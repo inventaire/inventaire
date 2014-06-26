@@ -1,15 +1,21 @@
 CONFIG = require('config')
-db = require('nano')(CONFIG.dbFullHost)
+nano = require('nano')(CONFIG.dbFullHost)
 
-# db.get "users", (err, body)->
-#   if err
-#     console.log "db users not found"
-#     db.create "users", (err, body)->
-#       if err
-#         console.log err
-#         console.log "couldn't create the db users"
-#       else
-#         console.log body
-#         console.log "users db created!"
+checkDbExistance = (DBsArray)->
+  DBsArray.forEach (dbName)->
+    nano.db.get dbName, (err,body)->
+      if err
+        console.log "#{dbName} not found: creating"
+        nano.db.create dbName, (err, body)->
+          if err
+            console.log err
+            console.log "couldn't create #{dbName}DB"
+          else
+            console.log body
+            console.log "#{dbName}DB created"
+      else
+        console.log "#{dbName}DB ready!"
 
-module.exports = db
+checkDbExistance ['inventory', 'users']
+
+module.exports = nano.db
