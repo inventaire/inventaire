@@ -24,6 +24,7 @@
     "chai": "^1.9.1",
     "config": "^0.4.36",
     "mocha": "^1.18.2",
+    "require-from": "^0.9.2",
     "should": "^3.3.1",
     "supertest": "^0.13.0",
     "supervisor": "^0.6.0",
