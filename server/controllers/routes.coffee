@@ -16,5 +16,8 @@ module.exports =
     get: items.fetch
     post: items.post
 
+  'username/items/:id':
+    put: items.put
+
   # '*':
   #   get: index.index
