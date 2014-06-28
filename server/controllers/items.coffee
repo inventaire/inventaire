@@ -1,35 +1,48 @@
-helpers = require '../helpers/items'
-
-json = "{\"_id\":\"p0biAX\",\"title\":\"La Horde du Contrevent\",\"visibility\":\"private\",\"transactionMode\":\"none\",\"comment\":\"\",\"tags\":\"\",\"owner\":\"username\",\"created\":\"2014-06-25T16:02:31.827Z\",\"entity\":{\"uri\":null,\"title\":null,\"P31\":null},\"version\":{\"uri\":null},\"instance\":{\"uri\":null,\"comment\":null,\"owner\":null,\"state\":null,\"history\":{\"created\":null,\"transactions\":[]}}}"
-fakeItem = JSON.parse json
-items = [fakeItem]
+H = items: require '../helpers/items'
 
 module.exports =
   fetch: (req, res, next) ->
-    res.setHeader('Content-Type', 'application/json')
-    res.send JSON.stringify(items)
+    H.items.fetchOwnerItems()
+    .then (resp)->
+      items = resp.rows.map (el)->el.doc
+      res.setHeader 'Content-Type', 'application/json'
+      res.status '200'
+      res.send JSON.stringify(items)
+    .done()
 
   post: (req, res, next) ->
-    if helpers.isValidItem req.body
-      helpers.postDocumentWithIdToInventoryDB req.body
-      .then(
-        res.status('201')
-        res.end()
-        )
-    else
-      res.status('400')
-      res.end()
+    console.log "POST to be implemented!"
+    # if H.items.isValidItem req.body
+    #   H.items.postDocumentWithIdToInventoryDB req.body
+    #   .then(
+    #     res.status('201')
+    #     res.end()
+    #     )
+    # else
+    #   res.status('400')
+    #   res.end()
 
   put: (req, res, next) ->
     console.log "****Put Item ID*******"
     console.log req.params.id
     console.log "**********************"
-    if helpers.isValidItem req.body
-      helpers.postDocumentWithIdToInventoryDB req.body
+    if H.items.isValidItem req.body
+      H.items.putDocumentToInventoryDB req.body
       .then(
-        res.status('201')
+        res.status '201'
         res.end()
         )
+      .done()
     else
-      res.status('400')
+      res.status '400'
       res.end()
+
+  get: (req, res, next) ->
+    console.log "****GET Item ID*******"
+    console.log req.params.id
+    console.log "**********************"
+    H.items.getUniqueItem req.params.id
+    .then (item)->
+      res.status '200'
+      res.send JSON.stringify(item)
+    .done()
