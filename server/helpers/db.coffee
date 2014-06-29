@@ -3,7 +3,7 @@ nano = require('nano')(CONFIG.dbFullHost)
 
 module.exports =
   checkDbsExistanceOrCreate: (db, checker = checkExistanceOrCreate)->
-    if typeof db is 'string'
+    if isLowercaseString db
       checker db
 
     else if db instanceof Array
