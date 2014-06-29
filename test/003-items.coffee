@@ -45,10 +45,31 @@ describe "GET id", ->
   it "responds with a model object", (done)->
     trycatch( ->
       request(baseUrl)
-      .get itemsRoot + '/' + fakeItems.good._id
+      .get itemsRoot + '/' + fakeItems.goodDynamicId._id
       .end (err, res)->
         res.status.should.equal 200
         res.body.should.be.an.Object
+        done()
+    , done)
+
+describe "GET id", ->
+  it "responds with a model object", (done)->
+    trycatch( ->
+      request(baseUrl)
+      .get itemsRoot + '/' + fakeItems.goodDynamicId._id
+      .end (err, res)->
+        res.status.should.equal 200
+        res.body.should.be.an.Object
+        done()
+    , done)
+
+describe "DELETE id", ->
+  it "responds with a unknown code so far TO BE IMPROVED", (done)->
+    trycatch(->
+      request baseUrl
+      .delete itemsRoot + '/' + fakeItems.goodDynamicId._id
+      .end (err, res)->
+        res.status.should.equal 200
         done()
     , done)
 
@@ -56,20 +77,24 @@ describe "GET id", ->
 
 
 
-
-
 __ = require('./test-utils').path
-helpers = require __.helpers + 'items'
+inv = require __.helpers + 'inventoryDB'
 idGen = require __.clientLib + 'id_generator'
 
-isValidItem = helpers.isValidItem
+isValidItem = inv.isValidItem
 fakeItems =
   good:
     title: "with a title"
+    owner: "username"
+    transactionMode: 'none'
+    visibility: 'private'
     _id: '123126'
 
   goodDynamicId:
     title: "with a title"
+    owner: "username"
+    transactionMode: 'none'
+    visibility: 'private'
     _id: idGen(6)
 
   noId:

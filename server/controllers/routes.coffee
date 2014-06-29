@@ -19,6 +19,7 @@ module.exports =
   'username/items/:id':
     put: items.put
     get: items.get
+    delete: items.del
 
   # '*':
   #   get: index.index

@@ -1,19 +1,19 @@
-H = items: require '../helpers/items'
+inv = require '../helpers/inventoryDB'
 
 module.exports =
   fetch: (req, res, next) ->
-    H.items.fetchOwnerItems()
+    inv.fetchOwnerItems()
     .then (resp)->
       items = resp.rows.map (el)->el.doc
-      res.setHeader 'Content-Type', 'application/json'
       res.status '200'
+      res.setHeader 'Content-Type', 'application/json'
       res.send JSON.stringify(items)
     .done()
 
   post: (req, res, next) ->
     console.log "POST to be implemented!"
-    # if H.items.isValidItem req.body
-    #   H.items.postDocumentWithIdToInventoryDB req.body
+    # if inv.isValidItem req.body
+    #   inv.postDocumentWithIdToInventoryDB req.body
     #   .then(
     #     res.status('201')
     #     res.end()
@@ -26,11 +26,14 @@ module.exports =
     console.log "****Put Item ID*******"
     console.log req.params.id
     console.log "**********************"
-    if H.items.isValidItem req.body
-      H.items.putDocumentToInventoryDB req.body
+    if inv.isValidItem req.body
+      console.log "**********************"
+      console.log req.body
+      console.log "**********************"
+      inv.putDocumentToInventoryDB req.body
       .then(
         res.status '201'
-        res.end()
+        res.send JSON.stringify(req.body)
         )
       .done()
     else
@@ -41,8 +44,34 @@ module.exports =
     console.log "****GET Item ID*******"
     console.log req.params.id
     console.log "**********************"
-    H.items.getUniqueItem req.params.id
+    inv.getUniqueItem req.params.id
     .then (item)->
       res.status '200'
+      res.setHeader 'Content-Type', 'application/json'
       res.send JSON.stringify(item)
+    .done()
+
+  del: (req, res, next) ->
+    console.log "****DELETE Item ID*******"
+    console.log req.params.id
+    console.log "**********************"
+    id = req.params.id
+    inv.getItemRev id
+    .then (rev)->
+      console.log "**********************"
+      console.log rev
+      console.log "**********************"
+      inv.deleteUniqueItem id, rev
+    .then (body)->
+      console.log "**********************"
+      console.log body
+      console.log "**********************"
+      res.status '200'
+      res.setHeader 'Content-Type', 'application/json'
+      res.send JSON.stringify(body)
+    .fail (err)->
+      console.error 'ERROR' + err
+      new Error err
+      res.status '500'
+      res.send err
     .done()
