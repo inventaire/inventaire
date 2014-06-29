@@ -18,7 +18,8 @@
     "csurf": "^1.2.1",
     "express-session": "^1.2.1",
     "nano": "^5.10.0",
-    "q": "^1.0.1"
+    "q": "^1.0.1",
+    "qreq": "^0.2.0"
   },
   "devDependencies": {
     "chai": "^1.9.1",
