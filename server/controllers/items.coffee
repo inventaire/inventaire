@@ -10,10 +10,12 @@ module.exports =
       .then (resp)->
         items = resp.rows.map (el)->el.doc
         _.sendJSON res, items
+      .fail _.errorHandler
       .done()
 
     else
-      user.redirectToLogin req, res
+      # user.redirectToLogin req, res
+      _.logRed 'waiting for redirect'
 
   post: (req, res, next) ->
     _.logRed "POST to be implemented!"
@@ -24,18 +26,17 @@ module.exports =
       inv.putDocumentToInventoryDB req.body
       .then (body)->
         _.sendJSON res, body, 201
-      .fail inv.errorHandler
+      .fail _.errorHandler
       .done()
     else
-      res.status '400'
-      res.send("400: couldn't add this item")
+      _.errorHandler "couldn't add this item", 400
 
   get: (req, res, next) ->
     _.log req.params.id, 'GET Item ID'
     inv.getUniqueItem req.params.id
     .then (item)->
       _.sendJSON res, item, 200
-    .fail inv.errorHandler
+    .fail _.errorHandler
     .done()
 
   del: (req, res, next) ->
@@ -45,5 +46,5 @@ module.exports =
     .then inv.deleteUniqueItem
     .then (body)->
       _.sendJSON res, body
-    .fail inv.errorHandler
+    .fail _.errorHandler
     .done()

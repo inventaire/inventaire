@@ -12,11 +12,11 @@ module.exports =
   'auth/logout':
     post: auth.logout
 
-  'username/items':
+  'api/items':
     get: items.fetch
     post: items.post
 
-  'username/items/:id':
+  'api/items/:id':
     put: items.put
     get: items.get
     delete: items.del
