@@ -1,36 +1,29 @@
 inv = require '../helpers/inventoryDB'
+user = require '../helpers/user'
 _ = require '../helpers/utils'
 
 module.exports =
   fetch: (req, res, next) ->
-    inv.fetchOwnerItems()
-    .then (resp)->
-      items = resp.rows.map (el)->el.doc
-      res.status '200'
-      res.setHeader 'Content-Type', 'application/json'
-      res.send JSON.stringify(items)
-    .done()
+    if req.session.email?
+      _.logRed req.session.toJSON()
+      inv.fetchUserItems()
+      .then (resp)->
+        items = resp.rows.map (el)->el.doc
+        _.sendJSON res, items
+      .done()
+
+    else
+      user.redirectToLogin req, res
 
   post: (req, res, next) ->
-    console.log "POST to be implemented!"
-    # if inv.isValidItem req.body
-    #   inv.postDocumentWithIdToInventoryDB req.body
-    #   .then(
-    #     res.status('201')
-    #     res.end()
-    #     )
-    # else
-    #   res.status('400')
-    #   res.end()
+    _.logRed "POST to be implemented!"
 
   put: (req, res, next) ->
     _.log req.params.id, 'Put Item ID'
     if inv.isValidItem req.body
       inv.putDocumentToInventoryDB req.body
       .then (body)->
-        _.log body, 'body'
-        res.status '201'
-        res.send JSON.stringify(body)
+        _.sendJSON res, body, 201
       .fail inv.errorHandler
       .done()
     else
@@ -41,9 +34,7 @@ module.exports =
     _.log req.params.id, 'GET Item ID'
     inv.getUniqueItem req.params.id
     .then (item)->
-      res.status '200'
-      res.setHeader 'Content-Type', 'application/json'
-      res.send JSON.stringify(item)
+      _.sendJSON res, item, 200
     .fail inv.errorHandler
     .done()
 
@@ -53,9 +44,6 @@ module.exports =
     inv.getItemRev id
     .then inv.deleteUniqueItem
     .then (body)->
-      _.log body, 'del then body'
-      res.status '200'
-      res.setHeader 'Content-Type', 'application/json'
-      res.send JSON.stringify(body)
+      _.sendJSON res, body
     .fail inv.errorHandler
     .done()
