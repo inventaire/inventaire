@@ -4,7 +4,10 @@ trycatch = require "trycatch"
 request = require "supertest"
 
 baseUrl = require('config').fullHost
-itemsRoot = '/username/items'
+itemsRoot = '/api/items'
+
+
+# INTEGRATION TESTS WITH DB
 
 describe "FETCH", ->
   it "responds an array of models", (done)->
@@ -40,17 +43,6 @@ describe "PUT", ->
   #         res.status.should.equal 400
   #         done()
   #   , done)
-
-describe "GET id", ->
-  it "responds with a model object", (done)->
-    trycatch( ->
-      request(baseUrl)
-      .get itemsRoot + '/' + fakeItems.goodDynamicId._id
-      .end (err, res)->
-        res.status.should.equal 200
-        res.body.should.be.an.Object
-        done()
-    , done)
 
 describe "GET id", ->
   it "responds with a model object", (done)->
