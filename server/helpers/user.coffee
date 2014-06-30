@@ -1,6 +1,5 @@
 db = require('../db')
 usersDB = db.use 'users'
-_ = require '../helpers/utils'
 request = require "request"
 audience = require('config').fullHost
 Q = require 'q'
@@ -28,26 +27,36 @@ module.exports =
     body = answer.body
     if body.status is "okay"
       req.session.email = email = body.email
-
-      _.logYellow email, 'email and'
-      _.logPurple req.session.email, 'req.session.email should be the same'
-
       # check if email is already saved in db
-      usersDB.view "users", "byEmail", {key: email}, (err, body) ->
-        console.log err  if err
-        _.log body, 'body'
+      @byEmail(email)
+      .then (body)->
         unless body.rows[0]
           # email is not in db
-          user =
-            type: "user"
-            email: email
-            username: ""
-
-          usersDB.insert user, (err, body) ->
-            console.log err if err
-            resp.send 200
+          @newUser(username, email)
+          .then _.sendJSON
+          .fail _.errorHandler
         else
           # email is already stored in db
-          resp.send 200
+          _.sendJSON resp, body.rows[0]
     else
       _.logRed 'DOH again'
+      _.errorHandler 'verify status isnt okay'
+
+
+  byEmail: (email)->
+    deferred = Q.defer()
+    usersDB.view "users", "byEmail", {key: email}, (err, body) ->
+      if err
+        deferred.reject new Error('CouchDB: ' + err)
+      else
+        deferred.resolve body
+    return deferred.promise
+
+  newUser: (username, email)->
+    deferred = Q.defer()
+    usersDB.insert user, (err, body) ->
+      if err
+        deferred.reject new Error('CouchDB: ' + err)
+      else
+        deferred.resolve body
+    return deferred.promise
