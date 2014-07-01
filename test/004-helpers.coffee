@@ -2,9 +2,21 @@ should = require "should"
 sinon = require "sinon"
 
 __ = require('./test-utils').path
-H = db: require __.helpers + 'db'
+H = db: require __.helpers 'db'
 
 
+#UNIT TEST
+describe "isValidDbName", ->
+  it "blocks unvalid names", (done)->
+    H.db.isValidDbName('goodstring').should.be.true
+    H.db.isValidDbName('good-string').should.be.true
+    H.db.isValidDbName('whatevera-z_$()+-/').should.be.true
+    H.db.isValidDbName('BadString').should.be.false
+    H.db.isValidDbName('bad string').should.be.false
+    done()
+
+
+#INTEGRATION TEST
 describe "checkDbExistanceOrCreate", ->
   it "uses the checker once on valid strings", (done)->
     checker = sinon.spy()
@@ -12,7 +24,7 @@ describe "checkDbExistanceOrCreate", ->
     checker.callCount.should.equal 1
     done()
 
-  it "uses the checker once on strings", (done)->
+  it "doesn't let ", (done)->
     checker = sinon.spy()
     (->H.db.checkDbsExistanceOrCreate 'badStringWithUppercase', checker).should.throwError
     checker.callCount.should.equal 0
