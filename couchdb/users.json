@@ -1,0 +1,12 @@
+{
+   "_id": "_design/users",
+   "language": "coffeescript",
+   "views": {
+       "byEmail": {
+           "map": "(doc)->\n  emit doc.email, doc"
+       },
+       "byUsername": {
+           "map": "(doc)->\n  emit(doc.username, doc)"
+       }
+   }
+}
