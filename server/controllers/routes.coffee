@@ -6,6 +6,9 @@ module.exports =
   'hello':
     get: index.hello
 
+  'auth/username':
+    post: auth.checkUsername
+
   'auth/login':
     post: auth.login
 

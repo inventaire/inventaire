@@ -1,5 +1,5 @@
 CONFIG = require 'config'
-_ = require '../helpers/utils'
+
 db = require '../db'
 H = db: require '../helpers/db'
 usersDB = db.use CONFIG.db.users
@@ -23,31 +23,40 @@ module.exports =
         audience: CONFIG.fullHost()
     return qreq.post params
 
-  verifyStatus: (answer, req, resp) ->
-    body = answer.body
+  verifyStatus: (personaAnswer, req, res) ->
+    body = personaAnswer.body
+    req.session.username = username = req.body.username
+    req.session.email = email = body.email
+
     if body.status is "okay"
-      req.session.email = email = body.email
-      # check if email is already saved in db
+      # CHECK IF EMAIL IS IN DB
       @byEmail(email)
-      .then (body)->
-        unless body.rows[0]
-          # email is not in db
+      .then (body)=>
+        console.log @
+        if body.rows[0]
+          # IF EMAIL IS ALREADY STORED IN DB, RETURN USER EMAIL AND USERNAME
+          _.sendJSON res, body.rows[0]
+        else if username? && @nameIsValid username
+          # IF EMAIL IS NOT IN DB AND IF VALID USERNAME, CREATE USER
           @newUser(username, email)
           .then _.sendJSON
           .fail _.errorHandler
+
         else
-          # email is already stored in db
-          _.sendJSON resp, body.rows[0]
+          err = "mmh, might had a problem with Username, you might need to restart the SignIn process"
+          _.logRed err
+          _.errorHandler err
+
     else
       _.logRed 'DOH again'
-      _.errorHandler 'verify status isnt okay'
+      _.errorHandler 'Persona verify status isnt okay oO'
 
 
   byEmail: (email)->
     deferred = Q.defer()
     usersDB.view "users", "byEmail", {key: email}, (err, body) ->
       if err
-        deferred.reject new Error('CouchDB: ' + err)
+        deferred.reject new Error('CouchDB problem with byEmail method: ' + err)
       else
         deferred.resolve body
     return deferred.promise
@@ -70,7 +79,7 @@ module.exports =
     deferred = Q.defer()
     usersDB.view "users", "byUsername", {key: username}, (err, body) ->
       if err
-        deferred.reject new Error('CouchDB: ' + err)
+        deferred.reject new Error('CouchDB problem with byUsername method: ' + err)
       else
         deferred.resolve body
     return deferred.promise
@@ -80,9 +89,10 @@ module.exports =
     user =
       username: username
       email: email
+      created: new Date()
     usersDB.insert user, (err, body) ->
       if err
-        deferred.reject new Error('CouchDB: ' + err)
+        deferred.reject new Error('CouchDB problem with newUser method: ' + err)
       else
         deferred.resolve body
     return deferred.promise

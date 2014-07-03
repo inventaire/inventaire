@@ -1,7 +1,6 @@
 user = require '../helpers/user'
-_ = require '../helpers/utils'
 
-module.exports.username = (req, res, next) ->
+module.exports.checkUsername = (req, res, next) ->
   reqUsername = req.body.username
   _.logGreen reqUsername
   if user.nameIsValid reqUsername
@@ -21,10 +20,10 @@ module.exports.username = (req, res, next) ->
       status_verbose: 'invalid username'
     _.sendJSON res, body, 400
 
-module.exports.login = (req, resp, next) ->
+module.exports.login = (req, res, next) ->
   user.verifyAssertion(req)
-  .then (answer)->
-    user.verifyStatus answer, req, resp
+  .then (personaAnswer)->
+    user.verifyStatus personaAnswer, req, res
   .fail (err)-> _.logRed err
   .done()
 
