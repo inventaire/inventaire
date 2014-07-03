@@ -1,10 +1,10 @@
-db = require('../db')
-usersDB = db.use 'users'
-request = require "request"
-audience = require('config').fullHost
+CONFIG = require 'config'
+_ = require '../helpers/utils'
+db = require '../db'
+H = db: require '../helpers/db'
+usersDB = db.use CONFIG.db.users
 Q = require 'q'
 qreq = require 'qreq'
-_ = require '../helpers/utils'
 
 module.exports =
   isLoggedIn: (req)->
@@ -20,7 +20,7 @@ module.exports =
       url: "https://verifier.login.persona.org/verify"
       json:
         assertion: req.body.assertion
-        audience: audience
+        audience: CONFIG.fullHost()
     return qreq.post params
 
   verifyStatus: (answer, req, resp) ->
@@ -52,8 +52,34 @@ module.exports =
         deferred.resolve body
     return deferred.promise
 
+  nameIsValid: (username)->
+    /^\w{1,20}$/.test username
+
+  nameIsAvailable: (username)->
+    deferred = Q.defer()
+    @byUsername(username)
+    .then (body)->
+      if body.rows.length == 0
+        _.logGreen username, 'available'
+        deferred.resolve username
+      else
+        _.logGreen username, 'not available'
+        deferred.reject new Error('This username already exists')
+
+  byUsername: (username)->
+    deferred = Q.defer()
+    usersDB.view "users", "byUsername", {key: username}, (err, body) ->
+      if err
+        deferred.reject new Error('CouchDB: ' + err)
+      else
+        deferred.resolve body
+    return deferred.promise
+
   newUser: (username, email)->
     deferred = Q.defer()
+    user =
+      username: username
+      email: email
     usersDB.insert user, (err, body) ->
       if err
         deferred.reject new Error('CouchDB: ' + err)
