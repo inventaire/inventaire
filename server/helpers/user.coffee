@@ -1,4 +1,6 @@
 CONFIG = require 'config'
+_ = require './utils'
+gravatar = require('gravatar')
 
 db = require '../db'
 H = db: require '../helpers/db'
@@ -15,7 +17,7 @@ module.exports =
     res.redirect '/login'
 
   verifyAssertion: (req)->
-    _.logRed 'verify assertion'
+    console.log 'verifyAssertion'
     params =
       url: "https://verifier.login.persona.org/verify"
       json:
@@ -24,6 +26,7 @@ module.exports =
     return qreq.post params
 
   verifyStatus: (personaAnswer, req, res) ->
+    _.logYellow personaAnswer.body, 'personaAnswer.body'
     body = personaAnswer.body
     req.session.username = username = req.body.username
     req.session.email = email = body.email
@@ -35,22 +38,25 @@ module.exports =
         console.log @
         if body.rows[0]
           # IF EMAIL IS ALREADY STORED IN DB, RETURN USER EMAIL AND USERNAME
-          _.sendJSON res, body.rows[0]
+          user = _.cleanUserData body.rows[0].value
+          _.sendJSON res, user
         else if username? && @nameIsValid username
           # IF EMAIL IS NOT IN DB AND IF VALID USERNAME, CREATE USER
           @newUser(username, email)
-          .then _.sendJSON
-          .fail _.errorHandler
+          .then (body)=>
+            _.logGreen body, 'new user returns'
+            _.logYellow @, '@'
+            user = _.cleanUserData body.value
+            _.sendJSON res, user
+          .fail (err)-> _.errorHandler res, err
 
         else
-          err = "mmh, might had a problem with Username, you might need to restart the SignIn process"
+          err = "Couldn't find an account associated with this email"
           _.logRed err
-          _.errorHandler err
+          _.errorHandler res, err
 
     else
-      _.logRed 'DOH again'
-      _.errorHandler 'Persona verify status isnt okay oO'
-
+      _.errorHandler res, 'Persona verify status isnt okay oO: might be a problem with Persona audience setting'
 
   byEmail: (email)->
     deferred = Q.defer()
@@ -72,12 +78,13 @@ module.exports =
         _.logGreen username, 'available'
         deferred.resolve username
       else
-        _.logGreen username, 'not available'
+        _.logRed username, 'not available'
         deferred.reject new Error('This username already exists')
+    return deferred.promise
 
   byUsername: (username)->
     deferred = Q.defer()
-    usersDB.view "users", "byUsername", {key: username}, (err, body) ->
+    usersDB.view "users", "byUsername", {key: username.toLowerCase()}, (err, body) ->
       if err
         deferred.reject new Error('CouchDB problem with byUsername method: ' + err)
       else
@@ -90,9 +97,31 @@ module.exports =
       username: username
       email: email
       created: new Date()
+      pic: gravatar.url(email, {d: 'mm'})
+    _.logBlue user, 'new user'
     usersDB.insert user, (err, body) ->
       if err
         deferred.reject new Error('CouchDB problem with newUser method: ' + err)
       else
+        body.value = user
         deferred.resolve body
     return deferred.promise
+
+
+  deleteUser: (user)->
+    _.logBlue user, 'deleteUser'
+    deferred = Q.defer()
+    usersDB.destroy user._id, user._rev, (err,body)->
+      if err
+        deferred.reject new Error(err)
+      else
+        deferred.resolve body
+    return deferred.promise
+
+  deleteUserByUsername: (username)->
+    _.logBlue username, 'deleteUserbyUsername'
+    @byUsername(username)
+    .then (body)->
+      return body.rows[0].value
+    .then @deleteUser
+    .fail (err)-> _.logRed err, 'deleteUserbyUsername err'
