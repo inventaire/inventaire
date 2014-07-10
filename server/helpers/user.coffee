@@ -10,11 +10,12 @@ qreq = require 'qreq'
 
 module.exports =
   isLoggedIn: (req)->
-    _.logBlue "IMPLEMENT ME", 'isLoggedIn'
-
-  redirectToLogin: (req, res)->
-    res.status '302'
-    res.redirect '/login'
+    if req.session.email?
+      _.logGreen req.session.toJSON(), 'user is logged in'
+      return true
+    else
+      _.logRed req.session.toJSON(), 'user is not logged in'
+      return false
 
   verifyAssertion: (req)->
     console.log 'verifyAssertion'
@@ -125,3 +126,11 @@ module.exports =
       return body.rows[0].value
     .then @deleteUser
     .fail (err)-> _.logRed err, 'deleteUserbyUsername err'
+
+  getUsername: (email)->
+    deferred = Q.defer()
+    @byEmail(email)
+    .then (res)->
+      deferred.resolve res.rows[0].value.username
+    .fail (err)-> deferred.reject new Error(err)
+    return deferred.promise
