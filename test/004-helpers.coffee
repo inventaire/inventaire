@@ -1,7 +1,6 @@
 should = require "should"
 sinon = require "sinon"
 
-__ = require('./test-utils').path
 H = db: require __.helpers 'db'
 
 
@@ -58,3 +57,4 @@ describe "checkDbExistanceOrCreate", ->
     (->H.db.checkDbsExistanceOrCreate(['badString1','badString2','badString3'], checker)).should.throw('only lowercase strings are accepted in an array of DBs')
     checker.callCount.should.equal 0
     done()
+
