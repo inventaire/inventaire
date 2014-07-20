@@ -9,6 +9,7 @@ Q = require 'q'
 qreq = require 'qreq'
 
 module.exports =
+  db: require('../cotDb').users
   isLoggedIn: (req)->
     if req.session.email?
       _.logGreen req.session.toJSON(), 'user is logged in'
@@ -36,10 +37,10 @@ module.exports =
       # CHECK IF EMAIL IS IN DB
       @byEmail(email)
       .then (body)=>
-        console.log @
         if body.rows[0]
           # IF EMAIL IS ALREADY STORED IN DB, RETURN USER EMAIL AND USERNAME
           user = _.cleanUserData body.rows[0].value
+          res.cookie "email", email
           _.sendJSON res, user
         else if username? && @nameIsValid username
           # IF EMAIL IS NOT IN DB AND IF VALID USERNAME, CREATE USER
@@ -48,16 +49,21 @@ module.exports =
             _.logGreen body, 'new user returns'
             _.logYellow @, '@'
             user = _.cleanUserData body.value
+            res.cookie "email", email
             _.sendJSON res, user
           .fail (err)-> _.errorHandler res, err
-
         else
           err = "Couldn't find an account associated with this email"
           _.logRed err
           _.errorHandler res, err
+      .fail (err)-> _.errorHandler res, err
+      .done()
 
     else
       _.errorHandler res, 'Persona verify status isnt okay oO: might be a problem with Persona audience setting'
+
+  byId: (id)->
+    return @db.get(id)
 
   byEmail: (email)->
     deferred = Q.defer()
@@ -84,13 +90,15 @@ module.exports =
     return deferred.promise
 
   byUsername: (username)->
-    deferred = Q.defer()
-    usersDB.view "users", "byUsername", {key: username.toLowerCase()}, (err, body) ->
-      if err
-        deferred.reject new Error('CouchDB problem with byUsername method: ' + err)
-      else
-        deferred.resolve body
-    return deferred.promise
+    return @db.view 'users', 'byUsername', {key: username.toLowerCase()}
+
+  usernameStartBy: (username, options)->
+    username = username.toLowerCase()
+    query =
+      startkey: username
+      endkey: username + 'Z'
+    query.limit = options.limit if options? && options.limit?
+    return @db.view 'users', 'byUsername', query
 
   newUser: (username, email)->
     deferred = Q.defer()
@@ -98,7 +106,7 @@ module.exports =
       username: username
       email: email
       created: new Date()
-      pic: gravatar.url(email, {d: 'mm'})
+      picture: gravatar.url(email, {d: 'mm'})
     _.logBlue user, 'new user'
     usersDB.insert user, (err, body) ->
       if err
@@ -133,4 +141,21 @@ module.exports =
     .then (res)->
       deferred.resolve res.rows[0].value.username
     .fail (err)-> deferred.reject new Error(err)
+    return deferred.promise
+
+  getUserId: (email)->
+    deferred = Q.defer()
+    @byEmail(email)
+    .then (res)->
+      deferred.resolve res.rows[0].value._id
+    .fail (err)-> deferred.reject new Error(err)
+    return deferred.promise
+
+  fetchUsers: (ids)->
+    deferred = Q.defer()
+    usersDB.fetch {keys: ids}, (err, body)->
+      if err
+        deferred.reject new Error(err)
+      else
+        deferred.resolve body
     return deferred.promise
