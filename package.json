@@ -6,7 +6,8 @@
   "scripts": {
     "start": "coffee server.coffee",
     "superstart": "supervisor server.coffee",
-    "test": "export NODE_ENV=tests; mocha --compilers coffee:coffee-script/register --watch" 
+    "test": "export NODE_ENV=tests; mocha --compilers coffee:coffee-script/register --watch",
+    "lint": "coffeelint -f config/coffeelint.json server.coffee server/* test/*"
   },
   "author": "maxlath",
   "license": "AGPL3",
@@ -18,6 +19,7 @@
     "cookie-session": "^1.0.2",
     "csurf": "^1.2.1",
     "express-session": "^1.2.1",
+    "gravatar": "^1.0.6",
     "nano": "^5.10.0",
     "q": "^1.0.1",
     "qreq": "^0.2.0"
