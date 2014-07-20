@@ -6,7 +6,7 @@
            "map": "(doc)->\n  emit doc.email, doc"
        },
        "byUsername": {
-           "map": "(doc)->\n  emit(doc.username, doc)"
+           "map": "(doc)->\n  emit(doc.username.toLowerCase(), doc)"
        }
    }
 }

@@ -1,0 +1,9 @@
+{
+   "_id": "_design/items",
+   "language": "coffeescript",
+   "views": {
+       "byOwner": {
+           "map": "(doc)->\n  emit(doc.owner, doc)"
+       }
+   }
+}
