@@ -2,26 +2,61 @@ colors = require 'colors'
 
 module.exports =
   sendJSON: (res, obj, status = '200')->
+    _.logGreen obj, 'sendJSON'
     res.status status
     res.setHeader 'Content-Type', 'application/json'
     res.send JSON.stringify(obj)
 
-  errorHandler: (err, status = 500)->
-    @logRed err
+  errorHandler: (res, err, status = 500)->
+    console.log err
     res.setHeader 'Content-Type', 'text/html'
     res.status status
     res.send err
 
   log: (obj, label, color = 'white')->
-    if label?
-      console.log "****** ".grey + label[color] + " ******".grey
-    else
-      console.log "******************************"[color]
-    console.log obj
-    console.log "-----".grey
+    if typeof obj is 'string' && !label?
+      console.log obj[color]
 
-  logError: (obj, label)-> @log obj, 'ERROR: ', 'red'
+    else
+      if label?
+        console.log "****** ".grey + label[color] + " ******".grey
+      else
+        console.log "******************************"[color]
+      console.log obj
+      console.log "-----".grey
+
+  error: (obj, label)-> @log obj, 'ERROR: ', 'red'
   logRed: (obj, label)-> @log obj, label, 'red'
   logGreen: (obj, label)-> @log obj, label, 'green'
   logBlue: (obj, label)-> @log obj, label, 'blue'
+  logCyan: (obj, label)-> @log obj, label, 'cyan'
   logYellow: (obj, label)-> @log obj, label, 'yellow'
+  logPurple: (obj, label)-> @log obj, label, 'magenta'
+  logRainbow: (obj, label)-> @log obj, label, 'rainbow'
+
+    # bold # italic # underline
+    # inverse # yellow # cyan
+    # white # magenta # green
+    # red # grey # blue
+    # rainbow # zebra # random
+
+
+  cleanUserData: (value)->
+    if value.username? && value.email? && value.created? && value.picture?
+      user =
+        username: value.username
+        email: value.email
+        created: value.created
+        picture: value.picture
+      return user
+    else
+      throw new Error('missing user data')
+
+  safeUserData: (value)->
+    user =
+      _id: value._id
+      username: value.username
+      created: value.created
+      picture: value.picture
+      contacts: value.contacts
+    return user

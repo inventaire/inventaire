@@ -47,3 +47,11 @@ describe "searchByUsername", ->
           res.rows.length.should.equal options.limit
         done()
       , done)
+
+
+
+fake =
+  good:
+    username: "validNewUserName"
+    email: "user@zombo.com"
+    contacts: [ "ff7ece53173603d712a91fd3850f6a38", "ff7ece53173603d712a91fd38515b016" ]
