@@ -1,14 +1,16 @@
 module.exports =
-  env: 'tests'
+  env: 'default'
+  login: true
   protocol: 'http'
   name: "inventaire"
   host: 'localhost'
-  port: 3009
+  hostAlt: '0.0.0.0' #problem with Persona Audience for local ip anyway
+  port: 3008
   fullHost: -> "#{@protocol}://#{@host}:#{@port}"
   db:
     protocol: 'http'
     host: 'localhost'
     port: 5984
     fullHost: -> "#{@protocol}://#{@host}:#{@port}"
-    users: 'users-tests'
-    inv: 'inventory-tests'
+    users: 'users'
+    inv: 'inventory'

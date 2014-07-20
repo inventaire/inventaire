@@ -1,6 +1,6 @@
 CONFIG = require('config')
 nano = require('nano') CONFIG.db.fullHost()
-loadDesignDocs = require './loadDesignDocs'
+dbInit = require './db_init'
 
 module.exports =
   checkDbsExistanceOrCreate: (db, checker = @checkExistanceOrCreate)->
@@ -31,7 +31,10 @@ module.exports =
             console.log "couldn't create #{dbName}DB"
           else
             if dbName == 'users' or dbName == 'users-tests'
-              loadDesignDocs()
+              dbInit.usersDesignLoader()
+              dbInit.loadFakeUsers()
+            if dbName == 'inventor' or dbName == 'inventor-tests'
+              dbInit.invDesignLoader()
             console.log body
             console.log "#{dbName}DB created"
       else

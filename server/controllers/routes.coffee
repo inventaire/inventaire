@@ -1,11 +1,10 @@
 index = require "./index"
 auth = require "./auth"
 items = require "./items"
+contacts = require "./contacts"
 
 module.exports =
-  'hello':
-    get: index.hello
-
+  # keep 'auth' routes for methods not requiring a valid session
   'auth/username':
     post: auth.checkUsername
 
@@ -15,6 +14,17 @@ module.exports =
   'auth/logout':
     post: auth.logout
 
+  # routes protected by the 'restrict' middleware. cf config.coffee
+  'user':
+    get: auth.getUser
+    put: auth.updateUser
+
+  'api/users':
+    get: contacts.searchByUsername
+
+  'api/contacts':
+    get: contacts.followedData
+
   'api/items':
     get: items.fetch
     post: items.post
@@ -23,6 +33,3 @@ module.exports =
     put: items.put
     get: items.get
     delete: items.del
-
-  # '*':
-  #   get: index.index
