@@ -7,6 +7,7 @@ module.exports =
   hostAlt: '0.0.0.0' #problem with Persona Audience for local ip anyway
   port: 3008
   fullHost: -> "#{@protocol}://#{@host}:#{@port}"
+  secret: "yoursecrethere"
   db:
     protocol: 'http'
     host: 'localhost'
