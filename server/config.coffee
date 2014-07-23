@@ -39,12 +39,8 @@ allowCrossDomain = (req, res, next)->
   next()
 
 emailCookie = (req, res, next) ->
-  _.log req.session.toJSON()
   if req.session.email
     res.cookie 'email', req.session.email
-    _.logBlue req.session.email, "cookie('email') set"
-  else
-    _.logBlue 'no session, no cookie'
   next()
 
 policy = "default-src 'self';" +

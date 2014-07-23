@@ -33,7 +33,7 @@ module.exports =
             if dbName == 'users' or dbName == 'users-tests'
               dbInit.usersDesignLoader()
               dbInit.loadFakeUsers()
-            if dbName == 'inventor' or dbName == 'inventor-tests'
+            if dbName == 'inventory' or dbName == 'inventory-tests'
               dbInit.invDesignLoader()
             console.log body
             console.log "#{dbName}DB created"
