@@ -8,8 +8,10 @@ usersDB = db.use CONFIG.db.users
 Q = require 'q'
 qreq = require 'qreq'
 
+usersCot = require('../cotDb').users
+
 module.exports =
-  db: require('../cotDb').users
+  db: usersCot
   isLoggedIn: (req)->
     if req.session.email?
       _.logGreen req.session.toJSON(), 'user is logged in'
@@ -46,11 +48,8 @@ module.exports =
           # IF EMAIL IS NOT IN DB AND IF VALID USERNAME, CREATE USER
           @newUser(username, email)
           .then (body)=>
-            _.logGreen body, 'new user returns'
-            _.logYellow @, '@'
-            user = _.cleanUserData body.value
             res.cookie "email", email
-            _.sendJSON res, user
+            _.sendJSON res, body
           .fail (err)-> _.errorHandler res, err
         else
           err = "Couldn't find an account associated with this email"
@@ -66,13 +65,7 @@ module.exports =
     return @db.get(id)
 
   byEmail: (email)->
-    deferred = Q.defer()
-    usersDB.view "users", "byEmail", {key: email}, (err, body) ->
-      if err
-        deferred.reject new Error('CouchDB problem with byEmail method: ' + err)
-      else
-        deferred.resolve body
-    return deferred.promise
+    return usersCot.view "users", "byEmail", {key: email}
 
   nameIsValid: (username)->
     /^\w{1,20}$/.test username
@@ -101,39 +94,13 @@ module.exports =
     return @db.view 'users', 'byUsername', query
 
   newUser: (username, email)->
-    deferred = Q.defer()
     user =
       username: username
       email: email
       created: new Date()
       picture: gravatar.url(email, {d: 'mm'})
     _.logBlue user, 'new user'
-    usersDB.insert user, (err, body) ->
-      if err
-        deferred.reject new Error('CouchDB problem with newUser method: ' + err)
-      else
-        body.value = user
-        deferred.resolve body
-    return deferred.promise
-
-
-  deleteUser: (user)->
-    _.logBlue user, 'deleteUser'
-    deferred = Q.defer()
-    usersDB.destroy user._id, user._rev, (err,body)->
-      if err
-        deferred.reject new Error(err)
-      else
-        deferred.resolve body
-    return deferred.promise
-
-  deleteUserByUsername: (username)->
-    _.logBlue username, 'deleteUserbyUsername'
-    @byUsername(username)
-    .then (body)->
-      return body.rows[0].value
-    .then @deleteUser
-    .fail (err)-> _.logRed err, 'deleteUserbyUsername err'
+    return usersCot.post(user).then (user)-> usersCot.get(user.id)
 
   getUsername: (email)->
     deferred = Q.defer()
@@ -152,10 +119,27 @@ module.exports =
     return deferred.promise
 
   fetchUsers: (ids)->
-    deferred = Q.defer()
-    usersDB.fetch {keys: ids}, (err, body)->
-      if err
-        deferred.reject new Error(err)
-      else
-        deferred.resolve body
-    return deferred.promise
+    if ids? and ids.length? and ids.length > 0
+      _.logGreen ids, 'ids for fetchUsers'
+      deferred = Q.defer()
+      usersDB.fetch {keys: ids}, (err, body)->
+        if err
+          deferred.reject new Error(err)
+        else
+          deferred.resolve body
+      return deferred.promise
+    else
+      _.logRed ids, 'ids for fetchUsers'
+      return
+
+  # only used by tests so far
+  deleteUser: (user)->
+    return usersCot.delete user._id, user._rev
+
+  deleteUserByUsername: (username)->
+    _.logBlue username, 'deleteUserbyUsername'
+    @byUsername(username)
+    .then (body)->
+      return body.rows[0].value
+    .then @deleteUser
+    .fail (err)-> _.logRed err, 'deleteUserbyUsername err'

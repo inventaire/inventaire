@@ -26,18 +26,17 @@ describe "username creation", ->
   after ->
     user.deleteUserByUsername fake.good.username
 
-  it 'returns a standard user row', (done)->
+  it 'returns a mapped result and not a raw row', (done)->
     trycatch( ->
       user.newUser(fake.good.username, fake.good.email)
       .done (body)->
-        body.should.have.property 'id'
-        body.should.have.property 'rev'
-        body.should.have.property 'value'
-        body.value.should.be.an.Object
-        body.value.should.have.property 'username'
-        body.value.should.have.property 'email'
-        body.value.should.have.property 'created'
-        body.value.should.have.property 'picture'
+        body.should.be.an.Object
+        body.should.have.property '_id'
+        body.should.have.property '_rev'
+        body.should.have.property 'username'
+        body.should.have.property 'email'
+        body.should.have.property 'created'
+        body.should.have.property 'picture'
         done()
     , done)
 
@@ -67,8 +66,6 @@ describe "byEmail", ->
         row.value.should.have.property 'picture'
         done()
     , done)
-
-
 
 
 describe "cleanUserData", ->

@@ -1,8 +1,11 @@
 should = require "should"
+expect = require("chai").expect
 trycatch = require "trycatch"
 request = require "supertest"
 fs = require 'fs'
 qreq = require 'qreq'
+
+user = require __.helpers 'user'
 
 CONFIG = require('config')
 baseDbUrl = CONFIG.db.fullHost()
@@ -48,10 +51,34 @@ describe "searchByUsername", ->
         done()
       , done)
 
+describe "fetchUsers", ->
+  it 'should return undefined if ids is undefined or empty', (done)->
+    trycatch( ->
+      expect(user.fetchUsers(undefined)).to.equal.undefined
+      expect(user.fetchUsers([])).to.equal.undefined
+      done()
+    , done)
 
+  it 'should return a promise, then an error for invalid requests', (done)->
+    trycatch( ->
+      user.fetchUsers(["1"]).should.be.an.Object
+      user.fetchUsers(["1"])
+      .then (res)->
+        res.rows[0].should.have.property 'error'
+        res.rows[0].error.should.equal 'not_found'
+        done()
+    , done)
 
-fake =
-  good:
-    username: "validNewUserName"
-    email: "user@zombo.com"
-    contacts: [ "ff7ece53173603d712a91fd3850f6a38", "ff7ece53173603d712a91fd38515b016" ]
+  it 'should return a promise, then an error for invalid requests', (done)->
+    trycatch( ->
+      user.fetchUsers(keepUsersIds)
+      .then (res)->
+        console.log res
+        res.rows.length.should.equal 2
+        res.rows.forEach (row)->
+          row.should.have.property 'id'
+          row.should.have.property 'key'
+          row.value.should.be.an.Object
+          row.doc.should.be.an.Object
+        done()
+    , done)

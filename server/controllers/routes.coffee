@@ -27,9 +27,18 @@ module.exports =
 
   'api/items':
     get: items.fetch
-    post: items.post
 
   'api/items/:id':
     put: items.put
     get: items.get
+
+  'api/items/:id/:rev':
     delete: items.del
+
+  'api/:user/items':
+    get: contacts.fetchItems
+
+  'api/:user/items/:id':
+    put: items.put
+  'api/:user/items/:id/:rev':
+    put: items.put

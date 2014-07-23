@@ -8,7 +8,7 @@ module.exports =
     res.send JSON.stringify(obj)
 
   errorHandler: (res, err, status = 500)->
-    console.log err
+    _.logRed err
     res.setHeader 'Content-Type', 'text/html'
     res.status status
     res.send err
@@ -53,10 +53,22 @@ module.exports =
       throw new Error('missing user data')
 
   safeUserData: (value)->
-    user =
+    return user =
       _id: value._id
       username: value.username
       created: value.created
       picture: value.picture
       contacts: value.contacts
-    return user
+
+  map: (type, body)->
+    return body.rows.map (el)-> el[type]
+
+  hasDiff: (one, two)-> JSON.stringify(one) != JSON.stringify(two)
+
+  getObjIfSuccess: (db, body)->
+    if db.get? && body.ok
+      return db.get(body.id)
+    else if db.get?
+      throw new Error "#{body.error}: #{body.reason}"
+    else
+      throw new Error "bad db object passed to _.getObjIfSuccess"

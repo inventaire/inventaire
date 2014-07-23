@@ -1,4 +1,5 @@
 user = require '../helpers/user'
+inv = require '../helpers/inv'
 
 module.exports.searchByUsername = (req, res, next) ->
   _.logYellow query = req._parsedUrl.query, 'search'
@@ -21,13 +22,17 @@ module.exports.followedData = (req, res, next) ->
   .then (body)->
     return body.rows[0].value.contacts
   .then user.fetchUsers
-  .then (couchData)->
-    usersData = couchData.rows.map (el)-> el.doc
-    cleanedUsersData = usersData.map _.safeUserData
-    _.logBlue cleanedUsersData
-    return cleanedUsersData
-  .then (usersData)->
-    _.logGreen usersData, 'usersData'
-    _.sendJSON res, usersData
+  .then (body)->
+    if body?
+      usersData = _.map 'doc', body
+      cleanedUsersData = usersData.map _.safeUserData
+      _.sendJSON res, cleanedUsersData
+    else
+      _.errorHandler res, 'no contacts found', 404
   .fail (err)-> _.errorHandler res, err
   .done()
+
+module.exports.fetchItems = (req, res, next) ->
+  _.logYellow ownerId = req.params.user, 'fetchItems user'
+  inv.byOwner ownerId
+  .then (body)-> _.sendJSON res, _.map('value', body)

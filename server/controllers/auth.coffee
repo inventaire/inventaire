@@ -53,8 +53,9 @@ module.exports.updateUser = (req, res, next) ->
   .then (body)->
     current = body.rows[0].value
     if current.email == req.session.email && current._id == req.body._id
-      if JSON.stringify(updateReq) != JSON.stringify(current)
+      if _.hasDiff current, updateReq
         user.db.post(req.body)
+        .then (body)-> _.getObjIfSuccess user.db, body
         .then (body)-> _.sendJSON res, body
         .fail (err)-> _.errorHandler res, err
       else
