@@ -5,20 +5,20 @@ contacts = require "./contacts"
 
 module.exports =
   # keep 'auth' routes for methods not requiring a valid session
-  'auth/username':
+  'api/auth/username':
     post: auth.checkUsername
 
-  'auth/login':
+  'api/auth/login':
     post: auth.login
 
-  'auth/logout':
+  'api/auth/logout':
     post: auth.logout
 
-  # routes protected by the 'restrict' middleware. cf config.coffee
-  'user':
+  'api/auth/user':
     get: auth.getUser
     put: auth.updateUser
 
+  # routes protected by the 'restrict' middleware. cf config.coffee
   'api/users':
     get: contacts.searchByUsername
 
@@ -42,3 +42,4 @@ module.exports =
     put: items.put
   'api/:user/items/:id/:rev':
     put: items.put
+    delete: items.del

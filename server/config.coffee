@@ -26,7 +26,7 @@ restrict = (req, res, next) ->
   else next()
 
 whitelistedRoute = (route)->
-  return /^\/auth\//.test route
+  return /^\/api\/auth\//.test route
 
 apiRoute = (route)->
   return /^\/api\//.test route
