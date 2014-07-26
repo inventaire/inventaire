@@ -7,7 +7,8 @@
     "start": "coffee server.coffee",
     "superstart": "supervisor server.coffee",
     "test": "export NODE_ENV=tests; mocha --compilers coffee:coffee-script/register --watch",
-    "lint": "coffeelint -f config/coffeelint.json server.coffee server/* test/*"
+    "lint": "coffeelint -f config/coffeelint.json server.coffee server/* test/*",
+    "debug": "DEBUG=express:* coffee server.coffee"
   },
   "author": "maxlath",
   "license": "AGPL3",

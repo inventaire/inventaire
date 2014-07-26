@@ -43,3 +43,6 @@ module.exports =
   'api/:user/items/:id/:rev':
     put: items.put
     delete: items.del
+
+  '*':
+    get: index.glob

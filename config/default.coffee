@@ -1,6 +1,5 @@
 module.exports =
   env: 'default'
-  login: true
   protocol: 'http'
   name: "inventaire"
   host: 'localhost'

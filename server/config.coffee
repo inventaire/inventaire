@@ -8,22 +8,21 @@ session = require 'cookie-session'
 # middlewares following recommandations found here for the implementation of Persona
 # http://www.mircozeiss.com/mozilla-persona-example-app-with-express-and-couchdb/
 
-restrict = (req, res, next) ->
-  if CONFIG.login
+restrictApiAccess = (req, res, next) ->
+  if apiRoute req.originalUrl
     if req.session.email
       _.logGreen "allowed user: #{req.session.email}"
       next()
     else if whitelistedRoute req.originalUrl
       _.logGreen "whitelisted route: #{req.originalUrl}"
       next()
-    else if apiRoute req.originalUrl
+    else
       _.logPurple "restricted api route: #{req.originalUrl}"
       _.errorHandler res, 'unauthorized api access', 401
-    else
-      _.logRed "restricted: #{req.originalUrl}"
-      res.redirect "/"
-    return
-  else next()
+  else
+    _.logGreen "allowed non-api route: #{req.originalUrl}"
+    next()
+  return
 
 whitelistedRoute = (route)->
   return /^\/api\/auth\//.test route
@@ -72,7 +71,7 @@ module.exports =
     )
     cookieParser()
     session(secret: CONFIG.secret)
-    restrict
+    restrictApiAccess
     emailCookie
     allowCrossDomain
     cspPolicy
