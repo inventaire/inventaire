@@ -2,6 +2,7 @@ index = require "./index"
 auth = require "./auth"
 items = require "./items"
 contacts = require "./contacts"
+entities = require "./entities"
 
 module.exports =
   # keep 'auth' routes for methods not requiring a valid session
@@ -43,6 +44,9 @@ module.exports =
   'api/:user/items/:id/:rev':
     put: items.put
     delete: items.del
+
+  'api/entities/search':
+    get: entities.search
 
   '*':
     get: index.glob
