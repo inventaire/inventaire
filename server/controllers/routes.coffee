@@ -48,5 +48,19 @@ module.exports =
   'api/entities/search':
     get: entities.search
 
+  'api/cookie':
+    post: (req, res, next)->
+      whitelist = ['lang']
+      if _.has whitelist, req.body.key
+        res.cookie key = req.body.key, value = req.body.value
+        _.logBlue result = "cookie set: #{key} = #{value}"
+        res.send result
+      else _.errorHandler res, 'unauthorize cookie setting', '403'
+
+  'test':
+    post: (req, res, next)->
+      _.logBlue req.body
+      res.send 'thanks!'
+
   '*':
     get: index.glob

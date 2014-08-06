@@ -1,8 +1,9 @@
 colors = require 'colors'
+fs = require 'fs'
 
 module.exports =
   sendJSON: (res, obj, status = '200')->
-    _.logGreen obj, 'sendJSON'
+    # _.logGreen obj, 'sendJSON'
     res.status status
     res.setHeader 'Content-Type', 'application/json'
     res.send JSON.stringify(obj)
@@ -25,8 +26,10 @@ module.exports =
       console.log obj
       console.log "-----".grey
 
-  error: (obj, label)-> @log obj, 'ERROR: ', 'red'
-  logRed: (obj, label)-> @log obj, label, 'red'
+  logRed: (obj, label)->
+    obj = obj.stack if obj.stack?
+    @log obj, label, 'red'
+  error: @logRed
   logGreen: (obj, label)-> @log obj, label, 'green'
   logBlue: (obj, label)-> @log obj, label, 'blue'
   logCyan: (obj, label)-> @log obj, label, 'cyan'
@@ -34,12 +37,13 @@ module.exports =
   logPurple: (obj, label)-> @log obj, label, 'magenta'
   logRainbow: (obj, label)-> @log obj, label, 'rainbow'
 
-    # bold # italic # underline
-    # inverse # yellow # cyan
-    # white # magenta # green
-    # red # grey # blue
-    # rainbow # zebra # random
-
+  logArray: (array, label, color='yellow')->
+    spaced = new Array
+    array.forEach (el)=>
+      spaced.push el
+      spaced.push @_
+    spaced.pop()
+    @log spaced, label, color
 
   cleanUserData: (value)->
     if value.username? && value.email? && value.created? && value.picture?
@@ -72,3 +76,28 @@ module.exports =
       throw new Error "#{body.error}: #{body.reason}"
     else
       throw new Error "bad db object passed to _.getObjIfSuccess"
+
+  has: (array, value)-> array.indexOf(value) isnt -1
+
+  randomGen: (length, withoutNumbers)->
+    text = ""
+    if withoutNumbers
+      possible="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+    else
+      possible="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+    i = 0
+    while i < length
+      text += possible.charAt(Math.floor(Math.random() * possible.length))
+      i++
+    return text
+
+  extend: (one, two)->
+    for k,v of two
+      if one[k]? then k += _.randomGen(6, true)
+      one[k] = v
+    return one
+
+  _: '-----------------------------------------------------------------'
+
+  jsonFile: (path)->
+    JSON.parse fs.readFileSync(path).toString()
