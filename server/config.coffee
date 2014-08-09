@@ -1,4 +1,3 @@
-
 CONFIG = require 'config'
 americano = require 'americano'
 cookieParser = require 'cookie-parser'
@@ -28,7 +27,7 @@ whitelistedRoute = (route)->
   return /^\/api\/auth\//.test route
 
 apiRoute = (route)->
-  return /^\/api\//.test route
+  return /^\/(api||test)\//.test route
 
 allowCrossDomain = (req, res, next)->
   res.header 'Access-Control-Allow-Origin', '*'
@@ -38,6 +37,7 @@ allowCrossDomain = (req, res, next)->
   next()
 
 emailCookie = (req, res, next) ->
+  res.cookie 'testcookie', 'cookies OK'
   if req.session.email
     res.cookie 'email', req.session.email
   next()
@@ -47,7 +47,6 @@ policy = "default-src 'self';" +
         "script-src 'self' 'unsafe-inline' https://login.persona.org;" +
         "style-src 'self' 'unsafe-inline'"
 
-
 cspPolicy = (req, res, next) ->
   res.header 'X-Content-Security-Policy', policy # Firefox and Internet Explorer
   res.header 'X-WebKit-CSP', policy # Safari and Chrome
@@ -56,6 +55,13 @@ cspPolicy = (req, res, next) ->
 
 csrf = (req, res, next) ->
   res.locals.token = req.session._csrf
+  next()
+
+langCookie = (req, res, next) ->
+  unless req.cookies?.lang?
+    if lang = req.headers?['accept-language']?[0..1]
+      if _.hasValue validLanguage, lang
+        _.logBlue(res.cookie('lang',lang), "setting lang cookie, #{lang}")
   next()
 
 module.exports =
@@ -76,6 +82,7 @@ module.exports =
     allowCrossDomain
     cspPolicy
     # csrf
+    langCookie
   ]
   development:
     use: [americano.logger('dev')]
