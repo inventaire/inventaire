@@ -64,7 +64,7 @@ module.exports =
       picture: value.picture
       contacts: value.contacts
 
-  map: (type, body)->
+  mapCouchResult: (type, body)->
     return body.rows.map (el)-> el[type]
 
   hasDiff: (one, two)-> JSON.stringify(one) != JSON.stringify(two)

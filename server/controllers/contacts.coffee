@@ -24,7 +24,7 @@ module.exports.followedData = (req, res, next) ->
   .then user.fetchUsers
   .then (body)->
     if body?
-      usersData = _.map 'doc', body
+      usersData = _.mapCouchResult 'doc', body
       cleanedUsersData = usersData.map _.safeUserData
       _.sendJSON res, cleanedUsersData
     else
@@ -35,4 +35,4 @@ module.exports.followedData = (req, res, next) ->
 module.exports.fetchItems = (req, res, next) ->
   _.logYellow ownerId = req.params.user, 'fetchItems user'
   inv.byOwner ownerId
-  .then (body)-> _.sendJSON res, _.map('value', body)
+  .then (body)-> _.sendJSON res, _.mapCouchResult('value', body)
