@@ -77,7 +77,7 @@ module.exports =
     else
       throw new Error "bad db object passed to _.getObjIfSuccess"
 
-  has: (array, value)-> array.indexOf(value) isnt -1
+  hasValue: (array, value)-> array.indexOf(value) isnt -1
 
   randomGen: (length, withoutNumbers)->
     text = ""
