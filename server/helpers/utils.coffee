@@ -1,6 +1,11 @@
 colors = require 'colors'
 fs = require 'fs'
 
+String::label = (label, color)->
+  if color? then console.log "[" + label[color] + "] #{@toString()}"
+  else console.log "[" + label['blue'] + "] #{@toString()}"
+  return @toString()
+
 module.exports =
   sendJSON: (res, obj, status = '200')->
     # _.logGreen obj, 'sendJSON'
@@ -27,7 +32,7 @@ module.exports =
       console.log "-----".grey
 
   logRed: (obj, label)->
-    obj = obj.stack if obj.stack?
+    obj = obj.stack if obj?.stack?
     @log obj, label, 'red'
   error: @logRed
   logGreen: (obj, label)-> @log obj, label, 'green'
@@ -101,3 +106,6 @@ module.exports =
 
   jsonFile: (path)->
     JSON.parse fs.readFileSync(path).toString()
+
+  wmCommonsThumb: (file, width=100)->
+    "http://commons.wikimedia.org/w/thumb.php?width=#{width}&f=#{file}"
