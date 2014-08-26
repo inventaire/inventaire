@@ -62,5 +62,5 @@ module.exports.updateUser = (req, res, next) ->
         _.errorHandler res, 'already up-to-date', 400
     else
       _.errorHandler res, 'wrong email', 400
-  .fail (err)->  _.errorHandler res, err, 400
+  .fail (err)-> _.errorHandler res, err, 400
   .done()

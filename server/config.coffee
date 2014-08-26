@@ -23,11 +23,9 @@ restrictApiAccess = (req, res, next) ->
     next()
   return
 
-whitelistedRoute = (route)->
-  return /^\/api\/auth\//.test route
+apiRoute = (route)-> /^\/(api||test)\//.test route
 
-apiRoute = (route)->
-  return /^\/(api||test)\//.test route
+whitelistedRoute = (route)-> new RegExp(CONFIG.whitelistedRouteRegExp).test route
 
 allowCrossDomain = (req, res, next)->
   res.header 'Access-Control-Allow-Origin', '*'
@@ -57,11 +55,13 @@ csrf = (req, res, next) ->
   res.locals.token = req.session._csrf
   next()
 
+validLanguage = ['en', 'fr', 'de']
 langCookie = (req, res, next) ->
   unless req.cookies?.lang?
     if lang = req.headers?['accept-language']?[0..1]
       if _.hasValue validLanguage, lang
-        _.logBlue(res.cookie('lang',lang), "setting lang cookie, #{lang}")
+        res.cookie('lang',lang)
+        _.logBlue "setting lang cookie, #{lang}"
   next()
 
 module.exports =

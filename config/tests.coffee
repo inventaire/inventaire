@@ -12,3 +12,4 @@ module.exports =
     fullHost: -> "#{@protocol}://#{@host}:#{@port}"
     users: 'users-tests'
     inv: 'inventory-tests'
+  whitelistedRouteRegExp: /^\/api\//

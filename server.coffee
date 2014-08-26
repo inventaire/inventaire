@@ -1,5 +1,5 @@
-CONFIG = require('config')
-americano = require('americano')
+CONFIG = require 'config'
+americano = require 'americano'
 
 global._ = require './server/helpers/utils'
 
