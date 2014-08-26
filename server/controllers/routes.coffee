@@ -3,6 +3,7 @@ auth = require "./auth"
 items = require "./items"
 contacts = require "./contacts"
 entities = require "./entities"
+proxy = require "./proxy"
 
 module.exports =
   # keep 'auth' routes for methods not requiring a valid session
@@ -61,6 +62,9 @@ module.exports =
     post: (req, res, next)->
       _.logBlue req.body
       res.send 'thanks!'
+
+  'proxy/*':
+    get: proxy.get
 
   '*':
     get: index.glob
