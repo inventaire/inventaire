@@ -1,10 +1,29 @@
 qreq = require 'qreq'
+wikidata = require './wikidata'
 
 module.exports =
-  getBookDataFromISBN: (isbn)->
+  isISBN: (text)->
+    cleanedText = text.trim().replace(/-/g, '').replace(/\s/g, '')
+    if /^([0-9]{10}||[0-9]{13})$/.test(cleanedText)
+      switch cleanedText.length
+        when 10 then return 10
+        when 13 then return 13
+    return false
+
+
+  getBookDataFromISBN: (isbn, lang)->
+    return @getGoogleapisData(isbn)
+    .then (bookData)->
+      wikidata.bookFilteredSearch(bookData.title, lang)
+    .fail (err)->
+      throw new Error 'err at getBookDataFromISBN'
+
+
+  getGoogleapisData: (isbn)->
     _.log cleanedIsbn = cleanIsbnData isbn, 'cleaned ISBN!'
     if cleanedIsbn?
-      return qreq.get('https://www.googleapis.com/books/v1/volumes/?q=' + cleanedIsbn)
+      request = "https://www.googleapis.com/books/v1/volumes/?q=#{cleanedIsbn}"
+      return qreq.get(request)
       .then (res)->
         _.logGreen res.body, "Entities:Search:res.body"
         if res.body.totalItems > 0
@@ -12,10 +31,8 @@ module.exports =
           foundItem = res.body.items[0].volumeInfo
           _.logGreen foundItem, "Entities:Search:foundItem"
           return cleanBookData foundItem
-        else
-          return
-    else
-      return
+        else throw new Error "no item found at: #{request}"
+    else throw new Error "bad isbn"
 
 cleanIsbnData = (isbn)->
   if typeof isbn is 'string'

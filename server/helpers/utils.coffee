@@ -22,6 +22,7 @@ module.exports =
   log: (obj, label, color = 'white')->
     if typeof obj is 'string' && !label?
       console.log obj[color]
+      return obj
 
     else
       if label?
@@ -30,6 +31,7 @@ module.exports =
         console.log "******************************"[color]
       console.log obj
       console.log "-----".grey
+      return obj
 
   logRed: (obj, label)->
     obj = obj.stack if obj?.stack?

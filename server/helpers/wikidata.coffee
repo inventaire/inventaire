@@ -20,6 +20,21 @@ module.exports =
       else throw new Error 'no item found or too many'
     .fail (err)-> console.error(err, 'err at findEntityByFreebaseIdentifier')
 
+  getBookEntityByISBN: (isbn, type, lang)->
+    switch type
+      when 10
+        request = "http://wdq.wmflabs.org/api?q=STRING[957:#{isbn}]"
+      when 13
+        request = "http://wdq.wmflabs.org/api?q=STRING[212:#{isbn}]"
+    return qreq.get(request)
+    .then (res)->
+      if res.body.items.length > 0
+        id = normalizeId(res.body.items[0])
+        return getEntities(id, lang).then(filterAndBrush)
+      else return null
+    .fail (err)-> console.error(err, 'err at getBookEntityByISBN')
+
+
 searchEntities = (search, language='en', limit='20', format='json')->
   url = "https://www.wikidata.org/w/api.php?action=wbsearchentities&language=#{language}&limit=#{limit}&format=#{format}&search=#{search}".label('searchEntities')
   return qreq.get url
@@ -37,6 +52,7 @@ getEntities = (ids, languages=['en'], props=defaultProps, format='json')->
   ids = [ids] if typeof ids is 'string'
   ids = normalizeIds(ids)
   pipedIds = ids.join '|'
+  languages = [languages] if typeof languages is 'string'
   languages.push 'en' unless _.hasValue languages, 'en'
   pipedLanguages = languages.join '|'
   pipedProps = props.join '|'
@@ -100,6 +116,7 @@ BooksP31 = [
   571 #book
   2831984 #comic book album
   1004 # bande dessinée
+  8261 #roman
 ]
 
 normalizeIds = (idsArray)->
@@ -112,3 +129,35 @@ normalizeId = (id)->
 
 isNumericId = (id)-> /^[0-9]{1,}$/.test id
 
+
+filteredSearch = (text, claim, lang, limit=30)->
+  return searchEntities(text, lang, limit)
+  .then filteredResultsIds
+  .then (numericIds)-> filteredIdsByClaim(numericIds, claim)
+  .then (res)->
+    if res.body.items.length > 0
+      filteredIds = normalizeIds(res.body.items)
+      return getEntities(filteredIds, lang).then(filterAndBrush)
+    else throw new Error 'no ids left after filteredIdsByClaim'
+  .fail (err)-> console.error(err, 'err at filteredSearch')
+
+filteredResultsIds = (res)->
+  if res.body?.search?.length > 0
+    return numericIds = res.body.search.map (el)-> el.id[1..-1]
+  else throw new Error 'no item found at filterIds'
+
+filteredIdsByClaim = (numericIds, claim)->
+  ids = numericIds.join(',')
+  query = "items[#{ids}] AND #{claim}"
+  return qreq.get "http://wdq.wmflabs.org/api?q=#{query}"
+
+
+bookFilteredSearch = (text, lang)->
+  claimsStringsArray = BooksP31.map (el)-> "claim[31:#{el}]"
+  claim = claimsStringsArray.join(' OR ')
+  _.logBlue claim = "(#{claim})", 'claim'
+  return filteredSearch(text, claim, lang, limit, format)
+
+
+module.exports.filteredSearch = filteredSearch
+module.exports.bookFilteredSearch = bookFilteredSearch
