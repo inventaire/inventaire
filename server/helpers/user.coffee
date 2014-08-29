@@ -72,14 +72,18 @@ module.exports =
 
   nameIsAvailable: (username)->
     deferred = Q.defer()
-    @byUsername(username)
-    .then (body)->
-      if body.rows.length == 0
-        _.logGreen username, 'available'
-        deferred.resolve username
-      else
-        _.logRed username, 'not available'
-        deferred.reject new Error('This username already exists')
+    unless @isReservedWord(username)
+      @byUsername(username)
+      .then (body)->
+        if body.rows.length == 0
+          _.logGreen username, 'available'
+          deferred.resolve username
+        else
+          _.logRed username, 'not available'
+          deferred.reject new Error('This username already exists')
+    else
+      _.logRed username, 'reserved word'
+      deferred.reject new Error('Reserved words cant be usernames')
     return deferred.promise
 
   byUsername: (username)->
@@ -143,3 +147,24 @@ module.exports =
       return body.rows[0].value
     .then @deleteUser
     .fail (err)-> _.logRed err, 'deleteUserbyUsername err'
+
+  isReservedWord: (username)->
+    reservedWords = [
+      'entity'
+      'entities'
+      'inventory'
+      'inventories'
+      'wikidata'
+      'isbn'
+      'user'
+      'users'
+      'profile'
+      'item'
+      'items'
+      'auth'
+      'listings'
+      'contacts'
+      'contact'
+      'welcome'
+    ]
+    return _.hasValue reservedWords, username
