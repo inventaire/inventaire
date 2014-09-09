@@ -26,7 +26,7 @@ module.exports =
       url: "https://verifier.login.persona.org/verify"
       json:
         assertion: req.body.assertion
-        audience: CONFIG.fullHost()
+        audience: CONFIG.fullHostTer()
     return qreq.post params
 
   verifyStatus: (personaAnswer, req, res) ->
@@ -41,7 +41,7 @@ module.exports =
       .then (body)=>
         if body.rows[0]
           # IF EMAIL IS ALREADY STORED IN DB, RETURN USER EMAIL AND USERNAME
-          user = _.cleanUserData body.rows[0].value
+          user = cleanUserData body.rows[0].value
           res.cookie "email", email
           _.sendJSON res, user
         else if username? && @nameIsValid username
@@ -168,3 +168,15 @@ module.exports =
       'welcome'
     ]
     return _.hasValue reservedWords, username
+
+
+cleanUserData = (value)->
+  if value.username? and value.email? and value.created? and value.picture?
+    user =
+      username: value.username
+      email: value.email
+      created: value.created
+      picture: value.picture
+    return user
+  else
+    throw new Error('missing user data')

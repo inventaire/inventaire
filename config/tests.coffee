@@ -6,6 +6,7 @@ module.exports =
   port: 3009
   fullHost: -> "#{@protocol}://#{@host}:#{@port}"
   db:
+    instable: true
     protocol: 'http'
     host: 'localhost'
     port: 5984

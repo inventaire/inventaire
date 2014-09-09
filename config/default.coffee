@@ -4,8 +4,10 @@ module.exports =
   name: "inventaire"
   host: 'localhost'
   hostAlt: '0.0.0.0' #problem with Persona Audience for local ip anyway
+  hostTer: '192.168.1.49' #problem with Persona Audience for local ip anyway
   port: 3008
   fullHost: -> "#{@protocol}://#{@host}:#{@port}"
+  fullHostTer: -> "#{@protocol}://#{@hostTer}:#{@port}"
   secret: "yoursecrethere"
   db:
     protocol: 'http'

@@ -1,10 +1,12 @@
 colors = require 'colors'
 fs = require 'fs'
 
-String::label = (label, color)->
+String::logIt = (label, color)->
   if color? then console.log "[" + label[color] + "] #{@toString()}"
   else console.log "[" + label['blue'] + "] #{@toString()}"
   return @toString()
+
+Array::clone = -> @slice(0)
 
 module.exports =
   sendJSON: (res, obj, status = '200')->
@@ -20,7 +22,7 @@ module.exports =
     res.send err
 
   log: (obj, label, color = 'white')->
-    if typeof obj is 'string' && !label?
+    if typeof obj is 'string' and !label?
       console.log obj[color]
       return obj
 
@@ -52,32 +54,13 @@ module.exports =
     spaced.pop()
     @log spaced, label, color
 
-  cleanUserData: (value)->
-    if value.username? && value.email? && value.created? && value.picture?
-      user =
-        username: value.username
-        email: value.email
-        created: value.created
-        picture: value.picture
-      return user
-    else
-      throw new Error('missing user data')
-
-  safeUserData: (value)->
-    return user =
-      _id: value._id
-      username: value.username
-      created: value.created
-      picture: value.picture
-      contacts: value.contacts
-
   mapCouchResult: (type, body)->
     return body.rows.map (el)-> el[type]
 
   hasDiff: (one, two)-> JSON.stringify(one) != JSON.stringify(two)
 
   getObjIfSuccess: (db, body)->
-    if db.get? && body.ok
+    if db.get? and body.ok
       return db.get(body.id)
     else if db.get?
       throw new Error "#{body.error}: #{body.reason}"
@@ -111,3 +94,20 @@ module.exports =
 
   wmCommonsThumb: (file, width=100)->
     "http://commons.wikimedia.org/w/thumb.php?width=#{width}&f=#{file}"
+
+  buildPath: (pathname, queryObj)->
+    if queryObj? and not @isEmpty queryObj
+      queries = ''
+      for k,v of queryObj
+        queries += "&#{k}=#{v}"
+      return pathname + '?' + queries[1..]
+    else pathname
+
+  isEmpty: (obj)-> Object.keys(obj).length is 0
+
+  toSet: (array)->
+    obj = {}
+    array.forEach (value)->
+      obj[value] = true
+      console.log 'value:', value
+    return Object.keys(obj)

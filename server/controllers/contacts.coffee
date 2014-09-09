@@ -25,7 +25,7 @@ module.exports.followedData = (req, res, next) ->
   .then (body)->
     if body?
       usersData = _.mapCouchResult 'doc', body
-      cleanedUsersData = usersData.map _.safeUserData
+      cleanedUsersData = usersData.map safeUserData
       _.sendJSON res, cleanedUsersData
     else
       _.errorHandler res, 'no contacts found', 404
@@ -36,3 +36,13 @@ module.exports.fetchItems = (req, res, next) ->
   _.logYellow ownerId = req.params.user, 'fetchItems user'
   inv.byOwner ownerId
   .then (body)-> _.sendJSON res, _.mapCouchResult('value', body)
+
+
+safeUserData = (value)->
+  return {
+    _id: value._id
+    username: value.username
+    created: value.created
+    picture: value.picture
+    contacts: value.contacts
+  }
