@@ -19,7 +19,6 @@ restrictApiAccess = (req, res, next) ->
       _.logPurple "restricted api route: #{req.originalUrl}"
       _.errorHandler res, 'unauthorized api access', 401
   else
-    _.logGreen "allowed non-api route: #{req.originalUrl}"
     next()
   return
 
@@ -31,7 +30,6 @@ allowCrossDomain = (req, res, next)->
   res.header 'Access-Control-Allow-Origin', '*'
   res.header 'Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE'
   res.header 'Access-Control-Allow-Headers', 'Content-Type'
-  _.log 'Access-Control Policy Middleware set'
   next()
 
 emailCookie = (req, res, next) ->
@@ -48,7 +46,6 @@ policy = "default-src 'self';" +
 cspPolicy = (req, res, next) ->
   res.header 'X-Content-Security-Policy', policy # Firefox and Internet Explorer
   res.header 'X-WebKit-CSP', policy # Safari and Chrome
-  _.log 'cspPolicy headers set'
   next()
 
 csrf = (req, res, next) ->
