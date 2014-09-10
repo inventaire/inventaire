@@ -8,7 +8,7 @@ module.exports =
 
     if req.query.search? and req.query.language?
 
-      if books.isISBN(req.query.search)
+      if books.isIsbn(req.query.search)
         _.logYellow req.query.search, 'searchByIsbn'
         searchByIsbn(req.query, res)
 
@@ -21,7 +21,7 @@ module.exports =
 
 searchByIsbn = (query, res)->
   isbn = query.search
-  isbnType = books.isISBN(isbn)
+  isbnType = books.isIsbn(isbn)
 
   promises = [
     wikidata.getBookEntityByISBN(isbn, isbnType, query.language)

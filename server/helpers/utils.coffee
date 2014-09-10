@@ -83,7 +83,6 @@ module.exports =
 
   extend: (one, two)->
     for k,v of two
-      if one[k]? then k += _.randomGen(6, true)
       one[k] = v
     return one
 
@@ -111,3 +110,8 @@ module.exports =
       obj[value] = true
       console.log 'value:', value
     return Object.keys(obj)
+
+  isString: (str)-> typeof str is 'string'
+  typeString: (str)->
+    if typeof str is 'string' then return str
+    else throw new Error 'TypeError'

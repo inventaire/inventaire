@@ -1,53 +1,48 @@
 qreq = require 'qreq'
-wikidata = require './wikidata'
 
 module.exports =
-  isISBN: (text)->
-    cleanedText = text.trim().replace(/-/g, '').replace(/\s/g, '')
-    if /^([0-9]{10}||[0-9]{13})$/.test(cleanedText)
+  getGoogleBooksDataFromISBN: (isbn, lang)->
+    if (cleanedIsbn = cleanIsbnData(isbn).logIt('cleaned isbn'))?
+      return qreq.get API.google.book(cleanedIsbn)
+      .then (res)->
+        if res.body.totalItems > 0
+          parsedItem = res.body.items[0].volumeInfo
+          return normalizeBookData parsedItem, isbn
+        else throw "no item found for: #{cleanedIsbn}"
+    else throw new Error "bad isbn"
+
+  isIsbn: (text)->
+    cleanedText = normalizeIsbn(text)
+    if isNormalizedIsbn cleanedText
       switch cleanedText.length
         when 10 then return 10
         when 13 then return 13
     return false
 
-  getGoogleBooksDataFromISBN: (isbn, lang)->
-    _.log cleanedIsbn = cleanIsbnData isbn, 'cleaned ISBN!'
-    if cleanedIsbn?
-      return qreq.get API.google.book(cleanedIsbn)
-      .then (res)->
-        if res.body.totalItems > 0
-          # _.logGreen res.body.items[0], 'getGoogleBooksDataFromISBN rawItem'
-          parsedItem = res.body.items[0].volumeInfo
-          # _.logGreen parsedItem, 'getGoogleBooksDataFromISBN parsedItem'
-          return cleanBookData parsedItem, isbn
-        else throw new Error "no item found for: #{cleanedIsbn}"
-    else throw new Error "bad isbn"
-
   getGoogleBooksDataFromText: (text)->
-    if typeof text is 'string'
+    if _.typeString text
       return qreq.get API.google.book(text)
       .then (res)->
         if res.body.totalItems > 0
-          # _.logGreen res.body.items[0], 'getGoogleBooksDataFromText rawItem'
           parsedItems = res.body.items.map (el)-> el.volumeInfo
-          # _.logGreen cleanedItems, 'getGoogleBooksDataFromText cleanedItem'
           validResults = []
           parsedItems.forEach (el)->
-            data = cleanBookData(el)
+            data = normalizeBookData(el)
             validResults.push(data) if data?
           return validResults
-        else throw new Error "no item found for: #{text}"
-    else throw new Error 'typeError'
+        else throw "no item found for: #{text}"
+
+normalizeIsbn = (text)-> text.trim().replace(/-/g, '').replace(/\s/g, '')
+isNormalizedIsbn = (text)-> /^([0-9]{10}|[0-9]{13})$/.test text
 
 cleanIsbnData = (isbn)->
-  if typeof isbn is 'string'
-    cleanedIsbn = isbn.trim().replace(/-/g, '').replace(/\s/g, '')
-    if /^([0-9]{10}||[0-9]{13})$/.test cleanedIsbn
+  if _.typeString isbn
+    if isNormalizedIsbn(cleanedIsbn = normalizeIsbn(isbn))
       return cleanedIsbn
-    else _.logRed 'isbn got an invalid value'
-  else throw new Error 'typeError'
+    else console.error 'isbn got an invalid value'
 
-cleanBookData = (cleanedItem, isbn)->
+
+normalizeBookData = (cleanedItem, isbn)->
   data =
     title: cleanedItem.title
     authors: cleanedItem.authors
@@ -66,13 +61,9 @@ cleanBookData = (cleanedItem, isbn)->
 
   isbn ||= data.P212 || data.P957
 
-  if isbn?
-    id = uri = "isbn:#{isbn}"
-  else if otherId?
-    id = uri = otherId
-  else
-    data.title.logIt 'no id found for. Will be droped', 'yellow'
-    return
+  if isbn? then data.id = data.uri = "isbn:#{isbn}"
+  else if otherId? then data.id = data.uri = otherId
+  else throw 'no id found normalizeBookData. Will be droped'
 
   if cleanedItem.imageLinks?
      data.pictures.push cleanedItem.imageLinks.thumbnail
