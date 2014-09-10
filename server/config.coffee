@@ -3,9 +3,17 @@ americano = require 'americano'
 cookieParser = require 'cookie-parser'
 session = require 'cookie-session'
 
+require('q').longStackSupport = true
+
 
 # middlewares following recommandations found here for the implementation of Persona
 # http://www.mircozeiss.com/mozilla-persona-example-app-with-express-and-couchdb/
+
+cacheControl = (req, res, next) ->
+  if CONFIG.noCache
+    res.header 'Cache-Control', 'no-cache, no-store, must-revalidate'
+  next()
+
 
 restrictApiAccess = (req, res, next) ->
   if apiRoute req.originalUrl
@@ -22,7 +30,7 @@ restrictApiAccess = (req, res, next) ->
     next()
   return
 
-apiRoute = (route)-> /^\/(api||test)\//.test route
+apiRoute = (route)-> /^\/(api|test)\//.test route
 
 whitelistedRoute = (route)-> new RegExp(CONFIG.whitelistedRouteRegExp).test route
 
@@ -65,13 +73,11 @@ module.exports =
   common: [
     americano.bodyParser()
     americano.methodOverride()
-    americano.errorHandler(
+    americano.errorHandler
       dumpExceptions: true
       showStack: true
-    )
-    americano.static(__dirname + '/../client/public',
-      maxAge: 24*60*60*1000
-    )
+    americano.static __dirname + '/../client/public',
+      maxAge: CONFIG.staticMaxAge
     cookieParser()
     session(secret: CONFIG.secret)
     restrictApiAccess
@@ -80,6 +86,7 @@ module.exports =
     cspPolicy
     # csrf
     langCookie
+    cacheControl
   ]
   development:
     use: [americano.logger('dev')]
