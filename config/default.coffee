@@ -17,3 +17,5 @@ module.exports =
     users: 'users'
     inv: 'inventory'
   whitelistedRouteRegExp: /^\/api\/auth\//
+  noCache: true
+  staticMaxAge: 0
