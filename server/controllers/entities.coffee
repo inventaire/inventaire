@@ -25,9 +25,11 @@ searchByIsbn = (query, res)->
 
   promises = [
     wikidata.getBookEntityByISBN(isbn, isbnType, query.language)
+    .fail (err)-> _.logRed err, 'wikidata getBookEntityByISBN err'
 
     booksPromise = books.getGoogleBooksDataFromISBN(isbn)
     .then((res)-> {items:[res], source: 'google'})
+    .fail (err)-> _.logRed err, 'getGoogleBooksDataFromISBN err'
   ]
 
   spreadRequests(res, promises, 'searchByIsbn')
@@ -36,14 +38,12 @@ searchByText = (query, res)->
 
   promises = [
     wikidata.getBookEntities(query)
-    .then (filteredAndBrushed)->
-      _.log filteredAndBrushed, 'filteredAndBrushed'
-      {items: filteredAndBrushed, source: 'wd'}
-    .fail (err)->
-      _.logRed err, 'wikidata getBookEntities promises err'
-      {status: "no item found for #{query.search}", query: query, items: [], source: 'wd'}
+    .then (filteredAndBrushed)-> {items: filteredAndBrushed, source: 'wd'}
+    .fail (err)-> _.logRed err, 'wikidata getBookEntities err'
 
-    books.getGoogleBooksDataFromText(query.search).then (res)-> {items: res, source: 'google'}
+    books.getGoogleBooksDataFromText(query.search)
+    .then (res)-> {items: res, source: 'google'}
+    .fail (err)-> _.logRed err, 'getGoogleBooksDataFromISBN err'
   ]
 
   spreadRequests(res, promises, 'searchByText')
@@ -53,14 +53,17 @@ spreadRequests = (res, promises, label)->
 
   Q.spread promises, (results...)->
     _.logBlue results, "api results for #{label}"
-
-    success = false
+    selected = null
     results.forEach (result)->
-      if result.items[0]?
-        success = true
-        _.sendJSON res, result
+      if result.items?.length > 0 and not selected?
+        selected = result
+    selected.source.logIt('selected source')
+    return selected
 
-    unless success
+  .then (selected)->
+    if selected?
+      _.sendJSON res, selected
+    else
       _.sendJSON res, { status: 'not found', details: results}, 404
 
   .fail (err)->
