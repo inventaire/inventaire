@@ -1,6 +1,7 @@
 CONFIG = require 'config'
 americano = require 'americano'
 
-global._ = require './server/helpers/utils'
+global.sharedLib = sharedLib = require('./shared_libs')
+global._ = sharedLib 'utils'
 
-americano.start name: CONFIG.name, port: CONFIG.port, host: CONFIG.hostAlt || CONFIG.host
+americano.start name: CONFIG.name, port: CONFIG.port, host: CONFIG.host
