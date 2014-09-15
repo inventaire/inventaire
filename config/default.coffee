@@ -3,13 +3,16 @@ module.exports =
   protocol: 'http'
   name: "inventaire"
   host: 'localhost'
-  hostAlt: '0.0.0.0' #problem with Persona Audience for local ip anyway
-  hostTer: '192.168.1.49' #problem with Persona Audience for local ip anyway
+  verbose: true
+  # host: '0.0.0.0' #problem with Persona Audience for local ip anyway
+  # host: '192.168.1.49' #problem with Persona Audience for local ip anyway
+  # host: '192.168.42.15' #mobile network
+  # host: '192.168.0.24' #charenton
   port: 3008
   fullHost: -> "#{@protocol}://#{@host}:#{@port}"
-  fullHostTer: -> "#{@protocol}://#{@hostTer}:#{@port}"
   secret: "yoursecrethere"
   db:
+    instable: false
     protocol: 'http'
     host: 'localhost'
     port: 5984
@@ -17,5 +20,7 @@ module.exports =
     users: 'users'
     inv: 'inventory'
   whitelistedRouteRegExp: /^\/api\/auth\//
-  noCache: true
-  staticMaxAge: 0
+  # noCache: true
+  noCache: false
+  # staticMaxAge: 0
+  staticMaxAge: 24*60*60*1000
