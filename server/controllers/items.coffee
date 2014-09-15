@@ -6,7 +6,7 @@ module.exports =
     user.getUserId(req.session.email)
     .then inv.byOwner
     .then (resp)->
-      items = resp.rows.map (el)->el.value
+      items = resp.rows.map (el)-> el.value
       _.sendJSON res, items
     .fail (err)-> _.errorHandler res, err
     .done()
@@ -37,5 +37,15 @@ module.exports =
     _.logBlue req.params, 'del'
     inv.db.delete req.params.id, req.params.rev
     .then (body)-> _.sendJSON res, body
+    .fail (err)-> _.errorHandler res, err
+    .done()
+
+  public: (req, res, next) ->
+    _.logBlue req.params, 'public'
+    inv.byEntity(req.params.uri)
+    .then (resp)->
+      items = resp.rows.map (el)-> el.value
+      _.logBlue items, 'public items'
+      _.sendJSON res, items
     .fail (err)-> _.errorHandler res, err
     .done()

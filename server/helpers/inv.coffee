@@ -14,7 +14,10 @@ module.exports =
     return valid
 
   byOwner: (owner)->
-    return invCot.view 'items', 'byOwner', {key: owner}
+    invCot.view 'items', 'byOwner', {key: owner}
 
   byListing: (owner, listing)->
-    return invCot.view 'items', 'byListing', {key: [owner, listing]}
+    invCot.view 'items', 'byListing', {key: [owner, listing]}
+
+  byEntity: (uri)->
+    invCot.view 'items', 'byEntity', {key: uri}

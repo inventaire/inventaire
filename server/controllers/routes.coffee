@@ -30,9 +30,13 @@ module.exports =
   'api/items':
     get: items.fetch
 
+  'api/items/public/:uri':
+    get: items.public
+
   'api/items/:id':
     put: items.put
     get: items.get
+
 
   'api/items/:id/:rev':
     delete: items.del
@@ -58,7 +62,12 @@ module.exports =
         res.send result
       else _.errorHandler res, 'unauthorize cookie setting', '403'
 
+  'api/upload':
+    post: (req, res, next)->
+      _.logBlue req, 'image upload'
+
   'test':
+    get: (req, res, next)-> res.send 'server: OK'
     post: (req, res, next)->
       _.logBlue req.body
       res.send 'thanks!'
