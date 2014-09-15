@@ -16,21 +16,15 @@ cacheControl = (req, res, next) ->
 
 
 restrictApiAccess = (req, res, next) ->
-  if apiRoute req.originalUrl
-    if req.session.email
-      _.logGreen "allowed user: #{req.session.email}"
-      next()
-    else if whitelistedRoute req.originalUrl
-      _.logGreen "whitelisted route: #{req.originalUrl}"
-      next()
+  if isApiRoute req.originalUrl
+    if req.session.email then next()
+    else if whitelistedRoute req.originalUrl then next()
     else
       _.logPurple "restricted api route: #{req.originalUrl}"
       _.errorHandler res, 'unauthorized api access', 401
-  else
-    next()
-  return
+  else next()
 
-apiRoute = (route)-> /^\/(api|test)\//.test route
+isApiRoute = (route)-> /^\/(api|test)\//.test route
 
 whitelistedRoute = (route)-> new RegExp(CONFIG.whitelistedRouteRegExp).test route
 
