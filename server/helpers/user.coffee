@@ -26,7 +26,7 @@ module.exports =
       url: "https://verifier.login.persona.org/verify"
       json:
         assertion: req.body.assertion
-        audience: CONFIG.fullHostTer()
+        audience: CONFIG.fullHost()
     return qreq.post params
 
   verifyStatus: (personaAnswer, req, res) ->
