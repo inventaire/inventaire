@@ -34,7 +34,7 @@ module.exports.followedData = (req, res, next) ->
 
 module.exports.fetchItems = (req, res, next) ->
   _.logYellow ownerId = req.params.user, 'fetchItems user'
-  inv.byOwner ownerId
+  inv.byListing ownerId, 'contacts'
   .then (body)-> _.sendJSON res, _.mapCouchResult('value', body)
 
 

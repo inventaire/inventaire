@@ -4,6 +4,12 @@
    "views": {
        "byOwner": {
            "map": "(doc)->\n  emit(doc.owner, doc)"
+       },
+       "byDate": {
+           "map": "(doc)->\n  emit(doc.created, [doc._id, doc.title])"
+       },
+       "byListing": {
+           "map": "(doc)->\n\tif doc.listing?\n\t\temit [doc.owner,doc.listing], doc"
        }
    }
 }

@@ -15,3 +15,6 @@ module.exports =
 
   byOwner: (owner)->
     return invCot.view 'items', 'byOwner', {key: owner}
+
+  byListing: (owner, listing)->
+    return invCot.view 'items', 'byListing', {key: [owner, listing]}
