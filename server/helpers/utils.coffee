@@ -1,14 +1,14 @@
 colors = require 'colors'
 fs = require 'fs'
+sharedLib = require '../../shared_libs'
+
 
 String::logIt = (label, color)->
   if color? then console.log "[" + label[color] + "] #{@toString()}"
   else console.log "[" + label['blue'] + "] #{@toString()}"
   return @toString()
 
-Array::clone = -> @slice(0)
-
-module.exports =
+utils =
   sendJSON: (res, obj, status = '200')->
     # _.logGreen obj, 'sendJSON'
     res.status status
@@ -57,8 +57,6 @@ module.exports =
   mapCouchResult: (type, body)->
     return body.rows.map (el)-> el[type]
 
-  hasDiff: (one, two)-> JSON.stringify(one) != JSON.stringify(two)
-
   getObjIfSuccess: (db, body)->
     if db.get? and body.ok
       return db.get(body.id)
@@ -66,20 +64,6 @@ module.exports =
       throw new Error "#{body.error}: #{body.reason}"
     else
       throw new Error "bad db object passed to _.getObjIfSuccess"
-
-  hasValue: (array, value)-> array.indexOf(value) isnt -1
-
-  randomGen: (length, withoutNumbers)->
-    text = ""
-    if withoutNumbers
-      possible="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-    else
-      possible="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-    i = 0
-    while i < length
-      text += possible.charAt(Math.floor(Math.random() * possible.length))
-      i++
-    return text
 
   extend: (one, two)->
     for k,v of two
@@ -91,27 +75,8 @@ module.exports =
   jsonFile: (path)->
     JSON.parse fs.readFileSync(path).toString()
 
-  wmCommonsThumb: (file, width=100)->
-    "http://commons.wikimedia.org/w/thumb.php?width=#{width}&f=#{file}"
-
-  buildPath: (pathname, queryObj)->
-    if queryObj? and not @isEmpty queryObj
-      queries = ''
-      for k,v of queryObj
-        queries += "&#{k}=#{v}"
-      return pathname + '?' + queries[1..]
-    else pathname
-
   isEmpty: (obj)-> Object.keys(obj).length is 0
 
-  toSet: (array)->
-    obj = {}
-    array.forEach (value)->
-      obj[value] = true
-      console.log 'value:', value
-    return Object.keys(obj)
-
   isString: (str)-> typeof str is 'string'
-  typeString: (str)->
-    if typeof str is 'string' then return str
-    else throw new Error 'TypeError'
+
+module.exports = utils.extend utils, sharedLib('utils')

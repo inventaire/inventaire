@@ -1,73 +1,46 @@
+Promises = require './promises'
+module.exports = wd = sharedLib('wikidata')(Promises)
+
 qreq = require 'qreq'
 wdProps = _.jsonFile('server/helpers/wikidata-properties-fr.json').properties
 
-module.exports =
-  getBookEntities: (query)->
-    searchEntities(query.search, query.language)
-    .then (res)->
-      _.logGreen res.body, 'searchEntities res'
-      if res.body.success and res.body.search.length > 0
-        return res.body.search.map (el)-> el.id
-      else throw 'not found'
-    .then (ids)->
-      _.logGreen ids, 'wd ids found'
-      getEntities(ids, [query.language])
-    .then filterAndBrush
+API = wd.API
+Q = wd.Q
 
-  getBookEntityByIsbn: (isbn, type, lang)->
+module.exports.getBookEntities = (query)->
+  searchEntities(query.search, query.language)
+  .then (res)->
+    _.logGreen res, 'searchEntities res'
+    if res.success and res.search.length > 0
+      return res.search.map (el)-> el.id
+    else throw 'not found'
+  .then (ids)=>
+    _.logGreen ids, 'wd ids found'
+    @getEntities(ids, [query.language])
+  .then filterAndBrush
+
+module.exports.getBookEntityByIsbn = (isbn, type, lang)->
     switch type
       when 10 then url = API.wmflabs.string 957, isbn
       when 13 then url = API.wmflabs.string 212, isbn
-    return qreq.get(url)
-    .then (res)->
-      if res.body.items.length > 0
-        id = normalizeId(res.body.items[0])
-        return getEntities(id, lang)
+    return Promises.get(url)
+    .then (res)=>
+      if res.items.length > 0
+        id = @normalizeId(res.items[0])
+        return @getEntities(id, lang)
         .then(filterAndBrush)
-        .then (resultArray)-> return {items: filterAndBrush, source: 'wd', isbn: isbn}
+        .then (resultArray)-> return {items: resultArray, source: 'wd', isbn: isbn}
       else return {status: 'no item found for this isbn', isbn: isbn, items: [], source: 'wd'}
     .fail (err)-> _.logRed err, 'err at getBookEntityByIsbn'
 
-API =
-  wikidata:
-    base: 'https://www.wikidata.org/w/api.php'
-    search: (search, language='en', limit='20', format='json')->
-      _.buildPath API.wikidata.base,
-        action: 'wbsearchentities'
-        language: language
-        limit: limit
-        format: format
-        search: search
-  wmflabs:
-    base: 'http://wdq.wmflabs.org/api'
-    query: (query)-> API.wmflabs.base + "?q=#{query}"
-    claim: (P, Q)-> API.wmflabs.base + "?q=CLAIM[#{P}:#{Q}]"
-    string: (P, string)-> API.wmflabs.base + "?q=STRING[#{P}:#{string}]"
 
 searchEntities = (search, language='en', limit='20', format='json')->
   url = API.wikidata.search(search, language).logIt('searchEntities')
-  return qreq.get url
-
-# defaultProps = ['info', 'sitelinks', 'sitelinks', 'aliases', 'labels', 'descriptions', 'claims', 'datatype']
-defaultProps = ['info', 'sitelinks', 'labels', 'descriptions', 'claims']
-getEntities = (ids, languages=['en'], props=defaultProps, format='json')->
-  ids = [ids] if _.isString ids
-  languages = [languages]  if _.isString languages and languages isnt ''
-  languages.push 'en'
-  languages = _.toSet(languages).join('|')
-
-  query = _.buildPath('',
-    action: 'wbgetentities'
-    languages: languages
-    format: format
-    props: props.join '|'
-    ids: normalizeIds(ids).join '|'
-  ).logIt('getEntities query')
-  return qreq.get(query)
+  return Promises.get url
 
 filterAndBrush = (res)->
   results = []
-  for id,entity of res.body.entities
+  for id,entity of res.entities
     rebaseClaimsValueToClaimsRoot entity
     if filterWhitelisted entity
       results.push entity
@@ -75,7 +48,7 @@ filterAndBrush = (res)->
 
 justBrush = (res)->
   results = []
-  for id,entity of res.body.entities
+  for id,entity of res.entities
     rebaseClaimsValueToClaimsRoot entity
     results.push entity
   return results
@@ -93,111 +66,23 @@ filterWhitelisted = (entity)->
   return valid
 
 rebaseClaimsValueToClaimsRoot = (entity)->
-  flat =
-    claims: new Object
-    pictures: new Array
   for id, claim of entity.claims
-    propLabel = wdProps[id]
-    flat.claims[id] = new Array
     if typeof claim is 'object'
       claim.forEach (statement)->
         switch statement.mainsnak.datatype
-          when 'string'
-            flat.claims[id].push(statement._value = statement.mainsnak.datavalue.value)
           when 'wikibase-item'
-            statement._id = statement.mainsnak.datavalue.value['numeric-id']
-            flat.claims[id].push "Q#{statement._id}"
-          else flat.claims[id].push(statement.mainsnak)
-        if id is 'P18'
-          flat.pictures.push _.wmCommonsThumb(statement.mainsnak.datavalue.value)
-    flat.claims["#{id} - #{propLabel}"] = flat.claims[id]
-  entity.flat = flat
+            id = statement.mainsnak.datavalue.value['numeric-id']
+            statement._id = 'Q' + id
+  return
 
 validIfIsABook = (claims, valid)->
   claims.P31.forEach (statement)->
-    valid = true  if _.hasValue BooksP31, statement._id
+    valid = true  if _.hasValue Q.books, statement._id
   return valid
 
 validIfIsAnAuthor = (claims, valid)->
   claims.P31?.forEach (statement)->
-    valid = true  if _.hasValue [5], statement._id
+    valid = true  if _.hasValue Q.humans, statement._id
   return valid
 
 whitelistedEntity = (id)-> _.hasValue P31Whitelist, id
-
-BooksP31 = [
-  571 #book
-  2831984 #comic book album
-  1004 # bande dessinée
-  8261 #roman
-  25379 #theatre play
-]
-
-AuthorsP31 = [5]
-
-normalizeIds = (idsArray)-> idsArray.map normalizeId
-
-normalizeId = (id)->
-  if isNumericId(id) then "Q#{id}"
-  else if isNormalizedId(id) then id
-  else throw new Error 'invalid id provided to normalizeIds'
-
-numericId = (id)->
-  if isNormalizedId(id) then id[1..]
-  else id
-
-isNormalizedId = (id)-> /^(P|Q)[0-9]+$/.test id
-isNumericId = (id)-> /^[0-9]+$/.test id
-
-
-# bookOrAuthorFilteredSearch = (text, lang)->
-#   ids = BooksP31.concat(AuthorsP31)
-#   return P31FilteredSearch(ids, text, lang)
-
-# bookFilteredSearch = (text, lang)->
-#   return P31FilteredSearch(BooksP31, text, lang)
-
-# P31FilteredSearch = (ids, text, lang)->
-#   claimsStringsArray = ids.map (el)-> "claim[31:#{el}]"
-#   claim = claimsStringsArray.join(' OR ')
-#   _.logBlue claim = "(#{claim})", 'claim'
-#   return filteredSearch(text, claim, lang)
-
-# filteredSearch = (text, claim, lang, limit=15)->
-#   console.time('filteredSearch')
-#   return searchEntities(text, lang, limit)
-#   .then filteredResultsIds
-#   .then (numericIds)-> filteredIdsByClaim(numericIds, claim)
-#   .then (res)->
-#     console.timeEnd('filteredSearch')
-#     if res.body.items.length > 0
-#       filteredIds = normalizeIds(res.body.items)
-#       return getEntities(filteredIds, lang).then(justBrush)
-#     else throw 'no ids left after filteredIdsByClaim'
-#   .fail (err)-> _.logRed err, 'err at filteredSearch'
-
-# filteredResultsIds = (res)->
-#   if res.body?.search?.length > 0
-#     return numericIds = res.body.search.map (el)-> el.id[1..]
-#   else throw 'no item found at filterIds'
-
-# filteredIdsByClaim = (numericIds, claim)->
-#   ids = numericIds.join(',')
-#   query = "items[#{ids}] AND #{claim}"
-#   url = API.wmflabs.query(query).logIt 'filteredIdsByClaim'
-#   return qreq.get url
-
-
-# module.exports.filteredSearch = filteredSearch
-# module.exports.bookFilteredSearch = bookFilteredSearch
-# module.exports.bookOrAuthorFilteredSearch = bookOrAuthorFilteredSearch
-module.exports.findEntityByFreebaseIdentifier = (freebaseId)->
-  # ugly escaping: wdq requires '\/' and you can't just '\\/'
-  escapedId = freebaseId.replace('/','%5C/', 'g')
-  url = API.wmflabs.string 646, escapedId
-  return qreq.get(url)
-  .then (res)->
-    if res.body.items.length is 1
-      return res.body.items[0]
-    else throw 'no item found or too many'
-  .fail (err)-> _.logRed err, 'err at findEntityByFreebaseIdentifier'
