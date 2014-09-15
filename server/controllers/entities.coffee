@@ -24,12 +24,12 @@ searchByIsbn = (query, res)->
   isbnType = books.isIsbn(isbn)
 
   promises = [
-    wikidata.getBookEntityByISBN(isbn, isbnType, query.language)
+    wikidata.getBookEntityByIsbn(isbn, isbnType, query.language)
     .fail (err)-> _.logRed err, 'wikidata getBookEntityByISBN err'
 
-    booksPromise = books.getGoogleBooksDataFromISBN(isbn)
+    booksPromise = books.getGoogleBooksDataFromIsbn(isbn)
     .then((res)-> {items:[res], source: 'google'})
-    .fail (err)-> _.logRed err, 'getGoogleBooksDataFromISBN err'
+    .fail (err)-> _.logRed err, 'getGoogleBooksDataFromIsbn err'
   ]
 
   spreadRequests(res, promises, 'searchByIsbn')
@@ -38,12 +38,12 @@ searchByText = (query, res)->
 
   promises = [
     wikidata.getBookEntities(query)
-    .then (filteredAndBrushed)-> {items: filteredAndBrushed, source: 'wd'}
+    .then (items)-> {items: items, source: 'wd'}
     .fail (err)-> _.logRed err, 'wikidata getBookEntities err'
 
     books.getGoogleBooksDataFromText(query.search)
     .then (res)-> {items: res, source: 'google'}
-    .fail (err)-> _.logRed err, 'getGoogleBooksDataFromISBN err'
+    .fail (err)-> _.logRed err, 'getGoogleBooksDataFromIsbn err'
   ]
 
   spreadRequests(res, promises, 'searchByText')
@@ -51,15 +51,7 @@ searchByText = (query, res)->
 
 spreadRequests = (res, promises, label)->
 
-  Q.spread promises, (results...)->
-    _.logBlue results, "api results for #{label}"
-    selected = null
-    results.forEach (result)->
-      if result.items?.length > 0 and not selected?
-        selected = result
-    selected.source.logIt('selected source')
-    return selected
-
+  Q.spread(promises, selectFirstNonEmptyResult)
   .then (selected)->
     if selected?
       _.sendJSON res, selected
@@ -70,3 +62,12 @@ spreadRequests = (res, promises, label)->
     _.logRed err, "#{label} err"
     _.errorHandler res, err
   .done()
+
+selectFirstNonEmptyResult = (results...)->
+  _.logBlue results, "api results"
+  selected = null
+  results.forEach (result)->
+    if result.items?.length > 0 and not selected?
+      selected = result
+  selected.source.logIt('selected source')
+  return selected
