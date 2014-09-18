@@ -5,4 +5,8 @@ americano = require 'americano'
 global.sharedLib = sharedLib = require './shared_libs'
 global._ = require './server/helpers/utils'
 
+if CONFIG.verbose
+  _.log CONFIG, 'CONFIG'
+  _.log CONFIG.fullHost(), 'host'
+
 americano.start name: CONFIG.name, port: CONFIG.port, host: CONFIG.host
