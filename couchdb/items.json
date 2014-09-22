@@ -10,6 +10,9 @@
        },
        "byListing": {
            "map": "(doc)->\n\tif doc.listing?\n\t\temit [doc.owner,doc.listing], doc"
+       },
+       "byEntity": {
+           "map": "(doc)->\n  emit(doc.entity, doc)"
        }
    }
 }
