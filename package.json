@@ -1,11 +1,13 @@
 {
   "name": "inventaire",
-  "subdomain": "alpha-O2O621pq3is",
-  "version": "0.0.1",
+  "domains": [
+    "dev.inventaire.io"
+  ],
+  "subdomain": "alpha-o2o621pq3is",
+  "version": "0.0.1-14",
   "description": "resources mapper",
   "main": "index.coffee",
   "scripts": {
-    "postinstall": "cd client && npm install",
     "start": "coffee server.coffee",
     "superstart": "supervisor server.coffee",
     "test": "export NODE_ENV=tests; mocha --compilers coffee:coffee-script/register --watch",
@@ -14,6 +16,11 @@
   },
   "author": "maxlath",
   "license": "AGPL3",
+  "homepage": "http://inventaire.io",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/maxlath/inventaire"
+  },
   "dependencies": {
     "americano": "^0.3.6",
     "coffee-script": "^1.8.0",
