@@ -7,7 +7,7 @@ module.exports =
     .then inv.byOwner
     .then (resp)->
       items = resp.rows.map (el)-> el.value
-      _.sendJSON res, items
+      res.json items
     .fail (err)-> _.errorHandler res, err
     .done()
 
@@ -20,7 +20,7 @@ module.exports =
       if inv.isValidItem item
         inv.db.put item
         .then (body)-> _.getObjIfSuccess inv.db, body
-        .then (body)-> _.sendJSON res, body, 201
+        .then (body)-> res.json 201, body
         .fail (err)-> _.errorHandler res, err
         .done()
       else
@@ -29,14 +29,14 @@ module.exports =
   get: (req, res, next) ->
     _.log req.params.id, 'GET Item ID'
     inv.db.get req.params.id
-    .then (item)-> _.sendJSON res, item, 200
+    .then (body)-> res.json(body)
     .fail (err)-> _.errorHandler res, err
     .done()
 
   del: (req, res, next) ->
     _.logBlue req.params, 'del'
     inv.db.delete req.params.id, req.params.rev
-    .then (body)-> _.sendJSON res, body
+    .then (body)-> res.json(body)
     .fail (err)-> _.errorHandler res, err
     .done()
 
@@ -46,6 +46,6 @@ module.exports =
     .then (resp)->
       items = resp.rows.map (el)-> el.value
       _.logBlue items, 'public items'
-      _.sendJSON res, items
+      res.json items
     .fail (err)-> _.errorHandler res, err
     .done()

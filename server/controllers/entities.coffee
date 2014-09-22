@@ -54,9 +54,10 @@ spreadRequests = (res, promises, label)->
   Q.spread(promises, selectFirstNonEmptyResult)
   .then (selected)->
     if selected?
-      _.sendJSON res, selected
+      res.json selected
     else
-      _.sendJSON res, { status: 'not found', details: results}, 404
+      obj = { status: 'not found', details: results}
+      res.json 404, obj
 
   .fail (err)->
     _.logRed err, "#{label} err"

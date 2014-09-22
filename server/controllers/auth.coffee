@@ -7,22 +7,22 @@ module.exports.checkUsername = (req, res, next) ->
     _.logGreen reqUsername, 'nameIsValid'
     user.nameIsAvailable reqUsername
     .then ()->
-      _.sendJSON res, {username: reqUsername, status: 'available'}, 200
+      res.json {username: reqUsername, status: 'available'}
     .fail (err)->
       obj =
         username: reqUsername
         status: 'not available'
         status_verbose: "this username isn't available"
         err: err
-      _.sendJSON res, obj, 400
+      res.json 400, obj
     .done()
   else
     _.logRed reqUsername, 'nameIsntValid'
-    body =
+    obj =
       username: reqUsername
       status: 'invalid'
       status_verbose: 'invalid username'
-    _.sendJSON res, body, 400
+    res.json 400, obj
 
 module.exports.login = (req, res, next) ->
   user.verifyAssertion(req)
@@ -42,7 +42,7 @@ module.exports.getUser = (req, res, next) ->
   .then (body)->
     userData = body.rows[0].value
     _.logYellow userData, 'getUser'
-    _.sendJSON res, userData
+    res.json userData
   .fail (err)-> _.errorHandler res, err, 404
   .done()
 
@@ -56,7 +56,7 @@ module.exports.updateUser = (req, res, next) ->
       if _.hasDiff current, updateReq
         user.db.post(req.body)
         .then (body)-> _.getObjIfSuccess user.db, body
-        .then (body)-> _.sendJSON res, body
+        .then (body)-> res.json(body)
         .fail (err)-> _.errorHandler res, err
       else
         _.errorHandler res, 'already up-to-date', 400

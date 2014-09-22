@@ -9,12 +9,6 @@ String::logIt = (label, color)->
   return @toString()
 
 utils =
-  sendJSON: (res, obj, status = '200')->
-    # _.logGreen obj, 'sendJSON'
-    res.status status
-    res.setHeader 'Content-Type', 'application/json'
-    res.send JSON.stringify(obj)
-
   errorHandler: (res, err, status = 500)->
     _.logRed err
     res.setHeader 'Content-Type', 'text/html'

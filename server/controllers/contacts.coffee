@@ -12,7 +12,7 @@ module.exports.searchByUsername = (req, res, next) ->
         picture: row.value.picture
         created: row.value.created
     _.logBlue contacts, 'contacts'
-    _.sendJSON res, contacts
+    res.json contacts
   .fail (err)-> _.error err
   .done()
 
@@ -26,7 +26,7 @@ module.exports.followedData = (req, res, next) ->
     if body?
       usersData = _.mapCouchResult 'doc', body
       cleanedUsersData = usersData.map safeUserData
-      _.sendJSON res, cleanedUsersData
+      res.json cleanedUsersData
     else
       _.errorHandler res, 'no contacts found', 404
   .fail (err)-> _.errorHandler res, err
@@ -35,7 +35,7 @@ module.exports.followedData = (req, res, next) ->
 module.exports.fetchItems = (req, res, next) ->
   _.logYellow ownerId = req.params.user, 'fetchItems user'
   inv.byListing ownerId, 'contacts'
-  .then (body)-> _.sendJSON res, _.mapCouchResult('value', body)
+  .then (body)-> res.json _.mapCouchResult('value', body)
 
 
 safeUserData = (value)->

@@ -27,6 +27,7 @@ module.exports =
       json:
         assertion: req.body.assertion
         audience: CONFIG.fullHost()
+    _.logYellow params, 'persona verifyAssertion'
     return qreq.post params
 
   verifyStatus: (personaAnswer, req, res) ->
@@ -43,13 +44,13 @@ module.exports =
           # IF EMAIL IS ALREADY STORED IN DB, RETURN USER EMAIL AND USERNAME
           user = cleanUserData body.rows[0].value
           res.cookie "email", email
-          _.sendJSON res, user
+          res.json user
         else if username? && @nameIsValid username
           # IF EMAIL IS NOT IN DB AND IF VALID USERNAME, CREATE USER
           @newUser(username, email)
           .then (body)=>
             res.cookie "email", email
-            _.sendJSON res, body
+            res.json body
           .fail (err)-> _.errorHandler res, err
         else
           err = "Couldn't find an account associated with this email"
@@ -123,7 +124,7 @@ module.exports =
     return deferred.promise
 
   fetchUsers: (ids)->
-    if ids? and ids.length? and ids.length > 0
+    if ids?.length? and ids.length > 0
       _.logGreen ids, 'ids for fetchUsers'
       deferred = Q.defer()
       usersDB.fetch {keys: ids}, (err, body)->
@@ -133,8 +134,9 @@ module.exports =
           deferred.resolve body
       return deferred.promise
     else
-      _.logRed ids, 'ids for fetchUsers'
-      return
+      err = {status: 404, error_message: 'no ids for fetchUsers'}
+      deferred.reject err
+    return
 
   # only used by tests so far
   deleteUser: (user)->

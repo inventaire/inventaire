@@ -69,8 +69,12 @@ module.exports =
   'test':
     get: (req, res, next)-> res.send 'server: OK'
     post: (req, res, next)->
-      _.logBlue req.body
+      if req.body?.label? then _.logBlue(req.body.obj, req.body.label)
+      else _.logBlue req.body
       res.send 'thanks!'
+
+  'test/json':
+    get: (req, res, next)-> res.json {server: 'OK'}
 
   'proxy/*':
     get: proxy.get
