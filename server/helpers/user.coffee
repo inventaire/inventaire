@@ -63,7 +63,7 @@ module.exports =
       _.errorHandler res, 'Persona verify status isnt okay oO: might be a problem with Persona audience setting'
 
   byId: (id)->
-    return @db.get(id)
+    return usersCot.get(id)
 
   byEmail: (email)->
     return usersCot.view "users", "byEmail", {key: email}
@@ -128,15 +128,35 @@ module.exports =
     if ids?.length? and ids.length > 0
       _.logGreen ids, 'ids for fetchUsers'
       usersDB.fetch {keys: ids}, (err, body)->
-        if err
-          deferred.reject new Error(err)
-        else
-          deferred.resolve body
+        if err then deferred.reject new Error(err)
+        else deferred.resolve body
       return deferred.promise
     else
       err = {status: 404, error_message: 'no ids for fetchUsers'}
       deferred.reject err
     return
+
+  getUsersPublicData: (ids)->
+    ids = ids.split?('|') or ids
+    @fetchUsers(ids)
+    .then (body)=>
+      _.logGreen body, 'found users data'
+      if body?
+        usersData = _.mapCouchResult 'doc', body
+        _.logGreen usersData, 'usersData'
+        cleanedUsersData = usersData.map @safeUserData
+        _.logGreen cleanedUsersData, 'cleanedUsersData'
+        return cleanedUsersData
+      else throw "users not found: #{ids.join(', ')}"
+
+  safeUserData: (value)->
+    return {
+      _id: value._id
+      username: value.username
+      created: value.created
+      picture: value.picture
+      contacts: value.contacts
+    }
 
   # only used by tests so far
   deleteUser: (user)->
@@ -152,14 +172,17 @@ module.exports =
 
   isReservedWord: (username)->
     reservedWords = [
+      'api'
       'entity'
       'entities'
       'inventory'
       'inventories'
+      'wd'
       'wikidata'
       'isbn'
       'user'
       'users'
+      'profil'
       'profile'
       'item'
       'items'

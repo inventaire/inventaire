@@ -22,7 +22,7 @@ module.exports =
 
   # routes protected by the 'restrict' middleware. cf config.coffee
   'api/users':
-    get: contacts.searchByUsername
+    get: contacts.find
 
   'api/contacts':
     get: contacts.followedData
@@ -30,8 +30,11 @@ module.exports =
   'api/items':
     get: items.fetch
 
+  'api/items/public':
+    get: items.fetchLastPublicItems
+
   'api/items/public/:uri':
-    get: items.public
+    get: items.publicByEntity
 
   'api/items/:id':
     put: items.put

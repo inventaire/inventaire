@@ -2,9 +2,19 @@ user = require '../helpers/user'
 inv = require '../helpers/inv'
 Q = require 'q'
 
-module.exports.searchByUsername = (req, res, next) ->
-  _.logYellow query = req._parsedUrl.query, 'search'
-  user.usernameStartBy(query)
+module.exports.find = (req, res, next) ->
+  _.logYellow query = req.query, 'contacts.find query'
+  if query.action?
+    switch query.action
+      when 'search'
+        if query.search? then return searchByUsername(res, query.search)
+      when 'getusers'
+        if query.ids? then return fetchUsersData(res, query.ids)
+
+  _.errorHandler res, 'bad query', 400
+
+searchByUsername = (res, search) ->
+  user.usernameStartBy(search)
   .then (body)->
     contacts = body.rows.map (row)->
       return contact =
@@ -14,9 +24,17 @@ module.exports.searchByUsername = (req, res, next) ->
         created: row.value.created
     _.logBlue contacts, 'contacts'
     res.json contacts
-  .fail (err)-> _.error err
+  .fail (err)-> _.errorHandler res, err
   .done()
 
+fetchUsersData = (res, ids)->
+  _.logBlue ids, 'fetchUsersData ids'
+  user.getUsersPublicData(ids)
+  .then (usersData)->
+    _.logGreen usersData, 'usersData'
+    res.json {users: usersData}
+  .fail (err)-> _.errorHandler res, err
+  .done()
 
 module.exports.followedData = (req, res, next) ->
   user.byEmail(req.session.email)
@@ -26,12 +44,13 @@ module.exports.followedData = (req, res, next) ->
   .then (body)->
     if body?
       usersData = _.mapCouchResult 'doc', body
-      cleanedUsersData = usersData.map safeUserData
+      cleanedUsersData = usersData.map user.safeUserData
       res.json cleanedUsersData
     else
       _.errorHandler res, 'no contacts found', 404
   .fail (err)-> _.errorHandler res, err
   .done()
+
 
 module.exports.fetchItems = (req, res, next) ->
   _.logYellow ownerId = req.params.user, 'fetchItems user'
@@ -41,20 +60,9 @@ module.exports.fetchItems = (req, res, next) ->
   ]
   Q.spread promises, joinResults
   .then (body)-> res.json body
-  .fail (err)-> _.errorHandler res, err
-  .done()
 
 joinResults = (results...)->
   parsedResults = []
   results.forEach (result)->
     parsedResults.push _.mapCouchResult('value', result)
   return _.mergeArrays(parsedResults)
-
-safeUserData = (value)->
-  return {
-    _id: value._id
-    username: value.username
-    created: value.created
-    picture: value.picture
-    contacts: value.contacts
-  }

@@ -40,12 +40,25 @@ module.exports =
     .fail (err)-> _.errorHandler res, err
     .done()
 
-  public: (req, res, next) ->
+  publicByEntity: (req, res, next) ->
     _.logBlue req.params, 'public'
     inv.byEntity(req.params.uri)
     .then (resp)->
       items = resp.rows.map (el)-> el.value
       _.logBlue items, 'public items'
       res.json items
+    .fail (err)-> _.errorHandler res, err
+    .done()
+
+  fetchLastPublicItems: (req, res, next) ->
+    inv.publicByDate()
+    .then (body)-> _.mapCouchResult('value', body)
+    .then (items)->
+      _.logGreen items, 'public items'
+      users = items.map (item)-> item.owner
+      _.logGreen users = _.toSet(users), 'public items users'
+      user.getUsersPublicData(users)
+      .then (users)->
+        res.json {items: items, users: users}
     .fail (err)-> _.errorHandler res, err
     .done()

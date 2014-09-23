@@ -21,3 +21,6 @@ module.exports =
 
   byEntity: (uri)->
     invCot.view 'items', 'byEntity', {key: uri}
+
+  publicByDate: (uri)->
+    invCot.view 'items', 'publicByDate', {key: uri, limit: 20}
