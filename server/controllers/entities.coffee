@@ -55,7 +55,7 @@ spreadRequests = (res, promises, label)->
   .then (selected)->
     if selected?
       res.json selected
-    else res.json 404, { responseText: 'not found'}
+    else res.json 404, 'not found'
 
   .fail (err)->
     _.logRed err, "#{label} err"
