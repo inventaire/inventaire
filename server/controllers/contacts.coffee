@@ -1,5 +1,6 @@
 user = require '../helpers/user'
 inv = require '../helpers/inv'
+Q = require 'q'
 
 module.exports.searchByUsername = (req, res, next) ->
   _.logYellow query = req._parsedUrl.query, 'search'
@@ -34,9 +35,20 @@ module.exports.followedData = (req, res, next) ->
 
 module.exports.fetchItems = (req, res, next) ->
   _.logYellow ownerId = req.params.user, 'fetchItems user'
-  inv.byListing ownerId, 'contacts'
-  .then (body)-> res.json _.mapCouchResult('value', body)
+  promises = [
+    inv.byListing ownerId, 'contacts'
+    inv.byListing ownerId, 'public'
+  ]
+  Q.spread promises, joinResults
+  .then (body)-> res.json body
+  .fail (err)-> _.errorHandler res, err
+  .done()
 
+joinResults = (results...)->
+  parsedResults = []
+  results.forEach (result)->
+    parsedResults.push _.mapCouchResult('value', result)
+  return _.mergeArrays(parsedResults)
 
 safeUserData = (value)->
   return {

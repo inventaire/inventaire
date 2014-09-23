@@ -72,5 +72,9 @@ utils =
   isEmpty: (obj)-> Object.keys(obj).length is 0
 
   isString: (str)-> typeof str is 'string'
+  mergeArrays: (arrays...)->
+    result = []
+    arrays.forEach (array)-> result = result.concat(array)
+    return result
 
 module.exports = utils.extend utils, sharedLib('utils')
