@@ -27,7 +27,7 @@ module.exports =
       json:
         assertion: req.body.assertion
         audience: CONFIG.fullHost()
-    _.logYellow params, 'persona verifyAssertion'
+    _.logYellow params.json.audience, 'persona audience requested'
     return qreq.post params
 
   verifyStatus: (personaAnswer, req, res) ->
@@ -45,7 +45,7 @@ module.exports =
           user = cleanUserData body.rows[0].value
           res.cookie "email", email
           res.json user
-        else if username? && @nameIsValid username
+        else if username? and @nameIsValid username
           # IF EMAIL IS NOT IN DB AND IF VALID USERNAME, CREATE USER
           @newUser(username, email)
           .then (body)=>
@@ -95,7 +95,7 @@ module.exports =
     query =
       startkey: username
       endkey: username + 'Z'
-    query.limit = options.limit if options? && options.limit?
+    query.limit = options.limit if options? and options.limit?
     return @db.view 'users', 'byUsername', query
 
   newUser: (username, email)->
@@ -124,9 +124,9 @@ module.exports =
     return deferred.promise
 
   fetchUsers: (ids)->
+    deferred = Q.defer()
     if ids?.length? and ids.length > 0
       _.logGreen ids, 'ids for fetchUsers'
-      deferred = Q.defer()
       usersDB.fetch {keys: ids}, (err, body)->
         if err
           deferred.reject new Error(err)

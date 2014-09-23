@@ -55,9 +55,7 @@ spreadRequests = (res, promises, label)->
   .then (selected)->
     if selected?
       res.json selected
-    else
-      obj = { status: 'not found', details: results}
-      res.json 404, obj
+    else res.json 404, { responseText: 'not found'}
 
   .fail (err)->
     _.logRed err, "#{label} err"
@@ -70,5 +68,5 @@ selectFirstNonEmptyResult = (results...)->
   results.forEach (result)->
     if result.items?.length > 0 and not selected?
       selected = result
-  selected.source.logIt('selected source')
+  selected?.source.logIt('selected source')
   return selected
