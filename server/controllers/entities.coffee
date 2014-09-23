@@ -38,11 +38,11 @@ searchByText = (query, res)->
 
   promises = [
     wikidata.getBookEntities(query)
-    .then (items)-> {items: items, source: 'wd'}
+    .then (items)-> {items: items, source: 'wd', search: query.search}
     .fail (err)-> _.logRed err, 'wikidata getBookEntities err'
 
     books.getGoogleBooksDataFromText(query.search)
-    .then (res)-> {items: res, source: 'google'}
+    .then (res)-> {items: res, source: 'google', search: query.search}
     .fail (err)-> _.logRed err, 'getGoogleBooksDataFromIsbn err'
   ]
 
