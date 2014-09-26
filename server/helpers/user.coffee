@@ -103,7 +103,7 @@ module.exports =
       username: username
       email: email
       created: new Date()
-      picture: gravatar.url(email, {d: 'mm'})
+      picture: gravatar.url(email, {d: 'mm', s: '200'}) # default, size
     _.logBlue user, 'new user'
     return usersCot.post(user).then (user)-> usersCot.get(user.id)
 
