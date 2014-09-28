@@ -5,8 +5,15 @@ americano = require 'americano'
 global.sharedLib = sharedLib = require './shared_libs'
 global._ = require './server/helpers/utils'
 
-if CONFIG.verbose
-  _.log CONFIG, 'CONFIG'
-  _.log CONFIG.fullHost(), 'host'
 
-americano.start name: CONFIG.name, port: CONFIG.port, host: CONFIG.host
+CONFIG.host = process.argv[2]  if process.argv[2]?
+CONFIG.port = process.argv[3]  if process.argv[3]?
+
+if CONFIG.verbosity > 1 or process.argv.length > 2
+  _.log CONFIG, 'CONFIG'
+  _.log CONFIG.fullHost(), 'fullHost'
+
+americano.start
+  name: CONFIG.name
+  host: CONFIG.host
+  port: CONFIG.port
