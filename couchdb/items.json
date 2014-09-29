@@ -13,6 +13,9 @@
        },
        "byEntity": {
            "map": "(doc)->\n  emit(doc.entity, doc)"
+       },
+       "publicByDate": {
+           "map": "(doc)->\n  if doc.listing is 'public'\n    emit(doc.created, doc)"
        }
    }
 }

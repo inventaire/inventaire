@@ -7,6 +7,9 @@
        },
        "byUsername": {
            "map": "(doc)->\n  emit(doc.username.toLowerCase(), doc)"
+       },
+       "usedProfiles": {
+           "map": "(doc)->\n\tedits = doc._rev.split('-')[0]\n\tif edits > 1 then emit(doc.username, doc)"
        }
    }
 }
