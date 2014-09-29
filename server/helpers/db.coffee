@@ -32,7 +32,7 @@ module.exports =
           else
             if dbName == 'users' or dbName == 'users-tests'
               dbInit.usersDesignLoader()
-              dbInit.loadFakeUsers()
+              dbInit.loadFakeUsers()  if CONFIG.fakeUsers
             if dbName == 'inventory' or dbName == 'inventory-tests'
               dbInit.invDesignLoader()
             console.log body

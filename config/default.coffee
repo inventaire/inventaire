@@ -3,7 +3,8 @@ module.exports =
   protocol: 'http'
   name: 'inventaire'
   host: 'localhost'
-  verbose: true
+  verbosity: 1
+  # host: '192.168.1.30'
   port: 3008
   fullHost: -> "#{@protocol}://#{@host}:#{@port}"
   secret: 'yoursecrethere'
@@ -14,9 +15,10 @@ module.exports =
     port: 5984
     fullHost: -> "#{@protocol}://#{@host}:#{@port}"
     users: 'users'
+    fakeUsers: false
     inv: 'inventory'
   whitelistedRouteRegExp: /^\/api\/auth\//
-  # noCache: true
-  noCache: false
-  # staticMaxAge: 0
-  staticMaxAge: 24*60*60*1000
+  noCache: true
+  # noCache: false
+  staticMaxAge: 0
+  # staticMaxAge: 24*60*60*1000
