@@ -36,6 +36,9 @@ module.exports =
   'api/items/public/:uri':
     get: items.publicByEntity
 
+  'api/items/public/:username/:suffix':
+    get: items.publicByUserAndSuffix
+
   'api/items/:id':
     put: items.put
     get: items.get

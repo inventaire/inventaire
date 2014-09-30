@@ -16,6 +16,9 @@
        },
        "publicByDate": {
            "map": "(doc)->\n  if doc.listing is 'public'\n    emit(doc.created, doc)"
+       },
+       "publicByOwnerAndSuffix": {
+           "map": "(doc)->\n  if doc.listing is 'public'\n    emit([doc.owner, doc.suffix], doc)"
        }
    }
 }

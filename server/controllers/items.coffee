@@ -62,3 +62,16 @@ module.exports =
         res.json {items: items, users: users}
     .fail (err)-> _.errorHandler res, err
     .done()
+
+  publicByUserAndSuffix: (req, res, next)->
+    _.logBlue req.params, 'publicByUserAndSuffix'
+    user.getSafeUserFromUsername(req.params.username)
+    .then (user)->
+      if user?._id?
+        owner = user._id
+        inv.publicByOwnerAndSuffix(owner, req.params.suffix)
+        .then (items)->
+          return res.json {items: items, user: user}
+      else _.errorHandler res, 'user not found', 404
+    .fail (err)-> _.errorHandler res, err
+    .done()

@@ -27,3 +27,7 @@ module.exports =
       limit: 20
       descending: true
     }
+
+  publicByOwnerAndSuffix: (owner, suffix)->
+    invCot.view 'items', 'publicByOwnerAndSuffix', {key: [owner, suffix]}
+    .then (body)-> body.rows.map (el)-> el.value

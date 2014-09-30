@@ -90,6 +90,15 @@ module.exports =
   byUsername: (username)->
     return @db.view 'users', 'byUsername', {key: username.toLowerCase()}
 
+  getSafeUserFromUsername: (username)->
+    @byUsername(username)
+    .then (res)=>
+      if res?.rows?[0]?
+        return @safeUserData(res.rows[0].value)
+      else return
+    .fail (err)->
+      _.logRed err, 'couldnt getUserFromUsername'
+
   usernameStartBy: (username, options)->
     username = username.toLowerCase()
     query =
@@ -154,13 +163,11 @@ module.exports =
         return
 
   safeUserData: (value)->
-    return {
       _id: value._id
       username: value.username
       created: value.created
       picture: value.picture
-      contacts: value.contacts
-    }
+      # contacts: value.contacts
 
   # only used by tests so far
   deleteUser: (user)->
