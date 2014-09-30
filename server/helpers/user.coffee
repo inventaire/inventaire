@@ -102,7 +102,7 @@ module.exports =
     user =
       username: username
       email: email
-      created: new Date()
+      created: _.now()
       picture: gravatar.url(email, {d: 'mm', s: '200'}) # default, size
     _.logBlue user, 'new user'
     return usersCot.post(user).then (user)-> usersCot.get(user.id)
@@ -111,7 +111,9 @@ module.exports =
     deferred = Q.defer()
     @byEmail(email)
     .then (res)->
-      deferred.resolve res.rows[0].value.username
+      if res?.rows?[0]?
+        deferred.resolve res.rows[0].value.username
+      else deferred.resolve
     .fail (err)-> deferred.reject new Error(err)
     return deferred.promise
 
@@ -119,7 +121,9 @@ module.exports =
     deferred = Q.defer()
     @byEmail(email)
     .then (res)->
-      deferred.resolve res.rows[0].value._id
+      if res?.rows?[0]?
+        deferred.resolve res.rows[0].value._id
+      else deferred.resolve
     .fail (err)-> deferred.reject new Error(err)
     return deferred.promise
 
@@ -130,11 +134,9 @@ module.exports =
       usersDB.fetch {keys: ids}, (err, body)->
         if err then deferred.reject new Error(err)
         else deferred.resolve body
-      return deferred.promise
-    else
-      err = {status: 404, error_message: 'no ids for fetchUsers'}
-      deferred.reject err
-    return
+    else deferred.resolve()
+    return deferred.promise
+
 
   getUsersPublicData: (ids)->
     ids = ids.split?('|') or ids
@@ -147,7 +149,9 @@ module.exports =
         cleanedUsersData = usersData.map @safeUserData
         _.logGreen cleanedUsersData, 'cleanedUsersData'
         return cleanedUsersData
-      else throw "users not found: #{ids.join(', ')}"
+      else
+        _.logYellow "users not found. Ids?: #{ids.join(', ')}"
+        return
 
   safeUserData: (value)->
     return {

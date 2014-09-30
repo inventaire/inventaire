@@ -10,9 +10,11 @@ String::logIt = (label, color)->
 
 utils =
   errorHandler: (res, err, status = 500)->
-    _.logRed err
+    switch status
+      when 404 then _.logYellow err
+      else _.logRed err
     res.setHeader 'Content-Type', 'text/html'
-    res.status status
+    res.status status || 500
     res.send err
 
   log: (obj, label, color = 'white')->

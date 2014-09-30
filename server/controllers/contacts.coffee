@@ -29,17 +29,23 @@ searchByUsername = (res, search) ->
 
 fetchUsersData = (res, ids)->
   _.logBlue ids, 'fetchUsersData ids'
-  user.getUsersPublicData(ids)
-  .then (usersData)->
-    _.logGreen usersData, 'usersData'
-    res.json {users: usersData}
-  .fail (err)-> _.errorHandler res, err
-  .done()
+  if ids?.length? and ids.length > 0
+    user.getUsersPublicData(ids)
+    .then (usersData)->
+      _.logGreen usersData, 'usersData'
+      res.json {users: usersData}
+    .fail (err)-> _.errorHandler res, err, err.status
+    .done()
+  else
+    _.errorHandler res, 'no data found', 404
 
 module.exports.followedData = (req, res, next) ->
   user.byEmail(req.session.email)
   .then (body)->
-    return body.rows[0].value.contacts
+    if body.rows.length > 0
+      return body.rows[0].value.contacts
+    else
+      return
   .then user.fetchUsers
   .then (body)->
     if body?
@@ -47,7 +53,7 @@ module.exports.followedData = (req, res, next) ->
       cleanedUsersData = usersData.map user.safeUserData
       res.json cleanedUsersData
     else
-      _.errorHandler res, 'no contacts found', 404
+      _.errorHandler res, 'no contact found', 404
   .fail (err)-> _.errorHandler res, err
   .done()
 

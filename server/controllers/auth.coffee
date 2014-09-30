@@ -40,9 +40,12 @@ module.exports.logout = (req, res, next) ->
 module.exports.getUser = (req, res, next) ->
   user.byEmail(req.session.email)
   .then (body)->
-    userData = body.rows[0].value
-    _.logYellow userData, 'getUser'
-    res.json userData
+    if body?.rows?[0]?
+      userData = body.rows[0].value
+      _.logYellow userData, 'getUser'
+      res.json userData
+    else
+      _.errorHandler res, 'user not found', 404
   .fail (err)-> _.errorHandler res, err, 404
   .done()
 

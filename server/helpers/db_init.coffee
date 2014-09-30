@@ -56,7 +56,7 @@ loadFakeUser = (username)->
       username: username || fake.username
       email: fake.email
       picture: fake.picture
-      created: new Date()
+      created: _.now()
     postUser userData
   .fail (err)-> _.error err
   .done()
