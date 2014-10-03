@@ -64,11 +64,5 @@ module.exports.fetchItems = (req, res, next) ->
     inv.byListing ownerId, 'contacts'
     inv.byListing ownerId, 'public'
   ]
-  Q.spread promises, joinResults
+  Q.spread promises, _.mergeArrays
   .then (body)-> res.json body
-
-joinResults = (results...)->
-  parsedResults = []
-  results.forEach (result)->
-    parsedResults.push _.mapCouchResult('value', result)
-  return _.mergeArrays(parsedResults)

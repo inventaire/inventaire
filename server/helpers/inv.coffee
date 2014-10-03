@@ -13,21 +13,41 @@ module.exports =
         valid = false
     return valid
 
+  # get: (id)->
+  #   @db.get(id)
+  #   .then safeItemData
+
   byOwner: (owner)->
+    # only used by items.fetch with req.session.email owner
+    # => shouldn't be safeItems'ized
     invCot.view 'items', 'byOwner', {key: owner}
+    .then parseValue
 
   byListing: (owner, listing)->
     invCot.view 'items', 'byListing', {key: [owner, listing]}
+    .then parseValue
+    .then safeItems
 
   byEntity: (uri)->
     invCot.view 'items', 'byEntity', {key: uri}
+    .then parseValue
+    .then safeItems
 
   publicByDate: ->
     invCot.view 'items', 'publicByDate', {
       limit: 20
       descending: true
     }
+    .then parseValue
+    .then safeItems
 
   publicByOwnerAndSuffix: (owner, suffix)->
     invCot.view 'items', 'publicByOwnerAndSuffix', {key: [owner, suffix]}
-    .then (body)-> body.rows.map (el)-> el.value
+    .then parseValue
+    .then safeItems
+
+parseValue = (body)-> body.rows.map (el)-> el.value
+safeItems = (items)-> items.map(safeItemData)
+safeItemData = (item)->
+  item.notes = null
+  return item

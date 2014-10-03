@@ -3,11 +3,11 @@ user = require '../helpers/user'
 
 module.exports =
   fetch: (req, res, next) ->
+    # only fetch for session email
+    # = only way to fetch private data on items
     user.getUserId(req.session.email)
     .then inv.byOwner
-    .then (resp)->
-      items = resp.rows.map (el)-> el.value
-      res.json items
+    .then (items)-> res.json items
     .fail (err)-> _.errorHandler res, err
     .done()
 
@@ -26,14 +26,16 @@ module.exports =
       else
         _.errorHandler res, "couldn't add this item", 400
 
-  get: (req, res, next) ->
-    _.log req.params.id, 'GET Item ID'
-    inv.db.get req.params.id
-    .then (body)-> res.json(body)
-    .fail (err)-> _.errorHandler res, err
-    .done()
+  # not used
+  # get: (req, res, next) ->
+  #   _.log req.params.id, 'GET Item ID'
+  #   inv.get req.params.id
+  #   .then (body)-> res.json(body)
+  #   .fail (err)-> _.errorHandler res, err
+  #   .done()
 
   del: (req, res, next) ->
+    # missing req.session.email check isn't it?
     _.logBlue req.params, 'del'
     inv.db.delete req.params.id, req.params.rev
     .then (body)-> res.json(body)
@@ -43,16 +45,12 @@ module.exports =
   publicByEntity: (req, res, next) ->
     _.logBlue req.params, 'public'
     inv.byEntity(req.params.uri)
-    .then (resp)->
-      items = resp.rows.map (el)-> el.value
-      _.logBlue items, 'public items'
-      res.json items
+    .then (items)-> res.json items
     .fail (err)-> _.errorHandler res, err
     .done()
 
   fetchLastPublicItems: (req, res, next) ->
     inv.publicByDate()
-    .then (body)-> _.mapCouchResult('value', body)
     .then (items)->
       _.logGreen items, 'public items'
       users = items.map (item)-> item.owner
