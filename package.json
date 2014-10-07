@@ -4,7 +4,7 @@
     "dev.inventaire.io"
   ],
   "subdomain": "alpha-o2o621pq3is",
-  "version": "0.0.1-14",
+  "version": "0.0.1-17",
   "description": "resources mapper",
   "main": "index.coffee",
   "scripts": {
@@ -30,9 +30,12 @@
     "cookie-session": "^1.0.2",
     "cot": "0.0.6",
     "express-session": "^1.8.2",
+    "formidable": "^1.0.15",
     "gravatar": "^1.0.6",
+    "knox": "^0.9.1",
     "mocha": "^1.21.4",
     "nano": "^5.11.2",
+    "prefixed-uuid": "^1.0.0",
     "q": "^1.0.1",
     "qreq": "^0.2.0"
   },

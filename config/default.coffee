@@ -18,7 +18,12 @@ module.exports =
     fakeUsers: false
     inv: 'inventory'
   whitelistedRouteRegExp: /^\/api\/auth\//
-  noCache: true
-  # noCache: false
-  staticMaxAge: 0
-  # staticMaxAge: 24*60*60*1000
+  # noCache: true
+  noCache: false
+  # staticMaxAge: 0
+  staticMaxAge: 24*60*60*1000
+  aws:
+    key: 'customizedInLocalConfig'
+    secret: 'customizedInLocalConfig'
+    region: 'customizedInLocalConfig'
+    bucket: 'customizedInLocalConfig'

@@ -3,6 +3,7 @@ auth = require "./auth"
 items = require "./items"
 contacts = require "./contacts"
 entities = require "./entities"
+upload = require "./upload"
 proxy = require "./proxy"
 
 module.exports =
@@ -41,7 +42,7 @@ module.exports =
 
   'api/items/:id':
     put: items.put
-    get: items.get
+    # get: items.get
 
 
   'api/items/:id/:rev':
@@ -69,8 +70,7 @@ module.exports =
       else _.errorHandler res, 'unauthorize cookie setting', '403'
 
   'api/upload':
-    post: (req, res, next)->
-      _.logBlue req, 'image upload'
+    post: upload.post
 
   'test':
     get: (req, res, next)-> res.send 'server: OK'
@@ -81,6 +81,7 @@ module.exports =
 
   'test/json':
     get: (req, res, next)-> res.json {server: 'OK'}
+    post: (req, res, next)-> res.json {server: 'OK', body: req.body}
 
   'proxy/*':
     get: proxy.get
