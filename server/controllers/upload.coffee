@@ -1,6 +1,8 @@
+CONFIG = require 'config'
 formidable = require 'formidable'
 client = require '../helpers/knox-client'
 Q = require 'q'
+
 
 module.exports.post = (req, res, next)->
   form = new formidable.IncomingForm()
@@ -28,7 +30,27 @@ module.exports.post = (req, res, next)->
       Q.all promises
       .then (urls)->
         _.logYellow urls, 'urls'
-        res.json 200, urls
+        ownedUrls = urls.map extractOwnedUrl
+        _.logYellow ownedUrls, 'ownedUrls'
+        res.json 200, ownedUrls
       .fail (err)->
         _.logRed err, 'putImage err'
         res.json 500, {status: err}
+
+module.exports.del = (req, res, next)->
+  filenames = req.body.urls
+  _.logGreen filenames, 'filenames?'
+  client.deleteImages(filenames)
+  .then (resp)->
+    _.logYellow resp.statusCode, 'delete statusCode'
+    if resp.statusCode is 200
+      res.json 200, {status: 'OK'}
+    else throw {status: 'FAILED'}
+  .fail (err)->
+    res.json 500, err
+
+
+extractOwnedUrl = (url)->
+  parts = url.split CONFIG.aws.bucket
+  path = parts.last()
+  return "//#{CONFIG.aws.bucket}#{path}"

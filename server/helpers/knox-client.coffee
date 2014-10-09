@@ -7,17 +7,27 @@ client = knox.createClient
   region: CONFIG.aws.region
   bucket: CONFIG.aws.bucket
 
-uuid = require 'prefixed-uuid'
-
-
 module.exports =
   putImage: (src, type)->
     deferred = Q.defer()
     headers =
       'x-amz-acl': 'public-read'
       'Content-Type': type
-    filename = uuid 'inv'
-    client.putFile src, "img/#{filename}.jpg", headers, (err, res)->
+    filename = _.idGenerator(22)
+    client.putFile src, "#{filename}.jpg", headers, (err, res)->
+      if err then deferred.reject(new Error(err))
+      else deferred.resolve(res)
+
+    return deferred.promise
+
+  deleteImages: (filenames, headers)->
+    filenames = filenames.map (url)->
+      parts = url.split(CONFIG.aws.bucket)
+      return parts.last()
+
+    deferred = Q.defer()
+    headers ||= {}
+    client.deleteMultiple filenames, headers, (err, res)->
       if err then deferred.reject(new Error(err))
       else deferred.resolve(res)
 

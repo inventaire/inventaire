@@ -72,6 +72,9 @@ module.exports =
   'api/upload':
     post: upload.post
 
+  'api/upload/delete':
+    post: upload.del
+
   'test':
     get: (req, res, next)-> res.send 'server: OK'
     post: (req, res, next)->
