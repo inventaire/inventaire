@@ -2,7 +2,7 @@ Promises = require './promises'
 module.exports = wd = sharedLib('wikidata')(Promises)
 
 qreq = require 'qreq'
-wdProps = _.jsonFile('server/helpers/wikidata-properties-fr.json').properties
+wdProps = _.jsonFile('server/lib/wikidata-properties-fr.json').properties
 
 API = wd.API
 Q = wd.Q

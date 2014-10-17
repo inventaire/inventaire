@@ -1,6 +1,6 @@
 CONFIG = require 'config'
 formidable = require 'formidable'
-client = require '../helpers/knox-client'
+client = require '../lib/knox-client'
 Q = require 'q'
 
 

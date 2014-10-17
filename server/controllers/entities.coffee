@@ -1,5 +1,5 @@
-books = require '../helpers/books'
-wikidata = require '../helpers/wikidata'
+books = require '../lib/books'
+wikidata = require '../lib/wikidata'
 Q = require 'q'
 
 module.exports =

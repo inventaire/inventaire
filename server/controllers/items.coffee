@@ -1,5 +1,5 @@
-inv = require '../helpers/inv'
-user = require '../helpers/user'
+inv = require '../lib/inv'
+user = require '../lib/user'
 
 module.exports =
   fetch: (req, res, next) ->

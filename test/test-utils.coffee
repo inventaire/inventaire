@@ -3,7 +3,7 @@ module.exports =
     server: (el)-> '../server/' + el
     controllers: (el)-> '../server/controllers/' + el
     models: (el)-> '../server/models/' + el
-    helpers: (el)-> '../server/helpers/' + el
+    lib: (el)-> '../server/lib/' + el
     client: (el)-> '../client/' + el
     app: (el)-> '../client/app/' + el
     clientLib: (el)-> '../client/app/lib/' + el

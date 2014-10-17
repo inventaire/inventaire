@@ -1,5 +1,5 @@
 lodash = require('lodash')
-serverUtils = require '../helpers/utils'
+serverUtils = require '../lib/utils'
 
 utils = lodash.assign(lodash, serverUtils)
 

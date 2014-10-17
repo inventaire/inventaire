@@ -1,5 +1,5 @@
-user = require '../helpers/user'
-inv = require '../helpers/inv'
+user = require '../lib/user'
+inv = require '../lib/inv'
 Q = require 'q'
 
 module.exports.find = (req, res, next) ->

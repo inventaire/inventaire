@@ -1,4 +1,4 @@
-user = require '../helpers/user'
+user = require '../lib/user'
 
 module.exports.checkUsername = (req, res, next) ->
   reqUsername = req.body.username

@@ -3,7 +3,7 @@ _ = require './utils'
 gravatar = require('gravatar')
 
 db = require '../db'
-H = db: require '../helpers/db'
+H = db: require '../lib/db'
 usersDB = db.use CONFIG.db.users
 Q = require 'q'
 qreq = require 'qreq'
@@ -154,7 +154,7 @@ module.exports =
       _.logGreen body, 'found users data'
       if body?
         usersData = _.mapCouchResult 'doc', body
-        _.logGreen usersData, 'usersData'
+        _.logGreen usersData, 'usersData before cleaning'
         cleanedUsersData = usersData.map @safeUserData
         _.logGreen cleanedUsersData, 'cleanedUsersData'
         return cleanedUsersData
