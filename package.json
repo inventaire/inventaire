@@ -9,7 +9,7 @@
   "main": "index.coffee",
   "scripts": {
     "start": "coffee server.coffee",
-    "superstart": "supervisor server.coffee",
+    "superstart": "supervisor --ignore client,test server.coffee",
     "test": "export NODE_ENV=tests; mocha --compilers coffee:coffee-script/register --watch",
     "lint": "coffeelint -f config/coffeelint.json server.coffee server/* test/*",
     "debug": "DEBUG=express:* coffee server.coffee"
