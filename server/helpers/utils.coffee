@@ -1,18 +1,16 @@
 colors = require 'colors'
 fs = require 'fs'
-sharedLib = require '../../shared_libs'
-
 
 String::logIt = (label, color)->
   if color? then console.log "[" + label[color] + "] #{@toString()}"
   else console.log "[" + label['blue'] + "] #{@toString()}"
   return @toString()
 
-utils =
+module.exports =
   errorHandler: (res, err, status = 500)->
     switch status
-      when 404 then _.logYellow err
-      else _.logRed err
+      when 404 then @logYellow err
+      else @logRed err
     res.setHeader 'Content-Type', 'text/html'
     res.status status || 500
     res.send err
@@ -78,5 +76,3 @@ utils =
     result = []
     arrays.forEach (array)-> result = result.concat(array)
     return result
-
-module.exports = utils.extend utils, sharedLib('utils')

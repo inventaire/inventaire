@@ -4,7 +4,7 @@ americano = require 'americano'
 
 # helper to require libs shared with the client-side
 global.sharedLib = sharedLib = require './shared_libs'
-global._ = require './server/helpers/utils'
+global._ = require './server/builder/utils'
 require('./server/helpers/global_libs_extender').initialize()
 
 
