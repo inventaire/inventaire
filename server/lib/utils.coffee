@@ -59,20 +59,7 @@ module.exports =
     else
       throw new Error "bad db object passed to _.getObjIfSuccess"
 
-  extend: (one, two)->
-    for k,v of two
-      one[k] = v
-    return one
-
   _: '-----------------------------------------------------------------'
 
   jsonFile: (path)->
     JSON.parse fs.readFileSync(path).toString()
-
-  isEmpty: (obj)-> Object.keys(obj).length is 0
-
-  isString: (str)-> typeof str is 'string'
-  mergeArrays: (arrays...)->
-    result = []
-    arrays.forEach (array)-> result = result.concat(array)
-    return result
