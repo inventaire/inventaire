@@ -3,9 +3,11 @@ should = require "should"
 trycatch = require "trycatch"
 request = require "supertest"
 baseUrl = require('config').fullHost()
-__ = require('./test-utils').path
-_ = require __.helpers 'utils'
-user = require __.helpers 'user'
+
+__ = require('config').root
+_ = __.require 'builders', 'utils'
+
+user = __.require 'lib','user'
 
 # UNIT TESTS
 describe "username validation", ->

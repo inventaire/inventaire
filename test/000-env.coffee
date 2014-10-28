@@ -1,12 +1,11 @@
+# fixes the problem with wrong line numbers in stack reports
+require 'coffee-errors'
+
+CONFIG = require 'config'
+__ = CONFIG.root
+_ = __.require('builders', 'utils')
+
 should = require "should"
-
-
-global.CONFIG = require('config')
-global.__ = require('./test-utils').path
-global._ = require __.helpers 'utils'
-
-
-# _.logGreen CONFIG.env, 'CONFIG env'
 
 describe 'config', ->
 

@@ -5,13 +5,15 @@ request = require "supertest"
 fs = require 'fs'
 qreq = require 'qreq'
 
-user = require __.helpers 'user'
+__ = require('config').root
+user =  __.require 'lib', 'user'
 
 CONFIG = require('config')
 baseDbUrl = CONFIG.db.fullHost()
 
-user = require __.helpers 'user'
-keepUsers = JSON.parse fs.readFileSync(__.couchdb('keep_users.json')).toString()
+user = __.require 'lib', 'user'
+couchPath = __.path.couchdb('keep_users.json')
+keepUsers = JSON.parse fs.readFileSync(couchPath).toString()
 keepUsersIds = keepUsers.map (user)-> return user._id
 
 describe "searchByUsername", ->

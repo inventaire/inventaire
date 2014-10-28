@@ -1,8 +1,10 @@
 should = require "should"
 sinon = require "sinon"
 
-H = db: require __.helpers 'db'
+__ = require('config').root
+_ = __.require 'builders', 'utils'
 
+H = db: __.require 'lib', 'db'
 
 #UNIT TEST
 describe "isValidDbName", ->

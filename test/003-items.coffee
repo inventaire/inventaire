@@ -6,6 +6,10 @@ baseUrl = require('config').fullHost()
 itemsRoot = '/api/items'
 
 
+__ = require('config').root
+_ = __.require 'builders', 'utils'
+
+
 # INTEGRATION TESTS WITH DB
 
 _.logBlue '', 'waiting for security implementation before re-testing db integration'
@@ -63,9 +67,7 @@ describe "PUT", ->
 
 
 
-__ = require('./test-utils').path
-inv = require __.helpers 'inv'
-idGen = require __.clientLib 'id_generator'
+inv = __.require 'lib','inv'
 
 isValidItem = inv.isValidItem
 fakeItems =
@@ -81,7 +83,7 @@ fakeItems =
     owner: "username"
     transactionMode: 'none'
     visibility: 'private'
-    _id: idGen(6)
+    _id: _.idGenerator(6)
 
   noId:
     title: "with a title"
