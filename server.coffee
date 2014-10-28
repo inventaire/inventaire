@@ -1,3 +1,10 @@
+env = process.argv[2]
+host = process.argv[3]
+port = process.argv[4]
+
+if env?
+  console.log 'env manual change', process.env.NODE_ENV = env
+
 CONFIG = require 'config'
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
@@ -11,8 +18,8 @@ global_libs_extender = __.require 'lib', 'global_libs_extender'
 global_libs_extender.initialize()
 
 
-CONFIG.host = process.argv[2]  if process.argv[2]?
-CONFIG.port = process.argv[3]  if process.argv[3]?
+CONFIG.host = host  if host?
+CONFIG.port = port  if port?
 
 if CONFIG.verbosity > 1 or process.argv.length > 2
   _.log CONFIG, 'CONFIG'
