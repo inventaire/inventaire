@@ -1,5 +1,6 @@
 CONFIG = require('config')
-_ = CONFIG.root.require('builders', 'utils')
+__ = CONFIG.root
+_ = __.require('builders', 'utils')
 
 nano = require('nano') CONFIG.db.fullHost()
 lib =
