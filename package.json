@@ -24,6 +24,7 @@
   "dependencies": {
     "americano": "^0.3.6",
     "app-root-path": "0.0.1",
+    "bluebird": "^2.2.2",
     "coffee-script": "^1.8.0",
     "colors": "^0.6.2",
     "config": "^1.2.0",
@@ -34,6 +35,8 @@
     "formidable": "^1.0.15",
     "gravatar": "^1.0.6",
     "knox": "^0.9.1",
+    "level": "^0.18.0",
+    "levelgraph": "^0.8.2",
     "lodash": "^2.4.1",
     "nano": "^5.11.2",
     "no-js-analytics": "^0.1.9",

@@ -14,4 +14,6 @@ module.exports =
     users: 'users-tests'
     fakeUsers: false
     inv: 'inventory-tests'
+  graph:
+    social: 'social_graph-tests'
   whitelistedRouteRegExp: /^\/api\//
