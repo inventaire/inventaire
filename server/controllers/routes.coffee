@@ -7,6 +7,7 @@ contacts = require "./contacts"
 entities = require "./entities"
 upload = require "./upload"
 proxy = require "./proxy"
+analytics = require 'no-js-analytics'
 
 module.exports =
   # keep 'auth' routes for methods not requiring a valid session
@@ -90,6 +91,9 @@ module.exports =
 
   'proxy/*':
     get: proxy.get
+
+  'analytics/stats':
+    get: (req, res, next)-> res.send(200, analytics.stats())
 
   '*':
     get: index.glob

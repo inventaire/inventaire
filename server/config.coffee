@@ -5,6 +5,7 @@ _ = __.require 'builders', 'utils'
 americano = require 'americano'
 cookieParser = require 'cookie-parser'
 session = require 'cookie-session'
+analytics = require 'no-js-analytics'
 
 require('q').longStackSupport = true
 
@@ -88,6 +89,7 @@ module.exports =
     # csrf
     langCookie
     cacheControl
+    analytics
   ]
   development:
     use: [americano.logger('dev')]
