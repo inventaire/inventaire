@@ -1,5 +1,5 @@
 CONFIG = require 'config'
-_ = require './utils'
+_ = CONFIG.root.require('builders', 'utils')
 invCot = require('../cotDb').inv
 
 module.exports =

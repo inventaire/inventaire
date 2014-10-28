@@ -1,3 +1,2 @@
-sharedPath = '../../client/app/lib/shared/'
-
-module.exports = (name)-> require "#{sharedPath}#{name}"
+__ = require('config').root
+module.exports = (name)-> __.require 'sharedLibs', name

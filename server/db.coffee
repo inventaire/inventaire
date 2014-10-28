@@ -1,7 +1,9 @@
 CONFIG = require('config')
+_ = CONFIG.root.require('builders', 'utils')
+
 nano = require('nano') CONFIG.db.fullHost()
 lib =
-  db: require './lib/db'
+  db: __.require 'lib', 'db'
 
 if CONFIG.db.instable
   lib.db.checkDbsExistanceOrCreate [CONFIG.db.users, CONFIG.db.inv]

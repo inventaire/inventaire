@@ -1,3 +1,5 @@
+_ = require('config').root.require('builders', 'utils')
+
 Promises = require './promises'
 module.exports = wd = sharedLib('wikidata')(Promises)
 

@@ -1,4 +1,7 @@
 CONFIG = require 'config'
+__ = require('config').root
+_ = __.require 'builders', 'utils'
+
 americano = require 'americano'
 cookieParser = require 'cookie-parser'
 session = require 'cookie-session'

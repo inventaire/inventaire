@@ -1,8 +1,10 @@
-lodash = require('lodash')
-serverUtils = require '../lib/utils'
+__ = require('config').root
+
+lodash = require 'lodash'
+serverUtils = __.require 'lib', 'utils'
 
 utils = lodash.assign(lodash, serverUtils)
 
-sharedUtils = sharedLib('utils')(utils)
+sharedUtils = __.require('sharedLibs', 'utils')(utils)
 
 module.exports = lodash.assign(utils, sharedUtils)

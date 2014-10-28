@@ -1,7 +1,7 @@
 CONFIG = require 'config'
 qreq = require 'qreq'
 fs = require 'fs'
-_ = require './utils'
+_ = CONFIG.root.require('builders', 'utils')
 
 usersDesignDoc =
   name: 'users'

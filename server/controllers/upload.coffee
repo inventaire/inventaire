@@ -1,4 +1,5 @@
 CONFIG = require 'config'
+_ = CONFIG.root.require('builders', 'utils')
 formidable = require 'formidable'
 client = require '../lib/knox-client'
 Q = require 'q'

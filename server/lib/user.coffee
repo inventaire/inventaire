@@ -1,5 +1,6 @@
 CONFIG = require 'config'
-_ = require './utils'
+_ = CONFIG.root.require('builders', 'utils')
+
 gravatar = require('gravatar')
 
 db = require '../db'

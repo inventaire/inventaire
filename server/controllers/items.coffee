@@ -1,3 +1,4 @@
+_ = require('config').root.require('builders', 'utils')
 inv = require '../lib/inv'
 user = require '../lib/user'
 

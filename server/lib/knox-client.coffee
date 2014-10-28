@@ -1,5 +1,6 @@
 Q = require 'q'
 CONFIG = require 'config'
+_ = CONFIG.root.require('builders', 'utils')
 knox = require 'knox'
 client = knox.createClient
   key: CONFIG.aws.key

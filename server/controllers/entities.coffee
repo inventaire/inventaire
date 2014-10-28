@@ -1,3 +1,5 @@
+_ = require('config').root.require('builders', 'utils')
+
 books = require '../lib/books'
 wikidata = require '../lib/wikidata'
 Q = require 'q'

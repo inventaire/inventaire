@@ -1,3 +1,5 @@
+_ = require('config').root.require('builders', 'utils')
+
 user = require '../lib/user'
 
 module.exports.checkUsername = (req, res, next) ->
