@@ -5,15 +5,13 @@ Promise = require 'bluebird'
 graph = require('./base')(CONFIG.graph.social)
 _g = graph.utils
 
-
-
 # UNI-DIRECTONAL:
 # - requested
 
 # BI-DIRECTONAL:
 # - friend
 
-methods =
+relationActions =
   relationStatus: (userId, otherId)->
     [fromUser, fromOther] = [
       @get({s: userId, o: otherId})
@@ -41,41 +39,32 @@ methods =
           # noop?
           return
         when 'none'
-          return @putUserFriendRequest(userId, friendId)
+          return putUserFriendRequest(userId, friendId)
         else throw "got status #{status} at requestFriend"
 
   acceptRequest: (userId, friendId)->
     if @relationStatus(userId, friendId) is 'friendRequested'
-      @putFriendRelation(userId, friendId)
-      .then ()=>
-        @delUserFriendRequest(userId, friendId)
+      putFriendRelation(userId, friendId)
+      .then -> delUserFriendRequest(userId, friendId)
 
-  putUserFriendRequest: (userId, friendId)->
-    triple =
-      s: userId
-      p: 'requested'
-      o: friendId
-    return @put triple
-
-  delUserFriendRequest: (userId, friendId)->
-    triple =
-      s: userId
-      p: 'requested'
-      o: friendId
-    return @put triple
-
-  putFriendRelation: (userId, friendId)->
-    triple =
-      s: userId
-      p: 'friend'
-      o: friendId
-    return @put triple
+    else throw new Error('tried to accept an inexistant request')
 
 
+putUserFriendRequest = (userId, friendId)->
+  return graph.put userId, 'requested', friendId
+
+delUserFriendRequest = (userId, friendId)->
+  return graph.del userId, 'requested', friendId
+
+putFriendRelation = (userId, friendId)->
+  return graph.put userId, 'friend', friendId
+
+
+
+
+relationsLists =
   getUserFriendRequests: (userId)->
-    query =
-      p: 'requested'
-      o: userId
+    query = { p: 'requested', o: userId }
     return @get(query).then _g.extract.subjects
 
   getUserFriends: (userId)->
@@ -84,4 +73,4 @@ methods =
 
 
 
-module.exports = _.extend graph, methods
+module.exports = _.extend graph, relationActions, relationsLists

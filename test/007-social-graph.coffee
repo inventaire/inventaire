@@ -23,7 +23,7 @@ describe 'RELATIONS', ->
 
     it "should return right status after request", (done)->
       trycatch( ->
-        graph.putUserFriendRequest('sarah', 'oconnor')
+        graph.requestFriend('sarah', 'oconnor')
         .then ->
           graph.relationStatus('sarah', 'oconnor')
           .then (status)->
@@ -34,23 +34,6 @@ describe 'RELATIONS', ->
               done()
         .catch (err)-> throw new Error(err)
       , done)
-
-  describe 'putUserFriendRequest', ->
-    it "should add the proper triple", (done)->
-      trycatch( ->
-        graph.get(relation)
-        .then (list)->
-          list.length.should.equal 0
-
-          graph.putUserFriendRequest('john', 'bobby')
-          .then ->
-            graph.get(relation)
-            .then (list)->
-              list.length.should.equal 1
-              done()
-        .catch (err)-> throw new Error(err)
-      , done)
-
 
   describe 'getUserFriendRequests', ->
     it "should only find requests from others", (done)->

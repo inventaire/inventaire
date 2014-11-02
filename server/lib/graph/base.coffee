@@ -26,8 +26,20 @@ module.exports = (graphName)->
   graph = levelgraph(leveldb)
   _.logBlue graph, 'graph'
 
-  action = (verb, obj)->
-    # obj: GET-> query, PUT-DEL-> triple
+  action = (verb, args)->
+
+    # spreaded interface: args map to [s, p, o]
+    if _.areStrings(args)
+      if args.length is 3
+        [s, p, o] = args
+        obj = {s: s, p: p, o: o}
+      else
+        throw new Error 'spreaded interface is available only for full triple'
+
+    # GET-> args[query]
+    # PUT-DEL-> args[triple] or args[[triples...]]
+    else obj = args[0]
+
     obj = aliases.unwrapAll(obj)
     def = Promise.defer()
     _.logBlue obj, verb
@@ -81,9 +93,9 @@ module.exports = (graphName)->
 
   API =
     # query example: { subject: "a", limit: 4, offset: 2, filter: ()-> }
-    get: (query)-> action 'get', query
-    put: (triple)-> action 'put', triple
-    del: (triple)-> action 'del', triple
+    get: (query...)-> action 'get', query
+    put: (triple...)-> action 'put', triple
+    del: (triple...)-> action 'del', triple
     getBidirectional: getBidirectional
     putBidirectional: putBidirectional
     delBidirectional: delBidirectional

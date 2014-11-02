@@ -42,9 +42,9 @@ module.exports =
       return triples.concat mirrorTriples
 
   extract:
-    subjects: (triples)-> _.extract triples, 's'
-    objects: (triples)-> _.extract triples, 'o'
-    predicates: (triples)-> _.extract triples, 'p'
+    subjects: (triples)-> _.pluck triples, 's'
+    objects: (triples)-> _.pluck triples, 'o'
+    predicates: (triples)-> _.pluck triples, 'p'
     first:
       subject: (triples)-> triples[0]?.s
       object: (triples)-> triples[0]?.o

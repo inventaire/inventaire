@@ -199,6 +199,34 @@ describe 'ACTIONS', ->
     .catch (err)->
       _.logRed err, 'err at Promises building'
 
+  describe 'common', ->
+    it 'should accept the spreaded interface', (done)->
+      trycatch( ->
+        graph.put('x', 'y', 'z')
+        .then ->
+          graph.get {s: 'x', p: 'y', o: 'z'}
+          .then (list)->
+            list.length.should.equal 1
+            graph.get('x', 'y', 'z')
+            .then (list2)->
+              list2.length.should.equal 1
+              graph.del('x', 'y', 'z')
+              .then ->
+                graph.get('x', 'y', 'z')
+                .then (list3)->
+                  list3.length.should.equal 0
+                  done()
+        .catch (err)-> throw new Error(err)
+      , done)
+
+    it 'should throw when the spreaded triple is incomplete', (done)->
+      trycatch( ->
+        (-> graph.put('x', 'y')).should.throw()
+        (-> graph.get('x', 'y')).should.throw()
+        (-> graph.del('x', 'y')).should.throw()
+        (-> graph.del('x', 'y', 'z')).should.not.throw()
+        done()
+      , done)
 
   describe 'put', ->
     it 'should return undefined', (done)->

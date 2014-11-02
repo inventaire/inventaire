@@ -44,7 +44,7 @@ module.exports =
     spaced = new Array
     array.forEach (el)=>
       spaced.push el
-      spaced.push @_
+      spaced.push '--------'
     spaced.pop()
     @log spaced, label, color
 
@@ -59,9 +59,11 @@ module.exports =
     else
       throw new Error "bad db object passed to _.getObjIfSuccess"
 
-  _: '-----------------------------------------------------------------'
-
   jsonFile: (path)->
     JSON.parse fs.readFileSync(path).toString()
 
-  extract: (objs, property)-> objs.map (obj)-> obj[property]
+  areStrings: (array)->
+    result = true
+    array.forEach (obj)=>
+      unless @isString(obj) then result = false
+    return result
