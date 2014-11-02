@@ -2,7 +2,7 @@ qreq = require 'qreq'
 _ = require('config').root.require('builders', 'utils')
 
 Promises = require './promises'
-module.exports = sharedLib('books')(Promises)
+module.exports = sharedLib('books')(Promises, _)
 
 module.exports.getGoogleBooksDataFromIsbn = (isbn)->
   cleanedIsbn = @cleanIsbnData(isbn).logIt('cleaned isbn')

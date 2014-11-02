@@ -1,7 +1,7 @@
 _ = require('config').root.require('builders', 'utils')
 
 Promises = require './promises'
-module.exports = wd = sharedLib('wikidata')(Promises)
+module.exports = wd = sharedLib('wikidata')(Promises, _)
 
 qreq = require 'qreq'
 wdProps = _.jsonFile('server/lib/wikidata-properties-fr.json').properties
@@ -78,7 +78,7 @@ rebaseClaimsValueToClaimsRoot = (entity)->
   return
 
 validIfIsABook = (claims, valid)->
-  claims.P31.forEach (statement)->
+  claims.P31?.forEach (statement)->
     valid = true  if _.hasValue Q.books, statement._id
   return valid
 
