@@ -63,3 +63,5 @@ module.exports =
 
   jsonFile: (path)->
     JSON.parse fs.readFileSync(path).toString()
+
+  extract: (objs, property)-> objs.map (obj)-> obj[property]
