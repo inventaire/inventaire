@@ -6,7 +6,6 @@ module.exports =
   name: 'inventaire'
   host: 'localhost'
   verbosity: 1
-  # host: '192.168.1.30'
   port: 3008
   fullHost: -> "#{@protocol}://#{@host}:#{@port}"
   secret: 'yoursecrethere'
@@ -32,13 +31,17 @@ module.exports =
     region: 'customizedInLocalConfig'
     bucket: 'customizedInLocalConfig'
   root:
-    path:
-      root: (name = '')-> "#{appRoot}/"
-      server: (name = '')-> "#{appRoot}/server/#{name}"
-      lib: (name = '')-> "#{appRoot}/server/lib/#{name}"
-      sharedLibs: (name = '')-> "#{appRoot}/client/app/lib/shared/#{name}"
-      builders: (name = '')-> "#{appRoot}/server/builders/#{name}"
-      controllers: (name = '')-> "#{appRoot}/server/controllers/#{name}"
-      graph: (name = '')-> "#{appRoot}/server/lib/graph/#{name}"
-      leveldb: (name = '')-> "#{appRoot}/leveldb/#{name}"
-    'require': (route, name)-> require @path[route](name)
+    paths:
+      root: ''
+      server: '/server'
+      lib: '/server/lib'
+      sharedLibs: '/client/app/lib/shared'
+      builders: '/server/builders'
+      controllers: '/server/controllers'
+      graph: '/server/lib/graph'
+      leveldb: '/leveldb'
+      couchdb: '/couchdb'
+    path: (route, name)->
+      path = @paths[route]
+      return "#{appRoot}#{path}/#{name}"
+    'require': (route, name)-> require @path(route, name)
