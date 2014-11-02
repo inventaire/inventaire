@@ -1,3 +1,7 @@
+# fixes the problem with wrong line numbers in stack reports
+# in other processes than 'coffee', i.e. mocha
+require 'coffee-errors'
+
 module.exports =
   env: 'tests'
   protocol: 'http'
@@ -15,5 +19,5 @@ module.exports =
     fakeUsers: false
     inv: 'inventory-tests'
   graph:
-    social: 'social_graph-tests'
+    social: undefined
   whitelistedRouteRegExp: /^\/api\//

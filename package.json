@@ -45,6 +45,7 @@
   },
   "devDependencies": {
     "chai": "^1.9.1",
+    "coffee-errors": "^0.8.6",
     "mocha": "^1.21.4",
     "should": "^4.0.4",
     "sinon": "^1.10.3",
