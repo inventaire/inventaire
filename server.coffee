@@ -10,14 +10,6 @@ __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 americano = require 'americano'
 
-# helper to require libs shared with the client-side
-# need to be a global variable, as the shared libs
-# depend on it
-global.sharedLib = sharedLib = __.require 'builders', 'shared_libs'
-global_libs_extender = __.require 'lib', 'global_libs_extender'
-global_libs_extender.initialize()
-
-
 CONFIG.host = host  if host?
 CONFIG.port = port  if port?
 
