@@ -19,12 +19,10 @@ module.exports = (graphName)->
   else
     level = require 'level'
     dbPath = __.path 'leveldb', graphName
-    _.logBlue dbPath, 'dbPath'
 
     leveldb = level(dbPath)
 
   graph = levelgraph(leveldb)
-  _.logBlue graph, 'graph'
 
   action = (verb, args)->
 
@@ -49,7 +47,6 @@ module.exports = (graphName)->
         _.logGreen result, "#{verb}: success!"
 
         if result?
-          _.logGreen result, "#{verb}: wrap"
           result = aliases.wrapAll(result)
 
         def.resolve(result)
@@ -70,9 +67,9 @@ module.exports = (graphName)->
     promise2 = @get query2
     return Promise.all([promise1, promise2])
     .spread (fromSubject, fromObject)->
-      results1 = _g.extract.objects(fromSubject)
-      results2 = _g.extract.subjects(fromObject)
-      result = _.toSet results1.concat(results2)
+      results1 = _g.pluck.objects(fromSubject)
+      results2 = _g.pluck.subjects(fromObject)
+      result = _.uniq results1.concat(results2)
       return _.logGreen result, 'bidirectional result'
 
   # PUT once with an arbitrary direction
@@ -93,9 +90,9 @@ module.exports = (graphName)->
 
   API =
     # query example: { subject: "a", limit: 4, offset: 2, filter: ()-> }
-    get: (query...)-> action 'get', query
-    put: (triple...)-> action 'put', triple
-    del: (triple...)-> action 'del', triple
+    get: (args...)-> action 'get', args
+    put: (args...)-> action 'put', args
+    del: (args...)-> action 'del', args
     getBidirectional: getBidirectional
     putBidirectional: putBidirectional
     delBidirectional: delBidirectional
