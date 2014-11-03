@@ -55,7 +55,7 @@ module.exports =
     .then (items)->
       _.logGreen items, 'public items'
       users = items.map (item)-> item.owner
-      _.logGreen users = _.toSet(users), 'public items users'
+      _.logGreen users = _.uniq(users), 'public items users'
       user.getUsersPublicData(users)
       .then (users)->
         res.json {items: items, users: users}
