@@ -1,4 +1,4 @@
-qreq = require 'qreq'
+breq = require 'breq'
 _ = require('config').root.require('builders', 'utils')
 
 Promises = require './promises'

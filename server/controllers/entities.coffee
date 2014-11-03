@@ -2,7 +2,7 @@ _ = require('config').root.require('builders', 'utils')
 
 books = require '../lib/books'
 wikidata = require '../lib/wikidata'
-Q = require 'q'
+Promise = require 'bluebird'
 
 module.exports =
   search: (req, res, next) ->
@@ -53,7 +53,7 @@ searchByText = (query, res)->
 
 spreadRequests = (res, promises, label)->
 
-  Q.spread(promises, selectFirstNonEmptyResult)
+  Promise.all(promises).spread(selectFirstNonEmptyResult)
   .then (selected)->
     if selected?
       res.json selected

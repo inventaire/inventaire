@@ -25,6 +25,7 @@
     "americano": "^0.3.6",
     "app-root-path": "0.0.1",
     "bluebird": "^2.2.2",
+    "breq": "git://github.com/maxlath/breq.git#master",
     "coffee-script": "^1.8.0",
     "colors": "^0.6.2",
     "config": "^1.2.0",
@@ -39,9 +40,7 @@
     "levelgraph": "^0.8.2",
     "lodash": "^2.4.1",
     "nano": "^5.11.2",
-    "no-js-analytics": "^0.1.9",
-    "q": "^1.0.1",
-    "qreq": "^0.2.0"
+    "no-js-analytics": "^0.1.9"
   },
   "devDependencies": {
     "chai": "^1.9.1",

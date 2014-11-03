@@ -1,4 +1,4 @@
-qreq = require 'qreq'
+breq = require 'breq'
 
 module.exports =
-  get: (url)-> qreq.get(url).then (res)-> res.body
+  get: (url)-> breq.get(url).then (res)-> res.body

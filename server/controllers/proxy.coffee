@@ -1,4 +1,4 @@
-qreq = require 'qreq'
+breq = require 'breq'
 url = require 'url'
 
 module.exports.get = (req, res, next)->
@@ -7,7 +7,7 @@ module.exports.get = (req, res, next)->
   unless parsed.protocol?
     _.errorHandler res, 'protocol missing', 400
   else
-    qreq.get(query)
+    breq.get(query)
     .then (resp)->
       res.send(resp.body)
     .fail (err)->

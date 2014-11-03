@@ -1,5 +1,5 @@
 CONFIG = require 'config'
-qreq = require 'qreq'
+breq = require 'breq'
 fs = require 'fs'
 _ = CONFIG.root.require('builders', 'utils')
 
@@ -23,13 +23,13 @@ invDbUrl = baseDbUrl + '/' + CONFIG.db.inv
 
 module.exports.usersDesignLoader = ->
   _.logBlue 'usersDesignLoader'
-  qreq.post usersDbUrl, usersDesignDoc.body()
+  breq.post usersDbUrl, usersDesignDoc.body()
   .then (res)-> _.logGreen res.body, "#{usersDesignDoc.id} for #{usersDbUrl}"
   .fail (err)-> _.logRed err.body, "#{usersDesignDoc.id} for #{usersDbUrl}"
 
 module.exports.invDesignLoader = ->
   _.logBlue 'invDesignLoader'
-  qreq.post invDbUrl, itemsDesignDoc.body()
+  breq.post invDbUrl, itemsDesignDoc.body()
   .then (res)-> _.logGreen res.body, "#{itemsDesignDoc.id} for #{invDbUrl}"
   .fail (err)-> _.logRed err.body, "#{itemsDesignDoc.id} for #{invDbUrl}"
 
@@ -49,7 +49,7 @@ keepUsers =
     JSON.parse fs.readFileSync(@path).toString()
 
 loadFakeUser = (username)->
-  qreq.get('http://api.randomuser.me/')
+  breq.get('http://api.randomuser.me/')
   .then (res)->
     fake = res.body.results[0].user
     userData =
@@ -62,13 +62,13 @@ loadFakeUser = (username)->
   .done()
 
 postUser = (data)->
-  qreq.post usersDbUrl, data
+  breq.post usersDbUrl, data
   .then (res)-> _.logBlue res.body, 'postUser'
   .fail (err)-> _.error err, 'postUser'
   .done()
 
 putUser = (data)->
-  qreq.put usersDbUrl + '/' + data._id, data
+  breq.put usersDbUrl + '/' + data._id, data
   .then (res)-> _.logBlue res.body, 'putUser'
   .fail (err)-> _.error err, 'putUser'
   .done()

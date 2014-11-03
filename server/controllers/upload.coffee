@@ -2,7 +2,7 @@ CONFIG = require 'config'
 _ = CONFIG.root.require('builders', 'utils')
 formidable = require 'formidable'
 client = require '../lib/knox-client'
-Q = require 'q'
+Promise = require 'bluebird'
 
 
 module.exports.post = (req, res, next)->
@@ -23,12 +23,12 @@ module.exports.post = (req, res, next)->
         src = file.path
         type = file.type
 
-        promise = client.putImage(src, type)
-        .then (response)-> _.logYellow response.req.url, 'url?'
+        promise = client.putImage(src, type).then (response)->
+          _.logYellow response.req.url, 'url?'
 
         promises.push promise
 
-      Q.all promises
+      Promise.all promises
       .then (urls)->
         _.logYellow urls, 'urls'
         ownedUrls = urls.map extractOwnedUrl

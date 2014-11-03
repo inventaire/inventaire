@@ -1,13 +1,13 @@
 CONFIG = require 'config'
-_ = CONFIG.root.require('builders', 'utils')
+__ = CONFIG.root
+_ = __.require('builders', 'utils')
 
 gravatar = require('gravatar')
 
-db = require '../db'
-H = db: require '../lib/db'
+db = __.require 'server', 'db'
 usersDB = db.use CONFIG.db.users
-Q = require 'q'
-qreq = require 'qreq'
+Promise = require 'bluebird'
+breq = require 'breq'
 
 usersCot = require('../cotDb').users
 
@@ -29,7 +29,7 @@ module.exports =
         assertion: req.body.assertion
         audience: CONFIG.fullHost()
     _.logYellow params.json.audience, 'persona audience requested'
-    return qreq.post params
+    return breq.post params
 
   verifyStatus: (personaAnswer, req, res) ->
     _.logYellow personaAnswer.body, 'personaAnswer.body'
@@ -73,20 +73,20 @@ module.exports =
     /^\w{1,20}$/.test username
 
   nameIsAvailable: (username)->
-    deferred = Q.defer()
+    def = Promise.defer()
     unless @isReservedWord(username)
       @byUsername(username)
       .then (body)->
         if body.rows.length == 0
           _.logGreen username, 'available'
-          deferred.resolve username
+          def.resolve username
         else
           _.logRed username, 'not available'
-          deferred.reject new Error('This username already exists')
+          def.reject new Error('This username already exists')
     else
       _.logRed username, 'reserved word'
-      deferred.reject new Error('Reserved words cant be usernames')
-    return deferred.promise
+      def.reject new Error('Reserved words cant be usernames')
+    return def.promise
 
   byUsername: (username)->
     return @db.view 'users', 'byUsername', {key: username.toLowerCase()}
@@ -118,34 +118,34 @@ module.exports =
     return usersCot.post(user).then (user)-> usersCot.get(user.id)
 
   getUsername: (email)->
-    deferred = Q.defer()
+    def = Promise.defer()
     @byEmail(email)
     .then (res)->
       if res?.rows?[0]?
-        deferred.resolve res.rows[0].value.username
-      else deferred.resolve
-    .fail (err)-> deferred.reject new Error(err)
-    return deferred.promise
+        def.resolve res.rows[0].value.username
+      else def.resolve
+    .fail (err)-> def.reject new Error(err)
+    return def.promise
 
   getUserId: (email)->
-    deferred = Q.defer()
+    def = Promise.defer()
     @byEmail(email)
     .then (res)->
       if res?.rows?[0]?
-        deferred.resolve res.rows[0].value._id
-      else deferred.resolve
-    .fail (err)-> deferred.reject new Error(err)
-    return deferred.promise
+        def.resolve res.rows[0].value._id
+      else def.resolve
+    .fail (err)-> def.reject new Error(err)
+    return def.promise
 
   fetchUsers: (ids)->
-    deferred = Q.defer()
+    def = Promise.defer()
     if ids?.length? and ids.length > 0
       _.logGreen ids, 'ids for fetchUsers'
       usersDB.fetch {keys: ids}, (err, body)->
-        if err then deferred.reject new Error(err)
-        else deferred.resolve body
-    else deferred.resolve()
-    return deferred.promise
+        if err then def.reject new Error(err)
+        else def.resolve body
+    else def.resolve()
+    return def.promise
 
 
   getUsersPublicData: (ids)->

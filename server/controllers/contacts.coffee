@@ -2,7 +2,7 @@ _ = require('config').root.require('builders', 'utils')
 
 user = require '../lib/user'
 inv = require '../lib/inv'
-Q = require 'q'
+Promise = require 'bluebird'
 
 module.exports.find = (req, res, next) ->
   _.logYellow query = req.query, 'contacts.find query'
@@ -66,5 +66,5 @@ module.exports.fetchItems = (req, res, next) ->
     inv.byListing ownerId, 'contacts'
     inv.byListing ownerId, 'public'
   ]
-  Q.spread promises, _.mergeArrays
+  Promise.all(promises).spread _.mergeArrays
   .then (body)-> res.json body
