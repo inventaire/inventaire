@@ -1,7 +1,7 @@
-expect = require("chai").expect
-should = require "should"
-trycatch = require "trycatch"
-request = require "supertest"
+expect = require('chai').expect
+should = require 'should'
+trycatch = require 'trycatch'
+request = require 'supertest'
 baseUrl = require('config').fullHost()
 
 __ = require('config').root

@@ -3,7 +3,7 @@ expect = require("chai").expect
 trycatch = require "trycatch"
 request = require "supertest"
 fs = require 'fs'
-qreq = require 'qreq'
+breq = require 'breq'
 
 __ = require('config').root
 user =  __.require 'lib', 'user'
@@ -12,13 +12,13 @@ CONFIG = require('config')
 baseDbUrl = CONFIG.db.fullHost()
 
 user = __.require 'lib', 'user'
-couchPath = __.path.couchdb('keep_users.json')
+couchPath = __.path 'couchdb', 'keep_users.json'
 keepUsers = JSON.parse fs.readFileSync(couchPath).toString()
 keepUsersIds = keepUsers.map (user)-> return user._id
 
 describe "searchByUsername", ->
   keepUsersIds.forEach (id)->
-    it "should have keept user", (done)->
+    it "should have kept user", (done)->
       trycatch( ->
         request(baseDbUrl)
         .get("/users/#{id}")

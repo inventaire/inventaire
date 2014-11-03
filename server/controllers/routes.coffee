@@ -87,7 +87,9 @@ module.exports =
 
   'test/json':
     get: (req, res, next)-> res.json {server: 'OK'}
-    post: (req, res, next)-> res.json {server: 'OK', body: req.body}
+    post: (req, res, next)->
+      _.logBlue req.body
+      res.json {server: 'OK', body: req.body}
 
   'proxy/*':
     get: proxy.get
