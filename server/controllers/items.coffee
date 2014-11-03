@@ -1,13 +1,14 @@
-_ = require('config').root.require('builders', 'utils')
-inv = require '../lib/inv'
-user = require '../lib/user'
+__ = require('config').root
+_ = __.require 'builders', 'utils'
+inv = __.require 'lib', 'inv'
+user = __.require 'lib', 'user'
 
 module.exports =
   fetch: (req, res, next) ->
     # only fetch for session email
     # = only way to fetch private data on items
     user.getUserId(req.session.email)
-    .then inv.byOwner
+    .then inv.byOwner.bind(inv)
     .then (items)-> res.json items
     .fail (err)-> _.errorHandler res, err
     .done()
