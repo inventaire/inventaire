@@ -15,10 +15,10 @@ relationActions =
   relationStatus: (userId, otherId)->
     [fromUser, fromOther] = [
       @get({s: userId, o: otherId})
-      .then _g.extract.first.predicate
+      .then _g.pluck.first.predicate
 
       @get({s: otherId , o: userId})
-      .then _g.extract.first.predicate
+      .then _g.pluck.first.predicate
     ]
 
     return Promise.all [fromUser, fromOther]
@@ -63,14 +63,32 @@ putFriendRelation = (userId, friendId)->
 
 
 relationsLists =
-  getUserFriendRequests: (userId)->
-    query = { p: 'requested', o: userId }
-    return @get(query).then _g.extract.subjects
+  getUserRelations: (userId)->
+    [friends, userRequests, othersRequests] = [
+      @getUserFriends(userId)
+      @getUserRequests(userId)
+      @getOthersRequests(userId)
+    ]
+
+    return Promise.all([friends, userRequests, othersRequests])
+    .spread (friends, userRequests, othersRequests)->
+      return {
+        friends: friends
+        userRequests: userRequests
+        othersRequests: othersRequests
+      }
 
   getUserFriends: (userId)->
     query = {s: userId, p: 'friend'}
     return @getBidirectional query
 
+  getOthersRequests: (userId)->
+    query = { p: 'requested', o: userId }
+    return @get(query).then _g.pluck.subjects
+
+  getUserRequests: (userId)->
+    query = {s: userId, p: 'requested'}
+    return @get(query).then _g.pluck.objects
 
 
 module.exports = _.extend graph, relationActions, relationsLists
