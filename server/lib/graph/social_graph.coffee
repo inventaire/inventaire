@@ -43,11 +43,13 @@ relationActions =
         else throw "got status #{status} at requestFriend"
 
   acceptRequest: (userId, friendId)->
-    if @relationStatus(userId, friendId) is 'friendRequested'
-      putFriendRelation(userId, friendId)
-      .then -> delUserFriendRequest(userId, friendId)
-
-    else throw new Error('tried to accept an inexistant request')
+    @relationStatus(userId, friendId)
+    .then (status)->
+      if status is 'friendRequested'
+        putFriendRelation(userId, friendId)
+        .then -> delUserFriendRequest(userId, friendId)
+      else
+        throw new Error 'tried to accept an inexistant request'
 
 
 putUserFriendRequest = (userId, friendId)->
@@ -63,7 +65,7 @@ putFriendRelation = (userId, friendId)->
 
 
 relationsLists =
-  getUserRelations: (userId)->
+  getUserRelationsIds: (userId)->
     [friends, userRequests, othersRequests] = [
       @getUserFriends(userId)
       @getUserRequests(userId)

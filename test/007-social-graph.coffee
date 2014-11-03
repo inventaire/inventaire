@@ -79,10 +79,10 @@ describe 'RELATIONS', ->
         .catch (err)-> throw new Error(err)
       , done)
 
-  describe 'getUserRelations', ->
+  describe 'getUserRelationsIds', ->
     it "should return a map of relations", (done)->
       trycatch( ->
-        graph.getUserRelations('max')
+        graph.getUserRelationsIds('max')
         .then (relations)->
           relations.should.be.an.Object
           relations.friends.should.be.an.Array
@@ -94,7 +94,7 @@ describe 'RELATIONS', ->
 
           graph.requestFriend('max', 'jane')
           .then ->
-            graph.getUserRelations('max')
+            graph.getUserRelationsIds('max')
             .then (relations)->
               relations.friends.length.should.equal 0
               relations.userRequests.length.should.equal 1
