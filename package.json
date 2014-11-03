@@ -22,7 +22,7 @@
     "url": "http://github.com/maxlath/inventaire"
   },
   "dependencies": {
-    "americano": "^0.3.6",
+    "americano": "^0.3.11",
     "app-root-path": "0.0.1",
     "bluebird": "^2.2.2",
     "breq": "git://github.com/maxlath/breq.git#master",
