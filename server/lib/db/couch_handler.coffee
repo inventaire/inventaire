@@ -1,6 +1,8 @@
 CONFIG = require('config')
+__ = CONFIG.root
+_ = __.require 'builders', 'utils'
 nano = require('nano') CONFIG.db.fullHost()
-dbInit = require './db_init'
+dbInit = __.require 'db', 'couch_init'
 
 module.exports =
   checkDbsExistanceOrCreate: (db, checker = @checkExistanceOrCreate)->
@@ -11,11 +13,13 @@ module.exports =
     else if db instanceof Array
       valid = true
       db.forEach (dbName)=>
+        unless dbName? then throw "missing dbName: got #{dbName}"
         if not @isValidDbName dbName
           valid = false
       if valid
         db.forEach checker
       else
+        _.log db, 'bad db names'
         throw new Error 'only lowercase strings are accepted in an array of DBs'
 
     else

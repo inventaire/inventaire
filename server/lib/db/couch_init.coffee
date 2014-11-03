@@ -1,19 +1,20 @@
 CONFIG = require 'config'
 breq = require 'breq'
 fs = require 'fs'
-_ = CONFIG.root.require('builders', 'utils')
+__ = CONFIG.root
+_ = __.require('builders', 'utils')
 
 usersDesignDoc =
   name: 'users'
   id: '_design/users'
-  path: './couchdb/users.json'
+  path: __.path 'couchdb', 'users.json'
   body: ()->
     JSON.parse fs.readFileSync(@path).toString()
 
 itemsDesignDoc =
   name: 'items'
   id: '_design/items'
-  path: './couchdb/items.json'
+  path: __.path 'couchdb', 'items.json'
   body: ()->
     JSON.parse fs.readFileSync(@path).toString()
 
@@ -44,7 +45,7 @@ module.exports.loadFakeUsers = ->
   loadFakeUser() for [1..50]
 
 keepUsers =
-  path: './couchdb/keep_users.json'
+  path: __.path 'couchdb', 'keep_users.json'
   body: ()->
     JSON.parse fs.readFileSync(@path).toString()
 

@@ -17,7 +17,7 @@ module.exports =
     fullHost: -> "#{@protocol}://#{@host}:#{@port}"
     users: 'users'
     fakeUsers: false
-    inv: 'inventory'
+    inventory: 'inventory'
   graph:
     social: 'social_graph'
   whitelistedRouteRegExp: /^\/api\/auth\//
@@ -36,9 +36,10 @@ module.exports =
       server: '/server'
       lib: '/server/lib'
       sharedLibs: '/client/app/lib/shared'
+      db: '/server/lib/db'
+      graph: '/server/lib/graph'
       builders: '/server/builders'
       controllers: '/server/controllers'
-      graph: '/server/lib/graph'
       leveldb: '/leveldb'
       couchdb: '/couchdb'
     path: (route, name)->

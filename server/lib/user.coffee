@@ -1,18 +1,14 @@
 CONFIG = require 'config'
 __ = CONFIG.root
-_ = __.require('builders', 'utils')
+_ = __.require 'builders', 'utils'
 
-gravatar = require('gravatar')
-
-db = __.require 'server', 'db'
-usersDB = db.use CONFIG.db.users
 Promise = require 'bluebird'
 breq = require 'breq'
 
-usersCot = require('../cotDb').users
+gravatar = require 'gravatar'
 
 module.exports =
-  db: usersCot
+  db: __.require 'db', 'users'
   isLoggedIn: (req)->
     if req.session.email?
       _.logGreen req.session.toJSON(), 'user is logged in'
@@ -63,30 +59,30 @@ module.exports =
     else
       _.errorHandler res, 'Persona verify status isnt okay oO: might be a problem with Persona audience setting'
 
-  byId: (id)->
-    return usersCot.get(id)
+  byId: (id)-> @db.get(id)
 
-  byEmail: (email)->
-    return usersCot.view "users", "byEmail", {key: email}
+  byEmail: (email)-> @db.view "users", "byEmail", {key: email}
 
   nameIsValid: (username)->
     /^\w{1,20}$/.test username
 
   nameIsAvailable: (username)->
-    def = Promise.defer()
     unless @isReservedWord(username)
-      @byUsername(username)
+      return @byUsername(username)
       .then (body)->
         if body.rows.length == 0
           _.logGreen username, 'available'
-          def.resolve username
+          return username
         else
           _.logRed username, 'not available'
-          def.reject new Error('This username already exists')
+          throw new Error('This username already exists')
     else
       _.logRed username, 'reserved word'
+
+      # this seems ackward to reject before returning the promise
+      def = Promise.defer()
       def.reject new Error('Reserved words cant be usernames')
-    return def.promise
+      return def.promise
 
   byUsername: (username)->
     return @db.view 'users', 'byUsername', {key: username.toLowerCase()}
@@ -113,40 +109,19 @@ module.exports =
       username: username
       email: email
       created: _.now()
-      picture: gravatar.url(email, {d: 'mm', s: '200'}) # default, size
+      # gravatar params: {d: default, s: size}
+      picture: gravatar.url(email, {d: 'mm', s: '200'})
     _.logBlue user, 'new user'
-    return usersCot.post(user).then (user)-> usersCot.get(user.id)
-
-  getUsername: (email)->
-    def = Promise.defer()
-    @byEmail(email)
-    .then (res)->
-      if res?.rows?[0]?
-        def.resolve res.rows[0].value.username
-      else def.resolve
-    .fail (err)-> def.reject new Error(err)
-    return def.promise
+    return @db.post(user).then (user)=> @db.get(user.id)
 
   getUserId: (email)->
-    def = Promise.defer()
-    @byEmail(email)
+    return @byEmail(email)
     .then (res)->
-      if res?.rows?[0]?
-        def.resolve res.rows[0].value._id
-      else def.resolve
-    .fail (err)-> def.reject new Error(err)
-    return def.promise
+      if res?.rows?[0]? then return res.rows[0].value._id
+      else return
+    .fail (err)-> throw new Error(err)
 
-  fetchUsers: (ids)->
-    def = Promise.defer()
-    if ids?.length? and ids.length > 0
-      _.logGreen ids, 'ids for fetchUsers'
-      usersDB.fetch {keys: ids}, (err, body)->
-        if err then def.reject new Error(err)
-        else def.resolve body
-    else def.resolve()
-    return def.promise
-
+  fetchUsers: (ids)-> @db.fetch(ids)
 
   getUsersPublicData: (ids)->
     ids = ids.split?('|') or ids
@@ -171,14 +146,12 @@ module.exports =
       # contacts: value.contacts
 
   # only used by tests so far
-  deleteUser: (user)->
-    return usersCot.delete user._id, user._rev
+  deleteUser: (user)-> @db.del user._id, user._rev
 
   deleteUserByUsername: (username)->
     _.logBlue username, 'deleteUserbyUsername'
     @byUsername(username)
-    .then (body)->
-      return body.rows[0].value
+    .then (body)-> body.rows[0].value
     .then @deleteUser
     .fail (err)-> _.logRed err, 'deleteUserbyUsername err'
 

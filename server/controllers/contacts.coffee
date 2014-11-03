@@ -48,7 +48,7 @@ module.exports.followedData = (req, res, next) ->
       return body.rows[0].value.contacts
     else
       return
-  .then user.fetchUsers
+  .then user.fetchUsers.bind(user)
   .then (body)->
     if body?
       usersData = _.mapCouchResult 'doc', body
@@ -66,5 +66,6 @@ module.exports.fetchItems = (req, res, next) ->
     inv.byListing ownerId, 'contacts'
     inv.byListing ownerId, 'public'
   ]
-  Promise.all(promises).spread _.mergeArrays
+  Promise.all(promises)
+  .spread _.mergeArrays
   .then (body)-> res.json body

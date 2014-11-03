@@ -1,9 +1,9 @@
 CONFIG = require 'config'
-_ = CONFIG.root.require('builders', 'utils')
-invCot = require('../cotDb').inv
+__ = CONFIG.root
+_ = __.require('builders', 'utils')
 
 module.exports =
-  db: invCot
+  db: __.require 'db', 'inventory'
   isValidItem: (item)->
     requiredKeys = ['title', '_id', 'owner']
     valid = true
@@ -13,28 +13,24 @@ module.exports =
         valid = false
     return valid
 
-  # get: (id)->
-  #   @db.get(id)
-  #   .then safeItemData
-
   byOwner: (owner)->
     # only used by items.fetch with req.session.email owner
     # => shouldn't be safeItems'ized
-    invCot.view 'items', 'byOwner', {key: owner}
+    @db.view 'items', 'byOwner', {key: owner}
     .then parseValue
 
   byListing: (owner, listing)->
-    invCot.view 'items', 'byListing', {key: [owner, listing]}
+    @db.view 'items', 'byListing', {key: [owner, listing]}
     .then parseValue
     .then safeItems
 
   byEntity: (uri)->
-    invCot.view 'items', 'byEntity', {key: uri}
+    @db.view 'items', 'byEntity', {key: uri}
     .then parseValue
     .then safeItems
 
   publicByDate: ->
-    invCot.view 'items', 'publicByDate', {
+    @db.view 'items', 'publicByDate', {
       limit: 20
       descending: true
     }
@@ -42,7 +38,7 @@ module.exports =
     .then safeItems
 
   publicByOwnerAndSuffix: (owner, suffix)->
-    invCot.view 'items', 'publicByOwnerAndSuffix', {key: [owner, suffix]}
+    @db.view 'items', 'publicByOwnerAndSuffix', {key: [owner, suffix]}
     .then parseValue
     .then safeItems
 

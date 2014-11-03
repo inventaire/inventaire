@@ -3,11 +3,10 @@ __ = CONFIG.root
 _ = __.require('builders', 'utils')
 
 nano = require('nano') CONFIG.db.fullHost()
-lib =
-  db: __.require 'lib', 'db'
+_db = __.require 'lib', 'db'
 
 if CONFIG.db.instable
-  lib.db.checkDbsExistanceOrCreate [CONFIG.db.users, CONFIG.db.inv]
+  _db.checkDbsExistanceOrCreate [CONFIG.db.users, CONFIG.db.inventory]
 else _.logBlue 'DBs assumed to exist'
 
 module.exports = nano.db
