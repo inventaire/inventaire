@@ -67,3 +67,9 @@ module.exports =
     array.forEach (obj)=>
       unless @isString(obj) then result = false
     return result
+
+  areStringsOrFalsy: (array)->
+    compacted = @compact(array)
+    if compacted.length > 0 and @areStrings(compacted)
+      return true
+    else return false

@@ -2,6 +2,7 @@ _ = require('config').root.require 'builders', 'utils'
 
 
 module.exports =
+  aliases: require './aliases'
   mirrorTriple: (triple)->
     unless @isShortened(triple)
       throw new Error('wrong API: should be shortened')
@@ -41,6 +42,31 @@ module.exports =
 
       return triples.concat mirrorTriples
 
+  normalizeInterface: (args, unwrap)->
+    # spreaded interface: args map to [s, p, o]
+    # allows args like ['foo', null, 'bar']
+    if _.areStringsOrFalsy(args)
+      obj = @convertSpreadedInterface(args)
+    else
+      if args.length > 1
+        throw 'unrecognized interface'
+      # GET-> args[query]
+      # PUT-DEL-> args[triple] or args[[triples...]]
+      obj = args[0]
+
+    # from s, p, o to subject, predicate, object
+    # as this is the interface required by levelgraph
+    if unwrap then return @aliases.unwrapAll(obj)
+    else return obj
+
+  convertSpreadedInterface: (args)->
+    [s, p, o] = args
+    obj = {}
+    obj.s = s  if s?
+    obj.p = p  if p?
+    obj.o = o  if o?
+    return obj
+
   pluck:
     subjects: (triples)-> _.pluck triples, 's'
     objects: (triples)-> _.pluck triples, 'o'
@@ -49,3 +75,10 @@ module.exports =
       subject: (triples)-> triples[0]?.s
       object: (triples)-> triples[0]?.o
       predicate: (triples)-> triples[0]?.p
+
+  logDb: ->
+    @leveldb.createReadStream()
+    .on 'data', (data) -> _.log data.value, data.key
+    .on 'error', (err) -> _.log err, 'err at logDb'
+    .on 'close', -> _.log 'Stream closed'
+    .on 'end', -> _.log 'Stream end'

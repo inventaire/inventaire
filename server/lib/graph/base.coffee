@@ -7,7 +7,6 @@ levelgraph = require 'levelgraph'
 
 Promise = require 'bluebird'
 
-aliases = require './aliases'
 _g = require './graph_utils'
 
 
@@ -25,20 +24,7 @@ module.exports = (graphName)->
   graph = levelgraph(leveldb)
 
   action = (verb, args)->
-
-    # spreaded interface: args map to [s, p, o]
-    if _.areStrings(args)
-      if args.length is 3
-        [s, p, o] = args
-        obj = {s: s, p: p, o: o}
-      else
-        throw new Error 'spreaded interface is available only for full triple'
-
-    # GET-> args[query]
-    # PUT-DEL-> args[triple] or args[[triples...]]
-    else obj = args[0]
-
-    obj = aliases.unwrapAll(obj)
+    obj = _g.normalizeInterface(args, true)
     def = Promise.defer()
     _.logBlue obj, verb
     graph[verb] obj, (err, result)->
@@ -47,13 +33,16 @@ module.exports = (graphName)->
         _.logGreen result, "#{verb}: success!"
 
         if result?
-          result = aliases.wrapAll(result)
+          result = _g.aliases.wrapAll(result)
 
         def.resolve(result)
     return def.promise
 
-  getBidirectional = (query)->
+  getBidirectional = (args...)->
+    query = _g.normalizeInterface(args)
     # EXPECT short form: s, p, o
+    # EXPECT a subject and a predicate
+    # RETURNS an array of subjet and/or object
     unless query.s? and query.p?
       return Promise.defer().reject('missing subject or predicate')
 
@@ -76,17 +65,11 @@ module.exports = (graphName)->
   # getBidirectional or delBidirectional will find it
   # it should just be agreed that a type of relation
   # is a mutual relation
-  putBidirectional = @put
+  # => putBidirectional aliased to graph.put
 
-  delBidirectional = (triples)->
+  delBidirectional = (args...)->
+    triples = _g.normalizeInterface(args)
     return @del _g.addMirrorTriples(triples)
-
-  logDb = ->
-    leveldb.createReadStream()
-    .on 'data', (data) -> _.log data.value, data.key
-    .on 'error', (err) -> _.log err, 'err at logDb'
-    .on 'close', -> _.log 'Stream closed'
-    .on 'end', -> _.log 'Stream end'
 
   API =
     # query example: { subject: "a", limit: 4, offset: 2, filter: ()-> }
@@ -94,12 +77,12 @@ module.exports = (graphName)->
     put: (args...)-> action 'put', args
     del: (args...)-> action 'del', args
     getBidirectional: getBidirectional
-    putBidirectional: putBidirectional
     delBidirectional: delBidirectional
     utils: _g
     leveldb: leveldb
-    logDb: logDb
+    logDb: _g.logDb
     graph: graph
-    aliases: aliases
+
+  API.putBidirectional = API.put
 
   return API
