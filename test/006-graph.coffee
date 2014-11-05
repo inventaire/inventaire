@@ -10,7 +10,7 @@ Promise = require 'bluebird'
 
 testDbName = 'tests'
 graph = __.require('graph', 'base')(testDbName)
-_.logYellow graph, 'graph'
+_.log graph, 'graph'
 
 aliasedTriple =
   s: 'A'
@@ -28,8 +28,8 @@ _g = graph.utils
 aliases = _g.aliases.list
 
 aliasesKeys = _g.aliases.keys
-_.logYellow aliases, 'aliases'
-_.logYellow aliasesKeys, 'aliasesKeys'
+_.log aliases, 'aliases'
+_.log aliasesKeys, 'aliasesKeys'
 
 queries = []
 aliasesKeys.forEach (alias)->
@@ -44,7 +44,7 @@ Fake = ->
   @triples = _.clone aliasedTriples
   return
 
-_.logBlue new Fake, 'fake'
+_.info new Fake, 'fake'
 
 fake = {}
 P = promises = {}
@@ -68,8 +68,8 @@ describe 'ALIASES', ->
         fake.queries.forEach (query)->
           newQuery = _g.aliases.unwrap(query)
           newQuery.should.be.an.Object
-          _.logBlue query, 'query'
-          _.logGreen newQuery, 'newQuery'
+          _.info query, 'query'
+          _.success newQuery, 'newQuery'
           for alias,v of aliases
             if query[alias]?
               expect(newQuery[alias]).to.be.undefined
@@ -192,7 +192,7 @@ describe 'ACTIONS', ->
     P.put = graph.put [P.triple]
     P.put.then ->
       P.query = _.pick P.triple, ['s']
-      _.logBlue P.query, 'P.query'
+      _.info P.query, 'P.query'
       P.get = graph.get P.query
 
       P.getBidirectional = graph.getBidirectional {s: 'B', p: 'C'}
@@ -201,7 +201,7 @@ describe 'ACTIONS', ->
         P.del = graph.del [P.triple]
 
     .catch (err)->
-      _.logRed err, 'err at Promises building'
+      _.error err, 'err at Promises building'
 
   describe 'common', ->
     it 'should accept the spreaded interface', (done)->
@@ -253,13 +253,13 @@ describe 'ACTIONS', ->
       trycatch( ->
         P.get.should.be.a.Promise
         P.get.then (res)->
-          _.logYellow res, 'res'
-          _.logYellow P.triple, 'P.triple'
+          _.log res, 'res'
+          _.log P.triple, 'P.triple'
           res.should.be.an.Array
           for k, v of P.query
             # k = aliases[k] or k
             res.forEach (triple)->
-              _.logYellow [k, v, triple], 'k, v, triple'
+              _.log [k, v, triple], 'k, v, triple'
               triple[k].should.equal v
           res[0].should.be.an.Object
           done()

@@ -11,10 +11,10 @@ module.exports =
   db: __.require 'db', 'users'
   isLoggedIn: (req)->
     if req.session.email?
-      _.logGreen req.session.toJSON(), 'user is logged in'
+      _.success req.session.toJSON(), 'user is logged in'
       return true
     else
-      _.logRed req.session.toJSON(), 'user is not logged in'
+      _.error req.session.toJSON(), 'user is not logged in'
       return false
 
   verifyAssertion: (req)->
@@ -24,11 +24,11 @@ module.exports =
       json:
         assertion: req.body.assertion
         audience: CONFIG.fullHost()
-    _.logYellow params.json.audience, 'persona audience requested'
+    _.log params.json.audience, 'persona audience requested'
     return breq.post params
 
   verifyStatus: (personaAnswer, req, res) ->
-    _.logYellow personaAnswer.body, 'personaAnswer.body'
+    _.log personaAnswer.body, 'personaAnswer.body'
     body = personaAnswer.body
     req.session.username = username = req.body.username
     req.session.email = email = body.email
@@ -51,7 +51,7 @@ module.exports =
           .fail (err)-> _.errorHandler res, err
         else
           err = "Couldn't find an account associated with this email"
-          _.logRed err
+          _.error err
           _.errorHandler res, err
       .fail (err)-> _.errorHandler res, err
       .done()
@@ -71,13 +71,13 @@ module.exports =
       return @byUsername(username)
       .then (body)->
         if body.rows.length == 0
-          _.logGreen username, 'available'
+          _.success username, 'available'
           return username
         else
-          _.logRed username, 'not available'
+          _.error username, 'not available'
           throw new Error('This username already exists')
     else
-      _.logRed username, 'reserved word'
+      _.error username, 'reserved word'
 
       # this seems ackward to reject before returning the promise
       def = Promise.defer()
@@ -94,7 +94,7 @@ module.exports =
         return @safeUserData(res.rows[0].value)
       else return
     .fail (err)->
-      _.logRed err, 'couldnt getUserFromUsername'
+      _.error err, 'couldnt getUserFromUsername'
 
   usernameStartBy: (username, options)->
     username = username.toLowerCase()
@@ -111,7 +111,7 @@ module.exports =
       created: _.now()
       # gravatar params: {d: default, s: size}
       picture: gravatar.url(email, {d: 'mm', s: '200'})
-    _.logBlue user, 'new user'
+    _.info user, 'new user'
     return @db.post(user).then (user)=> @db.get(user.id)
 
   getUserId: (email)->
@@ -127,15 +127,15 @@ module.exports =
     ids = ids.split?('|') or ids
     @fetchUsers(ids)
     .then (body)=>
-      _.logGreen body, 'found users data'
+      _.success body, 'found users data'
       if body?
         usersData = _.mapCouchResult 'doc', body
-        _.logGreen usersData, 'usersData before cleaning'
+        _.success usersData, 'usersData before cleaning'
         cleanedUsersData = usersData.map @safeUserData
-        _.logGreen cleanedUsersData, 'cleanedUsersData'
+        _.success cleanedUsersData, 'cleanedUsersData'
         return cleanedUsersData
       else
-        _.logYellow "users not found. Ids?: #{ids.join(', ')}"
+        _.log "users not found. Ids?: #{ids.join(', ')}"
         return
 
   safeUserData: (value)->
@@ -149,11 +149,11 @@ module.exports =
   deleteUser: (user)-> @db.del user._id, user._rev
 
   deleteUserByUsername: (username)->
-    _.logBlue username, 'deleteUserbyUsername'
+    _.info username, 'deleteUserbyUsername'
     @byUsername(username)
     .then (body)-> body.rows[0].value
     .then @deleteUser
-    .fail (err)-> _.logRed err, 'deleteUserbyUsername err'
+    .fail (err)-> _.error err, 'deleteUserbyUsername err'
 
   isReservedWord: (username)->
     reservedWords = [

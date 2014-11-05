@@ -79,7 +79,7 @@ describe "cleanUserData", ->
     done()
 
   it 'throw on missing params', (done)->
-    _.logBlue fakeBadRow.value
+    _.info fakeBadRow.value
     (-> _.cleanUserData(fakeBadRow.value)).should.throwError()
     done()
 
@@ -91,7 +91,7 @@ describe "username validation", ->
         .post '/auth/username'
         .send fake.good
         .end (err, res) ->
-          _.logYellow res.status, 'res.status'
+          _.log res.status, 'res.status'
           res.status.should.equal 200
           res.body.should.be.an.Object
           res.body.should.have.property('username')
@@ -105,7 +105,7 @@ describe "username validation", ->
         .post '/auth/username'
         .send fake.invalid
         .end (err, res) ->
-          _.logYellow res.status, 'res.status'
+          _.log res.status, 'res.status'
           res.status.should.equal 400
           res.body.should.be.an.Object
           res.body.should.have.property('username')
@@ -115,10 +115,10 @@ describe "username validation", ->
     , done)
 
   before ->
-    _.logYellow 'before'
+    _.log 'before'
     user.newUser fake.taken.username, fake.taken.email
   after ->
-    _.logYellow 'after'
+    _.log 'after'
     user.deleteUserByUsername fake.taken.username
 
   it "returns a 'not available' status when not available username", (done)->
@@ -140,7 +140,7 @@ describe "everything's clean", ->
     trycatch( ->
       user.byUsername(fake.good.username)
       .done (body)->
-        _.logYellow body, 'clean body?'
+        _.log body, 'clean body?'
         body.rows.should.be.an.Array
         body.rows.length.should.equal 0
         done()

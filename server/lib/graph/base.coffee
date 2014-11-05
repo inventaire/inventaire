@@ -26,11 +26,11 @@ module.exports = (graphName)->
   action = (verb, args)->
     obj = _g.normalizeInterface(args, true)
     def = Promise.defer()
-    _.logBlue obj, verb
+    _.info obj, verb
     graph[verb] obj, (err, result)->
       if err then def.reject(err)
       else
-        _.logGreen result, "#{verb}: success!"
+        _.success result, "#{verb}: success!"
 
         # result exist only on GET
         if result? then result = _g.aliases.wrapAll(result)
@@ -56,7 +56,7 @@ module.exports = (graphName)->
         return Promise.defer().reject(err)
 
       query2 = _g.mirrorTriple(query)
-      _.logBlue [query, query2], 'query & mirror '
+      _.info [query, query2], 'query & mirror '
 
       promise1 = @get query
       promise2 = @get query2
@@ -65,7 +65,7 @@ module.exports = (graphName)->
         results1 = _g.pluck.objects(fromSubject)
         results2 = _g.pluck.subjects(fromObject)
         result = _.uniq results1.concat(results2)
-        return _.logGreen result, 'bidirectional result'
+        return _.success result, 'bidirectional result'
 
     # PUT once with an arbitrary direction
     # getBidirectional or delBidirectional will find it

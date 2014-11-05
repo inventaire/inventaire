@@ -68,7 +68,7 @@ module.exports =
       whitelist = ['lang']
       if _.hasValue whitelist, req.body.key
         res.cookie key = req.body.key, value = req.body.value
-        _.logBlue result = "cookie set: #{key} = #{value}"
+        _.info result = "cookie set: #{key} = #{value}"
         res.send result
       else _.errorHandler res, 'unauthorize cookie setting', '403'
 
@@ -81,14 +81,14 @@ module.exports =
   'test':
     get: (req, res, next)-> res.send 'server: OK'
     post: (req, res, next)->
-      if req.body?.label? then _.logBlue(req.body.obj, req.body.label)
-      else _.logBlue req.body
+      if req.body?.label? then _.info(req.body.obj, req.body.label)
+      else _.info req.body
       res.send 'thanks!'
 
   'test/json':
     get: (req, res, next)-> res.json {server: 'OK'}
     post: (req, res, next)->
-      _.logBlue req.body
+      _.info req.body
       res.json {server: 'OK', body: req.body}
 
   'proxy/*':

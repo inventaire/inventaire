@@ -10,21 +10,21 @@ values = Object.keys _.invert(list)
 
 
 unwrap = (triple)->
-  # _.logBlue triple, 'triple'
+  # _.info triple, 'triple'
   updated = _.omit triple, keys
   if triple.s? then updated.subject = triple.s
   if triple.o? then updated.object = triple.o
   if triple.p? then updated.predicate = triple.p
-  # _.logGreen updated, 'updated'
+  # _.success updated, 'updated'
   return updated
 
 wrap = (triple)->
-  # _.logBlue triple, 'triple'
+  # _.info triple, 'triple'
   updated = _.omit triple, values
   if triple.subject? then updated.s = triple.subject
   if triple.object? then updated.o = triple.object
   if triple.predicate? then updated.p = triple.predicate
-  # _.logGreen updated, 'updated'
+  # _.success updated, 'updated'
   return updated
 
 wrapAll = (obj)-> toggleAll(wrap, obj)

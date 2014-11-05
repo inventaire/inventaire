@@ -23,16 +23,16 @@ usersDbUrl = baseDbUrl + '/' + CONFIG.db.users
 invDbUrl = baseDbUrl + '/' + CONFIG.db.inv
 
 module.exports.usersDesignLoader = ->
-  _.logBlue 'usersDesignLoader'
+  _.info 'usersDesignLoader'
   breq.post usersDbUrl, usersDesignDoc.body()
-  .then (res)-> _.logGreen res.body, "#{usersDesignDoc.id} for #{usersDbUrl}"
-  .fail (err)-> _.logRed err.body, "#{usersDesignDoc.id} for #{usersDbUrl}"
+  .then (res)-> _.success res.body, "#{usersDesignDoc.id} for #{usersDbUrl}"
+  .fail (err)-> _.error err.body, "#{usersDesignDoc.id} for #{usersDbUrl}"
 
 module.exports.invDesignLoader = ->
-  _.logBlue 'invDesignLoader'
+  _.info 'invDesignLoader'
   breq.post invDbUrl, itemsDesignDoc.body()
-  .then (res)-> _.logGreen res.body, "#{itemsDesignDoc.id} for #{invDbUrl}"
-  .fail (err)-> _.logRed err.body, "#{itemsDesignDoc.id} for #{invDbUrl}"
+  .then (res)-> _.success res.body, "#{itemsDesignDoc.id} for #{invDbUrl}"
+  .fail (err)-> _.error err.body, "#{itemsDesignDoc.id} for #{invDbUrl}"
 
 module.exports.loadFakeUsers = ->
   [
@@ -64,12 +64,12 @@ loadFakeUser = (username)->
 
 postUser = (data)->
   breq.post usersDbUrl, data
-  .then (res)-> _.logBlue res.body, 'postUser'
+  .then (res)-> _.info res.body, 'postUser'
   .fail (err)-> _.error err, 'postUser'
   .done()
 
 putUser = (data)->
   breq.put usersDbUrl + '/' + data._id, data
-  .then (res)-> _.logBlue res.body, 'putUser'
+  .then (res)-> _.info res.body, 'putUser'
   .fail (err)-> _.error err, 'putUser'
   .done()

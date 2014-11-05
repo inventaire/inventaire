@@ -12,7 +12,7 @@ _ = __.require 'builders', 'utils'
 
 # INTEGRATION TESTS WITH DB
 
-_.logBlue '', 'waiting for security implementation before re-testing db integration'
+_.info '', 'waiting for security implementation before re-testing db integration'
 describe "FETCH", ->
   it "blocks FETCH without session", (done)->
     trycatch( ->

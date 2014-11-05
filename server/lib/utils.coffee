@@ -9,13 +9,13 @@ String::logIt = (label, color)->
 module.exports =
   errorHandler: (res, err, status = 500)->
     switch status
-      when 404 then @logYellow err
+      when 404 then @warn err
       else @logRed err
     res.setHeader 'Content-Type', 'text/html'
     res.status status || 500
     res.send err
 
-  log: (obj, label, color = 'white')->
+  log: (obj, label, color = 'cyan')->
     if typeof obj is 'string' and !label?
       console.log obj[color]
       return obj
@@ -29,14 +29,13 @@ module.exports =
       console.log "-----".grey
       return obj
 
-  logRed: (obj, label)->
+  error: (obj, label)->
     obj = obj.stack if obj?.stack?
     @log obj, label, 'red'
-  error: @logRed
-  logGreen: (obj, label)-> @log obj, label, 'green'
-  logBlue: (obj, label)-> @log obj, label, 'blue'
+  success: (obj, label)-> @log obj, label, 'green'
+  info: (obj, label)-> @log obj, label, 'blue'
   logCyan: (obj, label)-> @log obj, label, 'cyan'
-  logYellow: (obj, label)-> @log obj, label, 'yellow'
+  warn: (obj, label)-> @log obj, label, 'yellow'
   logPurple: (obj, label)-> @log obj, label, 'magenta'
   logRainbow: (obj, label)-> @log obj, label, 'rainbow'
 

@@ -6,16 +6,16 @@ Promise = require 'bluebird'
 
 module.exports =
   search: (req, res, next) ->
-    _.logBlue req.query, "Entities:Search"
+    _.info req.query, "Entities:Search"
 
     if req.query.search? and req.query.language?
 
       if books.isIsbn(req.query.search)
-        _.logYellow req.query.search, 'searchByIsbn'
+        _.log req.query.search, 'searchByIsbn'
         searchByIsbn(req.query, res)
 
       else
-        _.logYellow req.query.search, 'searchByText'
+        _.log req.query.search, 'searchByText'
         searchByText(req.query, res)
 
     else  _.errorHandler res, 'empty query or no language specified', 400
@@ -27,11 +27,11 @@ searchByIsbn = (query, res)->
 
   promises = [
     wikidata.getBookEntityByIsbn(isbn, isbnType, query.language)
-    .fail (err)-> _.logRed err, 'wikidata getBookEntityByISBN err'
+    .fail (err)-> _.error err, 'wikidata getBookEntityByISBN err'
 
     booksPromise = books.getGoogleBooksDataFromIsbn(isbn)
     .then((res)-> {items:[res], source: 'google'})
-    .fail (err)-> _.logRed err, 'getGoogleBooksDataFromIsbn err'
+    .fail (err)-> _.error err, 'getGoogleBooksDataFromIsbn err'
   ]
 
   spreadRequests(res, promises, 'searchByIsbn')
@@ -41,11 +41,11 @@ searchByText = (query, res)->
   promises = [
     wikidata.getBookEntities(query)
     .then (items)-> {items: items, source: 'wd', search: query.search}
-    .fail (err)-> _.logRed err, 'wikidata getBookEntities err'
+    .fail (err)-> _.error err, 'wikidata getBookEntities err'
 
     books.getGoogleBooksDataFromText(query.search)
     .then (res)-> {items: res, source: 'google', search: query.search}
-    .fail (err)-> _.logRed err, 'getGoogleBooksDataFromIsbn err'
+    .fail (err)-> _.error err, 'getGoogleBooksDataFromIsbn err'
   ]
 
   spreadRequests(res, promises, 'searchByText')
@@ -60,12 +60,12 @@ spreadRequests = (res, promises, label)->
     else res.json 404, 'not found'
 
   .fail (err)->
-    _.logRed err, "#{label} err"
+    _.error err, "#{label} err"
     _.errorHandler res, err
   .done()
 
 selectFirstNonEmptyResult = (results...)->
-  _.logBlue results, "api results"
+  _.info results, "api results"
   selected = null
   results.forEach (result)->
     if result.items?.length > 0 and not selected?

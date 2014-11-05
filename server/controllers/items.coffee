@@ -38,14 +38,14 @@ module.exports =
 
   del: (req, res, next) ->
     # missing req.session.email check isn't it?
-    _.logBlue req.params, 'del'
+    _.info req.params, 'del'
     inv.db.delete req.params.id, req.params.rev
     .then (body)-> res.json(body)
     .fail (err)-> _.errorHandler res, err
     .done()
 
   publicByEntity: (req, res, next) ->
-    _.logBlue req.params, 'public'
+    _.info req.params, 'public'
     inv.byEntity(req.params.uri)
     .then (items)-> res.json items
     .fail (err)-> _.errorHandler res, err
@@ -54,9 +54,9 @@ module.exports =
   fetchLastPublicItems: (req, res, next) ->
     inv.publicByDate()
     .then (items)->
-      _.logGreen items, 'public items'
+      _.success items, 'public items'
       users = items.map (item)-> item.owner
-      _.logGreen users = _.uniq(users), 'public items users'
+      _.success users = _.uniq(users), 'public items users'
       user.getUsersPublicData(users)
       .then (users)->
         res.json {items: items, users: users}
@@ -64,7 +64,7 @@ module.exports =
     .done()
 
   publicByUserAndSuffix: (req, res, next)->
-    _.logBlue req.params, 'publicByUserAndSuffix'
+    _.info req.params, 'publicByUserAndSuffix'
     user.getSafeUserFromUsername(req.params.username)
     .then (user)->
       if user?._id?

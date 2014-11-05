@@ -7,6 +7,6 @@ _db = __.require 'db', 'couch_handler'
 
 if CONFIG.db.instable
   _db.checkDbsExistanceOrCreate [CONFIG.db.users, CONFIG.db.inventory]
-else _.logBlue 'DBs assumed to exist'
+else _.info 'DBs assumed to exist'
 
 module.exports = nano.db

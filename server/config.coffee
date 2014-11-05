@@ -71,7 +71,7 @@ langCookie = (req, res, next) ->
     if lang = req.headers?['accept-language']?[0..1]
       if _.hasValue validLanguage, lang
         res.cookie('lang',lang)
-        _.logBlue "setting lang cookie, #{lang}"
+        _.info "setting lang cookie, #{lang}"
   next()
 
 module.exports =

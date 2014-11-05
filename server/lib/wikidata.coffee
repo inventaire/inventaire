@@ -12,12 +12,12 @@ Q = wd.Q
 module.exports.getBookEntities = (query)->
   searchEntities(query.search, query.language)
   .then (res)->
-    _.logGreen res, 'searchEntities res'
+    _.success res, 'searchEntities res'
     if res.success and res.search.length > 0
       return res.search.map (el)-> el.id
     else throw 'not found'
   .then (ids)=>
-    _.logGreen ids, 'wd ids found'
+    _.success ids, 'wd ids found'
     @getEntities(ids, [query.language])
   .then filterAndBrush
 
@@ -33,7 +33,7 @@ module.exports.getBookEntityByIsbn = (isbn, type, lang)->
         .then(filterAndBrush)
         .then (resultArray)-> return {items: resultArray, source: 'wd', isbn: isbn}
       else return {status: 'no item found for this isbn', isbn: isbn, items: [], source: 'wd'}
-    .fail (err)-> _.logRed err, 'err at getBookEntityByIsbn'
+    .fail (err)-> _.error err, 'err at getBookEntityByIsbn'
 
 
 searchEntities = (search, language='en', limit='20', format='json')->

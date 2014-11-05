@@ -5,7 +5,7 @@ inv = require '../lib/inv'
 Promise = require 'bluebird'
 
 module.exports.find = (req, res, next) ->
-  _.logYellow query = req.query, 'contacts.find query'
+  _.log query = req.query, 'contacts.find query'
   if query.action?
     switch query.action
       when 'search'
@@ -24,17 +24,17 @@ searchByUsername = (res, search) ->
         username: row.value.username
         picture: row.value.picture
         created: row.value.created
-    _.logBlue contacts, 'contacts'
+    _.info contacts, 'contacts'
     res.json contacts
   .fail (err)-> _.errorHandler res, err
   .done()
 
 fetchUsersData = (res, ids)->
-  _.logBlue ids, 'fetchUsersData ids'
+  _.info ids, 'fetchUsersData ids'
   if ids?.length? and ids.length > 0
     user.getUsersPublicData(ids)
     .then (usersData)->
-      _.logGreen usersData, 'usersData'
+      _.success usersData, 'usersData'
       res.json {users: usersData}
     .fail (err)-> _.errorHandler res, err, err.status
     .done()
@@ -61,7 +61,7 @@ module.exports.followedData = (req, res, next) ->
 
 
 module.exports.fetchItems = (req, res, next) ->
-  _.logYellow ownerId = req.params.user, 'fetchItems user'
+  _.log ownerId = req.params.user, 'fetchItems user'
   promises = [
     inv.byListing ownerId, 'contacts'
     inv.byListing ownerId, 'public'
