@@ -1,7 +1,6 @@
 _ = require('config').root.require 'builders', 'utils'
 
-
-module.exports =
+triplesHandlers =
   aliases: require './aliases'
   mirrorTriple: (triple)->
     unless @isShortened(triple)
@@ -42,6 +41,19 @@ module.exports =
 
       return triples.concat mirrorTriples
 
+  pluck:
+    subjects: (triples)-> _.pluck triples, 's'
+    objects: (triples)-> _.pluck triples, 'o'
+    predicates: (triples)-> _.pluck triples, 'p'
+    first:
+      subject: (triples)-> triples[0]?.s
+      object: (triples)-> triples[0]?.o
+      predicate: (triples)-> triples[0]?.p
+
+
+
+
+interfaceNoralization =
   normalizeInterface: (args, unwrap)->
     # spreaded interface: args map to [s, p, o]
     # allows args like ['foo', null, 'bar']
@@ -67,18 +79,19 @@ module.exports =
     obj.o = o  if o?
     return obj
 
-  pluck:
-    subjects: (triples)-> _.pluck triples, 's'
-    objects: (triples)-> _.pluck triples, 'o'
-    predicates: (triples)-> _.pluck triples, 'p'
-    first:
-      subject: (triples)-> triples[0]?.s
-      object: (triples)-> triples[0]?.o
-      predicate: (triples)-> triples[0]?.p
 
+
+
+
+logs =
   logDb: ->
     @leveldb.createReadStream()
     .on 'data', (data) -> _.log data.value, data.key
     .on 'error', (err) -> _.log err, 'err at logDb'
     .on 'close', -> _.log 'Stream closed'
     .on 'end', -> _.log 'Stream end'
+
+
+
+
+module.exports = _.extend triplesHandlers, interfaceNoralization, logs
