@@ -41,7 +41,7 @@
     "levelgraph": "^0.8.2",
     "lodash": "^2.4.1",
     "nano": "^5.11.2",
-    "no-js-analytics": "^0.1.9"
+    "no-js-analytics": "git://github.com/maxlath/no-js-analytics.git#master"
   },
   "devDependencies": {
     "chai": "^1.9.1",

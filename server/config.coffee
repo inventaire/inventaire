@@ -5,7 +5,7 @@ _ = __.require 'builders', 'utils'
 americano = require 'americano'
 cookieParser = require 'cookie-parser'
 session = require 'cookie-session'
-analytics = require 'no-js-analytics'
+analytics = require 'minimalist-analytics'
 
 # compression should be the first use()'d
 # /!\ compression may become problematic with server-sent events
