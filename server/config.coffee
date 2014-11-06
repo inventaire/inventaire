@@ -7,6 +7,11 @@ cookieParser = require 'cookie-parser'
 session = require 'cookie-session'
 analytics = require 'no-js-analytics'
 
+# compression should be the first use()'d
+# /!\ compression may become problematic with server-sent events
+# see doc https://github.com/expressjs/compression
+compression = require 'compression'
+
 Promise = require 'bluebird'
 Promise.longStackTraces()
 Promise.onPossiblyUnhandledRejection (err)-> throw new Error(err)
@@ -74,8 +79,12 @@ langCookie = (req, res, next) ->
         _.info "setting lang cookie, #{lang}"
   next()
 
+# function => is a function with signature (req, res, next)->
+# function() => returns a function with signature (req, res, next)->
+
 module.exports =
   common: [
+    compression()
     americano.bodyParser()
     americano.methodOverride()
     americano.errorHandler
