@@ -1,6 +1,7 @@
-_ = require('config').root.require('builders', 'utils')
+__ = require('config').root
+_ = __.require('builders', 'utils')
 
-user = require '../lib/user'
+user = __.require 'lib', 'user'
 
 module.exports.checkUsername = (req, res, next) ->
   reqUsername = req.body.username
@@ -45,7 +46,15 @@ module.exports.getUser = (req, res, next) ->
     if body?.rows?[0]?
       userData = body.rows[0].value
       _.log userData, 'getUser'
-      res.json userData
+      userId = userData._id
+      user.getUserRelations(userId)
+      .then (relations)->
+        _.success relations, 'relations'
+        userData.relations = relations
+        res.json userData
+      .catch (err)->
+        _.error err, 'coulnt get user relations'
+        throw new Error(err)
     else
       _.errorHandler res, 'user not found', 404
   .fail (err)-> _.errorHandler res, err, 404
