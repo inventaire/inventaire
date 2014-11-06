@@ -126,17 +126,26 @@ module.exports =
 
   fetchUsers: (ids)-> @db.fetch(ids)
 
-  getUsersPublicData: (ids)->
+  getUsersPublicData: (ids, format='collection')->
     ids = ids.split?('|') or ids
     @fetchUsers(ids)
     .then (body)=>
       _.success body, 'found users data'
+
       if body?
         usersData = _.mapCouchResult 'doc', body
         _.success usersData, 'usersData before cleaning'
         cleanedUsersData = usersData.map @safeUserData
-        _.success cleanedUsersData, 'cleanedUsersData'
-        return cleanedUsersData
+
+        if format is 'index'
+          data = _.indexBy(cleanedUsersData, '_id')
+          _.log data, 'usersData: index format'
+        else
+          data = cleanedUsersData
+          _.log data, 'usersData: collection format'
+
+        return data
+
       else
         _.log "users not found. Ids?: #{ids.join(', ')}"
         return
@@ -146,7 +155,6 @@ module.exports =
     username: value.username
     created: value.created
     picture: value.picture
-    # contacts: value.contacts
 
   # only used by tests so far
   deleteUser: (user)-> @db.del user._id, user._rev

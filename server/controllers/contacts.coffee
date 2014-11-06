@@ -32,7 +32,7 @@ searchByUsername = (res, search) ->
 fetchUsersData = (res, ids)->
   _.info ids, 'fetchUsersData ids'
   if ids?.length? and ids.length > 0
-    user.getUsersPublicData(ids)
+    user.getUsersPublicData(ids, 'index')
     .then (usersData)->
       _.success usersData, 'usersData'
       res.json {users: usersData}
