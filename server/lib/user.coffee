@@ -5,6 +5,8 @@ _ = __.require 'builders', 'utils'
 Promise = require 'bluebird'
 breq = require 'breq'
 
+socialGraph = __.require 'graph', 'social_graph'
+
 gravatar = require 'gravatar'
 
 module.exports =
@@ -57,14 +59,14 @@ module.exports =
       .done()
 
     else
-      _.errorHandler res, 'Persona verify status isnt okay oO: might be a problem with Persona audience setting'
+      err = 'Persona verify status isnt okay oO: might be a problem with Persona audience setting'
+      _.errorHandler res, err
 
   byId: (id)-> @db.get(id)
 
   byEmail: (email)-> @db.view "users", "byEmail", {key: email}
 
-  nameIsValid: (username)->
-    /^\w{1,20}$/.test username
+  nameIsValid: (username)-> /^\w{1,20}$/.test username
 
   nameIsAvailable: (username)->
     unless @isReservedWord(username)
@@ -85,7 +87,8 @@ module.exports =
       return def.promise
 
   byUsername: (username)->
-    return @db.view 'users', 'byUsername', {key: username.toLowerCase()}
+    params = { key: username.toLowerCase() }
+    return @db.view 'users', 'byUsername', params
 
   getSafeUserFromUsername: (username)->
     @byUsername(username)
@@ -139,11 +142,11 @@ module.exports =
         return
 
   safeUserData: (value)->
-      _id: value._id
-      username: value.username
-      created: value.created
-      picture: value.picture
-      # contacts: value.contacts
+    _id: value._id
+    username: value.username
+    created: value.created
+    picture: value.picture
+    # contacts: value.contacts
 
   # only used by tests so far
   deleteUser: (user)-> @db.del user._id, user._rev
@@ -178,6 +181,11 @@ module.exports =
       'welcome'
     ]
     return _.hasValue reservedWords, username
+
+  getUserRelations: (userId)->
+    # just proxiing to let this module centralize
+    # interactions with the social graph
+    socialGraph.getUserRelations(userId)
 
 
 cleanUserData = (value)->
