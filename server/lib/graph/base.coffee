@@ -26,11 +26,11 @@ module.exports = (graphName)->
   action = (verb, args)->
     obj = _g.normalizeInterface(args, true)
     def = Promise.defer()
-    _.info obj, verb
+    # _.info obj, verb
     graph[verb] obj, (err, result)->
       if err then def.reject(err)
       else
-        _.success result, "#{verb}: success!"
+        # _.success result, "#{verb}: success!"
 
         # result exist only on GET
         if result? then result = _g.aliases.wrapAll(result)
@@ -56,7 +56,7 @@ module.exports = (graphName)->
         return Promise.defer().reject(err)
 
       query2 = _g.mirrorTriple(query)
-      _.info [query, query2], 'query & mirror '
+      # _.info [query, query2], 'query & mirror '
 
       promise1 = @get query
       promise2 = @get query2
@@ -76,7 +76,8 @@ module.exports = (graphName)->
 
     delBidirectional: (args...)->
       triples = _g.normalizeInterface(args)
-      return @del _g.addMirrorTriples(triples)
+      triples = _g.addMirrorTriples(triples)
+      return @del triples
 
   tools =
     utils: _g
