@@ -176,8 +176,6 @@ module.exports =
       'wd'
       'wikidata'
       'isbn'
-      'user'
-      'users'
       'profil'
       'profile'
       'item'
@@ -186,6 +184,10 @@ module.exports =
       'listings'
       'contacts'
       'contact'
+      'user'
+      'users'
+      'friend'
+      'friends'
       'welcome'
     ]
     return _.hasValue reservedWords, username

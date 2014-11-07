@@ -3,7 +3,7 @@ _ = require('config').root.require('builders', 'utils')
 index = require "./index"
 auth = require "./auth"
 items = require "./items"
-contacts = require "./contacts"
+users = require "./users"
 entities = require "./entities"
 upload = require "./upload"
 proxy = require "./proxy"
@@ -26,10 +26,10 @@ module.exports =
 
   # routes protected by the 'restrict' middleware. cf config.coffee
   'api/users':
-    get: contacts.find
+    get: users.find
 
-  'api/contacts':
-    get: contacts.followedData
+  'api/friends':
+    get: users.friendData
 
   'api/items':
     get: items.fetch
@@ -52,7 +52,7 @@ module.exports =
     delete: items.del
 
   'api/:user/items':
-    get: contacts.fetchItems
+    get: users.fetchItems
 
   'api/:user/items/:id':
     put: items.put

@@ -5,7 +5,7 @@ inv = require '../lib/inv'
 Promise = require 'bluebird'
 
 module.exports.find = (req, res, next) ->
-  _.log query = req.query, 'contacts.find query'
+  _.log query = req.query, 'users.find query'
   if query.action?
     switch query.action
       when 'search'
@@ -18,14 +18,14 @@ module.exports.find = (req, res, next) ->
 searchByUsername = (res, search) ->
   user.usernameStartBy(search)
   .then (body)->
-    contacts = body.rows.map (row)->
-      return contact =
+    users = body.rows.map (row)->
+      return user =
         _id: row.value._id
         username: row.value.username
         picture: row.value.picture
         created: row.value.created
-    _.info contacts, 'contacts'
-    res.json contacts
+    _.info users, 'users'
+    res.json users
   .fail (err)-> _.errorHandler res, err
   .done()
 
@@ -41,11 +41,11 @@ fetchUsersData = (res, ids)->
   else
     _.errorHandler res, 'no data found', 404
 
-module.exports.followedData = (req, res, next) ->
+module.exports.friendData = (req, res, next) ->
   user.byEmail(req.session.email)
   .then (body)->
     if body.rows.length > 0
-      return body.rows[0].value.contacts
+      return body.rows[0].value.users
     else
       return
   .then user.fetchUsers.bind(user)
@@ -55,7 +55,7 @@ module.exports.followedData = (req, res, next) ->
       cleanedUsersData = usersData.map user.safeUserData
       res.json cleanedUsersData
     else
-      _.errorHandler res, 'no contact found', 404
+      _.errorHandler res, 'no user found', 404
   .fail (err)-> _.errorHandler res, err
   .done()
 
@@ -63,7 +63,7 @@ module.exports.followedData = (req, res, next) ->
 module.exports.fetchItems = (req, res, next) ->
   _.log ownerId = req.params.user, 'fetchItems user'
   promises = [
-    inv.byListing ownerId, 'contacts'
+    inv.byListing ownerId, 'friends'
     inv.byListing ownerId, 'public'
   ]
   Promise.all(promises)
