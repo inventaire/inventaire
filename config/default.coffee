@@ -20,7 +20,7 @@ module.exports =
     inventory: 'inventory'
   graph:
     social: 'social_graph'
-  whitelistedRouteRegExp: /^\/api\/auth\//
+  whitelistedRouteRegExp: /^\/api\/(auth\/|items\/public)/
   # noCache: true
   noCache: false
   # staticMaxAge: 0
