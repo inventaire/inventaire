@@ -46,16 +46,6 @@ allowCrossDomain = (req, res, next)->
   res.header 'Access-Control-Allow-Headers', 'Content-Type'
   next()
 
-# messing with the front identification
-# as it gives cookies to user with Persona
-# but no Inventaire useraccount (?)
-
-# emailCookie = (req, res, next) ->
-#   res.cookie 'testcookie', 'cookies OK'
-#   if req.session.email
-#     res.cookie 'email', req.session.email
-#   next()
-
 policy = "default-src 'self';" +
         "frame-src 'self' https://login.persona.org;" +
         "script-src 'self' 'unsafe-inline' https://login.persona.org;" +
