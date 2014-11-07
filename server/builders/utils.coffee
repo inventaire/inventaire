@@ -20,5 +20,4 @@ module.exports = lo.extend(utils, sharedUtils)
 # need to be a global variable, as the shared libs
 # depend on it
 global.sharedLib = sharedLib = __.require 'builders', 'shared_libs'
-global_libs_extender = __.require 'lib', 'global_libs_extender'
-global_libs_extender.initialize()
+__.require('lib', 'global_libs_extender')()
