@@ -1,0 +1,3 @@
+{
+    "replaceContactsByFriends": "function (doc) {\n  if (doc.listing === 'contacts') {\n    doc.listing = 'friends';\n  }\n  return doc;\n}"
+}
