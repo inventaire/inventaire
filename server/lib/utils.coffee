@@ -10,7 +10,7 @@ module.exports =
   errorHandler: (res, err, status = 500)->
     switch status
       when 404 then @warn err
-      else @logRed err
+      else @error err
     res.setHeader 'Content-Type', 'text/html'
     res.status status || 500
     res.send err
@@ -47,8 +47,9 @@ module.exports =
     spaced.pop()
     @log spaced, label, color
 
-  mapCouchResult: (type, body)->
-    return body.rows.map (el)-> el[type]
+  mapCouchResult: (type, body)-> body.rows.map (el)-> el[type]
+  mapCouchValue: (body)-> @mapCouchResult 'value', body
+  mapCouchDoc: (body)-> @mapCouchResult 'doc', body
 
   getObjIfSuccess: (db, body)->
     if db.get? and body.ok

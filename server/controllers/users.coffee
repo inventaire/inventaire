@@ -18,12 +18,8 @@ module.exports.find = (req, res, next) ->
 searchByUsername = (res, search) ->
   user.usernameStartBy(search)
   .then (body)->
-    users = body.rows.map (row)->
-      return user =
-        _id: row.value._id
-        username: row.value.username
-        picture: row.value.picture
-        created: row.value.created
+    usersData = _.mapCouchValue body
+    users = usersData.map user.safeUserData
     _.info users, 'users'
     res.json users
   .fail (err)-> _.errorHandler res, err
@@ -51,7 +47,7 @@ module.exports.friendData = (req, res, next) ->
   .then user.fetchUsers.bind(user)
   .then (body)->
     if body?
-      usersData = _.mapCouchResult 'doc', body
+      usersData = _.mapCouchDoc body
       cleanedUsersData = usersData.map user.safeUserData
       res.json cleanedUsersData
     else

@@ -133,7 +133,7 @@ module.exports =
       _.success body, 'found users data'
 
       if body?
-        usersData = _.mapCouchResult 'doc', body
+        usersData = _.mapCouchDoc body
         _.success usersData, 'usersData before cleaning'
         cleanedUsersData = usersData.map @safeUserData
 
