@@ -26,7 +26,7 @@ module.exports =
 
   # routes protected by the 'restrict' middleware. cf config.coffee
   'api/users':
-    get: users.find
+    get: users.actions
 
   'api/friends':
     get: users.friendData

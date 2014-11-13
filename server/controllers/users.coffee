@@ -4,8 +4,8 @@ user = require '../lib/user'
 inv = require '../lib/inv'
 Promise = require 'bluebird'
 
-module.exports.find = (req, res, next) ->
-  _.log query = req.query, 'users.find query'
+module.exports.actions = (req, res, next) ->
+  _.log query = req.query, 'users.actions query'
   if query.action?
     switch query.action
       when 'search'
