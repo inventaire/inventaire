@@ -13,7 +13,8 @@ module.exports =
       else @error err
     res.setHeader 'Content-Type', 'text/html'
     res.status status || 500
-    res.send err
+    # dont send the error details to the user
+    res.send()
 
   log: (obj, label, color = 'cyan')->
     if typeof obj is 'string' and !label?
