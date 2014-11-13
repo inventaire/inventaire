@@ -4,6 +4,7 @@ index = require "./index"
 auth = require "./auth"
 items = require "./items"
 users = require "./users"
+relations = require "./relations"
 entities = require "./entities"
 upload = require "./upload"
 proxy = require "./proxy"
@@ -31,6 +32,8 @@ module.exports =
   'api/friends':
     get: users.friendData
 
+  'api/relations':
+    get: relations.actions
   'api/items':
     get: items.fetch
 

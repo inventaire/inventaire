@@ -23,6 +23,7 @@ relationActions =
 
     return Promise.all [fromUser, fromOther]
     .spread (fromUser, fromOther)->
+      _.info [fromUser, fromOther], 'relationStatus fromUser, fromOther'
       if fromUser is 'friend' or fromOther is 'friend'
         return 'friend'
       return 'userRequested'  if fromUser is 'requested'
@@ -33,14 +34,22 @@ relationActions =
     @relationStatus(userId, friendId)
     .then (status)=>
       switch status
+        when 'userRequested'
+          _.warn [userId, friendId], 'user request already exist'
+          return
         when 'friendRequested'
           return @acceptRequest(userId, friendId)
-        when 'userRequested'
-          # noop?
-          return
         when 'none'
           return putUserFriendRequest(userId, friendId)
         else throw "got status #{status} at requestFriend"
+
+  cancelFriendRequest: (userId, friendId)->
+    @relationStatus(userId, friendId)
+    .then (status)=>
+      switch status
+        when 'userRequested'
+          return delUserFriendRequest(userId, friendId)
+        else throw "got status #{status} at cancelFriendRequest"
 
   acceptRequest: (userId, friendId)->
     @relationStatus(userId, friendId)
@@ -49,23 +58,26 @@ relationActions =
         when 'friendRequested'
           putFriendRelation(userId, friendId)
           .then -> delUserFriendRequest(friendId, userId)
-        when 'friend'
-          err = 'cant accept a request while already friends'
-          throw new Error err
-        else
-          throw new Error 'tried to accept an inexistant request'
+        else throw "got status #{status} at acceptRequest"
 
+  removeFriendship: (userId, friendId)->
+    @relationStatus(userId, friendId)
+    .then (status)=>
+      switch status
+        when 'friend' then return delFriendship(userId, friendId)
+        else throw "got status #{status} at removeFriendship"
 
 putUserFriendRequest = (userId, friendId)->
   return graph.put userId, 'requested', friendId
 
-delUserFriendRequest = (userId, friendId)->
-  return graph.del userId, 'requested', friendId
-
 putFriendRelation = (userId, friendId)->
   return graph.put userId, 'friend', friendId
 
+delUserFriendRequest = (userId, friendId)->
+  return graph.del userId, 'requested', friendId
 
+delFriendship = (userId, friendId)->
+  return graph.delBidirectional userId, 'friend', friendId
 
 
 relationsLists =
