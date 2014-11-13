@@ -63,5 +63,5 @@ module.exports.fetchItems = (req, res, next) ->
     inv.byListing ownerId, 'public'
   ]
   Promise.all(promises)
-  .spread _.mergeArrays
+  .spread _.union
   .then (body)-> res.json body
