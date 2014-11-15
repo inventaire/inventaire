@@ -41,7 +41,7 @@ module.exports.loadFakeUsers = ->
     'babidi', 'boo', 'bamboo', 'baratin'
   ]
   .forEach loadFakeUser
-  keepUsers.body().forEach putUser
+  # keepUsers.body().forEach putUser
   loadFakeUser() for [1..50]
 
 keepUsers =
@@ -56,7 +56,7 @@ loadFakeUser = (username)->
     userData =
       username: username || fake.username
       email: fake.email
-      picture: fake.picture
+      picture: fake.picture.medium
       created: _.now()
     postUser userData
   .fail (err)-> _.error err
