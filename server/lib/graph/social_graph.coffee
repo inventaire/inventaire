@@ -51,6 +51,13 @@ relationActions =
           return delUserFriendRequest(userId, friendId)
         else throw "got status #{status} at cancelFriendRequest"
 
+  removeFriendship: (userId, friendId)->
+    @relationStatus(userId, friendId)
+    .then (status)=>
+      switch status
+        when 'friend' then return delFriendship(userId, friendId)
+        else throw "got status #{status} at removeFriendship"
+
   acceptRequest: (userId, friendId)->
     @relationStatus(userId, friendId)
     .then (status)->
@@ -58,14 +65,19 @@ relationActions =
         when 'friendRequested'
           putFriendRelation(userId, friendId)
           .then -> delUserFriendRequest(friendId, userId)
+        when 'none'
+          warn = 'user request accepted after being cancelled'
+          _.warn [userId, friendId], warn
+          return
         else throw "got status #{status} at acceptRequest"
 
-  removeFriendship: (userId, friendId)->
+  discardRequest: (userId, friendId)->
     @relationStatus(userId, friendId)
-    .then (status)=>
+    .then (status)->
       switch status
-        when 'friend' then return delFriendship(userId, friendId)
-        else throw "got status #{status} at removeFriendship"
+        when 'friendRequested'
+          return delUserFriendRequest(friendId, userId)
+        else throw "got status #{status} at discardRequest"
 
 putUserFriendRequest = (userId, friendId)->
   return graph.put userId, 'requested', friendId
