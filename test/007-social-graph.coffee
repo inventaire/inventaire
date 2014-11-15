@@ -81,6 +81,97 @@ describe 'RELATIONS', ->
         .catch (err)-> throw new Error(err)
       , done)
 
+  describe 'cancelFriendRequest', ->
+    it "should delete the request from user", (done)->
+      trycatch( ->
+        graph.requestFriend('georges', 'chips')
+        .then ->
+          graph.cancelFriendRequest('georges', 'chips')
+          .then ->
+            p1 = graph.relationStatus('georges', 'chips')
+            p2 = graph.relationStatus('chips', 'georges')
+            p3 = graph.getUserRelations('georges')
+            p4 = graph.getUserRelations('chips')
+            Promise.all([p1, p2, p3, p4])
+            .spread (fromGeorges, fromChips, georgesRel, chipsRel)->
+
+              fromGeorges.should.equal 'none'
+              fromChips.should.equal 'none'
+
+              georgesRel.friends.length.should.equal 0
+              georgesRel.userRequests.length.should.equal 0
+              georgesRel.othersRequests.length.should.equal 0
+
+              chipsRel.friends.length.should.equal 0
+              chipsRel.userRequests.length.should.equal 0
+              chipsRel.othersRequests.length.should.equal 0
+
+              done()
+        .catch (err)-> throw new Error(err)
+      , done)
+
+  describe 'removeFriendship', ->
+    it "should delete the friendship", (done)->
+      trycatch( ->
+        graph.requestFriend('gilles', 'michel')
+        .then ->
+          graph.acceptRequest('michel', 'gilles')
+          .then ->
+            graph.removeFriendship('michel', 'gilles')
+            .then ->
+              p1 = graph.relationStatus('gilles', 'michel')
+              p2 = graph.relationStatus('michel', 'gilles')
+              p3 = graph.getUserRelations('gilles')
+              p4 = graph.getUserRelations('michel')
+              Promise.all([p1, p2, p3, p4])
+              .spread (fromGilles, fromMichel, gillesRel, michelRel)->
+
+                fromGilles.should.equal 'none'
+                fromMichel.should.equal 'none'
+
+                gillesRel.friends.length.should.equal 0
+                gillesRel.userRequests.length.should.equal 0
+                gillesRel.othersRequests.length.should.equal 0
+
+                michelRel.friends.length.should.equal 0
+                michelRel.userRequests.length.should.equal 0
+                michelRel.othersRequests.length.should.equal 0
+
+                done()
+        .catch (err)-> throw new Error(err)
+      , done)
+
+  describe 'discardRequest', ->
+    it "should delete the other's request", (done)->
+      trycatch( ->
+        graph.requestFriend('mickey', 'minny')
+        .then ->
+          graph.discardRequest('minny', 'mickey')
+          .then ->
+            p1 = graph.relationStatus('mickey', 'minny')
+            p2 = graph.relationStatus('minny', 'mickey')
+            p3 = graph.getUserRelations('mickey')
+            p4 = graph.getUserRelations('minny')
+            Promise.all([p1, p2, p3, p4])
+            .spread (fromMickey, fromMinny, mickeyRel, minnyRel)->
+
+              fromMickey.should.equal 'none'
+              fromMinny.should.equal 'none'
+
+              mickeyRel.friends.length.should.equal 0
+              mickeyRel.userRequests.length.should.equal 0
+              mickeyRel.othersRequests.length.should.equal 0
+
+              minnyRel.friends.length.should.equal 0
+              minnyRel.userRequests.length.should.equal 0
+              minnyRel.othersRequests.length.should.equal 0
+
+              done()
+        .catch (err)-> throw new Error(err)
+      , done)
+
+
+describe 'RELATIONS LISTS', ->
   describe 'getOthersRequests', ->
     it "should only find requests from others", (done)->
       trycatch( ->
