@@ -32,7 +32,7 @@ fetchUsersData = (res, ids)->
     .then (usersData)->
       _.success usersData, 'usersData'
       res.json {users: usersData}
-    .fail (err)-> _.errorHandler res, err, err.status
+    .fail (err)-> _.errorHandler res, err
     .done()
   else
     _.errorHandler res, 'no data found', 404
