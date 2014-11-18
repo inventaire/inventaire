@@ -2,7 +2,7 @@ appRoot = require('app-root-path').path
 
 module.exports =
   env: 'default'
-  protocol: 'http'
+  protocol: 'https'
   name: 'inventaire'
   host: 'localhost'
   verbosity: 1
@@ -30,6 +30,7 @@ module.exports =
     secret: 'customizedInLocalConfig'
     region: 'customizedInLocalConfig'
     bucket: 'customizedInLocalConfig'
+    protocol: 'http'
   root:
     paths:
       root: ''
@@ -46,3 +47,6 @@ module.exports =
       path = @paths[route]
       return "#{appRoot}#{path}/#{name}"
     'require': (route, name)-> require @path(route, name)
+  https:
+    key: './cert/inventaire.key'
+    cert: './cert/inventaire.csr'

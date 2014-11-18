@@ -54,4 +54,4 @@ module.exports.del = (req, res, next)->
 extractOwnedUrl = (url)->
   parts = url.split CONFIG.aws.bucket
   path = parts.last()
-  return "//#{CONFIG.aws.bucket}#{path}"
+  return "#{CONFIG.aws.protocol}://#{CONFIG.aws.bucket}#{path}"
