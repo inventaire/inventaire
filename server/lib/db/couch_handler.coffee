@@ -7,19 +7,16 @@ dbInit = __.require 'db', 'couch_init'
 module.exports =
   checkDbsExistanceOrCreate: (db, checker = @checkExistanceOrCreate)->
     DbRecreated = false
-    if @isValidDbName db
-      checker db
-
-    else if db instanceof Array
+    if @isValidDbName db then checker db
+    else if _.isArray(db)
       valid = true
       db.forEach (dbName)=>
         unless dbName? then throw "missing dbName: got #{dbName}"
-        if not @isValidDbName dbName
-          valid = false
-      if valid
-        db.forEach checker
+        if not @isValidDbName dbName then valid = false
+
+      if valid then db.forEach checker
       else
-        _.log db, 'bad db names'
+        _.error db, 'bad db names'
         throw new Error 'only lowercase strings are accepted in an array of DBs'
 
     else
@@ -27,22 +24,19 @@ module.exports =
 
   checkExistanceOrCreate: (dbName)->
     nano.db.get dbName, (err,body)->
-      if err
-        console.log "#{dbName} not found: creating"
+      if err?
+        _.info "#{dbName} not found: creating"
         nano.db.create dbName, (err, body)->
-          if err
-            console.log err
-            console.log "couldn't create #{dbName}DB"
+          if err then _.error err, "couldn't create #{dbName}DB"
           else
-            if dbName == 'users' or dbName == 'users-tests'
+            if /^users/.test dbName
               dbInit.usersDesignLoader()
-              dbInit.loadFakeUsers()  if CONFIG.fakeUsers
-            if dbName == 'inventory' or dbName == 'inventory-tests'
+              dbInit.loadFakeUsers()  if CONFIG.db.fakeUsers
+            if /^inventory/.test dbName
               dbInit.invDesignLoader()
-            console.log body
-            console.log "#{dbName}DB created"
+            _.success body, "#{dbName}DB created"
       else
-        console.log "#{dbName}DB ready!"
+        _.success "#{dbName}DB ready!"
 
   isValidDbName: (str)->
-    typeof str is 'string' && /^[a-z_$()+-\/]+$/.test str
+    _.isString(str) and /^[a-z_$()+-\/]+$/.test str
