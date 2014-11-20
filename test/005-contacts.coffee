@@ -6,6 +6,7 @@ fs = require 'fs'
 breq = require 'breq'
 
 __ = require('config').root
+_ = __.require 'builders', 'utils'
 user =  __.require 'lib', 'user'
 
 CONFIG = require('config')
@@ -13,23 +14,23 @@ baseDbUrl = CONFIG.db.fullHost()
 
 user = __.require 'lib', 'user'
 couchPath = __.path 'couchdb', 'keep_users.json'
-keepUsers = JSON.parse fs.readFileSync(couchPath).toString()
-keepUsersIds = keepUsers.map (user)-> return user._id
+# keepUsers = JSON.parse fs.readFileSync(couchPath).toString()
+# keepUsersIds = keepUsers.map (user)-> return user._id
 
 describe "searchByUsername", ->
-  keepUsersIds.forEach (id)->
-    it "should have kept user", (done)->
-      trycatch( ->
-        request(baseDbUrl)
-        .get("/users/#{id}")
-        .set('Accept', 'application/json')
-        .end (err, res)->
-          res.status.should.equal 200
-          res.body.should.have.property '_id'
-          res.body.should.have.property 'username'
-          res.body.should.have.property 'email'
-          done()
-      , done)
+  # keepUsersIds.forEach (id)->
+    # it "should have kept user", (done)->
+    #   trycatch( ->
+    #     request(baseDbUrl)
+    #     .get("/api/users/#{id}")
+    #     .set('Accept', 'application/json')
+    #     .end (err, res)->
+    #       res.status.should.equal 200
+    #       res.body.should.have.property '_id'
+    #       res.body.should.have.property 'username'
+    #       res.body.should.have.property 'email'
+    #       done()
+    #   , done)
 
   it "returns rows", (done)->
     trycatch( ->
@@ -37,7 +38,7 @@ describe "searchByUsername", ->
       .done (res)->
         res.should.be.an.Object
         res.rows.should.be.an.Array
-      done()
+        done()
     , done)
 
   [1,2,3,4].forEach (limit)->
@@ -47,16 +48,16 @@ describe "searchByUsername", ->
           limit: limit
         user.usernameStartBy('b', options) #db_init should generate more relevant results than this
         .done (res)->
+          _.log res, 'res'
           res.should.be.an.Object
           res.rows.should.be.an.Array
           res.rows.length.should.equal options.limit
-        done()
+          done()
       , done)
 
 describe "fetchUsers", ->
-  it 'should return undefined if ids is undefined or empty', (done)->
+  it 'should return undefined if ids is empty', (done)->
     trycatch( ->
-      expect(user.fetchUsers(undefined)).to.equal.undefined
       expect(user.fetchUsers([])).to.equal.undefined
       done()
     , done)
@@ -71,16 +72,16 @@ describe "fetchUsers", ->
         done()
     , done)
 
-  it 'should return a promise, then an error for invalid requests', (done)->
-    trycatch( ->
-      user.fetchUsers(keepUsersIds)
-      .then (res)->
-        console.log res
-        res.rows.length.should.equal 2
-        res.rows.forEach (row)->
-          row.should.have.property 'id'
-          row.should.have.property 'key'
-          row.value.should.be.an.Object
-          row.doc.should.be.an.Object
-        done()
-    , done)
+  # it 'should return a promise, then an error for invalid requests', (done)->
+  #   trycatch( ->
+  #     user.fetchUsers(keepUsersIds)
+  #     .then (res)->
+  #       console.log res
+  #       res.rows.length.should.equal 2
+  #       res.rows.forEach (row)->
+  #         row.should.have.property 'id'
+  #         row.should.have.property 'key'
+  #         row.value.should.be.an.Object
+  #         row.doc.should.be.an.Object
+  #       done()
+  #   , done)

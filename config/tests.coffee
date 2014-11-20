@@ -8,6 +8,7 @@ module.exports =
   name: "inventaire"
   host: 'localhost'
   port: 3009
+  verbosity: 2
   fullHost: -> "#{@protocol}://#{@host}:#{@port}"
   db:
     instable: true
@@ -16,7 +17,7 @@ module.exports =
     port: 5984
     fullHost: -> "#{@protocol}://#{@host}:#{@port}"
     users: 'users-tests'
-    fakeUsers: false
+    fakeUsers: true
     inventory: 'inventory-tests'
   graph:
     social: undefined

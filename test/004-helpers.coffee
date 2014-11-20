@@ -4,16 +4,16 @@ sinon = require "sinon"
 __ = require('config').root
 _ = __.require 'builders', 'utils'
 
-H = db: __.require 'lib', 'db'
+couchHandler = __.require 'db', 'couch_handler'
 
 #UNIT TEST
 describe "isValidDbName", ->
   it "blocks unvalid names", (done)->
-    H.db.isValidDbName('goodstring').should.be.true
-    H.db.isValidDbName('good-string').should.be.true
-    H.db.isValidDbName('whatevera-z_$()+-/').should.be.true
-    H.db.isValidDbName('BadString').should.be.false
-    H.db.isValidDbName('bad string').should.be.false
+    couchHandler.isValidDbName('goodstring').should.be.true
+    couchHandler.isValidDbName('good-string').should.be.true
+    couchHandler.isValidDbName('whatevera-z_$()+-/').should.be.true
+    couchHandler.isValidDbName('BadString').should.be.false
+    couchHandler.isValidDbName('bad string').should.be.false
     done()
 
 
@@ -21,42 +21,42 @@ describe "isValidDbName", ->
 describe "checkDbExistanceOrCreate", ->
   it "uses the checker once on valid strings", (done)->
     checker = sinon.spy()
-    H.db.checkDbsExistanceOrCreate 'goodstring', checker
+    couchHandler.checkDbsExistanceOrCreate 'goodstring', checker
     checker.callCount.should.equal 1
     done()
 
   it "doesn't let ", (done)->
     checker = sinon.spy()
-    (->H.db.checkDbsExistanceOrCreate 'badStringWithUppercase', checker).should.throwError
+    (->couchHandler.checkDbsExistanceOrCreate 'badStringWithUppercase', checker).should.throwError
     checker.callCount.should.equal 0
     done()
 
   it "uses the checker {array.length} times on array", (done)->
     checker = sinon.spy()
-    H.db.checkDbsExistanceOrCreate ['abc','efg','hij'], checker
+    couchHandler.checkDbsExistanceOrCreate ['abc','efg','hij'], checker
     checker.callCount.should.equal 3
     done()
 
   it "should throw an error on non-string non-array argument", (done)->
     checker = sinon.spy()
     errorMessage = 'only string and array of strings accepted'
-    (->H.db.checkDbsExistanceOrCreate(42, checker)).should.throw errorMessage
-    (->H.db.checkDbsExistanceOrCreate({name: 'fakeName'}, checker)).should.throw errorMessage
+    (->couchHandler.checkDbsExistanceOrCreate(42, checker)).should.throw errorMessage
+    (->couchHandler.checkDbsExistanceOrCreate({name: 'fakeName'}, checker)).should.throw errorMessage
     checker.callCount.should.equal 0
     done()
 
   it "should throw an error on non-array-of-string argument", (done)->
     checker = sinon.spy()
     errorMessage = 'only lowercase strings are accepted in an array of DBs'
-    (->H.db.checkDbsExistanceOrCreate(['un', 2], checker)).should.throw errorMessage
-    (->H.db.checkDbsExistanceOrCreate(['10'], checker)).should.throw errorMessage
-    (->H.db.checkDbsExistanceOrCreate(['pastèque'], checker)).should.throw errorMessage
+    (->couchHandler.checkDbsExistanceOrCreate(['un', 2], checker)).should.throw errorMessage
+    (->couchHandler.checkDbsExistanceOrCreate(['10'], checker)).should.throw errorMessage
+    (->couchHandler.checkDbsExistanceOrCreate(['pastèque'], checker)).should.throw errorMessage
     checker.callCount.should.equal 0
     done()
 
   it "should throw an error on non-array-of-valid-string argument", (done)->
     checker = sinon.spy()
-    (->H.db.checkDbsExistanceOrCreate(['badString1','badString2','badString3'], checker)).should.throw('only lowercase strings are accepted in an array of DBs')
+    (->couchHandler.checkDbsExistanceOrCreate(['badString1','badString2','badString3'], checker)).should.throw('only lowercase strings are accepted in an array of DBs')
     checker.callCount.should.equal 0
     done()
 

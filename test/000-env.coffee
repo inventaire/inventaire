@@ -13,7 +13,7 @@ describe 'config', ->
     CONFIG.should.have.property 'env'
     CONFIG.env.should.equal 'tests'
     CONFIG.db.users.should.equal 'users-tests'
-    CONFIG.db.inv.should.equal 'inventory-tests'
+    CONFIG.db.inventory.should.equal 'inventory-tests'
     CONFIG.fullHost().should.equal 'http://localhost:3009'
     CONFIG.db.fullHost().should.equal 'http://localhost:5984'
     done()

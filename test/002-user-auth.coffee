@@ -72,7 +72,7 @@ describe "byEmail", ->
 
 describe "cleanUserData", ->
   it 'returns a cleaned user', (done)->
-    cleanedUser = _.cleanUserData(fakeGoodRow.value)
+    cleanedUser = user.cleanUserData(fakeGoodRow.value)
     cleanedUser.username.should.equal fakeGoodRow.value.username
     cleanedUser.email.should.equal fakeGoodRow.value.email
     cleanedUser.picture.should.equal fakeGoodRow.value.picture
@@ -80,7 +80,7 @@ describe "cleanUserData", ->
 
   it 'throw on missing params', (done)->
     _.info fakeBadRow.value
-    (-> _.cleanUserData(fakeBadRow.value)).should.throwError()
+    (-> user.cleanUserData(fakeBadRow.value)).should.throwError()
     done()
 
 # INTEGRATION TESTS
@@ -88,9 +88,10 @@ describe "username validation", ->
   it 'returns a confirmation when valid', (done)->
     trycatch( ->
       request(baseUrl)
-        .post '/auth/username'
+        .post '/api/auth/username'
         .send fake.good
         .end (err, res) ->
+          _.log res, 'res'
           _.log res.status, 'res.status'
           res.status.should.equal 200
           res.body.should.be.an.Object
@@ -102,7 +103,7 @@ describe "username validation", ->
   it 'returns an invalid status when invalid username', (done)->
     trycatch( ->
       request(baseUrl)
-        .post '/auth/username'
+        .post '/api/auth/username'
         .send fake.invalid
         .end (err, res) ->
           _.log res.status, 'res.status'
@@ -124,7 +125,7 @@ describe "username validation", ->
   it "returns a 'not available' status when not available username", (done)->
     trycatch( ->
       request(baseUrl)
-        .post '/auth/username'
+        .post '/api/auth/username'
         .send fake.taken
         .end (err, res) ->
           res.status.should.equal 400
