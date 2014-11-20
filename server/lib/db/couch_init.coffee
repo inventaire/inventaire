@@ -1,8 +1,11 @@
 CONFIG = require 'config'
-breq = require 'breq'
 fs = require 'fs'
 __ = CONFIG.root
 _ = __.require('builders', 'utils')
+
+
+# cant use users and inventory cot-db as it would create a require loop
+breq = require 'breq'
 
 usersDesignDoc =
   name: 'users'
@@ -24,15 +27,35 @@ invDbUrl = baseDbUrl + '/' + CONFIG.db.inventory
 
 module.exports.usersDesignLoader = ->
   _.info 'usersDesignLoader'
-  breq.post usersDbUrl, usersDesignDoc.body()
-  .then (res)-> _.success res.body, "#{usersDesignDoc.id} for #{usersDbUrl}"
-  .fail (err)-> _.error err.body, "#{usersDesignDoc.id} for #{usersDbUrl}"
+  loader usersDbUrl, usersDesignDoc
 
 module.exports.invDesignLoader = ->
   _.info 'invDesignLoader'
-  breq.post invDbUrl, itemsDesignDoc.body()
-  .then (res)-> _.success res.body, "#{itemsDesignDoc.id} for #{invDbUrl}"
-  .fail (err)-> _.error err.body, "#{itemsDesignDoc.id} for #{invDbUrl}"
+  loader invDbUrl, itemsDesignDoc
+
+loader = (dbUrl, designDoc)->
+  breq.post dbUrl, designDoc.body()
+  .then (res)-> _.success res.body, "#{designDoc.id} for #{dbUrl}"
+  .fail (err)-> _.error err.body or err, "#{designDoc.id} for #{dbUrl}"
+
+module.exports.usersDesignUpdater = ->
+  _.info 'usersDesignUpdater'
+  updater usersDbUrl, usersDesignDoc
+
+module.exports.invDesignUpdater = ->
+  _.info 'invDesignUpdater'
+  updater invDbUrl, itemsDesignDoc
+
+updater = (dbUrl, designDoc)->
+  breq.get dbUrl + '/' + designDoc.id
+  .then (res)->
+    _.log res.body, 'current'
+    update = designDoc.body()
+    update._rev = res.body._rev
+    url = dbUrl + '/' + update._id
+    breq.put(url, update)
+    .then (res)-> _.success res.body, "#{designDoc.id} for #{dbUrl}"
+  .fail (err)-> _.error err.body or err, "#{designDoc.id} for #{dbUrl}"
 
 module.exports.loadFakeUsers = ->
   [

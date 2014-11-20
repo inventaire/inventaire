@@ -40,3 +40,7 @@ module.exports =
 
   isValidDbName: (str)->
     _.isString(str) and /^[a-z_$()+-\/]+$/.test str
+
+  reloadDesignDocs: ->
+    dbInit.usersDesignUpdater()
+    dbInit.invDesignLoader()
