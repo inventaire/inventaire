@@ -41,7 +41,7 @@ module.exports =
       .then (body)=>
         if body.rows[0]
           # IF EMAIL IS ALREADY STORED IN DB, RETURN USER EMAIL AND USERNAME
-          user = cleanUserData body.rows[0].value
+          user = @cleanUserData body.rows[0].value
           res.cookie "email", email
           res.json user
         else if username? and @nameIsValid username
@@ -163,7 +163,7 @@ module.exports =
     _.info username, 'deleteUserbyUsername'
     @byUsername(username)
     .then (body)-> body.rows[0].value
-    .then @deleteUser
+    .then @deleteUser.bind @
     .fail (err)-> _.error err, 'deleteUserbyUsername err'
 
   isReservedWord: (username)->
@@ -198,13 +198,13 @@ module.exports =
     socialGraph.getUserRelations(userId)
 
 
-cleanUserData = (value)->
-  if value.username? and value.email? and value.created? and value.picture?
-    user =
-      username: value.username
-      email: value.email
-      created: value.created
-      picture: value.picture
-    return user
-  else
-    throw new Error('missing user data')
+  cleanUserData: (value)->
+    if value.username? and value.email? and value.created? and value.picture?
+      user =
+        username: value.username
+        email: value.email
+        created: value.created
+        picture: value.picture
+      return user
+    else
+      throw new Error('missing user data')
