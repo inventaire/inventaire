@@ -1,5 +1,6 @@
 CONFIG = require 'config'
 __ = CONFIG.root
+_ = __.require 'builders', 'utils'
 
 Promise = require 'bluebird'
 
@@ -17,10 +18,11 @@ module.exports =
   del: cot.delete.bind cot
   view: cot.view.bind cot
   fetch: (keys)->
-    def = Promise.defer()
-    if keys.length > 0
-      nano.fetch {keys: keys}, (err, body)->
-        if err then def.reject new Error(err)
-        else def.resolve body
-    else def.resolve()
-    return def.promise
+    if _.typeArray(keys)
+      def = Promise.defer()
+      if keys.length > 0
+        nano.fetch {keys: keys}, (err, body)->
+          if err then def.reject new Error(err)
+          else def.resolve body
+      else def.resolve()
+      return def.promise
