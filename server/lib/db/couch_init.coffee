@@ -20,7 +20,7 @@ itemsDesignDoc =
 
 baseDbUrl = CONFIG.db.fullHost()
 usersDbUrl = baseDbUrl + '/' + CONFIG.db.users
-invDbUrl = baseDbUrl + '/' + CONFIG.db.inv
+invDbUrl = baseDbUrl + '/' + CONFIG.db.inventory
 
 module.exports.usersDesignLoader = ->
   _.info 'usersDesignLoader'
