@@ -8,9 +8,8 @@ String::logIt = (label, color)->
 
 module.exports =
   errorHandler: (res, err, status = 500)->
-    switch status
-      when 404 then @warn err
-      else @error(new Error(err), err)
+    if /^4/.test status then @warn err
+    else @error(new Error(err), err)
     res.setHeader 'Content-Type', 'text/html'
     res.status status || 500
     # dont send the error details to the user
