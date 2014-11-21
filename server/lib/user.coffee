@@ -38,10 +38,10 @@ module.exports =
     if body.status is "okay"
       # CHECK IF EMAIL IS IN DB
       @byEmail(email)
-      .then (body)=>
-        if body.rows[0]
+      .then (docs)=>
+        if docs[0]
           # IF EMAIL IS ALREADY STORED IN DB, RETURN USER EMAIL AND USERNAME
-          user = @cleanUserData body.rows[0].value
+          user = @cleanUserData docs[0]
           res.cookie "email", email
           res.json user
         else if username? and @nameIsValid username
@@ -64,15 +64,19 @@ module.exports =
 
   byId: (id)-> @db.get(id)
 
-  byEmail: (email)-> @db.view "users", "byEmail", {key: email}
+  byEmail: (email)->
+    @db.viewByKey 'byEmail', email
+
+  byUsername: (username)->
+    @db.viewByKey 'byUsername', username.toLowerCase()
 
   nameIsValid: (username)-> /^\w{1,20}$/.test username
 
   nameIsAvailable: (username)->
     unless @isReservedWord(username)
       return @byUsername(username)
-      .then (body)->
-        if body.rows.length == 0
+      .then (docs)->
+        if docs.length is 0
           _.success username, 'available'
           return username
         else
@@ -86,26 +90,24 @@ module.exports =
       def.reject new Error('Reserved words cant be usernames')
       return def.promise
 
-  byUsername: (username)->
-    params = { key: username.toLowerCase() }
-    return @db.view 'users', 'byUsername', params
 
   getSafeUserFromUsername: (username)->
     @byUsername(username)
-    .then (res)=>
-      if res?.rows?[0]?
-        return @safeUserData(res.rows[0].value)
+    .then (docs)=>
+      if docs?[0]?
+        return @safeUserData(docs[0])
       else return
     .fail (err)->
       _.error err, 'couldnt getUserFromUsername'
 
   usernameStartBy: (username, options)->
     username = username.toLowerCase()
-    query =
+    params =
       startkey: username
       endkey: username + 'Z'
-    query.limit = options.limit if options? and options.limit?
-    return @db.view 'users', 'byUsername', query
+      include_docs: true
+    params.limit = options.limit if options?.limit?
+    @db.viewCustom 'byUsername', params
 
   newUser: (username, email)->
     user =
@@ -119,8 +121,8 @@ module.exports =
 
   getUserId: (email)->
     return @byEmail(email)
-    .then (res)->
-      if res?.rows?[0]? then return res.rows[0].value._id
+    .then (docs)->
+      if docs?[0]? then return docs[0]._id
       else return
     .fail (err)-> throw new Error(err)
 
@@ -129,11 +131,10 @@ module.exports =
   getUsersPublicData: (ids, format='collection')->
     ids = ids.split?('|') or ids
     @fetchUsers(ids)
-    .then (body)=>
-      _.success body, 'found users data'
+    .then (usersData)=>
+      _.success usersData, 'found users data'
 
-      if body?
-        usersData = _.mapCouchDoc body
+      if usersData?
         _.success usersData, 'usersData before cleaning'
         cleanedUsersData = usersData.map @safeUserData
 
@@ -162,7 +163,7 @@ module.exports =
   deleteUserByUsername: (username)->
     _.info username, 'deleteUserbyUsername'
     @byUsername(username)
-    .then (body)-> body.rows[0].value
+    .then (rows)-> rows[0].doc
     .then @deleteUser.bind @
     .fail (err)-> _.error err, 'deleteUserbyUsername err'
 

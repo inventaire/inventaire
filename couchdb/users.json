@@ -3,10 +3,10 @@
    "language": "coffeescript",
    "views": {
        "byEmail": {
-           "map": "(doc)->\n  emit doc.email, doc"
+           "map": "(doc)->\n  emit doc.email, doc._id"
        },
        "byUsername": {
-           "map": "(doc)->\n  emit(doc.username.toLowerCase(), doc)"
+           "map": "(doc)->\n  emit(doc.username.toLowerCase(), doc._id)"
        },
        "usedProfiles": {
            "map": "(doc)->\n\tedits = doc._rev.split('-')[0]\n\tif edits > 1 then emit(doc.username, doc)"

@@ -42,9 +42,9 @@ module.exports.logout = (req, res, next) ->
 
 module.exports.getUser = (req, res, next) ->
   user.byEmail(req.session.email)
-  .then (body)->
-    if body?.rows?[0]?
-      userData = body.rows[0].value
+  .then (docs)->
+    if docs?[0]?
+      userData = docs[0]
       _.log userData, 'getUser'
       userId = userData._id
       user.getUserRelations(userId)
@@ -64,8 +64,8 @@ module.exports.updateUser = (req, res, next) ->
   updateReq = req.body
   _.log updateReq, 'updateUser updateReq'
   user.byEmail(req.session.email)
-  .then (body)->
-    current = body.rows[0].value
+  .then (docs)->
+    current = docs[0]
     if current.email is req.session.email and current._id is req.body._id
       unless _(current).isEqual(updateReq)
         user.db.post(req.body)

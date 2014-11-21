@@ -17,12 +17,23 @@ module.exports =
   put: cot.put.bind cot
   del: cot.delete.bind cot
   view: cot.view.bind cot
+  viewCustom: (viewName, params)->
+    @view('users', viewName, params)
+    .then _.mapCouchDoc.bind(_)
+  viewByKey: (viewName, key)->
+    params =
+      key: key
+      include_docs: true
+    @viewCustom viewName, params
   fetch: (keys)->
     if _.typeArray(keys)
       def = Promise.defer()
       if keys.length > 0
-        nano.fetch {keys: keys}, (err, body)->
+        params =
+          keys: keys
+          include_docs: true
+        nano.fetch params, (err, body)->
           if err then def.reject new Error(err)
-          else def.resolve body
+          else def.resolve _.mapCouchDoc(body)
       else def.resolve()
       return def.promise

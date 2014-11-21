@@ -17,8 +17,7 @@ module.exports.actions = (req, res, next) ->
 
 searchByUsername = (res, search) ->
   user.usernameStartBy(search)
-  .then (body)->
-    usersData = _.mapCouchValue body
+  .then (usersData)->
     users = usersData.map user.safeUserData
     _.info users, 'users'
     res.json users
@@ -39,13 +38,12 @@ fetchUsersData = (res, ids)->
 
 module.exports.friendData = (req, res, next) ->
   user.byEmail(req.session.email)
-  .then (body)->
-    if body.rows.length > 0
-      return body.rows[0].value.users
-    else
-      return
+  .then (docs)->
+    if docs.length > 0 then return docs[0].users
+    else return
   .then user.fetchUsers.bind(user)
   .then (body)->
+    _.log body, 'fetchUsers body'
     if body?
       usersData = _.mapCouchDoc body
       cleanedUsersData = usersData.map user.safeUserData
