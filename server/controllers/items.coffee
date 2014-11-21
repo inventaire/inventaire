@@ -10,7 +10,7 @@ module.exports =
     user.getUserId(req.session.email)
     .then inv.byOwner.bind(inv)
     .then (items)-> res.json items
-    .fail (err)-> _.errorHandler res, err
+    .catch (err)-> _.errorHandler res, err
     .done()
 
   put: (req, res, next) ->
@@ -23,7 +23,7 @@ module.exports =
         inv.db.put item
         .then (body)-> _.getObjIfSuccess inv.db, body
         .then (body)-> res.json 201, body
-        .fail (err)-> _.errorHandler res, err
+        .catch (err)-> _.errorHandler res, err
         .done()
       else
         _.errorHandler res, "couldn't add this item", 400
@@ -33,7 +33,7 @@ module.exports =
   #   _.log req.params.id, 'GET Item ID'
   #   inv.get req.params.id
   #   .then (body)-> res.json(body)
-  #   .fail (err)-> _.errorHandler res, err
+  #   .catch (err)-> _.errorHandler res, err
   #   .done()
 
   del: (req, res, next) ->
@@ -41,14 +41,14 @@ module.exports =
     _.info req.params, 'del'
     inv.db.delete req.params.id, req.params.rev
     .then (body)-> res.json(body)
-    .fail (err)-> _.errorHandler res, err
+    .catch (err)-> _.errorHandler res, err
     .done()
 
   publicByEntity: (req, res, next) ->
     _.info req.params, 'public'
     inv.byEntity(req.params.uri)
     .then (items)-> res.json items
-    .fail (err)-> _.errorHandler res, err
+    .catch (err)-> _.errorHandler res, err
     .done()
 
   fetchLastPublicItems: (req, res, next) ->
@@ -60,7 +60,7 @@ module.exports =
       user.getUsersPublicData(users)
       .then (users)->
         res.json {items: items, users: users}
-    .fail (err)-> _.errorHandler res, err
+    .catch (err)-> _.errorHandler res, err
     .done()
 
   publicByUserAndSuffix: (req, res, next)->
@@ -73,5 +73,5 @@ module.exports =
         .then (items)->
           return res.json {items: items, user: user}
       else _.errorHandler res, 'user not found', 404
-    .fail (err)-> _.errorHandler res, err
+    .catch (err)-> _.errorHandler res, err
     .done()

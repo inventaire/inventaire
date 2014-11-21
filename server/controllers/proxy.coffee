@@ -8,8 +8,6 @@ module.exports.get = (req, res, next)->
     _.errorHandler res, 'protocol missing', 400
   else
     breq.get(query)
-    .then (resp)->
-      res.send(resp.body)
-    .fail (err)->
-      res.send(err.body)
+    .then (resp)-> res.send(resp.body)
+    .catch (err)-> res.send(err.body)
     .done()

@@ -27,11 +27,11 @@ searchByIsbn = (query, res)->
 
   promises = [
     wikidata.getBookEntityByIsbn(isbn, isbnType, query.language)
-    .fail (err)-> _.error err, 'wikidata getBookEntityByISBN err'
+    .catch (err)-> _.error err, 'wikidata getBookEntityByISBN err'
 
     booksPromise = books.getGoogleBooksDataFromIsbn(isbn)
     .then((res)-> {items:[res], source: 'google'})
-    .fail (err)-> _.error err, 'getGoogleBooksDataFromIsbn err'
+    .catch (err)-> _.error err, 'getGoogleBooksDataFromIsbn err'
   ]
 
   spreadRequests(res, promises, 'searchByIsbn')
@@ -41,11 +41,11 @@ searchByText = (query, res)->
   promises = [
     wikidata.getBookEntities(query)
     .then (items)-> {items: items, source: 'wd', search: query.search}
-    .fail (err)-> _.error err, 'wikidata getBookEntities err'
+    .catch (err)-> _.error err, 'wikidata getBookEntities err'
 
     books.getGoogleBooksDataFromText(query.search)
     .then (res)-> {items: res, source: 'google', search: query.search}
-    .fail (err)-> _.error err, 'getGoogleBooksDataFromIsbn err'
+    .catch (err)-> _.error err, 'getGoogleBooksDataFromIsbn err'
   ]
 
   spreadRequests(res, promises, 'searchByText')
@@ -59,7 +59,7 @@ spreadRequests = (res, promises, label)->
       res.json selected
     else res.json 404, 'not found'
 
-  .fail (err)->
+  .catch (err)->
     _.error err, "#{label} err"
     _.errorHandler res, err
   .done()

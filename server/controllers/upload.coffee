@@ -34,7 +34,7 @@ module.exports.post = (req, res, next)->
         ownedUrls = urls.map extractOwnedUrl
         _.log ownedUrls, 'ownedUrls'
         res.json 200, ownedUrls
-      .fail (err)->
+      .catch (err)->
         _.error err, 'putImage err'
         res.json 500, {status: err}
 
@@ -47,7 +47,7 @@ module.exports.del = (req, res, next)->
     if resp.statusCode is 200
       res.json 200, {status: 'OK'}
     else throw {status: 'FAILED'}
-  .fail (err)->
+  .catch (err)->
     res.json 500, err
 
 

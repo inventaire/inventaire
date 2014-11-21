@@ -15,8 +15,6 @@ compression = require 'compression'
 Promise = require 'bluebird'
 Promise.longStackTraces()
 Promise.onPossiblyUnhandledRejection (err)-> throw new Error(err)
-# adding a fail alias to caught to ease the transition from Q to Bluebird
-Promise::fail = Promise::caught
 
 # middlewares following recommandations found here for the implementation of Persona
 # http://www.mircozeiss.com/mozilla-persona-example-app-with-express-and-couchdb/

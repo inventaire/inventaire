@@ -11,7 +11,7 @@ module.exports.checkUsername = (req, res, next) ->
     user.nameIsAvailable reqUsername
     .then ()->
       res.json {username: reqUsername, status: 'available'}
-    .fail (err)->
+    .catch (err)->
       obj =
         username: reqUsername
         status: 'not available'
@@ -31,7 +31,7 @@ module.exports.login = (req, res, next) ->
   user.verifyAssertion(req)
   .then (personaAnswer)->
     user.verifyStatus personaAnswer, req, res
-  .fail (err)-> _.error err, 'login err'
+  .catch (err)-> _.error err, 'login err'
   .done()
 
 module.exports.logout = (req, res, next) ->
@@ -57,7 +57,7 @@ module.exports.getUser = (req, res, next) ->
         throw new Error(err)
     else
       _.errorHandler res, 'user not found', 404
-  .fail (err)-> _.errorHandler res, err, 404
+  .catch (err)-> _.errorHandler res, err, 404
   .done()
 
 module.exports.updateUser = (req, res, next) ->
@@ -71,10 +71,10 @@ module.exports.updateUser = (req, res, next) ->
         user.db.post(req.body)
         .then (body)-> _.getObjIfSuccess user.db, body
         .then (body)-> res.json(body)
-        .fail (err)-> _.errorHandler res, err
+        .catch (err)-> _.errorHandler res, err
       else
         _.errorHandler res, 'already up-to-date', 400
     else
       _.errorHandler res, 'wrong email', 400
-  .fail (err)-> _.errorHandler res, err, 400
+  .catch (err)-> _.errorHandler res, err, 400
   .done()

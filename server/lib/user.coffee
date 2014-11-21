@@ -50,12 +50,12 @@ module.exports =
           .then (body)=>
             res.cookie "email", email
             res.json body
-          .fail (err)-> _.errorHandler res, err
+          .catch (err)-> _.errorHandler res, err
         else
           err = "Couldn't find an account associated with this email"
           _.error err
           _.errorHandler res, err
-      .fail (err)-> _.errorHandler res, err
+      .catch (err)-> _.errorHandler res, err
       .done()
 
     else
@@ -97,7 +97,7 @@ module.exports =
       if docs?[0]?
         return @safeUserData(docs[0])
       else return
-    .fail (err)->
+    .catch (err)->
       _.error err, 'couldnt getUserFromUsername'
 
   usernameStartBy: (username, options)->
@@ -124,7 +124,7 @@ module.exports =
     .then (docs)->
       if docs?[0]? then return docs[0]._id
       else return
-    .fail (err)-> throw new Error(err)
+    .catch (err)-> throw new Error(err)
 
   fetchUsers: (ids)-> @db.fetch(ids)
 
@@ -163,9 +163,9 @@ module.exports =
   deleteUserByUsername: (username)->
     _.info username, 'deleteUserbyUsername'
     @byUsername(username)
-    .then (rows)-> rows[0].doc
+    .then (docs)-> docs[0]
     .then @deleteUser.bind @
-    .fail (err)-> _.error err, 'deleteUserbyUsername err'
+    .catch (err)-> _.error err, 'deleteUserbyUsername err'
 
   isReservedWord: (username)->
     reservedWords = [

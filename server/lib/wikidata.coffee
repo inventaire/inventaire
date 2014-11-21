@@ -33,7 +33,7 @@ module.exports.getBookEntityByIsbn = (isbn, type, lang)->
         .then(filterAndBrush)
         .then (resultArray)-> return {items: resultArray, source: 'wd', isbn: isbn}
       else return {status: 'no item found for this isbn', isbn: isbn, items: [], source: 'wd'}
-    .fail (err)-> _.error err, 'err at getBookEntityByIsbn'
+    .catch (err)-> _.error err, 'err at getBookEntityByIsbn'
 
 
 searchEntities = (search, language='en', limit='20', format='json')->

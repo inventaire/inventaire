@@ -36,7 +36,7 @@ module.exports.invDesignLoader = ->
 loader = (dbUrl, designDoc)->
   breq.post dbUrl, designDoc.body()
   .then (res)-> _.success res.body, "#{designDoc.id} for #{dbUrl}"
-  .fail (err)-> _.error err.body or err, "#{designDoc.id} for #{dbUrl}"
+  .catch (err)-> _.error err.body or err, "#{designDoc.id} for #{dbUrl}"
 
 module.exports.usersDesignUpdater = ->
   _.info 'usersDesignUpdater'
@@ -55,7 +55,7 @@ updater = (dbUrl, designDoc)->
     url = dbUrl + '/' + update._id
     breq.put(url, update)
     .then (res)-> _.success res.body, "#{designDoc.id} for #{dbUrl}"
-  .fail (err)-> _.error err.body or err, "#{designDoc.id} for #{dbUrl}"
+  .catch (err)-> _.error err.body or err, "#{designDoc.id} for #{dbUrl}"
 
 module.exports.loadFakeUsers = ->
   [
@@ -82,17 +82,17 @@ loadFakeUser = (username)->
       picture: fake.picture.medium
       created: _.now()
     postUser userData
-  .fail (err)-> _.error err
+  .catch (err)-> _.error err
   .done()
 
 postUser = (data)->
   breq.post usersDbUrl, data
   .then (res)-> _.info res.body, 'postUser'
-  .fail (err)-> _.error err, 'postUser'
+  .catch (err)-> _.error err, 'postUser'
   .done()
 
 putUser = (data)->
   breq.put usersDbUrl + '/' + data._id, data
   .then (res)-> _.info res.body, 'putUser'
-  .fail (err)-> _.error err, 'putUser'
+  .catch (err)-> _.error err, 'putUser'
   .done()

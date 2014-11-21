@@ -21,7 +21,7 @@ searchByUsername = (res, search) ->
     users = usersData.map user.safeUserData
     _.info users, 'users'
     res.json users
-  .fail (err)-> _.errorHandler res, err
+  .catch (err)-> _.errorHandler res, err
   .done()
 
 fetchUsersData = (res, ids)->
@@ -31,7 +31,7 @@ fetchUsersData = (res, ids)->
     .then (usersData)->
       _.success usersData, 'usersData'
       res.json {users: usersData}
-    .fail (err)-> _.errorHandler res, err
+    .catch (err)-> _.errorHandler res, err
     .done()
   else
     _.errorHandler res, 'no data found', 404
@@ -50,7 +50,7 @@ module.exports.friendData = (req, res, next) ->
       res.json cleanedUsersData
     else
       _.errorHandler res, 'no user found', 404
-  .fail (err)-> _.errorHandler res, err
+  .catch (err)-> _.errorHandler res, err
   .done()
 
 
