@@ -23,7 +23,7 @@ relationActions =
 
     return Promise.all [fromUser, fromOther]
     .spread (fromUser, fromOther)->
-      _.info [fromUser, fromOther], 'relationStatus fromUser, fromOther'
+      _.info [fromUser, fromOther], 'current relation statuses'
       if fromUser is 'friend' or fromOther is 'friend'
         return 'friend'
       return 'userRequested'  if fromUser is 'requested'

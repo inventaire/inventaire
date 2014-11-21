@@ -36,7 +36,7 @@ module.exports =
               dbInit.invDesignLoader()
             _.success body, "#{dbName}DB created"
       else
-        _.success "#{dbName}DB ready!"
+        _.info "#{dbName}DB ready!"
 
   isValidDbName: (str)->
     _.isString(str) and /^[a-z_$()+-\/]+$/.test str
