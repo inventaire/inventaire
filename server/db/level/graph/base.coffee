@@ -11,17 +11,8 @@ graph_ = require './graph_utils'
 
 
 module.exports = (graphName)->
-
-  if CONFIG.env is 'tests'
-    level = require('level-test')()
-    leveldb = level()
-  else
-    level = require 'level'
-    dbPath = __.path 'leveldb', graphName
-
-    leveldb = level(dbPath)
-
-  graph = levelgraph(leveldb)
+  db = __.require('level', 'base')(graphName)
+  graph = levelgraph(db)
 
   action = (verb, args)->
     obj = graph_.normalizeInterface(args, true)
@@ -30,10 +21,9 @@ module.exports = (graphName)->
     graph[verb] obj, (err, result)->
       if err then def.reject(err)
       else
-        # _.success result, "#{verb}: success!"
-
         # result exist only on GET
-        if result? then result = graph_.aliases.wrapAll(result)
+        if result?
+          result = graph_.aliases.wrapAll(result)
 
         def.resolve(result)
     return def.promise
@@ -81,7 +71,7 @@ module.exports = (graphName)->
 
   tools =
     utils: graph_
-    leveldb: leveldb
+    leveldb: db
     logDb: graph_.logDb
     graph: graph
 
