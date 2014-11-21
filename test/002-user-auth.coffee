@@ -50,22 +50,19 @@ describe "byEmail", ->
     user.newUser fake.good.username, fake.good.email
   after ->
     user.deleteUserByUsername fake.good.username
-  it 'returns a standard user row', (done)->
+  it 'returns a parsed user doc', (done)->
     trycatch( ->
       user.byEmail(fake.good.email)
-      .done (body)->
-        body.rows.length.should.equal 1
-        row = body.rows[0]
-        row.should.have.property 'id'
-        row.should.have.property 'key'
-        row.should.have.property 'value'
-        row.value.should.be.an.Object
-        row.value.should.have.property '_id'
-        row.value.should.have.property '_rev'
-        row.value.should.have.property 'username'
-        row.value.should.have.property 'email'
-        row.value.should.have.property 'created'
-        row.value.should.have.property 'picture'
+      .done (docs)->
+        docs.length.should.equal 1
+        doc = docs[0]
+        doc.should.be.an.Object
+        doc.should.have.property '_id'
+        doc.should.have.property '_rev'
+        doc.should.have.property 'username'
+        doc.should.have.property 'email'
+        doc.should.have.property 'created'
+        doc.should.have.property 'picture'
         done()
     , done)
 
@@ -91,7 +88,6 @@ describe "username validation", ->
         .post '/api/auth/username'
         .send fake.good
         .end (err, res) ->
-          _.log res, 'res'
           _.log res.status, 'res.status'
           res.status.should.equal 200
           res.body.should.be.an.Object
@@ -140,10 +136,10 @@ describe "everything's clean", ->
   it 'returns 0 row for fake.good user', (done)->
     trycatch( ->
       user.byUsername(fake.good.username)
-      .done (body)->
-        _.log body, 'clean body?'
-        body.rows.should.be.an.Array
-        body.rows.length.should.equal 0
+      .done (docs)->
+        _.log docs, 'clean docs?'
+        docs.should.be.an.Array
+        docs.length.should.equal 0
         done()
     , done)
 
