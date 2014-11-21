@@ -7,7 +7,7 @@ levelgraph = require 'levelgraph'
 
 Promise = require 'bluebird'
 
-_g = require './graph_utils'
+graph_ = require './graph_utils'
 
 
 module.exports = (graphName)->
@@ -24,7 +24,7 @@ module.exports = (graphName)->
   graph = levelgraph(leveldb)
 
   action = (verb, args)->
-    obj = _g.normalizeInterface(args, true)
+    obj = graph_.normalizeInterface(args, true)
     def = Promise.defer()
     # _.info obj, verb
     graph[verb] obj, (err, result)->
@@ -33,7 +33,7 @@ module.exports = (graphName)->
         # _.success result, "#{verb}: success!"
 
         # result exist only on GET
-        if result? then result = _g.aliases.wrapAll(result)
+        if result? then result = graph_.aliases.wrapAll(result)
 
         def.resolve(result)
     return def.promise
@@ -47,7 +47,7 @@ module.exports = (graphName)->
 
   bidirectionals =
     getBidirectional: (args...)->
-      query = _g.normalizeInterface(args)
+      query = graph_.normalizeInterface(args)
       # EXPECT short form: s, p, o
       # EXPECT a subject and a predicate
       # RETURNS an array of subjet and/or object
@@ -55,15 +55,15 @@ module.exports = (graphName)->
         err = 'missing subject or predicate'
         return Promise.defer().reject(err)
 
-      query2 = _g.mirrorTriple(query)
+      query2 = graph_.mirrorTriple(query)
       # _.info [query, query2], 'query & mirror '
 
       promise1 = @get query
       promise2 = @get query2
       return Promise.all([promise1, promise2])
       .spread (fromSubject, fromObject)->
-        results1 = _g.pluck.objects(fromSubject)
-        results2 = _g.pluck.subjects(fromObject)
+        results1 = graph_.pluck.objects(fromSubject)
+        results2 = graph_.pluck.subjects(fromObject)
         result = _.uniq results1.concat(results2)
         return _.success result, 'bidirectional result'
 
@@ -75,14 +75,14 @@ module.exports = (graphName)->
     putBidirectional: actions.put
 
     delBidirectional: (args...)->
-      triples = _g.normalizeInterface(args)
-      triples = _g.addMirrorTriples(triples)
+      triples = graph_.normalizeInterface(args)
+      triples = graph_.addMirrorTriples(triples)
       return @del triples
 
   tools =
-    utils: _g
+    utils: graph_
     leveldb: leveldb
-    logDb: _g.logDb
+    logDb: graph_.logDb
     graph: graph
 
   return _.extend actions, bidirectionals, tools

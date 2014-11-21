@@ -1,7 +1,7 @@
-_ = require('config').root.require('builders', 'utils')
-
-user = require '../lib/user'
-inv = require '../lib/inv'
+__ = require('config').root
+_ = __.require 'builders', 'utils'
+user_ = __.require 'lib', 'user'
+inv_ = __.require 'lib', 'inv'
 Promise = require 'bluebird'
 
 module.exports.actions = (req, res, next) ->
@@ -16,9 +16,9 @@ module.exports.actions = (req, res, next) ->
   _.errorHandler res, 'bad query', 400
 
 searchByUsername = (res, search) ->
-  user.usernameStartBy(search)
+  user_.usernameStartBy(search)
   .then (usersData)->
-    users = usersData.map user.safeUserData
+    users = usersData.map user_.safeUserData
     _.info users, 'users'
     res.json users
   .catch (err)-> _.errorHandler res, err
@@ -27,7 +27,7 @@ searchByUsername = (res, search) ->
 fetchUsersData = (res, ids)->
   _.info ids, 'fetchUsersData ids'
   if ids?.length? and ids.length > 0
-    user.getUsersPublicData(ids, 'index')
+    user_.getUsersPublicData(ids, 'index')
     .then (usersData)->
       _.success usersData, 'usersData'
       res.json {users: usersData}
@@ -37,16 +37,16 @@ fetchUsersData = (res, ids)->
     _.errorHandler res, 'no data found', 404
 
 module.exports.friendData = (req, res, next) ->
-  user.byEmail(req.session.email)
+  user_.byEmail(req.session.email)
   .then (docs)->
     if docs.length > 0 then return docs[0].users
     else return
-  .then user.fetchUsers.bind(user)
+  .then user_.fetchUsers.bind(user)
   .then (body)->
     _.log body, 'fetchUsers body'
     if body?
       usersData = _.mapCouchDoc body
-      cleanedUsersData = usersData.map user.safeUserData
+      cleanedUsersData = usersData.map user_.safeUserData
       res.json cleanedUsersData
     else
       _.errorHandler res, 'no user found', 404
@@ -57,8 +57,8 @@ module.exports.friendData = (req, res, next) ->
 module.exports.fetchItems = (req, res, next) ->
   _.log ownerId = req.params.user, 'fetchItems user'
   promises = [
-    inv.byListing ownerId, 'friends'
-    inv.byListing ownerId, 'public'
+    inv_.byListing ownerId, 'friends'
+    inv_.byListing ownerId, 'public'
   ]
   Promise.all(promises)
   .spread _.union

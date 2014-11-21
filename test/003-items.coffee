@@ -67,9 +67,9 @@ describe "PUT", ->
 
 
 
-inv = __.require 'lib','inv'
+inv_ = __.require 'lib','inv'
 
-isValidItem = inv.isValidItem
+isValidItem = inv_.isValidItem
 fakeItems =
   good:
     title: "with a title"

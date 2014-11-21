@@ -3,7 +3,7 @@ _ = CONFIG.root.require('builders', 'utils')
 Promise = require 'bluebird'
 
 graph = require('./base')(CONFIG.graph.social)
-_g = graph.utils
+graph_ = graph.utils
 
 # UNI-DIRECTONAL:
 # - requested
@@ -15,10 +15,10 @@ relationActions =
   relationStatus: (userId, otherId)->
     [fromUser, fromOther] = [
       @get({s: userId, o: otherId})
-      .then _g.pluck.first.predicate
+      .then graph_.pluck.first.predicate
 
       @get({s: otherId , o: userId})
-      .then _g.pluck.first.predicate
+      .then graph_.pluck.first.predicate
     ]
 
     return Promise.all [fromUser, fromOther]
@@ -114,11 +114,11 @@ relationsLists =
 
   getOthersRequests: (userId)->
     query = { p: 'requested', o: userId }
-    return @get(query).then _g.pluck.subjects
+    return @get(query).then graph_.pluck.subjects
 
   getUserRequests: (userId)->
     query = {s: userId, p: 'requested'}
-    return @get(query).then _g.pluck.objects
+    return @get(query).then graph_.pluck.objects
 
 
 module.exports = _.extend graph, relationActions, relationsLists

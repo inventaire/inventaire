@@ -1,6 +1,6 @@
 __ = require('config').root
 _ = __.require 'builders', 'utils'
-user = __.require 'lib', 'user'
+user_ = __.require 'lib', 'user'
 socialGraph = __.require 'graph', 'social_graph'
 
 
@@ -8,7 +8,7 @@ module.exports.actions = (req, res, next) ->
   _.log query = req.query, 'relations.actions query'
   [action, othersId] = [query.action, query.user]
   if action? and othersId?
-    user.getUserId(req.session.email)
+    user_.getUserId(req.session.email)
     .then (userId)->
       _.log arguments, 'action arguments'
       if userId isnt othersId

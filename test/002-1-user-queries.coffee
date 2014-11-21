@@ -9,13 +9,13 @@ _ = __.require 'builders', 'utils'
 
 Promise = require 'bluebird'
 
-_user = __.require 'lib','user'
+user_ = __.require 'lib','user'
 
 describe "user byUsername", ->
   it "returns docs", (done)->
     trycatch( ->
       # bobby should have been added in fakeUsers
-      _user.byUsername('bobby')
+      user_.byUsername('bobby')
       .then (docs)->
         docs.should.be.an.Array
         docs.length.should.equal 1
@@ -29,7 +29,7 @@ describe "usernameStartBy", ->
   it "returns docs", (done)->
     trycatch( ->
       # bobby should have been added in fakeUsers
-      _user.usernameStartBy('bob')
+      user_.usernameStartBy('bob')
       .then (docs)->
         docs.should.be.an.Array
         docs.length.should.equal 1
@@ -44,7 +44,7 @@ describe "users fetch", ->
     trycatch( ->
       # bobby, tony, rocky should have been added in fakeUsers
       promises = ['bobby', 'tony', 'rocky'].map (username)->
-        return _user.byUsername(username)
+        return user_.byUsername(username)
 
       Promise.all(promises)
       .then (proms)->
@@ -52,7 +52,7 @@ describe "users fetch", ->
           _.log user[0], 'user'
           return user[0]._id
         _.log ids, 'ids'
-        _user.db.fetch(ids)
+        user_.db.fetch(ids)
         .then (docs)->
           _.log docs, 'docs'
           docs.should.be.an.Array
@@ -65,7 +65,7 @@ describe "users fetch", ->
   it "return undefined docs when doc not found", (done)->
     trycatch( ->
       # johnnybegood should not be in fakeUsers
-      _user.db.fetch(['invalidId'])
+      user_.db.fetch(['invalidId'])
       .then (docs)->
         _.log docs, 'docs'
         docs.should.be.an.Array
@@ -79,7 +79,7 @@ describe "users fetch", ->
     trycatch( ->
       # bobby, tony, rocky should have been added in fakeUsers
       promises = ['tony', 'rocky'].map (username)->
-        return _user.byUsername(username)
+        return user_.byUsername(username)
 
       Promise.all(promises)
       .then (proms)->
@@ -88,7 +88,7 @@ describe "users fetch", ->
           return user[0]._id
         _.log ids, 'ids'
         ids.push 'invalidId'
-        _user.db.fetch(ids)
+        user_.db.fetch(ids)
         .then (docs)->
           _.log docs, 'docs'
           docs.should.be.an.Array

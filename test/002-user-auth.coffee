@@ -7,18 +7,18 @@ baseUrl = require('config').fullHost()
 __ = require('config').root
 _ = __.require 'builders', 'utils'
 
-user = __.require 'lib','user'
+user_ = __.require 'lib','user'
 
 # UNIT TESTS
 describe "username validation", ->
   it "doesn't let in invalid characters", (done)->
     trycatch( ->
-      user.nameIsValid('PerfectLyOKName').should.be.true
-      user.nameIsValid('1210pasteque').should.be.true
-      user.nameIsValid('Badname due to spaces').should.be.false
-      user.nameIsValid('specialChar**cters').should.be.false
-      user.nameIsValid('').should.be.false
-      user.nameIsValid('UsernameHasMoreThan20character').should.be.false
+      user_.nameIsValid('PerfectLyOKName').should.be.true
+      user_.nameIsValid('1210pasteque').should.be.true
+      user_.nameIsValid('Badname due to spaces').should.be.false
+      user_.nameIsValid('specialChar**cters').should.be.false
+      user_.nameIsValid('').should.be.false
+      user_.nameIsValid('UsernameHasMoreThan20character').should.be.false
       done()
     , done)
 
@@ -26,11 +26,11 @@ describe "username validation", ->
 describe "username creation", ->
 
   after ->
-    user.deleteUserByUsername fake.good.username
+    user_.deleteUserByUsername fake.good.username
 
   it 'returns a mapped result and not a raw row', (done)->
     trycatch( ->
-      user.newUser(fake.good.username, fake.good.email)
+      user_.newUser(fake.good.username, fake.good.email)
       .done (body)->
         body.should.be.an.Object
         body.should.have.property '_id'
@@ -47,12 +47,12 @@ describe "username creation", ->
 
 describe "byEmail", ->
   before ->
-    user.newUser fake.good.username, fake.good.email
+    user_.newUser fake.good.username, fake.good.email
   after ->
-    user.deleteUserByUsername fake.good.username
+    user_.deleteUserByUsername fake.good.username
   it 'returns a parsed user doc', (done)->
     trycatch( ->
-      user.byEmail(fake.good.email)
+      user_.byEmail(fake.good.email)
       .done (docs)->
         docs.length.should.equal 1
         doc = docs[0]
@@ -69,7 +69,7 @@ describe "byEmail", ->
 
 describe "cleanUserData", ->
   it 'returns a cleaned user', (done)->
-    cleanedUser = user.cleanUserData(fakeGoodRow.value)
+    cleanedUser = user_.cleanUserData(fakeGoodRow.value)
     cleanedUser.username.should.equal fakeGoodRow.value.username
     cleanedUser.email.should.equal fakeGoodRow.value.email
     cleanedUser.picture.should.equal fakeGoodRow.value.picture
@@ -77,7 +77,7 @@ describe "cleanUserData", ->
 
   it 'throw on missing params', (done)->
     _.info fakeBadRow.value
-    (-> user.cleanUserData(fakeBadRow.value)).should.throwError()
+    (-> user_.cleanUserData(fakeBadRow.value)).should.throwError()
     done()
 
 # INTEGRATION TESTS
@@ -113,10 +113,10 @@ describe "username validation", ->
 
   before ->
     _.log 'before'
-    user.newUser fake.taken.username, fake.taken.email
+    user_.newUser fake.taken.username, fake.taken.email
   after ->
     _.log 'after'
-    user.deleteUserByUsername fake.taken.username
+    user_.deleteUserByUsername fake.taken.username
 
   it "returns a 'not available' status when not available username", (done)->
     trycatch( ->
@@ -135,7 +135,7 @@ describe "username validation", ->
 describe "everything's clean", ->
   it 'returns 0 row for fake.good user', (done)->
     trycatch( ->
-      user.byUsername(fake.good.username)
+      user_.byUsername(fake.good.username)
       .done (docs)->
         _.log docs, 'clean docs?'
         docs.should.be.an.Array

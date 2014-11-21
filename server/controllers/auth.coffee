@@ -1,14 +1,14 @@
 __ = require('config').root
-_ = __.require('builders', 'utils')
+_ = __.require 'builders', 'utils'
 
-user = __.require 'lib', 'user'
+user_ = __.require 'lib', 'user'
 
 module.exports.checkUsername = (req, res, next) ->
   reqUsername = req.body.username
   _.success reqUsername, 'checkUsername reqUsername'
-  if user.nameIsValid reqUsername
+  if user_.nameIsValid reqUsername
     _.success reqUsername, 'nameIsValid'
-    user.nameIsAvailable reqUsername
+    user_.nameIsAvailable reqUsername
     .then ()->
       res.json {username: reqUsername, status: 'available'}
     .catch (err)->
@@ -28,9 +28,9 @@ module.exports.checkUsername = (req, res, next) ->
     res.json 400, obj
 
 module.exports.login = (req, res, next) ->
-  user.verifyAssertion(req)
+  user_.verifyAssertion(req)
   .then (personaAnswer)->
-    user.verifyStatus personaAnswer, req, res
+    user_.verifyStatus personaAnswer, req, res
   .catch (err)-> _.error err, 'login err'
   .done()
 
@@ -41,13 +41,13 @@ module.exports.logout = (req, res, next) ->
   res.redirect "/"
 
 module.exports.getUser = (req, res, next) ->
-  user.byEmail(req.session.email)
+  user_.byEmail(req.session.email)
   .then (docs)->
     if docs?[0]?
       userData = docs[0]
       _.log userData, 'getUser'
       userId = userData._id
-      user.getUserRelations(userId)
+      user_.getUserRelations(userId)
       .then (relations)->
         _.success relations, 'relations'
         userData.relations = relations
@@ -63,13 +63,13 @@ module.exports.getUser = (req, res, next) ->
 module.exports.updateUser = (req, res, next) ->
   updateReq = req.body
   _.log updateReq, 'updateUser updateReq'
-  user.byEmail(req.session.email)
+  user_.byEmail(req.session.email)
   .then (docs)->
     current = docs[0]
     if current.email is req.session.email and current._id is req.body._id
       unless _(current).isEqual(updateReq)
-        user.db.post(req.body)
-        .then (body)-> _.getObjIfSuccess user.db, body
+        user_.db.post(req.body)
+        .then (body)-> _.getObjIfSuccess user_.db, body
         .then (body)-> res.json(body)
         .catch (err)-> _.errorHandler res, err
       else
