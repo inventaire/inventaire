@@ -2,7 +2,7 @@ CONFIG = require 'config'
 _ = CONFIG.root.require('builders', 'utils')
 Promise = require 'bluebird'
 
-graph = require('./base')(CONFIG.graph.social)
+graph = require('./base')('social_graph')
 graph_ = graph.utils
 
 # UNI-DIRECTONAL:

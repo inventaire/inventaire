@@ -3,7 +3,7 @@ __ = CONFIG.root
 _ = __.require('builders', 'utils')
 
 nano = require('nano') CONFIG.db.fullHost()
-couch_ = __.require 'db', 'couch_handler'
+couch_ = __.require 'couch', 'couch_handler'
 
 if CONFIG.db.instable
   couch_.checkDbsExistanceOrCreate [CONFIG.db.users, CONFIG.db.inventory]

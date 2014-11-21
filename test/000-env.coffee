@@ -5,7 +5,7 @@ CONFIG = require 'config'
 __ = CONFIG.root
 _ = __.require('builders', 'utils')
 
-should = require "should"
+should = require 'should'
 
 describe 'config', ->
 

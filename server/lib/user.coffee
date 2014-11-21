@@ -10,7 +10,7 @@ socialGraph = __.require 'graph', 'social_graph'
 gravatar = require 'gravatar'
 
 module.exports =
-  db: __.require 'db', 'users'
+  db: __.require 'couch', 'users'
   isLoggedIn: (req)->
     if req.session.email?
       _.success req.session.toJSON(), 'user is logged in'

@@ -1,10 +1,10 @@
-should = require "should"
-sinon = require "sinon"
+should = require 'should'
+sinon = require 'sinon'
 
 __ = require('config').root
 _ = __.require 'builders', 'utils'
 
-couch_ = __.require 'db', 'couch_handler'
+couch_ = __.require 'couch', 'couch_handler'
 
 #UNIT TEST
 describe "isValidDbName", ->

@@ -2,7 +2,7 @@ CONFIG = require('config')
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 nano = require('nano') CONFIG.db.fullHost()
-dbInit = __.require 'db', 'couch_init'
+dbInit = __.require 'couch', 'couch_init'
 
 module.exports =
   checkDbsExistanceOrCreate: (db, checker = @checkExistanceOrCreate)->

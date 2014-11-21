@@ -1,6 +1,6 @@
-should = require "should"
-trycatch = require "trycatch"
-request = require "supertest"
+should = require 'should'
+trycatch = require 'trycatch'
+request = require 'supertest'
 
 baseUrl = require('config').fullHost()
 itemsRoot = '/api/items'

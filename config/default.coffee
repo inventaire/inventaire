@@ -18,8 +18,6 @@ module.exports =
     users: 'users'
     fakeUsers: false
     inventory: 'inventory'
-  graph:
-    social: 'social_graph'
   whitelistedRouteRegExp: /^\/api\/(auth\/|items\/public)/
   # noCache: true
   noCache: false
@@ -37,8 +35,10 @@ module.exports =
       server: '/server'
       lib: '/server/lib'
       sharedLibs: '/client/app/lib/shared'
-      db: '/server/lib/db'
-      graph: '/server/lib/graph'
+      db: '/server/db'
+      couch: '/server/db/couch'
+      level: '/server/db/level'
+      graph: '/server/db/level/graph'
       builders: '/server/builders'
       controllers: '/server/controllers'
       leveldb: '/leveldb'

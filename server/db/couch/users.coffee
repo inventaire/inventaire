@@ -4,8 +4,8 @@ _ = __.require 'builders', 'utils'
 
 Promise = require 'bluebird'
 
-nano = __.require('db', 'nano_base').use CONFIG.db.users
-cot = __.require('db', 'cot_base').users
+nano = __.require('couch', 'nano_base').use CONFIG.db.users
+cot = __.require('couch', 'cot_base').users
 
 
 # assembling different libraries to make a unique interface
