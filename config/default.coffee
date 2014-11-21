@@ -41,8 +41,8 @@ module.exports =
       graph: '/server/db/level/graph'
       builders: '/server/builders'
       controllers: '/server/controllers'
-      leveldb: '/leveldb'
-      couchdb: '/couchdb'
+      leveldb: '/db/leveldb'
+      couchdb: '/db/couchdb'
     path: (route, name)->
       path = @paths[route]
       return "#{appRoot}#{path}/#{name}"
