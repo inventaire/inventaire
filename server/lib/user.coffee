@@ -192,7 +192,7 @@ module.exports =
       'friends'
       'welcome'
     ]
-    return _.hasValue reservedWords, username
+    return _.contains reservedWords, username
 
   getUserRelations: (userId)->
     # just proxiing to let this module centralize

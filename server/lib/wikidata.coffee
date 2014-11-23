@@ -79,12 +79,12 @@ rebaseClaimsValueToClaimsRoot = (entity)->
 
 validIfIsABook = (claims, valid)->
   claims.P31?.forEach (statement)->
-    valid = true  if _.hasValue Q.books, statement._id
+    valid = true  if _.contains Q.books, statement._id
   return valid
 
 validIfIsAnAuthor = (claims, valid)->
   claims.P31?.forEach (statement)->
-    valid = true  if _.hasValue Q.humans, statement._id
+    valid = true  if _.contains Q.humans, statement._id
   return valid
 
-whitelistedEntity = (id)-> _.hasValue P31Whitelist, id
+whitelistedEntity = (id)-> _.contains P31Whitelist, id

@@ -62,7 +62,7 @@ validLanguage = ['en', 'fr', 'de']
 langCookie = (req, res, next) ->
   unless req.cookies?.lang?
     if lang = req.headers?['accept-language']?[0..1]
-      if _.hasValue validLanguage, lang
+      if _.contains validLanguage, lang
         res.cookie('lang',lang)
         _.info "setting lang cookie, #{lang}"
   next()
