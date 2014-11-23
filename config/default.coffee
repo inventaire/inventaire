@@ -50,3 +50,4 @@ module.exports =
   https:
     key: './cert/inventaire.key'
     cert: './cert/inventaire.csr'
+  typeCheck: true

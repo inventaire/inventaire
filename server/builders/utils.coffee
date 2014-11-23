@@ -1,9 +1,15 @@
-__ = require('config').root
+CONFIG = require('config')
+__ = CONFIG.root
 
 lo = require 'lodash'
-serverUtils = __.require 'lib', 'utils'
 
-utils = lo.extend(lo, serverUtils)
+serverUtils = __.require 'lib', 'utils'
+if CONFIG.verbosity is 0 then serverUtils.log = lo.identity
+
+typeUtils = __.require 'lib', 'type_utils'
+if not CONFIG.typeCheck then typeUtils.types = lo.noop
+
+utils = lo.extend(lo, serverUtils, typeUtils)
 
 sharedUtils = __.require('sharedLibs', 'utils')(utils)
 
