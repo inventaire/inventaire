@@ -2,6 +2,7 @@ _ = require('config').root.require('builders', 'utils')
 
 index = require "./index"
 auth = require "./auth"
+user = require "./user"
 items = require "./items"
 users = require "./users"
 relations = require "./relations"
@@ -22,8 +23,8 @@ module.exports =
     post: auth.logout
 
   'api/auth/user':
-    get: auth.getUser
-    put: auth.updateUser
+    get: user.getUser
+    put: user.updateUser
 
   # routes protected by the 'restrict' middleware. cf config.coffee
   'api/users':
