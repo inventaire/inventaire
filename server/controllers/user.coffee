@@ -2,6 +2,7 @@ __ = require('config').root
 _ = __.require 'builders', 'utils'
 
 user_ = __.require 'lib', 'user'
+Promise = require 'bluebird'
 
 module.exports.getUser = (req, res, next) ->
   user_.byEmail(req.session.email)
@@ -10,13 +11,20 @@ module.exports.getUser = (req, res, next) ->
       userData = docs[0]
       _.log userData, 'getUser'
       userId = userData._id
-      user_.getUserRelations(userId)
-      .then (relations)->
+
+      Promise.all([
+        user_.getUserRelations(userId)
+        user_.getNotifications(userId)
+      ])
+      .spread (relations, notifications)->
         _.success relations, 'relations'
+        _.success notifications, 'notifications'
         userData.relations = relations
+        userData.notifications = notifications
         res.json userData
+
       .catch (err)->
-        _.error err, 'coulnt get user relations'
+        _.error err, 'coulnt get user data'
         throw new Error(err)
     else
       _.errorHandler res, 'user not found', 404

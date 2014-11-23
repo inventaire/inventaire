@@ -6,6 +6,7 @@ Promise = require 'bluebird'
 breq = require 'breq'
 
 socialGraph = __.require 'graph', 'social_graph'
+notifs_ = __.require 'lib', 'notifications'
 
 gravatar = require 'gravatar'
 
@@ -209,3 +210,9 @@ module.exports =
       return user
     else
       throw new Error('missing user data')
+
+  addNotification: (userId, type, data)->
+    notifs_.add userId, type, data
+
+  getNotifications: (userId)->
+    notifs_.getUserNotifications userId
