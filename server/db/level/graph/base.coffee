@@ -6,12 +6,12 @@ _ = __.require('builders', 'utils')
 levelgraph = require 'levelgraph'
 
 Promise = require 'bluebird'
-
+levelBase = __.require('level', 'base')
 graph_ = require './graph_utils'
 
 
 module.exports = (graphName)->
-  db = __.require('level', 'base')(graphName)
+  db = levelBase.raw(graphName)
   graph = levelgraph(db)
 
   action = (verb, args)->
