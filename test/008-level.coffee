@@ -114,3 +114,33 @@ describe 'DB', ->
             res.length.should.equal 3
             done()
         , done)
+
+    describe 'UPDATE', ->
+      it "should update the value", (done)->
+        trycatch( ->
+          db.put 'a', {b: 'c'}
+          .then ->
+            db.update 'a', {d: 'e'}
+            .then ->
+              db.get 'a'
+              .then (val)->
+                val.should.be.an.Object
+                expect(val.b).to.equal undefined
+                val.d.should.equal 'e'
+                done()
+        , done)
+
+    describe 'PATCH', ->
+      it "should update the value", (done)->
+        trycatch( ->
+          db.put 'a', {b: 'c'}
+          .then ->
+            db.patch 'a', {d: 'e'}
+            .then ->
+              db.get 'a'
+              .then (val)->
+                val.should.be.an.Object
+                val.b.should.equal 'c'
+                val.d.should.equal 'e'
+                done()
+        , done)

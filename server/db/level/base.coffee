@@ -24,6 +24,9 @@ module.exports =
     API =
       get: (key)-> db.getAsync(key).then JSON.parse
       put: (key, value)-> db.putAsync key, JSON.stringify(value)
+      del: (key)-> db.delAsync(key)
+      update: (key, value)-> @del(key).then ()=> @put(key, value)
+      patch: (key, value)-> @get(key).then (current)=> @update key, _.extend(current, value)
       getStream: (params)->
         def = Promise.defer()
         result = []
