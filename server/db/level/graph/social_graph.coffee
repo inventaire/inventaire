@@ -1,6 +1,8 @@
-CONFIG = require 'config'
-_ = CONFIG.root.require('builders', 'utils')
+__ = require('config').root
+_ = __.require('builders', 'utils')
 Promise = require 'bluebird'
+
+Radio = __.require 'lib', 'radio'
 
 graph = require('./base')('social_graph')
 graph_ = graph.utils
@@ -64,7 +66,9 @@ relationActions =
       switch status
         when 'friendRequested'
           putFriendRelation(userId, friendId)
-          .then -> delUserFriendRequest(friendId, userId)
+          .then ->
+            delUserFriendRequest(friendId, userId)
+            Radio.emit 'notify:friend:request:accepted', friendId, userId
         when 'none'
           warn = 'user request accepted after being cancelled'
           _.warn [userId, friendId], warn

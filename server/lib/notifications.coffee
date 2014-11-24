@@ -2,8 +2,10 @@ __ = require('config').root
 _ = __.require 'builders', 'utils'
 levelBase = __.require 'level', 'base'
 API = levelBase.simpleAPI('notifications')
+Radio = __.require 'lib', 'radio'
 
-module.exports =
+
+notifs_ =
   API: API
   db: API.raw
 
@@ -29,3 +31,14 @@ module.exports =
       data: data
       status: 'unread'
       time: _.now()
+
+callbacks =
+  acceptedRequest: (userToNotify, newFriend)->
+    _.types arguments, 'string', 'string'
+    data = {user: newFriend}
+    notifs_.add userToNotify, 'friendAcceptedRequest', data
+
+Radio.on 'notify:friend:request:accepted', callbacks.acceptedRequest
+
+
+module.exports = notifs_
