@@ -8,6 +8,7 @@ users = require "./users"
 relations = require "./relations"
 entities = require "./entities"
 upload = require "./upload"
+notifs = require "./notifs"
 proxy = require "./proxy"
 analytics = require 'no-js-analytics'
 
@@ -35,6 +36,7 @@ module.exports =
 
   'api/relations':
     get: relations.actions
+
   'api/items':
     get: items.fetch
 
@@ -51,7 +53,6 @@ module.exports =
     put: items.put
     # get: items.get
 
-
   'api/items/:id/:rev':
     delete: items.del
 
@@ -66,6 +67,9 @@ module.exports =
 
   'api/entities/search':
     get: entities.search
+
+  'api/notifs':
+    post: notifs.updateStatus
 
   'api/cookie':
     post: (req, res, next)->

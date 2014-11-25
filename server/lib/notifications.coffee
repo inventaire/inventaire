@@ -23,7 +23,13 @@ notifs_ =
     _.info [key, value], 'key, value'
     API.put key, value
 
-  getKey: (userId)-> userId + ':' + _.now()
+  updateReadStatus: (userId, time)->
+    key = @getKey(userId, time)
+    API.patch key, {status: 'read'}
+
+  getKey: (userId, time)->
+    time ||= _.now()
+    userId + ':' + time
 
   getValue: (type, data)->
     return value =
