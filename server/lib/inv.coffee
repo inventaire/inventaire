@@ -16,33 +16,27 @@ module.exports =
   byOwner: (owner)->
     # only used by items.fetch with req.session.email owner
     # => shouldn't be safeItems'ized
-    @db.view 'items', 'byOwner', {key: owner}
-    .then parseValue
+    @db.viewByKey 'byOwner', owner
 
   byListing: (owner, listing)->
-    @db.view 'items', 'byListing', {key: [owner, listing]}
-    .then parseValue
+    @db.viewByKey 'byListing', [owner, listing]
     .then safeItems
 
   byEntity: (uri)->
-    @db.view 'items', 'byEntity', {key: uri}
-    .then parseValue
+    @db.viewByKey 'byEntity', uri
     .then safeItems
 
   publicByDate: ->
-    @db.view 'items', 'publicByDate', {
+    params =
       limit: 20
       descending: true
-    }
-    .then parseValue
+    @db.viewCustom 'publicByDate', params
     .then safeItems
 
   publicByOwnerAndSuffix: (owner, suffix)->
-    @db.view 'items', 'publicByOwnerAndSuffix', {key: [owner, suffix]}
-    .then parseValue
+    @db.viewByKey 'publicByOwnerAndSuffix', [owner, suffix]
     .then safeItems
 
-parseValue = (body)-> body.rows.map (el)-> el.value
 safeItems = (items)-> items.map(safeItemData)
 safeItemData = (item)->
   item.notes = null

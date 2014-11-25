@@ -1,2 +1,9 @@
-cot = require('config').root.require('couch', 'cot_base').inventory
-module.exports = cot
+CONFIG = require('config')
+__ = CONFIG.root
+_ = __.require 'builders', 'utils'
+cot = __.require('couch', 'cot_base').inventory
+
+designDocName = 'items'
+viewMethods = __.require('couch', 'view_methods')(designDocName)
+
+module.exports = _.extend cot, viewMethods
