@@ -4,27 +4,14 @@ _ = __.require 'builders', 'utils'
 
 Promise = require 'bluebird'
 
-nano = __.require('couch', 'nano_base').use CONFIG.db.users
-cot = __.require('couch', 'cot_base').users
-
-
 # assembling different libraries to make a unique interface
 # while I couldn't find the perfect promise-based lib
+cot = __.require('couch', 'cot_base').users
 
-module.exports =
-  get: cot.get.bind cot
-  post: cot.post.bind cot
-  put: cot.put.bind cot
-  del: cot.delete.bind cot
-  view: cot.view.bind cot
-  viewCustom: (viewName, params)->
-    @view('users', viewName, params)
-    .then _.mapCouchDoc.bind(_)
-  viewByKey: (viewName, key)->
-    params =
-      key: key
-      include_docs: true
-    @viewCustom viewName, params
+designDocName = 'users'
+viewMethods = __.require('couch', 'view_methods')(designDocName)
+nano = __.require('couch', 'nano_base').use CONFIG.db.users
+nanoMethods =
   fetch: (keys)->
     if _.typeArray(keys)
       def = Promise.defer()
@@ -37,3 +24,5 @@ module.exports =
           else def.resolve _.mapCouchDoc(body)
       else def.resolve()
       return def.promise
+
+module.exports = _.extend cot, viewMethods, nanoMethods
