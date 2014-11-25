@@ -43,4 +43,4 @@ module.exports =
 
   reloadDesignDocs: ->
     dbInit.usersDesignUpdater()
-    dbInit.invDesignLoader()
+    dbInit.invDesignUpdater()
