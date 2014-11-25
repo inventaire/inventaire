@@ -22,7 +22,7 @@ module.exports =
   'api/auth/logout':
     post: auth.logout
 
-  'api/auth/user':
+  'api/user':
     get: user.getUser
     put: user.updateUser
 
