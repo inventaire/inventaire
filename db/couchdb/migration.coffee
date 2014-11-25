@@ -4,8 +4,17 @@ Promise = require 'bluebird'
 Promise.longStackTraces()
 fs = require 'fs'
 
+
+# HOW TO:
+# -----------------
+# dbName = 'inventory' (e.g.)
+# mig = require('config').root.require('couchdb', 'migration')(dbName)
+# updateFunction = (doc)-> (do your thing) return doc
+# mig.updateAll(updateFunction)
+
+
 module.exports = (dbName)->
-  db = __.require('db', 'cot_base')[dbName]
+  db = __.require('couch', 'cot_base')[dbName]
   unless db? then throw new Error('bad dbName')
   API =
     db: db
