@@ -23,6 +23,8 @@ module.exports =
 
   typeOf: (obj)->
     # just handling what differes from typeof
-    if @isNull(obj) then return 'null'
-    if @isArray(obj) then return 'array'
-    return typeof obj
+    type = typeof obj
+    if type is 'object'
+      if @isNull(obj) then return 'null'
+      if @isArray(obj) then return 'array'
+    return type
