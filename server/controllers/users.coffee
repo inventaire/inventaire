@@ -12,6 +12,8 @@ module.exports.actions = (req, res, next) ->
         if query.search? then return searchByUsername(res, query.search)
       when 'getusers'
         if query.ids? then return fetchUsersData(res, query.ids)
+      when 'getitems'
+        if query.ids? then return fetchUsersItems(req, res, query.ids)
 
   _.errorHandler res, 'bad query', 400
 
@@ -54,12 +56,14 @@ module.exports.friendData = (req, res, next) ->
   .done()
 
 
-module.exports.fetchItems = (req, res, next) ->
-  _.log ownerId = req.params.user, 'fetchItems user'
-  promises = [
-    inv_.byListing ownerId, 'friends'
-    inv_.byListing ownerId, 'public'
-  ]
-  Promise.all(promises)
-  .spread _.union
+fetchUsersItems = (req, res, ids) ->
+  _.info ids = ids.split('|'), 'fetchUsersItems users'
+  user_.getUserId(req.session.email)
+  .then (userId)-> user_.getRelationsStatuses(userId, ids)
+  .then (res)->
+    _.log res, '[friends, public]'
+    [friends, others] = res
+    # not fetching others items
+    return _.combinations friends, ['friends', 'public']
+  .then (listings)-> inv_.batchByListings listings
   .then (body)-> res.json body

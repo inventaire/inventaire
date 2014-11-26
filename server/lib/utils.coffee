@@ -73,3 +73,11 @@ module.exports =
     if compacted.length > 0 and @areStrings(compacted)
       return true
     else return false
+
+  combinations: (array1, array2)->
+    @types arguments, 'array', 'array'
+    results = []
+    array1.forEach (keys1)->
+      array2.forEach (keys2)->
+        results.push [keys1, keys2]
+    return results

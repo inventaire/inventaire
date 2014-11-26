@@ -199,6 +199,16 @@ module.exports =
     # interactions with the social graph
     socialGraph.getUserRelations(userId)
 
+  getRelationsStatuses: (userId, usersIds)->
+    friends = []
+    others = []
+    socialGraph.getUserFriends(userId)
+    .then (friendsIds)->
+      usersIds.forEach (id)->
+        if _(friendsIds).contains(id)
+          friends.push id
+        else others.push id
+      return [friends, others]
 
   cleanUserData: (value)->
     if value.username? and value.email? and value.created? and value.picture?

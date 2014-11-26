@@ -56,9 +56,6 @@ module.exports =
   'api/items/:id/:rev':
     delete: items.del
 
-  'api/:user/items':
-    get: users.fetchItems
-
   'api/:user/items/:id':
     put: items.put
   'api/:user/items/:id/:rev':
