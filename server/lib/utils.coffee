@@ -81,3 +81,8 @@ module.exports =
       array2.forEach (keys2)->
         results.push [keys1, keys2]
     return results
+
+  timer: (fn)->
+    id = @now()
+    console.time id
+    cb().then -> console.timeEnd id
