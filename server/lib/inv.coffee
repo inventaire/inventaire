@@ -22,6 +22,11 @@ module.exports =
     @db.viewByKey 'byListing', [owner, listing]
     .then safeItems
 
+  batchByListings: (listings)->
+    _.types arguments, 'array'
+    @db.viewByKeys 'byListing', listings
+    .then safeItems
+
   byEntity: (uri)->
     @db.viewByKey 'byEntity', uri
     .then safeItems
@@ -30,6 +35,7 @@ module.exports =
     params =
       limit: 20
       descending: true
+      include_docs: true
     @db.viewCustom 'publicByDate', params
     .then safeItems
 
@@ -37,7 +43,8 @@ module.exports =
     @db.viewByKey 'publicByOwnerAndSuffix', [owner, suffix]
     .then safeItems
 
-safeItems = (items)-> items.map(safeItemData)
-safeItemData = (item)->
-  item.notes = null
-  return item
+safeItems = (items)->
+  items.map (item)->
+    item.notes = null
+    item.listing = null
+    return item
