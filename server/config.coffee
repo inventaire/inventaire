@@ -14,7 +14,6 @@ compression = require 'compression'
 
 Promise = require 'bluebird'
 Promise.longStackTraces()
-Promise.onPossiblyUnhandledRejection (err)-> throw new Error(err)
 
 # middlewares following recommandations found here for the implementation of Persona
 # http://www.mircozeiss.com/mozilla-persona-example-app-with-express-and-couchdb/
@@ -30,13 +29,13 @@ restrictApiAccess = (req, res, next) ->
     if req.session.email then next()
     else if whitelistedRoute req.originalUrl then next()
     else
-      _.logPurple "restricted api route: #{req.originalUrl}"
-      _.errorHandler res, 'unauthorized api access', 401
+      _.errorHandler res, "unauthorized api access: #{req.originalUrl}", 401
   else next()
 
 isApiRoute = (route)-> /^\/(api|test)\//.test route
 
-whitelistedRoute = (route)-> new RegExp(CONFIG.whitelistedRouteRegExp).test route
+whitelistedRoute = (route)->
+  new RegExp(CONFIG.whitelistedRouteRegExp).test route
 
 allowCrossDomain = (req, res, next)->
   res.header 'Access-Control-Allow-Origin', '*'
