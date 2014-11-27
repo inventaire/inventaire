@@ -47,21 +47,11 @@ module.exports =
   publicByEntity: (req, res, next) ->
     _.info req.params, 'public'
     inv_.byEntity(req.params.uri)
-    .then (items)-> res.json items
-    .catch (err)-> _.errorHandler res, err
-    .done()
+    .then bundleOwnersData.bind(null, res)
 
   fetchLastPublicItems: (req, res, next) ->
     inv_.publicByDate()
-    .then (items)->
-      _.success items, 'public items'
-      users = items.map (item)-> item.owner
-      _.success users = _.uniq(users), 'public items users'
-      user_.getUsersPublicData(users)
-      .then (users)->
-        res.json {items: items, users: users}
-    .catch (err)-> _.errorHandler res, err
-    .done()
+    .then bundleOwnersData.bind(null, res)
 
   publicByUserAndSuffix: (req, res, next)->
     _.info req.params, 'publicByUserAndSuffix'
@@ -75,3 +65,14 @@ module.exports =
       else _.errorHandler res, 'user not found', 404
     .catch (err)-> _.errorHandler res, err
     .done()
+
+bundleOwnersData = (res, items)->
+  _.success items, 'items'
+  users = getItemsOwners(items)
+  user_.getUsersPublicData(users)
+  .then (users)-> res.json {items: items, users: users}
+  .catch (err)-> _.errorHandler res, err
+
+getItemsOwners = (items)->
+  users = items.map (item)-> item.owner
+  return _.uniq(users)
