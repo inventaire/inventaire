@@ -19,7 +19,6 @@ module.exports = (graphName)->
   action = (verb, args)->
     obj = graph_.normalizeInterface(args, true)
     def = Promise.defer()
-    # _.info obj, verb
     graph[verb] obj, (err, result)->
       if err then def.reject(err)
       else
@@ -48,7 +47,6 @@ module.exports = (graphName)->
         return promises_.rejectedPromise(err)
 
       query2 = graph_.mirrorTriple(query)
-      # _.info [query, query2], 'query & mirror '
 
       promise1 = @get query
       promise2 = @get query2
@@ -56,8 +54,7 @@ module.exports = (graphName)->
       .spread (fromSubject, fromObject)->
         results1 = graph_.pluck.objects(fromSubject)
         results2 = graph_.pluck.subjects(fromObject)
-        result = _.uniq results1.concat(results2)
-        return _.success result, 'bidirectional result'
+        return _.uniq results1.concat(results2)
 
     # PUT once with an arbitrary direction
     # getBidirectional or delBidirectional will find it
