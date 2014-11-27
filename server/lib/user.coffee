@@ -2,8 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 
-Promise = require 'bluebird'
-breq = require 'breq'
+promises_ = __.require 'lib', 'promises'
 
 socialGraph = __.require 'graph', 'social_graph'
 notifs_ = __.require 'lib', 'notifications'
@@ -28,7 +27,7 @@ module.exports =
         assertion: req.body.assertion
         audience: CONFIG.fullHost()
     _.log params.json.audience, 'persona audience requested'
-    return breq.post params
+    return promises_.post params
 
   verifyStatus: (personaAnswer, req, res) ->
     _.log personaAnswer.body, 'personaAnswer.body'
@@ -85,12 +84,7 @@ module.exports =
           throw new Error('This username already exists')
     else
       _.error username, 'reserved word'
-
-      # this seems ackward to reject before returning the promise
-      def = Promise.defer()
-      def.reject new Error('Reserved words cant be usernames')
-      return def.promise
-
+      return promises_.rejectedPromise 'Reserved words cant be usernames'
 
   getSafeUserFromUsername: (username)->
     @byUsername(username)

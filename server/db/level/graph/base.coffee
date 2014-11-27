@@ -5,7 +5,9 @@ _ = __.require('builders', 'utils')
 
 levelgraph = require 'levelgraph'
 
-Promise = require 'bluebird'
+promises_ = __.require 'lib', 'promises'
+Promise = promises_.Promise
+
 levelBase = __.require('level', 'base')
 graph_ = require './graph_utils'
 
@@ -43,7 +45,7 @@ module.exports = (graphName)->
       # RETURNS an array of subjet and/or object
       unless query.s? and query.p?
         err = 'missing subject or predicate'
-        return Promise.defer().reject(err)
+        return promises_.rejectedPromise(err)
 
       query2 = graph_.mirrorTriple(query)
       # _.info [query, query2], 'query & mirror '
