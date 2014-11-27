@@ -20,7 +20,7 @@ module.exports =
       return false
 
   verifyAssertion: (req)->
-    console.log 'verifyAssertion'
+    _.info 'verifyAssertion'
     params =
       url: "https://verifier.login.persona.org/verify"
       json:
@@ -30,12 +30,11 @@ module.exports =
     return promises_.post params
 
   verifyStatus: (personaAnswer, req, res) ->
-    _.log personaAnswer.body, 'personaAnswer.body'
-    body = personaAnswer.body
-    req.session.username = username = req.body.username
-    req.session.email = email = body.email
+    _.log personaAnswer, 'personaAnswer'
+    username = req.body.username
+    req.session.email = email = personaAnswer.email
 
-    if body.status is "okay"
+    if personaAnswer.status is "okay"
       # CHECK IF EMAIL IS IN DB
       @byEmail(email)
       .then (docs)=>
@@ -53,8 +52,7 @@ module.exports =
           .catch (err)-> _.errorHandler res, err
         else
           err = "Couldn't find an account associated with this email"
-          _.error err
-          _.errorHandler res, err
+          throw err
       .catch (err)-> _.errorHandler res, err
       .done()
 
