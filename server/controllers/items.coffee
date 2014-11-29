@@ -48,10 +48,12 @@ module.exports =
     _.info req.params, 'public'
     inv_.byEntity(req.params.uri)
     .then bundleOwnersData.bind(null, res)
+    .catch (err)-> _.errorHandler res, err
 
   fetchLastPublicItems: (req, res, next) ->
     inv_.publicByDate()
     .then bundleOwnersData.bind(null, res)
+    .catch (err)-> _.errorHandler res, err
 
   publicByUserAndSuffix: (req, res, next)->
     _.info req.params, 'publicByUserAndSuffix'
@@ -68,10 +70,11 @@ module.exports =
 
 bundleOwnersData = (res, items)->
   _.success items, 'items'
-  users = getItemsOwners(items)
-  user_.getUsersPublicData(users)
-  .then (users)-> res.json {items: items, users: users}
-  .catch (err)-> _.errorHandler res, err
+  unless items?.length > 0 then return _.errorHandler res, 'no item found', 404
+  else
+    users = getItemsOwners(items)
+    user_.getUsersPublicData(users)
+    .then (users)-> res.json {items: items, users: users}
 
 getItemsOwners = (items)->
   users = items.map (item)-> item.owner
