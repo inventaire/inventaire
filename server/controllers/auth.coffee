@@ -43,21 +43,28 @@ module.exports.logout = (req, res, next) ->
 
 
 verifyAssertion = (req)->
-  _.info 'verifyAssertion'
-  params =
-    url: "https://verifier.login.persona.org/verify"
-    json:
-      assertion: req.body.assertion
-      audience: CONFIG.fullHost()
-  _.log params.json.audience, 'persona audience requested'
-  return promises_.post params
+  if CONFIG.env is 'offlinedev'
+    _.warn 'OFFLINE DEV'
+    personaAnswer =
+      status: 'okay'
+      email: CONFIG.mookEmail
+    return promises_.resolvedPromise(personaAnswer)
+  else
+    _.info 'verifyAssertion'
+    params =
+      url: "https://verifier.login.persona.org/verify"
+      json:
+        assertion: req.body.assertion
+        audience: CONFIG.fullHost()
+    _.log params.json.audience, 'persona audience requested'
+    return promises_.post params
 
 verifyStatus = (personaAnswer, req, res) ->
   _.log personaAnswer, 'personaAnswer'
   username = req.body.username
   req.session.email = email = personaAnswer.email
 
-  if personaAnswer.status is "okay"
+  if personaAnswer.status is 'okay'
     # CHECK IF EMAIL IS IN DB
     user_.byEmail(email)
     .then (docs)->
