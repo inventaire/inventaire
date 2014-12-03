@@ -11,55 +11,6 @@ gravatar = require 'gravatar'
 
 module.exports =
   db: __.require 'couch', 'users'
-  isLoggedIn: (req)->
-    if req.session.email?
-      _.success req.session.toJSON(), 'user is logged in'
-      return true
-    else
-      _.error req.session.toJSON(), 'user is not logged in'
-      return false
-
-  verifyAssertion: (req)->
-    _.info 'verifyAssertion'
-    params =
-      url: "https://verifier.login.persona.org/verify"
-      json:
-        assertion: req.body.assertion
-        audience: CONFIG.fullHost()
-    _.log params.json.audience, 'persona audience requested'
-    return promises_.post params
-
-  verifyStatus: (personaAnswer, req, res) ->
-    _.log personaAnswer, 'personaAnswer'
-    username = req.body.username
-    req.session.email = email = personaAnswer.email
-
-    if personaAnswer.status is "okay"
-      # CHECK IF EMAIL IS IN DB
-      @byEmail(email)
-      .then (docs)=>
-        if docs[0]
-          # IF EMAIL IS ALREADY STORED IN DB, RETURN USER EMAIL AND USERNAME
-          user = @cleanUserData docs[0]
-          res.cookie "email", email
-          res.json user
-        else if username? and @nameIsValid username
-          # IF EMAIL IS NOT IN DB AND IF VALID USERNAME, CREATE USER
-          @newUser(username, email)
-          .then (body)=>
-            res.cookie "email", email
-            res.json body
-          .catch (err)-> _.errorHandler res, err
-        else
-          err = "Couldn't find an account associated with this email"
-          throw err
-      .catch (err)-> _.errorHandler res, err
-      .done()
-
-    else
-      err = 'Persona verify status isnt okay oO: might be a problem with Persona audience setting'
-      _.errorHandler res, err
-
   byId: (id)-> @db.get(id)
 
   byEmail: (email)->
