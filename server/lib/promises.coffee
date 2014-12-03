@@ -9,3 +9,8 @@ module.exports =
     def = @Promise.defer()
     def.reject(err)
     return def.promise
+
+  resolvedPromise: (res)->
+    def = @Promise.defer()
+    def.resolve(res)
+    return def.promise
