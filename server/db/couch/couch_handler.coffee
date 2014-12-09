@@ -1,7 +1,8 @@
 CONFIG = require('config')
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
-nano = require('nano') CONFIG.db.fullHost()
+host = CONFIG.db.fullHost()
+nano = require('nano') host
 dbInit = __.require 'couch', 'couch_init'
 
 module.exports =
@@ -27,14 +28,14 @@ module.exports =
       if err?
         _.info "#{dbName} not found: creating"
         nano.db.create dbName, (err, body)->
-          if err then _.error err, "couldn't create #{dbName}DB"
+          if err then _.error err, "couldn't create #{dbName} CouchDB at #{host}"
           else
             if /^users/.test dbName
               dbInit.usersDesignLoader()
               dbInit.loadFakeUsers()  if CONFIG.db.fakeUsers
             if /^inventory/.test dbName
               dbInit.invDesignLoader()
-            _.success body, "#{dbName}DB created"
+            _.success body, "#{dbName} CouchDB created"
       else
         _.info "#{dbName}DB ready!"
 
