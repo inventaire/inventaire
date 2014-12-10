@@ -1,2 +1,4 @@
+__ = require('config').root
+
 module.exports = ->
-  sharedLib('global_libs_extender')()
+  __.require('sharedLibs', 'global_libs_extender')()

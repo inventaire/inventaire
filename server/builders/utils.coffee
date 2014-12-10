@@ -3,13 +3,14 @@ __ = CONFIG.root
 
 lo = require 'lodash'
 
-serverUtils = __.require 'lib', 'utils'
-if CONFIG.verbosity is 0 then serverUtils.log = lo.identity
+server_ = __.require 'utils', 'base'
+logs_ = __.require 'utils', 'logs'
+if CONFIG.verbosity is 0 then logs_.log = lo.identity
 
-typeUtils = __.require 'lib', 'type_utils'
-if not CONFIG.typeCheck then typeUtils.types = lo.noop
+types_ = __.require 'utils', 'types'
+if not CONFIG.typeCheck then types_.types = lo.noop
 
-utils = lo.extend(lo, serverUtils, typeUtils)
+utils = lo.extend(lo, server_, logs_, types_)
 
 sharedUtils = __.require('sharedLibs', 'utils')(utils)
 
@@ -22,8 +23,4 @@ module.exports = lo.extend(utils, sharedUtils)
 
 # globals should be limited as much as possible
 
-# helper to require libs shared with the client-side
-# need to be a global variable, as the shared libs
-# depend on it
-global.sharedLib = sharedLib = __.require 'builders', 'shared_libs'
 __.require('lib', 'global_libs_extender')()

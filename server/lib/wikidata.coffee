@@ -1,7 +1,10 @@
-_ = require('config').root.require('builders', 'utils')
+__ = require('config').root
+_ = __.require('builders', 'utils')
 
 Promises = require './promises'
-module.exports = wd = sharedLib('wikidata')(Promises, _)
+wd = __.require('sharedLibs', 'wikidata')(Promises, _)
+wd.sitelinks = __.require 'sharedLibs','wiki_sitelinks'
+module.exports = wd
 
 breq = require 'breq'
 wdProps = _.jsonFile('server/lib/wikidata-properties-fr.json').properties
