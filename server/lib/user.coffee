@@ -135,7 +135,7 @@ module.exports =
       'friends'
       'welcome'
     ]
-    return _.contains reservedWords, username
+    return username in reservedWords
 
   getUserRelations: (userId)->
     # just proxiing to let this module centralize
@@ -148,7 +148,7 @@ module.exports =
     socialGraph.getUserFriends(userId)
     .then (friendsIds)->
       usersIds.forEach (id)->
-        if _(friendsIds).contains(id)
+        if id in friendsIds
           friends.push id
         else others.push id
       return [friends, others]

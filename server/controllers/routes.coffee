@@ -71,7 +71,7 @@ module.exports =
   'api/cookie':
     post: (req, res, next)->
       whitelist = ['lang']
-      if _.contains whitelist, req.body.key
+      if req.body.key in whitelist
         res.cookie key = req.body.key, value = req.body.value
         _.info result = "cookie set: #{key} = #{value}"
         res.send result
