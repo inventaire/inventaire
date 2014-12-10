@@ -1,8 +1,8 @@
-_ = require('config').root.require('builders', 'utils')
-
-books = require '../lib/books'
-wikidata = require '../lib/wikidata'
-Promise = require 'bluebird'
+__ = require('config').root
+_ = __.require 'builders', 'utils'
+books = __.require 'lib', 'books'
+wikidata = __.require 'lib', 'wikidata'
+promises_ = __.require 'lib', 'promises'
 
 module.exports =
   search: (req, res, next) ->
@@ -48,12 +48,14 @@ searchByText = (query, res)->
     .catch (err)-> _.error err, 'getGoogleBooksDataFromIsbn err'
   ]
 
+  # adding a 4 seconds timeout on requests
+  promises = promises.map (promise)-> promise.timeout 4000
+
   spreadRequests(res, promises, 'searchByText')
 
 
 spreadRequests = (res, promises, label)->
-
-  Promise.all(promises).spread(selectFirstNonEmptyResult)
+  promises_.settle(promises).spread(selectFirstNonEmptyResult)
   .then (selected)->
     if selected?
       res.json selected
