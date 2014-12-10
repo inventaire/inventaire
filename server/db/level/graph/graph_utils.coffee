@@ -81,17 +81,14 @@ interfaceNoralization =
 
 
 
-
-
-logs =
+logs = (db)->
   logDb: ->
-    @leveldb.createReadStream()
+    db.createReadStream()
     .on 'data', (data) -> _.log data.value, data.key
     .on 'error', (err) -> _.log err, 'err at logDb'
     .on 'close', -> _.log 'Stream closed'
     .on 'end', -> _.log 'Stream end'
 
 
-
-
-module.exports = _.extend triplesHandlers, interfaceNoralization, logs
+module.exports = (db)->
+  _.extend triplesHandlers, interfaceNoralization, logs(db)

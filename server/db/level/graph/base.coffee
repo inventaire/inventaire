@@ -9,12 +9,12 @@ promises_ = __.require 'lib', 'promises'
 Promise = promises_.Promise
 
 levelBase = __.require('level', 'base')
-graph_ = require './graph_utils'
 
 
 module.exports = (graphName)->
   db = levelBase.raw(graphName)
   graph = levelgraph(db)
+  graph_ = require('./graph_utils')(db)
 
   action = (verb, args)->
     obj = graph_.normalizeInterface(args, true)
