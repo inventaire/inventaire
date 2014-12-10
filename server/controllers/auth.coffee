@@ -36,10 +36,10 @@ module.exports.login = (req, res, next) ->
   .done()
 
 module.exports.logout = (req, res, next) ->
-  _.log "logout"
   req.session = null
   res.clearCookie "email"
   res.redirect "/"
+  _.log req.session, "session after logout"
 
 
 verifyAssertion = (req)->
