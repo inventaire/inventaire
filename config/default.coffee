@@ -48,6 +48,7 @@ module.exports =
       return "#{appRoot}#{path}/#{name}"
     'require': (route, name)-> require @path(route, name)
   https:
-    key: './cert/inventaire.key'
-    cert: './cert/inventaire.csr'
+    key: '/cert/inventaire.key'
+    cert: '/cert/inventaire.csr'
   typeCheck: true
+  promisesStackTrace: true

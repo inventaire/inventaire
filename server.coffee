@@ -26,9 +26,8 @@ options =
   root: process.cwd()
 
 if CONFIG.protocol is 'https'
-
-  key = fs.readFileSync CONFIG.https.key, 'utf8'
-  cert = fs.readFileSync CONFIG.https.cert, 'utf8'
+  key = fs.readFileSync(options.root + CONFIG.https.key, 'utf8')
+  cert = fs.readFileSync(options.root + CONFIG.https.cert, 'utf8')
 
   if key? and cert?
     _.info 'https options found'

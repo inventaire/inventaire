@@ -13,7 +13,7 @@ analytics = require 'no-js-analytics'
 compression = require 'compression'
 
 Promise = require 'bluebird'
-Promise.longStackTraces()
+Promise.longStackTraces()  if CONFIG.promisesStackTrace
 
 # middlewares following recommandations found here for the implementation of Persona
 # http://www.mircozeiss.com/mozilla-persona-example-app-with-express-and-couchdb/
