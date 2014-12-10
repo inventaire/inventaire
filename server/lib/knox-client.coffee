@@ -27,7 +27,7 @@ module.exports =
       return parts.last()
 
     def = Promise.defer()
-    headers ||= {}
+    headers or= {}
     client.deleteMultiple filenames, headers, (err, res)->
       if err then def.reject(new Error(err))
       else def.resolve(res)

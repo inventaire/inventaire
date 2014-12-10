@@ -77,7 +77,7 @@ loadFakeUser = (username)->
   .then (res)->
     fake = res.body.results[0].user
     userData =
-      username: username || fake.username
+      username: username or fake.username
       email: fake.email
       picture: fake.picture.medium
       created: _.now()

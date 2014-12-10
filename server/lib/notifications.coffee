@@ -28,7 +28,7 @@ notifs_ =
     API.patch key, {status: 'read'}
 
   getKey: (userId, time)->
-    time ||= _.now()
+    time or= _.now()
     userId + ':' + time
 
   getValue: (type, data)->
