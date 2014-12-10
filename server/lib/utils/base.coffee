@@ -11,44 +11,11 @@ module.exports =
     if /^4/.test status then @warn err
     else @error(new Error(err), err)
     res.setHeader 'Content-Type', 'text/html'
-    res.status status || 500
+    res.status status or 500
     # dont send the error details to the user
     res.end()
 
-  log: (obj, label, color = 'cyan')->
-    if typeof obj is 'string' and !label?
-      console.log obj[color]
-      return obj
-
-    else
-      if label?
-        console.log "****** ".grey + label[color] + " ******".grey
-      else
-        console.log "******************************"[color]
-      console.log obj
-      console.log "-----".grey
-      return obj
-
-  error: (obj, label)->
-    obj = obj.stack if obj?.stack?
-    @log obj, label, 'red'
-  success: (obj, label)-> @log obj, label, 'green'
-  info: (obj, label)-> @log obj, label, 'blue'
-  logCyan: (obj, label)-> @log obj, label, 'cyan'
-  warn: (obj, label)-> @log obj, label, 'yellow'
-  logPurple: (obj, label)-> @log obj, label, 'magenta'
-  logRainbow: (obj, label)-> @log obj, label, 'rainbow'
-
-  logArray: (array, label, color='yellow')->
-    spaced = new Array
-    array.forEach (el)=>
-      spaced.push el
-      spaced.push '--------'
-    spaced.pop()
-    @log spaced, label, color
-
   mapCouchResult: (type, body)-> body.rows.map (el)-> el[type]
-  mapCouchValue: (body)-> @mapCouchResult 'value', body
   mapCouchDoc: (body)-> @mapCouchResult 'doc', body
 
   getObjIfSuccess: (db, body)->
