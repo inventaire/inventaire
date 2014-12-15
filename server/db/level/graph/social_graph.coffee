@@ -1,4 +1,5 @@
-__ = require('config').root
+CONFIG = require 'config'
+__ = CONFIG.root
 _ = __.require('builders', 'utils')
 Promise = require 'bluebird'
 
@@ -42,7 +43,8 @@ relationActions =
         when 'friendRequested'
           return @acceptRequest(userId, friendId)
         when 'none'
-          return putUserFriendRequest(userId, friendId)
+          if CONFIG.godMode then putFriendRelation(userId, friendId)
+          else putUserFriendRequest(userId, friendId)
         else throw "got status #{status} at requestFriend"
 
   cancelFriendRequest: (userId, friendId)->

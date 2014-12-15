@@ -53,3 +53,4 @@ module.exports =
     cert: '/cert/inventaire.csr'
   typeCheck: true
   promisesStackTrace: true
+  godMode: false # friends requests automatically accepted
