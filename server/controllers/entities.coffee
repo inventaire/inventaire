@@ -49,7 +49,7 @@ searchByText = (query, res)->
   ]
 
   # adding a 4 seconds timeout on requests
-  promises = promises.map (promise)-> promise.timeout 4000
+  promises = promises.map (promise)-> promise.timeout 10000
 
   spreadRequests(res, promises, 'searchByText')
 
