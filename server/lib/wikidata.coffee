@@ -34,8 +34,17 @@ module.exports.getBookEntityByIsbn = (isbn, type, lang)->
         id = @normalizeId(res.items[0])
         return @getEntities(id, lang)
         .then(filterAndBrush)
-        .then (resultArray)-> return {items: resultArray, source: 'wd', isbn: isbn}
-      else return {status: 'no item found for this isbn', isbn: isbn, items: [], source: 'wd'}
+        .then (resultArray)->
+          result =
+            items: resultArray
+            source: 'wd'
+            isbn: isbn
+      else
+        result =
+          items: []
+          source: 'wd'
+          isbn: isbn
+          status: 'no item found for this isbn'
     .catch (err)-> _.error err, 'err at getBookEntityByIsbn'
 
 
