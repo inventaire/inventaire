@@ -2,8 +2,8 @@ breq = require 'breq'
 __ = require('config').root
 _ = __.require('builders', 'utils')
 
-Promises = require './promises'
-module.exports = __.require('sharedLibs','books')(Promises, _)
+promises_ = require './promises'
+module.exports = __.require('sharedLibs','books')(promises_, _)
 
 module.exports.getGoogleBooksDataFromIsbn = (isbn)->
   cleanedIsbn = @cleanIsbnData(isbn).logIt('cleaned isbn')

@@ -1,8 +1,8 @@
 __ = require('config').root
 _ = __.require('builders', 'utils')
 
-Promises = require './promises'
-wd = __.require('sharedLibs', 'wikidata')(Promises, _)
+promises_ = require './promises'
+wd = __.require('sharedLibs', 'wikidata')(promises_, _)
 wd.sitelinks = __.require 'sharedLibs','wiki_sitelinks'
 module.exports = wd
 
@@ -28,29 +28,22 @@ module.exports.getBookEntityByIsbn = (isbn, type, lang)->
     switch type
       when 10 then url = API.wmflabs.string 957, isbn
       when 13 then url = API.wmflabs.string 212, isbn
-    return Promises.get(url)
+    promises_.get(url)
     .then (res)=>
       if res.items.length > 0
         id = @normalizeId(res.items[0])
-        return @getEntities(id, lang)
+        @getEntities(id, lang)
         .then(filterAndBrush)
-        .then (resultArray)->
-          result =
-            items: resultArray
-            source: 'wd'
-            isbn: isbn
+        .then (resultArray)->  normalizeResult resultArray, 'wd', isbn
       else
-        result =
-          items: []
-          source: 'wd'
-          isbn: isbn
-          status: 'no item found for this isbn'
+        normalizeResult [], 'wd', isbn, 'no item found for this isbn'
     .catch (err)-> _.error err, 'err at getBookEntityByIsbn'
 
+normalizeResult = (args...)-> _.zipObject ['items', 'source', 'isbn', 'status'], args
 
 searchEntities = (search, language='en', limit='20', format='json')->
   url = API.wikidata.search(search, language).logIt('searchEntities')
-  return Promises.get url
+  return promises_.get url
 
 filterAndBrush = (res)->
   results = []
@@ -89,14 +82,15 @@ rebaseClaimsValueToClaimsRoot = (entity)->
             statement._id = 'Q' + id
   return
 
-validIfIsABook = (claims, valid)->
-  claims.P31?.forEach (statement)->
-    valid = true  if statement._id in Q.books
-  return valid
+getP31Tester = (matchables)->
+  _.type matchables, 'array'
+  return tester = (claims, valid)->
+    claims.P31?.forEach (statement)->
+      if statement._id in matchables then valid = true
+    return valid
 
-validIfIsAnAuthor = (claims, valid)->
-  claims.P31?.forEach (statement)->
-    valid = true  if statement._id in Q.humans
-  return valid
+validIfIsABook = getP31Tester(Q.books)
+
+validIfIsAnAuthor = getP31Tester(Q.humans)
 
 whitelistedEntity = (id)-> id in P31Whitelist
