@@ -1,3 +1,7 @@
+CONFIG = require 'config'
+if CONFIG.monitoring
+  require('look').start()
+
 env = process.argv[2]
 host = process.argv[3]
 port = process.argv[4]
@@ -5,7 +9,6 @@ port = process.argv[4]
 if env?
   console.log 'env manual change', process.env.NODE_ENV = env
 
-CONFIG = require 'config'
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 americano = require 'americano'
