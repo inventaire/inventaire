@@ -4,6 +4,7 @@ _ = __.require 'builders', 'utils'
 
 americano = require 'americano'
 cookieParser = require 'cookie-parser'
+favicon = require 'serve-favicon'
 session = require 'cookie-session'
 analytics = require 'no-js-analytics'
 
@@ -66,9 +67,13 @@ langCookie = (req, res, next) ->
         _.info "setting lang cookie, #{lang}"
   next()
 
+publicPath = __dirname + '/../client/public'
+staticMiddleware = ->
+  options = maxAge: CONFIG.staticMaxAge
+  return americano.static publicPath, options
+
 # function => is a function with signature (req, res, next)->
 # function() => returns a function with signature (req, res, next)->
-
 module.exports =
   common: [
     compression()
@@ -78,8 +83,8 @@ module.exports =
       dumpExceptions: true
       showStack: true
     americano.logger CONFIG.morganLogFormat
-    americano.static __dirname + '/../client/public',
-      maxAge: CONFIG.staticMaxAge
+    ['/static', staticMiddleware()]
+    favicon publicPath + '/images/favicon.ico'
     cookieParser()
     session(secret: CONFIG.secret)
     restrictApiAccess

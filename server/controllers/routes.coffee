@@ -1,6 +1,5 @@
 _ = require('config').root.require('builders', 'utils')
 
-index = require "./index"
 auth = require "./auth"
 user = require "./user"
 items = require "./items"
@@ -103,4 +102,6 @@ module.exports =
     get: (req, res, next)-> res.send(200, analytics.stats())
 
   '*':
-    get: index.glob
+    # the routing will be done on the client side
+    get: (req, res, next)->
+      res.sendfile './index.html', {root: __dirname + '/../../client/public'}
