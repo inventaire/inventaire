@@ -21,9 +21,5 @@ module.exports =
       if @isArray(obj) then return 'array'
     return type
 
-  areStrings: (array)->
-    # soft testing: doesn't throw
-    result = true
-    array.forEach (obj)=>
-      unless @isString(obj) then result = false
-    return result
+  # soft testing: doesn't throw
+  areStrings: (array)-> @all array, @isString
