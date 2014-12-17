@@ -9,7 +9,7 @@ String::logIt = (label, color)->
 module.exports =
   errorHandler: (res, err, status = 500)->
     if /^4/.test status then @warn err
-    else @error(new Error(err), err)
+    else @error new Error(err), err
     res.setHeader 'Content-Type', 'text/html'
     res.status status or 500
     # dont send the error details to the user
@@ -29,12 +29,6 @@ module.exports =
   jsonFile: (path)->
     JSON.parse fs.readFileSync(path).toString()
 
-  areStrings: (array)->
-    result = true
-    array.forEach (obj)=>
-      unless @isString(obj) then result = false
-    return result
-
   areStringsOrFalsy: (array)->
     compacted = @compact(array)
     if compacted.length > 0 and @areStrings(compacted)
@@ -49,7 +43,11 @@ module.exports =
         results.push [keys1, keys2]
     return results
 
-  timer: (fn)->
+  timer: (fn, sync)->
     id = @now()
     console.time id
-    cb().then -> console.timeEnd id
+    if sync
+      cb()
+      console.timeEnd id
+    else
+      cb().then -> console.timeEnd id

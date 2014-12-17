@@ -81,6 +81,16 @@ describe 'UTILS', ->
           done()
         , done)
 
+    describe 'GENERAL', ->
+      it "should return the passed object", (done)->
+        trycatch( ->
+          array = ['im an array']
+          _.type(array, 'array').should.equal array
+          obj = {'im': 'an array'}
+          _.type(obj, 'object').should.equal obj
+          done()
+        , done)
+
 
   describe 'TYPES', ->
       it "should handle multi arguments type", (done)->
@@ -92,7 +102,8 @@ describe 'UTILS', ->
 
       it "should handle throw when on argument is of the wrong type", (done)->
         trycatch( ->
-          (-> _.types([{whoami: 'im an object'}, 1, 2, 125], 'object', 'number', 'string', 'number')).should.throw()
+          args = [{whoami: 'im an object'}, 1, 2, 125]
+          (-> _.types(args, 'object', 'number', 'string', 'number')).should.throw()
           (-> _.types([{whoami: 'im an object'}, 1, 'hello', 125], 'object', 'array', 'string', 'number')).should.throw()
           done()
         , done)
@@ -108,3 +119,20 @@ describe 'UTILS', ->
           (-> _.types([{whoami: 'im an object'}, 1, [123], 2, 3], 'object', 'number', 'array')).should.throw()
           done()
         , done)
+
+
+  describe 'ALL', ->
+    describe 'areStrings', ->
+      it "should be true when all are strings", (done)->
+          trycatch( ->
+            _.areStrings(['a', 'b', 'c']).should.equal true
+            done()
+          , done)
+
+      it "should be false when not all are strings", (done)->
+          trycatch( ->
+            _.areStrings(['a', 'b', 4]).should.equal false
+            _.areStrings(['a', {a:12}, 4]).should.equal false
+            _.areStrings([[], 'e', 'f']).should.equal false
+            done()
+          , done)
