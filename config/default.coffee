@@ -56,3 +56,4 @@ module.exports =
   godMode: false # friends requests automatically accepted
   monitoring: false
   morganLogFormat: 'dev'
+  logStaticFilesRequests: true

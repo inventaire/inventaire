@@ -74,6 +74,15 @@ staticMiddleware = ->
 
 # function => is a function with signature (req, res, next)->
 # function() => returns a function with signature (req, res, next)->
+
+logger = americano.logger CONFIG.morganLogFormat
+pass = (req, res, next)-> next()
+
+if CONFIG.logStaticFilesRequests
+  [loggerBeforeStatic, loggerAfterStatic] = [logger, pass]
+else
+  [loggerBeforeStatic, loggerAfterStatic] = [pass, logger]
+
 module.exports =
   common: [
     compression()
@@ -82,8 +91,9 @@ module.exports =
     americano.errorHandler
       dumpExceptions: true
       showStack: true
-    americano.logger CONFIG.morganLogFormat
+    loggerBeforeStatic
     ['/static', staticMiddleware()]
+    loggerAfterStatic
     favicon publicPath + '/images/favicon.ico'
     cookieParser()
     session(secret: CONFIG.secret)
