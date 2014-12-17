@@ -55,3 +55,4 @@ module.exports =
   promisesStackTrace: true
   godMode: false # friends requests automatically accepted
   monitoring: true
+  morganLogFormat: 'dev'

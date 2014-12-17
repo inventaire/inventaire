@@ -77,12 +77,12 @@ module.exports =
     americano.errorHandler
       dumpExceptions: true
       showStack: true
+    americano.logger CONFIG.morganLogFormat
     americano.static __dirname + '/../client/public',
       maxAge: CONFIG.staticMaxAge
     cookieParser()
     session(secret: CONFIG.secret)
     restrictApiAccess
-    # emailCookie
     allowCrossDomain
     cspPolicy
     # csrf
@@ -90,9 +90,7 @@ module.exports =
     cacheControl
     analytics
   ]
+  production: []
   development:
-    use: [americano.logger('dev')]
     set:
       debug: 'on'
-
-  production: [americano.logger('short')]
