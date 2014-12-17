@@ -104,4 +104,10 @@ module.exports =
   '*':
     # the routing will be done on the client side
     get: (req, res, next)->
-      res.sendfile './index.html', {root: __dirname + '/../../client/public'}
+      if /text\/html/.test req.headers.accept
+        res.sendfile './index.html', {root: publicRoot}
+      else
+        err = "wrong content-type: #{req.headers.accept}"
+        _.errorHandler res, err, 404
+
+publicRoot = __dirname + '/../../client/public'
