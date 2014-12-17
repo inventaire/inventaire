@@ -63,11 +63,11 @@ justBrush = (res)->
 filterWhitelisted = (entity)->
   valid = false
   logs = [ ['title', entity.title], 'desc', entity.descriptions, ['label.en', entity.labels?.en]]
-  if entity.claims? and entity.claims.P31?
+  if entity.claims?.P31?
     logs.push 'P31'
     logs.push entity.claims.P31
-    valid = validIfIsABook(entity.claims, valid)
-    valid = validIfIsAnAuthor(entity.claims, valid)
+    valid = validIfIsABook entity.claims, valid
+    valid = validIfIsAnAuthor entity.claims, valid
   if valid then _.logArray(logs, 'whitelisted', 'green')
   else _.logArray(logs, 'rejected', 'red')
   return valid
