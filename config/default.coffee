@@ -54,5 +54,5 @@ module.exports =
   typeCheck: true
   promisesStackTrace: true
   godMode: false # friends requests automatically accepted
-  monitoring: true
+  monitoring: false
   morganLogFormat: 'dev'
