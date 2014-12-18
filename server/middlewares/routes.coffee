@@ -1,3 +1,6 @@
+_ = require('config').root.require 'builders', 'utils'
+CONFIG = require 'config'
+
 exports.restrictApiAccess = (req, res, next) ->
   if isApiRoute req.originalUrl
     if req.session.email then next()

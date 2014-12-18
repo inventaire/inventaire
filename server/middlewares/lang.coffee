@@ -1,3 +1,5 @@
+_ = require('config').root.require 'builders', 'utils'
+
 exports.langCookie = (req, res, next) ->
   unless req.cookies?.lang?
     if lang = req.headers?['accept-language']?[0..1]

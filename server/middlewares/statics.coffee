@@ -7,6 +7,7 @@ staticMiddleware = ->
   options = maxAge: CONFIG.staticMaxAge
   return americano.static publicPath, options
 
+# 2 elements array: arguments apply'ied to app.use by americano
 exports.mountStaticFiles = ['/static', staticMiddleware()]
 
 
