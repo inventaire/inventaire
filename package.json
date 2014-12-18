@@ -10,7 +10,7 @@
   "main": "index.coffee",
   "scripts": {
     "postinstall": "npm run install-client",
-    "install-client": "git clone git@github.com:maxlath/inventaire-client.git ./client",
+    "install-client": "git clone git@github.com:maxlath/inventaire-client.git ./client && cd client && npm install",
     "start": "coffee server.coffee",
     "superstart": "supervisor --ignore client,test server.coffee",
     "test": "export NODE_ENV=tests; mocha --compilers coffee:coffee-script/register --watch",
