@@ -6,6 +6,14 @@ This repository tracks the server-side developments, while the (heavy) [client-s
 Both are licenced [AGPL3](http://www.gnu.org/licenses/agpl-3.0.html)
 
 
+## Installation
+
+```
+git clone git@github.com:maxlath/inventaire.git
+cd inventaire
+npm install
+```
+
 ## Day-dreaming on future evolutions
 
 [Inventaire.io](https://inventaire.io) is a hub for peers inventory data, it uses a centralized database to make the early development easier, while being as easy as possible to 'install' and use: well, it's just a classic website. Meanwhile, this repository is public as there is no reason it should ever stay so: if you can think of a better/more decentralized way for peers to keep their inventory data and share it with others, you are very welcome to experiment with what you can find here. The hard point being sharing data between this centralized website and other inventory implementations, working on a standard data model and an API would be a priority as soon as meaningful.
