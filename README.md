@@ -16,12 +16,12 @@ npm install
 
 ## Day-dreaming on future evolutions
 
-[Inventaire.io](https://inventaire.io) is a hub for peers inventory data, it uses a centralized database to make the early development easier, while being as easy as possible to 'install' and use: well, it's just a classic website. Meanwhile, this repository is public as there is no reason it should ever stay so: if you can think of a better/more decentralized way for peers to keep their inventory data and share it with others, you are very welcome to experiment with what you can find here. The hard point being sharing data between this centralized website and other inventory implementations, working on a standard data model and an API would be a priority as soon as meaningful.
+[Inventaire.io](https://inventaire.io) is a hub for open-knowledge-based peers inventory data. This prototype uses a centralized database to make the early development easier, while being as easy as possible to 'install' and use: well, it's just a classic website. Meanwhile, this repository is public as there is no reason it should ever stay so: this is a research work in progress, if you can think of a better/more decentralized way for peers to keep their inventory data and share it with others, you are very welcome to join the effort or experiment on your own with what you can find here. The hard point being sharing data between this centralized website and other inventory implementations. Works on a standard data model and an API would be a priority as soon as meaningful.
 
 **Ideas for experimentations:**
 
-- port to a desktop client using [node-webkit](https://github.com/rogerwang/node-webkit) or alike
-- port to a personal cloud platform: [Cozy](http://cozy.io), [OwnCloud](http://owncloud.org/)...
+- port to custom desktop clients using [node-webkit](https://github.com/rogerwang/node-webkit) or alike
+- port to an app for personal cloud platforms: [Cozy](http://cozy.io), [OwnCloud](http://owncloud.org/)...
 - any other IndieWeb / [Unhosted](https://unhosted.org/) crazyness? :)
 
 ## Powered by
