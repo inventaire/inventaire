@@ -7,7 +7,7 @@ server_ = __.require 'utils', 'base'
 logs_ = __.require 'utils', 'logs'
 if CONFIG.verbosity is 0 then logs_.log = lo.identity
 
-types_ = __.require 'utils', 'types'
+types_ = __.require 'sharedLibs', 'types'
 if not CONFIG.typeCheck then types_.types = lo.noop
 
 utils = lo.extend(lo, server_, logs_, types_)
