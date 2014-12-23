@@ -4,18 +4,18 @@ _ = __.require 'builders', 'utils'
 
 Promise = require 'bluebird'
 
-module.exports =
-  raw: (dbName)->
-    if CONFIG.env is 'tests'
-      level = require('level-test')()
-      leveldb = level()
-    else
-      _.typeString dbName
-      level = require 'level'
-      dbPath = __.path 'leveldb', dbName
-      leveldb = level(dbPath)
+sublevel = require 'level-sublevel'
+dbPath = __.path 'leveldb', 'main'
 
-    return leveldb
+if CONFIG.env is 'tests'
+  level = require('level-test')()
+  db = sublevel level()
+else
+  level = require 'level'
+  db = sublevel level(dbPath)
+
+module.exports =
+  raw: (dbName)-> db.sublevel dbName
 
   promisified: (db)->
     return Promise.promisifyAll db
