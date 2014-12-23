@@ -13,7 +13,9 @@ module.exports.getGoogleBooksDataFromIsbn = (isbn)->
       if body.totalItems > 0
         parsedItem = body.items[0].volumeInfo
         return @normalizeBookData parsedItem, isbn
-      else throw "no item found for: #{cleanedIsbn}"
+      else
+        _.error body, 'Google Book response'
+        throw "no item found for: #{cleanedIsbn}"
   else throw new Error "bad isbn"
 
 module.exports.getGoogleBooksDataFromText = (text)->
@@ -27,4 +29,6 @@ module.exports.getGoogleBooksDataFromText = (text)->
           data = @normalizeBookData(el)
           validResults.push(data) if data?
         return validResults
-      else throw "no item found for: #{text}"
+      else
+        _.error body, 'Google Book response'
+        throw "no item found for: #{text}"
