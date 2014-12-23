@@ -36,7 +36,7 @@ module.exports =
     else return false
 
   combinations: (array1, array2)->
-    @types arguments, 'array', 'array'
+    @types arguments, ['array', 'array']
     results = []
     array1.forEach (keys1)->
       array2.forEach (keys2)->

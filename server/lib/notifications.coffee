@@ -10,14 +10,14 @@ notifs_ =
   db: API.sub
 
   getUserNotifications: (userId)->
-    _.types arguments, 'string'
+    _.types arguments, ['string']
     params =
       gt: userId
       lt: userId + 'Z'
     return API.getStream(params)
 
   add: (userId, type, data)->
-    _.types arguments, 'string', 'string', 'object'
+    _.types arguments, ['string', 'string', 'object']
     value = @getValue(type, data)
     key = @getKey(userId, value.time)
     _.info [key, value], 'key, value'
@@ -40,7 +40,7 @@ notifs_ =
 
 callbacks =
   acceptedRequest: (userToNotify, newFriend)->
-    _.types arguments, 'string', 'string'
+    _.types arguments, ['string', 'string']
     data = {user: newFriend}
     notifs_.add userToNotify, 'friendAcceptedRequest', data
 

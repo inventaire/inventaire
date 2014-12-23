@@ -23,7 +23,7 @@ module.exports =
     .then safeItems
 
   batchByListings: (listings)->
-    _.types arguments, 'array'
+    _.types arguments, ['array']
     @db.viewByKeys 'byListing', listings
     .then safeItems
 
