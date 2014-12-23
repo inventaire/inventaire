@@ -15,7 +15,8 @@ else
   db = sublevel level(dbPath)
 
 module.exports =
-  raw: (dbName)-> db.sublevel dbName
+  db: db
+  sub: (dbName)-> db.sublevel dbName
 
   promisified: (db)->
     return Promise.promisifyAll db
@@ -39,7 +40,7 @@ module.exports =
     return API
 
   simpleAPI: (dbName)->
-    db = @raw(dbName)
+    db = @sub(dbName)
     API = @unjsonized @promisified(db)
-    API.raw = db
+    API.sub = db
     return API

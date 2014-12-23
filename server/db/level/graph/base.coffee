@@ -12,7 +12,7 @@ levelBase = __.require('level', 'base')
 
 
 module.exports = (graphName)->
-  db = levelBase.raw(graphName)
+  db = levelBase.sub(graphName)
   graph = levelgraph(db)
   graph_ = require('./graph_utils')(db)
 

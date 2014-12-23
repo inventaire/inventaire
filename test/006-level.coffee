@@ -7,20 +7,20 @@ trycatch = require 'trycatch'
 Promise = require 'bluebird'
 
 levelBase = __.require 'level', 'base'
-rawDb = levelBase.raw('hello')
-promDb = levelBase.promisified(rawDb)
+subDb = levelBase.sub('hello')
+promDb = levelBase.promisified(subDb)
 unjsonizedDb = levelBase.unjsonized(promDb)
 db = unjsonizedDb
 
 describe 'DB', ->
   describe 'LEVEL BASE', ->
 
-    describe 'RAW', ->
+    describe 'SUB', ->
       it "should put and get a string", (done)->
         trycatch( ->
-          rawDb.put 'what', 'zup', (err, body)->
+          subDb.put 'what', 'zup', (err, body)->
             if err? then _.error err
-            rawDb.get 'what', (err, body)->
+            subDb.get 'what', (err, body)->
               _.log body, 'body'
               body.should.equal 'zup'
               done()
@@ -30,9 +30,9 @@ describe 'DB', ->
         trycatch( ->
           obj = {bob: 'by'}
           json = JSON.stringify(obj)
-          rawDb.put 'salut', json, (err, body)->
+          subDb.put 'salut', json, (err, body)->
             if err? then _.error err
-            rawDb.get 'salut', (err, body)->
+            subDb.get 'salut', (err, body)->
               _.log body, 'body'
               body.should.be.a.String
               obj2 = JSON.parse body

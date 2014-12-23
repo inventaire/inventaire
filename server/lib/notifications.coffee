@@ -7,7 +7,7 @@ Radio = __.require 'lib', 'radio'
 
 notifs_ =
   API: API
-  db: API.raw
+  db: API.sub
 
   getUserNotifications: (userId)->
     _.types arguments, 'string'
