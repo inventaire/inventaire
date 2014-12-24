@@ -26,8 +26,12 @@ module.exports =
     else
       throw new Error "bad db object passed to _.getObjIfSuccess"
 
-  jsonFile: (path)->
+  jsonRead: (path)->
     JSON.parse fs.readFileSync(path).toString()
+
+  jsonWrite: (data, path)->
+    json = JSON.stringify data, null, 4
+    fs.writeFileSync(path, json)
 
   areStringsOrFalsy: (array)->
     compacted = @compact(array)

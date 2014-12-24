@@ -7,7 +7,7 @@ wd.sitelinks = __.require 'sharedLibs','wiki_sitelinks'
 module.exports = wd
 
 breq = require 'breq'
-wdProps = _.jsonFile('server/lib/wikidata-properties-fr.json').properties
+wdProps = _.jsonRead('server/lib/wikidata-properties-fr.json').properties
 
 API = wd.API
 Q = wd.Q
