@@ -15,7 +15,7 @@ mookPromise = hashKey = (key)->
 
 Ctx =
   method: (key)-> hashKey key + @value
-  value: -> _.random(5)
+  value: -> _.random(1000)
 
 describe 'CACHE', ->
   describe 'get', ->
@@ -85,3 +85,23 @@ describe 'CACHE', ->
                 # DHO [>.<]
                 spy.callCount.should.equal 2
                 done()
+
+    it "should also accept an expiration timespan", (done)->
+      console.time 'global'
+      console.time 'one'
+      cache_.get('samekey', Ctx.method, null, null)
+      .then (res1)->
+        console.timeEnd 'one'
+        console.time 'two'
+        cache_.get('samekey', Ctx.method, null, ['different arg'], 10000)
+        .then (res2)->
+          console.timeEnd 'two'
+          console.time 'three'
+          cache_.get('samekey', Ctx.method, null, ['different arg'], 0)
+          .then (res3)->
+            console.timeEnd 'three'
+            console.timeEnd 'global'
+            _.log [res1, res2, res3], 'results'
+            res1.should.equal res2
+            res2.should.not.equal res3
+            done()
