@@ -32,3 +32,13 @@ module.exports.getGoogleBooksDataFromText = (text)->
       else
         _.error body, 'Google Book response'
         throw "no item found for: #{text}"
+
+
+module.exports.getImage = (data)->
+  return @API.google.book(data)
+  .then (res)=>
+    if res.items?[0]?.volumeInfo?.imageLinks?.thumbnail?
+      image = res.items[0].volumeInfo.imageLinks.thumbnail
+      return {image: @normalize(image)}
+    else console.warn "google book image not found for #{data}"
+  .catch (err)-> _.error err, "google book err for data: #{data}"

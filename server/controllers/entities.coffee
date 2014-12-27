@@ -3,6 +3,7 @@ _ = __.require 'builders', 'utils'
 books = __.require 'lib', 'books'
 wikidata = __.require 'lib', 'wikidata'
 promises_ = __.require 'lib', 'promises'
+cache_ = __.require 'lib', 'cache'
 
 module.exports =
   actions: (req, res, next) ->
@@ -11,6 +12,7 @@ module.exports =
 
     switch action
       when 'search' then return searchEntity(req, res)
+      when 'getimage' then return getImage(req, res)
       else _.errorHandler res, 'entities action not found', 400
 
 
@@ -73,7 +75,6 @@ spreadRequests = (res, promises, label)->
   .catch (err)->
     _.error err, "#{label} err"
     _.errorHandler res, err
-  .done()
 
 selectFirstNonEmptyResult = (results...)->
   _.info results, "api results"
@@ -83,3 +84,13 @@ selectFirstNonEmptyResult = (results...)->
       selected = result
   selected?.source.logIt('selected source')
   return selected
+
+
+getImage = (req, res)->
+  data = req.query.data
+  unless data? then return res.json 400, 'bad query'
+
+  key = "image:#{data}"
+  cache_.get key, books.getImage, books, [data]
+  .then (body)-> res.json body
+  .catch (err)-> _.errorHandler res, err
