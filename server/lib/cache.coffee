@@ -17,14 +17,15 @@ module.exports =
 
     checkCache(key, timespan)
     .then (res)->
-      if res?.body? then return res.body
-      else return requestMethod(key, method, context, args)
+      if res?.body? then res.body
+      else requestMethod(key, method, context, args)
 
 checkCache = (key, timespan)->
   cacheDB.get(key)
   .catch (err)-> console.warn 'checkCache err', err, key
   .then (res)->
-    if isFreshEnough(res.timestamp, timespan) then return res
+    if res? and isFreshEnough(res.timestamp, timespan)
+      return res
     else return
   .catch (err)-> console.warn 'isFreshEnough err', err, key
 
@@ -45,6 +46,6 @@ cacheResponse = (key, res)->
 
 isFreshEnough = (timestamp, timespan)->
   _.types arguments, ['number', 'number']
-  age = _.now() - timestamp
+  age = Date.now() - timestamp
   fresh = age < timespan
   return _.log fresh, 'freshness'
