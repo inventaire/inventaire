@@ -62,8 +62,8 @@ module.exports =
     put: items.put
     delete: items.del
 
-  'api/entities/search':
-    get: entities.search
+  'api/entities':
+    get: entities.actions
 
   'api/notifs':
     post: notifs.updateStatus

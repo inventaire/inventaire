@@ -5,7 +5,16 @@ wikidata = __.require 'lib', 'wikidata'
 promises_ = __.require 'lib', 'promises'
 
 module.exports =
-  search: (req, res, next) ->
+  actions: (req, res, next) ->
+    action = req.query.action
+    unless action? then return _.errorHandler res, 'bad query', 400
+
+    switch action
+      when 'search' then return searchEntity(req, res)
+      else _.errorHandler res, 'entities action not found', 400
+
+
+searchEntity = (req, res)->
     _.info req.query, "Entities:Search"
 
     if req.query.search? and req.query.language?
