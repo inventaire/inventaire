@@ -9,14 +9,14 @@ dbPath = __.path 'leveldb', 'main'
 
 if CONFIG.env is 'tests'
   level = require('level-test')()
-  db = sublevel level()
+  DB = sublevel level()
 else
   level = require 'level'
-  db = sublevel level(dbPath)
+  DB = sublevel level(dbPath)
 
 module.exports =
-  db: db
-  sub: (dbName)-> db.sublevel dbName
+  db: DB
+  sub: (dbName)-> DB.sublevel dbName
 
   promisified: (db)->
     return Promise.promisifyAll db
@@ -40,7 +40,7 @@ module.exports =
     return API
 
   simpleAPI: (dbName)->
-    db = @sub(dbName)
-    API = @unjsonized @promisified(db)
-    API.sub = db
+    sub = @sub(dbName)
+    API = @unjsonized @promisified(sub)
+    API.sub = sub
     return API
