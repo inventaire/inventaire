@@ -48,7 +48,7 @@ module.exports =
     return results
 
   timer: (fn, sync)->
-    id = @now()
+    id = Date.now()
     console.time id
     if sync
       cb()

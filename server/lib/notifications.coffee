@@ -28,7 +28,7 @@ notifs_ =
     API.patch key, {status: 'read'}
 
   getKey: (userId, time)->
-    time or= _.now()
+    time or= Date.now()
     userId + ':' + time
 
   getValue: (type, data)->
@@ -36,7 +36,7 @@ notifs_ =
       type: type
       data: data
       status: 'unread'
-      time: _.now()
+      time: Date.now()
 
 callbacks =
   acceptedRequest: (userToNotify, newFriend)->

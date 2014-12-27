@@ -80,7 +80,7 @@ loadFakeUser = (username)->
       username: username or fake.username
       email: fake.email
       picture: fake.picture.medium
-      created: _.now()
+      created: Date.now()
     postUser userData
   .catch (err)-> _.error err
   .done()

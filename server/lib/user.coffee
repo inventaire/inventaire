@@ -57,7 +57,7 @@ module.exports =
     user =
       username: username
       email: email
-      created: _.now()
+      created: Date.now()
       # gravatar params: {d: default, s: size}
       picture: gravatar.url(email, {d: 'mm', s: '200'})
     _.info user, 'new user'
