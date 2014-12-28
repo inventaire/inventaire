@@ -11,5 +11,10 @@ exports.restrictApiAccess = (req, res, next) ->
 
 isApiRoute = (route)-> /^\/(api|test)\//.test route
 
-whitelistedRoute = (route)->
-  new RegExp(CONFIG.whitelistedRouteRegExp).test route
+whitelistedRoute = (route)-> route in whitelistedRoutes
+
+whitelistedRoutes = [
+  '/api/auth'
+  '/api/items/public'
+  '/api/entities'
+]

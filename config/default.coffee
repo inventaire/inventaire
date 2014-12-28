@@ -18,7 +18,6 @@ module.exports =
     users: 'users'
     fakeUsers: false
     inventory: 'inventory'
-  whitelistedRouteRegExp: /^\/api\/(auth\/|items\/public)/
   # noCache: true
   noCache: false
   # staticMaxAge: 0
