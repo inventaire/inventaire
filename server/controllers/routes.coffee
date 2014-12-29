@@ -12,12 +12,17 @@ proxy = require "./proxy"
 glob = require "./glob"
 analytics = require 'no-js-analytics'
 
+
+# routes structure:
+# 1 - api is the default prefix for server-side routes
+# 2 - the controller / module name
+# 3 - 'public' if the route can be called without a session
+
 module.exports =
-  # keep 'auth' routes for methods not requiring a valid session
-  'api/auth/username':
+  'api/auth/public/username':
     post: auth.checkUsername
 
-  'api/auth/login':
+  'api/auth/public/login':
     post: auth.login
 
   'api/auth/logout':
@@ -27,7 +32,6 @@ module.exports =
     get: user.getUser
     put: user.updateUser
 
-  # routes protected by the 'restrict' middleware. cf config.coffee
   'api/users':
     get: users.actions
 
@@ -62,7 +66,7 @@ module.exports =
     put: items.put
     delete: items.del
 
-  'api/entities':
+  'api/entities/public':
     get: entities.actions
 
   'api/notifs':
