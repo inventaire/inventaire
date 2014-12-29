@@ -10,21 +10,8 @@ module.exports = getImages = (req, res)->
 
   promises = dataArray.map getImage
 
-  _.log dataArray, 'dataArray'
   promises_.settle(promises)
-  .then (dataSets)->
-
-    _.log dataSets, 'dataSets'
-    data = {}
-    i = 0
-    while i < dataArray.length
-      key = dataArray[i]
-      value = dataSets[i]
-      data[key] = value
-      i++
-
-    _.log data, 'data at getImages'
-    res.json data
+  .then res.json.bind(res)
   .catch (err)-> _.errorHandler res, err
 
 getImage = (data)->
