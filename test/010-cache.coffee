@@ -3,6 +3,7 @@ __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 
 should = require 'should'
+expect = require('chai').expect
 sinon = require 'sinon'
 
 promises_ = __.require 'lib', 'promises'
@@ -105,3 +106,19 @@ describe 'CACHE', ->
             res1.should.equal res2
             res2.should.not.equal res3
             done()
+
+
+    it "should cache non-error empty results", (done)->
+      spy = sinon.spy()
+      empty = (key)->
+        spy()
+        return promises_.resolvedPromise _.noop(key)
+
+      cache_.get 'gogogo', empty
+      .then (res1)->
+        expect(res1).to.equal undefined
+        cache_.get 'gogogo', empty
+        .then (res2)->
+          expect(res2).to.equal undefined
+          spy.callCount.should.equal 1
+          done()

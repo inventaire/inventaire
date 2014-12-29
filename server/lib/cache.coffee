@@ -16,9 +16,7 @@ module.exports =
     catch err then return promises_.rejectedPromise(err)
 
     checkCache(key, timespan)
-    .then (res)->
-      if res?.body? then res.body
-      else requestMethod(key, method, context, args)
+    .then (res)-> requestOnlyIfNeeded(res, key, method, context, args)
 
 checkCache = (key, timespan)->
   cacheDB.get(key)
@@ -28,6 +26,10 @@ checkCache = (key, timespan)->
       return res
     else return
   .catch (err)-> console.warn 'isFreshEnough err', err, key
+
+requestOnlyIfNeeded = (res, key, method, context, args)->
+  if res? then res.body
+  else requestMethod(key, method, context, args)
 
 requestMethod = (key, method, context, args)->
   args or= [key]
