@@ -1,6 +1,7 @@
-_ = require('config').root.require('builders', 'utils')
-breq = require 'breq'
+__ = require('config').root
+_ = __.require 'builders', 'utils'
 url = require 'url'
+request = require 'request'
 
 module.exports.get = (req, res, next)->
   query = req.originalUrl.slice(7)
@@ -8,7 +9,4 @@ module.exports.get = (req, res, next)->
   unless parsed.protocol?
     _.errorHandler res, 'protocol missing', 400
   else
-    breq.get(query)
-    .then (resp)-> res.send(resp.body)
-    .catch (err)-> res.send(err.body)
-    .done()
+    req.pipe(request(query)).pipe(res)
