@@ -11,13 +11,17 @@ module.exports =
   secret: 'yoursecrethere'
   db:
     instable: true
-    protocol: 'http'
+    protocol: 'https'
     host: 'localhost'
     port: 5984
-    fullHost: -> "#{@protocol}://#{@host}:#{@port}"
     users: 'users'
     fakeUsers: false
     inventory: 'inventory'
+    restricted: true
+    username: 'yourcouchdbusername'
+    password: 'yourcouchdbpassword'
+    auth: -> "#{@username}:#{@password}"
+    fullHost: -> "#{@protocol}://#{@username}:#{@password}@#{@host}:#{@port}"
   # noCache: true
   noCache: false
   # staticMaxAge: 0

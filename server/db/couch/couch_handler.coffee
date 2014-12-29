@@ -33,8 +33,10 @@ module.exports =
             if /^users/.test dbName
               dbInit.usersDesignLoader()
               dbInit.loadFakeUsers()  if CONFIG.db.fakeUsers
+              dbInit.putSecurityDoc(CONFIG.db.users)  if CONFIG.db.restricted
             if /^inventory/.test dbName
               dbInit.invDesignLoader()
+              dbInit.putSecurityDoc(CONFIG.db.inventory)  if CONFIG.db.restricted
             _.success body, "#{dbName} CouchDB created"
       else
         _.info "#{dbName}DB ready!"

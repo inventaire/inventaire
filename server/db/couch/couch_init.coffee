@@ -25,11 +25,11 @@ baseDbUrl = CONFIG.db.fullHost()
 usersDbUrl = baseDbUrl + '/' + CONFIG.db.users
 invDbUrl = baseDbUrl + '/' + CONFIG.db.inventory
 
-module.exports.usersDesignLoader = ->
+exports.usersDesignLoader = ->
   _.info 'usersDesignLoader'
   loader usersDbUrl, usersDesignDoc
 
-module.exports.invDesignLoader = ->
+exports.invDesignLoader = ->
   _.info 'invDesignLoader'
   loader invDbUrl, itemsDesignDoc
 
@@ -38,11 +38,11 @@ loader = (dbUrl, designDoc)->
   .then (res)-> _.success res.body, "#{designDoc.id} for #{dbUrl}"
   .catch (err)-> _.error err.body or err, "#{designDoc.id} for #{dbUrl}"
 
-module.exports.usersDesignUpdater = ->
+exports.usersDesignUpdater = ->
   _.info 'usersDesignUpdater'
   updater usersDbUrl, usersDesignDoc
 
-module.exports.invDesignUpdater = ->
+exports.invDesignUpdater = ->
   _.info 'invDesignUpdater'
   updater invDbUrl, itemsDesignDoc
 
@@ -57,14 +57,13 @@ updater = (dbUrl, designDoc)->
     .then (res)-> _.success res.body, "#{designDoc.id} for #{dbUrl}"
   .catch (err)-> _.error err.body or err, "#{designDoc.id} for #{dbUrl}"
 
-module.exports.loadFakeUsers = ->
+exports.loadFakeUsers = ->
   [
     'bobby', 'tony', 'luigi', 'rocky', 'shanapaul', 'Hubert_Bonisseur_de_la_Bath'
     'bambi', 'bartolome', 'boris', 'bastogne', 'baraka'
     'babidi', 'boo', 'bamboo', 'baratin'
   ]
   .forEach loadFakeUser
-  # keepUsers.body().forEach putUser
   loadFakeUser() for [1..50]
 
 keepUsers =
@@ -91,8 +90,22 @@ postUser = (data)->
   .catch (err)-> _.error err, 'postUser'
   .done()
 
-putUser = (data)->
-  breq.put usersDbUrl + '/' + data._id, data
-  .then (res)-> _.info res.body, 'putUser'
-  .catch (err)-> _.error err, 'putUser'
-  .done()
+
+securityDoc = ->
+  username = CONFIG.db.username
+  unless _.isString(username) then throw "bad CONFIG.db.username: #{username}"
+
+  return securityDoc =
+    admins:
+      names: [username]
+    members:
+      names: [username]
+
+doc = securityDoc()
+
+exports.putSecurityDoc = (dbName)->
+  url = baseDbUrl + "/#{dbName}/_security"
+  _.log url, 'url'
+  breq.put url, doc
+  .then (res)-> _.info res.body, 'putSecurityDoc'
+  .catch (err)-> _.error err, 'putSecurityDoc'
