@@ -49,5 +49,4 @@ cacheResponse = (key, res)->
 isFreshEnough = (timestamp, timespan)->
   _.types arguments, ['number', 'number']
   age = Date.now() - timestamp
-  fresh = age < timespan
-  return _.log fresh, 'freshness'
+  return age < timespan
