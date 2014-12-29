@@ -1,22 +1,10 @@
 __ = require('config').root
 _ = __.require 'builders', 'utils'
+promises_ = __.require 'lib', 'promises'
 books = __.require 'lib', 'books'
 wikidata = __.require 'lib', 'wikidata'
-promises_ = __.require 'lib', 'promises'
-cache_ = __.require 'lib', 'cache'
 
-module.exports =
-  actions: (req, res, next) ->
-    action = req.query.action
-    unless action? then return _.errorHandler res, 'bad query', 400
-
-    switch action
-      when 'search' then return searchEntity(req, res)
-      when 'getimages' then return getImages(req, res)
-      else _.errorHandler res, 'entities action not found', 400
-
-
-searchEntity = (req, res)->
+module.exports = searchEntity = (req, res)->
     _.info req.query, "Entities:Search"
     unless req.query.search? and req.query.language?
       err = 'empty query or no language specified'
@@ -83,33 +71,3 @@ selectFirstNonEmptyResult = (results...)->
       selected = result
   selected?.source.logIt('selected source')
   return selected
-
-
-getImages = (req, res)->
-  dataArray = req.query.data.split '|'
-  # unless _.isArray(dataArray) then return dataArray = [dataArray]
-  unless dataArray? then return res.json 400, 'bad query'
-
-  promises = dataArray.map getImage
-
-  _.log dataArray, 'dataArray'
-  promises_.settle(promises)
-  .then (dataSets)->
-
-    _.log dataSets, 'dataSets'
-    data = {}
-    i = 0
-    while i < dataArray.length
-      key = dataArray[i]
-      value = dataSets[i]
-      data[key] = value
-      i++
-
-    _.log data, 'data at getImages'
-    res.json data
-  .catch (err)-> _.errorHandler res, err
-
-getImage = (data)->
-  key = "image:#{data}"
-  cache_.get key, books.getImage, books, [data]
-  .catch (err)-> _.error err, 'getImage err'
