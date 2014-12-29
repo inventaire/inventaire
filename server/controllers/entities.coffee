@@ -18,18 +18,17 @@ module.exports =
 
 searchEntity = (req, res)->
     _.info req.query, "Entities:Search"
+    unless req.query.search? and req.query.language?
+      err = 'empty query or no language specified'
+      return _.errorHandler res, err, 400
 
-    if req.query.search? and req.query.language?
+    if books.isIsbn(req.query.search)
+      _.log req.query.search, 'searchByIsbn'
+      searchByIsbn(req.query, res)
 
-      if books.isIsbn(req.query.search)
-        _.log req.query.search, 'searchByIsbn'
-        searchByIsbn(req.query, res)
-
-      else
-        _.log req.query.search, 'searchByText'
-        searchByText(req.query, res)
-
-    else  _.errorHandler res, 'empty query or no language specified', 400
+    else
+      _.log req.query.search, 'searchByText'
+      searchByText(req.query, res)
 
 
 searchByIsbn = (query, res)->
