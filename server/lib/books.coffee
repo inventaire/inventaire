@@ -1,15 +1,14 @@
-breq = require 'breq'
 __ = require('config').root
 _ = __.require('builders', 'utils')
 
 promises_ = require './promises'
-module.exports = __.require('sharedLibs','books')(promises_, _)
+module.exports = __.require('sharedLibs','books')(_)
 
 module.exports.getGoogleBooksDataFromIsbn = (isbn)->
   cleanedIsbn = @cleanIsbnData(isbn).logIt('cleaned isbn')
   unless cleanedIsbn? then throw new Error "bad isbn"
 
-  @API.google.book(cleanedIsbn)
+  promises_.get @API.google.book(cleanedIsbn)
   .then (body)=>
     if body.totalItems > 0
       parsedItem = body.items[0].volumeInfo
@@ -20,7 +19,7 @@ module.exports.getGoogleBooksDataFromIsbn = (isbn)->
 
 module.exports.getGoogleBooksDataFromText = (text)->
   _.typeString text
-  @API.google.book(text)
+  promises_.get @API.google.book(text)
   .then (body)=>
     if body.totalItems > 0
       parsedItems = body.items.map (el)-> el.volumeInfo
@@ -35,7 +34,7 @@ module.exports.getGoogleBooksDataFromText = (text)->
 
 
 module.exports.getImage = (data)->
-  @API.google.book(data)
+  promises_.get @API.google.book(data)
   .then (res)=>
     if res.items?[0]?.volumeInfo?.imageLinks?.thumbnail?
       image = res.items[0].volumeInfo.imageLinks.thumbnail
