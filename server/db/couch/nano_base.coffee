@@ -6,7 +6,8 @@ nano = require('nano') CONFIG.db.fullHost()
 couch_ = __.require 'couch', 'couch_handler'
 
 if CONFIG.db.instable
-  couch_.checkDbsExistanceOrCreate [CONFIG.db.users, CONFIG.db.inventory]
+  dbs = [CONFIG.db.users, CONFIG.db.inventory, CONFIG.db.entities]
+  couch_.checkDbsExistanceOrCreate dbs
 else
   _.info 'DBs assumed to exist'
 

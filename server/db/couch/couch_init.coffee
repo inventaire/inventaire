@@ -21,9 +21,17 @@ itemsDesignDoc =
   body: ()->
     JSON.parse fs.readFileSync(@path).toString()
 
+entitiesDesignDoc =
+  name: 'entities'
+  id: '_design/entities'
+  path: __.path 'couchdb', 'entities.json'
+  body: ()->
+    JSON.parse fs.readFileSync(@path).toString()
+
 baseDbUrl = CONFIG.db.fullHost()
 usersDbUrl = baseDbUrl + '/' + CONFIG.db.users
 invDbUrl = baseDbUrl + '/' + CONFIG.db.inventory
+entitiesDbUrl = baseDbUrl + '/' + CONFIG.db.entities
 
 exports.usersDesignLoader = ->
   _.info 'usersDesignLoader'
@@ -32,6 +40,10 @@ exports.usersDesignLoader = ->
 exports.invDesignLoader = ->
   _.info 'invDesignLoader'
   loader invDbUrl, itemsDesignDoc
+
+exports.entitiesDesignLoader = ->
+  _.info 'entitiesDesignLoader'
+  loader entitiesDbUrl, entitiesDesignDoc
 
 loader = (dbUrl, designDoc)->
   breq.post dbUrl, designDoc.body()
@@ -45,6 +57,10 @@ exports.usersDesignUpdater = ->
 exports.invDesignUpdater = ->
   _.info 'invDesignUpdater'
   updater invDbUrl, itemsDesignDoc
+
+exports.entitiesDesignUpdater = ->
+  _.info 'entitiesDesignUpdater'
+  updater entitiesDbUrl, entitiesDesignDoc
 
 updater = (dbUrl, designDoc)->
   breq.get dbUrl + '/' + designDoc.id

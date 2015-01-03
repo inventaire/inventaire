@@ -17,6 +17,7 @@ module.exports =
     users: 'users'
     fakeUsers: false
     inventory: 'inventory'
+    entities: 'entities'
     restricted: true
     username: 'yourcouchdbusername'
     password: 'yourcouchdbpassword'
