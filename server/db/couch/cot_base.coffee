@@ -9,6 +9,6 @@ params =
 if CONFIG.db.protocol is 'https'
   params.ssl = true
 
-module.exports.users = new cot(params).db(CONFIG.db.users)
+module.exports.users = new cot(params).db CONFIG.db.name('users')
 
-module.exports.inventory = new cot(params).db(CONFIG.db.inventory)
+module.exports.inventory = new cot(params).db CONFIG.db.name('inventory')

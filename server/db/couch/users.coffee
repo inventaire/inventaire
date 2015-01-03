@@ -10,7 +10,7 @@ cot = __.require('couch', 'cot_base').users
 
 designDocName = 'users'
 viewMethods = __.require('couch', 'view_methods')(designDocName)
-nano = __.require('couch', 'nano_base').use CONFIG.db.users
+nano = __.require('couch', 'nano_base').use CONFIG.db.name('users')
 nanoMethods =
   fetch: (keys)->
     if _.typeArray(keys)

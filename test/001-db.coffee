@@ -11,7 +11,7 @@
 
 
 
-# usersDB = db.use CONFIG.db.users
+# usersDB = db.use CONFIG.db.name('users')
 
 # H.db.headUniqueDoc(usersDB, usersDesignDoc)
 # .then(

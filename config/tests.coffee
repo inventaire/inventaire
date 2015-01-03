@@ -16,9 +16,8 @@ module.exports =
     host: 'localhost'
     port: 5984
     fullHost: -> "#{@protocol}://#{@host}:#{@port}"
-    users: 'users-tests'
+    suffix: 'tests'
     fakeUsers: true
-    inventory: 'inventory-tests'
   graph:
     social: undefined
   whitelistedRouteRegExp: /^\/api\//

@@ -29,8 +29,8 @@ entitiesDesignDoc =
     JSON.parse fs.readFileSync(@path).toString()
 
 baseDbUrl = CONFIG.db.fullHost()
-usersDbUrl = baseDbUrl + '/' + CONFIG.db.users
-invDbUrl = baseDbUrl + '/' + CONFIG.db.inventory
+usersDbUrl = baseDbUrl + '/' + CONFIG.db.name('users')
+invDbUrl = baseDbUrl + '/' + CONFIG.db.name('inventory')
 entitiesDbUrl = baseDbUrl + '/' + CONFIG.db.entities
 
 exports.usersDesignLoader = ->

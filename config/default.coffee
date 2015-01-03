@@ -14,15 +14,21 @@ module.exports =
     protocol: 'https'
     host: 'localhost'
     port: 5984
-    users: 'users'
-    fakeUsers: false
-    inventory: 'inventory'
-    entities: 'entities'
-    restricted: true
+    fullHost: -> "#{@protocol}://#{@username}:#{@password}@#{@host}:#{@port}"
     username: 'yourcouchdbusername'
     password: 'yourcouchdbpassword'
     auth: -> "#{@username}:#{@password}"
-    fullHost: -> "#{@protocol}://#{@username}:#{@password}@#{@host}:#{@port}"
+    names: [
+      'users'
+      'inventory'
+      'entities'
+    ]
+    suffix: null
+    name: (base)->
+      if @suffix? then return "#{base}-#{@suffix}"
+      else base
+    fakeUsers: false
+    restricted: true
   # noCache: true
   noCache: false
   # staticMaxAge: 0
