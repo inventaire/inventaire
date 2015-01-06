@@ -54,6 +54,7 @@ module.exports =
       controllers: '/server/controllers'
       leveldb: '/db/leveldb'
       couchdb: '/db/couchdb'
+      client: '/client'
     path: (route, name)->
       path = @paths[route]
       return "#{appRoot}#{path}/#{name}"
