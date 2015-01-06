@@ -1,113 +1,60 @@
 CONFIG = require 'config'
 fs = require 'fs'
 __ = CONFIG.root
-_ = __.require('builders', 'utils')
-
-
-# cant use users and inventory cot-db as it would create a require loop
+_ = __.require 'builders', 'utils'
+# cant use users and inventory cot-db
+# as it would create a require loop
 breq = require 'breq'
 
-usersDesignDoc =
-  name: 'users'
-  id: '_design/users'
-  path: __.path 'couchdb', 'users.json'
-  body: ()->
-    JSON.parse fs.readFileSync(@path).toString()
+module.exports =
+  designDoc:
+    load: (dbName)->
+      _.info "#{dbName} design doc loader"
+      url = getDbUrl(dbName)
+      designDoc = getDesignDoc(dbName)
+      breq.post url, designDoc.body()
+      .then (res)-> _.success res.body, "#{designDoc.id} for #{url}"
+      .catch (err)-> _.error err.body or err, "#{designDoc.id} for #{url}"
 
-itemsDesignDoc =
-  name: 'items'
-  id: '_design/items'
-  path: __.path 'couchdb', 'items.json'
-  body: ()->
-    JSON.parse fs.readFileSync(@path).toString()
+    update: (dbName)->
+      _.info "#{dbName} design doc updater"
+      url = getDbUrl(dbName)
+      designDoc = getDesignDoc(dbName)
+      breq.get url + '/' + designDoc.id
+      .then (res)->
+        _.log res.body, 'current'
+        update = designDoc.body()
+        update._rev = res.body._rev
+        url = url + '/' + update._id
+        breq.put(url, update)
+        .then (res)-> _.success res.body, "#{designDoc.id} for #{url}"
+      .catch (err)-> _.error err.body or err, "#{designDoc.id} for #{url}"
 
-entitiesDesignDoc =
-  name: 'entities'
-  id: '_design/entities'
-  path: __.path 'couchdb', 'entities.json'
-  body: ()->
-    JSON.parse fs.readFileSync(@path).toString()
+  putSecurityDoc: (dbName)->
+    url = baseDbUrl + "/#{dbName}/_security"
+    _.log url, 'url'
+    breq.put url, _securityDoc
+    .then (res)-> _.info res.body, 'putSecurityDoc'
+    .catch (err)-> _.error err, 'putSecurityDoc'
+
+  loadFakeUsers: require './load_fake_users'
+
+
+getDesignDoc = (dbName)->
+  return doc =
+    name: "#{dbName}"
+    id: "_design/#{dbName}"
+    path: __.path 'couchdb', "design_docs/#{dbName}.json"
+    body: -> _.jsonRead @path
 
 baseDbUrl = CONFIG.db.fullHost()
-usersDbUrl = baseDbUrl + '/' + CONFIG.db.name('users')
-invDbUrl = baseDbUrl + '/' + CONFIG.db.name('inventory')
-entitiesDbUrl = baseDbUrl + '/' + CONFIG.db.entities
 
-exports.usersDesignLoader = ->
-  _.info 'usersDesignLoader'
-  loader usersDbUrl, usersDesignDoc
-
-exports.invDesignLoader = ->
-  _.info 'invDesignLoader'
-  loader invDbUrl, itemsDesignDoc
-
-exports.entitiesDesignLoader = ->
-  _.info 'entitiesDesignLoader'
-  loader entitiesDbUrl, entitiesDesignDoc
-
-loader = (dbUrl, designDoc)->
-  breq.post dbUrl, designDoc.body()
-  .then (res)-> _.success res.body, "#{designDoc.id} for #{dbUrl}"
-  .catch (err)-> _.error err.body or err, "#{designDoc.id} for #{dbUrl}"
-
-exports.usersDesignUpdater = ->
-  _.info 'usersDesignUpdater'
-  updater usersDbUrl, usersDesignDoc
-
-exports.invDesignUpdater = ->
-  _.info 'invDesignUpdater'
-  updater invDbUrl, itemsDesignDoc
-
-exports.entitiesDesignUpdater = ->
-  _.info 'entitiesDesignUpdater'
-  updater entitiesDbUrl, entitiesDesignDoc
-
-updater = (dbUrl, designDoc)->
-  breq.get dbUrl + '/' + designDoc.id
-  .then (res)->
-    _.log res.body, 'current'
-    update = designDoc.body()
-    update._rev = res.body._rev
-    url = dbUrl + '/' + update._id
-    breq.put(url, update)
-    .then (res)-> _.success res.body, "#{designDoc.id} for #{dbUrl}"
-  .catch (err)-> _.error err.body or err, "#{designDoc.id} for #{dbUrl}"
-
-exports.loadFakeUsers = ->
-  [
-    'bobby', 'tony', 'luigi', 'rocky', 'shanapaul', 'Hubert_Bonisseur_de_la_Bath'
-    'bambi', 'bartolome', 'boris', 'bastogne', 'baraka'
-    'babidi', 'boo', 'bamboo', 'baratin'
-  ]
-  .forEach loadFakeUser
-  loadFakeUser() for [1..50]
-
-keepUsers =
-  path: __.path 'couchdb', 'keep_users.json'
-  body: ()->
-    JSON.parse fs.readFileSync(@path).toString()
-
-loadFakeUser = (username)->
-  breq.get('http://api.randomuser.me/')
-  .then (res)->
-    fake = res.body.results[0].user
-    userData =
-      username: username or fake.username
-      email: fake.email
-      picture: fake.picture.medium
-      created: Date.now()
-    postUser userData
-  .catch (err)-> _.error err
-  .done()
-
-postUser = (data)->
-  breq.post usersDbUrl, data
-  .then (res)-> _.info res.body, 'postUser'
-  .catch (err)-> _.error err, 'postUser'
-  .done()
+getDbUrl = (dbName)->
+  customDbName = CONFIG.db.name(dbName)
+  "#{baseDbUrl}/#{customDbName}"
 
 
-securityDoc = ->
+_securityDoc = (->
   username = CONFIG.db.username
   unless _.isString(username) then throw "bad CONFIG.db.username: #{username}"
 
@@ -116,12 +63,4 @@ securityDoc = ->
       names: [username]
     members:
       names: [username]
-
-doc = securityDoc()
-
-exports.putSecurityDoc = (dbName)->
-  url = baseDbUrl + "/#{dbName}/_security"
-  _.log url, 'url'
-  breq.put url, doc
-  .then (res)-> _.info res.body, 'putSecurityDoc'
-  .catch (err)-> _.error err, 'putSecurityDoc'
+  )()
