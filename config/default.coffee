@@ -67,3 +67,4 @@ module.exports =
   monitoring: false
   morganLogFormat: 'dev'
   logStaticFilesRequests: true
+  sendServerErrorsClientSide: true

@@ -25,6 +25,8 @@ module.exports =
   common: [
     compression()
 
+    # MUST be before middlewares using _.errorHandler
+    logger.sendServerErrorsClientSide
     americano.bodyParser()
     americano.methodOverride()
     americano.errorHandler
@@ -49,6 +51,8 @@ module.exports =
   ]
   production: []
   development:
-    use: []
+    use: [
+      logger.sendServerErrorsClientSide
+    ]
     set:
       debug: 'on'
