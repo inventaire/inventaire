@@ -12,12 +12,7 @@ module.exports =
   fullHost: -> "#{@protocol}://#{@host}:#{@port}"
   db:
     instable: true
-    protocol: 'http'
-    host: 'localhost'
-    port: 5984
-    fullHost: -> "#{@protocol}://#{@host}:#{@port}"
     suffix: 'tests'
     fakeUsers: true
   graph:
     social: undefined
-  whitelistedRouteRegExp: /^\/api\//
