@@ -4,7 +4,7 @@ __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 # cant use users and inventory cot-db
 # as it would create a require loop
-breq = require 'breq'
+bluereq = require 'bluereq'
 
 module.exports =
   designDoc:
@@ -12,7 +12,7 @@ module.exports =
       _.info "#{dbName} design doc loader"
       url = getDbUrl(dbName)
       designDoc = getDesignDoc(dbName)
-      breq.post url, designDoc.body()
+      bluereq.post url, designDoc.body()
       .then (res)-> _.success res.body, "#{designDoc.id} for #{url}"
       .catch (err)-> _.error err.body or err, "#{designDoc.id} for #{url}"
 
@@ -20,20 +20,20 @@ module.exports =
       _.info "#{dbName} design doc updater"
       url = getDbUrl(dbName)
       designDoc = getDesignDoc(dbName)
-      breq.get url + '/' + designDoc.id
+      bluereq.get url + '/' + designDoc.id
       .then (res)->
         _.log res.body, 'current'
         update = designDoc.body()
         update._rev = res.body._rev
         url = url + '/' + update._id
-        breq.put(url, update)
+        bluereq.put(url, update)
         .then (res)-> _.success res.body, "#{designDoc.id} for #{url}"
       .catch (err)-> _.error err.body or err, "#{designDoc.id} for #{url}"
 
   putSecurityDoc: (dbName)->
     url = baseDbUrl + "/#{dbName}/_security"
     _.log url, 'url'
-    breq.put url, _securityDoc
+    bluereq.put url, _securityDoc
     .then (res)-> _.info res.body, 'putSecurityDoc'
     .catch (err)-> _.error err, 'putSecurityDoc'
 

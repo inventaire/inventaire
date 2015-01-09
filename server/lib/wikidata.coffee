@@ -6,7 +6,6 @@ wd = __.require('sharedLibs', 'wikidata')(promises_, _)
 wd.sitelinks = __.require 'sharedLibs','wiki_sitelinks'
 module.exports = wd
 
-breq = require 'breq'
 wdProps = _.jsonRead('server/lib/wikidata-properties-fr.json').properties
 
 API = wd.API

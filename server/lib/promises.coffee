@@ -1,12 +1,12 @@
 _ = require('config').root.require('builders', 'utils')
-breq = require 'breq'
+bluereq = require 'bluereq'
 Promise = require 'bluebird'
 
 pluckSettled = (results)-> _.pluck results, '_settledValue'
 
 module.exports =
-  get: (url)-> breq.get(url).then (res)-> res.body
-  post: (params)-> breq.post(params).then (res)-> res.body
+  get: (url)-> bluereq.get(url).then (res)-> res.body
+  post: (params)-> bluereq.post(params).then (res)-> res.body
 
   Promise: Promise
   rejectedPromise: (err)->

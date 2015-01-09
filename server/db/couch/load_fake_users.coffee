@@ -1,7 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
-breq = require 'breq'
+bluereq = require 'bluereq'
 
 
 module.exports = ->
@@ -18,7 +18,7 @@ keepUsers =
   body: -> _.jsonRead @path
 
 loadFakeUser = (username)->
-  breq.get('http://api.randomuser.me/')
+  bluereq.get('http://api.randomuser.me/')
   .then getUserData
   .then postUser
   .catch (err)-> _.error err
@@ -32,6 +32,6 @@ getUserData = (res)->
     created: Date.now()
 
 postUser = (data)->
-  breq.post usersDbUrl, data
+  bluereq.post usersDbUrl, data
   .then (res)-> _.info res.body, 'postUser'
   .catch (err)-> _.error err, 'postUser'
