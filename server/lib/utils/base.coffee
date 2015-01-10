@@ -29,9 +29,11 @@ module.exports =
       throw new Error "bad db object passed to _.getObjIfSuccess"
 
   jsonRead: (path)->
+    @type path, 'string'
     JSON.parse fs.readFileSync(path).toString()
 
-  jsonWrite: (data, path)->
+  jsonWrite: (path, data)->
+    @types arguments, ['string', 'object']
     json = JSON.stringify data, null, 4
     fs.writeFileSync(path, json)
 

@@ -20,7 +20,7 @@ module.exports =
       path += "-#{subName}" if subName?
       path += "-#{date}.json"
       _.info "writing to #{path}"
-      _.jsonWrite dump, path
+      _.jsonWrite path, dump
 
   copyFromTo: (fromDbName, toDbName)->
     fromDb = findDb(fromDbName)
