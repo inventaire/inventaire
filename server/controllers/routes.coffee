@@ -1,4 +1,5 @@
-_ = require('config').root.require('builders', 'utils')
+CONFIG = require('config')
+_ = CONFIG.root.require('builders', 'utils')
 
 auth = require "./auth"
 user = require "./user"
@@ -10,6 +11,7 @@ upload = require "./upload"
 notifs = require "./notifs"
 proxy = require "./proxy"
 glob = require "./glob"
+log = require "./log"
 analytics = require 'no-js-analytics'
 
 
@@ -18,7 +20,7 @@ analytics = require 'no-js-analytics'
 # 2 - the controller / module name
 # 3 - 'public' if the route can be called without a session
 
-module.exports =
+routes =
   'api/auth/public/username':
     post: auth.checkUsername
 
@@ -108,3 +110,11 @@ module.exports =
 
   '*':
     get: glob.get
+
+if CONFIG.logMissingI18nKeys
+  log =
+    'log/i18n':
+      post: log.i18nMissingKeys
+else log = {}
+
+module.exports = _.extend routes, log

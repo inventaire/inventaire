@@ -69,3 +69,4 @@ module.exports =
   morganLogFormat: 'dev'
   logStaticFilesRequests: true
   sendServerErrorsClientSide: true
+  logMissingI18nKeys: true
