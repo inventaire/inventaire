@@ -29,9 +29,7 @@ module.exports =
       else base
     fakeUsers: false
     restricted: true
-  # noCache: true
   noCache: false
-  # staticMaxAge: 0
   staticMaxAge: 30*24*60*60*1000
   aws:
     key: 'customizedInLocalConfig'
