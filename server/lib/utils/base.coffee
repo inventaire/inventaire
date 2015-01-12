@@ -60,7 +60,7 @@ module.exports =
     else
       cb().then -> console.timeEnd id
 
-# adapted from http://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
+  # adapted from http://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
   hashCode: (string)->
     [hash, i, len] = [0, 0, string.length]
     if len is 0 then return hash
@@ -71,3 +71,5 @@ module.exports =
       hash |= 0 # Convert to 32bit integer
       i++
     Math.abs hash
+
+  objLength: (obj)-> Object.keys(obj)?.length
