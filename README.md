@@ -53,7 +53,3 @@ npm run install-client
 - [Brunch](http://brunch.io/) (task-runner)
 
 *find a more complete list of dependencies in [package.json](https://github.com/maxlath/inventaire-client/blob/dev/package.json) and [bower.json](https://github.com/maxlath/inventaire-client/blob/dev/bower.json)*
-
-**Hosting**
-- server hosted by [Nodejitsu](http://opensource.nodejitsu.com/)
-- couchDB hosted by [couchappy](http://couchappy.com/)
