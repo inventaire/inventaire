@@ -23,6 +23,7 @@ npm run install-client
 
 - port to custom desktop clients using [node-webkit](https://github.com/rogerwang/node-webkit) or alike
 - port to an app for personal cloud platforms: [Cozy](http://cozy.io), [OwnCloud](http://owncloud.org/)...
+- server-less/P2P inventory sharing using WebRTC DataChannel / [WebTorrent](https://github.com/feross/webtorrent)
 - any other IndieWeb / [Unhosted](https://unhosted.org/) crazyness? :)
 
 ## Powered by
