@@ -26,6 +26,11 @@ npm run install-client
 - server-less/P2P inventory sharing using WebRTC DataChannel / [WebTorrent](https://github.com/feross/webtorrent)
 - any other IndieWeb / [Unhosted](https://unhosted.org/) crazyness? :)
 
+**Already experiementing**
+
+*see [Labs settings](https://inventaire.io/settings/labs)*
+- user data backup to any CouchDB using [PouchDB](http://pouchdb.com/).
+
 ## Powered by
 
 - [CoffeeScript](http://coffeescript.org/)
