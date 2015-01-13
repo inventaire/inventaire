@@ -11,12 +11,11 @@ module.exports =
     .then inv_.byOwner.bind(inv_)
     .then (items)-> res.json items
     .catch (err)-> _.errorHandler res, err
-    .done()
 
   put: (req, res, next) ->
     _.log req.params.id, 'Put Item ID'
     user_.getUserId(req.session.email)
-    .done (userId)->
+    .then (userId)->
       item = req.body
       item.owner = userId
       if inv_.isValidItem item
@@ -24,7 +23,6 @@ module.exports =
         .then (body)-> _.getObjIfSuccess inv_.db, body
         .then (body)-> res.json 201, body
         .catch (err)-> _.errorHandler res, err
-        .done()
       else
         _.errorHandler res, "couldn't add this item", 400
 
@@ -42,7 +40,6 @@ module.exports =
     inv_.db.delete req.params.id, req.params.rev
     .then (body)-> res.json(body)
     .catch (err)-> _.errorHandler res, err
-    .done()
 
   publicByEntity: (req, res, next) ->
     _.info req.params, 'public'
@@ -66,7 +63,6 @@ module.exports =
           return res.json {items: items, user: user}
       else _.errorHandler res, 'user not found', 404
     .catch (err)-> _.errorHandler res, err
-    .done()
 
 bundleOwnersData = (res, items)->
   _.success items, 'items'
