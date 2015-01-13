@@ -71,5 +71,3 @@ module.exports =
       hash |= 0 # Convert to 32bit integer
       i++
     Math.abs hash
-
-  objLength: (obj)-> Object.keys(obj)?.length
