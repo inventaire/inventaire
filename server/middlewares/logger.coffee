@@ -16,11 +16,11 @@ else
 
 if CONFIG.sendServerErrorsClientSide
   sendServerErrorsClientSide = (req, res, next)->
-    _.errorHandler = monkeyPatchedFn
+    _.errorHandler = errorSentClientSide
     next()
 
   originalFn = _.errorHandler.bind(_)
-  monkeyPatchedFn = (args...)->
+  errorSentClientSide = (args...)->
     args[3] = true
     originalFn.apply null, args
 
