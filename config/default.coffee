@@ -56,7 +56,7 @@ module.exports =
     path: (route, name)->
       path = @paths[route]
       return "#{appRoot}#{path}/#{name}"
-    'require': (route, name)-> require @path(route, name)
+    require: (route, name)-> require @path(route, name)
   https:
     key: '/cert/inventaire.key'
     cert: '/cert/inventaire.csr'
