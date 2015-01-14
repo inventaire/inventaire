@@ -68,6 +68,9 @@ routes =
     put: items.put
     delete: items.del
 
+  'api/entities':
+    post: entities.create
+
   'api/entities/public':
     get: entities.actions
 
