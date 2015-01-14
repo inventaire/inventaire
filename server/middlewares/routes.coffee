@@ -2,6 +2,8 @@ _ = require('config').root.require 'builders', 'utils'
 CONFIG = require 'config'
 
 exports.restrictApiAccess = (req, res, next) ->
+  if CONFIG.apiOpenBar then return next()
+
   pathname = req._parsedUrl.pathname
   if isApiRoute pathname
     if req.session.email then next()

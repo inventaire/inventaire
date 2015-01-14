@@ -68,3 +68,4 @@ module.exports =
   logStaticFilesRequests: true
   sendServerErrorsClientSide: true
   logMissingI18nKeys: true
+  apiOpenBar: false
