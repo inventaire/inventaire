@@ -10,36 +10,42 @@ cacheDB = levelBase.simpleAPI 'cache'
 oneMonth = 1000*60*60*24*30
 
 module.exports =
-  get: (key, method, context, args, timespan=oneMonth)->
-    types = ['string', 'function', 'object|null', 'array|null', 'number']
+  # EXPECT method to come with context and arguements .bind'ed
+  # e.g. method = module.getData.bind(module, arg1, arg2)
+  get: (key, method, timespan=oneMonth)->
+    types = ['string', 'function', 'number']
     try _.types arguments, types, 2
     catch err then return promises_.reject(err)
 
     checkCache(key, timespan)
-    .then (res)-> requestOnlyIfNeeded(res, key, method, context, args)
+    .then (res)->
+      _.log "#{key} at requestOnlyIfNeeded"
+      requestOnlyIfNeeded(res, key, method)
+    .catch (err)->
+      _.warn [err, key], 'final cache_ err'
 
 checkCache = (key, timespan)->
   cacheDB.get(key)
-  .catch (err)-> console.warn 'checkCache err', err, key
+  .catch (err)->
+    _.warn [err, key], 'checkCache err'
+    return
   .then (res)->
     if res? and isFreshEnough(res.timestamp, timespan)
       return res
     else return
-  .catch (err)-> console.warn 'isFreshEnough err', err, key
 
-requestOnlyIfNeeded = (res, key, method, context, args)->
-  if res? then res.body
-  else requestMethod(key, method, context, args)
+requestOnlyIfNeeded = (res, key, method)->
+  if res?
+    _.info "from cache: #{key}"
+    res.body
+  else
+    method()
+    .then (res)->
+      _.info "from remote data source: #{key}"
+      putResponseInCache(key, res)
+      return res
 
-requestMethod = (key, method, context, args)->
-  args or= [key]
-  method.apply context, args
-  .then (res)->
-    cacheResponse(key, res)
-    return res
-  .catch (err)-> console.error 'requestMethod error:', err
-
-cacheResponse = (key, res)->
+putResponseInCache = (key, res)->
   obj =
     body: res
     timestamp: new Date().getTime()

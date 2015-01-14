@@ -12,7 +12,7 @@ Promise = promises_.Promise
 cache_ = __.require 'lib', 'cache'
 
 mookPromise = hashKey = (key)->
-  promises_.resolvedPromise _.hashCode(key)
+  promises_.resolve _.hashCode(key)
 
 Ctx =
   method: (key)-> hashKey key + @value
@@ -27,42 +27,9 @@ describe 'CACHE', ->
       done()
 
     it "should accept a key and a promisified method", (done)->
-      cache_.get('whatever', mookPromise)
+      key = 'whatever'
+      cache_.get(key, mookPromise.bind(null, key))
       .then -> done()
-
-    it "should accept a key, a promisified method, its context and/or arguements", (done)->
-      Promise.all([
-        cache_.get('whatever', Ctx.method)
-        cache_.get('whatever', Ctx.method, Ctx)
-        cache_.get('whatever', Ctx.method, Ctx, ['whatever'])
-        cache_.get('not cached before', hashKey, null, ['will be the args!!'])
-      ])
-      .spread (one, two, three, four)->
-        # the random function will be neutralized by the cache
-        (one is two is three).should.equal true
-        four.should.equal _.hashCode 'will be the args!!'
-        done()
-
-    it "should throw in other cases", (done)->
-      i = 0
-      Promise.all([
-        cache_.get('whatever').catch -> i++
-        cache_.get('whatever', mookPromise, 'yo').catch -> i++
-        cache_.get('whatever', 'not a function').catch -> i++
-        cache_.get('whatever', 'not a function', ['bla']).catch -> i++
-      ])
-      .then ->
-        i.should.equal 4
-        done()
-
-    it "should return the value asked", (done)->
-      key = 'hello!'
-      hash = _.hashCode(key)
-      cache_.get(key, hashKey)
-      .then (res)->
-        res.should.equal hash
-        done()
-
 
     it "should compute ones and cache for the nexts", (done)->
       spy = sinon.spy()
@@ -72,16 +39,17 @@ describe 'CACHE', ->
         spy()
         return hashKey(key)
 
-      cache_.get(key, spiedHash).then (res)->
+      method = spiedHash.bind(null, key)
+      cache_.get(key, method).then (res)->
         res.should.equal hash
-        cache_.get(key, spiedHash).then (res)->
+        cache_.get(key, spiedHash.bind(null, key)).then (res)->
           res.should.equal hash
-          cache_.get(key, spiedHash).then (res)->
+          cache_.get(key, spiedHash.bind(null, key)).then (res)->
             res.should.equal hash
             # MOUAHAHA YOU WONT SEE ME (◣_◢)
-            cache_.get('006', spiedHash).then (res)->
+            cache_.get('006', spiedHash.bind(null, '006')).then (res)->
               res.should.equal _.hashCode('006')
-              cache_.get(key, spiedHash).then (res)->
+              cache_.get(key, spiedHash.bind(null, key)).then (res)->
                 res.should.equal hash
                 # DHO [>.<]
                 spy.callCount.should.equal 2
@@ -90,15 +58,15 @@ describe 'CACHE', ->
     it "should also accept an expiration timespan", (done)->
       console.time 'global'
       console.time 'one'
-      cache_.get('samekey', Ctx.method, null, null)
+      cache_.get('samekey', Ctx.method)
       .then (res1)->
         console.timeEnd 'one'
         console.time 'two'
-        cache_.get('samekey', Ctx.method, null, ['different arg'], 10000)
+        cache_.get('samekey', Ctx.method.bind(null, 'different arg'), 10000)
         .then (res2)->
           console.timeEnd 'two'
           console.time 'three'
-          cache_.get('samekey', Ctx.method, null, ['different arg'], 0)
+          cache_.get('samekey', Ctx.method.bind(null, 'different arg'), 0)
           .then (res3)->
             console.timeEnd 'three'
             console.timeEnd 'global'
@@ -112,7 +80,7 @@ describe 'CACHE', ->
       spy = sinon.spy()
       empty = (key)->
         spy()
-        return promises_.resolvedPromise _.noop(key)
+        return promises_.resolve _.noop(key)
 
       cache_.get 'gogogo', empty
       .then (res1)->
