@@ -9,15 +9,8 @@ module.exports =
   post: (params)-> bluereq.post(params).then (res)-> res.body
 
   Promise: Promise
-  rejectedPromise: (err)->
-    def = @Promise.defer()
-    def.reject(err)
-    return def.promise
-
-  resolvedPromise: (res)->
-    def = @Promise.defer()
-    def.resolve(res)
-    return def.promise
+  reject: Promise.reject.bind(Promise)
+  resolve: Promise.resolve.bind(Promise)
 
   settle: (promises)->
     Promise.settle(promises).then pluckSettled

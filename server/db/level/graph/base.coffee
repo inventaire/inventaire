@@ -44,7 +44,7 @@ module.exports = (graphName)->
       # RETURNS an array of subjet and/or object
       unless query.s? and query.p?
         err = 'missing subject or predicate'
-        return promises_.rejectedPromise(err)
+        return promises_.reject(err)
 
       query2 = graph_.mirrorTriple(query)
 

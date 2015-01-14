@@ -33,7 +33,7 @@ module.exports =
           throw new Error('This username already exists')
     else
       _.error username, 'reserved word'
-      return promises_.rejectedPromise 'Reserved words cant be usernames'
+      return promises_.reject 'Reserved words cant be usernames'
 
   getSafeUserFromUsername: (username)->
     @byUsername(username)

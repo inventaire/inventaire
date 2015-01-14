@@ -48,7 +48,7 @@ verifyAssertion = (req)->
     personaAnswer =
       status: 'okay'
       email: CONFIG.mookEmail
-    return promises_.resolvedPromise(personaAnswer)
+    return promises_.resolve(personaAnswer)
   else
     _.info 'verifyAssertion'
     params =

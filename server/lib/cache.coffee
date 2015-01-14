@@ -13,7 +13,7 @@ module.exports =
   get: (key, method, context, args, timespan=oneMonth)->
     types = ['string', 'function', 'object|null', 'array|null', 'number']
     try _.types arguments, types, 2
-    catch err then return promises_.rejectedPromise(err)
+    catch err then return promises_.reject(err)
 
     checkCache(key, timespan)
     .then (res)-> requestOnlyIfNeeded(res, key, method, context, args)
