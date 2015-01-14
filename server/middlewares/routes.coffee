@@ -2,13 +2,16 @@ _ = require('config').root.require 'builders', 'utils'
 CONFIG = require 'config'
 
 exports.restrictApiAccess = (req, res, next) ->
-  if isApiRoute req.originalUrl
+  pathname = req._parsedUrl.pathname
+  if isApiRoute pathname
     if req.session.email then next()
-    else if whitelistedRoute req.originalUrl then next()
+    else if whitelistedRoute(pathname) then next()
     else
       _.errorHandler res, "unauthorized api access: #{req.originalUrl}", 401
   else next()
 
 isApiRoute = (route)-> /^\/(api|test)\//.test route
 
-whitelistedRoute = (route)-> route.split('/')[3] is 'public'
+whitelistedRoute = (pathname)->
+  # ex: /api/module/public?action=dostuff
+  pathname.split('/')[3] is 'public'
