@@ -15,6 +15,8 @@ module.exports = getImages = (req, res)->
   .catch (err)-> _.errorHandler res, err
 
 getImage = (data)->
-  key = "image:#{data}"
-  cache_.get key, books.getImage, books, [data]
-  .catch (err)-> _.error err, 'getImage err'
+  if data? and data isnt ''
+    key = "image:#{data}"
+    cache_.get key, books.getImage, books, [data]
+    .catch (err)-> _.error err, 'getImage err'
+  else promises_.reject('no data provided')
