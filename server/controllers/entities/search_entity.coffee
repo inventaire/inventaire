@@ -27,7 +27,7 @@ searchByIsbn = (query, res)->
     wikidata.getBookEntityByIsbn(isbn, isbnType, query.language)
     .catch (err)-> _.error err, 'wikidata getBookEntityByISBN err'
 
-    booksPromise = books.getGoogleBooksDataFromIsbn(isbn)
+    booksPromise = books.getDataFromIsbn(isbn)
     .then((res)-> {items:[res], source: 'google'})
     .catch (err)-> _.error err, 'getGoogleBooksDataFromIsbn err'
   ]
@@ -41,7 +41,7 @@ searchByText = (query, res)->
     .then (items)-> {items: items, source: 'wd', search: query.search}
     .catch (err)-> _.error err, 'wikidata getBookEntities err'
 
-    books.getGoogleBooksDataFromText(query.search)
+    books.getDataFromText(query.search)
     .then (res)-> {items: res, source: 'google', search: query.search}
     .catch (err)-> _.error err, 'getGoogleBooksDataFromIsbn err'
   ]

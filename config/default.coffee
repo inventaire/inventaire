@@ -42,6 +42,7 @@ module.exports =
       root: ''
       server: '/server'
       lib: '/server/lib'
+      data: '/server/lib/data'
       utils: '/server/lib/utils'
       sharedLibs: '/client/app/lib/shared'
       db: '/server/db'

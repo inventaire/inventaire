@@ -4,34 +4,9 @@ _ = __.require('builders', 'utils')
 promises_ = require './promises'
 module.exports = __.require('sharedLibs','books')(_)
 
-module.exports.getGoogleBooksDataFromIsbn = (isbn)->
-  cleanedIsbn = @cleanIsbnData(isbn).logIt('cleaned isbn')
-  unless cleanedIsbn? then throw new Error "bad isbn"
+module.exports.getDataFromIsbn = __.require 'data', 'isbn'
 
-  promises_.get @API.google.book(cleanedIsbn)
-  .then (body)=>
-    if body.totalItems > 0
-      parsedItem = body.items[0].volumeInfo
-      return @normalizeBookData parsedItem, isbn
-    else
-      _.error body, 'Google Book response'
-      throw "no item found for: #{cleanedIsbn}"
-
-module.exports.getGoogleBooksDataFromText = (text)->
-  _.typeString text
-  promises_.get @API.google.book(text)
-  .then (body)=>
-    if body.totalItems > 0
-      parsedItems = body.items.map (el)-> el.volumeInfo
-      validResults = []
-      parsedItems.forEach (el)=>
-        data = @normalizeBookData(el)
-        validResults.push(data) if data?
-      return validResults
-    else
-      _.error body, 'Google Book response'
-      throw "no item found for: #{text}"
-
+module.exports.getDataFromText = __.require 'data', 'text'
 
 module.exports.getImage = (data)->
   promises_.get @API.google.book(data)
