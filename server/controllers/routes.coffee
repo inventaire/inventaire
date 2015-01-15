@@ -111,6 +111,10 @@ routes =
   'analytics/stats':
     get: (req, res, next)-> res.send(200, analytics.stats())
 
+  'error/count':
+    get: (req, res, next)->
+      res.json { count: _.errorCount() }
+
   '*':
     get: glob.get
 

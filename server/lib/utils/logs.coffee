@@ -1,3 +1,5 @@
+errorCounter = 0
+
 module.exports =
   log: (obj, label, color = 'cyan')->
     if typeof obj is 'string' and !label?
@@ -14,8 +16,12 @@ module.exports =
       return obj
 
   error: (obj, label)->
-    obj = obj.stack if obj?.stack?
+    errorCounter++
+    obj = obj.stack or obj
     @log obj, label, 'red'
+
+  errorCount: -> errorCounter
+
   success: (obj, label)-> @log obj, label, 'green'
   info: (obj, label)-> @log obj, label, 'blue'
   logCyan: (obj, label)-> @log obj, label, 'cyan'
