@@ -17,12 +17,12 @@ requestBooksDataFromText = (text)->
 
 parseBooksData = (text, res)->
   if res.totalItems > 0
-    parsedItems = res.items.map (el)-> el.volumeInfo
-    validResults = []
-    parsedItems.forEach (el)=>
-      data = books_.normalizeBookData(el)
-      validResults.push(data) if data?
-    return validResults
+    parsedItems = res.items.map(normalizeBookData)
+    return  _.compact parsedItems
   else
     _.error res, 'Google Book response'
     throw "no item found for: #{text}"
+
+
+normalizeBookData = (item)->
+  books_.normalizeBookData(item.volumeInfo)
