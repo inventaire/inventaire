@@ -36,3 +36,13 @@ module.exports =
       spaced.push '--------'
     spaced.pop()
     @log spaced, label, color
+
+  logErrorsCount: ->
+    prev = 0
+    counter = ->
+      errs = @errorCount()
+      if errs isnt prev
+        prev = errs
+        console.log 'errors: '.red + errs
+
+    setInterval counter.bind(@), 5000

@@ -18,6 +18,9 @@ fs = require 'fs'
 CONFIG.host = host  if host?
 CONFIG.port = port  if port?
 
+if CONFIG.verbosity > 0
+  _.logErrorsCount()
+
 if CONFIG.verbosity > 1 or process.argv.length > 2
   _.log CONFIG, 'CONFIG'
   _.log CONFIG.fullHost(), 'fullHost'
