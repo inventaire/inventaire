@@ -1,8 +1,8 @@
 __ = require('config').root
 _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
-books = __.require 'lib', 'books'
-wikidata = __.require 'lib', 'wikidata'
+books_ = __.require 'lib', 'books'
+wikidata_ = __.require 'lib', 'wikidata'
 
 module.exports = searchEntity = (req, res)->
     _.info req.query, "Entities:Search"
@@ -10,7 +10,7 @@ module.exports = searchEntity = (req, res)->
       err = 'empty query or no language specified'
       return _.errorHandler res, err, 400
 
-    if books.isIsbn(req.query.search)
+    if books_.isIsbn(req.query.search)
       _.log req.query.search, 'searchByIsbn'
       searchByIsbn(req.query, res)
 
@@ -21,13 +21,13 @@ module.exports = searchEntity = (req, res)->
 
 searchByIsbn = (query, res)->
   isbn = query.search
-  isbnType = books.isIsbn(isbn)
+  isbnType = books_.isIsbn(isbn)
 
   promises = [
-    wikidata.getBookEntityByIsbn(isbn, isbnType, query.language)
+    wikidata_.getBookEntityByIsbn(isbn, isbnType, query.language)
     .catch (err)-> _.error err, 'wikidata getBookEntityByISBN err'
 
-    booksPromise = books.getDataFromIsbn(isbn)
+    booksPromise = books_.getDataFromIsbn(isbn)
     .then((res)-> {items:[res], source: 'google'})
     .catch (err)-> _.error err, 'getGoogleBooksDataFromIsbn err'
   ]
@@ -37,11 +37,11 @@ searchByIsbn = (query, res)->
 searchByText = (query, res)->
 
   promises = [
-    wikidata.getBookEntities(query)
+    wikidata_.getBookEntities(query)
     .then (items)-> {items: items, source: 'wd', search: query.search}
     .catch (err)-> _.error err, 'wikidata getBookEntities err'
 
-    books.getDataFromText(query.search)
+    books_.getDataFromText(query.search)
     .then (res)-> {items: res, source: 'google', search: query.search}
     .catch (err)-> _.error err, 'getGoogleBooksDataFromIsbn err'
   ]
