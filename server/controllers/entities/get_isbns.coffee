@@ -11,7 +11,5 @@ module.exports = (req, res, next) ->
   promises = isbns.map (isbn)-> books_.getDataFromIsbn(isbn)
 
   promises_.settle(promises)
-  .then (data)->
-    _.success data, 'isbns data !!'
-    res.json(data)
+  .then (data)-> res.json(data)
   .catch _.errorHandler.bind(_, res)
