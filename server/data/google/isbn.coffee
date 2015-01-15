@@ -24,7 +24,6 @@ cleanIsbn = (isbn)->
 
 parseBooksData = (isbn, res)->
   _.types arguments, ['string', 'object']
-  console.log('parseBooksData arguments', arguments)
   if res?.totalItems > 0
     parsedItem = res.items[0].volumeInfo
     return books_.normalizeBookData parsedItem, isbn
