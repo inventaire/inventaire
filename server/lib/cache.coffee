@@ -19,7 +19,6 @@ module.exports =
 
     checkCache(key, timespan)
     .then (res)->
-      _.log "#{key} at requestOnlyIfNeeded"
       requestOnlyIfNeeded(res, key, method)
     .catch (err)->
       _.warn [err, key], 'final cache_ err'
