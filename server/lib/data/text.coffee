@@ -5,17 +5,17 @@ cache_ = __.require 'lib', 'cache'
 promises_ = __.require 'lib', 'promises'
 
 # getDataFromText
-module.exports = (text)->
+module.exports = (text, timespan)->
   _.typeString text
   key = "google:#{text}"
-  cache_.get key, requestBooksDataFromText.bind(null, text)
+  cache_.get key, requestBooksDataFromText.bind(null, text), timespan
 
 
 requestBooksDataFromText = (text)->
   promises_.get books_.API.google.book(text)
-  .then parseBooksData
+  .then parseBooksData.bind(null, text)
 
-parseBooksData = (res)->
+parseBooksData = (text, res)->
   if res.totalItems > 0
     parsedItems = res.items.map (el)-> el.volumeInfo
     validResults = []
