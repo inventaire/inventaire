@@ -1,4 +1,5 @@
-__ = require('config').root
+CONFIG = require('config')
+__ = CONFIG.root
 _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
 Promise = promises_.Promise
@@ -6,6 +7,8 @@ Promise = promises_.Promise
 levelBase = __.require 'level', 'base'
 
 cacheDB = levelBase.simpleAPI 'cache'
+
+if CONFIG.resetCacheAtStartup then cacheDB.reset()
 
 oneMonth = 1000*60*60*24*30
 
@@ -21,12 +24,12 @@ module.exports =
     .then (res)->
       requestOnlyIfNeeded(res, key, method)
     .catch (err)->
-      _.warn [err, key], 'final cache_ err'
+      _.warn err, "final cache_ err: #{key}"
 
 checkCache = (key, timespan)->
   cacheDB.get(key)
   .catch (err)->
-    _.warn [err, key], 'checkCache err'
+    _.warn err, "checkCache err: #{key}"
     return
   .then (res)->
     if res? and isFreshEnough(res.timestamp, timespan)
@@ -48,7 +51,7 @@ putResponseInCache = (key, res)->
   obj =
     body: res
     timestamp: new Date().getTime()
-  _.info [key, res], 'CACHING'
+  _.info res, "CACHING #{key}"
   cacheDB.put key, obj
 
 isFreshEnough = (timestamp, timespan)->

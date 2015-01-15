@@ -70,3 +70,4 @@ module.exports =
   sendServerErrorsClientSide: true
   logMissingI18nKeys: true
   apiOpenBar: false
+  resetCacheAtStartup: false

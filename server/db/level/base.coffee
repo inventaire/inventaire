@@ -38,6 +38,14 @@ module.exports =
         .on 'error', (err)-> def.reject new Error(err)
         .on 'end', (err)-> def.resolve result
         return def.promise
+      reset: ->
+        ops = []
+        sub.createKeyStream()
+        .on 'data', (key)-> ops.push {type: 'del', key: key}
+        .on 'end', =>
+          @batch(ops)
+          .then -> _.log 'reset succesfully'
+          .catch (err)-> _.error err, 'reset failed'
 
     return API
 
