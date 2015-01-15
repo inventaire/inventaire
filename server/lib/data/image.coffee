@@ -1,28 +1,30 @@
 __ = require('config').root
 _ = __.require('builders', 'utils')
 books_ = __.require('sharedLibs','books')(_)
+# directly talking his sibbling to avoid require loops
+booksDataFromText = __.require 'data','text'
 cache_ = __.require 'lib', 'cache'
 promises_ = __.require 'lib', 'promises'
 
-module.exports = (data)->
+module.exports = (data, timespan)->
   if data? and data isnt ''
     key = "image:#{data}"
-    cache_.get key, requestImage.bind(null, data)
+    cache_.get key, requestImage.bind(null, data), timespan
     .catch (err)-> _.error err, 'getImage err'
   else promises_.reject 'no data provided'
 
 
 requestImage = (data)->
-  promises_.get books.API.google.book(data)
-  .then parseThumbnail.bind null, data
+  booksDataFromText(data)
+  .then parseCachedData.bind(null, data)
   .catch (err)-> _.error err, "google book err for data: #{data}"
 
-parseThumbnail = (data, res)->
-  unless res.items?[0]?.volumeInfo?.imageLinks?.thumbnail?
+parseCachedData = (data, res)->
+  unless res[0].pictures[0]
     console.warn "google book image not found for #{data}"
     return
 
-  image = res.items[0].volumeInfo.imageLinks.thumbnail
+  image = res[0].pictures[0]
   return result =
     image: books_.normalize(image)
     data: data
