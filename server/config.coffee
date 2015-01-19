@@ -13,21 +13,16 @@ lang = require './middlewares/lang'
 statics = require './middlewares/statics'
 logger = require './middlewares/logger'
 
-# compression should be the first use()'d
-# /!\ compression may become problematic with server-sent events
-# see doc https://github.com/expressjs/compression
-compression = require 'compression'
-
 Promise = require 'bluebird'
 Promise.longStackTraces()  if CONFIG.promisesStackTrace
 
 module.exports =
   common: [
     security.forceSSL
-    compression()
 
     # MUST be before middlewares using _.errorHandler
     logger.sendServerErrorsClientSide
+
     americano.bodyParser()
     americano.methodOverride()
     americano.errorHandler
