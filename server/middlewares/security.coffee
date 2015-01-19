@@ -17,10 +17,12 @@ exports.allowCrossDomain = (req, res, next)->
   res.header 'Access-Control-Allow-Headers', 'Content-Type'
   next()
 
-policy = "default-src 'self';" +
-        "frame-src 'self' https://login.persona.org;" +
-        "script-src 'self' 'unsafe-inline' https://login.persona.org;" +
-        "style-src 'self' 'unsafe-inline'"
+policy = """
+  default-src 'self';
+  frame-src 'self' https://login.persona.org;
+  script-src 'self' 'unsafe-inline' https://login.persona.org;
+  style-src 'self' 'unsafe-inline'
+  """
 
 exports.cspPolicy = (req, res, next) ->
   res.header 'X-Content-Security-Policy', policy # Firefox and Internet Explorer
