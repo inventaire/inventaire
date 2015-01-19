@@ -35,6 +35,7 @@
     "cookie-parser": "^1.3.3",
     "cookie-session": "^1.0.2",
     "cot": "git://github.com/maxlath/cot-node.git#master",
+    "express-force-ssl": "^0.2.9",
     "express-session": "^1.8.2",
     "formidable": "^1.0.15",
     "gravatar": "^1.0.6",

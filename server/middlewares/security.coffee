@@ -1,6 +1,15 @@
+CONFIG = require 'config'
+_ = require('config').root.require 'builders', 'utils'
+
+if CONFIG.protocol is 'https'
+  exports.forceSSL = require 'express-force-ssl'
+  _.info 'forcing SSL'
+else
+  exports.forceSSL = (req, res, next)-> next()
+
+
 # middlewares following recommandations found here for the implementation of Persona
 # http://www.mircozeiss.com/mozilla-persona-example-app-with-express-and-couchdb/
-
 
 exports.allowCrossDomain = (req, res, next)->
   res.header 'Access-Control-Allow-Origin', '*'

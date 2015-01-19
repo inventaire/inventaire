@@ -2,9 +2,7 @@ CONFIG = require 'config'
 if CONFIG.monitoring
   require('look').start()
 
-env = process.argv[2]
-host = process.argv[3]
-port = process.argv[4]
+[env, host, port] = process.argv.slice(2)
 
 if env?
   console.log 'env manual change', process.env.NODE_ENV = env
@@ -12,7 +10,6 @@ if env?
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 americano = require 'americano'
-https = require 'https'
 fs = require 'fs'
 
 CONFIG.host = host  if host?
@@ -20,6 +17,7 @@ CONFIG.port = port  if port?
 
 if CONFIG.verbosity > 0
   _.logErrorsCount()
+  _.log CONFIG.env, 'env'
 
 if CONFIG.verbosity > 1 or process.argv.length > 2
   _.log CONFIG, 'CONFIG'
@@ -32,15 +30,17 @@ options =
   root: process.cwd()
 
 if CONFIG.protocol is 'https'
+  https = require 'https'
+  http = require 'http'
   key = fs.readFileSync(options.root + CONFIG.https.key, 'utf8')
   cert = fs.readFileSync(options.root + CONFIG.https.cert, 'utf8')
 
-  if key? and cert?
-    _.info 'https options found'
-    httpsOptions =
-      key: key
-      cert: cert
-  else throw new Error('https options not found')
+  unless key? then throw new Error('https key not found')
+  unless cert? then throw new Error('https cert not found')
+  _.info 'https options found'
+  httpsOptions =
+    key: key
+    cert: cert
 
   # using americano._new instead of americano.start
   # to get an app object and start the server with
@@ -53,7 +53,7 @@ if CONFIG.protocol is 'https'
   app = americano._new(options, (app) -> app)
 
   https.createServer(httpsOptions, app).listen(options.port)
-
+  http.createServer(app).listen(80)
   _.info "#{options.name} server is listening on port #{options.port}..."
 
 else

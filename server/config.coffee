@@ -23,6 +23,7 @@ Promise.longStackTraces()  if CONFIG.promisesStackTrace
 
 module.exports =
   common: [
+    security.forceSSL
     compression()
 
     # MUST be before middlewares using _.errorHandler
