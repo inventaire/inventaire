@@ -47,16 +47,19 @@
     "look": "^0.1.3",
     "nano": "^5.11.2",
     "no-js-analytics": "git://github.com/maxlath/no-js-analytics.git#master",
+    "request": "^2.51.0",
     "serve-favicon": "^2.1.7",
     "simple-uuid": "0.0.1"
   },
   "devDependencies": {
-    "chai": "^1.9.1",
+    "chai": "^1.10.0",
     "coffee-errors": "^0.8.6",
+    "coffee-script": "^1.8.0",
     "lev": "^3.2.0",
-    "mocha": "^1.21.4",
+    "level-test": "^1.6.6",
+    "mocha": "^2.1.0",
     "should": "^4.0.4",
-    "sinon": "^1.10.3",
+    "sinon": "^1.12.2",
     "supertest": "^0.13.0",
     "supervisor": "^0.6.0",
     "trycatch": "^1.5.11"
