@@ -2,16 +2,18 @@ appRoot = require('app-root-path').path
 
 module.exports =
   env: 'default'
-  protocol: 'https'
+  protocol: 'http'
   name: 'inventaire'
   host: 'localhost'
+  publicHost: 'localhost'
   verbosity: 1
-  port: 3008
+  port: 3006
   fullHost: -> "#{@protocol}://#{@host}:#{@port}"
+  fullPublicHost: -> "#{@protocol}://#{@publicHost}"
   secret: 'yoursecrethere'
   db:
     instable: true
-    protocol: 'https'
+    protocol: 'http'
     host: 'localhost'
     port: 5984
     fullHost: -> "#{@protocol}://#{@username}:#{@password}@#{@host}:#{@port}"
@@ -71,3 +73,4 @@ module.exports =
   logMissingI18nKeys: true
   apiOpenBar: false
   resetCacheAtStartup: false
+  serveStatic: true

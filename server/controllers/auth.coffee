@@ -55,7 +55,7 @@ verifyAssertion = (req)->
       url: "https://verifier.login.persona.org/verify"
       json:
         assertion: req.body.assertion
-        audience: CONFIG.fullHost()
+        audience: CONFIG.fullPublicHost()
     _.log params.json.audience, 'persona audience requested'
     return promises_.post params
 
