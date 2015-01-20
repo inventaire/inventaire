@@ -5,12 +5,11 @@ americano = require 'americano'
 
 
 logger = americano.logger CONFIG.morganLogFormat
-pass = (req, res, next)-> next()
 
 if CONFIG.logStaticFilesRequests
-  [before, after] = [logger, pass]
+  [before, after] = [logger, _.pass]
 else
-  [before, after] = [pass, logger]
+  [before, after] = [_.pass, logger]
 
 
 
@@ -24,7 +23,7 @@ if CONFIG.sendServerErrorsClientSide
     args[3] = true
     originalFn.apply null, args
 
-else sendServerErrorsClientSide = pass
+else sendServerErrorsClientSide = _.pass
 
 
 

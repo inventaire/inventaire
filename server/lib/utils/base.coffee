@@ -71,3 +71,5 @@ module.exports =
       hash |= 0 # Convert to 32bit integer
       i++
     Math.abs hash
+
+  pass: (req, res, next)-> next()

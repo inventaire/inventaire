@@ -5,7 +5,7 @@ if CONFIG.protocol is 'https'
   exports.forceSSL = require 'express-force-ssl'
   _.info 'forcing SSL'
 else
-  exports.forceSSL = (req, res, next)-> next()
+  exports.forceSSL = _.pass
 
 
 # middlewares following recommandations found here for the implementation of Persona
