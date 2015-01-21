@@ -1,1 +1,1 @@
-mkdir -p logs/server logs/errors nginx.conf
+mkdir -p logs/archives/server logs/archives/errors deploy
