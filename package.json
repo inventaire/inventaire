@@ -14,6 +14,7 @@
     "start": "coffee server.coffee",
     "superstart": "supervisor -w .,client/app/lib/shared -i client,test server.coffee",
     "start-prod": "./scripts/start-prod",
+    "deamon-prod": "./scripts/deamon-prod",
     "test": "export NODE_ENV=tests; mocha --compilers coffee:coffee-script/register --watch",
     "lint": "coffeelint -f config/coffeelint.json server.coffee server/* test/*",
     "debug": "DEBUG=express:* coffee server.coffee"

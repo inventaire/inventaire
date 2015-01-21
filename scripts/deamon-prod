@@ -1,0 +1,4 @@
+NOW=$(date +%s)
+mv logs/server.log logs/archives/server-$NOW.log
+mv logs/errors.log logs/archives/errors-$NOW.log
+aeternum -o logs/server.log -e logs/error.log -- ./scripts/start-prod
