@@ -1,1 +1,1 @@
-mkdir -p logs/archives/server logs/archives/errors deploy
+mkdir -p logs/archives/server logs/archives/errors deploy run

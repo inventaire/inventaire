@@ -9,7 +9,7 @@
   "description": "resources mapper",
   "main": "index.coffee",
   "scripts": {
-    "postinstall":"./scripts/postinstall",
+    "postinstall": "./scripts/postinstall",
     "install-client": "git clone git@github.com:maxlath/inventaire-client.git ./client && cd client && npm install",
     "start": "coffee server.coffee",
     "superstart": "supervisor -w .,client/app/lib/shared -i client,test server.coffee",
