@@ -9,7 +9,7 @@ module.exports =
   verbosity: 1
   port: 3006
   fullHost: -> "#{@protocol}://#{@host}:#{@port}"
-  fullPublicHost: -> "#{@protocol}://#{@publicHost}"
+  fullPublicHost: -> "#{@protocol}://#{@publicHost}:#{@port}"
   secret: 'yoursecrethere'
   db:
     instable: true
