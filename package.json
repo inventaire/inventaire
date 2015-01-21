@@ -9,6 +9,7 @@
   "description": "resources mapper",
   "main": "index.coffee",
   "scripts": {
+    "postinstall":"./scripts/postinstall",
     "install-client": "git clone git@github.com:maxlath/inventaire-client.git ./client && cd client && npm install",
     "start": "coffee server.coffee",
     "superstart": "supervisor -w .,client/app/lib/shared -i client,test server.coffee",
@@ -53,6 +54,7 @@
     "simple-uuid": "0.0.1"
   },
   "devDependencies": {
+    "browserify": "^8.1.1",
     "chai": "^1.10.0",
     "coffee-errors": "^0.8.6",
     "coffee-script": "^1.8.0",

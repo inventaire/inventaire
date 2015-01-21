@@ -1,0 +1,1 @@
+mkdir -p logs/server logs/errors nginx.conf
