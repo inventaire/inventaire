@@ -1,1 +1,2 @@
-mkdir -p logs/archives/server logs/archives/errors deploy run
+mkdir -p logs/archives/server logs/archives/errors deploy run db/leveldb
+touch run/inv-current-port
