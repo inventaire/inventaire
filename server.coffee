@@ -1,5 +1,6 @@
 CONFIG = require 'config'
 if CONFIG.monitoring
+  # rather buggy
   require('look').start()
 
 [env, host, port] = process.argv.slice(2)
