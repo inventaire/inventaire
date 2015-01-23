@@ -5,7 +5,7 @@ Promise = require 'bluebird'
 
 Radio = __.require 'lib', 'radio'
 
-graph = require('./base')('social_graph')
+graph = require('./base')('social_graph', true)
 graph_ = graph.utils
 
 # UNI-DIRECTONAL:

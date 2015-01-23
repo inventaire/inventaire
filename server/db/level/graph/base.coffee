@@ -11,8 +11,8 @@ Promise = promises_.Promise
 levelBase = __.require('level', 'base')
 
 
-module.exports = (graphName)->
-  db = levelBase.sub(graphName)
+module.exports = (graphName, replicated)->
+  db = levelBase.sub(graphName, replicated)
   graph = levelgraph(db)
   graph_ = require('./graph_utils')(db)
 
