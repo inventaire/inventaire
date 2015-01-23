@@ -1,20 +1,35 @@
+console.time 'startup'
 CONFIG = require 'config'
 if CONFIG.monitoring
   # rather buggy
   require('look').start()
 
-[env, host, port] = process.argv.slice(2)
+[port, host, env] = process.argv.slice(2)
 
+if port? then CONFIG.port = port
+if host? then CONFIG.host = host
 if env?
+  CONFIG.env = env
   console.log 'env manual change', process.env.NODE_ENV = env
 
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 americano = require 'americano'
 fs = require 'fs'
+Radio = __.require 'lib', 'radio'
 
-CONFIG.host = host  if host?
-CONFIG.port = port  if port?
+exportCurrentPort = ->
+  fs.writeFile './run/inv-current-port', (CONFIG.port + '\n'), (err, data)->
+    if err? then _.error err, 'exportCurrentPort err'
+    else _.success "inv-current-port #{CONFIG.port} exported"
+
+Radio.once 'db:ready', ->
+  console.timeEnd 'startup'
+  # db:ready event isnt reliable
+  # so here is a 10 sec margin as a precaution
+  # you don't want requests to hit the server before it's up and ready
+  setTimeout exportCurrentPort, 10000
+
 
 if CONFIG.verbosity > 0
   _.logErrorsCount()

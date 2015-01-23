@@ -4,6 +4,7 @@ _ = __.require 'builders', 'utils'
 host = CONFIG.db.fullHost()
 nano = require('nano') host
 dbInit = __.require 'couch', 'couch_init'
+Radio = __.require 'lib', 'radio'
 
 module.exports =
   checkDbsExistanceOrCreate: (dbsNames)->
@@ -24,6 +25,7 @@ checkExistanceOrCreate = (dbName)->
     else
       _.info "#{customDbName} not found: creating"
       createDb(dbName)
+    Radio.emit 'db:ready'
 
 createDb = (dbName)->
   customDbName = CONFIG.db.name(dbName)
