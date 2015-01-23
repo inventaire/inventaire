@@ -22,6 +22,7 @@ else
 
 module.exports =
   sub: (dbName, replicated)->
+    _.info "#{dbName} replication: #{replicated is true}"
     if replicated then mainDB.sublevel dbName
     else secondaryDB.sublevel dbName
 
