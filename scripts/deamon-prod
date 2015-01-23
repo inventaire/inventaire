@@ -1,4 +1,20 @@
-NOW=$(date +%s)
-mv logs/server.log logs/archives/server-$NOW.log
-mv logs/errors.log logs/archives/errors-$NOW.log
-aeternum -o logs/server.log -e logs/error.log -- ./scripts/start-prod
+DAY=$(date +'%Y_%m_%d')
+PORT=$(cat config/local.coffee |grep port: |sed s/[^0-9]//g)
+
+archivelogs(){
+  mv --backup=numbered logs/server.log logs/archives/server-$DAY.log 2> /dev/null
+  mv --backup=numbered logs/errors.log logs/archives/errors-$DAY.log 2> /dev/null
+}
+
+if nmap -p$PORT localhost -oG - | grep -q $PORT/open
+then
+  echo -e "\\e[0;31m process not found for port $PORT\\e[0m"
+else
+  echo -e "\\e[0;30mport $PORT available\\e[0m"
+  archivelogs
+  aeternum -o logs/server.log -e logs/error.log > run/inv-$PORT.pid -- ./scripts/start-prod ;
+
+  sed -i "s/[^0-9]//g" run/inv-$PORT.pid
+  PID=$(cat run/inv-$PORT.pid) ;
+  echo -e "\\e[0;32m server started on port $PORT with PID $PID\\e[0m"
+fi
