@@ -11,5 +11,12 @@ module.exports = (req, res, next) ->
   promises = isbns.map (isbn)-> books_.getDataFromIsbn(isbn)
 
   promises_.settle(promises)
-  .then (data)-> res.json(data)
+  .then (data)->
+    index = {}
+    data.forEach (isbnData)->
+      for isbn, v of isbnData
+        index[isbn] = v
+
+    _.log index, 'get_isbns index'
+    res.json(index)
   .catch _.errorHandler.bind(_, res)
