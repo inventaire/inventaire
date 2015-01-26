@@ -14,4 +14,8 @@ if CONFIG.db.reloadDesignDocs
   _.info 'updating _design Docs'
   couch_.reloadDesignDocs()
 
-module.exports = nano.db
+nanoMethods = require './nano_methods'
+
+module.exports = (dbName)->
+  db = nano.db.use(dbName)
+  return nanoMethods(db)
