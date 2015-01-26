@@ -5,10 +5,10 @@ cache_ = __.require 'lib', 'cache'
 promises_ = __.require 'lib', 'promises'
 
 # getDataFromIsbn
-module.exports = (isbn)->
+module.exports = (isbn, timespan)->
   isbn = cleanIsbn(isbn)
   key = "google:#{isbn}"
-  cache_.get key, requestBooksDataFromIsbn.bind(null, isbn)
+  cache_.get key, requestBooksDataFromIsbn.bind(null, isbn), timespan
 
 
 requestBooksDataFromIsbn = (isbn)->
@@ -26,7 +26,10 @@ parseBooksData = (isbn, res)->
   _.types arguments, ['string', 'object']
   if res?.totalItems > 0
     parsedItem = res.items[0].volumeInfo
-    return books_.normalizeBookData parsedItem, isbn
+    data = books_.normalizeBookData parsedItem, isbn
+    result = {}
+    result[isbn] = data
+    return _.log result, 'RESULT'
   else
     _.error res, 'Google Book response'
     throw new Error "no item found for: #{cleanedIsbn}"
