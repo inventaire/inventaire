@@ -20,7 +20,7 @@ requestImage = (data)->
   .catch (err)-> _.error err, "google book err for data: #{data}"
 
 parseCachedData = (data, res)->
-  unless res[0].pictures[0]
+  unless res?[0]?.pictures?[0]?
     console.warn "google book image not found for #{data}"
     return
 
