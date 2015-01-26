@@ -4,6 +4,7 @@ _ = __.require 'builders', 'utils'
 searchEntity = require './search_entity'
 getImages = require './get_images'
 getIsbns = require './get_isbns'
+getEntities = require './get_entities'
 createEntity = require './create_entity'
 
 module.exports =
@@ -19,4 +20,5 @@ module.exports =
       else _.errorHandler res, 'entities action not found', 400
 
   # authentified
+  get: getEntities
   create: createEntity

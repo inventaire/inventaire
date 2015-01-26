@@ -69,6 +69,7 @@ routes =
     delete: items.del
 
   'api/entities':
+    get: entities.get
     post: entities.create
 
   'api/entities/public':

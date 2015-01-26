@@ -26,3 +26,8 @@ module.exports =
     @db.get id
     .then (res)-> _.log res, 'new entity'
     .catch (err)-> _.log err, 'getEntity err'
+
+  getEntities: (ids)->
+    ids = _.forceArray(ids)
+    @db.fetch(ids)
+    .then (res)-> _.log res, 'getEntities res'
