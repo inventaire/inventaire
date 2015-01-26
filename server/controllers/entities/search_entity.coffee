@@ -70,7 +70,8 @@ selectFirstNonEmptyResult = (results...)->
   _.info results, "api results"
   selected = null
   results.forEach (result)->
-    if result.items?.length > 0 and not selected?
+    {items} = result
+    if _.isArray(items) and items.length > 0 and not selected?
       selected = result
   selected?.source.logIt('selected source')
   return selected
