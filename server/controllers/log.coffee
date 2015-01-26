@@ -7,7 +7,7 @@ module.exports =
   i18nMissingKeys: (req, res, next)->
     _.info missingKeys = req.body?.missingKeys, 'i18n missing keys'
 
-    unless _.areStrings(missingKeys)
+    unless missingKeys? and _.areStrings(missingKeys)
       _.errorHandler res, "bad missingKeys #{missingKeys}", 400
       return
 
