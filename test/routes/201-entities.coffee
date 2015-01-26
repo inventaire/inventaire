@@ -6,7 +6,7 @@ sinon = require 'sinon'
 promises_ = __.require 'lib', 'promises'
 
 pathname = "/api/entities/public"
-root = "http://localhost:3008"
+root = CONFIG.fullHost()
 path = root + pathname
 
 errorCount = -> promises_.get root + "/error/count"
@@ -28,7 +28,6 @@ describe 'Entities', ->
       describe 'byIsbn', ->
         it "should have no error", (done)->
           url = path + "?action=search&search=978-2081-2178-29&language=en"
-          _.log url, 'url'
           promises_.get url
           .then (res)->
             res.should.be.an.Object
@@ -63,8 +62,5 @@ describe 'Entities', ->
         url = path + "?action=getisbnentities&isbns=#{isbns}"
         promises_.get url
         .then (res)->
-          res.should.be.an.Array
-          res[0].should.be.an.Object
-          res[0].title.should.be.an.String
-          res[0].authors.should.an.Array
+          res.should.be.an.Object
           assertZeroError(done, 'getisbnentities')
