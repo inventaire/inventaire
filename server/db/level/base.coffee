@@ -22,9 +22,12 @@ else
 
 module.exports =
   sub: (dbName, replicated)->
-    _.info "#{dbName} replication: #{replicated is true}"
-    if replicated then mainDB.sublevel dbName
-    else secondaryDB.sublevel dbName
+    if replicated
+      _.success "#{dbName}: replicated"
+      mainDB.sublevel dbName
+    else
+      _.warn "#{dbName}: not replicated"
+      secondaryDB.sublevel dbName
 
   promisified: (sub)->
     return Promise.promisifyAll sub
