@@ -24,11 +24,11 @@ searchByUsername = (res, search) ->
     _.info users, 'users'
     res.json users
   .catch (err)-> _.errorHandler res, err
-  .done()
 
 fetchUsersData = (res, ids)->
   _.info ids, 'fetchUsersData ids'
-  if ids?.length? and ids.length > 0
+  ids = ids.split('|')
+  if ids?.length > 0 and validUserIds(ids)
     user_.getUsersPublicData(ids, 'index')
     .then (usersData)->
       _.success usersData, 'usersData'
@@ -36,7 +36,9 @@ fetchUsersData = (res, ids)->
     .catch (err)-> _.errorHandler res, err
     .done()
   else
-    _.errorHandler res, 'no data found', 404
+    _.errorHandler res, 'unvalid ids', 400
+
+validUserIds = (ids)-> _.all ids, (id)-> /^\w{32}$/.test(id)
 
 module.exports.friendData = (req, res, next) ->
   user_.byEmail(req.session.email)
@@ -53,7 +55,6 @@ module.exports.friendData = (req, res, next) ->
     else
       _.errorHandler res, 'no user found', 404
   .catch (err)-> _.errorHandler res, err
-  .done()
 
 
 fetchUsersItems = (req, res, ids) ->
