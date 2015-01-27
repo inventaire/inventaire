@@ -45,7 +45,21 @@ getDesignDoc = (dbBaseName)->
     name: "#{dbBaseName}"
     id: "_design/#{dbBaseName}"
     path: __.path 'couchdb', "design_docs/#{dbBaseName}.json"
-    body: -> _.jsonRead @path
+    body: ->
+      try _.jsonRead @path
+      catch err
+        _.log err, "#{dbBaseName} designDoc not found: creating"
+        createDefaultDesignDoc(@path, dbBaseName)
+
+createDefaultDesignDoc = (path, dbBaseName)->
+  doc = defaultDesignDoc(dbBaseName)
+  _.jsonWrite path, doc
+  _.success doc, "#{dbBaseName} design doc initialized at #{path}"
+  return doc
+
+defaultDesignDoc = (dbBaseName)->
+   _id: "_design/#{dbBaseName}",
+   language: "coffeescript"
 
 baseDbUrl = CONFIG.db.fullHost()
 
