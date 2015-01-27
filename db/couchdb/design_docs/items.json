@@ -1,5 +1,5 @@
 {
-   "_id": "_design/inventory",
+   "_id": "_design/items",
    "language": "coffeescript",
    "views": {
        "byOwner": {

@@ -11,5 +11,5 @@ if CONFIG.db.protocol is 'https'
 
 module.exports =
   users: new cot(params).db CONFIG.db.name('users')
-  inventory: new cot(params).db CONFIG.db.name('inventory')
+  items: new cot(params).db CONFIG.db.name('items')
   entities: new cot(params).db CONFIG.db.name('entities')

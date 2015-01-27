@@ -1,7 +1,7 @@
 __ = require('config').root
 _ = __.require 'builders', 'utils'
 user_ = __.require 'lib', 'user'
-inv_ = __.require 'lib', 'inv'
+items_ = __.require 'lib', 'items'
 Promise = require 'bluebird'
 
 module.exports.actions = (req, res, next) ->
@@ -66,5 +66,5 @@ fetchUsersItems = (req, res, ids) ->
     [friends, others] = res
     # not fetching others items
     return _.combinations friends, ['friends', 'public']
-  .then (listings)-> inv_.batchByListings listings
+  .then (listings)-> items_.batchByListings listings
   .then (body)-> res.json body

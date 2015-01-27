@@ -3,7 +3,7 @@ __ = CONFIG.root
 _ = __.require('builders', 'utils')
 
 module.exports =
-  db: __.require 'couch', 'inventory'
+  db: __.require 'couch', 'items'
   isValidItem: (item)->
     requiredKeys = ['title', '_id', 'owner']
     valid = true

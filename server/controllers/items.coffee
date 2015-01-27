@@ -1,6 +1,6 @@
 __ = require('config').root
 _ = __.require 'builders', 'utils'
-inv_ = __.require 'lib', 'inv'
+items_ = __.require 'lib', 'items'
 user_ = __.require 'lib', 'user'
 
 module.exports =
@@ -8,7 +8,7 @@ module.exports =
     # only fetch for session email
     # = only way to fetch private data on items
     user_.getUserId(req.session.email)
-    .then inv_.byOwner.bind(inv_)
+    .then items_.byOwner.bind(items_)
     .then (items)-> res.json items
     .catch (err)-> _.errorHandler res, err
 
@@ -18,9 +18,9 @@ module.exports =
     .then (userId)->
       item = req.body
       item.owner = userId
-      if inv_.isValidItem item
-        inv_.db.put item
-        .then (body)-> _.getObjIfSuccess inv_.db, body
+      if items_.isValidItem item
+        items_.db.put item
+        .then (body)-> _.getObjIfSuccess items_.db, body
         .then (body)-> res.json 201, body
         .catch (err)-> _.errorHandler res, err
       else
@@ -29,7 +29,7 @@ module.exports =
   # not used
   # get: (req, res, next) ->
   #   _.log req.params.id, 'GET Item ID'
-  #   inv_.get req.params.id
+  #   items_.get req.params.id
   #   .then (body)-> res.json(body)
   #   .catch (err)-> _.errorHandler res, err
   #   .done()
@@ -37,18 +37,18 @@ module.exports =
   del: (req, res, next) ->
     # missing req.session.email check isn't it?
     _.info req.params, 'del'
-    inv_.db.delete req.params.id, req.params.rev
+    items_.db.delete req.params.id, req.params.rev
     .then (body)-> res.json(body)
     .catch (err)-> _.errorHandler res, err
 
   publicByEntity: (req, res, next) ->
     _.info req.params, 'public'
-    inv_.byEntity(req.params.uri)
+    items_.byEntity(req.params.uri)
     .then bundleOwnersData.bind(null, res)
     .catch (err)-> _.errorHandler res, err
 
   fetchLastPublicItems: (req, res, next) ->
-    inv_.publicByDate()
+    items_.publicByDate()
     .then bundleOwnersData.bind(null, res)
     .catch (err)-> _.errorHandler res, err
 
@@ -58,14 +58,13 @@ module.exports =
     .then (user)->
       if user?._id?
         owner = user._id
-        inv_.publicByOwnerAndSuffix(owner, req.params.suffix)
+        items_.publicByOwnerAndSuffix(owner, req.params.suffix)
         .then (items)->
           return res.json {items: items, user: user}
       else _.errorHandler res, 'user not found', 404
     .catch (err)-> _.errorHandler res, err
 
 bundleOwnersData = (res, items)->
-  _.success items, 'items'
   unless items?.length > 0 then return _.errorHandler res, 'no item found', 404
   else
     users = getItemsOwners(items)

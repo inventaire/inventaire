@@ -22,7 +22,7 @@ module.exports =
     auth: -> "#{@username}:#{@password}"
     names: [
       'users'
-      'inventory'
+      'items'
       'entities'
     ]
     suffix: null

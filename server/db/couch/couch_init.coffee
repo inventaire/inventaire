@@ -2,7 +2,7 @@ CONFIG = require 'config'
 fs = require 'fs'
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
-# cant use users and inventory cot-db
+# cant use users and items cot-db
 # as it would create a require loop
 bluereq = require 'bluereq'
 
