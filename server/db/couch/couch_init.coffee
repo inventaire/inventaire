@@ -8,18 +8,18 @@ bluereq = require 'bluereq'
 
 module.exports =
   designDoc:
-    load: (dbName)->
-      _.info "#{dbName} design doc loader"
-      url = getDbUrl(dbName)
-      designDoc = getDesignDoc(dbName)
+    load: (dbBaseName)->
+      _.info "#{dbBaseName} design doc loader"
+      url = getDbUrl(dbBaseName)
+      designDoc = getDesignDoc(dbBaseName)
       bluereq.post url, designDoc.body()
       .then (res)-> _.success res.body, "#{designDoc.id} for #{url}"
       .catch (err)-> _.error err.body or err, "#{designDoc.id} for #{url}"
 
-    update: (dbName)->
-      _.info "#{dbName} design doc updater"
-      url = getDbUrl(dbName)
-      designDoc = getDesignDoc(dbName)
+    update: (dbBaseName)->
+      _.info "#{dbBaseName} design doc updater"
+      url = getDbUrl(dbBaseName)
+      designDoc = getDesignDoc(dbBaseName)
       bluereq.get url + '/' + designDoc.id
       .then (res)->
         _.log res.body, 'current'
@@ -30,8 +30,8 @@ module.exports =
         .then (res)-> _.success res.body, "#{designDoc.id} for #{url}"
       .catch (err)-> _.error err.body or err, "#{designDoc.id} for #{url}"
 
-  putSecurityDoc: (dbName)->
-    url = baseDbUrl + "/#{dbName}/_security"
+  putSecurityDoc: (dbBaseName)->
+    url = baseDbUrl + "/#{dbBaseName}/_security"
     _.log url, 'url'
     bluereq.put url, _securityDoc
     .then (res)-> _.info res.body, 'putSecurityDoc'
@@ -40,18 +40,18 @@ module.exports =
   loadFakeUsers: require './load_fake_users'
 
 
-getDesignDoc = (dbName)->
+getDesignDoc = (dbBaseName)->
   return doc =
-    name: "#{dbName}"
-    id: "_design/#{dbName}"
-    path: __.path 'couchdb', "design_docs/#{dbName}.json"
+    name: "#{dbBaseName}"
+    id: "_design/#{dbBaseName}"
+    path: __.path 'couchdb', "design_docs/#{dbBaseName}.json"
     body: -> _.jsonRead @path
 
 baseDbUrl = CONFIG.db.fullHost()
 
-getDbUrl = (dbName)->
-  customDbName = CONFIG.db.name(dbName)
-  "#{baseDbUrl}/#{customDbName}"
+getDbUrl = (dbBaseName)->
+  dbName = CONFIG.db.name(dbBaseName)
+  "#{baseDbUrl}/#{dbName}"
 
 
 _securityDoc = (->
