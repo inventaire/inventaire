@@ -10,7 +10,7 @@ notifs_ = __.require 'lib', 'notifications'
 gravatar = require 'gravatar'
 
 module.exports =
-  db: __.require 'couch', 'users'
+  db: __.require('couch', 'base')('users')
   byId: (id)-> @db.get(id)
 
   byEmail: (email)->

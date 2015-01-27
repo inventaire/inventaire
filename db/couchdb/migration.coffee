@@ -14,7 +14,7 @@ fs = require 'fs'
 
 
 module.exports = (dbName)->
-  db = __.require('couch', 'cot_base')[dbName]
+  db = __.require('couch', 'cot_base')(dbName)
   unless db? then throw new Error('bad dbName')
   API =
     db: db

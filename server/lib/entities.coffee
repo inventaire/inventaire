@@ -4,7 +4,7 @@ _ = __.require 'builders', 'utils'
 uuid = require 'simple-uuid'
 
 module.exports =
-  db: __.require 'couch', 'entities'
+  db: __.require('couch', 'base')('entities')
   create: (entityData)->
     entityData = @normalizeData(entityData)
     # using PUT as the CouchDB documentation recommands

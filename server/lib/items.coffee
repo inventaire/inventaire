@@ -2,8 +2,9 @@ CONFIG = require 'config'
 __ = CONFIG.root
 _ = __.require('builders', 'utils')
 
+
 module.exports =
-  db: __.require 'couch', 'items'
+  db: __.require('couch', 'base')('items')
   isValidItem: (item)->
     requiredKeys = ['title', '_id', 'owner']
     valid = true
