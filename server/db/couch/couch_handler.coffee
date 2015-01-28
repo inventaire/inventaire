@@ -5,17 +5,18 @@ host = CONFIG.db.fullHost()
 nano = require('nano') host
 dbInit = __.require 'couch', 'couch_init'
 Radio = __.require 'lib', 'radio'
+dbsList = __.require 'couch', 'dbs_list'
 
 module.exports =
-  checkDbsExistanceOrCreate: (dbsNames)->
-    _.types dbsNames, 'strings...'
-    dbsNames.forEach (dbBaseName)->
+  checkDbsExistanceOrCreate: ->
+    for dbBaseName, designDocsNames of dbsList
       assertValidDbName(dbBaseName)
       checkExistanceOrCreate(dbBaseName)
 
   reloadDesignDocs: ->
-    CONFIG.db.names.forEach (dbBaseName)->
-      dbInit.designDoc.update dbBaseName
+    for dbBaseName, designDocsNames of dbsList
+      designDocsNames.forEach (designDocName)->
+        dbInit.designDoc.update dbBaseName, designDocName
 
 checkExistanceOrCreate = (dbBaseName)->
   dbName = CONFIG.db.name(dbBaseName)
@@ -41,10 +42,12 @@ assertValidDbName = (str)->
     only lowercase strings are accepted in an array of DBs"
 
 loadConfigurationDocs = (dbBaseName)->
-  dbInit.designDoc.load dbBaseName
+  designDocsNames = dbsList[dbBaseName]
+  designDocsNames.forEach (designDocName)->
+    dbInit.designDoc.load dbBaseName, designDocName
 
   if CONFIG.db.restricted
-    dbInit.putSecurityDoc dbBaseName
+    dbInit.putSecurityDoc dbName
 
   if dbBaseName is 'users' and CONFIG.db.fakeUsers
     dbInit.loadFakeUsers()

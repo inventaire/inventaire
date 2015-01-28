@@ -6,20 +6,22 @@ _ = __.require 'builders', 'utils'
 # as it would create a require loop
 bluereq = require 'bluereq'
 
+dbsList = __.require 'couch', 'dbs_list'
+
 module.exports =
   designDoc:
-    load: (dbBaseName)->
-      _.info "#{dbBaseName} design doc loader"
+    load: (dbBaseName, designDocName)->
+      _.info "#{designDocName} design doc loader"
       url = getDbUrl(dbBaseName)
-      designDoc = getDesignDoc(dbBaseName)
+      designDoc = getDesignDoc(designDocName)
       bluereq.post url, designDoc.body()
       .then (res)-> _.success res.body, "#{designDoc.id} for #{url}"
       .catch (err)-> _.error err.body or err, "#{designDoc.id} for #{url}"
 
-    update: (dbBaseName)->
-      _.info "#{dbBaseName} design doc updater"
+    update: (dbBaseName, designDocName)->
+      _.info "#{designDocName} design doc updater"
       url = getDbUrl(dbBaseName)
-      designDoc = getDesignDoc(dbBaseName)
+      designDoc = getDesignDoc(designDocName)
       bluereq.get url + '/' + designDoc.id
       .then (res)->
         _.log res.body, 'current'
@@ -30,8 +32,8 @@ module.exports =
         .then (res)-> _.success res.body, "#{designDoc.id} for #{url}"
       .catch (err)-> _.error err.body or err, "#{designDoc.id} for #{url}"
 
-  putSecurityDoc: (dbBaseName)->
-    url = baseDbUrl + "/#{dbBaseName}/_security"
+  putSecurityDoc: (dbName)->
+    url = baseDbUrl + "/#{dbName}/_security"
     _.log url, 'url'
     bluereq.put url, _securityDoc
     .then (res)-> _.info res.body, 'putSecurityDoc'
@@ -40,28 +42,28 @@ module.exports =
   loadFakeUsers: require './load_fake_users'
 
 
-getDesignDoc = (dbBaseName)->
+getDesignDoc = (designDocName)->
   return doc =
-    name: "#{dbBaseName}"
-    id: "_design/#{dbBaseName}"
-    path: __.path 'couchdb', "design_docs/#{dbBaseName}.json"
-    body: -> getOrCreateDesignDoc(@path, dbBaseName)
+    name: "#{designDocName}"
+    id: "_design/#{designDocName}"
+    path: __.path 'couchdb', "design_docs/#{designDocName}.json"
+    body: -> getOrCreateDesignDoc(@path, designDocName)
 
-getOrCreateDesignDoc = (path, dbBaseName)->
+getOrCreateDesignDoc = (path, designDocName)->
   try _.jsonRead path
   catch err
-    _.log err, "#{dbBaseName} designDoc not found: creating"
-    createDefaultDesignDoc(path, dbBaseName)
+    _.log err, "#{designDocName} designDoc not found: creating"
+    createDefaultDesignDoc(path, designDocName)
 
-createDefaultDesignDoc = (path, dbBaseName)->
-  doc = defaultDesignDoc(dbBaseName)
+createDefaultDesignDoc = (path, designDocName)->
+  doc = defaultDesignDoc(designDocName)
   _.jsonWrite path, doc
-  _.success doc, "#{dbBaseName} design doc initialized at #{path}"
+  _.success doc, "#{designDocName} design doc initialized at #{path}"
   return doc
 
-defaultDesignDoc = (dbBaseName)->
+defaultDesignDoc = (designDocName)->
   return defaultDoc =
-    _id: "_design/#{dbBaseName}"
+    _id: "_design/#{designDocName}"
     language: "coffeescript"
 
 baseDbUrl = CONFIG.db.fullHost()

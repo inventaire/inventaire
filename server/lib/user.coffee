@@ -10,7 +10,7 @@ notifs_ = __.require 'lib', 'notifications'
 gravatar = require 'gravatar'
 
 module.exports =
-  db: __.require('couch', 'base')('users')
+  db: __.require('couch', 'base')('users', 'user')
   byId: (id)-> @db.get(id)
 
   byEmail: (email)->
@@ -55,6 +55,7 @@ module.exports =
 
   newUser: (username, email)->
     user =
+      type: 'user'
       username: username
       email: email
       created: Date.now()

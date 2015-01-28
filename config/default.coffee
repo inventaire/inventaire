@@ -20,15 +20,10 @@ module.exports =
     username: 'yourcouchdbusername'
     password: 'yourcouchdbpassword'
     auth: -> "#{@username}:#{@password}"
-    names: [
-      'users'
-      'items'
-      'entities'
-    ]
     suffix: null
-    name: (base)->
-      if @suffix? then return "#{base}-#{@suffix}"
-      else base
+    name: (dbBaseName)->
+      if @suffix? then return "#{dbBaseName}-#{@suffix}"
+      else dbBaseName
     fakeUsers: false
     restricted: true
   noCache: false
