@@ -37,9 +37,6 @@ routes =
   'api/users':
     get: users.actions
 
-  'api/friends':
-    get: users.friendData
-
   'api/relations':
     get: relations.actions
 

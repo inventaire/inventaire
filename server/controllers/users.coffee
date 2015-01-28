@@ -40,23 +40,6 @@ fetchUsersData = (res, ids)->
 
 validUserIds = (ids)-> _.all ids, (id)-> /^\w{32}$/.test(id)
 
-module.exports.friendData = (req, res, next) ->
-  user_.byEmail(req.session.email)
-  .then (docs)->
-    if docs.length > 0 then return docs[0].users
-    else return
-  .then user_.fetchUsers.bind(user)
-  .then (body)->
-    _.log body, 'fetchUsers body'
-    if body?
-      usersData = _.mapCouchDoc body
-      cleanedUsersData = usersData.map user_.safeUserData
-      res.json cleanedUsersData
-    else
-      _.errorHandler res, 'no user found', 404
-  .catch (err)-> _.errorHandler res, err
-
-
 fetchUsersItems = (req, res, ids) ->
   _.info ids = ids.split('|'), 'fetchUsersItems users'
   user_.getUserId(req.session.email)
