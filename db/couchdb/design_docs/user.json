@@ -3,13 +3,10 @@
    "language": "coffeescript",
    "views": {
        "byEmail": {
-           "map": "(doc)->\n  if doc.type is 'user'\n    emit doc.email, doc._id"
+           "map": "(doc)->\n  if doc.type is 'user'\n    emit doc.email, null"
        },
        "byUsername": {
-           "map": "(doc)->\n  if doc.type is 'user'\n    emit(doc.username.toLowerCase(), doc._id)"
-       },
-       "usedProfiles": {
-           "map": "(doc)->\n  if doc.type is 'user'\n    edits = doc._rev.split('-')[0]\n    if edits > 8 then emit(doc.username, doc)"
+           "map": "(doc)->\n  if doc.type is 'user'\n    emit(doc.username.toLowerCase(), null)"
        }
    }
 }

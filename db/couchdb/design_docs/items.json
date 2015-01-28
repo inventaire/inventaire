@@ -3,22 +3,22 @@
    "language": "coffeescript",
    "views": {
        "byOwner": {
-           "map": "(doc)->\n  emit(doc.owner, doc._id)"
+           "map": "(doc)->\n  emit(doc.owner, null)"
        },
        "byDate": {
            "map": "(doc)->\n  emit(doc.created, [doc._id, doc.title])"
        },
        "byListing": {
-           "map": "(doc)->\n\tif doc.listing?\n\t\temit [doc.owner,doc.listing], doc._id"
+           "map": "(doc)->\n\tif doc.listing?\n\t\temit [doc.owner,doc.listing], null"
        },
        "byEntity": {
-           "map": "(doc)->\n  emit(doc.entity, doc._id)"
+           "map": "(doc)->\n  emit(doc.entity, null)"
        },
        "publicByDate": {
-           "map": "(doc)->\n  if doc.listing is 'public'\n    emit(doc.created, doc._id)"
+           "map": "(doc)->\n  if doc.listing is 'public'\n    emit(doc.created, null)"
        },
        "publicByOwnerAndSuffix": {
-           "map": "(doc)->\n  if doc.listing is 'public'\n    emit([doc.owner, doc.suffix], doc._id)"
+           "map": "(doc)->\n  if doc.listing is 'public'\n    emit([doc.owner, doc.suffix], null)"
        }
    }
 }
