@@ -45,11 +45,13 @@ getDesignDoc = (dbBaseName)->
     name: "#{dbBaseName}"
     id: "_design/#{dbBaseName}"
     path: __.path 'couchdb', "design_docs/#{dbBaseName}.json"
-    body: ->
-      try _.jsonRead @path
-      catch err
-        _.log err, "#{dbBaseName} designDoc not found: creating"
-        createDefaultDesignDoc(@path, dbBaseName)
+    body: -> getOrCreateDesignDoc(@path, dbBaseName)
+
+getOrCreateDesignDoc = (path, dbBaseName)->
+  try _.jsonRead path
+  catch err
+    _.log err, "#{dbBaseName} designDoc not found: creating"
+    createDefaultDesignDoc(path, dbBaseName)
 
 createDefaultDesignDoc = (path, dbBaseName)->
   doc = defaultDesignDoc(dbBaseName)
@@ -58,8 +60,9 @@ createDefaultDesignDoc = (path, dbBaseName)->
   return doc
 
 defaultDesignDoc = (dbBaseName)->
-   _id: "_design/#{dbBaseName}",
-   language: "coffeescript"
+  return defaultDoc =
+    _id: "_design/#{dbBaseName}"
+    language: "coffeescript"
 
 baseDbUrl = CONFIG.db.fullHost()
 
