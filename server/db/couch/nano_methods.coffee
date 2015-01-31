@@ -1,6 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
+couch_ = __.require 'lib', 'couch'
 
 Promise = require 'bluebird'
 
@@ -18,7 +19,7 @@ fetch = (db, keys)->
 
     db.fetch params, (err, body)->
       if err then def.reject new Error(err)
-      else def.resolve _.mapCouchDoc(body)
+      else def.resolve couch_.mapDoc(body)
 
   else def.resolve()
 

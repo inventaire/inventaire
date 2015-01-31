@@ -17,9 +17,6 @@ module.exports =
     if sendError then res.send(err)
     else res.end()
 
-  mapCouchResult: (type, body)-> body.rows.map (el)-> el[type]
-  mapCouchDoc: (body)-> @mapCouchResult 'doc', body
-
   getObjIfSuccess: (db, body)->
     if db.get? and body.ok
       return db.get(body.id)

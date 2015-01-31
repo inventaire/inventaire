@@ -1,20 +1,22 @@
-_ = require('config').root.require 'builders', 'utils'
+__ = require('config').root
+_ = __.require 'builders', 'utils'
+couch_ = __.require 'lib', 'couch'
 
-module.exports = (dbName)->
+module.exports = (designDocName)->
 
   methods =
     viewCustom: (viewName, query)->
       _.types arguments, ['string', 'object']
-      @view(dbName, viewName, query)
-      .then _.mapCouchDoc.bind(_)
+      @view(designDocName, viewName, query)
+      .then couch_.mapDoc
 
     viewByKeysCustom: (viewName, keys, query)->
       _.types arguments, ['string', 'array', 'object']
-      @viewKeys(dbName, viewName, keys, query)
-      .then _.mapCouchDoc.bind(_)
+      @viewKeys(designDocName, viewName, keys, query)
+      .then couch_.mapDoc
 
     viewByKey: (viewName, key)->
-      _.types arguments, ['string', 'string']
+      _.types arguments, ['string', 'string|array|object']
       query =
         key: key
         include_docs: true
