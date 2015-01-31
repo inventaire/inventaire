@@ -1,8 +1,8 @@
 __ = require('config').root
 _ = __.require 'builders', 'utils'
 user_ = __.require 'lib', 'user'
-socialGraph = __.require 'graph', 'social_graph'
-
+# socialGraph = __.require 'graph', 'social_graph'
+intent = require './lib/intent'
 
 module.exports.actions = (req, res, next) ->
   _.log query = req.query, 'relations.actions query'
@@ -19,7 +19,7 @@ module.exports.actions = (req, res, next) ->
           when 'discard' then type = 'discardRequest'
           when 'unfriend' then type = 'removeFriendship'
         return method(type, userId, othersId)
-      else throw new Error('cant create relation between identical ids')
+      else throw new Error "cant create relation between identical ids"
     .then ->
       _.success othersId, "#{action}: OK!"
       res.json {status: 'ok'}
@@ -31,4 +31,4 @@ module.exports.actions = (req, res, next) ->
 
 method = (type, userId, othersId)->
   _.log arguments, 'action arguments'
-  socialGraph[type](userId, othersId)
+  intent[type](userId, othersId)

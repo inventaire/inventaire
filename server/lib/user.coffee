@@ -4,7 +4,8 @@ _ = __.require 'builders', 'utils'
 
 promises_ = __.require 'lib', 'promises'
 
-socialGraph = __.require 'graph', 'social_graph'
+# socialGraph = __.require 'graph', 'social_graph'
+relations_ = __.require 'controllers', 'relations/lib/queries'
 notifs_ = __.require 'lib', 'notifications'
 
 gravatar = require 'gravatar'
@@ -138,15 +139,15 @@ module.exports =
     ]
     return username in reservedWords
 
-  getUserRelations: (userId)->
+  getUserRelations: (userId, getDocs)->
     # just proxiing to let this module centralize
     # interactions with the social graph
-    socialGraph.getUserRelations(userId)
+    relations_.getUserRelations(userId, getDocs)
 
   getRelationsStatuses: (userId, usersIds)->
     friends = []
     others = []
-    socialGraph.getUserFriends(userId)
+    relations_.getUserFriends(userId)
     .then (friendsIds)->
       usersIds.forEach (id)->
         if id in friendsIds
