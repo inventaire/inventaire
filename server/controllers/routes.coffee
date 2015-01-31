@@ -90,20 +90,20 @@ routes =
   'api/upload/delete':
     post: upload.del
 
-  'test':
+  'api/test':
     get: (req, res, next)-> res.send 'server: OK'
     post: (req, res, next)->
       if req.body?.label? then _.info(req.body.obj, req.body.label)
       else _.info req.body
       res.send 'thanks!'
 
-  'test/json':
+  'api/test/json':
     get: (req, res, next)-> res.json {server: 'OK'}
     post: (req, res, next)->
       _.info req.body
       res.json {server: 'OK', body: req.body}
 
-  'proxy/*':
+  'api/proxy/*':
     get: proxy.get
 
   'analytics/stats':
