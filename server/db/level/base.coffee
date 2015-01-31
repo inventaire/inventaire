@@ -3,31 +3,24 @@ __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 Promise = require 'bluebird'
 
-
-mainDBPath = __.path 'leveldb', 'main'
-secondaryDBPath = __.path 'leveldb', 'secondary'
+DBPath = __.path 'leveldb', CONFIG.port
 
 sublevel = require 'level-sublevel'
 if CONFIG.env is 'tests'
   level = require('level-test')()
-  mainDB = secondaryDB = sublevel level()
+  DB = sublevel level()
 else
   levelup = require 'levelup'
   leveldown = require 'leveldown'
   levelConfig =
     db: leveldown
 
-  mainDB = sublevel levelup(mainDBPath, levelConfig)
-  secondaryDB = sublevel levelup(secondaryDBPath, levelConfig)
+  DB = sublevel levelup(DBPath, levelConfig)
 
 module.exports =
-  sub: (dbName, replicated)->
-    if replicated
-      _.success "#{dbName}: replicated"
-      mainDB.sublevel dbName
-    else
-      _.warn "#{dbName}: not replicated"
-      secondaryDB.sublevel dbName
+  sub: (dbName)->
+    _.success "#{dbName} openned"
+    return DB.sublevel dbName
 
   promisified: (sub)->
     return Promise.promisifyAll sub

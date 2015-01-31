@@ -33,7 +33,8 @@ Radio.once 'db:ready', ->
 
 if CONFIG.verbosity > 0
   _.logErrorsCount()
-  _.log CONFIG.env, 'env'
+  _.log "env: #{CONFIG.env}"
+  _.log "port: #{CONFIG.port}"
 
 if CONFIG.verbosity > 1 or process.argv.length > 2
   _.log CONFIG, 'CONFIG'
