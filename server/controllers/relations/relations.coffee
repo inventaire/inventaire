@@ -1,7 +1,6 @@
 __ = require('config').root
 _ = __.require 'builders', 'utils'
 user_ = __.require 'lib', 'user'
-# socialGraph = __.require 'graph', 'social_graph'
 intent = require './lib/intent'
 
 module.exports.actions = (req, res, next) ->

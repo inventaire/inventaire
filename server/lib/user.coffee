@@ -4,7 +4,6 @@ _ = __.require 'builders', 'utils'
 
 promises_ = __.require 'lib', 'promises'
 
-# socialGraph = __.require 'graph', 'social_graph'
 relations_ = __.require 'controllers', 'relations/lib/queries'
 notifs_ = __.require 'lib', 'notifications'
 
