@@ -29,7 +29,8 @@ initRelations = ->
   otherRequested: []
 
 spreadRelation = (relations, row)->
+  # view key looks like userId:relationType
   type = row.key[1]
-  id = row.value._id
+  id = row.value
   if type? and id?
     relations[type].push id
