@@ -7,6 +7,7 @@ items = require "./items"
 users = require "./users"
 relations = require "./relations/relations"
 entities = require "./entities/entities"
+followed = require "./entities/followed"
 upload = require "./upload"
 notifs = require "./notifs"
 proxy = require "./proxy"
@@ -68,6 +69,10 @@ routes =
   'api/entities':
     get: entities.get
     post: entities.create
+
+  'api/entities/followed':
+    get: followed.fetch
+    post: followed.update
 
   'api/entities/public':
     get: entities.actions

@@ -3,7 +3,7 @@
    "language": "coffeescript",
    "views": {
        "byOwner": {
-           "map": "(doc)->\n  emit(doc.owner, null)"
+           "map": "(doc)->\n  if doc.owner?\n    emit(doc.owner, null)"
        },
        "byDate": {
            "map": "(doc)->\n  emit(doc.created, [doc._id, doc.title])"
