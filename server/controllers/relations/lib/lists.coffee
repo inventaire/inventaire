@@ -14,8 +14,8 @@ module.exports = (db)->
   getUserFriends: (userId)->
     query = { key: [userId, 'friends'] }
     db.view 'relations', 'byStatus', query
-    .then couch_.mapValueId
-
+    .then couch_.mapValue
+    .then (res)-> _.log res, "getUserFriends result #{userId}"
 
 parseRelations = (res)->
   _.log res, 'parseRelations res'
@@ -27,10 +27,19 @@ initRelations = ->
   friends: []
   userRequested: []
   otherRequested: []
+  none: []
 
 spreadRelation = (relations, row)->
   # view key looks like userId:relationType
   type = row.key[1]
   id = row.value
-  if type? and id?
+  if type in relationsTypes and id?
     relations[type].push id
+  else throw new Error "spreadRelation err: type=#{type}, id=#{id}"
+
+relationsTypes = [
+  'friends'
+  'userRequested'
+  'otherRequested'
+  'none'
+]

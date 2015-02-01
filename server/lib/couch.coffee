@@ -2,6 +2,7 @@ module.exports = couch_ = {}
 
 couch_.mapResult = (res, type)-> res.rows.map (row)-> row[type]
 couch_.mapDoc = (res)-> couch_.mapResult res, 'doc'
+couch_.mapValue = (res)-> res.rows.map (row)-> row.value
 couch_.mapValueId = (res)-> res.rows.map (row)-> row.value._id
 
 couch_.joinOrderedIds = (idA, idB)->
