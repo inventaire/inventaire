@@ -3,11 +3,12 @@ _ = __.require('builders', 'utils')
 
 module.exports =
   get: (req, res, next)->
+    pathname = req._parsedUrl.pathname
     if missedApiRequest(req)
-      err = "api route not found: #{req._parsedUrl.pathname}"
+      err = "GET #{req._parsedUrl.pathname}: api route not found"
       _.errorHandler res, err, 404
     else if imageHeader(req)
-      err = "wrong content-type: #{req.headers.accept}"
+      err = "GET #{pathname}: wrong content-type: #{req.headers.accept}"
       _.errorHandler res, err, 404
     else
       # the routing will be done on the client side
