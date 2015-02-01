@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 assert = require 'assert'
-{userId} = require './common-tests'
+{UserId} = require './common-tests'
 
 module.exports = (id, status)->
   assertValidId(id)
@@ -14,14 +14,12 @@ module.exports = (id, status)->
 
 
 assertValidId = (id)->
-  _.type id, 'string'
   [ userA, userB ] = id.split ':'
   assert userA isnt userB
-  assert userId.test(userA)
-  assert userId.test(userB)
+  assert UserId.test(userA)
+  assert UserId.test(userB)
 
 assertValidStatus = (status)->
-  _.type status, 'string'
   assert status in statuses
 
 statuses = [
