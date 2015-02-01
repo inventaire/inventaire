@@ -95,14 +95,14 @@ routes =
   'api/upload/delete':
     post: upload.del
 
-  'api/test':
+  'api/test/public':
     get: (req, res, next)-> res.send 'server: OK'
     post: (req, res, next)->
       if req.body?.label? then _.info(req.body.obj, req.body.label)
       else _.info req.body
       res.send 'thanks!'
 
-  'api/test/json':
+  'api/test/public/json':
     get: (req, res, next)-> res.json {server: 'OK'}
     post: (req, res, next)->
       _.info req.body
