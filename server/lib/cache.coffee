@@ -51,7 +51,7 @@ putResponseInCache = (key, res)->
   obj =
     body: res
     timestamp: new Date().getTime()
-  _.info res, "CACHING #{key}"
+  _.info "caching #{key}"
   cacheDB.put key, obj
 
 isFreshEnough = (timestamp, timespan)->
