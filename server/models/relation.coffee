@@ -1,16 +1,22 @@
 CONFIG = require 'config'
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
+couch_ = __.require 'lib', 'couch'
 assert = require 'assert'
 {UserId} = require './common-tests'
 
-module.exports = (id, status)->
-  assertValidId(id)
-  assertValidStatus(status)
-  return relation =
-    _id: id
-    type: 'relation'
-    status: status
+module.exports =
+  create: (id, status)->
+    assertValidId(id)
+    assertValidStatus(status)
+    return relation =
+      _id: id
+      type: 'relation'
+      status: status
+      created: _.now()
+
+  docId: (userId, otherId) ->
+    couch_.joinOrderedIds(userId, otherId)
 
 
 assertValidId = (id)->

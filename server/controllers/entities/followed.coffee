@@ -44,6 +44,7 @@ updateFollowingDoc = (entity, following, userId)->
   docId = FollowedEntities.docId(userId)
   db.update docId, (doc)->
     # if doc doesnt exist, cot creates one: {_id: doc._id}
+    # thus the need to test doc.status entities
     unless doc?.entities?
       _.extend doc, FollowedEntities.create(userId)
     doc.entities[entity] = following

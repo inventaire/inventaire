@@ -8,17 +8,20 @@ db = __.require('couch', 'base')('users', 'relations')
 Relation = __.require('models', 'relation')
 
 get = (userId, otherId)->
-  docId = couch_.joinOrderedIds(userId, otherId)
+  docId = Relation.docId(userId, otherId)
   db.get docId
 
 putStatus = (userId, otherId, status)->
-  docId = couch_.joinOrderedIds(userId, otherId)
+  docId = Relation.docId(userId, otherId)
   # cot-node handles get-put-with-rev and inexistant doc errors
-  db.update docId, updateStatus.bind(null, status)
+  db.update docId, updateStatus.bind(null, docId, status)
 
-updateStatus = (status, doc)->
-  if doc? then doc.status = status
-  else doc = Relation(docId, status)
+updateStatus = (docId, status, doc)->
+  # if doc doesnt exist, cot creates one: {_id: doc._id}
+  # thus the need to test doc.status instead
+  if doc?.status? then doc.status = status
+  else doc = Relation.create(docId, status)
+  doc.updated = _.now()
   return doc
 
 
