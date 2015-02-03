@@ -7,6 +7,9 @@
        },
        "byUsername": {
            "map": "(doc)->\n  if doc.type is 'user'\n    emit(doc.username.toLowerCase(), null)"
+       },
+       "byCreation": {
+           "map": "(doc)->\n  if doc.type is 'user'\n    emit(doc.created, doc.username)"
        }
    }
 }
