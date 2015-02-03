@@ -17,6 +17,5 @@ module.exports = (req, res, next) ->
       for isbn, v of isbnData
         index[isbn] = v
 
-    _.log index, 'get_isbns index'
     res.json(index)
   .catch _.errorHandler.bind(_, res)

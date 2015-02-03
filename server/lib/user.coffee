@@ -77,18 +77,18 @@ module.exports =
     ids = ids.split?('|') or ids
     @fetchUsers(ids)
     .then (usersData)=>
-      _.success usersData, 'found users data'
+      # _.success usersData, 'found users data'
 
       if usersData?
-        _.success usersData, 'usersData before cleaning'
+        # _.success usersData, 'usersData before cleaning'
         cleanedUsersData = usersData.map @safeUserData
 
         if format is 'index'
           data = _.indexBy(cleanedUsersData, '_id')
-          _.log data, 'usersData: index format'
+          # _.log data, 'usersData: index format'
         else
           data = cleanedUsersData
-          _.log data, 'usersData: collection format'
+          # _.log data, 'usersData: collection format'
 
         return data
 
