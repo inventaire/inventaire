@@ -3,7 +3,7 @@
    "language": "coffeescript",
    "views": {
        "byStatus": {
-           "map": "(doc)->\n  if doc.type is 'relation'\n    [a, b] = doc._id.split ':'\n    switch doc.status\n      when 'friends'\n        emit [a,'friends'], b\n        emit [b,'friends'], a\n      when 'a-requested'\n        emit [a,'userRequested'], b\n        emit [b,'friendRequested'], a\n      when 'b-requested'\n        emit [b,'userRequested'], a\n        emit [a,'friendRequested'], b"
+           "map": "(doc)->\n  if doc.type is 'relation'\n    [a, b] = doc._id.split ':'\n    switch doc.status\n      when 'friends'\n        emit [a,'friends'], b\n        emit [b,'friends'], a\n      when 'a-requested'\n        emit [a,'userRequested'], b\n        emit [b,'otherRequested'], a\n      when 'b-requested'\n        emit [b,'userRequested'], a\n        emit [a,'otherRequested'], b"
        }
    }
 }
