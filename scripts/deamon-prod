@@ -1,12 +1,12 @@
 DAY=$(date +'%Y_%m_%d')
-PORT=$(cat config/local.coffee |grep port: |sed s/[^0-9]//g)
+PORT=$(cat config/local.coffee |grep "port: 3" |sed s/[^0-9]//g)
 
 archivelogs(){
   mv --backup=numbered logs/server.log logs/archives/server-$DAY.log 2> /dev/null
   mv --backup=numbered logs/errors.log logs/archives/errors-$DAY.log 2> /dev/null
 }
 
-if nmap -p$PORT localhost -oG - | grep -q $PORT/open
+if nmap -p$PORT 127.0.0.1 -oG - | grep -q $PORT/open
 then
   echo -e "\\e[0;31m process not found for port $PORT\\e[0m"
 else
