@@ -73,13 +73,4 @@ getDbUrl = (dbBaseName)->
   "#{baseDbUrl}/#{dbName}"
 
 
-_securityDoc = (->
-  username = CONFIG.db.username
-  unless _.isString(username) then throw "bad CONFIG.db.username: #{username}"
-
-  return securityDoc =
-    admins:
-      names: [username]
-    members:
-      names: [username]
-  )()
+_securityDoc = __.require 'couchdb', 'security_doc'
