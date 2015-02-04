@@ -35,6 +35,7 @@ if CONFIG.verbosity > 0
   _.logErrorsCount()
   _.log "env: #{CONFIG.env}"
   _.log "port: #{CONFIG.port}"
+  _.log "host: #{CONFIG.host}"
 
 if CONFIG.verbosity > 1 or process.argv.length > 2
   _.log CONFIG, 'CONFIG'
