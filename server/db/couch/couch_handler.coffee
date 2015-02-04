@@ -47,6 +47,7 @@ loadConfigurationDocs = (dbBaseName)->
     dbInit.designDoc.load dbBaseName, designDocName
 
   if CONFIG.db.restricted
+    dbName = CONFIG.db.name(dbBaseName)
     dbInit.putSecurityDoc dbName
 
   if dbBaseName is 'users' and CONFIG.db.fakeUsers
