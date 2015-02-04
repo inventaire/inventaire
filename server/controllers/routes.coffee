@@ -111,6 +111,13 @@ routes =
   'api/proxy/*':
     get: proxy.get
 
+  'api/logs/public':
+    post: (req, res, next)->
+      {log, warn, error} = req.body
+      if log? then _.log(req.body, 'clients report')
+      if warn? then _.warn(req.body, 'clients report')
+      if error? then _.error(req.body, 'clients report')
+
   'analytics/stats':
     get: (req, res, next)-> res.send(200, analytics.stats())
 
