@@ -114,10 +114,12 @@ routes =
   'api/logs/public':
     post: (req, res, next)->
       {log, warn, error} = req.body
-      if log? then return _.log(req.body, 'clients report')
-      if warn? then return _.warn(req.body, 'clients report')
-      if error? then return _.error(req.body, 'clients report')
+      if log? then return _.log(req.body, 'client report')
+      if warn? then return _.warn(req.body, 'client report')
+      if error? then return _.error(req.body, 'client report')
       else _.error req.body, 'wrongly formatted client report'
+
+      res.send()
 
   'analytics/stats':
     get: (req, res, next)-> res.send(200, analytics.stats())
