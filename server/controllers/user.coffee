@@ -17,8 +17,6 @@ module.exports.getUser = (req, res, next) ->
         user_.getNotifications(userId)
       ])
       .spread (relations, notifications)->
-        _.success relations, 'relations'
-        _.success notifications, 'notifications'
         userData.relations = relations
         userData.notifications = notifications
         res.json userData
@@ -33,7 +31,6 @@ module.exports.getUser = (req, res, next) ->
 
 module.exports.updateUser = (req, res, next) ->
   updateReq = req.body
-  _.log updateReq, 'updateUser updateReq'
   user_.byEmail(req.session.email)
   .then (docs)->
     current = docs[0]

@@ -15,10 +15,8 @@ module.exports = (db)->
     query = { key: [userId, 'friends'] }
     db.view 'relations', 'byStatus', query
     .then couch_.mapValue
-    .then (res)-> _.log res, "getUserFriends result #{userId}"
 
 parseRelations = (res)->
-  _.log res, 'parseRelations res'
   relations = initRelations()
   res.rows.forEach spreadRelation.bind(null, relations)
   return relations

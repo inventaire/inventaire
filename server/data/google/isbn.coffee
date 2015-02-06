@@ -17,7 +17,7 @@ requestBooksDataFromIsbn = (isbn)->
 
 
 cleanIsbn = (isbn)->
-  cleanedIsbn = books_.cleanIsbnData(isbn).logIt('cleaned isbn')
+  cleanedIsbn = books_.cleanIsbnData(isbn)
   if cleanedIsbn? then return cleanedIsbn
   else throw new Error "bad isbn"
 
@@ -29,7 +29,7 @@ parseBooksData = (isbn, res)->
     data = books_.normalizeBookData parsedItem, isbn
     result = {}
     result[isbn] = data
-    return _.log result, 'RESULT'
+    return result
   else
     _.error res, 'Google Book response'
     throw new Error "no item found for: #{cleanedIsbn}"
