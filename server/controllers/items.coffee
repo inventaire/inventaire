@@ -20,19 +20,27 @@ module.exports =
       item = req.body
       try item = Item.validate(item, userId)
       catch err
-        _.error {item: item, error: err.stack.split('\n')}, 'invalid item'
+        _.error {user: userId, item: item, error: err.stack.split('\n')}, 'invalid item'
         return _.errorHandler res, "invalid item: #{err}", 400
 
       items_.db.put item
       .then (body)-> _.getObjIfSuccess items_.db, body
       .then (body)-> res.json 201, body
-      .catch (err)-> _.errorHandler res, err
+    .catch (err)-> _.errorHandler res, err
 
   del: (req, res, next) ->
-    # missing req.session.email check isn't it?
     _.info req.params, 'del'
-    items_.db.delete req.params.id, req.params.rev
-    .then (body)-> res.json(body)
+    {id, rev} = req.params
+    user_.getUserId(req.session.email)
+    .then (userId)->
+      try Item.assertValidOwnerFromId(id, userId)
+      catch err
+        stack = err.stack.split('\n')
+        _.error {user: userId, item: req.params, error: stack}, 'invalid item deletion'
+        return _.errorHandler res, "invalid item: #{err}", 403
+
+      items_.db.delete req.params.id, req.params.rev
+      .then (body)-> res.json(body)
     .catch (err)-> _.errorHandler res, err
 
   publicByEntity: (req, res, next) ->

@@ -7,17 +7,18 @@ assert = require 'assert'
 module.exports =
   validate: (item, userId)->
     _.types arguments, ['object', 'string']
-    assertValidId item._id, userId
+    @assertValidOwnerFromId item._id, userId
     assertValidTitle item.title
     assertValidEntity item.entity
     item.owner = userId
     return item
 
-assertValidId = (id, userId)->
-  [owner, entityDomain, entityId, time] = id.split ':'
-  assert(owner is userId)
-  assert EntityUri.test("#{entityDomain}:#{entityId}")
-  assert EpochMs.test(time)
+  assertValidOwnerFromId: (id, userId)->
+    [owner, entityDomain, entityId, time] = id.split ':'
+    assert(owner is userId)
+    assert EntityUri.test("#{entityDomain}:#{entityId}")
+    assert EpochMs.test(time)
+
 
 assertValidTitle = (id)->
   _.type id, 'string'
