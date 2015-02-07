@@ -2,6 +2,7 @@ __ = require('config').root
 _ = __.require 'builders', 'utils'
 items_ = __.require 'lib', 'items'
 user_ = __.require 'lib', 'user'
+Item = __.require 'models', 'item'
 
 module.exports =
   fetch: (req, res, next) ->
@@ -17,22 +18,15 @@ module.exports =
     user_.getUserId(req.session.email)
     .then (userId)->
       item = req.body
-      item.owner = userId
-      if items_.isValidItem item
-        items_.db.put item
-        .then (body)-> _.getObjIfSuccess items_.db, body
-        .then (body)-> res.json 201, body
-        .catch (err)-> _.errorHandler res, err
-      else
-        _.errorHandler res, "couldn't add this item", 400
+      try item = Item.validate(item, userId)
+      catch err
+        _.error {item: item, error: err.stack.split('\n')}, 'invalid item'
+        return _.errorHandler res, "invalid item: #{err}", 400
 
-  # not used
-  # get: (req, res, next) ->
-  #   _.log req.params.id, 'GET Item ID'
-  #   items_.get req.params.id
-  #   .then (body)-> res.json(body)
-  #   .catch (err)-> _.errorHandler res, err
-  #   .done()
+      items_.db.put item
+      .then (body)-> _.getObjIfSuccess items_.db, body
+      .then (body)-> res.json 201, body
+      .catch (err)-> _.errorHandler res, err
 
   del: (req, res, next) ->
     # missing req.session.email check isn't it?

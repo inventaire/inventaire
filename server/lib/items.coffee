@@ -5,15 +5,6 @@ _ = __.require('builders', 'utils')
 
 module.exports =
   db: __.require('couch', 'base')('items')
-  isValidItem: (item)->
-    requiredKeys = ['title', '_id', 'owner']
-    valid = true
-    requiredKeys.forEach (key)->
-      if not item[key]
-        console.log "missing key: #{key}"
-        valid = false
-    return valid
-
   byOwner: (owner)->
     # only used by items.fetch with req.session.email owner
     # => shouldn't be safeItems'ized
