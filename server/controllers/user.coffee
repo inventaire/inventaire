@@ -27,22 +27,22 @@ module.exports.getUser = (req, res, next) ->
     else
       _.errorHandler res, 'user not found', 404
   .catch (err)-> _.errorHandler res, err, 404
-  .done()
 
 module.exports.updateUser = (req, res, next) ->
-  updateReq = req.body
+  update = req.body
   user_.byEmail(req.session.email)
   .then (docs)->
     current = docs[0]
-    if current.email is req.session.email and current._id is req.body._id
-      unless _(current).isEqual(updateReq)
-        user_.db.post(req.body)
-        .then (body)-> _.getObjIfSuccess user_.db, body
-        .then (body)-> res.json(body)
-        .catch (err)-> _.errorHandler res, err
-      else
-        _.errorHandler res, 'already up-to-date', 400
-    else
-      _.errorHandler res, 'wrong email', 400
+
+    unless current.email is req.session.email
+      throw new Error 'invalid email'
+    unless current._id is update._id
+      throw new Error "id mismatch: #{current._id} - #{update._id}"
+
+    unless _(current).isEqual(update)
+      user_.db.post(req.body)
+      .then (body)-> _.getObjIfSuccess user_.db, body
+      .then (body)-> res.json(body)
+      .catch (err)-> _.errorHandler res, err
+    else _.errorHandler res, 'already up-to-date', 400
   .catch (err)-> _.errorHandler res, err, 400
-  .done()
