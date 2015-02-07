@@ -19,5 +19,5 @@ module.exports.updateStatus = (req, res, next) ->
       Promise.all(promises)
       .then ->
         _.success [userId, times], 'notifs marked as read'
-        res.end()
+        res.send('ok')
     .catch (err)-> _.errorHandler res, err

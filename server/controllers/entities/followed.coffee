@@ -17,7 +17,7 @@ module.exports =
     .then fetchFollowingDoc
     .then (doc)->
       if doc? then res.json(doc)
-      else res.send()
+      else res.json({})
     .catch _.errorHandler.bind(_, res)
 
   update: (req, res, next)->

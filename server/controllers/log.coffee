@@ -21,7 +21,7 @@ module.exports =
 
     appendToShortKeys(shortKeys)
     appendToFullKeys(fullKeys)
-    res.end()
+    res.send('ok')
 
 
 appendToFullKeys = (keys)-> appendToI18nKeys full, keys, true
