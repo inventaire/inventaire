@@ -65,11 +65,13 @@ module.exports =
     return @db.post(user).then (user)=> @db.get(user.id)
 
   getUserId: (email)->
-    return @byEmail(email)
-    .then (docs)->
-      if docs?[0]? then return docs[0]._id
-      else return
-    .catch (err)-> throw new Error(err)
+    if email?
+      @byEmail(email)
+      .then (docs)->
+        if docs?[0]? then return docs[0]._id
+        else return
+      .catch (err)-> throw new Error(err)
+    else promises_.reject()
 
   fetchUsers: (ids)-> @db.fetch(ids)
 
