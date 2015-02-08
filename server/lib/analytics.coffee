@@ -47,32 +47,39 @@ module.exports =
 
 
 transferReportToCouch = (stats, doc)->
+  _.types arguments, ['object', 'string']
   {refTime} = stats
   doc = JSON.parse(doc)
-  if sessionIsOver(refTime, doc.time?.last)
+  if sessionIsOver(refTime, doc?.time?.last)
     putInCouch(doc)
-    .then clearLevel.bind(null, stats)
-    .catch (err)-> _.log err, 'coulndt put report in couch'
+    .then clearLevel.bind(null, stats, doc._id)
+    .catch (err)-> _.error err, 'coulndt put report in couch'
   else
     stats.kept++
 
 
 sessionIsOver = (refTime, lastTime)->
+  _.types arguments, ['number', 'string']
   if lastTime?
+    # JSON conversions messes with the type
+    lastTime = Number(lastTime)
     # arbitrary choosing 5 minutes
     # given session with last time older than 30 sec are finished
     FiveMinutes = 5 * 60 * 1000
     return (lastTime + FiveMinutes) < refTime
 
 putInCouch = (doc)->
+  _.type doc, 'object'
   doc.type = 'report'
   analyticsCouchDB.put(doc)
 
-clearLevel = (stats, res)->
+clearLevel = (stats, docId, res)->
+  _.types arguments, ['object', 'string', 'object']
   if res.ok
-    _.log doc._id, 'succesfully transfered to couch. deleting in level'
+    _.log docId, 'succesfully transfered to couch. deleting in level'
     stats.transfered++
-    analyticsLevelDB.del doc._id
+    analyticsLevelDB.del docId
   else
+    _.log arguments
     stats.kept++
-    throw new Error "failed to transfered to couch: #{doc._id}"
+    throw new Error "failed to transfered to couch: #{docId}"
