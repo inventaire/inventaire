@@ -9,6 +9,22 @@
        "sessionTimes": {
            "map": "(doc)->\n  time = new Date(Number(doc.time.last))\n  emit([doc.user.id, doc.user.fingerPrint, doc._id], Number(doc.time.sessionTimeSec))",
            "reduce": "_sum"
+       },
+       "firstLoadTime": {
+           "map": "(doc)->\n  emit doc.user.fingerPrint, Number(doc.time.firstLoadTime)",
+           "reduce": "(keys, values, rereduce)->\n  sum(values) / values.length"
+       },
+       "averageFirstLoadTime": {
+           "map": "(doc)->\n  emit doc.user.fingerPrint, Number(doc.time.firstLoadTime)",
+           "reduce": "(keys, values, rereduce)->\n  sum(values) / values.length"
+       },
+       "timePerPage": {
+           "map": "(doc)->\n  doc.navigation.forEach (page)->\n    time = page.time or 0\n    emit page.page, Number(time)",
+           "reduce": "(keys, values, rereduce)->\n  sum(values) / values.length"
+       },
+       "pageViews": {
+           "map": "(doc)->\n  day = new Date(Number(doc.time.first)).toISOString().split('T')[0]\n  doc.navigation.forEach (page)->\n    emit [day, page.page], 1",
+           "reduce": "_sum"
        }
    }
 }
