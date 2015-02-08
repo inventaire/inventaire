@@ -6,10 +6,10 @@ analytics_ = __.require 'lib', 'analytics'
 user_ = __.require 'lib', 'user'
 
 
-# let 2 minutes to the server to finish to start before transfering
-setTimeout analytics_.saveToCouch, 2 * 60 * 1000
+# let 20 seconds to the server to finish to start before transfering
+setTimeout analytics_.saveToCouch, 20 * 1000
 # the transfering every hours
-setInterval analytics_.saveToCouch, 60 * 60 * 1000
+setInterval analytics_.saveToCouch, 30 * 60 * 1000
 
 module.exports =
   reports: (req, res, next)->
