@@ -30,10 +30,10 @@ flushErrors = -> errors = {}
 setInterval flushErrors, 24 * 3600 * 1000
 
 logIfNew = (err)->
-  unless errors[err.hash]
+  {hash} = err
+  unless errors[hash]
     _.error(err, 'client report')
-    errors[err.hash] = true
-  else _.log 'avoided'
+    errors[hash] = true
 
 
 recordSession = (req)->
