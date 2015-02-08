@@ -1,0 +1,14 @@
+{
+   "_id": "_design/reports",
+   "language": "coffeescript",
+   "views": {
+       "visits": {
+           "map": "(doc)->\n  emit(doc.user.fingerPrint, 1)",
+           "reduce": "_sum"
+       },
+       "sessionTimes": {
+           "map": "(doc)->\n  time = new Date(Number(doc.time.last))\n  emit([doc.user.id, doc.user.fingerPrint, doc._id], Number(doc.time.sessionTimeSec))",
+           "reduce": "_sum"
+       }
+   }
+}

@@ -5,7 +5,6 @@ _ = __.require 'builders', 'utils'
 americano = require 'americano'
 cookieParser = require 'cookie-parser'
 session = require 'cookie-session'
-analytics = require 'no-js-analytics'
 
 security = require './middlewares/security'
 routes = require './middlewares/routes'
@@ -43,7 +42,6 @@ module.exports =
     # security.csrf
 
     lang.langCookie
-    analytics
   ]
   production: []
   development:

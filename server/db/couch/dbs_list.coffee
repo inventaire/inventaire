@@ -3,3 +3,4 @@ module.exports =
   users: ['user', 'relations']
   items: ['items', 'followedEntities']
   entities: ['entities']
+  analytics: ['reports']
