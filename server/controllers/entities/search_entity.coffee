@@ -56,22 +56,23 @@ searchByText = (query, res)->
 
 
 spreadRequests = (res, promises, label)->
-  promises_.settle(promises).spread(selectFirstNonEmptyResult)
-  .then (selected)->
-    if selected?
-      res.json selected
+  promises_.settle(promises)
+  .spread(bundleResults)
+  .then (resp)->
+    if resp.wd? or resp.google? then res.json resp
     else res.json 404, 'not found'
 
   .catch (err)->
     _.error err, "#{label} err"
     _.errorHandler res, err
 
-selectFirstNonEmptyResult = (results...)->
+bundleResults = (results...)->
   _.info results, "api results"
-  selected = null
+  resp = {}
   results.forEach (result)->
-    {items} = result
-    if _.isArray(items) and items.length > 0 and not selected?
-      selected = result
-  selected?.source.logIt('selected source')
-  return selected
+    {source, items} = result
+    if _.isArray(items) and items.length > 0
+      resp[source] = result
+      resp.search or= result.search
+
+  return resp
