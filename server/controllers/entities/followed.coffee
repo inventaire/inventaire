@@ -32,7 +32,7 @@ module.exports =
 
     user_.getUserId(req.session.email)
     .then updateFollowingDoc.bind(null, entity, following)
-    .then -> res.send()
+    .then -> res.send('ok')
     .catch _.errorHandler.bind(_, res)
 
 
