@@ -15,12 +15,26 @@ module.exports =
   reports: (req, res, next)->
     {navigation, error} = req.body
     if navigation? then recordSession(req)
-    if error? then _.error(req.body, 'client report')
+    if error?
+      if _.isArray(error) then error.map logIfNew
+      else logIfNew(error)
 
     unless navigation? or error?
       _.error req.body, 'wrongly formatted client report'
 
     res.send('ok')
+
+
+errors = {}
+flushErrors = -> errors = {}
+setInterval flushErrors, 24 * 3600 * 1000
+
+logIfNew = (err)->
+  unless errors[err.hash]
+    _.error(err, 'client report')
+    errors[err.hash] = true
+  else _.log 'avoided'
+
 
 recordSession = (req)->
   addUserInfo(req)
