@@ -69,7 +69,8 @@ addIpData = (report)->
   if ip?
     analytics_.getIpData(ip)
     .then (ipData)->
-      report.user.country = ipData.country
+      if ipData?
+        report.user.country = ipData.country
       return report
     .catch (err)-> _.error err, 'addIpData err'
 
