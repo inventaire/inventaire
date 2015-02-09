@@ -59,7 +59,7 @@ addUserId = (req, report)->
 
   user_.getUserId(req.session.email)
   .then (userId)->
-    return report.user.id = userId
+    report.user.id = userId
     return report
   .catch (err)-> _.error err, 'addUserId err'
 
