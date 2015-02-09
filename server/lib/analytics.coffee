@@ -32,7 +32,7 @@ module.exports =
     .on 'end', logStats.bind(null, stats)
 
   getHeadersIp: (req)->
-    ip = req.header['x-forwarded-for']
+    ip = req.headers['x-forwarded-for']
     if not ip? and CONFIG.env is 'production'
       _.warn "no ip found in header['x-forwarded-for']
               (normal when the server isnt behing a proxy)"
