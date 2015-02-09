@@ -29,12 +29,9 @@ module.exports =
       refTime: _.now()
     analyticsLevelDB.sub.createValueStream()
     .on 'data', transferReportToCouch.bind(null, stats)
-    .on 'end', ->
-      _.info stats, "analytics transfered to Couchdb"
+    .on 'end', logStats.bind(null, stats)
 
-
-
-  getIp: (req)->
+  getHeadersIp: (req)->
     ip = req.header['x-forwarded-for']
     if not ip? and CONFIG.env is 'production'
       _.warn "no ip found in header['x-forwarded-for']
@@ -83,3 +80,7 @@ clearLevel = (stats, docId, res)->
     _.log arguments
     stats.kept++
     throw new Error "failed to transfered to couch: #{docId}"
+
+logStats = (stats)->
+  cb = -> _.info(stats, "analytics transfered to Couchdb")
+  setTimeout cb , 60*1000
