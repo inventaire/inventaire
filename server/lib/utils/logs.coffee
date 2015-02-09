@@ -17,7 +17,7 @@ module.exports =
 
   error: (obj, label)->
     errorCounter++
-    obj = obj.stack or obj
+    obj = obj?.stack or obj
     @log obj, label, 'red'
 
   errorCount: -> errorCounter
