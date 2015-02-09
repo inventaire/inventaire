@@ -51,6 +51,7 @@
     "look": "git+https://github.com/niahmiah/look.git",
     "nano": "^6.0.2",
     "request": "^2.51.0",
+    "satelize": "^0.1.0",
     "serve-favicon": "^2.1.7",
     "simple-uuid": "0.0.1"
   },
