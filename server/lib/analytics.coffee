@@ -21,6 +21,7 @@ module.exports =
     key = "ip:#{ip}"
     cache_.get key, satelize.bind(null, {ip: ip})
     .then JSON.parse
+    .catch (err)-> _.warn err, 'couldnt recover ip data'
 
   saveToCouch: ->
     stats =
