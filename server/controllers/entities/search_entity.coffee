@@ -26,12 +26,16 @@ searchByIsbn = (query, res)->
   isbn = query.search
   isbnType = books_.isIsbn(isbn)
 
+  cleanedIsbn = books_.cleanIsbnData(isbn)
+
   promises = [
     getWikidataBookEntitiesByIsbn(isbn, isbnType, query.language)
     .catch (err)-> _.error err, 'wikidata getBookEntityByISBN err'
 
-    booksPromise = books_.getDataFromIsbn(isbn)
-    .then((res)-> {items:[res], source: 'google'})
+    booksPromise = books_.getDataFromIsbn(cleanedIsbn)
+    # returns an index of entities, so it need to convert to a collection
+    .then (res)-> [res[cleanedIsbn]]
+    .then((res)-> {items: res, source: 'google'})
     .catch (err)-> _.error err, 'getGoogleBooksDataFromIsbn err'
   ]
 
@@ -71,7 +75,8 @@ bundleResults = (results...)->
   resp = {}
   results.forEach (result)->
     {source, items} = result
-    if _.isArray(items) and items.length > 0
+    # also tests if the first item isnt undefined
+    if _.isArray(items) and items[0]?
       resp[source] = result
       resp.search or= result.search
 
