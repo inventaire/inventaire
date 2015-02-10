@@ -58,7 +58,6 @@ transferReportToCouch = (stats, doc)->
 
 
 sessionIsOver = (refTime, lastTime)->
-  _.types arguments, ['number', 'string']
   if lastTime?
     # JSON conversions messes with the type
     lastTime = Number(lastTime)
@@ -66,6 +65,7 @@ sessionIsOver = (refTime, lastTime)->
     # given session with last time older than 30 sec are finished
     HalfAnHour = 30 * 60 * 1000
     return (lastTime + HalfAnHour) < refTime
+  else return false
 
 putInCouch = (doc)->
   _.type doc, 'object'
