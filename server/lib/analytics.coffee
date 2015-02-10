@@ -27,6 +27,7 @@ module.exports =
     stats =
       transfered: 0
       kept: 0
+      dropped: 0
       refTime: _.now()
     analyticsLevelDB.sub.createValueStream()
     .on 'data', transferReportToCouch.bind(null, stats)
@@ -63,8 +64,8 @@ sessionIsOver = (refTime, lastTime)->
     lastTime = Number(lastTime)
     # arbitrary choosing 5 minutes
     # given session with last time older than 30 sec are finished
-    FiveMinutes = 5 * 60 * 1000
-    return (lastTime + FiveMinutes) < refTime
+    HalfAnHour = 30 * 60 * 1000
+    return (lastTime + HalfAnHour) < refTime
 
 putInCouch = (doc)->
   _.type doc, 'object'
@@ -78,9 +79,14 @@ clearLevel = (stats, docId, res)->
     stats.transfered++
     analyticsLevelDB.del docId
   else
-    _.log arguments
-    stats.kept++
-    throw new Error "failed to transfered to couch: #{docId}"
+    _.log arguments, docId
+    if res.error is 'conflict'
+      _.warn 'report in conflict: dropping report update'
+      analyticsLevelDB.del docId
+      stats.dropped++
+    else
+      _.warn "not transfered to couch: #{docId}"
+      stats.kept++
 
 logStats = (stats)->
   cb = -> _.info(stats, "analytics transfered to Couchdb")
