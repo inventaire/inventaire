@@ -15,9 +15,9 @@ module.exports =
       console.log "-----".grey
       return obj
 
-  error: (obj, label)->
+  error: (obj, label, parse=true)->
     errorCounter++
-    obj = obj?.stack or obj
+    obj = obj?.stack or obj  if parse
     @log obj, label, 'red'
 
   errorCount: -> errorCounter

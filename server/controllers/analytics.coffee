@@ -17,8 +17,7 @@ module.exports =
     {navigation, error} = req.body
     if navigation? then recordSession(req)
     if error?
-      if _.isArray(error) then error.map logIfNew
-      else logIfNew(error)
+      _.forceArray(error).map (err)-> logIfNew err, req.body
 
     unless navigation? or error?
       _.error req.body, 'wrongly formatted client report'
@@ -26,15 +25,20 @@ module.exports =
     res.send('ok')
 
 
-errors = {}
-flushErrors = -> errors = {}
+# keeping track of errors hash to avoid logging errors
+# everytimes a session updates
+errorList = {}
+flushErrors = -> errorList = {}
 setInterval flushErrors, 24 * 3600 * 1000
 
-logIfNew = (err)->
+logIfNew = (err, fullReport)->
   {hash} = err
-  unless errors[hash]
-    _.error(err, 'client report')
-    errors[hash] = true
+  unless errorList[hash]
+    _.error err, 'client error report', false
+    # not logging it as an error to avoid having the error
+    # be counted twice
+    _.warn fullReport, 'client full report'
+    errorList[hash] = true
 
 
 recordSession = (req)->
