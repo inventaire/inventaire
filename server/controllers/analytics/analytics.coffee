@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = require('config').root
 _ = __.require 'builders', 'utils'
 
-analytics_ = __.require 'lib', 'analytics'
+analytics_ = __.require 'controllers', 'analytics/lib/base'
 user_ = __.require 'lib', 'user'
 promises_ = __.require 'lib', 'promises'
 

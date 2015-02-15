@@ -13,7 +13,7 @@ notifs = require "./notifs"
 proxy = require "./proxy"
 glob = require "./glob"
 log = require "./log"
-analytics = require './analytics'
+analytics = require './analytics/analytics'
 
 
 # routes structure:
