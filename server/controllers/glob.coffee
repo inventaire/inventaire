@@ -12,7 +12,7 @@ module.exports =
       _.errorHandler res, err, 404
     else
       # the routing will be done on the client side
-      res.sendfile './index.html', {root: __.path('client', 'public')}
+      res.sendFile './index.html', {root: __.path('client', 'public')}
 
 
 imageHeader = (req)-> /^image/.test req.headers.accept
