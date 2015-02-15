@@ -9,7 +9,7 @@ analyticsLevelDB = levelBase.simpleAPI 'analytics'
 cache_ = __.require 'lib', 'cache'
 satelize = Promise.promisify require('satelize').satelize
 
-module.exports =
+base =
   update: (report)->
     key = report._id
     analyticsLevelDB.put key, report
@@ -32,5 +32,9 @@ module.exports =
     str = JSON.stringify(args)
     crypto.createHash('md5').update(str).digest('hex')
 
+
+module.exports = _.extend base,
+  recordSession: require('./record_session')(base)
   saveToCouch: require('./save_to_couch')(analyticsLevelDB)
   onlineUser: require './online_users'
+  logErrorIfNew: require './log_error_if_new'
