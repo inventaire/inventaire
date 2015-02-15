@@ -7,11 +7,6 @@ user_ = __.require 'lib', 'user'
 promises_ = __.require 'lib', 'promises'
 
 
-# let 20 seconds to the server to finish to start before transfering
-setTimeout analytics_.saveToCouch, 20 * 1000
-# the transfering every hours
-setInterval analytics_.saveToCouch, 30 * 60 * 1000
-
 module.exports =
   reports: (req, res, next)->
     {navigation, error} = req.body
