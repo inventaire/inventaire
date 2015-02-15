@@ -44,6 +44,7 @@ module.exports =
     str = JSON.stringify(args)
     crypto.createHash('md5').update(str).digest('hex')
 
+  onlineUser: __.require 'controllers', 'analytics/online_users'
 
 transferReportToCouch = (stats, doc)->
   _.types arguments, ['object', 'string']

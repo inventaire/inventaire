@@ -83,4 +83,5 @@ addIpData = (report)->
 addFingerPrint = (report)->
   {ip, userAgent} = report.user
   report.user.fingerPrint = analytics_.getFingerPrint(ip, userAgent)
+  analytics_.onlineUser(report.user)
   return report

@@ -58,3 +58,7 @@ module.exports =
       cb().then -> console.timeEnd id
 
   pass: (req, res, next)-> next()
+
+  sumValues: (obj)->
+    @values(obj)
+    .reduce (a,b)-> a+b
