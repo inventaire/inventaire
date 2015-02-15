@@ -3,6 +3,7 @@ _ = __.require 'builders', 'utils'
 items_ = __.require 'lib', 'items'
 user_ = __.require 'lib', 'user'
 Item = __.require 'models', 'item'
+Promise = require 'bluebird'
 
 module.exports =
   fetch: (req, res, next) ->
@@ -18,29 +19,24 @@ module.exports =
     user_.getUserId(req.session.email)
     .then (userId)->
       item = req.body
-      try item = Item.validate(item, userId)
-      catch err
-        _.error {user: userId, item: item, error: err.stack.split('\n')}, 'invalid item'
-        return _.errorHandler res, "invalid item: #{err}", 400
-
-      items_.db.put item
-      .then (body)-> _.getObjIfSuccess items_.db, body
-      .then (body)-> res.json 201, body
+      if item._id is 'new' then Item.create(userId, item)
+      else Item.update(userId, item)
+    .then (body)-> _.getObjIfSuccess items_.db, body
+    .then (body)-> res.json 201, body
     .catch (err)-> _.errorHandler res, err
 
   del: (req, res, next) ->
     _.info req.params, 'del'
     {id, rev} = req.params
-    user_.getUserId(req.session.email)
-    .then (userId)->
-      try Item.assertValidOwnerFromId(id, userId)
-      catch err
-        stack = err.stack.split('\n')
-        _.error {user: userId, item: req.params, error: stack}, 'invalid item deletion'
-        return _.errorHandler res, "invalid item: #{err}", 403
-
-      items_.db.delete req.params.id, req.params.rev
-      .then (body)-> res.json(body)
+    getUserIdAndItem(req, id)
+    .spread (userId, item)->
+      if userId is item?.owner
+        _.log id, 'deleting!'
+        items_.db.delete(id, rev)
+        .then (body)-> res.json(body)
+      else
+        err = "user isnt item.owner: #{userId} / #{item.owner}"
+        _.errorHandler res, err, 403
     .catch (err)-> _.errorHandler res, err
 
   publicByEntity: (req, res, next) ->
@@ -76,3 +72,11 @@ bundleOwnersData = (res, items)->
 getItemsOwners = (items)->
   users = items.map (item)-> item.owner
   return _.uniq(users)
+
+
+getUserIdAndItem = (req, itemId)->
+  return Promise.all [
+    user_.getUserId(req.session.email)
+    items_.db.get(itemId)
+  ]
+
