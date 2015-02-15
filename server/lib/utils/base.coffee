@@ -60,5 +60,5 @@ module.exports =
   pass: (req, res, next)-> next()
 
   sumValues: (obj)->
-    @values(obj)
-    .reduce (a,b)-> a+b
+    @type obj, 'object'
+    @values(obj)?.reduce (a,b)-> a+b
