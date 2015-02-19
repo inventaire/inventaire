@@ -9,11 +9,14 @@ module.exports = (user)->
 
 
 onlineUsers = {}
+last = null
 
 updateOnlineUsers = ->
   length = _.objLength(onlineUsers)
   loggedUsers = _.sumValues(onlineUsers)
-  _.info "logged in #{loggedUsers} / total #{length}"
+  report = "logged in #{loggedUsers} / total #{length}"
+  unless report is last then _.info report
+  last = report
   onlineUsers = {}
 
 setInterval updateOnlineUsers, 30 * 1000
