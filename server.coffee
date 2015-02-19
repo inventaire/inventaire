@@ -76,3 +76,5 @@ if CONFIG.protocol is 'https'
 
 else
   americano.start options
+
+mailer_ = __.require('lib', 'emails/mailer')()

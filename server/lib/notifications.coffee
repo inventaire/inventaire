@@ -4,7 +4,6 @@ levelBase = __.require 'level', 'base'
 API = levelBase.simpleAPI('notifications')
 Radio = __.require 'lib', 'radio'
 
-
 notifs_ =
   API: API
   db: API.sub

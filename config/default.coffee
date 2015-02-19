@@ -70,3 +70,8 @@ module.exports =
   apiOpenBar: false
   resetCacheAtStartup: false
   serveStatic: true
+  mailer:
+    service: 'yoursettings',
+    auth:
+      user: 'yoursettings'
+      pass: 'yoursettings'
