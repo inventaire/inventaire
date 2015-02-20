@@ -1,3 +1,5 @@
+![inventory-en](http://profile.maxlath.eu/slides/backbone-meetup/img/inventory-en.png)
+
 # Inventaire
 [![Licence](https://img.shields.io/badge/licence-AGPL3-blue.svg)](http://www.gnu.org/licenses/agpl-3.0.html)
 [![Node](https://img.shields.io/node/v/gh-badges.svg)](http://www.gnu.org/licenses/agpl-3.0.html)
