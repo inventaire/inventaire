@@ -1,4 +1,4 @@
-# Inventaire
+#Inventaire
 Libre collaborative resource mapper powered by open-knowledge
 
 [![Licence](https://img.shields.io/badge/licence-AGPL3-blue.svg)](http://www.gnu.org/licenses/agpl-3.0.html)
