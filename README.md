@@ -1,8 +1,10 @@
-![inventory-en](http://profile.maxlath.eu/slides/backbone-meetup/img/inventory-en.png)
-
 # Inventaire
+Libre collaborative resource mapper powered by open-knowledge
+
 [![Licence](https://img.shields.io/badge/licence-AGPL3-blue.svg)](http://www.gnu.org/licenses/agpl-3.0.html)
 [![Node](https://img.shields.io/node/v/gh-badges.svg)](http://www.gnu.org/licenses/agpl-3.0.html)
+
+[![inventory-en](http://profile.maxlath.eu/slides/backbone-meetup/img/inventory-en.png)](https://inventaire.io)
 
 This repository hosts [Inventaire.io](https://inventaire.io) source code. Its a collaborative resources mapper project, while yet only focused on exploring books mapping with [wikidata](https://wikidata.org/) and [ISBNs](https://en.wikipedia.org/wiki/International_Standard_Book_Number)
 
