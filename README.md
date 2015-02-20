@@ -6,6 +6,9 @@ This repository hosts [Inventaire.io](https://inventaire.io) source code. Its a 
 
 This repository tracks the server-side developments, while the (heavy) [client-side can be found here](https://github.com/maxlath/inventaire-client).
 
+## Stack approximative overview
+![stack-en](http://profile.maxlath.eu/slides/backbone-meetup/img/stack-en.jpg)
+
 
 ## Installation
 
