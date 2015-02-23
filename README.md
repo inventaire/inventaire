@@ -43,7 +43,7 @@ You don't need to edit those as those files are generated from wikidata api, but
 *i18n file generation is a bit hacky, but you don't need to understand the full process if you just want to edit a language file*
 Lang files are updated using the [https://github.com/maxlath/inventaire-client/blob/master/scripts/generate_lang_json.coffee](generate_lang_json) script: it takes the language files (fullkey, shortkeys and wikidata) as first source, then fills the holes with the English values.
 It outputs 7 files per languages:
-- a `dist/xx.json` file with all the key / values pairs needed by the website at the moment
+- a `dist/xx.json` file with all the key / value pairs needed by the website at the moment
 - updated versions of `src/fullkey/xx.json`, `src/shortkey/xx.json`, and `src/wikidata/xx.json` where keys not found in the reference file (the English version) were removed and keys not found in this file were added with value `null`.
 - updated versions of `src/fullkey/archived/xx.json`, `src/shortkey/archived/xx.json`, and `src/wikidata/archived/xx.json`, gathering non-null keys that were removed. Those key may come back in the game if the key reappears in the reference file.
 
