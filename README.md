@@ -10,8 +10,49 @@ This repository hosts [Inventaire.io](https://inventaire.io) source code. Its a 
 
 This repository tracks the server-side developments, while the (heavy) [client-side can be found here](https://github.com/maxlath/inventaire-client).
 
-## Stack approximative overview
+##Stack approximative overview
 ![stack-en](http://profile.maxlath.eu/slides/backbone-meetup/img/stack-en.jpg)
+
+
+##Contributions
+
+###Internationalization (i18n)
+Want to help translating Inventaire in your language?
+You can edit the files in the [client i18n branch](https://github.com/maxlath/inventaire-client/tree/i18n).
+
+You will find three subfolders containing json files
+
+####fullkey
+ex: `src/fullkey/xx.json`
+Keys are the full text in English
+For instance, in fullkeys you will find keys like `delete` or `welcome`.
+
+####shortkey
+ex: `src/shortkey/xx.json`
+Keys are made of some English words indicating the context and `snake_cased` with always at least one `_`.
+It is used for text that would take a lot of space as a fullkeys or that require a special treatment:
+  - shortkeys may contain string interpolation. ex: `"has_it": "%{username} has it"`
+  - shortkeys may contain a few supported markdown syntax elements (links `[text](href)` and `**bold text**`)
+
+####wikidata
+ex: `src/wikidata/xx.json`
+Keys are a wikidata property identifier like `P50`.
+You don't need to edit those as those files are generated from wikidata api, but if you find a missing translation, you can directly edit the properties on wikidata ([P50](https://www.wikidata.org/wiki/Property:P50) for instance) and ask for a regeneration of those files.
+
+####i18n file generation and archives
+*i18n file generation is a bit hacky, but you don't need to understand the full process if you just want to edit a language file*
+Lang files are updated using the [https://github.com/maxlath/inventaire-client/blob/master/scripts/generate_lang_json.coffee](generate_lang_json) script: it takes the language files (fullkey, shortkeys and wikidata) as first source, then fills the holes with the English values.
+It outputs 7 files per languages:
+- a `dist/xx.json` file with all the key / values pairs needed by the website at the moment
+- updated versions of `src/fullkey/xx.json`, `src/shortkey/xx.json`, and `src/wikidata/xx.json` where keys not found in the reference file (the English version) were removed and keys not found in this file were added with value `null`.
+- updated versions of `src/fullkey/archived/xx.json`, `src/shortkey/archived/xx.json`, and `src/wikidata/archived/xx.json`, gathering non-null keys that were removed. Those key may come back in the game if the key reappears in the reference file.
+
+####currently active languages
+- English (en - reference files): [fullkeys](https://github.com/maxlath/inventaire-client/blob/i18n/src/fullkeys/en.json), [shortkeys](https://github.com/maxlath/inventaire-client/blob/i18n/src/shortkey/en.json)
+- French (fr): [fullkeys](https://github.com/maxlath/inventaire-client/blob/i18n/src/fullkeys/fr.json), [shortkeys](https://github.com/maxlath/inventaire-client/blob/i18n/src/shortkey/fr.json)
+
+*start a new language by adding missing values in its [fullkeys](https://github.com/maxlath/inventaire-client/blob/i18n/src/fullkeys) or [shortkeys](https://github.com/maxlath/inventaire-client/blob/i18n/src/shortkey) file*
+
 
 
 ## Installation
@@ -23,7 +64,7 @@ npm install
 npm run install-client
 ```
 
-## Day-dreaming on future evolutions
+##Day-dreaming on future evolutions
 
 [Inventaire.io](https://inventaire.io) is a hub for open-knowledge-based peers inventory data. This prototype uses a centralized database to make the early development easier, while being as easy as possible to 'install' and use: well, it's just a classic website. Meanwhile, this repository is public as there is no reason it should ever stay so: this is a research work in progress, if you can think of a better/more decentralized way for peers to keep their inventory data and share it with others, you are very welcome to join the effort or experiment on your own with what you can find here. The hard point being sharing data between this centralized website and other inventory implementations. Works on a standard data model and an API would be a priority as soon as meaningful.
 
