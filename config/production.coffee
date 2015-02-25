@@ -22,7 +22,8 @@ module.exports =
     cert: '/cert/OVERRIDE.crt'
   typeCheck: false
   promisesStackTrace: false
-  morganLogFormat: 'short'
+  morgan:
+    logFormat: 'short'
   sendServerErrorsClientSide: true
   logMissingI18nKeys: false
   serveStatic: false

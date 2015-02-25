@@ -38,7 +38,6 @@ checkCache = (key, timespan)->
 
 requestOnlyIfNeeded = (res, key, method)->
   if res?
-    _.info "from cache: #{key}"
     res.body
   else
     method()

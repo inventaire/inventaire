@@ -3,8 +3,13 @@ __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 americano = require 'americano'
 
+{logFormat, mutedRoutes} = CONFIG.morgan
 
-logger = americano.logger CONFIG.morganLogFormat
+logger = americano.logger
+  format: logFormat
+  skip: (req, res)->
+    route = req.originalUrl
+    return route in mutedRoutes
 
 if CONFIG.logStaticFilesRequests
   [before, after] = [logger, _.pass]

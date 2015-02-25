@@ -63,7 +63,11 @@ module.exports =
   promisesStackTrace: true
   godMode: false # friends requests automatically accepted
   monitoring: false
-  morganLogFormat: 'dev'
+  morgan:
+    logFormat: 'dev'
+    mutedRoutes: [
+      '/api/logs/public'
+    ]
   logStaticFilesRequests: true
   sendServerErrorsClientSide: true
   logMissingI18nKeys: true
