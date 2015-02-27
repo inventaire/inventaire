@@ -22,7 +22,7 @@ module.exports =
       if item._id is 'new' then Item.create(userId, item)
       else Item.update(userId, item)
     .then (body)-> _.getObjIfSuccess items_.db, body
-    .then (body)-> res.json 201, body
+    .then (body)-> res.status(201).json body
     .catch (err)-> _.errorHandler res, err
 
   del: (req, res, next) ->

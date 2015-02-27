@@ -14,7 +14,7 @@ module.exports.post = (req, res, next)->
         }, 'form parse'
     if err
       _.log err, 'err'
-      res.json 500, {status: err}
+      res.status(500).json {status: err}
     else
       promises = []
       for k,file of files
@@ -33,10 +33,10 @@ module.exports.post = (req, res, next)->
         _.log urls, 'urls'
         ownedUrls = urls.map extractOwnedUrl
         _.log ownedUrls, 'ownedUrls'
-        res.json 200, ownedUrls
+        res.status(200).json ownedUrls
       .catch (err)->
         _.error err, 'putImage err'
-        res.json 500, {status: err}
+        res.status(500).json {status: err}
 
 module.exports.del = (req, res, next)->
   filenames = req.body.urls
@@ -45,10 +45,10 @@ module.exports.del = (req, res, next)->
   .then (resp)->
     _.log resp.statusCode, 'delete statusCode'
     if resp.statusCode is 200
-      res.json 200, {status: 'OK'}
+      res.status(200).json {status: 'OK'}
     else throw {status: 'FAILED'}
   .catch (err)->
-    res.json 500, err
+    res.status(500).json err
 
 
 extractOwnedUrl = (url)->

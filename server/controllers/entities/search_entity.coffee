@@ -65,7 +65,7 @@ spreadRequests = (res, promises, label)->
   .spread(bundleResults)
   .then (resp)->
     if resp.wd? or resp.google? then res.json resp
-    else res.json 404, 'not found'
+    else res.status(404).json {error: 'not found'}
 
   .catch (err)->
     _.error err, "#{label} err"

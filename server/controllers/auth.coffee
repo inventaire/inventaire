@@ -18,7 +18,7 @@ module.exports.checkUsername = (req, res, next) ->
         status: 'not available'
         status_verbose: "this username isn't available"
         err: err
-      res.json 400, obj
+      res.status(400).json obj
     .done()
   else
     _.error reqUsername, 'nameIsntValid'
@@ -26,7 +26,7 @@ module.exports.checkUsername = (req, res, next) ->
       username: reqUsername
       status: 'invalid'
       status_verbose: 'invalid username'
-    res.json 400, obj
+    res.status(400).json obj
 
 module.exports.login = (req, res, next) ->
   verifyAssertion(req)
