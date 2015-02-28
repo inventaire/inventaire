@@ -19,8 +19,8 @@ module.exports =
     @db.viewByKeys 'byListing', listings
     .then safeItems
 
-  byEntity: (uri)->
-    @db.viewByKey 'byEntity', uri
+  publicByEntity: (uri)->
+    @db.viewByKey 'publicByEntity', uri
     .then safeItems
 
   publicByDate: ->

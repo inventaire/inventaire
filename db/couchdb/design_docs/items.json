@@ -11,14 +11,14 @@
        "byListing": {
            "map": "(doc)->\n\tif doc.listing?\n\t\temit [doc.owner,doc.listing], null"
        },
-       "byEntity": {
-           "map": "(doc)->\n  emit(doc.entity, null)"
-       },
        "publicByDate": {
            "map": "(doc)->\n  if doc.listing is 'public'\n    emit(doc.created, null)"
        },
        "publicByOwnerAndSuffix": {
            "map": "(doc)->\n  if doc.listing is 'public'\n    emit([doc.owner, doc.suffix], null)"
+       },
+       "publicByEntity": {
+           "map": "(doc)->\n  if doc.listing is 'public'\n    emit(doc.entity, null)"
        }
    }
 }

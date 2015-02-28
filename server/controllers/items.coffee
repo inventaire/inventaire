@@ -41,7 +41,7 @@ module.exports =
 
   publicByEntity: (req, res, next) ->
     _.info req.params, 'public'
-    items_.byEntity(req.params.uri)
+    items_.publicByEntity(req.params.uri)
     .then bundleOwnersData.bind(null, res)
     .catch (err)-> _.errorHandler res, err
 
