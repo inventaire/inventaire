@@ -24,12 +24,30 @@ cleanIsbn = (isbn)->
 
 parseBooksData = (isbn, res)->
   _.types arguments, ['string', 'object']
-  if res?.totalItems > 0
-    parsedItem = res.items[0].volumeInfo
-    data = books_.normalizeBookData parsedItem, isbn
-    result = {}
-    result[isbn] = data
-    return result
-  else
+
+  {items} = res
+  unless items?.length > 0
     _.error res, 'Google Book response'
-    throw new Error "no item found for: #{cleanedIsbn}"
+    throw new Error "no item found for: #{isbn}"
+
+  book = findBook(items, isbn)
+
+  unless book?
+    throw new Error "couldn't find the right book: #{isbn}"
+
+  result = {}
+  result[isbn] = book
+  return result
+
+
+
+findBook = (items, isbn)->
+  _.types arguments, ['array', 'string']
+  book = null
+  # loop on items until we find one matching the provided isbn
+  while items.length > 0
+    candidateItem = items.shift().volumeInfo
+    book = books_.normalizeBookData candidateItem, isbn
+    if book? then break
+
+  return book
