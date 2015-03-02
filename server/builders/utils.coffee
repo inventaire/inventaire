@@ -1,11 +1,10 @@
-CONFIG = require('config')
+CONFIG = require 'config'
 __ = CONFIG.root
 
 lo = require 'lodash'
 
 server_ = __.require 'utils', 'base'
-logs_ = __.require 'utils', 'logs'
-if CONFIG.verbosity is 0 then logs_.log = lo.identity
+logs_ = __.require('utils', 'logs')(lo)
 
 types_ = __.require 'sharedLibs', 'types'
 if not CONFIG.typeCheck then types_.types = lo.noop
