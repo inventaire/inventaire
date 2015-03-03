@@ -15,7 +15,9 @@ updateOnlineUsers = ->
   length = _.objLength(onlineUsers)
   loggedUsers = _.sumValues(onlineUsers)
   report = "logged in #{loggedUsers} / total #{length}"
-  unless report is last then _.info report
+  unless report is last
+    timestamp = new Date().toString().replace(/GMT.*/, 'GMT')
+    _.info "[#{timestamp}] #{report}"
   last = report
   onlineUsers = {}
 
