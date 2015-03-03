@@ -1,6 +1,5 @@
 __ = require('config').root
 _ = __.require('builders', 'utils')
-promises_ = __.require 'lib', 'promises'
 wd_ = __.require 'lib', 'wikidata'
 cache_ = __.require 'lib', 'cache'
 
