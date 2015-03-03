@@ -13,10 +13,17 @@ mailer =
     helpers_.getUsersData(userToNotify, newFriend)
     .then email_.friendAcceptedRequest
     .then transporter_.sendMail
-    .catch (err)->
-      _.error err, "friendAcceptedRequest email
-        fail for #{userToNotify} / #{newFriend}"
+    .catch Err('friendAcceptedRequest', userToNotify, newFriend)
 
+  friendshipRequest: (userToNotify, requestingUser)->
+    helpers_.getUsersData(userToNotify, requestingUser)
+    .then email_.friendshipRequest
+    .then transporter_.sendMail
+    .catch Err('friendshipRequest', userToNotify, requestingUser)
+
+Err = (label, user1, user2)->
+  _.Error("#{label} email fail for #{user1} / #{user2}")
 
 module.exports = ->
   Radio.on 'notify:friend:request:accepted', mailer.friendAcceptedRequest
+  Radio.on 'notify:friendship:request', mailer.friendshipRequest
