@@ -21,14 +21,13 @@ wikidataIsbnClaim = (isbn, type)->
     when 13 then return wd_.API.wmflabs.string 212, isbn
 
 parseResponse = (isbn, res)->
-  if res.items.length > 0
-    id = wd_.normalizeId(res.items[0])
-    wd_.getEntities(id, lang)
-    .then wd_.filterAndBrush
-    .then normalizeResult.bind(null, isbn)
-  else
-    normalizeResult isbn, [], 'no item found for this isbn'
+  unless res?.items?.length > 0
+    return normalizeResult isbn, [], 'no item found for this isbn'
 
+  id = wd_.normalizeId(res.items[0])
+  wd_.getEntities(id, lang)
+  .then wd_.filterAndBrush
+  .then normalizeResult.bind(null, isbn)
 
 normalizeResult = (isbn, items, status)->
   items: items
