@@ -21,10 +21,8 @@ module.exports =
     catch err then return promises_.reject(err)
 
     checkCache(key, timespan)
-    .then (res)->
-      requestOnlyIfNeeded(res, key, method)
-    .catch (err)->
-      _.warn err, "final cache_ err: #{key}"
+    .then requestOnlyIfNeeded.bind(null, key, method)
+    .catch _.Warn("final cache_ err: #{key}")
 
 checkCache = (key, timespan)->
   cacheDB.get(key)
@@ -36,9 +34,9 @@ checkCache = (key, timespan)->
       return res
     else return
 
-requestOnlyIfNeeded = (res, key, method)->
-  if res?
-    res.body
+requestOnlyIfNeeded = (key, method, cached)->
+  if cached?
+    cached.body
   else
     method()
     .then (res)->
