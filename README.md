@@ -6,7 +6,7 @@ Libre collaborative resource mapper powered by open-knowledge
 [![Node](https://img.shields.io/node/v/gh-badges.svg)](http://www.gnu.org/licenses/agpl-3.0.html)
 [![Join the chat at https://gitter.im/maxlath/inventaire](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/maxlath/inventaire)
 
-[![inventory-en](http://profile.maxlath.eu/slides/backbone-meetup/img/inventory-georges.png)](https://inventaire.io)
+[![inventory-georges](http://profile.maxlath.eu/slides/backbone-meetup/img/inventory-georges.png)](https://inventaire.io)
 
 This repository hosts [Inventaire.io](https://inventaire.io) source code. Its a collaborative resources mapper project, while yet only focused on exploring books mapping with [wikidata](https://wikidata.org/) and [ISBNs](https://en.wikipedia.org/wiki/International_Standard_Book_Number)
 
@@ -15,6 +15,11 @@ This repository tracks the server-side developments, while the (heavy) [client-s
 ##Stack approximative overview
 ![stack-en](http://profile.maxlath.eu/slides/backbone-meetup/img/stack-en.jpg)
 
+##Concepts map
+the whole app turns around 3 core concepts:
+- Users
+- Entities : encompass authors (ex: [wd:Q353](https://inventaire.io/entity/wd:Q535)), books (ex: [wd:Q393018](https://inventaire.io/entity/wd:Q393018)) and books' specific editions (ex: [isbn:9782070389162](https://inventaire.io/entity/isbn:9782070389162)). The term *entities* is inherited from wikidata terminology.
+- Items : instances of those entities that a user declare to own
 
 ##Contributions
 
