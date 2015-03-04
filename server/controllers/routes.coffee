@@ -10,6 +10,7 @@ entities = require "./entities/entities"
 followed = require "./entities/followed"
 upload = require "./upload"
 notifs = require "./notifs"
+data = require "./data"
 proxy = require "./proxy"
 glob = require "./glob"
 log = require "./log"
@@ -108,7 +109,10 @@ routes =
       _.info req.body
       res.json {server: 'OK', body: req.body}
 
-  'api/proxy/*':
+  'api/data/public*':
+    get: data.get
+
+  'api/proxy/public*':
     get: proxy.get
 
   'api/logs/public':
