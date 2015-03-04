@@ -40,6 +40,8 @@ searchByIsbn = (query, res)->
     .catch (err)-> _.error err, 'getGoogleBooksDataFromIsbn err'
   ]
 
+  promises = promises.map (promise)-> promise.timeout 10000
+
   spreadRequests(res, promises, 'searchByIsbn')
 
 searchByText = (query, res)->
