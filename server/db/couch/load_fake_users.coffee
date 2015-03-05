@@ -19,11 +19,11 @@ keepUsers =
 
 loadFakeUser = (username)->
   bluereq.get('http://api.randomuser.me/')
-  .then getUserData
+  .then getUserData.bind(null, username)
   .then postUser
   .catch (err)-> _.error err
 
-getUserData = (res)->
+getUserData = (username, res)->
   fake = res.body.results[0].user
   return userData =
     username: username or fake.username
