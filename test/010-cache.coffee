@@ -16,6 +16,7 @@ mookPromise = hashKey = (key)->
 
 Ctx =
   method: (key)-> hashKey key + @value
+  failingMethod: (key)-> promises_.reject("Jag är Döden")
   value: -> _.random(1000)
 
 describe 'CACHE', ->
@@ -56,25 +57,30 @@ describe 'CACHE', ->
                 done()
 
     it "should also accept an expiration timespan", (done)->
-      console.time 'global'
-      console.time 'one'
       cache_.get('samekey', Ctx.method)
       .then (res1)->
-        console.timeEnd 'one'
-        console.time 'two'
         cache_.get('samekey', Ctx.method.bind(null, 'different arg'), 10000)
         .then (res2)->
-          console.timeEnd 'two'
-          console.time 'three'
           cache_.get('samekey', Ctx.method.bind(null, 'different arg'), 0)
           .then (res3)->
-            console.timeEnd 'three'
-            console.timeEnd 'global'
             _.log [res1, res2, res3], 'results'
             res1.should.equal res2
             res2.should.not.equal res3
             done()
 
+    it "should return the outdated version if the new version returns an error", (done)->
+      cache_.get('doden', Ctx.method.bind(null, 'Vem är du?'), 0)
+      .then (res1)->
+        # returns an error: should return old value
+        cache_.get('doden', Ctx.failingMethod.bind(null, 'Vem är du?'), 0)
+        .then (res2)->
+          # the error shouldnt have overriden the value
+          cache_.get('doden', Ctx.method.bind(null, 'Vem är du?'), 5000)
+          .then (res3)->
+            _.log [res1, res2, res3], 'results'
+            res1.should.equal res2
+            res1.should.equal res3
+            done()
 
     it "should cache non-error empty results", (done)->
       spy = sinon.spy()

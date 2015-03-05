@@ -34,6 +34,10 @@ checkCache = (key, timespan)->
       return res
     else return
 
+returnOldValue = (key)->
+  checkCache(key, Infinity)
+  .then (res)-> res?.body
+
 requestOnlyIfNeeded = (key, method, cached)->
   if cached?
     cached.body
@@ -43,6 +47,9 @@ requestOnlyIfNeeded = (key, method, cached)->
       _.info "from remote data source: #{key}"
       putResponseInCache(key, res)
       return res
+    .catch (err)->
+      _.error err, 'request err (returning old value)'
+      return returnOldValue(key)
 
 putResponseInCache = (key, res)->
   obj =
