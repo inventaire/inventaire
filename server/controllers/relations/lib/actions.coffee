@@ -11,5 +11,7 @@ module.exports =
     queries_.putFriendStatus(userId, otherId)
     Radio.emit 'notify:friend:request:accepted', otherId, userId
     Radio.emit 'notify:friend:request:accepted', userId, otherId
-  makeRequest: queries_.putRequestedStatus
+  makeRequest: (userId, otherId)->
+    queries_.putRequestedStatus(userId, otherId)
+    Radio.emit 'notify:friendship:request', otherId, userId
   removeRelation: queries_.putNoneStatus
