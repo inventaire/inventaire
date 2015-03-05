@@ -5,5 +5,7 @@ Radio = __.require 'lib', 'radio'
 sendEmail = require './send_email'
 
 module.exports = ->
-  Radio.on 'notify:friend:request:accepted', sendEmail.friendAcceptedRequest
-  Radio.on 'notify:friendship:request', sendEmail.friendshipRequest
+  unless CONFIG.mailer.disabled
+    _.info 'mailer enabled'
+    Radio.on 'notify:friend:request:accepted', sendEmail.friendAcceptedRequest
+    Radio.on 'notify:friendship:request', sendEmail.friendshipRequest
