@@ -7,7 +7,7 @@ trycatch = require 'trycatch'
 Promise = require 'bluebird'
 
 levelBase = __.require 'level', 'base'
-subDb = levelBase.sub('hello')
+subDb = levelBase.sub('test db')
 promDb = levelBase.promisified(subDb)
 unjsonizedDb = levelBase.unjsonized(promDb)
 db = unjsonizedDb
@@ -112,6 +112,20 @@ describe 'DB', ->
           .then (res)->
             res.should.be.an.Array
             res.length.should.equal 3
+            done()
+        , done)
+
+    describe 'GET', ->
+      it "should catch notFound errors", (done)->
+        spyCount = 0
+        trycatch( ->
+          db.get('not defined')
+          .catch (err)->
+            _.error err, 'GET err'
+            spyCount++
+          .then (res)->
+            spyCount.should.equal 0
+            expect(res).to.equal undefined
             done()
         , done)
 

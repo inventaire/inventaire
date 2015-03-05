@@ -2,6 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 Promise = require 'bluebird'
+promises_ = __.require 'lib', 'promises'
 
 DBPath = __.path 'leveldb', CONFIG.port
 
@@ -27,7 +28,11 @@ module.exports =
 
   unjsonized: (sub)->
     API =
-      get: (key)-> sub.getAsync(key).then JSON.parse
+      get: (key)->
+        sub.getAsync(key)
+        .catch promises_.catchNotFound
+        .then (res)-> if res? then JSON.parse(res)
+
       put: (key, value)-> sub.putAsync key, JSON.stringify(value)
       del: (key)-> sub.delAsync(key)
       batch: (ops)-> sub.batchAsync(ops)
