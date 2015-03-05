@@ -5,38 +5,39 @@ errorCounter = 0
 module.exports = (_)->
   loggers_ = __.require('sharedLibs', 'loggers')(_)
 
-  logs_ =
-    log: (obj, label, color = 'cyan')->
-      # allow to pass the label as first argument
-      [obj, label] = loggers_.reorderObjLabel obj, label
-      if typeof obj is 'string' and !label?
-        console.log obj[color]
-        return obj
+  log = (obj, label, color = 'cyan')->
+    # allow to pass the label as first argument
+    [obj, label] = loggers_.reorderObjLabel obj, label
+    if typeof obj is 'string' and !label?
+      console.log obj[color]
+      return obj
 
+    else
+      if label?
+        console.log "****** ".grey + label[color] + " ******".grey
       else
-        if label?
-          console.log "****** ".grey + label[color] + " ******".grey
-        else
-          console.log "******************************"[color]
-        console.log obj
-        console.log "-----".grey
-        return obj
+        console.log "******************************"[color]
+      console.log obj
+      console.log "-----".grey
+      return obj
 
+  logs_ =
+    log: log
     error: (obj, label, parse=true)->
       # allow to pass the label as first argument
       [obj, label] = loggers_.reorderObjLabel obj, label
       errorCounter++
       obj = obj?.stack or obj  if parse
-      @log obj, label, 'red'
+      log obj, label, 'red'
 
     errorCount: -> errorCounter
 
-    success: (obj, label)-> @log obj, label, 'green'
-    info: (obj, label)-> @log obj, label, 'blue'
-    logCyan: (obj, label)-> @log obj, label, 'cyan'
-    warn: (obj, label)-> @log obj, label, 'yellow'
-    logPurple: (obj, label)-> @log obj, label, 'magenta'
-    logRainbow: (obj, label)-> @log obj, label, 'rainbow'
+    success: (obj, label)-> log obj, label, 'green'
+    info: (obj, label)-> log obj, label, 'blue'
+    logCyan: (obj, label)-> log obj, label, 'cyan'
+    warn: (obj, label)-> log obj, label, 'yellow'
+    logPurple: (obj, label)-> log obj, label, 'magenta'
+    logRainbow: (obj, label)-> log obj, label, 'rainbow'
 
     logArray: (array, label, color='yellow')->
       spaced = []
@@ -44,7 +45,7 @@ module.exports = (_)->
         spaced.push el
         spaced.push '--------'
       spaced.pop()
-      @log spaced, label, color
+      log spaced, label, color
 
     logErrorsCount: ->
       prev = 0
