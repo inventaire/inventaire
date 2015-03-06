@@ -5,14 +5,17 @@ cache_ = __.require 'lib', 'cache'
 promises_ = __.require 'lib', 'promises'
 wd_ = __.require 'lib', 'wikidata'
 
-baseUrl = wd_.API.wmflabs.base
-
-module.exports = (res, query)->
-  key = "wdq:#{query}"
-  cache_.get key, requestWdq.bind(null, query)
+module.exports = (res, query, P, Q)->
+  key = "wdq:#{query}:#{P}:#{Q}"
+  cache_.get key, requestWdq.bind(null, query, P, Q)
   .then res.json.bind(res)
   .catch _.errorHandler.bind(null, res)
 
-requestWdq = (query)->
-  url = "#{baseUrl}?q=#{query}"
+requestWdq = (query, P, Q)->
+  switch query
+    when 'claim' then return claim(P,Q)
+    else throw new Error "#{query} requestWdq isnt implemented"
+
+claim = (P, Q)->
+  url = wd_.API.wmflabs.claim(P, Q)
   promises_.get url

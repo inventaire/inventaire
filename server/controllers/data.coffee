@@ -5,7 +5,7 @@ wdq = __.require 'data','wikidata/wdq'
 
 
 module.exports.get = (req, res, next)->
-  {api, q} = req.query
+  {api, q, pid, qid} = req.query
   switch api
-    when 'wdq' then return wdq(res, q)
+    when 'wdq' then return wdq(res, q, pid, qid)
     else _.errorHandler res, "unknown data provider: #{api}", 400
