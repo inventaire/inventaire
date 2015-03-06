@@ -6,6 +6,11 @@ promises_ = __.require 'lib', 'promises'
 wd_ = __.require 'lib', 'wikidata'
 
 module.exports = (res, query, P, Q)->
+  try _.types [query, P, Q], 'strings...'
+  catch err
+    _.error err, 'wdq err'
+    return _.errorHandler(res, 'bad parameters', 400)
+
   key = "wdq:#{query}:#{P}:#{Q}"
   cache_.get key, requestWdq.bind(null, query, P, Q)
   .then res.json.bind(res)
