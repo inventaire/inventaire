@@ -12,7 +12,8 @@ module.exports =
   fullPublicHost: -> "#{@protocol}://#{@publicHost}:#{@port}"
   secret: 'yoursecrethere'
   db:
-    instable: true
+    instable: false
+    reloadDesignDocs: false
     protocol: 'http'
     host: 'localhost'
     port: 5984
