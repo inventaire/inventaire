@@ -6,10 +6,11 @@ promises_ = __.require 'lib', 'promises'
 
 relations_ = __.require 'controllers', 'relations/lib/queries'
 notifs_ = __.require 'lib', 'notifications'
+cache_ = __.require 'lib', 'cache'
 
 gravatar = require 'gravatar'
 
-module.exports =
+module.exports = user_ =
   db: __.require('couch', 'base')('users', 'user')
   byId: (id)-> @db.get(id)
 
@@ -65,13 +66,8 @@ module.exports =
     return @db.post(user).then (user)=> @db.get(user.id)
 
   getUserId: (email)->
-    if email?
-      @byEmail(email)
-      .then (docs)->
-        if docs?[0]? then return docs[0]._id
-        else return
-      .catch (err)-> throw new Error(err)
-    else promises_.reject()
+    if email? then cachedUserIdFromEmail(email)
+    else promises_.reject('no email found')
 
   fetchUsers: (ids)-> @db.fetch(ids)
 
@@ -172,3 +168,12 @@ module.exports =
 
   getNotifications: (userId)->
     notifs_.getUserNotifications userId
+
+
+cachedUserIdFromEmail = (email)->
+  key = "email:#{email}"
+  cache_.get key, userIdFromEmail.bind(null, email), 48*3600*1000
+
+userIdFromEmail = (email)->
+  user_.byEmail(email)
+  .then (docs)-> docs?[0]?._id
