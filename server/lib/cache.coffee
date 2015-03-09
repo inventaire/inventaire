@@ -48,7 +48,7 @@ requestOnlyIfNeeded = (key, method, cached)->
       putResponseInCache(key, res)
       return res
     .catch (err)->
-      _.error err, "#{key} request err (returning old value)"
+      _.warn err, "#{key} request err (returning old value)"
       return returnOldValue(key)
 
 putResponseInCache = (key, res)->
