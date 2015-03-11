@@ -21,7 +21,8 @@ Radio = __.require 'lib', 'radio'
 exportCurrentPort = ->
   fs.writeFile './run/inv-current-port', (CONFIG.port + '\n'), (err, data)->
     if err? then _.error err, 'exportCurrentPort err'
-    else _.success "inv-current-port #{CONFIG.port} exported"
+    else if CONFIG.verbosity > 2
+      _.success "inv-current-port #{CONFIG.port} exported"
 
 Radio.once 'db:ready', ->
   console.timeEnd 'startup'
