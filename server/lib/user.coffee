@@ -23,9 +23,13 @@ module.exports = user_ =
   nameIsValid: (username)-> /^\w{1,20}$/.test username
 
   nameIsAvailable: (username)->
+    if @nameIsValid(username)
+      _.warn username, 'invalid username'
+      return promises_.reject "invalid username: #{username}"
+
     if @isReservedWord(username)
-      _.error username, 'reserved word'
-      return promises_.reject 'Reserved words cant be usernames'
+      _.warn username, 'reserved word'
+      return promises_.reject "reserved words cant be usernames: #{username}"
 
     @byUsername(username)
     .then (docs)->
@@ -65,9 +69,14 @@ module.exports = user_ =
     _.info user, 'new user'
     return @db.post(user).then (user)=> @db.get(user.id)
 
-  getUserId: (email)->
-    if email? then cachedUserIdFromEmail(email)
-    else promises_.reject('no email found')
+  createUser: (username, email)->
+    @nameIsAvailable(username)
+    .then @newUser.bind(@, username, email)
+
+  getUserId: (req)->
+    id = req.user?._id
+    if id? then return promises_.resolve(id)
+    else promises_.reject('req.user._id couldnt be found')
 
   fetchUsers: (ids)-> @db.fetch(ids)
 
@@ -168,12 +177,3 @@ module.exports = user_ =
 
   getNotifications: (userId)->
     notifs_.getUserNotifications userId
-
-
-cachedUserIdFromEmail = (email)->
-  key = "email:#{email}"
-  cache_.get key, userIdFromEmail.bind(null, email), 48*3600*1000
-
-userIdFromEmail = (email)->
-  user_.byEmail(email)
-  .then (docs)-> docs?[0]?._id

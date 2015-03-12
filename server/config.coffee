@@ -3,9 +3,8 @@ __ = require('config').root
 _ = __.require 'builders', 'utils'
 
 americano = require 'americano'
-cookieParser = require 'cookie-parser'
-session = require 'cookie-session'
 
+auth = require './middlewares/auth'
 security = require './middlewares/security'
 routes = require './middlewares/routes'
 lang = require './middlewares/lang'
@@ -34,8 +33,11 @@ module.exports =
     logger.afterStatic
     statics.cacheControl
 
-    cookieParser()
-    session {secret: CONFIG.secret}
+    auth.cookieParser
+    auth.session
+    auth.passport.initialize
+    auth.passport.session
+
     routes.restrictApiAccess
     security.allowCrossDomain
     security.cspPolicy

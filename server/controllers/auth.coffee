@@ -3,6 +3,7 @@ __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 user_ = __.require 'lib', 'user'
 promises_ = __.require 'lib', 'promises'
+passport_ = __.require 'lib', 'passport/passport'
 
 module.exports.checkUsername = (req, res, next) ->
   reqUsername = req.body.username
@@ -28,64 +29,13 @@ module.exports.checkUsername = (req, res, next) ->
       status_verbose: 'invalid username'
     res.status(400).json obj
 
-module.exports.login = (req, res, next) ->
-  verifyAssertion(req)
-  .then (personaAnswer)->
-    verifyStatus personaAnswer, req, res
-  .catch (err)-> _.error err, 'login err'
-  .done()
+module.exports.login = (req, res, next)->
+  {strategy} = req.body
+  switch strategy
+    when 'browserid' then passport_.authenticate.browserid(req, res, next)
+    else _.errorHandler(res, "unknown login strategy: #{strategy}", 400)
 
 module.exports.logout = (req, res, next) ->
-  req.session = null
-  res.clearCookie "email"
+  res.clearCookie 'loggedin'
+  req.logout()
   res.redirect "/"
-  _.log req.session, "session after logout"
-
-
-verifyAssertion = (req)->
-  if CONFIG.env is 'offlinedev'
-    _.warn 'OFFLINE DEV'
-    personaAnswer =
-      status: 'okay'
-      email: CONFIG.mookEmail
-    return promises_.resolve(personaAnswer)
-  else
-    _.info 'verifyAssertion'
-    params =
-      url: "https://verifier.login.persona.org/verify"
-      json:
-        assertion: req.body.assertion
-        audience: CONFIG.fullPublicHost()
-    _.log params.json.audience, 'persona audience requested'
-    return promises_.post params
-
-verifyStatus = (personaAnswer, req, res) ->
-  _.log personaAnswer, 'personaAnswer'
-  username = req.body.username
-  req.session.email = email = personaAnswer.email
-
-  if personaAnswer.status is 'okay'
-    # CHECK IF EMAIL IS IN DB
-    user_.byEmail(email)
-    .then (docs)->
-      if docs[0]
-        # IF EMAIL IS ALREADY STORED IN DB, RETURN USER EMAIL AND USERNAME
-        user = user_.cleanUserData docs[0]
-        res.cookie "email", email
-        res.json user
-      else if username? and user_.nameIsValid username
-        # IF EMAIL IS NOT IN DB AND IF VALID USERNAME, CREATE USER
-        user_.newUser(username, email)
-        .then (body)->
-          res.cookie "email", email
-          res.json body
-        .catch (err)-> _.errorHandler res, err
-      else
-        err = "Couldn't find an account associated with this email"
-        throw err
-    .catch (err)-> _.errorHandler res, err
-    .done()
-
-  else
-    err = 'Persona verify status isnt okay oO: might be a problem with Persona audience setting'
-    _.errorHandler res, err

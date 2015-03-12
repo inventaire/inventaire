@@ -50,6 +50,8 @@
     "nano": "^6.1.1",
     "nodemailer": "^1.3.0",
     "nodemailer-express-handlebars": "0.0.3",
+    "passport": "^0.2.1",
+    "passport-browserid": "^0.1.4",
     "request": "^2.51.0",
     "satelize": "^0.1.0",
     "serve-favicon": "^2.1.7",
