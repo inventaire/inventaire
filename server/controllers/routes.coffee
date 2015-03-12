@@ -16,6 +16,9 @@ glob = require "./glob"
 log = require "./log"
 analytics = require './analytics/analytics'
 
+noGet = (req, res)->
+  _.errorHandler res, 'GET isnt implemented on this route', 400
+
 
 # routes structure:
 # 1 - api is the default prefix for server-side routes
@@ -24,12 +27,15 @@ analytics = require './analytics/analytics'
 
 routes =
   'api/auth/public/username':
+    get: noGet
     post: auth.checkUsername
 
   'api/auth/public/login':
+    get: noGet
     post: auth.login
 
   'api/auth/logout':
+    get: noGet
     post: auth.logout
 
   'api/user':
