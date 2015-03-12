@@ -5,6 +5,7 @@ module.exports =
   get: (req, res, next)->
     pathname = req._parsedUrl.pathname
     if missedApiRequest(req)
+      # the request didnt match previous routes
       err = "GET #{req._parsedUrl.pathname}: api route not found"
       _.errorHandler res, err, 404
     else if imageHeader(req)
