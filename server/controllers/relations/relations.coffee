@@ -7,7 +7,7 @@ module.exports.actions = (req, res, next) ->
   _.log query = req.query, 'relations.actions query'
   [action, othersId] = [query.action, query.user]
   if action? and othersId?
-    user_.getUserId(req.session.email)
+    user_.getUserId(req)
     .then (userId)->
       _.log arguments, 'action arguments'
       if userId isnt othersId

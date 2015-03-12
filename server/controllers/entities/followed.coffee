@@ -13,7 +13,7 @@ FollowedEntities = __.require 'models', 'followed_entities'
 
 module.exports =
   fetch: (req, res, next)->
-    user_.getUserId(req.session.email)
+    user_.getUserId(req)
     .then fetchFollowingDoc
     .then (doc)->
       if doc? then res.json(doc)
@@ -30,7 +30,7 @@ module.exports =
     unless _.typeOf(following) is 'boolean'
       return _.errorHandler res, "following isnt a boolean: #{following}", 400
 
-    user_.getUserId(req.session.email)
+    user_.getUserId(req)
     .then updateFollowingDoc.bind(null, entity, following)
     .then -> res.send('ok')
     .catch _.errorHandler.bind(_, res)

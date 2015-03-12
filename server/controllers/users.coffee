@@ -40,7 +40,7 @@ validUserIds = (ids)-> _.all ids, (id)-> /^\w{32}$/.test(id)
 
 fetchUsersItems = (req, res, ids) ->
   ids = ids.split '|'
-  user_.getUserId(req.session.email)
+  user_.getUserId(req)
   .then (userId)-> user_.getRelationsStatuses(userId, ids)
   .then (res)->
     [friends, others] = res

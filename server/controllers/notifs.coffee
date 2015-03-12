@@ -8,7 +8,7 @@ Promise = require 'bluebird'
 module.exports.updateStatus = (req, res, next) ->
   _.info times = req.body.times, 'times'
   if _.isArray(times) and times.length > 0
-    user_.getUserId(req.session.email)
+    user_.getUserId(req)
     .then (userId)->
 
       # could probably be replaced by a batch operation

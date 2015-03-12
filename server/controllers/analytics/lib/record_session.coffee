@@ -27,7 +27,7 @@ module.exports = (analytics_)->
   addUserId = (req, report)->
     unless req?.session?.email? then return report
 
-    user_.getUserId(req.session.email)
+    user_.getUserId(req)
 
     .then (userId)->
       report.user.id = userId

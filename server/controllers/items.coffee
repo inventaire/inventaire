@@ -9,14 +9,14 @@ module.exports =
   fetch: (req, res, next) ->
     # only fetch for session email
     # = only way to fetch private data on items
-    user_.getUserId(req.session.email)
+    user_.getUserId(req)
     .then items_.byOwner.bind(items_)
     .then (items)-> res.json items
     .catch (err)-> _.errorHandler res, err
 
   put: (req, res, next) ->
     _.log req.params.id, 'Put Item ID'
-    user_.getUserId(req.session.email)
+    user_.getUserId(req)
     .then (userId)->
       item = req.body
       if item._id is 'new' then Item.create(userId, item)
@@ -76,7 +76,7 @@ getItemsOwners = (items)->
 
 getUserIdAndItem = (req, itemId)->
   return Promise.all [
-    user_.getUserId(req.session.email)
+    user_.getUserId(req)
     items_.db.get(itemId)
   ]
 
