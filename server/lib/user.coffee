@@ -23,18 +23,18 @@ module.exports = user_ =
   nameIsValid: (username)-> /^\w{1,20}$/.test username
 
   nameIsAvailable: (username)->
-    unless @isReservedWord(username)
-      return @byUsername(username)
-      .then (docs)->
-        if docs.length is 0
-          _.success username, 'available'
-          return username
-        else
-          _.error username, 'not available'
-          throw new Error('This username already exists')
-    else
+    if @isReservedWord(username)
       _.error username, 'reserved word'
       return promises_.reject 'Reserved words cant be usernames'
+
+    @byUsername(username)
+    .then (docs)->
+      if docs.length is 0
+        _.success username, 'available'
+        return username
+      else
+        _.warn username, 'not available'
+        throw new Error('This username already exists')
 
   getSafeUserFromUsername: (username)->
     @byUsername(username)
