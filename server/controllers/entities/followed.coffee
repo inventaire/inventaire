@@ -5,7 +5,7 @@ _ = __.require 'builders', 'utils'
 # sharing items db as followed entities
 # are also a relation between a user and an entity
 db =  __.require('lib', 'items').db
-user_ = __.require 'lib', 'user'
+user_ = __.require 'lib', 'user/user'
 couch_ = __.require 'lib', 'couch'
 
 FollowedEntities = __.require 'models', 'followed_entities'

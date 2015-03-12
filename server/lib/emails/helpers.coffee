@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 
-user_ = __.require 'lib', 'user'
+user_ = __.require 'lib', 'user/user'
 
 module.exports =
   getUsersData: (user1Id, user2Id)->

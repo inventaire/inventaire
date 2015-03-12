@@ -1,7 +1,7 @@
 __ = require('config').root
 _ = __.require 'builders', 'utils'
 
-user_ = __.require 'lib', 'user'
+user_ = __.require 'lib', 'user/user'
 Promise = require 'bluebird'
 
 module.exports.getUser = (req, res, next) ->

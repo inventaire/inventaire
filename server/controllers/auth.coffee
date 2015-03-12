@@ -1,7 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
-user_ = __.require 'lib', 'user'
+user_ = __.require 'lib', 'user/user'
 promises_ = __.require 'lib', 'promises'
 passport_ = __.require 'lib', 'passport/passport'
 

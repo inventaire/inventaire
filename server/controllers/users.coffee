@@ -1,6 +1,6 @@
 __ = require('config').root
 _ = __.require 'builders', 'utils'
-user_ = __.require 'lib', 'user'
+user_ = __.require 'lib', 'user/user'
 items_ = __.require 'lib', 'items'
 Promise = require 'bluebird'
 

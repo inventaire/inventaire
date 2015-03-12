@@ -3,12 +3,12 @@ __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 
 promises_ = __.require 'lib', 'promises'
-
 relations_ = __.require 'controllers', 'relations/lib/queries'
 notifs_ = __.require 'lib', 'notifications'
 cache_ = __.require 'lib', 'cache'
-
 gravatar = require 'gravatar'
+
+isReservedWord = require './is_reserved_word'
 
 module.exports = user_ =
   db: __.require('couch', 'base')('users', 'user')
@@ -27,7 +27,7 @@ module.exports = user_ =
       _.warn username, 'invalid username'
       return promises_.reject "invalid username: #{username}"
 
-    if @isReservedWord(username)
+    if isReservedWord(username)
       _.warn username, 'reserved word'
       return promises_.reject "reserved words cant be usernames: #{username}"
 
@@ -119,32 +119,6 @@ module.exports = user_ =
     .then @deleteUser.bind @
     .catch (err)-> _.error err, 'deleteUserbyUsername err'
 
-  isReservedWord: (username)->
-    reservedWords = [
-      'api'
-      'entity'
-      'entities'
-      'inventory'
-      'inventories'
-      'wd'
-      'wikidata'
-      'isbn'
-      'profil'
-      'profile'
-      'item'
-      'items'
-      'auth'
-      'listings'
-      'contacts'
-      'contact'
-      'user'
-      'users'
-      'friend'
-      'friends'
-      'welcome'
-    ]
-    return username in reservedWords
-
   getUserRelations: (userId, getDocs)->
     # just proxiing to let this module centralize
     # interactions with the social graph
@@ -162,15 +136,15 @@ module.exports = user_ =
       return [friends, others]
 
   cleanUserData: (value)->
-    if value.username? and value.email? and value.created? and value.picture?
-      user =
-        username: value.username
-        email: value.email
-        created: value.created
-        picture: value.picture
-      return user
-    else
+    {username, email, created, picture} = value
+    unless username? and email? and created? and picture?
       throw new Error('missing user data')
+
+    return user =
+      username: username
+      email: email
+      created: created
+      picture: picture
 
   addNotification: (userId, type, data)->
     notifs_.add userId, type, data
