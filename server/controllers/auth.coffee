@@ -36,6 +36,6 @@ module.exports.login = (req, res, next)->
     else _.errorHandler(res, "unknown login strategy: #{strategy}", 400)
 
 module.exports.logout = (req, res, next) ->
-  res.clearCookie 'loggedin'
+  res.clearCookie 'loggedIn'
   req.logout()
   res.redirect "/"

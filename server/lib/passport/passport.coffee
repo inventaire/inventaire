@@ -24,7 +24,7 @@ passport.use 'browserid', require('./browser_id_strategy')
 
 options =
   afterComplete: (req, res)->
-    res.cookie 'loggedin', true
+    res.cookie 'loggedIn', true
     res.send 'ok'
 
 module.exports =
