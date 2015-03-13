@@ -34,7 +34,7 @@ routes =
     get: noGet
     post: auth.login
 
-  'api/auth/logout':
+  'api/auth/public/logout':
     get: noGet
     post: auth.logout
 
