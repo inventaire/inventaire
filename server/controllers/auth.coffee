@@ -31,14 +31,24 @@ module.exports.checkUsername = (req, res, next) ->
   {username} = req.body
   # checks for validity, availability, reserve words
   user_.nameIsAvailable username
-  .then ->
-    res.json {username: username, status: 'available'}
-  .catch (err)->
-    {type} = err
-    if type is 'not_available'
-      obj =
-        username: username
-        status: type
-        status_verbose: "this username isn't available"
-      res.status(400).json obj
-    else _.errorHandler(res, 'invalid username', 400)
+  .then -> res.json {username: username, status: 'available'}
+  .catch catchAvailabilityError.bind(null, res, username, 'username')
+
+
+module.exports.checkEmail = (req, res, next) ->
+  {email} = req.body
+  # checks for validity, availability
+  user_.emailIsAvailable email
+  .then -> res.json {email: email, status: 'available'}
+  .catch catchAvailabilityError.bind(null, res, email, 'email')
+
+
+catchAvailabilityError = (res, value, label, err)->
+  {type} = err
+  if type is 'not_available'
+    obj =
+      status: type
+      status_verbose: "this #{label} is already used"
+    obj[label] = value
+    res.status(400).json obj
+  else _.errorHandler(res, "invalid #{label}", 400)

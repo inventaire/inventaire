@@ -53,7 +53,7 @@ module.exports = User =
       return promises_.reject(err)
 
 User.validUsername = validUsername = (username)-> Username.test(username)
-validEmail = (username)-> Email.test(username)
+User.validEmail = validEmail = (username)-> Email.test(username)
 validPassword = (password)->  8 <= password.length <=60
 validStrategy = (creationStrategy)-> creationStrategy in ['browserid', 'local']
 

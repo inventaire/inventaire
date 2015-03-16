@@ -38,14 +38,15 @@ module.exports = user_ =
       return promises_.reject "reserved words cant be usernames: #{username}"
 
     @byUsername(username)
-    .then (docs)->
-      if docs.length is 0
-        _.success username, 'available'
-        return username
-      else
-        err = new Error('This username already exists')
-        _.warn username, err.type = 'not_available'
-        throw err
+    .then checkAvailability.bind(null, username, 'username')
+
+  emailIsAvailable: (email)->
+    unless User.validEmail(email)
+      _.warn email, 'invalid email'
+      return promises_.reject "invalid email: #{email}"
+
+    @byEmail(email)
+    .then checkAvailability.bind(null, email, 'email')
 
   getSafeUserFromUsername: (username)->
     @byUsername(username)
@@ -151,3 +152,12 @@ module.exports = user_ =
 
   getNotifications: (userId)->
     notifs_.getUserNotifications userId
+
+checkAvailability = (value, label, docs)->
+  if docs.length is 0
+    _.success value, 'available'
+    return value
+  else
+    err = new Error("This #{label} is already used")
+    _.warn value, err.type = 'not_available'
+    throw err

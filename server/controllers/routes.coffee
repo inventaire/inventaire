@@ -27,9 +27,6 @@ noGet = (req, res)->
 # 3 - 'public' if the route can be called without a session
 
 routes =
-  'api/auth/public/username':
-    get: noGet
-    post: auth.checkUsername
 
   'api/auth/public/signup':
     get: noGet
@@ -42,6 +39,14 @@ routes =
   'api/auth/public/logout':
     get: noGet
     post: auth.logout
+
+  'api/auth/public/username':
+    get: noGet
+    post: auth.checkUsername
+
+  'api/auth/public/email':
+    get: noGet
+    post: auth.checkEmail
 
   'api/user':
     get: user.getUser
