@@ -80,3 +80,5 @@ module.exports =
     auth:
       user: 'yoursettings'
       pass: 'yoursettings'
+  mailgun:
+    pubkey: 'yourkey'
