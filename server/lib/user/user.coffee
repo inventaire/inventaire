@@ -43,8 +43,9 @@ module.exports = user_ =
         _.success username, 'available'
         return username
       else
-        _.warn username, 'not available'
-        throw new Error('This username already exists')
+        err = new Error('This username already exists')
+        _.warn username, err.type = 'not_available'
+        throw err
 
   getSafeUserFromUsername: (username)->
     @byUsername(username)

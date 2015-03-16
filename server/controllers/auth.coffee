@@ -6,30 +6,6 @@ User = __.require 'models', 'user'
 promises_ = __.require 'lib', 'promises'
 passport_ = __.require 'lib', 'passport/passport'
 
-module.exports.checkUsername = (req, res, next) ->
-  reqUsername = req.body.username
-  _.success reqUsername, 'checkUsername reqUsername'
-  if User.validUsername reqUsername
-    _.success reqUsername, 'validUsername'
-    user_.nameIsAvailable reqUsername
-    .then ()->
-      res.json {username: reqUsername, status: 'available'}
-    .catch (err)->
-      obj =
-        username: reqUsername
-        status: 'not available'
-        status_verbose: "this username isn't available"
-        err: err
-      res.status(400).json obj
-    .done()
-  else
-    _.error reqUsername, 'nameIsntValid'
-    obj =
-      username: reqUsername
-      status: 'invalid'
-      status_verbose: 'invalid username'
-    res.status(400).json obj
-
 module.exports.signup = (req, res, next)->
   # _.log arguments, 'signup arguments'
   _.log req.body, 'req.body'
@@ -49,3 +25,20 @@ module.exports.logout = (req, res, next) ->
   res.clearCookie 'loggedIn'
   req.logout()
   res.redirect "/"
+
+
+module.exports.checkUsername = (req, res, next) ->
+  {username} = req.body
+  # checks for validity, availability, reserve words
+  user_.nameIsAvailable username
+  .then ->
+    res.json {username: username, status: 'available'}
+  .catch (err)->
+    {type} = err
+    if type is 'not_available'
+      obj =
+        username: username
+        status: type
+        status_verbose: "this username isn't available"
+      res.status(400).json obj
+    else _.errorHandler(res, 'invalid username', 400)
