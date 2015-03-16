@@ -16,7 +16,8 @@ module.exports =
     missingKeys.forEach (key)->
       # using _ as the convention to identify short keys: ex: awesome_title
       # (that is, keys with an english value different than the key itself)
-      if /_/.test(key) then shortKeys.push(key)
+      # the underscore should be surrended by letters, not spaces
+      if /\w+_\w+/.test(key) then shortKeys.push(key)
       else fullKeys.push(key)
 
     appendToShortKeys(shortKeys)
