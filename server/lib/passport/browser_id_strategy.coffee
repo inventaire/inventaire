@@ -2,6 +2,7 @@ CONFIG = require 'config'
 __ = require('config').root
 _ = __.require 'builders', 'utils'
 user_ = __.require 'lib', 'user/user'
+User = __.require 'models', 'user'
 
 BrowserIdStrategy = require('passport-browserid').Strategy
 
@@ -18,7 +19,8 @@ verify = (req, email, done)->
     if user?
       done(null, user)
     else if username?
-      user_.createUser(username, email)
+      # this is browserid way to signup
+      user_.create(username, email, 'browserid')
       .then (user)-> done(null, user)
     else
       _.error user, "user not found for #{email}"

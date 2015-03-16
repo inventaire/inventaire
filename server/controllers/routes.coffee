@@ -31,6 +31,10 @@ routes =
     get: noGet
     post: auth.checkUsername
 
+  'api/auth/public/signup':
+    get: noGet
+    post: auth.signup
+
   'api/auth/public/login':
     get: noGet
     post: auth.login

@@ -7,6 +7,7 @@ relations_ = __.require 'controllers', 'relations/lib/queries'
 notifs_ = __.require 'lib', 'notifications'
 cache_ = __.require 'lib', 'cache'
 gravatar = require 'gravatar'
+User = __.require 'models', 'user'
 
 isReservedWord = require './is_reserved_word'
 
@@ -20,10 +21,15 @@ module.exports = user_ =
   byUsername: (username)->
     @db.viewByKey 'byUsername', username.toLowerCase()
 
-  nameIsValid: (username)-> /^\w{1,20}$/.test username
+  findOneByUsername: (username)->
+    @byUsername(username)
+    .then (users)->
+      user = users[0]
+      if user?.username is username then return user
+      else throw new Error "user not found for username: #{username}"
 
   nameIsAvailable: (username)->
-    if @nameIsValid(username)
+    unless User.validUsername(username)
       _.warn username, 'invalid username'
       return promises_.reject "invalid username: #{username}"
 
@@ -58,20 +64,13 @@ module.exports = user_ =
     params.limit = options.limit if options?.limit?
     @db.viewCustom 'byUsername', params
 
-  newUser: (username, email)->
-    user =
-      type: 'user'
-      username: username
-      email: email
-      created: Date.now()
-      # gravatar params: {d: default, s: size}
-      picture: gravatar.url(email, {d: 'mm', s: '200'})
-    _.info user, 'new user'
-    return @db.post(user).then (user)=> @db.get(user.id)
-
-  createUser: (username, email)->
+  create: (username, email, creationStrategy, password)->
     @nameIsAvailable(username)
-    .then @newUser.bind(@, username, email)
+    .then -> User.create(username, email, creationStrategy, password)
+    .then @db.post.bind(@db)
+    .then _.Log('user created')
+    .then (user)-> user.id
+    .then @byId.bind(@)
 
   getUserId: (req)->
     id = req.user?._id

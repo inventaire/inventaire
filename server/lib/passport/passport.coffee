@@ -20,6 +20,9 @@ passport.deserializeUser (id, done) ->
     _.error err, 'err'
     done(err)
 
+passport.use 'local-login', require('./local_login_strategy')
+passport.use 'local-signup', require('./local_signup_strategy')
+# browserid startegy handles both login and signup
 passport.use 'browserid', require('./browser_id_strategy')
 
 options =
@@ -30,4 +33,6 @@ options =
 module.exports =
   passport: passport
   authenticate:
+    localLogin: passport.authenticate 'local-login', options
+    localSignup: passport.authenticate 'local-signup', options
     browserid: passport.authenticate 'browserid', options
