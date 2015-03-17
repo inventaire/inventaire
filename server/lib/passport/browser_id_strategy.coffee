@@ -23,7 +23,7 @@ verify = (req, email, done)->
       user_.create(username, email, 'browserid')
       .then (user)-> done(null, user)
     else
-      _.error user, "user not found for #{email}"
+      _.warn user, "user not found for #{email}"
       done(null, false)
   .catch (err)->
     _.error err, 'browserid verify err'
