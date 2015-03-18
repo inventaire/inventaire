@@ -26,19 +26,38 @@ module.exports.getUser = (req, res, next) ->
 
 module.exports.updateUser = (req, res, next) ->
   # implies that req.isAuthenticated() is true
-  current = req.user
-  update = req.body
 
-  unless current._id is update._id
-    throw new Error "id mismatch: #{current._id} - #{update._id}"
+  {attribute, value} = req.body
+  {user} = req
 
-  if _.isEqual(current, update)
+  if user[attribute] is value
     return _.errorHandler res, 'already up-to-date', 400
 
-  user_.db.post(req.body)
-  .then (body)-> _.getObjIfSuccess user_.db, body
-  .then (body)-> res.json(body)
-  .catch (err)-> _.errorHandler res, err
+  if attribute in User.attributes.updatable
+    unless User.tests[attribute](value)
+      return _.errorHandler res, "invalid #{attribute}: #{value}", 400
 
+    return updateAttribute(user, attribute, value)
+    .then updateConfirmation.bind(null, res)
+    .catch _.errorHandler.bind(_, res)
+
+  if attribute in User.attributes.concurrencial
+    return user_.availability[attribute](value)
+    .then updateAttribute.bind(null, user, attribute, value)
+    .then updateConfirmation.bind(null, res)
+    .catch (err)-> _.errorHandler res, err, 400
+
+  _.errorHandler res, "forbidden update: #{attribute} - #{value}", 403
+
+
+
+updateAttribute = (user, attribute, value)->
+  user_.db.update user._id, (doc)->
+    doc[attribute] = value
+    return doc
+
+updateConfirmation = (res, doc)->
+  _.success doc, 'updateConfirmation'
+  res.send('ok')
 
 securedData = (user)-> _.pick user, User.attributes.ownerSafe

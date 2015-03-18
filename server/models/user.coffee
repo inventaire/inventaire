@@ -68,6 +68,12 @@ replacePassword = (user, hash)->
   user.password = hash
   return user
 
+User.tests =
+  username: validUsername
+  email: validEmail
+  language: (lang)-> /^\w{2}$/.test(lang)
+  picture: (picture)-> _.isUrl(picture)
+
 User.attributes = {}
 
 # attributes that can be send to the owner
@@ -79,3 +85,15 @@ User.attributes.ownerSafe = [
     'picture'
     'language'
   ]
+
+# attributes that need availability check before update
+User.attributes.concurrencial = [
+  'username'
+  'email'
+]
+
+# attributes that can be changed with a simple validity check
+User.attributes.updatable = [
+  'picture'
+  'language'
+]
