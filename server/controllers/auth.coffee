@@ -30,7 +30,7 @@ module.exports.logout = (req, res, next) ->
 module.exports.checkUsername = (req, res, next) ->
   {username} = req.body
   # checks for validity, availability, reserve words
-  user_.nameIsAvailable username
+  user_.availability.username username
   .then -> res.json {username: username, status: 'available'}
   .catch catchAvailabilityError.bind(null, res, username, 'username')
 
@@ -38,7 +38,7 @@ module.exports.checkUsername = (req, res, next) ->
 module.exports.checkEmail = (req, res, next) ->
   {email} = req.body
   # checks for validity, availability
-  user_.emailIsAvailable email
+  user_.availability.email email
   .then -> res.json {email: email, status: 'available'}
   .catch catchAvailabilityError.bind(null, res, email, 'email')
 

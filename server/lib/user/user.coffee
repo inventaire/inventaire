@@ -9,10 +9,10 @@ cache_ = __.require 'lib', 'cache'
 gravatar = require 'gravatar'
 User = __.require 'models', 'user'
 
-isReservedWord = require './is_reserved_word'
+db = __.require('couch', 'base')('users', 'user')
 
-module.exports = user_ =
-  db: __.require('couch', 'base')('users', 'user')
+user_ =
+  db: db
   byId: (id)-> @db.get(id)
 
   byEmail: (email)->
@@ -27,26 +27,6 @@ module.exports = user_ =
       user = users[0]
       if user?.username is username then return user
       else throw new Error "user not found for username: #{username}"
-
-  nameIsAvailable: (username)->
-    unless User.validUsername(username)
-      _.warn username, 'invalid username'
-      return promises_.reject "invalid username: #{username}"
-
-    if isReservedWord(username)
-      _.warn username, 'reserved word'
-      return promises_.reject "reserved words cant be usernames: #{username}"
-
-    @byUsername(username)
-    .then checkAvailability.bind(null, username, 'username')
-
-  emailIsAvailable: (email)->
-    unless User.validEmail(email)
-      _.warn email, 'invalid email'
-      return promises_.reject "invalid email: #{email}"
-
-    @byEmail(email)
-    .then checkAvailability.bind(null, email, 'email')
 
   getSafeUserFromUsername: (username)->
     @byUsername(username)
@@ -67,11 +47,11 @@ module.exports = user_ =
     @db.viewCustom 'byUsername', params
 
   create: (username, email, creationStrategy, password)->
-    @nameIsAvailable(username)
+    @availability.username(username)
     .then -> User.create(username, email, creationStrategy, password)
     .then @db.post.bind(@db)
     .then _.Log('user created')
-    .then (user)-> user.id
+    .then (docInfo)-> docInfo.id
     .then @byId.bind(@)
 
   getUserId: (req)->
@@ -153,11 +133,6 @@ module.exports = user_ =
   getNotifications: (userId)->
     notifs_.getUserNotifications userId
 
-checkAvailability = (value, label, docs)->
-  if docs.length is 0
-    _.success value, 'available'
-    return value
-  else
-    err = new Error("This #{label} is already used")
-    _.warn value, err.type = 'not_available'
-    throw err
+user_.availability = require('./availability')(user_)
+
+module.exports = user_
