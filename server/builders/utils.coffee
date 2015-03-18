@@ -5,11 +5,13 @@ lo = require 'lodash'
 
 server_ = __.require 'utils', 'base'
 logs_ = __.require('utils', 'logs')(lo)
+json_ = __.require 'utils', 'json'
 
 types_ = __.require 'sharedLibs', 'types'
 if not CONFIG.typeCheck then types_.types = lo.noop
 
-utils = lo.extend(lo, server_, logs_, types_)
+
+utils = lo.extend(lo, server_, logs_, json_, types_)
 
 sharedUtils = __.require('sharedLibs', 'utils')(utils)
 

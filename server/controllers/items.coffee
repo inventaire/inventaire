@@ -21,9 +21,9 @@ module.exports =
       item = req.body
       if item._id is 'new' then Item.create(userId, item)
       else Item.update(userId, item)
-    .then (body)-> _.getObjIfSuccess items_.db, body
+    .then couch_.getObjIfSuccess.bind(null, items_.db)
     .then (body)-> res.status(201).json body
-    .catch (err)-> _.errorHandler res, err
+    .catch _.errorHandler.bind(null, res)
 
   del: (req, res, next) ->
     _.info req.params, 'del'
@@ -33,7 +33,7 @@ module.exports =
       if userId is item?.owner
         _.log id, 'deleting!'
         items_.db.delete(id, rev)
-        .then (body)-> res.json(body)
+        .then res.json.bind(res)
       else
         err = "user isnt item.owner: #{userId} / #{item.owner}"
         _.errorHandler res, err, 403

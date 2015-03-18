@@ -14,3 +14,10 @@ couch_.joinOrderedIds = (idA, idB)->
 couch_.ignoreNotFound = (err)->
   if err?.error is 'not_found' then return
 
+couch_.getObjIfSuccess = (db, body)->
+  if db.get? and body.ok
+    return db.get(body.id)
+  else if db.get?
+    throw new Error "#{body.error}: #{body.reason}"
+  else
+    throw new Error "bad db object passed to _.getObjIfSuccess"
