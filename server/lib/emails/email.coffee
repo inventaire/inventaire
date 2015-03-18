@@ -8,6 +8,18 @@ base =
   from: 'hello@inventaire.io'
 
 module.exports =
+  validationEmail: (user)->
+    {username, email} = user
+    {token} = user.emailValidation
+    return _.extend {}, base,
+      to: email
+      subject: "Welcome on Inventaire.io!! Here is the link to confirm your email address"
+      template: 'validation_email'
+      context:
+        user: user
+        token: token
+        host: host
+
   friendAcceptedRequest: (options)->
     [user1, user2] = validateOptions options
 

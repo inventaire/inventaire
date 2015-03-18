@@ -8,6 +8,11 @@ email_ = require './email'
 
 
 module.exports =
+  validationEmail: (userData)->
+    console.log 'validationEmail', userData
+    email = email_.validationEmail(userData)
+    transporter_.sendMail email
+
   friendAcceptedRequest: (userToNotify, newFriend)->
     helpers_.getUsersData(userToNotify, newFriend)
     .then email_.friendAcceptedRequest
@@ -19,6 +24,7 @@ module.exports =
     .then email_.friendshipRequest
     .then transporter_.sendMail
     .catch Err('friendshipRequest', userToNotify, requestingUser)
+
 
 Err = (label, user1, user2)->
   _.Error("#{label} email fail for #{user1} / #{user2}")
