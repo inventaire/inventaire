@@ -1,13 +1,13 @@
 __ = require('config').root
 _ = __.require 'builders', 'utils'
 
+User = __.require 'models', 'user'
 user_ = __.require 'lib', 'user/user'
 Promise = require 'bluebird'
 
 module.exports.getUser = (req, res, next) ->
   # implies that req.isAuthenticated() is true
-  userData = req.user
-  _.log userData, 'getUser'
+  userData = securedData(req.user)
   userId = userData._id
 
   Promise.all([
@@ -34,8 +34,11 @@ module.exports.updateUser = (req, res, next) ->
 
   if _.isEqual(current, update)
     return _.errorHandler res, 'already up-to-date', 400
-    
+
   user_.db.post(req.body)
   .then (body)-> _.getObjIfSuccess user_.db, body
   .then (body)-> res.json(body)
   .catch (err)-> _.errorHandler res, err
+
+
+securedData = (user)-> _.pick user, User.attributes.ownerSafe

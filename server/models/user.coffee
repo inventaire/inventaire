@@ -67,3 +67,15 @@ withHashedPassword = (user)->
 replacePassword = (user, hash)->
   user.password = hash
   return user
+
+User.attributes = {}
+
+# attributes that can be send to the owner
+User.attributes.ownerSafe = [
+    '_id'
+    '_rev'
+    'username'
+    'email'
+    'picture'
+    'language'
+  ]
