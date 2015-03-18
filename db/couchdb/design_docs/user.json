@@ -10,6 +10,9 @@
        },
        "byCreation": {
            "map": "(doc)->\n  if doc.type is 'user'\n    emit(doc.created, doc.username)"
+       },
+       "byEmailValidationToken": {
+           "map": "(doc)->\n  if doc.type is 'user' and doc.emailValidation?.token?\n    emit doc.emailValidation.token, null"
        }
    }
 }

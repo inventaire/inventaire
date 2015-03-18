@@ -1,7 +1,7 @@
 CONFIG = require('config')
 _ = CONFIG.root.require('builders', 'utils')
 
-auth = require "./auth"
+auth = require "./auth/auth"
 user = require "./user"
 items = require "./items"
 users = require "./users"
@@ -47,6 +47,9 @@ routes =
   'api/auth/public/email':
     get: noGet
     post: auth.checkEmail
+
+  'api/auth/public/token':
+    get: auth.token
 
   'api/user':
     get: user.getUser

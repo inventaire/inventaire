@@ -87,6 +87,25 @@ describe 'user model', ->
           # _.error(err, 'err')
           done()
 
+      it "should add a validation token", (done)->
+        create(validUser())
+        .then (user)->
+          console.log user
+          user.emailValidation.should.be.an.Object
+          user.emailValidation.token.should.be.a.String
+          user.emailValidation.token.length.should.equal 36
+          done()
+
+      it "should add a timestamp to emailValidation", (done)->
+        create(validUser())
+        .then (user)->
+          console.log user
+          user.emailValidation.should.be.an.Object
+          user.emailValidation.timestamp.should.be.a.Number
+          _.expired(user.emailValidation.timestamp, 0).should.equal true
+          _.expired(user.emailValidation.timestamp, 1000).should.equal false
+          done()
+
     describe 'password validation', ->
       it "should throw on passwords too short", (done)->
         args = replaceParam 3, 'shortpw'

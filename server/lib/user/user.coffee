@@ -11,6 +11,7 @@ User = __.require 'models', 'user'
 
 db = __.require('couch', 'base')('users', 'user')
 
+token_ = require('./token')(db)
 user_ =
   db: db
   byId: (id)-> @db.get(id)
@@ -53,6 +54,7 @@ user_ =
     .then _.Log('user created')
     .then (docInfo)-> docInfo.id
     .then @byId.bind(@)
+    .then token_.sendValidationEmail
 
   getUserId: (req)->
     id = req.user?._id
@@ -135,4 +137,4 @@ user_ =
 
 user_.availability = require('./availability')(user_)
 
-module.exports = user_
+module.exports = _.extend user_, token_

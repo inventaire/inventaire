@@ -52,3 +52,5 @@ catchAvailabilityError = (res, value, label, err)->
     obj[label] = value
     res.status(400).json obj
   else _.errorHandler(res, "invalid #{label}", 400)
+
+module.exports.token = require './token'

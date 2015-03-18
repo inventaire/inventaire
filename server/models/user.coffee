@@ -5,6 +5,7 @@ pw_ = __.require('lib', 'crypto').passwords
 promises_ = __.require 'lib', 'promises'
 {Username, Email} = require './common-tests'
 gravatar = require 'gravatar'
+uuid = require 'simple-uuid'
 
 
 module.exports = User =
@@ -36,6 +37,7 @@ module.exports = User =
       switch creationStrategy
         when 'local'
           user.validatedEmail = false
+          user.emailValidation = getEmailValidationData()
           unless validPassword(password)
             throw new Error "invalid password"
           user.password = password
@@ -68,11 +70,23 @@ replacePassword = (user, hash)->
   user.password = hash
   return user
 
+getEmailValidationData = ->
+  token: uuid()
+  timestamp: _.now()
+
+User.validToken = (token, emailValidation)->
+  _.types arguments, ['string', 'object']
+  _.log('validToken arguments', arguments)
+  return false  if _.expired(emailValidation.timestamp, 24*3600*1000)
+  return false  if token isnt emailValidation.token
+  return true
+
 User.tests =
   username: validUsername
   email: validEmail
   language: (lang)-> /^\w{2}$/.test(lang)
   picture: (picture)-> _.isUrl(picture)
+
 
 User.attributes = {}
 
