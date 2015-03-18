@@ -8,7 +8,7 @@ String::logIt = (label, color)->
 
 module.exports =
   errorHandler: (res, err, status = 500, sendError)->
-    if /^4/.test status then @warn err
+    if /^4/.test status then @warn err, "#{status} (_.errorHandler)"
     else @error new Error(err), err
     res.setHeader 'Content-Type', 'text/html'
     res.status status or 500
