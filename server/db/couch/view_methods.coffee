@@ -22,6 +22,10 @@ module.exports = (designDocName)->
         include_docs: true
       @viewCustom viewName, query
 
+    viewFindOneByKey: (viewName, key)->
+      @viewByKey viewName, key
+      .then couch_.firstDoc
+
     viewByKeys: (viewName, keys)->
       _.types arguments, ['string', 'array']
       query = { include_docs: true }

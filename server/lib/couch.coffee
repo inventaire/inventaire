@@ -5,6 +5,8 @@ couch_.mapDoc = (res)-> couch_.mapResult res, 'doc'
 couch_.mapValue = (res)-> res.rows.map (row)-> row.value
 couch_.mapValueId = (res)-> res.rows.map (row)-> row.value._id
 
+couch_.firstDoc = (docs)-> docs?[0]
+
 couch_.joinOrderedIds = (idA, idB)->
   if idA < idB then "#{idA}:#{idB}"
   else "#{idB}:#{idA}"
