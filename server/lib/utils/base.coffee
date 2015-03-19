@@ -1,5 +1,4 @@
 colors = require 'colors'
-fs = require 'fs'
 
 String::logIt = (label, color)->
   if color? then console.log "[" + label[color] + "] #{@toString()}"
