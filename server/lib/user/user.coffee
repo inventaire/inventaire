@@ -6,6 +6,7 @@ promises_ = __.require 'lib', 'promises'
 relations_ = __.require 'controllers', 'relations/lib/queries'
 notifs_ = __.require 'lib', 'notifications'
 cache_ = __.require 'lib', 'cache'
+couch_ = __.require 'lib', 'couch'
 gravatar = require 'gravatar'
 User = __.require 'models', 'user'
 
@@ -24,8 +25,8 @@ user_ =
 
   findOneByUsername: (username)->
     @byUsername(username)
-    .then (users)->
-      user = users[0]
+    .then couch_.firstDoc
+    .then (user)->
       if user?.username is username then return user
       else throw new Error "user not found for username: #{username}"
 
