@@ -40,13 +40,13 @@ routes =
     get: noGet
     post: auth.logout
 
-  'api/auth/public/username':
+  'api/auth/public/username-availability':
     get: noGet
-    post: auth.checkUsername
+    post: auth.usernameAvailability
 
-  'api/auth/public/email':
+  'api/auth/public/email-availability':
     get: noGet
-    post: auth.checkEmail
+    post: auth.emailAvailability
 
   'api/auth/public/token':
     get: auth.token
