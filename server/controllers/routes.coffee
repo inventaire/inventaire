@@ -51,6 +51,10 @@ routes =
   'api/auth/public/token':
     get: auth.token
 
+  'api/auth/email-confirmation':
+    get: noGet
+    post: auth.emailConfirmation
+
   'api/user':
     get: user.getUser
     put: user.updateUser

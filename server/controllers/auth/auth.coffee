@@ -28,3 +28,4 @@ exports.logout = (req, res, next) ->
 _.extend exports, require('./availability')
 
 exports.token = require './token'
+exports.emailConfirmation = require './email_confirmation'
