@@ -37,13 +37,13 @@ User.create = (username, email, creationStrategy, password)->
 
     switch creationStrategy
       when 'local'
-        user.validatedEmail = false
+        user.validEmail = false
         user.emailValidation = getEmailValidationData()
         unless tests.password(password)
           throw new Error "invalid password"
         user.password = password
       when 'browserid'
-        user.validatedEmail = true
+        user.validEmail = true
         # user can be created with a password when using
         # browserid authentification
         if password?

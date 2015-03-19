@@ -10,7 +10,7 @@ module.exports = (db)->
   token_ = {}
 
   token_.sendValidationEmail = (user)->
-    unless user.validatedEmail
+    unless user.validEmail
       Radio.emit 'validation:email', user
     else _.warn user, 'email was already validated'
     return user
@@ -24,7 +24,7 @@ module.exports = (db)->
 
   updateIfValidToken = (token, user)->
     _.log user, 'user byEmailValidationToken'
-    if user? and User.validToken(token, user.emailValidation)
+    if user? and User.tests.token(token, user.emailValidation)
       db.update user._id, emailIsValid
     else
       err = new Error 'token is invalid or expired'
@@ -35,5 +35,5 @@ module.exports = (db)->
 
 
 emailIsValid = (user)->
-  user.validatedEmail = true
+  user.validEmail = true
   return _.omit user, 'emailValidation'

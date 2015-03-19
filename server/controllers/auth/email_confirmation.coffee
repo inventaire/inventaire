@@ -23,13 +23,13 @@ module.exports = (req, res, next)->
 
 
 sendEmailValidation = (user)->
-  { _id, creationStrategy, validatedEmail} = user
+  { _id, creationStrategy, validEmail} = user
   unless creationStrategy is 'local'
     err = new Error "wrong authentification creationStrategy: #{creationStrategy}"
     err.type = 'wrong_strategy'
     throw err
 
-  if validatedEmail
+  if validEmail
     err = new Error "email was already validated"
     err.type = 'already_validated'
     throw err

@@ -9,7 +9,7 @@ attributes.ownerSafe = [
     'picture'
     'language'
     'creationStrategy'
-    'validatedEmail'
+    'validEmail'
   ]
 
 # attributes that need availability check before update
