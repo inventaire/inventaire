@@ -1,5 +1,6 @@
 CONFIG = require 'config'
 __ = CONFIG.root
+{tokenTtl} = CONFIG
 _ = __.require 'builders', 'utils'
 pw_ = __.require('lib', 'crypto').passwords
 promises_ = __.require 'lib', 'promises'
@@ -70,14 +71,14 @@ replacePassword = (user, hash)->
   user.password = hash
   return user
 
-getEmailValidationData = ->
+User.getEmailValidationData = getEmailValidationData = ->
   token: uuid()
   timestamp: _.now()
 
 User.validToken = (token, emailValidation)->
   _.types arguments, ['string', 'object']
   _.log('validToken arguments', arguments)
-  return false  if _.expired(emailValidation.timestamp, 24*3600*1000)
+  return false  if _.expired(emailValidation.timestamp, tokenTtl)
   return false  if token isnt emailValidation.token
   return true
 
@@ -98,6 +99,8 @@ User.attributes.ownerSafe = [
     'email'
     'picture'
     'language'
+    'creationStrategy'
+    'validatedEmail'
   ]
 
 # attributes that need availability check before update
