@@ -15,6 +15,7 @@ promisesHandlers =
   resolve: Promise.resolve.bind(Promise)
   settle: (promises)->
     Promise.settle(promises).then pluckSettled
+  start: Promise.resolve.bind(Promise)
 
 
 errorsHandlers =
