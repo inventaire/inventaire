@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 assert = require 'assert'
-{EntityUri, ItemId} = require './common-tests'
+{EntityUri, ItemId} = require './tests/common-tests'
 items_ = __.require 'lib', 'items'
 Promise = require 'bluebird'
 

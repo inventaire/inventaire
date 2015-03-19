@@ -18,7 +18,7 @@ verify = (req, email, done)->
   .then (user)->
     if user?
       done(null, user)
-    else if username? and User.validUsername(username)
+    else if username? and User.tests.username(username)
       # this is browserid way to signup
       user_.create(username, email, 'browserid')
       .then (user)-> done(null, user)

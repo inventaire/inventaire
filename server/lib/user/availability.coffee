@@ -7,7 +7,7 @@ isReservedWord = require './is_reserved_word'
 
 module.exports = (user_)->
   username: (username)->
-    unless User.validUsername(username)
+    unless User.tests.username(username)
       _.warn username, 'invalid username'
       return promises_.reject "invalid username: #{username}"
 
@@ -19,7 +19,7 @@ module.exports = (user_)->
     .then checkAvailability.bind(null, username, 'username')
 
   email: (email)->
-    unless User.validEmail(email)
+    unless User.tests.email(email)
       _.warn email, 'invalid email'
       return promises_.reject "invalid email: #{email}"
 

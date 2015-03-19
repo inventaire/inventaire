@@ -3,7 +3,7 @@ __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 couch_ = __.require 'lib', 'couch'
 assert = require 'assert'
-{UserId} = require './common-tests'
+{UserId} = require './tests/common-tests'
 
 module.exports =
   create: (id, status)->

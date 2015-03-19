@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 assert = require 'assert'
-{UserId} = require './common-tests'
+{UserId} = require './tests/common-tests'
 
 module.exports =
   create: (userId)->

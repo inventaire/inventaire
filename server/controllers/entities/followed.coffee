@@ -9,7 +9,7 @@ user_ = __.require 'lib', 'user/user'
 couch_ = __.require 'lib', 'couch'
 
 FollowedEntities = __.require 'models', 'followed_entities'
-{EntityUri} = __.require 'models','common-tests'
+{EntityUri} = __.require 'models','tests/common-tests'
 
 module.exports =
   fetch: (req, res, next)->
