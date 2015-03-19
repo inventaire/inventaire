@@ -18,8 +18,8 @@ catchInvalidToken = (req, res, err)->
   unless err.type is 'invalid_token'
     return _.errorHandler res, err
 
-  warnInvalidToken(req)
-  redirectValidEmail(res, true)
+  warnInvalidToken req
+  redirectValidEmail res, false
 
 warnInvalidToken = (req)->
   _.warn 'invalid_token',
