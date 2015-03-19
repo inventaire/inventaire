@@ -12,6 +12,7 @@ module.exports = (db)->
   token_.sendValidationEmail = (user)->
     unless user.validatedEmail
       Radio.emit 'validation:email', user
+    else _.warn user, 'email was already validated'
     return user
 
   token_.byEmailValidationToken = (token)->
