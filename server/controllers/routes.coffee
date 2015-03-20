@@ -141,6 +141,13 @@ routes =
   'api/proxy/public*':
     get: proxy.get
 
+  # allows authentification forms to submit
+  # a form already validated by XHR calls
+  # in order to be catched by browsers password manager
+  # or other field suggestions tools
+  'api/fakesubmit/public':
+    post: (req, res, next)-> res.redirect '/'
+
   'api/logs/public':
     post: analytics.reports
 
