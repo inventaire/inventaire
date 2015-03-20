@@ -1,9 +1,6 @@
 CONFIG = require 'config'
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
-user_ = __.require 'lib', 'user/user'
-User = __.require 'models', 'user'
-promises_ = __.require 'lib', 'promises'
 passport_ = __.require 'lib', 'passport/passport'
 
 exports.signup = (req, res, next)->
@@ -29,3 +26,4 @@ _.extend exports, require('./availability')
 
 exports.token = require './token'
 exports.emailConfirmation = require './email_confirmation'
+exports.updatePassword = require './update_password'

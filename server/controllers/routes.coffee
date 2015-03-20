@@ -55,6 +55,10 @@ routes =
     get: noGet
     post: auth.emailConfirmation
 
+  'api/auth/update-password':
+    get: noGet
+    post: auth.updatePassword
+
   'api/user':
     get: user.getUser
     put: user.updateUser
