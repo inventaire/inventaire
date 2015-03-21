@@ -9,7 +9,6 @@ email_ = require './email'
 
 module.exports =
   validationEmail: (userData)->
-    console.log 'validationEmail', userData
     email = email_.validationEmail(userData)
     transporter_.sendMail email
 

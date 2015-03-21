@@ -1,5 +1,6 @@
 __ = require('config').root
 _ = __.require 'builders', 'utils'
+error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
 books_ = __.require 'lib', 'books'
 wikidata_ = __.require 'lib', 'wikidata'
@@ -10,9 +11,12 @@ getWikidataBookEntitiesByIsbn = __.require 'data', 'wikidata/books_by_isbn'
 module.exports = searchEntity = (req, res)->
   {query} = req
   _.info query, "Entities:Search"
-  unless query.search?.length > 0 and query.language?
-    err = 'empty query or no language specified'
-    return _.errorHandler res, err, 400
+
+  unless query.search?.length > 0
+    return error_.bundle res, 'empty query' , 400
+
+  unless query.language?
+    return error_.bundle res, 'no language specified' , 400
 
   if books_.isIsbn(query.search)
     _.log query.search, 'searchByIsbn'
@@ -68,10 +72,7 @@ spreadRequests = (res, promises, label)->
   .then (resp)->
     if resp.wd? or resp.google? then res.json resp
     else res.status(404).json {error: 'not found'}
-
-  .catch (err)->
-    _.error err, "#{label} err"
-    _.errorHandler res, err
+  .catch error_.Handler(res)
 
 bundleResults = (results...)->
   _.info results, "api results"

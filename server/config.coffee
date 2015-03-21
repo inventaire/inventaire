@@ -18,9 +18,6 @@ module.exports =
   common: [
     security.forceSSL
 
-    # MUST be before middlewares using _.errorHandler
-    logger.sendServerErrorsClientSide
-
     americano.bodyParser()
     americano.methodOverride()
     americano.errorHandler
@@ -47,8 +44,6 @@ module.exports =
   ]
   production: []
   development:
-    use: [
-      logger.sendServerErrorsClientSide
-    ]
+    use: []
     set:
       debug: 'on'

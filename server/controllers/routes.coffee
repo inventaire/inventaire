@@ -1,24 +1,26 @@
-CONFIG = require('config')
-_ = CONFIG.root.require('builders', 'utils')
+CONFIG = require 'config'
+__ = CONFIG.root
+_ = __.require 'builders', 'utils'
+error_ = __.require 'lib', 'error/error'
 
-auth = require "./auth/auth"
-user = require "./user"
-items = require "./items"
-users = require "./users"
-relations = require "./relations/relations"
-entities = require "./entities/entities"
-followed = require "./entities/followed"
-upload = require "./upload"
-notifs = require "./notifs"
-data = require "./data"
-services = require "./services/services"
-proxy = require "./proxy"
-glob = require "./glob"
-log = require "./log"
+auth = require './auth/auth'
+user = require './user'
+items = require './items'
+users = require './users'
+relations = require './relations/relations'
+entities = require './entities/entities'
+followed = require './entities/followed'
+upload = require './upload'
+notifs = require './notifs'
+data = require './data'
+services = require './services/services'
+proxy = require './proxy'
+glob = require './glob'
+log = require './log'
 analytics = require './analytics/analytics'
 
 noGet = (req, res)->
-  _.errorHandler res, 'GET isnt implemented on this route', 400
+  error_.bundle res, 'GET isnt implemented on this route', 400
 
 
 # routes structure:
@@ -111,11 +113,14 @@ routes =
   'api/cookie':
     post: (req, res, next)->
       whitelist = ['lang']
-      if req.body.key in whitelist
-        res.cookie key = req.body.key, value = req.body.value
-        _.info result = "cookie set: #{key} = #{value}"
-        res.send result
-      else _.errorHandler res, 'unauthorize cookie setting', '403'
+      {body} = req
+      {key, value} = body
+      unless key in whitelist
+        return error_.bundle res, 'unauthorize cookie setting', 403
+
+      res.cookie key = key, value = value
+      _.info result = "cookie set: #{key} = #{value}"
+      res.send result
 
   'api/upload':
     post: upload.post

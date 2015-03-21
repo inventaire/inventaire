@@ -3,6 +3,7 @@ __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 
 promises_ = __.require 'lib', 'promises'
+error_ = __.require 'lib', 'error/error'
 relations_ = __.require 'controllers', 'relations/lib/queries'
 notifs_ = __.require 'lib', 'notifications'
 cache_ = __.require 'lib', 'cache'
@@ -60,7 +61,7 @@ user_ =
   getUserId: (req)->
     id = req.user?._id
     if id? then return promises_.resolve(id)
-    else promises_.reject('req.user._id couldnt be found')
+    else error_.reject('req.user._id couldnt be found')
 
   fetchUsers: (ids)-> @db.fetch(ids)
 

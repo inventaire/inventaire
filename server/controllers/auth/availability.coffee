@@ -1,6 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
+error_ = __.require 'lib', 'error/error'
 user_ = __.require 'lib', 'user/user'
 
 exports.usernameAvailability = (req, res, next) ->
@@ -8,7 +9,7 @@ exports.usernameAvailability = (req, res, next) ->
   # checks for validity, availability, reserve words
   user_.availability.username username
   .then -> res.json {username: username, status: 'available'}
-  .catch catchAvailabilityError.bind(null, res, username, 'username')
+  .catch error_.Handler(res)
 
 
 exports.emailAvailability = (req, res, next) ->
@@ -16,17 +17,4 @@ exports.emailAvailability = (req, res, next) ->
   # checks for validity, availability
   user_.availability.email email
   .then -> res.json {email: email, status: 'available'}
-  .catch catchAvailabilityError.bind(null, res, email, 'email')
-
-
-catchAvailabilityError = (res, value, label, err)->
-  {type} = err
-  unless type is 'not_available'
-    return _.errorHandler(res, "invalid #{label}", 400)
-
-  obj =
-    status: type
-    status_verbose: "this #{label} is already used"
-
-  obj[label] = value
-  res.status(400).json obj
+  .catch error_.Handler(res)

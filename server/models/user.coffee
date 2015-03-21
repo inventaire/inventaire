@@ -5,6 +5,7 @@ pw_ = __.require('lib', 'crypto').passwords
 promises_ = __.require 'lib', 'promises'
 gravatar = require 'gravatar'
 uuid = require 'simple-uuid'
+error_ = __.require 'lib', 'error/error'
 
 module.exports = User = {}
 
@@ -18,13 +19,13 @@ User.create = (username, email, creationStrategy, password)->
     _.types arguments, ['string', 'string', 'string', 'string|undefined'], 3
 
     unless tests.username(username)
-      throw new Error "invalid username: #{username}"
+      throw error_.new "invalid username: #{username}", 400
 
     unless tests.email(email)
-      throw new Error "invalid email: #{email}"
+      throw error_.new "invalid email: #{email}", 400
 
     unless tests.creationStrategy(creationStrategy)
-      throw new Error "invalid creationStrategy: #{creationStrategy}"
+      throw error_.new "invalid creationStrategy: #{creationStrategy}", 400
 
     user =
       username: username
@@ -40,14 +41,14 @@ User.create = (username, email, creationStrategy, password)->
         user.validEmail = false
         user.emailValidation = getEmailValidationData()
         unless tests.password(password)
-          throw new Error "invalid password"
+          throw error_.new 'invalid password'
         user.password = password
       when 'browserid'
         user.validEmail = true
         # user can be created with a password when using
         # browserid authentification
         if password?
-          throw new Error "shouldnt have a password"
+          throw error_.new 'shouldnt have a password'
 
     return withHashedPassword(user)
 

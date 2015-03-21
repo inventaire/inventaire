@@ -1,6 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
+error_ = __.require 'lib', 'error/error'
 
 exports.restrictApiAccess = (req, res, next) ->
   if CONFIG.apiOpenBar
@@ -13,7 +14,7 @@ exports.restrictApiAccess = (req, res, next) ->
     if req.isAuthenticated() then next()
     else if whitelistedRoute(pathname) then next()
     else
-      _.errorHandler res, "unauthorized api access: #{req.originalUrl} (routes middleware restrictApiAccess)", 401
+      error_.bundle res, "unauthorized api access", 401, req.originalUrl
   else next()
 
 isApiRoute = (route)-> /^\/(api|test)\//.test route

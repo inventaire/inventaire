@@ -1,5 +1,6 @@
 __ = require('config').root
 _ = __.require('builders', 'utils')
+error_ = __.require 'lib', 'error/error'
 
 module.exports =
   get: (req, res, next)->
@@ -7,10 +8,10 @@ module.exports =
     if missedApiRequest(req)
       # the request didnt match previous routes
       err = "GET #{req._parsedUrl.pathname}: api route not found"
-      _.errorHandler res, err, 404
+      error_.bundle res, err, 404
     else if imageHeader(req)
       err = "GET #{pathname}: wrong content-type: #{req.headers.accept}"
-      _.errorHandler res, err, 404
+      error_.bundle res, err, 404
     else
       # the routing will be done on the client side
       res.sendFile './index.html', {root: __.path('client', 'public')}

@@ -4,14 +4,16 @@ books_ = __.require('sharedLibs','books')(_)
 # directly talking his sibbling to avoid require loops
 booksDataFromText = __.require 'data','google/text'
 cache_ = __.require 'lib', 'cache'
-promises_ = __.require 'lib', 'promises'
+error_ = __.require 'lib', 'error/error'
+
 
 module.exports = (data, timespan)->
-  if data? and data isnt ''
-    key = "image:#{data}"
-    cache_.get key, requestImage.bind(null, data), timespan
-    .catch (err)-> _.error err, 'getImage err'
-  else promises_.reject 'no data provided'
+  unless data? and data isnt ''
+    error_.reject 'no data provided'
+
+  key = "image:#{data}"
+  cache_.get key, requestImage.bind(null, data), timespan
+  .catch (err)-> _.error err, 'getImage err'
 
 
 requestImage = (data)->

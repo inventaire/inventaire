@@ -1,5 +1,6 @@
 __ = require('config').root
 _ = __.require 'builders', 'utils'
+error_ = __.require 'lib', 'error/error'
 
 module.exports =
   # if this route is enabled by CONFIG
@@ -8,8 +9,7 @@ module.exports =
     _.info missingKeys = req.body?.missingKeys, 'i18n missing keys'
 
     unless missingKeys? and _.areStrings(missingKeys)
-      _.errorHandler res, "bad missingKeys #{missingKeys}", 400
-      return
+      return error_.bundle res, "bad missingKeys #{missingKeys}", 400
 
     shortKeys = []
     fullKeys = []

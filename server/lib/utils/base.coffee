@@ -6,7 +6,6 @@ String::logIt = (label, color)->
   return @toString()
 
 module.exports =
-  errorHandler: require './error_handler'
   areStringsOrFalsy: (array)->
     compacted = @compact(array)
     if compacted.length > 0 and @areStrings(compacted)

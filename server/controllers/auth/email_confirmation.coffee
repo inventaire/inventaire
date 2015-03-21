@@ -4,35 +4,26 @@ _ = __.require 'builders', 'utils'
 User = __.require 'models', 'user'
 user_ = __.require 'lib', 'user/user'
 promises_ = __.require 'lib', 'promises'
-
+error_ = __.require 'lib', 'error/error'
 
 module.exports = (req, res, next)->
   {user} = req
   unless user?
-    return _.errorHandler(res, 'user not found', 500)
+    return error_.bundle res, 'user not found', 500
 
   promises_.start()
   .then sendEmailValidation.bind(null, user)
   .then -> res.send('ok')
-  .catch (err)->
-    _.log err.type, err.message
-    unless err.type?
-      return _.errorHandler(res, err, 500)
-
-    _.errorHandler(res, err.message, 403)
+  .catch error_.Handler(res)
 
 
 sendEmailValidation = (user)->
   { _id, creationStrategy, validEmail} = user
   unless creationStrategy is 'local'
-    err = new Error "wrong authentification creationStrategy: #{creationStrategy}"
-    err.type = 'wrong_strategy'
-    throw err
+    throw error_.new "wrong authentification creationStrategy", 400
 
   if validEmail
-    err = new Error "email was already validated"
-    err.type = 'already_validated'
-    throw err
+    throw error_.new "email was already validated", 400
 
   resetEmailValidation(_id)
   .then -> user_.byId(_id)

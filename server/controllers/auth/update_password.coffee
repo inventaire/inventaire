@@ -1,6 +1,7 @@
 CONFIG = require 'config'
 __ = require('config').root
 _ = __.require 'builders', 'utils'
+error_ = __.require 'lib', 'error/error'
 user_ = __.require 'lib', 'user/user'
 User = __.require 'models', 'user'
 pw_ = __.require('lib', 'crypto').passwords
@@ -13,10 +14,10 @@ module.exports = (req, res, next)->
   _.types [currentPassword, newPassword, userId], 'strings...'
 
   unless User.tests.password(currentPassword)
-    return _.errorHandler res, 'invalid currentPassword', 400
+    return error_.bundle res, 'invalid currentPassword', 400
 
   unless User.tests.password(newPassword)
-    return _.errorHandler res, 'invalid newPassword', 400
+    return error_.bundle res, 'invalid newPassword', 400
 
 
   verifyCurrentPassword(user, currentPassword)
@@ -24,10 +25,7 @@ module.exports = (req, res, next)->
   .then -> hashNewPassword(newPassword)
   .then updateUserPassword.bind(null, userId, user)
   .then -> res.send('ok')
-  .catch (err)->
-    _.errorHandler res, err, err.status
-
-
+  .catch error_.Handler(res)
 
 
 verifyCurrentPassword = (user, currentPassword)->
@@ -35,9 +33,7 @@ verifyCurrentPassword = (user, currentPassword)->
 
 filterInvalid = (isValid)->
   unless isValid
-    err = new Error 'invalid newPassword'
-    err.status = 400
-    throw err
+    throw error_.new 'invalid newPassword', 400
 
 hashNewPassword = (newPassword)->
   pw_.hash(newPassword)

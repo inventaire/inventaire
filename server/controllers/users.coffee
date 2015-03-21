@@ -2,7 +2,7 @@ __ = require('config').root
 _ = __.require 'builders', 'utils'
 user_ = __.require 'lib', 'user/user'
 items_ = __.require 'lib', 'items'
-Promise = require 'bluebird'
+error_ = __.require 'lib', 'error/error'
 
 module.exports.actions = (req, res, next) ->
   {query} = req
@@ -16,25 +16,25 @@ module.exports.actions = (req, res, next) ->
       when 'getitems'
         if ids? then return fetchUsersItems(req, res, ids)
 
-  _.errorHandler res, 'bad query', 400
+  error_.bundle res, 'bad query', 400, query
 
 searchByUsername = (res, search) ->
   user_.usernameStartBy(search)
   .then (usersData)->
     users = usersData.map user_.safeUserData
     res.json users
-  .catch (err)-> _.errorHandler res, err
+  .catch error_.Handler(res)
 
 fetchUsersData = (res, ids)->
   ids = ids.split('|')
-  if ids?.length > 0 and validUserIds(ids)
-    user_.getUsersPublicData(ids, 'index')
-    .then (usersData)->
-      res.json {users: usersData}
-    .catch (err)-> _.errorHandler res, err
-    .done()
-  else
-    _.errorHandler res, 'unvalid ids', 400
+  unless ids?.length > 0 and validUserIds(ids)
+    return error_.bundle res, 'invalid ids', 400, ids
+
+  user_.getUsersPublicData(ids, 'index')
+  .then (usersData)->
+    res.json {users: usersData}
+  .catch error_.Handler(res)
+
 
 validUserIds = (ids)-> _.all ids, (id)-> /^\w{32}$/.test(id)
 
@@ -47,4 +47,5 @@ fetchUsersItems = (req, res, ids) ->
     # not fetching others items
     return _.combinations friends, ['friends', 'public']
   .then (listings)-> items_.batchByListings listings
-  .then (body)-> res.json body
+  .then res.json.bind(res)
+  .catch error_.Handler(res)

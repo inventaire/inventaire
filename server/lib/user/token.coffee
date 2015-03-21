@@ -3,7 +3,7 @@ __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 Radio = __.require 'lib', 'radio'
 User = __.require 'models', 'user'
-
+error_ = __.require 'lib', 'error/error'
 
 module.exports = (db)->
 
@@ -23,13 +23,10 @@ module.exports = (db)->
     .then updateIfValidToken.bind(null, token)
 
   updateIfValidToken = (token, user)->
-    _.log user, 'user byEmailValidationToken'
     if user? and User.tests.token(token, user.emailValidation)
       db.update user._id, emailIsValid
     else
-      err = new Error 'token is invalid or expired'
-      err.type = 'invalid_token'
-      throw err
+      throw error_.new 'token is invalid or expired', 401, token, user._id
 
   return token_
 

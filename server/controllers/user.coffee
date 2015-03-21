@@ -4,6 +4,8 @@ _ = __.require 'builders', 'utils'
 User = __.require 'models', 'user'
 user_ = __.require 'lib', 'user/user'
 Promise = require 'bluebird'
+error_ = __.require 'lib', 'error/error'
+
 
 module.exports.getUser = (req, res, next) ->
   # implies that req.isAuthenticated() is true
@@ -19,9 +21,7 @@ module.exports.getUser = (req, res, next) ->
     userData.notifications = notifications
     res.json userData
 
-  .catch (err)->
-    _.error err, 'coulnt get user data'
-    throw new Error(err)
+  .catch error_.Handler(res)
 
 
 module.exports.updateUser = (req, res, next) ->
@@ -31,23 +31,23 @@ module.exports.updateUser = (req, res, next) ->
   {user} = req
 
   if user[attribute] is value
-    return _.errorHandler res, 'already up-to-date', 400
+    return error_.bundle res, 'already up-to-date', 400
 
   if attribute in User.attributes.updatable
     unless User.tests[attribute](value)
-      return _.errorHandler res, "invalid #{attribute}: #{value}", 400
+      return error_.bundle res, "invalid #{attribute}: #{value}", 400
 
     return updateAttribute(user, attribute, value)
     .then updateConfirmation.bind(null, res)
-    .catch _.errorHandler.bind(_, res)
+    .catch error_.Handler(res)
 
   if attribute in User.attributes.concurrencial
     return user_.availability[attribute](value)
     .then updateAttribute.bind(null, user, attribute, value)
     .then updateConfirmation.bind(null, res)
-    .catch (err)-> _.errorHandler res, err, 400
+    .catch error_.Handler(res)
 
-  _.errorHandler res, "forbidden update: #{attribute} - #{value}", 403
+  error_.bundle res, "forbidden update: #{attribute} - #{value}", 403
 
 
 

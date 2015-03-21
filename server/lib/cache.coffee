@@ -1,8 +1,7 @@
 CONFIG = require('config')
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
-promises_ = __.require 'lib', 'promises'
-Promise = promises_.Promise
+error_ = __.require 'lib', 'error/error'
 
 levelBase = __.require 'level', 'base'
 
@@ -18,7 +17,7 @@ module.exports =
   get: (key, method, timespan=oneMonth)->
     types = ['string', 'function', 'number']
     try _.types arguments, types, 2
-    catch err then return promises_.reject(err)
+    catch err then return error_.reject(err)
 
     checkCache(key, timespan)
     .then requestOnlyIfNeeded.bind(null, key, method)

@@ -1,6 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
+error_ = __.require 'lib', 'error/error'
 passport_ = __.require 'lib', 'passport/passport'
 
 exports.signup = (req, res, next)->
@@ -8,14 +9,14 @@ exports.signup = (req, res, next)->
   {strategy} = req.body
   switch strategy
     when 'local' then passport_.authenticate.localSignup(req, res, next)
-    else _.errorHandler(res, "unknown signup strategy: #{strategy}", 400)
+    else error_.bundle res, "unknown signup strategy: #{strategy}", 400
 
 exports.login = (req, res, next)->
   {strategy} = req.body
   switch strategy
     when 'local' then passport_.authenticate.localLogin(req, res, next)
     when 'browserid' then passport_.authenticate.browserid(req, res, next)
-    else _.errorHandler(res, "unknown login strategy: #{strategy}", 400)
+    else error_.bundle res, "unknown login strategy: #{strategy}", 400
 
 exports.logout = (req, res, next) ->
   res.clearCookie 'loggedIn'
