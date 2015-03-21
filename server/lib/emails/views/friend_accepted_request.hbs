@@ -1,13 +1,14 @@
-<div style="margin: 1em; text-align:center;">
-  <h4 style="color:#222;font-size:1.5em;">{{friend.username}} accepted your request!</h4>
-  <br/>
-  <a style="font-size: 1.3em; padding:1em; background-color:#55ABED; color:white; text-decoration:none; border-radius: 3px;" href="{{host}}/inventory/{{friend.username}}">go to {{friend.username}}'s inventory</a>
-  <br/>
-</div>
+{{>title_top}}
+    <h2>{{friend.username}} accepted your request!</h2>
+{{>title_bottom}}
 
-<br/>
---
-<br/>
-raw link: {{host}}/inventory/{{friend.username}}
-<br/>
-<br/>
+
+{{>button_top}}
+    <a href="{{host}}/inventory/{{friend.username}}" target="_blank">go to {{friend.username}}'s inventory</a>
+{{>button_bottom}}
+
+{{>paragraph_top}}
+    <small>
+    raw link: {{host}}/inventory/{{friend.username}}
+    </small>
+{{>paragraph_bottom}}

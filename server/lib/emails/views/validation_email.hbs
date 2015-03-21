@@ -1,18 +1,16 @@
-<div style="margin: 1em; text-align:center;">
-  <h4 style="color:#222;font-size:1.5em;">thank you {{user.username}} for joining Inventaire!!</h4>
-  <br/>
-  <a style="font-size: 1.3em; padding:1em; background-color:#55ABED; color:white; text-decoration:none; border-radius: 3px;" href="{{host}}/api/auth/public/token?token={{token}}">Confirm your email address</a>
-  <br/>
-  <br/>
-  <p style="margin: 1em;">
-    Please, visit this link so that we can use it in the future to help you reset your password or things like that.
-  </p>
-  <br/>
-</div>
+{{>title_top}}
+    <h1>Thank you {{user.username}} for joining Inventaire!!</h1>
+{{>title_bottom}}
 
-<br/>
---
-<br/>
-raw link: {{host}}/api/auth/public/token?token={{token}}
-<br/>
-<br/>
+
+{{>button_top}}
+    <a href="{{host}}/api/auth/public/token?token={{token}}" target="_blank">Confirm your email address</a>
+{{>button_bottom}}
+
+{{>paragraph_top}}
+    Please, visit this link so that we can use your email address in the future, knowing it's really yours, to help you reset your password or things like that.
+    <br />
+    <small>
+    raw link: {{host}}/api/auth/public/token?token={{token}}
+    </small>
+{{>paragraph_bottom}}
