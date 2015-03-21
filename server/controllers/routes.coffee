@@ -150,7 +150,9 @@ routes =
   # in order to be catched by browsers password manager
   # or other field suggestions tools
   'api/fakesubmit/public':
-    post: (req, res, next)-> res.redirect '/'
+    post: (req, res, next)->
+      route = req.headers.referer or '/'
+      res.redirect route
 
   'api/logs/public':
     post: analytics.reports
