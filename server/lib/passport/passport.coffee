@@ -8,7 +8,7 @@ passport = require 'passport'
 
 passport.serializeUser (user, done) ->
   _.types [user, done], ['object', 'function']
-  _.success id = user._id, 'user id'
+  _.success id = user._id, 'serializeUser'
   done null, id
 
 passport.deserializeUser (id, done) ->
