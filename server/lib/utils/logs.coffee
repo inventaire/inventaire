@@ -14,7 +14,7 @@ module.exports = (_)->
 
     else
       if label?
-        console.log "****** ".grey + label[color] + " ******".grey
+        console.log "****** ".grey + label.toString()[color] + " ******".grey
       else
         console.log "******************************"[color]
       console.log obj
