@@ -20,6 +20,8 @@ reservedWords = [
   'friend'
   'friends'
   'welcome'
+  'username'
+  'email'
 ]
 
 module.exports =  (username)->
