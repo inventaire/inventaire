@@ -4,6 +4,7 @@ _ = __.require 'builders', 'utils'
 User = __.require 'models', 'user'
 user_ = __.require 'lib', 'user/user'
 Promise = require 'bluebird'
+Radio = __.require 'lib', 'radio'
 error_ = __.require 'lib', 'error/error'
 
 
@@ -42,6 +43,7 @@ module.exports.updateUser = (req, res, next) ->
     .catch error_.Handler(res)
 
   if attribute in User.attributes.concurrencial
+    # checks for validity and availability (+ reserve words for username)
     return user_.availability[attribute](value)
     .then updateAttribute.bind(null, user, attribute, value)
     .then updateConfirmation.bind(null, res)
@@ -52,9 +54,31 @@ module.exports.updateUser = (req, res, next) ->
 
 
 updateAttribute = (user, attribute, value)->
-  user_.db.update user._id, (doc)->
-    doc[attribute] = value
-    return doc
+  if attribute is 'email' then updater = emailUpdater
+  else updater = commonUpdater
+
+  user_.db.update user._id, updater.bind(null, attribute, value)
+
+
+commonUpdater = (attribute, value, doc)->
+  doc[attribute] = value
+  return doc
+
+emailUpdater = (attribute, value, doc)->
+  doc = archivePreviousEmail(doc)
+  doc.email = value
+  doc.emailValidation = User.getEmailValidationData()
+  Radio.emit 'validation:email', doc
+  return doc
+
+archivePreviousEmail = (doc)->
+  if doc.validEmail
+    doc.previousEmails or= []
+    doc.previousEmails.push doc.email
+    doc.previousEmails = _.uniq(doc.previousEmails)
+    doc.validEmail = false
+  return doc
+
 
 updateConfirmation = (res, doc)->
   _.success doc, 'updateConfirmation'
