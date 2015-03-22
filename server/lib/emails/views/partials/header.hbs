@@ -1,33 +1,11 @@
+{{!-- templates are all adapted from https://github.com/mailchimp/email-blueprints/blob/master/modular-template-patterns/modular-template-patterns.html --}}
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <meta name="viewport" content="width=device-width"/>
-        <title>Modular Template Patterns</title>
-
-        <!--
-          This email is an experimental proof-of-concept based on the
-            idea that the most common design patterns seen in email can
-            be placed in modular blocks and moved around to create
-            different designs.
-
-      The same principle is used to build the email templates in
-            MailChimp's Drag-and-Drop email editor.
-
-      This email is optimized for mobile email clients, and even
-            works relatively well in the Android Gmail App, which does
-            not support Media Queries, but does have limited mobile-
-            friendly functionality.
-
-      While this coding method is very flexible, it can be more
-            brittle than traditionally-coded emails, particularly in
-            Microsoft Outlook 2007-2010. Outlook-specific conditional
-            CSS is included to counteract the inconsistencies that
-            crop up.
-
-            For more information on HTML email design and development,
-            visit http://templates.mailchimp.com
-        -->
+        <title>Inventaire</title>
 
         <style type="text/css">
       /*////// RESET STYLES //////*/
@@ -56,8 +34,18 @@
       body, #bodyTable{background-color:#F5F5F5;}
       #bodyCell{padding-top:40px; padding-bottom:40px;}
       #emailBody{background-color:#FFFFFF; border:1px solid #DDDDDD; border-collapse:separate; border-radius:4px;}
-      h1, h2, h3, h4, h5, h6{color:#202020; font-family:Helvetica; font-size:20px; line-height:125%; text-align:Left;}
-      .textContent, .textContentLast{color:#404040; font-family:Helvetica; font-size:16px; line-height:125%; text-align:Left; padding-bottom:20px;}
+      h1, h2, h3, h4, h5, h6{color:#202020; font-family:Helvetica; line-height:125%;}
+      h2, h3, h4, h5, h6{text-align:Left;}
+      h1, h1.centered, h2.centered, h3.centered, h4.centered, h5.centered, h6.centered{text-align:Center;}
+      h1{font-size:22px;}
+      h2{font-size:20px;}
+      h3{font-size:18px;}
+      h4{font-size:16px;}
+      h5{font-size:14px;}
+      h6{font-size:12px;}
+      .textContent, .textContentLast, .textCenter{color:#404040; font-family:Helvetica; font-size:16px; line-height:125%; padding-bottom:20px;}
+      .textContent, .textContentLast{text-align:Left;}
+      .textCenter{text-align:Center;}
       .textContent a, .textContentLast a{color:#2C9AB7; text-decoration:underline;}
       .nestedContainer{background-color:#E5E5E5; border:1px solid #CCCCCC;}
       .emailButton{background-color:#2C9AB7; border-collapse:separate; border-radius:4px;}
