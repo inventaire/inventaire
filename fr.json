@@ -1,0 +1,20 @@
+{
+    "email_confirmation_subject": "Bienvenue sur Inventaire.io!! Voici le lien pour confirmer votre adresse email",
+    "email_confirmation_title": "Merci %{username} d'être parmi les pionniers d'Inventaire !!",
+    "email_confirmation_button": "Confirmer votre adresse email",
+    "email_confirmation_paragraph": "Merci de visiter ce lien afin que nous puissions utiliser cette adresse email dans le futur, en étant sûr que c'est bien la votre (pour vous aider à réinitialiser votre mot de passe en cas d'oubli, par exemple).",
+    "friend_accepted_request_subject": "%{username} a accepté(e) votre invitation !",
+    "friend_accepted_request_button": "aller à l'inventaire de %{username}",
+    "friendship_request_subject": "%{username} vous invite à connecter vos inventaires !",
+    "friendship_request_button": "aller à l'inventaire de %{username} pour accepter l'invitation",
+    "raw links:": "liens bruts:",
+    "you_are_welcome_to_reply": "**vous pouvez répondre à cet email** pour n'importe quelle question ou retour, ce serait même vachement chouette :)",
+    "Follow Inventaire developments": "Suivez les développements d'Inventaire",
+    "get_involved": "Vous pensez pouvoir contribuer à améliorer Inventaire ? Jetez vous à l'eau !",
+    "contribution_ideas": "Demandez à être ajouté au [tableau de bord du projet](https://trello.com/b/0lKcsZDj/inventaire-community) <small>(en)</small>, rejoignez [l'équipe de traduction](https://www.transifex.com/projects/p/inventaire/), postez une [remarque sur github](https://github.com/maxlath/inventaire/issues) <small>(en)</small>, ou commencez simplement une discussion en répondant à cet email !",
+    "next_functionalities_title": "Les prochaines fonctionalités au programme:",
+    "stop_email_notifications": "[Ne plus recevoir d'email d'Inventaire](mailto:hello@inventaire.io?subject=Ne plus recevoir d'email d'Inventaire&body=Bonjour, bravo pour Inventaire, j'adore!! Cela dit, et croyez bien que j'en sois le premier attristé, les temps sont dur pour les boîtes mail vous savez : je ne souhaite plus recevoir de mail de la part d'Inventaire, vous pouvez faire ça ? Non non, n'insistez pas, vos larmes de crocodiles n'y feront rien, ma décision est prise. Tendrement, votre %{username})",
+    "Groups": "Groupes",
+    "transactions_tracking": "Suivi des transactions (pour savoir où se trouve votre livre)",
+    "Messaging": "Méssagerie"
+}

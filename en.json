@@ -1,0 +1,20 @@
+{
+    "email_confirmation_subject": "Welcome on Inventaire.io!! Here is the link to confirm your email address",
+    "email_confirmation_title": "Thank you %{username} for joining Inventaire!!",
+    "email_confirmation_button": "Confirm your email address",
+    "email_confirmation_paragraph": "Please, visit this link so that we can use your email address in the future, knowing it's really yours (to help you reset your password for instance).",
+    "friend_accepted_request_subject": "%{username} accepted your request!",
+    "friend_accepted_request_button": "go to %{username}'s inventory",
+    "friendship_request_subject": "%{username} invites you to connect your inventories!",
+    "friendship_request_button": "go to %{username}'s inventory to accepts the invitation",
+    "raw links:": "raw links:",
+    "you_are_welcome_to_reply": "**you are very welcome to reply to this email** for any question or feedback",
+    "Follow Inventaire developments": "Follow Inventaire developments",
+    "get_involved": "Think you can contribute to make Inventaire better? Get involved!!",
+    "contribution_ideas": "Ask to be added to the [project development board](https://trello.com/b/0lKcsZDj/inventaire-community), join the [translation team](https://www.transifex.com/projects/p/inventaire/), post an [issue on github](https://github.com/maxlath/inventaire/issues), or simply start a discussion by answering this email!",
+    "next_functionalities_title": "Next functionalities to be developed:",
+    "stop_email_notifications": "[Stop email notifications](mailto:hello@inventaire.io?subject=Stop notifications&body=Hi, Inventaire is awesome, you really rock!! That said, I don't want to receive Inventaire's emails any more, could you do that? Love, %{username})",
+    "Groups": "Groups",
+    "transactions_tracking": "Transactions tracking (know where your book is)",
+    "Messaging": "Messaging"
+}
