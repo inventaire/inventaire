@@ -6,15 +6,20 @@ Promise = require 'bluebird'
 
 nodemailer = require 'nodemailer'
 hbs = require 'nodemailer-express-handlebars'
-
+i18n = require './i18n/i18n'
 viewsPath = __.path 'lib', 'emails/views'
 
 options =
   viewEngine:
     extname: '.hbs'
     layoutsDir: "#{viewsPath}/layouts/"
-    defaultLayout : 'template'
-    partialsDir : "#{viewsPath}/partials/"
+    defaultLayout: 'template'
+    partialsDir: "#{viewsPath}/partials/"
+    helpers:
+      i18n: i18n
+      debug: ->
+        console.log('this', this)
+        console.log('arguments', arguments)
   viewPath: viewsPath
   extName: '.hbs'
 

@@ -1,16 +1,16 @@
 {{>title_top}}
-    <h1>Thank you {{user.username}} for joining Inventaire!!</h1>
+    <h1>{{i18n lang 'email_confirmation_title' user}}</h1>
 {{>title_bottom}}
 
-
 {{>button_top}}
-    <a href="{{host}}/api/auth/public/token?token={{token}}" target="_blank">Confirm your email address</a>
+    <a href="{{host}}/api/auth/public/token?token={{token}}" target="_blank">{{i18n lang 'email_confirmation_button'}}</a>
 {{>button_bottom}}
 
 {{>paragraph_top}}
-    Please, visit this link so that we can use your email address in the future, knowing it's really yours, to help you reset your password or things like that.
+    {{i18n lang 'email_confirmation_paragraph'}}
+    <br />
     <br />
     <small>
-    raw link: {{host}}/api/auth/public/token?token={{token}}
+      {{i18n lang 'raw links:'}} {{host}}/api/auth/public/token?token={{token}}
     </small>
 {{>paragraph_bottom}}

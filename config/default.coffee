@@ -52,6 +52,9 @@ module.exports =
       controllers: '/server/controllers'
       leveldb: '/db/leveldb'
       couchdb: '/db/couchdb'
+      i18nSrc: '/server/lib/emails/i18n/src'
+      i18nArchive: '/server/lib/emails/i18n/src/archive'
+      i18nDist: '/server/lib/emails/i18n/dist'
       client: '/client'
     path: (route, name)->
       path = @paths[route]
