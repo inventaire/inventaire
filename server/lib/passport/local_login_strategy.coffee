@@ -12,7 +12,8 @@ verify = (username, password, done)->
   if loginAttempts.tooMany(username)
     return done null, false, { message: 'too_many_attempts' }
 
-  user_.findOneByUsername(username)
+  # addressing the case an email is provided instead of a username
+  user_.findOneByUsernameOrEmail(username)
   .catch invalidUsernameOrPassword.bind(null, done, username, 'findOneByUsername')
   .then returnIfValid.bind(null, done, password, username)
   .catch finalError.bind(null, done)

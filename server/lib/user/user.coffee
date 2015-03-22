@@ -21,6 +21,13 @@ user_ =
   byEmail: (email)->
     @db.viewByKey 'byEmail', email
 
+  findOneByEmail: (email)->
+    @byEmail(email)
+    .then couch_.firstDoc
+    .then (user)->
+      if user?.email is email then return user
+      else throw new Error "user not found for email: #{email}"
+
   byUsername: (username)->
     @db.viewByKey 'byUsername', username.toLowerCase()
 
@@ -30,6 +37,10 @@ user_ =
     .then (user)->
       if user?.username is username then return user
       else throw new Error "user not found for username: #{username}"
+
+  findOneByUsernameOrEmail: (str)->
+    if User.tests.email(str) then @findOneByEmail(str)
+    else @findOneByUsername(str)
 
   getSafeUserFromUsername: (username)->
     @byUsername(username)
