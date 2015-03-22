@@ -5,7 +5,6 @@ error_ = __.require 'lib', 'error/error'
 passport_ = __.require 'lib', 'passport/passport'
 
 exports.signup = (req, res, next)->
-  _.log req.body, 'req.body'
   {strategy} = req.body
   switch strategy
     when 'local' then passport_.authenticate.localSignup(req, res, next)
