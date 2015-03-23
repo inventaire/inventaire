@@ -115,3 +115,14 @@ npm run install-client
 - [Brunch](http://brunch.io/) (task-runner)
 
 *find a more complete list of dependencies in [package.json](https://github.com/maxlath/inventaire-client/blob/dev/package.json) and [bower.json](https://github.com/maxlath/inventaire-client/blob/dev/bower.json)*
+
+
+## Contributors
+
+<table><tbody>
+<tr><th align="left">Maxime Lathuilière</th><td><a href="https://github.com/maxlath">GitHub/maxlath</a></td><td><a href="https://twitter.com/maxlath">Twitter/@maxlath</a></td></tr>
+</tbody></table>
+
+
+## License
+[AGPL](LICENSE.md)
