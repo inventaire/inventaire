@@ -4,7 +4,6 @@ _ = __.require 'builders', 'utils'
 pw_ = __.require('lib', 'crypto').passwords
 promises_ = __.require 'lib', 'promises'
 gravatar = require 'gravatar'
-uuid = require 'simple-uuid'
 error_ = __.require 'lib', 'error/error'
 
 module.exports = User = {}
@@ -39,9 +38,8 @@ User.create = (username, email, creationStrategy, password)->
     switch creationStrategy
       when 'local'
         user.validEmail = false
-        user.emailValidation = getEmailValidationData()
         unless tests.password(password)
-          throw error_.new 'invalid password'
+          throw error_.new 'invalid password', 400
         user.password = password
       when 'browserid'
         user.validEmail = true
@@ -66,9 +64,5 @@ withHashedPassword = (user)->
 replacePassword = (user, hash)->
   user.password = hash
   return user
-
-User.getEmailValidationData = getEmailValidationData = ->
-  token: uuid()
-  timestamp: _.now()
 
 User.attributes = require './attributes/user'

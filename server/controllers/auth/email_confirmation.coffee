@@ -25,12 +25,4 @@ sendEmailValidation = (user)->
   if validEmail
     throw error_.new "email was already validated", 400
 
-  resetEmailValidation(_id)
-  .then -> user_.byId(_id)
-  # need the updated user object
-  .then user_.sendValidationEmail.bind(null)
-
-resetEmailValidation = (userId)->
-  user_.db.update userId, (doc)->
-    doc.emailValidation = User.getEmailValidationData()
-    return doc
+  user_.sendValidationEmail(user)

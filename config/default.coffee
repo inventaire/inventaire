@@ -85,4 +85,4 @@ module.exports =
       pass: 'yoursettings'
   mailgun:
     pubkey: 'yourkey'
-  tokenTtl: 3*24*3600*1000
+  tokenDaysToLive: 3

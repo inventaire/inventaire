@@ -8,8 +8,8 @@ email_ = require './email'
 
 
 module.exports =
-  validationEmail: (userData)->
-    email = email_.validationEmail(userData)
+  validationEmail: (userData, token)->
+    email = email_.validationEmail(userData, token)
     transporter_.sendMail email
 
   friendAcceptedRequest: (userToNotify, newFriend)->

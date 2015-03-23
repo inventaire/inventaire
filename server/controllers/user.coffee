@@ -67,9 +67,8 @@ commonUpdater = (attribute, value, doc)->
 emailUpdater = (attribute, value, doc)->
   doc = archivePreviousEmail(doc)
   doc.email = value
-  doc.emailValidation = User.getEmailValidationData()
-  Radio.emit 'validation:email', doc
-  return doc
+  # returns a user doc
+  user_.sendValidationEmail(doc)
 
 archivePreviousEmail = (doc)->
   if doc.validEmail
