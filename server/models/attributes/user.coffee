@@ -9,6 +9,7 @@ attributes.ownerSafe = [
     'picture'
     'language'
     'creationStrategy'
+    'hasPassword'
     'validEmail'
   ]
 
