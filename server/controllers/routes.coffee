@@ -65,6 +65,14 @@ routes =
     get: noGet
     post: auth.resetPassword
 
+  # allows authentification forms to submit
+  # a form already validated by XHR calls
+  # in order to be catched by browsers password manager
+  # or other field suggestions tools
+  'api/auth/public/submit':
+    get: noGet
+    post: auth.fakeSubmit
+
   'api/user':
     get: user.getUser
     put: user.updateUser
@@ -153,15 +161,6 @@ routes =
 
   'api/proxy/public*':
     get: proxy.get
-
-  # allows authentification forms to submit
-  # a form already validated by XHR calls
-  # in order to be catched by browsers password manager
-  # or other field suggestions tools
-  'api/fakesubmit/public':
-    post: (req, res, next)->
-      route = req.headers.referer or '/'
-      res.redirect route
 
   'api/logs/public':
     post: analytics.reports
