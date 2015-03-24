@@ -19,6 +19,7 @@ glob = require './glob'
 log = require './log'
 analytics = require './analytics/analytics'
 
+# placeholder for endpoints without a GET
 noGet = (req, res)->
   error_.bundle res, 'GET isnt implemented on this route', 400
 
@@ -29,49 +30,16 @@ noGet = (req, res)->
 # 3 - 'public' if the route can be called without a session
 
 routes =
-
-  'api/auth/public/signup':
+  'api/auth':
     get: noGet
-    post: auth.signup
+    post: auth.actions
 
-  'api/auth/public/login':
+  'api/auth/public':
     get: noGet
-    post: auth.login
-
-  'api/auth/public/logout':
-    get: noGet
-    post: auth.logout
-
-  'api/auth/public/username-availability':
-    get: noGet
-    post: auth.usernameAvailability
-
-  'api/auth/public/email-availability':
-    get: noGet
-    post: auth.emailAvailability
+    post: auth.publicActions
 
   'api/auth/public/token':
     get: auth.token
-
-  'api/auth/email-confirmation':
-    get: noGet
-    post: auth.emailConfirmation
-
-  'api/auth/update-password':
-    get: noGet
-    post: auth.updatePassword
-
-  'api/auth/public/reset-password':
-    get: noGet
-    post: auth.resetPassword
-
-  # allows authentification forms to submit
-  # a form already validated by XHR calls
-  # in order to be catched by browsers password manager
-  # or other field suggestions tools
-  'api/auth/public/submit':
-    get: noGet
-    post: auth.fakeSubmit
 
   'api/user':
     get: user.getUser

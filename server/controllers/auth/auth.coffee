@@ -4,35 +4,30 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 passport_ = __.require 'lib', 'passport/passport'
 
-exports.signup = (req, res)->
-  {strategy} = req.body
-  next = LoggedIn(res)
-  switch strategy
-    when 'local' then passport_.authenticate.localSignup(req, res, next)
-    else error_.bundle res, "unknown signup strategy: #{strategy}", 400
+{ signup, login, logout } = require './connection'
+{ usernameAvailability, emailAvailability } = require './availability'
+emailConfirmation = require './email_confirmation'
+updatePassword = require './update_password'
+resetPassword = require './reset_password'
+fakeSubmit = require './fake_submit'
 
-exports.login = (req, res)->
-  {strategy} = req.body
-  next = LoggedIn(res)
-  switch strategy
-    when 'local' then passport_.authenticate.localLogin(req, res, next)
-    when 'browserid' then passport_.authenticate.browserid(req, res, next)
-    else error_.bundle res, "unknown login strategy: #{strategy}", 400
+exports.publicActions = (req, res, next)->
+  {action} = req.query
+  switch action
+    when 'signup' then signup(req, res, next)
+    when 'login' then login(req, res, next)
+    when 'logout' then logout(req, res, next)
+    when 'username-availability' then usernameAvailability(req, res, next)
+    when 'email-availability' then emailAvailability(req, res, next)
+    when 'reset-password' then resetPassword(req, res, next)
+    when 'submit' then fakeSubmit(req, res, next)
+    else error_.bundle res, 'unknown auth action', 400
 
-LoggedIn = (res)->
-  loggedIn = ->
-    res.cookie 'loggedIn', true
-    res.send 'ok'
-
-exports.logout = (req, res, next) ->
-  res.clearCookie 'loggedIn'
-  req.logout()
-  res.redirect '/'
-
-_.extend exports, require('./availability')
+exports.actions = (req, res, next)->
+  {action} = req.query
+  switch action
+    when 'email-confirmation' then emailConfirmation(req, res, next)
+    when 'update-password' then updatePassword(req, res, next)
+    else error_.bundle res, 'unknown auth action', 400
 
 exports.token = require './token'
-exports.emailConfirmation = require './email_confirmation'
-exports.updatePassword = require './update_password'
-exports.resetPassword = require './reset_password'
-exports.fakeSubmit = require './fake_submit'

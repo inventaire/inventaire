@@ -2,6 +2,9 @@ CONFIG = require 'config'
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 
+# allows authentification forms to submit a form already
+# validated by XHR calls, in order to be catched by browsers
+# password manager or other field suggestions tools
 module.exports = (req, res, next)->
   route = solveRoute req.headers.referer
   res.redirect route
@@ -15,7 +18,7 @@ solveRoute = (referer)->
     re = new RegExp '/login/reset-password', 'i'
     if re.test(referer) then route = '/'
 
-  return _.log route, 'redirect route'
+  return route
 
 
 needRedirectHome = [
