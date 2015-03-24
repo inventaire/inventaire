@@ -18,5 +18,5 @@ solveLang = (lang)->
   if lang in activeLangs then lang else 'en'
 
 module.exports = (lang, key, args)->
-  lang = _.log solveLang(lang), 'lang'
-  return _.log polyglot[lang].t(key, args), 'i18n'
+  lang = solveLang(lang)
+  return polyglot[lang].t(key, args)
