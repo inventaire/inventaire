@@ -15,6 +15,8 @@ activeLangs.forEach (lang)->
 
 
 solveLang = (lang)->
+  # there is only support for 2 letters languages for now
+  lang = lang[0..1]
   if lang in activeLangs then lang else 'en'
 
 module.exports = (lang, key, args)->

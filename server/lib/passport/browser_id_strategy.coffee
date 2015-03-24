@@ -12,6 +12,7 @@ options =
 
 verify = (req, email, done)->
   {username} = req.body
+  language = user_.findLanguage(req)
   _.log [email, username], 'browserid verify params'
   user_.byEmail(email)
   .then (users)-> users?[0]
@@ -20,7 +21,7 @@ verify = (req, email, done)->
       done(null, user)
     else if username? and User.tests.username(username)
       # this is browserid way to signup
-      user_.create(username, email, 'browserid')
+      user_.create(username, email, 'browserid', language)
       .then (user)-> done(null, user)
     else
       _.warn user, "user not found for #{email}"

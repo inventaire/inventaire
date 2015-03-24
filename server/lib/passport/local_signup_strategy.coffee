@@ -12,7 +12,8 @@ options =
 
 verify = (req, username, password, done)->
   {email} = req.body
-  user_.create(username, email, 'local', password)
+  language = user_.findLanguage(req)
+  user_.create(username, email, 'local', language, password)
   .then (user)->
     if user? then done null, user
     else

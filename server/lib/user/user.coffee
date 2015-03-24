@@ -60,14 +60,19 @@ user_ =
     params.limit = options.limit if options?.limit?
     @db.viewCustom 'byUsername', params
 
-  create: (username, email, creationStrategy, password)->
+  create: (username, email, creationStrategy, language, password)->
     @availability.username(username)
-    .then -> User.create(username, email, creationStrategy, password)
+    .then -> User.create(username, email, creationStrategy, language, password)
     .then @db.post.bind(@db)
     .then (docInfo)-> docInfo.id
     .then _.Log('user created')
     .then @byId.bind(@)
     .then token_.sendValidationEmail
+
+  findLanguage: (req)->
+    accept = req.headers['accept-language']
+    language = accept?.split?(',')[0]
+    if User.tests.language(language) then language
 
   getUserId: (req)->
     id = req.user?._id
