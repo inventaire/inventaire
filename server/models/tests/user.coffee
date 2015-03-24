@@ -5,7 +5,7 @@ _ = __.require 'builders', 'utils'
 
 module.exports =
   username: (username)-> Username.test(username)
-  email: (username)-> Email.test(username)
+  email: (email)-> Email.test(email)
   password: (password)->  8 <= password.length <=60
   language: (lang)-> /^\w{2}$/.test(lang)
   picture: (picture)-> _.isUrl(picture)
