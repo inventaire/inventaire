@@ -15,7 +15,6 @@ activeLangs.forEach (lang)->
 
 
 solveLang = (lang)->
-  console.log 'solveLang', lang
   if lang in activeLangs then lang else 'en'
 
 module.exports = (lang, key, args)->
