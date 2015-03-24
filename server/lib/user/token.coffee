@@ -29,7 +29,6 @@ module.exports = (db)->
       updateEmailValidation db, user, tokenHash
       return user
 
-
   token_.confirmEmailValidity = (email, token)->
     @findOneByEmail(email)
     .then updateIfValidToken.bind(null, token)
@@ -42,6 +41,13 @@ module.exports = (db)->
     testToken(emailValidation, token)
     .then updateValidEmail.bind(null, db, _id)
 
+  token_.sendResetPasswordEmail = (user)->
+    getTokenData()
+    .then (tokenData)->
+      [token, tokenHash] = tokenData
+      Radio.emit 'reset:password:email', user, token
+      updateToken db, user, tokenHash
+      return user
 
   return token_
 
@@ -63,4 +69,9 @@ getTokenData = ->
 updateEmailValidation = (db, user, tokenHash)->
   db.update user._id, (doc)->
     doc.emailValidation = tokenHash
+    return doc
+
+updateToken = (db, user, tokenHash)->
+  db.update user._id, (doc)->
+    doc.token = tokenHash
     return doc

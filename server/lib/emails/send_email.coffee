@@ -11,6 +11,12 @@ module.exports =
   validationEmail: (userData, token)->
     email = email_.validationEmail(userData, token)
     transporter_.sendMail email
+    .catch _.Error('validationEmail')
+
+  resetPassword: (userData, token)->
+    email = email_.resetPassword(userData, token)
+    transporter_.sendMail email
+    .catch _.Error('resetPassword')
 
   friendAcceptedRequest: (userToNotify, newFriend)->
     helpers_.getUsersData(userToNotify, newFriend)

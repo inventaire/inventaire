@@ -11,5 +11,6 @@ module.exports = ->
   _.info 'mailer enabled'
 
   Radio.on 'validation:email', sendEmail.validationEmail
+  Radio.on 'reset:password:email', sendEmail.resetPassword
   Radio.on 'notify:friend:request:accepted', sendEmail.friendAcceptedRequest
   Radio.on 'notify:friendship:request', sendEmail.friendshipRequest

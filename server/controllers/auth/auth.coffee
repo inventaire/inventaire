@@ -34,3 +34,4 @@ _.extend exports, require('./availability')
 exports.token = require './token'
 exports.emailConfirmation = require './email_confirmation'
 exports.updatePassword = require './update_password'
+exports.resetPassword = require './reset_password'
