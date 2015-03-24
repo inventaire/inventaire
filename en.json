@@ -16,5 +16,9 @@
     "stop_email_notifications": "[Stop email notifications](mailto:hello@inventaire.io?subject=Stop notifications&body=Hi, Inventaire is awesome, you really rock!! That said, I don't want to receive Inventaire's emails any more, could you do that? Love, %{username})",
     "Groups": "Groups",
     "transactions_tracking": "Transactions tracking (know where your book is)",
-    "Messaging": "Messaging"
+    "Messaging": "Messaging",
+    "reset_password_subject": "Reset your Inventaire password",
+    "reset_password_title": "Forgot your Inventaire password?",
+    "reset_password_paragraph": "We received a request to reset the password for your account, **%{username}**. <br> If you made this request, click the button below. If you didn't make this request, you can ignore this email.",
+    "reset_password_button": "Reset your password"
 }
