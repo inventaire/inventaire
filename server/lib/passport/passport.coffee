@@ -24,6 +24,7 @@ passport.use 'local-login', require('./local_login_strategy')
 passport.use 'local-signup', require('./local_signup_strategy')
 # browserid startegy handles both login and signup
 passport.use 'browserid', require('./browser_id_strategy')
+passport.use 'token', require('./token_strategy')
 
 module.exports =
   passport: passport
@@ -31,3 +32,5 @@ module.exports =
     localLogin: passport.authenticate 'local-login'
     localSignup: passport.authenticate 'local-signup'
     browserid: passport.authenticate 'browserid'
+    resetPassword: passport.authenticate 'token',
+      failureRedirect: '/login/forgot-password?resetPasswordFail=true'
