@@ -64,8 +64,8 @@ user_ =
     @availability.username(username)
     .then -> User.create(username, email, creationStrategy, password)
     .then @db.post.bind(@db)
-    .then _.Log('user created')
     .then (docInfo)-> docInfo.id
+    .then _.Log('user created')
     .then @byId.bind(@)
     .then token_.sendValidationEmail
 

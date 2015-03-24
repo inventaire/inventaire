@@ -61,10 +61,10 @@ module.exports = (_)->
 
 
   bindingLoggers =
-    Log: (label)-> loggers_.bindLabel logs_.log, label
-    Error: (label)-> loggers_.bindLabel logs_.error, label
-    Warn: (label)-> loggers_.bindLabel logs_.warn, label
-    Info: (label)-> loggers_.bindLabel logs_.info, label
-    Success: (label)-> loggers_.bindLabel logs_.success, label
+    Log: (label)-> _.partialRight logs_.log, label
+    Error: (label)-> _.partialRight logs_.error, label
+    Warn: (label)-> _.partialRight logs_.warn, label
+    Info: (label)-> _.partialRight logs_.info, label
+    Success: (label)-> _.partialRight logs_.success, label
 
   return _.extend logs_, bindingLoggers

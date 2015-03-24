@@ -14,7 +14,6 @@ module.exports =
   _fails: -> fails
   _flushFails: flushFails
   recordFail: (username, label)->
-    _.warn username, "recording failed login attempt for #{label}"
     fails[username] or= 0
     fails[username]++
 
