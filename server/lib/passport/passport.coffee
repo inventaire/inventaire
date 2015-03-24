@@ -25,14 +25,9 @@ passport.use 'local-signup', require('./local_signup_strategy')
 # browserid startegy handles both login and signup
 passport.use 'browserid', require('./browser_id_strategy')
 
-options =
-  afterComplete: (req, res)->
-    res.cookie 'loggedIn', true
-    res.send 'ok'
-
 module.exports =
   passport: passport
   authenticate:
-    localLogin: passport.authenticate 'local-login', options
-    localSignup: passport.authenticate 'local-signup', options
-    browserid: passport.authenticate 'browserid', options
+    localLogin: passport.authenticate 'local-login'
+    localSignup: passport.authenticate 'local-signup'
+    browserid: passport.authenticate 'browserid'
