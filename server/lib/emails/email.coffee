@@ -58,6 +58,18 @@ module.exports =
         otherUser: user2
         host: host
 
+  feedback: (subject, message, user, unknownUser)->
+    return _.extend {}, base,
+      to: base.from
+      subject: "[feedback] #{subject}"
+      template: 'feedback'
+      context:
+        subject: subject
+        message: message
+        user: user
+        unknownUser: unknownUser
+
+
 validateOptions = (options)->
   {user1, user2} = options
   _.types [user1, user2], 'objects...'

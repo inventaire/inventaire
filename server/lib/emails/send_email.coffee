@@ -30,6 +30,11 @@ module.exports =
     .then transporter_.sendMail
     .catch Err('friendshipRequest', userToNotify, requestingUser)
 
+  feedback: (subject, message, user, unknownUser)->
+    email = email_.feedback(subject, message, user, unknownUser)
+    transporter_.sendMail email
+    .catch _.Error('feedback')
+
 
 Err = (label, user1, user2)->
   _.Error("#{label} email fail for #{user1} / #{user2}")

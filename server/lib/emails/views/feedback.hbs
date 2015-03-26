@@ -1,0 +1,16 @@
+{{>paragraph_top}}
+  {{#if user}}
+    <h4>{{user.username}}</h4>
+    {{user.email}} - {{user._id}}
+  {{else}}
+    <h4>{{unknownUser}}</h4>
+  {{/if}}
+  <hr>
+  <p>
+    {{subject}}
+  </p>
+  <hr>
+  <p>
+    {{message}}
+  </p>
+{{>paragraph_bottom}}
