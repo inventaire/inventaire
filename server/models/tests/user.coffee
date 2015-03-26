@@ -13,3 +13,4 @@ module.exports =
   picture: (picture)-> _.isUrl(picture)
   creationStrategy: (creationStrategy)->
     creationStrategy in ['browserid', 'local']
+  bio: (bio)-> _.isString(bio) and bio.length < 1000

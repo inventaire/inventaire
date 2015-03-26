@@ -11,6 +11,7 @@ attributes.ownerSafe = [
     'creationStrategy'
     'hasPassword'
     'validEmail'
+    'bio'
   ]
 
 # attributes that need availability check before update
@@ -23,4 +24,5 @@ attributes.concurrencial = [
 attributes.updatable = [
   'picture'
   'language'
+  'bio'
 ]
