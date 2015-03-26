@@ -50,6 +50,8 @@ module.exports = _.extend publicActions,
         publicActions.publicByUsernameAndEntity(req, res, next)
       when 'last-public-items'
         publicActions.lastPublicItems(req, res, next)
+      when 'user-public-items'
+        publicActions.userPublicItems(req, res, next)
       else error_.bundle res, 'unknown items public action', 400
 
 

@@ -11,6 +11,7 @@ module.exports =
     @db.viewByKey 'byOwner', owner
 
   byListing: (owner, listing)->
+    _.types arguments, 'strings...'
     @db.viewByKey 'byListing', [owner, listing]
     .then safeItems
 

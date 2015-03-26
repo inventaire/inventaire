@@ -1,9 +1,10 @@
 CONFIG = require 'config'
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
-{Username, Email} = require './common-tests'
+{Username, Email, UserId} = require './common-tests'
 
 module.exports =
+  userId: (userId)-> UserId.test(userId)
   username: (username)-> Username.test(username)
   email: (email)-> Email.test(email)
   password: (password)->  8 <= password.length <=60

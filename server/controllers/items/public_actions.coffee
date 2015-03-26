@@ -6,6 +6,7 @@ couch_ = __.require 'lib', 'couch'
 error_ = __.require 'lib', 'error/error'
 Item = __.require 'models', 'item'
 Promise = require 'bluebird'
+{ Username, UserId, EntityUri } = __.require 'models', 'tests/common-tests'
 
 module.exports =
   lastPublicItems: (req, res, next) ->
@@ -14,9 +15,22 @@ module.exports =
     .then bundleOwnersData.bind(null, res)
     .catch error_.Handler(res)
 
+  userPublicItems: (req, res, next)->
+    _.info req.query, 'userPublicItems'
+    {user} = req.query
+    unless UserId.test(user)
+      return error_.bundle res, 'bad userId', 400
+
+    items_.byListing(user, 'public')
+    .then res.json.bind(res)
+    .catch error_.Handler(res)
+
   publicByEntity: (req, res, next) ->
     _.info req.query, 'publicByEntity'
     {uri} = req.query
+    unless EntityUri.test(uri)
+      return error_.bundle res, 'bad entity uri', 400
+
     items_.publicByEntity(uri)
     .then bundleOwnersData.bind(null, res)
     .catch error_.Handler(res)
@@ -24,7 +38,12 @@ module.exports =
   publicByUsernameAndEntity: (req, res, next)->
     _.info req.query, 'publicByUserAndEntity'
     {username, uri} = req.query
-    _.types [username, uri], 'strings...'
+
+    unless EntityUri.test(uri)
+      return error_.bundle res, 'bad entity uri', 400
+    unless Username.test(username)
+      return error_.bundle res, 'bad username', 400
+
     user_.getSafeUserFromUsername(username)
     .then (user)->
       {_id} = user
