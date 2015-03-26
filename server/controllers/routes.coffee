@@ -5,7 +5,7 @@ error_ = __.require 'lib', 'error/error'
 
 auth = require './auth/auth'
 user = require './user'
-items = require './items'
+items = require './items/items'
 users = require './users'
 relations = require './relations/relations'
 entities = require './entities/entities'
@@ -55,17 +55,10 @@ routes =
     get: items.fetch
 
   'api/items/public':
-    get: items.fetchLastPublicItems
-
-  'api/items/public/:uri':
-    get: items.publicByEntity
-
-  'api/items/public/:username/:suffix':
-    get: items.publicByUserAndSuffix
+    get: items.publicActions
 
   'api/items/:id':
     put: items.put
-    # get: items.get
 
   'api/items/:id/:rev':
     delete: items.del

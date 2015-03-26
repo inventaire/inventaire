@@ -19,8 +19,8 @@ module.exports =
     @db.viewByKeys 'byListing', listings
     .then safeItems
 
-  publicByEntity: (uri)->
-    @db.viewByKey 'publicByEntity', uri
+  publicByEntity: (entityUri)->
+    @db.viewByKey 'publicByEntity', entityUri
     .then safeItems
 
   publicByDate: ->
@@ -31,8 +31,8 @@ module.exports =
     @db.viewCustom 'publicByDate', params
     .then safeItems
 
-  publicByOwnerAndSuffix: (owner, suffix)->
-    @db.viewByKey 'publicByOwnerAndSuffix', [owner, suffix]
+  publicByOwnerAndEntity: (owner, entityUri)->
+    @db.viewByKey 'publicByOwnerAndEntity', [owner, entityUri]
     .then safeItems
 
 safeItems = (items)->

@@ -7,7 +7,9 @@ error_ = __.require 'lib', 'error/error'
 Item = __.require 'models', 'item'
 Promise = require 'bluebird'
 
-module.exports =
+publicActions = require './public_actions'
+
+module.exports = _.extend publicActions,
   fetch: (req, res, next) ->
     # only fetch for session email
     # = only way to fetch private data on items
@@ -39,42 +41,16 @@ module.exports =
       .then res.json.bind(res)
     .catch error_.Handler(res)
 
-  publicByEntity: (req, res, next) ->
-    _.info req.params, 'public'
-    items_.publicByEntity(req.params.uri)
-    .then bundleOwnersData.bind(null, res)
-    .catch error_.Handler(res)
-
-  fetchLastPublicItems: (req, res, next) ->
-    items_.publicByDate()
-    .then bundleOwnersData.bind(null, res)
-    .catch error_.Handler(res)
-
-  publicByUserAndSuffix: (req, res, next)->
-    _.info req.params, 'publicByUserAndSuffix'
-    user_.getSafeUserFromUsername(req.params.username)
-    .then (user)->
-      {_id} = user
-      unless _id?
-        return error_.new 'user not found', 404
-
-      owner = _id
-      items_.publicByOwnerAndSuffix(owner, req.params.suffix)
-      .then (items)-> res.json {items: items, user: user}
-
-    .catch error_.Handler(res)
-
-bundleOwnersData = (res, items)->
-  unless items?.length > 0
-    return error_.bundle res, 'no item found', 404
-
-  users = getItemsOwners(items)
-  user_.getUsersPublicData(users)
-  .then (users)-> res.json {items: items, users: users}
-
-getItemsOwners = (items)->
-  users = items.map (item)-> item.owner
-  return _.uniq(users)
+  publicActions: (req, res, next)->
+    {action} = req.query
+    switch action
+      when 'public-by-entity'
+        publicActions.publicByEntity(req, res, next)
+      when 'public-by-username-and-entity'
+        publicActions.publicByUsernameAndEntity(req, res, next)
+      when 'last-public-items'
+        publicActions.lastPublicItems(req, res, next)
+      else error_.bundle res, 'unknown items public action', 400
 
 
 getUserIdAndItem = (req, itemId)->
