@@ -46,7 +46,7 @@ user_ =
     @byUsername(username)
     .then (docs)=>
       if docs?[0]?
-        return @safeUserData(docs[0])
+        return @publicUserData(docs[0])
       else return
     .catch (err)->
       _.error err, 'couldnt getUserFromUsername'
@@ -89,7 +89,7 @@ user_ =
 
       if usersData?
         # _.success usersData, 'usersData before cleaning'
-        cleanedUsersData = usersData.map @safeUserData
+        cleanedUsersData = usersData.map @publicUserData
 
         if format is 'index'
           data = _.indexBy(cleanedUsersData, '_id')
@@ -104,11 +104,8 @@ user_ =
         _.log "users not found. Ids?: #{ids.join(', ')}"
         return
 
-  safeUserData: (value)->
-    _id: value._id
-    username: value.username
-    created: value.created
-    picture: value.picture
+  publicUserData: (value)->
+    _.pick value, User.attributes.public
 
   # only used by tests so far
   deleteUser: (user)-> @db.del user._id, user._rev

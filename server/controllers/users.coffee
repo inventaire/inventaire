@@ -21,7 +21,7 @@ module.exports.actions = (req, res, next) ->
 searchByUsername = (res, search) ->
   user_.usernameStartBy(search)
   .then (usersData)->
-    users = usersData.map user_.safeUserData
+    users = usersData.map user_.publicUserData
     res.json users
   .catch error_.Handler(res)
 

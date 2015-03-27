@@ -14,6 +14,13 @@ attributes.ownerSafe = [
     'bio'
   ]
 
+attributes.public = [
+  '_id'
+  'username'
+  'picture'
+  'bio'
+]
+
 # attributes that need availability check before update
 attributes.concurrencial = [
   'username'
