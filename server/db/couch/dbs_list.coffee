@@ -4,3 +4,4 @@ module.exports =
   items: ['items', 'followedEntities']
   entities: ['entities']
   analytics: ['reports']
+  notifications: ['notifications']

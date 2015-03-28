@@ -32,22 +32,12 @@ describe 'Notifications', ->
         done()
       , done)
 
-    it "should have put the object", (done)->
-      trycatch( ->
-        value = notifs_.getValue 'aType', {some: 'data'}
-        key = notifs_.getKey 'aUserId', value.time
-        notifs_.API.put(key, value)
-        .then (res)->
-          notifs_.API.get(key)
-          .then (res)->
-            _.log res, 'res'
-            res.type.should.equal 'aType'
-            res.data.some.should.equal 'data'
-            res.status.should.equal 'unread'
-            res.time.should.equal(value.time)
-            done()
-          .catch (err)-> throw new Error(err)
-      , done)
-
+    it "should have posted the object", (done)->
+      notifs_.add 'aUserId', 'aType',
+        some: 'data'
+        time: _.now()
+      .then (res)->
+        res.ok.should.equal true
+        done()
 
   describe 'getUserNotifications', ->

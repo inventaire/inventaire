@@ -1,0 +1,9 @@
+{
+   "_id": "_design/notifications",
+   "language": "coffeescript",
+   "views": {
+       "byUserAndTime": {
+           "map": "(doc)->\n  emit [doc.user, doc.time], null"
+       }
+   }
+}
