@@ -4,15 +4,13 @@ _ = __.require('builders', 'utils')
 promises_ = require './promises'
 wd = __.require('sharedLibs', 'wikidata')(promises_, _)
 wd.sitelinks = __.require 'sharedLibs','wiki_sitelinks'
-module.exports = wd
+{ Q } = wd
 
-Q = wd.Q
-
-module.exports.searchEntities = (search, language='en', limit='20', format='json')->
+searchEntities = (search, language='en', limit='20', format='json')->
   url = wd.API.wikidata.search(search, language).logIt('searchEntities')
   return promises_.get url
 
-module.exports.filterAndBrush = (res)->
+filterAndBrush = (res)->
   results = []
   for id,entity of res.entities
     rebaseClaimsValueToClaimsRoot entity
@@ -56,3 +54,8 @@ validIfIsABook = getP31Tester(Q.books)
 validIfIsAnAuthor = getP31Tester(Q.humans)
 
 whitelistedEntity = (id)-> id in P31Whitelist
+
+
+module.exports = _.extend wd,
+  searchEntities: searchEntities
+  filterAndBrush: filterAndBrush
