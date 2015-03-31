@@ -1,7 +1,17 @@
-# db: [designDoc1, designDoc2]
+# 'default' keys/values are used by couch handler
+# checkDbsExistanceOrCreate and reloadDesignDocs
+# keys -> dbs names
+# values -> design docs
+
+# 'optional' keys/values are dbs names/design_docs
+# that aren't required to run on production
+
 module.exports =
-  users: ['user', 'relations']
-  items: ['items', 'followedEntities']
-  entities: ['entities']
-  analytics: ['reports']
-  notifications: ['notifications']
+  default:
+    users: ['user', 'relations']
+    items: ['items', 'followedEntities']
+    entities: ['entities']
+    analytics: []
+    notifications: ['notifications']
+  optional:
+    analytics: ['reports']

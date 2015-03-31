@@ -6,8 +6,6 @@ _ = __.require 'builders', 'utils'
 # as it would create a require loop
 bluereq = require 'bluereq'
 
-dbsList = __.require 'couch', 'dbs_list'
-
 module.exports =
   designDoc:
     load: (dbBaseName, designDocName)->

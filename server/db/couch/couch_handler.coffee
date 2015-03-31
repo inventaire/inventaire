@@ -5,7 +5,7 @@ host = CONFIG.db.fullHost()
 nano = require('nano') host
 dbInit = __.require 'couch', 'couch_init'
 Radio = __.require 'lib', 'radio'
-dbsList = __.require 'couch', 'dbs_list'
+dbsList = __.require('couch', 'dbs_list').default
 
 module.exports =
   checkDbsExistanceOrCreate: ->
