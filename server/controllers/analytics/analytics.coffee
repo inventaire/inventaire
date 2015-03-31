@@ -16,12 +16,17 @@ analytics_ = __.require 'controllers', 'analytics/lib/base'
 module.exports =
   reports: (req, res, next)->
     {navigation, error} = req.body
+    cspReport = req.body['csp-report']
+
     if navigation? then analytics_.recordSession(req)
     if error?
       _.forceArray(error).map (err)->
         analytics_.logErrorIfNew(err, req.body)
 
-    unless navigation? or error?
+    if cspReport?
+      _.error cspReport, 'cspReport'
+
+    unless navigation? or error? or cspReport?
       _.error req.body, 'wrongly formatted client report'
 
     res.send('ok')

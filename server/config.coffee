@@ -36,9 +36,9 @@ module.exports =
     auth.passport.session
 
     routes.restrictApiAccess
-    security.allowCrossDomain
-    security.cspPolicy
-    # security.csrf
+    # security.allowCrossDomain  #handled by the Nginx server
+    # security.cspPolicy  #handled by the Nginx server
+    # security.csrf  #not correctly implemented yet
 
     lang.langCookie
   ]

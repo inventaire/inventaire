@@ -8,25 +8,29 @@ else
   exports.forceSSL = _.pass
 
 
-# middlewares following recommandations found here for the implementation of Persona
-# http://www.mircozeiss.com/mozilla-persona-example-app-with-express-and-couchdb/
-
 exports.allowCrossDomain = (req, res, next)->
   res.header 'Access-Control-Allow-Origin', '*'
   res.header 'Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE'
   res.header 'Access-Control-Allow-Headers', 'Content-Type'
   next()
 
-policy = """
-  default-src 'self';
-  frame-src 'self' https://login.persona.org;
-  script-src 'self' 'unsafe-inline' https://login.persona.org;
-  style-src 'self' 'unsafe-inline'
+# script-src 'unsafe-eval' is needed by jQuery.getScript
+# style-src 'unsafe-inline' seem to be needed by Modernizr
+# connect-src * is required to use PouchDB replication
+policy =
+  """
+  child-src 'self' wikipedia.org https://login.persona.org;
+  script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.wikidata.org;
+  style-src 'self' 'unsafe-inline';
+  img-src *;
+  connect-src *;
+  report-uri /api/logs/public;
   """
 
 exports.cspPolicy = (req, res, next) ->
-  res.header 'X-Content-Security-Policy', policy # Firefox and Internet Explorer
-  res.header 'X-WebKit-CSP', policy # Safari and Chrome
+  res.header 'Content-Security-Policy', policy
+  res.header 'X-Content-Security-Policy', policy
+  res.header 'X-WebKit-CSP', policy
   next()
 
 exports.csrf = (req, res, next) ->
