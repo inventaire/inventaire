@@ -9,7 +9,7 @@ fs = require 'fs'
 # -----------------
 # dbName = 'inventory' (e.g.)
 # mig = require('config').root.require('couchdb', 'migration')(dbName)
-# updateFunction = (doc)-> (do your thing) return doc
+# updateFunction = (doc)-> if type is 'targetedType' (do your thing) return doc
 # mig.updateAll(updateFunction)
 
 
