@@ -11,7 +11,6 @@ Promise = require 'bluebird'
 module.exports =
   lastPublicItems: (req, res, next) ->
     items_.publicByDate()
-    .then (res)-> _.log res, 'fetchLastPublicItems'
     .then bundleOwnersData.bind(null, res)
     .catch error_.Handler(res)
 
