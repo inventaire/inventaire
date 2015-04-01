@@ -54,21 +54,11 @@ routes =
 
   'api/items':
     get: items.fetch
+    put: items.put
+    delete: items.del
 
   'api/items/public':
     get: items.publicActions
-
-  'api/items/:id':
-    put: items.put
-
-  'api/items/:id/:rev':
-    delete: items.del
-
-  'api/:user/items/:id':
-    put: items.put
-  'api/:user/items/:id/:rev':
-    put: items.put
-    delete: items.del
 
   'api/entities':
     get: entities.get

@@ -10,7 +10,7 @@ Promise = require 'bluebird'
 
 module.exports =
   lastPublicItems: (req, res, next) ->
-    items_.publicByDate()
+    items_.publicByDate(15)
     .then bundleOwnersData.bind(null, res)
     .catch error_.Handler(res)
 

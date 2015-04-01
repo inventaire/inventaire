@@ -5,45 +5,44 @@ assert = require 'assert'
 {EntityUri, ItemId} = require './tests/common-tests'
 items_ = __.require 'lib', 'items'
 Promise = require 'bluebird'
+error_ = __.require 'lib', 'error/error'
+
 
 module.exports = Item = {}
+
+Item.tests = tests = require './tests/item'
+Item.attributes = attributes = require './attributes/item'
+{ assertValid, solveConstraint } = require('./helpers')(tests, attributes)
 
 Item.create = (userId, item)->
   _.types arguments, ['string', 'object']
   # we want to get couchdb sequential id
   # so we need to let _id blank
   item = _.omit item, '_id'
-  assertValidTitle item.title
-  assertValidEntity item.entity
-  item.created = _.now()
+
+  {title, entity} = item
+  assertValid 'title', title
+  assertValid 'entity', entity
+
+  assertValid 'userId', userId
   item.owner = userId
-  item.listing or= 'private'
-  item.transaction or= 'inventorying'
-  items_.db.post item
+
+  item.created = _.now()
+  item.listing = solveConstraint item, 'listing'
+  item.transaction = solveConstraint item, 'transaction'
+  return item
 
 Item.update = (userId, item)->
   _.types arguments, ['string', 'object']
   {_id} = item
-  assertValidId(_id)
-  items_.db.update _id, updater.bind(null, userId, item)
+  assertValid '_id', _id
+  return item
 
 
-assertValidId = (id)->
-  assert ItemId.test(id)
-
-assertValidTitle = (id)->
-  _.type id, 'string'
-  assert id.length > 0
-
-assertValidEntity = (id)->
-  assert EntityUri.test(id)
-
-updater = (userId, item, doc)->
+Item.updater = (userId, item, doc)->
   unless doc?.owner is userId
     throw new Error  "user isnt doc.owner: #{userId} / #{doc.owner}"
 
   doc.updated = _.now()
-  newData = _.pick item, updatable
+  newData = _.pick item, attributes.updatable
   return _.extend doc, newData
-
-Item.attributes = require './attributes/item'

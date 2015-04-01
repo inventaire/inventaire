@@ -4,7 +4,6 @@ items_ = __.require 'lib', 'items'
 user_ = __.require 'lib', 'user/user'
 couch_ = __.require 'lib', 'couch'
 error_ = __.require 'lib', 'error/error'
-Item = __.require 'models', 'item'
 Promise = require 'bluebird'
 
 publicActions = require './public_actions'
@@ -19,26 +18,27 @@ module.exports = _.extend publicActions,
     .catch error_.Handler(res)
 
   put: (req, res, next) ->
-    _.log req.params.id, 'Put Item ID'
+    {_id, rev, title, entity} = req.body
+    _.log _id, 'Put Item ID'
+    unless _id? then return error_.bundle res, 'missing item id', 400
+    unless title? then return error_.bundle res, 'missing item title', 400
+    unless entity? then return error_.bundle res, 'missing item entity', 400
+
     user_.getUserId(req)
     .then (userId)->
       item = req.body
-      if item._id is 'new' then Item.create(userId, item)
-      else Item.update(userId, item)
+      if item._id is 'new' then items_.create(userId, item)
+      else items_.update(userId, item)
     .then couch_.getObjIfSuccess.bind(null, items_.db)
     .then (body)-> res.status(201).json body
     .catch error_.Handler(res)
 
   del: (req, res, next) ->
-    _.info req.params, 'del'
-    {id, rev} = req.params
-    getUserIdAndItem(req, id)
-    .spread (userId, item)->
-      unless userId is item?.owner
-        throw error_.new 'user isnt item.owner', 403, userId, item.owner
-      _.log id, 'deleting!'
-      items_.db.delete(id, rev)
-      .then res.json.bind(res)
+    {id, rev} = req.query
+    user_.getUserId(req)
+    .then items_.verifyOwnership.bind(null, id)
+    .then items_.delete.bind(null, id, rev)
+    .then res.json.bind(res)
     .catch error_.Handler(res)
 
   publicActions: (req, res, next)->
@@ -53,11 +53,3 @@ module.exports = _.extend publicActions,
       when 'user-public-items'
         publicActions.userPublicItems(req, res, next)
       else error_.bundle res, 'unknown items public action', 400
-
-
-getUserIdAndItem = (req, itemId)->
-  return Promise.all [
-    user_.getUserId(req)
-    items_.db.get(itemId)
-  ]
-
