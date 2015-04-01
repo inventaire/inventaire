@@ -35,7 +35,7 @@ Item.create = (userId, item)->
 Item.update = (userId, item)->
   _.types arguments, ['string', 'object']
   {_id} = item
-  assertValid '_id', _id
+  assertValid 'itemId', _id
   return item
 
 
