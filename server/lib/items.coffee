@@ -58,7 +58,6 @@ module.exports =
       return item
 
   delete: (id, rev)->
-    _.log id, 'deleting!'
     db.delete(id, rev)
 
 safeItems = (items)->

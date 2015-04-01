@@ -12,6 +12,8 @@ entities = require './entities/entities'
 followed = require './entities/followed'
 upload = require './upload'
 notifs = require './notifs'
+cookie = require './cookie'
+tests = require './tests'
 data = require './data'
 services = require './services/services'
 proxy = require './proxy'
@@ -75,16 +77,7 @@ routes =
     post: notifs.updateStatus
 
   'api/cookie':
-    post: (req, res, next)->
-      whitelist = ['lang']
-      {body} = req
-      {key, value} = body
-      unless key in whitelist
-        return error_.bundle res, 'unauthorize cookie setting', 403
-
-      res.cookie key = key, value = value
-      _.info result = "cookie set: #{key} = #{value}"
-      res.send result
+    post: cookie.post
 
   'api/upload':
     post: upload.post
@@ -93,17 +86,9 @@ routes =
     post: upload.del
 
   'api/test/public':
-    get: (req, res, next)-> res.send 'server: OK'
-    post: (req, res, next)->
-      if req.body?.label? then _.info(req.body.obj, req.body.label)
-      else _.info req.body
-      res.send 'thanks!'
-
-  'api/test/public/json':
-    get: (req, res, next)-> res.json {server: 'OK'}
-    post: (req, res, next)->
-      _.info req.body
-      res.json {server: 'OK', body: req.body}
+    get: tests.get
+    post: tests.post
+    delete: tests.delete
 
   'api/services/public*':
     get: services.get
