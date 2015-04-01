@@ -85,7 +85,7 @@ routes =
   'api/upload/delete':
     post: upload.del
 
-  'api/test/public':
+  'api/tests/public':
     get: tests.get
     post: tests.post
     delete: tests.delete
