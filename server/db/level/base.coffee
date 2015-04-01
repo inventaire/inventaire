@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 Promise = require 'bluebird'
-promises_ = __.require 'lib', 'promises'
+error_ = __.require 'lib', 'error/error'
 
 DBPath = __.path 'leveldb', CONFIG.port
 
@@ -30,7 +30,7 @@ module.exports =
     API =
       get: (key)->
         sub.getAsync(key)
-        .catch promises_.catchNotFound
+        .catch error_.catchNotFound
         .then (res)-> if res? then JSON.parse(res)
 
       put: (key, value)-> sub.putAsync key, JSON.stringify(value)

@@ -18,10 +18,4 @@ promisesHandlers =
   start: Promise.resolve.bind(Promise)
 
 
-errorsHandlers =
-  catchNotFound: (err)->
-    if err?.notFound then return
-    else throw err
-
-
-module.exports = _.extend {}, requests, promisesHandlers, errorsHandlers
+module.exports = _.extend {}, requests, promisesHandlers
