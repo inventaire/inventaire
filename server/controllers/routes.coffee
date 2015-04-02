@@ -12,6 +12,7 @@ entities = require './entities/entities'
 followed = require './entities/followed'
 upload = require './upload'
 notifs = require './notifs'
+newsletter = require './newsletter'
 cookie = require './cookie'
 tests = require './tests'
 data = require './data'
@@ -75,6 +76,9 @@ routes =
 
   'api/notifs':
     post: notifs.updateStatus
+
+  'api/newsletter/public':
+    post: newsletter.subscribe
 
   'api/cookie':
     post: cookie.post
