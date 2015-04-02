@@ -90,10 +90,10 @@ routes =
     post: tests.post
     delete: tests.delete
 
-  'api/services/public*':
+  'api/services/public':
     get: services.get
 
-  'api/data/public*':
+  'api/data/public':
     get: data.get
 
   'api/proxy/public*':
