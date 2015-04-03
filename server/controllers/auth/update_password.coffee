@@ -68,6 +68,6 @@ passwordUpdater = (user, newHash)->
 
 testOpenResetPasswordWindow = (resetPassword)->
   if _.expired(resetPassword, 3600*1000)
-    error_.reject 'reset password timespan experied'
+    error_.reject 'reset password timespan experied', 400
   else
     promises_.resolve()

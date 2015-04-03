@@ -17,7 +17,7 @@ module.exports =
   get: (key, method, timespan=oneMonth)->
     types = ['string', 'function', 'number']
     try _.types arguments, types, 2
-    catch err then return error_.reject(err)
+    catch err then return error_.reject(err, 500)
 
     checkCache(key, timespan)
     .then requestOnlyIfNeeded.bind(null, key, method)

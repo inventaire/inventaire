@@ -39,7 +39,6 @@ if CONFIG.verbosity > 0
   _.log "host: #{CONFIG.host}"
 
 if CONFIG.verbosity > 1 or process.argv.length > 2
-  _.log CONFIG, 'CONFIG'
   _.log CONFIG.fullHost(), 'fullHost'
 
 options =

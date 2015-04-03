@@ -77,7 +77,7 @@ user_ =
   getUserId: (req)->
     id = req.user?._id
     if id? then return promises_.resolve(id)
-    else error_.reject('req.user._id couldnt be found')
+    else error_.reject('req.user._id couldnt be found', 401)
 
   fetchUsers: (ids)-> @db.fetch(ids)
 
