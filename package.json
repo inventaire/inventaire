@@ -1,12 +1,8 @@
 {
   "name": "inventaire",
-  "domains": [
-    "inventaire.io",
-    "www.inventaire.io"
-  ],
-  "subdomain": "alpha-o2o621pq3is",
-  "version": "0.0.1-33",
-  "description": "resources mapper",
+  "homepage": "https://inventaire.io",
+  "version": "0.1.0",
+  "description": "a libre collaborative resources mapper powered by open-knowledge (server-side)",
   "main": "index.coffee",
   "scripts": {
     "postinstall": "./scripts/postinstall",
