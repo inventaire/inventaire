@@ -10,20 +10,21 @@ getWikidataBookEntitiesByIsbn = __.require 'data', 'wikidata/books_by_isbn'
 
 module.exports = searchEntity = (req, res)->
   {query} = req
+  {search, language} = query
   _.info query, "Entities:Search"
 
-  unless query.search?.length > 0
+  unless search?.length > 0
     return error_.bundle res, 'empty query' , 400
 
-  unless query.language?
+  unless language?
     return error_.bundle res, 'no language specified' , 400
 
-  if books_.isIsbn(query.search)
-    _.log query.search, 'searchByIsbn'
+  if books_.isIsbn(search)
+    _.log search, 'searchByIsbn'
     searchByIsbn(query, res)
 
   else
-    _.log query.search, 'searchByText'
+    _.log search, 'searchByText'
     searchByText(query, res)
 
 
