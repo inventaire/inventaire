@@ -10,3 +10,4 @@ module.exports =
     return str.length > 0
   userId: (userId)-> UserId.test(userId)
   entity: (entity)-> EntityUri.test(entity)
+  pictures: (pictures)-> _.isArray(pictures)

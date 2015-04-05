@@ -16,6 +16,7 @@ validItem =
   entity: 'wd:Q35160'
   listing: 'public'
   transaction: 'giving'
+  pictures: ['https://pictu.re/yoplaboom']
 
 extendItem = (data)->
   _.extend {}, validItem, data
@@ -53,6 +54,19 @@ describe 'item model', ->
       it "should throw on missing entity", (done)->
         (-> create extendItem({entity: null})).should.throw()
         done()
+
+    describe 'pictures', ->
+      it "should return an object with a pictures array", (done)->
+        item = create validItem
+        item.pictures.length.should.equal validItem.pictures.length
+        item.pictures[0].should.equal validItem.pictures[0]
+        done()
+
+      it "should replace missing pictures by an empty array", (done)->
+        _.log(create(extendItem({pictures: null}))).pictures.should.be.an.Array
+        create(extendItem({pictures: null})).pictures.length.should.equal 0
+        done()
+
 
     describe 'listing', ->
       it "should return an object with a listing", (done)->

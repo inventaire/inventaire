@@ -20,12 +20,15 @@ Item.create = (userId, item)->
   # so we need to let _id blank
   item = _.omit item, '_id'
 
-  {title, entity} = item
+  {title, entity, pictures} = item
   assertValid 'title', title
   assertValid 'entity', entity
 
   assertValid 'userId', userId
   item.owner = userId
+
+  item.pictures = pictures or= []
+  assertValid 'pictures', pictures
 
   item.created = _.now()
   item.listing = solveConstraint item, 'listing'
