@@ -14,17 +14,17 @@ module.exports =
     .catch error_.Handler(res)
 
   post: (req, res, next)->
-    { itemId, message } = req.body
+    { item, message } = req.body
     userId = req.user._id
 
-    unless itemId? then return error_.bundle res, 'missing item id', 400
+    unless item? then return error_.bundle res, 'missing item id', 400
     unless message? then return error_.bundle res, 'missing message id', 400
 
 
-    _.log [itemId, message], 'itemId, message'
+    _.log [item, message], 'item, message'
 
-    items_.byId itemId
+    items_.byId item
     .then _.partial(comments_.verifyRightToComment, userId)
     .then _.partial(comments_.createComment, userId, message)
-    .then _.Ok(res)
+    .then res.json.bind(res)
     .catch error_.Handler(res)
