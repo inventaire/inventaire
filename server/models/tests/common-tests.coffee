@@ -1,18 +1,20 @@
 CONFIG = require 'config'
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
-regex_ = __.require 'sharedLibs', 'regex'
+regex_ = require './regex'
 
-module.exports = tests = {}
+{ CouchUuid, Email, Username, EntityUri } = regex_
 
-tests.CouchUuid = regex_.CouchUuid
-tests.UserId = tests.CouchUuid
-tests.ItemId = tests.CouchUuid
+# regex need to their context
+bindedTest = (regex)-> regex.test.bind(regex)
 
-tests.EntityUri = /^(wd:Q[0-9]+|(isbn|inv):[0-9a-f\-]+)$/
+module.exports = tests =
+  userId: bindedTest CouchUuid
+  itemId: bindedTest CouchUuid
+  username: bindedTest Username
+  email: bindedTest Email
+  entityUri: bindedTest EntityUri
 
-tests.Email = regex_.Email
-tests.Username = /^\w{1,20}$/
 
 # no item of this app could have a timestamp before june 2014
 June2014 = 1402351200000

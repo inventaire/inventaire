@@ -3,13 +3,14 @@ __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 couch_ = __.require 'lib', 'couch'
 assert = require 'assert'
-{UserId} = require './tests/common-tests'
+{ userId } = require './tests/common-tests'
+
 
 module.exports =
   create: (id, status)->
     assertValidId(id)
     assertValidStatus(status)
-    return relation =
+    return _.log relation =
       _id: id
       type: 'relation'
       status: status
@@ -22,8 +23,9 @@ module.exports =
 assertValidId = (id)->
   [ userA, userB ] = id.split ':'
   assert userA isnt userB
-  assert UserId.test(userA)
-  assert UserId.test(userB)
+  _.type userA, 'string'
+  assert userId(userA)
+  assert userId(userB)
 
 assertValidStatus = (status)->
   assert status in statuses
