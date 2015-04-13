@@ -1,0 +1,9 @@
+{
+   "_id": "_design/comments",
+   "language": "coffeescript",
+   "views": {
+       "byItemId": {
+           "map": "(doc)->\n  if doc.type is 'comment'\n    emit doc.item, null"
+       }
+   }
+}

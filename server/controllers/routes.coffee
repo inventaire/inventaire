@@ -21,6 +21,7 @@ proxy = require './proxy'
 glob = require './glob'
 log = require './log'
 feedbacks = require './feedbacks'
+comments = require './comments/comments'
 analytics = require './analytics/analytics'
 
 # placeholder for endpoints without a GET
@@ -106,6 +107,10 @@ routes =
   'api/feedbacks/public':
     get: noGet
     post: feedbacks.post
+
+  'api/comments':
+    get: comments.get
+    post: comments.post
 
   'api/logs/public':
     post: analytics.reports

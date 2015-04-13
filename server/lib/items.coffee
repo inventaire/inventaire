@@ -9,6 +9,7 @@ db = __.require('couch', 'base')('items')
 
 module.exports =
   db: db
+  byId: db.get.bind(db)
   byOwner: (owner)->
     # only used by items.fetch with req.session.email owner
     # => shouldn't be safeItems'ized

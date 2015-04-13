@@ -10,6 +10,7 @@ module.exports =
   default:
     users: ['user', 'relations']
     items: ['items', 'followedEntities']
+    comments: ['comments']
     entities: ['entities']
     analytics: []
     notifications: ['notifications']
