@@ -133,6 +133,12 @@ user_ =
         else others.push id
       return [friends, others]
 
+  areFriends: (userId, otherId)->
+    relations_.getStatus(userId, otherId)
+    .then (status)->
+      if status is 'friends' then return true
+      else false
+
   cleanUserData: (value)->
     {username, email, created, picture} = value
     unless username? and email? and created? and picture?
