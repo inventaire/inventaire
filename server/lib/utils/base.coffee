@@ -35,3 +35,7 @@ module.exports =
     if @objLength(obj) > 0
       @values(obj)?.reduce (a,b)-> a+b
     else 0
+
+  # returns a function triggering a standard confirmation response
+  Ok: (res, status=200)->
+    return fn = -> res.status(status).json {ok: true}
