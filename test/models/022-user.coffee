@@ -14,6 +14,7 @@ validUser = -> [
     'rocky4'
     'hi@validemail.org'
     'local'
+    'se'
     'password'
   ]
 
@@ -21,6 +22,7 @@ browseridBaseArgs = -> [
     'rocky4'
     'hi@validemail.org'
     'browserid'
+    'se'
   ]
 
 replaceParam = (index, value, baseArgGen=validUser)->
@@ -87,42 +89,36 @@ describe 'user model', ->
           # _.error(err, 'err')
           done()
 
-      it "should add a validation token", (done)->
-        create(validUser())
-        .then (user)->
-          console.log user
-          user.emailValidation.should.be.an.Object
-          user.emailValidation.token.should.be.a.String
-          user.emailValidation.token.length.should.equal 36
+    describe 'language validation', ->
+      it "should throw on invalid language", (done)->
+        args = replaceParam 3, 'badlang'
+        create(args)
+        .catch (err)->
+          # _.error(err, 'err')
           done()
 
-      it "should add a timestamp to emailValidation", (done)->
-        create(validUser())
-        .then (user)->
-          console.log user
-          user.emailValidation.should.be.an.Object
-          user.emailValidation.timestamp.should.be.a.Number
-          _.expired(user.emailValidation.timestamp, 0).should.equal true
-          _.expired(user.emailValidation.timestamp, 1000).should.equal false
-          done()
+      it "should not throw on missing language", (done)->
+        args = replaceParam 3, undefined
+        create(args)
+        .then -> done()
 
     describe 'password validation', ->
       it "should throw on passwords too short", (done)->
-        args = replaceParam 3, 'shortpw'
+        args = replaceParam 4, 'shortpw'
         create(args)
         .catch (err)->
           # _.error(err, 'err')
           done()
       it "should throw on passwords too long", (done)->
         tooLongPassword = [0..10].join('hello')
-        args = replaceParam 3, tooLongPassword
+        args = replaceParam 4, tooLongPassword
         create(args)
         .catch (err)->
           # _.error(err, 'err')
           done()
       it "should return a hashed password", (done)->
         args = validUser()
-        clearPassword = args[3]
+        clearPassword = args[4]
         create(validUser())
         .then (user)->
           user.password.should.be.a.String

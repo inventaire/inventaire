@@ -14,7 +14,8 @@ describe 'relation model', ->
     id2 = 'a26a7b36655232763e1591e498003fee'
     docId = couch_.joinOrderedIds id1, id2
     status = 'friends'
-    relationDoc = Relation docId,status
+    _.log relationDoc, 'relationDoc'
+    relationDoc = Relation.create docId, status
     relationDoc.should.be.an.Object
     relationDoc._id.should.equal docId
     relationDoc.status.should.equal status
@@ -26,7 +27,7 @@ describe 'relation model', ->
     id2 = 'a26a7b36655232763e1591e498003fee'
     docId = couch_.joinOrderedIds id1, id2
     status = 'friends'
-    (-> Relation(docId,status)).should.throw()
+    (-> Relation.create(docId,status)).should.throw()
     done()
 
   it "should throw on unknow status", (done)->
@@ -34,5 +35,5 @@ describe 'relation model', ->
     id2 = 'a26a7b36655232763e1591e498003fee'
     docId = couch_.joinOrderedIds id1, id2
     status = 'bros'
-    (-> Relation(docId,status)).should.throw()
+    (-> Relation.create(docId,status)).should.throw()
     done()
