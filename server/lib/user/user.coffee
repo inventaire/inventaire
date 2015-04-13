@@ -16,10 +16,10 @@ db = __.require('couch', 'base')('users', 'user')
 token_ = require('./token')(db)
 user_ =
   db: db
-  byId: (id)-> @db.get(id)
+  byId: (id)-> db.get(id)
 
   byEmail: (email)->
-    @db.viewByKey 'byEmail', email
+    db.viewByKey 'byEmail', email
 
   findOneByEmail: (email)->
     @byEmail(email)
@@ -29,7 +29,7 @@ user_ =
       else throw new Error "user not found for email: #{email}"
 
   byUsername: (username)->
-    @db.viewByKey 'byUsername', username.toLowerCase()
+    db.viewByKey 'byUsername', username.toLowerCase()
 
   findOneByUsername: (username)->
     @byUsername(username)
@@ -58,13 +58,13 @@ user_ =
       endkey: username + 'Z'
       include_docs: true
     params.limit = options.limit if options?.limit?
-    @db.viewCustom 'byUsername', params
+    db.viewCustom 'byUsername', params
 
   create: (username, email, creationStrategy, language, password)->
     @availability.username(username)
     .then -> User.create(username, email, creationStrategy, language, password)
-    .then @db.post.bind(@db)
-    .then (docInfo)-> docInfo.id
+    .then db.post.bind(db)
+    .then _.property('id')
     .then _.Log('user created')
     .then @byId.bind(@)
     .then token_.sendValidationEmail
@@ -79,7 +79,7 @@ user_ =
     if id? then return promises_.resolve(id)
     else error_.reject('req.user._id couldnt be found', 401)
 
-  fetchUsers: (ids)-> @db.fetch(ids)
+  fetchUsers: (ids)-> db.fetch(ids)
 
   getUsersPublicData: (ids, format='collection')->
     ids = ids.split?('|') or ids
@@ -108,7 +108,7 @@ user_ =
     _.pick value, User.attributes.public
 
   # only used by tests so far
-  deleteUser: (user)-> @db.del user._id, user._rev
+  deleteUser: (user)-> db.del user._id, user._rev
 
   deleteUserByUsername: (username)->
     _.info username, 'deleteUserbyUsername'
