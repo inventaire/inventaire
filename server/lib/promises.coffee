@@ -16,6 +16,8 @@ promisesHandlers =
   settle: (promises)->
     Promise.settle(promises).then pluckSettled
   start: Promise.resolve.bind(Promise)
+  delayed: (val, delay=5000)->
+    Promise.delay(delay).then -> val
 
 
 module.exports = _.extend {}, requests, promisesHandlers
