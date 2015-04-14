@@ -9,7 +9,7 @@ user_ = __.require 'lib', 'user/user'
 couch_ = __.require 'lib', 'couch'
 
 FollowedEntities = __.require 'models', 'followed_entities'
-{EntityUri} = __.require 'models','tests/common-tests'
+tests = __.require 'models','tests/common-tests'
 
 module.exports =
   fetch: (req, res, next)->
@@ -24,7 +24,7 @@ module.exports =
     entity = req.body.entity
     following = JSON.parse req.body.following
 
-    unless EntityUri.test(entity)
+    unless tests.entityUri(entity)
       return error_.bundle res, "bad entity uri: #{entity}", 400
 
     unless _.typeOf(following) is 'boolean'
