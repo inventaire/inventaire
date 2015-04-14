@@ -21,12 +21,30 @@ requestImage = (data)->
   .then parseCachedData.bind(null, data)
   .catch (err)-> _.error err, "google book err for data: #{data}"
 
-parseCachedData = (data, res)->
-  unless res?[0]?.pictures?[0]?
+parseCachedData = (data, items)->
+  inDataWords = InDataWordsTest(data)
+
+  while items?.length > 0
+    candidateItem = items.shift()
+    if titleMatch candidateItem.title, inDataWords
+      image = candidateItem.pictures?[0]
+      if image? then break
+
+  if image
+    return result =
+      image: books_.normalize(image)
+      data: data
+  else
     console.warn "google book image not found for #{data}"
     return
 
-  image = res[0].pictures[0]
-  return result =
-    image: books_.normalize(image)
-    data: data
+
+titleMatch = (title, test)->
+  titleWords = title.split(/(\s|')/).map lowercased
+  return _.every(titleWords, test)
+
+InDataWordsTest = (data)->
+  dataWords = data.split(/(\s|')/).map lowercased
+  return inDataWords = (word)-> word in dataWords
+
+lowercased = (str)-> str.toLowerCase()
