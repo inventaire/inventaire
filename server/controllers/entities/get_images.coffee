@@ -9,7 +9,8 @@ module.exports = getImages = (req, res)->
   unless dataArray?.length > 0
     return error_.bundle res, 'empty query', 400, req.query
 
-  promises = dataArray.map (data)-> books_.getImage(data)
+  promises = dataArray.map (data)->
+    if data? then books_.getImage(data)
 
   promises_.settle(promises)
   .then res.json.bind(res)
