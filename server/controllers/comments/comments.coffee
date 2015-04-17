@@ -13,7 +13,7 @@ module.exports =
     .then res.json.bind(res)
     .catch error_.Handler(res)
 
-  post: (req, res, next)->
+  create: (req, res, next)->
     { item, message } = req.body
     userId = req.user._id
 
@@ -25,6 +25,34 @@ module.exports =
 
     items_.byId item
     .then _.partial(comments_.verifyRightToComment, userId)
-    .then _.partial(comments_.createComment, userId, message)
+    .then _.partial(comments_.create, userId, message)
     .then res.json.bind(res)
+    .catch error_.Handler(res)
+
+  update: (req, res, next)->
+    { id, message } = req.body
+    userId = req.user._id
+
+    unless id? then return error_.bundle res, 'missing comment id', 400
+    unless message? then return error_.bundle res, 'missing message id', 400
+
+
+    _.log [id, message], 'comment id, message'
+
+    comments_.byId id
+    .then _.partial(comments_.verifyEditRight, userId)
+    .then _.partial(comments_.update, message)
+    .then res.json.bind(res)
+    .catch error_.Handler(res)
+
+  delete: (req, res, next)->
+    { id } = req.query
+    userId = req.user._id
+
+    comments_.byId id
+    .then (comment)->
+      items_.byId(comment.item)
+      .then _.partial(comments_.verifyDeleteRight, userId, comment)
+    .then comments_.delete
+    .then _.Ok(res)
     .catch error_.Handler(res)

@@ -110,7 +110,9 @@ routes =
 
   'api/comments':
     get: comments.get
-    post: comments.post
+    post: comments.create
+    put: comments.update
+    delete: comments.delete
 
   'api/logs/public':
     post: analytics.reports
