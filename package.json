@@ -17,7 +17,6 @@
   },
   "author": "maxlath",
   "license": "AGPL3",
-  "homepage": "https://inventaire.io",
   "repository": {
     "type": "git",
     "url": "https://github.com/maxlath/inventaire"
