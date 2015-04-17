@@ -5,7 +5,7 @@ String::logIt = (label, color)->
   else console.log "[" + label['blue'] + "] #{@toString()}"
   return @toString()
 
-module.exports =
+module.exports = base =
   areStringsOrFalsy: (array)->
     compacted = @compact(array)
     if compacted.length > 0 and @areStrings(compacted)
@@ -37,5 +37,7 @@ module.exports =
     else 0
 
   # returns a function triggering a standard confirmation response
-  Ok: (res, status=200)->
-    return fn = -> res.status(status).json {ok: true}
+  ok: (res, status=200)->
+    res.status(status).json {ok: true}
+
+base.Ok = (res, status)-> base.ok.bind(null, res, status)
