@@ -24,4 +24,4 @@ Comment.create = (userId, message, item)->
     user: userId
     item: itemId
     message: message
-    time: _.now()
+    created: _.now()

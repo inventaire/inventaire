@@ -29,6 +29,7 @@ module.exports =
   update: (newMessage, comment)->
     db.update comment._id, (doc)->
       doc.message = newMessage
+      doc.edited = _.now()
       return doc
 
   delete: (comment)->
