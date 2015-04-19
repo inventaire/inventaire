@@ -4,7 +4,7 @@ attributes.updatable = [
   'transaction'
   'pictures'
   'listing'
-  'comment'
+  'details'
   'notes'
 ]
 
