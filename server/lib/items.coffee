@@ -25,6 +25,16 @@ module.exports =
     db.viewByKeys 'byListing', listings
     .then safeItems
 
+  publicById: (itemId)->
+    db.get(itemId)
+    .then (item)->
+      if item.listing is 'public' then return item
+      else throw error_.new 'item isnt a public item', 403, itemId
+    .catch (err)->
+      # cant filter operational error from the error status code
+      # as cot returns a poor error object with just a message
+      throw error_.new 'item not found', 404, itemId
+
   publicByEntity: (entityUri)->
     db.viewByKey 'publicByEntity', entityUri
     .then safeItems

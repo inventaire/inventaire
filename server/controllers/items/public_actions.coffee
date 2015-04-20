@@ -18,9 +18,18 @@ module.exports =
     _.info req.query, 'userPublicItems'
     {user} = req.query
     unless tests.userId(user)
-      return error_.bundle res, 'bad userId', 400
+      return error_.bundle res, 'bad user id', 400
 
     items_.byListing(user, 'public')
+    .then res.json.bind(res)
+    .catch error_.Handler(res)
+
+  publicById: (req, res, next) ->
+    {id} = req.query
+    unless tests.itemId(id)
+      return error_.bundle res, 'bad item id', 400
+
+    items_.publicById(id)
     .then res.json.bind(res)
     .catch error_.Handler(res)
 

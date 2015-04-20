@@ -44,6 +44,8 @@ module.exports = _.extend publicActions,
   publicActions: (req, res, next)->
     {action} = req.query
     switch action
+      when 'public-by-id'
+        publicActions.publicById(req, res, next)
       when 'public-by-entity'
         publicActions.publicByEntity(req, res, next)
       when 'public-by-username-and-entity'
