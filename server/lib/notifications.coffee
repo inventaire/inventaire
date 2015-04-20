@@ -33,10 +33,16 @@ notifs_ =
 callbacks =
   acceptedRequest: (userToNotify, newFriend)->
     _.types arguments, ['string', 'string']
-    data = {user: newFriend}
-    notifs_.add userToNotify, 'friendAcceptedRequest', data
+    notifs_.add userToNotify, 'friendAcceptedRequest',
+      user: newFriend
+
+  newCommentOnFollowedItem: (itemId, commentorId, users)->
+    users.forEach (userToNotify)->
+      notifs_.add userToNotify, 'newCommentOnFollowedItem',
+        item: itemId
+        user: commentorId
 
 Radio.on 'notify:friend:request:accepted', callbacks.acceptedRequest
-
+Radio.on 'notify:comment:followers', callbacks.newCommentOnFollowedItem
 
 module.exports = notifs_

@@ -3,11 +3,11 @@ __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 Comment = __.require 'models', 'comment'
 error_ = __.require 'lib', 'error/error'
-
+Radio = __.require 'lib', 'radio'
 
 db = __.require('couch', 'base')('comments')
 
-module.exports =
+module.exports = comments_ =
   byId: db.get.bind(db)
   byItemId: (itemId)->
     db.viewByKey 'byItemId', itemId
@@ -24,7 +24,12 @@ module.exports =
 
   create: (userId, message, item)->
     comment = Comment.create(userId, message, item)
-    db.post comment
+    promise = db.post comment
+
+    promise
+    .then notifyItemFollowers.bind(null, item._id, item.owner, userId)
+
+    return promise
 
   update: (newMessage, comment)->
     db.update comment._id, (doc)->
@@ -35,3 +40,28 @@ module.exports =
   delete: (comment)->
     comment._deleted = true
     db.put comment
+
+comments_.findItemCommentors = (itemId)->
+  comments_.byItemId(itemId)
+  .then mapUsers
+
+mapUsers = (comments)->
+  comments.map (comment)-> comment.user
+
+notifyItemFollowers = (itemId, owner, commentor)->
+  _.log arguments, 'notifyItemFollowers arguments'
+  findUsersToNotify(itemId, owner, commentor)
+  .then Radio.emit.bind(Radio, 'notify:comment:followers', itemId, commentor)
+
+findUsersToNotify = (itemId, owner, commentor)->
+  comments_.findItemCommentors(itemId)
+  .then addOwnerId.bind(null, owner)
+  .then removeCommentorId.bind(null, commentor)
+  .then _.uniq
+
+addOwnerId = (owner, users)->
+  users.push owner
+  return users
+
+removeCommentorId = (commentor, users)->
+  return _.without users, commentor
