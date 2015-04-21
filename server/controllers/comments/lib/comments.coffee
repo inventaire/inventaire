@@ -49,7 +49,6 @@ mapUsers = (comments)->
   comments.map (comment)-> comment.user
 
 notifyItemFollowers = (itemId, owner, commentor)->
-  _.log arguments, 'notifyItemFollowers arguments'
   findUsersToNotify(itemId, owner, commentor)
   .then Radio.emit.bind(Radio, 'notify:comment:followers', itemId, commentor)
 
