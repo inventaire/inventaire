@@ -7,27 +7,25 @@ Radio = __.require 'lib', 'radio'
 
 db = __.require('couch', 'base')('comments')
 
-module.exports = comments_ =
+rightsVerification = require './rights_verification'
+
+module.exports = comments_ = {}
+
+# helpers_ depends on comments_ which aslo depends on helpers_
+# thus this splitted comments_ definition
+helpers_ = require('./helpers')(comments_)
+
+_.extend comments_, rightsVerification,
   byId: db.get.bind(db)
   byItemId: (itemId)->
     db.viewByKey 'byItemId', itemId
-
-  verifyRightToComment: require './verify_right_to_comment'
-  verifyEditRight: (userId, comment)->
-    if comment.user is userId then return comment
-    else throw error_.new 'wrong user', 403, userId, comment
-
-  verifyDeleteRight: (userId, comment, item)->
-    if comment.user is userId then return comment
-    else if item.owner is userId then return comment
-    else throw error_.new 'wrong user', 403, userId, comment, item
 
   create: (userId, message, item)->
     comment = Comment.create(userId, message, item)
     promise = db.post comment
 
     promise
-    .then notifyItemFollowers.bind(null, item._id, item.owner, userId)
+    .then helpers_.notifyItemFollowers.bind(null, item._id, item.owner, userId)
 
     return promise
 
@@ -41,26 +39,6 @@ module.exports = comments_ =
     comment._deleted = true
     db.put comment
 
-comments_.findItemCommentors = (itemId)->
-  comments_.byItemId(itemId)
-  .then mapUsers
-
-mapUsers = (comments)->
-  comments.map (comment)-> comment.user
-
-notifyItemFollowers = (itemId, owner, commentor)->
-  findUsersToNotify(itemId, owner, commentor)
-  .then Radio.emit.bind(Radio, 'notify:comment:followers', itemId, commentor)
-
-findUsersToNotify = (itemId, owner, commentor)->
-  comments_.findItemCommentors(itemId)
-  .then addOwnerId.bind(null, owner)
-  .then removeCommentorId.bind(null, commentor)
-  .then _.uniq
-
-addOwnerId = (owner, users)->
-  users.push owner
-  return users
-
-removeCommentorId = (commentor, users)->
-  return _.without users, commentor
+  findItemCommentors: (itemId)->
+    comments_.byItemId(itemId)
+    .then helpers_.mapUsers

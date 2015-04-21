@@ -3,8 +3,7 @@ _ = __.require 'builders', 'utils'
 user_ = __.require 'lib', 'user/user'
 error_ = __.require 'lib', 'error/error'
 
-
-module.exports = (userId, item)->
+exports.verifyRightToComment = (userId, item)->
   {owner, listing} = item
 
   # the owner of the item is always allowed to comment
@@ -28,3 +27,13 @@ ifUserAreFriends = (userId, item)->
 
 commentForbidden = (userId, item)->
   throw error_.new "not allowed to comment on this item", 403, userId, item
+
+
+exports.verifyEditRight = (userId, comment)->
+  if comment.user is userId then return comment
+  else throw error_.new 'wrong user', 403, userId, comment
+
+exports.verifyDeleteRight = (userId, comment, item)->
+  if comment.user is userId then return comment
+  else if item.owner is userId then return comment
+  else throw error_.new 'wrong user', 403, userId, comment, item
