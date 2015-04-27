@@ -1,0 +1,9 @@
+{
+   "_id": "_design/transactions",
+   "language": "coffeescript",
+   "views": {
+       "byItemId": {
+           "map": "(doc)->\n  emit doc.item, null"
+       }
+   }
+}

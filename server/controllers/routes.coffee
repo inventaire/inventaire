@@ -21,6 +21,7 @@ proxy = require './proxy'
 glob = require './glob'
 log = require './log'
 feedbacks = require './feedbacks'
+transactions = require './transactions/transactions'
 comments = require './comments/comments'
 analytics = require './analytics/analytics'
 
@@ -113,6 +114,10 @@ routes =
     post: comments.create
     put: comments.update
     delete: comments.delete
+
+  'api/transactions':
+    get: noGet
+    post: transactions.actions
 
   'api/logs/public':
     post: analytics.reports
