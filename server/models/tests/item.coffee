@@ -1,9 +1,10 @@
 CONFIG = require 'config'
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
-{ itemId, userId, entityUri } = require './common-tests'
+{ pass, itemId, userId, entityUri } = require './common-tests'
 
 module.exports =
+  pass: pass
   itemId: itemId
   userId: userId
   entity: entityUri

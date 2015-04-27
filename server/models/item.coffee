@@ -11,7 +11,7 @@ module.exports = Item = {}
 
 Item.tests = tests = require './tests/item'
 Item.attributes = attributes = require './attributes/item'
-{ assertValid, solveConstraint } = require('./helpers')(tests, attributes)
+{ solveConstraint } = require('./helpers')(attributes)
 
 Item.create = (userId, item)->
   _.types arguments, ['string', 'object']
@@ -20,14 +20,14 @@ Item.create = (userId, item)->
   item = _.omit item, '_id'
 
   {title, entity, pictures} = item
-  assertValid 'title', title
-  assertValid 'entity', entity
+  tests.pass 'title', title
+  tests.pass 'entity', entity
 
-  assertValid 'userId', userId
+  tests.pass 'userId', userId
   item.owner = userId
 
   item.pictures = pictures or= []
-  assertValid 'pictures', pictures
+  tests.pass 'pictures', pictures
 
   item.created = _.now()
   item.listing = solveConstraint item, 'listing'
@@ -37,13 +37,13 @@ Item.create = (userId, item)->
 Item.update = (userId, item)->
   _.types arguments, ['string', 'object']
   {_id} = item
-  assertValid 'itemId', _id
+  tests.pass 'itemId', _id
   return item
 
 
 Item.updater = (userId, item, doc)->
   unless doc?.owner is userId
-    throw new Error  "user isnt doc.owner: #{userId} / #{doc.owner}"
+    throw new Error "user isnt doc.owner: #{userId} / #{doc.owner}"
 
   doc.updated = _.now()
   newData = _.pick item, attributes.updatable

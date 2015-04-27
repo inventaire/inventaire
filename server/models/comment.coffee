@@ -9,14 +9,14 @@ Comment.tests = tests = require './tests/comment'
 
 Comment.createItemComment = (userId, message, item)->
   itemId = item._id
-  passTest 'itemId', itemId
+  tests.pass 'itemId', itemId
 
   comment = createComment(userId, message)
   comment.item = itemId
   return comment
 
 Comment.createTransactionComment = (userId, message, transactionId)->
-  passTest 'transactionId', transactionId
+  tests.pass 'transactionId', transactionId
 
   comment = createComment(userId, message)
   comment.transaction = transactionId
@@ -24,15 +24,10 @@ Comment.createTransactionComment = (userId, message, transactionId)->
 
 
 createComment = (userId, message)->
-  passTest 'userId', userId
-  passTest 'message', message
+  tests.pass 'userId', userId
+  tests.pass 'message', message
 
   return comment =
     user: userId
     message: message
     created: _.now()
-
-
-passTest = (attribute, value)->
-  unless tests[attribute](value)
-    throw error_.new "invalid #{attribute}: #{value}", 400

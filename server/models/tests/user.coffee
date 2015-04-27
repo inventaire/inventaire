@@ -2,9 +2,10 @@ CONFIG = require 'config'
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 
-{ userId, username, email } = require './common-tests'
+{ pass, userId, username, email } = require './common-tests'
 
 module.exports =
+  pass: pass
   userId: userId
   username: username
   email: email

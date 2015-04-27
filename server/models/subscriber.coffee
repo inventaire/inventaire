@@ -10,8 +10,7 @@ module.exports = Subscriber = {}
 Subscriber.tests = tests = require './tests/subscriber'
 
 Subscriber.create = (email, language)->
-  unless tests.email(email)
-    throw error_.new "invalid email: #{email}", 400
+  tests.pass 'email', email
 
   # it's ok to have an undefined language
   if language? and not tests.language(language)

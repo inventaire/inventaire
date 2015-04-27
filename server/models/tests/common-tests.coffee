@@ -2,6 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 regex_ = require './regex'
+error_ = __.require 'lib', 'error/error'
 
 { CouchUuid, Email, Username, EntityUri } = regex_
 
@@ -21,3 +22,8 @@ module.exports = tests =
 June2014 = 1402351200000
 tests.EpochMs =
   test: (time)-> June2014 < time <= _.now()
+
+
+tests.pass = (attribute, value)->
+  unless @[attribute](value)
+    throw error_.new "invalid #{attribute}: #{value}", 400

@@ -2,11 +2,11 @@ CONFIG = require 'config'
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 assert = require 'assert'
-{UserId} = require './tests/common-tests'
+tests = require './tests/common-tests'
 
 module.exports =
   create: (userId)->
-    assertValidId(userId)
+    tests.pass 'userId', userId
     return follow =
       _id: @docId(userId)
       entities: {}
@@ -14,5 +14,3 @@ module.exports =
       listing: 'friends'
 
   docId: (userId)-> "#{userId}:following"
-
-assertValidId = (userId)-> assert UserId.test(userId)

@@ -17,18 +17,14 @@ User.create = (username, email, creationStrategy, language, password)->
   try
     _.types arguments, ['string', 'string', 'string', 'string|undefined', 'string|undefined'], 3
 
-    unless tests.username(username)
-      throw error_.new "invalid username: #{username}", 400
-
-    unless tests.email(email)
-      throw error_.new "invalid email: #{email}", 400
+    tests.pass 'username', username
+    tests.pass 'email', email
+    tests.pass 'creationStrategy', creationStrategy
 
     # it's ok to have an undefined language
     if language? and not tests.language(language)
       throw error_.new "invalid language: #{language}", 400
 
-    unless tests.creationStrategy(creationStrategy)
-      throw error_.new "invalid creationStrategy: #{creationStrategy}", 400
 
     user =
       username: username
