@@ -134,6 +134,7 @@ user_ =
       return [friends, others]
 
   areFriends: (userId, otherId)->
+    _.types arguments, 'strings...'
     relations_.getStatus(userId, otherId)
     .then (status)->
       if status is 'friends' then return true
