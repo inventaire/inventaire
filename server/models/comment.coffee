@@ -7,21 +7,32 @@ module.exports = Comment = {}
 
 Comment.tests = tests = require './tests/comment'
 
-Comment.create = (userId, message, item)->
+Comment.createItemComment = (userId, message, item)->
   itemId = item._id
+  passTest 'itemId', itemId
 
-  unless tests.userId(userId)
-    throw error_.new "invalid userId: #{userId}", 400
+  comment = createComment(userId, message)
+  comment.item = itemId
+  return comment
 
-  unless tests.itemId(itemId)
-    throw error_.new "invalid itemId: #{itemId}", 400
+Comment.createTransactionComment = (userId, message, transactionId)->
+  passTest 'transactionId', transactionId
 
-  unless tests.message(message)
-    throw error_.new "message is too long: #{message}", 400
+  comment = createComment(userId, message)
+  comment.transaction = transactionId
+  return comment
+
+
+createComment = (userId, message)->
+  passTest 'userId', userId
+  passTest 'message', message
 
   return comment =
-    type: 'comment'
     user: userId
-    item: itemId
     message: message
     created: _.now()
+
+
+passTest = (attribute, value)->
+  unless tests[attribute](value)
+    throw error_.new "invalid #{attribute}: #{value}", 400

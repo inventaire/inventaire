@@ -25,7 +25,7 @@ module.exports =
 
     items_.byId item
     .then _.partial(comments_.verifyRightToComment, userId)
-    .then _.partial(comments_.create, userId, message)
+    .then _.partial(comments_.addItemComment, userId, message)
     .then res.json.bind(res)
     .catch error_.Handler(res)
 

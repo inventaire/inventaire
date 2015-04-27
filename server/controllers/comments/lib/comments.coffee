@@ -20,14 +20,20 @@ _.extend comments_, rightsVerification,
   byItemId: (itemId)->
     db.viewByKey 'byItemId', itemId
 
-  create: (userId, message, item)->
-    comment = Comment.create(userId, message, item)
+  addItemComment: (userId, message, item)->
+    _.types arguments, ['string', 'string', 'object']
+    comment = Comment.createItemComment(userId, message, item)
     promise = db.post comment
 
     promise
     .then helpers_.notifyItemFollowers.bind(null, item._id, item.owner, userId)
 
     return promise
+
+  addTransactionComment: (userId, message, transactionId)->
+    _.types arguments, 'strings...'
+    comment = Comment.createTransactionComment(userId, message, transactionId)
+    db.post comment
 
   update: (newMessage, comment)->
     db.update comment._id, (doc)->

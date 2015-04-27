@@ -11,6 +11,7 @@ bindedTest = (regex)-> regex.test.bind(regex)
 module.exports = tests =
   userId: bindedTest CouchUuid
   itemId: bindedTest CouchUuid
+  transactionId: bindedTest CouchUuid
   username: bindedTest Username
   email: bindedTest Email
   entityUri: bindedTest EntityUri
