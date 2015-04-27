@@ -61,7 +61,6 @@ module.exports =
 
   verifyOwnership: (itemId, userId)->
     db.get(itemId)
-    .catch error_.formatCotNotFound
     .then (item)->
       unless userId is item?.owner
         throw error_.new 'user isnt item.owner', 403, userId, item.owner

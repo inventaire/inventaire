@@ -46,7 +46,3 @@ error_.Handler = (res)-> errorHandler.bind(null, res)
 error_.catchNotFound = (err)->
   if err?.notFound then return
   else throw err
-
-error_.formatCotNotFound = (err)->
-  if /not_found/.test err.message then err.status = 404
-  throw err
