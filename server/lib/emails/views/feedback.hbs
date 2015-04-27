@@ -2,6 +2,7 @@
   {{#if user}}
     <h4>{{user.username}}</h4>
     {{user.email}} - {{user._id}}
+    confirmed email: {{user.validEmail}}
   {{else}}
     <h4>{{unknownUser}}</h4>
   {{/if}}
