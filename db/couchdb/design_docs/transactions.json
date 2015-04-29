@@ -4,6 +4,9 @@
    "views": {
        "byItemId": {
            "map": "(doc)->\n  emit doc.item, null"
+       },
+       "byUser": {
+           "map": "(doc)->\n  emit doc.owner, null\n  emit doc.requester, null"
        }
    }
 }

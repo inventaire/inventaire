@@ -116,7 +116,7 @@ routes =
     delete: comments.delete
 
   'api/transactions':
-    get: noGet
+    get: transactions.fetch
     post: transactions.actions
 
   'api/logs/public':

@@ -10,6 +10,8 @@ db = __.require('couch', 'base')('transactions')
 
 module.exports =
   db: db
+  byUser: (userId)->
+    db.viewByKey 'byUser', userId
 
   create: (userId, item)->
     transaction = Transaction.create(userId, item)

@@ -7,14 +7,17 @@ module.exports = Transaction = {}
 
 Transaction.tests = tests = require './tests/transaction'
 
-Transaction.create = (userId, item)->
+Transaction.create = (requester, item)->
   itemId = item._id
+  owner = item.owner
 
-  tests.pass 'userId', userId
+  tests.pass 'userId', requester
+  tests.pass 'userId', owner
   tests.pass 'itemId', itemId
 
   return transaction =
     item: itemId
     state: 'requested'
-    requester: userId
+    owner: owner
+    requester: requester
     created: _.now()
