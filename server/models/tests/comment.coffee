@@ -9,4 +9,4 @@ module.exports =
   itemId: itemId
   transactionId: transactionId
   message: (message)->
-    return message.length < 5000
+    return 0 < message.length < 5000
