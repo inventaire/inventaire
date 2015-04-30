@@ -9,7 +9,7 @@ error_ = __.require 'lib', 'error/error'
 
 module.exports = (data, timespan)->
   unless data? and data isnt ''
-    error_.reject 'no data provided', 400
+    _.warn 'no data provided to request an image'
 
   key = "image:#{data}"
   cache_.get key, requestImage.bind(null, data), timespan
