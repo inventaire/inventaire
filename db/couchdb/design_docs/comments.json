@@ -3,7 +3,10 @@
    "language": "coffeescript",
    "views": {
        "byItemId": {
-           "map": "(doc)->\n  if doc.type is 'comment'\n    emit doc.item, null"
+           "map": "(doc)->\n  if doc.item?\n    emit doc.item, null"
+       },
+       "byTransactionId": {
+           "map": "(doc)->\n  if doc.transaction?\n    emit doc.transaction, null"
        }
    }
 }
