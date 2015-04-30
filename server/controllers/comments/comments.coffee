@@ -6,7 +6,6 @@ comments_ = __.require 'controllers', 'comments/lib/comments'
 error_ = __.require 'lib', 'error/error'
 
 module.exports =
-  # a user want to post a comment on a given item
   get: (req, res, next)->
     { item } = req.query
     comments_.byItemId(item)
