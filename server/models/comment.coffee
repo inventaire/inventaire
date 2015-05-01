@@ -10,24 +10,22 @@ Comment.tests = tests = require './tests/comment'
 Comment.createItemComment = (userId, message, item)->
   itemId = item._id
   tests.pass 'itemId', itemId
-
-  comment = createComment(userId, message)
-  comment.item = itemId
-  return comment
+  createComment userId, message, 'item', itemId
 
 Comment.createTransactionComment = (userId, message, transactionId)->
   tests.pass 'transactionId', transactionId
+  createComment userId, message, 'transaction', transactionId
 
-  comment = createComment(userId, message)
-  comment.transaction = transactionId
-  return comment
-
-
-createComment = (userId, message)->
+createComment = (userId, message, key, value)->
   tests.pass 'userId', userId
   tests.pass 'message', message
 
-  return comment =
+  comment =
     user: userId
     message: message
     created: _.now()
+
+  # the key identifies the object to which the comment is attached
+  comment[key] = value
+
+  return comment
