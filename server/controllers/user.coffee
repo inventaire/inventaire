@@ -3,6 +3,7 @@ _ = __.require 'builders', 'utils'
 
 User = __.require 'models', 'user'
 user_ = __.require 'lib', 'user/user'
+transactions_ = __.require 'controllers', 'transactions/lib/transactions'
 Promise = require 'bluebird'
 Radio = __.require 'lib', 'radio'
 error_ = __.require 'lib', 'error/error'
@@ -16,10 +17,12 @@ module.exports.getUser = (req, res, next) ->
   Promise.all([
     user_.getUserRelations(userId)
     user_.getNotifications(userId)
+    transactions_.byUser(userId)
   ])
-  .spread (relations, notifications)->
+  .spread (relations, notifications, transactions)->
     userData.relations = relations
     userData.notifications = notifications
+    userData.transactions = transactions
     res.json userData
 
   .catch error_.Handler(res)
