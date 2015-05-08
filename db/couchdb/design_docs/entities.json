@@ -1,4 +1,9 @@
 {
    "_id": "_design/entities",
-   "language": "coffeescript"
+   "language": "coffeescript",
+   "views": {
+       "byTitle": {
+           "map": "(doc)->\n  emit doc.title, null"
+       }
+   }
 }
