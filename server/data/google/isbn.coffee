@@ -12,7 +12,7 @@ module.exports = (isbn, timespan)->
 
 
 requestBooksDataFromIsbn = (isbn)->
-  promises_.get books_.API.google.book(isbn)
+  promises_.get books_.API.google.isbn(isbn)
   .then parseBooksData.bind(null, isbn)
 
 
