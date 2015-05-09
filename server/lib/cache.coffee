@@ -21,7 +21,9 @@ module.exports =
 
     checkCache(key, timespan)
     .then requestOnlyIfNeeded.bind(null, key, method)
-    .catch _.Warn("final cache_ err: #{key}")
+    .catch (err)->
+      _.warn err, "final cache_ err: #{key}"
+      throw err
 
 checkCache = (key, timespan)->
   cacheDB.get(key)
@@ -33,9 +35,14 @@ checkCache = (key, timespan)->
       return res
     else return
 
-returnOldValue = (key)->
+returnOldValue = (key, err)->
   checkCache(key, Infinity)
-  .then (res)-> res?.body
+  .then (res)->
+    if res? then res.body
+    else
+      # rethrowing the previous error as it's probably more meaningful
+      err.old_value = null
+      throw err
 
 requestOnlyIfNeeded = (key, method, cached)->
   if cached?
@@ -48,7 +55,7 @@ requestOnlyIfNeeded = (key, method, cached)->
       return res
     .catch (err)->
       _.warn err, "#{key} request err (returning old value)"
-      return returnOldValue(key)
+      return returnOldValue(key, err)
 
 putResponseInCache = (key, res)->
   obj =
