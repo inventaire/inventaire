@@ -6,8 +6,8 @@ thumb = __.require 'data','commons/thumb'
 
 
 module.exports.get = (req, res, next)->
-  {api, query, pid, qid} = req.query
+  { api } = req.query
   switch api
-    when 'wdq' then return wdq(res, query, pid, qid)
+    when 'wdq' then return wdq(req, res)
     when 'commons-thumb' then return thumb(req, res)
-    else error_.bundle res, 'unknown data provider', 400, api
+    else error_.bundle res, 'unknown data provider', 400, req.query
