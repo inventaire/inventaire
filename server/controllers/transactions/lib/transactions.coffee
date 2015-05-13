@@ -10,6 +10,7 @@ db = __.require('couch', 'base')('transactions')
 
 module.exports =
   db: db
+  byId: db.get.bind(db)
   byUser: (userId)->
     db.viewByKey 'byUser', userId
 

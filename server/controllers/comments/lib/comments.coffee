@@ -20,6 +20,9 @@ _.extend comments_, rightsVerification,
   byItemId: (itemId)->
     db.viewByKey 'byItemId', itemId
 
+  byTransactionId: (transactionId)->
+    db.viewByKey 'byTransactionId', transactionId
+
   addItemComment: (userId, message, item)->
     _.types arguments, ['string', 'string', 'object']
     comment = Comment.createItemComment(userId, message, item)

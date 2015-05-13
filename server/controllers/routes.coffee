@@ -116,8 +116,8 @@ routes =
     delete: comments.delete
 
   'api/transactions':
-    get: transactions.fetch
-    post: transactions.actions
+    get: transactions.get
+    post: transactions.post
 
   'api/logs/public':
     post: analytics.reports
