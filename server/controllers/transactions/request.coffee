@@ -13,7 +13,7 @@ module.exports = (req, res, nex)->
   unless item? then return error_.bundle res, 'missing item id', 400
 
   items_.byId item
-  .then transactions_.verifyRequesterRight.bind(null, requester)
+  .then transactions_.verifyRightToRequest.bind(null, requester)
   .then transactions_.create.bind(null, requester)
   .then _.property('id')
   .then (id)->
