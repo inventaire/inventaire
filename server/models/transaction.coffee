@@ -24,7 +24,8 @@ Transaction.create = (requester, item)->
     state: 'requested'
     owner: owner
     requester: requester
-    created: _.now()
+    created: now = _.now()
+    actions: [ { action: 'requested', timestamp: now } ]
 
 
 requestable = [
