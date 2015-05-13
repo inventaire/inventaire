@@ -17,7 +17,7 @@ module.exports =
     userId = req.user._id
 
     unless item? then return error_.bundle res, 'missing item id', 400
-    unless message? then return error_.bundle res, 'missing message id', 400
+    unless message? then return error_.bundle res, 'missing message', 400
 
 
     _.log [item, message], 'item, message'
