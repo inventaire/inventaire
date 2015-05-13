@@ -16,6 +16,8 @@ module.exports = (req, res, nex)->
   .then transactions_.verifyRequesterRight.bind(null, requester)
   .then transactions_.create.bind(null, requester)
   .then _.property('id')
-  .then transactions_.addMessage.bind(null, requester, message)
-  .then _.Ok(res, 201)
+  .then (id)->
+    transactions_.addMessage(requester, message, id)
+    transactions_.byId(id)
+    .then res.json.bind(res)
   .catch error_.Handler(res)
