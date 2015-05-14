@@ -53,12 +53,13 @@ module.exports = (_)->
 
   if CONFIG.verbosity is 0 then logs_.log = _.identity
 
+  partialLogger = (logger)-> (label)-> _.partialRight logger, label
 
-  bindingLoggers =
-    Log: (label)-> _.partialRight logs_.log, label
-    Error: (label)-> _.partialRight logs_.error, label
-    Warn: (label)-> _.partialRight logs_.warn, label
-    Info: (label)-> _.partialRight logs_.info, label
-    Success: (label)-> _.partialRight logs_.success, label
+  partialLoggers =
+    Log: partialLogger logs_.log
+    Error: partialLogger logs_.error
+    Warn: partialLogger logs_.warn
+    Info: partialLogger logs_.info
+    Success: partialLogger logs_.success
 
-  return _.extend logs_, bindingLoggers
+  return _.extend logs_, partialLoggers
