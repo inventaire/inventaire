@@ -3,11 +3,7 @@ __ = CONFIG.root
 errorCounter = 0
 
 module.exports = (_)->
-  loggers_ = __.require('sharedLibs', 'loggers')(_)
-
   log = (obj, label, color = 'cyan')->
-    # allow to pass the label as first argument
-    [obj, label] = loggers_.reorderObjLabel obj, label
     if typeof obj is 'string' and !label?
       console.log obj[color]
       return obj
@@ -24,8 +20,6 @@ module.exports = (_)->
   logs_ =
     log: log
     error: (obj, label, parse=true)->
-      # allow to pass the label as first argument
-      [obj, label] = loggers_.reorderObjLabel obj, label
       errorCounter++
       obj = obj?.stack or obj  if parse
       log obj, label, 'red'
