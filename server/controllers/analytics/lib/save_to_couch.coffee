@@ -59,8 +59,9 @@ module.exports = (analyticsLevelDB)->
         stats.kept++
 
   logStats = (stats)->
-    cb = -> _.info(stats, "analytics transfered to Couchdb")
-    setTimeout cb , 60*1000
+    if CONFIG.verbosity > 1
+      cb = -> _.info(stats, "analytics transfered to Couchdb")
+      setTimeout cb , 60*1000
 
 
   # let 20 seconds to the server to finish to start before transfering
