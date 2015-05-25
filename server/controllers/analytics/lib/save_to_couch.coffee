@@ -1,5 +1,6 @@
 CONFIG = require 'config'
-__ = require('config').root
+{ verbosity } = CONFIG
+__ = CONFIG.root
 _ = __.require 'builders', 'utils'
 
 analyticsCouchDB = __.require('couch', 'base')('analytics', 'reports')
@@ -45,7 +46,8 @@ module.exports = (analyticsLevelDB)->
   clearLevel = (stats, docId, res)->
     _.types arguments, ['object', 'string', 'object']
     if res.ok
-      _.log docId, 'succesfully transfered to couch. deleting in level'
+      if verbosity > 1
+        _.log docId, 'succesfully transfered to couch. deleting in level'
       stats.transfered++
       analyticsLevelDB.del docId
     else
@@ -59,7 +61,7 @@ module.exports = (analyticsLevelDB)->
         stats.kept++
 
   logStats = (stats)->
-    if CONFIG.verbosity > 1
+    if verbosity > 1
       cb = -> _.info(stats, "analytics transfered to Couchdb")
       setTimeout cb , 60*1000
 
