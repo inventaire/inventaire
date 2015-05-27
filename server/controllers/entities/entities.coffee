@@ -15,10 +15,10 @@ module.exports =
 
     switch action
       when 'search' then return searchEntity(req, res)
-      when 'getimages' then return getImages(req, res)
-      when 'getisbnentities' then return getIsbns(req, res)
+      when 'get-images' then return getImages(req, res)
+      when 'get-inv-entities' then return getEntities(req, res)
+      when 'get-isbn-entities' then return getIsbns(req, res)
       else error_.bundle res, 'entities action not found', 400
 
   # authentified
-  get: getEntities
   create: createEntity

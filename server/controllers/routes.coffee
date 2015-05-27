@@ -66,7 +66,7 @@ routes =
     get: items.publicActions
 
   'api/entities':
-    get: entities.get
+    get: noGet
     post: entities.create
 
   'api/entities/followed':
