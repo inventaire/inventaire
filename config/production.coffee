@@ -27,3 +27,5 @@ module.exports =
   sendServerErrorsClientSide: true
   logMissingI18nKeys: false
   serveStatic: false
+  mailer:
+    disabled: false

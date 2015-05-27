@@ -6,7 +6,7 @@
   "main": "index.coffee",
   "scripts": {
     "postinstall": "./scripts/postinstall",
-    "install-client": "git clone git@github.com:maxlath/inventaire-client.git ./client && cd client && npm install",
+    "install-client": "./scripts/install-client",
     "start": "coffee server.coffee",
     "superstart": "supervisor -w .,client/app/lib/shared -i client,test,logs,deploy server.coffee",
     "start-prod": "./scripts/start-prod",

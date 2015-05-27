@@ -1,3 +1,7 @@
 mkdir -p logs/archives/server logs/archives/errors deploy run db/leveldb
 touch run/inv-current-port
 ./scripts/run_patches $HOME/inventaire/scripts/patches
+
+git clone -b i18n git@github.com:maxlath/inventaire.git ./server/lib/emails/i18n/src
+mkdir -p ./server/lib/emails/i18n/dist
+./server/lib/emails/i18n/src/generate_lang_json.coffee

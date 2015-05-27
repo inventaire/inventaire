@@ -12,7 +12,7 @@ module.exports =
   fullPublicHost: -> "#{@protocol}://#{@publicHost}:#{@port}"
   secret: 'yoursecrethere'
   db:
-    instable: false
+    instable: true
     reloadDesignDocs: false
     protocol: 'http'
     host: 'localhost'
@@ -79,6 +79,7 @@ module.exports =
   resetCacheAtStartup: false
   serveStatic: true
   mailer:
+    disabled: true
     service: 'yoursettings',
     auth:
       user: 'yoursettings'
