@@ -19,6 +19,6 @@
     "Messaging": "Messagerie",
     "reset_password_subject": "Reinitialiser votre mot de passe Inventaire",
     "reset_password_title": "Mot de passe Inventaire oublié ?",
-    "reset_password_paragraph": "Nous avons reçu une demande pour réinitialiser le mot de passe de votre compte, **%{username}**. Si vous avez fait cette requête, cliquez sur le bouton ci-dessous. Si ce n'est pas vous, vous pouvez ignorer cet email.",
+    "reset_password_paragraph": "Nous avons reçu une demande pour réinitialiser le mot de passe de votre compte **%{username}**. Si vous avez fait cette requête, cliquez sur le bouton ci-dessous. Si ce n'est pas vous, vous pouvez ignorer cet email.",
     "reset_password_button": "Réinitialiser votre mot de passe"
 }

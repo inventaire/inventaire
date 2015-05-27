@@ -19,6 +19,6 @@
     "Messaging": "Messaging",
     "reset_password_subject": "Reset your Inventaire password",
     "reset_password_title": "Forgot your Inventaire password?",
-    "reset_password_paragraph": "We received a request to reset the password for your account, **%{username}**. <br> If you made this request, click the button below. If you didn't make this request, you can ignore this email.",
+    "reset_password_paragraph": "We received a request to reset the password for your account **%{username}**. <br> If you made this request, click the button below. If you didn't make this request, you can ignore this email.",
     "reset_password_button": "Reset your password"
 }
