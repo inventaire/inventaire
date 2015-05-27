@@ -19,6 +19,9 @@ module.exports = searchEntity = (req, res)->
   unless language?
     return error_.bundle res, 'no language specified' , 400
 
+  # make sure we have a 2 letters language code
+  language = language[0..1]
+
   if books_.isIsbn(search)
     _.log search, 'searchByIsbn'
     searchByIsbn(query, res)
