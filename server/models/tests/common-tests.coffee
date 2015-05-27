@@ -4,7 +4,7 @@ _ = __.require 'builders', 'utils'
 regex_ = require './regex'
 error_ = __.require 'lib', 'error/error'
 
-{ CouchUuid, Email, Username, EntityUri } = regex_
+{ CouchUuid, Email, Username, EntityUri, Lang } = regex_
 
 # regex need to their context
 bindedTest = (regex)-> regex.test.bind(regex)
@@ -16,6 +16,7 @@ module.exports = tests =
   username: bindedTest Username
   email: bindedTest Email
   entityUri: bindedTest EntityUri
+  lang: bindedTest Lang
 
 
 # no item of this app could have a timestamp before june 2014
