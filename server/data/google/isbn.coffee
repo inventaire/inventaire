@@ -1,6 +1,6 @@
 __ = require('config').root
 _ = __.require('builders', 'utils')
-books_ = __.require('sharedLibs','books')(_)
+books_ = __.require 'lib','books'
 cache_ = __.require 'lib', 'cache'
 promises_ = __.require 'lib', 'promises'
 

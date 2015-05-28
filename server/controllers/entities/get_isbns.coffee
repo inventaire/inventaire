@@ -1,6 +1,6 @@
 __ = require('config').root
 _ = __.require 'builders', 'utils'
-books_ = __.require 'lib', 'books'
+booksData_ = __.require 'lib', 'books_data'
 promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
 
@@ -9,7 +9,7 @@ module.exports = (req, res, next) ->
   unless isbns?.length > 0
     return error_.bundle res, 'empty query', 400, req.query
 
-  promises = isbns.map (isbn)-> books_.getDataFromIsbn(isbn)
+  promises = isbns.map (isbn)-> booksData_.getDataFromIsbn(isbn)
 
   promises_.settle(promises)
   .then (data)->

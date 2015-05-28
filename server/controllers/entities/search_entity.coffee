@@ -3,6 +3,7 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
 books_ = __.require 'lib', 'books'
+booksData_ = __.require 'lib', 'books_data'
 wikidata_ = __.require 'lib', 'wikidata'
 
 getWikidataBookEntities = __.require 'data', 'wikidata/books'
@@ -41,7 +42,7 @@ searchByIsbn = (query, res)->
     getWikidataBookEntitiesByIsbn(isbn, isbnType, query.language)
     .catch (err)-> _.error err, 'wikidata getBookEntityByISBN err'
 
-    booksPromise = books_.getDataFromIsbn(cleanedIsbn)
+    booksPromise = booksData_.getDataFromIsbn(cleanedIsbn)
     # returns an index of entities, so it need to be converted to a collection
     .then (res)-> [res[cleanedIsbn]]
     .then((res)-> {items: res, source: 'google'})
@@ -59,7 +60,7 @@ searchByText = (query, res)->
     .then (items)-> {items: items, source: 'wd', search: query.search}
     .catch (err)-> _.error err, 'wikidata getBookEntities err'
 
-    books_.getDataFromText(query.search)
+    booksData_.getDataFromText(query.search)
     .then (res)-> {items: res, source: 'google', search: query.search}
     .catch (err)-> _.error err, 'getGoogleBooksDataFromIsbn err'
   ]
