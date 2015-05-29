@@ -10,7 +10,6 @@ module.exports =
   subscribe: (req, res, next)->
     promises_.start()
     .then createSubscriberDoc.bind(null, req)
-    .then _.Log('wat?')
     .then user_.db.post.bind(user_.db)
     .then -> res.send('ok')
     .catch error_.Handler(res)

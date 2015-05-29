@@ -61,6 +61,7 @@ module.exports =
   feedback: (subject, message, user, unknownUser)->
     return _.extend {}, base,
       to: base.from
+      replyTo: user.email
       subject: "[feedback] #{subject}"
       template: 'feedback'
       context:

@@ -10,7 +10,7 @@ publicActions = require './public_actions'
 
 module.exports = _.extend publicActions,
   fetch: (req, res, next) ->
-    # only fetch for session email
+    # only fetch for requesters session
     # = only way to fetch private data on items
     user_.getUserId(req)
     .then items_.byOwner.bind(items_)

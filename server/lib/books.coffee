@@ -11,7 +11,7 @@ _.extend books_, normalizeBookData,
     # doc: https://developers.google.com/discovery/v1/performance
     google:
       book: (data)->
-        "https://www.googleapis.com/books/v1/volumes/?q=#{data}&fields=totalItems,items(volumeInfo)&country=FR"
+        "https://www.googleapis.com/books/v1/volumes/?q=#{data}&fields=totalItems,items(volumeInfo)&country=US"
       isbn: (isbn)-> @book("isbn:#{isbn}")
     worldcat:
       # http://xisbn.worldcat.org/xisbnadmin/doc/api.htm
