@@ -41,6 +41,8 @@ Transaction.testPossibleState = (transaction, newState)->
     throw error_.new "transaction and state mismatch", 400, transaction, newState
 
 
+Transaction.states = ['accepted', 'declined', 'confirmed', 'returned']
+
 possibleNextState =
   requested: ['accepted', 'declined']
   accepted: ['confirmed']
