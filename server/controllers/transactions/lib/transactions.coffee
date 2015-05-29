@@ -23,3 +23,13 @@ module.exports = _.extend {}, rightsVerification,
     _.types arguments, 'strings...'
     if message?
       comments_.addTransactionComment(userId, message, transactionId)
+
+  updateState: (newState, transaction)->
+    Transaction.testPossibleState transaction, newState
+    db.update transaction._id, UpdateState(newState)
+
+UpdateState = (state)->
+  updater = (doc)->
+    doc.state = state
+    doc.actions.push { action: state, timestamp: _.now() }
+    return doc

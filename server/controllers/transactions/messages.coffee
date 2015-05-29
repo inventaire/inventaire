@@ -24,6 +24,7 @@ module.exports =
 
     transactions_.byId transaction
     .then transactions_.verifyRightToInteract.bind(null, userId)
+    .then _.property('_id')
     .then comments_.addTransactionComment.bind(null, userId, message)
     .then res.json.bind(res)
     .catch error_.Handler(res)

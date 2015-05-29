@@ -27,9 +27,23 @@ Transaction.create = (requester, item)->
     created: now = _.now()
     actions: [ { action: 'requested', timestamp: now } ]
 
-
 requestable = [
   'giving'
   'lending'
   'selling'
 ]
+
+Transaction.testPossibleState = (transaction, newState)->
+  unless newState in possibleNextState[transaction.state]
+    throw error_.new "invalid state update", 400, transaction, newState
+
+  if newState is 'returned' and transaction.transaction isnt 'lending'
+    throw error_.new "transaction and state mismatch", 400, transaction, newState
+
+
+possibleNextState =
+  requested: ['accepted', 'declined']
+  accepted: ['confirmed']
+  declined: []
+  confirmed: ['returned']
+  returned: []

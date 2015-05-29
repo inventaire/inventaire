@@ -118,6 +118,7 @@ routes =
   'api/transactions':
     get: transactions.get
     post: transactions.post
+    put: transactions.put
 
   'api/logs/public':
     post: analytics.reports

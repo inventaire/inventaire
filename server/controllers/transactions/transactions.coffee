@@ -3,6 +3,7 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 transactions_ = require './lib/transactions'
 request = require './request'
+updateState = require './update_state'
 messages = require './messages'
 
 module.exports =
@@ -20,3 +21,5 @@ module.exports =
       when 'request' then request(req, res, next)
       when 'new-message' then messages.post(req, res, next)
       else error_.bundle res, 'unknown action', 400
+
+  put: updateState
