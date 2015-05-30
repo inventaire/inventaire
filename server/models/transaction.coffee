@@ -34,18 +34,27 @@ requestable = [
 ]
 
 Transaction.testPossibleState = (transaction, newState)->
-  unless newState in possibleNextState[transaction.state]
+  unless newState in states[transaction.state].next
     throw error_.new "invalid state update", 400, transaction, newState
 
   if newState is 'returned' and transaction.transaction isnt 'lending'
     throw error_.new "transaction and state mismatch", 400, transaction, newState
 
+Transaction.states = states =
+  requested:
+    actor: 'requester'
+    next: ['accepted', 'declined']
+  accepted:
+    actor: 'owner'
+    next: ['confirmed']
+  declined:
+    actor: 'owner'
+    next: []
+  confirmed:
+    actor: 'requester'
+    next: ['returned']
+  returned:
+    actor: 'owner'
+    next: []
 
-Transaction.states = ['accepted', 'declined', 'confirmed', 'returned']
-
-possibleNextState =
-  requested: ['accepted', 'declined']
-  accepted: ['confirmed']
-  declined: []
-  confirmed: ['returned']
-  returned: []
+Transaction.statesList = Object.keys states

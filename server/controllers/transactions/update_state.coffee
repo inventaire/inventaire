@@ -2,7 +2,7 @@ __ = require('config').root
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 transactions_ = require './lib/transactions'
-Transaction = __.require 'models','transaction'
+{ states, statesList } = __.require 'models', 'transaction'
 tests = __.require 'models','tests/common-tests'
 
 module.exports = (req, res, next)->
@@ -11,7 +11,7 @@ module.exports = (req, res, next)->
 
   tests.pass 'transactionId', id
 
-  unless state in Transaction.states
+  unless state in statesList
     return error_.bundle res, 'unknown state', 400, id, state
 
   _.log [id, state], 'update transaction state'
@@ -24,7 +24,11 @@ module.exports = (req, res, next)->
 
 
 VerifyRights = (state, userId)->
-  if state is 'confirmed'
-    transactions_.verifyIsRequester.bind(null, userId)
-  else
-    transactions_.verifyIsOwner.bind(null, userId)
+  switch states[state].actor
+    when 'requester'
+      transactions_.verifyIsRequester.bind(null, userId)
+    when 'owner'
+      transactions_.verifyIsOwner.bind(null, userId)
+    when 'both'
+      transactions_.verifyRightToInteract.bind(null, userId)
+    else throw error_.new 'unknown actor', 500, state
