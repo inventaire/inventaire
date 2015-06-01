@@ -70,6 +70,24 @@ module.exports =
   delete: (id, rev)->
     db.delete(id, rev)
 
+  setBusyness: (id, busy)->
+    _.types arguments, ['string', 'boolean']
+    db.update id, (doc)->
+      doc.busy = busy
+      return doc
+
+  fork: (id, options)->
+    db.get id
+    .then Item.fork.bind(null, options)
+    .then db.postAndReturn
+
+  archive: (id)->
+    _.type id, 'string'
+    db.update id, (doc)->
+      doc.archived = true
+      return doc
+
+
 safeItems = (items)->
   items.map (item)->
     item.notes = null

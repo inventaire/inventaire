@@ -15,3 +15,11 @@ attributes.constrained =
   listing:
     possibilities: [ 'private', 'friends', 'public' ]
     defaultValue: 'private'
+
+
+attributes.forkable = [
+ 'title'
+ 'entity'
+ 'pictures'
+ 'details'
+]

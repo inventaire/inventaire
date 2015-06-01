@@ -58,3 +58,14 @@ Transaction.states = states =
     next: []
 
 Transaction.statesList = Object.keys states
+
+# do the item change of owner or return to its previous owner
+Transaction.isOneWay = (transacDoc)->
+  unless _.isString transacDoc.transaction
+    throw error_.new "transaction transaction inaccessible", 500, transacDoc
+  oneWay[transacDoc.transaction]
+
+oneWay =
+  giving: true
+  lending: false
+  selling: true

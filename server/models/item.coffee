@@ -48,3 +48,15 @@ Item.updater = (userId, item, doc)->
   doc.updated = _.now()
   newData = _.pick item, attributes.updatable
   return _.extend doc, newData
+
+Item.fork = (data={}, item)->
+  {owner, transaction, visibility} = data
+
+  tests.pass 'userId', owner
+
+  newItem = _.pick item, attributes.forkable
+  newItem.owner = owner
+  newItem.transaction = transaction or 'inventorying'
+  newItem.visibility = visibility or 'private'
+  newItem.forkedFrom = item._id
+  return newItem

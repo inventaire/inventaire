@@ -6,6 +6,9 @@ error_ = __.require 'lib', 'error/error'
 comments_ = __.require 'controllers', 'comments/lib/comments'
 rightsVerification = require './rights_verification'
 
+Radio = __.require 'lib', 'radio'
+sideEffects = require('./side_effects')()
+
 db = __.require('couch', 'base')('transactions')
 
 module.exports = _.extend {}, rightsVerification,
@@ -27,6 +30,7 @@ module.exports = _.extend {}, rightsVerification,
   updateState: (newState, transaction)->
     Transaction.testPossibleState transaction, newState
     db.update transaction._id, UpdateState(newState)
+    Radio.emit 'transaction:update', transaction, newState
 
 UpdateState = (state)->
   updater = (doc)->
