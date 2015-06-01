@@ -3,7 +3,7 @@ _ = __.require 'builders', 'utils'
 
 module.exports = (books_)->
   normalizeBookData: (cleanedItem, isbn)->
-    data = _.pick cleanedItem, 'title', 'authors', 'description', 'publisher', 'publishedDate', 'language'
+    data = _.pick cleanedItem, 'title', 'authors', 'description', 'publisher', 'publishedDate', 'language', 'pageCount'
 
     data.pictures = []
 
