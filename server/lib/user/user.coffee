@@ -63,10 +63,8 @@ user_ =
   create: (username, email, creationStrategy, language, password)->
     @availability.username(username)
     .then -> User.create(username, email, creationStrategy, language, password)
-    .then db.post.bind(db)
-    .then _.property('id')
+    .then db.postAndReturn.bind(db)
     .then _.Log('user created')
-    .then @byId.bind(@)
     .then token_.sendValidationEmail
 
   findLanguage: (req)->

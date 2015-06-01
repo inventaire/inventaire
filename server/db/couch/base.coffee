@@ -12,4 +12,8 @@ module.exports = (dbBaseName, designDocName)->
   viewMethods = __.require('couch', 'view_methods')(designDocName)
   nanoMethods = __.require('couch', 'nano_base')(dbName)
 
-  return _.extend cot, viewMethods, nanoMethods
+  return _.extend cot, viewMethods, nanoMethods,
+    postAndReturn: (doc)->
+      cot.post(doc)
+      .then _.property('id')
+      .then cot.get.bind(cot)
