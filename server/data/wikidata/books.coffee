@@ -11,12 +11,11 @@ module.exports = (query)->
 
 requestBooksEntities = (search, language)->
   wd_.searchEntities(search, language)
-  .then (res)->
-    _.success res, 'searchEntities res'
-    if res.success and res.search.length > 0
-      return res.search.map (el)-> el.id
-    else throw 'not found'
+  .then extractWdIds
   .then (ids)->
     _.success ids, 'wd ids found'
     wd_.getEntities(ids, [language])
   .then wd_.filterAndBrush
+
+extractWdIds = (res)->
+  res.query.search.map _.property('title')
