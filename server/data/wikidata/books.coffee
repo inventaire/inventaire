@@ -10,11 +10,10 @@ module.exports = (query)->
  cache_.get key, requestBooksEntities.bind(null, search, language)
 
 requestBooksEntities = (search, language)->
-  wd_.searchEntities(search, language)
+  wd_.searchEntities(search)
   .then extractWdIds
-  .then (ids)->
-    _.success ids, 'wd ids found'
-    wd_.getEntities(ids, [language])
+  .then _.Success('wd ids found')
+  .then (ids)-> wd_.getEntities(ids, [language])
   .then wd_.filterAndBrush
 
 extractWdIds = (res)->
