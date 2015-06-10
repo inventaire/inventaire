@@ -19,6 +19,10 @@ module.exports = tests =
   lang: bindedTest Lang
 
 
+tests.isNonEmptyString = (str)->
+  _.isString str
+  return str.length > 0
+
 # no item of this app could have a timestamp before june 2014
 June2014 = 1402351200000
 tests.EpochMs =
