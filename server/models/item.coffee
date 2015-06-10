@@ -36,16 +36,22 @@ Item.create = (userId, item)->
 
 Item.update = (userId, item)->
   _.types arguments, ['string', 'object']
-  {_id} = item
-  tests.pass 'itemId', _id
+  tests.pass 'itemId', item._id
+  # just testing updatable attributes
+  # as non-updatable will be filtered-out at Item.updater
+  attributes.updatable.forEach _.partial(passAttrTest, item)
+
   return item
 
+passAttrTest = (item, attr)->
+  if item[attr]? then tests.pass attr, item[attr]
 
 Item.updater = (userId, item, doc)->
   unless doc?.owner is userId
     throw new Error "user isnt doc.owner: #{userId} / #{doc.owner}"
 
   doc.updated = _.now()
+  # filtered out non-updatable attributes
   newData = _.pick item, attributes.updatable
   return _.extend doc, newData
 

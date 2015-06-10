@@ -55,9 +55,8 @@ module.exports =
     db.post Item.create(userId, item)
 
   update: (userId, item)->
-    {_id} = item
     item = Item.update(userId, item)
-    db.update _id, Item.updater.bind(null, userId, item)
+    db.update item._id, Item.updater.bind(null, userId, item)
 
   verifyOwnership: (itemId, userId)->
     db.get(itemId)
