@@ -8,13 +8,16 @@ passport_ = __.require 'lib', 'passport/passport'
 
 cookieParser = require 'cookie-parser'
 session = require 'cookie-session'
+sessionParams =
+  secret: CONFIG.secret
+  cookie:
+    maxAge: 180*24*3600*1000
+  # see https://github.com/expressjs/session#resave
+  resave: false
 
 module.exports =
   cookieParser: cookieParser()
-  session: session
-    secret: CONFIG.secret
-    # see https://github.com/expressjs/session#resave
-    resave: false
+  session: session(sessionParams)
   passport:
     initialize: passport.initialize()
     session: passport.session {pauseStream: true}

@@ -1,8 +1,5 @@
 console.time 'startup'
 CONFIG = require 'config'
-if CONFIG.monitoring
-  # rather buggy
-  require('look').start()
 
 [port, host, env] = process.argv.slice(2)
 
