@@ -15,5 +15,5 @@ module.exports =
     transaction in constrained.transaction.possibilities
   listing: (listing)->
     listing in constrained.listing.possibilities
-  details: isNonEmptyString
-  notes: isNonEmptyString
+  details: _.isString
+  notes: _.isString
