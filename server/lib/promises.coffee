@@ -18,6 +18,7 @@ promisesHandlers =
   start: Promise.resolve.bind(Promise)
   delayed: (val, delay=5000)->
     Promise.delay(delay).then -> val
+  Timeout: (ms)-> (promise)-> promise.timeout ms
 
 
 module.exports = _.extend {}, requests, promisesHandlers

@@ -40,16 +40,17 @@ searchByIsbn = (query, res)->
 
   promises = [
     getWikidataBookEntitiesByIsbn(isbn, isbnType, query.language)
-    .catch (err)-> _.error err, 'wikidata getBookEntityByISBN err'
+    .catch _.Error('wikidata getBookEntityByISBN err')
 
     booksPromise = booksData_.getDataFromIsbn(cleanedIsbn)
     # returns an index of entities, so it need to be converted to a collection
     .then (res)-> [res[cleanedIsbn]]
     .then((res)-> {items: res, source: 'google'})
-    .catch (err)-> _.error err, 'getGoogleBooksDataFromIsbn err'
+    .catch _.Error('getGoogleBooksDataFromIsbn err')
   ]
 
-  promises = promises.map (promise)-> promise.timeout 10000
+  promises = promises.map promises_.Timeout(10000)
+
 
   spreadRequests(res, promises, 'searchByIsbn')
 
@@ -58,15 +59,15 @@ searchByText = (query, res)->
   promises = [
     getWikidataBookEntities(query)
     .then (items)-> {items: items, source: 'wd', search: query.search}
-    .catch (err)-> _.error err, 'wikidata getBookEntities err'
+    .catch _.Error('wikidata getBookEntities err')
 
     booksData_.getDataFromText(query.search)
     .then (res)-> {items: res, source: 'google', search: query.search}
-    .catch (err)-> _.error err, 'getGoogleBooksDataFromIsbn err'
+    .catch _.Error('getGoogleBooksDataFromText err')
   ]
 
   # adding a 10 seconds timeout on requests
-  promises = promises.map (promise)-> promise.timeout 10000
+  promises = promises.map promises_.Timeout(10000)
 
   spreadRequests(res, promises, 'searchByText')
 
