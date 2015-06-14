@@ -43,9 +43,10 @@ searchByIsbn = (query, res)->
     .catch _.Error('wikidata getBookEntityByISBN err')
 
     booksPromise = booksData_.getDataFromIsbn(cleanedIsbn)
-    # returns an index of entities, so it need to be converted to a collection
-    .then (res)-> [res[cleanedIsbn]]
-    .then((res)-> {items: res, source: 'google'})
+    # getDataFromIsbn returns an index of entities
+    # so it need to be converted to a collection
+    .then (res)-> if res? then [res[cleanedIsbn]] else []
+    .then (res)-> {items: res, source: 'google'}
     .catch _.Error('getGoogleBooksDataFromIsbn err')
   ]
 
