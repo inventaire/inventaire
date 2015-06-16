@@ -1,17 +1,12 @@
 DAY=$(date +'%Y_%m_%d')
 PORT=$(cat config/local.coffee |grep "port: 3" |sed s/[^0-9]//g)
 
-archivelogs(){
-  mv --backup=numbered logs/server.log logs/archives/server-$DAY.log 2> /dev/null
-  mv --backup=numbered logs/errors.log logs/archives/errors-$DAY.log 2> /dev/null
-}
-
 if nmap -p$PORT 127.0.0.1 -oG - | grep -q $PORT/open
 then
   echo -e "\\e[0;31m process not found for port $PORT\\e[0m"
 else
   echo -e "\\e[0;30mport $PORT available\\e[0m"
-  archivelogs
+  # logs will be archived at server reload with ~/inventaire/scripts/archive_logs
   aeternum -o logs/server.log -e logs/error.log > run/inv-$PORT.pid -- ./scripts/start-prod ;
 
   sed -i "s/[^0-9]//g" run/inv-$PORT.pid

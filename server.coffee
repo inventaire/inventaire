@@ -15,6 +15,8 @@ americano = require 'americano'
 fs = require 'fs'
 Radio = __.require 'lib', 'radio'
 
+__.require('lib', 'before_startup')()
+
 exportCurrentPort = ->
   fs.writeFile './run/inv-current-port', (CONFIG.port + '\n'), (err, data)->
     if err? then _.error err, 'exportCurrentPort err'

@@ -56,6 +56,7 @@ module.exports =
       i18nArchive: '/server/lib/emails/i18n/src/archive'
       i18nDist: '/server/lib/emails/i18n/dist'
       client: '/client'
+      scripts: '/scripts'
     path: (route, name)->
       path = @paths[route]
       return "#{appRoot}#{path}/#{name}"

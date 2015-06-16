@@ -1,0 +1,21 @@
+timestamp=`echo $(date +'%Y%m%d-%H-%M')`
+archive=~/inventaire/logs/archives
+
+logserver=~/inventaire/logs/server.log
+logservererrors=~/inventaire/logs/error.log
+lognginxserver=~/inventaire/logs/nginx_static_access.log
+lognginxerrors=~/inventaire/logs/nginx_static_errors.log
+
+mkdir -p $archive/server $archive/errors $archive/nginx $archive/nginx_errors
+
+cp $logserver $archive/server/$timestamp
+echo 'archived' > $logserver
+
+cp $logservererrors $archive/errors/$timestamp
+echo 'archived' > $logservererrors
+
+cp $lognginxserver $archive/nginx/$timestamp
+echo 'archived' > $lognginxserver
+
+cp $lognginxerrors $archive/nginx_errors/$timestamp
+echo 'archived' > $lognginxerrors
