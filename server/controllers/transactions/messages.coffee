@@ -1,6 +1,7 @@
 __ = require('config').root
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
+promises_ = __.require 'lib', 'promises'
 comments_ = __.require 'controllers', 'comments/lib/comments'
 transactions_ = require './lib/transactions'
 
@@ -23,8 +24,12 @@ module.exports =
     _.log [transaction, message], 'transaction, message'
 
     transactions_.byId transaction
-    .then transactions_.verifyRightToInteract.bind(null, userId)
-    .then _.property('_id')
-    .then comments_.addTransactionComment.bind(null, userId, message)
+    .then (transaction)->
+      promises_.resolve transactions_.verifyRightToInteract(userId, transaction)
+      .then _.property('_id')
+      .then comments_.addTransactionComment.bind(null, userId, message)
+      .then (couchRes)->
+        transactions_.updateReadForNewMessage userId, transaction
+        .then -> return couchRes
     .then res.json.bind(res)
     .catch error_.Handler(res)

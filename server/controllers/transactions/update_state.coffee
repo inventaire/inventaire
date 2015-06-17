@@ -18,7 +18,7 @@ module.exports = (req, res, next)->
 
   transactions_.byId id
   .then VerifyRights(state, userId)
-  .then transactions_.updateState.bind(null, state)
+  .then transactions_.updateState.bind(null, state, userId)
   .then res.json.bind(res)
   .catch error_.Handler(res)
 
@@ -31,4 +31,4 @@ VerifyRights = (state, userId)->
       transactions_.verifyIsOwner.bind(null, userId)
     when 'both'
       transactions_.verifyRightToInteract.bind(null, userId)
-    else throw error_.new 'unknown actor', 500, state
+    else throw error_.new 'unknown actor', 500, arguments

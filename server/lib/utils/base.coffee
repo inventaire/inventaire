@@ -36,6 +36,8 @@ module.exports = base =
       @values(obj)?.reduce (a,b)-> a+b
     else 0
 
+  sameObjects: (a, b)-> JSON.stringify(a) is JSON.stringify(b)
+
   # returns a function triggering a standard confirmation response
   ok: (res, status=200)->
     res.status(status).json {ok: true}

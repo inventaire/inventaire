@@ -5,21 +5,28 @@ transactions_ = require './lib/transactions'
 request = require './request'
 updateState = require './update_state'
 messages = require './messages'
+markAsRead = require './mark_as_read'
 
 module.exports =
   get: (req, res, next)->
     { action } = req.query
 
     switch action
-      when 'get-messages' then messages.get(req, res, next)
+      when 'get-messages' then messages.get req, res
       else error_.unknownAction res
 
   post: (req, res, next)->
     { action } = req.body
 
     switch action
-      when 'request' then request(req, res, next)
-      when 'new-message' then messages.post(req, res, next)
+      when 'request' then request req, res
+      when 'new-message' then messages.post req, res
       else error_.unknownAction res
 
-  put: updateState
+  put: (req, res, next)->
+    { action } = req.body
+
+    switch action
+      when 'update-state' then updateState req, res
+      when 'mark-as-read' then markAsRead req, res
+      else error_.unknownAction res

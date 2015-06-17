@@ -26,6 +26,9 @@ Transaction.create = (requester, item)->
     requester: requester
     created: now = _.now()
     actions: [ { action: 'requested', timestamp: now } ]
+    read:
+      requester: true
+      owner: false
 
 requestable = [
   'giving'
