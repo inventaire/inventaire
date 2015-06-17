@@ -18,7 +18,7 @@ module.exports =
       when 'get-images' then return getImages(req, res)
       when 'get-inv-entities' then return getEntities(req, res)
       when 'get-isbn-entities' then return getIsbns(req, res)
-      else error_.bundle res, 'entities action not found', 400
+      else error_.unknownAction res
 
   # authentified
   create: createEntity

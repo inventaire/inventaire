@@ -12,7 +12,7 @@ module.exports =
 
     switch action
       when 'get-messages' then messages.get(req, res, next)
-      else error_.bundle res, 'unknown action', 400
+      else error_.unknownAction res
 
   post: (req, res, next)->
     { action } = req.body
@@ -20,6 +20,6 @@ module.exports =
     switch action
       when 'request' then request(req, res, next)
       when 'new-message' then messages.post(req, res, next)
-      else error_.bundle res, 'unknown action', 400
+      else error_.unknownAction res
 
   put: updateState

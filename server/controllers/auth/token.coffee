@@ -12,9 +12,9 @@ module.exports = (req, res, next) ->
   unless email? then return error_.bundle res, 'no email provided', 400
 
   switch action
-    when 'validation-email' then confirmEmailValidity(res, email, token)
-    when 'reset-password' then allowPasswordReset(req, res)
-    else return error_.bundle res, 'unknown action', 400
+    when 'validation-email' then confirmEmailValidity res, email, token
+    when 'reset-password' then allowPasswordReset req, res
+    else error_.unknownAction res
 
 
 confirmEmailValidity = (res, email, token)->
