@@ -20,5 +20,20 @@
     "reset_password_subject": "Reinitialiser votre mot de passe Inventaire",
     "reset_password_title": "Mot de passe Inventaire oublié ?",
     "reset_password_paragraph": "Nous avons reçu une demande pour réinitialiser le mot de passe de votre compte **%{username}**. Si vous avez fait cette requête, cliquez sur le bouton ci-dessous. Si ce n'est pas vous, vous pouvez ignorer cet email.",
-    "reset_password_button": "Réinitialiser votre mot de passe"
+    "reset_password_button": "Réinitialiser votre mot de passe",
+    "your_item_was_requested_title": null,
+    "your_item_was_requested_subject": null,
+    "your_item_was_requested_button": null,
+    "update_on_your_item_title": null,
+    "update_on_your_item_subject": null,
+    "update_on_your_item_button": null,
+    "update_on_item_you_requested_title": null,
+    "update_on_item_you_requested_subject": null,
+    "update_on_item_you_requested_button": null,
+    "requested": null,
+    "accepted": null,
+    "declined": null,
+    "confirmed": null,
+    "returned": null,
+    "go_to_user_inventory": null
 }

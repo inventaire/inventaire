@@ -20,5 +20,20 @@
     "reset_password_subject": "Reset your Inventaire password",
     "reset_password_title": "Forgot your Inventaire password?",
     "reset_password_paragraph": "We received a request to reset the password for your account **%{username}**. <br> If you made this request, click the button below. If you didn't make this request, you can ignore this email.",
-    "reset_password_button": "Reset your password"
+    "reset_password_button": "Reset your password",
+    "your_item_was_requested_title": " [%{title}] %{username} requested your book",
+    "your_item_was_requested_subject": "%{username} requested your book [%{title}](%{link})",
+    "your_item_was_requested_button": "answer",
+    "update_on_your_item_title": "[%{title}] updates on %{username}'s request",
+    "update_on_your_item_subject": "some news from %{username} about your book [%{title}](%{link})",
+    "update_on_your_item_button": "answer",
+    "update_on_item_you_requested_title": "[%{title}] updates on your request to %{username}",
+    "update_on_item_you_requested_subject": "some news from %{username} about [%{title}](%{link})",
+    "update_on_item_you_requested_button": "answer",
+    "requested": "%{username} made a request",
+    "accepted": "%{username} accepted your request",
+    "declined": "%{username} declined your request",
+    "confirmed": "%{username} confirmed to have received the book",
+    "returned": "%{username} confirmed to have received the book back",
+    "go_to_user_inventory": "go to %{username}'s inventory"
 }
