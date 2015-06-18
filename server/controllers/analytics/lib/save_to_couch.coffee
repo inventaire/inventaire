@@ -61,7 +61,7 @@ module.exports = (analyticsLevelDB)->
         stats.kept++
 
   logStats = (stats)->
-    if verbosity > 1
+    if verbosity > 2
       cb = -> _.info(stats, "analytics transfered to Couchdb")
       setTimeout cb , 60*1000
 
