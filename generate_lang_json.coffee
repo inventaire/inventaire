@@ -4,6 +4,8 @@
 # From time to time, you can replace src/fullkey/en by {}
 # and browse all the website to regenerate an updated list of the fullkeys
 
+# Command: cd ~/inventaire && ./server/lib/emails/i18n/src/generate_lang_json.coffee all
+
 require('./lib/validate_cwd') process.cwd()
 require 'colors'
 Promise = require 'bluebird'
