@@ -1,7 +1,7 @@
 {
   "name": "inventaire",
   "homepage": "https://inventaire.io",
-  "version": "0.1.0",
+  "version": "2.0.0",
   "description": "a libre collaborative resources mapper powered by open-knowledge (server-side)",
   "main": "index.coffee",
   "scripts": {
