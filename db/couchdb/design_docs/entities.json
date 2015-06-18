@@ -4,6 +4,9 @@
    "views": {
        "byTitle": {
            "map": "(doc)->\n  emit doc.title, null"
+       },
+       "byIsbn": {
+           "map": "(doc)->\n  if doc.isbn?.length >= 10\n    emit doc.isbn, null"
        }
    }
 }
