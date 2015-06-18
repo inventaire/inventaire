@@ -13,12 +13,23 @@ promisesHandlers =
   Promise: Promise
   reject: Promise.reject.bind(Promise)
   resolve: Promise.resolve.bind(Promise)
+  all: Promise.all.bind(Promise)
   settle: (promises)->
     Promise.settle(promises).then pluckSettled
   start: Promise.resolve.bind(Promise)
   delayed: (val, delay=5000)->
     Promise.delay(delay).then -> val
   Timeout: (ms)-> (promise)-> promise.timeout ms
+  # skip throws in a standard way to be catched later
+  # by NonSkip and not be treated as an error
+  skip: -> throw 'skip'
+  NonSkip: (catcher)->
+    return filteredCatcher = (err)->
+      if err is 'skip' then _.noop
+      else catcher err
 
+# bundling NonSkip and _.Error handlers
+promisesHandlers.NonSkipError = (label)->
+  promisesHandlers.NonSkip _.Error(label)
 
 module.exports = _.extend {}, requests, promisesHandlers

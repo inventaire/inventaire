@@ -1,0 +1,19 @@
+{{#if item.pictures}}
+  {{> row_centered_top}}
+    <img src="{{src item.pictures 200}}" alt="{{item.title}}">
+  {{> row_centered_bottom}}
+{{/if}}
+{{>title_top}}
+  <h2 style="font-size:1.2em;">{{{i18n lang subject this}}}</h2>
+  {{>timeline this}}
+{{>title_bottom}}
+{{>button_top}}
+    <a href="{{link}}" target="_blank">
+      {{i18n lang button requester}}
+    </a>
+{{>button_bottom}}
+{{>paragraph_top}}
+    <small>{{i18n lang 'raw link:'}} {{link}}</small>
+{{>paragraph_bottom}}
+{{>banner}}
+{{>general_info}}

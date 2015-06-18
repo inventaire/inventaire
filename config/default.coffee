@@ -87,3 +87,6 @@ module.exports =
   mailgun:
     pubkey: 'yourkey'
   tokenDaysToLive: 3
+  debouncedEmail:
+    crawlPeriod: 10*60*1000
+    debounceDelay: 30*60*1000

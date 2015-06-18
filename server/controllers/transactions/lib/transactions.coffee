@@ -22,6 +22,9 @@ module.exports = _.extend {}, rightsVerification,
     transaction = Transaction.create(userId, item)
     _.log transaction, 'transaction'
     db.post transaction
+    .then (couchRes)->
+      Radio.emit 'transaction:request', couchRes.id
+      return couchRes
 
   addMessage: (userId, message, transactionId)->
     _.types arguments, 'strings...'

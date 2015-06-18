@@ -4,6 +4,7 @@ error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
 comments_ = __.require 'controllers', 'comments/lib/comments'
 transactions_ = require './lib/transactions'
+Radio = __.require 'lib', 'radio'
 
 module.exports =
   get: (req, res, next)->
@@ -30,6 +31,8 @@ module.exports =
       .then comments_.addTransactionComment.bind(null, userId, message)
       .then (couchRes)->
         transactions_.updateReadForNewMessage userId, transaction
-        .then -> return couchRes
+        .then ->
+          Radio.emit 'transaction:message', transaction
+          return couchRes
     .then res.json.bind(res)
     .catch error_.Handler(res)

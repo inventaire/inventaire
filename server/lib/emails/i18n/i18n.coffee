@@ -3,6 +3,7 @@ __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 Polyglot = require 'node-polyglot'
 activeLangs = require './active_langs'
+moment = require 'moment'
 
 polyglot = {}
 
@@ -19,6 +20,13 @@ solveLang = (lang)->
   lang = lang?[0..1]
   if lang in activeLangs then lang else 'en'
 
-module.exports = (lang, key, args)->
-  lang = solveLang(lang)
-  return polyglot[lang].t(key, args)
+module.exports =
+  i18n: (lang, key, args)->
+    lang = solveLang(lang)
+    return polyglot[lang].t(key, args)
+
+  dateI18n: (lang, epochTime, format)->
+    # set default while neutralizeing handlebars object
+    unless _.isString format then format = 'l'
+    lang = solveLang lang
+    return moment(epochTime).format(format)

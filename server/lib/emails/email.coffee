@@ -4,7 +4,7 @@ _ = __.require 'builders', 'utils'
 qs = require 'querystring'
 
 host = CONFIG.fullPublicHost()
-i18n = require './i18n/i18n'
+{ i18n } = require './i18n/i18n'
 base =
   from: 'Inventaire.io <hello@inventaire.io>'
 
@@ -37,7 +37,7 @@ module.exports =
 
     return _.extend {}, base,
       to: user1.email
-      subject: i18n(user1.language, "friend_accepted_request_subject", user2)
+      subject: i18n(user1.language, 'friend_accepted_request_subject', user2)
       template: 'friend_accepted_request'
       context:
         user: user1
@@ -50,7 +50,7 @@ module.exports =
 
     return _.extend {}, base,
       to: user1.email
-      subject: i18n(user1.language, "friendship_request_subject", user2)
+      subject: i18n(user1.language, 'friendship_request_subject', user2)
       template: 'friendship_request'
       context:
         user: user1
@@ -70,6 +70,33 @@ module.exports =
         user: user
         unknownUser: unknownUser
 
+  transactions:
+    yourItemWasRequested: (transaction)->
+      transactionEmail transaction, 'owner', 'your_item_was_requested'
+
+    updateOnYourItem: (transaction)->
+      transactionEmail transaction, 'owner', 'update_on_your_item'
+
+    updateOnItemYouRequested: (transaction)->
+      transactionEmail transaction, 'requester', 'update_on_item_you_requested'
+
+transactionEmail = (transaction, role, label)->
+  other = if role is 'owner' then 'requester' else 'owner'
+  titleContext =
+    username: transaction[other].username
+    title: transaction.item.title
+  return _.extend {}, base,
+    to: transaction[role].email
+    subject: i18n(transaction[role].language, "#{label}_title", titleContext)
+    template: 'transaction_update'
+    context: _.extend transaction,
+      host: host
+      link: "#{host}/transactions/#{transaction._id}"
+      title: transaction.item.title
+      username: transaction.other.username
+      subject: "#{label}_subject"
+      button: "#{label}_button"
+      lang: transaction.mainUser.language
 
 validateOptions = (options)->
   {user1, user2} = options

@@ -1,0 +1,19 @@
+<p>
+  <img src="{{src other.picture 36}}" alt="{{other.username}}" style="display:inline">
+  <a href="{{host}}/inventory/{{other.username}}" style="margin-left:5px; font-weight: bold;" title="{{i18n lang 'go_to_user_inventory' other}}">{{other.username}}</a>
+</p>
+{{#each timeline}}
+  <p style="margin-left: 10px; padding-bottom: 5px; background-color:#eee;">
+    {{#if action}}
+      <strong>
+        {{!-- relies on the fact that only action from the other user will be notified by mail --}}
+        {{i18n ../../lang action ../../other}}
+      </strong>
+      {{!-- '../' allows to access parent's scope http://stackoverflow.com/questions/13645084/access-a-variable-outside-the-scope-of-a-handlebars-js-each-loop --}}
+      <span style="float:right">{{dateI18n ../../lang timestamp}}</span>
+    {{else}}
+      {{message}}
+      <span style="float:right">{{dateI18n ../../lang created}}</span>
+    {{/if}}
+  </p>
+{{/each}}
