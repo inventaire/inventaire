@@ -3,8 +3,12 @@ _ = __.require 'builders', 'utils'
 
 uuid = require 'simple-uuid'
 
+db = __.require('couch', 'base')('entities')
+
 module.exports =
-  db: __.require('couch', 'base')('entities')
+  db: db
+  byId: db.get.bind(db)
+  byIsbn: db.viewFindOneByKey.bind(db, 'byIsbn')
   create: (entityData)->
     entityData = @normalizeData(entityData)
     # using PUT as the CouchDB documentation recommands
@@ -18,16 +22,16 @@ module.exports =
     return entityData
 
   putEntity: (entityData)->
-    @db.put entityData
+    db.put entityData
     .then @getEntity.bind(@, entityData._id)
     .catch (err)-> _.log err, 'putEntity err'
 
   getEntity: (id)->
-    @db.get id
+    db.get id
     .then (res)-> _.log res, 'new entity'
     .catch (err)-> _.log err, 'getEntity err'
 
   getEntities: (ids)->
     ids = _.forceArray(ids)
-    @db.fetch(ids)
+    db.fetch(ids)
     .then (res)-> _.log res, 'getEntities res'
