@@ -16,7 +16,7 @@ db = __.require('couch', 'base')('users', 'user')
 token_ = require('./token')(db)
 user_ =
   db: db
-  byId: (id)-> db.get(id)
+  byId: db.get.bind(db)
 
   byEmail: (email)->
     db.viewByKey 'byEmail', email
@@ -64,7 +64,8 @@ user_ =
     @availability.username(username)
     .then -> User.create(username, email, creationStrategy, language, password)
     .then db.postAndReturn.bind(db)
-    .then _.Log('user created')
+    # don't log the user doc to avoid having password hash in logs
+    .then _.log.bind(null, username, 'user created')
     .then token_.sendValidationEmail
 
   findLanguage: (req)->
