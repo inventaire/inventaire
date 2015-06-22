@@ -19,9 +19,9 @@ module.exports = tests =
   lang: bindedTest Lang
 
 
-tests.isNonEmptyString = (str)->
+tests.nonEmptyString = (str, maxLength=100)->
   _.isString str
-  return str.length > 0
+  return 0 < str.length <= maxLength
 
 # no item of this app could have a timestamp before june 2014
 June2014 = 1402351200000
@@ -29,6 +29,6 @@ tests.EpochMs =
   test: (time)-> June2014 < time <= _.now()
 
 
-tests.pass = (attribute, value)->
-  unless @[attribute](value)
+tests.pass = (attribute, value, option)->
+  unless @[attribute](value, option)
     throw error_.new "invalid #{attribute}: #{value}", 400
