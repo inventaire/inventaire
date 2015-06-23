@@ -65,7 +65,10 @@ user_ =
     .then -> User.create(username, email, creationStrategy, language, password)
     .then db.postAndReturn.bind(db)
     # don't log the user doc to avoid having password hash in logs
-    .then _.log.bind(null, username, 'user created')
+    # but still return the doc
+    .then (user)->
+      _.log username, 'user created'
+      return user
     .then token_.sendValidationEmail
 
   findLanguage: (req)->
