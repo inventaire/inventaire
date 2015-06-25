@@ -10,17 +10,16 @@ module.exports.actions = (req, res, next) ->
   unless action? and othersId?
     return error_.bundle res, 'bad relations query', 400
 
-  user_.getUserId(req)
+  user_.getUserId req
   .then solveNewRelation.bind(null, action, othersId)
-  .then ->
-    _.success othersId, "#{action}: OK!"
-    res.json {status: 'ok'}
+  .then _.success.bind(null, othersId, "#{action}: OK!")
+  .then _.Ok(res)
   .catch error_.Handler(res)
 
 solveNewRelation = (action, othersId, userId)->
   unless userId isnt othersId
     errMsg = 'cant create relation between identical ids'
-    throw error_.new +errMsg, 400, userId othersId
+    throw error_.new errMsg, 400, userId othersId
 
   switch action
     when 'request' then type = 'requestFriend'
