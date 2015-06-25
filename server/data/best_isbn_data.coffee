@@ -11,7 +11,5 @@ module.exports = (isbn)->
     getInvEntitiesDataFromIsbn(isbn)
   ]
   .spread (googleRes, invRes)->
-    _.log googleRes, 'googleRes'
-    _.log invRes, 'invRes'
     if googleRes?[isbn]? then googleRes
     else invRes
