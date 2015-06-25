@@ -31,4 +31,4 @@ requestExtract = (lang, title)->
 
 
 apiQuery = (lang, title)->
-  "http://#{lang}.wikipedia.org/w/api.php?format=json&action=query&titles=#{title}&prop=extracts&explaintext=true&exintro=true&exsentences=10"
+  "http://#{lang}.wikipedia.org/w/api.php?format=json&action=query&titles=#{title}&prop=extracts&explaintext=true&exintro=true&exsentences=20"
