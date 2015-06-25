@@ -8,6 +8,7 @@ user = require './user'
 items = require './items/items'
 users = require './users'
 relations = require './relations/relations'
+groups = require './groups/groups'
 entities = require './entities/entities'
 followed = require './entities/followed'
 upload = require './upload'
@@ -56,6 +57,9 @@ routes =
 
   'api/relations':
     get: relations.actions
+
+  'api/groups':
+    post: groups.post
 
   'api/items':
     get: items.fetch

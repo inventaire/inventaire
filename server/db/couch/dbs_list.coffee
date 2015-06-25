@@ -8,7 +8,7 @@
 
 module.exports =
   default:
-    users: ['user', 'relations']
+    users: ['user', 'relations', 'groups']
     items: ['items', 'followedEntities']
     transactions: ['transactions']
     comments: ['comments']

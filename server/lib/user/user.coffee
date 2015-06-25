@@ -5,6 +5,7 @@ _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
 relations_ = __.require 'controllers', 'relations/lib/queries'
+groups_ = __.require 'controllers', 'groups/lib/groups'
 notifs_ = __.require 'lib', 'notifications'
 cache_ = __.require 'lib', 'cache'
 couch_ = __.require 'lib', 'couch'
@@ -85,13 +86,13 @@ user_ =
 
   getUsersPublicData: (ids, format='collection')->
     ids = ids.split?('|') or ids
-    @fetchUsers(ids)
-    .then (usersData)=>
+    user_.fetchUsers(ids)
+    .then (usersData)->
       # _.success usersData, 'found users data'
 
       if usersData?
         # _.success usersData, 'usersData before cleaning'
-        cleanedUsersData = usersData.map @publicUserData
+        cleanedUsersData = usersData.map user_.publicUserData
 
         if format is 'index'
           data = _.indexBy(cleanedUsersData, '_id')
@@ -125,15 +126,15 @@ user_ =
     relations_.getUserRelations(userId, getDocs)
 
   getRelationsStatuses: (userId, usersIds)->
-    friends = []
-    others = []
-    relations_.getUserFriends(userId)
-    .then (friendsIds)->
-      usersIds.forEach (id)->
-        if id in friendsIds
-          friends.push id
-        else others.push id
-      return [friends, others]
+    promises_.all [
+      relations_.getUserFriends(userId)
+      groups_.findUserGroupsCoMembers(userId)
+    ]
+    .spread (friendsIds, coGroupMembers)->
+      friends = _.intersection friendsIds, usersIds
+      coGroupMembers = _.intersection coGroupMembers, usersIds
+      # not looking for remaing users as there is no use to it for now
+      return [friends, coGroupMembers]
 
   areFriends: (userId, otherId)->
     _.types arguments, 'strings...'

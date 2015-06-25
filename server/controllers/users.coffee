@@ -1,5 +1,6 @@
 __ = require('config').root
 _ = __.require 'builders', 'utils'
+promises_ = __.require 'lib', 'promises'
 user_ = __.require 'lib', 'user/user'
 items_ = __.require 'lib', 'items'
 error_ = __.require 'lib', 'error/error'
@@ -9,16 +10,15 @@ module.exports.actions = (req, res, next) ->
   {action, search, ids} = query
   if action?
     switch action
-      when 'search'
-        if search? then return searchByUsername(res, search)
-      when 'getusers'
-        if ids? then return fetchUsersData(res, ids)
-      when 'getitems'
-        if ids? then return fetchUsersItems(req, res, ids)
-
-  error_.bundle res, 'bad query', 400, query
+      when 'search' then searchByUsername res, search
+      when 'getusers' then fetchUsersData res, ids
+      when 'getitems'then fetchUsersItems req, res, ids
+      else error_.unknownAction res
 
 searchByUsername = (res, search) ->
+  unless search?
+    return error_.bundle res, 'bad query', 400, query
+
   user_.usernameStartBy(search)
   .then (usersData)->
     users = usersData.map user_.publicUserData
@@ -26,26 +26,31 @@ searchByUsername = (res, search) ->
   .catch error_.Handler(res)
 
 fetchUsersData = (res, ids)->
-  ids = ids.split('|')
-  unless ids?.length > 0 and validUserIds(ids)
-    return error_.bundle res, 'invalid ids', 400, ids
-
-  user_.getUsersPublicData(ids, 'index')
+  promises_.start()
+  .then parseAndValidateIds.bind(null, ids)
+  .then _.partialRight(user_.getUsersPublicData, 'index')
   .then (usersData)->
     res.json {users: usersData}
   .catch error_.Handler(res)
 
-
-validUserIds = (ids)-> _.all ids, (id)-> /^\w{32}$/.test(id)
-
 fetchUsersItems = (req, res, ids) ->
-  ids = ids.split '|'
-  user_.getUserId(req)
-  .then (userId)-> user_.getRelationsStatuses(userId, ids)
+  userId = req.user._id
+
+  promises_.start()
+  .then parseAndValidateIds.bind(null, ids)
+  .then user_.getRelationsStatuses.bind(null, userId)
   .then (res)->
-    [friends, others] = res
-    # not fetching others items
-    return _.combinations friends, ['friends', 'public']
-  .then (listings)-> items_.batchByListings listings
+    [friends, coGroupMembers] = res
+    # not fetching non-friends non-coGroupMembers items
+    networkIds = _.uniq coGroupMembers.concat(friends)
+    return _.combinations networkIds, ['friends', 'public']
+  .then items_.batchByListings
   .then res.json.bind(res)
   .catch error_.Handler(res)
+
+parseAndValidateIds = (ids)->
+  ids = ids.split '|'
+  if ids?.length > 0 and validUserIds(ids) then return ids
+  else throw error_.new res, 'invalid ids', 400, ids
+
+validUserIds = (ids)-> _.all ids, (id)-> /^\w{32}$/.test(id)
