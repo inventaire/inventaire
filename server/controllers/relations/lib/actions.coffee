@@ -15,3 +15,6 @@ module.exports =
     queries_.putRequestedStatus(userId, otherId)
     Radio.emit 'notify:friendship:request', otherId, userId
   removeRelation: queries_.putNoneStatus
+  # used by godMode
+  forceFriendship: (userId, otherId)->
+    queries_.putFriendStatus(userId, otherId)

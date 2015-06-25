@@ -1,10 +1,13 @@
 CONFIG = require 'config'
 __ = CONFIG.root
+{ godMode } = CONFIG
 _ = __.require 'builders', 'utils'
 
 module.exports = (actions)->
   API =
     requestFriend: (userId, otherId, status)->
+      # useful for development
+      if godMode then return actions.forceFriendship(userId, otherId)
       switch status
         when 'none'
           actions.makeRequest(userId, otherId)
