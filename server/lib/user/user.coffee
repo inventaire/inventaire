@@ -126,13 +126,10 @@ user_ =
     relations_.getUserRelations(userId, getDocs)
 
   getRelationsStatuses: (userId, usersIds)->
-    promises_.all [
-      relations_.getUserFriends(userId)
-      groups_.findUserGroupsCoMembers(userId)
-    ]
-    .spread (friendsIds, coGroupMembers)->
+    getFriendsAndCoMembers(userId)
+    .spread (friendsIds, coGroupMembersIds)->
       friends = _.intersection friendsIds, usersIds
-      coGroupMembers = _.intersection coGroupMembers, usersIds
+      coGroupMembers = _.intersection coGroupMembersIds, usersIds
       # not looking for remaing users as there is no use to it for now
       return [friends, coGroupMembers]
 
@@ -142,6 +139,12 @@ user_ =
     .then (status)->
       if status is 'friends' then return true
       else false
+
+  areFriendsOrGroupCoMembers: (userId, otherId)->
+    _.types arguments, 'strings...'
+    getFriendsAndCoMembers(userId)
+    .spread (friendsIds, coGroupMembersIds)->
+      return otherId in friendsIds or otherId in coGroupMembersIds
 
   cleanUserData: (value)->
     {username, email, created, picture} = value
@@ -159,6 +162,14 @@ user_ =
 
   getNotifications: (userId)->
     notifs_.getUserNotifications userId
+
+
+# result is to be .spread (friendsIds, coGroupMembersIds)->
+getFriendsAndCoMembers = (userId)->
+  promises_.all [
+    relations_.getUserFriends(userId)
+    groups_.findUserGroupsCoMembers(userId)
+  ]
 
 user_.availability = require('./availability')(user_)
 

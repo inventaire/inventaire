@@ -18,13 +18,13 @@ exports.verifyRightToInteract = (userId, item, ownerAllowed)->
     # anyone can interact on a public item
     when 'public' then return item
     # friends only can interact on a friends item
-    when 'friends' then return ifUserAreFriends userId, owner, item
+    when 'friends' then return ifUserAreFriendsOrGroup userId, owner, item
     # anyone can interact on a public item
     when 'private' then forbidden userId, item
 
 
-ifUserAreFriends = (userId, owner, item)->
-  user_.areFriends(userId, owner)
+ifUserAreFriendsOrGroup = (userId, owner, item)->
+  user_.areFriendsOrGroupCoMembers(userId, owner)
   .then (bool)->
     if bool then return item
     else forbidden userId, item
