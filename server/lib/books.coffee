@@ -12,7 +12,9 @@ _.extend books_, normalizeBookData,
     google:
       book: (data)->
         "https://www.googleapis.com/books/v1/volumes/?q=#{data}&fields=totalItems,items(volumeInfo)&country=US"
-      isbn: (isbn)-> @book("isbn:#{isbn}")
+      # not using the form "isbn:#{isbn}" as some results don't appear
+      # with the prefix 'isbn:'
+      isbn: (isbn)-> @book isbn
     worldcat:
       # http://xisbn.worldcat.org/xisbnadmin/doc/api.htm
       isbnBaseRoute: 'http://xisbn.worldcat.org/webservices/xid/isbn/'
