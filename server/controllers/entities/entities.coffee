@@ -14,10 +14,10 @@ module.exports =
     unless action? then return error_.bundle res, 'bad query', 400
 
     switch action
-      when 'search' then return searchEntity(req, res)
-      when 'get-images' then return getImages(req, res)
-      when 'get-inv-entities' then return getEntities(req, res)
-      when 'get-isbn-entities' then return getIsbns(req, res)
+      when 'search' then return searchEntity req, res
+      when 'get-images' then return getImages req, res
+      when 'get-inv-entities' then return getEntities req, res
+      when 'get-isbn-entities' then return getIsbns req, res
       else error_.unknownAction res
 
   # authentified

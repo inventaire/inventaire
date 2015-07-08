@@ -21,12 +21,12 @@ solveNewRelation = (action, othersId, userId)->
     errMsg = 'cant create relation between identical ids'
     throw error_.new errMsg, 400, userId othersId
 
-  switch action
-    when 'request' then type = 'requestFriend'
-    when 'cancel' then type = 'cancelFriendRequest'
-    when 'accept' then type = 'acceptRequest'
-    when 'discard' then type = 'discardRequest'
-    when 'unfriend' then type = 'removeFriendship'
+  type = switch action
+    when 'request' then 'requestFriend'
+    when 'cancel' then 'cancelFriendRequest'
+    when 'accept' then 'acceptRequest'
+    when 'discard' then 'discardRequest'
+    when 'unfriend' then 'removeFriendship'
 
   return method(type, userId, othersId)
 

@@ -45,13 +45,13 @@ module.exports = _.extend publicActions,
     {action} = req.query
     switch action
       when 'public-by-id'
-        publicActions.publicById(req, res, next)
+        publicActions.publicById req, res
       when 'public-by-entity'
-        publicActions.publicByEntity(req, res, next)
+        publicActions.publicByEntity req, res
       when 'public-by-username-and-entity'
-        publicActions.publicByUsernameAndEntity(req, res, next)
+        publicActions.publicByUsernameAndEntity req, res
       when 'last-public-items'
-        publicActions.lastPublicItems(req, res, next)
+        publicActions.lastPublicItems req, res
       when 'user-public-items'
-        publicActions.userPublicItems(req, res, next)
+        publicActions.userPublicItems req, res
       else error_.unknownAction res
