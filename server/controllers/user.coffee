@@ -25,7 +25,7 @@ getUserData = (userId)->
     user_.getUserRelations(userId)
     user_.getNotifications(userId)
     transactions_.byUser(userId)
-    groups_.byUser(userId)
+    groups_.allUserGroups(userId)
   ])
 
 AttachUserData = (userData)->

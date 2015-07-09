@@ -12,6 +12,16 @@ module.exports =
   # using a view to avoid returning users or relations
   byId: db.viewFindOneByKey.bind(db, 'byId')
   byUser: db.viewByKey.bind(db, 'byUser')
+  byInvitedUser: db.viewByKey.bind(db, 'byInvitedUser')
+
+  # including invitations
+  allUserGroups: (userId)->
+    promises_.all [
+      @byUser(userId)
+      @byInvitedUser(userId)
+    ]
+    .spread _.union.bind(_)
+
   create: (name, creatorId)->
     group = Group.create name, creatorId
     _.log group, 'group created'
@@ -20,11 +30,28 @@ module.exports =
   findUserGroupsCoMembers: (userId)->
     @byUser userId
     .then allGroupsMembers
+    # .then _.Log('allGroupsMembers')
 
+  userInGroup: (userId, groupId)->
+    @byId groupId
+    .then allGroupMembers
+    .then (users)-> userId in users
+
+  userInvited: (userId, groupId)->
+    @byId groupId
+    .then _.partial(Group.findInvitation, userId, _, true)
+
+  invite: (groupId, invitorId, invitedId)->
+    db.update groupId, Group.invite.bind(null, invitorId, invitedId)
+
+  answerInvitation: (userId, groupId, action)->
+    # action = 'accept' or 'decline'
+    db.update groupId, Group[action].bind(null, userId)
 
 allGroupsMembers = (groups)->
   return _(groups).map(allGroupMembers).flatten().value()
 
 allGroupMembers = (group)->
-  { admin, members } = group
-  return members.concat admin
+  _(group).pick(['admins', 'members']).values().flatten()
+  .map _.property('user')
+  .value()

@@ -13,6 +13,7 @@ module.exports = tests =
   userId: bindedTest CouchUuid
   itemId: bindedTest CouchUuid
   transactionId: bindedTest CouchUuid
+  groupId: bindedTest CouchUuid
   username: bindedTest Username
   email: bindedTest Email
   entityUri: bindedTest EntityUri
@@ -28,7 +29,9 @@ June2014 = 1402351200000
 tests.EpochMs =
   test: (time)-> June2014 < time <= _.now()
 
+tests.valid = (attribute, value, option)->
+  @[attribute](value, option)
 
 tests.pass = (attribute, value, option)->
-  unless @[attribute](value, option)
+  unless tests.valid.call @, attribute, value, option
     throw error_.new "invalid #{attribute}: #{value}", 400

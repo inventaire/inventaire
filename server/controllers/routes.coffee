@@ -60,6 +60,7 @@ routes =
 
   'api/groups':
     post: groups.post
+    put: groups.put
 
   'api/items':
     get: items.fetch
