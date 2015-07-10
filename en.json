@@ -21,7 +21,7 @@
     "reset_password_title": "Forgot your Inventaire password?",
     "reset_password_paragraph": "We received a request to reset the password for your account **%{username}**. <br> If you made this request, click the button below. If you didn't make this request, you can ignore this email.",
     "reset_password_button": "Reset your password",
-    "your_item_was_requested_title": " [%{title}] %{username} requested your book",
+    "your_item_was_requested_title": "[%{title}] %{username} requested your book",
     "your_item_was_requested_subject": "%{username} requested your book [%{title}](%{link})",
     "your_item_was_requested_button": "answer",
     "update_on_your_item_title": "[%{title}] updates on %{username}'s request",
