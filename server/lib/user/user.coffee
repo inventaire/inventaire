@@ -18,6 +18,7 @@ token_ = require('./token')(db)
 user_ =
   db: db
   byId: db.get.bind(db)
+  byIds: db.fetch.bind(db)
 
   byEmail: (email)->
     db.viewByKey 'byEmail', email
@@ -82,11 +83,9 @@ user_ =
     if id? then return promises_.resolve(id)
     else error_.reject('req.user._id couldnt be found', 401)
 
-  fetchUsers: (ids)-> db.fetch(ids)
-
   getUsersPublicData: (ids, format='collection')->
     ids = ids.split?('|') or ids
-    user_.fetchUsers(ids)
+    user_.byIds(ids)
     .then (usersData)->
       # _.success usersData, 'found users data'
 

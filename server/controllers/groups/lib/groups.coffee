@@ -8,7 +8,7 @@ Group = __.require 'models', 'group'
 
 db = __.require('couch', 'base')('users', 'groups')
 
-module.exports =
+module.exports = groups_ =
   # using a view to avoid returning users or relations
   byId: db.viewFindOneByKey.bind(db, 'byId')
   byUser: db.viewByKey.bind(db, 'byUser')
@@ -29,12 +29,12 @@ module.exports =
 
   findUserGroupsCoMembers: (userId)->
     @byUser userId
-    .then allGroupsMembers
+    .then groups_.allGroupsMembers
     # .then _.Log('allGroupsMembers')
 
   userInGroup: (userId, groupId)->
     @byId groupId
-    .then allGroupMembers
+    .then groups_.allGroupMembers
     .then (users)-> userId in users
 
   userInvited: (userId, groupId)->
@@ -48,10 +48,10 @@ module.exports =
     # action = 'accept' or 'decline'
     db.update groupId, Group[action].bind(null, userId)
 
-allGroupsMembers = (groups)->
-  return _(groups).map(allGroupMembers).flatten().value()
+  allGroupsMembers: (groups)->
+    return _(groups).map(groups_.allGroupMembers).flatten().value()
 
-allGroupMembers = (group)->
-  _(group).pick(['admins', 'members']).values().flatten()
-  .map _.property('user')
-  .value()
+  allGroupMembers: (group)->
+    _(group).pick(['admins', 'members']).values().flatten()
+    .map _.property('user')
+    .value()

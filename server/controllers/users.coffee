@@ -42,9 +42,8 @@ fetchUsersItems = (req, res, ids) ->
   .then (res)->
     [friends, coGroupMembers] = res
     # not fetching non-friends non-coGroupMembers items
-    networkIds = _.uniq coGroupMembers.concat(friends)
-    return _.combinations networkIds, ['friends', 'public']
-  .then items_.batchByListings
+    return networkIds = _.uniq coGroupMembers.concat(friends)
+  .then items_.bundleListings.bind(null, ['friends', 'public'])
   .then res.json.bind(res)
   .catch error_.Handler(res)
 

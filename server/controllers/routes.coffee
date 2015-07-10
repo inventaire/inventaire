@@ -59,6 +59,7 @@ routes =
     get: relations.actions
 
   'api/groups':
+    get: groups.get
     post: groups.post
     put: groups.put
 

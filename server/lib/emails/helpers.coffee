@@ -6,7 +6,7 @@ user_ = __.require 'lib', 'user/user'
 
 module.exports =
   getUsersData: (user1Id, user2Id)->
-    user_.fetchUsers [user1Id, user2Id]
+    user_.byIds [user1Id, user2Id]
     .then (usersData)->
       [user1, user2] = parseUsersData(user1Id, user2Id, usersData)
       return context =

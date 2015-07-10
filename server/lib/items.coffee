@@ -7,7 +7,7 @@ error_ = __.require 'lib', 'error/error'
 
 db = __.require('couch', 'base')('items')
 
-module.exports =
+module.exports = items_ =
   db: db
   byId: db.get.bind(db)
   byOwner: (owner)->
@@ -24,6 +24,10 @@ module.exports =
     _.types arguments, ['array']
     db.viewByKeys 'byListing', listings
     .then safeItems
+
+  bundleListings: (listingsTypes, usersIds)->
+    listings = _.combinations usersIds, listingsTypes
+    items_.batchByListings listings
 
   publicById: (itemId)->
     db.get(itemId)
