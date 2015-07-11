@@ -6,7 +6,7 @@ getGroupPublicData = require './get_group_public_data'
 create = require './create'
 invite = require './invite'
 { accept, decline } = require './answer_invitation'
-request = require './request'
+{ request, cancelRequest } = require './request'
 
 module.exports =
   get: getGroupPublicData
@@ -23,4 +23,5 @@ module.exports =
       when 'accept' then accept req, res
       when 'decline' then decline req, res
       when 'request' then request req, res
+      when 'cancel-request' then cancelRequest req, res
       else error_.unknownAction res

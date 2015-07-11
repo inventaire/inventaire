@@ -43,6 +43,9 @@ Group.request = (userId, group)->
   group.requested.push createMembership(userId, null)
   return group
 
+Group.cancelRequest = (userId, group)->
+  moveMembership userId, group, 'requested', null
+
 # create user's membership object that will be moved between categories
 createMembership = (userId, invitorId)->
   user: userId
@@ -51,9 +54,11 @@ createMembership = (userId, invitorId)->
 
 # moving membership object from previousCategory to newCategory
 moveMembership = (userId, group, previousCategory, newCategory)->
-  invitation = findMembership userId, group, previousCategory, true
-  group[previousCategory] = _.without group[previousCategory], invitation
-  group[newCategory].push invitation
+  membership = findMembership userId, group, previousCategory, true
+  group[previousCategory] = _.without group[previousCategory], membership
+  # let the possibility to just destroy the membership
+  # by letting newCategory undefined
+  if newCategory? then group[newCategory].push membership
   return group
 
 findMembership = (userId, group, previousCategory, wanted)->
@@ -69,3 +74,8 @@ findMembership = (userId, group, previousCategory, wanted)->
       # while the membership does exist
       throw error_.new 'membership already exist', 200
     else return
+
+
+Group.categories =
+  members: [ 'admins', 'members' ]
+  users: [ 'admins', 'members', 'invited', 'requested' ]

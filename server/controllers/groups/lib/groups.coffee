@@ -37,9 +37,14 @@ module.exports = groups_ =
     .then groups_.allGroupMembers
     .then (users)-> userId in users
 
-  userInGroupOrInvited: (userId, groupId)->
+  userInGroupOrOut: (userId, groupId)->
     groups_.byId groupId
-    .then groups_.allGroupMembersOrInvited
+    .then groups_.allGroupUsers
+    .then (users)-> userId in users
+
+  userInRequested: (userId, groupId)->
+    groups_.byId groupId
+    .then groups_.allRequested
     .then (users)-> userId in users
 
   userInvited: (userId, groupId)->
@@ -52,6 +57,9 @@ module.exports = groups_ =
   request: (groupId, userId)->
     db.update groupId, Group.request.bind(null, userId)
 
+  cancelRequest: (groupId, userId)->
+    db.update groupId, Group.cancelRequest.bind(null, userId)
+
   answerInvitation: (userId, groupId, action)->
     # action = 'accept' or 'decline'
     db.update groupId, Group[action].bind(null, userId)
@@ -60,10 +68,13 @@ module.exports = groups_ =
     return _(groups).map(groups_.allGroupMembers).flatten().value()
 
   allGroupMembers: (group)->
-    groups_.usersIdsByAgregatedCategories group, ['admins', 'members']
+    groups_.usersIdsByAgregatedCategories group, Group.categories.members
 
-  allGroupMembersOrInvited: (group)->
-    groups_.usersIdsByAgregatedCategories group, ['admins', 'members', 'invited']
+  allGroupUsers: (group)->
+    groups_.usersIdsByAgregatedCategories group, Group.categories.users
+
+  allRequested: (group)->
+    groups_.usersIdsByAgregatedCategories group, ['requested']
 
   usersIdsByAgregatedCategories: (group, categories)->
     _.type categories, 'array'
