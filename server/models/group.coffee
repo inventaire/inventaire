@@ -20,6 +20,7 @@ Group.create = (name, creatorId)->
     members: []
     invited: []
     declined: []
+    requested: []
     creator: creatorId
     # using the same timestamp for clarity
     created: creator.timestamp
@@ -37,6 +38,10 @@ Group.decline = (userId, group)->
 
 Group.findInvitation = (userId, group, wanted)->
   findMembership userId, group, 'invited', wanted
+
+Group.request = (userId, group)->
+  group.requested.push createMembership(userId, null)
+  return group
 
 # create user's membership object that will be moved between categories
 createMembership = (userId, invitorId)->

@@ -17,8 +17,8 @@ module.exports = groups_ =
   # including invitations
   allUserGroups: (userId)->
     promises_.all [
-      @byUser(userId)
-      @byInvitedUser(userId)
+      groups_.byUser(userId)
+      groups_.byInvitedUser(userId)
     ]
     .spread _.union.bind(_)
 
@@ -28,21 +28,29 @@ module.exports = groups_ =
     db.postAndReturn group
 
   findUserGroupsCoMembers: (userId)->
-    @byUser userId
+    groups_.byUser userId
     .then groups_.allGroupsMembers
     # .then _.Log('allGroupsMembers')
 
   userInGroup: (userId, groupId)->
-    @byId groupId
+    groups_.byId groupId
     .then groups_.allGroupMembers
     .then (users)-> userId in users
 
+  userInGroupOrInvited: (userId, groupId)->
+    groups_.byId groupId
+    .then groups_.allGroupMembersOrInvited
+    .then (users)-> userId in users
+
   userInvited: (userId, groupId)->
-    @byId groupId
+    groups_.byId groupId
     .then _.partial(Group.findInvitation, userId, _, true)
 
   invite: (groupId, invitorId, invitedId)->
     db.update groupId, Group.invite.bind(null, invitorId, invitedId)
+
+  request: (groupId, userId)->
+    db.update groupId, Group.request.bind(null, userId)
 
   answerInvitation: (userId, groupId, action)->
     # action = 'accept' or 'decline'
@@ -52,6 +60,13 @@ module.exports = groups_ =
     return _(groups).map(groups_.allGroupMembers).flatten().value()
 
   allGroupMembers: (group)->
-    _(group).pick(['admins', 'members']).values().flatten()
+    groups_.usersIdsByAgregatedCategories group, ['admins', 'members']
+
+  allGroupMembersOrInvited: (group)->
+    groups_.usersIdsByAgregatedCategories group, ['admins', 'members', 'invited']
+
+  usersIdsByAgregatedCategories: (group, categories)->
+    _.type categories, 'array'
+    _(group).pick(categories).values().flatten()
     .map _.property('user')
     .value()
