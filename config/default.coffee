@@ -84,7 +84,8 @@ module.exports =
     auth:
       user: 'yoursettings'
       pass: 'yoursettings'
-  mailgun:
+  emailValidation:
+    activated: false
     pubkey: 'yourkey'
   tokenDaysToLive: 3
   debouncedEmail:
