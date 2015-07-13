@@ -13,7 +13,7 @@ module.exports =
   verbosity: 2
   fullHost: -> "#{@protocol}://#{@host}:#{@port}"
   db:
-    instable: true
+    unstable: true
     suffix: 'tests'
     fakeUsers: true
   graph:

@@ -6,7 +6,7 @@ module.exports =
   fullPublicHost: -> "#{@publicProtocol}://#{@publicHost}"
   secret: "OVERRIDE"
   db:
-    instable: false
+    unstable: false
     reloadDesignDocs: false
     username: 'OVERRIDE'
     password: 'OVERRIDE'
@@ -29,3 +29,4 @@ module.exports =
   serveStatic: false
   mailer:
     disabled: false
+
