@@ -91,3 +91,8 @@ module.exports =
   debouncedEmail:
     crawlPeriod: 10*60*1000
     debounceDelay: 30*60*1000
+  # google Books keys are to be generated in
+  # https://console.developers.google.com/project
+  googleBooks:
+    useKey: false
+    key: 'yourkey'
