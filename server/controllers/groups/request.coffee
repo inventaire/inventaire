@@ -22,7 +22,6 @@ commonHandler = (action, req, res)->
   .catch error_.Handler(res)
 
 
-
 module.exports =
-  request: commonHandler.bind(null, 'request')
-  cancelRequest: commonHandler.bind(null, 'cancelRequest')
+  request: commonHandler.bind null, 'request'
+  cancelRequest: commonHandler.bind null, 'cancelRequest'
