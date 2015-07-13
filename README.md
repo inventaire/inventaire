@@ -68,7 +68,7 @@ It outputs 7 files per languages:
 General dependencies:
 - git, node (0.10), npm, coffee-script, brunch
 - a CouchDB (>=1.6) instance (on port 5984 for default config)
-- an AWS account
+- an AWS account (see the note below on how to get ride of this dependency in development )
 
 ```
 git clone git@github.com:maxlath/inventaire.git
@@ -77,10 +77,21 @@ npm install
 npm run install-client
 ```
 
-now, you need to customize your ./config/local.coffee file with your AWS credentials
+now, you need to create a ./config/local.coffee to override the default configuration in ./config/default.coffee:
+```
+module.exports =
+  'key to override': 'your custom value'
+```
+
+All the default values can be kept, out of your CouchDB and AWS credentials that need to be customized by your own.
 
 ```
 // in ./config/local.coffee
+  ...
+  db:
+    ...
+    username: 'your couchdb username'
+    password: 'your couchdb password'
   ...
   aws:
     key: 'yoursettings'
@@ -88,6 +99,8 @@ now, you need to customize your ./config/local.coffee file with your AWS credent
     region: 'yoursettings'
     bucket: 'yoursettings'
 ```
+
+ AWS is used to stock user book's images, if you don't want to use an AWS account, you can send a PR to make ./server/lib/knox-client.coffee configurable: it should be possible to just save pictures to ./client/public/images in development. It might be easy to do, I just couldn't give it the time it need yet.
 
 Emails are disable in default config to avoid having to configure that too for development.
 
