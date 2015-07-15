@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+echo 'stashing unstaged changes before running lints and tests'
+git stash --keep-index > /dev/null
+# in any case unstash modifications a the end of this script
+trap 'git stash pop > /dev/null && echo "done unstashing"' 0 2 15
+
+npm run lint > /dev/null
+npm test > /dev/null

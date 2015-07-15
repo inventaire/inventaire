@@ -14,7 +14,8 @@
     "test": "export NODE_ENV=tests; mocha --compilers coffee:coffee-script/register",
     "test-watch": "export NODE_ENV=tests; mocha --compilers coffee:coffee-script/register --watch",
     "lint": "coffeelint -f config/coffeelint.json server.coffee server/*",
-    "debug": "DEBUG=express:* coffee server.coffee"
+    "debug": "DEBUG=express:* coffee server.coffee",
+    "update-git-hooks": "./scripts/update_git_hooks"
   },
   "author": "maxlath",
   "license": "AGPL3",

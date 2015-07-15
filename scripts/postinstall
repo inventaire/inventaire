@@ -6,3 +6,5 @@ echo 'trying to clone git clone -b i18n git@github.com:maxlath/inventaire.git ./
 git clone -b i18n git@github.com:maxlath/inventaire.git ./server/lib/emails/i18n/src
 mkdir -p ./server/lib/emails/i18n/dist
 ./server/lib/emails/i18n/src/generate_lang_json.coffee all
+
+npm run update-git-hooks

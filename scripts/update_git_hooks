@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+# finding the script directory
+# see http://stackoverflow.com/questions/59895/can-a-bash-script-tell-what-directory-its-stored-in
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
+success="\e[0;32mgit hooks updated\e[0m"
+error="\e[0;31mfailed to update git hooks\e[0m"
+
+cp $DIR/git-hooks/* ./.git/hooks/ && echo -e $success || echo -e $error
