@@ -5,9 +5,9 @@ cache_ = __.require 'lib', 'cache'
 
 
 module.exports = (query)->
- {search, language} = query
- key = "wdBooks:#{search}:#{language}"
- cache_.get key, requestBooksEntities.bind(null, search, language)
+  {search, language} = query
+  key = "wdBooks:#{search}:#{language}"
+  cache_.get key, requestBooksEntities.bind(null, search, language)
 
 requestBooksEntities = (search, language)->
   wd_.searchEntities(search)

@@ -21,7 +21,7 @@ parseBooksData = (text, res)->
     return  _.compact parsedItems
   else
     _.error res, 'Google Book response'
-    throw "no item found for: #{text}"
+    throw new Error "no item found for: #{text}"
 
 
 normalizeBookData = (item)->

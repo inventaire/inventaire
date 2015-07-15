@@ -11,8 +11,9 @@
     "superstart": "supervisor -w .,client/app/lib/shared -i client,test,logs,deploy server.coffee",
     "start-prod": "./scripts/start-prod",
     "deamon-prod": "./scripts/deamon-prod",
-    "test": "export NODE_ENV=tests; mocha --compilers coffee:coffee-script/register --watch",
-    "lint": "coffeelint -f config/coffeelint.json server.coffee server/* test/*",
+    "test": "export NODE_ENV=tests; mocha --compilers coffee:coffee-script/register",
+    "test-watch": "export NODE_ENV=tests; mocha --compilers coffee:coffee-script/register --watch",
+    "lint": "coffeelint -f config/coffeelint.json server.coffee server/*",
     "debug": "DEBUG=express:* coffee server.coffee"
   },
   "author": "maxlath",

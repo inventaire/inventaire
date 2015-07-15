@@ -5,15 +5,15 @@ _ = __.require 'builders', 'utils'
 
 module.exports =
   dumpDb: (name)->
-    db = findDb(name)
-    unless db? then throw 'cant find db'
+    db = findDb name
+    unless db? then throw new Error 'cant find db'
 
-    dump = {};
+    dump = {}
 
     db.createReadStream()
     .on 'data', (data)->
-        console.log(data)
-        dump[data.key] = data.value
+      console.log data
+      dump[data.key] = data.value
     .on 'close', ->
       date = new Date().toISOString().split('T')[0]
       path = "./#{dbName}"
@@ -28,13 +28,13 @@ module.exports =
 
     fromDb.createReadStream()
     .on 'data', (data)->
-        console.log(data)
-        toDb.put data.key, data.value
+      console.log(data)
+      toDb.put data.key, data.value
     .on 'close', -> _.success 'done!'
 
 
 findDb = (name)->
-  unless name? then throw 'missing name';
+  unless name? then throw new Error 'missing name'
   [ dbName, subName ] = name.split ':'
 
   dbPath = __.path 'leveldb', dbName

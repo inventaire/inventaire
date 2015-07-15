@@ -9,9 +9,9 @@ module.exports.post = (req, res, next)->
   form = new formidable.IncomingForm()
   form.parse req, (err, fields, files) ->
     _.success {
-        fields: fields
-        files: files
-        }, 'form parse'
+      fields: fields
+      files: files
+      }, 'form parse'
     if err
       _.log err, 'err'
       res.status(500).json {status: err}

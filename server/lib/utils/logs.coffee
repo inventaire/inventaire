@@ -35,7 +35,7 @@ module.exports = (_)->
 
     logArray: (array, label, color='yellow')->
       spaced = []
-      array.forEach (el)=>
+      array.forEach (el)->
         spaced.push el
         spaced.push '--------'
       spaced.pop()

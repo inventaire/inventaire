@@ -22,24 +22,24 @@ describe 'UTILS', ->
         _.log('blob').should.be.an.String
         done()
 
-      it "should invert its args are a string then an object", (done)->
-        _.log('whatever', {what: 'blop'}).should.be.an.Object
-        _.log('whatever', ['blob']).should.be.an.Array
-        done()
+    #   it "should invert its args are a string then an object", (done)->
+    #     _.log('whatever', {what: 'blop'}).should.be.an.Object
+    #     _.log('whatever', ['blob']).should.be.an.Array
+    #     done()
 
-    describe 'error', ->
-      it "should return the first argument", (done)->
-        _.error({what: 'blop'}, 'whatever').should.be.an.Object
-        _.error({what: 'blop'}).should.be.an.Object
-        _.error('blob', 'whatever').should.be.an.String
-        _.error(['blob'], 'whatever').should.be.an.Array
-        _.error('blob').should.be.an.String
-        done()
+    # describe 'error', ->
+    #   it "should return the first argument", (done)->
+    #     _.error({what: 'blop'}, 'whatever').should.be.an.Object
+    #     _.error({what: 'blop'}).should.be.an.Object
+    #     _.error('blob', 'whatever').should.be.an.String
+    #     _.error(['blob'], 'whatever').should.be.an.Array
+    #     _.error('blob').should.be.an.String
+    #     done()
 
-      it "should invert its args are a string then an object", (done)->
-        _.error('whatever', {what: 'blop'}).should.be.an.Object
-        _.error('whatever', ['blob']).should.be.an.Array
-        done()
+    #   it "should invert its args are a string then an object", (done)->
+    #     _.error('whatever', {what: 'blop'}).should.be.an.Object
+    #     _.error('whatever', ['blob']).should.be.an.Array
+    #     done()
 
     describe 'BindingLoggers', ->
       it "should return a function", (done)->

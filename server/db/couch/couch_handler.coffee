@@ -38,7 +38,7 @@ createDb = (dbBaseName)->
 
 assertValidDbName = (str)->
   unless _.isString(str) and /^[a-z_$()+-\/]+$/.test str
-    throw "invalid db name: #{str}.
+    throw new Error "invalid db name: #{str}.
     only lowercase strings are accepted in an array of DBs"
 
 loadConfigurationDocs = (dbBaseName)->

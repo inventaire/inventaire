@@ -22,10 +22,13 @@ promisesHandlers =
   Timeout: (ms)-> (promise)-> promise.timeout ms
   # skip throws in a standard way to be catched later
   # by NonSkip and not be treated as an error
-  skip: -> throw 'skip'
+  skip: ->
+    err = new Error 'skip'
+    err.skip = true
+    throw err
   NonSkip: (catcher)->
     return filteredCatcher = (err)->
-      if err is 'skip' then _.noop
+      if err.skip then _.noop
       else catcher err
 
 # bundling NonSkip and _.Error handlers
