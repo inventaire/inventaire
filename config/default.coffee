@@ -96,3 +96,9 @@ module.exports =
   googleBooks:
     useKey: false
     key: 'yourkey'
+  sentinel:
+    checkInterval: 5*60*1000
+    aliveConfirmationInterval: 24*60*60*1000
+  freeMobile:
+    user: 'freeuserid'
+    pass: 'freepwd'
