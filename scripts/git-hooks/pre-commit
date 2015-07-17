@@ -6,6 +6,6 @@ git stash --keep-index > /dev/null
 trap 'git stash pop > /dev/null && echo "done unstashing"' 0 2 15
 
 echo -e "\e[0;30mstarting to lint...\e[0m"
-npm run lint > /dev/null
+npm run lint-staged > /dev/null
 echo -e "\e[0;30mstarting to test...\e[0m"
 npm test > /dev/null

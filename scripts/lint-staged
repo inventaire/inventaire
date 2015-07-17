@@ -1,0 +1,7 @@
+staged=$(git diff --name-only --cached | grep "\.coffee")
+if [ -z "$staged" ]
+  then
+    echo 'no file to lint'
+  else
+    coffeelint -f config/coffeelint.json $staged
+fi
