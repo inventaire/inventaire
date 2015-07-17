@@ -22,7 +22,7 @@ Ctx =
 describe 'CACHE', ->
   describe 'get', ->
     it "should return a promise", (done)->
-      p = cache_.get('whatever', mookPromise)
+      p = cache_.get('whatever', mookPromise.bind(null, 'yo'))
       p.should.have.property 'then'
       p.should.have.property 'catch'
       done()
