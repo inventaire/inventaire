@@ -26,7 +26,9 @@ module.exports = (books_)->
     # create isbn variable when not passed
     isbn or= data.P212 or data.P957
 
-    if isbn? then data.id = data.uri = "isbn:#{isbn}"
+    if isbn?
+      data.id = data.uri = "isbn:#{isbn}"
+      data.isbn = isbn
     else if otherId? then data.id = data.uri = otherId
     else
       _.warn data.title, 'no id found at normalizeBookData. Will be droped'
