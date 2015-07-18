@@ -50,6 +50,6 @@ fetchUsersItems = (req, res, ids) ->
 parseAndValidateIds = (ids)->
   ids = ids.split '|'
   if ids?.length > 0 and validUserIds(ids) then return ids
-  else throw error_.new res, 'invalid ids', 400, ids
+  else throw error_.new 'invalid ids', 400, ids
 
 validUserIds = (ids)-> _.all ids, (id)-> /^\w{32}$/.test(id)
