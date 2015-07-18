@@ -2,6 +2,7 @@ __ = require('config').root
 _ = __.require('builders', 'utils')
 books_ = __.require 'lib','books'
 cache_ = __.require 'lib', 'cache'
+error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
 
 # getDataFromIsbn
@@ -19,7 +20,7 @@ requestBooksDataFromIsbn = (isbn)->
 cleanIsbn = (isbn)->
   cleanedIsbn = books_.cleanIsbnData(isbn)
   if cleanedIsbn? then return cleanedIsbn
-  else throw new Error "bad isbn"
+  else throw error_.new 'bad isbn', 401, isbn
 
 
 parseBooksData = (isbn, res)->
