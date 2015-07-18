@@ -36,7 +36,8 @@ error_.bundle = (res, args...)->
 
 # a standardized way to return a 400 unknown action
 # on controllers top level switches
-error_.unknownAction = _.partialRight error_.bundle, 'unknown action', 400
+error_.unknownAction = (res, context)->
+  error_.bundle res, 'unknown action', 400, context
 
 error_.handler = errorHandler = require './error_handler'
 

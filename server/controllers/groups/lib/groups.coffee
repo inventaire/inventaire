@@ -5,10 +5,9 @@ promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
 Group = __.require 'models', 'group'
 
-
 db = __.require('couch', 'base')('users', 'groups')
 
-module.exports = groups_ =
+groups_ =
   # using a view to avoid returning users or relations
   byId: db.viewFindOneByKey.bind(db, 'byId')
   byUser: db.viewByKey.bind(db, 'byUser')
@@ -32,21 +31,6 @@ module.exports = groups_ =
     .then groups_.allGroupsMembers
     # .then _.Log('allGroupsMembers')
 
-  userInGroup: (userId, groupId)->
-    groups_.byId groupId
-    .then groups_.allGroupMembers
-    .then (users)-> userId in users
-
-  userInGroupOrOut: (userId, groupId)->
-    groups_.byId groupId
-    .then groups_.allGroupUsers
-    .then (users)-> userId in users
-
-  userInRequested: (userId, groupId)->
-    groups_.byId groupId
-    .then groups_.allRequested
-    .then (users)-> userId in users
-
   userInvited: (userId, groupId)->
     groups_.byId groupId
     .then _.partial(Group.findInvitation, userId, _, true)
@@ -54,30 +38,17 @@ module.exports = groups_ =
   invite: (groupId, invitorId, invitedId)->
     db.update groupId, Group.invite.bind(null, invitorId, invitedId)
 
-  request: (groupId, userId)->
-    db.update groupId, Group.request.bind(null, userId)
+  membershipUpdate: (action, groupId, userId, secondaryUserId)->
+    db.update groupId, Group[action].bind(null, userId, secondaryUserId)
 
-  cancelRequest: (groupId, userId)->
-    db.update groupId, Group.cancelRequest.bind(null, userId)
+actions =
+  accept: groups_.membershipUpdate.bind(null, 'accept')
+  decline: groups_.membershipUpdate.bind(null, 'decline')
+  request: groups_.membershipUpdate.bind(null, 'request')
+  cancelRequest: groups_.membershipUpdate.bind(null, 'cancelRequest')
+  acceptRequest: groups_.membershipUpdate.bind(null, 'acceptRequest')
+  refuseRequest: groups_.membershipUpdate.bind(null, 'refuseRequest')
 
-  answerInvitation: (userId, groupId, action)->
-    # action = 'accept' or 'decline'
-    db.update groupId, Group[action].bind(null, userId)
+usersLists = require('./users_lists')(groups_)
 
-  allGroupsMembers: (groups)->
-    return _(groups).map(groups_.allGroupMembers).flatten().value()
-
-  allGroupMembers: (group)->
-    groups_.usersIdsByAgregatedCategories group, Group.categories.members
-
-  allGroupUsers: (group)->
-    groups_.usersIdsByAgregatedCategories group, Group.categories.users
-
-  allRequested: (group)->
-    groups_.usersIdsByAgregatedCategories group, ['requested']
-
-  usersIdsByAgregatedCategories: (group, categories)->
-    _.type categories, 'array'
-    _(group).pick(categories).values().flatten()
-    .map _.property('user')
-    .value()
+module.exports = _.extend groups_, actions, usersLists

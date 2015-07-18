@@ -4,9 +4,7 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 getGroupPublicData = require './get_group_public_data'
 create = require './create'
-invite = require './invite'
-{ accept, decline } = require './answer_invitation'
-{ request, cancelRequest } = require './request'
+{ possibleActions, handleAction } = require './actions'
 
 module.exports =
   get: getGroupPublicData
@@ -14,14 +12,13 @@ module.exports =
     { action } = req.body
     switch action
       when 'create' then create req, res
-      else error_.unknownAction res
+      else error_.unknownAction res, action
 
   put: (req, res, next)->
     { action } = req.body
-    switch action
-      when 'invite' then invite req, res
-      when 'accept' then accept req, res
-      when 'decline' then decline req, res
-      when 'request' then request req, res
-      when 'cancel-request' then cancelRequest req, res
-      else error_.unknownAction res
+    action = _.camelCase action
+
+    unless action in possibleActions
+      return error_.unknownAction res, action
+
+    handleAction action, req, res

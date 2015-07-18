@@ -30,21 +30,23 @@ Group.invite = (invitorId, invitedId, group)->
   group.invited.push createMembership(invitedId, invitorId)
   return group
 
-Group.accept = (userId, group)->
-  moveMembership userId, group, 'invited', 'members'
-
-Group.decline = (userId, group)->
-  moveMembership userId, group, 'invited', 'declined'
-
 Group.findInvitation = (userId, group, wanted)->
   findMembership userId, group, 'invited', wanted
 
-Group.request = (userId, group)->
+# there is room for a secondaryUserId but only some actions actually need it
+Group.accept = (userId, secondaryUserId, group)->
+  moveMembership userId, group, 'invited', 'members'
+Group.decline = (userId, secondaryUserId, group)->
+  moveMembership userId, group, 'invited', 'declined'
+Group.request = (userId, secondaryUserId, group)->
   group.requested.push createMembership(userId, null)
   return group
-
-Group.cancelRequest = (userId, group)->
+Group.cancelRequest = (userId, secondaryUserId, group)->
   moveMembership userId, group, 'requested', null
+Group.acceptRequest = (adminId, requesterId, group)->
+  moveMembership requesterId, group, 'requested', 'members'
+Group.refuseRequest = (adminId, requesterId, group)->
+  moveMembership requesterId, group, 'requested', null
 
 # create user's membership object that will be moved between categories
 createMembership = (userId, invitorId)->
