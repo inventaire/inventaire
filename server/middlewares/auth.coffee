@@ -9,9 +9,8 @@ passport_ = __.require 'lib', 'passport/passport'
 cookieParser = require 'cookie-parser'
 session = require 'cookie-session'
 sessionParams =
+  maxAge: 10*365*24*3600*1000
   secret: CONFIG.secret
-  cookie:
-    maxAge: 180*24*3600*1000
   # see https://github.com/expressjs/session#resave
   resave: false
 
