@@ -37,7 +37,8 @@ user_ =
     @byUsername(username)
     .then couch_.firstDoc
     .then (user)->
-      if user?.username is username then return user
+      # ignoring case as expected does the database
+      if user?.username.toLowerCase() is username.toLowerCase() then return user
       else throw new Error "user not found for username: #{username}"
 
   findOneByUsernameOrEmail: (str)->
