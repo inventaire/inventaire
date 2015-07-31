@@ -4,14 +4,14 @@ Libre collaborative resource mapper powered by open-knowledge
 
 [![Licence](https://img.shields.io/badge/licence-AGPL3-blue.svg)](http://www.gnu.org/licenses/agpl-3.0.html)
 [![Node](https://img.shields.io/node/v/gh-badges.svg)](http://www.gnu.org/licenses/agpl-3.0.html)
-![dependencies](https://david-dm.org/maxlath/inventaire.svg)
-[![Join the chat at https://gitter.im/maxlath/inventaire](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/maxlath/inventaire)
+![dependencies](https://david-dm.org/inventaire/inventaire.svg)
+[![Join the chat at https://gitter.im/inventaire/inventaire](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/inventaire/inventaire)
 
 [![inventory-georges](http://profile.maxlath.eu/slides/backbone-meetup/img/inventory-georges.png)](https://inventaire.io)
 
 This repository hosts [Inventaire.io](https://inventaire.io) source code. Its a collaborative resources mapper project, while yet only focused on exploring books mapping with [wikidata](https://wikidata.org/) and [ISBNs](https://en.wikipedia.org/wiki/International_Standard_Book_Number)
 
-This repository tracks the server-side developments, while the (heavy) [client-side can be found here](https://github.com/maxlath/inventaire-client).
+This repository tracks the server-side developments, while the (heavy) [client-side can be found here](https://github.com/inventaire/inventaire-client).
 
 ##Stack approximative overview
 ![stack-en](http://profile.maxlath.eu/slides/backbone-meetup/img/stack-en.jpg)
@@ -35,7 +35,7 @@ General dependencies:
 - an AWS account (Used to host images for the moment, but it might change soon. See the note below on how to get ride of this dependency in development)
 
 ```
-git clone git@github.com:maxlath/inventaire.git
+git clone git@github.com:inventaire/inventaire.git
 cd inventaire
 npm install
 npm run install-client
@@ -96,7 +96,7 @@ Emails are disable in default config to avoid having to configure that too for d
 - [node-config](https://github.com/lorenwest/node-config)
 
 
-*find a more complete list of dependencies in the [package.json](https://github.com/maxlath/inventaire/blob/dev/package.json)*
+*find a more complete list of dependencies in the [package.json](https://github.com/inventaire/inventaire/blob/dev/package.json)*
 
 **Databases**
 - [CouchDB](http://couchdb.apache.org/)
@@ -112,7 +112,7 @@ Emails are disable in default config to avoid having to configure that too for d
 - [Polyglot.js](http://airbnb.github.io/polyglot.js/) for i18n
 - [Brunch](http://brunch.io/) (task-runner)
 
-*find a more complete list of dependencies in [package.json](https://github.com/maxlath/inventaire-client/blob/dev/package.json) and [bower.json](https://github.com/maxlath/inventaire-client/blob/dev/bower.json)*
+*find a more complete list of dependencies in [package.json](https://github.com/inventaire/inventaire-client/blob/dev/package.json) and [bower.json](https://github.com/inventaire/inventaire-client/blob/dev/bower.json)*
 
 
 ## Contributors
