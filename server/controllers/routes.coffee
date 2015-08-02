@@ -21,7 +21,7 @@ services = require './services/services'
 proxy = require './proxy'
 glob = require './glob'
 log = require './log'
-feedbacks = require './feedbacks'
+feedback = require './feedback'
 transactions = require './transactions/transactions'
 comments = require './comments/comments'
 analytics = require './analytics/analytics'
@@ -111,9 +111,9 @@ routes =
   'api/proxy/public*':
     get: proxy.get
 
-  'api/feedbacks/public':
+  'api/feedback/public':
     get: noGet
-    post: feedbacks.post
+    post: feedback.post
 
   'api/comments':
     get: comments.get
