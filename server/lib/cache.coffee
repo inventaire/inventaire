@@ -25,6 +25,25 @@ module.exports =
       _.warn err, "final cache_ err: #{key}"
       throw err
 
+  # dataChange: date before which cached data
+  # is outdated due to change in the data structure.
+  # A convenient way to bust cached data after an update
+
+  # exemple:
+  # timespan = cache_.solveExpirationTime 'commons'
+  # cache_.get key, method, timespan
+
+  # once the default expiration time is greater than the time since
+  # data change, just stop passing a timespan
+
+  solveExpirationTime: (dataChangeName, defaultTime=oneMonth)->
+    dataChange = CONFIG.dataChange?[dataChangeName]
+    unless dataChange? then return defaultTime
+
+    timeSinceDataChange = _.now() - dataChange
+    if timeSinceDataChange < defaultTime then timeSinceDataChange
+    else defaultTime
+
 checkCache = (key, timespan)->
   cacheDB.get(key)
   .catch (err)->

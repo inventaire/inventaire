@@ -10,8 +10,10 @@ module.exports = (req, res)->
 
   unless file? then return error_.bundle res, 'missing file parameter', 400
 
+  timespan = cache_.solveExpirationTime 'commons'
+
   key = "commons:#{file}:#{width}"
-  cache_.get key, requestThumb.bind(null, file, width)
+  cache_.get key, requestThumb.bind(null, file, width), timespan
   .then res.json.bind(res)
   .catch error_.Handler(res)
 
