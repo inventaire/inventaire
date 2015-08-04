@@ -25,8 +25,11 @@ requestThumb = (file, width)->
   .set
     thumbnail: 'thumbnail'
     error: 'error'
+    author: 'author'
+    license: 'license name'
   .data (data)->
-    { thumbnail, error } = data
+    { thumbnail, error, author } = data
+    data.author = removeMarkups author
     if thumbnail? then def.resolve data
     else
       err = new Error(error)
@@ -34,3 +37,7 @@ requestThumb = (file, width)->
       def.reject err
 
   return def.promise
+
+
+textInMarkups = /<.+>(.*)<\/\w+>/g
+removeMarkups = (text)-> text?.replace textInMarkups, '$1'
