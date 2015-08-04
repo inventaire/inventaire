@@ -41,5 +41,8 @@ requestThumb = (file, width)->
   return def.promise
 
 
-textInMarkups = /<.+>(.*)<\/\w+>/g
-removeMarkups = (text)-> text?.replace textInMarkups, '$1'
+textInMarkups = /<.+>(.*)<\/\w+>/
+removeMarkups = (text)->
+    text = text?.replace textInMarkups, '$1'
+    if text is '' then return
+    else return text
