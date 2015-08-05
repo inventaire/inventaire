@@ -43,6 +43,13 @@ requestThumb = (file, width)->
 
 textInMarkups = /<.+>(.*)<\/\w+>/
 removeMarkups = (text)->
-    text = text?.replace textInMarkups, '$1'
-    if text is '' then return
-    else return text
+  # avoiding very long credits
+  # including whole html documents
+  # cf: http://tools.wmflabs.org/magnus-toolserver/commonsapi.php?image=F%C3%A9lix_Nadar_1820-1910_portraits_Jules_Verne.jpg&thumbwidth=1000
+  if text.length > 100
+    _.warn 'discarding photo author credits: too long'
+    return
+
+  text = text?.replace textInMarkups, '$1'
+  if text is '' then return
+  else return text
