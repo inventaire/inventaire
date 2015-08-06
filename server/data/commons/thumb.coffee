@@ -29,16 +29,26 @@ requestThumb = (file, width)->
     error: 'error'
     author: 'author'
     license: 'license name'
-  .data (data)->
-    { thumbnail, error, author } = data
-    data.author = removeMarkups author
-    if thumbnail? then def.resolve data
-    else
-      err = new Error(error)
-      if error.match('File does not exist') then err.status = 404
-      def.reject err
+  .data parseData.bind(null, def, file)
 
   return def.promise
+
+parseData = (def, file, data)->
+  { thumbnail, error, author } = data
+  data.author = removeMarkups author
+
+  unless thumbnail?
+    err = new Error error
+    if error.match('File does not exist') then err.status = 404
+    def.reject err
+    return
+
+  unless _.validWmCommonsThumbnail file, thumbnail
+    err = error_.new 'invalid thumbnail', 500, file, data
+    def.reject err
+    return
+
+  def.resolve data
 
 
 textInMarkups = /<.+>(.*)<\/\w+>/
@@ -53,3 +63,18 @@ removeMarkups = (text)->
   text = text?.replace textInMarkups, '$1'
   if text is '' then return
   else return text
+
+
+validWmCommonsThumbnail = (file, thumbnail)->
+  fileParts = extractWords file
+  thumbnailParts = extractWords unescape(lastPart(thumbnail))
+  ratio = _.matchesCount(fileParts, thumbnailParts) / fileParts.length
+  valid = ratio > 0.5
+  unless valid
+    _.log arguments, 'not validWmCommonsThumbnail'
+    _.log [fileParts, thumbnailParts], 'parts'
+    _.log ratio, 'certitude ratio'
+  return valid
+
+lastPart = (url)-> url.split('/').slice(-1)[0]
+extractWords = (str)-> str.split /\W|_/
