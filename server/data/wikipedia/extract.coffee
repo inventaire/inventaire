@@ -23,7 +23,11 @@ module.exports = (req, res)->
 requestExtract = (lang, title)->
   promises_.get apiQuery(lang, title)
   .then (res)->
-    for id, page of res.query.pages
+    { pages } = res.query
+    unless pages?
+      throw error_.new 'invalid extract response', 500, arguments, res.query
+
+    for id, page of pages
       { extract } = page
     return data =
       extract: extract
