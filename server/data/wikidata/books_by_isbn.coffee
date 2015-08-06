@@ -17,8 +17,8 @@ requestBookEntityByIsbn = (isbn, type, lang)->
 
 wikidataIsbnClaim = (isbn, type)->
   switch type
-    when 10 then return wd_.API.wmflabs.string 957, isbn
-    when 13 then return wd_.API.wmflabs.string 212, isbn
+    when 10 then return wdk.getReverseClaims 'P957', isbn
+    when 13 then return wdk.getReverseClaims 'P212', isbn
 
 parseResponse = (isbn, res)->
   unless res?.items?.length > 0

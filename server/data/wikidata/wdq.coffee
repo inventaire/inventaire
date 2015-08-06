@@ -3,6 +3,7 @@ _ = __.require 'builders', 'utils'
 cache_ = __.require 'lib', 'cache'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
+wdk = require 'wikidata-sdk'
 wd_ = __.require 'lib', 'wikidata'
 
 module.exports = (req, res)->
@@ -22,5 +23,7 @@ requestWdq = (query, P, Q)->
     else throw error_.new "#{query} requestWdq isnt implemented", 400, arguments
 
 claim = (P, Q)->
-  url = wd_.API.wmflabs.claim(P, Q)
+  P = wdk.normalizeId(P, false, 'P')
+  Q = wdk.normalizeId(Q, false, 'Q')
+  url = wdk.getReverseClaims(P, Q)
   promises_.get url
