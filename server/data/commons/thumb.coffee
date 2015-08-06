@@ -2,7 +2,7 @@ __ = require('config').root
 _ = __.require 'builders', 'utils'
 cache_ = __.require 'lib', 'cache'
 error_ = __.require 'lib', 'error/error'
-Promise = require 'bluebird'
+promises_ = __.require 'lib', 'promises'
 osmosis = require 'osmosis'
 
 module.exports = (req, res)->
@@ -20,39 +20,39 @@ module.exports = (req, res)->
 requestThumb = (file, width)->
   url = "http://tools.wmflabs.org/magnus-toolserver/commonsapi.php?image=#{file}&thumbwidth=#{width}"
 
-  def = Promise.defer()
+  # return a bluebird Promise
+  promises_.start()
+  .then ->
+    osmosis
+    .get url
+    .set
+      thumbnail: 'thumbnail'
+      error: 'error'
+      author: 'author'
+      license: 'license name'
+    .data parseData.bind(null, file)
+    # can't catch the error if not re-thrown
+    .error _.Error('requestThumb')
 
-  osmosis
-  .get url
-  .set
-    thumbnail: 'thumbnail'
-    error: 'error'
-    author: 'author'
-    license: 'license name'
-  .data parseData.bind(null, def, file)
-
-  return def.promise
-
-parseData = (def, file, data)->
+parseData = (file, data)->
   { thumbnail, error, author } = data
   data.author = removeMarkups author
 
   unless thumbnail?
     err = new Error error
     if error.match('File does not exist') then err.status = 404
-    def.reject err
-    return
+    throw err
 
-  unless _.validWmCommonsThumbnail file, thumbnail
+  unless validWmCommonsThumbnail file, thumbnail
     err = error_.new 'invalid thumbnail', 500, file, data
-    def.reject err
-    return
+    throw err
 
-  def.resolve data
+  return data
 
 
 textInMarkups = /<.+>(.*)<\/\w+>/
 removeMarkups = (text)->
+  unless text? then return
   # avoiding very long credits
   # including whole html documents
   # cf: http://tools.wmflabs.org/magnus-toolserver/commonsapi.php?image=F%C3%A9lix_Nadar_1820-1910_portraits_Jules_Verne.jpg&thumbwidth=1000
@@ -60,7 +60,7 @@ removeMarkups = (text)->
     _.warn 'discarding photo author credits: too long'
     return
 
-  text = text?.replace textInMarkups, '$1'
+  text = text.replace textInMarkups, '$1'
   if text is '' then return
   else return text
 
