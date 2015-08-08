@@ -58,6 +58,23 @@ module.exports =
         otherUser: user2
         host: host
 
+  groupInvite: (context)->
+    { group, invitor, invited } = context
+
+    groupContext =
+      groupName: group.name
+      invitorUsername: invitor.username
+
+    return _.extend {}, base,
+      to: invited.email
+      subject: i18n(invited.language, 'group_invitation_subject', groupContext)
+      template: 'group_invitation'
+      context:
+        group: group
+        groupContext: groupContext
+        lang: invited.language
+        host: host
+
   feedback: (subject, message, user, unknownUser)->
     return _.extend {}, base,
       to: base.from

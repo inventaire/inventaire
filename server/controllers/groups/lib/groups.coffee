@@ -4,6 +4,7 @@ _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
 Group = __.require 'models', 'group'
+Radio = __.require 'lib', 'radio'
 
 db = __.require('couch', 'base')('users', 'groups')
 
@@ -37,6 +38,7 @@ groups_ =
 
   invite: (groupId, invitorId, invitedId)->
     db.update groupId, Group.invite.bind(null, invitorId, invitedId)
+    .then -> Radio.emit 'group:invite', groupId, invitorId, invitedId
 
   membershipUpdate: (action, groupId, userId, secondaryUserId)->
     db.update groupId, Group[action].bind(null, userId, secondaryUserId)

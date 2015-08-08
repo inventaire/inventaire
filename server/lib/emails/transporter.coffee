@@ -28,7 +28,7 @@ sendMail = Promise.promisify transporter.sendMail.bind(transporter)
 module.exports =
   sendMail: (email)->
     sendMail email
-    .then (res)-> _.success res, 'email sent'
+    .then _.Success('email sent')
     .catch (err)->
       _.error err, 'email error'
       _.warn email, 'associated email'

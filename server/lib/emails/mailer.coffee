@@ -16,6 +16,8 @@ module.exports = ->
   Radio.on 'reset:password:email', sendEmail.resetPassword
   Radio.on 'notify:friend:request:accepted', sendEmail.friendAcceptedRequest
   Radio.on 'notify:friendship:request', sendEmail.friendshipRequest
+  Radio.on 'group:invite', sendEmail.groupInvite
+
   Radio.on 'received:feedback', sendEmail.feedback
 
   initDebouncedEmailsCrawler()
