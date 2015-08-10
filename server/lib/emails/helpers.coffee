@@ -24,14 +24,14 @@ parseUsersData = (user1Id, user2Id, usersData)->
 
 
 
-exports.getGroupAndUsersData = (groupId, invitorId, invitedId)->
+exports.getGroupAndUsersData = (groupId, actingUserId, userToNotifyId)->
   promises_.all [
     groups_.byId groupId
-    user_.byId invitorId
-    user_.byId invitedId
+    user_.byId actingUserId
+    user_.byId userToNotifyId
   ]
-  .spread (group, invitor, invited)->
+  .spread (group, actingUser, userToNotify)->
     return context =
       group: group
-      invitor: invitor
-      invited: invited
+      actingUser: actingUser
+      userToNotify: userToNotify

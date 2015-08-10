@@ -58,21 +58,24 @@ module.exports =
         otherUser: user2
         host: host
 
-  groupInvite: (context)->
-    { group, invitor, invited } = context
+  group: (action, context)->
+    { group, actingUser, userToNotify } = context
+    { language, email } = userToNotify
 
     groupContext =
       groupName: group.name
-      invitorUsername: invitor.username
+      actingUserUsername: actingUser.username
 
     return _.extend {}, base,
-      to: invited.email
-      subject: i18n(invited.language, 'group_invitation_subject', groupContext)
-      template: 'group_invitation'
+      to: email
+      subject: i18n(language, "group_#{action}_subject", groupContext)
+      template: 'group'
       context:
+        title: "group_#{action}_subject"
+        button: "group_#{action}_button"
         group: group
         groupContext: groupContext
-        lang: invited.language
+        lang: language
         host: host
 
   feedback: (subject, message, user, unknownUser)->

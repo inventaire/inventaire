@@ -30,11 +30,11 @@ module.exports =
     .then transporter_.sendMail
     .catch Err('friendshipRequest', userToNotify, requestingUser)
 
-  groupInvite: (groupId, invitorId, invitedId)->
-    helpers_.getGroupAndUsersData groupId, invitorId, invitedId
-    .then email_.groupInvite
+  group: (action, groupId, actingUserId, userToNotifyId)->
+    helpers_.getGroupAndUsersData groupId, actingUserId, userToNotifyId
+    .then email_.group.bind(null, action)
     .then transporter_.sendMail
-    .catch Err('groupInvite', invitorId, invitedId)
+    .catch Err("group #{action}", actingUserId, userToNotifyId)
 
   feedback: (subject, message, user, unknownUser)->
     email = email_.feedback(subject, message, user, unknownUser)

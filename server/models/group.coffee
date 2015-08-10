@@ -33,15 +33,16 @@ Group.invite = (invitorId, invitedId, group)->
 Group.findInvitation = (userId, group, wanted)->
   findMembership userId, group, 'invited', wanted
 
-# there is room for a secondaryUserId but only some actions actually need it
-Group.accept = (userId, secondaryUserId, group)->
+# there is room for a secondaryUserId but only some actions actually need it:
+# the empty variable is thus passed to 'placeholder'
+Group.accept = (userId, placeholder, group)->
   moveMembership userId, group, 'invited', 'members'
-Group.decline = (userId, secondaryUserId, group)->
+Group.decline = (userId, placeholder, group)->
   moveMembership userId, group, 'invited', 'declined'
-Group.request = (userId, secondaryUserId, group)->
+Group.request = (userId, placeholder, group)->
   group.requested.push createMembership(userId, null)
   return group
-Group.cancelRequest = (userId, secondaryUserId, group)->
+Group.cancelRequest = (userId, placeholder, group)->
   moveMembership userId, group, 'requested', null
 Group.acceptRequest = (adminId, requesterId, group)->
   moveMembership requesterId, group, 'requested', 'members'

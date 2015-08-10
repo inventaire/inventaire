@@ -36,14 +36,12 @@ groups_ =
     groups_.byId groupId
     .then _.partial(Group.findInvitation, userId, _, true)
 
-  invite: (groupId, invitorId, invitedId)->
-    db.update groupId, Group.invite.bind(null, invitorId, invitedId)
-    .then -> Radio.emit 'group:invite', groupId, invitorId, invitedId
-
   membershipUpdate: (action, groupId, userId, secondaryUserId)->
     db.update groupId, Group[action].bind(null, userId, secondaryUserId)
+    .then -> Radio.emit "group:#{action}", groupId, userId, secondaryUserId
 
 actions =
+  invite: groups_.membershipUpdate.bind(null, 'invite')
   accept: groups_.membershipUpdate.bind(null, 'accept')
   decline: groups_.membershipUpdate.bind(null, 'decline')
   request: groups_.membershipUpdate.bind(null, 'request')
