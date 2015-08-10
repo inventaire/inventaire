@@ -3,7 +3,7 @@ _ = __.require 'builders', 'utils'
 cache_ = __.require 'lib', 'cache'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
-osmosis = require 'osmosis'
+xml_ = __.require 'lib', 'xml'
 
 module.exports = (req, res)->
   { file, width } = req.query
@@ -17,24 +17,29 @@ module.exports = (req, res)->
   .then res.json.bind(res)
   .catch error_.Handler(res)
 
-requestThumb = (file, width)->
-  url = "http://tools.wmflabs.org/magnus-toolserver/commonsapi.php?image=#{file}&thumbwidth=#{width}"
+requestThumb = (fileName, width)->
+  options = requestOptions fileName, width
 
-  # return a bluebird Promise
-  promises_.start()
-  .then ->
-    osmosis
-    .get url
-    .set
-      thumbnail: 'thumbnail'
-      error: 'error'
-      author: 'author'
-      license: 'license name'
-    .data parseData.bind(null, file)
-    # can't catch the error if not re-thrown
-    .error _.Error('requestThumb')
+  promises_.get options
+  .then xml_.parse
+  .then (res)->
+    { file, licenses, error } = res.response
+    return data =
+      thumbnail: file?[0].urls[0].thumbnail[0]
+      license: licenses?[0].license[0]?.name?.toString()
+      author: file?[0].author?.toString()
+      error: error?[0]
+  .then parseData.bind(null, fileName, options.url)
+  .error _.Error('requestThumb')
 
-parseData = (file, data)->
+requestOptions = (file, width)->
+  url: "http://tools.wmflabs.org/magnus-toolserver/commonsapi.php?image=#{file}&thumbwidth=#{width}"
+  headers:
+    'Content-Type': 'application/xml'
+    # the commonsapi requires a User-Agent
+    'User-Agent': 'Inventaire server'
+
+parseData = (file, url, data)->
   { thumbnail, error, author } = data
   data.author = removeMarkups author
 
@@ -43,8 +48,8 @@ parseData = (file, data)->
     if error.match('File does not exist') then err.status = 404
     throw err
 
-  unless validWmCommonsThumbnail file, thumbnail
-    err = error_.new 'invalid thumbnail', 500, file, data
+  unless validWmCommonsThumbnail file, url, thumbnail
+    err = error_.new 'invalid thumbnail', 500, file, url, data
     throw err
 
   return data
@@ -65,7 +70,7 @@ removeMarkups = (text)->
   else return text
 
 
-validWmCommonsThumbnail = (file, thumbnail)->
+validWmCommonsThumbnail = (file, url, thumbnail)->
   fileParts = extractWords file
   thumbnailParts = extractWords unescape(lastPart(thumbnail))
   ratio = _.matchesCount(fileParts, thumbnailParts) / fileParts.length
