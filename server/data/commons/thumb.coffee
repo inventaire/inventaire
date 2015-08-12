@@ -48,9 +48,16 @@ parseData = (file, url, data)->
     if error.match('File does not exist') then err.status = 404
     throw err
 
-  unless validWmCommonsThumbnail file, url, thumbnail
-    err = error_.new 'invalid thumbnail', 500, file, url, data
-    throw err
+  # commenting-out thumbnail validation as it was just refusing valid thumbnails now
+  #   false negative example:
+  #   ****** not validWmCommonsThumbnail ******
+  # { '0': 'Vasily Perov - Портрет Ф.М.Достоевского - Google Art Project.jpg',
+  #   '1': 'http://tools.wmflabs.org/magnus-toolserver/commonsapi.php?image=Vasily Perov - Портрет Ф.М.Достоевского - Google Art Project.jpg&thumbwidth=1000',
+  #   '2': 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Vasily_Perov_-_%D0%9F%D0%BE%D1%80%D1%82%D1%80%D0%B5%D1%82_%D0%A4.%D0%9C.%D0%94%D0%BE%D1%81%D1%82%D0%BE%D0%B5%D0%B2%D1%81%D0%BA%D0%BE%D0%B3%D0%BE_-_Google_Art_Project.jpg/1000px-Vasily_Perov_-_%D0%9F%D0%BE%D1%80%D1%82%D1%80%D0%B5%D1%82_%D0%A4.%D0%9C.%D0%94%D0%BE%D1%81%D1%82%D0%BE%D0%B5%D0%B2%D1%81%D0%BA%D0%BE%D0%B3%D0%BE_-_Google_Art_Project.jpg' }
+
+  # unless validWmCommonsThumbnail file, url, thumbnail
+  #   err = error_.new 'invalid thumbnail', 500, file, url, data
+  #   throw err
 
   return data
 
