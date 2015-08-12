@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 
-echo 'stashing unstaged changes before running lints and tests'
-git stash --keep-index > /dev/null
-# in any case unstash modifications a the end of this script
-trap 'git stash pop > /dev/null && echo "done unstashing"' 0 2 15
+# not stashing before lint and tests as its messing with brunch on the client
+# not stashing for server neither for consistency between the server and the client projects
+
+# echo 'stashing unstaged changes before running lints and tests'
+# git stash --keep-index > /dev/null
+# # in any case unstash modifications a the end of this script
+# trap 'git stash pop > /dev/null && echo "done unstashing"' 0 2 15
 
 echo -e "\e[0;30mstarting to lint...\e[0m"
 npm run lint-staged > /dev/null
