@@ -25,9 +25,9 @@ requestThumb = (fileName, width)->
   .then (res)->
     { file, licenses, error } = res.response
     return data =
-      thumbnail: file?[0].urls[0].thumbnail[0]
-      license: licenses?[0].license[0]?.name?.toString()
-      author: file?[0].author?.toString()
+      thumbnail: file?[0]?.urls?[0]?.thumbnail?[0]
+      license: licenses?[0]?.license?[0]?.name?.toString()
+      author: file?[0]?.author?.toString()
       error: error?[0]
   .then parseData.bind(null, fileName, options.url)
   .error _.Error('requestThumb')
