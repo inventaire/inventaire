@@ -23,6 +23,6 @@ module.exports = (dbBaseName, designDocName)->
 
   return _.extend db, nanoMethods,
     postAndReturn: (doc)->
-      cot.post(doc)
+      db.post(doc)
       .then _.property('id')
-      .then cot.get.bind(cot)
+      .then db.get.bind(db)

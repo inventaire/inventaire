@@ -1,21 +1,17 @@
 CONFIG = require 'config'
 __ = CONFIG.root
 
-lo = require 'lodash'
+_ = require 'lodash'
+_ = require('inv-utils')(_)
+
+if not CONFIG.typeCheck then invUtils.types = _.noop
 
 server_ = __.require 'utils', 'base'
-logs_ = __.require('utils', 'logs')(lo)
+logs_ = __.require('utils', 'logs')(_)
 json_ = __.require 'utils', 'json'
 
-types_ = __.require 'sharedLibs', 'types'
-if not CONFIG.typeCheck then types_.types = lo.noop
 
-
-utils = lo.extend(lo, server_, logs_, json_, types_)
-
-sharedUtils = __.require('sharedLibs', 'utils')(utils)
-
-module.exports = lo.extend(utils, sharedUtils)
+module.exports = _.extend _, server_, logs_, json_
 
 # GLOBALS
 # building it there as utils are required everywhere

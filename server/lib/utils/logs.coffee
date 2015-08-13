@@ -1,6 +1,6 @@
 CONFIG = require 'config'
 errorCounter = 0
-loggers_ = require('inv-loggers')()
+loggers_ = require 'inv-loggers'
 
 module.exports = (_)->
   if CONFIG.verbosity is 0 then loggers_.log = _.identity
