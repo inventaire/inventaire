@@ -102,3 +102,5 @@ module.exports =
   freeMobile:
     user: 'freeuserid'
     pass: 'freepwd'
+  fallback:
+    wdq: 'http://your-inv-wdq-instance:1234'

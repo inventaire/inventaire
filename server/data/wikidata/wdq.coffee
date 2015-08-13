@@ -5,6 +5,7 @@ error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
 wdk = require 'wikidata-sdk'
 wd_ = __.require 'lib', 'wikidata'
+wdqFallback = require './wdq_fallback'
 
 module.exports = (req, res)->
   { query, pid, qid } = req.query
@@ -23,7 +24,15 @@ requestWdq = (query, P, Q)->
     else throw error_.new "#{query} requestWdq isnt implemented", 400, arguments
 
 claim = (P, Q)->
-  P = wdk.normalizeId(P, false, 'P')
-  Q = wdk.normalizeId(Q, false, 'Q')
-  url = wdk.getReverseClaims(P, Q)
+  P = wdk.normalizeId P, false, 'P'
+  Q = wdk.normalizeId Q, false, 'Q'
+  url = wdk.getReverseClaims P, Q
+
   promises_.get url
+  .catch localFallback.bind(null, P, Q)
+  .catch _.Error('localFallback err')
+
+
+localFallback = (P, Q, err)->
+  _.warn arguments, 'wdq err: using fallback'
+  wdqFallback.claim P, Q

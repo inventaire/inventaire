@@ -20,9 +20,8 @@ parseBooksData = (text, res)->
     parsedItems = res.items.map(normalizeBookData)
     return  _.compact parsedItems
   else
-    _.error res, 'Google Book response'
-    throw new Error "no item found for: #{text}"
-
+    _.warn res, 'Google Book found no book'
+    return
 
 normalizeBookData = (item)->
   books_.normalizeBookData(item.volumeInfo)
