@@ -1,6 +1,4 @@
-__ = require('config').root
-_ = __.require 'builders', 'utils'
-couch_ = __.require 'lib', 'couch'
+couch_ = require 'inv-couch'
 
 module.exports = (designDocName)->
 

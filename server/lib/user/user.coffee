@@ -8,7 +8,7 @@ relations_ = __.require 'controllers', 'relations/lib/queries'
 groups_ = __.require 'controllers', 'groups/lib/groups'
 notifs_ = __.require 'lib', 'notifications'
 cache_ = __.require 'lib', 'cache'
-couch_ = __.require 'lib', 'couch'
+couch_ = require 'inv-couch'
 gravatar = require 'gravatar'
 User = __.require 'models', 'user'
 

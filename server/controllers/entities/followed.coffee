@@ -6,7 +6,7 @@ error_ = __.require 'lib', 'error/error'
 # are also a relation between a user and an entity
 db =  __.require('lib', 'items').db
 user_ = __.require 'lib', 'user/user'
-couch_ = __.require 'lib', 'couch'
+couch_ = require 'inv-couch'
 
 FollowedEntities = __.require 'models', 'followed_entities'
 tests = __.require 'models','tests/common-tests'

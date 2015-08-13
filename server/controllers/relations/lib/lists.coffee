@@ -1,7 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
-couch_ = __.require 'lib', 'couch'
+couch_ = require 'inv-couch'
 
 module.exports = (db)->
   getUserRelations: (userId)->
