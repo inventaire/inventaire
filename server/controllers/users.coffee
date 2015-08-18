@@ -5,12 +5,19 @@ user_ = __.require 'lib', 'user/user'
 items_ = __.require 'lib', 'items'
 error_ = __.require 'lib', 'error/error'
 
-module.exports.actions = (req, res, next) ->
-  {query} = req
-  {action, search, ids} = query
+module.exports.publicActions = (req, res, next) ->
+  { query } = req
+  { action, search } = query
   if action?
     switch action
       when 'search' then searchByUsername res, search
+      else error_.unknownAction res
+
+module.exports.actions = (req, res, next) ->
+  { query } = req
+  { action, ids } = query
+  if action?
+    switch action
       when 'getusers' then fetchUsersData res, ids
       when 'getitems'then fetchUsersItems req, res, ids
       else error_.unknownAction res

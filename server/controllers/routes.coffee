@@ -52,6 +52,9 @@ routes =
     get: user.getUser
     put: user.updateUser
 
+  'api/users/public':
+    get: users.publicActions
+
   'api/users':
     get: users.actions
 
