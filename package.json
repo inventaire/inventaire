@@ -8,7 +8,7 @@
     "postinstall": "./scripts/postinstall",
     "install-client": "./scripts/install-client",
     "start": "coffee server.coffee",
-    "superstart": "supervisor -w .,client/app/lib/shared -i client,test,logs,deploy,bots server.coffee",
+    "superstart": "supervisor -w .,client/app/lib/shared -i client,test,logs,deploy,inv_modules,inv_services server.coffee",
     "start-prod": "./scripts/start-prod",
     "deamon-prod": "./scripts/deamon-prod",
     "test": "export NODE_ENV=tests; mocha --compilers coffee:coffee-script/register",
@@ -16,7 +16,8 @@
     "lint": "coffeelint -f config/coffeelint.json server.coffee server/*",
     "lint-staged": "./scripts/lint-staged",
     "debug": "DEBUG=express:* coffee server.coffee",
-    "update-git-hooks": "./scripts/update_git_hooks"
+    "update-git-hooks": "./scripts/update_git_hooks",
+    "reload": "touch deploy/reload.coffee"
   },
   "author": "maxlath",
   "license": "AGPL3",
@@ -44,7 +45,7 @@
     "inv-couch": "^2.0.0",
     "inv-dbs-list": "^1.0.0",
     "inv-loggers": "^2.0.0",
-    "inv-utils": "^1.1.0",
+    "inv-utils": "^1.3.1",
     "knox": "^0.9.2",
     "level-sublevel": "^6.4.0",
     "leveldown": "^0.10.4",
