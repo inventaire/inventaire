@@ -9,7 +9,7 @@ module.exports =
     _.info missingKeys = req.body?.missingKeys, 'i18n missing keys'
 
     unless missingKeys? and _.areStrings(missingKeys)
-      return error_.bundle res, "bad missingKeys #{missingKeys}", 400
+      return error_.bundle res, "bad missingKeys", 400, missingKeys
 
     shortKeys = []
     fullKeys = []
