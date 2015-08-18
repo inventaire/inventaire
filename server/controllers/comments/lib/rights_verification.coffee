@@ -4,6 +4,8 @@ user_ = __.require 'lib', 'user/user'
 error_ = __.require 'lib', 'error/error'
 interactions_ = __.require 'lib', 'interactions'
 
+# /!\ is expected to be swallowed in a promise chain
+# thus returning either promise or non promise values
 exports.verifyRightToComment = (userId, item)->
   # the owner of the item is always allowed to comment
   ownerAllowed = true
