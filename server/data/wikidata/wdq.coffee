@@ -24,8 +24,12 @@ requestWdq = (query, P, Q)->
     else throw error_.new "#{query} requestWdq isnt implemented", 400, arguments
 
 claim = (P, Q)->
-  P = wdk.normalizeId P, false, 'P'
-  Q = wdk.normalizeId Q, false, 'Q'
+  try
+    P = wdk.normalizeId P, false, 'P'
+    Q = wdk.normalizeId Q, false, 'Q'
+  catch err
+    throw error_.complete err, 400, arguments
+
   url = wdk.getReverseClaims P, Q
 
   promises_.get url

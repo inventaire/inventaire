@@ -11,11 +11,19 @@ error_.new = (message, filter, context...)->
   _.types [message, filter], ['string', 'string|number']
 
   err = new Error message
+  return formatError err, filter, context
+
+# completing an existing error object
+error_.complete = (err, filter, context...)->
+  _.types [err, filter], ['object', 'string|number']
+  return formatError err, filter, context
+
+formatError = (err, filter, contextArray)->
   # numbers filters are used as HTTP codes
   # while string will be taken as a type
   attribute = if _.isNumber(filter) then 'status' else 'type'
   err[attribute] = filter
-  err.context = context
+  err.context = contextArray
   return err
 
 # same as error_.new but returns a promise
