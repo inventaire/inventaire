@@ -4,7 +4,7 @@ __ = CONFIG.root
 _ = require 'lodash'
 _ = require('inv-utils')(_)
 
-if not CONFIG.typeCheck then invUtils.types = _.noop
+if not CONFIG.typeCheck then _.types = _.noop
 
 server_ = __.require 'utils', 'base'
 logs_ = __.require('utils', 'logs')(_)
