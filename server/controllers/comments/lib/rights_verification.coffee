@@ -6,7 +6,12 @@ interactions_ = __.require 'lib', 'interactions'
 
 # /!\ is expected to be swallowed in a promise chain
 # thus returning either promise or non promise values
-exports.verifyRightToComment = (userId, item)->
+exports.verifyRightToWriteOrReadComment = (userId, item)->
+  # make sure we get a proper item object
+  # as it could otherwise open a privacy breach
+  unless item.listing?
+    throw error_.new 'missing listing', 500, arguments
+
   # the owner of the item is always allowed to comment
   ownerAllowed = true
   interactions_.verifyRightToInteract(userId, item, ownerAllowed)

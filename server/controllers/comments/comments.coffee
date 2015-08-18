@@ -5,13 +5,18 @@ items_ = __.require 'lib', 'items'
 comments_ = __.require 'controllers', 'comments/lib/comments'
 error_ = __.require 'lib', 'error/error'
 
-module.exports =
+publik =
   get: (req, res, next)->
     { item } = req.query
-    comments_.byItemId(item)
+    userId = req.user?._id
+
+    items_.byId item
+    .then comments_.verifyRightToWriteOrReadComment.bind(null, userId)
+    .then comments_.byItemId.bind(null, item)
     .then res.json.bind(res)
     .catch error_.Handler(res)
 
+privat =
   create: (req, res, next)->
     { item, message } = req.body
     userId = req.user._id
@@ -23,7 +28,7 @@ module.exports =
     _.log [item, message], 'item, message'
 
     items_.byId item
-    .then _.partial(comments_.verifyRightToComment, userId)
+    .then _.partial(comments_.verifyRightToWriteOrReadComment, userId)
     .then _.partial(comments_.addItemComment, userId, message)
     .then res.json.bind(res)
     .catch error_.Handler(res)
@@ -55,3 +60,7 @@ module.exports =
     .then comments_.delete
     .then _.Ok(res)
     .catch error_.Handler(res)
+
+module.exports =
+  public: publik
+  private: privat

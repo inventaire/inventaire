@@ -115,11 +115,13 @@ routes =
     get: noGet
     post: feedback.post
 
+  'api/comments/public':
+    get: comments.public.get
+
   'api/comments':
-    get: comments.get
-    post: comments.create
-    put: comments.update
-    delete: comments.delete
+    post: comments.private.create
+    put: comments.private.update
+    delete: comments.private.delete
 
   'api/transactions':
     get: transactions.get
