@@ -66,7 +66,7 @@ All the default values can be kept, out of your CouchDB and AWS credentials that
 
  AWS is used to stock user book's images, if you don't want to use an AWS account, you can send a PR to make ./server/lib/knox-client.coffee configurable: it should be possible to just save pictures to ./client/public/images in development. It might be easy to do, I just couldn't give it the time it needs yet.
 
-Emails are disable in default config to avoid having to configure that too for development.
+Emails are disabled in default config to avoid having to configure that too for development.
 
 
 ##Day-dreaming on future evolutions
@@ -90,7 +90,7 @@ Emails are disable in default config to avoid having to configure that too for d
 - [CoffeeScript](http://coffeescript.org/)
 
 **Server-side**
-- [ExpressJs](http://expressjs.com/) within a ligth wrapper: [Americano](https://github.com/cozy/americano)
+- [ExpressJs](http://expressjs.com/) within a light wrapper: [Americano](https://github.com/cozy/americano)
 - [Bluebird](https://github.com/petkaantonov/bluebird) for promises
 - [Lodash](http://lodash.com/) utils
 - [node-config](https://github.com/lorenwest/node-config)
