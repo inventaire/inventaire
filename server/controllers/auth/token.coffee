@@ -4,6 +4,7 @@ _ = __.require 'builders', 'utils'
 user_ = __.require 'lib', 'user/user'
 error_ = __.require 'lib', 'error/error'
 passport_ = __.require 'lib', 'passport/passport'
+setLoggedInCookie = require './lib/set_logged_in_cookie'
 
 module.exports = (req, res, next) ->
   {action, email, token} = req.query
@@ -34,5 +35,5 @@ allowPasswordReset = (req, res)->
 
 Redirect = (res)->
   redirect = ->
-    res.cookie 'loggedIn', true
+    setLoggedInCookie res
     res.redirect '/login/reset-password'

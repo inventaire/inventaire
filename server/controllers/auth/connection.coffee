@@ -1,8 +1,10 @@
 CONFIG = require 'config'
+{ cookieMaxAge } = CONFIG
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 passport_ = __.require 'lib', 'passport/passport'
+setLoggedInCookie = require './lib/set_logged_in_cookie'
 
 exports.signup = (req, res)->
   {strategy} = req.body
@@ -21,7 +23,7 @@ exports.login = (req, res)->
 
 LoggedIn = (res)->
   loggedIn = ->
-    res.cookie 'loggedIn', true
+    setLoggedInCookie res
     res.send 'ok'
 
 exports.logout = (req, res, next) ->

@@ -29,6 +29,7 @@ module.exports =
     restricted: true
   noCache: false
   staticMaxAge: 30*24*60*60*1000
+  cookieMaxAge: 10*365*24*3600*1000
   aws:
     key: 'customizedInLocalConfig'
     secret: 'customizedInLocalConfig'
