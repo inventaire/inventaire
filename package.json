@@ -63,7 +63,7 @@
     "satelize": "^0.1.0",
     "serve-favicon": "^2.1.7",
     "simple-uuid": "0.0.1",
-    "wikidata-sdk": "^1.3.0",
+    "wikidata-sdk": "^1.4.2",
     "xml2js": "^0.4.10"
   },
   "devDependencies": {
