@@ -12,6 +12,7 @@ attributes.ownerSafe = [
     'hasPassword'
     'validEmail'
     'bio'
+    'settings'
   ]
 
 attributes.public = [
@@ -32,4 +33,5 @@ attributes.updatable = [
   'picture'
   'language'
   'bio'
+  'settings'
 ]

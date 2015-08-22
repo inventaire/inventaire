@@ -16,3 +16,6 @@ module.exports =
   creationStrategy: (creationStrategy)->
     creationStrategy in ['browserid', 'local']
   bio: (bio)-> _.isString(bio) and bio.length < 1000
+  settings:
+    notifications:
+      global: (str)-> str is 'true' or str is 'false'

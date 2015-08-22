@@ -43,11 +43,14 @@ module.exports.updateUser = (req, res, next) ->
   {attribute, value} = req.body
   {user} = req
 
-  if user[attribute] is value
+  # support deep objects
+  if _.get(user, attribute) is value
     return error_.bundle res, 'already up-to-date', 400
 
-  if attribute in User.attributes.updatable
-    unless User.tests[attribute](value)
+  rootAttribute = attribute.split('.')[0]
+
+  if rootAttribute in User.attributes.updatable
+    unless _.get(User.tests, attribute)(value)
       return error_.bundle res, "invalid #{attribute}: #{value}", 400
 
     return updateAttribute(user, attribute, value)
@@ -66,15 +69,18 @@ module.exports.updateUser = (req, res, next) ->
 
 
 updateAttribute = (user, attribute, value)->
-  if attribute is 'email' then updater = emailUpdater
-  else updater = commonUpdater
-
+  updater = switch attribute
+    when 'email' then emailUpdater
+    when 'settings.notifications.global' then stringBooleanUpdater
+    else commonUpdater
   user_.db.update user._id, updater.bind(null, attribute, value)
 
-
 commonUpdater = (attribute, value, doc)->
-  doc[attribute] = value
-  return doc
+  return _.set doc, attribute, value
+
+stringBooleanUpdater = (attribute, value, doc)->
+  value = if value is 'true' then true else false
+  return commonUpdater attribute, value, doc
 
 emailUpdater = (attribute, value, doc)->
   doc = archivePreviousEmail(doc)

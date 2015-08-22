@@ -50,7 +50,7 @@
     "level-sublevel": "^6.4.0",
     "leveldown": "^0.10.4",
     "levelup": "^0.19.0",
-    "lodash": "^3.3.1",
+    "lodash": "^3.10.1",
     "moment": "^2.10.3",
     "nano": "^6.1.1",
     "node-polyglot": "^0.4.1",
