@@ -27,8 +27,6 @@ LoggedIn = (res)->
     res.send 'ok'
 
 exports.logout = (req, res, next) ->
-  _.log req.session, "logout request - #{new Date()}"
-  _.log req.headers, 'headers'
   res.clearCookie 'loggedIn'
   req.logout()
   res.redirect '/'
