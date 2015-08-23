@@ -55,6 +55,7 @@ module.exports =
       couchdb: '/db/couchdb'
       i18nSrc: '/server/lib/emails/i18n/src'
       i18nArchive: '/server/lib/emails/i18n/src/archive'
+      i18nTransifex: '/server/lib/emails/i18n/src/transifex'
       i18nDist: '/server/lib/emails/i18n/dist'
       client: '/client'
       scripts: '/scripts'
