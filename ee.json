@@ -35,5 +35,9 @@
     "declined": null,
     "confirmed": null,
     "returned": null,
-    "go_to_user_inventory": null
+    "go_to_user_inventory": null,
+    "group_invite_subject": null,
+    "group_invite_button": null,
+    "group_acceptRequest_subject": null,
+    "group_acceptRequest_button": null
 }

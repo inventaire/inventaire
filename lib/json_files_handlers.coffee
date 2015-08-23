@@ -10,6 +10,7 @@ module.exports =
     return [
       json_.read __.path('i18nSrc', 'en.json')
       json_.read __.path('i18nSrc', "#{lang}.json")
+      json_.read __.path('i18nTransifex', "#{lang}.json")
       json_.read __.path('i18nArchive', "#{lang}.json")
       true #markdown
     ]

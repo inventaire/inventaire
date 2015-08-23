@@ -2,11 +2,14 @@ __ = require('config').root
 _ = require 'lodash'
 convertMarkdown = __.require 'client', 'scripts/lib/convert_markdown'
 
-module.exports = findKeys = (enObj, langCurrent, langArchive, markdown)->
+module.exports = findKeys = (enObj, langCurrent, langTransifex, langArchive, markdown)->
+  langTransifex = keepNonNullValues langTransifex
+  langCurrent = keepNonNullValues langCurrent
+
   # dist will be the language 'dist' version
   # update will replace the previous 'src' version
   # archive will keep keys that werent in the English version)
-  langObj = _.extend {}, langCurrent, langArchive
+  langObj = _.extend {}, langArchive, langTransifex, langCurrent
   dist = {}
   update = {}
 
@@ -27,3 +30,6 @@ module.exports = findKeys = (enObj, langCurrent, langArchive, markdown)->
     cleanArchive = _.pick archive, _.identity
 
   return [dist, update, cleanArchive]
+
+
+keepNonNullValues = (obj)-> _.pick obj, (str)-> str?
