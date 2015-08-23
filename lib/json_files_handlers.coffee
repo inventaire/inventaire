@@ -1,24 +1,41 @@
 __ = require('config').root
 Promise = require 'bluebird'
 json_  = __.require 'client', 'scripts/lib/json'
+activeFiles  = __.require 'client', 'scripts/lib/active_files'
 count = 0
 args = process.argv.slice(2)
 total = args.length
 
+i18nSrcActive = activeFiles './server/lib/emails/i18n/src'
+i18nTransifexActive = activeFiles './server/lib/emails/i18n/src/transifex'
+i18nArchiveActive = activeFiles './server/lib/emails/i18n/src/archive'
+
+i18nSrc = (lang)->
+  if lang in i18nSrcActive then __.path('i18nSrc', "#{lang}.json")
+  else null
+
+i18nTransifex = (lang)->
+  if lang in i18nTransifexActive then __.path('i18nTransifex', "#{lang}.json")
+  else null
+
+i18nArchiveActive = (lang)->
+  if lang in i18nArchiveActive then __.path('i18nTransifex', "#{lang}.json")
+  else null
+
 module.exports =
   getSources: (lang)->
     return [
-      json_.read __.path('i18nSrc', 'en.json')
-      json_.read __.path('i18nSrc', "#{lang}.json")
-      json_.read __.path('i18nTransifex', "#{lang}.json")
-      json_.read __.path('i18nArchive', "#{lang}.json")
+      json_.read i18nSrc('en')
+      json_.read i18nSrc(lang)
+      json_.read i18nTransifex(lang)
+      json_.read i18nArchiveActive(lang)
       true #markdown
     ]
 
   updateAndArchive: (lang, update, archive)->
     Promise.all [
-      json_.write __.path('i18nSrc', "#{lang}.json"), update
-      json_.write __.path('i18nArchive', "#{lang}.json"), archive
+      json_.write i18nSrc(lang), update
+      json_.write i18nArchiveActive(lang), archive
     ]
     .then -> console.log "#{lang} src updated!".blue
     .catch (err)-> console.log "couldnt update #{lang} src files", err.stack
