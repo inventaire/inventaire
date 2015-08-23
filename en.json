@@ -11,9 +11,9 @@
     "you_are_welcome_to_reply": "**you are very welcome to reply to this email** for any question or feedback",
     "Follow Inventaire developments": "Follow Inventaire developments",
     "get_involved": "Think you can contribute to make Inventaire better? Get involved!!",
-    "contribution_ideas": "Ask to be added to the [project development board](https://trello.com/b/0lKcsZDj/inventaire-community), join the [translation team](https://www.transifex.com/projects/p/inventaire/), post an [issue on github](https://github.com/inventaire/inventaire/issues), or simply start a discussion by answering this email!",
+    "contribution_ideas": "Ask to be added to the [project development board](https://trello.com/b/0lKcsZDj/inventaire-community), join the [translation team](https://www.transifex.com/organization/inventaire/), post an [issue on github](https://github.com/inventaire/inventaire/issues), or simply start a discussion by answering this email!",
     "next_functionalities_title": "Next functionalities to be developed:",
-    "stop_email_notifications": "[Stop email notifications](mailto:hello@inventaire.io?subject=Stop notifications&body=Hi, Inventaire is awesome, you really rock!! That said, I don't want to receive Inventaire's emails any more, could you do that? Love, %{username})",
+    "stop_email_notifications": "[change emails settings](https://inventaire.io/settings/notifications)",
     "Groups": "Groups",
     "transactions_tracking": "Transactions tracking (know where your book is)",
     "Messaging": "Messaging",
@@ -35,5 +35,9 @@
     "declined": "%{username} declined your request",
     "confirmed": "%{username} confirmed to have received the book",
     "returned": "%{username} confirmed to have received the book back",
-    "go_to_user_inventory": "go to %{username}'s inventory"
+    "go_to_user_inventory": "go to %{username}'s inventory",
+    "group_invite_subject": "%{actingUserUsername} invited you to join the groupe %{groupName}!",
+    "group_invite_button": "go to the group's page to accept or decline the invitation",
+    "group_acceptRequest_subject": "[%{groupName}] your request to join the group has been validated!",
+    "group_acceptRequest_button": "see the books available in the group"
 }
