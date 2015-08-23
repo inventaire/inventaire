@@ -35,3 +35,8 @@ exports.getGroupAndUsersData = (groupId, actingUserId, userToNotifyId)->
       group: group
       actingUser: actingUser
       userToNotify: userToNotify
+
+
+exports.catchDisabledEmails = (err)->
+  if err.type is 'email_disabled' then _.warn err.context, err.message
+  else throw err

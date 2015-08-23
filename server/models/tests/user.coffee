@@ -1,10 +1,12 @@
 CONFIG = require 'config'
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
+notificationsSettingsList = __.require 'sharedLibs', 'notifications_settings_list'
 
 { pass, userId, username, email } = require './common-tests'
 
-module.exports =
+
+module.exports = tests =
   pass: pass
   userId: userId
   username: username
@@ -16,6 +18,15 @@ module.exports =
   creationStrategy: (creationStrategy)->
     creationStrategy in ['browserid', 'local']
   bio: (bio)-> _.isString(bio) and bio.length < 1000
+  settings: (str)-> str is 'true' or str is 'false'
+
+
+deepAttributes =
   settings:
-    notifications:
-      global: (str)-> str is 'true' or str is 'false'
+    notifications: {}
+
+notificationsSettingsList.forEach (setting)->
+  deepAttributes.settings.notifications[setting] = true
+
+tests.deepAttributesExistance = (attribute)->
+  _.get(deepAttributes, attribute)?

@@ -22,18 +22,21 @@ module.exports =
     helpers_.getUsersData(userToNotify, newFriend)
     .then email_.friendAcceptedRequest
     .then transporter_.sendMail
+    .catch helpers_.catchDisabledEmails
     .catch Err('friendAcceptedRequest', userToNotify, newFriend)
 
   friendshipRequest: (userToNotify, requestingUser)->
     helpers_.getUsersData(userToNotify, requestingUser)
     .then email_.friendshipRequest
     .then transporter_.sendMail
+    .catch helpers_.catchDisabledEmails
     .catch Err('friendshipRequest', userToNotify, requestingUser)
 
   group: (action, groupId, actingUserId, userToNotifyId)->
     helpers_.getGroupAndUsersData groupId, actingUserId, userToNotifyId
     .then email_.group.bind(null, action)
     .then transporter_.sendMail
+    .catch helpers_.catchDisabledEmails
     .catch Err("group #{action}", actingUserId, userToNotifyId)
 
   feedback: (subject, message, user, unknownUser)->

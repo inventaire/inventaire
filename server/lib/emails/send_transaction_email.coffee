@@ -16,7 +16,8 @@ module.exports = (transactionId)->
   .then emailIsRequired
   .then fetchData
   .then sendTailoredEmail
-  .catch promises_.NonSkipError('send_transaction_email')
+  # catched in the final promise chain: in send_debounced_email transactionUpdate
+  # after all the actions to skip are passed
 
 emailIsRequired = (transaction)->
   role = findUserToNotify transaction

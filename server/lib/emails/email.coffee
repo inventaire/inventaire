@@ -2,6 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 qs = require 'querystring'
+checkUserNotificationsSettings = require './check_user_notifications_settings'
 
 host = CONFIG.fullPublicHost()
 { i18n } = require './i18n/i18n'
@@ -10,6 +11,7 @@ base =
 
 module.exports =
   validationEmail: (user, token)->
+    # purposedly not checking notifications settings
     {username, email, language} = user
     return _.extend {}, base,
       to: email
@@ -21,6 +23,7 @@ module.exports =
         href: buildTokenUrl 'validation-email', email, token
 
   resetPassword: (user, token)->
+    # purposedly not checking notifications settings
     {username, email, language} = user
     return _.extend {}, base,
       to: email
@@ -35,6 +38,8 @@ module.exports =
   friendAcceptedRequest: (options)->
     [user1, user2] = validateOptions options
 
+    checkUserNotificationsSettings user1, 'friend_accepted_request'
+
     return _.extend {}, base,
       to: user1.email
       subject: i18n(user1.language, 'friend_accepted_request_subject', user2)
@@ -47,6 +52,8 @@ module.exports =
 
   friendshipRequest: (options)->
     [user1, user2] = validateOptions options
+
+    checkUserNotificationsSettings user1, 'friendship_request'
 
     return _.extend {}, base,
       to: user1.email
@@ -61,6 +68,8 @@ module.exports =
   group: (action, context)->
     { group, actingUser, userToNotify } = context
     { language, email } = userToNotify
+
+    checkUserNotificationsSettings userToNotify, "group_#{action}"
 
     groupContext =
       groupName: group.name
@@ -79,6 +88,7 @@ module.exports =
         host: host
 
   feedback: (subject, message, user, unknownUser)->
+    # no email settings to check here ;)
     return _.extend {}, base,
       to: base.from
       replyTo: user.email
@@ -101,6 +111,7 @@ module.exports =
       transactionEmail transaction, 'requester', 'update_on_item_you_requested'
 
 transactionEmail = (transaction, role, label)->
+  checkUserNotificationsSettings transaction.mainUser, label
   other = if role is 'owner' then 'requester' else 'owner'
   titleContext =
     username: transaction[other].username
