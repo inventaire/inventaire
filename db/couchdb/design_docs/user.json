@@ -3,7 +3,7 @@
   "language": "coffeescript",
   "views": {
     "byEmail": {
-       "map": "(doc)->\n  if doc.type is 'user'\n    emit doc.email, null"
+       "map": "(doc)->\n  if doc.type is 'user'\n    emit doc.email.toLowerCase(), null"
     },
     "byUsername": {
        "map": "(doc)->\n  if doc.type is 'user'\n    emit(doc.username.toLowerCase(), null)"

@@ -21,7 +21,7 @@ user_ =
   byIds: db.fetch.bind(db)
 
   byEmail: (email)->
-    db.viewByKey 'byEmail', email
+    db.viewByKey 'byEmail', email.toLowerCase()
 
   findOneByEmail: (email)->
     @byEmail(email)
