@@ -18,8 +18,8 @@ module.exports.actions = (req, res, next) ->
   { action, ids } = query
   if action?
     switch action
-      when 'getusers' then fetchUsersData res, ids
-      when 'getitems'then fetchUsersItems req, res, ids
+      when 'get-users' then fetchUsersData res, ids
+      when 'get-items'then fetchUsersItems req, res, ids
       else error_.unknownAction res
 
 searchByUsername = (res, search) ->
