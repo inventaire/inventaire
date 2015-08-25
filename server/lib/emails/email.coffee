@@ -91,7 +91,7 @@ module.exports =
     # no email settings to check here ;)
     return _.extend {}, base,
       to: base.from
-      replyTo: user.email
+      replyTo: user?.email
       subject: "[feedback] #{subject}"
       template: 'feedback'
       context:

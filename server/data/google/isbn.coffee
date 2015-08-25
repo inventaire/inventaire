@@ -4,9 +4,11 @@ books_ = __.require 'lib','books'
 cache_ = __.require 'lib', 'cache'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
+# extending cache validity for limited APIs
+oneYear = 365*24*3600*1000
 
 # getDataFromIsbn
-module.exports = (isbn, timespan)->
+module.exports = (isbn, timespan=oneYear)->
   isbn = cleanIsbn(isbn)
   key = "google:#{isbn}"
   cache_.get key, requestBooksDataFromIsbn.bind(null, isbn), timespan

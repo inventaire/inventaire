@@ -3,9 +3,11 @@ _ = __.require('builders', 'utils')
 books_ = __.require 'lib','books'
 cache_ = __.require 'lib', 'cache'
 promises_ = __.require 'lib', 'promises'
+# extending cache validity for limited APIs
+oneYear = 365*24*3600*1000
 
 # getDataFromText
-module.exports = (text, timespan)->
+module.exports = (text, timespan=oneYear)->
   _.typeString text
   key = "google:#{text}"
   cache_.get key, requestBooksDataFromText.bind(null, text), timespan

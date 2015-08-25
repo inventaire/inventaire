@@ -35,7 +35,7 @@ parseCachedData = (data, items)->
       image: books_.normalize(image)
       data: data
   else
-    console.warn "google book image not found for #{data}"
+    _.warn "google book image not found for #{data}"
     return
 
 
