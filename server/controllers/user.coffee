@@ -64,7 +64,7 @@ module.exports.updateUser = (req, res, next) ->
   if attribute in User.attributes.concurrencial
     # checks for validity and availability (+ reserve words for username)
     return user_.availability[attribute](value)
-    .then updateAttribute.bind(null, user, attribute, value)
+    .then updateAttribute.bind(null, user, rootAttribute, attribute, value)
     .then updateConfirmation.bind(null, res)
     .catch error_.Handler(res)
 
