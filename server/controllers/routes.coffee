@@ -108,6 +108,9 @@ routes =
   'api/services/public':
     get: services.get
 
+  'api/services':
+    post: services.post
+
   'api/data/public':
     get: data.get
 

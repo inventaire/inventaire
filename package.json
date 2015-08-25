@@ -36,6 +36,7 @@
     "cookie-session": "^1.1.0",
     "cookie-signature": "^1.0.6",
     "credential": "git+https://github.com/ericelliott/credential.git",
+    "email-addresses": "^2.0.1",
     "express-force-ssl": "^0.2.9",
     "express-session": "^1.10.2",
     "formidable": "^1.0.17",
