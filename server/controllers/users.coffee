@@ -15,10 +15,11 @@ module.exports.publicActions = (req, res, next) ->
 
 module.exports.actions = (req, res, next) ->
   { query } = req
-  { action, ids } = query
+  { action, ids, emails } = query
   if action?
     switch action
       when 'get-users' then fetchUsersData res, ids
+      when 'get-users-by-emails' then fetchUsersDataByEmails res, emails
       when 'get-items'then fetchUsersItems req, res, ids
       else error_.unknownAction res
 
@@ -36,9 +37,17 @@ fetchUsersData = (res, ids)->
   promises_.start()
   .then parseAndValidateIds.bind(null, ids)
   .then _.partialRight(user_.getUsersPublicData, 'index')
-  .then (usersData)->
-    res.json {users: usersData}
+  .then sendUsersData.bind(null, res)
   .catch error_.Handler(res)
+
+fetchUsersDataByEmails = (res, emails)->
+  emails = emails.split '|'
+  user_.publicUsersDataByEmails emails
+  .then sendUsersData.bind(null, res)
+  .catch error_.Handler(res)
+
+sendUsersData = (res, usersData)->
+  res.json {users: usersData}
 
 fetchUsersItems = (req, res, ids) ->
   userId = req.user._id

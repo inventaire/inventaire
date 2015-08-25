@@ -30,6 +30,15 @@ user_ =
       if user?.email is email then return user
       else throw new Error "user not found for email: #{email}"
 
+  byEmails: (emails)->
+    db.viewByKeys 'byEmail', emails.map(_.toLowerCase)
+
+  publicUsersDataByEmails: (emails)->
+    @byEmails emails
+    # keeping the email is required to map the users returned
+    # with the initial input
+    .then @publicUsersDataWithEmails.bind(@)
+
   byUsername: (username)->
     db.viewByKey 'byUsername', username.toLowerCase()
 
@@ -107,8 +116,16 @@ user_ =
         _.log "users not found. Ids?: #{ids.join(', ')}"
         return
 
-  publicUserData: (value)->
-    _.pick value, User.attributes.public
+  publicUserData: (doc, extraAttribute)->
+    attributes = User.attributes.public.clone()
+    if _.isString extraAttribute then attributes.push extraAttribute
+    _.pick doc, attributes
+
+  publicUserDataWithEmail: (doc)->
+    @publicUserData doc, 'email'
+
+  publicUsersDataWithEmails: (docs)->
+    docs.map @publicUserDataWithEmail.bind(@)
 
   # only used by tests so far
   deleteUser: (user)-> db.del user._id, user._rev

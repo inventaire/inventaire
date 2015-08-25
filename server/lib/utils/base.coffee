@@ -38,8 +38,11 @@ module.exports = base =
 
   sameObjects: (a, b)-> JSON.stringify(a) is JSON.stringify(b)
 
+  toLowerCase: (str)-> str.toLowerCase()
+
   # returns a function triggering a standard confirmation response
   ok: (res, status=200)->
     res.status(status).json {ok: true}
 
 base.Ok = (res, status)-> base.ok.bind(null, res, status)
+
