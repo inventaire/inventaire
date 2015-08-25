@@ -3,33 +3,37 @@ _ = __.require 'builders', 'utils'
 user_ = __.require 'lib', 'user/user'
 intent = require './lib/intent'
 error_ = __.require 'lib', 'error/error'
+tests = __.require 'models', 'tests/common-tests'
 
-module.exports.actions = (req, res, next) ->
-  _.log query = req.query, 'relations.actions query'
-  [action, othersId] = [query.action, query.user]
-  unless action? and othersId?
-    return error_.bundle res, 'bad relations query', 400
+module.exports.post = (req, res, next) ->
+  { user, action } = req.body
+
+  unless _.isString(action) and action in possibleActions
+    return error_.bundle res, 'bad actions parameter', 400, req.body
+  unless tests.userId user
+    return error_.bundle res, 'bad user parameter', 400, req.body
 
   user_.getUserId req
-  .then solveNewRelation.bind(null, action, othersId)
-  .then _.success.bind(null, othersId, "#{action}: OK!")
+  .then solveNewRelation.bind(null, action, user)
+  .then _.success.bind(null, user, "#{action}: OK!")
   .then _.Ok(res)
   .catch error_.Handler(res)
 
 solveNewRelation = (action, othersId, userId)->
-  unless userId isnt othersId
-    errMsg = 'cant create relation between identical ids'
-    throw error_.new errMsg, 400, userId othersId
+  if userId is othersId
+    throw error_.new 'cant create relation between identical ids', 400, arguments
 
-  type = switch action
-    when 'request' then 'requestFriend'
-    when 'cancel' then 'cancelFriendRequest'
-    when 'accept' then 'acceptRequest'
-    when 'discard' then 'discardRequest'
-    when 'unfriend' then 'removeFriendship'
-
-  return method(type, userId, othersId)
+  type = actions[action]
+  return method type, userId, othersId
 
 method = (type, userId, othersId)->
-  _.log arguments, 'action arguments'
   intent[type](userId, othersId)
+
+actions =
+  request: 'requestFriend'
+  cancel: 'cancelFriendRequest'
+  accept: 'acceptRequest'
+  discard: 'discardRequest'
+  unfriend: 'removeFriendship'
+
+possibleActions = Object.keys actions

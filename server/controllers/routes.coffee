@@ -59,7 +59,8 @@ routes =
     get: users.actions
 
   'api/relations':
-    get: relations.actions
+    get: noGet
+    post: relations.post
 
   'api/groups':
     get: groups.get
