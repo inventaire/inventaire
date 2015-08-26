@@ -19,7 +19,6 @@ module.exports.actions = (req, res, next) ->
   if action?
     switch action
       when 'get-users' then fetchUsersData res, ids
-      when 'get-users-by-emails' then fetchUsersDataByEmails res, emails
       when 'get-items'then fetchUsersItems req, res, ids
       else error_.unknownAction res
 
@@ -28,21 +27,14 @@ searchByUsername = (res, search) ->
     return error_.bundle res, 'bad query', 400, query
 
   user_.usernameStartBy(search)
-  .then (usersData)->
-    users = usersData.map user_.publicUserData
-    res.json users
+  .then user_.publicUsersData.bind(user_)
+  .then sendUsersData.bind(null, res)
   .catch error_.Handler(res)
 
 fetchUsersData = (res, ids)->
   promises_.start()
   .then parseAndValidateIds.bind(null, ids)
   .then _.partialRight(user_.getUsersPublicData, 'index')
-  .then sendUsersData.bind(null, res)
-  .catch error_.Handler(res)
-
-fetchUsersDataByEmails = (res, emails)->
-  emails = emails.split '|'
-  user_.publicUsersDataByEmails emails
   .then sendUsersData.bind(null, res)
   .catch error_.Handler(res)
 

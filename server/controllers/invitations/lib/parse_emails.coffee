@@ -1,22 +1,12 @@
-CONFIG = require 'config'
-__ = CONFIG.root
+__ = require('config').root
 _ = __.require 'builders', 'utils'
-promises_ = __.require 'lib', 'promises'
-error_ = __.require 'lib', 'error/error'
 { parseAddressList } = require 'email-addresses'
+error_ = __.require 'lib', 'error/error'
 
-module.exports = (req, res)->
-  { emails } = req.body
-
+module.exports = (emails, userEmail)->
   unless _.isString emails
-    return error_.bundle res, "missing emails string in body", 400
+    throw error_.new 'missing emails string in body', 400
 
-  promises_.start()
-  .then parseEmails.bind(null, emails)
-  .then res.json.bind(res)
-  .catch error_.Handler(res)
-
-parseEmails = (emails)->
   emails = prepareEmails emails
   parsedEmails = parseAddressList emails
   unless parsedEmails?
@@ -26,9 +16,10 @@ parseEmails = (emails)->
   .map _.property('address')
   .map _.toLowerCase
   .uniq()
+  .without userEmail.toLowerCase()
   .value()
 
 # providing to 'email-addresses' known limitations
 prepareEmails = (emails)->
   # deleting a possible trailing coma or semi-colon
-  emails.replace /(,|;)$/, ''
+  emails.trim().replace /(,|;)$/, ''

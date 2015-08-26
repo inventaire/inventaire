@@ -8,6 +8,7 @@ user = require './user'
 items = require './items/items'
 users = require './users'
 relations = require './relations/relations'
+invitations = require './invitations/invitations'
 groups = require './groups/groups'
 entities = require './entities/entities'
 followed = require './entities/followed'
@@ -62,6 +63,9 @@ routes =
     get: noGet
     post: relations.post
 
+  'api/invitations':
+    post: invitations.post
+
   'api/groups':
     get: groups.get
     post: groups.post
@@ -108,9 +112,6 @@ routes =
 
   'api/services/public':
     get: services.get
-
-  'api/services':
-    post: services.post
 
   'api/data/public':
     get: data.get

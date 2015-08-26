@@ -11,6 +11,8 @@ cache_ = __.require 'lib', 'cache'
 couch_ = require 'inv-couch'
 gravatar = require 'gravatar'
 User = __.require 'models', 'user'
+{ byEmails } = require './shared_user_handlers'
+
 
 db = __.require('couch', 'base')('users', 'user')
 
@@ -30,8 +32,7 @@ user_ =
       if user?.email is email then return user
       else throw new Error "user not found for email: #{email}"
 
-  byEmails: (emails)->
-    db.viewByKeys 'byEmail', emails.map(_.toLowerCase)
+  byEmails: byEmails.bind(null, db)
 
   publicUsersDataByEmails: (emails)->
     @byEmails emails
@@ -118,24 +119,23 @@ user_ =
 
   publicUserData: (doc, extraAttribute)->
     attributes = User.attributes.public.clone()
+    # beware of map index passed as second argument
     if _.isString extraAttribute then attributes.push extraAttribute
     _.pick doc, attributes
 
-  publicUserDataWithEmail: (doc)->
-    @publicUserData doc, 'email'
-
-  publicUsersDataWithEmails: (docs)->
-    docs.map @publicUserDataWithEmail.bind(@)
+  publicUsersData: (docs)-> docs.map user_.publicUserData
+  publicUserDataWithEmail: (doc)-> user_.publicUserData doc, 'email'
+  publicUsersDataWithEmails: (docs)-> docs.map user_.publicUserDataWithEmail
 
   # only used by tests so far
   deleteUser: (user)-> db.del user._id, user._rev
 
   deleteUserByUsername: (username)->
     _.info username, 'deleteUserbyUsername'
-    @byUsername(username)
+    user_.byUsername(username)
     .then (docs)-> docs[0]
-    .then @deleteUser.bind @
-    .catch (err)-> _.error err, 'deleteUserbyUsername err'
+    .then user_.deleteUser
+    .catch _.Error('deleteUserbyUsername err')
 
   getUserRelations: (userId, getDocs)->
     # just proxiing to let this module centralize

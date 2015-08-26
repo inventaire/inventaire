@@ -1,0 +1,12 @@
+{
+  "_id": "_design/invited",
+  "language": "coffeescript",
+  "views": {
+    "byId": {
+       "map": "(doc)->\n  if doc.type is 'invited'\n    emit doc._id, null"
+    },
+    "byEmail": {
+       "map": "(doc)->\n  if doc.type is 'invited'\n    emit doc.email.toLowerCase(), null"
+    }
+  }
+}
