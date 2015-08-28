@@ -27,6 +27,7 @@ module.exports =
 
   dateI18n: (lang, epochTime, format)->
     # set default while neutralizeing handlebars object
-    unless _.isString format then format = 'l'
+    unless _.isString format then format = 'LLL'
     lang = solveLang lang
+    moment.locale lang
     return moment(epochTime).format(format)
