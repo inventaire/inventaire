@@ -35,7 +35,8 @@ user_ =
   byEmails: byEmails.bind(null, db)
 
   publicUsersDataByEmails: (emails)->
-    @byEmails emails
+    _.type emails, 'array'
+    user_.byEmails emails
     # keeping the email is required to map the users returned
     # with the initial input
     .then @publicUsersDataWithEmails.bind(@)

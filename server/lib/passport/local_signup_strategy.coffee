@@ -11,14 +11,15 @@ options =
   passReqToCallback: true
 
 verify = (req, username, password, done)->
-  {email} = req.body
+  { email } = req.body
   language = user_.findLanguage(req)
   user_.create(username, email, 'local', language, password)
   .then (user)->
     if user? then done null, user
     else
       # case when user_.byId fails, rather unprobable
-      done(new Error("couldn't get user"))
+      done new Error "couldn't get user"
+
   .catch (err)->
     _.error err, 'local_signup_strategy verify err'
     # might need to filter more than that to extract verification errors

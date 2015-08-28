@@ -11,6 +11,7 @@ exports.signup = (req, res)->
   next = LoggedIn(res)
   switch strategy
     when 'local' then passport_.authenticate.localSignup(req, res, next)
+    # browserid login handles both login and signup
     else error_.bundle res, "unknown signup strategy: #{strategy}", 400
 
 exports.login = (req, res)->
