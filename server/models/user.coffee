@@ -35,6 +35,8 @@ User.create = (username, email, creationStrategy, language, password)->
       language: language
       # gravatar params: email, options={d: default image, s: size}, https
       picture: gravatar.url(email, {d: 'mm', s: '200'}, true)
+      settings:
+        notifications: {}
 
     switch creationStrategy
       when 'local'
