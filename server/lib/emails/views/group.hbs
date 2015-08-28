@@ -5,14 +5,8 @@
 
 
 {{>button_top}}
-  <a href="{{host}}/groups/{{group._id}}" target="_blank">
+  <a href="{{host}}/groups/{{group._id}}" target="_blank" mc:disable-tracking>
     {{i18n lang button groupContext}}
   </a>
 {{>button_bottom}}
-
-{{>paragraph_top}}
-  <small>
-    {{i18n lang 'raw link:'}} {{host}}/groups/{{group._id}}
-  </small>
-{{>paragraph_bottom}}
 {{>general_info}}

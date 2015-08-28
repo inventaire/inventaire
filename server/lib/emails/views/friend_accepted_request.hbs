@@ -5,12 +5,7 @@
 
 
 {{>button_top}}
-    <a href="{{host}}/inventory/{{friend.username}}" target="_blank">{{i18n lang 'friend_accepted_request_button' friend}}</a>
+    <a href="{{host}}/inventory/{{friend.username}}" target="_blank" mc:disable-tracking>{{i18n lang 'friend_accepted_request_button' friend}}</a>
 {{>button_bottom}}
 
-{{>paragraph_top}}
-    <small>
-      {{i18n lang 'raw link:'}} {{host}}/inventory/{{friend.username}}
-    </small>
-{{>paragraph_bottom}}
 {{>general_info}}

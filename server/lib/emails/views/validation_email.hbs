@@ -4,15 +4,10 @@
 {{>title_bottom}}
 
 {{>button_top}}
-    <a href="{{{href}}}" target="_blank">{{i18n lang 'email_confirmation_button'}}</a>
+    <a href="{{{href}}}" target="_blank" mc:disable-tracking>{{i18n lang 'email_confirmation_button'}}</a>
 {{>button_bottom}}
 
 {{>paragraph_top}}
     {{i18n lang 'email_confirmation_paragraph'}}
-    <br />
-    <br />
-    <small>
-      {{i18n lang 'raw links:'}} {{{href}}}
-    </small>
 {{>paragraph_bottom}}
 {{>general_info}}
