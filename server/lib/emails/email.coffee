@@ -13,61 +13,68 @@ module.exports =
   validationEmail: (user, token)->
     # purposedly not checking notifications settings
     {username, email, language} = user
+    lang = _.shortLang language
+
     return _.extend {}, base,
       to: email
-      subject: i18n language, 'email_confirmation_subject'
+      subject: i18n lang, 'email_confirmation_subject'
       template: 'validation_email'
       context:
-        lang: user.language
+        lang: lang
         user: user
         href: buildTokenUrl 'validation-email', email, token
 
   resetPassword: (user, token)->
     # purposedly not checking notifications settings
     {username, email, language} = user
+    lang = _.shortLang language
+
     return _.extend {}, base,
       to: email
-      subject: i18n language, 'reset_password_subject'
+      subject: i18n lang, 'reset_password_subject'
       template: 'reset_password'
       context:
-        lang: user.language
+        lang: lang
         user: user
         href: buildTokenUrl 'reset-password', email, token
 
 
   friendAcceptedRequest: (options)->
     [user1, user2] = validateOptions options
+    lang = _.shortLang user1.language
 
     checkUserNotificationsSettings user1, 'friend_accepted_request'
 
     return _.extend {}, base,
       to: user1.email
-      subject: i18n(user1.language, 'friend_accepted_request_subject', user2)
+      subject: i18n lang, 'friend_accepted_request_subject', user2
       template: 'friend_accepted_request'
       context:
         user: user1
-        lang: user1.language
+        lang: lang
         friend: user2
         host: host
 
   friendshipRequest: (options)->
     [user1, user2] = validateOptions options
+    lang = _.shortLang user1.language
 
     checkUserNotificationsSettings user1, 'friendship_request'
 
     return _.extend {}, base,
       to: user1.email
-      subject: i18n(user1.language, 'friendship_request_subject', user2)
+      subject: i18n lang, 'friendship_request_subject', user2
       template: 'friendship_request'
       context:
         user: user1
-        lang: user1.language
+        lang: lang
         otherUser: user2
         host: host
 
   group: (action, context)->
     { group, actingUser, userToNotify } = context
     { language, email } = userToNotify
+    lang = _.shortLang language
 
     checkUserNotificationsSettings userToNotify, "group_#{action}"
 
@@ -77,14 +84,14 @@ module.exports =
 
     return _.extend {}, base,
       to: email
-      subject: i18n(language, "group_#{action}_subject", groupContext)
+      subject: i18n lang, "group_#{action}_subject", groupContext
       template: 'group'
       context:
         title: "group_#{action}_subject"
         button: "group_#{action}_button"
         group: group
         groupContext: groupContext
-        lang: language
+        lang: lang
         host: host
 
   feedback: (subject, message, user, unknownUser)->
@@ -113,12 +120,14 @@ module.exports =
 transactionEmail = (transaction, role, label)->
   checkUserNotificationsSettings transaction.mainUser, label
   other = if role is 'owner' then 'requester' else 'owner'
+  lang = _.shortLang transaction.mainUser.language
+
   titleContext =
     username: transaction[other].username
     title: transaction.item.title
   return _.extend {}, base,
     to: transaction[role].email
-    subject: i18n(transaction[role].language, "#{label}_title", titleContext)
+    subject: i18n lang, "#{label}_title", titleContext
     template: 'transaction_update'
     context: _.extend transaction,
       host: host
@@ -127,7 +136,7 @@ transactionEmail = (transaction, role, label)->
       username: transaction.other.username
       subject: "#{label}_subject"
       button: "#{label}_button"
-      lang: transaction.mainUser.language
+      lang: lang
 
 validateOptions = (options)->
   {user1, user2} = options
