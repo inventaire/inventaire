@@ -23,6 +23,8 @@ module.exports = ->
 
   Radio.on 'received:feedback', sendEmail.feedback
 
+  Radio.on 'send:email:invitations', sendEmail.emailInvitations
+
   initDebouncedEmailsCrawler()
 
   Radio.on 'transaction:request', debounceEmails.transactionUpdate

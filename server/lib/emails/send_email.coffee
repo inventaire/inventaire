@@ -44,6 +44,13 @@ module.exports =
     transporter_.sendMail email
     .catch _.Error('feedback')
 
+  emailInvitations: (user, emailAddresses, message)->
+    emailFactory = email_.EmailInvitation user, message
+    emailAddresses.forEach (emailAddress)->
+      email = emailFactory emailAddress
+      transporter_.sendMail email
+      .catch _.Error('emailInvitations')
+
 
 Err = (label, user1, user2)->
   _.Error("#{label} email fail for #{user1} / #{user2}")

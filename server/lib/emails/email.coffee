@@ -107,6 +107,24 @@ module.exports =
         user: user
         unknownUser: unknownUser
 
+  EmailInvitation: (user, message)->
+    # no email settings to check here neither
+    { username, language } = user
+    lang = _.shortLang language
+
+    user.pathname = "#{host}/inventory/#{username}"
+    return emailFactory = (emailAddress)->
+      return _.extend {}, base,
+        to: emailAddress
+        replyTo: user.email
+        subject: i18n lang, 'email_invitation_subject', user
+        template: 'email_invitation'
+        context:
+          user: user
+          message: message
+          lang: lang
+          host: host
+
   transactions:
     yourItemWasRequested: (transaction)->
       transactionEmail transaction, 'owner', 'your_item_was_requested'

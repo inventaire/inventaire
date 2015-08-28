@@ -1,0 +1,31 @@
+{{>banner}}
+{{>title_top}}
+  <h2>{{i18n lang 'email_invitation_subject' user}}</h2>
+{{>title_bottom}}
+{{>paragraph_top}}
+  {{{i18n lang 'email_invitation_intro' user}}}
+  {{#if message}}
+    <br />
+    {{i18n lang 'email_invitation_message' user}}
+    <p style="background-color: #EEEEEE; width: 90%; padding: 1em;">
+      {{message}}
+    </p>
+  {{/if}}
+{{>paragraph_bottom}}
+
+{{>button_top}}
+  <a href="{{host}}/signup" target="_blank">{{i18n lang 'email_invitation_button' user}}</a>
+{{>button_bottom}}
+
+{{>paragraph_top}}
+  {{{i18n lang 'email_invitation_user_inventory' user}}}
+  <br />
+  <br />
+  {{{i18n lang 'email_invitation_learn_more' user}}}
+{{>paragraph_bottom}}
+{{>public_books}}
+{{>paragraph_top}}
+  <small style="background-color: #EEEEEE; width: 90%; text-align:center;">
+    {{{i18n lang 'stop_email_invitations'}}}
+  </small>
+{{>paragraph_bottom}}
