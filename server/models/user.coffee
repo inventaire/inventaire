@@ -52,6 +52,13 @@ User.create = (username, email, creationStrategy, language, password)->
 
   return withHashedPassword(user)
 
+User.upgradeInvited = (invitedDoc, username, creationStrategy, language, password)->
+  { email } = invitedDoc
+  User.create username, email, creationStrategy, language, password
+  .then (userDoc)->
+    # will override type but keep inviters
+    _.extend invitedDoc, userDoc
+
 withHashedPassword = (user)->
   {password} = user
   if password?

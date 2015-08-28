@@ -5,13 +5,14 @@ _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
 relations_ = __.require 'controllers', 'relations/lib/queries'
+invitations_ = __.require 'controllers', 'invitations/lib/invitations'
 groups_ = __.require 'controllers', 'groups/lib/groups'
 notifs_ = __.require 'lib', 'notifications'
 cache_ = __.require 'lib', 'cache'
 couch_ = require 'inv-couch'
 gravatar = require 'gravatar'
 User = __.require 'models', 'user'
-{ byEmails } = require './shared_user_handlers'
+{ byEmail, byEmails } = require './shared_user_handlers'
 
 
 db = __.require('couch', 'base')('users', 'user')
@@ -21,9 +22,7 @@ user_ =
   db: db
   byId: db.get.bind(db)
   byIds: db.fetch.bind(db)
-
-  byEmail: (email)->
-    db.viewByKey 'byEmail', email.toLowerCase()
+  byEmail: byEmail.bind(null, db)
 
   findOneByEmail: (email)->
     @byEmail(email)
@@ -75,15 +74,35 @@ user_ =
     db.viewCustom 'byUsername', params
 
   create: (username, email, creationStrategy, language, password)->
-    @availability.username(username)
-    .then -> User.create(username, email, creationStrategy, language, password)
-    .then db.postAndReturn.bind(db)
-    # don't log the user doc to avoid having password hash in logs
-    # but still return the doc
-    .then (user)->
-      _.log username, 'user created'
-      return user
-    .then token_.sendValidationEmail
+    @availability.username username
+    .then invitations_.findOneByEmail.bind(null, email)
+    .then _.Log('invitedDoc')
+    .then (invitedDoc)->
+      if invitedDoc?
+        User.upgradeInvited invitedDoc, username, creationStrategy, language, password
+        .then db.putAndReturn
+      else
+        User.create username, email, creationStrategy, language, password
+        .then db.postAndReturn
+
+    .catch _.ErrorRethrow('User create err')
+    .then @_postCreation.bind(@)
+
+  _postCreation: (user)->
+    promises_.all [
+      # can be parallelized without risk of conflict as
+      # convertInvitations doesnt edit the user document
+      # but we do need both to be over to be sure that the user will
+      # see the friends requests (converted from invitations)
+      invitations_.convertInvitations user
+      token_.sendValidationEmail user
+    ]
+    # return the user updated with the validation token
+    .spread (invitationRes, updatedUser)->
+      # don't log the user doc to avoid having password hash in logs
+      # but still return the doc
+      _.success updatedUser.username, 'user successfully created'
+      return updatedUser
 
   findLanguage: (req)->
     accept = req.headers['accept-language']

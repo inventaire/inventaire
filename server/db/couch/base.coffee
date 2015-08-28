@@ -10,10 +10,7 @@ module.exports = (dbBaseName, designDocName)->
   designDocName or= dbBaseName
 
   db = cot dbName, designDocName
-  nanoMethods = __.require('couch', 'nano_base')(dbName)
+  nanoMethods = require('./nano_base')(dbName)
+  bundles = require('./bundles')(db, _)
 
-  return _.extend db, nanoMethods,
-    postAndReturn: (doc)->
-      db.post(doc)
-      .then _.property('id')
-      .then db.get.bind(db)
+  return _.extend db, nanoMethods, bundles

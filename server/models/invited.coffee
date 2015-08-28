@@ -4,6 +4,7 @@ _ = __.require 'builders', 'utils'
 tests = __.require 'models','tests/common-tests'
 
 create = (inviterId, email)->
+  tests.pass 'email', email
   return addInviter inviterId, baseDoc(email)
 
 baseDoc = (email)->

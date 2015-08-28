@@ -1,8 +1,17 @@
 CONFIG = require 'config'
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
+couch_ = require 'inv-couch'
 
-module.exports =
+module.exports = handlers =
+  byEmail: (db, email)->
+    _.type email, 'string'
+    db.viewByKey 'byEmail', email.toLowerCase()
+
   byEmails: (db, emails)->
     _.type emails, 'array'
     db.viewByKeys 'byEmail', emails.map(_.toLowerCase)
+
+  findOneByEmail: (db, email)->
+    handlers.byEmail db, email
+    .then couch_.firstDoc
