@@ -1,6 +1,8 @@
 __ = require('config').root
 _ = require 'lodash'
-convertMarkdown = __.require 'client', 'scripts/lib/convert_markdown'
+
+linkify = require './linkify'
+convertMarkdown = __.require('client', 'scripts/lib/convert_markdown')(linkify)
 
 module.exports = findKeys = (enObj, langCurrent, langTransifex, langArchive, markdown)->
   langTransifex = keepNonNullValues langTransifex
