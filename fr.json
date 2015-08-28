@@ -39,5 +39,12 @@
     "group_invite_subject": "%{actingUserUsername} vous invite à rejoindre le groupe %{groupName}",
     "group_invite_button": "aller à la page du groupe pour accepter ou decliner l'invitation",
     "group_acceptRequest_subject": "[%{groupName}] votre demande pour rejoindre le groupe à été acceptée !",
-    "group_acceptRequest_button": "voir tous les livres disponible dans le groupe"
+    "group_acceptRequest_button": "voir tous les livres disponible dans le groupe",
+    "email_invitation_subject": null,
+    "email_invitation_intro": null,
+    "email_invitation_message": null,
+    "email_invitation_button": null,
+    "email_invitation_user_inventory": null,
+    "email_invitation_learn_more": null,
+    "stop_email_invitations": null
 }

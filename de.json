@@ -39,5 +39,12 @@
     "group_invite_subject": null,
     "group_invite_button": null,
     "group_acceptRequest_subject": null,
-    "group_acceptRequest_button": null
+    "group_acceptRequest_button": null,
+    "email_invitation_subject": null,
+    "email_invitation_intro": null,
+    "email_invitation_message": null,
+    "email_invitation_button": null,
+    "email_invitation_user_inventory": null,
+    "email_invitation_learn_more": null,
+    "stop_email_invitations": null
 }
