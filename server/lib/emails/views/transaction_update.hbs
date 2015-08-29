@@ -5,12 +5,13 @@
 {{/if}}
 {{>title_top}}
   <h2 style="font-size:1.2em;">{{{i18n lang subject this}}}</h2>
+  {{!-- everything happens here --}}
   {{>timeline this}}
+
 {{>title_bottom}}
 {{>button_top}}
     <a href="{{link}}" target="_blank" mc:disable-tracking>
       {{i18n lang button requester}}
     </a>
 {{>button_bottom}}
-{{>banner}}
 {{>general_info}}
