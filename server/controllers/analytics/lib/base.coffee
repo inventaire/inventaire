@@ -2,7 +2,8 @@ CONFIG = require 'config'
 __ = require('config').root
 _ = __.require 'builders', 'utils'
 Promise = require 'bluebird'
-crypto = require 'crypto'
+crypto_ = __.require 'lib', 'crypto'
+
 
 levelBase = __.require 'level', 'base'
 analyticsLevelDB = levelBase.simpleAPI 'analytics'
@@ -29,8 +30,8 @@ base =
     return ip
 
   getFingerPrint: (args...)->
-    str = JSON.stringify(args)
-    crypto.createHash('md5').update(str).digest('hex')
+    str = JSON.stringify args
+    crypto_.md5 str
 
 
 module.exports = _.extend base,
