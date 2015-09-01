@@ -12,7 +12,7 @@ invitations = require './invitations/invitations'
 groups = require './groups/groups'
 entities = require './entities/entities'
 followed = require './entities/followed'
-upload = require './upload'
+upload = require './upload/upload'
 notifs = require './notifs'
 newsletter = require './newsletter'
 cookie = require './cookie'
@@ -152,4 +152,14 @@ if CONFIG.logMissingI18nKeys
       post: log.i18nMissingKeys
 else log = {}
 
-module.exports = _.extend routes, log
+if CONFIG.objectStorage is 'local'
+  # the /img endpoint is common to all the object storage modes
+  # but this route is served from nginx in other modes
+  img =
+    'img*':
+      get: upload.get
+else img = {}
+
+# setting CONFIG-based route above standard routes
+# so that they wont be overpassed by the glob
+module.exports = _.extend log, img, routes

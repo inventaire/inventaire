@@ -30,12 +30,6 @@ module.exports =
   noCache: false
   staticMaxAge: 30*24*60*60*1000
   cookieMaxAge: 10*365*24*3600*1000
-  aws:
-    key: 'customizedInLocalConfig'
-    secret: 'customizedInLocalConfig'
-    region: 'customizedInLocalConfig'
-    bucket: 'customizedInLocalConfig'
-    protocol: 'http'
   root:
     paths:
       root: ''
@@ -59,6 +53,7 @@ module.exports =
       i18nDist: '/server/lib/emails/i18n/dist'
       client: '/client'
       scripts: '/scripts'
+      uploads: '/client/public/uploads'
     path: (route, name)->
       path = @paths[route]
       return "#{appRoot}#{path}/#{name}"
@@ -100,3 +95,12 @@ module.exports =
     key: 'yourkey'
   fallback:
     wdq: 'http://your-inv-wdq-instance:1234'
+  imagesUrlBase: -> @fullHost() + '/img/'
+  objectStorage: 'local'
+  # AWS credentials are requierd only when objectStorage is set to 'aws'
+  aws:
+    key: 'customizedInLocalConfig'
+    secret: 'customizedInLocalConfig'
+    region: 'customizedInLocalConfig'
+    bucket: 'customizedInLocalConfig'
+    protocol: 'http'
