@@ -105,9 +105,10 @@ routes =
   'api/upload/delete':
     post: upload.del
 
-  'api/tests/public':
+  'api/tests/public*':
     get: tests.get
     post: tests.post
+    put: tests.post
     delete: tests.delete
 
   'api/services/public':
