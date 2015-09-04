@@ -40,9 +40,16 @@ module.exports = base =
 
   toLowerCase: (str)-> str.toLowerCase()
 
+  # Returns a function ready to be called without accepting further arguments
+  # usefull in promises chains, when the previous event might return
+  # an unnecessary argument
+  # It does nothing more than what would do an anonymous function
+  # but it is explicit about what it does, while OCD-prone developers
+  # might look at an anonymous function wanting to turn it into a named function
+  Complete: (fn, context, args...)-> completeFn = -> fn.apply context, args
+
   # returns a function triggering a standard confirmation response
   ok: (res, status=200)->
     res.status(status).json {ok: true}
 
 base.Ok = (res, status)-> base.ok.bind(null, res, status)
-
