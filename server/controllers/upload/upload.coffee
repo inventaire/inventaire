@@ -14,7 +14,8 @@ client = switch objectStorage
   else throw new Error 'unknown object storage configuration'
 
 # mimicking what nginx does
-if objectStorage is 'local' then exports.get = require './get'
+if objectStorage is 'local'
+  exports.fakeObjectStorage = require './fake_object_storage'
 
 exports.post = (req, res, next)->
   parseForm req

@@ -158,9 +158,9 @@ img = {}
 if CONFIG.objectStorage is 'local'
   # the /img endpoint is common to all the object storage modes
   # but this route is served from nginx in other modes
-  endpoint = CONFIG.images.urlBase()
+  endpoint = CONFIG.images.urlBase().replace /^\//, ''
   img["#{endpoint}*"] =
-      get: upload.get
+      get: upload.fakeObjectStorage
 
 # setting CONFIG-based route above standard routes
 # so that they wont be overpassed by the glob
