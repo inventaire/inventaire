@@ -68,9 +68,11 @@ routes =
     post: invitations.post
 
   'api/groups':
-    get: groups.get
     post: groups.post
     put: groups.put
+
+  'api/groups/public':
+    get: groups.get
 
   'api/items':
     get: items.fetch
