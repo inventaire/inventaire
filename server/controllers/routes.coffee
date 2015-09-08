@@ -13,6 +13,7 @@ groups = require './groups/groups'
 entities = require './entities/entities'
 followed = require './entities/followed'
 upload = require './upload/upload'
+resize = require './upload/resize'
 notifs = require './notifs'
 newsletter = require './newsletter'
 cookie = require './cookie'
@@ -141,6 +142,9 @@ routes =
     get: (req, res, next)->
       res.json { count: _.errorCount() }
 
+  'img/*':
+    get: resize
+
   '*':
     get: glob.get
 
@@ -150,13 +154,13 @@ if CONFIG.logMissingI18nKeys
       post: log.i18nMissingKeys
 else log = {}
 
+img = {}
 if CONFIG.objectStorage is 'local'
   # the /img endpoint is common to all the object storage modes
   # but this route is served from nginx in other modes
-  img =
-    'img*':
+  endpoint = CONFIG.images.urlBase()
+  img["#{endpoint}*"] =
       get: upload.get
-else img = {}
 
 # setting CONFIG-based route above standard routes
 # so that they wont be overpassed by the glob

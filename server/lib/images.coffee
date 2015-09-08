@@ -35,8 +35,27 @@ module.exports =
       .interlace 'Line'
       .write resizedPath, ReturnNewPath(resizedPath, resolve, reject)
 
+  shrinkStream: (stream, width, height)->
+    gm stream
+    .resize width, height, '>'
+    .noProfile()
+    .interlace 'Line'
+
   applyLimits: (width, height)->
     return [ applyLimit(width), applyLimit(height) ]
+
+  check: (url)->
+    fastimage.info url
+    .then checkImageData
+    .catch formatCheckErr.bind(null, url)
+
+checkImageData = (data)->
+  { size } = data
+  if size > maxWeight
+    throw error_.new 'image is too big', 400
+
+formatCheckErr = (url, err)->
+  throw error_.complete err, err.httpCode, url
 
 applyLimit = (dimension=maxSize)->
   dimension = Number dimension

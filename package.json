@@ -39,6 +39,7 @@
     "email-addresses": "^2.0.1",
     "express-force-ssl": "^0.2.9",
     "express-session": "^1.10.2",
+    "fastimage": "^1.0.2",
     "formidable": "^1.0.17",
     "gm": "^1.18.1",
     "graceful-fs": "^3.0.6",

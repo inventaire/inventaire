@@ -5,11 +5,11 @@ Promise = require 'bluebird'
 parseForm = require './lib/parse_form'
 error_ = __.require 'lib', 'error/error'
 images_ = __.require 'lib', 'images'
-fs =  __.require 'lib', 'fs'
+fs_ =  __.require 'lib', 'fs'
 maxSize = 1024
 base = __.path 'client', 'public/uploads'
 regex_ = __.require 'models', 'tests/regex'
-
+urlBase = CONFIG.images.urlBase()
 
 # resized images urls looks like /img/#{hash}.#{extension}?width=#{width}&height=#{height}"
 # expect the files to be in public/img/
@@ -28,35 +28,26 @@ module.exports = (req, res, next)->
   unless extension is 'jpg'
     return error_.bundle res, 'accepts jpg extension only', 400
 
-  width = applyLimits width
-  height = applyLimits height
+  [ width, height ] = images_.applyLimits width, height
 
   originalPath = getOriginalPath filename
   resizedPath = getResizedPath filename, width, height
 
-  fs.exist resizedPath
+  fs_.exist resizedPath
   .catch getResizedFile.bind(null, originalPath, resizedPath, width, height)
-  .then sendResizedFile.bind(null, res, resizedPath)
+  .then _.Complete(res.sendFile, res, resizedPath)
   .catch formatErrNoEnt
   .catch error_.Handler(res)
 
 getFilename = (req)->
   { pathname } = req._parsedUrl
-  filename = pathname.replace '/img/', ''
-
-applyLimits = (dimension=maxSize)->
-  dimension = Number dimension
-  if dimension > maxSize then maxSize
-  else dimension
-
-sendResizedFile = (res, resizedPath)->
-  res.sendFile resizedPath
+  filename = pathname.replace urlBase, ''
 
 getResizedFile = (originalPath, resizedPath, width, height, err)->
   unless err.code is 'ENOENT' then throw err
-  _.info resizedPath, 'creating resized version'
-  fs.exist originalPath
-  .then images_.resize.bind(null, originalPath, resizedPath, width, height)
+  _.info resizedPath, 'creating resized version (object storage local mode)'
+  fs_.exist originalPath
+  .then images_.shrink.bind(null, originalPath, resizedPath, width, height)
 
 getOriginalPath = (filename)-> "#{base}/#{filename}"
 getResizedPath = (filename, width, height)->

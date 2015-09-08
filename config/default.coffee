@@ -1,6 +1,6 @@
 appRoot = require('app-root-path').path
 
-module.exports =
+module.exports = config =
   env: 'default'
   protocol: 'http'
   name: 'inventaire'
@@ -95,7 +95,6 @@ module.exports =
     key: 'yourkey'
   fallback:
     wdq: 'http://your-inv-wdq-instance:1234'
-  imagesUrlBase: -> @fullHost() + '/img/'
   objectStorage: 'local'
   # AWS credentials are requierd only when objectStorage is set to 'aws'
   aws:
@@ -112,3 +111,9 @@ module.exports =
     tenantName: '12345678'
     region: 'SBG-1'
     container: 'customizedInLocalConfig'
+  images:
+    urlBase: -> '/local/'
+    localEndpoint: -> config.fullHost() + @urlBase()
+    maxSize: 1600
+    # 5MB
+    maxWeight: 5*1024**2
