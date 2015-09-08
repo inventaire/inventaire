@@ -3,11 +3,7 @@ __ = CONFIG.root
 _ = __.require('builders', 'utils')
 Promise = require 'bluebird'
 knox = require 'knox'
-client = knox.createClient
-  key: CONFIG.aws.key
-  secret: CONFIG.aws.secret
-  region: CONFIG.aws.region
-  bucket: CONFIG.aws.bucket
+client = knox.createClient CONFIG.aws
 
 module.exports =
   putImage: (args...)->

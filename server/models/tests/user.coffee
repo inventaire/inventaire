@@ -3,7 +3,7 @@ __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 notificationsSettingsList = __.require 'sharedLibs', 'notifications_settings_list'
 
-{ pass, userId, username, email } = require './common-tests'
+{ pass, userId, username, email, localImg } = require './common-tests'
 
 
 module.exports = tests =
@@ -14,7 +14,7 @@ module.exports = tests =
   password: (password)->  8 <= password.length <=60
   # accepting second level languages (like es-AR) but only using first level yet
   language: (lang)-> /^\w{2}(-\w{2})?$/.test(lang)
-  picture: (picture)-> _.isUrl(picture)
+  picture: localImg
   creationStrategy: (creationStrategy)->
     creationStrategy in ['browserid', 'local']
   bio: (bio)-> _.isString(bio) and bio.length < 1000

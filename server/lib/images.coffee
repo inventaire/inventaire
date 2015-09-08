@@ -1,9 +1,14 @@
 CONFIG = require 'config'
 __ = CONFIG.root
+_ = __.require 'builders', 'utils'
 gm = require 'gm'
 Promise = require 'bluebird'
 crypto_ = __.require 'lib', 'crypto'
-readFile = Promise.promisify require('fs').readFile
+fs_ =  __.require 'lib', 'fs'
+{ maxSize, maxWeight } = CONFIG.images
+fastimage = require 'fastimage'
+error_ = __.require 'lib', 'error/error'
+
 
 module.exports =
   format: (path)->
@@ -12,23 +17,31 @@ module.exports =
       gm path
       .noProfile()
       # converting to progressive jpeg
-      .interlace('Line')
+      .interlace 'Line'
       # removing EXIF data
       .write formattedPath, ReturnNewPath(formattedPath, resolve, reject)
 
   getHashFilename: (path, extension='jpg')->
-    readFile path
+    fs_.readFile path
     .then crypto_.sha1
     .then (hash)-> "#{hash}.#{extension}"
 
-  resize: (originalPath, resizedPath, width, height)->
+  shrink: (originalPath, resizedPath, width, height)->
     new Promise (resolve, reject)->
-      gm(originalPath)
-      .resize(width, height)
+      gm originalPath
+      # only resize if bigger
+      .resize width, height, '>'
       .noProfile()
-      .interlace('Line')
+      .interlace 'Line'
       .write resizedPath, ReturnNewPath(resizedPath, resolve, reject)
 
+  applyLimits: (width, height)->
+    return [ applyLimit(width), applyLimit(height) ]
+
+applyLimit = (dimension=maxSize)->
+  dimension = Number dimension
+  if dimension > maxSize then maxSize
+  else dimension
 
 ReturnNewPath = (newPath, resolve, reject)->
   return cb = (err)->

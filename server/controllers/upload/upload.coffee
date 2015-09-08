@@ -8,13 +8,13 @@ images_ = __.require 'lib', 'images'
 { objectStorage } = CONFIG
 
 client = switch objectStorage
-  when 'aws' then require './lib/knox-client'
-  when 'local' then require './lib/local-client'
-  else throw new Error 'CONFIG.objectStorage should be set'
+  when 'aws' then require './lib/aws_client'
+  when 'swift' then require './lib/swift_client'
+  when 'local' then require './lib/local_client'
+  else throw new Error 'unknown object storage configuration'
 
-if objectStorage is 'local'
-  exports.get = require './get'
-
+# mimicking what nginx does
+if objectStorage is 'local' then exports.get = require './get'
 
 exports.post = (req, res, next)->
   parseForm req
@@ -42,13 +42,15 @@ putImage = (file)->
   # /tmp/path
   { id, path, type } = file
 
-  images_.format path
-  .then _.Log('formatted img path')
-  .then (path)->
-    images_.getHashFilename path
-    .then client.putImage.bind(null, path)
+  images_.getHashFilename path
+  .then client.putImage.bind(null, path)
   .then _.Log('url')
+  .then checkRelativeUrl
   .then (url)-> { id: id, url, url }
+
+checkRelativeUrl = (url)->
+  if /http/.test url then throw error_.new 'not a relative url', 500
+  return url
 
 indexCollection = (collection)->
   index = {}
@@ -57,13 +59,3 @@ indexCollection = (collection)->
     index[id] = url
 
   return index
-
-exports.del = (req, res, next)->
-  { urls } = req.body
-  _.log urls, 'urls to delete'
-  client.deleteImages urls
-  .then (resp)->
-    if resp.statusCode is 200 then return
-    else throw error_.new 'failed deleting image', 500, resp
-  .then _.Ok(res)
-  .catch error_.Handler(res)

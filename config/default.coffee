@@ -104,3 +104,11 @@ module.exports =
     region: 'customizedInLocalConfig'
     bucket: 'customizedInLocalConfig'
     protocol: 'http'
+  swift:
+    username: 'customizedInLocalConfig'
+    password: 'customizedInLocalConfig'
+    authUrl: 'https://openstackEndpointToCustomize/v2.0'
+    publicURL: 'https://swiftPublicURL/'
+    tenantName: '12345678'
+    region: 'SBG-1'
+    container: 'customizedInLocalConfig'
