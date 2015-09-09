@@ -55,7 +55,7 @@ checkImageData = (data)->
     throw error_.new 'image is too big', 400
 
 formatCheckErr = (url, err)->
-  throw error_.complete err, err.httpCode, url
+  throw error_.complete err, err.httpCode or 500, url
 
 applyLimit = (dimension=maxSize)->
   dimension = Number dimension
