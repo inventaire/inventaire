@@ -4,10 +4,12 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 images_ = __.require 'lib', 'images'
 endpoint = CONFIG.images.localEndpoint()
+{ maxSize } = CONFIG.images
 request = require 'request'
 qs = require 'querystring'
+oneYear = 365*24*3600*1000
 
-# resized images urls looks like /api/resize/public/img/30x30/(#{hash}.#{extension}|#{external url})"
+# resized images urls looks like /img/#{w}x#{h}/(#{hash}.jpg|#{external url hashCode?href=escaped url})"
 
 module.exports = (req, res, next)->
   [ dimensions, rest ] = parseReq req
@@ -15,6 +17,7 @@ module.exports = (req, res, next)->
   # if no dimensions are passed, should return the maximum dimension
   unless /\d{2,4}x\d{2,4}/.test dimensions
     rest = dimensions
+    dimensions = null
 
   if /^[0-9a-f]{40}.jpg$/.test rest
     url = "#{endpoint}#{rest}"
@@ -42,7 +45,7 @@ getResizeImage = (res, url, dimensions)->
   [ width, height ] = images_.applyLimits width, height
 
   res.header 'Content-Type', 'image/jpeg'
-  res.header 'Cache-Control', 'public'
+  res.header 'Cache-Control', "public, max-age=#{oneYear}"
 
   images_.check url
   .then ->
