@@ -1,7 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
-{ pass, itemId, userId, entityUri, nonEmptyString } = require './common-tests'
+{ pass, itemId, userId, entityUri, nonEmptyString, imgUrl } = require './common-tests'
 { constrained } = require '../attributes/item'
 
 module.exports =
@@ -10,7 +10,7 @@ module.exports =
   userId: userId
   entity: entityUri
   title: nonEmptyString
-  pictures: (pictures)-> _.isArray(pictures) and _.all(pictures, _.isUrl)
+  pictures: (pictures)-> _.isArray(pictures) and _.all(pictures, imgUrl)
   transaction: (transaction)->
     transaction in constrained.transaction.possibilities
   listing: (listing)->
