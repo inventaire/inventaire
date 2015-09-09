@@ -10,11 +10,11 @@ module.exports =
   byId: db.get.bind(db)
   byIsbn: db.viewFindOneByKey.bind(db, 'byIsbn')
   create: (entityData)->
-    entityData = @normalizeData(entityData)
+    entityData = @normalizeData entityData
     # using PUT as the CouchDB documentation recommands
     # to avoid POST as it can lead to dupplicates
     # http://wiki.apache.org/couchdb/HTTP_Document_API#POST
-    return @putEntity(entityData)
+    return @putEntity entityData
 
   normalizeData: (entityData)->
     unless entityData.title? then throw new Error 'entity miss a title'
@@ -24,14 +24,14 @@ module.exports =
   putEntity: (entityData)->
     db.put entityData
     .then @getEntity.bind(@, entityData._id)
-    .catch (err)-> _.log err, 'putEntity err'
+    .catch _.ErrorRethrow('putEntity err')
 
   getEntity: (id)->
     db.get id
-    .then (res)-> _.log res, 'new entity'
-    .catch (err)-> _.log err, 'getEntity err'
+    .then _.Log('new entity')
+    .catch _.ErrorRethrow('getEntity err')
 
   getEntities: (ids)->
     ids = _.forceArray(ids)
     db.fetch(ids)
-    .then (res)-> _.log res, 'getEntities res'
+    .then _.Log('getEntities res')
