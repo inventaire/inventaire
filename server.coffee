@@ -74,6 +74,7 @@ if CONFIG.protocol is 'https'
   _.info "#{options.name} server is listening on port #{options.port}..."
 
 else
-  americano.start options
+  americano.start options, (err, app, server)->
+    app.disable 'x-powered-by'
 
 mailer_ = __.require('lib', 'emails/mailer')()
