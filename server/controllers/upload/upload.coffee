@@ -39,12 +39,14 @@ validateFile = (file)->
   unless type is 'image/jpeg'
     throw error_.new 'only jpeg are accepted', 400, type, file
 
-putImage = (file)->
-  # /tmp/path
-  { id, path, type } = file
+exports.putImage = putImage = (fileData)->
+  { id, path, type, keepOldFile } = fileData
+  # keepOldFile is enabled in ./scripts/upload_jpg
+  resizePath = if keepOldFile then "#{path}_resized" else path
 
-  images_.getHashFilename path
-  .then client.putImage.bind(null, path)
+  images_.shrink path, resizePath
+  .then _.Complete(images_.getHashFilename, images_, resizePath)
+  .then client.putImage.bind(null, resizePath)
   .then _.Log('url')
   .then checkRelativeUrl
   .then (url)-> { id: id, url, url }

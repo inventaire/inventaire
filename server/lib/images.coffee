@@ -26,7 +26,7 @@ module.exports =
     .then crypto_.sha1
     .then (hash)-> "#{hash}.#{extension}"
 
-  shrink: (originalPath, resizedPath, width, height)->
+  shrink: (originalPath, resizedPath, width=maxSize, height=maxSize)->
     new Promise (resolve, reject)->
       gm originalPath
       # only resize if bigger
@@ -55,6 +55,7 @@ checkImageData = (data)->
     throw error_.new 'image is too big', 400
 
 formatCheckErr = (url, err)->
+  _.log  err, 'image check err'
   throw error_.complete err, err.httpCode or 500, url
 
 applyLimit = (dimension=maxSize)->
