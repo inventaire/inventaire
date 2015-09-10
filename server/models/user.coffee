@@ -33,7 +33,7 @@ User.create = (username, email, creationStrategy, language, password)->
     creationStrategy: creationStrategy
     language: language
     # gravatar params: email, options={d: default image, s: size}, https
-    picture: gravatar.url(email, {d: 'mm', s: '200'}, true)
+    picture: gravatar.url(email, {d: 'mm', s: '500'}, true)
     settings:
       notifications: {}
 

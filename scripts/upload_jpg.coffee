@@ -14,23 +14,33 @@ CONFIG.swift.container = 'img'
 require 'colors'
 { putImage } = __.require 'controllers', 'upload/upload'
 cp = require 'copy-paste'
+Promise = require 'bluebird'
+fs = require 'fs'
 
-[imagePath] = process.argv.slice(2)
+imagesPaths = process.argv.slice(2)
+imageMap = {}
 
-filename = imagePath.split('/').slice(-1)[0]
+uploadImg = (imagePath)->
+  filename = imagePath.split('/').slice(-1)[0]
+  console.log 'imagePath: '.green, imagePath
+  console.log 'filename: '.green, filename
+  putImage
+    id: filename
+    path: imagePath
+    keepOldFile: true
+  .then (res)->
+    { id, url } = res
+    url = "https://inventaire.io#{url}"
+    cp.copy url
+    console.log 'Copied to Clipboard: '.green, url
+    imageMap[id] = url
+  .catch _.Error('putImage err')
 
-console.log 'imagePath: '.green, imagePath
-console.log 'filename: '.green, filename
 
-
-putImage
-  id: filename
-  path: imagePath
-  keepOldFile: true
-.then (res)->
-  # _.log res, 'put image res'
-  url = "https://inventaire.io#{res.url}"
-  cp.copy url
-  console.log 'Copied to Clipboard: '.green, url
-  process.exit 0
-.catch _.Error('putImage err')
+Promise.all imagesPaths.map(uploadImg)
+.then ->
+  path = './uploads_map.json'
+  fs.writeFileSync path, JSON.stringify(imageMap, null, 4)
+  _.info "#{path} saved"
+  # process.exit 0
+.catch _.Error('saving map err')

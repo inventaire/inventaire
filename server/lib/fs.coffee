@@ -4,6 +4,7 @@ _ = __.require('builders', 'utils')
 Promise = require 'bluebird'
 fs = require 'fs'
 mime = require 'mime'
+request = require 'request'
 
 methods = [
   'readFile'
@@ -37,3 +38,12 @@ exports.contentHeaders = (src)->
   .catch _.ErrorRethrow('headers')
 
 exports.createReadStream = fs.createReadStream.bind(fs)
+exports.downloadFile = (url, path)->
+  file = fs.createWriteStream path
+  request url
+  .on 'response', (res)->
+    { headers, body, statusCode, statusMessage } = res
+    if statusCode < 400 then _.log [body, statusCode], "#{url} downloaded"
+    else _.error [body, headers], "#{statusCode} - #{statusMessage}"
+  .on 'error', _.Error('downloadFile')
+  .pipe file

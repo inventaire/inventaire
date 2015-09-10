@@ -29,6 +29,7 @@ module.exports =
   shrink: (originalPath, resizedPath, width=maxSize, height=maxSize)->
     new Promise (resolve, reject)->
       gm originalPath
+      .setFormat 'jpg'
       # only resize if bigger
       .resize width, height, '>'
       .noProfile()
@@ -37,6 +38,7 @@ module.exports =
 
   shrinkStream: (stream, width, height)->
     gm stream
+    .setFormat 'jpg'
     .resize width, height, '>'
     .noProfile()
     .interlace 'Line'
