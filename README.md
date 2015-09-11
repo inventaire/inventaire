@@ -11,7 +11,7 @@ Libre collaborative resource mapper powered by open-knowledge
 
 This repository hosts [Inventaire.io](https://inventaire.io) source code. Its a collaborative resources mapper project, while yet only focused on exploring books mapping with [wikidata](https://wikidata.org/) and [ISBNs](https://en.wikipedia.org/wiki/International_Standard_Book_Number)
 
-This repository tracks the server-side developments, while the (heavy) [client-side can be found here](https://github.com/inventaire/inventaire-client).
+This repository tracks the server-side developments, while the (heavy) [client-side can be found here](https://github.com/inventaire/inventaire-client). Client-related technical issues should go in the client repo, while this repo gathers all other technical issues. Non-technical discussions such as feature requests should preferably happen in the [Roadmap](https://trello.com/b/0lKcsZDj/inventaire-roadmap) Trello. In doubt, just use your best guess :)
 
 ##Stack approximative overview
 ![stack-en](http://profile.maxlath.eu/slides/backbone-meetup/img/stack-en.jpg)
