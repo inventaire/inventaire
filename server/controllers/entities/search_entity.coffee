@@ -85,10 +85,11 @@ bundleResults = (results...)->
   _.info results, "api results"
   resp = {}
   results.forEach (result)->
-    {source, items} = result
-    # also tests if the first item isnt undefined
-    if _.isArray(items) and items[0]?
-      resp[source] = result
-      resp.search or= result.search
+    if result?
+      {source, items} = result
+      # also tests if the first item isnt undefined
+      if _.isArray(items) and items[0]?
+        resp[source] = result
+        resp.search or= result.search
 
   return resp
