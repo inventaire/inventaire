@@ -69,7 +69,7 @@ Emails are disabled in default config to avoid having to configure that too for 
 
 - port to custom desktop clients using [node-webkit](https://github.com/rogerwang/node-webkit) or alike
 - port to an app for personal cloud platforms: [Cozy](http://cozy.io), [OwnCloud](http://owncloud.org/)...
-- server-less/P2P inventory sharing using WebRTC DataChannel / [WebTorrent](https://github.com/feross/webtorrent)
+- server-less/P2P inventory sharing using WebRTC DataChannel / [WebTorrent](https://github.com/feross/webtorrent) / [IPFS](http://ipfs.io/) / (Ethereum)[https://www.ethereum.org/] / you name it
 - any other IndieWeb / [Unhosted](https://unhosted.org/) crazyness? :)
 
 **Already experiementing**
