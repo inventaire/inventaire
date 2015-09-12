@@ -1,34 +1,30 @@
 __ = require('config').root
 _ = __.require 'builders', 'utils'
-
-uuid = require 'simple-uuid'
-
 db = __.require('couch', 'base')('entities')
+promises_ = __.require 'lib', 'promises'
+Entity = __.require 'models', 'entity'
 
 module.exports =
   db: db
   byId: db.get.bind(db)
   byIsbn: db.viewFindOneByKey.bind(db, 'byIsbn')
-  create: (entityData)->
-    entityData = @normalizeData entityData
+  create: (entityData, userId)->
+    # using a promise to catch Entity.create errors
+    promises_.start()
+    .then Entity.create.bind(null, entityData, userId)
+    .then _.Log('new entity')
     # using PUT as the CouchDB documentation recommands
     # to avoid POST as it can lead to dupplicates
     # http://wiki.apache.org/couchdb/HTTP_Document_API#POST
-    return @putEntity entityData
-
-  normalizeData: (entityData)->
-    unless entityData.title? then throw new Error 'entity miss a title'
-    entityData._id = uuid()
-    return entityData
+    .then @putEntity.bind(@)
 
   putEntity: (entityData)->
-    db.put entityData
-    .then @getEntity.bind(@, entityData._id)
+    db.putAndReturn entityData
     .catch _.ErrorRethrow('putEntity err')
 
   getEntity: (id)->
     db.get id
-    .then _.Log('new entity')
+    # .then _.Log('get entity')
     .catch _.ErrorRethrow('getEntity err')
 
   getEntities: (ids)->

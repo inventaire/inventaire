@@ -8,6 +8,8 @@ module.exports = (req, res, next) ->
   unless _.typeOf(entityData) is 'object'
     return error_.bundle res, 'bad query', 400
 
-  entities_.create entityData
+  userId = req.user._id
+
+  entities_.create entityData, userId
   .then res.json.bind(res)
   .catch error_.Handler(res)
