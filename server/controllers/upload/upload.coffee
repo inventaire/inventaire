@@ -19,7 +19,6 @@ if objectStorage is 'local'
 
 exports.post = (req, res, next)->
   parseForm req
-  .then _.Success('form parse')
   .then (formData)->
     { fields, files } = formData
     for key, file of files
@@ -47,7 +46,7 @@ exports.putImage = putImage = (fileData)->
   images_.shrink path, resizePath
   .then _.Complete(images_.getHashFilename, null, resizePath)
   .then client.putImage.bind(null, resizePath)
-  .then _.Log('url')
+  .then _.Log('new image url')
   .then checkRelativeUrl
   .then (url)-> { id: id, url, url }
 

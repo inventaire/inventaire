@@ -3,6 +3,7 @@ _ = __.require('builders', 'utils')
 promises_ = __.require 'lib', 'promises'
 wd_ = __.require 'lib', 'wikidata'
 cache_ = __.require 'lib', 'cache'
+wdk = require 'wikidata-sdk'
 
 module.exports = (isbn, type, lang)->
   key = "wdIsbn:#{isbn}:#{lang}"
