@@ -42,9 +42,9 @@
     "group_acceptRequest_button": "voir tous les livres disponible dans le groupe",
     "email_invitation_subject": "%{username} vous invite à partager vos livres sur Inventaire.io!",
     "email_invitation_intro": "Inventaire est une application web vous permettant de partager l'inventaire de vos livres avec vos amis et communautés",
-    "email_invitation_message": "message de **%{username}** :",
+    "email_invitation_message": "**message de %{username}** :",
     "email_invitation_button": "Inscrivez-vous pour partager vos livres avec %{username}",
-    "email_invitation_user_inventory": "Vous pouvez déjà voir les livres publiques de %{username} [ici](%{pathname}) mais il vous faut un compte pour accéder à la totalité des livres qu'il/elle souhaite partager avec vous",
+    "email_invitation_user_inventory": "Vous pouvez déjà voir les livres publiques de %{username} [ici](%{pathname}) mais il vous faut un compte pour accéder à la totalité des livres qu'il/elle souhaite partager avec vous.",
     "email_invitation_learn_more": "Inventaire est un projet se battant pour une meilleur information sur les ressources, tout en promouvant les [savoirs libres](https://fr.wikipedia.org/wiki/Savoir_libre), les [logiciels libres](https://fr.wikipedia.org/wiki/Logiciel_libre), et le contrôle de leurs données par les utilisateurs : [en savoir plus sur inventaire.io](https://inventaire.io/welcome)",
     "stop_email_invitations": "Si vous ne souhaitez pas recevoir d'email de notre part, envoyez un email à [stop-emails@inventaire.io](mailto:stop-emails@inventaire.io?subject=Merci%20de%20ne%20plus%20m'envoyer%20d'email&body=Non%20n'insiste%20pas%2C%20%C3%A7a%20n'aurait%20jamais%20march%C3%A9%20entre%20nous.%20Tendrement)"
 }
