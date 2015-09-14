@@ -23,9 +23,11 @@ exports.login = (req, res)->
     else error_.bundle res, "unknown login strategy: #{strategy}", 400
 
 LoggedIn = (res)->
-  loggedIn = ->
-    setLoggedInCookie res
-    res.send 'ok'
+  loggedIn = (result)->
+    if result instanceof Error then error_.handler res, result
+    else
+      setLoggedInCookie res
+      _.ok res
 
 exports.logout = (req, res, next) ->
   res.clearCookie 'loggedIn'

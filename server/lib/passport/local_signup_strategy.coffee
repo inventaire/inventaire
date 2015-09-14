@@ -20,9 +20,7 @@ verify = (req, username, password, done)->
       # case when user_.byId fails, rather unprobable
       done new Error "couldn't get user"
 
-  .catch (err)->
-    _.error err, 'local_signup_strategy verify err'
-    # might need to filter more than that to extract verification errors
-    done err
+  # the error will be logged by the final error_.handler
+  .catch done
 
 module.exports = new LocalStrategy options, verify

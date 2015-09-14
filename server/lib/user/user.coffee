@@ -12,6 +12,7 @@ cache_ = __.require 'lib', 'cache'
 couch_ = require 'inv-couch'
 gravatar = require 'gravatar'
 User = __.require 'models', 'user'
+preventMultiAccountsCreation = require './prevent_multi_accounts_creation'
 { byEmail, byEmails } = require './shared_user_handlers'
 
 
@@ -74,7 +75,10 @@ user_ =
     db.viewCustom 'byUsername', params
 
   create: (username, email, creationStrategy, language, password)->
-    @availability.username username
+    promises_.start()
+    .then preventMultiAccountsCreation.bind(null, username)
+    .then _.Complete(availability.username, availability, username)
+    # @availability.username username
     .then invitations_.findOneByEmail.bind(null, email)
     .then _.Log('invitedDoc')
     .then (invitedDoc)->
@@ -85,7 +89,6 @@ user_ =
         User.create username, email, creationStrategy, language, password
         .then db.postAndReturn
 
-    .catch _.ErrorRethrow('User create err')
     .then @_postCreation.bind(@)
 
   _postCreation: (user)->
@@ -208,6 +211,6 @@ getFriendsAndCoMembers = (userId)->
     groups_.findUserGroupsCoMembers(userId)
   ]
 
-user_.availability = require('./availability')(user_)
+user_.availability = availability = require('./availability')(user_)
 
 module.exports = _.extend user_, token_
