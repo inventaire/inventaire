@@ -10,10 +10,10 @@ module.exports = (req, res, next)->
   .catch error_.Handler(res)
 
 extractId = (res, entities)->
-  _.log entities, 'entities'
+  # _.log entities, 'entities'
   index = {}
   entities.forEach (entity)->
     {_id} = entity
     index[_id] = entity
-  _.log index, 'index'
+  # _.log index, 'index'
   res.send index

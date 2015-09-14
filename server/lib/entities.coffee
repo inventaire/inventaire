@@ -30,4 +30,4 @@ module.exports =
   getEntities: (ids)->
     ids = _.forceArray(ids)
     db.fetch(ids)
-    .then _.Log('getEntities res')
+    # .then _.Log('getEntities res')
