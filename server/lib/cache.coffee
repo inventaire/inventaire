@@ -88,7 +88,7 @@ returnOldValue = (key, err)->
 
 requestOnlyIfNeeded = (key, method, cached)->
   if cached?
-    _.info "from cache: #{key}"
+    # _.info "from cache: #{key}"
     cached.body
   else
     method()
