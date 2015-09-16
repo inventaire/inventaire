@@ -9,17 +9,18 @@ cacheDB = levelBase.simpleAPI 'cache'
 
 if CONFIG.resetCacheAtStartup then cacheDB.reset()
 
-oneMonth = 1000*60*60*24*30
+oneDay = 24*60*60*1000
+oneMonth = 30*oneDay
 
 module.exports =
   # EXPECT method to come with context and arguements .bind'ed
   # e.g. method = module.getData.bind(module, arg1, arg2)
-  get: (key, method, timespan=oneMonth)->
+  get: (key, method, timespan=oneMonth, retry=true)->
     types = ['string', 'function', 'number']
     try _.types arguments, types, 2
     catch err then return error_.reject(err, 500)
 
-    checkCache(key, timespan)
+    checkCache key, timespan, retry
     .then requestOnlyIfNeeded.bind(null, key, method)
     .catch (err)->
       _.warn err, "final cache_ err: #{key}"
@@ -44,15 +45,37 @@ module.exports =
     if timeSinceDataChange < defaultTime then timeSinceDataChange
     else defaultTime
 
-checkCache = (key, timespan)->
+checkCache = (key, timespan, retry)->
   cacheDB.get(key)
   .catch (err)->
     _.warn err, "checkCache err: #{key}"
     return
   .then (res)->
-    if res? and isFreshEnough(res.timestamp, timespan)
+    unless res? then return
+
+    { body, timestamp } = res
+    unless isFreshEnough timestamp, timespan then return
+
+    if retry then return retryIfEmpty res, key
+    else res
+
+retryIfEmpty = (res, key)->
+  { body, timestamp } = res
+  unless emptyBody body then return res
+  else
+    # if it was retried lately
+    if isFreshEnough timestamp, 2*oneDay
+      _.log key, 'empty cache value: retried lately'
       return res
-    else return
+    else
+      _.log key, 'empty cache value: retrying'
+      return
+
+emptyBody = (body)->
+  unless body? then return true
+  if _.isObject body then return _.objLength(body) is 0
+  if _.isString body then return body.length is 0
+  # doesnt expect other types
 
 returnOldValue = (key, err)->
   checkCache(key, Infinity)
@@ -65,6 +88,7 @@ returnOldValue = (key, err)->
 
 requestOnlyIfNeeded = (key, method, cached)->
   if cached?
+    _.info "from cache: #{key}"
     cached.body
   else
     method()

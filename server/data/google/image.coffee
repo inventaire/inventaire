@@ -13,13 +13,11 @@ module.exports = (data, timespan)->
 
   key = "image:#{data}"
   cache_.get key, requestImage.bind(null, data), timespan
-  .catch (err)-> _.error err, 'getImage err'
-
+  .catch _.ErrorRethrow('getImage err')
 
 requestImage = (data)->
   booksDataFromText(data)
   .then parseCachedData.bind(null, data)
-  .catch (err)-> _.error err, "google book err for data: #{data}"
 
 parseCachedData = (data, items)->
   inDataWords = InDataWordsTest(data)
