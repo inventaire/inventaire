@@ -9,8 +9,7 @@ cacheDB = levelBase.simpleAPI 'cache'
 
 if CONFIG.resetCacheAtStartup then cacheDB.reset()
 
-oneDay = 24*60*60*1000
-oneMonth = 30*oneDay
+{ oneDay, oneMonth } =  __.require 'lib', 'times'
 
 module.exports =
   # EXPECT method to come with context and arguements .bind'ed

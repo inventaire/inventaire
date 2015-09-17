@@ -6,6 +6,7 @@ user_ = __.require 'lib', 'user/user'
 promises_ = __.require 'lib', 'promises'
 User = __.require 'models', 'user'
 pw_ = __.require('lib', 'crypto').passwords
+{ oneHour } =  __.require 'lib', 'times'
 
 module.exports = (req, res, next)->
   {user, body} = req
@@ -67,7 +68,7 @@ passwordUpdater = (user, newHash)->
   return user
 
 testOpenResetPasswordWindow = (resetPassword)->
-  if _.expired(resetPassword, 3600*1000)
+  if _.expired resetPassword, oneHour
     error_.reject 'reset password timespan experied', 400
   else
     promises_.resolve()

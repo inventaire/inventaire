@@ -5,7 +5,7 @@ cache_ = __.require 'lib', 'cache'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
 # extending cache validity for limited APIs
-oneYear = 365*24*3600*1000
+{ oneYear } =  __.require 'lib', 'times'
 
 # getDataFromIsbn
 module.exports = (isbn, timespan=oneYear)->

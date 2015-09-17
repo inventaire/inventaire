@@ -1,6 +1,7 @@
 CONFIG = require 'config'
 __ = require('config').root
 _ = __.require 'builders', 'utils'
+{ oneMinute } =  __.require 'lib', 'times'
 
 attemptsLimit = 10
 periodMinutes = 5
@@ -8,7 +9,7 @@ periodMinutes = 5
 fails = {}
 flushFails = -> fails = {}
 
-setInterval flushFails, periodMinutes*60*1000
+setInterval flushFails, periodMinutes*oneMinute
 
 module.exports =
   _fails: -> fails

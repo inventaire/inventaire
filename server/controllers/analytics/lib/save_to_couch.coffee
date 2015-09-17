@@ -2,6 +2,7 @@ CONFIG = require 'config'
 { verbosity } = CONFIG
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
+{ oneMinute, HalfAnHour} =  __.require 'lib', 'times'
 
 analyticsCouchDB = __.require('couch', 'base')('analytics', 'reports')
 
@@ -34,7 +35,6 @@ module.exports = (analyticsLevelDB)->
       lastTime = Number(lastTime)
       # arbitrary choosing 5 minutes
       # given session with last time older than 30 sec are finished
-      HalfAnHour = 30 * 60 * 1000
       return (lastTime + HalfAnHour) < refTime
     else return false
 
@@ -63,12 +63,12 @@ module.exports = (analyticsLevelDB)->
   logStats = (stats)->
     if verbosity > 2
       cb = -> _.info(stats, "analytics transfered to Couchdb")
-      setTimeout cb , 60*1000
+      setTimeout cb , oneMinute
 
 
   # let 20 seconds to the server to finish to start before transfering
   setTimeout saveToCouch, 20 * 1000
   # the transfering every half hour
-  setInterval saveToCouch, 30 * 60 * 1000
+  setInterval saveToCouch, HalfAnHour
 
   return saveToCouch

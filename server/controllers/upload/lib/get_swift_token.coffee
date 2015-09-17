@@ -2,6 +2,8 @@ CONFIG = require 'config'
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
+{ tenMinutes } =  __.require 'lib', 'times'
+
 
 # /!\ lots of weird version issues possible making most of the libs irrelevant
 # Identity: v2
@@ -13,7 +15,6 @@ breq = require 'bluereq'
 lastToken = null
 lastTokenExpirationTime = 0
 # let a 10 minutes margin before token expiration
-tenMinutes = 10*60*1000
 tokenExpired = -> _.now() > (lastTokenExpirationTime - tenMinutes)
 
 module.exports = ->

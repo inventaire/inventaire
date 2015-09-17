@@ -4,7 +4,8 @@ books_ = __.require 'lib','books'
 cache_ = __.require 'lib', 'cache'
 promises_ = __.require 'lib', 'promises'
 # extending cache validity for limited APIs
-oneYear = 365*24*3600*1000
+{ oneYear } =  __.require 'lib', 'times'
+
 
 # getDataFromText
 module.exports = (text, timespan=oneYear)->

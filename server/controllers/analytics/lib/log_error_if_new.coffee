@@ -1,12 +1,13 @@
 CONFIG = require 'config'
 __ = require('config').root
 _ = __.require 'builders', 'utils'
+{ oneDay } =  __.require 'lib', 'times'
 
 # keeping track of errors hash to avoid logging errors
 # everytimes a session updates
 errorList = {}
 flushErrors = -> errorList = {}
-setInterval flushErrors, 24 * 3600 * 1000
+setInterval flushErrors, oneDay
 
 module.exports = (err, fullReport)->
   {hash} = err

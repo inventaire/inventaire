@@ -7,7 +7,7 @@ endpoint = CONFIG.images.localEndpoint()
 { maxSize } = CONFIG.images
 request = require 'request'
 qs = require 'querystring'
-oneYear = 365*24*3600*1000
+{ oneYear } =  __.require 'lib', 'times'
 
 # resized images urls looks like /img/#{w}x#{h}/(#{hash}.jpg|#{external url hashCode?href=escaped url})"
 
