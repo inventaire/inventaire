@@ -38,7 +38,7 @@ attachAuthors = (bookData)->
 
 
 parseBookData = (isbn, bookData)->
-  { title, authors, publish_date } = bookData
+  { title, authors, publish_date, number_of_pages } = bookData
   return data =
     title: title
     authors: authors
@@ -47,5 +47,6 @@ parseBookData = (isbn, bookData)->
     # matching Google Books vocabulary
     publisher: publishers?[0]
     publishedDate: publish_date
+    pageCount: number_of_pages
     pictures: [ coverByIsbn(isbn) ]
     source: 'openlibrary'
