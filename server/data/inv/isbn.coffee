@@ -2,6 +2,7 @@ __ = require('config').root
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 entities_ = __.require 'lib', 'entities'
+{ stringObject } = require '../wrappers'
 
 module.exports = (isbn)->
   entities_.byIsbn isbn
@@ -10,14 +11,11 @@ module.exports = (isbn)->
 
 
 parseBooksData = (isbn, book)->
-  result = {}
-  if book?
-    book.uri = findUri book
-    book.pictures or= []
-    result[isbn] = book
-  return result
+  unless book? then return
 
-findUri = (book)->
-  { _id, isbn } = book
-  if isbn? then "isbn:#{isbn}"
-  else "inv:#{_id}"
+  book.authors = book.authors?.map stringObject
+
+  return _.extend book,
+    uri: "isbn:#{isbn}"
+    pictures: []
+    source: 'inv'

@@ -6,6 +6,7 @@ wdk = require 'wikidata-sdk'
 wd = __.require('sharedLibs', 'wikidata')(promises_, _, wdk)
 wd.sitelinks = __.require 'sharedLibs','wiki_sitelinks'
 { Q } = __.require 'sharedLibs','wikidata_aliases'
+{ base } = wd.API.wikidata
 
 searchEntities = (search, language='en', limit='20', format='json')->
   url = wd.API.wikidata.search(search, language).logIt('searchEntities')
@@ -53,6 +54,26 @@ validIfIsAnAuthor = getP31Tester(Q.humans)
 
 whitelistedEntity = (id)-> id in P31Whitelist
 
+resolveWikiUrl = (url)->
+  _.log url, 'resolveWikiUrl'
+  lang = url.replace /.*\/\/([a-z]{2,3})\..*/, '$1'
+  title = url.split('/').last()
+  resolveWikiTitle title, lang
+
+resolveWikiTitle = (title, lang='en')->
+  url = "#{base}?action=wbgetentities&sites=#{lang}wiki&format=json&props=info&titles=#{title}"
+  promises_.get url
+  .then _.property('entities')
+  .then _.values
+  .then _.Log('values')
+  .then (entities)-> entities.map(_.property('id'))
+  .then _.Log('ids')
+  .then (ids)->
+    if ids.length isnt 1 then throw new Error 'id not found'
+    return ids[0]
+  .then _.Log('ids?')
+  .catch _.ErrorRethrow('resolveWikiTitle err')
+
 
 # Only extending with wdk.helpers instead of every wdk functions
 # in order to avoid overwritting local functions.
@@ -61,3 +82,4 @@ whitelistedEntity = (id)-> id in P31Whitelist
 module.exports = _.extend wd, wdk.helpers,
   searchEntities: searchEntities
   filterAndBrush: filterAndBrush
+  resolveWikiUrl: resolveWikiUrl

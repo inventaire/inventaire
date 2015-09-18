@@ -4,12 +4,13 @@ promises_ = __.require 'lib', 'promises'
 
 getGoogleDataFromIsbn =  __.require 'data', 'google/isbn'
 getInvEntitiesDataFromIsbn =  __.require 'data', 'inv/isbn'
+getOpenLibraryDataFromIsbn =  __.require 'data', 'openlibrary/isbn'
 
 module.exports = (isbn)->
   promises_.settle [
+    getOpenLibraryDataFromIsbn(isbn)
     getGoogleDataFromIsbn(isbn)
     getInvEntitiesDataFromIsbn(isbn)
   ]
-  .spread (googleRes, invRes)->
-    if googleRes?[isbn]? then googleRes
-    else invRes
+  .spread (openlibraryRes, googleRes, invRes)->
+    return openlibraryRes or googleRes or invRes

@@ -6,12 +6,13 @@ error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
 # extending cache validity for limited APIs
 { oneYear } =  __.require 'lib', 'times'
+{ stringObject } = require '../wrappers'
 
 # getDataFromIsbn
-module.exports = (isbn, timespan=oneYear)->
+module.exports = (isbn, maxAge=oneYear)->
   isbn = cleanIsbn(isbn)
   key = "google:#{isbn}"
-  cache_.get key, requestBooksDataFromIsbn.bind(null, isbn), timespan
+  cache_.get key, requestBooksDataFromIsbn.bind(null, isbn), maxAge
 
 
 requestBooksDataFromIsbn = (isbn)->
@@ -34,16 +35,14 @@ parseBooksData = (isbn, res)->
     _.warn "no item found for: #{isbn}"
     return
 
-  book = findBook(items, isbn)
+  book = findBook items, isbn
 
   unless book?
-    _.warn "couldn't find the right book: #{isbn}"
+    _.warn "Google Books couldn't find the right book: #{isbn}"
     return
 
-  result = {}
-  result[isbn] = book
-  return result
-
+  book.authors = book.authors?.map stringObject
+  return book
 
 
 findBook = (items, isbn)->
