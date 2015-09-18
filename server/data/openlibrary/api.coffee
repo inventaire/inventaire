@@ -12,6 +12,6 @@ module.exports =
   base: base
   getUrlFromKey: getUrlFromKey
   isbnUrl: (isbn)-> "#{base}/isbn/#{isbn}"
-  coverByIsbn: (isbn, type='b')-> "#{coverBase}/#{type}/isbn/#{isbn}.jpg"
+  coverByIsbn: (isbn)-> "#{coverBase}/b/isbn/#{isbn}.jpg"
   coverByOlId: (olId, type='b')-> "#{coverBase}/#{type}/olid/#{olId}.jpg"
   coverByOclcId: (oclcId, type='b')-> "#{coverBase}/#{type}/oclc/#{oclcId}.jpg"

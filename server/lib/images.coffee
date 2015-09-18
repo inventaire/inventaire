@@ -48,10 +48,10 @@ module.exports =
 
   check: (url)->
     fastimage.info url
-    .then checkImageData
+    .then checkImageSize
     .catch formatCheckErr.bind(null, url)
 
-checkImageData = (data)->
+checkImageSize = (data)->
   { size } = data
   if size > maxWeight
     throw error_.new 'image is too big', 400
