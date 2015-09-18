@@ -26,5 +26,6 @@ legacyCacheCompatibility = (isbnsData)->
   isbnsData.map (isbnData)->
     # case when the isbnData is returned as a one object index
     # ex: { "9782227479005": {[data]} }
+    _.type isbnData, 'object'
     if _.objLength(isbnData) is 1 then _.values(isbnData)[0]
     else isbnData
