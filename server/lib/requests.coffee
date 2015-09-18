@@ -6,11 +6,15 @@ req = (verb, url, options)->
   breq[verb] mergeOptions(url, options)
   .then getBody
 
+# default to JSON
+baseOptions =
+  headers:
+    accept: 'application/json'
+
 # merge options to fit the 'request' lib interface
 # which is wrapped by breq
-mergeOptions = (url, options)->
-  if options? then _.extend options, {url: url}
-  else url
+mergeOptions = (url, options={})->
+  _.extend baseOptions, options, {url: url}
 
 getBody = _.property 'body'
 
