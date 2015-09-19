@@ -8,6 +8,7 @@ wikidata_ = __.require 'lib', 'wikidata'
 
 getWikidataBookEntities = __.require 'data', 'wikidata/books'
 getWikidataBookEntitiesByIsbn = __.require 'data', 'wikidata/books_by_isbn'
+searchOpenLibrary = __.require 'data', 'openlibrary/search'
 
 module.exports = searchEntity = (req, res)->
   {query} = req
@@ -61,6 +62,9 @@ searchByText = (query, res)->
     getWikidataBookEntities(query)
     .then (items)-> {items: items, source: 'wd', search: query.search}
     .catch _.Error('wikidata getBookEntities err')
+
+    searchOpenLibrary(query)
+    .then (items)-> {items: items, source: 'ol', search: query.search}
 
     booksData_.getDataFromText(query.search)
     .then (res)-> {items: res, source: 'google', search: query.search}

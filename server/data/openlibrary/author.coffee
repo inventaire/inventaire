@@ -11,7 +11,8 @@ cache_ = __.require 'lib', 'cache'
 
 module.exports = (olAuthorKey)->
   unless validAuthorKey olAuthorKey
-    throw new Error 'invalid author key'
+    _.warn olAuthorKey, 'invalid author key'
+    return promises_.reject new Error 'invalid author key'
 
   key = "ol:#{olAuthorKey}"
   cache_.get key, requestOpenLibraryData.bind(null, olAuthorKey), oneYear

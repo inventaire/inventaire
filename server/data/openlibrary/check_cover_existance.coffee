@@ -2,6 +2,7 @@ __ = require('config').root
 _ = __.require 'builders', 'utils'
 fastimage = require 'fastimage'
 cache_ = __.require 'lib', 'cache'
+error_ = __.require 'lib', 'error/error'
 { oneMonth } =  __.require 'lib', 'times'
 
 module.exports = (url, maxAge=oneMonth)->

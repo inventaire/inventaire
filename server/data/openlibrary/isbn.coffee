@@ -3,9 +3,9 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 cache_ = __.require 'lib', 'cache'
 promises_ = __.require 'lib', 'promises'
-{ getUrlFromKey, isbnUrl, coverByIsbn } = require './api'
-getAuthors = require './authors'
+{ getUrlFromKey, isbnUrl } = require './api'
 { oneYear } =  __.require 'lib', 'times'
+formatBook = require './format_book'
 
 module.exports = (isbn, maxAge=oneYear)->
   key = "ol:#{isbn}"
@@ -13,7 +13,6 @@ module.exports = (isbn, maxAge=oneYear)->
 
 requestBook = (isbn)->
   getBooksDataByIsbn isbn
-  .then attachAuthors
   .then parseBookData.bind(null, isbn)
   .catch (err)->
     unless err.status is 404 then throw err
@@ -29,24 +28,6 @@ getBooksDataByIsbn = (isbn)->
     if key? then promises_.get getUrlFromKey(key)
     else throw error_.new 'openlibrary: book not found', 404, isbn
 
-attachAuthors = (bookData)->
-  { authors } = bookData
-  getAuthors authors
-  .then (authorsData)->
-    bookData.authors = authorsData
-    return bookData
-
-
 parseBookData = (isbn, bookData)->
-  { title, authors, publish_date, number_of_pages } = bookData
-  return data =
-    title: title
-    authors: authors
-    isbn: isbn
-    uri: "isbn:#{isbn}"
-    # matching Google Books vocabulary
-    publisher: publishers?[0]
-    publishedDate: publish_date
-    pageCount: number_of_pages
-    pictures: [ coverByIsbn(isbn) ]
-    source: 'openlibrary'
+  bookData.isbn = isbn
+  return formatBook bookData
