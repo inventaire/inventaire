@@ -45,7 +45,10 @@ module.exports =
     use: [
       #handled by the Nginx server in production
       security.allowCrossDomain
-      security.cspPolicy
+      # BEFORE REACTIVATING:
+      # - check DataUrl (used by profile picture)
+      # - check new Worker(BlobUrl) (used by quagga.js. see https://github.com/greasemonkey/greasemonkey/issues/1803 for bug)
+      # security.cspPolicy
     ]
     set:
       debug: 'on'

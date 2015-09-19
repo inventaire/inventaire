@@ -31,8 +31,7 @@ parseBooksData = (isbn, res)->
 
   {items} = res
   unless items?.length > 0
-    _.error res, 'Google Book response'
-    _.warn "no item found for: #{isbn}"
+    _.warn res, "no item found for: #{isbn}"
     return
 
   book = findBook items, isbn

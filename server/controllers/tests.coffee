@@ -10,8 +10,8 @@ module.exports =
     res.json {server: 'GET OK'}
 
   post: (req, res, next)->
-    _.log req.query, 'query'
-    _.log req.headers, 'headers'
+    # _.log req.query, 'query'
+    # _.log req.headers, 'headers'
 
     # useful to see text/plain bodys
     if isPlainText(req)
