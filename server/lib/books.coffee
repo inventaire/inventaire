@@ -2,6 +2,7 @@ CONFIG = require('config')
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 { useKey, key } = CONFIG.googleBooks
+isbn_ = require('isbn2').ISBN
 
 promises_ = require './promises'
 module.exports = books_ = __.require('sharedLibs','books')(_)
@@ -20,9 +21,7 @@ _.extend books_, normalizeBookData,
       # not using the form "isbn:#{isbn}" as some results don't appear
       # with the prefix 'isbn:'
       isbn: (isbn)-> @book isbn
-    worldcat:
-      # http://xisbn.worldcat.org/xisbnadmin/doc/api.htm
-      isbnBaseRoute: 'http://xisbn.worldcat.org/webservices/xid/isbn/'
-      to10: (isbn13)-> @isbnBaseRoute + "#{isbn13}?method=to10&format=json"
-      to13: (isbn10)-> @isbnBaseRoute + "#{isbn10}?method=to13&format=json"
-      hyphen: (isbn)-> @isbnBaseRoute + "#{isbn10}?method=hyphen&format=json"
+
+  # arguments: isbn:String, hyphenate:Boolean
+  toIsbn13: isbn_.asIsbn13
+  toIsbn10: isbn_.asIsbn13
