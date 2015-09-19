@@ -52,4 +52,6 @@ module.exports = base =
   ok: (res, status=200)->
     res.status(status).json {ok: true}
 
+  Map: (fn)-> (array)-> array.map fn
+
 base.Ok = (res, status)-> base.ok.bind(null, res, status)
