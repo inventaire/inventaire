@@ -13,12 +13,10 @@ module.exports = (req, res, next) ->
 
   promises_.settle promises
   .then legacyCacheCompatibility
-  .then (isbnsData)-> _.indexBy isbnsData, 'isbn'
-  .then _.Log('isbnIndex')
+  .then indexIsbnsData
+  .then _.Tap(logMissingIsbnsData.bind(null, isbns))
   .then res.json.bind(res)
   .catch error_.Handler(res)
-
-
 
 # avoiding to delete all the cache by maintaining retrocompatibility
 # could be removed once all the cache has been updated
@@ -29,3 +27,11 @@ legacyCacheCompatibility = (isbnsData)->
     _.type isbnData, 'object'
     if _.objLength(isbnData) is 1 then _.values(isbnData)[0]
     else isbnData
+
+indexIsbnsData = (isbnsData)-> _(isbnsData).filter(hasIsbn).indexBy('isbn').value()
+
+hasIsbn = (data)-> data.isbn?
+
+logMissingIsbnsData = (isbns, index)->
+  if _.objLength(index) isnt isbns.length
+    _.warn [isbns, index], 'missing isbns data'
