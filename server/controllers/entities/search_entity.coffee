@@ -63,8 +63,8 @@ searchByText = (query, res)->
     .then (items)-> {items: items, source: 'wd', search: query.search}
     .catch _.Error('wikidata getBookEntities err')
 
-    searchOpenLibrary(query)
-    .then (items)-> {items: items, source: 'ol', search: query.search}
+    # searchOpenLibrary(query)
+    # .then (items)-> {items: items, source: 'ol', search: query.search}
 
     booksData_.getDataFromText(query.search)
     .then (res)-> {items: res, source: 'google', search: query.search}
