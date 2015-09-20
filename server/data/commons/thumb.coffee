@@ -30,7 +30,7 @@ requestThumb = (fileName, width)->
       author: file?[0]?.author?.toString()
       error: error?[0]
   .then parseData.bind(null, fileName, options.url)
-  .error _.Error('requestThumb')
+  .error _.Error("requestThumb: #{fileName}")
 
 requestOptions = (file, width)->
   url: "http://tools.wmflabs.org/magnus-toolserver/commonsapi.php?image=#{file}&thumbwidth=#{width}"

@@ -13,5 +13,4 @@ module.exports = (isbn)->
     getInvEntitiesDataFromIsbn(isbn)
   ]
   .spread (openlibraryRes, googleRes, invRes)->
-    _.log arguments, isbn
     return openlibraryRes or googleRes or invRes or {}
