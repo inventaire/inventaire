@@ -15,7 +15,7 @@ module.exports =
   # EXPECT method to come with context and arguements .bind'ed
   # e.g. method = module.getData.bind(module, arg1, arg2)
   get: (key, method, timespan=oneMonth, retry=true)->
-    types = ['string', 'function', 'number']
+    types = ['string', 'function', 'number', 'boolean']
     try _.types arguments, types, 2
     catch err then return error_.reject(err, 500)
 
