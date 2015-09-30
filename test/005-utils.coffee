@@ -8,11 +8,12 @@ trycatch = require 'trycatch'
 
 describe 'UTILS', ->
   describe 'env', ->
-    it "should have loggers, types and misc utils", (done)->
+    it "should have loggers, types, tests and misc utils", (done)->
       console.log '_', _
       console.log '_.types', _.types
       _.type.should.be.a.Function
       _.types.should.be.a.Function
+      _.isLocalImg.should.be.a.Function
       done()
 
   describe 'hashCode', ->

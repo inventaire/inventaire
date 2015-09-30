@@ -10,8 +10,10 @@ server_ = __.require 'utils', 'base'
 logs_ = __.require('utils', 'logs')(_)
 json_ = __.require 'utils', 'json'
 
+regex_ = __.require 'sharedLibs', 'regex'
+tests_ = __.require('sharedLibs', 'tests')(regex_)
 
-module.exports = _.extend _, server_, logs_, json_
+module.exports = _.extend _, server_, logs_, json_, tests_
 
 # GLOBALS
 # building it there as utils are required everywhere
