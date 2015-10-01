@@ -3,13 +3,13 @@ __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 
-tests = require './tests/common-tests'
-
 module.exports = Group = {}
+
+Group.tests = tests = require './tests/group'
 
 Group.create = (name, creatorId)->
   tests.pass 'userId', creatorId
-  tests.pass 'nonEmptyString', name, 60
+  tests.pass 'name', name
 
   creator = createMembership creatorId, null
 
@@ -82,3 +82,5 @@ findMembership = (userId, group, previousCategory, wanted)->
 Group.categories =
   members: [ 'admins', 'members' ]
   users: [ 'admins', 'members', 'invited', 'requested' ]
+
+Group.attributes = require './attributes/group'

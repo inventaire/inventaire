@@ -18,7 +18,6 @@ handleRequest = (userId, groupId, requesterId)->
     unless requesterInRequested
       throw error_.new "request not found", 401, requesterId, groupId
 
-
 verifyRightsToInvite = (invitorId, groupId, invitedId)->
   promises_.all [
     user_.areFriends(invitorId, invitedId)
@@ -31,6 +30,12 @@ controlRights = (context, usersAreFriends, invitorInGroup)->
     throw error_.new "users aren't friends", 403, context
   unless invitorInGroup
     throw error_.new "invitor isn't in group", 403, context
+
+verifyAdminRights = (userId, groupId)->
+  groups_.userInAdmins userId, groupId
+  .then (bool)->
+    unless bool
+      throw error_.new 'user isnt a group admin', 403, userId, groupId
 
 module.exports =
   invite: verifyRightsToInvite
@@ -51,3 +56,4 @@ module.exports =
 
   acceptRequest: handleRequest
   refuseRequest: handleRequest
+  updateSettings: verifyAdminRights

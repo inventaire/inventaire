@@ -4,7 +4,6 @@ _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
 Group = __.require 'models', 'group'
-Radio = __.require 'lib', 'radio'
 
 db = __.require('couch', 'base')('users', 'groups')
 
@@ -36,18 +35,19 @@ groups_ =
     groups_.byId groupId
     .then _.partial(Group.findInvitation, userId, _, true)
 
-  membershipUpdate: (action, groupId, userId, secondaryUserId)->
-    db.update groupId, Group[action].bind(null, userId, secondaryUserId)
-    .then -> Radio.emit "group:#{action}", groupId, userId, secondaryUserId
+
+updateGroup = require('./update_group')(db)
+MembershipUpdate = require('./membership_update')(db)
 
 actions =
-  invite: groups_.membershipUpdate.bind(null, 'invite')
-  accept: groups_.membershipUpdate.bind(null, 'accept')
-  decline: groups_.membershipUpdate.bind(null, 'decline')
-  request: groups_.membershipUpdate.bind(null, 'request')
-  cancelRequest: groups_.membershipUpdate.bind(null, 'cancelRequest')
-  acceptRequest: groups_.membershipUpdate.bind(null, 'acceptRequest')
-  refuseRequest: groups_.membershipUpdate.bind(null, 'refuseRequest')
+  invite: MembershipUpdate 'invite'
+  accept: MembershipUpdate 'accept'
+  decline: MembershipUpdate 'decline'
+  request: MembershipUpdate 'request'
+  cancelRequest: MembershipUpdate 'cancelRequest'
+  acceptRequest: MembershipUpdate 'acceptRequest'
+  refuseRequest: MembershipUpdate 'refuseRequest'
+  updateSettings: updateGroup
 
 usersLists = require('./users_lists')(groups_)
 

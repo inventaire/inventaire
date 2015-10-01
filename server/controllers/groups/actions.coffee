@@ -6,12 +6,16 @@ groups_ = require './lib/groups'
 tests = __.require 'models','tests/common-tests'
 rightsVerification = require './lib/rights_verification'
 
+memberActions = [ 'invite', 'accept', 'decline', 'request', 'cancelRequest', 'acceptRequest', 'refuseRequest' ]
+adminActions = [ 'updateSettings' ]
+
 module.exports =
-  possibleActions: [ 'invite', 'accept', 'decline', 'request', 'cancelRequest', 'acceptRequest', 'refuseRequest' ]
+  possibleActions: memberActions.concat adminActions
 
   handleAction: (action, req, res)->
+    { body } = req
     # user is needed for invite, acceptRequest, refuseRequest controllers only
-    { group, user } = req.body
+    { group, user } = body
     userId = req.user._id
 
     if user? and not tests.valid 'userId', user
@@ -21,6 +25,6 @@ module.exports =
       return error_.bundle res, "invalid groupId", 400, group
 
     rightsVerification[action](userId, group, user)
-    .then groups_[action].bind(null, group, userId, user)
+    .then groups_[action].bind(null, body)
     .then _.Ok(res)
     .catch error_.Handler(res)
