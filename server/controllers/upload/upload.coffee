@@ -44,7 +44,7 @@ exports.putImage = putImage = (fileData)->
   resizePath = if keepOldFile then "#{path}_resized" else path
 
   images_.shrink path, resizePath
-  .then _.Complete(images_.getHashFilename, null, resizePath)
+  .then _.Full(images_.getHashFilename, null, resizePath)
   .then client.putImage.bind(null, resizePath)
   .then _.Log('new image url')
   .then checkRelativeUrl

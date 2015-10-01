@@ -77,7 +77,7 @@ user_ =
   create: (username, email, creationStrategy, language, password)->
     promises_.start()
     .then preventMultiAccountsCreation.bind(null, username)
-    .then _.Complete(availability.username, availability, username)
+    .then _.Full(availability.username, availability, username)
     # @availability.username username
     .then invitations_.findOneByEmail.bind(null, email)
     .then _.Log('invitedDoc')
