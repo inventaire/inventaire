@@ -3,6 +3,7 @@ __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 Group = __.require 'models', 'group'
 error_ = __.require 'lib', 'error/error'
+{ BasicUpdater } = __.require 'lib', 'doc_updates'
 
 module.exports = (db)->
   updateGroup = (data)->
@@ -14,6 +15,4 @@ module.exports = (db)->
     unless Group.tests[attribute](value)
       throw error_.new "invalid #{attribute}: #{value}", 400, data
 
-    return db.update group, (doc)->
-      doc[attribute] = value
-      return doc
+    return db.update group, BasicUpdater(attribute, value)
