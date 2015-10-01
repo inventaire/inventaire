@@ -3,40 +3,9 @@ _ = __.require 'builders', 'utils'
 
 User = __.require 'models', 'user'
 user_ = __.require 'lib', 'user/user'
-transactions_ = __.require 'controllers', 'transactions/lib/transactions'
-groups_ = __.require 'controllers', 'groups/lib/groups'
-Promise = require 'bluebird'
-Radio = __.require 'lib', 'radio'
 error_ = __.require 'lib', 'error/error'
 
-module.exports.getUser = (req, res, next) ->
-  # implies that req.isAuthenticated() is true
-  userData = securedData req.user
-  userId = userData._id
-
-  getUserData userId
-  .spread AttachUserData(userData)
-  .then res.json.bind(res)
-  .catch error_.Handler(res)
-
-getUserData = (userId)->
-  Promise.all([
-    user_.getUserRelations(userId)
-    user_.getNotifications(userId)
-    transactions_.byUser(userId)
-    groups_.allUserGroups(userId)
-  ])
-
-AttachUserData = (userData)->
-  attach = (relations, notifications, transactions, groups)->
-    _.extend userData,
-      relations: relations
-      notifications: notifications
-      transactions: transactions
-      groups: groups
-
-
-module.exports.updateUser = (req, res, next) ->
+module.exports = (req, res, next) ->
   # implies that req.isAuthenticated() is true
   {attribute, value} = req.body
   {user} = req
@@ -113,5 +82,3 @@ archivePreviousEmail = (doc)->
 updateConfirmation = (res, doc)->
   _.success doc, 'updateConfirmation'
   res.send('ok')
-
-securedData = (user)-> _.pick user, User.attributes.ownerSafe

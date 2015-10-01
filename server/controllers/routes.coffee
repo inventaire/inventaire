@@ -4,7 +4,7 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 
 auth = require './auth/auth'
-user = require './user'
+user = require './user/user'
 items = require './items/items'
 users = require './users'
 relations = require './relations/relations'
@@ -51,8 +51,8 @@ routes =
     get: auth.token
 
   'api/user':
-    get: user.getUser
-    put: user.updateUser
+    get: user.get
+    put: user.update
 
   'api/users/public':
     get: users.publicActions
