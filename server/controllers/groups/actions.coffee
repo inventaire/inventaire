@@ -25,6 +25,6 @@ module.exports =
       return error_.bundle res, "invalid groupId", 400, group
 
     rightsVerification[action](userId, group, user)
-    .then groups_[action].bind(null, body)
+    .then groups_[action].bind(null, body, userId)
     .then _.Ok(res)
     .catch error_.Handler(res)
