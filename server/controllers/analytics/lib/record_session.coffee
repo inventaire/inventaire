@@ -14,7 +14,6 @@ module.exports = (analytics_)->
     promises_.start()
     .then addUserInfo.bind(null, req)
     .then addUserId.bind(null, req)
-    .then addIpData
     .then addFingerPrint
     .then analytics_.update
     .catch (err)->
@@ -46,19 +45,6 @@ module.exports = (analytics_)->
       report.user.id = userId
       return report
     .catch (err)-> _.error err, 'addUserId err'
-
-
-  addIpData = (report)->
-    {ip} = report.user
-    if ip?
-      analytics_.getIpData(ip)
-      .then (ipData)->
-        if ipData?
-          report.user.country = ipData.country
-        return report
-      .catch (err)-> _.error err, 'addIpData err'
-
-    else return report
 
   addFingerPrint = (report)->
     {ip, userAgent} = report.user

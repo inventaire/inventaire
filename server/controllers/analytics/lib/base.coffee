@@ -1,26 +1,16 @@
 CONFIG = require 'config'
 __ = require('config').root
 _ = __.require 'builders', 'utils'
-Promise = require 'bluebird'
 crypto_ = __.require 'lib', 'crypto'
-
 
 levelBase = __.require 'level', 'base'
 analyticsLevelDB = levelBase.simpleAPI 'analytics'
-cache_ = __.require 'lib', 'cache'
-satelize = Promise.promisify require('satelize').satelize
 
 base =
   update: (report)->
     key = report._id
     analyticsLevelDB.put key, report
     .catch (err)-> _.error err, "coudnt update analyticsLevelDB for #{key}"
-
-  getIpData: (ip)->
-    key = "ip:#{ip}"
-    cache_.get key, satelize.bind(null, {ip: ip})
-    .then JSON.parse
-    .catch (err)-> _.warn err, 'couldnt recover ip data'
 
   getHeadersIp: (req)->
     ip = req.headers['x-forwarded-for']

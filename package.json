@@ -65,7 +65,6 @@
     "passport-browserid": "^0.1.4",
     "passport-local": "^1.0.0",
     "request": "^2.51.0",
-    "satelize": "^0.1.0",
     "serve-favicon": "^2.1.7",
     "simple-uuid": "0.0.1",
     "wikidata-sdk": "^1.4.2",
