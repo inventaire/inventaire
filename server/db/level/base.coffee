@@ -53,7 +53,7 @@ module.exports =
         .on 'end', =>
           @batch(ops)
           .then -> _.log 'reset succesfully'
-          .catch (err)-> _.error err, 'reset failed'
+          .catch _.Error('reset failed')
 
     return API
 

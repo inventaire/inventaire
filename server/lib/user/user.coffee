@@ -62,8 +62,7 @@ user_ =
       if docs?[0]?
         return @publicUserData(docs[0])
       else return
-    .catch (err)->
-      _.error err, 'couldnt getUserFromUsername'
+    .catch _.Error('couldnt getUserFromUsername')
 
   usernameStartBy: (username, options)->
     username = username.toLowerCase()

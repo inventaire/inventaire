@@ -35,7 +35,7 @@ module.exports =
     _.log url, 'url'
     bluereq.put url, _securityDoc
     .then (res)-> _.info res.body, 'putSecurityDoc'
-    .catch (err)-> _.error err, 'putSecurityDoc'
+    .catch _.Error('putSecurityDoc')
 
   loadFakeUsers: require './load_fake_users'
 

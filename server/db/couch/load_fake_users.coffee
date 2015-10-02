@@ -21,7 +21,7 @@ loadFakeUser = (username)->
   bluereq.get('http://api.randomuser.me/')
   .then getUserData.bind(null, username)
   .then postUser
-  .catch (err)-> _.error err
+  .catch _.Error('loadFakeUser')
 
 getUserData = (username, res)->
   fake = res.body.results[0].user
@@ -34,4 +34,4 @@ getUserData = (username, res)->
 postUser = (data)->
   bluereq.post usersDbUrl, data
   .then (res)-> _.info res.body, 'postUser'
-  .catch (err)-> _.error err, 'postUser'
+  .catch _.Error('postUser')

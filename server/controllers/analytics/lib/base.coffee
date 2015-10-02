@@ -10,7 +10,7 @@ base =
   update: (report)->
     key = report._id
     analyticsLevelDB.put key, report
-    .catch (err)-> _.error err, "coudnt update analyticsLevelDB for #{key}"
+    .catch _.Error("coudnt update analyticsLevelDB for #{key}")
 
   getHeadersIp: (req)->
     ip = req.headers['x-forwarded-for']

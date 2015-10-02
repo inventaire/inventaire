@@ -14,7 +14,7 @@ requestBookEntityByIsbn = (isbn, type, lang)->
   url = wikidataIsbnClaim(isbn, type)
   promises_.get(url)
   .then parseResponse.bind(null, isbn)
-  .catch (err)-> _.error err, 'err at getBookEntityByIsbn'
+  .catch _.Error('err at getBookEntityByIsbn')
 
 wikidataIsbnClaim = (isbn, type)->
   switch type

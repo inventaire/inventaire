@@ -44,7 +44,7 @@ module.exports = (analytics_)->
     .then (userId)->
       report.user.id = userId
       return report
-    .catch (err)-> _.error err, 'addUserId err'
+    .catch _.Error('addUserId err')
 
   addFingerPrint = (report)->
     {ip, userAgent} = report.user
