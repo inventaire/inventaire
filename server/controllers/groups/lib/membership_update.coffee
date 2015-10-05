@@ -6,8 +6,7 @@ Radio = __.require 'lib', 'radio'
 
 module.exports = (db)->
   membershipUpdate = (action, data, userId)->
-    groupId = data.group
-    secondaryUserId = data.user
+    { group:groupId, user:secondaryUserId } = data
     db.update groupId, Group[action].bind(null, userId, secondaryUserId)
     .then -> Radio.emit "group:#{action}", groupId, userId, secondaryUserId
 
