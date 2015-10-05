@@ -3,7 +3,7 @@ __ = CONFIG.root
 _ = __.require('builders', 'utils')
 Item = __.require 'models', 'item'
 error_ = __.require 'lib', 'error/error'
-
+{ BasicUpdater } = __.require 'lib', 'doc_updates'
 
 db = __.require('couch', 'base')('items')
 
@@ -75,9 +75,7 @@ module.exports = items_ =
 
   setBusyness: (id, busy)->
     _.types arguments, ['string', 'boolean']
-    db.update id, (doc)->
-      doc.busy = busy
-      return doc
+    db.update id, BasicUpdater('busy', busy)
 
   fork: (id, options)->
     db.get id
@@ -86,10 +84,7 @@ module.exports = items_ =
 
   archive: (id)->
     _.type id, 'string'
-    db.update id, (doc)->
-      doc.archived = true
-      return doc
-
+    db.update id, BasicUpdater('archived', true)
 
 safeItems = (items)->
   items.map (item)->

@@ -9,13 +9,16 @@ valueAlreayUpToDate = (currentValue, value)->
   return false
 
 basicUpdater = (attribute, value, doc)->
-  # could be a one-line as _.set returns the doc
-  # but that's more explicit as such
-  _.set doc, attribute, value
-  return doc
+  # returns the doc
+  return _.set doc, attribute, value
 
 BasicUpdater = (attribute, value)->
   return basicUpdater.bind null, attribute, value
+
+wrappedUpdater = (db, id, attribute, value)->
+  db.update id, BasicUpdater(attribute, value)
+
+WrappedUpdater = (db)-> wrappedUpdater.bind(null, db)
 
 stringBooleanUpdater = (attribute, value, doc)->
   # in the undesired cased that it is passed anything else
@@ -27,4 +30,6 @@ module.exports =
   valueAlreayUpToDate: valueAlreayUpToDate
   basicUpdater: basicUpdater
   BasicUpdater: BasicUpdater
+  wrappedUpdater: wrappedUpdater
+  WrappedUpdater: WrappedUpdater
   stringBooleanUpdater: stringBooleanUpdater

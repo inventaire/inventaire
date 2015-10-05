@@ -5,7 +5,8 @@ Radio = __.require 'lib', 'radio'
 User = __.require 'models', 'user'
 error_ = __.require 'lib', 'error/error'
 pw_ = __.require('lib', 'crypto').passwords
-{tokenDaysToLive} = CONFIG
+{ tokenDaysToLive } = CONFIG
+{ WrappedUpdater } = __.require 'lib', 'doc_updates'
 
 # waiting for credential 0.2.6 to make pw_.expired verifications
 testToken = pw_.verify
@@ -13,6 +14,8 @@ uuid = require 'simple-uuid'
 
 
 module.exports = (db)->
+
+  wrappedUpdate = WrappedUpdater db
 
   token_ = {}
 
@@ -26,7 +29,7 @@ module.exports = (db)->
     .then (tokenData)->
       [token, tokenHash] = tokenData
       Radio.emit 'validation:email', user, token
-      updateEmailValidation db, user, tokenHash
+      wrappedUpdate user._id, 'emailValidation', tokenHash
       return user
 
   token_.confirmEmailValidity = (email, token)->
@@ -46,7 +49,7 @@ module.exports = (db)->
     .then (tokenData)->
       [token, tokenHash] = tokenData
       Radio.emit 'reset:password:email', user, token
-      updateToken db, user, tokenHash
+      wrappedUpdate user._id, 'token', tokenHash
       return user
 
   token_.openPasswordUpdateWindow = (user)->
@@ -71,13 +74,3 @@ getTokenData = ->
   pw_.hash(token)
   .then (tokenHash)->
     return [token, tokenHash]
-
-updateEmailValidation = (db, user, tokenHash)->
-  db.update user._id, (doc)->
-    doc.emailValidation = tokenHash
-    return doc
-
-updateToken = (db, user, tokenHash)->
-  db.update user._id, (doc)->
-    doc.token = tokenHash
-    return doc

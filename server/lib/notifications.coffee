@@ -1,6 +1,7 @@
 __ = require('config').root
 _ = __.require 'builders', 'utils'
 Radio = __.require 'lib', 'radio'
+{ BasicUpdater } = __.require 'lib', 'doc_updates'
 
 db = __.require('couch', 'base')('notifications')
 
@@ -26,9 +27,7 @@ notifs_ =
     time = Number(time)
     db.viewFindOneByKey 'byUserAndTime', [userId, time]
     .then (doc)->
-      db.update doc._id, (doc)->
-        doc.status = 'read'
-        return doc
+      db.update doc._id, BasicUpdater('status', 'read')
 
 callbacks =
   acceptedRequest: (userToNotify, newFriend)->

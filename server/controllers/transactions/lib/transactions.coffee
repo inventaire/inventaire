@@ -6,6 +6,7 @@ error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
 comments_ = __.require 'controllers', 'comments/lib/comments'
 rightsVerification = require './rights_verification'
+{ BasicUpdater } = __.require 'lib', 'doc_updates'
 
 Radio = __.require 'lib', 'radio'
 sideEffects = require('./side_effects')()
@@ -40,14 +41,13 @@ module.exports = _.extend {}, rightsVerification,
     role = userRole userId, transaction
     # not handling cases when both user are connected:
     # should be clarified once sockets/server events will be implemented
-    db.update transaction._id, markAsReadUpdater(role)
+    db.update transaction._id, BasicUpdater("read.#{role}", true)
 
   updateReadForNewMessage: (userId, transaction)->
     updatedReadStates = updateReadStates userId, transaction
     # spares a db write if updatedReadStates is already the current read state object
     if _.sameObjects updatedReadStates, transaction.read then promises_.resolve()
-    else db.update transaction._id, newMessageReadUpdater(updatedReadStates)
-
+    else db.update transaction._id, BasicUpdater('read', updatedReadStates)
 
 stateUpdater = (state, userId, transaction)->
   updatedReadStates = updateReadStates userId, transaction
@@ -55,16 +55,6 @@ stateUpdater = (state, userId, transaction)->
     doc.state = state
     doc.actions.push { action: state, timestamp: _.now() }
     doc.read = updatedReadStates
-    return doc
-
-newMessageReadUpdater = (updatedReadStates)->
-  return updater = (doc)->
-    doc.read = updatedReadStates
-    return doc
-
-markAsReadUpdater = (role)->
-  return updater = (doc)->
-    doc.read[role] = true
     return doc
 
 updateReadStates = (userId, transaction)->
