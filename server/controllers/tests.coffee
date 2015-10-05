@@ -5,7 +5,7 @@ _ = __.require 'builders', 'utils'
 module.exports =
   get: (req, res, next)->
     { query } = req
-    unless _.objLength(query) is 0 then _.log query, 'query'
+    # unless _.objLength(query) is 0 then _.log query, 'query'
     # _.log req.headers, 'headers'
     res.json {server: 'GET OK'}
 
