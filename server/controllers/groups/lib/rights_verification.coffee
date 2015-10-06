@@ -5,6 +5,7 @@ error_ = __.require 'lib', 'error/error'
 groups_ = require './groups'
 user_ = __.require 'lib', 'user/user'
 promises_ = __.require 'lib', 'promises'
+{ possibleActions } = require './actions_lists'
 
 
 handleRequest = (userId, groupId, requesterId)->
@@ -37,7 +38,18 @@ verifyAdminRights = (userId, groupId)->
     unless bool
       throw error_.new 'user isnt a group admin', 403, userId, groupId
 
-module.exports =
+verifyAdminRightsWithoutAdminsConflict = (userId, groupId, targetId)->
+  promises_.all [
+    groups_.userInAdmins(userId, groupId)
+    groups_.userInAdmins(targetId, groupId)
+  ]
+  .spread (userIsAdmin, targetIsAdmin)->
+    unless userIsAdmin
+      throw error_.new 'user isnt a group admin', 403, userId, groupId
+    if targetIsAdmin
+      throw error_.new 'target user is also a group admin', 403, userId, groupId, targetId
+
+module.exports = verificators =
   invite: verifyRightsToInvite
   # /!\ groups_.userInvited returns a group doc, not a boolean
   accept: groups_.userInvited
@@ -57,3 +69,11 @@ module.exports =
   acceptRequest: handleRequest
   refuseRequest: handleRequest
   updateSettings: verifyAdminRights
+  makeAdmin: verifyAdminRights
+  kick: verifyAdminRightsWithoutAdminsConflict
+
+# just checking that everything looks right
+verificatorsList = Object.keys verificators
+diff = _.difference possibleActions, verificatorsList
+if diff.length > 0
+  _.error diff, "groups actions and verificators don't match"

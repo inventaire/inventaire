@@ -6,12 +6,7 @@ groups_ = require './lib/groups'
 tests = __.require 'models','tests/common-tests'
 rightsVerification = require './lib/rights_verification'
 
-memberActions = [ 'invite', 'accept', 'decline', 'request', 'cancelRequest', 'acceptRequest', 'refuseRequest' ]
-adminActions = [ 'updateSettings' ]
-
 module.exports =
-  possibleActions: memberActions.concat adminActions
-
   handleAction: (action, req, res)->
     { body } = req
     # user is needed for invite, acceptRequest, refuseRequest controllers only

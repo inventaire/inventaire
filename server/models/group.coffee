@@ -25,29 +25,37 @@ Group.create = (name, creatorId)->
     # using the same timestamp for clarity
     created: creator.timestamp
 
-Group.invite = (invitorId, invitedId, group)->
-  Group.findInvitation invitedId, group, false
-  group.invited.push createMembership(invitedId, invitorId)
-  return group
-
 Group.findInvitation = (userId, group, wanted)->
   findMembership userId, group, 'invited', wanted
 
-# there is room for a secondaryUserId but only some actions actually need it:
-# the empty variable is thus passed to 'placeholder'
-Group.accept = (userId, placeholder, group)->
-  moveMembership userId, group, 'invited', 'members'
-Group.decline = (userId, placeholder, group)->
-  moveMembership userId, group, 'invited', 'declined'
-Group.request = (userId, placeholder, group)->
-  group.requested.push createMembership(userId, null)
-  return group
-Group.cancelRequest = (userId, placeholder, group)->
-  moveMembership userId, group, 'requested', null
-Group.acceptRequest = (adminId, requesterId, group)->
-  moveMembership requesterId, group, 'requested', 'members'
-Group.refuseRequest = (adminId, requesterId, group)->
-  moveMembership requesterId, group, 'requested', null
+membershipActions =
+  invite: (invitorId, invitedId, group)->
+    Group.findInvitation invitedId, group, false
+    group.invited.push createMembership(invitedId, invitorId)
+    return group
+
+  # there is room for a secondaryUserId but only some actions actually need it:
+  # the empty variable is thus passed to 'placeholder'
+  accept: (userId, placeholder, group)->
+    moveMembership userId, group, 'invited', 'members'
+  decline: (userId, placeholder, group)->
+    moveMembership userId, group, 'invited', 'declined'
+  request: (userId, placeholder, group)->
+    group.requested.push createMembership(userId, null)
+    return group
+  cancelRequest: (userId, placeholder, group)->
+    moveMembership userId, group, 'requested', null
+  acceptRequest: (adminId, requesterId, group)->
+    moveMembership requesterId, group, 'requested', 'members'
+  refuseRequest: (adminId, requesterId, group)->
+    moveMembership requesterId, group, 'requested', null
+  makeAdmin: (adminId, memberId, group)->
+    moveMembership memberId, group, 'members', 'admins'
+  kick: (adminId, memberId, group)->
+    moveMembership memberId, group, 'members', null
+
+Group.membershipActionsList = Object.keys membershipActions
+_.extend Group, membershipActions
 
 # create user's membership object that will be moved between categories
 createMembership = (userId, invitorId)->

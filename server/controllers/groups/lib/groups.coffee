@@ -35,20 +35,9 @@ groups_ =
     groups_.byId groupId
     .then _.partial(Group.findInvitation, userId, _, true)
 
-
-updateGroup = require('./update_group')(db)
-MembershipUpdate = require('./membership_update')(db)
-
-actions =
-  invite: MembershipUpdate 'invite'
-  accept: MembershipUpdate 'accept'
-  decline: MembershipUpdate 'decline'
-  request: MembershipUpdate 'request'
-  cancelRequest: MembershipUpdate 'cancelRequest'
-  acceptRequest: MembershipUpdate 'acceptRequest'
-  refuseRequest: MembershipUpdate 'refuseRequest'
-  updateSettings: updateGroup
-
+membershipActions = require('./membership_actions')(db)
 usersLists = require('./users_lists')(groups_)
+updateGroup = require('./update_group')(db)
 
-module.exports = _.extend groups_, actions, usersLists
+module.exports = _.extend groups_, membershipActions, usersLists,
+  updateSettings: updateGroup
