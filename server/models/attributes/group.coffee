@@ -4,4 +4,5 @@ module.exports = attributes = {}
 attributes.updatable = [
   'name'
   'picture'
+  'description'
 ]

@@ -13,6 +13,6 @@ module.exports = (db)->
       throw error_.new "#{attribute} can't be updated", 400, data
 
     unless Group.tests[attribute](value)
-      throw error_.new "invalid #{attribute}: #{value}", 400, data
+      throw error_.new "invalid #{attribute}", 400, data
 
     return db.update group, BasicUpdater(attribute, value)

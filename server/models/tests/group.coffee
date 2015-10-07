@@ -5,3 +5,4 @@ module.exports =
   userId: userId
   name: (str)-> nonEmptyString str, 60
   picture: localImg
+  description: (str)-> nonEmptyString str, 5000
