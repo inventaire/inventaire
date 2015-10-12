@@ -8,10 +8,15 @@ endpoint = CONFIG.images.localEndpoint()
 request = require 'request'
 qs = require 'querystring'
 { oneYear } =  __.require 'lib', 'times'
+{ offline } = CONFIG
 
 # resized images urls looks like /img/#{w}x#{h}/(#{hash}.jpg|#{external url hashCode?href=escaped url})"
 
 module.exports = (req, res, next)->
+  # could be useful in development
+  # while hereafter image streams' error
+  # aren't correctly handled
+  if offline then return res.send()
   [ dimensions, rest ] = parseReq req
 
   # if no dimensions are passed, should return the maximum dimension

@@ -2,6 +2,7 @@ appRoot = require('app-root-path').path
 
 module.exports = config =
   env: 'default'
+  offline: false
   protocol: 'http'
   name: 'inventaire'
   host: 'localhost'
