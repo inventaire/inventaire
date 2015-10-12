@@ -41,7 +41,31 @@ callbacks =
         item: itemId
         user: commentorId
 
+  userMadeAdmin: (groupId, actorAdminId, newAdminId)->
+    notifs_.add newAdminId, 'userMadeAdmin',
+      group: groupId
+      user: actorAdminId
+
+  groupUpdate: (data)->
+    { attribute } = data
+    if attribute in groupAttributeWithNotification
+      { usersToNotify, groupId, actorId, previousValue, newValue } = data
+      # creates a lot of similar documents:
+      # could be refactored to use a single document
+      # including a read status per-user: { user: id, read: boolean }
+      usersToNotify.forEach (userToNotify)->
+        notifs_.add userToNotify, 'groupUpdate',
+          group: groupId
+          user: actorId
+          attribute: attribute
+          previousValue: previousValue
+          newValue: newValue
+
+groupAttributeWithNotification = [ 'name', 'description' ]
+
 Radio.on 'notify:friend:request:accepted', callbacks.acceptedRequest
 Radio.on 'notify:comment:followers', callbacks.newCommentOnFollowedItem
+Radio.on 'group:makeAdmin', callbacks.userMadeAdmin
+Radio.on 'group:update', callbacks.groupUpdate
 
 module.exports = notifs_

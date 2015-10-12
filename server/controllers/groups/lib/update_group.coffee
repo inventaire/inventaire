@@ -4,10 +4,11 @@ _ = __.require 'builders', 'utils'
 Group = __.require 'models', 'group'
 error_ = __.require 'lib', 'error/error'
 { BasicUpdater } = __.require 'lib', 'doc_updates'
+Radio = __.require 'lib', 'radio'
 
 module.exports = (db)->
-  updateGroup = (data)->
-    { group, attribute, value } = data
+  return updateGroup = (data, userId)->
+    { group:groupId, attribute, value } = data
 
     unless attribute in Group.attributes.updatable
       throw error_.new "#{attribute} can't be updated", 400, data
@@ -15,4 +16,23 @@ module.exports = (db)->
     unless Group.tests[attribute](value)
       throw error_.new "invalid #{attribute}", 400, data
 
-    return db.update group, BasicUpdater(attribute, value)
+    db.get groupId
+    .then (groupDoc)->
+      notifData =
+        usersToNotify: getUsersToNotify groupDoc
+        groupId: groupId
+        actorId: userId
+        attribute: attribute
+        newValue: value
+        previousValue: groupDoc[attribute]
+
+      db.update groupId, BasicUpdater(attribute, value)
+      .then -> Radio.emit 'group:update', notifData
+
+getUsersToNotify = (groupDoc)->
+  _(groupDoc)
+  .pick 'admins', 'members'
+  .values()
+  .flatten()
+  .map _.property('user')
+  .value()
