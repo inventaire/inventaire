@@ -8,7 +8,7 @@
     "postinstall": "./scripts/postinstall",
     "install-client": "./scripts/install-client",
     "start": "coffee server.coffee",
-    "superstart": "supervisor -w .,client/app/lib/shared -i client,test,logs,deploy,inv_modules,inv_services server.coffee",
+    "superstart": "supervisor -w server,server.coffee,client/app/lib/shared,config server.coffee",
     "start-prod": "./scripts/start-prod",
     "deamon-prod": "./scripts/deamon-prod",
     "test": "export NODE_ENV=tests; mocha --compilers coffee:coffee-script/register",
