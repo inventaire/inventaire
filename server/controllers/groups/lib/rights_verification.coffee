@@ -8,7 +8,7 @@ promises_ = __.require 'lib', 'promises'
 { possibleActions } = require './actions_lists'
 
 
-handleRequest = (userId, groupId, requesterId)->
+verifyJoinRequestHandlingRights = (userId, groupId, requesterId)->
   promises_.all([
       groups_.userInAdmins(userId, groupId)
       groups_.userInRequested(requesterId, groupId)
@@ -24,9 +24,9 @@ verifyRightsToInvite = (invitorId, groupId, invitedId)->
     user_.areFriends(invitorId, invitedId)
     groups_.userInGroup(invitorId, groupId)
   ]
-  .spread controlRights.bind(null, arguments)
+  .spread controlInvitationRights.bind(null, arguments)
 
-controlRights = (context, usersAreFriends, invitorInGroup)->
+controlInvitationRights = (context, usersAreFriends, invitorInGroup)->
   unless usersAreFriends
     throw error_.new "users aren't friends", 403, context
   unless invitorInGroup
@@ -66,8 +66,8 @@ module.exports = verificators =
       unless bool
         throw error_.new "request not found", 403, userId, groupId
 
-  acceptRequest: handleRequest
-  refuseRequest: handleRequest
+  acceptRequest: verifyJoinRequestHandlingRights
+  refuseRequest: verifyJoinRequestHandlingRights
   updateSettings: verifyAdminRights
   makeAdmin: verifyAdminRights
   kick: verifyAdminRightsWithoutAdminsConflict
