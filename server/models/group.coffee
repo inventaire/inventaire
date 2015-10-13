@@ -53,6 +53,9 @@ membershipActions =
     moveMembership memberId, group, 'members', 'admins'
   kick: (adminId, memberId, group)->
     moveMembership memberId, group, 'members', null
+  leave: (userId, placeholder, group)->
+    role = if userIsAdmin userId, group then 'admins' else 'members'
+    moveMembership userId, group, role, null
 
 Group.membershipActionsList = Object.keys membershipActions
 _.extend Group, membershipActions
@@ -86,6 +89,9 @@ findMembership = (userId, group, previousCategory, wanted)->
       throw error_.new 'membership already exist', 200
     else return
 
+userIsAdmin = (userId, group)->
+  admins = group.admins.map _.property('user')
+  return userId in admins
 
 Group.categories =
   members: [ 'admins', 'members' ]

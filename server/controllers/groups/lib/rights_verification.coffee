@@ -19,6 +19,12 @@ verifyJoinRequestHandlingRights = (userId, groupId, requesterId)->
     unless requesterInRequested
       throw error_.new "request not found", 401, requesterId, groupId
 
+verifyUserInGroup = (userId, groupId)->
+  groups_.userInGroup userId, groupId
+  .then (userInGroup)->
+    unless userInGroup
+      throw error_.new 'user isnt in the group', 403, userId, groupId
+
 verifyRightsToInvite = (invitorId, groupId, invitedId)->
   promises_.all [
     user_.areFriends(invitorId, invitedId)
@@ -71,6 +77,7 @@ module.exports = verificators =
   updateSettings: verifyAdminRights
   makeAdmin: verifyAdminRights
   kick: verifyAdminRightsWithoutAdminsConflict
+  leave: verifyUserInGroup
 
 # just checking that everything looks right
 verificatorsList = Object.keys verificators
