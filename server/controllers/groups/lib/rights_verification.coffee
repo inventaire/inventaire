@@ -19,12 +19,6 @@ verifyJoinRequestHandlingRights = (userId, groupId, requesterId)->
     unless requesterInRequested
       throw error_.new "request not found", 401, requesterId, groupId
 
-verifyUserInGroup = (userId, groupId)->
-  groups_.userInGroup userId, groupId
-  .then (userInGroup)->
-    unless userInGroup
-      throw error_.new 'user isnt in the group', 403, userId, groupId
-
 verifyRightsToInvite = (invitorId, groupId, invitedId)->
   promises_.all [
     user_.areFriends(invitorId, invitedId)
@@ -55,6 +49,18 @@ verifyAdminRightsWithoutAdminsConflict = (userId, groupId, targetId)->
     if targetIsAdmin
       throw error_.new 'target user is also a group admin', 403, userId, groupId, targetId
 
+verifyUserRightToLeave = (userId, groupId)->
+  promises_.all [
+    groups_.userInGroup(userId, groupId)
+    groups_.userCanLeave(userId, groupId)
+  ]
+  .spread (userInGroup, userCanLeave)->
+    unless userInGroup
+      throw error_.new 'user isnt in the group', 403, userId, groupId
+    unless userCanLeave
+      message = "the last group admin can't leave before naming another admin"
+      throw error_.new message, 403, userId, groupId
+
 module.exports = verificators =
   invite: verifyRightsToInvite
   # /!\ groups_.userInvited returns a group doc, not a boolean
@@ -77,7 +83,7 @@ module.exports = verificators =
   updateSettings: verifyAdminRights
   makeAdmin: verifyAdminRights
   kick: verifyAdminRightsWithoutAdminsConflict
-  leave: verifyUserInGroup
+  leave: verifyUserRightToLeave
 
 # just checking that everything looks right
 verificatorsList = Object.keys verificators

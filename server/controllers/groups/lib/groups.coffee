@@ -35,6 +35,17 @@ groups_ =
     groups_.byId groupId
     .then _.partial(Group.findInvitation, userId, _, true)
 
+  userCanLeave: (userId, groupId)->
+    groups_.byId groupId
+    .then (group)->
+      { admins, members } = group
+      adminsIds = admins.map _.property('user')
+      unless userId in adminsIds then return true
+      mainUserIsTheOnlyAdmin = admins.length is 1
+      thereAreOtherMembers = members.length > 0
+      if mainUserIsTheOnlyAdmin and thereAreOtherMembers then false
+      else true
+
 membershipActions = require('./membership_actions')(db)
 usersLists = require('./users_lists')(groups_)
 updateGroup = require('./update_group')(db)
