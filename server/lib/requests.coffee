@@ -16,9 +16,16 @@ baseOptions =
     accept: 'application/json'
 
 # merge options to fit the 'request' lib interface
-# which is wrapped by breq
+# which is wrapped by bluereq
 mergeOptions = (url, options={})->
-  _.extend baseOptions, options, {url: url}
+  # accept to get the url in the options
+  if _.isObject url
+    options = url
+    url = null
+
+  # if the url was in the options
+  # the url object will be overriden
+  _.extend {url: url}, baseOptions, options,
 
 module.exports =
   get: _.partial req, 'get'
