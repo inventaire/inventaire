@@ -52,4 +52,4 @@ module.exports = (books_)->
 
     cleanedIsbn = @normalizeIsbn(isbn)
     if books_.isNormalizedIsbn(cleanedIsbn) then return cleanedIsbn
-    else console.error 'isbn got an invalid value'
+    else console.error 'isbn got an invalid value', cleanedIsbn

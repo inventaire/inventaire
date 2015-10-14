@@ -28,6 +28,7 @@ module.exports =
     .catch _.ErrorRethrow('getEntity err')
 
   getEntities: (ids)->
-    ids = _.forceArray(ids)
-    db.fetch(ids)
+    ids = _.forceArray ids
+    db.fetch ids
+    .then _.compact
     # .then _.Log('getEntities res')
