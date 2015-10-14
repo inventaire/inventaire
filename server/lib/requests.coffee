@@ -4,7 +4,11 @@ breq = require 'bluereq'
 
 req = (verb, url, options)->
   breq[verb] mergeOptions(url, options)
-  .then getBody
+  .then _.property('body')
+
+head = (url, options)->
+  breq.head mergeOptions(url, options)
+  .then _.property('headers')
 
 # default to JSON
 baseOptions =
@@ -16,8 +20,7 @@ baseOptions =
 mergeOptions = (url, options={})->
   _.extend baseOptions, options, {url: url}
 
-getBody = _.property 'body'
-
 module.exports =
   get: _.partial req, 'get'
   post: _.partial req, 'post'
+  head: head

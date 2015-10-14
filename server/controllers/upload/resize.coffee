@@ -52,7 +52,6 @@ getResizeImage = (res, url, dimensions)->
   res.header 'Content-Type', 'image/jpeg'
   res.header 'Cache-Control', "public, max-age=#{oneYear}"
 
-  # images_.check url
   images_.shrinkStream request(url), width, height
   .stream (err, stdout, stderr)->
     if err? then return error_.handler res, err

@@ -6,7 +6,6 @@ Promise = require 'bluebird'
 crypto_ = __.require 'lib', 'crypto'
 fs_ =  __.require 'lib', 'fs'
 { maxSize, maxWeight } = CONFIG.images
-fastimage = require 'fastimage'
 error_ = __.require 'lib', 'error/error'
 
 
@@ -45,11 +44,6 @@ module.exports =
 
   applyLimits: (width, height)->
     return [ applyLimit(width), applyLimit(height) ]
-
-  check: (url)->
-    fastimage.info url
-    .then checkImageSize
-    .catch formatCheckErr.bind(null, url)
 
 checkImageSize = (data)->
   { size } = data

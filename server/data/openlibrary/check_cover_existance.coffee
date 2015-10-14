@@ -1,6 +1,6 @@
 __ = require('config').root
 _ = __.require 'builders', 'utils'
-fastimage = require 'fastimage'
+promises_ = __.require 'lib', 'promises'
 cache_ = __.require 'lib', 'cache'
 error_ = __.require 'lib', 'error/error'
 { oneMonth } =  __.require 'lib', 'times'
@@ -10,15 +10,13 @@ module.exports = (url, maxAge=oneMonth)->
   cache_.get key, checkExistance.bind(null, url), maxAge
 
 checkExistance = (url)->
-  # default=false makes the server return a 404 instead of a 1x1 image
-  # when there is no cover
-  urlWithDefault = url + '?default=false'
-  fastimage.info urlWithDefault
-  .then -> {url: url}
-  .catch formatFastImageErr.bind(null, url)
+  promises_.head url
+  .then checkHeader.bind(null, url)
 
-formatFastImageErr = (context, err)->
-  if err.httpCode is 404
-    throw error_.new 'no cover found', err.httpCode, context
+checkHeader = (url, headers)->
+  contentType = headers['content-type']
+  # coupled with OpenLibrary response headers
+  if contentType? and contentType is 'image/jpeg'
+    return { url: url }
   else
-    throw error_.complete err, err.httpCode
+    throw error_.new 'cover not found', 404, url
