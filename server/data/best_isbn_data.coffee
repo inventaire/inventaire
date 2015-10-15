@@ -3,8 +3,8 @@ _ = __.require('builders', 'utils')
 promises_ = __.require 'lib', 'promises'
 
 getGoogleDataFromIsbn =  __.require 'data', 'google/isbn'
-getInvEntitiesDataFromIsbn =  __.require 'data', 'inv/isbn'
 getOpenLibraryDataFromIsbn =  __.require 'data', 'openlibrary/isbn'
+getInvEntitiesDataFromIsbn =  __.require 'data', 'inv/isbn'
 
 module.exports = (isbn)->
   promises_.settle [

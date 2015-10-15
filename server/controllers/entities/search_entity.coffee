@@ -46,15 +46,20 @@ searchByIsbn = (query, res)->
   # adding a 10 seconds timeout on requests
   .map promises_.Timeout(10000)
 
-  spreadRequests(res, promises, 'searchByIsbn')
+  spreadRequests res, promises, 'searchByIsbn'
 
 getBooksDataFromIsbn = (cleanedIsbn)->
   booksData_.getDataFromIsbn cleanedIsbn
   # getDataFromIsbn returns an index of entities
   # so it need to be converted to a collection
-  .then _.values
-  .then (res)-> {items: res, source: 'google'}
+  .then parseBooksDataFromIsbn
   .catch _.Error('getBooksDataFromIsbn err')
+
+parseBooksDataFromIsbn = (res)->
+  _.type res, 'object'
+  { source } = res
+  _.type source, 'string'
+  { items: [res], source: source }
 
 searchByText = (query, res)->
 
@@ -73,26 +78,27 @@ searchByText = (query, res)->
   # adding a 10 seconds timeout on requests
   .map promises_.Timeout(10000)
 
-  spreadRequests(res, promises, 'searchByText')
+  spreadRequests res, promises, 'searchByText'
 
 
 spreadRequests = (res, promises, label)->
-  promises_.settle(promises)
-  .spread(bundleResults)
-  .then (resp)->
-    if resp.wd? or resp.google? then res.json resp
-    else res.status(404).json {error: 'not found'}
+  promises_.settle promises
+  .then bundleResults
+  .then res.json.bind(res)
   .catch error_.Handler(res)
 
-bundleResults = (results...)->
-  _.info results, "api results"
+bundleResults = (results)->
   resp = {}
-  results.forEach (result)->
-    if result?
-      {source, items} = result
-      # also tests if the first item isnt undefined
-      if _.isArray(items) and items[0]?
-        resp[source] = result
-        resp.search or= result.search
+
+  _.compact results
+  .forEach (result)->
+    { source, items } = result
+    # also tests if the first item isnt undefined
+    if _.isArray(items) and items[0]?
+      resp[source] = result
+      # resp.search or= result.search
+
+  unless _.objLength(resp) > 0
+    throw error_.new 'empty search result', 404
 
   return resp

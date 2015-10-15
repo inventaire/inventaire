@@ -10,9 +10,11 @@ promises_ = __.require 'lib', 'promises'
 
 # getDataFromIsbn
 module.exports = (isbn, maxAge=oneYear)->
-  isbn = cleanIsbn(isbn)
+  isbn = cleanIsbn isbn
   key = "google:#{isbn}"
-  cache_.get key, requestBooksDataFromIsbn.bind(null, isbn), maxAge
+
+  timespan = cache_.solveExpirationTime 'googleIsbn', maxAge
+  cache_.get key, requestBooksDataFromIsbn.bind(null, isbn), timespan
 
 
 requestBooksDataFromIsbn = (isbn)->
@@ -40,6 +42,7 @@ parseBooksData = (isbn, res)->
     _.warn "Google Books couldn't find the right book: #{isbn}"
     return
 
+  book.source = 'google'
   book.authors = book.authors?.map stringObject
   return book
 
