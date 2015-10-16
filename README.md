@@ -4,7 +4,7 @@ Libre collaborative resource mapper powered by open-knowledge
 
 [![Licence](https://img.shields.io/badge/licence-AGPL3-blue.svg)](http://www.gnu.org/licenses/agpl-3.0.html)
 [![RoadMap](https://img.shields.io/badge/roadmap-contributive-blue.svg)](https://trello.com/b/0lKcsZDj/inventaire-roadmap)
-[![Node](https://img.shields.io/node/v/gh-badges.svg)](http://nodejs.org)
+[![Node](https://img.shields.io/badge/node-v4.2.x-brightgreen.svg)](http://nodejs.org)
 [![dependencies](https://david-dm.org/inventaire/inventaire.svg)](https://david-dm.org/inventaire/inventaire)
 [![Join the chat at https://gitter.im/inventaire/inventaire](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/inventaire/inventaire)
 
