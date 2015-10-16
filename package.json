@@ -61,7 +61,7 @@
     "node-polyglot": "^0.4.3",
     "nodemailer": "^1.8.0",
     "nodemailer-express-handlebars": "^1.0.0",
-    "passport": "^0.3.0",
+    "passport": "^0.2.2",
     "passport-browserid": "^0.1.4",
     "passport-local": "^1.0.0",
     "request": "^2.65.0",
