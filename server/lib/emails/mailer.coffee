@@ -1,16 +1,22 @@
 CONFIG = require 'config'
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
-Radio = __.require 'lib', 'radio'
-sendEmail = require './send_email'
-debounceEmails = require './debounce_emails'
-initDebouncedEmailsCrawler = require './debounced_emails_crawler'
 
 module.exports = ->
   if CONFIG.mailer.disabled
     return _.warn 'mailer disabled'
 
   _.info 'mailer enabled'
+
+  # loading mailer dependencies slightly later
+  # due to its lower priority at startup
+  setTimeout initMailerEventListeners, 3000
+
+initMailerEventListeners = ->
+  Radio = __.require 'lib', 'radio'
+  sendEmail = require './send_email'
+  debounceEmails = require './debounce_emails'
+  initDebouncedEmailsCrawler = require './debounced_emails_crawler'
 
   Radio.on 'validation:email', sendEmail.validationEmail
   Radio.on 'reset:password:email', sendEmail.resetPassword
@@ -30,3 +36,4 @@ module.exports = ->
   Radio.on 'transaction:request', debounceEmails.transactionUpdate
   Radio.on 'transaction:update', debounceEmails.transactionUpdate
   Radio.on 'transaction:message', debounceEmails.transactionUpdate
+  _.info 'mailer events listeners ready!'
