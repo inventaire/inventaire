@@ -6,6 +6,7 @@ Libre collaborative resource mapper powered by open-knowledge
 [![RoadMap](https://img.shields.io/badge/roadmap-contributive-blue.svg)](https://trello.com/b/0lKcsZDj/inventaire-roadmap)
 [![Node](https://img.shields.io/badge/node-v4.2.x-brightgreen.svg)](http://nodejs.org)
 [![dependencies](https://david-dm.org/inventaire/inventaire.svg)](https://david-dm.org/inventaire/inventaire)
+[![Code Climate](https://codeclimate.com/github/inventaire/inventaire/badges/gpa.svg)](https://codeclimate.com/github/inventaire/inventaire)
 [![Join the chat at https://gitter.im/inventaire/inventaire](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/inventaire/inventaire)
 
 [![inventory-georges](http://profile.maxlath.eu/slides/backbone-meetup/img/inventory-georges.png)](https://inventaire.io)
