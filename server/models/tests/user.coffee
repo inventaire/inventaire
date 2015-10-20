@@ -19,7 +19,10 @@ module.exports = tests =
     creationStrategy in ['browserid', 'local']
   bio: (bio)-> _.isString(bio) and bio.length < 1000
   settings: (str)-> str is 'true' or str is 'false'
-
+  position: (latLng)->
+    # position numbers are converted to strings at some point of the user udpate
+    # this test is accomodating with that for now and validating this expectations
+    _.isArray(latLng) and latLng.length is 2 and _.all latLng, _.isString
 
 deepAttributes =
   settings:
