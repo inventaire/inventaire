@@ -8,6 +8,7 @@ books_ = __.require 'lib', 'books'
 
 exports.create = (entitiesData, creatorId)->
   { title, authors, isbn, pictures } = entitiesData
+  _.log entitiesData, 'create entity'
 
   unless title? then throw error_.new 'entity miss a title', 400
 
@@ -30,4 +31,5 @@ exports.create = (entitiesData, creatorId)->
     title: title
     authors: authors
     pictures: pictures
+    isbn: isbn
     history: [ action ]
