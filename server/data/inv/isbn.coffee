@@ -14,8 +14,8 @@ parseBooksData = (isbn, book)->
   unless book? then return
 
   book.authors = book.authors?.map stringObject
+  book.pictures or= []
 
   return _.extend book,
     uri: "isbn:#{isbn}"
-    pictures: []
     source: 'inv'
