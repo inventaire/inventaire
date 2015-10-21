@@ -36,7 +36,7 @@ General dependencies:
 - a CouchDB (>=1.6) instance (on port 5984 for default config)
 
 ```
-git clone git@github.com:inventaire/inventaire.git
+git clone https://github.com/inventaire/inventaire.git
 cd inventaire
 npm install
 npm run install-client
