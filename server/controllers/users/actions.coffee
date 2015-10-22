@@ -4,16 +4,10 @@ promises_ = __.require 'lib', 'promises'
 user_ = __.require 'lib', 'user/user'
 items_ = __.require 'lib', 'items'
 error_ = __.require 'lib', 'error/error'
+sendUsersData = require './lib/send_users_data'
+User = __.require 'models', 'user'
 
-module.exports.publicActions = (req, res, next) ->
-  { query } = req
-  { action, search } = query
-  if action?
-    switch action
-      when 'search' then searchByUsername res, search
-      else error_.unknownAction res
-
-module.exports.actions = (req, res, next) ->
+module.exports = (req, res, next) ->
   { query } = req
   { action, ids, emails } = query
   if action?
@@ -22,24 +16,12 @@ module.exports.actions = (req, res, next) ->
       when 'get-items'then fetchUsersItems req, res, ids
       else error_.unknownAction res
 
-searchByUsername = (res, search) ->
-  unless search?
-    return error_.bundle res, 'bad query', 400, query
-
-  user_.usernameStartBy(search)
-  .then user_.publicUsersData.bind(user_)
-  .then sendUsersData.bind(null, res)
-  .catch error_.Handler(res)
-
 fetchUsersData = (res, ids)->
   promises_.start()
   .then parseAndValidateIds.bind(null, ids)
   .then _.partialRight(user_.getUsersPublicData, 'index')
   .then sendUsersData.bind(null, res)
   .catch error_.Handler(res)
-
-sendUsersData = (res, usersData)->
-  res.json {users: usersData}
 
 fetchUsersItems = (req, res, ids) ->
   userId = req.user._id
@@ -60,4 +42,4 @@ parseAndValidateIds = (ids)->
   if ids?.length > 0 and validUserIds(ids) then return ids
   else throw error_.new 'invalid ids', 400, ids
 
-validUserIds = (ids)-> _.all ids, (id)-> /^\w{32}$/.test(id)
+validUserIds = (ids)-> _.all ids, User.tests.userId
