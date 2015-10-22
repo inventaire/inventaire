@@ -73,12 +73,13 @@ user_ =
       if format is 'index' then return _.indexBy cleanedUsersData, '_id'
       else return cleanedUsersData
 
-# only used by tests so far
-user_.deleteByUsername = require('./delete_by_username')(db, user_)
 
 token_ = require('./token')(db, user_)
 user_.availability = availability_ = require('./availability')(user_)
 user_.create = require('./create')(db, token_, availability_)
+
+# only used by tests so far
+user_.deleteByUsername = require('./delete_by_username')(db, user_)
 
 reqParsers = require './req_parsers'
 relationsStatus = require './relations_status'
