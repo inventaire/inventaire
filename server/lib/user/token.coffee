@@ -13,7 +13,7 @@ testToken = pw_.verify
 uuid = require 'simple-uuid'
 
 
-module.exports = (db)->
+module.exports = (db, user_)->
 
   wrappedUpdate = WrappedUpdater db
 
@@ -33,7 +33,7 @@ module.exports = (db)->
       return user
 
   token_.confirmEmailValidity = (email, token)->
-    @findOneByEmail(email)
+    user_.findOneByEmail email
     .then updateIfValidToken.bind(null, token)
 
   updateIfValidToken = (token, user)->

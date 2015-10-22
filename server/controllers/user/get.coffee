@@ -3,6 +3,7 @@ _ = __.require 'builders', 'utils'
 
 User = __.require 'models', 'user'
 user_ = __.require 'lib', 'user/user'
+notifs_ = __.require 'lib', 'notifications'
 transactions_ = __.require 'controllers', 'transactions/lib/transactions'
 groups_ = __.require 'controllers', 'groups/lib/groups'
 Promise = require 'bluebird'
@@ -21,7 +22,7 @@ module.exports = (req, res, next) ->
 getUserData = (userId)->
   Promise.all([
     user_.getUserRelations(userId)
-    user_.getNotifications(userId)
+    notifs_.getUserNotifications(userId)
     transactions_.byUser(userId)
     groups_.allUserGroups(userId)
   ])

@@ -67,19 +67,6 @@
 #     , done)
 
 
-# describe "cleanUserData", ->
-#   it 'returns a cleaned user', (done)->
-#     cleanedUser = user_.cleanUserData(fakeGoodRow.value)
-#     cleanedUser.username.should.equal fakeGoodRow.value.username
-#     cleanedUser.email.should.equal fakeGoodRow.value.email
-#     cleanedUser.picture.should.equal fakeGoodRow.value.picture
-#     done()
-
-#   it 'throw on missing params', (done)->
-#     _.info fakeBadRow.value
-#     (-> user_.cleanUserData(fakeBadRow.value)).should.throwError()
-#     done()
-
 # # INTEGRATION TESTS
 # describe "username validation", ->
 #   it 'returns a confirmation when valid', (done)->

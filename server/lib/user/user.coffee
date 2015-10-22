@@ -2,23 +2,13 @@ CONFIG = require 'config'
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 
-promises_ = __.require 'lib', 'promises'
-error_ = __.require 'lib', 'error/error'
-relations_ = __.require 'controllers', 'relations/lib/queries'
-invitations_ = __.require 'controllers', 'invitations/lib/invitations'
-groups_ = __.require 'controllers', 'groups/lib/groups'
-notifs_ = __.require 'lib', 'notifications'
-cache_ = __.require 'lib', 'cache'
 couch_ = require 'inv-couch'
-gravatar = require 'gravatar'
 User = __.require 'models', 'user'
-preventMultiAccountsCreation = require './prevent_multi_accounts_creation'
 { byEmail, byEmails } = require './shared_user_handlers'
-
+{ publicUserData, publicUsersDataWithEmails } = require './public_user_data'
 
 db = __.require('couch', 'base')('users', 'user')
 
-token_ = require('./token')(db)
 user_ =
   db: db
   byId: db.get.bind(db)
@@ -26,7 +16,7 @@ user_ =
   byEmail: byEmail.bind(null, db)
 
   findOneByEmail: (email)->
-    @byEmail(email)
+    user_.byEmail email
     .then couch_.firstDoc
     .then (user)->
       if user?.email is email then return user
@@ -39,13 +29,13 @@ user_ =
     user_.byEmails emails
     # keeping the email is required to map the users returned
     # with the initial input
-    .then @publicUsersDataWithEmails.bind(@)
+    .then publicUsersDataWithEmails
 
   byUsername: (username)->
     db.viewByKey 'byUsername', username.toLowerCase()
 
   findOneByUsername: (username)->
-    @byUsername(username)
+    user_.byUsername username
     .then couch_.firstDoc
     .then (user)->
       # ignoring case as expected does the database
@@ -53,16 +43,14 @@ user_ =
       else throw new Error "user not found for username: #{username}"
 
   findOneByUsernameOrEmail: (str)->
-    if User.tests.email(str) then @findOneByEmail(str)
-    else @findOneByUsername(str)
+    if User.tests.email(str) then user_.findOneByEmail str
+    else user_.findOneByUsername(str)
 
   getSafeUserFromUsername: (username)->
-    @byUsername(username)
-    .then (docs)=>
-      if docs?[0]?
-        return @publicUserData(docs[0])
+    user_.byUsername username
+    .then (docs)->
+      if docs?[0]? then return publicUserData docs[0]
       else return
-    .catch _.Error('couldnt getUserFromUsername')
 
   usernameStartBy: (username, options)->
     username = username.toLowerCase()
@@ -73,49 +61,6 @@ user_ =
     params.limit = options.limit if options?.limit?
     db.viewCustom 'byUsername', params
 
-  create: (username, email, creationStrategy, language, password)->
-    promises_.start()
-    .then preventMultiAccountsCreation.bind(null, username)
-    .then _.Full(availability.username, availability, username)
-    # @availability.username username
-    .then invitations_.findOneByEmail.bind(null, email)
-    .then _.Log('invitedDoc')
-    .then (invitedDoc)->
-      if invitedDoc?
-        User.upgradeInvited invitedDoc, username, creationStrategy, language, password
-        .then db.putAndReturn
-      else
-        User.create username, email, creationStrategy, language, password
-        .then db.postAndReturn
-
-    .then @_postCreation.bind(@)
-
-  _postCreation: (user)->
-    promises_.all [
-      # can be parallelized without risk of conflict as
-      # convertInvitations doesnt edit the user document
-      # but we do need both to be over to be sure that the user will
-      # see the friends requests (converted from invitations)
-      invitations_.convertInvitations user
-      token_.sendValidationEmail user
-    ]
-    # return the user updated with the validation token
-    .spread (invitationRes, updatedUser)->
-      # don't log the user doc to avoid having password hash in logs
-      # but still return the doc
-      _.success updatedUser.username, 'user successfully created'
-      return updatedUser
-
-  findLanguage: (req)->
-    accept = req.headers['accept-language']
-    language = accept?.split?(',')[0]
-    if User.tests.language(language) then language
-
-  getUserId: (req)->
-    id = req.user?._id
-    if id? then return promises_.resolve(id)
-    else error_.reject('req.user._id couldnt be found', 401)
-
   getUsersPublicData: (ids, format='collection')->
     ids = ids.split?('|') or ids
     user_.byIds(ids)
@@ -124,7 +69,7 @@ user_ =
 
       if usersData?
         # _.success usersData, 'usersData before cleaning'
-        cleanedUsersData = usersData.map user_.publicUserData
+        cleanedUsersData = usersData.map publicUserData
 
         if format is 'index'
           data = _.indexBy(cleanedUsersData, '_id')
@@ -139,77 +84,14 @@ user_ =
         _.log "users not found. Ids?: #{ids.join(', ')}"
         return
 
-  publicUserData: (doc, extraAttribute)->
-    attributes = User.attributes.public.clone()
-    # beware of map index passed as second argument
-    if _.isString extraAttribute then attributes.push extraAttribute
-    _.pick doc, attributes
+# only used by tests so far
+user_.deleteByUsername = require('./delete_by_username')(db, user_)
 
-  publicUsersData: (docs)-> docs.map user_.publicUserData
-  publicUserDataWithEmail: (doc)-> user_.publicUserData doc, 'email'
-  publicUsersDataWithEmails: (docs)-> docs.map user_.publicUserDataWithEmail
+token_ = require('./token')(db, user_)
+user_.availability = availability_ = require('./availability')(user_)
+user_.create = require('./create')(db, token_, availability_)
 
-  # only used by tests so far
-  deleteUser: (user)-> db.del user._id, user._rev
+reqParsers = require './req_parsers'
+relationsStatus = require './relations_status'
 
-  deleteUserByUsername: (username)->
-    _.info username, 'deleteUserbyUsername'
-    user_.byUsername(username)
-    .then (docs)-> docs[0]
-    .then user_.deleteUser
-    .catch _.Error('deleteUserbyUsername err')
-
-  getUserRelations: (userId, getDocs)->
-    # just proxiing to let this module centralize
-    # interactions with the social graph
-    relations_.getUserRelations(userId, getDocs)
-
-  getRelationsStatuses: (userId, usersIds)->
-    getFriendsAndCoMembers(userId)
-    .spread (friendsIds, coGroupMembersIds)->
-      friends = _.intersection friendsIds, usersIds
-      coGroupMembers = _.intersection coGroupMembersIds, usersIds
-      # not looking for remaing users as there is no use to it for now
-      return [friends, coGroupMembers]
-
-  areFriends: (userId, otherId)->
-    _.types arguments, 'strings...'
-    relations_.getStatus(userId, otherId)
-    .then (status)->
-      if status is 'friends' then return true
-      else false
-
-  areFriendsOrGroupCoMembers: (userId, otherId)->
-    _.types arguments, 'strings...'
-    getFriendsAndCoMembers(userId)
-    .spread (friendsIds, coGroupMembersIds)->
-      return otherId in friendsIds or otherId in coGroupMembersIds
-
-  cleanUserData: (value)->
-    {username, email, created, picture} = value
-    unless username? and email? and created? and picture?
-      throw new Error('missing user data')
-
-    return user =
-      username: username
-      email: email
-      created: created
-      picture: picture
-
-  addNotification: (userId, type, data)->
-    notifs_.add userId, type, data
-
-  getNotifications: (userId)->
-    notifs_.getUserNotifications userId
-
-
-# result is to be .spread (friendsIds, coGroupMembersIds)->
-getFriendsAndCoMembers = (userId)->
-  promises_.all [
-    relations_.getUserFriends(userId)
-    groups_.findUserGroupsCoMembers(userId)
-  ]
-
-user_.availability = availability = require('./availability')(user_)
-
-module.exports = _.extend user_, token_
+module.exports = _.extend user_, token_, relationsStatus, reqParsers
