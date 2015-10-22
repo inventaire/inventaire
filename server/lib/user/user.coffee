@@ -63,26 +63,15 @@ user_ =
 
   getUsersPublicData: (ids, format='collection')->
     ids = ids.split?('|') or ids
-    user_.byIds(ids)
+    user_.byIds ids
     .then (usersData)->
-      # _.success usersData, 'found users data'
-
-      if usersData?
-        # _.success usersData, 'usersData before cleaning'
-        cleanedUsersData = usersData.map publicUserData
-
-        if format is 'index'
-          data = _.indexBy(cleanedUsersData, '_id')
-          # _.log data, 'usersData: index format'
-        else
-          data = cleanedUsersData
-          # _.log data, 'usersData: collection format'
-
-        return data
-
-      else
-        _.log "users not found. Ids?: #{ids.join(', ')}"
+      unless usersData?
+        _.warn ids, "users not found"
         return
+
+      cleanedUsersData = usersData.map publicUserData
+      if format is 'index' then return _.indexBy cleanedUsersData, '_id'
+      else return cleanedUsersData
 
 # only used by tests so far
 user_.deleteByUsername = require('./delete_by_username')(db, user_)
