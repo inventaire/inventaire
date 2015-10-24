@@ -3,6 +3,7 @@ __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 groups_ = __.require 'controllers', 'groups/lib/groups'
 relations_ = __.require 'controllers', 'relations/lib/queries'
+promises_ = __.require 'lib', 'promises'
 
 module.exports =
   getUserRelations: (userId, getDocs)->
