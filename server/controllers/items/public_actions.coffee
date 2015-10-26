@@ -14,13 +14,19 @@ module.exports =
     .then bundleOwnersData.bind(null, res)
     .catch error_.Handler(res)
 
-  userPublicItems: (req, res, next)->
-    _.info req.query, 'userPublicItems'
-    {user} = req.query
-    unless tests.userId user
-      return error_.bundle res, 'bad user id', 400
+  usersPublicItems: (req, res, next)->
+    _.info req.query, 'usersPublicItems'
+    { query } = req
+    { users } = query
+    unless _.isNonEmptyString(users)
+      return error_.bundle res, 'missing parameter: users', 400, query
 
-    items_.byListing user, 'public'
+    usersIds = users.split '|'
+    unless _.all usersIds, tests.userId
+      return error_.bundle res, 'invalid user ids', 400, query
+
+    items_.bundleListings ['public'], usersIds
+    .then (items)-> { items: items }
     .then res.json.bind(res)
     .catch error_.Handler(res)
 

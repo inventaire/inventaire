@@ -52,6 +52,6 @@ module.exports = _.extend publicActions,
         publicActions.publicByUsernameAndEntity req, res
       when 'last-public-items'
         publicActions.lastPublicItems req, res
-      when 'user-public-items'
-        publicActions.userPublicItems req, res
+      when 'users-public-items'
+        publicActions.usersPublicItems req, res
       else error_.unknownAction res
