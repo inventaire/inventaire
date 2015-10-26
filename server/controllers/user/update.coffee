@@ -12,6 +12,12 @@ module.exports = (req, res, next) ->
   { user, body } = req
   { attribute, value } = body
 
+  # parsers are meant to reverse type changes occuring during data transfer
+  # ex: numbers converted to strings
+  # parsers are placed before tests to test only parsed values
+  if attribute in haveParser
+    value = parsers[attribute](value)
+
   # support deep objects
   if valueAlreayUpToDate _.get(user, attribute), value
     return error_.bundle res, 'already up-to-date', 400
@@ -61,3 +67,12 @@ archivePreviousEmail = (doc)->
     doc.previousEmails = _.uniq(doc.previousEmails)
     doc.validEmail = false
   return doc
+
+parsers =
+  position: (latLng)->
+    # just handling the expected data format
+    # otherwise, let the tests reject the value
+    unless _.isArray latLng then return latLng
+    return latLng.map (str)-> Number(str)
+
+haveParser = Object.keys parsers
