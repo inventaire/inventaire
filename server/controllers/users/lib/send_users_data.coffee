@@ -1,2 +1,4 @@
-module.exports = (res, usersData)->
+sendUsersData = (res, usersData)->
   res.json {users: usersData}
+
+module.exports = (res)-> sendUsersData.bind null, res
