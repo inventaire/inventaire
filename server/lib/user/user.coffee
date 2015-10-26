@@ -77,6 +77,7 @@ user_ =
 token_ = require('./token')(db, user_)
 user_.availability = availability_ = require('./availability')(user_)
 user_.create = require('./create')(db, token_, availability_)
+user_.byPosition = require('./by_position')(db)
 
 # only used by tests so far
 user_.deleteByUsername = require('./delete_by_username')(db, user_)

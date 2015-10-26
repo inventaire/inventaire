@@ -1,23 +1,14 @@
 __ = require('config').root
 _ = __.require 'builders', 'utils'
-user_ = __.require 'lib', 'user/user'
 error_ = __.require 'lib', 'error/error'
-sendUsersData = require './lib/send_users_data'
-{ publicUsersData } = __.require 'lib', 'user/public_user_data'
+searchByUsername = require './search_by_username'
+searchByPositon = require './search_by_position'
 
 module.exports = (req, res, next) ->
   { query } = req
-  { action, search } = query
+  { action } = query
   if action?
     switch action
-      when 'search' then searchByUsername res, search
+      when 'search' then searchByUsername res, query
+      when 'search-by-position' then searchByPositon res, query
       else error_.unknownAction res
-
-searchByUsername = (res, search) ->
-  unless search?
-    return error_.bundle res, 'bad query', 400, query
-
-  user_.usernameStartBy search
-  .then publicUsersData
-  .then sendUsersData.bind(null, res)
-  .catch error_.Handler(res)
