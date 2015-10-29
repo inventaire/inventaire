@@ -1,6 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
+promises_ = __.require 'lib', 'promises'
 
 couch_ = require 'inv-couch'
 User = __.require 'models', 'user'
@@ -63,16 +64,23 @@ user_ =
 
   getUsersPublicData: (ids, format='collection')->
     ids = ids.split?('|') or ids
+    unless ids.length > 0
+      _.warn arguments, 'no ids provided at getUsersPublicData'
+      emptyData = formatUsersData format, []
+      return promises_.resolve emptyData
+
     user_.byIds ids
     .then (usersData)->
       unless usersData?
         _.warn ids, "users not found"
         return
+      return usersData.map publicUserData
 
-      cleanedUsersData = usersData.map publicUserData
-      if format is 'index' then return _.indexBy cleanedUsersData, '_id'
-      else return cleanedUsersData
+    .then formatUsersData.bind(null, format)
 
+formatUsersData = (format, usersData)->
+  if format is 'index' then return _.indexBy usersData, '_id'
+  else return usersData
 
 token_ = require('./token')(db, user_)
 user_.availability = availability_ = require('./availability')(user_)
