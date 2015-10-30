@@ -16,7 +16,7 @@ module.exports = (req, res, next)->
   # could be useful in development
   # while hereafter image streams' error
   # aren't correctly handled
-  if offline then return res.send()
+  if offline then return _.okWarning res, 'you are in offline mode: no img delivered'
   [ dimensions, rest ] = parseReq req
 
   # if no dimensions are passed, should return the maximum dimension

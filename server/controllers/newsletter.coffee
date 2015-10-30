@@ -17,8 +17,7 @@ module.exports =
     promises_.start()
     .then createSubscriberDoc.bind(null, req)
     .then user_.db.post.bind(user_.db)
-    .then -> { ok: true, warning: deprecationWarning }
-    .then res.json.bind(@)
+    .then _.OkWarning(res, deprecationWarning)
     .catch error_.Handler(res)
 
 createSubscriberDoc = (req)->

@@ -44,6 +44,10 @@ module.exports = base =
   ok: (res, status=200)->
     res.status(status).json {ok: true}
 
+  okWarning: (res, warning, status=200)->
+    res.status(status).json {ok: true, warning: warning}
+
   Map: (fn)-> (array)-> array.map fn
 
 base.Ok = (res, status)-> base.ok.bind(null, res, status)
+base.OkWarning = (res, warning, status)-> base.okWarning.bind(null, res, status)
