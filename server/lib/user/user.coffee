@@ -3,7 +3,7 @@ __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
 
-couch_ = require 'inv-couch'
+couch_ = __.require 'lib', 'couch'
 User = __.require 'models', 'user'
 { byEmail, byEmails } = require './shared_user_handlers'
 { publicUserData, publicUsersDataWithEmails } = require './public_user_data'
@@ -87,10 +87,8 @@ user_.availability = availability_ = require('./availability')(user_)
 user_.create = require('./create')(db, token_, availability_)
 user_.byPosition = require('./by_position')(db)
 
-# only used by tests so far
-user_.deleteByUsername = require('./delete_by_username')(db, user_)
-
+deleteUser = require('./delete')(db, user_)
 reqParsers = require './req_parsers'
 relationsStatus = require './relations_status'
 
-module.exports = _.extend user_, token_, relationsStatus, reqParsers
+module.exports = _.extend user_, token_, relationsStatus, reqParsers, deleteUser

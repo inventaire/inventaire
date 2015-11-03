@@ -1,15 +1,14 @@
 CONFIG = require 'config'
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
-couch_ = require 'inv-couch'
+couch_ = __.require 'lib', 'couch'
 userRelativeRequest = require './user-relative_request'
 db = __.require('couch', 'base')('users', 'relations')
 
 Relation = __.require('models', 'relation')
 
 get = (userId, otherId)->
-  docId = Relation.docId(userId, otherId)
-  db.get docId
+  db.get Relation.docId(userId, otherId)
 
 putStatus = (userId, otherId, status)->
   docId = Relation.docId(userId, otherId)
@@ -23,7 +22,6 @@ updateStatus = (docId, status, doc)->
   else doc = Relation.create(docId, status)
   doc.updated = _.now()
   return doc
-
 
 queries =
   get: get

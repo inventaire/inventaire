@@ -1,7 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
-couch_ = require 'inv-couch'
+couch_ = __.require 'lib', 'couch'
 assert = require 'assert'
 { userId } = require './tests/common-tests'
 
