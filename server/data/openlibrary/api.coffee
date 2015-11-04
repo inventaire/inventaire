@@ -1,3 +1,4 @@
+qs = require 'querystring'
 base = "https://openlibrary.org"
 coverBase = "http://covers.openlibrary.org"
 
@@ -11,7 +12,9 @@ getUrlFromKey = (key)-> "#{base}#{cleanedKey(key)}.json"
 module.exports =
   base: base
   getUrlFromKey: getUrlFromKey
-  searchUrl: (text)-> "#{base}/search?q=#{text}"
+  searchUrl: (text)->
+    text = qs.escape text
+    "#{base}/search?q=#{text}"
   isbnUrl: (isbn)-> "#{base}/isbn/#{isbn}"
   coverById: (id, type='b')-> "#{coverBase}/#{type}/id/#{id}.jpg"
   coverByOlId: (olId, type='b')-> "#{coverBase}/#{type}/olid/#{olId}.jpg"

@@ -7,8 +7,10 @@ wd = __.require('sharedLibs', 'wikidata')(promises_, _, wdk)
 wd.sitelinks = __.require 'sharedLibs','wiki_sitelinks'
 { Q } = __.require 'sharedLibs','wikidata_aliases'
 { base } = wd.API.wikidata
+qs = require 'querystring'
 
 searchEntities = (search, language='en', limit='20', format='json')->
+  search = qs.escape search
   url = wd.API.wikidata.search(search, language).logIt('searchEntities')
   return promises_.get url
 

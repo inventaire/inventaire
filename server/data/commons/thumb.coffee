@@ -4,6 +4,7 @@ cache_ = __.require 'lib', 'cache'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
 xml_ = __.require 'lib', 'xml'
+qs = require 'querystring'
 
 module.exports = (req, res)->
   { file, width } = req.query
@@ -33,6 +34,7 @@ requestThumb = (fileName, width)->
   .error _.Error("requestThumb: #{options.url}")
 
 requestOptions = (file, width)->
+  file = qs.escape file
   url: "http://tools.wmflabs.org/magnus-toolserver/commonsapi.php?image=#{file}&thumbwidth=#{width}"
   headers:
     'Content-Type': 'application/xml'

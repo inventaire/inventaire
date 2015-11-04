@@ -3,6 +3,7 @@ __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 { useKey, key } = CONFIG.googleBooks
 isbn_ = require('isbn2').ISBN
+qs = require 'querystring'
 
 promises_ = require './promises'
 module.exports = books_ = __.require('sharedLibs','books')(_)
@@ -10,8 +11,14 @@ module.exports = books_ = __.require('sharedLibs','books')(_)
 normalizeBookData = __.require('lib', 'normalize_book_data')(books_)
 
 gbBase = "https://www.googleapis.com/books/v1/volumes/?fields=totalItems,items(volumeInfo)&country=US"
-if useKey then googleBooks = (data)->"#{gbBase}&q=#{data}&key=#{key}"
-else googleBooks = (data)-> "#{gbBase}&q=#{data}"
+if useKey
+  googleBooks = (data)->
+    data = qs.escape data
+    "#{gbBase}&q=#{data}&key=#{key}"
+else
+  googleBooks = (data)->
+    data = qs.escape data
+    "#{gbBase}&q=#{data}"
 
 _.extend books_, normalizeBookData,
   API:
@@ -24,4 +31,4 @@ _.extend books_, normalizeBookData,
 
   # arguments: isbn:String, hyphenate:Boolean
   toIsbn13: isbn_.asIsbn13
-  toIsbn10: isbn_.asIsbn13
+  toIsbn10: isbn_.asIsbn10

@@ -4,6 +4,7 @@ cache_ = __.require 'lib', 'cache'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
 tests = __.require 'models', 'tests/common-tests'
+qs = require 'querystring'
 
 module.exports = (req, res)->
   { query } = req
@@ -35,4 +36,5 @@ requestExtract = (lang, title)->
 
 
 apiQuery = (lang, title)->
+  title = qs.escape title
   "http://#{lang}.wikipedia.org/w/api.php?format=json&action=query&titles=#{title}&prop=extracts&explaintext=true&exintro=true&exsentences=20"
