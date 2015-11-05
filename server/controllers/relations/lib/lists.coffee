@@ -2,42 +2,27 @@ CONFIG = require 'config'
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 couch_ = __.require 'lib', 'couch'
+parseRelations = require './parse_relations'
 
 module.exports = (db)->
-  getUserRelations: (userId)->
-    query =
+
+  getAllUserRelations = (userId, includeDocs=false)->
+    db.view 'relations', 'byStatus',
       startkey: [userId]
       endkey: [userId, {}]
-    db.view 'relations', 'byStatus', query
-    .then parseRelations
+      include_docs: includeDocs
 
-  getUserFriends: (userId)->
-    query = { key: [userId, 'friends'] }
-    db.view 'relations', 'byStatus', query
-    .then couch_.mapValue
+  lists =
+    getUserRelations: (userId)->
+      getAllUserRelations userId
+      .then parseRelations
 
-parseRelations = (res)->
-  relations = initRelations()
-  res.rows.forEach spreadRelation.bind(null, relations)
-  return relations
+    getUserFriends: (userId)->
+      query = { key: [userId, 'friends'] }
+      db.view 'relations', 'byStatus', query
+      .then couch_.mapValue
 
-initRelations = ->
-  friends: []
-  userRequested: []
-  otherRequested: []
-  none: []
-
-spreadRelation = (relations, row)->
-  # view key looks like userId:relationType
-  type = row.key[1]
-  id = row.value
-  if type in relationsTypes and id?
-    relations[type].push id
-  else throw new Error "spreadRelation err: type=#{type}, id=#{id}"
-
-relationsTypes = [
-  'friends'
-  'userRequested'
-  'otherRequested'
-  'none'
-]
+    deleteUserRelations: (userId)->
+      getAllUserRelations userId, true
+      .then couch_.mapDoc
+      .then db.bulkDelete

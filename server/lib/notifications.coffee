@@ -6,13 +6,13 @@ Radio = __.require 'lib', 'radio'
 db = __.require('couch', 'base')('notifications')
 
 notifs_ =
-  getUserNotifications: (userId)->
+  byUserId: (userId)->
     _.type userId, 'string'
     db.viewCustom 'byUserAndTime',
       startkey: [userId, 0]
       endkey: [userId, {}]
       include_docs: true
-    .catch _.Error('getUserNotifications')
+    .catch _.Error('byUserId')
 
   add: (userId, type, data)->
     _.types arguments, ['string', 'string', 'object']
@@ -28,6 +28,10 @@ notifs_ =
     db.viewFindOneByKey 'byUserAndTime', [userId, time]
     .then (doc)->
       db.update doc._id, BasicUpdater('status', 'read')
+
+  deleteAllByUserId: (userId)->
+    notifs_.byUserId userId
+    .then db.bulkDelete
 
 callbacks =
   acceptedRequest: (userToNotify, newFriend)->

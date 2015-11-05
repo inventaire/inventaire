@@ -38,3 +38,12 @@ attributes.updatable = [
   'settings'
   'position'
 ]
+
+
+# attributes that are kept after a user deleted her account
+attributes.critical = [
+  '_id'
+  '_rev'
+  'username'
+  'type'
+]

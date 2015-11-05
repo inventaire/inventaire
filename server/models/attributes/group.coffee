@@ -6,3 +6,12 @@ attributes.updatable = [
   'picture'
   'description'
 ]
+
+
+attributes.usersLists = [
+  'admins'
+  'members'
+  'invited'
+  'declined'
+  'requested'
+]

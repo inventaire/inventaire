@@ -86,6 +86,8 @@ module.exports = items_ =
     _.type id, 'string'
     db.update id, BasicUpdater('archived', true)
 
+  bulkDelete: db.bulkDelete.bind(db)
+
 safeItems = (items)->
   items.map (item)->
     item.notes = null

@@ -70,4 +70,10 @@ replacePassword = (user, hash)->
   user.password = hash
   return user
 
+
 User.attributes = require './attributes/user'
+
+User.softDelete = (userDoc)->
+  userSouvenir = _.pick userDoc, User.attributes.critical
+  userSouvenir.deletedUser = true
+  return userSouvenir

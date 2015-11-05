@@ -21,10 +21,10 @@ module.exports = (req, res, next) ->
 
 getUserData = (userId)->
   Promise.all([
-    user_.getUserRelations(userId)
-    notifs_.getUserNotifications(userId)
-    transactions_.byUser(userId)
-    groups_.allUserGroups(userId)
+    user_.getUserRelations userId
+    notifs_.byUserId userId
+    transactions_.byUser userId
+    groups_.allUserGroups userId
   ])
 
 AttachUserData = (userData)->

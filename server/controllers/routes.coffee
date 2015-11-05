@@ -53,6 +53,7 @@ routes =
   'api/user':
     get: user.get
     put: user.update
+    delete: user.delete
 
   'api/users/public':
     get: users.publicActions

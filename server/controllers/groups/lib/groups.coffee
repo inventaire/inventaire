@@ -46,6 +46,21 @@ groups_ =
       if mainUserIsTheOnlyAdmin and thereAreOtherMembers then false
       else true
 
+  leaveAllGroups: (userId)->
+    # TODO: check if userCanLeave
+    groups_.byUser userId
+    .map removeUser.bind(null, userId)
+    .then db.bulk.bind(db)
+
+removeUser = (userId, groupDoc)->
+  if userId in groupDoc.admins
+    _.warn arguments, "removing a user from a group she's admin of"
+
+  Group.attributes.usersLists.forEach (list)->
+    groupDoc[list] = _.without groupDoc[list], userId
+
+  return groupDoc
+
 membershipActions = require('./membership_actions')(db)
 usersLists = require('./users_lists')(groups_)
 updateGroup = require('./update_group')(db)
