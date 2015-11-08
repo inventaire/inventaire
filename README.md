@@ -104,7 +104,7 @@ Emails are disabled in default config to avoid having to configure that too for 
 - [qLabel](https://github.com/googleknowledge/qlabel/) to work with Wikidata entities labels
 - [Level.js](https://github.com/maxogden/level.js) for client-side caching
 - [Polyglot.js](http://airbnb.github.io/polyglot.js/) for i18n
-- [Brunch](http://brunch.io/) (task-runner)
+- [Brunch](http://brunch.io/) ([underrated build tool](https://github.com/brunch/brunch-guide/blob/master/content/en/chapter01-whats-brunch.md))
 
 *find a more complete list of dependencies in [package.json](https://github.com/inventaire/inventaire-client/blob/dev/package.json) and [bower.json](https://github.com/inventaire/inventaire-client/blob/dev/bower.json)*
 
