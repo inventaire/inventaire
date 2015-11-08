@@ -1,7 +1,7 @@
 __ = require('config').root
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
-items_ = __.require 'lib', 'items'
+items_ = __.require 'controllers', 'items/lib/items'
 transactions_ = require './lib/transactions'
 
 module.exports = (req, res, nex)->

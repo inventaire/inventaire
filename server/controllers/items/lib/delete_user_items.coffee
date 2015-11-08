@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 comments_ = __.require 'controllers', 'comments/lib/comments'
-items_ = __.require 'lib', 'items'
+items_ = __.require 'controllers', 'items/lib/items'
 promises_ = __.require 'lib', 'promises'
 
 module.exports = (userId)->

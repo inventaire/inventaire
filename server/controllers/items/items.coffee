@@ -1,6 +1,6 @@
 __ = require('config').root
 _ = __.require 'builders', 'utils'
-items_ = __.require 'lib', 'items'
+items_ = __.require 'controllers', 'items/lib/items'
 user_ = __.require 'lib', 'user/user'
 couch_ = __.require 'lib', 'couch'
 error_ = __.require 'lib', 'error/error'

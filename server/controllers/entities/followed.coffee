@@ -4,7 +4,7 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 # sharing items db as followed entities
 # are also a relation between a user and an entity
-db =  __.require('lib', 'items').db
+{ db } = __.require 'controllers', 'items/lib/items'
 user_ = __.require 'lib', 'user/user'
 couch_ = __.require 'lib', 'couch'
 

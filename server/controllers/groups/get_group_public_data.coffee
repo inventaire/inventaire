@@ -6,7 +6,7 @@ tests = __.require 'models','tests/common-tests'
 promises_ = __.require 'lib', 'promises'
 groups_ = require './lib/groups'
 user_ = __.require 'lib', 'user/user'
-items_ = __.require 'lib', 'items'
+items_ = __.require 'controllers', 'items/lib/items'
 
 module.exports = (req, res)->
   { id } = req.query

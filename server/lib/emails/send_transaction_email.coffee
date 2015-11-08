@@ -4,7 +4,7 @@ _ = __.require 'builders', 'utils'
 
 user_ = __.require 'lib', 'user/user'
 transactions_ = __.require 'controllers', 'transactions/lib/transactions'
-items_ = __.require 'lib', 'items'
+items_ = __.require 'controllers', 'items/lib/items'
 promises_ = __.require 'lib', 'promises'
 comments_ = __.require 'controllers', 'comments/lib/comments'
 Transaction = __.require 'models', 'transaction'

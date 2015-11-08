@@ -5,7 +5,7 @@ promises_ = __.require 'lib', 'promises'
 { StringNumber } = __.require 'models', 'tests/regex'
 SendUsersData = require './lib/send_users_data'
 user_ = __.require 'lib', 'user/user'
-items_ = __.require 'lib', 'items'
+items_ = __.require 'controllers', 'items/lib/items'
 error_ = __.require 'lib', 'error/error'
 
 module.exports = (res, query) ->

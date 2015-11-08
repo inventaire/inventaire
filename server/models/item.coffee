@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 assert = require 'assert'
-items_ = __.require 'lib', 'items'
+items_ = __.require 'controllers', 'items/lib/items'
 Promise = require 'bluebird'
 error_ = __.require 'lib', 'error/error'
 

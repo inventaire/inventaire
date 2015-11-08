@@ -7,7 +7,7 @@ __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 Radio = __.require 'lib', 'radio'
 Transaction = __.require 'models', 'transaction'
-items_ = __.require 'lib', 'items'
+items_ = __.require 'controllers', 'items/lib/items'
 
 module.exports = ->
   Radio.on 'transaction:update', applySideEffects
