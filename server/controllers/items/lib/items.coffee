@@ -2,6 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.root
 _ = __.require('builders', 'utils')
 Item = __.require 'models', 'item'
+listingsPossibilities = Item.attributes.constrained.listing.possibilities
 error_ = __.require 'lib', 'error/error'
 { BasicUpdater } = __.require 'lib', 'doc_updates'
 
@@ -39,8 +40,12 @@ module.exports = items_ =
       # as cot returns a poor error object with just a message
       throw error_.new 'item not found', 404, itemId
 
+  picturesByEntity: (entityUri)->
+    db.viewByKeys 'byEntity', _.log(entityUriKeys(entityUri), 'keys')
+    .map _.property('pictures')
+
   publicByEntity: (entityUri)->
-    db.viewByKey 'publicByEntity', entityUri
+    db.viewByKey 'byEntity', [entityUri, 'public']
     .then safeItems
 
   publicByDate: (limit)->
@@ -87,6 +92,9 @@ module.exports = items_ =
     db.update id, BasicUpdater('archived', true)
 
   bulkDelete: db.bulkDelete.bind(db)
+
+entityUriKeys = (entityUri)->
+  return listingsPossibilities.map (listing)-> [entityUri, listing]
 
 safeItems = (items)->
   items.map (item)->

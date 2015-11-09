@@ -17,8 +17,8 @@
        "publicByOwnerAndEntity": {
            "map": "(doc)->\n  if doc.listing is 'public'\n    emit([doc.owner, doc.entity], null)"
        },
-       "publicByEntity": {
-           "map": "(doc)->\n  if doc.listing is 'public'\n    emit(doc.entity, null)"
+       "byEntity": {
+           "map": "(doc)->\n    if doc.entity?\n      emit [doc.entity, doc.listing], null"
        }
    }
 }

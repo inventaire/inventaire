@@ -4,14 +4,17 @@ error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
 booksData_ = __.require 'lib', 'books_data'
 
-module.exports = getImages = (req, res)->
-  dataArray = req.query.data?.split '|'
-  unless dataArray?.length > 0
-    return error_.bundle res, 'empty query', 400, req.query
+module.exports = (req, res)->
+  { query } = req
+  { entity:entityUri, data } = query
+  unless _.isNonEmptyString entityUri
+    return error_.bundle res, 'missing entity uri', 400, query
 
-  promises = dataArray.map (data)->
-    if data? then booksData_.getImage(data)
-
-  promises_.settle(promises)
+  booksData_.getImages entityUri, data
+  .then formatResponse
   .then res.json.bind(res)
   .catch error_.Handler(res)
+
+formatResponse = (results)->
+  results = _.compact _.forceArray(results)
+  return { images: results }
