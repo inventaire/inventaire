@@ -20,6 +20,8 @@ module.exports = tests =
   bio: (bio)-> _.isString(bio) and bio.length < 1000
   settings: (str)-> str is 'true' or str is 'false'
   position: (latLng)->
+    # allow the user to delete her position by passing a null value
+    if latLng is null then return true
     _.isArray(latLng) and latLng.length is 2 and _.all latLng, _.isNumber
 
 deepAttributes =

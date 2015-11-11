@@ -70,9 +70,8 @@ archivePreviousEmail = (doc)->
 
 parsers =
   position: (latLng)->
-    # just handling the expected data format
-    # otherwise, let the tests reject the value
-    unless _.isArray latLng then return latLng
+    # allow the user to delete her position by passing a null value
+    unless _.isArray latLng then return null
     return latLng.map (str)-> Number(str)
 
 haveParser = Object.keys parsers
