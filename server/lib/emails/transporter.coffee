@@ -2,8 +2,6 @@ CONFIG = require 'config'
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 
-Promise = require 'bluebird'
-
 nodemailer = require 'nodemailer'
 hbs = require 'nodemailer-express-handlebars'
 handlebarsHelpers = require './handlebars_helpers'
@@ -19,15 +17,17 @@ options =
   viewPath: viewsPath
   extName: '.hbs'
 
-transporter = nodemailer.createTransport CONFIG.mailer
-transporter.use 'compile', hbs(options)
+defaults =
+  from: CONFIG.mailer.defaultFrom
+  # pass in preview mode if mailer is disabled
+  preview: CONFIG.mailer.disabled
 
-# binding context is needed for transporter.sendMail calls to 'this' to work
-sendMail = Promise.promisify transporter.sendMail.bind(transporter)
+transporter = nodemailer.createTransport CONFIG.mailer, defaults
+transporter.use 'compile', hbs(options)
 
 module.exports =
   sendMail: (email)->
-    sendMail email
+    transporter.sendMail email
     .then _.Success('email sent')
     .catch (err)->
       _.error err, 'email error'

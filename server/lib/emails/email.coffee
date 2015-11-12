@@ -5,9 +5,8 @@ qs = require 'querystring'
 checkUserNotificationsSettings = require './check_user_notifications_settings'
 
 host = CONFIG.fullPublicHost()
+{ defaultFrom } = CONFIG.mailer
 { i18n } = require './i18n/i18n'
-base =
-  from: 'Inventaire.io <hello@inventaire.io>'
 
 module.exports =
   validationEmail: (user, token)->
@@ -15,7 +14,7 @@ module.exports =
     {username, email, language} = user
     lang = _.shortLang language
 
-    return _.extend {}, base,
+    return data =
       to: email
       subject: i18n lang, 'email_confirmation_subject'
       template: 'validation_email'
@@ -29,7 +28,7 @@ module.exports =
     {username, email, language} = user
     lang = _.shortLang language
 
-    return _.extend {}, base,
+    return data =
       to: email
       subject: i18n lang, 'reset_password_subject'
       template: 'reset_password'
@@ -45,7 +44,7 @@ module.exports =
 
     checkUserNotificationsSettings user1, 'friend_accepted_request'
 
-    return _.extend {}, base,
+    return data =
       to: user1.email
       subject: i18n lang, 'friend_accepted_request_subject', user2
       template: 'friend_accepted_request'
@@ -61,7 +60,7 @@ module.exports =
 
     checkUserNotificationsSettings user1, 'friendship_request'
 
-    return _.extend {}, base,
+    return data =
       to: user1.email
       subject: i18n lang, 'friendship_request_subject', user2
       template: 'friendship_request'
@@ -82,7 +81,7 @@ module.exports =
       groupName: group.name
       actingUserUsername: actingUser.username
 
-    return _.extend {}, base,
+    return data =
       to: email
       subject: i18n lang, "group_#{action}_subject", groupContext
       template: 'group'
@@ -96,8 +95,8 @@ module.exports =
 
   feedback: (subject, message, user, unknownUser)->
     # no email settings to check here ;)
-    return _.extend {}, base,
-      to: base.from
+    return data =
+      to: defaultFrom
       replyTo: user?.email
       subject: "[feedback] #{subject}"
       template: 'feedback'
@@ -114,7 +113,7 @@ module.exports =
 
     user.pathname = "#{host}/inventory/#{username}"
     return emailFactory = (emailAddress)->
-      return _.extend {}, base,
+      return data =
         to: emailAddress
         replyTo: user.email
         subject: i18n lang, 'email_invitation_subject', user
@@ -143,7 +142,7 @@ transactionEmail = (transaction, role, label)->
   titleContext =
     username: transaction[other].username
     title: transaction.item.title
-  return _.extend {}, base,
+  return data =
     to: transaction[role].email
     subject: i18n lang, "#{label}_title", titleContext
     template: 'transaction_update'

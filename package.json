@@ -17,7 +17,8 @@
     "lint-staged": "./scripts/lint-staged",
     "debug": "DEBUG=express:* coffee server.coffee",
     "update-git-hooks": "./scripts/update_git_hooks",
-    "reload": "touch deploy/reload.coffee"
+    "reload": "touch deploy/reload.coffee",
+    "preview-email": "live-server /tmp/nodemailer-preview"
   },
   "author": "maxlath",
   "license": "AGPL3",
@@ -59,7 +60,7 @@
     "moment": "^2.10.6",
     "nano": "^6.1.5",
     "node-polyglot": "^0.4.3",
-    "nodemailer": "^1.8.0",
+    "nodemailer": "git+https://github.com/maxlath/Nodemailer.git",
     "nodemailer-express-handlebars": "^1.0.0",
     "passport": "^0.2.2",
     "passport-browserid": "^0.1.4",
@@ -76,6 +77,7 @@
     "coffee-script": "^1.10.0",
     "lev": "^3.2.3",
     "level-test": "^2.0.1",
+    "live-server": "^0.8.2",
     "mocha": "^2.3.3",
     "should": "^7.1.0",
     "sinon": "^1.17.1",

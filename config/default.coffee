@@ -82,6 +82,7 @@ module.exports = config =
     auth:
       user: 'yoursettings'
       pass: 'yoursettings'
+    defaultFrom: 'inventaire.io <hello@inventaire.io>'
   emailValidation:
     activated: false
     pubkey: 'yourkey'
