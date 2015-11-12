@@ -21,7 +21,7 @@
     "preview-email": "live-server /tmp/nodemailer-preview"
   },
   "author": "maxlath",
-  "license": "AGPL3",
+  "license": "AGPL-3.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/maxlath/inventaire"
