@@ -75,5 +75,5 @@ User.attributes = require './attributes/user'
 
 User.softDelete = (userDoc)->
   userSouvenir = _.pick userDoc, User.attributes.critical
-  userSouvenir.deletedUser = true
+  userSouvenir.type = 'deletedUser'
   return userSouvenir

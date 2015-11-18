@@ -45,5 +45,4 @@ attributes.critical = [
   '_id'
   '_rev'
   'username'
-  'type'
 ]
