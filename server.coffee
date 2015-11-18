@@ -17,19 +17,7 @@ Radio = __.require 'lib', 'radio'
 
 __.require('lib', 'before_startup')()
 
-exportCurrentPort = ->
-  fs.writeFile './run/inv-current-port', (CONFIG.port + '\n'), (err, data)->
-    if err? then _.error err, 'exportCurrentPort err'
-    else if CONFIG.verbosity > 2
-      _.success "inv-current-port #{CONFIG.port} exported"
-
-Radio.once 'db:ready', ->
-  console.timeEnd 'startup'
-  # db:ready event isnt reliable
-  # so here is a 10 sec margin as a precaution
-  # you don't want requests to hit the server before it's up and ready
-  setTimeout exportCurrentPort, 10000
-
+Radio.once 'db:ready', -> console.timeEnd 'startup'
 
 if CONFIG.verbosity > 0
   _.logErrorsCount()
