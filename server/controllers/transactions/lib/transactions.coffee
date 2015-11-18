@@ -13,7 +13,7 @@ sideEffects = require('./side_effects')()
 
 db = __.require('couch', 'base')('transactions')
 
-module.exports = _.extend {}, rightsVerification,
+transactions_ =
   db: db
   byId: db.get.bind(db)
   byUser: (userId)->
@@ -69,3 +69,12 @@ userRole = (userId, transaction)->
   if userId is owner then return 'owner'
   if userId is requester then return 'requester'
   return throw error_.new 'no role found', 500, arguments
+
+counts =
+  activeTransactions: (userId)->
+    transactions_.byUser userId
+    .then activeCount
+
+activeCount = (transacs)-> transacs.filter(Transaction.isActive).length
+
+module.exports = _.extend transactions_, rightsVerification, counts

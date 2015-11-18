@@ -67,3 +67,6 @@ Item.fork = (data={}, item)->
     listing: listing or 'private'
     forkedFrom: item._id
     created: _.now()
+
+Item.allowTransaction = (item)->
+  item.transaction in attributes.allowTransaction

@@ -1,4 +1,5 @@
 appRoot = require('app-root-path').path
+contactAddress = 'hello@inventaire.io'
 
 module.exports = config =
   env: 'default'
@@ -76,13 +77,16 @@ module.exports = config =
   apiOpenBar: false
   resetCacheAtStartup: false
   serveStatic: true
+  contactAddress: contactAddress
   mailer:
     disabled: true
+    preview: true
     service: 'yoursettings',
     auth:
       user: 'yoursettings'
       pass: 'yoursettings'
-    defaultFrom: 'inventaire.io <hello@inventaire.io>'
+    defaultFrom: "inventaire.io <#{contactAddress}>"
+    initDelay: 10000
   emailValidation:
     activated: false
     pubkey: 'yourkey'
@@ -119,3 +123,8 @@ module.exports = config =
     maxSize: 1600
     # 5MB
     maxWeight: 5*1024**2
+  activitySummary:
+    disabled: true
+    # in days
+    periodicity: 14
+    maxEmailsPerHour: 100

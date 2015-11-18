@@ -45,6 +45,11 @@ queries =
   putNoneStatus: (userId, otherId)->
     putStatus userId, otherId, 'none'
 
-
 lists = require('./lists')(db)
-module.exports = _.extend {}, queries, lists
+
+counts =
+  pendingFriendsRequestsCount: (userId)->
+    lists.getUserRelations userId
+    .then (relations)-> relations.otherRequested.length
+
+module.exports = _.extend {}, queries, lists, counts

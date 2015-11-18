@@ -33,6 +33,13 @@ notifs_ =
     notifs_.byUserId userId
     .then db.bulkDelete
 
+  unreadCount: (userId)->
+    notifs_.byUserId userId
+    .then getUnreadCount
+
+getUnreadCount = (notifs)-> notifs.filter(isUnread).length
+isUnread = (notif)-> notif.status is 'unread'
+
 callbacks =
   acceptedRequest: (userToNotify, newFriend)->
     _.types arguments, ['string', 'string']

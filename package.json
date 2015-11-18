@@ -18,7 +18,8 @@
     "debug": "DEBUG=express:* coffee server.coffee",
     "update-git-hooks": "./scripts/update_git_hooks",
     "reload": "touch deploy/reload.coffee",
-    "preview-email": "live-server /tmp/nodemailer-preview"
+    "preview-email": "live-server /tmp/nodemailer-preview",
+    "watch-i18n": "onchange server/lib/emails/i18n/src -- ./scripts/update_i18n_actives"
   },
   "author": "maxlath",
   "license": "AGPL-3.0",
@@ -79,6 +80,7 @@
     "level-test": "^2.0.1",
     "live-server": "^0.8.2",
     "mocha": "^2.3.3",
+    "onchange": "^2.0.0",
     "should": "^7.1.0",
     "sinon": "^1.17.1",
     "supertest": "^1.1.0",

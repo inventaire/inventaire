@@ -1,0 +1,54 @@
+{{>paragraph_top}}
+  <h1>{{i18n lang 'activity_summary_title'}}</h1>
+  <br />
+  {{#if friendsRequests.display}}
+    {{{i18n lang 'pending_friends_requests_count' friendsRequests}}}
+    <br />
+  {{/if}}
+  {{#if groupInvitations.display}}
+    {{{i18n lang 'pending_group_invitations_count' groupInvitations}}}
+    <br />
+  {{/if}}
+  {{#if unreadNotifications.display}}
+    {{{i18n lang 'unread_notifications_count' unreadNotifications}}}
+    <br />
+  {{/if}}
+  {{#if activeTransactions.display}}
+    {{{i18n lang 'active_transactions_count' activeTransactions}}}
+    <br />
+  {{/if}}
+{{>paragraph_bottom}}
+
+{{#if lastFriendsBooks.display}}
+  {{>paragraph_top}}
+    <h2 style="text-align: center;">{{{I18n lang 'last_friends_books'}}}</h2>
+      {{> row_centered_top}}
+        {{#each lastFriendsBooks.highlighted}}
+          <a href="{{href}}">
+            {{#if pictures}}
+              <img src="{{src pictures 200}}" alt="{{title}}">
+            {{/if}}
+            <h3 style="margin: 0 auto; text-align: center;">{{title}}</h3>
+          </a>
+          <br />
+        {{/each}}
+        {{#if lastFriendsBooks.more.display}}
+          {{{i18n lang 'last_friends_books_more' lastFriendsBooks.more}}}
+        {{/if}}
+      {{> row_centered_bottom}}
+  {{>paragraph_bottom}}
+{{/if}}
+
+{{>paragraph_top}}
+  <h2>{{I18n lang 'did you know?'}}</h2>
+  <ul>
+    <li>
+      {{{i18n lang 'did_you_know_1'}}}</h2>
+    </li>
+  </ul>
+{{>paragraph_bottom}}
+
+{{>paragraph_top}}
+  <hr>
+  {{{i18n lang 'activity_summary_meta' meta}}}
+{{>paragraph_bottom}}

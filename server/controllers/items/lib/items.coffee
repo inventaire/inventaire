@@ -30,6 +30,9 @@ module.exports = items_ =
     listings = _.combinations usersIds, listingsTypes
     items_.batchByListings listings
 
+  friendsListings: (usersIds)->
+    items_.bundleListings ['friends', 'public'], usersIds
+
   publicById: (itemId)->
     db.get(itemId)
     .then (item)->
@@ -41,7 +44,7 @@ module.exports = items_ =
       throw error_.new 'item not found', 404, itemId
 
   picturesByEntity: (entityUri)->
-    db.viewByKeys 'byEntity', _.log(entityUriKeys(entityUri), 'keys')
+    db.viewByKeys 'byEntity', entityUriKeys(entityUri)
     .map _.property('pictures')
 
   publicByEntity: (entityUri)->

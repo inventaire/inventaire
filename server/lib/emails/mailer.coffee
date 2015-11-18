@@ -1,16 +1,21 @@
 CONFIG = require 'config'
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
+delayedInit = setTimeout
+{ initDelay, disabled } = CONFIG.mailer
 
 module.exports = ->
-  if CONFIG.mailer.disabled
-    return _.warn 'mailer disabled'
+  initMailer()
+  initActivitySummary()
+
+initMailer = ->
+  if disabled then return _.warn 'mailer disabled'
 
   _.info 'mailer enabled'
 
   # loading mailer dependencies slightly later
   # due to its lower priority at startup
-  setTimeout initMailerEventListeners, 3000
+  delayedInit initMailerEventListeners, initDelay
 
 initMailerEventListeners = ->
   Radio = __.require 'lib', 'radio'
@@ -37,3 +42,11 @@ initMailerEventListeners = ->
   Radio.on 'transaction:update', debounceEmails.transactionUpdate
   Radio.on 'transaction:message', debounceEmails.transactionUpdate
   _.info 'mailer events listeners ready!'
+
+initActivitySummary = ->
+  if CONFIG.activitySummary.disabled
+    return _.warn 'activity summary disabled'
+
+  _.info 'activity summary enabled'
+  activitySummary = require './activity_summary/activity_summary'
+  delayedInit activitySummary, initDelay

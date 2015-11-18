@@ -29,4 +29,6 @@ module.exports =
   serveStatic: false
   mailer:
     disabled: false
-
+    preview: false
+  activitySummary:
+    disabled: false

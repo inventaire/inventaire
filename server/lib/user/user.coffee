@@ -90,5 +90,6 @@ user_.byPosition = require('./by_position')(db)
 deleteUser = require('./delete')(db, user_)
 reqParsers = require './req_parsers'
 relationsStatus = require './relations_status'
+summary_ = require('./summary')(db)
 
-module.exports = _.extend user_, token_, relationsStatus, reqParsers, deleteUser
+module.exports = _.extend user_, token_, relationsStatus, reqParsers, deleteUser, summary_

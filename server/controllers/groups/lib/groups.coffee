@@ -65,5 +65,10 @@ membershipActions = require('./membership_actions')(db)
 usersLists = require('./users_lists')(groups_)
 updateGroup = require('./update_group')(db)
 
-module.exports = _.extend groups_, membershipActions, usersLists,
+counts =
+  pendingGroupInvitationsCount: (userId)->
+    groups_.byInvitedUser userId
+    .then _.property('length')
+
+module.exports = _.extend groups_, membershipActions, usersLists, counts,
   updateSettings: updateGroup

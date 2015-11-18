@@ -20,10 +20,15 @@ solveLang = (lang)->
   lang = lang?[0..1]
   if lang in activeLangs then lang else 'en'
 
-module.exports =
+module.exports = helpers =
   i18n: (lang, key, args)->
     lang = solveLang(lang)
     return polyglot[lang].t(key, args)
+
+  I18n: (args...)->
+    text = helpers.i18n.apply null, args
+    firstLetter = text[0].toUpperCase()
+    return firstLetter + text[1..-1]
 
   dateI18n: (lang, epochTime, format)->
     # set default while neutralizeing handlebars object

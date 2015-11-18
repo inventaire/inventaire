@@ -13,6 +13,9 @@
     },
     "byId": {
        "map": "(doc)->\n  if doc.type is 'user'\n    emit doc._id, null"
+    },
+    "waitingForSummary": {
+       "map": "(doc)->\n  if doc.type is 'user'\n    acceptsSummaries = doc.settings.notifications['inventories_activity_summary'] isnt false \n    if acceptsSummaries\n      lastSummary = doc.lastSummary or doc.created\n      emit lastSummary, null"
     }
   }
 }

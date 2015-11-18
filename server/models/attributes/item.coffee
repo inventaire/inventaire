@@ -8,9 +8,15 @@ attributes.updatable = [
   'notes'
 ]
 
+allowTransaction = [ 'giving', 'lending', 'selling']
+doesntAllowTransaction = [ 'inventorying']
+
+attributes.allowTransaction = allowTransaction
+attributes.doesntAllowTransaction = doesntAllowTransaction
+
 attributes.constrained =
   transaction:
-    possibilities: [ 'giving', 'lending', 'selling', 'inventorying' ]
+    possibilities: allowTransaction.concat doesntAllowTransaction
     defaultValue: 'inventorying'
   listing:
     possibilities: [ 'private', 'friends', 'public' ]

@@ -17,10 +17,11 @@ options =
   viewPath: viewsPath
   extName: '.hbs'
 
+{ defaultFrom, preview } = CONFIG.mailer
 defaults =
-  from: CONFIG.mailer.defaultFrom
+  from: defaultFrom
   # pass in preview mode if mailer is disabled
-  preview: CONFIG.mailer.disabled
+  preview: preview
 
 transporter = nodemailer.createTransport CONFIG.mailer, defaults
 transporter.use 'compile', hbs(options)

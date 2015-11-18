@@ -2,6 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.root
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
+{ findNextActions } = __.require('sharedLibs', 'transactions')(_)
 
 module.exports = Transaction = {}
 
@@ -72,3 +73,11 @@ oneWay =
   giving: true
   lending: false
   selling: true
+
+Transaction.isActive = (transacDoc)->
+  findNextActions
+    name: transacDoc.transaction
+    state: transacDoc.state
+    # owner doesnt matter to find if the transaction is active
+    # thus we just pass an arbitrary boolean
+    mainUserIsOwner: true
