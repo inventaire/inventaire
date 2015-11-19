@@ -89,7 +89,7 @@ findMembership = (userId, group, previousCategory, wanted)->
       throw error_.new 'membership already exist', 200
     else return
 
-userIsAdmin = (userId, group)->
+Group.userIsAdmin = userIsAdmin = (userId, group)->
   admins = group.admins.map _.property('user')
   return userId in admins
 

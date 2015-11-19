@@ -27,6 +27,7 @@ getEmailData = (user)->
     relations_.pendingFriendsRequestsCount userId
     # pending group invitation
     groups_.pendingGroupInvitationsCount userId
+    groups_.pendingGroupRequestsCount userId
     # unread notifications
     notifs_.unreadCount userId
     # waiting transaction
@@ -47,6 +48,7 @@ spreadEmailData = (user, results)->
   [
     friendsRequests
     groupInvitations
+    groupRequests
     unreadNotifications
     activeTransactions
     lastFriendsBooks
@@ -69,6 +71,7 @@ spreadEmailData = (user, results)->
         contactAddress: contactAddress
       friendsRequests: counter friendsRequests, '/network/friends'
       groupInvitations: counter groupInvitations, '/network/groups'
+      groupRequests: counter groupRequests, '/network/groups'
       unreadNotifications: counter unreadNotifications, '/notifications'
       activeTransactions: counter activeTransactions, '/transactions'
       lastFriendsBooks: lastFriendsBooks

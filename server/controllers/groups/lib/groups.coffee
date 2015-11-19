@@ -12,6 +12,13 @@ groups_ =
   byId: db.viewFindOneByKey.bind(db, 'byId')
   byUser: db.viewByKey.bind(db, 'byUser')
   byInvitedUser: db.viewByKey.bind(db, 'byInvitedUser')
+  byAdmin: (userId)->
+    # could be simplified by making the byUser view
+    # emit an arrey key with the role as second parameter
+    # but it would make groups_.byUser more complex
+    # (i.e. use a range instead of a simple key)
+    db.viewByKey 'byUser', userId
+    .filter Group.userIsAdmin.bind(null, userId)
 
   # including invitations
   allUserGroups: (userId)->
@@ -68,6 +75,10 @@ updateGroup = require('./update_group')(db)
 counts =
   pendingGroupInvitationsCount: (userId)->
     groups_.byInvitedUser userId
+    .then _.property('length')
+
+  pendingGroupRequestsCount: (userId)->
+    groups_.byAdmin userId
     .then _.property('length')
 
 module.exports = _.extend groups_, membershipActions, usersLists, counts,
