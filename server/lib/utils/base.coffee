@@ -1,4 +1,8 @@
 colors = require 'colors'
+# force the use of colors even if process.stdout.isTTY is false
+# which may happen with supervisor or daemon process
+# cf http://stackoverflow.com/questions/30974445/node-js-winston-logger-no-colors-with-nohup/30976363#30976363
+colors.enabled = true
 
 String::logIt = (label, color)->
   if color? then console.log "[" + label[color] + "] #{@toString()}"
