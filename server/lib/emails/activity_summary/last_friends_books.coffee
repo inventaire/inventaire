@@ -1,5 +1,5 @@
 CONFIG = require 'config'
-__ = CONFIG.root
+__ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 items_ = __.require 'controllers', 'items/lib/items'
 { allowTransaction } = __.require 'models', 'item'

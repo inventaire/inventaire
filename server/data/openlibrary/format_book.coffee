@@ -1,4 +1,4 @@
-__ = require('config').root
+__ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 { getUrlFromKey, isbnUrl, coverById, coverByIsbn } = require './api'
 attachAuthors = require './attach_authors'

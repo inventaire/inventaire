@@ -1,4 +1,4 @@
-__ = require('config').root
+__ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 user_ = __.require 'lib', 'user/user'
 intent = require './lib/intent'

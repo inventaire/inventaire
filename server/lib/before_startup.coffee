@@ -1,5 +1,5 @@
 CONFIG = require 'config'
-__ = CONFIG.root
+__ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 { execFile } = require 'child_process'
 archiveLogsScript = __.path 'scripts', 'archive_logs'

@@ -1,4 +1,4 @@
-__ = require('config').root
+__ = require('config').universalPath
 error_ = __.require 'lib', 'error/error'
 
 module.exports = (user, notificationLabel)->

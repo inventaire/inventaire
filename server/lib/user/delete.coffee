@@ -1,5 +1,5 @@
 CONFIG = require 'config'
-__ = CONFIG.root
+__ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 couch_ = __.require 'lib', 'couch'
 User = __.require 'models', 'user'

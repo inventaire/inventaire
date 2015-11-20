@@ -1,5 +1,5 @@
 CONFIG = require 'config'
-__ = CONFIG.root
+__ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 Promise = require 'bluebird'
 error_ = __.require 'lib', 'error/error'

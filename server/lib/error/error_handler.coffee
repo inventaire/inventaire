@@ -1,4 +1,4 @@
-__ = require('config').root
+__ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 
 module.exports = (res, err, status)->

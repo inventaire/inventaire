@@ -4,7 +4,7 @@
 # request = require 'supertest'
 # baseUrl = require('config').fullHost()
 
-# __ = require('config').root
+# __ = require('config').universalPath
 # _ = __.require 'builders', 'utils'
 
 # Promise = require 'bluebird'

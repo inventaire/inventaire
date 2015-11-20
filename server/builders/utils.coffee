@@ -1,5 +1,5 @@
 CONFIG = require 'config'
-__ = CONFIG.root
+__ = CONFIG.universalPath
 
 _ = require 'lodash'
 _ = require('inv-utils')(_)

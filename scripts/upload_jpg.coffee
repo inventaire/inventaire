@@ -6,7 +6,7 @@
 
 
 CONFIG = require 'config'
-__ = CONFIG.root
+__ = CONFIG.universalPath
 _ = __.require('builders', 'utils')
 # this script is used to upload static images for both production and development
 # thus, images have to go to the PROD container

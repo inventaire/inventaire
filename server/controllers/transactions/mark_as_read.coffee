@@ -1,6 +1,6 @@
 # mark the whole transaction as read
 
-__ = require('config').root
+__ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 tests = __.require 'models','tests/common-tests'

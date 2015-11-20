@@ -1,4 +1,4 @@
-__ = require('config').root
+__ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 Radio = __.require 'lib', 'radio'
 { BasicUpdater } = __.require 'lib', 'doc_updates'

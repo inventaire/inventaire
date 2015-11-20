@@ -1,6 +1,6 @@
 CONFIG = require 'config'
 americano = require 'americano'
-publicPath = CONFIG.root.path 'client', 'public'
+publicPath = CONFIG.universalPath.path 'client', 'public'
 
 
 staticMiddleware = ->

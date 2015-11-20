@@ -1,8 +1,8 @@
-appRoot = require('app-root-path').path
 contactAddress = 'hello@inventaire.io'
 
 module.exports = config =
   env: 'default'
+  universalPath: require './universal_path'
   offline: false
   protocol: 'http'
   name: 'inventaire'
@@ -32,34 +32,6 @@ module.exports = config =
   noCache: false
   staticMaxAge: 30*24*60*60*1000
   cookieMaxAge: 10*365*24*3600*1000
-  root:
-    paths:
-      root: ''
-      server: '/server'
-      lib: '/server/lib'
-      models: '/server/models'
-      utils: '/server/lib/utils'
-      sharedLibs: '/client/app/lib/shared'
-      data: '/server/data'
-      db: '/server/db'
-      couch: '/server/db/couch'
-      level: '/server/db/level'
-      graph: '/server/db/level/graph'
-      builders: '/server/builders'
-      controllers: '/server/controllers'
-      leveldb: '/db/leveldb'
-      couchdb: '/db/couchdb'
-      i18nSrc: '/server/lib/emails/i18n/src'
-      i18nArchive: '/server/lib/emails/i18n/src/archive'
-      i18nTransifex: '/server/lib/emails/i18n/src/transifex'
-      i18nDist: '/server/lib/emails/i18n/dist'
-      client: '/client'
-      scripts: '/scripts'
-      uploads: '/client/public/uploads'
-    path: (route, name)->
-      path = @paths[route]
-      return "#{appRoot}#{path}/#{name}"
-    require: (route, name)-> require @path(route, name)
   https:
     key: '/cert/inventaire.key'
     cert: '/cert/inventaire.csr'

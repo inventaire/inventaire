@@ -1,5 +1,5 @@
 CONFIG = require 'config'
-__ = require('config').root
+__ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 
 analytics_ = __.require 'controllers', 'analytics/lib/base'

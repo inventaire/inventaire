@@ -1,6 +1,6 @@
 CONFIG = require 'config'
 fs = require 'fs'
-__ = CONFIG.root
+__ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 # cant use users and items cot-db
 # as it would create a require loop

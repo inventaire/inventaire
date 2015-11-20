@@ -1,5 +1,5 @@
 CONFIG = require 'config'
-__ = CONFIG.root
+__ = CONFIG.universalPath
 { membershipActionsList } = __.require 'models', 'group'
 
 module.exports = (db)->

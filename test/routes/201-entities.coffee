@@ -1,5 +1,5 @@
 CONFIG = require('config')
-__ = CONFIG.root
+__ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 sinon = require 'sinon'
@@ -12,10 +12,10 @@ path = root + pathname
 errorCount = -> promises_.get root + "/error/count"
 
 assertZeroError = (done, label)->
-    errorCount()
-    .then (res)->
-      _.info(String(res.count), "error count @#{label}").should.equal('0')
-      done()
+  errorCount()
+  .then (res)->
+    _.info(String(res.count), "error count @#{label}").should.equal('0')
+    done()
 
 describe 'env', ->
   it "should start with 0 error", (done)->

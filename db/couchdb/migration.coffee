@@ -1,4 +1,4 @@
-__ = require('config').root
+__ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 Promise = require 'bluebird'
 Promise.longStackTraces()
@@ -8,7 +8,7 @@ fs = require 'fs'
 # HOW TO:
 # -----------------
 # dbName = 'inventory' (e.g.)
-# mig = require('config').root.require('couchdb', 'migration')(dbName)
+# mig = require('config').universalPath.require('couchdb', 'migration')(dbName)
 # updateFunction = (doc)-> if doc.type is 'targetedType' (do your thing) return doc
 # mig.updateAll(updateFunction)
 
@@ -16,7 +16,7 @@ fs = require 'fs'
 # dbName = 'users' (e.g.)
 # designDocName = 'user'
 # viewName = 'byId'
-# mig = require('config').root.require('couchdb', 'migration')(dbName, designDocName)
+# mig = require('config').universalPath.require('couchdb', 'migration')(dbName, designDocName)
 # updateFunction = (doc)-> if doc.type is 'targetedType' (do your thing) return doc
 # mig.updateByView(viewName, updateFunction)
 

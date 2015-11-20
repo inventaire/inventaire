@@ -1,4 +1,4 @@
-__ = require('config').root
+__ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 interactions_ = __.require 'lib', 'interactions'
 error_ = __.require 'lib', 'error/error'

@@ -1,4 +1,4 @@
-__ = require('config').root
+__ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 booksData_ = __.require 'lib', 'books_data'
 promises_ = __.require 'lib', 'promises'

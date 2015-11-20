@@ -1,4 +1,4 @@
-__ = require('config').root
+__ = require('config').universalPath
 _ = __.require('builders', 'utils')
 books_ = __.require 'lib','books'
 cache_ = __.require 'lib', 'cache'

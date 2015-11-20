@@ -1,5 +1,5 @@
 CONFIG = require 'config'
-__ = CONFIG.root
+__ = CONFIG.universalPath
 { newsKey } = CONFIG.activitySummary
 _ = __.require 'builders', 'utils'
 { oneDay } =  __.require 'lib', 'times'

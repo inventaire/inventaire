@@ -1,5 +1,5 @@
 CONFIG = require 'config'
-__ = CONFIG.root
+__ = CONFIG.universalPath
 { godMode } = CONFIG
 _ = __.require 'builders', 'utils'
 

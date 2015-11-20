@@ -1,5 +1,5 @@
 CONFIG = require 'config'
-__ = CONFIG.root
+__ = CONFIG.universalPath
 Promise = require 'bluebird'
 pw = Promise.promisifyAll require('credential')
 error_ = __.require 'lib', 'error/error'

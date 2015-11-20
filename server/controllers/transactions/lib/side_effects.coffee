@@ -3,7 +3,7 @@
 # and moving items between inventories (actually archiving in one and forking in the other)
 
 CONFIG = require 'config'
-__ = CONFIG.root
+__ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 Radio = __.require 'lib', 'radio'
 Transaction = __.require 'models', 'transaction'

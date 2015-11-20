@@ -1,5 +1,5 @@
 CONFIG = require('config')
-__ = CONFIG.root
+__ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 host = CONFIG.db.fullHost()
 nano = require('nano') host

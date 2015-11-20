@@ -9,7 +9,7 @@ if env?
   CONFIG.env = env
   console.log 'env manual change', process.env.NODE_ENV = env
 
-__ = CONFIG.root
+__ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 americano = require 'americano'
 fs = require 'fs'

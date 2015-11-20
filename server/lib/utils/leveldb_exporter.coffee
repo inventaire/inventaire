@@ -1,6 +1,6 @@
 level = require 'level'
 sublevel = require 'level-sublevel'
-__ = require('config').root
+__ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 
 module.exports =

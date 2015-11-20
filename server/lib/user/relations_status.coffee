@@ -1,5 +1,5 @@
 CONFIG = require 'config'
-__ = CONFIG.root
+__ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 groups_ = __.require 'controllers', 'groups/lib/groups'
 relations_ = __.require 'controllers', 'relations/lib/queries'

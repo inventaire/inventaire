@@ -1,5 +1,5 @@
 CONFIG = require('config')
-__ = CONFIG.root
+__ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 cot = require './cot_base'
 

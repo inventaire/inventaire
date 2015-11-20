@@ -2,7 +2,7 @@
 # given that the creation process is considerably slowed by bcrypt
 
 CONFIG = require 'config'
-__ = CONFIG.root
+__ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 

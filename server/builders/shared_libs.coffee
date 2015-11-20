@@ -1,2 +1,2 @@
-__ = require('config').root
+__ = require('config').universalPath
 module.exports = (name)-> __.require 'sharedLibs', name

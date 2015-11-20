@@ -1,4 +1,4 @@
-__ = require('config').root
+__ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 invitations_ = require './invitations'
 { extractUnknownEmails, extractNotAlreadyInvited, extractRemainingEmails, createUnknownInvited } = invitations_

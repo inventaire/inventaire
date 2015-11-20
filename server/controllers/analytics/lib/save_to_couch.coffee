@@ -1,6 +1,6 @@
 CONFIG = require 'config'
 { verbosity } = CONFIG
-__ = CONFIG.root
+__ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 { oneMinute, HalfAnHour} =  __.require 'lib', 'times'
 

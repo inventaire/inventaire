@@ -1,7 +1,7 @@
 # should = require 'should'
 # sinon = require 'sinon'
 
-# __ = require('config').root
+# __ = require('config').universalPath
 # _ = __.require 'builders', 'utils'
 
 # couch_ = __.require 'couch', 'couch_handler'

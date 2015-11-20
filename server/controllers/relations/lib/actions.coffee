@@ -1,5 +1,5 @@
 CONFIG = require 'config'
-__ = CONFIG.root
+__ = CONFIG.universalPath
 queries_ = require './queries'
 Radio = __.require 'lib', 'radio'
 

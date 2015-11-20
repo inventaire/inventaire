@@ -1,5 +1,5 @@
 CONFIG = require 'config'
-_ = require('config').root.require 'builders', 'utils'
+_ = require('config').universalPath.require 'builders', 'utils'
 
 if CONFIG.protocol is 'https'
   exports.forceSSL = require 'express-force-ssl'

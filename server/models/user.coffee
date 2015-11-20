@@ -1,5 +1,5 @@
 CONFIG = require 'config'
-__ = CONFIG.root
+__ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 pw_ = __.require('lib', 'crypto').passwords
 promises_ = __.require 'lib', 'promises'

@@ -1,6 +1,6 @@
 # a service to know if a cover is available
 # could actually be turned into a generalist 'image-check' service
-__ = require('config').root
+__ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 checkCoverExistance = require './check_cover_existance'

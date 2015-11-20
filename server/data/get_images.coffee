@@ -1,4 +1,4 @@
-__ = require('config').root
+__ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 getItemsImages = __.require 'data', 'inv/get_items_images'
 getGoogleImage = __.require 'data', 'google/image'

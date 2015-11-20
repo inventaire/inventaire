@@ -1,5 +1,5 @@
 CONFIG = require 'config'
-__ = require('config').root
+__ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 user_ = __.require 'lib', 'user/user'

@@ -2,7 +2,7 @@
 # to be used in development only
 
 CONFIG = require 'config'
-__ = CONFIG.root
+__ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 images_ = __.require 'lib', 'images'

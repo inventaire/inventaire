@@ -1,5 +1,5 @@
 CONFIG = require 'config'
-__ = CONFIG.root
+__ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 { pass, itemId, userId, entityUri, nonEmptyString, imgUrl } = require './common-tests'
 { constrained } = require '../attributes/item'

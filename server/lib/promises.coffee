@@ -1,4 +1,4 @@
-_ = require('config').root.require('builders', 'utils')
+_ = require('config').universalPath.require('builders', 'utils')
 Promise = require 'bluebird'
 requests = require './requests'
 
