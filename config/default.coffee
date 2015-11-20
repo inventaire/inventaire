@@ -128,3 +128,5 @@ module.exports = config =
     # in days
     periodicity: 14
     maxEmailsPerHour: 100
+    # the key to find the current news string
+    newsKey: 'news_1'

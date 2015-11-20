@@ -5,7 +5,7 @@ promises_ = __.require 'lib', 'promises'
 host = CONFIG.fullPublicHost()
 { i18n } = require '../i18n/i18n'
 { contactAddress } = CONFIG
-{ periodicity } = CONFIG.activitySummary
+{ periodicity, newsKey } = CONFIG.activitySummary
 
 user_ = __.require 'lib', 'user/user'
 relations_ = __.require 'controllers', 'relations/lib/queries'
@@ -75,8 +75,17 @@ spreadEmailData = (user, results)->
       unreadNotifications: counter unreadNotifications, '/notifications'
       activeTransactions: counter activeTransactions, '/transactions'
       lastFriendsBooks: lastFriendsBooks
+      news: newsData user
 
 counter = (count, path)->
   display: count > 0
   smart_count: count
   href: host + path
+
+newsData = (user)->
+  { lastNews } = user
+  if lastNews isnt newsKey
+    display: true
+    key: 'news_1'
+  else
+    display: false
