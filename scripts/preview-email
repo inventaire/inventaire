@@ -1,0 +1,2 @@
+mkdir -p /tmp/nodemailer-preview
+live-server /tmp/nodemailer-preview

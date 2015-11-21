@@ -18,7 +18,7 @@
     "debug": "DEBUG=express:* coffee server.coffee",
     "update-git-hooks": "./scripts/update_git_hooks",
     "reload": "touch deploy/reload.coffee",
-    "preview-email": "live-server /tmp/nodemailer-preview",
+    "preview-email": "./scripts/preview-email",
     "watch-i18n": "onchange server/lib/emails/i18n/src -- ./scripts/update_i18n_actives"
   },
   "author": "maxlath",
