@@ -8,7 +8,7 @@
     "postinstall": "./scripts/postinstall",
     "install-client": "./scripts/install-client",
     "start": "coffee server.coffee",
-    "superstart": "supervisor -w server,server.coffee,client/app/lib/shared,config server.coffee",
+    "superstart": "supervisor -w server,server.coffee,deploy/reload.coffee,client/app/lib/shared,config server.coffee",
     "start-prod": "./scripts/start-prod",
     "deamon-prod": "./scripts/deamon-prod",
     "test": "export NODE_ENV=tests; mocha --compilers coffee:coffee-script/register",
@@ -19,7 +19,7 @@
     "update-git-hooks": "./scripts/update_git_hooks",
     "reload": "touch deploy/reload.coffee",
     "preview-email": "./scripts/preview-email",
-    "watch-i18n": "onchange server/lib/emails/i18n/src -- ./scripts/update_i18n_actives"
+    "watch-i18n": "onchange server/lib/emails/i18n/src -- ./scripts/reload_i18n"
   },
   "author": "maxlath",
   "license": "AGPL-3.0",

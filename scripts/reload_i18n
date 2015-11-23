@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+# Can't chain commands with && straight from onchange
+# thus the need to have this single line script to wrap it all.
+# Reloading the server is required to take the new i18n strings in account
+./scripts/update_i18n_actives && npm run reload
