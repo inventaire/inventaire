@@ -1,6 +1,8 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
+error_ = __.require 'lib', 'error/error'
+{ appendToFullKeys, appendToShortKeys } = __.require 'lib', 'i18n_autofix'
 
 module.exports =
   # if this route is enabled by CONFIG
@@ -20,31 +22,6 @@ module.exports =
       if /\w+_\w+/.test(key) then shortKeys.push(key)
       else fullKeys.push(key)
 
-    appendToShortKeys(shortKeys)
-    appendToFullKeys(fullKeys)
-    res.send('ok')
-
-
-appendToFullKeys = (keys)-> appendToI18nKeys full, keys, true
-appendToShortKeys = (keys)-> appendToI18nKeys short, keys, false
-
-appendToI18nKeys = (path, newKeys, value)->
-  keys = _.jsonRead path
-  lengthBefore = _.objLength(keys)
-  newKeys.forEach (key)->
-    unless keys[key]
-      if value then val = key
-      else val = null
-      keys[key] = val
-      _.success "+i18n: '#{key}'"
-    else
-      _.info "i18n: already there '#{key}'"
-
-  if _.objLength(keys) > lengthBefore
-    _.jsonWrite path, keys
-    _.success "i18n:updating #{path}"
-  else
-    _.info "i18n:not:updating #{path}: no new key"
-
-full = __.path 'client', 'public/i18n/src/fullkey/en.json'
-short = __.path 'client', 'public/i18n/src/shortkey/en.json'
+    appendToShortKeys shortKeys
+    appendToFullKeys fullKeys
+    _.ok res

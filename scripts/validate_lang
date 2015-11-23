@@ -1,0 +1,12 @@
+#!/usr/bin/env coffee
+
+# a little script that throws if it isn't passed
+# a valid 2-letter language code as first argument
+# and does nothing otherwise
+
+__ = require('config').universalPath
+validLang = __.require 'client', 'scripts/valid_langs'
+
+lang = process.argv[2]
+unless lang in validLang
+  throw new Error("invalid lang: #{lang}")

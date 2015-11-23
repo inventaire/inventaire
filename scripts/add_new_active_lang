@@ -1,0 +1,19 @@
+#!/usr/bin/env sh
+email=./server/lib/emails/i18n/src/$1.json
+emailarchive=./server/lib/emails/i18n/src/archive/$1.json
+shortkey=./client/public/i18n/src/shortkey/$1.json
+fullkey=./client/public/i18n/src/fullkey/$1.json
+shortkeyarchive=./client/public/i18n/src/shortkey/archive/$1.json
+fullkeyarchive=./client/public/i18n/src/fullkey/archive/$1.json
+
+./scripts/validate_lang $1
+
+for file in $email $emailarchive $shortkey $shortkeyarchive $fullkey $fullkeyarchive;
+do
+  if [ ! -f $file ]; then
+      echo '{}' > $file;
+      echo "file created: $file"
+  else
+      echo "file already exists: $file"
+  fi
+done
