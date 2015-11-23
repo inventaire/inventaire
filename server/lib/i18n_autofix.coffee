@@ -4,14 +4,17 @@ _ = __.require 'builders', 'utils'
 module.exports =
   appendToFullKeys: (keys)-> appendToI18nKeys full, keys, true
   appendToShortKeys: (keys)-> appendToI18nKeys short, keys, false
-  appendToEmailsKeys: (keys)-> appendToI18nKeys emails, keys, false
 
-appendToI18nKeys = (path, newKeys, value)->
+  appendToEmailsKeys: (key)->
+    fullValue = not /^\w+_\w+/.test(key)
+    appendToI18nKeys emails, [key], fullValue
+
+appendToI18nKeys = (path, newKeys, fullValue)->
   keys = _.jsonRead path
   lengthBefore = _.objLength(keys)
   newKeys.forEach (key)->
     unless keys[key]
-      if value then val = key
+      if fullValue then val = key
       else val = null
       keys[key] = val
       _.success "+i18n: '#{key}'"

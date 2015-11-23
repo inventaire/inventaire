@@ -14,7 +14,7 @@ warnAndFix = (warning)->
 
   # hacky solution to extract the key from polyglot warning
   key = warning.split('"')[1]
-  appendToEmailsKeys [key]
+  appendToEmailsKeys key
 
 langJSON = (lang)-> _.jsonReadAsync __.path('i18nDist', "#{lang}.json")
 extendPolyglot = (lang, phrases)-> polyglot[lang].extend phrases
