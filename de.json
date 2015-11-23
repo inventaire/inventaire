@@ -46,5 +46,16 @@
     "email_invitation_button": null,
     "email_invitation_user_inventory": null,
     "email_invitation_learn_more": null,
-    "stop_email_invitations": null
+    "stop_email_invitations": null,
+    "activity_summary_title": null,
+    "pending_friends_requests_count": null,
+    "pending_group_invitations_count": null,
+    "pending_group_requests_count": null,
+    "unread_notifications_count": null,
+    "active_transactions_count": null,
+    "activity_summary_meta": null,
+    "last_friends_books": null,
+    "did_you_know_1": null,
+    "last_friends_books_more": null,
+    "news_1": null
 }
