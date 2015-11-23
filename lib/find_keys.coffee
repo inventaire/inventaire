@@ -1,4 +1,4 @@
-__ = require('config').root
+__ = require('config').universalPath
 _ = require 'lodash'
 
 linkify = require './linkify'

@@ -1,4 +1,4 @@
-__ = require('config').root
+__ = require('config').universalPath
 validLangs = __.require 'client', 'scripts/valid_langs'
 
 module.exports = (args)->

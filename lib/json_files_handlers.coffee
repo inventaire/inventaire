@@ -1,4 +1,4 @@
-__ = require('config').root
+__ = require('config').universalPath
 Promise = require 'bluebird'
 json_  = __.require 'client', 'scripts/lib/json'
 activeFiles  = __.require 'client', 'scripts/lib/active_files'
