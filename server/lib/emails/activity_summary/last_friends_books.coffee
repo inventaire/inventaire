@@ -6,21 +6,19 @@ items_ = __.require 'controllers', 'items/lib/items'
 relations_ = __.require 'controllers', 'relations/lib/queries'
 user_ = __.require 'lib', 'user/user'
 { oneDay } =  __.require 'lib', 'times'
-highlightedItems = 1
-# highlightedItems = 0
+highlightedItems = 10
 host = CONFIG.fullPublicHost()
 
-module.exports = (userId, periodicity)->
+module.exports = (userId, limitDate=0)->
   # get user friends ids
   relations_.getUserFriends userId
   # get last friends items available for a transaction
   .then items_.friendsListings
-  .then getLastItems.bind(null, periodicity)
+  .then getLastItems.bind(null, limitDate)
   .then extractHighlightedItems
   .catch _.Error('last friends items')
 
-getLastItems = (periodicity, allFriendsItems)->
-  limitDate = _.now() - periodicity*oneDay
+getLastItems = (limitDate, allFriendsItems)->
   return allFriendsItems.filter (item)-> item.created > limitDate
 
 extractHighlightedItems = (lastItems)->

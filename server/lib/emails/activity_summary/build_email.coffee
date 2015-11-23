@@ -21,7 +21,7 @@ module.exports = (user)->
 
 
 getEmailData = (user)->
-  userId = user._id
+  { _id:userId, lastSummary } = user
   promises_.all [
     # pending friends requests
     relations_.pendingFriendsRequestsCount userId
@@ -33,7 +33,7 @@ getEmailData = (user)->
     # waiting transaction
     transactions_.activeTransactions userId
     # new books in your network: preview + count for others 'X more...'
-    getLastFriendsBooks userId, periodicity
+    getLastFriendsBooks userId, lastSummary
     # new users in groups
 
     # FUTURE TODO
