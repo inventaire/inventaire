@@ -2,11 +2,12 @@ __ = require('config').universalPath
 Promise = require 'bluebird'
 json_  = __.require 'client', 'scripts/lib/json'
 activeFiles  = __.require 'client', 'scripts/lib/active_files'
+activeLangs = require '../../active_langs'
 count = 0
 args = process.argv.slice(2)
 total = args.length
 
-i18nSrcActive = activeFiles './server/lib/emails/i18n/src'
+i18nSrcActive = activeLangs
 i18nTransifexActive = activeFiles './server/lib/emails/i18n/src/transifex'
 i18nArchiveActive = activeFiles './server/lib/emails/i18n/src/archive'
 

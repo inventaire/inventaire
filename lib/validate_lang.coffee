@@ -5,7 +5,7 @@ module.exports = (args)->
   if args.length > 0
     if args[0] is 'all' then return validLangs
     else args.forEach checkLang
-  else throw new Error "expected at least one 2-letter language code as argument, got 0"
+  else throw new Error "expected at least one 2-letter language code as argument or 'all', got 0"
 
   return args
 
