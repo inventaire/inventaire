@@ -19,6 +19,7 @@
     "update-git-hooks": "./scripts/update_git_hooks",
     "reload": "touch deploy/reload.coffee",
     "preview-email": "./scripts/preview-email",
+    "patches": "./scripts/run_patches ./scripts/patches",
     "watch-i18n": "onchange server/lib/emails/i18n/src -- ./scripts/reload_i18n"
   },
   "author": "maxlath",

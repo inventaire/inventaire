@@ -59,7 +59,7 @@ spreadEmailData = (user, results)->
 
   return data =
     to: email
-    subject: i18n lang, 'activity_summary_subject'
+    subject: i18n lang, 'activity_summary_title'
     template: 'activity_summary'
     context:
       user: user

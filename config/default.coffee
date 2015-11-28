@@ -97,8 +97,9 @@ module.exports = config =
     maxWeight: 5*1024**2
   activitySummary:
     disabled: true
+    disableUserUpdate: false
     # in days
-    periodicity: 14
+    periodicity: 15
     maxEmailsPerHour: 100
     # the key to find the current news string
     newsKey: 'news_1'

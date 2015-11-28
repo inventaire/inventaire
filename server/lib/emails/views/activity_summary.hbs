@@ -1,4 +1,11 @@
 {{>paragraph_top}}
+  {{#if news.display}}
+    <br />
+    <h1 style="text-align: center;">{{I18n lang 'news'}}</h1>
+    {{{i18n lang news.key}}}
+  {{/if}}
+  <br />
+  <h1 style="text-align: center;">{{I18n lang 'activity summary'}}</h1>
   {{#if friendsRequests.display}}
     {{{i18n lang 'pending_friends_requests_count' friendsRequests}}}
     <br />
@@ -18,11 +25,6 @@
   {{#if activeTransactions.display}}
     {{{i18n lang 'active_transactions_count' activeTransactions}}}
     <br />
-  {{/if}}
-  {{#if news.display}}
-    <br />
-    <h2 style="text-align: center;">{{I18n lang 'news'}}</h2>
-    {{{i18n lang news.key}}}
   {{/if}}
 {{>paragraph_bottom}}
 

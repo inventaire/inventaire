@@ -1,6 +1,6 @@
 mkdir -p logs/archives/server logs/archives/errors deploy run db/leveldb
 touch run/inv-current-port
-./scripts/run_patches ./scripts/patches
+npm run patches
 
 echo 'trying to clone git clone -b i18n https://github.com/inventaire/inventaire.git ./server/lib/emails/i18n/src'
 git clone -b i18n https://github.com/inventaire/inventaire.git ./server/lib/emails/i18n/src
