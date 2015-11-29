@@ -9,6 +9,7 @@ promisesHandlers =
   reject: Promise.reject.bind(Promise)
   resolve: Promise.resolve.bind(Promise)
   all: Promise.all.bind(Promise)
+  props: Promise.props.bind(Promise)
   settle: (promises)->
     Promise.settle(promises).then pluckSettled
   start: Promise.resolve.bind(Promise)

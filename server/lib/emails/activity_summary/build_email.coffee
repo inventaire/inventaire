@@ -19,21 +19,20 @@ module.exports = (user)->
   getEmailData user
   .then spreadEmailData.bind(null, user)
 
-
 getEmailData = (user)->
   { _id:userId, lastSummary } = user
-  promises_.all [
+  promises_.props
     # pending friends requests
-    relations_.pendingFriendsRequestsCount userId
+    friendsRequests: relations_.pendingFriendsRequestsCount userId
     # pending group invitation
-    groups_.pendingGroupInvitationsCount userId
-    groups_.pendingGroupRequestsCount userId
+    groupInvitations: groups_.pendingGroupInvitationsCount userId
+    groupRequests: groups_.pendingGroupRequestsCount userId
     # unread notifications
-    notifs_.unreadCount userId
+    unreadNotifications: notifs_.unreadCount userId
     # waiting transaction
-    transactions_.activeTransactions userId
+    activeTransactions: transactions_.activeTransactions userId
     # new books in your network: preview + count for others 'X more...'
-    getLastFriendsBooks userId, lastSummary
+    lastFriendsBooks: getLastFriendsBooks userId, lastSummary
     # new users in groups
 
     # FUTURE TODO
@@ -42,17 +41,16 @@ getEmailData = (user)->
       # where you have been waiting for the other's action for long now
     # new books nearby
     # new users nearby
-  ]
 
 spreadEmailData = (user, results)->
-  [
-    friendsRequests
-    groupInvitations
-    groupRequests
-    unreadNotifications
-    activeTransactions
+  {
+    friendsRequests,
+    groupInvitations,
+    groupRequests,
+    unreadNotifications,
+    activeTransactions,
     lastFriendsBooks
-  ] = results
+  } = results
 
   { email, language } = user
   lang = _.shortLang language
