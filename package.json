@@ -44,7 +44,7 @@
     "express-session": "^1.11.3",
     "fastimage": "^1.0.2",
     "formidable": "^1.0.17",
-    "gm": "^1.20.0",
+    "gm": "^1.21.1",
     "graceful-fs": "^4.1.2",
     "gravatar": "^1.4.0",
     "inv-cot": "^1.1.2",
