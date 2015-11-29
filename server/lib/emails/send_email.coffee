@@ -46,7 +46,7 @@ module.exports =
 
   emailInvitations: (user, emailAddresses, message)->
     emailFactory = email_.EmailInvitation user, message
-    emailAddresses.forEach (emailAddress)->
+    for emailAddress in emailAddresses
       email = emailFactory emailAddress
       transporter_.sendMail email
       .catch _.Error('emailInvitations')

@@ -1,6 +1,7 @@
 module.exports = (res)->
   relations = initRelations()
-  res.rows.forEach spreadRelation.bind(null, relations)
+  for row in res.rows
+    spreadRelation relations, row
   return relations
 
 initRelations = ->

@@ -31,7 +31,7 @@ action = (verb, filename, body, type)->
   .catch _.ErrorRethrow("#{verb} #{filename}")
 
 actions = {}
-[ 'get', 'post', 'put', 'delete' ].forEach (verb)->
+for verb in [ 'get', 'post', 'put', 'delete' ]
   actions[verb] = action.bind null, verb
 
 module.exports = _.extend actions,

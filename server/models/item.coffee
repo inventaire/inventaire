@@ -39,7 +39,8 @@ Item.update = (userId, item)->
   tests.pass 'itemId', item._id
   # just testing updatable attributes
   # as non-updatable will be filtered-out at Item.updater
-  attributes.updatable.forEach _.partial(passAttrTest, item)
+  for attr in attributes.updatable
+    passAttrTest item, attr
 
   return item
 

@@ -47,7 +47,7 @@ callbacks =
       user: newFriend
 
   newCommentOnFollowedItem: (itemId, commentorId, users)->
-    users.forEach (userToNotify)->
+    for userToNotify in users
       notifs_.add userToNotify, 'newCommentOnFollowedItem',
         item: itemId
         user: commentorId
@@ -64,7 +64,7 @@ callbacks =
       # creates a lot of similar documents:
       # could be refactored to use a single document
       # including a read status per-user: { user: id, read: boolean }
-      usersToNotify.forEach (userToNotify)->
+      for userToNotify in usersToNotify
         notifs_.add userToNotify, 'groupUpdate',
           group: groupId
           user: actorId

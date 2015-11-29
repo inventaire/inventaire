@@ -9,15 +9,9 @@ module.exports = (req, res, next)->
   unless _.isNonEmptyString ids
     return error_.bundle res, "ids can't be empty", 401, req.query
 
-  entities_.getEntities ids
-  .then extractId.bind null, res
+  entities_.getEntities ids.split('|')
+  .then extractId
+  .then res.json.bind(res)
   .catch error_.Handler(res)
 
-extractId = (res, entities)->
-  # _.log entities, 'entities'
-  index = {}
-  entities.forEach (entity)->
-    { _id } = entity
-    index[_id] = entity
-  # _.log index, 'index'
-  res.send index
+extractId = (entities)-> _.indexBy entities, '_id'

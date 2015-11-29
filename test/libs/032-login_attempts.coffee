@@ -37,7 +37,7 @@ describe 'loginAttemps', ->
       done()
 
     it "should return true when attempts are higher or equal to the limit", (done)->
-      [1..10].forEach ->
+      for i in [1..10]
         loginAttemps.recordFail('notabot')
         _.log loginAttemps.tooMany('notabot')
       loginAttemps.tooMany('notabot').should.equal true

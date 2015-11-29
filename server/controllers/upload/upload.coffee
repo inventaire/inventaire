@@ -56,7 +56,7 @@ checkRelativeUrl = (url)->
 
 indexCollection = (collection)->
   index = {}
-  collection.forEach (data)->
+  for data in collection
     { id, url } = data
     index[id] = url
 

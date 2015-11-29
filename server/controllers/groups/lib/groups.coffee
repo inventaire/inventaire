@@ -63,7 +63,7 @@ removeUser = (userId, groupDoc)->
   if userId in groupDoc.admins
     _.warn arguments, "removing a user from a group she's admin of"
 
-  Group.attributes.usersLists.forEach (list)->
+  for list in Group.attributes.usersLists
     groupDoc[list] = _.without groupDoc[list], userId
 
   return groupDoc

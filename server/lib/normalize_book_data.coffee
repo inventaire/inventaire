@@ -10,7 +10,7 @@ module.exports = (books_)->
     {industryIdentifiers, imageLinks} = cleanedItem
 
     if industryIdentifiers?
-      industryIdentifiers.forEach (obj)->
+      for obj in industryIdentifiers
         switch obj.type
           when 'ISBN_10' then data.P957 = obj.identifier
           when 'ISBN_13' then data.P212 = obj.identifier

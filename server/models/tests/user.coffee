@@ -28,7 +28,7 @@ deepAttributes =
   settings:
     notifications: {}
 
-notificationsSettingsList.forEach (setting)->
+for setting in notificationsSettingsList
   deepAttributes.settings.notifications[setting] = true
 
 tests.deepAttributesExistance = (attribute)->

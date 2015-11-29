@@ -19,8 +19,8 @@ module.exports = base =
   combinations: (array1, array2)->
     @types arguments, ['array', 'array']
     results = []
-    array1.forEach (keys1)->
-      array2.forEach (keys2)->
+    for keys1 in array1
+      for keys2 in array2
         results.push [keys1, keys2]
     return results
 

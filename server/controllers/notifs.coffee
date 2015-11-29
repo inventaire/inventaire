@@ -15,7 +15,7 @@ module.exports.updateStatus = (req, res, next) ->
 
     # could probably be replaced by a batch operation
     promises = []
-    times.forEach (time)->
+    for time in times
       promises.push notifs_.updateReadStatus(userId, time)
 
     Promise.all(promises)

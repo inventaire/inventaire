@@ -6,7 +6,7 @@ module.exports = (db)->
   MembershipUpdate = require('./membership_update')(db)
 
   actions = {}
-  membershipActionsList.forEach (action)->
+  for action in membershipActionsList
     actions[action] = MembershipUpdate(action)
 
   return actions

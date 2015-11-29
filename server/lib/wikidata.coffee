@@ -34,7 +34,7 @@ filterWhitelisted = (entity)->
 rebaseClaimsValueToClaimsRoot = (entity)->
   for id, claim of entity.claims
     if typeof claim is 'object'
-      claim.forEach (statement)->
+      for statement in claim
         switch statement.mainsnak.datatype
           when 'wikibase-item'
             id = statement.mainsnak.datavalue.value['numeric-id']
@@ -44,10 +44,12 @@ rebaseClaimsValueToClaimsRoot = (entity)->
 getP31Tester = (matchables)->
   _.type matchables, 'array'
   return tester = (claims, valid)->
-    claims.P31?.forEach (statement)->
-      # not altering valid if no match is found has it might be already valided
-      # by a previous test
-      if statement._id in matchables then valid = true
+    { P31 } = claims
+    if P31?
+      for statement in P31
+        # not altering valid if no match is found has it might be already valided
+        # by a previous test
+        if statement._id in matchables then valid = true
     return valid
 
 validIfIsABook = getP31Tester(Q.books)

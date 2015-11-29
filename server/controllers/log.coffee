@@ -15,7 +15,7 @@ module.exports =
 
     shortKeys = []
     fullKeys = []
-    missingKeys.forEach (key)->
+    for key in missingKeys
       # using _ as the convention to identify short keys: ex: awesome_title
       # (that is, keys with an english value different than the key itself)
       # the underscore should be surrended by letters, not spaces

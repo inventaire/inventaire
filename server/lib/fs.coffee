@@ -17,7 +17,7 @@ aliases =
   exist: 'stat'
   move: 'rename'
 
-methods.forEach (methodName)->
+for methodName in methods
   exports[methodName] = Promise.promisify fs[methodName]
 
 for k, v of aliases

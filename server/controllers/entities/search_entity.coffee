@@ -90,8 +90,7 @@ spreadRequests = (res, promises, label)->
 bundleResults = (results)->
   resp = {}
 
-  _.compact results
-  .forEach (result)->
+  for result in _.compact(results)
     { source, items } = result
     # also tests if the first item isnt undefined
     if _.isArray(items) and items[0]?

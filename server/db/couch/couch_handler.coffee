@@ -15,7 +15,7 @@ module.exports =
 
   reloadDesignDocs: ->
     for dbBaseName, designDocsNames of dbsList
-      designDocsNames.forEach (designDocName)->
+      for designDocName in designDocsNames
         dbInit.designDoc.update dbBaseName, designDocName
 
 checkExistanceOrCreate = (dbBaseName)->
@@ -43,7 +43,7 @@ assertValidDbName = (str)->
 
 loadConfigurationDocs = (dbBaseName)->
   designDocsNames = dbsList[dbBaseName]
-  designDocsNames.forEach (designDocName)->
+  for designDocName in designDocsNames
     dbInit.designDoc.load dbBaseName, designDocName
 
   if CONFIG.db.restricted

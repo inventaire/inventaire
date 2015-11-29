@@ -12,7 +12,7 @@ module.exports =
 appendToI18nKeys = (path, newKeys, fullValue)->
   keys = _.jsonRead path
   lengthBefore = _.objLength(keys)
-  newKeys.forEach (key)->
+  for key in newKeys
     unless keys[key]
       if fullValue then val = key
       else val = null
