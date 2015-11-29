@@ -12,7 +12,11 @@ statics = require './middlewares/statics'
 logger = require './middlewares/logger'
 
 Promise = require 'bluebird'
-Promise.longStackTraces()  if CONFIG.promisesStackTrace
+if CONFIG.promisesDebug
+  Promise.config
+    warnings: true
+    longStackTraces: true
+
 
 module.exports =
   common: [
