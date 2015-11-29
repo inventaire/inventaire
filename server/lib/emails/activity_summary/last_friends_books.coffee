@@ -6,7 +6,7 @@ items_ = __.require 'controllers', 'items/lib/items'
 relations_ = __.require 'controllers', 'relations/lib/queries'
 user_ = __.require 'lib', 'user/user'
 { oneDay } =  __.require 'lib', 'times'
-highlightedItems = 10
+highlightedLength = 10
 host = CONFIG.fullPublicHost()
 
 module.exports = (userId, limitDate=0)->
@@ -27,7 +27,7 @@ extractHighlightedItems = (lastItems)->
   .then formatData.bind(null, lastItems)
 
 getHighlightedItems = (lastItems)->
-  unless lastItems.length > highlightedItems then return lastItems
+  if lastItems.length <= highlightedLength then return lastItems
   return getItemsWithTransactionFirst lastItems
 
 attachUsersData = (items)->
@@ -57,17 +57,19 @@ formatData = (lastItems, highlighted)->
       smart_count: more
 
 
-getItemsWithTransactionFirst = (items)->
+getItemsWithTransactionFirst = (lastItems)->
+  # create a new array as items.pop() would affect lastItems everywhere
+  items = lastItems.clone()
   withTransaction = []
   withoutTransaction = []
   # go through all items until withTransaction is equal to
   # the expected amount of highlightedItems
-  while withTransaction.length < highlightedItems and items.length > 0
+  while withTransaction.length < highlightedLength and items.length > 0
     item = items.pop()
     if allowTransaction(item) then withTransaction.push item
     else withoutTransaction.push item
 
-  if withTransaction.length is highlightedItems then return withTransaction
+  if withTransaction.length is highlightedLength then return withTransaction
   # in case there are less items with transactions than expected
   # concating items without transactions
-  else return withTransaction.concat(withoutTransaction)[0...highlightedItems]
+  else return withTransaction.concat(withoutTransaction)[0...highlightedLength]
