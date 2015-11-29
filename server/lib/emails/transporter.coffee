@@ -20,10 +20,15 @@ options =
 { defaultFrom, preview } = CONFIG.mailer
 defaults =
   from: defaultFrom
-  # pass in preview mode if mailer is disabled
-  preview: preview
 
 transporter = nodemailer.createTransport CONFIG.mailer, defaults
+
+if preview
+  # overriding Nodemailer::sendMail to generate a preview file
+  # instead of sending the email
+  sendMail = require './preview_email'
+  transporter.sendMail = sendMail.bind transporter
+
 transporter.use 'compile', hbs(options)
 
 module.exports =
