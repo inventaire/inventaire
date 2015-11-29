@@ -8,7 +8,7 @@ Promise = require 'bluebird'
 
 
 fetch = (db, keys)->
-  _.typeArray(keys)
+  _.typeArray keys
   return new Promise (resolve, reject)->
     unless keys.length > 0 then resolve()
 

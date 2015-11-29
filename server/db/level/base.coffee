@@ -39,13 +39,13 @@ module.exports =
       update: (key, value)-> @del(key).then ()=> @put(key, value)
       patch: (key, value)-> @get(key).then (current)=> @update key, _.extend(current, value)
       getStream: (params)->
-        def = Promise.defer()
-        result = []
-        sub.createValueStream(params)
-        .on 'data', (data)-> result.push JSON.parse(data)
-        .on 'error', (err)-> def.reject new Error(err)
-        .on 'end', (err)-> def.resolve result
-        return def.promise
+        return new Promise (resolve, reject)->
+          result = []
+          sub.createValueStream params
+          .on 'data', (data)-> result.push JSON.parse(data)
+          .on 'error', reject
+          .on 'end', -> resolve result
+
       reset: ->
         ops = []
         sub.createKeyStream()
