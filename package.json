@@ -46,7 +46,7 @@
     "formidable": "^1.0.17",
     "gm": "^1.20.0",
     "graceful-fs": "^4.1.2",
-    "gravatar": "git+https://github.com/maxlath/node-gravatar.git",
+    "gravatar": "^1.4.0",
     "inv-cot": "^1.0.1",
     "inv-couch": "^2.0.0",
     "inv-dbs-list": "^1.1.0",

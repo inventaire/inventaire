@@ -3,7 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 pw_ = __.require('lib', 'crypto').passwords
 promises_ = __.require 'lib', 'promises'
-gravatar = require 'gravatar'
+gravatar = __.require 'lib', 'gravatar'
 error_ = __.require 'lib', 'error/error'
 
 module.exports = User = {}
@@ -32,8 +32,7 @@ User.create = (username, email, creationStrategy, language, password)->
     created: Date.now()
     creationStrategy: creationStrategy
     language: language
-    # gravatar params: email, options={d: default image, s: size}, https
-    picture: gravatar.url(email, {d: 'mm', s: '500'}, true)
+    picture: gravatar email
     settings:
       notifications: {}
 
