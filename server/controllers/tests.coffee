@@ -1,12 +1,16 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
+{ cookieThief } = CONFIG
 
 module.exports =
   get: (req, res, next)->
     { query } = req
     # unless _.objLength(query) is 0 then _.log query, 'query'
     # _.log req.headers, 'headers'
+
+    if cookieThief then copyCookies req.headers['cookie']
+
     res.json {server: 'GET OK'}
 
   post: (req, res, next)->
@@ -37,3 +41,11 @@ rawBody = (req, res, next)->
   req.on 'end', ->
     _.log body, 'body'
     res.send body
+
+# used only in development obviously
+copyCookies = (cookies)->
+  if cookies?
+    _.success cookies, 'Copying cookie to clipboard!'
+    require('copy-paste').copy cookies
+  else
+    _.warn 'no cookies could be stolen'

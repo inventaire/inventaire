@@ -37,7 +37,8 @@ module.exports = config =
     cert: '/cert/inventaire.csr'
   typeCheck: true
   promisesStackTrace: true
-  godMode: false # friends requests automatically accepted
+  godMode: false # friends requests and groups invits automatically accepted
+  cookieThief: false
   morgan:
     logFormat: 'dev'
     mutedRoutes: [
