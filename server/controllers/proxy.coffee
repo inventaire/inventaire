@@ -9,8 +9,8 @@ isIp = Ip.test.bind Ip
 validProtocols = [ 'http:', 'https:' ]
 
 module.exports.get = (req, res, next)->
-  # removing both /api/proxy/public/ and https://inventaire.io/api/proxy/public/
-  query = req.originalUrl.split('/api/proxy/public/')[1]
+  # removing both /api/proxy/ and https://inventaire.io/api/proxy/
+  query = req.originalUrl.split('/api/proxy/')[1]
 
   { protocol, hostname } = url.parse query
 

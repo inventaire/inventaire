@@ -118,7 +118,7 @@ routes =
   'api/data/public':
     get: data.get
 
-  'api/proxy/public*':
+  'api/proxy*':
     get: proxy.get
 
   'api/feedback/public':
