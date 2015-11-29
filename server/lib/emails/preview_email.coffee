@@ -44,9 +44,6 @@ module.exports = (data, callback)->
   # if typeof @transporter == 'string'
   #   return callback new Error('Unsupported configuration, downgrade Nodemailer to v0.7.1 to use it')
 
-  console.log '@', @
-  console.log '@_processPlugins', @_processPlugins
-
   @_processPlugins 'compile', mail, (err)=>
     if err then return callback err
     mail.message = mailcomposer mail.data
