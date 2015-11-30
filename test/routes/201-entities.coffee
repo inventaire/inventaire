@@ -31,7 +31,9 @@ describe 'Entities', ->
           promises_.get url
           .then (res)->
             res.should.be.an.Object
-            res.items.should.be.an.Array
+            for source, data of res
+              data.items.should.be.an.Array
+              data.source.should.equal source
             assertZeroError(done, 'byIsbn')
 
       describe 'byText', ->
@@ -40,22 +42,23 @@ describe 'Entities', ->
           promises_.get url
           .then (res)->
             res.should.be.an.Object
-            res.items.should.be.an.Array
+            for source, data of res
+              data.items.should.be.an.Array
             assertZeroError(done, 'byText')
 
-    describe 'getimages', ->
+    describe 'get-images', ->
       it "should have no error", (done)->
-        data = "Les Misérables"
-        url = path + "?action=getimages&data=#{data}"
+        entity = "isbn:9780938978008"
+        url = path + "?action=get-images&entity=#{entity}"
         promises_.get url
         .then (res)->
           res.should.be.an.Array
-          res[0].should.be.an.Object
-          res[0].image.should.be.an.String
-          res[0].data.should.equal data
+          console.log 'res', res
+          res.images.should.be.an.Object
+          res.images[0].should.be.an.String
           assertZeroError(done, 'getimages')
 
-    describe 'getisbnentities', ->
+    describe 'get-isbn-entities', ->
       it "should have no error", (done)->
         data = "Les Misérables"
         isbns = "978-2081-2178-29|9782070368228"
