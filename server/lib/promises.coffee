@@ -35,10 +35,14 @@ settlers =
 # more dirty than the official solution http://bluebirdjs.com/docs/api/reflect.html
 # but how simpler
 pluckSettled = (inspectors)->
-  _.pluck inspectors, '_settledValueField'
+  inspectors.map returnValueIfFulfilled
 
 pluckSettledProps = (inspectorsProps)->
-  _.mapValues inspectorsProps, _.property('_settledValueField')
+  _.mapValues inspectorsProps, returnValueIfFulfilled
+
+returnValueIfFulfilled = (inspector)->
+  if inspector.isFulfilled() then inspector.value()
+  else _.warn inspector, "promise didn't fullfilled"
 
 # bundling NonSkip and _.Error handlers
 promisesHandlers.NonSkipError = (label)->
