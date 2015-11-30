@@ -2,7 +2,6 @@ _ = require('config').universalPath.require('builders', 'utils')
 Promise = require 'bluebird'
 requests = require './requests'
 
-pluckSettled = (results)-> _.pluck results, '_settledValue'
 
 promisesHandlers =
   Promise: Promise
@@ -11,7 +10,9 @@ promisesHandlers =
   all: Promise.all.bind(Promise)
   props: Promise.props.bind(Promise)
   settle: (promises)->
-    Promise.settle(promises).then pluckSettled
+    reflects = _.invoke promises, 'reflect'
+    Promise.all(reflects).then pluckSettled
+
   start: Promise.resolve.bind(Promise)
   Timeout: (ms)-> (promise)-> promise.timeout ms
   # skip throws in a standard way to be catched later
@@ -24,6 +25,12 @@ promisesHandlers =
     return filteredCatcher = (err)->
       if err.skip then _.noop
       else catcher err
+
+pluckSettled = (results)->
+  # if _settledValueField is undefined, that's that the promise didnt fullfilled
+  # more dirty than the official solution http://bluebirdjs.com/docs/api/reflect.html
+  # but how simpler
+  _.pluck results, '_settledValueField'
 
 # bundling NonSkip and _.Error handlers
 promisesHandlers.NonSkipError = (label)->
