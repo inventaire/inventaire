@@ -7,30 +7,30 @@ module.exports = (actions)->
   API =
     requestFriend: (userId, otherId, status)->
       # useful for development
-      if godMode then return actions.forceFriendship(userId, otherId)
+      if godMode then return actions.forceFriendship userId, otherId
       switch status
         when 'none'
-          actions.makeRequest(userId, otherId)
+          actions.makeRequest userId, otherId
         when 'otherRequested'
-          actions.simultaneousRequest(userId, otherId)
+          actions.simultaneousRequest userId, otherId
         else doNothing status, 'requestFriend', userId, otherId
 
     cancelFriendRequest: (userId, otherId, status)->
       switch status
         when 'userRequested'
-          actions.removeRelation(userId, otherId)
+          actions.removeRelation userId, otherId
         else doNothing status, 'cancelFriendRequest', userId, otherId
 
     removeFriendship: (userId, otherId, status)->
       switch status
         when 'friends','userRequested', 'otherRequested'
-          actions.removeRelation(userId, otherId)
+          actions.removeRelation userId, otherId
         else doNothing status, 'removeFriendship', userId, otherId
 
     acceptRequest: (userId, otherId, status)->
       switch status
         when 'otherRequested'
-          actions.acceptRequest(userId, otherId)
+          actions.acceptRequest userId, otherId
         when 'none'
           _.warn "#{userId} request to #{otherId} accepted after being cancelled"
         else doNothing status, 'acceptRequest', userId, otherId
@@ -38,7 +38,7 @@ module.exports = (actions)->
     discardRequest: (userId, otherId, status)->
       switch status
         when 'otherRequested'
-          actions.removeRelation(userId, otherId)
+          actions.removeRelation userId, otherId
         else doNothing status, 'discardRequest', userId, otherId
 
   return API

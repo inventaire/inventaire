@@ -18,3 +18,4 @@ module.exports =
     fakeUsers: true
   graph:
     social: undefined
+  godMode: false

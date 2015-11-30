@@ -12,12 +12,14 @@ resetSpies = ->
   simultaneousRequest: sinon.spy()
   makeRequest: sinon.spy()
   removeRelation: sinon.spy()
+  forceFriendship: sinon.spy()
 
 actions =
   acceptRequest: -> spies.acceptRequest()
   simultaneousRequest: -> spies.simultaneousRequest()
   makeRequest: -> spies.makeRequest()
   removeRelation: -> spies.removeRelation()
+  forceFriendship: -> spies.forceFriendship()
 
 totalSpiesCount = ->
   count = 0
