@@ -12,7 +12,7 @@ User.tests = tests = require './tests/user'
 
 # should always return a promise
 # thus the try/catch returning error in a rejected promise
-User.create = (username, email, creationStrategy, language, password)->
+User._create = (username, email, creationStrategy, language, password)->
   _.log [username, email, creationStrategy, language, "password:#{password?}"], 'creating user'
   _.types arguments, ['string', 'string', 'string', 'string|undefined', 'string|undefined'], 3
 
@@ -49,7 +49,12 @@ User.create = (username, email, creationStrategy, language, password)->
       if password?
         throw error_.new 'shouldnt have a password'
 
-  return withHashedPassword(user)
+  return user
+
+User.create = (args...)->
+  promises_.start()
+  .then -> User._create.apply null, args
+  .then withHashedPassword
 
 User.upgradeInvited = (invitedDoc, username, creationStrategy, language, password)->
   { email } = invitedDoc
@@ -59,11 +64,11 @@ User.upgradeInvited = (invitedDoc, username, creationStrategy, language, passwor
     _.extend invitedDoc, userDoc
 
 withHashedPassword = (user)->
-  {password} = user
+  { password } = user
   if password?
     return pw_.hash(password).then replacePassword.bind(null, user)
   else
-    return promises_.resolve(user)
+    return promises_.resolve user
 
 replacePassword = (user, hash)->
   user.password = hash
