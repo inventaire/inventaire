@@ -1,11 +1,6 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-assert = require 'assert'
-items_ = __.require 'controllers', 'items/lib/items'
-Promise = require 'bluebird'
-error_ = __.require 'lib', 'error/error'
-
 
 module.exports = Item = {}
 
