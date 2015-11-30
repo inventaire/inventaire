@@ -16,7 +16,7 @@ module.exports =
   _flushFails: flushFails
   recordFail: (username, label)->
     fails[username] or= 0
-    fails[username]++
+    ++fails[username]
 
   tooMany: (username)->
     fails[username]? and fails[username] >= attemptsLimit
