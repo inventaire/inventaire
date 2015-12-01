@@ -12,7 +12,7 @@
     "start-prod": "./scripts/start-prod",
     "deamon-prod": "./scripts/deamon-prod",
     "test": "export NODE_ENV=tests; mocha --compilers coffee:coffee-script/register test/**/*",
-    "test-watch": "export NODE_ENV=tests; mocha --compilers coffee:coffee-script/register --watch",
+    "test-watch": "export NODE_ENV=tests; mocha --compilers coffee:coffee-script/register test/**/* --watch",
     "lint": "coffeelint -f config/coffeelint.json server.coffee server/*",
     "lint-staged": "./scripts/lint-staged",
     "debug": "DEBUG=express:* coffee server.coffee",
