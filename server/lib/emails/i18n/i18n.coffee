@@ -19,7 +19,7 @@ warnAndFix = (warning)->
 langJSON = (lang)-> _.jsonReadAsync __.path('i18nDist', "#{lang}.json")
 extendPolyglot = (lang, phrases)-> polyglot[lang].extend phrases
 
-for lang in activeLangs
+activeLangs.forEach (lang)->
   polyglot[lang] = new Polyglot {locale: lang, warn: warnAndFix}
   langJSON(lang).then extendPolyglot.bind(null, lang)
 
