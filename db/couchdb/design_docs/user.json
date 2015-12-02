@@ -1,21 +1,24 @@
 {
-  "_id": "_design/user",
-  "language": "coffeescript",
-  "views": {
-    "byEmail": {
-       "map": "(doc)->\n  if doc.type is 'user'\n    emit doc.email.toLowerCase(), null"
-    },
-    "byUsername": {
-       "map": "(doc)->\n  if doc.type is 'user'\n    emit(doc.username.toLowerCase(), null)"
-    },
-    "byCreation": {
-       "map": "(doc)->\n  if doc.type is 'user'\n    emit(doc.created, doc.username)"
-    },
-    "byId": {
-       "map": "(doc)->\n  if doc.type is 'user'\n    emit doc._id, null"
-    },
-    "waitingForSummary": {
-       "map": "(doc)->\n  if doc.type is 'user'\n    acceptsSummaries = doc.settings.notifications['inventories_activity_summary'] isnt false \n    if acceptsSummaries\n      lastSummary = doc.lastSummary or doc.created\n      emit lastSummary, null"
-    }
-  }
+   "_id": "_design/user",
+   "language": "coffeescript",
+   "views": {
+       "byEmail": {
+           "map": "(doc)->\n  if doc.type is 'user'\n    emit doc.email.toLowerCase(), null"
+       },
+       "byUsername": {
+           "map": "(doc)->\n  if doc.type is 'user'\n    emit doc.username.toLowerCase(), null"
+       },
+       "byCreation": {
+           "map": "(doc)->\n  if doc.type is 'user'\n    emit doc.created, doc.username"
+       },
+       "byId": {
+           "map": "(doc)->\n  if doc.type is 'user'\n    emit doc._id, null"
+       },
+       "byPosition": {
+           "map": "(doc)->\n  if doc.position?\n    emit doc.position, null"
+       },
+       "waitingForSummary": {
+           "map": "(doc)->\n  if doc.type is 'user'\n    acceptsSummaries = doc.settings.notifications['inventories_activity_summary'] isnt false \n    if acceptsSummaries\n      lastSummary = doc.lastSummary or doc.created\n      emit lastSummary, null"
+       }
+   }
 }

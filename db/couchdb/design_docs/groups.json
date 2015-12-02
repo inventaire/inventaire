@@ -6,13 +6,13 @@
            "map": "(doc)->\n  if doc.type is 'group'\n    emit doc._id, null"
        },
        "byUser": {
-           "map": "(doc)->\n  if doc.type is 'group'\n    doc.members.forEach (member)-> emit member.user, null\n    doc.admins.forEach (admin)-> emit admin.user, null"
+           "map": "(doc)->\n  if doc.type is 'group'\n    for member in doc.members\n      emit member.user, null\n    for admin in doc.admins\n      emit admin.user, null"
        },
        "byName": {
            "map": "(doc)->\n  if doc.type is 'group'\n    emit doc.name, null"
        },
        "byInvitedUser": {
-           "map": "(doc)->\n  if doc.type is 'group'\n    doc.invited.forEach (invitation)->\n      emit invitation.user, null\n\n\n"
+           "map": "(doc)->\n  if doc.type is 'group'\n    for invitation in doc.invited\n      emit invitation.user, null\n\n\n"
        }
    }
 }
