@@ -4,11 +4,9 @@ findKeys = require './find_keys'
 { getSources, updateAndArchive, writeDistVersion } = require './json_files_handlers'
 
 module.exports = extendLangWithDefault = (lang)->
-  Promise.settle getSources(lang)
-  .then pluckSettled
-  .spread (args...)->
-    rethrowErrors(args)
-
+  Promise.all getSources(lang)
+  .then (args)->
+    rethrowErrors args
 
     [ dist, update, cleanArchive ] = findKeys.apply null, args
 
@@ -21,8 +19,6 @@ module.exports = extendLangWithDefault = (lang)->
 
   .catch (err)-> console.error "#{lang} err".red, err.stack
 
-
-pluckSettled = (results)-> _.pluck results, '_settledValue'
 
 rethrowErrors = (args)->
   args.forEach (arg)->
