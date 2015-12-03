@@ -9,27 +9,31 @@ user_ = __.require 'lib', 'user/user'
 items_ = __.require 'controllers', 'items/lib/items'
 
 module.exports = (req, res)->
-  { id } = req.query
+  { query } = req
+  { action } = query
 
-  unless tests.valid 'groupId', id
-    return error_.bundle res, "invalid groupId", 400, id
+  handler = getHandler action
 
-  getGroupData id
+  promises_.start()
+  .then handler.bind(null, query)
   .then res.json.bind(res)
   .catch error_.Handler(res)
 
-getGroupData = (groupId)->
-  groups_.byId groupId
-  .then (group)->
-    getUsersAndItems(group)
-    .spread (users, items)->
-      group: group
-      users: users
-      items: items
+getHandler = (action)->
+  handler = switch action
+    when 'search' then searchByName
+    else byId
 
-getUsersAndItems = (group)->
-  usersIds = groups_.allGroupMembers group
-  promises_.all [
-    user_.getUsersPublicData(usersIds)
-    items_.bundleListings(['public'], usersIds)
-  ]
+byId = (query)->
+  { id } = query
+  unless tests.valid 'groupId', id
+    throw error_.new 'invalid groupId', 400, id
+
+  groups_.getGroupPublicData id
+
+searchByName = (query)->
+  { search } = query
+  unless _.isNonEmptyString search
+    throw error_.new 'invalid search', 400, search
+
+  groups_.nameStartBy search

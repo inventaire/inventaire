@@ -20,6 +20,14 @@ groups_ =
     db.viewByKey 'byUser', userId
     .filter Group.userIsAdmin.bind(null, userId)
 
+  nameStartBy: (name, limit=10)->
+    name = name.toLowerCase()
+    db.viewCustom 'byName',
+      startkey: name
+      endkey: name + 'Z'
+      include_docs: true
+      limit: limit
+
   # including invitations
   allUserGroups: (userId)->
     promises_.all [
@@ -80,6 +88,8 @@ counts =
   pendingGroupRequestsCount: (userId)->
     groups_.byAdmin userId
     .then _.property('length')
+
+groups_.getGroupPublicData = require('./group_public_data')(groups_)
 
 module.exports = _.extend groups_, membershipActions, usersLists, counts,
   updateSettings: updateGroup
