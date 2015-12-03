@@ -67,6 +67,12 @@ groups_ =
     .map removeUser.bind(null, userId)
     .then db.bulk.bind(db)
 
+  byCreation: (limit=10)->
+    db.viewCustom 'byCreation',
+      limit: limit
+      descending: true
+      include_docs: true
+
 removeUser = (userId, groupDoc)->
   if userId in groupDoc.admins
     _.warn arguments, "removing a user from a group she's admin of"

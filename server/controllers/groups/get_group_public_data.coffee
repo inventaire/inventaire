@@ -22,6 +22,7 @@ module.exports = (req, res)->
 getHandler = (action)->
   handler = switch action
     when 'search' then searchByName
+    when 'last' then _.Full groups_.byCreation
     else byId
 
 byId = (query)->
