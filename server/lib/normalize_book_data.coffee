@@ -29,9 +29,9 @@ module.exports = (books_)->
     if isbn?
       data.id = data.uri = "isbn:#{isbn}"
       data.isbn = isbn
-    else if otherId? then data.id = data.uri = otherId
+    # else if otherId? then data.id = data.uri = otherId
     else
-      _.warn data.title, 'no id found at normalizeBookData. Will be droped'
+      _.warn data.title, 'no isbn found at normalizeBookData. Will be droped'
       return
 
     if imageLinks?
