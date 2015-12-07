@@ -55,6 +55,8 @@ spreadEmailData = (user, results)->
   { email, language } = user
   lang = _.shortLang language
 
+  countTotal = friendsRequests + groupInvitations + groupRequests + unreadNotifications + activeTransactions + lastFriendsBooks.highlighted.length
+
   return data =
     to: email
     subject: i18n lang, 'activity_summary_title'
@@ -74,6 +76,7 @@ spreadEmailData = (user, results)->
       activeTransactions: counter activeTransactions, '/transactions'
       lastFriendsBooks: lastFriendsBooks
       news: newsData user
+      hasActivities: countTotal > 0
 
 counter = (count, path)->
   display: count > 0

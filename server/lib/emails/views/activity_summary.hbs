@@ -1,30 +1,36 @@
+{{> banner}}
 {{>paragraph_top}}
   {{#if news.display}}
-    <br />
     <h1 style="text-align: center;">{{I18n lang 'news'}}</h1>
     {{{i18n lang news.key}}}
   {{/if}}
   <br />
   <h1 style="text-align: center;">{{I18n lang 'activity summary'}}</h1>
-  {{#if friendsRequests.display}}
-    {{{i18n lang 'pending_friends_requests_count' friendsRequests}}}
-    <br />
-  {{/if}}
-  {{#if groupInvitations.display}}
-    {{{i18n lang 'pending_group_invitations_count' groupInvitations}}}
-    <br />
-  {{/if}}
-  {{#if groupRequests.display}}
-    {{{i18n lang 'pending_group_requests_count' groupRequests}}}
-    <br />
-  {{/if}}
-  {{#if unreadNotifications.display}}
-    {{{i18n lang 'unread_notifications_count' unreadNotifications}}}
-    <br />
-  {{/if}}
-  {{#if activeTransactions.display}}
-    {{{i18n lang 'active_transactions_count' activeTransactions}}}
-    <br />
+  {{#if hasActivities}}
+    {{#if friendsRequests.display}}
+      {{{i18n lang 'pending_friends_requests_count' friendsRequests}}}
+      <br />
+    {{/if}}
+    {{#if groupInvitations.display}}
+      {{{i18n lang 'pending_group_invitations_count' groupInvitations}}}
+      <br />
+    {{/if}}
+    {{#if groupRequests.display}}
+      {{{i18n lang 'pending_group_requests_count' groupRequests}}}
+      <br />
+    {{/if}}
+    {{#if unreadNotifications.display}}
+      {{{i18n lang 'unread_notifications_count' unreadNotifications}}}
+      <br />
+    {{/if}}
+    {{#if activeTransactions.display}}
+      {{{i18n lang 'active_transactions_count' activeTransactions}}}
+      <br />
+    {{/if}}
+  {{else}}
+    <p style="background-color: #eeeeee; text-align:center; padding: 10px;">
+      {{{i18n lang 'no_activity'}}}
+    </p>
   {{/if}}
 {{>paragraph_bottom}}
 
@@ -37,7 +43,7 @@
             {{#if pictures}}
               <img src="{{src pictures 200}}" alt="{{title}}">
             {{/if}}
-            <h3 style="margin: 0 auto; text-align: center;">{{title}}</h3>
+            <h3 style="margin: 0 auto; text-align: center; color:#2C9AB7; text-decoration-color:#2C9AB7;">{{title}}</h3>
           </a>
           <br />
         {{/each}}
