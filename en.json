@@ -53,9 +53,12 @@
     "pending_group_requests_count": "there is **%{smart_count}** [request to join a group waiting for your approval](%{href}) |||| there are **%{smart_count}** [requests to join a group waiting for your approval](%{href})",
     "unread_notifications_count": "you have **%{smart_count}** [unread notification](%{href}) |||| you have **%{smart_count}** [unread notifications](%{href})",
     "active_transactions_count": "you have **%{smart_count}** [ongoing transaction](%{href}) |||| you have **%{smart_count}** [ongoing transactions](%{href})",
-    "activity_summary_meta": "Activity summaries are sent every %{periodicity} days. You can disable this sending in your [email notifications settings](%{settingsHref}). If there is anything you would like to see appear in those activity summary, you can send your suggestions to [%{contactAddress}](mailto:%{contactAddress}?subject=%5BActivity%20Summary%20suggestion%5D)",
-    "last_friends_books": "new books in  your friends inventories",
-    "did_you_know_1": "if your friends aren't on inventaire.io yet, you can [invite them by email](https://inventaire.io/network/friends) to start sharing your books inventories!",
+    "activity_summary_meta": "Activity summaries are sent every %{periodicity} days. You can disable this sending in your [email notifications settings](%{settingsHref}). If there is anything you would like to see appear in those activity summary, you can send your suggestions by replying to this email",
+    "last_friends_books": "new books in your friends inventories",
+    "did_you_know_1": "if your friends aren't on inventaire.io yet, you can [invite them by email](https://inventaire.io/network/users/invite) to start sharing your books inventories!",
     "last_friends_books_more": "...and [%{smart_count} more](https://inventaire.io/inventory)",
-    "news_1": "Hello! Congrats, you are currently reading the first edition of your inventaire.io activity summary! Those emails are meant to remind you of books you might have borrowed or lended, to tell you when friends add new books to their inventories, etc. It will also be the occasion to share news and tips on inventaire.io progresses!"
+    "news_1": "Hello! You are currently reading the first edition of your inventaire.io activity summary! Those emails are meant to remind you of books you might have borrowed or lended, to tell you when friends add new books to their inventories, and more! It will also be the occasion to share news and tips on inventaire.io progresses, and lot happened since we went first online in February: [groups](https://inventaire.io/network/groups), [transactions tracker](https://inventaire.io/transactions), improved design... and it's just a start! Thank you for taking part to this adventure :)<br>Maxime",
+    "news": "news",
+    "activity summary": "activity summary",
+    "did you know?": "did you know?"
 }
