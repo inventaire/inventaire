@@ -100,6 +100,6 @@ module.exports = config =
     disabled: true
     disableUserUpdate: false
     # in days
-    maxEmailsPerHour: 60
+    maxEmailsPerHour: 5
     # the key to find the current news string
     newsKey: 'news_1'
