@@ -2,6 +2,8 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
+user_ = __.require 'lib', 'user/user'
+items_ = __.require 'controllers', 'items/lib/items'
 
 module.exports = (groups_)->
 

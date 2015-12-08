@@ -95,7 +95,13 @@ counts =
     groups_.byAdmin userId
     .then _.property('length')
 
-groups_.getGroupPublicData = require('./group_public_data')(groups_)
-
 module.exports = _.extend groups_, membershipActions, usersLists, counts,
   updateSettings: updateGroup
+
+# getGroupPublicData depends on user_ which depends on groups_.
+# Initializing at next tick allows to work around this dependency loop
+# /!\ getGroupPublicData will be undefined until lateInit runs:
+# avoid `{ getGroupPublicData } = groups_`
+# prefer keeping a reference to groups_: `groups_.getGroupPublicData`
+process.nextTick ->
+  groups_.getGroupPublicData = require('./group_public_data')(groups_)
