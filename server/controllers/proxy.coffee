@@ -25,7 +25,6 @@ module.exports.get = (req, res, next)->
   unless validHostname hostname
     return error_.bundle res, 'invalid hostname', 400, query
 
-  _.warn query, 'proxied query'
   request query
   .on 'error', ErrorHandler(res)
   .pipe res
