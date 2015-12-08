@@ -15,7 +15,7 @@ module.exports = (req, res, next) ->
   # parsers are meant to reverse type changes occuring during data transfer
   # ex: numbers converted to strings
   # parsers are placed before tests to test only parsed values
-  if attribute in haveParser
+  if attribute in hasParser
     value = parsers[attribute](value)
 
   # support deep objects
@@ -32,7 +32,8 @@ module.exports = (req, res, next) ->
 
   if rootAttribute in User.attributes.updatable
     unless _.get(User.tests, rootAttribute)(value)
-      return error_.bundle res, "invalid #{attribute}: #{value}", 400
+      type = _.typeOf value
+      return error_.bundle res, "invalid #{attribute}: #{value} (#{type})", 400
 
     return updateAttribute(user, rootAttribute, attribute, value)
     .then _.Ok(res)
@@ -73,5 +74,10 @@ parsers =
     # allow the user to delete her position by passing a null value
     unless _.isArray latLng then return null
     return latLng.map (str)-> Number(str)
+  summaryPeriodicity: (days)->
+    if _.isString days
+      try days = Number days
+      catch err then _.warn err, "couldn't parse summaryPeriodicity value"
+    return days
 
-haveParser = Object.keys parsers
+hasParser = Object.keys parsers

@@ -23,6 +23,7 @@ module.exports = tests =
     # allow the user to delete her position by passing a null value
     if latLng is null then return true
     _.isArray(latLng) and latLng.length is 2 and _.all latLng, _.isNumber
+  summaryPeriodicity: (days)-> Number.isInteger(days) and days >= 1
 
 deepAttributes =
   settings:

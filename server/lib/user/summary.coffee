@@ -8,17 +8,16 @@ couch_ = __.require 'lib', 'couch'
 
 module.exports = (db)->
   return summary_ =
-    waitingForSummary: (periodicity, limit)->
-      # pick users with last summary date between epoch 0 and periodicity*days ago
-      onePeriodAgo = _.now() - periodicity*oneDay
+    waitingForSummary: (limit)->
+      # pick users with next summary between epoch 0 and now
       db.viewCustom 'waitingForSummary',
         include_docs: true
         limit: limit
         startkey: 0
-        endkey: onePeriodAgo
+        endkey: _.now()
 
-    findOneWaitingForSummary: (periodicity)->
-      summary_.waitingForSummary periodicity, 1
+    findOneWaitingForSummary: ->
+      summary_.waitingForSummary 1
       .then couch_.firstDoc
 
     justReceivedActivitySummary: (id)->

@@ -5,7 +5,10 @@ promises_ = __.require 'lib', 'promises'
 host = CONFIG.fullPublicHost()
 { i18n } = require '../i18n/i18n'
 { contactAddress } = CONFIG
-{ periodicity, newsKey } = CONFIG.activitySummary
+{ newsKey } = CONFIG.activitySummary
+# keep in sync with waitingForSummary in user design_docs
+# and defaultPeriodicity in the client's notifications_settings
+defaultPeriodicity = 20
 
 user_ = __.require 'lib', 'user/user'
 relations_ = __.require 'controllers', 'relations/lib/queries'
@@ -52,10 +55,12 @@ spreadEmailData = (user, results)->
     lastFriendsBooks
   } = results
 
-  { email, language } = user
+  { email, language, summaryPeriodicity } = user
   lang = _.shortLang language
 
   countTotal = friendsRequests + groupInvitations + groupRequests + unreadNotifications + activeTransactions + lastFriendsBooks.highlighted.length
+
+  periodicity = user.summaryPeriodicity or defaultPeriodicity
 
   return data =
     to: email

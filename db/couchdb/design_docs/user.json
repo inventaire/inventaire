@@ -18,7 +18,7 @@
            "map": "(doc)->\n  if doc.position?\n    emit doc.position, null"
        },
        "waitingForSummary": {
-           "map": "(doc)->\n  if doc.type is 'user'\n    acceptsSummaries = doc.settings.notifications['inventories_activity_summary'] isnt false \n    if acceptsSummaries\n      lastSummary = doc.lastSummary or doc.created\n      emit lastSummary, null"
+           "map": "(doc)->\n  if doc.type is 'user'\n    acceptsSummaries = doc.settings.notifications['inventories_activity_summary'] isnt false \n    if acceptsSummaries\n      lastSummary = doc.lastSummary or doc.created\n      summaryPeriodicity = doc.summaryPeriodicity or 20\n      nextSummary = lastSummary + summaryPeriodicity*24*3600*1000\n      emit nextSummary, null"
        }
    }
 }

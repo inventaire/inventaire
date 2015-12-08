@@ -6,7 +6,7 @@ User = __.require 'models', 'user'
 sendActivitySummary = require './send_activity_summary'
 
 { oneHour } =  __.require 'lib', 'times'
-{ periodicity, maxEmailsPerHour } = CONFIG.activitySummary
+{ maxEmailsPerHour } = CONFIG.activitySummary
 emailsInterval = oneHour / maxEmailsPerHour
 
 module.exports = ->
@@ -14,6 +14,6 @@ module.exports = ->
   setInterval sendOneUserSummary, emailsInterval
 
 sendOneUserSummary = ->
-  user_.findOneWaitingForSummary periodicity
+  user_.findOneWaitingForSummary()
   .then sendActivitySummary
   .catch _.Error('waitingForSummary err')

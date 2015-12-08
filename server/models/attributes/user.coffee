@@ -14,6 +14,7 @@ attributes.ownerSafe = [
   'bio'
   'settings'
   'position'
+  'summaryPeriodicity'
 ]
 
 attributes.public = [
@@ -37,6 +38,7 @@ attributes.updatable = [
   'bio'
   'settings'
   'position'
+  'summaryPeriodicity'
 ]
 
 
