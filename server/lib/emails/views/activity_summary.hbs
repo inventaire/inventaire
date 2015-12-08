@@ -34,36 +34,33 @@
   {{/if}}
 {{>paragraph_bottom}}
 
-{{#if lastFriendsBooks.display}}
-  {{>paragraph_top}}
-    <h2 style="text-align: center;">{{{I18n lang 'last_friends_books'}}}</h2>
-      {{> row_centered_top}}
-        {{#each lastFriendsBooks.highlighted}}
-          <a href="{{href}}">
-            {{#if pictures}}
-              <img src="{{src pictures 200}}" alt="{{title}}">
-            {{/if}}
-            <h3 style="margin: 0 auto; text-align: center; color:#2C9AB7; text-decoration-color:#2C9AB7;">{{title}}</h3>
-          </a>
-          <br />
-        {{/each}}
-        {{#if lastFriendsBooks.more.display}}
-          {{{i18n lang 'last_friends_books_more' lastFriendsBooks.more}}}
-        {{/if}}
-      {{> row_centered_bottom}}
-  {{>paragraph_bottom}}
-{{/if}}
-
 {{>paragraph_top}}
+  {{#if lastFriendsBooks.display}}
+    <h2 style="text-align: center;">{{{I18n lang 'last_friends_books'}}}</h2>
+    {{> row_centered_top}}
+      {{#each lastFriendsBooks.highlighted}}
+        <a href="{{href}}">
+          {{#if pictures}}
+            <img src="{{src pictures 200}}" alt="{{title}}">
+          {{/if}}
+          <h3 style="margin: 0 auto; text-align: center; color:#2C9AB7; text-decoration-color:#2C9AB7;">{{title}}</h3>
+        </a>
+        <br />
+      {{/each}}
+      {{#if lastFriendsBooks.more.display}}
+        {{{i18n lang 'last_friends_books_more' lastFriendsBooks.more}}}
+      {{/if}}
+    {{> row_centered_bottom}}
+  {{/if}}
+
+  {{> row_top}}
   <h2>{{I18n lang 'did you know?'}}</h2>
   <ul>
     <li>
-      {{{i18n lang 'did_you_know_1'}}}</h2>
+      {{{i18n lang 'did_you_know_1'}}}
     </li>
   </ul>
-{{>paragraph_bottom}}
-
-{{>paragraph_top}}
   <hr>
   {{{i18n lang 'activity_summary_meta' meta}}}
+  {{> row_centered_bottom}}
 {{>paragraph_bottom}}
