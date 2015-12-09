@@ -103,3 +103,9 @@ module.exports = config =
     maxEmailsPerHour: 5
     # the key to find the current news string
     newsKey: 'news_1'
+  prerender:
+    # specify the ip of the prerender server
+    # to eventually filter it out
+    ip: null
+    # setting prerendere's quota to half Google Books quota
+    quota: 500

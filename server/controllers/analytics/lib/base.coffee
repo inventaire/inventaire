@@ -13,7 +13,7 @@ base =
     .catch _.Error("coudnt update analyticsLevelDB for #{key}")
 
   getHeadersIp: (req)->
-    ip = req.headers['x-forwarded-for']
+    ip = _.extractReqIp req
     if not ip? and CONFIG.env is 'production'
       _.warn "no ip found in header['x-forwarded-for']
               (normal when the server isnt behing a proxy)"

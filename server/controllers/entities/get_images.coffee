@@ -10,7 +10,9 @@ module.exports = (req, res)->
   unless _.isNonEmptyString entityUri
     return error_.bundle res, 'missing entity uri', 400, query
 
-  booksData_.getImages entityUri, data
+  ip = _.extractReqIp req
+
+  booksData_.getImages entityUri, data, ip
   .then formatResponse
   .then res.json.bind(res)
   .catch error_.Handler(res)

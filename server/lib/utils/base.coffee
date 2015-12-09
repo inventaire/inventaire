@@ -53,6 +53,8 @@ module.exports = base =
 
   Map: (fn)-> (array)-> array.map fn
 
+  extractReqIp: (req)-> req.headers['x-forwarded-for']
+
 base.Ok = (res, status)-> base.ok.bind(null, res, status)
 base.OkWarning = (res, warning, status)->
   base.okWarning.bind null, res, warning, status
