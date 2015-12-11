@@ -36,7 +36,7 @@
     "confirmed": "%{username} confirmed to have received the book",
     "returned": "%{username} confirmed to have received the book back",
     "go_to_user_inventory": "go to %{username}'s inventory",
-    "group_invite_subject": "%{actingUserUsername} invited you to join the groupe %{groupName}!",
+    "group_invite_subject": "%{actingUserUsername} invited you to join the group %{groupName}!",
     "group_invite_button": "go to the group's page to accept or decline the invitation",
     "group_acceptRequest_subject": "[%{groupName}] your request to join the group has been validated!",
     "group_acceptRequest_button": "see the books available in the group",
