@@ -60,6 +60,13 @@ module.exports = config =
       pass: 'yoursettings'
     defaultFrom: "inventaire.io <#{contactAddress}>"
     initDelay: 10000
+  activitySummary:
+    disabled: true
+    disableUserUpdate: false
+    # in days
+    maxEmailsPerHour: 5
+    # the key to find the current news string
+    newsKey: 'news_1'
   emailValidation:
     activated: false
     pubkey: 'yourkey'
@@ -96,13 +103,6 @@ module.exports = config =
     maxSize: 1600
     # 5MB
     maxWeight: 5*1024**2
-  activitySummary:
-    disabled: true
-    disableUserUpdate: false
-    # in days
-    maxEmailsPerHour: 5
-    # the key to find the current news string
-    newsKey: 'news_1'
   prerender:
     # specify the ip of the prerender server
     # to eventually filter it out

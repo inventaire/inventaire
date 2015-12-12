@@ -6,7 +6,7 @@ host = CONFIG.fullPublicHost()
 { i18n } = require '../i18n/i18n'
 { contactAddress } = CONFIG
 { newsKey } = CONFIG.activitySummary
-# keep in sync with waitingForSummary in user design_docs
+# keep in sync with the nextSummary view in the user design_docs
 # and defaultPeriodicity in the client's notifications_settings
 defaultPeriodicity = 20
 

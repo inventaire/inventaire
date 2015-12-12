@@ -10,7 +10,7 @@ module.exports = (db)->
   return summary_ =
     waitingForSummary: (limit)->
       # pick users with next summary between epoch 0 and now
-      db.viewCustom 'waitingForSummary',
+      db.viewCustom 'nextSummary',
         include_docs: true
         limit: limit
         startkey: 0
