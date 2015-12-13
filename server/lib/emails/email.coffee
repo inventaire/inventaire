@@ -95,10 +95,11 @@ module.exports =
 
   feedback: (subject, message, user, unknownUser)->
     # no email settings to check here ;)
+    username = user?.username or 'anonymous'
     return data =
       to: defaultFrom
       replyTo: user?.email
-      subject: "[feedback] #{subject}"
+      subject: "[feedback][#{username}] #{subject}"
       template: 'feedback'
       context:
         subject: subject
