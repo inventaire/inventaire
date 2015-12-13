@@ -8,18 +8,20 @@ fs_ =  __.require 'lib', 'fs'
 { maxSize, maxWeight } = CONFIG.images
 error_ = __.require 'lib', 'error/error'
 
+shrink = (data, width, height)->
+  # gm accepts either a path string or a stream
+  gm data
+  .setFormat 'jpg'
+  # only resize if bigger
+  .resize width, height, '>'
+  # removing EXIF data
+  .noProfile()
+  # replace the alpha layer by a white background
+  .flatten()
+  # converting to progressive jpeg
+  .interlace 'Line'
 
 module.exports =
-  format: (path)->
-    formattedPath = "#{path}_formatted"
-    new Promise (resolve, reject)->
-      gm path
-      .noProfile()
-      # converting to progressive jpeg
-      .interlace 'Line'
-      # removing EXIF data
-      .write formattedPath, ReturnNewPath(formattedPath, resolve, reject)
-
   getHashFilename: (path, extension='jpg')->
     fs_.readFile path
     .then crypto_.sha1
@@ -27,20 +29,10 @@ module.exports =
 
   shrink: (originalPath, resizedPath, width=maxSize, height=maxSize)->
     new Promise (resolve, reject)->
-      gm originalPath
-      .setFormat 'jpg'
-      # only resize if bigger
-      .resize width, height, '>'
-      .noProfile()
-      .interlace 'Line'
+      shrink originalPath, width, height
       .write resizedPath, ReturnNewPath(resizedPath, resolve, reject)
 
-  shrinkStream: (stream, width, height)->
-    gm stream
-    .setFormat 'jpg'
-    .resize width, height, '>'
-    .noProfile()
-    .interlace 'Line'
+  shrinkStream: shrink
 
   applyLimits: (width, height)->
     return [ applyLimit(width), applyLimit(height) ]
