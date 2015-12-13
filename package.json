@@ -30,7 +30,6 @@
   },
   "dependencies": {
     "americano": "^0.4.2",
-    "app-root-path": "^1.0.0",
     "bluebird": "^3.0.5",
     "bluereq": "^0.4.0",
     "colors": "^1.1.2",

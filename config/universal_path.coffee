@@ -20,7 +20,7 @@
 # and that those explanation aren't clear enough, please open an issue
 # to help make it clearer
 
-appRoot = require('app-root-path').path
+appRoot = __dirname.replace '/config', ''
 
 module.exports =
   paths:
