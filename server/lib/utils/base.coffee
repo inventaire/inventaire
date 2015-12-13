@@ -55,6 +55,8 @@ module.exports = base =
 
   extractReqIp: (req)-> req.headers['x-forwarded-for']
 
+base.objDiff = -> not base.sameObjects.apply(null, arguments)
+
 base.Ok = (res, status)-> base.ok.bind(null, res, status)
 base.OkWarning = (res, warning, status)->
   base.okWarning.bind null, res, warning, status

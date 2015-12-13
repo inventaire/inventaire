@@ -4,41 +4,56 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 # cant use users and items cot-db
 # as it would create a require loop
-bluereq = require 'bluereq'
+promises_ = __.require 'lib', 'promises'
+breq = require('bluereq')
 
 module.exports =
   designDoc:
     load: (dbBaseName, designDocName)->
       _.info "#{designDocName} design doc loader"
-      url = getDbUrl(dbBaseName)
-      designDoc = getDesignDoc(designDocName)
-      bluereq.post url, designDoc.body()
-      .then (res)-> _.success res.body, "#{designDoc.id} for #{url}"
-      .catch (err)-> _.error err.body or err, "#{designDoc.id} for #{url}"
+      url = getDbUrl dbBaseName
+      designDoc = getDesignDoc designDocName
+      label = "load #{dbBaseName}/#{designDoc.id}"
+
+      breq.post url, designDoc.body()
+      .then _.property('body')
+      .then _.Success(label)
+      .catch _.Error(label)
 
     update: (dbBaseName, designDocName)->
       _.info "#{designDocName} design doc updater"
-      url = getDbUrl(dbBaseName)
-      designDoc = getDesignDoc(designDocName)
-      bluereq.get url + '/' + designDoc.id
-      .then (res)->
-        _.log res.body, 'current'
-        update = designDoc.body()
-        update._rev = res.body._rev
-        url = url + '/' + update._id
-        bluereq.put(url, update)
-        .then (res)-> _.success res.body, "#{designDoc.id} for #{url}"
-      .catch (err)-> _.error err.body or err, "#{designDoc.id} for #{url}"
+      dbUrl = getDbUrl dbBaseName
+      designDoc = getDesignDoc designDocName
+      label = "update #{dbBaseName}/#{designDoc.id}"
+
+      docUrl = dbUrl + '/' + designDoc.id
+
+      promises_.get docUrl
+      .then updateIfNeeded.bind(null, docUrl, designDoc.body())
+      .catch _.Error(label)
 
   putSecurityDoc: (dbName)->
-    url = baseDbUrl + "/#{dbName}/_security"
-    _.log url, 'url'
-    bluereq.put url, _securityDoc
-    .then (res)-> _.info res.body, 'putSecurityDoc'
+    docPath = "/#{dbName}/_security"
+    _.log docPath, 'doc path'
+    url = baseDbUrl + docPath
+
+    breq.put url, _securityDoc
+    .then _.property('body')
+    .then _.Info('putSecurityDoc')
     .catch _.Error('putSecurityDoc')
 
   loadFakeUsers: require './load_fake_users'
 
+
+updateIfNeeded = (url, update, current)->
+  unless _.objDiff update.views, current.views
+    return _.info "#{update._id} already up-to-date"
+
+  update._rev = current._rev
+
+  breq.put url, update
+  .then _.property('body')
+  .then _.Success(label)
 
 getDesignDoc = (designDocName)->
   return doc =
@@ -48,9 +63,9 @@ getDesignDoc = (designDocName)->
     body: -> getOrCreateDesignDoc(@path, designDocName)
 
 getOrCreateDesignDoc = (path, designDocName)->
-  try _.jsonRead path
+  try require path
   catch err
-    _.log err, "#{designDocName} designDoc not found: creating"
+    _.warn err, "#{designDocName} designDoc not found: creating"
     createDefaultDesignDoc(path, designDocName)
 
 createDefaultDesignDoc = (path, designDocName)->
