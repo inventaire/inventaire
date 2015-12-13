@@ -21,7 +21,9 @@ module.exports =
     key: '/cert/OVERRIDE.key'
     cert: '/cert/OVERRIDE.crt'
   typeCheck: false
-  promisesDebug: false
+  bluebird:
+    warnings: false
+    longStackTraces: false
   morgan:
     logFormat: 'short'
   sendServerErrorsClientSide: true

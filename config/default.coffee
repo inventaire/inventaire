@@ -36,7 +36,9 @@ module.exports = config =
     key: '/cert/inventaire.key'
     cert: '/cert/inventaire.csr'
   typeCheck: true
-  promisesDebug: true
+  bluebird:
+    warnings: true
+    longStackTraces: true
   godMode: false # friends requests and groups invits automatically accepted
   cookieThief: false
   morgan:
