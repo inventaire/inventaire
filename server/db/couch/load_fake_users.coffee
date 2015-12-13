@@ -15,7 +15,7 @@ module.exports = ->
 
 keepUsers =
   path: __.path 'couchdb', 'keep_users.json'
-  body: -> _.jsonRead @path
+  body: -> require @path
 
 loadFakeUser = (username)->
   bluereq.get('http://api.randomuser.me/')

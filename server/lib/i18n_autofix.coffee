@@ -10,7 +10,7 @@ module.exports =
     appendToI18nKeys emails, [key], fullValue
 
 appendToI18nKeys = (path, newKeys, fullValue)->
-  keys = _.jsonRead path
+  keys = require path
   lengthBefore = _.objLength(keys)
   for key in newKeys
     unless keys[key]

@@ -6,20 +6,19 @@ stringify = (data)-> JSON.stringify data, null, 4
 module.exports =
   jsonRead: (path)->
     @type path, 'string'
-    JSON.parse fs.readFileSync(path).toString()
+    require path
 
   jsonReadAsync: (path)->
     @type path, 'string'
-    fs.readFileAsync(path)
-    .then (res)-> res.toString()
+    fs.readFileAsync path, 'utf-8'
     .then parse
 
   jsonWrite: (path, data)->
     @types arguments, ['string', 'object']
-    json = stringify(data)
-    fs.writeFileSync(path, json)
+    json = stringify data
+    fs.writeFileSync path, json
 
   jsonWriteAsync: (path)->
     @type path, 'string'
-    json = stringify(data)
-    fs.writeFileAsync(path, json)
+    json = stringify data
+    fs.writeFileAsync path, json
