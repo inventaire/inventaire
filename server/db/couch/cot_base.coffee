@@ -1,6 +1,5 @@
 CONFIG = require('config')
 __ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
 
 params =
   hostname: CONFIG.db.host
