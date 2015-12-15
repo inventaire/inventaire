@@ -19,6 +19,9 @@
        },
        "byEntity": {
            "map": "(doc)->\n    if doc.entity?\n      emit [doc.entity, doc.listing], null"
+       },
+       "missingPicture": {
+           "map": "(doc)->\n  if doc.title?\n    if doc.pictures.length is 0\n      emit doc.created, null"
        }
    }
 }
