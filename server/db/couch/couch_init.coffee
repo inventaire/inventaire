@@ -5,7 +5,7 @@ _ = __.require 'builders', 'utils'
 # cant use users and items cot-db
 # as it would create a require loop
 promises_ = __.require 'lib', 'promises'
-breq = require('bluereq')
+breq = require 'bluereq'
 
 module.exports =
   designDoc:
@@ -24,13 +24,12 @@ module.exports =
       _.info "#{designDocName} design doc updater"
       dbUrl = getDbUrl dbBaseName
       designDoc = getDesignDoc designDocName
-      label = "update #{dbBaseName}/#{designDoc.id}"
 
       docUrl = dbUrl + '/' + designDoc.id
 
       promises_.get docUrl
       .then updateIfNeeded.bind(null, docUrl, designDoc.body())
-      .catch _.Error(label)
+      .catch _.Error("update #{dbBaseName}/#{designDoc.id}")
 
   putSecurityDoc: (dbName)->
     docPath = "/#{dbName}/_security"
@@ -53,7 +52,7 @@ updateIfNeeded = (url, update, current)->
 
   breq.put url, update
   .then _.property('body')
-  .then _.Success(label)
+  .then _.Success("updateIfNeeded #{update._id}")
 
 getDesignDoc = (designDocName)->
   return doc =
