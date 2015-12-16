@@ -31,7 +31,7 @@
   "dependencies": {
     "americano": "^0.4.2",
     "bluebird": "^3.0.5",
-    "bluereq": "^0.4.2",
+    "bluereq": "^1.0.0",
     "colors": "^1.1.2",
     "config": "^1.16.0",
     "cookie-parser": "^1.4.0",

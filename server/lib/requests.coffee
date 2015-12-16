@@ -30,4 +30,6 @@ mergeOptions = (url, options={})->
 module.exports =
   get: _.partial req, 'get'
   post: _.partial req, 'post'
+  put: _.partial req, 'put'
+  delete: _.partial req, 'delete'
   head: head
