@@ -45,4 +45,3 @@ module.exports =
     json_.write __.path('i18nDist', "#{lang}.json"), dist
     .then ->
       console.log "#{lang} done! total: #{++count}".green
-      if count is total then console.timeEnd 'generate'.grey
