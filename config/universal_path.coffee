@@ -48,5 +48,7 @@ module.exports =
     uploads: '/client/public/uploads'
   path: (route, name)->
     path = @paths[route]
-    return "#{appRoot}#{path}/#{name}"
+    rootedPath = "#{appRoot}#{path}"
+    if name? then "#{rootedPath}/#{name}"
+    else rootedPath
   require: (route, name)-> require @path(route, name)

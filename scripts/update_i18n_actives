@@ -1,1 +1,1 @@
-server/lib/emails/i18n/src/generate_lang_json.coffee en fr de pl sv es
+server/lib/emails/i18n/src/generate_lang_json.coffee $(./scripts/active_langs)

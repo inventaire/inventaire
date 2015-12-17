@@ -83,6 +83,7 @@
     "mailcomposer": "^2.1.0",
     "mocha": "^2.3.3",
     "onchange": "^2.0.0",
+    "shell-quote": "^1.4.3",
     "should": "^7.1.1",
     "sinon": "^1.17.1",
     "supertest": "^1.1.0",

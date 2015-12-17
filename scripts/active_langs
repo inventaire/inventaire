@@ -1,0 +1,10 @@
+#!/usr/bin/env coffee
+
+# just wrapping lib/emails/i18n/active_langs for uses in scripts
+
+CONFIG = require 'config'
+__ = CONFIG.universalPath
+{ quote } = require 'shell-quote'
+activeLang  = __.require 'lib', 'emails/i18n/active_langs'
+process.stdout.write quote(activeLang) + '\n'
+process.exit()
