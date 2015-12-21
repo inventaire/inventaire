@@ -36,10 +36,11 @@ groups_ =
     ]
     .spread _.union.bind(_)
 
-  create: (name, creatorId)->
-    group = Group.create name, creatorId
-    _.log group, 'group created'
-    db.postAndReturn group
+  create: (options)->
+    promises_.start()
+    .then -> Group.create options
+    .then _.Log('group created')
+    .then db.postAndReturn
 
   findUserGroupsCoMembers: (userId)->
     groups_.byUser userId

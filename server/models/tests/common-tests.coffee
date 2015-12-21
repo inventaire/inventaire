@@ -7,7 +7,7 @@ error_ = __.require 'lib', 'error/error'
 { CouchUuid, Email, Username, EntityUri, Lang, LocalImg } = regex_
 
 # regex need to their context
-bindedTest = (regex)-> regex.test.bind(regex)
+bindedTest = (regex)-> regex.test.bind regex
 
 module.exports = tests =
   userId: bindedTest CouchUuid
@@ -19,7 +19,7 @@ module.exports = tests =
   entityUri: bindedTest EntityUri
   lang: bindedTest Lang
   localImg: bindedTest LocalImg
-
+  boolean: _.isBoolean
 
 tests.nonEmptyString = (str, maxLength=100)->
   _.isString str
@@ -33,7 +33,11 @@ tests.EpochMs =
 tests.imgUrl = (url)-> tests.localImg(url) or _.isUrl(url)
 
 tests.valid = (attribute, value, option)->
-  @[attribute](value, option)
+  test = @[attribute]
+  # if no test are set at this attribute for this context
+  # default to common tests
+  test ?= tests[attribute]
+  test value, option
 
 tests.pass = (attribute, value, option)->
   unless tests.valid.call @, attribute, value, option

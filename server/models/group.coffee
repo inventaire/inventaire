@@ -7,15 +7,18 @@ module.exports = Group = {}
 
 Group.tests = tests = require './tests/group'
 
-Group.create = (name, creatorId)->
+Group.create = (options)->
+  { name, creatorId, searchable } = options
   tests.pass 'userId', creatorId
   tests.pass 'name', name
+  tests.pass 'boolean', searchable
 
   creator = createMembership creatorId, null
 
   return group =
     type: 'group'
     name: name
+    searchable: searchable
     admins: [ creator ]
     members: []
     invited: []

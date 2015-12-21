@@ -5,10 +5,13 @@ error_ = __.require 'lib', 'error/error'
 groups_ = require './lib/groups'
 
 module.exports = (req, res)->
-  { name } = req.body
+  { name, searchable } = req.body
   unless name? then return error_.bundle res, 'missing group name', 400
-  creatorId = req.user._id
 
-  groups_.create name, creatorId
+  groups_.create
+    name: name
+    # convert from String to Boolean with true as default value
+    searchable: searchable isnt 'false'
+    creatorId: req.user._id
   .then res.json.bind(res)
-  .catch _.Error('group create')
+  .catch error_.Handler(res)
