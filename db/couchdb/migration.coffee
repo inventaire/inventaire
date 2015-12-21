@@ -3,27 +3,13 @@ _ = __.require 'builders', 'utils'
 Promise = require 'bluebird'
 Promise.longStackTraces()
 fs = require 'fs'
+previewDocDiffs = require './preview_doc_diffs'
 
-
-# HOW TO:
-# -----------------
-# dbName = 'inventory' (e.g.)
-# mig = require('config').universalPath.require('couchdb', 'migration')(dbName)
-# updateFunction = (doc)-> if doc.type is 'targetedType' (do your thing) return doc
-# mig.updateAll(updateFunction)
-
-# OR
-# dbName = 'users' (e.g.)
-# designDocName = 'user'
-# viewName = 'byId'
-# mig = require('config').universalPath.require('couchdb', 'migration')(dbName, designDocName)
-# updateFunction = (doc)-> if doc.type is 'targetedType' (do your thing) return doc
-# mig.updateByView(viewName, updateFunction)
-
-
-module.exports = (dbName, designDocName)->
+module.exports = (dbName, designDocName, preview=true)->
   db = __.require('couch', 'cot_base')(dbName, designDocName)
   unless db? then throw new Error('bad dbName')
+
+  console.log 'preview', preview
 
   updater = (docsIdsPromise, updateFunction, label)->
     _.log typeof docsIdsPromise, 'typeof docsIdsPromise'
@@ -34,15 +20,26 @@ module.exports = (dbName, designDocName)->
       _.log ids, 'got ids'
       promises = []
       ids.forEach (id)->
-        unless isDesignDoc(id)
+        unless isDesignDoc id
           _.log id, 'id'
-          promises.push db.update(id, updateFunction)
+          promises.push updateIfNeeded(id, updateFunction)
 
-      Promise.all(promises)
-      .then _.Success('done updating !!')
-    .catch (err)->
-      _.error err, 'migration error'
-      throw new Error(err)
+      return Promise.all promises
+
+    .then -> _.log 'done updating !!'
+    .catch _.ErrorRethrow('migration error')
+
+  updateIfNeeded = (id, updateFn)->
+    db.get id
+    .then (doc)->
+      # use a clone of the doc to keep it unmuted
+      update = updateFn _.extend({}, doc)
+      if _.objDiff doc, update
+        if preview then previewDocDiffs doc, update
+        else return db.update id, updateFn
+      else
+        console.log 'no changes', id
+        return
 
   API =
     db: db
@@ -54,20 +51,15 @@ module.exports = (dbName, designDocName)->
       .then (res)->
         ids = _.pluck res.rows, 'id'
         return _.success ids, 'doc ids found'
-      .catch (err)->
-        _.error err, 'getAllDocsKeys error'
-        throw new Error(err)
+      .catch _.ErrorRethrow('getAllDocsKeys error')
 
     updateByView: (viewName, updateFunction, label)->
-      # console.log 'UPDATER', updater
       updater @getViewKeys(viewName), updateFunction, label
 
     getViewKeys: (viewName)->
       db.view designDocName, viewName
-      .then (res)->
-        return res.rows.map _.property('id')
+      .then (res)-> return res.rows.map _.property('id')
       .then _.Log('view ids')
-      # .catch _.Error('getViewKeys')
 
   return API
 

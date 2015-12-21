@@ -20,7 +20,8 @@
     "reload": "touch deploy/reload.coffee",
     "preview-email": "./scripts/preview-email",
     "patches": "./scripts/run_patches ./scripts/patches",
-    "watch-i18n": "onchange server/lib/emails/i18n/src -- ./scripts/reload_i18n"
+    "watch-i18n": "onchange server/lib/emails/i18n/src -- ./scripts/reload_i18n",
+    "migrator": "coffee db/couchdb/migrator.coffee"
   },
   "author": "maxlath",
   "license": "AGPL-3.0",
@@ -76,6 +77,7 @@
     "chai": "^3.3.0",
     "coffee-errors": "^0.8.6",
     "coffee-script": "^1.10.0",
+    "diff": "^2.2.1",
     "lev": "^3.2.3",
     "level-test": "^2.0.1",
     "live-server": "^0.8.2",
