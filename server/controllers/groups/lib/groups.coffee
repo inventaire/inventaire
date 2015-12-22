@@ -20,6 +20,7 @@ groups_ =
     db.viewByKey 'byUser', userId
     .filter Group.userIsAdmin.bind(null, userId)
 
+  # /!\ the 'byName' view doesn't return groups with 'searchable' set to false
   nameStartBy: (name, limit=10)->
     name = name.toLowerCase()
     db.viewCustom 'byName',
