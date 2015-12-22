@@ -12,23 +12,24 @@ module.exports = (req, res)->
   { query } = req
   { action } = query
 
-  handler = getHandler action
+  handler = switch action
+    when undefined then byId
+    when 'search' then searchByName
+    when 'last' then lastGroups
 
+  unless handler? then return error_.unknownAction res
+
+  # wrapping in a promise chain to allow throwing
+  # before generating a promise
   promises_.start()
   .then handler.bind(null, query)
   .then res.json.bind(res)
   .catch error_.Handler(res)
 
-getHandler = (action)->
-  handler = switch action
-    when 'search' then searchByName
-    when 'last' then lastGroups
-    else byId
-
 byId = (query)->
   { id } = query
   unless tests.valid 'groupId', id
-    throw error_.new 'invalid groupId', 400, id
+    throw error_.new 'invalid group id', 400, id
 
   groups_.getGroupPublicData id
 
