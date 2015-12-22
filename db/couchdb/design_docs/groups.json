@@ -9,7 +9,7 @@
            "map": "(doc)->\n  if doc.type is 'group'\n    for member in doc.members\n      emit member.user, null\n    for admin in doc.admins\n      emit admin.user, null"
        },
        "byName": {
-           "map": "(doc)->\n  if doc.type is 'group' and doc.searchable\n    emit doc.name.toLowerCase(), null"
+           "map": "(doc)->\n  if doc.type is 'group'\n    emit doc.name.toLowerCase(), null"
        },
        "byInvitedUser": {
            "map": "(doc)->\n  if doc.type is 'group'\n    for invitation in doc.invited\n      emit invitation.user, null"

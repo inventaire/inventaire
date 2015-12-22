@@ -22,7 +22,7 @@ module.exports = (req, res)->
 getHandler = (action)->
   handler = switch action
     when 'search' then searchByName
-    when 'last' then _.Full groups_.byCreation
+    when 'last' then lastGroups
     else byId
 
 byId = (query)->
@@ -38,3 +38,10 @@ searchByName = (query)->
     throw error_.new 'invalid search', 400, search
 
   groups_.nameStartBy search
+  .filter searchable
+
+lastGroups = ->
+  groups_.byCreation()
+  .filter searchable
+
+searchable = _.property 'searchable'
