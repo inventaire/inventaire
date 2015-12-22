@@ -9,14 +9,14 @@ Libre collaborative resource mapper powered by open-knowledge
 [![Code Climate](https://codeclimate.com/github/inventaire/inventaire/badges/gpa.svg)](https://codeclimate.com/github/inventaire/inventaire)
 [![Join the chat at https://gitter.im/inventaire/inventaire](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/inventaire/inventaire)
 
-[![inventory-georges](http://profile.maxlath.eu/slides/backbone-meetup/img/inventory-georges.png)](https://inventaire.io)
+[![inventory-georges](http://maxlath.eu/slides/backbone-meetup/img/inventory-georges.png)](https://inventaire.io)
 
 This repository hosts [Inventaire.io](https://inventaire.io) source code. Its a collaborative resources mapper project, while yet only focused on exploring books mapping with [wikidata](https://wikidata.org/) and [ISBNs](https://en.wikipedia.org/wiki/International_Standard_Book_Number)
 
 This repository tracks the server-side developments, while the (heavy) [client-side can be found here](https://github.com/inventaire/inventaire-client). Client-related technical issues should go in the client repo, while this repo gathers all other technical issues. Non-technical discussions such as feature requests should preferably happen in the [Roadmap](https://trello.com/b/0lKcsZDj/inventaire-roadmap) Trello. In doubt, just use your best guess :)
 
 ##Stack approximative overview
-![stack-en](http://profile.maxlath.eu/slides/backbone-meetup/img/stack-en.jpg)
+![stack-en](http://maxlath.eu/slides/backbone-meetup/img/stack-en.jpg)
 
 ##Concepts map
 the whole app turns around 3 core concepts:
@@ -69,8 +69,8 @@ Emails are disabled in default config to avoid having to configure that too for 
 
 **Ideas for experimentations:**
 
-- port to custom desktop clients using [node-webkit](https://github.com/rogerwang/node-webkit) or alike
-- port to an app for personal cloud platforms: [Cozy](http://cozy.io), [OwnCloud](http://owncloud.org/)...
+- port to custom desktop clients using [node-webkit](https://github.com/nwjs/nw.js) or alike
+- port to an app for personal cloud platforms: [Cozy](http://cozy.io), [OwnCloud](https://owncloud.org/)...
 - server-less/P2P inventory sharing using WebRTC DataChannel / [WebTorrent](https://github.com/feross/webtorrent) / [IPFS](http://ipfs.io/) / [Ethereum](https://www.ethereum.org/) / you name it
 - any other IndieWeb / [Unhosted](https://unhosted.org/) crazyness? :)
 
@@ -86,7 +86,7 @@ Emails are disabled in default config to avoid having to configure that too for 
 **Server-side**
 - [ExpressJs](http://expressjs.com/) within a light wrapper: [Americano](https://github.com/cozy/americano)
 - [Bluebird](https://github.com/petkaantonov/bluebird) for promises
-- [Lodash](http://lodash.com/) utils
+- [Lodash](https://lodash.com/) utils
 - [node-config](https://github.com/lorenwest/node-config)
 
 
@@ -94,7 +94,7 @@ Emails are disabled in default config to avoid having to configure that too for 
 
 **Databases**
 - [CouchDB](http://couchdb.apache.org/)
-- [LevelDB](http://leveldb.org/) with [LevelUp](https://github.com/rvagg/node-levelup) and [LevelGraph](https://github.com/mcollina/levelgraph)
+- [LevelDB](http://leveldb.org/) with [LevelUp](https://github.com/Level/levelup) and [LevelGraph](https://github.com/mcollina/levelgraph)
 
 **Client-side**
 - [BackboneJs](http://backbonejs.org/) / [MarionetteJs](http://marionettejs.com/)
