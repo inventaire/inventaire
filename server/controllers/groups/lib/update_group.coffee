@@ -8,7 +8,7 @@ Radio = __.require 'lib', 'radio'
 parse = __.require('lib', 'parsers')('group')
 
 module.exports = (db)->
-  return updateGroup = (data, userId)->
+  updateSettings: (data, userId)->
     { group:groupId, attribute, value } = data
 
     value = parse attribute, value

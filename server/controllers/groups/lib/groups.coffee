@@ -7,7 +7,7 @@ Group = __.require 'models', 'group'
 
 db = __.require('couch', 'base')('users', 'groups')
 
-groups_ =
+module.exports = groups_ =
   # using a view to avoid returning users or relations
   byId: db.viewFindOneByKey.bind(db, 'byId')
   byUser: db.viewByKey.bind(db, 'byUser')
@@ -52,53 +52,19 @@ groups_ =
     groups_.byId groupId
     .then _.partial(Group.findInvitation, userId, _, true)
 
-  userCanLeave: (userId, groupId)->
-    groups_.byId groupId
-    .then (group)->
-      { admins, members } = group
-      adminsIds = admins.map _.property('user')
-      unless userId in adminsIds then return true
-      mainUserIsTheOnlyAdmin = admins.length is 1
-      thereAreOtherMembers = members.length > 0
-      if mainUserIsTheOnlyAdmin and thereAreOtherMembers then false
-      else true
-
-  leaveAllGroups: (userId)->
-    # TODO: check if userCanLeave
-    groups_.byUser userId
-    .map removeUser.bind(null, userId)
-    .then db.bulk.bind(db)
-
   byCreation: (limit=10)->
     db.viewCustom 'byCreation',
       limit: limit
       descending: true
       include_docs: true
 
-removeUser = (userId, groupDoc)->
-  if userId in groupDoc.admins
-    _.warn arguments, "removing a user from a group she's admin of"
-
-  for list in Group.attributes.usersLists
-    groupDoc[list] = _.without groupDoc[list], userId
-
-  return groupDoc
-
 membershipActions = require('./membership_actions')(db)
 usersLists = require('./users_lists')(groups_)
 updateGroup = require('./update_group')(db)
+counts = require('./counts')(groups_)
+leaveGroups = require('./leave_groups')(groups_)
 
-counts =
-  pendingGroupInvitationsCount: (userId)->
-    groups_.byInvitedUser userId
-    .then _.property('length')
-
-  pendingGroupRequestsCount: (userId)->
-    groups_.byAdmin userId
-    .then _.property('length')
-
-module.exports = _.extend groups_, membershipActions, usersLists, counts,
-  updateSettings: updateGroup
+_.extend groups_, membershipActions, usersLists, updateGroup, counts, leaveGroups
 
 # getGroupPublicData depends on user_ which depends on groups_.
 # Initializing at next tick allows to work around this dependency loop
