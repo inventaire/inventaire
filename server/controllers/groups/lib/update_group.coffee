@@ -5,10 +5,13 @@ Group = __.require 'models', 'group'
 error_ = __.require 'lib', 'error/error'
 { BasicUpdater } = __.require 'lib', 'doc_updates'
 Radio = __.require 'lib', 'radio'
+parse = __.require('lib', 'parsers')('group')
 
 module.exports = (db)->
   return updateGroup = (data, userId)->
     { group:groupId, attribute, value } = data
+
+    value = parse attribute, value
 
     unless attribute in Group.attributes.updatable
       throw error_.new "#{attribute} can't be updated", 400, data

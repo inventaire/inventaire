@@ -4,6 +4,7 @@ _ = __.require 'builders', 'utils'
 User = __.require 'models', 'user'
 user_ = __.require 'lib', 'user/user'
 error_ = __.require 'lib', 'error/error'
+parse = __.require('lib', 'parsers')('user')
 updates_ = __.require 'lib', 'doc_updates'
 { valueAlreayUpToDate, basicUpdater, stringBooleanUpdater } = updates_
 
@@ -12,11 +13,7 @@ module.exports = (req, res, next) ->
   { user, body } = req
   { attribute, value } = body
 
-  # parsers are meant to reverse type changes occuring during data transfer
-  # ex: numbers converted to strings
-  # parsers are placed before tests to test only parsed values
-  if attribute in hasParser
-    value = parsers[attribute](value)
+  value = parse attribute, value
 
   # support deep objects
   if valueAlreayUpToDate _.get(user, attribute), value
@@ -68,16 +65,3 @@ archivePreviousEmail = (doc)->
     doc.previousEmails = _.uniq(doc.previousEmails)
     doc.validEmail = false
   return doc
-
-parsers =
-  position: (latLng)->
-    # allow the user to delete her position by passing a null value
-    unless _.isArray latLng then return null
-    return latLng.map (str)-> Number(str)
-  summaryPeriodicity: (days)->
-    if _.isString days
-      try days = Number days
-      catch err then _.warn err, "couldn't parse summaryPeriodicity value"
-    return days
-
-hasParser = Object.keys parsers
