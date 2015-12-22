@@ -1,12 +1,16 @@
 # parsers are meant to reverse type changes occuring during data transfer
 # ex: numbers converted to strings
 # parsers are placed before tests to test only parsed values
+__ = require('config').universalPath
+_ = __.require 'builders', 'utils'
 
-# arbitrary default to true
-booleanString = (value)-> if value is 'false' then false else true
+stringToBoolean = (value)->
+  _.type value, 'string'
+  return JSON.parse value
 
 allParsers =
   user:
+    settings: stringToBoolean
     position: (latLng)->
       # allow the user to delete her position by passing a null value
       unless _.isArray latLng then return null
@@ -18,8 +22,7 @@ allParsers =
       return days
 
   group:
-    searchable: booleanString
-
+    searchable: stringToBoolean
 
 module.exports = (domain)->
   parsers = allParsers[domain]

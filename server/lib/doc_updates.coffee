@@ -25,16 +25,9 @@ wrappedUpdater = (db, id, attribute, value)->
 
 WrappedUpdater = (db)-> wrappedUpdater.bind(null, db)
 
-stringBooleanUpdater = (attribute, value, doc)->
-  # in the undesired cased that it is passed anything else
-  # than a boolean string, it will arbitrary default to true
-  value = if value is 'false' then false else true
-  return basicUpdater attribute, value, doc
-
 module.exports =
   valueAlreayUpToDate: valueAlreayUpToDate
   basicUpdater: basicUpdater
   BasicUpdater: BasicUpdater
   wrappedUpdater: wrappedUpdater
   WrappedUpdater: WrappedUpdater
-  stringBooleanUpdater: stringBooleanUpdater

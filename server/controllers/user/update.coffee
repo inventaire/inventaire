@@ -6,22 +6,28 @@ user_ = __.require 'lib', 'user/user'
 error_ = __.require 'lib', 'error/error'
 parse = __.require('lib', 'parsers')('user')
 updates_ = __.require 'lib', 'doc_updates'
-{ valueAlreayUpToDate, basicUpdater, stringBooleanUpdater } = updates_
+{ valueAlreayUpToDate, basicUpdater } = updates_
+emailUpdater = require('./lib/email_updater')(user_)
 
 module.exports = (req, res, next) ->
   # implies that req.isAuthenticated() is true
   { user, body } = req
   { attribute, value } = body
 
-  value = parse attribute, value
-
-  # support deep objects
-  if valueAlreayUpToDate _.get(user, attribute), value
-    return error_.bundle res, 'already up-to-date', 400
+  unless _.isNonEmptyString attribute
+    return error_.bundle res, 'missing attribute', 400
+  unless value?
+    return error_.bundle res, 'missing value', 400
 
   # doesnt change anything for normal attribute
   # returns the root object for deep attributes such as settings
   rootAttribute = attribute.split('.')[0]
+
+  value = parse rootAttribute, value
+
+  # support deep objects
+  if valueAlreayUpToDate _.get(user, attribute), value
+    return error_.bundle res, 'already up-to-date', 400
 
   if attribute isnt rootAttribute
     unless User.tests.deepAttributesExistance attribute
@@ -48,20 +54,6 @@ module.exports = (req, res, next) ->
 updateAttribute = (user, rootAttribute, attribute, value)->
   updater = switch rootAttribute
     when 'email' then emailUpdater
-    when 'settings' then stringBooleanUpdater
     else basicUpdater
+
   user_.db.update user._id, updater.bind(null, attribute, value)
-
-emailUpdater = (attribute, value, doc)->
-  doc = archivePreviousEmail(doc)
-  doc.email = value
-  # returns a user doc
-  user_.sendValidationEmail(doc)
-
-archivePreviousEmail = (doc)->
-  if doc.validEmail
-    doc.previousEmails or= []
-    doc.previousEmails.push doc.email
-    doc.previousEmails = _.uniq(doc.previousEmails)
-    doc.validEmail = false
-  return doc
