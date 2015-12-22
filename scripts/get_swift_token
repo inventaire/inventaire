@@ -1,0 +1,10 @@
+#!/usr/bin/env coffee
+
+CONFIG = require 'config'
+__ = CONFIG.universalPath
+_ = __.require 'builders', 'utils'
+getToken = __.require 'controllers', 'upload/lib/get_swift_token'
+
+getToken()
+.then (token)-> console.log token
+.catch _.Error('get token')
