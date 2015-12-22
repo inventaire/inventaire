@@ -4,6 +4,8 @@
 # folder to get the 'config'
 # ex: ./scripts/upload_jpg.coffee ./imageFactory/images/my.jpg
 
+# use the --raw option to prevent image treatments
+
 
 CONFIG = require 'config'
 __ = CONFIG.universalPath
@@ -12,12 +14,18 @@ _ = __.require('builders', 'utils')
 # thus, images have to go to the PROD container
 CONFIG.swift.container = 'img'
 require 'colors'
-{ putImage } = __.require 'controllers', 'upload/upload'
+{ putImage, putRawImage } = __.require 'controllers', 'upload/upload'
 cp = require 'copy-paste'
 Promise = require 'bluebird'
 fs = require 'fs'
 
-imagesPaths = process.argv.slice(2)
+raw = false
+imagesPaths = process.argv.slice 2
+if imagesPaths[0] is '--raw'
+  raw = true
+  putImage = putRawImage
+  imagesPaths = imagesPaths.slice 1
+
 imageMap = {}
 
 uploadImg = (imagePath)->
@@ -31,16 +39,31 @@ uploadImg = (imagePath)->
   .then (res)->
     { id, url } = res
     url = "https://inventaire.io#{url}"
-    cp.copy url
-    console.log 'Copied to Clipboard: '.green, url
+
+    # don't copy to clipboard in raw mode
+    if raw
+      console.log url
+    else
+      cp.copy url
+      console.log 'Copied to Clipboard: '.green, url
+
     imageMap[id] = url
   .catch _.Error('putImage err')
 
-
-Promise.all imagesPaths.map(uploadImg)
-.then ->
+saveImageMap = ->
   path = './uploads_map.json'
   fs.writeFileSync path, JSON.stringify(imageMap, null, 4)
   _.info "#{path} saved"
-  # process.exit 0
+
+promise = Promise.resolve()
+
+while imagesPaths.length > 0
+  imagePath = imagesPaths.pop()
+  # chaining promises to make one upload at a time
+  promise = promise
+    .then uploadImg.bind(null, imagePath)
+    .catch _.Error("#{imagePath} err")
+
+promise
+.then saveImageMap
 .catch _.Error('saving map err')
