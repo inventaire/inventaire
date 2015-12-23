@@ -8,7 +8,7 @@ Libre collaborative resource mapper powered by open-knowledge<br>
 [![Code Climate](https://codeclimate.com/github/inventaire/inventaire/badges/gpa.svg)](https://codeclimate.com/github/inventaire/inventaire)<br>
 Come to say hi on your prefered chat<br>
 [![Join the chat at https://gitter.im/inventaire/inventaire](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/inventaire/inventaire)
-[![IRC](https://img.shields.io/badge/irc-%23inventaire-orange.svg)](irc://irc.freenode.net/inventaire)
+[![IRC](https://img.shields.io/badge/irc-%23inventaire-orange.svg)](https://kiwiirc.com/client/irc.freenode.net/inventaire)
 
 [![inventory-georges](http://maxlath.eu/slides/backbone-meetup/img/inventory-georges.png)](https://inventaire.io)
 
