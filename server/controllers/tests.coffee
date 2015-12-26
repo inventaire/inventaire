@@ -45,7 +45,11 @@ rawBody = (req, res, next)->
 # used only in development obviously
 copyCookies = (cookies)->
   if cookies?
-    _.success cookies, 'Copying cookie to clipboard!'
-    require('copy-paste').copy cookies
+    sessionCookies = cookies.split '; '
+      .filter (cookie)-> /^express/.test cookie
+      .join '; '
+
+    _.success sessionCookies, 'Copying cookie to clipboard!'
+    require('copy-paste').copy sessionCookies
   else
     _.warn 'no cookies could be stolen'
