@@ -16,6 +16,9 @@
        },
        "byCreation": {
            "map": "(doc)->\n  if doc.type is 'group'\n    emit doc.created, null"
+       },
+       "byPosition": {
+           "map": "(doc)->\n  if doc.type is 'group' and doc.position?\n    emit doc.position, null"
        }
    }
 }

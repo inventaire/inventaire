@@ -17,7 +17,11 @@ module.exports =
 
   put: (req, res, next)->
     { action } = req.body
-    action = _.camelCase action
+
+    # don't convert an undefined action to an empty string
+    # it makes debugging confusing
+    if action?
+      action = _.camelCase action
 
     unless action in possibleActions
       return error_.unknownAction res, action

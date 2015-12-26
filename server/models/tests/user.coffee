@@ -3,7 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 notificationsSettingsList = __.require 'sharedLibs', 'notifications_settings_list'
 
-{ pass, userId, username, email, localImg, boolean } = require './common-tests'
+{ pass, userId, username, email, localImg, boolean, position } = require './common-tests'
 
 module.exports = tests =
   pass: pass
@@ -18,10 +18,7 @@ module.exports = tests =
     creationStrategy in ['browserid', 'local']
   bio: (bio)-> _.isString(bio) and bio.length < 1000
   settings: boolean
-  position: (latLng)->
-    # allow the user to delete her position by passing a null value
-    if latLng is null then return true
-    _.isArray(latLng) and latLng.length is 2 and _.all latLng, _.isNumber
+  position: position
   summaryPeriodicity: (days)-> Number.isInteger(days) and days >= 1
 
 deepAttributes =

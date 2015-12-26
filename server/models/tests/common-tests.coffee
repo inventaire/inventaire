@@ -20,6 +20,10 @@ module.exports = tests =
   lang: bindedTest Lang
   localImg: bindedTest LocalImg
   boolean: _.isBoolean
+  position: (latLng)->
+    # allow the user or group to delete its position by passing a null value
+    if latLng is null then return true
+    _.isArray(latLng) and latLng.length is 2 and _.all latLng, _.isNumber
 
 tests.nonEmptyString = (str, maxLength=100)->
   _.isString str

@@ -1,4 +1,4 @@
-{ pass, nonEmptyString, localImg, boolean } = require './common-tests'
+{ pass, nonEmptyString, localImg, boolean, position } = require './common-tests'
 
 module.exports =
   pass: pass
@@ -10,3 +10,4 @@ module.exports =
   picture: localImg
   description: (str)-> nonEmptyString str, 5000
   searchable: boolean
+  position: position

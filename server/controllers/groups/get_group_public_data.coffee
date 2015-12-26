@@ -7,6 +7,8 @@ promises_ = __.require 'lib', 'promises'
 groups_ = require './lib/groups'
 user_ = __.require 'lib', 'user/user'
 items_ = __.require 'controllers', 'items/lib/items'
+parseLatLng = __.require 'lib', 'parse_lat_lng'
+
 
 module.exports = (req, res)->
   { query } = req
@@ -15,6 +17,7 @@ module.exports = (req, res)->
   handler = switch action
     when undefined then byId
     when 'search' then searchByName
+    when 'search-by-position' then searchByPositon
     when 'last' then lastGroups
 
   unless handler? then return error_.unknownAction res
@@ -39,6 +42,12 @@ searchByName = (query)->
     throw error_.new 'invalid search', 400, search
 
   groups_.nameStartBy search
+  .filter searchable
+
+searchByPositon = (query)->
+  parseLatLng query
+  .then _.Log('searchByPositon latLng')
+  .then groups_.byPosition
   .filter searchable
 
 lastGroups = ->

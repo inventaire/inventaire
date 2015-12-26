@@ -85,7 +85,7 @@ formatUsersData = (format, usersData)->
 token_ = require('./token')(db, user_)
 user_.availability = availability_ = require('./availability')(user_)
 user_.create = require('./create')(db, token_, availability_)
-user_.byPosition = require('./by_position')(db)
+user_.byPosition = require('../by_position')(db, 'user')
 
 deleteUser = require('./delete')(db, user_)
 reqParsers = require './req_parsers'

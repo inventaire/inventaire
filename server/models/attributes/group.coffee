@@ -6,6 +6,7 @@ attributes.updatable = [
   'picture'
   'description'
   'searchable'
+  'position'
 ]
 
 

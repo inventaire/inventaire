@@ -58,6 +58,8 @@ module.exports = groups_ =
       descending: true
       include_docs: true
 
+groups_.byPosition = __.require('lib', 'by_position')(db, 'groups')
+
 membershipActions = require('./membership_actions')(db)
 usersLists = require('./users_lists')(groups_)
 updateGroup = require('./update_group')(db)
