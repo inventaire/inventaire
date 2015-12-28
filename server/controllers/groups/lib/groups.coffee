@@ -63,7 +63,7 @@ groups_.byPosition = __.require('lib', 'by_position')(db, 'groups')
 membershipActions = require('./membership_actions')(db)
 usersLists = require('./users_lists')(groups_)
 updateGroup = require('./update_group')(db)
-counts = require('./counts')(groups_)
+counts = require('./counts')(groups_, _)
 leaveGroups = require('./leave_groups')(groups_)
 
 _.extend groups_, membershipActions, usersLists, updateGroup, counts, leaveGroups
