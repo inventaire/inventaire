@@ -25,7 +25,13 @@ module.exports.get = (req, res, next)->
   unless validHostname hostname
     return error_.bundle res, 'invalid hostname', 400, query
 
-  request query
+  request
+    url: query
+    headers:
+      # spoofing a User Agent to avoid possible User-Agent-based 403 answers
+      # (happens especially for images)
+      'User-Agent': "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:42.0) Gecko/20100101 Firefox/42.0"
+
   .on 'error', ErrorHandler(res)
   .pipe res
 
