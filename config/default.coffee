@@ -69,6 +69,7 @@ module.exports = config =
     maxEmailsPerHour: 5
     # the key to find the current news string
     newsKey: 'news_1'
+    didYouKnowKey: 'did_you_know_1'
   emailValidation:
     activated: false
     pubkey: 'yourkey'
