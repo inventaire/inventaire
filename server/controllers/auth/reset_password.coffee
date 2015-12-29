@@ -7,11 +7,12 @@ testEmail = __.require('models', 'tests/user').email
 # pw_ = __.require('lib', 'crypto').passwords
 
 module.exports = (req, res, next)->
-  {email} = req.body
+  { email } = req.body
   unless email? then return error_.bundle res, 'no email provided', 400
   unless testEmail(email) then return error_.bundle res, 'invalid email', 400
 
-  user_.findOneByEmail(email)
+  user_.findOneByEmail email
+  .catch (err)-> throw error_.complete err, 400, email
   .then user_.sendResetPasswordEmail
-  .then -> res.send('ok')
+  .then _.Ok(res)
   .catch error_.Handler(res)
