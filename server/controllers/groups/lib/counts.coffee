@@ -5,4 +5,7 @@ module.exports = (groups_, _)->
 
   pendingGroupRequestsCount: (userId)->
     groups_.byAdmin userId
-    .then _.property('length')
+    .then (groups)->
+      groups
+      .map _.property('requested.length')
+      .sum()
