@@ -3,23 +3,18 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 user_ = __.require 'lib', 'user/user'
 notifs_ = __.require 'lib', 'notifications'
-Promise = require 'bluebird'
+promises_ = __.require 'lib', 'promises'
 
 module.exports.updateStatus = (req, res, next) ->
   {times} = req.body
   unless _.isArray(times) and times.length > 0
-    return res.send('ok')
+    return _.ok res
 
-  user_.getUserId(req)
-  .then (userId)->
+  userId = req.user._id
 
-    # could probably be replaced by a batch operation
-    promises = []
-    for time in times
-      promises.push notifs_.updateReadStatus(userId, time)
-
-    Promise.all(promises)
-    .then ->
-      _.success [userId, times], 'notifs marked as read'
-      res.send('ok')
+  # could probably be replaced by a batch operation
+  promises_.all times.map(notifs_.updateReadStatus.bind(null, userId))
+  .then ->
+    _.success [userId, times], 'notifs marked as read'
+    _.ok res
   .catch error_.Handler(res)

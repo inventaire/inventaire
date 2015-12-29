@@ -64,14 +64,14 @@ module.exports = items_ =
     .then safeItems
 
   create: (userId, item)->
-    db.post Item.create(userId, item)
+    db.post Item.create userId, item
 
   update: (userId, item)->
-    item = Item.update(userId, item)
+    item = Item.update userId, item
     db.update item._id, Item.updater.bind(null, userId, item)
 
   verifyOwnership: (itemId, userId)->
-    db.get(itemId)
+    db.get itemId
     .then (item)->
       unless userId is item?.owner
         throw error_.new 'user isnt item.owner', 403, userId, item.owner
@@ -79,7 +79,7 @@ module.exports = items_ =
       return item
 
   delete: (id, rev)->
-    db.delete(id, rev)
+    db.delete id, rev
 
   setBusyness: (id, busy)->
     _.types arguments, ['string', 'boolean']

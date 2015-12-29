@@ -4,6 +4,7 @@ user_ = __.require 'lib', 'user/user'
 intent = require './lib/intent'
 error_ = __.require 'lib', 'error/error'
 tests = __.require 'models', 'tests/common-tests'
+promises_ = __.require 'lib', 'promises'
 
 module.exports.post = (req, res, next) ->
   { user, action } = req.body
@@ -13,8 +14,10 @@ module.exports.post = (req, res, next) ->
   unless tests.userId user
     return error_.bundle res, 'bad user parameter', 400, req.body
 
-  user_.getUserId req
-  .then solveNewRelation.bind(null, action, user)
+  userId = req.user._id
+
+  promises_.start()
+  .then -> solveNewRelation action, user, userId
   .then _.success.bind(null, user, "#{action}: OK!")
   .then _.Ok(res)
   .catch error_.Handler(res)

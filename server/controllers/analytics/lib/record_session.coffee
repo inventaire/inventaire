@@ -39,12 +39,9 @@ module.exports = (analytics_)->
   addUserId = (req, report)->
     unless req?.session?.email? then return report
 
-    user_.getUserId(req)
-
-    .then (userId)->
-      report.user.id = userId
-      return report
-    .catch _.Error('addUserId err')
+    userId = req.user._id
+    report.user.id = userId
+    return report
 
   addFingerPrint = (report)->
     {ip, userAgent} = report.user

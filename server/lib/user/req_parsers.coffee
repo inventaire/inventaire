@@ -10,8 +10,3 @@ module.exports =
     accept = req.headers['accept-language']
     language = accept?.split?(',')[0]
     if User.tests.language(language) then language
-
-  getUserId: (req)->
-    id = req.user?._id
-    if id? then return promises_.resolve(id)
-    else error_.reject('req.user._id couldnt be found', 401)

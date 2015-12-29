@@ -13,8 +13,9 @@ tests = __.require 'models','tests/common-tests'
 
 module.exports =
   fetch: (req, res, next)->
-    user_.getUserId(req)
-    .then fetchFollowingDoc
+    userId = req.user._id
+
+    fetchFollowingDoc userId
     .then (doc)->
       if doc? then res.json(doc)
       else res.json {}
@@ -30,9 +31,9 @@ module.exports =
     unless _.typeOf(following) is 'boolean'
       return error_.bundle res, "following isnt a boolean: #{following}", 400
 
-    user_.getUserId(req)
-    .then updateFollowingDoc.bind(null, entity, following)
-    .then -> res.send('ok')
+    userId = req.user._id
+    updateFollowingDoc entity, following, userId
+    .then _.Ok(res)
     .catch error_.Handler(res)
 
 
@@ -41,7 +42,7 @@ fetchFollowingDoc = (userId)->
   .catch couch_.ignoreNotFound
 
 updateFollowingDoc = (entity, following, userId)->
-  docId = FollowedEntities.docId(userId)
+  docId = FollowedEntities.docId userId
   db.update docId, (doc)->
     # if doc doesnt exist, cot creates one: {_id: doc._id}
     # thus the need to test doc.status entities
