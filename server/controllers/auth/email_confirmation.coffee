@@ -7,13 +7,13 @@ promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
 
 module.exports = (req, res, next)->
-  {user} = req
+  { user } = req
   unless user?
     return error_.bundle res, 'user not found', 500
 
   promises_.start()
   .then sendEmailValidation.bind(null, user)
-  .then -> res.send('ok')
+  .then _.Ok(res)
   .catch error_.Handler(res)
 
 
@@ -25,4 +25,4 @@ sendEmailValidation = (user)->
   if validEmail
     throw error_.new "email was already validated", 400
 
-  user_.sendValidationEmail(user)
+  user_.sendValidationEmail user
