@@ -35,7 +35,7 @@ exports.contentHeaders = (src)->
       'Content-Length': stat.size
       'Content-Type': contentType
   .then _.Log('headers')
-  .catch _.ErrorRethrow('headers')
+  .catch _.ErrorRethrow('content headers')
 
 exports.createReadStream = fs.createReadStream.bind(fs)
 exports.downloadFile = (url, path)->

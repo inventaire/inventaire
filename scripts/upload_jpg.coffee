@@ -34,6 +34,7 @@ uploadImg = (imagePath)->
   console.log 'filename: '.green, filename
   putImage
     id: filename
+    filename: filename
     path: imagePath
     keepOldFile: true
   .then (res)->
@@ -48,12 +49,13 @@ uploadImg = (imagePath)->
       console.log 'Copied to Clipboard: '.green, url
 
     imageMap[id] = url
-  .catch _.Error('putImage err')
+  .catch _.ErrorRethrow('putImage err')
 
 saveImageMap = ->
   path = './uploads_map.json'
   fs.writeFileSync path, JSON.stringify(imageMap, null, 4)
   _.info "#{path} saved"
+  process.exit 0
 
 promise = Promise.resolve()
 

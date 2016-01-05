@@ -30,6 +30,7 @@ exports.post = (req, res, next)->
     Promise.all promises
     .then indexCollection
 
+  .then _.Log('upload post res')
   .then res.json.bind(res)
   .catch error_.Handler(res)
 
@@ -46,16 +47,16 @@ exports.putImage = putImage = (fileData)->
 
   images_.shrink path, resizePath
   .then _.Full(images_.getHashFilename, null, resizePath)
-  .then clientPutImage.bind(null, id, resizePath)
+  .then clientPutImage.bind(null, resizePath, id)
 
 # without image treatments
 exports.putRawImage = (fileData)->
-  { id, path } = fileData
+  { id, filename, path } = fileData
   _.log fileData, 'fileData'
-  clientPutImage path, id
+  clientPutImage path, id, filename
 
-clientPutImage = (path, id)->
-  client.putImage path, id
+clientPutImage = (path, id, filename)->
+  client.putImage path, filename
   .then _.Log('new image url')
   .then checkRelativeUrl
   .then (url)-> { id: id, url, url }
