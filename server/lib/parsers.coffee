@@ -8,13 +8,15 @@ stringToBoolean = (value)->
   _.type value, 'string'
   return JSON.parse value
 
+position = (latLng)->
+  # allow the user to delete her position by passing a null value
+  unless _.isArray latLng then return null
+  return latLng.map (str)-> Number(str)
+
 allParsers =
   user:
     settings: stringToBoolean
-    position: (latLng)->
-      # allow the user to delete her position by passing a null value
-      unless _.isArray latLng then return null
-      return latLng.map (str)-> Number(str)
+    position: position
     summaryPeriodicity: (days)->
       if _.isString days
         try days = Number days
@@ -23,6 +25,7 @@ allParsers =
 
   group:
     searchable: stringToBoolean
+    position: position
 
 module.exports = (domain)->
   parsers = allParsers[domain]
