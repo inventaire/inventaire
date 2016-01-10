@@ -70,7 +70,7 @@
     "request": "^2.65.0",
     "serve-favicon": "^2.3.0",
     "simple-uuid": "0.0.1",
-    "wikidata-sdk": "^1.4.3",
+    "wikidata-sdk": "^2.2.0",
     "xml2js": "^0.4.13"
   },
   "devDependencies": {
