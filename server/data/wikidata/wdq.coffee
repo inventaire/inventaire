@@ -7,14 +7,19 @@ wdk = require 'wikidata-sdk'
 wd_ = __.require 'lib', 'wikidata'
 wdqFallback = require './wdq_fallback'
 
+
 module.exports = (req, res)->
-  { query, pid, qid } = req.query
+  { query, pid, qid, refresh } = req.query
   try _.types [query, pid, qid], 'strings...'
   catch err
     return error_.bundle res, 'bad parameters', 400, err
 
+  # Invalid the cache by passing refresh=true in the query.
+  # Return null if refresh isn't truthy to let the cache set its default value
+  timespan = if refresh then 0 else null
+
   key = "wdq:#{query}:#{pid}:#{qid}"
-  cache_.get key, requestWdq.bind(null, query, pid, qid)
+  cache_.get key, requestWdq.bind(null, query, pid, qid), timespan
   .then res.json.bind(res)
   .catch error_.Handler(res)
 
