@@ -12,7 +12,8 @@ module.exports = (db)->
   updateSettings: (data, userId)->
     { group:groupId, attribute, value } = data
 
-    value = parse attribute, value
+    try value = parse attribute, value
+    catch err then return error_.bundle res, "value couldn't be parsed", 400
 
     unless attribute in updatable
       throw error_.new "#{attribute} can't be updated", 400, data

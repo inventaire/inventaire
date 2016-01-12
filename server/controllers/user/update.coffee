@@ -24,7 +24,7 @@ module.exports = (req, res, next) ->
   rootAttribute = attribute.split('.')[0]
 
   try value = parse rootAttribute, value
-  catch err then return error_.handler res, err, 400
+  catch err then return error_.bundle res, "value couldn't be parsed", 400
 
   # support deep objects
   currentValue = _.get user, attribute
