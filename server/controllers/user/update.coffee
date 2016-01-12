@@ -5,8 +5,7 @@ User = __.require 'models', 'user'
 user_ = __.require 'lib', 'user/user'
 error_ = __.require 'lib', 'error/error'
 parse = __.require('lib', 'parsers')('user')
-updates_ = __.require 'lib', 'doc_updates'
-{ valueAlreayUpToDate, basicUpdater } = updates_
+{ basicUpdater } = __.require 'lib', 'doc_updates'
 emailUpdater = require('./lib/email_updater')(user_)
 
 module.exports = (req, res, next) ->
@@ -23,12 +22,13 @@ module.exports = (req, res, next) ->
   # returns the root object for deep attributes such as settings
   rootAttribute = attribute.split('.')[0]
 
-  value = parse rootAttribute, value
+  try value = parse rootAttribute, value
+  catch err then return error_.handler res, err, 400
 
   # support deep objects
   currentValue = _.get user, attribute
 
-  if valueAlreayUpToDate currentValue, value
+  if value is currentValue
     return error_.bundle res, 'already up-to-date', 400
 
   if attribute isnt rootAttribute

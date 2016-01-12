@@ -1,13 +1,6 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 
-valueAlreayUpToDate = (currentValue, value)->
-  if currentValue is value then return true
-  # booleans might arrive as string
-  if _.isBoolean currentValue
-    if value is currentValue.toString() then return true
-  return false
-
 # the simplest doc update: set one or several key/values
 basicUpdater = (attribute, value, doc)->
   # /!\ imperfect polymorphism:
@@ -26,7 +19,6 @@ wrappedUpdater = (db, id, attribute, value)->
 WrappedUpdater = (db)-> wrappedUpdater.bind(null, db)
 
 module.exports =
-  valueAlreayUpToDate: valueAlreayUpToDate
   basicUpdater: basicUpdater
   BasicUpdater: BasicUpdater
   wrappedUpdater: wrappedUpdater
