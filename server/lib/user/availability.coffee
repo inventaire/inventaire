@@ -8,9 +8,12 @@ error_ = __.require 'lib', 'error/error'
 
 module.exports = (user_)->
   username: (username, currentUsername)->
-    # if its just a case change, return true
-    if username.toLowerCase() is currentUsername.toLowerCase()
-      return promises_.resolve()
+    # If a currentUsername is provided
+    # return true if the new username is the same but with a different case
+    # (used for username update)
+    if currentUsername?
+      if username.toLowerCase() is currentUsername.toLowerCase()
+        return promises_.resolve()
 
     unless User.tests.username username
       return error_.reject "invalid username", 400, username
