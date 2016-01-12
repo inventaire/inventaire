@@ -26,7 +26,9 @@ module.exports = (req, res, next) ->
   value = parse rootAttribute, value
 
   # support deep objects
-  if valueAlreayUpToDate _.get(user, attribute), value
+  currentValue = _.get user, attribute
+
+  if valueAlreayUpToDate currentValue, value
     return error_.bundle res, 'already up-to-date', 400
 
   if attribute isnt rootAttribute
@@ -44,8 +46,8 @@ module.exports = (req, res, next) ->
 
   if attribute in User.attributes.concurrencial
     # checks for validity and availability (+ reserve words for username)
-    return user_.availability[attribute](value)
-    .then updateAttribute.bind(null, user, rootAttribute, attribute, value)
+    return user_.availability[attribute](value, currentValue)
+    .then _.Full(updateAttribute, null, user, rootAttribute, attribute, value)
     .then _.Ok(res)
     .catch error_.Handler(res)
 

@@ -7,7 +7,11 @@ isReservedWord = require './is_reserved_word'
 error_ = __.require 'lib', 'error/error'
 
 module.exports = (user_)->
-  username: (username)->
+  username: (username, currentUsername)->
+    # if its just a case change, return true
+    if username.toLowerCase() is currentUsername.toLowerCase()
+      return promises_.resolve()
+
     unless User.tests.username username
       return error_.reject "invalid username", 400, username
 
