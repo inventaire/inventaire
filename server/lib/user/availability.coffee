@@ -8,26 +8,26 @@ error_ = __.require 'lib', 'error/error'
 
 module.exports = (user_)->
   username: (username)->
-    unless User.tests.username(username)
+    unless User.tests.username username
       return error_.reject "invalid username", 400, username
 
-    if isReservedWord(username)
+    if isReservedWord username
       return error_.reject "reserved words cant be usernames", 400, username
 
-    user_.byUsername(username)
+    user_.byUsername username
     .then checkAvailability.bind(null, username, 'username')
 
   email: (email)->
-    unless User.tests.email(email)
+    unless User.tests.email email
       return error_.reject "invalid email", 400, email
 
-    user_.byEmail(email)
+    user_.byEmail email
     .then checkAvailability.bind(null, email, 'email')
 
 
 checkAvailability = (value, label, docs)->
-  if docs.length is 0
-    _.success value, 'available'
-    return value
-  else
+  unless docs.length is 0
     throw error_.new "this #{label} is already used", 400, value
+
+  _.success value, 'available'
+  return value
