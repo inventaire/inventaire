@@ -1,7 +1,8 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 
-User = __.require 'models', 'user'
+{ attributes, tests } = __.require 'models', 'user'
+{ updatable, concurrencial } = attributes
 user_ = __.require 'lib', 'user/user'
 error_ = __.require 'lib', 'error/error'
 parse = __.require('lib', 'parsers')('user')
@@ -32,11 +33,11 @@ module.exports = (req, res, next) ->
     return error_.bundle res, 'already up-to-date', 400
 
   if attribute isnt rootAttribute
-    unless User.tests.deepAttributesExistance attribute
+    unless tests.deepAttributesExistance attribute
       return error_.bundle res, "invalid deep attribute #{attribute}: #{value}", 400
 
-  if rootAttribute in User.attributes.updatable
-    unless _.get(User.tests, rootAttribute)(value)
+  if rootAttribute in updatable
+    unless _.get(tests, rootAttribute)(value)
       type = _.typeOf value
       return error_.bundle res, "invalid #{attribute}: #{value} (#{type})", 400
 
@@ -44,7 +45,7 @@ module.exports = (req, res, next) ->
     .then _.Ok(res)
     .catch error_.Handler(res)
 
-  if attribute in User.attributes.concurrencial
+  if attribute in concurrencial
     # checks for validity and availability (+ reserve words for username)
     return user_.availability[attribute](value, currentValue)
     .then _.Full(updateAttribute, null, user, rootAttribute, attribute, value)

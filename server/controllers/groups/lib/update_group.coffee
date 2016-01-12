@@ -1,7 +1,8 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-Group = __.require 'models', 'group'
+{ attributes, tests } = __.require 'models', 'group'
+{ updatable } = attributes
 error_ = __.require 'lib', 'error/error'
 { BasicUpdater } = __.require 'lib', 'doc_updates'
 Radio = __.require 'lib', 'radio'
@@ -13,10 +14,10 @@ module.exports = (db)->
 
     value = parse attribute, value
 
-    unless attribute in Group.attributes.updatable
+    unless attribute in updatable
       throw error_.new "#{attribute} can't be updated", 400, data
 
-    unless Group.tests[attribute](value)
+    unless tests[attribute](value)
       throw error_.new "invalid #{attribute}", 400, data
 
     db.get groupId
