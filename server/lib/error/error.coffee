@@ -54,6 +54,10 @@ error_.handler = errorHandler = require './error_handler'
 # .catch error_.Handler(res)
 error_.Handler = (res)-> errorHandler.bind(null, res)
 
+error_.notFound = (context)->
+  err = error_.new 'not found', 404, context
+  err.notFound = true
+  return err
 
 error_.catchNotFound = (err)->
   if err?.notFound then return

@@ -1,11 +1,20 @@
 CONFIG = require 'config'
 errorCounter = 0
 loggers_ = require 'inv-loggers'
+util = require 'util'
 
 module.exports = (_)->
   if CONFIG.verbosity is 0 then loggers_.log = _.identity
 
+  inspect = (obj, label)->
+    # fully display deep objects
+    console.log "#{label} inspect".grey, util.inspect(obj, false, null)
+    return obj
+
   customLoggers =
+    inspect: inspect
+    Inspect: (label)-> fn = (obj)-> inspect obj, label
+
     error: (obj, label, parse=true)->
       errorCounter++
       obj = obj?.stack or obj  if parse
