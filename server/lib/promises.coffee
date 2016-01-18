@@ -1,14 +1,16 @@
-_ = require('config').universalPath.require('builders', 'utils')
+__ = require('config').universalPath
+_ = __.require 'builders', 'utils'
 Promise = require 'bluebird'
 requests = require './requests'
+shared = __.require('sharedLibs', 'promises')(Promise)
+
+all = Promise.all.bind Promise
+props = Promise.props.bind Promise
 
 promisesHandlers =
   Promise: Promise
-  reject: Promise.reject.bind(Promise)
-  resolve: Promise.resolve.bind(Promise)
-  all: Promise.all.bind(Promise)
-  props: Promise.props.bind(Promise)
-  start: Promise.resolve.bind(Promise)
+  all: Promise.all.bind Promise
+  props: Promise.props.bind Promise
   Timeout: (ms)-> (promise)-> promise.timeout ms
   # skip throws in a standard way to be catched later
   # by NonSkip and not be treated as an error
@@ -23,13 +25,15 @@ promisesHandlers =
 
 settlers =
   settle: (promises)->
-    inspectors = promises.map _.method('reflect')
+    inspectors = promises.map reflectMethod
     Promise.all inspectors
     .then pluckSettled
   settleProps: (promisesObj)->
-    inspectorsProps = _.mapValues promisesObj, _.method('reflect')
+    inspectorsProps = _.mapValues promisesObj, reflectMethod
     Promise.props inspectorsProps
     .then pluckSettledProps
+
+reflectMethod = _.method 'reflect'
 
 # if _settledValueField is undefined, that's that the promise didnt fullfilled
 # more dirty than the official solution http://bluebirdjs.com/docs/api/reflect.html
@@ -48,4 +52,4 @@ returnValueIfFulfilled = (inspector)->
 promisesHandlers.NonSkipError = (label)->
   promisesHandlers.NonSkip _.Error(label)
 
-module.exports = _.extend {}, requests, promisesHandlers, settlers
+module.exports = _.extend {}, shared, requests, promisesHandlers, settlers

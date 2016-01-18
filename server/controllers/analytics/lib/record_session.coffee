@@ -10,8 +10,7 @@ excludedBots = require './excluded_bots'
 
 module.exports = (analytics_)->
   recordSession = (req)->
-
-    promises_.start()
+    promises_.start
     .then addUserInfo.bind(null, req)
     .then addUserId.bind(null, req)
     .then addFingerPrint

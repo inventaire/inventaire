@@ -13,7 +13,7 @@ module.exports = (user_)->
     # (used for username update)
     if currentUsername?
       if username.toLowerCase() is currentUsername.toLowerCase()
-        return promises_.resolve()
+        return promises_.resolved
 
     unless User.tests.username username
       return error_.reject "invalid username", 400, username

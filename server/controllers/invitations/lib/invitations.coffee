@@ -40,7 +40,7 @@ module.exports =
       promises = invitersIds.map convertInvitation.bind(null, _id)
       return promises_.all promises
     else
-      return promises_.resolve()
+      return promises_.resolved
 
 emailNotification = false
 convertInvitation = (newUserId, inviterId)->

@@ -71,4 +71,4 @@ testOpenResetPasswordWindow = (resetPassword)->
   if _.expired resetPassword, oneHour
     error_.reject 'reset password timespan experied', 400
   else
-    promises_.resolve()
+    promises_.resolved

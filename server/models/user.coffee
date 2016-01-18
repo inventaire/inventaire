@@ -52,7 +52,7 @@ User._create = (username, email, creationStrategy, language, password)->
   return user
 
 User.create = (args...)->
-  promises_.start()
+  promises_.start
   .then -> User._create.apply null, args
   .then withHashedPassword
 

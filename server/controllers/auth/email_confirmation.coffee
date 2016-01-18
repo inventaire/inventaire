@@ -11,7 +11,7 @@ module.exports = (req, res, next)->
   unless user?
     return error_.bundle res, 'user not found', 500
 
-  promises_.start()
+  promises_.start
   .then sendEmailValidation.bind(null, user)
   .then _.Ok(res)
   .catch error_.Handler(res)

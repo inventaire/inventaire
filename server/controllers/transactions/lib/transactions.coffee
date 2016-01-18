@@ -46,7 +46,7 @@ transactions_ =
   updateReadForNewMessage: (userId, transaction)->
     updatedReadStates = updateReadStates userId, transaction
     # spares a db write if updatedReadStates is already the current read state object
-    if _.sameObjects updatedReadStates, transaction.read then promises_.resolve()
+    if _.sameObjects updatedReadStates, transaction.read then promises_.resolved
     else db.update transaction._id, BasicUpdater('read', updatedReadStates)
 
 stateUpdater = (state, userId, transaction)->

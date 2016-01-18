@@ -14,7 +14,7 @@ deprecationWarning = 'this way to subscribe to the newsletter is deprecated:
 
 module.exports =
   subscribe: (req, res, next)->
-    promises_.start()
+    promises_.start
     .then createSubscriberDoc.bind(null, req)
     .then user_.db.post.bind(user_.db)
     .then _.OkWarning(res, deprecationWarning)

@@ -27,7 +27,7 @@ module.exports = _.extend publicActions,
 
     userId = req.user._id
 
-    promises_.start()
+    promises_.start
     .then ->
       item = req.body
       if item._id is 'new' then items_.create userId, item

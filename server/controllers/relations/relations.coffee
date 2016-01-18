@@ -16,7 +16,7 @@ module.exports.post = (req, res, next) ->
 
   userId = req.user._id
 
-  promises_.start()
+  promises_.start
   .then -> solveNewRelation action, user, userId
   .then _.success.bind(null, user, "#{action}: OK!")
   .then _.Ok(res)

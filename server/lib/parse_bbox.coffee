@@ -24,6 +24,5 @@ paramErr = (label, param, query)->
   error_.new "#{label} #{param} parameter", 400, query
 
 module.exports = (query)->
-  # return a promise
-  promises_.start()
+  promises_.start
   .then parseLatLng.bind(null, query)

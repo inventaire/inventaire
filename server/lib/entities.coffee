@@ -10,7 +10,7 @@ module.exports =
   byIsbn: db.viewFindOneByKey.bind(db, 'byIsbn')
   create: (entityData, userId)->
     # using a promise to catch Entity.create errors
-    promises_.start()
+    promises_.start
     .then Entity.create.bind(null, entityData, userId)
     .then _.Log('new entity')
     # using PUT as the CouchDB documentation recommands

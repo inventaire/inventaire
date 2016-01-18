@@ -17,7 +17,7 @@ module.exports = (req, res, next) ->
       else error_.unknownAction res
 
 fetchUsersData = (res, ids)->
-  promises_.start()
+  promises_.start
   .then parseAndValidateIds.bind(null, ids)
   .then _.partialRight(user_.getUsersPublicData, 'index')
   .then SendUsersData(res)
@@ -26,7 +26,7 @@ fetchUsersData = (res, ids)->
 fetchUsersItems = (req, res, ids) ->
   userId = req.user._id
 
-  promises_.start()
+  promises_.start
   .then parseAndValidateIds.bind(null, ids)
   .then user_.getRelationsStatuses.bind(null, userId)
   .then (res)->
