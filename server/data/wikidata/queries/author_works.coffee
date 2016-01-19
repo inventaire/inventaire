@@ -5,7 +5,6 @@ _ = __.require 'builders', 'utils'
 module.exports =
   query: (authorQid)->
     """
-    PREFIX wikibase: <http://wikiba.se/ontology#>
     PREFIX wd: <http://www.wikidata.org/entity/>
     PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 
