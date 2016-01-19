@@ -14,7 +14,6 @@ module.exports =
         ?work wdt:P577 ?date .
       }
     }
-    ORDER BY ASC(?date)
     """
 
   parser: (items)->
