@@ -78,6 +78,8 @@ resolveWikiTitle = (title, lang='en')->
   .then _.Log('ids?')
   .catch _.ErrorRethrow('resolveWikiTitle err')
 
+# expect URIs to look like https://wikidata.org/entity/Q184226
+getQidFromUri = (uri)-> uri.split('/').last()
 
 # Only extending with wdk.helpers instead of every wdk functions
 # in order to avoid overwritting local functions.
@@ -87,3 +89,4 @@ module.exports = _.extend wd, wdk.helpers,
   searchEntities: searchEntities
   filterAndBrush: filterAndBrush
   resolveWikiUrl: resolveWikiUrl
+  getQidFromUri: getQidFromUri
