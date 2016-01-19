@@ -21,5 +21,8 @@ module.exports = (emails, userEmail)->
 
 # providing to 'email-addresses' known limitations
 prepareEmails = (emails)->
+  emails.trim()
   # deleting a possible trailing coma or semi-colon
-  emails.trim().replace /(,|;)$/, ''
+  .replace /(,|;)$/, ''
+  # deleting line breaks and tabs
+  .replace /(\n|\t)/g, ''
