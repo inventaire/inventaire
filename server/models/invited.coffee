@@ -19,11 +19,25 @@ addInviter = (inviterId, doc)->
   doc.inviters[inviterId] or= _.now()
   return doc
 
-alreadyInvited = (inviterId, doc)-> doc.inviters[inviterId]?
 
+# The stopEmails flag is manually added to users
+# sending an email at stop-email@inventaire.io
+# This could be made more secure and automated
+# by sending an unsubscribe link with a token
+canBeInvited = (inviterId, doc)->
+  { inviters, stopEmails } = doc
+  if stopEmails
+    _.warn [inviterId, doc], 'stopEmails: invitation aborted'
+    return false
+
+  alreadyInvited = inviters[inviterId]?
+  if alreadyInvited
+    _.warn [inviterId, doc], 'alreadyInvited: invitation aborted'
+    return false
+
+  return true
 
 module.exports =
   create: create
   addInviter: addInviter
-  alreadyInvited: alreadyInvited
-  notAlreadyInvited: _.negate alreadyInvited
+  canBeInvited: canBeInvited

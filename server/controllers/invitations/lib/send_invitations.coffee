@@ -1,7 +1,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 invitations_ = require './invitations'
-{ extractUnknownEmails, extractNotAlreadyInvited, extractRemainingEmails, createUnknownInvited } = invitations_
+{ extractUnknownEmails, extractCanBeInvited, extractRemainingEmails, createUnknownInvited } = invitations_
 Invited = __.require 'models','invited'
 Radio = __.require 'lib', 'radio'
 
@@ -20,12 +20,12 @@ module.exports = (user, emails, message)->
     createUnknownInvited userId, unknownEmails
 
     # emails already invited by others but not this user
-    notAlreadyInvited = extractNotAlreadyInvited userId, existingInvitedUsers
-    _.log notAlreadyInvited, 'known emails notAlreadyInvited by the current user'
-    invitations_.addInviter userId, notAlreadyInvited
+    canBeInvited = extractCanBeInvited userId, existingInvitedUsers
+    _.log canBeInvited, 'known emails that canBeInvited by the current user'
+    invitations_.addInviter userId, canBeInvited
 
-    remainingEmails = extractRemainingEmails notAlreadyInvited, unknownEmails
-    _.log remainingEmails, 'remainingEmails'
+    remainingEmails = extractRemainingEmails canBeInvited, unknownEmails
+    _.log remainingEmails, 'effectively sent emails'
     sendInvitationEmails user, remainingEmails, message
 
   .catch _.Error('send invitations err')

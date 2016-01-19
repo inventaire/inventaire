@@ -26,11 +26,11 @@ module.exports =
     knownInvitedUsersEmails = knownInvitedUsers.map _.property('email')
     return _.difference emails, knownInvitedUsersEmails
 
-  extractNotAlreadyInvited: (userId, knownInvitedUsers)->
-    return knownInvitedUsers.filter Invited.notAlreadyInvited.bind(null, userId)
+  extractCanBeInvited: (userId, knownInvitedUsers)->
+    return knownInvitedUsers.filter Invited.canBeInvited.bind(null, userId)
 
-  extractRemainingEmails: (notAlreadyInvited, unknownEmails)->
-    knownEmails = notAlreadyInvited.map _.property('email')
+  extractRemainingEmails: (canBeInvited, unknownEmails)->
+    knownEmails = canBeInvited.map _.property('email')
     return unknownEmails.concat knownEmails
 
   convertInvitations: (userDoc)->
