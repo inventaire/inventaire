@@ -7,7 +7,7 @@ promises_ = __.require 'lib', 'promises'
 groups_ = require './lib/groups'
 user_ = __.require 'lib', 'user/user'
 items_ = __.require 'controllers', 'items/lib/items'
-parseLatLng = __.require 'lib', 'parse_lat_lng'
+parseBbox = __.require 'lib', 'parse_bbox'
 
 
 module.exports = (req, res)->
@@ -45,7 +45,7 @@ searchByName = (query)->
   .filter searchable
 
 searchByPositon = (query)->
-  parseLatLng query
+  parseBbox query
   .then _.Log('searchByPositon latLng')
   .then groups_.byPosition
   .filter searchable

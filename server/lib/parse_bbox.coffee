@@ -8,20 +8,27 @@ error_ = __.require 'lib', 'error/error'
 { StringNumber } = __.require 'models', 'tests/regex'
 
 parseLatLng = (query)->
-  { lat, lng } = query
+  { bbox } = query
 
-  unless lat? then throw paramErr 'missing', 'lat', query
-  unless lng? then throw paramErr 'missing', 'lng', query
+  try
+    bbox = JSON.parse bbox
+    _.types bbox, 'numbers...', 4
+  catch err then throw error_.new 'invalid bbox', 400, query
 
-  # lat and lng will be parsed from url query as strings
-  # but we want to make sure those are actually stringified numbers
-  unless StringNumber.test(lat) then throw paramErr 'invalid', 'lat', query
-  unless StringNumber.test(lng) then throw paramErr 'invalid', 'lng', query
+  [ minLng, minLat, maxLng, maxLat ] = bbox
+  _.log bbox, 'minLng, minLat, maxLng, maxLat'
 
-  return [ lat, lng ].map Number
+  unless minLng < maxLng and minLat < maxLat
+    throw error_.new 'invalid bbox coordinates', 400
 
-paramErr = (label, param, query)->
-  error_.new "#{label} #{param} parameter", 400, query
+  # not throwing an error when a coordinate is over its limit
+  # but replacing it by the limit to make following calculations lighter
+  if minLng < -180 then minLng = -180
+  if maxLng > 180 then maxLng = 180
+  if minLat < -90 then minLat = -90
+  if maxLng > 90 then maxLng = 90
+
+  return [ minLng, minLat, maxLng, maxLat ]
 
 module.exports = (query)->
   promises_.start
