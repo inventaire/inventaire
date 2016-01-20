@@ -46,9 +46,11 @@ searchByName = (query)->
 
 searchByPositon = (query)->
   parseBbox query
-  .then _.Log('searchByPositon latLng')
-  .then groups_.byPosition
-  .filter searchable
+  .then (bbox)->
+    # can't be chained directy as .filter makes problems when parseBbox throws:
+    # "parseBbox(...).then(...).then(...).catch(...).filter is not a function"
+    groups_.byPosition bbox
+    .filter searchable
 
 lastGroups = ->
   groups_.byCreation()

@@ -7,18 +7,23 @@ module.exports = (db, designDoc)->
   return byPosition = (bbox)->
     _.log bbox, 'bbox'
     _.types bbox, 'numbers...'
+
+    console.time 'geo square keys'
     keys = getGeoSquareKeys bbox
-    _.log keys, 'keys'
+    console.timeEnd 'geo square keys'
+    # _.log keys, 'keys'
 
     db.viewKeys designDoc, 'byGeoSquare', keys, { include_docs: true }
     .then couch_.mapDoc
 
 getGeoSquareKeys = (bbox)->
-  # using the same bbox order as Leaflet bounds.toBBoxString function
-  [ minLng, minLat, maxLng, maxLat ] = bbox
+  # Using the same bbox order as Leaflet bounds.toBBoxString function.
+  # Use Math.floor and not Math.trunc as they have different behaviors
+  # on negative numbers: Math.floor(-2.512) => -3 /// Math.trunc(-2.512) => -2
+  [ minLng, minLat, maxLng, maxLat ] = bbox.map Math.floor
 
-  latRange = [ Math.floor(minLat)..Math.floor(maxLat) ]
-  lngRange = [ Math.floor(minLng)..Math.floor(maxLng) ]
+  latRange = [ minLat..maxLat ]
+  lngRange = [ minLng..maxLng ]
 
-  # Keep keys format in sync with Couchdb byGeoSqure views
+  # Keep keys format in sync with Couchdb byGeoSquare views
   return _.combinations latRange, lngRange
