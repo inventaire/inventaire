@@ -19,7 +19,7 @@ module.exports = _.extend publicActions,
     .catch error_.Handler(res)
 
   put: (req, res, next) ->
-    {_id, rev, title, entity} = req.body
+    {_id, title, entity} = req.body
     _.log _id, 'Put Item ID'
     unless _id? then return error_.bundle res, 'missing item id', 400
     unless title? then return error_.bundle res, 'missing item title', 400
@@ -37,11 +37,11 @@ module.exports = _.extend publicActions,
     .catch error_.Handler(res)
 
   del: (req, res, next) ->
-    {id, rev} = req.query
+    { id } = req.query
     userId = req.user._id
 
     items_.verifyOwnership id, userId
-    .then items_.delete.bind(null, id, rev)
+    .then items_.delete.bind(null, id)
     .then res.json.bind(res)
     .catch error_.Handler(res)
 

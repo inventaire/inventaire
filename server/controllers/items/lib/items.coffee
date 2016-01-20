@@ -79,7 +79,7 @@ module.exports = items_ =
       return item
 
   delete: (id, rev)->
-    db.delete id, rev
+    db.update id, couch_.setDeletedTrue
 
   setBusyness: (id, busy)->
     _.types arguments, ['string', 'boolean']
