@@ -1,7 +1,7 @@
 __ = require('config').universalPath
 _ = require 'lodash'
 
-linkify = __.require 'client' 'app/lib/handlebars_helpers/linkify'
+linkify = __.require 'client', 'app/lib/handlebars_helpers/linkify'
 convertMarkdown = require('./convert_markdown')(linkify)
 
 module.exports = findKeys = (enObj, langCurrent, langTransifex, langArchive, markdown)->
@@ -36,10 +36,10 @@ module.exports = findKeys = (enObj, langCurrent, langTransifex, langArchive, mar
     if markdown
       dist[k] = convertMarkdown dist[k]
 
-    # archive will keep keys that weren't in the English version
-    archive = _.omit langObj, Object.keys(update)
-    # pick keys with non-null value
-    cleanArchive = _.pick archive, _.identity
+  # archive will keep keys that weren't in the English version
+  archive = _.omit langObj, Object.keys(update)
+  # pick keys with non-null value
+  cleanArchive = _.pick archive, _.identity
 
   return [dist, update, cleanArchive]
 
