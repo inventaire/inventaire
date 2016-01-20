@@ -17,8 +17,8 @@ getGeoSquareKeys = (bbox)->
   # using the same bbox order as Leaflet bounds.toBBoxString function
   [ minLng, minLat, maxLng, maxLat ] = bbox
 
-  latRange = [ Math.trunc(minLat)..Math.trunc(maxLat) ]
-  lngRange = [ Math.trunc(minLng)..Math.trunc(maxLng) ]
+  latRange = [ Math.floor(minLat)..Math.floor(maxLat) ]
+  lngRange = [ Math.floor(minLng)..Math.floor(maxLng) ]
 
   # Keep keys format in sync with Couchdb byGeoSqure views
   return _.combinations latRange, lngRange
