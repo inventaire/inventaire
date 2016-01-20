@@ -25,13 +25,11 @@ i18nArchiveActive = (lang)->
 
 module.exports =
   getSources: (lang)->
-    return [
-      json_.read i18nSrc('en')
-      json_.read i18nSrc(lang)
-      json_.read i18nTransifex(lang)
-      json_.read i18nArchiveActive(lang)
-      true #markdown
-    ]
+    enObj: json_.read i18nSrc('en')
+    langCurrent: json_.read i18nSrc(lang)
+    langTransifex: json_.read i18nTransifex(lang)
+    langArchive: json_.read i18nArchiveActive(lang)
+    markdown: true
 
   updateAndArchive: (lang, update, archive)->
     Promise.all [

@@ -4,7 +4,8 @@ _ = require 'lodash'
 linkify = __.require 'client', 'app/lib/handlebars_helpers/linkify'
 convertMarkdown = require('./convert_markdown')(linkify)
 
-module.exports = findKeys = (enObj, langCurrent, langTransifex, langArchive, markdown)->
+module.exports = findKeys = (params)->
+  { enObj, langCurrent, langTransifex, langArchive, markdown } = params
   langTransifex = formatTransifexValues langTransifex, enObj
   langCurrent = keepNonNullValues langCurrent
 
