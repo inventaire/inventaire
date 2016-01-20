@@ -52,10 +52,13 @@
     "activity_summary_meta": "Il riassunto delle tue attività è inviato ogni %{periodicity} giorni. Puoi cambiare la periodicità o anche disabilitare queste email nelle [impostazioni delle notifiche via email](%{settingsHref}). Se c'è qualcosa che tu vuoi vedere apparire in questi riassunti, puoi inviarci un suggerimento rispondendo a questa email",
     "last_friends_books": "nuovi libri nell'inventario dei tuoi amici",
     "did_you_know_1": "se i tuoi amici non sono ancora su inventaire.io puoi [invitarli via email](https://inventaire.io/network/users/invite) per incominciare a condividere con loro gli inventari dei tuoi libri!",
+    "did_you_know_2": null,
     "last_friends_books_more": "... e [altri %{smart_count}](https://inventaire.io/inventory)",
-    "news_1": "Ciao! Adesso stai leggendo la prima edizione del riassunto delle tue attività su inventaire.io! Queste email servono per ricordarti dei libri che potresti aver prestato o ricevuto in prestito, per dirti quando i tuoi amici aggiungono nuovi libri ai propri inventari e altro ancora! Sarà anche l'occasione per condividere notizie e suggerimenti sui progressi di inventaire.io, dato che molto è cambiato da quando, a febbraio, siamo andati online: [gruppi](https://inventaire.io/network/groups), [tracciamento delle transazioni](https://inventaire.io/transactions), design migliorato, ... ed è solo l'inizio! Grazie per aver preso parte a questa avventura :)<br><p style='text-align:right'>Maxime</p>",
+    "news_2": null,
     "news": "notizie",
     "activity summary": "riassunto delle attività",
     "did you know?": "lo sapevi?",
-    "no_activity": "nessun'attività da mostrare"
+    "no_activity": "nessun'attività da mostrare",
+    "Find books by geolocation": null,
+    "Organize inventories with tags": null
 }

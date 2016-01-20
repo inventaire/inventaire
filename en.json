@@ -37,7 +37,7 @@
     "group_acceptRequest_subject": "[%{groupName}] your request to join the group has been validated!",
     "group_acceptRequest_button": "see the books available in the group",
     "email_invitation_subject": "%{username} invited you to share your books on Inventaire.io!",
-    "email_invitation_intro": "Inventaire is a web application that let you share the inventory of your books with your friends and communities",
+    "email_invitation_intro": "Inventaire is a web application that lets you share the inventory of your books with your friends and communities",
     "email_invitation_message": "**%{username}'s message:**",
     "email_invitation_button": "Sign up and start sharing books with %{username}",
     "email_invitation_user_inventory": "You can already see %{username}'s public books [here](%{pathname}) but you need an account to have access to all the books they want to share with you.",
@@ -51,11 +51,14 @@
     "active_transactions_count": "you have **%{smart_count}** [ongoing transaction](%{href}) |||| you have **%{smart_count}** [ongoing transactions](%{href})",
     "activity_summary_meta": "Your activity summaries are sent every %{periodicity} days. You can change this periodicity or even disable those emails in your [email notifications settings](%{settingsHref}). If there is anything you would like to see appear in those activity summaries, you can send your suggestions by replying to this email",
     "last_friends_books": "new books in your friends inventories",
-    "did_you_know_1": "if your friends aren't on inventaire.io yet, you can [invite them by email](https://inventaire.io/network/users/invite) to start sharing your books inventories!",
+    "did_you_know_1": "If your friends aren't on inventaire.io yet, you can [invite them by email](https://inventaire.io/network/users/invite) to start sharing your books inventories!",
+    "did_you_know_2": "There are two different text fields on each of your books' page:<br>- in **details**, anything you write will be visible by anyone who can see the book.<br>- in **private notes**, everything you write will be visible just by you, whatever the book's visibility settings are",
     "last_friends_books_more": "...and [%{smart_count} more](https://inventaire.io/inventory)",
-    "news_1": "Hello! You are currently reading the first edition of your inventaire.io activity summary! Those emails are meant to remind you of books you might have borrowed or lended, to tell you when friends add new books to their inventories, and more! It will also be the occasion to share news and tips on inventaire.io progresses, and lot happened since we went first online in February: [groups](https://inventaire.io/network/groups), [transactions tracker](https://inventaire.io/transactions), improved design... and it's just a start! Thank you for taking part to this adventure :)<br><p style='text-align:right'>Maxime</p>",
+    "news_2": "Hello!<br>Good news, we are making progress toward geolocation features: you can now see the [users nearby](https://inventaire.io/network/users/nearby)! If you want to give the opportunity to other users to see your public books, and eventually send you a request, you can add yourself to the map. It's probably not perfect yet, but it will keep improving in the coming months and, as usual, your feedback is very welcome :)<br><p style='text-align:right'>Maxime</p>",
     "news": "news",
     "activity summary": "activity summary",
     "did you know?": "did you know?",
-    "no_activity": "no activity to display"
+    "no_activity": "no activity to display",
+    "Find books by geolocation": "Find books by geolocation",
+    "Organize inventories with tags": "Organize inventories with tags"
 }
