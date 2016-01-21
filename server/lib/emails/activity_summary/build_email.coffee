@@ -62,6 +62,11 @@ spreadEmailData = (user, results)->
 
   periodicity = user.summaryPeriodicity or defaultPeriodicity
 
+  news = newsData user
+
+  if news.display is false and countTotal is 0
+    throw promises_.skip 'empty activity summary', user._id
+
   return data =
     to: email
     subject: i18n lang, 'activity_summary_title'
@@ -80,7 +85,7 @@ spreadEmailData = (user, results)->
       unreadNotifications: counter unreadNotifications, '/notifications'
       activeTransactions: counter activeTransactions, '/transactions'
       lastFriendsBooks: lastFriendsBooks
-      news: newsData user
+      news: news
       didYouKnowKey: didYouKnowKey
       hasActivities: countTotal > 0
 

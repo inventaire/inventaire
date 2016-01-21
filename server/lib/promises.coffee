@@ -13,15 +13,15 @@ promisesHandlers =
   props: Promise.props.bind Promise
   Timeout: (ms)-> (promise)-> promise.timeout ms
   # skip throws in a standard way to be catched later
-  # by NonSkip and not be treated as an error
-  skip: ->
+  # by catchSkip and not be treated as an error.
+  # It can be used to pass over steps of a promise chain
+  # made unnecessary for some reason
+  skip: (reason, context)->
     err = new Error 'skip'
     err.skip = true
+    err.reason = reason
+    err.context = context
     throw err
-  NonSkip: (catcher)->
-    return filteredCatcher = (err)->
-      if err.skip then _.noop
-      else catcher err
 
 settlers =
   settle: (promises)->
@@ -49,7 +49,9 @@ returnValueIfFulfilled = (inspector)->
   else _.warn inspector, "promise didn't fullfilled"
 
 # bundling NonSkip and _.Error handlers
-promisesHandlers.NonSkipError = (label)->
-  promisesHandlers.NonSkip _.Error(label)
+promisesHandlers.catchSkip = (label)->
+  catcher = (err)->
+    if err.skip then _.log err.context, "#{label} skipped: #{err.reason}"
+    else throw err
 
 module.exports = _.extend {}, shared, requests, promisesHandlers, settlers

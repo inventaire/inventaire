@@ -13,5 +13,5 @@ module.exports =
     sendTransactionEmail transactionId
     .then transporter_.sendMail
     .catch helpers_.catchDisabledEmails
-    .catch promises_.NonSkipError('send_transaction_email')
+    .catch promises_.catchSkip('send_transaction_email')
     .catch _.Error('transactionUpdate')

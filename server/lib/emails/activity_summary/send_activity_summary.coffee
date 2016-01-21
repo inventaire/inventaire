@@ -5,6 +5,7 @@ user_ = __.require 'lib', 'user/user'
 User = __.require 'models', 'user'
 transporter_ = require '../transporter'
 buildEmail = require './build_email'
+promises_ = __.require 'lib', 'promises'
 { disableUserUpdate } = CONFIG.activitySummary
 
 # it can be convenient in development to disable user update
@@ -21,5 +22,8 @@ module.exports = (user)->
 
   buildEmail user
   .then transporter_.sendMail
-  .then updateUser.bind(null, userId)
+  # catch skiped updates before updating the user
+  # as otherwise the user would still appear as needing an activity summary
+  .catch promises_.catchSkip('activity summary')
+  .then _.Full(updateUser, null, userId)
   .catch _.Error('activity summary')

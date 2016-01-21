@@ -25,7 +25,8 @@ emailIsRequired = (transaction)->
     # progressively building the email ViewModel
     transaction.role = role
     return transaction
-  else promises_.skip()
+  else
+    throw promises_.skip "sending an email isn't required", transaction
 
 catchErr = (err)->
   if err.message is 'email_not_required' then return
