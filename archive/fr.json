@@ -1,3 +1,8 @@
 {
+    "raw links:": "liens bruts:",
+    "Groups": "Groupes",
+    "transactions_tracking": "Suivi des transactions (pour savoir où se trouve votre livre)",
+    "Messaging": "Messagerie",
+    "news_1": "Bonjour ! Vous lisez actuellement la première édition de vos résumés d'activité sur inventaire.io ! Ces emails sont prévus pour vous rappeler les livres que vous avez prêtés ou empruntés, vous signaler quand vos amis ajoutent de nouveaux livres, et plus encore ! Ces résumés sont aussi l'occasion de recevoir des nouvelles des progrès d'inventaire.io, et il s'en est passé des choses depuis la première mise en ligne du site en février dernier ! Les [groupes](https://inventaire.io/network/groups) sont opérationnels, le module de [suivi des transactions](https://inventaire.io/transactions) est prêt à devenir le centre névralgique de vos échanges de livres, le design a été amélioré... et ce n'est qu'un début ! Merci de faire partie de cette aventure :)<br><p style='text-align:right'>Maxime</p>",
     "news_2": "Bonjour !<br>Bonne nouvelle, ça avance du coté des fonctionnalités de géolocalisation : vous pouvez maintenant voir les [utilisateurs à proximité](https://inventaire.io/network/users/nearby) ! Si vous souhaitez donner la possibilité à d'autres personnes de voir vos livres publics et éventuellement d'envoyer une demande, vous pouvez indiquer votre position sur la carte. Tout n'est peut-être pas encore parfait, mais cela va continuer à s'améliorer dans les mois à venir : comme d'habitude, vos retours sont les très bienvenus :)<br><p style='text-align:right'>Maxime</p>"
 }
