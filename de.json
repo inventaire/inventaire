@@ -49,17 +49,9 @@
     "pending_group_requests_count": "Es wartet **%{smart_count}** [Gruppeneinladung auf Deine Bestätigung](%{href}) |||| Es warten **%{smart_count}** [Gruppeneinladungen auf Deine Bestätigung](%{href})",
     "unread_notifications_count": "Du hast **%{smart_count}** [ungelesene Benachrichtigung](%{href}) |||| Du hast **%{smart_count}** [ungelesene Benachrichtigungen](%{href})",
     "active_transactions_count": "Du hast **%{smart_count}** [laufende Transaktion](%{href}) |||| Du hast **%{smart_count}** [laufende Transaktionen](%{href})",
-    "activity_summary_meta": "Your activity summaries are sent every %{periodicity} days. You can change this periodicity or even disable those emails in your [email notifications settings](%{settingsHref}). If there is anything you would like to see appear in those activity summaries, you can send your suggestions by replying to this email",
     "last_friends_books": "Neue Bücher in den Inventaren Deiner Freunde",
-    "did_you_know_1": "if your friends aren't on inventaire.io yet, you can [invite them by email](https://inventaire.io/network/users/invite) to start sharing your books inventories!",
-    "did_you_know_2": null,
-    "did_you_know_3": null,
     "last_friends_books_more": "...und [%{smart_count} mehr](https://inventaire.io/inventory)",
-    "news_3": null,
     "news": "Neuigkeiten",
     "activity summary": "Zusammenfassung Aktivitäten",
-    "did you know?": "Wussest Du schon?",
-    "no_activity": "no activity to display",
-    "Find books by geolocation": null,
-    "Organize inventories with tags": null
+    "did you know?": "Wussest Du schon?"
 }
