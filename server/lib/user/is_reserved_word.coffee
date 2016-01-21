@@ -22,6 +22,16 @@ reservedWords = [
   'welcome'
   'username'
   'email'
+  'nearby'
+  'map'
+  'last'
+  'group'
+  'groups'
+  'transaction'
+  'transactions'
+  'public'
+  'private'
+  'auth'
 ]
 
 module.exports =  (username)->
