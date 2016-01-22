@@ -95,10 +95,12 @@ requestOnlyIfNeeded = (key, method, refuseOldValue, cached)->
     method()
     .then (res)->
       _.info "from remote data source: #{key}"
-      putResponseInCache(key, res)
+      putResponseInCache key, res
       return res
     .catch (err)->
-      if refuseOldValue then return
+      if refuseOldValue
+        _.warn err, "#{key} request err (returning nothing)"
+        return
       else
         _.warn err, "#{key} request err (returning old value)"
         return returnOldValue key, err
