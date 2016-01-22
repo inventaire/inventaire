@@ -8,7 +8,9 @@ module.exports = (_)->
 
   inspect = (obj, label)->
     # fully display deep objects
-    console.log "#{label} inspect".grey, util.inspect(obj, false, null)
+    console.log '****'.grey + "#{label} inspect".magenta + '****'.grey
+    console.log util.inspect(obj, false, null)
+    console.log "----------".grey
     return obj
 
   customLoggers =
