@@ -7,6 +7,7 @@ imageBase = "https://upload.wikimedia.org/wikipedia/en"
 cache_ = __.require 'lib', 'cache'
 error_ = __.require 'lib', 'error/error'
 fuzzy = require 'fuzzy.js'
+iconsBlacklist = require './icons_blacklist'
 
 module.exports = (req, res)->
   { query } = req
@@ -61,7 +62,10 @@ pickBestImage = (title, images)->
       return _.max images, score
 
 excludeIcons = (images)->
-  images.filter (img)-> not /svg$/.test img
+  images.filter (img)->
+    if /svg$/.test img then return false
+    if img in iconsBlacklist then return false
+    return true
 
 MatchingScore = (a)->
   fn = (b)->
