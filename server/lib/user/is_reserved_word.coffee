@@ -29,9 +29,21 @@ reservedWords = [
   'groups'
   'transaction'
   'transactions'
+  'exchange'
+  'exchanges'
+  'share'
+  'give'
+  'sell'
+  'lend'
+  'inventorize'
   'public'
   'private'
   'auth'
+  'me'
+  'i'
+  'setting'
+  'settings'
+  'contribute'
 ]
 
 module.exports =  (username)->
