@@ -19,8 +19,12 @@ module.exports =
     try _.types arguments, types, 2
     catch err then return error_.reject(err, 500)
 
+    # When passed a 0 timespan, it is expected to get a fresh value.
+    # Refusing the old value is also a way to invalidate the current cache
+    refuseOldValue = timespan is 0
+
     checkCache key, timespan, retry
-    .then requestOnlyIfNeeded.bind(null, key, method)
+    .then requestOnlyIfNeeded.bind(null, key, method, refuseOldValue)
     .catch (err)->
       _.warn err, "final cache_ err: #{key}"
       throw err
@@ -85,7 +89,7 @@ returnOldValue = (key, err)->
       err.old_value = null
       throw err
 
-requestOnlyIfNeeded = (key, method, cached)->
+requestOnlyIfNeeded = (key, method, refuseOldValue, cached)->
   if cached?
     # _.info "from cache: #{key}"
     cached.body
@@ -96,8 +100,10 @@ requestOnlyIfNeeded = (key, method, cached)->
       putResponseInCache(key, res)
       return res
     .catch (err)->
-      _.warn err, "#{key} request err (returning old value)"
-      return returnOldValue(key, err)
+      if refuseOldValue then throw err
+      else
+        _.warn err, "#{key} request err (returning old value)"
+        return returnOldValue key, err
 
 putResponseInCache = (key, res)->
   obj =
