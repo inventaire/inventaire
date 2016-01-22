@@ -1,13 +1,10 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
-apiBase = "https://en.wikipedia.org/w/api.php?action=query&format=json&prop=images&titles="
-imageBase = "https://upload.wikimedia.org/wikipedia/en"
-{ md5 } = __.require 'lib', 'crypto'
+wpBase = "https://en.wikipedia.org/w/api.php"
+apiBase = "#{wpBase}?action=query&prop=pageimages&format=json&titles="
 cache_ = __.require 'lib', 'cache'
 error_ = __.require 'lib', 'error/error'
-fuzzy = require 'fuzzy.js'
-iconsBlacklist = require './icons_blacklist'
 
 module.exports = (req, res)->
   { query } = req
@@ -27,62 +24,20 @@ module.exports = (req, res)->
   .catch error_.Handler(res)
 
 requestImage = (title)->
-  _.log title, 'title'
-  raw = unUnderscorize title
-  underscored = underscorize title
-
-  url = "#{apiBase}#{underscored}"
-
-  _.log url, "enwpimage:#{title}"
+  url = "#{apiBase}#{title}"
+  _.log url, 'url'
 
   promises_.get url
-  .then (data)->
-    { pages } = data.query
-    unless pages? then throw error_.notFound data
-    page = _.findWhere pages, {title: raw}
-    unless page?.images?.length > 0 then throw error_.notFound data
+  .then _.Inspect('requestImage')
+  .then (res)->
+    { pages } = res.query
+    source = _.values(pages)[0]?.thumbnail?.source
+    if source? then return parseThumbUrl source
 
-    filenames = page.images.map (img)-> img.title?.replace 'File:', ''
-    filename = pickBestImage title, filenames
-
-    unless filename? then throw error_.notFound data
-
-    return getUrl filename
-
-  .catch (err)->
-    _.inspect err, "enwpimage #{title} err"
-    throw err
-
-unUnderscorize = (text)-> text.replace /_/g, ' '
 underscorize = (text)-> text.replace /\s/g, '_'
 
-pickBestImage = (title, images)->
-  images = excludeIcons images
-  switch images.length
-    when 0 then return
-    when 1 then return images[0]
-    else
-      score = MatchingScore title
-      return _.max images, score
-
-excludeIcons = (images)->
-  images.filter (img)->
-    if /svg$/.test img then return false
-    if img in iconsBlacklist then return false
-    return true
-
-MatchingScore = (a)->
-  fn = (b)->
-    score = fuzzy(a, b).score
-    return _.log score, "#{a} --VS-- #{b}"
-
-getUrl = (filename)->
-  filename = underscorize filename
-  _.log filename, 'filename'
-  hash = md5 filename
-  _.log hash, 'hash'
-  [ a, b ] = hash
-  # DO NOT encode the filename before hashing
-  filename = encodeURIComponent filename
-  url = "#{imageBase}/#{a}/#{a}#{b}/#{filename}"
-  _.log url, 'url'
+# using the thumb fully built URL instead of build the URL
+# from the filename md5 hash, making it less hazardous
+parseThumbUrl = (url)->
+  # removing the last part and the thumb name
+  return url.split('/')[0...-1].join('/').replace('/thumb', '')
