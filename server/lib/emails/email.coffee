@@ -108,7 +108,9 @@ module.exports =
         unknownUser: unknownUser
 
   EmailInvitation: (user, message)->
-    # no email settings to check here neither
+    # no email settings to check here neither:
+    # invited users who don't want more emails should have been filtered-out
+    # by invitations_.extractCanBeInvited
     { username, language } = user
     lang = _.shortLang language
 

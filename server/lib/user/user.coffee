@@ -5,7 +5,7 @@ promises_ = __.require 'lib', 'promises'
 
 couch_ = __.require 'lib', 'couch'
 User = __.require 'models', 'user'
-{ byEmail, byEmails } = require './shared_user_handlers'
+{ byEmail, byEmails, findOneByEmail } = require './shared_user_handlers'
 { publicUserData, publicUsersDataWithEmails } = require './public_user_data'
 
 db = __.require('couch', 'base')('users', 'user')
@@ -15,15 +15,8 @@ user_ =
   byId: db.get.bind(db)
   byIds: db.fetch.bind(db)
   byEmail: byEmail.bind(null, db)
-
-  findOneByEmail: (email)->
-    user_.byEmail email
-    .then couch_.firstDoc
-    .then (user)->
-      if user?.email is email then return user
-      else throw new Error "user not found for email: #{email}"
-
   byEmails: byEmails.bind(null, db)
+  findOneByEmail: findOneByEmail.bind(null, db)
 
   publicUsersDataByEmails: (emails)->
     _.type emails, 'array'
@@ -77,6 +70,16 @@ user_ =
       return usersData.map publicUserData
 
     .then formatUsersData.bind(null, format)
+
+  incrementUndeliveredMailCounter: (email)->
+    user_.findOneByEmail email
+    .then (doc)->
+      unless doc? then throw new Error('user not found')
+      { _id } = doc
+      db.update _id, (doc)->
+        doc.undeliveredEmail or= 0
+        doc.undeliveredEmail += 1
+        return doc
 
 formatUsersData = (format, usersData)->
   if format is 'index' then return _.indexBy usersData, '_id'
