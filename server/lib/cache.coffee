@@ -17,7 +17,7 @@ module.exports =
   get: (key, method, timespan=oneMonth, retry=true)->
     types = ['string', 'function', 'number', 'boolean']
     try _.types arguments, types, 2
-    catch err then return error_.reject(err, 500)
+    catch err then return error_.reject err, 500
 
     # When passed a 0 timespan, it is expected to get a fresh value.
     # Refusing the old value is also a way to invalidate the current cache
@@ -25,9 +25,7 @@ module.exports =
 
     checkCache key, timespan, retry
     .then requestOnlyIfNeeded.bind(null, key, method, refuseOldValue)
-    .catch (err)->
-      _.warn err, "final cache_ err: #{key}"
-      throw err
+    .catch _.ErrorRethrow("final cache_ err: #{key}")
 
   # dataChange: date before which cached data
   # is outdated due to change in the data structure.
@@ -49,7 +47,7 @@ module.exports =
     else defaultTime
 
 checkCache = (key, timespan, retry)->
-  cacheDB.get(key)
+  cacheDB.get key
   .catch (err)->
     _.warn err, "checkCache err: #{key}"
     return
@@ -81,7 +79,7 @@ emptyBody = (body)->
   # doesnt expect other types
 
 returnOldValue = (key, err)->
-  checkCache(key, Infinity)
+  checkCache key, Infinity
   .then (res)->
     if res? then res.body
     else
@@ -100,17 +98,16 @@ requestOnlyIfNeeded = (key, method, refuseOldValue, cached)->
       putResponseInCache(key, res)
       return res
     .catch (err)->
-      if refuseOldValue then throw err
+      if refuseOldValue then return
       else
         _.warn err, "#{key} request err (returning old value)"
         return returnOldValue key, err
 
 putResponseInCache = (key, res)->
-  obj =
+  _.info "caching #{key}"
+  cacheDB.put key,
     body: res
     timestamp: new Date().getTime()
-  _.info "caching #{key}"
-  cacheDB.put key, obj
 
 isFreshEnough = (timestamp, timespan)->
   _.types arguments, ['number', 'number']
