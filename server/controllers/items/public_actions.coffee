@@ -10,7 +10,21 @@ tests = __.require 'models', 'tests/common-tests'
 
 module.exports =
   lastPublicItems: (req, res, next) ->
-    items_.publicByDate 15
+    { query } = req
+    { limit, offset } = query
+
+    limit or= 15
+    offset or= 0
+
+    try limit = Number limit
+    catch err then return error_.bundle res, 'invalid limit', 400, limit
+    try offset = Number offset
+    catch err then return error_.bundle res, 'invalid offset', 400, offset
+
+    if limit > 100
+      return error_.bundle res, "limit can't be over 100", 400, limit
+
+    items_.publicByDate limit, offset
     .then bundleOwnersData.bind(null, res)
     .catch error_.Handler(res)
 

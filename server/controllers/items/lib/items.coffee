@@ -51,12 +51,12 @@ module.exports = items_ =
     db.viewByKey 'byEntity', [entityUri, 'public']
     .then safeItems
 
-  publicByDate: (limit)->
-    params =
+  publicByDate: (limit=15, offset=0)->
+    db.viewCustom 'publicByDate',
       limit: limit
+      skip: offset
       descending: true
       include_docs: true
-    db.viewCustom 'publicByDate', params
     .then safeItems
 
   publicByOwnerAndEntity: (owner, entityUri)->
