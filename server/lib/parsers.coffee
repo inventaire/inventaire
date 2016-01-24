@@ -11,17 +11,13 @@ stringToBoolean = (value)->
 position = (latLng)->
   # allow the user to delete her position by passing a null value
   unless _.isArray latLng then return null
-  return latLng.map (str)-> Number(str)
+  return latLng.map _.stringToFloat
 
 allParsers =
   user:
     settings: stringToBoolean
     position: position
-    summaryPeriodicity: (days)->
-      if _.isString days
-        try days = Number days
-        catch err then _.warn err, "couldn't parse summaryPeriodicity value"
-      return days
+    summaryPeriodicity: _.stringToInt
 
   group:
     searchable: stringToBoolean

@@ -55,6 +55,18 @@ module.exports = base =
 
   extractReqIp: (req)-> req.headers['x-forwarded-for']
 
+  stringToInt: (str)->
+    unless typeof str is 'string' then throw new Error 'expected a string'
+    # testing the validity of the string is needed
+    # to avoid getting NaN from parseInt
+    unless /^\d+$/.test str then throw new Error 'invalid integer string'
+    return parseInt str
+
+  stringToFloat: (str)->
+    unless typeof str is 'string' then throw new Error 'expected a string'
+    unless /^[\d\.]+$/.test str then throw new Error 'invalid integer string'
+    return parseFloat str
+
 base.objDiff = -> not base.sameObjects.apply(null, arguments)
 
 base.Ok = (res, status)-> base.ok.bind(null, res, status)

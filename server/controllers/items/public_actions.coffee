@@ -13,13 +13,13 @@ module.exports =
     { query } = req
     { limit, offset } = query
 
-    limit or= 15
-    offset or= 0
+    limit or= '15'
+    offset or= '0'
 
-    try limit = Number limit
-    catch err then return error_.bundle res, 'invalid limit', 400, limit
-    try offset = Number offset
-    catch err then return error_.bundle res, 'invalid offset', 400, offset
+    try limit = _.stringToInt limit
+    catch err then return error_.bundle res, 'invalid limit', 400, [limit, err]
+    try offset = _.stringToInt offset
+    catch err then return error_.bundle res, 'invalid offset', 400, [offset, err]
 
     if limit > 100
       return error_.bundle res, "limit can't be over 100", 400, limit
