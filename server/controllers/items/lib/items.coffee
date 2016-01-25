@@ -51,12 +51,13 @@ module.exports = items_ =
     db.viewByKey 'byEntity', [entityUri, 'public']
     .then safeItems
 
-  publicByDate: (limit=15, offset=0)->
+  publicByDate: (limit=15, offset=0, assertImage=false)->
     db.viewCustom 'publicByDate',
       limit: limit
       skip: offset
       descending: true
       include_docs: true
+    .then FilterWithImage(assertImage)
     .then safeItems
 
   publicByOwnerAndEntity: (owner, entityUri)->
@@ -104,3 +105,8 @@ safeItems = (items)->
     item.notes = null
     item.listing = null
     return item
+
+FilterWithImage = (assertImage)->
+  return fn = (items)->
+    if assertImage then items.filter (item)-> item.pictures.length > 0
+    else items

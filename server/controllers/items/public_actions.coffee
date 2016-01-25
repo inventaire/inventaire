@@ -12,6 +12,7 @@ module.exports =
   lastPublicItems: (req, res, next) ->
     { query } = req
     { limit, offset } = query
+    assertImage = query['assert-image'] is 'true'
 
     limit or= '15'
     offset or= '0'
@@ -24,7 +25,7 @@ module.exports =
     if limit > 100
       return error_.bundle res, "limit can't be over 100", 400, limit
 
-    items_.publicByDate limit, offset
+    items_.publicByDate limit, offset, assertImage
     .then bundleOwnersData.bind(null, res)
     .catch error_.Handler(res)
 
