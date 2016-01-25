@@ -5,6 +5,7 @@ Item = __.require 'models', 'item'
 listingsPossibilities = Item.attributes.constrained.listing.possibilities
 error_ = __.require 'lib', 'error/error'
 { BasicUpdater } = __.require 'lib', 'doc_updates'
+couch_ = __.require 'lib', 'couch'
 
 db = __.require('couch', 'base')('items')
 
