@@ -51,6 +51,11 @@ module.exports = base =
   okWarning: (res, warning, status=200)->
     res.status(status).json {ok: true, warning: warning}
 
+  wrap: (res, key, data)->
+    obj = {}
+    obj[key] = data
+    res.json obj
+
   Map: (fn)-> (array)-> array.map fn
 
   extractReqIp: (req)-> req.headers['x-forwarded-for']
@@ -69,6 +74,8 @@ module.exports = base =
 
 base.objDiff = -> not base.sameObjects.apply(null, arguments)
 
-base.Ok = (res, status)-> base.ok.bind(null, res, status)
+base.Ok = (res, status)-> base.ok.bind null, res, status
 base.OkWarning = (res, warning, status)->
   base.okWarning.bind null, res, warning, status
+
+base.Wrap = (res, key)-> base.wrap.bind null, res, key

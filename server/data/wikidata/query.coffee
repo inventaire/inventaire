@@ -25,7 +25,7 @@ module.exports = (req, res)->
 
   key = "query:#{query}:#{qid}"
   cache_.get key, runQuery.bind(null, query, qid, key), timespan
-  .then (items)-> res.json {items: items}
+  .then _.Wrap(res, 'items')
   .catch error_.Handler(res)
 
 

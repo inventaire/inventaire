@@ -2,7 +2,6 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 user_ = __.require 'lib', 'user/user'
 error_ = __.require 'lib', 'error/error'
-SendUsersData = require './lib/send_users_data'
 { publicUsersData } = __.require 'lib', 'user/public_user_data'
 
 module.exports = (res, query) ->
@@ -12,5 +11,5 @@ module.exports = (res, query) ->
 
   user_.usernameStartBy search
   .then publicUsersData
-  .then SendUsersData(res)
+  .then _.Wrap(res, 'users')
   .catch error_.Handler(res)

@@ -20,7 +20,7 @@ module.exports = (req, res)->
   key = "enwpimage:#{title}"
   cache_.get key, requestImage.bind(null, title), timespan
   .then _.Log('wp image url')
-  .then (url)-> res.json {url: url}
+  .then _.Wrap(res, 'url')
   .catch error_.Handler(res)
 
 requestImage = (title)->

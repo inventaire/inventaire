@@ -4,7 +4,6 @@ promises_ = __.require 'lib', 'promises'
 user_ = __.require 'lib', 'user/user'
 items_ = __.require 'controllers', 'items/lib/items'
 error_ = __.require 'lib', 'error/error'
-SendUsersData = require './lib/send_users_data'
 User = __.require 'models', 'user'
 
 module.exports = (req, res, next) ->
@@ -20,7 +19,7 @@ fetchUsersData = (res, ids)->
   promises_.start
   .then parseAndValidateIds.bind(null, ids)
   .then _.partialRight(user_.getUsersPublicData, 'index')
-  .then SendUsersData(res)
+  .then _.Wrap(res, 'users')
   .catch error_.Handler(res)
 
 fetchUsersItems = (req, res, ids) ->
