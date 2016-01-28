@@ -1,3 +1,5 @@
+_ = require 'lodash'
+
 colors = require 'colors'
 # force the use of colors even if process.stdout.isTTY is false
 # which may happen with supervisor or daemon process
@@ -51,10 +53,6 @@ module.exports = base =
   okWarning: (res, warning, status=200)->
     res.status(status).json {ok: true, warning: warning}
 
-  wrap: (res, key, data)->
-    obj = {}
-    obj[key] = data
-    res.json obj
 
   Map: (fn)-> (array)-> array.map fn
 
@@ -78,4 +76,17 @@ base.Ok = (res, status)-> base.ok.bind null, res, status
 base.OkWarning = (res, warning, status)->
   base.okWarning.bind null, res, warning, status
 
-base.Wrap = (res, key)-> base.wrap.bind null, res, key
+
+# FROM: .then (users)-> res.json {users: users}
+# TO: .then _.Wrap(res, 'users')
+base.Wrap = (res, key)-> wrap.bind null, res, key
+wrap = (res, key, data)->
+  obj = {}
+  obj[key] = data
+  res.json obj
+
+# FROM: .spread (users, items)-> res.json {users: users, items: items}
+# TO: .then _.Wraps(res, ['users', 'items'])
+base.Wraps = (res, keys)-> wraps.bind null, res, keys
+wraps = (res, keys, dataArray)->
+  res.json _.zipObject(keys, dataArray)
