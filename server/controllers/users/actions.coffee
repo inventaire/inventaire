@@ -5,6 +5,7 @@ user_ = __.require 'lib', 'user/user'
 items_ = __.require 'controllers', 'items/lib/items'
 error_ = __.require 'lib', 'error/error'
 User = __.require 'models', 'user'
+{ fetchUsersNearby, fetchItemsNearby } = require './get_by_position'
 
 module.exports = (req, res, next) ->
   { query } = req
@@ -12,7 +13,9 @@ module.exports = (req, res, next) ->
   if action?
     switch action
       when 'get-users' then fetchUsersData res, ids
-      when 'get-items'then fetchUsersItems req, res, ids
+      when 'get-items' then fetchUsersItems req, res, ids
+      when 'get-users-nearby' then fetchUsersNearby req, res
+      when 'get-items-nearby' then fetchItemsNearby req, res
       else error_.unknownAction res
 
 fetchUsersData = (res, ids)->

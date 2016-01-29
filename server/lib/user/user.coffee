@@ -9,6 +9,7 @@ User = __.require 'models', 'user'
 { publicUserData, publicUsersDataWithEmails } = require './public_user_data'
 
 db = __.require('couch', 'base')('users', 'user')
+geo = require('./geo/geo')()
 
 user_ =
   db: db
@@ -80,6 +81,27 @@ user_ =
         doc.undeliveredEmail or= 0
         doc.undeliveredEmail += 1
         return doc
+
+  nearby: (latLng, meterRange, userId)->
+    findNearby latLng, meterRange
+    .then (res)->
+      ids = res.map _.property('id')
+      return _.without ids, userId
+    .catch _.ErrorRethrow('nearby err')
+
+findNearby = (latLng, meterRange, iterations=0)->
+  _.log arguments, 'findNearby iteration'
+  geo.search latLng, meterRange
+  .then (res)->
+    # if there is only one user found, it's the requesting user
+    # which will be filtered out later
+    if res.length > 1 then return res
+    else
+      # avoid creating an infinit loop if there are no users geolocated
+      if iterations > 10 then return []
+      iterations += 1
+      return findNearby latLng, meterRange*2, iterations
+
 
 formatUsersData = (format, usersData)->
   if format is 'index' then return _.indexBy usersData, '_id'

@@ -23,6 +23,16 @@ promisesHandlers =
     err.context = context
     throw err
 
+  # a proxy to Bluebird Promisify that keeps the names
+  promisify: (mod, keys)->
+    # Allow to pass an array of the desired keys
+    # or let keys undefined to get all the keys
+    unless _.isArray keys then keys = Object.keys mod
+    API = {}
+    for k in keys
+      API[k] = Promise.promisify mod[k]
+    return API
+
 settlers =
   settle: (promises)->
     inspectors = promises.map reflectMethod

@@ -20,7 +20,7 @@ module.exports = (groups_)->
     usersIds = groups_.allGroupMembers group
     promises_.all [
       user_.getUsersPublicData(usersIds)
-      items_.bundleListings(['public'], usersIds)
+      items_.publicListings(usersIds)
     ]
 
   return getGroupPublicData

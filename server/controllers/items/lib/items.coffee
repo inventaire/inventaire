@@ -34,6 +34,9 @@ module.exports = items_ =
   friendsListings: (usersIds)->
     items_.bundleListings ['friends', 'public'], usersIds
 
+  publicListings: (usersIds)->
+    items_.bundleListings ['public'], usersIds
+
   publicById: (itemId)->
     db.get(itemId)
     .then (item)->
