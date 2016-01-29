@@ -11,4 +11,8 @@ module.exports = (isbn)->
     openlibrary: getOpenLibraryDataFromIsbn(isbn)
     google: getGoogleDataFromIsbn(isbn)
     inv: getInvEntitiesDataFromIsbn(isbn)
-  .then (res)-> res.openlibrary or res.google or res.inv or {}
+
+  # give priority to inv data as those can be fixed
+  # while errors from google can't
+  # ex: isbn 9782253005438 is wrong in Google Books
+  .then (res)-> res.inv or res.openlibrary or res.google or {}
