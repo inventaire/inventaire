@@ -15,7 +15,6 @@ module.exports = (params)->
   .catch _.ErrorRethrow('init follow err')
 
 initFollow = (params, lastSeq=0)->
-  _.log arguments, 'args'
   { dbName, filter, onChange, reset } = params
   _.log lastSeq, "#{dbName} last seq"
 
@@ -30,15 +29,13 @@ initFollow = (params, lastSeq=0)->
     feed: 'continuous'
     since: lastSeq
 
-  setLastSeq = SetLastSeq(dbName)
-
-  _.info config, "#{dbName} config"
+  setLastSeq = SetLastSeq dbName
 
   follow config, (err, change)->
-    console.log 'change', change
     if err? then _.error err, "#{dbName} follow err"
     else
       { seq } = change
+      _.log seq, "#{dbName} change"
       setLastSeq seq
       onChange change
 
