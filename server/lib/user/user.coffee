@@ -93,9 +93,8 @@ findNearby = (latLng, meterRange, iterations=0)->
   _.log arguments, 'findNearby iteration'
   geo.search latLng, meterRange
   .then (res)->
-    # if there is only one user found, it's the requesting user
-    # which will be filtered out later
-    if res.length > 1 then return res
+    # try to get the 10 closest (11 minus the main user)
+    if res.length > 11 then return res
     else
       # avoid creating an infinit loop if there are no users geolocated
       if iterations > 10 then return []
