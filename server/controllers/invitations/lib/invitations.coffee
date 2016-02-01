@@ -7,7 +7,7 @@ Invited = __.require 'models','invited'
 promises_ = __.require 'lib', 'promises'
 { makeRequest } = __.require 'controllers', 'relations/lib/actions'
 
-module.exports =
+module.exports = invitations_ =
   findOneByEmail:findOneByEmail.bind(null, db)
   byEmails: byEmails.bind(null, db)
   createUnknownInvited: (inviterId, unknownEmails)->
@@ -41,6 +41,12 @@ module.exports =
       return promises_.all promises
     else
       return promises_.resolved
+
+  stopEmails: (email)->
+    invitations_.findOneByEmail email
+    .then (doc)-> db.update doc._id, Invited.stopEmails
+    .catch _.ErrorRethrow('stopEmails')
+
 
 emailNotification = false
 convertInvitation = (newUserId, inviterId)->

@@ -2,6 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 tests = __.require 'models','tests/common-tests'
+{ BasicUpdater } = __.require 'lib', 'doc_updates'
 
 create = (inviterId, email)->
   tests.pass 'email', email
@@ -20,10 +21,13 @@ addInviter = (inviterId, doc)->
   return doc
 
 
-# The stopEmails flag is manually added to users
-# sending an email at stop-email@inventaire.io
+# The stopEmails flag is added with scripts/lib/stop_emails.coffee
+# to users sending an email at stop-email@inventaire.io
+# or reporting inventaire.io emails as spam.
 # This could be made more secure and automated
 # by sending an unsubscribe link with a token
+stopEmails = BasicUpdater 'stopEmails', true
+
 canBeInvited = (inviterId, doc)->
   { inviters, stopEmails } = doc
   if stopEmails
@@ -41,3 +45,4 @@ module.exports =
   create: create
   addInviter: addInviter
   canBeInvited: canBeInvited
+  stopEmails: stopEmails
