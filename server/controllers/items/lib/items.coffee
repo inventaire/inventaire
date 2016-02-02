@@ -6,6 +6,8 @@ listingsPossibilities = Item.attributes.constrained.listing.possibilities
 error_ = __.require 'lib', 'error/error'
 { BasicUpdater } = __.require 'lib', 'doc_updates'
 couch_ = __.require 'lib', 'couch'
+user_ = __.require 'lib', 'user/user'
+promises_ = __.require 'lib', 'promises'
 
 db = __.require('couch', 'base')('items')
 
@@ -100,6 +102,18 @@ module.exports = items_ =
     db.update id, BasicUpdater('archived', true)
 
   bulkDelete: db.bulkDelete.bind(db)
+
+  nearby: (userId, range=50)->
+    user_.nearby userId, range
+    .then items_.getUsersAndItemsPublicData
+
+  getUsersAndItemsPublicData: (usersIds)->
+    _.log usersIds, 'usersIds'
+    unless usersIds.length > 0 then return [[], []]
+    return promises_.all [
+      user_.getUsersPublicData(usersIds).then _.Log('users')
+      items_.publicListings(usersIds).then _.Log('items')
+    ]
 
 entityUriKeys = (entityUri)->
   return listingsPossibilities.map (listing)-> [entityUri, listing]

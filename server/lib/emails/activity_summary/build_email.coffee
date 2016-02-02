@@ -17,6 +17,7 @@ notifs_ = __.require 'lib', 'notifications'
 transactions_ = __.require 'controllers', 'transactions/lib/transactions'
 
 getLastFriendsBooks = require './last_friends_books'
+getLastNearbyPublicBooks = require './last_nearby_books'
 
 module.exports = (user)->
   getEmailData user
@@ -36,14 +37,15 @@ getEmailData = (user)->
     activeTransactions: transactions_.activeTransactions userId
     # new books in your network: preview + count for others 'X more...'
     lastFriendsBooks: getLastFriendsBooks userId, lastSummary
-    # new users in groups
+    # new books nearby
+    lastNearbyPublicBooks: getLastNearbyPublicBooks user, lastSummary
 
     # FUTURE TODO
     # waiting transaction
       # where you have an action to do
       # where you have been waiting for the other's action for long now
-    # new books nearby
     # new users nearby
+    # new users in groups
 
 spreadEmailData = (user, results)->
   {
@@ -52,7 +54,8 @@ spreadEmailData = (user, results)->
     groupRequests,
     unreadNotifications,
     activeTransactions,
-    lastFriendsBooks
+    lastFriendsBooks,
+    lastNearbyPublicBooks
   } = results
 
   { email, language, summaryPeriodicity } = user
@@ -66,6 +69,10 @@ spreadEmailData = (user, results)->
 
   if news.display is false and countTotal is 0
     throw promises_.skip 'empty activity summary', user._id
+
+  # attach the lang to make accessible for the last_books partial
+  lastFriendsBooks.lang = lang
+  lastNearbyPublicBooks.lang = lang
 
   return data =
     to: email
@@ -85,6 +92,7 @@ spreadEmailData = (user, results)->
       unreadNotifications: counter unreadNotifications, '/notifications'
       activeTransactions: counter activeTransactions, '/transactions'
       lastFriendsBooks: lastFriendsBooks
+      lastNearbyPublicBooks: lastNearbyPublicBooks
       news: news
       didYouKnowKey: didYouKnowKey
       hasActivities: countTotal > 0

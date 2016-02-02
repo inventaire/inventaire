@@ -1,0 +1,17 @@
+{{#if display}}
+  <h2 style="text-align: center;">{{{I18n lang title}}}</h2>
+  {{> row_centered_top}}
+    {{#each highlighted}}
+      <a href="{{href}}">
+        {{#if pictures}}
+          <img src="{{src pictures 200}}" alt="{{title}}">
+        {{/if}}
+        <h3 style="margin: 0 auto; text-align: center; color:#2C9AB7; text-decoration-color:#2C9AB7;">{{title}}</h3>
+      </a>
+      <br />
+    {{/each}}
+    {{#if more.display}}
+      {{{i18n lang more.title more}}}
+    {{/if}}
+  {{> row_centered_bottom}}
+{{/if}}

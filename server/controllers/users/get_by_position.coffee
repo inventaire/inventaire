@@ -16,28 +16,14 @@ module.exports =
 
   fetchItemsNearby: (req, res)->
     getNearbyUsers req
-    .then (ids)->
-      _.log ids, 'ids'
-      unless ids.length > 0 then return [[], []]
-      return promises_.all [
-        user_.getUsersPublicData(ids).then _.Log('users')
-        items_.publicListings(ids).then _.Log('items')
-      ]
+    .then items_.getUsersAndItemsPublicData
     .then _.Wraps(res, ['users', 'items'])
     .catch error_.Handler(res)
 
-
 getNearbyUsers = (req)->
   parseReq req
-  .spread (userId, range)->
-    user_.byId userId
-    .then (user)->
-      { position } = user
-      unless position?
-        throw error_.new 'user has no position set', 400, userId
-
-      user_.nearby position, range, userId
-      .then _.Log('users nearby')
+  .spread user_.nearby
+  .then _.Log('users nearby')
 
 parseReq = (req)->
   { _id:userId } = req.user

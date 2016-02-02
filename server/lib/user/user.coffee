@@ -2,6 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
+error_ = __.require 'lib', 'error/error'
 
 couch_ = __.require 'lib', 'couch'
 User = __.require 'models', 'user'
@@ -82,22 +83,31 @@ user_ =
         doc.undeliveredEmail += 1
         return doc
 
-  nearby: (latLng, meterRange, userId)->
-    findNearby latLng, meterRange
-    .then (res)->
-      ids = res.map _.property('id')
-      return _.without ids, userId
+  nearby: (userId, meterRange)->
+    user_.byId userId
+    .then (user)->
+      { position } = user
+      console.log 'position', position
+      unless position?
+        throw error_.new 'user has no position set', 400, userId
+
+      findNearby position, meterRange
+      .then _.Log('find nearby')
+      .then (res)->
+        ids = res.map _.property('id')
+        return _.without ids, userId
+
     .catch _.ErrorRethrow('nearby err')
 
 findNearby = (latLng, meterRange, iterations=0)->
   _.log arguments, 'findNearby iteration'
   geo.search latLng, meterRange
   .then (res)->
-    # try to get the 10 closest (11 minus the main user)
-    if res.length > 11 then return res
+    # Try to get the 10 closest (11 minus the main user)
+    # But stop after 10 iterations to avoid creating an infinit loop
+    # if there are no users geolocated
+    if res.length > 11 or iterations > 10 then return res
     else
-      # avoid creating an infinit loop if there are no users geolocated
-      if iterations > 10 then return []
       iterations += 1
       return findNearby latLng, meterRange*2, iterations
 
