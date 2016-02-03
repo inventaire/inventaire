@@ -2,12 +2,55 @@
   <h2 style="text-align: center;">{{{I18n lang title}}}</h2>
   {{> row_centered_top}}
     {{#each highlighted}}
-      <a href="{{href}}">
+      <table width="300" align="center" padding="0" margin="0" bgcolor="#F5F5F5">
         {{#if pictures}}
-          <img src="{{src pictures 200}}" alt="{{title}}">
+          <tr>
+            <td align="center">
+              <a href="{{href}}" title="{{title}}" style="text-decoration: none"><img src="{{src pictures 200}}" alt="{{title}}"></a>
+            </td>
+          </tr>
         {{/if}}
-        <h3 style="margin: 0 auto; text-align: center; color:#2C9AB7; text-decoration-color:#2C9AB7;">{{title}}</h3>
-      </a>
+        <tr>
+          <td>
+            <a href="{{href}}" title="{{title}}" style="text-decoration: none">
+              <h3 style="margin: 0 auto; text-align: center; color:#2C9AB7;">{{title}}</h3>
+            </a>
+          </td>
+        </tr>
+        {{!-- <tr><td><h4 style="margin: 0 auto; text-align: center; color:#222222; text-decoration-color:#2C9AB7;">{{author}}</h4></td></tr> --}}
+        <tr>
+          <td>
+            <table width="300">
+              <tr>
+                <td>
+                  <a href="{{user.href}}" title="{{user.username}}">
+                    {{!-- hacky aligning with the label--}}
+                    <img src="{{src user.picture 64}}" alt="{{user.username}}" height="64" width="64" style="margin-top: 4px;">
+                  </a>
+                </td>
+                <td>
+                  <a href="{{href}}" title="{{title}}" style="color: white; text-decoration: none">
+                    {{!-- hacky aligning with the picture--}}
+                    <table bgcolor="{{transacColor}}" height="64" width="234">
+                      <tr align="center">
+                        <td>
+                          {{{i18n lang transacLabel user}}}
+                        </td>
+                      </tr>
+                    </table>
+                  </a>
+                </td>
+              </tr>
+            </table>
+          {{#if user.distance}}
+            <tr align="right" bgcolor="#ffffff">
+              <td>
+                <small style="color: #999999">{{i18n lang 'km_away' user}}</small>
+              </td>
+            </tr>
+          {{/if}}
+      </table>
+
       <br />
     {{/each}}
     {{#if more.display}}

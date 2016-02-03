@@ -61,7 +61,7 @@ spreadEmailData = (user, results)->
   { email, language, summaryPeriodicity } = user
   lang = _.shortLang language
 
-  countTotal = friendsRequests + groupInvitations + groupRequests + unreadNotifications + activeTransactions + lastFriendsBooks.highlighted.length
+  countTotal = friendsRequests + groupInvitations + groupRequests + unreadNotifications + activeTransactions + lastFriendsBooks.highlighted.length + lastNearbyPublicBooks.highlighted.length
 
   periodicity = user.summaryPeriodicity or defaultPeriodicity
 

@@ -43,6 +43,7 @@ module.exports =
     i18nArchive: '/server/lib/emails/i18n/src/archive'
     i18nTransifex: '/server/lib/emails/i18n/src/transifex'
     i18nDist: '/server/lib/emails/i18n/dist'
+    i18nClientDist: '/client/public/i18n/dist'
     client: '/client'
     scripts: '/scripts'
     uploads: '/client/public/uploads'

@@ -2,6 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 { allowTransaction } = __.require 'models', 'item'
+{ kmBetween } = __.require 'lib', 'geo'
 host = CONFIG.fullPublicHost()
 
 module.exports =
@@ -19,13 +20,17 @@ module.exports =
         smart_count: more
         title: "last_#{label}_books_more"
 
-  embedUsersData: (items, users)->
+  embedUsersData: (items, users, position)->
     users = indexById users
     items.map (item)->
       user = users[item.owner]
       if user?
-        item.user = _.pick user, requiredUserData
         item.href = "#{host}/inventory/#{user.username}/#{item.entity}"
+        item.user = _.pick user, requiredUserData
+        item.user.distance = kmBetween user.position, position
+        item.user.href = "#{host}/inventory/#{user.username}"
+        item.transacLabel = "#{item.transaction}_personalized_strong"
+        item.transacColor = transacColors[item.transaction]
       return item
 
   getHighlightedItems: (lastItems, highlightedLength)->
@@ -52,3 +57,9 @@ getItemsWithTransactionFirst = (lastItems, highlightedLength)->
   # in case there are less items with transactions than expected
   # concating items without transactions
   else return withTransaction.concat(withoutTransaction)[0...highlightedLength]
+
+transacColors =
+  giving: '#FEB1BA'
+  lending: '#9FD5B3'
+  selling: '#FFE567'
+  inventorying: '#BFBFBF'

@@ -83,7 +83,7 @@ user_ =
         doc.undeliveredEmail += 1
         return doc
 
-  nearby: (userId, meterRange)->
+  nearby: (userId, meterRange, strict)->
     user_.byId userId
     .then (user)->
       { position } = user
@@ -91,7 +91,7 @@ user_ =
       unless position?
         throw error_.new 'user has no position set', 400, userId
 
-      findNearby position, meterRange
+      findNearby position, meterRange, null, strict
       .then _.Log('find nearby')
       .then (res)->
         ids = res.map _.property('id')
@@ -99,14 +99,16 @@ user_ =
 
     .catch _.ErrorRethrow('nearby err')
 
-findNearby = (latLng, meterRange, iterations=0)->
+findNearby = (latLng, meterRange, iterations=0, strict=false)->
   _.log arguments, 'findNearby iteration'
   geo.search latLng, meterRange
   .then (res)->
     # Try to get the 10 closest (11 minus the main user)
+    # If strict, don't augment the range, just return what was found;
+    # else double the range
     # But stop after 10 iterations to avoid creating an infinit loop
     # if there are no users geolocated
-    if res.length > 11 or iterations > 10 then return res
+    if res.length > 11 or strict or iterations > 10 then return res
     else
       iterations += 1
       return findNearby latLng, meterRange*2, iterations

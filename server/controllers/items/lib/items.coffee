@@ -103,8 +103,8 @@ module.exports = items_ =
 
   bulkDelete: db.bulkDelete.bind(db)
 
-  nearby: (userId, range=50)->
-    user_.nearby userId, range
+  nearby: (userId, range=50, strict=false)->
+    user_.nearby userId, range, strict
     .then items_.getUsersAndItemsPublicData
 
   getUsersAndItemsPublicData: (usersIds)->
