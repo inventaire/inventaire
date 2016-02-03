@@ -5,7 +5,13 @@ linkify = __.require 'client', 'app/lib/handlebars_helpers/linkify'
 convertMarkdown = require('./convert_markdown')(linkify)
 
 module.exports = findKeys = (params)->
-  { enObj, langCurrent, langTransifex, langArchive, markdown } = params
+  { enObj, langCurrent, langTransifex, langArchive, langExtra, markdown, lang } = params
+
+  # extra are typically translation files from another subproject:
+  # for instance, emails key/values are kept DRY by using the client's dist key/values
+  hasExtra = langExtra?
+  langIsEnglish = lang is 'en'
+
   langTransifex = formatTransifexValues langTransifex, enObj
   langCurrent = keepNonNullValues langCurrent
 
@@ -30,10 +36,27 @@ module.exports = findKeys = (params)->
       # which can be the English version if it's really what is desired
       else update[k] = langCurrent[k]
     else
-      dist[k] = enVal
-      # allows to highlight the missing translations
-      # per-languages in the src files
-      update[k] = null
+      if hasExtra
+        extraVal = langExtra[k]
+        if extraVal?
+          console.log "importing extra val: #{k}".green, extraVal
+          dist[k] = extraVal
+          # Do not set update[k] = null for non-English langs as extra values should not appear
+          # in their source files given extra values are meant to avoid dupplicates between projects.
+          # Those null values should appear in English though, so that
+          # enObj keeps track of it, forcing findKeys to look for it.
+          # Those keys wont appear in Transifex as it takes a transifexified version of enObj as input,
+          # that is, enObj without the null values
+          if langIsEnglish then update[k] = null
+        else
+          dist[k] = enVal
+          update[k] = null
+      else
+        dist[k] = enVal
+        # allows to highlight the missing translations
+        # per-languages in the src files
+        update[k] = null
+
     if markdown
       dist[k] = convertMarkdown dist[k]
 

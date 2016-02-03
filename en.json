@@ -57,7 +57,6 @@
     "did_you_know_4": "Using a pseudonyme is perfectly fine on inventaire.io, but if you want people to find you or if you want to invite other users to connect as friends, [make sure you have a profile picture or a bio](https://inventaire.io/me) that they can recognize",
     "last_friends_books_more": "...and [%{smart_count} more](https://inventaire.io/inventory)",
     "news_3": "Hello!<br>Last time we introduced the possibility to see [geolocated users](https://inventaire.io/network/users/nearby), now you can also find [groups nearby](https://inventaire.io/network/groups/nearby)! If you already created a group and want it to appear on the map, go to your [group's settings](https://inventaire.io/network/groups/user). If you haven't, you can always [create a group here](https://inventaire.io/network/groups/create). Groups are designed to regroup people who come to a place regularly - an office, a coworking, a university, etc. - but if you use it in other ways and miss a feature, let us know!  <br><p style='text-align:right'>Maxime</p>",
-    "news": "news",
     "activity summary": "activity summary",
     "did you know?": "did you know?",
     "no_activity": "no activity to display",
@@ -65,5 +64,8 @@
     "Organize inventories with tags": "Organize inventories with tags",
     "last_nearby_books": "new books in nearby people inventories",
     "last_nearby_books_more": "...and [%{smart_count} more](https://inventaire.io/inventory/nearby)",
-    "km_away": "%{distance} km away"
+    "km_away": "%{distance} km away",
+    "news": null,
+    "lending_personalized_strong": null,
+    "giving_personalized_strong": null
 }
