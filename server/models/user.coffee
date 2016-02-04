@@ -42,12 +42,8 @@ User._create = (username, email, creationStrategy, language, password)->
       unless tests.password(password)
         throw error_.new 'invalid password', 400
       user.password = password
-    when 'browserid'
-      user.validEmail = true
-      # user can be created with a password when using
-      # browserid authentification
-      if password?
-        throw error_.new 'shouldnt have a password'
+    else
+      throw error_.new 'unknown strategy', 400
 
   return user
 

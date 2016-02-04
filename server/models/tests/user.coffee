@@ -5,6 +5,8 @@ notificationsSettingsList = __.require 'sharedLibs', 'notifications_settings_lis
 
 { pass, userId, username, email, localImg, boolean, position } = require './common-tests'
 
+creationStrategies = ['local']
+
 module.exports = tests =
   pass: pass
   userId: userId
@@ -14,8 +16,7 @@ module.exports = tests =
   # accepting second level languages (like es-AR) but only using first level yet
   language: (lang)-> /^\w{2}(-\w{2})?$/.test(lang)
   picture: localImg
-  creationStrategy: (creationStrategy)->
-    creationStrategy in ['browserid', 'local']
+  creationStrategy: (creationStrategy)-> creationStrategy in creationStrategies
   bio: (bio)-> _.isString(bio) and bio.length < 1000
   settings: boolean
   position: position

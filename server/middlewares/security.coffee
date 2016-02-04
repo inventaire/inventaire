@@ -19,7 +19,7 @@ exports.allowCrossDomain = (req, res, next)->
 # connect-src * is required to use PouchDB replication
 policy =
   """
-  child-src 'self' wikipedia.org https://login.persona.org;
+  child-src 'self' wikipedia.org;
   script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.wikidata.org;
   style-src 'self' 'unsafe-inline';
   img-src *;

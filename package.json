@@ -66,7 +66,6 @@
     "nodemailer": "git+https://github.com/maxlath/Nodemailer.git",
     "nodemailer-express-handlebars": "^1.0.0",
     "passport": "^0.2.2",
-    "passport-browserid": "^0.1.4",
     "passport-local": "^1.0.0",
     "request": "^2.65.0",
     "serve-favicon": "^2.3.0",

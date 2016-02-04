@@ -62,7 +62,7 @@ passwordUpdater = (user, newHash)->
   user.password = newHash
   user = _.omit user, 'resetPassword'
   # unlocking password-related functionalities on client-side
-  # for browserid users if they ask for a password reset
+  # for users originally created with browserid if they ask for a password reset
   if user.creationStrategy is 'browserid'
     user.hasPassword = true
   return user

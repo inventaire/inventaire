@@ -19,13 +19,6 @@ validUser = -> [
     'password'
   ]
 
-browseridBaseArgs = -> [
-    'rocky4'
-    'hi@validemail.org'
-    'browserid'
-    'se'
-  ]
-
 replaceParam = (index, value, baseArgGen=validUser)->
   args = baseArgGen()
   args[index] = value
@@ -120,34 +113,3 @@ describe 'user model', ->
       #     user.password.length.should.be.above 200
       #     done()
       #   .catch (err)-> console.log 'err', err
-
-  describe 'browserid signup', ->
-    it "should accept browserid strategy", (done)->
-      args = browseridBaseArgs()
-      user = _create args
-      user.should.an.Object
-      user.creationStrategy.should.equal 'browserid'
-      done()
-
-    it "should not throw on missing password", (done)->
-      args = browseridBaseArgs()
-      user = _create args
-      user.should.an.Object
-      expect(user.password).to.equal undefined
-      done()
-
-    it "should throw on existing password", (done)->
-      args = browseridBaseArgs()
-      args.push 'password'
-      (-> _create(args)).should.throw()
-      done()
-
-    it "should throw on bad username", (done)->
-      args = replaceParam 0, '', browseridBaseArgs
-      (-> _create(args)).should.throw()
-      done()
-
-    it "should throw on bad email", (done)->
-      args = replaceParam 1, '', browseridBaseArgs
-      (-> _create(args)).should.throw()
-      done()
