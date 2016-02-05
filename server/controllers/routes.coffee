@@ -11,7 +11,6 @@ relations = require './relations/relations'
 invitations = require './invitations/invitations'
 groups = require './groups/groups'
 entities = require './entities/entities'
-followed = require './entities/followed'
 upload = require './upload/upload'
 resize = require './upload/resize'
 notifs = require './notifs'
@@ -86,10 +85,6 @@ routes =
   'api/entities':
     get: noGet
     post: entities.create
-
-  'api/entities/followed':
-    get: followed.fetch
-    post: followed.update
 
   'api/entities/public':
     get: entities.actions
