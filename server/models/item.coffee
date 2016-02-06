@@ -1,6 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
+error_ = __.require 'lib', 'error/error'
 
 module.exports = Item = {}
 
@@ -32,6 +33,11 @@ Item.create = (userId, item)->
 Item.update = (userId, item)->
   _.types arguments, ['string', 'object']
   tests.pass 'itemId', item._id
+
+  unknown = _.difference Object.keys(item), attributes.known
+  if unknown.length > 0
+    throw error_.new "unknown attribute(s): #{unknown}", 400
+
   # just testing updatable attributes
   # as non-updatable will be filtered-out at Item.updater
   for attr in attributes.updatable

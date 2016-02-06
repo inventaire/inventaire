@@ -6,7 +6,20 @@ attributes.updatable = [
   'listing'
   'details'
   'notes'
+  'authors'
 ]
+
+notUpdatable = [
+  '_id'
+  '_rev'
+  'title'
+  'entity'
+  'owner'
+  'created'
+  'updated'
+]
+
+attributes.known = notUpdatable.concat attributes.updatable
 
 allowTransaction = [ 'giving', 'lending', 'selling']
 doesntAllowTransaction = [ 'inventorying']
