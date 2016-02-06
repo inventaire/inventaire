@@ -25,6 +25,7 @@ module.exports = (req, res, next) ->
 
   try value = parse rootAttribute, value
   catch err
+    _.error err, 'parsing error'
     msg = "#{rootAttribute} value couldn't be parsed"
     return error_.bundle res, msg, 400, value
 
