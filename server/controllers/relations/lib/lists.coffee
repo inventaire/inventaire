@@ -3,6 +3,8 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 couch_ = __.require 'lib', 'couch'
 parseRelations = require './parse_relations'
+groups_ = __.require 'controllers', 'groups/lib/groups'
+Promise = require 'bluebird'
 
 module.exports = (db)->
 
@@ -12,7 +14,7 @@ module.exports = (db)->
       endkey: [userId, {}]
       include_docs: includeDocs
 
-  lists =
+  return lists =
     getUserRelations: (userId)->
       getAllUserRelations userId
       .then parseRelations
@@ -26,3 +28,11 @@ module.exports = (db)->
       getAllUserRelations userId, true
       .then couch_.mapDoc
       .then db.bulkDelete
+
+    getUserAndCoGroupsMembers: (userId)->
+      Promise.all [
+        lists.getUserFriends userId
+        groups_.findUserGroupsCoMembers userId
+      ]
+      .spread (friends, coMembers)->
+        return _.uniq friends.concat(coMembers)

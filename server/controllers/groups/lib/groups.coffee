@@ -46,6 +46,7 @@ module.exports = groups_ =
   findUserGroupsCoMembers: (userId)->
     groups_.byUser userId
     .then groups_.allGroupsMembers
+    .then _.uniq
     # .then _.Log('allGroupsMembers')
 
   userInvited: (userId, groupId)->
