@@ -21,6 +21,11 @@ notUpdatable = [
 
 attributes.known = notUpdatable.concat attributes.updatable
 
+attributes.private = [
+  'notes'
+  'listing'
+]
+
 allowTransaction = [ 'giving', 'lending', 'selling']
 doesntAllowTransaction = [ 'inventorying']
 

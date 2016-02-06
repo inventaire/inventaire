@@ -2,6 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require('builders', 'utils')
 Item = __.require 'models', 'item'
+privateAttrs = Item.attributes.private
 listingsPossibilities = Item.attributes.constrained.listing.possibilities
 error_ = __.require 'lib', 'error/error'
 { BasicUpdater } = __.require 'lib', 'doc_updates'
@@ -118,11 +119,8 @@ module.exports = items_ =
 entityUriKeys = (entityUri)->
   return listingsPossibilities.map (listing)-> [entityUri, listing]
 
-safeItems = (items)->
-  items.map (item)->
-    item.notes = null
-    item.listing = null
-    return item
+omitPrivateAttrs = (item)-> _.omit item, privateAttrs
+safeItems = (items)-> items.map omitPrivateAttrs
 
 FilterWithImage = (assertImage)->
   return fn = (items)->
