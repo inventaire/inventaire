@@ -27,7 +27,8 @@ module.exports =
       if user?
         item.href = "#{host}/inventory/#{user.username}/#{item.entity}"
         item.user = _.pick user, requiredUserData
-        item.user.distance = kmBetween user.position, position
+        if user.position? and position?
+          item.user.distance = kmBetween user.position, position
         item.user.href = "#{host}/inventory/#{user.username}"
         item.transacLabel = "#{item.transaction}_personalized_strong"
         item.transacColor = transacColors[item.transaction]

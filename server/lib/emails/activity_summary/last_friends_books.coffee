@@ -13,7 +13,7 @@ module.exports = (userId, limitDate=0)->
   .then items_.friendsListings
   .then getLastItems.bind(null, limitDate)
   .then extractHighlightedItems
-  .catch _.Error('last friends items')
+  .catch _.ErrorRethrow('last friends items')
 
 extractHighlightedItems = (lastItems)->
   highlighted = getHighlightedItems lastItems, 10
