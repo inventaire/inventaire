@@ -7,6 +7,7 @@ checkUserNotificationsSettings = require './check_user_notifications_settings'
 host = CONFIG.fullPublicHost()
 { defaultFrom } = CONFIG.mailer
 { i18n } = require './i18n/i18n'
+{ kmBetween } = __.require 'lib', 'geo'
 
 module.exports =
   validationEmail: (user, token)->
@@ -59,6 +60,15 @@ module.exports =
     lang = _.shortLang user1.language
 
     checkUserNotificationsSettings user1, 'friendship_request'
+
+    user2.href = "#{host}/inventory/#{user2.username}"
+
+    { bio } = user2
+    if bio.length > 200 then bio = bio[0..200] + '...'
+    user2.bio = bio
+
+    if user1.position? and user2.position?
+      user2.distance = kmBetween user1.position, user2.position
 
     return data =
       to: user1.email

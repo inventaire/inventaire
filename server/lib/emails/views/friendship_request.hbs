@@ -1,11 +1,30 @@
 {{>banner}}
 {{>title_top}}
-    <h2>{{i18n lang 'friendship_request_subject' otherUser}}</h2>
+  <h2 style="text-align: center;">{{i18n lang 'friendship_request_subject' otherUser}}</h2>
+  <a href="{{otherUser.href}}" title="{{otherUser.username}}" style="text-decoration: none;">
+    <table width="100%" max-height="100px" style="text-align: left;">
+      <tr>
+        <td valign="top">
+          <img src="{{src otherUser.picture 64}}" alt="{{otherUser.username}}" height="64" width="64" style="margin-top: 4px;">
+        </td>
+        <td style="padding-Left: 10px;">
+          <strong>{{otherUser.username}}</strong>
+          {{#if otherUser.distance}}
+            <br />
+            <small style="color: #999999; font-size: 0.8em;">
+              {{i18n lang 'km_away' otherUser}}
+            </small>
+          {{/if}}
+          <p style="color: #999999; margin: 0; padding: 0;">{{otherUser.bio}}</p>
+        </td>
+      </tr>
+    </table>
+  </a>
 {{>title_bottom}}
 
 
 {{>button_top}}
-    <a href="{{host}}/inventory/{{otherUser.username}}" target="_blank">{{i18n lang 'friendship_request_button' otherUser}}</a>
+  <a href="{{otherUser.href}}" target="_blank">{{i18n lang 'friendship_request_button' otherUser}}</a>
 {{>button_bottom}}
 
 {{>general_info}}
