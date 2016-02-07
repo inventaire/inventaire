@@ -13,11 +13,13 @@
         <tr>
           <td>
             <a href="{{href}}" title="{{title}}" style="text-decoration: none">
-              <h3 style="margin: 0 auto; text-align: center; color:#2C9AB7;">{{title}}</h3>
+              <h3 style="margin: 0 auto; text-align: center; color:#2C9AB7; padding-bottom:0;">{{title}}</h3>
             </a>
           </td>
         </tr>
-        {{!-- <tr><td><h4 style="margin: 0 auto; text-align: center; color:#222222; text-decoration-color:#2C9AB7;">{{author}}</h4></td></tr> --}}
+        {{#if authors}}
+          <tr><td style="margin: 0 auto; text-align: center; color:#222222; text-decoration-color:#2C9AB7; padding-bottom: 0.5em;">{{authors}}</td></tr>
+        {{/if}}
         <tr>
           <td>
             <table width="300">
