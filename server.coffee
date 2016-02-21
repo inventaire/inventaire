@@ -13,11 +13,14 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 americano = require 'americano'
 fs = require 'fs'
-Radio = __.require 'lib', 'radio'
+
+Promise = require 'bluebird'
+# needs to be run before the first promise is fired
+Promise.config CONFIG.bluebird
+
+couchInit = __.require 'couch', 'init'
 
 __.require('lib', 'before_startup')()
-
-Radio.once 'db:ready', -> console.timeEnd 'startup'
 
 if CONFIG.verbosity > 0
   _.logErrorsCount()
@@ -34,12 +37,18 @@ options =
   port: CONFIG.port
   root: process.cwd()
 
-# just keeping the https at hand in case the need arises
-# but the default setup is an http server behind an nginx
-# doing all the TLS magic
-if CONFIG.protocol is 'https' then require('server-https')()
-else
-  americano.start options, (err, app, server)->
-    app.disable 'x-powered-by'
+couchInit()
+.then _.Log('couch init')
+.then ->
+  # just keeping the https at hand in case the need arises
+  # but the default setup is an http server behind an nginx
+  # doing all the TLS magic
+  if CONFIG.protocol is 'https' then require('server-https')()
+  else
+    americano.start options, (err, app)->
+      app.disable 'x-powered-by'
+      console.timeEnd 'startup'
 
-mailer_ = __.require('lib', 'emails/mailer')()
+.catch _.Error('init err')
+
+__.require('lib', 'emails/mailer')()

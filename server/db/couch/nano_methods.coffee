@@ -5,8 +5,6 @@ couch_ = __.require 'lib', 'couch'
 
 Promise = require 'bluebird'
 
-
-
 fetch = (db, keys)->
   _.typeArray keys
   return new Promise (resolve, reject)->

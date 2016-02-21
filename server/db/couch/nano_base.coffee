@@ -3,17 +3,6 @@ __ = CONFIG.universalPath
 _ = __.require('builders', 'utils')
 
 nano = require('nano') CONFIG.db.fullHost()
-couch_ = __.require 'couch', 'couch_handler'
-
-if CONFIG.db.unstable
-  couch_.checkDbsExistanceOrCreate()
-else
-  _.info 'DBs assumed to exist'
-
-if CONFIG.db.reloadDesignDocs
-  _.info 'updating _design Docs'
-  couch_.reloadDesignDocs()
-
 nanoMethods = require './nano_methods'
 
 module.exports = (dbName)->

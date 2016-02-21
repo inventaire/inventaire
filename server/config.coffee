@@ -11,9 +11,6 @@ lang = require './middlewares/lang'
 statics = require './middlewares/statics'
 logger = require './middlewares/logger'
 
-Promise = require 'bluebird'
-Promise.config CONFIG.bluebird
-
 module.exports =
   common: [
     security.forceSSL
