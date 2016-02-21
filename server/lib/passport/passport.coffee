@@ -2,7 +2,6 @@ CONFIG = require 'config'
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 user_ = __.require 'lib', 'user/user'
-promises_ = __.require 'lib', 'promises'
 
 passport = require 'passport'
 
@@ -23,6 +22,7 @@ passport.deserializeUser (id, done) ->
 passport.use 'local-login', require('./local_login_strategy')
 passport.use 'local-signup', require('./local_signup_strategy')
 passport.use 'token', require('./token_strategy')
+passport.use 'basic', require('./basic_strategy')
 
 module.exports =
   passport: passport
@@ -31,3 +31,4 @@ module.exports =
     localSignup: passport.authenticate 'local-signup'
     resetPassword: passport.authenticate 'token',
       failureRedirect: '/login/forgot-password?resetPasswordFail=true'
+    basic: passport.authenticate 'basic', { session: false }
