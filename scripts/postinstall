@@ -7,4 +7,8 @@ git clone -b i18n https://github.com/inventaire/inventaire.git ./server/lib/emai
 mkdir -p ./server/lib/emails/i18n/dist
 ./server/lib/emails/i18n/src/generate_lang_json.coffee all
 
+# expected by scripts/archive_logs
+mkdir -p ./logs
+touch ./logs/server.log ./logs/error.log
+
 npm run update-git-hooks
