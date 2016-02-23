@@ -10,5 +10,3 @@ mkdir -p ./server/lib/emails/i18n/dist
 # expected by scripts/archive_logs
 mkdir -p ./logs
 touch ./logs/server.log ./logs/error.log
-
-npm run update-git-hooks
