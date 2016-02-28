@@ -37,8 +37,9 @@ rebaseClaimsValueToClaimsRoot = (entity)->
       for statement in claim
         switch statement.mainsnak.datatype
           when 'wikibase-item'
-            id = statement.mainsnak.datavalue.value['numeric-id']
-            statement._id = 'Q' + id
+            # beware of snaktype: 'novalue', check datavalue
+            id = statement.mainsnak.datavalue?.value['numeric-id']
+            if id? then statement._id = 'Q' + id
   return
 
 getP31Tester = (matchables)->
