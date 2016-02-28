@@ -59,6 +59,7 @@ getItemsWithTransactionFirst = (lastItems, highlightedLength)->
   # concating items without transactions
   else return withTransaction.concat(withoutTransaction)[0...highlightedLength]
 
+# keep in sync with client/app/modules/general/scss/_colors.scss
 transacColors =
   giving: '#FEB1BA'
   lending: '#9FD5B3'
