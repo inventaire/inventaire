@@ -19,8 +19,8 @@ transactions_ =
   byUser: (userId)->
     db.viewByKey 'byUser', userId
 
-  create: (userId, item)->
-    transaction = Transaction.create(userId, item)
+  create: (itemDoc, ownerDoc, requesterDoc)->
+    transaction = Transaction.create(itemDoc, ownerDoc, requesterDoc)
     _.log transaction, 'transaction'
     db.post transaction
     .then (couchRes)->

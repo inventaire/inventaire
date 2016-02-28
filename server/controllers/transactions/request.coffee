@@ -3,9 +3,10 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 items_ = __.require 'controllers', 'items/lib/items'
 transactions_ = require './lib/transactions'
+user_ = __.require 'lib', 'user/user'
 
 module.exports = (req, res, nex)->
-  {item, message} = req.body
+  { item, message } = req.body
   requester = req.user._id
 
   _.log [item, message], 'item request'
@@ -14,7 +15,12 @@ module.exports = (req, res, nex)->
 
   items_.byId item
   .then transactions_.verifyRightToRequest.bind(null, requester)
-  .then transactions_.create.bind(null, requester)
+  .then (itemDoc)->
+    { owner } = itemDoc
+    user_.byIds([owner, requester])
+    .then _.Log('users')
+    .spread transactions_.create.bind(null, itemDoc)
+
   .then _.property('id')
   .then (id)->
     transactions_.addMessage(requester, message, id)

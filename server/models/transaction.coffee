@@ -3,33 +3,42 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 { findNextActions } = __.require('sharedLibs', 'transactions')(_)
+snapshotItemAttributes = __.require('models', 'attributes/item').snapshot
+snapshotUserAttributes = __.require('models', 'attributes/user').snapshot
 
 module.exports = Transaction = {}
 
 Transaction.tests = tests = require './tests/transaction'
 
-Transaction.create = (requester, item)->
-  itemId = item._id
-  owner = item.owner
+Transaction.create = (itemDoc, ownerDoc, requesterDoc)->
+  itemId = itemDoc._id
+  ownerId = ownerDoc._id
+  requesterId = requesterDoc._id
 
-  tests.pass 'userId', requester
-  tests.pass 'userId', owner
   tests.pass 'itemId', itemId
+  tests.pass 'userId', ownerId
+  tests.pass 'userId', requesterId
 
-  unless item.transaction in requestable
-    throw error_.new "this item can't be requested", 400, requester, item
+  unless itemDoc.transaction in requestable
+    throw error_.new "this item can't be requested", 400, itemDoc
+
+  now = _.now()
 
   return transaction =
     item: itemId
-    transaction: item.transaction
+    owner: ownerId
+    requester: requesterId
+    transaction: itemDoc.transaction
     state: 'requested'
-    owner: owner
-    requester: requester
-    created: now = _.now()
+    created: now
     actions: [ { action: 'requested', timestamp: now } ]
     read:
       requester: true
       owner: false
+    # keeping a copy of basic data to provide for when those
+    # will not be accessible anymore
+    # ex: item visibility change, deleted user, etc.
+    snapshot: snapshotData itemDoc, ownerDoc, requesterDoc
 
 requestable = [
   'giving'
@@ -81,3 +90,8 @@ Transaction.isActive = (transacDoc)->
     # owner doesnt matter to find if the transaction is active
     # thus we just pass an arbitrary boolean
     mainUserIsOwner: true
+
+snapshotData = (itemDoc, ownerDoc, requesterDoc)->
+  item: _.pick itemDoc, snapshotItemAttributes
+  owner: _.pick ownerDoc, snapshotUserAttributes
+  requester: _.pick requesterDoc, snapshotUserAttributes

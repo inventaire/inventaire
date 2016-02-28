@@ -48,3 +48,13 @@ attributes.critical = [
   '_rev'
   'username'
 ]
+
+# attributes to keep in documents where a stakeholder might loose
+# access to those data
+# ex: in a transaction, when the user was deleted
+# The _id is already recorded by a transaction
+# thus its absence here as long as only transactions doc uses snaphshot
+attributes.snapshot = [
+ 'username'
+ 'picture'
+]

@@ -55,8 +55,14 @@ attributes.constrained =
     defaultValue: 'private'
 
 
-attributes.forkable = [
+# attributes to keep in documents where a stakeholder might loose
+# access to those data
+# ex: in a transaction, when the item isn't visible to the previous owner anymore
+# Attributes such as _id and transaction are already recorded by a transaction
+# thus their absence here as long as only transactions doc uses snaphshot
+attributes.snapshot = [
  'title'
+ 'authors'
  'entity'
  'pictures'
  'details'
