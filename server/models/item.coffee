@@ -57,18 +57,32 @@ Item.updater = (userId, item, doc)->
   newData = _.pick item, attributes.updatable
   return _.extend doc, newData
 
-Item.fork = (data={}, item)->
-  {owner, transaction, listing} = data
+Item.changeOwner = (transacDoc, item)->
+  _.types arguments, 'objects...'
+  _.log arguments, 'changeOwner'
 
-  tests.pass 'userId', owner
+  item = _.omit item, attributes.reset
+  _.log item, 'item without reset attributes'
 
-  copy = _.pick item, attributes.forkable
-  _.extend copy,
-    owner: owner
-    transaction: transaction or 'inventorying'
-    listing: listing or 'private'
-    forkedFrom: item._id
-    created: _.now()
+  { _id: transacId, owner, requester } = transacDoc
+
+  unless item.owner is owner
+    throw new Error "owner doesn't match item owner"
+
+  item.history or= []
+  item.history.push
+    transaction: transacId
+    previousOwner: owner
+    timestamp: _.now()
+
+  _.log item.history, 'updated history'
+
+  _.extend item,
+    owner: requester
+    # default values
+    transaction: 'inventorying'
+    listing: 'private'
+    updated: _.now()
 
 Item.allowTransaction = (item)->
   item.transaction in attributes.allowTransaction

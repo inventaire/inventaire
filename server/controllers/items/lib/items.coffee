@@ -93,14 +93,11 @@ module.exports = items_ =
     _.types arguments, ['string', 'boolean']
     db.update id, BasicUpdater('busy', busy)
 
-  fork: (id, options)->
-    db.get id
-    .then Item.fork.bind(null, options)
+  changeOwner: (transacDoc)->
+    { item } = transacDoc
+    db.get item
+    .then Item.changeOwner.bind(null, transacDoc)
     .then db.postAndReturn
-
-  archive: (id)->
-    _.type id, 'string'
-    db.update id, BasicUpdater('archived', true)
 
   bulkDelete: db.bulkDelete.bind(db)
 

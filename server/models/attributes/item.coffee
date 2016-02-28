@@ -9,14 +9,22 @@ attributes.updatable = [
   'authors'
 ]
 
+# not updatable by the user
 notUpdatable = [
   '_id'
   '_rev'
   'title'
   'entity'
-  'owner'
   'created'
+
+  # updated when other attributes are updated
   'updated'
+
+  # updated as side effects of transactions
+  'busy'
+  'owner'
+  'history'
+
 ]
 
 attributes.known = notUpdatable.concat attributes.updatable
@@ -24,6 +32,12 @@ attributes.known = notUpdatable.concat attributes.updatable
 attributes.private = [
   'notes'
   'listing'
+]
+
+# attribute to reset on owner change
+attributes.reset = attributes.private.concat [
+  'details'
+  'busy'
 ]
 
 allowTransaction = [ 'giving', 'lending', 'selling']

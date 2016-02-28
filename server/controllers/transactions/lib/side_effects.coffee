@@ -28,16 +28,15 @@ setItemToNotBusy = _.partial setItemBusyness, false
 moveItemToItsNewInventory = (transacDoc)->
   _.log arguments, 'moveItemToItsNewInventory'
   { item, requester } = transacDoc
-  items_.fork item, {owner: requester}
-  .then items_.archive.bind(null, item)
-  .catch _.Error('moveItemToItsNewInventory')
+  items_.changeOwner transacDoc
+  .catch _.ErrorRethrow('moveItemToItsNewInventory')
 
 sideEffects =
   accepted: setItemToBusy
   declined: _.noop
   confirmed: (transacDoc)->
-    if Transaction.isOneWay(transacDoc)
-      moveItemToItsNewInventory(transacDoc)
+    if Transaction.isOneWay transacDoc
+      moveItemToItsNewInventory transacDoc
   returned: setItemToNotBusy
   cancelled: setItemToNotBusy
 
