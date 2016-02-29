@@ -22,21 +22,15 @@ setItemBusyness = (busy, transacDoc)->
   items_.setBusyness item, busy
   .catch _.Error('setItemBusyness')
 
-setItemToBusy = _.partial setItemBusyness, true
-setItemToNotBusy = _.partial setItemBusyness, false
+changeOwnerIfOneWay = (transacDoc)->
+  if Transaction.isOneWay transacDoc
+    _.log arguments, 'changeOwner'
+    { item, requester } = transacDoc
+    items_.changeOwner transacDoc
+    .catch _.ErrorRethrow('changeOwner')
 
-moveItemToItsNewInventory = (transacDoc)->
-  _.log arguments, 'moveItemToItsNewInventory'
-  { item, requester } = transacDoc
-  items_.changeOwner transacDoc
-  .catch _.ErrorRethrow('moveItemToItsNewInventory')
+actions =
+  setItemBusyness: setItemBusyness
+  changeOwnerIfOneWay: changeOwnerIfOneWay
 
-sideEffects =
-  accepted: setItemToBusy
-  declined: _.noop
-  confirmed: (transacDoc)->
-    if Transaction.isOneWay transacDoc
-      moveItemToItsNewInventory transacDoc
-  returned: setItemToNotBusy
-  cancelled: setItemToNotBusy
-
+sideEffects = __.require('sharedLibs', 'transaction_side_effects')(actions, _)
