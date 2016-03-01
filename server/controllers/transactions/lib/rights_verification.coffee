@@ -5,6 +5,9 @@ error_ = __.require 'lib', 'error/error'
 
 module.exports =
   verifyRightToRequest: (requester, item)->
+    if item.busy
+      throw error_.new 'this item is busy', 403, item
+
     # the owner of the item isnt allowed to request it
     ownerAllowed = false
     interactions_.verifyRightToInteract(requester, item, ownerAllowed)
