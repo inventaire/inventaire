@@ -2,6 +2,7 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 Radio = __.require 'lib', 'radio'
 { BasicUpdater } = __.require 'lib', 'doc_updates'
+{ minKey, maxKey } = __.require 'lib', 'couch'
 
 db = __.require('couch', 'base')('notifications')
 
@@ -9,8 +10,8 @@ notifs_ =
   byUserId: (userId)->
     _.type userId, 'string'
     db.viewCustom 'byUserAndTime',
-      startkey: [userId, 0]
-      endkey: [userId, {}]
+      startkey: [userId, minKey]
+      endkey: [userId, maxKey]
       include_docs: true
     .catch _.Error('byUserId')
 

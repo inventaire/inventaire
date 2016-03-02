@@ -2,6 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 couch_ = __.require 'lib', 'couch'
+{ minKey, maxKey } = couch_
 parseRelations = require './parse_relations'
 groups_ = __.require 'controllers', 'groups/lib/groups'
 Promise = require 'bluebird'
@@ -10,8 +11,8 @@ module.exports = (db)->
 
   getAllUserRelations = (userId, includeDocs=false)->
     db.view 'relations', 'byStatus',
-      startkey: [userId]
-      endkey: [userId, {}]
+      startkey: [userId, minKey]
+      endkey: [userId, maxKey]
       include_docs: includeDocs
 
   return lists =

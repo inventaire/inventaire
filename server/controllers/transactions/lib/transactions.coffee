@@ -6,6 +6,7 @@ error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
 comments_ = __.require 'controllers', 'comments/lib/comments'
 { BasicUpdater } = __.require 'lib', 'doc_updates'
+{ minKey, maxKey } = __.require 'lib', 'couch'
 
 Radio = __.require 'lib', 'radio'
 sideEffects = require('./side_effects')()
@@ -18,8 +19,8 @@ transactions_ =
   byUser: (userId)->
     db.viewCustom 'byUserAndItem',
       # get all the docs with this userId
-      startkey: [userId]
-      endkey: [userId, {}]
+      startkey: [userId, minKey]
+      endkey: [userId, maxKey]
       include_docs: true
 
   byUserAndItem: (userId, itemId)->
