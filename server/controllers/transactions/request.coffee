@@ -18,7 +18,6 @@ module.exports = (req, res, nex)->
   .then (itemDoc)->
     { owner } = itemDoc
     user_.byIds([owner, requester])
-    .then _.Log('users')
     .spread transactions_.create.bind(null, itemDoc)
 
   .then _.property('id')
