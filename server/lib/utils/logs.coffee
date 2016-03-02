@@ -21,6 +21,7 @@ module.exports = (_)->
       errorCounter++
       obj = obj?.stack or obj  if parse
       loggers_.log obj, label, 'red'
+      return
 
     errorCount: -> errorCounter
     logErrorsCount: ->
