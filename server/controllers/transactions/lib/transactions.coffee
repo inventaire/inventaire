@@ -5,7 +5,6 @@ Transaction = __.require 'models', 'transaction'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
 comments_ = __.require 'controllers', 'comments/lib/comments'
-rightsVerification = require './rights_verification'
 { BasicUpdater } = __.require 'lib', 'doc_updates'
 
 Radio = __.require 'lib', 'radio'
@@ -16,9 +15,8 @@ db = __.require('couch', 'base')('transactions')
 transactions_ =
   db: db
   byId: db.get.bind(db)
-  byUser: (userId)->
-    db.viewByKey 'byUser', userId
-
+  byUser: (userId)-> db.viewByKey 'byUser', userId
+  byItem: (itemId)-> db.viewByKey 'byItem', itemId
   create: (itemDoc, ownerDoc, requesterDoc)->
     transaction = Transaction.create(itemDoc, ownerDoc, requesterDoc)
     _.log transaction, 'transaction'
@@ -76,5 +74,7 @@ counts =
     .then activeCount
 
 activeCount = (transacs)-> transacs.filter(Transaction.isActive).length
+
+rightsVerification = require('./rights_verification')(transactions_)
 
 module.exports = _.extend transactions_, rightsVerification, counts

@@ -2,7 +2,7 @@
    "_id": "_design/transactions",
    "language": "coffeescript",
    "views": {
-       "byItemId": {
+       "byItem": {
            "map": "(doc)->\n  emit doc.item, null"
        },
        "byUser": {

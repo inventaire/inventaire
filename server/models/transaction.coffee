@@ -84,6 +84,7 @@ oneWay =
   selling: true
 
 Transaction.isActive = (transacDoc)->
+  # if there are next actions, the transaction is active
   findNextActions
     name: transacDoc.transaction
     state: transacDoc.state
