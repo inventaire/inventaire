@@ -56,7 +56,7 @@ pluckSettledProps = (inspectorsProps)->
 
 returnValueIfFulfilled = (inspector)->
   if inspector.isFulfilled() then inspector.value()
-  else _.warn inspector, "promise didn't fullfilled"
+  else _.error inspector.error(), "promise didn't fulfilled"
 
 # bundling NonSkip and _.Error handlers
 promisesHandlers.catchSkip = (label)->
