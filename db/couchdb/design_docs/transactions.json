@@ -2,11 +2,8 @@
    "_id": "_design/transactions",
    "language": "coffeescript",
    "views": {
-       "byItem": {
-           "map": "(doc)->\n  emit doc.item, null"
-       },
-       "byUser": {
-           "map": "(doc)->\n  emit doc.owner, null\n  emit doc.requester, null"
+       "byUserAndItem": {
+           "map": "(doc)->\n  emit [doc.owner, doc.item], null\n  emit [doc.requester, doc.item], null"
        }
    }
 }

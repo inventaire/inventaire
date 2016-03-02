@@ -15,8 +15,17 @@ db = __.require('couch', 'base')('transactions')
 transactions_ =
   db: db
   byId: db.get.bind(db)
-  byUser: (userId)-> db.viewByKey 'byUser', userId
-  byItem: (itemId)-> db.viewByKey 'byItem', itemId
+  byUser: (userId)->
+    db.viewCustom 'byUserAndItem',
+      # get all the docs with this userId
+      startkey: [userId]
+      endkey: [userId, {}]
+      include_docs: true
+
+  byUserAndItem: (userId, itemId)->
+    _.types arguments, 'strings...'
+    db.viewByKey 'byUserAndItem', [userId, itemId]
+
   create: (itemDoc, ownerDoc, requesterDoc)->
     transaction = Transaction.create(itemDoc, ownerDoc, requesterDoc)
     _.log transaction, 'transaction'

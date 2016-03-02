@@ -7,12 +7,9 @@ Transaction = __.require 'models', 'transaction'
 module.exports = (transactions_)->
 
   verifyNoExistingTransaction = (requester, item)->
-    transactions_.byItem item._id
+    transactions_.byUserAndItem requester, item._id
     .then (transactionsDocs)->
-      activeTransactionsDocs = transactionsDocs
-        # remove transaction from other users
-        .filter (doc)-> doc.requester is requester
-        .filter Transaction.isActive
+      activeTransactionsDocs = transactionsDocs.filter Transaction.isActive
 
       if activeTransactionsDocs.length > 0
         throw error_.new 'user already made a request on this item', 403, requester, item, activeTransactionsDocs[0]
