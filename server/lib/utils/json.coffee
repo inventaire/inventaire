@@ -6,6 +6,7 @@ stringify = (data)-> JSON.stringify data, null, 4
 module.exports =
   jsonRead: (path)->
     @type path, 'string'
+    # /!\ cached until the server restarts
     require path
 
   jsonReadAsync: (path)->
