@@ -2,7 +2,6 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-db = __.require('level', 'geo')('geo')
 follow = __.require 'lib', 'follow'
 
 module.exports = (db, reset)->
