@@ -53,21 +53,28 @@ Transaction.testPossibleState = (transaction, newState)->
   if newState is 'returned' and transaction.transaction isnt 'lending'
     throw error_.new "transaction and state mismatch", 400, transaction, newState
 
+# actor: the key on which VerifyRights switches
+# see controllers/transactions/update_state.coffee
 Transaction.states = states =
   requested:
+    # current action actor
     actor: 'requester'
-    next: ['accepted', 'declined']
+    # next actions: the actor(s) may defer from the current one
+    next: ['accepted', 'declined', 'cancelled']
   accepted:
     actor: 'owner'
-    next: ['confirmed']
+    next: ['confirmed', 'cancelled']
   declined:
     actor: 'owner'
     next: []
   confirmed:
     actor: 'requester'
-    next: ['returned']
+    next: ['returned', 'cancelled']
   returned:
     actor: 'owner'
+    next: []
+  cancelled:
+    actor: 'both'
     next: []
 
 Transaction.statesList = Object.keys states
