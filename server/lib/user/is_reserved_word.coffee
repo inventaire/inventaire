@@ -1,3 +1,5 @@
+# additionnaly all 1 letter strings are reserved words
+# but the restriction is handled by the username regex
 reservedWords = [
   'api'
   'entity'
@@ -40,7 +42,6 @@ reservedWords = [
   'private'
   'auth'
   'me'
-  'i'
   'setting'
   'settings'
   'contribute'
