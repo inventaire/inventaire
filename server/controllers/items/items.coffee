@@ -19,8 +19,8 @@ module.exports = _.extend publicActions,
     .catch error_.Handler(res)
 
   put: (req, res, next) ->
-    {_id, title, entity} = req.body
-    _.log _id, 'Put Item ID'
+    { _id, title, entity } = req.body
+    _.log req.body, "PUT item: #{_id}"
     unless _id? then return error_.bundle res, 'missing item id', 400
     unless title? then return error_.bundle res, 'missing item title', 400
     unless entity? then return error_.bundle res, 'missing item entity', 400
