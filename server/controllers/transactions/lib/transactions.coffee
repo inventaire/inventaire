@@ -61,9 +61,16 @@ stateUpdater = (state, userId, transaction)->
   updatedReadStates = updateReadStates userId, transaction
   return updater = (doc)->
     doc.state = state
-    doc.actions.push { action: state, timestamp: _.now() }
+    action = { action: state, timestamp: _.now() }
+    # keep track of the actor when it can be both
+    if state in actorCanBeBoth
+      role = userRole userId, transaction
+      action.actor = role
+    doc.actions.push action
     doc.read = updatedReadStates
     return doc
+
+actorCanBeBoth = ['cancelled']
 
 updateReadStates = (userId, transaction)->
   role = userRole userId, transaction
