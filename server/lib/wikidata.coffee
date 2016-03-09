@@ -33,7 +33,7 @@ filterWhitelisted = (entity)->
 
 rebaseClaimsValueToClaimsRoot = (entity)->
   for id, claim of entity.claims
-    if typeof claim is 'object'
+    if _.isArray claim
       for statement in claim
         switch statement.mainsnak.datatype
           when 'wikibase-item'
