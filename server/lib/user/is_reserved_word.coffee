@@ -45,6 +45,8 @@ reservedWords = [
   'setting'
   'settings'
   'contribute'
+  'donate'
+  'feedback'
 ]
 
 module.exports =  (username)->
