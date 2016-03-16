@@ -15,7 +15,9 @@ requestBook = (isbn)->
   getBooksDataByIsbn isbn
   .then parseBookData.bind(null, isbn)
   .catch (err)->
-    unless err.status is 404 then throw err
+    # avoid throwing the whole error response
+    # as the html body bloats the logs
+    unless err.status is 404 then throw error404 isbn
     _.warn isbn, err.message
     return
 
@@ -26,8 +28,11 @@ getBooksDataByIsbn = (isbn)->
   .then _.Log('key')
   .then (key)->
     if key? then promises_.get getUrlFromKey(key)
-    else throw error_.new 'openlibrary: book not found', 404, isbn
+    else throw error404 isbn
 
 parseBookData = (isbn, bookData)->
   bookData.isbn = isbn
   return formatBook bookData
+
+error404 = (isbn)->
+  error_.new 'openlibrary: book not found', 404, isbn
