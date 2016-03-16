@@ -20,10 +20,14 @@ This repository tracks the server-side developments, while the (heavy) [client-s
 ![stack-en](http://maxlath.eu/slides/backbone-meetup/img/stack-en.jpg)
 
 ##Concepts map
-the whole app turns around 3 core concepts:
+the whole app turns around a few core concepts:
 - Users
 - Entities : encompass authors (ex: [wd:Q353](https://inventaire.io/entity/wd:Q535)), books (ex: [wd:Q393018](https://inventaire.io/entity/wd:Q393018)) and books' specific editions (ex: [isbn:9782070389162](https://inventaire.io/entity/isbn:9782070389162)). The term *entities* is inherited from wikidata terminology.
-- Items : instances of those entities that a user declare to own
+- Items : instances of book entities that a user declare to own. Can be an instance of a work or a specific edition of a work.
+- Transactions : discussion between two users involving a specific item with an open transaction mode (giving, lending, selling). Transactions have effects on items: giving and selling an item make it move from the owner to the requester inventory; lending an item make it appear as unavailable.
+- Groups: groups of users with one or more admins
+
+![concepts map](https://raw.githubusercontent.com/inventaire/inventaire/master/docs/visualizations/concepts.jpg)
 
 ##Contributions
 
