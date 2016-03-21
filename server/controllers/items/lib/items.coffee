@@ -58,6 +58,10 @@ module.exports = items_ =
     db.viewByKey 'byEntity', [entityUri, 'public']
     .then safeItems
 
+  byIsbn: (isbn)->
+    db.viewByKeys 'byEntity', entityUriKeys("isbn:#{isbn}")
+    .then safeItems
+
   publicByDate: (limit=15, offset=0, assertImage=false)->
     db.viewCustom 'publicByDate',
       limit: limit
