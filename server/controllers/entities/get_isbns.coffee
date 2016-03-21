@@ -14,7 +14,7 @@ module.exports = (req, res, next) ->
   promises_.settle promises
   .then legacyCacheCompatibility
   .then indexIsbnsData
-  .then _.Tap(logMissingIsbnsData.bind(null, isbns))
+  .tap logMissingIsbnsData.bind(null, isbns)
   .then res.json.bind(res)
   .catch error_.Handler(res)
 

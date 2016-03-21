@@ -14,7 +14,7 @@ module.exports = (query)->
   .then _.property('docs')
   .then filterEditions
   .then formatBooks
-  .then _.Tap(logFirstBook)
+  .tap logFirstBook
   .catch _.Error('ol search')
 
 logFirstBook = (books)-> _.log books[1], 'first result'
