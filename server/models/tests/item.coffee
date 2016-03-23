@@ -17,4 +17,4 @@ module.exports =
     listing in constrained.listing.possibilities
   details: _.isString
   notes: _.isString
-  authors: nonEmptyString
+  authors: (str)-> nonEmptyString str, 500

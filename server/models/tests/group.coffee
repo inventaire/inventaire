@@ -1,4 +1,4 @@
-{ pass, nonEmptyString, localImg, boolean, position } = require './common-tests'
+{ pass, underLimitString, nonEmptyString, localImg, boolean, position } = require './common-tests'
 
 module.exports =
   pass: pass
@@ -8,6 +8,6 @@ module.exports =
   # Group.tests[attribute](value)
   name: (str)-> nonEmptyString str, 60
   picture: localImg
-  description: (str)-> nonEmptyString str, 5000
+  description: (str)-> underLimitString str, 5000
   searchable: boolean
   position: position

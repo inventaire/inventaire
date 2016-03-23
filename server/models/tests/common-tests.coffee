@@ -25,9 +25,11 @@ module.exports = tests =
     if latLng is null then return true
     _.isArray(latLng) and latLng.length is 2 and _.all latLng, _.isNumber
 
-tests.nonEmptyString = (str, maxLength=100)->
-  _.isString str
-  return 0 < str.length <= maxLength
+limitedString = (str, minLength, maxLength)->
+  return _.isString(str) and minLength <= str.length <= maxLength
+
+tests.underLimitString = (str, maxLength)-> limitedString str, 0, maxLength
+tests.nonEmptyString = (str, maxLength=100)-> limitedString str, 1, maxLength
 
 # no item of this app could have a timestamp before june 2014
 June2014 = 1402351200000
