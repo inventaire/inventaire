@@ -3,12 +3,12 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
-{ emailValidation } = CONFIG
+{ emailValidation, offline } = CONFIG
 { activated, mailgunPubkey } = emailValidation
 qs = require 'querystring'
 
 module.exports = (req, res)->
-  unless activated
+  if offline or not activated
     # faking a valid email if not activated
     return bypassValidation res
 
