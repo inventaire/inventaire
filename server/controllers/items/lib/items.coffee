@@ -17,18 +17,18 @@ module.exports = items_ =
   byId: db.get.bind(db)
   byOwner: (owner)->
     # only used by items.fetch with req.session.email owner
-    # => shouldn't be safeItems'ized
+    # => shouldn't be safeItem'ized
     db.viewByKey 'byOwner', owner
 
   byListing: (owner, listing)->
     _.types arguments, 'strings...'
     db.viewByKey 'byListing', [owner, listing]
-    .then safeItems
+    .map safeItem
 
   batchByListings: (listings)->
     _.types arguments, ['array']
     db.viewByKeys 'byListing', listings
-    .then safeItems
+    .map safeItem
 
   bundleListings: (listingsTypes, usersIds)->
     listings = _.combinations usersIds, listingsTypes
@@ -56,11 +56,11 @@ module.exports = items_ =
 
   publicByEntity: (entityUri)->
     db.viewByKey 'byEntity', [entityUri, 'public']
-    .then safeItems
+    .map safeItem
 
   byIsbn: (isbn)->
     db.viewByKeys 'byEntity', entityUriKeys("isbn:#{isbn}")
-    .then safeItems
+    .map safeItem
 
   publicByDate: (limit=15, offset=0, assertImage=false)->
     db.viewCustom 'publicByDate',
@@ -69,11 +69,11 @@ module.exports = items_ =
       descending: true
       include_docs: true
     .then FilterWithImage(assertImage)
-    .then safeItems
+    .map safeItem
 
   publicByOwnerAndEntity: (owner, entityUri)->
     db.viewByKey 'publicByOwnerAndEntity', [owner, entityUri]
-    .then safeItems
+    .map safeItem
 
   create: (userId, item)->
     db.post Item.create userId, item
@@ -120,8 +120,7 @@ module.exports = items_ =
 entityUriKeys = (entityUri)->
   return listingsPossibilities.map (listing)-> [entityUri, listing]
 
-omitPrivateAttrs = (item)-> _.omit item, privateAttrs
-safeItems = (items)-> items.map omitPrivateAttrs
+safeItem = (item)-> _.omit item, privateAttrs
 
 FilterWithImage = (assertImage)->
   return fn = (items)->

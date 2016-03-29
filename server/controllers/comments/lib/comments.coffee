@@ -57,8 +57,8 @@ _.extend comments_, rightsVerification,
     db.put comment
 
   findItemCommentors: (itemId)->
-    comments_.byItemId(itemId)
-    .then helpers_.mapUsers
+    comments_.byItemId itemId
+    .map _.property('user')
 
   deleteByItemsIds: (itemsIds)->
     comments_.byItemsIds itemsIds

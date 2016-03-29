@@ -23,6 +23,3 @@ module.exports = (comments_)->
     notifyItemFollowers: (itemId, owner, commentor)->
       findUsersToNotify(itemId, owner, commentor)
       .then Radio.emit.bind(Radio, 'notify:comment:followers', itemId, commentor)
-
-    mapUsers: (comments)->
-      comments.map (comment)-> comment.user

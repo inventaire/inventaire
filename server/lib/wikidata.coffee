@@ -71,7 +71,7 @@ resolveWikiTitle = (title, lang='en')->
   .then _.property('entities')
   .then _.values
   .then _.Log('values')
-  .then (entities)-> entities.map(_.property('id'))
+  .map _.property('id')
   .then _.Log('ids')
   .then (ids)->
     if ids.length isnt 1 then throw new Error 'id not found'
