@@ -91,11 +91,12 @@ bundleResults = (results)->
   resp = {}
 
   for result in _.compact(results)
-    { source, items } = result
+    { source, items, search } = result
     # also tests if the first item isnt undefined
     if _.isArray(items) and items[0]?
       resp[source] = result
-      # resp.search or= result.search
+
+    resp.search or= search
 
   unless _.objLength(resp) > 0
     throw error_.new 'empty search result', 404
