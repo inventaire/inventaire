@@ -9,7 +9,7 @@ module.exports =
   itemId: itemId
   userId: userId
   entity: entityUri
-  title: nonEmptyString
+  title: (str)-> nonEmptyString str, 300
   pictures: (pictures)-> _.isArray(pictures) and _.all(pictures, imgUrl)
   transaction: (transaction)->
     transaction in constrained.transaction.possibilities
