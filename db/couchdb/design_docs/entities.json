@@ -2,11 +2,8 @@
    "_id": "_design/entities",
    "language": "coffeescript",
    "views": {
-       "byTitle": {
-           "map": "(doc)->\n  emit doc.title, null"
-       },
-       "byIsbn": {
-           "map": "(doc)->\n  if doc.isbn?.length >= 10\n    emit doc.isbn, null"
+       "byClaim": {
+           "map": "(doc)->\n  if doc.type is 'entity'\n    for property, statements of doc.claims\n      for value in statements\n        emit [property, value], null"
        }
    }
 }

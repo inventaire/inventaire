@@ -1,35 +1,30 @@
+# DATA MODEL
+# _id: CouchDB uuid
+# claims: an object with properties and their associated statements
+
+# labels?
+# descriptions?
+# aliases?
+# sitelinks? qid?
+
+# use Wikidata data model as reference:
+# https://www.mediawiki.org/wiki/Wikibase/DataModel/JSON
+
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
-uuid = require 'simple-uuid'
 tests = require './tests/common-tests'
-books_ = __.require 'lib', 'books'
+promises_ = __.require 'lib', 'promises'
 
-exports.create = (entitiesData, creatorId)->
-  { title, authors, isbn, pictures } = entitiesData
-  _.log entitiesData, 'create entity'
+{ properties, whitelist } = __.require 'controllers','entities/lib/properties'
 
-  unless title? then throw error_.new 'entity miss a title', 400
+module.exports =
+  create: ->
+    type: 'entity'
+    claims: {}
 
-  if authors? then tests.types 'authors', authors, 'strings...'
-
-  if isbn?
-    unless books_.isIsbn isbn then throw error_.new 'invalid isbn', 400
-
-  if pictures?
-    tests.type 'picture', pictures, 'array'
-    unless _.all pictures, tests.imgUrl then throw error_.new 'invalid pictures', 400
-
-  action =
-    user: creatorId
-    action: 'creation'
-    timestamp: _.now()
-
-  return entityData =
-    _id: uuid()
-    title: title
-    authors: authors
-    pictures: pictures
-    isbn: isbn
-    history: [ action ]
+  createClaim: (doc, property, value)->
+    doc.claims[property] or= []
+    doc.claims[property].push value
+    return doc

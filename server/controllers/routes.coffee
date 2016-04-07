@@ -75,10 +75,11 @@ routes =
     get: items.publicActions
 
   'api/entities':
-    post: entities.create
+    post: entities.post
+    put: entities.put
 
   'api/entities/public':
-    get: entities.actions
+    get: entities.get
 
   'api/notifs':
     post: notifs.updateStatus

@@ -1,14 +1,13 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
-entities_ = __.require 'lib', 'entities'
+entities_ = __.require 'controllers', 'entities/lib/entities'
 { stringObject } = require '../wrappers'
 
 module.exports = (isbn)->
   entities_.byIsbn isbn
   .then parseBooksData.bind(null, isbn)
   .catch _.Error('inv entities byIsbn')
-
 
 parseBooksData = (isbn, book)->
   unless book? then return

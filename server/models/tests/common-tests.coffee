@@ -9,11 +9,14 @@ error_ = __.require 'lib', 'error/error'
 # regex need to their context
 bindedTest = (regex)-> regex.test.bind regex
 
+couchUuid = bindedTest CouchUuid
+
 module.exports = tests =
-  userId: bindedTest CouchUuid
-  itemId: bindedTest CouchUuid
-  transactionId: bindedTest CouchUuid
-  groupId: bindedTest CouchUuid
+  couchUuid: couchUuid
+  userId: couchUuid
+  itemId: couchUuid
+  transactionId: couchUuid
+  groupId: couchUuid
   username: bindedTest Username
   email: bindedTest Email
   entityUri: bindedTest EntityUri

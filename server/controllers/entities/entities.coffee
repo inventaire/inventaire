@@ -6,11 +6,13 @@ getImages = require './get_images'
 getIsbns = require './get_isbns'
 getEntities = require './get_entities'
 createEntity = require './create_entity'
+createClaim = require './create_claim'
 
 module.exports =
   # public
-  actions: (req, res, next) ->
+  get: (req, res) ->
     { action } = req.query
+    unless action? then return error_.bundle res, 'bad query', 400
 
     switch action
       when 'search' then return searchEntity req, res
@@ -20,4 +22,11 @@ module.exports =
       else error_.unknownAction res
 
   # authentified
-  create: createEntity
+  post: createEntity
+  put: (req, res)->
+    { action } = req.query
+    unless action? then return error_.bundle res, 'bad query', 400
+
+    switch action
+      when 'create-claim' then return createClaim req, res
+      else error_.unknownAction res

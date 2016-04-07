@@ -2,7 +2,7 @@ __ = require('config').universalPath
 _ = __.require('builders', 'utils')
 promises_ = __.require 'lib', 'promises'
 items_ = __.require 'controllers', 'items/lib/items'
-entities_ = __.require 'lib', 'entities'
+entities_ = __.require 'controllers', 'entities/lib/entities'
 
 getGoogleDataFromIsbn =  __.require 'data', 'google/isbn'
 getOpenLibraryDataFromIsbn =  __.require 'data', 'openlibrary/isbn'
