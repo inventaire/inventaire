@@ -49,7 +49,6 @@
     "gravatar": "^1.4.0",
     "inv-cot": "^1.1.2",
     "inv-couch": "^2.0.0",
-    "inv-dbs-list": "^1.1.0",
     "inv-loggers": "^3.0.1",
     "inv-utils": "^2.0.2",
     "ip-regex": "^1.0.3",

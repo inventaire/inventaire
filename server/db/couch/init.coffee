@@ -3,7 +3,7 @@ __ = CONFIG.universalPath
 couchInit = require 'couch-init2'
 dbBaseUrl = CONFIG.db.fullHost()
 
-dbsList = require('inv-dbs-list').default
+dbsList = require('./list').default
 formattedList = []
 
 # adapt the list to couch-init2 needs
