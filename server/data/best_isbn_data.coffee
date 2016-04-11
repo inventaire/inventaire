@@ -36,7 +36,9 @@ tryToCreateEntityFromItems = (isbn)->
     entityData =
       isbn: isbn
       title: title
-      authors: [ authors ]
       pictures: pictures
+
+    if _.isNonEmptyString authors
+      entityData.authors = [ authors ]
 
     return entities_.create entityData, owner
