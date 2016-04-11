@@ -13,6 +13,8 @@ module.exports =
     { group, user } = body
     userId = req.user._id
 
+    _.log [userId, body], 'group action'
+
     if user? and not tests.valid 'userId', user
       return error_.bundle res, "invalid userId", 400, user
 
