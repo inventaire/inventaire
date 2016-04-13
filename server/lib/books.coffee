@@ -20,6 +20,12 @@ else
     data = qs.escape data
     "#{gbBase}&q=#{data}"
 
+toIsbn = (num, isbn, hyphenate=false)->
+  # normalizing to avoid getting null for semi-hyphenate isbn
+  # such as '978-3484360440'
+  isbn = books_.normalizeIsbn isbn
+  return isbn_["asIsbn#{num}"](isbn, hyphenate)
+
 _.extend books_, normalizeBookData,
   API:
     # doc: https://developers.google.com/discovery/v1/performance
@@ -29,6 +35,5 @@ _.extend books_, normalizeBookData,
       # with the prefix 'isbn:'
       isbn: (isbn)-> @book isbn
 
-  # arguments: isbn:String, hyphenate:Boolean
-  toIsbn13: isbn_.asIsbn13
-  toIsbn10: isbn_.asIsbn10
+  toIsbn13: toIsbn.bind null, 13
+  toIsbn10: toIsbn.bind null, 10

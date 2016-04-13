@@ -8,7 +8,7 @@ req = (verb, url, options)->
 
 head = (url, options)->
   breq.head mergeOptions(url, options)
-  .then _.property('headers')
+  .then (res)-> _.pick res, ['statusCode', 'headers']
 
 # default to JSON
 baseOptions =
