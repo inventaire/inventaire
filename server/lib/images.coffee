@@ -37,15 +37,6 @@ module.exports =
   applyLimits: (width, height)->
     return [ applyLimit(width), applyLimit(height) ]
 
-checkImageSize = (data)->
-  { size } = data
-  if size > maxWeight
-    throw error_.new 'image is too big', 400
-
-formatCheckErr = (url, err)->
-  _.log  err, 'image check err'
-  throw error_.complete err, err.httpCode or 500, url
-
 applyLimit = (dimension=maxSize)->
   dimension = Number dimension
   if dimension > maxSize then maxSize
