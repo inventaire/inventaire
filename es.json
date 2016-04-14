@@ -10,7 +10,6 @@
     "you_are_welcome_to_reply": "**eres muy bienvenido/a a responder a este correo** ante cualquier pregunta o sugerencia",
     "Follow Inventaire development": null,
     "get_involved": "¿Crees que puedes contribuir a mejorar Inventaire? ¡Únete!",
-    "contribution_ideas": null,
     "next_features_title": "Próximas funcionalidades que desarrollar:",
     "stop_email_notifications": "[change emails settings](https://inventaire.io/settings/notifications). For any problem or question, send an email at: [help@inventaire.io](mailto:help@inventaire.io?subject=Help!&body=Dear%20Inventaire%2C%5Cn%20I%20need%20your%20help%3A)",
     "reset_password_subject": "Reset your Inventaire password",
@@ -31,6 +30,7 @@
     "declined": "%{username} ha rechazado tu petición",
     "confirmed": "%{username} ha confirmado que recibió el libro",
     "returned": "%{username} ha confirmado que recibió el libro de vuelta",
+    "cancelled": null,
     "go_to_user_inventory": null,
     "group_invite_subject": "¡%{actingUserUsername} te ha invitado a unirte al grupo %{groupName}!",
     "group_invite_button": null,
@@ -57,15 +57,11 @@
     "did_you_know_4": null,
     "last_friends_books_more": null,
     "news_3": null,
-    "news": null,
     "activity summary": null,
     "did you know?": null,
     "no_activity": null,
-    "Find books by geolocation": null,
     "Organize inventories with tags": null,
     "last_nearby_books": null,
     "last_nearby_books_more": null,
-    "km_away": null,
-    "lending_personalized_strong": null,
-    "giving_personalized_strong": null
+    "user_news": null
 }
