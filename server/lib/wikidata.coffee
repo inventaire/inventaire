@@ -11,7 +11,8 @@ qs = require 'querystring'
 
 searchEntities = (search, language='en', limit='20', format='json')->
   search = qs.escape search
-  url = wd.API.wikidata.search(search, language).logIt('searchEntities')
+  url = wd.API.wikidata.search search, language
+  _.log url, 'searchEntities'
   return promises_.get url
 
 filterAndBrush = (res)->

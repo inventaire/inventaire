@@ -6,11 +6,6 @@ colors = require 'colors'
 # cf http://stackoverflow.com/questions/30974445/node-js-winston-logger-no-colors-with-nohup/30976363#30976363
 colors.enabled = true
 
-String::logIt = (label, color)->
-  if color? then console.log "[" + label[color] + "] #{@toString()}"
-  else console.log "[" + label['blue'] + "] #{@toString()}"
-  return @toString()
-
 module.exports = base =
   areStringsOrFalsy: (array)->
     compacted = @compact(array)
