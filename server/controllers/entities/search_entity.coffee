@@ -6,7 +6,7 @@ books_ = __.require 'lib', 'books'
 booksData_ = __.require 'lib', 'books_data'
 wikidata_ = __.require 'lib', 'wikidata'
 
-getWikidataBookEntities = __.require 'data', 'wikidata/books'
+searchWikidataEntities = __.require 'data', 'wikidata/entities'
 getWikidataBookEntitiesByIsbn = __.require 'data', 'wikidata/books_by_isbn'
 searchOpenLibrary = __.require 'data', 'openlibrary/search'
 
@@ -63,7 +63,7 @@ parseBooksDataFromIsbn = (res)->
 searchByText = (query, res)->
 
   promises = [
-    getWikidataBookEntities query
+    searchWikidataEntities query
     .then (items)-> {items: items, source: 'wd', search: query.search}
     .catch _.Error('wikidata getBookEntities err')
 

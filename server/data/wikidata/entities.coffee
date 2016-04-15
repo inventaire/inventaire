@@ -1,12 +1,11 @@
 __ = require('config').universalPath
-_ = __.require('builders', 'utils')
+_ = __.require 'builders', 'utils'
 wd_ = __.require 'lib', 'wikidata'
 cache_ = __.require 'lib', 'cache'
 
-
 module.exports = (query)->
   { search, language } = query
-  key = "wdBooks:#{search}:#{language}"
+  key = "wd:#{search}:#{language}"
   cache_.get key, requestBooksEntities.bind(null, search, language)
 
 requestBooksEntities = (search, language)->
