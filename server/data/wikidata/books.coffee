@@ -5,12 +5,12 @@ cache_ = __.require 'lib', 'cache'
 
 
 module.exports = (query)->
-  {search, language} = query
+  { search, language } = query
   key = "wdBooks:#{search}:#{language}"
   cache_.get key, requestBooksEntities.bind(null, search, language)
 
 requestBooksEntities = (search, language)->
-  wd_.searchEntities(search)
+  wd_.searchEntities search
   .then extractWdIds
   .then _.Success('wd ids found')
   .then (ids)-> wd_.getEntities(ids, [language])

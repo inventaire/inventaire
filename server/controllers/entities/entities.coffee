@@ -10,8 +10,7 @@ createEntity = require './create_entity'
 module.exports =
   # public
   actions: (req, res, next) ->
-    action = req.query.action
-    unless action? then return error_.bundle res, 'bad query', 400
+    { action } = req.query
 
     switch action
       when 'search' then return searchEntity req, res
