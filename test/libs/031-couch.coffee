@@ -8,7 +8,7 @@ couch_ = __.require 'lib', 'couch'
 
 describe 'couch_', ->
   it "env", (done)->
-    couch_.should.be.an.Object
+    couch_.should.be.an.Object()
     done()
 
   describe 'joinOrderedIds', ->

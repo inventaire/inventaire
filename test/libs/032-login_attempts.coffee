@@ -9,10 +9,10 @@ loginAttemps = __.require 'lib', 'passport/login_attempts'
 
 describe 'loginAttemps', ->
   it "env", (done)->
-    loginAttemps.should.be.an.Object
-    loginAttemps._fails.should.be.a.Function
-    loginAttemps.recordFail.should.be.a.Function
-    loginAttemps.tooMany.should.be.a.Function
+    loginAttemps.should.be.an.Object()
+    loginAttemps._fails.should.be.a.Function()
+    loginAttemps.recordFail.should.be.a.Function()
+    loginAttemps.tooMany.should.be.a.Function()
     done()
 
   loginAttemps._flushFails()

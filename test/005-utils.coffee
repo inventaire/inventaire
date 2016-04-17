@@ -9,13 +9,13 @@ trycatch = require 'trycatch'
 describe 'UTILS', ->
   describe 'env', ->
     it "should have shared utils, loggers, types, tests and misc utils", (done)->
-      _.type.should.be.a.Function
-      _.types.should.be.a.Function
-      _.isLocalImg.should.be.a.Function
-      _.Full.should.be.a.Function
+      _.type.should.be.a.Function()
+      _.types.should.be.a.Function()
+      _.isLocalImg.should.be.a.Function()
+      _.Full.should.be.a.Function()
       done()
 
   describe 'hashCode', ->
     it "should return a hash", (done)->
-      _.hashCode('whatever').should.be.a.Number
+      _.hashCode('whatever').should.be.a.Number()
       done()

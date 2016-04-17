@@ -16,7 +16,7 @@
 #     status = 'friends'
 #     _.log relationDoc, 'relationDoc'
 #     relationDoc = Relation.create docId, status
-#     relationDoc.should.be.an.Object
+#     relationDoc.should.be.an.Object()
 #     relationDoc._id.should.equal docId
 #     relationDoc.status.should.equal status
 #     relationDoc.type.should.equal 'relation'

@@ -34,10 +34,10 @@ describe 'relations', ->
     describe 'requestFriend', ->
       beforeEach -> spies = resetSpies()
       it "env", (done)->
-        solveIntent.should.be.an.Object
-        solveIntent.requestFriend.should.be.a.Function
-        spies.should.be.an.Object
-        spies.acceptRequest.should.be.a.Function
+        solveIntent.should.be.an.Object()
+        solveIntent.requestFriend.should.be.a.Function()
+        spies.should.be.an.Object()
+        spies.acceptRequest.should.be.a.Function()
         spies.acceptRequest.callCount.should.equal 0
         actions.acceptRequest()
         spies.acceptRequest.callCount.should.equal 1

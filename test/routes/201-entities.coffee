@@ -33,9 +33,9 @@
 #           url = path + "?action=search&search=978-2081-2178-29&language=en"
 #           promises_.get url
 #           .then (res)->
-#             res.should.be.an.Object
+#             res.should.be.an.Object()
 #             for source, data of res
-#               data.items.should.be.an.Array
+#               data.items.should.be.an.Array()
 #               data.source.should.equal source
 #             assertZeroError(done, 'byIsbn')
 
@@ -44,9 +44,9 @@
 #           url = path + "?action=search&search=harry potter&language=en"
 #           promises_.get url
 #           .then (res)->
-#             res.should.be.an.Object
+#             res.should.be.an.Object()
 #             for source, data of res
-#               data.items.should.be.an.Array
+#               data.items.should.be.an.Array()
 #             assertZeroError(done, 'byText')
 
 #     describe 'get-images', ->
@@ -55,10 +55,10 @@
 #         url = path + "?action=get-images&entity=#{entity}"
 #         promises_.get url
 #         .then (res)->
-#           res.should.be.an.Array
+#           res.should.be.an.Array()
 #           console.log 'res', res
-#           res.images.should.be.an.Object
-#           res.images[0].should.be.an.String
+#           res.images.should.be.an.Object()
+#           res.images[0].should.be.an.String()
 #           assertZeroError(done, 'getimages')
 
 #     describe 'get-isbn-entities', ->
@@ -68,5 +68,5 @@
 #         url = path + "?action=getisbnentities&isbns=#{isbns}"
 #         promises_.get url
 #         .then (res)->
-#           res.should.be.an.Object
+#           res.should.be.an.Object()
 #           assertZeroError(done, 'getisbnentities')

@@ -41,7 +41,7 @@ describe 'user model', ->
   describe 'local signup', ->
     it "should return a user on valid args", (done)->
       user = create validUser()
-      user.should.be.an.Object
+      user.should.be.an.Object()
       done()
 
     describe 'username validation', ->
@@ -106,7 +106,7 @@ describe 'user model', ->
 
       #   create validUser()
       #   .then (user)->
-      #     user.password.should.be.a.String
+      #     user.password.should.be.a.String()
       #     _.log clearPassword, 'input'
       #     _.log user.password, 'output'
       #     user.password.should.not.equal clearPassword

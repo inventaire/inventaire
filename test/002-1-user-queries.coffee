@@ -17,9 +17,9 @@
 #       # bobby should have been added in fakeUsers
 #       user_.byUsername('bobby')
 #       .then (docs)->
-#         docs.should.be.an.Array
+#         docs.should.be.an.Array()
 #         docs.length.should.equal 1
-#         docs[0].should.be.an.Object
+#         docs[0].should.be.an.Object()
 #         _.log docs, 'docs byUsername'
 #         done()
 #       .catch (err)-> throw new Error(err)
@@ -31,9 +31,9 @@
 #       # bobby should have been added in fakeUsers
 #       user_.usernameStartBy('bob')
 #       .then (docs)->
-#         docs.should.be.an.Array
+#         docs.should.be.an.Array()
 #         docs.length.should.equal 1
-#         docs[0].should.be.an.Object
+#         docs[0].should.be.an.Object()
 #         _.log docs, 'docs usernameStartBy'
 #         done()
 #       .catch (err)-> throw new Error(err)
@@ -55,9 +55,9 @@
 #         user_.db.fetch(ids)
 #         .then (docs)->
 #           _.log docs, 'docs'
-#           docs.should.be.an.Array
+#           docs.should.be.an.Array()
 #           docs.length.should.equal 3
-#           docs.forEach (doc)-> doc.should.be.an.Object
+#           docs.forEach (doc)-> doc.should.be.an.Object()
 #           done()
 #       .catch (err)-> throw new Error(err)
 #     , done)
@@ -68,7 +68,7 @@
 #       user_.db.fetch(['invalidId'])
 #       .then (docs)->
 #         _.log docs, 'docs'
-#         docs.should.be.an.Array
+#         docs.should.be.an.Array()
 #         docs.length.should.equal 1
 #         expect(docs[0]).to.be.undefined
 #         done()
@@ -91,10 +91,10 @@
 #         user_.db.fetch(ids)
 #         .then (docs)->
 #           _.log docs, 'docs'
-#           docs.should.be.an.Array
+#           docs.should.be.an.Array()
 #           docs.length.should.equal 3
-#           docs[0].should.be.an.Object
-#           docs[1].should.be.an.Object
+#           docs[0].should.be.an.Object()
+#           docs[1].should.be.an.Object()
 #           expect(docs[2]).to.be.undefined
 #           done()
 #       .catch (err)-> throw new Error(err)

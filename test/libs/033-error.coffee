@@ -10,7 +10,7 @@ describe 'error_', ->
   describe 'new', ->
     it "should return an Error object", (done)->
       err = error_.new('doh', 500)
-      err.should.be.an.Object
+      err.should.be.an.Object()
       (err instanceof Error).should.equal true
       done()
 
@@ -35,7 +35,7 @@ describe 'error_', ->
       err = error_.new('doh', 'pinaiz', 'pizza', 'macharoni')
       err.type.should.equal 'pinaiz'
       expect(err.status).to.be.undefined
-      err.context.should.be.an.Array
+      err.context.should.be.an.Array()
       err.context.length.should.equal 2
       err.context[0].should.equal 'pizza'
       err.context[1].should.equal 'macharoni'
@@ -43,9 +43,9 @@ describe 'error_', ->
 
   describe 'ErrorHandler', ->
     it "should return a function", (done)->
-      error_.handler.should.be.a.Function
-      error_.Handler.should.be.a.Function
-      error_.Handler('yo').should.be.a.Function
+      error_.handler.should.be.a.Function()
+      error_.Handler.should.be.a.Function()
+      error_.Handler('yo').should.be.a.Function()
       done()
 
   describe 'reject', ->

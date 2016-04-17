@@ -34,9 +34,9 @@ describe 'DB', ->
             if err? then _.error err
             subDb.get 'salut', (err, body)->
               _.log body, 'body'
-              body.should.be.a.String
+              body.should.be.a.String()
               obj2 = JSON.parse body
-              obj2.should.be.an.Object
+              obj2.should.be.an.Object()
               obj2.bob.should.equal 'by'
               done()
         , done)
@@ -62,7 +62,7 @@ describe 'DB', ->
             promDb.getAsync('yo')
             .then (res)->
               obj2 = JSON.parse res
-              obj2.should.be.an.Object
+              obj2.should.be.an.Object()
               obj2.da.should.equal 'zup'
               done()
         , done)
@@ -86,7 +86,7 @@ describe 'DB', ->
           .then (res)->
             unjsonizedDb.get('ohoh')
             .then (res)->
-              res.should.be.an.Object
+              res.should.be.an.Object()
               res.ahoy.should.equal 'georges'
               done()
         , done)
@@ -110,7 +110,7 @@ describe 'DB', ->
             lt: '123' + 'Z'
           db.getStream(params)
           .then (res)->
-            res.should.be.an.Array
+            res.should.be.an.Array()
             res.length.should.equal 3
             done()
         , done)
@@ -138,7 +138,7 @@ describe 'DB', ->
             .then ->
               db.get 'a'
               .then (val)->
-                val.should.be.an.Object
+                val.should.be.an.Object()
                 expect(val.b).to.equal undefined
                 val.d.should.equal 'e'
                 done()
@@ -153,7 +153,7 @@ describe 'DB', ->
             .then ->
               db.get 'a'
               .then (val)->
-                val.should.be.an.Object
+                val.should.be.an.Object()
                 val.b.should.equal 'c'
                 val.d.should.equal 'e'
                 done()
