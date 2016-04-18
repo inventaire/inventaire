@@ -9,10 +9,11 @@ wikidata_ = __.require 'lib', 'wikidata'
 searchWikidataEntities = __.require 'data', 'wikidata/entities'
 getWikidataBookEntitiesByIsbn = __.require 'data', 'wikidata/books_by_isbn'
 searchOpenLibrary = __.require 'data', 'openlibrary/search'
+filteredSearch = require './filtered_search'
 
 module.exports = (req, res)->
   { query } = req
-  { search, language } = query
+  { search, language, filter } = query
   _.info query, 'entities search'
 
   unless _.isNonEmptyString search
@@ -23,6 +24,9 @@ module.exports = (req, res)->
 
   # make sure we have a 2 letters language code
   query.language = _.shortLang language
+
+  if _.isNonEmptyString filter
+    return filteredSearch query, res
 
   if books_.isIsbn search
     _.log search, 'searchByIsbn'
