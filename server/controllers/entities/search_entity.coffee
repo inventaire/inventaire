@@ -44,10 +44,13 @@ searchByIsbn = (query, res)->
 
   promises = [
     getWikidataBookEntitiesByIsbn isbn, isbnType, query.language
+    .timeout(10000)
+    .catch _.Error('getWikidataBookEntitiesByIsbn')
+
     getBooksDataFromIsbn cleanedIsbn
+    .timeout(10000)
+    .catch _.Error('getBooksDataFromIsbn')
   ]
-  # adding a 10 seconds timeout on requests
-  .map promises_.Timeout(10000)
 
   spreadRequests res, promises, 'searchByIsbn'
 
@@ -68,6 +71,7 @@ searchByText = (query, res)->
 
   promises = [
     searchWikidataEntities query
+    .timeout 10000
     .then (items)-> {items: items, source: 'wd', search: query.search}
     .catch _.Error('wikidata getBookEntities err')
 
@@ -75,17 +79,15 @@ searchByText = (query, res)->
     # .then (items)-> {items: items, source: 'ol', search: query.search}
 
     booksData_.getDataFromText query.search
+    .timeout 10000
     .then (res)-> {items: res, source: 'google', search: query.search}
     .catch _.Error('getGoogleBooksDataFromText err')
   ]
-  # adding a 10 seconds timeout on requests
-  .map promises_.Timeout(10000)
 
   spreadRequests res, promises, 'searchByText'
 
-
 spreadRequests = (res, promises, label)->
-  promises_.settle promises
+  promises_.all promises
   .then bundleResults
   .then res.json.bind(res)
   .catch error_.Handler(res)

@@ -33,35 +33,10 @@ promisesHandlers =
       API[k] = Promise.promisify mod[k]
     return API
 
-settlers =
-  settle: (promises)->
-    inspectors = promises.map reflectMethod
-    Promise.all inspectors
-    .then pluckSettled
-  settleProps: (promisesObj)->
-    inspectorsProps = _.mapValues promisesObj, reflectMethod
-    Promise.props inspectorsProps
-    .then pluckSettledProps
-
-reflectMethod = _.method 'reflect'
-
-# if _settledValueField is undefined, that's that the promise didnt fullfilled
-# more dirty than the official solution http://bluebirdjs.com/docs/api/reflect.html
-# but how simpler
-pluckSettled = (inspectors)->
-  inspectors.map returnValueIfFulfilled
-
-pluckSettledProps = (inspectorsProps)->
-  _.mapValues inspectorsProps, returnValueIfFulfilled
-
-returnValueIfFulfilled = (inspector)->
-  if inspector.isFulfilled() then inspector.value()
-  else _.error inspector.error(), "promise didn't fulfilled"
-
 # bundling NonSkip and _.Error handlers
 promisesHandlers.catchSkip = (label)->
   catcher = (err)->
     if err.skip then _.log err.context, "#{label} skipped: #{err.reason}"
     else throw err
 
-module.exports = _.extend {}, shared, requests, promisesHandlers, settlers
+module.exports = _.extend {}, shared, requests, promisesHandlers

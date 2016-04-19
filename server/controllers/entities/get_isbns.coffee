@@ -11,7 +11,7 @@ module.exports = (req, res, next) ->
 
   promises = isbns.map booksData_.getDataFromIsbn
 
-  promises_.settle promises
+  promises_.all promises
   .then legacyCacheCompatibility
   .then indexIsbnsData
   .tap logMissingIsbnsData.bind(null, isbns)

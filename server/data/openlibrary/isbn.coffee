@@ -15,12 +15,8 @@ requestBook = (isbn)->
   getBooksDataByIsbn isbn
   .then parseBookData.bind(null, isbn)
   .catch (err)->
-    # avoid throwing the whole error response
-    # as the html body bloats the logs
-    unless err.status is 404 then throw error404 isbn
-    _.warn isbn, err.message
-    return
-
+    if err.status is 404 then throw error404 isbn
+    else throw err
 
 getBooksDataByIsbn = (isbn)->
   promises_.get isbnUrl(isbn)

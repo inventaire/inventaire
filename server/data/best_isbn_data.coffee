@@ -9,10 +9,10 @@ getOpenLibraryDataFromIsbn =  __.require 'data', 'openlibrary/isbn'
 getInvEntitiesDataFromIsbn =  __.require 'data', 'inv/isbn'
 
 module.exports = (isbn)->
-  promises_.settleProps
-    openlibrary: getOpenLibraryDataFromIsbn(isbn)
-    google: getGoogleDataFromIsbn(isbn)
-    inv: getInvEntitiesDataFromIsbn(isbn)
+  promises_.props
+    openlibrary: getOpenLibraryDataFromIsbn(isbn).catch preventCrash
+    google: getGoogleDataFromIsbn(isbn).catch preventCrash
+    inv: getInvEntitiesDataFromIsbn(isbn).catch preventCrash
 
   # give priority to inv data as those can be fixed
   # while errors from google can't
@@ -21,6 +21,14 @@ module.exports = (isbn)->
     data = res.inv or res.openlibrary or res.google
     if data then return data
     else return tryToCreateEntityFromItems isbn
+
+# stop the error propagation to make sure that one source failing
+# doesn't crash the whole response
+preventCrash = (err)->
+  # no need to log if one source returned a 404
+  unless err.status is 404
+    _.error err, 'error catched to prevent promise settle crash'
+  return
 
 tryToCreateEntityFromItems = (isbn)->
   items_.byIsbn isbn
