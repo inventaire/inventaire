@@ -25,7 +25,13 @@ module.exports =
 
     checkCache key, timespan, retry
     .then requestOnlyIfNeeded.bind(null, key, method, refuseOldValue)
-    .catch _.ErrorRethrow("final cache_ err: #{key}")
+    .catch (err)->
+      label = "final cache_ err: #{key}"
+      # not logging the stack trace in case of 404 and alikes
+      if /^4/.test err.status then _.warn err, label
+      else _.error err, label
+
+      throw err
 
   # dataChange: date before which cached data
   # is outdated due to change in the data structure.
