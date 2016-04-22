@@ -31,6 +31,7 @@ preventCrash = (err)->
   return
 
 tryToCreateEntityFromItems = (isbn)->
+  _.log isbn, 'tryToCreateEntityFromItems'
   items_.byIsbn isbn
   .then (items)->
     if items.length is 0 then return {}
@@ -49,4 +50,8 @@ tryToCreateEntityFromItems = (isbn)->
     if _.isNonEmptyString authors
       entityData.authors = [ authors ]
 
-    return entities_.create entityData, owner
+    entities_.create entityData, owner
+    .then _.Log('created entity')
+    .then (entity)->
+      entity.source = 'inv'
+      return entity
