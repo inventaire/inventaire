@@ -49,7 +49,7 @@ searchByIsbn = (query, res)->
 
     getBooksDataFromIsbn cleanedIsbn
     .timeout(10000)
-    .catch _.Error('getBooksDataFromIsbn')
+    .catch _.Error('getBooksDataFromIsbn err')
   ]
 
   spreadRequests res, promises, 'searchByIsbn'
@@ -59,12 +59,10 @@ getBooksDataFromIsbn = (cleanedIsbn)->
   # getDataFromIsbn returns an index of entities
   # so it need to be converted to a collection
   .then parseBooksDataFromIsbn
-  .catch _.Error('getBooksDataFromIsbn err')
 
 parseBooksDataFromIsbn = (res)->
-  _.type res, 'object'
+  unless res?.source? then return
   { source } = res
-  _.type source, 'string'
   { items: [res], source: source }
 
 searchByText = (query, res)->
@@ -73,6 +71,7 @@ searchByText = (query, res)->
     searchWikidataEntities query
     .timeout 10000
     .then (items)-> {items: items, source: 'wd', search: query.search}
+    # catching errors to avoid crashing promises_.all
     .catch _.Error('wikidata getBookEntities err')
 
     # searchOpenLibrary(query)
@@ -81,6 +80,7 @@ searchByText = (query, res)->
     booksData_.getDataFromText query.search
     .timeout 10000
     .then (res)-> {items: res, source: 'google', search: query.search}
+    # catching errors to avoid crashing promises_.all
     .catch _.Error('getGoogleBooksDataFromText err')
   ]
 
@@ -94,16 +94,18 @@ spreadRequests = (res, promises, label)->
 
 bundleResults = (results)->
   resp = {}
+  empty = true
 
   for result in _.compact(results)
     { source, items, search } = result
     # also tests if the first item isnt undefined
     if _.isArray(items) and items[0]?
       resp[source] = result
+      empty = false
 
     resp.search or= search
 
-  unless _.objLength(resp) > 0
+  if empty
     throw error_.new 'empty search result', 404
 
   return resp

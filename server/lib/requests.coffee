@@ -5,10 +5,12 @@ breq = require 'bluereq'
 req = (verb, url, options)->
   breq[verb] mergeOptions(url, options)
   .then _.property('body')
+  .catch formatErr
 
 head = (url, options)->
   breq.head mergeOptions(url, options)
   .then (res)-> _.pick res, ['statusCode', 'headers']
+  .catch formatErr
 
 # default to JSON
 baseOptions =
@@ -26,6 +28,11 @@ mergeOptions = (url, options={})->
   # if the url was in the options
   # the url object will be overriden
   _.extend {url: url}, baseOptions, options,
+
+formatErr = (err)->
+  # aliasing statusCode to match lib/error filter system
+  err.status = err.statusCode
+  throw err
 
 module.exports =
   get: _.partial req, 'get'
