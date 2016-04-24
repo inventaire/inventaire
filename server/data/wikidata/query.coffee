@@ -3,35 +3,57 @@ _ = __.require 'builders', 'utils'
 cache_ = __.require 'lib', 'cache'
 error_ = __.require 'lib', 'error/error'
 buildQuery = require './queries/build_query'
-possibleQueries = ['author_works']
 promises_ = __.require 'lib', 'promises'
+wdk = require 'wikidata-sdk'
+
+queries = require './queries/queries'
+possibleQueries = Object.keys queries
 
 module.exports = (req, res)->
-  { query, qid, refresh } = req.query
+  params = req.query
+  { query:queryName, refresh } = params
 
-  try
-    _.types [query, qid], 'strings...'
-  catch err
-    return error_.bundle res, 'bad parameters', 400, err
+  unless _.isNonEmptyString queryName
+    return error_.bundle res, 'missing query parameter', 400, params
 
-  # converting from kebab case to snake case
-  query = query.replace /-/g, '_'
-  unless query in possibleQueries
-    return error_.bundle res, 'unknown query', 400, query
+  # Converting from kebab case to snake case
+  params.query = queryName = queryName.replace /-/g, '_'
+  unless queryName in possibleQueries
+    return error_.bundle res, 'unknown query', 400, params
+
+  { parameters } = queries[queryName]
+
+  # Every type of query should specify which parameters it needs
+  # with keys matching parametersTests keys
+  for k in parameters
+    value = params[k]
+    unless parametersTests[k](value)
+      return error_.bundle res, "invalid #{k}", 400, params
 
   # Invalid the cache by passing refresh=true in the query.
   # Return null if refresh isn't truthy to let the cache set its default value
   timespan = if refresh then 0 else null
 
-  key = "query:#{query}:#{qid}"
-  cache_.get key, runQuery.bind(null, query, qid, key), timespan
-  .then _.Wrap(res, 'items')
+  # Building the cache key
+  key = "wdQuery:#{queryName}"
+  for k in parameters
+    value = params[k]
+    key += ":#{value}"
+
+  cache_.get key, runQuery.bind(null, params, key), timespan
+  .then _.Wrap(res, 'entities')
   .catch error_.Handler(res)
 
+parametersTests =
+  qid: wdk.isWikidataEntityId
+  pid: (pid)-> pid in propertyWhitelist
 
+propertyWhitelist = ['P135', 'P136']
 
-runQuery = (query, qid, key)->
-  { url, parser } = buildQuery query, qid
+runQuery = (params, key)->
+  { query:queryName } = params
+  { parser } = queries[queryName]
+  url = buildQuery params
 
   promises_.get url
   .then _.property('results.bindings')

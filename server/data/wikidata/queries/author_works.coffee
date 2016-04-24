@@ -3,7 +3,9 @@ _ = __.require 'builders', 'utils'
 { getQidFromUri } = __.require 'lib', 'wikidata'
 
 module.exports =
-  query: (authorQid)->
+  parameters: ['qid']
+  query: (params)->
+    { qid:authorQid } = params
     """
     PREFIX wd: <http://www.wikidata.org/entity/>
     PREFIX wdt: <http://www.wikidata.org/prop/direct/>
@@ -16,11 +18,11 @@ module.exports =
     }
     """
 
-  parser: (items)->
-    _(items)
-    .map (item)->
-      work: getQidFromUri item.work.value
-      date: item.date?.value
+  parser: (entities)->
+    _(entities)
+    .map (entity)->
+      work: getQidFromUri entity.work.value
+      date: entity.date?.value
 
     # sort from the oldest to the newest with undefined date last
     .sortBy 'date'

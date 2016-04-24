@@ -1,17 +1,16 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 qs = require 'querystring'
-queries =
-  'author_works': require './author_works'
 
-module.exports = (key, args...)->
-  { query, parser } = queries[key]
-  sparql = query.apply null, args
+queries = require './queries'
+
+module.exports = (params)->
+  { query:queryName } = params
+  { query:queryBuilder } = queries[queryName]
+  sparql = queryBuilder params
 
   # removing line-breaks and tabs: doesnt change anything in a sparql query
   # but makes it slightly shorter
-  query = qs.escape sparql.replace /(\n|\t)/g, ''
+  sparql = qs.escape sparql.replace(/(\n|\t)/g, '')
 
-  return data =
-    url: "https://query.wikidata.org/sparql?format=json&query=#{query}"
-    parser: parser
+  return "https://query.wikidata.org/sparql?format=json&query=#{sparql}"
