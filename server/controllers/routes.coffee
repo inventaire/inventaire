@@ -114,7 +114,8 @@ routes =
     get: data.get
 
   'api/proxy/public*':
-    get: proxy.get
+    get: proxy
+    post: proxy
 
   'api/feedback/public':
     get: noGet

@@ -8,11 +8,12 @@ error_ = __.require 'lib', 'error/error'
 isIp = Ip.test.bind Ip
 validProtocols = [ 'http:', 'https:' ]
 
-module.exports.get = (req, res, next)->
+module.exports = (req, res)->
   # removing both /api/proxy/public/ and https://inventaire.io/api/proxy/public/
-  query = req.originalUrl.split('/api/proxy/public/')[1]
-
-  { protocol, hostname } = url.parse query
+  queriedUrl = req.originalUrl.split('/api/proxy/public/')[1]
+  { protocol, hostname } = url.parse queriedUrl
+  { method } = req
+  methodIsPost = method is 'POST'
 
   # in case the protocol is missing
   # the url parser still returns a defined protocol
@@ -20,25 +21,34 @@ module.exports.get = (req, res, next)->
   #   => protocal = 192.168.0.1, hostname = 1234
   # thus the need to check it really is a valid protocol
   unless protocol in validProtocols
-    return error_.bundle res, 'invalid protocol', 400, query
+    return error_.bundle res, 'invalid protocol', 400, queriedUrl
 
-  unless validHostname hostname
-    return error_.bundle res, 'invalid hostname', 400, query
+  unless validHostname hostname, methodIsPost
+    return error_.bundle res, 'invalid hostname', 400, queriedUrl
 
-  request
-    url: query
+  options =
+    method: method
+    url: queriedUrl
     headers:
       # spoofing a User Agent to avoid possible User-Agent-based 403 answers
       # (happens especially for images)
       'User-Agent': "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:42.0) Gecko/20100101 Firefox/42.0"
 
+  if methodIsPost
+    options.body = JSON.stringify req.body
+
+  request options
   .on 'error', ErrorHandler(res)
   .pipe res
 
 # can't just make a whitelist as images from anywhere
 # are queried through this process
-validHostname = (hostname)->
+validHostname = (hostname, methodIsPost)->
   unless hostname? then return false
+
+  if methodIsPost
+    unless hostname in postWightlist then return false
+
   # prevent access to resources behind the firewall
   if hostname is 'localhost' then return false
   # conservative rule to make sure the above
@@ -48,3 +58,7 @@ validHostname = (hostname)->
 
 # assuming a request error is on the client's fault => 400
 ErrorHandler = (res)-> (err)-> error_.handler res, err, 400
+
+postWightlist = [
+  'data.inventaire.io'
+]
