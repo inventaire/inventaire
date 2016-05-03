@@ -27,11 +27,6 @@ transactions = require './transactions/transactions'
 comments = require './comments/comments'
 analytics = require './analytics/analytics'
 
-# placeholder for endpoints without a GET
-noGet = (req, res)->
-  error_.bundle res, 'GET isnt implemented on this route', 400
-
-
 # routes structure:
 # 1 - api is the default prefix for server-side routes
 # 2 - the controller / module name
@@ -39,11 +34,9 @@ noGet = (req, res)->
 
 routes =
   'api/auth':
-    get: noGet
     post: auth.actions
 
   'api/auth/public':
-    get: noGet
     post: auth.publicActions
 
   'api/auth/public/token':
@@ -61,7 +54,6 @@ routes =
     get: users.actions
 
   'api/relations':
-    get: noGet
     post: relations.post
 
   'api/invitations':
@@ -83,7 +75,6 @@ routes =
     get: items.publicActions
 
   'api/entities':
-    get: noGet
     post: entities.create
 
   'api/entities/public':
@@ -118,7 +109,6 @@ routes =
     post: proxy
 
   'api/feedback/public':
-    get: noGet
     post: feedback.post
 
   'api/comments/public':
@@ -136,6 +126,9 @@ routes =
 
   'api/logs/public':
     post: analytics.reports
+
+  'api/*':
+    all: glob.api
 
   'error/count':
     get: (req, res, next)->

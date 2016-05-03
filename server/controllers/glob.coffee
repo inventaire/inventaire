@@ -16,6 +16,8 @@ module.exports =
       # the routing will be done on the client side
       res.sendFile './index.html', {root: __.path('client', 'public')}
 
+  api: (req, res)->
+    error_.bundle res, 'wrong API route or http verb', 400
 
 imageHeader = (req)-> /^image/.test req.headers.accept
 
