@@ -65,6 +65,9 @@ module.exports = base =
     unless /^[-?\d\.]+$/.test str then throw new Error 'invalid integer string'
     return parseFloat str
 
+  isNonEmptyPlainObject: (obj)->
+    _.isPlainObject(obj) and Object.keys(obj).length > 0
+
 base.objDiff = -> not base.sameObjects.apply(null, arguments)
 
 base.Ok = (res, status)-> base.ok.bind null, res, status
