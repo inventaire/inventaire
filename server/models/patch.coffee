@@ -2,6 +2,7 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 jiff = require 'jiff'
 tests = require './tests/common-tests'
+{ versionned } = require './attributes/entity'
 
 module.exports =
   create: (userId, currentDoc, updatedDoc)->
@@ -21,4 +22,9 @@ module.exports =
       type: 'patch'
       user: userId
       timestamp: _.now()
-      patch: jiff.diff currentDoc, updatedDoc
+      patch: getDiff currentDoc, updatedDoc
+
+getDiff = (currentDoc, updatedDoc)->
+  currentDoc = _.pick currentDoc, versionned
+  updatedDoc = _.pick updatedDoc, versionned
+  return jiff.diff currentDoc, updatedDoc
