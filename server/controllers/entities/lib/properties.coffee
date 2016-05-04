@@ -6,18 +6,24 @@ wdk = require 'wikidata-sdk'
 wdEntity = wdk.isWikidataEntityId
 books_ = __.require 'lib', 'books'
 
+wdEntityBase =
+  datatype: 'entity'
+  test: wdEntity
+  format: _.identity
+
 properties =
+  # instance of
+  P31: wdEntityBase
   # author
-  P50:
-    datatype: 'entity'
-    test: wdEntity
-    format: _.identity
+  P50: wdEntityBase
   # isbn 13
   P212:
     datatype: 'string'
     test: (isbn)-> books_.isIsbn(isbn) is 13
     concurrency: true
     format: books_.normalizeIsbn
+  # edition or translation of
+  P629: wdEntityBase
   # isbn 10
   P957:
     datatype: 'string'

@@ -12,33 +12,45 @@ books_ = __.require 'lib', 'books'
 module.exports =
   db: db
   byId: db.get.bind(db)
+
   byIds: (ids)->
     ids = _.forceArray ids
     db.fetch ids
     .then _.compact
     .then _.Log('getEntities')
+
   byIsbn: (isbn)->
     isbn = books_.normalizeIsbn isbn
     P = if isbn.length is 13 then 'P212' else 'P957'
     db.viewFindOneByKey 'byClaim', [P, isbn]
 
-  create: (entityData, userId)->
-    # create new entity doc
-    db.postAndReturn Entity.create(entityData)
-    .tap _.Log('created doc')
-    # then create the associated patch
-    .tap patches_.create.bind(null, userId, {})
+  create: ->
+    # Create a new entity doc.
+    # This constituts the basis on which next modifications patch
+    db.postAndReturn Entity.create()
+    .then _.Log('created doc')
+
+  edit: (userId, updatedLabels, updatedClaims, currentDoc)->
+    updatedDoc = _.cloneDeep currentDoc
+    updatedDoc = Entity.addLabels updatedDoc, updatedLabels
+    updatedDoc = Entity.addClaims updatedDoc, updatedClaims
+    db.putAndReturn updatedDoc
+    .tap -> patches_.create userId, currentDoc, updatedDoc
 
   createClaim: (doc, property, value, userId)->
     promises_.try -> validateProperty property
-    .then -> validateValue property, value
+    .then -> validateClaimValue property, value
     .then (formattedValue)-> Entity.createClaim(doc, property, formattedValue)
-    .tap _.Log('updated doc')
-    .tap db.putAndReturn
+    .then _.Log('updated doc')
+    .then db.putAndReturn
     .tap patches_.create.bind(null, userId, doc)
+    .tap -> patches_.create userId, currentDoc, updatedDoc
 
+  validateClaim: (property, value)->
+    promises_.try -> validateProperty property
+    .then -> validateClaimValue property, value
 
-validateValue = (property, value)->
+validateClaimValue = (property, value)->
   unless testDataType property, value
     return error_.reject 'invalid value datatype', 400, property, value
 
