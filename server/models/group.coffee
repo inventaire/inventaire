@@ -8,11 +8,12 @@ module.exports = Group = {}
 Group.tests = tests = require './tests/group'
 
 Group.create = (options)->
-  { name, description, searchable, creatorId } = options
+  _.log options, 'group create'
+  { name, description, searchable, position, creatorId } = options
   tests.pass 'name', name
   tests.pass 'description', description
   tests.pass 'searchable', searchable
-  tests.pass 'userId', creatorId
+  tests.pass 'position', position
 
   creator = createMembership creatorId, null
 
@@ -26,6 +27,7 @@ Group.create = (options)->
     invited: []
     declined: []
     requested: []
+    position: position
     creator: creatorId
     # using the same timestamp for clarity
     created: creator.timestamp
