@@ -24,7 +24,16 @@ formatError = (err, filter, contextArray)->
   attribute = if _.isNumber(filter) then 'status' else 'type'
   err[attribute] = filter
   err.context = contextArray
+  err.emitter = getErrorEmittingLine err
   return err
+
+getErrorEmittingLine = (err)->
+  err.stack.split('\n')[2]?.trim()
+  .replace 'at ', ''
+  # delete parenthesis around the file path
+  .replace /(\(|\))/g, ''
+  # delete machine specific path
+  .replace /\s[^\s]+server/, ': server'
 
 # same as error_.new but returns a promise
 error_.reject = (args...)->
