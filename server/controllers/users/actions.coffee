@@ -9,7 +9,8 @@ module.exports = (req, res, next) ->
   { action, ids, emails } = query
   if action?
     switch action
-      when 'get-users-items' then fetchUsersItems req, res, ids
+      # letting 'get-items' as temporary legacy
+      when 'get-items', 'get-users-items' then fetchUsersItems req, res, ids
       when 'get-users-nearby' then fetchUsersNearby req, res
       when 'get-items-nearby' then fetchItemsNearby req, res
       else error_.unknownAction res
