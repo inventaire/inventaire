@@ -37,7 +37,7 @@
     "cookie-parser": "^1.4.0",
     "cookie-session": "^1.2.0",
     "cookie-signature": "^1.0.6",
-    "couch-init2": "^2.0.0",
+    "couch-init2": "^2.1.0",
     "credential": "^1.0.0",
     "email-addresses": "^2.0.1",
     "express-force-ssl": "^0.3.0",
