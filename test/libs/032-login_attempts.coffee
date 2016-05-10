@@ -3,7 +3,6 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 
 should = require 'should'
-expect = require("chai").expect
 
 loginAttemps = __.require 'lib', 'passport/login_attempts'
 
@@ -20,9 +19,9 @@ describe 'loginAttemps', ->
 
   describe 'recordFail', ->
     it "should create username counter if it doesnt exist", (done)->
-      expect(loginAttemps._fails()['bobby']).to.equal undefined
+      should(loginAttemps._fails()['bobby']).not.be.ok()
       bobbyAttempt().should.equal 1
-      expect(loginAttemps._fails()['bobby']).to.equal 1
+      loginAttemps._fails()['bobby'].should.equal 1
       done()
 
     it "should increment username counter", (done)->

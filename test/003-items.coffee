@@ -24,9 +24,9 @@
 #     , done)
 
 
-#           # res.body.should.be.an.Array
+#           # res.body.should.be.an.Array()
 #           # res.body.forEach (model)->
-#           #   model.should.be.an.Object
+#           #   model.should.be.an.Object()
 #           #   model.should.have.property('title')
 #           #   model.should.have.property('owner')
 
@@ -49,7 +49,7 @@
 # #       .get itemsRoot + '/' + fakeItems.goodDynamicId._id
 # #       .end (err, res)->
 # #         res.status.should.equal 200
-# #         res.body.should.be.an.Object
+# #         res.body.should.be.an.Object()
 # #         done()
 # #     , done)
 

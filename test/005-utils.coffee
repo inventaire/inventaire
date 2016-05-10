@@ -2,7 +2,6 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 
 should = require 'should'
-expect = require('chai').expect
 trycatch = require 'trycatch'
 
 

@@ -75,7 +75,6 @@
     "xml2js": "^0.4.13"
   },
   "devDependencies": {
-    "chai": "^3.3.0",
     "coffee-errors": "^0.8.6",
     "coffee-script": "^1.10.0",
     "diff": "^2.2.1",

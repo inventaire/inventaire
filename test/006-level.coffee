@@ -2,7 +2,6 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 
 should = require 'should'
-expect = require('chai').expect
 trycatch = require 'trycatch'
 Promise = require 'bluebird'
 
@@ -125,7 +124,7 @@ describe 'DB', ->
             spyCount++
           .then (res)->
             spyCount.should.equal 0
-            expect(res).to.equal undefined
+            should(res).not.be.ok()
             done()
         , done)
 
@@ -139,7 +138,7 @@ describe 'DB', ->
               db.get 'a'
               .then (val)->
                 val.should.be.an.Object()
-                expect(val.b).to.equal undefined
+                should(val.b).not.be.ok()
                 val.d.should.equal 'e'
                 done()
         , done)

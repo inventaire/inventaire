@@ -2,7 +2,6 @@ CONFIG = require('config')
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ expect } = require 'chai'
 jiff = require 'jiff'
 
 Patch = __.require 'models', 'patch'
@@ -16,20 +15,20 @@ describe 'patch', ->
   describe 'create', ->
     it 'should throw if passed an invalid user id', (done)->
       create = Patch.create.bind(null, 'invalid user id', doc, update)
-      expect(create).to.throw()
+      should(create).throw()
       done()
 
     it 'should throw if passed an updated doc without id', (done)->
       invalidDoc = _.extend {}, update, { _id: 'invalid id' }
       create = Patch.create.bind(null, validUserId, doc, invalidDoc)
-      expect(create).to.throw()
+      should(create).throw()
       done()
 
     it 'should throw if passed an invalid doc object', (done)->
       create = Patch.create.bind(null, validUserId, 'not an object', doc)
-      expect(create).to.throw()
+      should(create).throw()
       create = Patch.create.bind(null, validUserId, doc, 'not an object')
-      expect(create).to.throw()
+      should(create).throw()
       done()
 
     it 'should return an object of type patch', (done)->

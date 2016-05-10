@@ -1,4 +1,3 @@
-# expect = require('chai').expect
 # should = require 'should'
 # trycatch = require 'trycatch'
 # request = require 'supertest'
@@ -32,7 +31,7 @@
 #     trycatch( ->
 #       user_.newUser(fake.good.username, fake.good.email)
 #       .done (body)->
-#         body.should.be.an.Object
+#         body.should.be.an.Object()
 #         body.should.have.property '_id'
 #         body.should.have.property '_rev'
 #         body.should.have.property 'username'
@@ -56,7 +55,7 @@
 #       .done (docs)->
 #         docs.length.should.equal 1
 #         doc = docs[0]
-#         doc.should.be.an.Object
+#         doc.should.be.an.Object()
 #         doc.should.have.property '_id'
 #         doc.should.have.property '_rev'
 #         doc.should.have.property 'username'
@@ -77,7 +76,7 @@
 #         .end (err, res) ->
 #           _.log res.status, 'res.status'
 #           res.status.should.equal 200
-#           res.body.should.be.an.Object
+#           res.body.should.be.an.Object()
 #           res.body.should.have.property('username')
 #           res.body.status.should.equal 'available'
 #           done()
@@ -91,7 +90,7 @@
 #         .end (err, res) ->
 #           _.log res.status, 'res.status'
 #           res.status.should.equal 400
-#           res.body.should.be.an.Object
+#           res.body.should.be.an.Object()
 #           res.body.should.have.property('username')
 #           res.body.should.have.property('status')
 #           res.body.status.should.equal 'invalid'
@@ -112,7 +111,7 @@
 #         .send fake.taken
 #         .end (err, res) ->
 #           res.status.should.equal 400
-#           res.body.should.be.an.Object
+#           res.body.should.be.an.Object()
 #           res.body.should.have.property('username')
 #           res.body.should.have.property('status')
 #           res.body.status.should.equal 'not available'
@@ -125,7 +124,7 @@
 #       user_.byUsername(fake.good.username)
 #       .done (docs)->
 #         _.log docs, 'clean docs?'
-#         docs.should.be.an.Array
+#         docs.should.be.an.Array()
 #         docs.length.should.equal 0
 #         done()
 #     , done)

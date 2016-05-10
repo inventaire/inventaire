@@ -3,7 +3,6 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 
 should = require 'should'
-expect = require("chai").expect
 
 Item = __.require 'models', 'item'
 
@@ -32,7 +31,7 @@ describe 'item model', ->
     describe 'id', ->
       it "should return an object without id", (done)->
         item = create validItem
-        expect(item._id).to.be.undefined
+        should(item._id).not.be.ok()
         done()
 
     describe 'title', ->

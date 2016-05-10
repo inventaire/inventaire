@@ -2,7 +2,6 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 
 should = require 'should'
-expect = require('chai').expect
 
 error_ = __.require 'lib', 'error/error'
 
@@ -22,19 +21,19 @@ describe 'error_', ->
     it "should convert a number filter into a status code", (done)->
       err = error_.new('doh', 456)
       err.status.should.equal 456
-      expect(err.type).to.be.undefined
+      should(err.type).not.be.ok()
       done()
 
     it "should convert a string filter into an error type", (done)->
       err = error_.new('doh', 'pinaiz')
       err.type.should.equal 'pinaiz'
-      expect(err.status).to.be.undefined
+      should(err.status).not.be.ok()
       done()
 
     it "should pass following arguments as an array of context", (done)->
       err = error_.new('doh', 'pinaiz', 'pizza', 'macharoni')
       err.type.should.equal 'pinaiz'
-      expect(err.status).to.be.undefined
+      should(err.status).not.be.ok()
       err.context.should.be.an.Array()
       err.context.length.should.equal 2
       err.context[0].should.equal 'pizza'
@@ -51,8 +50,8 @@ describe 'error_', ->
   describe 'reject', ->
     it "should return a promise", (done)->
       failed = error_.reject('doh', 500)
-      failed.should.be.an.Object
-      failed.then.should.be.a.Function
+      failed.should.be.an.Object()
+      failed.then.should.be.a.Function()
       failed.catch (err)->
         err.message.should.equal 'doh'
         err.status.should.equal 500

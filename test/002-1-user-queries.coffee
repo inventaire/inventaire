@@ -1,4 +1,3 @@
-# expect = require('chai').expect
 # should = require 'should'
 # trycatch = require 'trycatch'
 # request = require 'supertest'
@@ -70,7 +69,7 @@
 #         _.log docs, 'docs'
 #         docs.should.be.an.Array()
 #         docs.length.should.equal 1
-#         expect(docs[0]).to.be.undefined
+#         should(docs[0]).not.be.ok()
 #         done()
 #       .catch (err)-> throw new Error(err)
 #     , done)
@@ -95,7 +94,7 @@
 #           docs.length.should.equal 3
 #           docs[0].should.be.an.Object()
 #           docs[1].should.be.an.Object()
-#           expect(docs[2]).to.be.undefined
+#           should(docs[2]).not.be.ok()
 #           done()
 #       .catch (err)-> throw new Error(err)
 #     , done)
