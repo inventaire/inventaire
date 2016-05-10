@@ -9,7 +9,7 @@ books_ = __.require 'lib', 'books'
 
 { properties, validateProperty, testDataType } = require './properties'
 
-module.exports =
+module.exports = entities_ =
   db: db
   byId: db.get.bind(db)
 
@@ -38,17 +38,25 @@ module.exports =
     .tap -> patches_.create userId, currentDoc, updatedDoc
 
   createClaim: (doc, property, value, userId)->
-    promises_.try -> validateProperty property
-    .then -> validateClaimValue property, value
-    .then (formattedValue)-> Entity.createClaim(doc, property, formattedValue)
-    .then _.Log('updated doc')
-    .then db.putAndReturn
-    .tap patches_.create.bind(null, userId, doc)
-    .tap -> patches_.create userId, currentDoc, updatedDoc
+    entities_.validateClaim property, newVal
+    .then (formattedValue)-> Entity.createClaim doc, property, formattedValue
+    .then putUpdate.bind(null, userId, doc)
+
+  updateClaim: (property, oldVal, newVal, userId, doc)->
+    entities_.validateClaim property, newVal
+    .then (formattedValue)->
+      Entity.updateClaim doc, property, oldVal, formattedValue
+    .then putUpdate.bind(null, userId, doc)
 
   validateClaim: (property, value)->
     promises_.try -> validateProperty property
     .then -> validateClaimValue property, value
+
+putUpdate = (userId, currentDoc, updatedDoc)->
+  _.log updatedDoc, 'updated doc'
+  _.types arguments, ['string', 'object', 'object']
+  db.putAndReturn updatedDoc
+  .tap -> patches_.create userId, currentDoc, updatedDoc
 
 validateClaimValue = (property, value)->
   unless testDataType property, value
