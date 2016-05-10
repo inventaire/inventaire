@@ -68,6 +68,8 @@ module.exports = base =
   isNonEmptyPlainObject: (obj)->
     _.isPlainObject(obj) and Object.keys(obj).length > 0
 
+  isArrayLike: (obj)-> _.isArray(obj) or _.isArguments(obj)
+
 base.objDiff = -> not base.sameObjects.apply(null, arguments)
 
 base.Ok = (res, status)-> base.ok.bind null, res, status

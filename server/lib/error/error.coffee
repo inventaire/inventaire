@@ -23,6 +23,12 @@ formatError = (err, filter, contextArray)->
   # while string will be taken as a type
   attribute = if _.isNumber(filter) then 'status' else 'type'
   err[attribute] = filter
+
+  # prevent having an array in an array as context
+  if contextArray.length is 1 and _.isArrayLike contextArray[0]
+    # convert arguments objects to array
+    contextArray = _.toArray contextArray[0]
+
   err.context = contextArray
   err.emitter = getErrorEmittingLine err
   return err
