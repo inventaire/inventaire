@@ -36,17 +36,16 @@ notifs_ =
     .then (doc)->
       db.update doc._id, BasicUpdater('status', 'read')
 
-  deleteAllByUserId: (userId)->
-    notifs_.byUserId userId
-    .then db.bulkDelete
-
-  deleteAllBySubject: (userId)->
-    notifs_.bySubject userId
+  deleteAllBySubjectId: (subjectId)->
+    notifs_.bySubject subjectId
     .then db.bulkDelete
 
   unreadCount: (userId)->
     notifs_.byUserId userId
     .then getUnreadCount
+
+# alias
+notifs_.deleteAllByUserId = notifs_.deleteAllBySubjectId
 
 getUnreadCount = (notifs)-> notifs.filter(isUnread).length
 isUnread = (notif)-> notif.status is 'unread'
@@ -87,7 +86,7 @@ callbacks =
   # to avoid having notification triggering requests for deleted resources
   deleteGroupUpdates: (groupId)->
     _.log groupId, 'deleting group updates'
-    notifs_.deleteAllBySubject groupId
+    notifs_.deleteAllBySubjectId groupId
 
 groupAttributeWithNotification = [ 'name', 'description' ]
 
