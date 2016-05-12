@@ -35,10 +35,14 @@ Group.create = (options)->
 Group.findInvitation = (userId, group, wanted)->
   findMembership userId, group, 'invited', wanted
 
+
+inviteSection = if CONFIG.godMode then 'members' else 'invited'
 membershipActions =
   invite: (invitorId, invitedId, group)->
+    # Using Group.findInvitation as a validator throwing
+    # if the document isn't in the desired state
     Group.findInvitation invitedId, group, false
-    group.invited.push createMembership(invitedId, invitorId)
+    group[inviteSection].push createMembership(invitedId, invitorId)
     return group
 
   # there is room for a secondaryUserId but only some actions actually need it:
