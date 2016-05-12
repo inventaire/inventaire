@@ -4,6 +4,9 @@
    "views": {
        "byUserAndTime": {
            "map": "(doc)->\n  emit [doc.user, doc.time], null"
+       },
+       "bySubject": {
+           "map": "(doc)->\n  if doc.type is 'groupUpdate'\n    emit doc.data.group, 'group'\n    emit doc.data.user\t, 'user'"
        }
    }
 }

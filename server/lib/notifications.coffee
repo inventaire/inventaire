@@ -13,7 +13,13 @@ notifs_ =
       startkey: [userId, minKey]
       endkey: [userId, maxKey]
       include_docs: true
-    .catch _.Error('byUserId')
+    .catch _.ErrorRethrow('byUserId')
+
+  # make notifications accessible by the subjects they involve:
+  # user, group, item etc
+  bySubject: (subjectId)->
+    db.viewByKey 'bySubject', subjectId
+    .catch _.ErrorRethrow('bySubject')
 
   add: (userId, type, data)->
     _.types arguments, ['string', 'string', 'object']
@@ -32,6 +38,10 @@ notifs_ =
 
   deleteAllByUserId: (userId)->
     notifs_.byUserId userId
+    .then db.bulkDelete
+
+  deleteAllBySubject: (userId)->
+    notifs_.bySubject userId
     .then db.bulkDelete
 
   unreadCount: (userId)->
@@ -73,11 +83,19 @@ callbacks =
           previousValue: previousValue
           newValue: newValue
 
+  # Deleting notifications when their subject is deleted
+  # to avoid having notification triggering requests for deleted resources
+  deleteGroupUpdates: (groupId)->
+    _.log groupId, 'deleting group updates'
+    notifs_.deleteAllBySubject groupId
+
 groupAttributeWithNotification = [ 'name', 'description' ]
 
 Radio.on 'notify:friend:request:accepted', callbacks.acceptedRequest
 Radio.on 'notify:comment:followers', callbacks.newCommentOnFollowedItem
 Radio.on 'group:makeAdmin', callbacks.userMadeAdmin
 Radio.on 'group:update', callbacks.groupUpdate
+
+Radio.on 'group:destroyed', callbacks.deleteGroupUpdates
 
 module.exports = notifs_

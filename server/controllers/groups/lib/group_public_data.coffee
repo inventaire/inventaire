@@ -4,14 +4,14 @@ _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
 user_ = __.require 'lib', 'user/user'
 items_ = __.require 'controllers', 'items/lib/items'
+error_ = __.require 'lib', 'error/error'
 
 module.exports = (groups_)->
 
   getGroupPublicData = (groupId)->
     groups_.byId groupId
     .then (group)->
-      if emptyGroup group
-        return promises_.resolve objectRes(group)
+      unless group? then throw error_.notFound groupId
 
       getUsersAndItems group
       .spread objectRes.bind(null, group)
@@ -29,8 +29,3 @@ objectRes = (group, users=[], items=[])->
   group: group
   users: users
   items: items
-
-# When a user is alone in a group
-# she can leave the group and let it with 0 admins
-# But the group isn't destroyed and might still be queried for notifications
-emptyGroup = (group)-> group.admins.length is 0
