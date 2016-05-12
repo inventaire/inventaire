@@ -5,7 +5,7 @@ error_ = __.require 'lib', 'error/error'
 getGroupPublicData = require './get_group_public_data'
 create = require './create'
 { possibleActions } = require './lib/actions_lists'
-{ handleAction } = require './actions'
+handleAction = require './actions'
 
 module.exports =
   get: getGroupPublicData
