@@ -61,9 +61,15 @@ _.extend comments_, rightsVerification,
     .map _.property('user')
 
   deleteByItemsIds: (itemsIds)->
+    # You absolutly don't want this id to be undefined
+    # as this would end up deleting the whole database
+    _.types itemsIds, 'strings...'
     comments_.byItemsIds itemsIds
     .then db.bulkDelete
 
   deleteItemsCommentsByUserId: (userId)->
+    # You absolutly don't want this id to be undefined
+    # as this would end up deleting the whole database
+    _.type userId, 'string'
     comments_.bySubjectAndUserId 'item', userId
     .then db.bulkDelete
