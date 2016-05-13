@@ -1,4 +1,5 @@
 CONFIG = require 'config'
+{ offline } = CONFIG
 errorCounter = 0
 loggers_ = require 'inv-loggers'
 util = require 'util'
@@ -17,10 +18,16 @@ module.exports = (_)->
     inspect: inspect
     Inspect: (label)-> fn = (obj)-> inspect obj, label
 
-    error: (obj, label, parse=true)->
+    error: (err, label, parse=true)->
+      # Prevent logging big error stack traces for network errors
+      # in offline development mode
+      if offline and err.code is 'ENOTFOUND'
+        loggers_.log err.message, "#{label} (offline)", 'red'
+        return
+
       errorCounter++
-      obj = obj?.stack or obj  if parse
-      loggers_.log obj, label, 'red'
+      err = err?.stack or err  if parse
+      loggers_.log err, label, 'red'
       return
 
     errorCount: -> errorCounter
