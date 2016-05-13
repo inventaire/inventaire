@@ -31,6 +31,8 @@ module.exports = config =
     restricted: true
     # make external indexes restart from the first seq
     resetFollow: false
+    # logs Couchdb requests parameters
+    debug: false
   noCache: false
   staticMaxAge: 30*24*60*60*1000
   cookieMaxAge: 10*365*24*3600*1000
