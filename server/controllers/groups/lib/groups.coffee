@@ -65,7 +65,7 @@ membershipActions = require('./membership_actions')(db)
 usersLists = require('./users_lists')(groups_)
 updateGroup = require('./update_group')(db)
 counts = require('./counts')(groups_, _)
-leaveGroups = require('./leave_groups')(groups_)
+leaveGroups = require('./leave_groups')(db, groups_)
 
 _.extend groups_, membershipActions, usersLists, updateGroup, counts, leaveGroups
 

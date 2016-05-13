@@ -3,7 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 Group = __.require 'models', 'group'
 
-module.exports = (groups_)->
+module.exports = (db, groups_)->
   userCanLeave: (userId, groupId)->
     groups_.byId groupId
     .then (group)->
