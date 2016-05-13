@@ -9,6 +9,7 @@ error_ = __.require 'lib', 'error/error'
 couch_ = __.require 'lib', 'couch'
 user_ = __.require 'lib', 'user/user'
 promises_ = __.require 'lib', 'promises'
+Radio = __.require 'lib', 'radio'
 
 db = __.require('couch', 'base')('items')
 
@@ -92,6 +93,7 @@ module.exports = items_ =
 
   delete: (id, rev)->
     db.update id, couch_.setDeletedTrue
+    .then -> Radio.emit 'resource:destroyed', 'item', id
 
   setBusyness: (id, busy)->
     _.types arguments, ['string', 'boolean']

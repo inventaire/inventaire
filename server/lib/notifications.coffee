@@ -37,6 +37,9 @@ notifs_ =
       db.update doc._id, BasicUpdater('status', 'read')
 
   deleteAllBySubjectId: (subjectId)->
+    # You absolutly don't want this id to be undefined
+    # as this would end up deleting the whole database
+    _.type subjectId, 'string'
     notifs_.bySubject subjectId
     .then db.bulkDelete
 
@@ -84,9 +87,10 @@ callbacks =
 
   # Deleting notifications when their subject is deleted
   # to avoid having notification triggering requests for deleted resources
-  deleteGroupUpdates: (groupId)->
-    _.log groupId, 'deleting group updates'
-    notifs_.deleteAllBySubjectId groupId
+  deleteNotifications: (label, subjectId)->
+    _.types [label, subjectId], 'strings...'
+    _.log "deleting #{label} notifications"
+    notifs_.deleteAllBySubjectId subjectId
 
 groupAttributeWithNotification = [ 'name', 'description' ]
 
@@ -95,6 +99,6 @@ Radio.on 'notify:comment:followers', callbacks.newCommentOnFollowedItem
 Radio.on 'group:makeAdmin', callbacks.userMadeAdmin
 Radio.on 'group:update', callbacks.groupUpdate
 
-Radio.on 'group:destroyed', callbacks.deleteGroupUpdates
+Radio.on 'resource:destroyed', callbacks.deleteNotifications
 
 module.exports = notifs_

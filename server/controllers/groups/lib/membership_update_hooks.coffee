@@ -13,7 +13,7 @@ module.exports = (db)->
       if group.admins.length is 0
         db.update groupId, couch_.setDeletedTrue
         .then _.Log('group deleted')
-        .then -> Radio.emit 'group:destroyed', groupId
+        .then -> Radio.emit 'resource:destroyed', 'group', groupId
 
     .catch _.Error("group deletion err: #{groupId}")
 
