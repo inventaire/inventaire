@@ -39,7 +39,7 @@ getErrorEmittingLine = (err)->
   # delete parenthesis around the file path
   .replace /(\(|\))/g, ''
   # delete machine specific path
-  .replace /\s[^\s]+server/, ': server'
+  .replace /[a-z_\/]+server/, ': server'
 
 # same as error_.new but returns a promise
 error_.reject = (args...)->
