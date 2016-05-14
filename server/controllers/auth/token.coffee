@@ -7,7 +7,7 @@ passport_ = __.require 'lib', 'passport/passport'
 setLoggedInCookie = require './lib/set_logged_in_cookie'
 
 module.exports = (req, res, next) ->
-  {action, email, token} = req.query
+  { action, email, token } = req.query
   unless action? then return error_.bundle res, 'no action specified', 400
   unless token? then return error_.bundle res, 'no token provided', 400
   unless email? then return error_.bundle res, 'no email provided', 400

@@ -10,7 +10,7 @@ flushErrors = -> errorList = {}
 setInterval flushErrors, oneDay
 
 module.exports = (err, fullReport)->
-  {hash} = err
+  { hash } = err
   unless errorList[hash]
     _.error err, 'client error report', false
     # not logging it as an error to avoid having the error

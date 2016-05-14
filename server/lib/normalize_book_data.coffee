@@ -7,7 +7,7 @@ module.exports = (books_)->
 
     data.pictures = []
 
-    {industryIdentifiers, imageLinks} = cleanedItem
+    { industryIdentifiers, imageLinks } = cleanedItem
 
     if industryIdentifiers?
       for obj in industryIdentifiers

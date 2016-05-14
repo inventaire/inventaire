@@ -5,8 +5,8 @@ _ = __.require 'builders', 'utils'
 module.exports =
   post: (req, res, next)->
     whitelist = ['lang']
-    {body} = req
-    {key, value} = body
+    { body } = req
+    { key, value } = body
     unless key in whitelist
       return error_.bundle res, 'unauthorize cookie setting', 403
 

@@ -15,7 +15,7 @@ analytics_ = __.require 'controllers', 'analytics/lib/base'
 
 module.exports =
   reports: (req, res, next)->
-    {navigation, error} = req.body
+    { navigation, error } = req.body
     cspReport = req.body['csp-report']
 
     if navigation? then analytics_.recordSession(req)

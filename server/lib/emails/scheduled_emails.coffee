@@ -35,7 +35,7 @@ jobs =
     .then getRequestsTuples
     .then (tuples)->
       for tuple in tuples
-        [userToNotify, requestingUser] = tuple
+        [ userToNotify, requestingUser ] = tuple
         mailer userToNotify, requestingUser
 
 

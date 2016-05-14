@@ -31,7 +31,7 @@ cleanIsbn = (isbn)->
 parseBooksData = (isbn, res)->
   _.types arguments, ['string', 'object']
 
-  {items} = res
+  { items } = res
   unless items?.length > 0
     _.warn res, "no item found for: #{isbn}"
     return

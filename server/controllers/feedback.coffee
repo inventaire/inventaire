@@ -5,8 +5,8 @@ Radio = __.require 'lib', 'radio'
 
 module.exports =
   post: (req, res, next)->
-    {user} = req
-    {subject, message, unknownUser} = req.body
+    { user } = req
+    { subject, message, unknownUser } = req.body
     _.log [subject, message, unknownUser], 'feedback'
 
     unless subject? or message?

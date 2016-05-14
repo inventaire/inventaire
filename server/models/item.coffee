@@ -15,7 +15,7 @@ Item.create = (userId, item)->
   # so we need to let _id blank
   item = _.omit item, '_id'
 
-  {title, entity, pictures} = item
+  { title, entity, pictures } = item
   tests.pass 'title', title
   tests.pass 'entity', entity
 

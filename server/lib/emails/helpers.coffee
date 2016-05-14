@@ -9,7 +9,7 @@ groups_ = __.require 'controllers', 'groups/lib/groups'
 exports.getUsersData = (user1Id, user2Id)->
   user_.byIds [user1Id, user2Id]
   .then (usersData)->
-    [user1, user2] = parseUsersData(user1Id, user2Id, usersData)
+    [ user1, user2 ] = parseUsersData(user1Id, user2Id, usersData)
     return context =
       user1: user1
       user2: user2

@@ -16,8 +16,8 @@ crawl = ->
   .on 'data', onData
 
 onData = (data)->
-  {key, value} = data
-  [domain, id, time] = key.split ':'
+  { key, value } = data
+  [ domain, id, time ] = key.split ':'
 
   # if the last event happened more than debounceDelay ago
   if _.expired time, debounceDelay

@@ -6,7 +6,7 @@ notifs_ = __.require 'lib', 'notifications'
 promises_ = __.require 'lib', 'promises'
 
 module.exports.updateStatus = (req, res, next) ->
-  {times} = req.body
+  { times } = req.body
   unless _.isArray(times) and times.length > 0
     return _.ok res
 

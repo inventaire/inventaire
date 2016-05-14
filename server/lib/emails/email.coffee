@@ -12,7 +12,7 @@ host = CONFIG.fullPublicHost()
 module.exports =
   validationEmail: (user, token)->
     # purposedly not checking notifications settings
-    {username, email, language} = user
+    { username, email, language } = user
     lang = _.shortLang language
 
     return data =
@@ -26,7 +26,7 @@ module.exports =
 
   resetPassword: (user, token)->
     # purposedly not checking notifications settings
-    {username, email, language} = user
+    { username, email, language } = user
     lang = _.shortLang language
 
     return data =
@@ -40,7 +40,7 @@ module.exports =
 
 
   friendAcceptedRequest: (options)->
-    [user1, user2] = validateOptions options
+    [ user1, user2 ] = validateOptions options
     lang = _.shortLang user1.language
 
     checkUserNotificationsSettings user1, 'friend_accepted_request'
@@ -56,7 +56,7 @@ module.exports =
         host: host
 
   friendshipRequest: (options)->
-    [user1, user2] = validateOptions options
+    [ user1, user2 ] = validateOptions options
     lang = _.shortLang user1.language
 
     checkUserNotificationsSettings user1, 'friendship_request'
@@ -169,7 +169,7 @@ transactionEmail = (transaction, role, label)->
       lang: lang
 
 validateOptions = (options)->
-  {user1, user2} = options
+  { user1, user2 } = options
   _.types [user1, user2], 'objects...'
   unless user1.email? then throw new Error "missing user1 email"
   unless user2.username? then throw new Error "missing user2 username"

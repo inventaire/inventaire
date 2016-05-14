@@ -13,7 +13,7 @@ module.exports = (req, res, ids) ->
   .then parseAndValidateIds.bind(null, ids)
   .then user_.getRelationsStatuses.bind(null, userId)
   .then (res)->
-    [friends, coGroupMembers] = res
+    [ friends, coGroupMembers ] = res
     # not fetching non-friends non-coGroupMembers items
     return networkIds = _.uniq coGroupMembers.concat(friends)
   .then items_.friendsListings

@@ -7,14 +7,14 @@ passport_ = __.require 'lib', 'passport/passport'
 setLoggedInCookie = require './lib/set_logged_in_cookie'
 
 exports.signup = (req, res)->
-  {strategy} = req.body
+  { strategy } = req.body
   next = LoggedIn(res)
   switch strategy
     when 'local' then passport_.authenticate.localSignup(req, res, next)
     else error_.bundle res, "unknown signup strategy: #{strategy}", 400
 
 exports.login = (req, res)->
-  {strategy} = req.body
+  { strategy } = req.body
   next = LoggedIn(res)
   switch strategy
     when 'local' then passport_.authenticate.localLogin(req, res, next)

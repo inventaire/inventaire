@@ -46,7 +46,7 @@ module.exports = _.extend publicActions,
     .catch error_.Handler(res)
 
   publicActions: (req, res, next)->
-    {action} = req.query
+    { action } = req.query
     switch action
       when 'public-by-id'
         publicActions.publicById req, res

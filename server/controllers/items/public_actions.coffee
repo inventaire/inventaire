@@ -46,7 +46,7 @@ module.exports =
     .catch error_.Handler(res)
 
   publicById: (req, res, next) ->
-    {id} = req.query
+    { id } = req.query
     unless tests.itemId id
       return error_.bundle res, 'bad item id', 400
 
@@ -56,7 +56,7 @@ module.exports =
 
   publicByEntity: (req, res, next) ->
     _.info req.query, 'publicByEntity'
-    {uri} = req.query
+    { uri } = req.query
     unless tests.entityUri uri
       return error_.bundle res, 'bad entity uri', 400
 
@@ -66,7 +66,7 @@ module.exports =
 
   publicByUsernameAndEntity: (req, res, next)->
     _.info req.query, 'publicByUserAndEntity'
-    {username, uri} = req.query
+    { username, uri } = req.query
 
     unless tests.entityUri uri
       return error_.bundle res, 'bad entity uri', 400
@@ -75,7 +75,7 @@ module.exports =
 
     user_.getSafeUserFromUsername username
     .then (user)->
-      {_id} = user
+      { _id } = user
       unless _id?
         return error_.new 'user not found', 404
 

@@ -12,7 +12,7 @@ resetPassword = require './reset_password'
 fakeSubmit = require './fake_submit'
 
 exports.publicActions = (req, res, next)->
-  {action} = req.query
+  { action } = req.query
   switch action
     when 'signup' then signup req, res
     when 'login' then login req, res
@@ -24,7 +24,7 @@ exports.publicActions = (req, res, next)->
     else error_.unknownAction res
 
 exports.actions = (req, res, next)->
-  {action} = req.query
+  { action } = req.query
   switch action
     when 'email-confirmation' then emailConfirmation req, res
     when 'update-password' then updatePassword req, res

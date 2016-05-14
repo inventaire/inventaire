@@ -21,6 +21,6 @@ module.exports =
     .catch error_.Handler(res)
 
 createSubscriberDoc = (req)->
-  {email} = req.body
+  { email } = req.body
   language = user_.findLanguage(req)
   return Subscriber.create(email, language)

@@ -27,7 +27,7 @@ module.exports = (db, user_)->
 
     getTokenData()
     .then (tokenData)->
-      [token, tokenHash] = tokenData
+      [ token, tokenHash ] = tokenData
       Radio.emit 'validation:email', user, token
       wrappedUpdate user._id, 'emailValidation', tokenHash
       return user
@@ -37,7 +37,7 @@ module.exports = (db, user_)->
     .then updateIfValidToken.bind(null, token)
 
   updateIfValidToken = (token, user)->
-    {emailValidation, _id} = user
+    { emailValidation, _id } = user
     unless emailValidation?
       throw error_.new 'token is invalid or expired', 401, token, _id
 
@@ -47,7 +47,7 @@ module.exports = (db, user_)->
   token_.sendResetPasswordEmail = (user)->
     getTokenData()
     .then (tokenData)->
-      [token, tokenHash] = tokenData
+      [ token, tokenHash ] = tokenData
       Radio.emit 'reset:password:email', user, token
       wrappedUpdate user._id, 'token', tokenHash
       return user

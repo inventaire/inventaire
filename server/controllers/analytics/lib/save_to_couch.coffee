@@ -19,7 +19,7 @@ module.exports = (analyticsLevelDB)->
 
   transferReportToCouch = (stats, doc)->
     _.types arguments, ['object', 'string']
-    {refTime} = stats
+    { refTime } = stats
     doc = JSON.parse(doc)
     if sessionIsOver(refTime, doc?.time?.last)
       putInCouch(doc)

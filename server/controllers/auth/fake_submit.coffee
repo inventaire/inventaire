@@ -6,8 +6,8 @@ _ = __.require 'builders', 'utils'
 # validated by XHR calls, in order to be catched by browsers
 # password manager or other field suggestions tools
 module.exports = (req, res, next)->
-  {redirect} = req.query
-  {referer} = req.headers
+  { redirect } = req.query
+  { referer } = req.headers
   route = solveRoute redirect, referer
   res.redirect route
 

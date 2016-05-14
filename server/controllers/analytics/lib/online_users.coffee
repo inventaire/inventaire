@@ -3,7 +3,7 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 
 module.exports = (user)->
-  {id, fingerPrint} = user
+  { id, fingerPrint } = user
   if id? then onlineUsers[fingerPrint] = 1
   else onlineUsers[fingerPrint] = 0
 
