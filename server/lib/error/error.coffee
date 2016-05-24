@@ -44,6 +44,9 @@ getErrorEmittingLine = (line)->
   .replace /(\(|\))/g, ''
   # delete machine specific path
   .replace /[a-z_\/]+server/, ': server'
+  .replace /[a-z_\/]+node_modules/, ': node_modules'
+  # identify anonymous functions
+  .replace /^:/, '(anonymous):'
 
 # same as error_.new but returns a promise
 error_.reject = (args...)->
