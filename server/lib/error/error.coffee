@@ -30,11 +30,15 @@ formatError = (err, filter, contextArray)->
     contextArray = _.toArray contextArray[0]
 
   err.context = contextArray
-  err.emitter = getErrorEmittingLine err
+  err.emitter = getErrorEmittingLines err
   return err
 
-getErrorEmittingLine = (err)->
-  err.stack.split('\n')[2]?.trim()
+getErrorEmittingLines = (err)->
+  err.stack.split('\n')[2..4]
+  .map getErrorEmittingLine
+
+getErrorEmittingLine = (line)->
+  line?.trim()
   .replace 'at ', ''
   # delete parenthesis around the file path
   .replace /(\(|\))/g, ''
