@@ -6,9 +6,16 @@ meta = __.require 'lib', 'meta'
 
 dbHost = CONFIG.db.fullHost()
 
+
+{ freezeFollow } = CONFIG.db
+
 module.exports = (params)->
   { dbBaseName } = params
   dbName = params.dbName = CONFIG.db.name dbBaseName
+
+  if freezeFollow
+    _.warn dbName, 'freezed follow'
+    return
 
   meta.get buildKey(dbName)
   .then initFollow.bind(null, params)
@@ -16,9 +23,9 @@ module.exports = (params)->
 
 initFollow = (params, lastSeq=0)->
   { dbName, filter, onChange, reset } = params
-  _.log lastSeq, "#{dbName} last seq"
 
   if reset then lastSeq = 0
+  _.log lastSeq, "#{dbName} last seq"
 
   _.type lastSeq, 'number'
 

@@ -8,6 +8,8 @@ _.extend CONFIG.db,
   suffix: 'prod'
   unstable: false
   reloadDesignDocs: false
+  # prevent triggering follow onChange actions with data from the remote database
+  freezeFollow: true
 
 tests = __.require 'models','tests/common-tests'
 

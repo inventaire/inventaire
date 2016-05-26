@@ -3,6 +3,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 follow = __.require 'lib', 'follow'
+promises_ = __.require 'lib', 'promises'
 
 module.exports = (db, reset)->
 
@@ -37,8 +38,19 @@ module.exports = (db, reset)->
       _.success [id, lat, lon], 'user position updated'
       return
 
-  follow
-    dbBaseName: 'users'
-    filter: filter
-    onChange: onChange
-    reset: reset
+  startFollowing = (res)->
+    follow
+      dbBaseName: 'users'
+      filter: filter
+      onChange: onChange
+      reset: reset
+
+  resetIfNeeded = ->
+    if reset then db.reset()
+    else promises_.resolved
+
+  resetIfNeeded()
+  .then startFollowing
+  # catching the error without rethrowing
+  # as nobody is listening/waiting for it
+  .catch _.Error('geo follow init error')

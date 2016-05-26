@@ -31,6 +31,10 @@ module.exports = config =
     restricted: true
     # make external indexes restart from the first seq
     resetFollow: false
+    # use freezeFollow for cases when following the database would have undesired effects
+    # ex: without freezeFollow, scripts connecting to a remote database (like scripts/increment_undelivered_email_count)
+    # would trigger follow onChange actions with the data from the remote database
+    freezeFollow: false
     # logs Couchdb requests parameters
     debug: false
   noCache: false
