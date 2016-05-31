@@ -24,7 +24,7 @@ module.exports = (analyticsLevelDB)->
     if sessionIsOver(refTime, doc?.time?.last)
       putInCouch(doc)
       .then clearLevel.bind(null, stats, doc._id)
-      .catch _.Error('coulndt put report in couch')
+      .catch _.Warn('coulndt put report in couch')
     else
       stats.kept++
 

@@ -10,7 +10,7 @@ base =
   update: (report)->
     key = report._id
     analyticsLevelDB.put key, report
-    .catch _.Error("coudnt update analyticsLevelDB for #{key}")
+    .catch _.Warn("coudnt update analyticsLevelDB for #{key}")
 
   getHeadersIp: (req)->
     ip = _.extractReqIp req
