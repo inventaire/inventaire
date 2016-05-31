@@ -37,20 +37,15 @@ module.exports = entities_ =
     db.putAndReturn updatedDoc
     .tap -> patches_.create userId, currentDoc, updatedDoc
 
-  createClaim: (doc, property, value, userId)->
-    entities_.validateClaim property, newVal
-    .then (formattedValue)-> Entity.createClaim doc, property, formattedValue
-    .then putUpdate.bind(null, userId, doc)
-
   updateClaim: (property, oldVal, newVal, userId, doc)->
-    entities_.validateClaim property, newVal
+    entities_.validateClaim property, newVal, true
     .then (formattedValue)->
       Entity.updateClaim doc, property, oldVal, formattedValue
     .then putUpdate.bind(null, userId, doc)
 
-  validateClaim: (property, value)->
+  validateClaim: (property, value, letEmptyValuePass)->
     promises_.try -> validateProperty property
-    .then -> validateClaimValue property, value
+    .then -> validateClaimValue property, value, letEmptyValuePass
 
 putUpdate = (userId, currentDoc, updatedDoc)->
   _.log updatedDoc, 'updated doc'
@@ -58,7 +53,10 @@ putUpdate = (userId, currentDoc, updatedDoc)->
   db.putAndReturn updatedDoc
   .tap -> patches_.create userId, currentDoc, updatedDoc
 
-validateClaimValue = (property, value)->
+validateClaimValue = (property, value, letEmptyValuePass)->
+  # letEmptyValuePass to let it be interpreted as a claim deletion
+  if letEmptyValuePass and not value? then return null
+
   unless testDataType property, value
     return error_.reject 'invalid value datatype', 400, property, value
 

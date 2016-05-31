@@ -38,28 +38,29 @@ module.exports = Entity =
 
     return doc
 
-  createClaim: (doc, property, value)->
-    doc.claims[property] or= []
-    doc.claims[property].push value
-    return doc
-
   updateClaim: (doc, property, oldVal, newVal)->
-    # for new values, use createClaim instead
-    unless oldVal?
-      throw error_.new 'missing old value', 400, arguments
+    unless oldVal? or newVal?
+      throw error_.new 'missing old or new value', 400, arguments
 
     propArray = _.get doc, "claims.#{property}"
     _.log oldVal, 'oldVal'
     _.log propArray, 'propArray'
-    if not propArray? or oldVal not in propArray
-      throw error_.new 'claim property value not found', 400, arguments
 
-    if newVal?
-      index = propArray.indexOf oldVal
-      doc.claims[property][index] = newVal
+    if oldVal?
+      if not propArray? or oldVal not in propArray
+        throw error_.new 'claim property value not found', 400, arguments
+
+      if newVal?
+        index = propArray.indexOf oldVal
+        doc.claims[property][index] = newVal
+      else
+        # if the new value is null, it plays the role of a removeClaim
+        doc.claims[property] = _.without propArray, oldVal
+
     else
-      # if the new value is undefined, it plays the role of a removeClaim
-      doc.claims[property] = _.without propArray, oldVal
+      # if the old value is null, it plays the role of a createClaim
+      doc.claims[property] or= []
+      doc.claims[property].push newVal
 
     return doc
 

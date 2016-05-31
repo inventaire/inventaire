@@ -6,7 +6,6 @@ getImages = require './get_images'
 getIsbns = require './get_isbns'
 getEntities = require './get_entities'
 createEntity = require './create_entity'
-createClaim = require './create_claim'
 updateClaim = require './update_claim'
 
 module.exports =
@@ -29,6 +28,5 @@ module.exports =
     unless action? then return error_.bundle res, 'missing action parameter', 400
 
     switch action
-      when 'create-claim' then return createClaim req, res
       when 'update-claim' then return updateClaim req, res
       else error_.unknownAction res
