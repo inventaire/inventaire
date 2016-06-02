@@ -14,9 +14,9 @@ _ = __.require 'builders', 'utils'
 americano = require 'americano'
 fs = require 'fs'
 
-Promise = require 'bluebird'
-# needs to be run before the first promise is fired
-Promise.config CONFIG.bluebird
+# Needs to be run before the first promise is fired
+# so that the configuration applies to all
+{ Promise } = __.require 'lib', 'promises'
 
 couchInit = __.require 'couch', 'init'
 

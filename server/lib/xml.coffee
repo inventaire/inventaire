@@ -1,4 +1,5 @@
-Promise = require 'bluebird'
+__ = require('config').universalPath
+{ Promise } = __.require 'lib', 'promises'
 xml2js = require 'xml2js'
 
 module.exports =

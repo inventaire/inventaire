@@ -1,7 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-Promise = require 'bluebird'
+{ Promise } = __.require 'lib', 'promises'
 parseForm = require './lib/parse_form'
 error_ = __.require 'lib', 'error/error'
 images_ = __.require 'lib', 'images'

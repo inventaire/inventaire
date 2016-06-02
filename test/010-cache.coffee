@@ -6,7 +6,7 @@ should = require 'should'
 sinon = require 'sinon'
 
 promises_ = __.require 'lib', 'promises'
-Promise = promises_.Promise
+{ Promise } = promises_
 
 cache_ = __.require 'lib', 'cache'
 

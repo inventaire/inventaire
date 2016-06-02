@@ -6,7 +6,7 @@ user_ = __.require 'lib', 'user/user'
 notifs_ = __.require 'lib', 'notifications'
 transactions_ = __.require 'controllers', 'transactions/lib/transactions'
 groups_ = __.require 'controllers', 'groups/lib/groups'
-Promise = require 'bluebird'
+{ Promise } = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
 
 module.exports = (req, res, next) ->

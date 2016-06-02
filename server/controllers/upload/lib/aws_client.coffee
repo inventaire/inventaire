@@ -1,7 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require('builders', 'utils')
-Promise = require 'bluebird'
+{ Promise } = __.require 'lib', 'promises'
 knox = require 'knox'
 client = knox.createClient CONFIG.aws
 

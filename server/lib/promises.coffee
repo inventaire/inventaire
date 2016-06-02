@@ -1,6 +1,14 @@
-__ = require('config').universalPath
+CONFIG = require('config')
+__ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
+
+# Here should be the only direct require of bluebird
+# so that every other dependency to it passed through this file
+# and get the associated configuration
+# Exception: cases when this policy would produce dependecy loops
 Promise = require 'bluebird'
+Promise.config CONFIG.bluebird
+
 requests = require './requests'
 shared = __.require('sharedLibs', 'promises')(Promise)
 

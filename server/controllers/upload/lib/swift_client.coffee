@@ -4,7 +4,7 @@ _ = __.require 'builders', 'utils'
 breq = require 'bluereq'
 fs_ = __.require 'lib', 'fs'
 request = require 'request'
-Promise = require 'bluebird'
+{ Promise } = __.require 'lib', 'promises'
 
 getToken = require './get_swift_token'
 { publicURL, container } = CONFIG.swift

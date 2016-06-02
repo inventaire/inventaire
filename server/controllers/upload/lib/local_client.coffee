@@ -1,7 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require('builders', 'utils')
-Promise = require 'bluebird'
+{ Promise } = __.require 'lib', 'promises'
 fs_ = __.require 'lib', 'fs'
 urlBase = CONFIG.images.urlBase()
 

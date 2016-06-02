@@ -5,7 +5,7 @@ couch_ = __.require 'lib', 'couch'
 { minKey, maxKey } = couch_
 parseRelations = require './parse_relations'
 groups_ = __.require 'controllers', 'groups/lib/groups'
-Promise = require 'bluebird'
+{ Promise } = __.require 'lib', 'promises'
 
 module.exports = (db)->
 

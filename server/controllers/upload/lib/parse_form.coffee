@@ -1,5 +1,6 @@
+__ = require('config').universalPath
 { IncomingForm } = require 'formidable'
-Promise = require 'bluebird'
+{ Promise } = __.require 'lib', 'promises'
 
 module.exports = (req)->
   form = new IncomingForm()

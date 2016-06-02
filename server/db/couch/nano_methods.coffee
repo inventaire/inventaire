@@ -3,7 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 couch_ = __.require 'lib', 'couch'
 
-Promise = require 'bluebird'
+{ Promise } = __.require 'lib', 'promises'
 
 fetch = (db, keys)->
   _.typeArray keys

@@ -5,7 +5,7 @@ user_ = __.require 'lib', 'user/user'
 couch_ = __.require 'lib', 'couch'
 error_ = __.require 'lib', 'error/error'
 Item = __.require 'models', 'item'
-Promise = require 'bluebird'
+{ Promise } = __.require 'lib', 'promises'
 tests = __.require 'models', 'tests/common-tests'
 
 module.exports =
