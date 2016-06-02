@@ -58,9 +58,9 @@ describe 'CACHE', ->
     it "should also accept an expiration timespan", (done)->
       cache_.get('samekey', Ctx.method)
       .then (res1)->
-        cache_.get('samekey', Ctx.method.bind(null, 'different arg'), 10000)
+        cache_.get('samekey', Ctx.method.bind(Ctx, 'different arg'), 10000)
         .then (res2)->
-          cache_.get('samekey', Ctx.method.bind(null, 'different arg'), 0)
+          cache_.get('samekey', Ctx.method.bind(Ctx, 'different arg'), 0)
           .then (res3)->
             _.log [res1, res2, res3], 'results'
             res1.should.equal res2
@@ -68,18 +68,28 @@ describe 'CACHE', ->
             done()
 
     it "should return the outdated version if the new version returns an error", (done)->
-      cache_.get('doden', Ctx.method.bind(null, 'Vem är du?'), 0)
+      cache_.get('doden', Ctx.method.bind(Ctx, 'Vem är du?'), 0)
       .then (res1)->
         # returns an error: should return old value
-        cache_.get('doden', Ctx.failingMethod.bind(null, 'Vem är du?'), 0)
+        cache_.get('doden', Ctx.failingMethod.bind(Ctx, 'Vem är du?'), 1)
         .then (res2)->
           # the error shouldnt have overriden the value
-          cache_.get('doden', Ctx.method.bind(null, 'Vem är du?'), 5000)
+          cache_.get('doden', Ctx.method.bind(Ctx, 'Vem är du?'), 5000)
           .then (res3)->
             _.log [res1, res2, res3], 'results'
             res1.should.equal res2
             res1.should.equal res3
             done()
+
+    it "should refuse old value when passed a 0 timespan", (done)->
+      cache_.get('doden', Ctx.method.bind(Ctx, 'Vem är du?'), 0)
+      .then (res1)->
+        # returns an error: should return old value
+        cache_.get('doden', Ctx.failingMethod.bind(Ctx, 'Vem är du?'), 0)
+        .then (res2)->
+          res1.should.be.ok()
+          should(res2).not.be.ok()
+          done()
 
     it "should cache non-error empty results", (done)->
       spy = sinon.spy()

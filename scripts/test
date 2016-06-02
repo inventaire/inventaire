@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+options=$1
+mocha --compilers coffee:coffee-script/register test/*.coffee test/models/* test/libs/* test/controllers/* $options

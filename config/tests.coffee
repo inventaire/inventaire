@@ -16,6 +16,7 @@ module.exports =
     unstable: true
     suffix: 'tests'
     fakeUsers: true
+    debug: true
   graph:
     social: undefined
   godMode: false

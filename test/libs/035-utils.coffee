@@ -2,8 +2,6 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 
 should = require 'should'
-trycatch = require 'trycatch'
-
 
 describe 'UTILS', ->
   describe 'env', ->
