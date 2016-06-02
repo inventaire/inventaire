@@ -25,7 +25,25 @@ describe 'entity model', ->
       entityDoc.claims.should.be.an.Object()
       done()
 
-  describe 'updateClaim', ->
+  describe 'create claim', ->
+    it 'should not throw if not passed an old value', (done)->
+      updater = -> Entity.updateClaim validDoc(), 'P50', null, 'Q42'
+      updater.should.not.throw()
+      done()
+
+    it 'should return a doc with the new value', (done)->
+      entityDoc = validDoc()
+      lengthBefore = entityDoc.claims.P50.length
+      updatedDoc = Entity.updateClaim entityDoc, 'P50', null, 'Q42'
+      updatedDoc.claims.P50.length.should.equal lengthBefore + 1
+      done()
+
+    it 'should return a doc with the new value added last', (done)->
+      updatedDoc = Entity.updateClaim validDoc(), 'P50', null, 'Q42'
+      updatedDoc.claims.P50.slice(-1)[0].should.equal 'Q42'
+      done()
+
+  describe 'update claim', ->
     it 'should return with the claim value updated', (done)->
       entityDoc = validDoc()
       entityDoc.claims.P50[0].should.equal 'Q535'
@@ -33,13 +51,7 @@ describe 'entity model', ->
       updatedDoc.claims.P50[0].should.equal 'Q42'
       done()
 
-    # Requires an update: should not throw
-    # it 'should throw if not passed an old value', (done)->
-    #   entityDoc = validDoc()
-    #   updater = -> Entity.updateClaim entityDoc, 'P50', null, 'Q42'
-    #   updater.should.throw()
-    #   done()
-
+  describe 'delete claim', ->
     it 'should return with the claim value removed if passed an undefined new value', (done)->
       entityDoc = validDoc()
       updatedDoc = Entity.updateClaim entityDoc, 'P50', 'Q535', null
