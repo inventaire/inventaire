@@ -43,8 +43,13 @@ module.exports = Entity =
       throw error_.new 'missing old or new value', 400, arguments
 
     propArray = _.get doc, "claims.#{property}"
-    _.log oldVal, 'oldVal'
+
     _.log propArray, 'propArray'
+    _.log oldVal, 'oldVal'
+    _.log newVal, 'newVal'
+
+    if propArray? and newVal? and newVal in propArray
+      throw error_.new 'claim property new value already exist', 400, arguments
 
     if oldVal?
       if not propArray? or oldVal not in propArray
