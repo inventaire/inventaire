@@ -64,6 +64,7 @@ module.exports =
     user2.href = "#{host}/inventory/#{user2.username}"
 
     { bio } = user2
+    bio ?= ''
     if bio.length > 200 then bio = bio[0..200] + '...'
     user2.bio = bio
 
