@@ -1,7 +1,6 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
-error_ = __.require 'lib', 'error/error'
 { appendToFullKeys, appendToShortKeys } = __.require 'lib', 'i18n_autofix'
 
 module.exports =

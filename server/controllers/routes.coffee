@@ -20,19 +20,19 @@ tests = require './tests'
 data = require './data'
 services = require './services/services'
 proxy = require './proxy'
-glob = require './glob'
-log = require './log'
+i18n = require './i18n'
 feedback = require './feedback'
 transactions = require './transactions/transactions'
 comments = require './comments/comments'
 analytics = require './analytics/analytics'
+glob = require './glob'
 
 # routes structure:
 # 1 - api is the default prefix for server-side routes
 # 2 - the controller / module name
 # 3 - 'public' if the route can be called without a session
 
-routes =
+module.exports = routes =
   'api/auth':
     post: auth.actions
 
@@ -128,9 +128,6 @@ routes =
   'api/logs/public':
     post: analytics.reports
 
-  'api/*':
-    all: glob.api
-
   'error/count':
     get: (req, res, next)->
       res.json { count: _.errorCount() }
@@ -138,23 +135,21 @@ routes =
   'img/*':
     get: resize
 
-  '*':
-    get: glob.get
-
 if CONFIG.logMissingI18nKeys
-  log =
-    'log/i18n':
-      post: log.i18nMissingKeys
-else log = {}
+  routes['api/i18n/public'] =
+    post: i18n.i18nMissingKeys
 
-img = {}
 if CONFIG.objectStorage is 'local'
   # the /img endpoint is common to all the object storage modes
   # but this route is served from nginx in other modes
   endpoint = CONFIG.images.urlBase().replace /^\//, ''
-  img["#{endpoint}*"] =
+  routes["#{endpoint}*"] =
       get: upload.fakeObjectStorage
 
-# setting CONFIG-based route above standard routes
-# so that they wont be overpassed by the glob
-module.exports = _.extend log, img, routes
+# setting CONFIG-based routes before the globs
+# so that they wont be overpassed by it
+_.extend routes,
+  'api/*':
+    all: glob.api
+  '*':
+    get: glob.get
