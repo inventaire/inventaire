@@ -87,7 +87,7 @@ routes =
   'api/newsletter/public':
     post: newsletter.subscribe
 
-  'api/cookie':
+  'api/cookie/public':
     post: cookie.post
 
   'api/upload':
