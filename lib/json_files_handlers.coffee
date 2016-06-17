@@ -1,5 +1,5 @@
 __ = require('config').universalPath
-Promise = require 'bluebird'
+{ Promise } = __.require 'lib', 'promises'
 json_  = __.require 'client', 'scripts/lib/json'
 activeFiles  = __.require 'client', 'scripts/lib/active_files'
 activeLangs = require '../../active_langs'

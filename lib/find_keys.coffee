@@ -1,3 +1,5 @@
+# /!\ This module is shared between server and client scripts
+
 __ = require('config').universalPath
 _ = require 'lodash'
 
@@ -12,7 +14,6 @@ module.exports = findKeys = (params)->
   hasExtra = langExtra?
   langIsEnglish = lang is 'en'
 
-  langTransifex = formatTransifexValues langTransifex, enObj
   langCurrent = keepNonNullValues langCurrent
 
   # Aggregate values from all available source,
@@ -39,7 +40,7 @@ module.exports = findKeys = (params)->
       if hasExtra
         extraVal = langExtra[k]
         if extraVal?
-          console.log "importing extra val: #{k}".green, extraVal
+          # console.log "importing extra val: #{k}".green, extraVal
           dist[k] = extraVal
           # Do not set update[k] = null for non-English langs as extra values should not appear
           # in their source files given extra values are meant to avoid dupplicates between projects.
@@ -66,19 +67,5 @@ module.exports = findKeys = (params)->
   cleanArchive = _.pick archive, _.identity
 
   return [dist, update, cleanArchive]
-
-
-formatTransifexValues = (langTransifex={}, enObj)->
-  langTransifex = keepNonNullValues langTransifex
-  invertedEnObj = _.invert enObj
-  formattedLangTransifex = {}
-  for k,v of langTransifex
-    realKey = invertedEnObj[k]
-    # transifex uses the English version as value
-    # while we want it to stay 'null' to highligh that the value is missing
-    if realKey? and v isnt enObj[realKey]
-      formattedLangTransifex[realKey] = v
-
-  return formattedLangTransifex
 
 keepNonNullValues = (obj)-> _.pick obj, (str)-> str?
