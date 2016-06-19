@@ -38,6 +38,9 @@ module.exports = Entity =
 
     return doc
 
+  createClaim: (doc, property, value)->
+    return Entity.updateClaim doc, property, null, value
+
   updateClaim: (doc, property, oldVal, newVal)->
     unless oldVal? or newVal?
       throw error_.new 'missing old or new value', 400, arguments
