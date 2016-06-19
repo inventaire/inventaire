@@ -16,6 +16,8 @@ properties =
   P31: wdEntityBase
   # author
   P50: wdEntityBase
+  # genre
+  P136: wdEntityBase
   # isbn 13
   P212:
     datatype: 'string'
