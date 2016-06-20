@@ -9,6 +9,7 @@ reservedWords = [
   'wd'
   'wikidata'
   'isbn'
+  'ean'
   'profil'
   'profile'
   'item'
