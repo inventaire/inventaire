@@ -1,6 +1,7 @@
 # DATA MODEL
 # _id: CouchDB uuid
 # claims: an object with properties and their associated statements
+# labels: an object with labels in different languages
 
 # labels?
 # descriptions?
@@ -9,6 +10,14 @@
 
 # use Wikidata data model as reference:
 # https://www.mediawiki.org/wiki/Wikibase/DataModel/JSON
+
+# Used prefixes:
+# Entities:
+#   PREFIX wd: <http://www.wikidata.org/entity/>
+#   PREFIX inv: <https://inventaire.io/entity/>
+# Properties:
+#   PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+#   PREFIX invp: <http://www.wikidata.org/property/>
 
 CONFIG = require 'config'
 __ = CONFIG.universalPath

@@ -3,31 +3,31 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 wdk = require 'wikidata-sdk'
-wdEntity = wdk.isWikidataEntityId
 books_ = __.require 'lib', 'books'
+{ EntityUri } = __.require 'sharedLibs', 'regex'
 
-wdEntityBase =
+entityBase =
   datatype: 'entity'
-  test: wdEntity
+  test: EntityUri.test.bind EntityUri
   format: _.identity
 
 properties =
   # instance of
-  P31: wdEntityBase
+  'wdt:P31': entityBase
   # author
-  P50: wdEntityBase
+  'wdt:P50': entityBase
   # genre
-  P136: wdEntityBase
+  'wdt:P136': entityBase
   # isbn 13
-  P212:
+  'wdt:P212':
     datatype: 'string'
     test: (isbn)-> books_.isIsbn(isbn) is 13
     concurrency: true
     format: books_.normalizeIsbn
   # edition or translation of
-  P629: wdEntityBase
+  'wdt:P629': entityBase
   # isbn 10
-  P957:
+  'wdt:P957':
     datatype: 'string'
     test: (isbn)-> books_.isIsbn(isbn) is 10
     concurrency: true
