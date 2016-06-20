@@ -7,9 +7,6 @@ module.exports =
   query: (params)->
     { qid:authorQid } = params
     """
-    PREFIX wd: <http://www.wikidata.org/entity/>
-    PREFIX wdt: <http://www.wikidata.org/prop/direct/>
-
     SELECT ?work ?date WHERE {
       ?work wdt:P50 wd:#{authorQid} .
       OPTIONAL {

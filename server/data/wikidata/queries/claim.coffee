@@ -13,9 +13,6 @@ module.exports =
       limit = 500
 
     """
-    PREFIX wd: <http://www.wikidata.org/entity/>
-    PREFIX wdt: <http://www.wikidata.org/prop/direct/>
-
     SELECT ?entity WHERE {
       ?entity wdt:#{pid} wd:#{qid} .
     }
