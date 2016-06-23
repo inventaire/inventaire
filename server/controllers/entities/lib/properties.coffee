@@ -26,6 +26,8 @@ properties =
     format: books_.normalizeIsbn
   # edition or translation of
   'wdt:P629': entityBase
+  # main subject
+  'wdt:P921': entityBase
   # isbn 10
   'wdt:P957':
     datatype: 'string'
