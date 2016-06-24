@@ -82,6 +82,7 @@ module.exports = routes =
     get: entities.get
 
   'api/notifs':
+    get: notifs.get
     post: notifs.updateStatus
 
   'api/newsletter/public':

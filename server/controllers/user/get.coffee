@@ -3,7 +3,6 @@ _ = __.require 'builders', 'utils'
 
 User = __.require 'models', 'user'
 user_ = __.require 'lib', 'user/user'
-notifs_ = __.require 'lib', 'notifications'
 transactions_ = __.require 'controllers', 'transactions/lib/transactions'
 groups_ = __.require 'controllers', 'groups/lib/groups'
 { Promise } = __.require 'lib', 'promises'
@@ -22,16 +21,14 @@ module.exports = (req, res, next) ->
 getUserData = (userId)->
   Promise.all([
     user_.getUserRelations userId
-    notifs_.byUserId userId
     transactions_.byUser userId
     groups_.allUserGroups userId
   ])
 
 AttachUserData = (userData)->
-  attach = (relations, notifications, transactions, groups)->
+  attach = (relations, transactions, groups)->
     _.extend userData,
       relations: relations
-      notifications: notifications
       transactions: transactions
       groups: groups
 
