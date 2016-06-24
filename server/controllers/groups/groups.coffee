@@ -6,24 +6,33 @@ getGroupPublicData = require './get_group_public_data'
 create = require './create'
 { possibleActions } = require './lib/actions_lists'
 handleAction = require './actions'
+{ allUserGroups } = require './lib/groups'
 
 module.exports =
-  get: getGroupPublicData
-  post: (req, res, next)->
-    { action } = req.body
-    switch action
-      when 'create' then create req, res
-      else error_.unknownAction res, action
+  public:
+    get: getGroupPublicData
 
-  put: (req, res, next)->
-    { action } = req.body
+  authentified:
+    get: (req, res)->
+      allUserGroups req.user._id
+      .then res.json.bind(res)
+      .catch error_.Handler(res)
 
-    # don't convert an undefined action to an empty string
-    # it makes debugging confusing
-    if action?
-      action = _.camelCase action
+    post: (req, res)->
+      { action } = req.body
+      switch action
+        when 'create' then create req, res
+        else error_.unknownAction res, action
 
-    unless action in possibleActions
-      return error_.unknownAction res, action
+    put: (req, res)->
+      { action } = req.body
 
-    handleAction action, req, res
+      # don't convert an undefined action to an empty string
+      # it makes debugging confusing
+      if action?
+        action = _.camelCase action
+
+      unless action in possibleActions
+        return error_.unknownAction res, action
+
+      handleAction action, req, res

@@ -4,7 +4,6 @@ _ = __.require 'builders', 'utils'
 User = __.require 'models', 'user'
 user_ = __.require 'lib', 'user/user'
 transactions_ = __.require 'controllers', 'transactions/lib/transactions'
-groups_ = __.require 'controllers', 'groups/lib/groups'
 { Promise } = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
 
@@ -22,14 +21,12 @@ getUserData = (userId)->
   Promise.all([
     user_.getUserRelations userId
     transactions_.byUser userId
-    groups_.allUserGroups userId
   ])
 
 AttachUserData = (userData)->
-  attach = (relations, transactions, groups)->
+  attach = (relations, transactions)->
     _.extend userData,
       relations: relations
       transactions: transactions
-      groups: groups
 
 securedData = (user)-> _.pick user, User.attributes.ownerSafe

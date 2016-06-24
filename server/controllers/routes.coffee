@@ -60,11 +60,12 @@ module.exports = routes =
     post: invitations.post
 
   'api/groups':
-    post: groups.post
-    put: groups.put
+    get: groups.authentified.get
+    post: groups.authentified.post
+    put: groups.authentified.put
 
   'api/groups/public':
-    get: groups.get
+    get: groups.public.get
 
   'api/items':
     get: items.fetch
