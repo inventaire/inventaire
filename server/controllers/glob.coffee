@@ -17,7 +17,9 @@ module.exports =
       res.sendFile './index.html', {root: __.path('client', 'public')}
 
   api: (req, res)->
-    error_.bundle res, 'wrong API route or http verb', 400
+    error_.bundle res, 'wrong API route or http verb', 400,
+      verb: req.method
+      url: req._parsedUrl.href
 
 imageHeader = (req)-> /^image/.test req.headers.accept
 
