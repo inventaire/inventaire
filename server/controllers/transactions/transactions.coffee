@@ -13,7 +13,7 @@ module.exports =
 
     switch action
       when 'get-messages' then messages.get req, res
-      else error_.unknownAction res
+      else sendUserTransactions res, req.user._id
 
   post: (req, res, next)->
     { action } = req.body
@@ -30,3 +30,8 @@ module.exports =
       when 'update-state' then updateState req, res
       when 'mark-as-read' then markAsRead req, res
       else error_.unknownAction res
+
+sendUserTransactions = (res, userId)->
+  transactions_.byUser userId
+  .then res.json.bind(res)
+  .catch error_.Handler(res)

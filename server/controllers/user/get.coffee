@@ -20,13 +20,11 @@ module.exports = (req, res, next) ->
 getUserData = (userId)->
   Promise.all([
     user_.getUserRelations userId
-    transactions_.byUser userId
   ])
 
 AttachUserData = (userData)->
-  attach = (relations, transactions)->
+  attach = (relations)->
     _.extend userData,
       relations: relations
-      transactions: transactions
 
 securedData = (user)-> _.pick user, User.attributes.ownerSafe
