@@ -1,30 +1,9 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
-
 User = __.require 'models', 'user'
-user_ = __.require 'lib', 'user/user'
-transactions_ = __.require 'controllers', 'transactions/lib/transactions'
-{ Promise } = __.require 'lib', 'promises'
-error_ = __.require 'lib', 'error/error'
 
-module.exports = (req, res, next) ->
-  # implies that req.isAuthenticated() is true
+module.exports = (req, res) ->
   userData = securedData req.user
-  userId = userData._id
-
-  getUserData userId
-  .spread AttachUserData(userData)
-  .then res.json.bind(res)
-  .catch error_.Handler(res)
-
-getUserData = (userId)->
-  Promise.all([
-    user_.getUserRelations userId
-  ])
-
-AttachUserData = (userData)->
-  attach = (relations)->
-    _.extend userData,
-      relations: relations
+  res.json userData
 
 securedData = (user)-> _.pick user, User.attributes.ownerSafe

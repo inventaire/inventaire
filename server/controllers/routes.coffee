@@ -54,6 +54,7 @@ module.exports = routes =
     get: users.actions
 
   'api/relations':
+    get: relations.get
     post: relations.post
 
   'api/invitations':
