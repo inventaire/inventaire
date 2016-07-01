@@ -7,7 +7,17 @@ passport_ = __.require 'lib', 'passport/passport'
 setLoggedInCookie = require './lib/set_logged_in_cookie'
 
 exports.signup = (req, res)->
-  { strategy } = req.body
+  { strategy, username, email, password } = req.body
+
+  unless _.isNonEmptyString username
+    return error_.bundle res, 'missing username parameter', 400
+
+  unless _.isNonEmptyString email
+    return error_.bundle res, 'missing email parameter', 400
+
+  unless _.isNonEmptyString password
+    return error_.bundle res, 'missing password parameter', 400
+
   next = LoggedIn(res)
   switch strategy
     when 'local' then passport_.authenticate.localSignup(req, res, next)
