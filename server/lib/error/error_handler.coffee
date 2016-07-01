@@ -5,9 +5,8 @@ module.exports = (res, err, status)->
 
   # only accepts Error instances
   unless err instanceof Error
-    err = new Error('bad error object')
-    _.error err, err.message
-    return res.status(500).send(err.message)
+    _.error err, 'bad error object'
+    return res.status(500).send(err)
 
   # if a status code was attached to the error, use it
   status or= err.status or 500

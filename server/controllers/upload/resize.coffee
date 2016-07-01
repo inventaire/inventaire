@@ -52,11 +52,17 @@ getResizeImage = (res, url, dimensions)->
   res.header 'Content-Type', 'image/jpeg'
   res.header 'Cache-Control', "public, max-age=#{oneYear}"
 
+  alreadySent = false
+  handleBufferError = (buf)->
+    err = new Error(buf.toString())
+    error_.handler res, err
+    alreadySent = true
+
   images_.shrinkStream request(url), width, height
   .stream (err, stdout, stderr)->
     if err? then return error_.handler res, err
-    stdout.on 'error', error_.Handler(res)
-    stderr.on 'data', error_.Handler(res)
+    stdout.on 'error', handleBufferError
+    stderr.on 'data', handleBufferError
 
     # Non of the above seem to catch errors for the case when graphicsmagick isn't installed
     # so instead of doing `stdout.pipe(res)`, we check if data was actually passed
@@ -67,6 +73,8 @@ getResizeImage = (res, url, dimensions)->
       res.write data
 
     stdout.on 'close', (data)->
+      # Addresses the case when the response was already sent by an error handler
+      if alreadySent then return
       if receivedData then res.end()
       # usually solved by `sudo apt-get install graphicsmagick`
       else error_.bundle res, 'empty graphicsmagick response: make sure graphicsmagick is installed on the server', 500
