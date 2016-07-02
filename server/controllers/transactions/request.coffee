@@ -4,6 +4,7 @@ error_ = __.require 'lib', 'error/error'
 items_ = __.require 'controllers', 'items/lib/items'
 transactions_ = require './lib/transactions'
 user_ = __.require 'lib', 'user/user'
+{ Track } = __.require 'lib', 'track'
 
 module.exports = (req, res, nex)->
   { item, message } = req.body
@@ -25,4 +26,5 @@ module.exports = (req, res, nex)->
     transactions_.addMessage(requester, message, id)
     transactions_.byId(id)
     .then res.json.bind(res)
+  .then Track(req, ['transaction', 'request'])
   .catch error_.Handler(res)

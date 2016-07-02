@@ -120,3 +120,8 @@ module.exports = config =
     ip: null
     # setting prerendere's quota to half Google Books quota
     quota: 500
+  piwik:
+    enabled: false
+    endpoint: 'https://yourpiwikendpoint/piwik.php'
+    idsite: 1
+    rec: 1

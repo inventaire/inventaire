@@ -4,6 +4,7 @@ error_ = __.require 'lib', 'error/error'
 transactions_ = require './lib/transactions'
 { states, statesList } = __.require 'models', 'transaction'
 tests = __.require 'models','tests/common-tests'
+{ Track } = __.require 'lib', 'track'
 
 module.exports = (req, res, next)->
   { id, state } = req.body
@@ -20,8 +21,8 @@ module.exports = (req, res, next)->
   .then VerifyRights(state, userId)
   .then transactions_.updateState.bind(null, state, userId)
   .then res.json.bind(res)
+  .then Track(req, ['transaction', 'update', state])
   .catch error_.Handler(res)
-
 
 VerifyRights = (state, userId)->
   switch states[state].actor

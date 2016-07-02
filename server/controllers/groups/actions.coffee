@@ -5,6 +5,7 @@ error_ = __.require 'lib', 'error/error'
 groups_ = require './lib/groups'
 tests = __.require 'models','tests/common-tests'
 rightsVerification = require './lib/rights_verification'
+{ Track } = __.require 'lib', 'track'
 
 module.exports = (action, req, res)->
   { body } = req
@@ -23,4 +24,5 @@ module.exports = (action, req, res)->
   rightsVerification[action](userId, group, user)
   .then groups_[action].bind(null, body, userId)
   .then _.Ok(res)
+  .then Track(req, ['groups', action])
   .catch error_.Handler(res)

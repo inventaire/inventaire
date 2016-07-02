@@ -4,6 +4,7 @@ error_ = __.require 'lib', 'error/error'
 entities_ = require './lib/entities'
 { Lang } = __.require 'models', 'tests/regex'
 promises_ = __.require 'lib', 'promises'
+{ Track } = __.require 'lib', 'track'
 
 module.exports = (req, res) ->
   { body:entityData } = req
@@ -22,6 +23,7 @@ module.exports = (req, res) ->
   .then -> entities_.create entityData, userId
   .then entities_.edit.bind(null, userId, labels, claims)
   .then res.json.bind(res)
+  .then Track(req, ['entity', 'creation'])
   .catch error_.Handler(res)
 
 

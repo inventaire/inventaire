@@ -5,25 +5,26 @@ promises_ = __.require 'lib', 'promises'
 parseEmails = require './lib/parse_emails'
 user_ = __.require 'lib', 'user/user'
 sendInvitation = require './lib/send_invitations'
-
+{ Track } = __.require 'lib', 'track'
 
 module.exports.post = (req, res, next)->
   { body, user } = req
   { action } = body
   switch action
-    when 'by-emails' then return invitationByEmails user, body, res
+    when 'by-emails' then return invitationByEmails req, user, body, res
     else error_.bundle res, 'unknown action', 400, action
 
-
-invitationByEmails = (user, body, res)->
+invitationByEmails = (req, user, body, res)->
   { message } = body
   emailsString = body.emails
   promises_.start
   .then parseEmails.bind(null, emailsString, user.email)
   .then applyLimit
-  .then sendInvitationAndReturnData.bind(null, user, message)
-  .then _.Log('invitationByEmails data')
-  .then res.json.bind(res)
+  .then (emails)->
+    sendInvitationAndReturnData user, message, emails
+    .then _.Log('invitationByEmails data')
+    .then res.json.bind(res)
+    .then Track(req, ['invitation', 'email', null, emails.length])
   .catch error_.Handler(res)
 
 sendInvitationAndReturnData = (user, message, emails)->

@@ -3,6 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 groups_ = require './lib/groups'
+{ Track } = __.require 'lib', 'track'
 
 module.exports = (req, res)->
   { name, searchable, description, position } = req.body
@@ -17,4 +18,5 @@ module.exports = (req, res)->
     position: position?.map(parseFloat) or null
     creatorId: req.user._id
   .then res.json.bind(res)
+  .then Track(req, ['groups', 'create'])
   .catch error_.Handler(res)

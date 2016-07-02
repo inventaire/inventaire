@@ -5,6 +5,7 @@ intent = require './lib/intent'
 error_ = __.require 'lib', 'error/error'
 tests = __.require 'models', 'tests/common-tests'
 promises_ = __.require 'lib', 'promises'
+{ Track } = __.require 'lib', 'track'
 
 module.exports = (req, res, next) ->
   { user, action } = req.body
@@ -20,6 +21,7 @@ module.exports = (req, res, next) ->
   .then -> solveNewRelation action, user, userId
   .then _.success.bind(null, user, "#{action}: OK!")
   .then _.Ok(res)
+  .then Track(req, ['relation', action])
   .catch error_.Handler(res)
 
 solveNewRelation = (action, othersId, userId)->

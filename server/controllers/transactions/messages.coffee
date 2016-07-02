@@ -5,6 +5,7 @@ promises_ = __.require 'lib', 'promises'
 comments_ = __.require 'controllers', 'comments/lib/comments'
 transactions_ = require './lib/transactions'
 Radio = __.require 'lib', 'radio'
+{ Track } = __.require 'lib', 'track'
 
 module.exports =
   get: (req, res, next)->
@@ -35,4 +36,5 @@ module.exports =
           Radio.emit 'transaction:message', transaction
           return couchRes
     .then res.json.bind(res)
+    .then Track(req, ['transaction', 'message'])
     .catch error_.Handler(res)

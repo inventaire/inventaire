@@ -4,6 +4,7 @@ user_ = __.require 'lib', 'user/user'
 items_ = __.require 'controllers', 'items/lib/items'
 comments_ = __.require 'controllers', 'comments/lib/comments'
 error_ = __.require 'lib', 'error/error'
+{ Track } = __.require 'lib', 'track'
 
 publik =
   get: (req, res, next)->
@@ -31,6 +32,7 @@ privat =
     .then _.partial(comments_.verifyRightToWriteOrReadComment, userId)
     .then _.partial(comments_.addItemComment, userId, message)
     .then res.json.bind(res)
+    .then Track(req, ['item', 'comment'])
     .catch error_.Handler(res)
 
   update: (req, res, next)->

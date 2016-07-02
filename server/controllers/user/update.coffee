@@ -7,6 +7,7 @@ user_ = __.require 'lib', 'user/user'
 error_ = __.require 'lib', 'error/error'
 { basicUpdater } = __.require 'lib', 'doc_updates'
 emailUpdater = require('./lib/email_updater')(user_)
+{ Track } = __.require 'lib', 'track'
 
 module.exports = (req, res, next) ->
   # implies that req.isAuthenticated() is true
@@ -40,6 +41,7 @@ module.exports = (req, res, next) ->
 
     return updateAttribute(user, rootAttribute, attribute, value)
     .then _.Ok(res)
+    .then Track(req, ['user', 'update'])
     .catch error_.Handler(res)
 
   if attribute in concurrencial
@@ -47,6 +49,7 @@ module.exports = (req, res, next) ->
     return user_.availability[attribute](value, currentValue)
     .then _.Full(updateAttribute, null, user, rootAttribute, attribute, value)
     .then _.Ok(res)
+    .then Track(req, ['user', 'update'])
     .catch error_.Handler(res)
 
   error_.bundle res, "forbidden update: #{attribute} - #{value}", 403

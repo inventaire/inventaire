@@ -1,9 +1,10 @@
 CONFIG = require 'config'
-__ = require('config').universalPath
+__ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 user_ = __.require 'lib', 'user/user'
 pw_ = __.require('lib', 'crypto').passwords
 loginAttempts = require './login_attempts'
+{ track } = __.require 'lib', 'track'
 
 LocalStrategy = require('passport-local').Strategy
 
@@ -15,7 +16,9 @@ verify = (req, username, password, done)->
   language = user_.findLanguage(req)
   user_.create(username, email, 'local', language, password)
   .then (user)->
-    if user? then done null, user
+    if user?
+      track user._id, req.headers.referer, 'auth', 'signup', 'local'
+      done null, user
     else
       # case when user_.byId fails, rather unprobable
       done new Error "couldn't get user"

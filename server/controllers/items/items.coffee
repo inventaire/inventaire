@@ -5,6 +5,7 @@ user_ = __.require 'lib', 'user/user'
 couch_ = __.require 'lib', 'couch'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
+{ Track } = __.require 'lib', 'track'
 
 publicActions = require './public_actions'
 
@@ -30,8 +31,12 @@ module.exports = _.extend publicActions,
     promises_.start
     .then ->
       item = req.body
-      if item._id is 'new' then items_.create userId, item
-      else items_.update userId, item
+      if item._id is 'new'
+        items_.create userId, item
+        .tap Track(req, ['item', 'creation'])
+      else
+        items_.update userId, item
+        .tap Track(req, ['item', 'update'])
     .then couch_.getObjIfSuccess.bind(null, items_.db)
     .then (body)-> res.status(201).json body
     .catch error_.Handler(res)
