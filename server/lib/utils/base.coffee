@@ -54,15 +54,15 @@ module.exports = base =
   extractReqIp: (req)-> req.headers['x-forwarded-for']
 
   stringToInt: (str)->
-    unless typeof str is 'string' then throw new Error 'expected a string'
+    unless typeof str is 'string' then throw new Error "expected a string: #{str}"
     # testing the validity of the string is needed
     # to avoid getting NaN from parseInt
-    unless /^-?\d+$/.test str then throw new Error 'invalid integer string'
+    unless /^-?\d+$/.test str then throw new Error "invalid integer string: #{str}"
     return parseInt str
 
   stringToFloat: (str)->
-    unless typeof str is 'string' then throw new Error 'expected a string'
-    unless /^[-?\d\.]+$/.test str then throw new Error 'invalid integer string'
+    unless typeof str is 'string' then throw new Error "expected a string: #{str}"
+    unless /^[-?\d\.]+$/.test str then throw new Error "invalid integer string: #{str}"
     return parseFloat str
 
   isNonEmptyPlainObject: (obj)->
