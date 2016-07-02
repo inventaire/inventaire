@@ -10,12 +10,14 @@ routes = require './middlewares/routes'
 lang = require './middlewares/lang'
 statics = require './middlewares/statics'
 logger = require './middlewares/logger'
+content = require './middlewares/content'
 
 module.exports =
   common: [
     security.forceSSL
 
     americano.bodyParser()
+    content.recoverValidJson
     americano.methodOverride()
     americano.errorHandler
       dumpExceptions: true
