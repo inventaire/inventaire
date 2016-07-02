@@ -8,6 +8,7 @@ comments_ = __.require 'controllers', 'comments/lib/comments'
 deleteUserItems = __.require 'controllers', 'items/lib/delete_user_items'
 groups_ = __.require 'controllers', 'groups/lib/groups'
 notifs_ = __.require 'lib', 'notifications'
+{ Track } = __.require 'lib', 'track'
 
 module.exports = (req, res)->
   userId = req.user._id
@@ -16,6 +17,9 @@ module.exports = (req, res)->
 
   user_.softDeleteById userId
   .then cleanEverything.bind(null, userId)
+  # triggering track before logging out
+  # to get access to req.user before it's cleared
+  .tap Track(req, ['user', 'delete'])
   .then logout.bind(null, req)
   .then _.OkWarning(res, 'we will miss you :(')
   .catch error_.Handler(req, res)
