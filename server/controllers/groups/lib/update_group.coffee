@@ -6,14 +6,10 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 { BasicUpdater } = __.require 'lib', 'doc_updates'
 Radio = __.require 'lib', 'radio'
-parse = __.require('lib', 'parsers')('group')
 
 module.exports = (db)->
   updateSettings: (data, userId)->
     { group:groupId, attribute, value } = data
-
-    try value = parse attribute, value
-    catch err then return error_.bundle res, "value couldn't be parsed", 400
 
     unless attribute in updatable
       throw error_.new "#{attribute} can't be updated", 400, data

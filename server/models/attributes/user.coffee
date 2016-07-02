@@ -58,3 +58,7 @@ attributes.snapshot = [
  'username'
  'picture'
 ]
+
+attributes.acceptNullValue = [
+  'position'
+]

@@ -2,10 +2,9 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 
 { attributes, tests } = __.require 'models', 'user'
-{ updatable, concurrencial } = attributes
+{ updatable, concurrencial, acceptNullValue } = attributes
 user_ = __.require 'lib', 'user/user'
 error_ = __.require 'lib', 'error/error'
-parse = __.require('lib', 'parsers')('user')
 { basicUpdater } = __.require 'lib', 'doc_updates'
 emailUpdater = require('./lib/email_updater')(user_)
 
@@ -16,18 +15,13 @@ module.exports = (req, res, next) ->
 
   unless _.isNonEmptyString attribute
     return error_.bundle res, 'missing attribute', 400
-  unless value?
+
+  if (attribute not in acceptNullValue) and (not value?)
     return error_.bundle res, 'missing value', 400
 
   # doesnt change anything for normal attribute
   # returns the root object for deep attributes such as settings
   rootAttribute = attribute.split('.')[0]
-
-  try value = parse rootAttribute, value
-  catch err
-    _.error err, 'parsing error'
-    msg = "#{rootAttribute} value couldn't be parsed"
-    return error_.bundle res, msg, 400, value
 
   # support deep objects
   currentValue = _.get user, attribute
