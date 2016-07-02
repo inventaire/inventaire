@@ -11,7 +11,7 @@ module.exports = (req, res)->
   { title, refresh } = query
 
   unless title?.length > 0
-    return error_.bundle res, 'missing title', 400, query
+    return error_.bundle req, res, 'missing title', 400, query
 
   # Invalid the cache by passing refresh=true in the query.
   # Return null if refresh isn't truthy to let the cache set its default value
@@ -21,7 +21,7 @@ module.exports = (req, res)->
   cache_.get key, requestImage.bind(null, title), timespan
   .then _.Log('wp image url')
   .then _.Wrap(res, 'url')
-  .catch error_.Handler(res)
+  .catch error_.Handler(req, res)
 
 requestImage = (title)->
   url = "#{apiBase}#{title}"

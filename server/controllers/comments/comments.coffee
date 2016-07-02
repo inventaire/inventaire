@@ -15,16 +15,15 @@ publik =
     .then comments_.verifyRightToWriteOrReadComment.bind(null, userId)
     .then comments_.byItemId.bind(null, item)
     .then res.json.bind(res)
-    .catch error_.Handler(res)
+    .catch error_.Handler(req, res)
 
 privat =
   create: (req, res, next)->
     { item, message } = req.body
     userId = req.user._id
 
-    unless item? then return error_.bundle res, 'missing item id', 400
-    unless message? then return error_.bundle res, 'missing message', 400
-
+    unless item? then return error_.bundle req, res, 'missing item id', 400
+    unless message? then return error_.bundle req, res, 'missing message', 400
 
     _.log [item, message], 'item, message'
 
@@ -33,14 +32,14 @@ privat =
     .then _.partial(comments_.addItemComment, userId, message)
     .then res.json.bind(res)
     .then Track(req, ['item', 'comment'])
-    .catch error_.Handler(res)
+    .catch error_.Handler(req, res)
 
   update: (req, res, next)->
     { id, message } = req.body
     userId = req.user._id
 
-    unless id? then return error_.bundle res, 'missing comment id', 400
-    unless message? then return error_.bundle res, 'missing message id', 400
+    unless id? then return error_.bundle req, res, 'missing comment id', 400
+    unless message? then return error_.bundle req, res, 'missing message id', 400
 
 
     _.log [id, message], 'comment id, message'
@@ -49,7 +48,7 @@ privat =
     .then _.partial(comments_.verifyEditRight, userId)
     .then _.partial(comments_.update, message)
     .then res.json.bind(res)
-    .catch error_.Handler(res)
+    .catch error_.Handler(req, res)
 
   delete: (req, res, next)->
     { id } = req.query
@@ -61,7 +60,7 @@ privat =
       .then _.partial(comments_.verifyDeleteRight, userId, comment)
     .then comments_.delete
     .then _.Ok(res)
-    .catch error_.Handler(res)
+    .catch error_.Handler(req, res)
 
 module.exports =
   public: publik

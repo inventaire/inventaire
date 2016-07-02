@@ -21,10 +21,10 @@ module.exports = (req, res)->
   #   => protocal = 192.168.0.1, hostname = 1234
   # thus the need to check it really is a valid protocol
   unless protocol in validProtocols
-    return error_.bundle res, 'invalid protocol', 400, queriedUrl
+    return error_.bundle req, res, 'invalid protocol', 400, queriedUrl
 
   unless validHostname hostname, methodIsPost
-    return error_.bundle res, 'invalid hostname', 400, queriedUrl
+    return error_.bundle req, res, 'invalid hostname', 400, queriedUrl
 
   options =
     method: method
@@ -39,7 +39,7 @@ module.exports = (req, res)->
     _.log options.body, 'body'
 
   request options
-  .on 'error', ErrorHandler(res)
+  .on 'error', ErrorHandler(req, res)
   .pipe res
 
 # can't just make a whitelist as images from anywhere
@@ -58,7 +58,7 @@ validHostname = (hostname, methodIsPost)->
   return true
 
 # assuming a request error is on the client's fault => 400
-ErrorHandler = (res)-> (err)-> error_.handler res, err, 400
+ErrorHandler = (req, res)-> (err)-> error_.handler req, res, err, 400
 
 postWightlist = [
   'data.inventaire.io'

@@ -9,7 +9,7 @@ module.exports =
     { body } = req
     { key, value } = body
     unless key in whitelist
-      return error_.bundle res, 'non-whitelisted cookie', 403
+      return error_.bundle req, res, 'non-whitelisted cookie', 403
 
     res.cookie key, value
     _.info result = "cookie set: #{key} = #{value}"

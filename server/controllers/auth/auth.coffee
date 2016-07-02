@@ -21,13 +21,13 @@ exports.publicActions = (req, res, next)->
     when 'email-availability' then emailAvailability req, res
     when 'reset-password' then resetPassword req, res
     when 'submit' then fakeSubmit req, res
-    else error_.unknownAction res
+    else error_.unknownAction req, res
 
 exports.actions = (req, res, next)->
   { action } = req.query
   switch action
     when 'email-confirmation' then emailConfirmation req, res
     when 'update-password' then updatePassword req, res
-    else error_.unknownAction res
+    else error_.unknownAction req, res
 
 exports.token = require './token'

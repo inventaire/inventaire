@@ -9,12 +9,12 @@ error_ = __.require 'lib', 'error/error'
 module.exports = (req, res, next)->
   { user } = req
   unless user?
-    return error_.bundle res, 'user not found', 500
+    return error_.bundle req, res, 'user not found', 500
 
   promises_.start
   .then sendEmailValidation.bind(null, user)
   .then _.Ok(res)
-  .catch error_.Handler(res)
+  .catch error_.Handler(req, res)
 
 
 sendEmailValidation = (user)->

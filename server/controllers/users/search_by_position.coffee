@@ -5,9 +5,9 @@ parseBbox = __.require 'lib', 'parse_bbox'
 user_ = __.require 'lib', 'user/user'
 error_ = __.require 'lib', 'error/error'
 
-module.exports = (res, query) ->
+module.exports = (req, res, query) ->
   parseBbox query
   .then user_.byPosition
   .then publicUsersData
   .then _.Wrap(res, 'users')
-  .catch error_.Handler(res)
+  .catch error_.Handler(req, res)

@@ -32,7 +32,7 @@ exports.post = (req, res, next)->
 
   .then _.Log('upload post res')
   .then res.json.bind(res)
-  .catch error_.Handler(res)
+  .catch error_.Handler(req, res)
 
 validateFile = (file)->
   { type } = file

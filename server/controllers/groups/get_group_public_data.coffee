@@ -20,14 +20,14 @@ module.exports = (req, res)->
     when 'search-by-position' then searchByPositon
     when 'last' then lastGroups
 
-  unless handler? then return error_.unknownAction res
+  unless handler? then return error_.unknownAction req, res
 
   # wrapping in a promise chain to allow throwing
   # before generating a promise
   promises_.start
   .then handler.bind(null, query)
   .then res.json.bind(res)
-  .catch error_.Handler(res)
+  .catch error_.Handler(req, res)
 
 byId = (query)->
   { id } = query

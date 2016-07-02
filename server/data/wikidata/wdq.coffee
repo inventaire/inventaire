@@ -12,7 +12,7 @@ module.exports = (req, res)->
   { query, pid, qid, refresh } = req.query
   try _.types [query, pid, qid], 'strings...'
   catch err
-    return error_.bundle res, 'bad parameters', 400, err
+    return error_.bundle req, res, 'bad parameters', 400, err
 
   # Invalid the cache by passing refresh=true in the query.
   # Return null if refresh isn't truthy to let the cache set its default value
@@ -21,7 +21,7 @@ module.exports = (req, res)->
   key = "wdq:#{query}:#{pid}:#{qid}"
   cache_.get key, requestWdq.bind(null, query, pid, qid), timespan
   .then res.json.bind(res)
-  .catch error_.Handler(res)
+  .catch error_.Handler(req, res)
 
 requestWdq = (query, P, Q)->
   switch query

@@ -7,7 +7,7 @@ groups_ = require './lib/groups'
 
 module.exports = (req, res)->
   { name, searchable, description, position } = req.body
-  unless name? then return error_.bundle res, 'missing group name', 400
+  unless name? then return error_.bundle req, res, 'missing group name', 400
 
   groups_.create
     name: name
@@ -19,4 +19,4 @@ module.exports = (req, res)->
     creatorId: req.user._id
   .then res.json.bind(res)
   .then Track(req, ['groups', 'create'])
-  .catch error_.Handler(res)
+  .catch error_.Handler(req, res)

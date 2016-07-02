@@ -10,7 +10,7 @@ module.exports =
     _.log [subject, message, unknownUser], 'feedback'
 
     unless subject? or message?
-      return error_.bundle res, 'message is empty', 400
+      return error_.bundle req, res, 'message is empty', 400
 
     Radio.emit 'received:feedback', subject, message, user, unknownUser
 

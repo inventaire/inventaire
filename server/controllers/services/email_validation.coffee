@@ -15,12 +15,12 @@ module.exports = (req, res)->
   { email } = req.query
   email = qs.unescape email
   unless email?
-    return error_.bundle res, "missing email in query", 400
+    return error_.bundle req, res, "missing email in query", 400
 
   validateEmail email
   .then logIfInvalid
   .then res.json.bind(res)
-  .catch error_.Handler(res)
+  .catch error_.Handler(req, res)
 
 
 endpoint = "https://api:#{mailgunPubkey}@api.mailgun.net/v2/address/validate"

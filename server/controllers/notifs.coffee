@@ -8,7 +8,7 @@ promises_ = __.require 'lib', 'promises'
 exports.get = (req, res)->
   notifs_.byUserId req.user._id
   .then res.json.bind(res)
-  .catch error_.Handler(res)
+  .catch error_.Handler(req, res)
 
 exports.updateStatus = (req, res) ->
   { times } = req.body
@@ -22,4 +22,4 @@ exports.updateStatus = (req, res) ->
   .then ->
     _.success [userId, times], 'notifs marked as read'
     _.ok res
-  .catch error_.Handler(res)
+  .catch error_.Handler(req, res)

@@ -17,6 +17,6 @@ module.exports = (req, res)->
   .then _.Log('doc')
   .then entities_.updateClaim.bind(null, property, oldVal, newVal, userId)
   .then _.Ok(res)
-  .catch error_.Handler(res)
+  .catch error_.Handler(req, res)
 
 parseEmptyValue = (value)-> if value is '' then null else value

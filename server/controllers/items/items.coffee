@@ -17,14 +17,14 @@ module.exports = _.extend publicActions,
 
     items_.byOwner userId
     .then res.json.bind(res)
-    .catch error_.Handler(res)
+    .catch error_.Handler(req, res)
 
   put: (req, res, next) ->
     { _id, title, entity } = req.body
     _.log req.body, "PUT item: #{_id}"
-    unless _id? then return error_.bundle res, 'missing item id', 400
-    unless title? then return error_.bundle res, 'missing item title', 400
-    unless entity? then return error_.bundle res, 'missing item entity', 400
+    unless _id? then return error_.bundle req, res, 'missing item id', 400
+    unless title? then return error_.bundle req, res, 'missing item title', 400
+    unless entity? then return error_.bundle req, res, 'missing item entity', 400
 
     userId = req.user._id
 
@@ -39,7 +39,7 @@ module.exports = _.extend publicActions,
         .tap Track(req, ['item', 'update'])
     .then couch_.getObjIfSuccess.bind(null, items_.db)
     .then (body)-> res.status(201).json body
-    .catch error_.Handler(res)
+    .catch error_.Handler(req, res)
 
   del: (req, res, next) ->
     { id } = req.query
@@ -48,7 +48,7 @@ module.exports = _.extend publicActions,
     items_.verifyOwnership id, userId
     .then items_.delete.bind(null, id)
     .then res.json.bind(res)
-    .catch error_.Handler(res)
+    .catch error_.Handler(req, res)
 
   publicActions: (req, res, next)->
     { action } = req.query
@@ -63,4 +63,4 @@ module.exports = _.extend publicActions,
         publicActions.lastPublicItems req, res
       when 'users-public-items'
         publicActions.usersPublicItems req, res
-      else error_.unknownAction res
+      else error_.unknownAction req, res

@@ -15,28 +15,27 @@ module.exports = (req, res, next)->
   userId = user._id
 
   unless User.tests.password(newPassword)
-    return error_.bundle res, 'invalid new password', 400
+    return error_.bundle req, res, 'invalid new password', 400
 
   # classic password update
   if currentPassword?
     unless User.tests.password(currentPassword)
-      return error_.bundle res, 'invalid current password', 400
+      return error_.bundle req, res, 'invalid current password', 400
     test = verifyCurrentPassword(user, currentPassword).then filterInvalid
 
   # token-based password reset, with expiration date
   else if resetPassword?
     unless _.isNumber(resetPassword)
-      return error_.bundle res, 'invalid resetPassword timestamp', 500
+      return error_.bundle req, res, 'invalid resetPassword timestamp', 500
     test = testOpenResetPasswordWindow(resetPassword)
 
   unless test?
     # it is a resetPassword request but without a valid reset
-    return error_.bundle res, 'reset password token expired: request a new token', 403
-
+    return error_.bundle req, res, 'reset password token expired: request a new token', 403
 
   test
   .then updatePassword.bind(null, res, user, newPassword)
-  .catch error_.Handler(res)
+  .catch error_.Handler(req, res)
 
 
 updatePassword = (res, user, newPassword)->

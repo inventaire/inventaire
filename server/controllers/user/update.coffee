@@ -15,10 +15,10 @@ module.exports = (req, res, next) ->
   { attribute, value } = body
 
   unless _.isNonEmptyString attribute
-    return error_.bundle res, 'missing attribute', 400
+    return error_.bundle req, res, 'missing attribute', 400
 
   if (attribute not in acceptNullValue) and (not value?)
-    return error_.bundle res, 'missing value', 400
+    return error_.bundle req, res, 'missing value', 400
 
   # doesnt change anything for normal attribute
   # returns the root object for deep attributes such as settings
@@ -28,21 +28,23 @@ module.exports = (req, res, next) ->
   currentValue = _.get user, attribute
 
   if value is currentValue
-    return error_.bundle res, 'already up-to-date', 400
+    return error_.bundle req, res, 'already up-to-date', 400
 
   if attribute isnt rootAttribute
     unless tests.deepAttributesExistance attribute
-      return error_.bundle res, "invalid deep attribute #{attribute}: #{value}", 400
+      message = "invalid deep attribute #{attribute}: #{value}"
+      return error_.bundle req, res, message, 400
 
   if rootAttribute in updatable
     unless _.get(tests, rootAttribute)(value)
       type = _.typeOf value
-      return error_.bundle res, "invalid #{attribute}: #{value} (#{type})", 400
+      message = "invalid #{attribute}: #{value} (#{type})"
+      return error_.bundle req, res, message, 400
 
     return updateAttribute(user, rootAttribute, attribute, value)
     .then _.Ok(res)
     .then Track(req, ['user', 'update'])
-    .catch error_.Handler(res)
+    .catch error_.Handler(req, res)
 
   if attribute in concurrencial
     # checks for validity and availability (+ reserve words for username)
@@ -50,9 +52,9 @@ module.exports = (req, res, next) ->
     .then _.Full(updateAttribute, null, user, rootAttribute, attribute, value)
     .then _.Ok(res)
     .then Track(req, ['user', 'update'])
-    .catch error_.Handler(res)
+    .catch error_.Handler(req, res)
 
-  error_.bundle res, "forbidden update: #{attribute} - #{value}", 403
+  error_.bundle req, res, "forbidden update: #{attribute} - #{value}", 403
 
 updateAttribute = (user, rootAttribute, attribute, value)->
   updater = switch rootAttribute

@@ -17,10 +17,10 @@ module.exports = (req, res)->
   _.info query, 'entities search'
 
   unless _.isNonEmptyString search
-    return error_.bundle res, 'empty query' , 400
+    return error_.bundle req, res, 'empty query' , 400
 
   unless language?
-    return error_.bundle res, 'no language specified' , 400
+    return error_.bundle req, res, 'no language specified' , 400
 
   # make sure we have a 2 letters language code
   query.language = _.shortLang language
@@ -30,19 +30,24 @@ module.exports = (req, res)->
 
   if books_.isIsbn search
     _.log search, 'searchByIsbn'
-    searchByIsbn query, res
+    promises = searchByIsbn query
 
   else
     _.log search, 'searchByText'
-    searchByText query, res
+    promises = searchByText query
 
-searchByIsbn = (query, res)->
+  promises_.all promises
+  .then bundleResults
+  .then res.json.bind(res)
+  .catch error_.Handler(req, res)
+
+searchByIsbn = (query)->
   isbn = query.search
   isbnType = books_.isIsbn isbn
 
   cleanedIsbn = books_.cleanIsbnData isbn
 
-  promises = [
+  return promises = [
     getWikidataBookEntitiesByIsbn isbn, isbnType, query.language
     .timeout(10000)
     .catch _.Error('getWikidataBookEntitiesByIsbn')
@@ -51,8 +56,6 @@ searchByIsbn = (query, res)->
     .timeout(10000)
     .catch _.Error('getBooksDataFromIsbn err')
   ]
-
-  spreadRequests res, promises, 'searchByIsbn'
 
 getBooksDataFromIsbn = (cleanedIsbn)->
   booksData_.getDataFromIsbn cleanedIsbn
@@ -65,9 +68,8 @@ parseBooksDataFromIsbn = (res)->
   { source } = res
   { items: [res], source: source }
 
-searchByText = (query, res)->
-
-  promises = [
+searchByText = (query)->
+  return promises = [
     searchWikidataEntities query
     .timeout 10000
     .then (items)-> {items: items, source: 'wd', search: query.search}
@@ -83,14 +85,6 @@ searchByText = (query, res)->
     # catching errors to avoid crashing promises_.all
     .catch _.Error('getGoogleBooksDataFromText err')
   ]
-
-  spreadRequests res, promises, 'searchByText'
-
-spreadRequests = (res, promises, label)->
-  promises_.all promises
-  .then bundleResults
-  .then res.json.bind(res)
-  .catch error_.Handler(res)
 
 bundleResults = (results)->
   resp = {}

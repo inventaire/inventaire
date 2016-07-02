@@ -11,15 +11,15 @@ module.exports = (req, res)->
   { lang, title } = query
 
   unless tests.lang lang
-    return error_.bundle res, 'bad lang parameter', 400, query
+    return error_.bundle req, res, 'bad lang parameter', 400, query
 
   unless title?.length > 0
-    return error_.bundle res, 'missing title', 400, query
+    return error_.bundle req, res, 'missing title', 400, query
 
   key = "wpextract:#{lang}:#{title}"
   cache_.get key, requestExtract.bind(null, lang, title)
   .then res.json.bind(res)
-  .catch error_.Handler(res)
+  .catch error_.Handler(req, res)
 
 requestExtract = (lang, title)->
   promises_.get apiQuery(lang, title)

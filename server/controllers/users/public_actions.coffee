@@ -10,7 +10,7 @@ module.exports = (req, res, next) ->
   { action, ids } = query
   if action?
     switch action
-      when 'get-users' then getUsersPublicData res, ids
-      when 'search' then searchByUsername res, query
-      when 'search-by-position' then searchByPositon res, query
-      else error_.unknownAction res
+      when 'get-users' then getUsersPublicData req, res, ids
+      when 'search' then searchByUsername req, res, query
+      when 'search-by-position' then searchByPositon req, res, query
+      else error_.unknownAction req, res

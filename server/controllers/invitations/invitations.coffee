@@ -12,7 +12,7 @@ module.exports.post = (req, res, next)->
   { action } = body
   switch action
     when 'by-emails' then return invitationByEmails req, user, body, res
-    else error_.bundle res, 'unknown action', 400, action
+    else error_.bundle req, res, 'unknown action', 400, action
 
 invitationByEmails = (req, user, body, res)->
   { message } = body
@@ -25,7 +25,7 @@ invitationByEmails = (req, user, body, res)->
     .then _.Log('invitationByEmails data')
     .then res.json.bind(res)
     .then Track(req, ['invitation', 'email', null, emails.length])
-  .catch error_.Handler(res)
+  .catch error_.Handler(req, res)
 
 sendInvitationAndReturnData = (user, message, emails)->
   _.types arguments, ['object', 'string|undefined', 'array']

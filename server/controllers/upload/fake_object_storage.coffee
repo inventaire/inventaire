@@ -19,13 +19,13 @@ module.exports = (req, res, next)->
   [ hash, extension, others... ] = filename.split '.'
 
   if others.length > 0
-    return error_.bundle res, 'invalid image path', 400
+    return error_.bundle req, res, 'invalid image path', 400
 
   unless regex_.Sha1.test hash
-    return error_.bundle res, 'invalid image hash', 400
+    return error_.bundle req, res, 'invalid image hash', 400
 
   unless extension is 'jpg'
-    return error_.bundle res, 'accepts jpg extension only', 400
+    return error_.bundle req, res, 'accepts jpg extension only', 400
 
   res.sendFile "#{base}/#{filename}"
 

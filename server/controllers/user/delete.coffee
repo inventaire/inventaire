@@ -18,7 +18,7 @@ module.exports = (req, res)->
   .then cleanEverything.bind(null, userId)
   .then logout.bind(null, req)
   .then _.OkWarning(res, 'we will miss you :(')
-  .catch error_.Handler(res)
+  .catch error_.Handler(req, res)
 
 
 # what should happen to old:

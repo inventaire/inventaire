@@ -10,29 +10,29 @@ exports.signup = (req, res)->
   { strategy, username, email, password } = req.body
 
   unless _.isNonEmptyString username
-    return error_.bundle res, 'missing username parameter', 400
+    return error_.bundle req, res, 'missing username parameter', 400
 
   unless _.isNonEmptyString email
-    return error_.bundle res, 'missing email parameter', 400
+    return error_.bundle req, res, 'missing email parameter', 400
 
   unless _.isNonEmptyString password
-    return error_.bundle res, 'missing password parameter', 400
+    return error_.bundle req, res, 'missing password parameter', 400
 
-  next = LoggedIn(res)
+  next = LoggedIn req, res
   switch strategy
     when 'local' then passport_.authenticate.localSignup(req, res, next)
-    else error_.bundle res, "unknown signup strategy: #{strategy}", 400
+    else error_.bundle req, res, "unknown signup strategy: #{strategy}", 400
 
 exports.login = (req, res)->
   { strategy } = req.body
-  next = LoggedIn(res)
+  next = LoggedIn req, res
   switch strategy
     when 'local' then passport_.authenticate.localLogin(req, res, next)
-    else error_.bundle res, "unknown login strategy: #{strategy}", 400
+    else error_.bundle req, res, "unknown login strategy: #{strategy}", 400
 
-LoggedIn = (res)->
+LoggedIn = (req, res)->
   loggedIn = (result)->
-    if result instanceof Error then error_.handler res, result
+    if result instanceof Error then error_.handler req, res, result
     else
       setLoggedInCookie res
       _.ok res

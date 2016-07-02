@@ -9,7 +9,7 @@ exports.usernameAvailability = (req, res, next) ->
   # checks for validity, availability, reserve words
   user_.availability.username username
   .then -> res.json {username: username, status: 'available'}
-  .catch error_.Handler(res)
+  .catch error_.Handler(req, res)
 
 
 exports.emailAvailability = (req, res, next) ->
@@ -17,4 +17,4 @@ exports.emailAvailability = (req, res, next) ->
   # checks for validity, availability
   user_.availability.email email
   .then -> res.json {email: email, status: 'available'}
-  .catch error_.Handler(res)
+  .catch error_.Handler(req, res)

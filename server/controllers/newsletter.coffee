@@ -18,7 +18,7 @@ module.exports =
     .then createSubscriberDoc.bind(null, req)
     .then user_.db.post.bind(user_.db)
     .then _.OkWarning(res, deprecationWarning)
-    .catch error_.Handler(res)
+    .catch error_.Handler(req, res)
 
 createSubscriberDoc = (req)->
   { email } = req.body

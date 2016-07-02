@@ -8,14 +8,14 @@ module.exports = (req, res)->
   { query } = req
   { entity:entityUri, data } = query
   unless _.isNonEmptyString entityUri
-    return error_.bundle res, 'missing entity uri', 400, query
+    return error_.bundle req, res, 'missing entity uri', 400, query
 
   ip = _.extractReqIp req
 
   booksData_.getImages entityUri, data, ip
   .then formatResponse
   .then res.json.bind(res)
-  .catch error_.Handler(res)
+  .catch error_.Handler(req, res)
 
 formatResponse = (results)->
   results = _.compact _.forceArray(results)

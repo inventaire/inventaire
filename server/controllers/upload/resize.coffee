@@ -30,7 +30,7 @@ module.exports = (req, res, next)->
   else if /^[0-9]+$/.test rest
     url = req.query.href
     unless _.isUrl url
-      return error_.bundle res, 'invalid href query', 400
+      return error_.bundle req, res, 'invalid href query', 400
 
     urlCode = _.hashCode(url).toString()
     # the hashcode can be used by nginx for caching
@@ -38,14 +38,14 @@ module.exports = (req, res, next)->
     # it isnt in cache
     # here, we just check that we do get the same hash
     unless urlCode is rest
-      return error_.bundle res, 'hash code and href dont match', 400
+      return error_.bundle req, res, 'hash code and href dont match', 400
 
   else
-    return error_.bundle res, 'invalid image path', 400, rest
+    return error_.bundle req, res, 'invalid image path', 400, rest
 
-  getResizeImage res, url, dimensions
+  getResizeImage req, res, url, dimensions
 
-getResizeImage = (res, url, dimensions)->
+getResizeImage = (req, res, url, dimensions)->
   [ width, height ] = dimensions?.split('x') or [maxSize, maxSize]
   [ width, height ] = images_.applyLimits width, height
 
@@ -55,12 +55,12 @@ getResizeImage = (res, url, dimensions)->
   alreadySent = false
   handleBufferError = (buf)->
     err = new Error(buf.toString())
-    error_.handler res, err
+    error_.handler req, res, err
     alreadySent = true
 
   images_.shrinkStream request(url), width, height
   .stream (err, stdout, stderr)->
-    if err? then return error_.handler res, err
+    if err? then return error_.handler req, res, err
     stdout.on 'error', handleBufferError
     stderr.on 'data', handleBufferError
 
@@ -77,7 +77,7 @@ getResizeImage = (res, url, dimensions)->
       if alreadySent then return
       if receivedData then res.end()
       # usually solved by `sudo apt-get install graphicsmagick`
-      else error_.bundle res, 'empty graphicsmagick response: make sure graphicsmagick is installed on the server', 500
+      else error_.bundle req, res, 'empty graphicsmagick response: make sure graphicsmagick is installed on the server', 500
 
 parseReq = (req)->
   { pathname } = req._parsedUrl

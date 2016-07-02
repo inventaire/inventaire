@@ -17,61 +17,66 @@ module.exports =
     limit or= '15'
     offset or= '0'
 
-    try limit = _.stringToInt limit
-    catch err then return error_.bundle res, 'invalid limit', 400, [limit, err]
-    try offset = _.stringToInt offset
-    catch err then return error_.bundle res, 'invalid offset', 400, [offset, err]
+    try
+      limit = _.stringToInt limit
+    catch err
+      return error_.bundle req, res, 'invalid limit', 400, [limit, err]
+
+    try
+      offset = _.stringToInt offset
+    catch err
+      return error_.bundle req, res, 'invalid offset', 400, [offset, err]
 
     if limit > 100
-      return error_.bundle res, "limit can't be over 100", 400, limit
+      return error_.bundle req, res, "limit can't be over 100", 400, limit
 
     items_.publicByDate limit, offset, assertImage
-    .then bundleOwnersData.bind(null, res)
-    .catch error_.Handler(res)
+    .then bundleOwnersData.bind(null, req, res)
+    .catch error_.Handler(req, res)
 
   usersPublicItems: (req, res, next)->
     _.info req.query, 'usersPublicItems'
     { query } = req
     { users } = query
     unless _.isNonEmptyString(users)
-      return error_.bundle res, 'missing parameter: users', 400, query
+      return error_.bundle req, res, 'missing parameter: users', 400, query
 
     usersIds = users.split '|'
     unless _.all usersIds, tests.userId
-      return error_.bundle res, 'invalid user ids', 400, query
+      return error_.bundle req, res, 'invalid user ids', 400, query
 
     items_.bundleListings ['public'], usersIds
     .then (items)-> { items: items }
     .then res.json.bind(res)
-    .catch error_.Handler(res)
+    .catch error_.Handler(req, res)
 
   publicById: (req, res, next) ->
     { id } = req.query
     unless tests.itemId id
-      return error_.bundle res, 'bad item id', 400
+      return error_.bundle req, res, 'bad item id', 400
 
     items_.publicById id
     .then res.json.bind(res)
-    .catch error_.Handler(res)
+    .catch error_.Handler(req, res)
 
   publicByEntity: (req, res, next) ->
     _.info req.query, 'publicByEntity'
     { uri } = req.query
     unless tests.entityUri uri
-      return error_.bundle res, 'bad entity uri', 400
+      return error_.bundle req, res, 'bad entity uri', 400
 
     items_.publicByEntity uri
-    .then bundleOwnersData.bind(null, res)
-    .catch error_.Handler(res)
+    .then bundleOwnersData.bind(null, req, res)
+    .catch error_.Handler(req, res)
 
   publicByUsernameAndEntity: (req, res, next)->
     _.info req.query, 'publicByUserAndEntity'
     { username, uri } = req.query
 
     unless tests.entityUri uri
-      return error_.bundle res, 'bad entity uri', 400
+      return error_.bundle req, res, 'bad entity uri', 400
     unless tests.username username
-      return error_.bundle res, 'bad username', 400
+      return error_.bundle req, res, 'bad username', 400
 
     user_.getSafeUserFromUsername username
     .then (user)->
@@ -83,11 +88,11 @@ module.exports =
       items_.publicByOwnerAndEntity owner, uri
       .then (items)-> res.json {items: items, user: user}
 
-    .catch error_.Handler(res)
+    .catch error_.Handler(req, res)
 
-bundleOwnersData = (res, items)->
+bundleOwnersData = (req, res, items)->
   unless items?.length > 0
-    return error_.bundle res, 'no item found', 404
+    return error_.bundle req, res, 'no item found', 404
 
   users = getItemsOwners items
   user_.getUsersPublicData users

@@ -7,6 +7,6 @@ module.exports =
   get: (req, res)->
     user_.getUserRelations req.user._id
     .then res.json.bind(res)
-    .catch error_.Handler(res)
+    .catch error_.Handler(req, res)
 
   post: require './post'

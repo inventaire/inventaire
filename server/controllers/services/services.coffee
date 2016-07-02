@@ -7,4 +7,4 @@ exports.get = (req, res, next)->
   { service } = req.query
   switch service
     when 'email-validation' then return emailValidation req, res
-    else error_.bundle res, 'unknown service', 400, service
+    else error_.bundle req, res, 'unknown service', 400, service

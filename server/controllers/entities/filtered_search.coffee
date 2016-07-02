@@ -22,7 +22,7 @@ module.exports = (query, res)->
   .then -> searchWikidataEntities query
   .filter Filter(filter)
   .then res.json.bind(res)
-  .catch error_.Handler(res)
+  .catch error_.Handler(req, res)
 
 validateFilter = (query, filter)->
   [ prop, obj ] = filter.split ':'

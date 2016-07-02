@@ -19,7 +19,7 @@ exports.restrictApiAccess = (req, res, next) ->
   # else try one-time authentification means
   else if basicAuth(req, res, next) then return
   else
-    error_.bundle res, "unauthorized api access", 401, req.originalUrl
+    error_.bundle req, res, "unauthorized api access", 401, req.originalUrl
 
 isApiRoute = (route)-> /^\/(api|test)\//.test route
 

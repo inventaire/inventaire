@@ -13,7 +13,7 @@ module.exports = (req, res, next)->
   tests.pass 'transactionId', id
 
   unless state in statesList
-    return error_.bundle res, 'unknown state', 400, id, state
+    return error_.bundle req, res, 'unknown state', 400, id, state
 
   _.log [id, state], 'update transaction state'
 
@@ -22,7 +22,7 @@ module.exports = (req, res, next)->
   .then transactions_.updateState.bind(null, state, userId)
   .then res.json.bind(res)
   .then Track(req, ['transaction', 'update', state])
-  .catch error_.Handler(res)
+  .catch error_.Handler(req, res)
 
 VerifyRights = (state, userId)->
   switch states[state].actor

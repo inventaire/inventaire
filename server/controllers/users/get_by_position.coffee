@@ -12,13 +12,13 @@ module.exports =
       unless ids.length > 0 then return []
       return user_.getUsersPublicData ids
     .then _.Wrap(res, 'users')
-    .catch error_.Handler(res)
+    .catch error_.Handler(req, res)
 
   fetchItemsNearby: (req, res)->
     getNearbyUsers req
     .then items_.getUsersAndItemsPublicData
     .then _.Wraps(res, ['users', 'items'])
-    .catch error_.Handler(res)
+    .catch error_.Handler(req, res)
 
 getNearbyUsers = (req)->
   parseReq req

@@ -10,7 +10,7 @@ module.exports = (req, res) ->
   { body:entityData } = req
 
   unless _.isNonEmptyPlainObject entityData
-    return error_.bundle res, 'bad query', 400
+    return error_.bundle req, res, 'bad query', 400
 
   { _id:userId } = req.user
 
@@ -24,7 +24,7 @@ module.exports = (req, res) ->
   .then entities_.edit.bind(null, userId, labels, claims)
   .then res.json.bind(res)
   .then Track(req, ['entity', 'creation'])
-  .catch error_.Handler(res)
+  .catch error_.Handler(req, res)
 
 
 validateLabels = (labels)->

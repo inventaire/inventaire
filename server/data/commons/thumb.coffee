@@ -9,14 +9,14 @@ qs = require 'querystring'
 module.exports = (req, res)->
   { file, width } = req.query
 
-  unless file? then return error_.bundle res, 'missing file parameter', 400
+  unless file? then return error_.bundle req, res, 'missing file parameter', 400
 
   timespan = cache_.solveExpirationTime 'commons'
 
   key = "commons:#{file}:#{width}"
   cache_.get key, requestThumb.bind(null, file, width), timespan
   .then res.json.bind(res)
-  .catch error_.Handler(res)
+  .catch error_.Handler(req, res)
 
 requestThumb = (fileName, width)->
   options = requestOptions fileName, width

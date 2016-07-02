@@ -12,7 +12,7 @@ module.exports = (req, res, nex)->
 
   _.log [item, message], 'item request'
 
-  unless item? then return error_.bundle res, 'missing item id', 400
+  unless item? then return error_.bundle req, res, 'missing item id', 400
 
   items_.byId item
   .then transactions_.verifyRightToRequest.bind(null, requester)
@@ -27,4 +27,4 @@ module.exports = (req, res, nex)->
     transactions_.byId(id)
     .then res.json.bind(res)
   .then Track(req, ['transaction', 'request'])
-  .catch error_.Handler(res)
+  .catch error_.Handler(req, res)

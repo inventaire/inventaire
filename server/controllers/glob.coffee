@@ -8,16 +8,16 @@ module.exports =
     if missedApiRequest(req)
       # the request didnt match previous routes
       err = "GET #{req._parsedUrl.pathname}: api route not found"
-      error_.bundle res, err, 404
+      error_.bundle req, res, err, 404
     else if imageHeader(req)
       err = "GET #{pathname}: wrong content-type: #{req.headers.accept}"
-      error_.bundle res, err, 404
+      error_.bundle req, res, err, 404
     else
       # the routing will be done on the client side
       res.sendFile './index.html', {root: __.path('client', 'public')}
 
   api: (req, res)->
-    error_.bundle res, 'wrong API route or http verb', 400,
+    error_.bundle req, res, 'wrong API route or http verb', 400,
       verb: req.method
       url: req._parsedUrl.href
 

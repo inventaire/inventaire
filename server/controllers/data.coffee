@@ -17,4 +17,4 @@ module.exports.get = (req, res, next)->
     when 'wp-extract' then return wikipediaExtract req, res
     when 'openlibrary-cover' then return openLibraryCover req, res
     when 'en-wikipedia-image' then return enWikipediaImage req, res
-    else error_.bundle res, 'unknown data provider', 400, req.query
+    else error_.bundle req, res, 'unknown data provider', 400, req.query

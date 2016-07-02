@@ -11,9 +11,9 @@ module.exports = (req, res, next) ->
   { user, action } = req.body
 
   unless _.isString(action) and action in possibleActions
-    return error_.bundle res, 'bad actions parameter', 400, req.body
+    return error_.bundle req, res, 'bad actions parameter', 400, req.body
   unless tests.userId user
-    return error_.bundle res, 'bad user parameter', 400, req.body
+    return error_.bundle req, res, 'bad user parameter', 400, req.body
 
   userId = req.user._id
 
@@ -22,7 +22,7 @@ module.exports = (req, res, next) ->
   .then _.success.bind(null, user, "#{action}: OK!")
   .then _.Ok(res)
   .then Track(req, ['relation', action])
-  .catch error_.Handler(res)
+  .catch error_.Handler(req, res)
 
 solveNewRelation = (action, othersId, userId)->
   if userId is othersId

@@ -15,4 +15,4 @@ module.exports = (req, res, next)->
   .then transactions_.verifyRightToInteract.bind(null, userId)
   .then transactions_.markAsRead.bind(null, userId)
   .then _.Ok(res)
-  .catch error_.Handler(res)
+  .catch error_.Handler(req, res)

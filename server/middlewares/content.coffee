@@ -26,7 +26,7 @@ module.exports =
       next()
     # if it doesn't work, let it go
     catch err
-      error_.bundle res, """
+      error_.bundle req, res, """
         Couldn't recover JSON data sent with "Content-Type: #{urlencoded}".
         Try using a "Content-Type: application/json" header instead
         """, 400

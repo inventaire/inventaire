@@ -18,4 +18,4 @@ module.exports = (req, res, ids) ->
     return networkIds = _.uniq coGroupMembers.concat(friends)
   .then items_.friendsListings
   .then res.json.bind(res)
-  .catch error_.Handler(res)
+  .catch error_.Handler(req, res)

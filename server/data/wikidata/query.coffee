@@ -14,12 +14,12 @@ module.exports = (req, res)->
   { query:queryName, refresh } = params
 
   unless _.isNonEmptyString queryName
-    return error_.bundle res, 'missing query parameter', 400, params
+    return error_.bundle req, res, 'missing query parameter', 400, params
 
   # Converting from kebab case to snake case
   params.query = queryName = queryName.replace /-/g, '_'
   unless queryName in possibleQueries
-    return error_.bundle res, 'unknown query', 400, params
+    return error_.bundle req, res, 'unknown query', 400, params
 
   { parameters } = queries[queryName]
 
@@ -28,7 +28,7 @@ module.exports = (req, res)->
   for k in parameters
     value = params[k]
     unless parametersTests[k](value)
-      return error_.bundle res, "invalid #{k}", 400, params
+      return error_.bundle req, res, "invalid #{k}", 400, params
 
   # Invalid the cache by passing refresh=true in the query.
   # Return null if refresh isn't truthy to let the cache set its default value
@@ -42,7 +42,7 @@ module.exports = (req, res)->
 
   cache_.get key, runQuery.bind(null, params, key), timespan
   .then _.Wrap(res, 'entities')
-  .catch error_.Handler(res)
+  .catch error_.Handler(req, res)
 
 parametersTests =
   qid: wdk.isWikidataEntityId

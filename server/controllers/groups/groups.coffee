@@ -16,13 +16,13 @@ module.exports =
     get: (req, res)->
       allUserGroups req.user._id
       .then res.json.bind(res)
-      .catch error_.Handler(res)
+      .catch error_.Handler(req, res)
 
     post: (req, res)->
       { action } = req.body
       switch action
         when 'create' then create req, res
-        else error_.unknownAction res, action
+        else error_.unknownAction req, res, action
 
     put: (req, res)->
       { action } = req.body
@@ -33,6 +33,6 @@ module.exports =
         action = _.camelCase action
 
       unless action in possibleActions
-        return error_.unknownAction res, action
+        return error_.unknownAction req, res, action
 
       handleAction action, req, res

@@ -7,7 +7,7 @@ module.exports = error_ = {}
 
 # help bundling information at error instanciation
 # so that it can be catched and parsed in a standardized way
-# at the end of a promise chain, typically by a .catch error_.Handler(res)
+# at the end of a promise chain, typically by a .catch error_.Handler(req, res)
 error_.new = (message, filter, context...)->
   _.types [message, filter], ['string', 'string|number']
   err = new Error message
@@ -28,23 +28,23 @@ error_.reject = (args...)->
 # while out or at the end of a promise chain
 # DO NOT use inside a promise chain as error_.handler
 # send res, which, if there is an error, should be done by the final .catch
-error_.bundle = (res, args...)->
+error_.bundle = (req, res, args...)->
   # first create the new error
   err = error_.new.apply null, args
   # then make the handler deal with the res object
-  error_.handler res, err
+  error_.handler req, res, err
 
 # a standardized way to return a 400 unknown action
 # on controllers top level switches
-error_.unknownAction = (res, context)->
-  error_.bundle res, 'unknown action', 400, context
+error_.unknownAction = (req, res, context)->
+  error_.bundle req, res, 'unknown action', 400, context
 
 error_.handler = errorHandler = require './error_handler'
 
 # error_.handler with a binded res object
 # to be used in final promise chains like so:
-# .catch error_.Handler(res)
-error_.Handler = (res)-> errorHandler.bind(null, res)
+# .catch error_.Handler(req, res)
+error_.Handler = (req, res)-> errorHandler.bind null, req, res
 
 error_.notFound = (context)->
   err = error_.new 'not found', 404, context
