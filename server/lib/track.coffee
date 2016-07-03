@@ -30,17 +30,22 @@ track = (userId, url, category, action, name, value)->
   args = [userId, url, category, action, name, value]
   _.log args, 'track args'
 
-  promises_.post
-    url: endpoint
-    body:
-      idsite: idsite
-      rec: rec
-      url: url
-      uid: userId
-      e_c: category
-      e_a: action
-      e_n: name
-      e_v: value
+  queryUrl = _.buildPath endpoint,
+    idsite: idsite
+    rec: rec
+    url: url
+    uid: userId
+    e_c: category
+    e_a: action
+    e_n: name
+    e_v: value
+
+  promises_.get queryUrl
+  .catch _.Error('track error')
+
+  # do not return the promise as a failing track request should make the rest
+  # of operations fail
+  return
 
 module.exports =
   track: track
