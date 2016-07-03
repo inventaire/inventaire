@@ -24,7 +24,8 @@ module.exports = (analyticsLevelDB)->
     if sessionIsOver(refTime, doc?.time?.last)
       putInCouch(doc)
       .then clearLevel.bind(null, stats, doc._id)
-      .catch _.Warn('coulndt put report in couch')
+      .catch dropIfConflict.bind(null, stats, doc._id)
+      .catch _.Error('report transfer err')
     else
       stats.kept++
 
@@ -45,20 +46,19 @@ module.exports = (analyticsLevelDB)->
 
   clearLevel = (stats, docId, res)->
     _.types arguments, ['object', 'string', 'object']
-    if res.ok
-      if verbosity > 1
-        _.log docId, 'succesfully transfered to couch. deleting in level'
-      stats.transfered++
-      analyticsLevelDB.del docId
+    if verbosity > 1
+      _.log docId, 'succesfully transfered to couch. deleting in level'
+    stats.transfered++
+    analyticsLevelDB.del docId
+
+  dropIfConflict = (stats, docId, err)->
+    # delete the doc in any case
+    analyticsLevelDB.del docId
+    if err.statusCode is 409
+      _.warn 'report in conflict: dropping report update'
+      stats.dropped++
     else
-      _.log arguments, docId
-      if res.error is 'conflict'
-        _.warn 'report in conflict: dropping report update'
-        analyticsLevelDB.del docId
-        stats.dropped++
-      else
-        _.warn "not transfered to couch: #{docId}"
-        stats.kept++
+      throw err
 
   logStats = (stats)->
     if verbosity > 2
