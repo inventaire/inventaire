@@ -12,10 +12,8 @@ module.exports = (req, res)->
   groups_.create
     name: name
     description: description or ''
-    # convert from String to Boolean with true as default value
-    searchable: searchable isnt 'false'
-    # position can be either at latLng array or null (without position)
-    position: position?.map(parseFloat) or null
+    searchable: searchable
+    position: position or null
     creatorId: req.user._id
   .then res.json.bind(res)
   .then Track(req, ['groups', 'create'])
