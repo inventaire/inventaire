@@ -14,14 +14,15 @@ options =
 verify = (req, username, password, done)->
   { email } = req.body
   language = user_.findLanguage(req)
-  user_.create(username, email, 'local', language, password)
+  user_.create username, email, 'local', language, password
   .then (user)->
     if user?
-      track user._id, req.headers.referer, 'auth', 'signup', 'local'
       done null, user
+      req.user = user
+      track req, ['auth', 'signup', 'local']
     else
       # case when user_.byId fails, rather unprobable
-      done new Error "couldn't get user"
+      done new Error("couldn't get user")
 
   # the error will be logged by the final error_.handler
   .catch done

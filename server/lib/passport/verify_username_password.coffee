@@ -4,7 +4,6 @@ _ = __.require 'builders', 'utils'
 user_ = __.require 'lib', 'user/user'
 pw_ = __.require('lib', 'crypto').passwords
 loginAttempts = require './login_attempts'
-{ track } = __.require 'lib', 'track'
 
 LocalStrategy = require('passport-local').Strategy
 
@@ -27,7 +26,6 @@ returnIfValid = (done, password, username, user)->
   if user?
     verifyUserPassword(user, password)
     .then (valid)->
-      track user._id, '/login', 'auth', 'login', 'local'
       if valid then done null, user
       else invalidUsernameOrPassword(done, username, 'validity test')
     .catch invalidUsernameOrPassword.bind(null, done, username, 'verifyUserPassword')
