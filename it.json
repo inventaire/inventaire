@@ -31,7 +31,7 @@
     "declined": "%{username} ha declinato la tua richiesta",
     "confirmed": "%{username} ha confermato di aver ricevuto il libro",
     "returned": "%{username} ha confermato di aver ricevuto indietro il libro",
-    "cancelled": null,
+    "cancelled": "%{username} ha annullato la transazione",
     "go_to_user_inventory": "vai all'inventario di %{username}",
     "group_invite_subject": "%{actingUserUsername} ti ha invitato a entrare a far parte del gruppo %{groupName}!",
     "group_invite_button": "via alla pagina del gruppo per accettare o declinare l'invito",
