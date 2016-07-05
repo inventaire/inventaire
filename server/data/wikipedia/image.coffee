@@ -24,6 +24,7 @@ module.exports = (req, res)->
   .catch error_.Handler(req, res)
 
 requestImage = (title)->
+  title = encodeURIComponent title
   url = "#{apiBase}#{title}"
   _.log url, 'url'
 
