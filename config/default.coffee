@@ -1,7 +1,7 @@
 contactAddress = 'hello@inventaire.io'
 
 module.exports = config =
-  env: 'default'
+  env: 'dev'
   universalPath: require './universal_path'
   offline: false
   protocol: 'http'

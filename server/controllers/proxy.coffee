@@ -1,4 +1,6 @@
-__ = require('config').universalPath
+CONFIG = require 'config'
+__ = CONFIG.universalPath
+{ env } = CONFIG
 _ = __.require 'builders', 'utils'
 url = require 'url'
 request = require 'request'
@@ -48,18 +50,21 @@ validHostname = (hostname, methodIsPost)->
   unless hostname? then return false
 
   if methodIsPost
-    unless hostname in postWightlist then return false
+    unless hostname in postWhitelist then return false
 
   # prevent access to resources behind the firewall
-  if hostname is 'localhost' then return false
+  if hostname is 'localhost' and env isnt 'dev' then return false
   # conservative rule to make sure the above
   # no-behind-firewall-snuffing restriction is respected
   if isIp hostname then return false
   return true
 
 # assuming a request error is on the client's fault => 400
-ErrorHandler = (req, res)-> (err)-> error_.handler req, res, err, 400
+ErrorHandler = (req, res)-> (err)-> error_.handler req, res, err, 400, req.originalUrl
 
-postWightlist = [
+postWhitelist = [
+  # known case: when using services without proper CORS headers
   'data.inventaire.io'
+  # known case: when using those same services in development
+  'localhost'
 ]
