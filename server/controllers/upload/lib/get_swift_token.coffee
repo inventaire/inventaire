@@ -30,7 +30,7 @@ module.exports = ->
             username: username
             password: password
           tenantName: tenantName
-    .then _.property('body')
+    .get 'body'
     .then parseIdentificationRes
     .catch _.ErrorRethrow('getToken')
 

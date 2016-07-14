@@ -28,7 +28,7 @@ module.exports =
     transactions_.byId transaction
     .then (transaction)->
       promises_.resolve transactions_.verifyRightToInteract(userId, transaction)
-      .then _.property('_id')
+      .get '_id'
       .then comments_.addTransactionComment.bind(null, userId, message)
       .then (couchRes)->
         transactions_.updateReadForNewMessage userId, transaction

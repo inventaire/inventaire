@@ -69,7 +69,7 @@ resolveWikiUrl = (url)->
 resolveWikiTitle = (title, lang='en')->
   url = "#{base}?action=wbgetentities&sites=#{lang}wiki&format=json&props=info&titles=#{title}"
   promises_.get url
-  .then _.property('entities')
+  .get 'entities'
   .then _.values
   .then _.Log('values')
   .map _.property('id')

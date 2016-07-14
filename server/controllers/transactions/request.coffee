@@ -21,7 +21,7 @@ module.exports = (req, res, nex)->
     user_.byIds([owner, requester])
     .spread transactions_.create.bind(null, itemDoc)
 
-  .then _.property('id')
+  .get 'id'
   .then (id)->
     transactions_.addMessage(requester, message, id)
     transactions_.byId(id)

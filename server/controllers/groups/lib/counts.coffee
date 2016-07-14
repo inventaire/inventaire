@@ -1,7 +1,7 @@
 module.exports = (groups_, _)->
   pendingGroupInvitationsCount: (userId)->
     groups_.byInvitedUser userId
-    .then _.property('length')
+    .get 'length'
 
   pendingGroupRequestsCount: (userId)->
     groups_.byAdmin userId

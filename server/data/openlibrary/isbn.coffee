@@ -20,7 +20,7 @@ requestBook = (isbn)->
 
 getBooksDataByIsbn = (isbn)->
   promises_.get isbnUrl(isbn)
-  .then _.property('key')
+  .get 'key'
   .then _.Log('key')
   .then (key)->
     if key? then promises_.get getUrlFromKey(key)

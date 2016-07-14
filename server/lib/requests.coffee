@@ -4,7 +4,7 @@ breq = require 'bluereq'
 
 req = (verb, url, options)->
   breq[verb] mergeOptions(url, options)
-  .then _.property('body')
+  .get 'body'
   .catch formatErr
 
 head = (url, options)->

@@ -11,7 +11,7 @@ module.exports = (query)->
   { search } = query
   promises_.get searchUrl(search)
   # /!\ return works, not editions
-  .then _.property('docs')
+  .get 'docs'
   .then filterEditions
   .then formatBooks
   .tap logFirstBook
