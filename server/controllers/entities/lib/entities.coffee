@@ -5,6 +5,7 @@ promises_ = __.require 'lib', 'promises'
 Entity = __.require 'models', 'entity'
 patches_ = require './patches'
 books_ = __.require 'lib', 'books'
+couch_ = __.require 'lib', 'couch'
 validateClaimValue = require('./validate_claim_value')(db)
 
 { validateProperty } = require './properties'
@@ -23,6 +24,11 @@ module.exports = entities_ =
     isbn = books_.normalizeIsbn isbn
     P = if isbn.length is 13 then 'P212' else 'P957'
     db.viewFindOneByKey 'byClaim', [P, isbn]
+
+  idsByClaim: (property, value)->
+    promises_.try -> validateProperty property
+    .then -> db.view 'entities', 'byClaim', { key: [ property, value ] }
+    .then couch_.mapId
 
   create: ->
     # Create a new entity doc.

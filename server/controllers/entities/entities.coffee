@@ -6,6 +6,7 @@ getImages = require './get_images'
 getIsbns = require './get_isbns'
 getEntities = require './get_entities'
 createEntity = require './create_entity'
+idsByClaim = require './ids_by_claim'
 updateClaim = require './update_claim'
 updateLabel = require './update_label'
 
@@ -20,6 +21,7 @@ module.exports =
       when 'get-images' then return getImages req, res
       when 'get-inv-entities' then return getEntities req, res
       when 'get-isbn-entities' then return getIsbns req, res
+      when 'ids-by-claim' then return idsByClaim req, res
       else error_.unknownAction req, res
 
   # authentified
