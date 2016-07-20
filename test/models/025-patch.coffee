@@ -36,6 +36,17 @@ describe 'patch', ->
       create.should.throw()
       done()
 
+    it 'should throw if passed identical objects', (done)->
+      create = Patch.create.bind(null, validUserId, doc, doc)
+      create.should.throw()
+      done()
+
+    it 'should throw if there are no changes', (done)->
+      docClone = _.cloneDeep doc
+      create = Patch.create.bind(null, validUserId, doc, docClone)
+      create.should.throw()
+      done()
+
     it 'should throw if passed an updated doc without id', (done)->
       invalidDoc = _.extend {}, update, { _id: 'invalid id' }
       create = Patch.create.bind(null, validUserId, doc, invalidDoc)

@@ -37,17 +37,19 @@ module.exports = entities_ =
     db.putAndReturn updatedDoc
     .tap -> patches_.create userId, currentDoc, updatedDoc
 
-  updateClaim: (property, oldVal, newVal, userId, doc)->
+  updateClaim: (property, oldVal, newVal, userId, currentDoc)->
+    updatedDoc = _.cloneDeep currentDoc
     entities_.validateClaim property, newVal, true
     .then (formattedValue)->
-      Entity.updateClaim doc, property, oldVal, formattedValue
-    .then putUpdate.bind(null, userId, doc)
+      Entity.updateClaim updatedDoc, property, oldVal, formattedValue
+    .then putUpdate.bind(null, userId, currentDoc)
 
   validateClaim: (property, value, letEmptyValuePass)->
     promises_.try -> validateProperty property
     .then -> validateClaimValue property, value, letEmptyValuePass
 
 putUpdate = (userId, currentDoc, updatedDoc)->
+  _.log currentDoc, 'current doc'
   _.log updatedDoc, 'updated doc'
   _.types arguments, ['string', 'object', 'object']
   db.putAndReturn updatedDoc

@@ -1,5 +1,6 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
+error_ = __.require 'lib', 'error/error'
 jiff = require 'jiff'
 tests = require './tests/common-tests'
 { versionned } = require './attributes/entity'
@@ -10,6 +11,9 @@ module.exports =
     _.type currentDoc, 'object'
     _.type updatedDoc, 'object'
     tests.pass 'couchUuid', updatedDoc._id
+
+    if currentDoc is updatedDoc
+      throw error_.new 'invalid update: same document objects', 500, arguments
 
     # Use the updated doc _id as the the current doc
     # will miss an _id at creation.
@@ -27,4 +31,9 @@ module.exports =
 getDiff = (currentDoc, updatedDoc)->
   currentDoc = _.pick currentDoc, versionned
   updatedDoc = _.pick updatedDoc, versionned
-  return jiff.diff currentDoc, updatedDoc
+  patch = jiff.diff currentDoc, updatedDoc
+
+  if patch.length is 0
+    throw error_.new 'empty patch', 500, arguments
+
+  return patch
