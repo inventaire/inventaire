@@ -96,6 +96,9 @@ module.exports = routes =
   'api/upload':
     post: upload.post
 
+  'api/tests*':
+    post: tests.post
+
   'api/tests/public*':
     get: tests.get
     post: tests.post

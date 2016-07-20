@@ -33,6 +33,7 @@ module.exports =
     auth.session
     auth.passport.initialize
     auth.passport.session
+    content.dedupplicateRequests
 
     routes.restrictApiAccess
     # security.csrf  #not correctly implemented yet
