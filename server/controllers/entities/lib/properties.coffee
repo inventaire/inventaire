@@ -38,7 +38,7 @@ properties =
 whitelist = Object.keys properties
 
 validateProperty = (property)->
-  unless /P\d+/.test property
+  unless /^wdt:P\d+$/.test property
     throw error_.new 'invalid property', 400, property
 
   unless property in whitelist
