@@ -20,7 +20,7 @@ module.exports = (req, res) ->
 
   promises_.try -> validateLabels labels, claims
   .then -> validateClaims claims
-  .then -> entities_.create entityData, userId
+  .then entities_.create
   .then entities_.edit.bind(null, userId, labels, claims)
   .then res.json.bind(res)
   .then Track(req, ['entity', 'creation'])
@@ -50,8 +50,11 @@ validateClaims = (claims)->
 
   promises = []
 
+  currentClaims = Object.freeze {}
+  oldVal = null
+
   for prop, array of claims
-    for value in array
-      promises.push entities_.validateClaim(prop, value)
+    for newVal in array
+      promises.push entities_.validateClaim(currentClaims, prop, oldVal, newVal, false)
 
   return promises_.all promises

@@ -11,9 +11,11 @@ entityBase =
   test: EntityUri.test.bind EntityUri
   format: _.identity
 
+entityUniqueValue = _.extend {}, entityBase, { uniqueValue: true }
+
 properties =
   # instance of
-  'wdt:P31': entityBase
+  'wdt:P31': entityUniqueValue
   # author
   'wdt:P50': entityBase
   # genre
@@ -24,8 +26,9 @@ properties =
     test: (isbn)-> books_.isIsbn(isbn) is 13
     concurrency: true
     format: books_.normalizeIsbn
+    uniqueValue: true
   # edition or translation of
-  'wdt:P629': entityBase
+  'wdt:P629': entityUniqueValue
   # main subject
   'wdt:P921': entityBase
   # isbn 10
@@ -34,6 +37,7 @@ properties =
     test: (isbn)-> books_.isIsbn(isbn) is 10
     concurrency: true
     format: books_.normalizeIsbn
+    uniqueValue: true
 
 whitelist = Object.keys properties
 

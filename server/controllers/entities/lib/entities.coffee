@@ -50,14 +50,15 @@ module.exports = entities_ =
 
   updateClaim: (property, oldVal, newVal, userId, currentDoc)->
     updatedDoc = _.cloneDeep currentDoc
-    entities_.validateClaim property, newVal, true
+    { claims } = currentDoc
+    entities_.validateClaim claims, property, oldVal, newVal, true
     .then (formattedValue)->
       Entity.updateClaim updatedDoc, property, oldVal, formattedValue
     .then putUpdate.bind(null, userId, currentDoc)
 
-  validateClaim: (property, value, letEmptyValuePass)->
+  validateClaim: (claims, property, oldVal, newVal, letEmptyValuePass)->
     promises_.try -> validateProperty property
-    .then -> validateClaimValue property, value, letEmptyValuePass
+    .then -> validateClaimValue claims, property, oldVal, newVal, letEmptyValuePass
 
 putUpdate = (userId, currentDoc, updatedDoc)->
   _.log currentDoc, 'current doc'
