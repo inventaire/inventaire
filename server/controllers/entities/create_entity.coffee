@@ -18,7 +18,7 @@ module.exports = (req, res) ->
 
   { labels, claims } = entityData
 
-  promises_.try -> validateLabels labels
+  promises_.try -> validateLabels labels, claims
   .then -> validateClaims claims
   .then -> entities_.create entityData, userId
   .then entities_.edit.bind(null, userId, labels, claims)
@@ -27,8 +27,9 @@ module.exports = (req, res) ->
   .catch error_.Handler(req, res)
 
 
-validateLabels = (labels)->
-  unless _.isNonEmptyPlainObject labels
+validateLabels = (labels, claims)->
+  type = claims['wdt:P31']?[0]
+  if type not in optionalLabelsTypes and not _.isNonEmptyPlainObject labels
     throw error_.new "invalid labels", 400, labels
 
   for lang, value of labels
@@ -37,6 +38,11 @@ validateLabels = (labels)->
 
     unless _.isNonEmptyString value
       throw error_.new "invalid label value: #{value}", 400, labels
+
+optionalLabelsTypes = [
+  # editions can borrow their label to the work they are bound to
+  'wd:Q3331189'
+]
 
 validateClaims = (claims)->
   unless _.isNonEmptyPlainObject claims
