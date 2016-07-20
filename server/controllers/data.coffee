@@ -1,15 +1,18 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
-wdq = __.require 'data','wikidata/wdq'
-wdQuery = __.require 'data','wikidata/query'
-thumb = __.require 'data','commons/thumb'
-wikipediaExtract = __.require 'data','wikipedia/extract'
-enWikipediaImage = __.require 'data','wikipedia/image'
-openLibraryCover = __.require 'data','openlibrary/cover'
+wdq = __.require 'data', 'wikidata/wdq'
+wdQuery = __.require 'data', 'wikidata/query'
+thumb = __.require 'data', 'commons/thumb'
+wikipediaExtract = __.require 'data', 'wikipedia/extract'
+enWikipediaImage = __.require 'data', 'wikipedia/image'
+openLibraryCover = __.require 'data', 'openlibrary/cover'
+isbnData = __.require 'data', 'isbn'
 
 module.exports.get = (req, res, next)->
-  { api } = req.query
+  { api, isbn } = req.query
+  if _.isNonEmptyString isbn then return isbnData req, res
+
   switch api
     when 'wdq' then return wdq req, res
     when 'wd-query' then return wdQuery req, res
