@@ -38,14 +38,14 @@ module.exports = entities_ =
 
   edit: (userId, updatedLabels, updatedClaims, currentDoc)->
     updatedDoc = _.cloneDeep currentDoc
-    updatedDoc = Entity.addLabels updatedDoc, updatedLabels
+    updatedDoc = Entity.setLabels updatedDoc, updatedLabels
     updatedDoc = Entity.addClaims updatedDoc, updatedClaims
     db.putAndReturn updatedDoc
     .tap -> patches_.create userId, currentDoc, updatedDoc
 
   updateLabel: (lang, value, userId, currentDoc)->
     updatedDoc = _.cloneDeep currentDoc
-    updatedDoc = Entity.addLabel updatedDoc, lang, value
+    updatedDoc = Entity.setLabel updatedDoc, lang, value
     return putUpdate userId, currentDoc, updatedDoc
 
   updateClaim: (property, oldVal, newVal, userId, currentDoc)->

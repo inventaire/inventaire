@@ -34,13 +34,13 @@ module.exports = Entity =
     labels: {}
     claims: {}
 
-  addLabel: (doc, lang, value)->
+  setLabel: (doc, lang, value)->
     doc.labels[lang] = value
     return doc
 
-  addLabels: (doc, labels)->
+  setLabels: (doc, labels)->
     for lang, value of labels
-      doc = Entity.addLabel doc, lang, value
+      doc = Entity.setLabel doc, lang, value
 
     return doc
 
