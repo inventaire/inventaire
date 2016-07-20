@@ -34,8 +34,6 @@ track = (req, actionArray)->
     ua: encodeURIComponent ua
     lang: language or encodeURIComponent al
 
-  _.log data, 'track data'
-
   promises_.get _.buildPath(endpoint, data)
   .catch _.Error('track error')
 
