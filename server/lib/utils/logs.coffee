@@ -18,7 +18,7 @@ module.exports = (_)->
     inspect: inspect
     Inspect: (label)-> fn = (obj)-> inspect obj, label
 
-    error: (err, label, parse=true)->
+    error: (err, label, logStack=true)->
       # Prevent logging big error stack traces for network errors
       # in offline development mode
       if offline and err.code is 'ENOTFOUND'
@@ -26,8 +26,9 @@ module.exports = (_)->
         return
 
       errorCounter++
-      err = err?.stack or err  if parse
       loggers_.log err, label, 'red'
+      if logStack and err.stack? then console.log err.stack
+
       return
 
     errorCount: -> errorCounter
