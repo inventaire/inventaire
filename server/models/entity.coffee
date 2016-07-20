@@ -45,9 +45,17 @@ module.exports = Entity =
     return doc
 
   addClaims: (doc, claims)->
-    for prop, array of claims
+    for property, array of claims
+      prop = properties[property]
+      # claims will be validated one by one later but some collective checks are needed
+
+      if prop.uniqueValue
+        if array.length > 1
+          message = "#{property} expects a unique value, got #{array}"
+          throw error_.new message, 400, arguments
+
       for value in array
-        doc = Entity.createClaim doc, prop, value
+        doc = Entity.createClaim doc, property, value
 
     return doc
 

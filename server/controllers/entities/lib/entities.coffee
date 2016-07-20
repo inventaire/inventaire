@@ -38,9 +38,10 @@ module.exports = entities_ =
 
   edit: (userId, updatedLabels, updatedClaims, currentDoc)->
     updatedDoc = _.cloneDeep currentDoc
-    updatedDoc = Entity.setLabels updatedDoc, updatedLabels
-    updatedDoc = Entity.addClaims updatedDoc, updatedClaims
-    db.putAndReturn updatedDoc
+    promises_.try ->
+      updatedDoc = Entity.setLabels updatedDoc, updatedLabels
+      return Entity.addClaims updatedDoc, updatedClaims
+    .then db.putAndReturn
     .tap -> patches_.create userId, currentDoc, updatedDoc
 
   updateLabel: (lang, value, userId, currentDoc)->
