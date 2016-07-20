@@ -37,6 +37,11 @@ module.exports = entities_ =
     db.putAndReturn updatedDoc
     .tap -> patches_.create userId, currentDoc, updatedDoc
 
+  updateLabel: (lang, value, userId, currentDoc)->
+    updatedDoc = _.cloneDeep currentDoc
+    updatedDoc = Entity.addLabel updatedDoc, lang, value
+    return putUpdate userId, currentDoc, updatedDoc
+
   updateClaim: (property, oldVal, newVal, userId, currentDoc)->
     updatedDoc = _.cloneDeep currentDoc
     entities_.validateClaim property, newVal, true

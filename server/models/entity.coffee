@@ -34,9 +34,13 @@ module.exports = Entity =
     labels: {}
     claims: {}
 
+  addLabel: (doc, lang, value)->
+    doc.labels[lang] = value
+    return doc
+
   addLabels: (doc, labels)->
     for lang, value of labels
-      doc = addLabel doc, lang, value
+      doc = Entity.addLabel doc, lang, value
 
     return doc
 
@@ -80,7 +84,3 @@ module.exports = Entity =
       doc.claims[property].push newVal
 
     return doc
-
-addLabel = (doc, lang, value)->
-  doc.labels[lang] = value
-  return doc

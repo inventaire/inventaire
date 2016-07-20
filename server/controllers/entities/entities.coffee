@@ -7,6 +7,7 @@ getIsbns = require './get_isbns'
 getEntities = require './get_entities'
 createEntity = require './create_entity'
 updateClaim = require './update_claim'
+updateLabel = require './update_label'
 
 module.exports =
   # public
@@ -29,4 +30,5 @@ module.exports =
 
     switch action
       when 'update-claim' then return updateClaim req, res
+      when 'update-label' then return updateLabel req, res
       else error_.unknownAction req, res
