@@ -37,7 +37,7 @@ module.exports = (db)->
     db.viewCustom 'byClaim', { key: [property, value] }
     .then (docs)->
       if docs.length isnt 0
-        message = "this property value already exist: #{property} -> #{value}"
+        message = "this property value is already used: #{property} -> #{value}"
         throw error_.new message, 400, property, value
 
 
