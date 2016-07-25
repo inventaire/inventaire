@@ -72,6 +72,7 @@
     "request": "^2.72.0",
     "serve-favicon": "^2.3.0",
     "simple-uuid": "0.0.1",
+    "wikidata-lang": "^2.0.3",
     "wikidata-sdk": "^3.0.1",
     "xml2js": "^0.4.13"
   },

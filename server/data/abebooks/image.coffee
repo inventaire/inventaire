@@ -1,14 +1,14 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-books_ = __.require 'lib', 'books'
-hyphenate = false
 promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
 cache_ = __.require 'lib', 'cache'
+isbn_ = __.require 'lib', 'isbn/isbn'
+hyphenate = false
 
 module.exports = (isbn)->
-  isbn13 = books_.toIsbn13 isbn, hyphenate
+  isbn13 = isbn_.toIsbn13 isbn, hyphenate
   unless isbn13?
     return promises_.reject error_.new 'invalid isbn', 400, isbn
 

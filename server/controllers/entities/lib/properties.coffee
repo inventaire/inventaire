@@ -27,6 +27,8 @@ properties =
     concurrency: true
     format: books_.normalizeIsbn
     uniqueValue: true
+  # language of work
+  'wdt:P407': entityBase
   # edition or translation of
   'wdt:P629': entityUniqueValue
   # main subject

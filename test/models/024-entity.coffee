@@ -92,6 +92,7 @@ describe 'entity model', ->
         entityDoc = Entity.updateClaim validDoc(), 'wdt:P212', null, '978-2-7073-0152-9'
         _.warn entityDoc.claims, 'entityDoc.claims'
         entityDoc.claims['wdt:P957'][0].should.equal '2-7073-0152-3'
+        entityDoc.claims['wdt:P407'][0].should.equal 'wd:Q150'
         done()
 
       it "should add no inferred properties value when none is found", (done)->
@@ -99,6 +100,7 @@ describe 'entity model', ->
         # to tests cases where inferred properties convertors will fail to find a value
         entityDoc = Entity.updateClaim validDoc(), 'wdt:P212', null, '978-invalid isbn'
         should(entityDoc.claims['wdt:P957']).not.be.ok()
+        should(entityDoc.claims['wdt:P407']).not.be.ok()
         done()
 
 
@@ -144,4 +146,5 @@ describe 'entity model', ->
         entityDoc = Entity.updateClaim validDoc(), 'wdt:P212', null, '978-2-7073-0152-9'
         entityDoc = Entity.updateClaim entityDoc, 'wdt:P212', '978-2-7073-0152-9', null
         should(entityDoc.claims['wdt:P957']).not.be.ok()
+        should(entityDoc.claims['wdt:P407']).not.be.ok()
         done()
