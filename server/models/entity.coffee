@@ -27,6 +27,7 @@ tests = require './tests/common-tests'
 promises_ = __.require 'lib', 'promises'
 
 { properties, whitelist } = __.require 'controllers','entities/lib/properties'
+inferences = __.require 'controllers','entities/lib/inferences'
 
 module.exports = Entity =
   create: ->
@@ -84,11 +85,54 @@ module.exports = Entity =
         doc.claims[property][index] = newVal
       else
         # if the new value is null, it plays the role of a removeClaim
-        doc.claims[property] = _.without propArray, oldVal
+        propArray = _.without propArray, oldVal
+        setPossiblyEmptyPropertyArray doc, property, propArray
 
     else
       # if the old value is null, it plays the role of a createClaim
       doc.claims[property] or= []
       doc.claims[property].push newVal
 
-    return doc
+    return updateInferredProperties doc, property, oldVal, newVal
+
+updateInferredProperties = (doc, property, oldVal, newVal)->
+  propInferences = inferences[property]
+
+  addingOrUpdatingValue = newVal?
+
+  for inferredProperty, convertor of propInferences
+    inferredPropertyArray = doc.claims[inferredProperty] or []
+
+    if addingOrUpdatingValue
+      inferredValue = convertor newVal
+      if inferredValue?
+        if inferredValue not in inferredPropertyArray
+          inferredPropertyArray.push inferredValue
+          _.log inferredValue, "added inferred #{inferredProperty} from #{property}"
+      else
+        _.warn newVal, "inferred value not found for #{inferredProperty} from #{property}"
+
+    else
+      # The current entity data model doesn't allow to check if the claim was
+      # indeed inferred or if it was manually added.
+      # This could be made possible by replacing claims direct values by an object:
+      # {
+      #   id: 'claim uuid prefixed by property uri (following wikidata data model)',
+      #   value: "claim value",
+      #   inferredFrom: 'claim id'
+      # }
+      inferredValue = convertor oldVal
+      if inferredValue in inferredPropertyArray
+        inferredPropertyArray = _.without inferredPropertyArray, inferredValue
+        _.log inferredValue, "removed inferred #{inferredProperty} from #{property}"
+
+    setPossiblyEmptyPropertyArray doc, inferredProperty, inferredPropertyArray
+
+  return doc
+
+setPossiblyEmptyPropertyArray = (doc, property, propertyArray)->
+  if propertyArray.length is 0
+    # if empty, clean the doc from the property
+    doc.claims = _.omit doc.claims, property
+  else
+    doc.claims[property] = propertyArray

@@ -88,6 +88,20 @@ describe 'entity model', ->
         updater.should.throw()
         done()
 
+      it "should add inferred properties value", (done)->
+        entityDoc = Entity.updateClaim validDoc(), 'wdt:P212', null, '978-2-7073-0152-9'
+        _.warn entityDoc.claims, 'entityDoc.claims'
+        entityDoc.claims['wdt:P957'][0].should.equal '2-7073-0152-3'
+        done()
+
+      it "should add no inferred properties value when none is found", (done)->
+        # the invalid isbn would have been rejected upfront but here allows
+        # to tests cases where inferred properties convertors will fail to find a value
+        entityDoc = Entity.updateClaim validDoc(), 'wdt:P212', null, '978-invalid isbn'
+        should(entityDoc.claims['wdt:P957']).not.be.ok()
+        done()
+
+
     describe 'update existing claim', ->
       it 'should return with the claim value updated', (done)->
         entityDoc = validDoc()
@@ -110,15 +124,24 @@ describe 'entity model', ->
 
     describe 'delete claim', ->
       it 'should return with the claim value removed if passed an undefined new value', (done)->
-        entityDoc = validDoc()
-        updatedDoc = Entity.updateClaim entityDoc, 'wdt:P50', 'wd:Q535', null
+        updatedDoc = Entity.updateClaim validDoc(), 'wdt:P50', 'wd:Q535', null
         updatedDoc.claims['wdt:P50'].length.should.equal 1
+        done()
+
+      it 'should remove the property array if empty', (done)->
+        updatedDoc = Entity.updateClaim validDoc(), 'wdt:P50', 'wd:Q535', null
         updatedDoc2 = Entity.updateClaim updatedDoc, 'wdt:P50', 'wd:Q1541', null
-        updatedDoc2.claims['wdt:P50'].length.should.equal 0
+        should(updatedDoc2.claims['wdt:P50']).not.be.ok()
         done()
 
       it "should throw if the old value doesn't exist", (done)->
         entityDoc = validDoc()
         updater = -> Entity.updateClaim entityDoc, 'wdt:P50', 'wd:Q1', null
         updater.should.throw()
+        done()
+
+      it "should remove inferred properties value", (done)->
+        entityDoc = Entity.updateClaim validDoc(), 'wdt:P212', null, '978-2-7073-0152-9'
+        entityDoc = Entity.updateClaim entityDoc, 'wdt:P212', '978-2-7073-0152-9', null
+        should(entityDoc.claims['wdt:P957']).not.be.ok()
         done()
