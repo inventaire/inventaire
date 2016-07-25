@@ -15,5 +15,5 @@ module.exports = (err, fullReport)->
     _.error err, 'client error report', false
     # not logging it as an error to avoid having the error
     # be counted twice
-    _.warn fullReport, 'client full report'
+    # _.warn fullReport, 'client full report'
     errorList[hash] = true
