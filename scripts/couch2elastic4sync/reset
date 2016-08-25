@@ -1,0 +1,10 @@
+#!/usr/bin/env coffee
+CONFIG = require 'config'
+__ = require('config').universalPath
+_ = __.require 'builders', 'utils'
+promises_ = __.require 'lib', 'promises'
+url = CONFIG.elasticsearch.base
+
+promises_.delete url
+.then _.Log("reset #{url}")
+.catch _.Error('reset')

@@ -125,3 +125,11 @@ module.exports = config =
     endpoint: 'https://yourpiwikendpoint/piwik.php'
     idsite: 1
     rec: 1
+  elasticsearch:
+    base: 'http://localhost:9200/inventaire'
+    sync: [
+      { database: 'entities', type: 'entity' }
+      # Unblock: solve https://github.com/ryanramage/couch2elastic4sync/issues/14
+      # { database: 'users', type: 'user' }
+      # { database: 'users', type: 'group'}
+    ]

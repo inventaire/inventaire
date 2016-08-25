@@ -1,0 +1,14 @@
+#!/usr/bin/env coffee
+exec = require './exec'
+CONFIG = require 'config'
+__ = require('config').universalPath
+_ = __.require 'builders', 'utils'
+promises_ = __.require 'lib', 'promises'
+url = CONFIG.elasticsearch.base
+
+promises_.put url
+.then _.Log("put #{url}")
+.then -> exec 'load'
+.then -> _.success 'done loading'
+.catch _.Error('load')
+

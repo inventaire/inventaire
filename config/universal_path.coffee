@@ -47,6 +47,7 @@ module.exports =
     i18nClientDist: '/client/public/i18n/dist'
     client: '/client'
     scripts: '/scripts'
+    logs: '/logs'
     uploads: '/client/public/uploads'
   path: (route, name)->
     path = @paths[route]

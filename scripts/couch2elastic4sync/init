@@ -1,0 +1,27 @@
+#!/usr/bin/env coffee
+CONFIG = require 'config'
+__ = CONFIG.universalPath
+{ elasticsearch:elasticConfig } = CONFIG
+fs = require 'fs'
+
+couchdbHost = CONFIG.db.fullHost()
+folder = __.path 'scripts', 'couch2elastic4sync'
+
+writeConfigFile = (syncData)->
+  { database:dbName, type } = syncData
+  # Depending on the environment, the exact couchdb database name
+  # might take a suffix
+  prefixedCouchdbName = CONFIG.db.name dbName
+
+  data =
+    database: "#{couchdbHost}/#{prefixedCouchdbName}"
+    elasticsearch: "#{elasticConfig.base}/#{type}"
+    mapper: "#{folder}/mappers/#{type}.js"
+
+  json = JSON.stringify data, null, 2
+
+  fs.writeFile "#{folder}/configs/#{type}.json", json, (err, res)->
+    if err then console.error err
+    else console.log "'#{type}' config file generated"
+
+elasticConfig.sync.forEach writeConfigFile

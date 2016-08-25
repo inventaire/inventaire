@@ -1,0 +1,7 @@
+deploy-public
+db/couchdb/migrations
+server/lib/emails/i18n
+deploy
+node_modules
+logs
+scripts/couch2elastic4sync/configs

@@ -9,4 +9,12 @@ mkdir -p ./server/lib/emails/i18n/dist
 
 # expected by scripts/archive_logs
 mkdir -p ./logs
+# expected by scripts/couch2elastic4sync/exec.coffee
+mkdir -p ./logs/couch2elastic4sync
+# expected by scripts/couch2elastic4sync/init
+mkdir -p scripts/couch2elastic4sync/configs
 touch ./logs/server.log ./logs/error.log
+
+# start synchronization between CouchDB and ElasticSearch
+./scripts/couch2elastic4sync/init
+./scripts/couch2elastic4sync/load
