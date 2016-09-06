@@ -4,17 +4,22 @@ errorCounter = 0
 loggers_ = require 'inv-loggers'
 util = require 'util'
 
-module.exports = (_)->
-  if CONFIG.verbosity is 0 then loggers_.log = _.identity
-
-  inspect = (obj, label)->
+BaseLogger = (color, operation)->
+  return logger = (obj, label)->
     # fully display deep objects
-    console.log '****'.grey + "#{label} inspect".magenta + '****'.grey
-    console.log util.inspect(obj, false, null)
+    console.log '****'.grey + "#{label}"[color] + '****'.grey
+    console.log operation(obj)
     console.log "----------".grey
     return obj
 
+module.exports = (_)->
+  if CONFIG.verbosity is 0 then loggers_.log = _.identity
+
+  inspect = BaseLogger 'magenta', (obj)-> util.inspect obj, false, null
+  stringify = BaseLogger 'yellow', JSON.stringify
+
   customLoggers =
+    stringify: stringify
     inspect: inspect
     Inspect: (label)-> fn = (obj)-> inspect obj, label
 
