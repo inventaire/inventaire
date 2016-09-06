@@ -7,6 +7,7 @@ booksData_ = __.require 'lib', 'books_data'
 wikidata_ = __.require 'lib', 'wikidata'
 
 searchWikidataEntities = __.require 'data', 'wikidata/entities'
+searchLocalEntities = require './search_local'
 getWikidataBookEntitiesByIsbn = __.require 'data', 'wikidata/books_by_isbn'
 searchOpenLibrary = __.require 'data', 'openlibrary/search'
 filteredSearch = require './filtered_search'
@@ -66,35 +67,43 @@ getBooksDataFromIsbn = (cleanedIsbn)->
 parseBooksDataFromIsbn = (res)->
   unless res?.source? then return
   { source } = res
-  { items: [res], source: source }
+  { results: [res], source: source }
 
 searchByText = (query)->
   return promises = [
     searchWikidataEntities query
-    .timeout 10000
-    .then (items)-> {items: items, source: 'wd', search: query.search}
+    .timeout 7000
+    .then WrapResults('wd', query.search)
     # catching errors to avoid crashing promises_.all
     .catch _.Error('wikidata getBookEntities err')
 
     # searchOpenLibrary(query)
-    # .then (items)-> {items: items, source: 'ol', search: query.search}
+    # .timeout 7000
+    # .then WrapResults('ol', query.search)
 
     booksData_.getDataFromText query.search
-    .timeout 10000
-    .then (res)-> {items: res, source: 'google', search: query.search}
+    .timeout 7000
+    .then WrapResults('google', query.search)
     # catching errors to avoid crashing promises_.all
     .catch _.Error('getGoogleBooksDataFromText err')
+
+    searchLocalEntities query
+    .timeout 7000
+    .then WrapResults('inv', query.search)
+
   ]
 
-bundleResults = (results)->
+WrapResults = (source, search)-> (results)-> { results, source, search }
+
+bundleResults = (sourcesResults)->
   resp = {}
   empty = true
 
-  for result in _.compact(results)
-    { source, items, search } = result
+  for sourceResults in _.compact(sourcesResults)
+    { source, results, search } = sourceResults
     # also tests if the first item isnt undefined
-    if _.isArray(items) and items[0]?
-      resp[source] = result
+    if _.isArray(results) and results[0]?
+      resp[source] = sourceResults
       empty = false
 
     resp.search or= search
