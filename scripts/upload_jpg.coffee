@@ -13,11 +13,11 @@ _ = __.require('builders', 'utils')
 # this script is used to upload static images for both production and development
 # thus, images have to go to the PROD container
 CONFIG.swift.container = 'img'
-require 'colors'
 { putImage, putRawImage } = __.require 'controllers', 'upload/upload'
 cp = require 'copy-paste'
 Promise = require 'bluebird'
 fs = require 'fs'
+{ green } = require 'chalk'
 
 raw = false
 imagesPaths = process.argv.slice 2
@@ -30,8 +30,8 @@ imageMap = {}
 
 uploadImg = (imagePath)->
   filename = imagePath.split('/').slice(-1)[0]
-  console.log 'imagePath: '.green, imagePath
-  console.log 'filename: '.green, filename
+  console.log green('imagePath: '), imagePath
+  console.log green('filename: '), filename
   putImage
     id: filename
     filename: filename
@@ -46,7 +46,7 @@ uploadImg = (imagePath)->
       console.log url
     else
       cp.copy url
-      console.log 'Copied to Clipboard: '.green, url
+      console.log green('Copied to Clipboard: '), url
 
     imageMap[id] = url
   .catch _.ErrorRethrow('putImage err')

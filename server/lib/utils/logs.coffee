@@ -3,13 +3,15 @@ CONFIG = require 'config'
 errorCounter = 0
 loggers_ = require 'inv-loggers'
 util = require 'util'
+chalk = require 'chalk'
+{ grey, red } = chalk
 
 BaseLogger = (color, operation)->
   return logger = (obj, label)->
     # fully display deep objects
-    console.log '****'.grey + "#{label}"[color] + '****'.grey
+    console.log grey('****') + chalk[color]("#{label}") + grey('****')
     console.log operation(obj)
-    console.log "----------".grey
+    console.log grey("----------")
     return obj
 
 module.exports = (_)->
@@ -37,13 +39,17 @@ module.exports = (_)->
       return
 
     errorCount: -> errorCounter
+
+    # logs the errors total if there was an error
+    # in the last 5 seconds
+    # -> just a convenience for debugging
     logErrorsCount: ->
       prev = 0
       counter = ->
         errs = @errorCount()
         if errs isnt prev
           prev = errs
-          console.log 'errors: '.red + errs
+          console.log red('errors: ') + errs
 
       setInterval counter.bind(@), 5000
 

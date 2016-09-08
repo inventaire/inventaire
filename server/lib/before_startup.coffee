@@ -2,6 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 { execFile } = require 'child_process'
+{ red } = require 'chalk'
 archiveLogsScript = __.path 'scripts', 'archive_logs'
 
 module.exports = ->
@@ -15,4 +16,4 @@ archiveLogs = ->
 
 initUncaughtExceptionCatcher = ->
   process.on 'uncaughtException', (err)->
-    console.error 'uncaughtException'.red, err, err.stack
+    console.error red('uncaughtException'), err, err.stack
