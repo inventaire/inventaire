@@ -1,12 +1,6 @@
 _ = require 'lodash'
 
 module.exports = base =
-  areStringsOrFalsy: (array)->
-    compacted = @compact(array)
-    if compacted.length > 0 and @areStrings(compacted)
-      return true
-    else return false
-
   combinations: (array1, array2)->
     @types arguments, ['array', 'array']
     results = []
@@ -14,15 +8,6 @@ module.exports = base =
       for keys2 in array2
         results.push [keys1, keys2]
     return results
-
-  timer: (fn, sync)->
-    id = Date.now()
-    console.time id
-    if sync
-      cb()
-      console.timeEnd id
-    else
-      cb().then -> console.timeEnd id
 
   pass: (req, res, next)-> next()
 
@@ -41,9 +26,6 @@ module.exports = base =
 
   okWarning: (res, warning, status=200)->
     res.status(status).json {ok: true, warning: warning}
-
-
-  Map: (fn)-> (array)-> array.map fn
 
   extractReqIp: (req)-> req.headers['x-forwarded-for']
 
@@ -82,5 +64,4 @@ wrap = (res, key, data)->
 # FROM: .spread (users, items)-> res.json {users: users, items: items}
 # TO: .then _.Wraps(res, ['users', 'items'])
 base.Wraps = (res, keys)-> wraps.bind null, res, keys
-wraps = (res, keys, dataArray)->
-  res.json _.zipObject(keys, dataArray)
+wraps = (res, keys, dataArray)-> res.json _.zipObject(keys, dataArray)
