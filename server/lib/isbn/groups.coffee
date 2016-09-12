@@ -14,5 +14,3 @@ for gs1Prefix, gs1PrefixData of groupsData
       groupsMap["#{gs1Prefix}-#{groupId}"] =
         lang: lang
         wd: wdId
-
-console.log('groupsMap', groupsMap)
