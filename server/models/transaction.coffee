@@ -22,7 +22,7 @@ Transaction.create = (itemDoc, ownerDoc, requesterDoc)->
   unless itemDoc.transaction in requestable
     throw error_.new "this item can't be requested", 400, itemDoc
 
-  now = _.now()
+  now = Date.now()
 
   return transaction =
     item: itemId

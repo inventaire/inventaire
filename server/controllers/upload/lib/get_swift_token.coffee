@@ -15,7 +15,7 @@ breq = require 'bluereq'
 lastToken = null
 lastTokenExpirationTime = 0
 # let a 10 minutes margin before token expiration
-tokenExpired = -> _.now() > (lastTokenExpirationTime - tenMinutes)
+tokenExpired = -> Date.now() > (lastTokenExpirationTime - tenMinutes)
 
 module.exports = ->
   if lastToken? and not tokenExpired() then promises_.resolve lastToken

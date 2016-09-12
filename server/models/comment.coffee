@@ -1,6 +1,5 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 
 module.exports = Comment = {}
@@ -23,7 +22,7 @@ createComment = (userId, message, key, value)->
   comment =
     user: userId
     message: message
-    created: _.now()
+    created: Date.now()
 
   # the key identifies the object to which the comment is attached
   comment[key] = value

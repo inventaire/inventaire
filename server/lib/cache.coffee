@@ -48,7 +48,7 @@ module.exports =
     dataChange = CONFIG.dataChange?[dataChangeName]
     unless dataChange? then return defaultTime
 
-    timeSinceDataChange = _.now() - dataChange
+    timeSinceDataChange = Date.now() - dataChange
     if timeSinceDataChange < defaultTime then timeSinceDataChange
     else defaultTime
 

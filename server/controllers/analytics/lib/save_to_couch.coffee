@@ -12,7 +12,7 @@ module.exports = (analyticsLevelDB)->
       transfered: 0
       kept: 0
       dropped: 0
-      refTime: _.now()
+      refTime: Date.now()
     analyticsLevelDB.sub.createValueStream()
     .on 'data', transferReportToCouch.bind(null, stats)
     .on 'end', logStats.bind(null, stats)

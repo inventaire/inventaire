@@ -20,7 +20,7 @@ module.exports = (username)->
 lock = (username)->
   lockedUsernames.push
     username: username
-    timestamp: _.now()
+    timestamp: Date.now()
 
 # once a username is added to the list, it has 5 seconds to create the account
 # (which should be at least twice more than what is needed)

@@ -25,7 +25,7 @@ module.exports =
       _id: "#{docId}:#{version}"
       type: 'patch'
       user: userId
-      timestamp: _.now()
+      timestamp: Date.now()
       patch: getDiff currentDoc, updatedDoc
 
 getDiff = (currentDoc, updatedDoc)->

@@ -20,7 +20,7 @@ updateStatus = (docId, status, doc)->
   # thus the need to test doc.status instead
   if doc?.status? then doc.status = status
   else doc = Relation.create(docId, status)
-  doc.updated = _.now()
+  doc.updated = Date.now()
   return doc
 
 queries =

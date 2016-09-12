@@ -61,7 +61,7 @@ stateUpdater = (state, userId, transaction)->
   updatedReadStates = updateReadStates userId, transaction
   return updater = (doc)->
     doc.state = state
-    action = { action: state, timestamp: _.now() }
+    action = { action: state, timestamp: Date.now() }
     # keep track of the actor when it can be both
     if state in actorCanBeBoth
       role = userRole userId, transaction

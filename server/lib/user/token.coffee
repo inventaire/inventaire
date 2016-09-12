@@ -55,7 +55,7 @@ module.exports = (db, user_)->
   token_.openPasswordUpdateWindow = (user)->
     db.update user._id, (doc)->
       doc.token = null
-      doc.resetPassword = _.now()
+      doc.resetPassword = Date.now()
       return doc
 
   return token_

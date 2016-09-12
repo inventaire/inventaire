@@ -25,7 +25,7 @@ Item.create = (userId, item)->
   item.pictures = pictures or= []
   tests.pass 'pictures', pictures
 
-  item.created = _.now()
+  item.created = Date.now()
   item.listing = solveConstraint item, 'listing'
   item.transaction = solveConstraint item, 'transaction'
   return item
@@ -52,7 +52,7 @@ Item.updater = (userId, item, doc)->
   unless doc?.owner is userId
     throw new Error "user isnt doc.owner: #{userId} / #{doc.owner}"
 
-  doc.updated = _.now()
+  doc.updated = Date.now()
   # filtered out non-updatable attributes
   newData = _.pick item, attributes.updatable
   return _.extend doc, newData
@@ -73,7 +73,7 @@ Item.changeOwner = (transacDoc, item)->
   item.history.push
     transaction: transacId
     previousOwner: owner
-    timestamp: _.now()
+    timestamp: Date.now()
 
   _.log item.history, 'updated history'
 
@@ -82,7 +82,7 @@ Item.changeOwner = (transacDoc, item)->
     # default values
     transaction: 'inventorying'
     listing: 'private'
-    updated: _.now()
+    updated: Date.now()
 
 Item.allowTransaction = (item)->
   item.transaction in attributes.allowTransaction

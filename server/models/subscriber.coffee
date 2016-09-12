@@ -20,4 +20,4 @@ Subscriber.create = (email, language)->
     type: 'subscriber'
     email: email
     language: language
-    created: _.now()
+    created: Date.now()

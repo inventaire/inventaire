@@ -1,7 +1,6 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 { newsKey } = CONFIG.activitySummary
-_ = __.require 'builders', 'utils'
 { oneDay } =  __.require 'lib', 'times'
 { BasicUpdater } = __.require 'lib', 'doc_updates'
 couch_ = __.require 'lib', 'couch'
@@ -14,7 +13,7 @@ module.exports = (db)->
         include_docs: true
         limit: limit
         startkey: 0
-        endkey: _.now()
+        endkey: Date.now()
 
     findOneWaitingForSummary: ->
       summary_.waitingForSummary 1
@@ -22,7 +21,7 @@ module.exports = (db)->
 
     justReceivedActivitySummary: (id)->
       updater = BasicUpdater
-        lastSummary: _.now()
+        lastSummary: Date.now()
         lastNews: newsKey
 
       db.update id, updater

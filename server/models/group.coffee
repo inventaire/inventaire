@@ -75,7 +75,7 @@ _.extend Group, membershipActions
 createMembership = (userId, invitorId)->
   user: userId
   invitor: invitorId
-  timestamp: _.now()
+  timestamp: Date.now()
 
 # moving membership object from previousCategory to newCategory
 moveMembership = (userId, group, previousCategory, newCategory)->

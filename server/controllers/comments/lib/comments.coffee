@@ -49,7 +49,7 @@ _.extend comments_, rightsVerification,
   update: (newMessage, comment)->
     db.update comment._id, (doc)->
       doc.message = newMessage
-      doc.edited = _.now()
+      doc.edited = Date.now()
       return doc
 
   delete: (comment)->

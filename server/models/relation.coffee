@@ -14,7 +14,7 @@ module.exports =
       _id: id
       type: 'relation'
       status: status
-      created: _.now()
+      created: Date.now()
 
   docId: (userId, otherId) ->
     couch_.joinOrderedIds(userId, otherId)

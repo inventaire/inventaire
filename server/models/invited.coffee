@@ -17,7 +17,7 @@ baseDoc = (email)->
 addInviter = (inviterId, doc)->
   # the doc shouldnt be updated if the inviter already did invited
   # but in the undesired case it happens, keep the first timestamp
-  doc.inviters[inviterId] or= _.now()
+  doc.inviters[inviterId] or= Date.now()
   return doc
 
 

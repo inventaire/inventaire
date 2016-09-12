@@ -27,5 +27,5 @@ findPreviousWaiters = (domain, id)->
 
 
 createNewWaiter = (domain, id)->
-  key = "#{domain}:#{id}:#{_.now()}"
+  key = "#{domain}:#{id}:#{Date.now()}"
   waitingEmails.put key, {}
