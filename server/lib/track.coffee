@@ -31,8 +31,8 @@ track = (req, actionArray)->
     e_a: "#{category}:#{action}"
     e_n: name
     e_v: value
-    ua: encodeURIComponent ua
-    lang: language or encodeURIComponent al
+    ua: _.fixedEncodeURIComponent ua
+    lang: language or _.fixedEncodeURIComponent al
 
   promises_.get _.buildPath(endpoint, data)
   .catch _.Error('track error')
