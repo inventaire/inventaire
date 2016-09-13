@@ -13,7 +13,14 @@ entityBase =
 
 entityUniqueValue = _.extend {}, entityBase, { uniqueValue: true }
 
+urlBase =
+  datatype: 'url'
+  test: _.isUrl
+  format: _.identity
+
 properties =
+  # image
+  'wdt:P18': urlBase
   # instance of
   'wdt:P31': entityUniqueValue
   # author
@@ -54,6 +61,7 @@ validateProperty = (property)->
 datatypePrimordialType =
   string: 'string'
   entity: 'string'
+  url: 'string'
 
 testDataType = (property, value)->
   { datatype } = properties[property]
