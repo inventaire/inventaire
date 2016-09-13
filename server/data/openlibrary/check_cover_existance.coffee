@@ -17,6 +17,6 @@ checkHeader = (url, res)->
   contentType = res.headers['content-type']
   # coupled with OpenLibrary response headers
   if contentType? and contentType is 'image/jpeg'
-    return { url: url }
+    return { url }
   else
     throw error_.new 'cover not found', 404, url

@@ -46,8 +46,7 @@ module.exports =
       return error_.bundle req, res, 'invalid user ids', 400, query
 
     items_.bundleListings ['public'], usersIds
-    .then (items)-> { items: items }
-    .then res.json.bind(res)
+    .then _.Wrap(res, 'items')
     .catch error_.Handler(req, res)
 
   publicById: (req, res, next) ->

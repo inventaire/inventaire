@@ -59,7 +59,7 @@ clientPutImage = (path, id, filename)->
   client.putImage path, filename
   .then _.Log('new image url')
   .then checkRelativeUrl
-  .then (url)-> { id: id, url, url }
+  .then (url)-> { id, url }
 
 checkRelativeUrl = (url)->
   if /http/.test url then throw error_.new 'not a relative url', 500

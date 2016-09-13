@@ -12,5 +12,5 @@ parsePictures = (pictures)->
   .flatten()
   .compact()
   .uniq()
-  .map (image)-> { image: image }
+  .map (image)-> { image }
   .value()

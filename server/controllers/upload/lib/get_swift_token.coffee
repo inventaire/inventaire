@@ -44,9 +44,9 @@ parseIdentificationRes = (res)->
   return id
 
 verifyEndpoint = (serviceCatalog)->
-  swiftData = _.find serviceCatalog, {name: 'swift'}
+  swiftData = _.find serviceCatalog, { name: 'swift' }
   # _.log swiftData, 'swiftData'
-  endpoint = _.find swiftData.endpoints, { region: region }
+  endpoint = _.find swiftData.endpoints, { region }
   # _.log endpoint, 'endpoint'
   if endpoint.publicURL isnt publicURL
     throw new Error "config publicURL and returned publicURL don't match"
