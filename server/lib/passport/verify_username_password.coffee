@@ -5,7 +5,7 @@ user_ = __.require 'lib', 'user/user'
 pw_ = __.require('lib', 'crypto').passwords
 loginAttempts = require './login_attempts'
 
-LocalStrategy = require('passport-local').Strategy
+{ Strategy:LocalStrategy } = require 'passport-local'
 
 module.exports = (username, password, done)->
 
@@ -34,9 +34,8 @@ invalidUsernameOrPassword = (done, username, label)->
   loginAttempts.recordFail(username, label)
   done null, false, { message: 'invalid_username_or_password' }
 
-verifyUserPassword = (user, password)->
-  pw_.verify user.password, password
+verifyUserPassword = (user, password)-> pw_.verify user.password, password
 
 finalError = (done, err)->
   _.error err, 'username/password verify err'
-  done(err)
+  done err

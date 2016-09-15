@@ -6,7 +6,7 @@ pw_ = __.require('lib', 'crypto').passwords
 loginAttempts = require './login_attempts'
 { track } = __.require 'lib', 'track'
 
-LocalStrategy = require('passport-local').Strategy
+{ Strategy:LocalStrategy } = require 'passport-local'
 
 options =
   passReqToCallback: true

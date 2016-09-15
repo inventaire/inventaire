@@ -12,12 +12,11 @@ passport.serializeUser (user, done) ->
 
 passport.deserializeUser (id, done) ->
   _.types [id, done], ['string', 'function']
-  user_.byId(id)
-  .then (user)->
-    done(null, user)
+  user_.byId id
+  .then (user)-> done null, user
   .catch (err)->
-    _.error err, 'err'
-    done(err)
+    _.error err, 'deserializeUser err'
+    done err
 
 passport.use 'local-login', require('./local_login_strategy')
 passport.use 'local-signup', require('./local_signup_strategy')

@@ -1,3 +1,3 @@
 verify = require './verify_username_password'
-LocalStrategy = require('passport-local').Strategy
+{ Strategy:LocalStrategy } = require 'passport-local'
 module.exports = new LocalStrategy verify
