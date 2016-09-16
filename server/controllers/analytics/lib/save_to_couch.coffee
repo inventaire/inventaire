@@ -2,7 +2,7 @@ CONFIG = require 'config'
 { verbosity } = CONFIG
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-{ oneMinute, HalfAnHour} =  __.require 'lib', 'times'
+{ oneMinute, halfAnHour} =  __.require 'lib', 'times'
 
 analyticsCouchDB = __.require('couch', 'base')('analytics', 'reports')
 
@@ -36,7 +36,7 @@ module.exports = (analyticsLevelDB)->
       lastTime = Number(lastTime)
       # arbitrary choosing 5 minutes
       # given session with last time older than 30 sec are finished
-      return (lastTime + HalfAnHour) < refTime
+      return (lastTime + halfAnHour) < refTime
     else return false
 
   putInCouch = (doc)->
@@ -69,6 +69,6 @@ module.exports = (analyticsLevelDB)->
   # let 20 seconds to the server to finish to start before transfering
   setTimeout saveToCouch, 20 * 1000
   # the transfering every half hour
-  setInterval saveToCouch, HalfAnHour
+  setInterval saveToCouch, halfAnHour
 
   return saveToCouch
