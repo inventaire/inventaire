@@ -12,9 +12,6 @@ Promise.config CONFIG.bluebird
 requests = require './requests'
 shared = __.require('sharedLibs', 'promises')(Promise)
 
-all = Promise.all.bind Promise
-props = Promise.props.bind Promise
-
 promisesHandlers =
   Promise: Promise
   all: Promise.all.bind Promise
