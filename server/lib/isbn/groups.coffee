@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 wdLang = require 'wikidata-lang'
-groupsData = require './groups_data'
+groupsData = require 'isbn-groups'
 
 module.exports = groupsMap = {}
 
