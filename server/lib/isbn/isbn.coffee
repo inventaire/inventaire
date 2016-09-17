@@ -1,12 +1,11 @@
-isbn2 = require('isbn2').ISBN
+{ parse:isbn2Parser } = require('isbn2').ISBN
 groups = require './groups'
 
 parse = (isbn)->
-  data = isbn2.parse(isbn)?.codes
+  data = isbn2Parser(isbn)?.codes
   if data?
-    { group, publisher } = data
-    data.gs1Prefix = gs1Prefix = data.isbn13[0..2]
-    data.groupPrefix = groupPrefix = "#{gs1Prefix}-#{group}"
+    { prefix, group, publisher } = data
+    data.groupPrefix = groupPrefix = "#{prefix}-#{group}"
     data.publisherPrefix = "#{groupPrefix}-#{publisher}"
     langData = groups[groupPrefix]
     if langData?
