@@ -3,8 +3,7 @@
 Libre collaborative resource mapper powered by open-knowledge<br>
 [![License](https://img.shields.io/badge/license-AGPL3-blue.svg)](http://www.gnu.org/licenses/agpl-3.0.html)
 [![RoadMap](https://img.shields.io/badge/roadmap-contributive-blue.svg)](https://trello.com/b/0lKcsZDj/inventaire-roadmap)
-[![Node](https://img.shields.io/badge/node-v4.3.x-brightgreen.svg)](http://nodejs.org)
-[![dependencies](https://david-dm.org/inventaire/inventaire.svg)](https://david-dm.org/inventaire/inventaire)
+[![Node](https://img.shields.io/badge/node->=v4-brightgreen.svg)](http://nodejs.org)
 [![Code Climate](https://codeclimate.com/github/inventaire/inventaire/badges/gpa.svg)](https://codeclimate.com/github/inventaire/inventaire)<br>
 Come to say hi on your prefered chat<br>
 [![Join the chat at https://gitter.im/inventaire/inventaire](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/inventaire/inventaire)
@@ -16,10 +15,10 @@ This repository hosts [Inventaire.io](https://inventaire.io) source code. Its a 
 
 This repository tracks the server-side developments, while the (heavy) [client-side can be found here](https://github.com/inventaire/inventaire-client). Client-related technical issues should go in the client repo, while this repo gathers all other technical issues. Non-technical discussions such as feature requests should preferably happen in the [Roadmap](https://trello.com/b/0lKcsZDj/inventaire-roadmap) Trello. In doubt, just use your best guess :)
 
-##Stack approximative overview
-![stack-en](http://maxlath.eu/slides/backbone-meetup/img/stack-en.jpg)
+## inventaire stack map
+[![stack](https://raw.githubusercontent.com/inventaire/stack/master/snapshots/stack-from-server.png)](https://inventaire.github.io/stack/)
 
-##Concepts map
+## Concepts map
 the whole app turns around a few core concepts:
 - Users
 - Entities : encompass authors (ex: [wd:Q353](https://inventaire.io/entity/wd:Q535)), books (ex: [wd:Q393018](https://inventaire.io/entity/wd:Q393018)) and books' specific editions (ex: [isbn:9782070389162](https://inventaire.io/entity/isbn:9782070389162)). The term *entities* is inherited from wikidata terminology.
@@ -29,16 +28,17 @@ the whole app turns around a few core concepts:
 
 ![concepts map](https://raw.githubusercontent.com/inventaire/inventaire/master/docs/visualizations/concepts.jpg)
 
-##Contributions
-
-###Internationalization (i18n)
-* see wiki: [Internationalization](https://github.com/inventaire/inventaire/wiki/Internationalization)
+## Contribute
+see [wiki](https://github.com/inventaire/inventaire/wiki) to get started, especially the [new contributors](https://github.com/inventaire/inventaire/wiki#new-contributors) section
 
 ## Installation
+
+*see also*: [inventaire/inventaire-deploy](https://github.com/inventaire/inventaire-deploy)
 
 General dependencies:
 - git, node, npm, coffee-script, brunch (see package.json for versions)
 - a CouchDB (>=1.6) instance (on port 5984 for default config)
+- an Elasticsearch (>=2.4) instance (on port 9200 for default config)
 
 ```
 git clone https://github.com/inventaire/inventaire.git
@@ -67,8 +67,10 @@ All the default values can be kept, out of your CouchDB credentials that need to
 
 Emails are disabled in default config to avoid having to configure that too for development.
 
+## API
+see wiki: [API](https://github.com/inventaire/inventaire/wiki/API)
 
-##Day-dreaming on future evolutions
+## Day-dreaming on future evolutions
 
 [Inventaire.io](https://inventaire.io) is a hub for open-knowledge-based peers inventory data. This prototype uses a centralized database to make the early development easier, while being as easy as possible to 'install' and use: well, it's just a "classic" social network. Meanwhile, this repository is public as there is no reason it should always stay centralized: this is a research work in progress, if you can think of a better/more decentralized way for peers to keep their inventory data and share it with others, you are very welcome to join the effort or experiment on your own with what you can find here. The hard point being sharing data between this centralized website and other inventory implementations. Works on a standard data model and an API would be a priority as soon as meaningful.
 
@@ -80,46 +82,8 @@ Emails are disabled in default config to avoid having to configure that too for 
 - any other IndieWeb / [Unhosted](https://unhosted.org/) crazyness? :)
 
 **Already experiementing**
-
+- the [API](http://github.com/inventaire/inventaire/wiki/API) should allow a first level of decentralization: having personal clients allowing to manage an inventory out of inventaire.io but that could publish on inventaire.io what belongs there, public and semi public items, while keeping private items private.
 *see [Labs settings](https://inventaire.io/settings/labs)*
-- user data backup to any CouchDB using [PouchDB](http://pouchdb.com/).
-
-## Powered by
-
-- [CoffeeScript](http://coffeescript.org/)
-
-**Server-side**
-- [ExpressJs](http://expressjs.com/) within a light wrapper: [Americano](https://github.com/cozy/americano)
-- [Bluebird](https://github.com/petkaantonov/bluebird) for promises
-- [Lodash](https://lodash.com/) utils
-- [node-config](https://github.com/lorenwest/node-config)
-
-
-*find a more complete list of dependencies in the [package.json](https://github.com/inventaire/inventaire/blob/dev/package.json)*
-
-**Databases**
-- [CouchDB](http://couchdb.apache.org/)
-- [LevelDB](http://leveldb.org/) with [LevelUp](https://github.com/Level/levelup) and [LevelGraph](https://github.com/mcollina/levelgraph)
-
-**Client-side**
-- [BackboneJs](http://backbonejs.org/) / [MarionetteJs](http://marionettejs.com/)
-- [Handlebars](http://handlebarsjs.com/) for templates
-- some [Foundation](http://foundation.zurb.com/) for UI framework, but more and more just standard CSS3 flexbox everywhere (hammer, nail, blablabla)
-- [Font-Awesome icons](http://fortawesome.github.io/Font-Awesome/icons/)
-- [qLabel](https://github.com/googleknowledge/qlabel/) to work with Wikidata entities labels
-- [Level.js](https://github.com/maxogden/level.js) for client-side caching
-- [Polyglot.js](http://airbnb.github.io/polyglot.js/) for i18n
-- [Brunch](http://brunch.io/) ([underrated build tool](https://github.com/brunch/brunch-guide/blob/master/content/en/chapter01-whats-brunch.md))
-
-*find a more complete list of dependencies in [package.json](https://github.com/inventaire/inventaire-client/blob/dev/package.json) and [bower.json](https://github.com/inventaire/inventaire-client/blob/dev/bower.json)*
-
-
-## Contributors
-
-<table><tbody>
-<tr><th align="left">Maxime Lathuilière</th><td><a href="https://github.com/maxlath">GitHub/maxlath</a></td><td><a href="https://twitter.com/maxlath">Twitter/@maxlath</a></td></tr>
-</tbody></table>
-
 
 ## License
 [AGPL](LICENSE.md)
