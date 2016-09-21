@@ -12,7 +12,7 @@ if CONFIG.resetCacheAtStartup then cacheDB.reset()
 { oneDay, oneMonth } =  __.require 'lib', 'times'
 
 module.exports =
-  # EXPECT method to come with context and arguements .bind'ed
+  # EXPECT method to come with context and arguments .bind'ed
   # e.g. method = module.getData.bind(module, arg1, arg2)
   get: (key, method, timespan=oneMonth, retry=true)->
     types = ['string', 'function', 'number', 'boolean']
