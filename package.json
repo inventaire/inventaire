@@ -71,6 +71,7 @@
     "passport": "^0.2.2",
     "passport-http": "^0.3.0",
     "passport-local": "^1.0.0",
+    "ps-tree": "~1.1.0",
     "request": "^2.72.0",
     "simple-uuid": "0.0.1",
     "wikidata-lang": "^2.0.3",

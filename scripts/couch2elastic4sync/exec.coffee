@@ -1,37 +1,68 @@
-# Mapping to couch2elastic4sync API:
-# arg='sync' => couch2elastic4sync 
-# arg='load' => couch2elastic4sync load
+# Keep the desired CouchDB databases in sync with their ElasticSearch counterparts
+# Set the databases to sync in CONFIG.elasticsearch.sync
 
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 { elasticsearch:elasticConfig } = CONFIG
 execa = require 'execa'
+{ exec } = require 'child_process'
 folder = __.path 'scripts', 'couch2elastic4sync'
 logsFolder = __.path 'logs', 'couch2elastic4sync'
-{ Promise } = __.require 'lib', 'promises'
-
+promises_ = __.require 'lib', 'promises'
+{ Promise } = promises_
 fs  = require 'fs'
+meta = __.require 'lib', 'meta'
+psTree = Promise.promisify require('ps-tree')
 
 module.exports = (arg)->
-  _.info "starting couch2elastic4sync #{arg}"
-
-  promises = elasticConfig.sync.map (syncData)->
-    { type } = syncData
-    args = [ "--config=#{folder}/configs/#{type}.json" ]
-
-    if arg is 'load' then args.push arg
-    # if arg is 'sync', nothing needs to be pushed to args
-
-    childProcess = execa 'couch2elastic4sync', args
-
-    logFile = fs.createWriteStream "#{logsFolder}/#{type}"
-
-    childProcess.stdout.pipe logFile
-    childProcess.stderr.pipe logFile
-
-    # execa childProcess objects are also promises
-    return childProcess
-
-  return Promise.all promises
+  cleanupPreviousInstances()
+  .then -> startProcesses arg
   .catch _.Error("couch2elastic4sync #{arg} err")
+
+# Mapping to couch2elastic4sync API:
+# arg='sync' => couch2elastic4sync 
+# arg='load' => couch2elastic4sync load
+startProcesses = (arg)->
+  pids = []
+
+  elasticConfig.sync.map (syncData)->
+    { type } = syncData
+    command = "couch2elastic4sync --config=#{folder}/configs/#{type}.json"
+
+    if arg is 'load' then command += ' load'
+    # if arg is 'sync', nothing needs to be added
+
+    logFile = "#{logsFolder}/#{type}"
+    # Redirecting both stdin and stderr to the log file
+    command = "#{command} > #{logFile} 2>&1"
+
+    # Simply using the 'child_process' module exec here, as we don't need
+    # to keep its promise or anything: it will keep hanging around for the whole
+    # process time
+    child = exec command
+    pids.push child.pid
+
+  _.info "starting couch2elastic4sync #{arg} processes: #{pids}"
+  return meta.put 'couch2elastic4sync:pids', pids
+
+# couch2elastic4sync processes aren't terminating on supervisor SIGTERM
+# thus the need to kill them manually
+cleanupPreviousInstances = ->
+  meta.get 'couch2elastic4sync:pids'
+  .then (pids)->
+    if _.isNonEmptyArray pids
+      # Thoses pids are only the subshells:
+      # couch2elastic4sync processes will be referenced as their children
+      return Promise.all pids.map(killPidChildrenProcesses)
+    else
+      return promises_.resolved
+
+killPidChildrenProcesses = (pid)->
+  psTree pid
+  # Extract processes children pids
+  .map _.property('PID')
+  .then _.Log('previous couch2elastic4sync processes killed')
+  .then killByPids
+
+killByPids = (pids)-> execa.spawn 'kill', ['-9'].concat(pids)
