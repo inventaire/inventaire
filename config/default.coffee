@@ -1,17 +1,26 @@
+# This config file contains the default values for a development environment.
+# Override by creating per-environment files following the same structure
+# in this same folder
+# See the config module doc: https://npmjs.com/package/config
+
 contactAddress = 'hello@inventaire.io'
 
 module.exports = config =
-  env: 'dev'
-  universalPath: require './universal_path'
-  offline: false
-  protocol: 'http'
   name: 'inventaire'
+  env: 'dev'
   host: 'localhost'
-  publicHost: 'localhost'
+  universalPath: require './universal_path'
+  # Only http is supported: in production, TLS is delegated to Nginx
+  # see http://github.com/inventaire/inventaire-deploy
+  # protocol: 'http'
   verbosity: 1
   port: 3006
+  # Override in ./local.coffee when working offline to prevent trying to fetch remote resources (like images) when possible
+  offline: false
   fullHost: -> "#{@protocol}://#{@host}:#{@port}"
-  fullPublicHost: -> "#{@protocol}://#{@publicHost}:#{@port}"
+  publicProtocol: 'http'
+  publicHost: 'localhost'
+  fullPublicHost: -> "#{@publicProtocol}://#{@publicHost}:#{@port}"
   secret: 'yoursecrethere'
   db:
     unstable: true
@@ -40,9 +49,6 @@ module.exports = config =
   noCache: false
   staticMaxAge: 30*24*60*60*1000
   cookieMaxAge: 10*365*24*3600*1000
-  https:
-    key: '/cert/inventaire.key'
-    cert: '/cert/inventaire.csr'
   typeCheck: true
   bluebird:
     warnings: true
@@ -133,3 +139,6 @@ module.exports = config =
       # { database: 'users', type: 'user' }
       # { database: 'users', type: 'group'}
     ]
+  dataseed:
+    enabled: false
+    host: 'http://localhost:9898'

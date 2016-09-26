@@ -14,8 +14,6 @@ content = require './middlewares/content'
 
 module.exports =
   common: [
-    security.forceSSL
-
     americano.bodyParser()
     content.recoverValidJson
     americano.methodOverride()
@@ -25,7 +23,6 @@ module.exports =
 
     logger.beforeStatic
     statics.mountStaticFiles
-    statics.favicon
     logger.afterStatic
     statics.cacheControl
 

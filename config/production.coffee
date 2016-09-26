@@ -17,9 +17,6 @@ module.exports =
     secret: 'OVERRIDE'
     region: 'OVERRIDE'
     bucket: 'OVERRIDE'
-  https:
-    key: '/cert/OVERRIDE.key'
-    cert: '/cert/OVERRIDE.crt'
   typeCheck: false
   bluebird:
     warnings: false

@@ -40,14 +40,9 @@ options =
 couchInit()
 .then _.Log('couch init')
 .then ->
-  # just keeping the https at hand in case the need arises
-  # but the default setup is an http server behind an nginx
-  # doing all the TLS magic
-  if CONFIG.protocol is 'https' then require('./server-https')()
-  else
-    americano.start options, (err, app)->
-      app.disable 'x-powered-by'
-      console.timeEnd 'startup'
+  americano.start options, (err, app)->
+    app.disable 'x-powered-by'
+    console.timeEnd 'startup'
 
 .catch _.Error('init err')
 

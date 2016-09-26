@@ -1,13 +1,6 @@
 CONFIG = require 'config'
 _ = require('config').universalPath.require 'builders', 'utils'
 
-if CONFIG.protocol is 'https'
-  exports.forceSSL = require 'express-force-ssl'
-  _.info 'forcing SSL'
-else
-  exports.forceSSL = _.pass
-
-
 exports.allowCrossDomain = (req, res, next)->
   res.header 'Access-Control-Allow-Origin', '*'
   res.header 'Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE'
