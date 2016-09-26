@@ -9,6 +9,7 @@ security = require './middlewares/security'
 routes = require './middlewares/routes'
 lang = require './middlewares/lang'
 statics = require './middlewares/statics'
+cache = require './middlewares/cache'
 logger = require './middlewares/logger'
 content = require './middlewares/content'
 
@@ -24,7 +25,8 @@ module.exports =
     logger.beforeStatic
     statics.mountStaticFiles
     logger.afterStatic
-    statics.cacheControl
+
+    cache.cacheControl
 
     auth.cookieParser
     auth.session
@@ -42,7 +44,7 @@ module.exports =
     use: [
       #handled by the Nginx server in production
       security.allowCrossDomain
-      # BEFORE REACTIVATING:
+      # /!\ Before reactivating CSP policies:
       # - check DataUrl (used by profile picture)
       # - check new Worker(BlobUrl) (used by quagga.js. see https://github.com/greasemonkey/greasemonkey/issues/1803 for bug)
       # security.cspPolicy

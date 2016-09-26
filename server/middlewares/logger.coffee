@@ -1,7 +1,6 @@
 CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
 americano = require 'americano'
+pass = require './pass'
 
 { logFormat, mutedRoutes } = CONFIG.morgan
 
@@ -11,13 +10,13 @@ logger = americano.logger
     route = req.originalUrl
     return route in mutedRoutes
 
-# has no effect in prod where static files are served
-# by an nginx server
+# Init the logger before the static files middleware to log static files requests
+# Has no effect when CONFIG.serverStaticFiles is false notably in production,
+# where static files are served by the Nginx server
 if CONFIG.logStaticFilesRequests
-  [ before, after ] = [ logger, _.pass ]
+  [ before, after ] = [ logger, pass ]
 else
-  [ before, after ] = [ _.pass, logger ]
-
+  [ before, after ] = [ pass, logger ]
 
 module.exports =
   beforeStatic: before

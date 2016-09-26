@@ -9,8 +9,6 @@ module.exports = base =
         results.push [keys1, keys2]
     return results
 
-  pass: (req, res, next)-> next()
-
   sumValues: (obj)->
     if @objLength(obj) > 0
       @values(obj)?.reduce (a,b)-> a+b
@@ -22,10 +20,10 @@ module.exports = base =
 
   # returns a function triggering a standard confirmation response
   ok: (res, status=200)->
-    res.status(status).json {ok: true}
+    res.status(status).json { ok: true }
 
   okWarning: (res, warning, status=200)->
-    res.status(status).json {ok: true, warning: warning}
+    res.status(status).json { ok: true, warning }
 
   extractReqIp: (req)-> req.headers['x-forwarded-for']
 
