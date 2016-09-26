@@ -3,7 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 { crawlPeriod, debounceDelay } = CONFIG.debouncedEmail
 
-waitingEmails = __.require('level', 'base').simpleAPI 'waiting'
+waitingEmails = require './waiting_emails'
 sendDebouncedEmail = require './send_debounced_email'
 
 module.exports = ->

@@ -1,7 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-waitingEmails = __.require('level', 'base').simpleAPI 'waiting'
+waitingEmails = require './waiting_emails'
 
 module.exports =
   transactionUpdate: (transaction)->
