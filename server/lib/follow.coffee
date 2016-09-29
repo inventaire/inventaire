@@ -6,7 +6,6 @@ meta = __.require 'lib', 'meta'
 
 dbHost = CONFIG.db.fullHost()
 
-
 { freezeFollow } = CONFIG.db
 
 module.exports = (params)->
