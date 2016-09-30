@@ -1,7 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 
-if CONFIG.serverStaticFiles
+if CONFIG.serveStaticFiles
   americano = require 'americano'
   publicPath = __.path 'client', 'public'
   staticMiddleware = americano.static publicPath, { maxAge: CONFIG.staticMaxAge }

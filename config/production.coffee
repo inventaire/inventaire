@@ -7,10 +7,8 @@ module.exports =
   secret: "OVERRIDE"
   # Let Nginx serve the static files
   # https://github.com/inventaire/inventaire-deploy/blob/master/nginx/inventaire.original.nginx
-  serverStaticFiles: false
+  serveStaticFiles: false
   db:
-    unstable: false
-    reloadDesignDocs: false
     username: 'OVERRIDE'
     password: 'OVERRIDE'
   noCache: true
@@ -26,9 +24,7 @@ module.exports =
     longStackTraces: false
   morgan:
     logFormat: 'short'
-  sendServerErrorsClientSide: true
   logMissingI18nKeys: false
-  serveStatic: false
   mailer:
     disabled: false
     preview: false

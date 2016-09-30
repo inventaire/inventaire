@@ -6,4 +6,3 @@
 
 module.exports =
   env: 'offlinedev'
-  mookEmail: 'yourfakeuser@email.address'

@@ -6,8 +6,6 @@ _.extend CONFIG.db,
   # force to use the Couchdb tunneled to the 3456 port
   port: 3456
   suffix: 'prod'
-  unstable: false
-  reloadDesignDocs: false
   # prevent triggering follow onChange actions with data from the remote database
   freezeFollow: true
 

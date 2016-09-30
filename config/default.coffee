@@ -22,9 +22,9 @@ module.exports = config =
   publicHost: 'localhost'
   fullPublicHost: -> "#{@publicProtocol}://#{@publicHost}:#{@port}"
   secret: 'yoursecrethere'
+
+  # CouchDB settings
   db:
-    unstable: true
-    reloadDesignDocs: false
     protocol: 'http'
     host: 'localhost'
     port: 5984
@@ -36,8 +36,6 @@ module.exports = config =
     name: (dbBaseName)->
       if @suffix? then return "#{dbBaseName}-#{@suffix}"
       else dbBaseName
-    fakeUsers: false
-    restricted: true
     # make external indexes restart from the first seq
     resetFollow: false
     # use freezeFollow for cases when following the database would have undesired effects
@@ -46,7 +44,16 @@ module.exports = config =
     freezeFollow: false
     # logs Couchdb requests parameters
     debug: false
-  serverStaticFiles: true
+  elasticsearch:
+    base: 'http://localhost:9200/inventaire'
+    sync: [
+      { database: 'entities', type: 'entity' }
+      # Unblock: solve https://github.com/ryanramage/couch2elastic4sync/issues/14
+      # { database: 'users', type: 'user' }
+      # { database: 'users', type: 'group'}
+    ]
+
+  serveStaticFiles: true
   noCache: false
   staticMaxAge: 30*24*60*60*1000
   cookieMaxAge: 10*365*24*3600*1000
@@ -54,7 +61,10 @@ module.exports = config =
   bluebird:
     warnings: true
     longStackTraces: true
-  godMode: false # friends requests and groups invits automatically accepted
+  # Make friends requests and groups invits be automatically accepted
+  # can be useful for development
+  godMode: false
+  # see server/controllers/tests.coffee
   cookieThief: false
   morgan:
     logFormat: 'dev'
@@ -62,12 +72,14 @@ module.exports = config =
       '/api/logs/public'
     ]
   logStaticFilesRequests: true
-  sendServerErrorsClientSide: true
+  # enable the api/i18n/public endpoint and its i18nMissingKeys controller
   logMissingI18nKeys: true
+  # disable restrictApiAccess middleware: no more Auth required
   apiOpenBar: false
+  # reset server/lib/cache.coffee
   resetCacheAtStartup: false
-  serveStatic: true
-  contactAddress: contactAddress
+
+  # parameters for Nodemailer
   mailer:
     disabled: true
     preview: true
@@ -77,6 +89,7 @@ module.exports = config =
       pass: 'yoursettings'
     defaultFrom: "inventaire.io <#{contactAddress}>"
     initDelay: 10000
+  contactAddress: contactAddress
   activitySummary:
     disabled: true
     disableUserUpdate: false
@@ -85,20 +98,18 @@ module.exports = config =
     # the key to find the current news string
     newsKey: 'news_1'
     didYouKnowKey: 'did_you_know_1'
+  # use mailgun API to validate emails
   emailValidation:
     activated: false
-    pubkey: 'yourkey'
+    mailgunPubkey: 'yourkey'
+  # time of validity for email validation tokens
   tokenDaysToLive: 3
   debouncedEmail:
     crawlPeriod: 10*60*1000
     debounceDelay: 30*60*1000
-  # google Books keys are to be generated in
-  # https://console.developers.google.com/project
-  googleBooks:
-    useKey: false
-    key: 'yourkey'
-  fallback:
-    wdq: 'http://your-inv-wdq-instance:1234'
+
+  # By default, media are saved locally instead of using a remove
+  # object storage service such as Swift or AWS
   objectStorage: 'local'
   # AWS credentials are requierd only when objectStorage is set to 'aws'
   aws:
@@ -107,6 +118,7 @@ module.exports = config =
     region: 'customizedInLocalConfig'
     bucket: 'customizedInLocalConfig'
     protocol: 'http'
+  # Swift parameters are requierd only when objectStorage is set to 'swift'
   swift:
     username: 'customizedInLocalConfig'
     password: 'customizedInLocalConfig'
@@ -121,25 +133,27 @@ module.exports = config =
     maxSize: 1600
     # 5MB
     maxWeight: 5*1024**2
+
+  # Analytics service
+  piwik:
+    enabled: false
+    endpoint: 'https://yourpiwikendpoint/piwik.php'
+    idsite: 1
+    rec: 1
+  # see server/data/dataseed/search.coffee
+  dataseed:
+    enabled: false
+    host: 'http://localhost:9898'
+  # google Books keys are to be generated in
+  # https://console.developers.google.com/project
+  googleBooks:
+    useKey: false
+    key: 'yourkey'
+  fallback:
+    wdq: 'http://your-inv-wdq-instance:1234'
   prerender:
     # specify the ip of the prerender server
     # to eventually filter it out
     ip: null
     # setting prerendere's quota to half Google Books quota
     quota: 500
-  piwik:
-    enabled: false
-    endpoint: 'https://yourpiwikendpoint/piwik.php'
-    idsite: 1
-    rec: 1
-  elasticsearch:
-    base: 'http://localhost:9200/inventaire'
-    sync: [
-      { database: 'entities', type: 'entity' }
-      # Unblock: solve https://github.com/ryanramage/couch2elastic4sync/issues/14
-      # { database: 'users', type: 'user' }
-      # { database: 'users', type: 'group'}
-    ]
-  dataseed:
-    enabled: false
-    host: 'http://localhost:9898'
