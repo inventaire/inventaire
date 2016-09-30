@@ -1,7 +1,6 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
-wdq = __.require 'data', 'wikidata/wdq'
 wdQuery = __.require 'data', 'wikidata/query'
 thumb = __.require 'data', 'commons/thumb'
 wikipediaExtract = __.require 'data', 'wikipedia/extract'
@@ -14,7 +13,6 @@ module.exports.get = (req, res, next)->
   if _.isNonEmptyString isbn then return isbnData req, res
 
   switch api
-    when 'wdq' then return wdq req, res
     when 'wd-query' then return wdQuery req, res
     when 'commons-thumb' then return thumb req, res
     when 'wp-extract' then return wikipediaExtract req, res

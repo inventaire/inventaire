@@ -48,7 +48,7 @@ parametersTests =
   qid: wdk.isWikidataEntityId
   pid: (pid)-> pid in propertyWhitelist
 
-propertyWhitelist = ['P135', 'P136']
+propertyWhitelist = [ 'P31', 'P50', 'P106', 'P135', 'P136' ]
 
 runQuery = (params, key)->
   { query:queryName } = params
