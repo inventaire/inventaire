@@ -8,10 +8,8 @@ pw_ = __.require('lib', 'crypto').passwords
 { tokenDaysToLive } = CONFIG
 { WrappedUpdater } = __.require 'lib', 'doc_updates'
 
-# waiting for credential 0.2.6 to make pw_.expired verifications
 testToken = pw_.verify
 uuid = require 'simple-uuid'
-
 
 module.exports = (db, user_)->
 
@@ -39,9 +37,9 @@ module.exports = (db, user_)->
   updateIfValidToken = (token, user)->
     { emailValidation, _id } = user
     unless emailValidation?
-      throw error_.new 'token is invalid or expired', 401, token, _id
+      throw error_.new 'no email validation token found', 401, token, _id
 
-    testToken(emailValidation, token)
+    testToken emailValidation, token, tokenDaysToLive
     .then updateValidEmail.bind(null, db, _id)
 
   token_.sendResetPasswordEmail = (user)->
@@ -59,7 +57,6 @@ module.exports = (db, user_)->
       return doc
 
   return token_
-
 
 updateValidEmail = (db, _id, valid)->
   if valid then db.update _id, emailIsValid

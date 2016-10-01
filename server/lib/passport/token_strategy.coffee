@@ -6,6 +6,7 @@ pw_ = __.require('lib', 'crypto').passwords
 error_ = __.require 'lib', 'error/error'
 loginAttempts = require './login_attempts'
 { Strategy:LocalStrategy } = require 'passport-local'
+{ tokenDaysToLive } = CONFIG
 
 # reusing LocalStrategy but substituing username/password by email/token
 options =
@@ -27,7 +28,7 @@ returnIfValid = (done, token, email, user)->
   # to call invalidEmailOrToken a second time
   # in case findOneByemail returned an error
   if user?
-    verifyToken(user, token)
+    verifyToken user, token
     .then (valid)->
       if valid
         console.log 'valid', valid
@@ -42,10 +43,8 @@ invalidEmailOrToken = (done, email, label, err)->
   done null, false, { message: 'invalid_username_or_token' }
 
 verifyToken = (user, token)->
-  # should test expiration date here
-  # waiting for credential 0.2.6
   unless user.token? then return error_.reject 'no token found', 401
-  pw_.verify user.token, token
+  pw_.verify user.token, token, tokenDaysToLive
 
 finalError = (done, err)->
   _.error err, 'TokenStrategy verify err'

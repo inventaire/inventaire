@@ -19,11 +19,12 @@ module.exports = (req, res, next) ->
 
 
 confirmEmailValidity = (res, email, token)->
-  user_.confirmEmailValidity(email, token)
+  user_.confirmEmailValidity email, token
   .then redirectValidEmail.bind(null, res, true)
   .catch redirectValidEmail.bind(null, res, false)
 
-redirectValidEmail = (res, bool)->
+redirectValidEmail = (res, bool, resp)->
+  unless bool then _.error resp, 'email validation failed'
   res.redirect "/?validEmail=#{bool}"
 
 # reset password =
