@@ -9,6 +9,7 @@ request = require 'request'
 qs = require 'querystring'
 { oneYear } =  __.require 'lib', 'times'
 { offline } = CONFIG
+{ localGateway, publicGateway } = CONFIG.ipfs
 
 # resized images urls looks like /img/#{w}x#{h}/(#{hash}.jpg|#{external url hashCode?href=escaped url})"
 
@@ -33,12 +34,17 @@ module.exports = (req, res, next)->
       return error_.bundle req, res, 'invalid href query', 400
 
     urlCode = _.hashCode(url).toString()
-    # the hashcode can be used by nginx for caching
-    # while the url is passed as query argument in case
-    # it isnt in cache
-    # here, we just check that we do get the same hash
+    # The hashcode can be used by Nginx for caching, while the url is passed
+    # as query argument in case it isnt in cache.
+    # Here, we just check that we do get the same hash
     unless urlCode is rest
       return error_.bundle req, res, 'hash code and href dont match', 400
+
+    # Optimize where to fetch IPFS resources
+    if url.startsWith publicGateway
+      # The local gateway might already have the requested image in cache
+      # and should be way closer on the network
+      url = url.replace publicGateway, localGateway
 
   else
     return error_.bundle req, res, 'invalid image path', 400, rest

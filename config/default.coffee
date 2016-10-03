@@ -157,3 +157,8 @@ module.exports = config =
     ip: null
     # setting prerendere's quota to half Google Books quota
     quota: 500
+  ipfs:
+    # activate if you have a local instance running
+    enabled: false
+    localGateway: 'http://localhost:8080'
+    publicGateway: 'https://ipfs.io'
