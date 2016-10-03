@@ -38,6 +38,13 @@ module.exports = (_)->
 
       return
 
+    warn: (err, label)->
+      if err instanceof Error
+        # shorten the stack trace
+        err.stack = err.stack.split('\n').slice(0, 3).join('\n')
+
+      loggers_.warn.apply null, arguments
+
     errorCount: -> errorCounter
 
     # logs the errors total if there was an error
@@ -53,5 +60,5 @@ module.exports = (_)->
 
       setInterval counter.bind(@), 5000
 
-  # overriding inv-loggers 'error'
-  return _.extend loggers_, customLoggers
+  # overriding inv-loggers 'error' and 'warn'
+  return _.extend {}, loggers_, customLoggers
