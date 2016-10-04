@@ -9,56 +9,25 @@ wd.sitelinks = __.require 'sharedLibs','wiki_sitelinks'
 { base } = wd.API.wikidata
 qs = require 'querystring'
 
-searchEntities = (search, language='en', limit='20', format='json')->
+searchEntities = (search)->
   search = qs.escape search
-  url = wd.API.wikidata.search search, language
+  url = wd.API.wikidata.search search
   _.log url, 'searchEntities'
   return promises_.get url
 
 filterAndBrush = (res)->
-  results = []
-  for id,entity of res.entities
-    # not using wdk.simplifyClaims to let the freedom to the client
-    # to use it or use all the data
-    rebaseClaimsValueToClaimsRoot entity
-    if filterWhitelisted entity
-      results.push entity
-  return results
+  _.values res.entities
+  .filter filterWhitelisted
 
+missPrefixes = true
 filterWhitelisted = (entity)->
-  valid = false
-  if entity.claims?.P31?
-    valid = validIfIsABook entity.claims, valid
-    valid = validIfIsAnAuthor entity.claims, valid
-  return valid
+  { P31 } = entity.claims
+  unless P31? then return false
 
-rebaseClaimsValueToClaimsRoot = (entity)->
-  for id, claim of entity.claims
-    if _.isArray claim
-      for statement in claim
-        switch statement.mainsnak.datatype
-          when 'wikibase-item'
-            # beware of snaktype: 'novalue', check datavalue
-            id = statement.mainsnak.datavalue?.value['numeric-id']
-            if id? then statement._id = 'Q' + id
-  return
-
-getP31Tester = (matchables)->
-  _.type matchables, 'array'
-  return tester = (claims, valid)->
-    { P31 } = claims
-    if P31?
-      for statement in P31
-        # not altering valid if no match is found has it might be already valided
-        # by a previous test
-        if statement._id in matchables then valid = true
-    return valid
-
-validIfIsABook = getP31Tester(Q.books)
-
-validIfIsAnAuthor = getP31Tester(Q.humans)
-
-whitelistedEntity = (id)-> id in P31Whitelist
+  simplifiedP31 = wdk.simplifyPropertyClaims P31
+  switch wd.getType simplifiedP31, missPrefixes
+    when 'book', 'human' then return true
+    else return false
 
 resolveWikiUrl = (url)->
   _.log url, 'resolveWikiUrl'
