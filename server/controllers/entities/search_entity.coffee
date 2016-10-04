@@ -1,4 +1,5 @@
-__ = require('config').universalPath
+CONFIG = require 'config'
+__ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
@@ -9,22 +10,24 @@ wikidata_ = __.require 'lib', 'wikidata'
 searchWikidataEntities = __.require 'data', 'wikidata/entities'
 searchLocalEntities = require './search_local'
 getWikidataBookEntitiesByIsbn = __.require 'data', 'wikidata/books_by_isbn'
-searchOpenLibrary = __.require 'data', 'openlibrary/search'
+searchDataseed = __.require 'data', 'dataseed/search'
 filteredSearch = require './filtered_search'
+
+{ searchTimeout } = CONFIG
 
 module.exports = (req, res)->
   { query } = req
-  { search, language, filter } = query
+  { search, lang, filter } = query
   _.info query, 'entities search'
 
   unless _.isNonEmptyString search
     return error_.bundle req, res, 'empty query' , 400
 
-  unless language?
-    return error_.bundle req, res, 'no language specified' , 400
+  unless lang?
+    return error_.bundle req, res, 'no lang specified' , 400
 
-  # make sure we have a 2 letters language code
-  query.language = _.shortLang language
+  # make sure we have a 2 letters lang code
+  query.lang = _.shortLang lang
 
   if _.isNonEmptyString filter
     return filteredSearch query, res
@@ -49,12 +52,12 @@ searchByIsbn = (query)->
   cleanedIsbn = books_.cleanIsbnData isbn
 
   return promises = [
-    getWikidataBookEntitiesByIsbn isbn, isbnType, query.language
-    .timeout(10000)
+    getWikidataBookEntitiesByIsbn isbn, isbnType, query.lang
+    .timeout searchTimeout
     .catch _.Error('getWikidataBookEntitiesByIsbn')
 
     getBooksDataFromIsbn cleanedIsbn
-    .timeout(10000)
+    .timeout searchTimeout
     .catch _.Error('getBooksDataFromIsbn err')
   ]
 
@@ -72,25 +75,20 @@ parseBooksDataFromIsbn = (res)->
 searchByText = (query)->
   return promises = [
     searchWikidataEntities query
-    .timeout 7000
+    .timeout searchTimeout
     .then WrapResults('wd', query.search)
     # catching errors to avoid crashing promises_.all
     .catch _.Error('wikidata getBookEntities err')
 
-    # searchOpenLibrary(query)
-    # .timeout 7000
-    # .then WrapResults('ol', query.search)
-
-    booksData_.getDataFromText query.search
-    .timeout 7000
-    .then WrapResults('google', query.search)
-    # catching errors to avoid crashing promises_.all
-    .catch _.Error('getGoogleBooksDataFromText err')
-
     searchLocalEntities query
-    .timeout 7000
+    .timeout searchTimeout
     .then WrapResults('inv', query.search)
+    .catch _.Error('searchLocalEntities err')
 
+    searchDataseed query
+    .timeout searchTimeout
+    .then WrapResults('dataseed', query.search)
+    .catch _.Error('searchDataseed err')
   ]
 
 WrapResults = (source, search)-> (results)-> { results, source, search }

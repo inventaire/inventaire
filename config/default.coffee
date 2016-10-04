@@ -162,3 +162,4 @@ module.exports = config =
     enabled: false
     localGateway: 'http://localhost:8080'
     publicGateway: 'https://ipfs.io'
+  searchTimeout: 10000
