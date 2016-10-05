@@ -1,8 +1,15 @@
-{ parse:isbn2Parser } = require('isbn2').ISBN
+__ = require('config').universalPath
+_ = __.require 'builders', 'utils'
+isbn_ = __.require('sharedLibs', 'isbn')(_)
+
+{ parse:isbnParser } = require('isbn2').ISBN
 groups = require './groups'
 
 parse = (isbn)->
-  data = isbn2Parser(isbn)?.codes
+  # The isbn2 parser would reject an ISBN formatted like 978-2070368228,
+  # so removing all hypens gives us more coverage
+  isbn = isbn.replace /-/g, ''
+  data = isbnParser(isbn)?.codes
   if data?
     { prefix, group, publisher } = data
     data.groupPrefix = groupPrefix = "#{prefix}-#{group}"
@@ -14,7 +21,7 @@ parse = (isbn)->
 
   return data
 
-module.exports =
+module.exports = _.extend isbn_,
   parse: parse
   toIsbn13: (isbn, hyphenate)->
     data = parse isbn

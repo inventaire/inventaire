@@ -144,19 +144,6 @@ module.exports = config =
   dataseed:
     enabled: false
     host: 'http://localhost:9898'
-  # google Books keys are to be generated in
-  # https://console.developers.google.com/project
-  googleBooks:
-    useKey: false
-    key: 'yourkey'
-  fallback:
-    wdq: 'http://your-inv-wdq-instance:1234'
-  prerender:
-    # specify the ip of the prerender server
-    # to eventually filter it out
-    ip: null
-    # setting prerendere's quota to half Google Books quota
-    quota: 500
   ipfs:
     # activate if you have a local instance running
     enabled: false

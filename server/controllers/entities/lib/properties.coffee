@@ -3,7 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 wdk = require 'wikidata-sdk'
-books_ = __.require 'lib', 'books'
+isbn_ = __.require 'lib', 'isbn/isbn'
 { EntityUri } = __.require 'sharedLibs', 'regex'
 
 entityBase =
@@ -30,9 +30,9 @@ properties =
   # isbn 13
   'wdt:P212':
     datatype: 'string'
-    test: (isbn)-> books_.isIsbn(isbn) is 13
+    test: (isbn)-> isbn_.isIsbn(isbn) is 13
     concurrency: true
-    format: books_.normalizeIsbn
+    format: isbn_.normalizeIsbn
     uniqueValue: true
   # language of work
   'wdt:P407': entityBase
@@ -43,9 +43,9 @@ properties =
   # isbn 10
   'wdt:P957':
     datatype: 'string'
-    test: (isbn)-> books_.isIsbn(isbn) is 10
+    test: (isbn)-> isbn_.isIsbn(isbn) is 10
     concurrency: true
-    format: books_.normalizeIsbn
+    format: isbn_.normalizeIsbn
     uniqueValue: true
 
 whitelist = Object.keys properties

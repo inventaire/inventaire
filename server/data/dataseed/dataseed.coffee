@@ -11,6 +11,12 @@ promises_ = __.require 'lib', 'promises'
 
 { enabled, host } = CONFIG.dataseed
 
-module.exports = (query)->
-  unless enabled then return null
-  return promises_.get _.buildPath("#{host}/books", query)
+module.exports =
+  search: (query)->
+    unless enabled then return null
+    return promises_.get _.buildPath("#{host}/books", query)
+
+  getByIsbns: (isbns)->
+    unless enabled then return promises_.resolve {}
+    isbns = _.forceArray(isbns).join '|'
+    return promises_.get _.buildPath("#{host}/books", { isbns })

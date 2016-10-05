@@ -52,6 +52,16 @@ resolveWikiTitle = (title, lang='en')->
 # expect URIs to look like https://wikidata.org/entity/Q184226
 getQidFromUri = (uri)-> uri.split('/').last()
 
+formatTextFields = (data, multivalue=false)->
+  for lang, obj of data
+    if multivalue
+      data[lang] = obj.map getValue
+    else
+      data[lang] = obj.value
+  return data
+
+getValue = _.property 'value'
+
 # Only extending with wdk.helpers instead of every wdk functions
 # in order to avoid overwritting local functions.
 # That said, ideally, local functions should be renamed
@@ -61,3 +71,4 @@ module.exports = _.extend wd, wdk.helpers,
   filterAndBrush: filterAndBrush
   resolveWikiUrl: resolveWikiUrl
   getQidFromUri: getQidFromUri
+  formatTextFields: formatTextFields

@@ -4,7 +4,7 @@ db = __.require('couch', 'base')('entities')
 promises_ = __.require 'lib', 'promises'
 Entity = __.require 'models', 'entity'
 patches_ = require './patches'
-books_ = __.require 'lib', 'books'
+isbn_ = __.require 'lib', 'isbn/isbn'
 couch_ = __.require 'lib', 'couch'
 validateClaimValue = require('./validate_claim_value')(db)
 
@@ -20,10 +20,16 @@ module.exports = entities_ =
     .then _.compact
     .then _.Log('getEntities')
 
-  byIsbn: (isbn)->
-    isbn = books_.normalizeIsbn isbn
-    P = if isbn.length is 13 then 'P212' else 'P957'
-    db.viewFindOneByKey 'byClaim', [P, isbn]
+  byIsbns: (isbns)->
+    keys = isbns
+      .map (isbn)-> isbn_.toIsbn13 isbn, true
+      .filter _.identity
+      .map (isbn)-> ['wdt:P212', isbn]
+    db.viewByKeys 'byClaim', keys
+
+  byWikidataIds: (ids)->
+    keys = ids.map (id)-> ['invp:P1', id]
+    db.viewByKeys 'byClaim', keys
 
   idsByClaim: (property, value)->
     promises_.try -> validateProperty property
