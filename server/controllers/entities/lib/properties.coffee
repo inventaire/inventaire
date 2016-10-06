@@ -4,7 +4,7 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 wdk = require 'wikidata-sdk'
 isbn_ = __.require 'lib', 'isbn/isbn'
-{ EntityUri } = __.require 'sharedLibs', 'regex'
+{ EntityUri, SimpleDay } = __.require 'sharedLibs', 'regex'
 
 entityBase =
   datatype: 'entity'
@@ -21,6 +21,12 @@ urlBase =
 positiveIntegerBase =
   datatype: 'positive-integer'
   test: (value)-> _.isNumber(value) and value % 1 is 0 and value > 0
+  format: _.identity
+
+simpleDayBase =
+  datatype: 'simple-day'
+  # See specifications in inventaire-client/test/106-regex.coffee
+  test: SimpleDay.test.bind SimpleDay
   format: _.identity
 
 properties =
@@ -41,6 +47,8 @@ properties =
     uniqueValue: true
   # language of work
   'wdt:P407': entityBase
+  # publication date
+  'wdt:P577': simpleDayBase
   # edition or translation of
   'wdt:P629': entityUniqueValue
   # main subject
