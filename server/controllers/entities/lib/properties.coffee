@@ -18,6 +18,11 @@ urlBase =
   test: _.isUrl
   format: _.identity
 
+positiveIntegerBase =
+  datatype: 'positive-integer'
+  test: (value)-> _.isNumber(value) and value % 1 is 0 and value > 0
+  format: _.identity
+
 properties =
   # image
   'wdt:P18': urlBase
@@ -47,6 +52,8 @@ properties =
     concurrency: true
     format: isbn_.normalizeIsbn
     uniqueValue: true
+  # number of pages
+  'wdt:P1104': positiveIntegerBase
 
 whitelist = Object.keys properties
 
@@ -57,11 +64,12 @@ validateProperty = (property)->
   unless property in whitelist
     throw error_.new "property isn't whitelisted", 400, property
 
-# there are only datatypes resolving to string for now
+# which type those datatype should returned when passed to _.typeOf
 datatypePrimordialType =
   string: 'string'
   entity: 'string'
   url: 'string'
+  'positive-integer': 'number'
 
 testDataType = (property, value)->
   { datatype } = properties[property]
