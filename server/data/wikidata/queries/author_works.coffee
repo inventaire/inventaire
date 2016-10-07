@@ -1,6 +1,6 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
-{ getQidFromUri } = __.require 'lib', 'wikidata'
+{ getQidFromUri } = __.require 'lib', 'wikidata/wikidata'
 
 module.exports =
   parameters: ['qid']
