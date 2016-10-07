@@ -18,6 +18,7 @@ module.exports = (req, res, err, status)->
 
   res.status status
   res.json
+    status: status
     status_verbose: err.message
 
   return
