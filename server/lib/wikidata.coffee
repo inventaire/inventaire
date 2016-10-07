@@ -29,26 +29,6 @@ filterWhitelisted = (entity)->
     when 'book', 'human' then return true
     else return false
 
-resolveWikiUrl = (url)->
-  _.log url, 'resolveWikiUrl'
-  lang = url.replace /.*\/\/([a-z]{2,3})\..*/, '$1'
-  title = url.split('/').last()
-  resolveWikiTitle title, lang
-
-resolveWikiTitle = (title, lang='en')->
-  url = "#{base}?action=wbgetentities&sites=#{lang}wiki&format=json&props=info&titles=#{title}"
-  promises_.get url
-  .get 'entities'
-  .then _.values
-  .then _.Log('values')
-  .map _.property('id')
-  .then _.Log('ids')
-  .then (ids)->
-    if ids.length isnt 1 then throw new Error 'id not found'
-    return ids[0]
-  .then _.Log('ids?')
-  .catch _.ErrorRethrow('resolveWikiTitle err')
-
 # expect URIs to look like https://wikidata.org/entity/Q184226
 getQidFromUri = (uri)-> uri.split('/').last()
 
@@ -69,6 +49,5 @@ getValue = _.property 'value'
 module.exports = _.extend wd, wdk.helpers,
   searchEntities: searchEntities
   filterAndBrush: filterAndBrush
-  resolveWikiUrl: resolveWikiUrl
   getQidFromUri: getQidFromUri
   formatTextFields: formatTextFields
