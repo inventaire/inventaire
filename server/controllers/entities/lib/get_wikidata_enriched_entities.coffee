@@ -39,24 +39,18 @@ getInvEntitiesByWikidataIds = (ids)->
 mergeWdAndInvData = (wdEntities, invEntities)->
   for wdId, entity of wdEntities
 
-    # Filtering-out entities that aren't of the researched types
-    # to match entites search needs, but this might become an issue
-    # if search is used for things like main subject (wdt:P921) autocomplete
     { P31 } = entity.claims
     if P31
       simplifiedP31 = wdk.simplifyPropertyClaims P31
       entity.type = getEntityType simplifiedP31.map(prefixify)
     else
-      # Make sure to override the type as Wikidata entities have a type
-      # with another role in Wikibase
+      # Make sure to override the type as Wikidata entities have a type with
+      # another role in Wikibase, and we need this absence of known type to
+      # filter-out entities that aren't in our focus (i.e. not books, author, etc)
       entity.type = null
 
-    if entity.type
-      format entity, invEntities[wdId]
-    else
-      # Overriding the entity doc
-      # mark as irrelevant for caching
-      wdEntities[wdId] = { uri: "wd:#{wdId}", irrelevant: true }
+    if entity.type is 'meta' then formatMeta wdId, entity, wdEntities
+    else format entity, invEntities[wdId]
 
   return { entities: _.values wdEntities }
 
@@ -67,6 +61,12 @@ format = (entity, invEntity)->
   entity.descriptions = formatTextFields entity.descriptions
   entity.sitelinks = formatTextFields entity.sitelinks, false, 'title'
   entity.claims = formatClaims entity.claims
+
+  # Deleting unnecessary attributes
+  delete entity.pageid
+  delete entity.ns
+  delete entity.title
+  delete entity.lastrevid
   # Testing without aliases: the only use would be for local entity search(?)
   delete entity.aliases
 
@@ -86,3 +86,9 @@ format = (entity, invEntity)->
     entity.claims['invp:P1'] = [ wdId ]
 
   return
+
+formatMeta = (wdId, entity, wdEntities)->
+  # Keeping just enough data to filter-out while not cluttering the cache
+  wdEntities[wdId] =
+    id: wdId
+    type: 'meta'

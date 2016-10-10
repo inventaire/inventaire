@@ -1,6 +1,6 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
-{ types } = __.require 'sharedLibs', 'wikidata_aliases'
+{ types } = require './aliases'
 
 # Takes an entity P31 claims array
 # Returns a entity type string: book, edition, article, human, genre

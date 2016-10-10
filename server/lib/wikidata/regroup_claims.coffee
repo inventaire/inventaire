@@ -1,5 +1,5 @@
 __ = require('config').universalPath
-{ aliases } = __.require 'sharedLibs', 'wikidata_aliases'
+{ aliases } = require './aliases'
 
 # Regroup claims from properties that are close and would be ignored otherwise
 # ex: move screen writers ('wdt:P58') to the list of authors ('wdt:P50')

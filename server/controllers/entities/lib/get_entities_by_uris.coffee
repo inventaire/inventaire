@@ -15,9 +15,9 @@ prefixes = Object.keys getters
 
 module.exports = (uris)->
   domains =
-      wd: []
-      inv: []
-      isbn: []
+    wd: []
+    inv: []
+    isbn: []
 
   # validate per URI to be able to return a precise error message
   for uri in uris
@@ -56,20 +56,16 @@ mergeResponses = (results)->
     # to the client to alias entities
     redirects: {}
     notFound: []
-    irrelevant: []
 
   for result in results
 
     for entity in result.entities
       if entity.redirectedFrom?
         response.redirects[entity.redirectedFrom] = entity.uri
+        delete entity.redirectedFrom
 
-      if entity.irrelevant
-        response.irrelevant.push entity.uri
-
-    # concat all relevant entities
-    response.entities = response.entities
-      .concat result.entities.filter(relevant)
+    # concat all entities
+    response.entities = response.entities.concat result.entities
 
     # concat the list of not found URIs
     if result.notFound?
@@ -90,5 +86,3 @@ validators =
   inv: _.isInvEntityId
   wd: wdk.isWikidataEntityId
   isbn: isNormalizedIsbn
-
-relevant = (entity)-> not entity.irrelevant

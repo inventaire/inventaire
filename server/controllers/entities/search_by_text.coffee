@@ -16,6 +16,7 @@ module.exports = (query)->
     # Starting to look for the entities as soon as we have a search result
     # as other search results might take more time here but less later
     .then getEntitiesByUris
+    .then filterOutIrrelevantTypes
     # catching errors to avoid crashing promises_.all
     .catch _.Error('wikidata getBookEntities err')
 
@@ -49,3 +50,12 @@ urifyIsbn = (isbn)-> "isbn:#{isbn}"
 # (wd and isbn URI are prefered) as getEntitiesByUris will
 # take care of finding the right URI downward
 urifyInv = (entity)-> "inv:#{entity._id}"
+
+filterOutIrrelevantTypes = (result)->
+  for uri, entity of result.entities
+    { type } = entity
+    if not type or type is 'meta'
+      _.warn entity, 'filtered out'
+      delete result.entities[uri]
+
+  return result
