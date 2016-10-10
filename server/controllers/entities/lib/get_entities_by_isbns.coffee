@@ -1,9 +1,10 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 entities_ = require './entities'
-indexById = require './index_by_id'
-{ normalizeIsbn } = __.require 'lib', 'isbn/isbn'
+promises_ = __.require 'lib', 'promises'
+{ parse:parseIsbn, normalizeIsbn } = __.require 'lib', 'isbn/isbn'
 dataseed = __.require 'data', 'dataseed/dataseed'
+scaffoldEntityFromSeed = require './scaffold_entity_from_seed'
 
 module.exports = (isbns)->
   # search entities by isbn locally
@@ -14,16 +15,39 @@ module.exports = (isbns)->
     missingIsbns = _.difference isbns, foundIsbns
     _.log missingIsbns, 'missingIsbns'
 
-    entities = indexById entities
+    entities = entities.map formatEntity
 
-    if missingIsbns.length is 0 then return { entities }
+    if missingIsbns.length is 0 then return { entities }
 
-    # If some are missing, fetch data seeds as a place holder
-    # to help the user creating the associated entities
-    getSeedsByIsbns missingIsbns
-    .then (seeds)-> { entities, seeds }
+    # then look for missing isbns on dataseed
+    getMissingEntitiesFromSeeds missingIsbns
+    .spread (newEntities, notFound)->
+      data =
+        entities: entities.concat newEntities
+
+      if notFound.length > 0 then data.notFound = notFound
+
+      return data
 
 getNormalizedIsbn = (entity)-> normalizeIsbn entity.claims['wdt:P212'][0]
-getSeedsByIsbns = (isbns)->
+
+formatEntity = (entity)->
+  isbn = entity.claims['wdt:P212'][0]
+  entity.uri = "isbn:#{normalizeIsbn(isbn)}"
+  entity.type = 'edition'
+  return entity
+
+getMissingEntitiesFromSeeds = (isbns)->
   dataseed.getByIsbns isbns
-  .then (seeds)-> _.indexBy seeds, 'isbn'
+  .then (seeds)->
+    insufficientData = []
+    validSeeds = []
+    for seed in seeds
+      if _.isNonEmptyString seed.title then validSeeds.push seed
+      else insufficientData.push seed
+
+    promises_.all validSeeds.map(scaffoldEntityFromSeed)
+    .map formatEntity
+    .then (newEntities)-> [ newEntities, insufficientData ]
+
+extendWithIsbnData = (seed)-> _.extend seed, parseIsbn(seed.isbn)

@@ -3,6 +3,7 @@ _ = __.require('builders', 'utils')
 wdk = require 'wikidata-sdk'
 whitelistedProperties = require './whitelisted_properties'
 prefixify = require './prefixify'
+regroupClaims = require './regroup_claims'
 
 module.exports = (claims)->
   prefixedClaims = {}
@@ -14,12 +15,14 @@ module.exports = (claims)->
 
     prefixedClaims["wdt:#{prop}"] = values.map prefixify
 
+    regroupClaims prefixedClaims
+
   return prefixedClaims
 
 # Remove unused claims
 pickWhitelistedClaims = (claims)-> _.pick claims, whitelistedProperties
 
-# functions to convert Wikidata properties values to Inv entities custom formats
+# Functions to convert Wikidata properties values to Inv entities custom formats
 wikidataToInvFormatters =
   # convert epoch time to simple-day format
   P577: (date)->

@@ -7,7 +7,6 @@ isbn_ = __.require 'lib', 'isbn/isbn'
 
 searchByIsbn = require './search_by_isbn'
 searchByText = require './search_by_text'
-filteredSearch = require './filtered_search'
 
 { searchTimeout } = CONFIG
 
@@ -25,36 +24,29 @@ module.exports = (req, res)->
   # make sure we have a 2 letters lang code
   query.lang = _.shortLang lang
 
-  if _.isNonEmptyString filter
-    return filteredSearch query, res
-
   if isbn_.isIsbn search
     _.log search, 'searchByIsbn'
-    promises = searchByIsbn query
+    promise = searchByIsbn search
 
   else
     _.log search, 'searchByText'
-    promises = searchByText query
+    promise = searchByText query
 
-  promises_.all promises
-  .then bundleResults
+  promise
+  .then spreadResults
   .then res.json.bind(res)
   .catch error_.Handler(req, res)
 
-bundleResults = (sourcesResults)->
-  resp = {}
-  empty = true
+spreadResults = (results)->
+  response =
+    humans: []
+    books: []
+    editions: []
 
-  for sourceResults in _.compact(sourcesResults)
-    { source, results, search } = sourceResults
-    # also tests if the first item isnt undefined
-    if _.isArray(results) and results[0]?
-      resp[source] = sourceResults
-      empty = false
+  for result in results
+    { type } = result
+    switch type
+      when 'book', 'human', 'edition' then response["#{type}s"].push result
+      else _.warn result, "filtered-out type: #{type}"
 
-    resp.search or= search
-
-  if empty
-    throw error_.new 'empty search result', 404
-
-  return resp
+  return response

@@ -11,7 +11,6 @@ module.exports = (query)->
     body: _.stringify buildQuery(query.search), 'query'
   .then _.property('hits.hits')
   .map parseHit
-  .then _.Log('AFTER')
 
 buildQuery = (query)->
   query:

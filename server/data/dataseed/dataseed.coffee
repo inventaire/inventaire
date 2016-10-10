@@ -12,11 +12,16 @@ promises_ = __.require 'lib', 'promises'
 { enabled, host } = CONFIG.dataseed
 
 module.exports =
+  # Search query parameters:
+  # search: the text to search
+  # lang: the language code to prioritize
+  # refresh: request fresh data
+  # includeDocs: include the seeds docs
   search: (query)->
     unless enabled then return null
-    return promises_.get _.buildPath("#{host}/books", query)
+    promises_.get _.buildPath("#{host}/books", query)
 
   getByIsbns: (isbns)->
     unless enabled then return promises_.resolve {}
     isbns = _.forceArray(isbns).join '|'
-    return promises_.get _.buildPath("#{host}/books", { isbns })
+    promises_.get _.buildPath("#{host}/books", { isbns })

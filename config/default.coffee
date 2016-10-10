@@ -74,7 +74,7 @@ module.exports = config =
   logStaticFilesRequests: true
   # enable the api/i18n/public endpoint and its i18nMissingKeys controller
   logMissingI18nKeys: true
-  # disable restrictApiAccess middleware: no more Auth required
+  # disable restrictApiAccess middleware: no more Auth required
   apiOpenBar: false
   # reset server/lib/cache.coffee
   resetCacheAtStartup: false
@@ -150,3 +150,7 @@ module.exports = config =
     localGateway: 'http://localhost:8080'
     publicGateway: 'https://ipfs.io'
   searchTimeout: 10000
+
+  # Mock user ids passed for server edits on entities
+  adminUserIds:
+    seed: '00000000000000000000000000000000'
