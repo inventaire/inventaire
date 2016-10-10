@@ -25,7 +25,4 @@ module.exports = (groups_)->
 
   return getGroupPublicData
 
-objectRes = (group, users=[], items=[])->
-  group: group
-  users: users
-  items: items
+objectRes = (group, users=[], items=[])-> { group, users, items }
