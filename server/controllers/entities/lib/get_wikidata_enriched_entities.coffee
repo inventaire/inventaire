@@ -61,13 +61,12 @@ mergeWdAndInvData = (wdEntities, invEntities)->
   return { entities: _.values wdEntities }
 
 format = (entity, invEntity)->
-  entity.uri = "wd:#{entity.id}"
+  { id:wdId } = entity
+  entity.uri = "wd:#{wdId}"
   entity.labels = formatTextFields entity.labels
   entity.descriptions = formatTextFields entity.descriptions
   entity.sitelinks = formatTextFields entity.sitelinks, false, 'title'
   entity.claims = formatClaims entity.claims
-  # to run after claims were formatted
-
   # Testing without aliases: the only use would be for local entity search(?)
   delete entity.aliases
 
@@ -80,5 +79,10 @@ format = (entity, invEntity)->
     _.extend entity.claims, invEntity.claims
     # Attach inv database id to allow direct edit
     entity._id = invEntity._id
+
+  else
+    # Manually add the property that would link the Wikidata entity
+    # to the to-be-created-when-needed local inv entity
+    entity.claims['invp:P1'] = [ wdId ]
 
   return
