@@ -20,7 +20,8 @@
     "preview-email": "./scripts/preview-email",
     "patches": "./scripts/run_patches ./scripts/patches",
     "watch-i18n": "onchange server/lib/emails/i18n/src -- ./scripts/reload_i18n",
-    "migrator": "coffee db/couchdb/migrator.coffee"
+    "migrator": "coffee db/couchdb/migrator.coffee",
+    "reset-cache": "rm -rf db/leveldb && mkdir db/leveldb"
   },
   "author": "maxlath",
   "license": "AGPL-3.0",

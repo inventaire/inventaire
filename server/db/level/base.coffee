@@ -4,7 +4,7 @@ _ = __.require 'builders', 'utils'
 { Promise } = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
 
-DBPath = __.path 'leveldb', CONFIG.port
+DBPath = __.path 'leveldb'
 
 sublevel = require 'level-sublevel'
 if CONFIG.env is 'tests'
