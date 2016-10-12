@@ -13,10 +13,9 @@ cache_ = __.require 'lib', 'cache'
 mookPromise = hashKey = (key)->
   promises_.resolve _.hashCode(key)
 
-Ctx =
-  method: (key)-> hashKey key + @value
-  failingMethod: (key)-> promises_.reject('Jag är Döden')
-  value: -> _.random(1000)
+randomNum = -> _.random 100000
+workingFn = (key)-> hashKey(key + randomNum())
+failingFn = (key)-> promises_.reject 'Jag är Döden'
 
 describe 'CACHE', ->
   describe 'get', ->
@@ -58,11 +57,11 @@ describe 'CACHE', ->
       return
 
     it 'should also accept an expiration timespan', (done)->
-      cache_.get('samekey', Ctx.method)
+      cache_.get('samekey', workingFn)
       .then (res1)->
-        cache_.get('samekey', Ctx.method.bind(Ctx, 'different arg'), 10000)
+        cache_.get('samekey', workingFn.bind(null, 'different arg'), 10000)
         .then (res2)->
-          cache_.get('samekey', Ctx.method.bind(Ctx, 'different arg'), 0)
+          cache_.get('samekey', workingFn.bind(null, 'different arg'), 0)
           .then (res3)->
             _.log [res1, res2, res3], 'results'
             res1.should.equal res2
@@ -71,13 +70,13 @@ describe 'CACHE', ->
       return
 
     it 'should return the outdated version if the new version returns an error', (done)->
-      cache_.get('doden', Ctx.method.bind(Ctx, 'Vem är du?'), 0)
+      cache_.get('doden', workingFn.bind(null, 'Vem är du?'), 0)
       .then (res1)->
         # returns an error: should return old value
-        cache_.get('doden', Ctx.failingMethod.bind(Ctx, 'Vem är du?'), 1)
+        cache_.get('doden', failingFn.bind(null, 'Vem är du?'), 1)
         .then (res2)->
           # the error shouldnt have overriden the value
-          cache_.get('doden', Ctx.method.bind(Ctx, 'Vem är du?'), 5000)
+          cache_.get('doden', workingFn.bind(null, 'Vem är du?'), 5000)
           .then (res3)->
             _.log [res1, res2, res3], 'results'
             res1.should.equal res2
@@ -86,10 +85,10 @@ describe 'CACHE', ->
       return
 
     it 'should refuse old value when passed a 0 timespan', (done)->
-      cache_.get('doden', Ctx.method.bind(Ctx, 'Vem är du?'), 0)
+      cache_.get('doden', workingFn.bind(null, 'Vem är du?'), 0)
       .then (res1)->
         # returns an error: should return old value
-        cache_.get('doden', Ctx.failingMethod.bind(Ctx, 'Vem är du?'), 0)
+        cache_.get('doden', failingFn.bind(null, 'Vem är du?'), 0)
         .then (res2)->
           res1.should.be.ok()
           should(res2).not.be.ok()
@@ -110,4 +109,87 @@ describe 'CACHE', ->
           should(res2).not.be.ok()
           spy.callCount.should.equal 1
           done()
+      return
+
+  describe 'dryGet', ->
+    it 'should return a promise', (done)->
+      p = cache_.dryGet 'whatever'
+      p.should.have.property 'then'
+      p.should.have.property 'catch'
+      done()
+
+    it 'should return a rejected promise if not passed a key', (done)->
+      cache_.dryGet()
+      .catch -> done()
+
+      return
+
+    it 'should return a rejected promise if passed a non-number timestamp', (done)->
+      cache_.dryGet 'whatever', 'notanumber'
+      .catch -> done()
+
+      return
+
+    it 'should return a value only when a value was cached', (done)->
+      key = randomNum().toString()
+      cache_.dryGet key
+      .then (cached)->
+        should(cached).not.be.ok()
+        # with caching
+        cache_.get key, workingFn.bind(null, key)
+        .then (cached2)->
+          cache_.dryGet key
+          .then (cached3)->
+            should(cached3).be.ok()
+            cached3.should.equal cached2
+            done()
+
+      return
+
+    it "should return a value only if the timestamp isn't expired", (done)->
+      key = randomNum().toString()
+      cache_.get key, workingFn.bind(null, key)
+      .then (cached)->
+        cache_.dryGet key, 10000
+        .then (cached2)->
+          should(cached2).be.ok()
+          cache_.dryGet key, 0
+          .then (cached3)->
+            should(cached3).not.be.ok()
+            done()
+
+      return
+
+  describe 'put', ->
+    it 'should return a promise', (done)->
+      p = cache_.put 'whatever', 'somevalue'
+      p.should.have.property 'then'
+      p.should.have.property 'catch'
+      done()
+
+    it 'should return a rejected promise if not passed a key', (done)->
+      cache_.put null, 'somevalue'
+      .catch -> done()
+
+      return
+
+    it 'should return a rejected promise if not passed a value', (done)->
+      cache_.put 'whatever', null
+      .catch -> done()
+
+      return
+
+    it 'should put a value in the cache', (done)->
+      key = randomNum().toString()
+      value = randomNum().toString()
+      cache_.dryGet key
+      .then (cached)->
+        should(cached).not.be.ok()
+        cache_.put key, value
+        .then ->
+          cache_.dryGet key
+          .then (cached2)->
+            cached2.should.equal value
+            done()
+
       return

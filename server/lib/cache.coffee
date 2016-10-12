@@ -33,6 +33,22 @@ module.exports =
 
       throw err
 
+  # Return what's in cache. If nothing, return nothing: no request performed
+  dryGet: (key, timespan=oneMonth)->
+    try _.types [key, timespan], ['string', 'number']
+    catch err then return error_.reject err, 500
+
+    checkCache key, timespan
+    .then (cached)-> cached?.body
+
+  put: (key, value)->
+    try _.type key, 'string'
+    catch err then return error_.reject err, 500
+
+    unless value? then return error_.reject 'missing value', 500
+
+    return putResponseInCache key, value
+
   # dataChange: date before which cached data
   # is outdated due to change in the data structure.
   # A convenient way to bust cached data after an update
