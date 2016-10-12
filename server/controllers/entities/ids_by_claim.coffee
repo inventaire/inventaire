@@ -1,12 +1,17 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
-entities_ = require './lib/entities'
+reverseClaims = require './lib/reverse_claims'
 
 module.exports = (req, res, next)->
-  { property, value } = req.query
+  { property, uri } = req.query
 
-  entities_.idsByClaim property, value
-  .then _.Log('ENTITIES IDS BY CLAIM')
-  .then _.Wrap(res, 'ids')
+  unless _.isPropertyUri property
+    return error_.bundle req, res, 'invalid property', 400
+
+  unless _.isEntityUri uri
+    return error_.bundle req, res, 'invalid uri', 400
+
+  reverseClaims property, uri
+  .then _.Wrap(res, 'uris')
   .catch error_.Handler(req, res)

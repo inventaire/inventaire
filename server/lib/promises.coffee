@@ -38,6 +38,16 @@ promisesHandlers =
       API[k] = Promise.promisify mod[k]
     return API
 
+  # source: http://bluebirdjs.com/docs/api/deferred-migration.html
+  defer: ->
+    resolve = null
+    reject = null
+    promise = new Promise ->
+      resolve = arguments[0]
+      reject = arguments[1]
+
+    return { resolve, reject, promise }
+
 # bundling NonSkip and _.Error handlers
 promisesHandlers.catchSkip = (label)->
   catcher = (err)->
