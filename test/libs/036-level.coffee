@@ -44,6 +44,8 @@ describe 'DB', ->
             res.should.equal 'zup'
             done()
 
+        return
+
       it "should put and get an object", (done)->
         obj = {da: 'zup'}
         json = JSON.stringify(obj)
@@ -56,6 +58,8 @@ describe 'DB', ->
             obj2.da.should.equal 'zup'
             done()
 
+        return
+
     describe 'UNJSONIZED', ->
       it "should put and get a string", (done)->
         unjsonizedDb.put('what', 'zup')
@@ -65,6 +69,8 @@ describe 'DB', ->
             _.log res, 'res'
             res.should.equal 'zup'
             done()
+
+        return
 
       it "should put and get an object", (done)->
         obj = {ahoy: 'georges'}
@@ -76,12 +82,16 @@ describe 'DB', ->
             res.ahoy.should.equal 'georges'
             done()
 
+        return
+
     describe 'GET STREAM', ->
       it "should return a promise", (done)->
         db.getStream()
         .then (res)->
           _.log res, 'res'
           done()
+
+        return
 
       it "should return just what is asked", (done)->
         db.put('123:a', 'zou')
@@ -96,6 +106,8 @@ describe 'DB', ->
           res.length.should.equal 3
           done()
 
+        return
+
     describe 'GET', ->
       it "should catch notFound errors", (done)->
         spyCount = 0
@@ -107,6 +119,8 @@ describe 'DB', ->
           spyCount.should.equal 0
           should(res).not.be.ok()
           done()
+
+        return
 
     describe 'UPDATE', ->
       it "should update the value", (done)->
@@ -121,6 +135,8 @@ describe 'DB', ->
               val.d.should.equal 'e'
               done()
 
+        return
+
     describe 'PATCH', ->
       it "should update the value", (done)->
         db.put 'a', {b: 'c'}
@@ -133,3 +149,5 @@ describe 'DB', ->
               val.b.should.equal 'c'
               val.d.should.equal 'e'
               done()
+
+        return

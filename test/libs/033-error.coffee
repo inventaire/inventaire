@@ -56,3 +56,5 @@ describe 'error_', ->
         err.message.should.equal 'doh'
         err.status.should.equal 500
         done()
+
+      return

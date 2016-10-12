@@ -15,23 +15,24 @@ mookPromise = hashKey = (key)->
 
 Ctx =
   method: (key)-> hashKey key + @value
-  failingMethod: (key)-> promises_.reject("Jag är Döden")
+  failingMethod: (key)-> promises_.reject('Jag är Döden')
   value: -> _.random(1000)
 
 describe 'CACHE', ->
   describe 'get', ->
-    it "should return a promise", (done)->
+    it 'should return a promise', (done)->
       p = cache_.get('whatever', mookPromise.bind(null, 'yo'))
       p.should.have.property 'then'
       p.should.have.property 'catch'
       done()
 
-    it "should accept a key and a promisified method", (done)->
+    it 'should accept a key and a promisified method', (done)->
       key = 'whatever'
       cache_.get(key, mookPromise.bind(null, key))
       .then -> done()
+      return
 
-    it "should compute ones and cache for the nexts", (done)->
+    it 'should compute ones and cache for the nexts', (done)->
       spy = sinon.spy()
       key = '007'
       hash = _.hashCode(key)
@@ -54,8 +55,9 @@ describe 'CACHE', ->
                 # DHO [>.<]
                 spy.callCount.should.equal 2
                 done()
+      return
 
-    it "should also accept an expiration timespan", (done)->
+    it 'should also accept an expiration timespan', (done)->
       cache_.get('samekey', Ctx.method)
       .then (res1)->
         cache_.get('samekey', Ctx.method.bind(Ctx, 'different arg'), 10000)
@@ -66,8 +68,9 @@ describe 'CACHE', ->
             res1.should.equal res2
             res2.should.not.equal res3
             done()
+      return
 
-    it "should return the outdated version if the new version returns an error", (done)->
+    it 'should return the outdated version if the new version returns an error', (done)->
       cache_.get('doden', Ctx.method.bind(Ctx, 'Vem är du?'), 0)
       .then (res1)->
         # returns an error: should return old value
@@ -80,8 +83,9 @@ describe 'CACHE', ->
             res1.should.equal res2
             res1.should.equal res3
             done()
+      return
 
-    it "should refuse old value when passed a 0 timespan", (done)->
+    it 'should refuse old value when passed a 0 timespan', (done)->
       cache_.get('doden', Ctx.method.bind(Ctx, 'Vem är du?'), 0)
       .then (res1)->
         # returns an error: should return old value
@@ -90,8 +94,9 @@ describe 'CACHE', ->
           res1.should.be.ok()
           should(res2).not.be.ok()
           done()
+      return
 
-    it "should cache non-error empty results", (done)->
+    it 'should cache non-error empty results', (done)->
       spy = sinon.spy()
       empty = (key)->
         spy()
@@ -105,3 +110,4 @@ describe 'CACHE', ->
           should(res2).not.be.ok()
           spy.callCount.should.equal 1
           done()
+      return
