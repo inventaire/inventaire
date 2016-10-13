@@ -13,7 +13,7 @@ getters =
 
 prefixes = Object.keys getters
 
-module.exports = (uris)->
+module.exports = (uris, refresh)->
   domains =
     wd: []
     inv: []
@@ -36,15 +36,15 @@ module.exports = (uris)->
 
   _.log domains, 'entities requested'
 
-  getDomainsPromises domains
+  getDomainsPromises domains, refresh
   .then mergeResponses
   .catch _.ErrorRethrow("getEntitiesByUris err: #{uris.join('|')}")
 
-getDomainsPromises = (domains)->
+getDomainsPromises = (domains, refresh)->
   promises = []
   for prefix, array of domains
     if array.length > 0
-      promises.push getters[prefix](array)
+      promises.push getters[prefix](array, refresh)
 
   return promises_.all promises
 
@@ -58,7 +58,7 @@ mergeResponses = (results)->
     notFound: []
 
   for result in results
-
+    _.type result.entities, 'array'
     for entity in result.entities
       if entity.redirectedFrom?
         response.redirects[entity.redirectedFrom] = entity.uri

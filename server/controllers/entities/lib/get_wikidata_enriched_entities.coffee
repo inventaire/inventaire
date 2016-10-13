@@ -18,41 +18,42 @@ formatTextFields = __.require 'lib', 'wikidata/format_text_fields'
 getEntityType = __.require 'lib', 'wikidata/get_entity_type'
 prefixify = __.require 'lib', 'wikidata/prefixify'
 entities_ = require './entities'
+cache_ = __.require 'lib', 'cache'
+promises_ = __.require 'lib', 'promises'
+getWdEntity = __.require 'data', 'wikidata/get_entity'
+getInvEntityByWdId = require './get_inv_entity_by_wd_id'
 
-module.exports = (ids)->
-  # TODO: add caching at the single entity level
+module.exports = (ids, refresh)->
+  promises_.all ids.map((id)-> getCachedEnrichedEntity(id, refresh))
+  .then (entities)-> { entities }
+
+getCachedEnrichedEntity = (wdId, refresh)->
+  key = "wd:enriched:#{wdId}"
+  timespan = if refresh then 0 else null
+  cache_.get key, getEnrichedEntity.bind(null, wdId), timespan
+
+getEnrichedEntity = (wdId)->
   Promise.all [
-    getEntities(ids).get 'entities'
-    getInvEntitiesByWikidataIds ids
+    getWdEntity wdId
+    getInvEntityByWdId wdId
   ]
+  .then _.Log('getEnrichedEntity')
   .spread mergeWdAndInvData
 
-getInvEntitiesByWikidataIds = (ids)->
-  entities_.byWikidataIds ids
-  .then (entities)->
-    index = {}
-    for entity in entities
-      wdId = entity.claims['invp:P1'][0]
-      index[wdId] = entity
-    return index
+mergeWdAndInvData = (entity, invEntity)->
+  if entity.missing? then return formatEmpty 'missing', entity
+  { P31 } = entity.claims
+  if P31
+    simplifiedP31 = wdk.simplifyPropertyClaims P31
+    entity.type = getEntityType simplifiedP31.map(prefixify)
+  else
+    # Make sure to override the type as Wikidata entities have a type with
+    # another role in Wikibase, and we need this absence of known type to
+    # filter-out entities that aren't in our focus (i.e. not books, author, etc)
+    entity.type = null
 
-mergeWdAndInvData = (wdEntities, invEntities)->
-  for wdId, entity of wdEntities
-
-    { P31 } = entity.claims
-    if P31
-      simplifiedP31 = wdk.simplifyPropertyClaims P31
-      entity.type = getEntityType simplifiedP31.map(prefixify)
-    else
-      # Make sure to override the type as Wikidata entities have a type with
-      # another role in Wikibase, and we need this absence of known type to
-      # filter-out entities that aren't in our focus (i.e. not books, author, etc)
-      entity.type = null
-
-    if entity.type is 'meta' then formatMeta wdId, entity, wdEntities
-    else format entity, invEntities[wdId]
-
-  return { entities: _.values wdEntities }
+  if entity.type is 'meta' then return formatEmpty 'meta', entity
+  else return format entity, invEntity
 
 format = (entity, invEntity)->
   { id:wdId } = entity
@@ -85,10 +86,10 @@ format = (entity, invEntity)->
     # to the to-be-created-when-needed local inv entity
     entity.claims['invp:P1'] = [ wdId ]
 
-  return
+  return entity
 
-formatMeta = (wdId, entity, wdEntities)->
+formatEmpty = (type, entity)->
   # Keeping just enough data to filter-out while not cluttering the cache
-  wdEntities[wdId] =
-    id: wdId
-    type: 'meta'
+  id: entity.id
+  uri: "wd:#{entity.id}"
+  type: type
