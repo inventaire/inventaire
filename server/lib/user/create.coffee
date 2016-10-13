@@ -14,12 +14,14 @@ module.exports = (db, token_, availability_)->
     .then invitations_.findOneByEmail.bind(null, email)
     .then _.Log('invitedDoc')
     .then (invitedDoc)->
-      if invitedDoc?
-        User.upgradeInvited invitedDoc, username, creationStrategy, language, password
-        .then db.putAndReturn
-      else
+      User.upgradeInvited invitedDoc, username, creationStrategy, language, password
+      .then db.putAndReturn
+    .catch (err)->
+      if err.notFound
         User.create username, email, creationStrategy, language, password
         .then db.postAndReturn
+      else
+        throw err
 
     .then postCreation
 

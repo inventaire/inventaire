@@ -13,11 +13,10 @@ module.exports = (username, password, done)->
     return done null, false, { message: 'too_many_attempts' }
 
   # addressing the case an email is provided instead of a username
-  user_.findOneByUsernameOrEmail(username)
+  user_.findOneByUsernameOrEmail username
   .catch invalidUsernameOrPassword.bind(null, done, username, 'findOneByUsername')
   .then returnIfValid.bind(null, done, password, username)
   .catch finalError.bind(null, done)
-
 
 returnIfValid = (done, password, username, user)->
   # need to check user existance to avoid

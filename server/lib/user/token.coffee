@@ -33,14 +33,20 @@ module.exports = (db, user_)->
   token_.confirmEmailValidity = (email, token)->
     user_.findOneByEmail email
     .then updateIfValidToken.bind(null, token)
+    .catch (err)->
+      if err.notFound then throw noEmailValidationFound token, email
+      else throw err
 
   updateIfValidToken = (token, user)->
     { emailValidation, _id } = user
     unless emailValidation?
-      throw error_.new 'no email validation token found', 401, token, _id
+      throw noEmailValidationFound token, _id
 
     testToken emailValidation, token, tokenDaysToLive
     .then updateValidEmail.bind(null, db, _id)
+
+  noEmailValidationFound = (context...)->
+    error_.new 'no email validation token found', 401, context
 
   token_.sendResetPasswordEmail = (user)->
     getTokenData()

@@ -6,7 +6,7 @@ error_ = __.require 'lib', 'error/error'
 
 couch_ = __.require 'lib', 'couch'
 User = __.require 'models', 'user'
-{ byEmail, byEmails, findOneByEmail } = require './shared_user_handlers'
+{ byEmail, byEmails, findOneByEmail } = require './shared_user_handlers'
 { publicUserData, publicUsersDataWithEmails } = require './public_user_data'
 
 db = __.require('couch', 'base')('users', 'user')
@@ -16,9 +16,9 @@ user_ =
   db: db
   byId: db.get.bind(db)
   byIds: db.fetch.bind(db)
-  byEmail: byEmail.bind(null, db)
-  byEmails: byEmails.bind(null, db)
-  findOneByEmail: findOneByEmail.bind(null, db)
+  byEmail: byEmail.bind(null, db)
+  byEmails: byEmails.bind(null, db)
+  findOneByEmail: findOneByEmail.bind(null, db)
 
   publicUsersDataByEmails: (emails)->
     _.type emails, 'array'
@@ -76,7 +76,6 @@ user_ =
   incrementUndeliveredMailCounter: (email)->
     user_.findOneByEmail email
     .then (doc)->
-      unless doc? then throw new Error('user not found')
       { _id } = doc
       db.update _id, (doc)->
         doc.undeliveredEmail or= 0
