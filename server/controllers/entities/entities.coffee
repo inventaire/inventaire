@@ -4,7 +4,8 @@ error_ = __.require 'lib', 'error/error'
 searchEntity = require './search_entity'
 getEntities = require './get_entities'
 createEntity = require './create_entity'
-idsByClaim = require './ids_by_claim'
+reverseClaims = require './reverse_claims'
+authorWorks = require './author_works'
 updateClaim = require './update_claim'
 updateLabel = require './update_label'
 
@@ -19,7 +20,7 @@ module.exports =
       when 'search' then return searchEntity req, res
       when 'get-entities' then return getEntities req, res
       # when 'get-images' then return getImages req, res
-      when 'ids-by-claim' then return idsByClaim req, res
+      when 'reverse-claims' then return reverseClaims req, res
       else error_.unknownAction req, res
 
   # authentified
