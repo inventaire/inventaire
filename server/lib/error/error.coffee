@@ -19,8 +19,10 @@ error_.complete = (err, filter, context...)->
   return formatError err, filter, context
 
 # same as error_.new but returns a promise
+# also accepts Error instances
 error_.reject = (args...)->
-  err = error_.new.apply null, args
+  method = if args[0] instanceof Error then 'complete' else 'new'
+  err = error_[method].apply null, args
   return promises_.reject(err)
 
 
