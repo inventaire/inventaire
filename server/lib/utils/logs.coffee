@@ -26,6 +26,10 @@ module.exports = (_)->
     Inspect: (label)-> fn = (obj)-> inspect obj, label
 
     error: (err, label, logStack=true)->
+      # If the error is of a lower lever than 500, make it a warning, not an error
+      if err.status? and err.status < 500
+        return customLoggers.warn err, label
+
       # Prevent logging big error stack traces for network errors
       # in offline development mode
       if offline and err.code is 'ENOTFOUND'
@@ -59,6 +63,16 @@ module.exports = (_)->
           console.log red('errors: ') + errs
 
       setInterval counter.bind(@), 5000
+
+
+  # The same as inv-loggers::errorRethrow but using customLoggers.error instead
+  errorRethrow = (err, label)->
+    customLoggers.error err, label
+    throw err
+  # Overriding inv-loggers partial loggers with the above customized loggers
+  customLoggers.Warn = loggers_.partialLogger customLoggers.warn
+  customLoggers.Error = loggers_.partialLogger customLoggers.error
+  customLoggers.ErrorRethrow = loggers_.partialLogger errorRethrow
 
   # overriding inv-loggers 'error' and 'warn'
   return _.extend {}, loggers_, customLoggers
