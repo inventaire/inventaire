@@ -5,10 +5,10 @@ whitelistedProperties = require './whitelisted_properties'
 prefixify = require './prefixify'
 regroupClaims = require './regroup_claims'
 
-module.exports = (claims)->
+module.exports = (claims, wdId)->
   prefixedClaims = {}
 
-  for prop, values of wdk.simplifyClaims(pickWhitelistedClaims(claims))
+  for prop, values of wdk.simplifyClaims(pickWhitelistedClaims(claims, wdId))
 
     if prop in hasFormatter
       values = values.map wikidataToInvFormatters[prop]
@@ -20,7 +20,14 @@ module.exports = (claims)->
   return prefixedClaims
 
 # Remove unused claims
-pickWhitelistedClaims = (claims)-> _.pick claims, whitelistedProperties
+pickWhitelistedClaims = (claims, wdId)->
+  allProperties = Object.keys claims
+  keep = _.pick claims, whitelistedProperties
+  removedProperties = _.difference allProperties, Object.keys(keep)
+  if removedProperties.length > 0
+    # Converting to String to log properties on one line
+    _.warn removedProperties.toString(), "#{wdId} filtered-out claims"
+  return keep
 
 # Functions to convert Wikidata properties values to Inv entities custom formats
 wikidataToInvFormatters =
