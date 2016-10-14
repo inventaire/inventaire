@@ -2,7 +2,6 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 wdk = require 'wikidata-sdk'
 wd_ = __.require 'lib', 'wikidata/wikidata'
-prefixify = __.require 'lib', 'wikidata/prefixify'
 cache_ = __.require 'lib', 'cache'
 
 module.exports = (query)->

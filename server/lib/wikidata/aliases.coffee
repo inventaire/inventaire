@@ -21,7 +21,6 @@ _.extend Q,
     'wd:Q34620' #Greek tragedy
     'wd:Q8274' #manga
     'wd:Q128093' #ebook
-    'wd:Q128093' #ebook
   ]
   editions: [
     'wd:Q3331189' #edition
