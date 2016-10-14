@@ -28,4 +28,10 @@ format = (entity)->
     entity.uri = "inv:#{entity._id}"
 
   entity.type = getEntityType entity.claims['wdt:P31']
+
+  # Matching Wikidata entities format for images
+  # Here we are missing license, credits, and author attributes
+  entity.image =
+    url: entity.claims['wdt:P18']?[0]
+
   return entity

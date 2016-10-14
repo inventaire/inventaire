@@ -28,18 +28,19 @@ module.exports = [
   'P212' # isbn 13
   'P356' # DOI
   'P364' # original language of work
-  'P407' # language of work
-  'P577' # publication date
+  'P407' # language of work
+  'P577' # publication date
   'P569' # date of birth
   'P570' # date of death
   'P629' # edition or translation of
+  'P648' # Open Library ID
   'P674' # characters
   'P737' # influence by
   'P738' # influence of
   'P840' # narrative location
   'P856' # official website
   'P921' # main subject
-  'P953' # full text available at
+  'P953' # full text available at
   'P957' # isbn 10
   'P1066' # student of
   'P1104' # number of pages
@@ -50,5 +51,5 @@ module.exports = [
   'P2003' # instagram
   'P2013' # facebook
   'P2034' # Project Gutenberg ebook ID
-  'P2093' # author name string
+  'P2093' # author name string
 ]

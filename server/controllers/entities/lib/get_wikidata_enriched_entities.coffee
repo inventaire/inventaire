@@ -22,6 +22,7 @@ cache_ = __.require 'lib', 'cache'
 promises_ = __.require 'lib', 'promises'
 getWdEntity = __.require 'data', 'wikidata/get_entity'
 getInvEntityByWdId = require './get_inv_entity_by_wd_id'
+addImageData = require './add_image_data'
 
 module.exports = (ids, refresh)->
   promises_.all ids.map((id)-> getCachedEnrichedEntity(id, refresh))
@@ -37,7 +38,6 @@ getEnrichedEntity = (wdId)->
     getWdEntity wdId
     getInvEntityByWdId wdId
   ]
-  .then _.Log('getEnrichedEntity')
   .spread mergeWdAndInvData
 
 mergeWdAndInvData = (entity, invEntity)->
@@ -61,7 +61,7 @@ format = (entity, invEntity)->
   entity.labels = formatTextFields entity.labels
   entity.descriptions = formatTextFields entity.descriptions
   entity.sitelinks = formatTextFields entity.sitelinks, false, 'title'
-  entity.claims = formatClaims entity.claims
+  entity.claims = formatClaims entity.claims, wdId
 
   # Deleting unnecessary attributes
   delete entity.pageid
@@ -86,7 +86,7 @@ format = (entity, invEntity)->
     # to the to-be-created-when-needed local inv entity
     entity.claims['invp:P1'] = [ wdId ]
 
-  return entity
+  return addImageData entity
 
 formatEmpty = (type, entity)->
   # Keeping just enough data to filter-out while not cluttering the cache

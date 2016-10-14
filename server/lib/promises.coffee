@@ -11,6 +11,7 @@ Promise.config CONFIG.bluebird
 
 requests = require './requests'
 shared = __.require('sharedLibs', 'promises')(Promise)
+{ resolved } = shared
 
 promisesHandlers =
   Promise: Promise
@@ -42,11 +43,23 @@ promisesHandlers =
   defer: ->
     resolve = null
     reject = null
-    promise = new Promise ->
-      resolve = arguments[0]
-      reject = arguments[1]
-
+    promise = new Promise -> [ resolve, reject ] = arguments
     return { resolve, reject, promise }
+
+  fallbackChain: (getters, timeout=10000)->
+    _.types getters, 'functions...'
+    first = true
+    p = resolved
+    while getters.length > 0
+      # Get the next getter and assign a timeout
+      next = getters.shift()
+      if first
+        p = p.then(next).timeout timeout
+        first = false
+      else
+        # chaining the following options in case the first fails
+        p = p.catch(next).timeout timeout
+    return p
 
 # bundling NonSkip and _.Error handlers
 promisesHandlers.catchSkip = (label)->

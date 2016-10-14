@@ -7,19 +7,19 @@ checkCoverExistance = require './check_cover_existance'
 
 { coverByOlId } = require './api'
 
-module.exports = (req, res)->
-  { id, type } = req.query
-  unless id?
-    return error_.bundle req, res, 'no openlibrary id provided', 400
+module.exports = (openLibraryId, entityType)->
+  switch entityType
+    when 'human' then type = 'a'
+    when 'book', 'edition' then type = 'b'
+    else return error_.bundle req, res, 'unknow openlibrary type', 400
 
-  if type?
-    switch type
-      when 'author' then type = 'a'
-      when 'book' then type = 'b'
-      else return error_.bundle req, res, 'unknow openlibrary type', 400
-
-  url = coverByOlId id, type
+  url = coverByOlId openLibraryId, type
 
   checkCoverExistance url
-  .then res.json.bind(res)
-  .catch error_.Handler(req, res)
+  .then _.Log('open library url found')
+  .then (url)->
+    url: url
+    credits:
+      text: 'OpenLibrary'
+      url: url
+  .catch _.ErrorRethrow('get openlibrary cover err')

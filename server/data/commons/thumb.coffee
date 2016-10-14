@@ -1,57 +1,54 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
-cache_ = __.require 'lib', 'cache'
-error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
 xml_ = __.require 'lib', 'xml'
 qs = require 'querystring'
+error_ = __.require 'lib', 'error/error'
 
-module.exports = (req, res)->
-  { file, width } = req.query
-
-  unless file? then return error_.bundle req, res, 'missing file parameter', 400
-
-  timespan = cache_.solveExpirationTime 'commons'
-
-  key = "commons:#{file}:#{width}"
-  cache_.get key, requestThumb.bind(null, file, width), timespan
-  .then res.json.bind(res)
-  .catch error_.Handler(req, res)
-
-requestThumb = (fileName, width)->
-  options = requestOptions fileName, width
-
-  promises_.get options
+# Defaulting to a high width as if the width is higher than the original,
+# the API returns the original path
+# But not too high though so that we don't get super heavy files
+module.exports = (file, width=2000)->
+  file = qs.escape file
+  promises_.get requestOptions(file, width)
   .then xml_.parse
-  .then (res)->
-    { file, licenses, error } = res.response
-    return data =
-      thumbnail: file?[0]?.urls?[0]?.thumbnail?[0]
-      license: licenses?[0]?.license?[0]?.name?.toString()
-      author: file?[0]?.author?.toString()
-      error: error?[0]
-  .then parseData.bind(null, fileName, options.url)
-  .error _.Error("requestThumb: #{options.url}")
+  .then extractData
+  .then formatData.bind(null, file)
+  .catch _.ErrorRethrow('get commons image err')
 
 requestOptions = (file, width)->
-  file = qs.escape file
   url: "http://tools.wmflabs.org/magnus-toolserver/commonsapi.php?image=#{file}&thumbwidth=#{width}"
   headers:
     'Content-Type': 'application/xml'
     # the commonsapi requires a User-Agent
-    'User-Agent': 'Inventaire server'
+    'User-Agent': 'https://inventaire.io server'
 
-parseData = (file, url, data)->
-  { thumbnail, error, author } = data
-  data.author = removeMarkups author
+extractData = (res)->
+  { file, licenses, error } = res.response
+  return data =
+    url: file?[0]?.urls?[0]?.thumbnail?[0]
+    license: licenses?[0]?.license?[0]?.name?.toString()
+    author: file?[0]?.author?.toString()
+    error: error?[0]
 
-  unless thumbnail?
-    err = new Error error
+formatData = (file, parsedData)->
+  { url, error, author, license } = parsedData
+  author = removeMarkups author
+
+  unless url?
+    errMessage = error or 'url not found'
+    err = new Error errMessage
     if error.match('File does not exist') then err.status = 404
     throw err
 
-  return data
+  if author? and license? then text = "#{author} - #{license}"
+  else text = author or license
 
+  return data =
+    url: url
+    credits:
+      text: text
+      url: "https://commons.wikimedia.org/wiki/File:#{file}"
 
 textInMarkups = /<.+>(.*)<\/\w+>/
 removeMarkups = (text)->
@@ -66,18 +63,3 @@ removeMarkups = (text)->
   text = text.replace textInMarkups, '$1'
   if text is '' then return
   else return text
-
-
-validWmCommonsThumbnail = (file, url, thumbnail)->
-  fileParts = extractWords file
-  thumbnailParts = extractWords unescape(lastPart(thumbnail))
-  ratio = _.matchesCount(fileParts, thumbnailParts) / fileParts.length
-  valid = ratio > 0.5
-  unless valid
-    _.log arguments, 'not validWmCommonsThumbnail'
-    _.log [fileParts, thumbnailParts], 'parts'
-    _.log ratio, 'certitude ratio'
-  return valid
-
-lastPart = (url)-> url.split('/').slice(-1)[0]
-extractWords = (str)-> str.split /\W|_/
