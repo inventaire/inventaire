@@ -11,12 +11,8 @@ searchEntities = (search)->
   _.log url, 'searchEntities'
   return promises_.get url
 
-# expect URIs to look like https://wikidata.org/entity/Q184226
-getQidFromUri = (uri)-> uri.split('/').last()
-
 unprefixifyPropertyId = (value)-> value.replace 'wdt:', ''
 
 module.exports = _.extend wd_,
   searchEntities: searchEntities
-  getQidFromUri: getQidFromUri
   unprefixifyPropertyId: unprefixifyPropertyId

@@ -53,11 +53,9 @@ propertyWhitelist = [ 'P31', 'P50', 'P106', 'P135', 'P136' ]
 
 runQuery = (params, key)->
   { query:queryName } = params
-  { parser } = queries[queryName]
   url = buildQuery params
 
   promises_.get url
   .then wdk.simplifySparqlResults
-  .then parser
   .then _.Log(key)
   .catch _.ErrorRethrow(key)

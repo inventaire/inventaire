@@ -3,7 +3,7 @@
    "language": "coffeescript",
    "views": {
        "byClaim": {
-           "map": "(doc)->\n  if doc.type is 'entity'\n    for property, statements of doc.claims\n      for value in statements\n        emit [property, value], null"
+           "map": "(doc)->\n  if doc.type is 'entity'\n    for property, statements of doc.claims\n      for value in statements\n        emit [property, value], doc.claims['wdt:P31'][0]"
        }
    }
 }

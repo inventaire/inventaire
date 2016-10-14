@@ -21,6 +21,7 @@ module.exports =
       when 'get-entities' then return getEntities req, res
       # when 'get-images' then return getImages req, res
       when 'reverse-claims' then return reverseClaims req, res
+      when 'author-works' then return authorWorks req, res
       else error_.unknownAction req, res
 
   # authentified
