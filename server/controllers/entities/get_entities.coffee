@@ -9,6 +9,8 @@ module.exports = (req, res, next)->
   unless _.isNonEmptyString uris
     return error_.bundle req, res, "missing uris parameter", 400, req.query
 
-  getEntitiesByUris uris.split('|'), refresh
+  uris = _.uniq uris.split('|')
+
+  getEntitiesByUris uris, refresh
   .then res.json.bind(res)
   .catch error_.Handler(req, res)
