@@ -9,7 +9,10 @@ module.exports = (uri, refresh)->
   [ prefix, id ] = uri.split ':'
   promises = []
 
-  worksByTypes = {}
+  worksByTypes =
+    'wd:Q571': []
+    'wd:Q191067': []
+    # 'wd:Q277759': []
 
   # If the prefix is 'inv' or 'isbn', no need to check Wikidata
   if prefix is 'wd' then promises.push getWdAuthorWorks(id, worksByTypes, refresh)
@@ -18,8 +21,9 @@ module.exports = (uri, refresh)->
 
   promises_.all promises
   .then ->
-    # Returning only books for now
     books: worksByTypes['wd:Q571'].sort sortByDate
+    articles: worksByTypes['wd:Q191067'].sort sortByDate
+    # bookSeries: worksByTypes['wd:Q277759'].sort sortByDate
 
 getWdAuthorWorks = (qid, worksByTypes, refresh)->
   runWdQuery { query: 'author-works', qid, refresh }
