@@ -25,11 +25,11 @@ module.exports = (uris, refresh)->
 
     unless prefix in prefixes
       errMessage = "invalid uri prefix: #{prefix} (uri: #{uri})"
-      return error_.bundle req, res, errMessage, 400, req.query
+      return error_.reject errMessage, 400, uri
 
     unless validators[prefix](id)
       errMessage = "invalid uri id: #{id} (uri: #{uri})"
-      return error_.bundle req, res, errMessage, 400, req.query
+      return error_.reject errMessage, 400, uri
 
     if prefix in hasFormatter then id = formatters[prefix](id)
     domains[prefix].push id
