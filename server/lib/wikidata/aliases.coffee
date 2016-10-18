@@ -3,12 +3,15 @@ _ = __.require 'builders', 'utils'
 { Q } = __.require 'sharedLibs', 'wikidata_aliases'
 
 _.extend Q,
+  series: [
+    'wd:Q277759' #book series
+    'wd:Q14406742' #comic book series
+  ]
   books: [
     'wd:Q571' #book
     'wd:Q2831984' #comic book album
     'wd:Q1004' #bande dessinée / comic book
     'wd:Q1760610' #comic book
-    'wd:Q14406742' #bande dessinée / comic book series
     'wd:Q8261' #novel / roman
     'wd:Q25379' #theatre play
     'wd:Q7725634' #literary work

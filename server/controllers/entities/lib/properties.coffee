@@ -45,9 +45,11 @@ properties =
     concurrency: true
     format: isbn_.normalizeIsbn
     uniqueValue: true
-  # language of work
+  # part of
+  'wdt:P361': entityUniqueValue
+  # language of work
   'wdt:P407': entityBase
-  # publication date
+  # publication date
   'wdt:P577': simpleDayBase
   # edition or translation of
   'wdt:P629': entityUniqueValue

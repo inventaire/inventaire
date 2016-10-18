@@ -5,7 +5,7 @@ searchEntity = require './search_entity'
 getEntities = require './get_entities'
 createEntity = require './create_entity'
 reverseClaims = require './reverse_claims'
-authorWorks = require './author_works'
+customQuery = require './custom_query'
 updateClaim = require './update_claim'
 updateLabel = require './update_label'
 
@@ -21,7 +21,7 @@ module.exports =
       when 'get-entities' then return getEntities req, res
       # when 'get-images' then return getImages req, res
       when 'reverse-claims' then return reverseClaims req, res
-      when 'author-works' then return authorWorks req, res
+      when 'author-works', 'serie-parts' then return customQuery req, res
       else error_.unknownAction req, res
 
   # authentified
