@@ -4,13 +4,10 @@ promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
 entities_ = require './entities'
 runWdQuery = __.require 'data', 'wikidata/run_query'
+{ getSimpleDayDate, sortByDate } = require './queries_utils'
+{ types, typesNames, getTypePluralNameByTypeUri } = __.require 'lib', 'wikidata/aliases'
 
-whitelistedTypes =
-  series: 'wd:Q277759'
-  books: 'wd:Q571'
-  articles: 'wd:Q191067'
-
-whitelistedTypesUris = _.values whitelistedTypes
+whitelistedTypesNames = [ 'series', 'books', 'articles' ]
 
 module.exports = (uri, refresh)->
   [ prefix, id ] = uri.split ':'
@@ -28,10 +25,10 @@ module.exports = (uri, refresh)->
   .catch _.ErrorRethrow('get author works err')
 
 initWorksByTypes = ->
-  worksByTypes = {}
-  for name, uri of whitelistedTypes
-    worksByTypes[uri] = []
-  return worksByTypes
+  worksByTypesBase = {}
+  for name in whitelistedTypesNames
+    worksByTypesBase[name] = []
+  return worksByTypesBase
 
 getWdAuthorWorks = (qid, worksByTypes, refresh)->
   runWdQuery { query: 'author-works', qid, refresh }
@@ -39,12 +36,16 @@ getWdAuthorWorks = (qid, worksByTypes, refresh)->
 
 spreadWdResultsByTypes = (worksByTypes, results)->
   for result in results
-    { work:wdId, type, date } = result
+    { work:wdId, type:typeWdId, date } = result
     # If the date is a January 1st, it's very probably because
     # its a year-precision date
-    if "wd:#{type}" in whitelistedTypesUris
-      date = date?.split('T')[0].replace '-01-01', ''
-      worksByTypes["wd:#{type}"].push { uri: "wd:#{wdId}", date }
+    typeUri = "wd:#{typeWdId}"
+    typeName = getTypePluralNameByTypeUri typeUri
+    if typeName in whitelistedTypesNames
+      date = getSimpleDayDate date
+      worksByTypes[typeName].push { uri: "wd:#{wdId}", date }
+    else
+      _.warn wdId, "ignored type: #{typeWdId}"
 
   return
 
@@ -54,22 +55,15 @@ getInvAuthorWorks = (uri, worksByTypes)->
 
 spreadInvResultsByTypes = (worksByTypes, res)->
   for row in res.rows
-    type = row.value
-    if type in whitelistedTypesUris
+    typeUri = row.value
+    typeName = getTypePluralNameByTypeUri typeUri
+    if typeName in whitelistedTypesNames
       uri = "inv:#{row.id}"
-      worksByTypes[type].push { uri }
+      worksByTypes[typeName].push { uri }
 
   return
 
 formatResults = (worksByTypes)->
-  results = {}
-  for name, uri of whitelistedTypes
-    _.log worksByTypes[uri], "worksByTypes[uri] #{uri}"
-    results[name] = worksByTypes[uri].sort sortByDate
-  return results
-
-sortByDate = (a, b)-> formatSortDate(a.date) - formatSortDate(b.date)
-formatSortDate = (date)-> parseInt(date?.split('-')[0] or latestYear)
-# If no date is available, make it appear last by providing a date in the future
-# To update once we will have passed the year 2100
-latestYear = '2100'
+  for name, results of worksByTypes
+    worksByTypes[name] = results.sort sortByDate
+  return worksByTypes

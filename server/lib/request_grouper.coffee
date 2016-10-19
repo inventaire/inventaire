@@ -18,7 +18,6 @@ module.exports = (params)->
     timeout = null
 
   getGroupedRequestPromise = ->
-    _.log keys, 'grouped keys'
     # If no timeout was set, it's the first request so it triggers the timeout
     # Every next request within this time will be grouped in the same grouped request
     unless timeout then timeout = setTimeout doGroupedRequest, delay

@@ -51,9 +51,18 @@ for type, typeIds of Q
   for id in typeIds
     types[id] = type
 
+typesNames = Object.keys Q
+
+getTypePluralNameByTypeUri = (uri)-> if types[uri] then "#{types[uri]}s"
+
 P =
+  # author
   'wdt:P50': [
-    'wdt:P58' #screen writer / scénariste
+    'wdt:P58' # screen writer / scénariste
+  ]
+  # part of
+  'wdt:P361': [
+    'wdt:P179' # serie
   ]
 
 aliases = {}
@@ -65,3 +74,5 @@ for mainP, aliasedPs of P
 module.exports =
   aliases: aliases
   types: types
+  typesNames: typesNames
+  getTypePluralNameByTypeUri: getTypePluralNameByTypeUri

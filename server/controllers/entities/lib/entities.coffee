@@ -31,9 +31,12 @@ module.exports = entities_ =
     keys = ids.map (id)-> ['invp:P1', id]
     db.viewByKeys 'byClaim', keys
 
-  byClaim: (property, value)->
+  byClaim: (property, value, includeDocs=true)->
     promises_.try -> validateProperty property
-    .then -> db.view 'entities', 'byClaim', { key: [ property, value ] }
+    .then ->
+      db.view 'entities', 'byClaim',
+        key: [ property, value ]
+        include_docs: includeDocs
 
   idsByClaim: (property, value)->
     entities_.byClaim property, value
