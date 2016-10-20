@@ -21,12 +21,14 @@ module.exports = [
   'P123' # publisher
   'P135' # movement
   'P136' # genre
+  'P144' # based on
   'P155' # follow
   'P156' # is follow by
   'P166' # award received
   'P179' # series
   'P212' # isbn 13
   'P356' # DOI
+  'P361' # part of
   'P364' # original language of work
   'P407' # language of work
   'P577' # publication date

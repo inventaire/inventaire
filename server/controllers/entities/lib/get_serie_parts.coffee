@@ -27,9 +27,9 @@ getWdSerieParts = (qid, refresh)->
     date: getSimpleDayDate result.date
 
 getInvSerieParts = (uri)->
-  # Querying only for 'part of' (wdt:P361) and not 'serie' (wdt:P179)
-  # as we use only wdt:P361 internally
-  entities_.byClaim 'wdt:P361', uri, true
+  # Querying only for 'serie' (wdt:P179) and not 'part of' (wdt:P361)
+  # as we use only wdt:P179 internally
+  entities_.byClaim 'wdt:P179', uri, true
   .get 'rows'
   .map parseRow
 

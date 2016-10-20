@@ -38,6 +38,8 @@ properties =
   'wdt:P50': entityBase
   # genre
   'wdt:P136': entityBase
+  # serie
+  'wdt:P179': entityUniqueValue
   # isbn 13
   'wdt:P212':
     datatype: 'string'
@@ -45,8 +47,6 @@ properties =
     concurrency: true
     format: isbn_.normalizeIsbn
     uniqueValue: true
-  # part of
-  'wdt:P361': entityUniqueValue
   # language of work
   'wdt:P407': entityBase
   # publication date

@@ -4,6 +4,7 @@ promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
 entities_ = require './entities'
 runWdQuery = __.require 'data', 'wikidata/run_query'
+prefixify = __.require 'lib', 'wikidata/prefixify'
 { getSimpleDayDate, sortByDate } = require './queries_utils'
 { types, typesNames, getTypePluralNameByTypeUri } = __.require 'lib', 'wikidata/aliases'
 
@@ -36,21 +37,22 @@ getWdAuthorWorks = (qid, worksByTypes, refresh)->
 
 spreadWdResultsByTypes = (worksByTypes, results)->
   for result in results
-    { work:wdId, type:typeWdId, date } = result
+    { work:wdId, type:typeWdId, date, serie } = result
     # If the date is a January 1st, it's very probably because
     # its a year-precision date
     typeUri = "wd:#{typeWdId}"
     typeName = getTypePluralNameByTypeUri typeUri
     if typeName in whitelistedTypesNames
       date = getSimpleDayDate date
-      worksByTypes[typeName].push { uri: "wd:#{wdId}", date }
+      serie = prefixify serie
+      worksByTypes[typeName].push { uri: "wd:#{wdId}", date, serie }
     else
       _.warn wdId, "ignored type: #{typeWdId}"
 
   return
 
 getInvAuthorWorks = (uri, worksByTypes)->
-  entities_.byClaim 'wdt:P50', uri
+  entities_.byClaim 'wdt:P50', uri, true
   .then spreadInvResultsByTypes.bind(null, worksByTypes)
 
 spreadInvResultsByTypes = (worksByTypes, res)->
@@ -58,8 +60,10 @@ spreadInvResultsByTypes = (worksByTypes, res)->
     typeUri = row.value
     typeName = getTypePluralNameByTypeUri typeUri
     if typeName in whitelistedTypesNames
-      uri = "inv:#{row.id}"
-      worksByTypes[typeName].push { uri }
+      worksByTypes[typeName].push
+        uri: "inv:#{row.id}"
+        date: row.doc.claims['wdt:P577']?[0]
+        serie: row.doc.claims['wdt:P179']?[0]
 
   return
 
