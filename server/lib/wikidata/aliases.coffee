@@ -55,21 +55,23 @@ typesNames = Object.keys Q
 
 getTypePluralNameByTypeUri = (uri)-> if types[uri] then "#{types[uri]}s"
 
-P =
+# Key: property to redirect to
+# Values: properties to redirect from
+propertiesRedirections =
   # author
   'wdt:P50': [
     'wdt:P58' # screen writer / scénariste
   ]
-  # part of
-  'wdt:P361': [
-    'wdt:P179' # serie
+  # serie
+  'wdt:P179': [
+    'wdt:P361' # part of
   ]
 
 aliases = {}
 
-for mainP, aliasedPs of P
-  for aliasedP in aliasedPs
-    aliases[aliasedP] = mainP
+for mainProp, aliasedProps of propertiesRedirections
+  for aliasedProp in aliasedProps
+    aliases[aliasedProp] = mainProp
 
 module.exports =
   aliases: aliases

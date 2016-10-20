@@ -10,3 +10,5 @@ module.exports = (claims)->
       redirectPropClaims = claims[redirectProp] or []
       claims[redirectProp] = redirectPropClaims.concat propClaims
       delete claims[property]
+
+  return
