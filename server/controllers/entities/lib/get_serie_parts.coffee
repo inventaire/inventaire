@@ -17,7 +17,8 @@ module.exports = (uri, refresh)->
   promises.push getInvSerieParts(uri)
 
   promises_.all promises
-  .then (results...)-> { parts: _.log(_.flatten(results...).sort(sortByDate), 'sorted') }
+  .then (results...)->
+    parts: _.flatten(results...).sort(sortByDate)
   .catch _.ErrorRethrow('get serie parts err')
 
 getWdSerieParts = (qid, refresh)->
@@ -25,6 +26,7 @@ getWdSerieParts = (qid, refresh)->
   .map (result)->
     uri: prefixify result.part
     date: getSimpleDayDate result.date
+    rank: result.rank
 
 getInvSerieParts = (uri)->
   # Querying only for 'serie' (wdt:P179) and not 'part of' (wdt:P361)
@@ -36,3 +38,4 @@ getInvSerieParts = (uri)->
 parseRow = (row)->
   uri: "inv:#{row.id}"
   date: row.doc.claims['wdt:P577']?[0]
+  rank: row.doc.claims['wdt:P1545']?[0]
