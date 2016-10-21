@@ -63,6 +63,8 @@ format = (entity, invEntity)->
   entity.sitelinks = formatTextFields entity.sitelinks, false, 'title'
   entity.claims = formatClaims entity.claims, wdId
 
+  formatRedirection entity
+
   # Deleting unnecessary attributes
   delete entity.pageid
   delete entity.ns
@@ -87,6 +89,13 @@ format = (entity, invEntity)->
     entity.claims['invp:P1'] = [ wdId ]
 
   return addImageData entity
+
+formatRedirection = (entity)->
+  if entity.redirects?
+    { from, to } = entity.redirects
+    entity.redirects =
+      from: prefixify from
+      to: prefixify to
 
 formatEmpty = (type, entity)->
   # Keeping just enough data to filter-out while not cluttering the cache

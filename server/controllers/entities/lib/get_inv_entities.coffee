@@ -15,17 +15,19 @@ format = (entity)->
   wdId = entity.claims['invp:P1']?[0]
   isbn = entity.claims['wdt:P212']?[0]
 
+  invUri = "inv:#{entity._id}"
+
   # Those URIs are aliases but, when available, always use the Wikidata id
   # or the ISBN
-  if wdId?
-    entity.uri = "wd:#{wdId}"
-    entity.redirectedFrom = "inv:#{entity._id}"
-  else if isbn?
-    # By internal convention, ISBN URIs are without hyphen
-    entity.uri = "isbn:#{normalizeIsbn(isbn)}"
-    entity.redirectedFrom = "inv:#{entity._id}"
-  else
-    entity.uri = "inv:#{entity._id}"
+  if wdId? then entity.uri = "wd:#{wdId}"
+  # By internal convention, ISBN URIs are without hyphen
+  else if isbn? then entity.uri = "isbn:#{normalizeIsbn(isbn)}"
+  else entity.uri = invUri
+
+  if entity.uri isnt invUri
+    entity.redirects =
+      from: invUri
+      to: entity.uri
 
   entity.type = getEntityType entity.claims['wdt:P31']
 

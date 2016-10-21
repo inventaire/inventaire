@@ -60,9 +60,10 @@ mergeResponses = (results)->
   for result in results
     _.type result.entities, 'array'
     for entity in result.entities
-      if entity.redirectedFrom?
-        response.redirects[entity.redirectedFrom] = entity.uri
-        delete entity.redirectedFrom
+      if entity.redirects?
+        { from, to } = entity.redirects
+        response.redirects[from] = to
+        delete entity.redirects
 
     # concat all entities
     response.entities = response.entities.concat result.entities
