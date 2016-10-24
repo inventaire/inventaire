@@ -19,7 +19,7 @@ module.exports =
   # includeDocs: include the seeds docs
   search: (query)->
     unless enabled then return null
-    promises_.get _.buildPath("#{host}/books", query)
+    promises_.get _.buildPath("#{host}/books", { search: query.search })
 
   getByIsbns: (isbns)->
     unless enabled then return promises_.resolve {}
