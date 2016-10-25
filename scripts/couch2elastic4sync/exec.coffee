@@ -5,6 +5,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 { elasticsearch:elasticConfig } = CONFIG
+{ base:elasticBase } = elasticConfig
 execa = require 'execa'
 { exec } = require 'child_process'
 folder = __.path 'scripts', 'couch2elastic4sync'
@@ -18,11 +19,11 @@ psTree = Promise.promisify require('ps-tree')
 module.exports = (arg)->
   cleanupPreviousInstances()
   .then -> startProcesses arg
-  .catch _.Error("couch2elastic4sync #{arg} err")
+  .catch _.Error("couch2elastic4sync #{arg} err")
 
 # Mapping to couch2elastic4sync API:
-# arg='sync' => couch2elastic4sync 
-# arg='load' => couch2elastic4sync load
+# arg='sync' => couch2elastic4sync
+# arg='load' => couch2elastic4sync load
 startProcesses = (arg)->
   pids = []
 
@@ -35,18 +36,21 @@ startProcesses = (arg)->
 
     logFile = "#{logsFolder}/#{type}"
     # Redirecting both stdin and stderr to the log file
-    command = "#{command} > #{logFile} 2>&1"
+    command = "#{command} >> #{logFile} 2>&1"
 
     # Simply using the 'child_process' module exec here, as we don't need
     # to keep its promise or anything: it will keep hanging around for the whole
     # process time
-    child = exec command
+    child = exec command, (err, res)->
+      if err then _.log err, "#{command} err"
+      else _.success res, "#{command} success"
+
     pids.push child.pid
 
-  _.info "starting couch2elastic4sync #{arg} processes: #{pids}"
+  _.info "starting couch2elastic4sync #{arg} processes: #{pids}"
   return meta.put 'couch2elastic4sync:pids', pids
 
-# couch2elastic4sync processes aren't terminating on supervisor SIGTERM
+# couch2elastic4sync processes aren't terminating on supervisor SIGTERM
 # thus the need to kill them manually
 cleanupPreviousInstances = ->
   meta.get 'couch2elastic4sync:pids'
