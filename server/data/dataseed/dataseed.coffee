@@ -17,11 +17,11 @@ module.exports =
   # lang: the language code to prioritize
   # refresh: request fresh data
   # includeDocs: include the seeds docs
-  search: (query)->
+  search: (query, refresh)->
     unless enabled then return null
-    promises_.get _.buildPath("#{host}/books", { search: query.search })
+    promises_.get _.buildPath("#{host}/books", { search: query.search, refresh })
 
-  getByIsbns: (isbns)->
+  getByIsbns: (isbns, refresh)->
     unless enabled then return promises_.resolve {}
     isbns = _.forceArray(isbns).join '|'
-    promises_.get _.buildPath("#{host}/books", { isbns })
+    promises_.get _.buildPath("#{host}/books", { isbns, refresh })

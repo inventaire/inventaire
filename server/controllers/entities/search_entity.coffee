@@ -12,8 +12,9 @@ searchByText = require './search_by_text'
 
 module.exports = (req, res)->
   { query } = req
-  { search, lang, filter } = query
   _.info query, 'entities search'
+
+  { search, lang, filter, refresh } = query
 
   unless _.isNonEmptyString search
     return error_.bundle req, res, 'empty query' , 400
@@ -24,13 +25,15 @@ module.exports = (req, res)->
   # make sure we have a 2 letters lang code
   query.lang = _.shortLang lang
 
+  refresh = _.parseBooleanString refresh
+
   if isbn_.isIsbn search
     _.log search, 'searchByIsbn'
-    promise = searchByIsbn search
+    promise = searchByIsbn search, refresh
 
   else
     _.log search, 'searchByText'
-    promise = searchByText query
+    promise = searchByText query, refresh
 
   promise
   .then spreadResults

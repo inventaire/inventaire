@@ -11,6 +11,8 @@ module.exports = (req, res, next)->
 
   uris = _.uniq uris.split('|')
 
+  refresh = _.parseBooleanString refresh
+
   getEntitiesByUris uris, refresh
   .then res.json.bind(res)
   .catch error_.Handler(req, res)

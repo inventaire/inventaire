@@ -4,8 +4,8 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 getEntitiesByIsbns = require './lib/get_entities_by_isbns'
 
-module.exports = (isbn)->
-  getEntitiesByIsbns [ isbn ]
+module.exports = (isbn, refresh)->
+  getEntitiesByIsbns [ isbn ], refresh
   .then _.Log('getEntitiesByIsbns resp')
   .then (resp)->
     { entities } = resp

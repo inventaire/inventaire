@@ -6,7 +6,7 @@ promises_ = __.require 'lib', 'promises'
 dataseed = __.require 'data', 'dataseed/dataseed'
 scaffoldEntityFromSeed = require './scaffold_entity_from_seed'
 
-module.exports = (isbns)->
+module.exports = (isbns, refresh)->
   # search entities by isbn locally
   entities_.byIsbns isbns
   .then (entities)->
@@ -20,7 +20,7 @@ module.exports = (isbns)->
     if missingIsbns.length is 0 then return { entities }
 
     # then look for missing isbns on dataseed
-    getMissingEntitiesFromSeeds missingIsbns
+    getMissingEntitiesFromSeeds missingIsbns, refresh
     .spread (newEntities, notFound)->
       data =
         entities: entities.concat newEntities
@@ -37,8 +37,8 @@ formatEntity = (entity)->
   entity.type = 'edition'
   return entity
 
-getMissingEntitiesFromSeeds = (isbns)->
-  dataseed.getByIsbns isbns
+getMissingEntitiesFromSeeds = (isbns, refresh)->
+  dataseed.getByIsbns isbns, refresh
   .then (seeds)->
     insufficientData = []
     validSeeds = []

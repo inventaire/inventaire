@@ -11,8 +11,7 @@ module.exports = (req, res, next)->
   unless _.isEntityUri uri
     return error_.bundle req, res, 'invalid uri', 400
 
-  # Parsing boolean string
-  refresh = refresh is 'true'
+  refresh = _.parseBooleanString refresh
 
   customQueries[action] uri, refresh
   .then res.json.bind(res)

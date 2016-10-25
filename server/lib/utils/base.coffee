@@ -46,6 +46,8 @@ module.exports = base =
 
   isArrayLike: (obj)-> _.isArray(obj) or _.isArguments(obj)
 
+  parseBooleanString: (booleanString)-> booleanString is 'true'
+
 base.objDiff = -> not base.sameObjects.apply(null, arguments)
 
 base.Ok = (res, status)-> base.ok.bind null, res, status

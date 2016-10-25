@@ -8,33 +8,40 @@ searchLocalEntities = require './search_local'
 getEntitiesByUris = require './lib/get_entities_by_uris'
 promises_ = __.require 'lib', 'promises'
 
-module.exports = (query)->
+module.exports = (query, refresh)->
   promises_.all [
-    searchWikidataEntities query
-    .timeout searchTimeout
-    .map urifyWd
-    # Starting to look for the entities as soon as we have a search result
-    # as other search results might take more time here but less later
-    .then getEntitiesByUris
-    .then filterOutIrrelevantTypes
-    # catching errors to avoid crashing promises_.all
-    .catch _.Error('wikidata getBookEntities err')
-
-    searchLocalEntities query
-    .timeout searchTimeout
-    .map urifyInv
-    .then getEntitiesByUris
-    .catch _.Error('searchLocalEntities err')
-
-    searchDataseed query
-    .timeout searchTimeout
-    .get 'isbns'
-    .map urifyIsbn
-    .then getEntitiesByUris
-    .catch _.Error('searchDataseed err')
+    searchWikidataByText query
+    searchLocalByText query
+    searchDataseedByText query, refresh
   ]
   .then mergeResults
   .catch _.ErrorRethrow('search by text err')
+
+searchWikidataByText = (query)->
+  searchWikidataEntities query
+  .timeout searchTimeout
+  .map urifyWd
+  # Starting to look for the entities as soon as we have a search result
+  # as other search results might take more time here but less later
+  .then getEntitiesByUris
+  .then filterOutIrrelevantTypes
+  # catching errors to avoid crashing promises_.all
+  .catch _.Error('wikidata getBookEntities err')
+
+searchLocalByText = (query)->
+  searchLocalEntities query
+  .timeout searchTimeout
+  .map urifyInv
+  .then getEntitiesByUris
+  .catch _.Error('searchLocalEntities err')
+
+searchDataseedByText = (query, refresh)->
+  searchDataseed query, refresh
+  .timeout searchTimeout
+  .get 'isbns'
+  .map urifyIsbn
+  .then getEntitiesByUris
+  .catch _.Error('searchDataseed err')
 
 mergeResults = (results)->
   _(results)
