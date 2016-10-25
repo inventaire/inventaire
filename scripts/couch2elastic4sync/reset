@@ -6,5 +6,7 @@ promises_ = __.require 'lib', 'promises'
 url = CONFIG.elasticsearch.base
 
 promises_.delete url
-.then _.Log("reset #{url}")
+.then _.Log("delete #{url}")
+.then promises_.put.bind(promises_, url)
+.then _.Log("put #{url}")
 .catch _.Error('reset')
