@@ -43,13 +43,14 @@ module.exports = (req, res)->
 spreadResults = (results)->
   response =
     humans: []
+    series: []
     books: []
     editions: []
 
   for result in results
     { type } = result
     switch type
-      when 'book', 'human', 'edition' then response["#{type}s"].push result
+      when 'human', 'serie', 'book', 'edition' then response["#{type}s"].push result
       else _.warn result, "filtered-out type: #{type}"
 
   return response
