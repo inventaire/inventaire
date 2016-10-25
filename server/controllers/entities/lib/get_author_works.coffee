@@ -11,6 +11,7 @@ prefixify = __.require 'lib', 'wikidata/prefixify'
 whitelistedTypesNames = [ 'series', 'books', 'articles' ]
 
 module.exports = (uri, refresh)->
+  _.types arguments, ['string', 'boolean|undefined'], 1
   [ prefix, id ] = uri.split ':'
   promises = []
 
