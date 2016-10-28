@@ -6,6 +6,7 @@ promises_ = __.require 'lib', 'promises'
 searchEndpoint = CONFIG.elasticsearch.base + '/entity/_search'
 
 module.exports = (query)->
+  _.type query.search, 'string'
   promises_.post
     url: searchEndpoint
     body: _.stringify buildQuery(query.search), 'query'

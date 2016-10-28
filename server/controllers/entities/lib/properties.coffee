@@ -15,7 +15,7 @@ entityUniqueValue = _.extend {}, entityBase, { uniqueValue: true }
 
 urlBase =
   datatype: 'url'
-  test: _.isUrl
+  test: (str)-> _.isUrl(str) or _.isIpfsPath(str)
   format: _.identity
 
 positiveIntegerBase =
@@ -25,8 +25,8 @@ positiveIntegerBase =
 
 simpleDayBase =
   datatype: 'simple-day'
-  # See specifications in inventaire-client/test/106-regex.coffee
-  test: SimpleDay.test.bind SimpleDay
+  # See SimpleDay specifications in [inventaire-client]/test/106-regex.coffee
+  test: _.isSimpleDay
   format: _.identity
 
 properties =
@@ -80,12 +80,16 @@ datatypePrimordialType =
   entity: 'string'
   url: 'string'
   'positive-integer': 'number'
+  'simple-day': 'string'
 
-testDataType = (property, value)->
+propertyDatatypePrimordialType = (property)->
   { datatype } = properties[property]
-  return _.typeOf(value) is datatypePrimordialType[datatype]
+  return datatypePrimordialType[datatype]
+
+testDataType = (property, value)-> _.typeOf(value) is propertyDatatypePrimordialType(property)
 
 module.exports =
   properties: properties
   validateProperty: validateProperty
   testDataType: testDataType
+  propertyDatatypePrimordialType: propertyDatatypePrimordialType

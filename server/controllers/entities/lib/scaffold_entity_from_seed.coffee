@@ -1,3 +1,8 @@
+# A module to put the basis of an edition entity based on the results from dataseed.
+# It tries to find the associated works and authors from Wikidata and Inventaire search
+# (using searchWorkEntityByTitleAndAuthors) but if it fails to find the corresponding entities,
+# it creates new ones. It assumes that any seed arriving here found no match to its ISBN
+
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
@@ -5,13 +10,20 @@ promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
 { parse:parseIsbn } = __.require 'lib', 'isbn/isbn'
 entities_ = require './entities'
+createAndEditEntity = require './create_and_edit_entity'
 # It is simpler to use a consistent, recognizable mocked user id
 # than to put exceptions everywhere
 seedUserId = CONFIG.adminUserIds.seed
 
 { enabled, host } = CONFIG.dataseed
 
+# Can't be required directly as it would create a dependency loop with getEntitiesByUris
+# so requiring it at first run time
+searchWorkEntityByTitleAndAuthors = null
+
 module.exports = (seed)->
+  searchWorkEntityByTitleAndAuthors or= require './search_work_entity_by_title_and_authors'
+
   unless _.isNonEmptyString seed.title
     return error_.reject 'insufficient seed data', 400, seed
 
@@ -23,9 +35,17 @@ module.exports = (seed)->
   _.extend seed, isbnData
   lang = seed.groupLang or 'en'
 
-  authorsPromises = createAuthorsEntities seed, lang
-  workPromise = createWorkEntity seed, lang, authorsPromises
-  return createEditionEntity seed, workPromise
+  searchWorkEntityByTitleAndAuthors seed
+  .then (workEntity)->
+    if workEntity?
+      _.log seed, "scaffolding from existing work entity: #{workEntity.uri}"
+      workPromise = promises_.resolve workEntity
+      return createEditionEntity seed, workPromise
+    else
+      _.log seed, 'scaffolding from scratch'
+      authorsPromises = createAuthorsEntities seed, lang
+      workPromise = createWorkEntity seed, lang, authorsPromises
+      return createEditionEntity seed, workPromise
 
 createAuthorsEntities = (seed, lang)->
   promises_.all seed.authors.map(CreateAuthorEntity(lang))
@@ -36,8 +56,7 @@ CreateAuthorEntity = (lang)-> (authorName)->
   claims =
     'wdt:P31': [ 'wd:Q5' ]
 
-  entities_.create()
-  .then (doc)-> entities_.edit seedUserId, labels, claims, doc
+  createAndEditEntity labels, claims, seedUserId
   .then _.Log('created author entity')
   .catch _.ErrorRethrow('createAuthorEntity err')
 
@@ -47,15 +66,11 @@ createWorkEntity = (seed, lang, authorsPromises)->
   claims =
     'wdt:P31': [ 'wd:Q571' ]
 
-  promises_.all [
-    entities_.create()
-    authorsPromises
-  ]
-  .spread (doc, authors)->
+  authorsPromises
+  .then (authors)->
     authorsIds = authors.map (author)-> "inv:#{author._id}"
     claims['wdt:P50'] = authorsIds
-    return entities_.edit seedUserId, labels, claims, doc
-
+    return createAndEditEntity labels, claims, seedUserId
   .then _.Log('created work entity')
   .catch _.ErrorRethrow('createWorkEntity err')
 
@@ -71,13 +86,10 @@ createEditionEntity = (seed, workPromise)->
   if image? then claims['wdt:P18'] = [ image ]
   if publicationDate? then claims['wdt:P577'] = [ publicationDate ]
 
-  promises_.all [
-    entities_.create()
-    workPromise
-  ]
-  .spread (doc, work)->
-    claims['wdt:P629'] = [ "inv:#{work._id}" ]
-    return entities_.edit seedUserId, labels, claims, doc
-
+  workPromise
+  .then (work)->
+    workUri = work.uri or "inv:#{work._id}"
+    claims['wdt:P629'] = [ workUri ]
+    return createAndEditEntity labels, claims, seedUserId
   .then _.Log('created edition entity')
   .catch _.ErrorRethrow('createEditionEntity err')

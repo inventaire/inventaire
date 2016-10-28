@@ -3,7 +3,7 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
 
-{ properties, testDataType } = require './properties'
+{ properties, testDataType, propertyDatatypePrimordialType } = require './properties'
 
 module.exports = (db)->
   validateClaimValue = (currentClaims, property, oldVal, newVal, letEmptyValuePass)->
@@ -16,7 +16,10 @@ module.exports = (db)->
       return error_.reject 'invalid property value', 400, property, newVal
 
     unless testDataType property, newVal
-      return error_.reject 'invalid value datatype', 400, property, newVal
+      expectedDatatype = propertyDatatypePrimordialType property
+      realDatatype = _.typeOf newVal
+      context = "expected #{expectedDatatype}, got #{realDatatype}"
+      return error_.reject "invalid value datatype: #{context}", 400, property, newVal
 
     # if the property expects a uniqueValue and that there is already a value defined
     # any action other than editing the current value should be rejected

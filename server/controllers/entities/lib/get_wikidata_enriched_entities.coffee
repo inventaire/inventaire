@@ -12,7 +12,7 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 { Promise } = __.require 'lib', 'promises'
 wdk = require 'wikidata-sdk'
-{ getEntities } = __.require 'lib', 'wikidata/wikidata'
+{ getEntities, getOriginalLang } = __.require 'lib', 'wikidata/wikidata'
 formatClaims = __.require 'lib', 'wikidata/format_claims'
 formatTextFields = __.require 'lib', 'wikidata/format_text_fields'
 getEntityType = __.require 'lib', 'wikidata/get_entity_type'
@@ -62,10 +62,13 @@ format = (entity, invEntity)->
   entity.descriptions = formatTextFields entity.descriptions
   entity.sitelinks = formatTextFields entity.sitelinks, false, 'title'
   entity.claims = formatClaims entity.claims, wdId
+  entity.originalLang = getOriginalLang entity.claims
 
   formatRedirection entity
 
   # Deleting unnecessary attributes
+  delete entity.id
+  delete entity.modified
   delete entity.pageid
   delete entity.ns
   delete entity.title

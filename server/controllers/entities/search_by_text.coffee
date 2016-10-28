@@ -5,15 +5,23 @@ searchWikidataEntities = __.require 'data', 'wikidata/search_entities'
 searchLocalEntities = require './search_local'
 { search:searchDataseed } = __.require 'data', 'dataseed/dataseed'
 { searchTimeout } = CONFIG
+{ enabled:dataseedEnabled } = CONFIG.dataseed
 getEntitiesByUris = require './lib/get_entities_by_uris'
 promises_ = __.require 'lib', 'promises'
 
 module.exports = (query, refresh)->
-  promises_.all [
+  _.type query, 'object'
+  { disableDataseed } = query
+
+  promises = [
     searchWikidataByText query
     searchLocalByText query
-    searchDataseedByText query, refresh
   ]
+
+  if dataseedEnabled and not disableDataseed
+    promises.push searchDataseedByText(query, refresh)
+
+  promises_.all promises
   .then mergeResults
   .catch _.ErrorRethrow('search by text err')
 
@@ -26,14 +34,12 @@ searchWikidataByText = (query)->
   .then getEntitiesByUris
   .then filterOutIrrelevantTypes
   # catching errors to avoid crashing promises_.all
-  .catch _.Error('wikidata getBookEntities err')
 
 searchLocalByText = (query)->
   searchLocalEntities query
   .timeout searchTimeout
   .map urifyInv
   .then getEntitiesByUris
-  .catch _.Error('searchLocalEntities err')
 
 searchDataseedByText = (query, refresh)->
   searchDataseed query, refresh
@@ -41,7 +47,6 @@ searchDataseedByText = (query, refresh)->
   .get 'isbns'
   .map urifyIsbn
   .then getEntitiesByUris
-  .catch _.Error('searchDataseed err')
 
 mergeResults = (results)->
   _(results)

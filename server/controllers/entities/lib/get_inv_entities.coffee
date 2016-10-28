@@ -2,6 +2,7 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 entities_ = require './entities'
 getEntityType = __.require 'lib', 'wikidata/get_entity_type'
+{ getOriginalLang } = __.require 'lib', 'wikidata/wikidata'
 { normalizeIsbn } = __.require 'lib', 'isbn/isbn'
 
 module.exports = (ids)->
@@ -30,6 +31,7 @@ format = (entity)->
       to: entity.uri
 
   entity.type = getEntityType entity.claims['wdt:P31']
+  entity.originalLang = getOriginalLang entity.claims
 
   # Matching Wikidata entities format for images
   # Here we are missing license, credits, and author attributes
