@@ -9,6 +9,8 @@ searchLocalEntities = require './search_local'
 getEntitiesByUris = require './lib/get_entities_by_uris'
 promises_ = __.require 'lib', 'promises'
 
+error_ = __.require 'lib', 'error/error'
+
 module.exports = (query, refresh)->
   _.type query, 'object'
   { disableDataseed } = query
@@ -33,6 +35,7 @@ searchWikidataByText = (query)->
   # as other search results might take more time here but less later
   .then getEntitiesByUris
   .then filterOutIrrelevantTypes
+  .catch error_.notFound
   # catching errors to avoid crashing promises_.all
 
 searchLocalByText = (query)->
@@ -40,6 +43,7 @@ searchLocalByText = (query)->
   .timeout searchTimeout
   .map urifyInv
   .then getEntitiesByUris
+  .catch error_.notFound
 
 searchDataseedByText = (query, refresh)->
   searchDataseed query, refresh
@@ -47,6 +51,7 @@ searchDataseedByText = (query, refresh)->
   .get 'isbns'
   .map urifyIsbn
   .then getEntitiesByUris
+  .catch error_.notFound
 
 mergeResults = (results)->
   _(results)
