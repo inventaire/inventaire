@@ -18,7 +18,7 @@ module.exports =
   # refresh: request fresh data
   # includeDocs: include the seeds docs
   search: (query, refresh)->
-    unless enabled then return null
+    unless enabled then return promises_.resolve { isbn: [] }
     promises_.get _.buildPath("#{host}/books", { search: query.search, refresh })
 
   getByIsbns: (isbns, refresh)->
