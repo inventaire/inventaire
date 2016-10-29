@@ -38,6 +38,8 @@ see [wiki](https://github.com/inventaire/inventaire/wiki) to get started, especi
 General dependencies:
 - git, node, npm, coffee-script, brunch (see package.json for versions)
 - a CouchDB (>=1.6) instance (on port 5984 for default config)
+  - you need an admin to be set, which can be done with this command:<br>
+    `curl -XPUT http://localhost:5984/_config/admins/yourcouchdbusername -d '"'yourcouchdbpassword'"'`
 - an Elasticsearch (>=2.4) instance (on port 9200 for default config)
 
 ```
@@ -60,8 +62,8 @@ All the default values can be kept, out of your CouchDB credentials that need to
   ...
   db:
     ...
-    username: 'your couchdb username'
-    password: 'your couchdb password'
+    username: 'yourcouchdbusername'
+    password: 'yourcouchdbpassword'
   ...
 ```
 
