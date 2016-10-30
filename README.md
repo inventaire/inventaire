@@ -9,7 +9,7 @@ Come to say hi on your prefered chat<br>
 [![Join the chat at https://gitter.im/inventaire/inventaire](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/inventaire/inventaire)
 [![IRC](https://img.shields.io/badge/irc-%23inventaire-orange.svg)](https://kiwiirc.com/client/irc.freenode.net/inventaire)
 
-[![inventory-georges](http://maxlath.eu/slides/backbone-meetup/img/inventory-georges.png)](https://inventaire.io)
+[![inventory-georges](https://cloud.githubusercontent.com/assets/1596934/19841022/70efebce-9f03-11e6-97d2-a86162b59123.png)](https://inventaire.io)
 
 This repository hosts [Inventaire.io](https://inventaire.io) source code. Its a collaborative resources mapper project, while yet only focused on exploring books mapping with [wikidata](https://wikidata.org/) and [ISBNs](https://en.wikipedia.org/wiki/International_Standard_Book_Number)
 
