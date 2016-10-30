@@ -15,40 +15,23 @@ This repository hosts [Inventaire.io](https://inventaire.io) source code. Its a 
 
 This repository tracks the server-side developments, while the (heavy) [client-side can be found here](https://github.com/inventaire/inventaire-client). Client-related technical issues should go in the client repo, while this repo gathers all other technical issues. Non-technical discussions such as feature requests should preferably happen in the [Roadmap](https://trello.com/b/0lKcsZDj/inventaire-roadmap) Trello. In doubt, just use your best guess :)
 
-
 ## Summary
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 
-- [inventaire stack map](#inventaire-stack-map)
-- [Concepts map](#concepts-map)
-- [Contribute](#contribute)
 - [Installation](#installation)
   - [Dependencies to install manually:](#dependencies-to-install-manually)
   - [Project development environment installation](#project-development-environment-installation)
   - [Installation tips](#installation-tips)
+- [Inventaire stack map](#inventaire-stack-map)
+- [Concepts map](#concepts-map)
+- [Contribute](#contribute)
 - [API](#api)
 - [Day-dreaming on future evolutions](#day-dreaming-on-future-evolutions)
 - [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
-## inventaire stack map
-[![stack](https://raw.githubusercontent.com/inventaire/stack/master/snapshots/stack-from-server.png)](https://inventaire.github.io/stack/)
-
-## Concepts map
-the whole app turns around a few core concepts:
-- Users
-- Entities : encompass authors (ex: [wd:Q353](https://inventaire.io/entity/wd:Q535)), books (ex: [wd:Q393018](https://inventaire.io/entity/wd:Q393018)) and books' specific editions (ex: [isbn:9782070389162](https://inventaire.io/entity/isbn:9782070389162)). The term *entities* is inherited from wikidata terminology.
-- Items : instances of book entities that a user declare to own. Can be an instance of a work or a specific edition of a work.
-- Transactions : discussion between two users involving a specific item with an open transaction mode (giving, lending, selling). Transactions have effects on items: giving and selling an item make it move from the owner to the requester inventory; lending an item make it appear as unavailable.
-- Groups: groups of users with one or more admins
-
-![concepts map](https://raw.githubusercontent.com/inventaire/inventaire/master/docs/visualizations/concepts.jpg)
-
-## Contribute
-see [wiki](https://github.com/inventaire/inventaire/wiki) to get started, especially the [new contributors](https://github.com/inventaire/inventaire/wiki#new-contributors) section
 
 ## Installation
 
@@ -106,6 +89,23 @@ npm run watch
 
 ### Installation tips
 - If your computer has many CPU cores, you can make Brunch compile even faster by setting an environment variable: `BRUNCH_JOBS=4`
+
+## Inventaire stack map
+[![stack](https://raw.githubusercontent.com/inventaire/stack/master/snapshots/stack-from-server.png)](https://inventaire.github.io/stack/)
+
+## Concepts map
+the whole app turns around a few core concepts:
+- Users
+- Entities : encompass authors (ex: [wd:Q353](https://inventaire.io/entity/wd:Q535)), books (ex: [wd:Q393018](https://inventaire.io/entity/wd:Q393018)) and books' specific editions (ex: [isbn:9782070389162](https://inventaire.io/entity/isbn:9782070389162)). The term *entities* is inherited from wikidata terminology.
+- Items : instances of book entities that a user declare to own. Can be an instance of a work or a specific edition of a work.
+- Transactions : discussion between two users involving a specific item with an open transaction mode (giving, lending, selling). Transactions have effects on items: giving and selling an item make it move from the owner to the requester inventory; lending an item make it appear as unavailable.
+- Groups: groups of users with one or more admins
+
+![concepts map](https://raw.githubusercontent.com/inventaire/inventaire/master/docs/visualizations/concepts.jpg)
+
+## Contribute
+see [wiki](https://github.com/inventaire/inventaire/wiki) to get started, especially the [new contributors](https://github.com/inventaire/inventaire/wiki#new-contributors) section
+
 
 ## API
 see wiki: [API](https://github.com/inventaire/inventaire/wiki/API)
