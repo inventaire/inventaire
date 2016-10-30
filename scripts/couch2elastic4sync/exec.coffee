@@ -43,7 +43,7 @@ startProcesses = (arg)->
     # process time
     child = exec command, (err, res)->
       if err then _.log err, "#{command} err"
-      else _.success res, "#{command} success"
+      else _.log res, "#{command} res"
 
     pids.push child.pid
 
@@ -60,7 +60,8 @@ cleanupPreviousInstances = ->
       # couch2elastic4sync processes will be referenced as their children
       return Promise.all pids.map(killPidChildrenProcesses)
     else
-      return promises_.resolved
+      # First run checks
+      return createIndexIfMissing()
 
 killPidChildrenProcesses = (pid)->
   psTree pid
@@ -70,3 +71,9 @@ killPidChildrenProcesses = (pid)->
   .then killByPids
 
 killByPids = (pids)-> execa.spawn 'kill', ['-9'].concat(pids)
+
+createIndexIfMissing = ->
+  promises_.get elasticBase
+  .catch (err)->
+    if err.status is 404 then return promises_.put elasticBase
+    else throw err
