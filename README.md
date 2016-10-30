@@ -33,41 +33,60 @@ see [wiki](https://github.com/inventaire/inventaire/wiki) to get started, especi
 
 ## Installation
 
-*see also*: [inventaire/inventaire-deploy](https://github.com/inventaire/inventaire-deploy)
+*This is the installation documentation for a developement environment. For production setup, see*: [inventaire-deploy](https://github.com/inventaire/inventaire-deploy)
 
-General dependencies:
-- git, node, npm, coffee-script, brunch (see package.json for versions)
-- a CouchDB (>=1.6) instance (on port 5984 for default config)
-  - you need an admin to be set, which can be done with this command:<br>
-    `curl -XPUT http://localhost:5984/_config/admins/yourcouchdbusername -d '"'yourcouchdbpassword'"'`
-- an Elasticsearch (>=2.4) instance (on port 9200 for default config)
+### Dependencies to install manually:
+- [git](https://git-scm.com/), [curl](http://curl.haxx.se) (used in some installation scripts), [graphicsmagick](www.graphicsmagick.org/README.html) (used to resize images), [zsh](http://www.zsh.org/) (used in some scripts, no need to make it your default shell)
+- [NodeJS](http://nodejs.org/) (>=6, [NVM](https://github.com/creationix/nvm) is a great way to install it)
+- a [CouchDB](http://couchdb.apache.org/) (>=1.6) instance (on port 5984 for default config)
+- an [ElasticSearch](https://www.elastic.co/fr/products/elasticsearch) (>=2.4) instance (on port 9200 for default config)
 
+To install those on Ubuntu that could give something like:
+```sh
+sudo add-apt-repository ppa:couchdb/stable -y
+sudo apt-get update
+sudo apt-get install git curl wget graphicsmagick zsh couchdb cowsay
+
+# Install ElasticSearch and its main dependency: Java
+# You might want to make sure that no previous version of Java is installed first as it might trigger version issues:
+# ElasticSearch requires Java 8/Oracle JDK version 1.8. See https://www.elastic.co/guide/en/elasticsearch/reference/current/_installation.html
+# (yes, piping a script to bash is a bad security habit, just as is executing anything on your machine coming from the wild and internet without checking what it does, but we trust this source. For the sake of good practices, you may want to read the script first though ;) )
+curl https://raw.githubusercontent.com/inventaire/inventaire-deploy/d8c8bee46c241ceca0ddf3d9c319d84bfb0734d9/install_elasticsearch | bash
+
+# Installing NodeJs and NPM using NVM, the Node Version Manager https://github.com/creationix/nvm
+# (same remarque as above on piping a script)
+curl https://raw.githubusercontent.com/creationix/nvm/v0.32.1/install.sh | bash
+exit
 ```
+(reopen terminal)
+```sh
+# Check that the nvm command can be found
+# If you get a 'command not found' error, check NVM documentation https://github.com/creationix/nvm#installation
+nvm
+nvm install 6
+cowsay -f dragon "♫ ♪ copy/paste code, copy/paste code, the world is beautiful when all's in simple mode ♪ ♫"
+```
+
+### Project development environment installation
+```sh
 git clone https://github.com/inventaire/inventaire.git
 cd inventaire
 npm install
-npm run install-client
+# If you haven't done it previously, set an admin on CouchDB and update ./config/local.coffee accordingly
+curl -XPUT http://localhost:5984/_config/admins/yourcouchdbusername -d '"'yourcouchdbpassword'"'
+```
+We are all set! You can now start the server (in watch mode so that it reboots on file changes)
+```sh
+npm run watch
+```
+If you want to work on the client code, we also need to start Brunch in another terminal
+```sh
+cd client
+npm run watch
 ```
 
-now, you need to create a ./config/local.coffee to override the default configuration in ./config/default.coffee:
-```
-module.exports =
-  'key to override': 'your custom value'
-```
-
-All the default values can be kept, out of your CouchDB credentials that need to be customized by your own.
-
-```
-// in ./config/local.coffee
-  ...
-  db:
-    ...
-    username: 'yourcouchdbusername'
-    password: 'yourcouchdbpassword'
-  ...
-```
-
-Emails are disabled in default config to avoid having to configure that too for development.
+### Installation tips
+- If your computer has many CPU cores, you can make Brunch compile even faster by setting an environment variable: `BRUNCH_JOBS=4`
 
 ## API
 see wiki: [API](https://github.com/inventaire/inventaire/wiki/API)

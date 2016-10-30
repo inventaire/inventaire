@@ -4,6 +4,8 @@
 # and that all the following isn't needed
 [ -e client ] && exit 0
 
+git clone https://github.com/inventaire/inventaire-client.git ./client
+
 mkdir -p logs/archives/server logs/archives/errors deploy run db/leveldb
 npm run patches
 
@@ -12,14 +14,26 @@ git clone -b i18n https://github.com/inventaire/inventaire.git ./server/lib/emai
 mkdir -p ./server/lib/emails/i18n/dist
 ./server/lib/emails/i18n/src/generate_lang_json.coffee all
 
-# expected by scripts/archive_logs
+# Expected by scripts/archive_logs
 mkdir -p ./logs
-# expected by scripts/couch2elastic4sync/exec.coffee
+# Expected by scripts/couch2elastic4sync/exec.coffee
 mkdir -p ./logs/couch2elastic4sync
-# expected by scripts/couch2elastic4sync/init
+# Expected by scripts/couch2elastic4sync/init
 mkdir -p scripts/couch2elastic4sync/configs
 touch ./logs/server.log ./logs/error.log
 
-# start synchronization between CouchDB and ElasticSearch
+# Start synchronization between CouchDB and ElasticSearch
 ./scripts/couch2elastic4sync/init
 ./scripts/couch2elastic4sync/load
+
+# Create a local config file
+emptyConfigFile="
+# Override settings from ./default.coffee in this file
+module.exports =
+  db:
+    username: 'yourcouchdbusername'
+    password: 'yourcouchdbpassword'
+"
+echo "$emptyConfigFile" >> ./config/local.coffee
+
+npm run install-client

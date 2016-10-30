@@ -1,3 +1,6 @@
-git clone https://github.com/inventaire/inventaire-client.git ./client
+# The client repo should have been cloned earlier as files from the client repo are needed
+# to run the server postinstall script. But if for some reason this script is run in another context,
+# we want to make sure the client repo was installed
+[ -z client ] && git clone https://github.com/inventaire/inventaire-client.git ./client
 cd client
 npm install
