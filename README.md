@@ -15,6 +15,25 @@ This repository hosts [Inventaire.io](https://inventaire.io) source code. Its a 
 
 This repository tracks the server-side developments, while the (heavy) [client-side can be found here](https://github.com/inventaire/inventaire-client). Client-related technical issues should go in the client repo, while this repo gathers all other technical issues. Non-technical discussions such as feature requests should preferably happen in the [Roadmap](https://trello.com/b/0lKcsZDj/inventaire-roadmap) Trello. In doubt, just use your best guess :)
 
+
+## Summary
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+
+- [inventaire stack map](#inventaire-stack-map)
+- [Concepts map](#concepts-map)
+- [Contribute](#contribute)
+- [Installation](#installation)
+  - [Dependencies to install manually:](#dependencies-to-install-manually)
+  - [Project development environment installation](#project-development-environment-installation)
+  - [Installation tips](#installation-tips)
+- [API](#api)
+- [Day-dreaming on future evolutions](#day-dreaming-on-future-evolutions)
+- [License](#license)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## inventaire stack map
 [![stack](https://raw.githubusercontent.com/inventaire/stack/master/snapshots/stack-from-server.png)](https://inventaire.github.io/stack/)
 

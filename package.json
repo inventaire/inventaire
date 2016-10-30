@@ -21,7 +21,8 @@
     "patches": "./scripts/run_patches ./scripts/patches",
     "watch-i18n": "onchange server/lib/emails/i18n/src -- ./scripts/reload_i18n",
     "migrator": "coffee db/couchdb/migrator.coffee",
-    "reset-cache": "rm -rf db/leveldb && mkdir db/leveldb"
+    "reset-cache": "rm -rf db/leveldb && mkdir db/leveldb",
+    "update-toc": "doctoc README.md"
   },
   "author": "maxlath",
   "license": "AGPL-3.0",
@@ -84,6 +85,7 @@
     "coffee-errors": "^0.8.6",
     "coffeelint": "^1.15.7",
     "diff": "^2.2.1",
+    "doctoc": "^1.2.0",
     "git-hooks": "^1.0.2",
     "level-test": "^2.0.1",
     "live-server": "^0.8.2",
