@@ -14,10 +14,10 @@
 # Used prefixes:
 # Entities:
 #   PREFIX wd: <http://www.wikidata.org/entity/>
-#   PREFIX inv: <https://inventaire.io/entity/>
+#   PREFIX inv: <https://inventaire.io/entity/>
 # Properties:
-#   PREFIX wdt: <http://www.wikidata.org/prop/direct/>
-#   PREFIX invp: <https://inventaire.io/property/>
+#   PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+#   PREFIX invp: <https://inventaire.io/property/>
 
 # Inventaire properties:
 # invp:P1: Wikidata Id
@@ -29,7 +29,7 @@ error_ = __.require 'lib', 'error/error'
 tests = require './tests/common-tests'
 promises_ = __.require 'lib', 'promises'
 
-{ properties, whitelist } = __.require 'controllers','entities/lib/properties'
+{ properties, whitelist } = __.require 'controllers','entities/lib/properties'
 inferences = __.require 'controllers','entities/lib/inferences'
 
 module.exports = Entity =
@@ -71,10 +71,7 @@ module.exports = Entity =
       throw error_.new 'missing old or new value', 400, arguments
 
     propArray = _.get doc, "claims.#{property}"
-
-    _.log propArray, 'propArray'
-    _.log oldVal, 'oldVal'
-    _.log newVal, 'newVal'
+    _.info "#{property} propArray: #{propArray} /oldVal: #{oldVal} /newVal: #{newVal}"
 
     if propArray? and newVal? and newVal in propArray
       throw error_.new 'claim property new value already exist', 400, arguments

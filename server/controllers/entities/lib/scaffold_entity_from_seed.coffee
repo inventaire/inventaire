@@ -14,6 +14,7 @@ createAndEditEntity = require './create_and_edit_entity'
 # It is simpler to use a consistent, recognizable mocked user id
 # than to put exceptions everywhere
 seedUserId = CONFIG.adminUserIds.seed
+workEntitiesCache = require './work_entity_search_dedupplicating_cache'
 
 { enabled, host } = CONFIG.dataseed
 
@@ -40,12 +41,13 @@ module.exports = (seed)->
     if workEntity?
       _.log seed, "scaffolding from existing work entity: #{workEntity.uri}"
       workPromise = promises_.resolve workEntity
-      return createEditionEntity seed, workPromise
     else
       _.log seed, 'scaffolding from scratch'
       authorsPromises = createAuthorsEntities seed, lang
       workPromise = createWorkEntity seed, lang, authorsPromises
-      return createEditionEntity seed, workPromise
+
+    workEntitiesCache.set seed, workPromise
+    return createEditionEntity seed, workPromise
 
 createAuthorsEntities = (seed, lang)->
   promises_.all seed.authors.map(CreateAuthorEntity(lang))

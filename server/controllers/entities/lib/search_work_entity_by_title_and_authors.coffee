@@ -6,12 +6,19 @@ error_ = __.require 'lib', 'error/error'
 searchByText = require '../search_by_text'
 getBestLangValue = __.require('sharedLibs', 'get_best_lang_value')(_)
 getEntitiesByUris = require './get_entities_by_uris'
+workEntitiesCache = require './work_entity_search_dedupplicating_cache'
+{ MatchTitle, MatchAuthor } = require './work_entity_search_utils'
 
 # Search an existing work by title and authors from a seed
 # to avoid creating dupplicates if a corresponding work already exists
 module.exports = (seed)->
   { title, authors, groupLang:lang } = seed
+
   _.log seed, 'seed'
+
+  cachedWorkPromise = workEntitiesCache.get seed
+  if cachedWorkPromise? then return cachedWorkPromise
+
   searchByText
     search: title
     lang: lang
@@ -29,11 +36,6 @@ module.exports = (seed)->
     if matches.length > 1 then _.warn matches, 'possible dupplicates'
     return matches[0]
 
-# We want to have a rather high level of certitude that this is the same
-MatchTitle = (title, lang)-> (result)->
-  resultTitle = getBestLangValue lang, result.originalLang, result.labels
-  return _.log(formatTitle(resultTitle), 'result title') is _.log(formatTitle(title), 'seed title')
-
 AddAuthorsStrings = (lang)-> (result)->
   authorsUris = result.claims['wdt:P50']
   unless authorsUris.length > 0 then return result
@@ -47,25 +49,3 @@ AddAuthorsStrings = (lang)-> (result)->
 ParseAuthorsStrings = (lang)-> (res)->
   _.values res.entities
   .map (authorEntity)-> getBestLangValue lang, authorEntity.originalLang, authorEntity.labels
-
-MatchAuthor = (authors, lang)-> (result)->
-  _.log authors, 'authors'
-  _.log result.authors, 'result.authors'
-  # Consider its a match if one or more author match
-  # given we already know that the title matches
-  _.matchesCount(authors.map(formatAuthor), result.authors.map(formatAuthor)) > 0
-
-formatTitle = (str)->
-  str
-  .toLowerCase()
-  # remove part in parenthesis at then end of a title
-  .replace /\s\([^\)]+\)$/, ''
-
-formatAuthor = (str)->
-  str
-  .toLowerCase()
-  # Work around the various author name notations
-  .replace /\./g, ' '
-  # Replace all groups of spaces that might have emerged above by a single space
-  .replace /\s+/g, ' '
-  .trim()
