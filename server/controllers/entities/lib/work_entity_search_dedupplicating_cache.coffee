@@ -7,6 +7,7 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 { defer } = __.require 'lib', 'promises'
 { formatTitle, formatAuthor } = require './work_entity_search_utils'
+{ oneMinute } =  __.require 'lib', 'times'
 
 cache = {}
 
@@ -48,11 +49,14 @@ buildKey = (seed)->
 
 clean = ->
   for key, deferred of cache
-    { depending } = deferred
-    if depending is 0
+    { depending, kept } = deferred
+    # If there are no more depending promises or if this promise has been kept in cache
+    # for more than a minute, delete it
+    if depending is 0 or (kept? and _.now() - kept > oneMinute)
       _.info key, 'removing from dedupplicating cache'
       delete cache[key]
     else
+      deferred.kept or= _.now()
       _.warn key, "dedupplicating cache not clean: still #{depending} depending"
 
   _.info Object.keys(cache), 'work entity dedupplicating cache after cleaning'
