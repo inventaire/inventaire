@@ -25,6 +25,10 @@ This repository tracks the server-side developments, while the (heavy) [client-s
   - [Dependencies to install manually:](#dependencies-to-install-manually)
   - [Project development environment installation](#project-development-environment-installation)
   - [Installation tips](#installation-tips)
+  - [Repositories and Branches](#repositories-and-branches)
+    - [server](#server)
+    - [client](#client)
+    - [deploy](#deploy)
 - [Inventaire stack map](#inventaire-stack-map)
 - [Concepts map](#concepts-map)
 - [Contribute](#contribute)
@@ -91,6 +95,20 @@ npm run watch
 ### Installation tips
 * To use executable that are used by the project (such as `coffee`, `mocha`,`couch2elastic4sync`), you can either find them in `./node_modules/.bin` or install them globally with npm: `npm install -g coffee-script mocha brunch bower supervisor` etc.
 * If your computer has many CPU cores, you can make Brunch compile even faster by setting an environment variable: `BRUNCH_JOBS=4`
+
+### Repositories and Branches
+
+#### [server](http://github.com/inventaire/inventaire)
+- [**master**](http://github.com/inventaire/inventaire/tree/master): the stable branch. Unstable work should happen in feature-specific branches and trigger pull requests when ready to be merged in master. See [Code Contributor Guidelines](https://github.com/inventaire/inventaire/wiki/Code-Contributor-Guidelines).
+- [**i18n**](http://github.com/inventaire/inventaire/tree/i18n): the branch tracking strings used in emails in all the supported languages (contributions should happen in Transifex: [emails](https://www.transifex.com/inventaire/inventaire/emails/))
+
+#### [client](http://github.com/inventaire/inventaire-client)
+- [**master**](http://github.com/inventaire/inventaire-client/tree/master): the stable branch. Unstable work should happen in feature-specific branches and trigger pull requests when ready to be merged in master. See [Code Contributor Guidelines](https://github.com/inventaire/inventaire/wiki/Code-Contributor-Guidelines).
+- [**i18n**](http://github.com/inventaire/inventaire-client/tree/i18n): the branch tracking strings used in the client in all the supported languages (contributions should happen in Transifex: [fullkey](https://www.transifex.com/inventaire/inventaire/fullkey/) (strings where the key match the English value), [shortkey](https://www.transifex.com/inventaire/inventaire/shortkey/) (strings where the key doesn't match the English value: usually a short key with underscores used to point to long piece of text, possibly with variables))
+
+#### [deploy](http://github.com/inventaire/deploy)
+tracking installation scripts and documentation to run inventaire in production
+- [**master**](http://github.com/inventaire/inventaire-deploy/tree/master): the main implementation targeting Ubuntu 16.04. Additional branches can be started to document installation on other environments
 
 ## Inventaire stack map
 [![stack](https://raw.githubusercontent.com/inventaire/stack/master/snapshots/stack-from-server.png)](https://inventaire.github.io/stack/)
