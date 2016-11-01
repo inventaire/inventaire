@@ -17,9 +17,9 @@ module.exports =
   # lang: the language code to prioritize
   # refresh: request fresh data
   # includeDocs: include the seeds docs
-  search: (query, refresh)->
+  search: (search, refresh)->
     unless enabled then return promises_.resolve { isbn: [] }
-    promises_.get _.buildPath("#{host}/books", { search: query.search, refresh })
+    promises_.get _.buildPath("#{host}/books", { search, refresh })
 
   getByIsbns: (isbns, refresh)->
     unless enabled then return promises_.resolve {}

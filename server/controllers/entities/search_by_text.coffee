@@ -11,7 +11,7 @@ promises_ = __.require 'lib', 'promises'
 
 error_ = __.require 'lib', 'error/error'
 
-module.exports = (query, refresh)->
+module.exports = (query)->
   _.type query, 'object'
   { disableDataseed } = query
 
@@ -21,7 +21,7 @@ module.exports = (query, refresh)->
   ]
 
   if dataseedEnabled and not disableDataseed
-    promises.push searchDataseedByText(query, refresh)
+    promises.push searchDataseedByText(query)
 
   promises_.all promises
   .then mergeResults
@@ -36,7 +36,6 @@ searchWikidataByText = (query)->
   .then getEntitiesByUris
   .then filterOutIrrelevantTypes
   .catch error_.notFound
-  # catching errors to avoid crashing promises_.all
 
 searchLocalByText = (query)->
   searchLocalEntities query
@@ -45,8 +44,8 @@ searchLocalByText = (query)->
   .then getEntitiesByUris
   .catch error_.notFound
 
-searchDataseedByText = (query, refresh)->
-  searchDataseed query, refresh
+searchDataseedByText = (query)->
+  searchDataseed query.search, query.refresh
   .timeout searchTimeout
   .get 'isbns'
   .map urifyIsbn

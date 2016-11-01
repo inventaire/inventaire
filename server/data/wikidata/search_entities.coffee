@@ -5,10 +5,11 @@ wd_ = __.require 'lib', 'wikidata/wikidata'
 cache_ = __.require 'lib', 'cache'
 
 module.exports = (query)->
-  { search, lang } = query
+  { search, lang, refresh } = query
   _.type search, 'string'
   key = "wd:search:#{search}:#{lang}"
-  cache_.get key, requestBooksUris.bind(null, search, lang)
+  timestamp = if refresh then 0 else null
+  cache_.get key, requestBooksUris.bind(null, search, lang), timestamp
 
 requestBooksUris = (search, lang)->
   wd_.searchEntities search

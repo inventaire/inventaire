@@ -14,7 +14,7 @@ module.exports = (req, res)->
   { query } = req
   _.info query, 'entities search'
 
-  { search, lang, filter, refresh } = query
+  { search, lang } = query
 
   unless _.isNonEmptyString search
     return error_.bundle req, res, 'empty query' , 400
@@ -22,18 +22,17 @@ module.exports = (req, res)->
   unless lang?
     return error_.bundle req, res, 'no lang specified' , 400
 
-  # make sure we have a 2 letters lang code
+  # Make sure we have a 2 letters lang code
   query.lang = _.shortLang lang
-
-  refresh = _.parseBooleanString refresh
+  query.refresh = _.parseBooleanString query.refresh
 
   if isbn_.isIsbn search
     _.log search, 'searchByIsbn'
-    promise = searchByIsbn search, refresh
+    promise = searchByIsbn { isbn: search, refresh: query.refresh }
 
   else
     _.log search, 'searchByText'
-    promise = searchByText query, refresh
+    promise = searchByText query
 
   promise
   .then spreadResults
