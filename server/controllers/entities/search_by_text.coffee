@@ -7,12 +7,13 @@ searchLocalEntities = require './search_local'
 { searchTimeout } = CONFIG
 { enabled:dataseedEnabled } = CONFIG.dataseed
 getEntitiesByUris = require './lib/get_entities_by_uris'
+GetEntitiesByUris = (refresh)-> (uris)-> getEntitiesByUris uris, refresh
 promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
 
 module.exports = (query)->
   _.type query, 'object'
-  { disableDataseed } = query
+  { disableDataseed, refresh } = query
 
   promises = [
     searchWikidataByText query
@@ -24,7 +25,7 @@ module.exports = (query)->
 
   promises_.all promises
   .then mergeResults
-  .then replaceEditionsByTheirWork
+  .then ReplaceEditionsByTheirWork(refresh)
   .then _.values
   .catch _.ErrorRethrow('search by text err')
 
@@ -34,7 +35,7 @@ searchWikidataByText = (query)->
   .map urifyWd
   # Starting to look for the entities as soon as we have a search result
   # as other search results might take more time here but less later
-  .then getEntitiesByUris
+  .then GetEntitiesByUris(query.refresh)
   .then filterOutIrrelevantTypes
   .catch error_.notFound
 
@@ -42,15 +43,16 @@ searchLocalByText = (query)->
   searchLocalEntities query
   .timeout searchTimeout
   .map urifyInv
-  .then getEntitiesByUris
+  .then GetEntitiesByUris(query.refresh)
   .catch error_.notFound
 
 searchDataseedByText = (query)->
-  searchDataseed query.search, query.refresh
+  { search, refresh } = query
+  searchDataseed search, refresh
   .timeout searchTimeout
   .get 'isbns'
   .map urifyIsbn
-  .then getEntitiesByUris
+  .then GetEntitiesByUris(refresh)
   .catch error_.notFound
 
 urifyWd = (wdId)-> "wd:#{wdId}"
@@ -72,7 +74,7 @@ filterOutIrrelevantTypes = (result)->
 mergeResults = (results)->
   _.flattenIndexes _.compact(results).map(_.property('entities'))
 
-replaceEditionsByTheirWork = (entities)->
+ReplaceEditionsByTheirWork = (refresh)-> (entities)->
   missingWorkEntities = []
   for uri, entity of entities
     if entity.type is 'edition'
@@ -86,5 +88,5 @@ replaceEditionsByTheirWork = (entities)->
   missingWorkEntities = _.uniq missingWorkEntities
   _.log missingWorkEntities, 'missingWorkEntities from editions'
 
-  return getEntitiesByUris missingWorkEntities
+  return getEntitiesByUris missingWorkEntities, refresh
   .then (results)-> _.extend entities, results.entities
