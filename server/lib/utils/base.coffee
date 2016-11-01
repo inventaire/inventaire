@@ -48,6 +48,10 @@ module.exports = base =
 
   parseBooleanString: (booleanString)-> booleanString is 'true'
 
+  flattenIndexes: (indexesArray)->
+    indexesArray.unshift {}
+    return _.extend.apply _, indexesArray
+
 base.objDiff = -> not base.sameObjects.apply(null, arguments)
 
 base.Ok = (res, status)-> base.ok.bind null, res, status
