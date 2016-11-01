@@ -18,7 +18,6 @@ module.exports = entities_ =
     ids = _.forceArray ids
     db.fetch ids
     .then _.compact
-    .then _.Log('getEntities')
 
   byIsbns: (isbns)->
     keys = isbns
