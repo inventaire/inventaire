@@ -46,8 +46,6 @@ module.exports = base =
 
   isArrayLike: (obj)-> _.isArray(obj) or _.isArguments(obj)
 
-  parseBooleanString: (booleanString)-> booleanString is 'true'
-
   flattenIndexes: (indexesArray)->
     indexesArray.unshift {}
     return _.extend.apply _, indexesArray
