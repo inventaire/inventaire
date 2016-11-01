@@ -8,7 +8,6 @@ searchLocalEntities = require './search_local'
 { enabled:dataseedEnabled } = CONFIG.dataseed
 getEntitiesByUris = require './lib/get_entities_by_uris'
 promises_ = __.require 'lib', 'promises'
-
 error_ = __.require 'lib', 'error/error'
 
 module.exports = (query)->
@@ -25,6 +24,8 @@ module.exports = (query)->
 
   promises_.all promises
   .then mergeResults
+  .then replaceEditionsByTheirWork
+  .then _.values
   .catch _.ErrorRethrow('search by text err')
 
 searchWikidataByText = (query)->
@@ -52,14 +53,6 @@ searchDataseedByText = (query)->
   .then getEntitiesByUris
   .catch error_.notFound
 
-mergeResults = (results)->
-  _(results)
-  .compact()
-  .map _.property('entities')
-  .map _.values
-  .flatten()
-  .value()
-
 urifyWd = (wdId)-> "wd:#{wdId}"
 urifyIsbn = (isbn)-> "isbn:#{isbn}"
 # It's ok to use the inv URI even if its not the canonical URI
@@ -75,3 +68,23 @@ filterOutIrrelevantTypes = (result)->
       delete result.entities[uri]
 
   return result
+
+mergeResults = (results)->
+  _.flattenIndexes _.compact(results).map(_.property('entities'))
+
+replaceEditionsByTheirWork = (entities)->
+  missingWorkEntities = []
+  for uri, entity of entities
+    if entity.type is 'edition'
+      workUri = entity.claims['wdt:P629'][0]
+      # Ensure that the edition work is in the results
+      unless entities[workUri]? then missingWorkEntities.push workUri
+      # Remove the edition from the results as it will be fetched later
+      # as an edition of its work
+      delete entities[uri]
+
+  missingWorkEntities = _.uniq missingWorkEntities
+  _.log missingWorkEntities, 'missingWorkEntities from editions'
+
+  return getEntitiesByUris missingWorkEntities
+  .then (results)-> _.extend entities, results.entities
