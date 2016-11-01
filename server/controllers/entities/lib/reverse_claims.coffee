@@ -15,7 +15,7 @@ module.exports = (property, uri, refresh)->
   if prefix is 'wd'
     promises.push wikidataReverseClaims(property, id, refresh)
 
-  promises.push entities_.idsByClaim(property, uri)
+  promises.push invReverseClaims(property, uri)
 
   promises_.all promises
   .then _.flatten
@@ -30,3 +30,7 @@ _wikidataReverseClaims = (property, wdId)->
   promises_.get _.log(wdk.getReverseClaims(wdProp, wdId), 'reverseclaim')
   .then wdk.simplifySparqlResults
   .map prefixify
+
+invReverseClaims = (property, uri)->
+  entities_.idsByClaim property, uri
+  .map (id)-> "inv:#{id}"
