@@ -36,6 +36,8 @@ properties =
   'wdt:P31': entityUniqueValue
   # author
   'wdt:P50': entityBase
+  # movement
+  'wdt:P135': entityBase
   # genre
   'wdt:P136': entityBase
   # serie
