@@ -43,13 +43,13 @@ spreadResults = (results)->
   response =
     humans: []
     series: []
-    books: []
+    works: []
     editions: []
 
   for result in results
     { type } = result
     switch type
-      when 'human', 'serie', 'book', 'edition' then response["#{type}s"].push result
+      when 'human', 'serie', 'work', 'edition' then response["#{type}s"].push result
       else _.warn result, "filtered-out type: #{type}"
 
   return response

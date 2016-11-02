@@ -7,7 +7,7 @@ _.extend Q,
     'wd:Q277759' #book series
     'wd:Q14406742' #comic book series
   ]
-  books: [
+  works: [
     'wd:Q571' #book
     'wd:Q2831984' #comic book album
     'wd:Q1004' #bande dessinée / comic book

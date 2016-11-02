@@ -40,10 +40,10 @@ getPicSourceOrder = (entity)->
     # Commons pictures are prefered to Wikipedia and Open Library
     # to get access to photo credits
     when 'human' then return ['wm', 'wp', 'ol']
-    when 'book'
-      # Giving priority to openlibrary's pictures for books
+    when 'work'
+      # Giving priority to openlibrary's pictures for works
       # as it has only covers while commons sometimes has just an illustration
-      # Give priority to Wikimedia over Wikipedia for books
+      # Give priority to Wikimedia over Wikipedia for works
       # likely to be in the public domain and have a good image set in Wikidata
       # while querying images from English Wikipedia articles
       # can give quite random results

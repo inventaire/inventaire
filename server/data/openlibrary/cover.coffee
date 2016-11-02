@@ -10,7 +10,7 @@ checkCoverExistance = require './check_cover_existance'
 module.exports = (openLibraryId, entityType)->
   switch entityType
     when 'human' then type = 'a'
-    when 'book', 'edition' then type = 'b'
+    when 'work', 'edition' then type = 'b'
     else return error_.bundle req, res, 'unknow openlibrary type', 400
 
   url = coverByOlId openLibraryId, type
