@@ -54,11 +54,13 @@ promisesHandlers =
       # Get the next getter and assign a timeout
       next = getters.shift()
       if first
-        p = p.then(next).timeout timeout
+        p = p.then -> next().timeout timeout
         first = false
       else
         # chaining the following options in case the first fails
-        p = p.catch(next).timeout timeout
+        p = p.catch (err)->
+          _.warn err, 'err in the fallback chain'
+          next().timeout timeout
     return p
 
 # bundling NonSkip and _.Error handlers
