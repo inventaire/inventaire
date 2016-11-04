@@ -18,15 +18,17 @@ formatAuthor = (str)->
   .trim()
 
 MatchAuthor = (authors, lang)-> (result)->
-  _.log authors, 'authors'
-  _.log result.authors, 'result.authors'
+  unless _.isArray(authors) and _.isArray(result.authors) then return false
   # Consider its a match if one or more author match
   # given we already know that the title matches
-  _.matchesCount(authors.map(formatAuthor), result.authors.map(formatAuthor)) > 0
+  authors = _.compact(authors).map(formatAuthor)
+  resultAuthors = _.compact(result.authors).map(formatAuthor)
+  _.matchesCount(authors, resultAuthors) > 0
 
 # We want to have a rather high level of certitude that this is the same
 MatchTitle = (title, lang)-> (result)->
   resultTitle = getBestLangValue lang, result.originalLang, result.labels
-  return _.log(formatTitle(resultTitle), 'result title') is _.log(formatTitle(title), 'seed title')
+  unless _.isString(title) and _.isString(resultTitle) then return false
+  return formatTitle(resultTitle) is formatTitle(title)
 
 module.exports = { formatTitle, formatAuthor, MatchAuthor, MatchTitle }

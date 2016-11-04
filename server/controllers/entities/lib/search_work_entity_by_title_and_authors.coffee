@@ -38,7 +38,10 @@ module.exports = (seed)->
 
 AddAuthorsStrings = (lang)-> (result)->
   authorsUris = result.claims['wdt:P50']
-  unless authorsUris.length > 0 then return result
+  unless authorsUris?.length > 0
+    _.warn result, 'no authors to add'
+    result.authors = []
+    return result
 
   getEntitiesByUris authorsUris
   .then ParseAuthorsStrings(lang)
