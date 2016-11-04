@@ -39,7 +39,7 @@ June2014 = 1402351200000
 tests.EpochMs =
   test: (time)-> June2014 < time <= Date.now()
 
-tests.imgUrl = (url)-> tests.localImg(url) or _.isUrl(url)
+tests.imgUrl = (url)-> tests.localImg(url) or _.isUrl(url) or _.isIpfsPath(url)
 
 tests.valid = (attribute, value, option)->
   test = @[attribute]
