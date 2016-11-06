@@ -1,2 +1,2 @@
 #!/usr/bin/env sh
-supervisor -w server,server.coffee,deploy/reload.coffee,client/app/lib/shared,config server.coffee
+supervisor -w server,server.coffee,client/app/lib/shared,config server.coffee
