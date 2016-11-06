@@ -8,3 +8,4 @@ scripts/couch2elastic4sync/configs
 config/local.coffee
 db/leveldb/
 erl_crash.dump
+client
