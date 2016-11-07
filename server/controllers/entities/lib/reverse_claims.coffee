@@ -6,6 +6,8 @@ promises_ = __.require 'lib', 'promises'
 entities_ = require './entities'
 prefixify = __.require 'lib', 'wikidata/prefixify'
 cache_ = __.require 'lib', 'cache'
+getInvEntityCanonicalUri = require './get_inv_entity_canonical_uri'
+couch_ = __.require 'lib', 'couch'
 
 module.exports = (property, uri, refresh)->
   [ prefix, id ] = uri.split ':'
@@ -32,5 +34,6 @@ _wikidataReverseClaims = (property, wdId)->
   .map prefixify
 
 invReverseClaims = (property, uri)->
-  entities_.idsByClaim property, uri
-  .map (id)-> "inv:#{id}"
+  entities_.byClaim property, uri, true
+  .then couch_.mapDoc
+  .map (entity)-> getInvEntityCanonicalUri(entity)[0]
