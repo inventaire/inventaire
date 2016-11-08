@@ -5,6 +5,7 @@ promises_ = __.require 'lib', 'promises'
 { parse:parseIsbn, normalizeIsbn } = __.require 'lib', 'isbn/isbn'
 dataseed = __.require 'data', 'dataseed/dataseed'
 scaffoldEntityFromSeed = require './scaffold_entity_from_seed'
+formatEntityCommon = require './format_entity_common'
 
 module.exports = (isbns, refresh)->
   # search entities by isbn locally
@@ -35,7 +36,7 @@ formatEntity = (entity)->
   isbn = entity.claims['wdt:P212'][0]
   entity.uri = "isbn:#{normalizeIsbn(isbn)}"
   entity.type = 'edition'
-  return entity
+  return formatEntityCommon entity
 
 getMissingEntitiesFromSeeds = (isbns, refresh)->
   dataseed.getByIsbns isbns, refresh

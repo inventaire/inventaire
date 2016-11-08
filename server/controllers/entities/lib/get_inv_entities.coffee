@@ -1,8 +1,8 @@
 __ = require('config').universalPath
 entities_ = require './entities'
 getEntityType = __.require 'lib', 'wikidata/get_entity_type'
-{ getOriginalLang } = __.require 'lib', 'wikidata/wikidata'
 getInvEntityCanonicalUri = require './get_inv_entity_canonical_uri'
+formatEntityCommon = require './format_entity_common'
 
 module.exports = (ids)->
   # Hypothesis: there is no need to look for Wikidata data here
@@ -17,11 +17,4 @@ format = (entity)->
   if redirects? then entity.redirects = redirects
 
   entity.type = getEntityType entity.claims['wdt:P31']
-  entity.originalLang = getOriginalLang entity.claims
-
-  # Matching Wikidata entities format for images
-  # Here we are missing license, credits, and author attributes
-  entity.image =
-    url: entity.claims['wdt:P18']?[0]
-
-  return entity
+  return formatEntityCommon entity
