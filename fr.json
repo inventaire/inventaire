@@ -59,7 +59,7 @@
     "last_friends_books_more": "...et [encore %{smart_count} autre](https://inventaire.io/inventory) |||| ...et [encore %{smart_count} autres](https://inventaire.io/inventory)",
     "news_3": "La dernière fois, nous vous présentions la possibilité de voir [les utilisateurs s'étant geolocalisés](https://inventaire.io/network/users/nearby); maintenant vous pouvez également trouver les [groupes près de chez vous](https://inventaire.io/network/groups/nearby) ! Si vous avez déjà créé un groupe et souhaitez le voir apparaître sur la carte, rendez-vous dans les [réglages de votre groupe](https://inventaire.io/network/groups/user). Sinon, il est toujours possible de [créer un groupe](https://inventaire.io/network/groups/create). Les groupes sont pensés pour regrouper des personnes se retrouvant régulièrement dans un même lieu - un bureau, un coworking, une université, etc. - mais si vous les utilisez dans un autre contexte et qu'il vous manque une fonctionnalité, dites-le nous !",
     "activity summary": "résumé d'activité",
-    "did you know?": "le saviez-vous ?",
+    "did you know?": "astuces",
     "no_activity": "aucune activité à afficher",
     "Organize inventories with tags": "Organiser les inventaires avec des tags",
     "last_nearby_books": "les derniers livres ajoutés près de chez vous",
