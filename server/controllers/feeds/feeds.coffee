@@ -1,5 +1,7 @@
+CONFIG = require 'config'
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
+root = CONFIG.fullPublicHost()
 items_ = __.require 'controllers', 'items/lib/items'
 error_ = __.require 'lib', 'error/error'
 RSS = require 'rss'
@@ -15,7 +17,7 @@ module.exports =
         xmlItem = {}
         xmlItem["title"] = item["title"]
         xmlItem["guid"] = item["entity"]
-        xmlItem["url"] = item["_id"]
+        xmlItem["url"] = "#{root}/items/#{item["_id"]}"
         xmlItem["author"] = item["authors"]
         xmlItem["date"] = item["updated"]
         return xmlItem
