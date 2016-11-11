@@ -65,7 +65,7 @@ getResizeImage = (req, res, url, dimensions)->
     if statusCode >= 400
       errMessage = "Remote response: #{statusCode} #{statusMessage}"
 
-    else if contentType.split('/')[0] isnt 'image'
+    else if not validImageContentType.test(contentType)
       errMessage = "invalid image content-type: #{contentType}"
 
     else if contentLength > 10*oneMB
@@ -80,6 +80,10 @@ getResizeImage = (req, res, url, dimensions)->
       resizeFromStream reqStream, width, height, req, res
 
   .on 'error', error_.Handler(req, res)
+
+# Accepting image/*
+# Accepting application/octet-stream (known case: media storages 'dumb' content type)
+validImageContentType = /^(image\/\w+|application\/octet-stream)$/
 
 resizeFromStream = (reqStream, width, height, req, res)->
   alreadySent = false
