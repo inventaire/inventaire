@@ -47,6 +47,7 @@
     "express-session": "^1.11.3",
     "follow": "^0.12.1",
     "formidable": "^1.0.17",
+    "git-hooks": "^1.1.7",
     "gm": "^1.22.0",
     "graceful-fs": "^4.1.2",
     "gravatar": "^1.4.0",
