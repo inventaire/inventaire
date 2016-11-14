@@ -8,6 +8,7 @@ reverseClaims = require './reverse_claims'
 customQuery = require './custom_query'
 updateClaim = require './update_claim'
 updateLabel = require './update_label'
+getChanges = require './get_changes'
 
 module.exports =
   # public
@@ -19,6 +20,7 @@ module.exports =
     switch action
       when 'search' then return searchEntity req, res
       when 'get-entities' then return getEntities req, res
+      when 'get-changes' then return getChanges req, res
       # when 'get-images' then return getImages req, res
       when 'reverse-claims' then return reverseClaims req, res
       when 'author-works', 'serie-parts' then return customQuery req, res

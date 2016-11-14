@@ -7,6 +7,7 @@ patches_ = require './patches'
 isbn_ = __.require 'lib', 'isbn/isbn'
 couch_ = __.require 'lib', 'couch'
 validateClaimValue = require('./validate_claim_value')(db)
+getInvEntityCanonicalUri = require './get_inv_entity_canonical_uri'
 
 { validateProperty } = require './properties'
 
@@ -71,6 +72,18 @@ module.exports = entities_ =
   validateClaim: (claims, property, oldVal, newVal, letEmptyValuePass)->
     promises_.try -> validateProperty property
     .then -> validateClaimValue claims, property, oldVal, newVal, letEmptyValuePass
+
+  getLastChangedEntitiesUris: (since, limit)->
+    db.changes
+      filter: 'entities/entities'
+      limit: limit
+      since: since
+      include_docs: true
+    .then (res)->
+      uris: res.results.map parseCanonicalUri
+      lastSeq: res.last_seq
+
+parseCanonicalUri = (result)-> getInvEntityCanonicalUri(result.doc)[0]
 
 putUpdate = (userId, currentDoc, updatedDoc)->
   _.log currentDoc, 'current doc'
