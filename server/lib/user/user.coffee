@@ -8,6 +8,7 @@ couch_ = __.require 'lib', 'couch'
 User = __.require 'models', 'user'
 { byEmail, byEmails, findOneByEmail } = require './shared_user_handlers'
 { publicUserData, publicUsersDataWithEmails } = require './public_user_data'
+{ BasicUpdater } = __.require 'lib', 'doc_updates'
 
 db = __.require('couch', 'base')('users', 'user')
 geo = require('./geo/geo')()
@@ -81,6 +82,8 @@ user_ =
         doc.undeliveredEmail or= 0
         doc.undeliveredEmail += 1
         return doc
+
+  makeUserAdmin: (userId)-> db.update userId, BasicUpdater('admin', true)
 
   nearby: (userId, meterRange, strict)->
     user_.byId userId
