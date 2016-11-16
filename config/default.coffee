@@ -44,6 +44,13 @@ module.exports = config =
     freezeFollow: false
     # logs Couchdb requests parameters
     debug: false
+    # db settings for script actions
+    # see scripts/lib/action_by_input.coffee
+    actionsScripts:
+      port: 3456
+      suffix: 'prod'
+      # prevent triggering follow onChange actions with data from the remote database
+      freezeFollow: true
   elasticsearch:
     base: 'http://localhost:9200/inventaire'
     sync: [
