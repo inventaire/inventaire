@@ -2,7 +2,6 @@ CONFIG = require 'config'
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 
-user_ = __.require 'lib', 'user/user'
 promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
 
@@ -29,6 +28,7 @@ module.exports = (analytics_)->
       throw error_.new 'excluding bots from analytics reports', 'dropped', ip
 
     report.user =
+      id: req.user?._id
       ip: ip
       userAgent: userAgent
       lang: req.headers['accept-language']?.split(',')?[0]

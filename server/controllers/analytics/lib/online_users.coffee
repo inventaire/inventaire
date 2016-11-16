@@ -7,7 +7,6 @@ module.exports = (user)->
   if id? then onlineUsers[fingerPrint] = 1
   else onlineUsers[fingerPrint] = 0
 
-
 onlineUsers = {}
 last = null
 
