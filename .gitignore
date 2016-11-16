@@ -1,5 +1,6 @@
 deploy-public
 db/couchdb/migrations
+db/couchdb/backups
 server/lib/emails/i18n
 deploy
 node_modules
