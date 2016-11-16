@@ -1,7 +1,11 @@
 #!/usr/bin/env coffee
 
 # /!\ Using the action scripts custom settings
-CONFIG = require './lib/get_custom_config'
+[ port, suffix ] = process.argv.slice 2
+forcedArgs = {}
+if port? then forcedArgs.port = port
+if suffix? then forcedArgs.suffix = suffix
+CONFIG = require('./lib/get_custom_config')(forcedArgs)
 
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'

@@ -1,4 +1,4 @@
-CONFIG = require './get_custom_config'
+CONFIG = require('./get_custom_config')()
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 ActionByInput = require './action_by_input'
