@@ -19,10 +19,9 @@ module.exports = (analyticsLevelDB)->
     .on 'end', logStats.bind(null, stats)
 
   transferReportToCouch = (stats, doc)->
-    _.types arguments, ['object', 'string']
     { refTime } = stats
-    doc = JSON.parse(doc)
-    if sessionIsOver(refTime, doc?.time?.last)
+    doc = JSON.parse doc
+    if sessionIsOver refTime, doc?.time?.last
       putInCouchIfError doc
       .then clearLevel.bind(null, stats, doc._id)
       .catch dropIfConflict.bind(null, stats, doc._id)
@@ -30,11 +29,10 @@ module.exports = (analyticsLevelDB)->
     else
       stats.kept++
 
-
   sessionIsOver = (refTime, lastTime)->
     if lastTime?
       # JSON conversions messes with the type
-      lastTime = Number(lastTime)
+      lastTime = Number lastTime
       # arbitrary choosing 30 minutes
       # given session with last time older than 30 sec are finished
       return (lastTime + halfAnHour) < refTime
@@ -45,10 +43,9 @@ module.exports = (analyticsLevelDB)->
     unless doc.error? then return promises_.resolved
     _.type doc, 'object'
     doc.type = 'report'
-    analyticsCouchDB.put(doc)
+    analyticsCouchDB.put doc
 
   clearLevel = (stats, docId)->
-    _.types arguments, ['object', 'string']
     if verbosity > 1
       _.log docId, 'succesfully transfered to couch. deleting in level'
     stats.transfered++
@@ -64,10 +61,7 @@ module.exports = (analyticsLevelDB)->
       throw err
 
   logStats = (stats)->
-    if verbosity > 2
-      cb = -> _.info(stats, "analytics transfered to Couchdb")
-      setTimeout cb , oneMinute
-
+    if verbosity > 2 then _.info stats, 'analytics transfered to Couchdb'
 
   # let 20 seconds to the server to finish to start before transfering
   setTimeout saveToCouch, 20 * 1000
