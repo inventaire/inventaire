@@ -44,7 +44,7 @@ indexById = (users)-> _.indexBy users, '_id'
 
 getItemsWithTransactionFirst = (lastItems, highlightedLength)->
   # create a new array as items.pop() would affect lastItems everywhere
-  items = lastItems.clone()
+  items = _.clone lastItems
   withTransaction = []
   withoutTransaction = []
   # go through all items until withTransaction is equal to

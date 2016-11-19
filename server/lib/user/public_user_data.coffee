@@ -8,7 +8,7 @@ publicUserData = (doc, extraAttribute)->
   _.pick doc, attributes
 
 getAttributes = (extraAttribute)->
-  attributes = User.attributes.public.clone()
+  attributes = _.clone User.attributes.public
   # beware of map index passed as second argument
   if _.isString extraAttribute then attributes.push extraAttribute
   return attributes
