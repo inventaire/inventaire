@@ -134,10 +134,6 @@ module.exports = routes =
   'api/logs/public':
     post: analytics.reports
 
-  'error/count':
-    get: (req, res, next)->
-      res.json { count: _.errorCount() }
-
   'img/*':
     get: resize
 
