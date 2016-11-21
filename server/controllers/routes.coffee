@@ -14,7 +14,6 @@ entities = require './entities/entities'
 upload = require './upload/upload'
 resize = require './upload/resize'
 notifs = require './notifs'
-newsletter = require './newsletter'
 cookie = require './cookie'
 tests = require './tests'
 data = require './data'
@@ -86,9 +85,6 @@ module.exports = routes =
   'api/notifs':
     get: notifs.get
     post: notifs.updateStatus
-
-  'api/newsletter/public':
-    post: newsletter.subscribe
 
   'api/cookie/public':
     post: cookie.post
