@@ -1,10 +1,6 @@
 __ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-error_ = __.require 'lib', 'error/error'
-emailValidation = require './email_validation'
+ActionsControllers = __.require 'lib', 'actions_controllers'
 
-exports.get = (req, res, next)->
-  { service } = req.query
-  switch service
-    when 'email-validation' then return emailValidation req, res
-    else error_.bundle req, res, 'unknown service', 400, service
+module.exports =
+  get: ActionsControllers
+    'email-validation': require './email_validation'

@@ -8,8 +8,9 @@ promises_ = __.require 'lib', 'promises'
 { Track } = __.require 'lib', 'track'
 
 publicActions = require './public_actions'
+ActionsControllers = __.require 'lib', 'actions_controllers'
 
-module.exports = _.extend publicActions,
+module.exports =
   fetch: (req, res, next) ->
     # only fetch for requesters session
     # = only way to fetch private data on items
@@ -50,17 +51,9 @@ module.exports = _.extend publicActions,
     .then res.json.bind(res)
     .catch error_.Handler(req, res)
 
-  publicActions: (req, res, next)->
-    { action } = req.query
-    switch action
-      when 'public-by-id'
-        publicActions.publicById req, res
-      when 'public-by-entity'
-        publicActions.publicByEntity req, res
-      when 'public-by-username-and-entity'
-        publicActions.publicByUsernameAndEntity req, res
-      when 'last-public-items'
-        publicActions.lastPublicItems req, res
-      when 'users-public-items'
-        publicActions.usersPublicItems req, res
-      else error_.unknownAction req, res
+  publicActions: ActionsControllers
+    'public-by-id': publicActions.publicById
+    'public-by-entity': publicActions.publicByEntity
+    'public-by-username-and-entity': publicActions.publicByUsernameAndEntity
+    'last-public-items': publicActions.lastPublicItems
+    'users-public-items': publicActions.usersPublicItems

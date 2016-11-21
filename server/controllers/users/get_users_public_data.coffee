@@ -5,7 +5,8 @@ error_ = __.require 'lib', 'error/error'
 user_ = __.require 'lib', 'user/user'
 parseAndValidateIds = require './lib/parse_and_validate_ids'
 
-module.exports = (req, res, ids)->
+module.exports = (req, res)->
+  { ids } = req.query
   promises_.start
   .then parseAndValidateIds.bind(null, ids)
   .then _.partialRight(user_.getUsersPublicData, 'index')

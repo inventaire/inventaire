@@ -3,10 +3,10 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 getGroupPublicData = require './get_group_public_data'
-create = require './create'
-{ possibleActions } = require './lib/actions_lists'
+{ possibleActions } = require './lib/actions_lists'
 handleAction = require './actions'
 { allUserGroups } = require './lib/groups'
+ActionsControllers = __.require 'lib', 'actions_controllers'
 
 module.exports =
   public:
@@ -18,11 +18,8 @@ module.exports =
       .then res.json.bind(res)
       .catch error_.Handler(req, res)
 
-    post: (req, res)->
-      { action } = req.body
-      switch action
-        when 'create' then create req, res
-        else error_.unknownAction req, res, action
+    post: ActionsControllers
+      'create': require './create'
 
     put: (req, res)->
       { action } = req.body
