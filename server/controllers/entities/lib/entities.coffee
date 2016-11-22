@@ -53,8 +53,29 @@ module.exports = entities_ =
     promises_.try ->
       updatedDoc = Entity.setLabels updatedDoc, updatedLabels
       return Entity.addClaims updatedDoc, updatedClaims
-    .then db.putAndReturn
-    .tap -> patches_.create userId, currentDoc, updatedDoc
+
+    .then putUpdate.bind(null, userId, currentDoc)
+
+  merge: (userId, fromId, toId)->
+    _.types arguments, 'strings...'
+    db.byIds [fromId, toId]
+    .spread (fromEntityDoc, toEntityDoc)->
+      # At this point if the entities are not found, that's the server's fault, thus the 500 status
+      unless fromEntityDoc._id is fromId then throw error_.new "'from' entity doc not found", 500
+      unless toEntityDoc._id is toId then throw error_.new "'to' entity doc not found", 500
+
+      toEntityDocBeforeMerge = _.cloneDeep toEntityDoc
+      toEntityDoc = Entity.mergeDocs fromEntityDoc, toEntityDoc
+
+      putUpdate userId, toEntityDocBeforeMerge, toEntityDoc
+      .then -> entities_.turnIntoRedirection userId, fromId, "inv:#{toId}"
+
+  turnIntoRedirection: (userId, fromId, toUri)->
+    _.types arguments, 'strings...'
+    db.get fromId
+    .then (currentFromDoc)->
+      updatedFromDoc = Entity.turnEntityIntoRedirection currentFromDoc, toUri
+      return putUpdate userId, currentFromDoc, updatedFromDoc
 
   updateLabel: (lang, value, userId, currentDoc)->
     updatedDoc = _.cloneDeep currentDoc

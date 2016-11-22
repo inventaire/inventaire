@@ -82,6 +82,9 @@ module.exports = routes =
   'api/entities/public':
     get: entities.get
 
+  'api/entities/admin':
+    put: entities.admin.put
+
   'api/notifs':
     get: notifs.get
     post: notifs.updateStatus

@@ -95,6 +95,22 @@ module.exports = Entity =
 
     return updateInferredProperties doc, property, oldVal, newVal
 
+  # 'from' and 'to' refer to the redirection process which rely on merging two existing document:
+  # redirecting from an entity to another entity, only the 'to' doc will survive
+  mergeDocs: (fromEntityDoc, toEntityDoc)->
+    preventRedirectionEdit fromEntityDoc, 'mergeDocs (from)'
+    preventRedirectionEdit toEntityDoc, 'mergeDocs (to)'
+    # Giving priority to the toEntityDoc labels and claims
+    toEntityDoc.labels = _.extend {}, fromEntityDoc.labels, toEntityDoc.labels
+    toEntityDoc.claims = _.extend {}, fromEntityDoc.claims, toEntityDoc.claims
+    return toEntityDoc
+
+  turnEntityIntoRedirection: (fromEntityDoc, toUri)->
+    _id: fromEntityDoc._id
+    _rev: fromEntityDoc._rev
+    type: 'entity'
+    redirect: toUri
+
 updateInferredProperties = (doc, property, oldVal, newVal)->
   propInferences = inferences[property]
 

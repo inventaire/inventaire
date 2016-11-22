@@ -17,3 +17,7 @@ module.exports =
   put: ActionsControllers
     'update-claim': require './update_claim'
     'update-label': require './update_label'
+
+  admin:
+    put: ActionsControllers
+      'merge': require './merge'
