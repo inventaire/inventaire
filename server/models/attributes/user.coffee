@@ -15,6 +15,7 @@ attributes.ownerSafe = [
   'settings'
   'position'
   'summaryPeriodicity'
+  'admin'
 ]
 
 attributes.public = [
