@@ -43,12 +43,14 @@ module.exports = Entity =
     return doc
 
   setLabels: (doc, labels)->
+    preventRedirectionEdit doc, 'setLabels'
     for lang, value of labels
       doc = Entity.setLabel doc, lang, value
 
     return doc
 
   addClaims: (doc, claims)->
+    preventRedirectionEdit doc, 'addClaims'
     for property, array of claims
       prop = properties[property]
       # claims will be validated one by one later but some collective checks are needed
@@ -64,9 +66,11 @@ module.exports = Entity =
     return doc
 
   createClaim: (doc, property, value)->
+    preventRedirectionEdit doc, 'createClaim'
     return Entity.updateClaim doc, property, null, value
 
   updateClaim: (doc, property, oldVal, newVal)->
+    preventRedirectionEdit doc, 'updateClaim'
     unless oldVal? or newVal?
       throw error_.new 'missing old or new value', 400, arguments
 
@@ -152,3 +156,7 @@ setPossiblyEmptyPropertyArray = (doc, property, propertyArray)->
     doc.claims = _.omit doc.claims, property
   else
     doc.claims[property] = propertyArray
+
+preventRedirectionEdit = (doc, editLabel)->
+  if doc.redirect?
+    throw error_.new "#{editLabel} failed: the entity is a redirection", 400, arguments
