@@ -69,7 +69,7 @@ Item.changeOwner = (transacDoc, item)->
   unless item.owner is owner
     throw new Error "owner doesn't match item owner"
 
-  item.history or= []
+  item.history or= []
   item.history.push
     transaction: transacId
     previousOwner: owner
@@ -85,4 +85,17 @@ Item.changeOwner = (transacDoc, item)->
     updated: Date.now()
 
 Item.allowTransaction = (item)->
-  item.transaction in attributes.allowTransaction
+  item.transaction in attributes.allowTransaction
+
+Item.updateEntityAfterEntityMerge = (fromUri, toUri, item)->
+  unless item.entity is fromUri
+    throw error_.new "wrong entity uri: expected #{fromUri}, got #{item.entity}", 500
+
+  _.log item, 'item before entity merge'
+
+  item.entity = toUri
+  # Keeping track of previous entity URI in case a rollback is needed
+  item.previousEntity or= []
+  item.previousEntity.unshift fromUri
+
+  return _.log item, 'item after entity merge'

@@ -77,6 +77,33 @@ module.exports = entities_ =
       updatedFromDoc = Entity.turnEntityIntoRedirection currentFromDoc, toUri
       return putUpdate userId, currentFromDoc, updatedFromDoc
 
+  redirectClaims: (userId, fromUri, toUri)->
+    # Get claims by claims objects
+    entitiesByClaimsValue fromUri
+    .then (results)->
+      entitiesToEditIds = _.map results, 'entity'
+      _.log entitiesToEditIds, 'entitiesToEditIds'
+      if entitiesToEditIds.length is 0 then return
+      # Doing all the redirects at once to avoid conflicts
+      # within a same entity pointing several times to the redirected entity.
+      # There is no identified case at the moment though.
+      entities_.byIds entitiesToEditIds
+      .then (entities)->
+        entitiesIndex = _.indexBy entities, '_id'
+        entitiesIndexBeforeUpdate = _.cloneDeep entitiesIndex
+        # Apply all the redirection updates on the entities docs
+        results.forEach (result)->
+          { entity, property } = result
+          doc = entitiesIndex[entity]
+          entitiesIndex[entity] = Entity.updateClaim doc, property, fromUri, toUri
+
+        # Then, post the updates all at once
+        updatesPromises = _.values(entitiesIndex).map (updatedDoc)->
+          currentDoc = entitiesIndexBeforeUpdate[updatedDoc._id]
+          return putUpdate userId, currentDoc, updatedDoc
+
+        return promises_.all updatesPromises
+
   updateLabel: (lang, value, userId, currentDoc)->
     updatedDoc = _.cloneDeep currentDoc
     updatedDoc = Entity.setLabel updatedDoc, lang, value
@@ -112,3 +139,12 @@ putUpdate = (userId, currentDoc, updatedDoc)->
   _.types arguments, ['string', 'object', 'object']
   db.putAndReturn updatedDoc
   .tap -> patches_.create userId, currentDoc, updatedDoc
+
+entitiesByClaimsValue = (value)->
+  db.view 'entities', 'byClaimValue',
+    key: value
+    include_docs: false
+  .then (res)->
+    res.rows.map (row)->
+      entity: row.id
+      property: row.value

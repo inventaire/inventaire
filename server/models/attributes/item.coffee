@@ -25,6 +25,9 @@ notUpdatable = [
   'owner'
   'history'
 
+  # updated as side effects of entity redirections
+  'previousEntity'
+
 ]
 
 attributes.known = notUpdatable.concat attributes.updatable

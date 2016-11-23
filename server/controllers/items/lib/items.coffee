@@ -51,8 +51,10 @@ module.exports = items_ =
       # as cot returns a poor error object with just a message
       throw error_.new 'item not found', 404, itemId
 
+  byEntity: (entityUri)-> db.viewByKeys 'byEntity', entityUriKeys(entityUri)
+
   picturesByEntity: (entityUri)->
-    db.viewByKeys 'byEntity', entityUriKeys(entityUri)
+    items_.byEntity entityUri
     .map _.property('pictures')
 
   publicByEntity: (entityUri)->
@@ -118,6 +120,12 @@ module.exports = items_ =
       user_.getUsersPublicData(usersIds).then _.Log('users')
       items_.publicListings(usersIds).then _.Log('items')
     ]
+
+  updateEntityAfterEntityMerge: (fromUri, toUri)->
+    items_.byEntity fromUri
+    .map (item)->
+      updater = Item.updateEntityAfterEntityMerge.bind null, fromUri, toUri
+      return db.update item._id, updater
 
 entityUriKeys = (entityUri)->
   return listingsPossibilities.map (listing)-> [entityUri, listing]
