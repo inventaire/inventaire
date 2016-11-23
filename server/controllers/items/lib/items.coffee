@@ -82,8 +82,7 @@ module.exports = items_ =
     db.post Item.create userId, item
 
   update: (userId, item)->
-    item = Item.update userId, item
-    db.update item._id, Item.updater.bind(null, userId, item)
+    db.update item._id, Item.update.bind(null, userId, item)
 
   verifyOwnership: (itemId, userId)->
     db.get itemId

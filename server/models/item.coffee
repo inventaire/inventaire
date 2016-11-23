@@ -30,32 +30,26 @@ Item.create = (userId, item)->
   item.transaction = solveConstraint item, 'transaction'
   return item
 
-Item.update = (userId, item)->
-  _.types arguments, ['string', 'object']
-  tests.pass 'itemId', item._id
-
-  unknown = _.difference Object.keys(item), attributes.known
-  if unknown.length > 0
-    throw error_.new "unknown attribute(s): #{unknown}", 400
-
-  # just testing updatable attributes
-  # as non-updatable will be filtered-out at Item.updater
-  for attr in attributes.updatable
-    passAttrTest item, attr
-
-  return item
-
 passAttrTest = (item, attr)->
   if item[attr]? then tests.pass attr, item[attr]
 
-Item.updater = (userId, item, doc)->
+Item.update = (userId, updateAttributesData, doc)->
   unless doc?.owner is userId
     throw new Error "user isnt doc.owner: #{userId} / #{doc.owner}"
 
+  nonUpdatedAttribute = Object.keys _.omit(updateAttributesData, attributes.known)
+  if nonUpdatedAttribute.length > 0
+    throw error_.new "invalid attribute(s): #{nonUpdatedAttribute}", 400
+
+  # filter-out non-updatable attributes
+  newData = _.pick updateAttributesData, attributes.updatable
+
+  for attr in attributes.updatable
+    passAttrTest updateAttributesData, attr
+
+  _.extend doc, newData
   doc.updated = Date.now()
-  # filtered out non-updatable attributes
-  newData = _.pick item, attributes.updatable
-  return _.extend doc, newData
+  return doc
 
 Item.changeOwner = (transacDoc, item)->
   _.types arguments, 'objects...'

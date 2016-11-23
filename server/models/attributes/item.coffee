@@ -17,7 +17,7 @@ notUpdatable = [
   'entity'
   'created'
 
-  # updated when other attributes are updated
+  # updated when user updatable attributes are updated
   'updated'
 
   # updated as side effects of transactions
