@@ -5,10 +5,16 @@ transactions_ = require './lib/transactions'
 messages = require './messages'
 ActionsControllers = __.require 'lib', 'actions_controllers'
 
+sendUserTransactions = (req, res)->
+  { _id:userId } = req.user
+  transactions_.byUser userId
+  .then res.json.bind(res)
+  .catch error_.Handler(req, res)
+
 module.exports =
   get: ActionsControllers
+    'default': sendUserTransactions
     'get-messages': messages.get
-    default: sendUserTransactions
 
   post: ActionsControllers
     'request': require './request'
@@ -17,9 +23,3 @@ module.exports =
   put: ActionsControllers
     'update-state': require './update_state'
     'mark-as-read': require './mark_as_read'
-
-sendUserTransactions = (req, res)->
-  { _id:userId } = req.user
-  transactions_.byUser userId
-  .then res.json.bind(res)
-  .catch error_.Handler(req, res)
