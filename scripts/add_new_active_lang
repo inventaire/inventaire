@@ -1,19 +1,31 @@
 #!/usr/bin/env sh
-email=./server/lib/emails/i18n/src/$1.json
-emailarchive=./server/lib/emails/i18n/src/archive/$1.json
-shortkey=./client/public/i18n/src/shortkey/$1.json
-fullkey=./client/public/i18n/src/fullkey/$1.json
-shortkeyarchive=./client/public/i18n/src/shortkey/archive/$1.json
-fullkeyarchive=./client/public/i18n/src/fullkey/archive/$1.json
+newlang=$1
 
-./scripts/validate_lang $1
+wikidataarchive=./client/public/i18n/src/wikidata/archive/$newlang.json
 
-for file in $email $emailarchive $shortkey $shortkeyarchive $fullkey $fullkeyarchive;
-do
-  if [ ! -f $file ]; then
-      echo '{}' > $file;
-      echo "file created: $file"
-  else
-      echo "file already exists: $file"
-  fi
-done
+./scripts/validate_lang $newlang
+
+echo "Starting wd props -l $newlang > $wikidataarchive"
+wd props -l $1 > $wikidataarchive
+echo "wd props done"
+
+
+langList=./client/scripts/lib/i18n/langs.coffee
+
+# If the language wasn't already added
+head -n 1 $langList |grep -v $newlang &&
+# Add it
+echo "Adding the new lang to the list of actively translated langs: $langList" &&
+sed -i "s/]$/, '`echo $newlang`']/" $langList
+
+server=$PWD
+client=$server/client
+
+cd $client
+./scripts/get_transifex_translations.coffee
+npm run update-i18n
+
+cd $server
+npm run update-i18n
+
+echo "now, think to add a defaultRegion to client/app/lib/languages_data.coffee for the new language"
