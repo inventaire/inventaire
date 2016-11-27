@@ -47,8 +47,9 @@ searchLocalByText = (query)->
   .catch error_.notFound
 
 searchDataseedByText = (query)->
-  { search, refresh } = query
-  searchDataseed search, refresh
+  _.log query, 'query'
+  { search, lang, refresh } = query
+  searchDataseed search, lang, refresh
   .timeout searchTimeout
   .get 'isbns'
   .map urifyIsbn
