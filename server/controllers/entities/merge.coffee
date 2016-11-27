@@ -18,6 +18,9 @@ items_ = __.require 'controllers', 'items/lib/items'
 validFromPrefix = [ 'inv' ]
 validToPrefix = [ 'wd', 'inv' ]
 
+# Only books and authors can be merged yet
+validTypes = [ 'work', 'human' ]
+
 module.exports = (req, res)->
   { body } = req
   { from:fromUri, to:toUri } = body
@@ -59,6 +62,9 @@ Merge = (userId, toPrefix, fromUri, toUri)-> (entitiesByUri)->
 
   unless fromEntity.type is toEntity.type
     throw error_.new "type don't match: #{fromEntity.type} / #{toEntity.type}", 400, fromUri, toUri
+
+  unless fromEntity.type in validTypes
+    throw error_.new "this type can't be merged: #{fromEntity.type} (only #{validTypes})", 400, fromUri, toUri
 
   [ fromPrefix, fromId ] = fromUri.split ':'
   [ toPrefix, toId ] = toUri.split ':'
