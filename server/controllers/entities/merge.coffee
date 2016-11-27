@@ -76,7 +76,7 @@ Merge = (userId, toPrefix, fromUri, toUri)-> (entitiesByUri)->
     return entities_.turnIntoRedirection userId, fromId, toUri
 
 notFound = (label, context)->
-  error_.new "'#{label}' entity not found (could it be a redirection?)", 400, context
+  error_.new "'#{label}' entity not found (could it be not it's canonical uri?)", 400, context
 
 applyRedirections = (userId, fromUri, toUri)->
   promises_.all [
