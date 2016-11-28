@@ -83,7 +83,7 @@ getResizeImage = (req, res, url, dimensions)->
 
 # Accepting image/*
 # Accepting application/octet-stream (known case: media storages 'dumb' content type)
-validImageContentType = /^(image\/\w+|application\/octet-stream)$/
+validImageContentType = /^(image\/[\w\+]+|application\/octet-stream)$/
 
 resizeFromStream = (reqStream, width, height, req, res)->
   alreadySent = false
