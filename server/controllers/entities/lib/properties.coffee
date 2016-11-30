@@ -23,11 +23,12 @@ positiveIntegerBase =
   test: (value)-> _.isNumber(value) and value % 1 is 0 and value > 0
   format: _.identity
 
-simpleDayBase =
+simpleDayUniqueValueBase =
   datatype: 'simple-day'
   # See SimpleDay specifications in [inventaire-client]/test/106-regex.coffee
   test: _.isSimpleDay
   format: _.identity
+  uniqueValue: true
 
 properties =
   # image
@@ -54,7 +55,7 @@ properties =
   # language of work
   'wdt:P407': entityBase
   # publication date
-  'wdt:P577': simpleDayBase
+  'wdt:P577': simpleDayUniqueValueBase
   # edition or translation of
   'wdt:P629': entityUniqueValue
   # main subject
