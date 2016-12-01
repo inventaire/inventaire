@@ -4,12 +4,12 @@ _ = __.require 'builders', 'utils'
 root = CONFIG.fullPublicHost()
 items_ = __.require 'controllers', 'items/lib/items'
 error_ = __.require 'lib', 'error/error'
-RSS = require 'rss'
+Rss = require 'rss'
 limit = 100
 
 module.exports =
   get: (req, res, next)->
-    feed = new RSS({"title":"New Public Items"})
+    feed = new Rss {"title":"New Public Items"}
     { query } = req
     items_.publicByDate limit
     .then (items) -> rssSerializer(feed, items)
@@ -18,10 +18,10 @@ module.exports =
 
 rssSerializer = (feed, items)->
   items.map (item)->
-    title: item["title"]
-    guid: item["entity"]
-    url: "#{root}/items/#{item["_id"]}"
-    author: item["authors"]
-    date: item["updated"]
+    title: item.title
+    guid: item._id
+    url: "#{root}/items/#{item._id}"
+    author: item.authors
+    date: item.updated
   .map feed.item.bind(feed)
 
