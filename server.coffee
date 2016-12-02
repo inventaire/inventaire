@@ -47,4 +47,9 @@ couchInit()
 .catch _.Error('init err')
 
 __.require('lib', 'emails/mailer')()
-__.require('scripts', 'couch2elastic4sync/exec')('sync')
+
+# Progressive contributor setup: allow to start without having to install ElasticSearch
+if CONFIG.elasticsearch.enabled
+  __.require('scripts', 'couch2elastic4sync/exec')('sync')
+else
+  _.warn 'ElasticSearch is disabled: activate it in ./config/local.coffee by setting elasticsearch.enabled=true'

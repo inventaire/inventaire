@@ -45,6 +45,8 @@ module.exports = config =
     # logs Couchdb requests parameters
     debug: false
   elasticsearch:
+    # Progressive contributor setup: allow to start without having to install ElasticSearch
+    enabled: false
     base: 'http://localhost:9200/inventaire'
     sync: [
       { database: 'entities', type: 'entity' }
