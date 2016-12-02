@@ -1,0 +1,35 @@
+#!/usr/bin/env zsh
+
+echo 'Starting pouchdb-server installation'
+
+CUSTOMDBPORT=15984
+POUCHDIR=./db/pouchdb
+ROOT=$(pwd)
+
+mkdir -p $POUCHDIR
+
+npm install pouchdb-server &&
+
+read "COUCH_USER?Enter a CouchDB admin name (defaults to $USERNAME) "
+[ -z "$COUCH_USER" ] && COUCH_USER=$USERNAME
+
+read "COUCH_PW?Enter the admin's password (or get a randomly generated password if let blank) "
+# Random password generation source: http://security.stackexchange.com/questions/71187/one-liner-to-create-passwords-in-linux
+[ -z "$COUCH_PW" ] && COUCH_PW=$(mktemp -u XXXXXXXXXXXXXXXXXXXXXXXXXXX) && echo "your password: $COUCH_PW"
+
+sed -i "s/yourcouchdbusername/$(echo $COUCH_USER)/" ./config/local.coffee
+sed -i "s/yourcouchdbpassword/$(echo $COUCH_PW)/" ./config/local.coffee
+sed -i "s/5984/`echo $CUSTOMDBPORT`/" ./config/local.coffee
+
+# There is a --dir option but it seem to let files like config.json and log.txt in the current working directory
+cd $POUCHDIR
+$ROOT/node_modules/.bin/pouchdb-server --port $CUSTOMDBPORT &
+POUCHPID=$(ps aux |grep pouch |grep -v grep |awk '{print $2}')
+echo "PouchDB PID: $POUCHPID"
+
+echo "give it a few seconds to startup before continuing..." && sleep 5 &&
+echo "http://localhost:$CUSTOMDBPORT/_config/admins/$COUCH_USER -d $COUCH_PW"
+curl -XPUT http://localhost:$CUSTOMDBPORT/_config/admins/$COUCH_USER -d '"'$COUCH_PW'"' &&
+echo 'admin created' &&
+kill $POUCHPID &&
+echo 'database installed! Ready to start by executing: ./scripts/easy_database_start'

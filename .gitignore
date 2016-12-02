@@ -7,5 +7,6 @@ logs
 scripts/couch2elastic4sync/configs
 config/local.coffee
 db/leveldb/
+db/pouchdb
 erl_crash.dump
 client
