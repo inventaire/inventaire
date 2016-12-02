@@ -34,7 +34,7 @@ optionalLabelsTypes = [
 
 validateClaims = (claims)->
   unless _.isNonEmptyPlainObject claims
-    return error_.reject "invalid claims", 400, labels
+    return error_.reject 'invalid claims', 400, labels
 
   promises = []
 
