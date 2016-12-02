@@ -38,11 +38,19 @@ This repository tracks the server-side developments, while the (heavy) [client-s
 *This is the installation documentation for a developement environment. For production setup, see*: [inventaire-deploy](https://github.com/inventaire/inventaire-deploy)
 
 ### Dependencies to install manually:
+
+#### Indispensable
 - [git](https://git-scm.com/), [curl](http://curl.haxx.se) (used in some installation scripts), [graphicsmagick](www.graphicsmagick.org/README.html) (used to resize images), [zsh](http://www.zsh.org/) (used in some scripts, no need to make it your default shell)
 - [NodeJS](http://nodejs.org/) (>=6, [NVM](https://github.com/creationix/nvm) is a great way to install it)
-- a [CouchDB](http://couchdb.apache.org/) (>=1.6) instance (on port 5984 for default config)
-- an [ElasticSearch](https://www.elastic.co/fr/products/elasticsearch) (>=2.4) instance (on port 9200 for default config)
 
+#### Dependencies with a easy/lazy install option
+- a [CouchDB](http://couchdb.apache.org/) (>=1.6) instance (on port 5984 for default config).<br>
+  **Easy setup**: If for some reason installing CouchDB isn't straight forward (that is, more difficult than the `apt-get install couchdb` hereafter), you can use './scripts/easy_database_install' to setup [pouchdb-server](https://github.com/pouchdb/pouchdb-server) as an easy substitute. The only usability downside is that you then need to start it manually: `./scripts/easy_database_start`
+
+- an [ElasticSearch](https://www.elastic.co/fr/products/elasticsearch) (>=2.4) instance (on port 9200 for default config)<br>
+  **Easy setup**: Elasticsearch is a heavy beast, implying installing a Java. If that's an issue, just go for the lazy option: don't install it! You will simply miss some search features.
+
+#### Dependency installation on Ubuntu 16.04
 To install those on Ubuntu that could give something like:
 ```sh
 sudo add-apt-repository ppa:couchdb/stable -y
