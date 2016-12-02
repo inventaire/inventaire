@@ -48,9 +48,9 @@ properties =
   # isbn 13
   'wdt:P212':
     datatype: 'string'
-    test: (isbn)-> isbn_.isIsbn(isbn) is 13
+    test: (isbn)-> isbn is isbn_.parse(isbn).isbn13h
     concurrency: true
-    format: isbn_.normalizeIsbn
+    format: isbn_.toIsbn13h
     uniqueValue: true
   # language of work
   'wdt:P407': entityBase
@@ -63,9 +63,9 @@ properties =
   # isbn 10
   'wdt:P957':
     datatype: 'string'
-    test: (isbn)-> isbn_.isIsbn(isbn) is 10
+    test: (isbn)-> isbn is isbn_.parse(isbn).isbn10h
     concurrency: true
-    format: isbn_.normalizeIsbn
+    format: isbn_.toIsbn10h
     uniqueValue: true
   # number of pages
   'wdt:P1104': positiveIntegerBase

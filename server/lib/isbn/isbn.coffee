@@ -27,3 +27,6 @@ module.exports = _.extend isbn_,
     data = parse isbn
     unless data? then return
     if hyphenate then data.isbn13h else data.isbn13
+
+  toIsbn13h: (isbn)-> parse(isbn).isbn13h
+  toIsbn10h: (isbn)-> parse(isbn).isbn10h
