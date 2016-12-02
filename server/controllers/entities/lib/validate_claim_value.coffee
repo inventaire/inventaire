@@ -39,8 +39,10 @@ module.exports = (db)->
     # using viewCustom as there is no need to include docs
     db.viewCustom 'byClaim', { key: [property, value] }
     .then (docs)->
-      if docs.length isnt 0
-        message = "this property value is already used: #{property} -> #{value}"
+      if docs.length > 0
+        # /!\ The client rely on this exact message
+        # client/app/modules/entities/lib/creation_partials.coffee
+        message = 'this property value is already used'
         throw error_.new message, 400, property, value
 
 

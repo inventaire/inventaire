@@ -20,5 +20,6 @@ module.exports = (req, res, err, status)->
   res.json
     status: status
     status_verbose: err.message
+    context: err.context
 
   return
