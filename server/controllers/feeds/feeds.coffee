@@ -4,19 +4,34 @@ _ = __.require 'builders', 'utils'
 root = CONFIG.fullPublicHost()
 items_ = __.require 'controllers', 'items/lib/items'
 error_ = __.require 'lib', 'error/error'
+user_ = __.require 'lib', 'user/user'
 Rss = require 'rss'
-limit = 100
 
 module.exports =
   get: (req, res, next)->
-    feed = new Rss {"title":"New Public Items"}
     { query } = req
-    items_.publicByDate limit
-    .then (items) -> rssSerializer(feed, items)
-    .then -> res.send(feed.xml())
+    { user:userId } = query
+
+    unless userId?
+      throw error_.bundle req, res, 'missing user id', 400
+
+    unless _.isUserId userId
+      throw error_.bundle req, res, 'invalid user id', 400
+
+    findUser userId
+    .then findItems.bind(null, userId)
+    .then rssSerializer
+    .then res.send
     .catch error_.Handler(req, res)
 
-rssSerializer = (feed, items)->
+findUser = user_.byId
+
+findItems = (userId)->
+  items_.publicListings [userId]
+
+rssSerializer = (items)->
+  feed = new Rss
+  feed.title = 'New Public Items'
   items.map (item)->
     title: item.title
     guid: item._id
@@ -24,4 +39,4 @@ rssSerializer = (feed, items)->
     author: item.authors
     date: item.updated
   .map feed.item.bind(feed)
-
+  feed.xml()
