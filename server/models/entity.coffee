@@ -115,6 +115,12 @@ module.exports = Entity =
     type: 'entity'
     redirect: toUri
 
+  delete: (entityDoc)->
+    deletedDoc = _.cloneDeep entityDoc
+    # One of CouchDB ways to delete a document is to set _deleted = true
+    deletedDoc._deleted = true
+    return deletedDoc
+
 updateInferredProperties = (doc, property, oldVal, newVal)->
   propInferences = inferences[property]
 

@@ -4,6 +4,7 @@ _ = __.require 'builders', 'utils'
 
 couch_ = require 'inv-couch'
 
+# See "The three ways to remove a document from CouchDB" http://n.exts.ch/2012/11/baleting
 couch_.setDeletedTrue = BasicUpdater('_deleted', true)
 
 couch_.setDocsDeletedTrue = (docs)-> docs.map couch_.setDeletedTrue

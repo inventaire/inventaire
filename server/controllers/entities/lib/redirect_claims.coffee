@@ -5,8 +5,7 @@ entities_ = require './entities'
 Entity = __.require 'models', 'entity'
 
 module.exports = (userId, fromUri, toUri)->
-  # Get claims by claims objects
-  entitiesByClaimsValue fromUri
+  entities_.byClaimsValue fromUri
   .then (results)->
     entitiesToEditIds = _.map results, 'entity'
     _.log entitiesToEditIds, 'entitiesToEditIds'
@@ -30,12 +29,3 @@ module.exports = (userId, fromUri, toUri)->
         return entities_.putUpdate userId, currentDoc, updatedDoc
 
       return promises_.all updatesPromises
-
-entitiesByClaimsValue = (value)->
-  entities_.db.view 'entities', 'byClaimValue',
-    key: value
-    include_docs: false
-  .then (res)->
-    res.rows.map (row)->
-      entity: row.id
-      property: row.value

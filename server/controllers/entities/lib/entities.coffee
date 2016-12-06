@@ -42,6 +42,15 @@ module.exports = entities_ =
     entities_.byClaim property, value
     .then couch_.mapId
 
+  byClaimsValue: (value)->
+    db.view 'entities', 'byClaimValue',
+      key: value
+      include_docs: false
+    .then (res)->
+      res.rows.map (row)->
+        entity: row.id
+        property: row.value
+
   create: ->
     # Create a new entity doc.
     # This constituts the basis on which next modifications patch
@@ -55,6 +64,12 @@ module.exports = entities_ =
       return Entity.addClaims updatedDoc, updatedClaims
 
     .then entities_.putUpdate.bind(null, userId, currentDoc)
+
+  deletePlaceholder: (userId, entityId)->
+    _.warn entityId, 'deleting placeholder entity'
+    db.get entityId
+    .then (currentDoc)->
+      entities_.putUpdate userId, currentDoc, Entity.delete(currentDoc)
 
   updateLabel: (lang, value, userId, currentDoc)->
     updatedDoc = _.cloneDeep currentDoc
