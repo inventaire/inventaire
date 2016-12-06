@@ -120,12 +120,6 @@ module.exports = items_ =
       items_.publicListings(usersIds).then _.Log('items')
     ]
 
-  updateEntityAfterEntityMerge: (fromUri, toUri)->
-    items_.byEntity fromUri
-    .map (item)->
-      updater = Item.updateEntityAfterEntityMerge.bind null, fromUri, toUri
-      return db.update item._id, updater
-
 entityUriKeys = (entityUri)->
   return listingsPossibilities.map (listing)-> [entityUri, listing]
 

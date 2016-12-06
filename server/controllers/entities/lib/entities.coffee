@@ -54,60 +54,12 @@ module.exports = entities_ =
       updatedDoc = Entity.setLabels updatedDoc, updatedLabels
       return Entity.addClaims updatedDoc, updatedClaims
 
-    .then putUpdate.bind(null, userId, currentDoc)
-
-  merge: (userId, fromId, toId)->
-    _.types arguments, 'strings...'
-    db.byIds [fromId, toId]
-    .spread (fromEntityDoc, toEntityDoc)->
-      # At this point if the entities are not found, that's the server's fault, thus the 500 status
-      unless fromEntityDoc._id is fromId then throw error_.new "'from' entity doc not found", 500
-      unless toEntityDoc._id is toId then throw error_.new "'to' entity doc not found", 500
-
-      toEntityDocBeforeMerge = _.cloneDeep toEntityDoc
-      toEntityDoc = Entity.mergeDocs fromEntityDoc, toEntityDoc
-
-      putUpdate userId, toEntityDocBeforeMerge, toEntityDoc
-      .then -> entities_.turnIntoRedirection userId, fromId, "inv:#{toId}"
-
-  turnIntoRedirection: (userId, fromId, toUri)->
-    _.types arguments, 'strings...'
-    db.get fromId
-    .then (currentFromDoc)->
-      updatedFromDoc = Entity.turnEntityIntoRedirection currentFromDoc, toUri
-      return putUpdate userId, currentFromDoc, updatedFromDoc
-
-  redirectClaims: (userId, fromUri, toUri)->
-    # Get claims by claims objects
-    entitiesByClaimsValue fromUri
-    .then (results)->
-      entitiesToEditIds = _.map results, 'entity'
-      _.log entitiesToEditIds, 'entitiesToEditIds'
-      if entitiesToEditIds.length is 0 then return
-      # Doing all the redirects at once to avoid conflicts
-      # within a same entity pointing several times to the redirected entity.
-      # There is no identified case at the moment though.
-      entities_.byIds entitiesToEditIds
-      .then (entities)->
-        entitiesIndex = _.indexBy entities, '_id'
-        entitiesIndexBeforeUpdate = _.cloneDeep entitiesIndex
-        # Apply all the redirection updates on the entities docs
-        results.forEach (result)->
-          { entity, property } = result
-          doc = entitiesIndex[entity]
-          entitiesIndex[entity] = Entity.updateClaim doc, property, fromUri, toUri
-
-        # Then, post the updates all at once
-        updatesPromises = _.values(entitiesIndex).map (updatedDoc)->
-          currentDoc = entitiesIndexBeforeUpdate[updatedDoc._id]
-          return putUpdate userId, currentDoc, updatedDoc
-
-        return promises_.all updatesPromises
+    .then entities_.putUpdate.bind(null, userId, currentDoc)
 
   updateLabel: (lang, value, userId, currentDoc)->
     updatedDoc = _.cloneDeep currentDoc
     updatedDoc = Entity.setLabel updatedDoc, lang, value
-    return putUpdate userId, currentDoc, updatedDoc
+    return entities_.putUpdate userId, currentDoc, updatedDoc
 
   updateClaim: (property, oldVal, newVal, userId, currentDoc)->
     updatedDoc = _.cloneDeep currentDoc
@@ -115,7 +67,7 @@ module.exports = entities_ =
     entities_.validateClaim claims, property, oldVal, newVal, true
     .then (formattedValue)->
       Entity.updateClaim updatedDoc, property, oldVal, formattedValue
-    .then putUpdate.bind(null, userId, currentDoc)
+    .then entities_.putUpdate.bind(null, userId, currentDoc)
 
   validateClaim: (claims, property, oldVal, newVal, letEmptyValuePass)->
     promises_.try -> validateProperty property
@@ -131,20 +83,11 @@ module.exports = entities_ =
       uris: res.results.map parseCanonicalUri
       lastSeq: res.last_seq
 
+  putUpdate: (userId, currentDoc, updatedDoc)->
+    _.log currentDoc, 'current doc'
+    _.log updatedDoc, 'updated doc'
+    _.types arguments, ['string', 'object', 'object']
+    db.putAndReturn updatedDoc
+    .tap -> patches_.create userId, currentDoc, updatedDoc
+
 parseCanonicalUri = (result)-> getInvEntityCanonicalUri(result.doc)[0]
-
-putUpdate = (userId, currentDoc, updatedDoc)->
-  _.log currentDoc, 'current doc'
-  _.log updatedDoc, 'updated doc'
-  _.types arguments, ['string', 'object', 'object']
-  db.putAndReturn updatedDoc
-  .tap -> patches_.create userId, currentDoc, updatedDoc
-
-entitiesByClaimsValue = (value)->
-  db.view 'entities', 'byClaimValue',
-    key: value
-    include_docs: false
-  .then (res)->
-    res.rows.map (row)->
-      entity: row.id
-      property: row.value

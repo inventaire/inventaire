@@ -1,11 +1,8 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
-promises_ = __.require 'lib', 'promises'
 getEntitiesByUris = require './lib/get_entities_by_uris'
-Entity = __.require 'models', 'entity'
-entities_ = require './lib/entities'
-items_ = __.require 'controllers', 'items/lib/items'
+{ merge:mergeEntities, turnIntoRedirection } = require './lib/merge_entities'
 
 # Assumptions:
 # - ISBN are already desambiguated and should thus never need merge
@@ -49,7 +46,6 @@ module.exports = (req, res)->
   getEntitiesByUris [ fromUri, toUri ], true
   .get 'entities'
   .then Merge(userId, toPrefix, fromUri, toUri)
-  .then applyRedirections.bind(null, userId, fromUri, toUri)
   .then _.Ok(res)
   .catch error_.Handler(req, res)
 
@@ -70,16 +66,10 @@ Merge = (userId, toPrefix, fromUri, toUri)-> (entitiesByUri)->
   [ toPrefix, toId ] = toUri.split ':'
 
   if toPrefix is 'inv'
-    return entities_.merge userId, fromId, toId
+    return mergeEntities userId, fromId, toId
   else
     # no merge to do for Wikidata entities, simply creating a redirection
-    return entities_.turnIntoRedirection userId, fromId, toUri
+    return turnIntoRedirection userId, fromId, toUri
 
 notFound = (label, context)->
   error_.new "'#{label}' entity not found (could it be not it's canonical uri?)", 400, context
-
-applyRedirections = (userId, fromUri, toUri)->
-  promises_.all [
-    entities_.redirectClaims userId, fromUri, toUri
-    items_.updateEntityAfterEntityMerge fromUri, toUri
-  ]
