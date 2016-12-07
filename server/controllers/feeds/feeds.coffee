@@ -8,6 +8,8 @@ user_ = __.require 'lib', 'user/user'
 groups_ = __.require 'controllers', 'groups/lib/groups'
 Rss = require 'rss'
 
+rssLimitLength = 50
+
 module.exports =
   get: (req, res, next)->
     { query } = req
@@ -30,6 +32,7 @@ module.exports =
 
     userIdsPromise
     .then items_.publicListings
+    .then extractLastItems
     .then rssSerializer
     .then res.send.bind(res)
     .catch error_.Handler(req, res)
@@ -40,6 +43,11 @@ findUsersByGroup = (groupId)->
     { admins, members } = group
     admins.concat members
     .map _.property('user')
+
+extractLastItems = (items)->
+  items
+  .sort (a, b)-> a.updated > b.updated
+  .slice 0, rssLimitLengh
 
 rssSerializer = (items)->
   feed = new Rss
