@@ -5,29 +5,41 @@ root = CONFIG.fullPublicHost()
 items_ = __.require 'controllers', 'items/lib/items'
 error_ = __.require 'lib', 'error/error'
 user_ = __.require 'lib', 'user/user'
+groups_ = __.require 'controllers', 'groups/lib/groups'
 Rss = require 'rss'
 
 module.exports =
   get: (req, res, next)->
     { query } = req
-    { user:userId } = query
+    { user:userId, group:groupId } = query
 
-    unless userId?
-      throw error_.bundle req, res, 'missing user id', 400
+    if userId?
+      unless _.isUserId userId
+        throw error_.bundle req, res, 'invalid user id', 400
 
-    unless _.isUserId userId
-      throw error_.bundle req, res, 'invalid user id', 400
+      userIdsPromise = user_.byId userId
 
-    findUser userId
-    .then findItems.bind(null, userId)
+    else if groupId?
+      unless _.isGroupId groupId
+        throw error_.bundle req, res, 'invalid group id', 400
+
+      userIdsPromise = findUsersByGroup groupId
+
+    else
+      throw error_.bundle req, res, 'missing id', 400
+
+    userIdsPromise
+    .then items_.publicListings
     .then rssSerializer
-    .then res.send
+    .then res.send.bind(res)
     .catch error_.Handler(req, res)
 
-findUser = user_.byId
-
-findItems = (userId)->
-  items_.publicListings [userId]
+findUsersByGroup = (groupId)->
+  groups_.byId groupId
+  .then (group)->
+    { admins, members } = group
+    admins.concat members
+    .map _.property('user')
 
 rssSerializer = (items)->
   feed = new Rss
@@ -39,4 +51,4 @@ rssSerializer = (items)->
     author: item.authors
     date: item.updated
   .map feed.item.bind(feed)
-  feed.xml()
+  return feed.xml()

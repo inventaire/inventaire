@@ -39,6 +39,7 @@ module.exports = items_ =
     items_.bundleListings ['friends', 'public'], usersIds
 
   publicListings: (usersIds)->
+    usersIds = _.forceArray usersIds
     items_.bundleListings ['public'], usersIds
 
   publicById: (itemId)->
