@@ -21,6 +21,7 @@ services = require './services/services'
 proxy = require './proxy'
 i18n = require './i18n'
 feedback = require './feedback'
+feeds = require './feeds/feeds'
 transactions = require './transactions/transactions'
 comments = require './comments/comments'
 reports = require './reports/reports'
@@ -137,6 +138,9 @@ module.exports = routes =
   'api/config/public':
     # A endpoint dedicated to pass configuration parameters to the client
     get: (req, res)-> res.json CONFIG.client
+
+  'api/feeds/public':
+    get: feeds.get
 
   'img/*':
     get: resize
