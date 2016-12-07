@@ -5,6 +5,7 @@ whitelistedProperties = require './whitelisted_properties'
 regroupClaims = require './regroup_claims'
 
 module.exports = (claims, wdId)->
+  _.types arguments, ['object', 'string']
   whitelistedClaims = pickWhitelistedClaims claims, wdId
   prefixedSimplifiedClaims = wdk.simplifyClaims whitelistedClaims, 'wd', 'wdt'
 
