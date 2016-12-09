@@ -6,6 +6,7 @@ _.extend Q,
   series: [
     'wd:Q277759' #book series
     'wd:Q14406742' #comic book series
+    'wd:Q21198342' #manga series
   ]
   works: [
     'wd:Q571' #book
