@@ -13,6 +13,12 @@ module.exports = (req, res) ->
   { _id:userId } = req.user
   { labels, claims } = entityData
 
+  unless _.isObject labels
+    return error_.bundle req, res, 'labels should be an object', 400, entityData
+
+  unless _.isObject claims
+    return error_.bundle req, res, 'claims should be an object', 400, entityData
+
   createAndEditEntity labels, claims , userId
   .then res.json.bind(res)
   .then Track(req, ['entity', 'creation'])
