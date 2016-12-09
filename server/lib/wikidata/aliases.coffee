@@ -63,10 +63,6 @@ propertiesRedirections =
   'wdt:P50': [
     'wdt:P58' # screen writer / scénariste
   ]
-  # serie
-  'wdt:P179': [
-    'wdt:P361' # part of
-  ]
 
 aliases = {}
 
