@@ -133,6 +133,10 @@ module.exports = routes =
   'api/logs/public':
     post: analytics.reports
 
+  'api/config/public':
+    # A endpoint dedicated to pass configuration parameters to the client
+    get: (req, res)-> res.json CONFIG.client
+
   'img/*':
     get: resize
 

@@ -161,3 +161,8 @@ module.exports = config =
   # Mock user ids passed for server edits on entities
   adminUserIds:
     seed: '00000000000000000000000000000000'
+
+  # Config passed to the client
+  client:
+    elasticsearch:
+      wikidata: 'https://data.inventaire.io/wikidata'
