@@ -5,9 +5,9 @@ entities_ = require './lib/entities'
 
 module.exports = (req, res)->
   { id:entityId, property, 'old-value':oldVal, 'new-value': newVal } = req.body
-  { _id:userId } = req.user
+  { _id:userId } = req.user
 
-  _.log req.body, 'body'
+  _.log req.body, 'update claim input'
 
   # An empty string is interpreted as a null value
   oldVal = parseEmptyValue oldVal
