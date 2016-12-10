@@ -76,17 +76,20 @@ module.exports = entities_ =
     updatedDoc = Entity.setLabel updatedDoc, lang, value
     return entities_.putUpdate userId, currentDoc, updatedDoc
 
-  updateClaim: (property, oldVal, newVal, userId, currentDoc)->
+  updateClaim: (params)->
+    { property, oldVal, userId, currentDoc } = params
     updatedDoc = _.cloneDeep currentDoc
-    { claims } = currentDoc
-    entities_.validateClaim claims, property, oldVal, newVal, true
+    params.currentClaims = currentDoc.claims
+    params.letEmptyValuePass = true
+    entities_.validateClaim params
     .then (formattedValue)->
       Entity.updateClaim updatedDoc, property, oldVal, formattedValue
     .then entities_.putUpdate.bind(null, userId, currentDoc)
 
-  validateClaim: (claims, property, oldVal, newVal, letEmptyValuePass)->
+  validateClaim: (params)->
+    { property } = params
     promises_.try -> validateProperty property
-    .then -> validateClaimValue claims, property, oldVal, newVal, letEmptyValuePass
+    .then -> validateClaimValue params
 
   getLastChangedEntitiesUris: (since, limit)->
     db.changes

@@ -30,11 +30,25 @@ simpleDayUniqueValueBase =
   format: _.identity
   uniqueValue: true
 
+stringBase =
+  datatype: 'string'
+  uniqueValue: true
+  format: _.identity
+  # Arbitrary max length
+  test: (str)-> 0 < str.length < 5000
+
+isbnProperty = (num)->
+  _.extend {}, stringBase,
+    test: (isbn)-> isbn is isbn_.parse(isbn)?["isbn#{num}h"]
+    concurrency: true
+    format: isbn_["toIsbn#{num}h"]
+    adminUpdateOnly: true
+
 properties =
   # image
   'wdt:P18': urlBase
   # instance of
-  'wdt:P31': entityUniqueValue
+  'wdt:P31': _.extend {}, entityUniqueValue, { adminUpdateOnly: true }
   # author
   'wdt:P50': entityBase
   # publisher
@@ -46,12 +60,7 @@ properties =
   # serie
   'wdt:P179': entityUniqueValue
   # isbn 13
-  'wdt:P212':
-    datatype: 'string'
-    test: (isbn)-> isbn is isbn_.parse(isbn).isbn13h
-    concurrency: true
-    format: isbn_.toIsbn13h
-    uniqueValue: true
+  'wdt:P212': isbnProperty 13
   # language of work
   'wdt:P407': entityBase
   # publication date
@@ -61,12 +70,7 @@ properties =
   # main subject
   'wdt:P921': entityBase
   # isbn 10
-  'wdt:P957':
-    datatype: 'string'
-    test: (isbn)-> isbn is isbn_.parse(isbn).isbn10h
-    concurrency: true
-    format: isbn_.toIsbn10h
-    uniqueValue: true
+  'wdt:P957': isbnProperty 10
   # number of pages
   'wdt:P1104': positiveIntegerBase
 
