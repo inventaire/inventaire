@@ -73,6 +73,8 @@ properties =
   'wdt:P957': isbnProperty 10
   # number of pages
   'wdt:P1104': positiveIntegerBase
+  # title
+  'wdt:P1476': stringBase
 
 whitelist = Object.keys properties
 

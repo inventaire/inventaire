@@ -77,9 +77,11 @@ createWorkEntity = (seed, lang, authorsPromises)->
   .catch _.ErrorRethrow('createWorkEntity err')
 
 createEditionEntity = (seed, workPromise)->
-  # The title is let to the work
+  # The title is set hereafter as monolingue title (wdt:P1476)
+  # instead of as a label
   labels = {}
   claims =
+    'wdt:P1476': [ seed.title ]
     'wdt:P31': [ 'wd:Q3331189' ]
     'wdt:P212': [ seed.isbn13h ]
     # wdt:P957 and wdt:P407 will be inferred from 'wdt:P212'
