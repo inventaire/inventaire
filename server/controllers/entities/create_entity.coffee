@@ -19,7 +19,7 @@ module.exports = (req, res) ->
   unless _.isObject claims
     return error_.bundle req, res, 'claims should be an object', 400, entityData
 
-  createAndEditEntity labels, claims , userId
+  createAndEditEntity labels, claims, userId
   .then res.json.bind(res)
   .then Track(req, ['entity', 'creation'])
   .catch error_.Handler(req, res)
