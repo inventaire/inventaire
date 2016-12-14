@@ -28,6 +28,14 @@ module.exports =
       timestamp: Date.now()
       patch: getDiff currentDoc, updatedDoc
 
+  getSnapshots: (base, patchDocs)->
+    previousVersion = base
+    for patchDoc in patchDocs
+      # jiff.patch is non-mutating: we get a new object without modifying the previous snapshot
+      previousVersion = patchDoc.snapshot = jiff.patch patchDoc.patch, previousVersion
+
+    return patchDocs
+
 getDiff = (currentDoc, updatedDoc)->
   currentDoc = _.pick currentDoc, versionned
   updatedDoc = _.pick updatedDoc, versionned

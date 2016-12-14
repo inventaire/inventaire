@@ -54,7 +54,7 @@
     "gm": "^1.22.0",
     "graceful-fs": "^4.1.2",
     "gravatar": "^1.4.0",
-    "inv-cot": "^2.0.9",
+    "inv-cot": "^2.0.10",
     "inv-couch": "^2.0.0",
     "inv-loggers": "^3.3.1",
     "inv-utils": "^2.0.4",

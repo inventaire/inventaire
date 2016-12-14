@@ -11,6 +11,7 @@ module.exports =
     'reverse-claims': require './reverse_claims'
     'author-works': customQuery
     'serie-parts': customQuery
+    'history': require './history'
 
   # authentified
   post: require './create_entity'
