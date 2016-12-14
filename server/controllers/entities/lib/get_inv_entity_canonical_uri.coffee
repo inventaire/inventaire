@@ -29,6 +29,6 @@ module.exports = (entity)->
   if uri isnt invUri
     redirectsObj =
       from: invUri
-      to: entity.uri
+      to: uri
 
   return [ uri, redirectsObj ]
