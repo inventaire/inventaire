@@ -24,6 +24,7 @@ attributes.public = [
   'picture'
   'bio'
   'position'
+  'special'
 ]
 
 # attributes that need availability check before update

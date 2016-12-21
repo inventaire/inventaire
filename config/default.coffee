@@ -158,10 +158,6 @@ module.exports = config =
     publicGateway: 'https://ipfs.io'
   searchTimeout: 10000
 
-  # Mock user ids passed for server edits on entities
-  adminUserIds:
-    seed: '00000000000000000000000000000000'
-
   # Config passed to the client
   client:
     elasticsearch:

@@ -13,7 +13,7 @@ entities_ = require './entities'
 createAndEditEntity = require './create_and_edit_entity'
 # It is simpler to use a consistent, recognizable mocked user id
 # than to put exceptions everywhere
-seedUserId = CONFIG.adminUserIds.seed
+seedUserId = __.require('couch', 'hard_coded_documents').users.seed._id
 workEntitiesCache = require './work_entity_search_dedupplicating_cache'
 
 { enabled, host } = CONFIG.dataseed
