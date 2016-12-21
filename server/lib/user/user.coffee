@@ -67,9 +67,10 @@ user_ =
 
     user_.byIds ids
     .then (usersData)->
-      unless usersData?
-        _.warn ids, "users not found"
-        return
+      usersData = _.compact usersData
+      unless usersData?.length > 0
+        throw error_.new 'users not found', 404, ids
+
       return usersData.map publicUserData
 
     .then formatUsersData.bind(null, format)
