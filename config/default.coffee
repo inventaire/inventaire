@@ -162,3 +162,5 @@ module.exports = config =
   client:
     elasticsearch:
       wikidata: 'https://data.inventaire.io/wikidata'
+    ipfs:
+      gateway: 'https://ipfs.io'
