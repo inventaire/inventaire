@@ -17,10 +17,18 @@ merge = (userId, fromId, toId)->
     unless fromEntityDoc._id is fromId then throw error_.new "'from' entity doc not found", 500
     unless toEntityDoc._id is toId then throw error_.new "'to' entity doc not found", 500
 
+    # Transfer all data from the 'fromEntity' to the 'toEntity'
+    # if any difference can be found
     toEntityDocBeforeMerge = _.cloneDeep toEntityDoc
     toEntityDoc = Entity.mergeDocs fromEntityDoc, toEntityDoc
+    if _.eq toEntityDoc, toEntityDocBeforeMerge
+      # if the toEntityDoc after data transfer hasn't changed
+      # don't run entities_.putUpdate as it will throw an 'empty patch' error
+      transfer = promises_.resolved
+    else
+      transfer = entities_.putUpdate userId, toEntityDocBeforeMerge, toEntityDoc
 
-    entities_.putUpdate userId, toEntityDocBeforeMerge, toEntityDoc
+    transfer
     .then -> turnIntoRedirection userId, fromId, "inv:#{toId}"
 
 turnIntoRedirection = (userId, fromId, toUri)->
