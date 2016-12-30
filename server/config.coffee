@@ -23,6 +23,7 @@ module.exports =
       showStack: true
 
     logger.beforeStatic
+    statics.enableCors
     statics.mountStaticFiles
     logger.afterStatic
 
@@ -35,15 +36,13 @@ module.exports =
     content.dedupplicateRequests
 
     routes.restrictApiAccess
-    # security.csrf  #not correctly implemented yet
+    security.enableCorsOnPublicApiRoutes
 
     lang.langCookie
   ]
   production: []
   development:
     use: [
-      #handled by the Nginx server in production
-      security.allowCrossDomain
       # /!\ Before reactivating CSP policies:
       # - check DataUrl (used by profile picture)
       # - check new Worker(BlobUrl) (used by quagga.js. see https://github.com/greasemonkey/greasemonkey/issues/1803 for bug)

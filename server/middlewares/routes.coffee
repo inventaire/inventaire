@@ -12,7 +12,11 @@ exports.restrictApiAccess = (req, res, next) ->
 
   pathname = req._parsedUrl.pathname
   unless isApiRoute pathname then return next()
-  if whitelistedRoute(pathname) then return next()
+  if whitelistedRoute pathname
+    req.isPublicRoute = true
+    return next()
+  else
+    req.isPublicRoute = false
 
   if requiresAdminRights pathname
     # Replace next so that all the methods hereafter, sync or async,

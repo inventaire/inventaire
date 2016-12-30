@@ -1,10 +1,14 @@
 CONFIG = require 'config'
-_ = require('config').universalPath.require 'builders', 'utils'
+__ = CONFIG.universalPath
+_ = __.require 'builders', 'utils'
 
-exports.allowCrossDomain = (req, res, next)->
-  res.header 'Access-Control-Allow-Origin', '*'
-  res.header 'Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE'
-  res.header 'Access-Control-Allow-Headers', 'Content-Type'
+exports.enableCorsOnPublicApiRoutes = (req, res, next)->
+  # Only have cross domain requests wide open for public routes
+  # to avoid CSRF on request altering the database
+  if req.isPublicRoute
+    res.header 'Access-Control-Allow-Origin', '*'
+    res.header 'Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE'
+    res.header 'Access-Control-Allow-Headers', 'Content-Type'
   next()
 
 # script-src 'unsafe-eval' is needed by jQuery.getScript
@@ -24,8 +28,4 @@ exports.cspPolicy = (req, res, next) ->
   res.header 'Content-Security-Policy', policy
   res.header 'X-Content-Security-Policy', policy
   res.header 'X-WebKit-CSP', policy
-  next()
-
-exports.csrf = (req, res, next) ->
-  res.locals.token = req.session._csrf
   next()
