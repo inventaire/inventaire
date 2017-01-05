@@ -15,6 +15,7 @@ content = require './middlewares/content'
 
 module.exports =
   common: [
+    content.redirectContentTypes
     americano.bodyParser()
     content.recoverValidJson
     americano.methodOverride()

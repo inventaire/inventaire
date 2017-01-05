@@ -6,6 +6,13 @@ error_ = __.require 'lib', 'error/error'
 urlencoded = 'application/x-www-form-urlencoded'
 
 module.exports =
+  # Helping body-parser to get its parsing right
+  redirectContentTypes: (req, res, next)->
+    if req.headers['content-type'] is 'application/csp-report'
+      req.headers['content-type'] = 'application/json'
+
+    next()
+
   # When passed content with a content-type header different
   # from 'application/json' (typically urlencoded which is set by default on
   # tools like curl), this tries to be convenient by recovering the passed json
