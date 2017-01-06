@@ -27,6 +27,6 @@ module.exports =
       _.error cspReport, 'cspReport'
 
     unless navigation? or error? or cspReport?
-      _.error req.body, 'wrongly formatted client report'
+      _.error [req.url, req.headers, req.body], 'wrongly formatted client report'
 
     res.send('ok')
