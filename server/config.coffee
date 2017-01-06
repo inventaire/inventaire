@@ -17,7 +17,6 @@ module.exports =
   common: [
     content.redirectContentTypes
     americano.bodyParser()
-    content.recoverValidJson
     americano.methodOverride()
     americano.errorHandler
       dumpExceptions: true
@@ -48,6 +47,7 @@ module.exports =
       # which is done by Nginx in production
       # (see https://github.com/inventaire/inventaire-deploy)
       security.addSecurityHeaders
+      content.recoverJsonUrlencoded
     ]
     set:
       debug: 'on'

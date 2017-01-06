@@ -17,7 +17,10 @@ module.exports =
   # from 'application/json' (typically urlencoded which is set by default on
   # tools like curl), this tries to be convenient by recovering the passed json
   # instead of returning an unhelpful error messages
-  recoverValidJson: (req, res, next)->
+  # /!\ To be used only in development as it exposes to CSRF
+  # cf https://github.com/pillarjs/understanding-csrf#adding-them-to-json-ajax-calls
+  # http://stackoverflow.com/a/11024387/3324977
+  recoverJsonUrlencoded: (req, res, next)->
     if req.headers['content-type'] isnt urlencoded then return next()
 
     keys = Object.keys req.body
