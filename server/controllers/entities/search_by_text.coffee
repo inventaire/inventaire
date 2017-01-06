@@ -79,11 +79,15 @@ ReplaceEditionsByTheirWork = (refresh)-> (entities)->
   missingWorkEntities = []
   for uri, entity of entities
     if entity.type is 'edition'
-      workUri = entity.claims['wdt:P629'][0]
-      # Ensure that the edition work is in the results
-      unless entities[workUri]? then missingWorkEntities.push workUri
-      # Remove the edition from the results as it will be fetched later
-      # as an edition of its work
+      workUri = entity.claims['wdt:P629']?[0]
+      if workUri?
+        # Ensure that the edition work is in the results
+        unless entities[workUri]? then missingWorkEntities.push workUri
+        # Remove the edition from the results as it will be fetched later
+        # as an edition of its work
+      else
+        # Example: wd:Q24200032
+        _.warn entity, 'edition without an associated work: ignored'
       delete entities[uri]
 
   missingWorkEntities = _.uniq missingWorkEntities
