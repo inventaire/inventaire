@@ -44,10 +44,10 @@ module.exports =
   production: []
   development:
     use: [
-      # /!\ Before reactivating CSP policies:
-      # - check DataUrl (used by profile picture)
-      # - check new Worker(BlobUrl) (used by quagga.js. see https://github.com/greasemonkey/greasemonkey/issues/1803 for bug)
-      # security.cspPolicy
+      # Those headers only make sense when serving index.html
+      # which is done by Nginx in production
+      # (see https://github.com/inventaire/inventaire-deploy)
+      security.addSecurityHeaders
     ]
     set:
       debug: 'on'
