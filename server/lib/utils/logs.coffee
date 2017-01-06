@@ -26,6 +26,8 @@ module.exports = (_)->
     Inspect: (label)-> fn = (obj)-> inspect obj, label
 
     error: (err, label, logStack=true)->
+      if err.hasBeenLogged then return
+
       # If the error is of a lower lever than 500, make it a warning, not an error
       if err.status? and err.status < 500
         return customLoggers.warn err, label
@@ -40,14 +42,18 @@ module.exports = (_)->
       loggers_.log err, label, 'red'
       if logStack and err.stack? then console.log err.stack
 
+      err.hasBeenLogged = true
       return
 
     warn: (err, label)->
+      if err.hasBeenLogged then return
       if err instanceof Error
         # shorten the stack trace
         err.stack = err.stack.split('\n').slice(0, 3).join('\n')
 
       loggers_.warn.apply null, arguments
+      err.hasBeenLogged = true
+      return
 
     errorCount: -> errorCounter
 
