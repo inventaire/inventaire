@@ -73,7 +73,6 @@ module.exports = config =
   # can be useful for development
   godMode: false
   # see server/controllers/tests.coffee
-  cookieThief: false
   morgan:
     logFormat: 'dev'
     mutedRoutes: [
