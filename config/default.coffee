@@ -159,6 +159,14 @@ module.exports = config =
     publicGateway: 'https://ipfs.io'
   searchTimeout: 10000
 
+  gitlabLogging:
+    enabled: false
+    host: 'https://gitlab.server.tld'
+    user: 'gitlab.user'
+    token: 'USER_GITLAB_TOKEN'
+    project_id: 114
+    assignee_id: 2
+
   # Config passed to the client
   client:
     elasticsearch:

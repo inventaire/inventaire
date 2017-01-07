@@ -5,6 +5,7 @@ loggers_ = require 'inv-loggers'
 util = require 'util'
 chalk = require 'chalk'
 { grey, red } = chalk
+openIssue = require './open_issue'
 
 BaseLogger = (color, operation)->
   return logger = (obj, label)->
@@ -42,6 +43,7 @@ module.exports = (_)->
       loggers_.log err, label, 'red'
       if logStack and err.stack? then console.log err.stack
 
+      openIssue err
       err.hasBeenLogged = true
       return
 
