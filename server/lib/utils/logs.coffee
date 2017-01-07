@@ -70,6 +70,12 @@ module.exports = (_)->
 
       setInterval counter.bind(@), 5000
 
+    startTimer: (key, color='magenta')->
+      key = chalk[color](key)
+      console.time key
+      return key
+
+    EndTimer: (key)-> ()-> console.timeEnd key
 
   # The same as inv-loggers::errorRethrow but using customLoggers.error instead
   errorRethrow = (err, label)->

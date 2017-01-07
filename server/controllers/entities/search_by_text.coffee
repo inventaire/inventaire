@@ -15,13 +15,15 @@ module.exports = (query)->
   _.type query, 'object'
   { disableDataseed, refresh } = query
 
+  key = JSON.stringify(query) + ' ' + _.randomString(4)
+
   promises = [
-    searchWikidataByText query
-    searchLocalByText query
+    searchWikidataByText query, key
+    searchLocalByText query, key
   ]
 
   if dataseedEnabled and not disableDataseed
-    promises.push searchDataseedByText(query)
+    promises.push searchDataseedByText(query, key)
 
   promises_.all promises
   .then mergeResults
@@ -29,7 +31,9 @@ module.exports = (query)->
   .then _.values
   .catch _.ErrorRethrow('search by text err')
 
-searchWikidataByText = (query)->
+searchWikidataByText = (query, key)->
+  key = startTimer 'searchWikidataByText', key
+
   searchWikidataEntities query
   .timeout searchTimeout
   .map urifyWd
@@ -38,15 +42,21 @@ searchWikidataByText = (query)->
   .then GetEntitiesByUris(query.refresh)
   .then filterOutIrrelevantTypes
   .catch error_.notFound
+  .finally _.EndTimer(key)
 
-searchLocalByText = (query)->
+searchLocalByText = (query, key)->
+  key = startTimer 'searchLocalByText', key
+
   searchLocalEntities query
   .timeout searchTimeout
   .map urifyInv
   .then GetEntitiesByUris(query.refresh)
   .catch error_.notFound
+  .finally _.EndTimer(key)
 
-searchDataseedByText = (query)->
+searchDataseedByText = (query, key)->
+  key = startTimer 'searchDataseedByText', key
+
   _.log query, 'query'
   { search, lang, refresh } = query
   searchDataseed search, lang, refresh
@@ -55,6 +65,7 @@ searchDataseedByText = (query)->
   .map urifyIsbn
   .then GetEntitiesByUris(refresh)
   .catch error_.notFound
+  .finally _.EndTimer(key)
 
 urifyWd = (wdId)-> "wd:#{wdId}"
 urifyIsbn = (isbn)-> "isbn:#{isbn}"
@@ -95,3 +106,5 @@ ReplaceEditionsByTheirWork = (refresh)-> (entities)->
 
   return getEntitiesByUris missingWorkEntities, refresh
   .then (results)-> _.extend entities, results.entities
+
+startTimer = (name, key)-> _.startTimer "#{name} #{key}"

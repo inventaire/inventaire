@@ -4,20 +4,20 @@ breq = require 'bluereq'
 chalk = require 'chalk'
 
 req = (verb, url, options)->
-  key = startTime verb, url
+  key = startTimer verb, url
 
   breq[verb] mergeOptions(url, options)
   .get 'body'
   .catch formatErr
-  .finally EndTimer(key)
+  .finally _.EndTimer(key)
 
 head = (url, options)->
-  key = startTime 'head', url
+  key = startTimer 'head', url
 
   breq.head mergeOptions(url, options)
   .then (res)-> _.pick res, ['statusCode', 'headers']
   .catch formatErr
-  .finally EndTimer(key)
+  .finally _.EndTimer(key)
 
 # default to JSON
 baseOptions =
@@ -41,14 +41,11 @@ formatErr = (err)->
   err.status = err.statusCode
   throw err
 
-startTime = (verb, url)->
-  # Use a random string so that dupplicated request don't mixup their timers
-  randomStr = Math.random().toString(36).slice(2, 10)
-  key = chalk.magenta "#{verb.toUpperCase()} #{url} (#{randomStr})"
-  console.time key
-  return key
-
-EndTimer = (key)-> ()-> console.timeEnd key
+startTimer = (verb, url)->
+  # url could be an object
+  url = JSON.stringify url
+  key = "#{verb.toUpperCase()} #{url} [#{_.randomString()}]"
+  return _.startTimer key
 
 module.exports =
   get: _.partial req, 'get'
