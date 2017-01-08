@@ -44,6 +44,8 @@ isbnProperty = (num)->
     format: isbn_["toIsbn#{num}h"]
     adminUpdateOnly: true
 
+# Keep in sync with app/modules/entities/lib/properties
+# and app/modules/entities/lib/editor/properties_per_type
 properties =
   # image
   'wdt:P18': urlBase
@@ -63,16 +65,24 @@ properties =
   'wdt:P212': isbnProperty 13
   # language of work
   'wdt:P407': entityBase
+  # date of birth
+  'wdt:P569': simpleDayUniqueValueBase
+  # date of death
+  'wdt:P570': simpleDayUniqueValueBase
   # publication date
   'wdt:P577': simpleDayUniqueValueBase
   # edition or translation of
   'wdt:P629': entityUniqueValue
+  # influenced by
+  'wdt:P737': entityBase
   # main subject
   'wdt:P921': entityBase
   # isbn 10
   'wdt:P957': isbnProperty 10
   # number of pages
   'wdt:P1104': positiveIntegerBase
+  # languages of expression
+  'wdt:P1412': entityBase
   # title
   'wdt:P1476': stringBase
 
