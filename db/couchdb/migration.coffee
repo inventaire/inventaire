@@ -12,7 +12,7 @@ module.exports = (dbName, designDocName, preview=true)->
   console.log 'preview mode:', preview
 
   updater = (docsIdsPromise, updateFunction, label)->
-    logMigration dbName, updateFunction, label
+    unless preview then logMigration dbName, updateFunction, label
 
     docsIdsPromise
     .then (ids)->
