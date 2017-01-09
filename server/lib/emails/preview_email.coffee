@@ -68,14 +68,16 @@ module.exports = (data, callback)->
       # you can either be in preview or send mode
       # if preview
       previewDir = data.previewDir or '/tmp/nodemailer-preview'
-      previewFilename = data.previewFilename or 'preview.html'
+      previewFilename = data.previewFilename or 'index.html'
       previewFilePath = previewDir + '/' + previewFilename
       previewDataPath = previewDir + '/data.json'
       unless fs.existsSync(previewDir) then fs.mkdirSync previewDir
 
       console.log 'email not sent, updated email preview:', previewFilePath
-      fs.writeFile previewFilePath, mail.data.html
       json = JSON.stringify mail.data, null, 4
+      { html } = mail.data
+      html = "<p style='text-align:center'><a href='/data.json'>data</a></p>" + html
+      fs.writeFile previewFilePath, html
       fs.writeFile previewDataPath, json, callback
       # else
         # @transporter.send mail, callback
