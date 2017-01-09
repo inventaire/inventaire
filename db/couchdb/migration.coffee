@@ -9,12 +9,11 @@ module.exports = (dbName, designDocName, preview=true)->
   db = __.require('couch', 'cot_base')(dbName, designDocName)
   unless db? then throw new Error('bad dbName')
 
-  console.log 'preview', preview
+  console.log 'preview mode:', preview
 
   updater = (docsIdsPromise, updateFunction, label)->
-    _.log typeof docsIdsPromise, 'typeof docsIdsPromise'
-    logMigration(dbName, updateFunction, label)
-    console.log 'updating'
+    logMigration dbName, updateFunction, label
+
     docsIdsPromise
     .then (ids)->
       _.log ids, 'got ids'

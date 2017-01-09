@@ -21,7 +21,7 @@
     "update-i18n": "./scripts/update_i18n_all",
     "watch-i18n": "onchange server/lib/emails/i18n/src -- ./scripts/reload_i18n",
     "add-new-active-lang": "./scripts/add_new_active_lang",
-    "migrator": "coffee db/couchdb/migrator.coffee",
+    "migrator": "./scripts/migrator",
     "reset-cache": "rm -rf db/leveldb && mkdir db/leveldb",
     "update-toc": "doctoc README.md",
     "init-couch2elastic4sync": "./scripts/couch2elastic4sync/init && ./scripts/couch2elastic4sync/load"

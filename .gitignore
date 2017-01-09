@@ -29,3 +29,5 @@ inv_services
 organization
 imageFactory
 notes
+db/couchdb/migration_docs
+
