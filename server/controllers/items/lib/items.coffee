@@ -120,6 +120,14 @@ module.exports = items_ =
       items_.publicListings(usersIds).then _.Log('items')
     ]
 
+  # Data manipulation done on client-side view models (item.serializeData),
+  # but useful to have server-side for emails view models
+  importSnapshotData: (item)->
+    { 'entity:authors':authors, 'entity:image':image } = item.snapshot
+    item.authors = authors
+    if image? and item.pictures.length is 0 then item.pictures = [ image ]
+    return item
+
 entityUriKeys = (entityUri)->
   return listingsPossibilities.map (listing)-> [entityUri, listing]
 

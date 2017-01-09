@@ -15,7 +15,7 @@ entityUniqueValue = _.extend {}, entityBase, { uniqueValue: true }
 
 urlBase =
   datatype: 'url'
-  test: (str)-> _.isUrl(str) or _.isIpfsPath(str)
+  test: _.isExtendedUrl
   format: _.identity
 
 positiveIntegerBase =

@@ -6,7 +6,16 @@ attributes.updatable = [
   'listing'
   'details'
   'notes'
-  'authors'
+  'snapshot'
+]
+
+# List of attributes that can be part of item.snapshot,
+# not to be confused with attributes.snapshot hereafter.
+# Snapshot data follow there source document: changes on the item entity
+# will be reflected in the item's snapshot data
+attributes.inLocalSnapshot = [
+  'entity:image'
+  'entity:authors'
 ]
 
 # not updatable by the user
@@ -65,7 +74,6 @@ attributes.constrained =
 # thus their absence here as long as only transactions doc uses snaphshot
 attributes.snapshot = [
  'title'
- 'authors'
  'entity'
  'pictures'
  'details'

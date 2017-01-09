@@ -28,6 +28,7 @@ Item.create = (userId, item)->
   item.created = Date.now()
   item.listing = solveConstraint item, 'listing'
   item.transaction = solveConstraint item, 'transaction'
+  item.snapshot = {}
   return item
 
 passAttrTest = (item, attr)->

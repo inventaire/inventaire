@@ -14,6 +14,7 @@ module.exports = (user, limitDate=0)->
   .spread formatItems.bind(null, limitDate, position)
 
 formatItems = (limitDate, position, users, items)->
+  items = items.map items_.importSnapshotData
   lastItems = getLastItems limitDate, items
   highlighted = getHighlightedItems lastItems, 10
   lastItems = embedUsersData lastItems, users, position

@@ -50,7 +50,8 @@ tests.valid = (attribute, value, option)->
 
 tests.pass = (attribute, value, option)->
   unless tests.valid.call @, attribute, value, option
-    throw error_.new "invalid #{attribute}: #{value}", 400
+    if _.isObject value then value = JSON.stringify value
+    throw error_.new "invalid #{attribute}: #{value}", 400, arguments
 
 tests.type = (attribute, typeArgs...)->
   try _.type.apply _, typeArgs

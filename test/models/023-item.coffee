@@ -7,7 +7,8 @@ should = require 'should'
 Item = __.require 'models', 'item'
 
 someUserId = '1234567890a1234567890b1234567890'
-create = (item)-> Item.create.call null, someUserId, item
+create = Item.create.bind null, someUserId
+update = Item.update.bind null, someUserId
 
 validItem =
   _id: 'new'
@@ -111,3 +112,29 @@ describe 'item model', ->
         _.expired(item.created, 100).should.equal false
         done()
 
+  describe 'update', ->
+    it 'should not throw when updated with a valid attribute', (done)->
+      doc = create validItem
+      updateAttributesData = { listing: 'private' }
+      (-> update(updateAttributesData, doc)).should.not.throw()
+      done()
+
+    it 'should throw when updated with an invalid attribute', (done)->
+      doc = create validItem
+      updateAttributesData = { listing: 'chocolat' }
+      (-> update(updateAttributesData, doc)).should.throw()
+      done()
+
+    it 'should not throw when updated with a valid snapshot', (done)->
+      doc = create validItem
+      updateAttributesData =
+        snapshot:
+          'entity:image': '/ipfs/QmXtPA8rAn5VCJ3rVLxWhDEnMv2hiPTMopH9NuaERz3nuw'
+      (-> update(updateAttributesData, doc)).should.not.throw()
+      done()
+
+    it 'should throw when updated with an invalid snapshot', (done)->
+      doc = create validItem
+      updateAttributesData = { snapshot: { bla: 'hello' } }
+      (-> update(updateAttributesData, doc)).should.throw()
+      done()
