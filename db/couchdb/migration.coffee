@@ -3,29 +3,37 @@ _ = __.require 'builders', 'utils'
 Promise = require 'bluebird'
 Promise.longStackTraces()
 fs = require 'fs'
-previewDocDiffs = require './preview_doc_diffs'
 
-module.exports = (dbName, designDocName, preview=true)->
+module.exports = (params)->
+  { dbName, designDocName, preview, silent } = params
+  preview ?= true
+  silent ?= false
+
   db = __.require('couch', 'cot_base')(dbName, designDocName)
   unless db? then throw new Error('bad dbName')
 
+  log = if silent then _.identity else _.log
+  Log = (label)-> (obj)-> log obj, label
+  docDiff = if silent then _.noop else require('./doc_diffs')
+
   console.log 'preview mode:', preview
+  console.log 'silent mode:', silent
 
   updater = (docsIdsPromise, updateFunction, label)->
     unless preview then logMigration dbName, updateFunction, label
 
     docsIdsPromise
     .then (ids)->
-      _.log ids, 'got ids'
+      log ids, 'got ids'
       promises = []
       ids.forEach (id)->
         unless isDesignDoc id
-          _.log id, 'id'
+          log id, 'id'
           promises.push updateIfNeeded(id, updateFunction)
 
       return Promise.all promises
 
-    .then -> _.log 'done updating !!'
+    .then -> log 'done updating !!'
     .catch _.ErrorRethrow('migration error')
 
   updateIfNeeded = (id, updateFn)->
@@ -34,10 +42,10 @@ module.exports = (dbName, designDocName, preview=true)->
       # use a clone of the doc to keep it unmuted
       update = updateFn _.extend({}, doc)
       if _.objDiff doc, update
-        if preview then previewDocDiffs doc, update
-        else return db.update id, updateFn
+        docDiff doc, update, preview
+        return db.update id, updateFn
       else
-        console.log 'no changes', id
+        log id, 'no changes'
         return
 
   API =
@@ -58,7 +66,7 @@ module.exports = (dbName, designDocName, preview=true)->
     getViewKeys: (viewName)->
       db.view designDocName, viewName
       .then (res)-> return res.rows.map _.property('id')
-      .then _.Log('view ids')
+      .then Log('view ids')
 
   return API
 
