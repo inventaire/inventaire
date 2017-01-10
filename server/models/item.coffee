@@ -14,20 +14,22 @@ Item.create = (userId, item)->
   # we want to get couchdb sequential id
   # so we need to let _id blank
   item = _.omit item, '_id'
+  passedAttributes = Object.keys item
 
-  { title, entity, pictures } = item
-  tests.pass 'title', title
-  tests.pass 'entity', entity
-
-  tests.pass 'userId', userId
-  item.owner = userId
-
-  item.pictures = pictures or= []
-  tests.pass 'pictures', pictures
-
-  item.created = Date.now()
+  item.pictures or= []
   item.listing = solveConstraint item, 'listing'
   item.transaction = solveConstraint item, 'transaction'
+
+  for attr in passedAttributes
+    unless attr in attributes.validAtCreation
+      throw error_.new "invalid attribute: #{attr}", 400, arguments
+
+    tests.pass attr, item[attr]
+
+  tests.pass 'userId', userId
+
+  item.owner = userId
+  item.created = Date.now()
   item.snapshot = {}
   return item
 

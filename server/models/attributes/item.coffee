@@ -9,6 +9,18 @@ attributes.updatable = [
   'snapshot'
 ]
 
+# Not allowing snapshot as it later updated
+# and would require additional checking
+attributes.validAtCreation = [
+  'title'
+  'entity'
+  'transaction'
+  'pictures'
+  'listing'
+  'details'
+  'notes'
+]
+
 # List of attributes that can be part of item.snapshot,
 # not to be confused with attributes.snapshot hereafter.
 # Snapshot data follow there source document: changes on the item entity

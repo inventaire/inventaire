@@ -21,12 +21,18 @@ validItem =
 extendItem = (data)->
   _.extend {}, validItem, data
 
-
 describe 'item model', ->
   describe 'create', ->
     it "should return an object", (done)->
       item = create validItem
       item.should.be.an.Object()
+      done()
+
+    it "should throw when passed invalid attributes", (done)->
+      item = extendItem({authors: 'Joanne K. Rowling'})
+      (-> create(item)).should.throw()
+      item2 = extendItem({updated: Date.now()})
+      (-> create(item2)).should.throw()
       done()
 
     describe 'id', ->
@@ -63,7 +69,7 @@ describe 'item model', ->
         done()
 
       it "should replace missing pictures by an empty array", (done)->
-        _.log(create(extendItem({pictures: null}))).pictures.should.be.an.Array()
+        create(extendItem({pictures: null})).pictures.should.be.an.Array()
         create(extendItem({pictures: null})).pictures.length.should.equal 0
         done()
 
