@@ -17,9 +17,7 @@ _.extend Q,
     'wd:Q25379' #theatre play
     'wd:Q7725634' #literary work
     'wd:Q17518870' #group of literary works
-    'wd:Q5185279' #poem
     'wd:Q12308638' #poetry anthology
-    'wd:Q37484' #epic poem
     'wd:Q386724' #work
     'wd:Q49084' #short story / conte
     'wd:Q34620' #Greek tragedy
