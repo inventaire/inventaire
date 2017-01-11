@@ -112,6 +112,11 @@ describe 'item model', ->
         item.owner.should.equal someUserId
         done()
 
+      it "should ignore an owner passed in the data", (done)->
+        item = create extendItem({owner: 'whatever'})
+        item.owner.should.equal someUserId
+        done()
+
     describe 'created', ->
       it "should return an object with a created time", (done)->
         item = create validItem

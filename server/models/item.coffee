@@ -11,9 +11,9 @@ Item.attributes = attributes = require './attributes/item'
 
 Item.create = (userId, item)->
   _.types arguments, ['string', 'object']
-  # we want to get couchdb sequential id
-  # so we need to let _id blank
-  item = _.omit item, '_id'
+  # _id: We want to get couchdb sequential id so we need to let _id blank
+  # owner: ignore any passed owner, the owner is the authentified user
+  item = _.omit item, ['_id', 'owner']
   passedAttributes = Object.keys item
 
   item.pictures or= []
