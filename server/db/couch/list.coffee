@@ -6,13 +6,10 @@
 # that aren't required to run on production
 
 module.exports =
-  default:
-    users: ['user', 'relations', 'groups', 'invited']
-    items: ['items', 'followedEntities']
-    transactions: ['transactions']
-    comments: ['comments']
-    entities: ['entities', 'patches']
-    analytics: []
-    notifications: ['notifications']
-  optional:
-    analytics: ['reports']
+  users: ['user', 'relations', 'groups', 'invited']
+  items: ['items', 'followedEntities']
+  transactions: ['transactions']
+  comments: ['comments']
+  entities: ['entities', 'patches']
+  analytics: []
+  notifications: ['notifications']

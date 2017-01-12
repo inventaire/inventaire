@@ -4,7 +4,7 @@ couchInit = require 'couch-init2'
 dbBaseUrl = CONFIG.db.fullHost()
 initHardCodedDocuments = require './init_hard_coded_documents'
 
-dbsList = require('./list').default
+dbsList = require './list'
 formattedList = []
 
 # adapt the list to couch-init2 needs

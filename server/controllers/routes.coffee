@@ -23,7 +23,7 @@ i18n = require './i18n'
 feedback = require './feedback'
 transactions = require './transactions/transactions'
 comments = require './comments/comments'
-analytics = require './analytics/analytics'
+reports = require './reports/reports'
 glob = require './glob'
 
 # routes structure:
@@ -130,8 +130,8 @@ module.exports = routes =
     post: transactions.post
     put: transactions.put
 
-  'api/logs/public':
-    post: analytics.reports
+  'api/reports/public':
+    post: reports
 
   'api/config/public':
     # A endpoint dedicated to pass configuration parameters to the client

@@ -7,8 +7,8 @@ pass = require './pass'
 logger = americano.logger
   format: logFormat
   skip: (req, res)->
-    route = req.originalUrl
-    return route in mutedRoutes
+    { pathname } = req._parsedUrl
+    return pathname in mutedRoutes
 
 # Init the logger before the static files middleware to log static files requests
 # Has no effect when CONFIG.serveStaticFiles is false notably in production,

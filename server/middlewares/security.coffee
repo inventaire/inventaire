@@ -30,11 +30,12 @@ policy = "default-src 'self' #{ws};" +
   "font-src 'self';" +
   # altHost: required for images taken directly on the main server
   # data: required by leaflet and cropper
+  # https://commons.wikimedia.org: used for image claims
   "img-src 'self' #{altHost} https://commons.wikimedia.org https://api.tiles.mapbox.com data:;" +
-  "report-uri /api/logs/public;"
+  "report-uri /api/reports/public?action=csp-report;"
 
 exports.addSecurityHeaders = (req, res, next) ->
-  res.header 'X-XSS-Protection', '1; mode=block; report-uri=/api/logs/public;'
+  res.header 'X-XSS-Protection', '1; mode=block; report-uri=/api/reports/public?action=csp-report;'
   res.header 'X-Frame-Options', 'SAMEORIGIN'
   res.header 'Content-Security-Policy', policy
   res.header 'X-Content-Security-Policy', policy

@@ -39,12 +39,15 @@ module.exports = (_)->
         loggers_.log err.message, "#{label} (offline)", 'red'
         return
 
-      errorCounter++
+      # Make the stack more readable
+      err.stack = err.stack.split '\n'
       loggers_.log err, label, 'red'
-      if logStack and err.stack? then console.log err.stack
 
+      err.labels or= 'server'
       openIssue err
+
       err.hasBeenLogged = true
+      errorCounter++
       return
 
     warn: (err, label)->

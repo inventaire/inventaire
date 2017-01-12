@@ -13,7 +13,7 @@ fs = require 'fs'
 promises_ = __.require 'lib', 'promises'
 execa = require 'execa'
 { username, password, host, port } = CONFIG.db
-dbsNames = Object.keys __.require('couch', 'list').default
+dbsNames = Object.keys __.require('couch', 'list')
 allDbsUrl = CONFIG.db.fullHost() + '/_all_dbs'
 
 backupGeneralFolder = __.path 'couchdb', 'backups'
