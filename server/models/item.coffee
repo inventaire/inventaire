@@ -13,7 +13,8 @@ Item.create = (userId, item)->
   _.types arguments, ['string', 'object']
   # _id: We want to get couchdb sequential id so we need to let _id blank
   # owner: ignore any passed owner, the owner is the authentified user
-  item = _.omit item, ['_id', 'owner']
+  # created: ignore what the client may say, it will be re-set here
+  item = _.omit item, ['_id', 'owner', 'created']
   passedAttributes = Object.keys item
 
   item.pictures or= []
