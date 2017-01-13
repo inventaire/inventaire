@@ -23,6 +23,9 @@ module.exports = config =
   fullPublicHost: -> "#{@publicProtocol}://#{@publicHost}:#{@port}"
   invHost: 'https://inventaire.io'
   secret: 'yoursecrethere'
+  # Debug mode:
+  # - log requests body
+  debug: false
 
   # CouchDB settings
   db:

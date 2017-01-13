@@ -1,4 +1,5 @@
 CONFIG = require 'config'
+{ debug } = CONFIG
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
@@ -70,6 +71,8 @@ module.exports =
       return error_.bundle req, res, 'dupplicated request', 429, [key, req.body]
 
     temporaryLock key, data
+
+    if debug then _.log req.body, "#{method}:#{url} body"
 
     next()
 
