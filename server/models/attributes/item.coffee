@@ -11,7 +11,7 @@ attributes.updatable = [
 
 # Not allowing snapshot as it later updated
 # and would require additional checking
-attributes.validAtCreation = [
+attributes.validAtCreation = [
   'title'
   'entity'
   'transaction'

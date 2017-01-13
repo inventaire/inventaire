@@ -54,13 +54,13 @@ module.exports =
     if pathname in ignorePathname then return next()
 
     # If the request as no session cookie, simply use a hash of the header
-    # Different users might have the same but users using Basic Auth will be distincts
+    # Different users might have the same but users using Basic Auth will be distincts
     # so it only let unauthentified POST/PUT requests with the exact same body at risk
-    # of unjustified request denial, which should be a rather small risk
+    # of unjustified request denial, which should be a rather small risk
     sessionId = req.cookies?['express:sess.sig'] or headersHash(req)
 
     # Known case with an empty body:
-    # - image upload: its using application/octet-stream header instead of json
+    # - image upload: its using application/octet-stream header instead of json
     #   thus body-parser won't populate req.body
     data = _.hashCode JSON.stringify(req.body or {})
 

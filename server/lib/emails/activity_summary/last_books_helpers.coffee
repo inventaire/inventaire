@@ -1,7 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-{ allowTransaction } = __.require 'models', 'item'
+{ allowTransaction } = __.require 'models', 'item'
 { kmBetween } = __.require 'lib', 'geo'
 host = CONFIG.fullPublicHost()
 

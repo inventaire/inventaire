@@ -2,7 +2,7 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 getEntitiesByUris = require './lib/get_entities_by_uris'
-{ merge:mergeEntities, turnIntoRedirection } = require './lib/merge_entities'
+{ merge:mergeEntities, turnIntoRedirection } = require './lib/merge_entities'
 
 # Assumptions:
 # - ISBN are already desambiguated and should thus never need merge

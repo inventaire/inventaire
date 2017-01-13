@@ -17,7 +17,7 @@ module.exports = (req, res, nex)->
   items_.byId item
   .then transactions_.verifyRightToRequest.bind(null, requester)
   .then (itemDoc)->
-    { owner } = itemDoc
+    { owner } = itemDoc
     user_.byIds([owner, requester])
     .spread transactions_.create.bind(null, itemDoc)
 

@@ -9,7 +9,7 @@ module.exports = (current, update, preview)->
   else console.log 'CHANGE'.yellow
   diffLines stringify(current), stringify(update)
   .forEach (part)->
-    { added, removed, value } = part
+    { added, removed, value } = part
     if added? then write value.green
     else if removed? then write value.red
     else write value.grey

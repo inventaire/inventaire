@@ -34,7 +34,7 @@ Inspect = (sub)->
 Search = (db)->
   search = (latLng, kmRange)->
     _.types arguments, ['array', 'number']
-    [ lat, lon ] = latLng
+    [ lat, lon ] = latLng
     streamPromise db.search({lat: lat, lon: lon}, kmRange*1000)
 
 streamPromise = (stream)->

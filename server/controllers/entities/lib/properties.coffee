@@ -83,7 +83,7 @@ properties =
   'wdt:P1104': positiveIntegerBase
   # languages of expression
   'wdt:P1412': entityBase
-  # title
+  # title
   'wdt:P1476': stringBase
 
 whitelist = Object.keys properties

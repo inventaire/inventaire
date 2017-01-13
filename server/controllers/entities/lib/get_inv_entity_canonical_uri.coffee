@@ -2,7 +2,7 @@ __ = require('config').universalPath
 { normalizeIsbn } = __.require 'lib', 'isbn/isbn'
 
 module.exports = (entity)->
-  { _id:invId, redirect } = entity
+  { _id:invId, redirect } = entity
   invUri = "inv:#{entity._id}"
 
   # Case when the entity document is simply a redirection to another entity

@@ -5,8 +5,7 @@ error_ = __.require 'lib', 'error/error'
 groups_ = require './groups'
 user_ = __.require 'lib', 'user/user'
 promises_ = __.require 'lib', 'promises'
-{ possibleActions } = require './actions_lists'
-
+{ possibleActions } = require './actions_lists'
 
 verifyJoinRequestHandlingRights = (userId, groupId, requesterId)->
   promises_.all([

@@ -5,7 +5,7 @@ entities_ = require './lib/entities'
 
 module.exports = (req, res)->
   { id:entityId, lang, value } = req.body
-  { _id:userId } = req.user
+  { _id:userId } = req.user
 
   _.log req.body, 'body'
 

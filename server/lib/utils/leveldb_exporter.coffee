@@ -35,7 +35,7 @@ module.exports =
 
 findDb = (name)->
   unless name? then throw new Error 'missing name'
-  [ dbName, subName ] = name.split ':'
+  [ dbName, subName ] = name.split ':'
 
   dbPath = __.path 'leveldb', dbName
   if subName?
