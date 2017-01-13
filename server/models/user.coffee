@@ -48,8 +48,7 @@ User._create = (username, email, creationStrategy, language, password)->
   return user
 
 User.create = (args...)->
-  promises_.start
-  .then -> User._create.apply null, args
+  promises_.try -> User._create.apply null, args
   .then withHashedPassword
 
 User.upgradeInvited = (invitedDoc, username, creationStrategy, language, password)->

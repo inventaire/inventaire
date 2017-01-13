@@ -11,8 +11,7 @@ module.exports = (req, res)->
   { user, body } = req
   { message } = body
   emailsString = body.emails
-  promises_.start
-  .then parseEmails.bind(null, emailsString, user.email)
+  promises_.try parseEmails.bind(null, emailsString, user.email)
   .then applyLimit
   .then (emails)->
     sendInvitationAndReturnData user, message, emails

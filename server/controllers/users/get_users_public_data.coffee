@@ -7,8 +7,7 @@ parseAndValidateIds = require './lib/parse_and_validate_ids'
 
 module.exports = (req, res)->
   { ids } = req.query
-  promises_.start
-  .then parseAndValidateIds.bind(null, ids)
+  promises_.try parseAndValidateIds.bind(null, ids)
   .then _.partialRight(user_.getUsersPublicData, 'index')
   .then _.Wrap(res, 'users')
   .catch error_.Handler(req, res)

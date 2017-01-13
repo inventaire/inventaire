@@ -29,8 +29,7 @@ module.exports =
 
     userId = req.user._id
 
-    promises_.start
-    .then ->
+    promises_.try ->
       item = req.body
       if item._id is 'new'
         items_.create userId, item
