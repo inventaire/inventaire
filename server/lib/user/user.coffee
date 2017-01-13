@@ -122,6 +122,14 @@ formatUsersData = (format, usersData)->
   else return usersData
 
 token_ = require('./token')(db, user_)
+
+user_.updateEmail = (user, email)->
+  user = User.updateEmail user, email
+  db.put user
+  # sendValidationEmail doesn't need to access the last _rev
+  # so it's ok to pass the user as it was before the database was updated
+  .then -> token_.sendValidationEmail user
+
 user_.availability = availability_ = require('./availability')(user_)
 user_.create = require('./create')(db, token_, availability_)
 user_.byPosition = require('../by_position')(db, 'user')
