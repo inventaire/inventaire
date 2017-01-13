@@ -39,9 +39,12 @@ module.exports = (_)->
         loggers_.log err.message, "#{label} (offline)", 'red'
         return
 
-      # Make the stack more readable
-      err.stack = err.stack.split '\n'
-      loggers_.log err, label, 'red'
+      loggers_.log _.omit(err, 'stack'), label, 'red'
+      if logStack
+        # Make the stack more readable
+        err.stack = err.stack.split '\n'
+        # Log the stack appart to make it be displayed with line breaks
+        console.log err.stack
 
       err.labels or= 'server'
       openIssue err

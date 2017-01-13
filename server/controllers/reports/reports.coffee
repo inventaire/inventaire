@@ -10,7 +10,7 @@ cspReport = (req, res)->
   err.stack = JSON.stringify err, null, 2
   err.message = 'csp report'
   err.labels = 'csp'
-  _.error err, 'csp report'
+  _.error err, 'csp report', false
   _.ok res
 
 errorReport = (req, res)->
