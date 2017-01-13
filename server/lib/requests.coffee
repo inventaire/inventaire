@@ -44,6 +44,9 @@ formatErr = (err)->
 startTimer = (verb, url)->
   # url could be an object
   url = JSON.stringify url
+    # Prevent logging Basic Auth credentials
+    .replace /\/\/\w+:[^@:]+@/, '//'
+
   key = "#{verb.toUpperCase()} #{url} [#{_.randomString()}]"
   return _.startTimer key
 
