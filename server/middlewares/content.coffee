@@ -87,5 +87,5 @@ requestsCache = {}
 
 methodsWithBody = [ 'POST', 'PUT' ]
 ignorePathname = [
-  '/api/logs/public'
+  '/api/reports/public'
 ]
