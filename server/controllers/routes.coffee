@@ -36,6 +36,7 @@ module.exports = routes =
     post: auth.actions
 
   'api/auth/public':
+    get: auth.get
     post: auth.publicActions
 
   'api/auth/public/token':
