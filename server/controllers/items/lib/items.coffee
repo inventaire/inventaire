@@ -15,7 +15,7 @@ db = __.require('couch', 'base')('items')
 
 module.exports = items_ =
   db: db
-  byId: db.get.bind(db)
+  byId: db.get
   byOwner: (owner)->
     # only used by items.fetch with req.session.email owner
     # => shouldn't be safeItem'ized
@@ -106,7 +106,7 @@ module.exports = items_ =
     .then Item.changeOwner.bind(null, transacDoc)
     .then db.postAndReturn
 
-  bulkDelete: db.bulkDelete.bind(db)
+  bulkDelete: db.bulkDelete
 
   nearby: (userId, range=50, strict=false)->
     user_.nearby userId, range, strict

@@ -16,7 +16,7 @@ module.exports = comments_ = {}
 helpers_ = require('./helpers')(comments_)
 
 _.extend comments_, rightsVerification,
-  byId: db.get.bind(db)
+  byId: db.get
   byItemId: (itemId)->
     db.viewByKey 'byItemId', itemId
 

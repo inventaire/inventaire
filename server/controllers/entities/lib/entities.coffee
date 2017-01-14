@@ -13,7 +13,7 @@ getInvEntityCanonicalUri = require './get_inv_entity_canonical_uri'
 
 module.exports = entities_ =
   db: db
-  byId: db.get.bind(db)
+  byId: db.get
 
   byIds: (ids)->
     ids = _.forceArray ids

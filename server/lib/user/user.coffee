@@ -15,8 +15,8 @@ geo = require('./geo/geo')()
 
 user_ =
   db: db
-  byId: db.get.bind(db)
-  byIds: db.fetch.bind(db)
+  byId: db.get
+  byIds: db.fetch
   byEmail: byEmail.bind(null, db)
   byEmails: byEmails.bind(null, db)
   findOneByEmail: findOneByEmail.bind(null, db)

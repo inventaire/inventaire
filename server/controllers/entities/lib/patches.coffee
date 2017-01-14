@@ -7,7 +7,7 @@ promises_ = __.require 'lib', 'promises'
 
 module.exports = patches_ =
   db: db
-  byId: db.get.bind(db)
+  byId: db.get
 
   create: (userId, currentDoc, updatedDoc)->
     promises_.try -> Patch.create userId, currentDoc, updatedDoc

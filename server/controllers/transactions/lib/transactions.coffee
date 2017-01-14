@@ -15,7 +15,7 @@ db = __.require('couch', 'base')('transactions')
 
 transactions_ =
   db: db
-  byId: db.get.bind(db)
+  byId: db.get
   byUser: (userId)->
     db.viewCustom 'byUserAndItem',
       # get all the docs with this userId

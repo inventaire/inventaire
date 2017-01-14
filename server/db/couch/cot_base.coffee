@@ -10,4 +10,4 @@ params =
 if CONFIG.db.protocol is 'https'
   params.ssl = true
 
-module.exports = require('inv-cot')(params)
+module.exports = require('blue-cot')(params)
