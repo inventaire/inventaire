@@ -101,5 +101,14 @@ Transaction.isActive = (transacDoc)->
 
 snapshotData = (itemDoc, ownerDoc, requesterDoc)->
   item: _.pick itemDoc, snapshotItemAttributes
+  entity: getEntitySnapshotFromItemSnapshot itemDoc.snapshot
   owner: _.pick ownerDoc, snapshotUserAttributes
   requester: _.pick requesterDoc, snapshotUserAttributes
+
+getEntitySnapshotFromItemSnapshot = (itemSnapshot)->
+  entitySnapshot = {}
+  for k, v of itemSnapshot
+    # Ex: keep only 'image' in the key 'entity:image'
+    key = k.split(':')[1]
+    entitySnapshot[key] = v
+  return entitySnapshot
