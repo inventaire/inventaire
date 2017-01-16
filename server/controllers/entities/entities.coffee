@@ -14,7 +14,10 @@ module.exports =
     'history': require './history'
 
   # authentified
-  post: require './create_entity'
+  post: ActionsControllers
+    'default': require './create_entity'
+    'exists-or-create-from-seed': require './exists_or_create_from_seed'
+
   put: ActionsControllers
     'update-claim': require './update_claim'
     'update-label': require './update_label'

@@ -25,3 +25,7 @@ module.exports =
     unless enabled then return promises_.resolve {}
     isbns = _.forceArray(isbns).join '|'
     promises_.get _.buildPath("#{host}/books", { isbns, refresh })
+
+  # Provides simply an image in a prompt maner
+  getImageByIsbn: (isbn)->
+    promises_.get _.buildPath("#{host}/images", { isbn })

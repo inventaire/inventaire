@@ -16,16 +16,19 @@ createAndEditEntity = require './create_and_edit_entity'
 seedUserId = __.require('couch', 'hard_coded_documents').users.seed._id
 workEntitiesCache = require './work_entity_search_dedupplicating_cache'
 
-{ enabled, host } = CONFIG.dataseed
-
 # Can't be required directly as it would create a dependency loop with getEntitiesByUris
 # so requiring it at first run time
 searchWorkEntityByTitleAndAuthors = null
 
+# seed attributes:
+# MUST have: isbn <String>, title <String>, authors <Array of Strings>
+# MAY have: image, publicationDate
+# Data deduced from isbn: isbn13h, groupLang
 module.exports = (seed)->
   searchWorkEntityByTitleAndAuthors or= require './search_work_entity_by_title_and_authors'
 
-  unless _.isNonEmptyString seed.title
+  validAuthors = _.isArray(seed.authors) and _.isNonEmptyString seed.authors[0]
+  unless validAuthors and _.isNonEmptyString(seed.title)
     return error_.reject 'insufficient seed data', 400, seed
 
   isbnData = parseIsbn seed.isbn

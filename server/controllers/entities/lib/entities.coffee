@@ -27,6 +27,10 @@ module.exports = entities_ =
       .map (isbn)-> ['wdt:P212', isbn]
     db.viewByKeys 'byClaim', keys
 
+  byIsbn: (isbn)->
+    entities_.byIsbns [ isbn ]
+    .then couch_.firstDoc
+
   byWikidataIds: (ids)->
     keys = ids.map (id)-> ['invp:P1', id]
     db.viewByKeys 'byClaim', keys
