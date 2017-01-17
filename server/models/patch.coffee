@@ -19,6 +19,8 @@ module.exports =
     # will miss an _id at creation.
     docId = updatedDoc._id
     # Take advantage of _rev to keep track of version numbers
+    # The first patch will have a version number of 2, as the empty template doc
+    # would be version 1 but has no dedicated patch (its always the same template)
     version = updatedDoc._rev.split('-')[0]
 
     return patch =
