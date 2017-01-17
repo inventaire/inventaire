@@ -109,8 +109,9 @@ propertyDatatypePrimordialType = (property)->
 
 testDataType = (property, value)-> _.typeOf(value) is propertyDatatypePrimordialType(property)
 
-module.exports =
-  properties: properties
-  validateProperty: validateProperty
-  testDataType: testDataType
-  propertyDatatypePrimordialType: propertyDatatypePrimordialType
+module.exports = {
+  properties,
+  validateProperty,
+  testDataType,
+  propertyDatatypePrimordialType
+}

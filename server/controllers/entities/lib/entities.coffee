@@ -9,7 +9,7 @@ couch_ = __.require 'lib', 'couch'
 validateClaimValue = require('./validate_claim_value')(db)
 getInvEntityCanonicalUri = require './get_inv_entity_canonical_uri'
 
-{ validateProperty } = require './properties'
+{ properties, validateProperty } = require './properties'
 
 module.exports = entities_ =
   db: db
@@ -94,6 +94,9 @@ module.exports = entities_ =
     { property } = params
     promises_.try -> validateProperty property
     .then -> validateClaimValue params
+
+  # Assumes that the property is valid
+  validatePropertyValueSync: (property, value)-> properties[property].test value
 
   getLastChangedEntitiesUris: (since, limit)->
     db.changes

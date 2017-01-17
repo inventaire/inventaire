@@ -9,7 +9,7 @@ _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
 { parse:parseIsbn } = __.require 'lib', 'isbn/isbn'
-entities_ = require './entities'
+{ validatePropertyValueSync } = require './entities'
 createAndEditEntity = require './create_and_edit_entity'
 # It is simpler to use a consistent, recognizable mocked user id
 # than to put exceptions everywhere
@@ -22,7 +22,7 @@ searchWorkEntityByTitleAndAuthors = null
 
 # seed attributes:
 # MUST have: isbn <String>, title <String>, authors <Array of Strings>
-# MAY have: image, publicationDate
+# MAY have: image, publicationDate, numberOfPages
 # Data deduced from isbn: isbn13h, groupLang
 module.exports = (seed)->
   searchWorkEntityByTitleAndAuthors or= require './search_work_entity_by_title_and_authors'
@@ -89,9 +89,9 @@ createEditionEntity = (seed, workPromise)->
     'wdt:P212': [ seed.isbn13h ]
     # wdt:P957 and wdt:P407 will be inferred from 'wdt:P212'
 
-  { image, publicationDate } = seed
-  if image? then claims['wdt:P18'] = [ image ]
-  if publicationDate? then claims['wdt:P577'] = [ publicationDate ]
+  addClaimIfValid claims, 'wdt:P18', seed.image
+  addClaimIfValid claims, 'wdt:P577', seed.publicationDate
+  addClaimIfValid claims, 'wdt:P1104', seed.numberOfPages
 
   workPromise
   .then (work)->
@@ -100,3 +100,9 @@ createEditionEntity = (seed, workPromise)->
     return createAndEditEntity labels, claims, seedUserId
   .then _.Log('created edition entity')
   .catch _.ErrorRethrow('createEditionEntity err')
+
+addClaimIfValid = (claims, property, value)->
+  if value? and validatePropertyValueSync property, value
+    claims[property] = [ value ]
+
+  return
