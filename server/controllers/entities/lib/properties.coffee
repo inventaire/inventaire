@@ -32,14 +32,14 @@ simpleDayUniqueValueBase =
 
 stringBase =
   datatype: 'string'
-  uniqueValue: true
   format: _.identity
   # Arbitrary max length
-  test: (str)-> 0 < str.length < 5000
+  test: (str)-> _.isString(str) and 0 < str.length < 5000
 
 isbnProperty = (num)->
   _.extend {}, stringBase,
     test: (isbn)-> isbn is isbn_.parse(isbn)?["isbn#{num}h"]
+    uniqueValue: true
     concurrency: true
     format: isbn_["toIsbn#{num}h"]
     adminUpdateOnly: true
