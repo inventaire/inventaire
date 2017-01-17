@@ -104,6 +104,7 @@ module.exports = entities_ =
       limit: limit
       since: since
       include_docs: true
+      descending: true
     .then (res)->
       # TODO: return URIs in no-redirect mode so that redirections appear in entity changes
       uris: res.results.map parseCanonicalUri
