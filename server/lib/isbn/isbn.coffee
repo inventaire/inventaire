@@ -22,6 +22,7 @@ parse = (isbn)->
   return data
 
 module.exports = _.extend isbn_,
+  isValidIsbn: (isbn)-> isbnParser(isbn)?
   parse: parse
   toIsbn13: (isbn, hyphenate)->
     data = parse isbn

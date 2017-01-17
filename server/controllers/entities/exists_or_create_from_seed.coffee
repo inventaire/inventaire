@@ -19,7 +19,7 @@ module.exports = (req, res)->
   { body:seed } = req
   { isbn, title, authors } = seed
 
-  unless isbn_.isIsbn isbn
+  unless isbn_.isValidIsbn isbn
     return error_.bundle req, res, 'invalid isbn', 400, seed
 
   unless _.isNonEmptyString title

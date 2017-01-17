@@ -26,7 +26,10 @@ module.exports = (req, res)->
   query.lang = _.shortLang lang
   query.refresh = _.parseBooleanString query.refresh
 
-  if isbn_.isIsbn search
+  if isbn_.looksLikeAnIsbn search
+    unless isbn_.isValidIsbn search
+      return error_.bundle req, res, 'invalid isbn' , 400
+
     _.log search, 'searchByIsbn'
     promise = searchByIsbn { isbn: search, refresh: query.refresh }
 
