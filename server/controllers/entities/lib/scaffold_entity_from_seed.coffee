@@ -21,15 +21,16 @@ workEntitiesCache = require './work_entity_search_dedupplicating_cache'
 searchWorkEntityByTitleAndAuthors = null
 
 # seed attributes:
-# MUST have: isbn <String>, title <String>, authors <Array of Strings>
-# MAY have: image, publicationDate, numberOfPages
+# MUST have: isbn
+# MAY have: title, authors, image, publicationDate, numberOfPages
 # Data deduced from isbn: isbn13h, groupLang
+
+# Motivation to accept seeds without title or author:
+# Every isbn needs to have its edition entity and an associated author entity,
+# thus we create the expected entities what so ever
+
 module.exports = (seed)->
   searchWorkEntityByTitleAndAuthors or= require './search_work_entity_by_title_and_authors'
-
-  validAuthors = _.isArray(seed.authors) and _.isNonEmptyString seed.authors[0]
-  unless validAuthors and _.isNonEmptyString(seed.title)
-    return error_.reject 'insufficient seed data', 400, seed
 
   isbnData = parseIsbn seed.isbn
 
@@ -67,7 +68,8 @@ CreateAuthorEntity = (lang)-> (authorName)->
 
 createWorkEntity = (seed, lang, authorsPromises)->
   labels = {}
-  labels[lang] = seed.title
+  { title } = seed
+  if _.isNonEmptyString(title) then labels[lang] = title
   claims =
     'wdt:P31': [ 'wd:Q571' ]
 
@@ -80,15 +82,15 @@ createWorkEntity = (seed, lang, authorsPromises)->
   .catch _.ErrorRethrow('createWorkEntity err')
 
 createEditionEntity = (seed, workPromise)->
-  # The title is set hereafter as monolingue title (wdt:P1476)
+  # The title is set hereafter as monolingual title (wdt:P1476)
   # instead of as a label
   labels = {}
   claims =
-    'wdt:P1476': [ seed.title ]
     'wdt:P31': [ 'wd:Q3331189' ]
     'wdt:P212': [ seed.isbn13h ]
     # wdt:P957 and wdt:P407 will be inferred from 'wdt:P212'
 
+  addClaimIfValid claims, 'wdt:P1476', seed.title
   addClaimIfValid claims, 'wdt:P18', seed.image
   addClaimIfValid claims, 'wdt:P577', seed.publicationDate
   addClaimIfValid claims, 'wdt:P1104', seed.numberOfPages

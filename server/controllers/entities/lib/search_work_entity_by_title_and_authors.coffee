@@ -16,6 +16,11 @@ module.exports = (seed)->
 
   _.log seed, 'seed'
 
+  validAuthors = _.isArray(authors) and _.all authors, _.isNonEmptyString
+  unless _.isNonEmptyString(title) and validAuthors
+    _.warn seed, 'unsufficient seed data to search a pre-existing work entity'
+    return promises_.resolve()
+
   cachedWorkPromise = workEntitiesCache.get seed
   if cachedWorkPromise? then return cachedWorkPromise
 
