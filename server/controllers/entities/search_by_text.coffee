@@ -78,7 +78,7 @@ filterOutIrrelevantTypes = (result)->
   for uri, entity of result.entities
     { type } = entity
     if not type or type is 'meta'
-      _.warn entity, "filtered out: #{uri}"
+      _.warn [entity.labels.en, entity.claims['wdt:P31']], "filtered out:#{uri}"
       delete result.entities[uri]
 
   return result
