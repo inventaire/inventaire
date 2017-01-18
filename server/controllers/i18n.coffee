@@ -7,10 +7,17 @@ module.exports =
   # if this route is enabled by CONFIG
   # allows the client to notify the server of i18n keys without a value
   i18nMissingKeys: (req, res, next)->
-    _.info missingKeys = req.body?.missingKeys, 'i18n missing keys'
+    { missingKeys } = req.body
 
     unless missingKeys? and _.areStrings(missingKeys)
-      return error_.bundle req, res, "bad missingKeys", 400, missingKeys
+      return error_.bundle req, res, 'bad missingKeys', 400, missingKeys
+
+    _.info missingKeys, 'i18n missing keys'
+
+    # Filtering out keys longer than 500 characters or starting by 400 or 500:
+    # its most probably an undesired error message
+    missingKeys = missingKeys.filter (key)->
+      key?.length < 500 and not /^(4|5)00/.test(key)
 
     shortKeys = []
     fullKeys = []
