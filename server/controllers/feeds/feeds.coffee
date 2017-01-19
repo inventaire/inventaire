@@ -47,7 +47,7 @@ findUsersByGroup = (groupId)->
 extractLastItems = (items)->
   items
   .sort (a, b)-> a.updated > b.updated
-  .slice 0, rssLimitLengh
+  .slice 0, rssLimitLength
 
 rssSerializer = (items)->
   feed = new Rss
