@@ -8,17 +8,17 @@ module.exports = (req, res, err, status)->
     return res.status(500).send(err)
 
   # if a status code was attached to the error, use it
-  status or= err.status or 500
+  statusCode = err.statusCode or 500
 
   err.user = _.pick req.user, ['_id', 'username']
   err.referer = req.headers.referer
 
-  if /^4/.test status then _.warn err, status
+  if /^4/.test statusCode then _.warn err, statusCode
   else _.error err, err.message
 
-  res.status status
+  res.status statusCode
   res.json
-    status: status
+    status: statusCode
     status_verbose: err.message
     context: err.context
 

@@ -8,7 +8,6 @@ req = (verb, url, options)->
 
   breq[verb] mergeOptions(url, options)
   .get 'body'
-  .catch formatErr
   .finally _.EndTimer(key)
 
 head = (url, options)->
@@ -16,7 +15,6 @@ head = (url, options)->
 
   breq.head mergeOptions(url, options)
   .then (res)-> _.pick res, ['statusCode', 'headers']
-  .catch formatErr
   .finally _.EndTimer(key)
 
 # default to JSON
@@ -35,11 +33,6 @@ mergeOptions = (url, options={})->
   # if the url was in the options
   # the url object will be overriden
   _.extend {url: url}, baseOptions, options,
-
-formatErr = (err)->
-  # aliasing statusCode to match lib/error filter system
-  err.status = err.statusCode
-  throw err
 
 startTimer = (verb, url)->
   # url could be an object

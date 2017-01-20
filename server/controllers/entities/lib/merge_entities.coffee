@@ -13,7 +13,7 @@ merge = (userId, fromId, toId)->
   # Fetching non-formmatted docs
   entities_.byIds [fromId, toId]
   .spread (fromEntityDoc, toEntityDoc)->
-    # At this point if the entities are not found, that's the server's fault, thus the 500 status
+    # At this point if the entities are not found, that's the server's fault, thus the 500 statusCode
     unless fromEntityDoc._id is fromId then throw error_.new "'from' entity doc not found", 500
     unless toEntityDoc._id is toId then throw error_.new "'to' entity doc not found", 500
 

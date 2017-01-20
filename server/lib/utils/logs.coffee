@@ -30,7 +30,7 @@ module.exports = (_)->
       if err.hasBeenLogged then return
 
       # If the error is of a lower lever than 500, make it a warning, not an error
-      if err.status? and err.status < 500
+      if err.statusCode? and err.statusCode < 500
         return customLoggers.warn err, label
 
       # Prevent logging big error stack traces for network errors

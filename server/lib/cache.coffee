@@ -28,7 +28,7 @@ module.exports =
     .catch (err)->
       label = "final cache_ err: #{key}"
       # not logging the stack trace in case of 404 and alikes
-      if /^4/.test err.status then _.warn err, label
+      if /^4/.test err.statusCode then _.warn err, label
       else _.error err, label
 
       throw err

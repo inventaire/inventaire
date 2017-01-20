@@ -47,7 +47,7 @@ module.exports = items_ =
       if item.listing is 'public' then return item
       else throw error_.new 'item isnt a public item', 403, itemId
     .catch (err)->
-      # cant filter operational error from the error status code
+      # cant filter operational error from the error statusCode
       # as cot returns a poor error object with just a message
       throw error_.new 'item not found', 404, itemId
 
