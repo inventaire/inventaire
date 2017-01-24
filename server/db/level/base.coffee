@@ -11,12 +11,9 @@ if CONFIG.env is 'tests'
   level = require('level-test')()
   DB = sublevel level()
 else
-  levelup = require 'levelup'
-  leveldown = require 'leveldown'
-  levelConfig =
-    db: leveldown
-
-  DB = sublevel levelup(DBPath, levelConfig)
+  level = require 'level-party'
+  config = {}
+  DB = sublevel level(DBPath, config)
 
 module.exports =
   sub: (dbName)->
