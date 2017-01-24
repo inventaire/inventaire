@@ -40,7 +40,7 @@ module.exports = (params)->
     db.get id
     .then (doc)->
       # use a clone of the doc to keep it unmuted
-      update = updateFn _.extend({}, doc)
+      update = updateFn _.cloneDeep(doc)
       if _.objDiff doc, update
         docDiff doc, update, preview
         return db.update id, updateFn
