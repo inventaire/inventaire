@@ -43,7 +43,7 @@ module.exports = (params)->
       update = updateFn _.cloneDeep(doc)
       if _.objDiff doc, update
         docDiff doc, update, preview
-        return db.update id, updateFn
+        unless preview then db.update id, updateFn
       else
         log id, 'no changes'
         return
