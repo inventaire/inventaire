@@ -11,7 +11,9 @@ parse = (isbn)->
   isbn = isbn.replace /-/g, ''
   data = isbnParser(isbn)?.codes
   if data?
-    { prefix, group, publisher } = data
+    { prefix, group, publisher, isbn13h } = data
+    # It did happen that isbn2 parser returned without a prefix
+    prefix or= isbn13h.split('-')[0]
     data.groupPrefix = groupPrefix = "#{prefix}-#{group}"
     data.publisherPrefix = "#{groupPrefix}-#{publisher}"
     langData = groups[groupPrefix]

@@ -6,19 +6,14 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
 { parse:parseIsbn } = __.require 'lib', 'isbn/isbn'
-{ validatePropertyValueSync } = require './entities'
-createAndEditEntity = require './create_and_edit_entity'
+{ validatePropertyValueSync } = require '../entities'
+createAndEditEntity = require '../create_and_edit_entity'
 # It is simpler to use a consistent, recognizable mocked user id
 # than to put exceptions everywhere
 seedUserId = __.require('couch', 'hard_coded_documents').users.seed._id
-workEntitiesCache = require './work_entity_search_dedupplicating_cache'
-
-# Can't be required directly as it would create a dependency loop with getEntitiesByUris
-# so requiring it at first run time
-searchWorkEntityByTitleAndAuthors = null
+scaffoldWorkEntityFromSeed = require './work'
 
 # seed attributes:
 # MUST have: isbn
@@ -30,56 +25,17 @@ searchWorkEntityByTitleAndAuthors = null
 # thus we create the expected entities what so ever
 
 module.exports = (seed)->
-  searchWorkEntityByTitleAndAuthors or= require './search_work_entity_by_title_and_authors'
+  { isbn } = seed
+  unless _.isNonEmptyString isbn
+    return error_.reject 'missing isbn', 400, seed
 
   isbnData = parseIsbn seed.isbn
 
-  unless isbnData?
-    return error_.reject 'invalid isbn', 400, seed
+  unless isbnData? then return error_.reject 'invalid isbn', 400, seed
 
   _.extend seed, isbnData
-  lang = seed.groupLang or 'en'
 
-  searchWorkEntityByTitleAndAuthors seed
-  .then (workEntity)->
-    if workEntity?
-      _.log seed, "scaffolding from existing work entity: #{workEntity.uri}"
-      workPromise = promises_.resolve workEntity
-    else
-      _.log seed, 'scaffolding from scratch'
-      authorsPromises = createAuthorsEntities seed, lang
-      workPromise = createWorkEntity seed, lang, authorsPromises
-
-    workEntitiesCache.set seed, workPromise
-    return createEditionEntity seed, workPromise
-
-createAuthorsEntities = (seed, lang)->
-  promises_.all seed.authors.map(CreateAuthorEntity(lang))
-
-CreateAuthorEntity = (lang)-> (authorName)->
-  labels = {}
-  labels[lang] = authorName
-  claims =
-    'wdt:P31': [ 'wd:Q5' ]
-
-  createAndEditEntity labels, claims, seedUserId
-  .then _.Log('created author entity')
-  .catch _.ErrorRethrow('createAuthorEntity err')
-
-createWorkEntity = (seed, lang, authorsPromises)->
-  labels = {}
-  { title } = seed
-  if _.isNonEmptyString(title) then labels[lang] = title
-  claims =
-    'wdt:P31': [ 'wd:Q571' ]
-
-  authorsPromises
-  .then (authors)->
-    authorsIds = authors.map (author)-> "inv:#{author._id}"
-    claims['wdt:P50'] = authorsIds
-    return createAndEditEntity labels, claims, seedUserId
-  .then _.Log('created work entity')
-  .catch _.ErrorRethrow('createWorkEntity err')
+  createEditionEntity seed, scaffoldWorkEntityFromSeed(seed)
 
 createEditionEntity = (seed, workPromise)->
   # The title is set hereafter as monolingual title (wdt:P1476)

@@ -10,7 +10,7 @@ promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
 isbn_ = __.require 'lib', 'isbn/isbn'
 entities_ = require './lib/entities'
-scaffoldEntityFromSeed = require './lib/scaffold_entity_from_seed'
+scaffoldEditionEntityFromSeed = require './lib/scaffold_entity_from_seed/edition'
 { enabled:dataseedEnabled } = CONFIG.dataseed
 dataseed = __.require 'data', 'dataseed/dataseed'
 formatEditionEntity = require './lib/format_edition_entity'
@@ -20,22 +20,25 @@ module.exports = (req, res)->
   { isbn, title, authors } = seed
 
   unless isbn_.isValidIsbn isbn
-    return error_.bundle req, res, 'invalid isbn', 400, seed
+    return error_.bundle req, res, 'invalid isbn', 400, isbn
 
   unless _.isNonEmptyString title
-    return error_.bundle req, res, 'invalid title', 400, seed
+    return error_.bundle req, res, 'invalid title', 400, title
 
-  unless _.isNonEmptyString authors
-    return error_.bundle req, res, 'invalid authors', 400, seed
+  # Let it be splitted as a string
+  if _.isArray(authors) and authors.length is 1 then authors = authors[0]
 
-  seed.authors = authors
-    .split ','
-    .map (author)-> author.trim()
+  if _.isString authors
+    # Convert authors provided as strings as an array of strings
+    seed.authors = authors.split(',').map (author)-> author.trim()
+
+  seed.authors or= []
+  seed.authors = seed.authors.filter (author)-> author?.length > 0
 
   entities_.byIsbn isbn
   .then (entityDoc)->
     if entityDoc then return entityDoc
-    else return addImage(seed).then scaffoldEntityFromSeed
+    else return addImage(seed).then scaffoldEditionEntityFromSeed
   .then formatEditionEntity
   .then res.json.bind(res)
   .catch error_.Handler(req, res)
@@ -43,7 +46,23 @@ module.exports = (req, res)->
 addImage = (seed)->
   unless dataseedEnabled then return promises_.resolve seed
 
+  # Try to find an image from the seed ISBN
   dataseed.getImageByIsbn seed.isbn
   .then (res)->
-    seed.image = res.url
+    if res.url
+      seed.image = res.url
+      return seed
+    else
+      { image } = seed
+      unless image? then return seed
+
+      # Else, if an image was provided in the seed, try to use it
+      dataseed.getImageByUrl seed.image
+      .then (res2)->
+        if res.url then seed.image = res2.url
+        else delete seed.image
+        return seed
+
+  .catch (err)->
+    _.error err, 'add image err'
     return seed
