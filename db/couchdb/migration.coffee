@@ -5,16 +5,17 @@ Promise.longStackTraces()
 fs = require 'fs'
 
 module.exports = (params)->
-  { dbName, designDocName, preview, silent } = params
+  { dbName, designDocName, preview, silent, showDiff } = params
   preview ?= true
   silent ?= false
+  showDiff ?= true
 
   db = __.require('couch', 'cot_base')(dbName, designDocName)
   unless db? then throw new Error('bad dbName')
 
   log = if silent then _.identity else _.log
   Log = (label)-> (obj)-> log obj, label
-  docDiff = if silent then _.noop else require('./doc_diffs')
+  docDiff = if showDiff then require('./doc_diffs') else _.noop
 
   console.log 'preview mode:', preview
   console.log 'silent mode:', silent
