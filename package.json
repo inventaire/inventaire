@@ -34,7 +34,7 @@
   },
   "dependencies": {
     "americano": "^0.4.2",
-    "blue-cot": "^3.1.1",
+    "blue-cot": "^3.3.0",
     "bluebird": "^3.4.0",
     "bluereq": "^2.1.1",
     "chalk": "^1.1.3",
