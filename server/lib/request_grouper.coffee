@@ -35,3 +35,6 @@ module.exports = (params)->
 
     getGroupedRequestPromise()
     .then _.property(key)
+    # Prevent several consumers requesting the same object
+    # as it could create conflicts
+    .then _.cloneDeep
