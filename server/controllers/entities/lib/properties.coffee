@@ -13,9 +13,9 @@ entityBase =
 
 entityUniqueValue = _.extend {}, entityBase, { uniqueValue: true }
 
-urlBase =
-  datatype: 'url'
-  test: _.isExtendedUrl
+ipfsPathBase =
+  datatype: 'ipfs-path'
+  test: _.isIpfsPath
   format: _.identity
 
 positiveIntegerBase =
@@ -48,7 +48,7 @@ isbnProperty = (num)->
 # and app/modules/entities/lib/editor/properties_per_type
 properties =
   # image
-  'wdt:P18': urlBase
+  'wdt:P18': ipfsPathBase
   # instance of
   'wdt:P31': _.extend {}, entityUniqueValue, { adminUpdateOnly: true }
   # author
@@ -99,7 +99,7 @@ validateProperty = (property)->
 datatypePrimordialType =
   string: 'string'
   entity: 'string'
-  url: 'string'
+  'ipfs-path': 'string'
   'positive-integer': 'number'
   'simple-day': 'string'
 
