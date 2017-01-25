@@ -39,6 +39,7 @@ module.exports = Entity =
     claims: {}
 
   setLabel: (doc, lang, value)->
+    preventRedirectionEdit doc, 'setLabel'
     doc.labels[lang] = value
     return doc
 
