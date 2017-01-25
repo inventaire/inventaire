@@ -52,6 +52,7 @@ module.exports = items_ =
       throw error_.new 'item not found', 404, itemId
 
   byEntity: (entityUri)-> db.viewByKeys 'byEntity', entityUriKeys(entityUri)
+  byPreviousEntity: (entityUri)-> db.viewByKey 'byPreviousEntity', entityUri
 
   picturesByEntity: (entityUri)->
     items_.byEntity entityUri

@@ -69,12 +69,6 @@ module.exports = entities_ =
 
     .then entities_.putUpdate.bind(null, userId, currentDoc)
 
-  deletePlaceholder: (userId, entityId)->
-    _.warn entityId, 'deleting placeholder entity'
-    db.get entityId
-    .then (currentDoc)->
-      entities_.putUpdate userId, currentDoc, Entity.delete(currentDoc)
-
   updateLabel: (lang, value, userId, currentDoc)->
     updatedDoc = _.cloneDeep currentDoc
     updatedDoc = Entity.setLabel updatedDoc, lang, value

@@ -109,17 +109,23 @@ module.exports = Entity =
     toEntityDoc.claims = _.extend {}, fromEntityDoc.claims, toEntityDoc.claims
     return toEntityDoc
 
-  turnEntityIntoRedirection: (fromEntityDoc, toUri)->
+  turnEntityIntoRedirection: (fromEntityDoc, toUri, removedPlaceholdersIds)->
     _id: fromEntityDoc._id
     _rev: fromEntityDoc._rev
     type: 'entity'
     redirect: toUri
+    # the list of placeholders entities to recover if the merge as to be reverted
+    removedPlaceholdersIds: removedPlaceholdersIds
 
-  delete: (entityDoc)->
-    deletedDoc = _.cloneDeep entityDoc
-    # One of CouchDB ways to delete a document is to set _deleted = true
-    deletedDoc._deleted = true
-    return deletedDoc
+  removePlaceholder: (entityDoc)->
+    removedDoc = _.cloneDeep entityDoc
+    removedDoc.type = 'removed:placeholder'
+    return removedDoc
+
+  recoverPlaceholder: (entityDoc)->
+    recoveredDoc = _.cloneDeep entityDoc
+    recoveredDoc.type = 'entity'
+    return recoveredDoc
 
 updateInferredProperties = (doc, property, oldVal, newVal)->
   propInferences = inferences[property]

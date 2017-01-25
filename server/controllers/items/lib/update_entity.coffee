@@ -4,8 +4,12 @@ _ = __.require 'builders', 'utils'
 Item = __.require 'models', 'item'
 items_ = require './items'
 
-module.exports = (fromUri, toUri)->
-  items_.byEntity fromUri
+AfterFn = (viewName, modelFnName)-> (fromUri, toUri)->
+  items_[viewName](fromUri)
   .map (item)->
-    updater = Item.updateEntityAfterEntityMerge.bind null, fromUri, toUri
+    updater = Item[modelFnName].bind null, fromUri, toUri
     return items_.db.update item._id, updater
+
+module.exports =
+  afterMerge: AfterFn 'byEntity', 'updateEntityAfterEntityMerge'
+  afterRevert: AfterFn 'byPreviousEntity', 'updateEntityAfterEntityMergeRevert'

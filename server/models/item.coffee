@@ -97,3 +97,19 @@ Item.updateEntityAfterEntityMerge = (fromUri, toUri, item)->
   item.previousEntity.unshift fromUri
 
   return _.log item, 'item after entity merge'
+
+Item.updateEntityAfterEntityMergeRevert = (fromUri, toUri, item)->
+  { entity } = item
+  previousEntity = item.previousEntity[0]
+  unless item.entity is toUri
+    throw error_.new "wrong entity uri: expected #{entity}, got #{toUri}", 500
+
+  unless fromUri is previousEntity
+    throw error_.new "wrong previous entity: expected #{previousEntity}, got #{fromUri}", 500
+
+  _.log item, 'item before entity merge revert'
+
+  item.entity = previousEntity
+  item.previousEntity.shift()
+
+  return _.log item, 'item after entity merge revert'
