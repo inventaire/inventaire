@@ -23,7 +23,7 @@ module.exports = (req, res)->
   { from:fromUri, to:toUri } = body
   { _id:userId } = req.user
 
-  # Verify that we got valid URIs
+  # Not using _.isEntityUri, letting the logic hereafter check specific prefixes
   unless _.isNonEmptyString fromUri
     return error_.bundle req, res, "missing parameter: from", 400, body
 
@@ -57,7 +57,10 @@ Merge = (userId, toPrefix, fromUri, toUri)-> (entitiesByUri)->
   unless toEntity? then throw notFound 'to', toUri
 
   unless fromEntity.type is toEntity.type
-    throw error_.new "type don't match: #{fromEntity.type} / #{toEntity.type}", 400, fromUri, toUri
+    # Exception: authors can be organizations and collectives of all kinds
+    # which will not get a 'human' type
+    unless fromEntity.type is 'human' and not toEntity.type?
+      throw error_.new "type don't match: #{fromEntity.type} / #{toEntity.type}", 400, fromUri, toUri
 
   unless fromEntity.type in validTypes
     throw error_.new "this type can't be merged: #{fromEntity.type} (only #{validTypes})", 400, fromUri, toUri
