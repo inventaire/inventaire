@@ -7,6 +7,7 @@ _.extend Q,
     'wd:Q277759' #book series
     'wd:Q14406742' #comic book series
     'wd:Q21198342' #manga series
+    'wd:Q1667921' #novel series
   ]
   works: [
     'wd:Q571' #book
@@ -24,6 +25,7 @@ _.extend Q,
     'wd:Q8274' #manga
     'wd:Q128093' #ebook
     'wd:Q17518461' #posthumous work
+    'wd:Q179461' #religious text
   ]
   editions: [
     'wd:Q3331189' #edition
