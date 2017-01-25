@@ -25,3 +25,4 @@ module.exports =
   admin:
     put: ActionsControllers
       'merge': require './merge'
+      'revert-merge': require './revert_merge'
