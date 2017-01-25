@@ -5,9 +5,10 @@ error_ = __.require 'lib', 'error/error'
 passport_ = __.require 'lib', 'passport/passport'
 
 exports.restrictApiAccess = (req, res, next) ->
+  # turn apiOpenBar for testing or maintainance purpose
   if CONFIG.apiOpenBar
-    # for testing purpose only
-    _.warn '/!\\ API open bar: on'
+    req.user = CONFIG.apiOpenBar.user
+    _.warn CONFIG.apiOpenBar, '/!\\ API open bar: on'
     return next()
 
   pathname = req._parsedUrl.pathname
