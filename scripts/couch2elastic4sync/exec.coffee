@@ -16,7 +16,7 @@ fs  = require 'fs'
 module.exports = (cliArg)->
   elasticConfig.sync.map (syncData)->
     { type } = syncData
-    command = 'couch2elastic4sync'
+    command = "#{process.cwd()}/node_modules/.bin/couch2elastic4sync"
     args = [ "--config=#{folder}/configs/#{type}.json" ]
 
     if cliArg is 'load' then args.push 'load'
