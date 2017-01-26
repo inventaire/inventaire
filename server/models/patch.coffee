@@ -18,13 +18,19 @@ module.exports =
     # Use the updated doc _id as the the current doc
     # will miss an _id at creation.
     docId = updatedDoc._id
-    # Take advantage of _rev to keep track of version numbers
+
+    # Take advantage of _rev to get a growing id identifying the order of patches
     # The first patch will have a version number of 2, as the empty template doc
     # would be version 1 but has no dedicated patch (its always the same template)
-    version = updatedDoc._rev.split('-')[0]
+    # /!\ DO NOT expect to have exactly one patch per revision!
+    # The entity document id being the entity URI base, actions might be taken
+    # to recover a mistakenly deleted entity document: two actions that would not
+    # produce patches and that have for consequence that the next patch docRevId
+    # will be the last patch docRevID + 3
+    docRevId = updatedDoc._rev.split('-')[0]
 
     return patch =
-      _id: "#{docId}:#{version}"
+      _id: "#{docId}:#{docRevId}"
       type: 'patch'
       user: userId
       timestamp: Date.now()
