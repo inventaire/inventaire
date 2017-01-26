@@ -30,7 +30,7 @@ module.exports = (req, res)->
 
   if _.isString authors
     # Convert authors provided as strings as an array of strings
-    seed.authors = authors.split(',').map (author)-> author.trim()
+    seed.authors = authors.split(/(,|&|\set\s|\sand\s)/).map (author)-> author.trim()
 
   seed.authors or= []
   seed.authors = seed.authors.filter (author)-> author?.length > 0
