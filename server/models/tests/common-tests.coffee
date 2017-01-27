@@ -39,7 +39,7 @@ June2014 = 1402351200000
 tests.EpochMs =
   test: (time)-> June2014 < time <= Date.now()
 
-tests.imgUrl = (url)-> tests.localImg(url) or _.isUrl(url)
+tests.imgUrl = (url)-> tests.localImg(url) or _.isUrl(url) or _.isIpfsPath(url)
 
 tests.valid = (attribute, value, option)->
   test = @[attribute]
@@ -50,7 +50,8 @@ tests.valid = (attribute, value, option)->
 
 tests.pass = (attribute, value, option)->
   unless tests.valid.call @, attribute, value, option
-    throw error_.new "invalid #{attribute}: #{value}", 400
+    if _.isObject value then value = JSON.stringify value
+    throw error_.new "invalid #{attribute}: #{value}", 400, arguments
 
 tests.type = (attribute, typeArgs...)->
   try _.type.apply _, typeArgs

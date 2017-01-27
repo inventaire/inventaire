@@ -1,7 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-{ allowTransaction } = __.require 'models', 'item'
+{ allowTransaction } = __.require 'models', 'item'
 { kmBetween } = __.require 'lib', 'geo'
 host = CONFIG.fullPublicHost()
 
@@ -44,7 +44,7 @@ indexById = (users)-> _.indexBy users, '_id'
 
 getItemsWithTransactionFirst = (lastItems, highlightedLength)->
   # create a new array as items.pop() would affect lastItems everywhere
-  items = lastItems.clone()
+  items = _.clone lastItems
   withTransaction = []
   withoutTransaction = []
   # go through all items until withTransaction is equal to

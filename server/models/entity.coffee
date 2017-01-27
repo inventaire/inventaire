@@ -14,10 +14,10 @@
 # Used prefixes:
 # Entities:
 #   PREFIX wd: <http://www.wikidata.org/entity/>
-#   PREFIX inv: <https://inventaire.io/entity/>
+#   PREFIX inv: <https://inventaire.io/entity/>
 # Properties:
-#   PREFIX wdt: <http://www.wikidata.org/prop/direct/>
-#   PREFIX invp: <https://inventaire.io/property/>
+#   PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+#   PREFIX invp: <https://inventaire.io/property/>
 
 # Inventaire properties:
 # invp:P1: Wikidata Id
@@ -29,7 +29,7 @@ error_ = __.require 'lib', 'error/error'
 tests = require './tests/common-tests'
 promises_ = __.require 'lib', 'promises'
 
-{ properties, whitelist } = __.require 'controllers','entities/lib/properties'
+{ properties, whitelist } = __.require 'controllers','entities/lib/properties'
 inferences = __.require 'controllers','entities/lib/inferences'
 
 module.exports = Entity =
@@ -39,16 +39,19 @@ module.exports = Entity =
     claims: {}
 
   setLabel: (doc, lang, value)->
+    preventRedirectionEdit doc, 'setLabel'
     doc.labels[lang] = value
     return doc
 
   setLabels: (doc, labels)->
+    preventRedirectionEdit doc, 'setLabels'
     for lang, value of labels
       doc = Entity.setLabel doc, lang, value
 
     return doc
 
   addClaims: (doc, claims)->
+    preventRedirectionEdit doc, 'addClaims'
     for property, array of claims
       prop = properties[property]
       # claims will be validated one by one later but some collective checks are needed
@@ -64,17 +67,16 @@ module.exports = Entity =
     return doc
 
   createClaim: (doc, property, value)->
+    preventRedirectionEdit doc, 'createClaim'
     return Entity.updateClaim doc, property, null, value
 
   updateClaim: (doc, property, oldVal, newVal)->
+    preventRedirectionEdit doc, 'updateClaim'
     unless oldVal? or newVal?
       throw error_.new 'missing old or new value', 400, arguments
 
     propArray = _.get doc, "claims.#{property}"
-
-    _.log propArray, 'propArray'
-    _.log oldVal, 'oldVal'
-    _.log newVal, 'newVal'
+    _.info "#{property} propArray: #{propArray} /oldVal: #{oldVal} /newVal: #{newVal}"
 
     if propArray? and newVal? and newVal in propArray
       throw error_.new 'claim property new value already exist', 400, arguments
@@ -97,6 +99,34 @@ module.exports = Entity =
       doc.claims[property].push newVal
 
     return updateInferredProperties doc, property, oldVal, newVal
+
+  # 'from' and 'to' refer to the redirection process which rely on merging two existing document:
+  # redirecting from an entity to another entity, only the 'to' doc will survive
+  mergeDocs: (fromEntityDoc, toEntityDoc)->
+    preventRedirectionEdit fromEntityDoc, 'mergeDocs (from)'
+    preventRedirectionEdit toEntityDoc, 'mergeDocs (to)'
+    # Giving priority to the toEntityDoc labels and claims
+    toEntityDoc.labels = _.extend {}, fromEntityDoc.labels, toEntityDoc.labels
+    toEntityDoc.claims = _.extend {}, fromEntityDoc.claims, toEntityDoc.claims
+    return toEntityDoc
+
+  turnEntityIntoRedirection: (fromEntityDoc, toUri, removedPlaceholdersIds)->
+    _id: fromEntityDoc._id
+    _rev: fromEntityDoc._rev
+    type: 'entity'
+    redirect: toUri
+    # the list of placeholders entities to recover if the merge as to be reverted
+    removedPlaceholdersIds: removedPlaceholdersIds
+
+  removePlaceholder: (entityDoc)->
+    removedDoc = _.cloneDeep entityDoc
+    removedDoc.type = 'removed:placeholder'
+    return removedDoc
+
+  recoverPlaceholder: (entityDoc)->
+    recoveredDoc = _.cloneDeep entityDoc
+    recoveredDoc.type = 'entity'
+    return recoveredDoc
 
 updateInferredProperties = (doc, property, oldVal, newVal)->
   propInferences = inferences[property]
@@ -139,3 +169,7 @@ setPossiblyEmptyPropertyArray = (doc, property, propertyArray)->
     doc.claims = _.omit doc.claims, property
   else
     doc.claims[property] = propertyArray
+
+preventRedirectionEdit = (doc, editLabel)->
+  if doc.redirect?
+    throw error_.new "#{editLabel} failed: the entity is a redirection", 400, arguments

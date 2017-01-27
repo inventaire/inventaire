@@ -34,8 +34,6 @@ module.exports = (uris, refresh)->
     if prefix in hasFormatter then id = formatters[prefix](id)
     domains[prefix].push id
 
-  _.log domains, 'entities requested'
-
   getDomainsPromises domains, refresh
   .then mergeResponses
   .catch _.ErrorRethrow("getEntitiesByUris err: #{uris.join('|')}")
@@ -62,6 +60,7 @@ mergeResponses = (results)->
     for entity in result.entities
       if entity.redirects?
         { from, to } = entity.redirects
+        _.types [from, to], 'strings...'
         response.redirects[from] = to
         delete entity.redirects
 

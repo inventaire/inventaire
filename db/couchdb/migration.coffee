@@ -3,42 +3,50 @@ _ = __.require 'builders', 'utils'
 Promise = require 'bluebird'
 Promise.longStackTraces()
 fs = require 'fs'
-previewDocDiffs = require './preview_doc_diffs'
 
-module.exports = (dbName, designDocName, preview=true)->
+module.exports = (params)->
+  { dbName, designDocName, preview, silent, showDiff } = params
+  preview ?= true
+  silent ?= false
+  showDiff ?= true
+
   db = __.require('couch', 'cot_base')(dbName, designDocName)
   unless db? then throw new Error('bad dbName')
 
-  console.log 'preview', preview
+  log = if silent then _.identity else _.log
+  Log = (label)-> (obj)-> log obj, label
+  docDiff = if showDiff then require('./doc_diffs') else _.noop
+
+  console.log 'preview mode:', preview
+  console.log 'silent mode:', silent
 
   updater = (docsIdsPromise, updateFunction, label)->
-    _.log typeof docsIdsPromise, 'typeof docsIdsPromise'
-    logMigration(dbName, updateFunction, label)
-    console.log 'updating'
+    unless preview then logMigration dbName, updateFunction, label
+
     docsIdsPromise
     .then (ids)->
-      _.log ids, 'got ids'
+      log ids, 'got ids'
       promises = []
       ids.forEach (id)->
         unless isDesignDoc id
-          _.log id, 'id'
+          log id, 'id'
           promises.push updateIfNeeded(id, updateFunction)
 
       return Promise.all promises
 
-    .then -> _.log 'done updating !!'
+    .then -> log 'done updating !!'
     .catch _.ErrorRethrow('migration error')
 
   updateIfNeeded = (id, updateFn)->
     db.get id
     .then (doc)->
       # use a clone of the doc to keep it unmuted
-      update = updateFn _.extend({}, doc)
+      update = updateFn _.cloneDeep(doc)
       if _.objDiff doc, update
-        if preview then previewDocDiffs doc, update
-        else return db.update id, updateFn
+        docDiff doc, update, preview
+        unless preview then db.update id, updateFn
       else
-        console.log 'no changes', id
+        log id, 'no changes'
         return
 
   API =
@@ -59,7 +67,7 @@ module.exports = (dbName, designDocName, preview=true)->
     getViewKeys: (viewName)->
       db.view designDocName, viewName
       .then (res)-> return res.rows.map _.property('id')
-      .then _.Log('view ids')
+      .then Log('view ids')
 
   return API
 

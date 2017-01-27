@@ -17,8 +17,7 @@ module.exports = (req, res, next) ->
 
   userId = req.user._id
 
-  promises_.start
-  .then -> solveNewRelation action, user, userId
+  promises_.try -> solveNewRelation action, user, userId
   .then _.success.bind(null, user, "#{action}: OK!")
   .then _.Ok(res)
   .then Track(req, ['relation', action])

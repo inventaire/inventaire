@@ -6,8 +6,10 @@ _.extend Q,
   series: [
     'wd:Q277759' #book series
     'wd:Q14406742' #comic book series
+    'wd:Q21198342' #manga series
+    'wd:Q1667921' #novel series
   ]
-  books: [
+  works: [
     'wd:Q571' #book
     'wd:Q2831984' #comic book album
     'wd:Q1004' #bande dessinée / comic book
@@ -16,14 +18,14 @@ _.extend Q,
     'wd:Q25379' #theatre play
     'wd:Q7725634' #literary work
     'wd:Q17518870' #group of literary works
-    'wd:Q5185279' #poem
     'wd:Q12308638' #poetry anthology
-    'wd:Q37484' #epic poem
     'wd:Q386724' #work
     'wd:Q49084' #short story / conte
     'wd:Q34620' #Greek tragedy
     'wd:Q8274' #manga
     'wd:Q128093' #ebook
+    'wd:Q17518461' #posthumous work
+    'wd:Q179461' #religious text
   ]
   editions: [
     'wd:Q3331189' #edition
@@ -61,10 +63,6 @@ propertiesRedirections =
   # author
   'wdt:P50': [
     'wdt:P58' # screen writer / scénariste
-  ]
-  # serie
-  'wdt:P179': [
-    'wdt:P361' # part of
   ]
 
 aliases = {}

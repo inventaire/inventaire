@@ -1,0 +1,21 @@
+#!/usr/bin/env coffee
+
+# HOW TO:
+# -----------------
+# - create a new migration doc based on ./migration_docs/sample
+# - run `npm run migrator migration_doc_filename`
+
+[ fileName ] = process.argv.slice(2)
+
+__ = require('config').universalPath
+
+# Set preview to false to apply the migration
+migrationParams = __.require 'couchdb', "migration_docs/#{fileName}"
+
+{ viewName, updateFunction } = migrationParams
+
+# the database port will be taken from the local config
+migration = __.require('couchdb', './migration')(migrationParams)
+
+# will run the updateFunction on all documents emitted by the view
+migration.updateByView viewName, updateFunction

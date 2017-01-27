@@ -9,7 +9,7 @@ promises_ = __.require 'lib', 'promises'
 
 module.exports = invitations_ =
   findOneByEmail:findOneByEmail.bind(null, db)
-  byEmails: byEmails.bind(null, db)
+  byEmails: byEmails.bind(null, db)
   createUnknownInvited: (inviterId, unknownEmails)->
     _.types arguments, ['string', 'array']
     invitedDocs = unknownEmails.map Invited.create.bind(null, inviterId)

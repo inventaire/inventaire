@@ -30,5 +30,5 @@ module.exports = (req, res, next)->
   res.sendFile "#{base}/#{filename}"
 
 parseFilename = (req)->
-  { pathname } = req._parsedUrl
+  { pathname } = req._parsedUrl
   filename = pathname.replace urlBase, ''

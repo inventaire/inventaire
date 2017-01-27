@@ -14,12 +14,3 @@ if not CONFIG.typeCheck
   types_.types = _.noop
 
 module.exports = _.extend _, server_, shared_, types_, logs_, json_, tests_
-
-# GLOBALS
-# building it there as utils are required everywhere
-# making it less a pain to do manual or automatic tests
-# depending on those
-
-# globals should be limited as much as possible
-
-__.require('lib', 'global_libs_extender')()

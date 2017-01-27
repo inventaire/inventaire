@@ -2,13 +2,13 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-{ enabled, endpoint, idsite, rec } = CONFIG.piwik
+{ enabled, endpoint, idsite, rec } = CONFIG.piwik
 host = CONFIG.fullHost()
 placeholderUrl = '/unknown'
 promises_ = require './promises'
 
 track = (req, actionArray)->
-  unless enabled then return
+  unless enabled then return
 
   { _id:userId, language } = req.user
   { referer:url, 'user-agent':ua, 'accept-language':al } = req.headers

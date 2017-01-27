@@ -4,7 +4,7 @@ error_ = __.require 'lib', 'error/error'
 
 module.exports =
   get: (req, res, next)->
-    { pathname } = req._parsedUrl
+    { pathname } = req._parsedUrl
     if missedApiRequest(req)
       # the request didnt match previous routes
       err = "GET #{req._parsedUrl.pathname}: api route not found"

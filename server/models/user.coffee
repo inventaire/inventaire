@@ -48,8 +48,7 @@ User._create = (username, email, creationStrategy, language, password)->
   return user
 
 User.create = (args...)->
-  promises_.start
-  .then -> User._create.apply null, args
+  promises_.try -> User._create.apply null, args
   .then withHashedPassword
 
 User.upgradeInvited = (invitedDoc, username, creationStrategy, language, password)->
@@ -77,3 +76,17 @@ User.softDelete = (userDoc)->
   userSouvenir = _.pick userDoc, User.attributes.critical
   userSouvenir.type = 'deletedUser'
   return userSouvenir
+
+User.updateEmail = (doc, email)->
+  doc = archivePreviousEmail doc
+  doc.email = email
+  return doc
+
+archivePreviousEmail = (doc)->
+  # don't save the previous email if it had not been validated
+  if doc.validEmail
+    doc.previousEmails or= []
+    doc.previousEmails.push doc.email
+    doc.previousEmails = _.uniq doc.previousEmails
+    doc.validEmail = false
+  return doc

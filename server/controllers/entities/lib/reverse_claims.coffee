@@ -6,6 +6,8 @@ promises_ = __.require 'lib', 'promises'
 entities_ = require './entities'
 prefixify = __.require 'lib', 'wikidata/prefixify'
 cache_ = __.require 'lib', 'cache'
+getInvEntityCanonicalUri = require './get_inv_entity_canonical_uri'
+couch_ = __.require 'lib', 'couch'
 
 module.exports = (property, uri, refresh)->
   [ prefix, id ] = uri.split ':'
@@ -15,7 +17,7 @@ module.exports = (property, uri, refresh)->
   if prefix is 'wd'
     promises.push wikidataReverseClaims(property, id, refresh)
 
-  promises.push entities_.idsByClaim(property, uri)
+  promises.push invReverseClaims(property, uri)
 
   promises_.all promises
   .then _.flatten
@@ -30,3 +32,8 @@ _wikidataReverseClaims = (property, wdId)->
   promises_.get _.log(wdk.getReverseClaims(wdProp, wdId), 'reverseclaim')
   .then wdk.simplifySparqlResults
   .map prefixify
+
+invReverseClaims = (property, uri)->
+  entities_.byClaim property, uri, true
+  .then couch_.mapDoc
+  .map (entity)-> getInvEntityCanonicalUri(entity)[0]

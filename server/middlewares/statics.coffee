@@ -1,5 +1,6 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
+_ = __.require 'builders', 'utils'
 
 if CONFIG.serveStaticFiles
   americano = require 'americano'
@@ -9,3 +10,10 @@ if CONFIG.serveStaticFiles
   exports.mountStaticFiles = [ '/public', staticMiddleware ]
 else
   exports.mountStaticFiles = require './pass'
+
+exports.enableCors = (req, res, next)->
+  if req.originalUrl.startsWith '/public'
+    res.setHeader 'Access-Control-Allow-Origin', '*'
+    res.setHeader 'Access-Control-Allow-Method', 'GET'
+
+  next()

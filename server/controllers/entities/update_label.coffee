@@ -5,15 +5,20 @@ entities_ = require './lib/entities'
 
 module.exports = (req, res)->
   { id:entityId, lang, value } = req.body
-  { _id:userId } = req.user
+  { _id:userId } = req.user
 
   _.log req.body, 'body'
+
+  unless _.isInvEntityId entityId
+    return error_.bundle req, res, 'invalid id', 400
 
   unless _.isLang lang
     return error_.bundle req, res, 'invalid 2-letters lang code', 400
 
-  unless _.isNonEmptyString value
-    return error_.bundle req, res, "value parameter can't be empty", 400
+  unless _.isNonEmptyString value.trim()
+    return error_.bundle req, res, "value parameter should be an non empty string", 400
+
+  value = value.trim()
 
   entities_.byId entityId
   .then _.Log('doc')

@@ -35,5 +35,4 @@ parseLatLng = (query)->
   return [ minLng, minLat, maxLng, maxLat ]
 
 module.exports = (query)->
-  promises_.start
-  .then parseLatLng.bind(null, query)
+  promises_.try parseLatLng.bind(null, query)

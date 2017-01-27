@@ -13,6 +13,9 @@ validProtocols = [ 'http:', 'https:' ]
 module.exports = (req, res)->
   # removing both /api/proxy/public/ and https://inventaire.io/api/proxy/public/
   queriedUrl = req.originalUrl.split('/api/proxy/public/')[1]
+  unless _.isNonEmptyString queriedUrl
+    return error_.bundle req, res, 'missing url', 400, queriedUrl
+
   { protocol, hostname } = url.parse queriedUrl
   { method } = req
   methodIsPost = method is 'POST'

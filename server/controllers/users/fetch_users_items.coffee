@@ -6,11 +6,11 @@ user_ = __.require 'lib', 'user/user'
 items_ = __.require 'controllers', 'items/lib/items'
 parseAndValidateIds = require './lib/parse_and_validate_ids'
 
-module.exports = (req, res, ids) ->
+module.exports = (req, res)->
+  { ids } = req.query
   userId = req.user._id
 
-  promises_.start
-  .then parseAndValidateIds.bind(null, ids)
+  promises_.try parseAndValidateIds.bind(null, ids)
   .then user_.getRelationsStatuses.bind(null, userId)
   .then (res)->
     [ friends, coGroupMembers ] = res

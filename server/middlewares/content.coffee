@@ -1,4 +1,5 @@
 CONFIG = require 'config'
+{ debug } = CONFIG
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
@@ -6,11 +7,21 @@ error_ = __.require 'lib', 'error/error'
 urlencoded = 'application/x-www-form-urlencoded'
 
 module.exports =
+  # Helping body-parser to get its parsing right
+  redirectContentTypes: (req, res, next)->
+    if req.headers['content-type'] is 'application/csp-report'
+      req.headers['content-type'] = 'application/json'
+
+    next()
+
   # When passed content with a content-type header different
   # from 'application/json' (typically urlencoded which is set by default on
   # tools like curl), this tries to be convenient by recovering the passed json
   # instead of returning an unhelpful error messages
-  recoverValidJson: (req, res, next)->
+  # /!\ To be used only in development as it exposes to CSRF
+  # cf https://github.com/pillarjs/understanding-csrf#adding-them-to-json-ajax-calls
+  # http://stackoverflow.com/a/11024387/3324977
+  recoverJsonUrlencoded: (req, res, next)->
     if req.headers['content-type'] isnt urlencoded then return next()
 
     keys = Object.keys req.body
@@ -43,13 +54,13 @@ module.exports =
     if pathname in ignorePathname then return next()
 
     # If the request as no session cookie, simply use a hash of the header
-    # Different users might have the same but users using Basic Auth will be distincts
+    # Different users might have the same but users using Basic Auth will be distincts
     # so it only let unauthentified POST/PUT requests with the exact same body at risk
-    # of unjustified request denial, which should be a rather small risk
+    # of unjustified request denial, which should be a rather small risk
     sessionId = req.cookies?['express:sess.sig'] or headersHash(req)
 
     # Known case with an empty body:
-    # - image upload: its using application/octet-stream header instead of json
+    # - image upload: its using application/octet-stream header instead of json
     #   thus body-parser won't populate req.body
     data = _.hashCode JSON.stringify(req.body or {})
 
@@ -60,6 +71,8 @@ module.exports =
       return error_.bundle req, res, 'dupplicated request', 429, [key, req.body]
 
     temporaryLock key, data
+
+    if debug then _.log req.body, "#{method}:#{url} body"
 
     next()
 
@@ -77,5 +90,5 @@ requestsCache = {}
 
 methodsWithBody = [ 'POST', 'PUT' ]
 ignorePathname = [
-  '/api/logs/public'
+  '/api/reports/public'
 ]

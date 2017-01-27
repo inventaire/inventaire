@@ -21,7 +21,11 @@ module.exports = config =
   publicProtocol: 'http'
   publicHost: 'localhost'
   fullPublicHost: -> "#{@publicProtocol}://#{@publicHost}:#{@port}"
+  invHost: 'https://inventaire.io'
   secret: 'yoursecrethere'
+  # Debug mode:
+  # - log requests body
+  debug: false
 
   # CouchDB settings
   db:
@@ -44,6 +48,13 @@ module.exports = config =
     freezeFollow: false
     # logs Couchdb requests parameters
     debug: false
+    # db settings for script actions
+    # see scripts/lib/action_by_input.coffee
+    actionsScripts:
+      port: 3456
+      suffix: 'prod'
+      # prevent triggering follow onChange actions with data from the remote database
+      freezeFollow: true
   elasticsearch:
     base: 'http://localhost:9200/inventaire'
     sync: [
@@ -65,7 +76,6 @@ module.exports = config =
   # can be useful for development
   godMode: false
   # see server/controllers/tests.coffee
-  cookieThief: false
   morgan:
     logFormat: 'dev'
     mutedRoutes: [
@@ -151,6 +161,17 @@ module.exports = config =
     publicGateway: 'https://ipfs.io'
   searchTimeout: 10000
 
-  # Mock user ids passed for server edits on entities
-  adminUserIds:
-    seed: '00000000000000000000000000000000'
+  gitlabLogging:
+    enabled: false
+    host: 'https://gitlab.server.tld'
+    user: 'gitlab.user'
+    token: 'USER_GITLAB_TOKEN'
+    project_id: 114
+    assignee_id: 2
+
+  # Config passed to the client
+  client:
+    elasticsearch:
+      wikidata: 'https://data.inventaire.io/wikidata'
+    ipfs:
+      gateway: 'https://ipfs.io'

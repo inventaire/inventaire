@@ -11,6 +11,7 @@ module.exports = (userId, limitDate=0)->
   relations_.getUserAndCoGroupsMembers userId
   # get last friends items available for a transaction
   .then items_.friendsListings
+  .map items_.importSnapshotData
   .then getLastItems.bind(null, limitDate)
   .then extractHighlightedItems
   .catch _.ErrorRethrow('last friends items')

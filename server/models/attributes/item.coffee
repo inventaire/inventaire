@@ -6,7 +6,28 @@ attributes.updatable = [
   'listing'
   'details'
   'notes'
-  'authors'
+  'snapshot'
+]
+
+# Not allowing snapshot as it later updated
+# and would require additional checking
+attributes.validAtCreation = [
+  'title'
+  'entity'
+  'transaction'
+  'pictures'
+  'listing'
+  'details'
+  'notes'
+]
+
+# List of attributes that can be part of item.snapshot,
+# not to be confused with attributes.snapshot hereafter.
+# Snapshot data follow there source document: changes on the item entity
+# will be reflected in the item's snapshot data
+attributes.inLocalSnapshot = [
+  'entity:image'
+  'entity:authors'
 ]
 
 # not updatable by the user
@@ -17,13 +38,16 @@ notUpdatable = [
   'entity'
   'created'
 
-  # updated when other attributes are updated
+  # updated when user updatable attributes are updated
   'updated'
 
   # updated as side effects of transactions
   'busy'
   'owner'
   'history'
+
+  # updated as side effects of entity redirections
+  'previousEntity'
 
 ]
 
@@ -62,7 +86,6 @@ attributes.constrained =
 # thus their absence here as long as only transactions doc uses snaphshot
 attributes.snapshot = [
  'title'
- 'authors'
  'entity'
  'pictures'
  'details'

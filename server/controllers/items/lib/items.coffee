@@ -15,7 +15,7 @@ db = __.require('couch', 'base')('items')
 
 module.exports = items_ =
   db: db
-  byId: db.get.bind(db)
+  byId: db.get
   byOwner: (owner)->
     # only used by items.fetch with req.session.email owner
     # => shouldn't be safeItem'ized
@@ -47,12 +47,15 @@ module.exports = items_ =
       if item.listing is 'public' then return item
       else throw error_.new 'item isnt a public item', 403, itemId
     .catch (err)->
-      # cant filter operational error from the error status code
+      # cant filter operational error from the error statusCode
       # as cot returns a poor error object with just a message
       throw error_.new 'item not found', 404, itemId
 
+  byEntity: (entityUri)-> db.viewByKeys 'byEntity', entityUriKeys(entityUri)
+  byPreviousEntity: (entityUri)-> db.viewByKey 'byPreviousEntity', entityUri
+
   picturesByEntity: (entityUri)->
-    db.viewByKeys 'byEntity', entityUriKeys(entityUri)
+    items_.byEntity entityUri
     .map _.property('pictures')
 
   publicByEntity: (entityUri)->
@@ -80,8 +83,7 @@ module.exports = items_ =
     db.post Item.create userId, item
 
   update: (userId, item)->
-    item = Item.update userId, item
-    db.update item._id, Item.updater.bind(null, userId, item)
+    db.update item._id, Item.update.bind(null, userId, item)
 
   verifyOwnership: (itemId, userId)->
     db.get itemId
@@ -105,7 +107,7 @@ module.exports = items_ =
     .then Item.changeOwner.bind(null, transacDoc)
     .then db.postAndReturn
 
-  bulkDelete: db.bulkDelete.bind(db)
+  bulkDelete: db.bulkDelete
 
   nearby: (userId, range=50, strict=false)->
     user_.nearby userId, range, strict
@@ -118,6 +120,14 @@ module.exports = items_ =
       user_.getUsersPublicData(usersIds).then _.Log('users')
       items_.publicListings(usersIds).then _.Log('items')
     ]
+
+  # Data manipulation done on client-side view models (item.serializeData),
+  # but useful to have server-side for emails view models
+  importSnapshotData: (item)->
+    { 'entity:authors':authors, 'entity:image':image } = item.snapshot
+    item.authors = authors
+    if image? and item.pictures.length is 0 then item.pictures = [ image ]
+    return item
 
 entityUriKeys = (entityUri)->
   return listingsPossibilities.map (listing)-> [entityUri, listing]

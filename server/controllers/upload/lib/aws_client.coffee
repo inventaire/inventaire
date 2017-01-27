@@ -15,7 +15,7 @@ module.exports =
   deleteImages: (urls, headers)->
     urls = urls.map (url)->
       parts = url.split(CONFIG.aws.bucket)
-      return parts.last()
+      return _.last parts
 
     headers or= {}
     return new Promise (resolve, reject)->
@@ -36,5 +36,5 @@ putFile = (path, filename, type='image/jpeg')->
 
 extractOwnedUrl = (url)->
   parts = url.split CONFIG.aws.bucket
-  path = parts.last()
+  path = _.last parts
   return "#{CONFIG.aws.protocol}://#{CONFIG.aws.bucket}#{path}"

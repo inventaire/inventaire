@@ -14,7 +14,7 @@ module.exports = (req, res)->
   { query } = req
   _.info query, 'entities search'
 
-  { search, lang, filter, refresh } = query
+  { search, lang } = query
 
   unless _.isNonEmptyString search
     return error_.bundle req, res, 'empty query' , 400
@@ -22,18 +22,20 @@ module.exports = (req, res)->
   unless lang?
     return error_.bundle req, res, 'no lang specified' , 400
 
-  # make sure we have a 2 letters lang code
+  # Make sure we have a 2 letters lang code
   query.lang = _.shortLang lang
+  query.refresh = _.parseBooleanString query.refresh
 
-  refresh = _.parseBooleanString refresh
+  if isbn_.looksLikeAnIsbn search
+    unless isbn_.isValidIsbn search
+      return error_.bundle req, res, 'invalid isbn' , 400
 
-  if isbn_.isIsbn search
     _.log search, 'searchByIsbn'
-    promise = searchByIsbn search, refresh
+    promise = searchByIsbn { isbn: search, refresh: query.refresh }
 
   else
     _.log search, 'searchByText'
-    promise = searchByText query, refresh
+    promise = searchByText query
 
   promise
   .then spreadResults
@@ -44,13 +46,13 @@ spreadResults = (results)->
   response =
     humans: []
     series: []
-    books: []
+    works: []
     editions: []
 
   for result in results
     { type } = result
     switch type
-      when 'human', 'serie', 'book', 'edition' then response["#{type}s"].push result
+      when 'human', 'serie', 'work', 'edition' then response["#{type}s"].push result
       else _.warn result, "filtered-out type: #{type}"
 
   return response

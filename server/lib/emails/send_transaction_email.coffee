@@ -46,6 +46,7 @@ fetchData = (transaction)->
       requester: requester
       item: item
       messages: messages
+      image: item.pictures?[0] or transaction.snapshot.entity?.image
   .then buildTimeline
   .then aliasUsers
   # .then completeActionsData

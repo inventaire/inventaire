@@ -38,7 +38,7 @@ formatData = (file, parsedData)->
   unless url?
     errMessage = error or 'url not found'
     err = new Error errMessage
-    if error.match('File does not exist') then err.status = 404
+    if error.match('File does not exist') then err.statusCode = 404
     throw err
 
   if author? and license? then text = "#{author} - #{license}"

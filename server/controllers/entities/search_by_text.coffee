@@ -7,59 +7,65 @@ searchLocalEntities = require './search_local'
 { searchTimeout } = CONFIG
 { enabled:dataseedEnabled } = CONFIG.dataseed
 getEntitiesByUris = require './lib/get_entities_by_uris'
+GetEntitiesByUris = (refresh)-> (uris)-> getEntitiesByUris uris, refresh
 promises_ = __.require 'lib', 'promises'
-
 error_ = __.require 'lib', 'error/error'
 
-module.exports = (query, refresh)->
+module.exports = (query)->
   _.type query, 'object'
-  { disableDataseed } = query
+  { disableDataseed, refresh } = query
+
+  key = JSON.stringify(query) + ' ' + _.randomString(4)
 
   promises = [
-    searchWikidataByText query
-    searchLocalByText query
+    searchWikidataByText query, key
+    searchLocalByText query, key
   ]
 
   if dataseedEnabled and not disableDataseed
-    promises.push searchDataseedByText(query, refresh)
+    promises.push searchDataseedByText(query, key)
 
   promises_.all promises
   .then mergeResults
+  .then ReplaceEditionsByTheirWork(refresh)
+  .then _.values
   .catch _.ErrorRethrow('search by text err')
 
-searchWikidataByText = (query)->
+searchWikidataByText = (query, key)->
+  key = startTimer 'searchWikidataByText', key
+
   searchWikidataEntities query
   .timeout searchTimeout
   .map urifyWd
   # Starting to look for the entities as soon as we have a search result
   # as other search results might take more time here but less later
-  .then getEntitiesByUris
+  .then GetEntitiesByUris(query.refresh)
   .then filterOutIrrelevantTypes
   .catch error_.notFound
-  # catching errors to avoid crashing promises_.all
+  .finally _.EndTimer(key)
 
-searchLocalByText = (query)->
+searchLocalByText = (query, key)->
+  key = startTimer 'searchLocalByText', key
+
   searchLocalEntities query
   .timeout searchTimeout
   .map urifyInv
-  .then getEntitiesByUris
+  .then GetEntitiesByUris(query.refresh)
   .catch error_.notFound
+  .finally _.EndTimer(key)
 
-searchDataseedByText = (query, refresh)->
-  searchDataseed query, refresh
+searchDataseedByText = (query, key)->
+  key = startTimer 'searchDataseedByText', key
+
+  _.log query, 'query'
+  { search, lang, refresh } = query
+  searchDataseed search, lang, refresh
   .timeout searchTimeout
   .get 'isbns'
   .map urifyIsbn
-  .then getEntitiesByUris
+  .then GetEntitiesByUris(refresh)
   .catch error_.notFound
-
-mergeResults = (results)->
-  _(results)
-  .compact()
-  .map _.property('entities')
-  .map _.values
-  .flatten()
-  .value()
+  .finally _.EndTimer(key)
 
 urifyWd = (wdId)-> "wd:#{wdId}"
 urifyIsbn = (isbn)-> "isbn:#{isbn}"
@@ -72,7 +78,33 @@ filterOutIrrelevantTypes = (result)->
   for uri, entity of result.entities
     { type } = entity
     if not type or type is 'meta'
-      _.warn entity, 'filtered out'
+      _.warn [entity.labels.en, entity.claims['wdt:P31']], "filtered out:#{uri}"
       delete result.entities[uri]
 
   return result
+
+mergeResults = (results)->
+  _.flattenIndexes _.compact(results).map(_.property('entities'))
+
+ReplaceEditionsByTheirWork = (refresh)-> (entities)->
+  missingWorkEntities = []
+  for uri, entity of entities
+    if entity.type is 'edition'
+      workUri = entity.claims['wdt:P629']?[0]
+      if workUri?
+        # Ensure that the edition work is in the results
+        unless entities[workUri]? then missingWorkEntities.push workUri
+        # Remove the edition from the results as it will be fetched later
+        # as an edition of its work
+      else
+        # Example: wd:Q24200032
+        _.warn entity, 'edition without an associated work: ignored'
+      delete entities[uri]
+
+  missingWorkEntities = _.uniq missingWorkEntities
+  _.log missingWorkEntities, 'missingWorkEntities from editions'
+
+  return getEntitiesByUris missingWorkEntities, refresh
+  .then (results)-> _.extend entities, results.entities
+
+startTimer = (name, key)-> _.startTimer "#{name} #{key}"

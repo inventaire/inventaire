@@ -6,7 +6,7 @@ _ = __.require 'builders', 'utils'
 user_ = __.require 'lib', 'user/user'
 error_ = __.require 'lib', 'error/error'
 { basicUpdater } = __.require 'lib', 'doc_updates'
-emailUpdater = require('./lib/email_updater')(user_)
+User = __.require 'models', 'user'
 { Track } = __.require 'lib', 'track'
 
 module.exports = (req, res, next) ->
@@ -41,7 +41,7 @@ module.exports = (req, res, next) ->
       message = "invalid #{attribute}: #{value} (#{type})"
       return error_.bundle req, res, message, 400
 
-    return updateAttribute(user, rootAttribute, attribute, value)
+    return updateAttribute(user, attribute, value)
     .then _.Ok(res)
     .then Track(req, ['user', 'update'])
     .catch error_.Handler(req, res)
@@ -49,16 +49,15 @@ module.exports = (req, res, next) ->
   if attribute in concurrencial
     # checks for validity and availability (+ reserve words for username)
     return user_.availability[attribute](value, currentValue)
-    .then _.Full(updateAttribute, null, user, rootAttribute, attribute, value)
+    .then _.Full(updateAttribute, null, user, attribute, value)
     .then _.Ok(res)
     .then Track(req, ['user', 'update'])
     .catch error_.Handler(req, res)
 
   error_.bundle req, res, "forbidden update: #{attribute} - #{value}", 403
 
-updateAttribute = (user, rootAttribute, attribute, value)->
-  updater = switch rootAttribute
-    when 'email' then emailUpdater
-    else basicUpdater
-
-  user_.db.update user._id, updater.bind(null, attribute, value)
+updateAttribute = (user, attribute, value)->
+  if attribute is 'email'
+    user_.updateEmail user, value
+  else
+    user_.db.update user._id, basicUpdater.bind(null, attribute, value)

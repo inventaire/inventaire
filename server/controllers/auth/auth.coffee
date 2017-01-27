@@ -1,33 +1,22 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-error_ = __.require 'lib', 'error/error'
-passport_ = __.require 'lib', 'passport/passport'
-
+__ = require('config').universalPath
+ActionsControllers = __.require 'lib', 'actions_controllers'
 { signup, login, logout } = require './connection'
 { usernameAvailability, emailAvailability } = require './availability'
-emailConfirmation = require './email_confirmation'
-updatePassword = require './update_password'
-resetPassword = require './reset_password'
-fakeSubmit = require './fake_submit'
 
-exports.publicActions = (req, res, next)->
-  { action } = req.query
-  switch action
-    when 'signup' then signup req, res
-    when 'login' then login req, res
-    when 'logout' then logout req, res
-    when 'username-availability' then usernameAvailability req, res
-    when 'email-availability' then emailAvailability req, res
-    when 'reset-password' then resetPassword req, res
-    when 'submit' then fakeSubmit req, res
-    else error_.unknownAction req, res
+module.exports =
+  get: ActionsControllers
+    'username-availability': usernameAvailability
+    'email-availability': emailAvailability
 
-exports.actions = (req, res, next)->
-  { action } = req.query
-  switch action
-    when 'email-confirmation' then emailConfirmation req, res
-    when 'update-password' then updatePassword req, res
-    else error_.unknownAction req, res
+  publicActions: ActionsControllers
+    'signup': signup
+    'login': login
+    'logout': logout
+    'reset-password': require './reset_password'
+    'submit': require './fake_submit'
 
-exports.token = require './token'
+  actions: ActionsControllers
+    'email-confirmation': require './email_confirmation'
+    'update-password': require './update_password'
+
+  token: require './token'

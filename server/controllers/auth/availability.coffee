@@ -5,7 +5,7 @@ error_ = __.require 'lib', 'error/error'
 user_ = __.require 'lib', 'user/user'
 
 exports.usernameAvailability = (req, res, next) ->
-  { username } = req.body
+  { username } = req.query
   # checks for validity, availability, reserve words
   user_.availability.username username
   .then -> res.json {username: username, status: 'available'}
@@ -13,7 +13,7 @@ exports.usernameAvailability = (req, res, next) ->
 
 
 exports.emailAvailability = (req, res, next) ->
-  { email } = req.body
+  { email } = req.query
   # checks for validity, availability
   user_.availability.email email
   .then -> res.json {email: email, status: 'available'}

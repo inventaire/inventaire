@@ -14,4 +14,4 @@ module.exports =
 
     Radio.emit 'received:feedback', subject, message, user, unknownUser
 
-    res.status(201).send('ok')
+    _.ok res, 201

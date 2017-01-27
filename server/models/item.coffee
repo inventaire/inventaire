@@ -11,51 +11,49 @@ Item.attributes = attributes = require './attributes/item'
 
 Item.create = (userId, item)->
   _.types arguments, ['string', 'object']
-  # we want to get couchdb sequential id
-  # so we need to let _id blank
-  item = _.omit item, '_id'
+  # _id: We want to get couchdb sequential id so we need to let _id blank
+  # owner: ignore any passed owner, the owner is the authentified user
+  # created: ignore what the client may say, it will be re-set here
+  item = _.omit item, ['_id', 'owner', 'created']
+  passedAttributes = Object.keys item
 
-  { title, entity, pictures } = item
-  tests.pass 'title', title
-  tests.pass 'entity', entity
-
-  tests.pass 'userId', userId
-  item.owner = userId
-
-  item.pictures = pictures or= []
-  tests.pass 'pictures', pictures
-
-  item.created = Date.now()
+  item.pictures or= []
   item.listing = solveConstraint item, 'listing'
   item.transaction = solveConstraint item, 'transaction'
-  return item
 
-Item.update = (userId, item)->
-  _.types arguments, ['string', 'object']
-  tests.pass 'itemId', item._id
+  for attr in passedAttributes
+    unless attr in attributes.validAtCreation
+      throw error_.new "invalid attribute: #{attr}", 400, arguments
 
-  unknown = _.difference Object.keys(item), attributes.known
-  if unknown.length > 0
-    throw error_.new "unknown attribute(s): #{unknown}", 400
+    tests.pass attr, item[attr]
 
-  # just testing updatable attributes
-  # as non-updatable will be filtered-out at Item.updater
-  for attr in attributes.updatable
-    passAttrTest item, attr
+  tests.pass 'userId', userId
 
+  item.owner = userId
+  item.created = Date.now()
+  item.snapshot = {}
   return item
 
 passAttrTest = (item, attr)->
   if item[attr]? then tests.pass attr, item[attr]
 
-Item.updater = (userId, item, doc)->
+Item.update = (userId, updateAttributesData, doc)->
   unless doc?.owner is userId
     throw new Error "user isnt doc.owner: #{userId} / #{doc.owner}"
 
+  nonUpdatedAttribute = Object.keys _.omit(updateAttributesData, attributes.known)
+  if nonUpdatedAttribute.length > 0
+    throw error_.new "invalid attribute(s): #{nonUpdatedAttribute}", 400
+
+  # filter-out non-updatable attributes
+  newData = _.pick updateAttributesData, attributes.updatable
+
+  for attr in attributes.updatable
+    passAttrTest updateAttributesData, attr
+
+  _.extend doc, newData
   doc.updated = Date.now()
-  # filtered out non-updatable attributes
-  newData = _.pick item, attributes.updatable
-  return _.extend doc, newData
+  return doc
 
 Item.changeOwner = (transacDoc, item)->
   _.types arguments, 'objects...'
@@ -69,7 +67,7 @@ Item.changeOwner = (transacDoc, item)->
   unless item.owner is owner
     throw new Error "owner doesn't match item owner"
 
-  item.history or= []
+  item.history or= []
   item.history.push
     transaction: transacId
     previousOwner: owner
@@ -85,4 +83,33 @@ Item.changeOwner = (transacDoc, item)->
     updated: Date.now()
 
 Item.allowTransaction = (item)->
-  item.transaction in attributes.allowTransaction
+  item.transaction in attributes.allowTransaction
+
+Item.updateEntityAfterEntityMerge = (fromUri, toUri, item)->
+  unless item.entity is fromUri
+    throw error_.new "wrong entity uri: expected #{fromUri}, got #{item.entity}", 500
+
+  _.log item, 'item before entity merge'
+
+  item.entity = toUri
+  # Keeping track of previous entity URI in case a rollback is needed
+  item.previousEntity or= []
+  item.previousEntity.unshift fromUri
+
+  return _.log item, 'item after entity merge'
+
+Item.updateEntityAfterEntityMergeRevert = (fromUri, toUri, item)->
+  { entity } = item
+  previousEntity = item.previousEntity[0]
+  unless item.entity is toUri
+    throw error_.new "wrong entity uri: expected #{entity}, got #{toUri}", 500
+
+  unless fromUri is previousEntity
+    throw error_.new "wrong previous entity: expected #{previousEntity}, got #{fromUri}", 500
+
+  _.log item, 'item before entity merge revert'
+
+  item.entity = previousEntity
+  item.previousEntity.shift()
+
+  return _.log item, 'item after entity merge revert'

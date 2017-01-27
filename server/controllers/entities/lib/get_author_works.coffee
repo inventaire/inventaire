@@ -8,7 +8,7 @@ prefixify = __.require 'lib', 'wikidata/prefixify'
 { getSimpleDayDate, sortByDate } = require './queries_utils'
 { types, typesNames, getTypePluralNameByTypeUri } = __.require 'lib', 'wikidata/aliases'
 
-whitelistedTypesNames = [ 'series', 'books', 'articles' ]
+whitelistedTypesNames = [ 'series', 'works', 'articles' ]
 
 module.exports = (uri, refresh)->
   _.types arguments, ['string', 'boolean|undefined'], 1

@@ -2,36 +2,24 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 transactions_ = require './lib/transactions'
-request = require './request'
-updateState = require './update_state'
 messages = require './messages'
-markAsRead = require './mark_as_read'
+ActionsControllers = __.require 'lib', 'actions_controllers'
 
-module.exports =
-  get: (req, res, next)->
-    { action } = req.query
-
-    switch action
-      when 'get-messages' then messages.get req, res
-      else sendUserTransactions req, res, req.user._id
-
-  post: (req, res, next)->
-    { action } = req.body
-
-    switch action
-      when 'request' then request req, res
-      when 'new-message' then messages.post req, res
-      else error_.unknownAction req, res
-
-  put: (req, res, next)->
-    { action } = req.body
-
-    switch action
-      when 'update-state' then updateState req, res
-      when 'mark-as-read' then markAsRead req, res
-      else error_.unknownAction req, res
-
-sendUserTransactions = (req, res, userId)->
+sendUserTransactions = (req, res)->
+  { _id:userId } = req.user
   transactions_.byUser userId
   .then res.json.bind(res)
   .catch error_.Handler(req, res)
+
+module.exports =
+  get: ActionsControllers
+    'default': sendUserTransactions
+    'get-messages': messages.get
+
+  post: ActionsControllers
+    'request': require './request'
+    'new-message': messages.post
+
+  put: ActionsControllers
+    'update-state': require './update_state'
+    'mark-as-read': require './mark_as_read'

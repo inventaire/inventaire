@@ -22,7 +22,6 @@ findAnImage = (entity)->
   return pickBestPic entity, commonsImage, enwikiTitle, openLibraryId
 
 pickBestPic = (entity, commonsImage, enwikiTitle, openLibraryId)->
-  _.log arguments, 'pickBestPic'
   getters = {}
   if commonsImage? then getters.wm = getThumbData.bind null, commonsImage
   if enwikiTitle? then getters.wp = getEnwikiImage.bind null, enwikiTitle
@@ -30,9 +29,6 @@ pickBestPic = (entity, commonsImage, enwikiTitle, openLibraryId)->
     getters.ol = getOpenLibraryCover.bind null, openLibraryId, entity.type
 
   order = getPicSourceOrder entity
-  _.log order, "#{entity.id} image order"
-  _.log Object.keys(getters), "#{entity.id} available image getters"
-
   candidates = _.values _.pick(getters, order)
   if candidates.length is 0 then return promises_.resolved
 
@@ -44,10 +40,10 @@ getPicSourceOrder = (entity)->
     # Commons pictures are prefered to Wikipedia and Open Library
     # to get access to photo credits
     when 'human' then return ['wm', 'wp', 'ol']
-    when 'book'
-      # Giving priority to openlibrary's pictures for books
+    when 'work'
+      # Giving priority to openlibrary's pictures for works
       # as it has only covers while commons sometimes has just an illustration
-      # Give priority to Wikimedia over Wikipedia for books
+      # Give priority to Wikimedia over Wikipedia for works
       # likely to be in the public domain and have a good image set in Wikidata
       # while querying images from English Wikipedia articles
       # can give quite random results

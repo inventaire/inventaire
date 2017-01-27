@@ -3,7 +3,7 @@ _ = __.require 'builders', 'utils'
 { types } = require './aliases'
 
 # Takes an entity P31 claims array
-# Returns a entity type string: book, edition, article, human, genre
+# Returns a entity type string: work, edition, article, human, genre
 module.exports = (P31Array)->
   unless P31Array? then return
 

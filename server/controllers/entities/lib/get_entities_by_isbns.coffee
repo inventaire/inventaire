@@ -4,7 +4,8 @@ entities_ = require './entities'
 promises_ = __.require 'lib', 'promises'
 { parse:parseIsbn, normalizeIsbn } = __.require 'lib', 'isbn/isbn'
 dataseed = __.require 'data', 'dataseed/dataseed'
-scaffoldEntityFromSeed = require './scaffold_entity_from_seed'
+scaffoldEditionEntityFromSeed = require './scaffold_entity_from_seed/edition'
+formatEditionEntity = require './format_edition_entity'
 
 module.exports = (isbns, refresh)->
   # search entities by isbn locally
@@ -15,12 +16,12 @@ module.exports = (isbns, refresh)->
     missingIsbns = _.difference isbns, foundIsbns
     _.log missingIsbns, 'missingIsbns'
 
-    entities = entities.map formatEntity
+    entities = entities.map formatEditionEntity
 
     if missingIsbns.length is 0 then return { entities }
 
     # then look for missing isbns on dataseed
-    getMissingEntitiesFromSeeds missingIsbns, refresh
+    getMissingEditionEntitiesFromSeeds missingIsbns, refresh
     .spread (newEntities, notFound)->
       data =
         entities: entities.concat newEntities
@@ -31,13 +32,7 @@ module.exports = (isbns, refresh)->
 
 getNormalizedIsbn = (entity)-> normalizeIsbn entity.claims['wdt:P212'][0]
 
-formatEntity = (entity)->
-  isbn = entity.claims['wdt:P212'][0]
-  entity.uri = "isbn:#{normalizeIsbn(isbn)}"
-  entity.type = 'edition'
-  return entity
-
-getMissingEntitiesFromSeeds = (isbns, refresh)->
+getMissingEditionEntitiesFromSeeds = (isbns, refresh)->
   dataseed.getByIsbns isbns, refresh
   .then (seeds)->
     insufficientData = []
@@ -46,8 +41,6 @@ getMissingEntitiesFromSeeds = (isbns, refresh)->
       if _.isNonEmptyString seed.title then validSeeds.push seed
       else insufficientData.push seed
 
-    promises_.all validSeeds.map(scaffoldEntityFromSeed)
-    .map formatEntity
+    promises_.all validSeeds.map(scaffoldEditionEntityFromSeed)
+    .map formatEditionEntity
     .then (newEntities)-> [ newEntities, insufficientData ]
-
-extendWithIsbnData = (seed)-> _.extend seed, parseIsbn(seed.isbn)

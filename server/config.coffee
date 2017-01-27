@@ -15,14 +15,15 @@ content = require './middlewares/content'
 
 module.exports =
   common: [
+    content.redirectContentTypes
     americano.bodyParser()
-    content.recoverValidJson
     americano.methodOverride()
     americano.errorHandler
       dumpExceptions: true
       showStack: true
 
     logger.beforeStatic
+    statics.enableCors
     statics.mountStaticFiles
     logger.afterStatic
 
@@ -35,19 +36,18 @@ module.exports =
     content.dedupplicateRequests
 
     routes.restrictApiAccess
-    # security.csrf  #not correctly implemented yet
+    security.enableCorsOnPublicApiRoutes
 
     lang.langCookie
   ]
   production: []
   development:
     use: [
-      #handled by the Nginx server in production
-      security.allowCrossDomain
-      # /!\ Before reactivating CSP policies:
-      # - check DataUrl (used by profile picture)
-      # - check new Worker(BlobUrl) (used by quagga.js. see https://github.com/greasemonkey/greasemonkey/issues/1803 for bug)
-      # security.cspPolicy
+      # Those headers only make sense when serving index.html
+      # which is done by Nginx in production
+      # (see https://github.com/inventaire/inventaire-deploy)
+      security.addSecurityHeaders
+      content.recoverJsonUrlencoded
     ]
     set:
       debug: 'on'

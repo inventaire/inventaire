@@ -4,6 +4,12 @@
    "views": {
        "byClaim": {
            "map": "(doc)->\n  if doc.type is 'entity'\n    for property, statements of doc.claims\n      for value in statements\n        emit [property, value], doc.claims['wdt:P31'][0]"
+       },
+       "byClaimValue": {
+           "map": "(doc)->\n  if doc.type is 'entity'\n    for property, statements of doc.claims\n      for value in statements\n        emit value, property"
        }
+   },
+   "filters": {
+       "entities": "(doc)-> doc.type is 'entity'"
    }
 }

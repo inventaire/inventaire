@@ -1,31 +1,48 @@
 CONFIG = require 'config'
-_ = require('config').universalPath.require 'builders', 'utils'
+__ = CONFIG.universalPath
+_ = __.require 'builders', 'utils'
+{ invHost } = CONFIG
+devEnv = CONFIG.env is 'dev'
 
-exports.allowCrossDomain = (req, res, next)->
-  res.header 'Access-Control-Allow-Origin', '*'
-  res.header 'Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE'
-  res.header 'Access-Control-Allow-Headers', 'Content-Type'
+exports.enableCorsOnPublicApiRoutes = (req, res, next)->
+  # Only have cross domain requests wide open for public routes
+  # to avoid CSRF on request altering the database
+  if req.isPublicRoute
+    res.header 'Access-Control-Allow-Origin', '*'
+    res.header 'Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE'
+    res.header 'Access-Control-Allow-Headers', 'Content-Type'
   next()
 
-# script-src 'unsafe-eval' is needed by jQuery.getScript
-# style-src 'unsafe-inline' seem to be needed by Modernizr
-# connect-src * is required to use PouchDB replication
-policy =
-  """
-  child-src 'self' wikipedia.org;
-  script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.wikidata.org;
-  style-src 'self' 'unsafe-inline';
-  img-src *;
-  connect-src *;
-  report-uri /api/logs/public;
-  """
+altHost = if CONFIG.host isnt invHost then invHost else ''
+# In development, brunch needs websockets to be whitelisted
+ws = if devEnv then 'ws:' else ''
 
-exports.cspPolicy = (req, res, next) ->
+# Keep in sync with nginx/inventaire.original.nginx@inventaire/inventaire-deploy
+policy = "default-src 'self' #{ws};" +
+  "child-src 'self';" +
+  # 'unsafe-inline': required by
+  #   - <script>require('initialize')</script>
+  #   - login form 'onclick'
+  #   - dynamically loaded scripts(?)
+  "script-src 'self' 'unsafe-inline';" +
+  # 'unsafe-inline': required by _.preq.getCss and Modernizr
+  "style-src 'self' 'unsafe-inline';" +
+  "font-src 'self';" +
+  # altHost: required for images taken directly on the main server
+  # data: required by leaflet and cropper
+  # https://commons.wikimedia.org: used for image claims
+  "img-src 'self' #{altHost} https://commons.wikimedia.org https://api.tiles.mapbox.com data:;" +
+  "report-uri /api/reports/public?action=csp-report;"
+
+exports.addSecurityHeaders = (req, res, next) ->
+  res.header 'X-XSS-Protection', '1; mode=block; report-uri=/api/reports/public?action=csp-report;'
+  res.header 'X-Frame-Options', 'SAMEORIGIN'
   res.header 'Content-Security-Policy', policy
   res.header 'X-Content-Security-Policy', policy
   res.header 'X-WebKit-CSP', policy
-  next()
 
-exports.csrf = (req, res, next) ->
-  res.locals.token = req.session._csrf
+  unless devEnv
+    # Development is made over HTTP
+    res.header 'Strict-Transport-Security', 'max-age=31536000'
+
   next()

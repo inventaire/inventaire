@@ -21,10 +21,11 @@ mkdir -p ./logs/couch2elastic4sync
 # Expected by scripts/couch2elastic4sync/init
 mkdir -p scripts/couch2elastic4sync/configs
 touch ./logs/server.log ./logs/error.log
+# Expected by scripts/actions/backup_databases.coffee
+mkdir -p ./db/couchdb/backups
 
-# Start synchronization between CouchDB and ElasticSearch
-./scripts/couch2elastic4sync/init
-./scripts/couch2elastic4sync/load
+# Synchronize CouchDB and ElasticSearch databases
+npm run init-couch2elastic4sync
 
 # Create a local config file
 emptyConfigFile="

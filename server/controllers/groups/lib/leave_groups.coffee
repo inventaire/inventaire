@@ -19,7 +19,7 @@ module.exports = (db, groups_)->
     # TODO: check if userCanLeave
     groups_.byUser userId
     .map removeUser.bind(null, userId)
-    .then db.bulk.bind(db)
+    .then db.bulk
 
 
 removeUser = (userId, groupDoc)->

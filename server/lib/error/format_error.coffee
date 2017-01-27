@@ -1,18 +1,21 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 
-module.exports = (err, filter, contextArray)->
+# Global conventions:
+# - all error objects should have a statusCode (mimicking HTTP status codes)
+#   this is already the case for errors rejected by bluereq and blue-cot
+
+module.exports = (err, filter, context)->
+  context = _.forceArray context
   # numbers filters are used as HTTP codes
   # while string will be taken as a type
-  attribute = if _.isNumber(filter) then 'status' else 'type'
+  attribute = if _.isNumber(filter) then 'statusCode' else 'type'
   err[attribute] = filter
 
-  # prevent having an array in an array as context
-  if contextArray.length is 1 and _.isArrayLike contextArray[0]
-    # convert arguments objects to array
-    contextArray = _.toArray contextArray[0]
+  # Prevent having an array in an array as context.
+  if context.length is 1 then context = _.flatten context
 
-  err.context = contextArray
+  err.context = context
   err.emitter = getErrorEmittingLines err
   return err
 

@@ -2,8 +2,9 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 couchInit = require 'couch-init2'
 dbBaseUrl = CONFIG.db.fullHost()
+initHardCodedDocuments = require './init_hard_coded_documents'
 
-dbsList = require('./list').default
+dbsList = require './list'
 formattedList = []
 
 # adapt the list to couch-init2 needs
@@ -15,4 +16,6 @@ for dbName, designDocsNames of dbsList
 
 designDocFolder = __.path('couchdb', 'design_docs')
 
-module.exports = -> couchInit dbBaseUrl, formattedList, designDocFolder
+module.exports = ->
+  couchInit dbBaseUrl, formattedList, designDocFolder
+  .tap initHardCodedDocuments

@@ -2,8 +2,8 @@
    "_id": "_design/patches",
    "language": "coffeescript",
    "views": {
-       "byEntity": {
-           "map": "(doc)->\n  if doc.type is 'patch'\n    emit doc._id.split(':'), null"
+       "byEntityId": {
+           "map": "(doc)->\n  if doc.type is 'patch'\n    emit doc._id.split(':')[0], null"
        }
    }
 }

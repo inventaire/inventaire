@@ -5,9 +5,9 @@ entities_ = require './lib/entities'
 
 module.exports = (req, res)->
   { id:entityId, property, 'old-value':oldVal, 'new-value': newVal } = req.body
-  { _id:userId } = req.user
+  { _id:userId, admin:userIsAdmin } = req.user
 
-  _.log req.body, 'body'
+  _.log req.body, 'update claim input'
 
   # An empty string is interpreted as a null value
   oldVal = parseEmptyValue oldVal
@@ -15,7 +15,8 @@ module.exports = (req, res)->
 
   entities_.byId entityId
   .then _.Log('doc')
-  .then entities_.updateClaim.bind(null, property, oldVal, newVal, userId)
+  .then (currentDoc)->
+    entities_.updateClaim { property, oldVal, newVal, userId, currentDoc, userIsAdmin }
   .then _.Ok(res)
   .catch error_.Handler(req, res)
 

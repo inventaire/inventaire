@@ -38,8 +38,7 @@ module.exports = groups_ =
     .spread _.union.bind(_)
 
   create: (options)->
-    promises_.start
-    .then -> Group.create options
+    promises_.try -> Group.create options
     .then _.Log('group created')
     .then db.postAndReturn
 

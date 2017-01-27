@@ -34,15 +34,15 @@ optionalLabelsTypes = [
 
 validateClaims = (claims)->
   unless _.isNonEmptyPlainObject claims
-    return error_.reject "invalid claims", 400, labels
+    return error_.reject 'invalid claims', 400, labels
 
   promises = []
 
-  currentClaims = Object.freeze {}
+  claims = Object.freeze {}
   oldVal = null
 
-  for prop, array of claims
+  for property, array of claims
     for newVal in array
-      promises.push entities_.validateClaim(currentClaims, prop, oldVal, newVal, false)
+      promises.push entities_.validateClaim({ claims, property, oldVal, newVal, letEmptyValuePass: false })
 
   return promises_.all promises

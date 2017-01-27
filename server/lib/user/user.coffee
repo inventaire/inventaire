@@ -8,14 +8,15 @@ couch_ = __.require 'lib', 'couch'
 User = __.require 'models', 'user'
 { byEmail, byEmails, findOneByEmail } = require './shared_user_handlers'
 { publicUserData, publicUsersDataWithEmails } = require './public_user_data'
+{ BasicUpdater } = __.require 'lib', 'doc_updates'
 
 db = __.require('couch', 'base')('users', 'user')
 geo = require('./geo/geo')()
 
 user_ =
   db: db
-  byId: db.get.bind(db)
-  byIds: db.fetch.bind(db)
+  byId: db.get
+  byIds: db.fetch
   byEmail: byEmail.bind(null, db)
   byEmails: byEmails.bind(null, db)
   findOneByEmail: findOneByEmail.bind(null, db)
@@ -66,9 +67,10 @@ user_ =
 
     user_.byIds ids
     .then (usersData)->
-      unless usersData?
-        _.warn ids, "users not found"
-        return
+      usersData = _.compact usersData
+      unless usersData?.length > 0
+        throw error_.new 'users not found', 404, ids
+
       return usersData.map publicUserData
 
     .then formatUsersData.bind(null, format)
@@ -81,6 +83,8 @@ user_ =
         doc.undeliveredEmail or= 0
         doc.undeliveredEmail += 1
         return doc
+
+  makeUserAdmin: (userId)-> db.update userId, BasicUpdater('admin', true)
 
   nearby: (userId, meterRange, strict)->
     user_.byId userId
@@ -118,6 +122,14 @@ formatUsersData = (format, usersData)->
   else return usersData
 
 token_ = require('./token')(db, user_)
+
+user_.updateEmail = (user, email)->
+  user = User.updateEmail user, email
+  db.put user
+  # sendValidationEmail doesn't need to access the last _rev
+  # so it's ok to pass the user as it was before the database was updated
+  .then -> token_.sendValidationEmail user
+
 user_.availability = availability_ = require('./availability')(user_)
 user_.create = require('./create')(db, token_, availability_)
 user_.byPosition = require('../by_position')(db, 'user')

@@ -25,17 +25,13 @@ describe 'Regroup claims', ->
   it 'should regroup claims by property', (done)->
     claims = claimsFactory()
     claims['wdt:P50'].length.should.equal 1
-    should(claims['wdt:P179']).not.be.ok()
     regroupClaims(claims)
     claims['wdt:P50'].length.should.equal 2
-    claims['wdt:P179'].length.should.equal 1
     done()
 
   it 'should remove the regrouped claims former property array', (done)->
     claims = claimsFactory()
     claims['wdt:P58'].length.should.equal 1
-    claims['wdt:P361'].length.should.equal 1
     regroupClaims(claims)
     should(claims['wdt:P58']).not.be.ok()
-    should(claims['wdt:P361']).not.be.ok()
     done()

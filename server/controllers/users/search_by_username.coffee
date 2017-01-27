@@ -2,9 +2,10 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 user_ = __.require 'lib', 'user/user'
 error_ = __.require 'lib', 'error/error'
-{ publicUsersData } = __.require 'lib', 'user/public_user_data'
+{ publicUsersData } = __.require 'lib', 'user/public_user_data'
 
-module.exports = (req, res, query) ->
+module.exports = (req, res) ->
+  { query } = req
   { search } = query
   unless search?
     return error_.bundle req, res, 'bad query', 400, query

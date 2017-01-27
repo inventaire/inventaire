@@ -39,6 +39,7 @@ error_.bundle = (req, res, args...)->
 # a standardized way to return a 400 unknown action
 # on controllers top level switches
 error_.unknownAction = (req, res, context)->
+  context or= _.pick req, [ 'originalUrl', 'body', 'headers' ]
   error_.bundle req, res, 'unknown action', 400, context
 
 error_.handler = errorHandler = require './error_handler'

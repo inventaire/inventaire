@@ -12,7 +12,7 @@ get = (userId, otherId)->
 
 putStatus = (userId, otherId, status)->
   docId = Relation.docId(userId, otherId)
-  # cot-node handles get-put-with-rev and inexistant doc errors
+  # blue-cot handles get-put-with-rev and inexistant doc errors
   db.update docId, updateStatus.bind(null, docId, status)
 
 updateStatus = (docId, status, doc)->

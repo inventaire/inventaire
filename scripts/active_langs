@@ -4,7 +4,7 @@
 
 CONFIG = require 'config'
 __ = CONFIG.universalPath
-{ quote } = require 'shell-quote'
+{ quote } = require 'shell-quote'
 { active } = __.require 'client', 'scripts/lib/i18n/langs'
 console.log quote(active)
 process.exit()

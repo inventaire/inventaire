@@ -1,5 +1,5 @@
 __ = require('config').universalPath
-{ IncomingForm } = require 'formidable'
+{ IncomingForm } = require 'formidable'
 { Promise } = __.require 'lib', 'promises'
 
 module.exports = (req)->

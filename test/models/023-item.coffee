@@ -7,7 +7,8 @@ should = require 'should'
 Item = __.require 'models', 'item'
 
 someUserId = '1234567890a1234567890b1234567890'
-create = (item)-> Item.create.call null, someUserId, item
+create = Item.create.bind null, someUserId
+update = Item.update.bind null, someUserId
 
 validItem =
   _id: 'new'
@@ -20,12 +21,18 @@ validItem =
 extendItem = (data)->
   _.extend {}, validItem, data
 
-
 describe 'item model', ->
   describe 'create', ->
     it "should return an object", (done)->
       item = create validItem
       item.should.be.an.Object()
+      done()
+
+    it "should throw when passed invalid attributes", (done)->
+      item = extendItem({authors: 'Joanne K. Rowling'})
+      (-> create(item)).should.throw()
+      item2 = extendItem({updated: Date.now()})
+      (-> create(item2)).should.throw()
       done()
 
     describe 'id', ->
@@ -62,7 +69,7 @@ describe 'item model', ->
         done()
 
       it "should replace missing pictures by an empty array", (done)->
-        _.log(create(extendItem({pictures: null}))).pictures.should.be.an.Array()
+        create(extendItem({pictures: null})).pictures.should.be.an.Array()
         create(extendItem({pictures: null})).pictures.length.should.equal 0
         done()
 
@@ -105,9 +112,40 @@ describe 'item model', ->
         item.owner.should.equal someUserId
         done()
 
+      it "should ignore an owner passed in the data", (done)->
+        item = create extendItem({owner: 'whatever'})
+        item.owner.should.equal someUserId
+        done()
+
     describe 'created', ->
       it "should return an object with a created time", (done)->
         item = create validItem
         _.expired(item.created, 100).should.equal false
         done()
 
+  describe 'update', ->
+    it 'should not throw when updated with a valid attribute', (done)->
+      doc = create validItem
+      updateAttributesData = { listing: 'private' }
+      (-> update(updateAttributesData, doc)).should.not.throw()
+      done()
+
+    it 'should throw when updated with an invalid attribute', (done)->
+      doc = create validItem
+      updateAttributesData = { listing: 'chocolat' }
+      (-> update(updateAttributesData, doc)).should.throw()
+      done()
+
+    it 'should not throw when updated with a valid snapshot', (done)->
+      doc = create validItem
+      updateAttributesData =
+        snapshot:
+          'entity:image': '/ipfs/QmXtPA8rAn5VCJ3rVLxWhDEnMv2hiPTMopH9NuaERz3nuw'
+      (-> update(updateAttributesData, doc)).should.not.throw()
+      done()
+
+    it 'should throw when updated with an invalid snapshot', (done)->
+      doc = create validItem
+      updateAttributesData = { snapshot: { bla: 'hello' } }
+      (-> update(updateAttributesData, doc)).should.throw()
+      done()

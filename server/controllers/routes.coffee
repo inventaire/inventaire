@@ -14,7 +14,6 @@ entities = require './entities/entities'
 upload = require './upload/upload'
 resize = require './upload/resize'
 notifs = require './notifs'
-newsletter = require './newsletter'
 cookie = require './cookie'
 tests = require './tests'
 data = require './data'
@@ -24,7 +23,7 @@ i18n = require './i18n'
 feedback = require './feedback'
 transactions = require './transactions/transactions'
 comments = require './comments/comments'
-analytics = require './analytics/analytics'
+reports = require './reports/reports'
 glob = require './glob'
 
 # routes structure:
@@ -37,6 +36,7 @@ module.exports = routes =
     post: auth.actions
 
   'api/auth/public':
+    get: auth.get
     post: auth.publicActions
 
   'api/auth/public/token':
@@ -83,12 +83,12 @@ module.exports = routes =
   'api/entities/public':
     get: entities.get
 
+  'api/entities/admin':
+    put: entities.admin.put
+
   'api/notifs':
     get: notifs.get
     post: notifs.updateStatus
-
-  'api/newsletter/public':
-    post: newsletter.subscribe
 
   'api/cookie/public':
     post: cookie.post
@@ -131,12 +131,12 @@ module.exports = routes =
     post: transactions.post
     put: transactions.put
 
-  'api/logs/public':
-    post: analytics.reports
+  'api/reports/public':
+    post: reports
 
-  'error/count':
-    get: (req, res, next)->
-      res.json { count: _.errorCount() }
+  'api/config/public':
+    # A endpoint dedicated to pass configuration parameters to the client
+    get: (req, res)-> res.json CONFIG.client
 
   'img/*':
     get: resize

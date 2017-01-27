@@ -7,18 +7,18 @@ patches_ = require './patches'
 isbn_ = __.require 'lib', 'isbn/isbn'
 couch_ = __.require 'lib', 'couch'
 validateClaimValue = require('./validate_claim_value')(db)
+getInvEntityCanonicalUri = require './get_inv_entity_canonical_uri'
 
-{ validateProperty } = require './properties'
+{ properties, validateProperty } = require './properties'
 
 module.exports = entities_ =
   db: db
-  byId: db.get.bind(db)
+  byId: db.get
 
   byIds: (ids)->
     ids = _.forceArray ids
     db.fetch ids
     .then _.compact
-    .then _.Log('getEntities')
 
   byIsbns: (isbns)->
     keys = isbns
@@ -26,6 +26,10 @@ module.exports = entities_ =
       .filter _.identity
       .map (isbn)-> ['wdt:P212', isbn]
     db.viewByKeys 'byClaim', keys
+
+  byIsbn: (isbn)->
+    entities_.byIsbns [ isbn ]
+    .then couch_.firstDoc
 
   byWikidataIds: (ids)->
     keys = ids.map (id)-> ['invp:P1', id]
@@ -42,6 +46,15 @@ module.exports = entities_ =
     entities_.byClaim property, value
     .then couch_.mapId
 
+  byClaimsValue: (value)->
+    db.view 'entities', 'byClaimValue',
+      key: value
+      include_docs: false
+    .then (res)->
+      res.rows.map (row)->
+        entity: row.id
+        property: row.value
+
   create: ->
     # Create a new entity doc.
     # This constituts the basis on which next modifications patch
@@ -53,29 +66,49 @@ module.exports = entities_ =
     promises_.try ->
       updatedDoc = Entity.setLabels updatedDoc, updatedLabels
       return Entity.addClaims updatedDoc, updatedClaims
-    .then db.putAndReturn
-    .tap -> patches_.create userId, currentDoc, updatedDoc
+
+    .then entities_.putUpdate.bind(null, userId, currentDoc)
 
   updateLabel: (lang, value, userId, currentDoc)->
     updatedDoc = _.cloneDeep currentDoc
     updatedDoc = Entity.setLabel updatedDoc, lang, value
-    return putUpdate userId, currentDoc, updatedDoc
+    return entities_.putUpdate userId, currentDoc, updatedDoc
 
-  updateClaim: (property, oldVal, newVal, userId, currentDoc)->
+  updateClaim: (params)->
+    { property, oldVal, userId, currentDoc } = params
     updatedDoc = _.cloneDeep currentDoc
-    { claims } = currentDoc
-    entities_.validateClaim claims, property, oldVal, newVal, true
+    params.currentClaims = currentDoc.claims
+    params.letEmptyValuePass = true
+    entities_.validateClaim params
     .then (formattedValue)->
       Entity.updateClaim updatedDoc, property, oldVal, formattedValue
-    .then putUpdate.bind(null, userId, currentDoc)
+    .then entities_.putUpdate.bind(null, userId, currentDoc)
 
-  validateClaim: (claims, property, oldVal, newVal, letEmptyValuePass)->
+  validateClaim: (params)->
+    { property } = params
     promises_.try -> validateProperty property
-    .then -> validateClaimValue claims, property, oldVal, newVal, letEmptyValuePass
+    .then -> validateClaimValue params
 
-putUpdate = (userId, currentDoc, updatedDoc)->
-  _.log currentDoc, 'current doc'
-  _.log updatedDoc, 'updated doc'
-  _.types arguments, ['string', 'object', 'object']
-  db.putAndReturn updatedDoc
-  .tap -> patches_.create userId, currentDoc, updatedDoc
+  # Assumes that the property is valid
+  validatePropertyValueSync: (property, value)-> properties[property].test value
+
+  getLastChangedEntitiesUris: (since, limit)->
+    db.changes
+      filter: 'entities/entities'
+      limit: limit
+      since: since
+      include_docs: true
+      descending: true
+    .then (res)->
+      # TODO: return URIs in no-redirect mode so that redirections appear in entity changes
+      uris: res.results.map parseCanonicalUri
+      lastSeq: res.last_seq
+
+  putUpdate: (userId, currentDoc, updatedDoc)->
+    _.log currentDoc, 'current doc'
+    _.log updatedDoc, 'updated doc'
+    _.types arguments, ['string', 'object', 'object']
+    db.putAndReturn updatedDoc
+    .tap -> patches_.create userId, currentDoc, updatedDoc
+
+parseCanonicalUri = (result)-> getInvEntityCanonicalUri(result.doc)[0]

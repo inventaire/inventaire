@@ -15,6 +15,7 @@ attributes.ownerSafe = [
   'settings'
   'position'
   'summaryPeriodicity'
+  'admin'
 ]
 
 attributes.public = [
@@ -23,6 +24,7 @@ attributes.public = [
   'picture'
   'bio'
   'position'
+  'special'
 ]
 
 # attributes that need availability check before update

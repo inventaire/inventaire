@@ -1,16 +1,21 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 breq = require 'bluereq'
+chalk = require 'chalk'
 
 req = (verb, url, options)->
+  key = startTimer verb, url
+
   breq[verb] mergeOptions(url, options)
   .get 'body'
-  .catch formatErr
+  .finally _.EndTimer(key)
 
 head = (url, options)->
+  key = startTimer 'head', url
+
   breq.head mergeOptions(url, options)
   .then (res)-> _.pick res, ['statusCode', 'headers']
-  .catch formatErr
+  .finally _.EndTimer(key)
 
 # default to JSON
 baseOptions =
@@ -29,10 +34,14 @@ mergeOptions = (url, options={})->
   # the url object will be overriden
   _.extend {url: url}, baseOptions, options,
 
-formatErr = (err)->
-  # aliasing statusCode to match lib/error filter system
-  err.status = err.statusCode
-  throw err
+startTimer = (verb, url)->
+  # url could be an object
+  url = JSON.stringify url
+    # Prevent logging Basic Auth credentials
+    .replace /\/\/\w+:[^@:]+@/, '//'
+
+  key = "#{verb.toUpperCase()} #{url} [#{_.randomString()}]"
+  return _.startTimer key
 
 module.exports =
   get: _.partial req, 'get'

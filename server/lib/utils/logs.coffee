@@ -5,6 +5,7 @@ loggers_ = require 'inv-loggers'
 util = require 'util'
 chalk = require 'chalk'
 { grey, red } = chalk
+openIssue = require './open_issue'
 
 BaseLogger = (color, operation)->
   return logger = (obj, label)->
@@ -26,8 +27,10 @@ module.exports = (_)->
     Inspect: (label)-> fn = (obj)-> inspect obj, label
 
     error: (err, label, logStack=true)->
+      if err.hasBeenLogged then return
+
       # If the error is of a lower lever than 500, make it a warning, not an error
-      if err.status? and err.status < 500
+      if err.statusCode? and err.statusCode < 500
         return customLoggers.warn err, label
 
       # Prevent logging big error stack traces for network errors
@@ -36,18 +39,29 @@ module.exports = (_)->
         loggers_.log err.message, "#{label} (offline)", 'red'
         return
 
-      errorCounter++
-      loggers_.log err, label, 'red'
-      if logStack and err.stack? then console.log err.stack
+      loggers_.log _.omit(err, 'stack'), label, 'red'
+      if logStack
+        # Make the stack more readable
+        err.stack = err.stack.split '\n'
+        # Log the stack appart to make it be displayed with line breaks
+        console.log err.stack
 
+      err.labels or= 'server'
+      openIssue err
+
+      err.hasBeenLogged = true
+      errorCounter++
       return
 
     warn: (err, label)->
+      if err.hasBeenLogged then return
       if err instanceof Error
         # shorten the stack trace
         err.stack = err.stack.split('\n').slice(0, 3).join('\n')
 
       loggers_.warn.apply null, arguments
+      err.hasBeenLogged = true
+      return
 
     errorCount: -> errorCounter
 
@@ -64,6 +78,12 @@ module.exports = (_)->
 
       setInterval counter.bind(@), 5000
 
+    startTimer: (key, color='magenta')->
+      key = chalk[color](key)
+      console.time key
+      return key
+
+    EndTimer: (key)-> ()-> console.timeEnd key
 
   # The same as inv-loggers::errorRethrow but using customLoggers.error instead
   errorRethrow = (err, label)->
