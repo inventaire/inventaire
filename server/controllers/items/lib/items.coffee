@@ -136,5 +136,7 @@ safeItem = (item)-> _.omit item, privateAttrs
 
 FilterWithImage = (assertImage)->
   return fn = (items)->
-    if assertImage then items.filter (item)-> item.pictures.length > 0
+    if assertImage then items.filter itemWithImage
     else items
+
+itemWithImage = (item)-> item.snapshot['entity:image'] or item.pictures.length > 0
