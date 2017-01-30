@@ -14,6 +14,7 @@ module.exports = config =
   # see http://github.com/inventaire/inventaire-deploy
   # protocol: 'http'
   verbosity: 1
+  protocol: 'http'
   port: 3006
   # Override in ./local.coffee when working offline to prevent trying to fetch remote resources (like images) when possible
   offline: false
