@@ -77,9 +77,12 @@ urifyInv = (entity)-> "inv:#{entity._id}"
 filterOutIrrelevantTypes = (result)->
   for uri, entity of result.entities
     { type } = entity
-    if not type or type is 'meta'
-      _.warn [entity.labels.en, entity.claims['wdt:P31']], "filtered out:#{uri}"
-      delete result.entities[uri]
+    notTypeFound = not type?
+    if notTypeFound then _.warn "not relevant type found, filtered out: #{uri}"
+    # /!\ At this point, entities given the type meta will look something like
+    # { id: 'Q9232060', uri: 'wd:Q9232060', type: 'meta' }
+    # Thus, you can't assume that entity.labels? or entity.claims? is true
+    if notTypeFound or type is 'meta' then delete result.entities[uri]
 
   return result
 
