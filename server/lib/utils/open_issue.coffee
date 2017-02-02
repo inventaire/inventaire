@@ -8,6 +8,6 @@ unless CONFIG.gitlabLogging.enabled
 gitlabLogging = require 'gitlab-logging'
 gitlabLogging.configure CONFIG.gitlabLogging
 module.exports = (err)->
-  if err.stack instanceof Array then err.stack = err.stack.join('\n')
+  if err?.stack instanceof Array then err.stack = err.stack.join('\n')
   gitlabLogging.handle err
   return
