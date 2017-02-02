@@ -25,7 +25,6 @@ error_.reject = (args...)->
   err = error_[method].apply null, args
   return promises_.reject(err)
 
-
 # allow to use the standard error_.new interface
 # while out or at the end of a promise chain
 # DO NOT use inside a promise chain as error_.handler

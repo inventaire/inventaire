@@ -68,7 +68,7 @@ module.exports =
     previousData = requestsCache[key]
 
     if data is previousData
-      return error_.bundle req, res, 'dupplicated request', 429, [key, req.body]
+      return error_.bundle req, res, 'duplicated request', 429, [key, req.body]
 
     temporaryLock key, data
 
@@ -80,7 +80,7 @@ headersHash = (req)-> _.hashCode JSON.stringify(req.headers)
 
 temporaryLock = (key, data)->
   requestsCache[key] = data
-  # _.log key, 'preventing dupplicated request for the next 2 secondes'
+  # _.log key, 'preventing duplicated request for the next 2 secondes'
   # unlock after 2 secondes
   unlock = -> requestsCache[key] = null
   setTimeout unlock, 2000
