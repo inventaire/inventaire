@@ -9,13 +9,15 @@ getItemDescription = require './get_item_description'
 oneDayInMinutes = 24*60
 
 module.exports = (feedOptions, users, items, lang)->
-  { title, queryString, pathname, image } = feedOptions
+  { title, description, queryString, pathname, image } = feedOptions
 
   if image then image = templateHelpers.src image, 300
   else image = feedConfig.image
 
   feed = new Rss
     title: title
+    # Arbitrary limiting the description to 300 characters as it should stay short
+    description: description?[0..300]
     feed_url: "#{root}/api/feeds/public?#{queryString}"
     site_url: "#{root}/#{pathname}"
     image_url: image

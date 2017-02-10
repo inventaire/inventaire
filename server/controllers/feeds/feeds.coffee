@@ -41,6 +41,7 @@ userFeedData = (userId)->
     users: [ user ]
     feedOptions:
       title: user.username
+      description: user.bio
       image: user.picture
       queryString: "user=#{user._id}"
       pathname: "inventory/#{user._id}"
@@ -53,6 +54,7 @@ groupFeedData = (groupId)->
       users: users
       feedOptions:
         title: group.name
+        description: group.description
         image: group.picture
         queryString: "group=#{group._id}"
         pathname: "groups/#{group._id}"
