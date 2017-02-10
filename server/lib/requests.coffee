@@ -2,6 +2,7 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 breq = require 'bluereq'
 chalk = require 'chalk'
+randomString = require('./utils/random_string').bind(null, 8)
 
 req = (verb, url, options)->
   key = startTimer verb, url
@@ -40,7 +41,7 @@ startTimer = (verb, url)->
     # Prevent logging Basic Auth credentials
     .replace /\/\/\w+:[^@:]+@/, '//'
 
-  key = "#{verb.toUpperCase()} #{url} [#{_.randomString()}]"
+  key = "#{verb.toUpperCase()} #{url} [#{randomString()}]"
   return _.startTimer key
 
 module.exports =

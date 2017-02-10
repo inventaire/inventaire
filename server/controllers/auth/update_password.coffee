@@ -34,15 +34,13 @@ module.exports = (req, res, next)->
     return error_.bundle req, res, 'reset password token expired: request a new token', 403
 
   test
-  .then updatePassword.bind(null, res, user, newPassword)
+  .then updatePassword.bind(null, user, newPassword)
+  .then _.Ok(res)
   .catch error_.Handler(req, res)
 
-
-updatePassword = (res, user, newPassword)->
-  hashNewPassword(newPassword)
+updatePassword = (user, newPassword)->
+  pw_.hash newPassword
   .then updateUserPassword.bind(null, user._id, user)
-  .then -> res.send('ok')
-
 
 verifyCurrentPassword = (user, currentPassword)->
   pw_.verify user.password, currentPassword
@@ -51,20 +49,8 @@ filterInvalid = (isValid)->
   unless isValid
     throw error_.new 'invalid newPassword', 400
 
-hashNewPassword = (newPassword)->
-  pw_.hash(newPassword)
-
 updateUserPassword = (userId, user, newHash)->
-  user_.db.update userId, passwordUpdater.bind(null, user, newHash)
-
-passwordUpdater = (user, newHash)->
-  user.password = newHash
-  user = _.omit user, 'resetPassword'
-  # unlocking password-related functionalities on client-side
-  # for users originally created with browserid if they ask for a password reset
-  if user.creationStrategy is 'browserid'
-    user.hasPassword = true
-  return user
+  user_.db.update userId, User.updatePassword.bind(null, user, newHash)
 
 testOpenResetPasswordWindow = (resetPassword)->
   if _.expired resetPassword, oneHour

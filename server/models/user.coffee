@@ -5,6 +5,8 @@ pw_ = __.require('lib', 'crypto').passwords
 promises_ = __.require 'lib', 'promises'
 gravatar = __.require 'lib', 'gravatar'
 error_ = __.require 'lib', 'error/error'
+randomString = __.require 'lib', 'utils/random_string'
+generateReadToken = randomString.bind null, 40, 50
 
 module.exports = User = {}
 
@@ -24,7 +26,6 @@ User._create = (username, email, creationStrategy, language, password)->
   if language? and not tests.language(language)
     throw error_.new "invalid language: #{language}", 400
 
-
   user =
     username: username
     email: email
@@ -33,8 +34,12 @@ User._create = (username, email, creationStrategy, language, password)->
     creationStrategy: creationStrategy
     language: language
     picture: gravatar email
-    settings:
-      notifications: {}
+    settings: { notifications: {} }
+    # A token that, when combined with the right user id,
+    # gives access to all the resources the user can read
+    # Use case:
+    # - private RSS feeds
+    readToken: generateReadToken()
 
   switch creationStrategy
     when 'local'
@@ -69,7 +74,6 @@ replacePassword = (user, hash)->
   user.password = hash
   return user
 
-
 User.attributes = require './attributes/user'
 
 User.softDelete = (userDoc)->
@@ -90,3 +94,14 @@ archivePreviousEmail = (doc)->
     doc.previousEmails = _.uniq doc.previousEmails
     doc.validEmail = false
   return doc
+
+User.updatePassword = (user, newHash)->
+  user.password = newHash
+  user = _.omit user, 'resetPassword'
+  # Unlocking password-related functionalities on client-side
+  # for users originally created with browserid if they ask for a password reset
+  if user.creationStrategy is 'browserid' then user.hasPassword = true
+  # Also change the read token, following Github practice
+  # https://github.com/blog/16-token-private-feeds
+  user.readToken = generateReadToken()
+  return user

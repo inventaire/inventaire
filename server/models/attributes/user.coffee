@@ -16,6 +16,7 @@ attributes.ownerSafe = [
   'position'
   'summaryPeriodicity'
   'admin'
+  'readToken'
 ]
 
 attributes.public = [

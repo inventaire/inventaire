@@ -7,9 +7,8 @@ error_ = __.require 'lib', 'error/error'
 pw_ = __.require('lib', 'crypto').passwords
 { tokenDaysToLive } = CONFIG
 { WrappedUpdater } = __.require 'lib', 'doc_updates'
-
+randomString = __.require 'lib', 'utils/random_string'
 testToken = pw_.verify
-uuid = require 'simple-uuid'
 
 module.exports = (db, user_)->
 
@@ -73,7 +72,7 @@ emailIsValid = (user)->
   return _.omit user, 'emailValidation'
 
 getTokenData = ->
-  token = uuid()
-  pw_.hash(token)
+  token = randomString 32
+  pw_.hash token
   .then (tokenHash)->
     return [token, tokenHash]
