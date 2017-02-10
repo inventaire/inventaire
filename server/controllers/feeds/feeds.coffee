@@ -17,18 +17,18 @@ module.exports =
 
     if userId?
       unless _.isUserId userId
-        throw error_.bundle req, res, 'invalid user id', 400
+        return error_.bundle req, res, 'invalid user id', 400
 
       userIdsPromise = user_.byId userId
 
     else if groupId?
       unless _.isGroupId groupId
-        throw error_.bundle req, res, 'invalid group id', 400
+        return error_.bundle req, res, 'invalid group id', 400
 
       userIdsPromise = findUsersByGroup groupId
 
     else
-      throw error_.bundle req, res, 'missing id', 400
+      return error_.bundle req, res, 'missing id', 400
 
     userIdsPromise
     .then items_.publicListings
