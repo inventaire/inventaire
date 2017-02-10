@@ -19,7 +19,8 @@ module.exports =
       unless _.isUserId userId
         return error_.bundle req, res, 'invalid user id', 400
 
-      userIdsPromise = user_.byId userId
+      # Verify the existance of the passed id
+      userIdsPromise = user_.byId(userId).then _.property('_id')
 
     else if groupId?
       unless _.isGroupId groupId
