@@ -4,6 +4,7 @@ _ = __.require 'builders', 'utils'
 { allowTransaction } = __.require 'models', 'item'
 { kmBetween } = __.require 'lib', 'geo'
 host = CONFIG.fullPublicHost()
+transacColors = require './transactions_colors'
 
 module.exports =
   getLastItems: (limitDate, items)->
@@ -58,10 +59,3 @@ getItemsWithTransactionFirst = (lastItems, highlightedLength)->
   # in case there are less items with transactions than expected
   # concating items without transactions
   else return withTransaction.concat(withoutTransaction)[0...highlightedLength]
-
-# keep in sync with client/app/modules/general/scss/_colors.scss
-transacColors =
-  giving: '#FEB1BA'
-  lending: '#9FD5B3'
-  selling: '#FFE567'
-  inventorying: '#BFBFBF'

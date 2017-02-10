@@ -27,6 +27,7 @@ module.exports =
       return error_.bundle req, res, 'missing id', 400
 
     feedDataPromise
+    # TODO: use the accept-language header to customize the feed
     .then generateFeedFromFeedData
     .then res.send.bind(res)
     .catch error_.Handler(req, res)
@@ -34,21 +35,26 @@ module.exports =
 userFeedData = (userId)->
   user_.byId userId
   .then (user)->
-    userIds: [ user._id ]
+    users: [ user ]
     feedOptions:
       title: user.username
+      image: user.picture
       queryString: "user=#{user._id}"
       pathname: "inventory/#{user._id}"
 
 groupFeedData = (groupId)->
   groups_.byId groupId
   .then (group)->
-    userIds: getUserIdsFromGroupDoc group
-    feedOptions:
-      title: group.name
-      queryString: "group=#{group._id}"
-      pathname: "network/groups/#{group._id}"
+    getGroupMembers group
+    .then (users)->
+      users: users
+      feedOptions:
+        title: group.name
+        image: group.picture
+        queryString: "group=#{group._id}"
+        pathname: "groups/#{group._id}"
 
-getUserIdsFromGroupDoc = (group)->
+getGroupMembers = (group)->
   { admins, members } = group
-  return admins.concat(members).map _.property('user')
+  userIds = admins.concat(members).map _.property('user')
+  return user_.byIds userIds

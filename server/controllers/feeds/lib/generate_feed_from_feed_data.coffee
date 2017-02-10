@@ -6,9 +6,10 @@ items_ = __.require 'controllers', 'items/lib/items'
 serializeFeed = require './serialize_feed'
 
 module.exports = (feedData)->
-  { userIds, feedOptions } = feedData
+  { users, feedOptions } = feedData
+  userIds = users.map _.property('_id')
   getLastItemsFromUserIds userIds
-  .then (items)-> serializeFeed feedOptions, items
+  .then (items)-> serializeFeed feedOptions, users, items
 
 getLastItemsFromUserIds = (userIds)->
   items_.publicListings userIds
