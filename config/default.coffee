@@ -71,7 +71,7 @@ module.exports = config =
   cookieMaxAge: 10*365*24*3600*1000
   typeCheck: true
   bluebird:
-    warnings: true
+    warnings: false
     longStackTraces: true
   # Make friends requests and groups invits be automatically accepted
   # can be useful for development
