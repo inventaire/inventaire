@@ -5,11 +5,11 @@ _ = __.require 'builders', 'utils'
 items_ = __.require 'controllers', 'items/lib/items'
 serializeFeed = require './serialize_feed'
 
-module.exports = (feedData)->
+module.exports = (lang)-> (feedData)->
   { users, feedOptions } = feedData
   userIds = users.map _.property('_id')
   getLastItemsFromUserIds userIds
-  .then (items)-> serializeFeed feedOptions, users, items
+  .then (items)-> serializeFeed feedOptions, users, items, lang
 
 getLastItemsFromUserIds = (userIds)->
   items_.publicListings userIds

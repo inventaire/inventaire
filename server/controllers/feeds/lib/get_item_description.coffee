@@ -4,7 +4,7 @@ _ = __.require 'builders', 'utils'
 templateHelpers = __.require 'lib', 'emails/handlebars_helpers'
 transacColors = __.require 'lib', 'emails/activity_summary/transactions_colors'
 
-module.exports = (item, user)->
+module.exports = (item, user, lang)->
   { title, transaction, pictures, snapshot, details } = item
   image = pictures[0] or snapshot['entity:image']
 
@@ -15,7 +15,7 @@ module.exports = (item, user)->
     imageHtml = ''
 
   i18nKey = "#{transaction}_personalized_strong"
-  transacLabel = templateHelpers.i18n 'en', i18nKey, user
+  transacLabel = templateHelpers.i18n lang, i18nKey, user
 
   userProfilePic = templateHelpers.src user.picture, 64
 

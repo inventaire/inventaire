@@ -8,7 +8,7 @@ templateHelpers = __.require 'lib', 'emails/handlebars_helpers'
 getItemDescription = require './get_item_description'
 oneDayInMinutes = 24*60
 
-module.exports = (feedOptions, users, items)->
+module.exports = (feedOptions, users, items, lang)->
   { title, queryString, pathname, image } = feedOptions
 
   if image then image = templateHelpers.src image, 300
@@ -25,20 +25,20 @@ module.exports = (feedOptions, users, items)->
 
   usersIndex = _.indexBy users, '_id'
 
-  items.map serializeItem(usersIndex)
+  items.map serializeItem(usersIndex, lang)
   .forEach feed.item.bind(feed)
 
   return feed.xml()
 
-serializeItem = (usersIndex)-> (item)->
+serializeItem = (usersIndex, lang)-> (item)->
   { title, owner } = item
   user = usersIndex[owner]
   user.href = "#{root}/inventory/#{user._id}"
   item.href = "#{root}/items/#{item._id}"
 
   data =
-    title: getItemTitle item, user
-    description: getItemDescription item, user
+    title: getItemTitle item, user, lang
+    description: getItemDescription item, user, lang
     author: user.username
     guid: item._id
     url: item.href
@@ -51,13 +51,13 @@ serializeItem = (usersIndex)-> (item)->
 
   return data
 
-getItemTitle = (item, user)->
+getItemTitle = (item, user, lang)->
   { title, transaction } = item
   authors = item.snapshot['entity:authors']
   if _.isNonEmptyString authors then title += " - #{authors}"
 
   i18nKey = "#{transaction}_personalized"
-  transactionLabel = templateHelpers.i18n 'en', i18nKey, user
+  transactionLabel = templateHelpers.i18n lang, i18nKey, user
   title += " [#{transactionLabel}]"
 
   return title

@@ -26,9 +26,12 @@ module.exports =
     else
       return error_.bundle req, res, 'missing id', 400
 
+    # Guess the lang from the query string or from the request headers
+    # that might be passed by the feeds aggregator
+    lang = req.query.lang or req.headers['accept-language']?.split(/\W/)[0]
+
     feedDataPromise
-    # TODO: use the accept-language header to customize the feed
-    .then generateFeedFromFeedData
+    .then generateFeedFromFeedData(lang)
     .then res.send.bind(res)
     .catch error_.Handler(req, res)
 
