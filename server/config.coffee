@@ -22,6 +22,7 @@ module.exports =
       dumpExceptions: true
       showStack: true
 
+    statics.favicon
     logger.beforeStatic
     statics.enableCors
     statics.mountStaticFiles
