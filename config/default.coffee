@@ -176,3 +176,7 @@ module.exports = config =
       wikidata: 'https://data.inventaire.io/wikidata'
     ipfs:
       gateway: 'https://ipfs.io'
+
+  feed:
+    limitLength: 50
+    image: 'https://inventaire.io/public/icon/120.png'

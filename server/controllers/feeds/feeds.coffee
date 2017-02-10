@@ -1,14 +1,10 @@
 CONFIG = require 'config'
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
-root = CONFIG.fullPublicHost()
-items_ = __.require 'controllers', 'items/lib/items'
 error_ = __.require 'lib', 'error/error'
 user_ = __.require 'lib', 'user/user'
 groups_ = __.require 'controllers', 'groups/lib/groups'
-Rss = require 'rss'
-
-rssLimitLength = 50
+generateFeedFromFeedData = require './lib/generate_feed_from_feed_data'
 
 module.exports =
   get: (req, res, next)->
@@ -19,45 +15,40 @@ module.exports =
       unless _.isUserId userId
         return error_.bundle req, res, 'invalid user id', 400
 
-      # Verify the existance of the passed id
-      userIdsPromise = user_.byId(userId).then _.property('_id')
+      feedDataPromise = userFeedData userId
 
     else if groupId?
       unless _.isGroupId groupId
         return error_.bundle req, res, 'invalid group id', 400
 
-      userIdsPromise = findUsersByGroup groupId
+      feedDataPromise = groupFeedData groupId
 
     else
       return error_.bundle req, res, 'missing id', 400
 
-    userIdsPromise
-    .then items_.publicListings
-    .then extractLastItems
-    .then rssSerializer
+    feedDataPromise
+    .then generateFeedFromFeedData
     .then res.send.bind(res)
     .catch error_.Handler(req, res)
 
-findUsersByGroup = (groupId)->
+userFeedData = (userId)->
+  user_.byId userId
+  .then (user)->
+    userIds: [ user._id ]
+    feedOptions:
+      title: user.username
+      queryString: "user=#{user._id}"
+      pathname: "inventory/#{user._id}"
+
+groupFeedData = (groupId)->
   groups_.byId groupId
   .then (group)->
-    { admins, members } = group
-    admins.concat members
-    .map _.property('user')
+    userIds: getUserIdsFromGroupDoc group
+    feedOptions:
+      title: group.name
+      queryString: "group=#{group._id}"
+      pathname: "network/groups/#{group._id}"
 
-extractLastItems = (items)->
-  items
-  .sort (a, b)-> b.updated - a.updated
-  .slice 0, rssLimitLength
-
-rssSerializer = (items)->
-  feed = new Rss
-  feed.title = 'New Public Items'
-  items.map (item)->
-    title: item.title
-    guid: item._id
-    url: "#{root}/items/#{item._id}"
-    author: item.authors
-    date: item.updated
-  .map feed.item.bind(feed)
-  return feed.xml()
+getUserIdsFromGroupDoc = (group)->
+  { admins, members } = group
+  return admins.concat(members).map _.property('user')
