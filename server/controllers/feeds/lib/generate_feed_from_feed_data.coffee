@@ -6,13 +6,14 @@ items_ = __.require 'controllers', 'items/lib/items'
 serializeFeed = require './serialize_feed'
 
 module.exports = (lang)-> (feedData)->
-  { users, feedOptions } = feedData
-  userIds = users.map _.property('_id')
-  getLastItemsFromUserIds userIds
+  { users, semiPrivateAccessRight, feedOptions } = feedData
+  usersIds = users.map _.property('_id')
+  getLastItemsFromUsersIds usersIds, semiPrivateAccessRight
   .then (items)-> serializeFeed feedOptions, users, items, lang
 
-getLastItemsFromUserIds = (userIds)->
-  items_.publicListings userIds
+getLastItemsFromUsersIds = (usersIds, semiPrivateAccessRight)->
+  fnName = if semiPrivateAccessRight then 'friendsListings' else 'publicListings'
+  items_[fnName](usersIds)
   .then extractLastItems
 
 extractLastItems = (items)->
