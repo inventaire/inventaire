@@ -5,6 +5,7 @@ error_ = __.require 'lib', 'error/error'
 user_ = __.require 'lib', 'user/user'
 groups_ = __.require 'controllers', 'groups/lib/groups'
 generateFeedFromFeedData = require './lib/generate_feed_from_feed_data'
+headers_ = __.require 'lib', 'headers'
 
 module.exports =
   get: (req, res, next)->
@@ -28,7 +29,7 @@ module.exports =
 
     # Guess the lang from the query string or from the request headers
     # that might be passed by the feeds aggregator
-    lang = req.query.lang or req.headers['accept-language']?.split(/\W/)[0]
+    lang = req.query.lang or headers_.getReqLang(req)
 
     feedDataPromise
     .then generateFeedFromFeedData(lang)
