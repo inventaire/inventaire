@@ -6,10 +6,10 @@ relations_ = __.require 'controllers', 'relations/lib/queries'
 promises_ = __.require 'lib', 'promises'
 
 module.exports =
-  getUserRelations: (userId, getDocs)->
+  getUserRelations: (userId)->
     # just proxiing to let this module centralize
     # interactions with the social graph
-    relations_.getUserRelations(userId, getDocs)
+    relations_.getUserRelations userId
 
   getRelationsStatuses: (userId, usersIds)->
     getFriendsAndCoMembers userId
