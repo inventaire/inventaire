@@ -5,10 +5,11 @@ error_ = __.require 'lib', 'error/error'
 module.exports =
   get: (req, res, next)->
     { pathname } = req._parsedUrl
-    if missedApiRequest(req)
-      # the request didnt match previous routes
-      err = "GET #{req._parsedUrl.pathname}: api route not found"
-      error_.bundle req, res, err, 404
+    domain = pathname.split('/')[1]
+    if domain is 'api'
+      error_.bundle req, res, "GET #{pathname}: api route not found", 404
+    else if domain is 'public'
+      error_.bundle req, res, "GET #{pathname}: asset not found", 404
     else if imageHeader(req)
       err = "GET #{pathname}: wrong content-type: #{req.headers.accept}"
       error_.bundle req, res, err, 404
@@ -22,6 +23,3 @@ module.exports =
       url: req._parsedUrl.href
 
 imageHeader = (req)-> /^image/.test req.headers.accept
-
-missedApiRequest = (req)->
-  req._parsedUrl.pathname.split('/')[1] is 'api'
