@@ -6,22 +6,12 @@ relations_ = __.require 'controllers', 'relations/lib/queries'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
 doubleEndpoint = __.require 'lib', 'double_endpoint'
-{ addUsersData } = require './lib/queries_commons'
+{ validateQuery, addUsersData, ownerIs, ownerIn } = require './lib/queries_commons'
 
 module.exports = doubleEndpoint (req, res, userId)->
-  { ids } = req.query
-
-  unless _.isNonEmptyString ids
-    return error_.bundle req, res, 'missing ids parameter', 400, req.query
-
-  ids = _.uniq ids.split('|')
-
-  for id in ids
-    unless _.isItemId id
-      return error_.bundle req, res, 'invalid item id', 400, id
-
+  validateQuery req.query, 'ids', _.isItemId
   # fetch all items
-  items_.byIds ids
+  .then items_.byIds
   .then filterAuthorizedItems(userId)
   .then addUsersData
   .then _.Wrap(res, 'items')
@@ -48,11 +38,11 @@ getItemsIndexedByListing = (items)->
 
   return listingIndex
 
-filterPrivateItems = (items, userId)-> items.filter (item)-> item.owner is userId
+filterPrivateItems = (items, userId)-> items.filter ownerIs(userId)
 
 filterNetworkItems = (items, userId)->
   if items.length is 0 then return []
 
   relations_.getUserFriendsAndCoGroupsMembers userId
   .then (authorizingUsersIds)->
-    items.filter (item)-> item.owner in authorizingUsersIds
+    items.filter ownerIn(authorizingUsersIds)

@@ -6,21 +6,16 @@ relations_ = __.require 'controllers', 'relations/lib/queries'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
 doubleEndpoint = __.require 'lib', 'double_endpoint'
-{ validateQuery, addUsersData } = require './lib/queries_commons'
+{ validateQuery, addUsersData, ownerIn } = require './lib/queries_commons'
 
 module.exports = doubleEndpoint (req, res, userId)->
-  { uris } = req.query
+  validateQuery req.query, 'uris', _.isEntityUri
+  .then getEntitiesItems(userId)
+  .then addUsersData
+  .then res.json.bind(res)
+  .catch error_.Handler(req, res)
 
-  unless _.isNonEmptyString uris
-    return error_.bundle req, res, 'missing uris parameter', 400, req.query
-
-  uris = _.uniq uris.split('|')
-
-  for uri in uris
-    unless _.isEntityUri uri
-      return error_.bundle req, res, 'invalid uri', 400, uri
-
-  # fetch all items from those entities
+getEntitiesItems = (userId)-> (uris)->
   promises_.all [
     getUserItems userId, uris
     getNetworkItems userId, uris
@@ -33,10 +28,6 @@ module.exports = doubleEndpoint (req, res, userId)->
       items.user = userItems
       items.network = networkItems
     return items
-
-  .then addUsersData
-  .then res.json.bind(res)
-  .catch error_.Handler(req, res)
 
 getUserItems = (userId, uris)->
   unless userId? then return []
@@ -57,4 +48,4 @@ getNetworkItems = (userId, uris)->
   .spread (authorizedItems, networkUsersIds)->
     # Keep only items the user is authorized to see,
     # which are items from users in her network
-    return authorizedItems.filter (item)-> item.owner in networkUsersIds
+    return authorizedItems.filter ownerIn(networkUsersIds)

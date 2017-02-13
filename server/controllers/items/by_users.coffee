@@ -6,28 +6,18 @@ relations_ = __.require 'controllers', 'relations/lib/queries'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
 doubleEndpoint = __.require 'lib', 'double_endpoint'
+{ validateQuery } = require './lib/queries_commons'
 
 module.exports = doubleEndpoint (req, res, authentifiedUserId)->
-  { users } = req.query
-
-  unless _.isNonEmptyString users
-    return error_.bundle req, res, 'missing users parameter', 400, req.query
-
-  users = _.uniq users.split('|')
-
-  for id in users
-    unless _.isUserId id
-      return error_.bundle req, res, 'invalid user id', 400, id
-
-  # get relations to users
-  getRelations users, authentifiedUserId
+  validateQuery req.query, 'users', _.isUserId
+  .then getRelations(authentifiedUserId)
   .then fetchRelationsItems
   # Not including the associated users as this endpoint assumes
   # the requester already knows the users
   .then _.Wrap(res, 'items')
   .catch error_.Handler(req, res)
 
-getRelations = (usersIds, authentifiedUserId)->
+getRelations = (authentifiedUserId)-> (usersIds)->
   # All users are considered public users when the request isn't authentified
   unless authentifiedUserId? then return promises_.resolve { public: usersIds }
 
