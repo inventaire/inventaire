@@ -45,8 +45,8 @@ module.exports = groups_ =
   findUserGroupsCoMembers: (userId)->
     groups_.byUser userId
     .then groups_.allGroupsMembers
-    .then _.uniq
-    # .then _.Log('allGroupsMembers')
+    # Deduplicate and remove the user own id from the list
+    .then (usersIds)-> _.uniq _.without(usersIds, userId)
 
   userInvited: (userId, groupId)->
     groups_.byId groupId
