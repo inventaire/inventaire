@@ -8,7 +8,7 @@ user_ = __.require 'lib', 'user/user'
 
 module.exports = (userId, limitDate=0)->
   # get user friends ids
-  relations_.getUserAndCoGroupsMembers userId
+  relations_.getUserFriendsAndCoGroupsMembers userId
   # get last friends items available for a transaction
   .then items_.friendsListings
   .map items_.importSnapshotData

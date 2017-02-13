@@ -30,7 +30,7 @@ module.exports = (db)->
       .then couch_.mapDoc
       .then db.bulkDelete
 
-    getUserAndCoGroupsMembers: (userId)->
+    getUserFriendsAndCoGroupsMembers: (userId)->
       Promise.all [
         lists.getUserFriends userId
         groups_.findUserGroupsCoMembers userId

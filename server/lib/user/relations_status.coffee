@@ -13,11 +13,7 @@ module.exports =
 
   getRelationsStatuses: (userId, usersIds)->
     getFriendsAndCoMembers userId
-    .spread (friendsIds, coGroupMembersIds)->
-      friends = _.intersection friendsIds, usersIds
-      coGroupMembers = _.intersection coGroupMembersIds, usersIds
-      # not looking for remaing users as there is no use to it for now
-      return [friends, coGroupMembers]
+    .spread spreadRelations(usersIds)
 
   areFriends: (userId, otherId)->
     _.types arguments, 'strings...'
@@ -32,6 +28,17 @@ module.exports =
     .spread (friendsIds, coGroupMembersIds)->
       return otherId in friendsIds or otherId in coGroupMembersIds
 
+spreadRelations = (usersIds)-> (friendsIds, coGroupMembersIds)->
+  friends = []
+  coGroupMembers = []
+  publik = []
+
+  for id in usersIds
+    if id in friendsIds then friends.push id
+    else if id in coGroupMembers then coGroupMembers.push id
+    else publik.push id
+
+  return [ friends, coGroupMembers, publik ]
 
 # result is to be .spread (friendsIds, coGroupMembersIds)->
 getFriendsAndCoMembers = (userId)->

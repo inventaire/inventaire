@@ -64,7 +64,7 @@ module.exports =
     unless tests.entityUri uri
       return error_.bundle req, res, 'bad entity uri', 400
 
-    items_.publicByEntity uri
+    items_.publicByEntities [ uri ]
     .then bundleOwnersData.bind(null, req, res)
     .catch error_.Handler(req, res)
 

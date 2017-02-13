@@ -16,6 +16,7 @@ db = __.require('couch', 'base')('items')
 module.exports = items_ =
   db: db
   byId: db.get
+  byIds: db.fetch
   byOwner: (owner)->
     # only used by items.fetch with req.session.email owner
     # => shouldn't be safeItem'ized
@@ -59,8 +60,12 @@ module.exports = items_ =
     items_.byEntity entityUri
     .map _.property('pictures')
 
-  publicByEntity: (entityUri)->
-    db.viewByKey 'byEntity', [entityUri, 'public']
+  # all items from an entity that require a specific authorization
+  authorizedByEntities: (uris)-> items_.listingByEntities 'friends', uris
+  publicByEntities: (uris)-> items_.listingByEntities 'public', uris
+  listingByEntities: (listing, uris)->
+    keys = uris.map (uri)-> [uri, listing]
+    db.viewByKeys 'byEntity', keys
     .map safeItem
 
   byIsbn: (isbn)->

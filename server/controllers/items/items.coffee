@@ -8,17 +8,16 @@ promises_ = __.require 'lib', 'promises'
 { Track } = __.require 'lib', 'track'
 
 publicActions = require './public_actions'
+byIds = require './by_ids'
+byUsers = require './by_users'
+byEntities = require './by_entities'
 ActionsControllers = __.require 'lib', 'actions_controllers'
 
 module.exports =
-  fetch: (req, res, next) ->
-    # only fetch for requesters session
-    # = only way to fetch private data on items
-    userId = req.user._id
-
-    items_.byOwner userId
-    .then res.json.bind(res)
-    .catch error_.Handler(req, res)
+  get: ActionsControllers
+    'by-ids': byIds.authorized
+    'by-users': byUsers.authorized
+    'by-entities': byEntities.authorized
 
   put: (req, res, next) ->
     { _id, title, entity } = req.body
@@ -56,3 +55,6 @@ module.exports =
     'public-by-username-and-entity': publicActions.publicByUsernameAndEntity
     'last-public-items': publicActions.lastPublicItems
     'users-public-items': publicActions.usersPublicItems
+    'by-ids': byIds.public
+    'by-users': byUsers.public
+    'by-entities': byEntities.public
