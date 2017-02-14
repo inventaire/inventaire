@@ -14,7 +14,7 @@ module.exports = doubleEndpoint (req, res, userId)->
   .then items_.byIds
   .then filterAuthorizedItems(userId)
   .then addUsersData
-  .then _.Wrap(res, 'items')
+  .then res.json.bind(res)
   .catch error_.Handler(req, res)
 
 filterAuthorizedItems = (userId)-> (items)->
