@@ -20,3 +20,9 @@ module.exports =
   passport:
     initialize: passport.initialize()
     session: passport.session {pauseStream: true}
+
+  basicAuth: (req, res, next)->
+    unless req.headers.authorization? then return next()
+    # TODO: handle response to avoid text/plain 401 response
+    # to keep the API consistent on Content-Type
+    passport_.authenticate.basic req, res, next

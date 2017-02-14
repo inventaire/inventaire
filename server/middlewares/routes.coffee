@@ -24,12 +24,8 @@ exports.restrictApiAccess = (req, res, next) ->
     # can verify the admin rights once the user is authentified and set on req.user
     next = VerifyAdminRights req, res, next
 
-  # verify that the user as a valid session
   if req.isAuthenticated() then next()
-  # else try one-time authentification means
-  else if basicAuth(req, res, next) then return
-  else
-    error_.bundle req, res, 'unauthorized api access', 401, req.originalUrl
+  else error_.bundle req, res, 'unauthorized api access', 401, req.originalUrl
 
 isApiRoute = (route)-> /^\/(api|test)\//.test route
 
@@ -38,14 +34,6 @@ whitelistedRoute = (pathname)-> pathname.split('/')[3] is 'public'
 
 # ex: /api/module/admin?action=doadminstuff
 requiresAdminRights = (pathname)-> pathname.split('/')[3] is 'admin'
-
-basicAuth = (req, res, next)->
-  unless req.headers.authorization? then return false
-  # let the basic auth strategy handle the rest
-  # TODO: handle response to avoid text/plain 401 response
-  # to keep the API consistent on Content-Type
-  passport_.authenticate.basic req, res, next
-  return true
 
 VerifyAdminRights = (req, res, next)-> ()->
   if req.user.admin then next()

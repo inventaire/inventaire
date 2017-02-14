@@ -34,6 +34,8 @@ module.exports =
     auth.session
     auth.passport.initialize
     auth.passport.session
+    auth.basicAuth
+
     content.dedupplicateRequests
 
     routes.restrictApiAccess
