@@ -10,12 +10,13 @@ getEntitiesByUris = require './lib/get_entities_by_uris'
 GetEntitiesByUris = (refresh)-> (uris)-> getEntitiesByUris uris, refresh
 promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
+randomString = __.require 'lib', './utils/random_string'
 
 module.exports = (query)->
   _.type query, 'object'
   { disableDataseed, refresh } = query
 
-  key = JSON.stringify(query) + ' ' + _.randomString(4)
+  key = JSON.stringify(query) + ' ' + randomString(4)
 
   promises = [
     searchWikidataByText query, key
