@@ -7,22 +7,22 @@ actions = require './actions'
 solve = require('./solve_intent')(actions)
 
 module.exports =
-  requestFriend: (userId, otherId)->
-    queries.getStatus userId, otherId
-    .then solve.requestFriend.bind(null, userId, otherId)
+  requestFriend: (reqUserId, otherId)->
+    queries.getStatus reqUserId, otherId
+    .then solve.requestFriend.bind(null, reqUserId, otherId)
 
-  cancelFriendRequest: (userId, otherId)->
-    queries.getStatus userId, otherId
-    .then solve.cancelFriendRequest.bind(null, userId, otherId)
+  cancelFriendRequest: (reqUserId, otherId)->
+    queries.getStatus reqUserId, otherId
+    .then solve.cancelFriendRequest.bind(null, reqUserId, otherId)
 
-  removeFriendship: (userId, otherId)->
-    queries.getStatus userId, otherId
-    .then solve.removeFriendship.bind(null, userId, otherId)
+  removeFriendship: (reqUserId, otherId)->
+    queries.getStatus reqUserId, otherId
+    .then solve.removeFriendship.bind(null, reqUserId, otherId)
 
-  acceptRequest: (userId, otherId)->
-    queries.getStatus userId, otherId
-    .then solve.acceptRequest.bind(null, userId, otherId)
+  acceptRequest: (reqUserId, otherId)->
+    queries.getStatus reqUserId, otherId
+    .then solve.acceptRequest.bind(null, reqUserId, otherId)
 
-  discardRequest: (userId, otherId)->
-    queries.getStatus userId, otherId
-    .then solve.discardRequest.bind(null, userId, otherId)
+  discardRequest: (reqUserId, otherId)->
+    queries.getStatus reqUserId, otherId
+    .then solve.discardRequest.bind(null, reqUserId, otherId)

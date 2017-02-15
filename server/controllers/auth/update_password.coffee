@@ -12,7 +12,6 @@ module.exports = (req, res, next)->
   { user, body } = req
   { currentPassword, newPassword } = body
   { resetPassword } = user
-  userId = user._id
 
   unless User.tests.password(newPassword)
     return error_.bundle req, res, 'invalid new password', 400

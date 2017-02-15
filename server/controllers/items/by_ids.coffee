@@ -9,25 +9,25 @@ promises_ = __.require 'lib', 'promises'
 filterPrivateAttributes = require './lib/filter_private_attributes'
 
 module.exports = (req, res)->
-  userId = req.user?._id
+  reqUserId = req.user?._id
   validateQuery req.query, 'ids', _.isItemId
   .then items_.byIds
-  .then filterAuthorizedItems(userId)
+  .then filterAuthorizedItems(reqUserId)
   .then addUsersData
   .then res.json.bind(res)
   .catch error_.Handler(req, res)
 
-filterAuthorizedItems = (userId)-> (items)->
+filterAuthorizedItems = (reqUserId)-> (items)->
   listingIndex = getItemsIndexedByListing _.compact(items)
   results =
-    public: listingIndex.public.map filterPrivateAttributes(userId)
+    public: listingIndex.public.map filterPrivateAttributes(reqUserId)
 
-  unless userId? then return results
+  unless reqUserId? then return results
 
-  results.user = filterPrivateItems listingIndex.private, userId
+  results.user = filterPrivateItems listingIndex.private, reqUserId
   # 'friends' is the name of the listing open to friends and groups
   # a.k.a the user network
-  results.network = filterNetworkItems listingIndex.friends, userId
+  results.network = filterNetworkItems listingIndex.friends, reqUserId
   return promises_.props results
 
 getItemsIndexedByListing = (items)->
@@ -41,13 +41,13 @@ getItemsIndexedByListing = (items)->
 
   return listingIndex
 
-filterPrivateItems = (items, userId)-> items.filter ownerIs(userId)
+filterPrivateItems = (items, reqUserId)-> items.filter ownerIs(reqUserId)
 
-filterNetworkItems = (items, userId)->
+filterNetworkItems = (items, reqUserId)->
   if items.length is 0 then return []
 
-  relations_.getUserFriendsAndCoGroupsMembers userId
+  relations_.getUserFriendsAndCoGroupsMembers reqUserId
   .then (authorizingUsersIds)->
     items
     .filter ownerIn(authorizingUsersIds)
-    .map filterPrivateAttributes(userId)
+    .map filterPrivateAttributes(reqUserId)

@@ -16,7 +16,7 @@ module.exports =
 
   post: (req, res, next)->
     { transaction, message } = req.body
-    userId = req.user._id
+    reqUserId = req.user._id
 
     unless transaction?
       return error_.bundle req, res, 'missing transaction id', 400
@@ -27,11 +27,11 @@ module.exports =
 
     transactions_.byId transaction
     .then (transaction)->
-      promises_.resolve transactions_.verifyRightToInteract(userId, transaction)
+      promises_.resolve transactions_.verifyRightToInteract(reqUserId, transaction)
       .get '_id'
-      .then comments_.addTransactionComment.bind(null, userId, message)
+      .then comments_.addTransactionComment.bind(null, reqUserId, message)
       .then (couchRes)->
-        transactions_.updateReadForNewMessage userId, transaction
+        transactions_.updateReadForNewMessage reqUserId, transaction
         .then ->
           Radio.emit 'transaction:message', transaction
           return couchRes

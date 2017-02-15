@@ -11,12 +11,12 @@ notifs_ = __.require 'lib', 'notifications'
 { Track } = __.require 'lib', 'track'
 
 module.exports = (req, res)->
-  userId = req.user._id
+  reqUserId = req.user._id
 
   _.warn req.user, 'deleting user'
 
-  user_.softDeleteById userId
-  .then cleanEverything.bind(null, userId)
+  user_.softDeleteById reqUserId
+  .then cleanEverything.bind(null, reqUserId)
   # triggering track before logging out
   # to get access to req.user before it's cleared
   .tap Track(req, ['user', 'delete'])
@@ -29,16 +29,16 @@ module.exports = (req, res)->
 # commentaries => deleted (the user will expect it to clean her online presence )
 # transactions => kept: those are private and remain useful for the other user
 
-cleanEverything = (userId)->
+cleanEverything = (reqUserId)->
   promises_.all [
-    relations_.deleteUserRelations userId
-    deleteUserItems userId
-    groups_.leaveAllGroups userId
-    notifs_.deleteAllByUserId userId
+    relations_.deleteUserRelations reqUserId
+    deleteUserItems reqUserId
+    groups_.leaveAllGroups reqUserId
+    notifs_.deleteAllByUserId reqUserId
   ]
   .then ->
     # should be run after to avoid conflicts with items comments deletion
-    comments_.deleteItemsCommentsByUserId userId
+    comments_.deleteItemsCommentsByUserId reqUserId
 
 logout = (req)->
   _.warn req.session, 'session before logout'

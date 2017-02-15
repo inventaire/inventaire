@@ -10,7 +10,7 @@ module.exports = (req, res) ->
   unless _.isNonEmptyPlainObject entityData
     return error_.bundle req, res, 'bad query', 400
 
-  { _id:userId } = req.user
+  { _id:reqUserId } = req.user
   { labels, claims } = entityData
 
   unless _.isObject labels
@@ -19,7 +19,7 @@ module.exports = (req, res) ->
   unless _.isObject claims
     return error_.bundle req, res, 'claims should be an object', 400, entityData
 
-  createAndEditEntity labels, claims, userId
+  createAndEditEntity labels, claims, reqUserId
   .then res.json.bind(res)
   .then Track(req, ['entity', 'creation'])
   .catch error_.Handler(req, res)

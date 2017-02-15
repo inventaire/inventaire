@@ -8,22 +8,22 @@ user_ = __.require 'lib', 'user/user'
 
 module.exports = (req, res, nex)->
   { item, message } = req.body
-  requester = req.user._id
+  reqUserId = req.user._id
 
   _.log [item, message], 'item request'
 
   unless item? then return error_.bundle req, res, 'missing item id', 400
 
   items_.byId item
-  .then transactions_.verifyRightToRequest.bind(null, requester)
+  .then transactions_.verifyRightToRequest.bind(null, reqUserId)
   .then (itemDoc)->
-    { owner } = itemDoc
-    user_.byIds([owner, requester])
+    { owner:ownerId } = itemDoc
+    user_.byIds [ownerId, reqUserId]
     .spread transactions_.create.bind(null, itemDoc)
 
   .get 'id'
   .then (id)->
-    transactions_.addMessage(requester, message, id)
+    transactions_.addMessage(reqUserId, message, id)
     transactions_.byId(id)
     .then res.json.bind(res)
   .then Track(req, ['transaction', 'request'])

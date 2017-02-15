@@ -5,7 +5,7 @@ entities_ = require './lib/entities'
 
 module.exports = (req, res)->
   { id:entityId, lang, value } = req.body
-  { _id:userId } = req.user
+  { _id:reqUserId } = req.user
 
   _.log req.body, 'body'
 
@@ -22,6 +22,6 @@ module.exports = (req, res)->
 
   entities_.byId entityId
   .then _.Log('doc')
-  .then entities_.updateLabel.bind(null, lang, value, userId)
+  .then entities_.updateLabel.bind(null, lang, value, reqUserId)
   .then _.Ok(res)
   .catch error_.Handler(req, res)

@@ -28,15 +28,15 @@ module.exports =
     unless title? then return error_.bundle req, res, 'missing item title', 400
     unless entity? then return error_.bundle req, res, 'missing item entity', 400
 
-    userId = req.user._id
+    reqUserId = req.user._id
 
     promises_.try ->
       item = req.body
       if item._id is 'new'
-        items_.create userId, item
+        items_.create reqUserId, item
         .tap Track(req, ['item', 'creation'])
       else
-        items_.update userId, item
+        items_.update reqUserId, item
         .tap Track(req, ['item', 'update'])
     .then couch_.getObjIfSuccess.bind(null, items_.db)
     # TODO: Update user snapshot.items:counter
@@ -45,9 +45,9 @@ module.exports =
 
   del: (req, res, next) ->
     { id } = req.query
-    userId = req.user._id
+    reqUserId = req.user._id
 
-    items_.verifyOwnership id, userId
+    items_.verifyOwnership id, reqUserId
     .then items_.delete.bind(null, id)
     # TODO: Update user snapshot.items:counter
     .then res.json.bind(res)

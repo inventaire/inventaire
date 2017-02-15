@@ -6,8 +6,8 @@ messages = require './messages'
 ActionsControllers = __.require 'lib', 'actions_controllers'
 
 sendUserTransactions = (req, res)->
-  { _id:userId } = req.user
-  transactions_.byUser userId
+  { _id:reqUserId } = req.user
+  transactions_.byUser reqUserId
   .then res.json.bind(res)
   .catch error_.Handler(req, res)
 

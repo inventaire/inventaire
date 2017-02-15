@@ -15,23 +15,23 @@ module.exports = (req, res, next) ->
   unless tests.userId user
     return error_.bundle req, res, 'bad user parameter', 400, req.body
 
-  userId = req.user._id
+  reqUserId = req.user._id
 
-  promises_.try -> solveNewRelation action, user, userId
+  promises_.try -> solveNewRelation action, user, reqUserId
   .then _.success.bind(null, user, "#{action}: OK!")
   .then _.Ok(res)
   .then Track(req, ['relation', action])
   .catch error_.Handler(req, res)
 
-solveNewRelation = (action, othersId, userId)->
-  if userId is othersId
+solveNewRelation = (action, othersId, reqUserId)->
+  if reqUserId is othersId
     throw error_.new 'cant create relation between identical ids', 400, arguments
 
   type = actions[action]
-  return method type, userId, othersId
+  return method type, reqUserId, othersId
 
-method = (type, userId, othersId)->
-  intent[type](userId, othersId)
+method = (type, reqUserId, othersId)->
+  intent[type](reqUserId, othersId)
 
 actions =
   request: 'requestFriend'

@@ -11,18 +11,18 @@ module.exports = (action, req, res)->
   { body } = req
   # user is needed for invite, acceptRequest, refuseRequest controllers only
   { group, user } = body
-  userId = req.user._id
+  reqUserId = req.user._id
 
-  _.log [userId, body], 'group action'
+  _.log [reqUserId, body], 'group action'
 
   if user? and not tests.valid 'userId', user
-    return error_.bundle req, res, "invalid userId", 400, user
+    return error_.bundle req, res, 'invalid user id', 400, user
 
   unless tests.valid 'groupId', group
-    return error_.bundle req, res, "invalid groupId", 400, group
+    return error_.bundle req, res, 'invalid group id', 400, group
 
-  rightsVerification[action](userId, group, user)
-  .then groups_[action].bind(null, body, userId)
+  rightsVerification[action](reqUserId, group, user)
+  .then groups_[action].bind(null, body, reqUserId)
   .then _.Ok(res)
   .then Track(req, ['groups', action])
   .catch error_.Handler(req, res)

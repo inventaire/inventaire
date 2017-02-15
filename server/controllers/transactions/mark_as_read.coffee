@@ -9,10 +9,10 @@ transactions_ = require './lib/transactions'
 module.exports = (req, res, next)->
   { id } = req.body
   tests.pass 'transactionId', id
-  userId = req.user._id
+  reqUserId = req.user._id
 
   transactions_.byId id
-  .then transactions_.verifyRightToInteract.bind(null, userId)
-  .then transactions_.markAsRead.bind(null, userId)
+  .then transactions_.verifyRightToInteract.bind(null, reqUserId)
+  .then transactions_.markAsRead.bind(null, reqUserId)
   .then _.Ok(res)
   .catch error_.Handler(req, res)

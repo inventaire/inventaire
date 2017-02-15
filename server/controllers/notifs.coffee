@@ -15,11 +15,11 @@ exports.updateStatus = (req, res) ->
   unless _.isArray(times) and times.length > 0
     return _.ok res
 
-  userId = req.user._id
+  reqUserId = req.user._id
 
   # could probably be replaced by a batch operation
-  promises_.all times.map(notifs_.updateReadStatus.bind(null, userId))
+  promises_.all times.map(notifs_.updateReadStatus.bind(null, reqUserId))
   .then ->
-    _.success [userId, times], 'notifs marked as read'
+    _.success [reqUserId, times], 'notifs marked as read'
     _.ok res
   .catch error_.Handler(req, res)

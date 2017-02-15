@@ -7,21 +7,21 @@ user_ = __.require 'lib', 'user/user'
 promises_ = __.require 'lib', 'promises'
 { possibleActions } = require './actions_lists'
 
-verifyJoinRequestHandlingRights = (userId, groupId, requesterId)->
+verifyJoinRequestHandlingRights = (reqUserId, groupId, requesterId)->
   promises_.all([
-      groups_.userInAdmins(userId, groupId)
+      groups_.userInAdmins(reqUserId, groupId)
       groups_.userInRequested(requesterId, groupId)
     ])
   .spread (userInAdmins, requesterInRequested)->
     unless userInAdmins
-      throw error_.new "user isnt admin", 403, userId, groupId
+      throw error_.new "user isnt admin", 403, reqUserId, groupId
     unless requesterInRequested
       throw error_.new "request not found", 401, requesterId, groupId
 
-verifyRightsToInvite = (invitorId, groupId, invitedId)->
+verifyRightsToInvite = (reqUserId, groupId, invitedUserId)->
   promises_.all [
-    user_.areFriends(invitorId, invitedId)
-    groups_.userInGroup(invitorId, groupId)
+    user_.areFriends(reqUserId, invitedUserId)
+    groups_.userInGroup(reqUserId, groupId)
   ]
   .spread controlInvitationRights.bind(null, arguments)
 
@@ -31,51 +31,51 @@ controlInvitationRights = (context, usersAreFriends, invitorInGroup)->
   unless invitorInGroup
     throw error_.new "invitor isn't in group", 403, context
 
-verifyAdminRights = (userId, groupId)->
-  groups_.userInAdmins userId, groupId
+verifyAdminRights = (reqUserId, groupId)->
+  groups_.userInAdmins reqUserId, groupId
   .then (bool)->
     unless bool
-      throw error_.new 'user isnt a group admin', 403, userId, groupId
+      throw error_.new 'user isnt a group admin', 403, reqUserId, groupId
 
-verifyAdminRightsWithoutAdminsConflict = (userId, groupId, targetId)->
+verifyAdminRightsWithoutAdminsConflict = (reqUserId, groupId, targetId)->
   promises_.all [
-    groups_.userInAdmins(userId, groupId)
+    groups_.userInAdmins(reqUserId, groupId)
     groups_.userInAdmins(targetId, groupId)
   ]
   .spread (userIsAdmin, targetIsAdmin)->
     unless userIsAdmin
-      throw error_.new 'user isnt a group admin', 403, userId, groupId
+      throw error_.new 'user isnt a group admin', 403, reqUserId, groupId
     if targetIsAdmin
-      throw error_.new 'target user is also a group admin', 403, userId, groupId, targetId
+      throw error_.new 'target user is also a group admin', 403, reqUserId, groupId, targetId
 
-verifyUserRightToLeave = (userId, groupId)->
+verifyUserRightToLeave = (reqUserId, groupId)->
   promises_.all [
-    groups_.userInGroup(userId, groupId)
-    groups_.userCanLeave(userId, groupId)
+    groups_.userInGroup(reqUserId, groupId)
+    groups_.userCanLeave(reqUserId, groupId)
   ]
   .spread (userInGroup, userCanLeave)->
     unless userInGroup
-      throw error_.new 'user isnt in the group', 403, userId, groupId
+      throw error_.new 'user isnt in the group', 403, reqUserId, groupId
     unless userCanLeave
       message = "the last group admin can't leave before naming another admin"
-      throw error_.new message, 403, userId, groupId
+      throw error_.new message, 403, reqUserId, groupId
 
 module.exports = verificators =
   invite: verifyRightsToInvite
   # /!\ groups_.userInvited returns a group doc, not a boolean
   accept: groups_.userInvited
   decline: groups_.userInvited
-  request: (userId, groupId)->
-    groups_.userInGroupOrOut userId, groupId
+  request: (reqUserId, groupId)->
+    groups_.userInGroupOrOut reqUserId, groupId
     .then (bool)->
       if bool
-        throw error_.new "user is already in group", 403, userId, groupId
+        throw error_.new "user is already in group", 403, reqUserId, groupId
 
-  cancelRequest: (userId, groupId)->
-    groups_.userInRequested userId, groupId
+  cancelRequest: (reqUserId, groupId)->
+    groups_.userInRequested reqUserId, groupId
     .then (bool)->
       unless bool
-        throw error_.new "request not found", 403, userId, groupId
+        throw error_.new "request not found", 403, reqUserId, groupId
 
   acceptRequest: verifyJoinRequestHandlingRights
   refuseRequest: verifyJoinRequestHandlingRights

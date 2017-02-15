@@ -26,11 +26,11 @@ getNearbyUsers = (req)->
   .then _.Log('users nearby')
 
 parseReq = (req)->
-  { _id:userId } = req.user
+  { _id:reqUserId } = req.user
   # range in kilometers
   range = req.query.range or '50'
 
   try range = _.stringToInt range
   catch err then return error_.reject 'invalid range', 400, [range, err]
 
-  return promises_.resolve [userId, range]
+  return promises_.resolve [reqUserId, range]

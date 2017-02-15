@@ -8,7 +8,7 @@ tests = __.require 'models','tests/common-tests'
 
 module.exports = (req, res, next)->
   { id, state } = req.body
-  userId = req.user._id
+  reqUserId = req.user._id
 
   tests.pass 'transactionId', id
 
@@ -18,18 +18,18 @@ module.exports = (req, res, next)->
   _.log [id, state], 'update transaction state'
 
   transactions_.byId id
-  .then VerifyRights(state, userId)
-  .then transactions_.updateState.bind(null, state, userId)
+  .then VerifyRights(state, reqUserId)
+  .then transactions_.updateState.bind(null, state, reqUserId)
   .then res.json.bind(res)
   .then Track(req, ['transaction', 'update', state])
   .catch error_.Handler(req, res)
 
-VerifyRights = (state, userId)->
+VerifyRights = (state, reqUserId)->
   switch states[state].actor
     when 'requester'
-      transactions_.verifyIsRequester.bind(null, userId)
+      transactions_.verifyIsRequester.bind(null, reqUserId)
     when 'owner'
-      transactions_.verifyIsOwner.bind(null, userId)
+      transactions_.verifyIsOwner.bind(null, reqUserId)
     when 'both'
-      transactions_.verifyRightToInteract.bind(null, userId)
+      transactions_.verifyRightToInteract.bind(null, reqUserId)
     else throw error_.new 'unknown actor', 500, arguments

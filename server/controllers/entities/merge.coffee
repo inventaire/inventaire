@@ -21,7 +21,7 @@ validTypes = [ 'work', 'human' ]
 module.exports = (req, res)->
   { body } = req
   { from:fromUri, to:toUri } = body
-  { _id:userId } = req.user
+  { _id:reqUserId } = req.user
 
   # Not using _.isEntityUri, letting the logic hereafter check specific prefixes
   unless _.isNonEmptyString fromUri
@@ -39,17 +39,17 @@ module.exports = (req, res)->
   unless toPrefix in validToPrefix
     return error_.bundle req, res, "invalid 'to' uri domain: #{toPrefix}. Accepted domains: #{validToPrefix}", 400, body
 
-  _.log { merge: body, user: userId }, 'entity merge request'
+  _.log { merge: body, user: reqUserId }, 'entity merge request'
 
   # Let getEntitiesByUris test for the whole URI validity
   # Get data from concerned entities
   getEntitiesByUris [ fromUri, toUri ], true
   .get 'entities'
-  .then Merge(userId, toPrefix, fromUri, toUri)
+  .then Merge(reqUserId, toPrefix, fromUri, toUri)
   .then _.Ok(res)
   .catch error_.Handler(req, res)
 
-Merge = (userId, toPrefix, fromUri, toUri)-> (entitiesByUri)->
+Merge = (reqUserId, toPrefix, fromUri, toUri)-> (entitiesByUri)->
   fromEntity = entitiesByUri[fromUri]
   unless fromEntity? then throw notFound 'from', fromUri
 
@@ -69,10 +69,10 @@ Merge = (userId, toPrefix, fromUri, toUri)-> (entitiesByUri)->
   [ toPrefix, toId ] = toUri.split ':'
 
   if toPrefix is 'inv'
-    return mergeEntities userId, fromId, toId
+    return mergeEntities reqUserId, fromId, toId
   else
     # no merge to do for Wikidata entities, simply creating a redirection
-    return turnIntoRedirection userId, fromId, toUri
+    return turnIntoRedirection reqUserId, fromId, toUri
 
 notFound = (label, context)->
   error_.new "'#{label}' entity not found (could it be not it's canonical uri?)", 400, context

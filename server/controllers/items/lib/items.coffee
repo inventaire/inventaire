@@ -25,33 +25,33 @@ module.exports = items_ =
       endkey: [ ownerId, maxKey, maxKey ]
       include_docs: true
 
-  friendsListings: (usersIds, requesterId)->
-    bundleListings ['friends', 'public'], usersIds, requesterId
+  friendsListings: (usersIds, reqUserId)->
+    bundleListings ['friends', 'public'], usersIds, reqUserId
 
-  publicListings: (usersIds, requesterId)->
+  publicListings: (usersIds, reqUserId)->
     usersIds = _.forceArray usersIds
-    bundleListings ['public'], usersIds, requesterId
+    bundleListings ['public'], usersIds, reqUserId
 
   byEntity: (entityUri)-> db.viewByKeys 'byEntity', entityUriKeys(entityUri)
   byPreviousEntity: (entityUri)-> db.viewByKey 'byPreviousEntity', entityUri
 
   # all items from an entity that require a specific authorization
-  authorizedByEntities: (uris, requesterId)->
-    listingByEntities 'friends', uris, requesterId
+  authorizedByEntities: (uris, reqUserId)->
+    listingByEntities 'friends', uris, reqUserId
 
-  publicByEntities: (uris, requesterId)->
-    listingByEntities 'public', uris, requesterId
+  publicByEntities: (uris, reqUserId)->
+    listingByEntities 'public', uris, reqUserId
 
-  publicByDate: (limit=15, offset=0, assertImage=false, requesterId)->
+  publicByDate: (limit=15, offset=0, assertImage=false, reqUserId)->
     db.viewCustom 'publicByDate',
       limit: limit
       skip: offset
       descending: true
       include_docs: true
     .then FilterWithImage(assertImage)
-    .map filterPrivateAttributes(requesterId)
+    .map filterPrivateAttributes(reqUserId)
 
-  byOwnersAndEntitiesAndListings: (ownersIds, uris, listingsKey, requesterId)->
+  byOwnersAndEntitiesAndListings: (ownersIds, uris, listingsKey, reqUserId)->
     keys = []
     for ownerId in ownersIds
       for uri in uris
@@ -59,7 +59,7 @@ module.exports = items_ =
           keys.push [ownerId, uri, listing]
 
     db.viewByKeys 'byOwnerAndEntityAndListing', keys
-    .map filterPrivateAttributes(requesterId)
+    .map filterPrivateAttributes(reqUserId)
 
   create: (userId, item)->
     db.post Item.create userId, item
@@ -111,15 +111,15 @@ module.exports = items_ =
     if image? and item.pictures.length is 0 then item.pictures = [ image ]
     return item
 
-listingByEntities = (listing, uris, requesterId)->
+listingByEntities = (listing, uris, reqUserId)->
   keys = uris.map (uri)-> [uri, listing]
   db.viewByKeys 'byEntity', keys
-  .map filterPrivateAttributes(requesterId)
+  .map filterPrivateAttributes(reqUserId)
 
-bundleListings = (listingsTypes, usersIds, requesterId)->
+bundleListings = (listingsTypes, usersIds, reqUserId)->
   listings = _.combinations usersIds, listingsTypes
   db.viewByKeys 'byListing', listings
-  .map filterPrivateAttributes(requesterId)
+  .map filterPrivateAttributes(reqUserId)
 
 entityUriKeys = (entityUri)->
   return listingsPossibilities.map (listing)-> [entityUri, listing]

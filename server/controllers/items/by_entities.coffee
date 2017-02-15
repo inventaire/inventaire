@@ -9,22 +9,22 @@ promises_ = __.require 'lib', 'promises'
 filterPrivateAttributes = require './lib/filter_private_attributes'
 
 module.exports = (req, res)->
-  userId = req.user?._id
+  reqUserId = req.user?._id
   validateQuery req.query, 'uris', _.isEntityUri
-  .then getEntitiesItems(userId)
+  .then getEntitiesItems(reqUserId)
   .then addUsersData
   .then res.json.bind(res)
   .catch error_.Handler(req, res)
 
-getEntitiesItems = (userId)-> (uris)->
+getEntitiesItems = (reqUserId)-> (uris)->
   promises_.all [
-    getUserItems userId, uris
-    getNetworkItems userId, uris
+    getUserItems reqUserId, uris
+    getNetworkItems reqUserId, uris
     items_.publicByEntities uris
   ]
   .spread (userItems, networkItems, publicItems)->
     # Only add user and network keys for the authorized endpoint
-    if userId?
+    if reqUserId?
       return {
         user: userItems
         network: networkItems
@@ -33,17 +33,17 @@ getEntitiesItems = (userId)-> (uris)->
     else
       return { public: publicItems }
 
-getUserItems = (userId, uris)->
-  unless userId? then return []
+getUserItems = (reqUserId, uris)->
+  unless reqUserId? then return []
 
-  items_.byOwnersAndEntitiesAndListings [ userId ], uris, 'user', userId
+  items_.byOwnersAndEntitiesAndListings [ reqUserId ], uris, 'user', reqUserId
 
-getNetworkItems = (userId, uris)->
-  unless userId? then return []
+getNetworkItems = (reqUserId, uris)->
+  unless reqUserId? then return []
 
-  relations_.getUserFriendsAndCoGroupsMembers userId
+  relations_.getUserFriendsAndCoGroupsMembers reqUserId
   .then (networkUsersIds)->
-    items_.byOwnersAndEntitiesAndListings networkUsersIds, uris, 'network', userId
+    items_.byOwnersAndEntitiesAndListings networkUsersIds, uris, 'network', reqUserId
 
 deduplicateItems = (userItems, networkItems, publicItems)->
   userAndNetworkItemsIds = userItems.map(getId).concat networkItems.map(getId)

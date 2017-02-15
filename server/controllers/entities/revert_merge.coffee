@@ -6,7 +6,7 @@ revertMerge = require './lib/revert_merge'
 module.exports = (req, res)->
   { body } = req
   { from:fromUri } = body
-  { _id:userId } = req.user
+  { _id:reqUserId } = req.user
 
   unless _.isNonEmptyString fromUri
     return error_.bundle req, res, "missing parameter: from", 400, body
@@ -16,6 +16,6 @@ module.exports = (req, res)->
   unless fromPrefix is 'inv' and _.isInvEntityId fromId
     return error_.bundle req, res, "invalid 'from' uri", 400, body
 
-  revertMerge userId, fromId
+  revertMerge reqUserId, fromId
   .then res.json.bind(res)
   .catch error_.Handler(req, res)

@@ -14,7 +14,7 @@ module.exports =
     { query } = req
     { limit, offset } = query
     assertImage = query['assert-image'] is 'true'
-    userId = req.user?._id
+    reqUserId = req.user?._id
 
     limit or= '15'
     offset or= '0'
@@ -32,14 +32,14 @@ module.exports =
     if limit > 100
       return error_.bundle req, res, "limit can't be over 100", 400, limit
 
-    items_.publicByDate limit, offset, assertImage, userId
+    items_.publicByDate limit, offset, assertImage, reqUserId
     .then bundleOwnersData.bind(null, req, res)
     .catch error_.Handler(req, res)
 
   byUsernameAndEntity: (req, res, next)->
     _.info req.query, 'publicByUserAndEntity'
     { username, uri } = req.query
-    userId = req.user?._id
+    reqUserId = req.user?._id
 
     unless tests.entityUri uri
       return error_.bundle req, res, 'bad entity uri', 400, uri
@@ -54,9 +54,9 @@ module.exports =
 
       ownerId = _id
 
-      getAuthorizationLevel userId, ownerId
+      getAuthorizationLevel reqUserId, ownerId
       .then (listingKey)->
-        items_.byOwnersAndEntitiesAndListings [ownerId], [uri], listingKey, userId
+        items_.byOwnersAndEntitiesAndListings [ownerId], [uri], listingKey, reqUserId
         .then (foundItems)->
           items = {}
           items[listingKey] = foundItems
@@ -76,10 +76,10 @@ getItemsOwners = (items)->
   users = items.map (item)-> item.owner
   return _.uniq users
 
-getAuthorizationLevel = (userId, ownerId)->
-  unless userId? then return promises_.resolve 'public'
+getAuthorizationLevel = (reqUserId, ownerId)->
+  unless reqUserId? then return promises_.resolve 'public'
 
-  if userId is ownerId then return promises_.resolve 'user'
+  if reqUserId is ownerId then return promises_.resolve 'user'
 
-  user_.areFriendsOrGroupCoMembers userId, ownerId
+  user_.areFriendsOrGroupCoMembers reqUserId, ownerId
   .then (bool)-> if bool then 'network' else 'public'
