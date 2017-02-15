@@ -11,5 +11,4 @@ module.exports =
   transactions: ['transactions']
   comments: ['comments']
   entities: ['entities', 'patches']
-  analytics: []
   notifications: ['notifications']
