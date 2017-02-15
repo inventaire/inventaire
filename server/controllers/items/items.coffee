@@ -7,19 +7,15 @@ error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
 { Track } = __.require 'lib', 'track'
 
-publicActions = require './public_actions'
-byIds = require './by_ids'
-byUsers = require './by_users'
-byEntities = require './by_entities'
 ActionsControllers = __.require 'lib', 'actions_controllers'
 
 module.exports =
   get: ActionsControllers
-    'by-ids': byIds
-    'by-users': byUsers
-    'by-entities': byEntities
-    'last-public': publicActions.lastPublic
-    'by-username-and-entity': publicActions.byUsernameAndEntity
+    'by-ids': require './by_ids'
+    'by-users': require './by_users'
+    'by-entities': require './by_entities'
+    'last-public': require './last_public'
+    'by-username-and-entity': require './by_username_and_entity'
 
   put: (req, res, next) ->
     { _id, title, entity } = req.body
