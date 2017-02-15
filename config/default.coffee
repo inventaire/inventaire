@@ -80,8 +80,9 @@ module.exports = config =
   morgan:
     logFormat: 'dev'
     mutedRoutes: [
-      '/api/logs/public'
+      '/api/reports/public'
     ]
+    mutedDomains: []
   logStaticFilesRequests: true
   # enable the api/i18n/public endpoint and its i18nMissingKeys controller
   logMissingI18nKeys: true

@@ -2,13 +2,16 @@ CONFIG = require 'config'
 americano = require 'americano'
 pass = require './pass'
 
-{ logFormat, mutedRoutes } = CONFIG.morgan
+{ logFormat, mutedRoutes, mutedDomains } = CONFIG.morgan
 
 logger = americano.logger
   format: logFormat
   skip: (req, res)->
     { pathname } = req._parsedUrl
-    return pathname in mutedRoutes
+    domain = pathname.split('/')[1]
+    # /!\ resources behind the /public endpoint will have their pathname
+    # with /public removed: /public/css/app.css will have a pathname=/css/app.css
+    return domain in mutedDomains or pathname in mutedRoutes
 
 # Init the logger before the static files middleware to log static files requests
 # Has no effect when CONFIG.serveStaticFiles is false notably in production,
