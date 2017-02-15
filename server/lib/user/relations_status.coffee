@@ -35,7 +35,7 @@ spreadRelations = (usersIds)-> (friendsIds, coGroupMembersIds)->
 
   for id in usersIds
     if id in friendsIds then friends.push id
-    else if id in coGroupMembers then coGroupMembers.push id
+    else if id in coGroupMembersIds then coGroupMembers.push id
     else publik.push id
 
   return [ friends, coGroupMembers, publik ]
