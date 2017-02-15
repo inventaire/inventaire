@@ -10,8 +10,9 @@ couch_ = __.require 'lib', 'couch'
 user_ = __.require 'lib', 'user/user'
 promises_ = __.require 'lib', 'promises'
 Radio = __.require 'lib', 'radio'
-filterPrivateAttributes = require './filter_private_attributes'
+{ filterPrivateAttributes } = require './filter_private_attributes'
 { maxKey } = __.require 'lib', 'couch'
+listingsLists = require './listings_lists'
 
 db = __.require('couch', 'base')('items')
 
@@ -133,7 +134,3 @@ FilterWithImage = (assertImage)->
 
 itemWithImage = (item)-> item.snapshot['entity:image'] or item.pictures.length > 0
 
-listingsLists =
-  user: [ 'private', 'friends', 'public' ]
-  network: [ 'friends', 'public' ]
-  public: [ 'public' ]

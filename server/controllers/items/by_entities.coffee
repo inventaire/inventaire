@@ -5,8 +5,8 @@ user_ = __.require 'lib', 'user/user'
 relations_ = __.require 'controllers', 'relations/lib/queries'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
-{ validateQuery, addUsersData, ownerIn } = require './lib/queries_commons'
-filterPrivateAttributes = require './lib/filter_private_attributes'
+{ validateQuery, addUsersData } = require './lib/queries_commons'
+{ filterPrivateAttributes } = require './lib/filter_private_attributes'
 
 module.exports = (req, res)->
   reqUserId = req.user?._id

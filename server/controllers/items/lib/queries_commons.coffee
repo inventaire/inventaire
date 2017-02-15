@@ -30,4 +30,4 @@ module.exports =
     .then (users)-> { users, items }
 
   ownerIs: (userId)-> (item)-> item.owner is userId
-  ownerIn: (usersIds)-> (item)-> item.owner in usersIds
+  listingIs: (listing)-> (item)-> item.listing is listing

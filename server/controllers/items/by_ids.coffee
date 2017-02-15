@@ -5,49 +5,47 @@ user_ = __.require 'lib', 'user/user'
 relations_ = __.require 'controllers', 'relations/lib/queries'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
-{ validateQuery, addUsersData, ownerIs, ownerIn } = require './lib/queries_commons'
-filterPrivateAttributes = require './lib/filter_private_attributes'
+{ validateQuery, addUsersData, listingIs } = require './lib/queries_commons'
+{ omitPrivateAttributes } = require './lib/filter_private_attributes'
+{ network:networkListings } = require './lib/listings_lists'
 
 module.exports = (req, res)->
   reqUserId = req.user?._id
   validateQuery req.query, 'ids', _.isItemId
-  .then items_.byIds
-  .then filterAuthorizedItems(reqUserId)
+  .then (ids)->
+    promises_.all [
+      items_.byIds ids
+      relations_.getUserFriendsAndCoGroupsMembers reqUserId
+    ]
+  .spread filterAuthorizedItems(reqUserId)
   .then addUsersData
   .then res.json.bind(res)
   .catch error_.Handler(req, res)
 
-filterAuthorizedItems = (reqUserId)-> (items)->
-  listingIndex = getItemsIndexedByListing _.compact(items)
-  results =
-    public: listingIndex.public.map filterPrivateAttributes(reqUserId)
+filterAuthorizedItems = (reqUserId)-> (foundItems, networkIds)->
+  unless reqUserId?
+    publicItems = foundItems
+      .filter listingIs('public')
+      .map omitPrivateAttributes
 
-  unless reqUserId? then return results
+    return { public: publicItems }
 
-  results.user = filterPrivateItems listingIndex.private, reqUserId
-  # 'friends' is the name of the listing open to friends and groups
-  # a.k.a the user network
-  results.network = filterNetworkItems listingIndex.friends, reqUserId
-  return promises_.props results
+  items = { user: [], network: [], public: [] }
 
-getItemsIndexedByListing = (items)->
-  listingIndex =
-    private: []
-    friends: []
-    public: []
+  for item in foundItems
+    { owner:ownerId, listing } = item
 
-  for item in items
-    listingIndex[item.listing].push item
+    if ownerId is reqUserId
+      items.user.push item
 
-  return listingIndex
+    else if ownerId in networkIds
+      # Filter-out private item for network users
+      if listing isnt 'private'
+        items.network.push omitPrivateAttributes(item)
 
-filterPrivateItems = (items, reqUserId)-> items.filter ownerIs(reqUserId)
+    else
+      # Filter-out all non-public items for non-network users
+      if listing is 'public'
+        items.public.push omitPrivateAttributes(item)
 
-filterNetworkItems = (items, reqUserId)->
-  if items.length is 0 then return []
-
-  relations_.getUserFriendsAndCoGroupsMembers reqUserId
-  .then (authorizingUsersIds)->
-    items
-    .filter ownerIn(authorizingUsersIds)
-    .map filterPrivateAttributes(reqUserId)
+  return items
