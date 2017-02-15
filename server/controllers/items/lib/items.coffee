@@ -10,6 +10,7 @@ couch_ = __.require 'lib', 'couch'
 user_ = __.require 'lib', 'user/user'
 promises_ = __.require 'lib', 'promises'
 Radio = __.require 'lib', 'radio'
+filterPrivateAttributes = require './filter_private_attributes'
 
 db = __.require('couch', 'base')('items')
 
@@ -17,69 +18,33 @@ module.exports = items_ =
   db: db
   byId: db.get
   byIds: db.fetch
-  byOwner: (owner)->
-    # only used by items.fetch with req.session.email owner
-    # => shouldn't be safeItem'ized
-    db.viewByKey 'byOwner', owner
+  byOwner: db.viewByKey.bind null, 'byOwner'
 
-  byListing: (owner, listing)->
-    _.types arguments, 'strings...'
-    db.viewByKey 'byListing', [owner, listing]
-    .map safeItem
+  friendsListings: (usersIds, requesterId)->
+    bundleListings ['friends', 'public'], usersIds, requesterId
 
-  batchByListings: (listings)->
-    _.types arguments, ['array']
-    db.viewByKeys 'byListing', listings
-    .map safeItem
-
-  bundleListings: (listingsTypes, usersIds)->
-    listings = _.combinations usersIds, listingsTypes
-    items_.batchByListings listings
-
-  friendsListings: (usersIds)->
-    items_.bundleListings ['friends', 'public'], usersIds
-
-  publicListings: (usersIds)->
+  publicListings: (usersIds, requesterId)->
     usersIds = _.forceArray usersIds
-    items_.bundleListings ['public'], usersIds
-
-  publicById: (itemId)->
-    db.get(itemId)
-    .then (item)->
-      if item.listing is 'public' then return item
-      else throw error_.new 'item isnt a public item', 403, itemId
-    .catch (err)->
-      # cant filter operational error from the error statusCode
-      # as cot returns a poor error object with just a message
-      throw error_.new 'item not found', 404, itemId
+    bundleListings ['public'], usersIds, requesterId
 
   byEntity: (entityUri)-> db.viewByKeys 'byEntity', entityUriKeys(entityUri)
   byPreviousEntity: (entityUri)-> db.viewByKey 'byPreviousEntity', entityUri
 
-  picturesByEntity: (entityUri)->
-    items_.byEntity entityUri
-    .map _.property('pictures')
-
   # all items from an entity that require a specific authorization
-  authorizedByEntities: (uris)-> items_.listingByEntities 'friends', uris
-  publicByEntities: (uris)-> items_.listingByEntities 'public', uris
-  listingByEntities: (listing, uris)->
-    keys = uris.map (uri)-> [uri, listing]
-    db.viewByKeys 'byEntity', keys
-    .map safeItem
+  authorizedByEntities: (uris, requesterId)->
+    listingByEntities 'friends', uris, requesterId
 
-  byIsbn: (isbn)->
-    db.viewByKeys 'byEntity', entityUriKeys("isbn:#{isbn}")
-    .map safeItem
+  publicByEntities: (uris, requesterId)->
+    listingByEntities 'public', uris, requesterId
 
-  publicByDate: (limit=15, offset=0, assertImage=false)->
+  publicByDate: (limit=15, offset=0, assertImage=false, requesterId)->
     db.viewCustom 'publicByDate',
       limit: limit
       skip: offset
       descending: true
       include_docs: true
     .then FilterWithImage(assertImage)
-    .map safeItem
+    .map filterPrivateAttributes(requesterId)
 
   publicByOwnerAndEntity: (owner, entityUri)->
     db.viewByKey 'publicByOwnerAndEntity', [owner, entityUri]
@@ -134,6 +99,16 @@ module.exports = items_ =
     item.authors = authors
     if image? and item.pictures.length is 0 then item.pictures = [ image ]
     return item
+
+listingByEntities = (listing, uris, requesterId)->
+  keys = uris.map (uri)-> [uri, listing]
+  db.viewByKeys 'byEntity', keys
+  .map filterPrivateAttributes(requesterId)
+
+bundleListings = (listingsTypes, usersIds, requesterId)->
+  listings = _.combinations usersIds, listingsTypes
+  db.viewByKeys 'byListing', listings
+  .map filterPrivateAttributes(requesterId)
 
 entityUriKeys = (entityUri)->
   return listingsPossibilities.map (listing)-> [entityUri, listing]

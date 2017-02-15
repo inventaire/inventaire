@@ -9,10 +9,11 @@ Item = __.require 'models', 'item'
 tests = __.require 'models', 'tests/common-tests'
 
 module.exports =
-  lastPublicItems: (req, res, next) ->
+  lastPublic: (req, res, next) ->
     { query } = req
     { limit, offset } = query
     assertImage = query['assert-image'] is 'true'
+    userId = req.user?._id
 
     limit or= '15'
     offset or= '0'
@@ -30,41 +31,7 @@ module.exports =
     if limit > 100
       return error_.bundle req, res, "limit can't be over 100", 400, limit
 
-    items_.publicByDate limit, offset, assertImage
-    .then bundleOwnersData.bind(null, req, res)
-    .catch error_.Handler(req, res)
-
-  usersPublicItems: (req, res, next)->
-    _.info req.query, 'usersPublicItems'
-    { query } = req
-    { users } = query
-    unless _.isNonEmptyString(users)
-      return error_.bundle req, res, 'missing parameter: users', 400, query
-
-    usersIds = users.split '|'
-    unless _.all usersIds, tests.userId
-      return error_.bundle req, res, 'invalid user ids', 400, query
-
-    items_.bundleListings ['public'], usersIds
-    .then _.Wrap(res, 'items')
-    .catch error_.Handler(req, res)
-
-  publicById: (req, res, next) ->
-    { id } = req.query
-    unless tests.itemId id
-      return error_.bundle req, res, 'bad item id', 400
-
-    items_.publicById id
-    .then res.json.bind(res)
-    .catch error_.Handler(req, res)
-
-  publicByEntity: (req, res, next) ->
-    _.info req.query, 'publicByEntity'
-    { uri } = req.query
-    unless tests.entityUri uri
-      return error_.bundle req, res, 'bad entity uri', 400
-
-    items_.publicByEntities [ uri ]
+    items_.publicByDate limit, offset, assertImage, userId
     .then bundleOwnersData.bind(null, req, res)
     .catch error_.Handler(req, res)
 
@@ -85,7 +52,7 @@ module.exports =
 
       owner = _id
       items_.publicByOwnerAndEntity owner, uri
-      .then (items)-> res.json {items: items, user: user}
+      .then (items)-> res.json { items, user }
 
     .catch error_.Handler(req, res)
 
@@ -95,7 +62,7 @@ bundleOwnersData = (req, res, items)->
 
   users = getItemsOwners items
   user_.getUsersPublicData users
-  .then (users)-> res.json {items: items, users: users}
+  .then (users)-> res.json { items, users }
 
 getItemsOwners = (items)->
   users = items.map (item)-> item.owner

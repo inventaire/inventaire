@@ -15,9 +15,12 @@ ActionsControllers = __.require 'lib', 'actions_controllers'
 
 module.exports =
   get: ActionsControllers
-    'by-ids': byIds.authorized
-    'by-users': byUsers.authorized
-    'by-entities': byEntities.authorized
+    'by-ids': byIds
+    'by-users': byUsers
+    'by-entities': byEntities
+    'last-public': publicActions.lastPublic
+    # TODO: harmonize behavior with endpoints above
+    'public-by-username-and-entity': publicActions.publicByUsernameAndEntity
 
   put: (req, res, next) ->
     { _id, title, entity } = req.body
@@ -37,6 +40,7 @@ module.exports =
         items_.update userId, item
         .tap Track(req, ['item', 'update'])
     .then couch_.getObjIfSuccess.bind(null, items_.db)
+    # TODO: Update user snapshot.items:counter
     .then (body)-> res.status(201).json body
     .catch error_.Handler(req, res)
 
@@ -46,15 +50,6 @@ module.exports =
 
     items_.verifyOwnership id, userId
     .then items_.delete.bind(null, id)
+    # TODO: Update user snapshot.items:counter
     .then res.json.bind(res)
     .catch error_.Handler(req, res)
-
-  publicActions: ActionsControllers
-    'public-by-id': publicActions.publicById
-    'public-by-entity': publicActions.publicByEntity
-    'public-by-username-and-entity': publicActions.publicByUsernameAndEntity
-    'last-public-items': publicActions.lastPublicItems
-    'users-public-items': publicActions.usersPublicItems
-    'by-ids': byIds.public
-    'by-users': byUsers.public
-    'by-entities': byEntities.public

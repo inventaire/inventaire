@@ -5,42 +5,46 @@ user_ = __.require 'lib', 'user/user'
 relations_ = __.require 'controllers', 'relations/lib/queries'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
-doubleEndpoint = __.require 'lib', 'double_endpoint'
 { validateQuery } = require './lib/queries_commons'
 
-module.exports = doubleEndpoint (req, res, authentifiedUserId)->
+module.exports = (req, res)->
+  # using the name requesterId instead of the usual userId to distinguish it
+  # from the requested usersIds
+  requesterId = req.user?._id
   validateQuery req.query, 'users', _.isUserId
-  .then getRelations(authentifiedUserId)
-  .then fetchRelationsItems
+  .then getRelations(requesterId)
+  .then fetchRelationsItems(requesterId)
   # Not including the associated users as this endpoint assumes
   # the requester already knows the users
   .then _.Wrap(res, 'items')
   .catch error_.Handler(req, res)
 
-getRelations = (authentifiedUserId)-> (usersIds)->
+getRelations = (requesterId)-> (usersIds)->
   # All users are considered public users when the request isn't authentified
-  unless authentifiedUserId? then return promises_.resolve { public: usersIds }
+  unless requesterId? then return promises_.resolve { public: usersIds }
 
   relations = {}
-  if authentifiedUserId in usersIds
-    relations.user = authentifiedUserId
-    usersIds = _.without usersIds, authentifiedUserId
+  if requesterId in usersIds
+    relations.user = requesterId
+    usersIds = _.without usersIds, requesterId
 
   if usersIds.length is 0 then return promises_.resolve relations
 
-  user_.getRelationsStatuses authentifiedUserId, usersIds
+  user_.getRelationsStatuses requesterId, usersIds
   .spread (friends, coGroupMembers, publik)->
     relations.network = friends.concat coGroupMembers
     relations.public = publik
     return relations
 
-fetchRelationsItems = (relations)->
+fetchRelationsItems = (requesterId)-> (relations)->
   itemsPromises = {}
   { user, network, public:publik } = relations
   # Includes ownerSafe attributes
   if user? then itemsPromises.user = items_.byOwner user
   # Exclude ownerSafe attributes
-  if network? then itemsPromises.network = items_.friendsListings network
-  if publik? then itemsPromises.public = items_.publicListings publik
+  if network?
+    itemsPromises.network = items_.friendsListings network, requesterId
+  if publik?
+    itemsPromises.public = items_.publicListings publik, requesterId
 
   return promises_.props itemsPromises

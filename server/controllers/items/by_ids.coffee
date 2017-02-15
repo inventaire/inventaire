@@ -5,12 +5,12 @@ user_ = __.require 'lib', 'user/user'
 relations_ = __.require 'controllers', 'relations/lib/queries'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
-doubleEndpoint = __.require 'lib', 'double_endpoint'
 { validateQuery, addUsersData, ownerIs, ownerIn } = require './lib/queries_commons'
+filterPrivateAttributes = require './lib/filter_private_attributes'
 
-module.exports = doubleEndpoint (req, res, userId)->
+module.exports = (req, res)->
+  userId = req.user?._id
   validateQuery req.query, 'ids', _.isItemId
-  # fetch all items
   .then items_.byIds
   .then filterAuthorizedItems(userId)
   .then addUsersData
@@ -19,13 +19,16 @@ module.exports = doubleEndpoint (req, res, userId)->
 
 filterAuthorizedItems = (userId)-> (items)->
   listingIndex = getItemsIndexedByListing _.compact(items)
-  unless userId? then return _.pick listingIndex, 'public'
+  results =
+    public: listingIndex.public.map filterPrivateAttributes(userId)
 
-  promises_.props
-    user: filterPrivateItems listingIndex.private, userId
-    network: filterNetworkItems listingIndex.friends, userId
-    # keep all public items
-    public: listingIndex.public
+  unless userId? then return results
+
+  results.user = filterPrivateItems listingIndex.private, userId
+  # 'friends' is the name of the listing open to friends and groups
+  # a.k.a the user network
+  results.network = filterNetworkItems listingIndex.friends, userId
+  return promises_.props results
 
 getItemsIndexedByListing = (items)->
   listingIndex =
@@ -45,4 +48,6 @@ filterNetworkItems = (items, userId)->
 
   relations_.getUserFriendsAndCoGroupsMembers userId
   .then (authorizingUsersIds)->
-    items.filter ownerIn(authorizingUsersIds)
+    items
+    .filter ownerIn(authorizingUsersIds)
+    .map filterPrivateAttributes(userId)
