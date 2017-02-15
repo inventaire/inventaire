@@ -33,28 +33,17 @@ getEntitiesItems = (userId)-> (uris)->
     else
       return { public: publicItems }
 
-# TODO: use a byOwnerAndEntity view to query only the items from the desired user
 getUserItems = (userId, uris)->
   unless userId? then return []
 
-  # Fetch all items from the requesting user
-  items_.byOwner userId
-  # Filter to keep only those from the requested entity
-  .then (items)-> items.filter (item)-> item.entity in uris
+  items_.byOwnersAndEntitiesAndListings [ userId ], uris, 'user', userId
 
-# TODO: use a byOwnerAndEntity view to query only the items from the desired users
 getNetworkItems = (userId, uris)->
   unless userId? then return []
 
-  promises_.all [
-    # Fetch all items from those entities requiring an authorization
-    items_.authorizedByEntities uris, userId
-    relations_.getUserFriendsAndCoGroupsMembers userId
-  ]
-  .spread (authorizedItems, networkUsersIds)->
-    # Keep only items the user is authorized to see,
-    # which are items from users in her network
-    return authorizedItems.filter ownerIn(networkUsersIds)
+  relations_.getUserFriendsAndCoGroupsMembers userId
+  .then (networkUsersIds)->
+    items_.byOwnersAndEntitiesAndListings networkUsersIds, uris, 'network', userId
 
 deduplicateItems = (userItems, networkItems, publicItems)->
   userAndNetworkItemsIds = userItems.map(getId).concat networkItems.map(getId)

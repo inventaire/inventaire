@@ -11,6 +11,7 @@ user_ = __.require 'lib', 'user/user'
 promises_ = __.require 'lib', 'promises'
 Radio = __.require 'lib', 'radio'
 filterPrivateAttributes = require './filter_private_attributes'
+{ maxKey } = __.require 'lib', 'couch'
 
 db = __.require('couch', 'base')('items')
 
@@ -18,7 +19,11 @@ module.exports = items_ =
   db: db
   byId: db.get
   byIds: db.fetch
-  byOwner: db.viewByKey.bind null, 'byOwner'
+  byOwner: (ownerId)->
+    db.viewCustom 'byOwnerAndEntityAndListing',
+      startkey: [ ownerId ]
+      endkey: [ ownerId, maxKey, maxKey ]
+      include_docs: true
 
   friendsListings: (usersIds, requesterId)->
     bundleListings ['friends', 'public'], usersIds, requesterId
@@ -46,9 +51,15 @@ module.exports = items_ =
     .then FilterWithImage(assertImage)
     .map filterPrivateAttributes(requesterId)
 
-  publicByOwnerAndEntity: (owner, entityUri)->
-    db.viewByKey 'publicByOwnerAndEntity', [owner, entityUri]
-    .map safeItem
+  byOwnersAndEntitiesAndListings: (ownersIds, uris, listingsKey, requesterId)->
+    keys = []
+    for ownerId in ownersIds
+      for uri in uris
+        for listing in listingsLists[listingsKey]
+          keys.push [ownerId, uri, listing]
+
+    db.viewByKeys 'byOwnerAndEntityAndListing', keys
+    .map filterPrivateAttributes(requesterId)
 
   create: (userId, item)->
     db.post Item.create userId, item
@@ -121,3 +132,8 @@ FilterWithImage = (assertImage)->
     else items
 
 itemWithImage = (item)-> item.snapshot['entity:image'] or item.pictures.length > 0
+
+listingsLists =
+  user: [ 'private', 'friends', 'public' ]
+  network: [ 'friends', 'public' ]
+  public: [ 'public' ]

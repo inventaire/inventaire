@@ -19,8 +19,7 @@ module.exports =
     'by-users': byUsers
     'by-entities': byEntities
     'last-public': publicActions.lastPublic
-    # TODO: harmonize behavior with endpoints above
-    'public-by-username-and-entity': publicActions.publicByUsernameAndEntity
+    'by-username-and-entity': publicActions.byUsernameAndEntity
 
   put: (req, res, next) ->
     { _id, title, entity } = req.body

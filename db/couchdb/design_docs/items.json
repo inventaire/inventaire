@@ -2,9 +2,6 @@
    "_id": "_design/items",
    "language": "coffeescript",
    "views": {
-       "byOwner": {
-           "map": "(doc)->\n  if doc.owner?\n    emit doc.owner, null"
-       },
        "byDate": {
            "map": "(doc)->\n  emit doc.created, [doc._id, doc.title]"
        },
@@ -14,8 +11,8 @@
        "publicByDate": {
            "map": "(doc)->\n  if doc.listing is 'public'\n    emit doc.created, null"
        },
-       "publicByOwnerAndEntity": {
-           "map": "(doc)->\n  if doc.listing is 'public'\n    emit [doc.owner, doc.entity], null"
+       "byOwnerAndEntityAndListing": {
+           "map": "(doc)->\n  emit [doc.owner, doc.entity, doc.listing], null"
        },
        "byEntity": {
            "map": "(doc)->\n    if doc.entity?\n      emit [doc.entity, doc.listing], null"
