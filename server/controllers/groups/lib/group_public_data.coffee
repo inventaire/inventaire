@@ -7,22 +7,12 @@ items_ = __.require 'controllers', 'items/lib/items'
 error_ = __.require 'lib', 'error/error'
 
 module.exports = (groups_)->
-
-  getGroupPublicData = (groupId)->
+  return getGroupPublicData = (groupId)->
     groups_.byId groupId
     .then (group)->
       unless group? then throw error_.notFound groupId
 
-      getUsersAndItems group
-      .spread objectRes.bind(null, group)
+      usersIds = groups_.allGroupMembers group
 
-  getUsersAndItems = (group)->
-    usersIds = groups_.allGroupMembers group
-    promises_.all [
-      user_.getUsersPublicData(usersIds)
-      items_.publicListings(usersIds)
-    ]
-
-  return getGroupPublicData
-
-objectRes = (group, users=[], items=[])-> { group, users, items }
+      user_.getUsersPublicData usersIds
+      .then (users)-> { group, users }
