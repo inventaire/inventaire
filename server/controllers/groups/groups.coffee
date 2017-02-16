@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
-getGroupPublicData = require './get_group_public_data'
+publicActions = require './public_actions'
 { possibleActions } = require './lib/actions_lists'
 handleAction = require './actions'
 { allUserGroups } = require './lib/groups'
@@ -10,7 +10,11 @@ ActionsControllers = __.require 'lib', 'actions_controllers'
 
 module.exports =
   public:
-    get: getGroupPublicData
+    get: ActionsControllers
+      'by-id': publicActions.byId
+      'search': publicActions.searchByName
+      'search-by-position': publicActions.searchByPositon
+      'last': publicActions.lastGroups
 
   authentified:
     get: (req, res)->
