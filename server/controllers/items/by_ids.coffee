@@ -30,22 +30,23 @@ filterAuthorizedItems = (reqUserId)-> (foundItems, networkIds)->
 
     return { public: publicItems }
 
-  items = { user: [], network: [], public: [] }
+  results = { user: [], network: [], public: [] }
+  return foundItems.reduce spreadItems(reqUserId, networkIds), results
 
-  for item in foundItems
-    { owner:ownerId, listing } = item
+spreadItems = (reqUserId, networkIds)-> (aggregatedItems, item)->
+  { owner:ownerId, listing } = item
 
-    if ownerId is reqUserId
-      items.user.push item
+  if ownerId is reqUserId
+    aggregatedItems.user.push item
 
-    else if ownerId in networkIds
-      # Filter-out private item for network users
-      if listing isnt 'private'
-        items.network.push omitPrivateAttributes(item)
+  else if ownerId in networkIds
+    # Filter-out private item for network users
+    if listing isnt 'private'
+      aggregatedItems.network.push omitPrivateAttributes(item)
 
-    else
-      # Filter-out all non-public items for non-network users
-      if listing is 'public'
-        items.public.push omitPrivateAttributes(item)
+  else
+    # Filter-out all non-public aggregatedItems for non-network users
+    if listing is 'public'
+      aggregatedItems.public.push omitPrivateAttributes(item)
 
-  return items
+  return aggregatedItems
