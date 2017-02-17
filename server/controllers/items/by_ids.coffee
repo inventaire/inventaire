@@ -15,12 +15,16 @@ module.exports = (req, res)->
   .then (ids)->
     promises_.all [
       items_.byIds ids
-      relations_.getUserFriendsAndCoGroupsMembers reqUserId
+      getNetworkIds reqUserId
     ]
   .spread filterAuthorizedItems(reqUserId)
   .then addUsersData
   .then res.json.bind(res)
   .catch error_.Handler(req, res)
+
+getNetworkIds = (reqUserId)->
+  if reqUserId? then return relations_.getUserFriendsAndCoGroupsMembers reqUserId
+  else return
 
 filterAuthorizedItems = (reqUserId)-> (foundItems, networkIds)->
   unless reqUserId?
