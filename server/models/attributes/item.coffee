@@ -75,7 +75,7 @@ attributes.constrained =
     possibilities: allowTransaction.concat doesntAllowTransaction
     defaultValue: 'inventorying'
   listing:
-    possibilities: [ 'private', 'friends', 'public' ]
+    possibilities: [ 'private', 'network', 'public' ]
     defaultValue: 'private'
 
 

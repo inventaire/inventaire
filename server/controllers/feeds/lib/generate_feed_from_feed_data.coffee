@@ -12,7 +12,7 @@ module.exports = (lang)-> (feedData)->
   .then (items)-> serializeFeed feedOptions, users, items, lang
 
 getLastItemsFromUsersIds = (usersIds, semiPrivateAccessRight)->
-  fnName = if semiPrivateAccessRight then 'friendsListings' else 'publicListings'
+  fnName = if semiPrivateAccessRight then 'networkListings' else 'publicListings'
   items_[fnName](usersIds)
   .then extractLastItems
 

@@ -17,9 +17,9 @@ exports.verifyRightToInteract = (userId, item, ownerAllowed)->
   switch listing
     # anyone can interact on a public item
     when 'public' then return item
-    # friends only can interact on a friends item
-    when 'friends' then return ifUserAreFriendsOrGroup userId, owner, item
-    # anyone can interact on a public item
+    # network users only can interact on a network item
+    when 'network' then return ifUserAreFriendsOrGroup userId, owner, item
+    # no one can interact on a private item
     when 'private' then forbidden userId, item
 
 

@@ -16,7 +16,7 @@ groups_ = __.require 'controllers', 'groups/lib/groups'
 notifs_ = __.require 'lib', 'notifications'
 transactions_ = __.require 'controllers', 'transactions/lib/transactions'
 
-getLastFriendsBooks = require './last_friends_books'
+getLastNetworkBooks = require './last_network_books'
 getLastNearbyPublicBooks = require './last_nearby_books'
 
 module.exports = (user)->
@@ -36,7 +36,7 @@ getEmailData = (user)->
     # waiting transaction
     activeTransactions: transactions_.activeTransactions userId
     # new books in your network: preview + count for others 'X more...'
-    lastFriendsBooks: getLastFriendsBooks userId, lastSummary
+    lastFriendsBooks: getLastNetworkBooks userId, lastSummary
     # new books nearby
     lastNearbyPublicBooks: getLastNearbyPublicBooks user, lastSummary
 

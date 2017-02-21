@@ -41,7 +41,7 @@ fetchRelationsItems = (reqUserId)-> (relations)->
   if user? then itemsPromises.user = items_.byOwner user
   # Exclude ownerSafe attributes
   if network?
-    itemsPromises.network = items_.friendsListings network, reqUserId
+    itemsPromises.network = items_.networkListings network, reqUserId
   if publik?
     itemsPromises.public = items_.publicListings publik, reqUserId
 

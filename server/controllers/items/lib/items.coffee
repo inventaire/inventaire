@@ -26,8 +26,8 @@ module.exports = items_ =
       endkey: [ ownerId, maxKey, maxKey ]
       include_docs: true
 
-  friendsListings: (usersIds, reqUserId)->
-    bundleListings ['friends', 'public'], usersIds, reqUserId
+  networkListings: (usersIds, reqUserId)->
+    bundleListings ['network', 'public'], usersIds, reqUserId
 
   publicListings: (usersIds, reqUserId)->
     usersIds = _.forceArray usersIds
@@ -38,7 +38,7 @@ module.exports = items_ =
 
   # all items from an entity that require a specific authorization
   authorizedByEntities: (uris, reqUserId)->
-    listingByEntities 'friends', uris, reqUserId
+    listingByEntities 'network', uris, reqUserId
 
   publicByEntities: (uris, reqUserId)->
     listingByEntities 'public', uris, reqUserId
