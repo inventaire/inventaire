@@ -9,7 +9,7 @@ error_ = __.require 'lib', 'error/error'
 couch_ = __.require 'lib', 'couch'
 user_ = __.require 'lib', 'user/user'
 promises_ = __.require 'lib', 'promises'
-Radio = __.require 'lib', 'radio'
+radio = __.require 'lib', 'radio'
 { filterPrivateAttributes } = require './filter_private_attributes'
 { maxKey } = __.require 'lib', 'couch'
 listingsLists = require './listings_lists'
@@ -78,7 +78,7 @@ module.exports = items_ =
 
   delete: (id, rev)->
     db.update id, couch_.setDeletedTrue
-    .then -> Radio.emit 'resource:destroyed', 'item', id
+    .then -> radio.emit 'resource:destroyed', 'item', id
 
   setBusyness: (id, busy)->
     _.types arguments, ['string', 'boolean']

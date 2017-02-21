@@ -3,7 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 Comment = __.require 'models', 'comment'
 error_ = __.require 'lib', 'error/error'
-Radio = __.require 'lib', 'radio'
+radio = __.require 'lib', 'radio'
 
 db = __.require('couch', 'base')('comments')
 

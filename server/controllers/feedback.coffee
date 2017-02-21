@@ -1,7 +1,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
-Radio = __.require 'lib', 'radio'
+radio = __.require 'lib', 'radio'
 
 module.exports =
   post: (req, res, next)->
@@ -12,6 +12,6 @@ module.exports =
     unless subject? or message?
       return error_.bundle req, res, 'message is empty', 400
 
-    Radio.emit 'received:feedback', subject, message, user, unknownUser
+    radio.emit 'received:feedback', subject, message, user, unknownUser
 
     _.ok res, 201

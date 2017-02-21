@@ -1,7 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-Radio = __.require 'lib', 'radio'
+radio = __.require 'lib', 'radio'
 
 addOwnerId = (owner, users)->
   users.push owner
@@ -22,4 +22,4 @@ module.exports = (comments_)->
   helpers_ =
     notifyItemFollowers: (itemId, owner, commentor)->
       findUsersToNotify(itemId, owner, commentor)
-      .then Radio.emit.bind(Radio, 'notify:comment:followers', itemId, commentor)
+      .then radio.emit.bind(radio, 'notify:comment:followers', itemId, commentor)

@@ -1,6 +1,6 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
-Radio = __.require 'lib', 'radio'
+radio = __.require 'lib', 'radio'
 { BasicUpdater } = __.require 'lib', 'doc_updates'
 { minKey, maxKey } = __.require 'lib', 'couch'
 
@@ -94,11 +94,11 @@ callbacks =
 
 groupAttributeWithNotification = [ 'name', 'description' ]
 
-Radio.on 'notify:friend:request:accepted', callbacks.acceptedRequest
-Radio.on 'notify:comment:followers', callbacks.newCommentOnFollowedItem
-Radio.on 'group:makeAdmin', callbacks.userMadeAdmin
-Radio.on 'group:update', callbacks.groupUpdate
+radio.on 'notify:friend:request:accepted', callbacks.acceptedRequest
+radio.on 'notify:comment:followers', callbacks.newCommentOnFollowedItem
+radio.on 'group:makeAdmin', callbacks.userMadeAdmin
+radio.on 'group:update', callbacks.groupUpdate
 
-Radio.on 'resource:destroyed', callbacks.deleteNotifications
+radio.on 'resource:destroyed', callbacks.deleteNotifications
 
 module.exports = notifs_

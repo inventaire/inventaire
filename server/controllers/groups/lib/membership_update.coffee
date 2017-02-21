@@ -2,14 +2,14 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 Group = __.require 'models', 'group'
-Radio = __.require 'lib', 'radio'
+radio = __.require 'lib', 'radio'
 initMembershipUpdateHooks = require './membership_update_hooks'
 
 module.exports = (db)->
   membershipUpdate = (action, data, userId)->
     { group:groupId, user:secondaryUserId } = data
     db.update groupId, Group[action].bind(null, userId, secondaryUserId)
-    .then -> Radio.emit "group:#{action}", groupId, userId, secondaryUserId
+    .then -> radio.emit "group:#{action}", groupId, userId, secondaryUserId
 
   initMembershipUpdateHooks db
 

@@ -3,7 +3,7 @@ _ = __.require 'builders', 'utils'
 invitations_ = require './invitations'
 { extractUnknownEmails, extractCanBeInvited, extractRemainingEmails, createUnknownInvited } = invitations_
 Invited = __.require 'models','invited'
-Radio = __.require 'lib', 'radio'
+radio = __.require 'lib', 'radio'
 
 
 module.exports = (user, emails, message)->
@@ -32,4 +32,4 @@ module.exports = (user, emails, message)->
 
 
 sendInvitationEmails = (user, emails, message)->
-  Radio.emit 'send:email:invitations', user, emails, message
+  radio.emit 'send:email:invitations', user, emails, message

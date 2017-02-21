@@ -1,7 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-Radio = __.require 'lib', 'radio'
+radio = __.require 'lib', 'radio'
 User = __.require 'models', 'user'
 error_ = __.require 'lib', 'error/error'
 pw_ = __.require('lib', 'crypto').passwords
@@ -25,7 +25,7 @@ module.exports = (db, user_)->
     getTokenData()
     .then (tokenData)->
       [ token, tokenHash ] = tokenData
-      Radio.emit 'validation:email', user, token
+      radio.emit 'validation:email', user, token
       wrappedUpdate user._id, 'emailValidation', tokenHash
       return user
 
@@ -51,7 +51,7 @@ module.exports = (db, user_)->
     getTokenData()
     .then (tokenData)->
       [ token, tokenHash ] = tokenData
-      Radio.emit 'reset:password:email', user, token
+      radio.emit 'reset:password:email', user, token
       wrappedUpdate user._id, 'token', tokenHash
       return user
 

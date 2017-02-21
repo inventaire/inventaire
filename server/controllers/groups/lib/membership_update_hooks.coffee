@@ -1,7 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-Radio = __.require 'lib', 'radio'
+radio = __.require 'lib', 'radio'
 couch_ = __.require 'lib', 'couch'
 
 module.exports = (db)->
@@ -13,8 +13,8 @@ module.exports = (db)->
       if group.admins.length is 0
         db.update groupId, couch_.setDeletedTrue
         .then _.Log('group deleted')
-        .then -> Radio.emit 'resource:destroyed', 'group', groupId
+        .then -> radio.emit 'resource:destroyed', 'group', groupId
 
     .catch _.Error("group deletion err: #{groupId}")
 
-  Radio.on 'group:leave', deleteGroupIfEmpty
+  radio.on 'group:leave', deleteGroupIfEmpty

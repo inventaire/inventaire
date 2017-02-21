@@ -8,7 +8,7 @@ comments_ = __.require 'controllers', 'comments/lib/comments'
 { BasicUpdater } = __.require 'lib', 'doc_updates'
 { minKey, maxKey } = __.require 'lib', 'couch'
 
-Radio = __.require 'lib', 'radio'
+radio = __.require 'lib', 'radio'
 sideEffects = require('./side_effects')()
 
 db = __.require('couch', 'base')('transactions')
@@ -32,7 +32,7 @@ transactions_ =
     _.log transaction, 'transaction'
     db.post transaction
     .then (couchRes)->
-      Radio.emit 'transaction:request', couchRes.id
+      radio.emit 'transaction:request', couchRes.id
       return couchRes
 
   addMessage: (userId, message, transactionId)->
@@ -43,7 +43,7 @@ transactions_ =
   updateState: (newState, userId, transaction)->
     Transaction.testPossibleState transaction, newState
     db.update transaction._id, stateUpdater(newState, userId, transaction)
-    .then -> Radio.emit 'transaction:update', transaction, newState
+    .then -> radio.emit 'transaction:update', transaction, newState
 
   markAsRead: (userId, transaction)->
     role = userRole userId, transaction

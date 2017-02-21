@@ -5,12 +5,12 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-Radio = __.require 'lib', 'radio'
+radio = __.require 'lib', 'radio'
 Transaction = __.require 'models', 'transaction'
 items_ = __.require 'controllers', 'items/lib/items'
 
 module.exports = ->
-  Radio.on 'transaction:update', applySideEffects
+  radio.on 'transaction:update', applySideEffects
 
 applySideEffects = (transacDoc, newState)->
   _.log arguments, 'applySideEffects'

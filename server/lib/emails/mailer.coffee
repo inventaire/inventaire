@@ -18,29 +18,29 @@ initMailer = ->
   delayedInit initMailerEventListeners, initDelay
 
 initMailerEventListeners = ->
-  Radio = __.require 'lib', 'radio'
+  radio = __.require 'lib', 'radio'
   sendEmail = require './send_email'
   debounceEmails = require './debounce_emails'
   initDebouncedEmailsCrawler = require './debounced_emails_crawler'
 
-  Radio.on 'validation:email', sendEmail.validationEmail
-  Radio.on 'reset:password:email', sendEmail.resetPassword
-  Radio.on 'notify:friend:request:accepted', sendEmail.friendAcceptedRequest
-  Radio.on 'notify:friendship:request', sendEmail.friendshipRequest
+  radio.on 'validation:email', sendEmail.validationEmail
+  radio.on 'reset:password:email', sendEmail.resetPassword
+  radio.on 'notify:friend:request:accepted', sendEmail.friendAcceptedRequest
+  radio.on 'notify:friendship:request', sendEmail.friendshipRequest
 
-  Radio.on 'group:invite', sendEmail.group.bind(null, 'invite')
-  Radio.on 'group:acceptRequest', sendEmail.group.bind(null, 'acceptRequest')
+  radio.on 'group:invite', sendEmail.group.bind(null, 'invite')
+  radio.on 'group:acceptRequest', sendEmail.group.bind(null, 'acceptRequest')
 
 
-  Radio.on 'received:feedback', sendEmail.feedback
+  radio.on 'received:feedback', sendEmail.feedback
 
-  Radio.on 'send:email:invitations', sendEmail.emailInvitations
+  radio.on 'send:email:invitations', sendEmail.emailInvitations
 
   initDebouncedEmailsCrawler()
 
-  Radio.on 'transaction:request', debounceEmails.transactionUpdate
-  Radio.on 'transaction:update', debounceEmails.transactionUpdate
-  Radio.on 'transaction:message', debounceEmails.transactionUpdate
+  radio.on 'transaction:request', debounceEmails.transactionUpdate
+  radio.on 'transaction:update', debounceEmails.transactionUpdate
+  radio.on 'transaction:message', debounceEmails.transactionUpdate
   _.info 'mailer events listeners ready!'
 
 initActivitySummary = ->

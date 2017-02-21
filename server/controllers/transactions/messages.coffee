@@ -4,7 +4,7 @@ error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
 comments_ = __.require 'controllers', 'comments/lib/comments'
 transactions_ = require './lib/transactions'
-Radio = __.require 'lib', 'radio'
+radio = __.require 'lib', 'radio'
 { Track } = __.require 'lib', 'track'
 
 module.exports =
@@ -33,7 +33,7 @@ module.exports =
       .then (couchRes)->
         transactions_.updateReadForNewMessage reqUserId, transaction
         .then ->
-          Radio.emit 'transaction:message', transaction
+          radio.emit 'transaction:message', transaction
           return couchRes
     .then res.json.bind(res)
     .then Track(req, ['transaction', 'message'])

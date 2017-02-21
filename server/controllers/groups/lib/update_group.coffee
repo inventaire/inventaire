@@ -5,7 +5,7 @@ _ = __.require 'builders', 'utils'
 { updatable } = attributes
 error_ = __.require 'lib', 'error/error'
 { BasicUpdater } = __.require 'lib', 'doc_updates'
-Radio = __.require 'lib', 'radio'
+radio = __.require 'lib', 'radio'
 
 module.exports = (db)->
   updateSettings: (data, userId)->
@@ -28,7 +28,7 @@ module.exports = (db)->
         previousValue: groupDoc[attribute]
 
       db.update groupId, BasicUpdater(attribute, value)
-      .then -> Radio.emit 'group:update', notifData
+      .then -> radio.emit 'group:update', notifData
 
 getUsersToNotify = (groupDoc)->
   _(groupDoc)
