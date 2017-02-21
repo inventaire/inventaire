@@ -1,3 +1,8 @@
 # A server-wide event bus
 { EventEmitter } = require 'events'
-module.exports = new EventEmitter
+radio = new EventEmitter
+
+module.exports =
+  emit: radio.emit.bind radio
+  Emit: (label)-> radio.emit.bind radio, label
+  on: radio.on.bind radio

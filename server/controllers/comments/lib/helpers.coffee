@@ -22,4 +22,4 @@ module.exports = (comments_)->
   helpers_ =
     notifyItemFollowers: (itemId, owner, commentor)->
       findUsersToNotify(itemId, owner, commentor)
-      .then radio.emit.bind(radio, 'notify:comment:followers', itemId, commentor)
+      .then radio.Emit('notify:comment:followers', itemId, commentor)
