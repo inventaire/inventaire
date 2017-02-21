@@ -3,7 +3,7 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
 parseEmails = require './lib/parse_emails'
-user_ = __.require 'lib', 'user/user'
+user_ = __.require 'controllers', 'user/lib/user'
 sendInvitation = require './lib/send_invitations'
 { Track } = __.require 'lib', 'track'
 

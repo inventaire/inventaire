@@ -1,6 +1,6 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
-user_ = __.require 'lib', 'user/user'
+user_ = __.require 'controllers', 'user/lib/user'
 error_ = __.require 'lib', 'error/error'
 interactions_ = __.require 'lib', 'interactions'
 

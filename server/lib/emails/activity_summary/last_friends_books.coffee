@@ -3,7 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 items_ = __.require 'controllers', 'items/lib/items'
 relations_ = __.require 'controllers', 'relations/lib/queries'
-user_ = __.require 'lib', 'user/user'
+user_ = __.require 'controllers', 'user/lib/user'
 { getLastItems, formatData, embedUsersData, getHighlightedItems } = require './last_books_helpers'
 
 module.exports = (userId, limitDate=0)->

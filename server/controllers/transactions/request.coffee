@@ -3,7 +3,7 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 items_ = __.require 'controllers', 'items/lib/items'
 transactions_ = require './lib/transactions'
-user_ = __.require 'lib', 'user/user'
+user_ = __.require 'controllers', 'user/lib/user'
 { Track } = __.require 'lib', 'track'
 
 module.exports = (req, res, nex)->

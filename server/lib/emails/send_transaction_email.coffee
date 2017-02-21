@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 
-user_ = __.require 'lib', 'user/user'
+user_ = __.require 'controllers', 'user/lib/user'
 transactions_ = __.require 'controllers', 'transactions/lib/transactions'
 items_ = __.require 'controllers', 'items/lib/items'
 promises_ = __.require 'lib', 'promises'

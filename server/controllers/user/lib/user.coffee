@@ -132,7 +132,7 @@ user_.updateEmail = (user, email)->
 
 user_.availability = availability_ = require('./availability')(user_)
 user_.create = require('./create')(db, token_, availability_)
-user_.byPosition = require('../by_position')(db, 'user')
+user_.byPosition = __.require('lib', 'by_position')(db, 'user')
 
 deleteUser = require('./delete')(db, user_)
 reqParsers = require './req_parsers'

@@ -1,7 +1,7 @@
 CONFIG = require 'config'
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
-user_ = __.require 'lib', 'user/user'
+user_ = __.require 'controllers', 'user/lib/user'
 pw_ = __.require('lib', 'crypto').passwords
 error_ = __.require 'lib', 'error/error'
 loginAttempts = require './login_attempts'

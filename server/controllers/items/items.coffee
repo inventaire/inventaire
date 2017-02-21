@@ -1,7 +1,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 items_ = __.require 'controllers', 'items/lib/items'
-user_ = __.require 'lib', 'user/user'
+user_ = __.require 'controllers', 'user/lib/user'
 couch_ = __.require 'lib', 'couch'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'

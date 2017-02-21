@@ -10,7 +10,7 @@ host = CONFIG.fullPublicHost()
 # and defaultPeriodicity in the client's notifications_settings
 defaultPeriodicity = 20
 
-user_ = __.require 'lib', 'user/user'
+user_ = __.require 'controllers', 'user/lib/user'
 relations_ = __.require 'controllers', 'relations/lib/queries'
 groups_ = __.require 'controllers', 'groups/lib/groups'
 notifs_ = __.require 'lib', 'notifications'

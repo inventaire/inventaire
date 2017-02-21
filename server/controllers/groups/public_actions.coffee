@@ -5,7 +5,7 @@ error_ = __.require 'lib', 'error/error'
 tests = __.require 'models','tests/common-tests'
 promises_ = __.require 'lib', 'promises'
 groups_ = require './lib/groups'
-user_ = __.require 'lib', 'user/user'
+user_ = __.require 'controllers', 'user/lib/user'
 items_ = __.require 'controllers', 'items/lib/items'
 parseBbox = __.require 'lib', 'parse_bbox'
 

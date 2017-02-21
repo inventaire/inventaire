@@ -3,7 +3,7 @@ _ = __.require 'builders', 'utils'
 
 { attributes, tests } = __.require 'models', 'user'
 { updatable, concurrencial, acceptNullValue } = attributes
-user_ = __.require 'lib', 'user/user'
+user_ = __.require 'controllers', 'user/lib/user'
 error_ = __.require 'lib', 'error/error'
 { basicUpdater } = __.require 'lib', 'doc_updates'
 User = __.require 'models', 'user'

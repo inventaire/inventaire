@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
-user_ = __.require 'lib', 'user/user'
+user_ = __.require 'controllers', 'user/lib/user'
 testEmail = __.require('models', 'tests/user').email
 # pw_ = __.require('lib', 'crypto').passwords
 
