@@ -34,20 +34,24 @@ module.exports = (params)->
 
       return Promise.all promises
 
-    .then -> log 'done updating !!'
+    .then ->
+      log 'done updating !!'
+      process.exit 0
     .catch _.ErrorRethrow('migration error')
 
   updateIfNeeded = (id, updateFn)->
     db.get id
     .then (doc)->
-      # use a clone of the doc to keep it unmuted
-      update = updateFn _.cloneDeep(doc)
-      if _.objDiff doc, update
-        docDiff doc, update, preview
-        unless preview then db.update id, updateFn
-      else
-        log id, 'no changes'
-        return
+      # Convert sync functions to promises
+      # Use a clone of the doc to keep the doc itself unmutated
+      Promise.resolve updateFn(_.cloneDeep(doc))
+      .then (updatedDoc)->
+        if _.objDiff doc, updatedDoc
+          docDiff doc, updatedDoc, preview
+          unless preview then db.put updatedDoc
+        else
+          log id, 'no changes'
+          return
 
   API =
     db: db
