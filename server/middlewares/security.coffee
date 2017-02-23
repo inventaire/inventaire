@@ -19,7 +19,7 @@ ws = if devEnv then 'ws:' else ''
 
 # Keep in sync with nginx/inventaire.original.nginx@inventaire/inventaire-deploy
 policy = "default-src 'self' #{ws};" +
-  "child-src 'self';" +
+  "child-src 'self' blob:;" +
   # 'unsafe-inline': required by
   #   - <script>require('initialize')</script>
   #   - login form 'onclick'
