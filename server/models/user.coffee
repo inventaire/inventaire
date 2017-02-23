@@ -39,7 +39,14 @@ User._create = (username, email, creationStrategy, language, password)->
     # gives access to all the resources the user can read
     # Use case:
     # - private RSS feeds
+    # This token can be passed in a URL with the following considerations in mind
+    # http://stackoverflow.com/a/643480/3324977
     readToken: generateReadToken()
+    # Snapshot data by visibility
+    snapshot:
+      private: { 'items:count': 0 }
+      network: { 'items:count': 0 }
+      public: { 'items:count': 0 }
 
   switch creationStrategy
     when 'local'
