@@ -15,13 +15,9 @@ module.exports = (req, res)->
   unless tests.username username
     return error_.bundle req, res, 'bad username', 400, username
 
-  user_.getSafeUserFromUsername username
+  user_.getUserFromUsername username, reqUserId
   .then (user)->
-    { _id } = user
-    unless _id?
-      return error_.new 'user not found', 404
-
-    ownerId = _id
+    { _id:ownerId } = user
 
     getAuthorizationLevel reqUserId, ownerId
     .then (listingKey)->

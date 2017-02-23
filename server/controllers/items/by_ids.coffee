@@ -18,7 +18,7 @@ module.exports = (req, res)->
       getNetworkIds reqUserId
     ]
   .spread filterAuthorizedItems(reqUserId)
-  .then addUsersData
+  .then addUsersData(reqUserId)
   .then res.json.bind(res)
   .catch error_.Handler(req, res)
 

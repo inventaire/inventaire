@@ -6,3 +6,5 @@ module.exports =
       _id: '00000000000000000000000000000000'
       username: 'seed'
       special: true
+      # Data required to avoid crashing users logic
+      snapshot:  {}

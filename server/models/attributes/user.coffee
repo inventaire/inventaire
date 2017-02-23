@@ -17,6 +17,7 @@ attributes.ownerSafe = [
   'summaryPeriodicity'
   'admin'
   'readToken'
+  'snapshot'
 ]
 
 attributes.public = [
@@ -26,6 +27,12 @@ attributes.public = [
   'bio'
   'position'
   'special'
+  'created'
+  # Non-authorized data should still be deleted
+  # snapshot.private
+  # snapshot.network (unless requested by someone of the user network)
+  # cf server/controllers/user/lib/authorized_user_data_pickers omitPrivateData
+  'snapshot'
 ]
 
 # attributes that need availability check before update

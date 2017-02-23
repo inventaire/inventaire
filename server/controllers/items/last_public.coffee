@@ -27,15 +27,15 @@ module.exports = (req, res) ->
     return error_.bundle req, res, "limit can't be over 100", 400, limit
 
   items_.publicByDate limit, offset, assertImage, reqUserId
-  .then bundleOwnersData.bind(null, req, res)
+  .then bundleOwnersData.bind(null, res, reqUserId)
   .catch error_.Handler(req, res)
 
-bundleOwnersData = (req, res, items)->
+bundleOwnersData = (res, reqUserId, items)->
   unless items?.length > 0
-    return error_.bundle req, res, 'no item found', 404
+    throw error_.new 'no item found', 404
 
   users = getItemsOwners items
-  user_.getUsersPublicData users
+  user_.getUsersData users, reqUserId
   .then (users)-> res.json { items, users }
 
 getItemsOwners = (items)->

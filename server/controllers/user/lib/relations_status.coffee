@@ -12,7 +12,9 @@ module.exports =
     relations_.getUserRelations userId
 
   getRelationsStatuses: (userId, usersIds)->
-    getFriendsAndCoMembers userId
+    unless userId? then return promises_.resolve [ [], [], usersIds ]
+
+    getFriendsAndGroupCoMembers userId
     .spread spreadRelations(usersIds)
 
   areFriends: (userId, otherId)->
@@ -24,9 +26,14 @@ module.exports =
 
   areFriendsOrGroupCoMembers: (userId, otherId)->
     _.types arguments, 'strings...'
-    getFriendsAndCoMembers userId
+    getFriendsAndGroupCoMembers userId
     .spread (friendsIds, coGroupMembersIds)->
       return otherId in friendsIds or otherId in coGroupMembersIds
+
+  getNetworkIds: (userId)->
+    unless userId? then return promises_.resolve []
+    getFriendsAndGroupCoMembers userId
+    .then _.flatten
 
 spreadRelations = (usersIds)-> (friendsIds, coGroupMembersIds)->
   friends = []
@@ -41,7 +48,7 @@ spreadRelations = (usersIds)-> (friendsIds, coGroupMembersIds)->
   return [ friends, coGroupMembers, publik ]
 
 # result is to be .spread (friendsIds, coGroupMembersIds)->
-getFriendsAndCoMembers = (userId)->
+getFriendsAndGroupCoMembers = (userId)->
   promises_.all [
     relations_.getUserFriends(userId)
     groups_.findUserGroupsCoMembers(userId)

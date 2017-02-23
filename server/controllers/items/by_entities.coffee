@@ -12,7 +12,7 @@ module.exports = (req, res)->
   reqUserId = req.user?._id
   validateQuery req.query, 'uris', _.isEntityUri
   .then getEntitiesItems(reqUserId)
-  .then addUsersData
+  .then addUsersData(reqUserId)
   .then res.json.bind(res)
   .catch error_.Handler(req, res)
 

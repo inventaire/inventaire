@@ -12,10 +12,11 @@ parseBbox = __.require 'lib', 'parse_bbox'
 module.exports =
   byId: (req, res)->
     { id } = req.query
+    reqUserId = req.user?._id
     unless tests.valid 'groupId', id
       throw error_.new 'invalid group id', 400, id
 
-    groups_.getGroupPublicData id
+    groups_.getGroupData id, reqUserId
     .then res.json.bind(res)
     .catch error_.Handler(req, res)
 

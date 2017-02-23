@@ -10,19 +10,20 @@ sendInvitation = require './lib/send_invitations'
 module.exports = (req, res)->
   { user, body } = req
   { message } = body
+  { _id:reqUserId } = req.user
   emailsString = body.emails
   promises_.try parseEmails.bind(null, emailsString, user.email)
   .then applyLimit
   .then (emails)->
-    sendInvitationAndReturnData user, message, emails
+    sendInvitationAndReturnData user, message, emails, reqUserId
     .then _.Log('invitationByEmails data')
     .then res.json.bind(res)
     .then Track(req, ['invitation', 'email', null, emails.length])
   .catch error_.Handler(req, res)
 
-sendInvitationAndReturnData = (user, message, emails)->
+sendInvitationAndReturnData = (user, message, emails, reqUserId)->
   _.types arguments, ['object', 'string|undefined', 'array']
-  user_.publicUsersDataByEmails emails
+  user_.getUsersByEmails emails, reqUserId
   .then (existingUsers)->
     existingUsersEmails = existingUsers.map _.property('email')
     remainingEmails = _.difference emails, existingUsersEmails

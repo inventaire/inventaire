@@ -7,8 +7,9 @@ User = __.require 'models', 'user'
 
 module.exports = (req, res)->
   { ids } = req.query
+  reqUserId = req.user?._id
   promises_.try parseAndValidateIds.bind(null, ids)
-  .then _.partialRight(user_.getUsersPublicData, 'index')
+  .then user_.getUsersDataIndex(reqUserId)
   .then _.Wrap(res, 'users')
   .catch error_.Handler(req, res)
 

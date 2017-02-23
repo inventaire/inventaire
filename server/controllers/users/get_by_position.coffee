@@ -7,16 +7,18 @@ error_ = __.require 'lib', 'error/error'
 
 module.exports =
   fetchUsersNearby: (req, res)->
+    reqUserId = req.user?._id
     getNearbyUsers req
     .then (ids)->
       unless ids.length > 0 then return []
-      return user_.getUsersPublicData ids
+      return user_.getUsersData ids, reqUserId
     .then _.Wrap(res, 'users')
     .catch error_.Handler(req, res)
 
   fetchItemsNearby: (req, res)->
+    reqUserId = req.user?._id
     getNearbyUsers req
-    .then items_.getUsersAndItemsPublicData
+    .then items_.getUsersAndItemsPublicData(reqUserId)
     .then _.Wraps(res, ['users', 'items'])
     .catch error_.Handler(req, res)
 

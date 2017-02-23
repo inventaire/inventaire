@@ -20,13 +20,13 @@ module.exports =
 
     return promises_.resolve params
 
-  addUsersData: (items)->
+  addUsersData: (reqUserId)-> (items)->
     allItems = _.flatten _.values(items)
     if allItems.length is 0 then return { users: [], items }
 
     ownersIds = _.uniq allItems.map(_.property('owner'))
 
-    user_.getUsersPublicData ownersIds
+    user_.getUsersData ownersIds, reqUserId
     .then (users)-> { users, items }
 
   ownerIs: (userId)-> (item)-> item.owner is userId

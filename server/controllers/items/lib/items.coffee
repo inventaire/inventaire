@@ -92,15 +92,15 @@ module.exports = items_ =
 
   bulkDelete: db.bulkDelete
 
-  nearby: (userId, range=50, strict=false)->
-    user_.nearby userId, range, strict
-    .then items_.getUsersAndItemsPublicData
+  nearby: (reqUserId, range=50, strict=false)->
+    user_.nearby reqUserId, range, strict
+    .then items_.getUsersAndItemsPublicData(reqUserId)
 
-  getUsersAndItemsPublicData: (usersIds)->
+  getUsersAndItemsPublicData: (reqUserId)-> (usersIds)->
     _.log usersIds, 'usersIds'
     unless usersIds.length > 0 then return [[], []]
     return promises_.all [
-      user_.getUsersPublicData(usersIds).then _.Log('users')
+      user_.getUsersData(usersIds, reqUserId).then _.Log('users')
       items_.publicListings(usersIds).then _.Log('items')
     ]
 

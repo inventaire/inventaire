@@ -5,7 +5,7 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 passport_ = __.require 'lib', 'passport/passport'
 setLoggedInCookie = require './lib/set_logged_in_cookie'
-ownerSafeData = __.require 'controllers', 'user/lib/owner_safe_data'
+{ ownerSafeData } = __.require 'controllers', 'user/lib/authorized_user_data_pickers'
 
 exports.signup = (req, res)->
   { strategy, username, email, password } = req.body

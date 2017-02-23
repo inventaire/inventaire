@@ -1,7 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 error_ = __.require 'lib', 'error/error'
-ownerSafeData = require './lib/owner_safe_data'
+{ ownerSafeData } = require './lib/authorized_user_data_pickers'
 
 if CONFIG.apiOpenBar
   get = (req, res) ->

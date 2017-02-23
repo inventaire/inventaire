@@ -68,10 +68,10 @@ leaveGroups = require('./leave_groups')(db, groups_)
 
 _.extend groups_, membershipActions, usersLists, updateGroup, counts, leaveGroups
 
-# getGroupPublicData depends on user_ which depends on groups_.
+# getGroupData depends on user_ which depends on groups_.
 # Initializing at next tick allows to work around this dependency loop
-# /!\ getGroupPublicData will be undefined until lateInit runs:
-# avoid `{ getGroupPublicData } = groups_`
-# prefer keeping a reference to groups_: `groups_.getGroupPublicData`
+# /!\ getGroupData will be undefined until lateInit runs:
+# avoid `{ getGroupData } = groups_`
+# prefer keeping a reference to groups_: `groups_.getGroupData`
 process.nextTick ->
-  groups_.getGroupPublicData = require('./group_public_data')(groups_)
+  groups_.getGroupData = require('./group_public_data')(groups_)

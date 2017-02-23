@@ -7,7 +7,7 @@ error_ = __.require 'lib', 'error/error'
 couch_ = __.require 'lib', 'couch'
 User = __.require 'models', 'user'
 { byEmail, byEmails, findOneByEmail } = require './shared_user_handlers'
-{ publicUserData, publicUsersDataWithEmails } = require './public_user_data'
+{ omitPrivateData } = require './authorized_user_data_pickers'
 { BasicUpdater } = __.require 'lib', 'doc_updates'
 
 db = __.require('couch', 'base')('users', 'user')
@@ -21,12 +21,11 @@ user_ =
   byEmails: byEmails.bind(null, db)
   findOneByEmail: findOneByEmail.bind(null, db)
 
-  publicUsersDataByEmails: (emails)->
+  getUsersByEmails: (emails, reqUserId)->
     _.type emails, 'array'
-    user_.byEmails emails
-    # keeping the email is required to map the users returned
+    # Keeping the email is required to map the users returned
     # with the initial input
-    .then publicUsersDataWithEmails
+    user_.getUsersAuthorizedData user_.byEmails(emails), reqUserId, 'email'
 
   byUsername: (username)->
     db.viewByKey 'byUsername', username.toLowerCase()
@@ -43,11 +42,12 @@ user_ =
     if User.tests.email(str) then user_.findOneByEmail str
     else user_.findOneByUsername(str)
 
-  getSafeUserFromUsername: (username)->
-    user_.byUsername username
-    .then (docs)->
-      if docs?[0]? then return publicUserData docs[0]
-      else return
+  getUserFromUsername: (username, reqUserId)->
+    user_.getUsersAuthorizedData user_.byUsername(username), reqUserId
+    .then (usersDocs)->
+      userDoc = usersDocs[0]
+      if userDoc? then return userDoc
+      else throw error_.new 'user not found', 404, username
 
   usernameStartBy: (username, options)->
     username = username.toLowerCase()
@@ -58,22 +58,23 @@ user_ =
     params.limit = options.limit if options?.limit?
     db.viewCustom 'byUsername', params
 
-  getUsersPublicData: (ids, format='collection')->
-    ids = ids.split?('|') or ids
-    unless ids.length > 0
-      _.warn arguments, 'no ids provided at getUsersPublicData'
-      emptyData = formatUsersData format, []
-      return promises_.resolve emptyData
+  getUsersData: (ids, reqUserId)->
+    _.type ids, 'array'
+    if ids.length is 0 then return promises_.resolve []
+    user_.getUsersAuthorizedData user_.byIds(ids), reqUserId
 
-    user_.byIds ids
-    .then (usersData)->
-      usersData = _.compact usersData
-      unless usersData?.length > 0
-        throw error_.new 'users not found', 404, ids
+  getUsersAuthorizedData: (usersDocsPromise, reqUserId, extraAttribute)->
+    promises_.all [
+      usersDocsPromise
+      user_.getNetworkIds reqUserId
+    ]
+    .spread (usersDocs, networkIds)->
+      _.compact usersDocs
+      .map omitPrivateData(reqUserId, networkIds, extraAttribute)
 
-      return usersData.map publicUserData
-
-    .then formatUsersData.bind(null, format)
+  getUsersDataIndex: (reqUserId)-> (ids)->
+    user_.getUsersData ids, reqUserId
+    .then (usersData)-> _.indexBy usersData, '_id'
 
   incrementUndeliveredMailCounter: (email)->
     user_.findOneByEmail email
@@ -115,11 +116,6 @@ findNearby = (latLng, meterRange, iterations=0, strict=false)->
     else
       iterations += 1
       return findNearby latLng, meterRange*2, iterations
-
-
-formatUsersData = (format, usersData)->
-  if format is 'index' then return _.indexBy usersData, '_id'
-  else return usersData
 
 token_ = require('./token')(db, user_)
 
