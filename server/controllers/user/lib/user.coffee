@@ -97,7 +97,6 @@ user_ =
         throw error_.new 'user has no position set', 400, userId
 
       findNearby position, meterRange, null, strict
-      .then _.Log('find nearby')
       .then (res)->
         ids = res.map _.property('id')
         return _.without ids, userId
@@ -105,7 +104,6 @@ user_ =
     .catch _.ErrorRethrow('nearby err')
 
 findNearby = (latLng, meterRange, iterations=0, strict=false)->
-  _.log arguments, 'findNearby iteration'
   geo.search latLng, meterRange
   .then (res)->
     # Try to get the 10 closest (11 minus the main user)
