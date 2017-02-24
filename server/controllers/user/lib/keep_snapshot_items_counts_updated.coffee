@@ -13,14 +13,10 @@ module.exports = (user_)->
     user_.db.update userId, updateSnapshotItemsCounts(previousListing, newListing)
 
 updateSnapshotItemsCounts = (previousListing, newListing)-> (user)->
-  # Item created
-  if not previousListing?
-    increment user.snapshot[newListing]
-  else
-    # Item updated
-    if newListing? then increment user.snapshot[newListing]
-    # Item updated or deleted
-    decrement user.snapshot[previousListing]
+  # Item updated or deleted
+  if previousListing? then decrement user.snapshot[previousListing]
+  # Item created or updated
+  if newListing? then increment user.snapshot[newListing]
 
   return user
 
