@@ -70,6 +70,7 @@ user_ =
     ]
     .spread (usersDocs, networkIds)->
       _.compact usersDocs
+      .filter (user)-> user.type isnt 'deletedUser'
       .map omitPrivateData(reqUserId, networkIds, extraAttribute)
 
   getUsersDataIndex: (reqUserId)-> (ids)->
