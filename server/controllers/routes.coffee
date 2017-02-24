@@ -70,6 +70,7 @@ module.exports = routes =
     get: groups.public.get
 
   'api/items':
+    get: items.restricted
     put: items.put
     delete: items.del
 

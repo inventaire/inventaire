@@ -18,6 +18,9 @@ module.exports =
     'last-public': require './last_public'
     'by-username-and-entity': require './by_username_and_entity'
 
+  restricted: ActionsControllers
+    'nearby': require './nearby'
+
   put: (req, res, next) ->
     { _id, title, entity } = req.body
     _.log req.body, "PUT item: #{_id}"
