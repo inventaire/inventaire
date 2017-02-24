@@ -34,8 +34,9 @@ module.exports =
     actions[action].getCurrentItem(itemId)
     .then (currentItem)->
       items_[action](reqUserId, item)
-      .then items_.byId.bind(null, itemId)
-      .tap (updatedItem)->  radio.emit 'item:update', currentItem, updatedItem
+      # Using the response id as in case of item creation itemId='new'
+      .then (res)-> items_.byId res.id
+      .tap (updatedItem)-> radio.emit 'item:update', currentItem, updatedItem
     .then (item)-> res.status(201).json item
     .tap Track(req, ['item', actions[action].trackName])
     .catch error_.Handler(req, res)

@@ -5,7 +5,7 @@ User = __.require 'models', 'user'
 
 module.exports = (user_)->
   radio.on 'item:update', (previousItem, updateItem)->
-    { owner:userId } = previousItem
+    userId = previousItem?.owner or updateItem?.owner
     previousListing = previousItem?.listing
     newListing = updateItem?.listing
     # No update needed
