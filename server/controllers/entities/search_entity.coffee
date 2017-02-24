@@ -51,8 +51,8 @@ spreadResults = (results)->
 
   for result in results
     { type } = result
-    switch type
-      when 'human', 'serie', 'work', 'edition' then response["#{type}s"].push result
-      else _.warn result, "filtered-out type: #{type}"
+    if type in whitelistedTypes then response["#{type}s"].push result
 
   return response
+
+whitelistedTypes = [ 'human', 'serie', 'work', 'edition' ]
