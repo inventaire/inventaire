@@ -35,7 +35,7 @@ bundleOwnersData = (res, reqUserId, items)->
     throw error_.new 'no item found', 404
 
   users = getItemsOwners items
-  user_.getUsersData users, reqUserId
+  user_.getUsersData reqUserId, users
   .then (users)-> res.json { items, users }
 
 getItemsOwners = (items)->

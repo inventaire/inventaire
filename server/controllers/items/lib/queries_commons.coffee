@@ -26,7 +26,7 @@ module.exports =
 
     ownersIds = _.uniq allItems.map(_.property('owner'))
 
-    user_.getUsersData ownersIds, reqUserId
+    user_.getUsersData reqUserId, ownersIds
     .then (users)-> { users, items }
 
   ownerIs: (userId)-> (item)-> item.owner is userId

@@ -58,7 +58,7 @@ user_ =
     params.limit = options.limit if options?.limit?
     db.viewCustom 'byUsername', params
 
-  getUsersData: (ids, reqUserId)->
+  getUsersData: (reqUserId, ids)->
     _.type ids, 'array'
     if ids.length is 0 then return promises_.resolve []
     user_.getUsersAuthorizedData user_.byIds(ids), reqUserId
@@ -74,7 +74,7 @@ user_ =
       .map omitPrivateData(reqUserId, networkIds, extraAttribute)
 
   getUsersDataIndex: (reqUserId)-> (ids)->
-    user_.getUsersData ids, reqUserId
+    user_.getUsersData reqUserId, ids
     .then (usersData)-> _.indexBy usersData, '_id'
 
   incrementUndeliveredMailCounter: (email)->
