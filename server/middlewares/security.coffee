@@ -35,7 +35,7 @@ policy = "default-src 'self' #{ws};" +
   "report-uri /api/reports/public?action=csp-report;"
 
 exports.addSecurityHeaders = (req, res, next) ->
-  res.header 'X-XSS-Protection', '1; mode=block; report-uri=/api/reports/public?action=csp-report;'
+  res.header 'X-XSS-Protection', '1; mode=block; report=/api/reports/public?action=csp-report;'
   res.header 'X-Frame-Options', 'SAMEORIGIN'
   res.header 'Content-Security-Policy', policy
   res.header 'X-Content-Security-Policy', policy
