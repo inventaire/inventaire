@@ -21,13 +21,14 @@ module.exports =
     return promises_.resolve params
 
   addUsersData: (reqUserId)-> (items)->
-    allItems = _.flatten _.values(items)
-    if allItems.length is 0 then return { users: [], items }
+    if items.length is 0 then return { users: [], items }
 
-    ownersIds = _.uniq allItems.map(_.property('owner'))
+    ownersIds = _.uniq items.map(_.property('owner'))
 
     user_.getUsersData reqUserId, ownersIds
     .then (users)-> { users, items }
+
+  byCreationDate: (a, b)-> b.created - a.created
 
   ownerIs: (userId)-> (item)-> item.owner is userId
   listingIs: (listing)-> (item)-> item.listing is listing

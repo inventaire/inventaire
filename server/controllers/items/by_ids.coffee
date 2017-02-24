@@ -5,9 +5,8 @@ user_ = __.require 'controllers', 'user/lib/user'
 relations_ = __.require 'controllers', 'relations/lib/queries'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
-{ validateQuery, addUsersData, listingIs } = require './lib/queries_commons'
+{ validateQuery, addUsersData, listingIs, byCreationDate } = require './lib/queries_commons'
 { omitPrivateAttributes } = require './lib/filter_private_attributes'
-{ network:networkListings } = require './lib/listings_lists'
 
 module.exports = (req, res)->
   reqUserId = req.user?._id
@@ -26,31 +25,22 @@ getNetworkIds = (reqUserId)->
   if reqUserId? then return relations_.getUserFriendsAndCoGroupsMembers reqUserId
   else return
 
-filterAuthorizedItems = (reqUserId)-> (foundItems, networkIds)->
-  unless reqUserId?
-    publicItems = foundItems
-      .filter listingIs('public')
-      .map omitPrivateAttributes
+filterAuthorizedItems = (reqUserId)-> (items, networkIds)->
+  items
+  .map filterByAuthorization(reqUserId, networkIds)
+  # Keep non-nullified items
+  .filter _.identity
+  .sort byCreationDate
 
-    return { public: publicItems }
-
-  results = { user: [], network: [], public: [] }
-  return foundItems.reduce spreadItems(reqUserId, networkIds), results
-
-spreadItems = (reqUserId, networkIds)-> (aggregatedItems, item)->
+filterByAuthorization = (reqUserId, networkIds)-> (item)->
   { owner:ownerId, listing } = item
 
-  if ownerId is reqUserId
-    aggregatedItems.user.push item
+  if ownerId is reqUserId then return item
 
   else if ownerId in networkIds
     # Filter-out private item for network users
-    if listing isnt 'private'
-      aggregatedItems.network.push omitPrivateAttributes(item)
+    if listing isnt 'private' then return omitPrivateAttributes(item)
 
   else
-    # Filter-out all non-public aggregatedItems for non-network users
-    if listing is 'public'
-      aggregatedItems.public.push omitPrivateAttributes(item)
-
-  return aggregatedItems
+    # Filter-out all non-public items for non-network users
+    if listing is 'public' then return omitPrivateAttributes(item)

@@ -5,7 +5,7 @@ user_ = __.require 'controllers', 'user/lib/user'
 relations_ = __.require 'controllers', 'relations/lib/queries'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
-{ validateQuery, addUsersData } = require './lib/queries_commons'
+{ validateQuery, addUsersData, byCreationDate } = require './lib/queries_commons'
 { filterPrivateAttributes } = require './lib/filter_private_attributes'
 
 module.exports = (req, res)->
@@ -25,13 +25,11 @@ getEntitiesItems = (reqUserId)-> (uris)->
   .spread (userItems, networkItems, publicItems)->
     # Only add user and network keys for the authorized endpoint
     if reqUserId?
-      return {
-        user: userItems
-        network: networkItems
-        public: deduplicateItems userItems, networkItems, publicItems
-      }
+      dedupPublicItems = deduplicateItems userItems, networkItems, publicItems
+      return userItems.concat(networkItems).concat dedupPublicItems
     else
-      return { public: publicItems }
+      return publicItems
+  .then (items)-> items.sort byCreationDate
 
 getUserItems = (reqUserId, uris)->
   unless reqUserId? then return []

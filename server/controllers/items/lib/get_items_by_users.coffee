@@ -3,12 +3,13 @@ _ = __.require 'builders', 'utils'
 items_ = __.require 'controllers', 'items/lib/items'
 user_ = __.require 'controllers', 'user/lib/user'
 promises_ = __.require 'lib', 'promises'
-{ addUsersData } = require './queries_commons'
+{ addUsersData, byCreationDate } = require './queries_commons'
 
 module.exports = (reqUserId, includeUsersDocs)-> (usersIds)->
   getRelations reqUserId, usersIds
   .then fetchRelationsItems(reqUserId)
   .then (items)->
+    items.sort byCreationDate
     if includeUsersDocs then return addUsersData(reqUserId)(items)
     else return items
 
@@ -30,14 +31,12 @@ getRelations = (reqUserId, usersIds)->
     return relations
 
 fetchRelationsItems = (reqUserId)-> (relations)->
-  itemsPromises = {}
+  itemsPromises = []
   { user, network, public:publik } = relations
   # Includes ownerSafe attributes
-  if user? then itemsPromises.user = items_.byOwner user
+  if user? then itemsPromises.push items_.byOwner(user)
   # Exclude ownerSafe attributes
-  if network?
-    itemsPromises.network = items_.networkListings network, reqUserId
-  if publik?
-    itemsPromises.public = items_.publicListings publik, reqUserId
+  if network? then itemsPromises.push items_.networkListings(network, reqUserId)
+  if publik? then itemsPromises.push items_.publicListings(publik, reqUserId)
 
-  return promises_.props itemsPromises
+  return promises_.all(itemsPromises).then _.flatten
