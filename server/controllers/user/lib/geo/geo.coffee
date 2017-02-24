@@ -11,6 +11,4 @@ module.exports = ->
   setTimeout startFollowing, 5000
 
   return API =
-    search: (latLng, kmRange)->
-      db.search latLng, kmRange
-      .then _.Log('search results')
+    search: (latLng, kmRange)-> db.search latLng, kmRange
