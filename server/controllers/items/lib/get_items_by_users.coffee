@@ -5,7 +5,7 @@ user_ = __.require 'controllers', 'user/lib/user'
 promises_ = __.require 'lib', 'promises'
 { addUsersData, Paginate } = require './queries_commons'
 
-module.exports = (reqUserId, includeUsersDocs)-> (usersIds, limit, offset)->
+module.exports = (reqUserId, includeUsersDocs, limit, offset, usersIds)->
   getRelations reqUserId, usersIds
   .then fetchRelationsItems(reqUserId)
   .then Paginate(limit, offset)

@@ -16,7 +16,7 @@ module.exports = (req, res)->
   .then res.json.bind(res)
   .catch error_.Handler(req, res)
 
-getEntitiesItems = (reqUserId)-> (uris, limit, offset)->
+getEntitiesItems = (reqUserId)-> (limit, offset, uris)->
   promises_.all [
     getUserItems reqUserId, uris
     getNetworkItems reqUserId, uris

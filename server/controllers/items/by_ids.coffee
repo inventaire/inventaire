@@ -11,7 +11,7 @@ promises_ = __.require 'lib', 'promises'
 module.exports = (req, res)->
   reqUserId = req.user?._id
   validateQuery req.query, 'ids', _.isItemId
-  .spread (ids, limit, offset)->
+  .spread (limit, offset, ids)->
     promises_.all [
       items_.byIds ids
       getNetworkIds reqUserId

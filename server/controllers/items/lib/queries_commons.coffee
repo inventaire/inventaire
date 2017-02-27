@@ -4,6 +4,22 @@ user_ = __.require 'controllers', 'user/lib/user'
 promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
 
+validateLimitAndOffset = (query)->
+  { limit, offset } = query
+
+  if limit?
+    limit = _.parsePositiveInteger limit
+    unless limit? then return error_.reject 'invalid limit', 400, limit
+
+  if offset?
+    offset = _.parsePositiveInteger offset
+    unless offset? then return error_.reject 'invalid offset', 400, offset
+
+    unless limit?
+      return error_.reject 'missing a limit parameter', 400, offset
+
+  return promises_.resolve [ limit, offset ]
+
 module.exports =
   validateQuery: (query, paramName, paramTest)->
     params = query[paramName]
@@ -18,20 +34,10 @@ module.exports =
         singularParamName = paramName.replace /s$/, ''
         return error_.reject "invalid #{singularParamName}", 400, param
 
-    { limit, offset } = query
+    validateLimitAndOffset query
+    .spread (limit, offset)-> [ limit, offset, params ]
 
-    if limit?
-      limit = _.parsePositiveInteger limit
-      unless limit? then return error_.reject 'invalid limit', 400, limit
-
-    if offset?
-      offset = _.parsePositiveInteger offset
-      unless offset? then return error_.reject 'invalid offset', 400, offset
-
-      unless limit?
-        return error_.reject 'missing a limit parameter', 400, offset
-
-    return promises_.resolve [ params, limit, offset ]
+  validateLimitAndOffset: validateLimitAndOffset
 
   addUsersData: (reqUserId)-> (items)->
     if items.length is 0 then return { users: [], items }
