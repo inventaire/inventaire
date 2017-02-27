@@ -9,11 +9,13 @@ validateLimitAndOffset = (query)->
 
   if limit?
     limit = _.parsePositiveInteger limit
-    unless limit? then return error_.reject 'invalid limit', 400, limit
+    unless limit? and limit > 0
+      return error_.reject 'invalid limit', 400, limit
 
   if offset?
     offset = _.parsePositiveInteger offset
-    unless offset? then return error_.reject 'invalid offset', 400, offset
+    unless offset?
+      return error_.reject 'invalid offset', 400, offset
 
     unless limit?
       return error_.reject 'missing a limit parameter', 400, offset
