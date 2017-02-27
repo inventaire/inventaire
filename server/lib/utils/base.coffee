@@ -32,6 +32,11 @@ module.exports = base =
     unless /^-?\d+$/.test str then throw new Error "invalid integer string: #{str}"
     return parseInt str
 
+  parsePositiveInteger: (str)->
+    # /!\ Difference with parseInt: not throwing
+    unless typeof str is 'string' and /^\d+$/.test(str) then return
+    return parseInt str
+
   stringToFloat: (str)->
     unless typeof str is 'string' then throw new Error "expected a string: #{str}"
     unless /^[-?\d\.]+$/.test str then throw new Error "invalid integer string: #{str}"

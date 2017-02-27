@@ -5,18 +5,18 @@ user_ = __.require 'controllers', 'user/lib/user'
 relations_ = __.require 'controllers', 'relations/lib/queries'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
-{ validateQuery, addUsersData, byCreationDate } = require './lib/queries_commons'
+{ validateQuery, addUsersData, Paginate } = require './lib/queries_commons'
 { filterPrivateAttributes } = require './lib/filter_private_attributes'
 
 module.exports = (req, res)->
   reqUserId = req.user?._id
   validateQuery req.query, 'uris', _.isEntityUri
-  .then getEntitiesItems(reqUserId)
+  .spread getEntitiesItems(reqUserId)
   .then addUsersData(reqUserId)
   .then res.json.bind(res)
   .catch error_.Handler(req, res)
 
-getEntitiesItems = (reqUserId)-> (uris)->
+getEntitiesItems = (reqUserId)-> (uris, limit, offset)->
   promises_.all [
     getUserItems reqUserId, uris
     getNetworkItems reqUserId, uris
@@ -29,7 +29,7 @@ getEntitiesItems = (reqUserId)-> (uris)->
       return userItems.concat(networkItems).concat dedupPublicItems
     else
       return publicItems
-  .then (items)-> items.sort byCreationDate
+  .then Paginate(limit, offset)
 
 getUserItems = (reqUserId, uris)->
   unless reqUserId? then return []

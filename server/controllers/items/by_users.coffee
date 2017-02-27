@@ -14,6 +14,6 @@ module.exports = (req, res)->
   includeUsersDocs = false
 
   validateQuery req.query, 'users', _.isUserId
-  .then getItemsByUsers(reqUserId, includeUsersDocs)
+  .spread getItemsByUsers(reqUserId, includeUsersDocs)
   .then _.Wrap(res, 'items')
   .catch error_.Handler(req, res)

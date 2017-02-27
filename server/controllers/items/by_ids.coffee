@@ -5,18 +5,19 @@ user_ = __.require 'controllers', 'user/lib/user'
 relations_ = __.require 'controllers', 'relations/lib/queries'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
-{ validateQuery, addUsersData, listingIs, byCreationDate } = require './lib/queries_commons'
+{ validateQuery, addUsersData, listingIs, Paginate } = require './lib/queries_commons'
 { omitPrivateAttributes } = require './lib/filter_private_attributes'
 
 module.exports = (req, res)->
   reqUserId = req.user?._id
   validateQuery req.query, 'ids', _.isItemId
-  .then (ids)->
+  .spread (ids, limit, offset)->
     promises_.all [
       items_.byIds ids
       getNetworkIds reqUserId
     ]
-  .spread filterAuthorizedItems(reqUserId)
+    .spread filterAuthorizedItems(reqUserId)
+    .then Paginate(limit, offset)
   .then addUsersData(reqUserId)
   .then res.json.bind(res)
   .catch error_.Handler(req, res)
@@ -25,12 +26,11 @@ getNetworkIds = (reqUserId)->
   if reqUserId? then return relations_.getUserFriendsAndCoGroupsMembers reqUserId
   else return
 
-filterAuthorizedItems = (reqUserId)-> (items, networkIds)->
+filterAuthorizedItems = (reqUserId, limit, offset)-> (items, networkIds)->
   items
   .map filterByAuthorization(reqUserId, networkIds)
   # Keep non-nullified items
   .filter _.identity
-  .sort byCreationDate
 
 filterByAuthorization = (reqUserId, networkIds)-> (item)->
   { owner:ownerId, listing } = item

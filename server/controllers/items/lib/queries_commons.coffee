@@ -18,7 +18,20 @@ module.exports =
         singularParamName = paramName.replace /s$/, ''
         return error_.reject "invalid #{singularParamName}", 400, param
 
-    return promises_.resolve params
+    { limit, offset } = query
+
+    if limit?
+      limit = _.parsePositiveInteger limit
+      unless limit? then return error_.reject 'invalid limit', 400, limit
+
+    if offset?
+      offset = _.parsePositiveInteger offset
+      unless offset? then return error_.reject 'invalid offset', 400, offset
+
+      unless limit?
+        return error_.reject 'missing a limit parameter', 400, offset
+
+    return promises_.resolve [ params, limit, offset ]
 
   addUsersData: (reqUserId)-> (items)->
     if items.length is 0 then return { users: [], items }
@@ -28,7 +41,16 @@ module.exports =
     user_.getUsersData reqUserId, ownersIds
     .then (users)-> { users, items }
 
-  byCreationDate: (a, b)-> b.created - a.created
-
   ownerIs: (userId)-> (item)-> item.owner is userId
+
   listingIs: (listing)-> (item)-> item.listing is listing
+
+  Paginate: (limit, offset)-> (items)->
+    items = items.sort byCreationDate
+    if limit?
+      offset ?= 0
+      return items.slice offset, offset+limit
+    else
+      return items
+
+byCreationDate = (a, b)-> b.created - a.created

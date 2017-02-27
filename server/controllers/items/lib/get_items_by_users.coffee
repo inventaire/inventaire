@@ -3,13 +3,13 @@ _ = __.require 'builders', 'utils'
 items_ = __.require 'controllers', 'items/lib/items'
 user_ = __.require 'controllers', 'user/lib/user'
 promises_ = __.require 'lib', 'promises'
-{ addUsersData, byCreationDate } = require './queries_commons'
+{ addUsersData, Paginate } = require './queries_commons'
 
-module.exports = (reqUserId, includeUsersDocs)-> (usersIds)->
+module.exports = (reqUserId, includeUsersDocs)-> (usersIds, limit, offset)->
   getRelations reqUserId, usersIds
   .then fetchRelationsItems(reqUserId)
+  .then Paginate(limit, offset)
   .then (items)->
-    items.sort byCreationDate
     if includeUsersDocs then return addUsersData(reqUserId)(items)
     else return items
 
