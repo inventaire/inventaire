@@ -9,9 +9,9 @@ module.exports = (reqUserId, includeUsersDocs, limit, offset, usersIds)->
   getRelations reqUserId, usersIds
   .then fetchRelationsItems(reqUserId)
   .then Paginate(limit, offset)
-  .then (items)->
-    if includeUsersDocs then return addUsersData(reqUserId)(items)
-    else return items
+  .then (pageData)->
+    if includeUsersDocs then return addUsersData(reqUserId)(pageData)
+    else return pageData
 
 getRelations = (reqUserId, usersIds)->
   # All users are considered public users when the request isn't authentified

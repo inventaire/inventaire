@@ -41,13 +41,18 @@ module.exports =
 
   validateLimitAndOffset: validateLimitAndOffset
 
-  addUsersData: (reqUserId)-> (items)->
-    if items.length is 0 then return { users: [], items }
+  addUsersData: (reqUserId)-> (page)->
+    { items } = page
+    if items.length is 0
+      page.users = []
+      return page
 
     ownersIds = _.uniq items.map(_.property('owner'))
 
     user_.getUsersData reqUserId, ownersIds
-    .then (users)-> { users, items }
+    .then (users)->
+      page.users = users
+      return page
 
   ownerIs: (userId)-> (item)-> item.owner is userId
 
@@ -55,10 +60,15 @@ module.exports =
 
   Paginate: (limit, offset)-> (items)->
     items = items.sort byCreationDate
+    total = items.length
+    offset ?= 0
+    last = offset + limit
     if limit?
-      offset ?= 0
-      return items.slice offset, offset+limit
+      items = items.slice offset, last
+      data = { items, total, offset }
+      if last < total then data.continue = last
+      return data
     else
-      return items
+      return { items, total, offset }
 
 byCreationDate = (a, b)-> b.created - a.created
