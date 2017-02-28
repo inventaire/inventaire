@@ -16,7 +16,7 @@ module.exports =
     'by-users': require './by_users'
     'by-entities': require './by_entities'
     'last-public': require './last_public'
-    'by-username-and-entity': require './by_username_and_entity'
+    'by-user-and-entity': require './by_user_and_entity'
 
   restricted: ActionsControllers
     'nearby': require './nearby'

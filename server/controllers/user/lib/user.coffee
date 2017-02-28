@@ -58,6 +58,10 @@ user_ =
     params.limit = options.limit if options?.limit?
     db.viewCustom 'byUsername', params
 
+  getUserData: (reqUserId, id)->
+    user_.getUsersAuthorizedData user_.byIds([id]), reqUserId
+    .get '0'
+
   getUsersData: (reqUserId, ids)->
     _.type ids, 'array'
     if ids.length is 0 then return promises_.resolve []
