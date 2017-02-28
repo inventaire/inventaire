@@ -6,9 +6,7 @@ possibleChars = alphabet + alphabet.toUpperCase() + '0123456789'
 # - be fast to generate
 # - be in a URL without requiring to be escaped
 # - have the highest possible entropy with those constraints
-module.exports = (minLength, maxLength)->
-  length = if maxLength? then _.random(minLength, maxLength) else minLength
-
+module.exports = (length)->
   text = ''
   i = 0
   while i < length

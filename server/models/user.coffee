@@ -6,7 +6,7 @@ promises_ = __.require 'lib', 'promises'
 gravatar = __.require 'lib', 'gravatar'
 error_ = __.require 'lib', 'error/error'
 randomString = __.require 'lib', 'utils/random_string'
-generateReadToken = randomString.bind null, 40, 50
+generateReadToken = randomString.bind null, 32
 
 module.exports = User = {}
 
