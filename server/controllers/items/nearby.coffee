@@ -14,8 +14,8 @@ module.exports = (req, res)->
   includeUsersDocs = true
 
   validateLimitAndOffset query
-  .spread (limit, offset)->
+  .then (page)->
     getUsersNearby reqUserId, range
-    .then getItemsByUsers.bind(null, reqUserId, includeUsersDocs, limit, offset)
+    .then getItemsByUsers.bind(null, reqUserId, includeUsersDocs, page)
   .then res.json.bind(res)
   .catch error_.Handler(req, res)

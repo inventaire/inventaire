@@ -4,8 +4,15 @@ user_ = __.require 'controllers', 'user/lib/user'
 promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
 
+filters =
+  # Prevent showing private items in group context to avoid giving the false
+  # impresssion that those are visible by other members of the group
+  group: (item)-> item.listing isnt 'private'
+
+validFilters = Object.keys filters
+
 validateLimitAndOffset = (query)->
-  { limit, offset } = query
+  { limit, offset, filter } = query
 
   if limit?
     limit = _.parsePositiveInteger limit
@@ -20,7 +27,11 @@ validateLimitAndOffset = (query)->
     unless limit?
       return error_.reject 'missing a limit parameter', 400, offset
 
-  return promises_.resolve [ limit, offset ]
+  if filter?
+    unless filter in validFilters
+      return error_.reject 'invalid filter', 400, filter
+
+  return promises_.resolve { limit, offset, filter }
 
 module.exports =
   validateQuery: (query, paramName, paramTest)->
@@ -37,7 +48,9 @@ module.exports =
         return error_.reject "invalid #{singularParamName}", 400, param
 
     validateLimitAndOffset query
-    .spread (limit, offset)-> [ limit, offset, params ]
+    .then (page)->
+      page.params = params
+      return page
 
   validateLimitAndOffset: validateLimitAndOffset
 
@@ -58,17 +71,19 @@ module.exports =
 
   listingIs: (listing)-> (item)-> item.listing is listing
 
-  Paginate: (limit, offset)-> (items)->
+  Paginate: (page)-> (items)->
+    { limit, offset, filter } = page
     items = items.sort byCreationDate
+    if filter? then items = items.filter filters[filter]
     total = items.length
     offset ?= 0
     last = offset + limit
     if limit?
       items = items.slice offset, last
-      data = { items, total, offset }
+      data = { items, total, offset, filter }
       if last < total then data.continue = last
       return data
     else
-      return { items, total, offset }
+      return { items, total, offset, filter }
 
 byCreationDate = (a, b)-> b.created - a.created

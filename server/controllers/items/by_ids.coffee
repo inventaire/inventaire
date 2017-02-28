@@ -11,13 +11,14 @@ promises_ = __.require 'lib', 'promises'
 module.exports = (req, res)->
   reqUserId = req.user?._id
   validateQuery req.query, 'ids', _.isItemId
-  .spread (limit, offset, ids)->
+  .then (page)->
+    { params:ids } = page
     promises_.all [
       items_.byIds ids
       getNetworkIds reqUserId
     ]
     .spread filterAuthorizedItems(reqUserId)
-    .then Paginate(limit, offset)
+    .then Paginate(page)
   .then addUsersData(reqUserId)
   .then res.json.bind(res)
   .catch error_.Handler(req, res)
@@ -26,7 +27,7 @@ getNetworkIds = (reqUserId)->
   if reqUserId? then return relations_.getUserFriendsAndCoGroupsMembers reqUserId
   else return
 
-filterAuthorizedItems = (reqUserId, limit, offset)-> (items, networkIds)->
+filterAuthorizedItems = (reqUserId)-> (items, networkIds)->
   items
   .map filterByAuthorization(reqUserId, networkIds)
   # Keep non-nullified items

@@ -11,12 +11,13 @@ promises_ = __.require 'lib', 'promises'
 module.exports = (req, res)->
   reqUserId = req.user?._id
   validateQuery req.query, 'uris', _.isEntityUri
-  .spread getEntitiesItems(reqUserId)
+  .then getEntitiesItems(reqUserId)
   .then addUsersData(reqUserId)
   .then res.json.bind(res)
   .catch error_.Handler(req, res)
 
-getEntitiesItems = (reqUserId)-> (limit, offset, uris)->
+getEntitiesItems = (reqUserId)-> (page)->
+  { params:uris } = page
   promises_.all [
     getUserItems reqUserId, uris
     getNetworkItems reqUserId, uris
@@ -29,7 +30,7 @@ getEntitiesItems = (reqUserId)-> (limit, offset, uris)->
       return userItems.concat(networkItems).concat dedupPublicItems
     else
       return publicItems
-  .then Paginate(limit, offset)
+  .then Paginate(page)
 
 getUserItems = (reqUserId, uris)->
   unless reqUserId? then return []
