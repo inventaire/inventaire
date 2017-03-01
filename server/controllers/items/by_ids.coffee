@@ -28,7 +28,7 @@ getNetworkIds = (reqUserId)->
   else return
 
 filterAuthorizedItems = (reqUserId)-> (items, networkIds)->
-  items
+  _.compact items
   .map filterByAuthorization(reqUserId, networkIds)
   # Keep non-nullified items
   .filter _.identity
