@@ -29,6 +29,8 @@ module.exports = (seed)->
   unless _.isNonEmptyString isbn
     return error_.reject 'missing isbn', 400, seed
 
+  _.log seed, 'edition seed'
+
   isbnData = parseIsbn seed.isbn
 
   unless isbnData? then return error_.reject 'invalid isbn', 400, seed

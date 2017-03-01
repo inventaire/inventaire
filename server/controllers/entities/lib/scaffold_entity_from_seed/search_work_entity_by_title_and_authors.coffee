@@ -16,8 +16,6 @@ module.exports = (seed)->
   # unless a lang is explicitly passed, deduce it from the the ISBN groupLang
   lang or= groupLang
 
-  _.log seed, 'seed'
-
   validAuthors = _.isArray(authors) and _.all authors, _.isNonEmptyString
   unless _.isNonEmptyString(title) and validAuthors
     _.warn seed, 'unsufficient seed data to search a pre-existing work entity'
@@ -31,12 +29,10 @@ module.exports = (seed)->
     lang: lang
     # Having dataseed enable woud trigger a hell of a loop
     disableDataseed: true
-  .then _.Log('results before title filter')
   # Make a first filter from the results we got
   .filter MatchTitle(title, lang)
   # Fetch the data we miss to check author match
   .map AddAuthorsStrings(lang)
-  .then _.Log('results before author filter')
   # Filter the remaining results on authors
   .filter MatchAuthor(authors, lang)
   .then (matches)->
