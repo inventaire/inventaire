@@ -14,7 +14,7 @@ module.exports =
     { id } = req.query
     reqUserId = req.user?._id
     unless tests.valid 'groupId', id
-      throw error_.new 'invalid group id', 400, id
+      return error_.bundle req, res, 'invalid group id', 400, id
 
     groups_.getGroupData id, reqUserId
     .then res.json.bind(res)
@@ -23,7 +23,7 @@ module.exports =
   searchByName: (req, res)->
     { search } = req.query
     unless _.isNonEmptyString search
-      throw error_.new 'invalid search', 400, search
+      return error_.bundle req, res, 'invalid search', 400, search
 
     groups_.nameStartBy search
     .filter searchable
