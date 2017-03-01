@@ -10,9 +10,7 @@ cspReport = (req, res)->
   unless err?
     return error_.bundle req, res, 'missing csp-report', 400, req.body
 
-  # Faking an error object for the needs of server/lib/utils/open_issue.coffee
-  # Define the stack first to stringify only what was reported
-  err.stack = JSON.stringify err, null, 2
+  err.stack = getErrStack err
   err.message = 'csp report'
   err.labels = 'csp'
   _.error err, 'csp report', false
@@ -24,9 +22,14 @@ errorReport = (req, res)->
   unless err?
     return error_.bundle req, res, 'missing error', 400, req.body
 
+  err.stack = getErrStack err
   err.labels = 'client'
   _.error err, 'client error report'
   _.ok res
+
+# Faking an error object for the needs of server/lib/utils/open_issue.coffee
+# Define the stack first to stringify only what was reported
+getErrStack = (err)-> err.stack or JSON.stringify err, null, 2
 
 module.exports = ActionsControllers
   'csp-report':  cspReport
