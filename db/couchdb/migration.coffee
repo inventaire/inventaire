@@ -10,7 +10,7 @@ module.exports = (params)->
   silent ?= false
   showDiff ?= true
 
-  db = __.require('couch', 'cot_base')(dbName, designDocName)
+  db = __.require('couch', 'base')(dbName, designDocName)
   unless db? then throw new Error('bad dbName')
 
   log = if silent then _.identity else _.log
