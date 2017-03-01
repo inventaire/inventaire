@@ -78,6 +78,7 @@
     "passport-local": "^1.0.0",
     "ps-tree": "~1.1.0",
     "request": "^2.72.0",
+    "rss": "^1.2.2",
     "serve-favicon": "^2.3.2",
     "wikidata-lang": "^2.0.3",
     "wikidata-sdk": "^4.1.0",
