@@ -9,8 +9,6 @@ module.exports = (title)->
   title = _.fixedEncodeURIComponent title
   url = "#{apiBase}#{title}"
 
-  _.log url, 'Wikipedia image query'
-
   promises_.get url
   .then (res)->
     { pages } = res.query

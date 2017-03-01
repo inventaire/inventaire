@@ -7,7 +7,6 @@ getOpenLibraryCover = __.require 'data', 'openlibrary/cover'
 
 module.exports = (entity)->
   findAnImage entity
-  .then _.Log('image data')
   .then (data)->
     entity.image = data
     return entity

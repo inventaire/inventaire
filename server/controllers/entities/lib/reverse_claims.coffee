@@ -29,7 +29,8 @@ wikidataReverseClaims = (property, wdId, refresh)->
 
 _wikidataReverseClaims = (property, wdId)->
   wdProp = wd_.unprefixifyPropertyId property
-  promises_.get _.log(wdk.getReverseClaims(wdProp, wdId), 'reverseclaim')
+  _.log [property, wdId], 'reverse claim'
+  promises_.get wdk.getReverseClaims(wdProp, wdId)
   .then wdk.simplifySparqlResults
   .map prefixify
 

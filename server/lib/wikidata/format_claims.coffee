@@ -22,12 +22,7 @@ module.exports = (claims, wdId)->
 # Remove unused claims
 pickWhitelistedClaims = (claims, wdId)->
   allProperties = Object.keys claims
-  keep = _.pick claims, whitelistedProperties
-  removedProperties = _.difference allProperties, Object.keys(keep)
-  if removedProperties.length > 0
-    # Converting to String to log properties on one line
-    _.warn removedProperties.toString(), "#{wdId} filtered-out claims"
-  return keep
+  return _.pick claims, whitelistedProperties
 
 # Functions to convert Wikidata properties values to Inv entities custom formats
 wikidataToInvFormatters =

@@ -20,7 +20,6 @@ requester = (ids)->
 
   else
     url = getEntities(ids)
-    _.log url, 'get wikidata entities'
     getReq url
     .get 'entities'
 

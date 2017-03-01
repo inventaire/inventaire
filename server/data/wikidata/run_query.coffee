@@ -57,5 +57,4 @@ runQuery = (params, key)->
 
   promises_.get url
   .then wdk.simplifySparqlResults
-  .then _.Log(key)
   .catch _.ErrorRethrow(key)
