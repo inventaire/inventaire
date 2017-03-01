@@ -25,7 +25,7 @@ module.exports = (req, res)->
 
 getNetworkIds = (reqUserId)->
   if reqUserId? then return relations_.getUserFriendsAndCoGroupsMembers reqUserId
-  else return
+  else return []
 
 filterAuthorizedItems = (reqUserId)-> (items, networkIds)->
   _.compact items
