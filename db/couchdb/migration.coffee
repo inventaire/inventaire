@@ -44,7 +44,7 @@ module.exports = (params)->
     .then (doc)->
       # Convert sync functions to promises
       # Use a clone of the doc to keep the doc itself unmutated
-      Promise.resolve updateFn(_.cloneDeep(doc))
+      Promise.try -> updateFn(_.cloneDeep(doc))
       .then (updatedDoc)->
         if _.objDiff doc, updatedDoc
           docDiff doc, updatedDoc, preview
