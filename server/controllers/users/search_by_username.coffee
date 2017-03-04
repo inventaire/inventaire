@@ -5,11 +5,11 @@ error_ = __.require 'lib', 'error/error'
 
 module.exports = (req, res) ->
   { query } = req
-  { search } = query
+  search = query.search?.trim()
   reqUserId = req.user?._id
 
-  unless search?
-    return error_.bundle req, res, 'bad query', 400, query
+  unless _.isNonEmptyString search
+    return error_.bundle req, res, 'invalid search', 400, query
 
   user_.getUsersAuthorizedData user_.usernameStartBy(search), reqUserId
   .then _.Wrap(res, 'users')
