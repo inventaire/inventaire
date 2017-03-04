@@ -11,7 +11,6 @@ exports.usernameAvailability = (req, res, next) ->
   .then -> res.json {username: username, status: 'available'}
   .catch error_.Handler(req, res)
 
-
 exports.emailAvailability = (req, res, next) ->
   { email } = req.query
   # checks for validity, availability

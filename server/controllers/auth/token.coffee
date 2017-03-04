@@ -17,7 +17,6 @@ module.exports = (req, res, next) ->
     when 'reset-password' then allowPasswordReset req, res
     else error_.unknownAction req, res
 
-
 confirmEmailValidity = (res, email, token)->
   user_.confirmEmailValidity email, token
   .then redirectValidEmail.bind(null, res, true)
@@ -32,7 +31,6 @@ redirectValidEmail = (res, bool, resp)->
 #    => redirect to the reset-password page
 allowPasswordReset = (req, res)->
   passport_.authenticate.resetPassword req, res, Redirect(res)
-
 
 Redirect = (res)->
   redirect = ->

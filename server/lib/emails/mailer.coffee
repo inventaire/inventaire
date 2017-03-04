@@ -31,7 +31,6 @@ initMailerEventListeners = ->
   radio.on 'group:invite', sendEmail.group.bind(null, 'invite')
   radio.on 'group:acceptRequest', sendEmail.group.bind(null, 'acceptRequest')
 
-
   radio.on 'received:feedback', sendEmail.feedback
 
   radio.on 'send:email:invitations', sendEmail.emailInvitations

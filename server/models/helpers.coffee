@@ -3,7 +3,6 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 
-
 module.exports = (attributes)->
   solveConstraint: (model, attribute)->
     { possibilities, defaultValue } = attributes.constrained[attribute]

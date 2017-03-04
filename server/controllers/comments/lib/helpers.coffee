@@ -10,7 +10,6 @@ addOwnerId = (owner, users)->
 removeCommentorId = (commentor, users)->
   return _.without users, commentor
 
-
 module.exports = (comments_)->
 
   findUsersToNotify = (itemId, owner, commentor)->

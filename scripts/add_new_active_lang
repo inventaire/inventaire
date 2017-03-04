@@ -9,7 +9,6 @@ echo "Starting wd props -l $newlang > $wikidataarchive"
 wd props -l $1 > $wikidataarchive
 echo "wd props done"
 
-
 langList=./client/scripts/lib/i18n/langs.coffee
 
 # If the language wasn't already added

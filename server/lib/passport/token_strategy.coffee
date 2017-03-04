@@ -50,5 +50,4 @@ finalError = (done, err)->
   _.error err, 'TokenStrategy verify err'
   done err
 
-
 module.exports = new LocalStrategy options, verify

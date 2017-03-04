@@ -15,7 +15,6 @@ module.exports = (req, res, next)->
   .then _.Ok(res)
   .catch error_.Handler(req, res)
 
-
 sendEmailValidation = (user)->
   { _id, creationStrategy, validEmail} = user
   unless creationStrategy is 'local'

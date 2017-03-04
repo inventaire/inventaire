@@ -6,7 +6,6 @@ helpers_ = require './helpers'
 transporter_ = require './transporter'
 email_ = require './email'
 
-
 module.exports =
   validationEmail: (userData, token)->
     email = email_.validationEmail(userData, token)
@@ -50,7 +49,6 @@ module.exports =
       email = emailFactory emailAddress
       transporter_.sendMail email
       .catch _.Error('emailInvitations')
-
 
 Err = (label, user1, user2)->
   _.Error("#{label} email fail for #{user1} / #{user2}")

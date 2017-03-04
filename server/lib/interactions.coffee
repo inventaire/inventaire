@@ -3,7 +3,6 @@ _ = __.require 'builders', 'utils'
 user_ = __.require 'controllers', 'user/lib/user'
 error_ = __.require 'lib', 'error/error'
 
-
 # MUST return the item or throw an error
 exports.verifyRightToInteract = (userId, item, ownerAllowed)->
   { owner, listing } = item
@@ -21,7 +20,6 @@ exports.verifyRightToInteract = (userId, item, ownerAllowed)->
     when 'network' then return ifUserAreFriendsOrGroup userId, owner, item
     # no one can interact on a private item
     when 'private' then forbidden userId, item
-
 
 ifUserAreFriendsOrGroup = (userId, owner, item)->
   user_.areFriendsOrGroupCoMembers(userId, owner)

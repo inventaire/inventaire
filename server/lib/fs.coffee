@@ -23,7 +23,6 @@ for methodName in methods
 for k, v of aliases
   exports[k] = exports[v]
 
-
 exports.contentHeaders = (src)->
   exports.stat src
   .then (stat)->

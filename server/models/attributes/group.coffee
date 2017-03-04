@@ -9,7 +9,6 @@ attributes.updatable = [
   'position'
 ]
 
-
 attributes.usersLists = [
   'admins'
   'members'

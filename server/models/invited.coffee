@@ -20,7 +20,6 @@ addInviter = (inviterId, doc)->
   doc.inviters[inviterId] or= Date.now()
   return doc
 
-
 # The stopEmails flag is added with scripts/lib/stop_emails.coffee
 # to users sending an email at stop-email@inventaire.io
 # or reporting inventaire.io emails as spam.

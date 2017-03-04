@@ -11,7 +11,6 @@ module.exports = (req, res, next)->
   route = solveRoute redirect, referer
   res.redirect route
 
-
 # possible redirection parameters by priority
 # - a redirect parameter in the query string
 # - the referer found in headers

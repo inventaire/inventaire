@@ -6,7 +6,6 @@ should = require 'should'
 
 User = __.require 'models', 'user'
 
-
 _create = (args)-> User._create.apply null, args
 create = (args)-> User.create.apply null, args
 
@@ -22,8 +21,6 @@ replaceParam = (index, value, baseArgGen=validUser)->
   args = baseArgGen()
   args[index] = value
   return _.log args, 'args'
-
-
 
 describe 'user model', ->
   describe 'creation strategy', ->

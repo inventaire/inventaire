@@ -3,7 +3,6 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 bluereq = require 'bluereq'
 
-
 module.exports = ->
   [
     'bobby', 'tony', 'luigi', 'rocky', 'shanapaul', 'Hubert_Bonisseur_de_la_Bath'

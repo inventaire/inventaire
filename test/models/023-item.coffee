@@ -73,7 +73,6 @@ describe 'item model', ->
         create(extendItem({pictures: null})).pictures.length.should.equal 0
         done()
 
-
     describe 'listing', ->
       it "should return an object with a listing", (done)->
         item = create validItem

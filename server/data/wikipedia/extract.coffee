@@ -34,7 +34,6 @@ requestExtract = (lang, title)->
       extract: extract
       url: "https://#{lang}.wikipedia.org/wiki/#{title}"
 
-
 apiQuery = (lang, title)->
   title = qs.escape title
   "http://#{lang}.wikipedia.org/w/api.php?format=json&action=query&titles=#{title}&prop=extracts&explaintext=true&exintro=true&exsentences=20"

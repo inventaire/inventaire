@@ -7,7 +7,6 @@
 # Relation = __.require('models', 'relation')
 # couch_ = __.require 'lib', 'couch'
 
-
 # describe 'relation model', ->
 #   it "should return a relation doc", (done)->
 #     id1 = '31bdb23f92014ac20d60ce21eb00058e'

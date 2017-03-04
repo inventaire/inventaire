@@ -22,7 +22,6 @@ module.exports = (req, res)->
   .then res.json.bind(res)
   .catch error_.Handler(req, res)
 
-
 endpoint = "https://api:#{mailgunPubkey}@api.mailgun.net/v2/address/validate"
 
 validateEmail = (email)->

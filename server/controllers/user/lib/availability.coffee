@@ -31,7 +31,6 @@ module.exports = (user_)->
     user_.byEmail email
     .then checkAvailability.bind(null, email, 'email')
 
-
 checkAvailability = (value, label, docs)->
   unless docs.length is 0
     throw error_.new "this #{label} is already used", 400, value

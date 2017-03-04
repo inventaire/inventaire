@@ -6,7 +6,6 @@
 
 # use the --raw option to prevent image treatments
 
-
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require('builders', 'utils')

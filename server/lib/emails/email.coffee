@@ -38,7 +38,6 @@ module.exports =
         user: user
         href: buildTokenUrl 'reset-password', email, token
 
-
   friendAcceptedRequest: (options)->
     [ user1, user2 ] = validateOptions options
     lang = _.shortLang user1.language

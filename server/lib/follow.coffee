@@ -45,7 +45,6 @@ initFollow = (params, lastSeq=0)->
       setLastSeq seq
       onChange change
 
-
 SetLastSeq = (dbName)->
   key = buildKey dbName
   # Creating a closure on dbName to underline that
@@ -58,6 +57,5 @@ SetLastSeq = (dbName)->
   # setLastSeq might be triggered many times if a log of changes arrive at once
   # no need to write to the database at each times, just the last
   return _.debounce setLastSeq, 1000
-
 
 buildKey = (dbName)-> "#{dbName}-last-seq"

@@ -26,7 +26,6 @@ totalSpiesCount = ->
   count += v.callCount  for k,v of spies
   return count
 
-
 solveIntent = __.require('controllers', 'relations/lib/solve_intent')(actions)
 
 describe 'relations', ->

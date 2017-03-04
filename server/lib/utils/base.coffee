@@ -59,7 +59,6 @@ base.Ok = (res, status)-> base.ok.bind null, res, status
 base.OkWarning = (res, warning, status)->
   base.okWarning.bind null, res, warning, status
 
-
 # FROM: .then (users)-> res.json {users: users}
 # TO: .then _.Wrap(res, 'users')
 base.Wrap = (res, key)-> wrap.bind null, res, key

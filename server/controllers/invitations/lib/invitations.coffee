@@ -47,7 +47,6 @@ module.exports = invitations_ =
     .then (doc)-> db.update doc._id, Invited.stopEmails
     .catch _.ErrorRethrow('stopEmails')
 
-
 emailNotification = false
 convertInvitation = (newUserId, inviterId)->
   makeRequest inviterId, newUserId, emailNotification

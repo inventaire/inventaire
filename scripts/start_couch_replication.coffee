@@ -76,7 +76,6 @@ dbsNames.forEach (dbName)->
   .timeout 20000
   .catch (err)-> console.log err
 
-
 # TRYING TO PUT SECURITY DOC
 # will fail if db where already initialized
 

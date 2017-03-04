@@ -10,7 +10,6 @@ callbackPromise = (resolve, reject)->
     if err then reject err
     else resolve.apply null, args
 
-
 module.exports = (data, callback)->
   promise = undefined
 

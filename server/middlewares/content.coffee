@@ -43,7 +43,6 @@ module.exports =
         Try using a "Content-Type: application/json" header instead
         """, 400
 
-
   # Assumes that a requests made twice with the same body within 2 secondes
   # is an erronous request that should be blocked
   dedupplicateRequests: (req, res, next)->

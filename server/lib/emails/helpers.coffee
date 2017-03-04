@@ -5,7 +5,6 @@ promises_ = __.require 'lib', 'promises'
 user_ = __.require 'controllers', 'user/lib/user'
 groups_ = __.require 'controllers', 'groups/lib/groups'
 
-
 exports.getUsersData = (user1Id, user2Id)->
   user_.byIds [user1Id, user2Id]
   .then (usersData)->
@@ -23,7 +22,6 @@ parseUsersData = (user1Id, user2Id, usersData)->
   return [user1, user2]
 
 
-
 exports.getGroupAndUsersData = (groupId, actingUserId, userToNotifyId)->
   promises_.all [
     groups_.byId groupId
@@ -35,7 +33,6 @@ exports.getGroupAndUsersData = (groupId, actingUserId, userToNotifyId)->
       group: group
       actingUser: actingUser
       userToNotify: userToNotify
-
 
 exports.catchDisabledEmails = (err)->
   if err.type is 'email_disabled' then _.warn err.context, err.message

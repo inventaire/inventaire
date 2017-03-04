@@ -51,7 +51,6 @@ attributes.updatable = [
   'summaryPeriodicity'
 ]
 
-
 # attributes that are kept after a user deleted her account
 attributes.critical = [
   '_id'

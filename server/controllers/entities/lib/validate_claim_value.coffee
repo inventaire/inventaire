@@ -52,5 +52,4 @@ module.exports = (db)->
         message = 'this property value is already used'
         throw error_.new message, 400, property, value
 
-
   return validateClaimValue

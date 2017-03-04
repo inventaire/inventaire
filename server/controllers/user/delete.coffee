@@ -24,7 +24,6 @@ module.exports = (req, res)->
   .then _.OkWarning(res, 'we will miss you :(')
   .catch error_.Handler(req, res)
 
-
 # what should happen to old:
 # commentaries => deleted (the user will expect it to clean her online presence )
 # transactions => kept: those are private and remain useful for the other user

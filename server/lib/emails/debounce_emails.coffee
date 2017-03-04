@@ -12,7 +12,6 @@ module.exports =
 
     addToWaitingList 'transactionUpdate', transactionId
 
-
 addToWaitingList = (domain, id)->
   findPreviousWaiters domain, id
 
@@ -24,7 +23,6 @@ findPreviousWaiters = (domain, id)->
     lt: "#{domain}:#{id}::"
   .on 'data', waitingEmails.del
   .on 'end', createNewWaiter.bind(null, domain, id)
-
 
 createNewWaiter = (domain, id)->
   key = "#{domain}:#{id}:#{Date.now()}"

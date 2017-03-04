@@ -33,7 +33,6 @@ putFile = (path, filename, type='image/jpeg')->
       if err then reject err
       else resolve res
 
-
 extractOwnedUrl = (url)->
   parts = url.split CONFIG.aws.bucket
   path = _.last parts

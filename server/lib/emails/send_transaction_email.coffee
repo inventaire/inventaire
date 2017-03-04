@@ -69,7 +69,6 @@ newTransaction = (transaction)->
   if ownerSentMessage then return false
   else return true
 
-
 findEmailType = (transaction)->
   if transaction.role is 'owner'
     if newTransaction(transaction) then 'yourItemWasRequested'
@@ -97,7 +96,6 @@ formatMessages = (transaction, messages)->
   return messages.map (message)->
     message.user = if ownerIsMessager owner, message then owner else requester
     return message
-
 
 extractTimelineLastSequence = (transaction, timeline)->
   lastSequence = []

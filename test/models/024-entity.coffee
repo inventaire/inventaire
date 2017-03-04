@@ -103,7 +103,6 @@ describe 'entity model', ->
         should(entityDoc.claims['wdt:P407']).not.be.ok()
         done()
 
-
     describe 'update existing claim', ->
       it 'should return with the claim value updated', (done)->
         entityDoc = validDoc()

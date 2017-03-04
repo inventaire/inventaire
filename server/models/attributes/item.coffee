@@ -78,7 +78,6 @@ attributes.constrained =
     possibilities: [ 'private', 'network', 'public' ]
     defaultValue: 'private'
 
-
 # attributes to keep in documents where a stakeholder might loose
 # access to those data
 # ex: in a transaction, when the item isn't visible to the previous owner anymore

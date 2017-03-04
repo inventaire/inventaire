@@ -15,7 +15,6 @@ module.exports = (dbName)->
 
   return API
 
-
 Reset = (sub)->
   reset = ->
     new Promise (resolve, reject)->

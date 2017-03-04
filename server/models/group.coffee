@@ -35,7 +35,6 @@ Group.create = (options)->
 Group.findInvitation = (userId, group, wanted)->
   findMembership userId, group, 'invited', wanted
 
-
 inviteSection = if CONFIG.godMode then 'members' else 'invited'
 membershipActions =
   invite: (invitorId, invitedId, group)->

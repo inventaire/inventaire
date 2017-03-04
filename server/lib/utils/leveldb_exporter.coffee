@@ -32,7 +32,6 @@ module.exports =
       toDb.put data.key, data.value
     .on 'close', -> _.success 'done!'
 
-
 findDb = (name)->
   unless name? then throw new Error 'missing name'
   [ dbName, subName ] = name.split ':'

@@ -5,7 +5,6 @@ invitations_ = require './invitations'
 Invited = __.require 'models','invited'
 radio = __.require 'lib', 'radio'
 
-
 module.exports = (user, emails, message)->
   userId = user._id
   _.log emails, 'send_invitations emails'
@@ -29,7 +28,6 @@ module.exports = (user, emails, message)->
     sendInvitationEmails user, remainingEmails, message
 
   .catch _.Error('send invitations err')
-
 
 sendInvitationEmails = (user, emails, message)->
   radio.emit 'send:email:invitations', user, emails, message

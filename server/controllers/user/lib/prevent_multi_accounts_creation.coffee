@@ -16,7 +16,6 @@ module.exports = (username)->
   else
     lock username
 
-
 lock = (username)->
   lockedUsernames.push
     username: username
@@ -29,6 +28,5 @@ removeExpiredLocks = ->
   lockedUsernames = lockedUsernames.filter (data)->
     # only keep accounts that start to be created less than 5 secondes ago
     not _.expired data.timestamp, 5000
-
 
 setInterval removeExpiredLocks, 10*1000

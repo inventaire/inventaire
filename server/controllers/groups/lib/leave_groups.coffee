@@ -21,7 +21,6 @@ module.exports = (db, groups_)->
     .map removeUser.bind(null, userId)
     .then db.bulk
 
-
 removeUser = (userId, groupDoc)->
   if userId in groupDoc.admins
     _.warn arguments, "removing a user from a group she's admin of"
