@@ -5,11 +5,11 @@ _ = __.require 'builders', 'utils'
 devEnv = CONFIG.env is 'dev'
 
 exports.enableCorsOnPublicApiRoutes = (req, res, next)->
-  # Only have cross domain requests wide open for public routes
+  # Only have cross domain requests wide open for GET requests
   # to avoid CSRF on request altering the database
-  if req.isPublicRoute
+  if req.method is 'GET'
     res.header 'Access-Control-Allow-Origin', '*'
-    res.header 'Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE'
+    res.header 'Access-Control-Allow-Methods', 'GET'
     res.header 'Access-Control-Allow-Headers', 'Content-Type'
   next()
 

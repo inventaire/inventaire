@@ -5,6 +5,8 @@ error_ = __.require 'lib', 'error/error'
 
 module.exports =
   get: (req, res)->
+    unless req.user? then return error_.unauthorizedApiAccess req, res
+
     user_.getUserRelations req.user._id
     .then res.json.bind(res)
     .catch error_.Handler(req, res)

@@ -14,7 +14,7 @@ urlBase = CONFIG.images.urlBase()
 # images urls looks like /img/#{hash}.#{extension}"
 # expect the pictures' files to be in #{base}
 
-module.exports = (req, res, next)->
+exports.get = (req, res, next)->
   filename = parseFilename req
   [ hash, extension, others... ] = filename.split '.'
 

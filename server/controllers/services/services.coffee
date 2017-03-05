@@ -3,4 +3,5 @@ ActionsControllers = __.require 'lib', 'actions_controllers'
 
 module.exports =
   get: ActionsControllers
-    'email-validation': require './email_validation'
+    public:
+      'email-validation': require './email_validation'

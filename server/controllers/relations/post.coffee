@@ -8,6 +8,8 @@ promises_ = __.require 'lib', 'promises'
 { Track } = __.require 'lib', 'track'
 
 module.exports = (req, res, next) ->
+  unless req.user? then return error_.unauthorizedApiAccess req, res
+
   { user, action } = req.body
 
   unless _.isString(action) and action in possibleActions

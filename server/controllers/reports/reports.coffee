@@ -31,7 +31,9 @@ errorReport = (req, res)->
 # Define the stack first to stringify only what was reported
 getErrStack = (err)-> err.stack or JSON.stringify err, null, 2
 
-module.exports = ActionsControllers
-  'csp-report':  cspReport
-  'error-report':  errorReport
-  'online': require './online_report'
+module.exports =
+  post: ActionsControllers
+    public:
+      'csp-report':  cspReport
+      'error-report':  errorReport
+      'online': require './online_report'

@@ -6,7 +6,7 @@ comments_ = __.require 'controllers', 'comments/lib/comments'
 error_ = __.require 'lib', 'error/error'
 { Track } = __.require 'lib', 'track'
 
-publik =
+module.exports =
   get: (req, res, next)->
     { item } = req.query
     reqUserId = req.user?._id
@@ -17,8 +17,9 @@ publik =
     .then res.json.bind(res)
     .catch error_.Handler(req, res)
 
-privat =
-  create: (req, res, next)->
+  # create
+  post: (req, res, next)->
+    unless req.user? then return error_.unauthorizedApiAccess req, res
     { item, message } = req.body
     reqUserId = req.user._id
 
@@ -34,7 +35,9 @@ privat =
     .then Track(req, ['item', 'comment'])
     .catch error_.Handler(req, res)
 
-  update: (req, res, next)->
+  # update
+  put: (req, res, next)->
+    unless req.user? then return error_.unauthorizedApiAccess req, res
     { id, message } = req.body
     reqUserId = req.user._id
 
@@ -50,6 +53,7 @@ privat =
     .catch error_.Handler(req, res)
 
   delete: (req, res, next)->
+    unless req.user? then return error_.unauthorizedApiAccess req, res
     { id } = req.query
     reqUserId = req.user._id
 
@@ -60,7 +64,3 @@ privat =
     .then comments_.delete
     .then _.Ok(res)
     .catch error_.Handler(req, res)
-
-module.exports =
-  public: publik
-  private: privat

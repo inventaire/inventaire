@@ -41,6 +41,12 @@ error_.unknownAction = (req, res, context)->
   context or= _.pick req, [ 'originalUrl', 'body' ]
   error_.bundle req, res, 'unknown action', 400, context
 
+error_.unauthorizedApiAccess = (req, res, context)->
+  error_.bundle req, res, 'unauthorized api access', 401, context
+
+error_.unauthorizedAdminApiAccess = (req, res, context)->
+  error_.bundle req, res, 'unauthorized admin api access', 403, context
+
 error_.handler = errorHandler = require './error_handler'
 
 # error_.handler with a binded res object

@@ -5,18 +5,17 @@ ActionsControllers = __.require 'lib', 'actions_controllers'
 
 module.exports =
   get: ActionsControllers
-    'username-availability': usernameAvailability
-    'email-availability': emailAvailability
+    public:
+      'username-availability': usernameAvailability
+      'email-availability': emailAvailability
 
-  publicActions: ActionsControllers
-    'signup': signup
-    'login': login
-    'logout': logout
-    'reset-password': require './reset_password'
-    'submit': require './fake_submit'
-
-  actions: ActionsControllers
-    'email-confirmation': require './email_confirmation'
-    'update-password': require './update_password'
-
-  token: require './token'
+  post: ActionsControllers
+    public:
+      'signup': signup
+      'login': login
+      'logout': logout
+      'reset-password': require './reset_password'
+      'submit': require './fake_submit'
+    authentified:
+      'email-confirmation': require './email_confirmation'
+      'update-password': require './update_password'

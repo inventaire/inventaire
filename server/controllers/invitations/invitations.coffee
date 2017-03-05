@@ -3,4 +3,5 @@ ActionsControllers = __.require 'lib', 'actions_controllers'
 
 module.exports =
   post: ActionsControllers
-    'by-emails': require './by_emails'
+    authentified:
+      'by-emails': require './by_emails'

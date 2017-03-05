@@ -3,27 +3,16 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 
 module.exports =
-  get: (req, res, next)->
-    { query } = req
-    # unless _.objLength(query) is 0 then _.log query, 'query'
-    # _.log req.headers, 'headers'
-    res.json {server: 'GET OK'}
-
-  post: (req, res, next)->
-    # _.log req.query, 'query'
+  all: (req, res, next)->
     # _.log req.headers, 'headers'
 
     # useful to see text/plain bodys
     if isPlainText(req)
       rawBody req, res, next
     else
+      _.log req.query, 'query'
       _.log req.body, 'body'
-      res.json {server: 'POST OK', body: req.body}
-
-  delete: (req, res, next)->
-    _.log req.body, 'body'
-    _.log req.query, 'query'
-    res.json {server: 'DELETE OK', body: req.body}
+      res.json { ok: true, method: req.method, body: req.body}
 
 isPlainText = (req)->
   req.headers['content-type'] is 'text/plain'

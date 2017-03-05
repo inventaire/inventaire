@@ -6,7 +6,6 @@ americano = require 'americano'
 
 auth = require './middlewares/auth'
 security = require './middlewares/security'
-routes = require './middlewares/routes'
 lang = require './middlewares/lang'
 statics = require './middlewares/statics'
 cache = require './middlewares/cache'
@@ -38,7 +37,6 @@ module.exports =
 
     content.dedupplicateRequests
 
-    routes.restrictApiAccess
     security.enableCorsOnPublicApiRoutes
 
     lang.langCookie
@@ -46,6 +44,7 @@ module.exports =
   production: []
   development:
     use: [
+      auth.openBarApi
       # Those headers only make sense when serving index.html
       # which is done by Nginx in production
       # (see https://github.com/inventaire/inventaire-deploy)

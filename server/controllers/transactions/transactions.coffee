@@ -13,13 +13,16 @@ sendUserTransactions = (req, res)->
 
 module.exports =
   get: ActionsControllers
-    'default': sendUserTransactions
-    'get-messages': messages.get
+    authentified:
+      'default': sendUserTransactions
+      'get-messages': messages.get
 
   post: ActionsControllers
-    'request': require './request'
-    'new-message': messages.post
+    authentified:
+      'request': require './request'
+      'new-message': messages.post
 
   put: ActionsControllers
-    'update-state': require './update_state'
-    'mark-as-read': require './mark_as_read'
+    authentified:
+      'update-state': require './update_state'
+      'mark-as-read': require './mark_as_read'

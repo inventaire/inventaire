@@ -14,7 +14,7 @@ oneMB = 1024**2
 
 # resized images urls looks like /img/#{w}x#{h}/(#{hash}.jpg|#{external url hashCode?href=escaped url})"
 
-module.exports = (req, res, next)->
+exports.get = (req, res, next)->
   # could be useful in development
   # while hereafter image streams' error
   # aren't correctly handled

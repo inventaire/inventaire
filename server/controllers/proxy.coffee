@@ -10,7 +10,7 @@ error_ = __.require 'lib', 'error/error'
 isIp = Ip.test.bind Ip
 validProtocols = [ 'http:', 'https:' ]
 
-module.exports = (req, res)->
+proxy = (req, res)->
   # removing both /api/proxy/public/ and https://inventaire.io/api/proxy/public/
   queriedUrl = req.originalUrl.split('/api/proxy/public/')[1]
   unless _.isNonEmptyString queriedUrl
@@ -71,3 +71,5 @@ postWhitelist = [
   # known case: when using those same services in development
   'localhost'
 ]
+
+module.exports = { get: proxy, post: proxy }

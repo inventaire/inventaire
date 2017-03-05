@@ -12,7 +12,7 @@ _ = __.require('builders', 'utils')
 # this script is used to upload static images for both production and development
 # thus, images have to go to the PROD container
 CONFIG.swift.container = 'img'
-{ putImage, putRawImage } = __.require 'controllers', 'upload/upload'
+{ putImage, putRawImage } = __.require 'controllers', 'upload/put_image'
 cp = require 'copy-paste'
 Promise = require 'bluebird'
 fs = require 'fs'
