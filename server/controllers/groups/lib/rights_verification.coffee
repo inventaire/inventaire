@@ -88,4 +88,4 @@ module.exports = verificators =
 verificatorsList = Object.keys verificators
 diff = _.difference possibleActions, verificatorsList
 if diff.length > 0
-  _.error diff, "groups actions and verificators don't match"
+  throw new Error "groups actions and verificators don't match"

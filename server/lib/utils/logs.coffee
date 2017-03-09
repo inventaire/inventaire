@@ -27,6 +27,9 @@ module.exports = (_)->
     Inspect: (label)-> fn = (obj)-> inspect obj, label
 
     error: (err, label, logStack=true)->
+      unless err instanceof Error
+        throw new Error('invalid error object')
+
       if err.hasBeenLogged then return
 
       # If the error is of a lower lever than 500, make it a warning, not an error
