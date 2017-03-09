@@ -18,6 +18,8 @@ module.exports = (req, res)->
       getNetworkIds reqUserId
     ]
     .spread filterAuthorizedItems(reqUserId)
+    # Paginating isn't really required when requesting items by ids
+    # but it also handles sorting and the consistency of the API
     .then Paginate(page)
   .then addUsersData(reqUserId)
   .then res.json.bind(res)
