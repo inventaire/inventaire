@@ -42,8 +42,7 @@ module.exports =
     .then (cached)-> cached?.body
 
   put: (key, value)->
-    try _.type key, 'string'
-    catch err then return error_.reject err, 500
+    unless _.isNonEmptyString key then return error_.reject 'invalid key', 500
 
     unless value? then return error_.reject 'missing value', 500
 

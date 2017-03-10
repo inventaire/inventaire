@@ -169,13 +169,17 @@ describe 'CACHE', ->
 
     it 'should return a rejected promise if not passed a key', (done)->
       cache_.put null, 'somevalue'
-      .catch -> done()
+      .catch (err)->
+        err.message.should.equal 'invalid key'
+        done()
 
       return
 
     it 'should return a rejected promise if not passed a value', (done)->
       cache_.put 'whatever', null
-      .catch -> done()
+      .catch (err)->
+        err.message.should.equal 'missing value'
+        done()
 
       return
 
