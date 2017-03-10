@@ -7,10 +7,10 @@ module.exports = (req, res, next)->
   { property, uri, refresh } = req.query
 
   unless _.isPropertyUri property
-    return error_.bundle req, res, 'invalid property', 400
+    return error_.bundleInvalid req, res, 'property', property
 
   unless _.isEntityUri uri
-    return error_.bundle req, res, 'invalid uri', 400
+    return error_.bundleInvalid req, res, 'uri', uri
 
   refresh = _.parseBooleanString refresh
 

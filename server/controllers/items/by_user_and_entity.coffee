@@ -8,11 +8,11 @@ tests = __.require 'models', 'tests/common-tests'
 
 module.exports = (req, res)->
   { query } = req
-  { user:userId, username, uri } = query
+  { uri } = query
   reqUserId = req.user?._id
 
   unless _.isEntityUri uri
-    return error_.bundle req, res, 'invalid entity uri', 400, uri
+    return error_.bundleInvalid req, res, 'uri', uri
 
   getUser query, reqUserId
   .then getItemsFromUser(reqUserId, uri)
@@ -23,18 +23,18 @@ getUser = (query, reqUserId)->
   { user:userId, username } = query
   if userId?
     unless _.isUserId userId
-      return error_.reject 'invalid user id', 400, userId
+      return error_.rejectInvalid 'user', userId
 
     return user_.getUserData userId, reqUserId
 
   else if username?
     unless tests.username username
-      return error_.reject 'invalid username', 400, username
+      return error_.rejectInvalid 'username', userId
 
     return user_.getUserFromUsername username, reqUserId
 
   else
-    return error_.reject 'missing user id or username', 400, userId
+    return error_.rejectMissingQuery 'user|username'
 
 getItemsFromUser = (reqUserId, uri)-> (user)->
   { _id:ownerId } = user

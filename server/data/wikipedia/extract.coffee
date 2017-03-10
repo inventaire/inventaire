@@ -10,11 +10,14 @@ module.exports = (req, res)->
   { query } = req
   { lang, title } = query
 
-  unless tests.lang lang
-    return error_.bundle req, res, 'bad lang parameter', 400, query
+  unless _.isNonEmptyString lang
+    return error_.bundleMissingQuery req, res, 'lang'
 
-  unless title?.length > 0
-    return error_.bundle req, res, 'missing title', 400, query
+  unless _.isNonEmptyString title
+    return error_.bundleMissingQuery req, res, 'title'
+
+  unless tests.lang lang
+    return error_.bundleInvalid req, res, 'lang', lang
 
   key = "wpextract:#{lang}:#{title}"
   cache_.get key, requestExtract.bind(null, lang, title)

@@ -23,10 +23,8 @@ module.exports =
     { item, message } = req.body
     reqUserId = req.user._id
 
-    unless item? then return error_.bundle req, res, 'missing item id', 400
-    unless message? then return error_.bundle req, res, 'missing message', 400
-
-    _.log [item, message], 'item, message'
+    unless item? then return error_.bundleMissingQuery req, res, 'item'
+    unless message? then return error_.bundleMissingQuery req, res, 'message'
 
     items_.byId item
     .then _.partial(comments_.verifyRightToWriteOrReadComment, reqUserId)
@@ -41,10 +39,8 @@ module.exports =
     { id, message } = req.body
     reqUserId = req.user._id
 
-    unless id? then return error_.bundle req, res, 'missing comment id', 400
-    unless message? then return error_.bundle req, res, 'missing message id', 400
-
-    _.log [id, message], 'comment id, message'
+    unless id? then return error_.bundleMissingQuery req, res, 'id'
+    unless message? then return error_.bundleMissingQuery req, res, 'message'
 
     comments_.byId id
     .then _.partial(comments_.verifyEditRight, reqUserId)

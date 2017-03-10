@@ -19,9 +19,10 @@ module.exports =
     reqUserId = req.user._id
 
     unless transaction?
-      return error_.bundle req, res, 'missing transaction id', 400
+      return error_.bundleMissingBody req, res, 'transaction'
+
     unless message?
-      return error_.bundle req, res, 'missing message', 400
+      return error_.bundleMissingBody req, res, 'message'
 
     _.log [transaction, message], 'transaction, message'
 

@@ -14,10 +14,10 @@ module.exports = (req, res)->
   .catch error_.Handler(req, res)
 
 parseAndValidateIds = (ids)->
-  unless _.isNonEmptyString ids then throw error_.new 'missing ids', 400, ids
+  unless _.isNonEmptyString ids then throw error_.newMissingQuery 'ids'
 
   ids = ids.split '|'
   if ids?.length > 0 and validUsersIds(ids) then return ids
-  else throw error_.new 'invalid ids', 400, ids
+  else throw error_.newInvalid 'ids', ids
 
 validUsersIds = (ids)-> _.all ids, User.tests.userId

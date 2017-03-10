@@ -11,9 +11,9 @@ module.exports = (req, res, next) ->
 
   { _id, title, entity } = req.body
   _.log req.body, "PUT item: #{_id}"
-  unless _id? then return error_.bundle req, res, 'missing item id', 400
-  unless title? then return error_.bundle req, res, 'missing item title', 400
-  unless entity? then return error_.bundle req, res, 'missing item entity', 400
+  unless _id? then return error_.bundleMissingBody req, res, 'item'
+  unless title? then return error_.bundleMissingBody req, res, 'title'
+  unless entity? then return error_.bundleMissingBody req, res, 'entity'
 
   reqUserId = req.user._id
 

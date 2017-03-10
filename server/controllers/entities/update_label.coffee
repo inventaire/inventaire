@@ -9,16 +9,20 @@ module.exports = (req, res)->
 
   _.log req.body, 'body'
 
-  unless _.isInvEntityId entityId
-    return error_.bundle req, res, 'invalid id', 400
-
-  unless _.isLang lang
-    return error_.bundle req, res, 'invalid 2-letters lang code', 400
-
-  unless _.isNonEmptyString value.trim()
-    return error_.bundle req, res, "value parameter should be an non empty string", 400
+  unless entityId? then return error_.bundleMissingBody req, res, 'id'
+  unless lang? then return error_.bundleMissingBody req, res, 'lang'
+  unless value?.trim() then return error_.bundleMissingBody req, res, 'value'
 
   value = value.trim()
+
+  unless _.isInvEntityId entityId
+    return error_.bundleInvalid req, res, 'id', entityId
+
+  unless _.isLang lang
+    return error_.bundleInvalid req, res, 'lang', lang
+
+  unless _.isNonEmptyString value
+    return error_.bundleInvalid req, res, 'value', value
 
   entities_.byId entityId
   .then _.Log('doc')

@@ -16,12 +16,12 @@ module.exports = (req, res) ->
   try
     limit = _.stringToInt limit
   catch err
-    return error_.bundle req, res, 'invalid limit', 400, [limit, err]
+    return error_.bundleInvalid req, res, 'limit', limit
 
   try
     offset = _.stringToInt offset
   catch err
-    return error_.bundle req, res, 'invalid offset', 400, [offset, err]
+    return error_.bundleInvalid req, res, 'offset', offset
 
   if limit > 100
     return error_.bundle req, res, "limit can't be over 100", 400, limit

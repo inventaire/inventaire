@@ -9,16 +9,13 @@ module.exports = (requester, readToken)->
   unless requester? then return promises_.resolve null
 
   user_.byId requester
-  .catch formatNotFound
+  .catch formatNotFound(requester)
   .then validateUserReadToken(readToken)
 
-formatNotFound = (err)->
-  if err.statusCode is 404
-    err.message = 'invalid requester id'
-    err.statusCode = 400
-
+formatNotFound = (requester)-> (err)->
+  if err.statusCode is 404 then err = error_.newInvalid 'requester', requester
   throw err
 
 validateUserReadToken = (readToken)-> (user)->
   if user.readToken is readToken then return user
-  else throw error_.new 'invalid token', 400, user._id, readToken
+  else throw error_.newInvalid 'token', readToken

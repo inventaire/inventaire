@@ -12,7 +12,7 @@ module.exports = (req, res, nex)->
 
   _.log [item, message], 'item request'
 
-  unless item? then return error_.bundle req, res, 'missing item id', 400
+  unless item? then return error_.bundleMissingBody req, res, 'item'
 
   items_.byId item
   .then transactions_.verifyRightToRequest.bind(null, reqUserId)

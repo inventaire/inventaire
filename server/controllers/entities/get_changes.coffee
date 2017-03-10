@@ -10,7 +10,7 @@ module.exports = (req, res)->
   try
     if since? then since = _.stringToInt since
   catch err
-    return error_.bundle req, res, 'invalid since', 400, [since, err]
+    return error_.bundleInvalid req, res, 'since', since
 
   entities_.getLastChangedEntitiesUris since, defaultLimit
   .then res.json.bind(res)

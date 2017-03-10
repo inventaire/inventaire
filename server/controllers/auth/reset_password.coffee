@@ -8,11 +8,16 @@ testEmail = __.require('models', 'tests/user').email
 
 module.exports = (req, res, next)->
   { email } = req.body
-  unless email? then return error_.bundle req, res, 'no email provided', 400
-  unless testEmail(email) then return error_.bundle req, res, 'invalid email', 400
+  unless email? then return error_.bundleMissingBody req, res, 'email'
+  unless testEmail email
+    return error_.bundleInvalid req, res, 'email', email
 
   user_.findOneByEmail email
-  .catch (err)-> throw error_.complete err, 400, email
+  .catch (err)->
+    if err.statusCode is 404
+      throw error_.new 'email not found', 400, email
+    else
+      throw err
   .then user_.sendResetPasswordEmail
   .then _.Ok(res)
   .catch error_.Handler(req, res)

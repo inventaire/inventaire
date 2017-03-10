@@ -5,7 +5,7 @@ error_ = __.require 'lib', 'error/error'
 
 module.exports = (emails, userEmail)->
   unless _.isString emails
-    throw error_.new 'missing emails string in body', 400
+    throw error_.newMissingParameter 'body', 'emails'
 
   emails = prepareEmails emails
   parsedEmails = parseAddressList emails

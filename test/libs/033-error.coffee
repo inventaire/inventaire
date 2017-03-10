@@ -48,13 +48,21 @@ describe 'error_', ->
       done()
 
   describe 'reject', ->
-    it "should return a promise", (done)->
+    it 'should return a rejecting promise from a string', (done)->
       failed = error_.reject('doh', 500)
       failed.should.be.an.Object()
       failed.then.should.be.a.Function()
       failed.catch (err)->
         err.message.should.equal 'doh'
         err.statusCode.should.equal 500
+        done()
+
+      return
+
+    it 'should return a rejecting promise from an error object', (done)->
+      error_.reject new Error('doh'), 500
+      .catch (err)->
+        err.message.should.equal('doh')
         done()
 
       return

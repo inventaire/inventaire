@@ -7,7 +7,7 @@ module.exports = (req, res, next)->
   { uris, refresh } = req.query
 
   unless _.isNonEmptyString uris
-    return error_.bundle req, res, "missing uris parameter", 400, req.query
+    return error_.bundleMissingQuery req, res, 'uris'
 
   uris = _.uniq uris.split('|')
 

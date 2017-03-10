@@ -18,7 +18,7 @@ module.exports = (labels, claims, userId)->
 validateLabels = (labels, claims)->
   type = claims['wdt:P31']?[0]
   if type not in optionalLabelsTypes and not _.isNonEmptyPlainObject labels
-    throw error_.new "invalid labels", 400, labels
+    throw error_.new 'invalid labels', 400, labels
 
   for lang, value of labels
     unless Lang.test lang

@@ -7,7 +7,7 @@ groups_ = require './lib/groups'
 
 module.exports = (req, res)->
   { name, searchable, description, position } = req.body
-  unless name? then return error_.bundle req, res, 'missing group name', 400
+  unless name? then return error_.bundleMissingBody req, res, 'name'
 
   groups_.create
     name: name

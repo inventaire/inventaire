@@ -11,7 +11,7 @@ module.exports = (req, res)->
   data = isbn_.parse isbn
 
   unless data?
-    return error_.bundle req, res, 'invalid isbn', 400, isbn
+    return error_.bundleInvalid req, res, 'isbn', isbn
 
   # Not using source to pass the original input as 'source'
   # has another meaning in entities search

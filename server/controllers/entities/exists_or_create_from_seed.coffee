@@ -20,10 +20,10 @@ module.exports = (req, res)->
   { isbn, title, authors } = seed
 
   unless isbn_.isValidIsbn isbn
-    return error_.bundle req, res, 'invalid isbn', 400, isbn
+    return error_.bundleInvalid req, res, 'isbn', isbn
 
   unless _.isNonEmptyString title
-    return error_.bundle req, res, 'invalid title', 400, title
+    return error_.bundleInvalid req, res, 'title', title
 
   # Let it be splitted as a string
   if _.isArray(authors) and authors.length is 1 then authors = authors[0]

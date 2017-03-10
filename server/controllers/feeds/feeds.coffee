@@ -14,9 +14,9 @@ module.exports =
     { user:userId, group:groupId, requester, token } = query
 
     if requester?
-      unless token? then return error_.bundle req, res, 'missing token', 400
+      unless token? then return error_.bundleMissingQuery req, res, 'token'
     else
-      if token? then return error_.bundle req, res, 'missing requester id', 400
+      if token? then return error_.bundleMissingQuery req, res, 'requester'
 
     # The reason to have this authentifying token system on a public endpoint
     # is that relying on the general 'restrictApiAccess' middleware
@@ -29,18 +29,18 @@ module.exports =
 
     if userId?
       unless _.isUserId userId
-        return error_.bundle req, res, 'invalid user id', 400
+        return error_.bundleInvalid req, res, 'user', userId
 
       feedDataPromise = userFeedData userId, authentifiedUserPromise
 
     else if groupId?
       unless _.isGroupId groupId
-        return error_.bundle req, res, 'invalid group id', 400
+        return error_.bundleInvalid req, res, 'group', groupId
 
       feedDataPromise = groupFeedData groupId, authentifiedUserPromise
 
     else
-      return error_.bundle req, res, 'missing id', 400
+      return error_.bundleMissingQuery req, res, 'user|group', 400
 
     # Guess the lang from the query string or from the request headers
     # that might be passed by the feeds aggregator

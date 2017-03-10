@@ -13,39 +13,14 @@ error_.new = (message, filter, context...)->
   err = new Error message
   return formatError err, filter, context
 
-# completing an existing error object
+# Completing an existing error object
 error_.complete = (err, filter, context...)->
   _.types [err, filter], ['object', 'string|number']
   return formatError err, filter, context
 
-# same as error_.new but returns a promise
-# also accepts Error instances
-error_.reject = (args...)->
-  method = if args[0] instanceof Error then 'complete' else 'new'
-  err = error_[method].apply null, args
-  return promises_.reject(err)
-
-# allow to use the standard error_.new interface
-# while out or at the end of a promise chain
-# DO NOT use inside a promise chain as error_.handler
-# send res, which, if there is an error, should be done by the final .catch
-error_.bundle = (req, res, args...)->
-  # first create the new error
-  err = error_.new.apply null, args
-  # then make the handler deal with the res object
-  error_.handler req, res, err
-
-# a standardized way to return a 400 unknown action
-# on controllers top level switches
-error_.unknownAction = (req, res, context)->
-  context or= _.pick req, [ 'originalUrl', 'body' ]
-  error_.bundle req, res, 'unknown action', 400, context
-
-error_.unauthorizedApiAccess = (req, res, context)->
-  error_.bundle req, res, 'unauthorized api access', 401, context
-
-error_.unauthorizedAdminApiAccess = (req, res, context)->
-  error_.bundle req, res, 'unauthorized admin api access', 403, context
+# Compelete and rethrow: to be used in a promise chain
+error_.Complete = (args...)-> (err)->
+  throw error_.complete.apply null, [ err ].concat(args)
 
 error_.handler = errorHandler = require './error_handler'
 
@@ -62,3 +37,5 @@ error_.notFound = (context)->
 error_.catchNotFound = (err)->
   if err?.notFound then return
   else throw err
+
+_.extend error_, require('./pre_filled')(error_)

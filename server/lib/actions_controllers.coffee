@@ -11,11 +11,11 @@ module.exports = (controllers)->
     action = req.query.action or req.body.action
 
     if not action? and not actions.default?
-      return error_.bundle req, res, 'missing action parameter', 400, req.query
+      return error_.bundleMissingQuery req, res, 'action'
 
     actionData = if action? then actions[action] else actions.default
     unless actionData?
-      return error_.bundle req, res, 'unknown action', 400, req.query
+      return error_.unknownAction req, res
 
     if actionData.authentified and not req.user?
       return error_.unauthorizedApiAccess req, res

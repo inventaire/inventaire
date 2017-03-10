@@ -15,10 +15,10 @@ module.exports = (req, res, next) ->
   { attribute, value } = body
 
   unless _.isNonEmptyString attribute
-    return error_.bundle req, res, 'missing attribute', 400
+    return error_.bundleMissingBody req, res, 'attribute'
 
   if (attribute not in acceptNullValue) and (not value?)
-    return error_.bundle req, res, 'missing value', 400
+    return error_.bundleMissingBody req, res, 'value'
 
   # doesnt change anything for normal attribute
   # returns the root object for deep attributes such as settings
@@ -32,14 +32,11 @@ module.exports = (req, res, next) ->
 
   if attribute isnt rootAttribute
     unless tests.deepAttributesExistance attribute
-      message = "invalid deep attribute #{attribute}: #{value}"
-      return error_.bundle req, res, message, 400
+      return error_.bundleInvalid req, res, 'attribute', attribute
 
   if rootAttribute in updatable
     unless _.get(tests, rootAttribute)(value)
-      type = _.typeOf value
-      message = "invalid #{attribute}: #{value} (#{type})"
-      return error_.bundle req, res, message, 400
+      return error_.bundleInvalid req, res, 'value', value
 
     return updateAttribute(user, attribute, value)
     .then _.Ok(res)

@@ -8,7 +8,7 @@ cspReport = (req, res)->
   { 'csp-report':errData } = req.body
 
   unless errData?
-    return error_.bundle req, res, 'missing csp-report', 400, req.body
+    return error_.bundleMissingBody req, res, 'csp-report'
 
   err = buildError 'csp report', 'csp', errData
   _.error err, 'csp report', false
@@ -18,7 +18,7 @@ errorReport = (req, res)->
   { error:errData } = req.body
 
   unless errData?
-    return error_.bundle req, res, 'missing error', 400, req.body
+    return error_.bundleMissingBody req, res, 'error'
 
   message = errData.message or 'client error'
 

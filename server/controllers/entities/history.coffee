@@ -10,7 +10,7 @@ module.exports = (req, res)->
   { id } = req.query
 
   unless _.isInvEntityId id
-    return error_.bundle req, res, 'invalid id', 400
+    return error_.bundleInvalid req, res, 'id', id
 
   patches_.getSnapshots id
   .then _.Wrap(res, 'patches')

@@ -5,6 +5,6 @@ error_ = __.require 'lib', 'error/error'
 
 module.exports = (reqUserId, range='50')->
   try range = _.stringToInt range
-  catch err then return error_.reject 'invalid range', 400, [range, err]
+  catch err then return error_.rejectInvalid 'range', range
 
   return user_.nearby reqUserId, range

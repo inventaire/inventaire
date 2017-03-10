@@ -11,13 +11,13 @@ exports.signup = (req, res)->
   { strategy, username, email, password } = req.body
 
   unless _.isNonEmptyString username
-    return error_.bundle req, res, 'missing username parameter', 400
+    return error_.bundleMissingQuery req, res, 'username'
 
   unless _.isNonEmptyString email
-    return error_.bundle req, res, 'missing email parameter', 400
+    return error_.bundleMissingQuery req, res, 'email'
 
   unless _.isNonEmptyString password
-    return error_.bundle req, res, 'missing password parameter', 400
+    return error_.bundleMissingQuery req, res, 'password'
 
   next = LoggedIn req, res
   switch strategy

@@ -17,19 +17,19 @@ validateLimitAndOffset = (query)->
   if limit?
     limit = _.parsePositiveInteger limit
     unless limit? and limit > 0
-      return error_.reject 'invalid limit', 400, limit
+      return error_.rejectInvalid 'limit', limit
 
   if offset?
     offset = _.parsePositiveInteger offset
     unless offset?
-      return error_.reject 'invalid offset', 400, offset
+      return error_.rejectInvalid 'offset', offset
 
     unless limit?
-      return error_.reject 'missing a limit parameter', 400, offset
+      return error_.rejectMissingQuery 'limit'
 
   if filter?
     unless filter in validFilters
-      return error_.reject 'invalid filter', 400, filter
+      return error_.rejectInvalid 'filter', filter
 
   return promises_.resolve { limit, offset, filter }
 
@@ -38,14 +38,14 @@ module.exports =
     params = query[paramName]
 
     unless _.isNonEmptyString params
-      return error_.reject "missing #{paramName}", 400, query
+      return error_.rejectMissingQuery paramName
 
     params = _.uniq params.split('|')
 
     for param in params
       unless paramTest param
         singularParamName = paramName.replace /s$/, ''
-        return error_.reject "invalid #{singularParamName}", 400, param
+        return error_.rejectInvalid singularParamName, param
 
     validateLimitAndOffset query
     .then (page)->

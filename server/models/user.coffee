@@ -24,7 +24,7 @@ User._create = (username, email, creationStrategy, language, password)->
 
   # it's ok to have an undefined language
   if language? and not tests.language(language)
-    throw error_.new "invalid language: #{language}", 400
+    throw error_.newInvalid 'language', language
 
   user =
     username: username
@@ -52,6 +52,8 @@ User._create = (username, email, creationStrategy, language, password)->
     when 'local'
       user.validEmail = false
       unless tests.password(password)
+        # Do NOT pass the password as context, as it would be logged
+        # and returned in the response
         throw error_.new 'invalid password', 400
       user.password = password
     else

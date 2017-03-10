@@ -14,7 +14,7 @@ module.exports =
     { id } = req.query
     reqUserId = req.user?._id
     unless tests.valid 'groupId', id
-      return error_.bundle req, res, 'invalid group id', 400, id
+      return error_.bundleInvalid req, res, 'id', id
 
     groups_.getGroupData id, reqUserId
     .then res.json.bind(res)
@@ -23,7 +23,7 @@ module.exports =
   searchByName: (req, res)->
     { search } = req.query
     unless _.isNonEmptyString search
-      return error_.bundle req, res, 'invalid search', 400, search
+      return error_.bundleInvalid req, res, 'search', search
 
     groups_.nameStartBy search
     .filter searchable
@@ -31,7 +31,6 @@ module.exports =
     .catch error_.Handler(req, res)
 
   searchByPositon: (req, res)->
-    (query)->
     parseBbox req.query
     .then (bbox)->
       # can't be chained directy as .filter makes problems when parseBbox throws:

@@ -9,7 +9,7 @@ module.exports = (req, res) ->
   reqUserId = req.user?._id
 
   unless _.isNonEmptyString search
-    return error_.bundle req, res, 'invalid search', 400, query
+    return error_.bundleInvalid req, res, 'search', search
 
   user_.getUsersAuthorizedData user_.usernameStartBy(search), reqUserId
   .then _.Wrap(res, 'users')

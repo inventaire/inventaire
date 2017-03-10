@@ -10,20 +10,19 @@ error_ = __.require 'lib', 'error/error'
 parseLatLng = (query)->
   { bbox } = query
 
-  unless bbox?
-    return error_.reject 'missing bbox parameter', 400, query
+  unless bbox? then return error_.rejectMissingQuery 'bbox'
 
   try
     bbox = JSON.parse bbox
     _.types bbox, 'numbers...', 4
   catch err
-    return error_.reject 'invalid bbox', 400, query
+    return error_.rejectInvalid 'bbox'
 
   [ minLng, minLat, maxLng, maxLat ] = bbox
   _.log bbox, 'minLng, minLat, maxLng, maxLat'
 
   unless minLng < maxLng and minLat < maxLat
-    return error_.reject 'invalid bbox coordinates', 400
+    return error_.rejectInvalid 'bbox coordinates'
 
   # not throwing an error when a coordinate is over its limit
   # but replacing it by the limit to make following calculations lighter

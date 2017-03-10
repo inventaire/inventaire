@@ -14,8 +14,7 @@ module.exports = (req, res)->
 
   { email } = req.query
   email = qs.unescape email
-  unless email?
-    return error_.bundle req, res, "missing email in query", 400
+  unless email? then return error_.bundleMissingQuery 'email'
 
   validateEmail email
   .then logIfInvalid

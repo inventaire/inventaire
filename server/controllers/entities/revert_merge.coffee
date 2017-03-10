@@ -9,12 +9,12 @@ module.exports = (req, res)->
   { _id:reqUserId } = req.user
 
   unless _.isNonEmptyString fromUri
-    return error_.bundle req, res, "missing parameter: from", 400, body
+    return error_.bundleMissingBody req, res, 'from'
 
   [ fromPrefix, fromId ] = fromUri.split ':'
 
   unless fromPrefix is 'inv' and _.isInvEntityId fromId
-    return error_.bundle req, res, "invalid 'from' uri", 400, body
+    return error_.bundleInvalid req, res, 'from'
 
   revertMerge reqUserId, fromId
   .then res.json.bind(res)

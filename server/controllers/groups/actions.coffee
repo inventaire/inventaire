@@ -16,10 +16,10 @@ module.exports = (action, req, res)->
   _.log [reqUserId, body], 'group action'
 
   if user? and not tests.valid 'userId', user
-    return error_.bundle req, res, 'invalid user id', 400, user
+    return error_.bundleInvalid req, res, 'user', user
 
   unless tests.valid 'groupId', group
-    return error_.bundle req, res, 'invalid group id', 400, group
+    return error_.bundleInvalid req, res, 'group', group
 
   rightsVerification[action](reqUserId, group, user)
   .then groups_[action].bind(null, body, reqUserId)

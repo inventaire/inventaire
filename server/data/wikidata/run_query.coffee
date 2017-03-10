@@ -16,13 +16,10 @@ possibleQueries = Object.keys queries
 module.exports = (params)->
   { query:queryName, refresh } = params
 
-  unless _.isNonEmptyString queryName
-    return error_.new 'missing query parameter', 400, params
-
   # Converting from kebab case to snake case
   params.query = queryName = queryName.replace /-/g, '_'
   unless queryName in possibleQueries
-    return error_.new 'unknown query', 400, params
+    return error_.reject 'unknown query', 400, params
 
   { parameters } = queries[queryName]
 
@@ -31,7 +28,7 @@ module.exports = (params)->
   for k in parameters
     value = params[k]
     unless parametersTests[k](value)
-      return error_.new "invalid #{k}", 400, params
+      return error_.rejectInvalid k, params
 
   # Invalid the cache by passing refresh=true in the query.
   # Return null if refresh isn't truthy to let the cache set its default value

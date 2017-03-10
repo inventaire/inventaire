@@ -9,7 +9,7 @@ module.exports = (req, res, next)->
   { uri, refresh, action } = req.query
 
   unless _.isEntityUri uri
-    return error_.bundle req, res, 'invalid uri', 400
+    return error_.bundleInvalid req, res, 'uri', uri
 
   refresh = _.parseBooleanString refresh
 

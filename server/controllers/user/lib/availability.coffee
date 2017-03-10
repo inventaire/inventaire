@@ -16,17 +16,17 @@ module.exports = (user_)->
         return promises_.resolved
 
     unless User.tests.username username
-      return error_.reject "invalid username", 400, username
+      return error_.rejectInvalid 'username', username
 
     if isReservedWord username
-      return error_.reject "reserved words cant be usernames", 400, username
+      return error_.reject "reserved words can't be usernames", 400, username
 
     user_.byUsername username
     .then checkAvailability.bind(null, username, 'username')
 
   email: (email)->
     unless User.tests.email email
-      return error_.reject "invalid email", 400, email
+      return error_.rejectInvalid 'email', email
 
     user_.byEmail email
     .then checkAvailability.bind(null, email, 'email')

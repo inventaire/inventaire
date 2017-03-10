@@ -8,8 +8,11 @@ error_ = __.require 'lib', 'error/error'
 i18nMissingKeys = (req, res, next)->
   { missingKeys } = req.body
 
-  unless missingKeys? and _.areStrings(missingKeys)
-    return error_.bundle req, res, 'bad missingKeys', 400, missingKeys
+  unless missingKeys?
+    return error_.bundleMissingBody req, res, 'token'
+
+  unless _.areStrings missingKeys
+    return error_.bundleInvalid req, res, 'missingKeys', missingKeys
 
   _.info missingKeys, 'i18n missing keys'
 

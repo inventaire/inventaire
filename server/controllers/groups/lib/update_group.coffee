@@ -15,7 +15,7 @@ module.exports = (db)->
       throw error_.new "#{attribute} can't be updated", 400, data
 
     unless tests[attribute](value)
-      throw error_.new "invalid #{attribute}", 400, data
+      throw error_.newInvalid attribute, value
 
     db.get groupId
     .then (groupDoc)->

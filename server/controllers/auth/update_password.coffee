@@ -10,16 +10,16 @@ pw_ = __.require('lib', 'crypto').passwords
 
 module.exports = (req, res, next)->
   { user, body } = req
-  { currentPassword, newPassword } = body
+  { 'current-password':currentPassword, 'new-password':newPassword } = body
   { resetPassword } = user
 
-  unless User.tests.password(newPassword)
-    return error_.bundle req, res, 'invalid new password', 400
+  unless User.tests.password newPassword
+    return error_.bundleInvalid req, res, 'new-password', newPassword
 
   # classic password update
   if currentPassword?
-    unless User.tests.password(currentPassword)
-      return error_.bundle req, res, 'invalid current password', 400
+    unless User.tests.password currentPassword
+      return error_.bundleInvalid req, res, 'current-password', currentPassword
     test = verifyCurrentPassword(user, currentPassword).then filterInvalid
 
   # token-based password reset, with expiration date
@@ -45,8 +45,7 @@ verifyCurrentPassword = (user, currentPassword)->
   pw_.verify user.password, currentPassword
 
 filterInvalid = (isValid)->
-  unless isValid
-    throw error_.new 'invalid newPassword', 400
+  unless isValid then throw error_.newInvalid 'new-password'
 
 updateUserPassword = (userId, user, newHash)->
   user_.db.update userId, User.updatePassword.bind(null, user, newHash)
