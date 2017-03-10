@@ -8,7 +8,7 @@ setLoggedInCookie = require './lib/set_logged_in_cookie'
 { ownerSafeData } = __.require 'controllers', 'user/lib/authorized_user_data_pickers'
 
 exports.signup = (req, res)->
-  { strategy, username, email, password } = req.body
+  { username, email, password } = req.body
 
   unless _.isNonEmptyString username
     return error_.bundleMissingQuery req, res, 'username'
@@ -20,16 +20,11 @@ exports.signup = (req, res)->
     return error_.bundleMissingQuery req, res, 'password'
 
   next = LoggedIn req, res
-  switch strategy
-    when 'local' then passport_.authenticate.localSignup(req, res, next)
-    else error_.bundle req, res, "unknown signup strategy: #{strategy}", 400
+  passport_.authenticate.localSignup req, res, next
 
 exports.login = (req, res)->
-  { strategy } = req.body
   next = LoggedIn req, res
-  switch strategy
-    when 'local' then passport_.authenticate.localLogin(req, res, next)
-    else error_.bundle req, res, "unknown login strategy: #{strategy}", 400
+  passport_.authenticate.localLogin req, res, next
 
 LoggedIn = (req, res)->
   loggedIn = (result)->
