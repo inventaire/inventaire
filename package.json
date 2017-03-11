@@ -12,6 +12,7 @@
     "reload": "touch server.coffee",
     "test": "./scripts/test",
     "test-watch": "./scripts/test --watch",
+    "test-api": "./scripts/test_api",
     "lint": "coffeelint -f config/coffeelint.json server.coffee server/*",
     "lint-staged": "./scripts/lint-staged",
     "debug": "DEBUG=express:* coffee server.coffee",

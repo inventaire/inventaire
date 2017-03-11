@@ -1,0 +1,2 @@
+#!/usr/bin/env sh
+mocha --compilers coffee:coffee-script/register api-tests/*/*test.coffee $@
