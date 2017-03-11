@@ -10,8 +10,8 @@ module.exports =
     if isPlainText(req)
       rawBody req, res, next
     else
-      _.log req.query, 'query'
-      _.log req.body, 'body'
+      # _.log req.query, 'query'
+      # _.log req.body, 'body'
       res.json { ok: true, method: req.method, body: req.body}
 
 isPlainText = (req)->
