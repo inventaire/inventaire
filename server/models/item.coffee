@@ -41,9 +41,9 @@ Item.update = (userId, updateAttributesData, doc)->
   unless doc?.owner is userId
     throw new Error "user isnt doc.owner: #{userId} / #{doc.owner}"
 
-  nonUpdatedAttribute = Object.keys _.omit(updateAttributesData, attributes.known)
-  if nonUpdatedAttribute.length > 0
-    throw error_.new "invalid attribute(s): #{nonUpdatedAttribute}", 400
+  nonUpdatedAttributes = _.omit updateAttributesData, attributes.known
+  if Object.keys(nonUpdatedAttributes).length > 0
+    throw error_.new "invalid attribute(s): #{nonUpdatedAttributes}", 400
 
   # filter-out non-updatable attributes
   newData = _.pick updateAttributesData, attributes.updatable
