@@ -24,6 +24,5 @@ module.exports =
 
     items_.verifyOwnership id, reqUserId
     .then items_.delete.bind(null, id)
-    # TODO: Update user snapshot.items:counter
     .then res.json.bind(res)
     .catch error_.Handler(req, res)

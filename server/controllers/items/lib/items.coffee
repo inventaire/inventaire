@@ -63,10 +63,18 @@ module.exports = items_ =
     .map filterPrivateAttributes(reqUserId)
 
   create: (userId, item)->
-    db.post Item.create userId, item
+    db.post Item.create(userId, item)
+    .then (res)->
+      db.get res.id
+      .tap (createItem)-> radio.emit 'item:update', null, createItem
 
-  update: (userId, item)->
-    db.update item._id, Item.update.bind(null, userId, item)
+  update: (userId, itemUpdateData)->
+    itemId = itemUpdateData._id
+    db.get itemId
+    .then (currentItem)->
+      db.update itemId, Item.update.bind(null, userId, itemUpdateData)
+      .then -> db.get itemId
+      .tap (updatedItem)-> radio.emit 'item:update', currentItem, updatedItem
 
   verifyOwnership: (itemId, userId)->
     db.get itemId
@@ -77,8 +85,12 @@ module.exports = items_ =
       return item
 
   delete: (id, rev)->
-    db.update id, couch_.setDeletedTrue
-    .then -> radio.emit 'resource:destroyed', 'item', id
+    db.get id
+    .then (currentItem)->
+      db.update id, couch_.setDeletedTrue
+      .tap ->
+        radio.emit 'resource:destroyed', 'item', id
+        radio.emit 'item:update', currentItem, null
 
   setBusyness: (id, busy)->
     _.types arguments, ['string', 'boolean']

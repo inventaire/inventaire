@@ -21,20 +21,11 @@ module.exports = (req, res, next) ->
   itemId = item._id
   action = if itemId is 'new' then 'create' else 'update'
 
-  actions[action].getCurrentItem(itemId)
-  .then (currentItem)->
-    items_[action](reqUserId, item)
-    # Using the response id as in case of item creation itemId='new'
-    .then (res)-> items_.byId res.id
-    .tap (updatedItem)-> radio.emit 'item:update', currentItem, updatedItem
+  items_[action](reqUserId, item)
   .then (item)-> res.status(201).json item
-  .tap Track(req, ['item', actions[action].trackName])
+  .tap Track(req, ['item', trackNames[action]])
   .catch error_.Handler(req, res)
 
-actions =
-  create:
-    trackName: 'creation'
-    getCurrentItem: (itemId)-> promises_.resolve null
-  update:
-    trackName: 'update'
-    getCurrentItem: (itemId)-> items_.byId(itemId)
+trackNames =
+  create: 'creation'
+  update: 'update'
