@@ -1,6 +1,6 @@
 # Placeholders are entities automatically created without checking that a similar
 # entity existed locally or in Wikidata. Those entities have thus high chances
-# to be dupplicates and to be deleted by merge operations.
+# to be duplicates and to be deleted by merge operations.
 
 # But mistakes happen, and some merges will need to be reverted:
 # thus the remove/recover mechanism hereafter

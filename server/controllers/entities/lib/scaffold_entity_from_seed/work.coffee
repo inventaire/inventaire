@@ -12,7 +12,7 @@ createAndEditEntity = require '../create_and_edit_entity'
 # It is simpler to use a consistent, recognizable mocked user id
 # than to put exceptions everywhere
 seedUserId = __.require('couch', 'hard_coded_documents').users.seed._id
-workEntitiesCache = require './work_entity_search_dedupplicating_cache'
+workEntitiesCache = require './work_entity_search_deduplicating_cache'
 
 # Can't be required directly as it would create a dependency loop with getEntitiesByUris
 # so requiring it at first run time

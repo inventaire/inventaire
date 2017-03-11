@@ -45,7 +45,7 @@ module.exports =
 
   # Assumes that a requests made twice with the same body within 2 secondes
   # is an erronous request that should be blocked
-  dedupplicateRequests: (req, res, next)->
+  deduplicateRequests: (req, res, next)->
     { method, url } = req
     unless method in methodsWithBody then return next()
 

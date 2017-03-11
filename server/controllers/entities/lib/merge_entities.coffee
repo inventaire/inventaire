@@ -48,7 +48,7 @@ turnIntoRedirection = (userId, fromId, toUri)->
   .then propagateRedirection.bind(null, userId, fromUri, toUri)
 
 # Removing the entities that were needed only by the entity about to be turned into a redirection:
-# this entity now don't have anymore reason to be and is quite probably a dupplicate of an existing entity
+# this entity now don't have anymore reason to be and is quite probably a duplicate of an existing entity
 # referenced by the redirection destination entity.
 removeObsoletePlaceholderEntities = (userId, entityDocBeforeRedirection)->
   entityUrisToCheck = getEntityUrisToCheck entityDocBeforeRedirection.claims

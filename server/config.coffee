@@ -35,7 +35,7 @@ module.exports =
     auth.passport.session
     auth.basicAuth
 
-    content.dedupplicateRequests
+    content.deduplicateRequests
 
     security.enableCorsOnPublicApiRoutes
 
