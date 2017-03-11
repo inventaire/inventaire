@@ -11,13 +11,13 @@ exports.signup = (req, res)->
   { username, email, password } = req.body
 
   unless _.isNonEmptyString username
-    return error_.bundleMissingQuery req, res, 'username'
+    return error_.bundleMissingBody req, res, 'username'
 
   unless _.isNonEmptyString email
-    return error_.bundleMissingQuery req, res, 'email'
+    return error_.bundleMissingBody req, res, 'email'
 
   unless _.isNonEmptyString password
-    return error_.bundleMissingQuery req, res, 'password'
+    return error_.bundleMissingBody req, res, 'password'
 
   next = LoggedIn req, res
   passport_.authenticate.localSignup req, res, next
