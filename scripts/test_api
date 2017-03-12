@@ -1,2 +1,27 @@
 #!/usr/bin/env sh
-mocha --compilers coffee:coffee-script/register api-tests/*/*test.coffee $@
+
+# Deleting databases before the tests, so that tests can be run individually
+# without having to check for the databases existance, has those will not have
+# been deleted at the end of the tests
+./scripts/delete_tests_databases > /dev/null
+
+# Start a test server in the background
+export NODE_ENV=tests FORCE_COLOR=true; coffee server.coffee > logs/test-server.log 2>&1 &
+# on '$!': http://unix.stackexchange.com/a/85022/164977
+PID=$!
+
+# Once the server is up
+echo "waiting for server start..." &&
+sleep 5 &&
+echo "ok, let's go!" &&
+# Run the tests
+alias mochac="mocha --compilers coffee:coffee-script/register"
+
+files=$1
+# If no test file is passed as argument, run all tests
+[ -z "$files" ] && files=api-tests/*/*test.coffee
+
+export NODE_ENV=tests; mochac $files --timeout 10000
+
+# Close the server
+kill -9 $PID

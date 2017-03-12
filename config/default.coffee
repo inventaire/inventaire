@@ -7,7 +7,7 @@ contactAddress = 'hello@inventaire.io'
 
 module.exports = config =
   name: 'inventaire'
-  env: 'dev'
+  env: 'default'
   host: 'localhost'
   universalPath: require './universal_path'
   # Only http is supported: in production, TLS is delegated to Nginx

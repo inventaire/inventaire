@@ -1,8 +1,5 @@
-# supposed to fix the problem with wrong line numbers in stack reports
-# in other processes than 'coffee', i.e. mocha
-# not working much as such: any thing made the wrong way?
-
-require 'coffee-errors'
+# Use by setting NODE_ENV=tests
+# Will be overriden by local.coffee
 
 module.exports =
   env: 'tests'
@@ -10,11 +7,13 @@ module.exports =
   name: "inventaire"
   host: 'localhost'
   port: 3009
-  verbosity: 2
+  verbosity: 0
   fullHost: -> "#{@protocol}://#{@host}:#{@port}"
   db:
     suffix: 'tests'
-    debug: true
+    # debug: true
   graph:
     social: undefined
   godMode: false
+  piwik:
+    enabled: false
