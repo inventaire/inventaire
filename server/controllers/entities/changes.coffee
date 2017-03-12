@@ -7,10 +7,9 @@ defaultLimit = 100
 module.exports = (req, res)->
   { since } = req.query
 
-  try
-    if since? then since = _.stringToInt since
-  catch err
-    return error_.bundleInvalid req, res, 'since', since
+  if since?
+    if _.isPositiveIntegerString(since) then since = _.stringToInt since
+    else return error_.bundleInvalid req, res, 'since', since
 
   entities_.getLastChangedEntitiesUris since, defaultLimit
   .then res.json.bind(res)

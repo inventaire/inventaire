@@ -25,6 +25,8 @@ module.exports = base =
   okWarning: (res, warning, status=200)->
     res.status(status).json { ok: true, warning }
 
+  isPositiveIntegerString: (str)-> _.isString(str) and /^\d+$/.test str
+
   stringToInt: (str)->
     unless typeof str is 'string' then throw new Error "expected a string: #{str}"
     # testing the validity of the string is needed
