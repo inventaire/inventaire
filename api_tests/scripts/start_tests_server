@@ -1,3 +1,4 @@
+#!/usr/bin/env sh
 # Start a test server in the background
 export NODE_ENV=tests FORCE_COLOR=true; coffee server.coffee > logs/test-server.log 2>&1 &
 
