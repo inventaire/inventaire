@@ -13,6 +13,7 @@
     "test": "./scripts/test",
     "test-watch": "./scripts/test --watch",
     "test-api": "./scripts/test_api",
+    "test-api-quick": "./scripts/test_api_quick",
     "lint": "coffeelint -f config/coffeelint.json server.coffee server/*",
     "lint-staged": "./scripts/lint-staged",
     "debug": "DEBUG=express:* coffee server.coffee",

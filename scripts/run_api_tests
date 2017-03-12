@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+
+alias mochac="mocha --compilers coffee:coffee-script/register"
+files=$1
+# If no test file is passed as argument, run all tests
+[ -z "$files" ] && files=api-tests/*/*test.coffee
+
+# Run the tests
+export NODE_ENV=tests; mochac $files --timeout 10000

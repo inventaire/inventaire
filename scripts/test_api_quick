@@ -1,0 +1,14 @@
+#!/usr/bin/env sh
+
+# Same as ./test_api but without deleting the databases and restarting the server
+# each times: can be used to quickly run tests that don't need a complete
+# environement reboot. Typically, such a dependency is due to an operation that
+# isn't offered by the API at the moment (as those tests don't use as little
+# server libs/controllers as possible).
+# Known case: deleting an entity isn't possible from the API
+
+(curl -s http://localhost:3009/api/tests > /dev/null &&
+  echo "tests server is online" ||
+  # If the server wasn't started before, start it
+  ./scripts/start_tests_server ) &&
+./scripts/run_api_tests $1

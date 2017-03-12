@@ -1,0 +1,9 @@
+# Start a test server in the background
+export NODE_ENV=tests FORCE_COLOR=true; coffee server.coffee > logs/test-server.log 2>&1 &
+
+# on '$!': http://unix.stackexchange.com/a/85022/164977
+PID=$!
+
+echo "waiting for server start..." &&
+inotifywait run/3009 -e modify > /dev/null 2>&1 &&
+echo "ok, let's go!"
