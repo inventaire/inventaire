@@ -7,5 +7,5 @@
 ./scripts/start_tests_server &&
 ./scripts/run_api_tests $1
 
-# Close the server
-kill -9 $(cat run/3009)
+# Kill server, even if the tests fails
+./scripts/kill_tests_server
