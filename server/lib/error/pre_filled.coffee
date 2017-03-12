@@ -14,12 +14,17 @@ module.exports = (error_)->
       message = "missing parameter in #{place}: #{parameter}"
       err = error_.new message, 400
       err.attachReqContext = place
+      err.error_type = 'missing_parameter'
+      err.error_name = "missing_#{parameter}"
       return err
 
     # A standardized way to return a 400 invalid parameter
     newInvalid: (parameter, value)->
       context = { parameter, value }
-      return error_.new "invalid #{parameter}: #{value}", 400, context
+      err = error_.new "invalid #{parameter}: #{value}", 400, context
+      err.error_type = 'invalid_parameter'
+      err.error_name = "invalid_#{parameter}"
+      return err
 
   newFunctions.newMissingQuery = newFunctions.newMissing.bind null, 'query'
   newFunctions.newMissingBody = newFunctions.newMissing.bind null, 'body'
