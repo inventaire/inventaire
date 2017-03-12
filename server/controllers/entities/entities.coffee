@@ -5,9 +5,9 @@ customQuery = require './custom_query'
 module.exports =
   get: ActionsControllers
     public:
-      'search': require './search_entity'
-      'get-entities': require './get_entities'
-      'get-changes': require './get_changes'
+      'search': require './search'
+      'by-uris': require './by_uris'
+      'changes': require './changes'
       'reverse-claims': require './reverse_claims'
       'author-works': customQuery
       'serie-parts': customQuery
@@ -15,7 +15,7 @@ module.exports =
 
   post: ActionsControllers
     authentified:
-      'default': require './create_entity'
+      'create': require './create'
       'exists-or-create-from-seed': require './exists_or_create_from_seed'
 
   put: ActionsControllers
