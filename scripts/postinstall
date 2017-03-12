@@ -23,6 +23,9 @@ mkdir -p scripts/couch2elastic4sync/configs
 touch ./logs/server.log ./logs/error.log
 # Expected by scripts/actions/backup_databases.coffee
 mkdir -p ./db/couchdb/backups
+# Expected by scripts/test_api
+mkdir -p run
+touch run/3006 run/3009
 
 # Synchronize CouchDB and ElasticSearch databases
 npm run init-couch2elastic4sync

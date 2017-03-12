@@ -42,6 +42,10 @@ couchInit()
 .then ->
   americano.start options, (err, app)->
     app.disable 'x-powered-by'
+    # Provides a way to know when the server
+    # started listening by observing file change
+    # Expected by scripts/test_api
+    fs.writeFile "./run/#{CONFIG.port}", process.pid
     console.timeEnd 'startup'
 
 .catch _.Error('init err')
