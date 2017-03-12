@@ -29,13 +29,16 @@ userCookiesPromise = breq.post loginData
     return breq.post signupData
   .then parseCookies
 
-authentifiedRequest = (method, endpoint, body)->
+request = (method, endpoint, body, cookies = [])->
   url = host + endpoint
+  headers = { cookie: cookies.join ';' }
+  return breq[method]({ url, body, headers }).get 'body'
+
+authentifiedRequest = (method, endpoint, body)->
   userCookiesPromise
-  .then (cookies)->
-    headers =  cookie: cookies.join ';'
-    return breq[method]({ url, body, headers }).get 'body'
+  .then request.bind(null, method, endpoint, body)
 
 module.exports =
-  authentifiedRequest: authentifiedRequest
+  authReq: authentifiedRequest
+  nonAuthReq: request
   getUser: -> authentifiedRequest 'get', '/api/user'

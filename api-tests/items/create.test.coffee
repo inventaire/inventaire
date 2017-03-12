@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ authentifiedRequest:authreq, getUser } = require '../utils/utils'
+{ authReq, getUser } = require '../utils/utils'
 { newItemBase, CountChange } = require './helpers'
 
 describe 'items:create', ->
@@ -10,7 +10,7 @@ describe 'items:create', ->
     getUser()
     .then (userBefore)->
       userId = userBefore._id
-      authreq 'put', '/api/items', newItemBase()
+      authReq 'put', '/api/items', newItemBase()
       .then (res)->
         res.listing.should.equal 'private'
         res.transaction.should.equal 'inventorying'
@@ -25,7 +25,7 @@ describe 'items:create', ->
     getUser()
     .then (userBefore)->
       userId = userBefore._id
-      authreq 'put', '/api/items', newItemBase()
+      authReq 'put', '/api/items', newItemBase()
       # Delay to request the user after its items count was updated
       .delay 10
       .then (res)->
