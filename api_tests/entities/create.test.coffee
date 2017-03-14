@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ authReq } = require '../utils/utils'
+{ nonAuthReq, authReq } = require '../utils/utils'
 
 describe 'entities:create', ->
   it 'should create an entity', (done)->
@@ -53,5 +53,19 @@ describe 'entities:create', ->
       err.body.status_verbose.should.equal 'invalid property value'
       err.statusCode.should.equal 400
       done()
+
+    return
+
+  it 'should reject an entity created with a concurrent property with a value already taken', (done)->
+    # Make the entity being scaffolded from seed
+    nonAuthReq 'get', '/api/entities?action=by-uris&uris=isbn:9782253138938'
+    .then (res)->
+      authReq 'post', '/api/entities?action=create',
+        labels: { fr: 'bla' }
+        claims: { 'wdt:P212': [ '978-2-253-13893-8' ] }
+      .catch (err)->
+        err.body.status_verbose.should.equal 'this property value is already used'
+        err.statusCode.should.equal 400
+        done()
 
     return
