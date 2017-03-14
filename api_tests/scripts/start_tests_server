@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 # Start a test server in the background
-export NODE_ENV=tests FORCE_COLOR=true; coffee server.coffee > logs/test-server.log 2>&1 &
+export NODE_ENV=tests FORCE_COLOR=true; supervisor -w server,server.coffee,client/app/lib/shared,config server.coffee > logs/test-server.log 2>&1 &
 
 # on '$!': http://unix.stackexchange.com/a/85022/164977
 PID=$!
