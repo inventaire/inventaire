@@ -17,6 +17,9 @@ module.exports = (req, res, next) ->
   unless title? then return error_.bundleMissingBody req, res, 'title'
   unless entity? then return error_.bundleMissingBody req, res, 'entity'
 
+  unless _.isEntityUri entity
+    return error_.bundleInvalid req, res, 'entity', entity
+
   reqUserId = req.user._id
   itemId = item._id
 
