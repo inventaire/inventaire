@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ nonAuthReq } __.require 'apiTests', 'utils/utils'
+{ nonAuthReq } = __.require 'apiTests', 'utils/utils'
 
 describe 'entities:changes', ->
   it 'should returns an array of changes', (done)->

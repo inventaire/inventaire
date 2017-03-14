@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ nonAuthReq, authReq } __.require 'apiTests', 'utils/utils'
+{ nonAuthReq, authReq } = __.require 'apiTests', 'utils/utils'
 
 describe 'entities:create', ->
   it 'should create an entity', (done)->
