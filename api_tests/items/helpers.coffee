@@ -5,7 +5,6 @@ randomString = __.require 'lib', './utils/random_string'
 
 module.exports =
   newItemBase: ->
-    _id: 'new'
     title: 'whatever' + randomString(2)
     entity: 'wd:Q3548806'
 

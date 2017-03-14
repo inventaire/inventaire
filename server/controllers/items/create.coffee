@@ -8,24 +8,19 @@ radio = __.require 'lib', 'radio'
 
 module.exports = (req, res, next) ->
   unless req.user? then return error_.unauthorizedApiAccess req, res
+  { body:item } = req
 
-  { _id, title, entity } = req.body
-  _.log req.body, "PUT item: #{_id}"
-  unless _id? then return error_.bundleMissingBody req, res, 'item'
+  { title, entity } = item
+
+  _.log item, 'item create'
+
   unless title? then return error_.bundleMissingBody req, res, 'title'
   unless entity? then return error_.bundleMissingBody req, res, 'entity'
 
   reqUserId = req.user._id
-
-  item = req.body
   itemId = item._id
-  action = if itemId is 'new' then 'create' else 'update'
 
-  items_[action](reqUserId, item)
+  items_.create reqUserId, item
   .then (item)-> res.status(201).json item
-  .tap Track(req, ['item', trackNames[action]])
+  .tap Track(req, ['item', 'creation'])
   .catch error_.Handler(req, res)
-
-trackNames =
-  create: 'creation'
-  update: 'update'

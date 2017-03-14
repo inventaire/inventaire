@@ -8,13 +8,17 @@ should = require 'should'
 describe 'items:create', ->
   it 'should create an item', (done)->
     getUser()
-    .then (userBefore)->
-      userId = userBefore._id
-      authReq 'put', '/api/items', newItemBase()
-      .then (res)->
-        res.listing.should.equal 'private'
-        res.transaction.should.equal 'inventorying'
-        res.owner.should.equal userId
+    .then (user)->
+      userId = user._id
+      authReq 'post', '/api/items',
+        title: 'whatever'
+        entity: 'wd:Q3548806'
+      .then (item)->
+        item.title.should.equal 'whatever'
+        item.entity.should.equal 'wd:Q3548806'
+        item.listing.should.equal 'private'
+        item.transaction.should.equal 'inventorying'
+        item.owner.should.equal userId
       # Delay so that the item counter update doesn't impact the following test
       .delay 10
       .then -> done()
@@ -25,7 +29,7 @@ describe 'items:create', ->
     getUser()
     .then (userBefore)->
       userId = userBefore._id
-      authReq 'put', '/api/items', newItemBase()
+      authReq 'post', '/api/items', newItemBase()
       # Delay to request the user after its items count was updated
       .delay 10
       .then (res)->

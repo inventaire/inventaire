@@ -16,7 +16,8 @@ module.exports =
     authentified:
       'nearby': require './nearby'
 
-  put: require './put'
+  post: require './create'
+  put: require './update'
 
   delete: (req, res, next) ->
     { id } = req.query

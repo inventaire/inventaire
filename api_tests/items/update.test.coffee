@@ -7,7 +7,7 @@ should = require 'should'
 
 describe 'items:update', ->
   it 'should update an item', (done)->
-    authReq 'put', '/api/items', newItemBase()
+    authReq 'post', '/api/items', newItemBase()
     .then (item)->
       item.transaction = newTransaction = 'lending'
       item.details = newDetails = 'hello'
@@ -20,7 +20,7 @@ describe 'items:update', ->
     return
 
   it 'should not be able to update non updatable attributes', (done)->
-    authReq 'put', '/api/items', newItemBase()
+    authReq 'post', '/api/items', newItemBase()
     .then (item)->
       originalTitle = item.title
       item.title += 'bla'
@@ -32,7 +32,7 @@ describe 'items:update', ->
     return
 
   it 'should trigger an update of the users items counters', (done)->
-    authReq 'put', '/api/items', newItemBase()
+    authReq 'post', '/api/items', newItemBase()
     # Delay to let the time to the item counter to be updated
     .delay 10
     .then (item)->
