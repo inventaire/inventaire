@@ -9,8 +9,17 @@ urlencoded = 'application/x-www-form-urlencoded'
 module.exports =
   # Helping body-parser to get its parsing right
   redirectContentTypes: (req, res, next)->
-    if req.headers['content-type'] is 'application/csp-report'
-      req.headers['content-type'] = 'application/json'
+    { 'content-type':contentType } = req.headers
+
+    shouldBeJson = false
+
+    if _.isNonEmptyString contentType
+      if contentType is 'application/csp-report' then shouldBeJson = true
+    else
+      # Default to a JSON
+      shouldBeJson = true
+
+    if shouldBeJson then req.headers['content-type'] = 'application/json'
 
     next()
 
