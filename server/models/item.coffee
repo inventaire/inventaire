@@ -43,7 +43,7 @@ Item.update = (userId, updateAttributesData, doc)->
 
   nonUpdatedAttributes = _.omit updateAttributesData, attributes.known
   if Object.keys(nonUpdatedAttributes).length > 0
-    throw error_.new "invalid attribute(s): #{nonUpdatedAttributes}", 400
+    throw error_.new "invalid attribute(s): #{JSON.stringify(nonUpdatedAttributes)}", 400
 
   # filter-out non-updatable attributes
   newData = _.pick updateAttributesData, attributes.updatable
