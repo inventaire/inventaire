@@ -39,6 +39,7 @@ module.exports =
     controllers: '/server/controllers'
     leveldb: '/db/leveldb'
     couchdb: '/db/couchdb'
+    apiTests: '/api_tests'
     i18nSrc: '/server/lib/emails/i18n/src'
     i18nArchive: '/server/lib/emails/i18n/src/archive'
     i18nTransifex: '/server/lib/emails/i18n/src/transifex'
