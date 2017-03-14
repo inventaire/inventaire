@@ -14,6 +14,7 @@
     "test-watch": "./scripts/test --watch",
     "test-api": "./api_tests/scripts/test_api",
     "test-api-quick": "./api_tests/scripts/test_api_quick",
+    "start-tests-server": "./api_tests/scripts/start_tests_server",
     "kill-tests-server": "./api_tests/scripts/kill_tests_server",
     "lint": "coffeelint -f config/coffeelint.json server.coffee server/*",
     "lint-staged": "./scripts/lint-staged",

@@ -1,2 +1,12 @@
 #!/usr/bin/env sh
-kill -9 $(cat run/3009)
+serverpid=$(cat run/3009)
+supervisorpid=$(ps auxf |
+  grep $serverpid -B 1 |
+  grep supervisor |
+  grep -v grep |
+  grep -v ps |
+  awk '{printf $2}')
+
+kill -9f $supervisorpid 2> /dev/null
+kill -9f $serverpid 2> /dev/null ||
+echo "no server to kill"
