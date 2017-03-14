@@ -80,7 +80,7 @@ module.exports = config =
   morgan:
     logFormat: 'dev'
     mutedRoutes: [
-      '/api/reports/public'
+      '/api/reports'
     ]
     mutedDomains: []
   logStaticFilesRequests: true
