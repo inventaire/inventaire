@@ -6,4 +6,4 @@ files=$1
 [ -z "$files" ] && files=api-tests/*/*test.coffee
 
 # Run the tests
-export NODE_ENV=tests; mochac $files --timeout 10000
+export NODE_ENV=tests; mochac $files --timeout 5000
