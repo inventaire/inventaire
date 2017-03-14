@@ -1,2 +1,3 @@
 #!/usr/bin/env sh
-export NODE_ENV=dev; supervisor -w server,server.coffee,client/app/lib/shared,config server.coffee
+[ -z "$NODE_ENV" ] && export NODE_ENV=dev
+supervisor -w server,server.coffee,client/app/lib/shared,config server.coffee

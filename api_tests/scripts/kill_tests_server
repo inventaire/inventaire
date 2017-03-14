@@ -7,6 +7,15 @@ supervisorpid=$(ps auxf |
   grep -v ps |
   awk '{printf $2}')
 
-kill -9f $supervisorpid 2> /dev/null
-kill -9f $serverpid 2> /dev/null ||
+watchshellpids=$(ps auxf |
+  grep $serverpid -B 3 |
+  grep watch |
+  awk '{printf $2 " "}')
+
+echo "watchshellpids: $watchshellpids"
+echo "supervisorpid: $supervisorpid"
+echo "serverpid: $serverpid"
+kill -9 $watchshellpids 2> /dev/null
+kill -9 $supervisorpid 2> /dev/null
+kill -9 $serverpid 2> /dev/null ||
 echo "no server to kill"
