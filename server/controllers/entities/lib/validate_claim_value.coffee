@@ -16,6 +16,7 @@ module.exports = (db)->
     # If no old value is passed, it's a claim creation, not an update
     updatingValue = oldVal?
 
+    # Ex: a user can freely set a wdt:P31 value, but only an admin can change it
     if updatingValue and prop.adminUpdateOnly and not userIsAdmin
       return error_.reject "updating property requires admin's rights", 403, property, newVal
 
