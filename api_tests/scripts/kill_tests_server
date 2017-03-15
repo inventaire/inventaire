@@ -12,9 +12,6 @@ watchshellpids=$(ps auxf |
   grep watch |
   awk '{printf $2 " "}')
 
-echo "watchshellpids: $watchshellpids"
-echo "supervisorpid: $supervisorpid"
-echo "serverpid: $serverpid"
 kill -9 $watchshellpids 2> /dev/null
 kill -9 $supervisorpid 2> /dev/null
 kill -9 $serverpid 2> /dev/null ||

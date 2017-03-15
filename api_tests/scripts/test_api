@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 
+# In case they were running
+./api_tests/scripts/kill_tests_server
 # Deleting databases before the tests, so that tests can be run individually
 # without having to check for the databases existance, has those will not have
 # been deleted at the end of the tests

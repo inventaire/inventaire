@@ -12,6 +12,7 @@ module.exports =
   db:
     suffix: 'tests'
     # debug: true
+    freezeFollow: true
   graph:
     social: undefined
   godMode: false
