@@ -7,7 +7,7 @@ should = require 'should'
 
 describe 'items:delete', ->
   it 'should delete an item', (done)->
-    authReq 'put', '/api/items', newItemBase()
+    authReq 'post', '/api/items', newItemBase()
     .then (item)->
       authReq 'delete', "/api/items?id=#{item._id}"
       .then (res)->
@@ -17,7 +17,7 @@ describe 'items:delete', ->
     return
 
   it 'should trigger an update of the users items counters', (done)->
-    authReq 'put', '/api/items', newItemBase()
+    authReq 'post', '/api/items', newItemBase()
     # Delay to let the time to the item counter to be updated
     .delay 10
     .then (item)->
