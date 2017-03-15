@@ -103,8 +103,6 @@ describe 'entities:create', ->
       claims:
         'wdt:P31': [ 'wd:Q571' ]
         'wdt:P50': [ 'wdQ535' ]
-    .then (res)->
-      console.log('res', res)
     .catch (err)->
       err.body.status_verbose.should.equal 'invalid property value'
       err.statusCode.should.equal 400
