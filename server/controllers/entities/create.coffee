@@ -14,10 +14,10 @@ module.exports = (req, res) ->
   { _id:reqUserId } = req.user
   { labels, claims } = entityData
 
-  unless _.isObject labels
+  unless _.isPlainObject labels
     return error_.bundle req, res, 'labels should be an object', 400, entityData
 
-  unless _.isObject claims
+  unless _.isPlainObject claims
     return error_.bundle req, res, 'claims should be an object', 400, entityData
 
   createAndEditEntity labels, claims, reqUserId
