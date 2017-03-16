@@ -52,6 +52,8 @@ mergeWdAndInvData = (entity, invEntity)->
     # filter-out entities that aren't in our focus (i.e. not works, author, etc)
     entity.type = null
 
+  entity.claims = omitUndesiredPropertiesPerType entity.type, entity.claims
+
   if entity.type is 'meta' then return formatEmpty 'meta', entity
   else return format entity, invEntity
 
@@ -105,3 +107,13 @@ formatEmpty = (type, entity)->
   id: entity.id
   uri: "wd:#{entity.id}"
   type: type
+
+omitUndesiredPropertiesPerType = (type, claims)->
+  propertiesToOmit = undesiredPropertiesPerType[type]
+  if propertiesToOmit? then _.omit claims, propertiesToOmit
+  else claims
+
+undesiredPropertiesPerType =
+  # Ignoring ISBN data set on work entities, as those should be the responsability
+  # of edition entities
+  work: [ 'P212', 'P957' ]
