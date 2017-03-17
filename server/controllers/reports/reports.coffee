@@ -30,6 +30,9 @@ buildError = (message, labels, errData)->
   context = _.omit errData, 'stack'
   statusCode = errData.statusCode or 500
   err = error_.new message, statusCode, context
+  # Do not add an emitter stack on client reports as it makes it be confused
+  # with the client error stack itself
+  delete err.emitter
   # Labels to be used by gitlab-logging
   err.labels = labels
   err.stack = getErrStack errData
