@@ -8,7 +8,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
-createAndEditEntity = require '../create_and_edit_entity'
+createEntity = require '../create_entity'
 # It is simpler to use a consistent, recognizable mocked user id
 # than to put exceptions everywhere
 seedUserId = __.require('couch', 'hard_coded_documents').users.seed._id
@@ -56,7 +56,7 @@ CreateAuthorEntity = (lang)-> (authorName)->
   claims =
     'wdt:P31': [ 'wd:Q5' ]
 
-  createAndEditEntity labels, claims, seedUserId
+  createEntity labels, claims, seedUserId
   .then _.Log('created author entity')
   .catch _.ErrorRethrow('createAuthorEntity err')
 
@@ -71,6 +71,6 @@ createWorkEntity = (seed, lang, authorsPromises)->
   .then (authors)->
     authorsIds = authors.map (author)-> "inv:#{author._id}"
     claims['wdt:P50'] = authorsIds
-    return createAndEditEntity labels, claims, seedUserId
+    return createEntity labels, claims, seedUserId
   .then _.Log('created work entity')
   .catch _.ErrorRethrow('createWorkEntity err')

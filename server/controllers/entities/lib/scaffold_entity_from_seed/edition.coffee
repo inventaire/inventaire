@@ -9,7 +9,7 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 { parse:parseIsbn } = __.require 'lib', 'isbn/isbn'
 { validatePropertyValueSync } = require '../entities'
-createAndEditEntity = require '../create_and_edit_entity'
+createEntity = require '../create_entity'
 # It is simpler to use a consistent, recognizable mocked user id
 # than to put exceptions everywhere
 seedUserId = __.require('couch', 'hard_coded_documents').users.seed._id
@@ -57,7 +57,7 @@ createEditionEntity = (seed, workPromise)->
   .then (work)->
     workUri = work.uri or "inv:#{work._id}"
     claims['wdt:P629'] = [ workUri ]
-    return createAndEditEntity labels, claims, seedUserId
+    return createEntity labels, claims, seedUserId
   .then _.Log('created edition entity')
   .catch _.ErrorRethrow('createEditionEntity err')
 

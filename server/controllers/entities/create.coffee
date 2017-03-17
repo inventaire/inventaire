@@ -2,7 +2,7 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 { Track } = __.require 'lib', 'track'
-createAndEditEntity = require './lib/create_and_edit_entity'
+createEntity = require './lib/create_entity'
 getEntityByUri = require './lib/get_entity_by_uri'
 
 module.exports = (req, res) ->
@@ -20,7 +20,7 @@ module.exports = (req, res) ->
   unless _.isPlainObject claims
     return error_.bundle req, res, 'claims should be an object', 400, entityData
 
-  createAndEditEntity labels, claims, reqUserId
+  createEntity labels, claims, reqUserId
   # Re-request the entity's data to get it formatted
   .then (entity)-> getEntityByUri "inv:#{entity._id}", true
   .then res.json.bind(res)
