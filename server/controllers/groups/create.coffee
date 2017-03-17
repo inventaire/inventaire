@@ -9,6 +9,8 @@ module.exports = (req, res)->
   { name, searchable, description, position } = req.body
   unless name? then return error_.bundleMissingBody req, res, 'name'
 
+  searchable ?= true
+
   groups_.create
     name: name
     description: description or ''
