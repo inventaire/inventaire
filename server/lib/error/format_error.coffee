@@ -20,7 +20,9 @@ module.exports = (err, filter, context)->
   return err
 
 getErrorEmittingLines = (err)->
-  err.stack.split('\n')[2..4]
+  err.stack.split '\n'
+  .filter (line)-> not line.match(/lib\/error/)
+  .slice 0, 5
   .map getErrorEmittingLine
 
 getErrorEmittingLine = (line)->
