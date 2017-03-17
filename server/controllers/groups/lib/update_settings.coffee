@@ -3,12 +3,13 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 { attributes, tests } = __.require 'models', 'group'
 { updatable } = attributes
+promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
 { BasicUpdater } = __.require 'lib', 'doc_updates'
 radio = __.require 'lib', 'radio'
 
-module.exports = (db)->
-  updateSettings: (data, userId)->
+module.exports = (db, groups_)->
+  updateSettings = (data, userId)->
     { group:groupId, attribute, value } = data
 
     unless attribute in updatable
@@ -19,16 +20,28 @@ module.exports = (db)->
 
     db.get groupId
     .then (groupDoc)->
-      notifData =
-        usersToNotify: getUsersToNotify groupDoc
-        groupId: groupId
-        actorId: userId
-        attribute: attribute
-        newValue: value
-        previousValue: groupDoc[attribute]
+      notifData = getNotificationData groupId, userId, groupDoc, attribute, value
 
-      db.update groupId, BasicUpdater(attribute, value)
+      groupDoc[attribute] = value
+
+      applyEditHooks attribute, groupDoc
+      .then db.put
       .then -> radio.emit 'group:update', notifData
+
+    applyEditHooks = (attribute, groupDoc)->
+      if attribute is 'name' then groups_.addSlug groupDoc
+      else promises_.resolve groupDoc
+
+    return updateSettings
+
+getNotificationData = (groupId, userId, groupDoc, attribute, value)->
+  usersToNotify: getUsersToNotify groupDoc
+  groupId: groupId
+  actorId: userId
+  attribute: attribute
+  newValue: value
+  previousValue: groupDoc[attribute]
+
 
 getUsersToNotify = (groupDoc)->
   _(groupDoc)

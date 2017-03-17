@@ -10,6 +10,7 @@ db = __.require('couch', 'base')('users', 'groups')
 module.exports = groups_ =
   # using a view to avoid returning users or relations
   byId: db.viewFindOneByKey.bind(db, 'byId')
+  bySlug: db.viewFindOneByKey.bind(db, 'bySlug')
   byUser: db.viewByKey.bind(db, 'byUser')
   byInvitedUser: db.viewByKey.bind(db, 'byInvitedUser')
   byAdmin: (userId)->
@@ -39,6 +40,7 @@ module.exports = groups_ =
 
   create: (options)->
     promises_.try -> Group.create options
+    .then addSlug
     .then _.Log('group created')
     .then db.postAndReturn
 
@@ -62,11 +64,21 @@ groups_.byPosition = __.require('lib', 'by_position')(db, 'groups')
 
 membershipActions = require('./membership_actions')(db)
 usersLists = require('./users_lists')(groups_)
-updateGroup = require('./update_group')(db)
+updateSettings = require('./update_settings')(db, groups_)
 counts = require('./counts')(groups_, _)
 leaveGroups = require('./leave_groups')(db, groups_)
+getSlug = require('./get_slug')(groups_)
 
-_.extend groups_, membershipActions, usersLists, updateGroup, counts, leaveGroups
+addSlug = (group)->
+  getSlug group.name, group._id
+  .then (slug)->
+    group.slug = slug
+    return group
+
+_.extend groups_, membershipActions, usersLists, counts, leaveGroups,
+  updateSettings: updateSettings
+  getSlug: getSlug
+  addSlug: addSlug
 
 # getGroupData depends on user_ which depends on groups_.
 # Initializing at next tick allows to work around this dependency loop

@@ -15,6 +15,7 @@ module.exports =
       'search': publicActions.searchByName
       'search-by-position': publicActions.searchByPositon
       'last': publicActions.lastGroups
+      'slug': publicActions.slug
     authentified:
       'default': (req, res)->
         allUserGroups req.user._id
@@ -27,7 +28,8 @@ module.exports =
 
   put: (req, res)->
     unless req.user? then return error_.unauthorizedApiAccess req, res
-    { action } = req.body
+    # Allow to pass the action in either the query or the body, as ActionsControllers
+    action = req.body.action or req.query.action
 
     # don't convert an undefined action to an empty string
     # it makes debugging confusing

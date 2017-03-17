@@ -46,4 +46,16 @@ module.exports =
     .then res.json.bind(res)
     .catch error_.Handler(req, res)
 
+  slug: (req, res)->
+    { name, group:groupId } = req.query
+
+    unless name? then return error_.bundleMissingQuery req, res, 'name'
+
+    if groupId? and not _.isGroupId groupId
+      return error_.bundleInvalid req, res, 'group', groupId
+
+    groups_.getSlug name, groupId
+    .then _.Wrap(res, 'slug')
+    .catch error_.Handler(req, res)
+
 searchable = _.property 'searchable'

@@ -5,6 +5,9 @@
        "byId": {
            "map": "(doc)->\n  if doc.type is 'group'\n    emit doc._id, null"
        },
+       "bySlug": {
+           "map": "(doc)->\n  if doc.type is 'group'\n    emit doc.slug, null"
+       },
        "byUser": {
            "map": "(doc)->\n  if doc.type is 'group'\n    for member in doc.members\n      emit member.user, null\n    for admin in doc.admins\n      emit admin.user, null"
        },
