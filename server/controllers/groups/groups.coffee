@@ -12,6 +12,7 @@ module.exports =
   get: ActionsControllers
     public:
       'by-id': publicActions.byId
+      'by-slug': publicActions.bySlug
       'search': publicActions.searchByName
       'search-by-position': publicActions.searchByPositon
       'last': publicActions.lastGroups

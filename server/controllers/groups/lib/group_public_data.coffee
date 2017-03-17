@@ -7,8 +7,8 @@ items_ = __.require 'controllers', 'items/lib/items'
 error_ = __.require 'lib', 'error/error'
 
 module.exports = (groups_)->
-  return getGroupData = (groupId, reqUserId)->
-    groups_.byId groupId
+  return getGroupData = (fnName, fnArg, reqUserId)->
+    groups_[fnName](fnArg)
     .then (group)->
       unless group? then throw error_.notFound groupId
 
