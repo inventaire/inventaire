@@ -16,7 +16,7 @@ describe 'slugify', ->
     done()
 
   it 'should replace URL reserved characters', (done)->
-    slugify('L:a? M[!Y]$|N=.E - é<(h)>o').should.equal 'la-myn-e-ého'
+    slugify("""L:a;:? M[!Y]$'@,"|N=.E - é<(h)>o""").should.equal 'la-myn-e-ého'
     done()
 
   it 'should preserve non-ASCII characters', (done)->
