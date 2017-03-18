@@ -52,6 +52,12 @@ module.exports = Entity =
 
   addClaims: (doc, claims)->
     preventRedirectionEdit doc, 'addClaims'
+
+    # Pass the list of all edited properties, so that wen trying to infer property
+    # values, we know which one should not be infered at the risk of creating
+    # a conflict
+    doc._allClaimsProps = Object.keys claims
+
     for property, array of claims
       prop = properties[property]
       # claims will be validated one by one later but some collective checks are needed
@@ -61,9 +67,11 @@ module.exports = Entity =
           message = "#{property} expects a unique value, got #{array}"
           throw error_.new message, 400, arguments
 
+
       for value in array
         doc = Entity.createClaim doc, property, value
 
+    delete doc._allClaimsProps
     return doc
 
   createClaim: (doc, property, value)->
@@ -79,7 +87,7 @@ module.exports = Entity =
     _.info "#{property} propArray: #{propArray} /oldVal: #{oldVal} /newVal: #{newVal}"
 
     if propArray? and newVal? and newVal in propArray
-      throw error_.new 'claim property new value already exist', 400, arguments
+      throw error_.new 'claim property new value already exist', 400, [ propArray, newVal ]
 
     if oldVal?
       if not propArray? or oldVal not in propArray
@@ -129,7 +137,9 @@ module.exports = Entity =
     return recoveredDoc
 
 updateInferredProperties = (doc, property, oldVal, newVal)->
-  propInferences = inferences[property]
+  declaredProperties = doc._allClaimsProps or []
+  # Use _allClaimsProps to list properties that shouldn't be inferred
+  propInferences = _.omit inferences[property], declaredProperties
 
   addingOrUpdatingValue = newVal?
 
