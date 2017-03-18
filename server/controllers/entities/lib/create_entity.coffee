@@ -57,6 +57,9 @@ validateClaims = (claims, type)->
   oldVal = null
 
   for property, array of claims
+    unless _.isArray array
+      throw error_.new 'invalid property array', 400, { property, array }
+
     for newVal in array
       promises.push entities_.validateClaim({ currentClaims, property, oldVal, newVal, letEmptyValuePass: false })
 

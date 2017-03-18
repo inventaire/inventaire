@@ -82,6 +82,19 @@ describe 'entities:create', ->
 
     return
 
+  it 'should reject invalid property array', (done)->
+    authReq 'post', '/api/entities?action=create',
+      labels: { fr: 'bla' }
+      claims:
+        'wdt:P31': [ 'wd:Q571' ]
+        'wdt:P50': 'wd:Q535'
+    .catch (err)->
+      err.body.status_verbose.should.equal 'invalid property array'
+      err.statusCode.should.equal 400
+      done()
+
+    return
+
   it 'should reject invalid property', (done)->
     authReq 'post', '/api/entities?action=create',
       labels: { fr: 'bla' }
