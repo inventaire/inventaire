@@ -10,7 +10,6 @@ module.exports = (groups_)->
     _.log slug, 'trySlugCandidate'
     groups_.bySlug slug
     .then (group)->
-      console.log('group', group)
       # A group was found with that slug
       # If the group matches the passed group id,
       # it's ok, the group can keep it's current slug

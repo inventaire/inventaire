@@ -11,13 +11,13 @@ describe 'groups:update-settings', ->
     getGroup
     .then (group)->
       groupId = group._id
-      updatedName = group.name + 'updated'
+      updatedName = group.name + '-updated'
       authReq 'put', "#{endpointBase}=update-settings",
         group: groupId
         attribute: 'name',
         value: updatedName
       # Seem to be required to let the time to CouchDB to update the document oO
-      .delay 0
+      .delay 50
       .then (updateRes)->
         updateRes.ok.should.be.true()
         nonAuthReq 'get', "#{endpointBase}=by-id&id=#{groupId}"
