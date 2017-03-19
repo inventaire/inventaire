@@ -176,7 +176,7 @@ validateOptions = (options)->
   return [user1, user2]
 
 buildTokenUrl = (action, email, token)->
-  _.buildPath "#{host}/api/auth/public/token",
+  _.buildPath "#{host}/api/token",
     action: action
     email: qs.escape email
     token: token

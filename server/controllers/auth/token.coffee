@@ -19,7 +19,7 @@ redirectValidEmail = (res, bool, resp)->
   res.redirect "/?validEmail=#{bool}"
 
 validateQuery = (query)->
-  { email, token } = req.query
+  { email, token } = query
   unless email? then return error_.rejectMissingQuery 'email'
   unless token? then return error_.rejectMissingQuery 'token'
   return promises_.resolve [ email, token ]
