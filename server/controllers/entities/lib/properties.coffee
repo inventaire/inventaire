@@ -55,6 +55,8 @@ properties =
   'wdt:P50': entityBase
   # publisher
   'wdt:P123': entityUniqueValue
+  # original language of work
+  'wdt:P364': entityBase
   # movement
   'wdt:P135': entityBase
   # genre
