@@ -11,8 +11,8 @@ isIp = Ip.test.bind Ip
 validProtocols = [ 'http:', 'https:' ]
 
 proxy = (req, res)->
-  # removing both /api/proxy/public/ and https://inventaire.io/api/proxy/public/
-  queriedUrl = req.originalUrl.split('/api/proxy/public/')[1]
+  # removing both /api/proxy/ and https://inventaire.io/api/proxy/
+  queriedUrl = req.originalUrl.split('/api/proxy/')[1]
   unless _.isNonEmptyString queriedUrl
     return error_.bundle req, res, 'missing url', 400, queriedUrl
 
