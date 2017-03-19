@@ -84,7 +84,7 @@ module.exports = config =
     ]
     mutedDomains: []
   logStaticFilesRequests: true
-  # enable the api/i18n/public endpoint and its i18nMissingKeys controller
+  # enable the api/i18n endpoint and its i18nMissingKeys controller
   logMissingI18nKeys: true
   # disable restrictApiAccess middleware: no more Auth required
   apiOpenBar: false

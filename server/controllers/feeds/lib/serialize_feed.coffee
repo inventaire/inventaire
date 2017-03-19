@@ -18,7 +18,7 @@ module.exports = (feedOptions, users, items, lang)->
     title: title
     # Arbitrary limiting the description to 300 characters as it should stay short
     description: description?[0..300]
-    feed_url: "#{root}/api/feeds/public?#{queryString}"
+    feed_url: "#{root}/api/feeds?#{queryString}"
     site_url: "#{root}/#{pathname}"
     image_url: image
     # Not always respected, we probably need to cache generated feeds anyway
