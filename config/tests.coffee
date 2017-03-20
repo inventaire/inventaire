@@ -18,3 +18,5 @@ module.exports =
   godMode: false
   piwik:
     enabled: false
+  dataseed:
+    enabled: false

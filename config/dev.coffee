@@ -3,3 +3,5 @@
 
 module.exports =
   env: 'dev'
+  dataseed:
+    enabled: true
