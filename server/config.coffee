@@ -4,6 +4,7 @@ _ = __.require 'builders', 'utils'
 
 americano = require 'americano'
 
+routes = require './middlewares/routes'
 auth = require './middlewares/auth'
 security = require './middlewares/security'
 lang = require './middlewares/lang'
@@ -14,6 +15,7 @@ content = require './middlewares/content'
 
 module.exports =
   common: [
+    routes.legacyApiRedirect
     content.redirectContentTypes
     americano.bodyParser()
     americano.methodOverride()
