@@ -10,7 +10,7 @@ cspReport = (req, res)->
   unless errData?
     return error_.bundleMissingBody req, res, 'csp-report'
 
-  err = buildError 'csp report', 'csp', errData
+  err = buildError 'csp report', 'csp', errData, req
   _.error err, 'csp report', false
   _.ok res
 
@@ -22,11 +22,11 @@ errorReport = (req, res)->
 
   message = errData.message or 'client error'
 
-  err = buildError message, 'client error report', errData
+  err = buildError message, 'client error report', errData, req
   _.error err, 'client error report'
   _.ok res
 
-buildError = (message, labels, errData)->
+buildError = (message, labels, errData, req)->
   context = _.omit errData, 'stack'
   statusCode = errData.statusCode or 500
   err = error_.new message, statusCode, context
@@ -36,6 +36,8 @@ buildError = (message, labels, errData)->
   # Labels to be used by gitlab-logging
   err.labels = labels
   err.stack = getErrStack errData
+  err.referer = req.headers.referer
+  err['user-agent'] = req.headers['user-agent']
   return err
 
 # Faking an error object for the needs of server/lib/utils/open_issue.coffee
