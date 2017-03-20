@@ -12,7 +12,7 @@ Entity = __.require 'models', 'entity'
 
 PlaceholderHandler = (modelFnName)-> (userId, entityId)->
   _.warn entityId, "#{modelFnName} entity"
-  # Using db.get anticipates a possible future where db.byId filtes-out
+  # Using db.get anticipates a possible future where db.byId filters-out
   # non type='entity' docs, thus making type='removed:placeholder' not accessible
   entities_.db.get entityId
   .then (currentDoc)->
