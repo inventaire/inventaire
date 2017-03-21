@@ -14,7 +14,7 @@ fs  = require 'fs'
 # cliArg='sync' => couch2elastic4sync
 # cliArg='load' => couch2elastic4sync load
 module.exports = (cliArg)->
-  elasticConfig.sync.map (syncData)->
+  childProcesses = elasticConfig.sync.map (syncData)->
     { type } = syncData
     command = "#{process.cwd()}/node_modules/.bin/couch2elastic4sync"
     args = [ "--config=#{folder}/configs/#{type}.json" ]
@@ -22,11 +22,21 @@ module.exports = (cliArg)->
     if cliArg is 'load' then args.push 'load'
     # if cliArg is 'sync', nothing needs to be added
 
-    logFile = "#{logsFolder}/#{type}"
-    logStream = fs.createWriteStream logFile, {flags: 'a'}
-    logStream.write "\n--------- restarting: #{new Date} ---------\n"
+    logStream = getLogStream type
 
     childProcess = spawn command, args
     childProcess.stdout.pipe logStream
     # Unfortunately, couch2elastic4sync writes errors to stdout so this line doesn't have much effect
     childProcess.stderr.pipe logStream
+    return childProcess
+
+  killChildrenProcesses = -> childProcesses.forEach (childProc)-> childProc.kill()
+
+  process.on 'exit', killChildrenProcesses
+  process.on 'SIGINT', killChildrenProcesses
+
+getLogStream = (type)->
+  logFile = "#{logsFolder}/#{type}"
+  logStream = fs.createWriteStream logFile, {flags: 'a'}
+  logStream.write "\n--------- restarting: #{new Date} ---------\n"
+  return logStream
