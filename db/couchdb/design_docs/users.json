@@ -1,5 +1,5 @@
 {
-   "_id": "_design/user",
+   "_id": "_design/users",
    "language": "coffeescript",
    "views": {
        "byEmail": {

@@ -6,7 +6,7 @@
 # that aren't required to run on production
 
 module.exports =
-  users: ['user', 'relations', 'invited']
+  users: ['users', 'relations', 'invited']
   groups: ['groups']
   items: ['items', 'followedEntities']
   transactions: ['transactions']

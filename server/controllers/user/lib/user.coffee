@@ -10,7 +10,7 @@ User = __.require 'models', 'user'
 { omitPrivateData } = require './authorized_user_data_pickers'
 { BasicUpdater } = __.require 'lib', 'doc_updates'
 
-db = __.require('couch', 'base')('users', 'user')
+db = __.require('couch', 'base')('users')
 geo = require('./geo/geo')()
 
 user_ =
