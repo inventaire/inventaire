@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+CUSTOMDBPORT=15984
+POUCHDIR=./db/pouchdb
+./node_modules/.bin/pouchdb-server --port $CUSTOMDBPORT --dir $POUCHDIR

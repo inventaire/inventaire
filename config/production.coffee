@@ -30,3 +30,6 @@ module.exports =
     preview: false
   activitySummary:
     disabled: false
+  elasticsearch:
+    # Progressive contributor setup: allow to start without installing ElasticSearch
+    enabled: true

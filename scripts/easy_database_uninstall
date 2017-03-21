@@ -1,0 +1,2 @@
+#!/usr/bin/env sh
+npm uninstall pouchdb-server && rm -rf ./db/pouchdb

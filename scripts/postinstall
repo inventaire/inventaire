@@ -37,6 +37,7 @@ module.exports =
   db:
     username: 'yourcouchdbusername'
     password: 'yourcouchdbpassword'
+    port: 5984
 "
 echo "$emptyConfigFile" >> ./config/local.coffee
 

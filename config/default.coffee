@@ -57,6 +57,8 @@ module.exports = config =
       # prevent triggering follow onChange actions with data from the remote database
       freezeFollow: true
   elasticsearch:
+    # Progressive contributor setup: allow to start without having to install ElasticSearch
+    enabled: false
     base: 'http://localhost:9200/inventaire'
     sync: [
       { database: 'entities', type: 'entity' }
