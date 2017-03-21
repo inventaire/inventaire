@@ -5,7 +5,7 @@ promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
 Group = __.require 'models', 'group'
 
-db = __.require('couch', 'base')('users', 'groups')
+db = __.require('couch', 'base')('groups')
 
 module.exports = groups_ =
   # using a view to avoid returning users or relations
