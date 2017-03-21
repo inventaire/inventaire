@@ -16,8 +16,15 @@ fs  = require 'fs'
 module.exports = (cliArg)->
   childProcesses = elasticConfig.sync.map (syncData)->
     { type } = syncData
-    command = "#{process.cwd()}/node_modules/.bin/couch2elastic4sync"
-    args = [ "--config=#{folder}/configs/#{type}.json" ]
+
+    # Prefixing the command with nice, so that it get reniced to 10,
+    # thus lowering those sub-processes priority
+    # cf https://groups.google.com/forum/#!topic/nodejs/9O-2gLJzmcQ
+    command = 'nice'
+    args = [
+      "#{process.cwd()}/node_modules/.bin/couch2elastic4sync"
+      "--config=#{folder}/configs/#{type}.json"
+    ]
 
     if cliArg is 'load' then args.push 'load'
     # if cliArg is 'sync', nothing needs to be added
