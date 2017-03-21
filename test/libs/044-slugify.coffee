@@ -22,3 +22,8 @@ describe 'slugify', ->
   it 'should preserve non-ASCII characters', (done)->
     slugify('『青チョークの男』').should.equal '『青チョークの男』'
     done()
+
+  it 'should drop dashes at the extremities', (done)->
+    slugify('-hello-').should.equal 'hello'
+    slugify('?hello?').should.equal 'hello'
+    done()

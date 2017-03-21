@@ -6,3 +6,5 @@ module.exports = (str)->
   .replace /(\s+|\.)/g, '-'
   # Replace multiple - with a single -
   .replace /\-+/g, '-'
+  # Drop - at the extremities
+  .replace /(^-|-$)/g, ''

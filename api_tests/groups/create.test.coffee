@@ -18,3 +18,13 @@ describe 'groups:create', ->
       done()
 
     return
+
+  it 'should reject a group with an empty name or generated slug', (done)->
+    name = '??'
+    authReq 'post', '/api/groups?action=create', { name }
+    .catch (err)->
+      err.statusCode.should.equal 400
+      err.body.error_name.should.equal 'invalid_name'
+      done()
+
+    return
