@@ -7,3 +7,5 @@ do
   printf "deleting ${db}-tests... " &&
   curl -sXDELETE "${dbHost}/${db}-tests"
 done
+
+export NODE_ENV=tests; npm run init-couch2elastic4sync

@@ -3,10 +3,22 @@ CONFIG = require 'config'
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
-url = CONFIG.elasticsearch.base
+{ host } = CONFIG.elasticsearch
+{ indexesList } = __.require 'db', 'elasticsearch/list'
+createIndex = require './create_index'
 
-promises_.delete url
-.then _.Log("delete #{url}")
-.then promises_.put.bind(promises_, url)
-.then _.Log("put #{url}")
-.catch _.Error('reset')
+reset = (dbName)->
+  url = "#{host}/#{dbName}"
+  promises_.delete url
+  .then _.Log("delete #{url}")
+  .catch ignoreMissing(url)
+  .then createIndex.bind(null, dbName)
+  .catch _.Error('reset')
+
+ignoreMissing = (url)-> (err)->
+  if err.statusCode is 404
+    _.warn url, 'no database to delete'
+  else
+    throw err
+
+indexesList.forEach reset

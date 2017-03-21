@@ -9,27 +9,28 @@ _ = __.require 'builders', 'utils'
 folder = __.path 'scripts', 'couch2elastic4sync'
 logsFolder = __.path 'logs', 'couch2elastic4sync'
 fs  = require 'fs'
+{ syncDataList } = __.require 'db', 'elasticsearch/list'
 
 # Mapping to couch2elastic4sync API:
 # cliArg='sync' => couch2elastic4sync
 # cliArg='load' => couch2elastic4sync load
 module.exports = (cliArg)->
-  childProcesses = elasticConfig.sync.map (syncData)->
-    { type } = syncData
+  childProcesses = syncDataList.map (syncData)->
+    { dbName } = syncData
 
     # Prefixing the command with nice, so that it get reniced to 10,
     # thus lowering those sub-processes priority
     # cf https://groups.google.com/forum/#!topic/nodejs/9O-2gLJzmcQ
     command = 'nice'
     args = [
-      "#{process.cwd()}/node_modules/.bin/couch2elastic4sync"
-      "--config=#{folder}/configs/#{type}.json"
+      __.path 'modulesBin', 'couch2elastic4sync'
+      "--config=#{folder}/configs/#{dbName}.json"
     ]
 
     if cliArg is 'load' then args.push 'load'
     # if cliArg is 'sync', nothing needs to be added
 
-    logStream = getLogStream type
+    logStream = getLogStream dbName
 
     childProcess = spawn command, args
     childProcess.stdout.pipe logStream
@@ -42,8 +43,8 @@ module.exports = (cliArg)->
   process.on 'exit', killChildrenProcesses
   process.on 'SIGINT', killChildrenProcesses
 
-getLogStream = (type)->
-  logFile = "#{logsFolder}/#{type}"
+getLogStream = (dbName)->
+  logFile = "#{logsFolder}/#{dbName}"
   logStream = fs.createWriteStream logFile, {flags: 'a'}
   logStream.write "\n--------- restarting: #{new Date} ---------\n"
   return logStream

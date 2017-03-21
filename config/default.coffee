@@ -57,14 +57,7 @@ module.exports = config =
       # prevent triggering follow onChange actions with data from the remote database
       freezeFollow: true
   elasticsearch:
-    base: 'http://localhost:9200/inventaire'
-    sync: [
-      { database: 'entities', type: 'entity' }
-      # Unblock: solve https://github.com/ryanramage/couch2elastic4sync/issues/14
-      # { database: 'users', type: 'user' }
-      # { database: 'users', type: 'group'}
-    ]
-
+    host: 'http://localhost:9200'
   serveStaticFiles: true
   noCache: false
   staticMaxAge: 30*24*60*60*1000

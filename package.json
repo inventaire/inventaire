@@ -28,7 +28,8 @@
     "migrator": "./scripts/migrator",
     "reset-cache": "rm -rf db/leveldb && mkdir db/leveldb",
     "update-toc": "doctoc README.md",
-    "init-couch2elastic4sync": "./scripts/couch2elastic4sync/init && ./scripts/couch2elastic4sync/load"
+    "init-couch2elastic4sync": "./scripts/couch2elastic4sync/init && ./scripts/couch2elastic4sync/load",
+    "reset-couch2elastic4sync": "./scripts/couch2elastic4sync/init && ./scripts/couch2elastic4sync/reset"
   },
   "author": "maxlath",
   "license": "AGPL-3.0",

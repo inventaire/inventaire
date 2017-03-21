@@ -4,11 +4,10 @@ CONFIG = require 'config'
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
-url = CONFIG.elasticsearch.base
+{ indexesList } = __.require 'db', 'elasticsearch/list'
+createIndex = require './create_index'
 
-promises_.put url
-.then _.Log("put #{url}")
+promises_.all indexesList.map(createIndex)
 .then -> exec 'load'
 .then -> _.success 'done loading'
 .catch _.Error('load')
-

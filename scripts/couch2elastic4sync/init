@@ -1,27 +1,25 @@
 #!/usr/bin/env coffee
 CONFIG = require 'config'
 __ = CONFIG.universalPath
-{ elasticsearch:elasticConfig } = CONFIG
-fs = require 'fs'
-
+_ = __.require 'builders', 'utils'
+elasticSearchHost = CONFIG.elasticsearch.host
 couchdbHost = CONFIG.db.fullHost()
 folder = __.path 'scripts', 'couch2elastic4sync'
+fs = __.require 'lib', 'fs'
+{ syncDataList, indexesList } = __.require 'db', 'elasticsearch/list'
+createIndex = require './create_index'
 
 writeConfigFile = (syncData)->
-  { database:dbName, type } = syncData
-  # Depending on the environment, the exact couchdb database name
-  # might take a suffix
-  prefixedCouchdbName = CONFIG.db.name dbName
+  { dbName, type } = syncData
 
   data =
-    database: "#{couchdbHost}/#{prefixedCouchdbName}"
-    elasticsearch: "#{elasticConfig.base}/#{type}"
+    database: "#{couchdbHost}/#{dbName}"
+    elasticsearch: "#{elasticSearchHost}/#{dbName}/#{type}"
     mapper: "#{folder}/mappers/#{type}.js"
 
-  json = JSON.stringify data, null, 2
+  fs.writeFile "#{folder}/configs/#{dbName}.json", JSON.stringify(data, null, 2)
+  .then -> _.log "'#{dbName}' config file generated"
+  .catch _.ErrorRethrow("'#{dbName}' config file error")
 
-  fs.writeFile "#{folder}/configs/#{type}.json", json, (err, res)->
-    if err then console.error err
-    else console.log "'#{type}' config file generated"
-
-elasticConfig.sync.forEach writeConfigFile
+syncDataList.forEach writeConfigFile
+indexesList.forEach createIndex

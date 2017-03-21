@@ -4,7 +4,7 @@ _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
 { buildQuery, parseResponse } = __.require 'lib', 'elasticsearch'
 
-searchEndpoint = CONFIG.elasticsearch.base + '/entity/_search'
+searchEndpoint = CONFIG.elasticsearch.host + '/entity/_search'
 
 module.exports = (query)->
   _.type query.search, 'string'

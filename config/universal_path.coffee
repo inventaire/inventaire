@@ -50,6 +50,7 @@ module.exports =
     scripts: '/scripts'
     logs: '/logs'
     uploads: '/client/public/uploads'
+    modulesBin: '/node_modules/.bin'
   path: (route, name)->
     path = @paths[route]
     rootedPath = "#{appRoot}#{path}"

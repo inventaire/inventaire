@@ -7,11 +7,11 @@ initHardCodedDocuments = require './init_hard_coded_documents'
 dbsList = require './list'
 formattedList = []
 
-# adapt the list to couch-init2 needs
+# Adapt the list to couch-init2 needs
 for dbName, designDocsNames of dbsList
   formattedList.push
-    # adding a suffix if needed
-    name: CONFIG.db.name(dbName)
+    # Adding a suffix if needed
+    name: CONFIG.db.name dbName
     designDocs: designDocsNames
 
 designDocFolder = __.path('couchdb', 'design_docs')
