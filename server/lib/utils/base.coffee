@@ -42,10 +42,7 @@ module.exports = base =
     unless /^[-?\d\.]+$/.test str then throw new Error "invalid integer string: #{str}"
     return parseFloat str
 
-  isNonEmptyPlainObject: (obj)->
-    _.isPlainObject(obj) and Object.keys(obj).length > 0
-  isNonEmptyArray: (array)->
-    _.isArray(array) and array.length > 0
+  isNonEmptyArray: (array)-> _.isArray(array) and array.length > 0
 
   isArrayLike: (obj)-> _.isArray(obj) or _.isArguments(obj)
 
