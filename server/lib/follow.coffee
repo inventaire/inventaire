@@ -8,6 +8,7 @@ dbHost = CONFIG.db.fullHost()
 
 { freezeFollow } = CONFIG.db
 
+# { dbBaseName, filter, onChange, reset } = params
 module.exports = (params)->
   { dbBaseName } = params
   dbName = params.dbName = CONFIG.db.name dbBaseName
