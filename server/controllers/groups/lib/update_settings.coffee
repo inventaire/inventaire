@@ -24,15 +24,22 @@ module.exports = (db, groups_)->
 
       groupDoc[attribute] = value
 
-      applyEditHooks attribute, groupDoc
-      .then db.put
-      .then -> radio.emit 'group:update', notifData
+      return applyEditHooks attribute, groupDoc
+      .spread (updatedDoc, hooksUpdates)->
+        db.put updatedDoc
+        .then ->
+          radio.emit 'group:update', notifData
+          return { update: hooksUpdates }
 
-    applyEditHooks = (attribute, groupDoc)->
-      if attribute is 'name' then groups_.addSlug groupDoc
-      else promises_.resolve groupDoc
+  applyEditHooks = (attribute, groupDoc)->
+    if attribute is 'name'
+      groups_.addSlug groupDoc
+      .then (updatedDoc)->
+        return [ updatedDoc, _.pick(updatedDoc, 'slug') ]
+    else
+      promises_.resolve [ groupDoc, {} ]
 
-    return updateSettings
+  return updateSettings
 
 getNotificationData = (groupId, userId, groupDoc, attribute, value)->
   usersToNotify: getUsersToNotify groupDoc
@@ -41,7 +48,6 @@ getNotificationData = (groupId, userId, groupDoc, attribute, value)->
   attribute: attribute
   newValue: value
   previousValue: groupDoc[attribute]
-
 
 getUsersToNotify = (groupDoc)->
   _(groupDoc)

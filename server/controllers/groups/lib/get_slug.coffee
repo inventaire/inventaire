@@ -7,7 +7,6 @@ slugify = require './slugify'
 
 module.exports = (groups_)->
   trySlugCandidate = (slug, groupId)->
-    _.log slug, 'trySlugCandidate'
     groups_.bySlug slug
     .then (group)->
       # A group was found with that slug

@@ -23,6 +23,10 @@ module.exports = (action, req, res)->
 
   rightsVerification[action](reqUserId, group, user)
   .then groups_[action].bind(null, body, reqUserId)
-  .then _.Ok(res)
+  # Allow to pass an update object, with key/values to be updated on the model
+  # as the results of update hooks
+  .then addUpdateData(res)
   .then Track(req, ['groups', action])
   .catch error_.Handler(req, res)
+
+addUpdateData = (res)-> (data={})-> res.json { ok: true, update: data.update }
