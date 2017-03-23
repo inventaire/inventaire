@@ -10,7 +10,7 @@ User = __.require 'models', 'user'
 { Track } = __.require 'lib', 'track'
 
 module.exports = (req, res, next) ->
-  # implies that req.isAuthenticated() is true
+  unless req.user? then return error_.unauthorizedApiAccess req, res
   { user, body } = req
   { attribute, value } = body
 

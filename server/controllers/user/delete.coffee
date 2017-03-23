@@ -11,6 +11,7 @@ notifs_ = __.require 'lib', 'notifications'
 { Track } = __.require 'lib', 'track'
 
 module.exports = (req, res)->
+  unless req.user? then return error_.unauthorizedApiAccess req, res
   reqUserId = req.user._id
 
   _.warn req.user, 'deleting user'
