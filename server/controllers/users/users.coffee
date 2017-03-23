@@ -5,7 +5,7 @@ module.exports =
   get: ActionsControllers
     public:
       'get-users': require './get_users_public_data'
-      'search': require './search_by_username'
+      'search': require './search_by_text'
       'search-by-position': require './search_by_position'
     authentified:
       'nearby': require './nearby'

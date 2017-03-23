@@ -20,9 +20,12 @@ searchByUsername = buildSearcher
   dbBaseName: 'users'
   queryBodyBuilder: (search)->
     should = [
-      { match: { username: search } }
-      { match_phrase_prefix: { username: search } }
+      # Username
+      { match: { username: { query: search, boost: 5 } } }
+      { match_phrase_prefix: { username: { query: search, boost: 4 } } }
       { fuzzy: { username: search } }
+      # Bio
+      { match: { bio: search } }
     ]
 
     return { query: { bool: { should } } }
