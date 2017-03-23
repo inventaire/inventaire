@@ -49,15 +49,6 @@ user_ =
       if userDoc? then return userDoc
       else throw error_.new 'user not found', 404, username
 
-  usernameStartBy: (username, options)->
-    username = username.toLowerCase()
-    params =
-      startkey: username
-      endkey: username + 'Z'
-      include_docs: true
-    params.limit = options.limit if options?.limit?
-    db.viewCustom 'byUsername', params
-
   getUserData: (reqUserId, id)->
     user_.getUsersAuthorizedData user_.byIds([id]), reqUserId
     .get '0'

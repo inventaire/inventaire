@@ -13,32 +13,41 @@ testUser =
   password: 'testpassword'
   email: 'a+testemail@inventaire.io'
 
-loginData =
-  url: "#{authEndpoint}?action=login"
-  body: testUser
+testUserB =
+  username: 'testuserb'
+  password: 'testpassword'
+  email: 'b+testemail@inventaire.io'
 
-signupData =
-  url: "#{authEndpoint}?action=signup"
-  body: testUser
+loginEndpoint = "#{authEndpoint}?action=login"
+signupEndpoint = "#{authEndpoint}?action=signup"
 
 parseCookies = (res) -> res.headers['set-cookie']
 
-userCookiesPromise = breq.post loginData
+getUserCookies = (userData)->
+  breq.post { url: loginEndpoint, body: userData }
   .catch (err)->
     if err.statusCode isnt 401 then throw err
-    return breq.post signupData
+    return breq.post { url: signupEndpoint, body: userData }
   .then parseCookies
+
+userCookiesPromise = getUserCookies testUser
+userBCookiesPromise = getUserCookies testUserB
 
 request = (method, endpoint, body, cookies = [])->
   url = host + endpoint
   headers = { cookie: cookies.join ';' }
   return breq[method]({ url, body, headers }).get 'body'
 
-authentifiedRequest = (method, endpoint, body)->
-  userCookiesPromise
+AuthentifiedRequest = (cookiesPromise)-> (method, endpoint, body)->
+  cookiesPromise
   .then request.bind(null, method, endpoint, body)
+
+authentifiedRequest = AuthentifiedRequest userCookiesPromise
+bUserAuthentifiedRequest = AuthentifiedRequest userBCookiesPromise
+GetUser = (authentifiedRequester)-> ()-> authentifiedRequester 'get', '/api/user'
 
 module.exports =
   authReq: authentifiedRequest
   nonAuthReq: request
-  getUser: -> authentifiedRequest 'get', '/api/user'
+  getUser: GetUser authentifiedRequest
+  getUserB: GetUser bUserAuthentifiedRequest

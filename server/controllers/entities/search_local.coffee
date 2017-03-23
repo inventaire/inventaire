@@ -1,14 +1,14 @@
 CONFIG = require 'config'
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
-promises_ = __.require 'lib', 'promises'
-{ buildQuery, parseResponse } = __.require 'lib', 'elasticsearch'
+{ buildSearcher } = __.require 'lib', 'elasticsearch'
 
-searchEndpoint = CONFIG.elasticsearch.host + '/entity/_search'
+module.exports = buildSearcher
+  dbBaseName: 'entities'
+  queryBodyBuilder: (search)->
+    should = [
+      { match: { _all: search } }
+      { prefix: { _all: _.last search.split(' ') } }
+    ]
 
-module.exports = (query)->
-  _.type query.search, 'string'
-  promises_.post
-    url: searchEndpoint
-    body: buildQuery(query.search, true)
-  .then parseResponse
+    return { query: { bool: { should } } }

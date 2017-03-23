@@ -1,18 +1,33 @@
+CONFIG = require 'config'
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
+promises_ = __.require 'lib', 'promises'
+{ host:elasticHost } = CONFIG.elasticsearch
 
-module.exports =
-  buildQuery: (search, prefixSearch)->
-    should = [ { match: { _all: search } } ]
-    if prefixSearch
-      # passing only the last word
-      should.push { prefix: { _all: search.split(' ').slice(-1)[0] } }
+buildSearcher = (params)->
+  { dbBaseName, queryBodyBuilder } = params
+  dbName = CONFIG.db.name dbBaseName
+  url = "#{elasticHost}/#{dbName}/_search"
+  return (query)->
+    _.type query, 'string'
+    body = queryBodyBuilder query
+    _.stringify body, "#{dbBaseName} search"
+    promises_.post { url, body }
+    .then parseResponse
+    .catch formatError
+    .catch _.ErrorRethrow("#{dbBaseName} search err")
 
-    return _.stringify({ query: { bool: { should: should } } }, 'elasticsearch query')
+parseResponse = (res)-> res.hits.hits.map parseHit
 
-  parseResponse: (res)-> res.hits.hits.map parseHit
+# Reshape the error object to be fully displayed when logged by _.warn
+formatError = (err)->
+  err.body.error.root_cause = err.body.error.root_cause[0]
+  err.body = err.body.error
+  throw err
 
 parseHit = (hit)->
   { _source:data, _id } = hit
   data._id = _id
   return data
+
+module.exports = { buildSearcher }
