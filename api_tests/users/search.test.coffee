@@ -11,7 +11,7 @@ describe 'users:search', ->
       userId = user._id
       nonAuthReq 'get', "/api/users?action=search&search=testuser"
       .then (res)->
-        res.users[0]._id.should.equal user._id
+        (user._id in usersIds(res)).should.be.true()
         done()
 
     return
@@ -22,7 +22,7 @@ describe 'users:search', ->
       userId = user._id
       nonAuthReq 'get', "/api/users?action=search&search=testu"
       .then (res)->
-        res.users[0]._id.should.equal user._id
+        (user._id in usersIds(res)).should.be.true()
         done()
 
     return
@@ -33,7 +33,7 @@ describe 'users:search', ->
       userId = user._id
       nonAuthReq 'get', "/api/users?action=search&search=testusr"
       .then (res)->
-        res.users[0]._id.should.equal user._id
+        (user._id in usersIds(res)).should.be.true()
         done()
 
     return
@@ -44,15 +44,14 @@ describe 'users:search', ->
       userId = user._id
       authReq 'get', "/api/users?action=search&search=#{user.username}"
       .then (res)->
-        user = res.users[0]
-        user._id.should.equal user._id
-        should(user.snapshot).not.be.ok()
+        (user._id in usersIds(res)).should.be.true()
+        should(res.users[0].snapshot).not.be.ok()
         done()
 
     return
 
   it 'should find a user by its bio', (done)->
-    authReq 'put', '/api/user', { attribute: 'bio', value: 'zzbio' }
+    authReq 'put', '/api/user', { attribute: 'bio', value: 'blablablayouhou' }
     .catch (err)->
       if err.body.status_verbose is 'already up-to-date' then return
       else throw err
@@ -60,7 +59,9 @@ describe 'users:search', ->
     .then (user)->
       nonAuthReq 'get', "/api/users?action=search&search=#{user.bio}"
       .then (res)->
-        res.users[0]._id.should.equal user._id
+        (user._id in usersIds(res)).should.be.true()
         done()
 
     return
+
+usersIds = (res)-> _.pluck res.users, '_id'
