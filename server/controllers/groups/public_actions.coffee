@@ -16,18 +16,18 @@ module.exports =
     unless tests.valid 'groupId', id
       return error_.bundleInvalid req, res, 'id', id
 
-    groups_.getGroupData 'byId', id, reqUserId
+    groups_.getGroupData 'byId', [ id ], reqUserId
     .then res.json.bind(res)
     .catch error_.Handler(req, res)
 
   bySlug: (req, res)->
-    { slug } = req.query
+    { slug, group } = req.query
     reqUserId = req.user?._id
 
     unless _.isNonEmptyString slug
       return error_.bundleMissingQuery req, res, 'slug'
 
-    groups_.getGroupData 'bySlug', slug, reqUserId
+    groups_.getGroupData 'bySlug', [ slug, group ], reqUserId
     .then res.json.bind(res)
     .catch error_.Handler(req, res)
 
