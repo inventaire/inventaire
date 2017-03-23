@@ -8,6 +8,7 @@ groups_ = require './lib/groups'
 user_ = __.require 'controllers', 'user/lib/user'
 items_ = __.require 'controllers', 'items/lib/items'
 parseBbox = __.require 'lib', 'parse_bbox'
+{ buildSearcher } = __.require 'lib', 'elasticsearch'
 
 module.exports =
   byId: (req, res)->
@@ -31,14 +32,17 @@ module.exports =
     .then res.json.bind(res)
     .catch error_.Handler(req, res)
 
-  searchByName: (req, res)->
-    { search } = req.query
+  searchByText: (req, res)->
+    { query } = req
+    search = query.search?.trim()
+    reqUserId = req.user?._id
+
     unless _.isNonEmptyString search
       return error_.bundleInvalid req, res, 'search', search
 
-    groups_.nameStartBy search
+    searchByText search
     .filter searchable
-    .then res.json.bind(res)
+    .then _.Wrap(res, 'groups')
     .catch error_.Handler(req, res)
 
   searchByPositon: (req, res)->
@@ -68,5 +72,19 @@ module.exports =
     groups_.getSlug name, groupId
     .then _.Wrap(res, 'slug')
     .catch error_.Handler(req, res)
+
+searchByText = buildSearcher
+  dbBaseName: 'groups'
+  queryBodyBuilder: (search)->
+    should = [
+      # Name
+      { match: { name: { query: search, boost: 5 } } }
+      { match_phrase_prefix: { name: { query: search, boost: 4 } } }
+      { fuzzy: { name: search } }
+      # Description
+      { match: { description: search } }
+    ]
+
+    return { query: { bool: { should } } }
 
 searchable = _.property 'searchable'
