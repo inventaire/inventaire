@@ -11,7 +11,7 @@ buildSearcher = (params)->
   return (query)->
     _.type query, 'string'
     body = queryBodyBuilder query
-    _.stringify body, "#{dbBaseName} search"
+
     promises_.post { url, body }
     .then parseResponse
     .catch formatError
