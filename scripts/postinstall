@@ -28,7 +28,7 @@ mkdir -p run
 touch run/3006 run/3009
 
 # Synchronize CouchDB and ElasticSearch databases
-npm run init-couch2elastic4sync
+npm run couch2elastic4sync:init && npm run couch2elastic4sync:load
 
 # Create a local config file
 emptyConfigFile="

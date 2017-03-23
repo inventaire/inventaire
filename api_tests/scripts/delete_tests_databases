@@ -8,4 +8,6 @@ do
   curl -sXDELETE "${dbHost}/${db}-tests"
 done
 
-export NODE_ENV=tests; npm run init-couch2elastic4sync
+export NODE_ENV=tests; npm run couch2elastic4sync:init &&
+  npm run couch2elastic4sync:reset &&
+  npm run couch2elastic4sync:load
