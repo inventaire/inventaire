@@ -9,32 +9,36 @@ cache_ = __.require 'lib', 'cache'
 getInvEntityCanonicalUri = require './get_inv_entity_canonical_uri'
 couch_ = __.require 'lib', 'couch'
 
-module.exports = (property, uri, refresh)->
-  [ prefix, id ] = uri.split ':'
+module.exports = (property, value, refresh)->
   promises = []
 
-  # If the prefix is 'inv' or 'isbn', no need to check Wikidata
-  if prefix is 'wd'
-    promises.push wikidataReverseClaims(property, id, refresh)
+  isEntityValue = _.isEntityUri value
 
-  promises.push invReverseClaims(property, uri)
+  if isEntityValue
+    [ prefix, id ] = value.split ':'
+    # If the prefix is 'inv' or 'isbn', no need to check Wikidata
+    if prefix is 'wd' then promises.push wikidataReverseClaims(property, id, refresh)
+  else
+    promises.push wikidataReverseClaims(property, value, refresh)
+
+  promises.push invReverseClaims(property, value)
 
   promises_.all promises
   .then _.flatten
 
-wikidataReverseClaims = (property, wdId, refresh)->
-  key = "wd:reverse-claim:#{property}:#{wdId}"
+wikidataReverseClaims = (property, value, refresh)->
+  key = "wd:reverse-claim:#{property}:#{value}"
   timestamp = if refresh then 0 else null
-  cache_.get key, _wikidataReverseClaims.bind(null, property, wdId), timestamp
+  cache_.get key, _wikidataReverseClaims.bind(null, property, value), timestamp
 
-_wikidataReverseClaims = (property, wdId)->
+_wikidataReverseClaims = (property, value)->
   wdProp = wd_.unprefixifyPropertyId property
-  _.log [property, wdId], 'reverse claim'
-  promises_.get wdk.getReverseClaims(wdProp, wdId)
+  _.log [property, value], 'reverse claim'
+  promises_.get wdk.getReverseClaims(wdProp, value)
   .then wdk.simplifySparqlResults
   .map prefixify
 
-invReverseClaims = (property, uri)->
-  entities_.byClaim property, uri, true
+invReverseClaims = (property, value)->
+  entities_.byClaim property, value, true
   .then couch_.mapDoc
   .map (entity)-> getInvEntityCanonicalUri(entity)[0]
