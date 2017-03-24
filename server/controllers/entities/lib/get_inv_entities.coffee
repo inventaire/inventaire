@@ -3,6 +3,7 @@ entities_ = require './entities'
 getEntityType = __.require 'lib', 'wikidata/get_entity_type'
 getInvEntityCanonicalUri = require './get_inv_entity_canonical_uri'
 formatEntityCommon = require './format_entity_common'
+addRedirection = require './add_redirection'
 
 module.exports = (ids, refresh)->
   # Hypothesis: there is no need to look for Wikidata data here
@@ -27,16 +28,4 @@ getRedirectedEntity = (entity, refresh)->
 
   # Passing the refresh parameter as the entity data source might be Wikidata
   getEntityByUri entity.redirect, refresh
-  .then (formattedEntity)->
-    # Possibly overriding further redirects object
-    # Notice a tricky naming issue here:
-    # - 'redirects' is the name Wikidata uses to signal redirections as an object
-    # with a 'from' and a 'to', and that was thus adopted here too: those 'redirects'
-    # objects signal constated redirections.
-    # - 'redirect' is the attribute by which an entity document redirected to another
-    # entity keeps track of this redirection
-    formattedEntity.redirects =
-      from: "inv:#{entity._id}"
-      to: formattedEntity.uri
-
-    return formattedEntity
+  .then addRedirection.bind(null, "inv:#{entity._id}")

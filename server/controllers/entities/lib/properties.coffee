@@ -36,11 +36,12 @@ stringBase =
   # Arbitrary max length
   test: (str)-> _.isString(str) and 0 < str.length < 5000
 
+stringConcurrentBase = _.extend {}, stringBase, { concurrency: true }
+
 isbnProperty = (num)->
-  _.extend {}, stringBase,
+  _.extend {}, stringConcurrentBase,
     test: (isbn)-> isbn is isbn_.parse(isbn)?["isbn#{num}h"]
     uniqueValue: true
-    concurrency: true
     format: isbn_["toIsbn#{num}h"]
     adminUpdateOnly: true
 
@@ -87,6 +88,8 @@ properties =
   'wdt:P1412': entityBase
   # title
   'wdt:P1476': stringBase
+  # twitter account
+  'wdt:P2002': stringConcurrentBase
 
 whitelist = Object.keys properties
 

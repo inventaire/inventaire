@@ -4,6 +4,8 @@ error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
 wdk = require 'wikidata-sdk'
 { normalizeIsbn, isNormalizedIsbn } = __.require 'lib', 'isbn/isbn'
+{ prefixes:aliasesPrefixes, validators:aliasesValidators } = require './alias_uris'
+aliasesGetter = require './get_entities_by_alias_uris'
 
 # Getters take ids, return an object on the model { entities, notFound }
 getters =
@@ -11,13 +13,12 @@ getters =
   wd: require './get_wikidata_enriched_entities'
   isbn: require './get_entities_by_isbns'
 
-prefixes = Object.keys getters
+getGetter = (prefix)-> getters[prefix] or aliasesGetter
+
+prefixes = Object.keys(getters).concat aliasesPrefixes
 
 module.exports = (uris, refresh)->
-  domains =
-    wd: []
-    inv: []
-    isbn: []
+  domains = {}
 
   # validate per URI to be able to return a precise error message
   for uri in uris
@@ -32,7 +33,10 @@ module.exports = (uris, refresh)->
       return error_.reject errMessage, 400, uri
 
     if prefix in hasFormatter then id = formatters[prefix](id)
-    domains[prefix].push id
+    # Alias getters require the full URI as it handles multiple prefixes
+    value = if prefix in aliasesPrefixes then uri else id
+    domains[prefix] or= []
+    domains[prefix].push value
 
   getDomainsPromises domains, refresh
   .then mergeResponses
@@ -41,8 +45,7 @@ module.exports = (uris, refresh)->
 getDomainsPromises = (domains, refresh)->
   promises = []
   for prefix, array of domains
-    if array.length > 0
-      promises.push getters[prefix](array, refresh)
+    promises.push getGetter(prefix)(array, refresh)
 
   return promises_.all promises
 
@@ -82,7 +85,7 @@ formatters =
 
 hasFormatter = Object.keys formatters
 
-validators =
+validators = _.extend {}, aliasesValidators,
   inv: _.isInvEntityId
   wd: wdk.isWikidataEntityId
   isbn: isNormalizedIsbn
