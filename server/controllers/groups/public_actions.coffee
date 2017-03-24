@@ -58,7 +58,7 @@ module.exports =
   lastGroups: (req, res)->
     groups_.byCreation()
     .filter searchable
-    .then res.json.bind(res)
+    .then _.Wrap(res, 'groups')
     .catch error_.Handler(req, res)
 
   slug: (req, res)->
