@@ -46,9 +46,10 @@ searchWikidataByText = (query, key)->
   .finally _.EndTimer(key)
 
 searchLocalByText = (query, key)->
+  { search } = query
   key = startTimer 'searchLocalByText', key
 
-  searchLocalEntities query
+  searchLocalEntities search
   .timeout searchTimeout
   .map urifyInv
   .then GetEntitiesByUris(query.refresh)
