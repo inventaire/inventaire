@@ -118,7 +118,7 @@ module.exports = Entity =
     toEntityDoc.claims = _.extend {}, fromEntityDoc.claims, toEntityDoc.claims
     return toEntityDoc
 
-  turnEntityIntoRedirection: (fromEntityDoc, toUri, removedPlaceholdersIds)->
+  turnIntoRedirection: (fromEntityDoc, toUri, removedPlaceholdersIds)->
     _id: fromEntityDoc._id
     _rev: fromEntityDoc._rev
     type: 'entity'

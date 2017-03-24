@@ -14,9 +14,13 @@ merge = (userId, fromId, toId)->
   # Fetching non-formmatted docs
   entities_.byIds [fromId, toId]
   .spread (fromEntityDoc, toEntityDoc)->
-    # At this point if the entities are not found, that's the server's fault, thus the 500 statusCode
-    unless fromEntityDoc._id is fromId then throw error_.new "'from' entity doc not found", 500
-    unless toEntityDoc._id is toId then throw error_.new "'to' entity doc not found", 500
+    # At this point if the entities are not found, that's the server's fault,
+    # thus the 500 statusCode
+    unless fromEntityDoc._id is fromId
+      throw error_.new "'from' entity doc not found", 500
+
+    unless toEntityDoc._id is toId
+      throw error_.new "'to' entity doc not found", 500
 
     # Transfer all data from the 'fromEntity' to the 'toEntity'
     # if any difference can be found
@@ -41,15 +45,16 @@ turnIntoRedirection = (userId, fromId, toUri)->
   .then (currentFromDoc)->
     # If an author has no more links to it, remove it
     removeObsoletePlaceholderEntities userId, currentFromDoc
-    .then (removedPlaceholdersIds)->
-      updatedFromDoc = Entity.turnEntityIntoRedirection currentFromDoc, toUri, removedPlaceholdersIds
+    .then (removedIds)->
+      updatedFromDoc = Entity.turnIntoRedirection currentFromDoc, toUri, removedIds
       entities_.putUpdate userId, currentFromDoc, updatedFromDoc
 
   .then propagateRedirection.bind(null, userId, fromUri, toUri)
 
-# Removing the entities that were needed only by the entity about to be turned into a redirection:
-# this entity now don't have anymore reason to be and is quite probably a duplicate of an existing entity
-# referenced by the redirection destination entity.
+# Removing the entities that were needed only by the entity about to be turned
+# into a redirection: this entity now don't have anymore reason to be and is quite
+# probably a duplicate of an existing entity referenced by the redirection
+# destination entity.
 removeObsoletePlaceholderEntities = (userId, entityDocBeforeRedirection)->
   entityUrisToCheck = getEntityUrisToCheck entityDocBeforeRedirection.claims
   _.log entityUrisToCheck, 'entityUrisToCheck'
