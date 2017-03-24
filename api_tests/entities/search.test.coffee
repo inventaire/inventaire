@@ -1,0 +1,47 @@
+CONFIG = require 'config'
+__ = CONFIG.universalPath
+_ = __.require 'builders', 'utils'
+should = require 'should'
+{ Promise } = __.require 'lib', 'promises'
+{ nonAuthReq, authReq, getUser } = __.require 'apiTests', 'utils/utils'
+# Admin action, can't be triggered from the API without an admin user
+# so the simple work around is to call the function directly for now
+{ merge:mergeEntities } = __.require 'controllers', 'entities/lib/merge_entities'
+
+describe 'entities:search', ->
+  it 'should return a recently created entity', (done)->
+    authReq 'post', '/api/entities?action=create',
+      labels: { fr: 'zzzz yyyy xxxx' }
+      claims: { 'wdt:P31': [ 'wd:Q571' ] }
+    .delay 1000
+    .then (creationRes)->
+      nonAuthReq 'get', '/api/entities?action=search&search=zzzz&lang=fr'
+      .then _.Log('creationRes')
+      .then (searchRes)->
+        done()
+
+    return
+
+  it 'should not return a removed:placeholder entity', (done)->
+    Promise.all [
+      getUser().get '_id'
+      createEntity 'zzzz yyyy xxxxx'
+      createEntity 'zzzz yyyy xxxxxx'
+    ]
+    .spread (userId, fromId, toId)->
+      mergeEntities userId, fromId, toId
+      .delay 1000
+      .then -> nonAuthReq 'get', '/api/entities?action=search&search=zzzz&lang=fr'
+      .then (searchRes)->
+        worksIds = _.pluck searchRes.works, '_id'
+        (toId in worksIds).should.be.true()
+        (fromId not in worksIds).should.be.true()
+        done()
+
+    return
+
+createEntity = (label)->
+  authReq 'post', '/api/entities?action=create',
+    labels: { fr: label }
+    claims: { 'wdt:P31': [ 'wd:Q571' ] }
+  .get '_id'
