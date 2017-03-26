@@ -5,14 +5,7 @@ _ = __.require 'builders', 'utils'
 parseForm = require './lib/parse_form'
 error_ = __.require 'lib', 'error/error'
 images_ = __.require 'lib', 'images'
-{ objectStorage } = CONFIG
 { putImage } = require './put_image'
-
-client = switch objectStorage
-  when 'aws' then require './lib/aws_client'
-  when 'swift' then require './lib/swift_client'
-  when 'local' then require './lib/local_client'
-  else throw new Error 'unknown object storage configuration'
 
 exports.post = (req, res, next)->
   unless req.user? then return error_.unauthorizedApiAccess req, res

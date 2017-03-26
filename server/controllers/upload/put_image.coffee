@@ -1,3 +1,14 @@
+CONFIG = require 'config'
+__ = CONFIG.universalPath
+_ = __.require 'builders', 'utils'
+images_ = __.require 'lib', 'images'
+
+client = switch CONFIG.objectStorage
+  when 'aws' then require './lib/aws_client'
+  when 'swift' then require './lib/swift_client'
+  when 'local' then require './lib/local_client'
+  else throw new Error 'unknown object storage configuration'
+
 module.exports =
   putImage: (fileData)->
     { id, path, keepOldFile } = fileData
