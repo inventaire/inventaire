@@ -16,7 +16,7 @@ validFromPrefix = [ 'inv' ]
 validToPrefix = [ 'wd', 'inv' ]
 
 # Only books and authors can be merged yet
-validTypes = [ 'work', 'human' ]
+validTypes = [ 'work', 'human', 'serie' ]
 
 module.exports = (req, res)->
   { body } = req
