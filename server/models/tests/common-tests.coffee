@@ -4,7 +4,7 @@ _ = __.require 'builders', 'utils'
 regex_ = require './regex'
 error_ = __.require 'lib', 'error/error'
 
-{ CouchUuid, Email, Username, EntityUri, Lang, LocalImg } = regex_
+{ CouchUuid, Email, Username, EntityUri, Lang, WikiLang, LocalImg } = regex_
 
 # regex need to their context
 bindedTest = (regex)-> regex.test.bind regex
@@ -21,6 +21,7 @@ module.exports = tests =
   email: bindedTest Email
   entityUri: bindedTest EntityUri
   lang: bindedTest Lang
+  wikiLang: bindedTest WikiLang
   localImg: bindedTest LocalImg
   boolean: _.isBoolean
   position: (latLng)->

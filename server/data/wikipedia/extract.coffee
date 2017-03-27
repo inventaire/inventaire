@@ -16,7 +16,7 @@ module.exports = (req, res)->
   unless _.isNonEmptyString title
     return error_.bundleMissingQuery req, res, 'title'
 
-  unless tests.lang lang
+  unless tests.wikiLang lang
     return error_.bundleInvalid req, res, 'lang', lang
 
   key = "wpextract:#{lang}:#{title}"
@@ -31,11 +31,10 @@ requestExtract = (lang, title)->
     unless pages?
       throw error_.new 'invalid extract response', 500, arguments, res.query
 
-    for id, page of pages
-      { extract } = page
-    return data =
-      extract: extract
+    return {
+      extract: _.values(pages)?[0]?.extract
       url: "https://#{lang}.wikipedia.org/wiki/#{title}"
+    }
 
 apiQuery = (lang, title)->
   title = qs.escape title
