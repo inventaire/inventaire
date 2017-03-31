@@ -87,5 +87,5 @@ hasFormatter = Object.keys formatters
 
 validators = _.extend {}, aliasesValidators,
   inv: _.isInvEntityId
-  wd: wdk.isWikidataEntityId
+  wd: wdk.isItemId
   isbn: isNormalizedIsbn

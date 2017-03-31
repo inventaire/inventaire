@@ -43,7 +43,7 @@ module.exports = (params)->
   cache_.get key, runQuery.bind(null, params, key), timespan
 
 parametersTests =
-  qid: wdk.isWikidataEntityId
+  qid: wdk.isItemId
   pid: (pid)-> pid in propertyWhitelist
 
 propertyWhitelist = [ 'P31', 'P50', 'P106', 'P135', 'P136' ]
