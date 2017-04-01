@@ -27,7 +27,7 @@ MatchAuthor = (authors, lang)-> (result)->
 
 # We want to have a rather high level of certitude that this is the same
 MatchTitle = (title, lang)-> (result)->
-  resultTitle = getBestLangValue lang, result.originalLang, result.labels
+  resultTitle = getBestLangValue(lang, result.originalLang, result.labels).value
   unless _.isString(title) and _.isString(resultTitle) then return false
   return formatTitle(resultTitle) is formatTitle(title)
 

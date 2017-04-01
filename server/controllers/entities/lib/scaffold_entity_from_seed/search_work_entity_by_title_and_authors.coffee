@@ -54,4 +54,5 @@ AddAuthorsStrings = (lang)-> (result)->
 
 ParseAuthorsStrings = (lang)-> (res)->
   _.values res.entities
-  .map (authorEntity)-> getBestLangValue lang, authorEntity.originalLang, authorEntity.labels
+  .map (authorEntity)->
+    getBestLangValue(lang, authorEntity.originalLang, authorEntity.labels).value
