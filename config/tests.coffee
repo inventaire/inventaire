@@ -20,3 +20,4 @@ module.exports =
     enabled: false
   dataseed:
     enabled: false
+  deduplicateRequests: false

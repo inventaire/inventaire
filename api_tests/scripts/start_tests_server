@@ -1,15 +1,18 @@
-#!/usr/bin/env sh
+#!/usr/bin/env zsh
+
+testhost=http://localhost:3009
 
 # If the server is already up, return early
-curl -s http://localhost:3009 > /dev/null &&
+(curl -s "$testhost" > /dev/null || [ "$(cat run/3009)" == "starting" ]) &&
 echo "server already started" &&
 exit 0
 
 # Start a test server in the background
-export NODE_ENV=tests FORCE_COLOR=true; npm run watch > logs/test-server.log 2>&1 &
+export NODE_ENV=tests FORCE_COLOR=true
+npm run watch > logs/test-server.log 2>&1 &
 
-# on '$!': http://unix.stackexchange.com/a/85022/164977
-PID=$!
+# Will be replaced by the process pid once the server started
+echo "starting" > run/3009
 
 echo "waiting for server start..." &&
 inotifywait run/3009 -e modify > /dev/null 2>&1 &&

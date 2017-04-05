@@ -1,4 +1,5 @@
 CONFIG = require 'config'
+{ deduplicateRequests } = CONFIG
 { debug } = CONFIG
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
@@ -55,6 +56,8 @@ module.exports =
   # Assumes that a requests made twice with the same body within 2 secondes
   # is an erronous request that should be blocked
   deduplicateRequests: (req, res, next)->
+    unless deduplicateRequests then return next()
+
     { method, url } = req
     unless method in methodsWithBody then return next()
 

@@ -174,3 +174,5 @@ module.exports = config =
   feed:
     limitLength: 50
     image: 'https://inventaire.io/public/icon/120.png'
+
+  deduplicateRequests: true
