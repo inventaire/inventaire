@@ -10,11 +10,8 @@ describe 'items:create', ->
     getUser()
     .then (user)->
       userId = user._id
-      authReq 'post', '/api/items',
-        title: 'whatever'
-        entity: 'wd:Q3548806'
+      authReq 'post', '/api/items', newItemBase()
       .then (item)->
-        item.title.should.equal 'whatever'
         item.entity.should.equal 'wd:Q3548806'
         item.listing.should.equal 'private'
         item.transaction.should.equal 'inventorying'
@@ -42,3 +39,55 @@ describe 'items:create', ->
           done()
 
     return
+
+  it 'should deduce the title from an edition entity', (done)->
+    title = 'Un mariage à Lyon'
+    ensureEntityExist 'isbn:9782253138938',
+      labels: {}
+      claims:
+        'wdt:P31': [ 'wd:Q3331189' ]
+        'wdt:P212': [ '978-2-253-13893-8' ]
+        'wdt:P1476': [ title ]
+
+    .then ->
+      authReq 'post', '/api/items', { entity: 'isbn:9782253138938' }
+      .then (item)->
+        item.snapshot.should.be.an.Object()
+        item.snapshot['entity:title'].should.equal title
+        done()
+
+    return
+
+  it 'should reject an item created with a work entity without specifying in which lang the title is', (done)->
+    authReq 'post', '/api/items', { entity: 'wd:Q3548806' }
+    .catch (err)->
+      err.statusCode.should.equal 400
+      done()
+
+    return
+
+  it 'should deduce the title from a work entity and a lang', (done)->
+    uri = 'wd:Q3548806'
+    lang = 'fr'
+    authReq 'get', "/api/entities?action=by-uris&uris=#{uri}"
+    .get 'entities'
+    .then (entities)->
+      title = entities[uri].labels[lang]
+      authReq 'post', '/api/items', { entity: 'wd:Q3548806', lang: 'fr' }
+      .then (item)->
+        item.snapshot.should.be.an.Object()
+        item.snapshot['entity:title'].should.equal title
+        done()
+
+    return
+
+  # TODO:
+  # it 'should be updated when the edition entity title change', (done)->
+  # it 'should be updated when the work entity title change', (done)->
+
+ensureEntityExist = (uri, data)->
+  authReq 'get', "/api/entities?action=by-uris&uris=#{uri}"
+  .get 'entities'
+  .then (entities)->
+    if entities[uri]? then return
+    authReq 'post', '/api/entities?action=create', data

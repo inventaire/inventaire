@@ -11,12 +11,12 @@ create = Item.create.bind null, someUserId
 update = Item.update.bind null, someUserId
 
 validItem =
-  _id: 'new'
-  title: 'Odysse'
   entity: 'wd:Q35160'
   listing: 'public'
   transaction: 'giving'
   pictures: ['https://pictu.re/yoplaboom']
+  lang: 'fr'
+  snapshot: { 'entity:title': 'Odyssé' }
 
 extendItem = (data)->
   _.extend {}, validItem, data
@@ -44,11 +44,17 @@ describe 'item model', ->
     describe 'title', ->
       it "should return an object with a title", (done)->
         item = create validItem
-        item.title.should.equal validItem.title
+        item.snapshot['entity:title'].should.equal validItem.snapshot['entity:title']
         done()
 
       it "should throw on missing title", (done)->
-        (-> create extendItem({title: null})).should.throw()
+        item = extendItem { snapshot: null }
+        (-> create(item)).should.throw()
+        done()
+
+      it "should throw on invalid title", (done)->
+        item = extendItem { snapshot: { 'entity:title': 123 } }
+        (-> create(item)).should.throw()
         done()
 
     describe 'entity', ->

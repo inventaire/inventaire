@@ -9,16 +9,17 @@ attributes.updatable = [
   'snapshot'
 ]
 
-# Not allowing snapshot as it later updated
-# and would require additional checking
 attributes.validAtCreation = [
-  'title'
   'entity'
   'transaction'
   'pictures'
   'listing'
   'details'
   'notes'
+  'snapshot'
+  # Required for items created from a language-ambiguous entity (like a work)
+  # to determine from which language the title should be snapshoted
+  'lang'
 ]
 
 # List of attributes that can be part of item.snapshot,
@@ -28,6 +29,7 @@ attributes.validAtCreation = [
 attributes.inLocalSnapshot = [
   'entity:image'
   'entity:authors'
+  'entity:title'
 ]
 
 # not updatable by the user

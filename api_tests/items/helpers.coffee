@@ -4,9 +4,7 @@ _ = __.require 'builders', 'utils'
 randomString = __.require 'lib', './utils/random_string'
 
 module.exports =
-  newItemBase: ->
-    title: 'whatever' + randomString(2)
-    entity: 'wd:Q3548806'
+  newItemBase: -> { entity: 'wd:Q3548806', lang: 'fr' }
 
   CountChange: (snapBefore, snapAfter)-> (section)->
     before = snapBefore[section]['items:count']

@@ -9,7 +9,7 @@ module.exports =
   itemId: itemId
   userId: userId
   entity: entityUri
-  title: (str)-> nonEmptyString str, 300
+  lang: (lang)-> if lang then _.isLang(lang) else true
   pictures: (pictures)-> _.isArray(pictures) and _.all(pictures, imgUrl)
   transaction: (transaction)->
     transaction in constrained.transaction.possibilities
@@ -27,3 +27,4 @@ module.exports =
 snapshotTests =
   'entity:authors': (str)-> nonEmptyString str, 500
   'entity:image': _.isExtendedUrl
+  'entity:title': (str)-> nonEmptyString str, 500

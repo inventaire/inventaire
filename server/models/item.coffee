@@ -31,7 +31,7 @@ Item.create = (userId, item)->
 
   item.owner = userId
   item.created = Date.now()
-  item.snapshot = {}
+  item.snapshot or= {}
   return item
 
 passAttrTest = (item, attr)->
