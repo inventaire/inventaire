@@ -1,6 +1,6 @@
 __ = require('config').universalPath
 entities_ = require './entities'
-getEntityType = __.require 'lib', 'wikidata/get_entity_type'
+getEntityType = require './get_entity_type'
 getInvEntityCanonicalUri = require './get_inv_entity_canonical_uri'
 formatEntityCommon = require './format_entity_common'
 addRedirection = require './add_redirection'
