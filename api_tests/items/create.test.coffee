@@ -58,6 +58,52 @@ describe 'items:create', ->
 
     return
 
+  it 'should deduce the author from a work entity', (done)->
+    authReq 'post', '/api/entities?action=create',
+      labels: { de: 'Mr moin moin' }
+      claims: { 'wdt:P31': [ 'wd:Q5' ] }
+    .then (authorEntity)->
+      authReq 'post', '/api/entities?action=create',
+        labels: { de: 'moin moin' }
+        claims:
+          'wdt:P31': [ 'wd:Q571' ]
+          'wdt:P50': [ authorEntity.uri ]
+    .then (workEntity)->
+      authReq 'post', '/api/items', { entity: workEntity.uri, lang: 'de' }
+      .then (item)->
+        item.snapshot.should.be.an.Object()
+        item.snapshot['entity:authors'].should.equal 'Mr moin moin'
+        done()
+
+    return
+
+  it 'should deduce the author from an edition entity', (done)->
+    authReq 'post', '/api/entities?action=create',
+      labels: { de: 'Mr moin moin' }
+      claims: { 'wdt:P31': [ 'wd:Q5' ] }
+    .then (authorEntity)->
+      authReq 'post', '/api/entities?action=create',
+        labels: { de: 'moin moin' }
+        claims:
+          'wdt:P31': [ 'wd:Q571' ]
+          'wdt:P50': [ authorEntity.uri ]
+    .then (workEntity)->
+      ensureEntityExist 'isbn:9782315006113',
+        labels: {}
+        claims:
+          'wdt:P31': [ 'wd:Q3331189' ]
+          'wdt:P212': [ '978-2-315-00611-3' ]
+          'wdt:P1476': [ 'Gouverner par le Chaos' ]
+          'wdt:P629': [ workEntity.uri ]
+    .then ->
+      authReq 'post', '/api/items', { entity: 'isbn:9782315006113' }
+      .then (item)->
+        item.snapshot.should.be.an.Object()
+        item.snapshot['entity:authors'].should.equal 'Mr moin moin'
+        done()
+
+    return
+
   it 'should reject an item created with a non-whitelisted entity type', (done)->
     authReq 'post', '/api/items', { entity: 'wd:Q1', lang: 'fr' }
     .catch (err)->

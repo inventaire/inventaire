@@ -3,7 +3,7 @@ _ = __.require 'builders', 'utils'
 items_ = __.require 'controllers', 'items/lib/items'
 error_ = __.require 'lib', 'error/error'
 { Track } = __.require 'lib', 'track'
-snapshotTitleFromEntity = require './lib/snapshot_title_from_entity'
+snapshotEntityData = require './lib/snapshot_entity_data'
 
 module.exports = (req, res, next) ->
   unless req.user? then return error_.unauthorizedApiAccess req, res
@@ -20,7 +20,7 @@ module.exports = (req, res, next) ->
   reqUserId = req.user._id
   itemId = item._id
 
-  snapshotTitleFromEntity item, entityUri
+  snapshotEntityData item, entityUri
   .then items_.create.bind(null, reqUserId)
   .then (item)-> res.status(201).json item
   .tap Track(req, ['item', 'creation'])
