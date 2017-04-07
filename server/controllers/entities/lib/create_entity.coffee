@@ -68,7 +68,6 @@ validateClaims = (claims, type)->
 perTypeClaimsTests =
   edition: (claims)->
     hasWork = claims['wdt:P629']?[0]?
-    hasIsbn = claims['wdt:P212']?[0]?
-    unless hasWork or hasIsbn
-      throw error_.new 'an edition entity should have an associated work claim (wdt:P629) or an ISBN-13 (wdt:P212)', 400, claims
+    unless hasWork
+      throw error_.new 'an edition should have an associated work', 400, claims
     return

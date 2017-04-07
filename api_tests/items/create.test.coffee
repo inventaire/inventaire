@@ -4,6 +4,7 @@ _ = __.require 'builders', 'utils'
 should = require 'should'
 { authReq, getUser } = __.require 'apiTests', 'utils/utils'
 { newItemBase, CountChange } = require './helpers'
+{ ensureEntityExist } = require '../entities/helpers'
 
 describe 'items:create', ->
   it 'should create an item', (done)->
@@ -190,10 +191,3 @@ describe 'items:create', ->
 
   # TODO:
   # it 'should be updated when its remote work entity title changes', (done)->
-
-ensureEntityExist = (uri, data)->
-  authReq 'get', "/api/entities?action=by-uris&uris=#{uri}"
-  .get 'entities'
-  .then (entities)->
-    if entities[uri]? then return entities[uri]
-    authReq 'post', '/api/entities?action=create', data

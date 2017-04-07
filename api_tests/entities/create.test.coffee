@@ -3,6 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { nonAuthReq, authReq } = __.require 'apiTests', 'utils/utils'
+{ ensureEntityExist } = require './helpers'
 
 describe 'entities:create', ->
   it 'should not be able to create an entity without a wdt:P31 value', (done)->
@@ -124,14 +125,23 @@ describe 'entities:create', ->
     return
 
   it 'should reject an entity created with a concurrent property with a value already taken', (done)->
-    # Make the entity being scaffolded from seed
-    nonAuthReq 'get', '/api/entities?action=by-uris&uris=isbn:9782253138938'
-    .then (res)->
-      authReq 'post', '/api/entities?action=create',
-        labels: { fr: 'bla' }
+    authReq 'post', '/api/entities?action=create',
+      labels: { fr: 'bla' }
+      claims: { 'wdt:P31': [ 'wd:Q571' ] }
+    .then (workEntity)->
+      ensureEntityExist 'isbn:9782315006113',
+        labels: {}
         claims:
           'wdt:P31': [ 'wd:Q3331189' ]
-          'wdt:P212': [ '978-2-253-13893-8' ]
+          'wdt:P212': [ '978-2-315-00611-3' ]
+          'wdt:P629': [ workEntity.uri ]
+      .then ->
+        authReq 'post', '/api/entities?action=create',
+          labels: { fr: 'bla' }
+          claims:
+            'wdt:P31': [ 'wd:Q3331189' ]
+            'wdt:P212': [ '978-2-315-00611-3' ]
+            'wdt:P629': [ workEntity.uri ]
       .catch (err)->
         err.body.status_verbose.should.equal 'this property value is already used'
         err.statusCode.should.equal 400
@@ -140,17 +150,25 @@ describe 'entities:create', ->
     return
 
   it 'should reject an entity created with inappropriate properties', (done)->
-    # Make the entity being scaffolded from seed
-    nonAuthReq 'get', '/api/entities?action=by-uris&uris=isbn:9782315006113'
-    .then (res)->
-      authReq 'post', '/api/entities?action=create',
-        labels: { fr: 'bla' }
-        claims:
-          'wdt:P31': [ 'wd:Q571' ]
-          # A book entity should not have an ISBN
-          'wdt:P212': [ '978-2-315-00611-3' ]
-      .catch (err)->
-        err.statusCode.should.equal 400
-        done()
+    authReq 'post', '/api/entities?action=create',
+      labels: { fr: 'bla' }
+      claims:
+        'wdt:P31': [ 'wd:Q571' ]
+        # A book entity should not have an ISBN
+        'wdt:P212': [ '978-2-315-00611-3' ]
+    .catch (err)->
+      err.statusCode.should.equal 400
+      done()
+
+    return
+
+  it 'should reject an edition entity without an associated work', (done)->
+    authReq 'post', '/api/entities?action=create',
+      labels: { fr: 'bla' }
+      claims: { 'wdt:P31': [ 'wd:Q3331189' ] }
+    .catch (err)->
+      err.statusCode.should.equal 400
+      err.body.status_verbose.should.equal 'an edition should have an associated work'
+      done()
 
     return
