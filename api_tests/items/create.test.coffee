@@ -58,6 +58,15 @@ describe 'items:create', ->
 
     return
 
+  it 'should reject an item created with a non-whitelisted entity type', (done)->
+    authReq 'post', '/api/items', { entity: 'wd:Q1', lang: 'fr' }
+    .catch (err)->
+      err.statusCode.should.equal 400
+      err.body.status_verbose.should.equal 'invalid entity type'
+      done()
+
+    return
+
   it 'should reject an item created with a work entity without specifying in which lang the title is', (done)->
     authReq 'post', '/api/items', { entity: 'wd:Q3548806' }
     .catch (err)->
