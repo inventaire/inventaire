@@ -18,4 +18,4 @@ kill -9 $serverpid 2> /dev/null ||
 echo "no server to kill"
 
 # Remove any stored state, either the pid or 'starting'
-rm run/3009
+echo '' > run/3009
