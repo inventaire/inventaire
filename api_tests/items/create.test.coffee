@@ -187,5 +187,60 @@ describe 'items:create', ->
 
     return
 
+  it 'should be updated when its local author entity title changes (edition entity)', (done)->
+    ensureEditionExists 'isbn:9788389920935', null,
+      labels: {}
+      claims:
+        'wdt:P31': [ 'wd:Q3331189' ]
+        'wdt:P212': [ '978-83-89920-93-5' ]
+        'wdt:P1476': [ 'some title' ]
+    .then (editionDoc)->
+      workUri = editionDoc.claims['wdt:P629'][0]
+      authReq 'get', "/api/entities?action=by-uris&uris=#{workUri}"
+    .then (res)->
+      workEntity = _.values(res.entities)[0]
+      trueAuthorUri = workEntity.claims['wdt:P50'][0]
+      authReq 'post', '/api/items', { entity: 'isbn:9788389920935' }
+      .then (item)->
+        updateAuthorName = 'Mr moin moin' + new Date().toISOString()
+        authReq 'put', '/api/entities?action=update-label',
+          id: trueAuthorUri.split(':')[1]
+          lang: 'de'
+          value: updateAuthorName
+        .delay 1000
+        .then -> authReq 'get', "/api/items?action=by-ids&ids=#{item._id}"
+        .then (res)->
+          res.items[0].snapshot['entity:authors'].should.equal updateAuthorName
+          done()
+
+    return
+
+  it 'should be updated when its local author entity title changes (work entity)', (done)->
+    authReq 'post', '/api/entities?action=create',
+      labels: { de: 'Mr moin moin' }
+      claims: { 'wdt:P31': [ 'wd:Q5' ] }
+    .then (authorEntity)->
+      authReq 'post', '/api/entities?action=create',
+        labels: { de: 'moin moin' }
+        claims:
+          'wdt:P31': [ 'wd:Q571' ]
+          'wdt:P50': [ authorEntity.uri ]
+      .then (workEntity)->
+        authReq 'post', '/api/items', { entity: workEntity.uri, lang: 'de' }
+        .then (item)->
+          updateAuthorName = 'Mr moin moin' + new Date().toISOString()
+          authReq 'put', '/api/entities?action=update-label',
+            id: authorEntity._id
+            lang: 'de'
+            value: updateAuthorName
+          .delay 1000
+          .then -> authReq 'get', "/api/items?action=by-ids&ids=#{item._id}"
+          .then (res)->
+            res.items[0].snapshot['entity:authors'].should.equal updateAuthorName
+            done()
+
+    return
+
   # TODO:
+  # it 'should be updated when its local author entity is merged', (done)->
   # it 'should be updated when its remote work entity title changes', (done)->

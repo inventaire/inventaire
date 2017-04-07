@@ -25,6 +25,6 @@ module.exports =
     return true
 
 snapshotTests =
-  'entity:authors': (str)-> nonEmptyString str, 500
+  'entity:authors': _.isString
   'entity:image': _.isExtendedUrl
   'entity:title': (str)-> nonEmptyString str, 500

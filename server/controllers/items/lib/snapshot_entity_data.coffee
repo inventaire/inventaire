@@ -3,9 +3,8 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 getEntityByUri = __.require 'controllers', 'entities/lib/get_entity_by_uri'
 Item = __.require 'models', 'item'
-{ Promise } = __.require 'lib', 'promises'
-getBestLangValue = __.require('sharedLibs', 'get_best_lang_value')(_)
 { getOriginalLang } = __.require 'lib', 'wikidata/wikidata'
+{ getAuthorsNamesString } = require('./snapshot_helpers')
 
 module.exports = (item, entityUri)->
   getEntityByUri entityUri
@@ -45,15 +44,6 @@ snapshotByType =
     .then addSnapshot(item, title)
 
 whitelistedTypes = Object.keys snapshotByType
-
-getAuthorsNamesString = (wdtP50, preferedLang)->
-  # Using getEntityByUri instead of getEntitiesByUris to keep the order
-  Promise.all wdtP50.map(getEntityByUri)
-  .map getAuthorsName(preferedLang)
-  .then (names)-> names.join ', '
-
-getAuthorsName = (lang)-> (author)->
-  getBestLangValue(lang, author.originalLang, author.labels).value
 
 addSnapshot = (item, title)-> (authorsNamesString)->
   item.snapshot =
