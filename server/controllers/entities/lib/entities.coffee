@@ -35,12 +35,14 @@ module.exports = entities_ =
     keys = ids.map (id)-> ['invp:P1', id]
     db.viewByKeys 'byClaim', keys
 
-  byClaim: (property, value, includeDocs=false)->
+  byClaim: (property, value, includeDocs=false, parseDoc=false)->
     promises_.try -> validateProperty property
     .then ->
-      db.view 'entities', 'byClaim',
+      query = db.view 'entities', 'byClaim',
         key: [ property, value ]
         include_docs: includeDocs
+      if parseDoc then query.then couch_.mapDoc
+      else query
 
   idsByClaim: (property, value)->
     entities_.byClaim property, value

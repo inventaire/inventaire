@@ -39,6 +39,5 @@ _wikidataReverseClaims = (property, value)->
   .map prefixify
 
 invReverseClaims = (property, value)->
-  entities_.byClaim property, value, true
-  .then couch_.mapDoc
+  entities_.byClaim property, value, true, true
   .map (entity)-> getInvEntityCanonicalUri(entity)[0]
