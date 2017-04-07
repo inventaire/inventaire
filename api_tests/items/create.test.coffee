@@ -4,7 +4,7 @@ _ = __.require 'builders', 'utils'
 should = require 'should'
 { authReq, getUser } = __.require 'apiTests', 'utils/utils'
 { newItemBase, CountChange } = require './helpers'
-{ ensureEntityExist } = require '../entities/helpers'
+{ ensureEditionExists } = require '../entities/helpers'
 
 describe 'items:create', ->
   it 'should create an item', (done)->
@@ -43,13 +43,12 @@ describe 'items:create', ->
 
   it 'should deduce the title from an edition entity', (done)->
     title = 'Un mariage à Lyon'
-    ensureEntityExist 'isbn:9782253138938',
+    ensureEditionExists 'isbn:9782253138938', null,
       labels: {}
       claims:
         'wdt:P31': [ 'wd:Q3331189' ]
         'wdt:P212': [ '978-2-253-13893-8' ]
         'wdt:P1476': [ title ]
-
     .then ->
       authReq 'post', '/api/items', { entity: 'isbn:9782253138938' }
       .then (item)->
@@ -83,19 +82,18 @@ describe 'items:create', ->
       labels: { de: 'Mr moin moin' }
       claims: { 'wdt:P31': [ 'wd:Q5' ] }
     .then (authorEntity)->
-      authReq 'post', '/api/entities?action=create',
+      workData =
         labels: { de: 'moin moin' }
         claims:
           'wdt:P31': [ 'wd:Q571' ]
           'wdt:P50': [ authorEntity.uri ]
-    .then (workEntity)->
-      ensureEntityExist 'isbn:9782315006113',
+
+      ensureEditionExists 'isbn:9782315006113', workData,
         labels: {}
         claims:
           'wdt:P31': [ 'wd:Q3331189' ]
           'wdt:P212': [ '978-2-315-00611-3' ]
           'wdt:P1476': [ 'Gouverner par le Chaos' ]
-          'wdt:P629': [ workEntity.uri ]
     .then ->
       authReq 'post', '/api/items', { entity: 'isbn:9782315006113' }
       .then (item)->
@@ -138,7 +136,7 @@ describe 'items:create', ->
     return
 
   it 'should be updated when its local edition entity title changes', (done)->
-    ensureEntityExist 'isbn:9789100131913',
+    ensureEditionExists 'isbn:9789100131913', null,
       labels: {}
       claims:
         'wdt:P31': [ 'wd:Q3331189' ]

@@ -3,7 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { nonAuthReq, authReq } = __.require 'apiTests', 'utils/utils'
-{ ensureEntityExist } = require './helpers'
+{ ensureEditionExists } = require './helpers'
 
 describe 'entities:create', ->
   it 'should not be able to create an entity without a wdt:P31 value', (done)->
@@ -125,27 +125,22 @@ describe 'entities:create', ->
     return
 
   it 'should reject an entity created with a concurrent property with a value already taken', (done)->
-    authReq 'post', '/api/entities?action=create',
-      labels: { fr: 'bla' }
-      claims: { 'wdt:P31': [ 'wd:Q571' ] }
-    .then (workEntity)->
-      ensureEntityExist 'isbn:9782315006113',
-        labels: {}
+    ensureEditionExists 'isbn:9782315006113', null,
+      labels: {}
+      claims:
+        'wdt:P31': [ 'wd:Q3331189' ]
+        'wdt:P212': [ '978-2-315-00611-3' ]
+    .then (editionEntity)->
+      authReq 'post', '/api/entities?action=create',
+        labels: { fr: 'bla' }
         claims:
           'wdt:P31': [ 'wd:Q3331189' ]
           'wdt:P212': [ '978-2-315-00611-3' ]
-          'wdt:P629': [ workEntity.uri ]
-      .then ->
-        authReq 'post', '/api/entities?action=create',
-          labels: { fr: 'bla' }
-          claims:
-            'wdt:P31': [ 'wd:Q3331189' ]
-            'wdt:P212': [ '978-2-315-00611-3' ]
-            'wdt:P629': [ workEntity.uri ]
-      .catch (err)->
-        err.body.status_verbose.should.equal 'this property value is already used'
-        err.statusCode.should.equal 400
-        done()
+          'wdt:P629': editionEntity.claims['wdt:P629']
+    .catch (err)->
+      err.body.status_verbose.should.equal 'this property value is already used'
+      err.statusCode.should.equal 400
+      done()
 
     return
 
