@@ -27,3 +27,5 @@ module.exports =
     .then items_.delete.bind(null, id)
     .then res.json.bind(res)
     .catch error_.Handler(req, res)
+
+require('./lib/update_snapshot_on_entity_change')()

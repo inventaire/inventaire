@@ -145,4 +145,3 @@ FilterWithImage = (assertImage)->
     else items
 
 itemWithImage = (item)-> item.snapshot['entity:image'] or item.pictures.length > 0
-

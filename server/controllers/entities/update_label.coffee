@@ -2,6 +2,7 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 entities_ = require './lib/entities'
+radio = __.require 'lib', 'radio'
 
 module.exports = (req, res)->
   { id:entityId, lang, value } = req.body
@@ -27,5 +28,6 @@ module.exports = (req, res)->
   entities_.byId entityId
   .then _.Log('doc')
   .then entities_.updateLabel.bind(null, lang, value, reqUserId)
-  .then _.Ok(res)
+  .tap _.Ok(res)
+  .then (updatedDoc)-> radio.emit 'entity:update:label', updatedDoc, lang, value
   .catch error_.Handler(req, res)

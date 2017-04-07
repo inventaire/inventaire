@@ -113,3 +113,8 @@ Item.updateEntityAfterEntityMergeRevert = (fromUri, toUri, item)->
   item.previousEntity.shift()
 
   return _.log item, 'item after entity merge revert'
+
+Item.updateSnapshotTitle = (title, item)->
+  item.snapshot or= {}
+  item.snapshot['entity:title'] = title
+  return item
