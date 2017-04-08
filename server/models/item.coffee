@@ -89,14 +89,12 @@ Item.updateEntityAfterEntityMerge = (fromUri, toUri, item)->
   unless item.entity is fromUri
     throw error_.new "wrong entity uri: expected #{fromUri}, got #{item.entity}", 500
 
-  _.log item, 'item before entity merge'
-
   item.entity = toUri
   # Keeping track of previous entity URI in case a rollback is needed
   item.previousEntity or= []
   item.previousEntity.unshift fromUri
 
-  return _.log item, 'item after entity merge'
+  return item
 
 Item.updateEntityAfterEntityMergeRevert = (fromUri, toUri, item)->
   { entity } = item
@@ -107,12 +105,10 @@ Item.updateEntityAfterEntityMergeRevert = (fromUri, toUri, item)->
   unless fromUri is previousEntity
     throw error_.new "wrong previous entity: expected #{previousEntity}, got #{fromUri}", 500
 
-  _.log item, 'item before entity merge revert'
-
   item.entity = previousEntity
   item.previousEntity.shift()
 
-  return _.log item, 'item after entity merge revert'
+  return item
 
 Item.updateSnapshotTitle = (title, item)->
   item.snapshot or= {}
