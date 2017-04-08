@@ -100,6 +100,7 @@ describe 'items:create', ->
         item.snapshot.should.be.an.Object()
         item.snapshot['entity:authors'].should.equal 'Mr moin moin'
         done()
+    .catch done
 
     return
 

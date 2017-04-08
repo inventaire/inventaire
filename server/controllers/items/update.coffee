@@ -9,12 +9,11 @@ radio = __.require 'lib', 'radio'
 module.exports = (req, res, next) ->
   unless req.user? then return error_.unauthorizedApiAccess req, res
   { body:item } = req
-  { _id, title, entity } = item
+  { _id, entity } = item
 
   _.log item, 'item update'
 
   unless _id? then return error_.bundleMissingBody req, res, '_id'
-  unless title? then return error_.bundleMissingBody req, res, 'title'
   unless entity? then return error_.bundleMissingBody req, res, 'entity'
 
   unless _.isItemId _id

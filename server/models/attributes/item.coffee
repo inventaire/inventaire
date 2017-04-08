@@ -36,8 +36,8 @@ attributes.inLocalSnapshot = [
 notUpdatable = [
   '_id'
   '_rev'
-  'title'
   'entity'
+  'lang'
   'created'
 
   # updated when user updatable attributes are updated

@@ -16,18 +16,20 @@ describe 'items:update', ->
         updatedItem.transaction.should.equal newTransaction
         updatedItem.details.should.equal newDetails
         done()
+    .catch done
 
     return
 
   it 'should not be able to update non updatable attributes', (done)->
     authReq 'post', '/api/items', newItemBase()
     .then (item)->
-      originalTitle = item.title
-      item.title += 'bla'
+      { entity:originalEntity } = item
+      item.entity = 'wd:Q123'
       authReq 'put', '/api/items', item
       .then (updatedItem)->
-        updatedItem.title.should.equal originalTitle
+        updatedItem.entity.should.equal originalEntity
         done()
+    .catch done
 
     return
 
@@ -52,5 +54,6 @@ describe 'items:update', ->
             countChange('network').should.equal 0
             countChange('public').should.equal 1
             done()
+    .catch done
 
     return
