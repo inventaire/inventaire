@@ -88,14 +88,14 @@ describe 'items:create', ->
           'wdt:P31': [ 'wd:Q571' ]
           'wdt:P50': [ authorEntity.uri ]
 
-      ensureEditionExists 'isbn:9782315006113', workData,
+      ensureEditionExists 'isbn:9780812993257', workData,
         labels: {}
         claims:
           'wdt:P31': [ 'wd:Q3331189' ]
-          'wdt:P212': [ '978-2-315-00611-3' ]
-          'wdt:P1476': [ 'Gouverner par le Chaos' ]
+          'wdt:P212': [ '978-0-8129-9325-7' ]
+          'wdt:P1476': [ 'The Road to Character' ]
     .then ->
-      authReq 'post', '/api/items', { entity: 'isbn:9782315006113' }
+      authReq 'post', '/api/items', { entity: 'isbn:9780812993257' }
       .then (item)->
         item.snapshot.should.be.an.Object()
         item.snapshot['entity:authors'].should.equal 'Mr moin moin'

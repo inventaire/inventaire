@@ -56,11 +56,13 @@ describe 'users:search', ->
       if err.body.status_verbose is 'already up-to-date' then return
       else throw err
     .then getUser
+    .delay 1000
     .then (user)->
       nonAuthReq 'get', "/api/users?action=search&search=#{user.bio}"
       .then (res)->
         (user._id in usersIds(res)).should.be.true()
         done()
+    .catch done
 
     return
 
