@@ -3,7 +3,7 @@ _ = __.require 'builders', 'utils'
 items_ = __.require 'controllers', 'items/lib/items'
 error_ = __.require 'lib', 'error/error'
 { Track } = __.require 'lib', 'track'
-snapshotEntityData = require './lib/snapshot_entity_data'
+snapshotEntityData = require './lib/snapshot/snapshot_entity_data'
 
 module.exports = (req, res, next) ->
   unless req.user? then return error_.unauthorizedApiAccess req, res

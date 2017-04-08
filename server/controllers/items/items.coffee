@@ -28,4 +28,4 @@ module.exports =
     .then res.json.bind(res)
     .catch error_.Handler(req, res)
 
-require('./lib/update_snapshot_on_entity_change')()
+require('./lib/snapshot/update_snapshot_on_entity_change')()

@@ -4,7 +4,7 @@ error_ = __.require 'lib', 'error/error'
 getEntityByUri = __.require 'controllers', 'entities/lib/get_entity_by_uri'
 Item = __.require 'models', 'item'
 { getOriginalLang } = __.require 'lib', 'wikidata/wikidata'
-{ getAuthorsNamesString } = require('./snapshot_helpers')
+authors_ = require './authors'
 
 module.exports = (item, entityUri)->
   getEntityByUri entityUri
@@ -27,7 +27,7 @@ snapshotByType =
     lang = getOriginalLang(entity.claims) or 'en'
 
     getEntityByUri workUri
-    .then (workEntity)-> getAuthorsNamesString workEntity.claims['wdt:P50'], lang
+    .then (workEntity)-> authors_.getNames workEntity.claims['wdt:P50'], lang
     .then addSnapshot(item, title)
 
   work: (item, entity)->
@@ -40,7 +40,7 @@ snapshotByType =
     unless _.isNonEmptyString title
       throw error_.new 'no title could be found on the work entity', 400, item
 
-    getAuthorsNamesString entity.claims['wdt:P50'], lang
+    authors_.getNames entity.claims['wdt:P50'], lang
     .then addSnapshot(item, title)
 
 whitelistedTypes = Object.keys snapshotByType
