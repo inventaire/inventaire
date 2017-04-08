@@ -2,8 +2,13 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ authReq } = __.require 'apiTests', 'utils/utils'
+{ Promise } = __.require 'lib', 'promises'
+{ authReq, getUser } = __.require 'apiTests', 'utils/utils'
 { ensureEditionExists } = require '../entities/helpers'
+# Admin action, can't be triggered from the API without an admin user
+# so the simple work around is to call the function directly for now
+{ merge:mergeEntities } = __.require 'controllers', 'entities/lib/merge_entities'
+randomString = __.require 'lib', './utils/random_string'
 
 describe 'items:snapshot', ->
   it 'should be updated when its local edition entity title changes', (done)->
@@ -110,8 +115,32 @@ describe 'items:snapshot', ->
             res.items[0].snapshot['entity:authors'].should.equal updateAuthorName
             done()
 
+  it 'should be updated when its local work entity is merged', (done)->
+    Promise.all [
+      getUser().get '_id'
+      createWorkEntity()
+      createWorkEntity()
+    ]
+    .spread (userId, workEntityA, workEntityB)->
+      authReq 'post', '/api/items', { entity: workEntityA.uri, lang: 'de' }
+      .then (item)->
+        mergeEntities userId, workEntityA._id, workEntityB._id
+        .then -> authReq 'get', "/api/items?action=by-ids&ids=#{item._id}"
+      .then (res)->
+        updatedItem = res.items[0]
+        updatedTitle = workEntityB.labels.de
+        updatedItem.snapshot['entity:title'].should.equal updatedTitle
+        done()
+    .catch done
+
     return
 
   # TODO:
   # it 'should be updated when its local author entity is merged', (done)->
+  # it 'should be updated when its remote author entity changes', (done)->
   # it 'should be updated when its remote work entity title changes', (done)->
+
+createWorkEntity = ->
+  authReq 'post', '/api/entities?action=create',
+    labels: { de: 'moin moin' + randomString(4) }
+    claims: { 'wdt:P31': [ 'wd:Q571' ] }
