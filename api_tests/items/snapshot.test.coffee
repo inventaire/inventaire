@@ -3,11 +3,8 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
-{ authReq, getUser } = __.require 'apiTests', 'utils/utils'
+{ authReq, getUser, adminReq } = __.require 'apiTests', 'utils/utils'
 { ensureEditionExists } = require '../entities/helpers'
-# Admin action, can't be triggered from the API without an admin user
-# so the simple work around is to call the function directly for now
-{ merge:mergeEntities } = __.require 'controllers', 'entities/lib/merge_entities'
 randomString = __.require 'lib', './utils/random_string'
 
 describe 'items:snapshot', ->
@@ -123,9 +120,11 @@ describe 'items:snapshot', ->
     ]
     .spread (userId, workEntityA, workEntityB)->
       authReq 'post', '/api/items', { entity: workEntityA.uri, lang: 'de' }
-      .then (item)->
-        mergeEntities userId, workEntityA._id, workEntityB._id
-        .then -> authReq 'get', "/api/items?action=by-ids&ids=#{item._id}"
+      .tap ->
+        adminReq 'put', '/api/entities?action=merge',
+          from: workEntityA.uri
+          to: workEntityB.uri
+      .then (item)-> authReq 'get', "/api/items?action=by-ids&ids=#{item._id}"
       .then (res)->
         updatedItem = res.items[0]
         updatedTitle = workEntityB.labels.de

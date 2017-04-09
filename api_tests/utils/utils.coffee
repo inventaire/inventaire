@@ -7,6 +7,7 @@ promises_ = __.require 'lib', 'promises'
 host = CONFIG.fullHost()
 authEndpoint = host + '/api/auth'
 randomString = __.require 'lib', './utils/random_string'
+{ makeUserAdmin } = __.require 'controllers', 'user/lib/user'
 
 testUser =
   username: 'testuser'
@@ -17,6 +18,11 @@ testUserB =
   username: 'testuserb'
   password: 'testpassword'
   email: 'b+testemail@inventaire.io'
+
+testAdmin =
+  username: 'testadmin'
+  password: 'testpassword'
+  email: 'c+testemail@inventaire.io'
 
 loginEndpoint = "#{authEndpoint}?action=login"
 signupEndpoint = "#{authEndpoint}?action=signup"
@@ -32,6 +38,7 @@ getUserCookies = (userData)->
 
 userCookiesPromise = getUserCookies testUser
 userBCookiesPromise = getUserCookies testUserB
+adminCookiesPromise =  getUserCookies testAdmin
 
 request = (method, endpoint, body, cookies = [])->
   url = host + endpoint
@@ -44,10 +51,18 @@ AuthentifiedRequest = (cookiesPromise)-> (method, endpoint, body)->
 
 authentifiedRequest = AuthentifiedRequest userCookiesPromise
 bUserAuthentifiedRequest = AuthentifiedRequest userBCookiesPromise
+adminReq = AuthentifiedRequest adminCookiesPromise
+
 GetUser = (authentifiedRequester)-> ()-> authentifiedRequester 'get', '/api/user'
+
+getAdminUser = GetUser adminReq
+
+getAdminUser().get('_id').then makeUserAdmin
 
 module.exports =
   authReq: authentifiedRequest
   nonAuthReq: request
+  adminReq: adminReq
   getUser: GetUser authentifiedRequest
   getUserB: GetUser bUserAuthentifiedRequest
+  getAdminUser: getAdminUser

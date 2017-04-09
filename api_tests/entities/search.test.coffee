@@ -3,10 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
-{ nonAuthReq, authReq, getUser } = __.require 'apiTests', 'utils/utils'
-# Admin action, can't be triggered from the API without an admin user
-# so the simple work around is to call the function directly for now
-{ merge:mergeEntities } = __.require 'controllers', 'entities/lib/merge_entities'
+{ nonAuthReq, authReq, getUser, adminReq } = __.require 'apiTests', 'utils/utils'
 
 describe 'entities:search', ->
   it 'should return a recently created entity', (done)->
@@ -29,7 +26,9 @@ describe 'entities:search', ->
       createEntity 'zzzz yyyy xxxxxx'
     ]
     .spread (userId, fromId, toId)->
-      mergeEntities userId, fromId, toId
+      adminReq 'put', '/api/entities?action=merge',
+        from: "inv:#{fromId}"
+        to: "inv:#{toId}"
       .delay 1000
       .then -> nonAuthReq 'get', '/api/entities?action=search&search=zzzz&lang=fr'
       .then (searchRes)->
