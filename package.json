@@ -51,7 +51,7 @@
     "cookie-signature": "^1.0.6",
     "couch-init2": "^2.1.5",
     "couch2elastic4sync": "^3.4.5",
-    "credential": "^1.0.0",
+    "credential": "^2.0.0",
     "email-addresses": "^2.0.1",
     "execa": "^0.4.0",
     "express-session": "^1.11.3",

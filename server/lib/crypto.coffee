@@ -5,8 +5,6 @@ error_ = __.require 'lib', 'error/error'
 crypto = require 'crypto'
 
 exports.passwords =
-  # TODO: udpate to credentials > 2.0.0 when released to get rid
-  # of the DeprecationWarning on crypto.pbkdf2 without specifying a digest
   hash: (password)->
     unless password? then return error_.reject('missing password', 400)
     pw.hash password
