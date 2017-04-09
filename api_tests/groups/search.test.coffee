@@ -17,6 +17,7 @@ describe 'groups:search', ->
       .then (searchRes)->
         (groupId in groupsIds(searchRes)).should.be.true()
         done()
+    .catch done
 
     return
 
@@ -31,6 +32,7 @@ describe 'groups:search', ->
       .then (searchRes)->
         (groupId in groupsIds(searchRes)).should.be.true()
         done()
+    .catch done
 
     return
 
@@ -44,6 +46,7 @@ describe 'groups:search', ->
       .then (searchRes)->
         (groupId in groupsIds(searchRes)).should.not.be.true()
         done()
+    .catch done
 
     return
 

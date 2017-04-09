@@ -17,5 +17,6 @@ describe 'entities:get:by-uris', ->
       entity.type.should.equal 'human'
       entity.uri.should.equal canonicalUri
       done()
+    .catch done
 
     return

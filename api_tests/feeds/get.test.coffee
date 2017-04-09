@@ -13,6 +13,7 @@ describe 'feeds:get', ->
       .then (res)->
         res.startsWith('<?xml').should.be.true()
         done()
+    .catch done
 
     return
 
@@ -24,5 +25,6 @@ describe 'feeds:get', ->
       .then (res)->
         res.startsWith('<?xml').should.be.true()
         done()
+    .catch done
 
     return

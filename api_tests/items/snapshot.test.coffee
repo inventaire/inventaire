@@ -33,6 +33,7 @@ describe 'items:snapshot', ->
         .then (res2)->
           res2.items[0].snapshot['entity:title'].should.equal updatedTitle
           done()
+    .catch done
 
     return
 
@@ -57,6 +58,7 @@ describe 'items:snapshot', ->
         .then (res2)->
           res2.items[0].snapshot['entity:title'].should.equal updatedTitle
           done()
+    .catch done
 
     return
 
@@ -85,6 +87,7 @@ describe 'items:snapshot', ->
         .then (res)->
           res.items[0].snapshot['entity:authors'].should.equal updateAuthorName
           done()
+    .catch done
 
     return
 
@@ -111,6 +114,9 @@ describe 'items:snapshot', ->
           .then (res)->
             res.items[0].snapshot['entity:authors'].should.equal updateAuthorName
             done()
+    .catch done
+
+    return
 
   it 'should be updated when its local work entity is merged', (done)->
     Promise.all [

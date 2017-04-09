@@ -13,6 +13,7 @@ describe 'users:search', ->
       .then (res)->
         (user._id in usersIds(res)).should.be.true()
         done()
+    .catch done
 
     return
 
@@ -24,6 +25,7 @@ describe 'users:search', ->
       .then (res)->
         (user._id in usersIds(res)).should.be.true()
         done()
+    .catch done
 
     return
 
@@ -35,6 +37,7 @@ describe 'users:search', ->
       .then (res)->
         (user._id in usersIds(res)).should.be.true()
         done()
+    .catch done
 
     return
 
@@ -47,6 +50,7 @@ describe 'users:search', ->
         (user._id in usersIds(res)).should.be.true()
         should(res.users[0].snapshot).not.be.ok()
         done()
+    .catch done
 
     return
 

@@ -13,5 +13,6 @@ describe 'groups:get:slug', ->
     .then (res)->
       res.slug.should.equal slugify(name)
       done()
+    .catch done
 
     return

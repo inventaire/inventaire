@@ -13,6 +13,7 @@ describe 'entities:create', ->
     .catch (err)->
       err.body.status_verbose.should.equal "wdt:P31 array can't be empty"
       done()
+    .catch done
 
     return
 
@@ -23,6 +24,7 @@ describe 'entities:create', ->
     .catch (err)->
       err.body.status_verbose.should.equal 'invalid labels'
       done()
+    .catch done
 
     return
 
@@ -33,6 +35,7 @@ describe 'entities:create', ->
     .catch (err)->
       err.body.status_verbose.should.equal "wdt:P31 value isn't a known valid value"
       done()
+    .catch done
 
     return
 
@@ -44,7 +47,7 @@ describe 'entities:create', ->
       res._id.should.be.a.String()
       res._rev.should.be.a.String()
       done()
-    .catch _.Error('entities create')
+    .catch done
 
     return
 
@@ -56,6 +59,7 @@ describe 'entities:create', ->
       err.statusCode.should.equal 400
       err.body.status_verbose.match(/expects a unique value/).should.be.ok()
       done()
+    .catch done
 
     return
 
@@ -68,6 +72,7 @@ describe 'entities:create', ->
       err.body.status_verbose.should.equal 'labels should be an object'
       err.statusCode.should.equal 400
       done()
+    .catch done
 
     return
 
@@ -80,6 +85,7 @@ describe 'entities:create', ->
       err.body.status_verbose.should.equal 'claims should be an object'
       err.statusCode.should.equal 400
       done()
+    .catch done
 
     return
 
@@ -93,6 +99,7 @@ describe 'entities:create', ->
       err.body.status_verbose.should.equal 'invalid property array'
       err.statusCode.should.equal 400
       done()
+    .catch done
 
     return
 
@@ -107,6 +114,7 @@ describe 'entities:create', ->
       err.body.status_verbose.should.equal 'invalid property'
       err.statusCode.should.equal 400
       done()
+    .catch done
 
     return
 
@@ -121,6 +129,7 @@ describe 'entities:create', ->
       err.body.status_verbose.should.equal 'invalid property value'
       err.statusCode.should.equal 400
       done()
+    .catch done
 
     return
 
@@ -141,6 +150,7 @@ describe 'entities:create', ->
       err.body.status_verbose.should.equal 'this property value is already used'
       err.statusCode.should.equal 400
       done()
+    .catch done
 
     return
 
@@ -154,6 +164,7 @@ describe 'entities:create', ->
     .catch (err)->
       err.statusCode.should.equal 400
       done()
+    .catch done
 
     return
 
@@ -165,5 +176,6 @@ describe 'entities:create', ->
       err.statusCode.should.equal 400
       err.body.status_verbose.should.equal 'an edition should have an associated work'
       done()
+    .catch done
 
     return

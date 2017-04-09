@@ -11,6 +11,7 @@ describe 'entities:changes', ->
       res.uris.should.be.an.Array()
       res.lastSeq.should.be.an.Number()
       done()
+    .catch done
 
     return
 
@@ -20,6 +21,7 @@ describe 'entities:changes', ->
       res.uris.should.be.an.Array()
       res.lastSeq.should.be.an.Number()
       done()
+    .catch done
 
     return
 
@@ -28,5 +30,6 @@ describe 'entities:changes', ->
     .catch (err)->
       err.body.error_name.should.equal 'invalid_since'
       done()
+    .catch done
 
     return

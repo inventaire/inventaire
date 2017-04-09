@@ -13,6 +13,7 @@ describe 'entities:editions:create', ->
       err.statusCode.should.equal 400
       err.body.status_verbose.should.equal 'an edition should have an associated work'
       done()
+    .catch done
 
     return
 

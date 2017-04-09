@@ -17,6 +17,7 @@ describe 'groups:get', ->
           res.group.name.should.equal group.name
           res.group.slug.should.equal group.slug
           done()
+      .catch done
 
       return
 
@@ -31,5 +32,6 @@ describe 'groups:get', ->
           res.group.name.should.equal group.name
           res.group.slug.should.equal group.slug
           done()
+      .catch done
 
       return

@@ -26,6 +26,7 @@ describe 'groups:update-settings', ->
           group.name.should.equal updatedName
           group.slug.should.equal slugify(updatedName)
           done()
+    .catch done
 
     return
 
@@ -44,6 +45,7 @@ describe 'groups:update-settings', ->
         updateRes.ok.should.be.true()
         updateRes.update.slug.should.equal slugify(updatedName)
         done()
+    .catch done
 
     return
 
@@ -66,5 +68,6 @@ describe 'groups:update-settings', ->
           { group } = getRes
           group.description.should.equal updatedDescription
           done()
+    .catch done
 
     return

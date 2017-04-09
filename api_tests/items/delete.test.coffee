@@ -13,6 +13,7 @@ describe 'items:delete', ->
       .then (res)->
         res.ok.should.be.true()
         done()
+    .catch done
 
     return
 
@@ -34,5 +35,6 @@ describe 'items:delete', ->
             countChange('network').should.equal 0
             countChange('public').should.equal 0
             done()
+    .catch done
 
     return
