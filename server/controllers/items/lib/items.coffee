@@ -33,7 +33,10 @@ module.exports = items_ =
     usersIds = _.forceArray usersIds
     bundleListings ['public'], usersIds, reqUserId
 
-  byEntity: (entityUri)-> db.viewByKeys 'byEntity', entityUriKeys(entityUri)
+  byEntity: (entityUri)->
+    _.type entityUri, 'string'
+    db.viewByKeys 'byEntity', entityUriKeys(entityUri)
+
   byPreviousEntity: (entityUri)-> db.viewByKey 'byPreviousEntity', entityUri
 
   # all items from an entity that require a specific authorization

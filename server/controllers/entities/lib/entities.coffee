@@ -48,6 +48,10 @@ module.exports = entities_ =
     entities_.byClaim property, value
     .then couch_.mapId
 
+  urisByClaim: (property, value)->
+    entities_.byClaim property, value, true, true
+    .map (doc)-> getInvEntityCanonicalUri(doc)[0]
+
   byClaimsValue: (value)->
     db.view 'entities', 'byClaimValue',
       key: value

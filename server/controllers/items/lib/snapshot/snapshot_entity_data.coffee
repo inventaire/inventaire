@@ -2,9 +2,8 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 getEntityByUri = __.require 'controllers', 'entities/lib/get_entity_by_uri'
-Item = __.require 'models', 'item'
-{ getOriginalLang } = __.require 'lib', 'wikidata/wikidata'
-authors_ = require './authors'
+buildSnapshot = require './build_snapshot'
+{ getEditionGraphFromEdition, getWorkGraphFromWork } = require './get_entities'
 
 module.exports = (item, entityUri)->
   getEntityByUri entityUri
@@ -17,36 +16,23 @@ module.exports = (item, entityUri)->
     return snapshotByType[type](item, entity)
 
 snapshotByType =
-  edition: (item, entity)->
-    title = entity.claims['wdt:P1476']?[0]
-    unless _.isNonEmptyString title
-      throw error_.new 'no title found on edition', 400, item
+  edition: (item, edition)->
+    getEditionGraphFromEdition edition
+    .spread buildSnapshot.edition
+    .then addSnapshot(item)
 
-    # Assumes that all editions have an associated work
-    workUri = entity.claims['wdt:P629'][0]
-    lang = getOriginalLang(entity.claims) or 'en'
-
-    getEntityByUri workUri
-    .then (workEntity)-> authors_.getNames workEntity.claims['wdt:P50'], lang
-    .then addSnapshot(item, title)
-
-  work: (item, entity)->
+  work: (item, work)->
     { lang } = item
     unless _.isLang lang
       message = "can't deduce title from a work entity without a lang"
       throw error_.new message, 400, arguments
 
-    title = entity.labels[lang]
-    unless _.isNonEmptyString title
-      throw error_.new 'no title could be found on the work entity', 400, item
+    getWorkGraphFromWork lang, work
+    .spread buildSnapshot.work
+    .then addSnapshot(item)
 
-    authors_.getNames entity.claims['wdt:P50'], lang
-    .then addSnapshot(item, title)
+addSnapshot = (item)-> (snapshot)->
+  item.snapshot = snapshot
+  return item
 
 whitelistedTypes = Object.keys snapshotByType
-
-addSnapshot = (item, title)-> (authorsNamesString)->
-  item.snapshot =
-    'entity:title': title
-    'entity:authors': authorsNamesString
-  return item

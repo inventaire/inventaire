@@ -1,17 +1,6 @@
 __ = require('config').universalPath
-_ = __.require 'builders', 'utils'
 radio = __.require 'lib', 'radio'
-items_ = require '../items'
-entities_ = __.require 'controllers','entities/lib/entities'
-getEntityByUri = __.require 'controllers', 'entities/lib/get_entity_by_uri'
-getEntityType = __.require 'controllers', 'entities/lib/get_entity_type'
-getInvEntityCanonicalUri = __.require 'controllers', 'entities/lib/get_inv_entity_canonical_uri'
-Item = __.require 'models', 'item'
-{ Promise } = __.require 'lib', 'promises'
-{ getOriginalLang } = __.require 'lib', 'wikidata/wikidata'
-
-updateAuthorsNames = require './update_authors_names'
-{ getDocData, bulkUpdateTitle } = require './helpers'
+refreshSnapshot = require './refresh_snapshot'
 
 # Items keep some data about their related entities, and those entities graphs
 # to make querying items quick, while keeping the required data at end
@@ -24,27 +13,10 @@ updateAuthorsNames = require './update_authors_names'
 #   Wikidata's data is assumed to be more reliable, and less changing
 
 module.exports = ->
-  radio.on 'entity:update:label', updateSnapshotOnLabelChange
-  radio.on 'entity:update:claim', updateSnapshotOnClaimChange
+  radio.on 'entity:update:label', refreshSnapshot.fromDoc
+  radio.on 'entity:update:claim', refreshSnapshot.fromDoc
+  radio.on 'entity:merge', updateSnapshotOnEntityMerge
 
-updateSnapshotOnLabelChange = (updatedDoc, lang, value)->
-  [ uri, type ] = getDocData updatedDoc
-  switch type
-    when 'work' then updateWorksTitles uri, lang, value
-    when 'human' then updateAuthorsNames uri
-
-updateWorksTitles = (uri, lang, value)->
-  items_.byEntity uri
-  .filter (item)-> item.lang is lang
-  .then bulkUpdateTitle(value)
-  .catch _.Error('updateWorksTitles err')
-
-updateSnapshotOnClaimChange = (updatedDoc, property, oldVal, newVal)->
-  [ uri, type ] = getDocData updatedDoc
-  switch type
-    when 'edition'
-      if property is 'wdt:P1476' then updateEditionsTitles uri, newVal
-
-updateEditionsTitles = (uri, newVal)->
-  items_.byEntity uri
-  .then bulkUpdateTitle(newVal)
+updateSnapshotOnEntityMerge = (fromUri, toUri)->
+  # Using the toUri as its the URI the items are now
+  refreshSnapshot.fromUri toUri

@@ -3,6 +3,7 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 getEntitiesByUris = require './lib/get_entities_by_uris'
 { merge:mergeEntities, turnIntoRedirection } = require './lib/merge_entities'
+radio = __.require 'lib', 'radio'
 
 # Assumptions:
 # - ISBN are already desambiguated and should thus never need merge
@@ -47,6 +48,7 @@ module.exports = (req, res)->
   .get 'entities'
   .then Merge(reqUserId, toPrefix, fromUri, toUri)
   .then _.Ok(res)
+  .then -> radio.emit 'entity:merge', fromUri, toUri
   .catch error_.Handler(req, res)
 
 Merge = (reqUserId, toPrefix, fromUri, toUri)-> (entitiesByUri)->

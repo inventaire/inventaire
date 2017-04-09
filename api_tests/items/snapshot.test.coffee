@@ -76,13 +76,14 @@ describe 'items:snapshot', ->
       workEntity = _.values(res.entities)[0]
       trueAuthorUri = workEntity.claims['wdt:P50'][0]
       authReq 'post', '/api/items', { entity: 'isbn:9788389920935' }
+      .delay 100
       .then (item)->
         updateAuthorName = 'Mr moin moin' + new Date().toISOString()
         authReq 'put', '/api/entities?action=update-label',
           id: trueAuthorUri.split(':')[1]
           lang: 'de'
           value: updateAuthorName
-        .delay 1000
+        .delay 100
         .then -> authReq 'get', "/api/items?action=by-ids&ids=#{item._id}"
         .then (res)->
           res.items[0].snapshot['entity:authors'].should.equal updateAuthorName
@@ -109,7 +110,7 @@ describe 'items:snapshot', ->
             id: authorEntity._id
             lang: 'de'
             value: updateAuthorName
-          .delay 1000
+          .delay 100
           .then -> authReq 'get', "/api/items?action=by-ids&ids=#{item._id}"
           .then (res)->
             res.items[0].snapshot['entity:authors'].should.equal updateAuthorName
@@ -118,7 +119,7 @@ describe 'items:snapshot', ->
 
     return
 
-  it 'should be updated when its local work entity is merged', (done)->
+  it 'should be updated when its local work entity is merged (work entity)', (done)->
     Promise.all [
       getUser().get '_id'
       createWorkEntity()
@@ -140,12 +141,92 @@ describe 'items:snapshot', ->
 
     return
 
+  it 'should be updated when its local work entity is merged (edition entity)', (done)->
+    Promise.all [
+      getUser().get '_id'
+      createWorkEntity()
+      createWorkEntity()
+    ]
+    .spread (userId, workEntityA, workEntityB)->
+      createEditionEntity workEntityA
+      .then (editionEntity)->
+        Promise.all [
+          authReq 'post', '/api/items', { entity: editionEntity.uri }
+          addAuthor workEntityB
+        ]
+        .delay 100
+        .tap ->
+          adminReq 'put', '/api/entities?action=merge',
+            from: workEntityA.uri
+            to: workEntityB.uri
+        .delay 100
+        .spread (item, addedAuthor)->
+          authReq 'get', "/api/items?action=by-ids&ids=#{item._id}"
+          .then (res)->
+            updatedItem = res.items[0]
+            authorName = _.values(addedAuthor.labels)[0]
+            updatedItem.snapshot['entity:authors'].should.equal authorName
+            done()
+    .catch done
+
+    return
+
+  it 'should be updated when its local author entity is merged', (done)->
+    Promise.all [
+      getUser().get '_id'
+      createAuthorEntity()
+      createAuthorEntity()
+    ]
+    .spread (userId, authorEntityA, authorEntityB)->
+      authReq 'post', '/api/entities?action=create',
+        labels: { de: 'moin moin' + randomString(4) }
+        claims:
+          'wdt:P31': [ 'wd:Q571' ]
+          'wdt:P50': [ authorEntityA.uri ]
+      .then (workEntity)->
+        authReq 'post', '/api/items', { entity: workEntity.uri, lang: 'de' }
+      .delay 100
+      .tap ->
+        adminReq 'put', '/api/entities?action=merge',
+          from: authorEntityA.uri
+          to: authorEntityB.uri
+      .delay 100
+      .then (item)-> authReq 'get', "/api/items?action=by-ids&ids=#{item._id}"
+      .then (res)->
+        updatedItem = res.items[0]
+        updatedAuthors = authorEntityB.labels.de
+        updatedItem.snapshot['entity:authors'].should.equal updatedAuthors
+        done()
+    .catch done
+
+    return
+
   # TODO:
-  # it 'should be updated when its local author entity is merged', (done)->
   # it 'should be updated when its remote author entity changes', (done)->
   # it 'should be updated when its remote work entity title changes', (done)->
+
+createAuthorEntity = ->
+  authReq 'post', '/api/entities?action=create',
+    labels: { de: 'Mr moin moin'  + randomString(4) }
+    claims: { 'wdt:P31': [ 'wd:Q5' ] }
 
 createWorkEntity = ->
   authReq 'post', '/api/entities?action=create',
     labels: { de: 'moin moin' + randomString(4) }
     claims: { 'wdt:P31': [ 'wd:Q571' ] }
+
+createEditionEntity = (workEntity)->
+  authReq 'post', '/api/entities?action=create',
+    labels: { de: 'moin moin' + randomString(4) }
+    claims:
+      'wdt:P31': [ 'wd:Q3331189' ]
+      'wdt:P629': [ workEntity.uri ]
+      'wdt:P1476': [ _.values(workEntity.labels)[0] ]
+
+addAuthor = (workEntity)->
+  createAuthorEntity()
+  .tap (authorEntity)->
+    authReq 'put', '/api/entities?action=update-claim',
+      id: workEntity._id
+      property: 'wdt:P50'
+      'new-value': authorEntity.uri
