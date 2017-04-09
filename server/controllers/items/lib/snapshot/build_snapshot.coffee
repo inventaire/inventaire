@@ -22,4 +22,5 @@ wrapSnapshot = (title, lang, authors)->
   return {
     'entity:title': title
     'entity:authors': authorsNamesString
+    'entity:lang': lang
   }

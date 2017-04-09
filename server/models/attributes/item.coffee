@@ -30,6 +30,7 @@ attributes.inLocalSnapshot = [
   'entity:image'
   'entity:authors'
   'entity:title'
+  'entity:lang'
 ]
 
 # not updatable by the user

@@ -28,3 +28,4 @@ snapshotTests =
   'entity:authors': _.isString
   'entity:image': _.isExtendedUrl
   'entity:title': (str)-> nonEmptyString str, 500
+  'entity:lang': _.isLang
