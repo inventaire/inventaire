@@ -55,7 +55,9 @@ getUpdatedWorkItems = (uri, work, authors)->
     { lang } = item
     updatedSnapshot = buildSnapshot.work lang, work, authors
     if _.objDiff item.snapshot, updatedSnapshot
-      item.snapshot = updatedSnapshot
+      # Keep snapshot fields that would be missing on the new snapshot
+      # Known case: entity:image that aren't defined on works anymore
+      item.snapshot = _.extend item.snapshot, updatedSnapshot
       return item
     else
       return null
