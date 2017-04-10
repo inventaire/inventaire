@@ -15,7 +15,6 @@ module.exports = (req, res)->
   newVal = parseEmptyValue newVal
 
   entities_.byId entityId
-  .then _.Log('doc')
   .then (currentDoc)->
     entities_.updateClaim { property, oldVal, newVal, userId, currentDoc, userIsAdmin }
   .tap _.Ok(res)

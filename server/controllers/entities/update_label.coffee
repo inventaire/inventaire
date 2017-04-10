@@ -8,7 +8,7 @@ module.exports = (req, res)->
   { id:entityId, lang, value } = req.body
   { _id:reqUserId } = req.user
 
-  _.log req.body, 'body'
+  _.log req.body, 'update label body'
 
   unless entityId? then return error_.bundleMissingBody req, res, 'id'
   unless lang? then return error_.bundleMissingBody req, res, 'lang'
@@ -26,7 +26,6 @@ module.exports = (req, res)->
     return error_.bundleInvalid req, res, 'value', value
 
   entities_.byId entityId
-  .then _.Log('doc')
   .then entities_.updateLabel.bind(null, lang, value, reqUserId)
   .tap _.Ok(res)
   .then (updatedDoc)-> radio.emit 'entity:update:label', updatedDoc, lang, value
