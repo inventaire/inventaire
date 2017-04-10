@@ -12,9 +12,9 @@ watchshellpids=$(ps auxf |
   grep watch |
   awk '{printf $2 " "}')
 
-kill -9 $watchshellpids 2> /dev/null
-kill -9 $supervisorpid 2> /dev/null
-kill -9 $serverpid 2> /dev/null ||
+kill $watchshellpids 2> /dev/null
+kill $supervisorpid 2> /dev/null
+kill $serverpid 2> /dev/null ||
 echo "no server to kill"
 
 # Remove any stored state, either the pid or 'starting'
