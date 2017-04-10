@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 { pass, itemId, userId, entityUri, nonEmptyString, imgUrl } = require './common-tests'
-{ constrained, inLocalSnapshot } = require '../attributes/item'
+{ constrained } = require '../attributes/item'
 
 module.exports =
   pass: pass
@@ -25,7 +25,10 @@ module.exports =
     return true
 
 snapshotTests =
-  'entity:authors': _.isString
-  'entity:image': _.isExtendedUrl
   'entity:title': (str)-> nonEmptyString str, 500
+  'entity:image': _.isExtendedUrl
   'entity:lang': _.isLang
+  'entity:authors': _.isString
+  'entity:series': _.isString
+
+inLocalSnapshot = Object.keys snapshotTests

@@ -17,10 +17,11 @@ module.exports =
     item.snapshot = _.extend item.snapshot, updatedSnapshot
     return item
 
-  getAuthorsNames: (preferedLang, authors)->
-    authors
+  getNames: (preferedLang, entities)->
+    unless _.isNonEmptyArray entities then return ''
+    entities
     .map getName(preferedLang)
     .join ', '
 
-getName = (lang)-> (author)->
-  getBestLangValue(lang, author.originalLang, author.labels).value
+getName = (lang)-> (entity)->
+  getBestLangValue(lang, entity.originalLang, entity.labels).value

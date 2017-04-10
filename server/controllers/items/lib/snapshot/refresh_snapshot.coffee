@@ -4,7 +4,7 @@ entities_ = __.require 'controllers','entities/lib/entities'
 getEntityByUri = __.require 'controllers', 'entities/lib/get_entity_by_uri'
 getInvEntityCanonicalUri = __.require 'controllers', 'entities/lib/get_inv_entity_canonical_uri'
 buildSnapshot = require './build_snapshot'
-{ getWorkAuthors, getEditionGraphEntities } = require './get_entities'
+{ getWorkAuthorsAndSeries, getEditionGraphEntities } = require './get_entities'
 { getDocData, addSnapshot } = require './helpers'
 items_ = require '../items'
 
@@ -24,6 +24,11 @@ fromUri = (changedEntityUri)->
 
 module.exports = { fromDoc, fromUri }
 
+multiWorkRefresh = (relationProperty)-> (uri)->
+  entities_.urisByClaim relationProperty, uri
+  .map refresh.work
+  .then _.flatten
+
 refresh =
   edition: (uri)->
     # Get all the entities docs required to build the snapshot
@@ -34,26 +39,24 @@ refresh =
   work: (uri)->
     getEntityByUri uri
     .then (work)->
-      getWorkAuthors work
-      .then (authors)->
+      getWorkAuthorsAndSeries work
+      .spread (authors, series)->
         Promise.all [
-          getUpdatedWorkItems uri, work, authors
-          getUpdatedEditionsItems uri, work, authors
+          getUpdatedWorkItems uri, work, authors, series
+          getUpdatedEditionsItems uri, work, authors, series
         ]
         .then _.flatten
 
-  human: (uri)->
-    entities_.urisByClaim 'wdt:P50', uri
-    .map refresh.work
-    .then _.flatten
+  human: multiWorkRefresh 'wdt:P50'
+  serie: multiWorkRefresh 'wdt:P179'
 
 refreshTypes = Object.keys refresh
 
-getUpdatedWorkItems = (uri, work, authors)->
+getUpdatedWorkItems = (uri, work, authors, series)->
   items_.byEntity uri
   .map (item)->
     { lang } = item
-    updatedSnapshot = buildSnapshot.work lang, work, authors
+    updatedSnapshot = buildSnapshot.work lang, work, authors, series
     if _.objDiff item.snapshot, updatedSnapshot
       return addSnapshot item, updatedSnapshot
     else
@@ -61,16 +64,16 @@ getUpdatedWorkItems = (uri, work, authors)->
   # Filter out items without snapshot change
   .filter _.identity
 
-getUpdatedEditionsItems = (uri, work, authors)->
+getUpdatedEditionsItems = (uri, work, authors, series)->
   entities_.byClaim 'wdt:P629', uri, true, true
-  .map (edition)-> getUpdatedEditionItems edition, work, authors
+  .map (edition)-> getUpdatedEditionItems edition, work, authors, series
   # Keep only items that had a change
   .filter _.identity
   .then _.flatten
 
-getUpdatedEditionItems = (edition, work, authors)->
+getUpdatedEditionItems = (edition, work, authors, series)->
   [ uri ] = getInvEntityCanonicalUri edition
-  updatedSnapshot = buildSnapshot.edition edition, work, authors
+  updatedSnapshot = buildSnapshot.edition edition, work, authors, series
   # Find all edition items
   items_.byEntity uri
   .then (items)->

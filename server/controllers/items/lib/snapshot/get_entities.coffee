@@ -6,28 +6,39 @@ getEntityByUri = __.require 'controllers', 'entities/lib/get_entity_by_uri'
 getEditionWork = (edition)->
   getEntityByUri edition.claims['wdt:P629'][0]
 
-getWorkAuthors = (work)->
-  authorsUris = work.claims['wdt:P50']
-  unless authorsUris?.length > 0 then return Promise.resolve []
-  Promise.all authorsUris.map(getEntityByUri)
+getWorkRelativeEntity = (relationProperty)-> (work)->
+  _.warn work, 'work'
+  uris = work.claims[relationProperty]
+  _.log uris, "#{relationProperty} uris"
+  unless uris?.length > 0 then return Promise.resolve []
+  return Promise.all uris.map(getEntityByUri)
+
+getWorkAuthors = getWorkRelativeEntity 'wdt:P50'
+getWorkSeries = getWorkRelativeEntity 'wdt:P179'
+
+getWorkAuthorsAndSeries = (work)->
+  Promise.all [
+    getWorkAuthors work
+    getWorkSeries work
+  ]
 
 getEditionGraphFromEdition = (edition)->
   getEditionWork edition
   .then (work)->
-    getWorkAuthors work
+    getWorkAuthorsAndSeries work
     # Tailor output to be spreaded on buildSnapshot.edition
-    .then (authors)-> [ edition, work, authors ]
+    .spread (authors, series)-> [ edition, work, authors, series ]
 
 getEditionGraphEntities = (uri)->
   getEntityByUri uri
   .then getEditionGraphFromEdition
 
 getWorkGraphFromWork = (lang, work)->
-  getWorkAuthors work
-  .then (authors)-> [ lang, work, authors ]
+  getWorkAuthorsAndSeries work
+  .spread (authors, series)-> [ lang, work, authors, series ]
 
 module.exports = {
-  getWorkAuthors,
+  getWorkAuthorsAndSeries
   getEditionGraphFromEdition,
   getEditionGraphEntities,
   getWorkGraphFromWork,
