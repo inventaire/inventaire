@@ -62,6 +62,26 @@ describe 'items:snapshot', ->
 
     return
 
+  it 'should preserve existing data if missing in the new snapshot', (done)->
+    image = '/ipfs/QmcYCcWP11dBDXgNxn7GtoL2imaGMLqcvjnBTn7uoEcXDk'
+    createWorkEntity()
+    .then (workEntity)->
+      createEditionEntity workEntity
+      .then (editionEntity)->
+        authReq 'post', '/api/items',
+          entity: editionEntity.uri
+          snapshot: { 'entity:image': image }
+        .tap -> addAuthor workEntity
+        .delay 100
+        .then (item)-> authReq 'get', "/api/items?action=by-ids&ids=#{item._id}"
+        .then (res)->
+          item = res.items[0]
+          item.snapshot['entity:image'].should.equal image
+          done()
+    .catch done
+
+    return
+
   it 'should be updated when its local author entity title changes (edition entity)', (done)->
     ensureEditionExists 'isbn:9788389920935', null,
       labels: {}

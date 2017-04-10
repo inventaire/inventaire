@@ -5,7 +5,7 @@ getEntityByUri = __.require 'controllers', 'entities/lib/get_entity_by_uri'
 getInvEntityCanonicalUri = __.require 'controllers', 'entities/lib/get_inv_entity_canonical_uri'
 buildSnapshot = require './build_snapshot'
 { getWorkAuthors, getEditionGraphEntities } = require './get_entities'
-{ getDocData } = require './helpers'
+{ getDocData, addSnapshot } = require './helpers'
 items_ = require '../items'
 
 fromDoc = (changedEntityDoc)->
@@ -55,10 +55,7 @@ getUpdatedWorkItems = (uri, work, authors)->
     { lang } = item
     updatedSnapshot = buildSnapshot.work lang, work, authors
     if _.objDiff item.snapshot, updatedSnapshot
-      # Keep snapshot fields that would be missing on the new snapshot
-      # Known case: entity:image that aren't defined on works anymore
-      item.snapshot = _.extend item.snapshot, updatedSnapshot
-      return item
+      return addSnapshot item, updatedSnapshot
     else
       return null
   # Filter out items without snapshot change
@@ -80,8 +77,4 @@ getUpdatedEditionItems = (edition, work, authors)->
     unless items.length > 0 then return
     if _.objDiff items[0].snapshot, updatedSnapshot
       # Update snapshot
-      return items.map(addSnapshot(updatedSnapshot))
-
-addSnapshot = (updatedSnapshot)-> (item)->
-  item.snapshot = updatedSnapshot
-  return item
+      return items.map (item)-> addSnapshot item, updatedSnapshot
