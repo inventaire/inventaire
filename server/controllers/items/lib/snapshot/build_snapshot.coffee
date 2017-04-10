@@ -2,6 +2,7 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 { getAuthorsNames } = require './helpers'
 { getOriginalLang } = __.require 'lib', 'wikidata/wikidata'
+error_ = __.require 'lib', 'error/error'
 
 module.exports =
   # all editions items have the same snapshot
