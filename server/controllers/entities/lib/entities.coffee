@@ -111,8 +111,6 @@ module.exports = entities_ =
       lastSeq: res.last_seq
 
   putUpdate: (userId, currentDoc, updatedDoc)->
-    _.log currentDoc, 'current doc'
-    _.log updatedDoc, 'updated doc'
     _.types arguments, ['string', 'object', 'object']
     db.putAndReturn updatedDoc
     .tap -> patches_.create userId, currentDoc, updatedDoc
