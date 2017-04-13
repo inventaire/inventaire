@@ -6,7 +6,8 @@ wikidataarchive=./client/public/i18n/src/wikidata/archive/$newlang.json
 ./scripts/validate_lang $newlang
 
 echo "Starting wd props -l $newlang > $wikidataarchive"
-wd props -l $1 > $wikidataarchive
+wd props --lang $1 > $wikidataarchive
+echo '{}' > /client/public/i18n/src/wikidata/$newlang.json
 echo "wd props done"
 
 langList=./client/scripts/lib/i18n/langs.coffee
@@ -15,7 +16,7 @@ langList=./client/scripts/lib/i18n/langs.coffee
 head -n 1 $langList |grep -v $newlang &&
 # Add it
 echo "Adding the new lang to the list of actively translated langs: $langList" &&
-sed -i "s/]$/, '`echo $newlang`']/" $langList
+sed -i "s/]$/, '`echo $newlang`' ]/" $langList
 
 server=$PWD
 client=$server/client
