@@ -115,7 +115,7 @@ module.exports = items_ =
     _.log usersIds, 'usersIds'
     unless usersIds.length > 0 then return [[], []]
     return promises_.all [
-      user_.getUsersData(reqUserId, usersIds).then _.Log('users')
+      user_.getUsersByIds(reqUserId, usersIds).then _.Log('users')
       items_.publicListings(usersIds).then _.Log('items')
     ]
 

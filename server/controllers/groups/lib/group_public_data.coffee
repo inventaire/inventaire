@@ -15,5 +15,5 @@ module.exports = (groups_)->
 
       usersIds = groups_.allGroupMembers group
 
-      user_.getUsersData reqUserId, usersIds
+      user_.getUsersByIds reqUserId, usersIds
       .then (users)-> { group, users }

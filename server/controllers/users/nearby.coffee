@@ -10,6 +10,6 @@ module.exports = (req, res)->
   { range } = req.query
 
   getUsersNearby reqUserId, range
-  .then user_.getUsersData.bind(null, reqUserId)
+  .then user_.getUsersByIds.bind(null, reqUserId)
   .then _.Wrap(res, 'users')
   .catch error_.Handler(req, res)

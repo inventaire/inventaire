@@ -50,6 +50,8 @@ module.exports = base =
     indexesArray.unshift {}
     return _.extend.apply _, indexesArray
 
+  IndexBy: (attribute)-> (array)-> _.indexBy array, attribute
+
 base.objDiff = -> not base.sameObjects.apply(null, arguments)
 
 base.Ok = (res, status)-> base.ok.bind null, res, status

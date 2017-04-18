@@ -27,8 +27,9 @@ user_ =
     # with the initial input
     user_.getUsersAuthorizedData user_.byEmails(emails), reqUserId, 'email'
 
-  byUsername: (username)->
-    db.viewByKey 'byUsername', username.toLowerCase()
+  byUsername: (username)-> db.viewByKey 'byUsername', username.toLowerCase()
+  byUsernames: (usernames)->
+    db.viewByKeys 'byUsername', usernames.map(_.toLowerCase)
 
   findOneByUsername: (username)->
     user_.byUsername username
@@ -49,11 +50,11 @@ user_ =
       if userDoc? then return userDoc
       else throw error_.new 'user not found', 404, username
 
-  getUserData: (reqUserId, id)->
+  getUserById: (reqUserId, id)->
     user_.getUsersAuthorizedData user_.byIds([id]), reqUserId
     .get '0'
 
-  getUsersData: (reqUserId, ids)->
+  getUsersByIds: (reqUserId, ids)->
     _.type ids, 'array'
     if ids.length is 0 then return promises_.resolve []
     user_.getUsersAuthorizedData user_.byIds(ids), reqUserId
@@ -68,9 +69,13 @@ user_ =
       .filter (user)-> user.type isnt 'deletedUser'
       .map omitPrivateData(reqUserId, networkIds, extraAttribute)
 
-  getUsersDataIndex: (reqUserId)-> (ids)->
-    user_.getUsersData reqUserId, ids
-    .then (usersData)-> _.indexBy usersData, '_id'
+  getUsersIndexByIds: (reqUserId)-> (ids)->
+    user_.getUsersByIds reqUserId, ids
+    .then _.IndexBy('_id')
+
+  getUsersIndexByUsernames: (reqUserId)-> (usernames)->
+    user_.getUsersAuthorizedData user_.byUsernames(usernames), reqUserId
+    .then _.IndexBy('username')
 
   incrementUndeliveredMailCounter: (email)->
     user_.findOneByEmail email

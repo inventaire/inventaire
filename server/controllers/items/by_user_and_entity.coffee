@@ -25,7 +25,7 @@ getUser = (query, reqUserId)->
     unless _.isUserId userId
       return error_.rejectInvalid 'user', userId
 
-    return user_.getUserData userId, reqUserId
+    return user_.getUserById userId, reqUserId
 
   else if username?
     unless tests.username username

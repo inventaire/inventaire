@@ -62,7 +62,7 @@ module.exports =
 
     ownersIds = _.uniq items.map(_.property('owner'))
 
-    user_.getUsersData reqUserId, ownersIds
+    user_.getUsersByIds reqUserId, ownersIds
     .then (users)->
       page.users = users
       return page

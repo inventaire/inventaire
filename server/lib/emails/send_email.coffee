@@ -18,14 +18,14 @@ module.exports =
     .catch _.Error('resetPassword')
 
   friendAcceptedRequest: (userToNotify, newFriend)->
-    helpers_.getUsersData(userToNotify, newFriend)
+    helpers_.getUsersByIds(userToNotify, newFriend)
     .then email_.friendAcceptedRequest
     .then transporter_.sendMail
     .catch helpers_.catchDisabledEmails
     .catch Err('friendAcceptedRequest', userToNotify, newFriend)
 
   friendshipRequest: (userToNotify, requestingUser)->
-    helpers_.getUsersData(userToNotify, requestingUser)
+    helpers_.getUsersByIds(userToNotify, requestingUser)
     .then email_.friendshipRequest
     .then transporter_.sendMail
     .catch helpers_.catchDisabledEmails

@@ -5,14 +5,14 @@ promises_ = __.require 'lib', 'promises'
 user_ = __.require 'controllers', 'user/lib/user'
 groups_ = __.require 'controllers', 'groups/lib/groups'
 
-exports.getUsersData = (user1Id, user2Id)->
+exports.getUsersByIds = (user1Id, user2Id)->
   user_.byIds [user1Id, user2Id]
   .then (usersData)->
     [ user1, user2 ] = parseUsersData(user1Id, user2Id, usersData)
     return context =
       user1: user1
       user2: user2
-  .catch _.Error('getUsersData err')
+  .catch _.Error('getUsersByIds err')
 
 parseUsersData = (user1Id, user2Id, usersData)->
   usersData = _.indexBy usersData, '_id'
