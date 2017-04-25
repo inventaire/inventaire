@@ -171,14 +171,4 @@ describe 'entities:create', ->
 
     return
 
-  it 'should reject an edition entity without an associated work', (done)->
-    authReq 'post', '/api/entities?action=create',
-      labels: { fr: 'bla' }
-      claims: { 'wdt:P31': [ 'wd:Q3331189' ] }
-    .catch (err)->
-      err.statusCode.should.equal 400
-      err.body.status_verbose.should.equal 'an edition should have an associated work'
-      done()
-    .catch done
-
-    return
+  # See also: edititons/create.test.coffee
