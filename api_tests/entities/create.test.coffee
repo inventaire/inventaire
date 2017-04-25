@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ nonAuthReq, authReq } = __.require 'apiTests', 'utils/utils'
+{ nonAuthReq, authReq, undesiredRes } = __.require 'apiTests', 'utils/utils'
 { ensureEditionExists } = require './helpers'
 
 describe 'entities:create', ->
@@ -160,9 +160,11 @@ describe 'entities:create', ->
       labels: { fr: 'bla' }
       claims:
         'wdt:P31': [ 'wd:Q571' ]
-        # A book entity should not have an ISBN
-        'wdt:P212': [ '978-2-315-00611-3' ]
+        # A work entity should not have pages counts
+        'wdt:P1104': [ 124 ]
+    .then undesiredRes(done)
     .catch (err)->
+      err.body.status_verbose.should.equal "works can't have a property wdt:P1104"
       err.statusCode.should.equal 400
       done()
     .catch done

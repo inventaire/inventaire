@@ -6,6 +6,7 @@ entities_ = require './entities'
 promises_ = __.require 'lib', 'promises'
 { Track } = __.require 'lib', 'track'
 { types } = __.require 'lib', 'wikidata/aliases'
+propertiesPerType = __.require 'controllers','entities/lib/properties_per_type'
 
 module.exports = (labels, claims, userId)->
   _.types arguments, ['object', 'object', 'string']
@@ -55,7 +56,13 @@ validateClaims = (claims, type)->
   currentClaims = {}
   oldVal = null
 
+  typesProperties = propertiesPerType[type]
+
   for property, array of claims
+    unless property in typesProperties
+      context = { property, array }
+      throw error_.new "#{type}s can't have a property #{property}", 400, context
+
     unless _.isArray array
       throw error_.new 'invalid property array', 400, { property, array }
 
