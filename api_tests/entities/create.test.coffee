@@ -145,6 +145,7 @@ describe 'entities:create', ->
         claims:
           'wdt:P31': [ 'wd:Q3331189' ]
           'wdt:P212': [ '978-2-315-00611-3' ]
+          'wdt:P1476': [ 'bla' ]
           'wdt:P629': editionEntity.claims['wdt:P629']
     .catch (err)->
       err.body.status_verbose.should.equal 'this property value is already used'

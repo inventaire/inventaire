@@ -14,6 +14,9 @@ module.exports = (req, res) ->
   { _id:reqUserId } = req.user
   { labels, claims } = entityData
 
+  # Editions entities don't have labels
+  labels ?= {}
+
   unless _.isPlainObject labels
     return error_.bundle req, res, 'labels should be an object', 400, entityData
 

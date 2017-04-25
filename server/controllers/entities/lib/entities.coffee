@@ -65,7 +65,6 @@ module.exports = entities_ =
     # Create a new entity doc.
     # This constituts the basis on which next modifications patch
     db.postAndReturn Entity.create()
-    .then _.Log('created doc')
 
   edit: (userId, updatedLabels, updatedClaims, currentDoc)->
     updatedDoc = _.cloneDeep currentDoc

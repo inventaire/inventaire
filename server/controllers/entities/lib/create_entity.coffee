@@ -18,7 +18,6 @@ module.exports = (labels, claims, userId)->
   .then entities_.edit.bind(null, userId, labels, claims)
 
 validateType = (wdtP31)->
-  _.log wdtP31, 'wdtP31'
   unless _.isNonEmptyArray wdtP31
     throw error_.new "wdt:P31 array can't be empty", 400, wdtP31
 
@@ -30,20 +29,20 @@ validateType = (wdtP31)->
   return type
 
 validateLabels = (labels, claims, type)->
-  if type not in optionalLabelsTypes and not _.isNonEmptyPlainObject labels
-    throw error_.new 'invalid labels', 400, labels
+  # editions have a monolingual title but no label
+  if type is 'edition'
+    if _.isNonEmptyPlainObject labels
+      throw error_.new "an edition shouldn't have labels", 400, labels
+  else
+    unless _.isNonEmptyPlainObject labels
+      throw error_.new 'invalid labels', 400, labels
 
-  for lang, value of labels
-    unless Lang.test lang
-      throw error_.new "invalid label language: #{lang}", 400, labels
+    for lang, value of labels
+      unless Lang.test lang
+        throw error_.new "invalid label language: #{lang}", 400, labels
 
-    unless _.isNonEmptyString value
-      throw error_.new "invalid label value: #{value}", 400, labels
-
-optionalLabelsTypes = [
-  # editions can borrow their label to the work they are bound to
-  'edition'
-]
+      unless _.isNonEmptyString value
+        throw error_.new "invalid label value: #{value}", 400, labels
 
 validateClaims = (claims, type)->
   unless _.isNonEmptyPlainObject claims
@@ -67,7 +66,14 @@ validateClaims = (claims, type)->
 
 perTypeClaimsTests =
   edition: (claims)->
-    hasWork = claims['wdt:P629']?[0]?
-    unless hasWork
-      throw error_.new 'an edition should have an associated work', 400, claims
+    entityLabel = 'an edition'
+    assertPropertyHasValue claims, 'wdt:P629', entityLabel, 'an associated work'
+    assertPropertyHasValue claims, 'wdt:P1476', entityLabel, 'a title'
     return
+
+assertPropertyHasValue = (claims, property, entityLabel, propertyLabel)->
+  unless claims[property]?[0]?
+    message = "#{entityLabel} should have #{propertyLabel} (#{property})"
+    throw error_.new message, 400, claims
+
+  return
