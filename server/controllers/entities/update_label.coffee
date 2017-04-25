@@ -3,6 +3,9 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 entities_ = require './lib/entities'
 radio = __.require 'lib', 'radio'
+Entity = __.require 'models', 'entity'
+getEntityType = require './lib/get_entity_type'
+typesWithoutLabels = require './lib/types_without_labels'
 
 module.exports = (req, res)->
   { id:entityId, lang, value } = req.body
@@ -26,7 +29,20 @@ module.exports = (req, res)->
     return error_.bundleInvalid req, res, 'value', value
 
   entities_.byId entityId
-  .then entities_.updateLabel.bind(null, lang, value, reqUserId)
+  .then updateLabel(lang, value, reqUserId)
   .tap _.Ok(res)
   .then (updatedDoc)-> radio.emit 'entity:update:label', updatedDoc, lang, value
   .catch error_.Handler(req, res)
+
+updateLabel = (lang, value, userId)-> (currentDoc)->
+  checkEntityTypeCanHaveLabel currentDoc
+
+  updatedDoc = _.cloneDeep currentDoc
+  updatedDoc = Entity.setLabel updatedDoc, lang, value
+  return entities_.putUpdate userId, currentDoc, updatedDoc
+
+checkEntityTypeCanHaveLabel = (currentDoc)->
+  type = getEntityType currentDoc.claims['wdt:P31']
+
+  if type in typesWithoutLabels
+    throw error_.new "#{type}s can't have labels", 400

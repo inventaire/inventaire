@@ -5,8 +5,9 @@ entities_ = require './entities'
 { Lang } = __.require 'models', 'tests/regex'
 promises_ = __.require 'lib', 'promises'
 { Track } = __.require 'lib', 'track'
-{ types } = __.require 'lib', 'wikidata/aliases'
+getEntityType = require './get_entity_type'
 validateClaimProperty = require './validate_claim_property'
+typesWithoutLabels = require './types_without_labels'
 
 module.exports = (labels, claims, userId)->
   _.types arguments, ['object', 'object', 'string']
@@ -22,18 +23,16 @@ validateType = (wdtP31)->
   unless _.isNonEmptyArray wdtP31
     throw error_.new "wdt:P31 array can't be empty", 400, wdtP31
 
-  value = wdtP31[0]
-  type = types[value]
+  type = getEntityType wdtP31
   unless type?
     throw error_.new "wdt:P31 value isn't a known valid value", 400, wdtP31
 
   return type
 
 validateLabels = (labels, claims, type)->
-  # editions have a monolingual title but no label
-  if type is 'edition'
+  if type in typesWithoutLabels
     if _.isNonEmptyPlainObject labels
-      throw error_.new "an edition shouldn't have labels", 400, labels
+      throw error_.new "#{type}s can't have labels", 400, labels
   else
     unless _.isNonEmptyPlainObject labels
       throw error_.new 'invalid labels', 400, labels

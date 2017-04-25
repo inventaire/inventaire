@@ -44,7 +44,7 @@ describe 'entities:editions:create', ->
           'wdt:P1476': [ 'bla' ]
     .catch (err)->
       err.statusCode.should.equal 400
-      err.body.status_verbose.should.equal "an edition shouldn't have labels"
+      err.body.status_verbose.should.equal "editions can't have labels"
       done()
     .catch undesiredErr(done)
 

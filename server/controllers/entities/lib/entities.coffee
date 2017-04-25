@@ -74,11 +74,6 @@ module.exports = entities_ =
 
     .then entities_.putUpdate.bind(null, userId, currentDoc)
 
-  updateLabel: (lang, value, userId, currentDoc)->
-    updatedDoc = _.cloneDeep currentDoc
-    updatedDoc = Entity.setLabel updatedDoc, lang, value
-    return entities_.putUpdate userId, currentDoc, updatedDoc
-
   validateClaim: (params)->
     { property } = params
     promises_.try -> validateProperty property
