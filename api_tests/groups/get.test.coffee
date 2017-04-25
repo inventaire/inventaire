@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ nonAuthReq } = __.require 'apiTests', 'utils/utils'
+{ nonAuthReq, undesiredErr } = __.require 'apiTests', 'utils/utils'
 { getGroup, endpointBase } = require './helpers'
 
 describe 'groups:get', ->
@@ -17,7 +17,7 @@ describe 'groups:get', ->
           res.group.name.should.equal group.name
           res.group.slug.should.equal group.slug
           done()
-      .catch done
+      .catch undesiredErr(done)
 
       return
 
@@ -32,6 +32,6 @@ describe 'groups:get', ->
           res.group.name.should.equal group.name
           res.group.slug.should.equal group.slug
           done()
-      .catch done
+      .catch undesiredErr(done)
 
       return

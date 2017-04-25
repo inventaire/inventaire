@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ nonAuthReq, getUser } = __.require 'apiTests', 'utils/utils'
+{ nonAuthReq, getUser, undesiredErr } = __.require 'apiTests', 'utils/utils'
 
 describe 'users:by-usernames', ->
   it 'should get a user', (done)->
@@ -16,6 +16,6 @@ describe 'users:by-usernames', ->
         res.users[username].should.be.an.Object()
         res.users[username].username.should.equal username
         done()
-    .catch done
+    .catch undesiredErr(done)
 
     return

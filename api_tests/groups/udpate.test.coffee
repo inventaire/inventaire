@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ nonAuthReq, authReq } = __.require 'apiTests', 'utils/utils'
+{ nonAuthReq, authReq, undesiredErr } = __.require 'apiTests', 'utils/utils'
 { getGroup, endpointBase } = require './helpers'
 slugify = __.require 'controllers', 'groups/lib/slugify'
 
@@ -26,7 +26,7 @@ describe 'groups:update-settings', ->
           group.name.should.equal updatedName
           group.slug.should.equal slugify(updatedName)
           done()
-    .catch done
+    .catch undesiredErr(done)
 
     return
 
@@ -45,7 +45,7 @@ describe 'groups:update-settings', ->
         updateRes.ok.should.be.true()
         updateRes.update.slug.should.equal slugify(updatedName)
         done()
-    .catch done
+    .catch undesiredErr(done)
 
     return
 
@@ -68,6 +68,6 @@ describe 'groups:update-settings', ->
           { group } = getRes
           group.description.should.equal updatedDescription
           done()
-    .catch done
+    .catch undesiredErr(done)
 
     return

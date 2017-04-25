@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ authReq, getUser } = __.require 'apiTests', 'utils/utils'
+{ authReq, getUser, undesiredErr } = __.require 'apiTests', 'utils/utils'
 { newItemBase, CountChange } = require './helpers'
 
 describe 'items:update', ->
@@ -16,7 +16,7 @@ describe 'items:update', ->
         updatedItem.transaction.should.equal newTransaction
         updatedItem.details.should.equal newDetails
         done()
-    .catch done
+    .catch undesiredErr(done)
 
     return
 
@@ -29,7 +29,7 @@ describe 'items:update', ->
       .then (updatedItem)->
         updatedItem.entity.should.equal originalEntity
         done()
-    .catch done
+    .catch undesiredErr(done)
 
     return
 
@@ -54,6 +54,6 @@ describe 'items:update', ->
             countChange('network').should.equal 0
             countChange('public').should.equal 1
             done()
-    .catch done
+    .catch undesiredErr(done)
 
     return

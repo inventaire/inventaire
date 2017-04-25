@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ nonAuthReq } = __.require 'apiTests', 'utils/utils'
+{ nonAuthReq, undesiredErr } = __.require 'apiTests', 'utils/utils'
 
 describe 'entities:get:by-uris', ->
   it 'should accept alias URIs', (done)->
@@ -17,6 +17,6 @@ describe 'entities:get:by-uris', ->
       entity.type.should.equal 'human'
       entity.uri.should.equal canonicalUri
       done()
-    .catch done
+    .catch undesiredErr(done)
 
     return

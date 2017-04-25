@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ authReq, getUser } = __.require 'apiTests', 'utils/utils'
+{ authReq, getUser, undesiredErr } = __.require 'apiTests', 'utils/utils'
 { newItemBase, CountChange } = require './helpers'
 { ensureEditionExists } = require '../entities/helpers'
 
@@ -20,7 +20,7 @@ describe 'items:create', ->
       # Delay so that the item counter update doesn't impact the following test
       .delay 10
       .then -> done()
-    .catch done
+    .catch undesiredErr(done)
 
     return
 
@@ -39,7 +39,7 @@ describe 'items:create', ->
           countChange('network').should.equal 0
           countChange('public').should.equal 0
           done()
-    .catch done
+    .catch undesiredErr(done)
 
     return
 
@@ -57,7 +57,7 @@ describe 'items:create', ->
         item.snapshot.should.be.an.Object()
         item.snapshot['entity:title'].should.equal title
         done()
-    .catch done
+    .catch undesiredErr(done)
 
     return
 
@@ -77,7 +77,7 @@ describe 'items:create', ->
         item.snapshot.should.be.an.Object()
         item.snapshot['entity:authors'].should.equal 'Mr moin moin'
         done()
-    .catch done
+    .catch undesiredErr(done)
 
     return
 
@@ -104,7 +104,7 @@ describe 'items:create', ->
         item.snapshot.should.be.an.Object()
         item.snapshot['entity:authors'].should.equal 'Mr moin moin'
         done()
-    .catch done
+    .catch undesiredErr(done)
 
     return
 
@@ -114,7 +114,7 @@ describe 'items:create', ->
       err.statusCode.should.equal 400
       err.body.status_verbose.should.equal 'invalid entity type'
       done()
-    .catch done
+    .catch undesiredErr(done)
 
     return
 
@@ -123,7 +123,7 @@ describe 'items:create', ->
     .catch (err)->
       err.statusCode.should.equal 400
       done()
-    .catch done
+    .catch undesiredErr(done)
 
     return
 
@@ -139,6 +139,6 @@ describe 'items:create', ->
         item.snapshot.should.be.an.Object()
         item.snapshot['entity:title'].should.equal title
         done()
-    .catch done
+    .catch undesiredErr(done)
 
     return

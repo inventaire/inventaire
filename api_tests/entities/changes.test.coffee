@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ nonAuthReq } = __.require 'apiTests', 'utils/utils'
+{ nonAuthReq, undesiredErr } = __.require 'apiTests', 'utils/utils'
 
 describe 'entities:changes', ->
   it 'should returns an array of changes', (done)->
@@ -11,7 +11,7 @@ describe 'entities:changes', ->
       res.uris.should.be.an.Array()
       res.lastSeq.should.be.an.Number()
       done()
-    .catch done
+    .catch undesiredErr(done)
 
     return
 
@@ -21,7 +21,7 @@ describe 'entities:changes', ->
       res.uris.should.be.an.Array()
       res.lastSeq.should.be.an.Number()
       done()
-    .catch done
+    .catch undesiredErr(done)
 
     return
 
@@ -30,6 +30,6 @@ describe 'entities:changes', ->
     .catch (err)->
       err.body.error_name.should.equal 'invalid_since'
       done()
-    .catch done
+    .catch undesiredErr(done)
 
     return

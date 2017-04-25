@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ nonAuthReq, authReq } = __.require 'apiTests', 'utils/utils'
+{ nonAuthReq, authReq, undesiredErr } = __.require 'apiTests', 'utils/utils'
 
 describe 'entities:editions:create', ->
   it 'should not be able to create an edition entity without a work entity', (done)->
@@ -13,7 +13,7 @@ describe 'entities:editions:create', ->
       err.statusCode.should.equal 400
       err.body.status_verbose.should.equal 'an edition should have an associated work (wdt:P629)'
       done()
-    .catch done
+    .catch undesiredErr(done)
 
     return
 
@@ -29,7 +29,7 @@ describe 'entities:editions:create', ->
       err.statusCode.should.equal 400
       err.body.status_verbose.should.equal 'an edition should have a title (wdt:P1476)'
       done()
-    .catch done
+    .catch undesiredErr(done)
 
     return
 
@@ -46,7 +46,7 @@ describe 'entities:editions:create', ->
       err.statusCode.should.equal 400
       err.body.status_verbose.should.equal "an edition shouldn't have labels"
       done()
-    .catch done
+    .catch undesiredErr(done)
 
     return
 
@@ -59,7 +59,7 @@ describe 'entities:editions:create', ->
           'wdt:P629': [ workEntity.uri ]
           'wdt:P1476': [ 'bla' ]
     .then -> done()
-    .catch done
+    .catch undesiredErr(done)
 
     return
 

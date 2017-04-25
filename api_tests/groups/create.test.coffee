@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ authReq } = __.require 'apiTests', 'utils/utils'
+{ authReq, undesiredErr } = __.require 'apiTests', 'utils/utils'
 randomString = __.require 'lib', './utils/random_string'
 slugify = __.require 'controllers', 'groups/lib/slugify'
 
@@ -16,7 +16,7 @@ describe 'groups:create', ->
       res.searchable.should.be.true()
       res.creator.should.equal res.admins[0].user
       done()
-    .catch done
+    .catch undesiredErr(done)
 
     return
 
@@ -27,6 +27,6 @@ describe 'groups:create', ->
       err.statusCode.should.equal 400
       err.body.error_name.should.equal 'invalid_name'
       done()
-    .catch done
+    .catch undesiredErr(done)
 
     return

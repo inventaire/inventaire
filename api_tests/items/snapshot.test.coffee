@@ -3,7 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
-{ authReq, getUser, adminReq } = __.require 'apiTests', 'utils/utils'
+{ authReq, getUser, adminReq, undesiredErr } = __.require 'apiTests', 'utils/utils'
 { ensureEditionExists } = require '../entities/helpers'
 randomString = __.require 'lib', './utils/random_string'
 
@@ -33,7 +33,7 @@ describe 'items:snapshot', ->
         .then (updatedItem)->
           updatedItem.snapshot['entity:title'].should.equal updatedTitle
           done()
-    .catch done
+    .catch undesiredErr(done)
 
     return
 
@@ -55,7 +55,7 @@ describe 'items:snapshot', ->
         .then (updatedItem)->
           updatedItem.snapshot['entity:title'].should.equal updatedTitle
           done()
-    .catch done
+    .catch undesiredErr(done)
 
     return
 
@@ -70,7 +70,7 @@ describe 'items:snapshot', ->
           title = _.values(serieEntity.labels)[0]
           item.snapshot['entity:series'].should.equal title
           done()
-    .catch done
+    .catch undesiredErr(done)
 
     return
 
@@ -94,7 +94,7 @@ describe 'items:snapshot', ->
             .then (reupdatedItem)->
               reupdatedItem.snapshot['entity:series'].should.equal updatedTitle
               done()
-    .catch done
+    .catch undesiredErr(done)
 
     return
 
@@ -113,7 +113,7 @@ describe 'items:snapshot', ->
         .then (item)->
           item.snapshot['entity:image'].should.equal image
           done()
-    .catch done
+    .catch undesiredErr(done)
 
     return
 
@@ -143,7 +143,7 @@ describe 'items:snapshot', ->
         .then (updatedItem)->
           updatedItem.snapshot['entity:authors'].should.equal updateAuthorName
           done()
-    .catch done
+    .catch undesiredErr(done)
 
     return
 
@@ -170,7 +170,7 @@ describe 'items:snapshot', ->
           .then (item)->
             item.snapshot['entity:authors'].should.equal updateAuthorName
             done()
-    .catch done
+    .catch undesiredErr(done)
 
     return
 
@@ -188,7 +188,7 @@ describe 'items:snapshot', ->
         updatedTitle = workEntityB.labels.de
         updatedItem.snapshot['entity:title'].should.equal updatedTitle
         done()
-    .catch done
+    .catch undesiredErr(done)
 
     return
 
@@ -214,7 +214,7 @@ describe 'items:snapshot', ->
             authorName = _.values(addedAuthor.labels)[0]
             updatedItem.snapshot['entity:authors'].should.equal authorName
             done()
-    .catch done
+    .catch undesiredErr(done)
 
     return
 
@@ -240,7 +240,7 @@ describe 'items:snapshot', ->
         updatedAuthors = authorEntityB.labels.de
         updatedItem.snapshot['entity:authors'].should.equal updatedAuthors
         done()
-    .catch done
+    .catch undesiredErr(done)
 
     return
 
@@ -266,7 +266,7 @@ describe 'items:snapshot', ->
         updatedSeries = serieEntityB.labels.de
         updatedItem.snapshot['entity:series'].should.equal updatedSeries
         done()
-    .catch done
+    .catch undesiredErr(done)
 
     return
 
@@ -285,7 +285,6 @@ createWorkEntity = -> createEntity 'wd:Q571'
 
 createEditionEntity = (workEntity)->
   authReq 'post', '/api/entities?action=create',
-    labels: { de: 'moin moin' + randomString(4) }
     claims:
       'wdt:P31': [ 'wd:Q3331189' ]
       'wdt:P629': [ workEntity.uri ]

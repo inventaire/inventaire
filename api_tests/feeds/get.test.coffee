@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ nonAuthReq, getUser } = __.require 'apiTests', 'utils/utils'
+{ nonAuthReq, getUser, undesiredErr } = __.require 'apiTests', 'utils/utils'
 
 describe 'feeds:get', ->
   it 'should return a user RSS feed', (done)->
@@ -13,7 +13,7 @@ describe 'feeds:get', ->
       .then (res)->
         res.startsWith('<?xml').should.be.true()
         done()
-    .catch done
+    .catch undesiredErr(done)
 
     return
 
@@ -25,6 +25,6 @@ describe 'feeds:get', ->
       .then (res)->
         res.startsWith('<?xml').should.be.true()
         done()
-    .catch done
+    .catch undesiredErr(done)
 
     return

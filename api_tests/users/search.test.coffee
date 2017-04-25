@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ nonAuthReq, authReq, getUser, getUserB } = __.require 'apiTests', 'utils/utils'
+{ nonAuthReq, authReq, getUser, getUserB, undesiredErr } = __.require 'apiTests', 'utils/utils'
 
 describe 'users:search', ->
   it 'should find a user', (done)->
@@ -13,7 +13,7 @@ describe 'users:search', ->
       .then (res)->
         (user._id in usersIds(res)).should.be.true()
         done()
-    .catch done
+    .catch undesiredErr(done)
 
     return
 
@@ -25,7 +25,7 @@ describe 'users:search', ->
       .then (res)->
         (user._id in usersIds(res)).should.be.true()
         done()
-    .catch done
+    .catch undesiredErr(done)
 
     return
 
@@ -37,7 +37,7 @@ describe 'users:search', ->
       .then (res)->
         (user._id in usersIds(res)).should.be.true()
         done()
-    .catch done
+    .catch undesiredErr(done)
 
     return
 
@@ -50,7 +50,7 @@ describe 'users:search', ->
         (user._id in usersIds(res)).should.be.true()
         should(res.users[0].snapshot).not.be.ok()
         done()
-    .catch done
+    .catch undesiredErr(done)
 
     return
 
@@ -66,7 +66,7 @@ describe 'users:search', ->
       .then (res)->
         (user._id in usersIds(res)).should.be.true()
         done()
-    .catch done
+    .catch undesiredErr(done)
 
     return
 

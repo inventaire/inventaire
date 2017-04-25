@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ authReq, getUser } = __.require 'apiTests', 'utils/utils'
+{ authReq, getUser, undesiredErr } = __.require 'apiTests', 'utils/utils'
 { newItemBase, CountChange } = require './helpers'
 
 describe 'items:delete', ->
@@ -13,7 +13,7 @@ describe 'items:delete', ->
       .then (res)->
         res.ok.should.be.true()
         done()
-    .catch done
+    .catch undesiredErr(done)
 
     return
 
@@ -35,6 +35,6 @@ describe 'items:delete', ->
             countChange('network').should.equal 0
             countChange('public').should.equal 0
             done()
-    .catch done
+    .catch undesiredErr(done)
 
     return
