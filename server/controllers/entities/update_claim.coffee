@@ -3,6 +3,10 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 entities_ = require './lib/entities'
 radio = __.require 'lib', 'radio'
+Entity = __.require 'models', 'entity'
+getEntityType = require './lib/get_entity_type'
+validateClaimProperty = require './lib/validate_claim_property'
+promises_ = __.require 'lib', 'promises'
 
 module.exports = (req, res)->
   { id:entityId, property, 'old-value':oldVal, 'new-value': newVal } = req.body
@@ -16,10 +20,22 @@ module.exports = (req, res)->
 
   entities_.byId entityId
   .then (currentDoc)->
-    entities_.updateClaim { property, oldVal, newVal, userId, currentDoc, userIsAdmin }
+    type = getEntityType currentDoc.claims['wdt:P31']
+    validateClaimProperty type, property
+    updateClaim { property, oldVal, newVal, userId, currentDoc, userIsAdmin }
   .tap _.Ok(res)
   .then (updatedDoc)->
     radio.emit 'entity:update:claim', updatedDoc, property, oldVal, newVal
   .catch error_.Handler(req, res)
 
 parseEmptyValue = (value)-> if value is '' then null else value
+
+updateClaim = (params)->
+  { property, oldVal, userId, currentDoc } = params
+  updatedDoc = _.cloneDeep currentDoc
+  params.currentClaims = currentDoc.claims
+  params.letEmptyValuePass = true
+
+  entities_.validateClaim params
+  .then Entity.updateClaim.bind(null, updatedDoc, property, oldVal)
+  .then entities_.putUpdate.bind(null, userId, currentDoc)

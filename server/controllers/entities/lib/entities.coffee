@@ -79,16 +79,6 @@ module.exports = entities_ =
     updatedDoc = Entity.setLabel updatedDoc, lang, value
     return entities_.putUpdate userId, currentDoc, updatedDoc
 
-  updateClaim: (params)->
-    { property, oldVal, userId, currentDoc } = params
-    updatedDoc = _.cloneDeep currentDoc
-    params.currentClaims = currentDoc.claims
-    params.letEmptyValuePass = true
-    entities_.validateClaim params
-    .then (formattedValue)->
-      Entity.updateClaim updatedDoc, property, oldVal, formattedValue
-    .then entities_.putUpdate.bind(null, userId, currentDoc)
-
   validateClaim: (params)->
     { property } = params
     promises_.try -> validateProperty property
