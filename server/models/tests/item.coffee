@@ -4,7 +4,7 @@ _ = __.require 'builders', 'utils'
 { pass, itemId, userId, entityUri, nonEmptyString, imgUrl } = require './common-tests'
 { constrained } = require '../attributes/item'
 
-module.exports =
+module.exports = itemTests =
   pass: pass
   itemId: itemId
   userId: userId
@@ -24,7 +24,7 @@ module.exports =
       unless snapshotTests[key](value) then return false
     return true
 
-snapshotTests =
+itemTests.snapshotTests = snapshotTests =
   'entity:title': (str)-> nonEmptyString str, 500
   'entity:image': _.isExtendedUrl
   'entity:lang': _.isLang

@@ -3,6 +3,7 @@ _ = __.require 'builders', 'utils'
 { getNames } = require './helpers'
 { getOriginalLang } = __.require 'lib', 'wikidata/wikidata'
 error_ = __.require 'lib', 'error/error'
+{ snapshotTests } = __.require 'models', 'tests/item'
 
 module.exports =
   # all editions items have the same snapshot
@@ -33,6 +34,8 @@ wrapSnapshot = (entity, title, lang, image, authors, series)->
 
   if authorsNames? then snapshot['entity:authors'] = authorsNames
   if seriesNames? then snapshot['entity:series'] = seriesNames
-  if image? then snapshot['entity:image'] = image
+
+  # Filtering out Wikimedia File names, keeping only IPFS hashes or URLs
+  if snapshotTests['entity:image'](image) then snapshot['entity:image'] = image
 
   return snapshot
