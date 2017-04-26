@@ -3,75 +3,49 @@ _ = __.require 'builders', 'utils'
 Promise = require 'bluebird'
 Promise.longStackTraces()
 fs = require 'fs'
+updateDocsByBatch = require './update_docs_by_batch'
 
 module.exports = (params)->
   { dbName, designDocName, preview, silent, showDiff } = params
-  preview ?= true
-  silent ?= false
-  showDiff ?= true
-
-  db = __.require('couch', 'base')(dbName, designDocName)
-  unless db? then throw new Error('bad dbName')
-
-  log = if silent then _.identity else _.log
+  params.preview = preview ?= true
+  params.silent = silent ?= false
+  params.showDiff ?= true
+  params.log = log = if silent then _.identity else _.log
   Log = (label)-> (obj)-> log obj, label
-  docDiff = if showDiff then require('./doc_diffs') else _.noop
 
   console.log 'preview mode:', preview
   console.log 'silent mode:', silent
 
+  params.db = db = __.require('couch', 'base')(dbName, designDocName)
+  unless db? then throw new Error('bad dbName')
+
   updater = (docsIdsPromise, updateFunction, label)->
     unless preview then logMigration dbName, updateFunction, label
 
+    params.updateFunction = updateFunction
+
     docsIdsPromise
-    .then (ids)->
-      log ids, 'got ids'
-      promises = []
-      ids.forEach (id)->
-        unless isDesignDoc id
-          log id, 'id'
-          promises.push updateIfNeeded(id, updateFunction)
-
-      return Promise.all promises
-
-    .then ->
-      log 'done updating !!'
-      process.exit 0
-    .catch _.ErrorRethrow('migration error')
-
-  updateIfNeeded = (id, updateFn)->
-    db.get id
-    .then (doc)->
-      # Convert sync functions to promises
-      # Use a clone of the doc to keep the doc itself unmutated
-      Promise.try -> updateFn(_.cloneDeep(doc))
-      .then (updatedDoc)->
-        if _.objDiff doc, updatedDoc
-          docDiff doc, updatedDoc, preview
-          unless preview then db.put updatedDoc
-        else
-          log id, 'no changes'
-          return
+    .filter isntDesignDoc
+    .then updateDocsByBatch(params)
 
   API =
-    db: db
     updateAll: (updateFunction, label)->
-      updater @getAllDocsKeys(), updateFunction, label
-
-    getAllDocsKeys: ->
-      db.allDocsKeys()
-      .then (res)->
-        ids = _.pluck res.rows, 'id'
-        return _.success ids, 'doc ids found'
-      .catch _.ErrorRethrow('getAllDocsKeys error')
+      updater getAllDocsKeys(), updateFunction, label
 
     updateByView: (viewName, updateFunction, label)->
-      updater @getViewKeys(viewName), updateFunction, label
+      updater getViewKeys(viewName), updateFunction, label
 
-    getViewKeys: (viewName)->
-      db.view designDocName, viewName
-      .then (res)-> return res.rows.map _.property('id')
-      .then Log('view ids')
+  getAllDocsKeys = ->
+    db.allDocsKeys()
+    .then (res)->
+      ids = _.pluck res.rows, 'id'
+      return _.success ids, 'doc ids found'
+    .catch _.ErrorRethrow('getAllDocsKeys error')
+
+  getViewKeys = (viewName)->
+    db.view designDocName, viewName
+    .then (res)-> return res.rows.map _.property('id')
+    .then Log('view ids')
 
   return API
 
@@ -86,4 +60,4 @@ logMigration = (dbName, updateFunction, label='updateFunction')->
   fs.writeFileSync(path, json)
   _.success "migration logged at #{path}: #{json}"
 
-isDesignDoc = (id)-> /^_design/.test id
+isntDesignDoc = (id)-> not /^_design/.test id
