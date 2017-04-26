@@ -9,20 +9,15 @@ randomString = __.require 'lib', './utils/random_string'
 
 describe 'items:snapshot', ->
   it 'should be updated when its local edition entity title changes', (done)->
-    ensureEditionExists 'isbn:9789100131913', null,
-      labels: {}
-      claims:
-        'wdt:P31': [ 'wd:Q3331189' ]
-        'wdt:P212': [ '978-91-0-013191-3' ]
-        # If the entity already exist (because the test databases where reset)
-        # the initial entity title might be different
-        'wdt:P1476': [ 'Some book edition' ]
+    createWorkEntity()
+    .then createEditionEntity
     .then (res)->
-      { _id:entityId } = res
-      authReq 'post', '/api/items', { entity: 'isbn:9789100131913' }
+      { _id:entityId, uri } = res
+      authReq 'post', '/api/items', { entity: uri }
       .then (item)->
         currentTitle = item.snapshot['entity:title']
         updatedTitle = currentTitle.split('$$')[0] + '$$' + new Date().toISOString()
+
         authReq 'put', '/api/entities?action=update-claim',
           id: entityId
           property: 'wdt:P1476'
@@ -38,11 +33,7 @@ describe 'items:snapshot', ->
     return
 
   it 'should be updated when its local work entity title changes', (done)->
-    authReq 'post', '/api/entities?action=create',
-      labels: { de: 'moin moin' }
-      claims:
-        'wdt:P31': [ 'wd:Q571' ]
-        'wdt:P50': [ 'wd:Q535' ]
+    createWorkEntity()
     .then (res)->
       { _id:entityId, uri } = res
       authReq 'post', '/api/items', { entity: uri, lang: 'de' }
