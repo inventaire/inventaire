@@ -10,30 +10,29 @@ module.exports =
     title = edition.claims['wdt:P1476']?[0]
     lang = getOriginalLang(edition.claims) or 'en'
     image = edition.claims['wdt:P18']?[0]
-    return wrapSnapshot title, lang, image, authors, series
+    return wrapSnapshot edition, title, lang, image, authors, series
 
   work: (lang, work, authors, series)->
     title = work.labels[lang]
     image = work.claims['wdt:P18']?[0]
-    return wrapSnapshot title, lang, image, authors, series
+    return wrapSnapshot work, title, lang, image, authors, series
 
-wrapSnapshot = (title, lang, image, authors, series)->
-  _.types arguments, [ 'string', 'string', 'string|undefined', 'array', 'array' ]
+types = [ 'object', 'string', 'string', 'string|undefined', 'array', 'array' ]
+wrapSnapshot = (entity, title, lang, image, authors, series)->
+  _.types arguments, types
 
   unless _.isNonEmptyString title
-    throw error_.new 'no title found', 400, work
-
-  _.log series, 'series'
-  authorsNames = getNames lang, authors
-  seriesNames = getNames lang, series
-  _.log seriesNames, 'seriesNames'
+    throw error_.new 'no title found', 400, entity
 
   snapshot =
     'entity:title': title
     'entity:lang': lang
-    'entity:authors': authorsNames
-    'entity:series': seriesNames
 
+  authorsNames = getNames lang, authors
+  seriesNames = getNames lang, series
+
+  if authorsNames? then snapshot['entity:authors'] = authorsNames
+  if seriesNames? then snapshot['entity:series'] = seriesNames
   if image? then snapshot['entity:image'] = image
 
   return snapshot

@@ -18,7 +18,8 @@ module.exports =
     return item
 
   getNames: (preferedLang, entities)->
-    unless _.isNonEmptyArray entities then return ''
+    unless _.isNonEmptyArray entities then return
+
     entities
     .map getName(preferedLang)
     .join ', '
