@@ -11,10 +11,11 @@ chalk = require 'chalk'
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
 IP = /^[0-9.]{7,15}$/
-{ from, ip, suffix, protocol, port, localPort } = CONFIG.replication
+{ from, ip, suffix, protocol, port, localPort, continuous } = CONFIG.replication
 protocol or= 'https'
 port or= 6984
 localPort or= 6984
+continuous ?= true
 
 unless from?
   throw new Error "bad CONFIG.replication.from: #{from}"
@@ -59,7 +60,7 @@ dbsNames.forEach (dbName)->
   repDoc =
     source: remoteDb(dbName)
     target: localDb(dbName)
-    continuous: true
+    continuous: continuous
 
   breq.get remoteDb(dbName)
   .then (res)->
