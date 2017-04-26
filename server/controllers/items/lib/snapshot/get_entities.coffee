@@ -7,9 +7,7 @@ getEditionWork = (edition)->
   getEntityByUri edition.claims['wdt:P629'][0]
 
 getWorkRelativeEntity = (relationProperty)-> (work)->
-  _.warn work, 'work'
   uris = work.claims[relationProperty]
-  _.log uris, "#{relationProperty} uris"
   unless uris?.length > 0 then return Promise.resolve []
   return Promise.all uris.map(getEntityByUri)
 
