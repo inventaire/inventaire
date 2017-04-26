@@ -16,6 +16,9 @@ refreshSnapshot = require './refresh_snapshot'
 # IT doesn't matter that some entity got an update on some properties
 # that aren't involved in generating the snapshot data. Ex: edition publisher.
 
+# TODO: use the Wikidata recentchanges API to follow remote entities updates
+# https://www.wikidata.org/w/api.php?action=help&modules=query%2Brecentchanges
+
 module.exports = ->
   radio.on 'entity:update:label', refreshSnapshot.fromDoc
   radio.on 'entity:update:claim', refreshSnapshot.fromDoc
