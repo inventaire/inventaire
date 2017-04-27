@@ -6,6 +6,7 @@ _ = __.require 'builders', 'utils'
 serverOnlyProperties = [
   # Currently not handled from client-side
   'wdt:P31'
+  'wdt:P18'
 ]
 
 module.exports =
