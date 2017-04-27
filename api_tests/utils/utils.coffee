@@ -73,4 +73,4 @@ module.exports =
 
   undesiredErr: (done)-> (err)->
     done err
-    _.warn err.body, 'undesired err body'
+    _.warn err.body or err, 'undesired err body'
