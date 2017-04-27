@@ -119,12 +119,19 @@ module.exports = Entity =
     return toEntityDoc
 
   turnIntoRedirection: (fromEntityDoc, toUri, removedPlaceholdersIds)->
-    _id: fromEntityDoc._id
-    _rev: fromEntityDoc._rev
-    type: 'entity'
-    redirect: toUri
-    # the list of placeholders entities to recover if the merge as to be reverted
-    removedPlaceholdersIds: removedPlaceholdersIds
+    [ prefix, id ] = toUri.split ':'
+
+    if prefix is 'inv' and id is fromEntityDoc._id
+      throw error_.new 'circular redirection', 500, arguments
+
+    return {
+      _id: fromEntityDoc._id
+      _rev: fromEntityDoc._rev
+      type: 'entity'
+      redirect: toUri
+      # the list of placeholders entities to recover if the merge as to be reverted
+      removedPlaceholdersIds: removedPlaceholdersIds
+    }
 
   removePlaceholder: (entityDoc)->
     removedDoc = _.cloneDeep entityDoc
