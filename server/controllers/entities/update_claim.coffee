@@ -14,6 +14,11 @@ module.exports = (req, res)->
 
   _.log req.body, 'update claim input'
 
+  unless entityId? then return error_.bundleMissingBody req, res, 'id'
+  unless property? then return error_.bundleMissingBody req, res, 'property'
+  unless oldVal? or newVal?
+    return error_.bundleMissingBody req, res, 'old-value|new-value'
+
   # An empty string is interpreted as a null value
   oldVal = parseEmptyValue oldVal
   newVal = parseEmptyValue newVal
