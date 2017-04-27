@@ -20,7 +20,6 @@ module.exports = (title)->
     credits:
       text: 'English Wikipedia'
       url: "https://en.wikipedia.org/wiki/#{title}"
-  .catch _.ErrorRethrow('get enwiki image err')
 
 underscorize = (text)-> text.replace /\s/g, '_'
 
