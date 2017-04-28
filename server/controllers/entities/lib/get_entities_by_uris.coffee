@@ -3,7 +3,7 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
 wdk = require 'wikidata-sdk'
-{ normalizeIsbn, isNormalizedIsbn } = __.require 'lib', 'isbn/isbn'
+{ normalizeIsbn, isValidIsbn } = __.require 'lib', 'isbn/isbn'
 { prefixes:aliasesPrefixes, validators:aliasesValidators } = require './alias_uris'
 aliasesGetter = require './get_entities_by_alias_uris'
 
@@ -88,4 +88,4 @@ hasFormatter = Object.keys formatters
 validators = _.extend {}, aliasesValidators,
   inv: _.isInvEntityId
   wd: wdk.isItemId
-  isbn: isNormalizedIsbn
+  isbn: isValidIsbn
