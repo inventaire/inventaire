@@ -12,9 +12,12 @@ fromDoc = (changedEntityDoc)->
   [ uri, type ] = getDocData changedEntityDoc
   unless type in refreshTypes then return
 
+  _.info "items snapshot refresh: #{uri}"
   refresh[type](uri)
   .then (updatedItems)->
-    if updatedItems?.length > 0 then items_.db.bulk updatedItems
+    if updatedItems?.length > 0
+      _.info "#{uri} items snapshot refresh: #{updatedItems.length} items refreshed"
+      items_.db.bulk updatedItems
 
   .catch _.Error('refresh snapshot err')
 
