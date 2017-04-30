@@ -8,6 +8,7 @@ _.extend Q,
     'wd:Q14406742' #comic book series
     'wd:Q21198342' #manga series
     'wd:Q1667921' #novel series
+    'wd:Q3297186' #limited series
   ]
   works: [
     'wd:Q571' #book
