@@ -40,7 +40,7 @@ stringConcurrentBase = _.extend {}, stringBase, { concurrency: true }
 
 isbnProperty = (num)->
   _.extend {}, stringConcurrentBase,
-    test: (isbn)-> isbn is isbn_.parse(isbn)?["isbn#{num}h"]
+    test: (isbn)-> isbn? and isbn is isbn_.parse(isbn)?["isbn#{num}h"]
     uniqueValue: true
     format: isbn_["toIsbn#{num}h"]
     adminUpdateOnly: true
