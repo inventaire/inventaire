@@ -6,10 +6,9 @@ isbn_ = __.require('sharedLibs', 'isbn')(_)
 groups = require './groups'
 
 parse = (isbn)->
-  _.log isbn, 'isbn'
   # The isbn2 parser would reject an ISBN formatted like 978-2070368228,
   # so removing all hypens gives us more coverage
-  isbn = isbn.replace /-/g, ''
+  isbn = dehyphenate isbn
   data = isbnParser(isbn)?.codes
 
   # Some people input an isbn 13 without EAN prefix
@@ -29,6 +28,8 @@ parse = (isbn)->
       data.groupLangUri = langData.wd
 
   return data
+
+dehyphenate = (isbn)-> isbn.replace /-/g, ''
 
 module.exports = _.extend isbn_,
   isValidIsbn: (isbn)-> isbnParser(isbn)?

@@ -32,7 +32,6 @@ module.exports = (uris, refresh)->
       errMessage = "invalid uri id: #{id} (uri: #{uri})"
       return error_.reject errMessage, 400, uri
 
-    if prefix in hasFormatter then id = formatters[prefix](id)
     # Alias getters require the full URI as it handles multiple prefixes
     value = if prefix in aliasesPrefixes then uri else id
     domains[prefix] or= []
@@ -79,11 +78,6 @@ mergeResponses = (results)->
   if response.notFound.length is 0 then delete response.notFound
 
   return response
-
-formatters =
-  isbn: normalizeIsbn
-
-hasFormatter = Object.keys formatters
 
 validators = _.extend {}, aliasesValidators,
   inv: _.isInvEntityId
