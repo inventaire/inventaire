@@ -7,7 +7,7 @@ dataseed = __.require 'data', 'dataseed/dataseed'
 # An endpoint to get basic facts from an ISBN
 # Returns a merge of isbn2 and dataseed data
 module.exports = (req, res)->
-  { isbn } = req.query
+  { isbn, refresh } = req.query
   data = isbn_.parse isbn
 
   unless data?
@@ -18,7 +18,9 @@ module.exports = (req, res)->
   delete data.source
   data.query = isbn
 
-  dataseed.getByIsbns data.isbn13
+  refresh = _.parseBooleanString refresh
+
+  dataseed.getByIsbns data.isbn13, refresh
   .then (resp)->
     seed = resp[0] or {}
     delete seed.isbn
