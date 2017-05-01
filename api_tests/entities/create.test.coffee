@@ -135,13 +135,12 @@ describe 'entities:create', ->
 
   it 'should reject an entity created with a concurrent property with a value already taken', (done)->
     ensureEditionExists 'isbn:9782315006113', null,
-      labels: {}
       claims:
         'wdt:P31': [ 'wd:Q3331189' ]
         'wdt:P212': [ '978-2-315-00611-3' ]
+        'wdt:P1476': [ 'bla' ]
     .then (editionEntity)->
       authReq 'post', '/api/entities?action=create',
-        labels: { fr: 'bla' }
         claims:
           'wdt:P31': [ 'wd:Q3331189' ]
           'wdt:P212': [ '978-2-315-00611-3' ]
