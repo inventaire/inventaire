@@ -14,7 +14,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
-{ updateEnabled, host } = CONFIG.wikidataSubsetSearchEngine
+{ updateEnabled, host, delay } = CONFIG.wikidataSubsetSearchEngine
 radio = __.require 'lib', 'radio'
 
 module.exports = ->
@@ -30,7 +30,7 @@ module.exports = ->
     .catch _.Error('WSSE update err')
 
   # Send a batch every 30 seconds max
-  lazyRequestUpdate = _.throttle requestUpdate, 30000, { leading: false }
+  lazyRequestUpdate = _.throttle requestUpdate, delay, { leading: false }
 
   radio.on 'wikidata:entity:cache:miss', (wdId, type)->
     if type?

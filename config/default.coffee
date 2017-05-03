@@ -181,3 +181,4 @@ module.exports = config =
   wikidataSubsetSearchEngine:
     updateEnabled: false
     host: 'http://localhost:3213'
+    delay: 30000
