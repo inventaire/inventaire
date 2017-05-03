@@ -23,6 +23,7 @@ promises_ = __.require 'lib', 'promises'
 getWdEntity = __.require 'data', 'wikidata/get_entity'
 getInvEntityByWdId = require './get_inv_entity_by_wd_id'
 addImageData = require './add_image_data'
+radio = __.require 'lib', 'radio'
 
 module.exports = (ids, refresh)->
   promises_.all ids.map(getCachedEnrichedEntity(refresh))
@@ -46,6 +47,7 @@ mergeWdAndInvData = (entity, invEntity)->
   if P31
     simplifiedP31 = wdk.simplifyPropertyClaims P31
     entity.type = getEntityType simplifiedP31.map(prefixify)
+    radio.emit 'wikidata:entity:cache:miss', entity.id, entity.type
   else
     # Make sure to override the type as Wikidata entities have a type with
     # another role in Wikibase, and we need this absence of known type to
@@ -117,3 +119,7 @@ undesiredPropertiesPerType =
   # Ignoring ISBN data set on work entities, as those should be the responsability
   # of edition entities
   work: [ 'P212', 'P957' ]
+
+# Not really related, out of the fact that it listen for
+# 'wikidata:entity:cache:miss', but that needed to be initialized somewhere
+require('./update_wikidata_subset_search_engine')()

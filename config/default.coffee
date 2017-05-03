@@ -176,3 +176,8 @@ module.exports = config =
     image: 'https://inventaire.io/public/icon/120.png'
 
   deduplicateRequests: true
+
+  # https://github.com/inventaire/wikidata-subset-search-engine
+  wikidataSubsetSearchEngine:
+    updateEnabled: false
+    host: 'http://localhost:3213'
