@@ -72,7 +72,10 @@ getResizeImage = (req, res, url, dimensions)->
       errMessage = "image is too large: #{contentLength}"
 
     if errMessage?
-      err = error_.new errMessage, 400, url
+      # Keep the internal service host private
+      context = url.replace /(\d{1,3}\.){3}(\d{1,3}):\d{4}/, 'internal-host'
+      err = error_.new errMessage, 400, context
+      err.privateContext = url
       @emit 'error', err
     else
       res.header 'Content-Type', 'image/jpeg'
