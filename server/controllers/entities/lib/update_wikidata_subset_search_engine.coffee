@@ -36,5 +36,9 @@ module.exports = ->
     if type?
       pluralizedType = type + 's'
       idsPerType[pluralizedType] or= []
-      idsPerType[pluralizedType].push wdId
+
+      # Deduplicating
+      unless wdId in idsPerType[pluralizedType]
+        idsPerType[pluralizedType].push wdId
+
       lazyRequestUpdate()
