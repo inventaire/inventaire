@@ -42,6 +42,16 @@ _.extend Q,
     'wd:Q483394' # genre
     'wd:Q223393' # literary genre
   ]
+  publishers: [
+    # publisher
+    'wd:Q2085381'
+    # book publishing company
+    'wd:Q1320047'
+    # comics publishing company
+    'wd:Q1114515'
+    # bandes dessinées publishing company
+    'wd:Q3279251'
+  ]
   # types to ignore (Category pages, homonymie, etc.)
   meta: [
     'wd:Q4167836' # Wikimedia category
