@@ -2,6 +2,8 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 { Q } = __.require 'sharedLibs', 'wikidata_aliases'
 
+# TODO: replace this list by a SPARQL generated list
+# that can be refreshed from time to time
 _.extend Q,
   series: [
     'wd:Q277759' # book series
