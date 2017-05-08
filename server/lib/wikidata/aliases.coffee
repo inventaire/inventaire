@@ -42,6 +42,9 @@ _.extend Q,
     'wd:Q483394' # genre
     'wd:Q223393' # literary genre
   ]
+
+  # Types required to update the entity search engine
+  # see server/controllers/entities/lib/update_wikidata_subset_search_engine
   publishers: [
     # publisher
     'wd:Q2085381'
@@ -62,7 +65,8 @@ _.extend Q,
     # literary group
     'wd:Q23834194'
   ]
-  # types to ignore (Category pages, homonymie, etc.)
+
+  # Types to ignore (Category pages, homonymie, etc.)
   meta: [
     'wd:Q4167836' # Wikimedia category
     'wd:Q4167410' # Wikimedia disambiguation page
