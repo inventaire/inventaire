@@ -52,6 +52,16 @@ _.extend Q,
     # bandes dessinées publishing company
     'wd:Q3279251'
   ]
+  movements: [
+    # cultural movement
+    'wd:Q2198855'
+    # literary movement
+    'wd:Q3326717'
+    # art movement
+    'wd:Q968159'
+    # literary group
+    'wd:Q23834194'
+  ]
   # types to ignore (Category pages, homonymie, etc.)
   meta: [
     'wd:Q4167836' # Wikimedia category
