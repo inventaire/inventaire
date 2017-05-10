@@ -8,6 +8,10 @@ dataseed = __.require 'data', 'dataseed/dataseed'
 # Returns a merge of isbn2 and dataseed data
 module.exports = (req, res)->
   { isbn, refresh } = req.query
+
+  unless _.isNonEmptyString isbn
+    return error_.bundleMissingQuery req, res, 'isbn'
+
   data = isbn_.parse isbn
 
   unless data?
