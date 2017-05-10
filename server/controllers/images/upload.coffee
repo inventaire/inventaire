@@ -7,7 +7,7 @@ error_ = __.require 'lib', 'error/error'
 images_ = __.require 'lib', 'images'
 { putImage } = require './put_image'
 
-exports.post = (req, res, next)->
+module.exports = (req, res, next)->
   unless req.user? then return error_.unauthorizedApiAccess req, res
 
   parseForm req

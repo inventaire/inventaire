@@ -21,7 +21,7 @@ module.exports = routes =
   'api/entities': endpoint './entities/entities'
   'api/notifs': endpoint './notifs'
   'api/cookie': endpoint './cookie'
-  'api/upload': endpoint './upload/upload'
+  'api/images': endpoint './images/images'
   'api/tests*': endpoint './tests'
   'api/services': endpoint './services/services'
   'api/data': endpoint './data'
@@ -32,7 +32,7 @@ module.exports = routes =
   'api/reports': endpoint './reports/reports'
   'api/config': endpoint './config'
   'api/feeds': endpoint './feeds/feeds'
-  'img/*': endpoint './upload/resize'
+  'img/*': endpoint './images/resize'
 
 if CONFIG.logMissingI18nKeys
   routes['api/i18n'] = require './i18n'
