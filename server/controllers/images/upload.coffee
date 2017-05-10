@@ -6,25 +6,40 @@ parseForm = require './lib/parse_form'
 error_ = __.require 'lib', 'error/error'
 images_ = __.require 'lib', 'images'
 { putImage } = require './put_image'
+{ getImageByUrl } = __.require 'data', 'dataseed/dataseed'
+{ enabled:dataseedEnabled } = CONFIG.dataseed
+host = CONFIG.fullPublicHost()
 
 module.exports = (req, res, next)->
-  unless req.user? then return error_.unauthorizedApiAccess req, res
+  # Set ipfs=true to get a IPFS hash instead of a local URL
+  ipfs = dataseedEnabled and _.parseBooleanString(req.query.ipfs)
 
   parseForm req
   .then (formData)->
     { fields, files } = formData
+
+    unless _.isNonEmptyPlainObject files
+      throw error_.new 'no file provided', 400, formData
+
     for key, file of files
       validateFile file
       file.id = key
 
-    promises = _.values(files).map putImage
-
-    Promise.all promises
-    .then indexCollection
-
+    return Promise.all _.values(files).map(putImage)
+  .map convertUrl(ipfs)
+  .then indexCollection
   .then _.Log('upload post res')
   .then res.json.bind(res)
   .catch error_.Handler(req, res)
+
+convertUrl = (ipfs)-> (urlData)->
+  unless ipfs then return urlData
+
+  getImageByUrl "#{host}#{urlData.url}"
+  .get 'url'
+  .then (ipfsPath)->
+    urlData.url = ipfsPath
+    return urlData
 
 validateFile = (file)->
   { type } = file
