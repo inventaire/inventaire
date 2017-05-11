@@ -41,7 +41,7 @@ proxy = (req, res)->
 
   if methodIsPost
     options.body = JSON.stringify req.body
-    _.log options.body, 'body'
+    _.log options.body, 'proxied request body'
 
   request options
   .on 'error', ErrorHandler(req, res)
