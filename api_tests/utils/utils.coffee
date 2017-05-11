@@ -51,13 +51,17 @@ AuthentifiedRequest = (cookiesPromise)-> (method, endpoint, body)->
 
 authentifiedRequest = AuthentifiedRequest userCookiesPromise
 bUserAuthentifiedRequest = AuthentifiedRequest userBCookiesPromise
-adminReq = AuthentifiedRequest adminCookiesPromise
+_adminReq = AuthentifiedRequest adminCookiesPromise
 
 GetUser = (authentifiedRequester)-> ()-> authentifiedRequester 'get', '/api/user'
 
-getAdminUser = GetUser adminReq
+getAdminUser = GetUser _adminReq
 
-getAdminUser().get('_id').then makeUserAdmin
+waitForAdminRights = getAdminUser().get('_id').then makeUserAdmin
+
+adminReq = (args...)->
+  waitForAdminRights
+  .then -> _adminReq.apply null, args
 
 module.exports =
   authReq: authentifiedRequest
