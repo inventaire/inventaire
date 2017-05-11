@@ -17,10 +17,10 @@ module.exports = (req, res)->
   { search, lang } = query
 
   unless _.isNonEmptyString search
-    return error_.bundle req, res, 'empty query' , 400
+    return error_.bundleMissingQuery req, res, 'search'
 
   unless lang?
-    return error_.bundle req, res, 'no lang specified' , 400
+    return error_.bundleMissingQuery req, res, 'lang'
 
   # Make sure we have a 2 letters lang code
   query.lang = _.shortLang lang
