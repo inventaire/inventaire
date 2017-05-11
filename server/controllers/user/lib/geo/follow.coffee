@@ -4,6 +4,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 follow = __.require 'lib', 'follow'
 promises_ = __.require 'lib', 'promises'
+dbBaseName = 'users'
 
 module.exports = (db, reset)->
 
@@ -33,17 +34,12 @@ module.exports = (db, reset)->
       { position } = res
       if lat is position.lat and lon is position.lon then return
 
-    db.put { lat: lat, lon: lon }, id, null
+    db.put { lat, lon }, id, null
     .then ->
       _.success [id, lat, lon], 'user position updated'
       return
 
-  startFollowing = (res)->
-    follow
-      dbBaseName: 'users'
-      filter: filter
-      onChange: onChange
-      reset: reset
+  startFollowing = (res)-> follow { dbBaseName, filter, onChange, reset }
 
   resetIfNeeded = ->
     if reset then db.reset()
