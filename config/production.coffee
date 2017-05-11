@@ -13,11 +13,6 @@ module.exports =
     password: 'OVERRIDE'
   noCache: true
   staticMaxAge: 0
-  aws:
-    key: 'OVERRIDE'
-    secret: 'OVERRIDE'
-    region: 'OVERRIDE'
-    bucket: 'OVERRIDE'
   typeCheck: false
   bluebird:
     warnings: false

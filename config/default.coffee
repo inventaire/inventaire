@@ -113,15 +113,8 @@ module.exports = config =
     debounceDelay: 30*60*1000
 
   # By default, media are saved locally instead of using a remove
-  # object storage service such as Swift or AWS
+  # object storage service such as Swift
   objectStorage: 'local'
-  # AWS credentials are requierd only when objectStorage is set to 'aws'
-  aws:
-    key: 'customizedInLocalConfig'
-    secret: 'customizedInLocalConfig'
-    region: 'customizedInLocalConfig'
-    bucket: 'customizedInLocalConfig'
-    protocol: 'http'
   # Swift parameters are requierd only when objectStorage is set to 'swift'
   swift:
     username: 'customizedInLocalConfig'
