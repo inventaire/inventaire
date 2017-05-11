@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
-getEntitiesByIsbns = require './lib/get_entities_by_isbns'
+getEntitiesByIsbns = require './get_entities_by_isbns'
 
 module.exports = (query)->
   { isbn, refresh } = query

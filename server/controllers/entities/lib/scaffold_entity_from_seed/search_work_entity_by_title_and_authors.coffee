@@ -3,7 +3,7 @@ _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
 
-searchByText = require '../../search_by_text'
+searchByText = require '../search_by_text'
 getBestLangValue = __.require('sharedLibs', 'get_best_lang_value')(_)
 getEntitiesByUris = require '../get_entities_by_uris'
 workEntitiesCache = require './work_entity_search_deduplicating_cache'

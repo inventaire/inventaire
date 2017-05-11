@@ -5,8 +5,8 @@ error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
 isbn_ = __.require 'lib', 'isbn/isbn'
 
-searchByIsbn = require './search_by_isbn'
-searchByText = require './search_by_text'
+searchByIsbn = require './lib/search_by_isbn'
+searchByText = require './lib/search_by_text'
 
 { searchTimeout } = CONFIG
 
