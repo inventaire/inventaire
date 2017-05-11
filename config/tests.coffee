@@ -25,3 +25,5 @@ module.exports =
   dataseed:
     enabled: false
   deduplicateRequests: false
+  mailer:
+    disabled: true

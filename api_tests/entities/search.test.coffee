@@ -13,7 +13,6 @@ describe 'entities:search', ->
     .delay 1000
     .then (creationRes)->
       nonAuthReq 'get', '/api/entities?action=search&search=zzzz&lang=fr'
-      .then _.Log('creationRes')
       .then (searchRes)->
         done()
 
