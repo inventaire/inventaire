@@ -1,38 +1,51 @@
+# A module to listen for changes in a CouchDB database, and dispatch the change
+# event to all the subscribed followers
+
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 follow = require 'follow'
 meta = __.require 'lib', 'meta'
-
 dbHost = CONFIG.db.fullHost()
+{ freezeFollow, resetFollow } = CONFIG.db
 
-{ freezeFollow } = CONFIG.db
+# filter and an onChange functions register, indexed per dbBaseNames
+followers = {}
 
-# { dbBaseName, filter, onChange, reset } = params
 module.exports = (params)->
-  { dbBaseName } = params
-  dbName = params.dbName = CONFIG.db.name dbBaseName
+  { dbBaseName, filter, onChange } = params
+  _.types [ dbBaseName, filter, onChange ], [ 'string', 'function', 'function' ]
+
+  dbName = CONFIG.db.name dbBaseName
 
   if freezeFollow
     _.warn dbName, 'freezed follow'
     return
 
-  meta.get buildKey(dbName)
-  .then initFollow.bind(null, params)
-  .catch _.ErrorRethrow('init follow err')
+  if followers[dbName]?
+    # Add this follower to the exist db follower register
+    followers[dbName].push params
+  else
+    # Create a db follower register, and add it this follower
+    followers[dbName] = [ params ]
 
-initFollow = (params, lastSeq=0)->
-  { dbName, filter, onChange, reset } = params
+    # Then start follow this database
+    meta.get buildKey(dbName)
+    # after a bit, to let other followers the time to register, and CouchDB
+    # the time to initialize, while letting other initialization functions
+    # with a higher priority level some time to run
+    .delay 5000
+    .then initFollow(dbName)
+    .catch _.ErrorRethrow('init follow err')
 
-  if reset then lastSeq = 0
+initFollow = (dbName)-> (lastSeq=0)->
+  if resetFollow then lastSeq = 0
   _.log lastSeq, "#{dbName} last seq"
-
   _.type lastSeq, 'number'
 
   config =
     db: "#{dbHost}/#{dbName}"
     include_docs: true
-    filter: filter
     feed: 'continuous'
     since: lastSeq
 
@@ -44,7 +57,8 @@ initFollow = (params, lastSeq=0)->
       { seq } = change
       _.log seq, "#{dbName} change"
       setLastSeq seq
-      onChange change
+      for follower in followers[dbName]
+        if follower.filter(change.doc) then follower.onChange change
 
 SetLastSeq = (dbName)->
   key = buildKey dbName

@@ -5,10 +5,10 @@ _ = __.require 'builders', 'utils'
 follow = __.require 'lib', 'follow'
 promises_ = __.require 'lib', 'promises'
 dbBaseName = 'users'
+{ resetFollow } = CONFIG.db
 
-module.exports = (db, reset)->
-
-  filter = (doc, req)->
+module.exports = (db)->
+  filter = (doc)->
     if doc.type is 'user'
       if doc.position? then return true
 
@@ -39,10 +39,10 @@ module.exports = (db, reset)->
       _.success [id, lat, lon], 'user position updated'
       return
 
-  startFollowing = (res)-> follow { dbBaseName, filter, onChange, reset }
+  startFollowing = (res)-> follow { dbBaseName, filter, onChange }
 
   resetIfNeeded = ->
-    if reset then db.reset()
+    if resetFollow then db.reset()
     else promises_.resolved
 
   resetIfNeeded()
