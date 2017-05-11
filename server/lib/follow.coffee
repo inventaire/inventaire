@@ -7,7 +7,13 @@ _ = __.require 'builders', 'utils'
 follow = require 'follow'
 meta = __.require 'lib', 'meta'
 dbHost = CONFIG.db.fullHost()
-{ freezeFollow, resetFollow } = CONFIG.db
+{ reset:resetFollow, freeze:freezeFollow, delay:delayFollow } = CONFIG.db.follow
+
+# Never follow in non-server mode.
+# This behaviors allows, in api_tests environement, to have the tests server
+# following, while scripts being called directly by tests don't compete
+# with the server
+freezeFollow = freezeFollow or not CONFIG.serverMode
 
 # filter and an onChange functions register, indexed per dbBaseNames
 followers = {}
@@ -34,7 +40,7 @@ module.exports = (params)->
     # after a bit, to let other followers the time to register, and CouchDB
     # the time to initialize, while letting other initialization functions
     # with a higher priority level some time to run
-    .delay 5000
+    .delay delayFollow
     .then initFollow(dbName)
     .catch _.ErrorRethrow('init follow err')
 

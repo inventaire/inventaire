@@ -1,5 +1,8 @@
 console.time 'startup'
 CONFIG = require 'config'
+# Signal to other CONFIG consumers that they are in a server context
+# and not simply scripts being executed in the wild
+CONFIG.serverMode = true
 
 [port, host, env] = process.argv.slice(2)
 

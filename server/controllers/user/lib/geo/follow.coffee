@@ -5,7 +5,7 @@ _ = __.require 'builders', 'utils'
 follow = __.require 'lib', 'follow'
 promises_ = __.require 'lib', 'promises'
 dbBaseName = 'users'
-{ resetFollow } = CONFIG.db
+{ reset:resetFollow } = CONFIG.db.follow
 
 module.exports = (db)->
   filter = (doc)->

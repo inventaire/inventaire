@@ -14,6 +14,7 @@
 module.exports =
   db:
     suffix: 'prod'
-    resetFollow: true
+    follow:
+      reset: true
   swift:
     container: 'img'

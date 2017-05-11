@@ -9,5 +9,4 @@
 module.exports =
   db:
     suffix: 'prod'
-    freezeFollow: true
     port: 3456

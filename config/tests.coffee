@@ -12,7 +12,11 @@ module.exports =
   db:
     suffix: 'tests'
     # debug: true
-    freezeFollow: true
+    follow:
+      reset: true
+      freeze: false
+      # Give 1000 delay so that tests relying on follow don't have to wait
+      delay: 1000
   graph:
     social: undefined
   godMode: false

@@ -42,11 +42,16 @@ module.exports = config =
       if @suffix? then return "#{dbBaseName}-#{@suffix}"
       else dbBaseName
     # make external indexes restart from the first seq
-    resetFollow: false
-    # use freezeFollow for cases when following the database would have undesired effects
-    # ex: without freezeFollow, scripts connecting to a remote database (like scripts/increment_undelivered_email_count)
-    # would trigger follow onChange actions with the data from the remote database
-    freezeFollow: false
+    follow:
+      reset: false
+      # Use freezeFollow for cases when following the database would have
+      # undesired effects. Ex: without freezeFollow, scripts connecting to a
+      # remote database (like scripts/increment_undelivered_email_count) would
+      # trigger follow onChange actions with the data from the remote database
+      # follow.freeze is thus always activated in non-serverMode
+      # cf server/lib/follow.coffee
+      freeze: false
+      delay: 5000
     # logs Couchdb requests parameters
     debug: false
     # db settings for script actions
@@ -54,8 +59,6 @@ module.exports = config =
     actionsScripts:
       port: 3456
       suffix: 'prod'
-      # prevent triggering follow onChange actions with data from the remote database
-      freezeFollow: true
   elasticsearch:
     host: 'http://localhost:9200'
   serveStaticFiles: true
