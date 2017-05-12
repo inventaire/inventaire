@@ -2,6 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
+promises_ = __.require 'lib', 'promises'
 { nonAuthReq, authReq, undesiredRes, undesiredErr } = __.require 'apiTests', 'utils/utils'
 
 describe 'entities:update-claims-hooks', ->
@@ -15,12 +16,37 @@ describe 'entities:update-claims-hooks', ->
           property: 'wdt:P1476'
           'old-value': 'bla'
           'new-value': 'bla-updated'
-      .delay 10
+      .delay 100
       .then ->
         nonAuthReq 'get', "/api/entities?action=by-uris&uris=#{work.uri}"
         .then (res)->
           work = res.entities[work.uri]
           work.labels.fr.should.equal 'bla-updated'
+          done()
+
+    .catch undesiredErr(done)
+
+    return
+
+  it 'should not update a work label if editions disagree on the title', (done)->
+    createWork()
+    .then (work)->
+      promises_.all [
+        createEdition work
+        createEdition work
+      ]
+      .spread (editionA, editionB)->
+        authReq 'put', '/api/entities?action=update-claim',
+          id: editionA._id
+          property: 'wdt:P1476'
+          'old-value': 'bla'
+          'new-value': 'bla-updated'
+      .delay 100
+      .then ->
+        nonAuthReq 'get', "/api/entities?action=by-uris&uris=#{work.uri}"
+        .then (res)->
+          work = res.entities[work.uri]
+          work.labels.fr.should.equal 'bla'
           done()
 
     .catch undesiredErr(done)
