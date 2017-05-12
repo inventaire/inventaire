@@ -147,3 +147,16 @@ describe 'entity model', ->
         should(entityDoc.claims['wdt:P957']).not.be.ok()
         should(entityDoc.claims['wdt:P407']).not.be.ok()
         done()
+
+    describe 'set label', ->
+      it "should set the label in the given lang", (done)->
+        entityDoc = validDoc()
+        Entity.setLabel entityDoc, 'fr', 'hello'
+        entityDoc.labels.fr.should.equal 'hello'
+        done()
+
+      it "should throw if no lang is passed", (done)->
+        entityDoc = validDoc()
+        updater = -> Entity.setLabel entityDoc, null, 'hello'
+        updater.should.throw()
+        done()

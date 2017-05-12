@@ -8,6 +8,11 @@ updateLabel = require './update_label'
 module.exports = (edition, oldTitle)->
   workUri = edition.claims['wdt:P629'][0]
   editionLang = getOriginalLang edition.claims
+
+  unless editionLang?
+    _.warn edition._id, "couldn't apply hook: edition miss a lang"
+    return
+
   [ prefix, id ] = workUri.split ':'
   # local work entity all have an 'inv' prefix
   unless prefix is 'inv' then return

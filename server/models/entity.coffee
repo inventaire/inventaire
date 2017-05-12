@@ -39,6 +39,8 @@ module.exports = Entity =
     claims: {}
 
   setLabel: (doc, lang, value)->
+    _.types arguments, [ 'object', 'string', 'string' ]
+    unless _.isLang lang then throw error_.new 'invalid lang', 400, arguments
     preventRedirectionEdit doc, 'setLabel'
     doc.labels[lang] = value
     return doc
