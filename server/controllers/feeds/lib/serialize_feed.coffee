@@ -33,7 +33,7 @@ module.exports = (feedOptions, users, items, lang)->
   return feed.xml()
 
 serializeItem = (usersIndex, lang)-> (item)->
-  { title, owner } = item
+  { owner } = item
   user = usersIndex[owner]
   user.href = "#{root}/inventory/#{user._id}"
   item.href = "#{root}/items/#{item._id}"
@@ -54,8 +54,9 @@ serializeItem = (usersIndex, lang)-> (item)->
   return data
 
 getItemTitle = (item, user, lang)->
-  { title, transaction } = item
-  authors = item.snapshot['entity:authors']
+  { transaction, snapshot } = item
+  title = snapshot['entity:title']
+  authors = snapshot['entity:authors']
   if _.isNonEmptyString authors then title += " - #{authors}"
 
   i18nKey = "#{transaction}_personalized"

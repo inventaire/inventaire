@@ -5,8 +5,9 @@ templateHelpers = __.require 'lib', 'emails/handlebars_helpers'
 transacColors = __.require 'lib', 'emails/activity_summary/transactions_colors'
 
 module.exports = (item, user, lang)->
-  { title, transaction, pictures, snapshot, details } = item
+  { transaction, pictures, snapshot, details } = item
   image = pictures[0] or snapshot['entity:image']
+  title = snapshot['entity:title']
 
   if _.isNonEmptyString image
     imageSrc = templateHelpers.src image, 300
@@ -23,7 +24,7 @@ module.exports = (item, user, lang)->
 
   detailsHtml = if _.isNonEmptyString details then "<p>#{item.details}<p>" else ''
 
-  return """<a href="#{item.href}" alt="#{item.title}">#{imageHtml}</a>
+  return """<a href="#{item.href}" alt="#{title}">#{imageHtml}</a>
   <table width="300"><tr>
     <td>
       <a href="#{user.href}" title="#{user.username}">
