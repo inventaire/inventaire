@@ -7,6 +7,7 @@ Entity = __.require 'models', 'entity'
 getEntityType = require './lib/get_entity_type'
 validateClaimProperty = require './lib/validate_claim_property'
 promises_ = __.require 'lib', 'promises'
+require('./lib/update_claims_hooks')()
 
 module.exports = (req, res)->
   { id:entityId, property, 'old-value':oldVal, 'new-value': newVal } = req.body
