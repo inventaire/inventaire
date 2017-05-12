@@ -1,3 +1,6 @@
+# Add emails to the waiting list to let server/lib/emails/debounced_emails_crawler
+# find and send them
+
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
@@ -12,12 +15,9 @@ module.exports =
 
     addToWaitingList 'transactionUpdate', transactionId
 
-addToWaitingList = (domain, id)->
-  findPreviousWaiters domain, id
-
-# delete and repost with new time to wait
+# Delete and repost with new time to wait
 # as long as updates are arriving fast (i.e. in a 30 minutes timespan)
-findPreviousWaiters = (domain, id)->
+addToWaitingList = (domain, id)->
   waitingEmails.sub.createKeyStream
     gt: "#{domain}:#{id}:0"
     lt: "#{domain}:#{id}::"
