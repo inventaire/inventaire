@@ -8,7 +8,7 @@ endpoint = CONFIG.images.localEndpoint()
 request = require 'request'
 qs = require 'querystring'
 { oneYear } =  __.require 'lib', 'times'
-{ offline } = CONFIG
+{ offline, imageRedirection } = CONFIG
 { localGateway, publicGateway } = CONFIG.ipfs
 oneMB = 1024**2
 
@@ -19,6 +19,14 @@ exports.get = (req, res, next)->
   # while hereafter image streams' error
   # aren't correctly handled
   if offline then return _.okWarning res, 'you are in offline mode: no img delivered'
+
+  # Used to redirect to production server when working with the prod databases
+  # in development
+  if imageRedirection?
+    { originalUrl } = req
+    res.redirect imageRedirection + originalUrl
+    return
+
   [ dimensions, rest ] = parseReq req
 
   # if no dimensions are passed, should return the maximum dimension
