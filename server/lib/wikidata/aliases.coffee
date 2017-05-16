@@ -11,12 +11,14 @@ _.extend Q,
     'wd:Q21198342' # manga series
     'wd:Q1667921' # novel series
     'wd:Q3297186' # limited series
+    'wd:Q21191134' # comic strip series
   ]
   works: [
     'wd:Q571' # book
     'wd:Q2831984' # comic book album
     'wd:Q1004' # bande dessinée / comic book
     'wd:Q1760610' # comic book
+    'wd:Q838795' # comic strip
     'wd:Q8261' # novel / roman
     'wd:Q25379' # theatre play
     'wd:Q7725634' # literary work
