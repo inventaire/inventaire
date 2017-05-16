@@ -48,5 +48,7 @@ if CONFIG.objectStorage is 'local'
 _.extend routes,
   'api/*':
     all: glob.api
+  '*.json':
+    get: _.log glob.jsonRedirection, 'glob.jsonRedirection'
   '*':
     get: glob.get

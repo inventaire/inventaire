@@ -18,9 +18,27 @@ module.exports =
       # the routing will be done on the client side
       res.sendFile './index.html', { root: publicFolder }
 
+  jsonRedirection: (req, res)->
+    { pathname } = req._parsedUrl
+    [ domain, id ] = pathname.split('/').slice(1)
+    id = id.replace /\.json$/, ''
+    redirectionFn = redirections[domain]
+
+    unless redirectionFn?
+      return error_.bundleInvalid req, res, 'domain', domain
+
+    res.redirect redirectionFn(id)
+
   api: (req, res)->
     error_.bundle req, res, 'wrong API route or http verb', 400,
       verb: req.method
       url: req._parsedUrl.href
 
 imageHeader = (req)-> /^image/.test req.headers.accept
+
+redirections =
+  entity: (uri)-> "/api/entities?action=by-uris&uris=#{uri}"
+  inventory: (username)-> "/api/users?action=by-usernames&usernames=#{username}"
+  users: (id)-> "/api/users?action=by-ids&ids=#{id}"
+  groups: (id)-> "/api/groups?action=by-ids&ids=#{id}"
+  # transactions: (id)->
