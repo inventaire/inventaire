@@ -39,8 +39,6 @@ getWdAuthorWorks = (qid, worksByTypes, refresh)->
 spreadWdResultsByTypes = (worksByTypes, results)->
   for result in results
     { work:wdId, type:typeWdId, date, serie } = result
-    # If the date is a January 1st, it's very probably because
-    # its a year-precision date
     typeUri = "wd:#{typeWdId}"
     typeName = getTypePluralNameByTypeUri typeUri
     if typeName in whitelistedTypesNames

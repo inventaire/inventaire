@@ -7,7 +7,7 @@ error_ = __.require 'lib', 'error/error'
 { validateLimitAndOffset } = require './lib/queries_commons'
 
 module.exports = (req, res)->
-  reqUserId = req.user?._id
+  { _id:reqUserId } = req.user
   { query } = req
   { range } = query
 

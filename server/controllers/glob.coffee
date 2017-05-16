@@ -4,7 +4,7 @@ error_ = __.require 'lib', 'error/error'
 publicFolder = __.path 'client', 'public'
 
 module.exports =
-  get: (req, res, next)->
+  get: (req, res)->
     { pathname } = req._parsedUrl
     domain = pathname.split('/')[1]
     if domain is 'api'
