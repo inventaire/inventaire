@@ -22,7 +22,7 @@ exports.get = (req, res, next)->
 
   # Used to redirect to production server when working with the prod databases
   # in development
-  if imageRedirection?
+  if imageRedirection
     { originalUrl } = req
     res.redirect imageRedirection + originalUrl
     return
