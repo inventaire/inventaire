@@ -25,6 +25,7 @@ module.exports = (req, res)->
   # Make sure we have a 2 letters lang code
   query.lang = _.shortLang lang
   query.refresh = _.parseBooleanString query.refresh
+  query.disableDataseed = _.parseBooleanString query.fast
 
   if isbn_.looksLikeAnIsbn search
     unless isbn_.isValidIsbn search
