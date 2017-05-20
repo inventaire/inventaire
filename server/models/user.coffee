@@ -114,3 +114,10 @@ User.updatePassword = (user, newHash)->
   # https://github.com/blog/16-token-private-feeds
   user.readToken = generateReadToken()
   return user
+
+User.setOauthTokens = (provider, data)-> (user)->
+  _.type provider, 'string'
+  _.type data, 'object'
+  user.oauth or= {}
+  user.oauth[provider] = data
+  return user

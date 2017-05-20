@@ -181,3 +181,10 @@ module.exports = config =
     updateEnabled: false
     host: 'http://localhost:3213'
     delay: 30000
+
+  # Doc: https://www.mediawiki.org/wiki/OAuth/For_Developers
+  # Request tokens at
+  # https://meta.wikimedia.org/wiki/Special:OAuthConsumerRegistration/propose
+  wikidataOAuth:
+    consumerKey: 'your-consumer-token'
+    consumerSecret: 'your-secret-token'

@@ -125,6 +125,9 @@ user_.updateEmail = (user, email)->
   # so it's ok to pass the user as it was before the database was updated
   .then -> token_.sendValidationEmail user
 
+user_.setOauthTokens = (userId, provider, data)->
+  db.update userId, User.setOauthTokens(provider, data)
+
 user_.availability = availability_ = require('./availability')(user_)
 user_.create = require('./create')(db, token_, availability_)
 user_.byPosition = __.require('lib', 'by_position')(db, 'user')

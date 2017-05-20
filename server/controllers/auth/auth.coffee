@@ -8,6 +8,8 @@ module.exports =
     public:
       'username-availability': usernameAvailability
       'email-availability': emailAvailability
+    authentified:
+      'wikidata-oauth': require './wikidata_oauth'
 
   post: ActionsControllers
     public:
