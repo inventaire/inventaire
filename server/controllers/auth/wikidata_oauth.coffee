@@ -20,12 +20,12 @@ reqTokenSecrets = {}
 
 module.exports = (req, res)->
   { _id:reqUserId } = req.user
-  { oauth_verifier:verifier, oauth_token:reqToken } = req.query
+  { oauth_verifier:verifier, oauth_token:reqToken, redirect } = req.query
 
   step1 = not (verifier? and reqToken?)
 
   if step1
-    getStep1Token()
+    getStep1Token redirect
     .then (step1Res)->
       { oauth_token_secret:reqTokenSecret } = qs.parse step1Res
       reqTokenSecrets[reqUserId] = reqTokenSecret
@@ -34,14 +34,14 @@ module.exports = (req, res)->
   else
     getStep3 reqUserId, verifier, reqToken
     .then saveUserTokens(reqUserId)
-    .then _.Ok(res)
+    .then -> res.redirect "#{root}#{redirect}"
     .catch error_.Handler(req, res)
 
-getStep1Token = ->
+getStep1Token = (redirect)->
   promises_.post
     url: step1Url
     oauth:
-      callback: "#{root}/api/auth?action=wikidata-oauth"
+      callback: "#{root}/api/auth?action=wikidata-oauth&redirect=#{redirect}"
       consumer_key: consumerKey
       consumer_secret: consumerSecret
 
