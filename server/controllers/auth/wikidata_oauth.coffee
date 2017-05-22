@@ -59,5 +59,5 @@ getStep3 = (reqUserId, verifier, oauthToken)->
 
 saveUserTokens = (reqUserId)-> (step3Res)->
   { oauth_token_secret:userTokenSecret, oauth_token:userToken } = qs.parse step3Res
-  data = { key: userToken, secret: userTokenSecret }
+  data = { token: userToken, token_secret: userTokenSecret }
   user_.setOauthTokens reqUserId, 'wikidata', data

@@ -186,5 +186,5 @@ module.exports = config =
   # Request tokens at
   # https://meta.wikimedia.org/wiki/Special:OAuthConsumerRegistration/propose
   wikidataOAuth:
-    consumerKey: 'your-consumer-token'
-    consumerSecret: 'your-secret-token'
+    consumer_key: 'your-consumer-key'
+    consumer_secret: 'your-consumer-secret'
