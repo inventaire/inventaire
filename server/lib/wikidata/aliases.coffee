@@ -12,6 +12,7 @@ _.extend Q,
     'wd:Q1667921' # novel series
     'wd:Q3297186' # limited series
     'wd:Q21191134' # comic strip series
+    'wd:Q17489659' # group of works
   ]
   works: [
     'wd:Q571' # book
