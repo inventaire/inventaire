@@ -1,24 +1,21 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
-entities_ = require './lib/entities'
-radio = __.require 'lib', 'radio'
-updateLabel = require './lib/update_label'
 
 module.exports = (req, res)->
-  { id:entityId, lang, value } = req.body
-  { _id:reqUserId } = req.user
-
+  { uri, lang, value } = req.body
   _.log req.body, 'update label body'
 
-  unless entityId? then return error_.bundleMissingBody req, res, 'id'
+  unless uri? then return error_.bundleMissingBody req, res, 'uri'
   unless lang? then return error_.bundleMissingBody req, res, 'lang'
   unless value?.trim() then return error_.bundleMissingBody req, res, 'value'
 
   value = value.trim()
 
-  unless _.isInvEntityId entityId
-    return error_.bundleInvalid req, res, 'id', entityId
+  [ prefix, id ] = uri.split ':'
+  updater = updaters[prefix]
+  unless updater?
+    return error_.bundle req, res, "unsupported uri prefix: #{prefix}", 400, uri
 
   unless _.isLang lang
     return error_.bundleInvalid req, res, 'lang', lang
@@ -26,8 +23,10 @@ module.exports = (req, res)->
   unless _.isNonEmptyString value
     return error_.bundleInvalid req, res, 'value', value
 
-  entities_.byId entityId
-  .then updateLabel.bind(null, lang, value, reqUserId)
-  .tap _.Ok(res)
-  .then (updatedDoc)-> radio.emit 'entity:update:label', updatedDoc, lang, value
+  updater req.user, id, lang, value
+  .then _.Ok(res)
   .catch error_.Handler(req, res)
+
+updaters =
+  inv: require './update_inv_label'
+  wd: require './update_wd_label'
