@@ -29,5 +29,6 @@ module.exports = (req, res)->
 parseEmptyValue = (value)-> if value is '' then null else value
 
 updaters =
+  # TODO: accept ISBN URIs
   inv: require './update_inv_claim'
   wd: require './update_wd_claim'
