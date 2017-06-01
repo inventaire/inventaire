@@ -4,7 +4,7 @@ _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
 root = CONFIG.fullPublicHost()
-{ consumerKey, consumerSecret } = CONFIG.wikidataOAuth
+{ consumer_key, consumer_secret } = CONFIG.wikidataOAuth
 qs = require 'querystring'
 user_ = __.require 'controllers', 'user/lib/user'
 
@@ -42,16 +42,16 @@ getStep1Token = (redirect)->
     url: step1Url
     oauth:
       callback: "#{root}/api/auth?action=wikidata-oauth&redirect=#{redirect}"
-      consumer_key: consumerKey
-      consumer_secret: consumerSecret
+      consumer_key: consumer_key
+      consumer_secret: consumer_secret
 
 getStep3 = (reqUserId, verifier, oauthToken)->
   reqTokenSecret = reqTokenSecrets[reqUserId]
   promises_.post
     url: step3Url
     oauth:
-      consumer_key: consumerKey
-      consumer_secret: consumerSecret
+      consumer_key: consumer_key
+      consumer_secret: consumer_secret
       token: oauthToken
       token_secret: reqTokenSecret
       verifier: verifier
