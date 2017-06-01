@@ -6,7 +6,7 @@ Entity = __.require 'models', 'entity'
 getEntityType = require './lib/get_entity_type'
 validateClaimProperty = require './lib/validate_claim_property'
 
-updateInvClaim = (user, id, property, oldVal, newVal)->
+module.exports = (user, id, property, oldVal, newVal)->
   { _id:userId, admin:userIsAdmin } = user
   entities_.byId id
   .then (currentDoc)->
