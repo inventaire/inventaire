@@ -45,6 +45,14 @@ isbnProperty = (num)->
     format: isbn_["toIsbn#{num}h"]
     adminUpdateOnly: true
 
+# For the moment, ordinals can be only positive integers, but stringified
+# to stay consistent with Wikidata and let the door open to custom ordinals later
+# (ex: roman numbers, letters, etc.)
+ordinal =
+  datatype: 'number'
+  test: (value)-> positiveIntegerBase.test(value) and value.toString().length < 20
+  format: (value)-> value.toString()
+
 # Keep in sync with app/modules/entities/lib/properties
 # and app/modules/entities/lib/editor/properties_per_type
 properties =
@@ -88,6 +96,8 @@ properties =
   'wdt:P1412': entityBase
   # title
   'wdt:P1476': stringBase
+  # series ordinal
+  'wdt:P1545': ordinal
   # twitter account
   'wdt:P2002': stringConcurrentBase
 
@@ -103,6 +113,7 @@ validateProperty = (property)->
 # which type those datatype should returned when passed to _.typeOf
 datatypePrimordialType =
   string: 'string'
+  number: 'number'
   entity: 'string'
   'ipfs-path': 'string'
   'positive-integer': 'number'

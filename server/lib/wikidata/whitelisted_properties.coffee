@@ -47,6 +47,7 @@ module.exports = [
   'P1066' # student of
   'P1104' # number of pages
   'P1476' # title
+  'P1545' # series ordinal
   'P1680' # subtitle
   'P1938' # Project Gutenberg author ID
   'P2002' # twitter
