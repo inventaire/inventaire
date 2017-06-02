@@ -4,9 +4,9 @@ error_ = __.require 'lib', 'error/error'
 require('./lib/update_claims_hooks')()
 
 module.exports = (req, res)->
-  { uri, property, 'old-value':oldVal, 'new-value': newVal } = req.body
-
+  { id, uri, property, 'old-value':oldVal, 'new-value': newVal } = req.body
   _.log req.body, 'update claim input'
+  if _.isInvEntityId(id) and not uri? then uri = "inv:#{id}"
 
   unless uri? then return error_.bundleMissingBody req, res, 'uri'
   unless property? then return error_.bundleMissingBody req, res, 'property'

@@ -3,8 +3,9 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 
 module.exports = (req, res)->
-  { uri, lang, value } = req.body
+  { id, uri, lang, value } = req.body
   _.log req.body, 'update label body'
+  if _.isInvEntityId(id) and not uri? then uri = "inv:#{id}"
 
   unless uri? then return error_.bundleMissingBody req, res, 'uri'
   unless lang? then return error_.bundleMissingBody req, res, 'lang'
