@@ -41,4 +41,5 @@ redirections =
   inventory: (username)-> "/api/users?action=by-usernames&usernames=#{username}"
   users: (id)-> "/api/users?action=by-ids&ids=#{id}"
   groups: (id)-> "/api/groups?action=by-ids&ids=#{id}"
+  items: (id)-> "/api/items?action=by-ids&ids=#{id}"
   # transactions: (id)->
