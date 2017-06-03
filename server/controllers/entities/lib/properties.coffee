@@ -17,11 +17,13 @@ ipfsPathBase =
   datatype: 'ipfs-path'
   test: _.isIpfsPath
   format: _.identity
+  uniqueValue: true
 
 positiveIntegerBase =
   datatype: 'positive-integer'
   test: (value)-> _.isNumber(value) and value % 1 is 0 and value > 0
   format: _.identity
+  uniqueValue: true
 
 simpleDayUniqueValueBase =
   datatype: 'simple-day'
@@ -30,13 +32,14 @@ simpleDayUniqueValueBase =
   format: _.identity
   uniqueValue: true
 
-stringBase =
+stringUniqueBase =
   datatype: 'string'
   format: _.identity
   # Arbitrary max length
   test: (str)-> _.isString(str) and 0 < str.length < 5000
+  uniqueValue: true
 
-stringConcurrentBase = _.extend {}, stringBase, { concurrency: true }
+stringConcurrentBase = _.extend {}, stringUniqueBase, { concurrency: true }
 
 isbnProperty = (num)->
   _.extend {}, stringConcurrentBase,
@@ -48,10 +51,11 @@ isbnProperty = (num)->
 # For the moment, ordinals can be only positive integers, but stringified
 # to stay consistent with Wikidata and let the door open to custom ordinals later
 # (ex: roman numbers, letters, etc.)
-ordinal =
+ordinalBase =
   datatype: 'number'
   test: (value)-> positiveIntegerBase.test(value) and value.toString().length < 20
   format: (value)-> value.toString()
+  uniqueValue: true
 
 # Keep in sync with app/modules/entities/lib/properties
 # and app/modules/entities/lib/editor/properties_per_type
@@ -95,9 +99,9 @@ properties =
   # languages of expression
   'wdt:P1412': entityBase
   # title
-  'wdt:P1476': stringBase
+  'wdt:P1476': stringUniqueBase
   # series ordinal
-  'wdt:P1545': ordinal
+  'wdt:P1545': ordinalBase
   # twitter account
   'wdt:P2002': stringConcurrentBase
 
