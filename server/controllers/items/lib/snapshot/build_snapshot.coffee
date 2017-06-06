@@ -32,8 +32,8 @@ wrapSnapshot = (entity, work, title, lang, image, authors, series)->
   if authorsNames? then snapshot['entity:authors'] = authorsNames
   if seriesNames?
     snapshot['entity:series'] = seriesNames
-    rank = work.claims['wdt:P1545']?[0]
-    if rank? then snapshot['entity:rank'] = rank
+    ordinal = work.claims['wdt:P1545']?[0]
+    if ordinal? then snapshot['entity:ordinal'] = ordinal
 
   # Filtering out Wikimedia File names, keeping only IPFS hashes or URLs
   if snapshotTests['entity:image'](image) then snapshot['entity:image'] = image
