@@ -13,7 +13,6 @@ module.exports = (item, entityUri)->
     unless type in whitelistedTypes
       throw error_.new 'invalid entity type', 400, item
 
-    # TODO: also snapshot series label and rank when available
     return snapshotByType[type](item, entity)
 
 snapshotByType =
