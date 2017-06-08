@@ -24,5 +24,13 @@ module.exports =
     .map getName(preferedLang)
     .join ', '
 
+  aggregateClaims: (entities, property)->
+    _(entities)
+    .map (entity)-> entity.claims[property]
+    .flatten()
+    .compact()
+    .uniq()
+    .value()
+
 getName = (lang)-> (entity)->
   getBestLangValue(lang, entity.originalLang, entity.labels).value

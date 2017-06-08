@@ -6,7 +6,10 @@ entities_ = require './entities'
 updateLabel = require './update_label'
 
 module.exports = (edition, oldTitle)->
-  workUri = edition.claims['wdt:P629'][0]
+  workUris = edition.claims['wdt:P629']
+  # Ignore composite editions
+  if workUris.length isnt 1 then return
+  workUri = workUris[0]
   editionLang = getOriginalLang edition.claims
 
   unless editionLang?

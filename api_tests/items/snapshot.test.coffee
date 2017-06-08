@@ -235,28 +235,30 @@ describe 'items:snapshot', ->
 
     return
 
-  it 'should be updated when its local author entity is merged', (done)->
+  it 'should snapshot data from all the works of a composite edition', (done)->
     Promise.all [
-      getUser().get '_id'
-      createSerieEntity()
-      createSerieEntity()
+      createWorkEntity()
+      createWorkEntity()
     ]
-    .spread (userId, serieEntityA, serieEntityB)->
-      authReq 'post', '/api/entities?action=create',
-        labels: { de: 'moin moin' + randomString(4) }
-        claims:
-          'wdt:P31': [ 'wd:Q571' ]
-          'wdt:P179': [ serieEntityA.uri ]
-      .then (workEntity)->
-        authReq 'post', '/api/items', { entity: workEntity.uri, lang: 'de' }
-      .delay 100
-      .tap -> merge serieEntityA, serieEntityB
-      .delay 100
-      .then getItem
-      .then (updatedItem)->
-        updatedSeries = serieEntityB.labels.de
-        updatedItem.snapshot['entity:series'].should.equal updatedSeries
-        done()
+    .spread (workA, workB)->
+      Promise.all [
+        addAuthor(workA)
+        addAuthor(workB)
+      ]
+      .then (authors)->
+        Promise.all [
+          addSerie(workA)
+          addSerie(workB)
+        ]
+        .then (series)->
+          createEditionEntity(workA, workB)
+          .then (edition)-> authReq 'post', '/api/items', { entity: edition.uri }
+          .then (item)->
+            authorsNames = authors.map((author)-> author.labels.de).join(', ')
+            seriesNames = series.map((serie)-> serie.labels.de).join(', ')
+            item.snapshot['entity:authors'].should.equal authorsNames
+            item.snapshot['entity:series'].should.equal seriesNames
+            done()
     .catch undesiredErr(done)
 
     return
@@ -274,12 +276,13 @@ createSerieEntity = -> createEntity 'wd:Q277759'
 createAuthorEntity = -> createEntity 'wd:Q5'
 createWorkEntity = -> createEntity 'wd:Q571'
 
-createEditionEntity = (workEntity)->
+createEditionEntity = (works...)->
+  worksUris = works.map (work)-> work.uri
   authReq 'post', '/api/entities?action=create',
     claims:
       'wdt:P31': [ 'wd:Q3331189' ]
-      'wdt:P629': [ workEntity.uri ]
-      'wdt:P1476': [ _.values(workEntity.labels)[0] ]
+      'wdt:P629': worksUris
+      'wdt:P1476': [ _.values(works[0].labels)[0] ]
 
 addAuthor = (subjectEntity)->
   createAuthorEntity()

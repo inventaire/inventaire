@@ -87,7 +87,7 @@ properties =
   # publication date
   'wdt:P577': simpleDayUniqueValueBase
   # edition or translation of
-  'wdt:P629': entityUniqueValue
+  'wdt:P629': entityBase
   # influenced by
   'wdt:P737': entityBase
   # main subject
