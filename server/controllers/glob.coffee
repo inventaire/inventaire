@@ -40,6 +40,8 @@ redirections =
   entity: (uri)-> "/api/entities?action=by-uris&uris=#{uri}"
   inventory: (username)-> "/api/users?action=by-usernames&usernames=#{username}"
   users: (id)-> "/api/users?action=by-ids&ids=#{id}"
-  groups: (id)-> "/api/groups?action=by-ids&ids=#{id}"
+  groups: (id)->
+    if _.isGroupId id then "/api/groups?action=by-id&id=#{id}"
+    else "/api/groups?action=by-slug&slug=#{id}"
   items: (id)-> "/api/items?action=by-ids&ids=#{id}"
   # transactions: (id)->
