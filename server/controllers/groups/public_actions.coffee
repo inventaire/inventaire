@@ -22,13 +22,13 @@ module.exports =
     .catch error_.Handler(req, res)
 
   bySlug: (req, res)->
-    { slug, group } = req.query
+    { slug } = req.query
     reqUserId = req.user?._id
 
     unless _.isNonEmptyString slug
       return error_.bundleMissingQuery req, res, 'slug'
 
-    groups_.getGroupData 'bySlug', [ slug, group ], reqUserId
+    groups_.getGroupData 'bySlug', [ slug ], reqUserId
     .then res.json.bind(res)
     .catch error_.Handler(req, res)
 
