@@ -9,10 +9,10 @@ db = __.require('couch', 'base')('groups')
 
 module.exports = groups_ =
   # using a view to avoid returning users or relations
-  byId: db.viewFindOneByKey.bind(db, 'byId')
-  bySlug: db.viewFindOneByKey.bind(db, 'bySlug')
-  byUser: db.viewByKey.bind(db, 'byUser')
-  byInvitedUser: db.viewByKey.bind(db, 'byInvitedUser')
+  byId: db.viewFindOneByKey.bind db, 'byId'
+  bySlug: db.viewFindOneByKey.bind db, 'bySlug'
+  byUser: db.viewByKey.bind db, 'byUser'
+  byInvitedUser: db.viewByKey.bind db, 'byInvitedUser'
   byAdmin: (userId)->
     # could be simplified by making the byUser view
     # emit an arrey key with the role as second parameter
