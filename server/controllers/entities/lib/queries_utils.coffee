@@ -9,19 +9,19 @@ module.exports =
   sortByDate: (a, b)-> formatDate(a) - formatDate(b)
 
 formatDate = (obj)->
-  { date, rank } = obj
+  { date, ordinal } = obj
   if date? then new Date(date).getTime()
-  else fakeLastYearTime rank
+  else fakeLastYearTime ordinal
 
 # If no date is available, make it appear last by providing a date in the future
-# Add the rank so that items without a date are still prioritized by rank
+# Add the ordinal so that items without a date are still prioritized by ordinal
 # lastYearBase to update once we will have passed the year 2100
 lastYearBase = 2100
-fakeLastYearTime = (rank)->
-  fakeDateYearString = (lastYearBase + rankNum rank).toString()
+fakeLastYearTime = (ordinal)->
+  fakeDateYearString = (lastYearBase + ordinalNum ordinal).toString()
   return new Date(fakeDateYearString).getTime()
 
-lastRank = 1000
-rankNum = (rank)->
-  if /^\d+$/.test rank then parseInt rank
-  else lastRank
+lastOrdinal = 1000
+ordinalNum = (ordinal)->
+  if /^\d+$/.test ordinal then parseInt ordinal
+  else lastOrdinal
