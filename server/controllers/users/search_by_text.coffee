@@ -6,7 +6,6 @@ error_ = __.require 'lib', 'error/error'
 module.exports = (req, res) ->
   { query } = req
   search = query.search?.trim()
-  reqUserId = req.user?._id
 
   unless _.isNonEmptyString search
     return error_.bundleInvalid req, res, 'search', search
