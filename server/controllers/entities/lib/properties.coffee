@@ -104,6 +104,10 @@ properties =
   'wdt:P1545': ordinalBase
   # twitter account
   'wdt:P2002': stringConcurrentBase
+  # author of foreword
+  'wdt:P2679': entityBase
+  # author of afterword
+  'wdt:P2680': entityBase
 
 whitelist = Object.keys properties
 
