@@ -65,6 +65,7 @@ deleteFolder = -> execa 'rm', [ '-rf', backupFolder ]
 
 promises_.get allDbsUrl
 .filter isDatabase
+.filter (dbName)-> dbName.match(suffix)
 .then _.Log('databases to backup')
 .map backupDatabase
 .then -> _.log 'done doing backup'
