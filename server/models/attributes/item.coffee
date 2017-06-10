@@ -7,6 +7,8 @@ attributes.updatable = [
   'details'
   'notes'
   'snapshot'
+  # Use case: change from a work entity to an edition entity
+  'entity'
 ]
 
 attributes.validAtCreation = [
