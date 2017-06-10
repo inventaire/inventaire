@@ -15,11 +15,8 @@ module.exports = patches_ =
 
   getSnapshots: (entityId)->
     byEntityId entityId
-    .then _.Log('patches')
     .then (patchDocs)->
       base = Entity.create()
       return Patch.getSnapshots base, patchDocs
-
-    .then _.Log('with snapshots')
 
 byEntityId = (entityId)-> db.viewByKey 'byEntityId', entityId
