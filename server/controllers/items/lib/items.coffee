@@ -13,6 +13,7 @@ radio = __.require 'lib', 'radio'
 { filterPrivateAttributes } = require './filter_private_attributes'
 { maxKey } = __.require 'lib', 'couch'
 listingsLists = require './listings_lists'
+snapshotEntityData = require './snapshot/snapshot_entity_data'
 
 db = __.require('couch', 'base')('items')
 
@@ -75,8 +76,16 @@ module.exports = items_ =
     itemId = itemUpdateData._id
     db.get itemId
     .then (currentItem)->
-      db.update itemId, Item.update.bind(null, userId, itemUpdateData)
-      .then -> db.get itemId
+      updatedItem = Item.update userId, itemUpdateData, currentItem
+
+      # Refresh the item's snapshot data if the entity changed
+      if currentItem.entity isnt updatedItem.entity
+        promise = snapshotEntityData updatedItem, updatedItem.entity
+      else
+        promise = promises_.resolve updatedItem
+
+      promise
+      .then db.putAndReturn
       .tap (updatedItem)-> radio.emit 'item:update', currentItem, updatedItem
 
   verifyOwnership: (itemId, userId)->

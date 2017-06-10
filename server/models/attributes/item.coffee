@@ -32,7 +32,6 @@ attributes.validAtCreation = [
 notUpdatable = [
   '_id'
   '_rev'
-  'entity'
   'lang'
   'created'
 

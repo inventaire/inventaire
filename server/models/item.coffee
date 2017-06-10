@@ -51,9 +51,9 @@ Item.update = (userId, updateAttributesData, doc)->
   for attr in attributes.updatable
     passAttrTest updateAttributesData, attr
 
-  _.extend doc, newData
-  doc.updated = Date.now()
-  return doc
+  updatedDoc = _.extend {}, doc, newData
+  updatedDoc.updated = Date.now()
+  return updatedDoc
 
 Item.changeOwner = (transacDoc, item)->
   _.types arguments, 'objects...'

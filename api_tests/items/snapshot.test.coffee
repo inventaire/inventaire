@@ -263,6 +263,31 @@ describe 'items:snapshot', ->
 
     return
 
+  it 'should be updated when its entity changes', (done)->
+    Promise.all [
+      getUser().get '_id'
+      createWorkEntity()
+    ]
+    .spread (userId, workEntityA)->
+      Promise.all [
+        createEditionEntity workEntityA
+        authReq 'post', '/api/items', { entity: workEntityA.uri, lang: 'de' }
+      ]
+      .delay 100
+      .spread (editionEntity, item)->
+        authReq 'get', "/api/items?action=by-ids&ids=#{item._id}"
+        .then (res)->
+          item = res.items[0]
+          item.entity = editionEntity.uri
+          return authReq 'put', '/api/items', item
+        .then (updatedItem)->
+          editionTitle = editionEntity.claims['wdt:P1476'][0]
+          updatedItem.snapshot['entity:title'].should.equal editionTitle
+          done()
+    .catch undesiredErr(done)
+
+    return
+
   # TODO:
   # it 'should be updated when its remote author entity changes', (done)->
   # it 'should be updated when its remote work entity title changes', (done)->

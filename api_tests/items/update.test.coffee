@@ -23,11 +23,10 @@ describe 'items:update', ->
   it 'should not be able to update non updatable attributes', (done)->
     authReq 'post', '/api/items', newItemBase()
     .then (item)->
-      { entity:originalEntity } = item
-      item.entity = 'wd:Q123'
+      item.busy = true
       authReq 'put', '/api/items', item
       .then (updatedItem)->
-        updatedItem.entity.should.equal originalEntity
+        should(updatedItem.busy).not.be.ok()
         done()
     .catch undesiredErr(done)
 
