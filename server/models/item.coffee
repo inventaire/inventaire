@@ -85,7 +85,7 @@ Item.changeOwner = (transacDoc, item)->
 Item.allowTransaction = (item)->
   item.transaction in attributes.allowTransaction
 
-Item.updateEntityAfterEntityMerge = (fromUri, toUri, item)->
+Item.updateEntity = (fromUri, toUri, item)->
   unless item.entity is fromUri
     throw error_.new "wrong entity uri: expected #{fromUri}, got #{item.entity}", 500
 
@@ -96,7 +96,7 @@ Item.updateEntityAfterEntityMerge = (fromUri, toUri, item)->
 
   return item
 
-Item.updateEntityAfterEntityMergeRevert = (fromUri, toUri, item)->
+Item.revertEntity = (fromUri, toUri, item)->
   { entity } = item
   previousEntity = item.previousEntity[0]
   unless item.entity is toUri

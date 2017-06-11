@@ -12,5 +12,5 @@ AfterFn = (viewName, modelFnName)-> (fromUri, toUri)->
   .then items_.db.bulk
 
 module.exports =
-  afterMerge: AfterFn 'byEntity', 'updateEntityAfterEntityMerge'
-  afterRevert: AfterFn 'byPreviousEntity', 'updateEntityAfterEntityMergeRevert'
+  afterMerge: AfterFn 'byEntity', 'updateEntity'
+  afterRevert: AfterFn 'byPreviousEntity', 'revertEntity'

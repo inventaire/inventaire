@@ -77,10 +77,16 @@ module.exports = items_ =
     db.get itemId
     .then (currentItem)->
       updatedItem = Item.update userId, itemUpdateData, currentItem
+      { entity:currentEntity } = currentItem
+      { entity:updatedEntity } = updatedItem
 
       # Refresh the item's snapshot data if the entity changed
-      if currentItem.entity isnt updatedItem.entity
-        promise = snapshotEntityData updatedItem, updatedItem.entity
+      if currentEntity isnt updatedEntity
+        # Revert to the previous entity to let Item.updateEntity re-update it
+        # and not complain about item.entity being equal to updatedEntity
+        updatedItem.entity = currentEntity
+        updatedItem = Item.updateEntity currentEntity, updatedEntity, updatedItem
+        promise = snapshotEntityData updatedItem, updatedEntity
       else
         promise = promises_.resolve updatedItem
 
