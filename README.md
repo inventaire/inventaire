@@ -119,7 +119,7 @@ see wiki: [API](https://github.com/inventaire/inventaire/wiki/API)
 
 - port to custom desktop clients using [node-webkit](https://github.com/nwjs/nw.js) or alike
 - port to an app for personal cloud platforms: [Cozy](http://cozy.io), [OwnCloud](https://owncloud.org/)...
-- server-less/P2P inventory sharing using WebRTC DataChannel / [WebTorrent](https://github.com/feross/webtorrent) / [IPFS](http://ipfs.io/) / [Ethereum](https://www.ethereum.org/) / you name it
+- server-less/P2P inventory sharing using WebRTC DataChannel / [WebTorrent](https://github.com/feross/webtorrent) / [IPFS](http://ipfs.io/) / [Ethereum](https://www.ethereum.org/) / [OpenBazaar](https://www.openbazaar.org) / [Scuttlebot](https://scuttlebot.io) / you name it
 - any other IndieWeb / [Unhosted](https://unhosted.org/) crazyness? :)
 
 **Already experiementing**
