@@ -4,15 +4,18 @@
 # and that all the following isn't needed
 [ -e client ] && exit 0
 
+# Clone the server i18n before cloning the client as some client script depend on
+# this repo's convert_markdown lib
+echo 'trying to clone git clone -b i18n https://github.com/inventaire/inventaire.git ./server/lib/emails/i18n/src'
+git clone -b i18n https://github.com/inventaire/inventaire.git ./server/lib/emails/i18n/src
+mkdir -p ./server/lib/emails/i18n/dist
+./server/lib/emails/i18n/src/generate_lang_json.coffee all
+
 git clone https://github.com/inventaire/inventaire-client.git ./client
 
 mkdir -p logs/archives/server logs/archives/errors deploy run db/leveldb
 npm run patches
 
-echo 'trying to clone git clone -b i18n https://github.com/inventaire/inventaire.git ./server/lib/emails/i18n/src'
-git clone -b i18n https://github.com/inventaire/inventaire.git ./server/lib/emails/i18n/src
-mkdir -p ./server/lib/emails/i18n/dist
-./server/lib/emails/i18n/src/generate_lang_json.coffee all
 
 # Expected by scripts/archive_logs
 mkdir -p ./logs
