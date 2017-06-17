@@ -13,6 +13,8 @@ module.exports =
       'author-works': customQuery
       'serie-parts': customQuery
       'history': require './history'
+    admin:
+      'contributions': require './contributions'
 
   post: ActionsControllers
     authentified:
