@@ -117,6 +117,7 @@ module.exports = config =
   debouncedEmail:
     crawlPeriod: 10*60*1000
     debounceDelay: 30*60*1000
+    disabled: false
 
   # By default, media are saved locally instead of using a remove
   # object storage service such as Swift
@@ -188,3 +189,6 @@ module.exports = config =
   wikidataOAuth:
     consumer_key: 'your-consumer-key'
     consumer_secret: 'your-consumer-secret'
+
+  couch2elastic4sync:
+    activated: true

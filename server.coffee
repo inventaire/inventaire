@@ -54,4 +54,6 @@ couchInit()
 .catch _.Error('init err')
 
 __.require('lib', 'emails/mailer')()
-__.require('scripts', 'couch2elastic4sync/exec')('sync')
+
+if CONFIG.couch2elastic4sync.activated
+  __.require('scripts', 'couch2elastic4sync/exec')('sync')

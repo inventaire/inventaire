@@ -1,13 +1,13 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-{ crawlPeriod, debounceDelay } = CONFIG.debouncedEmail
+{ crawlPeriod, debounceDelay, disabled } = CONFIG.debouncedEmail
 
 waitingEmails = require './waiting_emails'
 sendDebouncedEmail = require './send_debounced_email'
 
 module.exports = ->
-  setInterval crawl, crawlPeriod
+  unless disabled then setInterval crawl, crawlPeriod
 
 # key structure: sendEmailFunctionName:id:time
 
