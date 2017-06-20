@@ -44,8 +44,8 @@ module.exports = config =
     name: (dbBaseName)->
       if @suffix? then return "#{dbBaseName}-#{@suffix}"
       else dbBaseName
-    # make external indexes restart from the first seq
     follow:
+      # Make external indexes restart from the first seq
       reset: false
       # Use freezeFollow for cases when following the database would have
       # undesired effects. Ex: without freezeFollow, scripts connecting to a
