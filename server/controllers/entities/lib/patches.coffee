@@ -1,6 +1,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
-db = __.require('couch', 'base')('entities', 'patches')
+designDocName = 'patches'
+db = __.require('couch', 'base')('entities', designDocName)
 Patch = __.require 'models', 'patch'
 Entity = __.require 'models', 'entity'
 promises_ = __.require 'lib', 'promises'
@@ -10,13 +11,20 @@ module.exports = patches_ =
   db: db
   byId: db.get
   byUserId: (userId, limit, offset)->
-    db.viewCustom 'byUserId',
+    db.view designDocName, 'byUserId',
       startkey: [ userId, maxKey ]
       endkey: [ userId ]
       include_docs: true
       descending: true
       limit: limit
       skip: offset
+    .then (res)->
+      data =
+        patches: _.pluck res.rows, 'doc'
+        total: res.total_rows
+      continu = limit + offset
+      if continu < data.total then data.continue = continu
+      return data
 
   create: (userId, currentDoc, updatedDoc)->
     promises_.try -> Patch.create userId, currentDoc, updatedDoc

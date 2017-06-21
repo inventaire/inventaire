@@ -28,5 +28,5 @@ module.exports = (req, res)->
     return error_.bundle req, res, "limit can't be over 100", 400, limit
 
   patches_.byUserId userId, limit, offset
-  .then _.Wrap(res, 'patches')
+  .then res.json.bind(res)
   .catch error_.Handler(req, res)

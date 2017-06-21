@@ -59,6 +59,34 @@ describe 'entities:get:contributions', ->
 
     return
 
+  it 'should return total and continue data', (done)->
+    create2WorksAndGetUser()
+    .spread (workA, workB, user)->
+      { _id } = user
+      adminReq 'get', "/api/entities?action=contributions&user=#{_id}&limit=1"
+      .then (res1)->
+        res1.total.should.be.a.Number()
+        should(res1.total >= 2).be.true()
+        res1.continue.should.be.a.Number()
+        res1.continue.should.equal 1
+        getWorkId(res1.patches[0]._id).should.equal workB._id
+        create2WorksAndGetUser()
+        .spread (workC, workD)->
+          adminReq 'get', "/api/entities?action=contributions&user=#{_id}&limit=3"
+          .then (res2)->
+            getWorkId(res2.patches[0]._id).should.equal workD._id
+            getWorkId(res2.patches[1]._id).should.equal workC._id
+            getWorkId(res2.patches[2]._id).should.equal workB._id
+            res2.continue.should.equal 3
+            res2.total.should.equal(res1.total + 2)
+            adminReq 'get', "/api/entities?action=contributions&user=#{_id}&offset=3"
+            .then (res3)->
+              getWorkId(res3.patches[0]._id).should.equal workA._id
+              done()
+    .catch undesiredErr(done)
+
+    return
+
 createWork = ->
   authReq 'post', '/api/entities?action=create',
     labels: { fr: 'bla' }
@@ -71,3 +99,5 @@ create2WorksAndGetUser = ->
     .then (workB)->
       getUser()
       .then (user)-> [ workA, workB, user]
+
+getWorkId = (id)-> id.split(':')[0]
