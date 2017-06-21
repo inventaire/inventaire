@@ -9,5 +9,5 @@ createIndex = require './create_index'
 
 promises_.all indexesList.map(createIndex)
 .then -> exec 'load'
-.then -> _.success 'done loading'
+.then -> _.success 'started loading (spawned processes)'
 .catch _.Error('load')
