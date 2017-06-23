@@ -46,6 +46,7 @@ module.exports = [
   'P957' # isbn 10
   'P1066' # student of
   'P1104' # number of pages
+  'P1412' # languages spoken, written or signed
   'P1476' # title
   'P1545' # series ordinal
   'P1680' # subtitle
@@ -55,4 +56,6 @@ module.exports = [
   'P2013' # facebook
   'P2034' # Project Gutenberg ebook ID
   'P2093' # author name string
+  'P2679' # author of foreword
+  'P2680' # author of afterword
 ]
