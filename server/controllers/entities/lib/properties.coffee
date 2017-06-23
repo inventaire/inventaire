@@ -102,6 +102,8 @@ properties =
   'wdt:P1476': stringUniqueBase
   # series ordinal
   'wdt:P1545': ordinalBase
+  # subtitle
+  'wdt:P1680': stringUniqueBase
   # twitter account
   'wdt:P2002': stringConcurrentBase
   # author of foreword
