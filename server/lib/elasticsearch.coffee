@@ -30,4 +30,4 @@ parseHit = (hit)->
   data._id = _id
   return data
 
-module.exports = { buildSearcher }
+module.exports = { buildSearcher, parseResponse, formatError }
