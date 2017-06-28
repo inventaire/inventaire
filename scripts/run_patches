@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 
+set -eu
+
 # PATCHES
 # scripts/run_patches take its arguments from all the files
 # in the scripts/patches directroy
-# line 1: file to edit
+# line 1: path to file to edit relatively to repo from which this script
+#         is run as an npm script (that is, relatively to the value of $(pwd))
 # line 2: line to find
 # line 3: line to append after
 
@@ -12,12 +15,16 @@ markAsPatched(){
 }
 
 line(){
-  sed $1"q;d" $2
+  LINENUM=$1
+  FILE=$2
+  # see https://stackoverflow.com/a/6022431/3324977
+  sed $LINENUM"q;d" $FILE
 }
 
 patchFile(){
   echo '-------------------------'
-  FILE=$HOME/$1
+  CWD=$(pwd)
+  FILE=$CWD/$1
   NAME=$(basename $FILE)
   ORIGINAL="$2"
   APPEND="$3"
