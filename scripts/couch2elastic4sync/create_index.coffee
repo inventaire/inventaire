@@ -11,7 +11,7 @@ module.exports = (dbName)->
   .catch ignoreAlreadyExisting(url)
 
 ignoreAlreadyExisting = (url)-> (err)->
-  if err.body.error.type is 'index_already_exists_exception'
+  if err.body?.error.type is 'index_already_exists_exception'
     _.warn url, 'database already exist'
   else
     throw err
