@@ -13,6 +13,7 @@ module.exports =
       'author-works': customQuery
       'serie-parts': customQuery
       'history': require './history'
+      'images': require './images'
     admin:
       'contributions': require './contributions'
 
