@@ -6,6 +6,7 @@ error_ = __.require 'lib', 'error/error'
 { host:elasticHost } = CONFIG.elasticsearch
 { parseResponse, formatError } = __.require 'lib', 'elasticsearch'
 getEntityType = __.require 'controllers', 'entities/lib/get_entity_type'
+getBestLangValue = __.require('sharedLibs', 'get_best_lang_value')(_)
 
 entitiesDbName = CONFIG.db.name 'entities'
 typesData =
@@ -19,7 +20,7 @@ possibleTypes =  Object.keys typesData
 
 module.exports =
   get: (req, res)->
-    { types, search } = req.query
+    { types, search, lang } = req.query
 
     _.info [ types, search ], 'entities local search'
 
@@ -28,6 +29,9 @@ module.exports =
 
     unless _.isNonEmptyString types
       return error_.bundleMissingQuery req, res, 'types'
+
+    unless _.isNonEmptyString lang
+      return error_.bundleMissingQuery req, res, 'lang'
 
     typesList = types.split '|'
     for type in typesList
@@ -45,6 +49,7 @@ module.exports =
     promises_.post { url, body }
     .catch formatError
     .then parseResults(types)
+    .then tailorResults(lang)
     .then _.Wrap(res, 'results')
     .catch error_.Handler(req, res)
 
@@ -92,3 +97,36 @@ fixEntityType = (hit)->
 isOfDesiredTypes = (types)-> (hit)->
   if hit._db_type is 'entity' then return hit._type in types
   else return true
+
+tailorResults = (lang)-> (results)->
+  unless lang then return results
+
+  results
+  .map (result)->
+    { _type, _source } = result
+    return formatters[_type](result, _source, lang)
+
+getUri = (index, id)-> if index is 'wikidata' then "wd:#{id}" else "inv:#{id}"
+
+entityFormatter = (result, _source, lang)->
+  id: result._id
+  type: result._type
+  uri: getUri result._index, result._id
+  label: getBestLangValue(lang, null, _source.labels).value
+  description: getBestLangValue(lang, null, _source.descriptions).value?[0..200]
+  image: getBestLangValue(lang, null, _source.images).value
+
+networkFormatter = (labelAttr, descAttr)->
+  return (result, _source, lang)->
+    id: result._id
+    type: result._type
+    label: _source[labelAttr]
+    description: _source[descAttr]?[0..200]
+    image: _source.picture
+
+formatters =
+  works: entityFormatter
+  humans: entityFormatter
+  series: entityFormatter
+  users: networkFormatter 'username', 'bio'
+  groups: networkFormatter 'name', 'description'
