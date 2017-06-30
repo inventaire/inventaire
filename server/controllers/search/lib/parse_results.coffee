@@ -9,21 +9,21 @@ module.exports = (types)-> (res)->
   .map fixEntityType
   .filter isOfDesiredTypes(types)
 
-fixEntityType = (hit)->
-  hit._db_type = hit._type
+fixEntityType = (result)->
+  result._db_type = result._type
   # Pluralized types to be aligned with Wikidata Subset Search Engine indexes results
-  if hit._type is 'user' then hit._type = 'users'
-  else if hit._type is 'group' then hit._type = 'groups'
+  if result._type is 'user' then result._type = 'users'
+  else if result._type is 'group' then result._type = 'groups'
   # inv entities are all put in the same index with the same type by couch2elastic4sync
   # thus the need to recover it
-  else if hit._type is 'entity'
+  else if result._type is 'entity'
     # Type is pluralzed, thus the +'s'
-    hit._type = getEntityType(hit._source.claims['wdt:P31']) + 's'
+    result._type = getEntityType(result._source.claims['wdt:P31']) + 's'
 
-  return hit
+  return result
 
 # Required for local entities that are all indexed with the type 'entity'
 # including editions
-isOfDesiredTypes = (types)-> (hit)->
-  if hit._db_type is 'entity' then return hit._type in types
+isOfDesiredTypes = (types)-> (result)->
+  if result._db_type is 'entity' then return result._type in types
   else return true
