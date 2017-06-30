@@ -175,3 +175,23 @@ describe 'search:global', ->
     .catch undesiredErr(done)
 
     return
+
+  it 'should not return a private group unless requester is a member', (done)->
+    name = randomString 5
+    authReq 'post', '/api/groups?action=create', { name, searchable: false }
+    .delay 1000
+    .then (group)->
+      nonAuthReq 'get', "/api/search?search=#{name}&types=groups&lang=fr"
+      .then (res)->
+        { results } = res
+        _.pluck(results, 'id').includes(group._id).should.be.false()
+        # The same request but authentified with a group member account
+        # should find the group
+        authReq 'get', "/api/search?search=#{name}&types=groups&lang=fr"
+        .then (res)->
+          { results } = res
+          _.pluck(results, 'id').includes(group._id).should.be.true()
+          done()
+    .catch undesiredErr(done)
+
+    return

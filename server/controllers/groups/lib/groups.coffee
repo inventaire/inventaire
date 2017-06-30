@@ -41,8 +41,8 @@ module.exports = groups_ =
   create: (options)->
     promises_.try -> Group.create options
     .then addSlug
-    .then _.Log('group created')
     .then db.postAndReturn
+    .then _.Log('group created')
 
   findUserGroupsCoMembers: (userId)->
     groups_.byUser userId

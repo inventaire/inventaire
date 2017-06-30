@@ -14,6 +14,7 @@ queryBodyBuilder = require './lib/query_body_builder'
 module.exports =
   get: (req, res)->
     { types, search, lang } = req.query
+    reqUserId = req.user?._id
 
     _.info [ types, search ], 'entities local search'
 
@@ -41,7 +42,7 @@ module.exports =
 
     promises_.post { url, body }
     .catch formatError
-    .then parseResults(types)
+    .then parseResults(types, reqUserId)
     .then tailorResults(lang)
     .then _.Wrap(res, 'results')
     .catch error_.Handler(req, res)

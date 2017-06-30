@@ -99,9 +99,15 @@ findMembership = (userId, group, previousCategory, wanted)->
       throw error_.new 'membership already exist', 200
     else return
 
-Group.userIsAdmin = userIsAdmin = (userId, group)->
-  admins = group.admins.map _.property('user')
-  return userId in admins
+userIsRole = (role)-> (userId, group)->
+  ids = group[role].map _.property('user')
+  return userId in ids
+
+Group.userIsAdmin = userIsAdmin = userIsRole 'admins'
+userIsNonAdminMember = userIsRole 'members'
+
+Group.userIsMember = (userId, group)->
+  return userIsAdmin(userId, group) or userIsNonAdminMember(userId, group)
 
 Group.categories =
   members: [ 'admins', 'members' ]
