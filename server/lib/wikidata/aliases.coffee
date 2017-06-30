@@ -78,7 +78,8 @@ _.extend Q,
 types = {}
 
 for type, typeIds of Q
-  # drop the plural form
+  # Drop the plural form, including when deriving from English uses,
+  # notably: series => serie
   type = type.replace /s$/, ''
   for id in typeIds
     types[id] = type
