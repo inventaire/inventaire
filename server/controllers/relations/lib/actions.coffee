@@ -11,11 +11,11 @@ module.exports =
     queries_.putFriendStatus(userId, otherId)
     radio.emit 'notify:friend:request:accepted', otherId, userId
     radio.emit 'notify:friend:request:accepted', userId, otherId
-  makeRequest: (userId, otherId, notify=true)->
-    # useful to avoid emails when a new user is created with waiting email invitations
-    # which are then converted into requests
-    if notify then radio.emit 'notify:friendship:request', otherId, userId
-    return queries_.putRequestedStatus(userId, otherId)
+  makeRequest: (inviterId, recipientId, notify=true)->
+    # Use notify=false to avoid emails when a new user is created with waiting
+    # email invitations, which are then converted into requests
+    if notify then radio.emit 'notify:friendship:request', recipientId, inviterId
+    return queries_.putRequestedStatus inviterId, recipientId
 
   removeRelation: queries_.putNoneStatus
   # used by godMode
