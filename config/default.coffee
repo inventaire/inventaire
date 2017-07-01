@@ -94,6 +94,8 @@ module.exports = config =
   mailer:
     disabled: true
     preview: true
+    # Rely on SMTP: make sure the appropriate ports are not blocked by your server provider
+    # - Scaleway: https://community.online.net/t/solved-smtp-connection-blocked/2262/3
     service: 'yoursettings',
     auth:
       user: 'yoursettings'
