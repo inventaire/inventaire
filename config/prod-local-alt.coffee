@@ -2,7 +2,6 @@
 # - answering Prerender (thus getting the logs aside)
 # - update handle database change hooks (based on follow)
 # - sending activity reports
-# - sending debounced emails
 # - start couch2elastic4sync sub processes
 
 module.exports =
@@ -13,6 +12,8 @@ module.exports =
   activitySummary:
     disabled: false
   debouncedEmail:
-    disabled: false
+    # Let the main server handle it as its logs are archived so if if the mail
+    # fails to be sent, it could be recovered
+    disabled: true
   couch2elastic4sync:
     activated: true
