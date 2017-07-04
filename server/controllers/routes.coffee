@@ -46,6 +46,8 @@ if CONFIG.objectStorage is 'local'
 # setting CONFIG-based routes before the globs
 # so that they wont be overpassed by it
 _.extend routes,
+  'api':
+    get: glob.redirectToApiDoc
   'api/*':
     all: glob.api
   '*.json':
