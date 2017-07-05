@@ -3,6 +3,7 @@ _ = __.require 'builders', 'utils'
 entities_ = require './entities'
 { getOriginalLang } = __.require 'lib', 'wikidata/wikidata'
 getSerieParts = require './get_serie_parts'
+getEntityImageClaims = require './get_entity_image_claims'
 
 module.exports =
   # Works images (wdt:P18) in Wikidat aren't satisfying, as not making use
@@ -24,8 +25,6 @@ module.exports =
 getWorkEditions = (workUri, images, limitPerLang)->
   entities_.byClaim 'wdt:P629', workUri, true, true
   .then addEditionsImages(images, limitPerLang)
-
-getEntityImageClaims = (entity)-> entity.claims['wdt:P18']
 
 addEditionsImages = (images, limitPerLang=3)-> (editions)->
   for edition in editions

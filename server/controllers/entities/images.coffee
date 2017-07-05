@@ -12,6 +12,7 @@ error_ = __.require 'lib', 'error/error'
 { Promise } = __.require 'lib', 'promises'
 getEntitiesByUris = require './lib/get_entities_by_uris'
 specialEntityImagesGetter = require './lib/special_entity_images_getter'
+getEntityImageClaims = require './lib/get_entity_image_claims'
 
 module.exports = (req, res)->
   { uris } = req.query
