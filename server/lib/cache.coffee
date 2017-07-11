@@ -8,6 +8,7 @@ levelBase = __.require 'level', 'base'
 cacheDB = levelBase.simpleAPI 'cache'
 
 if CONFIG.resetCacheAtStartup then cacheDB.reset()
+{ offline } = CONFIG
 
 { oneDay, oneMonth } =  __.require 'lib', 'times'
 
@@ -18,6 +19,9 @@ module.exports =
     types = ['string', 'function', 'number', 'boolean']
     try _.types arguments, types, 2
     catch err then return error_.reject err, 500
+
+    # Try to avoid cache miss when working offline (only useful in development)
+    if offline then timespan = Infinity
 
     # When passed a 0 timespan, it is expected to get a fresh value.
     # Refusing the old value is also a way to invalidate the current cache
