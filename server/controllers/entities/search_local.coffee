@@ -2,7 +2,7 @@
 # filtered by entity type, to fit the needs of autocomplete searches
 # Wikidata entities are queries separately to our Wikidata Subset Search Engine
 # See https://github.com/inventaire/wikidata-subset-search-engine
-# and server/controllers/entities/lib/update_wikidata_subset_search_engine
+# and server/controllers/entities/lib/update_search_engine
 
 CONFIG = require 'config'
 __ = CONFIG.universalPath

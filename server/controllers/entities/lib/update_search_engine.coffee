@@ -22,9 +22,9 @@ module.exports = ->
 
   _.info 'initializing wikidataSubsetSearchEngine update'
 
-  idsPerType = {}
+  urisPerType = {}
   requestUpdate = ->
-    [ body, idsPerType ] = [ idsPerType, {} ]
+    [ body, urisPerType ] = [ urisPerType, {} ]
     _.log body, 'requested Wikidata entities Search Engine updates'
     promises_.post { url: host, body }
     .catch _.Error('WSSE update err')
@@ -32,13 +32,20 @@ module.exports = ->
   # Send a batch every 30 seconds max
   lazyRequestUpdate = _.throttle requestUpdate, delay, { leading: false }
 
-  radio.on 'wikidata:entity:cache:miss', (wdId, type)->
+  add = (uri, type)->
     if type?
       pluralizedType = type + 's'
-      idsPerType[pluralizedType] or= []
+      urisPerType[pluralizedType] or= []
 
       # Deduplicating
-      unless wdId in idsPerType[pluralizedType]
-        idsPerType[pluralizedType].push wdId
+      unless uri in urisPerType[pluralizedType]
+        urisPerType[pluralizedType].push uri
 
       lazyRequestUpdate()
+
+  radio.on 'inv:entity:update', (invId, type)-> add "inv:#{invId}", type
+  # Ideally, we should update Wikidata entities on every changes
+  # but that would require to follow a change feed of Wikidata entities,
+  # which isn't that straight forward, so refreshing on every cache miss instead,
+  # that is, for every new entity + when cache expired + when a data refresh is requested
+  radio.on 'wikidata:entity:cache:miss', (wdId, type)-> add "wd:#{wdId}", type

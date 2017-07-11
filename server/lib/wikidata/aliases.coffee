@@ -47,7 +47,7 @@ _.extend Q,
   ]
 
   # Types required to update the entity search engine
-  # see server/controllers/entities/lib/update_wikidata_subset_search_engine
+  # see server/controllers/entities/lib/update_search_engine
   publishers: [
     # publisher
     'wd:Q2085381'
