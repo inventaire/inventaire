@@ -10,7 +10,7 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 searchLocalEntities = require './lib/search_local'
 getEntityType = require './lib/get_entity_type'
-indexedTypes = [ 'work', 'edition', 'human', 'serie' ]
+indexedTypes = [ 'works', 'editions', 'humans', 'series' ]
 
 module.exports = (req, res)->
   { type, search } = req.query
@@ -23,20 +23,10 @@ module.exports = (req, res)->
   unless _.isNonEmptyString type
     return error_.bundleMissingQuery req, res, 'type'
 
-  # Accept plural form
-  type = type.replace /s$/, ''
-
   unless type in indexedTypes
     return error_.bundleInvalid req, res, 'type', type
 
-  searchLocalEntities search
-  .map addType
-  .filter byType(type)
+  # That type might actually need to be pluralized: check BEFORE COMMIT :P
+  searchLocalEntities search, type
   .then res.json.bind(res)
   .catch error_.Handler(req, res)
-
-addType = (entity)->
-  entity.type = getEntityType entity.claims['wdt:P31']
-  return entity
-
-byType = (type)-> (entity)-> entity.type is type
