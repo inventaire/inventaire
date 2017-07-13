@@ -27,3 +27,7 @@ module.exports =
   deduplicateRequests: false
   mailer:
     disabled: true
+
+  entitiesSearchEngine:
+    # Using a custom for testsinstance
+    host: 'http://localhost:3214'
