@@ -180,7 +180,7 @@ module.exports = config =
   deduplicateRequests: true
 
   # https://github.com/inventaire/wikidata-subset-search-engine
-  wikidataSubsetSearchEngine:
+  entitiesSearchEngine:
     updateEnabled: false
     host: 'http://localhost:3213'
     delay: 30000

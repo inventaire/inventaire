@@ -1,4 +1,4 @@
-# Keep our wikidataSubsetSearchEngine instance updated by requesting it
+# Keep our entitiesSearchEngine instance updated by requesting it
 # to update its data everytime an entity with a type is requested here:
 # Every cache miss triggers an update request, meaning that 'refresh' request
 # are also propagated to the search engine \o/
@@ -14,20 +14,20 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
-{ updateEnabled, host, delay } = CONFIG.wikidataSubsetSearchEngine
+{ updateEnabled, host, delay } = CONFIG.entitiesSearchEngine
 radio = __.require 'lib', 'radio'
 
 module.exports = ->
   unless updateEnabled then return
 
-  _.info 'initializing wikidataSubsetSearchEngine update'
+  _.info 'initializing entitiesSearchEngine update'
 
   urisPerType = {}
   requestUpdate = ->
     [ body, urisPerType ] = [ urisPerType, {} ]
-    _.log body, 'requested Wikidata entities Search Engine updates'
+    _.log body, 'requested entities search engine updates'
     promises_.post { url: host, body }
-    .catch _.Error('WSSE update err')
+    .catch _.Error('entities search engine update err')
 
   # Send a batch every 30 seconds max
   lazyRequestUpdate = _.throttle requestUpdate, delay, { leading: false }
