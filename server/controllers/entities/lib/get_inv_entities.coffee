@@ -19,6 +19,10 @@ Format = (refresh)-> (entity)->
   entity.uri = uri
   if redirects? then entity.redirects = redirects
 
+  # Keep track of special types such as removed:placehoder
+  # to the let the search engine unindex it
+  if entity.type isnt 'entity' then entity._meta_type = entity.type
+
   entity.type = getEntityType entity.claims['wdt:P31']
   return formatEntityCommon entity
 
