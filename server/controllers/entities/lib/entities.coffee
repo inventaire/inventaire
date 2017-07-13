@@ -100,11 +100,14 @@ module.exports = entities_ =
     _.types arguments, ['string', 'object', 'object']
     db.putAndReturn updatedDoc
     .tap ->
-      triggerUpdateEvent updatedDoc
+      triggerUpdateEvent currentDoc, updatedDoc
       patches_.create userId, currentDoc, updatedDoc
 
 parseCanonicalUri = (result)-> getInvEntityCanonicalUri(result.doc)[0]
 
-triggerUpdateEvent = (entityDoc)->
-  type = getEntityType entityDoc.claims['wdt:P31']
-  radio.emit 'inv:entity:update', entityDoc._id, type
+triggerUpdateEvent = (currentDoc, updatedDoc)->
+  # Use currentDoc claims if the update removed the claims object
+  # Known case: when an entity is turned into a redirection
+  claims = updatedDoc.claims or currentDoc.claims
+  type = getEntityType claims['wdt:P31']
+  radio.emit 'inv:entity:update', updatedDoc._id, type
