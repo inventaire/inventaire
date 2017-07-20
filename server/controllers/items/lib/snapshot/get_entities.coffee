@@ -37,10 +37,8 @@ getWorksAuthorsAndSeries = (works)->
 # Aggregating edition's potentially multiple works claims to fit
 # dependent functions' needs
 mergeWorksClaims = (works)->
-  claims = {}
-  claims['wdt:P50'] = aggregateClaims works, 'wdt:P50'
-  claims['wdt:P179'] = aggregateClaims works, 'wdt:P179'
-  return claims
+  'wdt:P50': aggregateClaims works, 'wdt:P50'
+  'wdt:P179': aggregateClaims works, 'wdt:P179'
 
 getEditionGraphEntities = (uri)->
   getEntityByUri uri
