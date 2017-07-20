@@ -29,7 +29,7 @@ module.exports = ->
     promises_.post { url: host, body }
     .catch _.Error('entities search engine update err')
 
-  # Send a batch every 30 seconds max
+  # Send a batch every #{delay} milliseconds max
   lazyRequestUpdate = _.throttle requestUpdate, delay, { leading: false }
 
   add = (uri, type)->
