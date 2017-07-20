@@ -25,6 +25,9 @@ module.exports =
     .join ', '
 
   aggregateClaims: (entities, property)->
+    _.type entities, 'array'
+    _.type property, 'string'
+
     _(entities)
     .filter (entity)->
       hasClaims = entity.claims?

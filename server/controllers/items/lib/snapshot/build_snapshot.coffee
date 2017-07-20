@@ -20,6 +20,7 @@ module.exports =
     return wrapSnapshot work, works, title, lang, image, authors, series
 
 wrapSnapshot = (entity, works, title, lang, image, authors, series)->
+  _.type works, 'array'
   unless _.isNonEmptyString title
     throw error_.new 'no title found', 400, entity
 
