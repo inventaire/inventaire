@@ -89,6 +89,37 @@ describe 'items:snapshot', ->
 
     return
 
+  it "should snapshot the item's work series ordinal", (done)->
+    createWorkEntity()
+    .then (workEntity)->
+      Promise.all [
+        authReq 'post', '/api/items', { entity: workEntity.uri, lang: 'de' }
+        addSerie workEntity
+      ]
+      .delay 100
+      .spread (item, serieEntity)->
+        authReq 'put', '/api/entities?action=update-claim',
+          id: workEntity._id
+          property: 'wdt:P1545'
+          'new-value': '5'
+        .delay 100
+        .then -> getItem item
+        .then (item)->
+          item.snapshot['entity:ordinal'].should.equal '5'
+          authReq 'put', '/api/entities?action=update-claim',
+            id: workEntity._id
+            property: 'wdt:P1545'
+            'old-value': '5'
+            'new-value': '6'
+          .delay 100
+          .then -> getItem item
+          .then (item)->
+            item.snapshot['entity:ordinal'].should.equal '6'
+            done()
+    .catch undesiredErr(done)
+
+    return
+
   it 'should preserve existing data if missing in the new snapshot', (done)->
     image = '/ipfs/QmcYCcWP11dBDXgNxn7GtoL2imaGMLqcvjnBTn7uoEcXDk'
     createWorkEntity()
