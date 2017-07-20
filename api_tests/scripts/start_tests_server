@@ -9,6 +9,10 @@ exit 0
 
 # Start a test server in the background
 export NODE_ENV=tests FORCE_COLOR=true
+
+# Unclear why, but sometimes config files seem to be empty at this point
+npm run couch2elastic4sync:init
+
 npm run watch > logs/test-server.log 2>&1 &
 
 # Will be replaced by the process pid once the server started
