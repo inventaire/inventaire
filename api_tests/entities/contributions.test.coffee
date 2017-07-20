@@ -19,6 +19,7 @@ describe 'entities:get:contributions', ->
 
   it 'should return a list of patches ordered by timestamp', (done)->
     create2WorksAndGetUser()
+    .delay 1000
     .spread (workA, workB, user)->
       { _id } = user
       adminReq 'get', "/api/entities?action=contributions&user=#{_id}"
@@ -33,6 +34,7 @@ describe 'entities:get:contributions', ->
 
   it 'should take a limit parameter', (done)->
     create2WorksAndGetUser()
+    .delay 1000
     .spread (workA, workB, user)->
       { _id } = user
       adminReq 'get', "/api/entities?action=contributions&user=#{_id}&limit=1"
@@ -47,6 +49,7 @@ describe 'entities:get:contributions', ->
 
   it 'should take an offset parameter', (done)->
     create2WorksAndGetUser()
+    .delay 1000
     .spread (workA, workB, user)->
       { _id } = user
       adminReq 'get', "/api/entities?action=contributions&user=#{_id}&limit=1&offset=1"
@@ -61,6 +64,7 @@ describe 'entities:get:contributions', ->
 
   it 'should return total and continue data', (done)->
     create2WorksAndGetUser()
+    .delay 1000
     .spread (workA, workB, user)->
       { _id } = user
       adminReq 'get', "/api/entities?action=contributions&user=#{_id}&limit=1"
@@ -71,6 +75,7 @@ describe 'entities:get:contributions', ->
         res1.continue.should.equal 1
         getWorkId(res1.patches[0]._id).should.equal workB._id
         create2WorksAndGetUser()
+        .delay 1000
         .spread (workC, workD)->
           adminReq 'get', "/api/entities?action=contributions&user=#{_id}&limit=3"
           .then (res2)->
@@ -94,8 +99,10 @@ createWork = ->
 
 create2WorksAndGetUser = ->
   createWork()
+  .delay 10
   .then (workA)->
     createWork()
+    .delay 10
     .then (workB)->
       getUser()
       .then (user)-> [ workA, workB, user]
