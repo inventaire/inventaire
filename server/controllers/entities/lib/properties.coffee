@@ -52,9 +52,9 @@ isbnProperty = (num)->
 # to stay consistent with Wikidata and let the door open to custom ordinals later
 # (ex: roman numbers, letters, etc.)
 ordinalBase =
-  datatype: 'number'
-  test: (value)-> positiveIntegerBase.test(value) and value.toString().length < 20
-  format: (value)-> value.toString()
+  datatype: 'string'
+  format: _.identity
+  test: _.isPositiveIntegerString
   uniqueValue: true
 
 # Keep in sync with app/modules/entities/lib/properties
