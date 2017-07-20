@@ -88,6 +88,8 @@ properties =
   'wdt:P577': simpleDayUniqueValueBase
   # edition or translation of
   'wdt:P629': entityBase
+  # translator
+  'wdt:P655': entityBase
   # influenced by
   'wdt:P737': entityBase
   # main subject
