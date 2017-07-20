@@ -51,9 +51,10 @@ couchInit()
     fs.writeFile "./run/#{CONFIG.port}", process.pid
     console.timeEnd 'startup'
 
+  if CONFIG.couch2elastic4sync.activated
+    # Need to wait for databases to exist
+    __.require('scripts', 'couch2elastic4sync/exec')('sync')
+
 .catch _.Error('init err')
 
 __.require('lib', 'emails/mailer')()
-
-if CONFIG.couch2elastic4sync.activated
-  __.require('scripts', 'couch2elastic4sync/exec')('sync')
