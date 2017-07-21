@@ -26,7 +26,6 @@ module.exports = (req, res)->
   unless type in indexedTypes
     return error_.bundleInvalid req, res, 'type', type
 
-  # That type might actually need to be pluralized: check BEFORE COMMIT :P
   searchLocalEntities search, type
   .then res.json.bind(res)
   .catch error_.Handler(req, res)
