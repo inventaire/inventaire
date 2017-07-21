@@ -36,6 +36,7 @@ module.exports = [
   'P570' # date of death
   'P629' # edition or translation of
   'P648' # Open Library ID
+  'P655' # translator
   'P674' # characters
   'P737' # influence by
   'P738' # influence of

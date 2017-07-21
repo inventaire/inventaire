@@ -10,4 +10,4 @@ files=$@
 eval "files=($files)"
 
 # Run the tests
-export NODE_ENV=tests; mochac $files --timeout 5000
+export NODE_ENV=tests; mochac $files --timeout 10000

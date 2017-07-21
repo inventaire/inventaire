@@ -3,8 +3,11 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 { buildSearcher } = __.require 'lib', 'elasticsearch'
 
+invEntitiesIndex = CONFIG.db.name 'entities'
+index = "wikidata,#{invEntitiesIndex}"
+
 module.exports = buildSearcher
-  dbBaseName: 'entities'
+  index: index
   queryBodyBuilder: (search)->
     should = [
       { match: { _all: search } }

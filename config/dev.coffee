@@ -5,3 +5,5 @@ module.exports =
   env: 'dev'
   dataseed:
     enabled: true
+  entitiesSearchEngine:
+    delay: 5000

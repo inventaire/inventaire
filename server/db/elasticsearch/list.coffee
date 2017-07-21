@@ -4,7 +4,6 @@ _ = __.require 'builders', 'utils'
 
 # Using CouchDB database names + environment suffix as indexes names
 syncDataList = [
-  { dbBaseName: 'entities', type: 'entity' }
   { dbBaseName: 'users', type: 'user' }
   { dbBaseName: 'groups', type: 'group' }
 ].map (data)->

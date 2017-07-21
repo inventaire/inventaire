@@ -8,6 +8,8 @@ isbn_ = __.require 'lib', 'isbn/isbn'
 couch_ = __.require 'lib', 'couch'
 validateClaimValue = require('./validate_claim_value')(db)
 getInvEntityCanonicalUri = require './get_inv_entity_canonical_uri'
+getEntityType = require './get_entity_type'
+radio = __.require 'lib', 'radio'
 
 { properties, validateProperty } = require './properties'
 
@@ -97,6 +99,15 @@ module.exports = entities_ =
   putUpdate: (userId, currentDoc, updatedDoc)->
     _.types arguments, ['string', 'object', 'object']
     db.putAndReturn updatedDoc
-    .tap -> patches_.create userId, currentDoc, updatedDoc
+    .tap ->
+      triggerUpdateEvent currentDoc, updatedDoc
+      patches_.create userId, currentDoc, updatedDoc
 
 parseCanonicalUri = (result)-> getInvEntityCanonicalUri(result.doc)[0]
+
+triggerUpdateEvent = (currentDoc, updatedDoc)->
+  # Use currentDoc claims if the update removed the claims object
+  # Known case: when an entity is turned into a redirection
+  claims = updatedDoc.claims or currentDoc.claims
+  type = getEntityType claims['wdt:P31']
+  radio.emit 'inv:entity:update', updatedDoc._id, type

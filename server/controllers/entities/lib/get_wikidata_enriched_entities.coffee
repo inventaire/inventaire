@@ -122,4 +122,4 @@ undesiredPropertiesPerType =
 
 # Not really related, out of the fact that it listen for
 # 'wikidata:entity:cache:miss', but that needed to be initialized somewhere
-require('./update_wikidata_subset_search_engine')()
+require('./update_search_engine')()

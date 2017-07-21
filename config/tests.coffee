@@ -27,3 +27,10 @@ module.exports =
   deduplicateRequests: false
   mailer:
     disabled: true
+
+  entitiesSearchEngine:
+    updateEnabled: true
+    # Using a custom for testsinstance
+    host: 'http://localhost:3214'
+    # Go fast to avoid having to wait in tests
+    delay: 10

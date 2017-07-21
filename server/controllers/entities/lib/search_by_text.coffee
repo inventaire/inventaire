@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 searchWikidataEntities = __.require 'data', 'wikidata/search_entities'
-searchLocalEntities = require './search_local'
+searchInvEntities = require('./search_type').inventaire
 { search:searchDataseed } = __.require 'data', 'dataseed/dataseed'
 { searchTimeout } = CONFIG
 { enabled:dataseedEnabled } = CONFIG.dataseed
@@ -20,7 +20,7 @@ module.exports = (query)->
 
   promises = [
     searchWikidataByText query, key
-    searchLocalByText query, key
+    searchInvByText query, key
   ]
 
   if dataseedEnabled and not disableDataseed
@@ -45,11 +45,11 @@ searchWikidataByText = (query, key)->
   .catch error_.notFound
   .finally _.EndTimer(key)
 
-searchLocalByText = (query, key)->
+searchInvByText = (query, key)->
   { search } = query
-  key = startTimer 'searchLocalByText', key
+  key = startTimer 'searchInvByText', key
 
-  searchLocalEntities search
+  searchInvEntities search
   .timeout searchTimeout
   .map urifyInv
   .then GetEntitiesByUris(query.refresh)

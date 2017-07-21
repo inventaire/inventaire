@@ -168,8 +168,6 @@ module.exports = config =
   # Config passed to the client
   client:
     piwik: 'https://your.piwik.instance'
-    elasticsearch:
-      wikidata: 'https://data.inventaire.io/wikidata'
     ipfs:
       gateway: 'https://ipfs.io'
 
@@ -180,7 +178,7 @@ module.exports = config =
   deduplicateRequests: true
 
   # https://github.com/inventaire/wikidata-subset-search-engine
-  wikidataSubsetSearchEngine:
+  entitiesSearchEngine:
     updateEnabled: false
     host: 'http://localhost:3213'
     delay: 30000

@@ -48,7 +48,7 @@ refresh =
       .spread (authors, series)->
         Promise.all [
           getUpdatedWorkItems uri, work, authors, series
-          getUpdatedEditionsItems uri, work, authors, series
+          getUpdatedEditionsItems uri, [ work ], authors, series
         ]
         .then _.flatten
 
@@ -58,6 +58,7 @@ refresh =
 refreshTypes = Object.keys refresh
 
 getUpdatedWorkItems = (uri, work, authors, series)->
+  _.types arguments, [ 'string', 'object', 'array', 'array' ]
   items_.byEntity uri
   .map (item)->
     { lang } = item
@@ -69,16 +70,20 @@ getUpdatedWorkItems = (uri, work, authors, series)->
   # Filter out items without snapshot change
   .filter _.identity
 
-getUpdatedEditionsItems = (uri, work, authors, series)->
+getUpdatedEditionsItems = (uri, works, authors, series)->
+  _.types arguments, [ 'string', 'array', 'array', 'array' ]
+
   entities_.byClaim 'wdt:P629', uri, true, true
-  .map (edition)-> getUpdatedEditionItems edition, work, authors, series
+  .map (edition)-> getUpdatedEditionItems edition, works, authors, series
   # Keep only items that had a change
   .filter _.identity
   .then _.flatten
 
-getUpdatedEditionItems = (edition, work, authors, series)->
+getUpdatedEditionItems = (edition, works, authors, series)->
+  _.types arguments, [ 'object', 'array', 'array', 'array' ]
+
   [ uri ] = getInvEntityCanonicalUri edition
-  updatedSnapshot = buildSnapshot.edition edition, work, authors, series
+  updatedSnapshot = buildSnapshot.edition edition, works, authors, series
   # Find all edition items
   items_.byEntity uri
   .then (items)->
