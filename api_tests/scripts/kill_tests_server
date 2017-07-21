@@ -1,15 +1,15 @@
 #!/usr/bin/env sh
 serverpid=$(cat run/3009)
 supervisorpid=$(ps auxf |
-  grep $serverpid -B 1 |
-  grep supervisor |
-  grep -v grep |
-  grep -v ps |
+  grep "$serverpid" -B 1 |
+  grep "supervisor" |
+  grep -v "grep" |
+  grep -v "ps" |
   awk '{printf $2}')
 
 watchshellpids=$(ps auxf |
-  grep $serverpid -B 3 |
-  grep watch |
+  grep "$serverpid" -B 3 |
+  grep "watch" |
   awk '{printf $2 " "}')
 
 kill $watchshellpids 2> /dev/null
