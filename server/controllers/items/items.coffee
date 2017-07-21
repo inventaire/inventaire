@@ -16,7 +16,12 @@ module.exports =
     authentified:
       'nearby': require './nearby'
 
-  post: require './create'
+  post: ActionsControllers
+    authentified:
+      default: require './create'
+    admin:
+      'refresh-snapshot': require './refresh_snapshot'
+
   put: require './update'
 
   delete: (req, res, next)->

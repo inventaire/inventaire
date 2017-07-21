@@ -5,8 +5,7 @@ error_ = __.require 'lib', 'error/error'
 { Track } = __.require 'lib', 'track'
 snapshotEntityData = require './lib/snapshot/snapshot_entity_data'
 
-module.exports = (req, res, next) ->
-  unless req.user? then return error_.unauthorizedApiAccess req, res
+module.exports = (req, res, next)->
   { body:item } = req
 
   _.log item, 'item create'
