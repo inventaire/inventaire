@@ -1,10 +1,9 @@
+# Same as ./search_type.coffee but only for inventaire entities
+# instead of both wikidata and inventaire
 CONFIG = require 'config'
-__ = CONFIG.universalPath
+__ = require('config').universalPath
 { buildSearcher } = __.require 'lib', 'elasticsearch'
 
-invEntitiesIndex = CONFIG.db.name 'entities'
-index = "wikidata,#{invEntitiesIndex}"
-
 module.exports = buildSearcher
-  index: index
+  dbBaseName: 'entities'
   queryBodyBuilder: require './common_query_body_builder'
