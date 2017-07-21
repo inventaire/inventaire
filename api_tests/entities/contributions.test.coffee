@@ -25,8 +25,10 @@ describe 'entities:get:contributions', ->
       adminReq 'get', "/api/entities?action=contributions&user=#{_id}"
       .then (res)->
         { patches } = res
-        workB._id.should.equal patches[0]._id.split(':')[0]
-        workA._id.should.equal patches[1]._id.split(':')[0]
+        patchesIds = patches.map getPatchEntityId
+        (workB._id in patchesIds).should.be.true()
+        (workA._id in patchesIds).should.be.true()
+        (patches[0].timestamp > patches[1].timestamp).should.be.true()
         done()
     .catch undesiredErr(done)
 
@@ -108,3 +110,4 @@ create2WorksAndGetUser = ->
       .then (user)-> [ workA, workB, user]
 
 getWorkId = (id)-> id.split(':')[0]
+getPatchEntityId = (patch)-> patch._id.split(':')[0]
