@@ -5,7 +5,7 @@ error_ = __.require 'lib', 'error/error'
 createEntity = require './lib/create_entity'
 getEntityByUri = require './lib/get_entity_by_uri'
 
-module.exports = (req, res) ->
+module.exports = (req, res)->
   { body:entityData } = req
 
   unless _.isNonEmptyPlainObject entityData

@@ -28,7 +28,7 @@ module.exports =
     passport_.authenticate.basic req, res, next
 
   # Obviously not to be used in production
-  openBarApi: (req, res, next) ->
+  openBarApi: (req, res, next)->
     # turn apiOpenBar for testing or maintainance purpose
     if apiOpenBar
       req.user = apiOpenBar.user

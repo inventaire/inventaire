@@ -1,6 +1,6 @@
 _ = require('config').universalPath.require 'builders', 'utils'
 
-exports.langCookie = (req, res, next) ->
+exports.langCookie = (req, res, next)->
   unless req.cookies?.lang?
     if lang = req.headers?['accept-language']?[0..1]
       if lang in validLanguage

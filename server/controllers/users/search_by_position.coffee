@@ -5,7 +5,7 @@ user_ = __.require 'controllers', 'user/lib/user'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
 
-module.exports = (req, res) ->
+module.exports = (req, res)->
   { query } = req
   reqUserId = req.user?._id
   parseBbox query

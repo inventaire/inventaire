@@ -15,7 +15,7 @@ module.exports =
       status: status
       created: Date.now()
 
-  docId: (userId, otherId) ->
+  docId: (userId, otherId)->
     couch_.joinOrderedIds(userId, otherId)
 
 assertValidId = (id)->

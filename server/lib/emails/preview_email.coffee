@@ -14,7 +14,7 @@ module.exports = (data, callback)->
   promise = undefined
 
   if !callback and typeof Promise == 'function'
-    promise = new Promise (resolve, reject) ->
+    promise = new Promise (resolve, reject)->
       callback = callbackPromise resolve, reject
 
   data or= {}
@@ -23,13 +23,13 @@ module.exports = (data, callback)->
 
   # apply defaults
   # Object.keys @_defaults
-  # .forEach (key) ->
+  # .forEach (key)->
   #   if !(key of data)
   #     data[key] = @_defaults[key]
   #   else if key == 'headers'
   #     # headers is a special case. Allow setting individual default headers
   #     Object.keys @_defaults.headers or {}
-  #     .forEach (key) ->
+  #     .forEach (key)->
   #       unless (key of data.headers) then data.headers[key] = @_defaults.headers[key]
   #     .bind this
 

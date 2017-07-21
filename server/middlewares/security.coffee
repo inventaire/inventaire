@@ -39,7 +39,7 @@ policy = "default-src 'self' #{ws};" +
   "img-src 'self' #{altHost} https://commons.wikimedia.org https://api.tiles.mapbox.com data:;" +
   "report-uri /api/reports?action=csp-report;"
 
-exports.addSecurityHeaders = (req, res, next) ->
+exports.addSecurityHeaders = (req, res, next)->
   res.header 'X-XSS-Protection', '1; mode=block; report=/api/reports?action=csp-report;'
   res.header 'X-Frame-Options', 'SAMEORIGIN'
   res.header 'Content-Security-Policy', policy

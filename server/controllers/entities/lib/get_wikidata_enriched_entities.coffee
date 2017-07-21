@@ -29,7 +29,7 @@ module.exports = (ids, refresh)->
   promises_.all ids.map(getCachedEnrichedEntity(refresh))
   .then (entities)-> { entities }
 
-getCachedEnrichedEntity = (refresh) -> (wdId)->
+getCachedEnrichedEntity = (refresh)-> (wdId)->
   key = "wd:enriched:#{wdId}"
   timespan = if refresh then 0 else null
   cache_.get key, getEnrichedEntity.bind(null, wdId), timespan

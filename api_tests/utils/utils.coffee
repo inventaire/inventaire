@@ -27,7 +27,7 @@ testAdmin =
 loginEndpoint = "#{authEndpoint}?action=login"
 signupEndpoint = "#{authEndpoint}?action=signup"
 
-parseCookies = (res) -> res.headers['set-cookie']
+parseCookies = (res)-> res.headers['set-cookie']
 
 getUserCookies = (userData)->
   breq.post { url: loginEndpoint, body: userData }

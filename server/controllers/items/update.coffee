@@ -6,7 +6,7 @@ promises_ = __.require 'lib', 'promises'
 radio = __.require 'lib', 'radio'
 { Track } = __.require 'lib', 'track'
 
-module.exports = (req, res, next) ->
+module.exports = (req, res, next)->
   unless req.user? then return error_.unauthorizedApiAccess req, res
   { body:item } = req
   { _id, entity } = item

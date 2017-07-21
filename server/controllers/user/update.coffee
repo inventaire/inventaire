@@ -9,7 +9,7 @@ error_ = __.require 'lib', 'error/error'
 User = __.require 'models', 'user'
 { Track } = __.require 'lib', 'track'
 
-module.exports = (req, res, next) ->
+module.exports = (req, res, next)->
   unless req.user? then return error_.unauthorizedApiAccess req, res
   { user, body } = req
   { attribute, value } = body

@@ -19,7 +19,7 @@ module.exports =
   post: require './create'
   put: require './update'
 
-  delete: (req, res, next) ->
+  delete: (req, res, next)->
     { id } = req.query
     reqUserId = req.user._id
 

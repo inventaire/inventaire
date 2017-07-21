@@ -10,7 +10,7 @@ get = (req, res)->
   .then res.json.bind(res)
   .catch error_.Handler(req, res)
 
-updateStatus = (req, res) ->
+updateStatus = (req, res)->
   { times } = req.body
   unless _.isArray(times) and times.length > 0
     return _.ok res

@@ -4,7 +4,7 @@ error_ = __.require 'lib', 'error/error'
 items_ = __.require 'controllers', 'items/lib/items'
 user_ = __.require 'controllers', 'user/lib/user'
 
-module.exports = (req, res) ->
+module.exports = (req, res)->
   { query } = req
   { limit, offset } = query
   assertImage = query['assert-image'] is 'true'

@@ -3,7 +3,7 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 { buildSearcher } = __.require 'lib', 'elasticsearch'
 
-module.exports = (req, res) ->
+module.exports = (req, res)->
   { query } = req
   search = query.search?.trim()
 
