@@ -6,7 +6,7 @@ module.exports =
   get: ActionsControllers
     public:
       'search': require './search'
-      'search-local': require './search_local'
+      'search-type': require './search_type'
       'by-uris': require './by_uris'
       'changes': require './changes'
       'reverse-claims': require './reverse_claims'

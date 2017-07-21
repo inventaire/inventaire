@@ -5,10 +5,10 @@ promises_ = __.require 'lib', 'promises'
 { host:elasticHost } = CONFIG.elasticsearch
 
 buildSearcher = (params)->
-  { dbBaseName, queryBodyBuilder } = params
-  dbName = CONFIG.db.name dbBaseName
+  { index, dbBaseName, queryBodyBuilder } = params
+  index or= CONFIG.db.name dbBaseName
 
-  url = "#{elasticHost}/#{dbName}/_search"
+  url = "#{elasticHost}/#{index}/_search"
 
   return (query, type)->
     _.type query, 'string'
@@ -23,7 +23,7 @@ buildSearcher = (params)->
     promises_.post { url: customUrl, body }
     .then parseResponse
     .catch formatError
-    .catch _.ErrorRethrow("#{dbBaseName} search err")
+    .catch _.ErrorRethrow("#{index} #{type} search err")
 
 parseResponse = (res)-> res.hits.hits.map parseHit
 

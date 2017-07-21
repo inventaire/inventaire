@@ -168,8 +168,6 @@ module.exports = config =
   # Config passed to the client
   client:
     piwik: 'https://your.piwik.instance'
-    elasticsearch:
-      wikidata: 'https://data.inventaire.io/wikidata'
     ipfs:
       gateway: 'https://ipfs.io'
 
