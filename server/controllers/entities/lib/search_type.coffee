@@ -3,18 +3,15 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 { buildSearcher } = __.require 'lib', 'elasticsearch'
 
-queryBodyBuilder = (search)->
-  should = [
-    { match: { _all: search } }
-    { prefix: { _all: _.last search.split(' ') } }
-  ]
+invEntitiesIndex = CONFIG.db.name 'entities'
+index = "wikidata,#{invEntitiesIndex}"
 
-  return { query: { bool: { should } } }
+module.exports = buildSearcher
+  index: index
+  queryBodyBuilder: (search)->
+    should = [
+      { match: { _all: search } }
+      { prefix: { _all: _.last search.split(' ') } }
+    ]
 
-module.exports =
-  wikidata: buildSearcher
-    index: 'wikidata'
-    queryBodyBuilder: queryBodyBuilder
-  inventaire: buildSearcher
-    dbBaseName: 'entities'
-    queryBodyBuilder: queryBodyBuilder
+    return { query: { bool: { should } } }
