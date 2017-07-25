@@ -23,7 +23,7 @@ altHost = if CONFIG.host isnt invHost then invHost else ''
 ws = if devEnv then 'ws:' else ''
 
 # Keep in sync with nginx/inventaire.original.nginx@inventaire/inventaire-deploy
-policy = "default-src 'self' #{ws};" +
+policy = "default-src 'self' www.wikidata.org #{ws};" +
   "child-src 'self' blob:;" +
   # 'unsafe-inline': required by
   #   - <script>require('initialize')</script>
