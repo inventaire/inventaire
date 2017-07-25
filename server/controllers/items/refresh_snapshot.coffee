@@ -28,7 +28,7 @@ refreshSequentially = (uris)->
 
     refreshSnapshot.fromUri nextUri
     # Space refreshes to lower stress on production resources
-    .delay 1000
+    .delay 100
     .then refreshNext
 
   return refreshNext()
