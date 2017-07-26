@@ -32,7 +32,7 @@ wikidataReverseClaims = (property, value, refresh)->
   cache_.get key, _wikidataReverseClaims.bind(null, property, value), timestamp
 
 _wikidataReverseClaims = (property, value)->
-  wdProp = wd_.unprefixifyPropertyId property
+  wdProp = wd_.unprefixify property
   _.log [property, value], 'reverse claim'
   promises_.get wdk.getReverseClaims(wdProp, value)
   .then wdk.simplifySparqlResults

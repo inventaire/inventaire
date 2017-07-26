@@ -8,8 +8,4 @@ getEntities = (ids, languages, props)->
   url = wdk.getEntities ids.map(unprefixifyEntityId), languages, props
   return promises_.get url
 
-unprefixifyPropertyId = (value)-> value.replace 'wdt:', ''
-
-module.exports = _.extend wd_,
-  getEntities: getEntities
-  unprefixifyPropertyId: unprefixifyPropertyId
+module.exports = _.extend wd_, { getEntities }
