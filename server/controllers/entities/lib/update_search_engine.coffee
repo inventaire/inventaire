@@ -14,11 +14,12 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
+{ offline } = CONFIG
 { updateEnabled, host, delay } = CONFIG.entitiesSearchEngine
 radio = __.require 'lib', 'radio'
 
 module.exports = ->
-  unless updateEnabled then return
+  if not updateEnabled or offline then return
 
   _.info 'initializing entitiesSearchEngine update'
 
