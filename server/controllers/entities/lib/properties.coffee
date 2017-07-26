@@ -92,6 +92,8 @@ properties =
   'wdt:P655': entityBase
   # influenced by
   'wdt:P737': entityBase
+  # narrative set in
+  'wdt:P840': entityBase
   # main subject
   'wdt:P921': entityBase
   # isbn 10
