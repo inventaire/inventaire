@@ -10,6 +10,7 @@
        }
    },
    "filters": {
-       "entities": "(doc)-> doc.type is 'entity'"
+       "entities:only": "(doc)-> doc.type is 'entity'",
+       "patches:only": "(doc)-> doc.type is 'patch'"
    }
 }

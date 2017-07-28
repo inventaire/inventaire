@@ -1,7 +1,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 designDocName = 'patches'
-db = __.require('couch', 'base')('entities', designDocName)
+db = __.require('couch', 'base')('patches', designDocName)
 Patch = __.require 'models', 'patch'
 Entity = __.require 'models', 'entity'
 promises_ = __.require 'lib', 'promises'
