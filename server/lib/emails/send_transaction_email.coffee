@@ -40,9 +40,10 @@ fetchData = (transaction)->
     comments_.byTransactionId(transaction._id)
   ]
   .spread (owner, requester, item, messages)->
-    # overriding ids by docs for email ViewModel
     item.title = item.snapshot['entity:title']
     image = item.snapshot['entity:image'] or transaction.snapshot.entity?.image
+    # Overriding transaction document ids by the ids' docs (owner, requester, etc.)
+    # for the email ViewModel
     return _.extend transaction, { owner, requester, item, messages, image }
   .then buildTimeline
   .then aliasUsers
