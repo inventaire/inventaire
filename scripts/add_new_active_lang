@@ -1,22 +1,25 @@
-#!/usr/bin/env sh
-newlang=$1
+#!/usr/bin/env zsh
 
-wikidataarchive=./client/public/i18n/src/wikidata/archive/$newlang.json
+set -eu
 
-./scripts/validate_lang $newlang
+new_lang=$1
 
-echo "Starting wd props -l $newlang > $wikidataarchive"
-wd props --lang $1 > $wikidataarchive
-echo '{}' > /client/public/i18n/src/wikidata/$newlang.json
+wikidata_archive=./client/public/i18n/src/wikidata/archive/$new_lang.json
+
+./scripts/validate_lang $new_lang
+
+echo "Starting wd props -l $new_lang > $wikidata_archive"
+wd props --lang $1 > $wikidata_archive
+echo '{}' > ./client/public/i18n/src/wikidata/$new_lang.json
 echo "wd props done"
 
-langList=./client/scripts/lib/i18n/langs.coffee
+lang_list=./client/scripts/lib/i18n/langs.coffee
 
 # If the language wasn't already added
-head -n 1 $langList |grep -v $newlang &&
+head -n 1 $lang_list | grep -v $new_lang &&
 # Add it
-echo "Adding the new lang to the list of actively translated langs: $langList" &&
-sed -i "s/]$/, '`echo $newlang`' ]/" $langList
+echo "Adding the new lang to the list of actively translated langs: $lang_list" &&
+sed -i "s/]$/, '`echo $new_lang`' ]/" $lang_list
 
 server=$PWD
 client=$server/client
