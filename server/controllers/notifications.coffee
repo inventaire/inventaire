@@ -6,16 +6,18 @@ notifs_ = __.require 'lib', 'notifications'
 promises_ = __.require 'lib', 'promises'
 
 get = (req, res)->
+  unless req.user? then return error_.unauthorizedApiAccess req, res
+
   notifs_.byUserId req.user._id
   .then res.json.bind(res)
   .catch error_.Handler(req, res)
 
 updateStatus = (req, res)->
-  { times } = req.body
-  unless _.isArray(times) and times.length > 0
-    return _.ok res
-
+  unless req.user? then return error_.unauthorizedApiAccess req, res
   reqUserId = req.user._id
+
+  { times } = req.body
+  unless _.isArray(times) and times.length > 0 then return _.ok res
 
   # could probably be replaced by a batch operation
   promises_.all times.map(notifs_.updateReadStatus.bind(null, reqUserId))
