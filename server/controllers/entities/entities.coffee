@@ -16,6 +16,7 @@ module.exports =
       'images': require './images'
     admin:
       'contributions': require './contributions'
+      'duplicates': require './duplicates'
 
   post: ActionsControllers
     authentified:

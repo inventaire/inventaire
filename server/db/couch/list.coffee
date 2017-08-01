@@ -11,6 +11,6 @@ module.exports =
   items: ['items', 'followedEntities']
   transactions: ['transactions']
   comments: ['comments']
-  entities: ['entities']
+  entities: ['entities', 'entities_deduplicate']
   patches: ['patches']
   notifications: ['notifications']
