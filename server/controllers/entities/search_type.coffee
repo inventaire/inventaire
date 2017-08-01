@@ -15,9 +15,9 @@ getEntityType = require './lib/get_entity_type'
 indexedTypes = [ 'works', 'humans', 'series', 'genres', 'movements', 'publishers' ]
 
 module.exports = (req, res)->
-  { type, search } = req.query
+  { type, search, limit } = req.query
 
-  _.info [ type, search ], 'entities search per type'
+  _.info [ type, search, limit ], 'entities search per type'
 
   unless _.isNonEmptyString search
     return error_.bundleMissingQuery req, res, 'search'
@@ -28,6 +28,13 @@ module.exports = (req, res)->
   unless type in indexedTypes
     return error_.bundleInvalid req, res, 'type', type
 
-  searchType search, type
+  limit or= '20'
+
+  unless _.isPositiveIntegerString limit
+    return error_.bundleInvalid req, res, 'limit', limit
+
+  limit = _.stringToInt limit
+
+  searchType search, type, limit
   .then res.json.bind(res)
   .catch error_.Handler(req, res)
