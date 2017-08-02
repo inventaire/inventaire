@@ -24,4 +24,3 @@ getHomonymes = ->
     .filter (row)-> row.value > 1 and /\w{1}\w+/.test row.key
     .sort (a, b)-> b.value - a.value
     .slice 0, 100
-    .map _.property('key')
