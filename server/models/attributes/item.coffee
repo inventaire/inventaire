@@ -81,8 +81,6 @@ attributes.constrained =
 # Attributes such as _id and transaction are already recorded by a transaction
 # thus their absence here as long as only transactions doc uses snaphshot
 attributes.snapshot = [
- 'title'
  'entity'
- 'pictures'
  'details'
 ]
