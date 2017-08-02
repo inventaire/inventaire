@@ -29,6 +29,10 @@ parseResponse = (res)-> res.hits.hits.map parseHit
 
 # Reshape the error object to be fully displayed when logged by _.warn
 formatError = (err)->
+  # Directly rethrow errors that aren't from ElasticSearch
+  # like ECONNREFUSED errors
+  unless err.body? then throw err
+
   err.body.error.root_cause = err.body.error.root_cause[0]
   err.body = err.body.error
   throw err
