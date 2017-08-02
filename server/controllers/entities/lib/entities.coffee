@@ -86,7 +86,7 @@ module.exports = entities_ =
 
   getLastChangedEntitiesUris: (since, limit)->
     db.changes
-      filter: 'entities/entities'
+      filter: 'entities/entities:only'
       limit: limit
       since: since
       include_docs: true
