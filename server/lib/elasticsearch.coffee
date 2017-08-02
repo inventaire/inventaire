@@ -10,7 +10,7 @@ buildSearcher = (params)->
 
   url = "#{elasticHost}/#{index}/_search"
 
-  return (query, type)->
+  return (query, type, limit)->
     _.type query, 'string'
 
     if _.isNonEmptyString type
@@ -18,7 +18,7 @@ buildSearcher = (params)->
     else
       customUrl = url
 
-    body = queryBodyBuilder query
+    body = queryBodyBuilder query, limit
 
     promises_.post { url: customUrl, body }
     .then parseResponse
