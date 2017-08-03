@@ -3,8 +3,8 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 getEntityByUri = __.require 'controllers', 'entities/lib/get_entity_by_uri'
 buildSnapshot = require './build_snapshot'
-{ addSnapshot } = require './helpers'
 { getEditionGraphFromEdition, getWorkGraphFromWork } = require './get_entities'
+Item = __.require 'models', 'item'
 
 module.exports = (item, entityUri)->
   getEntityByUri entityUri
@@ -19,7 +19,7 @@ snapshotByType =
   edition: (item, edition)->
     getEditionGraphFromEdition edition
     .spread buildSnapshot.edition
-    .then addSnapshot.bind(null, item)
+    .then Item.updateSnapshot.bind(null, item)
 
   work: (item, work)->
     { lang } = item
@@ -29,6 +29,6 @@ snapshotByType =
 
     getWorkGraphFromWork lang, work
     .spread buildSnapshot.work
-    .then addSnapshot.bind(null, item)
+    .then Item.updateSnapshot.bind(null, item)
 
 whitelistedTypes = Object.keys snapshotByType

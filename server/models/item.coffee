@@ -110,6 +110,10 @@ Item.revertEntity = (fromUri, toUri, item)->
 
   return item
 
+Item.updateSnapshot = (item, updatedSnapshot)->
+  item.snapshot = updatedSnapshot
+  return item
+
 Item.updateSnapshotTitle = (title, item)->
   item.snapshot or= {}
   item.snapshot['entity:title'] = title

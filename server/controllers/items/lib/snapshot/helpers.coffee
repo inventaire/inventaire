@@ -10,13 +10,6 @@ module.exports =
     type = getEntityType updatedDoc.claims['wdt:P31']
     return [ uri, type ]
 
-  addSnapshot: (item, updatedSnapshot)->
-    item.snapshot or= {}
-    # Keep snapshot fields that would be missing on the new snapshot
-    # Known case: entity:image that aren't defined on works anymore
-    item.snapshot = _.extend item.snapshot, updatedSnapshot
-    return item
-
   getNames: (preferedLang, entities)->
     unless _.isNonEmptyArray entities then return
 

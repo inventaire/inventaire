@@ -69,10 +69,10 @@ describe 'items:snapshot', ->
     createWorkEntity()
     .then (workEntity)->
       authReq 'post', '/api/items', { entity: workEntity.uri, lang: 'de' }
-      .delay 100
+      .delay 200
       .then (item)->
         addSerie workEntity
-        .delay 100
+        .delay 200
         .then (serieEntity)->
           title = _.values(serieEntity.labels)[0]
           getItem item
@@ -80,7 +80,7 @@ describe 'items:snapshot', ->
             updatedItem.snapshot['entity:series'].should.equal title
             updatedTitle = title + '-updated'
             updateLabel serieEntity._id, updatedTitle
-            .delay 100
+            .delay 200
             .then -> getItem item
             .then (reupdatedItem)->
               reupdatedItem.snapshot['entity:series'].should.equal updatedTitle
@@ -116,25 +116,6 @@ describe 'items:snapshot', ->
           .then (item)->
             item.snapshot['entity:ordinal'].should.equal '6'
             done()
-    .catch undesiredErr(done)
-
-    return
-
-  it 'should preserve existing data if missing in the new snapshot', (done)->
-    image = '/ipfs/QmcYCcWP11dBDXgNxn7GtoL2imaGMLqcvjnBTn7uoEcXDk'
-    createWorkEntity()
-    .then (workEntity)->
-      createEditionEntity workEntity
-      .then (editionEntity)->
-        authReq 'post', '/api/items',
-          entity: editionEntity.uri
-          snapshot: { 'entity:image': image }
-        .tap -> addAuthor workEntity
-        .delay 100
-        .then getItem
-        .then (item)->
-          item.snapshot['entity:image'].should.equal image
-          done()
     .catch undesiredErr(done)
 
     return

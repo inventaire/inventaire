@@ -5,8 +5,9 @@ getEntityByUri = __.require 'controllers', 'entities/lib/get_entity_by_uri'
 getInvEntityCanonicalUri = __.require 'controllers', 'entities/lib/get_inv_entity_canonical_uri'
 buildSnapshot = require './build_snapshot'
 { getWorkAuthorsAndSeries, getEditionGraphEntities } = require './get_entities'
-{ getDocData, addSnapshot } = require './helpers'
+{ getDocData } = require './helpers'
 items_ = require '../items'
+Item = __.require 'models', 'item'
 
 fromDoc = (changedEntityDoc)->
   [ uri, type ] = getDocData changedEntityDoc
@@ -64,7 +65,7 @@ getUpdatedWorkItems = (uri, work, authors, series)->
     { lang } = item
     updatedSnapshot = buildSnapshot.work lang, work, authors, series
     if _.objDiff item.snapshot, updatedSnapshot
-      return addSnapshot item, updatedSnapshot
+      return Item.updateSnapshot item, updatedSnapshot
     else
       return null
   # Filter out items without snapshot change
@@ -90,4 +91,4 @@ getUpdatedEditionItems = (edition, works, authors, series)->
     unless items.length > 0 then return
     if _.objDiff items[0].snapshot, updatedSnapshot
       # Update snapshot
-      return items.map (item)-> addSnapshot item, updatedSnapshot
+      return items.map (item)-> Item.updateSnapshot item, updatedSnapshot
