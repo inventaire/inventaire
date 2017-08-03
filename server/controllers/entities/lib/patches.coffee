@@ -10,6 +10,7 @@ promises_ = __.require 'lib', 'promises'
 module.exports = patches_ =
   db: db
   byId: db.get
+  byEntityIds: (entityIds)-> db.viewByKeys 'byEntityId', entityIds
   byUserId: (userId, limit, offset)->
     db.view designDocName, 'byUserId',
       startkey: [ userId, maxKey ]

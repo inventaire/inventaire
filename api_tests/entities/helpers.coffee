@@ -2,8 +2,9 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 { authReq } = __.require 'apiTests', 'utils/utils'
+randomString = __.require 'lib', './utils/random_string'
 
-module.exports =
+module.exports = helpers =
   ensureEditionExists: (uri, workData, editionData)->
     authReq 'get', "/api/entities?action=by-uris&uris=#{uri}"
     .get 'entities'
@@ -22,3 +23,19 @@ module.exports =
       .then (workEntity)->
         editionData.claims['wdt:P629'] = [ workEntity.uri ]
         authReq 'post', '/api/entities?action=create', editionData
+
+  createHuman: ->
+    authReq 'post', '/api/entities?action=create',
+      labels: { en: randomString(6) }
+      claims: { 'wdt:P31': [ 'wd:Q5' ] }
+
+  createWorkWithAuthor: (human)->
+    humanPromise = if human then Promise.resolve(human) else helpers.createHuman()
+
+    humanPromise
+    .then (human)->
+      authReq 'post', '/api/entities?action=create',
+        labels: { en: randomString(6) }
+        claims:
+          'wdt:P31': [ 'wd:Q571' ]
+          'wdt:P50': [ human.uri ]

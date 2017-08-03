@@ -7,6 +7,7 @@ getEntityType = require './lib/get_entity_type'
 validateClaimProperty = require './lib/validate_claim_property'
 
 module.exports = (user, id, property, oldVal, newVal)->
+  _.type user, 'object'
   { _id:userId, admin:userIsAdmin } = user
   entities_.byId id
   .then (currentDoc)->

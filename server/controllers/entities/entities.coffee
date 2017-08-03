@@ -30,3 +30,7 @@ module.exports =
     admin:
       'merge': require './merge'
       'revert-merge': require './revert_merge'
+
+  delete: ActionsControllers
+    admin:
+      'by-uris': require './delete_by_uris'
