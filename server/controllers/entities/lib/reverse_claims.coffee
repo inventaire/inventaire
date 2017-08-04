@@ -8,6 +8,9 @@ prefixify = __.require 'lib', 'wikidata/prefixify'
 cache_ = __.require 'lib', 'cache'
 getInvEntityCanonicalUri = require './get_inv_entity_canonical_uri'
 couch_ = __.require 'lib', 'couch'
+caseInsensitiveProperties = [
+  'wdt:P2002'
+]
 
 module.exports = (property, value, refresh)->
   promises = []
@@ -32,9 +35,10 @@ wikidataReverseClaims = (property, value, refresh)->
   cache_.get key, _wikidataReverseClaims.bind(null, property, value), timestamp
 
 _wikidataReverseClaims = (property, value)->
+  caseInsensitive = property in caseInsensitiveProperties
   wdProp = wd_.unprefixify property
   _.log [property, value], 'reverse claim'
-  promises_.get wdk.getReverseClaims(wdProp, value)
+  promises_.get wdk.getReverseClaims(wdProp, value, { caseInsensitive })
   .then wdk.simplifySparqlResults
   .map prefixify
 
