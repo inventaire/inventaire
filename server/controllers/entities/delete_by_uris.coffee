@@ -9,7 +9,7 @@ updateInvClaim = require './update_inv_claim'
 placeholders_ = require './lib/placeholders'
 # Other types should be redirected instead of removed
 # so that the associated items follow
-whitelistedTypes = [ 'human' ]
+whitelistedTypes = [ 'human', 'work' ]
 
 module.exports = (req, res, next)->
   { user } = req
@@ -32,7 +32,7 @@ module.exports = (req, res, next)->
 verifyThatEntitiesCanBeRemoved = (uris)->
   Promise.all [
     entitiesAreOfAWhitelistedType uris
-    entitisArentUsedInMoreThanOneClaim uris
+    entitiesArentMuchUsed uris
   ]
 
 entitiesAreOfAWhitelistedType = (uris)->
@@ -43,14 +43,23 @@ entitiesAreOfAWhitelistedType = (uris)->
       if type not in whitelistedTypes
         throw error_.new "entities of type '#{type}' can't be removed", 400, uri
 
-entitisArentUsedInMoreThanOneClaim = (uris)->
-  Promise.all uris.map entityIsntUsedInMoreThanOneClaim
+entitiesArentMuchUsed = (uris)->
+  Promise.all uris.map entityIsntMuchUsed
 
-entityIsntUsedInMoreThanOneClaim = (uri)->
+entityIsntMuchUsed = (uri)->
   entities_.byClaimsValue uri
   .then (claims)->
     if claims.length > 1
       throw error_.new 'this entity has too many claims to be removed', 400, uri, claims
+
+    for claim in claims
+      if claim.property in criticalClaimProperties
+        throw error_.new 'this entity is used in a critical claim', 400, uri, claim
+
+criticalClaimProperties = [
+  # no edition should end up without an associated work because of a removed work
+  'wdt:P629'
+]
 
 removeEntitiesByInvId = (user, uris)->
   ids = uris.map unprefixify

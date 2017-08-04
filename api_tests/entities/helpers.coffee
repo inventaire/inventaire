@@ -29,6 +29,11 @@ module.exports = helpers =
       labels: { en: randomString(6) }
       claims: { 'wdt:P31': [ 'wd:Q5' ] }
 
+  createWork: ->
+    authReq 'post', '/api/entities?action=create',
+      labels: { en: randomString(6) }
+      claims: { 'wdt:P31': [ 'wd:Q571' ] }
+
   createWorkWithAuthor: (human)->
     humanPromise = if human then Promise.resolve(human) else helpers.createHuman()
 
@@ -39,3 +44,12 @@ module.exports = helpers =
         claims:
           'wdt:P31': [ 'wd:Q571' ]
           'wdt:P50': [ human.uri ]
+
+  createEdition: ->
+    helpers.createWork()
+    .then (work)->
+      authReq 'post', '/api/entities?action=create',
+        claims:
+          'wdt:P31': [ 'wd:Q3331189' ]
+          'wdt:P629': [ work.uri ]
+          'wdt:P1476': [ work.labels.en ]

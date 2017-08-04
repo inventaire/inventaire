@@ -4,7 +4,7 @@ _ = __.require 'builders', 'utils'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
 { nonAuthReq, authReq, adminReq, undesiredRes, undesiredErr } = __.require 'apiTests', 'utils/utils'
-{ createHuman, createWorkWithAuthor } = require './helpers'
+{ createHuman, createWork, createWorkWithAuthor, createEdition } = require './helpers'
 
 describe 'entities:delete:by-uris', ->
   it 'should require admin rights', (done)->
@@ -44,7 +44,7 @@ describe 'entities:delete:by-uris', ->
   it 'should remove several entities', (done)->
     Promise.all [
       createHuman()
-      createHuman()
+      createWork()
     ]
     .spread (entityA, entityB)->
       { uri:uriA } = entityA
@@ -93,11 +93,26 @@ describe 'entities:delete:by-uris', ->
     return
 
   it 'should refuse to delete entities that are not of a whitelisted type', (done)->
-    createWorkWithAuthor()
-    .then (work)-> adminReq 'delete', "/api/entities?action=by-uris&uris=#{work.uri}"
+    createEdition()
+    .then (edition)->
+      invUri = 'inv:' + edition._id
+      adminReq 'delete', "/api/entities?action=by-uris&uris=#{invUri}"
     .then undesiredRes(done)
     .catch (err)->
-      err.body.status_verbose.should.equal "entities of type 'work' can't be removed"
+      err.body.status_verbose.should.equal "entities of type 'edition' can't be removed"
+      err.statusCode.should.equal 400
+      done()
+    .catch undesiredErr(done)
+    return
+
+  it 'should refuse to delete a work that is depend on by an edition', (done)->
+    createEdition()
+    .then (edition)->
+      workUri = edition.claims['wdt:P629'][0]
+      adminReq 'delete', "/api/entities?action=by-uris&uris=#{workUri}"
+    .then undesiredRes(done)
+    .catch (err)->
+      err.body.status_verbose.should.equal "this entity is used in a critical claim"
       err.statusCode.should.equal 400
       done()
     .catch undesiredErr(done)
