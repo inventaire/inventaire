@@ -1,10 +1,10 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
-entities_ = require './lib/entities'
+entities_ = require './entities'
 radio = __.require 'lib', 'radio'
 Entity = __.require 'models', 'entity'
-getEntityType = require './lib/get_entity_type'
-validateClaimProperty = require './lib/validate_claim_property'
+getEntityType = require './get_entity_type'
+validateClaimProperty = require './validate_claim_property'
 
 module.exports = (user, id, property, oldVal, newVal)->
   _.type user, 'object'

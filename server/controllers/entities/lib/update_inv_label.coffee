@@ -1,8 +1,8 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
-entities_ = require './lib/entities'
+entities_ = require './entities'
 radio = __.require 'lib', 'radio'
-updateLabel = require './lib/update_label'
+updateLabel = require './update_label'
 
 module.exports = (user, id, lang, value)->
   { _id:reqUserId } = user

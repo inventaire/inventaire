@@ -2,8 +2,8 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 { Promise } = __.require 'lib', 'promises'
-getEntitiesByUris = require './lib/get_entities_by_uris'
-entities_ = require './lib/entities'
+getEntitiesByUris = require './get_entities_by_uris'
+entities_ = require './entities'
 
 # Other types should be redirected instead of removed
 # so that the associated items follow

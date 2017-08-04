@@ -1,9 +1,9 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 { Promise } = __.require 'lib', 'promises'
-entities_ = require './lib/entities'
+entities_ = require './entities'
 updateInvClaim = require './update_inv_claim'
-placeholders_ = require './lib/placeholders'
+placeholders_ = require './placeholders'
 
 module.exports = (user, uris)->
   ids = uris.map unprefixify

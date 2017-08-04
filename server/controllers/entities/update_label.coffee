@@ -29,5 +29,5 @@ module.exports = (req, res)->
   .catch error_.Handler(req, res)
 
 updaters =
-  inv: require './update_inv_label'
-  wd: require './update_wd_label'
+  inv: require './lib/update_inv_label'
+  wd: require './lib/update_wd_label'
