@@ -124,3 +124,17 @@ describe 'entities:delete:by-uris', ->
     .catch undesiredErr(done)
 
     return
+
+  it 'should ignore entities that where already turned into removed:placeholder', (done)->
+    createHuman()
+    .then (entity)->
+      { uri } = entity
+      adminReq 'delete', "/api/entities?action=by-uris&uris=#{uri}"
+      .then -> nonAuthReq 'get', "/api/entities?action=by-uris&uris=#{uri}"
+      .then (res)->
+        should(res.entities[uri]._meta_type).equal 'removed:placeholder'
+        adminReq 'delete', "/api/entities?action=by-uris&uris=#{uri}"
+        .then -> done()
+    .catch undesiredErr(done)
+
+    return
