@@ -17,6 +17,8 @@ module.exports = (user, uris)->
 
     id = unprefixify uri
 
+    _.warn uri, 'removing entity'
+
     tolerantRemove reqUserId, id
     .then -> deleteUriValueClaims user, uri
     .delay 100
@@ -50,6 +52,7 @@ removeClaimsSequentially = (user, uri)-> (claimsData)->
   removeNextClaim = ->
     claimData = claimsData.pop()
     unless claimData? then return
+    _.warn claimData, "removing claims with value: #{uri}"
     removeClaim user, uri, claimData
     .delay 100
     .then removeNextClaim
