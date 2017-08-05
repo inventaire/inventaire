@@ -153,3 +153,16 @@ describe 'entities:delete:by-uris', ->
     .catch undesiredErr(done)
 
     return
+
+  it 'should not deleted entities that are the entity of an item', (done)->
+    createWork()
+    .then (work)->
+      authReq 'post', '/api/items', { entity: work.uri, lang: 'en' }
+      .then -> adminReq 'delete', "/api/entities?action=by-uris&uris=#{work.uri}"
+      .then undesiredRes(done)
+      .catch (err)->
+        err.body.status_verbose.should.equal "entities that are used by an item can't be removed"
+        err.statusCode.should.equal 400
+        done()
+    .catch undesiredErr(done)
+    return

@@ -4,6 +4,7 @@ error_ = __.require 'lib', 'error/error'
 { Promise } = __.require 'lib', 'promises'
 getEntitiesByUris = require './get_entities_by_uris'
 entities_ = require './entities'
+items_ = __.require 'controllers', 'items/lib/items'
 
 # Other types should be redirected instead of removed
 # so that the associated items follow
@@ -18,6 +19,7 @@ module.exports = (uris)->
   Promise.all [
     entitiesAreOfAWhitelistedType uris
     entitiesArentMuchUsed uris
+    entitiesArentUsedByAnyItem uris
   ]
 
 entitiesAreOfAWhitelistedType = (uris)->
@@ -28,8 +30,7 @@ entitiesAreOfAWhitelistedType = (uris)->
       if type not in whitelistedTypes
         throw error_.new "entities of type '#{type}' can't be removed", 400, uri
 
-entitiesArentMuchUsed = (uris)->
-  Promise.all uris.map entityIsntMuchUsed
+entitiesArentMuchUsed = (uris)-> Promise.all uris.map entityIsntMuchUsed
 
 entityIsntMuchUsed = (uri)->
   entities_.byClaimsValue uri
@@ -40,3 +41,10 @@ entityIsntMuchUsed = (uri)->
     for claim in claims
       if claim.property in criticalClaimProperties
         throw error_.new 'this entity is used in a critical claim', 400, uri, claim
+
+entitiesArentUsedByAnyItem = (uris)-> Promise.all uris.map entityIsntUsedByAnyItem
+entityIsntUsedByAnyItem = (uri)->
+  items_.byEntity uri
+  .then (items)->
+    if items.length > 0
+      throw error_.new "entities that are used by an item can't be removed", 400, uri
