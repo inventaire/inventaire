@@ -8,6 +8,8 @@ formatTitle = (str)->
   .toLowerCase()
   # remove part in parenthesis at then end of a title
   .replace /\s\([^\)]+\)$/, ''
+  # Ignore leading articles as they are a big source of false negative match
+  .replace /^(the|a|le|la|l'|der|die|das)\s/ig, ''
 
 formatAuthor = (str)->
   str
