@@ -1,6 +1,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 getBestLangValue = __.require('sharedLibs', 'get_best_lang_value')(_)
+stringsAreClose = __.require 'lib', 'strings_are_close'
 
 formatTitle = (str)->
   str
@@ -23,12 +24,17 @@ MatchAuthor = (authors, lang)-> (result)->
   # given we already know that the title matches
   authors = _.compact(authors).map(formatAuthor)
   resultAuthors = _.compact(result.authors).map(formatAuthor)
-  _.matchesCount(authors, resultAuthors) > 0
+
+  for authorA in authors
+    for authorB in resultAuthors
+      if stringsAreClose(authorA, authorB) then return true
+
+  return false
 
 # We want to have a rather high level of certitude that this is the same
 MatchTitle = (title, lang)-> (result)->
   resultTitle = getBestLangValue(lang, result.originalLang, result.labels).value
   unless _.isString(title) and _.isString(resultTitle) then return false
-  return formatTitle(resultTitle) is formatTitle(title)
+  return stringsAreClose formatTitle(resultTitle), formatTitle(title)
 
 module.exports = { formatTitle, formatAuthor, MatchAuthor, MatchTitle }
