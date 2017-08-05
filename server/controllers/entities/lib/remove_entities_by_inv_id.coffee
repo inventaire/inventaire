@@ -6,23 +6,31 @@ updateInvClaim = require './update_inv_claim'
 placeholders_ = require './placeholders'
 
 module.exports = (user, uris)->
-  ids = uris.map unprefixify
+  reqUserId = user._id
 
-  Promise.all [
-    removeEntities user._id, ids
-    deleteUrisValueClaims(user, uris)
-  ]
+  # Removing sequentially to avoid edit conflicts if entities or items
+  # are concerned by several of the deleted entities.
+  # This makes it a potentially slow operation, which is OK, as it's an admin task
+  removeNext = ->
+    uri = uris.pop()
+    unless uri? then return
+
+    id = unprefixify uri
+
+    tolerantRemove reqUserId, id
+    .then -> deleteUriValueClaims user, uri
+    .delay 100
+    .then removeNext
+
+  return removeNext()
 
 unprefixify = (uri)-> uri.split(':')[1]
 
-# Turning deleted entities into removed:placeholder as it as largely the same effect
-# as deleting (not indexed by views any more) but it's reversible, and already
-# understood by other services, that will either unindex it (search engine updater)
-# or ignore it (client)
-removeEntities = (reqUserId, ids)->
-  Promise.all ids.map(tolerantRemove(reqUserId))
-
-tolerantRemove = (reqUserId)-> (id)->
+tolerantRemove = (reqUserId, id)->
+  # Turning deleted entities into removed:placeholder as it as largely the same effect
+  # as deleting (not indexed by views any more) but it's reversible, and already
+  # understood by other services, that will either unindex it (search engine updater)
+  # or ignore it (client)
   placeholders_.remove reqUserId, id
   .catch (err)->
     # If the entity was already turned into a removed:placeholder
@@ -34,11 +42,20 @@ tolerantRemove = (reqUserId)-> (id)->
     else
       throw err
 
-deleteUrisValueClaims = (user, uris)->
-  Promise.all uris.map(deleteUriValueClaims(user))
-
-deleteUriValueClaims = (user)-> (uri)->
+deleteUriValueClaims = (user, uri)->
   entities_.byClaimsValue uri
-  .map (claimData)->
-    { entity:id, property } = claimData
-    return updateInvClaim user, id, property, uri, null
+  .then removeClaimsSequentially(user, uri)
+
+removeClaimsSequentially = (user, uri)-> (claimsData)->
+  removeNextClaim = ->
+    claimData = claimsData.pop()
+    unless claimData? then return
+    removeClaim user, uri, claimData
+    .delay 100
+    .then removeNextClaim
+
+  return removeNextClaim()
+
+removeClaim = (user, uri, claimData)->
+  { entity:id, property } = claimData
+  return updateInvClaim user, id, property, uri, null
