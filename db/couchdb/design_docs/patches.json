@@ -3,10 +3,10 @@
    "language": "coffeescript",
    "views": {
        "byEntityId": {
-           "map": "(doc)->\n  if doc.type is 'patch'\n    emit doc._id.split(':')[0], null"
+           "map": "(doc)->\n  emit doc._id.split(':')[0], null"
        },
        "byUserId": {
-           "map": "(doc)->\n  if doc.type is 'patch'\n    emit [doc.user, doc.timestamp], null"
+           "map": "(doc)->\n  emit [doc.user, doc.timestamp], null"
        }
    }
 }
