@@ -1,4 +1,4 @@
-# An endpoint to get entities history as snapshots and diffs
+# An endpoint to list entities edits made by a user
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
