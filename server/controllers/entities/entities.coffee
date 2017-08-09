@@ -17,6 +17,7 @@ module.exports =
     admin:
       'contributions': require './contributions'
       'duplicates': require './duplicates'
+      'activity': require './activity'
 
   post: ActionsControllers
     authentified:
