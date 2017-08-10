@@ -44,6 +44,8 @@ module.exports = patches_ =
     .get 'rows'
     .map formatRow
     .then sortAndFilterContributions
+    # Return only the first hundred results
+    .then (rows)-> rows.slice 0, 100
 
   getActivityFromLastDay: (days)->
     _.type days, 'number'
