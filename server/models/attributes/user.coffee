@@ -5,6 +5,7 @@ attributes.ownerSafe = [
   '_id'
   '_rev'
   'username'
+  'created'
   'email'
   'picture'
   'language'
@@ -23,6 +24,7 @@ attributes.ownerSafe = [
 attributes.public = [
   '_id'
   'username'
+  'created'
   'picture'
   'bio'
   'position'
