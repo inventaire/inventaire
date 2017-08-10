@@ -18,15 +18,16 @@ module.exports = patches_ =
       endkey: [ userId ]
       include_docs: true
       descending: true
-      limit: limit
-      skip: offset
       reduce: false
     .then (res)->
+      { rows } = res
+      rangeStart = offset
+      rangeEnd = offset + limit
+      subset = rows.slice rangeStart, rangeEnd
       data =
-        patches: _.pluck res.rows, 'doc'
-        total: res.total_rows
-      continu = limit + offset
-      if continu < data.total then data.continue = continu
+        patches: _.pluck subset, 'doc'
+        total: rows.length
+      if rangeEnd < data.total then data.continue = rangeEnd
       return data
 
   create: (userId, currentDoc, updatedDoc)->
