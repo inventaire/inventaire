@@ -45,7 +45,7 @@ module.exports = (db)->
 
   verifyExisting = (property, value)->
     # using viewCustom as there is no need to include docs
-    db.viewCustom 'byClaim', { key: [property, value] }
+    db.viewCustom 'byClaim', { key: [ property, value ] }
     .then (docs)->
       if docs.length > 0
         # /!\ The client rely on this exact message

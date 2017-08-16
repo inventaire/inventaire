@@ -13,7 +13,7 @@ module.exports = (action, req, res)->
   { group, user } = body
   reqUserId = req.user._id
 
-  _.log [reqUserId, body], 'group action'
+  _.log [ reqUserId, body ], 'group action'
 
   if user? and not tests.valid 'userId', user
     return error_.bundleInvalid req, res, 'user', user

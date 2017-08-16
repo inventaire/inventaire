@@ -10,7 +10,7 @@ module.exports = (req, res, nex)->
   { item, message } = req.body
   reqUserId = req.user._id
 
-  _.log [item, message], 'item request'
+  _.log [ item, message ], 'item request'
 
   unless item? then return error_.bundleMissingBody req, res, 'item'
 
@@ -18,7 +18,7 @@ module.exports = (req, res, nex)->
   .then transactions_.verifyRightToRequest.bind(null, reqUserId)
   .then (itemDoc)->
     { owner:ownerId } = itemDoc
-    user_.byIds [ownerId, reqUserId]
+    user_.byIds [ ownerId, reqUserId ]
     .spread transactions_.create.bind(null, itemDoc)
 
   .get 'id'

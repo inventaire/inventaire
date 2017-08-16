@@ -75,4 +75,4 @@ getTokenData = ->
   token = randomString 32
   pw_.hash token
   .then (tokenHash)->
-    return [token, tokenHash]
+    return [ token, tokenHash ]

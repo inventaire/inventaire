@@ -15,7 +15,7 @@ head = (url, options)->
   key = startTimer 'head', url
 
   breq.head mergeOptions(url, options)
-  .then (res)-> _.pick res, ['statusCode', 'headers']
+  .then (res)-> _.pick res, [ 'statusCode', 'headers' ]
   .finally _.EndTimer(key)
 
 # default to JSON
@@ -33,7 +33,7 @@ mergeOptions = (url, options={})->
 
   # if the url was in the options
   # the url object will be overriden
-  _.extend {url: url}, baseOptions, options,
+  _.extend { url }, baseOptions, options,
 
 startTimer = (verb, url)->
   # url could be an object

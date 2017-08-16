@@ -19,13 +19,13 @@ transactions_ =
   byUser: (userId)->
     db.viewCustom 'byUserAndItem',
       # get all the docs with this userId
-      startkey: [userId, minKey]
-      endkey: [userId, maxKey]
+      startkey: [ userId, minKey ]
+      endkey: [ userId, maxKey ]
       include_docs: true
 
   byUserAndItem: (userId, itemId)->
     _.types arguments, 'strings...'
-    db.viewByKey 'byUserAndItem', [userId, itemId]
+    db.viewByKey 'byUserAndItem', [ userId, itemId ]
 
   create: (itemDoc, ownerDoc, requesterDoc)->
     transaction = Transaction.create(itemDoc, ownerDoc, requesterDoc)
@@ -75,8 +75,8 @@ actorCanBeBoth = ['cancelled']
 updateReadStates = (userId, transaction)->
   role = userRole userId, transaction
   switch role
-    when 'owner' then return {owner: true, requester: false}
-    when 'requester' then return {owner: false, requester: true}
+    when 'owner' then return { owner: true, requester: false }
+    when 'requester' then return { owner: false, requester: true }
     else throw error_.new 'updateReadStates err', 500, arguments
 
 userRole = (userId, transaction)->

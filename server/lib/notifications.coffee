@@ -10,8 +10,8 @@ notifs_ =
   byUserId: (userId)->
     _.type userId, 'string'
     db.viewCustom 'byUserAndTime',
-      startkey: [userId, minKey]
-      endkey: [userId, maxKey]
+      startkey: [ userId, minKey ]
+      endkey: [ userId, maxKey ]
       include_docs: true
     .catch _.ErrorRethrow('byUserId')
 
@@ -22,7 +22,7 @@ notifs_ =
     .catch _.ErrorRethrow('bySubject')
 
   add: (userId, type, data)->
-    _.types arguments, ['string', 'string', 'object']
+    _.types arguments, [ 'string', 'string', 'object' ]
     db.post
       user: userId
       type: type
@@ -32,7 +32,7 @@ notifs_ =
 
   updateReadStatus: (userId, time)->
     time = Number(time)
-    db.viewFindOneByKey 'byUserAndTime', [userId, time]
+    db.viewFindOneByKey 'byUserAndTime', [ userId, time ]
     .then (doc)->
       db.update doc._id, BasicUpdater('status', 'read')
 
@@ -55,7 +55,7 @@ isUnread = (notif)-> notif.status is 'unread'
 
 callbacks =
   acceptedRequest: (userToNotify, newFriend)->
-    _.types arguments, ['string', 'string']
+    _.types arguments, [ 'string', 'string' ]
     notifs_.add userToNotify, 'friendAcceptedRequest',
       user: newFriend
 
@@ -88,7 +88,7 @@ callbacks =
   # Deleting notifications when their subject is deleted
   # to avoid having notification triggering requests for deleted resources
   deleteNotifications: (label, subjectId)->
-    _.types [label, subjectId], 'strings...'
+    _.types [ label, subjectId ], 'strings...'
     _.log "deleting #{label} notifications"
     notifs_.deleteAllBySubjectId subjectId
 

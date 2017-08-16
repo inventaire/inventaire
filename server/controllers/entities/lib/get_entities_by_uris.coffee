@@ -62,7 +62,7 @@ mergeResponses = (results)->
     for entity in result.entities
       if entity.redirects?
         { from, to } = entity.redirects
-        _.types [from, to], 'strings...'
+        _.types [ from, to ], 'strings...'
         response.redirects[from] = to
         delete entity.redirects
 

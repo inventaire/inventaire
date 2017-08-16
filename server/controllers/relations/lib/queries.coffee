@@ -16,7 +16,7 @@ putStatus = (userId, otherId, status)->
   db.update docId, updateStatus.bind(null, docId, status)
 
 updateStatus = (docId, status, doc)->
-  # if doc doesnt exist, cot creates one: {_id: doc._id}
+  # if doc doesnt exist, cot creates one: { _id: doc._id }
   # thus the need to test doc.status instead
   if doc?.status? then doc.status = status
   else doc = Relation.create(docId, status)

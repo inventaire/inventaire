@@ -40,7 +40,7 @@ getItemsFromUser = (reqUserId, uri)-> (user)->
   { _id:ownerId } = user
   getAuthorizationLevel reqUserId, ownerId
   .then (listingKey)->
-    items_.byOwnersAndEntitiesAndListings [ownerId], [uri], listingKey, reqUserId
+    items_.byOwnersAndEntitiesAndListings [ ownerId ], [ uri ], listingKey, reqUserId
     .then (items)-> { users: [ user ], items }
 
 getAuthorizationLevel = (reqUserId, ownerId)->

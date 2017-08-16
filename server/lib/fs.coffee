@@ -42,7 +42,7 @@ exports.downloadFile = (url, path)->
   request url
   .on 'response', (res)->
     { headers, body, statusCode, statusMessage } = res
-    if statusCode < 400 then _.log [body, statusCode], "#{url} downloaded"
-    else _.error [body, headers], "#{statusCode} - #{statusMessage}"
+    if statusCode < 400 then _.log [ body, statusCode ], "#{url} downloaded"
+    else _.error [ body, headers ], "#{statusCode} - #{statusMessage}"
   .on 'error', _.Error('downloadFile')
   .pipe file

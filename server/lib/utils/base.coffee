@@ -2,11 +2,11 @@ _ = require 'lodash'
 
 module.exports = base =
   combinations: (array1, array2)->
-    @types arguments, ['array', 'array']
+    @types arguments, [ 'array', 'array' ]
     results = []
     for keys1 in array1
       for keys2 in array2
-        results.push [keys1, keys2]
+        results.push [ keys1, keys2 ]
     return results
 
   sumValues: (obj)->
@@ -56,7 +56,7 @@ base.Ok = (res, status)-> base.ok.bind null, res, status
 base.OkWarning = (res, warning, status)->
   base.okWarning.bind null, res, warning, status
 
-# FROM: .then (users)-> res.json {users: users}
+# FROM: .then (users)-> res.json { users }
 # TO: .then _.Wrap(res, 'users')
 base.Wrap = (res, key)-> wrap.bind null, res, key
 wrap = (res, key, data)->
@@ -64,7 +64,7 @@ wrap = (res, key, data)->
   obj[key] = data
   res.json obj
 
-# FROM: .spread (users, items)-> res.json {users: users, items: items}
-# TO: .then _.Wraps(res, ['users', 'items'])
+# FROM: .spread (users, items)-> res.json { users, items }
+# TO: .then _.Wraps(res, [ 'users', 'items' ])
 base.Wraps = (res, keys)-> wraps.bind null, res, keys
 wraps = (res, keys, dataArray)-> res.json _.zipObject(keys, dataArray)

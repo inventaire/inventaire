@@ -7,7 +7,7 @@ module.exports =
 
   appendToEmailsKeys: (key)->
     fullValue = not /^\w+_\w+/.test(key)
-    appendToI18nKeys emails, [key], fullValue
+    appendToI18nKeys emails, [ key ], fullValue
 
 appendToI18nKeys = (path, newKeys, fullValue)->
   # don't use 'require' as it will be cached until next start

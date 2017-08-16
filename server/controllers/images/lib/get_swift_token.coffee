@@ -39,7 +39,7 @@ parseIdentificationRes = (res)->
   { expires, id } = token
   lastToken = id
   lastTokenExpirationTime = new Date(expires).getTime()
-  # _.log [lastToken, lastTokenExpirationTime], 'new swift token'
+  # _.log [ lastToken, lastTokenExpirationTime ], 'new swift token'
   return id
 
 verifyEndpoint = (serviceCatalog)->

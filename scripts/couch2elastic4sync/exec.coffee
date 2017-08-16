@@ -45,6 +45,6 @@ module.exports = (cliArg)->
 
 getLogStream = (dbName)->
   logFile = "#{logsFolder}/#{dbName}"
-  logStream = fs.createWriteStream logFile, {flags: 'a'}
+  logStream = fs.createWriteStream logFile, { flags: 'a' }
   logStream.write "\n--------- restarting: #{new Date} ---------\n"
   return logStream

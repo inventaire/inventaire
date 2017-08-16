@@ -4,7 +4,7 @@ CONFIG = require 'config'
 # and not simply scripts being executed in the wild
 CONFIG.serverMode = true
 
-[port, host, env] = process.argv.slice(2)
+[ port, host, env ] = process.argv.slice 2
 
 if port? then CONFIG.port = port
 if host? then CONFIG.host = host

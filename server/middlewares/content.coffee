@@ -79,7 +79,7 @@ module.exports =
     previousData = requestsCache[key]
 
     if data is previousData
-      return error_.bundle req, res, 'duplicated request', 429, [key, req.body]
+      return error_.bundle req, res, 'duplicated request', 429, [ key, req.body ]
 
     temporaryLock key, data
 

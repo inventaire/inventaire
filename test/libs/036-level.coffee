@@ -22,7 +22,7 @@ describe 'DB', ->
             done()
 
       it "should put and get an object", (done)->
-        obj = {bob: 'by'}
+        obj = { bob: 'by' }
         json = JSON.stringify(obj)
         subDb.put 'salut', json, (err, body)->
           if err? then _.error err
@@ -47,7 +47,7 @@ describe 'DB', ->
         return
 
       it "should put and get an object", (done)->
-        obj = {da: 'zup'}
+        obj = { da: 'zup' }
         json = JSON.stringify(obj)
         promDb.putAsync('yo', json)
         .then (res)->
@@ -73,7 +73,7 @@ describe 'DB', ->
         return
 
       it "should put and get an object", (done)->
-        obj = {ahoy: 'georges'}
+        obj = { ahoy: 'georges' }
         unjsonizedDb.put('ohoh', obj)
         .then (res)->
           unjsonizedDb.get('ohoh')
@@ -124,9 +124,9 @@ describe 'DB', ->
 
     describe 'UPDATE', ->
       it "should update the value", (done)->
-        db.put 'a', {b: 'c'}
+        db.put 'a', { b: 'c' }
         .then ->
-          db.update 'a', {d: 'e'}
+          db.update 'a', { d: 'e' }
           .then ->
             db.get 'a'
             .then (val)->
@@ -139,9 +139,9 @@ describe 'DB', ->
 
     describe 'PATCH', ->
       it "should update the value", (done)->
-        db.put 'a', {b: 'c'}
+        db.put 'a', { b: 'c' }
         .then ->
-          db.patch 'a', {d: 'e'}
+          db.patch 'a', { d: 'e' }
           .then ->
             db.get 'a'
             .then (val)->

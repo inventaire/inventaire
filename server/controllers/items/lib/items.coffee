@@ -61,7 +61,7 @@ module.exports = items_ =
     for ownerId in ownersIds
       for uri in uris
         for listing in listingsLists[listingsKey]
-          keys.push [ownerId, uri, listing]
+          keys.push [ ownerId, uri, listing ]
 
     db.viewByKeys 'byOwnerAndEntityAndListing', keys
     .map filterPrivateAttributes(reqUserId)
@@ -143,7 +143,7 @@ module.exports = items_ =
     return item
 
 listingByEntities = (listing, uris, reqUserId)->
-  keys = uris.map (uri)-> [uri, listing]
+  keys = uris.map (uri)-> [ uri, listing ]
   db.viewByKeys 'byEntity', keys
   .map filterPrivateAttributes(reqUserId)
 
@@ -153,7 +153,7 @@ bundleListings = (listingsTypes, usersIds, reqUserId)->
   .map filterPrivateAttributes(reqUserId)
 
 entityUriKeys = (entityUri)->
-  return listingsPossibilities.map (listing)-> [entityUri, listing]
+  return listingsPossibilities.map (listing)-> [ entityUri, listing ]
 
 safeItem = (item)-> _.omit item, privateAttrs
 

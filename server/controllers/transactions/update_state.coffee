@@ -15,7 +15,7 @@ module.exports = (req, res, next)->
   unless state in statesList
     return error_.bundle req, res, 'unknown state', 400, id, state
 
-  _.log [id, state], 'update transaction state'
+  _.log [ id, state ], 'update transaction state'
 
   transactions_.byId id
   .then VerifyRights(state, reqUserId)

@@ -9,13 +9,13 @@ module.exports = error_ = {}
 # so that it can be catched and parsed in a standardized way
 # at the end of a promise chain, typically by a .catch error_.Handler(req, res)
 error_.new = (message, filter, context...)->
-  _.types [message, filter], ['string', 'string|number']
+  _.types [ message, filter ], [ 'string', 'string|number' ]
   err = new Error message
   return formatError err, filter, context
 
 # Completing an existing error object
 error_.complete = (err, filter, context...)->
-  _.types [err, filter], ['object', 'string|number']
+  _.types [ err, filter ], [ 'object', 'string|number' ]
   return formatError err, filter, context
 
 # Compelete and rethrow: to be used in a promise chain

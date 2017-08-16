@@ -9,4 +9,4 @@ module.exports = _.extend regex_,
   WikiLang: /^\w{2,4}$/
   Sha1: /^[0-9a-f]{40}$/
   StringNumber: /^-?[0-9]+(\.[0-9]+)?$/
-  Ip: ipRegex {exact: true}
+  Ip: ipRegex { exact: true }

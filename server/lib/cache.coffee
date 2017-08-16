@@ -39,7 +39,7 @@ module.exports =
 
   # Return what's in cache. If nothing, return nothing: no request performed
   dryGet: (key, timespan=oneMonth)->
-    try _.types [key, timespan], ['string', 'number']
+    try _.types [ key, timespan ], [ 'string', 'number' ]
     catch err then return error_.reject err, 500
 
     checkCache key, timespan

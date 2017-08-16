@@ -8,7 +8,7 @@ promises_ = __.require 'lib', 'promises'
 module.exports = (dbName)->
   sub = levelBase.sub dbName
   db = geo sub
-  API = promises_.promisify db, ['get', 'getByKey', 'put', 'del']
+  API = promises_.promisify db, [ 'get', 'getByKey', 'put', 'del' ]
   API.reset = Reset sub
   API.inspect = Inspect sub
   API.search = Search db
@@ -20,7 +20,7 @@ Reset = (sub)->
     new Promise (resolve, reject)->
       ops = []
       sub.createKeyStream()
-      .on 'data', (key)-> ops.push {type: 'del', key: key}
+      .on 'data', (key)-> ops.push { type: 'del', key }
       .on 'end', ->
         sub.batch ops, (err, res)->
           if err then reject err
@@ -32,9 +32,9 @@ Inspect = (sub)->
 
 Search = (db)->
   search = (latLng, kmRange)->
-    _.types arguments, ['array', 'number']
+    _.types arguments, [ 'array', 'number' ]
     [ lat, lon ] = latLng
-    streamPromise db.search({lat: lat, lon: lon}, kmRange*1000)
+    streamPromise db.search({ lat, lon }, kmRange*1000)
 
 streamPromise = (stream)->
   new Promise (resolve, reject)->

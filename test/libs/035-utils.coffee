@@ -20,7 +20,7 @@ describe 'UTILS', ->
   describe 'flattenIndexes', ->
     it 'should return the collection of indexes merged into one', (done)->
       _.flattenIndexes.should.be.a.Function()
-      indexes = [{a: 1}, {b: 2}, {c: 3}, {a: 4, d: 5}]
+      indexes = [ { a: 1 }, { b: 2 }, { c: 3 }, { a: 4, d: 5 } ]
       result = _.flattenIndexes indexes
       result.should.be.an.Object()
       result.a.should.equal 4
@@ -31,10 +31,10 @@ describe 'UTILS', ->
       done()
 
     it 'should return a new index without modifiy the passed indexes', (done)->
-      indexA = {a: 1}
-      indexB = {b: 2}
-      indexC = {c: 3}
-      indexD = {a: 4, d: 5}
+      indexA = { a: 1 }
+      indexB = { b: 2 }
+      indexC = { c: 3 }
+      indexD = { a: 4, d: 5 }
       indexes = [ indexA, indexB, indexC, indexD ]
       result = _.flattenIndexes indexes
       result.should.not.equal indexA

@@ -36,7 +36,7 @@ module.exports = (db)->
 
     db.put { lat, lon }, id, null
     .then ->
-      _.success [id, lat, lon], 'user position updated'
+      _.success [ id, lat, lon ], 'user position updated'
       return
 
   startFollowing = (res)-> follow { dbBaseName, filter, onChange }

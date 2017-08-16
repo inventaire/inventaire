@@ -29,7 +29,7 @@ _.extend comments_, rightsVerification,
 
   bySubjectAndUserId: (subject, userId)->
     # subject: either item or transaction
-    db.viewByKey 'bySubjectAndUserId', [subject, userId]
+    db.viewByKey 'bySubjectAndUserId', [ subject, userId ]
 
   addItemComment: (userId, message, item)->
     _.types arguments, ['string', 'string', 'object']

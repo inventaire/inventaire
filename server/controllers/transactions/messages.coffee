@@ -24,7 +24,7 @@ module.exports =
     unless message?
       return error_.bundleMissingBody req, res, 'message'
 
-    _.log [transaction, message], 'transaction, message'
+    _.log [ transaction, message ], 'transaction, message'
 
     transactions_.byId transaction
     .then (transaction)->

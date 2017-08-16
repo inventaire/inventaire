@@ -61,7 +61,7 @@ exports.get = (req, res, next)->
   getResizeImage req, res, url, dimensions
 
 getResizeImage = (req, res, url, dimensions)->
-  [ width, height ] = dimensions?.split('x') or [maxSize, maxSize]
+  [ width, height ] = dimensions?.split('x') or [ maxSize, maxSize ]
   [ width, height ] = images_.applyLimits width, height
 
   reqStream = request url

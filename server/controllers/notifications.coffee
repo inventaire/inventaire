@@ -22,7 +22,7 @@ updateStatus = (req, res)->
   # could probably be replaced by a batch operation
   promises_.all times.map(notifs_.updateReadStatus.bind(null, reqUserId))
   .then ->
-    _.success [reqUserId, times], 'notifs marked as read'
+    _.success [ reqUserId, times ], 'notifs marked as read'
     _.ok res
   .catch error_.Handler(req, res)
 

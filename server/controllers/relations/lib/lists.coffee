@@ -11,8 +11,8 @@ module.exports = (db)->
 
   getAllUserRelations = (userId, includeDocs=false)->
     db.view 'relations', 'byStatus',
-      startkey: [userId, minKey]
-      endkey: [userId, maxKey]
+      startkey: [ userId, minKey ]
+      endkey: [ userId, maxKey ]
       include_docs: includeDocs
 
   return lists =
@@ -21,7 +21,7 @@ module.exports = (db)->
       .then parseRelations
 
     getUserFriends: (userId)->
-      query = { key: [userId, 'friends'] }
+      query = { key: [ userId, 'friends' ] }
       db.view 'relations', 'byStatus', query
       .then couch_.mapValue
 

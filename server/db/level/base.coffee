@@ -46,7 +46,7 @@ module.exports =
       reset: ->
         ops = []
         sub.createKeyStream()
-        .on 'data', (key)-> ops.push {type: 'del', key: key}
+        .on 'data', (key)-> ops.push { type: 'del', key }
         .on 'end', =>
           @batch(ops)
           .then -> _.log 'reset succesfully'

@@ -37,7 +37,7 @@ wikidataReverseClaims = (property, value, refresh)->
 _wikidataReverseClaims = (property, value)->
   caseInsensitive = property in caseInsensitiveProperties
   wdProp = wd_.unprefixify property
-  _.log [property, value], 'reverse claim'
+  _.log [ property, value ], 'reverse claim'
   promises_.get wdk.getReverseClaims(wdProp, value, { caseInsensitive })
   .then wdk.simplifySparqlResults
   .map prefixify

@@ -12,7 +12,7 @@ merge = (userId, fromId, toId)->
   _.types arguments, 'strings...'
 
   # Fetching non-formmatted docs
-  entities_.byIds [fromId, toId]
+  entities_.byIds [ fromId, toId ]
   .spread (fromEntityDoc, toEntityDoc)->
     # At this point if the entities are not found, that's the server's fault,
     # thus the 500 statusCode

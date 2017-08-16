@@ -63,7 +63,7 @@ describe 'CACHE', ->
         .then (res2)->
           cache_.get('samekey', workingFn.bind(null, 'different arg'), 0)
           .then (res3)->
-            _.log [res1, res2, res3], 'results'
+            _.log [ res1, res2, res3 ], 'results'
             res1.should.equal res2
             res2.should.not.equal res3
             done()
@@ -78,7 +78,7 @@ describe 'CACHE', ->
           # the error shouldnt have overriden the value
           cache_.get('doden', workingFn.bind(null, 'Vem är du?'), 5000)
           .then (res3)->
-            _.log [res1, res2, res3], 'results'
+            _.log [ res1, res2, res3 ], 'results'
             res1.should.equal res2
             res1.should.equal res3
             done()

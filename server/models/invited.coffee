@@ -30,12 +30,12 @@ stopEmails = BasicUpdater 'stopEmails', true
 canBeInvited = (inviterId, doc)->
   { inviters, stopEmails } = doc
   if stopEmails
-    _.warn [inviterId, doc], 'stopEmails: invitation aborted'
+    _.warn [ inviterId, doc ], 'stopEmails: invitation aborted'
     return false
 
   alreadyInvited = inviters[inviterId]?
   if alreadyInvited
-    _.warn [inviterId, doc], 'alreadyInvited: invitation aborted'
+    _.warn [ inviterId, doc ], 'alreadyInvited: invitation aborted'
     return false
 
   return true

@@ -19,7 +19,7 @@ module.exports =
   session: session(sessionParams)
   passport:
     initialize: passport.initialize()
-    session: passport.session {pauseStream: true}
+    session: passport.session { pauseStream: true }
 
   basicAuth: (req, res, next)->
     unless req.headers.authorization? then return next()

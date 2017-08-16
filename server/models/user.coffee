@@ -15,7 +15,7 @@ User.tests = tests = require './tests/user'
 # should always return a promise
 # thus the try/catch returning error in a rejected promise
 User._create = (username, email, creationStrategy, language, password)->
-  _.log [username, email, creationStrategy, language, "password:#{password?}"], 'creating user'
+  _.log [ username, email, creationStrategy, language, "password:#{password?}" ], 'creating user'
   _.types arguments, ['string', 'string', 'string', 'string|undefined', 'string|undefined'], 3
 
   tests.pass 'username', username
