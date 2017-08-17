@@ -21,7 +21,13 @@ module.exports = (userId, fromUri, toUri)->
       results.forEach (result)->
         { entity, property } = result
         doc = entitiesIndex[entity]
-        entitiesIndex[entity] = Entity.updateClaim doc, property, fromUri, toUri
+
+        # If the toUri is already a claim value, delete the fromUri claim
+        # instead of creating a duplicated claim
+        if toUri in doc.claims[property] then newVal = null
+        else newVal = toUri
+
+        entitiesIndex[entity] = Entity.updateClaim doc, property, fromUri, newVal
 
       # Then, post the updates all at once
       updatesPromises = _.values(entitiesIndex).map (updatedDoc)->
