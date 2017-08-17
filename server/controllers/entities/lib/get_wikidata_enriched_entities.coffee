@@ -24,6 +24,8 @@ getWdEntity = __.require 'data', 'wikidata/get_entity'
 getInvEntityByWdId = require './get_inv_entity_by_wd_id'
 addImageData = require './add_image_data'
 radio = __.require 'lib', 'radio'
+redirectClaims = require './redirect_claims'
+{ _id:hookUserId } = __.require('couch', 'hard_coded_documents').users.hook
 
 module.exports = (ids, refresh)->
   promises_.all ids.map(getCachedEnrichedEntity(refresh))
@@ -68,7 +70,7 @@ format = (entity, invEntity)->
   entity.claims = formatClaims entity.claims, wdId
   entity.originalLang = getOriginalLang entity.claims
 
-  formatRedirection entity
+  formatAndPropagateRedirection entity
 
   # Deleting unnecessary attributes
   delete entity.id
@@ -97,12 +99,20 @@ format = (entity, invEntity)->
 
   return addImageData entity
 
-formatRedirection = (entity)->
+formatAndPropagateRedirection = (entity)->
   if entity.redirects?
     { from, to } = entity.redirects
     entity.redirects =
       from: prefixify from
       to: prefixify to
+
+    # Take advantage of this request for a Wikidata entity to check
+    # if there is a redirection we are not aware of, and propagate it:
+    # if the redirected entity is used in Inventaire claims, redirect claims
+    # to their new entity
+    redirectClaims hookUserId, entity.redirects.from, entity.redirects.to
+
+  return
 
 formatEmpty = (type, entity)->
   # Keeping just enough data to filter-out while not cluttering the cache
