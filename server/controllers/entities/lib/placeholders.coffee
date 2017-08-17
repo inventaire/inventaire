@@ -22,6 +22,7 @@ PlaceholderHandler = (modelFnName)-> (userId, entityId)->
       if err.message is "can't turn a redirection into a removed placeholder"
         # Ignore this error as the effects of those two states are close
         # (so much so that it might be worth just having redirections)
+        _.warn currentDoc, err.message
         return
       else
         throw err
