@@ -16,7 +16,16 @@ PlaceholderHandler = (modelFnName)-> (userId, entityId)->
   # non type='entity' docs, thus making type='removed:placeholder' not accessible
   entities_.db.get entityId
   .then (currentDoc)->
-    updatedDoc = Entity[modelFnName](currentDoc)
+    try
+      updatedDoc = Entity[modelFnName](currentDoc)
+    catch err
+      if err.message is "can't turn a redirection into a removed placeholder"
+        # Ignore this error as the effects of those two states are close
+        # (so much so that it might be worth just having redirections)
+        return
+      else
+        throw err
+
     entities_.putUpdate userId, currentDoc, updatedDoc
     .then -> return currentDoc._id
 

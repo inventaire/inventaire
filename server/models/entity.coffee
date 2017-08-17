@@ -136,6 +136,9 @@ module.exports = Entity =
     }
 
   removePlaceholder: (entityDoc)->
+    if entityDoc.redirect?
+      throw error_.new "can't turn a redirection into a removed placeholder", 400, entityDoc
+
     removedDoc = _.cloneDeep entityDoc
     removedDoc.type = 'removed:placeholder'
     return removedDoc
