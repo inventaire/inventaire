@@ -36,6 +36,8 @@ getWdAuthorWorks = (qid, worksByTypes, refresh)->
   runWdQuery { query: 'author-works', qid, refresh }
   .then spreadWdResultsByTypes.bind(null, worksByTypes)
 
+# TODO: prevent a work with several wdt:P577 values to appear several times
+# ex: https://inventaire.io/api/entities?action=serie-parts&uri=wd:Q8337
 spreadWdResultsByTypes = (worksByTypes, results)->
   for result in results
     { work:wdId, type:typeWdId, date, serie } = result
