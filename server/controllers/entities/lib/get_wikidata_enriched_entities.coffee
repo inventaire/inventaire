@@ -24,7 +24,7 @@ getWdEntity = __.require 'data', 'wikidata/get_entity'
 getInvEntityByWdId = require './get_inv_entity_by_wd_id'
 addImageData = require './add_image_data'
 radio = __.require 'lib', 'radio'
-redirectClaims = require './redirect_claims'
+propagateRedirection = require './propagate_redirection'
 { _id:hookUserId } = __.require('couch', 'hard_coded_documents').users.hook
 
 module.exports = (ids, refresh)->
@@ -110,7 +110,7 @@ formatAndPropagateRedirection = (entity)->
     # if there is a redirection we are not aware of, and propagate it:
     # if the redirected entity is used in Inventaire claims, redirect claims
     # to their new entity
-    redirectClaims hookUserId, entity.redirects.from, entity.redirects.to
+    propagateRedirection hookUserId, entity.redirects.from, entity.redirects.to
 
   return
 

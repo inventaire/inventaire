@@ -3,10 +3,9 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
 entities_ = require './entities'
-updateItemEntity = __.require 'controllers', 'items/lib/update_entity'
 Entity = __.require 'models', 'entity'
-redirectClaims = require './redirect_claims'
 placeholders_ = require './placeholders'
+propagateRedirection = require './propagate_redirection'
 
 merge = (userId, fromId, toId)->
   _.types arguments, 'strings...'
@@ -86,11 +85,5 @@ deleteIfIsolated = (userId, fromId)-> (entityUri)->
   .filter (result)-> result.entity isnt fromId
   .then (results)->
     if results.length is 0 then return placeholders_.remove userId, entityId
-
-propagateRedirection = (userId, fromUri, toUri)->
-  promises_.all [
-    redirectClaims userId, fromUri, toUri
-    updateItemEntity.afterMerge fromUri, toUri
-  ]
 
 module.exports = { merge, turnIntoRedirection }
