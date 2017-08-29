@@ -2,8 +2,16 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 Item = __.require 'models', 'item'
-items_ = require './items'
-snapshotEntityData = require './snapshot/snapshot_entity_data'
+
+# Working around circular dependencies
+snapshotEntityData = null
+items_ = null
+
+lateRequire = ->
+  snapshotEntityData = require './snapshot/snapshot_entity_data'
+  items_ = require './items'
+
+setTimeout lateRequire, 0
 
 AfterFn = (viewName, modelFnName)-> (fromUri, toUri)->
   items_[viewName](fromUri)
