@@ -21,6 +21,7 @@ _.extend Q,
     'wd:Q1760610' # comic book
     'wd:Q838795' # comic strip
     'wd:Q8261' # novel / roman
+    'wd:Q725377' # graphic novel
     'wd:Q25379' # theatre play
     'wd:Q7725634' # literary work
     'wd:Q17518870' # group of literary works
