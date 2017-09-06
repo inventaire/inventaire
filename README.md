@@ -97,12 +97,14 @@ npm run watch
 ## Concepts map
 the whole app turns around a few core concepts:
 - Users
-- Entities : encompass authors (ex: [wd:Q353](https://inventaire.io/entity/wd:Q535)), books (ex: [wd:Q393018](https://inventaire.io/entity/wd:Q393018)) and books' specific editions (ex: [isbn:9782070389162](https://inventaire.io/entity/isbn:9782070389162)). The term *entities* is inherited from wikidata terminology.
+- Entities : encompass authors (ex: [wd:Q353](https://inventaire.io/entity/wd:Q535)), books (ex: [wd:Q393018](https://inventaire.io/entity/wd:Q393018)) and books' specific editions (ex: [isbn:9782070389162](https://inventaire.io/entity/isbn:9782070389162)). The term *entities* is inherited from wikidata terminology. See the [entities map](https://inventaire.github.io/entities-map/).
 - Items : instances of book entities that a user declare to own. Can be an instance of a work or a specific edition of a work.
 - Transactions : discussion between two users involving a specific item with an open transaction mode (giving, lending, selling). Transactions have effects on items: giving and selling an item make it move from the owner to the requester inventory; lending an item make it appear as unavailable.
 - Groups: groups of users with one or more admins
 
 ![concepts map](https://raw.githubusercontent.com/inventaire/inventaire/master/docs/visualizations/concepts.jpg)
+
+![entities map](https://raw.githubusercontent.com/inventaire/entities-map/master/screenshots/entities-map-2.png)
 
 ## Contribute
 see [wiki](https://github.com/inventaire/inventaire/wiki) to get started, especially the [new contributors](https://github.com/inventaire/inventaire/wiki#new-contributors) section
