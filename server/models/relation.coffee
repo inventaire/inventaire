@@ -16,6 +16,7 @@ module.exports =
       created: Date.now()
 
   docId: (userId, otherId)->
+    # TODO: add a receiver-read flag to stop notifying already read requestes
     couch_.joinOrderedIds(userId, otherId)
 
 assertValidId = (id)->
