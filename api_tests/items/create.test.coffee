@@ -142,3 +142,13 @@ describe 'items:create', ->
     .catch undesiredErr(done)
 
     return
+
+  it 'should reject an item created with an invalid URI', (done)->
+    authReq 'post', '/api/items', { entity: 'isbn:9782800051922' }
+    .catch (err)->
+      err.statusCode.should.equal 400
+      err.body.status_verbose.should.equal 'invalid uri id: 9782800051922 (uri: isbn:9782800051922)'
+      done()
+    .catch undesiredErr(done)
+
+    return
