@@ -21,6 +21,18 @@ describe 'entities:get:by-uris', ->
 
     return
 
+  it 'should accept alias URIs with inexact case', (done)->
+    aliasUri = 'twitter:Bouletcorp'
+    nonAuthReq 'get', "/api/entities?action=by-uris&uris=#{aliasUri}"
+    .then (res)->
+      { entities, redirects } = res
+      canonicalUri = redirects[aliasUri]
+      canonicalUri.should.equal 'wd:Q1524522'
+      done()
+    .catch undesiredErr(done)
+
+    return
+
   it 'should accept alternative ISBN 13 syntax', (done)->
     isbn13h = '978-2-84565-221-7'
     isbn13Uri = 'isbn:9782845652217'
