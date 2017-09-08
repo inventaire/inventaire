@@ -160,6 +160,8 @@ updateInferredProperties = (doc, property, oldVal, newVal)->
 
     if addingOrUpdatingValue
       inferredValue = convertor newVal
+      # Known case of missing infered value:
+      # ISBN-13 with a 979 prefix will not have an ISBN-10
       if inferredValue?
         if inferredValue not in inferredPropertyArray
           inferredPropertyArray.push inferredValue
