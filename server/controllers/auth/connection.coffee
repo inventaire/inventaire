@@ -8,6 +8,7 @@ setLoggedInCookie = require './lib/set_logged_in_cookie'
 { ownerSafeData } = __.require 'controllers', 'user/lib/authorized_user_data_pickers'
 
 exports.signup = (req, res)->
+  # TODO: rate limit to 10 signup per IP per 10 minutes
   { username, email, password } = req.body
 
   unless _.isNonEmptyString username
