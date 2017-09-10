@@ -3,6 +3,11 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
 
+# Working around circular dependencies
+getEntityByUri = null
+lateRequire = -> getEntityByUri = require './get_entity_by_uri'
+setTimeout lateRequire, 0
+
 { properties, testDataType, propertyDatatypePrimordialType } = require './properties'
 
 module.exports = (db)->
@@ -38,12 +43,17 @@ module.exports = (db)->
 
     formattedValue = prop.format newVal
 
-    unless prop.concurrency then return promises_.resolve formattedValue
-
-    verifyExisting property, formattedValue
+    # Resolve only if all async tests pass
+    return promises_.all [
+      verifyClaimConcurrency prop.concurrency, property, formattedValue
+      verifyClaimEntityType prop.restrictedType, formattedValue
+    ]
     .then -> formattedValue
 
-  verifyExisting = (property, value)->
+  # For properties that don't tolerate having several entities
+  # sharing the same value
+  verifyClaimConcurrency = (concurrency, property, value)->
+    unless concurrency then return
     # using viewCustom as there is no need to include docs
     db.viewCustom 'byClaim', { key: [ property, value ] }
     .then (docs)->
@@ -52,5 +62,15 @@ module.exports = (db)->
         # client/app/modules/entities/lib/creation_partials.coffee
         message = 'this property value is already used'
         throw error_.new message, 400, property, value
+
+  # For claims that have an entity URI as value
+  # check that the target entity is of the expected type
+  verifyClaimEntityType = (restrictedType, value)->
+    unless restrictedType? then return
+
+    getEntityByUri value
+    .then (entity)->
+      unless entity.type is restrictedType
+        throw error_.new "invalid claim entity type: #{entity.type}", 400, value
 
   return validateClaimValue

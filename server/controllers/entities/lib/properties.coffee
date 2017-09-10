@@ -13,6 +13,14 @@ entityBase =
 
 entityUniqueValue = _.extend {}, entityBase, { uniqueValue: true }
 
+restrictedType = (base)-> (type)-> _.extend { restrictedType: type }, entityBase
+
+entityRestrictedType = restrictedType entityBase
+entityUniqueValueRestrictedType = restrictedType entityUniqueValue
+workEntity = entityRestrictedType 'work'
+serieEntity = entityRestrictedType 'serie'
+humanEntity = entityRestrictedType 'human'
+
 ipfsPathBase =
   datatype: 'ipfs-path'
   test: _.isIpfsPath
@@ -65,7 +73,7 @@ properties =
   # instance of
   'wdt:P31': _.extend {}, entityUniqueValue, { adminUpdateOnly: true }
   # author
-  'wdt:P50': entityBase
+  'wdt:P50': humanEntity
   # publisher
   'wdt:P123': entityUniqueValue
   # original language of work
@@ -75,7 +83,7 @@ properties =
   # genre
   'wdt:P136': entityBase
   # serie
-  'wdt:P179': entityUniqueValue
+  'wdt:P179': serieEntity
   # isbn 13
   'wdt:P212': isbnProperty 13
   # language of work
@@ -87,9 +95,9 @@ properties =
   # publication date
   'wdt:P577': simpleDayUniqueValueBase
   # edition or translation of
-  'wdt:P629': entityBase
+  'wdt:P629': workEntity
   # translator
-  'wdt:P655': entityBase
+  'wdt:P655': humanEntity
   # influenced by
   'wdt:P737': entityBase
   # narrative set in
@@ -111,9 +119,9 @@ properties =
   # twitter account
   'wdt:P2002': stringConcurrentBase
   # author of foreword
-  'wdt:P2679': entityBase
+  'wdt:P2679': humanEntity
   # author of afterword
-  'wdt:P2680': entityBase
+  'wdt:P2680': humanEntity
 
 whitelist = Object.keys properties
 
