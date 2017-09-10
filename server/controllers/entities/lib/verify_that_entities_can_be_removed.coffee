@@ -8,7 +8,7 @@ items_ = __.require 'controllers', 'items/lib/items'
 
 # Other types should be redirected instead of removed
 # so that the associated items follow
-whitelistedTypes = [ 'human', 'work' ]
+whitelistedTypes = [ 'human', 'work', 'serie' ]
 
 criticalClaimProperties = [
   # no edition should end up without an associated work because of a removed work
