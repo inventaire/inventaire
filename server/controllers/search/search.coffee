@@ -16,8 +16,6 @@ module.exports =
     { types, search, lang } = req.query
     reqUserId = req.user?._id
 
-    _.info [ types, search ], 'entities local search'
-
     unless _.isNonEmptyString search
       return error_.bundleMissingQuery req, res, 'search'
 
@@ -35,8 +33,6 @@ module.exports =
     { indexes, types } = getIndexesAndTypes typesList
 
     url = "#{elasticHost}/#{indexes.join(',')}/#{types.join(',')}/_search"
-
-    _.log url, 'global search'
 
     body = queryBodyBuilder search
 
