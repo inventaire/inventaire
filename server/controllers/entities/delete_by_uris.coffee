@@ -14,7 +14,9 @@ module.exports = (req, res, next)->
   uris = _.uniq uris.split('|')
 
   for uri in uris
-    unless _.isInvEntityUri(uri)
+    # Wikidata entities can't be delete obviously
+    # and neither can editions entities with an ISBN: they should be fixed
+    unless _.isInvEntityUri uri
       return error_.bundleInvalid req, res, 'uri', uri
 
   verifyThatEntitiesCanBeRemoved uris

@@ -3,6 +3,12 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 { authReq } = __.require 'apiTests', 'utils/utils'
 randomString = __.require 'lib', './utils/random_string'
+isbn_ = __.require 'lib', 'isbn/isbn'
+defaultEditionData = ->
+  labels: {}
+  claims:
+    'wdt:P31': [ 'wd:Q3331189' ]
+    'wdt:P1476': [ randomString(4) ]
 
 module.exports = helpers =
   ensureEditionExists: (uri, workData, editionData)->
@@ -21,6 +27,10 @@ module.exports = helpers =
         workData.claims['wdt:P50'] = [ authorEntity.uri ]
         authReq 'post', '/api/entities?action=create', workData
       .then (workEntity)->
+        editionData or= defaultEditionData()
+        [ prefix, id ] = uri.split ':'
+        if isbn_.isValidIsbn id
+          editionData.claims['wdt:P212'] = [ isbn_.toIsbn13h(id) ]
         editionData.claims['wdt:P629'] = [ workEntity.uri ]
         authReq 'post', '/api/entities?action=create', editionData
 

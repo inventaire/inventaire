@@ -4,7 +4,7 @@ _ = __.require 'builders', 'utils'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
 { nonAuthReq, authReq, adminReq, undesiredRes, undesiredErr } = __.require 'apiTests', 'utils/utils'
-{ createHuman, createWork, createWorkWithAuthor, createEdition } = require './helpers'
+{ createHuman, createWork, createWorkWithAuthor, createEdition, ensureEditionExists } = require './helpers'
 
 describe 'entities:delete:by-uris', ->
   it 'should require admin rights', (done)->
@@ -92,14 +92,25 @@ describe 'entities:delete:by-uris', ->
     .catch undesiredErr(done)
     return
 
-  it 'should refuse to delete entities that are not of a whitelisted type', (done)->
+  it 'should remove edition entities without an ISBN', (done)->
     createEdition()
     .then (edition)->
       invUri = 'inv:' + edition._id
       adminReq 'delete', "/api/entities?action=by-uris&uris=#{invUri}"
+    .then -> done()
+    .catch undesiredErr(done)
+    return
+
+  it 'should refuse to delete an edition with an ISBN', (done)->
+    uri = 'isbn:9782298063264'
+    ensureEditionExists uri
+    .then (edition)->
+      # Using the inv URI, as the isbn one would be rejected earlier
+      invUri = 'inv:' + edition._id
+      adminReq 'delete', "/api/entities?action=by-uris&uris=#{invUri}"
     .then undesiredRes(done)
     .catch (err)->
-      err.body.status_verbose.should.equal "entities of type 'edition' can't be removed"
+      err.body.status_verbose.should.equal "this entity uses blacklisted claim properties"
       err.statusCode.should.equal 400
       done()
     .catch undesiredErr(done)

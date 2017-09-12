@@ -6,31 +6,32 @@ getEntitiesByUris = require './get_entities_by_uris'
 entities_ = require './entities'
 items_ = __.require 'controllers', 'items/lib/items'
 
-# Other types should be redirected instead of removed
-# so that the associated items follow
-whitelistedTypes = [ 'human', 'work', 'serie' ]
-
 criticalClaimProperties = [
-  # no edition should end up without an associated work because of a removed work
+  # No edition should end up without an associated work because of a removed work
   'wdt:P629'
+]
+
+blacklistedClaimProperties = [
+  # Editions with an ISBN shouldn't be removed, but fixed
+  'wdt:P212'
 ]
 
 module.exports = (uris)->
   Promise.all [
-    entitiesAreOfAWhitelistedType uris
-    entitiesArentMuchUsed uris
-    entitiesArentUsedByAnyItem uris
+    entitiesChecks uris
+    entitiesRelationsChecks uris
+    entitiesItemsChecks uris
   ]
 
-entitiesAreOfAWhitelistedType = (uris)->
+entitiesChecks = (uris)->
   getEntitiesByUris uris
   .then (res)->
     for uri, entity of res.entities
-      { type } = entity
-      if type not in whitelistedTypes
-        throw error_.new "entities of type '#{type}' can't be removed", 400, uri
+      # Verify that entities don't have blacklisted claims
+      if _.haveAMatch Object.keys(entity.claims), blacklistedClaimProperties
+        throw error_.new "this entity uses blacklisted claim properties", 400, uri
 
-entitiesArentMuchUsed = (uris)-> Promise.all uris.map entityIsntMuchUsed
+entitiesRelationsChecks = (uris)-> Promise.all uris.map entityIsntMuchUsed
 
 entityIsntMuchUsed = (uri)->
   entities_.byClaimsValue uri
@@ -42,7 +43,7 @@ entityIsntMuchUsed = (uri)->
       if claim.property in criticalClaimProperties
         throw error_.new 'this entity is used in a critical claim', 400, uri, claim
 
-entitiesArentUsedByAnyItem = (uris)-> Promise.all uris.map entityIsntUsedByAnyItem
+entitiesItemsChecks = (uris)-> Promise.all uris.map entityIsntUsedByAnyItem
 entityIsntUsedByAnyItem = (uri)->
   items_.byEntity uri
   .then (items)->
