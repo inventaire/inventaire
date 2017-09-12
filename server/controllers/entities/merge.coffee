@@ -14,10 +14,6 @@ radio = __.require 'lib', 'radio'
 
 # Only inv entities can be merged yet
 validFromPrefix = [ 'inv' ]
-validToPrefix = [ 'wd', 'inv' ]
-
-# Only books and authors can be merged yet
-validTypes = [ 'work', 'human', 'serie' ]
 
 module.exports = (req, res)->
   { body } = req
@@ -37,8 +33,7 @@ module.exports = (req, res)->
   unless fromPrefix in validFromPrefix
     return error_.bundle req, res, "invalid 'from' uri domain: #{fromPrefix}. Accepted domains: #{validFromPrefix}", 400, body
 
-  unless toPrefix in validToPrefix
-    return error_.bundle req, res, "invalid 'to' uri domain: #{toPrefix}. Accepted domains: #{validToPrefix}", 400, body
+  # 'to' prefix doesn't need validation as it can be anything
 
   _.log { merge: body, user: reqUserId }, 'entity merge request'
 
@@ -63,9 +58,6 @@ Merge = (reqUserId, toPrefix, fromUri, toUri)-> (entitiesByUri)->
     # which will not get a 'human' type
     unless fromEntity.type is 'human' and not toEntity.type?
       throw error_.new "type don't match: #{fromEntity.type} / #{toEntity.type}", 400, fromUri, toUri
-
-  unless fromEntity.type in validTypes
-    throw error_.new "this type can't be merged: #{fromEntity.type} (only #{validTypes})", 400, fromUri, toUri
 
   [ fromPrefix, fromId ] = fromUri.split ':'
   [ toPrefix, toId ] = toUri.split ':'

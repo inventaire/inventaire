@@ -63,3 +63,6 @@ module.exports = helpers =
           'wdt:P31': [ 'wd:Q3331189' ]
           'wdt:P629': [ work.uri ]
           'wdt:P1476': [ work.labels.en ]
+
+  createItemFromEntityUri: (uri)->
+    authReq 'post', '/api/items', { entity: uri }
