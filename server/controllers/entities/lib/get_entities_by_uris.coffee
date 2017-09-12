@@ -4,7 +4,7 @@ error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
 wdk = require 'wikidata-sdk'
 { normalizeIsbn, isValidIsbn } = __.require 'lib', 'isbn/isbn'
-{ prefixes:aliasesPrefixes, validators:aliasesValidators } = require './alias_uris'
+{ prefixes:aliasesPrefixes, validators:aliasesValidators, looksLikeSitelink } = require './alias_uris'
 aliasesGetter = require './get_entities_by_alias_uris'
 
 # Getters take ids, return an object on the model { entities, notFound }
@@ -12,6 +12,7 @@ getters =
   inv: require './get_inv_entities'
   wd: require './get_wikidata_enriched_entities'
   isbn: require './get_entities_by_isbns'
+  wmsite: require './get_wikidata_entites_by_sitelink'
 
 getGetter = (prefix)-> getters[prefix] or aliasesGetter
 
@@ -25,15 +26,20 @@ module.exports = (uris, refresh)->
     [ prefix, id ] = uri.split ':'
 
     unless prefix in prefixes
-      errMessage = "invalid uri prefix: #{prefix} (uri: #{uri})"
-      return error_.reject errMessage, 400, uri
+      if looksLikeSitelink prefix
+        prefix = 'wmsite'
+      else
+        errMessage = "invalid uri prefix: #{prefix} (uri: #{uri})"
+        return error_.reject errMessage, 400, uri
 
     unless validators[prefix](id)
       errMessage = "invalid uri id: #{id} (uri: #{uri})"
       return error_.reject errMessage, 400, uri
 
     # Alias getters require the full URI as it handles multiple prefixes
-    value = if prefix in aliasesPrefixes then uri else id
+    if prefix in aliasesPrefixes or prefix is 'wmsite' then value = uri
+    else value = id
+
     domains[prefix] or= []
     domains[prefix].push value
 

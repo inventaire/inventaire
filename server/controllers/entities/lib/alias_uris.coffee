@@ -7,6 +7,8 @@ aliases =
   twitter:
     property: 'wdt:P2002'
     validator: _.isNonEmptyString
+  wmsite:
+    validator: _.isNonEmptyString
 
 prefixes = []
 validators = {}
@@ -15,4 +17,7 @@ for prefix, data of aliases
   prefixes.push prefix
   validators[prefix] = data.validator
 
-module.exports = { aliases, prefixes, validators }
+sitelinkPattern = /^[\w_]+wiki\w*$/
+looksLikeSitelink = (str)-> str.match(sitelinkPattern)?
+
+module.exports = { aliases, prefixes, validators, looksLikeSitelink }

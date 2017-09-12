@@ -5,34 +5,6 @@ should = require 'should'
 { authReq, nonAuthReq, undesiredErr } = __.require 'apiTests', 'utils/utils'
 
 describe 'entities:get:by-uris', ->
-  it 'should accept alias URIs', (done)->
-    aliasUri = 'twitter:bouletcorp'
-    nonAuthReq 'get', "/api/entities?action=by-uris&uris=#{aliasUri}"
-    .then (res)->
-      { entities, redirects } = res
-      canonicalUri = redirects[aliasUri]
-      canonicalUri.should.equal 'wd:Q1524522'
-      entity = entities[canonicalUri]
-      entity.should.be.an.Object()
-      entity.type.should.equal 'human'
-      entity.uri.should.equal canonicalUri
-      done()
-    .catch undesiredErr(done)
-
-    return
-
-  it 'should accept alias URIs with inexact case', (done)->
-    aliasUri = 'twitter:Bouletcorp'
-    nonAuthReq 'get', "/api/entities?action=by-uris&uris=#{aliasUri}"
-    .then (res)->
-      { entities, redirects } = res
-      canonicalUri = redirects[aliasUri]
-      canonicalUri.should.equal 'wd:Q1524522'
-      done()
-    .catch undesiredErr(done)
-
-    return
-
   it 'should accept alternative ISBN 13 syntax', (done)->
     isbn13h = '978-2-84565-221-7'
     isbn13Uri = 'isbn:9782845652217'
@@ -65,6 +37,67 @@ describe 'entities:get:by-uris', ->
       entity = entities[canonicalUri]
       entity.should.be.an.Object()
       entity.type.should.equal 'edition'
+      entity.uri.should.equal canonicalUri
+      done()
+    .catch undesiredErr(done)
+
+    return
+
+  describe 'alias URIs', ->
+  it 'should accept twitter URIs', (done)->
+    aliasUri = 'twitter:bouletcorp'
+    nonAuthReq 'get', "/api/entities?action=by-uris&uris=#{aliasUri}"
+    .then (res)->
+      { entities, redirects } = res
+      canonicalUri = redirects[aliasUri]
+      canonicalUri.should.equal 'wd:Q1524522'
+      entity = entities[canonicalUri]
+      entity.should.be.an.Object()
+      entity.type.should.equal 'human'
+      entity.uri.should.equal canonicalUri
+      done()
+    .catch undesiredErr(done)
+
+    return
+
+  it 'should accept alias URIs with inexact case', (done)->
+    aliasUri = 'twitter:Bouletcorp'
+    nonAuthReq 'get', "/api/entities?action=by-uris&uris=#{aliasUri}"
+    .then (res)->
+      { entities, redirects } = res
+      canonicalUri = redirects[aliasUri]
+      canonicalUri.should.equal 'wd:Q1524522'
+      done()
+    .catch undesiredErr(done)
+
+    return
+
+  it 'should accept Wikimedia project URIs', (done)->
+    aliasUri = 'frwiki:Lucien_Suel'
+    nonAuthReq 'get', "/api/entities?action=by-uris&uris=#{aliasUri}"
+    .then (res)->
+      { entities, redirects } = res
+      canonicalUri = redirects[aliasUri]
+      canonicalUri.should.equal 'wd:Q3265721'
+      entity = entities[canonicalUri]
+      entity.should.be.an.Object()
+      entity.type.should.equal 'human'
+      entity.uri.should.equal canonicalUri
+      done()
+    .catch undesiredErr(done)
+
+    return
+
+  it 'should accept Wikimedia project URIs with spaces', (done)->
+    aliasUri = 'eswikiquote:J. K. Rowling'
+    nonAuthReq 'get', "/api/entities?action=by-uris&uris=#{aliasUri}"
+    .then (res)->
+      { entities, redirects } = res
+      canonicalUri = redirects[aliasUri]
+      canonicalUri.should.equal 'wd:Q34660'
+      entity = entities[canonicalUri]
+      entity.should.be.an.Object()
+      entity.type.should.equal 'human'
       entity.uri.should.equal canonicalUri
       done()
     .catch undesiredErr(done)
