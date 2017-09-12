@@ -4,7 +4,7 @@ items_ = __.require 'controllers', 'items/lib/items'
 user_ = __.require 'controllers', 'user/lib/user'
 promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
-tests = __.require 'models', 'tests/common-tests'
+tests = __.require 'models', 'tests/common'
 
 module.exports = (req, res)->
   { query } = req

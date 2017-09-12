@@ -2,7 +2,7 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 jiff = require 'jiff'
-tests = require './tests/common-tests'
+tests = require './tests/common'
 { versionned } = require './attributes/entity'
 
 module.exports =

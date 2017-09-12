@@ -1,7 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-{ pass, itemId, userId, entityUri, nonEmptyString, imgUrl } = require './common-tests'
+{ pass, itemId, userId, entityUri, nonEmptyString, imgUrl } = require './common'
 { constrained } = require '../attributes/item'
 
 module.exports = itemTests =

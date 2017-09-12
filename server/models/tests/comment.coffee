@@ -1,7 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-{ pass, userId, itemId, transactionId } = require './common-tests'
+{ pass, userId, itemId, transactionId } = require './common'
 
 module.exports =
   pass: pass

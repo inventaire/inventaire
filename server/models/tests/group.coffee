@@ -1,7 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 slugify = __.require 'controllers', 'groups/lib/slugify'
-{ pass, underLimitString, nonEmptyString, localImg, boolean, position } = require './common-tests'
+{ pass, underLimitString, nonEmptyString, localImg, boolean, position } = require './common'
 
 module.exports =
   pass: pass

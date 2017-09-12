@@ -3,7 +3,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
-tests = __.require 'models','tests/common-tests'
+tests = __.require 'models','tests/common'
 transactions_ = require './lib/transactions'
 
 module.exports = (req, res, next)->

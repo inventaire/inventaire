@@ -26,7 +26,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
-tests = require './tests/common-tests'
+tests = require './tests/common'
 promises_ = __.require 'lib', 'promises'
 
 { properties, whitelist } = __.require 'controllers','entities/lib/properties'

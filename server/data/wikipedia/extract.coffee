@@ -3,7 +3,7 @@ _ = __.require 'builders', 'utils'
 cache_ = __.require 'lib', 'cache'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
-tests = __.require 'models', 'tests/common-tests'
+tests = __.require 'models', 'tests/common'
 qs = require 'querystring'
 
 module.exports = (req, res)->

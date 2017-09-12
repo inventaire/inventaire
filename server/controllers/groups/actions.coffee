@@ -3,7 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 groups_ = require './lib/groups'
-tests = __.require 'models','tests/common-tests'
+tests = __.require 'models','tests/common'
 rightsVerification = require './lib/rights_verification'
 { Track } = __.require 'lib', 'track'
 

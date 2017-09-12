@@ -3,7 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 notificationsSettingsList = __.require 'sharedLibs', 'notifications_settings_list'
 
-{ pass, userId, username, email, localImg, boolean, position } = require './common-tests'
+{ pass, userId, username, email, localImg, boolean, position } = require './common'
 
 creationStrategies = ['local']
 

@@ -1,7 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-tests = __.require 'models','tests/common-tests'
+tests = __.require 'models','tests/common'
 { BasicUpdater } = __.require 'lib', 'doc_updates'
 
 create = (inviterId, email)->

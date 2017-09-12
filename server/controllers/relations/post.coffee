@@ -3,7 +3,7 @@ _ = __.require 'builders', 'utils'
 user_ = __.require 'controllers', 'user/lib/user'
 intent = require './lib/intent'
 error_ = __.require 'lib', 'error/error'
-tests = __.require 'models', 'tests/common-tests'
+tests = __.require 'models', 'tests/common'
 promises_ = __.require 'lib', 'promises'
 { Track } = __.require 'lib', 'track'
 
