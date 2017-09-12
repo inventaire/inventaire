@@ -32,7 +32,7 @@ module.exports = tests =
 limitedString = (str, minLength, maxLength)->
   return _.isString(str) and minLength <= str.length <= maxLength
 
-tests.underLimitString = (str, maxLength)-> limitedString str, 0, maxLength
+tests.underLimitString = (maxLength)-> (str)-> limitedString str, 0, maxLength
 tests.nonEmptyString = (str, maxLength=100)-> limitedString str, 1, maxLength
 
 # no item of this app could have a timestamp before june 2014

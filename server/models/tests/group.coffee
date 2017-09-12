@@ -13,6 +13,6 @@ module.exports =
   # Make sure the generated slug isn't an empty string
   name: (str)-> nonEmptyString(str, 60) and nonEmptyString(slugify(str))
   picture: localImg
-  description: (str)-> underLimitString str, 5000
+  description: underLimitString 5000
   searchable: boolean
   position: position

@@ -48,6 +48,7 @@ stringUniqueBase =
   uniqueValue: true
 
 stringConcurrentBase = _.extend {}, stringUniqueBase, { concurrency: true }
+externalId = stringConcurrentBase
 
 isbnProperty = (num)->
   _.extend {}, stringConcurrentBase,
@@ -84,8 +85,12 @@ properties =
   'wdt:P136': entityBase
   # serie
   'wdt:P179': serieEntity
-  # isbn 13
+  # ISBN 13
   'wdt:P212': isbnProperty 13
+  # VIAF id
+  'wdt:P214': externalId
+  # BNF id
+  'wdt:P268': externalId
   # language of work
   'wdt:P407': entityBase
   # date of birth
@@ -96,6 +101,8 @@ properties =
   'wdt:P577': simpleDayUniqueValueBase
   # edition or translation of
   'wdt:P629': workEntity
+  # Open Library id
+  'wdt:P648': externalId
   # translator
   'wdt:P655': humanEntity
   # influenced by
@@ -104,7 +111,7 @@ properties =
   'wdt:P840': entityBase
   # main subject
   'wdt:P921': entityBase
-  # isbn 10
+  # ISBN 10
   'wdt:P957': isbnProperty 10
   # number of pages
   'wdt:P1104': positiveIntegerBase
@@ -116,8 +123,10 @@ properties =
   'wdt:P1545': ordinalBase
   # subtitle
   'wdt:P1680': stringUniqueBase
-  # twitter account
-  'wdt:P2002': stringConcurrentBase
+  # Twitter account
+  'wdt:P2002': externalId
+  # Facebook profile id
+  'wdt:P2013': externalId
   # author of foreword
   'wdt:P2679': humanEntity
   # author of afterword
