@@ -3,7 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
-{ nonAuthReq, authReq, getUser, adminReq, undesiredErr } = __.require 'apiTests', 'utils/utils'
+{ nonAuthReq, authReq, adminReq, undesiredErr, undesiredRes } = __.require 'apiTests', 'utils/utils'
 randomString = __.require 'lib', './utils/random_string'
 { createWork, createEdition, ensureEditionExists, createItemFromEntityUri } = require './helpers'
 
@@ -48,6 +48,29 @@ describe 'entities:merge', ->
           entitiesRes.entities[editionB.uri].should.be.ok()
           itemsRes.items[0].entity.should.equal editionB.uri
           done()
-      .catch undesiredErr(done)
+    .catch undesiredErr(done)
+
+    return
+
+  it 'should reject merge an entity with an ISBN', (done)->
+    Promise.all [
+      ensureEditionExists 'isbn:9782298063264'
+      createEdition()
+    ]
+    .spread (editionA, editionB)->
+      # Use the inv URI to pass the prefix check
+      # and test the claim check
+      editionAInvUri = 'inv:' + editionA._id
+      adminReq 'put', '/api/entities?action=merge',
+        from: editionAInvUri
+        to: editionB.uri
+      .then undesiredRes(done)
+      .catch (err)->
+        # That's not a very specific error report, but it does the job
+        # of blocking a merge from an edition with an ISBN
+        err.body.status_verbose.should.equal "'from' entity not found (could it be not it's canonical uri?)"
+        err.statusCode.should.equal 400
+        done()
+    .catch undesiredErr(done)
 
     return
