@@ -24,7 +24,12 @@ module.exports = (uris, refresh)->
   promises_.get url
   .then (res)->
     { entities } = res
+    # If the title can't be resolved, entities['-1'] will contain data about
+    # the missing entity
+    delete entities['-1']
     ids = Object.keys entities
+
+    if ids.length is 0 then return { entities: [] }
 
     getWikidataEnrichedEntities ids, refresh
     .then (results)->
