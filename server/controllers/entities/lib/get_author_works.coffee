@@ -39,14 +39,23 @@ getWdAuthorWorks = (qid, worksByTypes, refresh)->
 # TODO: prevent a work with several wdt:P577 values to appear several times
 # ex: https://inventaire.io/api/entities?action=serie-parts&uri=wd:Q8337
 spreadWdResultsByTypes = (worksByTypes, results)->
+  ids = {}
   for result in results
     { work:wdId, type:typeWdId, date, serie } = result
     typeUri = "wd:#{typeWdId}"
     typeName = getTypePluralNameByTypeUri typeUri
     if typeName in whitelistedTypesNames
-      date = getSimpleDayDate date
-      serie = prefixify serie
-      worksByTypes[typeName].push { uri: "wd:#{wdId}", date, serie }
+      ids[typeName] or= []
+      if wdId in ids[typeName]
+        # Known case: when an entity has two P31 values that both
+        # resolve to the same whitelisted type
+        # ex: Q23701761 → P31 → Q571/Q17518461
+        _.warn wdId, "duplicated id: #{wdId}"
+      else
+        ids[typeName].push wdId
+        date = getSimpleDayDate date
+        serie = prefixify serie
+        worksByTypes[typeName].push { uri: "wd:#{wdId}", date, serie }
     else
       _.warn wdId, "ignored type: #{typeWdId}"
 
