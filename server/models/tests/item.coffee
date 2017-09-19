@@ -30,5 +30,6 @@ itemTests.snapshotTests = snapshotTests =
   'entity:lang': _.isLang
   'entity:authors': _.isString
   'entity:series': _.isString
+  'entity:ordinal': _.isString
 
 inLocalSnapshot = Object.keys snapshotTests
