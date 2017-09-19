@@ -5,7 +5,7 @@ error_ = __.require 'lib', 'error/error'
 entities_ = require './entities'
 runWdQuery = __.require 'data', 'wikidata/run_query'
 prefixify = __.require 'lib', 'wikidata/prefixify'
-{ getSimpleDayDate, sortByDate } = require './queries_utils'
+{ getSimpleDayDate, sortByOrdinalOrDate } = require './queries_utils'
 
 module.exports = (uri, refresh)->
   [ prefix, id ] = uri.split ':'
@@ -18,7 +18,7 @@ module.exports = (uri, refresh)->
 
   promises_.all promises
   .then (results...)->
-    parts: _.flatten(results...).sort(sortByDate)
+    parts: _.flatten(results...).sort(sortByOrdinalOrDate)
   .catch _.ErrorRethrow('get serie parts err')
 
 getWdSerieParts = (qid, refresh)->

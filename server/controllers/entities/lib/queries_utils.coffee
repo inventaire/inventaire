@@ -7,18 +7,23 @@ module.exports =
     .replace '-01-01', ''
 
   sortByDate: (a, b)-> formatDate(a) - formatDate(b)
+  sortByOrdinalOrDate: (a, b)-> formatDate(a, true) - formatDate(b, true)
 
-formatDate = (obj)->
+earliestDate = -10000
+formatDate = (obj, preferOrdinal)->
   { date, ordinal } = obj
-  if date? then new Date(date).getTime()
-  else fakeLastYearTime ordinal
+  # Fake a very early date to be ranked before any entity
+  # with a date but no ordinal
+  if preferOrdinal and ordinal? then return earliestDate + ordinalNum(ordinal)
+  if date? then return new Date(date).getTime()
+  return fakeLastYearTime ordinal
 
 # If no date is available, make it appear last by providing a date in the future
 # Add the ordinal so that items without a date are still prioritized by ordinal
 # lastYearBase to update once we will have passed the year 2100
 lastYearBase = 2100
 fakeLastYearTime = (ordinal)->
-  fakeDateYearString = (lastYearBase + ordinalNum ordinal).toString()
+  fakeDateYearString = (lastYearBase + ordinalNum(ordinal)).toString()
   return new Date(fakeDateYearString).getTime()
 
 lastOrdinal = 1000
