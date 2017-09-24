@@ -15,6 +15,7 @@ module.exports =
       'by-user-and-entity': require './by_user_and_entity'
     authentified:
       'nearby': require './nearby'
+      'inventory-view': require './inventory_view'
 
   post: ActionsControllers
     authentified:
