@@ -5,13 +5,12 @@ promises_ = __.require 'lib', 'promises'
 express = require 'express'
 { env, port, host, name, verbosity } = CONFIG
 
+middlewares = require './middlewares/middlewares'
+middlewaresList = middlewares.common.concat (middlewares[CONFIG.env] or [])
+
+routes = require './controllers/routes'
+
 module.exports = ->
-  middlewares = require './middlewares/middlewares'
-  envMiddlewares = middlewares[CONFIG.env] or []
-  middlewaresList = middlewares.common.concat envMiddlewares
-
-  routes = require './controllers/routes'
-
   app = express()
 
   for middleware in middlewaresList
