@@ -18,9 +18,7 @@ updateOnlineUsers = ->
   report = "logged in #{loggedUsers} / total #{length}"
 
   # Only log the amount of users online when there is a change
-  unless report is last
-    timestamp = new Date().toString().replace(/GMT.*/, 'GMT')
-    _.info "[#{timestamp}] #{report}"
+  if report isnt last then _.info report
   last = report
   onlineUsers = {}
 
