@@ -40,7 +40,7 @@
   },
   "dependencies": {
     "americano": "^0.4.2",
-    "blue-cot": "^3.3.0",
+    "blue-cot": "^3.4.3",
     "bluebird": "^3.4.0",
     "bluereq": "^2.1.1",
     "chalk": "^1.1.3",
@@ -49,7 +49,7 @@
     "cookie-parser": "^1.4.0",
     "cookie-session": "^1.2.0",
     "cookie-signature": "^1.0.6",
-    "couch-init2": "^2.1.5",
+    "couch-init2": "^2.1.7",
     "couch2elastic4sync": "^3.4.5",
     "credential": "^2.0.0",
     "email-addresses": "^2.0.1",
