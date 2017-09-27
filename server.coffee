@@ -37,7 +37,8 @@ couchInit()
     # Provides a way to know when the server
     # started listening by observing file change
     # Expected by scripts/test_api
-    fs.writeFile "./run/#{CONFIG.port}", process.pid
+    # Pass noop as callback to avoid getting a DeprecationWarning
+    fs.writeFile "./run/#{CONFIG.port}", process.pid, _.noop
     console.timeEnd 'startup'
 
   if CONFIG.couch2elastic4sync.activated
