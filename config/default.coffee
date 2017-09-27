@@ -182,6 +182,9 @@ module.exports = config =
     updateEnabled: false
     host: 'http://localhost:3213'
     delay: 30000
+    # Set the path to the local repository to allow api_tests to start it
+    # if it isn't already online
+    localPath: '/path/to/repo'
 
   # Doc: https://www.mediawiki.org/wiki/OAuth/For_Developers
   # Request tokens at

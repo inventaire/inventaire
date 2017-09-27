@@ -9,7 +9,7 @@ entities_search_engine_host=$(node -p "require('config').entitiesSearchEngine.ho
 curl -s "$entities_search_engine_host" > /dev/null && echo "entities search engine found" || \
   # Using curly brackets to group those commands without starting a subshell from which exiting would be useless
   # cf https://ss64.com/bash/syntax-brackets.html
-  { echo "entities search engine not found at ${entities_search_engine_host}" && exit 1; }
+  { ./api_tests/scripts/start_entities_search_engine && sleep 5 }
 
 # If the server is already up, return early
 (curl -s "$test_host" > /dev/null || [ "$(cat run/3009)" == "starting" ]) &&
