@@ -1,10 +1,9 @@
 CONFIG = require 'config'
-americano = require 'americano'
-pass = require './pass'
-
 { logFormat, mutedRoutes, mutedDomains } = CONFIG.morgan
+pass = require './pass'
+morgan = require 'morgan'
 
-logger = americano.logger
+logger = morgan 'dev',
   format: logFormat
   skip: (req, res)->
     { pathname } = req._parsedUrl

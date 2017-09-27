@@ -4,10 +4,10 @@ _ = __.require 'builders', 'utils'
 pass = require './pass'
 
 if CONFIG.serveStaticFiles
-  americano = require 'americano'
+  express = require 'express'
   publicPath = __.path 'client', 'public'
-  staticMiddleware = americano.static publicPath, { maxAge: CONFIG.staticMaxAge }
-  # the 2 arguments array will be apply'ied to app.use by americano
+  staticMiddleware = express.static publicPath, { maxAge: CONFIG.staticMaxAge }
+  # the 2 arguments array will be apply'ied to app.use by server/init_express
   exports.mountStaticFiles = [ '/public', staticMiddleware ]
 
   faviconPath = __.path 'client', 'public/favicon.ico'

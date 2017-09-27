@@ -14,7 +14,6 @@ if env?
 
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-americano = require 'americano'
 fs = require 'fs'
 
 # Needs to be run before the first promise is fired
@@ -28,23 +27,13 @@ __.require('lib', 'before_startup')()
 if CONFIG.verbosity > 0
   _.logErrorsCount()
   _.log "env: #{CONFIG.env}"
-  _.log "port: #{CONFIG.port}"
-  _.log "host: #{CONFIG.host}"
-
-if CONFIG.verbosity > 1 or process.argv.length > 2
-  _.log CONFIG.fullHost(), 'fullHost'
-
-options =
-  name: CONFIG.name
-  host: CONFIG.host
-  port: CONFIG.port
-  root: process.cwd()
+  _.log "host: #{CONFIG.fullHost()}"
 
 couchInit()
 .then _.Log('couch init')
 .then ->
-  americano.start options, (err, app)->
-    app.disable 'x-powered-by'
+  require('./server/init_express')()
+  .then ->
     # Provides a way to know when the server
     # started listening by observing file change
     # Expected by scripts/test_api

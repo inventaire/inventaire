@@ -8,6 +8,8 @@ error_ = __.require 'lib', 'error/error'
 urlencoded = 'application/x-www-form-urlencoded'
 
 module.exports =
+  jsonBodyParser: require('body-parser').json()
+  methodOverride: require('method-override')()
   # Helping body-parser to get its parsing right
   redirectContentTypes: (req, res, next)->
     { 'content-type':contentType } = req.headers
