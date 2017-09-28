@@ -19,10 +19,9 @@ module.exports =
     content.methodOverride
     statics.favicon
 
-    logger.beforeStatic
+    logger
     statics.enableCors
     statics.mountStaticFiles
-    logger.afterStatic
 
     cache.cacheControl
 
