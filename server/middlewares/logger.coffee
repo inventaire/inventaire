@@ -3,6 +3,7 @@ CONFIG = require 'config'
 pass = require './pass'
 morgan = require 'morgan'
 
+# Using morgan 1.1.1 to be able to have grey request logs
 module.exports = morgan 'dev',
   format: logFormat
   skip: (req, res)->
