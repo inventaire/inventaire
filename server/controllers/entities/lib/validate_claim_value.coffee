@@ -5,7 +5,10 @@ promises_ = __.require 'lib', 'promises'
 
 # Working around circular dependencies
 getEntityByUri = null
-lateRequire = -> getEntityByUri = require './get_entity_by_uri'
+entities_ = null
+lateRequire = ->
+  getEntityByUri = require './get_entity_by_uri'
+  entities_ = require './entities'
 setTimeout lateRequire, 0
 
 { properties, testDataType, propertyDatatypePrimordialType } = require './properties'
@@ -54,14 +57,15 @@ module.exports = (db)->
   # sharing the same value
   verifyClaimConcurrency = (concurrency, property, value)->
     unless concurrency then return
-    # using viewCustom as there is no need to include docs
-    db.viewCustom 'byClaim', { key: [ property, value ] }
-    .then (docs)->
-      if docs.length > 0
-        # /!\ The client rely on this exact message
+    entities_.byClaim property, value
+    .then (res)->
+      if res.rows.length > 0
+        # /!\ The client relies on this exact message
         # client/app/modules/entities/lib/creation_partials.coffee
         message = 'this property value is already used'
-        throw error_.new message, 400, property, value
+        entity = 'inv:' + res.rows[0].id
+        # /!\ The client relies on the entity being passed in the context
+        throw error_.new message, 400, { entity, property, value }
 
   # For claims that have an entity URI as value
   # check that the target entity is of the expected type

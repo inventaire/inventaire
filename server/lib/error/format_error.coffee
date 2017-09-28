@@ -12,8 +12,12 @@ module.exports = (err, filter, context)->
   attribute = if _.isNumber(filter) then 'statusCode' else 'type'
   err[attribute] = filter
 
-  # Prevent having an array in an array as context.
-  if context.length is 1 then context = _.flatten context
+  # Prevent having an array in an array as context
+  # or an array with a single object
+  # This allows to return an object as context, with possibly data
+  # the client can depend on
+  if context.length is 1 and (_.isArray(context[0]) or _.isPlainObject(context[0]))
+    context = context[0]
 
   err.context = context
   err.emitter = getErrorEmittingLines err
