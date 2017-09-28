@@ -48,7 +48,8 @@ stringUniqueBase =
   uniqueValue: true
 
 stringConcurrentBase = _.extend {}, stringUniqueBase, { concurrency: true }
-externalId = stringConcurrentBase
+# External ids regexs can be found on their Wikidata property page P1793 statement
+externalId = (regex)-> _.extend {}, stringConcurrentBase, { test: regex.test.bind(regex) }
 
 isbnProperty = (num)->
   _.extend {}, stringConcurrentBase,
@@ -88,9 +89,9 @@ properties =
   # ISBN 13
   'wdt:P212': isbnProperty 13
   # VIAF id
-  'wdt:P214': externalId
+  'wdt:P214': externalId /^[1-9]\d(\d{0,7}|\d{17,20})$/
   # BNF id
-  'wdt:P268': externalId
+  'wdt:P268': externalId /^\d{8}[0-9bcdfghjkmnpqrstvwxz]$/
   # language of work
   'wdt:P407': entityBase
   # date of birth
@@ -102,7 +103,7 @@ properties =
   # edition or translation of
   'wdt:P629': workEntity
   # Open Library id
-  'wdt:P648': externalId
+  'wdt:P648': externalId /^OL[1-9]\d{0,7}[AMW]$/
   # translator
   'wdt:P655': humanEntity
   # influenced by
@@ -124,9 +125,11 @@ properties =
   # subtitle
   'wdt:P1680': stringUniqueBase
   # Twitter account
-  'wdt:P2002': externalId
+  'wdt:P2002': externalId /^\w{1,15}$/
+  # Instagram username
+  'wdt:P2003': externalId /^(\w(?:(?:\w|(?:\\.(?!\\.))){0,28}(?:\w))?)$/
   # Facebook profile id
-  'wdt:P2013': externalId
+  'wdt:P2013': externalId /^(\d+|[\w\.]+)$/
   # author of foreword
   'wdt:P2679': humanEntity
   # author of afterword
