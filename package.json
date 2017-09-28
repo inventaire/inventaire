@@ -38,7 +38,7 @@
     "url": "https://github.com/maxlath/inventaire"
   },
   "dependencies": {
-    "blue-cot": "^3.4.3",
+    "blue-cot": "^3.4.4",
     "bluebird": "^3.4.0",
     "bluereq": "^2.1.1",
     "body-parser": "^1.18.2",
