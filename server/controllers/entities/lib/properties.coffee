@@ -47,6 +47,11 @@ stringUniqueBase =
   test: (str)-> _.isString(str) and 0 < str.length < 5000
   uniqueValue: true
 
+urlBase =
+  datatype: 'string'
+  test: _.isUrl
+  format: _.identity
+
 stringConcurrentBase = _.extend {}, stringUniqueBase, { concurrency: true }
 # External ids regexs can be found on their Wikidata property page P1793 statement
 externalId = (regex)-> _.extend {}, stringConcurrentBase, { test: regex.test.bind(regex) }
@@ -110,6 +115,8 @@ properties =
   'wdt:P737': entityBase
   # narrative set in
   'wdt:P840': entityBase
+  # official website
+  'wdt:P856': urlBase
   # main subject
   'wdt:P921': entityBase
   # ISBN 10
