@@ -10,8 +10,8 @@ module.exports = (req, res, err, status)->
   # if a status code was attached to the error, use it
   statusCode = err.statusCode or 500
 
-  err.user = _.pick req.user, ['_id', 'username']
-  err.referer = req.headers.referer
+  err.user = _.pick req.user, '_id', 'username'
+  err.headers = _.pick req.headers, 'user-agent', 'content-type', 'content-length', 'referer'
 
   # Ex: to pass req.query as err.context, set err.attachReqContext = 'query'
   if err.attachReqContext and emptyContext err.context
