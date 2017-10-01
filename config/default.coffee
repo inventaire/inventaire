@@ -78,10 +78,10 @@ module.exports = config =
   # see server/controllers/tests.coffee
   morgan:
     logFormat: 'dev'
-    mutedRoutes: [
-      '/api/reports'
-    ]
     mutedDomains: []
+    mutedPath: [
+      '/api/reports?action=online'
+    ]
   # enable the api/i18n endpoint and its i18nMissingKeys controller
   logMissingI18nKeys: true
   # disable restrictApiAccess middleware: no more Auth required
