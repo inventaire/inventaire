@@ -77,7 +77,6 @@ module.exports = config =
   godMode: false
   # see server/controllers/tests.coffee
   morgan:
-    logFormat: 'dev'
     mutedDomains: []
     mutedPath: [
       '/api/reports?action=online'

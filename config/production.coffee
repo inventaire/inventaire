@@ -17,8 +17,6 @@ module.exports =
   bluebird:
     warnings: false
     longStackTraces: false
-  morgan:
-    logFormat: 'short'
   logMissingI18nKeys: false
   mailer:
     disabled: false
