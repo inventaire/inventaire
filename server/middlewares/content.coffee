@@ -5,55 +5,18 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 
-urlencoded = 'application/x-www-form-urlencoded'
-
 module.exports =
-  jsonBodyParser: require('body-parser').json()
   methodOverride: require('method-override')()
-  # Helping body-parser to get its parsing right
-  redirectContentTypes: (req, res, next)->
-    { 'content-type':contentType } = req.headers
 
-    shouldBeJson = false
-
-    if _.isNonEmptyString contentType
-      if contentType is 'application/csp-report' then shouldBeJson = true
-    else
-      # Default to a JSON
-      shouldBeJson = true
-
-    if shouldBeJson then req.headers['content-type'] = 'application/json'
-
-    next()
-
-  # When passed content with a content-type header different
-  # from 'application/json' (typically urlencoded which is set by default on
-  # tools like curl), this tries to be convenient by recovering the passed json
-  # instead of returning an unhelpful error messages
-  # /!\ To be used only in development as it exposes to CSRF
-  # cf https://github.com/pillarjs/understanding-csrf#adding-them-to-json-ajax-calls
-  # http://stackoverflow.com/a/11024387/3324977
-  recoverJsonUrlencoded: (req, res, next)->
-    if req.headers['content-type'] isnt urlencoded then return next()
-
-    keys = Object.keys req.body
-
-    # keeping the case when req.body was parsed by body-parser as something like:
-    # { '{"a":"b", "c":null}': '' }
-    if keys.length isnt 1 or keys[0][0..1] isnt '{"' then return next()
-
-    # if keys.length isnt 1 or req.body[keys[0]] isnt '' then return next()
-
-    # try to parse what should be a valid json object
-    try
-      req.body = JSON.parse keys[0]
-      next()
-    # if it doesn't work, let it go
-    catch err
-      error_.bundle req, res, """
-        Couldn't recover JSON data sent with "Content-Type: #{urlencoded}".
-        Try using a "Content-Type: application/json" header instead
-        """, 400
+  # Assume JSON content-type for, among others:
+  # - application/json
+  # - application/x-www-form-urlencoded (used by /bin/curl and jquery default)
+  # - application/csp-report
+  # While thus not parse properly urlencoded content, preserving from CSRF attacks
+  # cf https://fosterelli.co/dangerous-use-of-express-body-parser
+  # Not using '*/*' as this would include multipart/form-data
+  # used for image upload
+  jsonBodyParser: require('body-parser').json { type: 'application/*'}
 
   # Assumes that a requests made twice with the same body within 2 secondes
   # is an erronous request that should be blocked

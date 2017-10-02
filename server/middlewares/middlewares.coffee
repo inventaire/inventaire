@@ -14,7 +14,6 @@ content = require './content'
 module.exports =
   common: [
     routes.legacyApiRedirect
-    content.redirectContentTypes
     content.jsonBodyParser
     content.methodOverride
     statics.favicon
@@ -44,5 +43,4 @@ module.exports =
     # which is done by Nginx in production
     # (see https://github.com/inventaire/inventaire-deploy)
     security.addSecurityHeaders
-    content.recoverJsonUrlencoded
   ]
