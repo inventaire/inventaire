@@ -17,6 +17,13 @@ module.exports =
   # Not using '*/*' as this would include multipart/form-data
   # used for image upload
   jsonBodyParser: require('body-parser').json { type: 'application/*'}
+  # server/controllers/auth/fake_submit.coffee relies on the possibility
+  # to submit a url encoded form data, so it needs to have the body-parser ready for it,
+  # otherwise it throws a 'SyntaxError: Unexpected token # in JSON at position 0' error
+  fakeSubmitException: [
+    '/api/auth',
+    require('body-parser').urlencoded { extended: false }
+  ]
 
   # Assumes that a requests made twice with the same body within 2 secondes
   # is an erronous request that should be blocked

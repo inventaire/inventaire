@@ -14,6 +14,7 @@ content = require './content'
 module.exports =
   common: [
     routes.legacyApiRedirect
+    content.fakeSubmitException
     content.jsonBodyParser
     content.methodOverride
     statics.favicon
