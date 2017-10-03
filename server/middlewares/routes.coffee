@@ -10,3 +10,5 @@ module.exports =
       res.redirect rewroteUrl
     else
       next()
+
+  methodOverride: require('method-override')()

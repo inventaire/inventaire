@@ -6,8 +6,6 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 
 module.exports =
-  methodOverride: require('method-override')()
-
   # Assume JSON content-type for, among others:
   # - application/json
   # - application/x-www-form-urlencoded (used by /bin/curl and jquery default)
