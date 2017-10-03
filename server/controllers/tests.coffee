@@ -12,7 +12,7 @@ module.exports =
     else
       # _.log req.query, 'query'
       # _.log req.body, 'body'
-      res.json { ok: true, method: req.method, body: req.body}
+      res.json { ok: true, method: req.method, body: req.body }
 
 isPlainText = (req)->
   req.headers['content-type'] is 'text/plain'

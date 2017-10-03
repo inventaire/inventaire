@@ -32,6 +32,7 @@ module.exports = routes =
   'api/reports': endpoint './reports/reports'
   'api/config': endpoint './config'
   'api/feeds': endpoint './feeds/feeds'
+  'api/submit': require './auth/fake_submit'
   'img/*': endpoint './images/resize'
 
 if CONFIG.logMissingI18nKeys

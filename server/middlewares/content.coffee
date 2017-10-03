@@ -20,8 +20,9 @@ module.exports =
   # server/controllers/auth/fake_submit.coffee relies on the possibility
   # to submit a url encoded form data, so it needs to have the body-parser ready for it,
   # otherwise it throws a 'SyntaxError: Unexpected token # in JSON at position 0' error
+  # This middleware will only apply for requests on the '/api/submit' endpoint
   fakeSubmitException: [
-    '/api/auth',
+    '/api/submit',
     require('body-parser').urlencoded { extended: false }
   ]
 

@@ -17,7 +17,6 @@ module.exports =
       'login': login
       'logout': logout
       'reset-password': require './reset_password'
-      'submit': require './fake_submit'
     authentified:
       'email-confirmation': require './email_confirmation'
       'update-password': require './update_password'
