@@ -5,7 +5,6 @@ _ = __.require 'builders', 'utils'
 routes = require './routes'
 auth = require './auth'
 security = require './security'
-lang = require './lang'
 statics = require './statics'
 cache = require './cache'
 logger = require './logger'
@@ -34,8 +33,6 @@ module.exports =
     content.deduplicateRequests
 
     security.enableCorsOnPublicApiRoutes
-
-    lang.langCookie
   ]
   production: []
   dev: [
