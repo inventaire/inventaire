@@ -12,13 +12,16 @@ content = require './content'
 
 module.exports =
   common: [
+    # Place the logger first so that even requests that generate an error
+    # in the middleware are logged
+    logger
+
     routes.legacyApiRedirect
     routes.methodOverride
     content.fakeSubmitException
     content.jsonBodyParser
     statics.favicon
 
-    logger
     statics.enableCors
     statics.mountStaticFiles
 
