@@ -14,6 +14,7 @@ module.exports =
       'serie-parts': customQuery
       'history': require './history'
       'images': require './images'
+      'popularity': require './popularity'
     admin:
       'contributions': require './contributions'
       'duplicates': require './duplicates'

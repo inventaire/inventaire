@@ -54,11 +54,12 @@ module.exports = entities_ =
     entities_.byClaim property, value, true, true
     .map (doc)-> getInvEntityCanonicalUri(doc)[0]
 
-  byClaimsValue: (value)->
+  byClaimsValue: (value, count)->
     db.view 'entities', 'byClaimValue',
       key: value
       include_docs: false
     .then (res)->
+      if count then return res.rows.length
       res.rows.map (row)->
         entity: row.id
         property: row.value

@@ -1,5 +1,5 @@
 module.exports =
-  parameters: ['qid']
+  parameters: [ 'qid' ]
   query: (params)->
     { qid:authorQid } = params
     """
