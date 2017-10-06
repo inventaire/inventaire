@@ -8,6 +8,8 @@ express = require 'express'
 middlewares = require './middlewares/middlewares'
 middlewaresList = middlewares.common.concat (middlewares[CONFIG.env] or [])
 
+middlewareErrorHandler = require './middlewares/error_handler'
+
 routes = require './controllers/routes'
 
 module.exports = ->
@@ -20,6 +22,10 @@ module.exports = ->
   for endpoint, controllers of routes
     for verb, controller of controllers
       app[verb]("/#{endpoint}", controller)
+
+  # Should be used after all middlewares and routes
+  # cf http://expressjs.com/fr/guide/error-handling.html
+  app.use middlewareErrorHandler
 
   app.disable 'x-powered-by'
 
