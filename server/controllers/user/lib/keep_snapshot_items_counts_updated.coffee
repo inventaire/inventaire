@@ -10,7 +10,10 @@ module.exports = (user_)->
     newListing = updateItem?.listing
     # No update needed
     if previousListing is newListing then return
+    # TODO: debounce this request so that parallele updates of a same user
+    # doesn't trigger an update conflict
     user_.db.update userId, updateSnapshotItemsCounts(previousListing, newListing)
+    .catch _.Error('user updateSnapshotItemsCounts err')
 
 updateSnapshotItemsCounts = (previousListing, newListing)-> (user)->
   # Item updated or deleted
