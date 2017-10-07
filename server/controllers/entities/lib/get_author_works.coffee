@@ -15,7 +15,7 @@ module.exports = (uri, refresh)->
   [ prefix, id ] = uri.split ':'
   promises = []
 
-  worksByTypes = initWorksByTypes()
+  worksByTypes = _.initCollectionsIndex whitelistedTypesNames
 
   # If the prefix is 'inv' or 'isbn', no need to check Wikidata
   if prefix is 'wd' then promises.push getWdAuthorWorks(id, worksByTypes, refresh)
@@ -25,12 +25,6 @@ module.exports = (uri, refresh)->
   promises_.all promises
   .then formatResults.bind(null, worksByTypes)
   .catch _.ErrorRethrow('get author works err')
-
-initWorksByTypes = ->
-  worksByTypesBase = {}
-  for name in whitelistedTypesNames
-    worksByTypesBase[name] = []
-  return worksByTypesBase
 
 getWdAuthorWorks = (qid, worksByTypes, refresh)->
   runWdQuery { query: 'author-works', qid, refresh }

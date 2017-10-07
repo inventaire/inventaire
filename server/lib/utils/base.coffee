@@ -50,6 +50,12 @@ module.exports = base =
 
   IndexBy: (attribute)-> (array)-> _.indexBy array, attribute
 
+  initCollectionsIndex: (names)-> names.reduce aggregateCollections, {}
+
+aggregateCollections = (index, name)->
+  index[name] = []
+  return index
+
 base.objDiff = -> not base.sameObjects.apply(null, arguments)
 
 base.Ok = (res, status)-> base.ok.bind null, res, status

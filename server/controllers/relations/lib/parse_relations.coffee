@@ -1,14 +1,11 @@
+__ = require('config').universalPath
+_ = __.require 'builders', 'utils'
+
 module.exports = (res)->
-  relations = initRelations()
+  relations = _.initCollectionsIndex relationsTypes
   for row in res.rows
     spreadRelation relations, row
   return relations
-
-initRelations = ->
-  friends: []
-  userRequested: []
-  otherRequested: []
-  none: []
 
 spreadRelation = (relations, row)->
   # view key looks like userId:relationType
