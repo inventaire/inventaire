@@ -7,11 +7,19 @@ reverseClaims = require './reverse_claims'
 getSerieParts = require './get_serie_parts'
 getAuthorWorks = require './get_author_works'
 getLinksCount = require './get_links_count'
+cache_ = __.require 'lib', 'cache'
 { oneUriSeveralFunctions, severalUrisOneFunction, getUri } = require './popularity_helpers'
 
-module.exports = (uri, refresh)->
-  # check cache
-  getPopularityByUri uri
+module.exports = (uris, refresh)->
+  _.type uris, 'array'
+  return Promise.props _.indexAppliedValue(uris, getPopularity(refresh))
+
+getPopularity = (refresh)-> (uri)->
+  unless _.isEntityUri(uri) then throw new Error 'invalid uri'
+
+  key = "popularity:#{uri}"
+  timespan = if refresh then 0 else null
+  cache_.get key, getPopularityByUri.bind(null, uri), timespan
 
 getPopularityByUri = (uri)->
   getEntityByUri uri
@@ -50,7 +58,6 @@ getAuthorWorksScores = (uri)->
       getSeriesLinksCounts res.series.map(getUri)
       getWorksPopularity res.works.map(getUri)
     ]
-    .then _.Log('BLA')
     .then _.sum
 
 popularityGettersByType =
@@ -60,5 +67,7 @@ popularityGettersByType =
   human: oneUriSeveralFunctions getAuthorWorksScores
 
 getSeriesLinksCounts = severalUrisOneFunction getLinksCount
-getWorksPopularity = severalUrisOneFunction popularityGettersByType.work
+# Using getPopularityByUri instead of the more specific
+# popularityGettersByType.work to use cached value if available
+getWorksPopularity = severalUrisOneFunction getPopularityByUri
 

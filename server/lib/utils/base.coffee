@@ -52,8 +52,15 @@ module.exports = base =
 
   initCollectionsIndex: (names)-> names.reduce aggregateCollections, {}
 
+  indexAppliedValue: (array, fn)->
+    return array.reduce aggragateFnApplication(fn), {}
+
 aggregateCollections = (index, name)->
   index[name] = []
+  return index
+
+aggragateFnApplication = (fn)-> (index, value)->
+  index[value] = fn value
   return index
 
 base.objDiff = -> not base.sameObjects.apply(null, arguments)
