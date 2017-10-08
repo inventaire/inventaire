@@ -30,7 +30,7 @@ module.exports = (_)->
       unless err instanceof Error
         throw new Error('invalid error object')
 
-      if err.hasBeenLogged then return
+      if err._hasBeenLogged then return
 
       # If the error is of a lower lever than 500, make it a warning, not an error
       if err.statusCode? and err.statusCode < 500
@@ -52,18 +52,21 @@ module.exports = (_)->
       err.labels or= 'server'
       openIssue err
 
-      err.hasBeenLogged = true
+      err._hasBeenLogged = true
       errorCounter++
       return
 
     warn: (err, label)->
-      if err.hasBeenLogged then return
+      # Errors that have a status code of 404 don't need to be logged
+      # as they will be logged by the request logger middleware (morgan)
+      # and logging the error object is of no help, everything is in the URL
+      if err._hasBeenLogged or err.statusCode is 404 then return
       if err instanceof Error
         # shorten the stack trace
         err.stack = err.stack.split('\n').slice(0, 3).join('\n')
 
       loggers_.warn.apply null, arguments
-      err.hasBeenLogged = true
+      err._hasBeenLogged = true
       return
 
     errorCount: -> errorCounter

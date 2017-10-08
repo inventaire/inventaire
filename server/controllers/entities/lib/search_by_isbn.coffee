@@ -12,4 +12,4 @@ module.exports = (query)->
     { entities } = resp
     entities = _.values entities
     if entities.length is 1 then return entities
-    else throw error_.new 'Not Found' , 404
+    else throw error_.notFound query
