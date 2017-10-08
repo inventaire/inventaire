@@ -42,7 +42,8 @@ startTimer = (verb, url)->
     .replace /\/\/\w+:[^@:]+@/, '//'
 
   key = "#{verb.toUpperCase()} #{url} [#{randomString()}]"
-  return _.startTimer key
+  _.startTimer key
+  return key
 
 module.exports =
   get: _.partial req, 'get'
