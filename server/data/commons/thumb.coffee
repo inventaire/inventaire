@@ -1,14 +1,22 @@
-__ = require('config').universalPath
+CONFIG = require 'config'
+__ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
 xml_ = __.require 'lib', 'xml'
 qs = require 'querystring'
 error_ = __.require 'lib', 'error/error'
+cache_ = __.require 'lib', 'cache'
+fullPublicHost = CONFIG.fullPublicHost()
 
 # Defaulting to a high width as if the width is higher than the original,
 # the API returns the original path
 # But not too high though so that we don't get super heavy files
-module.exports = (file, width=2000)->
+module.exports = (file, width=2000, refresh)->
+  key = "commons:#{file}:#{width}"
+  timespan = if refresh is true then 0 else null
+  cache_.get key, getThumbData.bind(null, file, width), timespan
+
+getThumbData = (file, width=2000)->
   file = qs.escape file
   promises_.get requestOptions(file, width)
   .then xml_.parse
@@ -21,7 +29,7 @@ requestOptions = (file, width)->
   headers:
     'Content-Type': 'application/xml'
     # the commonsapi requires a User-Agent
-    'User-Agent': 'https://inventaire.io server'
+    'User-Agent': "#{fullPublicHost} server"
 
 extractData = (res)->
   { file, licenses, error } = res.response
