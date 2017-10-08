@@ -12,7 +12,7 @@ error_ = __.require 'lib', 'error/error'
 { Promise } = __.require 'lib', 'promises'
 getEntitiesByUris = require './lib/get_entities_by_uris'
 specialEntityImagesGetter = require './lib/special_entity_images_getter'
-getEntityImageClaims = require './lib/get_entity_image_claims'
+getEntityImagesFromClaims = require './lib/get_entity_images_from_claims'
 
 module.exports = (req, res)->
   { uris } = req.query
@@ -35,6 +35,6 @@ getEntityImages = (entities)-> (promises, id)->
   entity = entities[id]
   # All entities type that don't have a specialEntityImagesGetter will
   # simply return their first wdt:P18 claim value, if any
-  getter = specialEntityImagesGetter[entity.type] or getEntityImageClaims
+  getter = specialEntityImagesGetter[entity.type] or getEntityImagesFromClaims
   promises[id] = getter entity
   return promises

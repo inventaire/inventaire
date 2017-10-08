@@ -3,20 +3,20 @@ _ = __.require 'builders', 'utils'
 entities_ = require './entities'
 { getOriginalLang } = __.require 'lib', 'wikidata/wikidata'
 getSerieParts = require './get_serie_parts'
-getEntityImageClaims = require './get_entity_image_claims'
+getEntityImagesFromClaims = require './get_entity_images_from_claims'
 
 module.exports =
   # Works images (wdt:P18) in Wikidat aren't satisfying, as not making use
   # of the right to fair-use, thus the need to fetch editions covers instead
   work: (entity, limitPerLang)->
     { uri } = entity
-    images = { claims: getEntityImageClaims(entity) }
+    images = { claims: getEntityImagesFromClaims(entity) }
     getWorkEditions uri, images, limitPerLang
 
   # Idem
   serie: (entity)->
     { uri } = entity
-    images = { claims: getEntityImageClaims(entity) }
+    images = { claims: getEntityImagesFromClaims(entity) }
     getSerieParts uri
     .then (res)-> _.pluck(res.parts, 'uri')
     .map getOneWorkImagePerLang
