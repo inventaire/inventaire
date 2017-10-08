@@ -137,6 +137,8 @@ properties =
   'wdt:P2003': externalId /^(\w(?:(?:\w|(?:\\.(?!\\.))){0,28}(?:\w))?)$/
   # Facebook profile id
   'wdt:P2013': externalId /^(\d+|[\w\.]+)$/
+  # YouTube channel ID
+  'wdt:P2397': externalId /^UC[\w\-]{21}[AQgw]$/
   # author of foreword
   'wdt:P2679': humanEntity
   # author of afterword
