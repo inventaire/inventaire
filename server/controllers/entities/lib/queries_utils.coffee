@@ -6,8 +6,9 @@ module.exports =
     # its a year-precision date
     .replace '-01-01', ''
 
-  sortByDate: (a, b)-> formatDate(a) - formatDate(b)
+  # sortByDate: (a, b)-> formatDate(a) - formatDate(b)
   sortByOrdinalOrDate: (a, b)-> formatDate(a, true) - formatDate(b, true)
+  sortByScore: (a, b)-> b.score - a.score
 
 earliestDate = -10000
 formatDate = (obj, preferOrdinal)->
