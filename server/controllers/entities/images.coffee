@@ -15,14 +15,16 @@ specialEntityImagesGetter = require './lib/special_entity_images_getter'
 getEntityImagesFromClaims = require './lib/get_entity_images_from_claims'
 
 module.exports = (req, res)->
-  { uris } = req.query
+  { uris, refresh } = req.query
 
   unless _.isNonEmptyString uris
     return error_.bundleMissingQuery req, res, 'uris'
 
   uris = uris.split '|'
 
-  getEntitiesByUris uris
+  refresh = _.parseBooleanString refresh
+
+  getEntitiesByUris uris, refresh
   .get 'entities'
   .then getEntitiesImages
   .then _.Wrap(res, 'images')

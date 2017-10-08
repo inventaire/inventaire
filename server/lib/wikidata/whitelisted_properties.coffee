@@ -22,6 +22,7 @@ module.exports = [
   'P135' # movement
   'P136' # genre
   'P144' # based on
+  'P154' # logo image
   'P155' # follow
   'P156' # is follow by
   'P166' # award received
@@ -59,4 +60,5 @@ module.exports = [
   'P2093' # author name string
   'P2679' # author of foreword
   'P2680' # author of afterword
+  'P2716' # collage image
 ]
