@@ -4,25 +4,27 @@ promises_ = __.require 'lib', 'promises'
 getThumbData = __.require 'data', 'commons/thumb'
 getEnwikiImage = __.require 'data', 'wikipedia/image'
 getOpenLibraryCover = __.require 'data', 'openlibrary/cover'
+{ getAvatarsDataFromClaims } = require './get_avatars_from_claims'
+getCommonsFilenamesFromClaims = require './get_commons_filenames_from_claims'
 
 module.exports = (entity)->
   findAnImage entity
   .then (data)->
-    entity.image = data
+    entity.image = data or getAvatarsDataFromClaims(entity.claims)[0]
     return entity
   .catch (err)->
     _.error err, 'addImageData err'
     return entity
 
 findAnImage = (entity)->
-  commonsImage = entity.claims['wdt:P18']?[0]
+  commonsFilename = getCommonsFilenamesFromClaims(entity.claims)[0]
   enwikiTitle = entity.sitelinks.enwiki
   openLibraryId = entity.claims['wdt:P648']?[0]
-  return pickBestPic entity, commonsImage, enwikiTitle, openLibraryId
+  return pickBestPic entity, commonsFilename, enwikiTitle, openLibraryId
 
-pickBestPic = (entity, commonsImage, enwikiTitle, openLibraryId)->
+pickBestPic = (entity, commonsFilename, enwikiTitle, openLibraryId)->
   getters = {}
-  if commonsImage? then getters.wm = getThumbData.bind null, commonsImage
+  if commonsFilename? then getters.wm = getThumbData.bind null, commonsFilename
   if enwikiTitle? then getters.wp = getEnwikiImage.bind null, enwikiTitle
   if openLibraryId?
     getters.ol = getOpenLibraryCover.bind null, openLibraryId, entity.type
