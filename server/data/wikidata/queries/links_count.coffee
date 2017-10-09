@@ -5,8 +5,8 @@ module.exports =
   query: (params)->
     { qid } = params
     """
-    SELECT DISTINCT (COUNT(?statement) AS ?statementCount) WHERE {
-      ?statement ?property wd:#{qid} .
-      ?property wikibase:directClaim ?wdt.
+    SELECT DISTINCT (COUNT(?entity) AS ?entityCount) WHERE {
+      ?entity ?property wd:#{qid} .
+      ?property wikibase:directClaim ?wdt .
     }
     """
