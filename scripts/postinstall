@@ -35,7 +35,12 @@ mkdir -p run
 touch run/3006 run/3009
 
 # Synchronize CouchDB and ElasticSearch databases
-npm run couch2elastic4sync:init && npm run couch2elastic4sync:load
+{
+  elastic_host=$(node -p "require('config').elasticsearch.host")
+  curl -s $elastic_host > /dev/null &&
+  echo "Found ElasticSearch" &&
+  npm run couch2elastic4sync:init && npm run couch2elastic4sync:load
+} || echo "ElasticSearch not found: init & load scripts skipped"
 
 # Create a local config file
 emptyConfigFile="
