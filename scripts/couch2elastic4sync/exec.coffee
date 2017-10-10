@@ -41,7 +41,10 @@ module.exports = (cliArg)->
   killChildrenProcesses = -> childProcesses.forEach (childProc)-> childProc.kill()
 
   process.on 'exit', killChildrenProcesses
-  process.on 'SIGINT', killChildrenProcesses
+  process.on 'SIGINT', ->
+    killChildrenProcesses()
+    # Exit the process itself as we overrided the default SIGINT behavior
+    process.exit 0
 
 getLogStream = (dbName)->
   logFile = "#{logsFolder}/#{dbName}"
