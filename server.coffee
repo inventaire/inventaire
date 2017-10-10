@@ -45,6 +45,8 @@ couchInit()
     # Need to wait for databases to exist
     __.require('scripts', 'couch2elastic4sync/exec')('sync')
 
-.catch _.Error('init err')
+  # Run once the databases are ready to prevent having multiple error messages
+  # if databases aren't properly setup
+  __.require('lib', 'emails/mailer')()
 
-__.require('lib', 'emails/mailer')()
+.catch _.Error('init err')
