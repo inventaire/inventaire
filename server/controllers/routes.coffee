@@ -42,7 +42,7 @@ if CONFIG.objectStorage is 'local'
   # the /img endpoint is common to all the object storage modes
   # but this route is served from nginx in other modes
   endpointPath = CONFIG.images.urlBase().replace /^\//, ''
-  routes[endpointPath + '*'] = require './upload/fake_object_storage'
+  routes[endpointPath + '*'] = require './images/fake_object_storage'
 
 # setting CONFIG-based routes before the globs
 # so that they wont be overpassed by it
