@@ -2,6 +2,7 @@ CONFIG = require 'config'
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 user_ = __.require 'controllers', 'user/lib/user'
+error_ = __.require 'lib', 'error/error'
 
 passport = require 'passport'
 
@@ -15,6 +16,10 @@ passport.deserializeUser (id, done)->
   user_.byId id
   .then (user)-> done null, user
   .catch (err)->
+    if err.statusCode is 404
+      err = error_.new "Couldn't deserialize cookies: user not found", 400, id
+      err.name = 'SessionError'
+
     _.error err, 'deserializeUser err'
     done err
 

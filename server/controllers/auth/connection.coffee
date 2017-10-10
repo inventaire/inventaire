@@ -39,7 +39,9 @@ LoggedIn = (req, res)->
       if req.query['include-user-data'] then data.user = ownerSafeData req.user
       res.json data
 
-exports.logout = (req, res, next)->
+exports.logoutRedirect = logoutRedirect = (redirect, req, res, next)->
   res.clearCookie 'loggedIn'
   req.logout()
-  res.redirect '/'
+  res.redirect redirect
+
+exports.logout = logoutRedirect.bind null, '/'
