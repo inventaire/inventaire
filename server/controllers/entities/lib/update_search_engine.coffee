@@ -24,11 +24,16 @@ module.exports = ->
   _.info 'initializing entitiesSearchEngine update'
 
   urisPerType = {}
+
   requestUpdate = ->
     [ body, urisPerType ] = [ urisPerType, {} ]
-    _.log body, 'requested entities search engine updates'
     promises_.post { url: host, body }
-    .catch _.Error('entities search engine update err')
+    .then -> _.log body, 'requested entities search engine updates'
+    .catch (err)->
+      if err.message.match 'ECONNREFUSED'
+        _.warn 'entities search engine updater is offline'
+      else
+        _.error err, 'entities search engine update err'
 
   # Send a batch every #{delay} milliseconds max
   lazyRequestUpdate = _.throttle requestUpdate, delay, { leading: false }
