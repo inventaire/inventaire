@@ -11,6 +11,7 @@ module.exports = (err, req, res, next) ->
   if err.name is 'SyntaxError' and err.message.startsWith('Unexpected token')
     error_.bundle req, res, 'invalid JSON body', 400
   else if err.name is 'SessionError'
-    logoutRedirect '/login', req, res, next
+    { pathname } = req._parsedUrl
+    logoutRedirect "/login?redirect=#{pathname}", req, res, next
   else
     error_.handler req, res, err
