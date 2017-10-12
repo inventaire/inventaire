@@ -10,10 +10,13 @@ getCommonsFilenamesFromClaims = require './get_commons_filenames_from_claims'
 module.exports = (entity)->
   findAnImage entity
   .then (data)->
-    entity.image = data or getAvatarsDataFromClaims(entity.claims)[0]
+    entity.image = data
     return entity
   .catch (err)->
-    _.error err, 'addImageData err'
+    if err.statusCode is 404
+      entity.image = getAvatarsDataFromClaims(entity.claims)[0]
+    else
+      _.error err, 'addImageData err'
     return entity
 
 findAnImage = (entity)->
