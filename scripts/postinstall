@@ -19,9 +19,9 @@ npm run install-client
 mkdir -p ./server/lib/emails/i18n/dist
 ./server/lib/emails/i18n/src/generate_lang_json.coffee all
 
-mkdir -p logs/archives/server logs/archives/errors run db/leveldb
+mkdir -p run db/leveldb
 
-# Expected by scripts/archive_logs
+# Expected by couch2elastic4sync scripts
 mkdir -p ./logs
 # Expected by scripts/couch2elastic4sync/exec.coffee
 mkdir -p ./logs/couch2elastic4sync
