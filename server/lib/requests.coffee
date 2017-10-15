@@ -41,9 +41,7 @@ startTimer = (verb, url)->
     # Prevent logging Basic Auth credentials
     .replace /\/\/\w+:[^@:]+@/, '//'
 
-  key = "#{verb.toUpperCase()} #{url} [#{randomString()}]"
-  _.startTimer key
-  return key
+  return _.startTimer "#{verb.toUpperCase()} #{url} [#{randomString()}]"
 
 module.exports =
   get: _.partial req, 'get'

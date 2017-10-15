@@ -84,8 +84,13 @@ module.exports = (_)->
 
       setInterval counter.bind(@), 5000
 
-    startTimer: (key)-> console.time chalk.magenta(key)
-    EndTimer: (key)-> ()-> console.timeEnd chalk.magenta(key)
+    startTimer: (key)->
+      console.time chalk.magenta(key)
+      # Make sure to return the non-formated key
+      return key
+
+    EndTimer: (key)-> ()->
+      console.timeEnd chalk.magenta(key)
 
   # The same as inv-loggers::errorRethrow but using customLoggers.error instead
   errorRethrow = (err, label)->
