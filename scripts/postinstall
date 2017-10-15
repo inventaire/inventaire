@@ -19,7 +19,7 @@ npm run install-client
 mkdir -p ./server/lib/emails/i18n/dist
 ./server/lib/emails/i18n/src/generate_lang_json.coffee all
 
-mkdir -p logs/archives/server logs/archives/errors deploy run db/leveldb
+mkdir -p logs/archives/server logs/archives/errors run db/leveldb
 
 # Expected by scripts/archive_logs
 mkdir -p ./logs
