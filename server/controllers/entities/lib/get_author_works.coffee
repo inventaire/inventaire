@@ -7,7 +7,11 @@ runWdQuery = __.require 'data', 'wikidata/run_query'
 prefixify = __.require 'lib', 'wikidata/prefixify'
 { getSimpleDayDate, sortByScore } = require './queries_utils'
 { types, typesNames, getTypePluralNameByTypeUri } = __.require 'lib', 'wikidata/aliases'
-getEntitiesPopularity = require './get_entities_popularity'
+
+# Working around the circular dependency
+getEntitiesPopularity = null
+lateRequire = -> getEntitiesPopularity = require './get_entities_popularity'
+setTimeout lateRequire, 0
 
 whitelistedTypesNames = [ 'series', 'works', 'articles' ]
 
