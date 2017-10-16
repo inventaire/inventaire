@@ -41,16 +41,21 @@ describe 'CACHE', ->
         return hashKey(key)
 
       fn = spiedHash.bind(null, key)
-      cache_.get(key, fn).then (res)->
+      cache_.get key, fn
+      .then (res)->
         res.should.equal hash
-        cache_.get(key, spiedHash.bind(null, key)).then (res)->
+        cache_.get key, spiedHash.bind(null, key)
+        .then (res)->
           res.should.equal hash
-          cache_.get(key, spiedHash.bind(null, key)).then (res)->
+          cache_.get key, spiedHash.bind(null, key)
+          .then (res)->
             res.should.equal hash
             # MOUAHAHA YOU WONT SEE ME (◣_◢)
-            cache_.get('006', spiedHash.bind(null, '006')).then (res)->
+            cache_.get '006', spiedHash.bind(null, '006')
+            .then (res)->
               res.should.equal _.hashCode('006')
-              cache_.get(key, spiedHash.bind(null, key)).then (res)->
+              cache_.get key, spiedHash.bind(null, key)
+              .then (res)->
                 res.should.equal hash
                 # DHO [>.<]
                 spy.callCount.should.equal 2
@@ -58,11 +63,11 @@ describe 'CACHE', ->
       return
 
     it 'should also accept an expiration timespan', (done)->
-      cache_.get('samekey', workingFn)
+      cache_.get 'samekey', workingFn
       .then (res1)->
-        cache_.get('samekey', workingFn.bind(null, 'different arg'), 10000)
+        cache_.get 'samekey', workingFn.bind(null, 'different arg'), 10000
         .then (res2)->
-          cache_.get('samekey', workingFn.bind(null, 'different arg'), 0)
+          cache_.get 'samekey', workingFn.bind(null, 'different arg'), 0
           .then (res3)->
             _.log [ res1, res2, res3 ], 'results'
             res1.should.equal res2
@@ -71,13 +76,13 @@ describe 'CACHE', ->
       return
 
     it 'should return the outdated version if the new version returns an error', (done)->
-      cache_.get('doden', workingFn.bind(null, 'Vem är du?'), 0)
+      cache_.get 'doden', workingFn.bind(null, 'Vem är du?'), 0
       .then (res1)->
         # returns an error: should return old value
-        cache_.get('doden', failingFn.bind(null, 'Vem är du?'), 1)
+        cache_.get 'doden', failingFn.bind(null, 'Vem är du?'), 1
         .then (res2)->
           # the error shouldnt have overriden the value
-          cache_.get('doden', workingFn.bind(null, 'Vem är du?'), 5000)
+          cache_.get 'doden', workingFn.bind(null, 'Vem är du?'), 5000
           .then (res3)->
             _.log [ res1, res2, res3 ], 'results'
             res1.should.equal res2
@@ -86,10 +91,10 @@ describe 'CACHE', ->
       return
 
     it 'should refuse old value when passed a 0 timespan', (done)->
-      cache_.get('doden', workingFn.bind(null, 'Vem är du?'), 0)
+      cache_.get 'doden', workingFn.bind(null, 'Vem är du?'), 0
       .then (res1)->
         # returns an error: should return old value
-        cache_.get('doden', failingFn.bind(null, 'Vem är du?'), 0)
+        cache_.get 'doden', failingFn.bind(null, 'Vem är du?'), 0
         .then (res2)->
           res1.should.be.ok()
           should(res2).not.be.ok()
