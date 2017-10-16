@@ -15,8 +15,8 @@ shared = __.require('sharedLibs', 'promises')(Promise)
 
 promisesHandlers =
   Promise: Promise
-  all: Promise.all.bind Promise
-  props: Promise.props.bind Promise
+  all: Promise.all
+  props: Promise.props
   Timeout: (ms)-> (promise)-> promise.timeout ms
   # skip throws in a standard way to be catched later
   # by catchSkip and not be treated as an error.
