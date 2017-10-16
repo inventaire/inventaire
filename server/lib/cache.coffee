@@ -12,7 +12,7 @@ if CONFIG.resetCacheAtStartup then cacheDB.reset()
 
 { oneDay, oneMonth } =  __.require 'lib', 'times'
 
-module.exports =
+module.exports = cache_ =
   # EXPECT method to come with context and arguments .bind'ed
   # e.g. method = module.getData.bind(module, arg1, arg2)
   get: (key, method, timespan=oneMonth, retry=true)->
@@ -36,6 +36,31 @@ module.exports =
       else _.error err, label
 
       throw err
+
+  # An alternative get function to use when the function call might take a while
+  # and we are in a hury, and it's ok to return nothing
+  fastGet: (key, method, timespan=oneMonth, updateDelay=0)->
+    try _.types [key, method, timespan, updateDelay], [ 'string', 'function', 'number', 'number' ]
+    catch err then return error_.reject err, 500
+
+    cacheDB.get key
+    .then (res)->
+      # If there is something cached and it's fresh enough, just return it
+      if res?.body? and isFreshEnough(res.timestamp, timespan)
+        return res.body
+
+      # Else plan an update and return what we presently have in cache
+      # (possibly nothing)
+
+      update = ->
+        cache_.get key, method, timespan
+        .catch _.Error("#{key} cache udpate err")
+
+      # Spreading updates between updateDelay and some 10 times later
+      # to decrease chances of hitting any third party parallele request quota
+      setTimeout update, _.random(updateDelay, 10*updateDelay)
+
+      return res?.body
 
   # Return what's in cache. If nothing, return nothing: no request performed
   dryGet: (key, timespan=oneMonth)->
@@ -73,14 +98,11 @@ module.exports =
 
 checkCache = (key, timespan, retry)->
   cacheDB.get key
-  .catch (err)->
-    _.warn err, "checkCache err: #{key}"
-    return
   .then (res)->
     unless res? then return
 
     { body, timestamp } = res
-    unless isFreshEnough timestamp, timespan then return
+    unless isFreshEnough(timestamp, timespan) then return
 
     if retry then return retryIfEmpty res, key
     else res
@@ -136,7 +158,4 @@ putResponseInCache = (key, res)->
     body: res
     timestamp: new Date().getTime()
 
-isFreshEnough = (timestamp, timespan)->
-  _.types arguments, ['number', 'number']
-  age = Date.now() - timestamp
-  return age < timespan
+isFreshEnough = (timestamp, timespan)-> not _.expired(timestamp, timespan)

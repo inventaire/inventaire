@@ -9,6 +9,7 @@ promises_ = __.require 'lib', 'promises'
 { Promise } = promises_
 
 cache_ = __.require 'lib', 'cache'
+randomString = __.require 'lib', './utils/random_string'
 
 mookPromise = hashKey = (key)->
   promises_.resolve _.hashCode(key)
@@ -109,6 +110,100 @@ describe 'CACHE', ->
           should(res2).not.be.ok()
           spy.callCount.should.equal 1
           done()
+      return
+
+  describe 'fastGet', ->
+    it 'should return a promise', (done)->
+      p = cache_.fastGet 'whatever', _.noop, 0, 0
+      p.should.have.property 'then'
+      p.should.have.property 'catch'
+      done()
+
+    it 'should return a rejected promise if not passed a key', (done)->
+      cache_.fastGet()
+      .catch -> done()
+
+      return
+
+    it 'should return a rejected promise if passed a non-number timestamp', (done)->
+      cache_.fastGet 'whatever', 'notanumber'
+      .catch -> done()
+
+      return
+
+    it 'should resolve to the cached value if something is cached', (done)->
+      key = randomString 10
+      fn = workingFn.bind null, 'whatever'
+      cache_.get key, fn, 0
+      .then (res1)->
+        cache_.fastGet key, fn, 0
+        .then (res2)->
+          res1.should.equal res2
+          done()
+      .catch done
+
+      return
+
+    it 'should resolve to undefined if nothing was cached', (done)->
+      key = randomString 10
+      fn = workingFn.bind null, 'whatever'
+      cache_.fastGet key, fn, 0
+      .then (res)->
+        should(res).not.be.ok()
+        done()
+      .catch done
+
+      return
+
+    it 'should then plan an to fill the cache', (done)->
+      key = randomString 10
+      fn = workingFn.bind null, 'whatever'
+      cache_.fastGet key, fn, 0
+      .delay 10
+      .then (res1)->
+        should(res1).not.be.ok()
+        cache_.fastGet key, fn, 10000
+        .then (res2)->
+          should(res2).be.ok()
+          done()
+      .catch done
+
+      return
+
+    it 'should resolve to the cached value if something is cached even if it expired', (done)->
+      key = randomString 10
+      fn = workingFn.bind null, 'whatever'
+      cache_.fastGet key, fn, 0
+      .delay 10
+      .then (res1)->
+        should(res1).not.be.ok()
+        cache_.fastGet key, fn, 0
+        .then (res2)->
+          should(res2).be.ok()
+          done()
+      .catch done
+
+      return
+
+    it 'should delay update when requested', (done)->
+      key = randomString 10
+      fn = workingFn.bind null, 'whatever'
+      minDelay = 100
+      cache_.fastGet key, fn, 0, minDelay
+      .then (res1)->
+        should(res1).not.be.ok()
+        cache_.fastGet key, fn, 0
+        .then (res2)-> should(res2).not.be.ok()
+        # the updateDelay is randomized to be between minDelay and 10*minDelay
+        .delay 10*minDelay
+        .then ->
+          cache_.fastGet key, fn, 0
+          .then (res3)->
+            should(res3).be.ok()
+            done()
+
+      .catch done
+
       return
 
   describe 'dryGet', ->
