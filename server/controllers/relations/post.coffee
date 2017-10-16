@@ -30,10 +30,7 @@ solveNewRelation = (action, othersId, reqUserId)->
     throw error_.new 'cant create relation between identical ids', 400, arguments
 
   type = actions[action]
-  return method type, reqUserId, othersId
-
-method = (type, reqUserId, othersId)->
-  intent[type](reqUserId, othersId)
+  return intent[type](reqUserId, othersId)
 
 actions =
   request: 'requestFriend'

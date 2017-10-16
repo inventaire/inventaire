@@ -13,9 +13,9 @@ if CONFIG.resetCacheAtStartup then cacheDB.reset()
 { oneDay, oneMonth } =  __.require 'lib', 'times'
 
 module.exports = cache_ =
-  # EXPECT method to come with context and arguments .bind'ed
-  # e.g. method = module.getData.bind(module, arg1, arg2)
-  get: (key, method, timespan=oneMonth, retry=true)->
+  # EXPECT function to come with context and arguments .bind'ed
+  # e.g. function = module.getData.bind(module, arg1, arg2)
+  get: (key, fn, timespan=oneMonth, retry=true)->
     types = ['string', 'function', 'number', 'boolean']
     try _.types arguments, types, 2
     catch err then return error_.reject err, 500
@@ -28,7 +28,7 @@ module.exports = cache_ =
     refuseOldValue = timespan is 0
 
     checkCache key, timespan, retry
-    .then requestOnlyIfNeeded.bind(null, key, method, refuseOldValue)
+    .then requestOnlyIfNeeded.bind(null, key, fn, refuseOldValue)
     .catch (err)->
       label = "final cache_ err: #{key}"
       # not logging the stack trace in case of 404 and alikes
@@ -39,8 +39,8 @@ module.exports = cache_ =
 
   # An alternative get function to use when the function call might take a while
   # and we are in a hury, and it's ok to return nothing
-  fastGet: (key, method, timespan=oneMonth, updateDelay=0)->
-    try _.types [key, method, timespan, updateDelay], [ 'string', 'function', 'number', 'number' ]
+  fastGet: (key, fn, timespan=oneMonth, updateDelay=0)->
+    try _.types [key, fn, timespan, updateDelay], [ 'string', 'function', 'number', 'number' ]
     catch err then return error_.reject err, 500
 
     cacheDB.get key
@@ -53,7 +53,7 @@ module.exports = cache_ =
       # (possibly nothing)
 
       update = ->
-        cache_.get key, method, timespan
+        cache_.get key, fn, timespan
         .catch _.Error("#{key} cache udpate err")
 
       # Spreading updates between updateDelay and some 10 times later
@@ -83,7 +83,7 @@ module.exports = cache_ =
 
   # exemple:
   # timespan = cache_.solveExpirationTime 'commons'
-  # cache_.get key, method, timespan
+  # cache_.get key, fn, timespan
 
   # once the default expiration time is greater than the time since
   # data change, just stop passing a timespan
@@ -134,12 +134,12 @@ returnOldValue = (key, err)->
       err.old_value = null
       throw err
 
-requestOnlyIfNeeded = (key, method, refuseOldValue, cached)->
+requestOnlyIfNeeded = (key, fn, refuseOldValue, cached)->
   if cached?
     _.info "from cache: #{key}"
     cached.body
   else
-    method()
+    fn()
     .then (res)->
       _.info "from remote data source: #{key}"
       putResponseInCache key, res

@@ -26,7 +26,7 @@ describe 'CACHE', ->
       p.should.have.property 'catch'
       done()
 
-    it 'should accept a key and a promisified method', (done)->
+    it 'should accept a key and a promisified function', (done)->
       key = 'whatever'
       cache_.get(key, mookPromise.bind(null, key))
       .then -> done()
@@ -40,8 +40,8 @@ describe 'CACHE', ->
         spy()
         return hashKey(key)
 
-      method = spiedHash.bind(null, key)
-      cache_.get(key, method).then (res)->
+      fn = spiedHash.bind(null, key)
+      cache_.get(key, fn).then (res)->
         res.should.equal hash
         cache_.get(key, spiedHash.bind(null, key)).then (res)->
           res.should.equal hash
