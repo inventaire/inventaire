@@ -39,8 +39,8 @@ module.exports = cache_ =
 
   # An alternative get function to use when the function call might take a while
   # and we are in a hury, and it's ok to return nothing
-  fastGet: (key, fn, timespan=oneMonth, updateDelay=0)->
-    try _.types [key, fn, timespan, updateDelay], [ 'string', 'function', 'number', 'number' ]
+  fastGet: (key, fn, timespan=oneMonth)->
+    try _.types [ key, fn, timespan ], [ 'string', 'function', 'number' ]
     catch err then return error_.reject err, 500
 
     cacheDB.get key
@@ -51,15 +51,7 @@ module.exports = cache_ =
 
       # Else plan an update and return what we presently have in cache
       # (possibly nothing)
-
-      update = ->
-        cache_.get key, fn, timespan
-        .catch _.Error("#{key} cache udpate err")
-
-      # Spreading updates between updateDelay and some 10 times later
-      # to decrease chances of hitting any third party parallele request quota
-      setTimeout update, _.random(updateDelay, 10*updateDelay)
-
+      addToUpdateQueue { key, fn, timespan }
       return res?.body
 
   # Return what's in cache. If nothing, return nothing: no request performed
@@ -159,3 +151,25 @@ putResponseInCache = (key, res)->
     timestamp: new Date().getTime()
 
 isFreshEnough = (timestamp, timespan)-> not _.expired(timestamp, timespan)
+
+updateQueue = []
+ongoingUpdates = false
+
+runNextUpdate = ->
+  nextUpdateData = updateQueue.shift()
+  unless nextUpdateData?
+    ongoingUpdates = false
+    _.info 'emptied cache update queue'
+    return
+
+  ongoingUpdates = true
+  { key, fn, timespan } = nextUpdateData
+
+  cache_.get key, fn, timespan
+  .catch _.Error("#{key} cache udpate err")
+  .then runNextUpdate
+
+addToUpdateQueue = (updateData)->
+  updateQueue.push updateData
+  # Restart the update queue if it was idle
+  unless ongoingUpdates then runNextUpdate()

@@ -6,7 +6,6 @@ getEntityByUri = require './get_entity_by_uri'
 items_ = __.require 'controllers', 'items/lib/items'
 cache_ = __.require 'lib', 'cache'
 { oneUriSeveralFunctions, severalUrisOneFunction, getUri } = require './popularity_helpers'
-minUpdateDelay = 5000
 
 reverseClaims = require './reverse_claims'
 getSerieParts = require './get_serie_parts'
@@ -15,28 +14,22 @@ getLinksCount = require './get_links_count'
 
 module.exports = (uris, fast, refresh)->
   _.type uris, 'array'
-  return promises_.props _.indexAppliedValue(uris, getPopularity(fast, refresh))
+  # Using fastGet to work around the slow popularity calculation
+  # especially for Wikidata entities, which rely on remote SPARQL queries
+  # which are limited to 5 concurrent requests
+  # The classic cache get is used principally for testing purposes
+  fnName = if fast then 'fastGet' else 'get'
+  return promises_.props _.indexAppliedValue(uris, getPopularity(fnName, refresh))
 
-getPopularity = (fast, refresh)-> (uri)->
+getPopularity = (fnName, refresh)-> (uri)->
   unless _.isEntityUri(uri) then throw error_.new 'invalid uri', 400, uri
 
   key = "popularity:#{uri}"
   timespan = if refresh then 0 else null
   fn = getPopularityByUri.bind null, uri
 
-  if fast
-    # Using fastGet to work around the slow popularity calculation
-    # especially for Wikidata entities, which rely on remote SPARQL queries
-    # which are limited to 5 concurrent requests
-    # Let at least 5 seconds as a minimum update delay to give priority to other
-    # operations related to the request triggering this call, and randomly spread
-    # the requests to lower risks to hit Wikidata Query concurrent requests quota
-    cache_.fastGet key, fn, timespan, minUpdateDelay
-    .then defaultToZero
-  else
-    # Classic cache mode used principally for testing purposes
-    cache_.get key, fn, timespan
-    .then defaultToZero
+  cache_[fnName](key, fn, timespan)
+  .then defaultToZero
 
 # Returning 0 if the cache is currently empty, which is kind of rational:
 # if the cache is empty, the entity isn't that popular

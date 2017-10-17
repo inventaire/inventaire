@@ -119,7 +119,7 @@ describe 'CACHE', ->
 
   describe 'fastGet', ->
     it 'should return a promise', (done)->
-      p = cache_.fastGet 'whatever', _.noop, 0, 0
+      p = cache_.fastGet 'whatever', _.noop, 0
       p.should.have.property 'then'
       p.should.have.property 'catch'
       done()
@@ -160,7 +160,7 @@ describe 'CACHE', ->
 
       return
 
-    it 'should then plan an to fill the cache', (done)->
+    it 'should then plan to fill the cache', (done)->
       key = randomString 10
       fn = workingFn.bind null, 'whatever'
       cache_.fastGet key, fn, 0
@@ -193,14 +193,12 @@ describe 'CACHE', ->
     it 'should delay update when requested', (done)->
       key = randomString 10
       fn = workingFn.bind null, 'whatever'
-      minDelay = 100
-      cache_.fastGet key, fn, 0, minDelay
+      cache_.fastGet key, fn, 0
       .then (res1)->
         should(res1).not.be.ok()
         cache_.fastGet key, fn, 0
         .then (res2)-> should(res2).not.be.ok()
-        # the updateDelay is randomized to be between minDelay and 10*minDelay
-        .delay 10*minDelay
+        .delay 10
         .then ->
           cache_.fastGet key, fn, 0
           .then (res3)->
