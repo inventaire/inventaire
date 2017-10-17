@@ -40,9 +40,10 @@ module.exports = (params)->
     .then (scores)-> uris.sort sortByScore(scores)
 
 wikidataReverseClaims = (property, value, refresh)->
-  customQuery = customReverseClaimsQuery[property]
-  if customQuery?
-    runWdQuery { query: customQuery, qid: value, refresh }
+  type = typeTailoredQuery[property]
+  if type?
+    pid = property.split(':')[1]
+    runWdQuery { query: "#{type}_reverse_claims", pid, qid: value, refresh }
     .map prefixify
   else
     generalWikidataReverseClaims property, value, refresh
@@ -63,11 +64,31 @@ _wikidataReverseClaims = (property, value)->
 invReverseClaims = (property, value)->
   entities_.byClaim property, value, true, true
   .map (entity)-> getInvEntityCanonicalUri(entity)[0]
+  .catch (err)->
+    # Allow to request reverse claims for properties that aren't yet
+    # whitelisted to be added to inv properties: simply ignore inv entities
+    if err.message is "property isn't whitelisted" then return []
+    else throw err
 
 # Customize queries to tailor for specific types of results
 # Ex: 'wdt:P921' reverse claims should not include films, etc
 # but only works or series
-customReverseClaimsQuery =
-  'wdt:P921': 'subjects_works'
+typeTailoredQuery =
+  # country of citizenship
+  'wdt:P27': 'humans'
+  # award received
+  'wdt:P166': 'humans'
+  # genre
+  'wdt:P135': 'humans'
+  # movement
+  'wdt:P136': 'works'
+  # original language
+  'wdt:P364': 'works'
+  # characters
+  'wdt:P674': 'works'
+  # narrative location
+  'wdt:P840': 'works'
+  # main subject
+  'wdt:P921': 'works'
 
 sortByScore = (scores)-> (a, b)-> scores[b] - scores[a]

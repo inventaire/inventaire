@@ -1,10 +1,10 @@
 module.exports =
-  parameters: [ 'qid' ]
+  parameters: [ 'pid', 'qid' ]
   query: (params)->
-    { qid } = params
+    { pid, qid } = params
     """
     SELECT DISTINCT ?item WHERE {
-      ?item wdt:P921 wd:#{qid} .
+      ?item wdt:#{pid} wd:#{qid} .
       # book
       { ?item wdt:P31/wdt:P279* wd:Q571 . }
       # literary work
