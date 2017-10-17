@@ -10,7 +10,7 @@ cacheDB = levelBase.simpleAPI 'cache'
 if CONFIG.resetCacheAtStartup then cacheDB.reset()
 { offline } = CONFIG
 
-{ oneDay, oneMonth } =  __.require 'lib', 'times'
+{ oneMinute, oneDay, oneMonth } =  __.require 'lib', 'times'
 
 module.exports = cache_ =
   # EXPECT function to come with context and arguments .bind'ed
@@ -166,6 +166,8 @@ runNextUpdate = ->
   { key, fn, timespan } = nextUpdateData
 
   cache_.get key, fn, timespan
+  # No job should block the queue
+  .timeout 5*oneMinute
   .catch _.Error("#{key} cache udpate err")
   .then runNextUpdate
 
