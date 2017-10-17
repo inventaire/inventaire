@@ -168,9 +168,9 @@ describe 'CACHE', ->
       .then (res1)->
         should(res1).not.be.ok()
         cache_.fastGet key, fn, 10000
-        .then (res2)->
-          should(res2).be.ok()
-          done()
+      .then (res2)->
+        should(res2).be.ok()
+        done()
       .catch done
 
       return
@@ -183,9 +183,9 @@ describe 'CACHE', ->
       .then (res1)->
         should(res1).not.be.ok()
         cache_.fastGet key, fn, 0
-        .then (res2)->
-          should(res2).be.ok()
-          done()
+      .then (res2)->
+        should(res2).be.ok()
+        done()
       .catch done
 
       return
@@ -197,13 +197,12 @@ describe 'CACHE', ->
       .then (res1)->
         should(res1).not.be.ok()
         cache_.fastGet key, fn, 0
-        .then (res2)-> should(res2).not.be.ok()
-        .delay 10
-        .then ->
-          cache_.fastGet key, fn, 0
-          .then (res3)->
-            should(res3).be.ok()
-            done()
+      .then (res2)-> should(res2).not.be.ok()
+      .delay 10
+      .then -> cache_.fastGet key, fn, 0
+      .then (res3)->
+        should(res3).be.ok()
+        done()
 
       .catch done
 
@@ -288,10 +287,9 @@ describe 'CACHE', ->
       .then (cached)->
         should(cached).not.be.ok()
         cache_.put key, value
-        .then ->
-          cache_.dryGet key
-          .then (cached2)->
-            cached2.should.equal value
-            done()
+      .then -> cache_.dryGet key
+      .then (cached2)->
+        cached2.should.equal value
+        done()
 
       return
