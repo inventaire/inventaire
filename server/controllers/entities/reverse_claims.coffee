@@ -4,7 +4,7 @@ error_ = __.require 'lib', 'error/error'
 reverseClaims = require './lib/reverse_claims'
 
 module.exports = (req, res, next)->
-  { property, uri, refresh } = req.query
+  { property, uri, refresh, sort } = req.query
 
   unless _.isPropertyUri property
     return error_.bundleInvalid req, res, 'property', property
@@ -13,7 +13,8 @@ module.exports = (req, res, next)->
     return error_.bundleInvalid req, res, 'uri', uri
 
   refresh = _.parseBooleanString refresh
+  sort = _.parseBooleanString sort
 
-  reverseClaims property, uri, refresh
+  reverseClaims { property, value: uri, refresh, sort }
   .then _.Wrap(res, 'uris')
   .catch error_.Handler(req, res)

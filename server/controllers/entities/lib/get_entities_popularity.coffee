@@ -2,24 +2,34 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
-getEntityByUri = require './get_entity_by_uri'
-items_ = __.require 'controllers', 'items/lib/items'
 cache_ = __.require 'lib', 'cache'
 { oneUriSeveralFunctions, severalUrisOneFunction, getUri } = require './popularity_helpers'
 
-reverseClaims = require './reverse_claims'
 getSerieParts = require './get_serie_parts'
 getAuthorWorks = require './get_author_works'
 getLinksCount = require './get_links_count'
 
-module.exports = (uris, fast, refresh)->
+# Working around circular dependencies
+items_ = null
+getEntityByUri = null
+reverseClaims = null
+lateRequire = ->
+  items_ = __.require 'controllers', 'items/lib/items'
+  getEntityByUri = require './get_entity_by_uri'
+  reverseClaims = require './reverse_claims'
+
+setTimeout lateRequire, 0
+
+module.exports = (uris, fast=true, refresh)->
   _.type uris, 'array'
+  if uris.length is 0 then return promises_.resolve {}
   # Using fastGet to work around the slow popularity calculation
   # especially for Wikidata entities, which rely on remote SPARQL queries
   # which are limited to 5 concurrent requests
   # The classic cache get is used principally for testing purposes
   fnName = if fast then 'fastGet' else 'get'
-  return promises_.props _.indexAppliedValue(uris, getPopularity(fnName, refresh))
+  urisPopularity = _.indexAppliedValue uris, getPopularity(fnName, refresh)
+  return promises_.props urisPopularity
 
 getPopularity = (fnName, refresh)-> (uri)->
   unless _.isEntityUri(uri) then throw error_.new 'invalid uri', 400, uri
@@ -57,7 +67,7 @@ getItemsCount = (uri)->
   .then (owners)-> _.uniq(owners).length
 
 getWorkEditionsScores = (uri)->
-  reverseClaims 'wdt:P629', uri
+  reverseClaims { property: 'wdt:P629', value: uri }
   .map getItemsCount
   .then _.sum
 
@@ -88,4 +98,3 @@ getSeriesLinksCounts = severalUrisOneFunction getLinksCount
 # Using getPopularityByUri instead of the more specific
 # popularityGettersByType.work to use cached value if available
 getWorksPopularity = severalUrisOneFunction getPopularityByUri
-

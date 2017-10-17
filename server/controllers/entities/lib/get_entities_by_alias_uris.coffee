@@ -24,7 +24,7 @@ getCanonicalUri = (uri, refresh)->
   [ prefix, value ] = uri.split ':'
   { property } = aliases[prefix]
 
-  reverseClaims property, value, refresh
+  reverseClaims { property, value, refresh }
   # Assumes that their will be only one result
   .then (canonicalUris)-> canonicalUris[0]
 
