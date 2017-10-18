@@ -168,6 +168,7 @@ runNextUpdate = ->
   # Customization is mainly needed for testing
   delay ?= 1000
 
+  _.info "next cache queue task: #{key} (remaining: #{updateQueue.length})"
   cache_.get key, fn, timespan
   # No job should block the queue
   .timeout 5*oneMinute
