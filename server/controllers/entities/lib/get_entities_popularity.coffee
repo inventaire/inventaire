@@ -20,23 +20,23 @@ lateRequire = ->
 
 setTimeout lateRequire, 0
 
-module.exports = (uris, fast=true, refresh)->
+module.exports = (uris, refresh)->
   _.type uris, 'array'
   if uris.length is 0 then return promises_.resolve {}
-  # Using fastGet to work around the slow popularity calculation
-  # especially for Wikidata entities, which rely on remote SPARQL queries
-  # which are limited to 5 concurrent requests
-  # The classic cache get is used principally for testing purposes
-  fnName = if fast then 'fastGet' else 'get'
-  urisPopularity = _.indexAppliedValue uris, getPopularity(fnName, refresh)
+  urisPopularity = _.indexAppliedValue uris, getPopularity(refresh)
   return promises_.props urisPopularity
 
-getPopularity = (fnName, refresh)-> (uri)->
+getPopularity = (refresh)-> (uri)->
   unless _.isEntityUri(uri) then throw error_.new 'invalid uri', 400, uri
 
   key = "popularity:#{uri}"
   timespan = if refresh then 0 else null
   fn = getPopularityByUri.bind null, uri
+
+  # Using fastGet to work around the slow popularity calculation
+  # for Wikidata entities, which rely on remote SPARQL queries
+  # which are limited to 5 concurrent requests
+  fnName = if uri.split(':')[0] is 'wd' then 'fastGet' else 'get'
 
   cache_[fnName](key, fn, timespan)
   .then defaultToZero
@@ -95,6 +95,6 @@ popularityGettersByType =
   human: oneUriSeveralFunctions getAuthorWorksScores
 
 getSeriesLinksCounts = severalUrisOneFunction getLinksCount
-# Using getPopularityByUri instead of the more specific
+# Using getPopularity instead of the more specific
 # popularityGettersByType.work to use cached value if available
-getWorksPopularity = severalUrisOneFunction getPopularityByUri
+getWorksPopularity = severalUrisOneFunction getPopularity(false)

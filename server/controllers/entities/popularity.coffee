@@ -5,7 +5,7 @@ error_ = __.require 'lib', 'error/error'
 getEntitiesPopularity = require './lib/get_entities_popularity'
 
 module.exports = (req, res, next)->
-  { uris, refresh, fast } = req.query
+  { uris, refresh } = req.query
 
   unless _.isNonEmptyString uris
     return error_.bundleMissingQuery req, res, 'uris'
@@ -16,6 +16,6 @@ module.exports = (req, res, next)->
   # Default to true
   fast = fast isnt 'false'
 
-  getEntitiesPopularity uris, fast, refresh
+  getEntitiesPopularity uris, refresh
   .then _.Wrap(res, 'scores')
   .catch error_.Handler(req, res)

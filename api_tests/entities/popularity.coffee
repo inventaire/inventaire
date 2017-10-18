@@ -107,14 +107,6 @@ describe 'entities:popularity', ->
 
       return
 
-  describe 'fast mode', ->
-    it 'should return 0 when no data is available in cache yet', (done)->
-      createWorkWithAnItem()
-      .then (work)-> scoreShouldEqual work.uri, 0, done, true
-      .catch done
-
-      return
-
 getPopularity = (uri, fast=false)->
   nonAuthReq 'get', "/api/entities?action=popularity&uris=#{uri}&refresh=true&fast=#{fast}"
 
@@ -122,8 +114,8 @@ getScore = (uri, fast)->
   getPopularity uri, fast
   .then (res)-> res.scores[uri]
 
-scoreShouldEqual = (uri, value, done, fast)->
-  getScore uri, fast
+scoreShouldEqual = (uri, value, done)->
+  getScore uri
   .then (score)->
     score.should.equal value
     done?()
