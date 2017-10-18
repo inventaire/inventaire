@@ -39,7 +39,7 @@ module.exports = cache_ =
 
   # An alternative get function to use when the function call might take a while
   # and we are in a hury, and it's ok to return nothing
-  fastGet: (key, fn, timespan=oneMonth)->
+  fastGet: (key, fn, timespan=oneMonth, delay)->
     try _.types [ key, fn, timespan ], [ 'string', 'function', 'number' ]
     catch err then return error_.reject err, 500
 
@@ -51,7 +51,7 @@ module.exports = cache_ =
 
       # Else plan an update and return what we presently have in cache
       # (possibly nothing)
-      addToUpdateQueue { key, fn, timespan }
+      addToUpdateQueue { key, fn, timespan, delay }
       return res?.body
 
   # Return what's in cache. If nothing, return nothing: no request performed
@@ -163,12 +163,16 @@ runNextUpdate = ->
     return
 
   ongoingUpdates = true
-  { key, fn, timespan } = nextUpdateData
+  { key, fn, timespan, delay } = nextUpdateData
+  # Add a delay to avoid hitting 429 Too Many Requests error codes
+  # Customization is mainly needed for testing
+  delay ?= 1000
 
   cache_.get key, fn, timespan
   # No job should block the queue
   .timeout 5*oneMinute
   .catch _.Error("#{key} cache udpate err")
+  .delay delay
   .then runNextUpdate
 
 addToUpdateQueue = (updateData)->

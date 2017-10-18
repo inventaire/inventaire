@@ -119,7 +119,7 @@ describe 'CACHE', ->
 
   describe 'fastGet', ->
     it 'should return a promise', (done)->
-      p = cache_.fastGet 'whatever', _.noop, 0
+      p = cache_.fastGet 'whatever', _.noop, 0, 0
       p.should.have.property 'then'
       p.should.have.property 'catch'
       done()
@@ -141,7 +141,7 @@ describe 'CACHE', ->
       fn = workingFn.bind null, 'whatever'
       cache_.get key, fn, 0
       .then (res1)->
-        cache_.fastGet key, fn, 0
+        cache_.fastGet key, fn, 0, 0
         .then (res2)->
           res1.should.equal res2
           done()
@@ -152,7 +152,7 @@ describe 'CACHE', ->
     it 'should resolve to undefined if nothing was cached', (done)->
       key = randomString 10
       fn = workingFn.bind null, 'whatever'
-      cache_.fastGet key, fn, 0
+      cache_.fastGet key, fn, 0, 0
       .then (res)->
         should(res).not.be.ok()
         done()
@@ -163,11 +163,11 @@ describe 'CACHE', ->
     it 'should then plan to fill the cache', (done)->
       key = randomString 10
       fn = workingFn.bind null, 'whatever'
-      cache_.fastGet key, fn, 0
+      cache_.fastGet key, fn, 0, 0
       .delay 10
       .then (res1)->
         should(res1).not.be.ok()
-        cache_.fastGet key, fn, 10000
+        cache_.fastGet key, fn, 10000, 0
       .then (res2)->
         should(res2).be.ok()
         done()
@@ -178,11 +178,11 @@ describe 'CACHE', ->
     it 'should resolve to the cached value if something is cached even if it expired', (done)->
       key = randomString 10
       fn = workingFn.bind null, 'whatever'
-      cache_.fastGet key, fn, 0
+      cache_.fastGet key, fn, 0, 0
       .delay 10
       .then (res1)->
         should(res1).not.be.ok()
-        cache_.fastGet key, fn, 0
+        cache_.fastGet key, fn, 0, 0
       .then (res2)->
         should(res2).be.ok()
         done()
@@ -193,13 +193,13 @@ describe 'CACHE', ->
     it 'should delay update when requested', (done)->
       key = randomString 10
       fn = workingFn.bind null, 'whatever'
-      cache_.fastGet key, fn, 0
+      cache_.fastGet key, fn, 0, 10
       .then (res1)->
         should(res1).not.be.ok()
-        cache_.fastGet key, fn, 0
+        cache_.fastGet key, fn, 0, 10
       .then (res2)-> should(res2).not.be.ok()
       .delay 10
-      .then -> cache_.fastGet key, fn, 0
+      .then -> cache_.fastGet key, fn, 0, 10
       .then (res3)->
         should(res3).be.ok()
         done()
