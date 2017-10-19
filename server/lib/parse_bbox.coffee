@@ -16,13 +16,13 @@ parseLatLng = (query)->
     bbox = JSON.parse bbox
     _.types bbox, 'numbers...', 4
   catch err
-    return error_.rejectInvalid 'bbox'
+    return error_.rejectInvalid 'bbox', bbox
 
   [ minLng, minLat, maxLng, maxLat ] = bbox
   _.log bbox, 'minLng, minLat, maxLng, maxLat'
 
   unless minLng < maxLng and minLat < maxLat
-    return error_.rejectInvalid 'bbox coordinates'
+    return error_.rejectInvalid 'bbox coordinates', bbox
 
   # not throwing an error when a coordinate is over its limit
   # but replacing it by the limit to make following calculations lighter

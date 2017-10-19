@@ -23,7 +23,7 @@ module.exports = (user, id, property, oldVal, newVal)->
   [ propertyPrefix, propertyId ] = property.split ':'
 
   unless propertyPrefix is 'wdt'
-    return error_.rejectInvalid req, res, 'property', propertyPrefix
+    return error_.rejectInvalid 'property', propertyPrefix
 
   oauth = _.extend userWikidataOAuth, wikidataOAuth
 

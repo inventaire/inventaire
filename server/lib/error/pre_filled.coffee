@@ -20,6 +20,7 @@ module.exports = (error_)->
 
     # A standardized way to return a 400 invalid parameter
     newInvalid: (parameter, value)->
+      _.type parameter, 'string'
       context = { parameter, value }
       err = error_.new "invalid #{parameter}: #{value}", 400, context
       err.error_type = 'invalid_parameter'
