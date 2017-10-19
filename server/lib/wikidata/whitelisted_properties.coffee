@@ -44,6 +44,7 @@ module.exports = [
   'P840' # narrative location
   'P856' # official website
   'P921' # main subject
+  'P941' # inspired by
   'P953' # full text available at
   'P957' # isbn 10
   'P1066' # student of

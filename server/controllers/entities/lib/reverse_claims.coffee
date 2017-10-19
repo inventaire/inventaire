@@ -76,6 +76,12 @@ invReverseClaims = (property, value)->
 typeTailoredQuery =
   # country of citizenship
   'wdt:P27': 'humans'
+  # educated at
+  'wdt:P69': 'humans'
+  # native language
+  'wdt:P103': 'humans'
+  # occupation
+  'wdt:P106': 'humans'
   # award received
   'wdt:P166': 'humans'
   # genre
@@ -84,11 +90,15 @@ typeTailoredQuery =
   'wdt:P136': 'works'
   # original language
   'wdt:P364': 'works'
+  # language of work
+  'wdt:P407': 'works'
   # characters
   'wdt:P674': 'works'
   # narrative location
   'wdt:P840': 'works'
   # main subject
   'wdt:P921': 'works'
+  # inspired by
+  'wdt:P941': 'works'
 
 sortByScore = (scores)-> (a, b)-> scores[b] - scores[a]
