@@ -82,6 +82,8 @@ typeTailoredQuery =
   'wdt:P103': 'humans'
   # occupation
   'wdt:P106': 'humans'
+  # publisher
+  'wdt:P123': 'editions'
   # award received
   'wdt:P166': 'humans'
   # genre
@@ -92,6 +94,8 @@ typeTailoredQuery =
   'wdt:P364': 'works'
   # language of work
   'wdt:P407': 'works'
+  # translator
+  'wdt:P655': 'editions'
   # characters
   'wdt:P674': 'works'
   # narrative location

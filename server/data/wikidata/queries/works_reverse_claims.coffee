@@ -23,6 +23,8 @@ module.exports =
       UNION { ?item wdt:P31/wdt:P279* wd:Q21198342 . }
       # novel series
       UNION { ?item wdt:P31/wdt:P279* wd:Q1667921 . }
+      # Filter-out entities tagged as both work and edition
+      FILTER NOT EXISTS { ?item wdt:P31 wd:Q3331189 }
     }
     LIMIT 1000
     """
