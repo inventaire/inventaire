@@ -90,6 +90,8 @@ typeTailoredQuery =
   'wdt:P135': 'humans'
   # movement
   'wdt:P136': 'works'
+  # collection
+  'wdt:P195': 'editions'
   # original language
   'wdt:P364': 'works'
   # language of work
