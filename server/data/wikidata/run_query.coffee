@@ -44,9 +44,7 @@ module.exports = (params)->
 
 parametersTests =
   qid: wdk.isItemId
-  pid: (pid)-> pid in propertyWhitelist
-
-propertyWhitelist = [ 'P31', 'P50', 'P106', 'P135', 'P136' ]
+  pid: wdk.isPropertyId
 
 runQuery = (params, key)->
   { query:queryName } = params

@@ -60,6 +60,14 @@ _.extend Q,
     # bandes dessinées publishing company
     'wd:Q3279251'
   ]
+
+  collections: [
+    # editorial collection
+    'wd:Q20655472'
+    # monographic series
+    'wd:Q1700470'
+  ]
+
   movements: [
     # cultural movement
     'wd:Q2198855'

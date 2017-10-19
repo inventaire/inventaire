@@ -89,7 +89,7 @@
     "serve-favicon": "^2.3.2",
     "wikidata-edit": "^1.6.0",
     "wikidata-lang": "^2.0.3",
-    "wikidata-sdk": "^5.2.7",
+    "wikidata-sdk": "^5.2.9",
     "xml2js": "^0.4.13"
   },
   "devDependencies": {

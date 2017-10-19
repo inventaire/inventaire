@@ -8,11 +8,16 @@ prefixify = __.require 'lib', 'wikidata/prefixify'
 cache_ = __.require 'lib', 'cache'
 getInvEntityCanonicalUri = require './get_inv_entity_canonical_uri'
 couch_ = __.require 'lib', 'couch'
+runWdQuery = __.require 'data', 'wikidata/run_query'
+getEntitiesPopularity = require './get_entities_popularity'
+
 caseInsensitiveProperties = [
   'wdt:P2002'
 ]
 
-module.exports = (property, value, refresh)->
+module.exports = (params)->
+  { property, value, refresh, sort } = params
+  _.types [ property, value ], 'strings...'
   promises = []
 
   isEntityValue = _.isEntityUri value
@@ -28,8 +33,22 @@ module.exports = (property, value, refresh)->
 
   promises_.all promises
   .then _.flatten
+  .then (uris)->
+    unless sort then return uris
+
+    getEntitiesPopularity uris
+    .then (scores)-> uris.sort sortByScore(scores)
 
 wikidataReverseClaims = (property, value, refresh)->
+  type = typeTailoredQuery[property]
+  if type?
+    pid = property.split(':')[1]
+    runWdQuery { query: "#{type}_reverse_claims", pid, qid: value, refresh }
+    .map prefixify
+  else
+    generalWikidataReverseClaims property, value, refresh
+
+generalWikidataReverseClaims = (property, value, refresh)->
   key = "wd:reverse-claim:#{property}:#{value}"
   timestamp = if refresh then 0 else null
   cache_.get key, _wikidataReverseClaims.bind(null, property, value), timestamp
@@ -45,3 +64,47 @@ _wikidataReverseClaims = (property, value)->
 invReverseClaims = (property, value)->
   entities_.byClaim property, value, true, true
   .map (entity)-> getInvEntityCanonicalUri(entity)[0]
+  .catch (err)->
+    # Allow to request reverse claims for properties that aren't yet
+    # whitelisted to be added to inv properties: simply ignore inv entities
+    if err.message is "property isn't whitelisted" then return []
+    else throw err
+
+# Customize queries to tailor for specific types of results
+# Ex: 'wdt:P921' reverse claims should not include films, etc
+# but only works or series
+typeTailoredQuery =
+  # country of citizenship
+  'wdt:P27': 'humans'
+  # educated at
+  'wdt:P69': 'humans'
+  # native language
+  'wdt:P103': 'humans'
+  # occupation
+  'wdt:P106': 'humans'
+  # publisher
+  'wdt:P123': 'editions'
+  # award received
+  'wdt:P166': 'humans'
+  # genre
+  'wdt:P135': 'humans'
+  # movement
+  'wdt:P136': 'works'
+  # collection
+  'wdt:P195': 'editions'
+  # original language
+  'wdt:P364': 'works'
+  # language of work
+  'wdt:P407': 'works'
+  # translator
+  'wdt:P655': 'editions'
+  # characters
+  'wdt:P674': 'works'
+  # narrative location
+  'wdt:P840': 'works'
+  # main subject
+  'wdt:P921': 'works'
+  # inspired by
+  'wdt:P941': 'works'
+
+sortByScore = (scores)-> (a, b)-> scores[b] - scores[a]

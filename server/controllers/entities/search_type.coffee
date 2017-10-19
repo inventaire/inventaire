@@ -12,7 +12,7 @@ searchType = require './lib/search_type'
 getEntityType = require './lib/get_entity_type'
 { typesNames } = __.require 'lib', 'wikidata/aliases'
 
-indexedTypes = [ 'works', 'humans', 'series', 'genres', 'movements', 'publishers' ]
+indexedTypes = [ 'works', 'humans', 'series', 'genres', 'movements', 'publishers', 'collections']
 
 module.exports = (req, res)->
   { type, search, limit } = req.query

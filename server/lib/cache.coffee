@@ -10,12 +10,12 @@ cacheDB = levelBase.simpleAPI 'cache'
 if CONFIG.resetCacheAtStartup then cacheDB.reset()
 { offline } = CONFIG
 
-{ oneDay, oneMonth } =  __.require 'lib', 'times'
+{ oneMinute, oneDay, oneMonth } =  __.require 'lib', 'times'
 
-module.exports =
-  # EXPECT method to come with context and arguments .bind'ed
-  # e.g. method = module.getData.bind(module, arg1, arg2)
-  get: (key, method, timespan=oneMonth, retry=true)->
+module.exports = cache_ =
+  # EXPECT function to come with context and arguments .bind'ed
+  # e.g. function = module.getData.bind(module, arg1, arg2)
+  get: (key, fn, timespan=oneMonth, retry=true)->
     types = ['string', 'function', 'number', 'boolean']
     try _.types arguments, types, 2
     catch err then return error_.reject err, 500
@@ -28,7 +28,7 @@ module.exports =
     refuseOldValue = timespan is 0
 
     checkCache key, timespan, retry
-    .then requestOnlyIfNeeded.bind(null, key, method, refuseOldValue)
+    .then requestOnlyIfNeeded.bind(null, key, fn, refuseOldValue)
     .catch (err)->
       label = "final cache_ err: #{key}"
       # not logging the stack trace in case of 404 and alikes
@@ -36,6 +36,23 @@ module.exports =
       else _.error err, label
 
       throw err
+
+  # An alternative get function to use when the function call might take a while
+  # and we are in a hury, and it's ok to return nothing
+  fastGet: (key, fn, timespan=oneMonth, delay)->
+    try _.types [ key, fn, timespan ], [ 'string', 'function', 'number' ]
+    catch err then return error_.reject err, 500
+
+    cacheDB.get key
+    .then (res)->
+      # If there is something cached and it's fresh enough, just return it
+      if res?.body? and isFreshEnough(res.timestamp, timespan)
+        return res.body
+
+      # Else plan an update and return what we presently have in cache
+      # (possibly nothing)
+      addToUpdateQueue { key, fn, timespan, delay }
+      return res?.body
 
   # Return what's in cache. If nothing, return nothing: no request performed
   dryGet: (key, timespan=oneMonth)->
@@ -58,7 +75,7 @@ module.exports =
 
   # exemple:
   # timespan = cache_.solveExpirationTime 'commons'
-  # cache_.get key, method, timespan
+  # cache_.get key, fn, timespan
 
   # once the default expiration time is greater than the time since
   # data change, just stop passing a timespan
@@ -73,14 +90,11 @@ module.exports =
 
 checkCache = (key, timespan, retry)->
   cacheDB.get key
-  .catch (err)->
-    _.warn err, "checkCache err: #{key}"
-    return
   .then (res)->
     unless res? then return
 
     { body, timestamp } = res
-    unless isFreshEnough timestamp, timespan then return
+    unless isFreshEnough(timestamp, timespan) then return
 
     if retry then return retryIfEmpty res, key
     else res
@@ -112,12 +126,12 @@ returnOldValue = (key, err)->
       err.old_value = null
       throw err
 
-requestOnlyIfNeeded = (key, method, refuseOldValue, cached)->
+requestOnlyIfNeeded = (key, fn, refuseOldValue, cached)->
   if cached?
     _.info "from cache: #{key}"
     cached.body
   else
-    method()
+    fn()
     .then (res)->
       _.info "from remote data source: #{key}"
       putResponseInCache key, res
@@ -136,7 +150,33 @@ putResponseInCache = (key, res)->
     body: res
     timestamp: new Date().getTime()
 
-isFreshEnough = (timestamp, timespan)->
-  _.types arguments, ['number', 'number']
-  age = Date.now() - timestamp
-  return age < timespan
+isFreshEnough = (timestamp, timespan)-> not _.expired(timestamp, timespan)
+
+updateQueue = []
+ongoingUpdates = false
+
+runNextUpdate = ->
+  nextUpdateData = updateQueue.shift()
+  unless nextUpdateData?
+    ongoingUpdates = false
+    _.info 'emptied cache update queue'
+    return
+
+  ongoingUpdates = true
+  { key, fn, timespan, delay } = nextUpdateData
+  # Add a delay to avoid hitting 429 Too Many Requests error codes
+  # Customization is mainly needed for testing
+  delay ?= 1000
+
+  _.info "next cache queue task: #{key} (remaining: #{updateQueue.length})"
+  cache_.get key, fn, timespan
+  # No job should block the queue
+  .timeout 5*oneMinute
+  .catch _.Error("#{key} cache udpate err")
+  .delay delay
+  .then runNextUpdate
+
+addToUpdateQueue = (updateData)->
+  updateQueue.push updateData
+  # Restart the update queue if it was idle
+  unless ongoingUpdates then runNextUpdate()

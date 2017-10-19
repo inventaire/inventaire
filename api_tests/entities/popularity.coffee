@@ -93,9 +93,11 @@ describe 'entities:popularity', ->
       .then (human)->
         createSerieWithTwoWorksWithTwoClaims()
         .spread (serie, workA, workB)->
-          addClaim serie.uri, 'wdt:P50', human.uri
-          addClaim workA.uri, 'wdt:P50', human.uri
-          addClaim workB.uri, 'wdt:P50', human.uri
+          Promise.all [
+            addClaim serie.uri, 'wdt:P50', human.uri
+            addClaim workA.uri, 'wdt:P50', human.uri
+            addClaim workB.uri, 'wdt:P50', human.uri
+          ]
           # 2: work items
           # 2: work being claim values
           # 2: the serie having both work linking to it
@@ -105,11 +107,11 @@ describe 'entities:popularity', ->
 
       return
 
-getPopularity = (uri)->
-  nonAuthReq 'get', "/api/entities?action=popularity&uris=#{uri}&refresh=true"
+getPopularity = (uri, fast=false)->
+  nonAuthReq 'get', "/api/entities?action=popularity&uris=#{uri}&refresh=true&fast=#{fast}"
 
-getScore = (uri)->
-  getPopularity uri
+getScore = (uri, fast)->
+  getPopularity uri, fast
   .then (res)-> res.scores[uri]
 
 scoreShouldEqual = (uri, value, done)->

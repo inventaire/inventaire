@@ -13,11 +13,9 @@ module.exports = (req, res, next)->
   uris = _.uniq uris.split('|')
 
   refresh = _.parseBooleanString refresh
+  # Default to true
+  fast = fast isnt 'false'
 
-  getEntitiesPopularity uris
+  getEntitiesPopularity uris, refresh
   .then _.Wrap(res, 'scores')
   .catch error_.Handler(req, res)
-
-popularityByUri = (index, uri)->
-  index[uri] = getEntityPopularity uri
-  return index
