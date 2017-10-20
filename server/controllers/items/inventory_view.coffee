@@ -22,7 +22,11 @@ module.exports = (req, res)->
     getEntitiesByUris uris
     .get 'entities'
     .then replaceEditionsByTheirWork
-    .then buildInvertedClaimTree
+    .then (data)->
+      { works, editionWorkMap } = data
+      tree = buildInvertedClaimTree works
+      workUriItemsMap = items.reduce buildWorkUriItemsMap(editionWorkMap), {}
+      return { tree, workUriItemsMap }
 
   # get associated entities
   # sort items by entities properties
@@ -36,13 +40,16 @@ replaceEditionsByTheirWork = (entities)->
   { works, editions } = splitEntities entities
   worksUris = works.map _.property('uri')
   _.log worksUris, 'worksUris'
-  editionsWorkUris = _.compact editions.map(getEditionWorkUri)
+  data = { editionsWorksUris: [], editionWorkMap: {} }
+  { editionsWorksUris, editionWorkMap } = editions.reduce aggregateEditionsWorksUris, data
   # Do no refetch works already fetched
-  editionsWorkUris = _.uniq _.difference(editionsWorkUris, worksUris)
-  _.log editionsWorkUris, 'editionsWorkUris'
-  getEntitiesByUris editionsWorkUris
+  editionsWorksUris = _.uniq _.difference(editionsWorksUris, worksUris)
+  _.log data, 'data'
+  getEntitiesByUris editionsWorksUris
   .get 'entities'
-  .then (editionsWorkEntities)-> works.concat _.values(editionsWorkEntities)
+  .then (editionsWorksEntities)->
+    works = works.concat _.values(editionsWorksEntities)
+    return { works, editionWorkMap }
 
 splitEntities = (entities)->
   _.values(entities).reduce splitWorksAndEditions, { works: [], editions: [] }
@@ -52,14 +59,18 @@ splitWorksAndEditions = (results, entity)->
   else results.editions.push entity
   return results
 
-getEditionWorkUri = (edition)->
-  workUris = edition.claims['wdt:P629']
-  unless workUris? then return _.warn edition, 'edition without work'
-  return workUris[0]
+aggregateEditionsWorksUris = (data, edition)->
+  worksUris = edition.claims['wdt:P629']
+  if worksUris?
+    data.editionWorkMap[edition.uri] = worksUris
+    data.editionsWorksUris.push worksUris...
+  else
+    _.warn edition, 'edition without work'
+  return data
 
 buildInvertedClaimTree = (entities)-> entities.reduce addToTree, {}
 
-viewProperties = [ 'wdt:P31', 'wdt:P50', 'wdt:P136' ]
+viewProperties = [ 'wdt:P50', 'wdt:P136', 'wdt:P921' ]
 
 addToTree = (tree, entity)->
   { uri, claims } = entity
@@ -72,3 +83,11 @@ addToTree = (tree, entity)->
         tree[property][value].push uri
 
   return tree
+
+buildWorkUriItemsMap = (editionWorkMap)-> (workUriItemsMap, item)->
+  { _id:itemId, entity:itemEntityUri } = item
+  itemWorksUris = editionWorkMap[itemEntityUri] or [ itemEntityUri ]
+  for workUri in itemWorksUris
+    workUriItemsMap[workUri] or= []
+    workUriItemsMap[workUri].push itemId
+  return workUriItemsMap
