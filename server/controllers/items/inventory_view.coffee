@@ -24,9 +24,10 @@ module.exports = (req, res)->
     .then replaceEditionsByTheirWork
     .then (data)->
       { works, editionWorkMap } = data
-      tree = buildInvertedClaimTree works
+      worksTree = buildInvertedClaimTree works
       workUriItemsMap = items.reduce buildWorkUriItemsMap(editionWorkMap), {}
-      return { tree, workUriItemsMap }
+      itemsByDate = getItemsByDate items
+      return { worksTree, workUriItemsMap, itemsByDate }
 
   # get associated entities
   # sort items by entities properties
@@ -75,10 +76,10 @@ viewProperties = [ 'wdt:P50', 'wdt:P136', 'wdt:P921' ]
 addToTree = (tree, entity)->
   { uri, claims } = entity
   for property in viewProperties
+    tree[property] or= {}
     values = entity.claims[property]
     if values?
       for value in values
-        tree[property] or= {}
         tree[property][value] or= []
         tree[property][value].push uri
 
@@ -91,3 +92,11 @@ buildWorkUriItemsMap = (editionWorkMap)-> (workUriItemsMap, item)->
     workUriItemsMap[workUri] or= []
     workUriItemsMap[workUri].push itemId
   return workUriItemsMap
+
+getItemsByDate = (items)->
+  items
+  .sort sortByCreationDate
+  .map getId
+
+getId = _.property '_id'
+sortByCreationDate = (a, b)-> b.created - a.created
