@@ -46,6 +46,10 @@ _.extend Q,
   genres: [
     'wd:Q483394' # genre
     'wd:Q223393' # literary genre
+    'wd:Q1792379' # art genre
+    'wd:Q4894405' # journalism genre
+    'wd:Q5151404' # comedic genre
+    'wd:Q21114848' # magazine genre
   ]
 
   # Types required to update the entity search engine
