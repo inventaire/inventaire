@@ -27,6 +27,8 @@ module.exports = (req, res)->
       worksTree = buildInvertedClaimTree works
       workUriItemsMap = items.reduce buildWorkUriItemsMap(editionWorkMap), {}
       itemsByDate = getItemsByDate items
+      worksByOwner = items.reduce aggregateOwnersWorks(editionWorkMap), {}
+      worksTree.owner = worksByOwner
       return { worksTree, workUriItemsMap, itemsByDate }
 
   # get associated entities
@@ -40,12 +42,10 @@ module.exports = (req, res)->
 replaceEditionsByTheirWork = (entities)->
   { works, editions } = splitEntities entities
   worksUris = works.map _.property('uri')
-  _.log worksUris, 'worksUris'
   data = { editionsWorksUris: [], editionWorkMap: {} }
   { editionsWorksUris, editionWorkMap } = editions.reduce aggregateEditionsWorksUris, data
   # Do no refetch works already fetched
   editionsWorksUris = _.uniq _.difference(editionsWorksUris, worksUris)
-  _.log data, 'data'
   getEntitiesByUris editionsWorksUris
   .get 'entities'
   .then (editionsWorksEntities)->
@@ -100,3 +100,11 @@ getItemsByDate = (items)->
 
 getId = _.property '_id'
 sortByCreationDate = (a, b)-> b.created - a.created
+
+aggregateOwnersWorks = (editionWorkMap)-> (index, item)->
+  { _id:itemId, owner:ownerId, entity:entityUri } = item
+  workUri = editionWorkMap[entityUri] or entityUri
+  index[ownerId] or= {}
+  index[ownerId][workUri] or= []
+  index[ownerId][workUri].push itemId
+  return index
