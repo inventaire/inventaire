@@ -89,8 +89,14 @@ module.exports = (_)->
       # Make sure to return the non-formated key
       return key
 
-    EndTimer: (key)-> ()->
+    # To be used in promise chains
+    StartTimer: (key)-> (data)->
+      customLoggers.startTimer key
+      return data
+
+    EndTimer: (key)-> (data)->
       console.timeEnd chalk.magenta(key)
+      return data
 
   # The same as inv-loggers::errorRethrow but using customLoggers.error instead
   errorRethrow = (err, label)->
