@@ -27,6 +27,7 @@ _.extend Q,
     'wd:Q7725634' # literary work
     'wd:Q17518870' # group of literary works
     'wd:Q12308638' # poetry anthology
+    'wd:Q1279564' # short story collection
     'wd:Q386724' # work
     'wd:Q49084' # short story / conte
     'wd:Q34620' # Greek tragedy
