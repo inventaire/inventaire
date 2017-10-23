@@ -3,8 +3,8 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
-{ authReq, getUser, adminReq, undesiredErr } = __.require 'apiTests', 'utils/utils'
-{ ensureEditionExists } = require '../entities/helpers'
+{ authReq, getUser, adminReq, undesiredErr } = require '../utils/utils'
+{ ensureEditionExists } = require '../fixtures/entities'
 randomString = __.require 'lib', './utils/random_string'
 
 describe 'items:snapshot', ->

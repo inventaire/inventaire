@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ nonAuthReq, authReq, undesiredRes, undesiredErr } = __.require 'apiTests', 'utils/utils'
+{ nonAuthReq, authReq, undesiredRes, undesiredErr } = require '../utils/utils'
 
 describe 'entities:update-claims', ->
   it 'should reject an update with an inappropriate property', (done)->

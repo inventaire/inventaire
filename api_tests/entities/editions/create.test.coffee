@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ nonAuthReq, authReq, undesiredErr, undesiredRes } = __.require 'apiTests', 'utils/utils'
+{ nonAuthReq, authReq, undesiredErr, undesiredRes } = require '../../utils/utils'
 
 describe 'entities:editions:create', ->
   it 'should not be able to create an edition entity without a work entity', (done)->

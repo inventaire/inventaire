@@ -3,7 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
-{ nonAuthReq, authReq, undesiredRes, undesiredErr, getUser } = __.require 'apiTests', 'utils/utils'
+{ nonAuthReq, authReq, undesiredRes, undesiredErr, getUser } = require '../utils/utils'
 randomString = __.require 'lib', './utils/random_string'
 
 describe 'search:global', ->

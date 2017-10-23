@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ authReq, nonAuthReq, undesiredErr } = __.require 'apiTests', 'utils/utils'
+{ authReq, nonAuthReq, undesiredErr } = require '../utils/utils'
 
 describe 'entities:get:by-uris', ->
   it 'should accept alternative ISBN 13 syntax', (done)->

@@ -2,14 +2,15 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ nonAuthReq, authReq, getUser, getUserB, undesiredErr } = __.require 'apiTests', 'utils/utils'
+{ nonAuthReq, authReq, customAuthReq, getUser, getUserB, undesiredErr } = require '../utils/utils'
+{ createUser } = require '../fixtures/users'
 
 describe 'users:search', ->
   it 'should find a user', (done)->
     getUser()
     .then (user)->
-      userId = user._id
-      nonAuthReq 'get', "/api/users?action=search&search=testuser"
+      { username } = user
+      nonAuthReq 'get', "/api/users?action=search&search=#{username}"
       .then (res)->
         (user._id in usersIds(res)).should.be.true()
         done()
@@ -20,8 +21,8 @@ describe 'users:search', ->
   it 'should find a user even with just a prefix', (done)->
     getUser()
     .then (user)->
-      userId = user._id
-      nonAuthReq 'get', "/api/users?action=search&search=testu"
+      prefix = user.username[0..4]
+      nonAuthReq 'get', "/api/users?action=search&search=#{prefix}"
       .then (res)->
         (user._id in usersIds(res)).should.be.true()
         done()
@@ -30,10 +31,13 @@ describe 'users:search', ->
     return
 
   it 'should find a user even with a typo', (done)->
-    getUser()
+    # Using a user with a non-random username to make the typo not to hard
+    # to recover for ElasticSearch
+    userPromise = createUser 'testuser'
+    userPromise
+    .delay 10
     .then (user)->
-      userId = user._id
-      nonAuthReq 'get', "/api/users?action=search&search=testusr"
+      customAuthReq userPromise, 'get', "/api/users?action=search&search=testusr"
       .then (res)->
         (user._id in usersIds(res)).should.be.true()
         done()
@@ -44,7 +48,6 @@ describe 'users:search', ->
   it 'should not return snapshot data', (done)->
     getUserB()
     .then (user)->
-      userId = user._id
       authReq 'get', "/api/users?action=search&search=#{user.username}"
       .then (res)->
         (user._id in usersIds(res)).should.be.true()

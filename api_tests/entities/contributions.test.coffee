@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ adminReq, authReq, getUser, undesiredErr } = __.require 'apiTests', 'utils/utils'
+{ adminReq, authReq, getUser, undesiredErr } = require '../utils/utils'
 
 describe 'entities:get:contributions', ->
   it 'should return a list of patches', (done)->

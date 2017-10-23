@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ authReq, getUser, undesiredErr } = __.require 'apiTests', 'utils/utils'
+{ authReq, getUser, undesiredErr } = require '../utils/utils'
 { newItemBase, CountChange } = require './helpers'
 
 describe 'items:update', ->

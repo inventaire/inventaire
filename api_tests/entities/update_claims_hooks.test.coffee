@@ -3,7 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 promises_ = __.require 'lib', 'promises'
-{ nonAuthReq, authReq, undesiredRes, undesiredErr } = __.require 'apiTests', 'utils/utils'
+{ nonAuthReq, authReq, undesiredRes, undesiredErr } = require '../utils/utils'
 
 describe 'entities:update-claims-hooks', ->
   it 'should update a work label from an edition title update if in sync', (done)->

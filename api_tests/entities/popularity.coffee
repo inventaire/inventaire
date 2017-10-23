@@ -3,8 +3,8 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
-{ authReq, nonAuthReq, undesiredErr } = __.require 'apiTests', 'utils/utils'
-{ createEdition, createWork, createItemFromEntityUri, addClaim, createSerie, createHuman } = require './helpers'
+{ authReq, nonAuthReq, undesiredErr } = require '../utils/utils'
+{ createEdition, createWork, createItemFromEntityUri, addClaim, createSerie, createHuman } = require '../fixtures/entities'
 
 describe 'entities:popularity', ->
   describe 'edition', ->
