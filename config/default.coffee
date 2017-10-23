@@ -193,3 +193,5 @@ module.exports = config =
 
   couch2elastic4sync:
     activated: true
+
+  itemsCountDebounceTime: 5000

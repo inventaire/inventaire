@@ -4,6 +4,7 @@ _ = __.require 'builders', 'utils'
 should = require 'should'
 { authReq, getUser, undesiredErr } = require '../utils/utils'
 { newItemBase, CountChange } = require './helpers'
+debounceDelay = CONFIG.itemsCountDebounceTime + 100
 
 describe 'items:update', ->
   it 'should update an item', (done)->
@@ -35,7 +36,7 @@ describe 'items:update', ->
   it 'should trigger an update of the users items counters', (done)->
     authReq 'post', '/api/items', newItemBase()
     # Delay to let the time to the item counter to be updated
-    .delay 10
+    .delay debounceDelay
     .then (item)->
       getUser()
       .then (userBefore)->
@@ -43,7 +44,7 @@ describe 'items:update', ->
         item.listing = newListing = 'public'
         authReq 'put', '/api/items', item
         # Delay to request the user after its items count was updated
-        .delay 10
+        .delay debounceDelay
         .then (updatedItem)->
           updatedItem.listing.should.equal newListing
           getUser()

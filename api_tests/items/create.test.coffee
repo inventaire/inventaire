@@ -2,9 +2,13 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
+{ Promise } = __.require 'lib', 'promises'
 { authReq, getUser, undesiredErr } = require '../utils/utils'
 { newItemBase, CountChange } = require './helpers'
 { ensureEditionExists } = require '../fixtures/entities'
+{ createItem } = require '../fixtures/items'
+{ createUser, getRefreshedUser } = require '../fixtures/users'
+debounceDelay = CONFIG.itemsCountDebounceTime + 100
 
 describe 'items:create', ->
   it 'should create an item', (done)->
@@ -25,20 +29,16 @@ describe 'items:create', ->
     return
 
   it 'should increment the user items counter', (done)->
-    getUser()
-    .then (userBefore)->
-      userId = userBefore._id
-      authReq 'post', '/api/items', newItemBase()
-      # Delay to request the user after its items count was updated
-      .delay 10
-      .then (res)->
-        getUser()
-        .then (userAfter)->
-          countChange = CountChange userBefore.snapshot, userAfter.snapshot
-          countChange('private').should.equal 1
-          countChange('network').should.equal 0
-          countChange('public').should.equal 0
-          done()
+    userPromise = createUser()
+    createItem userPromise, { listing: 'public' }
+    .delay debounceDelay
+    .then -> getRefreshedUser userPromise
+    .then (user)->
+      _.log user.snapshot, 'user.snapshot'
+      user.snapshot.public['items:count'].should.equal 1
+      user.snapshot.network['items:count'].should.equal 0
+      user.snapshot.private['items:count'].should.equal 0
+      done()
     .catch undesiredErr(done)
 
     return
@@ -148,6 +148,25 @@ describe 'items:create', ->
     .catch (err)->
       err.statusCode.should.equal 400
       err.body.status_verbose.should.equal 'invalid uri id: 9782800051922 (uri: isbn:9782800051922)'
+      done()
+    .catch undesiredErr(done)
+
+    return
+
+  # Should not create edition conflicts on the user document
+  it 'should keep the snapshot data updated even when created in bulk', (done)->
+    userPromise = createUser()
+    Promise.all [
+      createItem userPromise, { listing: 'public' }
+      createItem userPromise, { listing: 'network' }
+      createItem userPromise, { listing: 'private' }
+    ]
+    .delay debounceDelay
+    .then -> getRefreshedUser userPromise
+    .then (user)->
+      user.snapshot.public['items:count'].should.equal 1
+      user.snapshot.network['items:count'].should.equal 1
+      user.snapshot.private['items:count'].should.equal 1
       done()
     .catch undesiredErr(done)
 
