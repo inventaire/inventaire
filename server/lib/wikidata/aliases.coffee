@@ -82,6 +82,8 @@ _.extend Q,
     'wd:Q968159'
     # literary group
     'wd:Q23834194'
+    # philosophy
+    'wd:Q5891'
   ]
 
   # Types to ignore (Category pages, homonymie, etc.)
