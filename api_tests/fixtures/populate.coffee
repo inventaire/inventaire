@@ -5,26 +5,19 @@ _ = __.require 'builders', 'utils'
 { createUser } = require './users'
 { createRandomizedItem } = require './items'
 
-module.exports = ->
-  Promise.all [
-    createUserWithItems()
-    createUserWithItems()
-    createUserWithItems()
-    createUserWithItems()
-    createUserWithItems()
-    createUserWithItems()
-  ]
+module.exports = (params) ->
+  { usersCount } = params
+  promiseArray = [1..usersCount].map ->
+    createUserWithItems(params)
+  Promise.all promiseArray
 
-createUserWithItems = ->
+createUserWithItems = (params) ->
+  { itemsPerUser, publicItemsPerUser } = params
   userPromise = createUser()
-  Promise.all [
-    createRandomizedItem userPromise, { listing: 'public'}
-    createRandomizedItem userPromise, { listing: 'public'}
-    createRandomizedItem userPromise, { listing: 'public'}
-    createRandomizedItem userPromise, { listing: 'public'}
-    createRandomizedItem userPromise
-    createRandomizedItem userPromise
-  ]
-  .then (items)->
-    userPromise
-    .then (user)-> { user, items }
+  userPromise.then ->
+    if itemsPerUser
+      [1..itemsPerUser].forEach ->
+        createRandomizedItem userPromise
+    if publicItemsPerUser
+      [1..publicItemsPerUser].forEach ->
+        createRandomizedItem userPromise, { listing: 'public'}
