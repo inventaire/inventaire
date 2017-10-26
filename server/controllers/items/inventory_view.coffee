@@ -56,8 +56,10 @@ splitEntities = (entities)->
   _.values(entities).reduce splitWorksAndEditions, { works: [], editions: [] }
 
 splitWorksAndEditions = (results, entity)->
-  if entity.type is 'work' then results.works.push entity
-  else results.editions.push entity
+  switch entity.type
+    when 'work' then results.works.push entity
+    when 'edition' then results.editions.push entity
+    else _.warn entity, 'invalid item entity type'
   return results
 
 aggregateEditionsWorksUris = (data, edition)->
