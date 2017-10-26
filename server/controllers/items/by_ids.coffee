@@ -10,6 +10,10 @@ promises_ = __.require 'lib', 'promises'
 
 module.exports = (req, res)->
   reqUserId = req.user?._id
+
+  # By default, doesn't include users
+  includeUsers = _.parseBooleanString req.query['include-users']
+
   validateQuery req.query, 'ids', _.isItemId
   .then (page)->
     { params:ids } = page
@@ -21,7 +25,7 @@ module.exports = (req, res)->
     # Paginating isn't really required when requesting items by ids
     # but it also handles sorting and the consistency of the API
     .then Paginate(page)
-  .then addUsersData(reqUserId)
+  .then addUsersData(reqUserId, includeUsers)
   .then res.json.bind(res)
   .catch error_.Handler(req, res)
 

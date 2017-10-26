@@ -21,6 +21,8 @@ module.exports =
       'activity': require './activity'
 
   post: ActionsControllers
+    public:
+      'by-uris': require './by_uris'
     authentified:
       'create': require './create'
       'exists-or-create-from-seed': require './exists_or_create_from_seed'

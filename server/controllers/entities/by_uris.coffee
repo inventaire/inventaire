@@ -5,11 +5,15 @@ getEntitiesByUris = require './lib/get_entities_by_uris'
 
 module.exports = (req, res, next)->
   { uris, refresh } = req.query
+  # Accept URIs in a POST body
+  uris or= req.body?.uris
 
-  unless _.isNonEmptyString uris
+  unless _.isNonEmptyString(uris) or _.isNonEmptyArray(uris)
     return error_.bundleMissingQuery req, res, 'uris'
 
-  uris = _.uniq uris.split('|')
+  if _.isString uris then uris = uris.split '|'
+
+  uris = _.uniq uris
 
   refresh = _.parseBooleanString refresh
 

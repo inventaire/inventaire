@@ -54,7 +54,9 @@ module.exports =
 
   validateLimitAndOffset: validateLimitAndOffset
 
-  addUsersData: (reqUserId)-> (page)->
+  addUsersData: (reqUserId, includeUsers)-> (page)->
+    if includeUsers is false then return page
+
     { items } = page
     if items.length is 0
       page.users = []
