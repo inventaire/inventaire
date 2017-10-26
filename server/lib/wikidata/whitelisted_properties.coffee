@@ -12,7 +12,7 @@ module.exports = [
   'P31' # instance of
   'P39' # position held
   'P50' # author
-  'P58' #screen writer
+  'P58' # screen writer
   'P69' # educated at
   'P103' # native language
   'P106' # occupation
