@@ -15,7 +15,17 @@ module.exports = (req, res)->
   .catch error_.Handler(req, res)
 
 selectRecentItems = (items)->
-  items.slice 0, 15
+  itemsLimit = 15
+  maxItemsPerOwner = 3
+
+  Promise.resolve _.groupBy items, (item)-> item.owner
+  .then (itemsByOwner)->
+    _.map itemsByOwner, (items)->
+      items.slice 0, maxItemsPerOwner
+  .then (limitedItemsByOwner)->
+    _.flatten _.values limitedItemsByOwner
+  .then (allRecentItems)->
+    allRecentItems.slice 0, itemsLimit
 
 bundleOwnersData = (res, reqUserId, items)->
   unless items?.length > 0

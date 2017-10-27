@@ -19,3 +19,17 @@ describe 'items:recent-public', ->
     .then -> done()
     .catch undesiredErr(done)
     return
+
+  it 'should fetch items from minimum 5 owners', (done)->
+    populate
+      usersCount: 2
+      publicItemsPerUser: 4
+    .then ->
+      nonAuthReq 'get', recentPublicUrl
+    .then (res)->
+      res.users.length.should.be.above 4
+
+    .delay 10
+    .then -> done()
+    .catch undesiredErr(done)
+    return
