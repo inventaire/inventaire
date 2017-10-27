@@ -27,7 +27,7 @@ module.exports = (entity)->
         text += formatPropClaims property, datesValues
 
   # Replace the last ';' by a '.'
-  return text.replace /;$/, '.\n'
+  return text.replace /;$/, '.'
 
 formatStringValue = (str)->
   # May also be of type number
