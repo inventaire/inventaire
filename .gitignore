@@ -32,4 +32,5 @@ imageFactory
 notes
 db/couchdb/migration_docs
 run
+./dumps
 

@@ -11,9 +11,10 @@ username=$(db_param username)
 password=$(db_param password)
 db_name='entities-prod'
 today=$(date +'20%y-%m-%d')
-output_file="${folder}/${today}_${db_name}.json"
+raw_db_json_filename="${today}_${db_name}.json"
+output_file="${folder}/${raw_db_json_filename}"
 
-[ -f "$output_file" ] && echo "$output_file already exist" || {
+[ -f "$output_file" ] && echo "$raw_db_json_filename already exist" || {
   couchdb-backup -b -H "$host" -P "$port" -u "$username" -p "$password" -d "$db_name" -f "$output_file"
 }
 
@@ -21,15 +22,19 @@ filtered_dump_filename="${today}.ndjson"
 filtered_dump_filename_with_seeds="${today}_with_seeds.ndjson"
 redirections_dump="${today}_redirections.ndjson"
 
-cd "$folder"
+root_cwd="$(pwd)"
 
-echo "filtering $output_file into $folder/$filtered_dump_filename"
+alias convert_ndjson_dump_to_ttl="$(pwd)/scripts/dumps/convert_ndjson_dump_to_ttl"
+
+cd "$folder"
 
 alias drop_colon="sed 's/,$//'"
 
-cat "$output_file" | grep '"type":"entity","redirect":' | drop_colon > "$redirections_dump"
+echo "filtering $raw_db_json_filename redirections into ${redirections_dump}"
+cat "$raw_db_json_filename" | grep '"type":"entity","redirect":' | drop_colon > "$redirections_dump"
 
-cat "$output_file" |
+echo "filtering $raw_db_json_filename with seeds into $filtered_dump_filename_with_seeds"
+cat "$raw_db_json_filename" |
   # Filter-out removed:placeholders
   grep '"type":"entity"' |
   # Filter-out redirections
@@ -38,11 +43,21 @@ cat "$output_file" |
   grep -v '_rev":"1-' |
   drop_colon > "${filtered_dump_filename_with_seeds}"
 
+echo "filtering $raw_db_json_filename without seeds into $filtered_dump_filename"
 cat "${filtered_dump_filename_with_seeds}" |
   # Filter-out entities that are just unedited data seeds
   grep -v '_rev":"2-' > "$filtered_dump_filename"
 
-echo compressing $folder/$today*.ndjson
-gzip -9kf $folder/$today*.ndjson
+echo compressing $today*.ndjson
+gzip -9kf $today*.ndjson
+
+# We need to return to the root directory so that convert_ndjson_dump_to_ttl
+# can find the CONFIG
+cd $root_cwd
+turtle_filename="${today}.ttl"
+turtle_filepath="${folder}/${turtle_filename}"
+echo "converting to turtle $turtle_filename"
+cat "$folder/$filtered_dump_filename" | ./scripts/dumps/convert_ndjson_dump_to_ttl > "$turtle_filepath"
+gzip -9kf "$turtle_filepath"
 
 echo "done"

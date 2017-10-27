@@ -1,0 +1,29 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix wikibase: <http://wikiba.se/ontology-beta#> .
+# @prefix wdata: <https://www.wikidata.org/wiki/Special:EntityData/> .
+@prefix wd: <http://www.wikidata.org/entity/> .
+# @prefix wds: <http://www.wikidata.org/entity/statement/> .
+# @prefix wdref: <http://www.wikidata.org/reference/> .
+# @prefix wdv: <http://www.wikidata.org/value/> .
+@prefix wdt: <http://www.wikidata.org/prop/direct/> .
+# @prefix wdtn: <http://www.wikidata.org/prop/direct-normalized/> .
+# @prefix p: <http://www.wikidata.org/prop/> .
+# @prefix ps: <http://www.wikidata.org/prop/statement/> .
+# @prefix psv: <http://www.wikidata.org/prop/statement/value/> .
+# @prefix psn: <http://www.wikidata.org/prop/statement/value-normalized/> .
+# @prefix pq: <http://www.wikidata.org/prop/qualifier/> .
+# @prefix pqv: <http://www.wikidata.org/prop/qualifier/value/> .
+# @prefix pqn: <http://www.wikidata.org/prop/qualifier/value-normalized/> .
+# @prefix pr: <http://www.wikidata.org/prop/reference/> .
+# @prefix prv: <http://www.wikidata.org/prop/reference/value/> .
+# @prefix prn: <http://www.wikidata.org/prop/reference/value-normalized/> .
+# @prefix wdno: <http://www.wikidata.org/prop/novalue/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix schema: <http://schema.org/> .
+# @prefix cc: <http://creativecommons.org/ns#> .
+# @prefix geo: <http://www.opengis.net/ont/geosparql#> .
+# @prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix inv: <http://inventaire.io/entity/> .

@@ -1,0 +1,30 @@
+#!/usr/bin/env coffee
+CONFIG = require 'config'
+__ = CONFIG.universalPath
+_ = __.require 'builders', 'utils'
+split = require 'split'
+through = require 'through'
+fs = require 'fs'
+serializeEntityInTurtle = require './lib/serialize_entity_in_turtle'
+
+headers = fs.readFileSync(__dirname + '/headers.ttl').toString()
+  .split '\n'
+  # Filtering-out commented out lines
+  .filter (line)-> line[0] isnt '#'
+  .join '\n'
+
+console.log(headers)
+
+parse = (line)->
+  try
+    unless _.isNonEmptyString(line) then return
+    json = JSON.parse line
+    console.log serializeEntityInTurtle(json)
+  catch err
+    console.log 'line', line
+    console.error 'err', err
+
+process.stdin
+.pipe split()
+.pipe through(parse)
+.on 'error', _.Error('conversion error')
