@@ -1,0 +1,48 @@
+#!/usr/bin/env zsh
+
+set -eu
+
+folder=$(node -p "require('config').universalPath.path('dumps')")
+db_param(){ node -p "require('config').db.$1" }
+
+host=$(db_param host)
+port=$(db_param port)
+username=$(db_param username)
+password=$(db_param password)
+db_name='entities-prod'
+today=$(date +'20%y-%m-%d')
+output_file="${folder}/${today}_${db_name}.json"
+
+[ -f "$output_file" ] && echo "$output_file already exist" || {
+  couchdb-backup -b -H "$host" -P "$port" -u "$username" -p "$password" -d "$db_name" -f "$output_file"
+}
+
+filtered_dump_filename="${today}.ndjson"
+filtered_dump_filename_with_seeds="${today}_with_seeds.ndjson"
+redirections_dump="${today}_redirections.ndjson"
+
+cd "$folder"
+
+echo "filtering $output_file into $folder/$filtered_dump_filename"
+
+alias drop_colon="sed 's/,$//'"
+
+cat "$output_file" | grep '"type":"entity","redirect":' | drop_colon > "$redirections_dump"
+
+cat "$output_file" |
+  # Filter-out removed:placeholders
+  grep '"type":"entity"' |
+  # Filter-out redirections
+  grep -v "redirect" |
+  # Filter-out entities empty canvas (entity creation process failure)
+  grep -v '_rev":"1-' |
+  drop_colon > "${filtered_dump_filename_with_seeds}"
+
+cat "${filtered_dump_filename_with_seeds}" |
+  # Filter-out entities that are just unedited data seeds
+  grep -v '_rev":"2-' > "$filtered_dump_filename"
+
+echo compressing $folder/$today*.ndjson
+gzip -9kf $folder/$today*.ndjson
+
+echo "done"
