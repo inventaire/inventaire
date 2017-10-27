@@ -21,8 +21,8 @@ output_file="${folder}/${raw_db_json_filename}"
   couchdb-backup -b -H "$host" -P "$port" -u "$username" -p "$password" -d "$db_name" -f "$output_file"
 }
 
-filtered_dump_filename="${today}.ndjson"
-filtered_dump_filename_with_seeds="${today}_with_seeds.ndjson"
+filtered_dump_filename="${today}_entities.ndjson"
+filtered_dump_filename_with_seeds="${today}_entities_with_seeds.ndjson"
 redirections_dump="${today}_redirections.ndjson"
 root_cwd="$(pwd)"
 alias drop_colon="sed 's/,$//'"
@@ -50,7 +50,7 @@ cat "${filtered_dump_filename_with_seeds}" |
   grep -v '_rev":"2-' > "$filtered_dump_filename"
 
 echo compressing $today*.ndjson
-gzip -9kf $today*.ndjson
+gzip -9f $today*.ndjson
 
 
 # TTL dump
@@ -58,11 +58,12 @@ gzip -9kf $today*.ndjson
 # We need to return to the root directory so that convert_ndjson_dump_to_ttl
 # can find the CONFIG
 cd $root_cwd
-turtle_filename="${today}.ttl"
+turtle_filename="${today}_entities.ttl"
 turtle_filepath="${folder}/${turtle_filename}"
 echo "converting to turtle $turtle_filename"
-cat "$folder/$filtered_dump_filename" | ./scripts/dumps/convert_ndjson_dump_to_ttl > "$turtle_filepath"
-gzip -9kf "$turtle_filepath"
+cat "$folder/${filtered_dump_filename}.gz" | gzip -d | ./scripts/dumps/convert_ndjson_dump_to_ttl > "$turtle_filepath"
+gzip -9f "$turtle_filepath"
 
+rm "$output_file"
 
 echo "done"
