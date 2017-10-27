@@ -156,7 +156,6 @@ validateProperty = (property)->
 # which type those datatype should returned when passed to _.typeOf
 datatypePrimordialType =
   string: 'string'
-  number: 'number'
   entity: 'string'
   'ipfs-path': 'string'
   'positive-integer': 'number'
