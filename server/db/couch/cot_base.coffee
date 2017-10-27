@@ -1,4 +1,4 @@
-CONFIG = require('config')
+CONFIG = require 'config'
 __ = CONFIG.universalPath
 
 params =

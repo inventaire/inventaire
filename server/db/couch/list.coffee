@@ -6,11 +6,11 @@
 # that aren't required to run on production
 
 module.exports =
-  users: ['users', 'relations', 'invited']
-  groups: ['groups']
-  items: ['items', 'followedEntities']
-  transactions: ['transactions']
-  comments: ['comments']
-  entities: ['entities', 'entities_deduplicate']
-  patches: ['patches']
-  notifications: ['notifications']
+  users: [ 'users', 'relations', 'invited' ]
+  groups: [ 'groups' ]
+  items: [ 'items', 'followedEntities' ]
+  transactions: [ 'transactions' ]
+  comments: [ 'comments' ]
+  entities: [ 'entities', 'entities_deduplicate' ]
+  patches: [ 'patches' ]
+  notifications: [ 'notifications' ]

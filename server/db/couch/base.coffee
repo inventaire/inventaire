@@ -1,4 +1,4 @@
-CONFIG = require('config')
+CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 getDbApi = require './cot_base'
