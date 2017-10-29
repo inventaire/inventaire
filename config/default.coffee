@@ -75,6 +75,7 @@ module.exports = config =
   # Make friends requests and groups invits be automatically accepted
   # can be useful for development
   godMode: false
+  hashPasswords: true
   # see server/controllers/tests.coffee
   morgan:
     mutedDomains: []

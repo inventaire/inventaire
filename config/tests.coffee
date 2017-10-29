@@ -20,6 +20,7 @@ module.exports =
   graph:
     social: undefined
   godMode: false
+  hashPasswords: false
   piwik:
     enabled: false
   dataseed:
