@@ -2,8 +2,8 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ nonAuthReq, authReq, undesiredRes, undesiredErr } = __.require 'apiTests', 'utils/utils'
-{ ensureEditionExists } = require './helpers'
+{ nonAuthReq, authReq, undesiredRes, undesiredErr } = require '../utils/utils'
+{ ensureEditionExists } = require '../fixtures/entities'
 
 describe 'entities:create', ->
   it 'should not be able to create an entity without a wdt:P31 value', (done)->

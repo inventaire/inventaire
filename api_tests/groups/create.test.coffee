@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ authReq, undesiredErr } = __.require 'apiTests', 'utils/utils'
+{ authReq, undesiredErr } = require '../utils/utils'
 randomString = __.require 'lib', './utils/random_string'
 slugify = __.require 'controllers', 'groups/lib/slugify'
 

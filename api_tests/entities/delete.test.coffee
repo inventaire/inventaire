@@ -3,8 +3,8 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
-{ nonAuthReq, authReq, adminReq, undesiredRes, undesiredErr } = __.require 'apiTests', 'utils/utils'
-{ createHuman, createWork, createWorkWithAuthor, createEdition, ensureEditionExists } = require './helpers'
+{ nonAuthReq, authReq, adminReq, undesiredRes, undesiredErr } = require '../utils/utils'
+{ createHuman, createWork, createWorkWithAuthor, createEdition, ensureEditionExists } = require '../fixtures/entities'
 
 describe 'entities:delete:by-uris', ->
   it 'should require admin rights', (done)->

@@ -3,9 +3,9 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
-{ nonAuthReq, authReq, adminReq, undesiredErr, undesiredRes } = __.require 'apiTests', 'utils/utils'
+{ nonAuthReq, authReq, adminReq, undesiredErr, undesiredRes } = require '../utils/utils'
 randomString = __.require 'lib', './utils/random_string'
-{ createWork, createEdition, ensureEditionExists, createItemFromEntityUri } = require './helpers'
+{ createWork, createEdition, ensureEditionExists, createItemFromEntityUri } = require '../fixtures/entities'
 
 describe 'entities:merge', ->
   it 'should merge two entities with an inv URI', (done)->

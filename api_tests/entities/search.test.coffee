@@ -3,7 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
-{ nonAuthReq, authReq, getUser, adminReq, undesiredErr } = __.require 'apiTests', 'utils/utils'
+{ nonAuthReq, authReq, getUser, adminReq, undesiredErr } = require '../utils/utils'
 randomString = __.require 'lib', './utils/random_string'
 
 describe 'entities:search', ->

@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ authReq, undesiredRes, undesiredErr } = __.require 'apiTests', 'utils/utils'
+{ authReq, undesiredRes, undesiredErr } = require '../utils/utils'
 
 imageUrl = encodeURIComponent 'https://raw.githubusercontent.com/inventaire/inventaire-client/master/app/assets/icon/32.png'
 dataUrlStart = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYA'

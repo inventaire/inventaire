@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ nonAuthReq, getUser, undesiredErr } = __.require 'apiTests', 'utils/utils'
+{ nonAuthReq, getUser, undesiredErr } = require '../utils/utils'
 slugify = __.require 'controllers', 'groups/lib/slugify'
 
 describe 'groups:get:slug', ->

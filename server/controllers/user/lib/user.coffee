@@ -136,6 +136,6 @@ deleteUser = require('./delete')(db, user_)
 reqParsers = require './req_parsers'
 relationsStatus = require './relations_status'
 summary_ = require('./summary')(db)
-require('./keep_snapshot_items_counts_updated')(user_)
+require('./keep_snapshot_items_counts_updated')()
 
 module.exports = _.extend user_, token_, relationsStatus, reqParsers, deleteUser, summary_

@@ -1,33 +1,29 @@
-__ = require('config').universalPath
+# Keep the user snapshot data about the state of her items updated
+# taking care of avoiding edit conflicts on the user document when several items
+# are created/edited in a short period of time
+
+CONFIG = require 'config'
+__ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 radio = __.require 'lib', 'radio'
-User = __.require 'models', 'user'
+updateSnapshotItemsCounts = require './update_snapshot_items_counts'
+{ itemsCountDebounceTime:delay } = CONFIG
+totalCount = 0
+debounceCount = 0
 
-module.exports = (user_)->
-  radio.on 'item:update', (previousItem, updateItem)->
-    userId = previousItem?.owner or updateItem?.owner
-    previousListing = previousItem?.listing
-    newListing = updateItem?.listing
-    # No update needed
-    if previousListing is newListing then return
-    # TODO: debounce this request so that parallele updates of a same user
-    # doesn't trigger an update conflict
-    user_.db.update userId, updateSnapshotItemsCounts(previousListing, newListing)
+module.exports = ->
+  debouncedUpdaters = {}
+
+  itemsCountsUpdater = (userId)-> ()->
+    # When it gets to be called, remove the lazy updater
+    # to prevent blocking memory undefinitely
+    delete debouncedUpdaters[userId]
+    updateSnapshotItemsCounts userId
     .catch _.Error('user updateSnapshotItemsCounts err')
 
-updateSnapshotItemsCounts = (previousListing, newListing)-> (user)->
-  # Item updated or deleted
-  if previousListing? then decrement user.snapshot[previousListing]
-  # Item created or updated
-  if newListing? then increment user.snapshot[newListing]
-
-  return user
-
-increment = (snapshotSection)->
-  snapshotSection['items:count'] += 1
-  snapshotSection['items:last-add'] = Date.now()
-  return
-
-decrement = (snapshotSection)->
-  snapshotSection['items:count'] -= 1
-  return
+  radio.on 'item:update', (previousItem, updateItem)->
+    userId = previousItem?.owner or updateItem?.owner
+    # Creating a personnalized debouncer as a global debounce would be delayed
+    # undefinitely "at scale"
+    debouncedUpdaters[userId] or= _.debounce itemsCountsUpdater(userId), delay
+    debouncedUpdaters[userId]()

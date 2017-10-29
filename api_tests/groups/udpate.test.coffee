@@ -2,13 +2,13 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ nonAuthReq, authReq, undesiredErr } = __.require 'apiTests', 'utils/utils'
-{ getGroup, endpointBase } = require './helpers'
+{ nonAuthReq, authReq, undesiredErr } = require '../utils/utils'
+{ createGroup, endpointBase } = require '../fixtures/groups'
 slugify = __.require 'controllers', 'groups/lib/slugify'
 
 describe 'groups:update-settings', ->
   it 'should update the group slug when updating the name', (done)->
-    getGroup
+    createGroup
     .then (group)->
       groupId = group._id
       updatedName = group.name + '-updated'
@@ -31,7 +31,7 @@ describe 'groups:update-settings', ->
     return
 
   it 'should request a group slug update when updating the name', (done)->
-    getGroup
+    createGroup
     .then (group)->
       groupId = group._id
       updatedName = group.name + '-updated-again'
@@ -51,7 +51,7 @@ describe 'groups:update-settings', ->
 
   it 'should update description', (done)->
     updatedDescription = 'Lorem ipsum dolor sit amet'
-    getGroup
+    createGroup
     .then (group)->
       groupId = group._id
       authReq 'put', "#{endpointBase}=update-settings",

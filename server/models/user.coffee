@@ -121,3 +121,10 @@ User.setOauthTokens = (provider, data)-> (user)->
   user.oauth or= {}
   user.oauth[provider] = data
   return user
+
+User.updateItemsCounts = (itemsCounts)-> (user)->
+  _.type itemsCounts.private, 'object'
+  _.type itemsCounts.network, 'object'
+  _.type itemsCounts.public, 'object'
+  _.extend user.snapshot, itemsCounts
+  return user

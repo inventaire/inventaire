@@ -2,13 +2,13 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ nonAuthReq, undesiredErr } = __.require 'apiTests', 'utils/utils'
-{ getGroup, endpointBase } = require './helpers'
+{ nonAuthReq, undesiredErr } = require '../utils/utils'
+{ createGroup, endpointBase } = require '../fixtures/groups'
 
 describe 'groups:get', ->
   describe 'by-id', ->
     it 'should get a group by id', (done)->
-      getGroup
+      createGroup
       .then (group)->
         nonAuthReq 'get', "#{endpointBase}=by-id&id=#{group._id}"
         .then (res)->
@@ -23,7 +23,7 @@ describe 'groups:get', ->
 
   describe 'by-slug', ->
     it 'should get a group by slug', (done)->
-      getGroup
+      createGroup
       .then (group)->
         nonAuthReq 'get', "#{endpointBase}=by-slug&slug=#{group.slug}"
         .then (res)->

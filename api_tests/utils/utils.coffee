@@ -7,69 +7,32 @@ promises_ = __.require 'lib', 'promises'
 host = CONFIG.fullHost()
 authEndpoint = host + '/api/auth'
 randomString = __.require 'lib', './utils/random_string'
-{ makeUserAdmin } = __.require 'controllers', 'user/lib/user'
+{ createUser, createAdminUser, getRefreshedUser } = require '../fixtures/users'
+{ request, customAuthReq } = require './request'
 
-testUser =
-  username: 'testuser'
-  password: 'testpassword'
-  email: 'a+testemail@inventaire.io'
+userAPromise = null
+userBPromise = null
+adminUserPromise = null
 
-testUserB =
-  username: 'testuserb'
-  password: 'testpassword'
-  email: 'b+testemail@inventaire.io'
-
-testAdmin =
-  username: 'testadmin'
-  password: 'testpassword'
-  email: 'c+testemail@inventaire.io'
-
-loginEndpoint = "#{authEndpoint}?action=login"
-signupEndpoint = "#{authEndpoint}?action=signup"
-
-parseCookies = (res)-> res.headers['set-cookie']
-
-getUserCookies = (userData)->
-  breq.post { url: loginEndpoint, body: userData }
-  .catch (err)->
-    if err.statusCode isnt 401 then throw err
-    return breq.post { url: signupEndpoint, body: userData }
-  .then parseCookies
-
-userCookiesPromise = getUserCookies testUser
-userBCookiesPromise = getUserCookies testUserB
-adminCookiesPromise =  getUserCookies testAdmin
-
-request = (method, endpoint, body, cookies = [])->
-  url = host + endpoint
-  headers = { cookie: cookies.join ';' }
-  return breq[method]({ url, body, headers }).get 'body'
-
-AuthentifiedRequest = (cookiesPromise)-> (method, endpoint, body)->
-  cookiesPromise
-  .then request.bind(null, method, endpoint, body)
-
-authentifiedRequest = AuthentifiedRequest userCookiesPromise
-bUserAuthentifiedRequest = AuthentifiedRequest userBCookiesPromise
-_adminReq = AuthentifiedRequest adminCookiesPromise
-
-GetUser = (authentifiedRequester)-> ()-> authentifiedRequester 'get', '/api/user'
-
-getAdminUser = GetUser _adminReq
-
-waitForAdminRights = getAdminUser().get('_id').then makeUserAdmin
-
-adminReq = (args...)->
-  waitForAdminRights
-  .then -> _adminReq.apply null, args
-
-module.exports =
-  authReq: authentifiedRequest
+module.exports = API =
   nonAuthReq: request
-  adminReq: adminReq
-  getUser: GetUser authentifiedRequest
-  getUserB: GetUser bUserAuthentifiedRequest
-  getAdminUser: getAdminUser
+  customAuthReq: customAuthReq
+  authReq: (args...)-> customAuthReq API.getUser(), args...
+  adminReq: (args...)-> customAuthReq API.getAdminUser(), args...
+
+  getUser: ->
+    # Create users only if needed
+    userAPromise or= createUser()
+    return getRefreshedUser userAPromise
+
+  getUserB: ->
+    userBPromise or= createUser()
+    return getRefreshedUser userBPromise
+
+  getAdminUser: ->
+    adminUserPromise or= createAdminUser()
+    return getRefreshedUser adminUserPromise
+
   # A function to quickly fail when a test gets an undesired positive answer
   undesiredRes: (done)-> (res)->
     done new Error(".then function was expected not to be called")

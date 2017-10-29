@@ -1,16 +1,61 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-{ authReq } = __.require 'apiTests', 'utils/utils'
+{ authReq } = require '../utils/utils'
 randomString = __.require 'lib', './utils/random_string'
 isbn_ = __.require 'lib', 'isbn/isbn'
+
 defaultEditionData = ->
   labels: {}
   claims:
     'wdt:P31': [ 'wd:Q3331189' ]
     'wdt:P1476': [ randomString(4) ]
 
-module.exports = helpers =
+module.exports = API =
+  createHuman: ->
+    authReq 'post', '/api/entities?action=create',
+      labels: { en: randomString(6) }
+      claims: { 'wdt:P31': [ 'wd:Q5' ] }
+
+  createWork: ->
+    authReq 'post', '/api/entities?action=create',
+      labels: { en: randomString(6) }
+      claims: { 'wdt:P31': [ 'wd:Q571' ] }
+
+  createSerie: ->
+    authReq 'post', '/api/entities?action=create',
+      labels: { en: randomString(6) }
+      claims: { 'wdt:P31': [ 'wd:Q277759' ] }
+
+  createWorkWithAuthor: (human)->
+    humanPromise = if human then Promise.resolve(human) else API.createHuman()
+
+    humanPromise
+    .then (human)->
+      authReq 'post', '/api/entities?action=create',
+        labels: { en: randomString(6) }
+        claims:
+          'wdt:P31': [ 'wd:Q571' ]
+          'wdt:P50': [ human.uri ]
+
+  createEdition: ->
+    API.createWork()
+    .then (work)->
+      authReq 'post', '/api/entities?action=create',
+        claims:
+          'wdt:P31': [ 'wd:Q3331189' ]
+          'wdt:P629': [ work.uri ]
+          'wdt:P1476': [ work.labels.en ]
+
+  createItemFromEntityUri: (uri, data={})->
+    authReq 'post', '/api/items', _.extend({}, data, { entity: uri })
+
+  addClaim: (uri, property, value)->
+    authReq 'put', '/api/entities?action=update-claim',
+      uri: uri
+      property: property
+      'new-value': value
+
   ensureEditionExists: (uri, workData, editionData)->
     authReq 'get', "/api/entities?action=by-uris&uris=#{uri}"
     .get 'entities'
@@ -33,47 +78,3 @@ module.exports = helpers =
           editionData.claims['wdt:P212'] = [ isbn_.toIsbn13h(id) ]
         editionData.claims['wdt:P629'] = [ workEntity.uri ]
         authReq 'post', '/api/entities?action=create', editionData
-
-  createHuman: ->
-    authReq 'post', '/api/entities?action=create',
-      labels: { en: randomString(6) }
-      claims: { 'wdt:P31': [ 'wd:Q5' ] }
-
-  createWork: ->
-    authReq 'post', '/api/entities?action=create',
-      labels: { en: randomString(6) }
-      claims: { 'wdt:P31': [ 'wd:Q571' ] }
-
-  createSerie: ->
-    authReq 'post', '/api/entities?action=create',
-      labels: { en: randomString(6) }
-      claims: { 'wdt:P31': [ 'wd:Q277759' ] }
-
-  createWorkWithAuthor: (human)->
-    humanPromise = if human then Promise.resolve(human) else helpers.createHuman()
-
-    humanPromise
-    .then (human)->
-      authReq 'post', '/api/entities?action=create',
-        labels: { en: randomString(6) }
-        claims:
-          'wdt:P31': [ 'wd:Q571' ]
-          'wdt:P50': [ human.uri ]
-
-  createEdition: ->
-    helpers.createWork()
-    .then (work)->
-      authReq 'post', '/api/entities?action=create',
-        claims:
-          'wdt:P31': [ 'wd:Q3331189' ]
-          'wdt:P629': [ work.uri ]
-          'wdt:P1476': [ work.labels.en ]
-
-  createItemFromEntityUri: (uri, data={})->
-    authReq 'post', '/api/items', _.extend({}, data, { entity: uri })
-
-  addClaim: (uri, property, value)->
-    authReq 'put', '/api/entities?action=update-claim',
-      uri: uri
-      property: property
-      'new-value': value
