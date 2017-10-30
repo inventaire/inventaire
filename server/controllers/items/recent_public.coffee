@@ -15,17 +15,23 @@ module.exports = (req, res)->
   .catch error_.Handler(req, res)
 
 selectRecentItems = (items)->
+  # Group items in an object of owners ID,
+  # then select only x firsts items from each owner
+  # turn object into flattened array
+
   itemsLimit = 15
   maxItemsPerOwner = 3
 
-  Promise.resolve _.groupBy items, (item)-> item.owner
-  .then (itemsByOwner)->
-    _.map itemsByOwner, (items)->
-      items.slice 0, maxItemsPerOwner
-  .then (limitedItemsByOwner)->
-    _.flatten _.values limitedItemsByOwner
-  .then (allRecentItems)->
-    allRecentItems.slice 0, itemsLimit
+  _(items)
+  .groupBy itemOwner
+  .map (items, _)-> items.slice(0, maxItemsPerOwner)
+  .flatten()
+  .values()
+  .slice 0, itemsLimit
+  .shuffle()
+  .value() # wrapping lodash .chain() function
+
+itemOwner = (item)-> item.owner
 
 bundleOwnersData = (res, reqUserId, items)->
   unless items?.length > 0
