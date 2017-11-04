@@ -33,6 +33,33 @@ describe 'items:create', ->
 
     return
 
+  it 'should create items in bulk', (done)->
+    Promise.all [
+      getUser()
+      editionUriPromise
+    ]
+    .spread (user, editionUri)->
+      userId = user._id
+      authReq 'post', '/api/items', [
+        { entity: editionUri, listing: 'network', transaction: 'giving' }
+        { entity: editionUri, listing: 'public', transaction: 'lending' }
+      ]
+      .then (items)->
+        items[0].entity.should.equal editionUri
+        items[0].listing.should.equal 'network'
+        items[0].transaction.should.equal 'giving'
+        items[0].owner.should.equal userId
+        items[1].entity.should.equal editionUri
+        items[1].listing.should.equal 'public'
+        items[1].transaction.should.equal 'lending'
+        items[1].owner.should.equal userId
+      # Delay so that the item counter update doesn't impact the following test
+      .delay 10
+      .then -> done()
+    .catch undesiredErr(done)
+
+    return
+
   it 'should increment the user items counter', (done)->
     userPromise = createUser()
     createItem userPromise, { listing: 'public' }
