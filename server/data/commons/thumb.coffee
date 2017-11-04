@@ -24,6 +24,8 @@ getThumbData = (file, width=2000)->
   .then formatData.bind(null, file)
   .catch _.ErrorRethrow('get commons image err')
 
+# Note: Commons files could also be accessed directly from
+# https://commons.wikimedia.org/wiki/Special:FilePath/#{file}?width=#{width}
 requestOptions = (file, width)->
   url: "http://tools.wmflabs.org/magnus-toolserver/commonsapi.php?image=#{file}&thumbwidth=#{width}"
   headers:
