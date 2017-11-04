@@ -61,6 +61,7 @@ module.exports = [
   'P2034' # Project Gutenberg ebook ID
   'P2093' # author name string
   'P2397' # YouTube channel ID
+  'P2635' # number of volumes
   'P2679' # author of foreword
   'P2680' # author of afterword
   'P2716' # collage image
