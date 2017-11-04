@@ -16,7 +16,7 @@ setTimeout lateRequire, 0
 AfterFn = (viewName, modelFnName)-> (fromUri, toUri)->
   items_[viewName](fromUri)
   .map Item[modelFnName].bind(null, fromUri, toUri)
-  .map (item)-> snapshotEntityData item, item.entity
+  .map snapshotEntityData
   .then items_.db.bulk
 
 module.exports =

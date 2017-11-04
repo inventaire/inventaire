@@ -66,11 +66,15 @@ module.exports = items_ =
     db.viewByKeys 'byOwnerAndEntityAndListing', keys
     .map filterPrivateAttributes(reqUserId)
 
-  create: (userId, item)->
-    db.post Item.create(userId, item)
+  create: (userId, items)->
+    _.type items, 'array'
+    Promise.all items.map(snapshotEntityData)
+    .map Item.create.bind(null, userId)
+    .then db.bulk
     .then (res)->
-      db.get res.id
-      .tap (createItem)-> radio.emit 'item:update', null, createItem
+      itemsIds = _.pluck res, 'id'
+      db.fetch itemsIds
+      .tap -> radio.emit 'user:inventory:update', userId
 
   update: (userId, itemUpdateData)->
     itemId = itemUpdateData._id
@@ -86,13 +90,13 @@ module.exports = items_ =
         # and not complain about item.entity being equal to updatedEntity
         updatedItem.entity = currentEntity
         updatedItem = Item.updateEntity currentEntity, updatedEntity, updatedItem
-        promise = snapshotEntityData updatedItem, updatedEntity
+        promise = snapshotEntityData updatedItem
       else
         promise = promises_.resolve updatedItem
 
       promise
       .then db.putAndReturn
-      .tap (updatedItem)-> radio.emit 'item:update', currentItem, updatedItem
+      .tap -> radio.emit 'user:inventory:update', userId
 
   verifyOwnership: (itemId, userId)->
     db.get itemId
@@ -108,7 +112,7 @@ module.exports = items_ =
       db.update id, couch_.setDeletedTrue
       .tap ->
         radio.emit 'resource:destroyed', 'item', id
-        radio.emit 'item:update', currentItem, null
+        radio.emit 'user:inventory:update', currentItem.owner
 
   setBusyness: (id, busy)->
     _.types arguments, ['string', 'boolean']

@@ -6,8 +6,8 @@ buildSnapshot = require './build_snapshot'
 { getEditionGraphFromEdition, getWorkGraphFromWork } = require './get_entities'
 Item = __.require 'models', 'item'
 
-module.exports = (item, entityUri)->
-  getEntityByUri entityUri
+module.exports = (item)->
+  getEntityByUri item.entity
   .then (entity)->
     { type } = entity
     unless type in whitelistedTypes

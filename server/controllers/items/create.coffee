@@ -24,15 +24,11 @@ module.exports = (req, res, next)->
 
   reqUserId = req.user._id
 
-  Promise.all items.map(createItem(reqUserId))
-  .then (items)->
+  items_.create reqUserId, items
+  .then (itemsDocs)->
     # When only one item was sent, without being wrapped in an array
     # return the created item object, instead of an array
-    data = if singleItemMode then items[0] else items
+    data = if singleItemMode then itemsDocs[0] else itemsDocs
     res.status(201).json data
-  .tap Track(req, ['item', 'creation'])
+  .tap Track(req, [ 'item', 'creation', null, items.length ])
   .catch error_.Handler(req, res)
-
-createItem = (reqUserId)-> (itemData)->
-  snapshotEntityData itemData, itemData.entity
-  .then items_.create.bind(null, reqUserId)
