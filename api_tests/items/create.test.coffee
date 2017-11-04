@@ -4,20 +4,25 @@ _ = __.require 'builders', 'utils'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
 { authReq, getUser, undesiredErr } = require '../utils/utils'
-{ newItemBase, CountChange } = require './helpers'
-{ ensureEditionExists } = require '../fixtures/entities'
+{ CountChange } = require './helpers'
+{ ensureEditionExists, createEdition } = require '../fixtures/entities'
 { createItem } = require '../fixtures/items'
 { createUser, getRefreshedUser } = require '../fixtures/users'
 debounceDelay = CONFIG.itemsCountDebounceTime + 100
 
+editionUriPromise = createEdition().get 'uri'
+
 describe 'items:create', ->
   it 'should create an item', (done)->
-    getUser()
-    .then (user)->
+    Promise.all [
+      getUser()
+      editionUriPromise
+    ]
+    .spread (user, editionUri)->
       userId = user._id
-      authReq 'post', '/api/items', newItemBase()
+      authReq 'post', '/api/items', { entity: editionUri }
       .then (item)->
-        item.entity.should.equal 'wd:Q3548806'
+        item.entity.should.equal editionUri
         item.listing.should.equal 'private'
         item.transaction.should.equal 'inventorying'
         item.owner.should.equal userId
