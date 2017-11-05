@@ -5,6 +5,7 @@ server/lib/emails/i18n
 deploy
 node_modules
 logs
+npm-debug.log
 scripts/couch2elastic4sync/configs
 scripts/assets
 scripts/local
