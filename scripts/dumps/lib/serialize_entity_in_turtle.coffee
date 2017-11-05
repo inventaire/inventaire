@@ -19,7 +19,8 @@ module.exports = (entity)->
       formattedPropClaims = formatter propClaims
       text += formatPropClaims property, formattedPropClaims
 
-  # Replace the last ';' by a '.'
+  # Replace the last ';' by a '.' and add a line break
+  # to have one line between each entity
   return text.replace /;$/, '.\n'
 
 datatypePropClaimsFormatter =
