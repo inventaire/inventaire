@@ -9,25 +9,26 @@ module.exports = (req, res)->
   assertImage = query['assert-image'] is 'true'
   reqUserId = req.user?._id
 
-  items_.publicByDate 100, 0, assertImage, reqUserId
-  .then selectRecentItems
+  itemsQueryLimit = 100
+  offset = 0
+  itemsReturnedLimit = 15
+  maxItemsPerOwner = 3
+
+  items_.publicByDate itemsQueryLimit, offset, assertImage, reqUserId
+  .then selectRecentItems.bind(null, itemsReturnedLimit, maxItemsPerOwner)
   .then bundleOwnersData.bind(null, res, reqUserId)
   .catch error_.Handler(req, res)
 
-selectRecentItems = (items)->
-  # Group items in an object of owners ID,
-  # then select only x firsts items from each owner
-  # turn object into flattened array
-
-  itemsLimit = 15
-  maxItemsPerOwner = 3
-
+selectRecentItems = (itemsReturnedLimit, maxItemsPerOwner, items)->
   _(items)
+  # Group items in an object of owners ID
   .groupBy itemOwner
+  # then select only `maxItemsPerOwner` items from each owner
   .map (items, _)-> items.slice(0, maxItemsPerOwner)
+  # turn object into flattened array
   .flatten()
   .values()
-  .slice 0, itemsLimit
+  .slice 0, itemsReturnedLimit
   .shuffle()
   .value() # wrapping lodash .chain() function
 

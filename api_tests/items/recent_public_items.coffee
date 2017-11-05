@@ -12,8 +12,7 @@ describe 'items:recent-public', ->
       usersCount: 1
       publicItemsPerUser: 16
     .then -> nonAuthReq 'get', recentPublicUrl
-    .then (res)->
-      res.items.length.should.equal 15
+    .then (res)-> res.items.length.should.equal 15
 
     .delay 10
     .then -> done()
@@ -23,11 +22,10 @@ describe 'items:recent-public', ->
   it 'should fetch items from minimum 5 owners', (done)->
     populate
       usersCount: 2
+      # only 2 as tests already create 3 users in `./api_tests/users`
       publicItemsPerUser: 4
-    .then ->
-      nonAuthReq 'get', recentPublicUrl
-    .then (res)->
-      res.users.length.should.be.above 4
+    .then -> nonAuthReq 'get', recentPublicUrl
+    .then (res)-> res.users.length.should.be.above 4
 
     .delay 10
     .then -> done()
