@@ -13,21 +13,20 @@ module.exports = (entity)->
     text += """\n  skos:prefLabel #{formatStringValue(value)}@#{lang} ;"""
 
   for property, propClaims of entity.claims
-    switch properties[property].datatype
-      when 'entity'
-        text += formatPropClaims property, propClaims
-      when 'string'
-        stringValues = propClaims.map formatStringValue
-        text += formatPropClaims property, stringValues
-      when 'positive-integer'
-        prefixedIntegers = propClaims.map formatPositiveInteger
-        text += formatPropClaims property, prefixedIntegers
-      when 'simple-day'
-        datesValues = propClaims.filter(validSimpleDay).map formatDate
-        text += formatPropClaims property, datesValues
+    { datatype } = properties[property]
+    formatter = datatypePropClaimsFormatter[datatype]
+    if formatter?
+      formattedPropClaims = formatter propClaims
+      text += formatPropClaims property, formattedPropClaims
 
   # Replace the last ';' by a '.'
-  return text.replace /;$/, '.'
+  return text.replace /;$/, '.\n'
+
+datatypePropClaimsFormatter =
+  entity: _.identity
+  string: (propClaims)-> propClaims.map formatStringValue
+  'positive-integer': (propClaims)-> propClaims.map formatPositiveInteger
+  'simple-day': (propClaims)-> propClaims.filter(validSimpleDay).map formatDate
 
 formatStringValue = (str)->
   # May also be of type number
