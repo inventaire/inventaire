@@ -1,6 +1,6 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
-pw = require('credential')()
+pw = require './password_hashing'
 error_ = __.require 'lib', 'error/error'
 crypto = require 'crypto'
 
