@@ -1,0 +1,69 @@
+#!/usr/bin/env zsh
+
+set -eu
+
+folder=$(node -p "require('config').universalPath.path('dumps')")
+db_param(){ node -p "require('config').db.$1" }
+
+# Getting the database parameters to get ready for couchdb-dump
+host=$(db_param host)
+port=$(db_param port)
+username=$(db_param username)
+password=$(db_param password)
+db_name='entities-prod'
+today=$(date +'20%y-%m-%d')
+raw_db_json_filename="${today}_${db_name}.json"
+output_file="${folder}/${raw_db_json_filename}"
+
+# Dumping the database only if the file doesn't already exist,
+# which means that this file should be deleted to start a new dump version
+[ -f "$output_file" ] && echo "$raw_db_json_filename already exist" || {
+  couchdb-backup -b -H "$host" -P "$port" -u "$username" -p "$password" -d "$db_name" -f "$output_file"
+}
+
+filtered_dump_filename="${today}_entities.ndjson"
+filtered_dump_filename_with_seeds="${today}_entities_with_seeds.ndjson"
+redirections_dump="${today}_redirections.ndjson"
+root_cwd="$(pwd)"
+alias drop_colon="sed 's/,$//'"
+
+
+# NDJSON dumps
+cd "$folder"
+
+echo "filtering $raw_db_json_filename redirections into ${redirections_dump}"
+cat "$raw_db_json_filename" | grep '"type":"entity","redirect":' | drop_colon > "$redirections_dump"
+
+echo "filtering $raw_db_json_filename with seeds into $filtered_dump_filename_with_seeds"
+cat "$raw_db_json_filename" |
+  # Filter-out removed:placeholders
+  grep '"type":"entity"' |
+  # Filter-out redirections
+  grep -v "redirect" |
+  # Filter-out entities empty canvas (entity creation process failure)
+  grep -v '_rev":"1-' |
+  drop_colon > "${filtered_dump_filename_with_seeds}"
+
+echo "filtering $raw_db_json_filename without seeds into $filtered_dump_filename"
+cat "${filtered_dump_filename_with_seeds}" |
+  # Filter-out entities that are just unedited data seeds
+  grep -v '_rev":"2-' > "$filtered_dump_filename"
+
+echo compressing $today*.ndjson
+gzip -9f $today*.ndjson
+
+
+# TTL dump
+
+# We need to return to the root directory so that convert_ndjson_dump_to_ttl
+# can find the CONFIG
+cd $root_cwd
+turtle_filename="${today}_entities.ttl"
+turtle_filepath="${folder}/${turtle_filename}"
+echo "converting to turtle $turtle_filename"
+cat "$folder/${filtered_dump_filename}.gz" | gzip -d | ./scripts/dumps/convert_ndjson_dump_to_ttl > "$turtle_filepath"
+gzip -9f "$turtle_filepath"
+
+rm "$output_file"
+
+echo "done"

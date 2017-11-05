@@ -51,6 +51,7 @@ module.exports =
     logs: '/logs'
     uploads: '/client/public/uploads'
     modulesBin: '/node_modules/.bin'
+    dumps: '/dumps'
   path: (route, name)->
     path = @paths[route]
     rootedPath = "#{appRoot}#{path}"
