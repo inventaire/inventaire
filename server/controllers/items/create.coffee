@@ -4,7 +4,6 @@ items_ = __.require 'controllers', 'items/lib/items'
 error_ = __.require 'lib', 'error/error'
 { Track } = __.require 'lib', 'track'
 { Promise } = __.require 'lib', 'promises'
-snapshotEntityData = require './lib/snapshot/snapshot_entity_data'
 
 module.exports = (req, res, next)->
   { body:items } = req
