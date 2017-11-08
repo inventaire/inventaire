@@ -8,7 +8,9 @@ module.exports = (emails, userEmail)->
     throw error_.newMissingParameter 'body', 'emails'
 
   emails = prepareEmails emails
+
   parsedEmails = parseAddressList emails
+
   unless parsedEmails?
     throw error_.new "couldn't parse emails", 400, emails
 
@@ -22,7 +24,9 @@ module.exports = (emails, userEmail)->
 # providing to 'email-addresses' known limitations
 prepareEmails = (emails)->
   emails.trim()
-  # deleting a possible trailing coma or semi-colon
-  .replace /(,|;)$/, ''
-  # deleting line breaks and tabs
-  .replace /(\n|\t)/g, ''
+  # Replace line breaks, tabs, semi-colons by a comma
+  .replace /(\n|\t|;)/g, ','
+  # Replace successive commas
+  .replace /,,/g, ','
+  # Delete a possible trailing comma
+  .replace /,$/, ''
