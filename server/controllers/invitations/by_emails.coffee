@@ -22,7 +22,7 @@ module.exports = (req, res)->
   .catch error_.Handler(req, res)
 
 sendInvitationAndReturnData = (user, message, emails, reqUserId)->
-  _.types arguments, ['object', 'string|undefined', 'array']
+  _.types arguments, ['object', 'string|undefined', 'array', 'string']
   user_.getUsersByEmails emails, reqUserId
   .then (existingUsers)->
     existingUsersEmails = existingUsers.map _.property('email')
