@@ -25,9 +25,6 @@ module.exports = (user, emails, message)->
 
     remainingEmails = extractRemainingEmails canBeInvited, unknownEmails
     _.log remainingEmails, 'effectively sent emails'
-    sendInvitationEmails user, remainingEmails, message
+    radio.emit 'send:email:invitations', user, remainingEmails, message
 
   .catch _.Error('send invitations err')
-
-sendInvitationEmails = (user, emails, message)->
-  radio.emit 'send:email:invitations', user, emails, message
