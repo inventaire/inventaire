@@ -119,8 +119,4 @@ for mainProp, aliasedProps of propertiesRedirections
   for aliasedProp in aliasedProps
     aliases[aliasedProp] = mainProp
 
-module.exports =
-  aliases: aliases
-  types: types
-  typesNames: typesNames
-  getTypePluralNameByTypeUri: getTypePluralNameByTypeUri
+module.exports = { aliases, types, typesNames, getTypePluralNameByTypeUri }

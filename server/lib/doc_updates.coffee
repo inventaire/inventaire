@@ -18,8 +18,4 @@ wrappedUpdater = (db, id, attribute, value)->
 
 WrappedUpdater = (db)-> wrappedUpdater.bind(null, db)
 
-module.exports =
-  basicUpdater: basicUpdater
-  BasicUpdater: BasicUpdater
-  wrappedUpdater: wrappedUpdater
-  WrappedUpdater: WrappedUpdater
+module.exports = { basicUpdater, BasicUpdater, wrappedUpdater, WrappedUpdater }

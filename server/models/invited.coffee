@@ -40,8 +40,4 @@ canBeInvited = (inviterId, doc)->
 
   return true
 
-module.exports =
-  create: create
-  addInviter: addInviter
-  canBeInvited: canBeInvited
-  stopEmails: stopEmails
+module.exports = { create, addInviter, canBeInvited, stopEmails }

@@ -3,10 +3,10 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 { pass, userId, itemId, transactionId } = require './common'
 
-module.exports =
-  pass: pass
-  userId: userId
-  itemId: itemId
-  transactionId: transactionId
-  message: (message)->
-    return 0 < message.length < 5000
+module.exports = {
+  pass,
+  userId,
+  itemId,
+  transactionId,
+  message: (message)-> 0 < message.length < 5000
+}
