@@ -8,7 +8,7 @@ radio = __.require 'lib', 'radio'
 module.exports = (user, emails, message)->
   userId = user._id
   _.log emails, 'send_invitations emails'
-  _.types arguments, ['object', 'array', 'string|undefined']
+  _.types arguments, ['object', 'array', 'string|null']
 
   invitations_.byEmails emails
   .then _.Log('known invited')

@@ -9,20 +9,29 @@ sendInvitation = require './lib/send_invitations'
 
 module.exports = (req, res)->
   { user, body } = req
-  { message } = body
+  { emails, message } = body
   { _id:reqUserId } = req.user
-  emailsString = body.emails
-  promises_.try parseEmails.bind(null, emailsString, user.email)
+
+  if message?
+    if _.isString message
+      if message.length is 0 then message = null
+    else
+      return error_.bundleInvalid req, res, 'message', message
+  else
+    # Convert undefined message to null to make following type checks easier
+    message = null
+
+  promises_.try parseEmails.bind(null, emails, user.email)
   .then applyLimit
-  .then (emails)->
-    sendInvitationAndReturnData user, message, emails, reqUserId
+  .then (parsedEmails)->
+    sendInvitationAndReturnData user, message, parsedEmails, reqUserId
     .then _.Log('invitationByEmails data')
     .then res.json.bind(res)
-    .then Track(req, ['invitation', 'email', null, emails.length])
+    .then Track(req, ['invitation', 'email', null, parsedEmails.length])
   .catch error_.Handler(req, res)
 
 sendInvitationAndReturnData = (user, message, emails, reqUserId)->
-  _.types arguments, ['object', 'string|undefined', 'array', 'string']
+  _.types arguments, ['object', 'string|null', 'array', 'string']
   user_.getUsersByEmails emails, reqUserId
   .then (existingUsers)->
     existingUsersEmails = existingUsers.map _.property('email')

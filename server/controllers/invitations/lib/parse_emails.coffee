@@ -4,12 +4,12 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 
 module.exports = (emails, userEmail)->
-  unless _.isString emails
-    throw error_.newMissingParameter 'body', 'emails'
+  emailsString = if _.isArray(emails) then emails.join(',') else emails
 
-  emails = prepareEmails emails
+  unless _.isNonEmptyString emailsString
+    throw error_.newMissingBody 'emails'
 
-  parsedEmails = parseAddressList emails
+  parsedEmails = parseAddressList prepareEmails(emailsString)
 
   unless parsedEmails?
     throw error_.new "couldn't parse emails", 400, emails
