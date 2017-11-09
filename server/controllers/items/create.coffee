@@ -3,24 +3,31 @@ _ = __.require 'builders', 'utils'
 items_ = __.require 'controllers', 'items/lib/items'
 error_ = __.require 'lib', 'error/error'
 { Track } = __.require 'lib', 'track'
-snapshotEntityData = require './lib/snapshot/snapshot_entity_data'
+{ Promise } = __.require 'lib', 'promises'
 
 module.exports = (req, res, next)->
-  { body:item } = req
+  { body:items } = req
 
-  _.log item, 'item create'
+  singleItemMode = _.isPlainObject items
 
-  { entity:entityUri } = item
-  unless entityUri? then return error_.bundleMissingBody req, res, 'entity'
+  items = _.forceArray items
 
-  unless _.isEntityUri entityUri
-    return error_.bundleInvalid req, res, 'entity', entityUri
+  _.log items, 'create items'
+
+  for item in items
+    { entity:entityUri } = item
+    unless entityUri? then return error_.bundleMissingBody req, res, 'entity'
+
+    unless _.isEntityUri entityUri
+      return error_.bundleInvalid req, res, 'entity', entityUri
 
   reqUserId = req.user._id
-  itemId = item._id
 
-  snapshotEntityData item, entityUri
-  .then items_.create.bind(null, reqUserId)
-  .then (item)-> res.status(201).json item
-  .tap Track(req, ['item', 'creation'])
+  items_.create reqUserId, items
+  .then (itemsDocs)->
+    # When only one item was sent, without being wrapped in an array
+    # return the created item object, instead of an array
+    data = if singleItemMode then itemsDocs[0] else itemsDocs
+    res.status(201).json data
+  .tap Track(req, [ 'item', 'creation', null, items.length ])
   .catch error_.Handler(req, res)

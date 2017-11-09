@@ -3,21 +3,21 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 { Promise } = __.require 'lib', 'promises'
 { createUser } = require './users'
-{ createRandomizedItem } = require './items'
+{ createRandomizedItems } = require './items'
+randomString = __.require 'lib', './utils/random_string'
 
-module.exports = (params) ->
-  { usersCount } = params
-  promiseArray = [1..usersCount].map ->
-    createUserWithItems(params)
-  Promise.all promiseArray
+populatePromise = null
+usersCount = 2
+publicItemsPerUser = 16
 
-createUserWithItems = (params) ->
-  { itemsPerUser, publicItemsPerUser } = params
+module.exports = ->
+  if populatePromise? then return populatePromise
+  populatePromise = Promise.all _.times(usersCount, createUserWithItems)
+  return populatePromise
+
+createUserWithItems = ->
   userPromise = createUser()
-  userPromise.then ->
-    if itemsPerUser
-      [1..itemsPerUser].forEach ->
-        createRandomizedItem userPromise
-    if publicItemsPerUser
-      [1..publicItemsPerUser].forEach ->
-        createRandomizedItem userPromise, { listing: 'public'}
+  userPromise
+  .then ->
+    itemsData = _.times publicItemsPerUser, -> { listing: 'public' }
+    return createRandomizedItems userPromise, itemsData

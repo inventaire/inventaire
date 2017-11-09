@@ -1,3 +1,19 @@
+# Entity data snapshots are a attributes of the snapshot object on item documents:
+# - entity:title
+# - entity:lang
+# - entity:authors
+# - entity:series
+# - entity:image
+# - entity:ordinal
+
+# Their role is to keep a copy at hand of data deduced from the item's entity
+# and its graph: typically, the edition the item is an instance of, the edition work,
+# (or works in case of a multi-works edition), the work(s) authors, the serie(s)
+# the work(s) might be part of.
+# Being able to have a succint version of those data accessible from the item
+# allows to display basic data or filter large lists of items by text
+# without having to query from 3 to 10+ entities per item
+
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
@@ -6,8 +22,8 @@ buildSnapshot = require './build_snapshot'
 { getEditionGraphFromEdition, getWorkGraphFromWork } = require './get_entities'
 Item = __.require 'models', 'item'
 
-module.exports = (item, entityUri)->
-  getEntityByUri entityUri
+module.exports = (item)->
+  getEntityByUri item.entity
   .then (entity)->
     { type } = entity
     unless type in whitelistedTypes

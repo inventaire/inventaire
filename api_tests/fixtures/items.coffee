@@ -12,19 +12,26 @@ listings = [ 'private', 'network', 'public' ]
 transactions = [ 'giving', 'lending', 'selling', 'inventorying' ]
 
 module.exports = API =
-  createItem: (userPromise, itemData = {})->
-    { entity } = itemData
+  createItems: (userPromise, itemsData = {})->
+    { entity } = itemsData[0]
     entityUriPromise = if entity then Promise.resolve(entity) else editionUriPromise
 
     entityUriPromise
     .then (entityUri)->
-      body = _.extend {}, itemData, { entity: entityUri }
-      customAuthReq userPromise, 'post', '/api/items', body
+      items = itemsData.map addDefaultEntity(entityUri)
+      customAuthReq userPromise, 'post', '/api/items', items
 
-  createRandomizedItem: (userPromise, itemData = {})->
-    { entity, listing, transaction } = itemData
-    itemData.listing or= _.sample(listings)
-    itemData.transaction or= _.sample(transactions)
-    itemData.details = randomString 10
-    itemData.notes = randomString 10
-    return API.createItem userPromise, itemData
+  createRandomizedItems: (userPromise, itemsData)->
+    return API.createItems userPromise, itemsData.map(randomizedItem)
+
+randomizedItem = (itemData)->
+  { entity, listing, transaction } = itemData
+  itemData.listing or= _.sample(listings)
+  itemData.transaction or= _.sample(transactions)
+  itemData.details = randomString 10
+  itemData.notes = randomString 10
+  return itemData
+
+addDefaultEntity = (entityUri)-> (item)->
+  itemData.entity or= entityUri
+  return itemData

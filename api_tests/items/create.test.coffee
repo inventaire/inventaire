@@ -4,23 +4,55 @@ _ = __.require 'builders', 'utils'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
 { authReq, getUser, undesiredErr } = require '../utils/utils'
-{ newItemBase, CountChange } = require './helpers'
-{ ensureEditionExists } = require '../fixtures/entities'
+{ CountChange } = require './helpers'
+{ ensureEditionExists, createEdition } = require '../fixtures/entities'
 { createItem } = require '../fixtures/items'
 { createUser, getRefreshedUser } = require '../fixtures/users'
 debounceDelay = CONFIG.itemsCountDebounceTime + 100
 
+editionUriPromise = createEdition().get 'uri'
+
 describe 'items:create', ->
   it 'should create an item', (done)->
-    getUser()
-    .then (user)->
+    Promise.all [
+      getUser()
+      editionUriPromise
+    ]
+    .spread (user, editionUri)->
       userId = user._id
-      authReq 'post', '/api/items', newItemBase()
+      authReq 'post', '/api/items', { entity: editionUri }
       .then (item)->
-        item.entity.should.equal 'wd:Q3548806'
+        item.entity.should.equal editionUri
         item.listing.should.equal 'private'
         item.transaction.should.equal 'inventorying'
         item.owner.should.equal userId
+      # Delay so that the item counter update doesn't impact the following test
+      .delay 10
+      .then -> done()
+    .catch undesiredErr(done)
+
+    return
+
+  it 'should create items in bulk', (done)->
+    Promise.all [
+      getUser()
+      editionUriPromise
+    ]
+    .spread (user, editionUri)->
+      userId = user._id
+      authReq 'post', '/api/items', [
+        { entity: editionUri, listing: 'network', transaction: 'giving' }
+        { entity: editionUri, listing: 'public', transaction: 'lending' }
+      ]
+      .then (items)->
+        items[0].entity.should.equal editionUri
+        items[0].listing.should.equal 'network'
+        items[0].transaction.should.equal 'giving'
+        items[0].owner.should.equal userId
+        items[1].entity.should.equal editionUri
+        items[1].listing.should.equal 'public'
+        items[1].transaction.should.equal 'lending'
+        items[1].owner.should.equal userId
       # Delay so that the item counter update doesn't impact the following test
       .delay 10
       .then -> done()

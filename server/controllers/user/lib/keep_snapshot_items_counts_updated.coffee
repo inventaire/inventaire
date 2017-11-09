@@ -21,8 +21,7 @@ module.exports = ->
     updateSnapshotItemsCounts userId
     .catch _.Error('user updateSnapshotItemsCounts err')
 
-  radio.on 'item:update', (previousItem, updateItem)->
-    userId = previousItem?.owner or updateItem?.owner
+  radio.on 'user:inventory:update', (userId)->
     # Creating a personnalized debouncer as a global debounce would be delayed
     # undefinitely "at scale"
     debouncedUpdaters[userId] or= _.debounce itemsCountsUpdater(userId), delay
