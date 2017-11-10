@@ -149,6 +149,8 @@ properties =
   'wdt:P2679': humanEntity
   # author of afterword
   'wdt:P2680': humanEntity
+  # Mastodon address
+  'wdt:P4033': externalId /^\w+@[a-z0-9\.\-]+[a-z0-9]+$/
 
 whitelist = Object.keys properties
 
