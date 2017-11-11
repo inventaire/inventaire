@@ -3,7 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { nonAuthReq, authReq, undesiredErr } = require '../utils/utils'
-{ groupPromise, endpointBase } = require '../fixtures/groups'
+{ groupPromise, endpointAction } = require '../fixtures/groups'
 slugify = __.require 'controllers', 'groups/lib/slugify'
 
 describe 'groups:update-settings', ->
@@ -12,7 +12,7 @@ describe 'groups:update-settings', ->
     .then (group)->
       groupId = group._id
       updatedName = group.name + '-updated'
-      authReq 'put', "#{endpointBase}=update-settings",
+      authReq 'put', "#{endpointAction}=update-settings",
         group: groupId
         attribute: 'name',
         value: updatedName
@@ -20,7 +20,7 @@ describe 'groups:update-settings', ->
       .delay 50
       .then (updateRes)->
         updateRes.ok.should.be.true()
-        nonAuthReq 'get', "#{endpointBase}=by-id&id=#{groupId}"
+        nonAuthReq 'get', "#{endpointAction}=by-id&id=#{groupId}"
         .then (getRes)->
           { group } = getRes
           group.name.should.equal updatedName
@@ -35,7 +35,7 @@ describe 'groups:update-settings', ->
     .then (group)->
       groupId = group._id
       updatedName = group.name + '-updated-again'
-      authReq 'put', "#{endpointBase}=update-settings",
+      authReq 'put', "#{endpointAction}=update-settings",
         group: groupId
         attribute: 'name',
         value: updatedName
@@ -54,7 +54,7 @@ describe 'groups:update-settings', ->
     groupPromise
     .then (group)->
       groupId = group._id
-      authReq 'put', "#{endpointBase}=update-settings",
+      authReq 'put', "#{endpointAction}=update-settings",
         group: groupId
         attribute: 'description',
         value: updatedDescription
@@ -63,7 +63,7 @@ describe 'groups:update-settings', ->
       .then (updateRes)->
         updateRes.ok.should.be.true()
         Object.keys(updateRes.update).length.should.equal 0
-        nonAuthReq 'get', "#{endpointBase}=by-id&id=#{groupId}"
+        nonAuthReq 'get', "#{endpointAction}=by-id&id=#{groupId}"
         .then (getRes)->
           { group } = getRes
           group.description.should.equal updatedDescription

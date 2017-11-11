@@ -33,7 +33,8 @@ initMailerEventListeners = ->
 
   radio.on 'received:feedback', sendEmail.feedback
 
-  radio.on 'send:email:invitations', sendEmail.emailInvitations
+  radio.on 'send:email:invitations', sendEmail.friendInvitations
+  radio.on 'send:group:email:invitations', sendEmail.groupInvitations
 
   initDebouncedEmailsCrawler()
 

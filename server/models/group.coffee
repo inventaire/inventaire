@@ -90,13 +90,17 @@ findMembership = (userId, group, previousCategory, wanted)->
   if wanted
     # expect to find a membership
     if membership? then return membership
-    else throw error_.new 'membership not found', 403
+    else
+      context = { userId }
+      context[previousCategory] = group[previousCategory]
+      throw error_.new 'membership not found', 403, context
   else
     # expect to find no existing membership
     if membership?
       # return a 200 to avoid to show an error on client-side
       # while the membership does exist
-      throw error_.new 'membership already exist', 200
+      context = { groupId: group._id, userId }
+      throw error_.new 'membership already exist', 200, context
     else return
 
 userIsRole = (role)-> (userId, group)->

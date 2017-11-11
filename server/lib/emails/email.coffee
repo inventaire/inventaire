@@ -98,21 +98,39 @@ module.exports =
       template: 'feedback'
       context: { subject, message, user , unknownUser }
 
-  EmailInvitation: (user, message)->
-    # no email settings to check here neither:
-    # invited users who don't want more emails should have been filtered-out
-    # by invitations_.extractCanBeInvited
-    { username, language } = user
+  FriendInvitation: (inviter, message)->
+    # No email settings to check here:
+    # - Existing users aren't sent an email invitation but get a friend request
+    #   where their notifications settings will be applied
+    # - Invited users who don't want more emails should have been filtered-out
+    #   by invitations/lib/send_invitations extractCanBeInvited
+    { username, language } = inviter
     lang = _.shortLang language
 
-    user.pathname = "#{host}/inventory/#{username}"
+    inviter.pathname = "#{host}/users/#{username}"
     return emailFactory = (emailAddress)->
       return data =
         to: emailAddress
-        replyTo: user.email
-        subject: i18n lang, 'email_invitation_subject', user
+        replyTo: inviter.email
+        subject: i18n lang, 'email_invitation_subject', inviter
         template: 'email_invitation'
-        context: { user, message, lang, host }
+        context: { inviter, message, lang, host }
+
+  GroupInvitation: (inviter, group, message)->
+    # No email settings to check here neither (idem FriendInvitation)
+    { username, language } = inviter
+    lang = _.shortLang language
+
+    group.pathname = "#{host}/groups/#{group.slug}"
+    # Object required to pass as i18n strings context
+    data = { username: inviter.username, groupName: group.name }
+    return emailFactory = (emailAddress)->
+      return data =
+        to: emailAddress
+        replyTo: inviter.email
+        subject: i18n lang, 'group_email_invitation_subject', inviter
+        template: 'group_email_invitation'
+        context: { data, message, lang, host }
 
   transactions:
     yourItemWasRequested: (transaction)->

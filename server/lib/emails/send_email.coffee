@@ -43,12 +43,32 @@ module.exports =
     transporter_.sendMail email
     .catch _.Error('feedback')
 
-  emailInvitations: (user, emailAddresses, message)->
-    emailFactory = email_.EmailInvitation user, message
-    for emailAddress in emailAddresses
-      email = emailFactory emailAddress
-      transporter_.sendMail email
-      .catch _.Error('emailInvitations')
+  friendInvitations: (user, emailAddresses, message)->
+    emailFactory = email_.FriendInvitation user, message
+    sendSequentially emailAddresses, emailFactory, 'friendInvitations'
+
+  groupInvitations: (user, group, emailAddresses, message)->
+    emailFactory = email_.GroupInvitation user, group, message
+    sendSequentially emailAddresses, emailFactory, 'groupInvitations'
+
+sendSequentially = (emailAddresses, emailFactory, label)->
+  # Do not mutate the original object
+  addresses = _.clone emailAddresses
+  sendNext = ->
+    nextAddress = addresses.pop()
+    unless nextAddress then return
+
+    _.info nextAddress, "#{label}: next. Remaining: #{addresses.length}"
+
+    email = emailFactory nextAddress
+    transporter_.sendMail email
+    .catch _.Error("#{label} (address: #{nextAddress} err)")
+    # Wait to lower risk to trigger any API quota issue from the email service
+    .delay 500
+    # In any case, send the next
+    .then sendNext
+
+  return sendNext()
 
 Err = (label, user1, user2)->
   _.Error("#{label} email fail for #{user1} / #{user2}")
