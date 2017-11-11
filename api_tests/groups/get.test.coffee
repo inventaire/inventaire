@@ -3,12 +3,12 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { nonAuthReq, undesiredErr } = require '../utils/utils'
-{ createGroup, endpointBase } = require '../fixtures/groups'
+{ groupPromise, endpointBase } = require '../fixtures/groups'
 
 describe 'groups:get', ->
   describe 'by-id', ->
     it 'should get a group by id', (done)->
-      createGroup
+      groupPromise
       .then (group)->
         nonAuthReq 'get', "#{endpointBase}=by-id&id=#{group._id}"
         .then (res)->
@@ -23,7 +23,7 @@ describe 'groups:get', ->
 
   describe 'by-slug', ->
     it 'should get a group by slug', (done)->
-      createGroup
+      groupPromise
       .then (group)->
         nonAuthReq 'get', "#{endpointBase}=by-slug&slug=#{group.slug}"
         .then (res)->

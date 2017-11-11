@@ -3,10 +3,10 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 { authReq } = require '../utils/utils'
 randomString = __.require 'lib', './utils/random_string'
-
-name = 'my group' + randomString(5)
 endpointBase = '/api/groups?action'
 
-createGroup = authReq 'post', "#{endpointBase}=create", { name }
+createGroup = (name)-> authReq 'post', "#{endpointBase}=create", { name }
 
-module.exports = { endpointBase, createGroup }
+groupPromise = createGroup 'my group' + randomString(5)
+
+module.exports = { endpointBase, groupPromise }
