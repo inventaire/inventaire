@@ -101,18 +101,14 @@ describe 'entities:delete:by-uris', ->
     .catch undesiredErr(done)
     return
 
-  it 'should refuse to delete an edition with an ISBN', (done)->
+  it 'should remove edition entities with an ISBN', (done)->
     uri = 'isbn:9782298063264'
     ensureEditionExists uri
     .then (edition)->
       # Using the inv URI, as the isbn one would be rejected earlier
       invUri = 'inv:' + edition._id
       adminReq 'delete', "/api/entities?action=by-uris&uris=#{invUri}"
-    .then undesiredRes(done)
-    .catch (err)->
-      err.body.status_verbose.should.equal "this entity uses blacklisted claim properties"
-      err.statusCode.should.equal 400
-      done()
+    .then -> done()
     .catch undesiredErr(done)
     return
 

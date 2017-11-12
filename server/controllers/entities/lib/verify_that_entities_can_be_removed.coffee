@@ -11,25 +11,11 @@ criticalClaimProperties = [
   'wdt:P629'
 ]
 
-blacklistedClaimProperties = [
-  # Editions with an ISBN shouldn't be removed, but fixed
-  'wdt:P212'
-]
-
 module.exports = (uris)->
   Promise.all [
-    entitiesChecks uris
     entitiesRelationsChecks uris
     entitiesItemsChecks uris
   ]
-
-entitiesChecks = (uris)->
-  getEntitiesByUris uris
-  .then (res)->
-    for uri, entity of res.entities
-      # Verify that entities don't have blacklisted claims
-      if _.haveAMatch Object.keys(entity.claims), blacklistedClaimProperties
-        throw error_.new "this entity uses blacklisted claim properties", 400, uri
 
 entitiesRelationsChecks = (uris)-> Promise.all uris.map entityIsntMuchUsed
 
