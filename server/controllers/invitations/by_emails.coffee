@@ -9,7 +9,6 @@ parseEmails = require './lib/parse_emails'
 sendInvitationAndReturnData = require './lib/send_invitation_and_return_data'
 groups_ = __.require 'controllers', 'groups/lib/groups'
 Group = __.require 'models', 'group'
-slugify = __.require 'controllers', 'groups/lib/slugify'
 { Track } = __.require 'lib', 'track'
 
 module.exports = (req, res)->
@@ -45,11 +44,10 @@ parseAndValidateEmails = (emails, userEmail)->
 validateGroup = (groupId, reqUserId)->
   unless groupId? then return promises_.resolve null
 
-  if _.isGroupId groupId then getFnName = 'byId'
-  else if mayBeASlug groupId then getFnName = 'bySlug'
-  else return error_.reject 'invalid group id or slug', 400, groupId
+  unless _.isGroupId groupId
+    return error_.rejectInvalid 'group id', groupId
 
-  groups_[getFnName](groupId)
+  groups_.byId groupId
   .then (group)->
     userIsAdmin = Group.userIsAdmin reqUserId, group
     unless userIsAdmin
@@ -60,8 +58,6 @@ validateGroup = (groupId, reqUserId)->
       throw error_.new 'group not found', 404, { groupId, reqUserId }
     else
       throw err
-
-mayBeASlug = (str)-> str is slugify(str)
 
 # this is totally arbitrary but sending too many invites at a time
 # will probably end up being reported as spam

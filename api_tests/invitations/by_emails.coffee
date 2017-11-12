@@ -110,21 +110,8 @@ describe 'invitations:by-emails', ->
         group: 'abc'
       .then undesiredRes(done)
       .catch (err)->
-        err.statusCode.should.equal 404
-        err.body.status_verbose.should.equal 'group not found'
-        done()
-      .catch undesiredErr(done)
-
-      return
-
-    it 'should reject invalid group slugs', (done)->
-      authReq 'post', '/api/invitations?action=by-emails',
-        emails: 'a@foo.org'
-        group: 'invalid slug.ùù*$!*$*$!*$*&!*$><'
-      .then undesiredRes(done)
-      .catch (err)->
-        err.body.status_verbose.should.equal 'invalid group id or slug'
         err.statusCode.should.equal 400
+        err.body.status_verbose.should.equal 'invalid group id: abc'
         done()
       .catch undesiredErr(done)
 
@@ -138,20 +125,6 @@ describe 'invitations:by-emails', ->
           group: group._id
         .then (res)->
           res.emails[0].should.equal 'a@foo.org'
-          done()
-      .catch undesiredErr(done)
-
-      return
-
-    it 'should accept valid group slugs', (done)->
-      groupPromise
-      .then (group)->
-        email = randomEmail()
-        authReq 'post', '/api/invitations?action=by-emails',
-          emails: email
-          group: group.slug
-        .then (res)->
-          res.emails[0].should.equal email
           done()
       .catch undesiredErr(done)
 
