@@ -61,7 +61,6 @@ initFollow = (dbName)-> (lastSeq=0)->
     if err? then _.error err, "#{dbName} follow err"
     else
       { seq } = change
-      _.log seq, "#{dbName} change"
       setLastSeq seq
       for follower in followers[dbName]
         if follower.filter(change.doc) then follower.onChange change
