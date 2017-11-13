@@ -134,14 +134,14 @@ describe 'items:snapshot', ->
       workEntity = _.values(res.entities)[0]
       trueAuthorUri = workEntity.claims['wdt:P50'][0]
       authReq 'post', '/api/items', { entity: 'isbn:9788389920935' }
-      .delay 100
+      .delay 200
       .then (item)->
         updateAuthorName = 'Mr moin moin' + new Date().toISOString()
         authReq 'put', '/api/entities?action=update-label',
           id: trueAuthorUri.split(':')[1]
           lang: 'de'
           value: updateAuthorName
-        .delay 100
+        .delay 200
         .then -> getItem item
         .then (updatedItem)->
           updatedItem.snapshot['entity:authors'].should.equal updateAuthorName
@@ -208,9 +208,9 @@ describe 'items:snapshot', ->
           authReq 'post', '/api/items', { entity: editionEntity.uri }
           addAuthor workEntityB
         ]
-        .delay 100
+        .delay 200
         .tap -> merge workEntityA, workEntityB
-        .delay 100
+        .delay 200
         .spread (item, addedAuthor)->
           getItem item
           .then (updatedItem)->
@@ -235,9 +235,9 @@ describe 'items:snapshot', ->
           'wdt:P50': [ authorEntityA.uri ]
       .then (workEntity)->
         authReq 'post', '/api/items', { entity: workEntity.uri, lang: 'de' }
-      .delay 100
+      .delay 200
       .tap -> merge authorEntityA, authorEntityB
-      .delay 100
+      .delay 200
       .then getItem
       .then (updatedItem)->
         updatedAuthors = authorEntityB.labels.de

@@ -8,6 +8,7 @@ should = require 'should'
 describe 'users:search', ->
   it 'should find a user', (done)->
     getUser()
+    .delay 1000
     .then (user)->
       { username } = user
       nonAuthReq 'get', "/api/users?action=search&search=#{username}"
@@ -20,6 +21,7 @@ describe 'users:search', ->
 
   it 'should find a user even with just a prefix', (done)->
     getUser()
+    .delay 1000
     .then (user)->
       prefix = user.username[0..4]
       nonAuthReq 'get', "/api/users?action=search&search=#{prefix}"
@@ -35,7 +37,7 @@ describe 'users:search', ->
     # to recover for ElasticSearch
     userPromise = createUser 'testuser'
     userPromise
-    .delay 10
+    .delay 1000
     .then (user)->
       customAuthReq userPromise, 'get', "/api/users?action=search&search=testusr"
       .then (res)->
@@ -47,6 +49,7 @@ describe 'users:search', ->
 
   it 'should not return snapshot data', (done)->
     getUserB()
+    .delay 1000
     .then (user)->
       authReq 'get', "/api/users?action=search&search=#{user.username}"
       .then (res)->
