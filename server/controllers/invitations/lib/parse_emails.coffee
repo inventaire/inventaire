@@ -3,7 +3,10 @@ _ = __.require 'builders', 'utils'
 { parseAddressList } = require 'email-addresses'
 error_ = __.require 'lib', 'error/error'
 
-module.exports = (emails, userEmail)->
+# Takes a string (or an array) containing email addresses
+# (typically, the value of a text input filled with emails by a user)
+# and returns an array of parsed emails addresses
+module.exports = (emails)->
   emailsString = if _.isArray(emails) then emails.join(',') else emails
 
   unless _.isNonEmptyString emailsString
@@ -18,7 +21,6 @@ module.exports = (emails, userEmail)->
   .map _.property('address')
   .map _.toLowerCase
   .uniq()
-  .without userEmail.toLowerCase()
   .value()
 
 # providing to 'email-addresses' known limitations

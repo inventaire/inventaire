@@ -38,8 +38,11 @@ module.exports = (req, res)->
 
 parseAndValidateEmails = (emails, userEmail)->
   promises_.try ->
-    parsedEmails = parseEmails emails, userEmail
-    return applyLimit parsedEmails
+    parsedEmails = parseEmails emails
+    # Removing the requesting user email if for some reason
+    # it ended up in the list
+    filteredEmails = _.without parsedEmails, userEmail.toLowerCase()
+    return applyLimit filteredEmails
 
 validateGroup = (groupId, reqUserId)->
   unless groupId? then return promises_.resolve null
