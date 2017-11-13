@@ -11,9 +11,11 @@ describe 'parse emails', ->
     done()
 
   it 'should take a string email list and return an array of strings', (done)->
-    parseEmails('a@bla.org,b@bla.org').should.be.an.Array()
-    parseEmails('a@bla.org,b@bla.org')[0].should.equal 'a@bla.org'
-    parseEmails('a@bla.org,b@bla.org')[1].should.equal 'b@bla.org'
+    emails = 'a@bla.org,b@bla.org, "Bob Example" <bob@example.com>'
+    parseEmails(emails).should.be.an.Array()
+    parseEmails(emails)[0].should.equal 'a@bla.org'
+    parseEmails(emails)[1].should.equal 'b@bla.org'
+    parseEmails(emails)[2].should.equal 'bob@example.com'
     done()
 
   it 'should return emails lowercased', (done)->
