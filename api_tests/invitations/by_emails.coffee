@@ -85,24 +85,6 @@ describe 'invitations:by-emails', ->
 
       return
 
-      email = randomEmail()
-      groupPromise
-      .then (group)->
-        authReq 'post', '/api/invitations?action=by-emails',
-          emails: email
-          group: group._id
-        .then -> signup email
-        .then -> getGroup group._id
-        .then (updatedGroup)->
-          prevInvitedCount = group.invited.length
-          invitedCount = updatedGroup.invited.length
-          invitedCount.should.equal prevInvitedCount + 1
-          done()
-
-      .catch undesiredErr(done)
-
-      return
-
   describe 'groups', ->
     it 'should reject invalid group ids', (done)->
       authReq 'post', '/api/invitations?action=by-emails',
