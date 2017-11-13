@@ -21,6 +21,10 @@ module.exports = API =
       items = itemsData.map addDefaultEntity(entityUri)
       customAuthReq userPromise, 'post', '/api/items', items
 
+  createItem: (userPromise, itemData = {})->
+    API.createItems userPromise, [ itemData ]
+    .get '0'
+
   createRandomizedItems: (userPromise, itemsData)->
     return API.createItems userPromise, itemsData.map(randomizedItem)
 
@@ -33,5 +37,5 @@ randomizedItem = (itemData)->
   return itemData
 
 addDefaultEntity = (entityUri)-> (item)->
-  itemData.entity or= entityUri
-  return itemData
+  item.entity or= entityUri
+  return item

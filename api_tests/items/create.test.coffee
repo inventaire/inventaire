@@ -66,7 +66,6 @@ describe 'items:create', ->
     .delay debounceDelay
     .then -> getRefreshedUser userPromise
     .then (user)->
-      _.log user.snapshot, 'user.snapshot'
       user.snapshot.public['items:count'].should.equal 1
       user.snapshot.network['items:count'].should.equal 0
       user.snapshot.private['items:count'].should.equal 0
