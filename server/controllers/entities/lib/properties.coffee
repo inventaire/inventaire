@@ -83,12 +83,12 @@ properties =
   'wdt:P50': humanEntity
   # publisher
   'wdt:P123': entityUniqueValue
-  # original language of work
-  'wdt:P364': entityBase
   # movement
   'wdt:P135': entityBase
   # genre
   'wdt:P136': entityBase
+  # based on
+  'wdt:P144': workEntity
   # serie
   'wdt:P179': serieEntity
   # ISBN 13
@@ -97,6 +97,8 @@ properties =
   'wdt:P214': externalId /^[1-9]\d(\d{0,7}|\d{17,20})$/
   # BNF id
   'wdt:P268': externalId /^\d{8}[0-9bcdfghjkmnpqrstvwxz]$/
+  # original language of work
+  'wdt:P364': entityBase
   # language of work
   'wdt:P407': entityBase
   # date of birth
@@ -119,6 +121,8 @@ properties =
   'wdt:P856': urlBase
   # main subject
   'wdt:P921': entityBase
+  # inspired by
+  'wdt:P941': workEntity
   # ISBN 10
   'wdt:P957': isbnProperty 10
   # number of pages
@@ -139,10 +143,14 @@ properties =
   'wdt:P2013': externalId /^(\d+|[\w\.]+)$/
   # YouTube channel ID
   'wdt:P2397': externalId /^UC[\w\-]{21}[AQgw]$/
+  # number of volumes
+  'wdt:P2635': positiveIntegerBase
   # author of foreword
   'wdt:P2679': humanEntity
   # author of afterword
   'wdt:P2680': humanEntity
+  # Mastodon address
+  'wdt:P4033': externalId /^\w+@[a-z0-9\.\-]+[a-z0-9]+$/
 
 whitelist = Object.keys properties
 
@@ -156,7 +164,6 @@ validateProperty = (property)->
 # which type those datatype should returned when passed to _.typeOf
 datatypePrimordialType =
   string: 'string'
-  number: 'number'
   entity: 'string'
   'ipfs-path': 'string'
   'positive-integer': 'number'
