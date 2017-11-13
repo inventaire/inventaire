@@ -18,6 +18,9 @@ login = (userData)->
     return signup userData
 
 module.exports = API =
+  signup: (email)->
+    signup { email, username: randomString(8), password: randomString(8) }
+
   createUser: (username)->
     str = username or randomString(10)
     userData =

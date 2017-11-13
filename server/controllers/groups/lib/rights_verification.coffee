@@ -19,17 +19,11 @@ verifyJoinRequestHandlingRights = (reqUserId, groupId, requesterId)->
       throw error_.new "request not found", 401, requesterId, groupId
 
 verifyRightsToInvite = (reqUserId, groupId, invitedUserId)->
-  promises_.all [
-    user_.areFriends(reqUserId, invitedUserId)
-    groups_.userInGroup(reqUserId, groupId)
-  ]
-  .spread controlInvitationRights.bind(null, arguments)
-
-controlInvitationRights = (context, usersAreFriends, invitorInGroup)->
-  unless usersAreFriends
-    throw error_.new "users aren't friends", 403, context
-  unless invitorInGroup
-    throw error_.new "invitor isn't in group", 403, context
+  groups_.userInGroup reqUserId, groupId
+  .then (invitorInGroup)->
+    unless invitorInGroup
+      context = { reqUserId, groupId, invitedUserId }
+      throw error_.new "invitor isn't in group", 403, context
 
 verifyAdminRights = (reqUserId, groupId)->
   groups_.userInAdmins reqUserId, groupId

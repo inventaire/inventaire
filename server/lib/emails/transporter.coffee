@@ -1,6 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
+{ Promise } = __.require 'lib', 'promises'
 
 nodemailer = require 'nodemailer'
 hbs = require 'nodemailer-express-handlebars'
@@ -33,7 +34,8 @@ transporter.use 'compile', hbs(options)
 
 module.exports =
   sendMail: (email)->
-    transporter.sendMail email
+    # Make sure to return a bluebird promise
+    Promise.resolve transporter.sendMail(email)
     .then _.Success('email sent')
     .catch (err)->
       _.error err, 'email error'

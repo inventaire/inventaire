@@ -55,10 +55,7 @@ module.exports = groups_ =
     .then _.partial(Group.findInvitation, userId, _, true)
 
   byCreation: (limit=10)->
-    db.viewCustom 'byCreation',
-      limit: limit
-      descending: true
-      include_docs: true
+    db.viewCustom 'byCreation', { limit, descending: true, include_docs: true }
 
 groups_.byPosition = __.require('lib', 'by_position')(db, 'groups')
 
@@ -75,10 +72,11 @@ addSlug = (group)->
     group.slug = slug
     return group
 
-_.extend groups_, membershipActions, usersLists, counts, leaveGroups,
-  updateSettings: updateSettings
-  getSlug: getSlug
-  addSlug: addSlug
+_.extend groups_, membershipActions, usersLists, counts, leaveGroups, {
+  updateSettings,
+  getSlug,
+  addSlug
+}
 
 # getGroupData depends on user_ which depends on groups_.
 # Initializing at next tick allows to work around this dependency loop

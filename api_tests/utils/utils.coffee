@@ -10,28 +10,26 @@ randomString = __.require 'lib', './utils/random_string'
 { createUser, createAdminUser, getRefreshedUser } = require '../fixtures/users'
 { request, customAuthReq } = require './request'
 
-userAPromise = null
-userBPromise = null
-adminUserPromise = null
+userPromises = {}
+getUserGetter = (key, admin=false)-> ()->
+  unless userPromises[key]?
+    createFn = if admin then createAdminUser else createUser
+    userPromises[key] = createFn()
+  return getRefreshedUser userPromises[key]
 
 module.exports = API =
   nonAuthReq: request
   customAuthReq: customAuthReq
   authReq: (args...)-> customAuthReq API.getUser(), args...
+  authReqB: (args...)-> customAuthReq API.getUserB(), args...
+  authReqC: (args...)-> customAuthReq API.getUserC(), args...
   adminReq: (args...)-> customAuthReq API.getAdminUser(), args...
 
-  getUser: ->
-    # Create users only if needed
-    userAPromise or= createUser()
-    return getRefreshedUser userAPromise
-
-  getUserB: ->
-    userBPromise or= createUser()
-    return getRefreshedUser userBPromise
-
-  getAdminUser: ->
-    adminUserPromise or= createAdminUser()
-    return getRefreshedUser adminUserPromise
+  # Create users only if needed by the current test suite
+  getUser: getUserGetter 'a'
+  getUserB: getUserGetter 'b'
+  getUserC: getUserGetter 'c'
+  getAdminUser: getUserGetter 'admin', true
 
   # A function to quickly fail when a test gets an undesired positive answer
   undesiredRes: (done)-> (res)->

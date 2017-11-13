@@ -4,7 +4,8 @@ _ = __.require 'builders', 'utils'
 { Lang } = require './regex'
 { pass, email } = require './common'
 
-module.exports =
-  pass: pass
-  email: email
+module.exports = {
+  pass,
+  email,
   language: (lang)-> /^\w{2}(-\w{2})?$/.test(lang)
+}

@@ -14,29 +14,25 @@ module.exports =
     # purposedly not checking notifications settings
     { username, email, language } = user
     lang = _.shortLang language
+    href = buildTokenUrl 'validation-email', email, token
 
     return data =
       to: email
       subject: i18n lang, 'email_confirmation_subject'
       template: 'validation_email'
-      context:
-        lang: lang
-        user: user
-        href: buildTokenUrl 'validation-email', email, token
+      context: { lang, user, href }
 
   resetPassword: (user, token)->
     # purposedly not checking notifications settings
     { username, email, language } = user
     lang = _.shortLang language
+    href = buildTokenUrl 'reset-password', email, token
 
     return data =
       to: email
       subject: i18n lang, 'reset_password_subject'
       template: 'reset_password'
-      context:
-        lang: lang
-        user: user
-        href: buildTokenUrl 'reset-password', email, token
+      context: { lang, user, href }
 
   friendAcceptedRequest: (options)->
     [ user1, user2 ] = validateOptions options
@@ -48,11 +44,7 @@ module.exports =
       to: user1.email
       subject: i18n lang, 'friend_accepted_request_subject', user2
       template: 'friend_accepted_request'
-      context:
-        user: user1
-        lang: lang
-        friend: user2
-        host: host
+      context: { user: user1, friend: user2, lang, host }
 
   friendshipRequest: (options)->
     [ user1, user2 ] = validateOptions options
@@ -74,11 +66,7 @@ module.exports =
       to: user1.email
       subject: i18n lang, 'friendship_request_subject', user2
       template: 'friendship_request'
-      context:
-        user: user1
-        lang: lang
-        otherUser: user2
-        host: host
+      context: { user: user1, otherUser: user2, lang, host }
 
   group: (action, context)->
     { group, actingUser, userToNotify } = context
@@ -91,17 +79,14 @@ module.exports =
       groupName: group.name
       actingUserUsername: actingUser.username
 
+    title = "group_#{action}_subject"
+    button = "group_#{action}_button"
+
     return data =
       to: email
       subject: i18n lang, "group_#{action}_subject", groupContext
       template: 'group'
-      context:
-        title: "group_#{action}_subject"
-        button: "group_#{action}_button"
-        group: group
-        groupContext: groupContext
-        lang: lang
-        host: host
+      context: { title, button, group, groupContext, lang, host }
 
   feedback: (subject, message, user, unknownUser)->
     # no email settings to check here ;)
@@ -111,31 +96,41 @@ module.exports =
       replyTo: user?.email
       subject: "[feedback][#{username}] #{subject}"
       template: 'feedback'
-      context:
-        subject: subject
-        message: message
-        user: user
-        unknownUser: unknownUser
+      context: { subject, message, user , unknownUser }
 
-  EmailInvitation: (user, message)->
-    # no email settings to check here neither:
-    # invited users who don't want more emails should have been filtered-out
-    # by invitations_.extractCanBeInvited
-    { username, language } = user
+  FriendInvitation: (inviter, message)->
+    # No email settings to check here:
+    # - Existing users aren't sent an email invitation but get a friend request
+    #   where their notifications settings will be applied
+    # - Invited users who don't want more emails should have been filtered-out
+    #   by invitations/lib/send_invitations extractCanBeInvited
+    { username, language } = inviter
     lang = _.shortLang language
 
-    user.pathname = "#{host}/inventory/#{username}"
+    inviter.pathname = "#{host}/users/#{username}"
     return emailFactory = (emailAddress)->
       return data =
         to: emailAddress
-        replyTo: user.email
-        subject: i18n lang, 'email_invitation_subject', user
+        replyTo: inviter.email
+        subject: i18n lang, 'email_invitation_subject', inviter
         template: 'email_invitation'
-        context:
-          user: user
-          message: message
-          lang: lang
-          host: host
+        context: { inviter, message, lang, host }
+
+  GroupInvitation: (inviter, group, message)->
+    # No email settings to check here neither (idem FriendInvitation)
+    { username, language } = inviter
+    lang = _.shortLang language
+
+    group.pathname = "#{host}/groups/#{group.slug}"
+    # Object required to pass as i18n strings context
+    data = { username: inviter.username, groupName: group.name }
+    return emailFactory = (emailAddress)->
+      return data =
+        to: emailAddress
+        replyTo: inviter.email
+        subject: i18n lang, 'group_email_invitation_subject', inviter
+        template: 'group_email_invitation'
+        context: { data, message, lang, host }
 
   transactions:
     yourItemWasRequested: (transaction)->
@@ -176,7 +171,4 @@ validateOptions = (options)->
   return [ user1, user2 ]
 
 buildTokenUrl = (action, email, token)->
-  _.buildPath "#{host}/api/token",
-    action: action
-    email: qs.escape email
-    token: token
+  _.buildPath "#{host}/api/token", { action, email: qs.escape(email), token }

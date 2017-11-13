@@ -6,41 +6,40 @@ db = __.require('couch', 'base')('users', 'invited')
 Invited = __.require 'models','invited'
 promises_ = __.require 'lib', 'promises'
 { makeRequest } = __.require 'controllers', 'relations/lib/actions'
+{ invite:groupInvite } = __.require 'controllers', 'groups/lib/groups'
 
 module.exports = invitations_ =
-  findOneByEmail:findOneByEmail.bind(null, db)
-  byEmails: byEmails.bind(null, db)
-  createUnknownInvited: (inviterId, unknownEmails)->
-    _.types arguments, ['string', 'array']
-    invitedDocs = unknownEmails.map Invited.create.bind(null, inviterId)
+  findOneByEmail: findOneByEmail.bind null, db
+  byEmails: byEmails.bind null, db
+  createUnknownInvited: (inviterId, groupId, unknownEmails)->
+    _.types arguments, ['string', 'string|undefined', 'array']
+    invitedDocs = unknownEmails.map Invited.create(inviterId, groupId)
     db.bulk invitedDocs
     .catch _.ErrorRethrow('createUnknownInvited')
 
-  addInviter: (inviterId, invitedDocs)->
-    _.types arguments, ['string', 'array']
-    invitedDocs = invitedDocs.map Invited.addInviter.bind(null, inviterId)
+  addInviter: (inviterId, groupId, invitedDocs)->
+    _.types arguments, ['string', 'string|undefined', 'array']
+    addInviterFn = Invited.addInviter.bind null, inviterId, groupId
+    invitedDocs = invitedDocs.map addInviterFn
     db.bulk invitedDocs
     .catch _.ErrorRethrow('addInviter')
 
-  extractUnknownEmails: (emails, knownInvitedUsers)->
-    knownInvitedUsersEmails = knownInvitedUsers.map _.property('email')
-    return _.difference emails, knownInvitedUsersEmails
-
-  extractCanBeInvited: (userId, knownInvitedUsers)->
-    return knownInvitedUsers.filter Invited.canBeInvited.bind(null, userId)
-
-  extractRemainingEmails: (canBeInvited, unknownEmails)->
-    knownEmails = canBeInvited.map _.property('email')
-    return unknownEmails.concat knownEmails
-
   convertInvitations: (userDoc)->
-    { _id, inviters } = userDoc
-    if inviters?
-      invitersIds = Object.keys inviters
-      promises = invitersIds.map convertInvitation.bind(null, _id)
-      return promises_.all promises
-    else
-      return promises_.resolved
+    { _id:userId, inviters, invitersGroups } = userDoc
+
+    unless inviters? or invitersGroups? then return promises_.resolved
+
+    invitersGroups or= {}
+    groupInvitersIds = _.values invitersGroups
+    _.log groupInvitersIds, 'groupInvitersIds'
+
+    invitersIds = _.difference Object.keys(inviters), groupInvitersIds
+    _.log invitersIds, 'invitersIds'
+
+    friendsPromises = convertFriendInvitations invitersIds, userId
+    groupsPromises = convertGroupsInvitations invitersGroups, userId
+
+    return promises_.all friendsPromises.concat(groupsPromises)
 
   stopEmails: (email)->
     invitations_.findOneByEmail email
@@ -48,5 +47,16 @@ module.exports = invitations_ =
     .catch _.ErrorRethrow('stopEmails')
 
 emailNotification = false
-convertInvitation = (newUserId, inviterId)->
-  makeRequest inviterId, newUserId, emailNotification
+convertFriendInvitations = (invitersIds, newUserId)->
+  invitersIds
+  .map (inviterId)->
+    makeRequest inviterId, newUserId, emailNotification
+    # Prevent crashing the signup request for one failed request
+    .catch _.Error("friend invitation convertion err: #{inviterId}/#{newUserId}")
+
+convertGroupsInvitations = (invitersGroups, newUserId)->
+  Object.keys invitersGroups
+  .map (groupId)->
+    inviterId = invitersGroups[groupId]
+    groupInvite { group: groupId, user: newUserId }, inviterId
+    .catch _.Error("group invitation convertion err: #{inviterId}/#{newUserId}")

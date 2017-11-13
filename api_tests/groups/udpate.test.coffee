@@ -3,16 +3,16 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { nonAuthReq, authReq, undesiredErr } = require '../utils/utils'
-{ createGroup, endpointBase } = require '../fixtures/groups'
+{ groupPromise, endpointAction } = require '../fixtures/groups'
 slugify = __.require 'controllers', 'groups/lib/slugify'
 
 describe 'groups:update-settings', ->
   it 'should update the group slug when updating the name', (done)->
-    createGroup
+    groupPromise
     .then (group)->
       groupId = group._id
       updatedName = group.name + '-updated'
-      authReq 'put', "#{endpointBase}=update-settings",
+      authReq 'put', "#{endpointAction}=update-settings",
         group: groupId
         attribute: 'name',
         value: updatedName
@@ -20,7 +20,7 @@ describe 'groups:update-settings', ->
       .delay 50
       .then (updateRes)->
         updateRes.ok.should.be.true()
-        nonAuthReq 'get', "#{endpointBase}=by-id&id=#{groupId}"
+        nonAuthReq 'get', "#{endpointAction}=by-id&id=#{groupId}"
         .then (getRes)->
           { group } = getRes
           group.name.should.equal updatedName
@@ -31,11 +31,11 @@ describe 'groups:update-settings', ->
     return
 
   it 'should request a group slug update when updating the name', (done)->
-    createGroup
+    groupPromise
     .then (group)->
       groupId = group._id
       updatedName = group.name + '-updated-again'
-      authReq 'put', "#{endpointBase}=update-settings",
+      authReq 'put', "#{endpointAction}=update-settings",
         group: groupId
         attribute: 'name',
         value: updatedName
@@ -51,10 +51,10 @@ describe 'groups:update-settings', ->
 
   it 'should update description', (done)->
     updatedDescription = 'Lorem ipsum dolor sit amet'
-    createGroup
+    groupPromise
     .then (group)->
       groupId = group._id
-      authReq 'put', "#{endpointBase}=update-settings",
+      authReq 'put', "#{endpointAction}=update-settings",
         group: groupId
         attribute: 'description',
         value: updatedDescription
@@ -63,7 +63,7 @@ describe 'groups:update-settings', ->
       .then (updateRes)->
         updateRes.ok.should.be.true()
         Object.keys(updateRes.update).length.should.equal 0
-        nonAuthReq 'get', "#{endpointBase}=by-id&id=#{groupId}"
+        nonAuthReq 'get', "#{endpointAction}=by-id&id=#{groupId}"
         .then (getRes)->
           { group } = getRes
           group.description.should.equal updatedDescription
