@@ -68,8 +68,8 @@ module.exports = items_ =
 
   create: (userId, items)->
     _.type items, 'array'
-    Promise.all items.map(snapshotEntityData)
-    .map Item.create.bind(null, userId)
+    promises_.all items.map(snapshotEntityData)
+    .map (item)-> Item.create userId, item
     .then db.bulk
     .then (res)->
       itemsIds = _.pluck res, 'id'
