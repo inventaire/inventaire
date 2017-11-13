@@ -52,9 +52,9 @@ validateGroup = (groupId, reqUserId)->
 
   groups_.byId groupId
   .then (group)->
-    userIsAdmin = Group.userIsAdmin reqUserId, group
-    unless userIsAdmin
-      throw error_.new "user isn't group admin", 403, { groupId, reqUserId }
+    userIsMember = Group.userIsMember reqUserId, group
+    unless userIsMember
+      throw error_.new "user isn't a group member", 403, { groupId, reqUserId }
     return group
   .catch (err)->
     if err.statusCode is 404

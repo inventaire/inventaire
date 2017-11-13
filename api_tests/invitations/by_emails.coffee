@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ authReq, authReqB, undesiredErr, undesiredRes } = require '../utils/utils'
+{ authReq, authReqB, authReqC, undesiredErr, undesiredRes } = require '../utils/utils'
 { groupPromise, getGroup } = require '../fixtures/groups'
 { signup } = require '../fixtures/users'
 randomString = __.require 'lib', './utils/random_string'
@@ -112,15 +112,30 @@ describe 'invitations:by-emails', ->
 
       return
 
-    it 'should reject non-user admin requests to invite to a group', (done)->
+    it 'should accept non-user admin requests to invite to a group', (done)->
       groupPromise
       .then (group)->
+        # User B is a member (see ../fixtures/groups.coffee)
         authReqB 'post', '/api/invitations?action=by-emails',
+          emails: 'a@foo.org'
+          group: group._id
+      .then (res)->
+        res.emails[0].should.equal 'a@foo.org'
+        done()
+      .catch undesiredErr(done)
+
+      return
+
+    it 'should reject non-member requests to invite to a group', (done)->
+      groupPromise
+      .then (group)->
+        # User C isnt a member
+        authReqC 'post', '/api/invitations?action=by-emails',
           emails: 'a@foo.org'
           group: group._id
       .catch (err)->
         err.statusCode.should.equal 403
-        err.body.status_verbose.should.equal "user isn't group admin"
+        err.body.status_verbose.should.equal "user isn't a group member"
         done()
       .catch undesiredErr(done)
 
