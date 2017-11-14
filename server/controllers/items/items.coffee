@@ -11,6 +11,7 @@ module.exports =
       'by-ids': require './by_ids'
       'by-users': require './by_users'
       'by-entities': require './by_entities'
+      'recent-public': require './recent_public'
       'last-public': require './last_public'
       'by-user-and-entity': require './by_user_and_entity'
     authentified:
