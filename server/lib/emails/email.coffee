@@ -128,7 +128,7 @@ module.exports =
       return data =
         to: emailAddress
         replyTo: inviter.email
-        subject: i18n lang, 'group_email_invitation_subject', inviter
+        subject: i18n lang, 'group_email_invitation_subject', data
         template: 'group_email_invitation'
         context: { data, message, lang, host }
 
