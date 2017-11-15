@@ -61,10 +61,13 @@ searchDataseedByText = (query, key)->
 
   _.log query, 'query'
   { search, lang, refresh } = query
+  # Get a list of matching ISBNs
   searchDataseed search, lang, refresh
   .timeout searchTimeout
   .get 'isbns'
   .map urifyIsbn
+  # For which we now request the associated entities:
+  # that's where the entity scaffolding from data seeds takes place
   .then GetEntitiesByUris(refresh)
   .catch error_.notFound
   .finally _.EndTimer(key)

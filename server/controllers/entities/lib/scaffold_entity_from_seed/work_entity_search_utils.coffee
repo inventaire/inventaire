@@ -35,6 +35,8 @@ MatchAuthor = (authors, lang)-> (result)->
 
 # We want to have a rather high level of certitude that this is the same
 MatchTitle = (title, lang)-> (result)->
+  # TODO: Compare on other languages and aliases too
+  # Ex: "Virginie Lou" should be matched with "Virginie Lou-nony"
   resultTitle = getBestLangValue(lang, result.originalLang, result.labels).value
   unless _.isString(title) and _.isString(resultTitle) then return false
   return stringsAreClose formatTitle(resultTitle), formatTitle(title)

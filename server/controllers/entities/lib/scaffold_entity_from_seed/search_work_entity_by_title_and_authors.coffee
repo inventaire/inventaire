@@ -27,7 +27,7 @@ module.exports = (seed)->
   searchByText
     search: title
     lang: lang
-    # Having dataseed enable woud trigger a hell of a loop
+    # Having dataseed enable would trigger a hell of a loop
     disableDataseed: true
   # Make a first filter from the results we got
   .filter MatchTitle(title, lang)

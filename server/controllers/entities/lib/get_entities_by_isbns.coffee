@@ -40,6 +40,9 @@ getMissingEditionEntitiesFromSeeds = (isbns, refresh)->
   .then (seeds)->
     insufficientData = []
     validSeeds = []
+    # TODO: Filter out more aggressively bad quality seeds
+    # - titles with punctuations
+    # - authors with punctuations or single word
     for seed in seeds
       if _.isNonEmptyString seed.title then validSeeds.push seed
       else insufficientData.push seed
