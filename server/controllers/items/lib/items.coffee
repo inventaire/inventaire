@@ -7,13 +7,17 @@ listingsPossibilities = Item.attributes.constrained.listing.possibilities
 error_ = __.require 'lib', 'error/error'
 { BasicUpdater } = __.require 'lib', 'doc_updates'
 couch_ = __.require 'lib', 'couch'
-user_ = __.require 'controllers', 'user/lib/user'
 promises_ = __.require 'lib', 'promises'
 radio = __.require 'lib', 'radio'
 { filterPrivateAttributes } = require './filter_private_attributes'
 { maxKey } = __.require 'lib', 'couch'
 listingsLists = require './listings_lists'
 snapshotEntityData = require './snapshot/snapshot_entity_data'
+
+# Working around the circular dependency
+user_ = null
+lateRequire = -> user_ = __.require 'controllers', 'user/lib/user'
+setTimeout lateRequire, 0
 
 db = __.require('couch', 'base')('items')
 
