@@ -10,7 +10,6 @@ module.exports = (user, limitDate=0)->
   unless position? then return formatData [], 'nearby', []
 
   items_.nearby userId, 20, true
-  .then _.Log('items nearby')
   .spread formatItems.bind(null, limitDate, position)
 
 formatItems = (limitDate, position, users, items)->

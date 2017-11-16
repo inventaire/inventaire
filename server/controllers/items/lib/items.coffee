@@ -138,8 +138,8 @@ module.exports = items_ =
     _.log usersIds, 'usersIds'
     unless usersIds.length > 0 then return [[], []]
     return promises_.all [
-      user_.getUsersByIds(reqUserId, usersIds).then _.Log('users')
-      items_.publicListings(usersIds).then _.Log('items')
+      user_.getUsersByIds reqUserId, usersIds
+      items_.publicListings usersIds
     ]
 
   # Data manipulation done on client-side view models (item.serializeData),
