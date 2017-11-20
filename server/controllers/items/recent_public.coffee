@@ -15,11 +15,11 @@ module.exports = (req, res)->
   maxItemsPerOwner = 3
 
   items_.publicByDate itemsQueryLimit, offset, assertImage, reqUserId
-  .then selectRecentItems.bind(null, itemsReturnedLimit, maxItemsPerOwner)
+  .then selectRecentItems(itemsReturnedLimit, maxItemsPerOwner)
   .then bundleOwnersToItems.bind(null, res, reqUserId)
   .catch error_.Handler(req, res)
 
-selectRecentItems = (itemsReturnedLimit, maxItemsPerOwner, items)->
+selectRecentItems = (itemsReturnedLimit, maxItemsPerOwner)-> (items)->
   _(items)
   .groupBy itemsOwnerId
   .map (ownerItems, _)-> ownerItems.slice(0, maxItemsPerOwner)
