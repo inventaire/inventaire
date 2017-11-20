@@ -20,11 +20,13 @@ getLastNetworkBooks = require './last_network_books'
 getLastNearbyPublicBooks = require './last_nearby_books'
 
 module.exports = (user)->
+  user.lang = _.shortLang user.language
+
   getEmailData user
-  .then spreadEmailData.bind(null, user)
+  .then spreadEmailData(user)
 
 getEmailData = (user)->
-  { _id:userId, lastSummary } = user
+  { _id:userId, lang, lastSummary } = user
   promises_.props
     # pending friends requests
     friendsRequests: relations_.pendingFriendsRequestsCount userId
@@ -36,7 +38,7 @@ getEmailData = (user)->
     # waiting transaction
     activeTransactions: transactions_.activeTransactions userId
     # new books in your network: preview + count for others 'X more...'
-    lastFriendsBooks: getLastNetworkBooks userId, lastSummary
+    lastFriendsBooks: getLastNetworkBooks userId, lang, lastSummary
     # new books nearby
     lastNearbyPublicBooks: getLastNearbyPublicBooks user, lastSummary
 
@@ -47,7 +49,7 @@ getEmailData = (user)->
     # new users nearby
     # new users in groups
 
-spreadEmailData = (user, results)->
+spreadEmailData = (user)-> (results)->
   {
     friendsRequests,
     groupInvitations,
@@ -58,8 +60,7 @@ spreadEmailData = (user, results)->
     lastNearbyPublicBooks
   } = results
 
-  { email, language, summaryPeriodicity } = user
-  lang = _.shortLang language
+  { email, summaryPeriodicity, lang } = user
 
   countTotal = friendsRequests + groupInvitations + groupRequests + unreadNotifications + activeTransactions + lastFriendsBooks.highlighted.length + lastNearbyPublicBooks.highlighted.length
 

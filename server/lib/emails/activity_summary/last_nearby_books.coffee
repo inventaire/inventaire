@@ -5,16 +5,16 @@ items_ = __.require 'controllers', 'items/lib/items'
 { getLastItems, formatData, embedUsersData, getHighlightedItems } = require './last_books_helpers'
 
 module.exports = (user, limitDate=0)->
-  { _id:userId, position } = user
+  { _id:userId, position, lang } = user
 
-  unless position? then return formatData [], 'nearby', []
+  unless position? then return formatData [], 'nearby', lang, []
 
   items_.nearby userId, 20, true
-  .spread formatItems.bind(null, limitDate, position)
+  .spread formatItems(limitDate, position, lang)
 
-formatItems = (limitDate, position, users, items)->
+formatItems = (limitDate, position, lang)-> (users, items)->
   items = items.map items_.importSnapshotData
   lastItems = getLastItems limitDate, items
   highlighted = getHighlightedItems lastItems, 10
   lastItems = embedUsersData lastItems, users, position
-  return formatData lastItems, 'nearby', highlighted
+  return formatData lastItems, 'nearby', lang, highlighted

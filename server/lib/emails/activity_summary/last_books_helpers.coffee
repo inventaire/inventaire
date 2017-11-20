@@ -10,11 +10,11 @@ module.exports =
   getLastItems: (limitDate, items)->
     return items.filter (item)-> item.created > limitDate
 
-  formatData: (lastItems, label, highlighted)->
+  formatData: (lastItems, label, lang, highlighted)->
     more = lastItems.length - highlighted.length
     return formattedItems =
       display: highlighted.length > 0
-      highlighted: highlighted
+      highlighted: highlighted.map addUserLang(lang)
       title: "last_#{label}_books"
       more:
         display: more > 0
@@ -59,3 +59,7 @@ getItemsWithTransactionFirst = (lastItems, highlightedLength)->
   # in case there are less items with transactions than expected
   # concating items without transactions
   else return withTransaction.concat(withoutTransaction)[0...highlightedLength]
+
+addUserLang = (lang)-> (item)->
+  item.userLang = lang
+  return item
