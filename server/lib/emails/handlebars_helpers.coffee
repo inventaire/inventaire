@@ -7,4 +7,5 @@ appApi = require './app_api'
 module.exports = hb_ = __.require('sharedLibs', 'handlebars_helpers')(_, appApi)
 
 _.extend hb_, i18n,
-  debug: _.log
+  # Prevent passing more than 2 arguments
+  debug: (obj, label)-> _.log obj, label
