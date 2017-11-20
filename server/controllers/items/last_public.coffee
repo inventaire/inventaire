@@ -7,7 +7,7 @@ bundleOwnersToItems = require './lib/bundle_owners_to_items'
 module.exports = (req, res)->
   { query } = req
   { limit, offset } = query
-  assertImage = query['assert-image'] is 'true'
+  assertImage = _.parseBooleanString query['assert-image']
   reqUserId = req.user?._id
 
   limit or= '15'
