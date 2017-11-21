@@ -13,7 +13,6 @@ describe 'items:recent-public', ->
       publicItemsPerUser: 16
     .then -> nonAuthReq 'get', recentPublicUrl
     .then (res)-> res.items.length.should.equal 15
-
     .delay 10
     .then -> done()
     .catch undesiredErr(done)
@@ -26,7 +25,18 @@ describe 'items:recent-public', ->
       publicItemsPerUser: 4
     .then -> nonAuthReq 'get', recentPublicUrl
     .then (res)-> res.users.length.should.be.above 4
+    .delay 10
+    .then -> done()
+    .catch undesiredErr(done)
+    return
 
+  it 'should respect the limit parameter', (done)->
+    populate
+      usersCount: 2
+      # only 2 as tests already create 3 users in `./api_tests/users`
+      publicItemsPerUser: 4
+    .then -> nonAuthReq 'get', "#{recentPublicUrl}&limit=3"
+    .then (res)-> res.items.length.should.equal 3
     .delay 10
     .then -> done()
     .catch undesiredErr(done)

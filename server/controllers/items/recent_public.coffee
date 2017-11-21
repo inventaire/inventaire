@@ -3,29 +3,28 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 items_ = __.require 'controllers', 'items/lib/items'
 bundleOwnersToItems = require './lib/bundle_owners_to_items'
+itemsQueryLimit = 100
+maxItemsPerOwner = 3
+offset = 0
 
 module.exports = (req, res)->
   { query } = req
   assertImage = _.parseBooleanString query['assert-image']
+  limit = query.limit or 15
   reqUserId = req.user?._id
 
-  itemsQueryLimit = 100
-  offset = 0
-  itemsReturnedLimit = 15
-  maxItemsPerOwner = 3
-
   items_.publicByDate itemsQueryLimit, offset, assertImage, reqUserId
-  .then selectRecentItems(itemsReturnedLimit, maxItemsPerOwner)
+  .then selectRecentItems(limit, maxItemsPerOwner)
   .then bundleOwnersToItems.bind(null, res, reqUserId)
   .catch error_.Handler(req, res)
 
-selectRecentItems = (itemsReturnedLimit, maxItemsPerOwner)-> (items)->
+selectRecentItems = (limit, maxItemsPerOwner)-> (items)->
   _(items)
   .groupBy itemsOwnerId
   .map (ownerItems, _)-> ownerItems.slice(0, maxItemsPerOwner)
   .flatten()
   .values()
-  .slice 0, itemsReturnedLimit
+  .slice 0, limit
   .shuffle()
   # wrapping lodash .chain() function
   .value()
