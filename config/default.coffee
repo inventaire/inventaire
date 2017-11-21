@@ -108,7 +108,7 @@ module.exports = config =
     maxEmailsPerHour: 5
     # the key to find the current news string
     newsKey: 'news_1'
-    didYouKnowKey: 'did_you_know_1'
+    didYouKnowKeyCount: 5
   # use mailgun API to validate emails
   emailValidation:
     activated: false

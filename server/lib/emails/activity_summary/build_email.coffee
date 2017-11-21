@@ -5,7 +5,7 @@ promises_ = __.require 'lib', 'promises'
 host = CONFIG.fullPublicHost()
 { i18n } = require '../i18n/i18n'
 { contactAddress } = CONFIG
-{ newsKey, didYouKnowKey } = CONFIG.activitySummary
+{ newsKey, didYouKnowKeyCount } = CONFIG.activitySummary
 # keep in sync with the nextSummary view in the user design_docs
 # and defaultPeriodicity in the client's notifications_settings
 defaultPeriodicity = 20
@@ -95,7 +95,7 @@ spreadEmailData = (user)-> (results)->
       lastFriendsBooks: lastFriendsBooks
       lastNearbyPublicBooks: lastNearbyPublicBooks
       news: news
-      didYouKnowKey: didYouKnowKey
+      didYouKnowKey: getDidYouKnowKey()
       hasActivities: countTotal > 0
 
 counter = (count, path)->
@@ -110,3 +110,7 @@ newsData = (user)->
     key: newsKey
   else
     display: false
+
+getDidYouKnowKey = ->
+  num = _.random 1, didYouKnowKeyCount
+  return "did_you_know_#{num}"
