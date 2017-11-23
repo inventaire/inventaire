@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ nonAuthReq, undesiredErr } = __.require 'apiTests', 'utils/utils'
+{ nonAuthReq, undesiredRes, undesiredErr } = __.require 'apiTests', 'utils/utils'
 populate = require '../fixtures/populate'
 recentPublicUrl = '/api/items?action=recent-public'
 
@@ -49,6 +49,24 @@ describe 'items:recent-public', ->
     .then (res)-> _.all(res.items, createdLately).should.be.true()
     .delay 10
     .then -> done()
+    .catch undesiredErr(done)
+    return
+
+  it 'should reject invalid limit', (done)->
+    nonAuthReq 'get', "#{recentPublicUrl}&limit=bla"
+    .then undesiredRes(done)
+    .catch (err)->
+      err.body.status_verbose.should.equal 'invalid limit: bla'
+      done()
+    .catch undesiredErr(done)
+    return
+
+  it 'should reject invalid lang', (done)->
+    nonAuthReq 'get', "#{recentPublicUrl}&lang=bla"
+    .then undesiredRes(done)
+    .catch (err)->
+      err.body.status_verbose.should.equal 'invalid lang: bla'
+      done()
     .catch undesiredErr(done)
     return
 

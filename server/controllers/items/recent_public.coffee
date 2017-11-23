@@ -9,8 +9,21 @@ offset = 0
 
 module.exports = (req, res)->
   { query } = req
-  limit = query.limit or 15
-  lang = query.lang or 'en'
+  { limit, lang } = query
+
+  if limit?
+    unless _.isPositiveIntegerString limit
+      return error_.bundleInvalid req, res, 'limit', limit
+
+    limit = parseInt limit
+
+  limit or= 15
+
+  if lang? and not _.isLang(lang)
+    return error_.bundleInvalid req, res, 'lang', lang
+
+  lang or= 'en'
+
   assertImage = _.parseBooleanString query['assert-image']
   reqUserId = req.user?._id
 
