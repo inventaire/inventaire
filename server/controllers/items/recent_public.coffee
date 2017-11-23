@@ -9,11 +9,12 @@ offset = 0
 
 module.exports = (req, res)->
   { query } = req
-  assertImage = _.parseBooleanString query['assert-image']
   limit = query.limit or 15
+  lang = query.lang or 'en'
+  assertImage = _.parseBooleanString query['assert-image']
   reqUserId = req.user?._id
 
-  items_.publicByDate itemsQueryLimit, offset, assertImage, reqUserId
+  items_.publicByLangAndDate itemsQueryLimit, offset, lang, assertImage, reqUserId
   .then selectRecentItems(limit, maxItemsPerOwner)
   .then bundleOwnersToItems.bind(null, res, reqUserId)
   .catch error_.Handler(req, res)

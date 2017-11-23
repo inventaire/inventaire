@@ -25,7 +25,7 @@ describe 'items:recent-public', ->
     .catch undesiredErr(done)
     return
 
-  it 'should respect the limit parameter', (done)->
+  it 'should take a limit parameter', (done)->
     populate()
     .then -> nonAuthReq 'get', "#{recentPublicUrl}&limit=3"
     .then (res)-> res.items.length.should.equal 3
@@ -33,3 +33,24 @@ describe 'items:recent-public', ->
     .then -> done()
     .catch undesiredErr(done)
     return
+
+  it 'should take a lang parameter', (done)->
+    populate()
+    .then -> nonAuthReq 'get', "#{recentPublicUrl}&lang=de"
+    .then (res)-> _.all(res.items, itemLangIs('de')).should.be.true()
+    .delay 10
+    .then -> done()
+    .catch undesiredErr(done)
+    return
+
+  it 'should return the most recent items', (done)->
+    populate()
+    .then -> nonAuthReq 'get', recentPublicUrl
+    .then (res)-> _.all(res.items, createdLately).should.be.true()
+    .delay 10
+    .then -> done()
+    .catch undesiredErr(done)
+    return
+
+itemLangIs = (lang)-> (item)-> item.snapshot['entity:lang'] is lang
+createdLately = (item)-> not _.expired(item.created, 120000)
