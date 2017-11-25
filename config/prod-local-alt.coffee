@@ -11,6 +11,7 @@ module.exports =
       freeze: false
   activitySummary:
     disabled: false
+    maxEmailsPerHour: 20
   debouncedEmail:
     # Let the main server handle it as its logs are archived so if if the mail
     # fails to be sent, it could be recovered
