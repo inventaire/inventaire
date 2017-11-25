@@ -20,6 +20,7 @@ module.exports =
   graph:
     social: undefined
   godMode: false
+  # Disable password hashing to make tests run faster
   hashPasswords: false
   piwik:
     enabled: false
