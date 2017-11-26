@@ -3,8 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
-{ nonAuthReq, getUser, adminReq, undesiredErr } = require '../utils/utils
-'
+{ nonAuthReq, getUser, adminReq, undesiredErr } = require '../utils/utils'
 randomString = __.require 'lib', './utils/random_string'
 { createWork } = require '../fixtures/entities'
 
