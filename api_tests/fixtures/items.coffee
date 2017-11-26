@@ -6,7 +6,16 @@ _ = __.require 'builders', 'utils'
 { createEdition } = require './entities'
 randomString = __.require 'lib', './utils/random_string'
 
-editionUriPromise = createEdition().get 'uri'
+editionsUrisPromise =
+  en: createEdition({ lang: 'en' }).get 'uri'
+  de: createEdition({ lang: 'de' }).get 'uri'
+
+count = 0
+getEditionUri = ->
+  # Get 4/5 'en' editions, 1/5 'de' editions
+  lang = if count % 4 is 0 then 'de' else 'en'
+  count += 1
+  return editionsUrisPromise[lang]
 
 listings = [ 'private', 'network', 'public' ]
 transactions = [ 'giving', 'lending', 'selling', 'inventorying' ]
@@ -14,7 +23,7 @@ transactions = [ 'giving', 'lending', 'selling', 'inventorying' ]
 module.exports = API =
   createItems: (userPromise, itemsData = {})->
     { entity } = itemsData[0]
-    entityUriPromise = if entity then Promise.resolve(entity) else editionUriPromise
+    entityUriPromise = if entity then Promise.resolve(entity) else getEditionUri()
 
     entityUriPromise
     .then (entityUri)->

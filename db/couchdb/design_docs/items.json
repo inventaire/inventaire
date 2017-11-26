@@ -22,6 +22,9 @@
        },
        "byPreviousEntity": {
            "map": "(doc)->\n    if doc.previousEntity?\n      for uri in doc.previousEntity\n        emit uri, null"
+       },
+       "publicByLangAndDate": {
+           "map": "(doc)->\n  if doc.listing is 'public' and doc.snapshot?\n    lang = doc.snapshot['entity:lang']\n    emit [ lang, doc.created ], null"
        }
    }
 }

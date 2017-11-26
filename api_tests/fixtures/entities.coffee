@@ -4,6 +4,7 @@ _ = __.require 'builders', 'utils'
 { authReq } = require '../utils/utils'
 randomString = __.require 'lib', './utils/random_string'
 isbn_ = __.require 'lib', 'isbn/isbn'
+wdLang = require 'wikidata-lang'
 
 defaultEditionData = ->
   labels: {}
@@ -38,7 +39,8 @@ module.exports = API =
           'wdt:P31': [ 'wd:Q571' ]
           'wdt:P50': [ human.uri ]
 
-  createEdition: ->
+  createEdition: (params={})->
+    lang = params.lang or 'en'
     API.createWork()
     .then (work)->
       authReq 'post', '/api/entities?action=create',
@@ -46,6 +48,7 @@ module.exports = API =
           'wdt:P31': [ 'wd:Q3331189' ]
           'wdt:P629': [ work.uri ]
           'wdt:P1476': [ work.labels.en ]
+          'wdt:P407': [ 'wd:' + wdLang.byCode[lang].wd ]
 
   createItemFromEntityUri: (uri, data={})->
     authReq 'post', '/api/items', _.extend({}, data, { entity: uri })

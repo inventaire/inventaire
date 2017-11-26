@@ -10,7 +10,7 @@ couch_ = __.require 'lib', 'couch'
 promises_ = __.require 'lib', 'promises'
 radio = __.require 'lib', 'radio'
 { filterPrivateAttributes } = require './filter_private_attributes'
-{ maxKey } = __.require 'lib', 'couch'
+{ minKey, maxKey } = __.require 'lib', 'couch'
 listingsLists = require './listings_lists'
 snapshotEntityData = require './snapshot/snapshot_entity_data'
 
@@ -56,6 +56,17 @@ module.exports = items_ =
       limit: limit
       skip: offset
       descending: true
+      include_docs: true
+    .then FilterWithImage(assertImage)
+    .map filterPrivateAttributes(reqUserId)
+
+  publicByLangAndDate: (limit, offset, lang, assertImage, reqUserId)->
+    db.viewCustom 'publicByLangAndDate',
+      startkey: [ lang, maxKey ]
+      endkey: [ lang, minKey ]
+      descending: true
+      limit: limit or 15
+      skip: offset or 0
       include_docs: true
     .then FilterWithImage(assertImage)
     .map filterPrivateAttributes(reqUserId)

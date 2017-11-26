@@ -7,8 +7,8 @@ _ = __.require 'builders', 'utils'
 randomString = __.require 'lib', './utils/random_string'
 
 populatePromise = null
-usersCount = 2
-publicItemsPerUser = 16
+usersCount = 8
+publicItemsPerUser = 10
 
 module.exports = ->
   if populatePromise? then return populatePromise
