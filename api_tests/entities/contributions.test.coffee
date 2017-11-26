@@ -3,6 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { adminReq, authReq, getUser, undesiredErr } = require '../utils/utils'
+{ createWork } = require '../fixtures/entities'
 
 describe 'entities:get:contributions', ->
   it 'should return a list of patches', (done)->
@@ -93,11 +94,6 @@ describe 'entities:get:contributions', ->
     .catch undesiredErr(done)
 
     return
-
-createWork = ->
-  authReq 'post', '/api/entities?action=create',
-    labels: { fr: 'bla' }
-    claims: { 'wdt:P31': [ 'wd:Q571' ] }
 
 create2WorksAndGetUser = ->
   createWork()

@@ -3,10 +3,11 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { nonAuthReq, authReq, undesiredRes, undesiredErr } = require '../utils/utils'
+{ createWork } = require '../fixtures/entities'
 
 describe 'entities:update-claims', ->
   it 'should reject an update with an inappropriate property', (done)->
-    workPromise
+    createWork()
     .then (work)->
       authReq 'put', '/api/entities?action=update-claim',
         id: work._id
@@ -21,7 +22,3 @@ describe 'entities:update-claims', ->
     .catch undesiredErr(done)
 
     return
-
-workPromise = authReq 'post', '/api/entities?action=create',
-  labels: { fr: 'bla' }
-  claims: { 'wdt:P31': [ 'wd:Q571' ] }

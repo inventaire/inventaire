@@ -5,6 +5,7 @@ should = require 'should'
 { Promise } = __.require 'lib', 'promises'
 { nonAuthReq, authReq, undesiredRes, undesiredErr, getUser } = require '../utils/utils'
 randomString = __.require 'lib', './utils/random_string'
+{ createWork, createHuman, createSerie } = require '../fixtures/entities'
 
 describe 'search:global', ->
   it 'should reject empty searches', (done)->
@@ -65,9 +66,7 @@ describe 'search:global', ->
 
   it 'should return a local human', (done)->
     label = randomString 5
-    authReq 'post', '/api/entities?action=create',
-      labels: { fr: label }
-      claims: { 'wdt:P31': [ 'wd:Q5' ] }
+    createHuman { labels: { fr: label } }
     # Let the time for Elastic Search indexation
     .delay 1000
     .then (entity)->
@@ -84,9 +83,7 @@ describe 'search:global', ->
 
   it 'should return a local work', (done)->
     label = randomString 5
-    authReq 'post', '/api/entities?action=create',
-      labels: { fr: label }
-      claims: { 'wdt:P31': [ 'wd:Q571' ] }
+    createWork { labels: { fr: label } }
     # Let the time for Elastic Search indexation
     .delay 1000
     .then (entity)->
@@ -115,9 +112,7 @@ describe 'search:global', ->
 
   it 'should return a local serie', (done)->
     label = randomString 5
-    authReq 'post', '/api/entities?action=create',
-      labels: { fr: label }
-      claims: { 'wdt:P31': [ 'wd:Q277759' ] }
+    createSerie { labels: { fr: label } }
     # Let the time for Elastic Search indexation
     .delay 1000
     .then (entity)->

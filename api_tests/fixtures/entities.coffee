@@ -2,6 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 { authReq } = require '../utils/utils'
+{ Promise } = __.require 'lib', 'promises'
 randomString = __.require 'lib', './utils/random_string'
 isbn_ = __.require 'lib', 'isbn/isbn'
 wdLang = require 'wikidata-lang'
@@ -12,21 +13,16 @@ defaultEditionData = ->
     'wdt:P31': [ 'wd:Q3331189' ]
     'wdt:P1476': [ randomString(4) ]
 
+createEntity = (P31)-> (params={})->
+  labels = params.labels or { en: randomString(6) }
+  authReq 'post', '/api/entities?action=create',
+    labels: labels
+    claims: { 'wdt:P31': [ P31 ] }
+
 module.exports = API =
-  createHuman: ->
-    authReq 'post', '/api/entities?action=create',
-      labels: { en: randomString(6) }
-      claims: { 'wdt:P31': [ 'wd:Q5' ] }
-
-  createWork: ->
-    authReq 'post', '/api/entities?action=create',
-      labels: { en: randomString(6) }
-      claims: { 'wdt:P31': [ 'wd:Q571' ] }
-
-  createSerie: ->
-    authReq 'post', '/api/entities?action=create',
-      labels: { en: randomString(6) }
-      claims: { 'wdt:P31': [ 'wd:Q277759' ] }
+  createHuman: createEntity 'wd:Q5'
+  createWork: createEntity 'wd:Q571'
+  createSerie: createEntity 'wd:Q277759'
 
   createWorkWithAuthor: (human)->
     humanPromise = if human then Promise.resolve(human) else API.createHuman()
@@ -40,15 +36,24 @@ module.exports = API =
           'wdt:P50': [ human.uri ]
 
   createEdition: (params={})->
-    lang = params.lang or 'en'
-    API.createWork()
-    .then (work)->
+    { works, lang } = params
+    lang or= 'en'
+    worksPromise = if works? then Promise.resolve(works) else API.createWork()
+
+    worksPromise
+    .then (works)->
+      works = _.forceArray works
+      worksUris = _.pluck works, 'uri'
       authReq 'post', '/api/entities?action=create',
         claims:
           'wdt:P31': [ 'wd:Q3331189' ]
-          'wdt:P629': [ work.uri ]
-          'wdt:P1476': [ work.labels.en ]
+          'wdt:P629': worksUris
+          'wdt:P1476': [ _.values(works[0].labels)[0] ]
           'wdt:P407': [ 'wd:' + wdLang.byCode[lang].wd ]
+
+  createEditionFromWorks: (works...)->
+    params = { works }
+    API.createEdition params
 
   createItemFromEntityUri: (uri, data={})->
     authReq 'post', '/api/items', _.extend({}, data, { entity: uri })

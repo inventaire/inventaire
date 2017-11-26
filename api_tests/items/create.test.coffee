@@ -5,7 +5,7 @@ should = require 'should'
 { Promise } = __.require 'lib', 'promises'
 { authReq, getUser, undesiredErr } = require '../utils/utils'
 { CountChange } = require './helpers'
-{ ensureEditionExists, createEdition } = require '../fixtures/entities'
+{ ensureEditionExists, createEdition, createWorkWithAuthor, createHuman } = require '../fixtures/entities'
 { createItem } = require '../fixtures/items'
 { createUser, getRefreshedUser } = require '../fixtures/users'
 debounceDelay = CONFIG.itemsCountDebounceTime + 100
@@ -93,21 +93,15 @@ describe 'items:create', ->
     return
 
   it 'should deduce the author from a work entity', (done)->
-    authReq 'post', '/api/entities?action=create',
-      labels: { de: 'Mr moin moin' }
-      claims: { 'wdt:P31': [ 'wd:Q5' ] }
-    .then (authorEntity)->
-      authReq 'post', '/api/entities?action=create',
-        labels: { de: 'moin moin' }
-        claims:
-          'wdt:P31': [ 'wd:Q571' ]
-          'wdt:P50': [ authorEntity.uri ]
-    .then (workEntity)->
-      authReq 'post', '/api/items', { entity: workEntity.uri, lang: 'de' }
-      .then (item)->
-        item.snapshot.should.be.an.Object()
-        item.snapshot['entity:authors'].should.equal 'Mr moin moin'
-        done()
+    createHuman()
+    .then (author)->
+      createWorkWithAuthor author
+      .then (workEntity)->
+        authReq 'post', '/api/items', { entity: workEntity.uri, lang: 'en' }
+        .then (item)->
+          item.snapshot.should.be.an.Object()
+          item.snapshot['entity:authors'].should.equal author.labels.en
+          done()
     .catch undesiredErr(done)
 
     return

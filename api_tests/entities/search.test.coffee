@@ -3,15 +3,15 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
-{ nonAuthReq, authReq, getUser, adminReq, undesiredErr } = require '../utils/utils'
+{ nonAuthReq, getUser, adminReq, undesiredErr } = require '../utils/utils
+'
 randomString = __.require 'lib', './utils/random_string'
+{ createWork } = require '../fixtures/entities'
 
 describe 'entities:search', ->
   it 'should return a recently created entity', (done)->
-    label = randomString 10
-    authReq 'post', '/api/entities?action=create',
-      labels: { fr: label }
-      claims: { 'wdt:P31': [ 'wd:Q571' ] }
+    label = randomString(10)
+    createWork { labels: { fr: label } }
     .delay 1000
     .then (creationRes)->
       createdWorkId = creationRes._id
@@ -28,8 +28,8 @@ describe 'entities:search', ->
     label = randomString 10
     Promise.all [
       getUser().get '_id'
-      createEntity label
-      createEntity label
+      createWork({ labels: { fr: label } }).get '_id'
+      createWork({ labels: { fr: label } }).get '_id'
     ]
     .spread (userId, fromId, toId)->
       adminReq 'put', '/api/entities?action=merge',
@@ -45,9 +45,3 @@ describe 'entities:search', ->
     .catch undesiredErr(done)
 
     return
-
-createEntity = (label)->
-  authReq 'post', '/api/entities?action=create',
-    labels: { fr: label }
-    claims: { 'wdt:P31': [ 'wd:Q571' ] }
-  .get '_id'

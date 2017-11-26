@@ -3,6 +3,8 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { nonAuthReq, authReq, undesiredErr, undesiredRes } = require '../../utils/utils'
+{ createWork, createSerie } = require '../../fixtures/entities'
+workEntityPromise = createWork()
 
 describe 'entities:editions:create', ->
   it 'should not be able to create an edition entity without a work entity', (done)->
@@ -64,7 +66,7 @@ describe 'entities:editions:create', ->
     return
 
   it 'should not be able to create an edition entity with a non-work entity', (done)->
-    serieEntityPromise
+    createSerie()
     .then (serieEntity)->
       authReq 'post', '/api/entities?action=create',
         claims:
@@ -79,11 +81,3 @@ describe 'entities:editions:create', ->
     .catch undesiredErr(done)
 
     return
-
-workEntityPromise = authReq 'post', '/api/entities?action=create',
-  labels: { fr: 'bla' }
-  claims: { 'wdt:P31': [ 'wd:Q571' ] }
-
-serieEntityPromise = authReq 'post', '/api/entities?action=create',
-  labels: { fr: 'bla' }
-  claims: { 'wdt:P31': [ 'wd:Q277759' ] }
