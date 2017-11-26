@@ -6,7 +6,6 @@ should = require 'should'
 jiff = require 'jiff'
 
 Entity = __.require 'models', 'entity'
-entities_ = __.require 'controllers','entities/lib/entities'
 
 validDoc = ->
   doc = Entity.create()

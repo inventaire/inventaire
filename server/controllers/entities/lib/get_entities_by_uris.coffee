@@ -49,8 +49,8 @@ module.exports = (uris, refresh)->
 
 getDomainsPromises = (domains, refresh)->
   promises = []
-  for prefix, array of domains
-    promises.push getGetter(prefix)(array, refresh)
+  for prefix, uris of domains
+    promises.push getGetter(prefix)(uris, refresh)
 
   return promises_.all promises
 
