@@ -5,6 +5,6 @@ __ = CONFIG.universalPath
 invEntitiesIndex = CONFIG.db.name 'entities'
 index = "wikidata,#{invEntitiesIndex}"
 
-module.exports = buildSearcher
-  index: index
-  queryBodyBuilder: require './common_query_body_builder'
+queryBodyBuilder = require './common_query_body_builder'
+
+module.exports = buildSearcher { index, queryBodyBuilder }
