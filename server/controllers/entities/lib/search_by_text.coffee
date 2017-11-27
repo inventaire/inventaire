@@ -1,7 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-searchWikidataEntities = __.require 'data', 'wikidata/search_entities'
+searchWikidataByText = __.require 'data', 'wikidata/search_by_text'
 searchInvEntities = require './search_inv_entities'
 { search:searchDataseed } = __.require 'data', 'dataseed/dataseed'
 { searchTimeout } = CONFIG
@@ -32,19 +32,6 @@ module.exports = (query)->
   .then _.values
   .catch _.ErrorRethrow('search by text err')
 
-searchWikidataByText = (query, key)->
-  key = startTimer 'searchWikidataByText', key
-
-  searchWikidataEntities query
-  .timeout searchTimeout
-  .map urifyWd
-  # Starting to look for the entities as soon as we have a search result
-  # as other search results might take more time here but less later
-  .then GetEntitiesByUris(query.refresh)
-  .then filterOutIrrelevantTypes
-  .catch error_.notFound
-  .finally _.EndTimer(key)
-
 searchInvByText = (query, key)->
   { search } = query
   key = startTimer 'searchInvByText', key
@@ -72,24 +59,11 @@ searchDataseedByText = (query, key)->
   .catch error_.notFound
   .finally _.EndTimer(key)
 
-urifyWd = (wdId)-> "wd:#{wdId}"
 urifyIsbn = (isbn)-> "isbn:#{isbn}"
 # It's ok to use the inv URI even if its not the canonical URI
 # (wd and isbn URI are prefered) as getEntitiesByUris will
 # take care of finding the right URI downward
 urifyInv = (entity)-> "inv:#{entity._id}"
-
-filterOutIrrelevantTypes = (result)->
-  for uri, entity of result.entities
-    { type } = entity
-    notTypeFound = not type?
-    if notTypeFound then _.warn "not relevant type found, filtered out: #{uri}"
-    # /!\ At this point, entities given the type meta will look something like
-    # { id: 'Q9232060', uri: 'wd:Q9232060', type: 'meta' }
-    # Thus, you can't assume that entity.labels? or entity.claims? is true
-    if notTypeFound or type is 'meta' then delete result.entities[uri]
-
-  return result
 
 mergeResults = (results)->
   _.flattenIndexes _.compact(results).map(_.property('entities'))
