@@ -84,6 +84,10 @@ _.extend Q,
     'wd:Q23834194'
     # philosophy
     'wd:Q5891'
+    # social movement
+    'wd:Q49773'
+    # political movement
+    'wd:Q2738074'
   ]
 
   # Types to ignore (Category pages, homonymie, etc.)
