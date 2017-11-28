@@ -1,7 +1,6 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-error_ = __.require 'lib', 'error/error'
 endpoint = require './endpoint'
 glob = require './glob'
 
