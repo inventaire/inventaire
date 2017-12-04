@@ -36,7 +36,8 @@ policy = "default-src 'self' www.wikidata.org #{ws};" +
   # altHost: required for images taken directly on the main server
   # data: required by leaflet and cropper
   # https://commons.wikimedia.org: used for image claims
-  "img-src 'self' #{altHost} https://commons.wikimedia.org https://api.tiles.mapbox.com data:;" +
+  # https://upload.wikimedia.org: used for genre layouts
+  "img-src 'self' #{altHost} https://commons.wikimedia.org https://upload.wikimedia.org https://api.tiles.mapbox.com data:;" +
   "report-uri /api/reports?action=csp-report;"
 
 exports.addSecurityHeaders = (req, res, next)->
