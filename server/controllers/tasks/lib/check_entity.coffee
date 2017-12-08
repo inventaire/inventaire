@@ -15,22 +15,34 @@ module.exports = (entity)->
   .then (searchResult)->
     entities = _.values(searchResult.entities)
     filterSuggestions entity, entities
+  .then (entities)->
+    tooManyHomonyms(entities)
   .then (suggestionEntities)->
     newTasks = createTasks entity, suggestionEntities
     return { "tasks": newTasks }
 
+tooManyHomonyms = (entities)->
+  if entities.length > 2
+    return []
+  else
+    return entities
+
 filterSuggestions = (suspectEntity, suggestionEntities)->
     suggestionEntities.filter (suggestionEntity)->
-      isSubsetOf suspectEntity.claims, suggestionEntity.claims
+      sameType(suspectEntity, suggestionEntity) &&
+      isSubsetOf(suspectEntity.claims, suggestionEntity.claims)
 
 createTasks = (suspectEntity, suggestionEntities)->
   suggestionEntities.map (suggestion)->
-    suspectUri = urify(suspectEntity)
+    suspectUri = urify suspectEntity
     suggestionUri = suggestion.uri
     Task.create suspectUri, suggestionUri
 
 urify = (entity)->
   "inv:#{entity._id}"
+
+sameType = (entity, otherEntity)->
+  entity.type == otherEntity.type
 
 isSubsetOf = (suspectClaim, suggestionClaim) ->
   _.isEqual suspectClaim, _.pick(suggestionClaim, _.keys(suspectClaim))
