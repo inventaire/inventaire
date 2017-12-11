@@ -5,6 +5,7 @@ should = require 'should'
 { authReq, nonAuthReq, undesiredErr } = require '../utils/utils'
 { getByUris } = require '../utils/entities'
 { ensureEditionExists } = require '../fixtures/entities'
+endpointBase = '/api/entities?action=by-uris&uris='
 
 describe 'entities:get:by-uris', ->
   it 'should accept alternative ISBN 13 syntax', (done)->
