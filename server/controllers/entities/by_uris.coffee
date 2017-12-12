@@ -5,6 +5,8 @@ getEntitiesByUris = require './lib/get_entities_by_uris'
 addRelatives = require './lib/add_relatives'
 whitelistedRelativesProperties = [
   'wdt:P50'
+  'wdt:P179'
+  'wdt:P629'
 ]
 
 module.exports = (req, res, next)->
