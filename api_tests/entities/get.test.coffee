@@ -2,10 +2,11 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ authReq, nonAuthReq, undesiredErr } = require '../utils/utils'
+{ authReq, nonAuthReq, undesiredErr, undesiredRes } = require '../utils/utils'
 { getByUris } = require '../utils/entities'
-{ ensureEditionExists } = require '../fixtures/entities'
+{ ensureEditionExists, createWorkWithAuthor } = require '../fixtures/entities'
 endpointBase = '/api/entities?action=by-uris&uris='
+workWithAuthorPromise = createWorkWithAuthor()
 
 describe 'entities:get:by-uris', ->
   it 'should accept alternative ISBN 13 syntax', (done)->
@@ -103,6 +104,35 @@ describe 'entities:get:by-uris', ->
         entity.type.should.equal 'human'
         entity.uri.should.equal canonicalUri
         done()
+      .catch undesiredErr(done)
+
+      return
+
+  describe 'relatives', ->
+    it "should accept a 'relatives' parameter", (done)->
+      workWithAuthorPromise
+      .then (work)->
+        { uri:workUri } = work
+        authorUri = work.claims['wdt:P50'][0]
+        nonAuthReq 'get', "#{endpointBase}#{workUri}&relatives=wdt:P50"
+        .then (res)->
+          res.entities[workUri].should.be.an.Object()
+          res.entities[authorUri].should.be.an.Object()
+          done()
+      .catch undesiredErr(done)
+
+      return
+
+    it "should reject a non-whitelisted 'relatives' parameter", (done)->
+      workWithAuthorPromise
+      .then (work)->
+        { uri:workUri } = work
+        nonAuthReq 'get', "#{endpointBase}#{workUri}&relatives=wdt:P31"
+        .then undesiredRes(done)
+        .catch (err)->
+          err.statusCode.should.equal 400
+          err.body.status_verbose.should.equal 'invalid relative: wdt:P31'
+          done()
       .catch undesiredErr(done)
 
       return
