@@ -1,25 +1,27 @@
 _ = require 'lodash'
 
-avatarData =
-  'wdt:P2002': (id)->
-    url: "https://twitter.com/#{id}/profile_image?size=original"
-    credits:
-      text: 'Twitter profil picture'
-      url: "https://twitter.com/#{id}"
-  'wdt:P2013': (id)->
-    url: "https://graph.facebook.com/#{id}/picture?type=large"
-    credits:
-      text: 'Facebook profil picture'
-      url: "https://facebook.com/#{id}"
+avatarData = (platform, id)->
+  url: "https://avatars.io/#{platform}/#{id}"
+  credits:
+    text: _.capitalize(platform) + ' profil picture'
+    url: "https://#{platform}.com/#{id}"
 
-avatarProperties = Object.keys avatarData
+platforms =
+  'wdt:P2002': 'twitter'
+  'wdt:P2003': 'instagram'
+  'wdt:P2013': 'facebook'
+
+platformsProperties = Object.keys platforms
 
 aggregateAvatars = (claims)-> (array, property)->
   websiteUserId = claims[property]?[0]
-  if websiteUserId then array.push avatarData[property](websiteUserId)
+  if websiteUserId
+    platform = platforms[property]
+    array.push avatarData(platform, websiteUserId)
   return array
 
-getAvatarsFromClaims = (claims)-> avatarProperties.reduce aggregateAvatars(claims), []
+getAvatarsFromClaims = (claims)->
+  platformsProperties.reduce aggregateAvatars(claims), []
 
 module.exports =
   getAvatarsDataFromClaims: getAvatarsFromClaims
