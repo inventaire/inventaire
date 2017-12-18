@@ -7,16 +7,18 @@ module.exports = Task = {}
 
 tests = require './tests/task'
 
-Task.create = (suspect, suggestion)->
-  _.types arguments, [ 'string', 'string' ]
+Task.create = ( newTask )->
+  _.types arguments, [ 'object' ]
 
-  tests.pass 'suspect', suspect
+  { type, suspectUri, suggestionUri } = newTask
+
+  tests.pass 'suspect', suspectUri
 
   now = Date.now()
 
   return task =
-    type: "task"
-    suspectUri: suspect
-    suggestionUri: suggestion
-    state: 'requested'
+    type: type
+    suspectUri: suspectUri
+    suggestionUri: suggestionUri
+    state: "requested"
     createdAt: now

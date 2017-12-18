@@ -1,0 +1,12 @@
+{
+  "_id": "_design/tasks",
+  "language": "coffeescript",
+  "views": {
+    "byId": {
+        "map": "(doc)->\n  if doc.type is 'task'\n    emit doc._id, null"
+    },
+    "deduplicates": {
+        "map": "(doc)->\n  if doc.type is 'deduplicate'\n    emit doc._id, null"
+    }
+  }
+}
