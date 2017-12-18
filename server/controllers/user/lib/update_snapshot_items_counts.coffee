@@ -24,7 +24,8 @@ aggregateCounts = (index, item)->
   { listing, created } = item
   index[listing]['items:count'] += 1
 
-  if created > index[listing]['items:last-add']
+  lastAdd = index[listing]['items:last-add']
+  if not lastAdd? or created > lastAdd
     index[listing]['items:last-add'] = created
 
   return index

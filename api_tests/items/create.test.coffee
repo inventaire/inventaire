@@ -62,11 +62,13 @@ describe 'items:create', ->
 
   it 'should increment the user items counter', (done)->
     userPromise = createUser()
+    timestamp = Date.now()
     createItem userPromise, { listing: 'public' }
     .delay debounceDelay
     .then -> getRefreshedUser userPromise
     .then (user)->
       user.snapshot.public['items:count'].should.equal 1
+      user.snapshot.public['items:last-add'].should.be.greaterThan(timestamp)
       user.snapshot.network['items:count'].should.equal 0
       user.snapshot.private['items:count'].should.equal 0
       done()
