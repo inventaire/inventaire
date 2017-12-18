@@ -5,8 +5,6 @@ error_ = __.require 'lib', 'error/error'
 
 searchWikidataByText = __.require 'data', 'wikidata/search_by_text'
 
-Task = __.require 'models', 'task'
-
 module.exports = (entity)->
   title = _.values(entity.labels)[0]
 
@@ -14,35 +12,19 @@ module.exports = (entity)->
     search: title
   .then (searchResult)->
     entities = _.values(searchResult.entities)
-    filterSuggestions entity, entities
+    filterSuggestions(entity, entities)
   .then (entities)->
     tooManyHomonyms(entities)
-  .then (suggestionEntities)->
-    newTasks = createTasks entity, suggestionEntities
-    return { "tasks": newTasks }
 
 tooManyHomonyms = (entities)->
-  if entities.length > 2
+  if entities.length > 1
     return []
   else
     return entities
 
 filterSuggestions = (suspectEntity, suggestionEntities)->
-    suggestionEntities.filter (suggestionEntity)->
-      sameType(suspectEntity, suggestionEntity) &&
-      isSubsetOf(suspectEntity.claims, suggestionEntity.claims)
-
-createTasks = (suspectEntity, suggestionEntities)->
-  suggestionEntities.map (suggestion)->
-    suspectUri = urify suspectEntity
-    suggestionUri = suggestion.uri
-    Task.create suspectUri, suggestionUri
-
-urify = (entity)->
-  "inv:#{entity._id}"
-
-sameType = (entity, otherEntity)->
-  entity.type == otherEntity.type
+  suggestionEntities.filter (suggestionEntity)->
+    suspectEntity.type == suggestionEntity.type
 
 isSubsetOf = (suspectClaim, suggestionClaim) ->
   _.isEqual suspectClaim, _.pick(suggestionClaim, _.keys(suspectClaim))

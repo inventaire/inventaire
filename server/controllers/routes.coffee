@@ -30,6 +30,7 @@ module.exports = routes =
   'api/reports': endpoint './reports/reports'
   'api/config': endpoint './config'
   'api/feeds': endpoint './feeds/feeds'
+  'api/tasks': endpoint './tasks/tasks'
   'api/submit': require './auth/fake_submit'
   'img/*': endpoint './images/resize'
 
