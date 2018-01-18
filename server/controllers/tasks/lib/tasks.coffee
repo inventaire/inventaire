@@ -20,3 +20,5 @@ module.exports = tasks_ =
     .then db.postAndReturn
     .then _.Log('task created')
 
+  bySuspectUri: (suspectUri)->
+    db.viewByKey 'bySuspectUri', suspectUri

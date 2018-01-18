@@ -16,6 +16,7 @@ describe 'tasks:deduplicates', ->
     .then (res)->
       res.should.be.an.Array()
       res.length.should.be.belowOrEqual 10
+      res.length.should.be.aboveOrEqual 1
       done()
     .catch undesiredErr(done)
 

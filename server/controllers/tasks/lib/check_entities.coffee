@@ -15,11 +15,10 @@ module.exports = (entities)->
     .then (suggestionEntities)->
       for suggestionEntity in suggestionEntities
         newTasks.push
-          'type': 'deduplicate'
-          'suspectUri': entity.uri
-          'suggestionUri': suggestionEntity.uri
-          'state': 'requested'
-
+          type: 'deduplicate'
+          suspectUri: entity.uri
+          suggestionUri: suggestionEntity.uri
+          state: 'requested'
     .then checkNextEntity
 
   return checkNextEntity()
