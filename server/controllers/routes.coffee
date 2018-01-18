@@ -24,7 +24,6 @@ module.exports = routes =
   'api/cookie': endpoint './cookie'
   'api/images': endpoint './images/images'
   'api/tests*': endpoint './tests'
-  'api/services': endpoint './services/services'
   'api/data': endpoint './data'
   'api/feedback': endpoint './feedback'
   'api/comments': endpoint './comments/comments'

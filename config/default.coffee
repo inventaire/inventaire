@@ -109,10 +109,6 @@ module.exports = config =
     # the key to find the current news string
     newsKey: 'news_1'
     didYouKnowKeyCount: 5
-  # use mailgun API to validate emails
-  emailValidation:
-    activated: false
-    mailgunPubkey: 'yourkey'
   # time of validity for email validation tokens
   tokenDaysToLive: 3
   debouncedEmail:
