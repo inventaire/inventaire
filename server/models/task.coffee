@@ -10,8 +10,11 @@ tests = require './tests/task'
 Task.create = ( newTask )->
   _.types arguments, [ 'object' ]
 
-  { type, suspectUri, suggestionUri } = newTask
+  { type, suspectUri, suggestionUri, state } = newTask
+  state or= 'requested'
 
+  tests.pass 'types', type
+  tests.pass 'states', state
   tests.pass 'suspect', suspectUri
 
   now = Date.now()
@@ -20,5 +23,5 @@ Task.create = ( newTask )->
     type: type
     suspectUri: suspectUri
     suggestionUri: suggestionUri
-    state: "requested"
+    state: state
     createdAt: now
