@@ -101,6 +101,13 @@ module.exports = Entity =
       else
         # if the new value is null, it plays the role of a removeClaim
         propArray = _.without propArray, oldVal
+
+        # Some properties are required.
+        # Ex: wdt:P629 is required on editions, so the last claim can't be removed
+        # without adding a new value
+        if propArray.length is 0 and property in criticalProperties
+          throw error_.new 'this property should at least have one value', 400, arguments
+
         setPossiblyEmptyPropertyArray doc, property, propArray
 
     else
@@ -197,3 +204,6 @@ setPossiblyEmptyPropertyArray = (doc, property, propertyArray)->
 preventRedirectionEdit = (doc, editLabel)->
   if doc.redirect?
     throw error_.new "#{editLabel} failed: the entity is a redirection", 400, arguments
+
+# Properties that need at least one value
+criticalProperties = [ 'wdt:P629' ]
