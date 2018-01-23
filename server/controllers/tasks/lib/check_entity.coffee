@@ -1,20 +1,29 @@
+CONFIG = require 'config'
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
-promises_ = __.require 'lib', 'promises'
-error_ = __.require 'lib', 'error/error'
 
-searchWikidataByText = __.require 'data', 'wikidata/search_by_text'
+error_ = __.require 'lib', 'error/error'
+promises_ = __.require 'lib', 'promises'
+{ searchTimeout } = CONFIG
+{ host:elasticHost } = CONFIG.elasticsearch
+{ buildSearcher, formatError } = __.require 'lib', 'elasticsearch'
 
 module.exports = (entity)->
   title = _.values(entity.labels)[0]
+  index = 'wikidata'
+  promiseToElastic = buildSearcher
+    index: index
+    dbBaseName: 'humans'
+    queryBodyBuilder:
+      { size: 20, query: { bool: { match: { _all: title } } } }
 
-  searchWikidataByText
-    search: title
+  promises_.resolve promiseToElastic
   .then (searchResult)->
     entities = _.values(searchResult.entities)
     filterSuggestions(entity, entities)
   .then (entities)->
     tooManyHomonyms(entities)
+  .catch _.ErrorRethrow("#{index} #{title} search err")
 
 tooManyHomonyms = (entities)->
   if entities.length > 1
