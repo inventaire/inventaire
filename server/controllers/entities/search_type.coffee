@@ -9,8 +9,6 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 searchType = require './lib/search_type'
-getEntityType = require './lib/get_entity_type'
-{ typesNames } = __.require 'lib', 'wikidata/aliases'
 
 indexedTypes = [ 'works', 'humans', 'series', 'genres', 'movements', 'publishers', 'collections']
 
