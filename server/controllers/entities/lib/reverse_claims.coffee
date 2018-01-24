@@ -1,5 +1,6 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
+error_ = __.require 'lib', 'error/error'
 wdk = require 'wikidata-sdk'
 wd_ = __.require 'lib', 'wikidata/wikidata'
 promises_ = __.require 'lib', 'promises'
@@ -15,9 +16,18 @@ caseInsensitiveProperties = [
   'wdt:P2002'
 ]
 
+blacklistedProperties = [
+  # Too many results, can't be sorted
+  'wdt:P31'
+]
+
 module.exports = (params)->
   { property, value, refresh, sort } = params
   _.types [ property, value ], 'strings...'
+
+  if property in blacklistedProperties
+    return error_.reject 'blacklisted property', 400, { property }
+
   promises = []
 
   isEntityValue = _.isEntityUri value
