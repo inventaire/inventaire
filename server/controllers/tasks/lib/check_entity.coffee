@@ -7,33 +7,23 @@ promises_ = __.require 'lib', 'promises'
 { searchTimeout } = CONFIG
 { host:elasticHost } = CONFIG.elasticsearch
 { buildSearcher, formatError } = __.require 'lib', 'elasticsearch'
+prefixify = __.require 'lib', 'wikidata/prefixify'
+
+index = 'wikidata'
+
+queryBodyBuilder = (title)->
+  { size: 20, query: { bool: { should: [ { match: { _all: title } } ] } } }
+
+search = buildSearcher { index, queryBodyBuilder }
 
 module.exports = (entity)->
   title = _.values(entity.labels)[0]
-  index = 'wikidata'
-  promiseToElastic = buildSearcher
-    index: index
-    dbBaseName: 'humans'
-    queryBodyBuilder:
-      { size: 20, query: { bool: { match: { _all: title } } } }
 
-  promises_.resolve promiseToElastic
+  search title, 'humans'
   .then (searchResult)->
-    entities = _.values(searchResult.entities)
-    filterSuggestions(entity, entities)
-  .then (entities)->
-    tooManyHomonyms(entities)
+    searchResult
+    .filter (result)-> result._score > 4
+    .map (result)->
+      _score: result._score
+      uri: prefixify result.id
   .catch _.ErrorRethrow("#{index} #{title} search err")
-
-tooManyHomonyms = (entities)->
-  if entities.length > 1
-    return []
-  else
-    return entities
-
-filterSuggestions = (suspectEntity, suggestionEntities)->
-  suggestionEntities.filter (suggestionEntity)->
-    suspectEntity.type == suggestionEntity.type
-
-isSubsetOf = (suspectClaim, suggestionClaim) ->
-  _.isEqual suspectClaim, _.pick(suggestionClaim, _.keys(suspectClaim))

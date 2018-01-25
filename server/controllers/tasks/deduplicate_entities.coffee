@@ -11,11 +11,12 @@ urify = (entity)->
   "inv:#{entity['entity']}"
 
 module.exports = (req, res)->
+   # TODO: bulk 100 entities each
   entities_.byClaimsValue "wd:Q5"
   .then (results)->
     entitiesUris = _.map results, urify
     getEntitiesByUris entitiesUris
-  .then (uris)-> checkEntities uris.entities
+  .then (entities)-> checkEntities entities.entities
   .then (tasks)->
     Promise.resolve tasks.map(task_.create)
   # .then (tasksDocs)-> res.json tasksDocs

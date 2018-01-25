@@ -37,7 +37,7 @@ describe 'tasks:create', ->
 
     return
 
-  it 'should not create a task with invalid type', (done)->
+  it 'should not create a task with invalid state', (done)->
     authReq 'post', createTaskPath,
       type: 'deduplicate'
       state: 'invalid'
