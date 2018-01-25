@@ -12,14 +12,18 @@ deduplicates = '/api/tasks?action=deduplicates'
 
 describe 'tasks:deduplicate-entities', ->
   it 'should get new tasks created', (done)->
-    createHuman('Stanislas Lem')
+    createHuman { labels: { en: 'Stanislas Lem' } }
     .then (suspect)->
       suspectId = suspect._id
+
       nonAuthReq 'get', deduplicateEntities
-      .then (res)-> nonAuthReq 'get', deduplicates + "&limit=1"
-      .then (res)->
-        res.length.should.aboveOrEqual(1)
+      .then -> nonAuthReq 'get', deduplicates
+      .then (tasks)->
+        tasks.length.should.aboveOrEqual 1
+        tasksUris = _.pluck tasks, 'suspectUri'
+        tasksUris.should.containEql "inv:#{suspectId}"
         done()
       .catch undesiredErr(done)
 
     return
+

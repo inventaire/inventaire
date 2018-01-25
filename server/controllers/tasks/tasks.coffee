@@ -2,6 +2,7 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 
 ActionsControllers = __.require 'lib', 'actions_controllers'
+
 module.exports =
   get: ActionsControllers
     public:

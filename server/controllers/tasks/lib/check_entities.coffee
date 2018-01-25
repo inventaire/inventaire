@@ -14,6 +14,7 @@ module.exports = (entities)->
     checkEntity entity
     .then (suggestionEntities)->
       for suggestionEntity in suggestionEntities
+        unless suggestionEntity.uri? then return {}
         newTasks.push
           type: 'deduplicate'
           suspectUri: entity.uri
