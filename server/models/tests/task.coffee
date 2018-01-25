@@ -7,8 +7,6 @@ attributes = require '../attributes/task'
 
 module.exports =
   pass: pass
-  types: (taskType)->
-    return taskType in attributes.types
-  states: (taskState)->
-    return taskState in attributes.states
+  types: (taskType)-> taskType in attributes.types
+  states: (taskState)-> taskState in attributes.states
   suspect: entityUri

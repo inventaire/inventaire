@@ -10,26 +10,31 @@ createTaskPath = '/api/tasks?action=create'
 
 describe 'tasks:create', ->
   it 'should create new tasks', (done)->
-    createHuman(randomString(10))
+    createHuman randomString(10)
     .then (suspect)->
       suspectId = suspect._id
-      authReq 'post', createTaskPath,
-        type: 'deduplicate'
-        suspectUri: "inv:#{suspectId}"
-        suggestionUri: randomString(10)
-      .then (res)->
-        res.type.should.equal 'deduplicate'
-        res.state.should.equal 'requested'
-        res.suspectUri.should.equal "inv:#{suspectId}"
-        res._id.should.be.a.String()
+      tasks = [
+        {
+          type: 'deduplicate',
+          suspectUri: "inv:#{suspectId}",
+          suggestionUri: randomString 10
+        }
+      ]
+      authReq 'post', createTaskPath, { tasks }
+      .then (tasks)->
+        task = tasks[0]
+        task.type.should.equal 'deduplicate'
+        task.state.should.equal 'requested'
+        task.suspectUri.should.equal "inv:#{suspectId}"
+        task._id.should.be.a.String()
         done()
       .catch undesiredErr(done)
 
     return
 
   it 'should not create a task with invalid type', (done)->
-    authReq 'post', createTaskPath,
-      type: 'invalidTypeee'
+    tasks = [ { type: 'invalidTypeee' } ]
+    authReq 'post', createTaskPath, { tasks }
     .catch (err)->
       err.body.status_verbose.should.startWith 'invalid type'
       done()
@@ -38,9 +43,8 @@ describe 'tasks:create', ->
     return
 
   it 'should not create a task with invalid state', (done)->
-    authReq 'post', createTaskPath,
-      type: 'deduplicate'
-      state: 'invalid'
+    tasks = [ { type: 'deduplicate', state: 'invalid' } ]
+    authReq 'post', createTaskPath, { tasks }
     .catch (err)->
       err.body.status_verbose.should.startWith 'invalid state'
       done()
@@ -49,9 +53,8 @@ describe 'tasks:create', ->
     return
 
   it 'should not create a task without a valid suspect URI', (done)->
-    authReq 'post', createTaskPath,
-      type: 'deduplicate'
-      suspectUri: 'inv:alidID1234'
+    tasks = [ { type: 'deduplicate', suspectUri: 'inv:alidID1234' } ]
+    authReq 'post', createTaskPath, { tasks }
     .catch (err)->
       err.body.status_verbose.should.startWith 'invalid suspect'
       done()
@@ -60,38 +63,19 @@ describe 'tasks:create', ->
     return
 
   it 'should not create a task if another task already have same suspect AND suggestion uris', (done)->
-    createHuman(randomString(10))
+    createHuman randomString(10)
     .then (suspect)->
       suspectId = suspect._id
       newTaskDoc =
         type: 'deduplicate'
         suspectUri: "inv:#{suspectId}"
-        suggestionUri: randomString(10)
-      authReq 'post', createTaskPath, newTaskDoc
+        suggestionUri: randomString 10
+
+      authReq 'post', createTaskPath, { tasks: [ newTaskDoc ] }
       .then ->
-        authReq 'post', createTaskPath, newTaskDoc
+        authReq 'post', createTaskPath, { tasks: [ newTaskDoc ] }
         .catch (err)->
-          err.body.status_verbose.should.startWith 'task already created'
-          done()
-      .catch undesiredErr(done)
-
-    return
-
-  it 'should create a task if another task have same suspect but different suggestion uris', (done)->
-    createHuman(randomString(10))
-    .then (suspect)->
-      suspectId = suspect._id
-      authReq 'post', createTaskPath,
-        type: 'deduplicate'
-        suspectUri: "inv:#{suspectId}"
-        suggestionUri: randomString(10)
-      .then ->
-        authReq 'post', createTaskPath,
-          type: 'deduplicate'
-          suspectUri: "inv:#{suspectId}"
-          suggestionUri: randomString(10)
-        .then (res)->
-          res._id.should.be.a.String()
+          err.body.status_verbose.should.equal 'one or several tasks already created'
           done()
       .catch undesiredErr(done)
 

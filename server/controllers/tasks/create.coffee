@@ -5,23 +5,17 @@ error_ = __.require 'lib', 'error/error'
 { Track } = __.require 'lib', 'track'
 
 module.exports = (req, res, next)->
-  task = req.body
-  _.log task, 'create tasks'
+  { tasks } = req.body
+  _.log tasks, 'create tasks'
 
-  validateTaskUniqueness task
-  .then -> tasks_.create task
+  validateTasksUniqueness tasks
+  .then -> Promise.all tasks.map(tasks_.create)
   .then res.json.bind(res)
-  .then Track(req, [ 'task', 'creation', null, task ])
+  .then Track(req, [ 'tasks', 'create', null, tasks ])
   .catch error_.Handler(req, res)
 
-validateTaskUniqueness = (task)->
-  alreadyCreated task
-  .then (res)->
-    if res
-      throw error_.new 'task already created', 400, task
-
-alreadyCreated = (task)->
-  tasks_.bySuspectUri(task.suspectUri)
-  .then (tasks)->
-    suggestionsCreated = tasks.map((task)-> task.suggestionUri)
-    _.includes(suggestionsCreated, task.suggestionUri)
+validateTasksUniqueness = (tasks)->
+  tasks_.keepNewTasks tasks
+  .then (tasksToCreate)->
+    if tasksToCreate.length isnt tasks.length
+      throw error_.new 'one or several tasks already created', 400, tasks

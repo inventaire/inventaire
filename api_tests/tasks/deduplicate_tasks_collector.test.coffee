@@ -27,3 +27,18 @@ describe 'tasks:deduplicate-entities', ->
 
     return
 
+  it 'should not re-create existing tasks', (done)->
+    createHuman { labels: { en: 'Stanislas Lem' } }
+    .then (suspect)->
+      suspectId = suspect._id
+
+      nonAuthReq 'get', deduplicateEntities
+      .then -> nonAuthReq 'get', deduplicateEntities
+      .then -> nonAuthReq 'get', deduplicates
+      .then (tasks)->
+        uniqSuspectUris = _.uniq _.pluck(tasks, 'suspectUri')
+        tasks.length.should.equal uniqSuspectUris.length
+        done()
+      .catch undesiredErr(done)
+
+    return
