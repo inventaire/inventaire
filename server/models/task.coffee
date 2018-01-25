@@ -7,7 +7,7 @@ module.exports = Task = {}
 
 tests = require './tests/task'
 
-Task.create = ( newTask )->
+Task.create = (newTask)->
   _.types arguments, [ 'object' ]
 
   { type, suspectUri, suggestionUri, state } = newTask
