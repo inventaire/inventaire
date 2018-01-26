@@ -6,7 +6,7 @@ regroupClaims = require './regroup_claims'
 
 module.exports = (claims, wdId)->
   _.types arguments, ['object', 'string']
-  whitelistedClaims = pickWhitelistedClaims claims, wdId
+  whitelistedClaims = _.pick claims, whitelistedProperties
   prefixedSimplifiedClaims = wdk.simplifyClaims whitelistedClaims, 'wd', 'wdt'
 
   for prop in hasFormatter
@@ -18,11 +18,6 @@ module.exports = (claims, wdId)->
   regroupClaims prefixedSimplifiedClaims
 
   return prefixedSimplifiedClaims
-
-# Remove unused claims
-pickWhitelistedClaims = (claims, wdId)->
-  allProperties = Object.keys claims
-  return _.pick claims, whitelistedProperties
 
 # Functions to convert Wikidata properties values to Inv entities custom formats
 wikidataToInvFormatters =
