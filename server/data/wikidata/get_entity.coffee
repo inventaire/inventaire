@@ -30,5 +30,4 @@ mergeResults = (results)-> _.extend.apply _, results.map(_.property('entities'))
 # Expose a single requester
 # Taking a Wikidata Id
 # Returning the corresponding entity object
-# module.exports = requestGrouper { requester, delay: 10 }
-module.exports = requestGrouper { requester, delay: 10 }
+module.exports = requestGrouper { requester, delay: 5 }

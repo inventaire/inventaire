@@ -14,15 +14,13 @@ module.exports = (entity)->
     return [ redirect, redirectsObj ]
 
   # Case when the entity document is a proper entity document
-  # but as a more broadly recognized URI available: ISBN or Wikidata id
-  wdId = entity.claims['invp:P1']?[0]
+  # but has a more broadly recognized URI available, currently only an ISBN
   isbn = entity.claims['wdt:P212']?[0]
 
-  # Those URIs are aliases but, when available, always use the Wikidata id
-  # or the ISBN
-  if wdId? then uri = "wd:#{wdId}"
+  # Those URIs are aliases but, when available, always use the canonical id,
+  # that is, in the only current, the ISBN
   # By internal convention, ISBN URIs are without hyphen
-  else if isbn? then uri = "isbn:#{normalizeIsbn(isbn)}"
+  if isbn? then uri = "isbn:#{normalizeIsbn(isbn)}"
   else uri = invUri
 
   redirectsObj = null
