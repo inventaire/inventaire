@@ -33,10 +33,6 @@ module.exports = entities_ =
     entities_.byIsbns [ isbn ]
     .then couch_.firstDoc
 
-  byWikidataIds: (ids)->
-    keys = ids.map (id)-> ['invp:P1', id]
-    db.viewByKeys 'byClaim', keys
-
   byClaim: (property, value, includeDocs = false, parseDoc = false)->
     promises_.try -> validateProperty property
     .then ->

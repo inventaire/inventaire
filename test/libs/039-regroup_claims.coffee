@@ -11,7 +11,6 @@ claimsFactory = ->
   'wdt:P58': [ 'wd:Q239897' ]
   'wdt:P136': [ 'wd:Q2625243', 'wd:Q2882238', 'wd:Q27477672' ]
   'wdt:P361': [ 'wd:Q162328' ]
-  'invp:P1': [ 'Q27478440' ]
 
 describe 'Regroup claims', ->
   it 'should be a function', (done)->

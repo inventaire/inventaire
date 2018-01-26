@@ -19,9 +19,6 @@
 #   PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 #   PREFIX invp: <https://inventaire.io/property/>
 
-# Inventaire properties:
-# invp:P1: Wikidata Id
-
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
