@@ -5,7 +5,7 @@ should = require 'should'
 randomString = __.require 'lib', './utils/random_string'
 
 deduplicateEntities = '/api/tasks?action=deduplicate-entities'
-deduplicates = '/api/tasks?action=deduplicates'
+deduplicates = '/api/tasks?action=deduplicates&limit=1000'
 
 { authReq, nonAuthReq, undesiredErr } = __.require 'apiTests', 'utils/utils'
 { createHuman } = require '../fixtures/entities'

@@ -4,11 +4,10 @@ _ = __.require 'builders', 'utils'
 checkEntity = require './check_entity'
 
 module.exports = (entities)->
-  entitiesList = _.values(entities)
   newTasks = []
 
   checkNextEntity = ->
-    entity = entitiesList.pop()
+    entity = entities.pop()
     unless entity? then return newTasks
 
     checkEntity entity
@@ -17,7 +16,7 @@ module.exports = (entities)->
         unless suggestionEntity.uri? then return {}
         newTasks.push
           type: 'deduplicate'
-          suspectUri: entity.uri
+          suspectUri: "inv:#{entity._id}"
           suggestionUri: suggestionEntity.uri
           state: 'requested'
     .then checkNextEntity
