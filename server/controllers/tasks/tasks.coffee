@@ -6,7 +6,7 @@ ActionsControllers = __.require 'lib', 'actions_controllers'
 module.exports =
   get: ActionsControllers
     public:
-      'deduplicate-entities': require './deduplicate_entities'
+      'collect-entities': require './collect_entities'
       'deduplicates': require './deduplicates'
 
   post: ActionsControllers
