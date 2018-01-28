@@ -2,6 +2,9 @@ CONFIG = require('config')
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 
+if CONFIG.env isnt 'tests'
+  throw new Error("invalid env: #{CONFIG.env}")
+
 should = require 'should'
 sinon = require 'sinon'
 
