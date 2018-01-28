@@ -30,6 +30,7 @@ describe 'CACHE', ->
       key = 'whatever'
       cache_.get(key, mookPromise.bind(null, key))
       .then -> done()
+      .catch done
       return
 
     it 'should compute ones and cache for the nexts', (done)->
@@ -60,6 +61,7 @@ describe 'CACHE', ->
                 # DHO [>.<]
                 spy.callCount.should.equal 2
                 done()
+      .catch done
       return
 
     it 'should also accept an expiration timespan', (done)->
@@ -73,6 +75,7 @@ describe 'CACHE', ->
             res1.should.equal res2
             res2.should.not.equal res3
             done()
+      .catch done
       return
 
     it 'should return the outdated version if the new version returns an error', (done)->
@@ -88,6 +91,7 @@ describe 'CACHE', ->
             res1.should.equal res2
             res1.should.equal res3
             done()
+      .catch done
       return
 
     it 'should refuse old value when passed a 0 timespan', (done)->
@@ -99,6 +103,7 @@ describe 'CACHE', ->
           res1.should.be.ok()
           should(res2).not.be.ok()
           done()
+      .catch done
       return
 
     it 'should cache non-error empty results', (done)->
@@ -115,6 +120,7 @@ describe 'CACHE', ->
           should(res2).not.be.ok()
           spy.callCount.should.equal 1
           done()
+      .catch done
       return
 
   describe 'fastGet', ->
@@ -240,6 +246,7 @@ describe 'CACHE', ->
             should(cached3).be.ok()
             cached3.should.equal cached2
             done()
+      .catch done
 
       return
 
@@ -254,6 +261,7 @@ describe 'CACHE', ->
           .then (cached3)->
             should(cached3).not.be.ok()
             done()
+      .catch done
 
       return
 
@@ -269,6 +277,7 @@ describe 'CACHE', ->
       .catch (err)->
         err.message.should.equal 'invalid key'
         done()
+      .catch done
 
       return
 
@@ -277,6 +286,7 @@ describe 'CACHE', ->
       .catch (err)->
         err.message.should.equal 'missing value'
         done()
+      .catch done
 
       return
 
@@ -291,5 +301,6 @@ describe 'CACHE', ->
       .then (cached2)->
         cached2.should.equal value
         done()
+      .catch done
 
       return
