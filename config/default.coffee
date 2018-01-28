@@ -62,6 +62,7 @@ module.exports = config =
     actionsScripts:
       port: 3456
       suffix: 'prod'
+  leveldbMemoryBackend: false
   elasticsearch:
     host: 'http://localhost:9200'
   serveStaticFiles: true

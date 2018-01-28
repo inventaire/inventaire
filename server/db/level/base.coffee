@@ -7,7 +7,7 @@ error_ = __.require 'lib', 'error/error'
 DBPath = __.path 'leveldb'
 
 sublevel = require 'level-sublevel'
-if CONFIG.env is 'tests'
+if CONFIG.leveldbMemoryBackend
   level = require('level-test')()
   DB = sublevel level()
 else
