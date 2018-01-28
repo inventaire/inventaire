@@ -8,9 +8,12 @@ module.exports = (req, res, next)->
   { tasks } = req.body
   _.log tasks, 'create tasks'
 
+  unless _.isNonEmptyArray tasks
+    return error_.bundleMissingBody req, res, 'tasks'
+
   validateTasksUniqueness tasks
-  .then -> Promise.all tasks.map(tasks_.create)
-  .then res.json.bind(res)
+  .then -> Promise.all tasks.map tasks_.create
+  .then _.Wrap(res, 'tasks')
   .then Track(req, [ 'tasks', 'create', null, tasks ])
   .catch error_.Handler(req, res)
 
