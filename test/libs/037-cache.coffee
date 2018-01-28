@@ -17,8 +17,7 @@ randomString = __.require 'lib', './utils/random_string'
 mookPromise = hashKey = (key)->
   promises_.resolve _.hashCode(key)
 
-randomNum = -> _.random 100000
-workingFn = (key)-> hashKey(key + randomNum())
+workingFn = (key)-> hashKey key + randomString(8)
 failingFn = (key)-> promises_.reject 'Jag är Döden'
 
 describe 'CACHE', ->
@@ -68,7 +67,7 @@ describe 'CACHE', ->
       return
 
     it 'should also accept an expiration timespan', (done)->
-      cache_.get 'samekey', workingFn
+      cache_.get 'samekey', workingFn.bind(null, 'bla')
       .then (res1)->
         cache_.get 'samekey', workingFn.bind(null, 'different arg'), 10000
         .then (res2)->
@@ -237,7 +236,7 @@ describe 'CACHE', ->
       return
 
     it 'should return a value only when a value was cached', (done)->
-      key = randomNum().toString()
+      key = randomString 8
       cache_.dryGet key
       .then (cached)->
         should(cached).not.be.ok()
@@ -254,7 +253,7 @@ describe 'CACHE', ->
       return
 
     it "should return a value only if the timestamp isn't expired", (done)->
-      key = randomNum().toString()
+      key = randomString 8
       cache_.get key, workingFn.bind(null, key)
       .then (cached)->
         cache_.dryGet key, 10000
@@ -294,8 +293,8 @@ describe 'CACHE', ->
       return
 
     it 'should put a value in the cache', (done)->
-      key = randomNum().toString()
-      value = randomNum().toString()
+      key = randomString 8
+      value = randomString 8
       cache_.dryGet key
       .then (cached)->
         should(cached).not.be.ok()
