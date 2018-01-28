@@ -9,6 +9,8 @@ validDoc = ->
   type: 'deduplicate'
   suspectUri: 'inv:035a93cc360f4e285e955bc1230415c4'
   suggestionUri: 'wd:Q42'
+  elasticScore: 4.2
+  probability: 4.2
 
 describe 'task model', ->
   describe 'create', ->
@@ -40,4 +42,10 @@ describe 'task model', ->
         suggestionUri: 'wd:Q42'
       taskDoc = -> Task.create invalidDoc
       taskDoc.should.throw()
+      done()
+
+    it 'should return scores', (done)->
+      taskDoc = Task.create validDoc()
+      taskDoc.elasticScore.should.equal validDoc().elasticScore
+      taskDoc.probability.should.equal validDoc().probability
       done()

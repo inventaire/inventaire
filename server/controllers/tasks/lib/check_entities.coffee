@@ -19,6 +19,7 @@ module.exports = (entities)->
           suspectUri: "inv:#{entity._id}"
           suggestionUri: suggestionEntity.uri
           state: 'requested'
+          elasticScore: suggestionEntity._score
     .then checkNextEntity
 
   return checkNextEntity()
