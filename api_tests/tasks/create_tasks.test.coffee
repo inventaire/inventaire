@@ -21,8 +21,8 @@ describe 'tasks:create', ->
         }
       ]
       authReq 'post', createTaskPath, { tasks }
-      .then (tasks)->
-        task = tasks[0]
+      .then (res)->
+        task = res.tasks[0]
         task.type.should.equal 'deduplicate'
         task.state.should.equal 'requested'
         task.suspectUri.should.equal "inv:#{suspectId}"

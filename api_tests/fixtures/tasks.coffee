@@ -5,9 +5,10 @@ _ = __.require 'builders', 'utils'
 
 module.exports = API =
   createTask: (suspectUri)->
-    authReq 'post', '/api/tasks?action=create',
+    task =
       suspectUri: suspectUri
       suggestionUri: 'wd:Q12345'
       type: 'deduplicate'
       state: 'requested'
 
+    authReq 'post', '/api/tasks?action=create', { tasks: [ task ] }
