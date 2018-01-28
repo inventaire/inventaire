@@ -2,6 +2,9 @@ CONFIG = require('config')
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 
+if CONFIG.env isnt 'tests'
+  throw new Error("invalid env: #{CONFIG.env}")
+
 should = require 'should'
 sinon = require 'sinon'
 
@@ -14,8 +17,7 @@ randomString = __.require 'lib', './utils/random_string'
 mookPromise = hashKey = (key)->
   promises_.resolve _.hashCode(key)
 
-randomNum = -> _.random 100000
-workingFn = (key)-> hashKey(key + randomNum())
+workingFn = (key)-> hashKey key + randomString(8)
 failingFn = (key)-> promises_.reject 'Jag är Döden'
 
 describe 'CACHE', ->
@@ -30,6 +32,7 @@ describe 'CACHE', ->
       key = 'whatever'
       cache_.get(key, mookPromise.bind(null, key))
       .then -> done()
+      .catch done
       return
 
     it 'should compute ones and cache for the nexts', (done)->
@@ -60,19 +63,23 @@ describe 'CACHE', ->
                 # DHO [>.<]
                 spy.callCount.should.equal 2
                 done()
+      .catch done
       return
 
     it 'should also accept an expiration timespan', (done)->
-      cache_.get 'samekey', workingFn
+      cache_.get 'samekey', workingFn.bind(null, 'bla')
       .then (res1)->
         cache_.get 'samekey', workingFn.bind(null, 'different arg'), 10000
+        .delay 100
         .then (res2)->
           cache_.get 'samekey', workingFn.bind(null, 'different arg'), 0
+          .delay 100
           .then (res3)->
             _.log [ res1, res2, res3 ], 'results'
             res1.should.equal res2
             res2.should.not.equal res3
             done()
+      .catch done
       return
 
     it 'should return the outdated version if the new version returns an error', (done)->
@@ -88,10 +95,12 @@ describe 'CACHE', ->
             res1.should.equal res2
             res1.should.equal res3
             done()
+      .catch done
       return
 
     it 'should refuse old value when passed a 0 timespan', (done)->
       cache_.get 'doden', workingFn.bind(null, 'Vem är du?'), 0
+      .delay 10
       .then (res1)->
         # returns an error: should return old value
         cache_.get 'doden', failingFn.bind(null, 'Vem är du?'), 0
@@ -99,6 +108,7 @@ describe 'CACHE', ->
           res1.should.be.ok()
           should(res2).not.be.ok()
           done()
+      .catch done
       return
 
     it 'should cache non-error empty results', (done)->
@@ -115,6 +125,7 @@ describe 'CACHE', ->
           should(res2).not.be.ok()
           spy.callCount.should.equal 1
           done()
+      .catch done
       return
 
   describe 'fastGet', ->
@@ -228,7 +239,7 @@ describe 'CACHE', ->
       return
 
     it 'should return a value only when a value was cached', (done)->
-      key = randomNum().toString()
+      key = randomString 8
       cache_.dryGet key
       .then (cached)->
         should(cached).not.be.ok()
@@ -240,20 +251,23 @@ describe 'CACHE', ->
             should(cached3).be.ok()
             cached3.should.equal cached2
             done()
+      .catch done
 
       return
 
     it "should return a value only if the timestamp isn't expired", (done)->
-      key = randomNum().toString()
+      key = randomString 8
       cache_.get key, workingFn.bind(null, key)
       .then (cached)->
         cache_.dryGet key, 10000
+        .delay 10
         .then (cached2)->
           should(cached2).be.ok()
           cache_.dryGet key, 0
           .then (cached3)->
             should(cached3).not.be.ok()
             done()
+      .catch done
 
       return
 
@@ -269,6 +283,7 @@ describe 'CACHE', ->
       .catch (err)->
         err.message.should.equal 'invalid key'
         done()
+      .catch done
 
       return
 
@@ -277,12 +292,13 @@ describe 'CACHE', ->
       .catch (err)->
         err.message.should.equal 'missing value'
         done()
+      .catch done
 
       return
 
     it 'should put a value in the cache', (done)->
-      key = randomNum().toString()
-      value = randomNum().toString()
+      key = randomString 8
+      value = randomString 8
       cache_.dryGet key
       .then (cached)->
         should(cached).not.be.ok()
@@ -291,5 +307,6 @@ describe 'CACHE', ->
       .then (cached2)->
         cached2.should.equal value
         done()
+      .catch done
 
       return

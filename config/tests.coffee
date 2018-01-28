@@ -17,8 +17,7 @@ module.exports =
       freeze: false
       # Give 1000 delay so that tests relying on follow don't have to wait
       delay: 1000
-  graph:
-    social: undefined
+  leveldbMemoryBackend: true
   godMode: false
   # Disable password hashing to make tests run faster
   hashPasswords: false
