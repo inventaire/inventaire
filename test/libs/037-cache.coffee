@@ -70,8 +70,10 @@ describe 'CACHE', ->
       cache_.get 'samekey', workingFn.bind(null, 'bla')
       .then (res1)->
         cache_.get 'samekey', workingFn.bind(null, 'different arg'), 10000
+        .delay 100
         .then (res2)->
           cache_.get 'samekey', workingFn.bind(null, 'different arg'), 0
+          .delay 100
           .then (res3)->
             _.log [ res1, res2, res3 ], 'results'
             res1.should.equal res2
@@ -98,6 +100,7 @@ describe 'CACHE', ->
 
     it 'should refuse old value when passed a 0 timespan', (done)->
       cache_.get 'doden', workingFn.bind(null, 'Vem är du?'), 0
+      .delay 10
       .then (res1)->
         # returns an error: should return old value
         cache_.get 'doden', failingFn.bind(null, 'Vem är du?'), 0
@@ -257,6 +260,7 @@ describe 'CACHE', ->
       cache_.get key, workingFn.bind(null, key)
       .then (cached)->
         cache_.dryGet key, 10000
+        .delay 10
         .then (cached2)->
           should(cached2).be.ok()
           cache_.dryGet key, 0
