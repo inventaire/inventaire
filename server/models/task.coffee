@@ -16,6 +16,7 @@ Task.create = (newTask)->
   tests.pass 'types', type
   tests.pass 'states', state
   tests.pass 'suspect', suspectUri
+  tests.pass 'elasticScore', elasticScore
 
   now = Date.now()
 
