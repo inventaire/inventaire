@@ -23,9 +23,8 @@ module.exports = ->
   .catch (err)->
     if err.message isnt 'CouchDB name or password is incorrect' then throw err
 
+    context = _.pick CONFIG.db, 'protocol', 'host', 'port', 'username', 'password'
     # Avoid logging the password in plain text
-    CONFIG.db.password = CONFIG.db.password.replace(/.{1}/g, '*')
-    _.extend err, _.pick(CONFIG.db, 'protocol', 'host', 'port', 'username', 'password')
-    _.error err, err.message, false
-
+    context.password = context.password.replace(/.{1}/g, '*')
+    console.error err.message, context
     process.exit 1
