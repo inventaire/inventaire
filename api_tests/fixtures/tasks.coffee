@@ -10,5 +10,6 @@ module.exports = API =
       suggestionUri: 'wd:Q12345'
       type: 'deduplicate'
       state: 'requested'
+      elasticScore: 4
 
     authReq 'post', '/api/tasks?action=create', { tasks: [ task ] }

@@ -10,3 +10,4 @@ module.exports =
   types: (taskType)-> taskType in attributes.types
   states: (taskState)-> taskState in attributes.states
   suspect: entityUri
+  elasticScore: _.isNumber

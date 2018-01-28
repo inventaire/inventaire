@@ -18,6 +18,7 @@ describe 'tasks:create', ->
           type: 'deduplicate',
           suspectUri: "inv:#{suspectId}",
           suggestionUri: randomString 10
+          elasticScore: 4
         }
       ]
       authReq 'post', createTaskPath, { tasks }
@@ -70,6 +71,7 @@ describe 'tasks:create', ->
         type: 'deduplicate'
         suspectUri: "inv:#{suspectId}"
         suggestionUri: randomString 10
+        elasticScore: 8.124
 
       authReq 'post', createTaskPath, { tasks: [ newTaskDoc ] }
       .then ->

@@ -49,3 +49,12 @@ describe 'task model', ->
       taskDoc.elasticScore.should.equal validDoc().elasticScore
       taskDoc.probability.should.equal validDoc().probability
       done()
+
+    it 'should throw if no score', (done)->
+      invalidDoc = validDoc()
+      delete invalidDoc.elasticScore
+      taskDoc = -> Task.create invalidDoc
+      try taskDoc()
+      catch err then err.message.should.startWith 'invalid elasticScore'
+      taskDoc.should.throw()
+      done()
