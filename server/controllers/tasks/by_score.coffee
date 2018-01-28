@@ -12,6 +12,6 @@ module.exports = (req, res)->
   catch err
     return error_.bundleInvalid req, res, 'invalid limit', limit
 
-  tasks_.deduplicates limit
-  .then res.json.bind(res)
+  tasks_.byScore limit
+  .then _.Wrap(res, 'tasks')
   .catch error_.Handler(req, res)

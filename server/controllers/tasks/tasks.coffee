@@ -7,7 +7,7 @@ module.exports =
   get: ActionsControllers
     public:
       'collect-entities': require './collect_entities'
-      'deduplicates': require './deduplicates'
+      'by-score': require './by_score'
 
   post: ActionsControllers
     public:

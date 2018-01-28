@@ -5,8 +5,8 @@
     "bySuspectUri": {
       "map": "(doc)->\n  emit doc.suspectUri, null"
     },
-    "deduplicates": {
-      "map": "(doc)->\n  if doc.type is 'deduplicate'\n    emit doc._id, null"
+    "byScore": {
+       "map": "(doc)->\n  if doc.type is 'deduplicate'\n    emit doc.elasticScore, null"
     }
   }
 }

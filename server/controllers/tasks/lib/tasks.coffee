@@ -8,8 +8,8 @@ Task = __.require 'models', 'task'
 db = __.require('couch', 'base')('tasks')
 
 module.exports = tasks_ =
-  deduplicates: (limit)->
-    db.viewCustom 'deduplicates',
+  byScore: (limit)->
+    db.viewCustom 'byScore',
       limit: limit
       descending: true
       include_docs: true
