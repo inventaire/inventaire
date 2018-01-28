@@ -34,7 +34,6 @@ module.exports =
     db: '/server/db'
     couch: '/server/db/couch'
     level: '/server/db/level'
-    graph: '/server/db/level/graph'
     builders: '/server/builders'
     controllers: '/server/controllers'
     leveldb: '/db/leveldb'
