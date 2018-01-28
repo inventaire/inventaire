@@ -31,16 +31,18 @@ describe 'task model', ->
       invalidDoc =
         type: 'deduplicate'
         suggestionUri: 'wd:Q42'
-      taskDoc = -> Task.create(invalidDoc.suggestionUri)
+      taskDoc = -> Task.create invalidDoc
       taskDoc.should.throw()
       done()
 
     it 'should throw if empty suspect', (done)->
       invalidDoc =
         type: 'deduplicate'
-        suspectId: ""
+        suspectId: ''
         suggestionUri: 'wd:Q42'
       taskDoc = -> Task.create invalidDoc
+      try taskDoc()
+      catch err then err.message.should.startWith 'invalid suspect'
       taskDoc.should.throw()
       done()
 
