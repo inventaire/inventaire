@@ -2,18 +2,19 @@
 
 Libre collaborative resource mapper powered by open-knowledge<br>
 [![License](https://img.shields.io/badge/license-AGPL3-blue.svg)](http://www.gnu.org/licenses/agpl-3.0.html)
-[![RoadMap](https://img.shields.io/badge/roadmap-contributive-blue.svg)](https://trello.com/b/0lKcsZDj/inventaire-roadmap)
 [![Node](https://img.shields.io/badge/node->=v4-brightgreen.svg)](http://nodejs.org)
 [![Code Climate](https://codeclimate.com/github/inventaire/inventaire/badges/gpa.svg)](https://codeclimate.com/github/inventaire/inventaire)<br>
-Come to say hi on your prefered chat<br>
-[![Join the chat at https://gitter.im/inventaire/inventaire](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/inventaire/inventaire)
-[![IRC](https://img.shields.io/badge/irc-%23inventaire-orange.svg)](https://kiwiirc.com/client/irc.freenode.net/inventaire)
+<br>
+[![chat](https://img.shields.io/badge/chat-%23inventaire-ffd402.svg)](https://riot.im/app/#/room/#freenode_#inventaire:matrix.org)
+[![general wiki](https://img.shields.io/badge/wiki-general-319cc2.svg)](https://wiki.inventaire.io)
+[![technical wiki](https://img.shields.io/badge/wiki-technical-222222.svg)](http://github.com/inventaire/inventaire/wiki/)
+[![roadmap](https://img.shields.io/badge/roadmap-contributive-4eba76.svg)](http://roadmap.inventaire.io)
 
-[![inventory-georges](https://cloud.githubusercontent.com/assets/1596934/19841022/70efebce-9f03-11e6-97d2-a86162b59123.png)](https://inventaire.io)
+[![inventory-graph](https://user-images.githubusercontent.com/1596934/35507755-1a159b62-04ee-11e8-8391-5808223caa51.png)](https://inventaire.io)
 
 This repository hosts [Inventaire.io](https://inventaire.io) source code. Its a collaborative resources mapper project, while yet only focused on exploring books mapping with [wikidata](https://wikidata.org/) and [ISBNs](https://en.wikipedia.org/wiki/International_Standard_Book_Number)
 
-This repository tracks the server-side developments, while the (heavy) [client-side can be found here](https://github.com/inventaire/inventaire-client). Client-related technical issues should go in the client repo, while this repo gathers all other technical issues. Non-technical discussions such as feature requests should preferably happen in the [Roadmap](https://trello.com/b/0lKcsZDj/inventaire-roadmap) Trello. In doubt, just use your best guess :)
+This repository tracks the server-side developments, while the (heavy) [client-side can be found here](https://github.com/inventaire/inventaire-client). Client-related technical issues should go in the client repo, while this repo gathers all other technical issues. Non-technical discussions such as feature requests should preferably happen in the [roadmap](http://roadmap.inventaire.io). In doubt, just use your best guess or come ask on the chat :)
 
 ## Summary
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
