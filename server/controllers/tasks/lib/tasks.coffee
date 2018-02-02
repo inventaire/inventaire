@@ -8,16 +8,24 @@ Task = __.require 'models', 'task'
 db = __.require('couch', 'base')('tasks')
 
 module.exports = tasks_ =
+  create: (taskDoc)->
+    promises_.try -> Task.create taskDoc
+    .then db.postAndReturn
+    .then _.Log('task created')
+
+  update: (options)->
+    { taskId, attribute, newValue } = options
+    db.get taskId
+    .then (currentTask)->
+      promises_.resolve Task.update currentTask, attribute, newValue
+      .then db.putAndReturn
+      .then _.Log('task updated')
+
   byScore: (limit)->
     db.viewCustom 'byScore',
       limit: limit
       descending: true
       include_docs: true
-
-  create: (taskDoc)->
-    promises_.try -> Task.create taskDoc
-    .then db.postAndReturn
-    .then _.Log('task created')
 
   bySuspectUri: (suspectUri)->
     db.viewByKey 'bySuspectUri', suspectUri

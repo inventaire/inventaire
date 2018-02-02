@@ -1,9 +1,9 @@
 module.exports = attributes = {}
 
-attributes.types = [
+attributes.type = [
   'deduplicate'
 ]
 
-attributes.states = [
-  'requested'
+attributes.state = [
+  'requested', 'archived'
 ]

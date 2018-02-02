@@ -9,6 +9,7 @@ validDoc = ->
   type: 'deduplicate'
   suspectUri: 'inv:035a93cc360f4e285e955bc1230415c4'
   suggestionUri: 'wd:Q42'
+  state: 'requested'
   elasticScore: 4.2
   probability: 4.2
 
@@ -58,5 +59,25 @@ describe 'task model', ->
       taskDoc = -> Task.create invalidDoc
       try taskDoc()
       catch err then err.message.should.startWith 'invalid elasticScore'
+      taskDoc.should.throw()
+      done()
+
+  describe 'update', ->
+    it 'should update a valid task with an archived state', (done)->
+      taskDoc = Task.update validDoc(), 'state', 'archived'
+      taskDoc.state.should.equal 'archived'
+      done()
+
+    it 'should throw if invalid attribute to update', (done)->
+      taskDoc = -> Task.update validDoc(), 'blob', 'archived'
+      try taskDoc()
+      catch err then err.message.should.startWith 'invalid attributes'
+      taskDoc.should.throw()
+      done()
+
+    it 'should throw if invalid value', (done)->
+      taskDoc = -> Task.update validDoc(), 'state', 'invalidValue'
+      try taskDoc()
+      catch err then err.message.should.startWith 'invalid state'
       taskDoc.should.throw()
       done()
