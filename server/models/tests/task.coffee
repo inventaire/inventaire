@@ -7,7 +7,10 @@ attributes = require '../attributes/task'
 
 module.exports =
   pass: pass
-  types: (taskType)-> taskType in attributes.types
-  states: (taskState)-> taskState in attributes.states
+  # in attributes/task.coffee, attributes keys should match
+  # db keys to verify if attribute is updatable
+  attributes: (attribute)-> attribute in _.keys attributes
+  types: (taskType)-> taskType in attributes.type
+  states: (taskState)-> taskState in attributes.state
   suspect: entityUri
   elasticScore: _.isNumber

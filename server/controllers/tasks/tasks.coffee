@@ -12,3 +12,7 @@ module.exports =
   post: ActionsControllers
     public:
       'create': require './create'
+
+  put: ActionsControllers
+    authentified:
+      'update': require './update'

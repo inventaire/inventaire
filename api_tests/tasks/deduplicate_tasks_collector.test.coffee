@@ -18,7 +18,8 @@ describe 'tasks:collect-entities', ->
 
       nonAuthReq 'get', collectEntities
       .then -> nonAuthReq 'get', byScore
-      .then (tasks)->
+      .then (res)->
+        { tasks } = res
         tasks.length.should.aboveOrEqual 1
         tasksUris = _.pluck tasks, 'suspectUri'
         tasksUris.should.containEql "inv:#{suspectId}"
@@ -30,7 +31,8 @@ describe 'tasks:collect-entities', ->
   it 'should not re-create existing tasks', (done)->
     nonAuthReq 'get', collectEntities
     .then -> nonAuthReq 'get', byScore
-    .then (tasks)->
+    .then (res)->
+      { tasks } = res
       uniqSuspectUris = _.uniq _.pluck(tasks, 'suspectUri')
       tasks.length.should.equal uniqSuspectUris.length
       done()
