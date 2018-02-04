@@ -11,7 +11,7 @@ validDoc = ->
   suggestionUri: 'wd:Q42'
   state: 'requested'
   elasticScore: 4.2
-  probability: 4.2
+  relationScore: 4.2
 
 describe 'task model', ->
   describe 'create', ->
@@ -50,7 +50,7 @@ describe 'task model', ->
     it 'should return scores', (done)->
       taskDoc = Task.create validDoc()
       taskDoc.elasticScore.should.equal validDoc().elasticScore
-      taskDoc.probability.should.equal validDoc().probability
+      taskDoc.relationScore.should.equal validDoc().relationScore
       done()
 
     it 'should throw if no score', (done)->
