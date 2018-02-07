@@ -28,7 +28,7 @@ module.exports = (req, res, next)->
   currentValue = _.get user, attribute
 
   if value is currentValue
-    return error_.bundle req, res, 'already up-to-date', 400
+    return error_.bundle req, res, 'already up-to-date', 400, { attribute, value }
 
   if attribute isnt rootAttribute
     unless tests.deepAttributesExistance attribute
