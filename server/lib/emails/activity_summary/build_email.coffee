@@ -23,6 +23,7 @@ module.exports = (user)->
   user.lang = _.shortLang user.language
 
   getEmailData user
+  .then filterOutDuplicatedItems
   .then spreadEmailData(user)
 
 getEmailData = (user)->
@@ -48,6 +49,13 @@ getEmailData = (user)->
       # where you have been waiting for the other's action for long now
     # new users nearby
     # new users in groups
+
+filterOutDuplicatedItems = (results)->
+  { lastFriendsBooks, lastNearbyPublicBooks } = results
+  lastFriendsBooksIds = _.pluck lastFriendsBooks.highlighted, '_id'
+  lastNearbyPublicBooks.highlighted = lastNearbyPublicBooks.highlighted
+    .filter (item)-> item._id not in lastFriendsBooksIds
+  return results
 
 spreadEmailData = (user)-> (results)->
   {
