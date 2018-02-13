@@ -23,7 +23,7 @@ scaffoldWorkEntityFromSeed = require './work'
 
 # Motivation to accept seeds without title or author:
 # Every isbn needs to have its edition entity and an associated author entity,
-# thus we create the expected entities what so ever
+# thus we create the expected entities whatsoever
 
 module.exports = (seed)->
   { isbn } = seed
@@ -63,7 +63,7 @@ createEditionEntity = (seed, workPromise)->
   claims =
     'wdt:P31': [ 'wd:Q3331189' ]
     'wdt:P212': [ seed.isbn13h ]
-    # wdt:P957 and wdt:P407 will be inferred from 'wdt:P212'
+    # wdt:P957 and wdt:P407 will be inferred from wdt:P212
 
   addClaimIfValid claims, 'wdt:P1476', seed.title
   addClaimIfValid claims, 'wdt:P18', seed.image

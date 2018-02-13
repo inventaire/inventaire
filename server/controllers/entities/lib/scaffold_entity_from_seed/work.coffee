@@ -1,9 +1,8 @@
-# A module to put the basis of a work entity to associate with a given
-# edition entity with an ISBN, for which no data could be found locally,
-# but dataseed returned a seed.
-# It tries to find the associated authors from Wikidata and Inventaire search
-# (using searchWorkEntityByTitleAndAuthors), but if it fails to find
-# the corresponding entities, it creates new ones.
+# A module to put the basis of an edition entity based on the results
+# from dataseed. It tries to find the associated works and authors
+# from Wikidata and Inventaire search (using searchWorkEntityByTitleAndAuthors)
+# but if it fails to find the corresponding entities, it creates new ones.
+# It assumes that any seed arriving here found no match to its ISBN
 
 CONFIG = require 'config'
 __ = CONFIG.universalPath
@@ -68,7 +67,7 @@ CreateAuthorEntity = (lang)-> (authorName)->
 
 createWorkEntity = (seed, lang, authorsPromises)->
   labels = {}
-  { title } = seed
+  { title } = seed
   if _.isNonEmptyString(title) then labels[lang] = title
   claims =
     'wdt:P31': [ 'wd:Q571' ]
