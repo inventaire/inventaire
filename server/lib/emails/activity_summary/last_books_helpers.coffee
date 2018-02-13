@@ -26,7 +26,7 @@ module.exports =
     items.map (item)->
       user = users[item.owner]
       if user?
-        item.href = "#{host}/inventory/#{user.username}/#{item.entity}"
+        item.href = "#{host}/items/#{item._id}"
         item.user = _.pick user, requiredUserData
         if user.position? and position?
           item.user.distance = kmBetween user.position, position
