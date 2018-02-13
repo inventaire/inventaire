@@ -13,7 +13,7 @@ module.exports = (user, limitDate=0)->
   .spread formatItems(limitDate, position, lang)
 
 formatItems = (limitDate, position, lang)-> (users, items)->
-  items = items.map items_.importSnapshotData
+  items = items.map items_.serializeData
   lastItems = getLastItems limitDate, items
   highlighted = getHighlightedItems lastItems, 10
   lastItems = embedUsersData lastItems, users, position

@@ -11,7 +11,7 @@ module.exports = (userId, lang, limitDate=0)->
   relations_.getUserFriendsAndCoGroupsMembers userId
   # get last network items available for a transaction
   .then items_.networkListings
-  .map items_.importSnapshotData
+  .map items_.serializeData
   .then getLastItems.bind(null, limitDate)
   .then extractHighlightedItems(lang)
   .catch _.ErrorRethrow('last network items')
