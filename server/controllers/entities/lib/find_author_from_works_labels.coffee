@@ -8,6 +8,8 @@ typeSearch = __.require 'controllers', 'search/lib/type_search'
 prefixify = __.require 'lib', 'wikidata/prefixify'
 getWorksLabelsOccurrences = require './get_works_labels_occurrences'
 
+# Returns a URI if an single author was identified
+# returns undefined otherwise
 module.exports = (authorStr, worksLabels, worksLabelsLangs)->
   searchHumans authorStr
   .then getWdAuthorUris

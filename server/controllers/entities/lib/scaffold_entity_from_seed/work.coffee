@@ -15,16 +15,18 @@ createEntity = require '../create_entity'
 seedUserId = __.require('couch', 'hard_coded_documents').users.seed._id
 workEntitiesCache = require './work_entity_search_deduplicating_cache'
 
-# Can't be required directly as it would create a dependency loop with getEntitiesByUris
-# so requiring it at first run time
+# Working around the circular dependencies
 searchWorkEntityByTitleAndAuthors = null
+findAuthorFromWorksLabels = null
+lateRequire = ->
+  searchWorkEntityByTitleAndAuthors = require './search_work_entity_by_title_and_authors'
+  findAuthorFromWorksLabels = __.require 'controllers', 'entities/lib/find_author_from_works_labels'
+setTimeout lateRequire, 0
 
 # seed attributes:
 # MUST have: title
 
 module.exports = (seed)->
-  searchWorkEntityByTitleAndAuthors or= require './search_work_entity_by_title_and_authors'
-
   { title, authors } = seed
   unless _.isNonEmptyString title
     return error_.reject 'missing title', 400, title
@@ -40,18 +42,30 @@ module.exports = (seed)->
     if workEntity?
       _.log seed, "scaffolding from existing work entity: #{workEntity.uri}"
       workPromise = promises_.resolve workEntity
+      workEntitiesCache.set seed, workPromise
+      return workEntity
+
+    findAuthorsFromWorksTitleOrCreate title, authors, lang
+    .then (authorsUris)->
+      _.log seed, 'scaffolding work from scratch'
+      workPromise = createWorkEntity title, lang, authorsUris
+      workEntitiesCache.set seed, workPromise
+      return workPromise
+
+findAuthorsFromWorksTitleOrCreate = (title, authorsNames, lang)->
+  promises_.all authorsNames.map(findAuthorFromWorkTitleOrCreate(title, lang))
+
+# Returns a URI in any case, either from an existing entity or a newly created one
+findAuthorFromWorkTitleOrCreate = (title, lang)-> (authorName)->
+  findAuthorFromWorksLabels authorName, [ title ], [ lang ]
+  .then (uri)->
+    if uri?
+      return uri
     else
-      _.log seed, 'scaffolding from scratch'
-      authorsPromises = createAuthorsEntities seed, lang
-      workPromise = createWorkEntity seed, lang, authorsPromises
+      return createAuthorEntity authorName, lang
+      .then (authorDoc)-> "inv:#{authorDoc._id}"
 
-    workEntitiesCache.set seed, workPromise
-    return workPromise
-
-createAuthorsEntities = (seed, lang)->
-  promises_.all seed.authors.map(CreateAuthorEntity(lang))
-
-CreateAuthorEntity = (lang)-> (authorName)->
+createAuthorEntity = (authorName, lang)->
   labels = {}
   labels[lang] = authorName
   claims =
@@ -61,17 +75,13 @@ CreateAuthorEntity = (lang)-> (authorName)->
   .then _.Log('created author entity')
   .catch _.ErrorRethrow('createAuthorEntity err')
 
-createWorkEntity = (seed, lang, authorsPromises)->
+createWorkEntity = (title, lang, authorsUris)->
   labels = {}
-  { title } = seed
   if _.isNonEmptyString(title) then labels[lang] = title
   claims =
     'wdt:P31': [ 'wd:Q571' ]
+    'wdt:P50': authorsUris
 
-  authorsPromises
-  .then (authors)->
-    authorsIds = authors.map (author)-> "inv:#{author._id}"
-    claims['wdt:P50'] = authorsIds
-    return createEntity labels, claims, seedUserId
+  return createEntity labels, claims, seedUserId
   .then _.Log('created work entity')
   .catch _.ErrorRethrow('createWorkEntity err')
