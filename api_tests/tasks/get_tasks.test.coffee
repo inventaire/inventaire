@@ -10,8 +10,8 @@ byScore = '/api/tasks?action=by-score'
 
 describe 'tasks:byScore', ->
   it 'should returns 10 or less tasks to deduplicates, by default', (done)->
-    createHuman('Stanislas Lem')
-    .then (res)-> createTask(res.uri)
+    createHuman 'Stanislas Lem'
+    .then (res)-> createTask res.uri
     .then (res)-> nonAuthReq 'get', byScore
     .then (res)->
       res.should.be.an.Object()

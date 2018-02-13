@@ -21,6 +21,8 @@ module.exports = tasks_ =
       .then db.putAndReturn
       .then _.Log('task updated')
 
+  byId: (id)-> db.get id
+
   byScore: (limit)->
     db.viewCustom 'byScore',
       limit: limit

@@ -7,3 +7,5 @@ attributes.type = [
 attributes.state = [
   'requested', 'archived'
 ]
+
+attributes.relationScore = []
