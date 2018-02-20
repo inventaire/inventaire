@@ -8,6 +8,7 @@ module.exports =
     public:
       'collect-entities': require './collect_entities'
       'by-score': require './by_score'
+      'by-suspect-uri': require './by_suspect_uri'
       'update-relation-score': require './update_relation_score'
 
   post: ActionsControllers
