@@ -6,7 +6,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 typeSearch = __.require 'controllers', 'search/lib/type_search'
 prefixify = __.require 'lib', 'wikidata/prefixify'
-getWorksLabelsOccurrences = require './get_works_labels_occurrences'
+hasWorksLabelsOccurrence = require './has_works_labels_occurrence'
 
 # Returns a URI if an single author was identified
 # returns undefined otherwise
@@ -14,7 +14,7 @@ module.exports = (authorStr, worksLabels, worksLabelsLangs)->
   searchHumans authorStr
   .then getWdAuthorUris
   .map getAuthorOccurrenceData(worksLabels, worksLabelsLangs)
-  .filter (authorData)-> authorData.occurrences > 0
+  .filter _.property('hasOccurrence')
   .then (authorsData)->
     if authorsData.length is 0 then return
     else if authorsData.length is 1
@@ -34,5 +34,5 @@ getWdAuthorUris = (res)->
   .map (hit)-> prefixify hit._id
 
 getAuthorOccurrenceData = (worksLabels, worksLabelsLangs)-> (wdAuthorUri)->
-  getWorksLabelsOccurrences wdAuthorUri, worksLabels, worksLabelsLangs
-  .then (occurrences)-> { uri: wdAuthorUri, occurrences }
+  hasWorksLabelsOccurrence wdAuthorUri, worksLabels, worksLabelsLangs
+  .then (hasOccurrence)-> { uri: wdAuthorUri, hasOccurrence }
