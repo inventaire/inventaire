@@ -4,13 +4,13 @@ _ = __.require 'builders', 'utils'
 should = require 'should'
 
 byScore = '/api/tasks?action=by-score&limit=1000'
-calculateRelationScore = '/api/tasks?action=calculate-relation-score&id='
+updateRelationScore = '/api/tasks?action=update-relation-score&id='
 
 { Promise } = __.require 'lib', 'promises'
 { authReq, nonAuthReq, undesiredErr } = __.require 'apiTests', 'utils/utils'
 { createTask, createTaskWithSuggestionAuthor } = require '../fixtures/tasks'
 
-describe 'tasks:calculate-relation-score', ->
+describe 'tasks:update-relation-score', ->
   describe 'when a task have no homonym', ->
     it 'should have a relationScore equal to 1', (done)->
       createTaskWithSuggestionAuthor
@@ -18,7 +18,7 @@ describe 'tasks:calculate-relation-score', ->
         suggestionUri: 'wd:Q6530'
       .then (res)->
         createdTask = _.first res.tasks
-        nonAuthReq 'get', calculateRelationScore + createdTask._id
+        nonAuthReq 'get', updateRelationScore + createdTask._id
       .then (task)->
         task.relationScore.should.equal 1
         done()
@@ -35,7 +35,7 @@ describe 'tasks:calculate-relation-score', ->
         createdTask = _.first res.tasks
         createTask createdTask.suspectUri
         .then (res)->
-          nonAuthReq 'get', calculateRelationScore + createdTask._id
+          nonAuthReq 'get', updateRelationScore + createdTask._id
           .then (task)->
             task.relationScore.should.be.below 1
             done()

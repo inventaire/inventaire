@@ -11,6 +11,7 @@ validDoc = ->
   suggestionUri: 'wd:Q42'
   state: 'requested'
   elasticScore: 4.2
+  relationScore: 1
 
 describe 'task model', ->
   describe 'create', ->
@@ -52,6 +53,15 @@ describe 'task model', ->
       taskDoc = -> Task.create invalidDoc
       try taskDoc()
       catch err then err.message.should.startWith 'invalid elasticScore'
+      taskDoc.should.throw()
+      done()
+
+    it 'should throw if no relationScore', (done)->
+      invalidDoc = validDoc()
+      delete invalidDoc.relationScore
+      taskDoc = -> Task.create invalidDoc
+      try taskDoc()
+      catch err then err.message.should.startWith 'invalid relationScore'
       taskDoc.should.throw()
       done()
 

@@ -14,3 +14,4 @@ module.exports =
   states: (taskState)-> taskState in attributes.state
   suspect: entityUri
   elasticScore: _.isNumber
+  relationScore: _.isNumber

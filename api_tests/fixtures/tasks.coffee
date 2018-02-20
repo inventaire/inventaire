@@ -16,6 +16,7 @@ module.exports = API =
         type: 'deduplicate'
         state: 'requested'
         elasticScore: 4
+        relationScore: 1
 
       authReq 'post', '/api/tasks?action=create', { tasks: [ task ] }
 
