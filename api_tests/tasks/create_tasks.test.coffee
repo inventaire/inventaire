@@ -19,6 +19,7 @@ describe 'tasks:create', ->
           suspectUri: "inv:#{suspectId}",
           suggestionUri: randomString 10
           elasticScore: 4
+          relationScore: 1
         }
       ]
       authReq 'post', createTaskPath, { tasks }
@@ -27,6 +28,8 @@ describe 'tasks:create', ->
         task.type.should.equal 'deduplicate'
         task.state.should.equal 'requested'
         task.suspectUri.should.equal "inv:#{suspectId}"
+        task.elasticScore.should.equal 4
+        task.relationScore.should.equal 1
         task._id.should.be.a.String()
         done()
       .catch undesiredErr(done)

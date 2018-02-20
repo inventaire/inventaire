@@ -2,6 +2,7 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 
 checkEntity = require './check_entity'
+{ calculateRelationScore } = require './relation_score'
 
 module.exports = (entities)->
   newTasks = []
@@ -20,6 +21,8 @@ module.exports = (entities)->
           suggestionUri: suggestionEntity.uri
           state: 'requested'
           elasticScore: suggestionEntity._score
+          # relation score express the number of suggestions for the same suspect
+          relationScore:  calculateRelationScore(suggestionEntities)
     .then checkNextEntity
 
   return checkNextEntity()

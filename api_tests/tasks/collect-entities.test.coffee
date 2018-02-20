@@ -21,8 +21,12 @@ describe 'tasks:collect-entities', ->
       .then (res)->
         { tasks } = res
         tasks.length.should.aboveOrEqual 1
+        # with a suspect
         tasksUris = _.pluck tasks, 'suspectUri'
         tasksUris.should.containEql "inv:#{suspectId}"
+        # with a relationScore
+        taskRelationScores = _.pluck tasks, 'relationScore'
+        _.compact(taskRelationScores).length.should.equal taskRelationScores.length
         done()
       .catch undesiredErr(done)
 
