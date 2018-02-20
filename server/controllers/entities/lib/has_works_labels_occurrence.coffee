@@ -33,9 +33,10 @@ module.exports = (wdAuthorUri, worksLabels, worksLabelsLangs)->
   .map (sitelinkData)->
     { lang, title } = sitelinkData
     return getWikipediaArticle lang, title
-  .map countOccurrences(worksLabelsPattern)
-  .then _.sum
-  .then _.Log("#{wdAuthorUri} - [ #{worksLabels} ] : matches count")
+  .then (articles)->
+    for article in articles
+      if article.extract.match(worksLabelsPattern)? then return true
+    return false
 
 getBestSitelinks = (worksLabelsLangs)-> (entity)->
   { sitelinks, originalLang } = entity
@@ -45,8 +46,3 @@ getBestSitelinks = (worksLabelsLangs)-> (entity)->
     title = sitelinks["#{lang}wiki"]
     if title? then return { lang, title }
   .filter _.identity
-
-countOccurrences = (worksLabelsPattern)-> (article)->
-  occurrences = article.extract.match(worksLabelsPattern)?.length or 0
-  _.info occurrences, "#{article.url} occurences"
-  return occurrences
