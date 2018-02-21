@@ -1,7 +1,6 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
-require('./lib/update_claims_hooks')()
 
 module.exports = (req, res)->
   { id, uri, property, 'old-value':oldVal, 'new-value': newVal } = req.body

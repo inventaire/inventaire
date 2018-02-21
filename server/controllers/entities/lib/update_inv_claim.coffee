@@ -5,6 +5,7 @@ radio = __.require 'lib', 'radio'
 Entity = __.require 'models', 'entity'
 getEntityType = require './get_entity_type'
 validateClaimProperty = require './validate_claim_property'
+inferredClaimUpdates = require './inferred_claim_updates'
 
 module.exports = (user, id, property, oldVal, newVal)->
   _.type user, 'object'
@@ -16,6 +17,8 @@ module.exports = (user, id, property, oldVal, newVal)->
     updateClaim { property, oldVal, newVal, userId, currentDoc, userIsAdmin }
   .then (updatedDoc)->
     radio.emit 'entity:update:claim', updatedDoc, property, oldVal, newVal
+    # Wait for inferred updates
+    return inferredClaimUpdates updatedDoc, property, oldVal
 
 updateClaim = (params)->
   { property, oldVal, userId, currentDoc } = params
