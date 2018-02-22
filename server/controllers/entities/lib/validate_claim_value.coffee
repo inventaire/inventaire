@@ -44,7 +44,7 @@ module.exports = (db)->
       if propArray?.length > 0 and oldVal isnt propArray[0]
         return error_.reject 'this property accepts only one value', 400, arguments
 
-    formattedValue = prop.format newVal
+    formattedValue = if prop.format? then prop.format(newVal) else newVal
 
     # Resolve only if all async tests pass
     return promises_.all [
