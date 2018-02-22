@@ -6,8 +6,8 @@ error_ = __.require 'lib', 'error/error'
 # Each property configuration object is made of the following attributes:
 
 # datatype: {String}
-# format: {Function}
-# test: {Function}
+# validate: {Function}
+# format: {Function} (optional)
 # uniqueValue: {Boolean} (default: false)
 # concurrency: {Boolean} (default: false)
 # adminUpdateOnly: {Boolean} (default: false)
@@ -129,5 +129,5 @@ module.exports =
     unless property in whitelist
       throw error_.new "property isn't whitelisted", 400, property
 
-  testDataType: (property, value)->
+  validateDataType: (property, value)->
     _.typeOf(value) is propertyDatatypePrimordialType(property)

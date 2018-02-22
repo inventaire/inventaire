@@ -9,12 +9,12 @@ isbn_ = __.require 'lib', 'isbn/isbn'
 
 entity =
   datatype: 'entity'
-  test: EntityUri.test.bind EntityUri
+  validate: EntityUri.test.bind EntityUri
 
 uniqueString =
   datatype: 'string'
   # Arbitrary max length
-  test: BoundedString 1, 5000
+  validate: BoundedString 1, 5000
   uniqueValue: true
 
 restrictedEntityType = (type)-> _.extend { restrictedType: type }, entity
@@ -34,25 +34,25 @@ module.exports =
 
   url:
     datatype: 'string'
-    test: _.isUrl
+    validate: _.isUrl
 
   uniqueSimpleDay:
     datatype: 'simple-day'
     # See SimpleDay specifications in [inventaire-client]/test/106-regex.coffee
-    test: _.isSimpleDay
+    validate: _.isSimpleDay
     uniqueValue: true
 
   positiveInteger:
     datatype: 'positive-integer'
-    test: (value)-> _.isNumber(value) and value % 1 is 0 and value > 0
+    validate: (value)-> _.isNumber(value) and value % 1 is 0 and value > 0
     uniqueValue: true
 
   ordinal:
     datatype: 'string'
-    test: _.isPositiveIntegerString
+    validate: _.isPositiveIntegerString
     uniqueValue: true
 
   ipfsPath:
     datatype: 'ipfs-path'
-    test: _.isIpfsPath
+    validate: _.isIpfsPath
     uniqueValue: true
