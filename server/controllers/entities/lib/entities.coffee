@@ -83,7 +83,8 @@ module.exports = entities_ =
     .then -> validateClaimValue params
 
   # Assumes that the property is valid
-  validatePropertyValueSync: (property, value)-> properties[property].test value
+  validatePropertyValueSync: (property, value)->
+    properties[property].validate value
 
   getLastChangedEntitiesUris: (since, limit)->
     db.changes
