@@ -5,6 +5,7 @@ error_ = __.require 'lib', 'error/error'
 wdk = require 'wikidata-sdk'
 isbn_ = __.require 'lib', 'isbn/isbn'
 { EntityUri, SimpleDay } = __.require 'sharedLibs', 'regex'
+{ BoundedString } = __.require 'models', 'tests/common'
 
 entity =
   datatype: 'entity'
@@ -13,7 +14,7 @@ entity =
 uniqueString =
   datatype: 'string'
   # Arbitrary max length
-  test: (str)-> _.isString(str) and 0 < str.length < 5000
+  test: BoundedString 1, 5000
   uniqueValue: true
 
 restrictedEntityType = (type)-> _.extend { restrictedType: type }, entity

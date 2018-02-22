@@ -85,7 +85,7 @@ describe 'user model', ->
         done()
 
       it 'should throw on passwords too long', (done)->
-        tooLongPassword = [0..10].join('hello')
+        tooLongPassword = [0..10].join('hellohellohello')
         args = replaceParam 4, tooLongPassword
         (-> _create(args)).should.throw()
         done()
