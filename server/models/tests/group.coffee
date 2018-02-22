@@ -1,7 +1,8 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
+_ = __.require 'builders', 'utils'
 slugify = __.require 'controllers', 'groups/lib/slugify'
-{ pass, underLimitString, nonEmptyString, localImg, boolean, position } = require './common'
+{ pass, boundedString, BoundedString, localImg, boolean, position } = require './common'
 
 module.exports =
   pass: pass
@@ -11,8 +12,8 @@ module.exports =
   # Group.tests[attribute](value)
 
   # Make sure the generated slug isn't an empty string
-  name: (str)-> nonEmptyString(str, 60) and nonEmptyString(slugify(str))
+  name: (str)-> boundedString(str, 1, 60) and _.isNonEmptyString(slugify(str))
   picture: localImg
-  description: underLimitString 5000
+  description: BoundedString 0, 5000
   searchable: boolean
   position: position
