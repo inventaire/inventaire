@@ -38,16 +38,15 @@ module.exports = ->
   # Send a batch every #{delay} milliseconds max
   lazyRequestUpdate = _.throttle requestUpdate, delay, { leading: false }
 
-  add = (uri, type)->
-    if type?
-      pluralizedType = type + 's'
-      urisPerType[pluralizedType] or= []
+  add = (uri, type='other')->
+    pluralizedType = type + 's'
+    urisPerType[pluralizedType] or= []
 
-      # Deduplicating
-      unless uri in urisPerType[pluralizedType]
-        urisPerType[pluralizedType].push uri
+    # Deduplicating
+    unless uri in urisPerType[pluralizedType]
+      urisPerType[pluralizedType].push uri
 
-      lazyRequestUpdate()
+    lazyRequestUpdate()
 
   radio.on 'inv:entity:update', (invId, type)-> add "inv:#{invId}", type
   # Ideally, we should update Wikidata entities on every changes

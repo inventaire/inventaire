@@ -44,17 +44,22 @@ getEnrichedEntity = (wdId)->
   .spread mergeWdAndInvData
 
 mergeWdAndInvData = (entity, invEntity)->
-  if entity.missing? then return formatEmpty 'missing', entity
+  if entity.missing?
+    # Make sure the entity is unindexed
+    radio.emit 'wikidata:entity:cache:miss', entity.id
+    return formatEmpty 'missing', entity
+
   { P31 } = entity.claims
   if P31
     simplifiedP31 = wdk.simplifyPropertyClaims P31
     entity.type = getEntityType simplifiedP31.map(prefixify)
-    radio.emit 'wikidata:entity:cache:miss', entity.id, entity.type
   else
     # Make sure to override the type as Wikidata entities have a type with
     # another role in Wikibase, and we need this absence of known type to
     # filter-out entities that aren't in our focus (i.e. not works, author, etc)
     entity.type = null
+
+  radio.emit 'wikidata:entity:cache:miss', entity.id, entity.type
 
   entity.claims = omitUndesiredPropertiesPerType entity.type, entity.claims
 
