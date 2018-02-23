@@ -35,11 +35,6 @@ tests.boundedString = boundedString = (str, minLength, maxLength)->
 tests.BoundedString = (minLength, maxLength)-> (str)->
   boundedString str, minLength, maxLength
 
-# no item of this app could have a timestamp before june 2014
-June2014 = 1402351200000
-tests.EpochMs =
-  test: (time)-> June2014 < time <= Date.now()
-
 tests.imgUrl = (url)-> tests.localImg(url) or _.isUrl(url) or _.isIpfsPath(url)
 
 tests.valid = (attribute, value, option)->
