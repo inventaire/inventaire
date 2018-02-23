@@ -49,10 +49,11 @@ mergeWdAndInvData = (entity, invEntity)->
     radio.emit 'wikidata:entity:cache:miss', entity.id
     return formatEmpty 'missing', entity
 
-  { P31 } = entity.claims
-  if P31
-    simplifiedP31 = wdk.simplifyPropertyClaims P31
-    entity.type = getEntityType simplifiedP31.map(prefixify)
+  { P31, P279 } = entity.claims
+  if P31? or P279?
+    simplifiedP31 = wdk.simplifyPropertyClaims(P31).map prefixify
+    simplifiedP279 = wdk.simplifyPropertyClaims(P279).map prefixify
+    entity.type = getEntityType simplifiedP31, simplifiedP279
   else
     # Make sure to override the type as Wikidata entities have a type with
     # another role in Wikibase, and we need this absence of known type to
