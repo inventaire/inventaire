@@ -156,7 +156,8 @@ module.exports = items_ =
   # Data manipulation done on client-side view models (item.serializeData),
   # but useful to have server-side for emails view models
   serializeData: (item)->
-    { 'entity:authors':authors, 'entity:image':image } = item.snapshot
+    { 'entity:title':title, 'entity:authors':authors, 'entity:image':image } = item.snapshot
+    item.title = title
     item.authors = authors
     if image? and item.pictures.length is 0 then item.pictures = [ image ]
     return item
