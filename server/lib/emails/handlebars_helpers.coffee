@@ -8,4 +8,6 @@ module.exports = hb_ = __.require('sharedLibs', 'handlebars_helpers')(_, appApi)
 
 _.extend hb_, i18n,
   # Prevent passing more than 2 arguments
-  debug: (obj, label)-> _.log obj, label
+  debug: (obj, label)->
+    _.log obj, label
+    return JSON.stringify(obj, null, 2)
