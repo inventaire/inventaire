@@ -15,3 +15,4 @@ module.exports =
   suspect: entityUri
   elasticScore: _.isNumber
   relationScore: _.isNumber
+  hasEncyclopediaOccurence: _.isBoolean
