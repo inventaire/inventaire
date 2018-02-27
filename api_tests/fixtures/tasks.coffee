@@ -17,17 +17,17 @@ module.exports = API =
         state: 'requested'
         elasticScore: 4
         relationScore: 1
+        hasEncyclopediaOccurence: false
 
       authReq 'post', '/api/tasks?action=create', { tasks: [ task ] }
 
   createTaskWithSuggestionAuthor: (options)->
-    { authorName, suggestionUri } = options
+    { authorName, suggestionUri, workLabel } = options
 
     authReq 'post', '/api/entities?action=create',
       labels: { fr: authorName }
       claims:
         'wdt:P31': [ 'wd:Q5' ]
-    .then -> createWorkWithAuthor()
     .then (res)->
       suspectUri = 'inv:' + res._id
       task =
@@ -36,6 +36,8 @@ module.exports = API =
         type: 'deduplicate'
         state: 'requested'
         elasticScore: 4
+        relationScore: 1
+        hasEncyclopediaOccurence: false
 
       authReq 'post', '/api/tasks?action=create', { tasks: [ task ] }
 

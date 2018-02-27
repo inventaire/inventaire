@@ -10,7 +10,7 @@ tests = require './tests/task'
 Task.create = (newTask)->
   _.types arguments, [ 'object' ]
 
-  { type, suspectUri, suggestionUri, state, elasticScore, relationScore } = newTask
+  { type, suspectUri, suggestionUri, state, elasticScore, relationScore, hasEncyclopediaOccurence } = newTask
   state or= 'requested'
 
   tests.pass 'types', type
@@ -18,6 +18,7 @@ Task.create = (newTask)->
   tests.pass 'suspect', suspectUri
   tests.pass 'elasticScore', elasticScore
   tests.pass 'relationScore', relationScore
+  tests.pass 'hasEncyclopediaOccurence', hasEncyclopediaOccurence
 
   now = Date.now()
 
@@ -28,6 +29,7 @@ Task.create = (newTask)->
     state: state
     elasticScore: elasticScore
     relationScore: relationScore
+    hasEncyclopediaOccurence: hasEncyclopediaOccurence
     createdAt: now
 
 Task.update = (task, attribute, value)->

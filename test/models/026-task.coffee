@@ -12,6 +12,7 @@ validDoc = ->
   state: 'requested'
   elasticScore: 4.2
   relationScore: 1
+  hasEncyclopediaOccurence: true
 
 describe 'task model', ->
   describe 'create', ->
@@ -62,6 +63,15 @@ describe 'task model', ->
       taskDoc = -> Task.create invalidDoc
       try taskDoc()
       catch err then err.message.should.startWith 'invalid relationScore'
+      taskDoc.should.throw()
+      done()
+
+    it 'should throw if no hasEncyclopediaOccurence', (done)->
+      invalidDoc = validDoc()
+      delete invalidDoc.hasEncyclopediaOccurence
+      taskDoc = -> Task.create invalidDoc
+      try taskDoc()
+      catch err then err.message.should.startWith 'invalid hasEncyclopediaOccurence'
       taskDoc.should.throw()
       done()
 
