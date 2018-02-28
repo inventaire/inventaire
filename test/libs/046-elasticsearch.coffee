@@ -14,7 +14,7 @@ describe 'elastic query of an author name within indexes of wikidata humans', ->
   it "only full phrase match should appear in result", (done)->
     authorInWdDescriptions =
       query: 'Karl Marx'
-      goodId: 'Q9061'  # => label: 'Karl Marx'
+      goodId: 'Q9061' # => label: 'Karl Marx'
       lessGoodId: 'Q214986' # => label: 'Heinrich Marx'
 
     search authorInWdDescriptions.query, 'humans'
