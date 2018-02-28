@@ -5,7 +5,7 @@ attributes.type = [
 ]
 
 attributes.state = [
-  'requested', 'archived'
+  'requested', 'dismissed'
 ]
 
 attributes.relationScore = []

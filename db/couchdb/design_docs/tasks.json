@@ -6,7 +6,7 @@
       "map": "(doc)->\n  emit doc.suspectUri, null"
     },
     "byScore": {
-       "map": "(doc)->\n  if doc.type is 'deduplicate'\n    emit doc.elasticScore, null"
+       "map": "(doc)->\n  if doc.state is 'requested'\n    emit [doc.hasEncyclopediaOccurence, doc.relationScore, doc.elasticScore], doc"
     }
   }
 }

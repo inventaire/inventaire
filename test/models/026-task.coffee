@@ -76,13 +76,13 @@ describe 'task model', ->
       done()
 
   describe 'update', ->
-    it 'should update a valid task with an archived state', (done)->
-      taskDoc = Task.update validDoc(), 'state', 'archived'
-      taskDoc.state.should.equal 'archived'
+    it 'should update a valid task with an dismissed state', (done)->
+      taskDoc = Task.update validDoc(), 'state', 'dismissed'
+      taskDoc.state.should.equal 'dismissed'
       done()
 
     it 'should throw if invalid attribute to update', (done)->
-      taskDoc = -> Task.update validDoc(), 'blob', 'archived'
+      taskDoc = -> Task.update validDoc(), 'blob', 'dismissed'
       try taskDoc()
       catch err then err.message.should.startWith 'invalid attributes'
       taskDoc.should.throw()
