@@ -7,7 +7,7 @@ randomString = __.require 'lib', './utils/random_string'
 collectEntities = '/api/tasks?action=collect-entities'
 byScore = '/api/tasks?action=by-score&limit=1000'
 
-{ authReq, nonAuthReq, undesiredErr } = __.require 'apiTests', 'utils/utils'
+{ authReq, undesiredErr } = __.require 'apiTests', 'utils/utils'
 { createHuman } = require '../fixtures/entities'
 
 describe 'tasks:collect-entities', ->
@@ -16,8 +16,8 @@ describe 'tasks:collect-entities', ->
     .then (suspect)->
       suspectId = suspect._id
 
-      nonAuthReq 'get', collectEntities
-      .then -> nonAuthReq 'get', byScore
+      authReq 'post', collectEntities
+      .then -> authReq 'get', byScore
       .then (res)->
         { tasks } = res
         tasks.length.should.aboveOrEqual 1
@@ -33,8 +33,8 @@ describe 'tasks:collect-entities', ->
     return
 
   it 'should not re-create existing tasks', (done)->
-    nonAuthReq 'get', collectEntities
-    .then -> nonAuthReq 'get', byScore
+    authReq 'post', collectEntities
+    .then -> authReq 'get', byScore
     .then (res)->
       { tasks } = res
       uniqSuspectUris = _.uniq _.pluck(tasks, 'suspectUri')

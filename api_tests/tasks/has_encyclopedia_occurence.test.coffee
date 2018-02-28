@@ -21,7 +21,7 @@ describe 'tasks:has-encyclopedia-occurence', ->
         claims:
           'wdt:P31': [ 'wd:Q571' ]
           'wdt:P50': [ authorUri ]
-      .then -> authReq 'get', collectEntities
+      .then -> authReq 'post', collectEntities
       .then -> authReq 'get', byScore
       .then (res)->
         { tasks } = res

@@ -18,7 +18,7 @@ describe 'tasks:update-relation-score', ->
         suggestionUri: 'wd:Q6530'
       .then (res)->
         createdTask = _.first res.tasks
-        nonAuthReq 'get', updateRelationScore + createdTask._id
+        authReq 'put', updateRelationScore + createdTask._id
       .then (task)->
         task.relationScore.should.equal 1
         done()
@@ -35,7 +35,7 @@ describe 'tasks:update-relation-score', ->
         createdTask = _.first res.tasks
         createTask createdTask.suspectUri
         .then (res)->
-          nonAuthReq 'get', updateRelationScore + createdTask._id
+          authReq 'put', updateRelationScore + createdTask._id
           .then (task)->
             task.relationScore.should.be.below 1
             done()
