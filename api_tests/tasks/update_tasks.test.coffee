@@ -13,7 +13,7 @@ describe 'tasks:update', ->
       authReq 'put', '/api/tasks?action=update',
         id: task._id,
         attribute: 'state',
-        value: 'archived'
+        value: 'dismissed'
       .then (updatedTask)->
         updatedTask[0].ok.should.be.true()
         done()
@@ -29,6 +29,23 @@ describe 'tasks:update', ->
         id: ''
       .catch (err)->
         err.body.status_verbose.should.be.a.String()
+        done()
+    .catch done
+
+    return
+
+describe 'tasks:merge-entities', ->
+  it 'should update task state from requested to merged', (done) ->
+    createTask()
+    .then (task)->
+      adminReq 'put', '/api/entities?action=merge',
+        from: task.suspectUri
+        to: task.suggestionUri
+      .delay 100
+      .then -> authReq 'get', "/api/tasks?action=by-ids&ids=#{task._id}"
+      .then (res)->
+        updatedTask = res.tasks[0]
+        updatedTask.state.should.equal 'merged'
         done()
     .catch done
 
