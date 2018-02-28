@@ -22,7 +22,7 @@ module.exports = (wdAuthorUri, worksLabels, worksLabelsLangs)->
   # Filter-out labels that are too short, as it could generate false positives
   worksLabels = worksLabels.filter (label)-> label.length > 5
 
-  if worksLabels.length is 0 then return promises_.resolve 0
+  if worksLabels.length is 0 then return promises_.resolve false
 
   # Match any of the works labels
   worksLabelsPattern = new RegExp(worksLabels.join('|'), 'gi')
