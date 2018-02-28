@@ -13,7 +13,7 @@ describe 'tasks:byScore', ->
   it 'should returns 10 or less tasks to deduplicates, by default', (done)->
     createHuman 'Stanislas Lem'
     .then (res)-> createTask res.uri
-    .then (res)-> nonAuthReq 'get', byScore
+    .then -> nonAuthReq 'get', byScore
     .then (res)->
       res.should.be.an.Object()
       { tasks } = res
@@ -49,8 +49,8 @@ describe 'tasks:bySuspectUri', ->
   it 'should return an Array of tasks', (done)->
     createHuman 'John Byrne'
     .then (res)-> createTask res.uri
-    .then (res)->
-      uri = res.tasks[0].suspectUri
+    .then (task)->
+      uri = task.suspectUri
       query = bySuspectUri "&uri=#{uri}"
       nonAuthReq 'get', query
       .then (res)->

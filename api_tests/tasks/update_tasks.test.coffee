@@ -2,14 +2,13 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ authReq } = require '../utils/utils'
+{ authReq, adminReq } = require '../utils/utils'
 { createTask } = require '../fixtures/tasks'
 
 describe 'tasks:update', ->
   it 'should update a task', (done)->
     createTask()
-    .then (res)->
-      task = res.tasks[0]
+    .then (task)->
       task.state.should.equal 'requested'
       authReq 'put', '/api/tasks?action=update',
         id: task._id,
@@ -24,11 +23,10 @@ describe 'tasks:update', ->
 
   it 'should throw if invalid task id', (done)->
     createTask()
-    .then (res)->
-      task = res.tasks[0]
+    .then (task)->
       task.state.should.equal 'requested'
       authReq 'put', '/api/tasks?action=update',
-        id: ""
+        id: ''
       .catch (err)->
         err.body.status_verbose.should.be.a.String()
         done()

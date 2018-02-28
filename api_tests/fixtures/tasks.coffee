@@ -12,7 +12,7 @@ module.exports = API =
     .then (suspectUri)->
       task =
         suspectUri: suspectUri
-        suggestionUri: 'wd:Q12345'
+        suggestionUri: 'wd:Q535'
         type: 'deduplicate'
         state: 'requested'
         elasticScore: 4
@@ -20,6 +20,7 @@ module.exports = API =
         hasEncyclopediaOccurence: false
 
       authReq 'post', '/api/tasks?action=create', { tasks: [ task ] }
+    .then (res)-> res.tasks[0]
 
   createTaskWithSuggestionAuthor: (options)->
     { authorName, suggestionUri, workLabel } = options
@@ -43,5 +44,4 @@ module.exports = API =
 
 getUriPromise = (uri)->
   if uri? then return promises_.resolve uri
-  return createHuman().then (human)->
-    'inv:' + human._id
+  return createHuman().then (human)-> "inv:#{human._id}"
