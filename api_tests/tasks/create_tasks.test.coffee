@@ -5,7 +5,7 @@ should = require 'should'
 randomString = __.require 'lib', './utils/random_string'
 
 createTaskPath = '/api/tasks?action=create'
-{ authReq, nonAuthReq, undesiredErr } = __.require 'apiTests', 'utils/utils'
+{ authReq, undesiredErr } = __.require 'apiTests', 'utils/utils'
 { createHuman } = require '../fixtures/entities'
 
 describe 'tasks:create', ->
