@@ -3,16 +3,18 @@ _ = __.require 'builders', 'utils'
 
 tasks_ = require './tasks'
 
+# relation score express the number of suggestions for the same suspect
+# calculated based on the number of homonyms found on wikidata
 calculateRelationScore = (tasks)->
   1 / tasks.length
 
 module.exports =
   calculateRelationScore: calculateRelationScore
-  updateRelationScore: (taskDoc)->
+  updateRelationScore: (task)->
     tasks_.bySuspectUri(task.suspectUri)
-    .then -> calculateRelationScore
+    .then (tasks)-> calculateRelationScore(tasks)
     .then (score)->
       tasks_.update
-        taskId: taskDoc._id
+        taskId: task._id
         attribute: 'relationScore'
         newValue: score

@@ -5,16 +5,16 @@ ActionsControllers = __.require 'lib', 'actions_controllers'
 
 module.exports =
   get: ActionsControllers
-    public:
-      'collect-entities': require './collect_entities'
+    authentified:
       'by-score': require './by_score'
       'by-suspect-uri': require './by_suspect_uri'
-      'update-relation-score': require './update_relation_score'
 
   post: ActionsControllers
-    public:
+    authentified:
+      'collect-entities': require './collect_entities'
       'create': require './create'
 
   put: ActionsControllers
     authentified:
       'update': require './update'
+      'update-relation-score': require './update_relation_score'
