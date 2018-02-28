@@ -12,11 +12,11 @@ describe 'tasks:update', ->
       task = res.tasks[0]
       task.state.should.equal 'requested'
       authReq 'put', '/api/tasks?action=update',
-        taskId: task._id,
+        id: task._id,
         attribute: 'state',
         value: 'archived'
       .then (updatedTask)->
-        updatedTask.state.should.equal 'archived'
+        updatedTask[0].ok.should.be.true()
         done()
     .catch done
 
@@ -28,7 +28,7 @@ describe 'tasks:update', ->
       task = res.tasks[0]
       task.state.should.equal 'requested'
       authReq 'put', '/api/tasks?action=update',
-        taskId: ""
+        id: ""
       .catch (err)->
         err.body.status_verbose.should.be.a.String()
         done()

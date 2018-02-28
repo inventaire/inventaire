@@ -7,14 +7,16 @@ tasks_ = __.require 'controllers', 'tasks/lib/tasks'
 promises_ = __.require 'lib', 'promises'
 
 module.exports = (req, res, next)->
-  { taskId, attribute, value } = req.body
-  _.log taskId, 'update task'
+  { id, attribute, value } = req.body
+  _.log id, 'update task'
 
-  unless _.isNonEmptyString taskId
-    return error_.bundleMissingBody req, res, 'tasks'
+  unless _.isNonEmptyString(id)
+    return error_.bundleMissingBody req, res, 'task'
+
+  ids = [ id ]
 
   tasks_.update
-    taskId: taskId
+    ids: ids
     attribute: attribute
     newValue: value
   .then res.json.bind(res)

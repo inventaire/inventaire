@@ -14,14 +14,15 @@ module.exports = tasks_ =
     .then _.Log('task created')
 
   update: (options)->
-    { taskId, attribute, newValue } = options
-    db.get taskId
-    .then (currentTask)->
-      promises_.resolve Task.update currentTask, attribute, newValue
-      .then db.putAndReturn
-      .then _.Log('task updated')
+    { ids, attribute, newValue } = options
+    tasks_.byIds ids
+    .map (task)-> Task.update task, attribute, newValue
+    .then db.bulk
+    .then _.Log('tasks updated')
 
-  byId: (id)-> db.get id
+  byId: db.get
+
+  byIds: db.fetch
 
   byScore: (limit)->
     db.viewCustom 'byScore',
