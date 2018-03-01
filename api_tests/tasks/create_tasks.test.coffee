@@ -12,7 +12,7 @@ validTask =
   type: 'deduplicate',
   suspectUri: "inv:5bb3931277d7358580a8aa265803013b",
   suggestionUri: randomString 10
-  elasticScore: 4
+  lexicalScore: 4
   relationScore: 1
   hasEncyclopediaOccurence: true
 

@@ -10,7 +10,7 @@ validDoc = ->
   suspectUri: 'inv:035a93cc360f4e285e955bc1230415c4'
   suggestionUri: 'wd:Q42'
   state: 'requested'
-  elasticScore: 4.2
+  lexicalScore: 4.2
   relationScore: 1
   hasEncyclopediaOccurence: true
 
@@ -48,12 +48,12 @@ describe 'task model', ->
       taskDoc.should.throw()
       done()
 
-    it 'should throw if no elasticScore', (done)->
+    it 'should throw if no lexicalScore', (done)->
       invalidDoc = validDoc()
-      delete invalidDoc.elasticScore
+      delete invalidDoc.lexicalScore
       taskDoc = -> Task.create invalidDoc
       try taskDoc()
-      catch err then err.message.should.startWith 'invalid elasticScore'
+      catch err then err.message.should.startWith 'invalid lexicalScore'
       taskDoc.should.throw()
       done()
 

@@ -13,6 +13,6 @@ module.exports =
   types: (taskType)-> taskType in attributes.type
   states: (taskState)-> taskState in attributes.state
   suspect: entityUri
-  elasticScore: _.isNumber
+  lexicalScore: _.isNumber
   relationScore: _.isNumber
   hasEncyclopediaOccurence: _.isBoolean

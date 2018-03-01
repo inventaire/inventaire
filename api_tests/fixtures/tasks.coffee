@@ -16,7 +16,7 @@ module.exports = API =
         suggestionUri: suggestionUri
         type: 'deduplicate'
         state: 'requested'
-        elasticScore: 4
+        lexicalScore: 4
         relationScore: 1
         hasEncyclopediaOccurence: false
 
@@ -37,7 +37,7 @@ module.exports = API =
         suggestionUri: suggestionUri
         type: 'deduplicate'
         state: 'requested'
-        elasticScore: 4
+        lexicalScore: 4
         relationScore: 1
         hasEncyclopediaOccurence: false
 

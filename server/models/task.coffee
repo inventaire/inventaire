@@ -10,13 +10,13 @@ tests = require './tests/task'
 Task.create = (newTask)->
   _.types arguments, [ 'object' ]
 
-  { type, suspectUri, suggestionUri, state, elasticScore, relationScore, hasEncyclopediaOccurence } = newTask
+  { type, suspectUri, suggestionUri, state, lexicalScore, relationScore, hasEncyclopediaOccurence } = newTask
   state or= 'requested'
 
   tests.pass 'types', type
   tests.pass 'states', state
   tests.pass 'suspect', suspectUri
-  tests.pass 'elasticScore', elasticScore
+  tests.pass 'lexicalScore', lexicalScore
   tests.pass 'relationScore', relationScore
   tests.pass 'hasEncyclopediaOccurence', hasEncyclopediaOccurence
 
@@ -27,7 +27,7 @@ Task.create = (newTask)->
     suspectUri: suspectUri
     suggestionUri: suggestionUri
     state: state
-    elasticScore: elasticScore
+    lexicalScore: lexicalScore
     relationScore: relationScore
     hasEncyclopediaOccurence: hasEncyclopediaOccurence
     createdAt: now

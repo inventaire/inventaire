@@ -35,7 +35,7 @@ createTaskDocs = (authorWorksData, relationScore)-> (suggestionEntity)->
       suspectUri: "inv:#{authorWorksData.authorId}"
       suggestionUri: suggestionEntity.uri
       state: 'requested'
-      elasticScore: suggestionEntity._score
+      lexicalScore: suggestionEntity._score
       relationScore: relationScore
       hasEncyclopediaOccurence: hasOccurence
     }
