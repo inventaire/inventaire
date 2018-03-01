@@ -41,10 +41,24 @@ promisesHandlers =
 
   # source: http://bluebirdjs.com/docs/api/deferred-migration.html
   defer: ->
+    # Initialize in the defer function scope
     resolve = null
     reject = null
-    promise = new Promise -> [ resolve, reject ] = arguments
-    return { resolve, reject, promise }
+
+    promise = new Promise (resolveFn, rejectFn)->
+      # Set the previously initialized variables
+      # to the promise internal resolve/reject functions
+      resolve = resolveFn
+      reject = rejectFn
+
+    return {
+      # A function to resolve the promise at will:
+      # the promise will stay pending until 'resolve' or 'reject' is called
+      resolve,
+      reject,
+      # The promise object, still pending at the moment this is returned
+      promise
+    }
 
   fallbackChain: (getters, timeout=10000)->
     _.types getters, 'functions...'
