@@ -7,3 +7,5 @@ module.exports =
     enabled: true
   entitiesSearchEngine:
     delay: 5000
+  db:
+    enableDesignDocSync: true

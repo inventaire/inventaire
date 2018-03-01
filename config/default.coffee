@@ -57,6 +57,8 @@ module.exports = config =
       delay: 5000
     # logs Couchdb requests parameters
     debug: false
+    # Keep the design doc files in sync with CouchDB design docs
+    enableDesignDocSync: false
     # db settings for script actions
     # see scripts/lib/action_by_input.coffee
     actionsScripts:
