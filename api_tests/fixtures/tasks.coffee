@@ -7,12 +7,13 @@ randomString = __.require 'lib', './utils/random_string'
 { createHuman, createWorkWithAuthor } = require './entities'
 
 module.exports = API =
-  createTask: (suspectUri)->
+  createTask: (suspectUri, suggestionUri)->
+    suggestionUri = suggestionUri || 'wd:Q535'
     getUriPromise suspectUri
     .then (suspectUri)->
       task =
         suspectUri: suspectUri
-        suggestionUri: 'wd:Q535'
+        suggestionUri: suggestionUri
         type: 'deduplicate'
         state: 'requested'
         elasticScore: 4
@@ -41,6 +42,7 @@ module.exports = API =
         hasEncyclopediaOccurence: false
 
       authReq 'post', '/api/tasks?action=create', { tasks: [ task ] }
+    .then (res)-> res.tasks[0]
 
 getUriPromise = (uri)->
   if uri? then return promises_.resolve uri

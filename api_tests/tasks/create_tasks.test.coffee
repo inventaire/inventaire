@@ -8,31 +8,24 @@ createTaskPath = '/api/tasks?action=create'
 { authReq, undesiredErr } = __.require 'apiTests', 'utils/utils'
 { createHuman } = require '../fixtures/entities'
 
+validTask =
+  type: 'deduplicate',
+  suspectUri: "inv:5bb3931277d7358580a8aa265803013b",
+  suggestionUri: randomString 10
+  elasticScore: 4
+  relationScore: 1
+  hasEncyclopediaOccurence: true
+
 describe 'tasks:create', ->
   it 'should create new tasks', (done)->
-    createHuman randomString(10)
-    .then (suspect)->
-      suspectId = suspect._id
-      tasks = [
-        {
-          type: 'deduplicate',
-          suspectUri: "inv:#{suspectId}",
-          suggestionUri: randomString 10
-          elasticScore: 4
-          relationScore: 1
-        }
-      ]
-      authReq 'post', createTaskPath, { tasks }
-      .then (res)->
-        task = res.tasks[0]
-        task.type.should.equal 'deduplicate'
-        task.state.should.equal 'requested'
-        task.suspectUri.should.equal "inv:#{suspectId}"
-        task.elasticScore.should.equal 4
-        task.relationScore.should.equal 1
-        task._id.should.be.a.String()
-        done()
-      .catch undesiredErr(done)
+    authReq 'post', createTaskPath,
+      tasks: [ validTask ]
+    .then (res)->
+      task = res.tasks[0]
+      task.should.containDeep validTask
+      task._id.should.be.a.String()
+      done()
+    .catch undesiredErr(done)
 
     return
 
@@ -67,21 +60,13 @@ describe 'tasks:create', ->
     return
 
   it 'should not create a task if another task already have same suspect AND suggestion uris', (done)->
-    createHuman randomString(10)
-    .then (suspect)->
-      suspectId = suspect._id
-      newTaskDoc =
-        type: 'deduplicate'
-        suspectUri: "inv:#{suspectId}"
-        suggestionUri: randomString 10
-        elasticScore: 8.124
-
-      authReq 'post', createTaskPath, { tasks: [ newTaskDoc ] }
-      .then ->
-        authReq 'post', createTaskPath, { tasks: [ newTaskDoc ] }
-        .catch (err)->
-          err.body.status_verbose.should.equal 'one or several tasks already created'
-          done()
-      .catch undesiredErr(done)
+    validTask.suspectUri = "inv:026a1856df319a2fe3c14c4db602ab1b"
+    authReq 'post', createTaskPath, { tasks: [ validTask ] }
+    .then ->
+      authReq 'post', createTaskPath, { tasks: [ validTask ] }
+      .catch (err)->
+        err.body.status_verbose.should.equal 'one or several tasks already created'
+        done()
+    .catch undesiredErr(done)
 
     return

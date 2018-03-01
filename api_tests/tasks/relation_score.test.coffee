@@ -16,12 +16,11 @@ describe 'tasks:update-relation-score', ->
       createTaskWithSuggestionAuthor
         authorName: 'Stanilas Lem'
         suggestionUri: 'wd:Q6530'
-      .then (res)->
-        createdTask = _.first res.tasks
-        authReq 'put', updateRelationScore + createdTask._id
       .then (task)->
-        task.relationScore.should.equal 1
-        done()
+        authReq 'put', updateRelationScore + task._id
+        .then ->
+          task.relationScore.should.equal 1
+          done()
       .catch undesiredErr(done)
 
       return
@@ -31,15 +30,15 @@ describe 'tasks:update-relation-score', ->
       createTaskWithSuggestionAuthor
         authorName: 'Jim Vance'
         suggestionUri: 'wd:Q27042411'
-      .then (res)->
-        createdTask = _.first res.tasks
-        createTask createdTask.suspectUri
+      .then (task)->
+        createTask task.suspectUri
         .then (res)->
-          authReq 'put', updateRelationScore + createdTask._id
-          .then (task)->
-            task.relationScore.should.be.below 1
+          authReq 'put', updateRelationScore + task._id
+          .then -> authReq 'get', "/api/tasks?action=by-ids&ids=#{task._id}"
+          .then (res)->
+            updatedTask = res.tasks[0]
+            updatedTask.relationScore.should.be.below 1
             done()
       .catch undesiredErr(done)
 
       return
-
