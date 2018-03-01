@@ -29,8 +29,8 @@ error_ = __.require 'lib', 'error/error'
 tests = require './tests/common'
 promises_ = __.require 'lib', 'promises'
 
-{ properties, whitelist } = __.require 'controllers','entities/lib/properties'
-inferences = __.require 'controllers','entities/lib/inferences'
+{ properties, whitelist } = __.require 'controllers', 'entities/lib/properties'
+inferences = __.require 'controllers', 'entities/lib/inferences'
 
 module.exports = Entity =
   create: ->
@@ -117,8 +117,9 @@ module.exports = Entity =
 
     return updateInferredProperties doc, property, oldVal, newVal
 
-  # 'from' and 'to' refer to the redirection process which rely on merging two existing document:
-  # redirecting from an entity to another entity, only the 'to' doc will survive
+  # 'from' and 'to' refer to the redirection process which rely on merging
+  # two existing document: redirecting from an entity to another entity,
+  # only the 'to' doc will survive
   mergeDocs: (fromEntityDoc, toEntityDoc)->
     preventRedirectionEdit fromEntityDoc, 'mergeDocs (from)'
     preventRedirectionEdit toEntityDoc, 'mergeDocs (to)'
@@ -144,7 +145,8 @@ module.exports = Entity =
 
   removePlaceholder: (entityDoc)->
     if entityDoc.redirect?
-      throw error_.new "can't turn a redirection into a removed placeholder", 400, entityDoc
+      message = "can't turn a redirection into a removed placeholder"
+      throw error_.new message, 400, entityDoc
 
     removedDoc = _.cloneDeep entityDoc
     removedDoc.type = 'removed:placeholder'

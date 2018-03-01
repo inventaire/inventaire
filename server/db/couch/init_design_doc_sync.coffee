@@ -40,7 +40,7 @@ syncDesignDocFile = (change)->
 
   updatedDesignDoc = formatDesignDoc doc
 
-  fs_.readFile designDocPath, { encoding: 'utf-8'}
+  fs_.readFile designDocPath, { encoding: 'utf-8' }
   .then (file)->
     if updatedDesignDoc is file then return
     fs_.writeFile designDocPath, updatedDesignDoc
