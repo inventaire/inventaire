@@ -4,6 +4,7 @@ _ = __.require 'builders', 'utils'
 couchInit = require 'couch-init2'
 dbBaseUrl = CONFIG.db.fullHost()
 initHardCodedDocuments = require './init_hard_coded_documents'
+initDesignDocSync = require './init_design_doc_sync'
 
 dbsList = require './list'
 formattedList = []
@@ -15,11 +16,12 @@ for dbName, designDocsNames of dbsList
     name: CONFIG.db.name dbName
     designDocs: designDocsNames
 
-designDocFolder = __.path('couchdb', 'design_docs')
+designDocFolder = __.path 'couchdb', 'design_docs'
 
 module.exports = ->
   couchInit dbBaseUrl, formattedList, designDocFolder
   .tap initHardCodedDocuments
+  .tap initDesignDocSync
   .catch (err)->
     if err.message isnt 'CouchDB name or password is incorrect' then throw err
 
