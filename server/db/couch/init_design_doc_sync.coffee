@@ -34,7 +34,7 @@ isDesignDoc = (designDocsNames)-> (doc)->
   return true
 
 syncDesignDocFile = (change)->
-  { id, deleted, doc } = change
+  { id, doc } = change
   designDocName = id.split('/')[1]
   designDocPath = "#{designDocFolder}/#{designDocName}.json"
 
