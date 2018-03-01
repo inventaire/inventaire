@@ -38,7 +38,7 @@ policy = "default-src 'self' www.wikidata.org #{ws};" +
   # https://commons.wikimedia.org: used for image claims
   # https://upload.wikimedia.org: used for genre layouts
   "img-src 'self' #{altHost} https://commons.wikimedia.org https://upload.wikimedia.org https://api.tiles.mapbox.com data:;" +
-  "report-uri /api/reports?action=csp-report;"
+  'report-uri /api/reports?action=csp-report;'
 
 exports.addSecurityHeaders = (req, res, next)->
   res.header 'X-XSS-Protection', '1; mode=block; report=/api/reports?action=csp-report;'

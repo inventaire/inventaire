@@ -1,7 +1,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
-wpBase = "https://en.wikipedia.org/w/api.php"
+wpBase = 'https://en.wikipedia.org/w/api.php'
 apiBase = "#{wpBase}?action=query&prop=pageimages&format=json&titles="
 error_ = __.require 'lib', 'error/error'
 

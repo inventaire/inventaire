@@ -17,7 +17,7 @@
     },
     "cyclomatic_complexity": {
         "value": 10,
-        "level": "ignore"
+        "level": "warn"
     },
     "duplicate_key": {
         "level": "error"
@@ -89,7 +89,7 @@
         "allowed_in_empty_lines": true
     },
     "no_unnecessary_double_quotes": {
-        "level": "ignore"
+        "level": "warn"
     },
     "no_unnecessary_fat_arrows": {
         "level": "warn"

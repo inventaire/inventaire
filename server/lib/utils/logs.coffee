@@ -12,7 +12,7 @@ BaseLogger = (color, operation)->
     # fully display deep objects
     console.log grey('****') + chalk[color]("#{label}") + grey('****')
     console.log operation(obj)
-    console.log grey("----------")
+    console.log grey('----------')
     return obj
 
 module.exports = (_)->
