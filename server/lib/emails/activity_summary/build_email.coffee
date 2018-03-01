@@ -70,7 +70,13 @@ spreadEmailData = (user)-> (results)->
 
   { email, summaryPeriodicity, lang } = user
 
-  countTotal = friendsRequests + groupInvitations + groupRequests + unreadNotifications + activeTransactions + lastFriendsBooks.highlighted.length + lastNearbyPublicBooks.highlighted.length
+  countTotal = friendsRequests +
+    groupInvitations +
+    groupRequests +
+    unreadNotifications +
+    activeTransactions +
+    lastFriendsBooks.highlighted.length +
+    lastNearbyPublicBooks.highlighted.length
 
   periodicity = user.summaryPeriodicity or defaultPeriodicity
 

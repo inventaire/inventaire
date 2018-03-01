@@ -122,7 +122,9 @@ resizeFromStream = (reqStream, width, height, req, res)->
       if alreadySent then return
       if receivedData then res.end()
       # usually solved by `sudo apt-get install graphicsmagick`
-      else error_.bundle req, res, 'empty graphicsmagick response: make sure graphicsmagick is installed on the server', 500
+      else
+        message = 'empty graphicsmagick response: make sure graphicsmagick is installed'
+        error_.bundle req, res, message , 500
 
 parseReq = (req)->
   { pathname } = req._parsedUrl

@@ -12,7 +12,8 @@ module.exports = (transactions_)->
       activeTransactionsDocs = transactionsDocs.filter Transaction.isActive
 
       if activeTransactionsDocs.length > 0
-        throw error_.new 'user already made a request on this item', 403, requester, item, activeTransactionsDocs[0]
+        message = 'user already made a request on this item'
+        throw error_.new message, 403, requester, item, activeTransactionsDocs[0]
       else
         return item
 
