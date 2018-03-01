@@ -66,7 +66,7 @@ exit
 # Check that the nvm command can be found
 # If you get a 'command not found' error, check NVM documentation https://github.com/creationix/nvm#installation
 nvm
-nvm install 6
+nvm install 8
 cowsay -f dragon "♫ ♪ copy/paste code, copy/paste code, the world is beautiful when all's in simple mode ♪ ♫"
 ```
 
