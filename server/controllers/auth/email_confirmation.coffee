@@ -16,7 +16,7 @@ module.exports = (req, res, next)->
   .catch error_.Handler(req, res)
 
 sendEmailValidation = (user)->
-  { _id, creationStrategy, validEmail} = user
+  { _id, creationStrategy, validEmail } = user
   unless creationStrategy is 'local'
     throw error_.new 'wrong authentification creationStrategy', 400
 

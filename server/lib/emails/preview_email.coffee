@@ -13,7 +13,7 @@ callbackPromise = (resolve, reject)->
 module.exports = (data, callback)->
   promise = undefined
 
-  if !callback and typeof Promise == 'function'
+  if not callback and typeof Promise is 'function'
     promise = new Promise (resolve, reject)->
       callback = callbackPromise resolve, reject
 
@@ -31,14 +31,14 @@ module.exports = (data, callback)->
   #     Object.keys @_defaults.headers or {}
   #     .forEach (key)->
   #       unless (key of data.headers) then data.headers[key] = @_defaults.headers[key]
-  #     .bind this
+  #     .bind @
 
-  # .bind this
+  # .bind @
 
   mail =
     data: data
     message: null
-    resolveContent: @resolveContent.bind this
+    resolveContent: @resolveContent.bind @
 
   # if typeof @transporter == 'string'
   #   return callback new Error('Unsupported configuration, downgrade Nodemailer to v0.7.1 to use it')

@@ -27,7 +27,9 @@ getThumbData = (file, width = 2000)->
 # Note: Commons files could also be accessed directly from
 # https://commons.wikimedia.org/wiki/Special:FilePath/#{file}?width=#{width}
 requestOptions = (file, width)->
-  url: "http://tools.wmflabs.org/magnus-toolserver/commonsapi.php?image=#{file}&thumbwidth=#{width}"
+  url: _.buildPath 'http://tools.wmflabs.org/magnus-toolserver/commonsapi.php',
+    image: file
+    thumbwidth: width
   headers:
     'Content-Type': 'application/xml'
     # the commonsapi requires a User-Agent

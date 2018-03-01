@@ -2,7 +2,7 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
 invitations_ = require './invitations'
-Invited = __.require 'models','invited'
+Invited = __.require 'models', 'invited'
 radio = __.require 'lib', 'radio'
 
 module.exports = (user, group, emails, message)->

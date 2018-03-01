@@ -11,7 +11,7 @@ module.exports = base =
 
   sumValues: (obj)->
     if @objLength(obj) > 0
-      @values(obj)?.reduce (a,b)-> a + b
+      @values(obj)?.reduce (a, b)-> a + b
     else 0
 
   sameObjects: (a, b)-> JSON.stringify(a) is JSON.stringify(b)

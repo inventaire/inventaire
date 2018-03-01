@@ -12,7 +12,8 @@ qs = require 'querystring'
 { localGateway, publicGateway } = CONFIG.ipfs
 oneMB = 1024 ** 2
 
-# resized images urls looks like /img/#{w}x#{h}/(#{hash}.jpg|#{external url hashCode?href=escaped url})"
+# resized images urls looks like
+# /img/#{w}x#{h}/(#{hash}.jpg|#{external url hashCode?href=escaped url})"
 
 exports.get = (req, res, next)->
   # could be useful in development
@@ -109,9 +110,10 @@ resizeFromStream = (reqStream, width, height, req, res)->
     stdout.on 'error', handleBufferError
     stderr.on 'data', handleBufferError
 
-    # Non of the above seem to catch errors for the case when graphicsmagick isn't installed
-    # so instead of doing `stdout.pipe(res)`, we check if data was actually passed
-    # before determining if it is a success or an error
+    # Non of the above seem to catch errors for the case when graphicsmagick
+    # isn't installed, so instead of doing `stdout.pipe(res)`, we check
+    # if data was actually passed before determining if it is a success
+    # or an error
     receivedData = false
     stdout.on 'data', (data)->
       receivedData = true

@@ -4,7 +4,7 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 { possibleActions } = require './lib/actions_lists'
 groups_ = require './lib/groups'
-tests = __.require 'models','tests/common'
+tests = __.require 'models', 'tests/common'
 rightsVerification = require './lib/rights_verification'
 { Track } = __.require 'lib', 'track'
 
