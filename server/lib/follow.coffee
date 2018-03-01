@@ -44,7 +44,7 @@ module.exports = (params)->
     .then initFollow(dbName)
     .catch _.ErrorRethrow('init follow err')
 
-initFollow = (dbName)-> (lastSeq=0)->
+initFollow = (dbName)-> (lastSeq = 0)->
   if resetFollow then lastSeq = 0
   _.type lastSeq, 'number'
 

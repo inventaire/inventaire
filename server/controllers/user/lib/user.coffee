@@ -103,7 +103,7 @@ user_ =
 
     .catch _.ErrorRethrow('nearby err')
 
-findNearby = (latLng, meterRange, iterations=0, strict=false)->
+findNearby = (latLng, meterRange, iterations = 0, strict = false)->
   geo.search latLng, meterRange
   .then (res)->
     # Try to get the 10 closest (11 minus the main user)
@@ -114,7 +114,7 @@ findNearby = (latLng, meterRange, iterations=0, strict=false)->
     if res.length > 11 or strict or iterations > 10 then return res
     else
       iterations += 1
-      return findNearby latLng, meterRange*2, iterations
+      return findNearby latLng, meterRange * 2, iterations
 
 token_ = require('./token')(db, user_)
 

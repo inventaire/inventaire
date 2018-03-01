@@ -11,12 +11,12 @@ fullPublicHost = CONFIG.fullPublicHost()
 # Defaulting to a high width as if the width is higher than the original,
 # the API returns the original path
 # But not too high though so that we don't get super heavy files
-module.exports = (file, width=2000, refresh)->
+module.exports = (file, width = 2000, refresh)->
   key = "commons:#{file}:#{width}"
   timespan = if refresh is true then 0 else null
   cache_.get key, getThumbData.bind(null, file, width), timespan
 
-getThumbData = (file, width=2000)->
+getThumbData = (file, width = 2000)->
   file = qs.escape file
   promises_.get requestOptions(file, width)
   .then xml_.parse

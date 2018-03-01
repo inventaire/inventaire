@@ -4,7 +4,7 @@ _ = __.require 'builders', 'utils'
 items_ = __.require 'controllers', 'items/lib/items'
 { getLastItems, formatData, embedUsersData, getHighlightedItems } = require './last_books_helpers'
 
-module.exports = (user, limitDate=0)->
+module.exports = (user, limitDate = 0)->
   { _id:userId, position, lang } = user
 
   unless position? then return formatData [], 'nearby', lang, []

@@ -12,7 +12,7 @@ filePath = (filename)-> folder + filename
 tmpPath = (filename)-> '/tmp/' + filename
 
 module.exports =
-  putImage: (path, filename, type='image/jpeg')->
+  putImage: (path, filename, type = 'image/jpeg')->
     fs_.readFile path
     .then writeFile.bind(null, filename)
 

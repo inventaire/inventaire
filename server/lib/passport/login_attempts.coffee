@@ -9,7 +9,7 @@ periodMinutes = 5
 fails = {}
 flushFails = -> fails = {}
 
-setInterval flushFails, periodMinutes*oneMinute
+setInterval flushFails, periodMinutes * oneMinute
 
 module.exports =
   _fails: -> fails
