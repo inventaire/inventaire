@@ -29,7 +29,9 @@ module.exports = (rawIsbns, refresh)->
     .spread (newEntities, notFound)->
       results = { entities: entities.concat(newEntities) }
 
-      if notFound.length > 0 then results.notFound = notFound
+      if notFound.length > 0
+        results.notFound = notFound
+          .map (seed)-> "isbn:#{normalizeIsbn(seed.isbn)}"
 
       return addRedirections results, redirections
 

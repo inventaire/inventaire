@@ -23,7 +23,7 @@ module.exports =
     promises_.get _.buildPath("#{host}/books", { search, lang, refresh })
 
   getByIsbns: (isbns, refresh)->
-    unless enabled then return promises_.resolve {}
+    unless enabled then return promises_.resolve isbns.map(emptySeed)
     isbns = _.forceArray(isbns).join '|'
     promises_.get _.buildPath("#{host}/books", { isbns, refresh })
 
@@ -37,3 +37,5 @@ module.exports =
   getImageByUrl: (url)->
     url = encodeURIComponent url
     promises_.get _.buildPath("#{host}/images", { url })
+
+emptySeed = (isbn)-> { isbn }
