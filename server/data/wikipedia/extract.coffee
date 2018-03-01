@@ -37,8 +37,14 @@ requestExtract = (lang, title)->
     }
 
 apiQuery = (lang, title)->
-  title = qs.escape title
-  "http://#{lang}.wikipedia.org/w/api.php?format=json&action=query&titles=#{title}&prop=extracts&explaintext=true&exintro=true&exsentences=20"
+  _.buildPath "http://#{lang}.wikipedia.org/w/api.php",
+    format: 'json'
+    action: 'query'
+    titles: qs.escape title
+    prop: 'extracts'
+    explaintext: true
+    exintro: true
+    exsentences: 20
 
 # Commas between references aren't removed, thus the presence of aggregated commas
 cleanExtract = (str)-> str?.replace /,,/g, ','
