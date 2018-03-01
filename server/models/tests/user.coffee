@@ -12,7 +12,7 @@ module.exports = tests =
   userId: userId
   username: username
   email: email
-  password: (password)->  8 <= password.length <=60
+  password: (password)->  8 <= password.length <= 60
   # accepting second level languages (like es-AR) but only using first level yet
   language: (lang)-> /^\w{2}(-\w{2})?$/.test(lang)
   picture: localImg
