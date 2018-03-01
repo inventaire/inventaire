@@ -6,7 +6,7 @@ relations_ = __.require 'controllers', 'relations/lib/queries'
 user_ = __.require 'controllers', 'user/lib/user'
 { getLastItems, formatData, embedUsersData, getHighlightedItems } = require './last_books_helpers'
 
-module.exports = (userId, lang, limitDate=0)->
+module.exports = (userId, lang, limitDate = 0)->
   # get network ids
   relations_.getUserFriendsAndCoGroupsMembers userId
   # get last network items available for a transaction

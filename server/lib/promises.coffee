@@ -60,7 +60,7 @@ promisesHandlers =
       promise
     }
 
-  fallbackChain: (getters, timeout=10000)->
+  fallbackChain: (getters, timeout = 10000)->
     _.types getters, 'functions...'
     promiseChainInitializer = Promise.reject new Error(initMessage)
     return getters.reduce ChainReducer(timeout), promiseChainInitializer

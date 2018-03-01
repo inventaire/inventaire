@@ -38,7 +38,7 @@ module.exports = ->
   # Send a batch every #{delay} milliseconds max
   lazyRequestUpdate = _.throttle requestUpdate, delay, { leading: false }
 
-  add = (uri, type='other')->
+  add = (uri, type = 'other')->
     # Also include entities without known type
     # so that a Wikidata entity that got a wdt:P31 update
     # that doesn't match any known type still triggers an update

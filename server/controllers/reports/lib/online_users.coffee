@@ -26,4 +26,4 @@ getFingerPrint = (args...)->
   str = JSON.stringify args
   return crypto_.md5 str
 
-setInterval updateOnlineUsers, 30*1000
+setInterval updateOnlineUsers, 30 * 1000

@@ -22,12 +22,12 @@ shrink = (data, width, height)->
   .interlace 'Line'
 
 module.exports =
-  getHashFilename: (path, extension='jpg')->
+  getHashFilename: (path, extension = 'jpg')->
     fs_.readFile path
     .then crypto_.sha1
     .then (hash)-> "#{hash}.#{extension}"
 
-  shrink: (originalPath, resizedPath, width=maxSize, height=maxSize)->
+  shrink: (originalPath, resizedPath, width = maxSize, height = maxSize)->
     new Promise (resolve, reject)->
       shrink originalPath, width, height
       .write resizedPath, ReturnNewPath(resizedPath, resolve, reject)
@@ -37,7 +37,7 @@ module.exports =
   applyLimits: (width, height)->
     return [ applyLimit(width), applyLimit(height) ]
 
-applyLimit = (dimension=maxSize)->
+applyLimit = (dimension = maxSize)->
   dimension = Number dimension
   if dimension > maxSize then maxSize
   else dimension

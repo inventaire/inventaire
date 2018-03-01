@@ -55,7 +55,7 @@ module.exports = patches_ =
   getActivityFromLastDay: (days)->
     _.type days, 'number'
     now = Date.now()
-    startTime = now - oneDay*days
+    startTime = now - oneDay * days
     today = _.simpleDay()
     startDay = _.simpleDay startTime
     db.view designDocName, 'byDay',

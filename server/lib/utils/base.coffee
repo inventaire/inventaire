@@ -19,10 +19,10 @@ module.exports = base =
   toLowerCase: (str)-> str.toLowerCase()
 
   # returns a function triggering a standard confirmation response
-  ok: (res, status=200)->
+  ok: (res, status = 200)->
     res.status(status).json { ok: true }
 
-  okWarning: (res, warning, status=200)->
+  okWarning: (res, warning, status = 200)->
     res.status(status).json { ok: true, warning }
 
   stringToInt: (str)->

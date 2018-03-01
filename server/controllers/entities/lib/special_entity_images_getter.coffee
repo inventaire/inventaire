@@ -26,7 +26,7 @@ getWorkEditions = (workUri, images, limitPerLang)->
   entities_.byClaim 'wdt:P629', workUri, true, true
   .then addEditionsImages(images, limitPerLang)
 
-addEditionsImages = (images, limitPerLang=3)-> (editions)->
+addEditionsImages = (images, limitPerLang = 3)-> (editions)->
   for edition in editions
     lang = getOriginalLang edition.claims
     image = edition.claims['wdt:P18']?[0]

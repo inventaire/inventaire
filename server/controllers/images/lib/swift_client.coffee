@@ -12,7 +12,7 @@ getToken = require './get_swift_token'
 absoluteUrl = (filename)-> "#{publicURL}/#{container}/#{filename}"
 relativeUrl = (filename)-> "/img/#{filename}"
 
-getParams = (filename, body, type='application/json')->
+getParams = (filename, body, type = 'application/json')->
   getToken()
   .then (token)->
     url: absoluteUrl filename

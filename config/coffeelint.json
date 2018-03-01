@@ -98,6 +98,6 @@
         "level": "ignore"
     },
     "space_operators": {
-        "level": "ignore"
+        "level": "warn"
     }
 }

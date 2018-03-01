@@ -25,7 +25,7 @@ baseOptions =
 
 # merge options to fit the 'request' lib interface
 # which is wrapped by bluereq
-mergeOptions = (url, options={})->
+mergeOptions = (url, options = {})->
   # accept to get the url in the options
   if _.isObject url
     options = url

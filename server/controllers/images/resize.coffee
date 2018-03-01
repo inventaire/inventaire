@@ -10,7 +10,7 @@ qs = require 'querystring'
 { oneYear } =  __.require 'lib', 'times'
 { offline, imageRedirection } = CONFIG
 { localGateway, publicGateway } = CONFIG.ipfs
-oneMB = 1024**2
+oneMB = 1024 ** 2
 
 # resized images urls looks like /img/#{w}x#{h}/(#{hash}.jpg|#{external url hashCode?href=escaped url})"
 
@@ -76,7 +76,7 @@ getResizeImage = (req, res, url, dimensions)->
     else if not validImageContentType.test(contentType)
       errMessage = "invalid image content-type: #{contentType}"
 
-    else if contentLength > 10*oneMB
+    else if contentLength > 10 * oneMB
       errMessage = "image is too large: #{contentLength}"
 
     if errMessage?

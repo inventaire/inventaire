@@ -22,7 +22,7 @@ module.exports = groups_ =
     .filter Group.userIsAdmin.bind(null, userId)
 
   # /!\ the 'byName' view does return groups with 'searchable' set to false
-  nameStartBy: (name, limit=10)->
+  nameStartBy: (name, limit = 10)->
     name = name.toLowerCase()
     db.viewCustom 'byName',
       startkey: name
@@ -54,7 +54,7 @@ module.exports = groups_ =
     groups_.byId groupId
     .then _.partial(Group.findInvitation, userId, _, true)
 
-  byCreation: (limit=10)->
+  byCreation: (limit = 10)->
     db.viewCustom 'byCreation', { limit, descending: true, include_docs: true }
 
 groups_.byPosition = __.require('lib', 'by_position')(db, 'groups')

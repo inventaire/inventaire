@@ -58,4 +58,4 @@ handleAction = (action, req, res)->
   .then Track(req, ['groups', action])
   .catch error_.Handler(req, res)
 
-addUpdateData = (res)-> (data={})-> res.json { ok: true, update: data.update }
+addUpdateData = (res)-> (data = {})-> res.json { ok: true, update: data.update }

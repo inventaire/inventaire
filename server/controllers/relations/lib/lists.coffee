@@ -9,7 +9,7 @@ groups_ = __.require 'controllers', 'groups/lib/groups'
 
 module.exports = (db)->
 
-  getAllUserRelations = (userId, includeDocs=false)->
+  getAllUserRelations = (userId, includeDocs = false)->
     db.view 'relations', 'byStatus',
       startkey: [ userId, minKey ]
       endkey: [ userId, maxKey ]
