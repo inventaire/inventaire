@@ -9,7 +9,7 @@ dataUrlStart = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYA'
 
 describe 'images:data-url', ->
   it 'should reject a request without URL', (done)->
-    authReq 'get', "/api/images?action=data-url"
+    authReq 'get', '/api/images?action=data-url'
     .then undesiredRes(done)
     .catch (err)->
       err.statusCode.should.equal 400
@@ -20,7 +20,7 @@ describe 'images:data-url', ->
     return
 
   it 'should reject a request with an invalid URL', (done)->
-    authReq 'get', "/api/images?action=data-url&url=bla"
+    authReq 'get', '/api/images?action=data-url&url=bla'
     .then undesiredRes(done)
     .catch (err)->
       err.statusCode.should.equal 400

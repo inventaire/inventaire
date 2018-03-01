@@ -39,7 +39,7 @@ describe 'users:search', ->
     userPromise
     .delay 1000
     .then (user)->
-      customAuthReq userPromise, 'get', "/api/users?action=search&search=testusr"
+      customAuthReq userPromise, 'get', '/api/users?action=search&search=testusr'
       .then (res)->
         (user._id in usersIds(res)).should.be.true()
         done()

@@ -23,11 +23,11 @@ unless IP.test(ip)
   throw new Error "bad CONFIG.replication.ip: #{ip}"
 unless suffix?
   throw new Error "bad CONFIG.replication.suffix: #{suffix}"
-console.log green("valid replication config found: ") + "#{from} @ #{ip}"
+console.log green('valid replication config found: ') + "#{from} @ #{ip}"
 
 { username, password } = CONFIG.db
 unless username? and password?
-  throw new Error "missing username or password in CONFIG.db"
+  throw new Error 'missing username or password in CONFIG.db'
 
 { username:remoteUsername, password:remotePassword } = CONFIG.replication
 # If no replication credentials where passed, assume those are the same as the local ones
@@ -35,15 +35,15 @@ remoteUsername or= username
 remotePassword or= password
 
 pw = [3..password.length]
-.map -> "•"
+.map -> '•'
 .join ''
 pw = password[0..2] + pw
 
-console.log green("valid username and password found: ") + "#{username} / #{pw}"
+console.log green('valid username and password found: ') + "#{username} / #{pw}"
 
 dbsNames = Object.keys __.require('db', 'couch/list')
 dbsNames = dbsNames.map (name)-> "#{name}-#{suffix}"
-console.log green("dbs names found: ") +  dbsNames
+console.log green('dbs names found: ') +  dbsNames
 
 localDb = (dbName)->
   "#{protocol}://#{username}:#{password}@localhost:#{localPort}/#{dbName}"

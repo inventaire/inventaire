@@ -10,7 +10,7 @@ host = CONFIG.fullHost()
 
 describe 'entities:images', ->
   it 'should return an array of images associated with the passed uri', (done)->
-    nonAuthReq 'get', "/api/entities?action=images&uris=wd:Q535"
+    nonAuthReq 'get', '/api/entities?action=images&uris=wd:Q535'
     .then _.Log('RES')
     .then (res)->
       res.images.should.be.an.Object()
@@ -22,7 +22,7 @@ describe 'entities:images', ->
     return
 
   it 'should reject redirect requests with multiple URIs', (done)->
-    nonAuthReq 'get', "/api/entities?action=images&uris=wd:Q535|wd:Q42&redirect=true"
+    nonAuthReq 'get', '/api/entities?action=images&uris=wd:Q535|wd:Q42&redirect=true'
     .then undesiredRes(done)
     .catch (err)->
       err.statusCode.should.equal 400

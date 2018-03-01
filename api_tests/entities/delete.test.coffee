@@ -18,7 +18,7 @@ describe 'entities:delete:by-uris', ->
     return
 
   it 'should reject non-inv URIs', (done)->
-    adminReq 'delete', "/api/entities?action=by-uris&uris=wd:Q535"
+    adminReq 'delete', '/api/entities?action=by-uris&uris=wd:Q535'
     .then undesiredRes(done)
     .catch (err)->
       err.body.status_verbose.should.equal 'invalid uri: wd:Q535'
@@ -119,7 +119,7 @@ describe 'entities:delete:by-uris', ->
       adminReq 'delete', "/api/entities?action=by-uris&uris=#{workUri}"
     .then undesiredRes(done)
     .catch (err)->
-      err.body.status_verbose.should.equal "this entity is used in a critical claim"
+      err.body.status_verbose.should.equal 'this entity is used in a critical claim'
       err.statusCode.should.equal 400
       done()
     .catch undesiredErr(done)

@@ -1,7 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-{ properties } = __.require 'controllers','entities/lib/properties'
+{ properties } = __.require 'controllers', 'entities/lib/properties'
 
 module.exports = (entity)->
   { _id } = entity

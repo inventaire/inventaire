@@ -51,7 +51,7 @@ updateDoc = (params)->
         log doc._id, 'no changes'
         return
 
-splitInSubgroups = (collection, groupsLength=1000)->
+splitInSubgroups = (collection, groupsLength = 1000)->
   subgroups = []
   while collection.length > 0
     subgroups.push collection.splice(0, groupsLength)

@@ -49,7 +49,7 @@ module.exports = (params)->
 
   return API
 
-logMigration = (dbName, updateFunction, label='updateFunction')->
+logMigration = (dbName, updateFunction, label = 'updateFunction')->
   date = new Date().toJSON()
   name = "migrations/#{dbName}-#{date}.json"
   path = __.path('couchdb', name)

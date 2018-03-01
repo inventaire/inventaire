@@ -11,7 +11,7 @@ randomString = __.require 'lib', './utils/random_string'
 { request, customAuthReq } = require './request'
 
 userPromises = {}
-getUserGetter = (key, admin=false)-> ()->
+getUserGetter = (key, admin = false)-> ()->
   unless userPromises[key]?
     createFn = if admin then createAdminUser else createUser
     userPromises[key] = createFn()
@@ -33,7 +33,7 @@ module.exports = API =
 
   # A function to quickly fail when a test gets an undesired positive answer
   undesiredRes: (done)-> (res)->
-    done new Error(".then function was expected not to be called")
+    done new Error('.then function was expected not to be called')
     _.warn res, 'undesired positive res'
 
   undesiredErr: (done)-> (err)->

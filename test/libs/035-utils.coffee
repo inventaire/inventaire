@@ -3,7 +3,7 @@ _ = __.require 'builders', 'utils'
 
 should = require 'should'
 
-describe 'UTILS', ->
+describe 'utils', ->
   describe 'env', ->
     it 'should have shared utils, loggers, types, tests and misc utils', (done)->
       _.type.should.be.a.Function()

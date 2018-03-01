@@ -74,7 +74,7 @@ module.exports = API =
         claims: { 'wdt:P31': [ 'wd:Q571' ] }
       }
       authReq 'post', '/api/entities?action=create',
-        labels: { de: 'Mr moin moin'}
+        labels: { de: 'Mr moin moin' }
         claims: { 'wdt:P31': [ 'wd:Q5' ] }
       .then (authorEntity)->
         workData.claims['wdt:P50'] = [ authorEntity.uri ]

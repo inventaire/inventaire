@@ -10,10 +10,10 @@ promDb = levelBase.promisified(subDb)
 unjsonizedDb = levelBase.unjsonized(promDb)
 db = unjsonizedDb
 
-describe 'DB', ->
-  describe 'LEVEL BASE', ->
-    describe 'SUB', ->
-      it "should put and get a string", (done)->
+describe 'db', ->
+  describe 'level base', ->
+    describe 'sub', ->
+      it 'should put and get a string', (done)->
         subDb.put 'what', 'zup', (err, body)->
           if err? then _.error err
           subDb.get 'what', (err, body)->
@@ -21,7 +21,7 @@ describe 'DB', ->
             body.should.equal 'zup'
             done()
 
-      it "should put and get an object", (done)->
+      it 'should put and get an object', (done)->
         obj = { bob: 'by' }
         json = JSON.stringify(obj)
         subDb.put 'salut', json, (err, body)->
@@ -34,8 +34,8 @@ describe 'DB', ->
             obj2.bob.should.equal 'by'
             done()
 
-    describe 'PROMISIFIED', ->
-      it "should put and get a string", (done)->
+    describe 'promisified', ->
+      it 'should put and get a string', (done)->
         promDb.putAsync('what', 'zup')
         .then (res)->
           promDb.getAsync('what')
@@ -46,7 +46,7 @@ describe 'DB', ->
 
         return
 
-      it "should put and get an object", (done)->
+      it 'should put and get an object', (done)->
         obj = { da: 'zup' }
         json = JSON.stringify(obj)
         promDb.putAsync('yo', json)
@@ -60,8 +60,8 @@ describe 'DB', ->
 
         return
 
-    describe 'UNJSONIZED', ->
-      it "should put and get a string", (done)->
+    describe 'unjsonized', ->
+      it 'should put and get a string', (done)->
         unjsonizedDb.put('what', 'zup')
         .then (res)->
           unjsonizedDb.get('what')
@@ -72,7 +72,7 @@ describe 'DB', ->
 
         return
 
-      it "should put and get an object", (done)->
+      it 'should put and get an object', (done)->
         obj = { ahoy: 'georges' }
         unjsonizedDb.put('ohoh', obj)
         .then (res)->
@@ -85,7 +85,7 @@ describe 'DB', ->
         return
 
     describe 'GET STREAM', ->
-      it "should return a promise", (done)->
+      it 'should return a promise', (done)->
         db.getStream()
         .then (res)->
           _.log res, 'res'
@@ -93,7 +93,7 @@ describe 'DB', ->
 
         return
 
-      it "should return just what is asked", (done)->
+      it 'should return just what is asked', (done)->
         db.put('123:a', 'zou')
         db.put('123:b', 'bi')
         db.put('123:c', 'dou')
@@ -108,8 +108,8 @@ describe 'DB', ->
 
         return
 
-    describe 'GET', ->
-      it "should catch notFound errors", (done)->
+    describe 'get', ->
+      it 'should catch notFound errors', (done)->
         spyCount = 0
         db.get('not defined')
         .catch (err)->
@@ -122,8 +122,8 @@ describe 'DB', ->
 
         return
 
-    describe 'UPDATE', ->
-      it "should update the value", (done)->
+    describe 'update', ->
+      it 'should update the value', (done)->
         db.put 'a', { b: 'c' }
         .then ->
           db.update 'a', { d: 'e' }
@@ -137,8 +137,8 @@ describe 'DB', ->
 
         return
 
-    describe 'PATCH', ->
-      it "should update the value", (done)->
+    describe 'patch', ->
+      it 'should update the value', (done)->
         db.put 'a', { b: 'c' }
         .then ->
           db.patch 'a', { d: 'e' }

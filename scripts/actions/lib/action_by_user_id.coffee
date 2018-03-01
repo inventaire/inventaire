@@ -7,7 +7,7 @@ ActionByInput = require './action_by_input'
 
 _.log userId, 'userId'
 
-tests = __.require 'models','tests/common'
+tests = __.require 'models', 'tests/common'
 
 unless tests.userId userId then throw new Error('invalid userId')
 

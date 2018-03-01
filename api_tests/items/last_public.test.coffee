@@ -18,4 +18,3 @@ describe 'items:last-public', ->
     .then -> done()
     .catch undesiredErr(done)
     return
-

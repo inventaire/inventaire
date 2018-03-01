@@ -56,7 +56,7 @@ describe 'entity model', ->
       updatedDoc.claims['wdt:P50'].slice(-1)[0].should.equal 'wd:Q42'
       done()
 
-    it "should throw if the new value already exist", (done)->
+    it 'should throw if the new value already exist', (done)->
       entityDoc = workDoc()
       updater = -> Entity.createClaim entityDoc, 'wdt:P50', 'wd:Q1541'
       updater.should.throw()
@@ -88,20 +88,20 @@ describe 'entity model', ->
         updatedDoc.claims['wdt:P50'].slice(-1)[0].should.equal 'wd:Q42'
         done()
 
-      it "should throw if the new value already exist", (done)->
+      it 'should throw if the new value already exist', (done)->
         entityDoc = workDoc()
         updater = -> Entity.updateClaim entityDoc, 'wdt:P50', null, 'wd:Q1541'
         updater.should.throw()
         done()
 
-      it "should add inferred properties value", (done)->
+      it 'should add inferred properties value', (done)->
         entityDoc = Entity.updateClaim workDoc(), 'wdt:P212', null, '978-2-7073-0152-9'
         _.warn entityDoc.claims, 'entityDoc.claims'
         entityDoc.claims['wdt:P957'][0].should.equal '2-7073-0152-3'
         entityDoc.claims['wdt:P407'][0].should.equal 'wd:Q150'
         done()
 
-      it "should add no inferred properties value when none is found", (done)->
+      it 'should add no inferred properties value when none is found', (done)->
         # the invalid isbn would have been rejected upfront but here allows
         # to tests cases where inferred properties convertors will fail to find a value
         entityDoc = Entity.updateClaim workDoc(), 'wdt:P212', null, '978-invalid isbn'
@@ -123,7 +123,7 @@ describe 'entity model', ->
         updater.should.throw()
         done()
 
-      it "should throw if the new value already exist", (done)->
+      it 'should throw if the new value already exist', (done)->
         entityDoc = workDoc()
         updater = -> Entity.updateClaim entityDoc, 'wdt:P50', 'wd:Q535', 'wd:Q1541'
         updater.should.throw()
@@ -147,14 +147,14 @@ describe 'entity model', ->
         updater.should.throw()
         done()
 
-      it "should remove inferred properties value", (done)->
+      it 'should remove inferred properties value', (done)->
         entityDoc = Entity.updateClaim workDoc(), 'wdt:P212', null, '978-2-7073-0152-9'
         entityDoc = Entity.updateClaim entityDoc, 'wdt:P212', '978-2-7073-0152-9', null
         should(entityDoc.claims['wdt:P957']).not.be.ok()
         should(entityDoc.claims['wdt:P407']).not.be.ok()
         done()
 
-      it "should throw if a critical property got zero claims", (done)->
+      it 'should throw if a critical property got zero claims', (done)->
         doc = editionDoc()
         updater = -> Entity.updateClaim doc, 'wdt:P629', 'wd:Q53592', null
         updater.should.throw()
@@ -163,13 +163,13 @@ describe 'entity model', ->
         done()
 
     describe 'set label', ->
-      it "should set the label in the given lang", (done)->
+      it 'should set the label in the given lang', (done)->
         entityDoc = workDoc()
         Entity.setLabel entityDoc, 'fr', 'hello'
         entityDoc.labels.fr.should.equal 'hello'
         done()
 
-      it "should throw if no lang is passed", (done)->
+      it 'should throw if no lang is passed', (done)->
         entityDoc = workDoc()
         updater = -> Entity.setLabel entityDoc, null, 'hello'
         updater.should.throw()

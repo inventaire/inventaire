@@ -7,7 +7,7 @@ ActionByInput = require './action_by_input'
 
 _.log email, 'email'
 
-tests = __.require 'models','tests/common'
+tests = __.require 'models', 'tests/common'
 
 unless tests.email email then throw new Error('invalid email')
 

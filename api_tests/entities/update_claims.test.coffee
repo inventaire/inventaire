@@ -34,7 +34,7 @@ describe 'entities:update-claims', ->
         'new-value': null
       .then undesiredRes(done)
       .catch (err)->
-        err.body.status_verbose.should.equal "this property should at least have one value"
+        err.body.status_verbose.should.equal 'this property should at least have one value'
         err.statusCode.should.equal 400
         done()
     .catch undesiredErr(done)

@@ -20,7 +20,7 @@ mookPromise = hashKey = (key)->
 workingFn = (key)-> hashKey key + randomString(8)
 failingFn = (key)-> promises_.reject 'Jag är Döden'
 
-describe 'CACHE', ->
+describe 'cache', ->
   describe 'get', ->
     it 'should return a promise', (done)->
       p = cache_.get('whatever', mookPromise.bind(null, 'yo'))

@@ -23,7 +23,8 @@ actions =
 
 totalSpiesCount = ->
   count = 0
-  count += v.callCount  for k,v of spies
+  for key, value of spies
+    count += value.callCount
   return count
 
 solveIntent = __.require('controllers', 'relations/lib/solve_intent')(actions)
@@ -32,7 +33,7 @@ describe 'relations', ->
   describe 'solveIntent', ->
     describe 'requestFriend', ->
       beforeEach -> spies = resetSpies()
-      it "env", (done)->
+      it 'env', (done)->
         solveIntent.should.be.an.Object()
         solveIntent.requestFriend.should.be.a.Function()
         spies.should.be.an.Object()

@@ -23,107 +23,107 @@ extendItem = (data)->
 
 describe 'item model', ->
   describe 'create', ->
-    it "should return an object", (done)->
+    it 'should return an object', (done)->
       item = create validItem
       item.should.be.an.Object()
       done()
 
-    it "should throw when passed invalid attributes", (done)->
-      item = extendItem({authors: 'Joanne K. Rowling'})
+    it 'should throw when passed invalid attributes', (done)->
+      item = extendItem { authors: 'Joanne K. Rowling' }
       (-> create(item)).should.throw()
-      item2 = extendItem({updated: Date.now()})
+      item2 = extendItem({ updated: Date.now() })
       (-> create(item2)).should.throw()
       done()
 
     describe 'id', ->
-      it "should return an object without id", (done)->
+      it 'should return an object without id', (done)->
         item = create validItem
         should(item._id).not.be.ok()
         done()
 
     describe 'title', ->
-      it "should return an object with a title", (done)->
+      it 'should return an object with a title', (done)->
         item = create validItem
         item.snapshot['entity:title'].should.equal validItem.snapshot['entity:title']
         done()
 
-      it "should throw on missing title", (done)->
+      it 'should throw on missing title', (done)->
         item = extendItem { snapshot: null }
         (-> create(item)).should.throw()
         done()
 
-      it "should throw on invalid title", (done)->
+      it 'should throw on invalid title', (done)->
         item = extendItem { snapshot: { 'entity:title': 123 } }
         (-> create(item)).should.throw()
         done()
 
     describe 'entity', ->
-      it "should return an object with a entity", (done)->
+      it 'should return an object with a entity', (done)->
         item = create validItem
         item.entity.should.equal validItem.entity
         done()
 
-      it "should throw on missing entity", (done)->
-        (-> create extendItem({entity: null})).should.throw()
+      it 'should throw on missing entity', (done)->
+        (-> create extendItem({ entity: null })).should.throw()
         done()
 
     describe 'pictures', ->
-      it "should return an object with a pictures array", (done)->
+      it 'should return an object with a pictures array', (done)->
         item = create validItem
         item.pictures.length.should.equal validItem.pictures.length
         item.pictures[0].should.equal validItem.pictures[0]
         done()
 
-      it "should replace missing pictures by an empty array", (done)->
-        create(extendItem({pictures: null})).pictures.should.be.an.Array()
-        create(extendItem({pictures: null})).pictures.length.should.equal 0
+      it 'should replace missing pictures by an empty array', (done)->
+        create(extendItem({ pictures: null })).pictures.should.be.an.Array()
+        create(extendItem({ pictures: null })).pictures.length.should.equal 0
         done()
 
     describe 'listing', ->
-      it "should return an object with a listing", (done)->
+      it 'should return an object with a listing', (done)->
         item = create validItem
         item.listing.should.equal validItem.listing
         done()
 
-      it "should use a default listing value", (done)->
-        item = create extendItem({listing: null})
+      it 'should use a default listing value', (done)->
+        item = create extendItem({ listing: null })
         item.listing.should.equal 'private'
         done()
 
-      it "should override a bad listing with default value", (done)->
-        item = create extendItem({listing: 'evillist'})
+      it 'should override a bad listing with default value', (done)->
+        item = create extendItem({ listing: 'evillist' })
         item.listing.should.equal 'private'
         done()
 
     describe 'transaction', ->
-      it "should return an object with a transaction", (done)->
+      it 'should return an object with a transaction', (done)->
         item = create validItem
         item.transaction.should.equal validItem.transaction
         done()
 
-      it "should override a bad transaction with default value", (done)->
-        item = create extendItem({transaction: null})
+      it 'should override a bad transaction with default value', (done)->
+        item = create extendItem({ transaction: null })
         item.transaction.should.equal 'inventorying'
         done()
 
-      it "should override a bad transaction with default value", (done)->
-        item = create extendItem({transaction: 'eviltransac'})
+      it 'should override a bad transaction with default value', (done)->
+        item = create extendItem({ transaction: 'eviltransac' })
         item.transaction.should.equal 'inventorying'
         done()
 
     describe 'owner', ->
-      it "should return an object with an owner", (done)->
+      it 'should return an object with an owner', (done)->
         item = create validItem
         item.owner.should.equal someUserId
         done()
 
-      it "should ignore an owner passed in the data", (done)->
-        item = create extendItem({owner: 'whatever'})
+      it 'should ignore an owner passed in the data', (done)->
+        item = create extendItem({ owner: 'whatever' })
         item.owner.should.equal someUserId
         done()
 
     describe 'created', ->
-      it "should return an object with a created time", (done)->
+      it 'should return an object with a created time', (done)->
         item = create validItem
         _.expired(item.created, 100).should.equal false
         done()

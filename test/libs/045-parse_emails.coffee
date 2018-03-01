@@ -31,11 +31,7 @@ describe 'parse emails', ->
     done()
 
   it 'should accept emails separated by a newline break', (done)->
-    emails = """
-    a@bla.org
-    b@bla.org;
-    c@bla.org
-    """
+    emails = 'a@bla.org' + '\n' + 'b@bla.org;' + '\n' + 'c@bla.org' + '\n'
     parseEmails(emails)[0].should.equal 'a@bla.org'
     parseEmails(emails)[1].should.equal 'b@bla.org'
     parseEmails(emails)[2].should.equal 'c@bla.org'
