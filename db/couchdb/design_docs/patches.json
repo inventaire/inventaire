@@ -1,17 +1,17 @@
 {
-   "_id": "_design/patches",
-   "language": "coffeescript",
-   "views": {
-       "byEntityId": {
-           "map": "(doc)->\n  emit doc._id.split(':')[0], null"
-       },
-       "byUserId": {
-           "map": "(doc)->\n  emit [doc.user, doc.timestamp], null",
-           "reduce": "_count"
-       },
-       "byDay": {
-           "map": "(doc)->\n  day = new Date(doc.timestamp).toISOString().split('T')[0]\n  emit [day, doc.user], null",
-           "reduce": "_count"
-       }
-   }
+  "_id": "_design/patches",
+  "language": "coffeescript",
+  "views": {
+    "byEntityId": {
+      "map": "(doc)->\n  emit doc._id.split(':')[0], null"
+    },
+    "byUserId": {
+      "map": "(doc)->\n  emit [doc.user, doc.timestamp], null",
+      "reduce": "_count"
+    },
+    "byDay": {
+      "map": "(doc)->\n  day = new Date(doc.timestamp).toISOString().split('T')[0]\n  emit [day, doc.user], null",
+      "reduce": "_count"
+    }
+  }
 }
