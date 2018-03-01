@@ -29,6 +29,7 @@ module.exports = [
   'P179' # series
   'P195' # collection
   'P212' # isbn 13
+  'P268' # BnF ID
   'P356' # DOI
   'P361' # part of
   'P364' # original language of work
