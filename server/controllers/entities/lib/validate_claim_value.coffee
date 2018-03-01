@@ -28,14 +28,14 @@ module.exports = (db)->
     if updatingValue and prop.adminUpdateOnly and not userIsAdmin
       return error_.reject "updating property requires admin's rights", 403, property, newVal
 
-    unless prop.validate newVal
-      return error_.reject 'invalid property value', 400, property, newVal
-
     unless validateDataType property, newVal
       expectedDatatype = propertyDatatypePrimordialType property
       realDatatype = _.typeOf newVal
       context = "expected #{expectedDatatype}, got #{realDatatype}"
       return error_.reject "invalid value datatype: #{context}", 400, property, newVal
+
+    unless prop.validate newVal
+      return error_.reject 'invalid property value', 400, property, newVal
 
     # If the property expects a uniqueValue and that there is already a value defined
     # any action other than editing the current value should be rejected
