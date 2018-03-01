@@ -13,21 +13,25 @@ module.exports = patches_ =
   byId: db.get
   byEntityIds: (entityIds)-> db.viewByKeys 'byEntityId', entityIds
   byUserId: (userId, limit, offset)->
-    db.view designDocName, 'byUserId',
-      startkey: [ userId, maxKey ]
-      endkey: [ userId ]
-      include_docs: true
-      descending: true
-      reduce: false
-    .then (res)->
-      { rows } = res
-      rangeStart = offset
-      rangeEnd = offset + limit
-      subset = rows.slice rangeStart, rangeEnd
+    promises_.all [
+      db.view designDocName, 'byUserId',
+        startkey: [ userId, maxKey ]
+        endkey: [ userId ]
+        descending: true
+        limit: limit
+        skip: offset
+        include_docs: true
+        reduce: false
+      # Unfortunately, the response doesn't gives the total range length
+      # so we need to query it separately
+      getUserTotalContributions userId
+    ]
+    .spread (res, total)->
       data =
-        patches: _.pluck subset, 'doc'
-        total: rows.length
-      if rangeEnd < data.total then data.continue = rangeEnd
+        patches: _.pluck res.rows, 'doc'
+        total: total
+      rangeEnd = offset + limit
+      if rangeEnd < total then data.continue = rangeEnd
       return data
 
   create: (userId, currentDoc, updatedDoc)->
@@ -87,3 +91,13 @@ sortAndFilterContributions = (rows)->
 # Filtering-out special users automated contributions
 # see server/db/couch/hard_coded_documents.coffee
 noSpecialUser = (row)-> not row.user.startsWith('000000000000000000000000000000')
+
+getUserTotalContributions = (userId)->
+  db.view designDocName, 'byUserId',
+    group_level: 1
+    # Maybe there is a way to only pass the userId key
+    # but I couln't find it
+    startkey: [ userId ]
+    endkey: [ userId, maxKey ]
+  # Testing the row existance in case we got an invalid user id
+  .then (res)-> res.rows[0]?.value or 0
