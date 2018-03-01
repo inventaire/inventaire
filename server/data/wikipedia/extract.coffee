@@ -32,10 +32,13 @@ requestExtract = (lang, title)->
       throw error_.new 'invalid extract response', 500, arguments, res.query
 
     return {
-      extract: _.values(pages)?[0]?.extract
+      extract: cleanExtract _.values(pages)?[0]?.extract
       url: "https://#{lang}.wikipedia.org/wiki/#{title}"
     }
 
 apiQuery = (lang, title)->
   title = qs.escape title
   "http://#{lang}.wikipedia.org/w/api.php?format=json&action=query&titles=#{title}&prop=extracts&explaintext=true&exintro=true&exsentences=20"
+
+# Commas between references aren't removed, thus the presence of aggregated commas
+cleanExtract = (str)-> str?.replace /,,/g, ','
