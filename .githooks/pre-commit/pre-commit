@@ -1,7 +1,4 @@
-#!/usr/bin/env bash
-
-# not stashing before lint and tests as its messing with brunch on the client
-# not stashing for server neither for consistency between the server and the client projects
+#!/usr/bin/env zsh
 
 echo -e "\e[0;30mstarting to lint...\e[0m" &&
 # wanted to "grep ✗" but it doesnt stops the commit (exit 0)
