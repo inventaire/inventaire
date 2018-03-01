@@ -1,16 +1,16 @@
 {
-   "_id": "_design/entities",
-   "language": "coffeescript",
-   "views": {
-       "byClaim": {
-           "map": "(doc)->\n  if doc.type is 'entity'\n    for property, statements of doc.claims\n      for value in statements\n        emit [property, value], doc.claims['wdt:P31'][0]"
-       },
-       "byClaimValue": {
-           "map": "(doc)->\n  if doc.type is 'entity'\n    for property, statements of doc.claims\n      for value in statements\n        emit value, property"
-       }
-   },
-   "filters": {
-       "entities:only": "(doc)-> doc.type is 'entity'",
-       "patches:only": "(doc)-> doc.type is 'patch'"
-   }
+  "_id": "_design/entities",
+  "language": "coffeescript",
+  "views": {
+    "byClaim": {
+      "map": "(doc)->\n  if doc.type is 'entity'\n    for property, statements of doc.claims\n      for value in statements\n        emit [property, value], doc.claims['wdt:P31'][0]"
+    },
+    "byClaimValue": {
+      "map": "(doc)->\n  if doc.type is 'entity'\n    for property, statements of doc.claims\n      for value in statements\n        emit value, property"
+    }
+  },
+  "filters": {
+    "entities:only": "(doc)-> doc.type is 'entity'",
+    "patches:only": "(doc)-> doc.type is 'patch'"
+  }
 }

@@ -1,9 +1,9 @@
 {
-   "_id": "_design/followedEntities",
-   "language": "coffeescript",
-   "views": {
-       "byUser": {
-           "map": "(doc)->\n  if doc.transaction is 'following'\n    emit doc._id.split(':')[0], null"
-       }
-   }
+  "_id": "_design/followedEntities",
+  "language": "coffeescript",
+  "views": {
+    "byUser": {
+      "map": "(doc)->\n  if doc.transaction is 'following'\n    emit doc._id.split(':')[0], null"
+    }
+  }
 }
