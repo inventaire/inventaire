@@ -48,10 +48,10 @@ requestable = [
 
 Transaction.testPossibleState = (transaction, newState)->
   unless newState in states[transaction.state].next
-    throw error_.new "invalid state update", 400, transaction, newState
+    throw error_.new 'invalid state update', 400, transaction, newState
 
   if newState is 'returned' and transaction.transaction isnt 'lending'
-    throw error_.new "transaction and state mismatch", 400, transaction, newState
+    throw error_.new 'transaction and state mismatch', 400, transaction, newState
 
 # actor: the key on which VerifyRights switches
 # see controllers/transactions/update_state.coffee
@@ -82,7 +82,7 @@ Transaction.statesList = Object.keys states
 # do the item change of owner or return to its previous owner
 Transaction.isOneWay = (transacDoc)->
   unless _.isString transacDoc.transaction
-    throw error_.new "transaction transaction inaccessible", 500, transacDoc
+    throw error_.new 'transaction transaction inaccessible', 500, transacDoc
   oneWay[transacDoc.transaction]
 
 oneWay =

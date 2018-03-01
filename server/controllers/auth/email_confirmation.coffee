@@ -18,9 +18,9 @@ module.exports = (req, res, next)->
 sendEmailValidation = (user)->
   { _id, creationStrategy, validEmail} = user
   unless creationStrategy is 'local'
-    throw error_.new "wrong authentification creationStrategy", 400
+    throw error_.new 'wrong authentification creationStrategy', 400
 
   if validEmail
-    throw error_.new "email was already validated", 400
+    throw error_.new 'email was already validated', 400
 
   user_.sendValidationEmail user
