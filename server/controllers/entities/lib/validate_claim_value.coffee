@@ -11,7 +11,7 @@ lateRequire = ->
   entities_ = require './entities'
 setTimeout lateRequire, 0
 
-{ properties, validateDataType, expectedDatatype } = require './properties'
+{ properties, validateType, expectedType } = require './properties'
 
 module.exports = (db)->
   validateClaimValue = (params)->
@@ -28,11 +28,11 @@ module.exports = (db)->
     if updatingValue and prop.adminUpdateOnly and not userIsAdmin
       return error_.reject "updating property requires admin's rights", 403, property, newVal
 
-    unless validateDataType property, newVal
-      expected = expectedDatatype(property)
+    unless validateType property, newVal
+      expected = expectedType property
       actual = _.typeOf newVal
-      context = "expected #{expected}, got #{actual}"
-      return error_.reject "invalid value datatype: #{context}", 400, property, newVal
+      message = "invalid value type: expected #{expected}, got #{actual}"
+      return error_.reject message, 400, property, newVal
 
     unless prop.validate newVal
       return error_.reject 'invalid property value', 400, property, newVal
