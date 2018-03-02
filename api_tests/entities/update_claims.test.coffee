@@ -33,7 +33,7 @@ describe 'entities:update-claims', ->
         'new-value': 124
       .then undesiredRes(done)
       .catch (err)->
-        err.body.status_verbose.should.startWith 'invalid value datatype'
+        err.body.status_verbose.should.equal 'invalid value datatype: expected string, got number'
         err.statusCode.should.equal 400
         done()
     .catch undesiredErr(done)

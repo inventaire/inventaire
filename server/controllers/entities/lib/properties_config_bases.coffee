@@ -9,6 +9,7 @@ isbn_ = __.require 'lib', 'isbn/isbn'
 
 entity =
   datatype: 'entity'
+  primordialDatatype: 'string'
   validate: EntityUri.test.bind EntityUri
 
 uniqueString =
@@ -38,12 +39,14 @@ module.exports =
 
   uniqueSimpleDay:
     datatype: 'simple-day'
+    primordialDatatype: 'string'
     # See SimpleDay specifications in [inventaire-client]/test/106-regex.coffee
     validate: _.isSimpleDay
     uniqueValue: true
 
   positiveInteger:
     datatype: 'positive-integer'
+    primordialDatatype: 'number'
     validate: (value)-> _.isNumber(value) and value % 1 is 0 and value > 0
     uniqueValue: true
 
@@ -54,5 +57,6 @@ module.exports =
 
   ipfsPath:
     datatype: 'ipfs-path'
+    primordialDatatype: 'string'
     validate: _.isIpfsPath
     uniqueValue: true
