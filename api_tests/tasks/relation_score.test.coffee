@@ -25,7 +25,7 @@ describe 'tasks:update-relation-score', ->
 
       return
 
-  describe 'when 2 tasks have same suspect with different wd suggestions', ->
+  describe 'when tasks have same suspect with different wd suggestions', ->
     it 'should relationScore should be depreciated', (done)->
       createTaskWithSuggestionAuthor
         authorName: 'Jim Vance'
@@ -38,6 +38,23 @@ describe 'tasks:update-relation-score', ->
           .then (res)->
             updatedTask = res.tasks[0]
             updatedTask.relationScore.should.be.below 1
+            done()
+      .catch undesiredErr(done)
+
+      return
+
+    it 'should relationScore should be rounded at 2 decimals', (done)->
+      createTask null, 'wd:Q27042411'
+      .then (task)->
+        createTask task.suspectUri, 'wd:Q42'
+      .then (task)->
+        createTask task.suspectUri, 'wd:Q565'
+        .then (res)->
+          authReq 'put', updateRelationScore + task._id
+          .then -> authReq 'get', "/api/tasks?action=by-ids&ids=#{task._id}"
+          .then (res)->
+            updatedTask = res.tasks[0]
+            updatedTask.relationScore.toString().length.should.belowOrEqual 4
             done()
       .catch undesiredErr(done)
 

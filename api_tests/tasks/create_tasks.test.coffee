@@ -70,3 +70,16 @@ describe 'tasks:create', ->
     .catch undesiredErr(done)
 
     return
+
+  it 'should have a lexical rounded at 2 decimals', (done)->
+    validTask.suspectUri = "inv:026a1856df319a2fe3c14c4db602ab1a"
+    validTask.lexicalScore = 4.123456789
+    authReq 'post', createTaskPath,
+      tasks: [ validTask ]
+    .then (res)->
+      task = res.tasks[0]
+      task.lexicalScore.toString().length.should.belowOrEqual 4
+      done()
+    .catch undesiredErr(done)
+
+    return

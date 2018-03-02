@@ -27,8 +27,8 @@ Task.create = (newTask)->
     suspectUri: suspectUri
     suggestionUri: suggestionUri
     state: state
-    lexicalScore: lexicalScore
-    relationScore: relationScore
+    lexicalScore: _.round(lexicalScore, 2)
+    relationScore: _.round(relationScore, 2)
     hasEncyclopediaOccurence: hasEncyclopediaOccurence
     createdAt: now
 
