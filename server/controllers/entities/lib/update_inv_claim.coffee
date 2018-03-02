@@ -1,5 +1,6 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
+error_ = __.require 'lib', 'error/error'
 entities_ = require './entities'
 radio = __.require 'lib', 'radio'
 Entity = __.require 'models', 'entity'
@@ -10,11 +11,21 @@ inferredClaimUpdates = require './inferred_claim_updates'
 module.exports = (user, id, property, oldVal, newVal)->
   _.type user, 'object'
   { _id:userId, admin:userIsAdmin } = user
+
   entities_.byId id
   .then (currentDoc)->
+    unless currentDoc?
+      throw error_.new 'entity not found', 400, { id, property, oldVal, newVal }
+
+    # Known cases: entities turned into redirections or removed:placeholders
+    unless currentDoc?.claims?
+      context = { id, property, oldVal, newVal }
+      throw error_.new 'this entity is obsolete', 400, context
+
     type = getEntityType currentDoc.claims['wdt:P31']
     validateClaimProperty type, property
     updateClaim { property, oldVal, newVal, userId, currentDoc, userIsAdmin }
+
   .then (updatedDoc)->
     radio.emit 'entity:update:claim', updatedDoc, property, oldVal, newVal
     # Wait for inferred updates

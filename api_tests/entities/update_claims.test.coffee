@@ -2,7 +2,8 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ nonAuthReq, authReq, undesiredRes, undesiredErr } = require '../utils/utils'
+{ Promise } = __.require 'lib', 'promises'
+{ nonAuthReq, authReq, adminReq, undesiredRes, undesiredErr } = require '../utils/utils'
 { createWork, createEdition } = require '../fixtures/entities'
 
 describe 'entities:update-claims', ->
@@ -54,6 +55,29 @@ describe 'entities:update-claims', ->
         err.body.status_verbose.should.equal 'this property should at least have one value'
         err.statusCode.should.equal 400
         done()
+    .catch undesiredErr(done)
+
+    return
+
+  it 'should reject an update on an obsolete entity', (done)->
+    Promise.all [
+      createWork()
+      createWork()
+    ]
+    .spread (workA, workB)->
+      adminReq 'put', '/api/entities?action=merge',
+        from: "inv:#{workA._id}"
+        to: "inv:#{workB._id}"
+      .then ->
+        authReq 'put', '/api/entities?action=update-claim',
+          id: workA._id
+          property: 'wdt:P50'
+          'new-value': 'wd:Q535'
+    .then undesiredRes(done)
+    .catch (err)->
+      err.statusCode.should.equal 400
+      err.body.status_verbose.should.equal 'this entity is obsolete'
+      done()
     .catch undesiredErr(done)
 
     return
