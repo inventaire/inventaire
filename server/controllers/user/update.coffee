@@ -38,7 +38,7 @@ module.exports = (req, res, next)->
     unless _.get(tests, rootAttribute)(value)
       return error_.bundleInvalid req, res, 'value', value
 
-    return updateAttribute(user, attribute, value)
+    return updateAttribute user, attribute, value
     .then _.Ok(res)
     .then Track(req, ['user', 'update'])
     .catch error_.Handler(req, res)
@@ -46,7 +46,7 @@ module.exports = (req, res, next)->
   if attribute in concurrencial
     # checks for validity and availability (+ reserve words for username)
     return user_.availability[attribute](value, currentValue)
-    .then _.Full(updateAttribute, null, user, attribute, value)
+    .then -> updateAttribute user, attribute, value
     .then _.Ok(res)
     .then Track(req, ['user', 'update'])
     .catch error_.Handler(req, res)

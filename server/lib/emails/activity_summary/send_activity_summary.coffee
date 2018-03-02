@@ -25,5 +25,5 @@ module.exports = (user)->
   # catch skiped updates before updating the user
   # as otherwise the user would still appear as needing an activity summary
   .catch promises_.catchSkip('activity summary')
-  .then _.Full(updateUser, null, userId)
+  .then -> updateUser userId
   .catch _.Error('activity summary')

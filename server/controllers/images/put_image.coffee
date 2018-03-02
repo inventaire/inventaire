@@ -13,7 +13,7 @@ module.exports =
     resizePath = if keepOldFile then "#{path}_resized" else path
 
     images_.shrink path, resizePath
-    .then _.Full(images_.getHashFilename, null, resizePath)
+    .then -> images_.getHashFilename resizePath
     .then clientPutImage.bind(null, resizePath, id)
 
   # without image treatments

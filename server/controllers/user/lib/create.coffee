@@ -9,7 +9,7 @@ User = __.require 'models', 'user'
 module.exports = (db, token_, availability_)->
   create = (username, email, creationStrategy, language, password)->
     promises_.try preventMultiAccountsCreation.bind(null, username)
-    .then _.Full(availability_.username, availability_, username)
+    .then -> availability_.username username
     .then invitations_.findOneByEmail.bind(null, email)
     .then _.Log('invitedDoc')
     .then (invitedDoc)->

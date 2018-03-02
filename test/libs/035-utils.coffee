@@ -9,7 +9,7 @@ describe 'utils', ->
       _.type.should.be.a.Function()
       _.types.should.be.a.Function()
       _.isLocalImg.should.be.a.Function()
-      _.Full.should.be.a.Function()
+      _.isNonEmptyString.should.be.a.Function()
       done()
 
   describe 'hashCode', ->
