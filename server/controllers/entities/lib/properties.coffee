@@ -106,12 +106,13 @@ properties =
 
 whitelist = Object.keys properties
 
-expectedDatatype = (property)->
-  properties[property].primordialDatatype or properties[property].datatype
+# Which type a property value should return when passed to _.typeOf
+expectedType = (property)->
+  properties[property].type or properties[property].datatype
 
 module.exports =
   properties: properties
-  expectedDatatype: expectedDatatype
+  expectedType: expectedType
 
   validateProperty: (property)->
     unless /^wdt:P\d+$/.test property
@@ -120,5 +121,5 @@ module.exports =
     unless property in whitelist
       throw error_.new "property isn't whitelisted", 400, property
 
-  validateDataType: (property, value)->
-    _.typeOf(value) is expectedDatatype property
+  validateType: (property, value)->
+    _.typeOf(value) is expectedType property

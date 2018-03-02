@@ -3,16 +3,16 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 
-{ validateDataType } = __.require 'controllers', 'entities/lib/properties'
+{ validateType } = __.require 'controllers', 'entities/lib/properties'
 
 describe 'properties', ->
-  describe 'validateDataType', ->
+  describe 'validateType', ->
     it 'should return false when passed the wrong type', (done)->
-      validateDataType('wdt:P50', 123).should.equal false
-      validateDataType('wdt:P212', null).should.equal false
+      validateType('wdt:P50', 123).should.equal false
+      validateType('wdt:P212', null).should.equal false
       done()
 
     it 'should return true when passed the right type', (done)->
-      validateDataType('wdt:P50', 'not a qid but a proper string').should.equal true
-      validateDataType('wdt:P212', 'not an isbn but a proper string').should.equal true
+      validateType('wdt:P50', 'not a qid but a proper string').should.equal true
+      validateType('wdt:P212', 'not an isbn but a proper string').should.equal true
       done()
