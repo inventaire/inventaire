@@ -106,21 +106,12 @@ properties =
 
 whitelist = Object.keys properties
 
-# which type those datatype should returned when passed to _.typeOf
-datatypePrimordialType =
-  string: 'string'
-  entity: 'string'
-  'ipfs-path': 'string'
-  'positive-integer': 'number'
-  'simple-day': 'string'
-
-propertyDatatypePrimordialType = (property)->
-  { datatype } = properties[property]
-  return datatypePrimordialType[datatype]
+expectedDatatype = (property)->
+  properties[property].primordialDatatype or properties[property].datatype
 
 module.exports =
   properties: properties
-  propertyDatatypePrimordialType: propertyDatatypePrimordialType
+  expectedDatatype: expectedDatatype
 
   validateProperty: (property)->
     unless /^wdt:P\d+$/.test property
@@ -130,4 +121,4 @@ module.exports =
       throw error_.new "property isn't whitelisted", 400, property
 
   validateDataType: (property, value)->
-    _.typeOf(value) is propertyDatatypePrimordialType(property)
+    _.typeOf(value) is expectedDatatype property
