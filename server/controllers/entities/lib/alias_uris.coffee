@@ -1,7 +1,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 reverseClaims = require './reverse_claims'
-{ BoundedString } = __.require 'models', 'tests/common'
+{ BoundedString } = __.require 'models', 'validations/common'
 
 # Find properties regex on properties P1793 claims
 regexValidator = (regex)-> (str)-> regex.test str
