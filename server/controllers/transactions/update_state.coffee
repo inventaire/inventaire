@@ -3,14 +3,14 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 transactions_ = require './lib/transactions'
 { states, statesList } = __.require 'models', 'transaction'
-tests = __.require 'models', 'tests/common'
+validations = __.require 'models', 'validations/common'
 { Track } = __.require 'lib', 'track'
 
 module.exports = (req, res, next)->
   { id, state } = req.body
   reqUserId = req.user._id
 
-  tests.pass 'transactionId', id
+  validations.pass 'transactionId', id
 
   unless state in statesList
     return error_.bundle req, res, 'unknown state', 400, id, state

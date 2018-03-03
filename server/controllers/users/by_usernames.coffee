@@ -25,4 +25,4 @@ parseAndValidateUsernames = (usernames)->
   else
     throw error_.newInvalid 'usernames', usernames
 
-validUsersUsernames = (usernames)-> _.all usernames, User.tests.username
+validUsersUsernames = (usernames)-> _.all usernames, User.validations.username
