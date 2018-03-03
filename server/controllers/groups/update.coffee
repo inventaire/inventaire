@@ -4,7 +4,6 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 { possibleActions } = require './lib/actions_lists'
 groups_ = require './lib/groups'
-tests = __.require 'models', 'tests/common'
 rightsVerification = require './lib/rights_verification'
 { Track } = __.require 'lib', 'track'
 
@@ -39,18 +38,18 @@ module.exports = (req, res)->
 handleAction = (action, req, res)->
   { body } = req
   # user is needed for invite, acceptRequest, refuseRequest controllers only
-  { group, user } = body
+  { group:groupId, user:userId } = body
   reqUserId = req.user._id
 
   _.log [ reqUserId, body ], 'group action'
 
-  if user? and not tests.valid 'userId', user
-    return error_.bundleInvalid req, res, 'user', user
+  if userId? and not _.isUserId userId
+    return error_.bundleInvalid req, res, 'user', userId
 
-  unless tests.valid 'groupId', group
-    return error_.bundleInvalid req, res, 'group', group
+  if groupId? and not _.isGroupId groupId
+    return error_.bundleInvalid req, res, 'group', groupId
 
-  rightsVerification[action](reqUserId, group, user)
+  rightsVerification[action](reqUserId, groupId, userId)
   .then groups_[action].bind(null, body, reqUserId)
   # Allow to pass an update object, with key/values to be updated on the model
   # as the results of update hooks
