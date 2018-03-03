@@ -9,4 +9,4 @@ module.exports =
   findLanguage: (req)->
     accept = req.headers['accept-language']
     language = accept?.split?(',')[0]
-    if User.tests.language(language) then language
+    if User.validations.language(language) then language

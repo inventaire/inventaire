@@ -3,7 +3,7 @@ _ = __.require 'builders', 'utils'
 cache_ = __.require 'lib', 'cache'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
-tests = __.require 'models', 'tests/common'
+validations = __.require 'models', 'validations/common'
 qs = require 'querystring'
 
 module.exports = (req, res)->
@@ -16,7 +16,7 @@ module.exports = (req, res)->
   unless _.isNonEmptyString title
     return error_.bundleMissingQuery req, res, 'title'
 
-  unless tests.wikiLang lang
+  unless vailidations.wikiLang lang
     return error_.bundleInvalid req, res, 'lang', lang
 
   key = "wpextract:#{lang}:#{title}"

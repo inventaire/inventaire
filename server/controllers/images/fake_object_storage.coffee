@@ -8,7 +8,7 @@ error_ = __.require 'lib', 'error/error'
 images_ = __.require 'lib', 'images'
 promises_ = __.require 'lib', 'promises'
 base = __.path 'client', 'public/uploads'
-regex_ = __.require 'models', 'tests/regex'
+regex_ = __.require 'models', 'validations/regex'
 urlBase = CONFIG.images.urlBase()
 
 # images urls looks like /img/#{hash}.#{extension}"

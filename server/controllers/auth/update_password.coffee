@@ -13,12 +13,12 @@ module.exports = (req, res, next)->
   { 'current-password':currentPassword, 'new-password':newPassword } = body
   { resetPassword } = user
 
-  unless User.tests.password newPassword
+  unless User.validations.password newPassword
     return error_.bundleInvalid req, res, 'new-password', newPassword
 
   # classic password update
   if currentPassword?
-    unless User.tests.password currentPassword
+    unless User.validations.password currentPassword
       return error_.bundleInvalid req, res, 'current-password', currentPassword
     test = verifyCurrentPassword(user, currentPassword).then filterInvalid
 
