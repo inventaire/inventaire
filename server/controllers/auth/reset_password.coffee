@@ -3,13 +3,13 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 user_ = __.require 'controllers', 'user/lib/user'
-validate = __.require('models', 'validations/user').email
+isValidEmail = __.require('models', 'validations/user').email
 # pw_ = __.require('lib', 'crypto').passwords
 
 module.exports = (req, res, next)->
   { email } = req.body
   unless email? then return error_.bundleMissingBody req, res, 'email'
-  unless validate email
+  unless isValidEmail email
     return error_.bundleInvalid req, res, 'email', email
 
   user_.findOneByEmail email
