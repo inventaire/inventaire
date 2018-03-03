@@ -1,11 +1,9 @@
 # this module is doomed to be replaced by a geobox parser
 # to fit search_by_positions needs: keeping it as a placeholder
-
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
-{ StringNumber } = __.require 'models', 'tests/regex'
 
 parseLatLng = (query)->
   { bbox } = query

@@ -7,8 +7,6 @@ ActionByInput = require './action_by_input'
 
 _.log userId, 'userId'
 
-tests = __.require 'models', 'tests/common'
-
-unless tests.userId userId then throw new Error('invalid userId')
+unless _.isUserId userId then throw new Error('invalid userId')
 
 module.exports = ActionByInput userId

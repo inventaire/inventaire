@@ -3,7 +3,6 @@ _ = __.require 'builders', 'utils'
 user_ = __.require 'controllers', 'user/lib/user'
 intent = require './lib/intent'
 error_ = __.require 'lib', 'error/error'
-tests = __.require 'models', 'tests/common'
 promises_ = __.require 'lib', 'promises'
 { Track } = __.require 'lib', 'track'
 
@@ -14,7 +13,7 @@ module.exports = (req, res, next)->
 
   unless _.isString(action) and action in possibleActions
     return error_.bundle req, res, 'bad actions parameter', 400, req.body
-  unless tests.userId user
+  unless _.isUserId user
     return error_.bundle req, res, 'bad user parameter', 400, req.body
 
   reqUserId = req.user._id
