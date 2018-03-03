@@ -2,15 +2,15 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 jiff = require 'jiff'
-tests = require './tests/common'
+validations = require './validations/common'
 { versionned } = require './attributes/entity'
 
 module.exports =
   create: (userId, currentDoc, updatedDoc)->
-    tests.pass 'userId', userId
+    validations.pass 'userId', userId
     _.type currentDoc, 'object'
     _.type updatedDoc, 'object'
-    tests.pass 'couchUuid', updatedDoc._id
+    validations.pass 'couchUuid', updatedDoc._id
 
     if currentDoc is updatedDoc
       throw error_.new 'invalid update: same document objects', 500, arguments

@@ -5,7 +5,7 @@ error_ = __.require 'lib', 'error/error'
 
 module.exports = Item = {}
 
-Item.tests = tests = require './tests/item'
+Item.validations = validations = require './validations/item'
 Item.attributes = attributes = require './attributes/item'
 { solveConstraint } = require('./helpers')(attributes)
 
@@ -25,9 +25,9 @@ Item.create = (userId, item)->
     unless attr in attributes.validAtCreation
       throw error_.new "invalid attribute: #{attr}", 400, arguments
 
-    tests.pass attr, item[attr]
+    validations.pass attr, item[attr]
 
-  tests.pass 'userId', userId
+  validations.pass 'userId', userId
 
   item.owner = userId
   item.created = Date.now()
@@ -35,7 +35,7 @@ Item.create = (userId, item)->
   return item
 
 passAttrTest = (item, attr)->
-  if item[attr]? then tests.pass attr, item[attr]
+  if item[attr]? then validations.pass attr, item[attr]
 
 Item.update = (userId, updateAttributesData, doc)->
   unless doc?.owner is userId

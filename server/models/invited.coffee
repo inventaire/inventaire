@@ -1,11 +1,11 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-tests = __.require 'models', 'tests/common'
+validations = __.require 'models', 'validations/common'
 { BasicUpdater } = __.require 'lib', 'doc_updates'
 
 create = (inviterId, groupId)-> (email)->
-  tests.pass 'email', email
+  validations.pass 'email', email
   return addInviter inviterId, groupId, baseDoc(email)
 
 baseDoc = (email)->

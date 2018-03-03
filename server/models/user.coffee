@@ -10,7 +10,7 @@ generateReadToken = randomString.bind null, 32
 
 module.exports = User = {}
 
-User.tests = tests = require './tests/user'
+User.validations = validations = require './validations/user'
 
 # should always return a promise
 # thus the try/catch returning error in a rejected promise
@@ -18,12 +18,12 @@ User._create = (username, email, creationStrategy, language, password)->
   _.log [ username, email, creationStrategy, language, "password:#{password?}" ], 'creating user'
   _.types arguments, ['string', 'string', 'string', 'string|undefined', 'string|undefined'], 3
 
-  tests.pass 'username', username
-  tests.pass 'email', email
-  tests.pass 'creationStrategy', creationStrategy
+  validations.pass 'username', username
+  validations.pass 'email', email
+  validations.pass 'creationStrategy', creationStrategy
 
   # it's ok to have an undefined language
-  if language? and not tests.language(language)
+  if language? and not validations.language(language)
     throw error_.newInvalid 'language', language
 
   user =
@@ -51,7 +51,7 @@ User._create = (username, email, creationStrategy, language, password)->
   switch creationStrategy
     when 'local'
       user.validEmail = false
-      unless tests.password(password)
+      unless validations.password(password)
         # Do NOT pass the password as context, as it would be logged
         # and returned in the response
         throw error_.new 'invalid password', 400
