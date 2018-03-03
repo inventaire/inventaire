@@ -39,8 +39,10 @@ module.exports =
   getSnapshots: (base, patchDocs)->
     previousVersion = base
     for patchDoc in patchDocs
-      # jiff.patch is non-mutating: we get a new object without modifying the previous snapshot
-      previousVersion = patchDoc.snapshot = jiff.patch patchDoc.patch, previousVersion
+      patchDoc.snapshot = jiff.patch patchDoc.patch, previousVersion
+      # jiff.patch is non-mutating: we get a new object
+      # without modifying the previous snapshot
+      previousVersion = patchDoc.snapshot
 
     return patchDocs
 

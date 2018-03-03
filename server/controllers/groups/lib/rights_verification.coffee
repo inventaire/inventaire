@@ -14,9 +14,9 @@ verifyJoinRequestHandlingRights = (reqUserId, groupId, requesterId)->
     ])
   .spread (userInAdmins, requesterInRequested)->
     unless userInAdmins
-      throw error_.new "user isnt admin", 403, reqUserId, groupId
+      throw error_.new 'user isnt admin', 403, reqUserId, groupId
     unless requesterInRequested
-      throw error_.new "request not found", 401, requesterId, groupId
+      throw error_.new 'request not found', 401, requesterId, groupId
 
 verifyRightsToInvite = (reqUserId, groupId, invitedUserId)->
   groups_.userInGroup reqUserId, groupId
@@ -63,13 +63,13 @@ module.exports = verificators =
     groups_.userInGroupOrOut reqUserId, groupId
     .then (bool)->
       if bool
-        throw error_.new "user is already in group", 403, reqUserId, groupId
+        throw error_.new 'user is already in group', 403, reqUserId, groupId
 
   cancelRequest: (reqUserId, groupId)->
     groups_.userInRequested reqUserId, groupId
     .then (bool)->
       unless bool
-        throw error_.new "request not found", 403, reqUserId, groupId
+        throw error_.new 'request not found', 403, reqUserId, groupId
 
   acceptRequest: verifyJoinRequestHandlingRights
   refuseRequest: verifyJoinRequestHandlingRights

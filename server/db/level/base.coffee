@@ -26,15 +26,19 @@ module.exports =
   unjsonized: (sub)->
     API =
       get: (key)->
-        sub.getAsync(key)
+        sub.getAsync key
         .catch error_.catchNotFound
-        .then (res)-> if res? then JSON.parse(res)
+        .then (res)-> if res? then JSON.parse res
 
       put: (key, value)-> sub.putAsync key, JSON.stringify(value)
-      del: (key)-> sub.delAsync(key)
-      batch: (ops)-> sub.batchAsync(ops)
-      update: (key, value)-> @del(key).then ()=> @put(key, value)
-      patch: (key, value)-> @get(key).then (current)=> @update key, _.extend(current, value)
+      del: (key)-> sub.delAsync key
+      batch: (ops)-> sub.batchAsync ops
+      update: (key, value)->
+        @del key
+        .then => @put key, value
+      patch: (key, value)->
+        @get key
+        .then (current)=> @update key, _.extend(current, value)
       getStream: (params)->
         return new Promise (resolve, reject)->
           result = []
@@ -48,14 +52,14 @@ module.exports =
         sub.createKeyStream()
         .on 'data', (key)-> ops.push { type: 'del', key }
         .on 'end', =>
-          @batch(ops)
+          @batch ops
           .then -> _.log 'reset succesfully'
           .catch _.Error('reset failed')
 
     return API
 
   simpleAPI: (dbName)->
-    sub = @sub(dbName)
+    sub = @sub dbName
     API = @unjsonized @promisified(sub)
     API.sub = sub
     return API

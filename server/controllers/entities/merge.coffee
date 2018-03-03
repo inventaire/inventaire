@@ -31,7 +31,8 @@ module.exports = (req, res)->
   [ toPrefix, toId ] = toUri.split ':'
 
   unless fromPrefix in validFromPrefix
-    return error_.bundle req, res, "invalid 'from' uri domain: #{fromPrefix}. Accepted domains: #{validFromPrefix}", 400, body
+    message = "invalid 'from' uri domain: #{fromPrefix}. Accepted domains: #{validFromPrefix}"
+    return error_.bundle req, res, message, 400, body
 
   # 'to' prefix doesn't need validation as it can be anything
 
@@ -57,7 +58,8 @@ Merge = (reqUserId, toPrefix, fromUri, toUri)-> (entitiesByUri)->
     # Exception: authors can be organizations and collectives of all kinds
     # which will not get a 'human' type
     unless fromEntity.type is 'human' and not toEntity.type?
-      throw error_.new "type don't match: #{fromEntity.type} / #{toEntity.type}", 400, fromUri, toUri
+      message = "type don't match: #{fromEntity.type} / #{toEntity.type}"
+      throw error_.new message, 400, fromUri, toUri
 
   [ fromPrefix, fromId ] = fromUri.split ':'
   [ toPrefix, toId ] = toUri.split ':'

@@ -103,7 +103,8 @@ Item.revertEntity = (fromUri, toUri, item)->
     throw error_.new "wrong entity uri: expected #{entity}, got #{toUri}", 500
 
   unless fromUri is previousEntity
-    throw error_.new "wrong previous entity: expected #{previousEntity}, got #{fromUri}", 500
+    message = "wrong previous entity: expected #{previousEntity}, got #{fromUri}"
+    throw error_.new message, 500
 
   item.entity = previousEntity
   item.previousEntity.shift()

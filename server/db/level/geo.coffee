@@ -34,7 +34,7 @@ Search = (db)->
   search = (latLng, kmRange)->
     _.types arguments, [ 'array', 'number' ]
     [ lat, lon ] = latLng
-    streamPromise db.search({ lat, lon }, kmRange*1000)
+    streamPromise db.search({ lat, lon }, kmRange * 1000)
 
 streamPromise = (stream)->
   new Promise (resolve, reject)->

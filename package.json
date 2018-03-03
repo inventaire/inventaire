@@ -97,7 +97,7 @@
   },
   "devDependencies": {
     "coffee-errors": "^0.8.6",
-    "coffeelint": "^1.15.7",
+    "coffeelint": "^1.16.2",
     "diff": "^2.2.1",
     "doctoc": "^1.2.0",
     "git-hooks": "^1.0.2",

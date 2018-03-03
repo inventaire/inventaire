@@ -11,7 +11,7 @@ module.exports =
     queries_.putFriendStatus(userId, otherId)
     radio.emit 'notify:friend:request:accepted', otherId, userId
     radio.emit 'notify:friend:request:accepted', userId, otherId
-  makeRequest: (inviterId, recipientId, notify=true)->
+  makeRequest: (inviterId, recipientId, notify = true)->
     # Use notify=false to avoid emails when a new user is created with waiting
     # email invitations, which are then converted into requests
     if notify then radio.emit 'notify:friendship:request', recipientId, inviterId

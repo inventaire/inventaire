@@ -4,7 +4,7 @@ error_ = __.require 'lib', 'error/error'
 module.exports = (user, notificationLabel)->
   { _id, settings, undeliveredEmail } = user
   if undeliveredEmail > 1
-    throw emailDisabled { user: _id, reason: 'too many undelivered emails'}
+    throw emailDisabled { user: _id, reason: 'too many undelivered emails' }
 
   { notifications } = settings
   checkSetting _id, notifications, 'global'

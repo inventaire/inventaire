@@ -1,5 +1,6 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
+headersToKeep = [ 'user-agent', 'content-type', 'content-length', 'referer' ]
 
 module.exports = (req, res, err, status)->
   # only accepts Error instances
@@ -11,7 +12,7 @@ module.exports = (req, res, err, status)->
   statusCode = err.statusCode or 500
 
   err.user = _.pick req.user, '_id', 'username'
-  err.headers = _.pick req.headers, 'user-agent', 'content-type', 'content-length', 'referer'
+  err.headers = _.pick req.headers, headersToKeep
 
   # Ex: to pass req.query as err.context, set err.attachReqContext = 'query'
   if err.attachReqContext and emptyContext err.context

@@ -11,12 +11,12 @@ fullPublicHost = CONFIG.fullPublicHost()
 # Defaulting to a high width as if the width is higher than the original,
 # the API returns the original path
 # But not too high though so that we don't get super heavy files
-module.exports = (file, width=2000, refresh)->
+module.exports = (file, width = 2000, refresh)->
   key = "commons:#{file}:#{width}"
   timespan = if refresh is true then 0 else null
   cache_.get key, getThumbData.bind(null, file, width), timespan
 
-getThumbData = (file, width=2000)->
+getThumbData = (file, width = 2000)->
   file = qs.escape file
   promises_.get requestOptions(file, width)
   .then xml_.parse
@@ -27,7 +27,9 @@ getThumbData = (file, width=2000)->
 # Note: Commons files could also be accessed directly from
 # https://commons.wikimedia.org/wiki/Special:FilePath/#{file}?width=#{width}
 requestOptions = (file, width)->
-  url: "http://tools.wmflabs.org/magnus-toolserver/commonsapi.php?image=#{file}&thumbwidth=#{width}"
+  url: _.buildPath 'http://tools.wmflabs.org/magnus-toolserver/commonsapi.php',
+    image: file
+    thumbwidth: width
   headers:
     'Content-Type': 'application/xml'
     # the commonsapi requires a User-Agent

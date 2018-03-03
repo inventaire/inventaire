@@ -10,9 +10,10 @@ qs = require 'querystring'
 { oneYear } =  __.require 'lib', 'times'
 { offline, imageRedirection } = CONFIG
 { localGateway, publicGateway } = CONFIG.ipfs
-oneMB = 1024**2
+oneMB = 1024 ** 2
 
-# resized images urls looks like /img/#{w}x#{h}/(#{hash}.jpg|#{external url hashCode?href=escaped url})"
+# resized images urls looks like
+# /img/#{w}x#{h}/(#{hash}.jpg|#{external url hashCode?href=escaped url})"
 
 exports.get = (req, res, next)->
   # could be useful in development
@@ -76,7 +77,7 @@ getResizeImage = (req, res, url, dimensions)->
     else if not validImageContentType.test(contentType)
       errMessage = "invalid image content-type: #{contentType}"
 
-    else if contentLength > 10*oneMB
+    else if contentLength > 10 * oneMB
       errMessage = "image is too large: #{contentLength}"
 
     if errMessage?
@@ -109,9 +110,10 @@ resizeFromStream = (reqStream, width, height, req, res)->
     stdout.on 'error', handleBufferError
     stderr.on 'data', handleBufferError
 
-    # Non of the above seem to catch errors for the case when graphicsmagick isn't installed
-    # so instead of doing `stdout.pipe(res)`, we check if data was actually passed
-    # before determining if it is a success or an error
+    # Non of the above seem to catch errors for the case when graphicsmagick
+    # isn't installed, so instead of doing `stdout.pipe(res)`, we check
+    # if data was actually passed before determining if it is a success
+    # or an error
     receivedData = false
     stdout.on 'data', (data)->
       receivedData = true
@@ -122,7 +124,9 @@ resizeFromStream = (reqStream, width, height, req, res)->
       if alreadySent then return
       if receivedData then res.end()
       # usually solved by `sudo apt-get install graphicsmagick`
-      else error_.bundle req, res, 'empty graphicsmagick response: make sure graphicsmagick is installed on the server', 500
+      else
+        message = 'empty graphicsmagick response: make sure graphicsmagick is installed'
+        error_.bundle req, res, message , 500
 
 parseReq = (req)->
   { pathname } = req._parsedUrl

@@ -6,7 +6,7 @@ root = CONFIG.fullPublicHost()
 { feed:feedConfig } = CONFIG
 templateHelpers = __.require 'lib', 'emails/handlebars_helpers'
 getItemDescription = require './get_item_description'
-oneDayInMinutes = 24*60
+oneDayInMinutes = 24 * 60
 
 module.exports = (feedOptions, users, items, lang)->
   { title, description, queryString, pathname, image } = feedOptions

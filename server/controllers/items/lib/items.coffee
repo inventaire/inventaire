@@ -51,7 +51,7 @@ module.exports = items_ =
   publicByEntities: (uris, reqUserId)->
     listingByEntities 'public', uris, reqUserId
 
-  publicByDate: (limit=15, offset=0, assertImage=false, reqUserId)->
+  publicByDate: (limit = 15, offset = 0, assertImage = false, reqUserId)->
     db.viewCustom 'publicByDate',
       limit: limit
       skip: offset
@@ -141,7 +141,7 @@ module.exports = items_ =
 
   bulkDelete: db.bulkDelete
 
-  nearby: (reqUserId, range=50, strict=false)->
+  nearby: (reqUserId, range = 50, strict = false)->
     user_.nearby reqUserId, range, strict
     .then items_.getUsersAndItemsPublicData(reqUserId)
 

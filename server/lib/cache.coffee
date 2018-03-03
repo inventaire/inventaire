@@ -15,7 +15,7 @@ if CONFIG.resetCacheAtStartup then cacheDB.reset()
 module.exports = cache_ =
   # EXPECT function to come with context and arguments .bind'ed
   # e.g. function = module.getData.bind(module, arg1, arg2)
-  get: (key, fn, timespan=oneMonth, retry=true)->
+  get: (key, fn, timespan = oneMonth, retry = true)->
     types = ['string', 'function', 'number', 'boolean']
     try _.types arguments, types, 2
     catch err then return error_.reject err, 500
@@ -39,7 +39,7 @@ module.exports = cache_ =
 
   # An alternative get function to use when the function call might take a while
   # and we are in a hury, and it's ok to return nothing
-  fastGet: (key, fn, timespan=oneMonth, delay)->
+  fastGet: (key, fn, timespan = oneMonth, delay)->
     try _.types [ key, fn, timespan ], [ 'string', 'function', 'number' ]
     catch err then return error_.reject err, 500
 
@@ -55,7 +55,7 @@ module.exports = cache_ =
       return res?.body
 
   # Return what's in cache. If nothing, return nothing: no request performed
-  dryGet: (key, timespan=oneMonth)->
+  dryGet: (key, timespan = oneMonth)->
     try _.types [ key, timespan ], [ 'string', 'number' ]
     catch err then return error_.reject err, 500
 
@@ -80,7 +80,7 @@ module.exports = cache_ =
   # once the default expiration time is greater than the time since
   # data change, just stop passing a timespan
 
-  solveExpirationTime: (dataChangeName, defaultTime=oneMonth)->
+  solveExpirationTime: (dataChangeName, defaultTime = oneMonth)->
     dataChange = CONFIG.dataChange?[dataChangeName]
     unless dataChange? then return defaultTime
 
@@ -104,7 +104,7 @@ retryIfEmpty = (res, key)->
   unless emptyBody body then return res
   else
     # if it was retried lately
-    if isFreshEnough timestamp, 2*oneDay
+    if isFreshEnough timestamp, 2 * oneDay
       _.log key, 'empty cache value: retried lately'
       return res
     else
@@ -171,7 +171,7 @@ runNextUpdate = ->
   _.info "next cache queue task: #{key} (remaining: #{updateQueue.length})"
   cache_.get key, fn, timespan
   # No job should block the queue
-  .timeout 5*oneMinute
+  .timeout 5 * oneMinute
   .catch _.Error("#{key} cache udpate err")
   .delay delay
   .then runNextUpdate

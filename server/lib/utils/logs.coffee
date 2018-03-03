@@ -12,7 +12,7 @@ BaseLogger = (color, operation)->
     # fully display deep objects
     console.log grey('****') + chalk[color]("#{label}") + grey('****')
     console.log operation(obj)
-    console.log grey("----------")
+    console.log grey('----------')
     return obj
 
 module.exports = (_)->
@@ -26,7 +26,7 @@ module.exports = (_)->
     inspect: inspect
     Inspect: (label)-> fn = (obj)-> inspect obj, label
 
-    error: (err, label, logStack=true)->
+    error: (err, label, logStack = true)->
       unless err instanceof Error
         throw new Error('invalid error object')
 

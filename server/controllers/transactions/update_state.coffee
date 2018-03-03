@@ -3,7 +3,7 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 transactions_ = require './lib/transactions'
 { states, statesList } = __.require 'models', 'transaction'
-tests = __.require 'models','tests/common'
+tests = __.require 'models', 'tests/common'
 { Track } = __.require 'lib', 'track'
 
 module.exports = (req, res, next)->

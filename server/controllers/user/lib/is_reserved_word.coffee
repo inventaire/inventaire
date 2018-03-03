@@ -50,5 +50,4 @@ reservedWords = [
   'feedback'
 ]
 
-module.exports =  (username)->
-  return username in reservedWords
+module.exports =  (username)-> username in reservedWords

@@ -4,7 +4,7 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 { possibleActions } = require './lib/actions_lists'
 groups_ = require './lib/groups'
-tests = __.require 'models','tests/common'
+tests = __.require 'models', 'tests/common'
 rightsVerification = require './lib/rights_verification'
 { Track } = __.require 'lib', 'track'
 
@@ -58,4 +58,4 @@ handleAction = (action, req, res)->
   .then Track(req, ['groups', action])
   .catch error_.Handler(req, res)
 
-addUpdateData = (res)-> (data={})-> res.json { ok: true, update: data.update }
+addUpdateData = (res)-> (data = {})-> res.json { ok: true, update: data.update }

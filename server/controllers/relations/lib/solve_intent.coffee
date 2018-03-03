@@ -23,7 +23,7 @@ module.exports = (actions)->
 
     removeFriendship: (userId, otherId, status)->
       switch status
-        when 'friends','userRequested', 'otherRequested'
+        when 'friends', 'userRequested', 'otherRequested'
           actions.removeRelation userId, otherId
         else doNothing status, 'removeFriendship', userId, otherId
 

@@ -13,7 +13,7 @@ defaultEditionData = ->
     'wdt:P31': [ 'wd:Q3331189' ]
     'wdt:P1476': [ randomString(4) ]
 
-createEntity = (P31)-> (params={})->
+createEntity = (P31)-> (params = {})->
   labels = params.labels or { en: randomString(6) }
   authReq 'post', '/api/entities?action=create',
     labels: labels
@@ -35,7 +35,7 @@ module.exports = API =
           'wdt:P31': [ 'wd:Q571' ]
           'wdt:P50': [ human.uri ]
 
-  createEdition: (params={})->
+  createEdition: (params = {})->
     { works, lang } = params
     lang or= 'en'
     worksPromise = if works? then Promise.resolve(works) else API.createWork()
@@ -55,7 +55,7 @@ module.exports = API =
     params = { works }
     API.createEdition params
 
-  createItemFromEntityUri: (uri, data={})->
+  createItemFromEntityUri: (uri, data = {})->
     authReq 'post', '/api/items', _.extend({}, data, { entity: uri })
 
   addClaim: (uri, property, value)->
