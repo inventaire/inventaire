@@ -46,7 +46,6 @@ module.exports = (params)->
 
 initFollow = (dbName)-> (lastSeq=0)->
   if resetFollow then lastSeq = 0
-  _.log lastSeq, "#{dbName} last seq"
   _.type lastSeq, 'number'
 
   config =
@@ -72,7 +71,6 @@ SetLastSeq = (dbName)->
   # as it could miss updates due to the debouncer
   setLastSeq = (seq)->
     meta.put key, seq
-    .then -> _.log seq, "#{dbName} last seq updated"
     .catch _.Error("#{dbName} setLastSeq err")
   # setLastSeq might be triggered many times if a log of changes arrive at once
   # no need to write to the database at each times, just the last

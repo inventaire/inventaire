@@ -8,7 +8,7 @@
 module.exports =
   users: [ 'users', 'relations', 'invited' ]
   groups: [ 'groups' ]
-  items: [ 'items', 'followedEntities' ]
+  items: [ 'items' ]
   transactions: [ 'transactions' ]
   comments: [ 'comments' ]
   entities: [ 'entities', 'entities_deduplicate' ]
