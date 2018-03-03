@@ -3,3 +3,5 @@
 module.exports =
   dataseed:
     enabled: false
+  mailer:
+    enabled: false
