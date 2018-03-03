@@ -40,7 +40,7 @@ user_ =
       else throw new Error "user not found for username: #{username}"
 
   findOneByUsernameOrEmail: (str)->
-    if User.tests.email(str) then user_.findOneByEmail str
+    if User.validations.email(str) then user_.findOneByEmail str
     else user_.findOneByUsername(str)
 
   getUserFromUsername: (username, reqUserId)->

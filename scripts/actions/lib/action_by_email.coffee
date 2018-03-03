@@ -7,8 +7,8 @@ ActionByInput = require './action_by_input'
 
 _.log email, 'email'
 
-tests = __.require 'models', 'tests/common'
+validations = __.require 'models', 'validations/common'
 
-unless tests.email email then throw new Error('invalid email')
+unless validations.email email then throw new Error('invalid email')
 
 module.exports = ActionByInput email

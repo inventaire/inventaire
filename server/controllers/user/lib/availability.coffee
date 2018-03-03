@@ -15,7 +15,7 @@ module.exports = (user_)->
       if username.toLowerCase() is currentUsername.toLowerCase()
         return promises_.resolved
 
-    unless User.tests.username username
+    unless User.validations.username username
       return error_.rejectInvalid 'username', username
 
     if isReservedWord username
@@ -25,7 +25,7 @@ module.exports = (user_)->
     .then checkAvailability.bind(null, username, 'username')
 
   email: (email)->
-    unless User.tests.email email
+    unless User.validations.email email
       return error_.rejectInvalid 'email', email
 
     user_.byEmail email

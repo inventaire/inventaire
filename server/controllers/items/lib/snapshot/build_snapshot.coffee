@@ -3,7 +3,7 @@ _ = __.require 'builders', 'utils'
 { getNames, aggregateClaims } = require './helpers'
 { getOriginalLang } = __.require 'lib', 'wikidata/wikidata'
 error_ = __.require 'lib', 'error/error'
-{ snapshotTests } = __.require 'models', 'tests/item'
+{ snapshotTests } = __.require 'models', 'validations/item'
 
 module.exports =
   # all editions items have the same snapshot

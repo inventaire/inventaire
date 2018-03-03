@@ -2,7 +2,6 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
-tests = __.require 'models', 'tests/common'
 promises_ = __.require 'lib', 'promises'
 groups_ = require './lib/groups'
 user_ = __.require 'controllers', 'user/lib/user'
@@ -14,7 +13,8 @@ module.exports =
   byId: (req, res)->
     { id } = req.query
     reqUserId = req.user?._id
-    unless tests.valid 'groupId', id
+
+    unless  _.isGroupId id
       return error_.bundleInvalid req, res, 'id', id
 
     groups_.getGroupData 'byId', [ id ], reqUserId

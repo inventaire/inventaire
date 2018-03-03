@@ -4,7 +4,7 @@ items_ = __.require 'controllers', 'items/lib/items'
 user_ = __.require 'controllers', 'user/lib/user'
 promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
-tests = __.require 'models', 'tests/common'
+{ Username:isValidUsername } = __.require 'models', 'validations/regex'
 
 module.exports = (req, res)->
   { query } = req
@@ -28,7 +28,7 @@ getUser = (query, reqUserId)->
     return user_.getUserById userId, reqUserId
 
   else if username?
-    unless tests.username username
+    unless isValidUsername username
       return error_.rejectInvalid 'username', userId
 
     return user_.getUserFromUsername username, reqUserId

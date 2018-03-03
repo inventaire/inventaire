@@ -41,7 +41,7 @@ transactions_ =
       comments_.addTransactionComment(userId, message, transactionId)
 
   updateState: (newState, userId, transaction)->
-    Transaction.testPossibleState transaction, newState
+    Transaction.validatePossibleState transaction, newState
     db.update transaction._id, stateUpdater(newState, userId, transaction)
     .then -> radio.emit 'transaction:update', transaction, newState
 

@@ -5,15 +5,15 @@ error_ = __.require 'lib', 'error/error'
 
 module.exports = Group = {}
 
-Group.tests = tests = require './tests/group'
+Group.validations = validations = require './validations/group'
 
 Group.create = (options)->
   _.log options, 'group create'
   { name, description, searchable, position, creatorId } = options
-  tests.pass 'name', name
-  tests.pass 'description', description
-  tests.pass 'searchable', searchable
-  tests.pass 'position', position
+  validations.pass 'name', name
+  validations.pass 'description', description
+  validations.pass 'searchable', searchable
+  validations.pass 'position', position
 
   creator = createMembership creatorId, null
 
