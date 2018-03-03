@@ -8,16 +8,16 @@ snapshotUserAttributes = __.require('models', 'attributes/user').snapshot
 
 module.exports = Transaction = {}
 
-Transaction.tests = tests = require './tests/transaction'
+Transaction.validations = validations = require './validations/transaction'
 
 Transaction.create = (itemDoc, ownerDoc, requesterDoc)->
   itemId = itemDoc._id
   ownerId = ownerDoc._id
   requesterId = requesterDoc._id
 
-  tests.pass 'itemId', itemId
-  tests.pass 'userId', ownerId
-  tests.pass 'userId', requesterId
+  validations.pass 'itemId', itemId
+  validations.pass 'userId', ownerId
+  validations.pass 'userId', requesterId
 
   unless itemDoc.transaction in requestable
     throw error_.new "this item can't be requested", 400, itemDoc
@@ -46,7 +46,7 @@ requestable = [
   'selling'
 ]
 
-Transaction.testPossibleState = (transaction, newState)->
+Transaction.validatePossibleState = (transaction, newState)->
   unless newState in states[transaction.state].next
     throw error_.new 'invalid state update', 400, transaction, newState
 
