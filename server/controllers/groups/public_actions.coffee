@@ -14,7 +14,7 @@ module.exports =
     { id } = req.query
     reqUserId = req.user?._id
 
-    if id? and not _.isGroupId id
+    unless  _.isGroupId id
       return error_.bundleInvalid req, res, 'id', id
 
     groups_.getGroupData 'byId', [ id ], reqUserId
