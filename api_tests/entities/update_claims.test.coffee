@@ -23,6 +23,23 @@ describe 'entities:update-claims', ->
 
     return
 
+  it 'should reject an update with an inappropriate property datatype', (done)->
+    createWork()
+    .then (work)->
+      authReq 'put', '/api/entities?action=update-claim',
+        id: work._id
+        # A work entity should not have pages count
+        property: 'wdt:P50'
+        'new-value': 124
+      .then undesiredRes(done)
+      .catch (err)->
+        err.body.status_verbose.should.equal 'invalid value datatype: expected string, got number'
+        err.statusCode.should.equal 400
+        done()
+    .catch undesiredErr(done)
+
+    return
+
   it 'should reject an update removing a critical claim', (done)->
     createEdition()
     .then (edition)->

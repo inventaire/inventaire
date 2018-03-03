@@ -11,7 +11,7 @@ lateRequire = ->
   entities_ = require './entities'
 setTimeout lateRequire, 0
 
-{ properties, testDataType, propertyDatatypePrimordialType } = require './properties'
+{ properties, validateType, expectedType } = require './properties'
 
 module.exports = (db)->
   validateClaimValue = (params)->
@@ -28,14 +28,14 @@ module.exports = (db)->
     if updatingValue and prop.adminUpdateOnly and not userIsAdmin
       return error_.reject "updating property requires admin's rights", 403, property, newVal
 
-    unless prop.test newVal
-      return error_.reject 'invalid property value', 400, property, newVal
+    unless validateType property, newVal
+      expected = expectedType property
+      actual = _.typeOf newVal
+      message = "invalid value type: expected #{expected}, got #{actual}"
+      return error_.reject message, 400, property, newVal
 
-    unless testDataType property, newVal
-      expectedDatatype = propertyDatatypePrimordialType property
-      realDatatype = _.typeOf newVal
-      context = "expected #{expectedDatatype}, got #{realDatatype}"
-      return error_.reject "invalid value datatype: #{context}", 400, property, newVal
+    unless prop.validate newVal
+      return error_.reject 'invalid property value', 400, property, newVal
 
     # If the property expects a uniqueValue and that there is already a value defined
     # any action other than editing the current value should be rejected
@@ -44,7 +44,7 @@ module.exports = (db)->
       if propArray?.length > 0 and oldVal isnt propArray[0]
         return error_.reject 'this property accepts only one value', 400, arguments
 
-    formattedValue = prop.format newVal
+    formattedValue = if prop.format? then prop.format(newVal) else newVal
 
     # Resolve only if all async tests pass
     return promises_.all [

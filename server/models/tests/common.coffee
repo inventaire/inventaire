@@ -29,16 +29,11 @@ module.exports = tests =
     if latLng is null then return true
     _.isArray(latLng) and latLng.length is 2 and _.all latLng, _.isNumber
 
-limitedString = (str, minLength, maxLength)->
+tests.boundedString = boundedString = (str, minLength, maxLength)->
   return _.isString(str) and minLength <= str.length <= maxLength
 
-tests.underLimitString = (maxLength)-> (str)-> limitedString str, 0, maxLength
-tests.nonEmptyString = (str, maxLength = 100)-> limitedString str, 1, maxLength
-
-# no item of this app could have a timestamp before june 2014
-June2014 = 1402351200000
-tests.EpochMs =
-  test: (time)-> June2014 < time <= Date.now()
+tests.BoundedString = (minLength, maxLength)-> (str)->
+  boundedString str, minLength, maxLength
 
 tests.imgUrl = (url)-> tests.localImg(url) or _.isUrl(url) or _.isIpfsPath(url)
 
