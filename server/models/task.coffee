@@ -5,7 +5,7 @@ error_ = __.require 'lib', 'error/error'
 
 module.exports = Task = {}
 
-tests = require './tests/task'
+validations = require './validations/task'
 
 Task.create = (newTask)->
   _.types arguments, [ 'object' ]
@@ -13,12 +13,12 @@ Task.create = (newTask)->
   { type, suspectUri, suggestionUri, state, lexicalScore, relationScore, hasEncyclopediaOccurence } = newTask
   state or= 'requested'
 
-  tests.pass 'types', type
-  tests.pass 'states', state
-  tests.pass 'suspect', suspectUri
-  tests.pass 'lexicalScore', lexicalScore
-  tests.pass 'relationScore', relationScore
-  tests.pass 'hasEncyclopediaOccurence', hasEncyclopediaOccurence
+  validations.pass 'types', type
+  validations.pass 'states', state
+  validations.pass 'suspect', suspectUri
+  validations.pass 'lexicalScore', lexicalScore
+  validations.pass 'relationScore', relationScore
+  validations.pass 'hasEncyclopediaOccurence', hasEncyclopediaOccurence
 
   now = Date.now()
 
@@ -35,12 +35,12 @@ Task.create = (newTask)->
 Task.update = (task, attribute, value)->
   _.types arguments, [ 'object', 'string', 'string|number' ]
 
-  tests.pass 'attributes', attribute
+  validations.pass 'attributes', attribute
 
   # Todo : find a way to check update values according to valid attribute,
   # without the current code smell (conditonal if)
   if attribute is 'state'
-    tests.pass 'states', value
+    validations.pass 'states', value
 
   now = Date.now()
 
