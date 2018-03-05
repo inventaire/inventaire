@@ -66,5 +66,6 @@ module.exports = [
   'P2679' # author of foreword
   'P2680' # author of afterword
   'P2716' # collage image
+  'P2860' # cite
   'P4033' # Mastodon address
 ]
