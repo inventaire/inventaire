@@ -18,7 +18,10 @@ module.exports = (userId, fromId)->
       targetVersion._id = currentVersion._id
       targetVersion._rev = currentVersion._rev
 
-      entities_.putUpdate userId, currentVersion, targetVersion
+      entities_.putUpdate
+        userId: userId
+        currentDoc: currentVersion
+        updatedDoc: targetVersion
       .tap -> updateItemEntity.afterRevert fromUri, toUri
       .tap -> recoverPlaceholders currentVersion.removedPlaceholdersIds
       .tap -> alertOnPossibleClaimsToReveryManually fromUri, toUri

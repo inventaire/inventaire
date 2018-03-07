@@ -27,7 +27,7 @@ PlaceholderHandler = (modelFnName)-> (userId, entityId)->
       else
         throw err
 
-    entities_.putUpdate userId, currentDoc, updatedDoc
+    entities_.putUpdate { userId, currentDoc, updatedDoc }
     .then -> return currentDoc._id
 
 module.exports =

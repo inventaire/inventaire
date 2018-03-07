@@ -11,7 +11,7 @@ module.exports = (lang, value, userId, currentDoc)->
 
   updatedDoc = _.cloneDeep currentDoc
   updatedDoc = Entity.setLabel updatedDoc, lang, value
-  return entities_.putUpdate userId, currentDoc, updatedDoc
+  return entities_.putUpdate { userId, currentDoc, updatedDoc }
 
 checkEntityTypeCanHaveLabel = (currentDoc)->
   type = getEntityType currentDoc.claims['wdt:P31']

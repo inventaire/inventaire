@@ -32,6 +32,6 @@ module.exports = (userId, fromUri, toUri)->
       # Then, post the updates all at once
       updatesPromises = _.values(entitiesIndex).map (updatedDoc)->
         currentDoc = entitiesIndexBeforeUpdate[updatedDoc._id]
-        return entities_.putUpdate userId, currentDoc, updatedDoc
+        return entities_.putUpdate { userId, currentDoc, updatedDoc }
 
       return promises_.all updatesPromises

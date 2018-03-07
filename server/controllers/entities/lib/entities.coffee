@@ -71,7 +71,7 @@ module.exports = entities_ =
       updatedDoc = Entity.setLabels updatedDoc, updatedLabels
       return Entity.addClaims updatedDoc, updatedClaims
 
-    .then entities_.putUpdate.bind(null, userId, currentDoc)
+    .then (updatedDoc)-> entities_.putUpdate { userId, currentDoc, updatedDoc }
 
   validateClaim: (params)->
     { property } = params
@@ -94,8 +94,9 @@ module.exports = entities_ =
       uris: res.results.map parseCanonicalUri
       lastSeq: res.last_seq
 
-  putUpdate: (userId, currentDoc, updatedDoc)->
-    _.types arguments, ['string', 'object', 'object']
+  putUpdate: (params)->
+    { userId, currentDoc, updatedDoc } = params
+    _.types [ userId, currentDoc, updatedDoc ], ['string', 'object', 'object']
     db.putAndReturn updatedDoc
     .tap ->
       triggerUpdateEvent currentDoc, updatedDoc

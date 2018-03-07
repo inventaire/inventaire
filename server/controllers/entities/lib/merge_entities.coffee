@@ -30,7 +30,10 @@ merge = (userId, fromId, toId)->
       # don't run entities_.putUpdate as it will throw an 'empty patch' error
       transfer = promises_.resolved
     else
-      transfer = entities_.putUpdate userId, toEntityDocBeforeMerge, toEntityDoc
+      transfer = entities_.putUpdate
+        userId: userId
+        currentDoc: toEntityDocBeforeMerge
+        updatedDoc: toEntityDoc
 
     transfer
     .then -> turnIntoRedirection userId, fromId, "inv:#{toId}"
@@ -46,7 +49,10 @@ turnIntoRedirection = (userId, fromId, toUri)->
     removeObsoletePlaceholderEntities userId, currentFromDoc
     .then (removedIds)->
       updatedFromDoc = Entity.turnIntoRedirection currentFromDoc, toUri, removedIds
-      entities_.putUpdate userId, currentFromDoc, updatedFromDoc
+      entities_.putUpdate
+        userId: userId
+        currentDoc: currentFromDoc
+        updatedDoc: updatedFromDoc
 
   .then propagateRedirection.bind(null, userId, fromUri, toUri)
 

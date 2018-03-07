@@ -39,4 +39,4 @@ updateClaim = (params)->
 
   entities_.validateClaim params
   .then Entity.updateClaim.bind(null, updatedDoc, property, oldVal)
-  .then entities_.putUpdate.bind(null, userId, currentDoc)
+  .then (updatedDoc)-> entities_.putUpdate { userId, currentDoc, updatedDoc }
