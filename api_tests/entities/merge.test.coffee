@@ -111,3 +111,22 @@ describe 'entities:merge', ->
     .catch undesiredErr(done)
 
     return
+
+  it 'should keep track of the patch context', (done)->
+    Promise.all [
+      createWork()
+      createWork()
+    ]
+    .spread (workA, workB)->
+      addClaim workA.uri, 'wdt:P50', 'wd:Q535'
+      .then ->
+        adminReq 'put', '/api/entities?action=merge',
+          from: workA.uri
+          to: workB.uri
+      .then -> nonAuthReq 'get', "/api/entities?action=history&id=#{workB._id}"
+      .then (res)->
+        res.patches[1].context.mergeFrom.should.equal workA._id
+        done()
+    .catch undesiredErr(done)
+
+    return

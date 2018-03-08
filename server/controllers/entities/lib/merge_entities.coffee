@@ -34,6 +34,7 @@ merge = (userId, fromId, toId)->
         userId: userId
         currentDoc: toEntityDocBeforeMerge
         updatedDoc: toEntityDoc
+        context: { mergeFrom: fromId }
 
     transfer
     .then -> turnIntoRedirection userId, fromId, "inv:#{toId}"

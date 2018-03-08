@@ -100,7 +100,7 @@ module.exports = entities_ =
     db.putAndReturn updatedDoc
     .tap ->
       triggerUpdateEvent currentDoc, updatedDoc
-      patches_.create userId, currentDoc, updatedDoc
+      patches_.create params
 
 parseCanonicalUri = (result)-> getInvEntityCanonicalUri(result.doc)[0]
 

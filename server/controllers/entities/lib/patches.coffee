@@ -34,8 +34,8 @@ module.exports = patches_ =
       if rangeEnd < total then data.continue = rangeEnd
       return data
 
-  create: (userId, currentDoc, updatedDoc)->
-    promises_.try -> Patch.create userId, currentDoc, updatedDoc
+  create: (params)->
+    promises_.try -> Patch.create params
     .then db.postAndReturn
 
   getSnapshots: (entityId)->

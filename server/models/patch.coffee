@@ -6,11 +6,14 @@ validations = require './validations/common'
 { versionned } = require './attributes/entity'
 
 module.exports =
-  create: (userId, currentDoc, updatedDoc)->
+  create: (params)->
+    { userId, currentDoc, updatedDoc, context } = params
     validations.pass 'userId', userId
     _.type currentDoc, 'object'
     _.type updatedDoc, 'object'
     validations.pass 'couchUuid', updatedDoc._id
+
+    if context? then _.type context, 'object'
 
     if currentDoc is updatedDoc
       throw error_.new 'invalid update: same document objects', 500, arguments
@@ -29,12 +32,21 @@ module.exports =
     # will be the last patch docRevID + 3
     docRevId = updatedDoc._rev.split('-')[0]
 
-    return patch =
+    patch =
       _id: "#{docId}:#{docRevId}"
       type: 'patch'
       user: userId
       timestamp: Date.now()
       patch: getDiff currentDoc, updatedDoc
+
+    # Let the consumer pass any data object helping to contextualize the patch
+    # Current uses:
+    # - `{ mergeFrom: entityId }` where entityId is the entity being merged
+    #   with the current entity. This is useful to be able to easily find
+    #   the merge patch during a merge revert
+    if context? then patch.context = context
+
+    return patch
 
   getSnapshots: (base, patchDocs)->
     previousVersion = base
