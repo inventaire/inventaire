@@ -6,7 +6,7 @@ error_ = __.require 'lib', 'error/error'
 { host:elasticHost } = CONFIG.elasticsearch
 { formatError } = __.require 'lib', 'elasticsearch'
 parseResults = require './lib/parse_results'
-tailorResults = require './lib/tailor_results'
+normalizeResults = require './lib/normalize_results'
 boostByPopularity = require './lib/boost_by_popularity'
 getIndexesAndTypes = require './lib/get_indexes_and_types'
 queryBodyBuilder = require './lib/query_body_builder'
@@ -40,7 +40,7 @@ module.exports =
     promises_.post { url, body }
     .catch formatError
     .then parseResults(types, reqUserId)
-    .then tailorResults(lang)
+    .then normalizeResults(lang)
     .then boostByPopularity
     .then _.Log('search results')
     .then _.Wrap(res, 'results')
