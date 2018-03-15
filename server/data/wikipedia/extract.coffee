@@ -47,4 +47,4 @@ apiQuery = (lang, title)->
     exsentences: 20
 
 # Commas between references aren't removed, thus the presence of aggregated commas
-cleanExtract = (str)-> str?.replace /,,/g, ','
+cleanExtract = (str)-> str?.replace(/,,/g, ',').replace /,\./g, '.'
