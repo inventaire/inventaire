@@ -19,12 +19,13 @@ module.exports =
   # refresh: request fresh data
   # includeDocs: include the seeds docs
   search: (search, lang, refresh)->
-    unless enabled then return promises_.resolve { isbn: [] }
+    unless enabled then return promises_.resolve { isbns: [] }
     promises_.get _.buildPath("#{host}/books", { search, lang, refresh })
 
   getByIsbns: (isbns, refresh)->
+    isbns = _.forceArray isbns
     unless enabled then return promises_.resolve isbns.map(emptySeed)
-    isbns = _.forceArray(isbns).join '|'
+    isbns = isbns.join '|'
     promises_.get _.buildPath("#{host}/books", { isbns, refresh })
 
   # Provides simply an image in a prompt maner
