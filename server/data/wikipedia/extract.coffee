@@ -16,7 +16,7 @@ module.exports = (req, res)->
   unless _.isNonEmptyString title
     return error_.bundleMissingQuery req, res, 'title'
 
-  unless vailidations.wikiLang lang
+  unless validations.wikiLang lang
     return error_.bundleInvalid req, res, 'lang', lang
 
   key = "wpextract:#{lang}:#{title}"
