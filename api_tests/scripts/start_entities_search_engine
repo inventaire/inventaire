@@ -1,10 +1,11 @@
 #!/usr/bin/env zsh
 search_engine_path=$(node -p "require('config').entitiesSearchEngine.localPath")
+cwd=$(pwd)
 
 {
   cd "$search_engine_path" &&
   export NODE_ENV=tests &&
-  npm start | grep 'server listening' &
+  npm start | tee "${cwd}/logs/entities_search_engine_tests.log" | grep 'server listening' &
 } || exit 1
 
 sleep 5 && echo "entitiesSearchEngine started"
