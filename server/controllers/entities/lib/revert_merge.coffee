@@ -6,6 +6,8 @@ entities_ = require './entities'
 patches_ = require './patches'
 placeholders_ = require './placeholders'
 updateItemEntity = __.require 'controllers', 'items/lib/update_entity'
+entities_ = require './entities'
+Patch = __.require 'models', 'patch'
 
 module.exports = (userId, fromId)->
   patches_.getSnapshots fromId
@@ -24,6 +26,7 @@ module.exports = (userId, fromId)->
         updatedDoc: targetVersion
       .tap -> updateItemEntity.afterRevert fromUri, toUri
       .tap -> recoverPlaceholders currentVersion.removedPlaceholdersIds
+      .tap -> revertMergePatch userId, fromUri, toUri
       .tap -> alertOnPossibleClaimsToReveryManually fromUri, toUri
 
 findVersionBeforeRedirect = (patches)->
@@ -50,3 +53,23 @@ alertOnPossibleClaimsToReveryManually = (fromUri, toUri)->
   .then (results)->
     if results.length is 0 then return
     _.log results, "claims using #{toUri} but that might need to be reverted to #{fromUri}", 'red'
+
+revertMergePatch = (userId, fromUri, toUri)->
+  [ prefix, toId ] = toUri.split ':'
+  if prefix isnt 'inv' then return
+
+  promises_.all [
+    entities_.byId toId
+    patches_.byEntityId toId
+  ]
+  .spread (currentDoc, patches)->
+    mergePatch = patches.find (patch)-> patch.context?.mergeFrom is fromUri
+    unless mergePatch?
+      # This happens when the merged entity didn't bring any label or claim
+      # value that the merge target hadn't already
+      _.warn { fromUri, toUri }, 'no merge patch found'
+      return
+
+    updatedDoc = Patch.revert currentDoc, mergePatch
+    context = { revertMergeFrom: fromUri }
+    return entities_.putUpdate { userId, currentDoc, updatedDoc, context }

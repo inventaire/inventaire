@@ -11,6 +11,7 @@ promises_ = __.require 'lib', 'promises'
 module.exports = patches_ =
   db: db
   byId: db.get
+  byEntityId: (entityId)-> db.viewByKeys 'byEntityId', [ entityId ]
   byEntityIds: (entityIds)-> db.viewByKeys 'byEntityId', entityIds
   byUserId: (userId, limit, offset)->
     promises_.all [

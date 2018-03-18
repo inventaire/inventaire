@@ -125,7 +125,7 @@ describe 'entities:merge', ->
           to: workB.uri
       .then -> nonAuthReq 'get', "/api/entities?action=history&id=#{workB._id}"
       .then (res)->
-        res.patches[1].context.mergeFrom.should.equal workA._id
+        res.patches[1].context.mergeFrom.should.equal workA.uri
         done()
     .catch undesiredErr(done)
 

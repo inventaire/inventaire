@@ -64,6 +64,9 @@ module.exports = API =
       property: property
       'new-value': value
 
+  setLabel: (uri, lang, value)->
+    authReq 'put', '/api/entities?action=update-label', { uri, lang, value }
+
   ensureEditionExists: (uri, workData, editionData)->
     authReq 'get', "/api/entities?action=by-uris&uris=#{uri}"
     .get 'entities'
