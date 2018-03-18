@@ -7,6 +7,7 @@ error_ = __.require 'lib', 'error/error'
 { formatError } = __.require 'lib', 'elasticsearch'
 parseResults = require './lib/parse_results'
 tailorResults = require './lib/tailor_results'
+boostByPopularity = require './lib/boost_by_popularity'
 getIndexesAndTypes = require './lib/get_indexes_and_types'
 queryBodyBuilder = require './lib/query_body_builder'
 { possibleTypes } = require './lib/types'
@@ -40,5 +41,7 @@ module.exports =
     .catch formatError
     .then parseResults(types, reqUserId)
     .then tailorResults(lang)
+    .then boostByPopularity
+    .then _.Log('search results')
     .then _.Wrap(res, 'results')
     .catch error_.Handler(req, res)

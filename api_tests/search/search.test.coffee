@@ -6,6 +6,7 @@ should = require 'should'
 { nonAuthReq, authReq, undesiredRes, undesiredErr, getUser } = require '../utils/utils'
 randomString = __.require 'lib', './utils/random_string'
 { createWork, createHuman, createSerie } = require '../fixtures/entities'
+{ createEditionFromWorks } = require '../fixtures/entities'
 
 describe 'search:global', ->
   it 'should reject empty searches', (done)->
@@ -190,3 +191,31 @@ describe 'search:global', ->
     .catch undesiredErr(done)
 
     return
+
+  it 'should sort entities by global score', (done)->
+    fullMatchLabel = randomString 15
+    partialMatchLabel = fullMatchLabel + ' a'
+    createWork { labels: { fr: partialMatchLabel } }
+    .then (work)->
+      Promise.all [
+        createEditionFromWorks(work)
+        createWork({ labels: { fr: fullMatchLabel } })
+      ]
+      .delay 1000
+      .then ->
+        workWithEditionUri = work.uri
+        url = "/api/search?search=#{fullMatchLabel}&types=works&lang=fr"
+        getRefreshedEntitiesResult url
+        .then (results)->
+          firstResultUri = results[0].uri
+          firstResultUri.should.be.equal workWithEditionUri
+          done()
+    .catch undesiredErr(done)
+
+    return
+
+getRefreshedEntitiesResult = (url)->
+  # Refresh result entities popularity, then get refreshed entities
+  nonAuthReq 'get', url
+  .then -> nonAuthReq 'get', url
+  .get 'results'
