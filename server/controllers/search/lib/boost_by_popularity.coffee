@@ -13,6 +13,10 @@ module.exports = (results)->
         popularity = popularityByUri[result.uri]
       else
         popularity = 1
-      result.globalScore = result.lexicalScore + popularity
+      result.globalScore = boostScore(result.lexicalScore, popularity)
       result
     .sort (a, b)-> b.globalScore - a.globalScore
+
+boostScore = (oldScore, numberOfVotes)->
+  logFactor = 2
+  oldScore * Math.log(1 + logFactor * numberOfVotes)
