@@ -12,6 +12,9 @@
     "byDay": {
       "map": "(doc)->\n  day = new Date(doc.timestamp).toISOString().split('T')[0]\n  emit [day, doc.user], null",
       "reduce": "_count"
+    },
+    "byRedirectUri": {
+      "map": "(doc)->\n  if doc.context?.redirectClaims?\n    fromUri = doc.context.redirectClaims.fromUri\n    emit fromUri, null"
     }
   }
 }

@@ -35,6 +35,8 @@ module.exports = patches_ =
       if rangeEnd < total then data.continue = rangeEnd
       return data
 
+  byRedirectUri: db.viewByKey.bind null, 'byRedirectUri'
+
   create: (params)->
     promises_.try -> Patch.create params
     .then db.postAndReturn

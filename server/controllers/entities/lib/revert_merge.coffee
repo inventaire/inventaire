@@ -27,7 +27,7 @@ module.exports = (userId, fromId)->
       .tap -> updateItemEntity.afterRevert fromUri, toUri
       .tap -> recoverPlaceholders currentVersion.removedPlaceholdersIds
       .tap -> revertMergePatch userId, fromUri, toUri
-      .tap -> alertOnPossibleClaimsToReveryManually fromUri, toUri
+      .tap -> revertClaimsRedirections userId, fromUri, toUri
 
 findVersionBeforeRedirect = (patches)->
   versions = patches.map _.property('snapshot')
@@ -48,12 +48,6 @@ recoverPlaceholders = (userId, removedPlaceholdersIds)->
   recoverFn = placeholders_.recover.bind(null, userId)
   return promises_.all removedPlaceholdersIds.map(recoverFn)
 
-alertOnPossibleClaimsToReveryManually = (fromUri, toUri)->
-  entities_.byClaimsValue toUri
-  .then (results)->
-    if results.length is 0 then return
-    _.log results, "claims using #{toUri} but that might need to be reverted to #{fromUri}", 'red'
-
 revertMergePatch = (userId, fromUri, toUri)->
   [ prefix, toId ] = toUri.split ':'
   if prefix isnt 'inv' then return
@@ -71,5 +65,17 @@ revertMergePatch = (userId, fromUri, toUri)->
       return
 
     updatedDoc = Patch.revert currentDoc, mergePatch
-    context = { revertMergeFrom: fromUri }
+    context = { revertPatch: mergePatch._id }
+    return entities_.putUpdate { userId, currentDoc, updatedDoc, context }
+
+revertClaimsRedirections = (userId, fromUri, toUri)->
+  patches_.byRedirectUri fromUri
+  .map revertClaimsRedirectionFromPatch(userId)
+
+revertClaimsRedirectionFromPatch = (userId)-> (patch)->
+  entityId = patch._id.split(':')[0]
+  entities_.byId entityId
+  .then (currentDoc)->
+    updatedDoc = Patch.revert currentDoc, patch
+    context = { revertPatch: patch._id }
     return entities_.putUpdate { userId, currentDoc, updatedDoc, context }

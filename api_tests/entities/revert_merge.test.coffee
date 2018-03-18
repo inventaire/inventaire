@@ -129,3 +129,25 @@ describe 'entities:revert-merge', ->
     .catch undesiredErr(done)
 
     return
+
+  it 'should revert redirected claims', (done)->
+    Promise.all [
+      createHuman()
+      createHuman()
+      createWork()
+    ]
+    .spread (humanA, humanB, work)->
+      addClaim work.uri, 'wdt:P50', humanA.uri
+      .then ->
+        adminReq 'put', '/api/entities?action=merge',
+          from: humanA.uri
+          to: humanB.uri
+      .then ->
+        adminReq 'put', '/api/entities?action=revert-merge', { from: humanA.uri }
+      .then -> nonAuthReq 'get', "/api/entities?action=by-uris&uris=#{work.uri}"
+      .then (res)->
+        res.entities[work.uri].claims['wdt:P50'][0].should.equal humanA.uri
+        done()
+    .catch undesiredErr(done)
+
+    return

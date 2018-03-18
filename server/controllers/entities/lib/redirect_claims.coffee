@@ -14,9 +14,9 @@ module.exports = (userId, fromUri, toUri)->
     # within a same entity pointing several times to the redirected entity.
     # There is no identified case at the moment though.
     entities_.byIds entitiesToEditIds
-    .then redirectEntitiesClaims(results, fromUri, toUri)
+    .then redirectEntitiesClaims(results, userId, fromUri, toUri)
 
-redirectEntitiesClaims = (results, fromUri, toUri)-> (entities)->
+redirectEntitiesClaims = (results, userId, fromUri, toUri)-> (entities)->
   entitiesIndex = _.indexBy entities, '_id'
   entitiesIndexBeforeUpdate = _.cloneDeep entitiesIndex
 
@@ -26,12 +26,14 @@ redirectEntitiesClaims = (results, fromUri, toUri)-> (entities)->
   # Then, post the updates all at once
   updatesPromises = _.values(entitiesIndex).map (updatedDoc)->
     currentDoc = entitiesIndexBeforeUpdate[updatedDoc._id]
-    return entities_.putUpdate { userId, currentDoc, updatedDoc }
+    # Add a context in case we need to revert those redirections later on
+    context = { redirectClaims: { fromUri } }
+    return entities_.putUpdate { userId, currentDoc, updatedDoc, context }
 
   return promises_.all updatesPromises
 
 applyRedirections = (entitiesIndex, fromUri, toUri)-> (result)->
-  { entity, property } = result
+  { property, entity } = result
   doc = entitiesIndex[entity]
 
   # If the toUri is already a claim value, delete the fromUri claim

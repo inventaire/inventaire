@@ -5,7 +5,7 @@ should = require 'should'
 { Promise } = __.require 'lib', 'promises'
 { nonAuthReq, authReq, adminReq, undesiredErr, undesiredRes } = require '../utils/utils'
 randomString = __.require 'lib', './utils/random_string'
-{ createWork, createEdition, ensureEditionExists, createItemFromEntityUri, addClaim } = require '../fixtures/entities'
+{ createWork, createHuman, createEdition, ensureEditionExists, createItemFromEntityUri, addClaim } = require '../fixtures/entities'
 
 describe 'entities:merge', ->
   it 'should merge two entities with an inv URI', (done)->
@@ -126,6 +126,30 @@ describe 'entities:merge', ->
       .then -> nonAuthReq 'get', "/api/entities?action=history&id=#{workB._id}"
       .then (res)->
         res.patches[1].context.mergeFrom.should.equal workA.uri
+        done()
+    .catch undesiredErr(done)
+
+    return
+
+  it 'should redirect claims', (done)->
+    Promise.all [
+      createHuman()
+      createHuman()
+      createWork()
+    ]
+    .spread (humanA, humanB, work)->
+      addClaim work.uri, 'wdt:P50', humanA.uri
+      .then ->
+        adminReq 'put', '/api/entities?action=merge',
+          from: humanA.uri
+          to: humanB.uri
+      .then -> nonAuthReq 'get', "/api/entities?action=by-uris&uris=#{work.uri}"
+      .then (res)->
+        res.entities[work.uri].claims['wdt:P50'][0].should.equal humanB.uri
+      .then -> nonAuthReq 'get', "/api/entities?action=history&id=#{work._id}"
+      .then (res)->
+        res.patches[2].context.redirectClaims
+        .should.deepEqual { fromUri: humanA.uri }
         done()
     .catch undesiredErr(done)
 
