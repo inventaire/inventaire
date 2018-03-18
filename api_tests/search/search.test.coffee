@@ -214,6 +214,27 @@ describe 'search:global', ->
 
     return
 
+  it 'should return a global score boosted by a logarithmic popularity', (done)->
+    workLabel = randomString(15)
+    createWork { labels: { fr: workLabel } }
+    .then (work)->
+      Promise.all [
+        createEditionFromWorks work
+        createEditionFromWorks work
+      ]
+      .delay 500
+      .then ->
+        url = "/api/search?search=#{workLabel}&types=works&lang=fr"
+        getRefreshedEntitiesResult url
+        .then (results)->
+          firstEntityResult = results[0]
+          boostLimit = firstEntityResult.lexicalScore + 2
+          firstEntityResult.globalScore.should.be.below boostLimit
+          done()
+    .catch undesiredErr(done)
+
+    return
+
 getRefreshedEntitiesResult = (url)->
   # Refresh result entities popularity, then get refreshed entities
   nonAuthReq 'get', url
