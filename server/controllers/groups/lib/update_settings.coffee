@@ -1,7 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-{ attributes, tests } = __.require 'models', 'group'
+{ attributes, validations } = __.require 'models', 'group'
 { updatable } = attributes
 promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
@@ -15,7 +15,7 @@ module.exports = (db, groups_)->
     unless attribute in updatable
       throw error_.new "#{attribute} can't be updated", 400, data
 
-    unless tests[attribute](value)
+    unless validations[attribute](value)
       throw error_.newInvalid attribute, value
 
     db.get groupId

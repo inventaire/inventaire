@@ -4,7 +4,7 @@ _ = __.require 'builders', 'utils'
 { pass, itemId, userId, entityUri, BoundedString, imgUrl } = require './common'
 { constrained } = require '../attributes/item'
 
-module.exports = itemTests =
+module.exports = validations =
   pass: pass
   itemId: itemId
   userId: userId
@@ -21,10 +21,10 @@ module.exports = itemTests =
     if _.typeOf(obj) isnt 'object' then return false
     for key, value of obj
       unless key in inLocalSnapshot then return false
-      unless snapshotTests[key](value) then return false
+      unless snapshotValidations[key](value) then return false
     return true
 
-itemTests.snapshotTests = snapshotTests =
+validations.snapshotValidations = snapshotValidations =
   'entity:title': BoundedString 1, 500
   'entity:image': _.isExtendedUrl
   'entity:lang': _.isLang
@@ -32,4 +32,4 @@ itemTests.snapshotTests = snapshotTests =
   'entity:series': _.isString
   'entity:ordinal': _.isString
 
-inLocalSnapshot = Object.keys snapshotTests
+inLocalSnapshot = Object.keys snapshotValidations

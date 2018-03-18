@@ -7,7 +7,7 @@ notificationsSettingsList = __.require 'sharedLibs', 'notifications_settings_lis
 
 creationStrategies = ['local']
 
-module.exports = tests =
+module.exports = validations =
   pass: pass
   userId: userId
   username: username
@@ -29,5 +29,5 @@ deepAttributes =
 for setting in notificationsSettingsList
   deepAttributes.settings.notifications[setting] = true
 
-tests.deepAttributesExistance = (attribute)->
+validations.deepAttributesExistance = (attribute)->
   _.get(deepAttributes, attribute)?

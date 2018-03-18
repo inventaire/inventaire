@@ -1,7 +1,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 
-{ attributes, tests } = __.require 'models', 'user'
+{ attributes, validations } = __.require 'models', 'user'
 { updatable, concurrencial, acceptNullValue } = attributes
 user_ = __.require 'controllers', 'user/lib/user'
 error_ = __.require 'lib', 'error/error'
@@ -31,11 +31,11 @@ module.exports = (req, res, next)->
     return error_.bundle req, res, 'already up-to-date', 400, { attribute, value }
 
   if attribute isnt rootAttribute
-    unless tests.deepAttributesExistance attribute
+    unless validations.deepAttributesExistance attribute
       return error_.bundleInvalid req, res, 'attribute', attribute
 
   if rootAttribute in updatable
-    unless _.get(tests, rootAttribute)(value)
+    unless _.get(validations, rootAttribute)(value)
       return error_.bundleInvalid req, res, 'value', value
 
     return updateAttribute user, attribute, value

@@ -11,7 +11,7 @@ bindedTest = (regex)-> regex.test.bind regex
 
 couchUuid = bindedTest CouchUuid
 
-module.exports = tests =
+module.exports = validations =
   couchUuid: couchUuid
   userId: couchUuid
   itemId: couchUuid
@@ -29,32 +29,32 @@ module.exports = tests =
     if latLng is null then return true
     _.isArray(latLng) and latLng.length is 2 and _.all latLng, _.isNumber
 
-tests.boundedString = boundedString = (str, minLength, maxLength)->
+validations.boundedString = boundedString = (str, minLength, maxLength)->
   return _.isString(str) and minLength <= str.length <= maxLength
 
-tests.BoundedString = (minLength, maxLength)-> (str)->
+validations.BoundedString = (minLength, maxLength)-> (str)->
   boundedString str, minLength, maxLength
 
-tests.imgUrl = (url)-> tests.localImg(url) or _.isUrl(url) or _.isIpfsPath(url)
+validations.imgUrl = (url)-> validations.localImg(url) or _.isUrl(url) or _.isIpfsPath(url)
 
-tests.valid = (attribute, value, option)->
+validations.valid = (attribute, value, option)->
   test = @[attribute]
   # if no test are set at this attribute for this context
-  # default to common tests
-  test ?= tests[attribute]
+  # default to common validations
+  test ?= validations[attribute]
   test value, option
 
-tests.pass = (attribute, value, option)->
-  unless tests.valid.call @, attribute, value, option
+validations.pass = (attribute, value, option)->
+  unless validations.valid.call @, attribute, value, option
     if _.isObject value then value = JSON.stringify value
     throw error_.newInvalid attribute, value
 
-tests.type = (attribute, typeArgs...)->
+validations.type = (attribute, typeArgs...)->
   try _.type.apply _, typeArgs
   catch err
     throw error_.complete err, "invalid #{attribute}", 400, typeArgs
 
-tests.types = (attribute, typesArgs...)->
+validations.types = (attribute, typesArgs...)->
   try _.types.apply _, typesArgs
   catch err
     throw error_.complete err, "invalid #{attribute}", 400, typesArgs
