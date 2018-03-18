@@ -29,6 +29,13 @@ updatedDoc =
     P135: ['Q53121']
   notTrackedAttr: 456
 
+authorDoc =
+  _id: '42d699b333a86f2506208e7e6d0671cc'
+  _rev: '4-760b982ea416be33c6938774db2cfaeb'
+  type: 'entity'
+  labels: { en: 'GBKaRq' }
+  claims: { 'wdt:P31': [ 'wd:Q571' ] }
+
 describe 'patch', ->
   describe 'create', ->
     it 'should throw if passed an invalid user id', (done)->
@@ -112,4 +119,126 @@ describe 'patch', ->
       patch = Patch.create params
       patch.should.be.an.Object()
       patch.type.should.equal 'patch'
+      done()
+
+  describe 'revert', ->
+    it 'should revert a patch', (done)->
+      patch = Patch.create { userId, currentDoc, updatedDoc }
+      revertedDoc = Patch.revert updatedDoc, patch
+      revertedDoc.labels.should.deepEqual currentDoc.labels
+      revertedDoc.claims.should.deepEqual currentDoc.claims
+      done()
+
+    it 'should revert a patch between patches', (done)->
+      authorDocUpdatedA = _.cloneDeep authorDoc
+      authorDocUpdatedA.claims['wdt:P50'] = [ 'wd:Q535' ]
+      patchA = Patch.create
+        userId: userId
+        currentDoc: authorDoc
+        updatedDoc: authorDocUpdatedA
+
+      authorDocUpdatedB = _.cloneDeep authorDocUpdatedA
+      authorDocUpdatedB.claims['wdt:P50'].push 'wd:Q184226'
+
+      revertedDoc = Patch.revert authorDocUpdatedB, patchA
+      revertedDoc.claims['wdt:P50'].length.should.equal 1
+      revertedDoc.claims['wdt:P50'][0].should.equal 'wd:Q184226'
+      done()
+
+    it 'should revert a patch between more patches', (done)->
+      authorDocUpdatedA = _.cloneDeep authorDoc
+      authorDocUpdatedA.claims['wdt:P50'] = [ 'wd:Q535' ]
+
+      authorDocUpdatedB = _.cloneDeep authorDocUpdatedA
+      authorDocUpdatedB.claims['wdt:P50'].push 'wd:Q184226'
+      patchB = Patch.create
+        userId: userId
+        currentDoc: authorDocUpdatedA
+        updatedDoc: authorDocUpdatedB
+
+      authorDocUpdatedC = _.cloneDeep authorDocUpdatedB
+      authorDocUpdatedC.claims['wdt:P50'].push 'wd:Q237087'
+
+      revertedDoc = Patch.revert authorDocUpdatedC, patchB
+      revertedDoc.claims['wdt:P50'].should.deepEqual [ 'wd:Q535', 'wd:Q237087' ]
+      done()
+
+    it 'should revert a delete patch', (done)->
+      authorDocUpdatedA = _.cloneDeep authorDoc
+      authorDocUpdatedA.claims['wdt:P50'] = [ 'wd:Q535' ]
+
+      authorDocUpdatedB = _.cloneDeep authorDocUpdatedA
+      delete authorDocUpdatedB.claims['wdt:P50']
+      patchB = Patch.create
+        userId: userId
+        currentDoc: authorDocUpdatedA
+        updatedDoc: authorDocUpdatedB
+
+      revertedDoc = Patch.revert authorDocUpdatedB, patchB
+      revertedDoc.claims['wdt:P50'].should.deepEqual [ 'wd:Q535' ]
+      done()
+
+    it 'should revert a delete patch after the doc was re-edited', (done)->
+      authorDocUpdatedA = _.cloneDeep authorDoc
+      authorDocUpdatedA.claims['wdt:P50'] = [ 'wd:Q535' ]
+
+      authorDocUpdatedB = _.cloneDeep authorDocUpdatedA
+      delete authorDocUpdatedB.claims['wdt:P50']
+      patchB = Patch.create
+        userId: userId
+        currentDoc: authorDocUpdatedA
+        updatedDoc: authorDocUpdatedB
+
+      _.inspect patchB, 'patchB'
+
+      authorDocUpdatedC = _.cloneDeep authorDocUpdatedB
+      authorDocUpdatedC.claims['wdt:P50'] = [ 'wd:Q237087' ]
+
+      revertedDoc = Patch.revert authorDocUpdatedC, patchB
+      revertedDoc.claims['wdt:P50'].should.deepEqual [ 'wd:Q237087', 'wd:Q535' ]
+      done()
+
+    it 'should revert a patch between patches on different claims', (done)->
+      authorDocUpdatedA = _.cloneDeep authorDoc
+      authorDocUpdatedA.claims['wdt:P50'] = [ 'wd:Q535' ]
+
+      authorDocUpdatedB = _.cloneDeep authorDocUpdatedA
+      authorDocUpdatedB.claims['wdt:P58'] = [ 'wd:Q184226' ]
+      delete authorDocUpdatedB.claims['wdt:P50']
+      patchB = Patch.create
+        userId: userId
+        currentDoc: authorDocUpdatedA
+        updatedDoc: authorDocUpdatedB
+
+      revertedDoc = Patch.revert authorDocUpdatedB, patchB
+      revertedDoc.claims['wdt:P50'].should.deepEqual [ 'wd:Q535' ]
+      should(revertedDoc.claims['wdt:P58']).not.be.ok()
+      done()
+
+    it 'should revert successive patches', (done)->
+      authorDocUpdatedA = _.cloneDeep authorDoc
+      authorDocUpdatedA.claims['wdt:P50'] = [ 'wd:Q535' ]
+
+      authorDocUpdatedB = _.cloneDeep authorDocUpdatedA
+      authorDocUpdatedB.claims['wdt:P50'].push 'wd:Q184226'
+      patchB = Patch.create
+        userId: userId
+        currentDoc: authorDocUpdatedA
+        updatedDoc: authorDocUpdatedB
+
+      authorDocUpdatedC = _.cloneDeep authorDocUpdatedB
+      authorDocUpdatedC.claims['wdt:P50'].push 'wd:Q42'
+      patchC = Patch.create
+        userId: userId
+        currentDoc: authorDocUpdatedB
+        updatedDoc: authorDocUpdatedC
+
+      revertedDoc = Patch.revert authorDocUpdatedC, patchB
+      revertedDoc.claims['wdt:P50'].should.deepEqual [ 'wd:Q535', 'wd:Q42' ]
+
+      # Tests that the revert works despite the patch keeping an outdated
+      # index of the value
+      revertedDoc = Patch.revert revertedDoc, patchC
+      revertedDoc.claims['wdt:P50'].should.deepEqual [ 'wd:Q535' ]
+
       done()
