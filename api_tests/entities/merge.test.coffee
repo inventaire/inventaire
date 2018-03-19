@@ -130,9 +130,12 @@ describe 'entities:merge', ->
       .then -> merge humanA.uri, humanB.uri
       .then -> getByUris work.uri
       .then (res)->
-        res.entities[work.uri].claims['wdt:P50'][0].should.equal humanB.uri
+        res.entities[work.uri].claims['wdt:P50'].should.deepEqual [ humanB.uri ]
       .then -> getHistory work._id
       .then (res)->
+        # patch 0: create the work entity
+        # patch 1: add a wdt:P50 claim pointing to to humanA
+        # patch 2: redirect to humanB
         res.patches[2].context.redirectClaims
         .should.deepEqual { fromUri: humanA.uri }
         done()
