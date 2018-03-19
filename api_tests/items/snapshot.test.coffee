@@ -4,6 +4,8 @@ _ = __.require 'builders', 'utils'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
 { authReq, getUser, adminReq, undesiredErr } = require '../utils/utils'
+{ getByIds } = require '../utils/items'
+{ getByUris, merge, updateLabel, updateClaim } = require '../utils/entities'
 { ensureEditionExists } = require '../fixtures/entities'
 randomString = __.require 'lib', './utils/random_string'
 { createWork, createHuman, createSerie, createEditionFromWorks, createWorkWithAuthor } = require '../fixtures/entities'
@@ -19,11 +21,7 @@ describe 'items:snapshot', ->
         currentTitle = item.snapshot['entity:title']
         updatedTitle = currentTitle.split('$$')[0] + '$$' + new Date().toISOString()
 
-        authReq 'put', '/api/entities?action=update-claim',
-          id: entityId
-          property: 'wdt:P1476'
-          'old-value': currentTitle
-          'new-value': updatedTitle
+        updateClaim entityId, 'wdt:P1476', currentTitle, updatedTitle
         .delay 100
         .then -> getItem item
         .then (updatedItem)->
@@ -41,7 +39,7 @@ describe 'items:snapshot', ->
       .then (item)->
         currentTitle = item.snapshot['entity:title']
         updatedTitle = currentTitle + ' ' + new Date().toISOString()
-        updateLabel entityId, updatedTitle
+        updateLabel entityId, 'en', updatedTitle
         .delay 100
         .then -> getItem item
         .then (updatedItem)->
@@ -80,7 +78,7 @@ describe 'items:snapshot', ->
           .then (updatedItem)->
             updatedItem.snapshot['entity:series'].should.equal title
             updatedTitle = title + '-updated'
-            updateLabel serieEntity._id, updatedTitle
+            updateLabel serieEntity._id, 'en', updatedTitle
             .delay 200
             .then -> getItem item
             .then (reupdatedItem)->
@@ -107,11 +105,7 @@ describe 'items:snapshot', ->
         .then -> getItem item
         .then (item)->
           item.snapshot['entity:ordinal'].should.equal '5'
-          authReq 'put', '/api/entities?action=update-claim',
-            id: workEntity._id
-            property: 'wdt:P1545'
-            'old-value': '5'
-            'new-value': '6'
+          updateClaim workEntity._id, 'wdt:P1545', '5', '6'
           .delay 100
           .then -> getItem item
           .then (item)->
@@ -130,7 +124,7 @@ describe 'items:snapshot', ->
         'wdt:P1476': [ 'some title' ]
     .then (editionDoc)->
       workUri = editionDoc.claims['wdt:P629'][0]
-      authReq 'get', "/api/entities?action=by-uris&uris=#{workUri}"
+      getByUris workUri
     .then (res)->
       workEntity = _.values(res.entities)[0]
       trueAuthorUri = workEntity.claims['wdt:P50'][0]
@@ -138,10 +132,7 @@ describe 'items:snapshot', ->
       .delay 200
       .then (item)->
         updateAuthorName = 'Mr moin moin' + new Date().toISOString()
-        authReq 'put', '/api/entities?action=update-label',
-          id: trueAuthorUri.split(':')[1]
-          lang: 'en'
-          value: updateAuthorName
+        updateLabel trueAuthorUri, 'en', updateAuthorName
         .delay 200
         .then -> getItem item
         .then (updatedItem)->
@@ -157,10 +148,8 @@ describe 'items:snapshot', ->
       authReq 'post', '/api/items', { entity: workEntity.uri, lang: 'en' }
       .then (item)->
         updateAuthorName = 'Mr moin moin' + new Date().toISOString()
-        authReq 'put', '/api/entities?action=update-label',
-          uri: workEntity.claims['wdt:P50'][0]
-          lang: 'en'
-          value: updateAuthorName
+        uri = workEntity.claims['wdt:P50'][0]
+        updateLabel uri, 'en', updateAuthorName
         .delay 100
         .then -> getItem item
         .then (item)->
@@ -178,7 +167,7 @@ describe 'items:snapshot', ->
     ]
     .spread (userId, workEntityA, workEntityB)->
       authReq 'post', '/api/items', { entity: workEntityA.uri, lang: 'en' }
-      .tap -> merge workEntityA, workEntityB
+      .tap -> merge workEntityA.uri, workEntityB.uri
       .then getItem
       .then (updatedItem)->
         updatedTitle = workEntityB.labels.en
@@ -202,7 +191,7 @@ describe 'items:snapshot', ->
           addAuthor workEntityB
         ]
         .delay 200
-        .tap -> merge workEntityA, workEntityB
+        .tap -> merge workEntityA.uri, workEntityB.uri
         .delay 200
         .spread (item, addedAuthor)->
           getItem item
@@ -225,7 +214,7 @@ describe 'items:snapshot', ->
       .then (workEntity)->
         authReq 'post', '/api/items', { entity: workEntity.uri, lang: 'en' }
       .delay 200
-      .tap -> merge authorEntityA, authorEntityB
+      .tap -> merge authorEntityA.uri, authorEntityB.uri
       .delay 200
       .then getItem
       .then (updatedItem)->
@@ -276,7 +265,7 @@ describe 'items:snapshot', ->
       ]
       .delay 100
       .spread (editionEntity, item)->
-        authReq 'get', "/api/items?action=by-ids&ids=#{item._id}"
+        getByIds item._id
         .then (res)->
           item = res.items[0]
           item.entity = editionEntity.uri
@@ -302,22 +291,8 @@ addSerie = (subjectEntity)->
   .tap addClaim('wdt:P179', subjectEntity)
 
 addClaim = (property, subjectEntity)-> (entity)->
-  authReq 'put', '/api/entities?action=update-claim',
-    id: subjectEntity._id
-    property: property
-    'new-value': entity.uri
-
-updateLabel = (id, label)->
-  authReq 'put', '/api/entities?action=update-label',
-    id: id
-    lang: 'en'
-    value: label
+  updateClaim subjectEntity._id, property, null, entity.uri
 
 getItem = (item)->
-  authReq 'get', "/api/items?action=by-ids&ids=#{item._id}"
+  getByIds item._id
   .then (res)-> res.items[0]
-
-merge = (from, to)->
-  adminReq 'put', '/api/entities?action=merge',
-    from: from.uri
-    to: to.uri

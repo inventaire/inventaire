@@ -3,16 +3,14 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { nonAuthReq, authReq, undesiredRes, undesiredErr } = require '../../utils/utils'
+{ merge, updateLabel, updateClaim } = require '../../utils/entities'
 { createEdition } = require '../../fixtures/entities'
 
 describe 'entities:editions:update-labels', ->
   it 'should reject labels update', (done)->
     createEdition()
     .then (edition)->
-      authReq 'put', '/api/entities?action=update-label',
-        id: edition._id
-        lang: 'fr'
-        value: 'bla'
+      updateLabel edition._id, 'fr', 'bla'
       .then undesiredRes(done)
       .catch (err)->
         err.body.status_verbose.should.equal "editions can't have labels"

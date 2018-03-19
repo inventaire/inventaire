@@ -6,6 +6,7 @@ _ = __.require 'builders', 'utils'
 randomString = __.require 'lib', './utils/random_string'
 isbn_ = __.require 'lib', 'isbn/isbn'
 wdLang = require 'wikidata-lang'
+{ getByUris } = require '../utils/entities'
 
 defaultEditionData = ->
   labels: {}
@@ -58,17 +59,8 @@ module.exports = API =
   createItemFromEntityUri: (uri, data = {})->
     authReq 'post', '/api/items', _.extend({}, data, { entity: uri })
 
-  addClaim: (uri, property, value)->
-    authReq 'put', '/api/entities?action=update-claim',
-      uri: uri
-      property: property
-      'new-value': value
-
-  setLabel: (uri, lang, value)->
-    authReq 'put', '/api/entities?action=update-label', { uri, lang, value }
-
   ensureEditionExists: (uri, workData, editionData)->
-    authReq 'get', "/api/entities?action=by-uris&uris=#{uri}"
+    getByUris uri
     .get 'entities'
     .then (entities)->
       if entities[uri]? then return entities[uri]

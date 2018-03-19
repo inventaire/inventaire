@@ -5,7 +5,9 @@ should = require 'should'
 { Promise } = __.require 'lib', 'promises'
 { nonAuthReq, authReq, adminReq, undesiredErr, undesiredRes } = require '../utils/utils'
 randomString = __.require 'lib', './utils/random_string'
-{ createWork, createHuman, createEdition, ensureEditionExists, createItemFromEntityUri, addClaim } = require '../fixtures/entities'
+{ getByUris, merge, getHistory, addClaim } = require '../utils/entities'
+{ getByIds: getItemsByIds } = require '../utils/items'
+{ createWork, createHuman, createEdition, ensureEditionExists, createItemFromEntityUri } = require '../fixtures/entities'
 
 describe 'entities:merge', ->
   it 'should merge two entities with an inv URI', (done)->
@@ -14,10 +16,8 @@ describe 'entities:merge', ->
       createWork()
     ]
     .spread (workA, workB)->
-      adminReq 'put', '/api/entities?action=merge',
-        from: workA.uri
-        to: workB.uri
-      .then -> nonAuthReq 'get', "/api/entities?action=by-uris&uris=#{workA.uri}"
+      merge workA.uri, workB.uri
+      .then -> getByUris workA.uri
       .then (res)->
         res.redirects[workA.uri].should.equal workB.uri
         res.entities[workB.uri].should.be.ok()
@@ -35,13 +35,11 @@ describe 'entities:merge', ->
       createItemFromEntityUri editionA.uri
       .then (item)->
         item.entity.should.equal editionA.uri
-        adminReq 'put', '/api/entities?action=merge',
-          from: editionA.uri
-          to: editionB.uri
+        merge editionA.uri, editionB.uri
         .then ->
           Promise.all [
-            nonAuthReq 'get', "/api/entities?action=by-uris&uris=#{editionA.uri}"
-            authReq 'get', "/api/items?action=by-ids&ids=#{item._id}"
+            getByUris editionA.uri
+            getItemsByIds item._id
           ]
         .spread (entitiesRes, itemsRes)->
           entitiesRes.redirects[editionA.uri].should.equal editionB.uri
@@ -61,9 +59,7 @@ describe 'entities:merge', ->
       # Use the inv URI to pass the prefix check
       # and test the claim check
       editionAInvUri = 'inv:' + editionA._id
-      adminReq 'put', '/api/entities?action=merge',
-        from: editionAInvUri
-        to: editionB.uri
+      merge editionAInvUri, editionB.uri
       .then undesiredRes(done)
       .catch (err)->
         # That's not a very specific error report, but it does the job
@@ -82,11 +78,8 @@ describe 'entities:merge', ->
     ]
     .spread (workA, workB)->
       addClaim workA.uri, 'wdt:P50', 'wd:Q535'
-      .then ->
-        adminReq 'put', '/api/entities?action=merge',
-          from: workA.uri
-          to: workB.uri
-      .then -> nonAuthReq 'get', "/api/entities?action=by-uris&uris=#{workB.uri}"
+      .then -> merge workA.uri, workB.uri
+      .then -> getByUris workB.uri
       .then (res)->
         res.entities[workB.uri].claims['wdt:P50'][0].should.equal 'wd:Q535'
         done()
@@ -101,10 +94,8 @@ describe 'entities:merge', ->
       createWork()
     ]
     .spread (workA, workB)->
-      adminReq 'put', '/api/entities?action=merge',
-        from: workA.uri
-        to: workB.uri
-      .then -> nonAuthReq 'get', "/api/entities?action=by-uris&uris=#{workB.uri}"
+      merge workA.uri, workB.uri
+      .then -> getByUris workB.uri
       .then (res)->
         res.entities[workB.uri].labels.zh.should.equal label
         done()
@@ -119,11 +110,8 @@ describe 'entities:merge', ->
     ]
     .spread (workA, workB)->
       addClaim workA.uri, 'wdt:P50', 'wd:Q535'
-      .then ->
-        adminReq 'put', '/api/entities?action=merge',
-          from: workA.uri
-          to: workB.uri
-      .then -> nonAuthReq 'get', "/api/entities?action=history&id=#{workB._id}"
+      .then -> merge workA.uri, workB.uri
+      .then -> getHistory workB._id
       .then (res)->
         res.patches[1].context.mergeFrom.should.equal workA.uri
         done()
@@ -139,14 +127,11 @@ describe 'entities:merge', ->
     ]
     .spread (humanA, humanB, work)->
       addClaim work.uri, 'wdt:P50', humanA.uri
-      .then ->
-        adminReq 'put', '/api/entities?action=merge',
-          from: humanA.uri
-          to: humanB.uri
-      .then -> nonAuthReq 'get', "/api/entities?action=by-uris&uris=#{work.uri}"
+      .then -> merge humanA.uri, humanB.uri
+      .then -> getByUris work.uri
       .then (res)->
         res.entities[work.uri].claims['wdt:P50'][0].should.equal humanB.uri
-      .then -> nonAuthReq 'get', "/api/entities?action=history&id=#{work._id}"
+      .then -> getHistory work._id
       .then (res)->
         res.patches[2].context.redirectClaims
         .should.deepEqual { fromUri: humanA.uri }

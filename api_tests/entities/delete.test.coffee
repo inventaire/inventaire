@@ -4,12 +4,15 @@ _ = __.require 'builders', 'utils'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
 { nonAuthReq, authReq, adminReq, undesiredRes, undesiredErr } = require '../utils/utils'
+{ getByUris, deleteByUris } = require '../utils/entities'
+{ getByIds: getItemsByIds } = require '../utils/items'
 { createHuman, createWork, createWorkWithAuthor, createEdition, ensureEditionExists } = require '../fixtures/entities'
 
 describe 'entities:delete:by-uris', ->
   it 'should require admin rights', (done)->
     createHuman()
-    .then (entity)-> authReq 'delete', "/api/entities?action=by-uris&uris=#{entity.uri}"
+    .then (entity)->
+      authReq 'delete', "/api/entities?action=by-uris&uris=#{entity.uri}"
     .then undesiredRes(done)
     .catch (err)->
       err.statusCode.should.equal 403
@@ -18,7 +21,7 @@ describe 'entities:delete:by-uris', ->
     return
 
   it 'should reject non-inv URIs', (done)->
-    adminReq 'delete', '/api/entities?action=by-uris&uris=wd:Q535'
+    deleteByUris 'wd:Q535'
     .then undesiredRes(done)
     .catch (err)->
       err.body.status_verbose.should.equal 'invalid uri: wd:Q535'
@@ -32,8 +35,8 @@ describe 'entities:delete:by-uris', ->
     createHuman()
     .then (entity)->
       { uri } = entity
-      adminReq 'delete', "/api/entities?action=by-uris&uris=#{uri}"
-      .then -> nonAuthReq 'get', "/api/entities?action=by-uris&uris=#{uri}"
+      deleteByUris uri
+      .then -> getByUris uri
       .then (res)->
         should(res.entities[uri]._meta_type).equal 'removed:placeholder'
         done()
@@ -47,11 +50,9 @@ describe 'entities:delete:by-uris', ->
       createWork()
     ]
     .spread (entityA, entityB)->
-      { uri:uriA } = entityA
-      { uri:uriB } = entityB
-      uris = "#{uriA}|#{uriB}"
-      adminReq 'delete', "/api/entities?action=by-uris&uris=#{uris}"
-      .then -> nonAuthReq 'get', "/api/entities?action=by-uris&uris=#{uris}"
+      uris = [ entityA.uri, entityB.uri ]
+      deleteByUris uris
+      .then -> getByUris uris
       .then (res)->
         for uri, entity in res.entities
           should(entity._meta_type).equal 'removed:placeholder'
@@ -65,8 +66,8 @@ describe 'entities:delete:by-uris', ->
     .then (work)->
       { uri:workUri } = work
       authorUri = work.claims['wdt:P50'][0]
-      adminReq 'delete', "/api/entities?action=by-uris&uris=#{authorUri}"
-      .then -> nonAuthReq 'get', "/api/entities?action=by-uris&uris=#{workUri}"
+      deleteByUris authorUri
+      .then -> getByUris workUri
       .then (res)->
         updatedWork = res.entities[workUri]
         should(updatedWork.claims['wdt:P50']).not.be.ok()
@@ -83,7 +84,7 @@ describe 'entities:delete:by-uris', ->
     .spread (workA, workB)->
       { uri:workUri } = workA
       authorUri = workA.claims['wdt:P50'][0]
-      adminReq 'delete', "/api/entities?action=by-uris&uris=#{authorUri}"
+      deleteByUris authorUri
     .then undesiredRes(done)
     .catch (err)->
       err.body.status_verbose.should.equal 'this entity has too many claims to be removed'
@@ -96,7 +97,7 @@ describe 'entities:delete:by-uris', ->
     createEdition()
     .then (edition)->
       invUri = 'inv:' + edition._id
-      adminReq 'delete', "/api/entities?action=by-uris&uris=#{invUri}"
+      deleteByUris invUri
     .then -> done()
     .catch undesiredErr(done)
     return
@@ -107,7 +108,7 @@ describe 'entities:delete:by-uris', ->
     .then (edition)->
       # Using the inv URI, as the isbn one would be rejected earlier
       invUri = 'inv:' + edition._id
-      adminReq 'delete', "/api/entities?action=by-uris&uris=#{invUri}"
+      deleteByUris invUri
     .then -> done()
     .catch undesiredErr(done)
     return
@@ -116,7 +117,7 @@ describe 'entities:delete:by-uris', ->
     createEdition()
     .then (edition)->
       workUri = edition.claims['wdt:P629'][0]
-      adminReq 'delete', "/api/entities?action=by-uris&uris=#{workUri}"
+      deleteByUris workUri
     .then undesiredRes(done)
     .catch (err)->
       err.body.status_verbose.should.equal 'this entity is used in a critical claim'
@@ -134,9 +135,9 @@ describe 'entities:delete:by-uris', ->
         .then (item)->
           item.snapshot['entity:title'].should.equal work.labels.en
           item.snapshot['entity:authors'].should.equal author.labels.en
-          adminReq 'delete', "/api/entities?action=by-uris&uris=#{author.uri}"
+          deleteByUris author.uri
           .delay 100
-          .then -> authReq 'get', "/api/items?action=by-ids&ids=#{item._id}"
+          .then -> getItemsByIds item._id
           .then (res)->
             updatedItem = res.items[0]
             updatedItem.snapshot['entity:title'].should.equal work.labels.en
@@ -151,11 +152,11 @@ describe 'entities:delete:by-uris', ->
     createHuman()
     .then (entity)->
       { uri } = entity
-      adminReq 'delete', "/api/entities?action=by-uris&uris=#{uri}"
-      .then -> nonAuthReq 'get', "/api/entities?action=by-uris&uris=#{uri}"
+      deleteByUris uri
+      .then -> getByUris uri
       .then (res)->
         should(res.entities[uri]._meta_type).equal 'removed:placeholder'
-        adminReq 'delete', "/api/entities?action=by-uris&uris=#{uri}"
+        deleteByUris uri
         .then -> done()
     .catch undesiredErr(done)
 
@@ -165,7 +166,7 @@ describe 'entities:delete:by-uris', ->
     createWork()
     .then (work)->
       authReq 'post', '/api/items', { entity: work.uri, lang: 'en' }
-      .then -> adminReq 'delete', "/api/entities?action=by-uris&uris=#{work.uri}"
+      .then -> deleteByUris work.uri
       .then undesiredRes(done)
       .catch (err)->
         err.body.status_verbose.should.equal "entities that are used by an item can't be removed"
