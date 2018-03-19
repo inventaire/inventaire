@@ -81,7 +81,8 @@ describe 'entities:merge', ->
       .then -> merge workA.uri, workB.uri
       .then -> getByUris workB.uri
       .then (res)->
-        res.entities[workB.uri].claims['wdt:P50'][0].should.equal 'wd:Q535'
+        authorsUris = res.entities[workB.uri].claims['wdt:P50']
+        authorsUris.should.deepEqual [ 'wd:Q535' ]
         done()
     .catch undesiredErr(done)
 
@@ -130,7 +131,8 @@ describe 'entities:merge', ->
       .then -> merge humanA.uri, humanB.uri
       .then -> getByUris work.uri
       .then (res)->
-        res.entities[work.uri].claims['wdt:P50'].should.deepEqual [ humanB.uri ]
+        authorsUris = res.entities[work.uri].claims['wdt:P50']
+        authorsUris.should.deepEqual [ humanB.uri ]
       .then -> getHistory work._id
       .then (res)->
         # patch 0: create the work entity

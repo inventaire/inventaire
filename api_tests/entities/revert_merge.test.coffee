@@ -41,11 +41,13 @@ describe 'entities:revert-merge', ->
       .then -> merge workA.uri, workB.uri
       .then -> getByUris workB.uri
       .then (res)->
-        res.entities[workB.uri].claims['wdt:P50'].should.deepEqual [ author.uri ]
+        authorsUris = res.entities[workB.uri].claims['wdt:P50']
+        authorsUris.should.deepEqual [ author.uri ]
         revertMerge workA.uri
       .then -> getByUris workB.uri
       .then (res)->
-        should(res.entities[workB.uri].claims['wdt:P50']).not.be.ok()
+        authorsUris = res.entities[workB.uri].claims['wdt:P50']
+        should(authorsUris).not.be.ok()
         done()
     .catch undesiredErr(done)
 
@@ -85,11 +87,13 @@ describe 'entities:revert-merge', ->
       # Make another edit between the merge and the revert-merge
       .tap -> addClaim workB.uri, 'wdt:P50', authorB.uri
       .then (res)->
-        res.entities[workB.uri].claims['wdt:P50'].should.deepEqual [ authorA.uri ]
+        authorsUris = res.entities[workB.uri].claims['wdt:P50']
+        authorsUris.should.deepEqual [ authorA.uri ]
         revertMerge workA.uri
       .then -> getByUris workB.uri
       .then (res)->
-        res.entities[workB.uri].claims['wdt:P50'].should.deepEqual [ authorB.uri ]
+        authorsUris = res.entities[workB.uri].claims['wdt:P50']
+        authorsUris.should.deepEqual [ authorB.uri ]
         done()
     .catch undesiredErr(done)
 
@@ -130,7 +134,8 @@ describe 'entities:revert-merge', ->
       .then -> revertMerge humanA.uri
       .then -> getByUris work.uri
       .then (res)->
-        res.entities[work.uri].claims['wdt:P50'].should.deepEqual [ humanA.uri ]
+        authorsUris = res.entities[work.uri].claims['wdt:P50']
+        authorsUris.should.deepEqual [ humanA.uri ]
         done()
     .catch undesiredErr(done)
 
