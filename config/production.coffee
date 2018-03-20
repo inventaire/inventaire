@@ -4,7 +4,7 @@ module.exports =
   publicHost: 'OVERRIDE'
   publicProtocol: 'https'
   fullPublicHost: -> "#{@publicProtocol}://#{@publicHost}"
-  secret: "OVERRIDE"
+  secret: 'OVERRIDE'
   # Let Nginx serve the static files
   # https://github.com/inventaire/inventaire-deploy/blob/master/nginx/inventaire.original.nginx
   serveStaticFiles: false
@@ -23,3 +23,5 @@ module.exports =
     preview: false
   activitySummary:
     disabled: false
+  # Let the alt instance run the jobs
+  runJobsInQueue: false

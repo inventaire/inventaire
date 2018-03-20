@@ -18,3 +18,4 @@ module.exports =
     disabled: true
   couch2elastic4sync:
     activated: true
+  runJobsInQueue: true

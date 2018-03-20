@@ -26,7 +26,7 @@ buildKey = (uri)-> "popularity:#{uri}"
 
 getPopularityByUriOrQueue = (uri)->
   prefix = uri.split(':')[0]
-  if prefix isnt 'wd' then return getPopularity uri
+  if prefix isnt 'wd' then return getPopularityByUri uri
 
   # Queue job to work around the slow popularity calculation
   # for Wikidata entities, which rely on remote SPARQL queries
@@ -43,7 +43,7 @@ defaultToZero = (value)-> value or 0
 
 wdPopularityWorker = (jobId, uri, cb)->
   key = buildKey uri
-  # Check that the score wasn't since this job was queued
+  # Check that the score wasn't calculated since this job was queued
   cache_.dryGet key
   .then (res)->
     if res? then return
@@ -56,4 +56,4 @@ wdPopularityWorker = (jobId, uri, cb)->
     _.error err, 'wdPopularityWorker err'
     cb err
 
-wdPopularityQueue = jobs_.getQueue 'wd:popularity', wdPopularityWorker, 1
+wdPopularityQueue = jobs_.getQueue 'popularity', wdPopularityWorker, 1
