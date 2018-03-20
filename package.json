@@ -55,6 +55,7 @@
     "execa": "^0.4.0",
     "express": "^4.15.5",
     "express-session": "^1.11.3",
+    "faker": "^4.1.0",
     "follow": "^1.0.0",
     "formidable": "^1.0.17",
     "gitlab-logging": "git+https://github.com/inventaire/node-gitlab-logging.git#master",

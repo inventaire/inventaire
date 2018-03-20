@@ -7,7 +7,6 @@ should = require 'should'
 { getByIds } = require '../utils/items'
 { getByUris, merge, updateLabel, updateClaim } = require '../utils/entities'
 { ensureEditionExists } = require '../fixtures/entities'
-randomString = __.require 'lib', './utils/random_string'
 { createWork, createHuman, createSerie, addAuthor, addSerie, createEditionFromWorks, createWorkWithAuthor } = require '../fixtures/entities'
 
 describe 'items:snapshot', ->
