@@ -7,7 +7,7 @@ should = require 'should'
 { getByIds } = require '../utils/items'
 { getByUris, merge, updateLabel, updateClaim } = require '../utils/entities'
 { ensureEditionExists } = require '../fixtures/entities'
-{ createWork, createHuman, createSerie, addAuthor, addSerie, createEditionFromWorks, createWorkWithAuthor } = require '../fixtures/entities'
+{ createWork, createHuman, createSerie, addAuthor, addSerie, createEditionFromWorks, createWorkWithAuthor, humanName } = require '../fixtures/entities'
 
 describe 'items:snapshot', ->
   it 'should be updated when its local edition entity title changes', (done)->
@@ -130,7 +130,7 @@ describe 'items:snapshot', ->
       authReq 'post', '/api/items', { entity: 'isbn:9788389920935' }
       .delay 200
       .then (item)->
-        updateAuthorName = 'Mr moin moin' + new Date().toISOString()
+        updateAuthorName = humanName()
         updateLabel trueAuthorUri, 'en', updateAuthorName
         .delay 200
         .then -> getItem item
@@ -146,7 +146,7 @@ describe 'items:snapshot', ->
     .then (workEntity)->
       authReq 'post', '/api/items', { entity: workEntity.uri, lang: 'en' }
       .then (item)->
-        updateAuthorName = 'Mr moin moin' + new Date().toISOString()
+        updateAuthorName = humanName()
         uri = workEntity.claims['wdt:P50'][0]
         updateLabel uri, 'en', updateAuthorName
         .delay 100
