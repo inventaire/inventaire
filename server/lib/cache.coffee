@@ -37,23 +37,6 @@ module.exports = cache_ =
 
       throw err
 
-  # An alternative get function to use when the function call might take a while
-  # and we are in a hury, and it's ok to return nothing
-  fastGet: (key, fn, timespan = oneMonth, delay)->
-    try _.types [ key, fn, timespan ], [ 'string', 'function', 'number' ]
-    catch err then return error_.reject err, 500
-
-    cacheDB.get key
-    .then (res)->
-      # If there is something cached and it's fresh enough, just return it
-      if res?.body? and isFreshEnough(res.timestamp, timespan)
-        return res.body
-
-      # Else plan an update and return what we presently have in cache
-      # (possibly nothing)
-      addToUpdateQueue { key, fn, timespan, delay }
-      return res?.body
-
   # Return what's in cache. If nothing, return nothing: no request performed
   dryGet: (key, timespan = oneMonth)->
     try _.types [ key, timespan ], [ 'string', 'number' ]
@@ -151,32 +134,3 @@ putResponseInCache = (key, res)->
     timestamp: new Date().getTime()
 
 isFreshEnough = (timestamp, timespan)-> not _.expired(timestamp, timespan)
-
-updateQueue = []
-ongoingUpdates = false
-
-runNextUpdate = ->
-  nextUpdateData = updateQueue.shift()
-  unless nextUpdateData?
-    ongoingUpdates = false
-    _.info 'emptied cache update queue'
-    return
-
-  ongoingUpdates = true
-  { key, fn, timespan, delay } = nextUpdateData
-  # Add a delay to avoid hitting 429 Too Many Requests error codes
-  # Customization is mainly needed for testing
-  delay ?= 1000
-
-  _.info "next cache queue task: #{key} (remaining: #{updateQueue.length})"
-  cache_.get key, fn, timespan
-  # No job should block the queue
-  .timeout 5 * oneMinute
-  .catch _.Error("#{key} cache udpate err")
-  .delay delay
-  .then runNextUpdate
-
-addToUpdateQueue = (updateData)->
-  updateQueue.push updateData
-  # Restart the update queue if it was idle
-  unless ongoingUpdates then runNextUpdate()

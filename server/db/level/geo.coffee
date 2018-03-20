@@ -1,7 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-levelBase = __.require 'level', 'base'
+levelBase = require './base'
 geo = require 'level-geospatial'
 promises_ = __.require 'lib', 'promises'
 
