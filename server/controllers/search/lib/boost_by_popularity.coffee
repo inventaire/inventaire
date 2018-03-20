@@ -4,19 +4,21 @@ _ = __.require 'builders', 'utils'
 getEntitiesPopularity = __.require 'controllers', 'entities/lib/get_entities_popularity'
 
 module.exports = (results)->
-  # results entities keys : id, type, uri, label, lexicalScore
   entityUris = _.compact _.pluck(results, 'uri')
   getEntitiesPopularity entityUris
-  .then (popularityByUri)->
-    results.map (result)->
-      if result.uri?
-        popularity = popularityByUri[result.uri]
-      else
-        popularity = 1
-      result.globalScore = boostScore(result.lexicalScore, popularity)
-      result
-    .sort (a, b)-> b.globalScore - a.globalScore
+  .then sortResultsByPopularity(results)
 
-boostScore = (oldScore, numberOfVotes)->
-  logFactor = 2
-  oldScore * Math.log(1 + logFactor * numberOfVotes)
+sortResultsByPopularity = (results)-> (popularityByUri)->
+  results
+  .map setGlobalScore(popularityByUri)
+  .sort (a, b)-> b.globalScore - a.globalScore
+
+setGlobalScore = (popularityByUri)-> (result)->
+  popularity = if result.uri? then popularityByUri[result.uri] else 1
+  result.globalScore = boostScore result.lexicalScore, popularity
+  return result
+
+logFactor = 2
+# Inspired by https://www.elastic.co/guide/en/elasticsearch/guide/current/boosting-by-popularity.html
+boostScore = (score, popularity)->
+  return score * Math.log(1 + logFactor * popularity)

@@ -1,6 +1,5 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
 getEntityType = __.require 'controllers', 'entities/lib/get_entity_type'
 Group = __.require 'models', 'group'
 

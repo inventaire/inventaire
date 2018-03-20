@@ -42,6 +42,5 @@ module.exports =
     .then parseResults(types, reqUserId)
     .then normalizeResults(lang)
     .then boostByPopularity
-    .then _.Log('search results')
     .then _.Wrap(res, 'results')
     .catch error_.Handler(req, res)
