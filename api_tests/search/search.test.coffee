@@ -198,8 +198,8 @@ describe 'search:global', ->
     createWork { labels: { fr: partialMatchLabel } }
     .then (work)->
       Promise.all [
-        createEditionFromWorks(work)
-        createWork({ labels: { fr: fullMatchLabel } })
+        createEditionFromWorks work
+        createWork { labels: { fr: fullMatchLabel } }
       ]
       .delay 1000
       .then ->
@@ -208,7 +208,7 @@ describe 'search:global', ->
         getRefreshedEntitiesResult url
         .then (results)->
           firstResultUri = results[0].uri
-          firstResultUri.should.be.equal workWithEditionUri
+          firstResultUri.should.equal workWithEditionUri
           done()
     .catch undesiredErr(done)
 
@@ -218,17 +218,18 @@ describe 'search:global', ->
     workLabel = randomString(15)
     createWork { labels: { fr: workLabel } }
     .then (work)->
-      Promise.all [
+      workEditionsCreation = [
         createEditionFromWorks work
         createEditionFromWorks work
       ]
+      Promise.all workEditionsCreation
       .delay 500
       .then ->
         url = "/api/search?search=#{workLabel}&types=works&lang=fr"
         getRefreshedEntitiesResult url
         .then (results)->
           firstEntityResult = results[0]
-          boostLimit = firstEntityResult.lexicalScore + 2
+          boostLimit = firstEntityResult.lexicalScore + workEditionsCreation.length
           firstEntityResult.globalScore.should.be.below boostLimit
           done()
     .catch undesiredErr(done)
@@ -238,5 +239,6 @@ describe 'search:global', ->
 getRefreshedEntitiesResult = (url)->
   # Refresh result entities popularity, then get refreshed entities
   nonAuthReq 'get', url
+  .delay 500
   .then -> nonAuthReq 'get', url
   .get 'results'
