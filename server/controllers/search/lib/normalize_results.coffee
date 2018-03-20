@@ -18,6 +18,7 @@ entityFormatter = (result, _source, lang)->
   label: getBestLangValue(lang, null, _source.labels).value
   description: getBestLangValue(lang, null, _source.descriptions).value?[0..200]
   image: getBestLangValue(lang, null, _source.images).value
+  lexicalScore: result._score
 
 getUri = (index, id)-> if index is 'wikidata' then "wd:#{id}" else "inv:#{id}"
 
@@ -28,6 +29,7 @@ networkFormatter = (labelAttr, descAttr)->
     label: _source[labelAttr]
     description: _source[descAttr]?[0..200]
     image: _source.picture
+    lexicalScore: result._score
 
 formatters =
   works: entityFormatter

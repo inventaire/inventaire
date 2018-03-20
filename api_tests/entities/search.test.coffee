@@ -10,7 +10,7 @@ randomString = __.require 'lib', './utils/random_string'
 
 describe 'entities:search', ->
   it 'should return a recently created entity', (done)->
-    label = randomString(10)
+    label = randomString 10
     createWork { labels: { fr: label } }
     .delay 1000
     .then (creationRes)->
