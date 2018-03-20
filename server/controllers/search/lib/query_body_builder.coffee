@@ -2,10 +2,10 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 
-module.exports = (search)->
+module.exports = (search, size)->
   should = [
     { match: { _all: { query: search, boost: 5 } } }
     { prefix: { _all: _.last(search.split(' ')) } }
   ]
 
-  return { query: { bool: { should } } }
+  return { query: { bool: { should } }, size }

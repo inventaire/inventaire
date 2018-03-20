@@ -35,12 +35,17 @@ module.exports =
 
     url = "#{elasticHost}/#{indexes.join(',')}/#{types.join(',')}/_search"
 
-    body = queryBodyBuilder search
+    # Fetch 20 results to give the opportunity to results with a higher popularity
+    # but a lower lexical score to make it to the 10 results returned
+    body = queryBodyBuilder search, 20
 
     promises_.post { url, body }
     .catch formatError
     .then parseResults(types, reqUserId)
     .then normalizeResults(lang)
     .then boostByPopularity
+    .then keep10First
     .then _.Wrap(res, 'results')
     .catch error_.Handler(req, res)
+
+keep10First = (results)-> results.slice 0, 10
