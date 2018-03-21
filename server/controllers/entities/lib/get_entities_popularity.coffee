@@ -5,6 +5,8 @@ error_ = __.require 'lib', 'error/error'
 cache_ = __.require 'lib', 'cache'
 getPopularityByUri = require './get_popularity_by_uri'
 jobs_ = __.require 'level', 'jobs'
+# If an entity is on Wikidata, consider it to be already somewhat popular
+wdEntityBaseScore = 10
 
 module.exports = (uris, refresh)->
   _.type uris, 'array'
@@ -32,7 +34,7 @@ getPopularityByUriOrQueue = (uri)->
   # for Wikidata entities, which rely on remote SPARQL queries
   # which are limited to 5 concurrent requests
   wdPopularityQueue.push uri, errorLogger
-  return promises_.resolved
+  return promises_.resolve wdEntityBaseScore
 
 errorLogger = (err)->
   if err? then _.error err, 'wdPopularityQueue.push err'
@@ -48,7 +50,7 @@ wdPopularityWorker = (jobId, uri, cb)->
   .then (res)->
     if res? then return
     getPopularityByUri uri
-    .then (score)-> cache_.put key, score
+    .then (score)-> cache_.put key, wdEntityBaseScore + score
   # Spacing requests
   .delay 5000
   .then -> cb()
