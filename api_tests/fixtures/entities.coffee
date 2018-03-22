@@ -15,20 +15,23 @@ defaultEditionData = ->
     'wdt:P1476': [ workLabel() ]
 
 createEntity = (P31)-> (params = {})->
-  labels = params.labels or { en: workLabel() }
+  if P31 is 'wd:Q5'
+    labels = params.labels or { en: workLabel() }
+  else
+    labels = params.labels or { en: humanName() }
   authReq 'post', '/api/entities?action=create',
     labels: labels
     claims: { 'wdt:P31': [ P31 ] }
 
 workLabel = -> faker.random.words()
-humanName = -> faker.name.findName()
+humanName = -> faker.fake '{{name.firstName}} {{name.lastName}} human'
 
 module.exports = API =
   createHuman: createEntity 'wd:Q5'
   createWork: createEntity 'wd:Q571'
   createSerie: createEntity 'wd:Q277759'
-  editionLabel: workLabel
-  workLabel: workLabel
+  editionLabel: workLabel + ' edition'
+  workLabel: workLabel + ' work'
   humanName: humanName
 
   createWorkWithAuthor: (human)->

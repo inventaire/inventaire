@@ -2,10 +2,11 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
+faker = require 'faker'
 { Promise } = __.require 'lib', 'promises'
 { nonAuthReq, authReq, undesiredRes, undesiredErr, getUser } = require '../utils/utils'
 randomString = __.require 'lib', './utils/random_string'
-{ createWork, createHuman, createSerie } = require '../fixtures/entities'
+{ createWork, createHuman, createSerie, humanName, workLabel } = require '../fixtures/entities'
 { createEditionFromWorks } = require '../fixtures/entities'
 
 describe 'search:global', ->
@@ -65,7 +66,7 @@ describe 'search:global', ->
     return
 
   it 'should return a local human', (done)->
-    label = randomString 5
+    label = humanName()
     createHuman { labels: { fr: label } }
     # Let the time for Elastic Search indexation
     .delay 1000
@@ -81,7 +82,7 @@ describe 'search:global', ->
     return
 
   it 'should return a local work', (done)->
-    label = randomString 5
+    label = workLabel()
     createWork { labels: { fr: label } }
     # Let the time for Elastic Search indexation
     .delay 1000
@@ -108,7 +109,7 @@ describe 'search:global', ->
     return
 
   it 'should return a local serie', (done)->
-    label = randomString 5
+    label = workLabel()
     createSerie { labels: { fr: label } }
     # Let the time for Elastic Search indexation
     .delay 1000
@@ -149,7 +150,7 @@ describe 'search:global', ->
     return
 
   it 'should return a group', (done)->
-    name = randomString 5
+    name = "group #{faker.lorem.word}"
     authReq 'post', '/api/groups?action=create', { name }
     .delay 1000
     .then (group)->
@@ -164,7 +165,7 @@ describe 'search:global', ->
     return
 
   it 'should not return a private group unless requester is a member', (done)->
-    name = randomString 5
+    name = "group #{faker.lorem.word}"
     authReq 'post', '/api/groups?action=create', { name, searchable: false }
     .delay 1000
     .then (group)->
