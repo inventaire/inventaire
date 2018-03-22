@@ -7,7 +7,6 @@ should = require 'should'
 
 describe 'entities:create', ->
   it 'should not be able to create an entity without a wdt:P31 value', (done)->
-
     authReq 'post', '/api/entities?action=create',
       labels: { de: humanName() }
       claims: { 'wdt:P50': [ 'wd:Q535' ] }
@@ -77,10 +76,9 @@ describe 'entities:create', ->
 
     return
 
-  it 'should reject invalid claims object', (done)->
+  it 'should reject invalid claims type: array instead of object', (done)->
     authReq 'post', '/api/entities?action=create',
       labels: { fr: humanName() }
-      # Invalid claims type: array instead of object
       claims: [ { 'wdt:P31': [ 'wd:Q571' ] } ]
     .catch (err)->
       err.body.status_verbose.should.equal 'claims should be an object'
@@ -104,12 +102,11 @@ describe 'entities:create', ->
 
     return
 
-  it 'should reject invalid property', (done)->
+  it 'should reject invalid property such as wd:P50 as a property URI', (done)->
     authReq 'post', '/api/entities?action=create',
       labels: { fr: humanName() }
       claims:
         'wdt:P31': [ 'wd:Q571' ]
-        # 'wd:P50' isn't a valid property URI
         'wd:P50': [ 'wd:Q535' ]
     .catch (err)->
       err.body.status_verbose.should.equal 'invalid property'
@@ -119,10 +116,9 @@ describe 'entities:create', ->
 
     return
 
-  it 'should reject invalid property value', (done)->
+  it 'should reject invalid property value such as wd:P31 as entity URI', (done)->
     authReq 'post', '/api/entities?action=create',
       labels: { fr: humanName() }
-      # 'wd:P31' isn't a valid entity URI
       claims:
         'wdt:P31': [ 'wd:Q571' ]
         'wdt:P50': [ 'wdQ535' ]
@@ -155,12 +151,11 @@ describe 'entities:create', ->
 
     return
 
-  it 'should reject an entity created with inappropriate properties', (done)->
+  it 'should reject creation with incorrect properties such as pages counts for works', (done)->
     authReq 'post', '/api/entities?action=create',
       labels: { fr: workLabel() }
       claims:
         'wdt:P31': [ 'wd:Q571' ]
-        # A work entity should not have pages counts
         'wdt:P1104': [ 124 ]
     .then undesiredRes(done)
     .catch (err)->

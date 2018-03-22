@@ -54,12 +54,7 @@ describe 'entities:editions:create', ->
 
   it 'should accept an edition without a labels object', (done)->
     workEntityPromise
-    .then (workEntity)->
-      authReq 'post', '/api/entities?action=create',
-        claims:
-          'wdt:P31': [ 'wd:Q3331189' ]
-          'wdt:P629': [ workEntity.uri ]
-          'wdt:P1476': [ editionLabel() ]
+    .then (workEntity)-> createEdition workEntity.uri
     .then -> done()
     .catch undesiredErr(done)
 
@@ -67,12 +62,7 @@ describe 'entities:editions:create', ->
 
   it 'should not be able to create an edition entity with a non-work entity', (done)->
     createSerie()
-    .then (serieEntity)->
-      authReq 'post', '/api/entities?action=create',
-        claims:
-          'wdt:P31': [ 'wd:Q3331189' ]
-          'wdt:P629': [ serieEntity.uri ]
-          'wdt:P1476': [ editionLabel() ]
+    .then (serieEntity)-> createEdition serieEntity.uri
     .then undesiredRes(done)
     .catch (err)->
       err.statusCode.should.equal 400
@@ -81,3 +71,10 @@ describe 'entities:editions:create', ->
     .catch undesiredErr(done)
 
     return
+
+createEdition = (uri) ->
+  authReq 'post', '/api/entities?action=create',
+    claims:
+      'wdt:P31': [ 'wd:Q3331189' ]
+      'wdt:P629': [ uri ]
+      'wdt:P1476': [ editionLabel() ]
