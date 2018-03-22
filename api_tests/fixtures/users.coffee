@@ -5,7 +5,7 @@ breq = require 'bluereq'
 should = require 'should'
 host = CONFIG.fullHost()
 authEndpoint = host + '/api/auth'
-randomString = __.require 'lib', './utils/random_string'
+faker = require 'faker'
 { makeUserAdmin } = __.require 'controllers', 'user/lib/user'
 { request } = require '../utils/request'
 
@@ -19,14 +19,17 @@ login = (userData)->
 
 module.exports = API =
   signup: (email)->
-    signup { email, username: randomString(8), password: randomString(8) }
+    signup
+      email: email
+      username: faker.name.findName()
+      password: faker.internet.password()
 
   createUser: (username)->
-    str = username or randomString(10)
+    str = username or faker.fake '{{name.firstName}}{{name.lastName}}'
     userData =
       username: str
       password: str
-      email: "#{str}@foo.org"
+      email: "#{str}#{faker.internet.email()}"
 
     # Try to login first if the username is given, as a user with this username
     # might still exist if the database wasn't reset since the last test session
