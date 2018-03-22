@@ -27,6 +27,7 @@ module.exports = API =
   createHuman: createEntity 'wd:Q5'
   createWork: createEntity 'wd:Q571'
   createSerie: createEntity 'wd:Q277759'
+  editionLabel: workLabel
   workLabel: workLabel
   humanName: humanName
 

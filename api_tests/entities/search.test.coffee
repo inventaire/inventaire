@@ -3,14 +3,12 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
-{ nonAuthReq, getUser, adminReq, undesiredErr } = require '../utils/utils
-'
-randomString = __.require 'lib', './utils/random_string'
-{ createWork } = require '../fixtures/entities'
+{ nonAuthReq, getUser, adminReq, undesiredErr } = require '../utils/utils'
+{ createWork, workLabel } = require '../fixtures/entities'
 
 describe 'entities:search', ->
   it 'should return a recently created entity', (done)->
-    label = randomString 10
+    label = workLabel()
     createWork { labels: { fr: label } }
     .delay 1000
     .then (creationRes)->
@@ -25,7 +23,7 @@ describe 'entities:search', ->
     return
 
   it 'should not return a removed:placeholder entity', (done)->
-    label = randomString 10
+    label = workLabel()
     Promise.all [
       getUser().get '_id'
       createWork({ labels: { fr: label } }).get '_id'
