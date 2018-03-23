@@ -21,15 +21,15 @@ module.exports = API =
   signup: (email)->
     signup
       email: email
-      username: faker.name.findName()
+      username: API.createUsername()
       password: faker.internet.password()
 
   createUser: (username)->
-    str = username or faker.fake '{{name.firstName}}{{name.lastName}}'
+    username = username or API.createUsername()
     userData =
-      username: str
-      password: str
-      email: "#{str}#{faker.internet.email()}"
+      username: username
+      password: username
+      email: "#{username}@adomain.org"
 
     # Try to login first if the username is given, as a user with this username
     # might still exist if the database wasn't reset since the last test session
@@ -54,5 +54,9 @@ module.exports = API =
     # Get the up-to-date user doc while keeping the cookie
     # set by api_tests/fixtures/users
     .then (user)-> API.getUserWithCookie user.cookie
+
+  createUsername: ->
+    # faker firstName generates alphabet-only strings
+    faker.fake '{{name.firstName}}{{name.firstName}}'
 
 parseCookie = (res)-> res.headers['set-cookie'].join ';'
