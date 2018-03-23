@@ -58,4 +58,4 @@ wdPopularityWorker = (jobId, uri, cb)->
     _.error err, 'wdPopularityWorker err'
     cb err
 
-wdPopularityQueue = jobs_.getQueue 'popularity', wdPopularityWorker, 1
+wdPopularityQueue = jobs_.initQueue 'wd:popularity', wdPopularityWorker, 1
