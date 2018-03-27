@@ -12,9 +12,10 @@ module.exports = (req, res, next)->
 
   uris = _.uniq uris.split('|')
 
+  # TODO: when passing a refresh flag, return the old popularity value
+  # instead of the default value, as getEntitiesPopularity would do
+  # for Wikidata entities
   refresh = _.parseBooleanString refresh
-  # Default to true
-  fast = fast isnt 'false'
 
   getEntitiesPopularity uris, refresh
   .then _.Wrap(res, 'scores')
