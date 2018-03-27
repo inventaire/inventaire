@@ -52,12 +52,15 @@ applyDefaultValue = (uri)-> (value)->
 
 wdPopularityWorker = (jobId, uri, cb)->
   key = buildKey uri
+  _.log uri, 'wdPopularityWorker uri'
   # Check that the score wasn't calculated since this job was queued
   cache_.dryGet key
   .then (res)->
     if res? then return
     getPopularityByUri uri
-    .then (score)-> cache_.put key, wdEntityBaseScore + score
+    .then (score)->
+      _.log score, "wdPopularityWorker #{uri} score"
+      cache_.put key, wdEntityBaseScore + score
   # Spacing requests
   .delay 5000
   .then -> cb()
