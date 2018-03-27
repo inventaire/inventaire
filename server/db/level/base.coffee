@@ -17,7 +17,7 @@ else
 
 module.exports =
   sub: (dbName)->
-    _.success "#{dbName} openned"
+    _.success "#{dbName} opened"
     return DB.sublevel dbName
 
   promisified: (sub)->

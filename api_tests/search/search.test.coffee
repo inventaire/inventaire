@@ -32,7 +32,7 @@ describe 'search:global', ->
     return
 
   it 'should reject invalid types', (done)->
-    nonAuthReq 'get', '/api/search?search=yo&types=da&lang=fr'
+    search 'da', 'yo'
     .then undesiredRes(done)
     .catch (err)->
       err.statusCode.should.equal 400
@@ -54,9 +54,8 @@ describe 'search:global', ->
     return
 
   it 'should return a wikidata human', (done)->
-    nonAuthReq 'get', '/api/search?search=Gilles%20Deleuze&types=humans&lang=fr'
-    .then (res)->
-      { results } = res
+    search 'humans', 'Gilles Deleuze'
+    .then (results)->
       results.should.be.an.Array()
       results.forEach (result)-> result.type.should.equal 'humans'
       _.pluck(results, 'id').includes('Q184226').should.be.true()
@@ -71,9 +70,8 @@ describe 'search:global', ->
     # Let the time for Elastic Search indexation
     .delay 1000
     .then (entity)->
-      nonAuthReq 'get', "/api/search?search=#{label}&types=humans&lang=fr"
-      .then (res)->
-        { results } = res
+      search 'humans', label
+      .then (results)->
         results.should.be.an.Array()
         results.forEach (result)-> result.type.should.equal 'humans'
         _.pluck(results, 'id').includes(entity._id).should.be.true()
@@ -88,9 +86,8 @@ describe 'search:global', ->
     # Let the time for Elastic Search indexation
     .delay 1000
     .then (entity)->
-      nonAuthReq 'get', "/api/search?search=#{label}&types=works&lang=fr"
-      .then (res)->
-        { results } = res
+      search 'works', label
+      .then (results)->
         results.should.be.an.Array()
         results.forEach (result)-> result.type.should.equal 'works'
         _.pluck(results, 'id').includes(entity._id).should.be.true()
@@ -100,9 +97,8 @@ describe 'search:global', ->
     return
 
   it 'should return a wikidata work', (done)->
-    nonAuthReq 'get', '/api/search?search=Les%20Misérables&types=works&lang=fr'
-    .then (res)->
-      { results } = res
+    search 'works', 'Les Misérables'
+    .then (results)->
       results.should.be.an.Array()
       results.forEach (result)-> result.type.should.equal 'works'
       _.pluck(results, 'id').includes('Q180736').should.be.true()
@@ -117,9 +113,8 @@ describe 'search:global', ->
     # Let the time for Elastic Search indexation
     .delay 1000
     .then (entity)->
-      nonAuthReq 'get', "/api/search?search=#{label}&types=series&lang=fr"
-      .then (res)->
-        { results } = res
+      search 'series', label
+      .then (results)->
         results.should.be.an.Array()
         results.forEach (result)-> result.type.should.equal 'series'
         _.pluck(results, 'id').includes(entity._id).should.be.true()
@@ -129,9 +124,8 @@ describe 'search:global', ->
     return
 
   it 'should return a wikidata serie', (done)->
-    nonAuthReq 'get', '/api/search?search=Harry%20Potter&types=series&lang=fr'
-    .then (res)->
-      { results } = res
+    search 'series', 'Harry Potter'
+    .then (results)->
       results.should.be.an.Array()
       results.forEach (result)-> result.type.should.equal 'series'
       _.pluck(results, 'id').includes('Q8337').should.be.true()
@@ -144,10 +138,8 @@ describe 'search:global', ->
     getUser()
     .delay 1000
     .then (user)->
-      { username } = user
-      nonAuthReq 'get', "/api/search?search=#{username}&types=users&lang=fr"
-      .then (res)->
-        { results } = res
+      search 'users', user.username
+      .then (results)->
         results.should.be.an.Array()
         results.forEach (result)-> result.type.should.equal 'users'
         _.pluck(results, 'id').includes(user._id).should.be.true()
@@ -161,9 +153,8 @@ describe 'search:global', ->
     authReq 'post', '/api/groups?action=create', { name }
     .delay 1000
     .then (group)->
-      nonAuthReq 'get', "/api/search?search=#{name}&types=groups&lang=fr"
-      .then (res)->
-        { results } = res
+      search 'groups', name
+      .then (results)->
         results.should.be.an.Array()
         results.forEach (result)-> result.type.should.equal 'groups'
         _.pluck(results, 'id').includes(group._id).should.be.true()
@@ -177,9 +168,8 @@ describe 'search:global', ->
     authReq 'post', '/api/groups?action=create', { name, searchable: false }
     .delay 1000
     .then (group)->
-      nonAuthReq 'get', "/api/search?search=#{name}&types=groups&lang=fr"
-      .then (res)->
-        { results } = res
+      search 'groups', name
+      .then (results)->
         _.pluck(results, 'id').includes(group._id).should.be.false()
         # The same request but authentified with a group member account
         # should find the group
@@ -204,8 +194,7 @@ describe 'search:global', ->
       .delay 1000
       .then ->
         workWithEditionUri = work.uri
-        url = "/api/search?search=#{fullMatchLabel}&types=works&lang=fr"
-        getRefreshedEntitiesResult url
+        search 'works', fullMatchLabel
         .then (results)->
           firstResultUri = results[0].uri
           firstResultUri.should.equal workWithEditionUri
@@ -225,8 +214,7 @@ describe 'search:global', ->
       Promise.all workEditionsCreation
       .delay 500
       .then ->
-        url = "/api/search?search=#{workLabel}&types=works&lang=fr"
-        getRefreshedEntitiesResult url
+        search 'works', workLabel
         .then (results)->
           firstEntityResult = results[0]
           boostLimit = firstEntityResult.lexicalScore + workEditionsCreation.length
@@ -236,9 +224,7 @@ describe 'search:global', ->
 
     return
 
-getRefreshedEntitiesResult = (url)->
-  # Refresh result entities popularity, then get refreshed entities
-  nonAuthReq 'get', url
-  .delay 500
-  .then -> nonAuthReq 'get', url
+search = (types, search)->
+  search = encodeURIComponent search
+  nonAuthReq 'get', "/api/search?search=#{search}&types=#{types}&lang=fr"
   .get 'results'

@@ -195,3 +195,5 @@ module.exports = config =
     activated: true
 
   itemsCountDebounceTime: 5000
+
+  runJobsInQueue: true
