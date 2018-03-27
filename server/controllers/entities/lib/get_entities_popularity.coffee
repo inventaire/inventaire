@@ -22,7 +22,7 @@ getPopularity = (refresh)-> (uri)->
   fn = getPopularityByUriOrQueue.bind null, uri
 
   cache_.get key, fn, timespan
-  .then defaultToZero
+  .then applyDefaultValue(uri)
 
 buildKey = (uri)-> "popularity:#{uri}"
 
@@ -34,14 +34,21 @@ getPopularityByUriOrQueue = (uri)->
   # for Wikidata entities, which rely on remote SPARQL queries
   # which are limited to 5 concurrent requests
   wdPopularityQueue.push uri, errorLogger
-  return promises_.resolve wdEntityBaseScore
+  # Do not return the wdEntityBaseScore as it would be saved in cache
+  # preventing the popularity to be really calculated once the queue
+  # reaches it as a value will already be available
+  return promises_.resolve null
 
 errorLogger = (err)->
   if err? then _.error err, 'wdPopularityQueue.push err'
 
-# Returning 0 if the cache is currently empty, which is kind of rational:
-# if the cache is empty, the entity isn't that popular
-defaultToZero = (value)-> value or 0
+applyDefaultValue = (uri)-> (value)->
+  if value? then return value
+  prefix = uri.split(':')[0]
+  if prefix is 'wd' then return wdEntityBaseScore
+  # Returning 0 if the cache is currently empty, which is kind of rational:
+  # if the cache is empty, the entity isn't that popular
+  return 0
 
 wdPopularityWorker = (jobId, uri, cb)->
   key = buildKey uri
