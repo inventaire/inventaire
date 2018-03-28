@@ -22,4 +22,7 @@ writeConfigFile = (syncData)->
   .catch _.ErrorRethrow("'#{dbName}' config file error")
 
 syncDataList.forEach writeConfigFile
+# Creating indexes would be done by any POST operation
+# but is required before any bulk operations:
+# in doubt, let's make sure indexes are created
 indexesList.forEach createIndex
