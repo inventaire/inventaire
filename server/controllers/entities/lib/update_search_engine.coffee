@@ -2,7 +2,7 @@
 # to update its data everytime an entity with a type is requested here:
 # Every cache miss triggers an update request, meaning that 'refresh' request
 # are also propagated to the search engine \o/
-# see https://github.com/inventaire/wikidata-subset-search-engine
+# see https://github.com/inventaire/entities-search-engine
 
 # Other advantage of requesting update from here:
 # - we already have the logic to determine the entity's type
