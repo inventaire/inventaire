@@ -197,3 +197,4 @@ module.exports = config =
   itemsCountDebounceTime: 5000
 
   runJobsInQueue: true
+  wdPopularityWorkerDelay: 3000

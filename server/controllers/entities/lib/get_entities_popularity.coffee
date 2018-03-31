@@ -1,10 +1,12 @@
-__ = require('config').universalPath
+CONFIG = require 'config'
+__ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
 cache_ = __.require 'lib', 'cache'
 getPopularityByUri = require './get_popularity_by_uri'
 jobs_ = __.require 'level', 'jobs'
+{ wdPopularityWorkerDelay } = CONFIG
 # If an entity is on Wikidata, consider it to be already somewhat popular
 wdEntityBaseScore = 10
 
@@ -61,8 +63,8 @@ wdPopularityWorker = (jobId, uri, cb)->
     .then (score)->
       _.log score, "wdPopularityWorker #{uri} score"
       cache_.put key, wdEntityBaseScore + score
-  # Spacing requests
-  .delay 5000
+    # Spacing requests
+    .delay wdPopularityWorkerDelay
   .then -> cb()
   .catch (err)->
     _.error err, 'wdPopularityWorker err'
