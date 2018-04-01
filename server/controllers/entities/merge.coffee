@@ -20,12 +20,15 @@ module.exports = (req, res)->
   { from:fromUri, to:toUri } = body
   { _id:reqUserId } = req.user
 
+  unless fromUri? then return error_.bundleMissingBody req, res, 'from'
+  unless toUri then return error_.bundleMissingBody req, res, 'to'
+
   # Not using _.isEntityUri, letting the logic hereafter check specific prefixes
   unless _.isNonEmptyString fromUri
-    return error_.bundleMissingBody req, res, 'from'
+    return error_.bundleInvalid req, res, 'from', fromUri
 
   unless _.isNonEmptyString toUri
-    return error_.bundleMissingBody req, res, 'to'
+    return error_.bundleInvalid req, res, 'to', toUri
 
   [ fromPrefix, fromId ] = fromUri.split ':'
   [ toPrefix, toId ] = toUri.split ':'

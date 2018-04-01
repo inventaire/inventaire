@@ -8,6 +8,7 @@ should = require 'should'
 { ensureEditionExists, createEdition, createWorkWithAuthor, createHuman } = require '../fixtures/entities'
 { createItem } = require '../fixtures/items'
 { createUser, getRefreshedUser } = require '../fixtures/users'
+{ getByUris: getEntitiesByUris } = require '../utils/entities'
 debounceDelay = CONFIG.itemsCountDebounceTime + 100
 
 editionUriPromise = createEdition().get 'uri'
@@ -157,7 +158,7 @@ describe 'items:create', ->
   it 'should deduce the title from a work entity and a lang', (done)->
     uri = 'wd:Q3548806'
     lang = 'fr'
-    authReq 'get', "/api/entities?action=by-uris&uris=#{uri}"
+    getEntitiesByUris uri
     .get 'entities'
     .then (entities)->
       title = entities[uri].labels[lang]

@@ -11,6 +11,7 @@ promises_ = __.require 'lib', 'promises'
 module.exports = patches_ =
   db: db
   byId: db.get
+  byEntityId: (entityId)-> db.viewByKeys 'byEntityId', [ entityId ]
   byEntityIds: (entityIds)-> db.viewByKeys 'byEntityId', entityIds
   byUserId: (userId, limit, offset)->
     promises_.all [
@@ -34,8 +35,10 @@ module.exports = patches_ =
       if rangeEnd < total then data.continue = rangeEnd
       return data
 
-  create: (userId, currentDoc, updatedDoc)->
-    promises_.try -> Patch.create userId, currentDoc, updatedDoc
+  byRedirectUri: db.viewByKey.bind null, 'byRedirectUri'
+
+  create: (params)->
+    promises_.try -> Patch.create params
     .then db.postAndReturn
 
   getSnapshots: (entityId)->
