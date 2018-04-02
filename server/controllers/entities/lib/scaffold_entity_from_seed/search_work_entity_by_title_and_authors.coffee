@@ -29,6 +29,7 @@ module.exports = (seed)->
     lang: lang
     # Having dataseed enable would trigger a hell of a loop
     disableDataseed: true
+  .filter isWork
   # Make a first filter from the results we got
   .filter MatchTitle(title, lang)
   # Fetch the data we miss to check author match
@@ -38,6 +39,8 @@ module.exports = (seed)->
   .then (matches)->
     if matches.length > 1 then _.warn matches, 'possible duplicates'
     return matches[0]
+
+isWork = (entity)-> entity.type is 'work'
 
 AddAuthorsStrings = (lang)-> (result)->
   authorsUris = result.claims['wdt:P50']
