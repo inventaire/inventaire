@@ -1,6 +1,6 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
-isbn_ = __.require('sharedLibs', 'isbn')(_)
+isbn_ = __.require 'sharedLibs', 'isbn'
 
 { parse:isbnParser } = require('isbn2').ISBN
 groups = require './groups'
