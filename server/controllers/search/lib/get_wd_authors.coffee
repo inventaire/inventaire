@@ -17,7 +17,8 @@ queryBodyBuilder = (title)->
           type: 'phrase'
           fields: [ 'labels.*' ]
           boost: 5
-        },{
+        },
+        {
         # operator AND == can match 'Aaron Michael Swartz'
         multi_match:
           query: title

@@ -4,7 +4,7 @@ _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
 qs = require 'querystring'
 
-endpoint = "http://data.bnf.fr/sparql"
+endpoint = 'http://data.bnf.fr/sparql'
 base = "#{endpoint}?default-graph-uri=&format=json&timeout=60000&query="
 
 module.exports = (bnfId)->

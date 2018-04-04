@@ -54,7 +54,7 @@ describe 'tasks:merge-entities', ->
   it 'should update all tasks that have same suspectUri to merged', (done) ->
     createTask()
     .then (task)->
-      createTask task.suspectUri, " wd:Q42"
+      createTask task.suspectUri, 'wd:Q42'
       .then (anotherTask)->
         adminReq 'put', '/api/entities?action=merge',
           from: task.suspectUri

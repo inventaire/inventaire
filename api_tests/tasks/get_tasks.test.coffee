@@ -25,7 +25,7 @@ describe 'tasks:byScore', ->
     return
 
   it 'should returns a limited array of tasks to deduplicate', (done)->
-    authReq 'get', byScore + "&limit=1"
+    authReq 'get', byScore + '&limit=1'
     .then (res)->
       res.tasks.length.should.equal 1
       done()
@@ -34,19 +34,14 @@ describe 'tasks:byScore', ->
     return
 
 describe 'tasks:bySuspectUri', ->
-  it 'should return an Array of tasks', (done)->
+  it 'should return an array of tasks', (done)->
     createTask()
-    .then (task)->
-      createTask task.suspectUri, "wd:Q42"
-      .then (secondTask)->
-        authReq 'get', bySuspectUri + secondTask.suspectUri
-        .then (res)->
-          { tasks } = res
-          suspectUris = _.pluck(tasks, 'suspectUri')
-          _.uniq(suspectUris).length.should.equal 1
-
-
-          done()
+    .then (task)-> authReq 'get', bySuspectUri + task.suspectUri
+    .then (res)->
+      suspectUris = _.pluck res.tasks, 'suspectUri'
+      suspectUris.should.be.an.Array()
+      _.uniq(suspectUris).length.should.equal 1
+      done()
     .catch undesiredErr(done)
 
     return

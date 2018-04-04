@@ -11,22 +11,22 @@ module.exports = (req, res, next)->
   { id, attribute, value } = req.body
   _.log id, 'update task'
 
-  unless _.isNonEmptyString(id)
+  unless _.isNonEmptyString id
     return error_.bundleMissingBody req, res, 'task'
 
-  ids = [ id ]
-
   tasks_.update
-    ids: ids
+    ids: [ id ]
     attribute: attribute
     newValue: value
   .then res.json.bind(res)
-  .tap Track(req, ['task', 'update'])
+  .tap Track(req, [ 'task', 'update' ])
   .catch error_.Handler(req, res)
 
 
-radio.on 'entity:merge', (fromUri, toUri)->
+updateTasksStateOnEntityMerge = (fromUri, toUri)->
   tasks_.bySuspectUri fromUri
   .then (tasks)->
     ids = _.pluck tasks, '_id'
     tasks_.update { ids, attribute: 'state', newValue: 'merged' }
+
+radio.on 'entity:merge', updateTasksStateOnEntityMerge

@@ -4,8 +4,7 @@ error_ = __.require 'lib', 'error/error'
 tasks_ = require './lib/tasks'
 
 module.exports = (req, res)->
-  { query } = req
-  { uri } = query
+  { uri } = req.query
 
   unless _.isEntityUri uri
     return error_.bundleInvalid req, res, 'suspectUri', uri
@@ -13,4 +12,3 @@ module.exports = (req, res)->
   tasks_.bySuspectUri uri
   .then _.Wrap(res, 'tasks')
   .catch error_.Handler(req, res)
-

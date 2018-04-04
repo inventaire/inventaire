@@ -15,4 +15,3 @@ module.exports = (req, res)->
   tasks_.byScore limit
   .then _.Wrap(res, 'tasks')
   .catch error_.Handler(req, res)
-

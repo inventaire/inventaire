@@ -28,7 +28,6 @@ describe 'tasks:has-encyclopedia-occurence', ->
         tasks.length.should.aboveOrEqual 1
         hasEncyclopediaOccurences = _.pluck tasks, 'hasEncyclopediaOccurence'
         _.includes(hasEncyclopediaOccurences, true).should.be.true()
-
         done()
       .catch undesiredErr(done)
 

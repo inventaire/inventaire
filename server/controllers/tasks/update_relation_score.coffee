@@ -7,11 +7,13 @@ tasks_ = require './lib/tasks'
 { updateRelationScore } = require './lib/relation_score'
 
 module.exports = (req, res)->
-
   { id } = req.query
 
-  tasks_.byId(id)
-  .then (task)-> updateRelationScore(task)
+  unless _.isNonEmptyString id
+    return error_.bundleMissingQuery req, res, 'id'
+
+  tasks_.byId id
+  .then updateRelationScore
   .then res.json.bind(res)
-  .tap Track(req, ['task', 'update relation score'])
+  .tap Track(req, [ 'task', 'update relation score' ])
   .catch error_.Handler(req, res)

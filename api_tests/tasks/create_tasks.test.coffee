@@ -10,7 +10,7 @@ createTaskPath = '/api/tasks?action=create'
 
 validTask =
   type: 'deduplicate',
-  suspectUri: "inv:5bb3931277d7358580a8aa265803013b",
+  suspectUri: 'inv:5bb3931277d7358580a8aa265803013b',
   suggestionUri: randomString 10
   lexicalScore: 4
   relationScore: 1
@@ -60,7 +60,7 @@ describe 'tasks:create', ->
     return
 
   it 'should not create a task if another task already have same suspect AND suggestion uris', (done)->
-    validTask.suspectUri = "inv:026a1856df319a2fe3c14c4db602ab1b"
+    validTask.suspectUri = 'inv:026a1856df319a2fe3c14c4db602ab1b'
     authReq 'post', createTaskPath, { tasks: [ validTask ] }
     .then ->
       authReq 'post', createTaskPath, { tasks: [ validTask ] }
@@ -72,7 +72,7 @@ describe 'tasks:create', ->
     return
 
   it 'should have a lexical rounded at 2 decimals', (done)->
-    validTask.suspectUri = "inv:026a1856df319a2fe3c14c4db602ab1a"
+    validTask.suspectUri = 'inv:026a1856df319a2fe3c14c4db602ab1a'
     validTask.lexicalScore = 4.123456789
     authReq 'post', createTaskPath,
       tasks: [ validTask ]

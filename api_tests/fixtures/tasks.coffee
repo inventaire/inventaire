@@ -8,7 +8,7 @@ randomString = __.require 'lib', './utils/random_string'
 
 module.exports = API =
   createTask: (suspectUri, suggestionUri)->
-    suggestionUri = suggestionUri || 'wd:Q535'
+    suggestionUri = suggestionUri or 'wd:Q535'
     getUriPromise suspectUri
     .then (suspectUri)->
       task =
