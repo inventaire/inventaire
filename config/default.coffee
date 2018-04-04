@@ -175,11 +175,11 @@ module.exports = config =
 
   deduplicateRequests: true
 
-  # https://github.com/inventaire/wikidata-subset-search-engine
+  # See https://github.com/inventaire/entities-search-engine
   entitiesSearchEngine:
     updateEnabled: false
     host: 'http://localhost:3213'
-    delay: 30000
+    delay: 10000
     # Set the path to the local repository to allow api_tests to start it
     # if it isn't already online
     localPath: '/path/to/repo'

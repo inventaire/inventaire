@@ -1,7 +1,7 @@
 # A search endpoint dedicated to searching entities by types
 # to fit the needs of autocomplete searches
 # Relies on a local ElasticSearch instance loaded with Inventaire and Wikidata entities
-# See https://github.com/inventaire/wikidata-subset-search-engine
+# See https://github.com/inventaire/entities-search-engine
 # and server/controllers/entities/lib/update_search_engine
 
 CONFIG = require 'config'

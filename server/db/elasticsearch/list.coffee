@@ -6,7 +6,10 @@ _ = __.require 'builders', 'utils'
 syncDataList = [
   { dbBaseName: 'users', type: 'user' }
   { dbBaseName: 'groups', type: 'group' }
-].map (data)->
+  # No 'entities' entry as it is fully handled by the entities search engine
+  # See server/controllers/entities/lib/update_search_engine.coffee
+]
+.map (data)->
   data.dbName = CONFIG.db.name data.dbBaseName
   return data
 
