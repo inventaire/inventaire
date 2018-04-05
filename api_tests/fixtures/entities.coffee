@@ -6,7 +6,7 @@ _ = __.require 'builders', 'utils'
 randomString = __.require 'lib', './utils/random_string'
 isbn_ = __.require 'lib', 'isbn/isbn'
 wdLang = require 'wikidata-lang'
-{ getByUris } = require '../utils/entities'
+{ getByUris, addClaim } = require '../utils/entities'
 
 defaultEditionData = ->
   labels: {}
@@ -88,9 +88,9 @@ module.exports = API =
         editionData.claims['wdt:P629'] = [ workEntity.uri ]
         authReq 'post', '/api/entities?action=create', editionData
 
-addEntityClaim = (createFn, property)-> (subjectEntity)->
-  API[createFn]()
-  .tap (entity)-> API.addClaim subjectEntity.uri, property, entity.uri
+addEntityClaim = (createFnName, property)-> (subjectEntity)->
+  API[createFnName]()
+  .tap (entity)-> addClaim subjectEntity.uri, property, entity.uri
 
 API.addAuthor = addEntityClaim 'createHuman', 'wdt:P50'
 API.addSerie = addEntityClaim 'createSerie', 'wdt:P179'

@@ -8,7 +8,7 @@ should = require 'should'
 { getByUris, merge, updateLabel, updateClaim } = require '../utils/entities'
 { ensureEditionExists } = require '../fixtures/entities'
 randomString = __.require 'lib', './utils/random_string'
-{ createWork, createHuman, addAuthor, addSerie, createEditionFromWorks, createWorkWithAuthor } = require '../fixtures/entities'
+{ createWork, createHuman, createSerie, addAuthor, addSerie, createEditionFromWorks, createWorkWithAuthor } = require '../fixtures/entities'
 
 describe 'items:snapshot', ->
   it 'should be updated when its local edition entity title changes', (done)->
