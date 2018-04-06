@@ -17,4 +17,3 @@ module.exports =
   put: ActionsControllers
     authentified:
       'update': require './update'
-      'update-relation-score': require './update_relation_score'
