@@ -13,7 +13,6 @@ module.exports =
   post: ActionsControllers
     authentified:
       'collect-entities': require './collect_entities'
-      'create': require './create'
 
   put: ActionsControllers
     authentified:
