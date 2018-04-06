@@ -11,9 +11,9 @@ module.exports =
     { type, suspectUri, suggestionUri, state, lexicalScore, relationScore, hasEncyclopediaOccurence } = newTask
     state or= 'requested'
 
-    validations.pass 'types', type
-    validations.pass 'states', state
-    validations.pass 'suspect', suspectUri
+    validations.pass 'type', type
+    validations.pass 'state', state
+    validations.pass 'suspectUri', suspectUri
     validations.pass 'lexicalScore', lexicalScore
     validations.pass 'relationScore', relationScore
     validations.pass 'hasEncyclopediaOccurence', hasEncyclopediaOccurence
@@ -31,12 +31,8 @@ module.exports =
   update: (task, attribute, value)->
     _.types arguments, [ 'object', 'string', 'string|number' ]
 
-    validations.pass 'attributes', attribute
-
-    # Todo : find a way to check update values according to valid attribute,
-    # without the current code smell (conditonal if)
-    if attribute is 'state'
-      validations.pass 'states', value
+    validations.pass 'attribute', attribute
+    validations.pass attribute, value
 
     now = Date.now()
 

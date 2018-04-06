@@ -9,10 +9,10 @@ module.exports =
   pass: pass
   # in attributes/task.coffee, attributes keys should match
   # db keys to verify if attribute is updatable
-  attributes: (attribute)-> attribute in _.keys attributes
-  types: (taskType)-> taskType in attributes.type
-  states: (taskState)-> taskState in attributes.state
-  suspect: entityUri
+  attribute: (attribute)-> attribute in _.keys attributes
+  type: (taskType)-> taskType in attributes.type
+  state: (taskState)-> taskState in attributes.state
+  suspectUri: entityUri
   lexicalScore: _.isNumber
   relationScore: _.isNumber
   hasEncyclopediaOccurence: _.isBoolean

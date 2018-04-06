@@ -2,7 +2,6 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-
 Task = __.require 'models', 'task'
 
 validDoc = ->
@@ -84,7 +83,7 @@ describe 'task model', ->
     it 'should throw if invalid attribute to update', (done)->
       taskDoc = -> Task.update validDoc(), 'blob', 'dismissed'
       try taskDoc()
-      catch err then err.message.should.startWith 'invalid attributes'
+      catch err then err.message.should.startWith 'invalid attribute'
       taskDoc.should.throw()
       done()
 
