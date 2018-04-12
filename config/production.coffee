@@ -24,4 +24,5 @@ module.exports =
   activitySummary:
     disabled: false
   # Let the alt instance run the jobs
-  runJobsInQueue: false
+  runJobsInQueue:
+    'wd:popularity': false
