@@ -8,7 +8,8 @@ module.exports =
   # taking two arguments; a payload and an error logger function
   initQueue: (jobName, worker, maxConcurrency)->
     db = levelBase.sub "job:#{jobName}"
-    # push & run jobs to queue if runJobsInQueue jobKey is true
+
+    # Push & run jobs to queue if this job is enabled in config
     if CONFIG.runJobsInQueue[jobName]
       JobQueueServerAndClient = require 'level-jobs'
       return JobQueueServerAndClient db, worker, maxConcurrency
