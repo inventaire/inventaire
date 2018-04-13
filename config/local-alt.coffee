@@ -3,4 +3,5 @@
 
 module.exports =
   port: 3007
-  runJobsInQueue: true
+  runJobsInQueue:
+    'wd:popularity': true

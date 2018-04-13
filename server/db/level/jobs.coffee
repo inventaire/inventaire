@@ -9,8 +9,8 @@ module.exports =
   initQueue: (jobName, worker, maxConcurrency)->
     db = levelBase.sub "job:#{jobName}"
 
-    # If runJobsInQueue is true, push and run jobs
-    if CONFIG.runJobsInQueue
+    # Push & run jobs to queue if this job is enabled in config
+    if CONFIG.runJobsInQueue[jobName]
       JobQueueServerAndClient = require 'level-jobs'
       return JobQueueServerAndClient db, worker, maxConcurrency
 
