@@ -6,7 +6,7 @@ _ = __.require 'builders', 'utils'
 randomString = __.require 'lib', './utils/random_string'
 isbn_ = __.require 'lib', 'isbn/isbn'
 wdLang = require 'wikidata-lang'
-{ getByUris } = require '../utils/entities'
+{ getByUris, addClaim } = require '../utils/entities'
 
 defaultEditionData = ->
   labels: {}
@@ -37,8 +37,9 @@ module.exports = API =
           'wdt:P50': [ human.uri ]
 
   createEdition: (params = {})->
-    { works, lang } = params
+    { work, works, lang } = params
     lang or= 'en'
+    if work? and not works? then works = [ work ]
     worksPromise = if works? then Promise.resolve(works) else API.createWork()
 
     worksPromise
@@ -55,6 +56,11 @@ module.exports = API =
   createEditionFromWorks: (works...)->
     params = { works }
     API.createEdition params
+
+  createEditionWithWorkAuthorAndSerie: ->
+    API.createWorkWithAuthor()
+    .tap API.addSerie
+    .then (work)-> API.createEdition { work }
 
   createItemFromEntityUri: (uri, data = {})->
     authReq 'post', '/api/items', _.extend({}, data, { entity: uri })
@@ -81,3 +87,10 @@ module.exports = API =
           editionData.claims['wdt:P212'] = [ isbn_.toIsbn13h(id) ]
         editionData.claims['wdt:P629'] = [ workEntity.uri ]
         authReq 'post', '/api/entities?action=create', editionData
+
+addEntityClaim = (createFnName, property)-> (subjectEntity)->
+  API[createFnName]()
+  .tap (entity)-> addClaim subjectEntity.uri, property, entity.uri
+
+API.addAuthor = addEntityClaim 'createHuman', 'wdt:P50'
+API.addSerie = addEntityClaim 'createSerie', 'wdt:P179'
