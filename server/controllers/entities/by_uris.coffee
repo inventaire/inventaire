@@ -23,7 +23,6 @@ module.exports = (req, res, next)->
   # before even knowning the authors URIs: relatives=wdt:P50
   if relatives?
     relatives = relatives.split '|'
-    _.log relatives, 'include relative entities'
     for relative in relatives
       unless relative in whitelistedRelativesProperties
         return error_.bundleInvalid req, res, 'relative', relative

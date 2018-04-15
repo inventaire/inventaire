@@ -29,13 +29,12 @@ module.exports = (relatives, refresh)->
   return addRelatives
 
 getAdditionalEntitiesUris = (entities, relatives)->
-  additionalEntitiesUris = []
+  _(entities)
+  .values()
+  .map getEntityRelativesUris(relatives)
+  .flattenDeep()
+  .uniq()
+  .value()
 
-  for uri, entity of entities
-    for relative in relatives
-      propUris = entity.claims[relative]
-      if propUris?
-        for propUri in propUris
-          unless entities[propUri]? then additionalEntitiesUris.push propUri
-
-  return _.uniq additionalEntitiesUris
+getEntityRelativesUris = (relatives)-> (entity)->
+  _.values _.pick(entity.claims, relatives)
