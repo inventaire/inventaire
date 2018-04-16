@@ -2,9 +2,12 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ authReq, nonAuthReq, undesiredErr } = require '../utils/utils'
+{ Promise } = __.require 'lib', 'promises'
+{ authReq, nonAuthReq, undesiredErr, undesiredRes } = require '../utils/utils'
 { getByUris } = require '../utils/entities'
-{ ensureEditionExists } = require '../fixtures/entities'
+{ ensureEditionExists, createWorkWithAuthor, createEditionWithWorkAuthorAndSerie } = require '../fixtures/entities'
+endpointBase = '/api/entities?action=by-uris&uris='
+workWithAuthorPromise = createWorkWithAuthor()
 
 describe 'entities:get:by-uris', ->
   it 'should accept alternative ISBN 13 syntax', (done)->
@@ -46,62 +49,119 @@ describe 'entities:get:by-uris', ->
     return
 
   describe 'alias URIs', ->
-  it 'should accept twitter URIs', (done)->
-    aliasUri = 'twitter:bouletcorp'
-    getByUris aliasUri
-    .then (res)->
-      { entities, redirects } = res
-      canonicalUri = redirects[aliasUri]
-      canonicalUri.should.equal 'wd:Q1524522'
-      entity = entities[canonicalUri]
-      entity.should.be.an.Object()
-      entity.type.should.equal 'human'
-      entity.uri.should.equal canonicalUri
-      done()
-    .catch undesiredErr(done)
+    it 'should accept twitter URIs', (done)->
+      aliasUri = 'twitter:bouletcorp'
+      getByUris aliasUri
+      .then (res)->
+        { entities, redirects } = res
+        canonicalUri = redirects[aliasUri]
+        canonicalUri.should.equal 'wd:Q1524522'
+        entity = entities[canonicalUri]
+        entity.should.be.an.Object()
+        entity.type.should.equal 'human'
+        entity.uri.should.equal canonicalUri
+        done()
+      .catch undesiredErr(done)
 
-    return
+      return
 
-  it 'should accept alias URIs with inexact case', (done)->
-    aliasUri = 'twitter:Bouletcorp'
-    getByUris aliasUri
-    .then (res)->
-      { entities, redirects } = res
-      canonicalUri = redirects[aliasUri]
-      canonicalUri.should.equal 'wd:Q1524522'
-      done()
-    .catch undesiredErr(done)
+    it 'should accept alias URIs with inexact case', (done)->
+      aliasUri = 'twitter:Bouletcorp'
+      getByUris aliasUri
+      .then (res)->
+        { entities, redirects } = res
+        canonicalUri = redirects[aliasUri]
+        canonicalUri.should.equal 'wd:Q1524522'
+        done()
+      .catch undesiredErr(done)
 
-    return
+      return
 
-  it 'should accept Wikimedia project URIs', (done)->
-    aliasUri = 'frwiki:Lucien_Suel'
-    getByUris aliasUri
-    .then (res)->
-      { entities, redirects } = res
-      canonicalUri = redirects[aliasUri]
-      canonicalUri.should.equal 'wd:Q3265721'
-      entity = entities[canonicalUri]
-      entity.should.be.an.Object()
-      entity.type.should.equal 'human'
-      entity.uri.should.equal canonicalUri
-      done()
-    .catch undesiredErr(done)
+    it 'should accept Wikimedia project URIs', (done)->
+      aliasUri = 'frwiki:Lucien_Suel'
+      getByUris aliasUri
+      .then (res)->
+        { entities, redirects } = res
+        canonicalUri = redirects[aliasUri]
+        canonicalUri.should.equal 'wd:Q3265721'
+        entity = entities[canonicalUri]
+        entity.should.be.an.Object()
+        entity.type.should.equal 'human'
+        entity.uri.should.equal canonicalUri
+        done()
+      .catch undesiredErr(done)
 
-    return
+      return
 
-  it 'should accept Wikimedia project URIs with spaces', (done)->
-    aliasUri = 'eswikiquote:J. K. Rowling'
-    getByUris aliasUri
-    .then (res)->
-      { entities, redirects } = res
-      canonicalUri = redirects[aliasUri]
-      canonicalUri.should.equal 'wd:Q34660'
-      entity = entities[canonicalUri]
-      entity.should.be.an.Object()
-      entity.type.should.equal 'human'
-      entity.uri.should.equal canonicalUri
-      done()
-    .catch undesiredErr(done)
+    it 'should accept Wikimedia project URIs with spaces', (done)->
+      aliasUri = 'eswikiquote:J. K. Rowling'
+      getByUris aliasUri
+      .then (res)->
+        { entities, redirects } = res
+        canonicalUri = redirects[aliasUri]
+        canonicalUri.should.equal 'wd:Q34660'
+        entity = entities[canonicalUri]
+        entity.should.be.an.Object()
+        entity.type.should.equal 'human'
+        entity.uri.should.equal canonicalUri
+        done()
+      .catch undesiredErr(done)
 
-    return
+      return
+
+  describe 'relatives', ->
+    it "should accept a 'relatives' parameter", (done)->
+      workWithAuthorPromise
+      .then (work)->
+        { uri:workUri } = work
+        authorUri = work.claims['wdt:P50'][0]
+        nonAuthReq 'get', "#{endpointBase}#{workUri}&relatives=wdt:P50"
+        .then (res)->
+          res.entities[workUri].should.be.an.Object()
+          res.entities[authorUri].should.be.an.Object()
+          done()
+      .catch undesiredErr(done)
+
+      return
+
+    it "should reject a non-whitelisted 'relatives' parameter", (done)->
+      workWithAuthorPromise
+      .then (work)->
+        { uri:workUri } = work
+        nonAuthReq 'get', "#{endpointBase}#{workUri}&relatives=wdt:P31"
+        .then undesiredRes(done)
+        .catch (err)->
+          err.statusCode.should.equal 400
+          err.body.status_verbose.should.equal 'invalid relative: wdt:P31'
+          done()
+      .catch undesiredErr(done)
+
+      return
+
+    it "should be able to include the works, authors, and series of an edition", (done)->
+      createEditionWithWorkAuthorAndSerie()
+      .get 'uri'
+      .then (editionUri)->
+        relatives = 'relatives=wdt:P50|wdt:P179|wdt:P629'
+        nonAuthReq 'get', "#{endpointBase}#{editionUri}&#{relatives}"
+        .then (res)->
+          edition = res.entities[editionUri]
+          edition.should.be.an.Object()
+
+          workUri = edition.claims['wdt:P629'][0]
+          work = res.entities[workUri]
+          work.should.be.an.Object()
+
+          authorUri = work.claims['wdt:P50'][0]
+          author = res.entities[authorUri]
+          author.should.be.an.Object()
+
+          serieUri = work.claims['wdt:P179'][0]
+          serie = res.entities[serieUri]
+          serie.should.be.an.Object()
+
+          done()
+
+      .catch undesiredErr(done)
+
+      return
