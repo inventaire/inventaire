@@ -6,6 +6,12 @@ getBestLangValue = __.require('sharedLibs', 'get_best_lang_value')(_)
 
 module.exports =
   getDocData: (updatedDoc)->
+    { uri, type } = updatedDoc
+    # Case when a formatted entity doc is passed
+    if uri? and type? then return [ uri, type ]
+
+    # Case when a raw entity doc is passed,
+    # which can only be an inv entity doc
     [ uri ] = getInvEntityCanonicalUri updatedDoc
     type = getEntityType updatedDoc.claims['wdt:P31']
     return [ uri, type ]

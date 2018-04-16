@@ -25,5 +25,5 @@ module.exports = ->
   radio.on 'entity:merge', updateSnapshotOnEntityMerge
 
 updateSnapshotOnEntityMerge = (fromUri, toUri)->
-  # Using the toUri as its the URI the items are now
+  # Using the toUri as its the URI the items are using now
   refreshSnapshot.fromUri toUri
