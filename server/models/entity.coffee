@@ -43,6 +43,9 @@ module.exports = Entity =
 
     preventRedirectionEdit doc, 'setLabel'
 
+    # Remove any superfluous spaces
+    value = value.replace(/\s+/g, ' ').trim()
+
     if doc.labels[lang] is value
       throw error_.new 'already up-to-date', 400, { doc, lang, value }
 

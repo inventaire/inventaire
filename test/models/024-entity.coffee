@@ -190,3 +190,15 @@ describe 'entity model', ->
         try updater()
         catch err then err.message.should.equal 'already up-to-date'
         done()
+
+      it 'should trim labels', (done)->
+        entityDoc = workDoc()
+        # coffeelint: disable=no_unnecessary_double_quotes
+        Entity.setLabel entityDoc, 'fr', """
+
+                  foo
+            bar
+
+        """
+        entityDoc.labels.fr.should.equal 'foo bar'
+        done()
