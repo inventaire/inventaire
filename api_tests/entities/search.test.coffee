@@ -5,6 +5,7 @@ should = require 'should'
 { Promise } = __.require 'lib', 'promises'
 { nonAuthReq, getUser, adminReq, undesiredErr } = require '../utils/utils'
 { createWork, workLabel } = require '../fixtures/entities'
+{ search, merge } = require '../utils/entities'
 
 describe 'entities:search', ->
   it 'should return a recently created entity', (done)->
@@ -13,7 +14,7 @@ describe 'entities:search', ->
     .delay 1000
     .then (creationRes)->
       createdWorkId = creationRes._id
-      nonAuthReq 'get', "/api/entities?action=search&search=#{label}&lang=fr"
+      search label, 'fr'
       .then (searchRes)->
         worksIds = _.pluck searchRes.works, '_id'
         (createdWorkId in worksIds).should.be.true()
@@ -30,11 +31,9 @@ describe 'entities:search', ->
       createWork({ labels: { fr: label } }).get '_id'
     ]
     .spread (userId, fromId, toId)->
-      adminReq 'put', '/api/entities?action=merge',
-        from: "inv:#{fromId}"
-        to: "inv:#{toId}"
+      merge fromId, toId
       .delay 1000
-      .then -> nonAuthReq 'get', "/api/entities?action=search&search=#{label}&lang=fr"
+      .then -> search label, 'fr'
       .then (searchRes)->
         worksIds = _.pluck searchRes.works, '_id'
         (toId in worksIds).should.be.true()

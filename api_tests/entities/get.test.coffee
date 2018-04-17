@@ -6,6 +6,7 @@ should = require 'should'
 { authReq, nonAuthReq, undesiredErr, undesiredRes } = require '../utils/utils'
 { getByUris } = require '../utils/entities'
 { ensureEditionExists, createWorkWithAuthor, createEditionWithWorkAuthorAndSerie } = require '../fixtures/entities'
+{ getByUris } = require '../utils/entities'
 endpointBase = '/api/entities?action=by-uris&uris='
 workWithAuthorPromise = createWorkWithAuthor()
 
@@ -115,7 +116,7 @@ describe 'entities:get:by-uris', ->
       .then (work)->
         { uri:workUri } = work
         authorUri = work.claims['wdt:P50'][0]
-        nonAuthReq 'get', "#{endpointBase}#{workUri}&relatives=wdt:P50"
+        getByUris workUri, 'wdt:P50'
         .then (res)->
           res.entities[workUri].should.be.an.Object()
           res.entities[authorUri].should.be.an.Object()
@@ -128,7 +129,7 @@ describe 'entities:get:by-uris', ->
       workWithAuthorPromise
       .then (work)->
         { uri:workUri } = work
-        nonAuthReq 'get', "#{endpointBase}#{workUri}&relatives=wdt:P31"
+        getByUris workUri, 'wdt:P31'
         .then undesiredRes(done)
         .catch (err)->
           err.statusCode.should.equal 400
@@ -138,12 +139,11 @@ describe 'entities:get:by-uris', ->
 
       return
 
-    it "should be able to include the works, authors, and series of an edition", (done)->
+    it 'should be able to include the works, authors, and series of an edition', (done)->
       createEditionWithWorkAuthorAndSerie()
       .get 'uri'
       .then (editionUri)->
-        relatives = 'relatives=wdt:P50|wdt:P179|wdt:P629'
-        nonAuthReq 'get', "#{endpointBase}#{editionUri}&#{relatives}"
+        getByUris editionUri, 'wdt:P50|wdt:P179|wdt:P629'
         .then (res)->
           edition = res.entities[editionUri]
           edition.should.be.an.Object()
