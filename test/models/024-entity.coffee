@@ -174,3 +174,9 @@ describe 'entity model', ->
         updater = -> Entity.setLabel entityDoc, null, 'hello'
         updater.should.throw()
         done()
+
+      it 'should throw if an invalid lang is passed', (done)->
+        entityDoc = workDoc()
+        updater = -> Entity.setLabel entityDoc, 'zz', 'hello'
+        updater.should.throw()
+        done()

@@ -24,6 +24,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
+validLangs = Object.keys require('wikidata-lang').byCode
 
 { properties, whitelist } = __.require 'controllers', 'entities/lib/properties'
 inferences = __.require 'controllers', 'entities/lib/inferences'
@@ -36,7 +37,8 @@ module.exports = Entity =
 
   setLabel: (doc, lang, value)->
     _.types arguments, [ 'object', 'string', 'string' ]
-    unless _.isLang lang then throw error_.new 'invalid lang', 400, arguments
+    unless lang in validLangs
+      throw error_.new 'invalid lang', 400, arguments
     preventRedirectionEdit doc, 'setLabel'
     doc.labels[lang] = value
     return doc
