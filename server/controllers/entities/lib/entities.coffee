@@ -97,6 +97,8 @@ module.exports = entities_ =
   putUpdate: (params)->
     { userId, currentDoc, updatedDoc } = params
     _.types [ userId, currentDoc, updatedDoc ], ['string', 'object', 'object']
+    # It is to the consumers responsability to check if there is an update:
+    # empty patches at this stage will throw 500 errors
     db.putAndReturn updatedDoc
     .tap ->
       triggerUpdateEvent currentDoc, updatedDoc

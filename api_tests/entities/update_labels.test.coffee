@@ -32,3 +32,18 @@ describe 'entities:update-labels', ->
     .catch undesiredErr(done)
 
     return
+
+  it 'should reject an up-to-date value', (done)->
+    humanPromise
+    .then (human)->
+      updateLabel human._id, 'en', 'foo'
+      .catch undesiredErr(done)
+      .then -> updateLabel human._id, 'en', 'foo'
+      .then undesiredRes(done)
+      .catch (err)->
+        err.statusCode.should.equal 400
+        err.body.status_verbose.should.startWith 'already up-to-date'
+        done()
+    .catch undesiredErr(done)
+
+    return

@@ -37,9 +37,15 @@ module.exports = Entity =
 
   setLabel: (doc, lang, value)->
     _.types arguments, [ 'object', 'string', 'string' ]
+
     unless lang in validLangs
-      throw error_.new 'invalid lang', 400, arguments
+      throw error_.new 'invalid lang', 400, { doc, lang, value }
+
     preventRedirectionEdit doc, 'setLabel'
+
+    if doc.labels[lang] is value
+      throw error_.new 'already up-to-date', 400, { doc, lang, value }
+
     doc.labels[lang] = value
     return doc
 

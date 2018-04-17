@@ -180,3 +180,13 @@ describe 'entity model', ->
         updater = -> Entity.setLabel entityDoc, 'zz', 'hello'
         updater.should.throw()
         done()
+
+      it 'should throw if the current and the updated label are equal', (done)->
+        entityDoc = workDoc()
+        updater = ->
+          Entity.setLabel entityDoc, 'en', 'foo'
+          Entity.setLabel entityDoc, 'en', 'foo'
+        updater.should.throw()
+        try updater()
+        catch err then err.message.should.equal 'already up-to-date'
+        done()
