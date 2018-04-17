@@ -9,9 +9,7 @@ module.exports = (req, res)->
 
   unless uri? then return error_.bundleMissingBody req, res, 'uri'
   unless lang? then return error_.bundleMissingBody req, res, 'lang'
-  unless value?.trim() then return error_.bundleMissingBody req, res, 'value'
-
-  value = value.trim()
+  unless value? then return error_.bundleMissingBody req, res, 'value'
 
   [ prefix, id ] = uri.split ':'
   updater = updaters[prefix]
@@ -20,6 +18,8 @@ module.exports = (req, res)->
 
   unless _.isLang lang
     return error_.bundleInvalid req, res, 'lang', lang
+
+  value = if _.isString(value) then value.trim() else value
 
   unless _.isNonEmptyString value
     return error_.bundleInvalid req, res, 'value', value
