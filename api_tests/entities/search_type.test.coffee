@@ -3,7 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
-{ nonAuthReq, getUser, adminReq, undesiredErr } = require '../utils/utils'
+{ nonAuthReq, undesiredErr } = require '../utils/utils'
 { createWork, workLabel } = require '../fixtures/entities'
 endpoint = '/api/entities?action=search-type'
 
