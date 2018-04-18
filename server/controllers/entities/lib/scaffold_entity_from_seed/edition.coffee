@@ -38,7 +38,23 @@ module.exports = (seed)->
 
   _.extend seed, isbnData
 
-  createEditionEntity seed, scaffoldWorkEntityFromSeed(seed)
+  { isbn13 } = seed
+
+  unless cache[isbn13]?
+    promise = createEditionEntity seed, scaffoldWorkEntityFromSeed(seed)
+    cache[isbn13] = promise
+    promise.finally clearCache(isbn13)
+
+  return cache[isbn13]
+
+# Use a cache to prevent creating several entities with the same ISBN
+# at about the same time
+cache = {}
+
+clearCache = (isbn13)-> ()->
+  remove = -> delete cache[isbn13]
+  # Let a large delay to be sure CouchDB view had the time to update
+  setTimeout remove, 10000
 
 createEditionEntity = (seed, workPromise)->
   # The title is set hereafter as monolingual title (wdt:P1476)
