@@ -15,7 +15,6 @@ module.exports = API =
         suspectUri: suspectUri
         suggestionUri: suggestionUri
         type: 'deduplicate'
-        state: 'requested'
         lexicalScore: 4
         relationScore: 1
         hasEncyclopediaOccurence: false
@@ -36,7 +35,6 @@ module.exports = API =
         suspectUri: suspectUri
         suggestionUri: suggestionUri
         type: 'deduplicate'
-        state: 'requested'
         lexicalScore: 4
         relationScore: 1
         hasEncyclopediaOccurence: false

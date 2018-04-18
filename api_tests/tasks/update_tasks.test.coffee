@@ -9,7 +9,6 @@ describe 'tasks:update', ->
   it 'should update a task', (done)->
     createTask()
     .then (task)->
-      task.state.should.equal 'requested'
       authReq 'put', '/api/tasks?action=update',
         id: task._id,
         attribute: 'state',
@@ -24,7 +23,6 @@ describe 'tasks:update', ->
   it 'should throw if invalid task id', (done)->
     createTask()
     .then (task)->
-      task.state.should.equal 'requested'
       authReq 'put', '/api/tasks?action=update',
         id: ''
       .catch (err)->

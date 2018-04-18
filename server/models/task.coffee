@@ -8,11 +8,9 @@ module.exports =
   create: (newTask)->
     _.types arguments, [ 'object' ]
 
-    { type, suspectUri, suggestionUri, state, lexicalScore, relationScore, hasEncyclopediaOccurence } = newTask
-    state or= 'requested'
+    { type, suspectUri, suggestionUri, lexicalScore, relationScore, hasEncyclopediaOccurence } = newTask
 
     validations.pass 'type', type
-    validations.pass 'state', state
     validations.pass 'suspectUri', suspectUri
     validations.pass 'lexicalScore', lexicalScore
     validations.pass 'relationScore', relationScore
@@ -22,7 +20,6 @@ module.exports =
       type: type
       suspectUri: suspectUri
       suggestionUri: suggestionUri
-      state: state
       lexicalScore: _.round lexicalScore, 2
       relationScore: _.round relationScore, 2
       hasEncyclopediaOccurence: hasEncyclopediaOccurence
