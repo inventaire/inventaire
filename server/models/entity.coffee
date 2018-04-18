@@ -43,8 +43,7 @@ module.exports = Entity =
 
     preventRedirectionEdit doc, 'setLabel'
 
-    # Remove any superfluous spaces
-    value = value.replace(/\s+/g, ' ').trim()
+    value = _.superTrim value
 
     if doc.labels[lang] is value
       throw error_.new 'already up-to-date', 400, { doc, lang, value }
@@ -91,6 +90,9 @@ module.exports = Entity =
     preventRedirectionEdit doc, 'updateClaim'
     unless oldVal? or newVal?
       throw error_.new 'missing old or new value', 400, arguments
+
+    if oldVal? then oldVal = _.superTrim oldVal
+    if newVal? then newVal = _.superTrim newVal
 
     propArray = _.get doc, "claims.#{property}"
     _.info "#{property} propArray: #{propArray} /oldVal: #{oldVal} /newVal: #{newVal}"

@@ -44,6 +44,9 @@ module.exports = base =
 
   isArrayLike: (obj)-> _.isArray(obj) or _.isArguments(obj)
 
+  # Remove any superfluous spaces
+  superTrim: (str)-> str.replace(/\s+/g, ' ').trim()
+
   flattenIndexes: (indexesArray)->
     indexesArray.unshift {}
     return _.extend.apply _, indexesArray

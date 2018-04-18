@@ -21,6 +21,15 @@ editionDoc = ->
   doc.claims['wdt:P629'] = ['wd:Q53592']
   return doc
 
+# coffeelint: disable=no_unnecessary_double_quotes
+nonTrimedString = """
+
+                  foo
+            bar
+
+        """
+
+
 describe 'entity model', ->
   describe 'create', ->
     it 'should return an object with type entity and a claims object', (done)->
@@ -109,6 +118,11 @@ describe 'entity model', ->
         should(entityDoc.claims['wdt:P407']).not.be.ok()
         done()
 
+    it 'should trim values', (done)->
+      updatedDoc = Entity.updateClaim editionDoc(), 'wd:P1476', null, nonTrimedString
+      updatedDoc.claims['wd:P1476'][0].should.equal 'foo bar'
+      done()
+
     describe 'update existing claim', ->
       it 'should return with the claim value updated', (done)->
         entityDoc = workDoc()
@@ -193,12 +207,6 @@ describe 'entity model', ->
 
       it 'should trim labels', (done)->
         entityDoc = workDoc()
-        # coffeelint: disable=no_unnecessary_double_quotes
-        Entity.setLabel entityDoc, 'fr', """
-
-                  foo
-            bar
-
-        """
+        Entity.setLabel entityDoc, 'fr', nonTrimedString
         entityDoc.labels.fr.should.equal 'foo bar'
         done()
