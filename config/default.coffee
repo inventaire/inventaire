@@ -198,4 +198,5 @@ module.exports = config =
 
   runJobsInQueue:
     'wd:popularity': true
+
   wdPopularityWorkerDelay: 3000

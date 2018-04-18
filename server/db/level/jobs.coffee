@@ -9,7 +9,9 @@ module.exports =
   initQueue: (jobName, worker, maxConcurrency)->
     db = levelBase.sub "job:#{jobName}"
 
-    _.type CONFIG.runJobsInQueue[jobName], 'boolean'
+    if typeof CONFIG.runJobsInQueue[jobName] isnt 'boolean'
+      throw new Error "unknown job: #{jobName}"
+
     # Push & run jobs to queue if this job is enabled in config
     if CONFIG.runJobsInQueue[jobName]
       JobQueueServerAndClient = require 'level-jobs'
