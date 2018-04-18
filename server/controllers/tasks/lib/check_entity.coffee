@@ -8,6 +8,8 @@ prefixify = __.require 'lib', 'wikidata/prefixify'
 module.exports = (entity)->
   name = _.values(entity.labels)[0]
 
+  unless _.isNonEmptyString(name) then return
+
   search name, 'humans'
   .then (searchResult)->
     searchResult

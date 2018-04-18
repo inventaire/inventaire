@@ -1,37 +1,46 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
+promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
 tasks_ = __.require 'controllers', 'tasks/lib/tasks'
 entities_ = __.require 'controllers', 'entities/lib/entities'
+getEntityByUri = __.require 'controllers', 'entities/lib/get_entity_by_uri'
 checkEntities = __.require 'controllers', 'tasks/lib/check_entities'
+jobs_ = __.require 'level', 'jobs'
 { mapDoc } = __.require 'lib', 'couch'
 
 module.exports = (req, res)->
-  offset = 0
-  checkEntitiesRecursively offset
+  addEntitiesToQueue()
   .then _.Ok(res)
   .catch error_.Handler(req, res)
 
-checkEntitiesRecursively = (offset)->
-  getEntitiesBatch offset
-  .then (entities)->
-    if entities.length is 0 then return
+addEntitiesToQueue = ->
+  getInvHumanUris()
+  .then (invHumanUris)->
+    invTasksEntitiesQueue.pushBatch invHumanUris, errorLogger
 
-    checkEntities entities
-    .then tasks_.keepNewTasks
-    # TODO: bulk create
-    .map tasks_.create
-    .delay 1000
-    .then ->
-      offset += 100
-      checkEntitiesRecursively offset
+    return promises_.resolve null
 
-humanClaim = [ 'wdt:P31', 'wd:Q5' ]
+errorLogger = (err)->
+  if err? then _.error err, 'invTasksEntitiesQueue.push err'
 
-getEntitiesBatch = (offset)->
+getInvHumanUris = ->
   entities_.db.view 'entities', 'byClaim',
-    key: humanClaim
-    include_docs: true
-    skip: offset
-    limit: 100
-  .then mapDoc
+    key: [ 'wdt:P31', 'wd:Q5' ]
+    limit: 10000
+  .then (res)-> _.pluck(res.rows, 'id').map prefixify
+
+deduplicateWorker = (jobId, uri, cb)->
+  getEntityByUri uri
+  .then (entity)-> checkEntities [entity]
+  .then tasks_.keepNewTasks
+  .map tasks_.create
+  # .delay 5000
+  .then -> cb()
+  .catch (err)->
+    _.error err, 'deduplicateWorker err'
+    cb err
+
+prefixify = (id)-> "inv:#{id}"
+
+invTasksEntitiesQueue = jobs_.initQueue 'inv:deduplicate', deduplicateWorker, 1

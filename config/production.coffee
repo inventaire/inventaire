@@ -26,3 +26,4 @@ module.exports =
   # Let the alt instance run the jobs
   runJobsInQueue:
     'wd:popularity': false
+    'inv:deduplicate': false

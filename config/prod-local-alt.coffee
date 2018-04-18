@@ -20,3 +20,4 @@ module.exports =
     activated: true
   runJobsInQueue:
     'wd:popularity': true
+    'inv:deduplicate': true
