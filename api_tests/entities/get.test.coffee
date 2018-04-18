@@ -49,6 +49,19 @@ describe 'entities:get:by-uris', ->
 
     return
 
+  it 'should return uris not found', (done)->
+    fakeUri = 'inv:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+    workWithAuthorPromise
+    .then (work)->
+      getByUris [ fakeUri, work.uri ]
+      .then (res)->
+        res.entities[work.uri].should.be.an.Object()
+        res.notFound.should.deepEqual [ fakeUri ]
+        done()
+    .catch undesiredErr(done)
+
+    return
+
   describe 'alias URIs', ->
     it 'should accept twitter URIs', (done)->
       aliasUri = 'twitter:bouletcorp'

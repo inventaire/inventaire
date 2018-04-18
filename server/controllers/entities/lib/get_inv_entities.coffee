@@ -1,4 +1,6 @@
-__ = require('config').universalPath
+CONFIG = require 'config'
+__ = CONFIG.universalPath
+_ = __.require 'builders', 'utils'
 entities_ = require './entities'
 getEntityType = require './get_entity_type'
 getInvEntityCanonicalUri = require './get_inv_entity_canonical_uri'
@@ -10,7 +12,10 @@ module.exports = (ids, refresh)->
   # as inv entities with an associated Wikidata entity use the Wikidata uri
   entities_.byIds ids
   .map Format(refresh)
-  .then (entities)-> { entities }
+  .then (entities)->
+    found = _.pluck entities, '_id'
+    notFound = _.difference(ids, found).map prefixify
+    return { entities, notFound }
 
 Format = (refresh)-> (entity)->
   if entity.redirect? then return getRedirectedEntity entity, refresh
@@ -32,4 +37,6 @@ getRedirectedEntity = (entity, refresh)->
 
   # Passing the refresh parameter as the entity data source might be Wikidata
   getEntityByUri entity.redirect, refresh
-  .then addRedirection.bind(null, "inv:#{entity._id}")
+  .then addRedirection.bind(null, prefixify(entity._id))
+
+prefixify = (id)-> "inv:#{id}"
