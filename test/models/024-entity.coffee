@@ -41,9 +41,9 @@ describe 'entity model', ->
       done()
 
   describe 'create claim', ->
-    it 'should not throw if not passed an old value', (done)->
-      updater = -> Entity.createClaim workDoc(), 'wdt:P50', 'wd:Q42'
-      updater.should.not.throw()
+    it 'should add a claim value', (done)->
+      doc = Entity.createClaim workDoc(), 'wdt:P50', 'wd:Q42'
+      _.last(doc.claims['wdt:P50']).should.equal 'wd:Q42'
       done()
 
     it 'should return a doc with the new value for an existing property', (done)->
