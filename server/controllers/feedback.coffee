@@ -7,7 +7,7 @@ module.exports =
   post: (req, res, next)->
     { user } = req
     { subject, message, unknownUser } = req.body
-    _.log [ subject, message, unknownUser ], 'feedback'
+    _.log { subject, message, unknownUser }, 'feedback'
 
     unless subject? or message?
       return error_.bundle req, res, 'message is empty', 400
