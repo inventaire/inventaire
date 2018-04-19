@@ -7,24 +7,16 @@ checkEntity = require './check_entity'
 { calculateRelationScore } = require './relation_score'
 hasWorksLabelsOccurrence = __.require 'controllers', 'entities/lib/has_works_labels_occurrence'
 
-module.exports = (entities)->
-  newTasks = []
+module.exports = (entity)->
+  unless entity? then return newTasks
 
-  checkNextEntity = ->
-    entity = entities.pop()
-    unless entity? then return newTasks
-
-    Promise.all [
-      checkEntity entity
-      getAuthorWorksData entity._id
-    ]
-    .spread (suggestionEntities, authorWorksData)->
-      relationScore = calculateRelationScore(suggestionEntities)
-      Promise.all suggestionEntities.map(createTaskDocs(authorWorksData, relationScore))
-      .then (taskDocs)-> newTasks.push taskDocs...
-    .then checkNextEntity
-
-  return checkNextEntity()
+  Promise.all [
+    checkEntity entity
+    getAuthorWorksData entity._id
+  ]
+  .spread (suggestionEntities, authorWorksData)->
+    relationScore = calculateRelationScore suggestionEntities
+    Promise.all suggestionEntities.map(createTaskDocs(authorWorksData, relationScore))
 
 createTaskDocs = (authorWorksData, relationScore)-> (suggestionEntity)->
   hasWorksLabelsOccurrence(suggestionEntity.uri, authorWorksData.labels, authorWorksData.langs)

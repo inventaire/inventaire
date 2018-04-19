@@ -32,7 +32,7 @@ getInvHumanUris = ->
 
 deduplicateWorker = (jobId, uri, cb)->
   getEntityByUri uri
-  .then (entity)-> createTaskDocs [entity]
+  .then (entity)-> createTaskDocs entity
   .then tasks_.keepNewTasks
   .map tasks_.create
   # .delay 5000
