@@ -5,7 +5,7 @@ error_ = __.require 'lib', 'error/error'
 tasks_ = __.require 'controllers', 'tasks/lib/tasks'
 entities_ = __.require 'controllers', 'entities/lib/entities'
 getEntityByUri = __.require 'controllers', 'entities/lib/get_entity_by_uri'
-checkEntities = __.require 'controllers', 'tasks/lib/check_entities'
+createTaskDocs = __.require 'controllers', 'tasks/lib/create_task_docs'
 jobs_ = __.require 'level', 'jobs'
 { mapDoc } = __.require 'lib', 'couch'
 
@@ -32,7 +32,7 @@ getInvHumanUris = ->
 
 deduplicateWorker = (jobId, uri, cb)->
   getEntityByUri uri
-  .then (entity)-> checkEntities [entity]
+  .then (entity)-> createTaskDocs [entity]
   .then tasks_.keepNewTasks
   .map tasks_.create
   # .delay 5000
