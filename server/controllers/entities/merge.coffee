@@ -44,17 +44,17 @@ module.exports = (req, res)->
   # Let getEntitiesByUris test for the whole URI validity
   # Get data from concerned entities
   getEntitiesByUris [ fromUri, toUri ], true
-  .get 'entities'
   .then Merge(reqUserId, toPrefix, fromUri, toUri)
   .then _.Ok(res)
   .then -> radio.emit 'entity:merge', fromUri, toUri
   .catch error_.Handler(req, res)
 
-Merge = (reqUserId, toPrefix, fromUri, toUri)-> (entitiesByUri)->
-  fromEntity = entitiesByUri[fromUri]
+Merge = (reqUserId, toPrefix, fromUri, toUri)-> (res)->
+  { entities, redirects } = res
+  fromEntity = entities[fromUri] or entities[redirects[fromUri]]
   unless fromEntity? then throw notFound 'from', fromUri
 
-  toEntity = entitiesByUri[toUri]
+  toEntity = entities[toUri] or entities[redirects[toUri]]
   unless toEntity? then throw notFound 'to', toUri
 
   unless fromEntity.type is toEntity.type
@@ -63,6 +63,15 @@ Merge = (reqUserId, toPrefix, fromUri, toUri)-> (entitiesByUri)->
     unless fromEntity.type is 'human' and not toEntity.type?
       message = "type don't match: #{fromEntity.type} / #{toEntity.type}"
       throw error_.new message, 400, fromUri, toUri
+
+  # Merging editions with ISBNs should only happen in the rare case
+  # where the uniqueness check failed because two entities with the same ISBN
+  # were created at about the same time. Other cases should be rejected.
+  if fromEntity.type is 'edition'
+    fromEntityIsbn = fromEntity.claims['wdt:P212']?[0]
+    toEntityIsbn = toEntity.claims['wdt:P212']?[0]
+    if fromEntityIsbn? and toEntityIsbn? and fromEntityIsbn isnt toEntityIsbn
+      throw error_.new "can't merge editions with different ISBNs", 400, fromUri, toUri
 
   [ fromPrefix, fromId ] = fromUri.split ':'
   [ toPrefix, toId ] = toUri.split ':'
@@ -74,4 +83,4 @@ Merge = (reqUserId, toPrefix, fromUri, toUri)-> (entitiesByUri)->
     return turnIntoRedirection reqUserId, fromId, toUri
 
 notFound = (label, context)->
-  error_.new "'#{label}' entity not found (could it be not it's canonical uri?)", 400, context
+  error_.new "'#{label}' entity not found", 400, context
