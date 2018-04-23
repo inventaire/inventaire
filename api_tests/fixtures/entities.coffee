@@ -3,27 +3,34 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 { authReq } = require '../utils/utils'
 { Promise } = __.require 'lib', 'promises'
-randomString = __.require 'lib', './utils/random_string'
 isbn_ = __.require 'lib', 'isbn/isbn'
 wdLang = require 'wikidata-lang'
 { getByUris, addClaim } = require '../utils/entities'
+faker = require 'faker'
 
 defaultEditionData = ->
   labels: {}
   claims:
     'wdt:P31': [ 'wd:Q3331189' ]
-    'wdt:P1476': [ randomString(4) ]
+    'wdt:P1476': [ workLabel() ]
 
 createEntity = (P31)-> (params = {})->
-  labels = params.labels or { en: randomString(6) }
+  defaultLabel = if P31 is 'wd:Q5' then humanName() else workLabel()
+  labels = params.labels or { en: defaultLabel }
   authReq 'post', '/api/entities?action=create',
     labels: labels
     claims: { 'wdt:P31': [ P31 ] }
+
+workLabel = -> faker.random.words()
+humanName = -> faker.fake '{{name.firstName}} {{name.lastName}} human'
 
 module.exports = API =
   createHuman: createEntity 'wd:Q5'
   createWork: createEntity 'wd:Q571'
   createSerie: createEntity 'wd:Q277759'
+  editionLabel: workLabel + ' edition'
+  workLabel: workLabel + ' work'
+  humanName: humanName
 
   createWorkWithAuthor: (human)->
     humanPromise = if human then Promise.resolve(human) else API.createHuman()
@@ -31,7 +38,7 @@ module.exports = API =
     humanPromise
     .then (human)->
       authReq 'post', '/api/entities?action=create',
-        labels: { en: randomString(6) }
+        labels: { en: humanName() }
         claims:
           'wdt:P31': [ 'wd:Q571' ]
           'wdt:P50': [ human.uri ]
@@ -71,11 +78,11 @@ module.exports = API =
     .then (entities)->
       if entities[uri]? then return entities[uri]
       workData or= {
-        labels: { fr: 'bla' }
+        labels: { fr: workLabel() }
         claims: { 'wdt:P31': [ 'wd:Q571' ] }
       }
       authReq 'post', '/api/entities?action=create',
-        labels: { de: 'Mr moin moin' }
+        labels: { de: humanName() }
         claims: { 'wdt:P31': [ 'wd:Q5' ] }
       .then (authorEntity)->
         workData.claims['wdt:P50'] = [ authorEntity.uri ]

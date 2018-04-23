@@ -4,7 +4,6 @@ _ = __.require 'builders', 'utils'
 { Promise } = __.require 'lib', 'promises'
 { createUser } = require './users'
 { createRandomizedItems } = require './items'
-randomString = __.require 'lib', './utils/random_string'
 
 populatePromise = null
 usersCount = 8

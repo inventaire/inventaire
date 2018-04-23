@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 { authReq, authReqB, getUserB } = require '../utils/utils'
-randomString = __.require 'lib', './utils/random_string'
+faker = require 'faker'
 endpointBase = '/api/groups'
 endpointAction = endpointBase + '?action'
 
@@ -15,8 +15,10 @@ createGroup = (name)-> authReq 'post', "#{endpointBase}?action=create", { name }
 membershipAction = (reqFn, action, groupId, userId)->
   reqFn 'put', endpointBase, { action, group: groupId, user: userId }
 
+groupName = -> faker.lorem.word() + ' group'
+
 # Resolves to a group with userA as admin and userB as member
-groupPromise = createGroup 'my group' + randomString(5)
+groupPromise = createGroup groupName()
   .then (group)->
     membershipAction authReqB, 'request', group._id
     .then -> getUserB()
@@ -25,4 +27,4 @@ groupPromise = createGroup 'my group' + randomString(5)
     # Return the group doc
     .then -> getGroup group._id
 
-module.exports = { endpointBase, endpointAction, groupPromise, getGroup }
+module.exports = { endpointBase, endpointAction, groupPromise, getGroup, groupName }

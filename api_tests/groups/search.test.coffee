@@ -2,13 +2,14 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
+faker = require 'faker'
 { authReq, nonAuthReq, undesiredErr } = require '../utils/utils'
-randomString = __.require 'lib', './utils/random_string'
+{ groupName } = require '../fixtures/groups'
 slugify = __.require 'controllers', 'groups/lib/slugify'
 
 describe 'groups:search', ->
   it 'should find a group by its name', (done)->
-    name = 'yo' + randomString(5)
+    name = groupName()
     authReq 'post', '/api/groups?action=create', { name }
     .delay 1000
     .then (creationRes)->
@@ -22,8 +23,8 @@ describe 'groups:search', ->
     return
 
   it 'should find a group by its description', (done)->
-    name = 'yo' + randomString(5)
-    description = 'hello' + randomString(10)
+    name = groupName()
+    description = faker.lorem.paragraph()
     authReq 'post', '/api/groups?action=create', { name, description }
     .delay 1000
     .then (creationRes)->
@@ -37,7 +38,7 @@ describe 'groups:search', ->
     return
 
   it 'should not find a group when not searchable', (done)->
-    name = 'yo' + randomString(5)
+    name = groupName()
     authReq 'post', '/api/groups?action=create', { name, searchable: false }
     .delay 1000
     .then (creationRes)->

@@ -3,7 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { nonAuthReq, authReq, undesiredErr, undesiredRes } = require '../../utils/utils'
-{ createWork, createSerie } = require '../../fixtures/entities'
+{ createWork, createSerie, workLabel, editionLabel } = require '../../fixtures/entities'
 workEntityPromise = createWork()
 
 describe 'entities:editions:create', ->
@@ -39,11 +39,11 @@ describe 'entities:editions:create', ->
     workEntityPromise
     .then (workEntity)->
       authReq 'post', '/api/entities?action=create',
-        labels: { fr: 'bla' }
+        labels: { fr: workLabel() }
         claims:
           'wdt:P31': [ 'wd:Q3331189' ]
           'wdt:P629': [ workEntity.uri ]
-          'wdt:P1476': [ 'bla' ]
+          'wdt:P1476': [ editionLabel() ]
     .catch (err)->
       err.statusCode.should.equal 400
       err.body.status_verbose.should.equal "editions can't have labels"
@@ -54,12 +54,7 @@ describe 'entities:editions:create', ->
 
   it 'should accept an edition without a labels object', (done)->
     workEntityPromise
-    .then (workEntity)->
-      authReq 'post', '/api/entities?action=create',
-        claims:
-          'wdt:P31': [ 'wd:Q3331189' ]
-          'wdt:P629': [ workEntity.uri ]
-          'wdt:P1476': [ 'bla' ]
+    .then (workEntity)-> createEdition workEntity.uri
     .then -> done()
     .catch undesiredErr(done)
 
@@ -67,12 +62,7 @@ describe 'entities:editions:create', ->
 
   it 'should not be able to create an edition entity with a non-work entity', (done)->
     createSerie()
-    .then (serieEntity)->
-      authReq 'post', '/api/entities?action=create',
-        claims:
-          'wdt:P31': [ 'wd:Q3331189' ]
-          'wdt:P629': [ serieEntity.uri ]
-          'wdt:P1476': [ 'bla' ]
+    .then (serieEntity)-> createEdition serieEntity.uri
     .then undesiredRes(done)
     .catch (err)->
       err.statusCode.should.equal 400
@@ -81,3 +71,10 @@ describe 'entities:editions:create', ->
     .catch undesiredErr(done)
 
     return
+
+createEdition = (uri) ->
+  authReq 'post', '/api/entities?action=create',
+    claims:
+      'wdt:P31': [ 'wd:Q3331189' ]
+      'wdt:P629': [ uri ]
+      'wdt:P1476': [ editionLabel() ]

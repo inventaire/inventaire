@@ -3,12 +3,12 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { authReq, undesiredErr } = require '../utils/utils'
-randomString = __.require 'lib', './utils/random_string'
+{ groupName } = require '../fixtures/groups'
 slugify = __.require 'controllers', 'groups/lib/slugify'
 
 describe 'groups:create', ->
   it 'should create a group', (done)->
-    name = 'my group' + randomString(5)
+    name = groupName()
     authReq 'post', '/api/groups?action=create', { name }
     .then (res)->
       res.name.should.equal name

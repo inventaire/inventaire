@@ -3,12 +3,12 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { nonAuthReq, authReq, undesiredRes, undesiredErr } = require '../utils/utils'
-{ ensureEditionExists } = require '../fixtures/entities'
+{ ensureEditionExists, humanName, workLabel, editionLabel } = require '../fixtures/entities'
 
 describe 'entities:create', ->
   it 'should not be able to create an entity without a wdt:P31 value', (done)->
     authReq 'post', '/api/entities?action=create',
-      labels: { de: 'moin moin' }
+      labels: { de: humanName() }
       claims: { 'wdt:P50': [ 'wd:Q535' ] }
     .catch (err)->
       err.body.status_verbose.should.equal "wdt:P31 array can't be empty"
@@ -30,7 +30,7 @@ describe 'entities:create', ->
 
   it 'should not be able to create an entity without a known valid wdt:P31 value', (done)->
     authReq 'post', '/api/entities?action=create',
-      labels: { de: 'moin moin' }
+      labels: { de: humanName() }
       claims: { 'wdt:P31': [ 'wd:Q535' ] }
     .catch (err)->
       err.body.status_verbose.should.equal "wdt:P31 value isn't a known valid value"
@@ -41,7 +41,7 @@ describe 'entities:create', ->
 
   it 'should create an entity', (done)->
     authReq 'post', '/api/entities?action=create',
-      labels: { fr: 'bla' }
+      labels: { fr: humanName() }
       claims: { 'wdt:P31': [ 'wd:Q571' ] }
     .then (res)->
       res._id.should.be.a.String()
@@ -53,7 +53,7 @@ describe 'entities:create', ->
 
   it 'should reject an entity with several values for a property that take one', (done)->
     authReq 'post', '/api/entities?action=create',
-      labels: { fr: 'bla' }
+      labels: { fr: humanName() }
       claims: { 'wdt:P31': [ 'wd:Q571', 'wd:Q572' ] }
     .catch (err)->
       err.statusCode.should.equal 400
@@ -66,7 +66,7 @@ describe 'entities:create', ->
   it 'should reject invalid labels object', (done)->
     authReq 'post', '/api/entities?action=create',
       # Invalid labels type: array instead of object
-      labels: [ { fr: 'bla' } ]
+      labels: [ { fr: humanName() } ]
       claims: { 'wdt:P31': [ 'wd:Q571' ] }
     .catch (err)->
       err.body.status_verbose.should.equal 'labels should be an object'
@@ -76,10 +76,9 @@ describe 'entities:create', ->
 
     return
 
-  it 'should reject invalid claims object', (done)->
+  it 'should reject invalid claims type: array instead of object', (done)->
     authReq 'post', '/api/entities?action=create',
-      labels: { fr: 'bla' }
-      # Invalid claims type: array instead of object
+      labels: { fr: humanName() }
       claims: [ { 'wdt:P31': [ 'wd:Q571' ] } ]
     .catch (err)->
       err.body.status_verbose.should.equal 'claims should be an object'
@@ -91,7 +90,7 @@ describe 'entities:create', ->
 
   it 'should reject invalid property array', (done)->
     authReq 'post', '/api/entities?action=create',
-      labels: { fr: 'bla' }
+      labels: { fr: humanName() }
       claims:
         'wdt:P31': [ 'wd:Q571' ]
         'wdt:P50': 'wd:Q535'
@@ -103,12 +102,11 @@ describe 'entities:create', ->
 
     return
 
-  it 'should reject invalid property', (done)->
+  it 'should reject invalid property such as wd:P50 as a property URI', (done)->
     authReq 'post', '/api/entities?action=create',
-      labels: { fr: 'bla' }
+      labels: { fr: humanName() }
       claims:
         'wdt:P31': [ 'wd:Q571' ]
-        # 'wd:P50' isn't a valid property URI
         'wd:P50': [ 'wd:Q535' ]
     .catch (err)->
       err.body.status_verbose.should.equal 'invalid property'
@@ -118,13 +116,12 @@ describe 'entities:create', ->
 
     return
 
-  it 'should reject invalid property value', (done)->
+  it 'should reject invalid property value such as wd:P31 as entity URI', (done)->
     authReq 'post', '/api/entities?action=create',
-      labels: { fr: 'bla' }
-      # 'wd:P31' isn't a valid entity URI
+      labels: { fr: humanName() }
       claims:
         'wdt:P31': [ 'wd:Q571' ]
-        'wdt:P50': [ 'wdQ535' ]
+        'wdt:P50': [ 'wd:Q535' ]
     .catch (err)->
       err.body.status_verbose.should.equal 'invalid property value'
       err.statusCode.should.equal 400
@@ -138,13 +135,13 @@ describe 'entities:create', ->
       claims:
         'wdt:P31': [ 'wd:Q3331189' ]
         'wdt:P212': [ '978-2-315-00611-3' ]
-        'wdt:P1476': [ 'bla' ]
+        'wdt:P1476': [ editionLabel() ]
     .then (editionEntity)->
       authReq 'post', '/api/entities?action=create',
         claims:
           'wdt:P31': [ 'wd:Q3331189' ]
           'wdt:P212': [ '978-2-315-00611-3' ]
-          'wdt:P1476': [ 'bla' ]
+          'wdt:P1476': [ editionLabel() ]
           'wdt:P629': editionEntity.claims['wdt:P629']
     .catch (err)->
       err.body.status_verbose.should.equal 'this property value is already used'
@@ -154,12 +151,11 @@ describe 'entities:create', ->
 
     return
 
-  it 'should reject an entity created with inappropriate properties', (done)->
+  it 'should reject creation with incorrect properties such as pages counts for works', (done)->
     authReq 'post', '/api/entities?action=create',
-      labels: { fr: 'bla' }
+      labels: { fr: workLabel() }
       claims:
         'wdt:P31': [ 'wd:Q571' ]
-        # A work entity should not have pages counts
         'wdt:P1104': [ 124 ]
     .then undesiredRes(done)
     .catch (err)->

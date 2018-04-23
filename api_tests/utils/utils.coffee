@@ -6,7 +6,6 @@ should = require 'should'
 promises_ = __.require 'lib', 'promises'
 host = CONFIG.fullHost()
 authEndpoint = host + '/api/auth'
-randomString = __.require 'lib', './utils/random_string'
 { createUser, createAdminUser, getRefreshedUser } = require '../fixtures/users'
 { request, customAuthReq } = require './request'
 

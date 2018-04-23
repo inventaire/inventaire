@@ -1,7 +1,6 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-randomString = __.require 'lib', './utils/random_string'
 
 module.exports =
   newItemBase: -> { entity: 'wd:Q3548806', lang: 'fr' }

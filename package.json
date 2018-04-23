@@ -101,6 +101,7 @@
     "coffeelint": "^1.16.2",
     "diff": "^2.2.1",
     "doctoc": "^1.2.0",
+    "faker": "^4.1.0",
     "git-hooks": "^1.0.2",
     "level-test": "^2.0.1",
     "live-server": "^0.8.2",

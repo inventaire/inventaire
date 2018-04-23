@@ -4,7 +4,6 @@ _ = __.require 'builders', 'utils'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
 { nonAuthReq, undesiredRes, undesiredErr } = require '../utils/utils'
-randomString = __.require 'lib', './utils/random_string'
 breq = require 'bluereq'
 host = CONFIG.fullHost()
 

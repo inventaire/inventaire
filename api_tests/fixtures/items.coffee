@@ -4,7 +4,7 @@ _ = __.require 'builders', 'utils'
 { Promise } = __.require 'lib', 'promises'
 { customAuthReq } = require '../utils/request'
 { createEdition } = require './entities'
-randomString = __.require 'lib', './utils/random_string'
+faker = require 'faker'
 
 editionsUrisPromise =
   en: createEdition({ lang: 'en' }).get 'uri'
@@ -41,8 +41,8 @@ randomizedItem = (itemData)->
   { entity, listing, transaction } = itemData
   itemData.listing or= _.sample(listings)
   itemData.transaction or= _.sample(transactions)
-  itemData.details = randomString 10
-  itemData.notes = randomString 10
+  itemData.details = faker.hacker.phrase()
+  itemData.notes = faker.lorem.paragraph()
   return itemData
 
 addDefaultEntity = (entityUri)-> (item)->
