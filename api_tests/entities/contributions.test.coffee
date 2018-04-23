@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ adminReq, authReq, getUser, undesiredErr } = require '../utils/utils'
+{ adminReq, getUser, undesiredErr } = require '../utils/utils'
 { createWork } = require '../fixtures/entities'
 
 describe 'entities:get:contributions', ->

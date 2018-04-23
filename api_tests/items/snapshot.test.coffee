@@ -3,11 +3,12 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
-{ authReq, getUser, adminReq, undesiredErr } = require '../utils/utils'
+{ authReq, getUser, undesiredErr } = require '../utils/utils'
 { getByIds } = require '../utils/items'
 { getByUris, merge, updateLabel, updateClaim } = require '../utils/entities'
 { ensureEditionExists } = require '../fixtures/entities'
 { createWork, createHuman, createSerie, addAuthor, addSerie, createEditionFromWorks, createWorkWithAuthor, humanName } = require '../fixtures/entities'
+{ updateClaim } = require '../utils/entities'
 
 describe 'items:snapshot', ->
   it 'should be updated when its local edition entity title changes', (done)->
@@ -96,10 +97,7 @@ describe 'items:snapshot', ->
       ]
       .delay 100
       .spread (item, serieEntity)->
-        authReq 'put', '/api/entities?action=update-claim',
-          id: workEntity._id
-          property: 'wdt:P1545'
-          'new-value': '5'
+        updateClaim workEntity._id, 'wdt:P1545', null, '5'
         .delay 100
         .then -> getItem item
         .then (item)->

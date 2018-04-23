@@ -4,17 +4,26 @@ _ = __.require 'builders', 'utils'
 { nonAuthReq, authReq, adminReq } = require './utils'
 
 module.exports = entitiesUtils =
-  getByUris: (uris)->
+  search: (search, lang)->
+    url = _.buildPath '/api/entities', { action: 'search', search, lang }
+    nonAuthReq 'get', url
+
+  getByUris: (uris, relatives)->
     if _.isArray(uris) then uris = uris.join('|')
-    nonAuthReq 'get', "/api/entities?action=by-uris&uris=#{uris}"
+    url = _.buildPath '/api/entities', { action: 'by-uris', uris, relatives }
+    nonAuthReq 'get', url
 
   deleteByUris: (uris)->
     if _.isArray(uris) then uris = uris.join('|')
     adminReq 'delete', "/api/entities?action=by-uris&uris=#{uris}"
 
-  merge: (from, to)-> adminReq 'put', '/api/entities?action=merge', { from, to }
+  merge: (from, to)->
+    from = normalizeUri from
+    to = normalizeUri to
+    adminReq 'put', '/api/entities?action=merge', { from, to }
 
   revertMerge: (from)->
+    from = normalizeUri from
     adminReq 'put', '/api/entities?action=revert-merge', { from }
 
   getHistory: (entityId)->

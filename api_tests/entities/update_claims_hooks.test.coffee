@@ -3,7 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 promises_ = __.require 'lib', 'promises'
-{ nonAuthReq, authReq, undesiredRes, undesiredErr } = require '../utils/utils'
+{ undesiredErr } = require '../utils/utils'
 { getByUris, updateClaim } = require '../utils/entities'
 { createWork, createEditionFromWorks } = require '../fixtures/entities'
 

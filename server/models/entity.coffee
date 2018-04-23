@@ -24,6 +24,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
+validLangs = Object.keys require('wikidata-lang').byCode
 
 { properties, whitelist } = __.require 'controllers', 'entities/lib/properties'
 inferences = __.require 'controllers', 'entities/lib/inferences'
@@ -36,8 +37,17 @@ module.exports = Entity =
 
   setLabel: (doc, lang, value)->
     _.types arguments, [ 'object', 'string', 'string' ]
-    unless _.isLang lang then throw error_.new 'invalid lang', 400, arguments
+
+    unless lang in validLangs
+      throw error_.new 'invalid lang', 400, { doc, lang, value }
+
     preventRedirectionEdit doc, 'setLabel'
+
+    value = _.superTrim value
+
+    if doc.labels[lang] is value
+      throw error_.new 'already up-to-date', 400, { doc, lang, value }
+
     doc.labels[lang] = value
     return doc
 
@@ -80,6 +90,9 @@ module.exports = Entity =
     preventRedirectionEdit doc, 'updateClaim'
     unless oldVal? or newVal?
       throw error_.new 'missing old or new value', 400, arguments
+
+    if oldVal? then oldVal = _.superTrim oldVal
+    if newVal? then newVal = _.superTrim newVal
 
     propArray = _.get doc, "claims.#{property}"
     _.info "#{property} propArray: #{propArray} /oldVal: #{oldVal} /newVal: #{newVal}"

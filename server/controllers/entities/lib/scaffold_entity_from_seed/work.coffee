@@ -30,8 +30,12 @@ module.exports = (seed)->
   unless _.isNonEmptyString title
     return error_.reject 'missing title', 400, title
 
+  title = title.trim()
+
   unless _.isArray authors
     return error_.reject 'missing authors', 400, authors
+
+  authors = authors.map _.trim
 
   # unless a lang is explicitly passed, deduce it from the the ISBN groupLang
   lang = seed.lang or seed.groupLang or 'en'

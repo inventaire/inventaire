@@ -21,6 +21,15 @@ editionDoc = ->
   doc.claims['wdt:P629'] = ['wd:Q53592']
   return doc
 
+# coffeelint: disable=no_unnecessary_double_quotes
+nonTrimedString = """
+
+                  foo
+            bar
+
+        """
+
+
 describe 'entity model', ->
   describe 'create', ->
     it 'should return an object with type entity and a claims object', (done)->
@@ -32,9 +41,9 @@ describe 'entity model', ->
       done()
 
   describe 'create claim', ->
-    it 'should not throw if not passed an old value', (done)->
-      updater = -> Entity.createClaim workDoc(), 'wdt:P50', 'wd:Q42'
-      updater.should.not.throw()
+    it 'should add a claim value', (done)->
+      doc = Entity.createClaim workDoc(), 'wdt:P50', 'wd:Q42'
+      _.last(doc.claims['wdt:P50']).should.equal 'wd:Q42'
       done()
 
     it 'should return a doc with the new value for an existing property', (done)->
@@ -109,6 +118,11 @@ describe 'entity model', ->
         should(entityDoc.claims['wdt:P407']).not.be.ok()
         done()
 
+    it 'should trim values', (done)->
+      updatedDoc = Entity.updateClaim editionDoc(), 'wd:P1476', null, nonTrimedString
+      updatedDoc.claims['wd:P1476'][0].should.equal 'foo bar'
+      done()
+
     describe 'update existing claim', ->
       it 'should return with the claim value updated', (done)->
         entityDoc = workDoc()
@@ -173,4 +187,26 @@ describe 'entity model', ->
         entityDoc = workDoc()
         updater = -> Entity.setLabel entityDoc, null, 'hello'
         updater.should.throw()
+        done()
+
+      it 'should throw if an invalid lang is passed', (done)->
+        entityDoc = workDoc()
+        updater = -> Entity.setLabel entityDoc, 'zz', 'hello'
+        updater.should.throw()
+        done()
+
+      it 'should throw if the current and the updated label are equal', (done)->
+        entityDoc = workDoc()
+        updater = ->
+          Entity.setLabel entityDoc, 'en', 'foo'
+          Entity.setLabel entityDoc, 'en', 'foo'
+        updater.should.throw()
+        try updater()
+        catch err then err.message.should.equal 'already up-to-date'
+        done()
+
+      it 'should trim labels', (done)->
+        entityDoc = workDoc()
+        Entity.setLabel entityDoc, 'fr', nonTrimedString
+        entityDoc.labels.fr.should.equal 'foo bar'
         done()

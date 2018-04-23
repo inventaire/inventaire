@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ nonAuthReq, authReq, undesiredRes, undesiredErr } = require '../../utils/utils'
+{ undesiredRes, undesiredErr } = require '../../utils/utils'
 { updateLabel } = require '../../utils/entities'
 { createEdition, workLabel } = require '../../fixtures/entities'
 
