@@ -4,6 +4,7 @@ _ = __.require 'builders', 'utils'
 
 module.exports = (search, size)->
   should = [
+    { match_phrase_prefix: { _all: { query: search, boost: 5 } } }
     { match: { _all: { query: search, boost: 5 } } }
     { prefix: { _all: _.last(search.split(' ')) } }
   ]
