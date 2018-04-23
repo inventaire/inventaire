@@ -15,10 +15,8 @@ defaultEditionData = ->
     'wdt:P1476': [ workLabel() ]
 
 createEntity = (P31)-> (params = {})->
-  if P31 is 'wd:Q5'
-    labels = params.labels or { en: workLabel() }
-  else
-    labels = params.labels or { en: humanName() }
+  defaultLabel = if P31 is 'wd:Q5' then humanName() else workLabel()
+  labels = params.labels or { en: defaultLabel }
   authReq 'post', '/api/entities?action=create',
     labels: labels
     claims: { 'wdt:P31': [ P31 ] }

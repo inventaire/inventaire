@@ -121,7 +121,7 @@ describe 'entities:create', ->
       labels: { fr: humanName() }
       claims:
         'wdt:P31': [ 'wd:Q571' ]
-        'wdt:P50': [ 'wdQ535' ]
+        'wdt:P50': [ 'wd:Q535' ]
     .catch (err)->
       err.body.status_verbose.should.equal 'invalid property value'
       err.statusCode.should.equal 400
