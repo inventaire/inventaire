@@ -3,7 +3,13 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { authReq, adminReq } = require '../utils/utils'
-{ createTask } = require '../fixtures/tasks'
+{ createTask, createTaskWithSuggestionAuthor } = require '../fixtures/tasks'
+{ createHuman } = require '../fixtures/entities'
+
+collectEntities = '/api/tasks?action=collect-entities'
+bySuspectUri = '/api/tasks?action=by-suspect-uri&uri='
+updateTask = '/api/tasks?action=update'
+
 
 describe 'tasks:update', ->
   it 'should update a task', (done)->
@@ -32,11 +38,12 @@ describe 'tasks:update', ->
 
     return
 
+
 describe 'tasks:merge-entities', ->
   it 'should update task state from requested to merged', (done) ->
     createTask()
     .then (task)->
-      adminReq 'put', '/api/entities?action=merge',
+      adminReq 'put', updateTask,
         from: task.suspectUri
         to: task.suggestionUri
       .delay 100
@@ -49,12 +56,12 @@ describe 'tasks:merge-entities', ->
 
     return
 
-  it 'should update all tasks that have same suspectUri to merged', (done) ->
+  it 'should update same suspact tasks state to merge', (done) ->
     createTask()
     .then (task)->
       createTask task.suspectUri, 'wd:Q42'
       .then (anotherTask)->
-        adminReq 'put', '/api/entities?action=merge',
+        adminReq 'put', updateTask,
           from: task.suspectUri
           to: task.suggestionUri
         .delay 100
@@ -62,6 +69,31 @@ describe 'tasks:merge-entities', ->
         .then (res)->
           updatedTask = res.tasks[0]
           updatedTask.state.should.equal 'merged'
+          done()
+      .catch done
+
+    return
+
+  it 'should update relationScore of tasks with same suspect', (done)->
+    createHuman { labels: { en: 'Jim Vance' } }
+    .then (suspect)->
+      authReq 'post', collectEntities
+      .delay 1000
+      .then -> authReq 'get', bySuspectUri + "inv:#{suspect._id}"
+      .get 'tasks'
+      .then (tasks)->
+        taskToUpdate = tasks[0]
+        otherTask = tasks[1]
+        taskToUpdate.relationScore.should.be.below 1
+        authReq 'put', updateTask,
+          id: taskToUpdate._id,
+          attribute: 'state',
+          value: 'dismissed'
+        .delay 1000
+        .then -> authReq 'get', "/api/tasks?action=by-ids&ids=#{otherTask._id}"
+        .then (res)->
+          updatedTask = res.tasks[0]
+          updatedTask.relationScore.should.equal 1
           done()
       .catch done
 

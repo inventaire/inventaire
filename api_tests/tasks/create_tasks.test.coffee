@@ -3,7 +3,6 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 randomString = __.require 'lib', './utils/random_string'
-
 createTaskPath = '/api/tasks?action=create'
 { authReq, undesiredErr } = __.require 'apiTests', 'utils/utils'
 { createHuman } = require '../fixtures/entities'
@@ -39,16 +38,6 @@ describe 'tasks:create', ->
 
     return
 
-  it 'should not create a task with invalid state', (done)->
-    tasks = [ { type: 'deduplicate', state: 'invalid' } ]
-    authReq 'post', createTaskPath, { tasks }
-    .catch (err)->
-      err.body.status_verbose.should.startWith 'invalid state'
-      done()
-    .catch undesiredErr(done)
-
-    return
-
   it 'should not create a task without a valid suspect URI', (done)->
     tasks = [ { type: 'deduplicate', suspectUri: 'inv:alidID1234' } ]
     authReq 'post', createTaskPath, { tasks }
@@ -71,9 +60,9 @@ describe 'tasks:create', ->
 
     return
 
-  it 'should have a lexical rounded at 2 decimals', (done)->
+  it 'should have a lexical score rounded at 2 decimals', (done)->
     validTask.suspectUri = 'inv:026a1856df319a2fe3c14c4db602ab1a'
-    validTask.lexicalScore = 4.123456789
+    validTask.lexicalScore = 1.123456789
     authReq 'post', createTaskPath,
       tasks: [ validTask ]
     .then (res)->

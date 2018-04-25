@@ -24,9 +24,8 @@ createTaskDocs = (authorWorksData, relationScore)-> (suggestionEntity)->
     unless suggestionEntity.uri? then return {}
     return {
       type: 'deduplicate'
-      suspectUri: "inv:#{authorWorksData.authorId}"
+      suspectUri: prefixify authorWorksData.authorId
       suggestionUri: suggestionEntity.uri
-      state: 'requested'
       lexicalScore: suggestionEntity._score
       relationScore: relationScore
       hasEncyclopediaOccurence: hasOccurence
@@ -45,3 +44,5 @@ aggregateWorksData = (worksData, work)->
     worksData.labels.push label
     worksData.langs.push lang
   return worksData
+
+prefixify = (id)-> "inv:#{id}"

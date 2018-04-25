@@ -45,17 +45,14 @@ describe 'tasks:update-relation-score', ->
 
     it 'should relationScore should be rounded at 2 decimals', (done)->
       createTask null, 'wd:Q27042411'
-      .then (task)->
-        createTask task.suspectUri, 'wd:Q42'
-      .then (task)->
-        createTask task.suspectUri, 'wd:Q565'
+      .then (task)-> createTask task.suspectUri, 'wd:Q42'
+      .then (res)->
+        authReq 'put', updateRelationScore + task._id
+        .then -> authReq 'get', "/api/tasks?action=by-ids&ids=#{task._id}"
         .then (res)->
-          authReq 'put', updateRelationScore + task._id
-          .then -> authReq 'get', "/api/tasks?action=by-ids&ids=#{task._id}"
-          .then (res)->
-            updatedTask = res.tasks[0]
-            updatedTask.relationScore.toString().length.should.belowOrEqual 4
-            done()
+          updatedTask = res.tasks[0]
+          updatedTask.relationScore.toString().length.should.belowOrEqual 4
+          done()
       .catch undesiredErr(done)
 
       return

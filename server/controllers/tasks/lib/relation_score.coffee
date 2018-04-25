@@ -2,20 +2,18 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 
 tasks_ = require './tasks'
+# relationScore (between 0 & 1) express the number of tasks for the same suspect
 
-# relation score express the number of suggestions for the same suspect
-# calculated based on the number of homonyms found on wikidata
 calculateRelationScore = (tasks)->
   score = 1 / tasks.length
-  return _.round score, 2
+  _.round score, 2
 
 updateRelationScore = (task)->
   tasks_.bySuspectUri task.suspectUri
-  .then calculateRelationScore
-  .then (score)->
+  .then (tasks)->
     tasks_.update
-      taskId: task._id
+      ids: _.pluck tasks, '_id'
       attribute: 'relationScore'
-      newValue: score
+      newValue: calculateRelationScore tasks
 
 module.exports = { calculateRelationScore, updateRelationScore }
