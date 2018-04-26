@@ -50,21 +50,39 @@ describe 'entities:merge', ->
 
     return
 
-  it 'should reject merge an entity with an ISBN', (done)->
+  it 'should merge an entity with an ISBN', (done)->
     Promise.all [
       ensureEditionExists 'isbn:9782298063264'
       createEdition()
     ]
     .spread (editionA, editionB)->
-      # Use the inv URI to pass the prefix check
-      # and test the claim check
+      merge editionA.uri, editionB.uri
+      .then -> getByUris editionB.uri
+      .then (res)->
+        { entities, redirects } = res
+        updatedEditionB = entities[redirects[editionB.uri]]
+        updatedEditionB.claims['wdt:P212']
+        .should.deepEqual editionA.claims['wdt:P212']
+        done()
+    .catch undesiredErr(done)
+
+    return
+
+  it 'should reject merge with different ISBNs', (done)->
+    Promise.all [
+      ensureEditionExists 'isbn:9782298063264'
+      ensureEditionExists 'isbn:9782211225915'
+    ]
+    .spread (editionA, editionB)->
       editionAInvUri = 'inv:' + editionA._id
-      merge editionAInvUri, editionB.uri
+      editionBInvUri = 'inv:' + editionB._id
+      merge editionAInvUri, editionBInvUri
       .then undesiredRes(done)
       .catch (err)->
         # That's not a very specific error report, but it does the job
         # of blocking a merge from an edition with an ISBN
-        err.body.status_verbose.should.equal "'from' entity not found (could it be not it's canonical uri?)"
+        err.body.status_verbose
+        .should.equal "can't merge editions with different ISBNs"
         err.statusCode.should.equal 400
         done()
     .catch undesiredErr(done)
