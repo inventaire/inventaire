@@ -11,11 +11,15 @@ chalk = require 'chalk'
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
 IP = /^[0-9.]{7,15}$/
-{ from, ip, suffix, protocol, port, localPort, continuous } = CONFIG.replication
+{ from, ip, suffix, protocol, port, localPort, continuous, persist } = CONFIG.replication
 protocol or= 'https'
 port or= 6984
 localPort or= 6984
 continuous ?= true
+
+persistFromArgv = process.argv.slice(2)[0] is 'persist'
+
+endpoint = if persist or persistFromArgv then '_replicator' else '_replicate'
 
 unless from?
   throw new Error "bad CONFIG.replication.from: #{from}"
@@ -49,7 +53,7 @@ localDb = (dbName)->
   "#{protocol}://#{username}:#{password}@localhost:#{localPort}/#{dbName}"
 
 localReplicate = (dbName)->
-  "#{protocol}://#{username}:#{password}@localhost:#{localPort}/_replicate"
+  "#{protocol}://#{username}:#{password}@localhost:#{localPort}/#{endpoint}"
 
 remoteDb = (dbName)->
   "#{protocol}://#{remoteUsername}:#{remotePassword}@#{ip}:#{port}/#{dbName}"
