@@ -91,8 +91,8 @@ module.exports = Entity =
     unless oldVal? or newVal?
       throw error_.new 'missing old or new value', 400, arguments
 
-    if oldVal? then oldVal = _.superTrim oldVal
-    if newVal? then newVal = _.superTrim newVal
+    if _.isString oldVal then oldVal = _.superTrim oldVal
+    if _.isString newVal then newVal = _.superTrim newVal
 
     propArray = _.get doc, "claims.#{property}"
     _.info "#{property} propArray: #{propArray} /oldVal: #{oldVal} /newVal: #{newVal}"
