@@ -28,6 +28,8 @@ module.exports = (wdAuthorUri, worksLabels, worksLabelsLangs)->
   # get Wikipedia article title from URI
   getEntityByUri wdAuthorUri
   .then (authorEntity)->
+    # Known case: entities tagged as 'missing' or 'meta'
+    unless authorEntity.sitelinks? then return false
     promises_.all [
       hasWikipediaOccurrence authorEntity, worksLabels, worksLabelsLangs
       hasBnfOccurrence authorEntity, worksLabels
@@ -49,8 +51,6 @@ hasWikipediaOccurrence = (authorEntity, worksLabels, worksLabelsLangs)->
 
 getMostRelevantWikipediaArticles = (authorEntity, worksLabelsLangs)->
   { sitelinks, originalLang } = authorEntity
-
-  unless sitelinks? then throw error_.new 'missing sitelinks', 500, { authorEntity }
 
   return _.uniq worksLabelsLangs.concat([ originalLang, 'en' ])
   .map (lang)->
