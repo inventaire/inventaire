@@ -38,13 +38,12 @@ module.exports = tasks_ =
 
   keepNewTasks: (newTasks)->
     suspectUris = _.pluck newTasks, 'suspectUri'
-
     tasks_.bySuspectUris suspectUris
     .then (existingTasks)->
       suggestionBySuspect = existingTasks.reduce indexSuggestionBySuspect, {}
-      return newTasks.filter keepNewTask(suggestionBySuspect)
+      newTasks.filter isNewTask(suggestionBySuspect)
 
-keepNewTask = (suggestionBySuspect)-> (newTask)->
+isNewTask = (suggestionBySuspect)-> (newTask)->
   matchingExistingTasksUris = suggestionBySuspect[newTask.suspectUri]
   unless matchingExistingTasksUris? then return true
   return newTask.suggestionUri not in matchingExistingTasksUris
