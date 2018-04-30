@@ -16,26 +16,34 @@ module.exports = (entity)->
   ]
   .spread (suggestionEntities, authorWorksData)->
     relationScore = calculateRelationScore suggestionEntities
-    Promise.all suggestionEntities.map(createTaskDocs(authorWorksData, relationScore))
+    create = createTaskDocs authorWorksData, relationScore
+    Promise.all suggestionEntities.map(create)
 
-createTaskDocs = (authorWorksData, relationScore)-> (suggestionEntity)->
-  hasWorksLabelsOccurrence(suggestionEntity.uri, authorWorksData.labels, authorWorksData.langs)
-  .then (hasOccurence)->
-    unless suggestionEntity.uri? then return {}
-    return {
-      type: 'deduplicate'
-      suspectUri: prefixify authorWorksData.authorId
-      suggestionUri: suggestionEntity.uri
-      lexicalScore: suggestionEntity._score
-      relationScore: relationScore
-      hasEncyclopediaOccurence: hasOccurence
-    }
+createTaskDocs = (authorWorksData, relationScore)->
+  { labels, langs } = authorWorksData
+  return (suggestionEntity)->
+    suggestionUri = suggestionEntity.uri
+    hasWorksLabelsOccurrence suggestionUri, labels, langs
+    .then (hasOccurence)->
+      unless suggestionEntity.uri? then return {}
+      return {
+        type: 'deduplicate'
+        suspectUri: prefixify authorWorksData.authorId
+        suggestionUri: suggestionEntity.uri
+        lexicalScore: suggestionEntity._score
+        relationScore: relationScore
+        hasEncyclopediaOccurence: hasOccurence
+      }
 
 getAuthorWorksData = (authorId)->
   entities_.byClaim 'wdt:P50', "inv:#{authorId}", true, true
   .then (works)->
-    # works = [ { labels: { fr: 'Matiere et Memoire'} }, { labels: { en: 'foo' } } ]
-    worksData = works.reduce aggregateWorksData, { authorId: authorId, labels: [], langs: [] }
+    # works = [
+    #   { labels: { fr: 'Matiere et Memoire'} },
+    #   { labels: { en: 'foo' } }
+    # ]
+    base = { authorId, labels: [], langs: [] }
+    worksData = works.reduce aggregateWorksData, base
     worksData.langs = _.uniq worksData.langs
     return worksData
 
