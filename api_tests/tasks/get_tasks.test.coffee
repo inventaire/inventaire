@@ -7,12 +7,12 @@ byScore = '/api/tasks?action=by-score'
 bySuspectUri = '/api/tasks?action=by-suspect-uri&uri='
 { authReq, undesiredErr } = __.require 'apiTests', 'utils/utils'
 { createHuman } = require '../fixtures/entities'
-{ createTask } = require '../fixtures/tasks'
+{ collectEntities } = require '../fixtures/tasks'
+
 
 describe 'tasks:byScore', ->
   it 'should returns 10 or less tasks to deduplicates, by default', (done)->
-    createHuman 'Stanislas Lem'
-    .then (res)-> createTask res.uri
+    collectEntities()
     .then -> authReq 'get', byScore
     .then (res)->
       res.should.be.an.Object()
@@ -35,8 +35,8 @@ describe 'tasks:byScore', ->
 
 describe 'tasks:bySuspectUri', ->
   it 'should return an array of tasks', (done)->
-    createTask()
-    .then (task)-> authReq 'get', bySuspectUri + task.suspectUri
+    collectEntities()
+    .then (res)-> authReq 'get', bySuspectUri + res.human.uri
     .then (res)->
       suspectUris = _.pluck res.tasks, 'suspectUri'
       suspectUris.should.be.an.Array()

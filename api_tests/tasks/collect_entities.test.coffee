@@ -3,8 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 randomString = __.require 'lib', './utils/random_string'
-
-collectEntities = '/api/tasks?action=collect-entities'
+{ collectEntities } = require '../fixtures/tasks'
 byScore = '/api/tasks?action=by-score&limit=1000'
 
 { authReq, undesiredErr } = __.require 'apiTests', 'utils/utils'
@@ -12,18 +11,16 @@ byScore = '/api/tasks?action=by-score&limit=1000'
 
 describe 'tasks:collect-entities', ->
   it 'should create new tasks', (done)->
-    createHuman { labels: { en: 'Stanislas Lem' } }
-    .then (suspect)->
-      suspectId = suspect._id
-
-      authReq 'post', collectEntities
-      .then -> authReq 'get', byScore
-      .then (res)->
-        { tasks } = res
+    collectEntities()
+    .then (res)->
+      suspectUri = res.human.uri
+      authReq 'get', byScore
+      .get 'tasks'
+      .then (tasks)->
         tasks.length.should.aboveOrEqual 1
         # with a suspect
         tasksUris = _.pluck tasks, 'suspectUri'
-        tasksUris.should.containEql "inv:#{suspectId}"
+        tasksUris.should.containEql suspectUri
         # with a relationScore
         taskRelationScores = _.pluck tasks, 'relationScore'
         _.compact(taskRelationScores).length.should.equal taskRelationScores.length
@@ -33,13 +30,14 @@ describe 'tasks:collect-entities', ->
     return
 
   it 'should not re-create existing tasks', (done)->
-    authReq 'post', collectEntities
-    .then -> authReq 'get', byScore
+    collectEntities()
     .then (res)->
-      { tasks } = res
-      uniqSuspectUris = _.uniq _.pluck(tasks, 'suspectUri')
-      tasks.length.should.equal uniqSuspectUris.length
-      done()
+      authReq 'get', byScore
+      .get 'tasks'
+      .then (tasks)->
+        uniqSuspectUris = _.uniq _.pluck(tasks, 'suspectUri')
+        tasks.length.should.equal uniqSuspectUris.length
+        done()
     .catch undesiredErr(done)
 
     return

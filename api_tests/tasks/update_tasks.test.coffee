@@ -3,19 +3,23 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { authReq, adminReq } = require '../utils/utils'
-{ createTask, createTaskWithSuggestionAuthor } = require '../fixtures/tasks'
+{ merge } = require '../utils/entities'
+{ collectEntities } = require '../fixtures/tasks'
 { createHuman } = require '../fixtures/entities'
 
-collectEntities = '/api/tasks?action=collect-entities'
+collectEntitiesEndpoint = '/api/tasks?action=collect-entities'
 bySuspectUri = '/api/tasks?action=by-suspect-uri&uri='
-updateTask = '/api/tasks?action=update'
-
+byScore = '/api/tasks?action=by-score'
+updateEndpoint = '/api/tasks?action=update'
 
 describe 'tasks:update', ->
   it 'should update a task', (done)->
-    createTask()
-    .then (task)->
-      authReq 'put', '/api/tasks?action=update',
+    collectEntities()
+    .then -> authReq 'get', byScore
+    .get 'tasks'
+    .then (tasks)->
+      task = tasks[0]
+      authReq 'put', updateEndpoint,
         id: task._id,
         attribute: 'state',
         value: 'dismissed'
@@ -27,25 +31,46 @@ describe 'tasks:update', ->
     return
 
   it 'should throw if invalid task id', (done)->
-    createTask()
-    .then (task)->
-      authReq 'put', '/api/tasks?action=update',
-        id: ''
-      .catch (err)->
-        err.body.status_verbose.should.be.a.String()
-        done()
+    authReq 'put', updateEndpoint,
+      id: ''
+    .catch (err)->
+      err.body.status_verbose.should.be.a.String()
+      done()
     .catch done
 
     return
 
 
 describe 'tasks:merge-entities', ->
-  it 'should update task state from requested to merged', (done) ->
-    createTask()
-    .then (task)->
-      adminReq 'put', updateTask,
-        from: task.suspectUri
-        to: task.suggestionUri
+  it 'should update same suspect tasks to merged state', (done) ->
+    createHuman { labels: { en: 'Jim Vance' } }
+    .then (human)->
+      adminReq 'post', collectEntitiesEndpoint
+      .delay 2000
+      .then -> authReq 'get', bySuspectUri + "inv:#{human._id}"
+      .get 'tasks'
+      .then (tasks)->
+        task = tasks[0]
+        anotherTask = tasks[1]
+        merge task.suspectUri, task.suggestionUri
+        .delay 100
+        .then -> authReq 'get', "/api/tasks?action=by-ids&ids=#{anotherTask._id}"
+        .get 'tasks'
+        .then (tasks)->
+          updatedTask = tasks[0]
+          updatedTask.state.should.equal 'merged'
+          done()
+    .catch done
+
+    return
+
+  it 'should update task state to merged', (done) ->
+    collectEntities()
+    .then -> authReq 'get', byScore
+    .get 'tasks'
+    .then (tasks)->
+      task = tasks[0]
+      merge task.suspectUri, task.suggestionUri
       .delay 100
       .then -> authReq 'get', "/api/tasks?action=by-ids&ids=#{task._id}"
       .then (res)->
@@ -56,36 +81,18 @@ describe 'tasks:merge-entities', ->
 
     return
 
-  it 'should update same suspact tasks state to merge', (done) ->
-    createTask()
-    .then (task)->
-      createTask task.suspectUri, 'wd:Q42'
-      .then (anotherTask)->
-        adminReq 'put', updateTask,
-          from: task.suspectUri
-          to: task.suggestionUri
-        .delay 100
-        .then -> authReq 'get', "/api/tasks?action=by-ids&ids=#{anotherTask._id}"
-        .then (res)->
-          updatedTask = res.tasks[0]
-          updatedTask.state.should.equal 'merged'
-          done()
-      .catch done
-
-    return
-
   it 'should update relationScore of tasks with same suspect', (done)->
     createHuman { labels: { en: 'Jim Vance' } }
     .then (suspect)->
-      authReq 'post', collectEntities
+      authReq 'post', collectEntitiesEndpoint
       .delay 1000
       .then -> authReq 'get', bySuspectUri + "inv:#{suspect._id}"
       .get 'tasks'
       .then (tasks)->
         taskToUpdate = tasks[0]
         otherTask = tasks[1]
-        taskToUpdate.relationScore.should.be.below 1
-        authReq 'put', updateTask,
+        taskRelationScore = taskToUpdate.relationScore
+        authReq 'put', updateEndpoint,
           id: taskToUpdate._id,
           attribute: 'state',
           value: 'dismissed'
@@ -93,7 +100,7 @@ describe 'tasks:merge-entities', ->
         .then -> authReq 'get', "/api/tasks?action=by-ids&ids=#{otherTask._id}"
         .then (res)->
           updatedTask = res.tasks[0]
-          updatedTask.relationScore.should.equal 1
+          updatedTask.relationScore.should.not.equal taskRelationScore
           done()
       .catch done
 
