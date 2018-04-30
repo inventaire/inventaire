@@ -1,4 +1,5 @@
-__ = require('config').universalPath
+CONFIG = require 'config'
+__ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
@@ -8,6 +9,7 @@ getEntityByUri = __.require 'controllers', 'entities/lib/get_entity_by_uri'
 createTaskDocs = __.require 'controllers', 'tasks/lib/create_task_docs'
 jobs_ = __.require 'level', 'jobs'
 { mapDoc } = __.require 'lib', 'couch'
+{ interval } = CONFIG.jobs['inv:deduplicate']
 
 module.exports = (req, res)->
   addEntitiesToQueue()
@@ -35,7 +37,7 @@ deduplicateWorker = (jobId, uri, cb)->
   .then (entity)-> createTaskDocs entity
   .then tasks_.keepNewTasks
   .map tasks_.create
-  # .delay 5000
+  .delay interval
   .then -> cb()
   .catch (err)->
     _.error err, 'deduplicateWorker err'

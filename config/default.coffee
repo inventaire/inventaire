@@ -196,8 +196,10 @@ module.exports = config =
 
   itemsCountDebounceTime: 5000
 
-  runJobsInQueue:
-    'wd:popularity': true
-    'inv:deduplicate': true
-
-  wdPopularityWorkerDelay: 3000
+  jobs:
+    'wd:popularity':
+      run: true
+      interval: 3000
+    'inv:deduplicate':
+      run: true
+      interval: 3000

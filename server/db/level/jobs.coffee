@@ -9,11 +9,11 @@ module.exports =
   initQueue: (jobName, worker, maxConcurrency)->
     db = levelBase.rawSubDb "job:#{jobName}"
 
-    if typeof CONFIG.runJobsInQueue[jobName] isnt 'boolean'
+    if typeof CONFIG.jobs[jobName]?.run isnt 'boolean'
       throw new Error "unknown job: #{jobName}"
 
     # Push & run jobs to queue if this job is enabled in config
-    if CONFIG.runJobsInQueue[jobName]
+    if CONFIG.jobs[jobName].run
       JobQueueServerAndClient = require 'level-jobs'
       _.info "#{jobName} job in server & client mode"
       return JobQueueServerAndClient db, worker, maxConcurrency
@@ -24,5 +24,5 @@ module.exports =
     # and let the main instance focus on answering user requests
     else
       JobsQueueClient = require 'level-jobs/client'
-      _.info "#{jobName} job in client mode"
+      _.warn "#{jobName} job in client mode only"
       return JobsQueueClient db

@@ -18,6 +18,8 @@ module.exports =
     disabled: true
   couch2elastic4sync:
     activated: true
-  runJobsInQueue:
-    'wd:popularity': true
-    'inv:deduplicate': true
+  jobs:
+    'wd:popularity':
+      run: true
+    'inv:deduplicate':
+      run: true

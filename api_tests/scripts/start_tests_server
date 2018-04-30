@@ -1,7 +1,7 @@
 #!/usr/bin/env zsh
 
-# Use NODE_APP_INSTANCE=tests to override local config with local-tests config
-export NODE_ENV=tests NODE_APP_INSTANCE=tests FORCE_COLOR=true
+# Use NODE_APP_INSTANCE=tests-alt to override local config with local-tests-alt
+export NODE_ENV=tests NODE_APP_INSTANCE=tests-alt FORCE_COLOR=true
 
 test_host=$(node -p "require('config').fullHost()")
 entities_search_engine_host=$(node -p "require('config').entitiesSearchEngine.host")
