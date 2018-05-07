@@ -21,6 +21,7 @@
     "postinstall": "./scripts/postinstall",
     "preview-email": "./scripts/preview-email",
     "reload": "touch server.coffee",
+    "replicate-tests-db": "./scripts/replicate_tests_db.coffee",
     "reset-cache": "rm -rf db/leveldb && mkdir db/leveldb",
     "start": "coffee server.coffee",
     "start-tests-server": "./tests/api/scripts/start_tests_server",
