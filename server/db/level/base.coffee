@@ -15,51 +15,46 @@ else
   config = {}
   DB = sublevel level(DBPath, config)
 
-module.exports =
-  sub: (dbName)->
-    _.success "#{dbName} opened"
-    return DB.sublevel dbName
+rawSubDb = (dbName, valueEncoding)->
+  _.success "#{dbName} opened"
+  return DB.sublevel dbName, { valueEncoding }
 
-  promisified: (sub)->
-    return Promise.promisifyAll sub
+# Promisified and with a few additional functions
+simplifiedSubDb = (dbName)->
+  sub = Promise.promisifyAll rawSubDb(dbName, 'json')
 
-  unjsonized: (sub)->
-    API =
-      get: (key)->
-        sub.getAsync key
-        .catch error_.catchNotFound
-        .then (res)-> if res? then JSON.parse res
+  return API =
+    get: (key)->
+      sub.getAsync key
+      # TODO: remove to keep the convention that notFound cases
+      # should be handled in catch functions
+      .catch error_.catchNotFound
+    put: sub.putAsync.bind sub
+    del: sub.delAsync.bind sub
+    batch: sub.batchAsync.bind sub
+    reset: Reset sub
+    sub: sub
 
-      put: (key, value)-> sub.putAsync key, JSON.stringify(value)
-      del: (key)-> sub.delAsync key
-      batch: (ops)-> sub.batchAsync ops
-      update: (key, value)->
-        @del key
-        .then => @put key, value
-      patch: (key, value)->
-        @get key
-        .then (current)=> @update key, _.extend(current, value)
-      getStream: (params)->
-        return new Promise (resolve, reject)->
-          result = []
-          sub.createValueStream params
-          .on 'data', (data)-> result.push JSON.parse(data)
-          .on 'error', reject
-          .on 'end', -> resolve result
+Reset = (sub)-> ()->
+  new Promise (resolve, reject)->
+    ops = []
+    sub.createKeyStream()
+    .on 'data', (key)-> ops.push { type: 'del', key }
+    .on 'end', ->
+      sub.batch ops, (err, res)->
+        if err then reject err
+        else resolve res
 
-      reset: ->
-        ops = []
-        sub.createKeyStream()
-        .on 'data', (key)-> ops.push { type: 'del', key }
-        .on 'end', =>
-          @batch ops
-          .then -> _.log 'reset succesfully'
-          .catch _.Error('reset failed')
+Inspect = (sub)-> ()->
+  streamPromise sub.createReadStream()
+  .then _.Inspect('sub dump')
 
-    return API
+streamPromise = (stream)->
+  new Promise (resolve, reject)->
+    results = []
+    stream
+    .on 'data', results.push.bind(results)
+    .on 'end', -> resolve results
+    .on 'error', reject
 
-  simpleAPI: (dbName)->
-    sub = @sub dbName
-    API = @unjsonized @promisified(sub)
-    API.sub = sub
-    return API
+module.exports = { rawSubDb, simplifiedSubDb, Reset, Inspect, streamPromise }

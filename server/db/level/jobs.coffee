@@ -7,7 +7,7 @@ module.exports =
   # always return an object with a 'push' function
   # taking two arguments; a payload and an error logger function
   initQueue: (jobName, worker, maxConcurrency)->
-    db = levelBase.sub "job:#{jobName}"
+    db = levelBase.rawSubDb "job:#{jobName}"
 
     if typeof CONFIG.runJobsInQueue[jobName] isnt 'boolean'
       throw new Error "unknown job: #{jobName}"

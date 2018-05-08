@@ -5,9 +5,9 @@ error_ = __.require 'lib', 'error/error'
 
 levelBase = __.require 'level', 'base'
 
-cacheDB = levelBase.simpleAPI 'cache'
+db = levelBase.simplifiedSubDb 'cache'
 
-if CONFIG.resetCacheAtStartup then cacheDB.reset()
+if CONFIG.resetCacheAtStartup then db.reset()
 { offline } = CONFIG
 
 { oneMinute, oneDay, oneMonth } =  __.require 'lib', 'times'
@@ -72,7 +72,7 @@ module.exports = cache_ =
     else defaultTime
 
 checkCache = (key, timespan, retry)->
-  cacheDB.get key
+  db.get key
   .then (res)->
     unless res? then return
 
@@ -129,7 +129,7 @@ requestOnlyIfNeeded = (key, fn, refuseOldValue, cached)->
 
 putResponseInCache = (key, res)->
   _.info "caching #{key}"
-  cacheDB.put key,
+  db.put key,
     body: res
     timestamp: new Date().getTime()
 
