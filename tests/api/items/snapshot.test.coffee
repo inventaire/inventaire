@@ -3,7 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
-{ authReq, getUser, undesiredErr } = require '../utils/utils'
+{ authReq, getUserId, undesiredErr } = require '../utils/utils'
 { getByIds } = require '../utils/items'
 { getByUris, merge, updateLabel, updateClaim } = require '../utils/entities'
 { ensureEditionExists } = require '../fixtures/entities'
@@ -158,7 +158,7 @@ describe 'items:snapshot', ->
 
   it 'should be updated when its local work entity is merged (work entity)', (done)->
     Promise.all [
-      getUser().get '_id'
+      getUserId()
       createWork()
       createWork()
     ]
@@ -176,7 +176,7 @@ describe 'items:snapshot', ->
 
   it 'should be updated when its local work entity is merged (edition entity)', (done)->
     Promise.all [
-      getUser().get '_id'
+      getUserId()
       createWork()
       createWork()
     ]
@@ -202,7 +202,7 @@ describe 'items:snapshot', ->
 
   it 'should be updated when its local author entity is merged', (done)->
     Promise.all [
-      getUser().get '_id'
+      getUserId()
       createHuman()
       createHuman()
     ]
@@ -252,7 +252,7 @@ describe 'items:snapshot', ->
 
   it 'should be updated when its entity changes', (done)->
     Promise.all [
-      getUser().get '_id'
+      getUserId()
       createWork()
     ]
     .spread (userId, workEntityA)->

@@ -26,6 +26,7 @@ module.exports = API =
 
   # Create users only if needed by the current test suite
   getUser: getUserGetter 'a'
+  getUserId: -> API.getUser().get '_id'
   getUserB: getUserGetter 'b'
   getUserC: getUserGetter 'c'
   getAdminUser: getUserGetter 'admin', true

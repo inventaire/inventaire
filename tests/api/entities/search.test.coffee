@@ -3,7 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
-{ getUser, undesiredErr } = require '../utils/utils'
+{ getUserId, undesiredErr } = require '../utils/utils'
 { createWork, workLabel } = require '../fixtures/entities'
 { search, merge } = require '../utils/entities'
 
@@ -26,7 +26,7 @@ describe 'entities:search', ->
   it 'should not return a removed:placeholder entity', (done)->
     label = workLabel()
     Promise.all [
-      getUser().get '_id'
+      getUserId()
       createWork({ labels: { fr: label } }).get '_id'
       createWork({ labels: { fr: label } }).get '_id'
     ]
