@@ -5,14 +5,11 @@ promises_ = __.require 'lib', 'promises'
 hardCodedDocuments = require './hard_coded_documents'
 
 module.exports = ->
-  promises = []
-
   for dbName, docs of hardCodedDocuments
     db = __.require('couch', 'base')(dbName)
-    for docName, doc of docs
-      promises.push updateDoc(db, doc)
-
-  return promises_.all promises
+    docs = hardCodedDocuments[dbName]
+    updateDoc(db, _.values(docs)[0])
+    .then -> updateDoc(db, _.values(docs)[1])
 
 updateDoc = (db, doc)->
   { _id:id } = doc
