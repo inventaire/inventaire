@@ -2,14 +2,12 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
-hardCodedDocuments = require './hard_coded_documents'
+{ users } = require './hard_coded_documents'
+usersDb = __.require('couch', 'base')('users')
 
 module.exports = ->
-  for dbName, docs of hardCodedDocuments
-    db = __.require('couch', 'base')(dbName)
-    docs = hardCodedDocuments[dbName]
-    updateDoc(db, _.values(docs)[0])
-    .then -> updateDoc(db, _.values(docs)[1])
+  updateDoc usersDb, users.seed
+  .then -> updateDoc usersDb, users.hook
 
 updateDoc = (db, doc)->
   { _id:id } = doc
