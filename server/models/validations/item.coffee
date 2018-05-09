@@ -17,12 +17,6 @@ module.exports = validations =
     return listing in constrained.listing.possibilities
   details: _.isString
   notes: _.isString
-  snapshot: (obj)->
-    if _.typeOf(obj) isnt 'object' then return false
-    for key, value of obj
-      unless key in inLocalSnapshot then return false
-      unless snapshotValidations[key](value) then return false
-    return true
 
 validations.snapshotValidations = snapshotValidations =
   'entity:title': BoundedString 1, 500
@@ -31,5 +25,3 @@ validations.snapshotValidations = snapshotValidations =
   'entity:authors': _.isString
   'entity:series': _.isString
   'entity:ordinal': _.isString
-
-inLocalSnapshot = Object.keys snapshotValidations

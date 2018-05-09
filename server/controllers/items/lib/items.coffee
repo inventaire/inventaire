@@ -12,7 +12,7 @@ radio = __.require 'lib', 'radio'
 { filterPrivateAttributes } = require './filter_private_attributes'
 { minKey, maxKey } = __.require 'lib', 'couch'
 listingsLists = require './listings_lists'
-snapshotEntityData = require './snapshot/snapshot_entity_data'
+snapshot_ = require './snapshot/snapshot'
 
 # Working around the circular dependency
 user_ = null
@@ -83,35 +83,20 @@ module.exports = items_ =
 
   create: (userId, items)->
     _.type items, 'array'
-    promises_.all items.map(snapshotEntityData)
-    .map (item)-> Item.create userId, item
-    .then db.bulk
+    itemsDocs = items.map (item)-> Item.create userId, item
+    db.bulk itemsDocs
     .then (res)->
       itemsIds = _.pluck res, 'id'
       db.fetch itemsIds
       .tap -> radio.emit 'user:inventory:update', userId
 
   update: (userId, itemUpdateData)->
-    itemId = itemUpdateData._id
-    db.get itemId
+    db.get itemUpdateData._id
     .then (currentItem)->
       updatedItem = Item.update userId, itemUpdateData, currentItem
-      { entity:currentEntity } = currentItem
-      { entity:updatedEntity } = updatedItem
-
-      # Refresh the item's snapshot data if the entity changed
-      if currentEntity isnt updatedEntity
-        # Revert to the previous entity to let Item.updateEntity re-update it
-        # and not complain about item.entity being equal to updatedEntity
-        updatedItem.entity = currentEntity
-        updatedItem = Item.updateEntity currentEntity, updatedEntity, updatedItem
-        promise = snapshotEntityData updatedItem
-      else
-        promise = promises_.resolve updatedItem
-
-      promise
-      .then db.putAndReturn
-      .tap -> radio.emit 'user:inventory:update', userId
+      return updatedItem
+    .then db.putAndReturn
+    .tap -> radio.emit 'user:inventory:update', userId
 
   verifyOwnership: (itemId, userId)->
     db.get itemId
@@ -156,11 +141,13 @@ module.exports = items_ =
   # Data manipulation done on client-side view models (item.serializeData),
   # but useful to have server-side for emails view models
   serializeData: (item)->
-    { 'entity:title':title, 'entity:authors':authors, 'entity:image':image } = item.snapshot
-    item.title = title
-    item.authors = authors
-    if image? and item.pictures.length is 0 then item.pictures = [ image ]
-    return item
+    snapshot_.addToItem item
+    .then (item)->
+      { 'entity:title':title, 'entity:authors':authors, 'entity:image':image } = item.snapshot
+      item.title = title
+      item.authors = authors
+      if image? and item.pictures.length is 0 then item.pictures = [ image ]
+      return item
 
 listingByEntities = (listing, uris, reqUserId)->
   keys = uris.map (uri)-> [ uri, listing ]
@@ -177,8 +164,9 @@ entityUriKeys = (entityUri)->
 
 safeItem = (item)-> _.omit item, privateAttrs
 
-FilterWithImage = (assertImage)->
-  return fn = (items)->
+FilterWithImage = (assertImage)-> (items)->
+  Promise.all items.map(snapshot_.addToItem)
+  .then (items)->
     if assertImage then items.filter itemWithImage
     else items
 

@@ -1,13 +1,17 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
+items_ = require '../items'
 entities_ = __.require 'controllers', 'entities/lib/entities'
 getEntityByUri = __.require 'controllers', 'entities/lib/get_entity_by_uri'
 getInvEntityCanonicalUri = __.require 'controllers', 'entities/lib/get_inv_entity_canonical_uri'
 buildSnapshot = require './build_snapshot'
 { getWorkAuthorsAndSeries, getEditionGraphEntities } = require './get_entities'
 { getDocData } = require './helpers'
-items_ = require '../items'
-Item = __.require 'models', 'item'
+
+# Working around circular dependencies
+snapshot_ = null
+lateRequire = -> snapshot_ = require './snapshot'
+setTimeout lateRequire, 0
 
 fromDoc = (changedEntityDoc)->
   [ uri, type ] = getDocData changedEntityDoc
@@ -16,13 +20,8 @@ fromDoc = (changedEntityDoc)->
   label = "#{uri} items snapshot refresh"
 
   _.info "#{label}: starting"
-  refresh[type](uri)
-  .then (updatedItems)->
-    if updatedItems?.length > 0
-      items_.db.bulk updatedItems
-      .then -> _.info "#{label}: #{updatedItems.length} item(s) refreshed"
-
-  .catch _.Error('refresh snapshot err')
+  getSnapshotsByType[type](uri)
+  .then snapshot_.batch
 
 fromUri = (changedEntityUri)->
   getEntityByUri changedEntityUri
@@ -32,15 +31,15 @@ module.exports = { fromDoc, fromUri }
 
 multiWorkRefresh = (relationProperty)-> (uri)->
   entities_.urisByClaim relationProperty, uri
-  .map refresh.work
+  .map getSnapshotsByType.work
   .then _.flatten
 
-refresh =
+getSnapshotsByType =
   edition: (uri)->
     # Get all the entities docs required to build the snapshot
     getEditionGraphEntities uri
     # Build common updated snapshot
-    .spread getUpdatedEditionItems
+    .spread getEditionSnapshot
 
   work: (uri)->
     getEntityByUri uri
@@ -48,47 +47,29 @@ refresh =
       getWorkAuthorsAndSeries work
       .spread (authors, series)->
         Promise.all [
-          getUpdatedWorkItems uri, work, authors, series
-          getUpdatedEditionsItems uri, [ work ], authors, series
+          getWorkSnapshot uri, work, authors, series
+          getEditionsSnapshots uri, [ work ], authors, series
         ]
         .then _.flatten
 
   human: multiWorkRefresh 'wdt:P50'
   serie: multiWorkRefresh 'wdt:P179'
 
-refreshTypes = Object.keys refresh
+refreshTypes = Object.keys getSnapshotsByType
 
-getUpdatedWorkItems = (uri, work, authors, series)->
+getWorkSnapshot = (uri, work, authors, series)->
   _.types arguments, [ 'string', 'object', 'array', 'array' ]
-  items_.byEntity uri
-  .map (item)->
-    { lang } = item
-    updatedSnapshot = buildSnapshot.work lang, work, authors, series
-    if _.objDiff item.snapshot, updatedSnapshot
-      return Item.updateSnapshot item, updatedSnapshot
-    else
-      return null
-  # Filter out items without snapshot change
-  .filter _.identity
+  buildSnapshot.work work, authors, series
 
-getUpdatedEditionsItems = (uri, works, authors, series)->
+getEditionsSnapshots = (uri, works, authors, series)->
   _.types arguments, [ 'string', 'array', 'array', 'array' ]
 
   entities_.byClaim 'wdt:P629', uri, true, true
-  .map (edition)-> getUpdatedEditionItems edition, works, authors, series
-  # Keep only items that had a change
-  .filter _.identity
-  .then _.flatten
+  .map (edition)-> getEditionSnapshot edition, works, authors, series
 
-getUpdatedEditionItems = (edition, works, authors, series)->
+getEditionSnapshot = (edition, works, authors, series)->
   _.types arguments, [ 'object', 'array', 'array', 'array' ]
 
   [ uri ] = getInvEntityCanonicalUri edition
-  updatedSnapshot = buildSnapshot.edition edition, works, authors, series
-  # Find all edition items
-  items_.byEntity uri
-  .then (items)->
-    unless items.length > 0 then return
-    if _.objDiff items[0].snapshot, updatedSnapshot
-      # Update snapshot
-      return items.map (item)-> Item.updateSnapshot item, updatedSnapshot
+  edition.uri = uri
+  return buildSnapshot.edition edition, works, authors, series

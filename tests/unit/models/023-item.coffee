@@ -16,7 +16,6 @@ validItem =
   transaction: 'giving'
   pictures: ['https://pictu.re/yoplaboom']
   lang: 'fr'
-  snapshot: { 'entity:title': 'Odyssé' }
 
 extendItem = (data)->
   _.extend {}, validItem, data
@@ -39,22 +38,6 @@ describe 'item model', ->
       it 'should return an object without id', (done)->
         item = create validItem
         should(item._id).not.be.ok()
-        done()
-
-    describe 'title', ->
-      it 'should return an object with a title', (done)->
-        item = create validItem
-        item.snapshot['entity:title'].should.equal validItem.snapshot['entity:title']
-        done()
-
-      it 'should throw on missing title', (done)->
-        item = extendItem { snapshot: null }
-        (-> create(item)).should.throw()
-        done()
-
-      it 'should throw on invalid title', (done)->
-        item = extendItem { snapshot: { 'entity:title': 123 } }
-        (-> create(item)).should.throw()
         done()
 
     describe 'entity', ->
@@ -138,19 +121,5 @@ describe 'item model', ->
     it 'should throw when updated with an invalid attribute', (done)->
       doc = create validItem
       updateAttributesData = { listing: 'chocolat' }
-      (-> update(updateAttributesData, doc)).should.throw()
-      done()
-
-    it 'should not throw when updated with a valid snapshot', (done)->
-      doc = create validItem
-      updateAttributesData =
-        snapshot:
-          'entity:image': '/ipfs/QmXtPA8rAn5VCJ3rVLxWhDEnMv2hiPTMopH9NuaERz3nuw'
-      (-> update(updateAttributesData, doc)).should.not.throw()
-      done()
-
-    it 'should throw when updated with an invalid snapshot', (done)->
-      doc = create validItem
-      updateAttributesData = { snapshot: { bla: 'hello' } }
       (-> update(updateAttributesData, doc)).should.throw()
       done()

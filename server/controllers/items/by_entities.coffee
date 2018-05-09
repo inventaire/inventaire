@@ -7,7 +7,7 @@ error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
 sanitize = __.require 'lib', 'sanitize/sanitize'
 responses_ = __.require 'lib', 'responses'
-{ addUsersData, Paginate } = require './lib/queries_commons'
+{ addAssociatedData, Paginate } = require './lib/queries_commons'
 { filterPrivateAttributes } = require './lib/filter_private_attributes'
 
 sanitization =
@@ -18,7 +18,7 @@ sanitization =
 module.exports = (req, res)->
   sanitize req, res, sanitization
   .then getEntitiesItems
-  .then addUsersData
+  .then addAssociatedData
   .then responses_.Send(res)
   .catch error_.Handler(req, res)
 

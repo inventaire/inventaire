@@ -3,23 +3,44 @@ _ = __.require 'builders', 'utils'
 { getNames, aggregateClaims } = require './helpers'
 { getOriginalLang } = __.require 'lib', 'wikidata/wikidata'
 error_ = __.require 'lib', 'error/error'
+wdk = require 'wikidata-sdk'
 { snapshotValidations } = __.require 'models', 'validations/item'
+getBestLangValue = __.require('sharedLibs', 'get_best_lang_value')(_)
 
 module.exports =
-  # all editions items have the same snapshot
   edition: (edition, works, authors, series)->
     title = edition.claims['wdt:P1476']?[0]
     lang = getOriginalLang(edition.claims) or 'en'
     image = edition.claims['wdt:P18']?[0]
-    return wrapSnapshot edition, works, title, lang, image, authors, series
+    return buildOperation {
+      type: 'edition'
+      entity: edition,
+      works,
+      title,
+      lang,
+      image,
+      authors,
+      series
+    }
 
-  work: (lang, work, authors, series)->
-    title = work.labels[lang]
+  work: (work, authors, series)->
+    { originalLang: lang } = work
+    title = getBestLangValue(lang, null, work.labels).value
     image = work.claims['wdt:P18']?[0]
     works = [ work ]
-    return wrapSnapshot work, works, title, lang, image, authors, series
+    return buildOperation {
+      type: 'work'
+      entity: work,
+      works,
+      title,
+      lang,
+      image,
+      authors,
+      series
+    }
 
-wrapSnapshot = (entity, works, title, lang, image, authors, series)->
+buildOperation = (params)->
+  { type, entity, works, title, lang, image, authors, series } = params
   _.type works, 'array'
   unless _.isNonEmptyString title
     throw error_.new 'no title found', 400, entity
@@ -40,7 +61,10 @@ wrapSnapshot = (entity, works, title, lang, image, authors, series)->
   if snapshotValidations['entity:image'](image)
     snapshot['entity:image'] = image
 
-  return snapshot
+  { uri } = entity
+  _.type uri, 'string'
+
+  return { key: uri, value: snapshot }
 
 setOrdinal = (snapshot, works)->
   if works.length is 1

@@ -1,6 +1,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 items_ = __.require 'controllers', 'items/lib/items'
+snapshot_ = require './lib/snapshot/snapshot'
 error_ = __.require 'lib', 'error/error'
 { Track } = __.require 'lib', 'track'
 { Promise } = __.require 'lib', 'promises'
@@ -27,7 +28,10 @@ module.exports = (req, res, next)->
   .then (itemsDocs)->
     # When only one item was sent, without being wrapped in an array
     # return the created item object, instead of an array
-    data = if singleItemMode then itemsDocs[0] else itemsDocs
-    res.status(201).json data
+    if singleItemMode
+      snapshot_.addToItem itemsDocs[0]
+    else
+      Promise.all itemsDocs.map(snapshot_.addToItem)
+  .then (data)-> res.status(201).json data
   .tap Track(req, [ 'item', 'creation', null, items.length ])
   .catch error_.Handler(req, res)

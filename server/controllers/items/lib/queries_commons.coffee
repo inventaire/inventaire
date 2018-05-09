@@ -3,6 +3,7 @@ _ = __.require 'builders', 'utils'
 user_ = __.require 'controllers', 'user/lib/user'
 promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
+snapshot_ = require './snapshot/snapshot'
 
 filters =
   # Prevent showing private items in group context to avoid giving the false
@@ -11,8 +12,15 @@ filters =
 
 validFilters = Object.keys filters
 
-module.exports =
+module.exports = queriesCommons =
   validFilters: validFilters
+
+  addAssociatedData: (page)->
+    Promise.all [
+      queriesCommons.addItemsSnapshots page.items
+      queriesCommons.addUsersData page
+    ]
+    .then -> page
 
   addUsersData: (page)->
     { reqUserId, includeUsers } = page
@@ -29,6 +37,9 @@ module.exports =
     .then (users)->
       page.users = users
       return page
+
+  addItemsSnapshots: (items)->
+    Promise.all items.map(snapshot_.addToItem)
 
   ownerIs: (userId)-> (item)-> item.owner is userId
 
