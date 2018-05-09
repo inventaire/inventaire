@@ -13,7 +13,7 @@ config/local.coffee
 config/prod-local.coffee
 config/runtime.json
 config/staging-local.coffee
-db/level*
+db/leveldb*
 erl_crash.dump
 client
 docs
