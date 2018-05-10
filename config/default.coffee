@@ -122,7 +122,7 @@ module.exports = config =
   # By default, media are saved locally instead of using a remove
   # object storage service such as Swift
   objectStorage: 'local'
-  # Swift parameters are requierd only when objectStorage is set to 'swift'
+  # Swift parameters are required only when objectStorage is set to 'swift'
   swift:
     username: 'customizedInLocalConfig'
     password: 'customizedInLocalConfig'
