@@ -19,6 +19,7 @@ caseInsensitiveProperties = [
 blacklistedProperties = [
   # Too many results, can't be sorted
   'wdt:P31'
+  'wdt:P407'
 ]
 
 module.exports = (params)->
