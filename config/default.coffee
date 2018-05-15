@@ -69,8 +69,8 @@ module.exports = config =
     host: 'http://localhost:9200'
   serveStaticFiles: true
   noCache: false
-  staticMaxAge: 30*24*60*60*1000
-  cookieMaxAge: 10*365*24*3600*1000
+  staticMaxAge: 30 * 24 * 60 * 60 * 1000
+  cookieMaxAge: 10 * 365 * 24 * 3600 * 1000
   typeCheck: true
   bluebird:
     warnings: false
@@ -115,8 +115,8 @@ module.exports = config =
   # time of validity for email validation tokens
   tokenDaysToLive: 3
   debouncedEmail:
-    crawlPeriod: 10*60*1000
-    debounceDelay: 30*60*1000
+    crawlPeriod: 10 * 60 * 1000
+    debounceDelay: 30 * 60 * 1000
     disabled: false
 
   # By default, media are saved locally instead of using a remove
@@ -136,7 +136,7 @@ module.exports = config =
     localEndpoint: -> config.fullHost() + @urlBase()
     maxSize: 1600
     # 5MB
-    maxWeight: 5*1024**2
+    maxWeight: 5 * 1024 ** 2
 
   # Analytics service
   piwik:
