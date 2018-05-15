@@ -22,7 +22,6 @@ onData = (data)->
   # if the last event happened more than debounceDelay ago
   if _.expired time, debounceDelay
     sendDebouncedEmail[domain](id)
-    .then cleanDb.bind(null, key)
+    .then cleanup.bind(null, key)
 
-cleanDb = (key)->
-  waitingEmails.del key
+cleanup = waitingEmails.del

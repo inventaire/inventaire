@@ -3,151 +3,69 @@ _ = __.require 'builders', 'utils'
 
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
+{ undesiredRes } = require '../utils'
 
 levelBase = __.require 'level', 'base'
-subDb = levelBase.sub('test db')
-promDb = levelBase.promisified(subDb)
-unjsonizedDb = levelBase.unjsonized(promDb)
-db = unjsonizedDb
+db = levelBase.simpleSubDb 'test db'
 
-describe 'db', ->
-  describe 'level base', ->
-    describe 'sub', ->
-      it 'should put and get a string', (done)->
-        subDb.put 'what', 'zup', (err, body)->
-          if err? then _.error err
-          subDb.get 'what', (err, body)->
-            _.log body, 'body'
-            body.should.equal 'zup'
-            done()
+describe 'simplified level', ->
+  it 'should put and get an object value', (done)->
+    db.put 'ohoh', { ahoy: 'georges' }
+    .then -> db.get 'ohoh'
+    .then (res)->
+      res.should.be.an.Object()
+      res.ahoy.should.equal 'georges'
+      done()
+    .catch done
 
-      it 'should put and get an object', (done)->
-        obj = { bob: 'by' }
-        json = JSON.stringify(obj)
-        subDb.put 'salut', json, (err, body)->
-          if err? then _.error err
-          subDb.get 'salut', (err, body)->
-            _.log body, 'body'
-            body.should.be.a.String()
-            obj2 = JSON.parse body
-            obj2.should.be.an.Object()
-            obj2.bob.should.equal 'by'
-            done()
+    return
 
-    describe 'promisified', ->
-      it 'should put and get a string', (done)->
-        promDb.putAsync('what', 'zup')
-        .then (res)->
-          promDb.getAsync('what')
-          .then (res)->
-            _.log res, 'res'
-            res.should.equal 'zup'
-            done()
+  it 'should batch and reset', (done)->
+    db.reset()
+    .then ->
+      db.batch [
+        { key: 'a', value: 'b' }
+        { key: 'c', value: 'd' }
+        { key: 'e', value: { f: 1 } }
+        { key: 'g', value: 'h' }
+      ]
+    .then ->
+      db.batch [
+        { type: 'del', key: 'c' }
+        { type: 'del', key: 'g' }
+        { type: 'put', key: 'i', value: 'j' }
+      ]
+    .then -> levelBase.streamPromise db.sub.createReadStream()
+    .then (dump)->
+      dump.should.deepEqual [
+        { key: 'a', value: 'b' }
+        { key: 'e', value: { f: 1 } }
+        { key: 'i', value: 'j' }
+      ]
+      done()
 
-        return
+    return
 
-      it 'should put and get an object', (done)->
-        obj = { da: 'zup' }
-        json = JSON.stringify(obj)
-        promDb.putAsync('yo', json)
-        .then (res)->
-          promDb.getAsync('yo')
-          .then (res)->
-            obj2 = JSON.parse res
-            obj2.should.be.an.Object()
-            obj2.da.should.equal 'zup'
-            done()
+  it 'should put and get a string value', (done)->
+    db.put 'what', 'zup'
+    .then -> db.get 'what'
+    .then (res)->
+      res.should.equal 'zup'
+      done()
+    .catch done
 
-        return
+    return
 
-    describe 'unjsonized', ->
-      it 'should put and get a string', (done)->
-        unjsonizedDb.put('what', 'zup')
-        .then (res)->
-          unjsonizedDb.get('what')
-          .then (res)->
-            _.log res, 'res'
-            res.should.equal 'zup'
-            done()
+  it 'should catch notFound errors', (done)->
+    spyCount = 0
+    db.get 'not defined'
+    .catch (err)->
+      _.error err, 'GET err'
+      spyCount++
+    .then (res)->
+      spyCount.should.equal 0
+      should(res).not.be.ok()
+      done()
+    .catch done
 
-        return
-
-      it 'should put and get an object', (done)->
-        obj = { ahoy: 'georges' }
-        unjsonizedDb.put('ohoh', obj)
-        .then (res)->
-          unjsonizedDb.get('ohoh')
-          .then (res)->
-            res.should.be.an.Object()
-            res.ahoy.should.equal 'georges'
-            done()
-
-        return
-
-    describe 'GET STREAM', ->
-      it 'should return a promise', (done)->
-        db.getStream()
-        .then (res)->
-          _.log res, 'res'
-          done()
-
-        return
-
-      it 'should return just what is asked', (done)->
-        db.put('123:a', 'zou')
-        db.put('123:b', 'bi')
-        db.put('123:c', 'dou')
-        params =
-          gt: '123'
-          lt: '123' + 'Z'
-        db.getStream(params)
-        .then (res)->
-          res.should.be.an.Array()
-          res.length.should.equal 3
-          done()
-
-        return
-
-    describe 'get', ->
-      it 'should catch notFound errors', (done)->
-        spyCount = 0
-        db.get('not defined')
-        .catch (err)->
-          _.error err, 'GET err'
-          spyCount++
-        .then (res)->
-          spyCount.should.equal 0
-          should(res).not.be.ok()
-          done()
-
-        return
-
-    describe 'update', ->
-      it 'should update the value', (done)->
-        db.put 'a', { b: 'c' }
-        .then ->
-          db.update 'a', { d: 'e' }
-          .then ->
-            db.get 'a'
-            .then (val)->
-              val.should.be.an.Object()
-              should(val.b).not.be.ok()
-              val.d.should.equal 'e'
-              done()
-
-        return
-
-    describe 'patch', ->
-      it 'should update the value', (done)->
-        db.put 'a', { b: 'c' }
-        .then ->
-          db.patch 'a', { d: 'e' }
-          .then ->
-            db.get 'a'
-            .then (val)->
-              val.should.be.an.Object()
-              val.b.should.equal 'c'
-              val.d.should.equal 'e'
-              done()
-
-        return
+    return
