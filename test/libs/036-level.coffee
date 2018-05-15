@@ -6,7 +6,7 @@ should = require 'should'
 { undesiredRes } = require '../utils'
 
 levelBase = __.require 'level', 'base'
-db = levelBase.simplifiedSubDb 'test db'
+db = levelBase.simpleSubDb 'test db'
 
 describe 'simplified level', ->
   it 'should put and get an object value', (done)->

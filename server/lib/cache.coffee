@@ -5,7 +5,7 @@ error_ = __.require 'lib', 'error/error'
 
 levelBase = __.require 'level', 'base'
 
-db = levelBase.simplifiedSubDb 'cache'
+db = levelBase.simpleSubDb 'cache'
 
 if CONFIG.resetCacheAtStartup then db.reset()
 { offline } = CONFIG

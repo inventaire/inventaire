@@ -20,7 +20,7 @@ rawSubDb = (dbName, valueEncoding)->
   return DB.sublevel dbName, { valueEncoding }
 
 # Promisified and with a few additional functions
-simplifiedSubDb = (dbName)->
+simpleSubDb = (dbName)->
   sub = Promise.promisifyAll rawSubDb(dbName, 'json')
 
   return API =
@@ -57,4 +57,4 @@ streamPromise = (stream)->
     .on 'end', -> resolve results
     .on 'error', reject
 
-module.exports = { rawSubDb, simplifiedSubDb, Reset, Inspect, streamPromise }
+module.exports = { rawSubDb, simpleSubDb, Reset, Inspect, streamPromise }

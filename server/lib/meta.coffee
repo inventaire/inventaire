@@ -2,4 +2,4 @@
 # that can be retrieved after the app restarts
 __ = require('config').universalPath
 levelBase = __.require 'level', 'base'
-module.exports = levelBase.simplifiedSubDb 'meta'
+module.exports = levelBase.simpleSubDb 'meta'
