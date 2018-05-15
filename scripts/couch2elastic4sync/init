@@ -5,7 +5,7 @@ _ = __.require 'builders', 'utils'
 elasticSearchHost = CONFIG.elasticsearch.host
 couchdbHost = CONFIG.db.fullHost()
 folder = __.path 'scripts', 'couch2elastic4sync'
-fs = __.require 'lib', 'fs'
+{ writeFile } = __.require 'lib', 'fs'
 { syncDataList, indexesList } = __.require 'db', 'elasticsearch/list'
 createIndex = require './create_index'
 
@@ -17,7 +17,7 @@ writeConfigFile = (syncData)->
     elasticsearch: "#{elasticSearchHost}/#{dbName}/#{type}"
     mapper: "#{folder}/mappers/#{type}.js"
 
-  fs.writeFile "#{folder}/configs/#{dbName}.json", JSON.stringify(data, null, 2)
+  writeFile "#{folder}/configs/#{dbName}.json", JSON.stringify(data, null, 2)
   .then -> _.log "'#{dbName}' config file generated"
   .catch _.ErrorRethrow("'#{dbName}' config file error")
 

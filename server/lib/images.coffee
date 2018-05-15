@@ -4,7 +4,7 @@ _ = __.require 'builders', 'utils'
 gm = require 'gm'
 { Promise } = __.require 'lib', 'promises'
 crypto_ = __.require 'lib', 'crypto'
-fs_ =  __.require 'lib', 'fs'
+{ readFile } =  __.require 'lib', 'fs'
 { maxSize, maxWeight } = CONFIG.images
 error_ = __.require 'lib', 'error/error'
 
@@ -23,7 +23,7 @@ shrink = (data, width, height)->
 
 module.exports =
   getHashFilename: (path, extension = 'jpg')->
-    fs_.readFile path
+    readFile path
     .then crypto_.sha1
     .then (hash)-> "#{hash}.#{extension}"
 

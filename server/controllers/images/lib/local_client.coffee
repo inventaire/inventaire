@@ -9,20 +9,15 @@ base = '/public/uploads/'
 folder = "client#{base}"
 fileUrl = (filename)-> urlBase + filename
 filePath = (filename)-> folder + filename
-tmpPath = (filename)-> '/tmp/' + filename
+tmpFolderPath = (filename)-> '/tmp/' + filename
 
 module.exports =
   putImage: (path, filename, type = 'image/jpeg')->
-    fs_.readFile path
-    .then writeFile.bind(null, filename)
+    url = fileUrl filename
+    fs_.mv path, filePath(filename)
+    .then -> url
 
   deleteImages: (urls, headers)->
     promises = urls.map (url)->
       filename = url.split(base)[1]
-      fs_.move filePath(filename), tmpPath(filename)
-
-writeFile = (filename, file)->
-  path = filePath filename
-  url = fileUrl filename
-  fs_.writeFile path, file
-  .then -> url
+      fs_.mv filePath(filename), tmpFolderPath(filename)
