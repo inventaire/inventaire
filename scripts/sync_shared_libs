@@ -31,8 +31,9 @@ cd $project_dir
 
 server_folder=./server/lib/shared
 client_folder=./client/app/lib/shared
+client_only_file="${server_folder}/shared_libs.coffee"
 
-diff_lines_count=$(diff -r "$server_folder" "$client_folder" | wc -l)
+diff_lines_count=$(diff -r "$server_folder" "$client_folder" --exclude "$client_only_file" | wc -l)
 
 [ "$diff_lines_count" == "0" ] && {
   echo "server and client shared libs are in sync" &&
@@ -42,4 +43,7 @@ diff_lines_count=$(diff -r "$server_folder" "$client_folder" | wc -l)
 timestamp=$(node -p 'new Date().getTime()')
 mv "$server_folder" "/tmp/inv-shared-libs-${timestamp}"
 cp -r "$client_folder" "$server_folder"
+# Remove files that were copied in the server repo
+# but that are actually not needed there
+rm "${client_only_file}"
 echo "client and server shared libs synchronized"
