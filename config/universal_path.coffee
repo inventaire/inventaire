@@ -29,7 +29,7 @@ module.exports =
     lib: '/server/lib'
     models: '/server/models'
     utils: '/server/lib/utils'
-    sharedLibs: '/client/app/lib/shared'
+    sharedLibs: '/server/lib/shared'
     data: '/server/data'
     db: '/server/db'
     couch: '/server/db/couch'

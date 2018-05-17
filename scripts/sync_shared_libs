@@ -1,0 +1,45 @@
+#!/usr/bin/env zsh
+# When the server and the client repo are both checkout on a branch with the same name,
+# make sure their shared libs are in sync
+# This allows to have DRY shared libs while allowing both repos to be out of sync at times
+# without it making one or the other crash.
+# The client keeps the lead: unit tests and edits should be done there, the server follows
+
+set -eu
+
+[ -e ./client ]   || { echo "client repo folder can't be found" && exit 1 }
+
+current_branch(){
+  git branch | grep '*' | awk '{printf $2}'
+}
+
+project_dir=$(pwd)
+current_server_branch=$(current_branch)
+
+
+cd ./client
+current_client_branch=$(current_branch)
+
+# echo "current server branch: $current_server_branch"
+# echo "current client branch: $current_client_branch"
+cd $project_dir
+
+[ "$current_server_branch" != "$current_client_branch" ] && {
+  echo "server and client repo are on different branches" &&
+  exit 0
+}
+
+server_folder=./server/lib/shared
+client_folder=./client/app/lib/shared
+
+diff_lines_count=$(diff -r "$server_folder" "$client_folder" | wc -l)
+
+[ "$diff_lines_count" == "0" ] && {
+  echo "server and client shared libs are in sync" &&
+  exit 0
+}
+
+timestamp=$(node -p 'new Date().getTime()')
+mv "$server_folder" "/tmp/inv-shared-libs-${timestamp}"
+cp -r "$client_folder" "$server_folder"
+echo "client and server shared libs synchronized"
