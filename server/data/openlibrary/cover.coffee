@@ -2,6 +2,7 @@
 # could actually be turned into a generalist 'image-check' service
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
+{ Promise } = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
 checkCoverExistance = require './check_cover_existance'
 
@@ -11,7 +12,7 @@ module.exports = (openLibraryId, entityType)->
   switch entityType
     when 'human' then type = 'a'
     when 'work', 'edition' then type = 'b'
-    else return error_.bundle req, res, 'unknow openlibrary type', 400
+    else return Promise.resolve null
 
   url = coverByOlId openLibraryId, type
 

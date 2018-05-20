@@ -60,20 +60,6 @@ promisesHandlers =
       promise
     }
 
-  fallbackChain: (getters, timeout = 10000)->
-    _.types getters, 'functions...'
-    promiseChainInitializer = Promise.reject new Error(initMessage)
-    return getters.reduce ChainReducer(timeout), promiseChainInitializer
-
-initMessage = 'init chain'
-ChainReducer = (timeout)-> (prev, next)->
-  prev
-  .catch (err)->
-    # The promiseChainInitializer will always reject its promise to init the fallback chain
-    # so logging its error message would be useless
-    if err.message isnt initMessage then _.warn err, 'err in the fallback chain'
-    return next().timeout timeout
-
 # bundling NonSkip and _.Error handlers
 promisesHandlers.catchSkip = (label)->
   catcher = (err)->

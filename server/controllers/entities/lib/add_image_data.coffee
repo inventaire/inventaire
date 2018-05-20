@@ -1,6 +1,6 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
-promises_ = __.require 'lib', 'promises'
+{ Promise } = __.require 'lib', 'promises'
 getThumbData = __.require 'data', 'commons/thumb'
 getEnwikiImage = __.require 'data', 'wikipedia/image'
 getOpenLibraryCover = __.require 'data', 'openlibrary/cover'
@@ -12,12 +12,6 @@ module.exports = (entity)->
   .then (data)->
     entity.image = data
     return entity
-  .catch (err)->
-    if err.statusCode is 404
-      entity.image = getAvatarsDataFromClaims(entity.claims)[0]
-    else
-      _.error err, 'addImageData err'
-    return entity
 
 findAnImage = (entity)->
   commonsFilename = getCommonsFilenamesFromClaims(entity.claims)[0]
@@ -26,17 +20,20 @@ findAnImage = (entity)->
   return pickBestPic entity, commonsFilename, enwikiTitle, openLibraryId
 
 pickBestPic = (entity, commonsFilename, enwikiTitle, openLibraryId)->
-  getters = {}
-  if commonsFilename? then getters.wm = getThumbData.bind null, commonsFilename
-  if enwikiTitle? then getters.wp = getEnwikiImage.bind null, enwikiTitle
-  if openLibraryId?
-    getters.ol = getOpenLibraryCover.bind null, openLibraryId, entity.type
+  Promise.props
+    wm: timeoutAndPreventThrow getThumbData(commonsFilename)
+    wp: timeoutAndPreventThrow getEnwikiImage(enwikiTitle)
+    ol: timeoutAndPreventThrow getOpenLibraryCover(openLibraryId, entity.type)
+  .then (results)->
+    order = getPicSourceOrder entity
+    orderedResults = _.pick results, order
+    bestPicData = _.compact(_.values(orderedResults))[0]
+    return bestPicData or getAvatarsDataFromClaims(entity.claims)[0]
 
-  order = getPicSourceOrder entity
-  candidates = _.values _.pick(getters, order)
-  if candidates.length is 0 then return promises_.resolved
-
-  return promises_.fallbackChain candidates, 5000
+timeoutAndPreventThrow = (promise)->
+  promise
+  .timeout 5000
+  .catch (err)-> return
 
 getPicSourceOrder = (entity)->
   { type } = entity
