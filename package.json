@@ -18,6 +18,7 @@
     "lint": "coffeelint -f config/coffeelint.json --color always server.coffee server tests db/couchdb scripts",
     "lint-staged": "./scripts/lint-staged",
     "migrator": "./scripts/migrator",
+    "populate-fixtures": "./scripts/populate_fixtures",
     "postinstall": "./scripts/postinstall",
     "preview-email": "./scripts/preview-email",
     "reload": "touch server.coffee",

@@ -3,7 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { nonAuthReq, undesiredRes, undesiredErr } = __.require 'apiTests', 'utils/utils'
-populate = require '../fixtures/populate'
+{ populate } = require '../fixtures/populate'
 recentPublicUrl = '/api/items?action=recent-public'
 
 describe 'items:recent-public', ->

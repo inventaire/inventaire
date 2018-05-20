@@ -26,3 +26,4 @@ Promise.all dbsBaseNames
 .catch (err)->
   console.log "#{err.body.reason}\n\
   Hum, have you ran the tests first ?"
+  error_.catchNotFound err
