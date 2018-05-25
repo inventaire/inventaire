@@ -12,26 +12,25 @@ defaultEditionData = ->
   labels: {}
   claims:
     'wdt:P31': [ 'wd:Q3331189' ]
-    'wdt:P1476': [ workLabel() ]
+    'wdt:P1476': [ API.workLabel() ]
 
 createEntity = (P31)-> (params = {})->
-  defaultLabel = if P31 is 'wd:Q5' then humanName() else workLabel()
+  defaultLabel = if P31 is 'wd:Q5' then humanName() else API.workLabel(4)
   labels = params.labels or { en: defaultLabel }
   authReq 'post', '/api/entities?action=create',
     labels: labels
     claims: { 'wdt:P31': [ P31 ] }
 
-workLabel = -> faker.random.words()
 humanName = -> faker.fake '{{name.firstName}} {{name.lastName}} human'
+randomWords = (length)-> faker.random.words(length)
 
 module.exports = API =
   createHuman: createEntity 'wd:Q5'
   createWork: createEntity 'wd:Q571'
   createSerie: createEntity 'wd:Q277759'
-  editionLabel: workLabel + ' edition'
-  workLabel: workLabel + ' work'
+  editionLabel: -> randomWords() + 'edition'
+  workLabel: -> randomWords(5) + ' work'
   humanName: humanName
-
   createWorkWithAuthor: (human)->
     humanPromise = if human then Promise.resolve(human) else API.createHuman()
 
@@ -78,7 +77,7 @@ module.exports = API =
     .then (entities)->
       if entities[uri]? then return entities[uri]
       workData or= {
-        labels: { fr: workLabel() }
+        labels: { fr: API.workLabel() }
         claims: { 'wdt:P31': [ 'wd:Q571' ] }
       }
       authReq 'post', '/api/entities?action=create',
