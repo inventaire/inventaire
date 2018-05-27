@@ -14,4 +14,13 @@
   <p>
     {{message}}
   </p>
+  {{#if uris}}
+    <ul>
+      {{#each uris}}
+        <li>
+          <a href="{{../host}}/entity/{{this}}">{{this}}</a>
+        </li>
+      {{/each}}
+    </ul>
+  {{/if}}
 {{>paragraph_bottom}}
