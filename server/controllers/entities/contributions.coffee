@@ -3,30 +3,19 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
+sanitize = __.require 'lib', 'sanitize/sanitize'
 entities_ = require './lib/entities'
 patches_ = require './lib/patches'
 
+sanitization =
+  user: {}
+  limit: { default: 50, max: 100 }
+  offset: { default: 0 }
+
 module.exports = (req, res)->
-  { user:userId, limit, offset } = req.query
-
-  unless _.isUserId userId
-    return error_.bundleInvalid req, res, 'user', userId
-
-  limit or= '50'
-  offset or= '0'
-
-  unless _.isPositiveIntegerString limit
-    return error_.bundleInvalid req, res, 'limit', limit
-
-  unless _.isPositiveIntegerString offset
-    return error_.bundleInvalid req, res, 'offset', offset
-
-  limit = _.stringToInt limit
-  offset = _.stringToInt offset
-
-  if limit > 100
-    return error_.bundle req, res, "limit can't be over 100", 400, limit
-
-  patches_.byUserId userId, limit, offset
+  sanitize req, sanitization
+  .then (params)->
+    { user:userId, limit, offset } = params
+    patches_.byUserId userId, limit, offset
   .then res.json.bind(res)
   .catch error_.Handler(req, res)
