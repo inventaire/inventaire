@@ -24,9 +24,11 @@ module.exports = tasks_ =
 
   byIds: db.fetch
 
-  byScore: (limit)->
+  byScore: (options)->
+    { limit, offset } = options
     db.viewCustom 'byScore',
       limit: limit
+      skip: offset
       descending: true
       include_docs: true
 
