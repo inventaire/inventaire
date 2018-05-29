@@ -1,12 +1,20 @@
+__ = require('config').universalPath
+_ = __.require 'builders', 'utils'
+
 module.exports = responses_ =
   # returns a function triggering a standard confirmation response
-  ok: (res, status = 200)-> res.status(status).json { ok: true }
+  ok: (res, status = 200)->
+    res.status status
+    responses_.send res, { ok: true }
+
   Ok: (res, status)-> responses_.ok.bind null, res, status
 
-  okWarning: (res, warning, status = 200)->
-    res.status(status).json { ok: true, warning }
+  okWarning: (res, category, warning, status = 200)->
+    responses_.addWarning res, category, warning
+    res.status status
+    responses_.send res, { ok: true }
 
-  OkWarning: (res, warning, status)->
+  OkWarning: (res, category, warning, status)->
     responses_.okWarning.bind null, res, warning, status
 
   # FROM: .then (users)-> res.json { users }
@@ -14,11 +22,19 @@ module.exports = responses_ =
   Wrap: (res, key)-> (data)->
     obj = {}
     obj[key] = data
-    res.json obj
+    responses_.send res, obj
 
-  Send: (req, res)-> (data)->
+  send: (res, data)->
+    _.type res, 'object'
     _.type data, 'object'
-    setWarnings req, data
+    setWarnings res, data
     res.json data
 
-setWarnings = (req, data)-> if req.warnings? then data.warnings = req.warnings
+  Send: (res)-> responses_.send.bind null, res
+
+  addWarning: (res, category, message)->
+    res.warnings or= {}
+    res.warnings.parameters or= []
+    res.warnings.parameters.push message
+
+setWarnings = (res, data)-> if res.warnings? then data.warnings = res.warnings

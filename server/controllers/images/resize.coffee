@@ -21,7 +21,8 @@ exports.get = (req, res, next)->
   # while hereafter image streams' error
   # aren't correctly handled
   if offline
-    return reponses_.okWarning res, 'you are in offline mode: no img delivered'
+    message = 'you are in offline mode: no img delivered'
+    return reponses_.okWarning res, 'connection', message
 
   # Used to redirect to production server when working with the prod databases
   # in development

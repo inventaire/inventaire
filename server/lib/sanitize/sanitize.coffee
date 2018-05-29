@@ -2,9 +2,10 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 { Promise } = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
+responses_ = __.require 'lib', 'responses'
 parameters = require './parameters'
 
-module.exports = (req, configs)->
+module.exports = (req, res, configs)->
   Promise.try ->
     _.type req.query, 'object'
 
@@ -15,16 +16,15 @@ module.exports = (req, configs)->
 
     for name, value of input
       unless configs[name]?
-        addWarning req, "unexpected parameter: #{name}"
+        addWarning res, "unexpected parameter: #{name}"
         delete input[name]
 
     for name, config of configs
       parameter = parameters[name]
 
       unless parameter?
-        addWarning req, "unexpected parameter: #{name}"
+        addWarning res, "unexpected parameter: #{name}"
         delete input[name]
-        return
 
       unless input[name]?
         if config.default? then input[name] = config.default
@@ -38,7 +38,7 @@ module.exports = (req, configs)->
 
       if config.max? and input[name] > config.max
         input[name] = config.max
-        addWarning req, "#{name} should be below or equal to #{config.max}"
+        addWarning res, "#{name} should be below or equal to #{config.max}"
 
     return input
 
@@ -46,7 +46,4 @@ getPlace = (method)->
   if method is 'POST' or method is 'PUT' then return 'query or body'
   return 'query'
 
-addWarning = (req, warning)->
-  req.warnings or= {}
-  req.warnings.parameters or= []
-  req.warnings.parameters.push warning
+addWarning = (res, message)-> responses_.addWarning res, 'parameters', message

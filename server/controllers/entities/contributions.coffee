@@ -14,9 +14,9 @@ sanitization =
   offset: { default: 0 }
 
 module.exports = (req, res)->
-  sanitize req, sanitization
+  sanitize req, res, sanitization
   .then (params)->
     { user:userId, limit, offset } = params
     patches_.byUserId userId, limit, offset
-  .then responses_.Send(req, res)
+  .then responses_.Send(res)
   .catch error_.Handler(req, res)
