@@ -57,6 +57,19 @@ describe 'sanitize', ->
 
     return
 
+  describe 'secret parameter', ->
+    it 'should not return the value', (done)->
+      req = { query: { password: 'a' } }
+      configs = { password: {} }
+      sanitize req, {}, configs
+      .then undesiredRes(done)
+      .catch (err)->
+        err.context.value.should.equal '*'
+        done()
+      .catch done
+
+      return
+
   describe 'strictly positive integer', ->
     it 'should accept string values', (done)->
       req = { query: { limit: '5' } }

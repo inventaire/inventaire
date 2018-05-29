@@ -9,10 +9,9 @@ module.exports = (req, res, configs)->
   Promise.try ->
     _.type req.query, 'object'
 
-    input = _.extend {}, req.query, req.body
-    delete input.action
-
     place = getPlace req.method
+    input = _.cloneDeep req[place]
+    delete input.action
 
     for name, value of input
       unless configs[name]?
@@ -34,7 +33,9 @@ module.exports = (req, res, configs)->
         input[name] = parameter.format input[name]
 
       unless parameter.validate input[name]
-        throw error_.newInvalid name, input[name]
+        err = error_.newInvalid name, input[name]
+        if parameter.secret then err.context.value = _.obfuscate err.context.value
+        throw err
 
       if config.max? and input[name] > config.max
         input[name] = config.max
@@ -43,7 +44,6 @@ module.exports = (req, res, configs)->
     return input
 
 getPlace = (method)->
-  if method is 'POST' or method is 'PUT' then return 'query or body'
-  return 'query'
+  if method is 'POST' or method is 'PUT' then 'body' else 'query'
 
 addWarning = (res, message)-> responses_.addWarning res, 'parameters', message

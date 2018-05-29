@@ -56,6 +56,8 @@ module.exports = base =
   indexAppliedValue: (array, fn)->
     return array.reduce aggragateFnApplication(fn), {}
 
+  obfuscate: (str)-> str.replace /.{1}/g, '*'
+
 aggregateCollections = (index, name)->
   index[name] = []
   return index

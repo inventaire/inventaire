@@ -2,26 +2,26 @@ CONFIG = require 'config'
 { cookieMaxAge } = CONFIG
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
+sanitize = __.require 'lib', 'sanitize/sanitize'
 error_ = __.require 'lib', 'error/error'
 passport_ = __.require 'lib', 'passport/passport'
 setLoggedInCookie = require './lib/set_logged_in_cookie'
 { ownerSafeData } = __.require 'controllers', 'user/lib/authorized_user_data_pickers'
 
+sanitization =
+  username: {}
+  email: {}
+  password: {}
+
+# TODO: rate limit to 10 signup per IP per 10 minutes
 exports.signup = (req, res)->
-  # TODO: rate limit to 10 signup per IP per 10 minutes
-  { username, email, password } = req.body
-
-  unless _.isNonEmptyString username
-    return error_.bundleMissingBody req, res, 'username'
-
-  unless _.isNonEmptyString email
-    return error_.bundleMissingBody req, res, 'email'
-
-  unless _.isNonEmptyString password
-    return error_.bundleMissingBody req, res, 'password'
-
-  next = LoggedIn req, res
-  passport_.authenticate.localSignup req, res, next
+  sanitize req, res, sanitization
+  .then (params)->
+    { username, email, password } = params
+    next = LoggedIn req, res
+    # TODO: rewrite passport response to use responses_.send
+    passport_.authenticate.localSignup req, res, next
+  .catch error_.Handler(req, res)
 
 exports.login = (req, res)->
   next = LoggedIn req, res
