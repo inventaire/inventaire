@@ -17,5 +17,5 @@ module.exports = (req, res)->
   .then (params)->
     { user:userId, limit, offset } = params
     patches_.byUserId userId, limit, offset
-  .then res.json.bind(res)
+  .then _.Send(req, res)
   .catch error_.Handler(req, res)

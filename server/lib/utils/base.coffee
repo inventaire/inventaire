@@ -89,3 +89,10 @@ wrap = (res, key, data)->
 # TO: .then _.Wraps(res, [ 'users', 'items' ])
 base.Wraps = (res, keys)-> wraps.bind null, res, keys
 wraps = (res, keys, dataArray)-> res.json _.zipObject(keys, dataArray)
+
+base.send = (req, res, data)->
+  _.type data, 'object'
+  if req.warnings? then data.warnings = req.warnings
+  res.json data
+
+base.Send = (req, res)-> base.send.bind null, req, res
