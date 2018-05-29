@@ -6,6 +6,7 @@ images_ = __.require 'lib', 'images'
 endpoint = CONFIG.images.localEndpoint()
 { maxSize } = CONFIG.images
 request = require 'request'
+responses_ = __.require 'lib', 'responses'
 qs = require 'querystring'
 { oneYear } =  __.require 'lib', 'times'
 { offline, imageRedirection } = CONFIG
@@ -19,7 +20,8 @@ exports.get = (req, res, next)->
   # could be useful in development
   # while hereafter image streams' error
   # aren't correctly handled
-  if offline then return _.okWarning res, 'you are in offline mode: no img delivered'
+  if offline
+    return reponses_.okWarning res, 'you are in offline mode: no img delivered'
 
   # Used to redirect to production server when working with the prod databases
   # in development

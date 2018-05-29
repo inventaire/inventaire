@@ -1,6 +1,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
+responses_ = __.require 'lib', 'responses'
 verifyThatEntitiesCanBeRemoved = require './lib/verify_that_entities_can_be_removed'
 removeEntitiesByInvId = require './lib/remove_entities_by_inv_id'
 
@@ -21,5 +22,5 @@ module.exports = (req, res, next)->
 
   verifyThatEntitiesCanBeRemoved uris
   .then -> removeEntitiesByInvId user, uris
-  .then _.Ok(res)
+  .then responses_.Ok(res)
   .catch error_.Handler(req, res)

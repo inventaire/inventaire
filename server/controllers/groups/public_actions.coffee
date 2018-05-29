@@ -2,6 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
+responses_ = __.require 'lib', 'responses'
 promises_ = __.require 'lib', 'promises'
 groups_ = require './lib/groups'
 user_ = __.require 'controllers', 'user/lib/user'
@@ -42,7 +43,7 @@ module.exports =
 
     searchByText search
     .filter searchable
-    .then _.Wrap(res, 'groups')
+    .then responses_.Wrap(res, 'groups')
     .catch error_.Handler(req, res)
 
   searchByPositon: (req, res)->
@@ -58,7 +59,7 @@ module.exports =
   lastGroups: (req, res)->
     groups_.byCreation()
     .filter searchable
-    .then _.Wrap(res, 'groups')
+    .then responses_.Wrap(res, 'groups')
     .catch error_.Handler(req, res)
 
   slug: (req, res)->
@@ -70,7 +71,7 @@ module.exports =
       return error_.bundleInvalid req, res, 'group', groupId
 
     groups_.getSlug name, groupId
-    .then _.Wrap(res, 'slug')
+    .then responses_.Wrap(res, 'slug')
     .catch error_.Handler(req, res)
 
 searchByText = buildSearcher

@@ -2,6 +2,7 @@ CONFIG = require 'config'
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
+responses_ = __.require 'lib', 'responses'
 user_ = __.require 'controllers', 'user/lib/user'
 isValidEmail = __.require('models', 'validations/user').email
 # pw_ = __.require('lib', 'crypto').passwords
@@ -19,5 +20,5 @@ module.exports = (req, res, next)->
     else
       throw err
   .then user_.sendResetPasswordEmail
-  .then _.Ok(res)
+  .then responses_.Ok(res)
   .catch error_.Handler(req, res)

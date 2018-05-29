@@ -5,6 +5,7 @@ _ = __.require 'builders', 'utils'
 { updatable, concurrencial, acceptNullValue } = attributes
 user_ = __.require 'controllers', 'user/lib/user'
 error_ = __.require 'lib', 'error/error'
+responses_ = __.require 'lib', 'responses'
 { basicUpdater } = __.require 'lib', 'doc_updates'
 User = __.require 'models', 'user'
 { Track } = __.require 'lib', 'track'
@@ -39,7 +40,7 @@ module.exports = (req, res, next)->
       return error_.bundleInvalid req, res, 'value', value
 
     return updateAttribute user, attribute, value
-    .then _.Ok(res)
+    .then responses_.Ok(res)
     .then Track(req, ['user', 'update'])
     .catch error_.Handler(req, res)
 
@@ -47,7 +48,7 @@ module.exports = (req, res, next)->
     # checks for validity and availability (+ reserve words for username)
     return user_.availability[attribute](value, currentValue)
     .then -> updateAttribute user, attribute, value
-    .then _.Ok(res)
+    .then responses_.Ok(res)
     .then Track(req, ['user', 'update'])
     .catch error_.Handler(req, res)
 

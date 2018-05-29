@@ -3,6 +3,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
+responses_ = __.require 'lib', 'responses'
 patches_ = require './lib/patches'
 
 module.exports = (req, res)->
@@ -20,6 +21,6 @@ module.exports = (req, res)->
 
   else
 
-    promise = patches_.getGlobalActivity()
-    .then _.Wrap(res, 'activity')
+    patches_.getGlobalActivity()
+    .then responses_.Wrap(res, 'activity')
     .catch error_.Handler(req, res)

@@ -1,6 +1,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
+responses_ = __.require 'lib', 'responses'
 promises_ = __.require 'lib', 'promises'
 refreshSnapshot = require './lib/snapshot/refresh_snapshot'
 
@@ -11,7 +12,7 @@ module.exports = (req, res)->
     return error_.bundleInvalid req, res, 'uris', uris
 
   refreshSequentially uris
-  .then _.Ok(res)
+  .then responses_.Ok(res)
   .catch error_.Handler(req, res)
 
 refreshSequentially = (uris)->

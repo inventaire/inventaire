@@ -2,6 +2,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
+responses_ = __.require 'lib', 'responses'
 promises_ = __.require 'lib', 'promises'
 entities_ = require './lib/entities'
 patches_ = require './lib/patches'
@@ -13,5 +14,5 @@ module.exports = (req, res)->
     return error_.bundleInvalid req, res, 'id', id
 
   patches_.getSnapshots id
-  .then _.Wrap(res, 'patches')
+  .then responses_.Wrap(res, 'patches')
   .catch error_.Handler(req, res)

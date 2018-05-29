@@ -3,6 +3,7 @@ _ = __.require 'builders', 'utils'
 parseBbox = __.require 'lib', 'parse_bbox'
 user_ = __.require 'controllers', 'user/lib/user'
 error_ = __.require 'lib', 'error/error'
+responses_ = __.require 'lib', 'responses'
 promises_ = __.require 'lib', 'promises'
 
 module.exports = (req, res)->
@@ -10,5 +11,5 @@ module.exports = (req, res)->
   reqUserId = req.user?._id
   parseBbox query
   .then (bbox)-> user_.getUsersAuthorizedData user_.byPosition(bbox), reqUserId
-  .then _.Wrap(res, 'users')
+  .then responses_.Wrap(res, 'users')
   .catch error_.Handler(req, res)

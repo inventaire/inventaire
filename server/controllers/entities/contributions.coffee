@@ -4,6 +4,7 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
 sanitize = __.require 'lib', 'sanitize/sanitize'
+responses_ = __.require 'lib', 'responses'
 entities_ = require './lib/entities'
 patches_ = require './lib/patches'
 
@@ -17,5 +18,5 @@ module.exports = (req, res)->
   .then (params)->
     { user:userId, limit, offset } = params
     patches_.byUserId userId, limit, offset
-  .then _.Send(req, res)
+  .then responses_.Send(req, res)
   .catch error_.Handler(req, res)

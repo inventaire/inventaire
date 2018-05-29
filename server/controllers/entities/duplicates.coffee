@@ -7,12 +7,13 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
+responses_ = __.require 'lib', 'responses'
 designDocName = 'entities_deduplicate'
 db = __.require('couch', 'base')('entities', designDocName)
 
 module.exports = (req, res)->
   getHomonymes()
-  .then _.Wrap(res, 'names')
+  .then responses_.Wrap(res, 'names')
   .catch error_.Handler(req, res)
 
 getHomonymes = ->
