@@ -145,7 +145,6 @@ describe 'sanitize', ->
       .catch done
 
       return
-      done()
 
     it 'should accept valid uuids', (done)->
       req = { query: { user: '00000000000000000000000000000000' } }
@@ -153,6 +152,31 @@ describe 'sanitize', ->
       sanitize req, {}, configs
       .then (input)->
         input.user.should.equal '00000000000000000000000000000000'
+        done()
+      .catch done
+
+      return
+
+  describe 'string with specific length', ->
+    it 'should reject a token of invalid type', (done)->
+      req = { query: { token: 1251251 } }
+      configs = { token: { length: 32 } }
+      sanitize req, {}, configs
+      .then undesiredRes(done)
+      .catch (err)->
+        err.message.should.equal 'invalid token: expected string, got number'
+        done()
+      .catch done
+
+      return
+
+    it 'should reject an invalid token', (done)->
+      req = { query: { token: 'foo' } }
+      configs = { token: { length: 32 } }
+      sanitize req, {}, configs
+      .then undesiredRes(done)
+      .catch (err)->
+        err.message.should.equal 'invalid token length: expected 32, got 3'
         done()
       .catch done
 

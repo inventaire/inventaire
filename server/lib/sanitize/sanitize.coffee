@@ -32,7 +32,9 @@ module.exports = (req, res, configs)->
       if parameter.format?
         input[name] = parameter.format input[name]
 
-      unless parameter.validate input[name]
+      # May throw a custom error, to avoid getting the general error
+      # created hereafter
+      unless parameter.validate input[name], name, config
         err = error_.newInvalid name, input[name]
         if parameter.secret then err.context.value = _.obfuscate err.context.value
         throw err
@@ -46,4 +48,6 @@ module.exports = (req, res, configs)->
 getPlace = (method)->
   if method is 'POST' or method is 'PUT' then 'body' else 'query'
 
-addWarning = (res, message)-> responses_.addWarning res, 'parameters', message
+addWarning = (res, message)->
+  _.warn message
+  responses_.addWarning res, 'parameters', message
