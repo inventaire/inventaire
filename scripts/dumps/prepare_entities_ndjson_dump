@@ -12,8 +12,16 @@ username=$(db_param username)
 password=$(db_param password)
 db_name='entities-prod'
 today=$(date +'20%y-%m-%d')
-raw_db_json_filename="${today}_${db_name}.json"
-output_file="${folder}/${raw_db_json_filename}"
+today_folder="${folder}/${today}"
+root_cwd="$(pwd)"
+mkdir -p "$today_folder"
+
+cd "$folder"
+rm -f ./latest
+ln -sr "./${today}" latest
+
+raw_db_json_filename="${db_name}.json"
+output_file="${today_folder}/${raw_db_json_filename}"
 
 # Dumping the database only if the file doesn't already exist,
 # which means that this file should be deleted to start a new dump version
@@ -21,18 +29,16 @@ output_file="${folder}/${raw_db_json_filename}"
   couchdb-backup -b -H "$host" -P "$port" -u "$username" -p "$password" -d "$db_name" -f "$output_file"
 }
 
-filtered_dump_filename="${today}_entities.ndjson"
-filtered_dump_filename_with_seeds="${today}_entities_with_seeds.ndjson"
-redirections_dump="${today}_redirections.ndjson"
-root_cwd="$(pwd)"
-alias drop_colon="sed 's/,$//'"
-
+filtered_dump_filename="entities.ndjson"
+filtered_dump_filename_with_seeds="entities_with_seeds.ndjson"
+redirections_dump="redirections.ndjson"
+alias drop_comma="sed 's/,$//'"
 
 # NDJSON dumps
-cd "$folder"
+cd "$today_folder"
 
 echo "filtering $raw_db_json_filename redirections into ${redirections_dump}"
-cat "$raw_db_json_filename" | grep '"type":"entity","redirect":' | drop_colon > "$redirections_dump"
+cat "$raw_db_json_filename" | grep '"type":"entity","redirect":' | drop_comma > "$redirections_dump"
 
 echo "filtering $raw_db_json_filename with seeds into $filtered_dump_filename_with_seeds"
 cat "$raw_db_json_filename" |
@@ -42,28 +48,37 @@ cat "$raw_db_json_filename" |
   grep -v "redirect" |
   # Filter-out entities empty canvas (entity creation process failure)
   grep -v '_rev":"1-' |
-  drop_colon > "${filtered_dump_filename_with_seeds}"
+  drop_comma > "${filtered_dump_filename_with_seeds}"
 
 echo "filtering $raw_db_json_filename without seeds into $filtered_dump_filename"
 cat "${filtered_dump_filename_with_seeds}" |
   # Filter-out entities that are just unedited data seeds
   grep -v '_rev":"2-' > "$filtered_dump_filename"
 
-echo compressing $today*.ndjson
-gzip -9f $today*.ndjson
-
+# JSON dump
+ndjson_to_json(){
+  { echo '[' && head -n -1 "$1" | sed 's/$/,/' && tail -n 1 "$1" && echo ']' } > "$2"
+}
+json_filename="entities.json"
+json_with_seeds_filename="entities_with_seeds.json"
+echo "converting to json: $json_filename $json_with_seeds_filename"
+ndjson_to_json "$filtered_dump_filename" "${json_filename}"
+ndjson_to_json "$filtered_dump_filename_with_seeds" "${json_with_seeds_filename}"
 
 # TTL dump
-
 # We need to return to the root directory so that convert_ndjson_dump_to_ttl
 # can find the CONFIG
 cd $root_cwd
-turtle_filename="${today}_entities.ttl"
-turtle_filepath="${folder}/${turtle_filename}"
-echo "converting to turtle $turtle_filename"
-cat "$folder/${filtered_dump_filename}.gz" | gzip -d | ./scripts/dumps/convert_ndjson_dump_to_ttl > "$turtle_filepath"
-gzip -9f "$turtle_filepath"
+turtle_filename="entities.ttl"
+turtle_with_seeds_filepath="entities_with_seeds.ttl"
+echo "converting to turtle: $turtle_filename $turtle_with_seeds_filepath"
+cat "${today_folder}/${filtered_dump_filename}" | ./scripts/dumps/convert_ndjson_dump_to_ttl > "${today_folder}/${turtle_filename}"
+cat "${today_folder}/${filtered_dump_filename_with_seeds}" | ./scripts/dumps/convert_ndjson_dump_to_ttl > "${today_folder}/${turtle_with_seeds_filepath}"
 
+cd "$today_folder"
 rm "$output_file"
+
+echo "compressing results"
+pigz -9f *json *ttl
 
 echo "done"

@@ -29,7 +29,8 @@
     "update-toc": "doctoc README.md",
     "couch2elastic4sync:init": "./scripts/couch2elastic4sync/init",
     "couch2elastic4sync:reset": "./scripts/couch2elastic4sync/reset",
-    "couch2elastic4sync:load": "./scripts/couch2elastic4sync/load"
+    "couch2elastic4sync:load": "./scripts/couch2elastic4sync/load",
+    "create-entities-dump": "./scripts/dumps/prepare_entities_ndjson_dump"
   },
   "author": "maxlath",
   "license": "AGPL-3.0",

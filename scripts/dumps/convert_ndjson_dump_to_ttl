@@ -15,7 +15,7 @@ parse = (line)->
   try
     # Omit the last empty line
     unless _.isNonEmptyString(line) then return
-    json = JSON.parse line
+    json = JSON.parse line.replace(/,$/, '')
     # Output on process.stdin
     console.log serializeEntityInTurtle(json)
   catch err
