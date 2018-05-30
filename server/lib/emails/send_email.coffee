@@ -38,8 +38,8 @@ module.exports =
     .catch helpers_.catchDisabledEmails
     .catch Err("group #{action}", actingUserId, userToNotifyId)
 
-  feedback: (subject, message, user, unknownUser)->
-    email = email_.feedback(subject, message, user, unknownUser)
+  feedback: (subject, message, user, unknownUser, uris)->
+    email = email_.feedback subject, message, user, unknownUser, uris
     transporter_.sendMail email
     .catch _.Error('feedback')
 
