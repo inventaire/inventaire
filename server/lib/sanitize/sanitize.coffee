@@ -12,8 +12,7 @@ module.exports = (req, res, configs)->
     place = getPlace req.method
     input = _.cloneDeep req[place]
     delete input.action
-
-    for name, value of input
+    for name of input
       unless configs[name]?
         addWarning res, "unexpected parameter: #{name}"
         delete input[name]

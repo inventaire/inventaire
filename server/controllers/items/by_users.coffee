@@ -3,7 +3,7 @@ _ = __.require 'builders', 'utils'
 items_ = __.require 'controllers', 'items/lib/items'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
-{ validateQuery } = require './lib/queries_commons'
+sanitize = __.require 'lib', 'sanitize/sanitize'
 getItemsByUsers = require './lib/get_items_by_users'
 
 module.exports = (req, res)->
@@ -13,7 +13,7 @@ module.exports = (req, res)->
   # the requester already knows the users
   includeUsersDocs = false
 
-  validateQuery req.query, 'users', _.isUserId
+  sanitize req, res, { ids: {} }
   .then getItemsByUsers.bind(null, reqUserId, includeUsersDocs)
   .then res.json.bind(res)
   .catch error_.Handler(req, res)

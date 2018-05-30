@@ -36,6 +36,28 @@ nonEmptyString =
 
     return true
 
+onlyEntityUris =
+  validate: (value, name)->
+    arrayOfAKind name, value, validations.common.entityUri
+
+onlyIds =
+  validate: (value, name)->
+    arrayOfAKind name, value, validations.common.couchUuid
+
+arrayOfAKind = (kind, value, validation)->
+  if validation value
+    return true
+
+  unless _.isArray value
+    details = "expected array, got #{_.typeOf(value)}"
+    throw error_.new "invalid #{kind}: #{details}", 400, { value }
+
+  for element in value
+    unless validation(value)
+      sigularKind = kind.substring 0, kind.length-1
+      details = "expected #{sigularKind}, got #{element}"
+      throw error_.new "invalid #{sigularKind}: #{details}", 400, { value }
+
 module.exports =
   email: { validate: validations.common.email }
   limit: strictlyPositiveInteger
@@ -46,3 +68,6 @@ module.exports =
   token: nonEmptyString
   user: couchUuid
   username: { validate: validations.common.username }
+  uri: { validate: validations.common.entityUri }
+  uris: onlyEntityUris
+  ids: onlyIds

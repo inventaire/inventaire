@@ -181,3 +181,67 @@ describe 'sanitize', ->
       .catch done
 
       return
+
+  describe 'uris', ->
+    it 'should reject invalid type', (done)->
+      req = { query: { uris: 1251251 } }
+      configs = { uris: {} }
+      sanitize req, {}, configs
+      .then undesiredRes(done)
+      .catch (err)->
+        err.message.should.equal 'invalid uris: expected array, got number'
+        done()
+      .catch done
+
+      return
+
+    it 'should reject array including invalid elements', (done)->
+      req = { query: { uris: [ 1251251 ] } }
+      configs = { uris: {} }
+      sanitize req, {}, configs
+      .then undesiredRes(done)
+      .catch (err)->
+        err.message.should.startWith 'invalid uri: expected uri, got'
+        done()
+      .catch done
+
+      return
+
+  describe 'uri', ->
+    it 'should reject invalid type', (done)->
+      req = { query: { uri: 1251251 } }
+      configs = { uri: {} }
+      sanitize req, {}, configs
+      .then undesiredRes(done)
+      .catch (err)->
+        err.message.should.startWith 'invalid uri'
+        done()
+      .catch done
+
+      return
+
+
+  describe 'ids', ->
+    it 'should reject invalid type', (done)->
+      req = { query: { ids: 1251251 } }
+      configs = { ids: {} }
+      sanitize req, {}, configs
+      .then undesiredRes(done)
+      .catch (err)->
+        err.message.should.equal 'invalid ids: expected array, got number'
+        done()
+      .catch done
+
+      return
+
+    it 'should reject array including invalid elements', (done)->
+      req = { query: { ids: [ 1251251 ] } }
+      configs = { ids: {} }
+      sanitize req, {}, configs
+      .then undesiredRes(done)
+      .catch (err)->
+        err.message.should.startWith 'invalid id: expected id, got'
+        done()
+      .catch done
+
+      return

@@ -4,6 +4,7 @@ items_ = __.require 'controllers', 'items/lib/items'
 user_ = __.require 'controllers', 'user/lib/user'
 promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
+sanitize = __.require 'lib', 'sanitize/sanitize'
 { Username } = __.require 'models', 'validations/regex'
 
 module.exports = (req, res)->
@@ -11,10 +12,8 @@ module.exports = (req, res)->
   { uri } = query
   reqUserId = req.user?._id
 
-  unless _.isEntityUri uri
-    return error_.bundleInvalid req, res, 'uri', uri
-
-  getUser query, reqUserId
+  sanitize req, res, { uri: {} }
+  .then getUser query, reqUserId
   .then getItemsFromUser(reqUserId, uri)
   .then res.json.bind(res)
   .catch error_.Handler(req, res)

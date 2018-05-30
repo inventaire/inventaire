@@ -5,8 +5,10 @@ user_ = __.require 'controllers', 'user/lib/user'
 relations_ = __.require 'controllers', 'relations/lib/queries'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
-{ validateQuery, addUsersData, listingIs, Paginate } = require './lib/queries_commons'
+sanitize = __.require 'lib', 'sanitize/sanitize'
+{ addUsersData, listingIs, Paginate } = require './lib/queries_commons'
 { omitPrivateAttributes } = require './lib/filter_private_attributes'
+sanitization = { ids: {} }
 
 module.exports = (req, res)->
   reqUserId = req.user?._id
@@ -14,7 +16,7 @@ module.exports = (req, res)->
   # By default, doesn't include users
   includeUsers = _.parseBooleanString req.query['include-users']
 
-  validateQuery req.query, 'ids', _.isItemId
+  sanitize req, res, sanitization
   .then (page)->
     { params:ids } = page
     promises_.all [

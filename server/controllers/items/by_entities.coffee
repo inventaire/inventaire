@@ -5,12 +5,14 @@ user_ = __.require 'controllers', 'user/lib/user'
 relations_ = __.require 'controllers', 'relations/lib/queries'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
-{ validateQuery, addUsersData, Paginate } = require './lib/queries_commons'
+sanitize = __.require 'lib', 'sanitize/sanitize'
+{ addUsersData, Paginate } = require './lib/queries_commons'
 { filterPrivateAttributes } = require './lib/filter_private_attributes'
+sanitization = { uris: {} }
 
 module.exports = (req, res)->
   reqUserId = req.user?._id
-  validateQuery req.query, 'uris', _.isEntityUri
+  sanitize req, res, sanitization
   .then getEntitiesItems(reqUserId)
   .then addUsersData(reqUserId)
   .then res.json.bind(res)
