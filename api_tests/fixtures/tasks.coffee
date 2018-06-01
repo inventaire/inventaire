@@ -13,9 +13,6 @@ createHumanAndCollectEntities = ->
   promises_.all [
     createHuman { labels: { en: 'Stanislas Lem' } }
     createHuman { labels: { en: 'Stanislas Lem' } }
-    createHuman { labels: { en: 'Stanislas Lem' } }
-    createHuman { labels: { en: 'Stanislas Lem' } }
-    createHuman { labels: { en: 'Stanislas Lem' } }
   ]
   .then (humans)->
     adminReq 'post', collectEntitiesEndpoint

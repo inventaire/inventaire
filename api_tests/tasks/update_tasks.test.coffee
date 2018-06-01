@@ -43,10 +43,10 @@ describe 'tasks:update', ->
 
 describe 'tasks:merge-entities', ->
   it 'should update same suspect tasks to merged state', (done) ->
-    createHuman { labels: { en: 'Jim Vance' } }
+    # Alexander Kennedy is expected to have several merge suggestions
+    createHuman { labels: { en: 'Alexander Kennedy' } }
     .then (human)->
-      adminReq 'post', collectEntitiesEndpoint
-      .delay 2000
+      collectEntities { refresh: true }
       .then -> authReq 'get', bySuspectUri + "inv:#{human._id}"
       .get 'tasks'
       .then (tasks)->
@@ -82,10 +82,13 @@ describe 'tasks:merge-entities', ->
     return
 
   it 'should update relationScore of tasks with same suspect', (done)->
-    createHuman { labels: { en: 'Jim Vance' } }
+    # John Smith is expected to have several merge suggestions
+    createHuman { labels: { en: 'John Smith' } }
     .then (suspect)->
-      authReq 'post', collectEntitiesEndpoint
-      .delay 1000
+      collectEntities { refresh: true }
+      # A long delay is required because the collection is done by
+      # a worker, which might not be done yet without it
+      .delay 5000
       .then -> authReq 'get', bySuspectUri + "inv:#{suspect._id}"
       .get 'tasks'
       .then (tasks)->
@@ -101,7 +104,7 @@ describe 'tasks:merge-entities', ->
         .then (res)->
           updatedTask = res.tasks[0]
           updatedTask.relationScore.should.not.equal taskRelationScore
-          done()
+        done()
       .catch done
 
     return
