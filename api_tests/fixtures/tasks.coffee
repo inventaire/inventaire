@@ -10,12 +10,18 @@ collectEntitiesPromise = null
 
 createHumanAndCollectEntities = ->
   # Make sure there is at least one human in the database
-  createHuman { labels: { en: 'Stanislas Lem' } }
-  .then (human)->
+  promises_.all [
+    createHuman { labels: { en: 'Stanislas Lem' } }
+    createHuman { labels: { en: 'Stanislas Lem' } }
+    createHuman { labels: { en: 'Stanislas Lem' } }
+    createHuman { labels: { en: 'Stanislas Lem' } }
+    createHuman { labels: { en: 'Stanislas Lem' } }
+  ]
+  .then (humans)->
     adminReq 'post', collectEntitiesEndpoint
     .delay 2000
     .then (res)->
-      res.human = human
+      res.humans = humans
       return res
 
 module.exports = API =

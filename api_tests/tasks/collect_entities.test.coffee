@@ -13,7 +13,7 @@ describe 'tasks:collect-entities', ->
   it 'should create new tasks', (done)->
     collectEntities()
     .then (res)->
-      suspectUri = res.human.uri
+      suspectUri = res.humans[0].uri
       authReq 'get', byScore
       .get 'tasks'
       .then (tasks)->

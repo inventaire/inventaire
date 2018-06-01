@@ -34,15 +34,15 @@ describe 'tasks:byScore', ->
     return
 
   it 'should take an offset parameter', (done)->
-    offset = 1
     collectEntities()
     .then -> authReq 'get', byScore
     .then (res)->
-      firstOffsetedTask = res.tasks[offset]
+      offset = 1
+      firstOffsetTask = res.tasks[offset]
       authReq 'get', byScore + "&offset=#{offset}"
       .then (res)->
         firstTask = res.tasks[0]
-        firstTask.should.deepEqual firstOffsetedTask
+        firstTask.should.deepEqual firstOffsetTask
         done()
     .catch undesiredErr(done)
 
@@ -51,7 +51,7 @@ describe 'tasks:byScore', ->
 describe 'tasks:bySuspectUri', ->
   it 'should return an array of tasks', (done)->
     collectEntities()
-    .then (res)-> authReq 'get', bySuspectUri + res.human.uri
+    .then (res)-> authReq 'get', bySuspectUri + res.humans[0].uri
     .then (res)->
       suspectUris = _.pluck res.tasks, 'suspectUri'
       suspectUris.should.be.an.Array()
