@@ -21,15 +21,15 @@ createEntity = (P31)-> (params = {})->
     labels: labels
     claims: { 'wdt:P31': [ P31 ] }
 
-humanName = -> faker.fake '{{name.firstName}} {{name.lastName}} human'
+humanName = -> faker.fake '{{name.firstName}} {{name.lastName}}'
 randomWords = (length)-> faker.random.words(length)
 
 module.exports = API =
   createHuman: createEntity 'wd:Q5'
   createWork: createEntity 'wd:Q571'
   createSerie: createEntity 'wd:Q277759'
-  editionLabel: -> randomWords() + 'edition'
-  workLabel: -> randomWords(5) + ' work'
+  editionLabel: -> randomWords()
+  workLabel: -> randomWords(5)
   humanName: humanName
   createWorkWithAuthor: (human)->
     humanPromise = if human then Promise.resolve(human) else API.createHuman()

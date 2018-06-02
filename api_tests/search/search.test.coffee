@@ -69,7 +69,7 @@ describe 'search:global', ->
     label = humanName()
     createHuman { labels: { fr: label } }
     # Let the time for Elastic Search indexation
-    .delay 1000
+    .delay 5000
     .then (entity)->
       search 'humans', label
       .then (results)->
@@ -227,5 +227,5 @@ describe 'search:global', ->
 
 search = (types, search)->
   search = encodeURIComponent search
-  nonAuthReq 'get', "/api/search?search=#{search}&types=#{types}&lang=fr"
+  nonAuthReq 'get', "/api/search?search=#{search}&types=#{types}&lang=fr&limit=50"
   .get 'results'

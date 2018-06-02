@@ -14,7 +14,7 @@ queryBodyBuilder = require './lib/query_body_builder'
 
 module.exports =
   get: (req, res)->
-    { types, search, lang } = req.query
+    { types, search, lang, limit } = req.query
     reqUserId = req.user?._id
 
     unless _.isNonEmptyString search
@@ -25,6 +25,13 @@ module.exports =
 
     unless _.isNonEmptyString lang
       return error_.bundleMissingQuery req, res, 'lang'
+
+    limit or= '10'
+
+    unless _.isPositiveIntegerString limit
+      return error_.bundleInvalid req, res, 'limit', limit
+
+    limit = _.stringToInt limit
 
     typesList = types.split '|'
     for type in typesList
@@ -37,15 +44,13 @@ module.exports =
 
     # Fetch 20 results to give the opportunity to results with a higher popularity
     # but a lower lexical score to make it to the 10 results returned
-    body = queryBodyBuilder search, 20
+    body = queryBodyBuilder search, limit + 20
 
     promises_.post { url, body }
     .catch formatError
     .then parseResults(types, reqUserId)
     .then normalizeResults(lang)
     .then boostByPopularity
-    .then keep10First
+    .then (results)-> results.slice 0, limit
     .then _.Wrap(res, 'results')
     .catch error_.Handler(req, res)
-
-keep10First = (results)-> results.slice 0, 10
