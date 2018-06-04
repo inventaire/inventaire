@@ -195,13 +195,35 @@ describe 'sanitize', ->
 
       return
 
-    it 'should reject array including invalid elements', (done)->
+    it 'should reject array including invalid values', (done)->
       req = { query: { uris: [ 1251251 ] } }
       configs = { uris: {} }
       sanitize req, {}, configs
       .then undesiredRes(done)
       .catch (err)->
         err.message.should.startWith 'invalid uri: expected uri, got'
+        done()
+      .catch done
+
+      return
+
+    it 'should accept uris as an array of strings', (done)->
+      req = { query: { uris: [ 'wd:Q535', 'isbn:9782330056315' ] } }
+      configs = { uris: {} }
+      sanitize req, {}, configs
+      .then (input)->
+        input.uris.should.deepEqual req.query.uris
+        done()
+      .catch done
+
+      return
+
+    it 'should accept uris as a pipe separated string', (done)->
+      req = { query: { uris: 'wd:Q535|isbn:9782330056315' } }
+      configs = { uris: {} }
+      sanitize req, {}, configs
+      .then (input)->
+        input.uris.should.deepEqual req.query.uris.split('|')
         done()
       .catch done
 
@@ -220,7 +242,6 @@ describe 'sanitize', ->
 
       return
 
-
   describe 'ids', ->
     it 'should reject invalid type', (done)->
       req = { query: { ids: 1251251 } }
@@ -234,7 +255,7 @@ describe 'sanitize', ->
 
       return
 
-    it 'should reject array including invalid elements', (done)->
+    it 'should reject array including invalid values', (done)->
       req = { query: { ids: [ 1251251 ] } }
       configs = { ids: {} }
       sanitize req, {}, configs

@@ -21,8 +21,8 @@ listings = [ 'private', 'network', 'public' ]
 transactions = [ 'giving', 'lending', 'selling', 'inventorying' ]
 
 module.exports = API =
-  createItems: (userPromise, itemsData = {})->
-    { entity } = itemsData[0]
+  createItems: (userPromise, itemsData = [])->
+    entity = if itemsData[0]? then itemsData[0].entity
     entityUriPromise = if entity then Promise.resolve(entity) else getEditionUri()
 
     entityUriPromise

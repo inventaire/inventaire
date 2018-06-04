@@ -36,27 +36,30 @@ nonEmptyString =
 
     return true
 
-onlyEntityUris =
-  validate: (value, name)->
-    arrayOfAKind name, value, validations.common.entityUri
+arrayOfAKind = (validation)-> (values, kind)->
+  unless _.isArray values
+    details = "expected array, got #{_.typeOf(values)}"
+    throw error_.new "invalid #{kind}: #{details}", 400, { values }
 
-onlyIds =
-  validate: (value, name)->
-    arrayOfAKind name, value, validations.common.couchUuid
+  for value in values
+    unless validation value
+      singularKind = kind.replace /s$/, ''
+      details = "expected #{singularKind}, got #{value} (#{_.typeOf(values)})"
+      throw error_.new "invalid #{singularKind}: #{details}", 400, { values }
 
-arrayOfAKind = (kind, value, validation)->
-  if validation value
-    return true
+  return true
 
-  unless _.isArray value
-    details = "expected array, got #{_.typeOf(value)}"
-    throw error_.new "invalid #{kind}: #{details}", 400, { value }
+arrayOrPipedStrings = (value)->
+  if _.isString value then return value.split '|'
+  return value
 
-  for element in value
-    unless validation(value)
-      sigularKind = kind.substring 0, kind.length-1
-      details = "expected #{sigularKind}, got #{element}"
-      throw error_.new "invalid #{sigularKind}: #{details}", 400, { value }
+entityUris =
+  format: arrayOrPipedStrings
+  validate: arrayOfAKind validations.common.entityUri
+
+couchUuids =
+  format: arrayOrPipedStrings
+  validate: arrayOfAKind validations.common.couchUuid
 
 module.exports =
   email: { validate: validations.common.email }
@@ -69,5 +72,5 @@ module.exports =
   user: couchUuid
   username: { validate: validations.common.username }
   uri: { validate: validations.common.entityUri }
-  uris: onlyEntityUris
-  ids: onlyIds
+  uris: entityUris
+  ids: couchUuids
