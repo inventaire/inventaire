@@ -21,8 +21,7 @@ module.exports = (req, res, configs)->
       parameter = parameters[name]
 
       unless parameter?
-        addWarning res, "unexpected parameter: #{name}"
-        delete input[name]
+        throw error_.new 'unknown parameter', 500, { name, configs }
 
       unless input[name]?
         if config.default? then input[name] = config.default
