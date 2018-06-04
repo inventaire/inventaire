@@ -8,7 +8,11 @@ promises_ = __.require 'lib', 'promises'
 sanitize = __.require 'lib', 'sanitize/sanitize'
 { addUsersData, listingIs, Paginate } = require './lib/queries_commons'
 { omitPrivateAttributes } = require './lib/filter_private_attributes'
-sanitization = { ids: {} }
+
+sanitization =
+  ids: {}
+  limit: { optional: true }
+  offset: { optional: true }
 
 module.exports = (req, res)->
   reqUserId = req.user?._id
@@ -18,7 +22,7 @@ module.exports = (req, res)->
 
   sanitize req, res, sanitization
   .then (page)->
-    { params:ids } = page
+    { ids } = page
     promises_.all [
       items_.byIds ids
       getNetworkIds reqUserId

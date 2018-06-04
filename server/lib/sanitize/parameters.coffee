@@ -61,16 +61,26 @@ couchUuids =
   format: arrayOrPipedStrings
   validate: arrayOfAKind validations.common.couchUuid
 
+whitelistedString =
+  validate: (value, name, config)->
+    unless value in config.whitelist
+      details = "possible values: #{config.whitelist.join(', ')}"
+      throw error_.new "unknown #{name}: #{value} (#{details})"
+
+    return
+
 module.exports =
   email: { validate: validations.common.email }
+  filter: whitelistedString
+  ids: couchUuids
   limit: strictlyPositiveInteger
   offset: strictlyPositiveInteger
   password:
     secret: true
     validate: validations.user.password
   token: nonEmptyString
-  user: couchUuid
-  username: { validate: validations.common.username }
   uri: { validate: validations.common.entityUri }
   uris: entityUris
-  ids: couchUuids
+  user: couchUuid
+  users: couchUuids
+  username: { validate: validations.common.username }

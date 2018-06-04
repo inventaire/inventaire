@@ -34,6 +34,10 @@ module.exports = API =
     API.createItems userPromise, [ itemData ]
     .get '0'
 
+  createEditionAndItem: (userPromise, itemData = {})->
+    createEdition()
+    .then (edition)-> API.createItem userPromise, { entity: "inv:#{edition._id}" }
+
   createRandomizedItems: (userPromise, itemsData)->
     return API.createItems userPromise, itemsData.map(randomizedItem)
 

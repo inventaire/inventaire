@@ -8,7 +8,8 @@ promises_ = __.require 'lib', 'promises'
 module.exports = (reqUserId, includeUsersDocs, page, usersIds)->
   # Allow to pass users ids either through the page object
   # or as an additional argument
-  usersIds or= page.params
+  usersIds or= page.users
+
   getRelations reqUserId, usersIds
   .then fetchRelationsItems(reqUserId)
   .then Paginate(page)

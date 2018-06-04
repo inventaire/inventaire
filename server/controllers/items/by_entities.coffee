@@ -8,7 +8,11 @@ promises_ = __.require 'lib', 'promises'
 sanitize = __.require 'lib', 'sanitize/sanitize'
 { addUsersData, Paginate } = require './lib/queries_commons'
 { filterPrivateAttributes } = require './lib/filter_private_attributes'
-sanitization = { uris: {} }
+
+sanitization =
+  uris: {}
+  limit: { optional: true }
+  offset: { optional: true }
 
 module.exports = (req, res)->
   reqUserId = req.user?._id
@@ -19,7 +23,8 @@ module.exports = (req, res)->
   .catch error_.Handler(req, res)
 
 getEntitiesItems = (reqUserId)-> (page)->
-  { params:uris } = page
+  { uris } = page
+
   promises_.all [
     getUserItems reqUserId, uris
     getNetworkItems reqUserId, uris
