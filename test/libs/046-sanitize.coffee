@@ -57,6 +57,19 @@ describe 'sanitize', ->
 
     return
 
+  it 'should accept optional parameters', (done)->
+    req = { query: {} }
+    res = {}
+    configs =
+      ids: { optional: true }
+    sanitize req, res, configs
+    .then (input)->
+      Object.keys(input).length.should.equal 0
+      done()
+    .catch done
+
+    return
+
   describe 'secret parameter', ->
     it 'should not return the value', (done)->
       req = { query: { password: 'a' } }

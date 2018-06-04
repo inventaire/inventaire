@@ -18,30 +18,38 @@ module.exports = (req, res, configs)->
         delete input[name]
 
     for name, config of configs
-      parameter = parameters[name]
-
-      unless parameter?
-        throw error_.new 'unknown parameter', 500, { name, configs }
-
-      unless input[name]?
-        if config.default? then input[name] = config.default
-        else throw error_.newMissing place, name
-
-      if parameter.format?
-        input[name] = parameter.format input[name]
-
-      # May throw a custom error, to avoid getting the general error
-      # created hereafter
-      unless parameter.validate input[name], name, config
-        err = error_.newInvalid name, input[name]
-        if parameter.secret then err.context.value = _.obfuscate err.context.value
-        throw err
-
-      if config.max? and input[name] > config.max
-        input[name] = config.max
-        addWarning res, "#{name} should be below or equal to #{config.max}"
+      sanitizeParameter input, name, config, place, res
 
     return input
+
+sanitizeParameter = (input, name, config, place, res)->
+  parameter = parameters[name]
+
+  unless parameter?
+    addWarning res, "unexpected parameter: #{name}"
+    delete input[name]
+    return
+
+  unless input[name]?
+    if config.default? then input[name] = config.default
+    else if config.optional then return
+    else throw error_.newMissing place, name
+
+  if parameter.format?
+    input[name] = parameter.format input[name]
+
+  # May throw a custom error, to avoid getting the general error
+  # created hereafter
+  unless parameter.validate input[name], name, config
+    err = error_.newInvalid name, input[name]
+    if parameter.secret then err.context.value = _.obfuscate err.context.value
+    throw err
+
+  if config.max? and input[name] > config.max
+    input[name] = config.max
+    addWarning res, "#{name} should be below or equal to #{config.max}"
+
+  return
 
 getPlace = (method)->
   if method is 'POST' or method is 'PUT' then 'body' else 'query'
