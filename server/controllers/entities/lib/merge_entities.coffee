@@ -7,18 +7,18 @@ Entity = __.require 'models', 'entity'
 placeholders_ = require './placeholders'
 propagateRedirection = require './propagate_redirection'
 
-merge = (userId, fromId, toId)->
-  _.types arguments, 'strings...'
+merge = (params)->
+  { userId, fromInvId, toInvId, fromUri, toUri } = params
 
   # Fetching non-formmatted docs
-  entities_.byIds [ fromId, toId ]
+  entities_.byIds [ fromInvId, toInvId ]
   .spread (fromEntityDoc, toEntityDoc)->
     # At this point if the entities are not found, that's the server's fault,
     # thus the 500 statusCode
-    unless fromEntityDoc._id is fromId
+    unless fromEntityDoc._id is fromInvId
       throw error_.new "'from' entity doc not found", 500
 
-    unless toEntityDoc._id is toId
+    unless toEntityDoc._id is toInvId
       throw error_.new "'to' entity doc not found", 500
 
     # Transfer all data from the 'fromEntity' to the 'toEntity'
@@ -34,17 +34,15 @@ merge = (userId, fromId, toId)->
         userId: userId
         currentDoc: toEntityDocBeforeMerge
         updatedDoc: toEntityDoc
-        context: { mergeFrom: "inv:#{fromId}" }
+        context: { mergeFrom: "inv:#{fromInvId}" }
 
     transfer
-    .then -> turnIntoRedirection userId, fromId, "inv:#{toId}"
+    .then -> turnIntoRedirection userId, fromInvId, fromUri, toUri
 
-turnIntoRedirection = (userId, fromId, toUri)->
+turnIntoRedirection = (userId, fromInvId, fromUri, toUri)->
   _.types arguments, 'strings...'
 
-  fromUri = "inv:#{fromId}"
-
-  entities_.byId fromId
+  entities_.byId fromInvId
   .then (currentFromDoc)->
     # If an author has no more links to it, remove it
     removeObsoletePlaceholderEntities userId, currentFromDoc

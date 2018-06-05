@@ -13,7 +13,7 @@ radio = __.require 'lib', 'radio'
 #   what matter is the redirection. Or more fine, reconciling strategy can be developed later
 
 # Only inv entities can be merged yet
-validFromPrefix = [ 'inv' ]
+validFromPrefix = [ 'inv', 'isbn' ]
 
 module.exports = (req, res)->
   { body } = req
@@ -76,11 +76,15 @@ Merge = (reqUserId, toPrefix, fromUri, toUri)-> (res)->
   [ fromPrefix, fromId ] = fromUri.split ':'
   [ toPrefix, toId ] = toUri.split ':'
 
-  if toPrefix is 'inv'
-    return mergeEntities reqUserId, fromId, toId
-  else
+  if toPrefix is 'wd'
     # no merge to do for Wikidata entities, simply creating a redirection
     return turnIntoRedirection reqUserId, fromId, toUri
+
+  fromInvId = fromEntity._id
+  toInvId = toEntity._id
+  # Passing both the inv ids (that will be required to fetch docs in the db)
+  # and the canonical URIs (required to propagate redirections)
+  return mergeEntities { userId: reqUserId, fromInvId, toInvId, fromUri, toUri }
 
 notFound = (label, context)->
   error_.new "'#{label}' entity not found", 400, context
