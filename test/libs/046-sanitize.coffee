@@ -25,23 +25,25 @@ describe 'sanitize', ->
 
     return
 
-  it 'should add a warning for unknown parameter', (done)->
+  it 'should add a warning for unknown parameter (server error)', (done)->
     req = { query: { foo: 1000 } }
     res = {}
-    configs = {}
+    configs = {
+      foo: {}
+    }
     sanitize req, res, configs
     .then (input)->
       input.should.deepEqual {}
       res.warnings.should.be.an.Object()
       res.warnings.parameters.should.deepEqual [
-        'unexpected parameter: foo'
+        'unexpected config parameter: foo'
       ]
       done()
     .catch done
 
     return
 
-  it 'should add a warning for unexpected parameter', (done)->
+  it 'should add a warning for unexpected parameter (user error)', (done)->
     req = { query: { limit: 1000 } }
     res = {}
     configs = {}

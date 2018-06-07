@@ -26,7 +26,7 @@ sanitizeParameter = (input, name, config, place, res)->
   parameter = parameters[name]
 
   unless parameter?
-    addWarning res, "unexpected parameter: #{name}"
+    addWarning res, "unexpected config parameter: #{name}"
     delete input[name]
     return
 
