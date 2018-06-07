@@ -54,6 +54,10 @@ sanitizeParameter = (input, name, config, place, res)->
   camelCasedName = _.camelCase name
   input[camelCasedName] = input[name]
 
+  if parameter.altKey?
+    parameterAltKey = parameter.altKey camelCasedName
+    input[parameterAltKey] = input[name]
+
   return
 
 getPlace = (method)->
