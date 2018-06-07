@@ -4,6 +4,7 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 responses_ = __.require 'lib', 'responses'
 parameters = require './parameters'
+{ generics } = parameters
 
 module.exports = (req, res, configs)->
   Promise.try ->
@@ -23,7 +24,7 @@ module.exports = (req, res, configs)->
     return input
 
 sanitizeParameter = (input, name, config, place, res)->
-  parameter = parameters[name]
+  parameter = if config.generic? then generics[config.generic] else parameters[name]
 
   unless parameter?
     addWarning res, "unexpected config parameter: #{name}"
@@ -36,7 +37,7 @@ sanitizeParameter = (input, name, config, place, res)->
     else throw error_.newMissing place, name
 
   if parameter.format?
-    input[name] = parameter.format input[name]
+    input[name] = parameter.format input[name], name, config
 
   # May throw a custom error, to avoid getting the general error
   # created hereafter
@@ -48,6 +49,10 @@ sanitizeParameter = (input, name, config, place, res)->
   if config.max? and input[name] > config.max
     input[name] = config.max
     addWarning res, "#{name} should be below or equal to #{config.max}"
+
+  # Also make the parameter available from its camel-cased name
+  camelCasedName = _.camelCase name
+  input[camelCasedName] = input[name]
 
   return
 

@@ -85,6 +85,24 @@ describe 'sanitize', ->
 
       return
 
+  describe 'generic parameter', ->
+    it 'should accept generic parameters', (done)->
+      req = { query: { 'include-users': true } }
+      res = {}
+
+      configs =
+        'include-users':
+          generic: 'boolean'
+          default: false
+
+      sanitize req, res, configs
+      .then (input)->
+        input.includeUsers.should.equal true
+        done()
+      .catch done
+
+      return
+
   describe 'strictly positive integer', ->
     it 'should accept string values', (done)->
       req = { query: { limit: '5' } }

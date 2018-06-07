@@ -69,8 +69,16 @@ whitelistedString =
 
     return
 
+generics =
+  boolean:
+    format: (value, name, config)->
+      if _.isString value then _.parseBooleanString value, config.default
+      else value
+    validate: (value)-> _.typeOf(value) is 'boolean'
+
 module.exports =
   email: { validate: validations.common.email }
+  generics: generics
   filter: whitelistedString
   ids: couchUuids
   limit: strictlyPositiveInteger
