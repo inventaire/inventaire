@@ -59,18 +59,32 @@ describe 'sanitize', ->
 
     return
 
-  it 'should accept optional parameters', (done)->
-    req = { query: {} }
-    res = {}
-    configs =
-      ids: { optional: true }
-    sanitize req, res, configs
-    .then (input)->
-      Object.keys(input).length.should.equal 0
-      done()
-    .catch done
+  describe 'optional parameters', ->
+    it 'should accept optional parameters', (done)->
+      req = { query: {} }
+      res = {}
+      configs =
+        ids: { optional: true }
+      sanitize req, res, configs
+      .then (input)->
+        Object.keys(input).length.should.equal 0
+        done()
+      .catch done
 
-    return
+      return
+
+    it 'should still validate optional parameters', (done)->
+      req = { query: { lang: '1212515' } }
+      res = {}
+      configs = { lang: { optional: true } }
+      sanitize req, res, configs
+      .then undesiredRes(done)
+      .catch (err)->
+        err.message.should.equal 'invalid lang: 1212515'
+        done()
+      .catch done
+
+      return
 
   describe 'secret parameter', ->
     it 'should not return the value', (done)->
