@@ -33,6 +33,7 @@ sanitizeParameter = (input, name, config, place, res)->
 
   unless input[name]?
     if config.default? then input[name] = config.default
+    else if parameter.default? then input[name] = parameter.default
     else if config.optional then return
     else throw error_.newMissing place, name
 

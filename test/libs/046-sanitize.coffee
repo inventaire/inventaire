@@ -299,3 +299,41 @@ describe 'sanitize', ->
       .catch done
 
       return
+
+  describe 'lang', ->
+    it "should default to 'en'", (done)->
+      req = { query: {} }
+      res = {}
+      configs = { lang: {} }
+      sanitize req, res, configs
+      .then (input)->
+        input.lang.should.equal 'en'
+        done()
+      .catch done
+
+      return
+
+    it 'should accept a valid lang', (done)->
+      req = { query: { lang: 'fr' } }
+      res = {}
+      configs = { lang: {} }
+      sanitize req, res, configs
+      .then (input)->
+        input.lang.should.equal 'fr'
+        done()
+      .catch done
+
+      return
+
+    it 'should reject an invalid lang', (done)->
+      req = { query: { lang: '12512' } }
+      res = {}
+      configs = { lang: {} }
+      sanitize req, res, configs
+      .then undesiredRes(done)
+      .catch (err)->
+        err.message.should.equal 'invalid lang: 12512'
+        done()
+      .catch done
+
+      return

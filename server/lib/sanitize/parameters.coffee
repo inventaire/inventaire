@@ -82,6 +82,9 @@ module.exports =
   generics: generics
   filter: whitelistedString
   ids: couchUuids
+  lang:
+    default: 'en'
+    validate: _.isLang
   limit: strictlyPositiveInteger
   offset: strictlyPositiveInteger
   password:
