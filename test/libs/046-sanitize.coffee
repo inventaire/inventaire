@@ -168,13 +168,25 @@ describe 'sanitize', ->
 
       return
 
-    it 'should reject non integer values', (done)->
+    it 'should reject non-integer values', (done)->
       req = { query: { limit: '5.5' } }
       configs = { limit: {} }
       sanitize req, {}, configs
       .then undesiredRes(done)
       .catch (err)->
         err.message.should.equal 'invalid limit: 5.5'
+        done()
+      .catch done
+
+      return
+
+    it 'should reject non-number values', (done)->
+      req = { query: { limit: 'bla' } }
+      configs = { limit: {} }
+      sanitize req, {}, configs
+      .then undesiredRes(done)
+      .catch (err)->
+        err.message.should.equal 'invalid limit: bla'
         done()
       .catch done
 

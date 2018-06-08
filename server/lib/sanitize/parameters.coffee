@@ -13,7 +13,8 @@ validations =
 
 parseNumberString = (value)->
   if _.isNumber value then return value
-  return parseFloat value
+  parsedValue = parseFloat value
+  return if _.isNaN parsedValue then value else parsedValue
 
 couchUuid =
   validate: validations.common.couchUuid
