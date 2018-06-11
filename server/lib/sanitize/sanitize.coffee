@@ -49,7 +49,7 @@ sanitizeParameter = (input, name, config, place, res)->
 
   if config.max? and input[name] > config.max
     input[name] = config.max
-    addWarning res, "#{name} should be below or equal to #{config.max}"
+    addWarning res, "#{name} can't be over #{config.max}"
 
   # Also make the parameter available from its camel-cased name
   camelCasedName = _.camelCase name

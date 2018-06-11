@@ -149,7 +149,7 @@ describe 'sanitize', ->
         input.limit.should.equal 500
         res.warnings.should.be.an.Object()
         res.warnings.parameters.should.deepEqual [
-          'limit should be below or equal to 500'
+          "limit can't be over 500"
         ]
         done()
       .catch done
