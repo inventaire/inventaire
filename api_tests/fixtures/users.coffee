@@ -28,7 +28,7 @@ module.exports = API =
     username = username or API.createUsername()
     userData =
       username: username
-      password: username.padEnd 8, '_'
+      password: '12345678'
       email: "#{username}@adomain.org"
 
     # Try to login first if the username is given, as a user with this username
