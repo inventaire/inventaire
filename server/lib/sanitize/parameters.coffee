@@ -18,7 +18,7 @@ parseNumberString = (value)->
 
 couchUuid =
   validate: validations.common.couchUuid
-  altKey: (name)-> "#{name}Id"
+  rename: (name)-> "#{name}Id"
 
 strictlyPositiveInteger =
   format: parseNumberString

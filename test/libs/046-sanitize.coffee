@@ -211,6 +211,7 @@ describe 'sanitize', ->
       sanitize req, {}, configs
       .then (input)->
         input.user.should.equal '00000000000000000000000000000000'
+        input.userId.should.equal '00000000000000000000000000000000'
         done()
       .catch done
 

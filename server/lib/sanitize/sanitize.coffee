@@ -51,13 +51,8 @@ sanitizeParameter = (input, name, config, place, res)->
     input[name] = config.max
     addWarning res, "#{name} can't be over #{config.max}"
 
-  # Also make the parameter available from its camel-cased name
-  camelCasedName = _.camelCase name
-  input[camelCasedName] = input[name]
-
-  if parameter.altKey?
-    parameterAltKey = parameter.altKey camelCasedName
-    input[parameterAltKey] = input[name]
+  renameParameter input, name, _.camelCase
+  renameParameter input, name, parameter.rename
 
   return
 
@@ -67,3 +62,8 @@ getPlace = (method)->
 addWarning = (res, message)->
   _.warn message
   responses_.addWarning res, 'parameters', message
+
+renameParameter = (input, name, renameFn)->
+  unless renameFn? then return
+  aliasedName = renameFn name
+  input[aliasedName] = input[name]
