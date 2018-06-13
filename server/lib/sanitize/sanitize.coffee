@@ -31,25 +31,21 @@ sanitizeParameter = (input, name, config, place, res)->
     delete input[name]
     return
 
+  unless input[name]? then applyDefaultValue input, name, config, parameter
   unless input[name]?
-    if config.default? then input[name] = config.default
-    else if parameter.default? then input[name] = parameter.default
-    else if config.optional then return
+    if config.optional then return
     else throw error_.newMissing place, name
 
-  if parameter.format?
-    input[name] = parameter.format input[name], name, config
+  format input, name, parameter.format, config
 
   # May throw a custom error, to avoid getting the general error
   # created hereafter
   unless parameter.validate input[name], name, config
     err = error_.newInvalid name, input[name]
-    if parameter.secret then err.context.value = _.obfuscate err.context.value
+    obfuscateSecret parameter, err
     throw err
 
-  if config.max? and input[name] > config.max
-    input[name] = config.max
-    addWarning res, "#{name} can't be over #{config.max}"
+  enforceMaximum input, name, config.max, res
 
   renameParameter input, name, _.camelCase
   renameParameter input, name, parameter.rename
@@ -59,11 +55,26 @@ sanitizeParameter = (input, name, config, place, res)->
 getPlace = (method)->
   if method is 'POST' or method is 'PUT' then 'body' else 'query'
 
-addWarning = (res, message)->
-  _.warn message
-  responses_.addWarning res, 'parameters', message
+format = (input, name, formatFn, config)->
+  if formatFn? then input[name] = formatFn input[name], name, config
+
+applyDefaultValue = (input, name, config, parameter)->
+  if config.default? then input[name] = config.default
+  else if parameter.default? then input[name] = parameter.default
+
+obfuscateSecret = (parameter, err)->
+  if parameter.secret then err.context.value = _.obfuscate err.context.value
+
+enforceMaximum = (input, name, max, res)->
+  if max? and input[name] > max
+    input[name] = max
+    addWarning res, "#{name} can't be over #{max}"
 
 renameParameter = (input, name, renameFn)->
   unless renameFn? then return
   aliasedName = renameFn name
   input[aliasedName] = input[name]
+
+addWarning = (res, message)->
+  _.warn message
+  responses_.addWarning res, 'parameters', message
