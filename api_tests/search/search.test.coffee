@@ -66,10 +66,10 @@ describe 'search:global', ->
     return
 
   it 'should return a local human', (done)->
-    label = humanName()
+    label = randomString 5
     createHuman { labels: { fr: label } }
     # Let the time for Elastic Search indexation
-    .delay 5000
+    .delay 4000
     .then (entity)->
       search 'humans', label
       .then (results)->
@@ -82,10 +82,10 @@ describe 'search:global', ->
     return
 
   it 'should return a local work', (done)->
-    label = workLabel()
+    label = randomString 5
     createWork { labels: { fr: label } }
     # Let the time for Elastic Search indexation
-    .delay 1000
+    .delay 4000
     .then (entity)->
       search 'works', label
       .then (results)->
