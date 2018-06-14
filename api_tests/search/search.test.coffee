@@ -205,7 +205,7 @@ describe 'search:global', ->
     return
 
   it 'should return a global score boosted by a logarithmic popularity', (done)->
-    workLabel = randomString(15)
+    workLabel = randomString 15
     createWork { labels: { fr: workLabel } }
     .then (work)->
       workEditionsCreation = [
@@ -213,7 +213,7 @@ describe 'search:global', ->
         createEditionFromWorks work
       ]
       Promise.all workEditionsCreation
-      .delay 500
+      .delay 4000
       .then ->
         search 'works', workLabel
         .then (results)->
