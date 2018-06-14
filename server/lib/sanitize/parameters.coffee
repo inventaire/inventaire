@@ -20,7 +20,7 @@ couchUuid =
   validate: validations.common.couchUuid
   rename: (name)-> "#{name}Id"
 
-strictlyPositiveInteger =
+positiveInteger =
   format: parseNumberString
   validate: (num)-> _.isNumber(num) and /^\d+$/.test(num.toString())
 
@@ -86,11 +86,16 @@ module.exports =
   lang:
     default: 'en'
     validate: _.isLang
-  limit: strictlyPositiveInteger
-  offset: strictlyPositiveInteger
+  limit: _.extend {}, positiveInteger,
+    min: 1
+    default: 100
+  offset: _.extend {}, positiveInteger, { default: 0 }
   password:
     secret: true
     validate: validations.user.password
+  range: _.extend {}, positiveInteger,
+    default: 50
+    max: 500
   token: nonEmptyString
   uri: { validate: validations.common.entityUri }
   uris: entityUris

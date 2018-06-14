@@ -32,6 +32,7 @@ module.exports = API =
       customAuthReq userPromise, 'post', '/api/items', items
 
   createItem: (userPromise, itemData = {})->
+    itemData.listing or= 'public'
     API.createItems userPromise, [ itemData ]
     .get '0'
 
