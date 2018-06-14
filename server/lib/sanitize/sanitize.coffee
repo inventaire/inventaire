@@ -13,10 +13,9 @@ module.exports = (req, res, configs)->
     place = getPlace req.method
     input = _.cloneDeep req[place]
     delete input.action
+
     for name of input
-      unless configs[name]?
-        addWarning res, "unexpected parameter: #{name}"
-        delete input[name]
+      removeUnexpectedParameter input, name, configs, res
 
     for name, config of configs
       sanitizeParameter input, name, config, place, res
@@ -24,7 +23,8 @@ module.exports = (req, res, configs)->
     return input
 
 sanitizeParameter = (input, name, config, place, res)->
-  parameter = if config.generic? then generics[config.generic] else parameters[name]
+  { generic } = config
+  parameter = if generic? then generics[generic] else parameters[name]
 
   unless parameter?
     addWarning res, "unexpected config parameter: #{name}"
@@ -54,6 +54,11 @@ sanitizeParameter = (input, name, config, place, res)->
 
 getPlace = (method)->
   if method is 'POST' or method is 'PUT' then 'body' else 'query'
+
+removeUnexpectedParameter = (input, name, configs, res)->
+  unless configs[name]?
+    addWarning res, "unexpected parameter: #{name}"
+    delete input[name]
 
 format = (input, name, formatFn, config)->
   if formatFn? then input[name] = formatFn input[name], name, config
