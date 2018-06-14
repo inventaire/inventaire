@@ -7,7 +7,7 @@ Entity = __.require 'models', 'entity'
 placeholders_ = require './placeholders'
 propagateRedirection = require './propagate_redirection'
 
-merge = (userId, fromId, toId)->
+merge = (userId, fromId, toId, canonicalToUri)->
   _.types arguments, 'strings...'
 
   # Fetching non-formmatted docs
@@ -37,7 +37,7 @@ merge = (userId, fromId, toId)->
         context: { mergeFrom: "inv:#{fromId}" }
 
     transfer
-    .then -> turnIntoRedirection userId, fromId, "inv:#{toId}"
+    .then -> turnIntoRedirection userId, fromId, canonicalToUri
 
 turnIntoRedirection = (userId, fromId, toUri)->
   _.types arguments, 'strings...'
