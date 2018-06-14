@@ -45,7 +45,7 @@ sanitizeParameter = (input, name, config, place, res)->
     obfuscateSecret parameter, err
     throw err
 
-  enforceMaximum input, name, config.max, res
+  enforceBoundaries input, name, config, parameter, res
 
   renameParameter input, name, _.camelCase
   renameParameter input, name, parameter.rename
@@ -70,10 +70,17 @@ applyDefaultValue = (input, name, config, parameter)->
 obfuscateSecret = (parameter, err)->
   if parameter.secret then err.context.value = _.obfuscate err.context.value
 
-enforceMaximum = (input, name, max, res)->
-  if max? and input[name] > max
-    input[name] = max
-    addWarning res, "#{name} can't be over #{max}"
+enforceBoundaries = (input, name, config, parameter, res)->
+  min = config.min or parameter.min
+  max = config.max or parameter.max
+  if min? and input[name] < min
+    enforceBoundary input, name, min, res, 'under'
+  else if max? and input[name] > max
+    enforceBoundary input, name, max, res, 'over'
+
+enforceBoundary = (input, name, boundary, res, position)->
+  input[name] = boundary
+  addWarning res, "#{name} can't be #{position} #{boundary}"
 
 renameParameter = (input, name, renameFn)->
   unless renameFn? then return
