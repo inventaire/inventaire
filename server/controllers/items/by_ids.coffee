@@ -13,16 +13,15 @@ sanitization =
   ids: {}
   limit: { optional: true }
   offset: { optional: true }
+  'include-users':
+    generic: 'boolean'
+    default: false
 
 module.exports = (req, res)->
   reqUserId = req.user?._id
-
-  # By default, doesn't include users
-  includeUsers = _.parseBooleanString req.query['include-users']
-
   sanitize req, res, sanitization
   .then (page)->
-    { ids } = page
+    { ids, includeUsers } = page
     promises_.all [
       items_.byIds ids
       getNetworkIds reqUserId
@@ -31,7 +30,7 @@ module.exports = (req, res)->
     # Paginating isn't really required when requesting items by ids
     # but it also handles sorting and the consistency of the API
     .then Paginate(page)
-  .then addUsersData(reqUserId, includeUsers)
+    .then addUsersData(reqUserId, includeUsers)
   .then res.json.bind(res)
   .catch error_.Handler(req, res)
 

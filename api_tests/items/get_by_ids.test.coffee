@@ -30,3 +30,15 @@ describe 'items:get-by-ids', ->
     .catch undesiredErr(done)
 
     return
+
+  it 'should include users if requested', (done)->
+    createItem getUser()
+    .then (item)->
+      authReq 'get', "/api/items?action=by-ids&ids=#{item._id}&include-users=true"
+      .then (res)->
+        res.items[0]._id.should.equal item._id
+        res.users[0]._id.should.equal item.owner
+        done()
+    .catch undesiredErr(done)
+
+    return
