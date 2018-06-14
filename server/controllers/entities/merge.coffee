@@ -73,7 +73,6 @@ merge = (reqUserId, toPrefix, fromUri, toUri)-> (res)->
     if fromEntityIsbn? and toEntityIsbn? and fromEntityIsbn isnt toEntityIsbn
       throw error_.new "can't merge editions with different ISBNs", 400, fromUri, toUri
 
-  canonicalToUri = toUri
   fromUri = replaceIsbnUriByInvUri fromUri, fromEntity._id
   toUri = replaceIsbnUriByInvUri toUri, toEntity._id
 
@@ -84,7 +83,7 @@ merge = (reqUserId, toPrefix, fromUri, toUri)-> (res)->
     # no merge to do for Wikidata entities, simply creating a redirection
     return turnIntoRedirection reqUserId, fromId, toUri
   else
-    return mergeEntities reqUserId, fromId, toId, canonicalToUri
+    return mergeEntities reqUserId, fromId, toId
 
 replaceIsbnUriByInvUri = (uri, invId)->
   [ prefix ] = uri.split ':'
