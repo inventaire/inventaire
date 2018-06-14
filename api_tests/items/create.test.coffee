@@ -110,27 +110,24 @@ describe 'items:create', ->
     return
 
   it 'should deduce the author from an edition entity', (done)->
-    authReq 'post', '/api/entities?action=create',
-      labels: { de: 'Mr moin moin' }
-      claims: { 'wdt:P31': [ 'wd:Q5' ] }
-    .then (authorEntity)->
-      workData =
-        labels: { de: 'moin moin' }
-        claims:
-          'wdt:P31': [ 'wd:Q571' ]
-          'wdt:P50': [ authorEntity.uri ]
-
-      ensureEditionExists 'isbn:9780812993257', workData,
-        labels: {}
-        claims:
-          'wdt:P31': [ 'wd:Q3331189' ]
-          'wdt:P212': [ '978-0-8129-9325-7' ]
-          'wdt:P1476': [ 'The Road to Character' ]
-    .then ->
-      authReq 'post', '/api/items', { entity: 'isbn:9780812993257' }
-      .then (item)->
+    ensureEditionExists 'isbn:9780812993257', null,
+      labels: {}
+      claims:
+        'wdt:P31': [ 'wd:Q3331189' ]
+        'wdt:P212': [ '978-0-8129-9325-7' ]
+        'wdt:P1476': [ 'The Road to Character' ]
+    .then (edition)->
+      Promise.all [
+        getEntitiesByUris(edition.uri, 'wdt:P629|wdt:P50').get 'entities'
+        authReq 'post', '/api/items', { entity: 'isbn:9780812993257' }
+      ]
+      .spread (entities, item)->
+        edition = entities[edition.uri]
+        work = entities[edition.claims['wdt:P629'][0]]
+        author = entities[work.claims['wdt:P50'][0]]
+        authorLabel = _.values(author.labels)[0]
         item.snapshot.should.be.an.Object()
-        item.snapshot['entity:authors'].should.equal 'Mr moin moin'
+        item.snapshot['entity:authors'].should.equal authorLabel
         done()
     .catch undesiredErr(done)
 
