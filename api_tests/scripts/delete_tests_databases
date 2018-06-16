@@ -1,11 +1,13 @@
 #!/usr/bin/env sh
 databases=$(coffee -e "console.log Object.keys(require('./server/db/couch/list.coffee')).join(' ')")
 dbHost=$(coffee -e "console.log require('config').db.fullHost()")
+elasticHost=$(coffee -e "console.log require('config').elasticsearch.host")
 
 for db in $databases
 do
   printf "deleting ${db}-tests... " &&
   curl -sXDELETE "${dbHost}/${db}-tests"
+  curl -sXDELETE "${elasticHost}/${db}-tests"
 done
 
 export NODE_ENV=tests; npm run couch2elastic4sync:init &&

@@ -13,7 +13,7 @@ radio = __.require 'lib', 'radio'
 #   what matter is the redirection. Or more fine, reconciling strategy can be developed later
 
 # Only inv entities can be merged yet
-validFromPrefix = [ 'inv' ]
+validFromPrefix = [ 'inv', 'isbn' ]
 
 module.exports = (req, res)->
   { body } = req
@@ -44,12 +44,12 @@ module.exports = (req, res)->
   # Let getEntitiesByUris test for the whole URI validity
   # Get data from concerned entities
   getEntitiesByUris [ fromUri, toUri ], true
-  .then Merge(reqUserId, toPrefix, fromUri, toUri)
+  .then merge(reqUserId, toPrefix, fromUri, toUri)
   .then _.Ok(res)
   .then -> radio.emit 'entity:merge', fromUri, toUri
   .catch error_.Handler(req, res)
 
-Merge = (reqUserId, toPrefix, fromUri, toUri)-> (res)->
+merge = (reqUserId, toPrefix, fromUri, toUri)-> (res)->
   { entities, redirects } = res
   fromEntity = entities[fromUri] or entities[redirects[fromUri]]
   unless fromEntity? then throw notFound 'from', fromUri
@@ -73,14 +73,23 @@ Merge = (reqUserId, toPrefix, fromUri, toUri)-> (res)->
     if fromEntityIsbn? and toEntityIsbn? and fromEntityIsbn isnt toEntityIsbn
       throw error_.new "can't merge editions with different ISBNs", 400, fromUri, toUri
 
+  fromUri = replaceIsbnUriByInvUri fromUri, fromEntity._id
+  toUri = replaceIsbnUriByInvUri toUri, toEntity._id
+
   [ fromPrefix, fromId ] = fromUri.split ':'
   [ toPrefix, toId ] = toUri.split ':'
 
-  if toPrefix is 'inv'
-    return mergeEntities reqUserId, fromId, toId
-  else
+  if toPrefix is 'wd'
     # no merge to do for Wikidata entities, simply creating a redirection
     return turnIntoRedirection reqUserId, fromId, toUri
+  else
+    return mergeEntities reqUserId, fromId, toId
+
+replaceIsbnUriByInvUri = (uri, invId)->
+  [ prefix ] = uri.split ':'
+  # Prefer inv id over isbn to prepare for ./lib/merge_entities
+  if prefix is 'isbn' then return "inv:#{invId}"
+  return uri
 
 notFound = (label, context)->
   error_.new "'#{label}' entity not found", 400, context

@@ -56,14 +56,22 @@ describe 'entities:merge', ->
       createEdition()
     ]
     .spread (editionA, editionB)->
-      merge editionA.uri, editionB.uri
-      .then -> getByUris editionB.uri
-      .then (res)->
-        { entities, redirects } = res
-        updatedEditionB = entities[redirects[editionB.uri]]
-        updatedEditionB.claims['wdt:P212']
-        .should.deepEqual editionA.claims['wdt:P212']
-        done()
+      createItemFromEntityUri editionB.uri
+      .then (item)->
+        merge editionA.uri, editionB.uri
+        .then ->
+          Promise.all [
+            getByUris editionB.uri
+            getItemsByIds item._id
+          ]
+        .spread (entitiesRes, itemsRes)->
+          { entities, redirects } = entitiesRes
+          updatedEditionB = entities[redirects[editionB.uri]]
+          updatedEditionB.claims['wdt:P212']
+          .should.deepEqual editionA.claims['wdt:P212']
+          isbnUri = editionA.uri
+          itemsRes.items[0].entity.should.equal isbnUri
+          done()
     .catch undesiredErr(done)
 
     return

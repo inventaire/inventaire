@@ -66,10 +66,10 @@ describe 'search:global', ->
     return
 
   it 'should return a local human', (done)->
-    label = humanName()
+    label = randomString 5
     createHuman { labels: { fr: label } }
     # Let the time for Elastic Search indexation
-    .delay 1000
+    .delay 4000
     .then (entity)->
       search 'humans', label
       .then (results)->
@@ -82,10 +82,10 @@ describe 'search:global', ->
     return
 
   it 'should return a local work', (done)->
-    label = workLabel()
+    label = randomString 5
     createWork { labels: { fr: label } }
     # Let the time for Elastic Search indexation
-    .delay 1000
+    .delay 4000
     .then (entity)->
       search 'works', label
       .then (results)->
@@ -205,7 +205,7 @@ describe 'search:global', ->
     return
 
   it 'should return a global score boosted by a logarithmic popularity', (done)->
-    workLabel = randomString(15)
+    workLabel = randomString 15
     createWork { labels: { fr: workLabel } }
     .then (work)->
       workEditionsCreation = [
@@ -213,7 +213,7 @@ describe 'search:global', ->
         createEditionFromWorks work
       ]
       Promise.all workEditionsCreation
-      .delay 500
+      .delay 4000
       .then ->
         search 'works', workLabel
         .then (results)->
@@ -227,5 +227,5 @@ describe 'search:global', ->
 
 search = (types, search)->
   search = encodeURIComponent search
-  nonAuthReq 'get', "/api/search?search=#{search}&types=#{types}&lang=fr"
+  nonAuthReq 'get', "/api/search?search=#{search}&types=#{types}&lang=fr&limit=50"
   .get 'results'

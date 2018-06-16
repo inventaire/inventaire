@@ -88,7 +88,7 @@ describe 'entities:create', ->
 
     return
 
-  it 'should reject invalid property array', (done)->
+  it 'should reject invalid claim property array', (done)->
     authReq 'post', '/api/entities?action=create',
       labels: { fr: humanName() }
       claims:
@@ -102,11 +102,12 @@ describe 'entities:create', ->
 
     return
 
-  it 'should reject invalid property such as wd:P50 as a property URI', (done)->
+  it 'should reject invalid claim property', (done)->
     authReq 'post', '/api/entities?action=create',
       labels: { fr: humanName() }
       claims:
         'wdt:P31': [ 'wd:Q571' ]
+         # invalid property: wd:P50
         'wd:P50': [ 'wd:Q535' ]
     .catch (err)->
       err.body.status_verbose.should.equal 'invalid property'
@@ -116,12 +117,13 @@ describe 'entities:create', ->
 
     return
 
-  it 'should reject invalid property value such as wd:P31 as entity URI', (done)->
+  it 'should reject invalid claim property value', (done)->
     authReq 'post', '/api/entities?action=create',
       labels: { fr: humanName() }
       claims:
         'wdt:P31': [ 'wd:Q571' ]
-        'wdt:P50': [ 'wd:Q535' ]
+        # invalid value: wd####Q535 as entity URI
+        'wdt:P50': [ 'wd####Q535' ]
     .catch (err)->
       err.body.status_verbose.should.equal 'invalid property value'
       err.statusCode.should.equal 400

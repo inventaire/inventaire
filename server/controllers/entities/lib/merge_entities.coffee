@@ -6,6 +6,7 @@ entities_ = require './entities'
 Entity = __.require 'models', 'entity'
 placeholders_ = require './placeholders'
 propagateRedirection = require './propagate_redirection'
+getInvEntityCanonicalUri = require './get_inv_entity_canonical_uri'
 
 merge = (userId, fromId, toId)->
   _.types arguments, 'strings...'
@@ -20,6 +21,8 @@ merge = (userId, fromId, toId)->
 
     unless toEntityDoc._id is toId
       throw error_.new "'to' entity doc not found", 500
+
+    [ previousToUri ] = getInvEntityCanonicalUri toEntityDoc
 
     # Transfer all data from the 'fromEntity' to the 'toEntity'
     # if any difference can be found
@@ -36,10 +39,13 @@ merge = (userId, fromId, toId)->
         updatedDoc: toEntityDoc
         context: { mergeFrom: "inv:#{fromId}" }
 
-    transfer
-    .then -> turnIntoRedirection userId, fromId, "inv:#{toId}"
+    # Refresh the URI in case an ISBN was transfered and the URI changed
+    [ newToUri ] = getInvEntityCanonicalUri toEntityDoc
 
-turnIntoRedirection = (userId, fromId, toUri)->
+    transfer
+    .then -> turnIntoRedirection userId, fromId, newToUri, previousToUri
+
+turnIntoRedirection = (userId, fromId, toUri, previousToUri)->
   _.types arguments, 'strings...'
 
   fromUri = "inv:#{fromId}"
@@ -55,7 +61,7 @@ turnIntoRedirection = (userId, fromId, toUri)->
         currentDoc: currentFromDoc
         updatedDoc: updatedFromDoc
 
-  .then propagateRedirection.bind(null, userId, fromUri, toUri)
+  .then propagateRedirection.bind(null, userId, fromUri, toUri, previousToUri)
 
 # Removing the entities that were needed only by the entity about to be turned
 # into a redirection: this entity now don't have anymore reason to be and is quite
