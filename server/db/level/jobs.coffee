@@ -13,7 +13,7 @@ module.exports =
       throw new Error "unknown job: #{jobName}"
 
     # Push & run jobs to queue if this job is enabled in config
-    if CONFIG.jobs[jobName].run
+    if CONFIG.serverMode and CONFIG.jobs[jobName].run
       JobQueueServerAndClient = require 'level-jobs'
       _.info "#{jobName} job in server & client mode"
       return JobQueueServerAndClient db, worker, maxConcurrency
