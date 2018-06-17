@@ -18,14 +18,15 @@ describe 'items:get-by-ids', ->
     return
 
   it 'should get items by ids', (done)->
-    createItems getUser(), [ {}, {}, {} ]
+    emptyItemsData = [ {}, {}, {} ]
+    createItems getUser(), emptyItemsData
     .then (items)->
       ids = _.pluck items, '_id'
       authReq 'get', "/api/items?action=by-ids&ids=#{ids.join('|')}"
       .then (res)->
         resIds = _.pluck res.items, '_id'
         resIds.should.deepEqual ids
-        res.total.should.equal ids.length
+        resIds.length.should.equal ids.length
         done()
     .catch undesiredErr(done)
 

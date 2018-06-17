@@ -45,6 +45,7 @@ arrayOfAKind = (validation)-> (values, kind)->
 
   for value in values
     unless validation value
+      # approximative way to get singular of a word
       singularKind = kind.replace /s$/, ''
       details = "expected #{singularKind}, got #{value} (#{_.typeOf(values)})"
       throw error_.new "invalid #{singularKind}: #{details}", 400, { values }

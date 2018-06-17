@@ -21,7 +21,6 @@ describe 'items:get-by-entities', ->
     Promise.all [
       createEditionAndItem getUser()
       createEditionAndItem getUser()
-      createEditionAndItem getUser()
     ]
     .then (items)->
       uris = _.uniq _.pluck(items, 'entity')

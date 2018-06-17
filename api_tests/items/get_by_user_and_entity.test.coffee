@@ -4,6 +4,9 @@ _ = __.require 'builders', 'utils'
 should = require 'should'
 { getUser, getUserB, authReq, undesiredErr } = __.require 'apiTests', 'utils/utils'
 { createItem, createEditionAndItem } = require '../fixtures/items'
+{ createUser } = require '../fixtures/users'
+{ Promise } = __.require 'lib', 'promises'
+
 
 endpoint = '/api/items?action=by-user-and-entity'
 
@@ -20,7 +23,23 @@ describe 'items:get-by-user-and-entity', ->
 
     return
 
-  it 'should get items by their owner id and entity uri', (done)->
+  it 'should get items by their owner id', (done)->
+    Promise.all [
+      createEditionAndItem getUser()
+      createEditionAndItem createUser()
+    ]
+    .spread (userItem, _)->
+      uri = userItem.entity
+      authReq 'get', "#{endpoint}&user=#{userItem.owner}&uri=#{uri}"
+      .then (res)->
+        res.items.length.should.equal 1
+        res.items[0].should.deepEqual userItem
+        done()
+    .catch undesiredErr(done)
+
+    return
+
+  it 'should get items by their entity uri', (done)->
     createEditionAndItem getUser()
     .then (itemA)->
       uri = itemA.entity
