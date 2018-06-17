@@ -2,6 +2,7 @@ CONFIG = require 'config'
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 onlineUsers = require './lib/online_users'
+responses_ = __.require 'lib', 'responses'
 
 module.exports = (req, res)->
   { headers } = req
@@ -17,7 +18,7 @@ module.exports = (req, res)->
     userAgent: headers['user-agent']
     lang: headers['accept-language']?.split(',')?[0]
 
-  _.ok res
+  responses_.ok res
 
 # In production, bots should be routed to use prerender
 # cf https://github.com/inventaire/inventaire-deploy/blob/f3cda7210d29d9b3bfb983f8fbb1106c43c18968/nginx/inventaire.original.nginx#L160

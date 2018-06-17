@@ -5,18 +5,23 @@ user_ = __.require 'controllers', 'user/lib/user'
 relations_ = __.require 'controllers', 'relations/lib/queries'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
-{ validateQuery, addUsersData, listingIs, Paginate } = require './lib/queries_commons'
+sanitize = __.require 'lib', 'sanitize/sanitize'
+{ addUsersData, listingIs, Paginate } = require './lib/queries_commons'
 { omitPrivateAttributes } = require './lib/filter_private_attributes'
+
+sanitization =
+  ids: {}
+  limit: { optional: true }
+  offset: { optional: true }
+  'include-users':
+    generic: 'boolean'
+    default: false
 
 module.exports = (req, res)->
   reqUserId = req.user?._id
-
-  # By default, doesn't include users
-  includeUsers = _.parseBooleanString req.query['include-users']
-
-  validateQuery req.query, 'ids', _.isItemId
+  sanitize req, res, sanitization
   .then (page)->
-    { params:ids } = page
+    { ids, includeUsers } = page
     promises_.all [
       items_.byIds ids
       getNetworkIds reqUserId
@@ -25,7 +30,7 @@ module.exports = (req, res)->
     # Paginating isn't really required when requesting items by ids
     # but it also handles sorting and the consistency of the API
     .then Paginate(page)
-  .then addUsersData(reqUserId, includeUsers)
+    .then addUsersData(reqUserId, includeUsers)
   .then res.json.bind(res)
   .catch error_.Handler(req, res)
 

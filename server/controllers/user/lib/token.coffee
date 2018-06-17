@@ -14,7 +14,9 @@ module.exports = (db, user_)->
 
   wrappedUpdate = WrappedUpdater db
 
-  token_ = {}
+  tokenLength = 32
+
+  token_ = { tokenLength }
 
   token_.sendValidationEmail = (user)->
     if user.validEmail
@@ -22,7 +24,7 @@ module.exports = (db, user_)->
       _.warn log, 'email was already validated'
       return user
 
-    getTokenData()
+    getTokenData tokenLength
     .then (tokenData)->
       [ token, tokenHash ] = tokenData
       radio.emit 'validation:email', user, token
@@ -48,7 +50,7 @@ module.exports = (db, user_)->
     error_.new 'no email validation token found', 401, context
 
   token_.sendResetPasswordEmail = (user)->
-    getTokenData()
+    getTokenData tokenLength
     .then (tokenData)->
       [ token, tokenHash ] = tokenData
       radio.emit 'reset:password:email', user, token
@@ -71,8 +73,7 @@ emailIsValid = (user)->
   user.validEmail = true
   return _.omit user, 'emailValidation'
 
-getTokenData = ->
-  token = randomString 32
+getTokenData = (tokenLength)->
+  token = randomString tokenLength
   pw_.hash token
-  .then (tokenHash)->
-    return [ token, tokenHash ]
+  .then (tokenHash)-> [ token, tokenHash ]

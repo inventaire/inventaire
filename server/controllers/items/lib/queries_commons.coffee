@@ -11,48 +11,8 @@ filters =
 
 validFilters = Object.keys filters
 
-validateLimitAndOffset = (query)->
-  { limit, offset, filter } = query
-
-  if limit?
-    limit = _.parsePositiveInteger limit
-    unless limit? and limit > 0
-      return error_.rejectInvalid 'limit', limit
-
-  if offset?
-    offset = _.parsePositiveInteger offset
-    unless offset?
-      return error_.rejectInvalid 'offset', offset
-
-    unless limit?
-      return error_.rejectMissingQuery 'limit'
-
-  if filter?
-    unless filter in validFilters
-      return error_.rejectInvalid 'filter', filter
-
-  return promises_.resolve { limit, offset, filter }
-
 module.exports =
-  validateQuery: (query, paramName, paramTest)->
-    params = query[paramName]
-
-    unless _.isNonEmptyString params
-      return error_.rejectMissingQuery paramName
-
-    params = _.uniq params.split('|')
-
-    for param in params
-      unless paramTest param
-        singularParamName = paramName.replace /s$/, ''
-        return error_.rejectInvalid singularParamName, param
-
-    validateLimitAndOffset query
-    .then (page)->
-      page.params = params
-      return page
-
-  validateLimitAndOffset: validateLimitAndOffset
+  validFilters: validFilters
 
   addUsersData: (reqUserId, includeUsers)-> (page)->
     if includeUsers is false then return page

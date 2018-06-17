@@ -4,6 +4,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
+responses_ = __.require 'lib', 'responses'
 { Promise } = __.require 'lib', 'promises'
 breq = require 'bluereq'
 host = CONFIG.fullPublicHost()
@@ -19,7 +20,7 @@ module.exports = (req, res, next)->
   unless _.isUrl(url) then return error_.bundleInvalid req, res, 'url', url
 
   getImageDataUrl url
-  .then _.Wrap(res, 'data-url')
+  .then responses_.Wrap(res, 'data-url')
   .catch error_.Handler(req, res)
 
 getImageDataUrl = (url)->

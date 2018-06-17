@@ -1,6 +1,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
+responses_ = __.require 'lib', 'responses'
 promises_ = __.require 'lib', 'promises'
 user_ = __.require 'controllers', 'user/lib/user'
 relations_ = __.require 'controllers', 'relations/lib/queries'
@@ -22,7 +23,7 @@ module.exports = (req, res)->
   # to get access to req.user before it's cleared
   .tap Track(req, ['user', 'delete'])
   .then logout.bind(null, req)
-  .then _.OkWarning(res, 'we will miss you :(')
+  .then responses_.OkWarning(res, 'account', 'we will miss you :(')
   .catch error_.Handler(req, res)
 
 # what should happen to old:

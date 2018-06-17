@@ -18,13 +18,6 @@ module.exports = base =
 
   toLowerCase: (str)-> str.toLowerCase()
 
-  # returns a function triggering a standard confirmation response
-  ok: (res, status = 200)->
-    res.status(status).json { ok: true }
-
-  okWarning: (res, warning, status = 200)->
-    res.status(status).json { ok: true, warning }
-
   stringToInt: (str)->
     unless typeof str is 'string' then throw new Error "expected a string: #{str}"
     # testing the validity of the string is needed
@@ -63,6 +56,8 @@ module.exports = base =
   indexAppliedValue: (array, fn)->
     return array.reduce aggragateFnApplication(fn), {}
 
+  obfuscate: (str)-> str.replace /.{1}/g, '*'
+
 aggregateCollections = (index, name)->
   index[name] = []
   return index
@@ -72,20 +67,3 @@ aggragateFnApplication = (fn)-> (index, value)->
   return index
 
 base.objDiff = -> not base.sameObjects.apply(null, arguments)
-
-base.Ok = (res, status)-> base.ok.bind null, res, status
-base.OkWarning = (res, warning, status)->
-  base.okWarning.bind null, res, warning, status
-
-# FROM: .then (users)-> res.json { users }
-# TO: .then _.Wrap(res, 'users')
-base.Wrap = (res, key)-> wrap.bind null, res, key
-wrap = (res, key, data)->
-  obj = {}
-  obj[key] = data
-  res.json obj
-
-# FROM: .spread (users, items)-> res.json { users, items }
-# TO: .then _.Wraps(res, [ 'users', 'items' ])
-base.Wraps = (res, keys)-> wraps.bind null, res, keys
-wraps = (res, keys, dataArray)-> res.json _.zipObject(keys, dataArray)

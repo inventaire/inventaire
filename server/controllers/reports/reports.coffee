@@ -3,6 +3,7 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 ActionsControllers = __.require 'lib', 'actions_controllers'
 error_ = __.require 'lib', 'error/error'
+responses_ = __.require 'lib', 'responses'
 
 cspReport = (req, res)->
   { 'csp-report':errData } = req.body
@@ -12,7 +13,7 @@ cspReport = (req, res)->
 
   err = buildError 'csp report', 'csp', errData, req
   _.error err, 'csp report', false
-  _.ok res
+  responses_.ok res
 
 errorReport = (req, res)->
   { error:errData } = req.body
@@ -24,7 +25,7 @@ errorReport = (req, res)->
 
   err = buildError message, 'client error report', errData, req
   _.error err, 'client error report'
-  _.ok res
+  responses_.ok res
 
 buildError = (message, labels, errData, req)->
   context = _.omit errData, 'stack'

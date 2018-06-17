@@ -3,13 +3,16 @@ _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
 user_ = __.require 'controllers', 'user/lib/user'
 error_ = __.require 'lib', 'error/error'
-getUsersNearby = __.require 'controllers', 'users/lib/get_users_nearby'
+sanitize = __.require 'lib', 'sanitize/sanitize'
+responses_ = __.require 'lib', 'responses'
+
+sanitization =
+  range: {}
 
 module.exports = (req, res)->
   reqUserId = req.user?._id
-  { range } = req.query
-
-  getUsersNearby reqUserId, range
+  sanitize req, res, sanitization
+  .then (input)-> user_.nearby reqUserId, input.range
   .then user_.getUsersByIds.bind(null, reqUserId)
-  .then _.Wrap(res, 'users')
+  .then responses_.Wrap(res, 'users')
   .catch error_.Handler(req, res)

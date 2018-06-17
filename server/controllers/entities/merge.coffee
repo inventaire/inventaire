@@ -1,6 +1,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
+responses_ = __.require 'lib', 'responses'
 getEntitiesByUris = require './lib/get_entities_by_uris'
 { merge:mergeEntities, turnIntoRedirection } = require './lib/merge_entities'
 radio = __.require 'lib', 'radio'
@@ -45,7 +46,7 @@ module.exports = (req, res)->
   # Get data from concerned entities
   getEntitiesByUris [ fromUri, toUri ], true
   .then merge(reqUserId, toPrefix, fromUri, toUri)
-  .then _.Ok(res)
+  .then responses_.Ok(res)
   .then -> radio.emit 'entity:merge', fromUri, toUri
   .catch error_.Handler(req, res)
 

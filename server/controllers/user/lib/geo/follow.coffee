@@ -16,7 +16,6 @@ module.exports = (db)->
 
   onChange = (change)->
     { id, deleted, doc } = change
-    _.log id, 'user change'
     { position } = doc
 
     if deleted then return db.del id
@@ -35,9 +34,6 @@ module.exports = (db)->
       if lat is position.lat and lon is position.lon then return
 
     db.put { lat, lon }, id, null
-    .then ->
-      _.success [ id, lat, lon ], 'user position updated'
-      return
 
   startFollowing = (res)-> follow { dbBaseName, filter, onChange }
 

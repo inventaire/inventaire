@@ -1,6 +1,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
+responses_ = __.require 'lib', 'responses'
 
 module.exports = (req, res)->
   { id, uri, property, 'old-value':oldVal, 'new-value': newVal } = req.body
@@ -22,7 +23,7 @@ module.exports = (req, res)->
     return error_.bundle req, res, "unsupported uri prefix: #{prefix}", 400, uri
 
   updater req.user, id, property, oldVal, newVal
-  .then _.Ok(res)
+  .then responses_.Ok(res)
   .catch error_.Handler(req, res)
 
 parseEmptyValue = (value)-> if value is '' then null else value

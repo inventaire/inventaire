@@ -92,7 +92,6 @@ user_ =
     user_.byId userId
     .then (user)->
       { position } = user
-      console.log 'position', position
       unless position?
         throw error_.new 'user has no position set', 400, userId
 

@@ -1,5 +1,6 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
+responses_ = __.require 'lib', 'responses'
 headersToKeep = [ 'user-agent', 'content-type', 'content-length', 'referer' ]
 
 module.exports = (req, res, err, status)->
@@ -22,7 +23,7 @@ module.exports = (req, res, err, status)->
   else _.error err, err.message
 
   res.status statusCode
-  res.json
+  responses_.send res,
     status: statusCode
     status_verbose: err.message
     error_type: err.error_type

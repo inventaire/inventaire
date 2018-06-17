@@ -27,6 +27,6 @@ module.exports = ->
 
     context = _.pick CONFIG.db, 'protocol', 'host', 'port', 'username', 'password'
     # Avoid logging the password in plain text
-    context.password = context.password.replace(/.{1}/g, '*')
+    context.password = _.obfuscate context.password
     console.error err.message, context
     process.exit 1

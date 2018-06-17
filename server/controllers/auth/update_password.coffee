@@ -2,6 +2,7 @@ CONFIG = require 'config'
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
+responses_ = __.require 'lib', 'responses'
 user_ = __.require 'controllers', 'user/lib/user'
 promises_ = __.require 'lib', 'promises'
 User = __.require 'models', 'user'
@@ -34,7 +35,7 @@ module.exports = (req, res, next)->
 
   test
   .then updatePassword.bind(null, user, newPassword)
-  .then _.Ok(res)
+  .then responses_.Ok(res)
   .catch error_.Handler(req, res)
 
 updatePassword = (user, newPassword)->

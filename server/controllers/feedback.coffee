@@ -1,6 +1,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
+responses_ = __.require 'lib', 'responses'
 radio = __.require 'lib', 'radio'
 
 module.exports =
@@ -19,4 +20,4 @@ module.exports =
 
     radio.emit 'received:feedback', subject, message, user, unknownUser, uris
 
-    _.ok res, 201
+    responses_.ok res, 201

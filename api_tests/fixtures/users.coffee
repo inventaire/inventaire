@@ -3,6 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 breq = require 'bluereq'
 should = require 'should'
+{ Promise } = __.require 'lib', 'promises'
 host = CONFIG.fullHost()
 authEndpoint = host + '/api/auth'
 faker = require 'faker'
@@ -24,11 +25,11 @@ module.exports = API =
       username: API.createUsername()
       password: faker.internet.password()
 
-  createUser: (username)->
-    username = username or API.createUsername()
+  createUser: (customData = {})->
+    username = customData.username or API.createUsername()
     userData =
       username: username
-      password: username
+      password: '12345678'
       email: "#{username}@adomain.org"
 
     # Try to login first if the username is given, as a user with this username
@@ -38,9 +39,10 @@ module.exports = API =
     authPromise
     .then parseCookie
     .then API.getUserWithCookie
+    .tap setCustomData(customData)
 
-  createAdminUser: ->
-    API.createUser()
+  createAdminUser: (data)->
+    API.createUser data
     .tap (user)-> makeUserAdmin user._id
 
   getUserWithCookie: (cookie)->
@@ -60,3 +62,18 @@ module.exports = API =
     faker.fake '{{name.firstName}}{{name.firstName}}'
 
 parseCookie = (res)-> res.headers['set-cookie'].join ';'
+
+setCustomData = (customData)-> (user)->
+  delete customData.username
+
+  # Make updates sequentially to avoid update conflicts
+  sequentialUpdate = Promise.resolve()
+
+  for attribute, value of customData
+    sequentialUpdate = sequentialUpdate
+      .then -> setUserAttribute user, attribute, value
+
+  return sequentialUpdate
+
+setUserAttribute = (user, attribute, value)->
+  request 'put', '/api/user', { attribute, value }, user.cookie

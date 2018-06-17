@@ -4,37 +4,32 @@ items_ = __.require 'controllers', 'items/lib/items'
 user_ = __.require 'controllers', 'user/lib/user'
 promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
+sanitize = __.require 'lib', 'sanitize/sanitize'
 { Username } = __.require 'models', 'validations/regex'
+
+sanitization =
+  user: { optional: true }
+  username: { optional: true }
+  uri: {}
+  limit: { optional: true }
+  offset: { optional: true }
 
 module.exports = (req, res)->
   { query } = req
   { uri } = query
   reqUserId = req.user?._id
 
-  unless _.isEntityUri uri
-    return error_.bundleInvalid req, res, 'uri', uri
-
-  getUser query, reqUserId
+  sanitize req, res, sanitization
+  .then (input)-> getUser input, reqUserId
   .then getItemsFromUser(reqUserId, uri)
   .then res.json.bind(res)
   .catch error_.Handler(req, res)
 
-getUser = (query, reqUserId)->
-  { user:userId, username } = query
-  if userId?
-    unless _.isUserId userId
-      return error_.rejectInvalid 'user', userId
-
-    return user_.getUserById userId, reqUserId
-
-  else if username?
-    unless Username.test username
-      return error_.rejectInvalid 'username', userId
-
-    return user_.getUserFromUsername username, reqUserId
-
-  else
-    return error_.rejectMissingQuery 'user|username'
+getUser = (input, reqUserId)->
+  { userId, username } = input
+  if userId? then return user_.getUserById userId, reqUserId
+  if username? then return user_.getUserFromUsername username, reqUserId
+  return error_.rejectMissingQuery 'user|username'
 
 getItemsFromUser = (reqUserId, uri)-> (user)->
   { _id:ownerId } = user

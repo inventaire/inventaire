@@ -4,6 +4,7 @@ _ = __.require 'builders', 'utils'
 User = __.require 'models', 'user'
 user_ = __.require 'controllers', 'user/lib/user'
 promises_ = __.require 'lib', 'promises'
+responses_ = __.require 'lib', 'responses'
 error_ = __.require 'lib', 'error/error'
 
 module.exports = (req, res, next)->
@@ -12,7 +13,7 @@ module.exports = (req, res, next)->
     return error_.bundle req, res, 'user not found', 500
 
   promises_.try sendEmailValidation.bind(null, user)
-  .then _.Ok(res)
+  .then responses_.Ok(res)
   .catch error_.Handler(req, res)
 
 sendEmailValidation = (user)->

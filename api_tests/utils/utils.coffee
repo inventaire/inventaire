@@ -10,10 +10,10 @@ authEndpoint = host + '/api/auth'
 { request, customAuthReq } = require './request'
 
 userPromises = {}
-getUserGetter = (key, admin = false)-> ()->
+getUserGetter = (key, admin = false, customData)-> ()->
   unless userPromises[key]?
     createFn = if admin then createAdminUser else createUser
-    userPromises[key] = createFn()
+    userPromises[key] = createFn customData
   return getRefreshedUser userPromises[key]
 
 module.exports = API =
@@ -29,5 +29,6 @@ module.exports = API =
   getUserB: getUserGetter 'b'
   getUserC: getUserGetter 'c'
   getAdminUser: getUserGetter 'admin', true
+  getUserGetter: getUserGetter
 
 _.extend API, require('../../test/utils')

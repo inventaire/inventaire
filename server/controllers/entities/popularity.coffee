@@ -1,6 +1,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
+responses_ = __.require 'lib', 'responses'
 { Promise } = __.require 'lib', 'promises'
 getEntitiesPopularity = require './lib/get_entities_popularity'
 
@@ -18,5 +19,5 @@ module.exports = (req, res, next)->
   refresh = _.parseBooleanString refresh
 
   getEntitiesPopularity uris, refresh
-  .then _.Wrap(res, 'scores')
+  .then responses_.Wrap(res, 'scores')
   .catch error_.Handler(req, res)

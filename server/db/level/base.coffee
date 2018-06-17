@@ -4,15 +4,19 @@ _ = __.require 'builders', 'utils'
 { Promise } = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
 
-DBPath = __.path 'leveldb'
+DBPathBase = __.path 'leveldb'
+{ suffix } = CONFIG.db
+DBPath = if suffix? then "#{DBPathBase}-#{suffix}" else DBPathBase
 
 sublevel = require 'level-sublevel'
 if CONFIG.leveldbMemoryBackend
+  _.info 'leveldb in memory'
   level = require('level-test')()
   DB = sublevel level()
 else
   level = require 'level-party'
   config = {}
+  _.info DBPath, 'leveldb path'
   DB = sublevel level(DBPath, config)
 
 rawSubDb = (dbName, valueEncoding)->

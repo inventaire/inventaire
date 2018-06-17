@@ -1,6 +1,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
+responses_ = __.require 'lib', 'responses'
 
 module.exports = (req, res)->
   { id, uri, lang, value } = req.body
@@ -25,7 +26,7 @@ module.exports = (req, res)->
     return error_.bundleInvalid req, res, 'value', value
 
   updater req.user, id, lang, value
-  .then _.Ok(res)
+  .then responses_.Ok(res)
   .catch error_.Handler(req, res)
 
 updaters =

@@ -1,6 +1,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
+responses_ = __.require 'lib', 'responses'
 { appendToFullKeys, appendToShortKeys } = __.require 'lib', 'i18n_autofix'
 
 # if this route is enabled by CONFIG
@@ -32,6 +33,6 @@ i18nMissingKeys = (req, res, next)->
 
   appendToShortKeys shortKeys
   appendToFullKeys fullKeys
-  _.ok res
+  responses_.ok res
 
 module.exports = { post: i18nMissingKeys }

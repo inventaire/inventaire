@@ -1,6 +1,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
+responses_ = __.require 'lib', 'responses'
 user_ = __.require 'controllers', 'user/lib/user'
 notifs_ = __.require 'lib', 'notifications'
 promises_ = __.require 'lib', 'promises'
@@ -23,7 +24,7 @@ updateStatus = (req, res)->
   promises_.all times.map(notifs_.updateReadStatus.bind(null, reqUserId))
   .then ->
     _.success [ reqUserId, times ], 'notifs marked as read'
-    _.ok res
+    responses_.ok res
   .catch error_.Handler(req, res)
 
 module.exports = { get, post: updateStatus }
