@@ -5,6 +5,7 @@ promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
 tasks_ = __.require 'controllers', 'tasks/lib/tasks'
 entities_ = __.require 'controllers', 'entities/lib/entities'
+responses_ = __.require 'lib', 'responses'
 getEntityByUri = __.require 'controllers', 'entities/lib/get_entity_by_uri'
 createTaskDocs = __.require 'controllers', 'tasks/lib/create_task_docs'
 jobs_ = __.require 'level', 'jobs'
@@ -13,7 +14,7 @@ jobs_ = __.require 'level', 'jobs'
 
 module.exports = (req, res)->
   addEntitiesToQueue()
-  .then _.Ok(res)
+  .then responses_.Ok(res)
   .catch error_.Handler(req, res)
 
 addEntitiesToQueue = ->

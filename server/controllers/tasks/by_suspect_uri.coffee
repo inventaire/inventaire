@@ -1,5 +1,6 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
+responses_ = __.require 'lib', 'responses'
 error_ = __.require 'lib', 'error/error'
 tasks_ = require './lib/tasks'
 
@@ -10,5 +11,5 @@ module.exports = (req, res)->
     return error_.bundleInvalid req, res, 'suspectUri', uri
 
   tasks_.bySuspectUri uri
-  .then _.Wrap(res, 'tasks')
+  .then responses_.Wrap(res, 'tasks')
   .catch error_.Handler(req, res)

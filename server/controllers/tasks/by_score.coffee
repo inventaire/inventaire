@@ -1,5 +1,6 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
+responses_ = __.require 'lib', 'responses'
 error_ = __.require 'lib', 'error/error'
 tasks_ = require './lib/tasks'
 
@@ -19,5 +20,5 @@ module.exports = (req, res)->
   offset = _.stringToInt offset
 
   tasks_.byScore { limit, offset }
-  .then _.Wrap(res, 'tasks')
+  .then responses_.Wrap(res, 'tasks')
   .catch error_.Handler(req, res)

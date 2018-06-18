@@ -1,5 +1,6 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
+responses_ = __.require 'lib', 'responses'
 error_ = __.require 'lib', 'error/error'
 tasks_ = __.require 'controllers', 'tasks/lib/tasks'
 
@@ -12,5 +13,5 @@ module.exports = (req, res)->
   ids = ids.split '|'
 
   tasks_.byIds ids
-  .then _.Wrap(res, 'tasks')
+  .then responses_.Wrap(res, 'tasks')
   .catch error_.Handler(req, res)
