@@ -58,8 +58,7 @@ module.exports = API =
     .then (user)-> API.getUserWithCookie user.cookie
 
   createUsername: ->
-    # faker firstName generates alphabet-only strings
-    faker.fake '{{name.firstName}}{{name.firstName}}'
+    faker.fake('{{name.firstName}}').replace /\W/, ''
 
 parseCookie = (res)-> res.headers['set-cookie'].join ';'
 
