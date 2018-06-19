@@ -35,7 +35,9 @@ getInvHumanUris = ->
 
 deduplicateWorker = (jobId, uri, cb)->
   getEntityByUri uri
-  .then (entity)-> createTaskDocs entity
+  .then (entity)->
+    unless entity? then throw error_.notFound { uri }
+    createTaskDocs entity
   .then tasks_.keepNewTasks
   .map tasks_.create
   .delay interval

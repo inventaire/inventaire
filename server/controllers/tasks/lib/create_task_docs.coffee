@@ -8,8 +8,6 @@ checkEntity = require './check_entity'
 hasWorksLabelsOccurrence = __.require 'controllers', 'entities/lib/has_works_labels_occurrence'
 
 module.exports = (entity)->
-  unless entity? then return newTasks
-
   Promise.all [
     checkEntity entity
     getAuthorWorksData entity._id
