@@ -11,9 +11,9 @@ module.exports =
       'by-suspect-uri': require './by_suspect_uri'
 
   post: ActionsControllers
-    authentified:
+    admin:
       'collect-entities': require './collect_entities'
 
   put: ActionsControllers
-    authentified:
+    admin:
       'update': require './update'
