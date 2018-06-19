@@ -19,7 +19,7 @@ describe 'tasks:update', ->
     .get 'tasks'
     .then (tasks)->
       task = tasks[0]
-      authReq 'put', updateEndpoint,
+      adminReq 'put', updateEndpoint,
         id: task._id,
         attribute: 'state',
         value: 'dismissed'
@@ -31,7 +31,7 @@ describe 'tasks:update', ->
     return
 
   it 'should throw if invalid task id', (done)->
-    authReq 'put', updateEndpoint,
+    adminReq 'put', updateEndpoint,
       id: ''
     .catch (err)->
       err.body.status_verbose.should.be.a.String()
@@ -95,7 +95,7 @@ describe 'tasks:merge-entities', ->
         taskToUpdate = tasks[0]
         otherTask = tasks[1]
         taskRelationScore = taskToUpdate.relationScore
-        authReq 'put', updateEndpoint,
+        adminReq 'put', updateEndpoint,
           id: taskToUpdate._id,
           attribute: 'state',
           value: 'dismissed'
