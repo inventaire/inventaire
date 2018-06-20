@@ -7,8 +7,8 @@ error_ = __.require 'lib', 'error/error'
 module.exports = (res, reqUserId, items)->
   unless items?.length > 0
     throw error_.new 'no item found', 404
-  users = getItemsOwners items
-  user_.getUsersByIds reqUserId, users
+  usersIds = getItemsOwners items
+  user_.getUsersByIds usersIds, reqUserId
   .then (users)-> res.json { items, users }
 
 getItemsOwners = (items)->

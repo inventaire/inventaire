@@ -50,11 +50,11 @@ user_ =
       if userDoc? then return userDoc
       else throw error_.new 'user not found', 404, username
 
-  getUserById: (reqUserId, id)->
+  getUserById: (id, reqUserId)->
     user_.getUsersAuthorizedData user_.byIds([id]), reqUserId
     .get '0'
 
-  getUsersByIds: (reqUserId, ids)->
+  getUsersByIds: (ids, reqUserId)->
     _.type ids, 'array'
     if ids.length is 0 then return promises_.resolve []
     user_.getUsersAuthorizedData user_.byIds(ids), reqUserId
@@ -70,7 +70,7 @@ user_ =
       .map omitPrivateData(reqUserId, networkIds, extraAttribute)
 
   getUsersIndexByIds: (reqUserId)-> (ids)->
-    user_.getUsersByIds reqUserId, ids
+    user_.getUsersByIds ids, reqUserId
     .then _.IndexBy('_id')
 
   getUsersIndexByUsernames: (reqUserId)-> (usernames)->
