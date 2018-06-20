@@ -37,22 +37,27 @@ user_ =
     .then (user)->
       # ignoring case as expected does the database
       if user?.username.toLowerCase() is username.toLowerCase() then return user
-      else throw new Error "user not found for username: #{username}"
+      else throw error_.notFound { username }
 
   findOneByUsernameOrEmail: (str)->
     if User.validations.email(str) then user_.findOneByEmail str
     else user_.findOneByUsername(str)
 
   getUserFromUsername: (username, reqUserId)->
+    _.type username, 'string'
     user_.getUsersAuthorizedData user_.byUsername(username), reqUserId
     .then (usersDocs)->
       userDoc = usersDocs[0]
       if userDoc? then return userDoc
-      else throw error_.new 'user not found', 404, username
+      else throw error_.notFound { username }
 
   getUserById: (id, reqUserId)->
+    _.type id, 'string'
     user_.getUsersAuthorizedData user_.byIds([id]), reqUserId
-    .get '0'
+    .then (users)->
+      user = users[0]
+      if user? then return user
+      else throw error_.notFound { userId: id }
 
   getUsersByIds: (ids, reqUserId)->
     _.type ids, 'array'
