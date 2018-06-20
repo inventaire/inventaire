@@ -19,13 +19,8 @@ module.exports = (req, res)->
 
 addEntitiesToQueue = ->
   getInvHumanUris()
-  .then (invHumanUris)->
-    invTasksEntitiesQueue.pushBatch invHumanUris, errorLogger
-
-    return promises_.resolve null
-
-errorLogger = (err)->
-  if err? then _.error err, 'invTasksEntitiesQueue.push err'
+  .then invTasksEntitiesQueue.pushBatch
+  .catch _.ErrorRethrow('addEntitiesToQueue err')
 
 getInvHumanUris = ->
   entities_.db.view 'entities', 'byClaim',
@@ -41,10 +36,7 @@ deduplicateWorker = (jobId, uri, cb)->
   .then tasks_.keepNewTasks
   .map tasks_.create
   .delay interval
-  .then -> cb()
-  .catch (err)->
-    _.error err, 'deduplicateWorker err'
-    cb err
+  .catch _.ErrorRethrow('deduplicateWorker err')
 
 prefixify = (id)-> "inv:#{id}"
 
