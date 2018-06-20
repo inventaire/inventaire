@@ -3,6 +3,7 @@ _ = __.require 'builders', 'utils'
 items_ = __.require 'controllers', 'items/lib/items'
 user_ = __.require 'controllers', 'user/lib/user'
 relations_ = __.require 'controllers', 'relations/lib/queries'
+responses_ = __.require 'lib', 'responses'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
 sanitize = __.require 'lib', 'sanitize/sanitize'
@@ -30,7 +31,7 @@ module.exports = (req, res)->
     # but it also handles sorting and the consistency of the API
     .then Paginate(page)
     .then addUsersData
-  .then res.json.bind(res)
+  .then responses_.Send(res)
   .catch error_.Handler(req, res)
 
 getNetworkIds = (reqUserId)->

@@ -7,6 +7,7 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 { Track } = __.require 'lib', 'track'
 promises_ = __.require 'lib', 'promises'
+responses_ = __.require 'lib', 'responses'
 error_ = __.require 'lib', 'error/error'
 isbn_ = __.require 'lib', 'isbn/isbn'
 entities_ = require './lib/entities'
@@ -40,7 +41,7 @@ module.exports = (req, res)->
     if entityDoc then return entityDoc
     else return addImage(seed).then scaffoldEditionEntityFromSeed
   .then formatEditionEntity
-  .then res.json.bind(res)
+  .then responses_.Send(res)
   .catch error_.Handler(req, res)
 
 addImage = (seed)->

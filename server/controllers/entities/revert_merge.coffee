@@ -1,5 +1,6 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
+responses_ = __.require 'lib', 'responses'
 error_ = __.require 'lib', 'error/error'
 revertMerge = require './lib/revert_merge'
 
@@ -17,5 +18,5 @@ module.exports = (req, res)->
     return error_.bundleInvalid req, res, 'from'
 
   revertMerge reqUserId, fromId
-  .then res.json.bind(res)
+  .then responses_.Send(res)
   .catch error_.Handler(req, res)

@@ -1,5 +1,6 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
+responses_ = __.require 'lib', 'responses'
 error_ = __.require 'lib', 'error/error'
 entities_ = require './lib/entities'
 defaultLimit = 100
@@ -12,5 +13,5 @@ module.exports = (req, res)->
     else return error_.bundleInvalid req, res, 'since', since
 
   entities_.getLastChangedEntitiesUris since, defaultLimit
-  .then res.json.bind(res)
+  .then responses_.Send(res)
   .catch error_.Handler(req, res)

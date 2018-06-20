@@ -1,6 +1,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
+responses_ = __.require 'lib', 'responses'
 items_ = __.require 'controllers', 'items/lib/items'
 transactions_ = require './lib/transactions'
 user_ = __.require 'controllers', 'user/lib/user'
@@ -25,6 +26,6 @@ module.exports = (req, res, nex)->
   .then (id)->
     transactions_.addMessage(reqUserId, message, id)
     transactions_.byId(id)
-    .then res.json.bind(res)
+    .then responses_.Send(res)
   .then Track(req, ['transaction', 'request'])
   .catch error_.Handler(req, res)

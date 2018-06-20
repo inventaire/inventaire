@@ -3,6 +3,7 @@ _ = __.require 'builders', 'utils'
 items_ = __.require 'controllers', 'items/lib/items'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
+responses_ = __.require 'lib', 'responses'
 radio = __.require 'lib', 'radio'
 { Track } = __.require 'lib', 'track'
 
@@ -26,6 +27,6 @@ module.exports = (req, res, next)->
   itemId = item._id
 
   items_.update reqUserId, item
-  .then res.json.bind(res)
+  .then responses_.Send(res)
   .tap Track(req, ['item', 'update'])
   .catch error_.Handler(req, res)

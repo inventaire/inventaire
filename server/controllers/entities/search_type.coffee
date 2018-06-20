@@ -7,6 +7,7 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
+responses_ = __.require 'lib', 'responses'
 error_ = __.require 'lib', 'error/error'
 searchType = require './lib/search_type'
 
@@ -34,5 +35,5 @@ module.exports = (req, res)->
   limit = _.stringToInt limit
 
   searchType search, type, limit
-  .then res.json.bind(res)
+  .then responses_.Send(res)
   .catch error_.Handler(req, res)

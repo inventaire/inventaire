@@ -1,6 +1,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
+responses_ = __.require 'lib', 'responses'
 promises_ = __.require 'lib', 'promises'
 comments_ = __.require 'controllers', 'comments/lib/comments'
 transactions_ = require './lib/transactions'
@@ -11,7 +12,7 @@ module.exports =
   get: (req, res, next)->
     { transaction } = req.query
     comments_.byTransactionId(transaction)
-    .then res.json.bind(res)
+    .then responses_.Send(res)
     .catch error_.Handler(req, res)
 
   post: (req, res, next)->
@@ -36,6 +37,6 @@ module.exports =
         .then ->
           radio.emit 'transaction:message', transaction
           return couchRes
-    .then res.json.bind(res)
+    .then responses_.Send(res)
     .then Track(req, ['transaction', 'message'])
     .catch error_.Handler(req, res)

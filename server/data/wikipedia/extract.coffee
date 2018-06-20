@@ -2,6 +2,7 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 cache_ = __.require 'lib', 'cache'
 error_ = __.require 'lib', 'error/error'
+responses_ = __.require 'lib', 'responses'
 promises_ = __.require 'lib', 'promises'
 validations = __.require 'models', 'validations/common'
 qs = require 'querystring'
@@ -21,7 +22,7 @@ module.exports = (req, res)->
 
   key = "wpextract:#{lang}:#{title}"
   cache_.get key, requestExtract.bind(null, lang, title)
-  .then res.json.bind(res)
+  .then responses_.Send(res)
   .catch error_.Handler(req, res)
 
 requestExtract = (lang, title)->

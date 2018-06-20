@@ -1,6 +1,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
+responses_ = __.require 'lib', 'responses'
 transactions_ = require './lib/transactions'
 { states, statesList } = __.require 'models', 'transaction'
 validations = __.require 'models', 'validations/common'
@@ -20,7 +21,7 @@ module.exports = (req, res, next)->
   transactions_.byId id
   .then VerifyRights(state, reqUserId)
   .then transactions_.updateState.bind(null, state, reqUserId)
-  .then res.json.bind(res)
+  .then responses_.Send(res)
   .then Track(req, ['transaction', 'update', state])
   .catch error_.Handler(req, res)
 

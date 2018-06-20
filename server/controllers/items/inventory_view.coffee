@@ -1,6 +1,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
+responses_ = __.require 'lib', 'responses'
 error_ = __.require 'lib', 'error/error'
 items_ = require './lib/items'
 user_ = __.require 'controllers', 'user/lib/user'
@@ -33,7 +34,7 @@ module.exports = (req, res)->
 
   # get associated entities
   # sort items by entities properties
-  .then res.json.bind(res)
+  .then responses_.Send(res)
   .catch error_.Handler(req, res)
 
 # Maybe we need a system of per-user inventory view

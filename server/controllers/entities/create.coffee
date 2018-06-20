@@ -1,5 +1,6 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
+responses_ = __.require 'lib', 'responses'
 error_ = __.require 'lib', 'error/error'
 { Track } = __.require 'lib', 'track'
 createEntity = require './lib/create_entity'
@@ -26,6 +27,6 @@ module.exports = (req, res)->
   createEntity labels, claims, reqUserId
   # Re-request the entity's data to get it formatted
   .then (entity)-> getEntityByUri "inv:#{entity._id}", true
-  .then res.json.bind(res)
+  .then responses_.Send(res)
   .then Track(req, ['entity', 'creation'])
   .catch error_.Handler(req, res)

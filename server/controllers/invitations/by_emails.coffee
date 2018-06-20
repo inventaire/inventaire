@@ -5,6 +5,7 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
+responses_ = __.require 'lib', 'responses'
 parseEmails = require './lib/parse_emails'
 sendInvitationAndReturnData = require './lib/send_invitation_and_return_data'
 groups_ = __.require 'controllers', 'groups/lib/groups'
@@ -32,7 +33,7 @@ module.exports = (req, res)->
   .spread (parsedEmails, group)->
     sendInvitationAndReturnData { user, message, group, parsedEmails, reqUserId }
     .then _.Log('invitationByEmails data')
-    .then res.json.bind(res)
+    .then responses_.Send(res)
     .then Track(req, ['invitation', 'email', null, parsedEmails.length])
   .catch error_.Handler(req, res)
 

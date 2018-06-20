@@ -19,7 +19,7 @@ module.exports =
       return error_.bundleInvalid req, res, 'id', id
 
     groups_.getGroupData 'byId', [ id ], reqUserId
-    .then res.json.bind(res)
+    .then responses_.Send(res)
     .catch error_.Handler(req, res)
 
   bySlug: (req, res)->
@@ -30,7 +30,7 @@ module.exports =
       return error_.bundleMissingQuery req, res, 'slug'
 
     groups_.getGroupData 'bySlug', [ slug ], reqUserId
-    .then res.json.bind(res)
+    .then responses_.Send(res)
     .catch error_.Handler(req, res)
 
   searchByText: (req, res)->
@@ -53,7 +53,7 @@ module.exports =
       # "parseBbox(...).then(...).then(...).catch(...).filter is not a function"
       groups_.byPosition bbox
       .filter searchable
-    .then res.json.bind(res)
+    .then responses_.Send(res)
     .catch error_.Handler(req, res)
 
   lastGroups: (req, res)->

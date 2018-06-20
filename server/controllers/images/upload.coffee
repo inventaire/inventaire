@@ -3,6 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 { Promise } = __.require 'lib', 'promises'
 parseForm = require './lib/parse_form'
+responses_ = __.require 'lib', 'responses'
 error_ = __.require 'lib', 'error/error'
 images_ = __.require 'lib', 'images'
 { putImage } = require './put_image'
@@ -29,7 +30,7 @@ module.exports = (req, res, next)->
   .map convertUrl(ipfs)
   .then indexCollection
   .then _.Log('upload post res')
-  .then res.json.bind(res)
+  .then responses_.Send(res)
   .catch error_.Handler(req, res)
 
 convertUrl = (ipfs)-> (urlData)->

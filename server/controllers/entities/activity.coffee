@@ -2,8 +2,8 @@
 # Reserved to admins for the moment, as some data might be considered privacy issue
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
-error_ = __.require 'lib', 'error/error'
 responses_ = __.require 'lib', 'responses'
+error_ = __.require 'lib', 'error/error'
 patches_ = require './lib/patches'
 
 module.exports = (req, res)->
@@ -16,7 +16,7 @@ module.exports = (req, res)->
     period = _.stringToInt period
 
     patches_.getActivityFromLastDay period
-    .then res.json.bind(res)
+    .then responses_.Send(res)
     .catch error_.Handler(req, res)
 
   else

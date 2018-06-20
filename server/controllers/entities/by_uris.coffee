@@ -1,5 +1,6 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
+responses_ = __.require 'lib', 'responses'
 error_ = __.require 'lib', 'error/error'
 getEntitiesByUris = require './lib/get_entities_by_uris'
 addRelatives = require './lib/add_relatives'
@@ -35,5 +36,5 @@ module.exports = (req, res, next)->
 
   getEntitiesByUris uris, refresh
   .then addRelatives(relatives, refresh)
-  .then res.json.bind(res)
+  .then responses_.Send(res)
   .catch error_.Handler(req, res)

@@ -1,5 +1,6 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
+responses_ = __.require 'lib', 'responses'
 error_ = __.require 'lib', 'error/error'
 customQueries =
   'author-works': require './lib/get_author_works'
@@ -14,5 +15,5 @@ module.exports = (req, res, next)->
   refresh = _.parseBooleanString refresh
 
   customQueries[action] uri, refresh
-  .then res.json.bind(res)
+  .then responses_.Send(res)
   .catch error_.Handler(req, res)
