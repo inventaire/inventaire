@@ -15,10 +15,9 @@ sanitization =
   offset: { optional: true }
 
 module.exports = (req, res)->
-  reqUserId = req.user?._id
   sanitize req, res, sanitization
   .then (input)->
-    { userId, uri } = input
+    { userId, uri, reqUserId } = input
     user_.getUserById userId, reqUserId
     .then getItemsFromUser(reqUserId, uri)
   .then responses_.Send(res)

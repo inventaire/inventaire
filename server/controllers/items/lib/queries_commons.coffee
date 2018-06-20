@@ -14,7 +14,8 @@ validFilters = Object.keys filters
 module.exports =
   validFilters: validFilters
 
-  addUsersData: (reqUserId, includeUsers)-> (page)->
+  addUsersData: (page)->
+    { reqUserId, includeUsers } = page
     if includeUsers is false then return page
 
     { items } = page

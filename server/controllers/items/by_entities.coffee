@@ -15,15 +15,14 @@ sanitization =
   offset: { optional: true }
 
 module.exports = (req, res)->
-  reqUserId = req.user?._id
   sanitize req, res, sanitization
-  .then getEntitiesItems(reqUserId)
-  .then addUsersData(reqUserId)
+  .then getEntitiesItems
+  .then addUsersData
   .then res.json.bind(res)
   .catch error_.Handler(req, res)
 
-getEntitiesItems = (reqUserId)-> (page)->
-  { uris } = page
+getEntitiesItems = (page)->
+  { uris, reqUserId } = page
 
   promises_.all [
     getUserItems reqUserId, uris
