@@ -3,7 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 
-createTaskDocs = __.require 'controllers', 'tasks/lib/create_task_docs'
+buildTaskDocs = __.require 'controllers', 'tasks/lib/build_task_docs'
 
 input = suspectEntity = {
   _id: '026a1856df319a2fe3c14c4db6011feb'
@@ -24,7 +24,7 @@ validTask = {
 
 describe 'create tasks doc based on inv entity object', ->
   it 'should return an array of tasks with the same suspectUri', (done)->
-    createTaskDocs suspectEntity
+    buildTaskDocs suspectEntity
     .then (taskDocs)->
       tasksSuspectUris = _.pluck taskDocs, 'suspectUri'
       _.uniq(tasksSuspectUris).length.should.equal 1
@@ -37,7 +37,7 @@ describe 'create tasks doc based on inv entity object', ->
     return
 
   it 'should return a relationScore for every tasks', (done)->
-    createTaskDocs suspectEntity
+    buildTaskDocs suspectEntity
     .then (taskDocs)->
       taskRelationScores = _.pluck taskDocs, 'relationScore'
       _.compact(taskRelationScores).length.should.equal taskRelationScores.length
@@ -47,7 +47,7 @@ describe 'create tasks doc based on inv entity object', ->
     return
 
   it 'should return if task has encyclopedia occurence for every tasks', (done)->
-    createTaskDocs suspectEntity
+    buildTaskDocs suspectEntity
     .then (taskDocs)->
       taskEncyclopedia = _.pluck taskDocs, 'hasEncyclopediaOccurence'
       _.without(taskEncyclopedia, true, false).should.deepEqual []

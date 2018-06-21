@@ -3,36 +3,33 @@ _ = __.require 'builders', 'utils'
 { Promise } = __.require 'lib', 'promises'
 
 entities_ = __.require 'controllers', 'entities/lib/entities'
-checkEntity = require './check_entity'
+searchEntityDuplicatesSuggestions = require './search_entity_duplicates_suggestions'
 { calculateRelationScore } = require './relation_score'
 hasWorksLabelsOccurrence = __.require 'controllers', 'entities/lib/has_works_labels_occurrence'
 { prefixifyInv } = __.require 'controllers', 'entities/lib/prefix'
 
 module.exports = (entity)->
   Promise.all [
-    checkEntity entity
+    searchEntityDuplicatesSuggestions entity
     getAuthorWorksData entity._id
   ]
   .spread (suggestionEntities, authorWorksData)->
     relationScore = calculateRelationScore suggestionEntities
-    create = createTaskDocs authorWorksData, relationScore
-    Promise.all suggestionEntities.map(create)
+    Promise.all suggestionEntities.map(create(authorWorksData, relationScore))
 
-createTaskDocs = (authorWorksData, relationScore)->
+create = (authorWorksData, relationScore)->
   { labels, langs } = authorWorksData
   return (suggestionEntity)->
     suggestionUri = suggestionEntity.uri
+    _.type suggestionUri, 'string'
     hasWorksLabelsOccurrence suggestionUri, labels, langs
     .then (hasOccurence)->
-      unless suggestionEntity.uri? then return {}
-      return {
-        type: 'deduplicate'
-        suspectUri: prefixifyInv authorWorksData.authorId
-        suggestionUri: suggestionEntity.uri
-        lexicalScore: suggestionEntity._score
-        relationScore: relationScore
-        hasEncyclopediaOccurence: hasOccurence
-      }
+      type: 'deduplicate'
+      suspectUri: prefixifyInv authorWorksData.authorId
+      suggestionUri: suggestionEntity.uri
+      lexicalScore: suggestionEntity._score
+      relationScore: relationScore
+      hasEncyclopediaOccurence: hasOccurence
 
 getAuthorWorksData = (authorId)->
   entities_.byClaim 'wdt:P50', "inv:#{authorId}", true, true

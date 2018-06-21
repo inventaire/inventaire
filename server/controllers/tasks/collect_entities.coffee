@@ -1,16 +1,15 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
-tasks_ = __.require 'controllers', 'tasks/lib/tasks'
 entities_ = __.require 'controllers', 'entities/lib/entities'
 responses_ = __.require 'lib', 'responses'
 { prefixifyInv } = __.require 'controllers', 'entities/lib/prefix'
 getEntityByUri = __.require 'controllers', 'entities/lib/get_entity_by_uri'
-createTaskDocs = __.require 'controllers', 'tasks/lib/create_task_docs'
 jobs_ = __.require 'level', 'jobs'
-{ mapDoc } = __.require 'lib', 'couch'
+tasks_ = require './lib/tasks'
+buildTaskDocs = require './lib/build_task_docs'
+keepNewTasks = require './lib/keep_new_tasks'
 { interval } = CONFIG.jobs['inv:deduplicate']
 
 module.exports = (req, res)->
@@ -31,8 +30,8 @@ deduplicateWorker = (jobId, uri, cb)->
   getEntityByUri uri
   .then (entity)->
     unless entity? then throw error_.notFound { uri }
-    createTaskDocs entity
-  .then tasks_.keepNewTasks
+    return buildTaskDocs entity
+  .then keepNewTasks
   .map tasks_.create
   .delay interval
   .catch _.ErrorRethrow('deduplicateWorker err')

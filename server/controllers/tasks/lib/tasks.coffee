@@ -37,20 +37,3 @@ module.exports = tasks_ =
 
   bySuspectUris: (suspectUris)->
     db.viewByKeys 'bySuspectUri', suspectUris
-
-  keepNewTasks: (newTasks)->
-    suspectUris = _.pluck newTasks, 'suspectUri'
-    tasks_.bySuspectUris suspectUris
-    .then (existingTasks)->
-      suggestionBySuspect = existingTasks.reduce indexSuggestionBySuspect, {}
-      newTasks.filter isNewTask(suggestionBySuspect)
-
-isNewTask = (suggestionBySuspect)-> (newTask)->
-  matchingExistingTasksUris = suggestionBySuspect[newTask.suspectUri]
-  unless matchingExistingTasksUris? then return true
-  return newTask.suggestionUri not in matchingExistingTasksUris
-
-indexSuggestionBySuspect = (index, task)->
-  index[task.suspectUri] or= []
-  index[task.suspectUri].push task.suggestionUri
-  return index
