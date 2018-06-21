@@ -12,14 +12,18 @@ sanitization =
   limit: {}
   offset: {}
   range: {}
-
-includeUsersDocs = true
+  'include-users':
+    generic: 'boolean'
+    default: true
+  'strict-range':
+    generic: 'boolean'
+    default: false
 
 module.exports = (req, res)->
   { _id:reqUserId } = req.user
   sanitize req, res, sanitization
   .then (input)->
-    user_.nearby reqUserId, input.range
-    .then getItemsByUsers.bind(null, reqUserId, includeUsersDocs, input)
+    user_.nearby reqUserId, input.range, input.strictRange
+    .then getItemsByUsers.bind(null, input)
   .then responses_.Send(res)
   .catch error_.Handler(req, res)

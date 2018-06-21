@@ -6,6 +6,7 @@ relations_ = __.require 'controllers', 'relations/lib/queries'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
 sanitize = __.require 'lib', 'sanitize/sanitize'
+responses_ = __.require 'lib', 'responses'
 { addUsersData, Paginate } = require './lib/queries_commons'
 { filterPrivateAttributes } = require './lib/filter_private_attributes'
 
@@ -15,15 +16,14 @@ sanitization =
   offset: { optional: true }
 
 module.exports = (req, res)->
-  reqUserId = req.user?._id
   sanitize req, res, sanitization
-  .then getEntitiesItems(reqUserId)
-  .then addUsersData(reqUserId)
-  .then res.json.bind(res)
+  .then getEntitiesItems
+  .then addUsersData
+  .then responses_.Send(res)
   .catch error_.Handler(req, res)
 
-getEntitiesItems = (reqUserId)-> (page)->
-  { uris } = page
+getEntitiesItems = (page)->
+  { uris, reqUserId } = page
 
   promises_.all [
     getUserItems reqUserId, uris

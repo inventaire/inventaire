@@ -13,6 +13,6 @@ module.exports = (req, res)->
   reqUserId = req.user?._id
   sanitize req, res, sanitization
   .then (input)-> user_.nearby reqUserId, input.range
-  .then user_.getUsersByIds.bind(null, reqUserId)
+  .then (usersIds)-> user_.getUsersByIds usersIds, reqUserId
   .then responses_.Wrap(res, 'users')
   .catch error_.Handler(req, res)

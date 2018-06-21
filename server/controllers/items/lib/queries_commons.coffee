@@ -14,7 +14,8 @@ validFilters = Object.keys filters
 module.exports =
   validFilters: validFilters
 
-  addUsersData: (reqUserId, includeUsers)-> (page)->
+  addUsersData: (page)->
+    { reqUserId, includeUsers } = page
     if includeUsers is false then return page
 
     { items } = page
@@ -24,7 +25,7 @@ module.exports =
 
     ownersIds = _.uniq items.map(_.property('owner'))
 
-    user_.getUsersByIds reqUserId, ownersIds
+    user_.getUsersByIds ownersIds, reqUserId
     .then (users)->
       page.users = users
       return page

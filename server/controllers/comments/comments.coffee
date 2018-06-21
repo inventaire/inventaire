@@ -3,8 +3,8 @@ _ = __.require 'builders', 'utils'
 user_ = __.require 'controllers', 'user/lib/user'
 items_ = __.require 'controllers', 'items/lib/items'
 comments_ = __.require 'controllers', 'comments/lib/comments'
-error_ = __.require 'lib', 'error/error'
 responses_ = __.require 'lib', 'responses'
+error_ = __.require 'lib', 'error/error'
 { Track } = __.require 'lib', 'track'
 
 module.exports =
@@ -15,7 +15,7 @@ module.exports =
     items_.byId item
     .then comments_.verifyRightToWriteOrReadComment.bind(null, reqUserId)
     .then comments_.byItemId.bind(null, item)
-    .then res.json.bind(res)
+    .then responses_.Send(res)
     .catch error_.Handler(req, res)
 
   # create
@@ -30,7 +30,7 @@ module.exports =
     items_.byId item
     .then _.partial(comments_.verifyRightToWriteOrReadComment, reqUserId)
     .then _.partial(comments_.addItemComment, reqUserId, message)
-    .then res.json.bind(res)
+    .then responses_.Send(res)
     .then Track(req, ['item', 'comment'])
     .catch error_.Handler(req, res)
 
@@ -46,7 +46,7 @@ module.exports =
     comments_.byId id
     .then _.partial(comments_.verifyEditRight, reqUserId)
     .then _.partial(comments_.update, message)
-    .then res.json.bind(res)
+    .then responses_.Send(res)
     .catch error_.Handler(req, res)
 
   delete: (req, res, next)->

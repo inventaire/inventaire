@@ -5,17 +5,16 @@ user_ = __.require 'controllers', 'user/lib/user'
 promises_ = __.require 'lib', 'promises'
 { addUsersData, Paginate } = require './queries_commons'
 
-module.exports = (reqUserId, includeUsersDocs, page, usersIds)->
+module.exports = (page, usersIds)->
   # Allow to pass users ids either through the page object
   # or as an additional argument
   usersIds or= page.users
+  { reqUserId } = page
 
   getRelations reqUserId, usersIds
   .then fetchRelationsItems(reqUserId)
   .then Paginate(page)
-  .then (pageData)->
-    if includeUsersDocs then return addUsersData(reqUserId)(pageData)
-    else return pageData
+  .then addUsersData
 
 getRelations = (reqUserId, usersIds)->
   # All users are considered public users when the request isn't authentified

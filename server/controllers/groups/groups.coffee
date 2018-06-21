@@ -1,6 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
+responses_ = __.require 'lib', 'responses'
 error_ = __.require 'lib', 'error/error'
 publicActions = require './public_actions'
 { allUserGroups } = require './lib/groups'
@@ -18,7 +19,7 @@ module.exports =
     authentified:
       'default': (req, res)->
         allUserGroups req.user._id
-        .then res.json.bind(res)
+        .then responses_.Send(res)
         .catch error_.Handler(req, res)
 
   post: ActionsControllers

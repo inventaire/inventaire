@@ -1,6 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
+responses_ = __.require 'lib', 'responses'
 error_ = __.require 'lib', 'error/error'
 { getImageByUrl } = __.require 'data', 'dataseed/dataseed'
 { enabled:dataseedEnabled } = CONFIG.dataseed
@@ -13,5 +14,5 @@ module.exports = (req, res, next)->
   unless dataseedEnabled then res.json { url }
 
   getImageByUrl url
-  .then res.json.bind(res)
+  .then responses_.Send(res)
   .catch error_.Handler(req, res)

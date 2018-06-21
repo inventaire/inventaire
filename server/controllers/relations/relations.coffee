@@ -1,6 +1,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 user_ = __.require 'controllers', 'user/lib/user'
+responses_ = __.require 'lib', 'responses'
 error_ = __.require 'lib', 'error/error'
 { Promise } = __.require 'lib', 'promises'
 
@@ -16,7 +17,7 @@ module.exports =
       delete relations.none
       relations.network = networkIds
       return relations
-    .then res.json.bind(res)
+    .then responses_.Send(res)
     .catch error_.Handler(req, res)
 
   post: require './post'

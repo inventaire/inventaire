@@ -1,6 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
+responses_ = __.require 'lib', 'responses'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
 isbn_ = __.require 'lib', 'isbn/isbn'
@@ -40,7 +41,7 @@ module.exports = (req, res)->
 
   promise
   .then spreadResults
-  .then res.json.bind(res)
+  .then responses_.Send(res)
   .catch error_.Handler(req, res)
 
 spreadResults = (results)->

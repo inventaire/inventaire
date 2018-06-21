@@ -3,33 +3,25 @@ _ = __.require 'builders', 'utils'
 items_ = __.require 'controllers', 'items/lib/items'
 user_ = __.require 'controllers', 'user/lib/user'
 promises_ = __.require 'lib', 'promises'
+responses_ = __.require 'lib', 'responses'
 error_ = __.require 'lib', 'error/error'
 sanitize = __.require 'lib', 'sanitize/sanitize'
 { Username } = __.require 'models', 'validations/regex'
 
 sanitization =
-  user: { optional: true }
-  username: { optional: true }
+  user: {}
   uri: {}
   limit: { optional: true }
   offset: { optional: true }
 
 module.exports = (req, res)->
-  { query } = req
-  { uri } = query
-  reqUserId = req.user?._id
-
   sanitize req, res, sanitization
-  .then (input)-> getUser input, reqUserId
-  .then getItemsFromUser(reqUserId, uri)
-  .then res.json.bind(res)
+  .then (input)->
+    { userId, uri, reqUserId } = input
+    user_.getUserById userId, reqUserId
+    .then getItemsFromUser(reqUserId, uri)
+  .then responses_.Send(res)
   .catch error_.Handler(req, res)
-
-getUser = (input, reqUserId)->
-  { userId, username } = input
-  if userId? then return user_.getUserById userId, reqUserId
-  if username? then return user_.getUserFromUsername username, reqUserId
-  return error_.rejectMissingQuery 'user|username'
 
 getItemsFromUser = (reqUserId, uri)-> (user)->
   { _id:ownerId } = user

@@ -16,8 +16,11 @@ describe 'items:get-by-user-and-entity', ->
     .then (item)->
       authReq 'get', "#{endpoint}&user=#{item.owner}&uri=#{item.entity}"
       .then (res)->
-        res.items[0].entity.should.equal item.entity
-        res.items[0]._id.should.equal item._id
+        itemsIds = _.pluck res.items, '_id'
+        itemsIds.includes(item._id).should.be.true()
+        for resItem in res.items
+          resItem.entity.should.equal item.entity
+          resItem.owner.should.equal item.owner
         done()
     .catch undesiredErr(done)
 
@@ -28,9 +31,9 @@ describe 'items:get-by-user-and-entity', ->
       createEditionAndItem getUser()
       createEditionAndItem createUser()
     ]
-    .spread (userItem, _)->
-      uri = userItem.entity
-      authReq 'get', "#{endpoint}&user=#{userItem.owner}&uri=#{uri}"
+    .spread (userItem)->
+      { owner, entity: uri } = userItem
+      authReq 'get', "#{endpoint}&user=#{owner}&uri=#{uri}"
       .then (res)->
         res.items.length.should.equal 1
         res.items[0].should.deepEqual userItem

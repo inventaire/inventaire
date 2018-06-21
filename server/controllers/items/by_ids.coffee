@@ -3,6 +3,7 @@ _ = __.require 'builders', 'utils'
 items_ = __.require 'controllers', 'items/lib/items'
 user_ = __.require 'controllers', 'user/lib/user'
 relations_ = __.require 'controllers', 'relations/lib/queries'
+responses_ = __.require 'lib', 'responses'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
 sanitize = __.require 'lib', 'sanitize/sanitize'
@@ -18,10 +19,9 @@ sanitization =
     default: false
 
 module.exports = (req, res)->
-  reqUserId = req.user?._id
   sanitize req, res, sanitization
   .then (page)->
-    { ids, includeUsers } = page
+    { ids, includeUsers, reqUserId } = page
     promises_.all [
       items_.byIds ids
       getNetworkIds reqUserId
@@ -30,8 +30,8 @@ module.exports = (req, res)->
     # Paginating isn't really required when requesting items by ids
     # but it also handles sorting and the consistency of the API
     .then Paginate(page)
-    .then addUsersData(reqUserId, includeUsers)
-  .then res.json.bind(res)
+    .then addUsersData
+  .then responses_.Send(res)
   .catch error_.Handler(req, res)
 
 getNetworkIds = (reqUserId)->

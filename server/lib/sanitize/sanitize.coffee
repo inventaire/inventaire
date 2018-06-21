@@ -20,6 +20,8 @@ module.exports = (req, res, configs)->
     for name, config of configs
       sanitizeParameter input, name, config, place, res
 
+    if req.user?._id? then input.reqUserId = req.user._id
+
     return input
 
 sanitizeParameter = (input, name, config, place, res)->
