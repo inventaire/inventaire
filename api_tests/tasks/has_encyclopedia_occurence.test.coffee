@@ -3,9 +3,8 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { authReq, adminReq, nonAuthReq, undesiredErr } = __.require 'apiTests', 'utils/utils'
-
-collectEntitiesEndpoint = '/api/tasks?action=collect-entities'
-byScore = '/api/tasks?action=by-score&limit=1000'
+{ collectEntities } = require '../fixtures/tasks'
+{ getByScore } = require '../utils/tasks'
 
 describe 'tasks:has-encyclopedia-occurence', ->
   it 'should return true when author has work sourced in their wikipedia page', (done)->
@@ -20,10 +19,9 @@ describe 'tasks:has-encyclopedia-occurence', ->
         claims:
           'wdt:P31': [ 'wd:Q571' ]
           'wdt:P50': [ authorUri ]
-      .then -> adminReq 'post', collectEntitiesEndpoint
+      .then -> collectEntities { refresh: true }
       .delay 5000
-      .then -> authReq 'get', byScore
-      .get 'tasks'
+      .then getByScore
       .then (tasks)->
         tasks.length.should.aboveOrEqual 1
         hasEncyclopediaOccurences = _.pluck tasks, 'hasEncyclopediaOccurence'

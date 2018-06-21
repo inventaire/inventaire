@@ -2,20 +2,16 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-randomString = __.require 'lib', './utils/random_string'
 { collectEntities } = require '../fixtures/tasks'
-byScore = '/api/tasks?action=by-score&limit=1000'
-
-{ authReq, undesiredErr } = __.require 'apiTests', 'utils/utils'
-{ createHuman } = require '../fixtures/entities'
+{ getByScore } = require '../utils/tasks'
+{ undesiredErr } = __.require 'apiTests', 'utils/utils'
 
 describe 'tasks:collect-entities', ->
   it 'should create new tasks', (done)->
     collectEntities()
     .then (res)->
       suspectUri = res.humans[0].uri
-      authReq 'get', byScore
-      .get 'tasks'
+      getByScore()
       .then (tasks)->
         tasks.length.should.aboveOrEqual 1
         # with a suspect
@@ -32,8 +28,7 @@ describe 'tasks:collect-entities', ->
   it 'should not re-create existing tasks', (done)->
     collectEntities()
     .then (res)->
-      authReq 'get', byScore
-      .get 'tasks'
+      getByScore()
       .then (tasks)->
         uniqSuspectUris = _.uniq _.pluck(tasks, 'suspectUri')
         tasks.length.should.equal uniqSuspectUris.length

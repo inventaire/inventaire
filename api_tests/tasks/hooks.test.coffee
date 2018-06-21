@@ -6,27 +6,23 @@ should = require 'should'
 { merge } = require '../utils/entities'
 { collectEntities } = require '../fixtures/tasks'
 { createHuman } = require '../fixtures/entities'
-
-bySuspectUri = '/api/tasks?action=by-suspect-uri&uri='
-byScore = '/api/tasks?action=by-score'
-updateEndpoint = '/api/tasks?action=update'
+{ getByIds, getBySuspectUri, getByScore, update } = require '../utils/tasks'
 
 describe 'tasks:hooks', ->
-  describe 'merge-entities', ->
+  describe 'entity merge', ->
     it 'should update same suspect tasks to merged state', (done) ->
       # Alexander Kennedy is expected to have several merge suggestions
       createHuman { labels: { en: 'Alexander Kennedy' } }
       .then (human)->
         collectEntities { refresh: true }
-        .then -> authReq 'get', bySuspectUri + "inv:#{human._id}"
-        .get 'tasks'
+        .delay 3000
+        .then -> getBySuspectUri human.uri
         .then (tasks)->
           task = tasks[0]
           anotherTask = tasks[1]
           merge task.suspectUri, task.suggestionUri
           .delay 100
-          .then -> authReq 'get', "/api/tasks?action=by-ids&ids=#{anotherTask._id}"
-          .get 'tasks'
+          .then -> getByIds anotherTask._id
           .then (tasks)->
             updatedTask = tasks[0]
             updatedTask.state.should.equal 'merged'
@@ -37,15 +33,14 @@ describe 'tasks:hooks', ->
 
     it 'should update task state to merged', (done) ->
       collectEntities()
-      .then -> authReq 'get', byScore
-      .get 'tasks'
+      .then getByScore
       .then (tasks)->
         task = tasks[0]
         merge task.suspectUri, task.suggestionUri
         .delay 100
-        .then -> authReq 'get', "/api/tasks?action=by-ids&ids=#{task._id}"
-        .then (res)->
-          updatedTask = res.tasks[0]
+        .then -> getByIds task._id
+        .then (tasks)->
+          updatedTask = tasks[0]
           updatedTask.state.should.equal 'merged'
           done()
       .catch done
@@ -60,20 +55,16 @@ describe 'tasks:hooks', ->
         # A long delay is required because the collection is done by
         # a worker, which might not be done yet without it
         .delay 5000
-        .then -> authReq 'get', bySuspectUri + "inv:#{suspect._id}"
-        .get 'tasks'
+        .then -> getBySuspectUri suspect.uri
         .then (tasks)->
           taskToUpdate = tasks[0]
           otherTask = tasks[1]
           taskRelationScore = taskToUpdate.relationScore
-          adminReq 'put', updateEndpoint,
-            id: taskToUpdate._id,
-            attribute: 'state',
-            value: 'dismissed'
+          update taskToUpdate._id, 'state', 'dismissed'
           .delay 1000
-          .then -> authReq 'get', "/api/tasks?action=by-ids&ids=#{otherTask._id}"
-          .then (res)->
-            updatedTask = res.tasks[0]
+          .then -> getByIds otherTask._id
+          .then (tasks)->
+            updatedTask = tasks[0]
             updatedTask.relationScore.should.not.equal taskRelationScore
           done()
         .catch done

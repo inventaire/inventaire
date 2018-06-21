@@ -2,13 +2,11 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-
-byScore = '/api/tasks?action=by-score'
-bySuspectUri = '/api/tasks?action=by-suspect-uri&uri='
 { authReq, undesiredErr } = __.require 'apiTests', 'utils/utils'
 { createHuman } = require '../fixtures/entities'
 { collectEntities } = require '../fixtures/tasks'
-
+{ getBySuspectUri } = require '../utils/tasks'
+byScore = '/api/tasks?action=by-score'
 
 describe 'tasks:byScore', ->
   it 'should returns 10 or less tasks to deduplicates, by default', (done)->
@@ -51,9 +49,9 @@ describe 'tasks:byScore', ->
 describe 'tasks:bySuspectUri', ->
   it 'should return an array of tasks', (done)->
     collectEntities()
-    .then (res)-> authReq 'get', bySuspectUri + res.humans[0].uri
-    .then (res)->
-      suspectUris = _.pluck res.tasks, 'suspectUri'
+    .then (res)-> getBySuspectUri res.humans[0].uri
+    .then (tasks)->
+      suspectUris = _.pluck tasks, 'suspectUri'
       suspectUris.should.be.an.Array()
       _.uniq(suspectUris).length.should.equal 1
       done()
