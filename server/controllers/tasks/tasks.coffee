@@ -17,3 +17,5 @@ module.exports =
   put: ActionsControllers
     admin:
       'update': require './update'
+
+require('./hooks')()
