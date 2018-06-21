@@ -23,9 +23,7 @@ addEntitiesToQueue = ->
   .catch _.ErrorRethrow('addEntitiesToQueue err')
 
 getInvHumanUris = ->
-  entities_.db.view 'entities', 'byClaim',
-    key: [ 'wdt:P31', 'wd:Q5' ]
-    limit: 10000
+  entities_.byClaim 'wdt:P31', 'wd:Q5'
   .then (res)-> _.pluck(res.rows, 'id').map prefixify
 
 deduplicateWorker = (jobId, uri, cb)->
