@@ -6,6 +6,7 @@ should = require 'should'
 { merge } = require '../utils/entities'
 { collectEntities } = require '../fixtures/tasks'
 { createHuman } = require '../fixtures/entities'
+{ deleteByUris: deleteEntityByUris } = require '../utils/entities'
 { getByIds, getBySuspectUri, getByScore, update } = require '../utils/tasks'
 
 describe 'tasks:hooks', ->
@@ -68,5 +69,23 @@ describe 'tasks:hooks', ->
             updatedTask.relationScore.should.not.equal taskRelationScore
           done()
         .catch done
+
+      return
+
+  describe 'entity removed', ->
+    it 'should update tasks to merged state', (done) ->
+      createHuman { labels: { en: 'Fred Vargas' } }
+      .then (human)->
+        collectEntities { refresh: true }
+        .delay 5000
+        .then -> getBySuspectUri human.uri
+        .then (tasks)->
+          tasks.length.should.be.aboveOrEqual 1
+          deleteEntityByUris human.uri
+        .then -> getBySuspectUri human.uri
+      .then (tasks)->
+        tasks.length.should.equal 0
+        done()
+      .catch done
 
       return

@@ -3,11 +3,13 @@ _ = __.require 'builders', 'utils'
 tasks_ = __.require 'controllers', 'tasks/lib/tasks'
 radio = __.require 'lib', 'radio'
 
-updateTasksStateOnEntityMerge = (fromUri, toUri)->
-  tasks_.bySuspectUri fromUri
+archiveObsoleteEntityUriTasks = (uri)->
+  tasks_.bySuspectUri uri
   .then (tasks)->
     ids = _.pluck tasks, '_id'
     tasks_.update { ids, attribute: 'state', newValue: 'merged' }
 
 module.exports = ->
-  radio.on 'entity:merge', updateTasksStateOnEntityMerge
+  radio.on 'entity:merge', archiveObsoleteEntityUriTasks
+  radio.on 'entity:remove', archiveObsoleteEntityUriTasks
+  # TODO: revert archiveObsoleteEntityUriTasks on revert-merge
