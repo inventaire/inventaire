@@ -6,6 +6,7 @@ error_ = __.require 'lib', 'error/error'
 tasks_ = __.require 'controllers', 'tasks/lib/tasks'
 entities_ = __.require 'controllers', 'entities/lib/entities'
 responses_ = __.require 'lib', 'responses'
+{ prefixifyInv } = __.require 'controllers', 'entities/lib/prefix'
 getEntityByUri = __.require 'controllers', 'entities/lib/get_entity_by_uri'
 createTaskDocs = __.require 'controllers', 'tasks/lib/create_task_docs'
 jobs_ = __.require 'level', 'jobs'
@@ -24,7 +25,7 @@ addEntitiesToQueue = ->
 
 getInvHumanUris = ->
   entities_.byClaim 'wdt:P31', 'wd:Q5'
-  .then (res)-> _.pluck(res.rows, 'id').map prefixify
+  .then (res)-> _.pluck(res.rows, 'id').map prefixifyInv
 
 deduplicateWorker = (jobId, uri, cb)->
   getEntityByUri uri
@@ -35,7 +36,5 @@ deduplicateWorker = (jobId, uri, cb)->
   .map tasks_.create
   .delay interval
   .catch _.ErrorRethrow('deduplicateWorker err')
-
-prefixify = (id)-> "inv:#{id}"
 
 invTasksEntitiesQueue = jobs_.initQueue 'inv:deduplicate', deduplicateWorker, 1

@@ -6,6 +6,7 @@ entities_ = __.require 'controllers', 'entities/lib/entities'
 checkEntity = require './check_entity'
 { calculateRelationScore } = require './relation_score'
 hasWorksLabelsOccurrence = __.require 'controllers', 'entities/lib/has_works_labels_occurrence'
+{ prefixifyInv } = __.require 'controllers', 'entities/lib/prefix'
 
 module.exports = (entity)->
   Promise.all [
@@ -26,7 +27,7 @@ createTaskDocs = (authorWorksData, relationScore)->
       unless suggestionEntity.uri? then return {}
       return {
         type: 'deduplicate'
-        suspectUri: prefixify authorWorksData.authorId
+        suspectUri: prefixifyInv authorWorksData.authorId
         suggestionUri: suggestionEntity.uri
         lexicalScore: suggestionEntity._score
         relationScore: relationScore
@@ -50,5 +51,3 @@ aggregateWorksData = (worksData, work)->
     worksData.labels.push label
     worksData.langs.push lang
   return worksData
-
-prefixify = (id)-> "inv:#{id}"

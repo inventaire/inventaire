@@ -11,6 +11,7 @@ GetEntitiesByUris = (refresh)-> (uris)-> getEntitiesByUris uris, refresh
 promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
 randomString = __.require 'lib', './utils/random_string'
+{ prefixifyInv, prefixifyIsbn } = __.require 'controllers', 'entities/lib/prefix'
 
 module.exports = (query)->
   _.type query, 'object'
@@ -38,7 +39,10 @@ searchInvByText = (query, key)->
 
   searchInvEntities search
   .timeout searchTimeout
-  .map urifyInv
+  # It's ok to use the inv URI even if its not the canonical URI
+  # (wd and isbn URI are prefered) as getEntitiesByUris will
+  # take care of finding the right URI downward
+  .map prefixifyInv
   .then GetEntitiesByUris(query.refresh)
   .catch error_.notFound
   .finally _.EndTimer(key)
@@ -52,18 +56,12 @@ searchDataseedByText = (query, key)->
   searchDataseed search, lang, refresh
   .timeout searchTimeout
   .get 'isbns'
-  .map urifyIsbn
+  .map prefixifyIsbn
   # For which we now request the associated entities:
   # that's where the entity scaffolding from data seeds takes place
   .then GetEntitiesByUris(refresh)
   .catch error_.notFound
   .finally _.EndTimer(key)
-
-urifyIsbn = (isbn)-> "isbn:#{isbn}"
-# It's ok to use the inv URI even if its not the canonical URI
-# (wd and isbn URI are prefered) as getEntitiesByUris will
-# take care of finding the right URI downward
-urifyInv = (entity)-> "inv:#{entity._id}"
 
 mergeResults = (results)->
   _.flattenIndexes _.compact(results).map(_.property('entities'))

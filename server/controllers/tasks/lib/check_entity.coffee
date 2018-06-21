@@ -3,7 +3,7 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
 search = __.require 'controllers', 'search/lib/get_wd_authors'
-prefixify = __.require 'lib', 'wikidata/prefixify'
+{ prefixifyWd } = __.require 'controllers', 'entities/lib/prefix'
 
 module.exports = (entity)->
   name = _.values(entity.labels)[0]
@@ -16,5 +16,5 @@ module.exports = (entity)->
     .filter (result)-> result._score > 4
     .map (result)->
       _score: result._score
-      uri: prefixify result.id
+      uri: prefixifyWd result.id
   .catch _.ErrorRethrow("#{name} search err")

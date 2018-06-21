@@ -4,7 +4,7 @@ promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
 entities_ = require './entities'
 runWdQuery = __.require 'data', 'wikidata/run_query'
-prefixify = __.require 'lib', 'wikidata/prefixify'
+{ prefixifyWd } = __.require 'controllers', 'entities/lib/prefix'
 { getSimpleDayDate, sortByOrdinalOrDate } = require './queries_utils'
 
 module.exports = (uri, refresh)->
@@ -24,7 +24,7 @@ module.exports = (uri, refresh)->
 getWdSerieParts = (qid, refresh)->
   runWdQuery { query: 'serie-parts', qid, refresh }
   .map (result)->
-    uri: prefixify result.part
+    uri: prefixifyWd result.part
     date: getSimpleDayDate result.date
     ordinal: result.ordinal
 

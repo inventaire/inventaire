@@ -6,6 +6,7 @@ getEntityType = require './get_entity_type'
 getInvEntityCanonicalUri = require './get_inv_entity_canonical_uri'
 formatEntityCommon = require './format_entity_common'
 addRedirection = require './add_redirection'
+{ prefixifyInv } = __.require 'controllers', 'entities/lib/prefix'
 
 module.exports = (ids, refresh)->
   # Hypothesis: there is no need to look for Wikidata data here
@@ -14,7 +15,7 @@ module.exports = (ids, refresh)->
   .map Format(refresh)
   .then (entities)->
     found = _.pluck entities, '_id'
-    notFound = _.difference(ids, found).map prefixify
+    notFound = _.difference(ids, found).map prefixifyInv
     return { entities, notFound }
 
 Format = (refresh)-> (entity)->
@@ -37,6 +38,4 @@ getRedirectedEntity = (entity, refresh)->
 
   # Passing the refresh parameter as the entity data source might be Wikidata
   getEntityByUri entity.redirect, refresh
-  .then addRedirection.bind(null, prefixify(entity._id))
-
-prefixify = (id)-> "inv:#{id}"
+  .then addRedirection.bind(null, prefixifyInv(entity._id))

@@ -4,7 +4,7 @@ promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
 entities_ = require './entities'
 runWdQuery = __.require 'data', 'wikidata/run_query'
-prefixify = __.require 'lib', 'wikidata/prefixify'
+{ prefixifyWd } = __.require 'controllers', 'entities/lib/prefix'
 { getSimpleDayDate, sortByScore } = require './queries_utils'
 { types, typesNames, getTypePluralNameByTypeUri } = __.require 'lib', 'wikidata/aliases'
 
@@ -66,7 +66,7 @@ formatWdEntity = (result)->
   if typeName not in whitelistedTypesNames then return
 
   date = getSimpleDayDate date
-  serie = prefixify serie
+  serie = prefixifyWd serie
   return { type: typeName, uri: "wd:#{wdId}", date, serie }
 
 ## INV

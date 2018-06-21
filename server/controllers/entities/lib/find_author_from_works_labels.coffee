@@ -5,7 +5,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 typeSearch = __.require 'controllers', 'search/lib/type_search'
-prefixify = __.require 'lib', 'wikidata/prefixify'
+{ prefixifyWd } = __.require 'controllers', 'entities/lib/prefix'
 hasWorksLabelsOccurrence = require './has_works_labels_occurrence'
 
 # Returns a URI if an single author was identified
@@ -31,7 +31,7 @@ searchHumans = typeSearch.bind null, [ 'humans' ]
 getWdAuthorUris = (res)->
   res.hits.hits
   .filter (hit)-> hit._index is 'wikidata' and hit._score > 1
-  .map (hit)-> prefixify hit._id
+  .map (hit)-> prefixifyWd hit._id
 
 getAuthorOccurrenceData = (worksLabels, worksLabelsLangs)-> (wdAuthorUri)->
   hasWorksLabelsOccurrence wdAuthorUri, worksLabels, worksLabelsLangs

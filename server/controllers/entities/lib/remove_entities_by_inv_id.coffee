@@ -4,6 +4,7 @@ _ = __.require 'builders', 'utils'
 entities_ = require './entities'
 updateInvClaim = require './update_inv_claim'
 placeholders_ = require './placeholders'
+{ unprefixify } = __.require 'controllers', 'entities/lib/prefix'
 
 module.exports = (user, uris)->
   reqUserId = user._id
@@ -25,8 +26,6 @@ module.exports = (user, uris)->
     .then removeNext
 
   return removeNext()
-
-unprefixify = (uri)-> uri.split(':')[1]
 
 tolerantRemove = (reqUserId, id)->
   # Turning deleted entities into removed:placeholder as it as largely the same effect
