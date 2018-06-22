@@ -23,7 +23,7 @@ module.exports =
       lexicalScore: _.round lexicalScore, 2
       relationScore: _.round relationScore, 2
       hasEncyclopediaOccurence: hasEncyclopediaOccurence
-      createdAt: Date.now()
+      created: Date.now()
 
   update: (task, attribute, value)->
     _.types arguments, [ 'object', 'string', 'string|number' ]
