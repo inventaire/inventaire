@@ -8,7 +8,7 @@ module.exports =
   getDocData: (updatedDoc)->
     { uri, type } = updatedDoc
     # Case when a formatted entity doc is passed
-    if uri? and type? then return [ uri, type ]
+    if uri? then return [ uri, type ]
 
     # Case when a raw entity doc is passed,
     # which can only be an inv entity doc
