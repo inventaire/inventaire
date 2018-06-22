@@ -3,7 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
-{ authReq, getUser, undesiredErr } = require '../utils/utils'
+{ authReq, getUser, undesiredErr, undesiredRes } = require '../utils/utils'
 { CountChange } = require './helpers'
 { ensureEditionExists, createEdition, createWorkWithAuthor, createHuman } = require '../fixtures/entities'
 { createItem } = require '../fixtures/items'
@@ -143,27 +143,13 @@ describe 'items:create', ->
 
     return
 
-  it 'should reject an item created with a work entity without specifying in which lang the title is', (done)->
+  it 'should use the original language label for an item created from a work without specifying in which lang the title is', (done)->
     authReq 'post', '/api/items', { entity: 'wd:Q3548806' }
-    .catch (err)->
-      err.statusCode.should.equal 400
+    .then (item)->
+      item.snapshot.should.be.an.Object()
+      item.snapshot['entity:title'].should.equal 'Die Hochzeit von Lyon'
+      item.snapshot['entity:lang'].should.equal 'de'
       done()
-    .catch undesiredErr(done)
-
-    return
-
-  it 'should deduce the title from a work entity and a lang', (done)->
-    uri = 'wd:Q3548806'
-    lang = 'fr'
-    getEntitiesByUris uri
-    .get 'entities'
-    .then (entities)->
-      title = entities[uri].labels[lang]
-      authReq 'post', '/api/items', { entity: 'wd:Q3548806', lang: 'fr' }
-      .then (item)->
-        item.snapshot.should.be.an.Object()
-        item.snapshot['entity:title'].should.equal title
-        done()
     .catch undesiredErr(done)
 
     return
