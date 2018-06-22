@@ -13,6 +13,7 @@ radio = __.require 'lib', 'radio'
 { minKey, maxKey } = __.require 'lib', 'couch'
 listingsLists = require './listings_lists'
 snapshot_ = require './snapshot/snapshot'
+getEntityByUri = __.require 'controllers', 'entities/lib/get_entity_by_uri'
 
 # Working around the circular dependency
 user_ = null
@@ -83,8 +84,9 @@ module.exports = items_ =
 
   create: (userId, items)->
     _.type items, 'array'
-    itemsDocs = items.map (item)-> Item.create userId, item
-    db.bulk itemsDocs
+    promises_.all items.map(validateEntityType)
+    .map (item)-> Item.create userId, item
+    .then db.bulk
     .then (res)->
       itemsIds = _.pluck res, 'id'
       db.fetch itemsIds
@@ -171,3 +173,15 @@ FilterWithImage = (assertImage)-> (items)->
     else items
 
 itemWithImage = (item)-> item.snapshot['entity:image'] or item.pictures.length > 0
+
+validateEntityType = (item)->
+  getEntityByUri item.entity
+  .then (entity)->
+    { type } = entity
+
+    unless type in whitelistedEntityTypes
+      throw error_.new 'invalid entity type', 400, { item, type }
+
+    return item
+
+whitelistedEntityTypes = [ 'edition', 'work' ]
