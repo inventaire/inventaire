@@ -16,7 +16,7 @@ createHumanAndCollectEntities = ->
   ]
   .then (humans)->
     adminReq 'post', collectEntitiesEndpoint
-    .delay 2000
+    .delay 5000
     .then (res)->
       res.humans = humans
       return res

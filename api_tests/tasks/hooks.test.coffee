@@ -16,7 +16,6 @@ describe 'tasks:hooks', ->
       createHuman { labels: { en: 'Alexander Kennedy' } }
       .then (human)->
         collectEntities { refresh: true }
-        .delay 3000
         .then -> getBySuspectUri human.uri
         .then (tasks)->
           task = tasks[0]
@@ -53,9 +52,6 @@ describe 'tasks:hooks', ->
       createHuman { labels: { en: 'John Smith' } }
       .then (suspect)->
         collectEntities { refresh: true }
-        # A long delay is required because the collection is done by
-        # a worker, which might not be done yet without it
-        .delay 5000
         .then -> getBySuspectUri suspect.uri
         .then (tasks)->
           taskToUpdate = tasks[0]
@@ -76,7 +72,6 @@ describe 'tasks:hooks', ->
       createHuman { labels: { en: 'Fred Vargas' } }
       .then (human)->
         collectEntities { refresh: true }
-        .delay 5000
         .then -> getBySuspectUri human.uri
         .then (tasks)->
           tasks.length.should.be.aboveOrEqual 1

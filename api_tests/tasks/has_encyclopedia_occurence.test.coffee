@@ -20,7 +20,6 @@ describe 'tasks:has-encyclopedia-occurence', ->
           'wdt:P31': [ 'wd:Q571' ]
           'wdt:P50': [ authorUri ]
       .then -> collectEntities { refresh: true }
-      .delay 5000
       .then getByScore
       .then (tasks)->
         tasks.length.should.aboveOrEqual 1
