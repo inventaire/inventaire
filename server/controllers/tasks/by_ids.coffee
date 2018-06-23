@@ -2,16 +2,15 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 responses_ = __.require 'lib', 'responses'
 error_ = __.require 'lib', 'error/error'
-tasks_ = __.require 'controllers', 'tasks/lib/tasks'
+tasks_ = require './lib/tasks'
+sanitize = __.require 'lib', 'sanitize/sanitize'
+
+sanitization =
+  ids: {}
 
 module.exports = (req, res)->
-  { ids } = req.query
-
-  unless _.isNonEmptyString ids
-    return error_.bundleMissingQuery req, res, 'ids'
-
-  ids = ids.split '|'
-
-  tasks_.byIds ids
+  sanitize req, res, sanitization
+  .get 'ids'
+  .then tasks_.byIds
   .then responses_.Wrap(res, 'tasks')
   .catch error_.Handler(req, res)

@@ -60,14 +60,13 @@ describe 'tasks:hooks', ->
         .then (tasks)->
           taskToUpdate = tasks[0]
           otherTask = tasks[1]
-          taskRelationScore = taskToUpdate.relationScore
+          { relationScore: taskRelationScore } = taskToUpdate
           update taskToUpdate._id, 'state', 'dismissed'
-          .delay 1000
           .then -> getByIds otherTask._id
           .then (tasks)->
             updatedTask = tasks[0]
             updatedTask.relationScore.should.not.equal taskRelationScore
-          done()
+            done()
         .catch done
 
       return

@@ -3,13 +3,14 @@ _ = __.require 'builders', 'utils'
 responses_ = __.require 'lib', 'responses'
 error_ = __.require 'lib', 'error/error'
 tasks_ = require './lib/tasks'
+sanitize = __.require 'lib', 'sanitize/sanitize'
+
+sanitization =
+  uri: {}
 
 module.exports = (req, res)->
-  { uri } = req.query
-
-  unless _.isEntityUri uri
-    return error_.bundleInvalid req, res, 'suspectUri', uri
-
-  tasks_.bySuspectUri uri
+  sanitize req, res, sanitization
+  .get 'uri'
+  .then tasks_.bySuspectUri
   .then responses_.Wrap(res, 'tasks')
   .catch error_.Handler(req, res)

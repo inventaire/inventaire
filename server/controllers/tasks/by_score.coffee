@@ -3,22 +3,16 @@ _ = __.require 'builders', 'utils'
 responses_ = __.require 'lib', 'responses'
 error_ = __.require 'lib', 'error/error'
 tasks_ = require './lib/tasks'
+sanitize = __.require 'lib', 'sanitize/sanitize'
+
+sanitization =
+  limit:
+    default: 10
+  offset:
+    default: 0
 
 module.exports = (req, res)->
-  { limit, offset } = req.query
-
-  limit or= '10'
-  offset or= '0'
-
-  unless _.isPositiveIntegerString limit
-    return error_.bundleInvalid req, res, 'limit', limit
-
-  unless _.isPositiveIntegerString offset
-    return error_.bundleInvalid req, res, 'offset', offset
-
-  limit = _.stringToInt limit
-  offset = _.stringToInt offset
-
-  tasks_.byScore { limit, offset }
+  sanitize req, res, sanitization
+  .then tasks_.byScore
   .then responses_.Wrap(res, 'tasks')
   .catch error_.Handler(req, res)
