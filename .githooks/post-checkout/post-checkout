@@ -1,2 +1,0 @@
-#!/usr/bin/env zsh
-./scripts/sync_shared_libs
