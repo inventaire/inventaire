@@ -7,3 +7,9 @@ module.exports =
   mailer:
     enabled: false
   leveldbMemoryBackend: false
+  jobs:
+    'wd:popularity':
+      run: false
+    'inv:deduplicate':
+      run: true
+      interval: 0

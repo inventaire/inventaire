@@ -6,7 +6,7 @@ error_ = __.require 'lib', 'error/error'
 cache_ = __.require 'lib', 'cache'
 getPopularityByUri = require './get_popularity_by_uri'
 jobs_ = __.require 'level', 'jobs'
-{ wdPopularityWorkerDelay } = CONFIG
+{ interval } = CONFIG.jobs['wd:popularity']
 # If an entity is on Wikidata, consider it to be already somewhat popular
 wdEntityBaseScore = 10
 
@@ -35,14 +35,12 @@ getPopularityByUriOrQueue = (uri)->
   # Queue job to work around the slow popularity calculation
   # for Wikidata entities, which rely on remote SPARQL queries
   # which are limited to 5 concurrent requests
-  wdPopularityQueue.push uri, errorLogger
+  wdPopularityQueue.push uri
   # Do not return the wdEntityBaseScore as it would be saved in cache
   # preventing the popularity to be really calculated once the queue
   # reaches it as a value will already be available
-  return promises_.resolve null
-
-errorLogger = (err)->
-  if err? then _.error err, 'wdPopularityQueue.push err'
+  .then -> null
+  .catch _.ErrorRethrow('wdPopularityQueue.push err')
 
 applyDefaultValue = (uri)-> (value)->
   if value? then return value
@@ -64,10 +62,7 @@ wdPopularityWorker = (jobId, uri, cb)->
       _.log score, "wdPopularityWorker #{uri} score"
       cache_.put key, wdEntityBaseScore + score
     # Spacing requests
-    .delay wdPopularityWorkerDelay
-  .then -> cb()
-  .catch (err)->
-    _.error err, 'wdPopularityWorker err'
-    cb err
+    .delay interval
+  .catch _.ErrorRethrow('wdPopularityWorker err')
 
 wdPopularityQueue = jobs_.initQueue 'wd:popularity', wdPopularityWorker, 1

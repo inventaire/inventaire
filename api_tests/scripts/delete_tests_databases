@@ -2,14 +2,21 @@
 databases=$(coffee -e "console.log Object.keys(require('./server/db/couch/list.coffee')).join(' ')")
 dbHost=$(coffee -e "console.log require('config').db.fullHost()")
 elasticHost=$(coffee -e "console.log require('config').elasticsearch.host")
+leveldbPathBase=$(coffee -e "console.log require('config').universalPath.path('leveldb')")
+leveldbPath="${leveldbPathBase}-tests"
 
 for db in $databases
 do
-  printf "deleting ${db}-tests... " &&
+  echo "\ndeleting ${db}-tests in couchdb... " &&
   curl -sXDELETE "${dbHost}/${db}-tests"
+  echo "\ndeleting ${db}-tests in elastic search... " &&
   curl -sXDELETE "${elasticHost}/${db}-tests"
 done
 
+echo "\ndeleting ${leveldbPath}... " &&
+rm -rf ${leveldbPath}
+
+echo "\nreseting couch2elastic4sync... " &&
 export NODE_ENV=tests; npm run couch2elastic4sync:init &&
   npm run couch2elastic4sync:reset &&
   npm run couch2elastic4sync:load

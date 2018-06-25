@@ -5,7 +5,7 @@ wdk = require 'wikidata-sdk'
 wd_ = __.require 'lib', 'wikidata/wikidata'
 promises_ = __.require 'lib', 'promises'
 entities_ = require './entities'
-prefixify = __.require 'lib', 'wikidata/prefixify'
+{ prefixifyWd, unprefixify } = __.require 'controllers', 'entities/lib/prefix'
 cache_ = __.require 'lib', 'cache'
 getInvEntityCanonicalUri = require './get_inv_entity_canonical_uri'
 couch_ = __.require 'lib', 'couch'
@@ -55,7 +55,7 @@ wikidataReverseClaims = (property, value, refresh)->
   if type?
     pid = property.split(':')[1]
     runWdQuery { query: "#{type}_reverse_claims", pid, qid: value, refresh }
-    .map prefixify
+    .map prefixifyWd
   else
     generalWikidataReverseClaims property, value, refresh
 
@@ -66,11 +66,11 @@ generalWikidataReverseClaims = (property, value, refresh)->
 
 _wikidataReverseClaims = (property, value)->
   caseInsensitive = property in caseInsensitiveProperties
-  wdProp = wd_.unprefixify property
+  wdProp = unprefixify property
   _.log [ property, value ], 'reverse claim'
   promises_.get wdk.getReverseClaims(wdProp, value, { caseInsensitive })
   .then wdk.simplifySparqlResults
-  .map prefixify
+  .map prefixifyWd
 
 invReverseClaims = (property, value)->
   entities_.byClaim property, value, true, true

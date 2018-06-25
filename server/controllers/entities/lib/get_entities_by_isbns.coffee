@@ -7,6 +7,7 @@ dataseed = __.require 'data', 'dataseed/dataseed'
 scaffoldEditionEntityFromSeed = require './scaffold_entity_from_seed/edition'
 formatEditionEntity = require './format_edition_entity'
 isbn_ = __.require 'lib', 'isbn/isbn'
+{ prefixifyIsbn } = __.require 'controllers', 'entities/lib/prefix'
 
 module.exports = (rawIsbns, refresh)->
   [ isbns, redirections ] = getRedirections rawIsbns
@@ -30,8 +31,7 @@ module.exports = (rawIsbns, refresh)->
       results = { entities: entities.concat(newEntities) }
 
       if notFound.length > 0
-        results.notFound = notFound
-          .map (seed)-> "isbn:#{normalizeIsbn(seed.isbn)}"
+        results.notFound = _.pluck(notFound, 'isbn').map prefixifyIsbn
 
       return addRedirections results, redirections
 

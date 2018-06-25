@@ -38,8 +38,9 @@ formatError = (err)->
   throw err
 
 parseHit = (hit)->
-  { _source:data, _id } = hit
+  { _source:data, _id, _score } = hit
   data._id = _id
+  data._score = _score
   return data
 
 module.exports = { buildSearcher, parseResponse, formatError }

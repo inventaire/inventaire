@@ -12,7 +12,7 @@ wdk = require 'wikidata-sdk'
 formatClaims = __.require 'lib', 'wikidata/format_claims'
 { simplify } = wdk
 getEntityType = require './get_entity_type'
-prefixify = __.require 'lib', 'wikidata/prefixify'
+{ prefixifyWd } = __.require 'controllers', 'entities/lib/prefix'
 entities_ = require './entities'
 cache_ = __.require 'lib', 'cache'
 promises_ = __.require 'lib', 'promises'
@@ -43,8 +43,8 @@ format = (entity)->
 
   { P31, P279 } = entity.claims
   if P31? or P279?
-    simplifiedP31 = wdk.simplifyPropertyClaims(P31).map prefixify
-    simplifiedP279 = wdk.simplifyPropertyClaims(P279).map prefixify
+    simplifiedP31 = wdk.simplifyPropertyClaims P31, simplifyClaimsOptions
+    simplifiedP279 = wdk.simplifyPropertyClaims P279, simplifyClaimsOptions
     entity.type = getEntityType simplifiedP31, simplifiedP279
   else
     # Make sure to override the type as Wikidata entities have a type with
@@ -58,6 +58,8 @@ format = (entity)->
 
   if entity.type is 'meta' then return formatEmpty 'meta', entity
   else return formatValidEntity entity
+
+simplifyClaimsOptions = { entityPrefix: 'wd' }
 
 formatValidEntity = (entity)->
   { id:wdId } = entity
@@ -86,8 +88,8 @@ formatAndPropagateRedirection = (entity)->
   if entity.redirects?
     { from, to } = entity.redirects
     entity.redirects =
-      from: prefixify from
-      to: prefixify to
+      from: prefixifyWd from
+      to: prefixifyWd to
 
     # Take advantage of this request for a Wikidata entity to check
     # if there is a redirection we are not aware of, and propagate it:

@@ -4,6 +4,8 @@ _ = __.require 'builders', 'utils'
 entities_ = require './entities'
 updateInvClaim = require './update_inv_claim'
 placeholders_ = require './placeholders'
+{ unprefixify } = __.require 'controllers', 'entities/lib/prefix'
+radio = __.require 'lib', 'radio'
 
 module.exports = (user, uris)->
   reqUserId = user._id
@@ -26,14 +28,13 @@ module.exports = (user, uris)->
 
   return removeNext()
 
-unprefixify = (uri)-> uri.split(':')[1]
-
 tolerantRemove = (reqUserId, id)->
   # Turning deleted entities into removed:placeholder as it as largely the same effect
   # as deleting (not indexed by views any more) but it's reversible, and already
   # understood by other services, that will either unindex it (search engine updater)
   # or ignore it (client)
   placeholders_.remove reqUserId, id
+  .then -> radio.emit 'entity:remove', "inv:#{id}"
   .catch (err)->
     # If the entity was already turned into a removed:placeholder
     # there is no new change and this operation produces and 'empty patch' error

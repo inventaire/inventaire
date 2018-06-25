@@ -1,7 +1,7 @@
 # Deduplicate work entity creation: every seed checks if a seed with matching title
 # and authors let a work entity promise around, else creates one
 # This allow to work around the fact that multiple seed might be looking for the same
-# non-yet-existing entity work and that those seed being processed at about
+# not-yet-existing entity work and that those seed being processed at about
 # the same time, the database and search engine wouldn't have the time to update
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'

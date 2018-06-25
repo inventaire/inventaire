@@ -23,11 +23,11 @@ module.exports = (req, res)->
   .then (input)->
     { assertImage, lang, limit } = input
     items_.publicByLangAndDate itemsQueryLimit, offset, lang, assertImage, reqUserId
-    .then selectRecentItems(limit, maxItemsPerOwner)
+    .then selectRecentItems(limit)
   .then bundleOwnersToItems.bind(null, res, reqUserId)
   .catch error_.Handler(req, res)
 
-selectRecentItems = (limit, maxItemsPerOwner)-> (items)->
+selectRecentItems = (limit)-> (items)->
   _(items)
   .groupBy itemsOwnerId
   .map (ownerItems, _)-> ownerItems.slice(0, maxItemsPerOwner)

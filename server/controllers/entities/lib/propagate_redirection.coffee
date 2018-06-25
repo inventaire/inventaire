@@ -10,7 +10,7 @@ module.exports = (userId, fromUri, toUri, previousToUri)->
     updateItemEntity.afterMerge fromUri, toUri
   ]
 
-  if toUri isnt previousToUri
+  if previousToUri? and toUri isnt previousToUri
     actions.push updateItemEntity.afterMerge(previousToUri, toUri)
 
   return promises_.all actions
