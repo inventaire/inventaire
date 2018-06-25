@@ -30,10 +30,18 @@ deduplicateWorker = (jobId, uri, cb)->
   getEntityByUri uri
   .then (entity)->
     unless entity? then throw error_.notFound { uri }
+
+    if entity.uri.split(':')[0] is 'wd'
+      throw error_.new 'entity is already a redirection', 400, { uri }
+
     return buildTaskDocs entity
   .then keepNewTasks
   .map tasks_.create
   .delay interval
-  .catch _.ErrorRethrow('deduplicateWorker err')
+  .catch (err)->
+    if err.statusCode is 400 then return
+    else
+      _.error err, 'deduplicateWorker err'
+      throw err
 
 invTasksEntitiesQueue = jobs_.initQueue 'inv:deduplicate', deduplicateWorker, 1
