@@ -9,6 +9,6 @@ createUserWithItems()
   _.success '#### New User available ####'
   console.log "Your can now login with :\n\
     - Username : #{userCreated.username} \n\
-    - Password : #{userCreated.username}"
+    - Password : 12345678"
   process.exit 0
-.catch (err)-> console.log err
+.catch _.Error err
