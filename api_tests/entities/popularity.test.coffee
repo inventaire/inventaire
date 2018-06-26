@@ -3,12 +3,23 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
-{ authReq, nonAuthReq, undesiredErr } = require '../utils/utils'
+{ authReq, nonAuthReq, undesiredErr, undesiredRes } = require '../utils/utils'
 { addClaim } = require '../utils/entities'
 { createEdition, createWork, createItemFromEntityUri, createSerie, createHuman } = require '../fixtures/entities'
 
 describe 'entities:popularity', ->
   describe 'edition', ->
+    it 'should reject invalid uri', (done)->
+      invalidUri = 'inv:aliduri'
+      getPopularity invalidUri, true
+      .then undesiredRes(done)
+      .catch (err)->
+        err.body.status_verbose.should.startWith 'invalid '
+        done()
+      .catch undesiredErr(done)
+
+      return
+
     it 'should default to 0', (done)->
       createEdition()
       .then (edition)-> scoreShouldEqual edition.uri, 0, done

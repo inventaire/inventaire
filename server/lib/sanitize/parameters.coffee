@@ -82,6 +82,7 @@ generics =
 module.exports =
   email: { validate: validations.common.email }
   generics: generics
+  refresh: generics.boolean
   filter: whitelistedString
   ids: couchUuids
   lang:
