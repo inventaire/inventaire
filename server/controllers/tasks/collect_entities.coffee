@@ -10,12 +10,16 @@ checkEntity = require './lib/check_entity'
 { interval } = CONFIG.jobs['inv:deduplicate']
 
 module.exports = (req, res)->
-  addEntitiesToQueue()
+  refresh = _.parseBooleanString req.query.refresh
+  addEntitiesToQueue refresh
   .then responses_.Ok(res)
   .catch error_.Handler(req, res)
 
-addEntitiesToQueue = ->
+addEntitiesToQueue = (refresh) ->
   getInvHumanUris()
+  .then (uris)->
+    if refresh then uris
+    else filterNotAlreadySuspectEntities(uris)
   .then invTasksEntitiesQueue.pushBatch
   .catch _.ErrorRethrow('addEntitiesToQueue err')
 
@@ -31,5 +35,11 @@ deduplicateWorker = (jobId, uri)->
     else
       _.error err, 'deduplicateWorker err'
       throw err
+
+filterNotAlreadySuspectEntities = (uris)->
+  tasks_.bySuspectUris uris
+  .then (res)->
+    alreadyCheckedUris = _.pluck res.rows, 'suspectUri'
+    return _.difference uris, alreadyCheckedUris
 
 invTasksEntitiesQueue = jobs_.initQueue 'inv:deduplicate', deduplicateWorker, 1
