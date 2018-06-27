@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ getUser, getUserB, authReq, undesiredErr } = __.require 'apiTests', 'utils/utils'
+{ getUser, getUserB, authReq, undesiredErr, undesiredRes } = __.require 'apiTests', 'utils/utils'
 { createItem, createItems } = require '../fixtures/items'
 
 describe 'items:get-by-users', ->
@@ -53,6 +53,19 @@ describe 'items:get-by-users', ->
         resItemsIds = _.uniq _.pluck(res.items, '_id')
         resItemsIds.should.not.containEql privateItemId
         done()
+    .catch undesiredErr(done)
+
+    return
+
+  it "should reject invalid filters'", (done)->
+    getUser()
+    .then (user)->
+      { _id: userId } = user
+      authReq 'get', "/api/items?action=by-users&users=#{userId}&filter=bla"
+    .then undesiredRes(done)
+    .catch (err)->
+      err.statusCode.should.equal 400
+      err.body.status_verbse.should.startWith 'invalid filter'
     .catch undesiredErr(done)
 
     return
