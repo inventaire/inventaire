@@ -19,15 +19,19 @@ describe 'items:get-by-users', ->
 
   it 'should get items by ids', (done)->
     Promise.all [
+      createItem getUser(), { listing: 'private' }
       createItem getUser(), { listing: 'public' }
       createItem getUserB(), { listing: 'public' }
     ]
     .then (items)->
-      userIds = _.pluck items, 'owner'
-      authReq 'get', "/api/items?action=by-users&users=#{userIds.join('|')}"
+      usersIds = _.pluck items.slice(1), 'owner'
+      itemsIds = _.pluck items, '_id'
+      authReq 'get', "/api/items?action=by-users&users=#{usersIds.join('|')}"
       .then (res)->
-        resUserIds = _.uniq _.pluck(res.items, 'owner')
-        resUserIds.should.containDeep userIds
+        resUsersIds = _.uniq _.pluck(res.items, 'owner')
+        resUsersIds.should.containDeep usersIds
+        resItemsIds = _.uniq _.pluck(res.items, '_id')
+        resItemsIds.should.containDeep itemsIds
         done()
     .catch undesiredErr(done)
 
@@ -35,15 +39,19 @@ describe 'items:get-by-users', ->
 
   it "should get items by ids with a filter set to 'group'", (done)->
     Promise.all [
+      createItem getUser(), { listing: 'private' }
       createItem getUser(), { listing: 'public' }
       createItem getUserB(), { listing: 'public' }
     ]
     .then (items)->
-      userIds = _.pluck items, 'owner'
-      authReq 'get', "/api/items?action=by-users&users=#{userIds.join('|')}&filter=group"
+      privateItemId = items[0]._id
+      usersIds = _.pluck items.slice(1), 'owner'
+      authReq 'get', "/api/items?action=by-users&users=#{usersIds.join('|')}&filter=group"
       .then (res)->
-        resUserIds = _.uniq _.pluck(res.items, 'owner')
-        resUserIds.should.containDeep userIds
+        resUsersIds = _.uniq _.pluck(res.items, 'owner')
+        resUsersIds.should.containDeep usersIds
+        resItemsIds = _.uniq _.pluck(res.items, '_id')
+        resItemsIds.should.not.containEql privateItemId
         done()
     .catch undesiredErr(done)
 
