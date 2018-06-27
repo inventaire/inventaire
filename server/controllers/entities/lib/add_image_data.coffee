@@ -21,18 +21,21 @@ findAnImage = (entity)->
 
 pickBestPic = (entity, commonsFilename, enwikiTitle, openLibraryId)->
   Promise.props
-    wm: timeoutAndPreventThrow getThumbData(commonsFilename)
-    wp: timeoutAndPreventThrow getEnwikiImage(enwikiTitle)
-    ol: timeoutAndPreventThrow getOpenLibraryCover(openLibraryId, entity.type)
+    wm: getSourcePromise getThumbData, commonsFilename
+    wp: getSourcePromise getEnwikiImage, enwikiTitle
+    ol: getSourcePromise getOpenLibraryCover, openLibraryId, entity.type
   .then (results)->
     order = getPicSourceOrder entity
     orderedResults = _.pick results, order
     bestPicData = _.compact(_.values(orderedResults))[0]
     return bestPicData or getAvatarsDataFromClaims(entity.claims)[0]
 
-timeoutAndPreventThrow = (promise)->
-  promise
+getSourcePromise = (fn, args...)->
+  unless args[0]? then return null
+
+  fn.apply null, args
   .timeout 5000
+  # Prevent to throw all the sources
   .catch (err)-> return
 
 getPicSourceOrder = (entity)->
