@@ -11,7 +11,7 @@ GetEntitiesByUris = (refresh)-> (uris)-> getEntitiesByUris uris, refresh
 promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
 randomString = __.require 'lib', './utils/random_string'
-{ prefixifyInv, prefixifyIsbn } = __.require 'controllers', 'entities/lib/prefix'
+{ getInvEntityUri, prefixifyIsbn } = __.require 'controllers', 'entities/lib/prefix'
 
 module.exports = (query)->
   _.type query, 'object'
@@ -42,7 +42,7 @@ searchInvByText = (query, key)->
   # It's ok to use the inv URI even if its not the canonical URI
   # (wd and isbn URI are prefered) as getEntitiesByUris will
   # take care of finding the right URI downward
-  .map prefixifyInv
+  .map getInvEntityUri
   .then GetEntitiesByUris(query.refresh)
   .catch error_.notFound
   .finally _.EndTimer(key)

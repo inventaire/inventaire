@@ -22,4 +22,8 @@ prefixifyIsbn = (isbn)-> prefixify isbn_.normalizeIsbn(isbn), 'isbn'
 
 unprefixify = (uri)-> uri.split(':')[1]
 
-module.exports = { prefixify, Prefixify, unprefixify, prefixifyWd, prefixifyInv, prefixifyIsbn }
+getInvEntityUri = (entity)->
+  { _id } = entity
+  if _id? then "inv:#{_id}"
+
+module.exports = { prefixify, Prefixify, unprefixify, prefixifyWd, prefixifyInv, prefixifyIsbn, getInvEntityUri }
