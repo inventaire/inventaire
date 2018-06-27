@@ -12,7 +12,7 @@ sanitization =
 module.exports = (req, res)->
   reqUserId = req.user?._id
   sanitize req, res, sanitization
-  .then (input)-> user_.nearby reqUserId, input.range
+  .then (params)-> user_.nearby reqUserId, params.range
   .then (usersIds)-> user_.getUsersByIds usersIds, reqUserId
   .then responses_.Wrap(res, 'users')
   .catch error_.Handler(req, res)

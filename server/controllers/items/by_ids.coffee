@@ -20,8 +20,8 @@ sanitization =
 
 module.exports = (req, res)->
   sanitize req, res, sanitization
-  .then (page)->
-    { ids, includeUsers, reqUserId } = page
+  .then (params)->
+    { ids, includeUsers, reqUserId } = params
     promises_.all [
       items_.byIds ids
       getNetworkIds reqUserId
@@ -29,7 +29,7 @@ module.exports = (req, res)->
     .spread filterAuthorizedItems(reqUserId)
     # Paginating isn't really required when requesting items by ids
     # but it also handles sorting and the consistency of the API
-    .then Paginate(page)
+    .then Paginate(params)
     .then addUsersData
   .then responses_.Send(res)
   .catch error_.Handler(req, res)

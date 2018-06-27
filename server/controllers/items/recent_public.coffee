@@ -20,8 +20,8 @@ sanitization =
 module.exports = (req, res)->
   reqUserId = req.user?._id
   sanitize req, res, sanitization
-  .then (input)->
-    { assertImage, lang, limit } = input
+  .then (params)->
+    { assertImage, lang, limit } = params
     items_.publicByLangAndDate itemsQueryLimit, offset, lang, assertImage, reqUserId
     .then selectRecentItems(limit)
   .then bundleOwnersToItems.bind(null, res, reqUserId)
