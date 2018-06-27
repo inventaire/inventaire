@@ -66,11 +66,11 @@ couchUuids =
 
 whitelistedString =
   validate: (value, name, config)->
-    unless value in config.whitelist
+    if value in config.whitelist
+      return true
+    else
       details = "possible values: #{config.whitelist.join(', ')}"
       throw error_.new "unknown #{name}: #{value} (#{details})"
-
-    return
 
 generics =
   boolean:

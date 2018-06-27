@@ -32,3 +32,19 @@ describe 'items:get-by-users', ->
     .catch undesiredErr(done)
 
     return
+
+  it "should get items by ids with a filter set to 'group'", (done)->
+    Promise.all [
+      createItem getUser(), { listing: 'public' }
+      createItem getUserB(), { listing: 'public' }
+    ]
+    .then (items)->
+      userIds = _.pluck items, 'owner'
+      authReq 'get', "/api/items?action=by-users&users=#{userIds.join('|')}&filter=group"
+      .then (res)->
+        resUserIds = _.uniq _.pluck(res.items, 'owner')
+        resUserIds.should.containDeep userIds
+        done()
+    .catch undesiredErr(done)
+
+    return
