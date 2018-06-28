@@ -92,12 +92,14 @@ module.exports =
   refresh: generics.boolean
   filter: whitelistedString
   ids: couchUuids
+  item: couchUuid
   lang:
     default: 'en'
     validate: _.isLang
   limit: _.extend {}, positiveInteger,
     min: 1
     default: 100
+  message: nonEmptyString
   offset: _.extend {}, positiveInteger, { default: 0 }
   password:
     secret: true
