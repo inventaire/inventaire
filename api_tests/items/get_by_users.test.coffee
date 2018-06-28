@@ -65,7 +65,8 @@ describe 'items:get-by-users', ->
     .then undesiredRes(done)
     .catch (err)->
       err.statusCode.should.equal 400
-      err.body.status_verbse.should.startWith 'invalid filter'
+      err.body.status_verbose.should.startWith 'invalid filter'
+      done()
     .catch undesiredErr(done)
 
     return
