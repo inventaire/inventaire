@@ -29,14 +29,11 @@ module.exports =
 
     transactions_.byId transaction
     .then (transaction)->
-      promises_.resolve transactions_.verifyRightToInteract(reqUserId, transaction)
-      .get '_id'
-      .then comments_.addTransactionComment.bind(null, reqUserId, message)
-      .then (couchRes)->
-        transactions_.updateReadForNewMessage reqUserId, transaction
-        .then ->
-          radio.emit 'transaction:message', transaction
-          return couchRes
-    .then responses_.Send(res)
-    .then Track(req, ['transaction', 'message'])
+      transactions_.verifyRightToInteract reqUserId, transaction
+      { _id } = transaction
+      comments_.addTransactionComment reqUserId, message, _id
+      .then -> transactions_.updateReadForNewMessage reqUserId, transaction
+      .then -> radio.emit 'transaction:message', transaction
+    .then responses_.Ok(res)
+    .then Track(req, [ 'transaction', 'message' ])
     .catch error_.Handler(req, res)

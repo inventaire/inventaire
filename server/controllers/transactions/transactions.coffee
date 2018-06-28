@@ -11,7 +11,7 @@ module.exports =
   post: ActionsControllers
     authentified:
       'request': require './request'
-      'new-message': messages.post
+      'message': messages.post
 
   put: ActionsControllers
     authentified:

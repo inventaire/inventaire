@@ -20,3 +20,9 @@ module.exports =
       .then (res)->
         _.extend res, { userA, userB, userBItem }
         return res
+
+  addMessage: (transaction)->
+    authReq 'post', '/api/transactions?action=message',
+      action: 'message'
+      transaction: transaction._id
+      message: 'yo'

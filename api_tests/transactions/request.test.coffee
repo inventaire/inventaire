@@ -3,9 +3,8 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
-{ getUser, getUserB, authReq, undesiredErr } = __.require 'apiTests', 'utils/utils'
+{ undesiredErr } = __.require 'apiTests', 'utils/utils'
 { createTransaction } = require '../fixtures/transactions'
-{ createItem } = require '../fixtures/items'
 
 describe 'transactions:request', ->
   it 'should create a transaction', (done)->
