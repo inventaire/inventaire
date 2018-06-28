@@ -1,40 +1,29 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
+sanitize = __.require 'lib', 'sanitize/sanitize'
 responses_ = __.require 'lib', 'responses'
 error_ = __.require 'lib', 'error/error'
 getEntitiesByUris = require './lib/get_entities_by_uris'
 addRelatives = require './lib/add_relatives'
-whitelistedRelativesProperties = [
+
+validRelativesProperties = [
   'wdt:P50'
   'wdt:P179'
   'wdt:P629'
 ]
 
+sanitization =
+  uris: {}
+  refresh: { optional: true }
+  relatives:
+    whitelist: validRelativesProperties
+    optional: true
+
 module.exports = (req, res, next)->
-  { uris, refresh, relatives } = req.query
-  # Accept URIs in a POST body
-  uris or= req.body?.uris
-
-  unless _.isNonEmptyString(uris) or _.isNonEmptyArray(uris)
-    return error_.bundleMissingQuery req, res, 'uris'
-
-  # Include a 'relatives' parameter to request to include entities
-  # that you know in advance you will need. For instance, when requesting
-  # works, you can request to have their authors entities directly included
-  # before even knowning the authors URIs: relatives=wdt:P50
-  if relatives?
-    relatives = relatives.split '|'
-    for relative in relatives
-      unless relative in whitelistedRelativesProperties
-        return error_.bundleInvalid req, res, 'relative', relative
-
-  if _.isString uris then uris = uris.split '|'
-
-  uris = _.uniq uris
-
-  refresh = _.parseBooleanString refresh
-
-  getEntitiesByUris uris, refresh
-  .then addRelatives(relatives, refresh)
+  sanitize req, res, sanitization
+  .then (params)->
+    { uris, refresh, relatives } = params
+    getEntitiesByUris uris, refresh
+    .then addRelatives(relatives, refresh)
   .then responses_.Send(res)
   .catch error_.Handler(req, res)

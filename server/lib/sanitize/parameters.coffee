@@ -70,7 +70,14 @@ whitelistedString =
       return true
     else
       details = "possible values: #{config.whitelist.join(', ')}"
-      throw error_.new "unknown #{name}: #{value} (#{details})"
+      throw error_.new "invalid #{name}: #{value} (#{details})", 400, { value }
+
+whitelistedStrings =
+  format: arrayOrPipedStrings
+  validate: (values, name, config)->
+    for value in values
+      whitelistedString.validate(value, name, config)
+    return true
 
 generics =
   boolean:
@@ -104,3 +111,4 @@ module.exports =
   user: couchUuid
   users: couchUuids
   username: { validate: validations.common.username }
+  relatives: whitelistedStrings

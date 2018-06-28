@@ -102,7 +102,7 @@ describe 'entities:get:by-uris', ->
         .then undesiredRes(done)
         .catch (err)->
           err.statusCode.should.equal 400
-          err.body.status_verbose.should.equal 'invalid relative: wdt:P31'
+          err.body.status_verbose.should.startWith 'invalid relative'
           done()
       .catch undesiredErr(done)
 
