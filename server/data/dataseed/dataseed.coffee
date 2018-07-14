@@ -10,7 +10,9 @@ _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
 isbn_ = __.require 'lib', 'isbn/isbn'
 
+{ readOnly } = CONFIG
 { enabled, host } = CONFIG.dataseed
+enabled = enabled and not readOnly
 
 module.exports =
   # Search query parameters:
