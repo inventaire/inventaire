@@ -3,7 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require('builders', 'utils')
 promises_ = __.require 'lib', 'promises'
 express = require 'express'
-{ env, port, host, name, verbosity } = CONFIG
+{ env, port, host, name, verbosity, readOnly } = CONFIG
 
 middlewares = require './middlewares/middlewares'
 middlewaresList = middlewares.common.concat (middlewares[CONFIG.env] or [])
@@ -19,9 +19,12 @@ module.exports = ->
     if _.isArray(middleware) then app.use.apply app, middleware
     else app.use middleware
 
+  if readOnly then _.warn 'read-only mode: non-get endpoints are disabled'
+
   for endpoint, controllers of routes
     for verb, controller of controllers
-      app[verb]("/#{endpoint}", controller)
+      if not readOnly or verb is 'get'
+        app[verb]("/#{endpoint}", controller)
 
   # Should be used after all middlewares and routes
   # cf http://expressjs.com/fr/guide/error-handling.html

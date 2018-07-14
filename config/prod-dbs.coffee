@@ -10,6 +10,7 @@
 
 module.exports =
   env: 'prod-dbs'
+  readOnly: true
   imageRedirection: 'https://inventaire.io'
   db:
     suffix: 'prod'
