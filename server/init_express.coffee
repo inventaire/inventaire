@@ -4,6 +4,10 @@ _ = __.require('builders', 'utils')
 promises_ = __.require 'lib', 'promises'
 express = require 'express'
 { env, port, host, name, verbosity, readOnly } = CONFIG
+readOnlyEndpointWhitelist = [
+  'api/auth'
+  'api/submit'
+]
 
 middlewares = require './middlewares/middlewares'
 middlewaresList = middlewares.common.concat (middlewares[CONFIG.env] or [])
@@ -23,7 +27,7 @@ module.exports = ->
 
   for endpoint, controllers of routes
     for verb, controller of controllers
-      if not readOnly or verb is 'get'
+      if verb is 'get' or not readOnly or endpoint in readOnlyEndpointWhitelist
         app[verb]("/#{endpoint}", controller)
 
   # Should be used after all middlewares and routes
