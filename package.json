@@ -112,7 +112,8 @@
     "shell-quote": "^1.4.3",
     "should": "^11.1.1",
     "sinon": "^1.17.1",
-    "supervisor": "^0.10.0"
+    "supervisor": "^0.10.0",
+    "wikidata-filter": "^2.3.1"
   },
   "engines": {
     "node": ">= 6.4"

@@ -1,0 +1,10 @@
+#!/usr/bin/env zsh
+# Generate a pre-filtered dump of humans in Wikidata to ease development setup
+# cf https://github.com/inventaire/inventaire-deploy/blob/d280055/install_entities_search_engine#L24-L28
+
+curl -s https://dumps.wikimedia.org/wikidatawiki/entities/latest-all.json.gz |
+  gzip -d |
+  wikidata-filter --claim P31:Q5 --omit type,sitelinks |
+  gzip -c9 > humans.ndjson.gz
+
+chmod 664 humans.ndjson.gz
