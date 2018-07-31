@@ -52,6 +52,7 @@ turnIntoRedirection = (userId, fromId, toUri, previousToUri)->
 
   entities_.byId fromId
   .then (currentFromDoc)->
+    Entity.preventRedirectionEdit currentFromDoc, 'turnIntoRedirection'
     # If an author has no more links to it, remove it
     removeObsoletePlaceholderEntities userId, currentFromDoc
     .then (removedIds)->

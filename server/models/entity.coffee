@@ -41,7 +41,7 @@ module.exports = Entity =
     unless lang in validLangs
       throw error_.new 'invalid lang', 400, { doc, lang, value }
 
-    preventRedirectionEdit doc, 'setLabel'
+    Entity.preventRedirectionEdit doc, 'setLabel'
 
     value = _.superTrim value
 
@@ -52,14 +52,14 @@ module.exports = Entity =
     return doc
 
   setLabels: (doc, labels)->
-    preventRedirectionEdit doc, 'setLabels'
+    Entity.preventRedirectionEdit doc, 'setLabels'
     for lang, value of labels
       doc = Entity.setLabel doc, lang, value
 
     return doc
 
   addClaims: (doc, claims)->
-    preventRedirectionEdit doc, 'addClaims'
+    Entity.preventRedirectionEdit doc, 'addClaims'
 
     # Pass the list of all edited properties, so that wen trying to infer property
     # values, we know which one should not be infered at the risk of creating
@@ -83,11 +83,11 @@ module.exports = Entity =
     return doc
 
   createClaim: (doc, property, value)->
-    preventRedirectionEdit doc, 'createClaim'
+    Entity.preventRedirectionEdit doc, 'createClaim'
     return Entity.updateClaim doc, property, null, value
 
   updateClaim: (doc, property, oldVal, newVal)->
-    preventRedirectionEdit doc, 'updateClaim'
+    Entity.preventRedirectionEdit doc, 'updateClaim'
     unless oldVal? or newVal?
       throw error_.new 'missing old or new value', 400, arguments
 
@@ -130,8 +130,8 @@ module.exports = Entity =
   # two existing document: redirecting from an entity to another entity,
   # only the 'to' doc will survive
   mergeDocs: (fromEntityDoc, toEntityDoc)->
-    preventRedirectionEdit fromEntityDoc, 'mergeDocs (from)'
-    preventRedirectionEdit toEntityDoc, 'mergeDocs (to)'
+    Entity.preventRedirectionEdit fromEntityDoc, 'mergeDocs (from)'
+    Entity.preventRedirectionEdit toEntityDoc, 'mergeDocs (to)'
     # Giving priority to the toEntityDoc labels and claims
     toEntityDoc.labels = _.extend {}, fromEntityDoc.labels, toEntityDoc.labels
     toEntityDoc.claims = _.extend {}, fromEntityDoc.claims, toEntityDoc.claims
@@ -165,6 +165,10 @@ module.exports = Entity =
     recoveredDoc = _.cloneDeep entityDoc
     recoveredDoc.type = 'entity'
     return recoveredDoc
+
+  preventRedirectionEdit: (doc, editLabel)->
+    unless doc.redirect? then return
+    throw error_.new "#{editLabel} failed: the entity is a redirection", 400, arguments
 
 updateInferredProperties = (doc, property, oldVal, newVal)->
   declaredProperties = doc._allClaimsProps or []
@@ -211,10 +215,6 @@ setPossiblyEmptyPropertyArray = (doc, property, propertyArray)->
     doc.claims = _.omit doc.claims, property
   else
     doc.claims[property] = propertyArray
-
-preventRedirectionEdit = (doc, editLabel)->
-  if doc.redirect?
-    throw error_.new "#{editLabel} failed: the entity is a redirection", 400, arguments
 
 # Properties that need at least one value
 criticalProperties = [ 'wdt:P629' ]
