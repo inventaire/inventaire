@@ -5,7 +5,7 @@ should = require 'should'
 { Promise } = __.require 'lib', 'promises'
 { undesiredRes, undesiredErr } = require '../utils/utils'
 { createWork, createEdition } = require '../fixtures/entities'
-{ getByUris, updateClaim, merge } = require '../utils/entities'
+{ getByUri, updateClaim, merge } = require '../utils/entities'
 
 describe 'entities:update-claims', ->
   it 'should reject an update with an inappropriate property', (done)->
@@ -75,10 +75,8 @@ describe 'entities:update-claims', ->
       Promise.all authorsUris.map((uri)-> updateClaim work._id, 'wdt:P50', null, uri)
       .then (responses)->
         responses.forEach (res)-> should(res.ok).be.true()
-        getByUris work.uri
-        .get 'entities'
-        .then (entities)->
-          updatedWork = entities[workUri]
+        getByUri work.uri
+        .then (updatedWork)->
           addedAuthorsUris = updatedWork.claims['wdt:P50']
           authorsUris.forEach (uri)-> should(uri in addedAuthorsUris).be.true()
           done()

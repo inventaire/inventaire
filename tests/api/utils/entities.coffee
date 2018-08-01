@@ -13,6 +13,10 @@ module.exports = entitiesUtils =
     url = _.buildPath '/api/entities', { action: 'by-uris', uris, relatives }
     nonAuthReq 'get', url
 
+  getByUri: (uri)->
+    entitiesUtils.getByUris uri
+    .then (res)-> res.entities[uri]
+
   deleteByUris: (uris)->
     if _.isArray(uris) then uris = uris.join('|')
     adminReq 'delete', "/api/entities?action=by-uris&uris=#{uris}"
