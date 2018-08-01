@@ -3,12 +3,13 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 entities_ = require './entities'
 radio = __.require 'lib', 'radio'
+retryOnConflict = __.require 'lib', 'retry_on_conflict'
 Entity = __.require 'models', 'entity'
 getEntityType = require './get_entity_type'
 validateClaimProperty = require './validate_claim_property'
 inferredClaimUpdates = require './inferred_claim_updates'
 
-module.exports = (user, id, property, oldVal, newVal)->
+updateInvClaim = (user, id, property, oldVal, newVal)->
   _.type user, 'object'
   { _id:userId, admin:userIsAdmin } = user
 
@@ -40,3 +41,5 @@ updateClaim = (params)->
   entities_.validateClaim params
   .then Entity.updateClaim.bind(null, updatedDoc, property, oldVal)
   .then (updatedDoc)-> entities_.putUpdate { userId, currentDoc, updatedDoc }
+
+module.exports = retryOnConflict updateInvClaim

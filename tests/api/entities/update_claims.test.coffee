@@ -5,7 +5,7 @@ should = require 'should'
 { Promise } = __.require 'lib', 'promises'
 { undesiredRes, undesiredErr } = require '../utils/utils'
 { createWork, createEdition } = require '../fixtures/entities'
-{ updateClaim, merge } = require '../utils/entities'
+{ getByUris, updateClaim, merge } = require '../utils/entities'
 
 describe 'entities:update-claims', ->
   it 'should reject an update with an inappropriate property', (done)->
@@ -63,6 +63,25 @@ describe 'entities:update-claims', ->
       err.statusCode.should.equal 400
       err.body.status_verbose.should.equal 'this entity is obsolete'
       done()
+    .catch undesiredErr(done)
+
+    return
+
+  it 'should accept rapid updates on the same entity', (done)->
+    authorsUris = [ 'wd:Q192214', 'wd:Q206685', 'wd:Q281411', 'wd:Q312835', 'wd:Q309945' ]
+    createWork()
+    .then (work)->
+      { uri: workUri } = work
+      Promise.all authorsUris.map((uri)-> updateClaim work._id, 'wdt:P50', null, uri)
+      .then (responses)->
+        responses.forEach (res)-> should(res.ok).be.true()
+        getByUris work.uri
+        .get 'entities'
+        .then (entities)->
+          updatedWork = entities[workUri]
+          addedAuthorsUris = updatedWork.claims['wdt:P50']
+          authorsUris.forEach (uri)-> should(uri in addedAuthorsUris).be.true()
+          done()
     .catch undesiredErr(done)
 
     return
