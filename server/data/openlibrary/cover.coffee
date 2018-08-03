@@ -9,6 +9,8 @@ checkCoverExistance = require './check_cover_existance'
 { coverByOlId } = require './api'
 
 module.exports = (openLibraryId, entityType)->
+  unless openLibraryId then return Promise.resolve null
+
   switch entityType
     when 'human' then type = 'a'
     when 'work', 'edition' then type = 'b'
