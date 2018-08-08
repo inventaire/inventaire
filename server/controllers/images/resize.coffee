@@ -22,7 +22,7 @@ exports.get = (req, res, next)->
   # aren't correctly handled
   if offline
     message = 'you are in offline mode: no img delivered'
-    return reponses_.okWarning res, 'connection', message
+    return responses_.okWarning res, 'connection', message
 
   # Used to redirect to production server when working with the prod databases
   # in development
