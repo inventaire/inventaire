@@ -10,7 +10,6 @@ host = CONFIG.fullHost()
 describe 'entities:images', ->
   it 'should return an array of images associated with the passed uri', (done)->
     nonAuthReq 'get', '/api/entities?action=images&uris=wd:Q535'
-    .then _.Log('RES')
     .then (res)->
       res.images.should.be.an.Object()
       res.images['wd:Q535'].should.be.an.Array()
