@@ -27,7 +27,7 @@ describe 'content', ->
 
       request params, (err, res)->
         res.statusCode.should.equal 400
-        should(res.body.match('SyntaxError: Unexpected token')?).be.true()
+        res.body.status_verbose.should.equal 'invalid JSON body'
         done()
 
     it 'should make an exception for /api/submit', (done)->
