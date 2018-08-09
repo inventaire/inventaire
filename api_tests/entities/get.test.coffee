@@ -4,124 +4,80 @@ _ = __.require 'builders', 'utils'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
 { undesiredErr, undesiredRes } = require '../utils/utils'
-{ getByUris } = require '../utils/entities'
 { ensureEditionExists, createWorkWithAuthor, createEditionWithWorkAuthorAndSerie } = require '../fixtures/entities'
 { getByUris } = require '../utils/entities'
 endpointBase = '/api/entities?action=by-uris&uris='
 workWithAuthorPromise = createWorkWithAuthor()
 
 describe 'entities:get:by-uris', ->
-  it 'should accept alternative ISBN 13 syntax', (done)->
-    isbn13h = '978-2-84565-221-7'
-    isbn13Uri = 'isbn:9782845652217'
-    isbn13hUri = "isbn:#{isbn13h}"
-    ensureEditionExists isbn13Uri
-    .then -> getByUris isbn13hUri
-    .then (res)->
-      { entities, redirects } = res
-      canonicalUri = redirects[isbn13hUri]
-      canonicalUri.should.equal isbn13Uri
-      entity = entities[canonicalUri]
-      entity.should.be.an.Object()
-      entity.type.should.equal 'edition'
-      entity.uri.should.equal canonicalUri
+  it 'should reject invalid uri', (done)->
+    invalidUri = 'bla'
+    getByUris invalidUri
+    .then undesiredRes(done)
+    .catch (err)->
+      err.statusCode.should.equal 400
+      err.body.status_verbose.should.startWith 'invalid uri'
       done()
     .catch undesiredErr(done)
 
     return
 
-  it 'should accept alternative ISBN 10 syntax', (done)->
-    isbn13h = '978-2-84565-221-7'
-    isbn13Uri = 'isbn:9782845652217'
-    isbn10hUri = 'isbn:2-84565-221-6'
-    ensureEditionExists isbn13Uri
-    .then -> getByUris isbn10hUri
-    .then (res)->
-      { entities, redirects } = res
-      canonicalUri = redirects[isbn10hUri]
-      canonicalUri.should.equal isbn13Uri
-      entity = entities[canonicalUri]
-      entity.should.be.an.Object()
-      entity.type.should.equal 'edition'
-      entity.uri.should.equal canonicalUri
+  it 'should reject uri with wrong prefix', (done)->
+    invalidUri = 'twitter:isevil'
+    getByUris invalidUri
+    .then undesiredRes(done)
+    .catch (err)->
+      err.statusCode.should.equal 400
+      err.body.status_verbose.should.startWith 'invalid uri'
       done()
+    .catch undesiredErr(done)
+
+    return
+
+  it 'should accept inventaire uri', (done)->
+    workWithAuthorPromise
+    .then (work)->
+      getByUris work.uri
+      .then (res)->
+        res.entities[work.uri].should.be.an.Object()
+        done()
     .catch undesiredErr(done)
 
     return
 
   it 'should return uris not found', (done)->
     fakeUri = 'inv:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
-    workWithAuthorPromise
-    .then (work)->
-      getByUris [ fakeUri, work.uri ]
-      .then (res)->
-        res.entities[work.uri].should.be.an.Object()
-        res.notFound.should.deepEqual [ fakeUri ]
-        done()
+    getByUris fakeUri
+    .then (res)->
+      res.notFound.should.deepEqual [ fakeUri ]
+      done()
     .catch undesiredErr(done)
 
     return
 
-  describe 'alias URIs', ->
-    it 'should accept twitter URIs', (done)->
-      aliasUri = 'twitter:bouletcorp'
-      getByUris aliasUri
-      .then (res)->
-        { entities, redirects } = res
-        canonicalUri = redirects[aliasUri]
-        canonicalUri.should.equal 'wd:Q1524522'
-        entity = entities[canonicalUri]
-        entity.should.be.an.Object()
-        entity.type.should.equal 'human'
-        entity.uri.should.equal canonicalUri
-        done()
-      .catch undesiredErr(done)
+  it 'should accept wikidata uri', (done)->
+    validWdUri = 'wd:Q2300248'
+    ensureEditionExists validWdUri
+    .then -> getByUris validWdUri
+    .then (res)->
+      entity = res.entities[validWdUri]
+      entity.uri.should.equal validWdUri
+      done()
+    .catch undesiredErr(done)
 
-      return
+    return
 
-    it 'should accept alias URIs with inexact case', (done)->
-      aliasUri = 'twitter:Bouletcorp'
-      getByUris aliasUri
-      .then (res)->
-        { entities, redirects } = res
-        canonicalUri = redirects[aliasUri]
-        canonicalUri.should.equal 'wd:Q1524522'
-        done()
-      .catch undesiredErr(done)
+  it 'should accept strict ISBN 13 syntax', (done)->
+    isbn13Uri = 'isbn:9782845652217'
+    ensureEditionExists isbn13Uri
+    .then -> getByUris isbn13Uri
+    .then (res)->
+      entity = res.entities[isbn13Uri]
+      entity.uri.should.equal isbn13Uri
+      done()
+    .catch undesiredErr(done)
 
-      return
-
-    it 'should accept Wikimedia project URIs', (done)->
-      aliasUri = 'frwiki:Lucien_Suel'
-      getByUris aliasUri
-      .then (res)->
-        { entities, redirects } = res
-        canonicalUri = redirects[aliasUri]
-        canonicalUri.should.equal 'wd:Q3265721'
-        entity = entities[canonicalUri]
-        entity.should.be.an.Object()
-        entity.type.should.equal 'human'
-        entity.uri.should.equal canonicalUri
-        done()
-      .catch undesiredErr(done)
-
-      return
-
-    it 'should accept Wikimedia project URIs with spaces', (done)->
-      aliasUri = 'eswikiquote:J. K. Rowling'
-      getByUris aliasUri
-      .then (res)->
-        { entities, redirects } = res
-        canonicalUri = redirects[aliasUri]
-        canonicalUri.should.equal 'wd:Q34660'
-        entity = entities[canonicalUri]
-        entity.should.be.an.Object()
-        entity.type.should.equal 'human'
-        entity.uri.should.equal canonicalUri
-        done()
-      .catch undesiredErr(done)
-
-      return
+    return
 
   describe 'relatives', ->
     it "should accept a 'relatives' parameter", (done)->
@@ -146,7 +102,7 @@ describe 'entities:get:by-uris', ->
         .then undesiredRes(done)
         .catch (err)->
           err.statusCode.should.equal 400
-          err.body.status_verbose.should.equal 'invalid relative: wdt:P31'
+          err.body.status_verbose.should.startWith 'invalid relative'
           done()
       .catch undesiredErr(done)
 

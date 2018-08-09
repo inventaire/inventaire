@@ -16,8 +16,8 @@ sanitization =
 
 module.exports = (req, res)->
   sanitize req, res, sanitization
-  .then (input)->
-    { userId, uri, reqUserId } = input
+  .then (params)->
+    { userId, uri, reqUserId } = params
     user_.getUserById userId, reqUserId
     .then getItemsFromUser(reqUserId, uri)
   .then responses_.Send(res)

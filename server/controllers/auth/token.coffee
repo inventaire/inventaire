@@ -15,7 +15,7 @@ sanitization =
 
 confirmEmailValidity = (req, res)->
   sanitize req, res, sanitization
-  .then (input)-> user_.confirmEmailValidity input.email, input.token
+  .then (params)-> user_.confirmEmailValidity params.email, params.token
   .then redirectValidEmail.bind(null, res, true)
   .catch redirectValidEmail.bind(null, res, false)
 

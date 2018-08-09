@@ -22,8 +22,8 @@ sanitization =
 module.exports = (req, res)->
   { _id:reqUserId } = req.user
   sanitize req, res, sanitization
-  .then (input)->
-    user_.nearby reqUserId, input.range, input.strictRange
-    .then getItemsByUsers.bind(null, input)
+  .then (params)->
+    user_.nearby reqUserId, params.range, params.strictRange
+    .then getItemsByUsers.bind(null, params)
   .then responses_.Send(res)
   .catch error_.Handler(req, res)

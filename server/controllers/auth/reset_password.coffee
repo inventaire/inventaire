@@ -12,7 +12,7 @@ sanitization =
 
 module.exports = (req, res, next)->
   sanitize req, res, sanitization
-  .then (input)-> user_.findOneByEmail input.email
+  .then (params)-> user_.findOneByEmail params.email
   .catch (err)->
     if err.statusCode is 404
       throw error_.new 'email not found', 400, email
