@@ -3,6 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 { Promise } = __.require 'lib', 'promises'
 { customAuthReq } = require '../utils/request'
+{ getUser } = require '../utils/utils'
 { createEdition } = require './entities'
 faker = require 'faker'
 
@@ -23,6 +24,7 @@ transactions = [ 'giving', 'lending', 'selling', 'inventorying' ]
 
 module.exports = API =
   createItems: (userPromise, itemsData = [])->
+    userPromise or= getUser()
     entity = if itemsData[0]? then itemsData[0].entity
     entityUriPromise = if entity then Promise.resolve(entity) else getEditionUri()
 

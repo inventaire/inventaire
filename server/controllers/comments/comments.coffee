@@ -4,18 +4,22 @@ user_ = __.require 'controllers', 'user/lib/user'
 items_ = __.require 'controllers', 'items/lib/items'
 comments_ = __.require 'controllers', 'comments/lib/comments'
 responses_ = __.require 'lib', 'responses'
+sanitize = __.require 'lib', 'sanitize/sanitize'
 error_ = __.require 'lib', 'error/error'
 { Track } = __.require 'lib', 'track'
 
+sanitization =
+  item: {}
+
 module.exports =
   get: (req, res, next)->
-    { item } = req.query
-    reqUserId = req.user?._id
-
-    items_.byId item
-    .then comments_.verifyRightToWriteOrReadComment.bind(null, reqUserId)
-    .then comments_.byItemId.bind(null, item)
-    .then responses_.Send(res)
+    sanitize req, res, sanitization
+    .then (params)->
+      { itemId, reqUserId } = params
+      items_.byId itemId
+      .then comments_.verifyRightToWriteOrReadComment.bind(null, reqUserId)
+      .then comments_.byItemId.bind(null, itemId)
+    .then responses_.Wrap(res, 'comments')
     .catch error_.Handler(req, res)
 
   # create
