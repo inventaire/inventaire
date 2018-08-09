@@ -10,7 +10,7 @@ get = (req, res)->
   unless req.user? then return error_.unauthorizedApiAccess req, res
 
   notifs_.byUserId req.user._id
-  .then responses_.Send(res)
+  .then responses_.Wrap(res, 'notifications')
   .catch error_.Handler(req, res)
 
 updateStatus = (req, res)->
