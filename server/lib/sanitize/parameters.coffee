@@ -108,6 +108,7 @@ module.exports =
     default: 50
     max: 500
   token: nonEmptyString
+  transaction: couchUuid
   uri: { validate: validations.common.entityUri }
   uris: entityUris
   user: couchUuid
