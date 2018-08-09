@@ -2,10 +2,24 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ nonAuthReq, undesiredErr } = require '../utils/utils'
+{ authReq, nonAuthReq, undesiredErr } = require '../utils/utils'
 { groupPromise, endpointAction } = require '../fixtures/groups'
 
 describe 'groups:get', ->
+  describe 'default', ->
+    it 'should get all user groups', (done)->
+      groupPromise
+      .then (group)->
+        authReq 'get', endpointAction
+        .then (res)->
+          res.groups.should.be.an.Array()
+          groupsIds = _.pluck res.groups, '_id'
+          should(group._id in groupsIds).be.true()
+          done()
+      .catch undesiredErr(done)
+
+      return
+
   describe 'by-id', ->
     it 'should get a group by id', (done)->
       groupPromise
