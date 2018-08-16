@@ -9,15 +9,18 @@ sanitize = __.require 'lib', 'sanitize/sanitize'
 radio = __.require 'lib', 'radio'
 { Track } = __.require 'lib', 'track'
 
+getSanitization =
+  transaction: {}
+
 postSanitization =
   transaction: {}
   message: {}
 
 module.exports =
   get: (req, res, next)->
-    { transaction } = req.query
-    comments_.byTransactionId(transaction)
-    .then responses_.Send(res)
+    sanitize req, res, getSanitization
+    .then (params)-> comments_.byTransactionId params.transactionId
+    .then responses_.Wrap(res, 'messages')
     .catch error_.Handler(req, res)
 
   post: (req, res, next)->
