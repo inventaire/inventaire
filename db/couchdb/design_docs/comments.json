@@ -2,14 +2,8 @@
   "_id": "_design/comments",
   "language": "coffeescript",
   "views": {
-    "byItemId": {
-      "map": "(doc)->\n  if doc.item?\n    emit doc.item, null"
-    },
     "byTransactionId": {
       "map": "(doc)->\n  if doc.transaction?\n    emit doc.transaction, null"
-    },
-    "bySubjectAndUserId": {
-      "map": "(doc)->\n  if doc.item? then emit ['item', doc.user], null\n  else if doc.transaction? then emit ['transaction', doc.user], null"
     }
   }
 }

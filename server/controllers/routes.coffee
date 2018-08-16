@@ -25,7 +25,6 @@ module.exports = routes =
   'api/tests*': endpoint './tests'
   'api/data': endpoint './data'
   'api/feedback': endpoint './feedback'
-  'api/comments': endpoint './comments/comments'
   'api/transactions': endpoint './transactions/transactions'
   'api/reports': endpoint './reports/reports'
   'api/config': endpoint './config'

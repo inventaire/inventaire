@@ -59,12 +59,6 @@ callbacks =
     notifs_.add userToNotify, 'friendAcceptedRequest',
       user: newFriend
 
-  newCommentOnFollowedItem: (itemId, commentorId, users)->
-    for userToNotify in users
-      notifs_.add userToNotify, 'newCommentOnFollowedItem',
-        item: itemId
-        user: commentorId
-
   userMadeAdmin: (groupId, actorAdminId, newAdminId)->
     notifs_.add newAdminId, 'userMadeAdmin',
       group: groupId
@@ -95,7 +89,6 @@ callbacks =
 groupAttributeWithNotification = [ 'name', 'description' ]
 
 radio.on 'notify:friend:request:accepted', callbacks.acceptedRequest
-radio.on 'notify:comment:followers', callbacks.newCommentOnFollowedItem
 radio.on 'group:makeAdmin', callbacks.userMadeAdmin
 radio.on 'group:update', callbacks.groupUpdate
 
