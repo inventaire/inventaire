@@ -6,7 +6,9 @@ entities_ = __.require 'controllers', 'entities/lib/entities'
 searchEntityDuplicatesSuggestions = require './search_entity_duplicates_suggestions'
 { calculateRelationScore } = require './relation_score'
 hasWorksLabelsOccurrence = __.require 'controllers', 'entities/lib/has_works_labels_occurrence'
+{ turnIntoRedirection } = __.require 'controllers', 'entities/lib/merge_entities'
 { prefixifyInv } = __.require 'controllers', 'entities/lib/prefix'
+{ _id:reconcilerUserId } = __.require('couch', 'hard_coded_documents').users.reconciler
 
 module.exports = (entity)->
   Promise.all [
@@ -14,22 +16,36 @@ module.exports = (entity)->
     getAuthorWorksData entity._id
   ]
   .spread (suggestionEntities, authorWorksData)->
-    relationScore = calculateRelationScore suggestionEntities
-    Promise.all suggestionEntities.map(create(authorWorksData, relationScore))
+    { labels, langs, authorId } = authorWorksData
+    Promise.all(suggestionEntities.map(getSuggestionsWithOccurences(authorWorksData)))
+    .then _.compact
+    .then (suggestionsWithOccurences)->
+      if suggestionEntities.length == 1 && labels[0].length > 12
+        turnIntoRedirection reconcilerUserId, authorId, suggestionsWithOccurences[0].uri
+        return []
+      relationScore = calculateRelationScore suggestionEntities
+      Promise.all suggestionEntities.map(create(authorWorksData, relationScore, suggestionsWithOccurences))
 
-create = (authorWorksData, relationScore)->
-  { labels, langs } = authorWorksData
+getSuggestionsWithOccurences = (authorWorksData)->
   return (suggestionEntity)->
+    { labels, langs, authorId } = authorWorksData
+    hasWorksLabelsOccurrence suggestionEntity.uri, labels, langs
+    .then (worksLabelsOccurrence)->
+      if worksLabelsOccurrence then suggestionEntity else false
+
+create = (authorWorksData, relationScore, suggestionsWithOccurences)->
+  return (suggestionEntity)->
+    { authorId } = authorWorksData
     suggestionUri = suggestionEntity.uri
     _.type suggestionUri, 'string'
-    hasWorksLabelsOccurrence suggestionUri, labels, langs
-    .then (hasOccurence)->
+    return {
       type: 'deduplicate'
-      suspectUri: prefixifyInv authorWorksData.authorId
+      suspectUri: prefixifyInv(authorId)
       suggestionUri: suggestionEntity.uri
       lexicalScore: suggestionEntity._score
       relationScore: relationScore
-      hasEncyclopediaOccurence: hasOccurence
+      hasEncyclopediaOccurence: _.some(suggestionsWithOccurences)
+    }
 
 getAuthorWorksData = (authorId)->
   entities_.byClaim 'wdt:P50', "inv:#{authorId}", true, true

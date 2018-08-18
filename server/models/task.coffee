@@ -7,7 +7,6 @@ validations = require './validations/task'
 module.exports =
   create: (newTask)->
     _.types arguments, [ 'object' ]
-
     { type, suspectUri, suggestionUri, lexicalScore, relationScore, hasEncyclopediaOccurence } = newTask
 
     validations.pass 'type', type

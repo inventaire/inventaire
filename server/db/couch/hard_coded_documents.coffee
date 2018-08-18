@@ -12,5 +12,6 @@ module.exports =
     seed: userDoc 'seed', '000'
     # see server/controllers/entities/lib/update_claims_hooks
     hook: userDoc 'hook', '001'
+    reconciler: userDoc 'reconciler', '002'
     # used by scripts/update_entities_schema
     updater: userDoc 'updater', '003'

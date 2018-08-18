@@ -7,6 +7,9 @@
     },
     "byScore": {
       "map": "(doc)->\n  unless doc.state \n    emit [doc.hasEncyclopediaOccurence, doc.relationScore, doc.elasticScore], doc"
+    },
+    "hasEncyclopediaOccurence": {
+      "map": "(doc)->\n  unless doc.state \n    if doc.hasEncyclopediaOccurence == true\n      emit doc.id, null"
     }
   }
 }
