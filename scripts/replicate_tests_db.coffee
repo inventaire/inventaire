@@ -9,10 +9,8 @@ error_ = __.require 'lib', 'error/error'
 dbHost = require('config').db.fullHost()
 allDbsUrl = dbHost + '/_all_dbs'
 
-tests_dbs = (db)-> db.includes '-tests'
 dbUrl = (dbName)-> "#{dbHost}/#{dbName}"
 dbsBaseNames = Object.keys __.require('couch', 'list')
-testDbsNames = dbsBaseNames.map (dbBaseName)-> "#{dbBaseName}-tests"
 
 Promise.all dbsBaseNames
 .map (dbName)->
@@ -22,7 +20,7 @@ Promise.all dbsBaseNames
     target: dbUrl dbName
   breq.post "#{dbHost}/_replicate", repDoc
   .then (res)-> res.body
-  .then _.Log "#{dbTestName} replication response"
+  .then _.Log("#{dbTestName} replication response")
 .catch (err)->
   console.log "#{err.body.reason}\n\
   Hum, have you ran the tests first ?"
