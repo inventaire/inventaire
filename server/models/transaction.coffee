@@ -59,7 +59,7 @@ Transaction.states = states =
   requested:
     # current action actor
     actor: 'requester'
-    # next actions: the actor(s) may defer from the current one
+    # next actions (the actor(s) may differ from the current one)
     next: ['accepted', 'declined', 'cancelled']
   accepted:
     actor: 'owner'
