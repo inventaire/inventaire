@@ -15,6 +15,7 @@ describe 'entities:search-type', ->
     .then (creationRes)->
       createdWorkId = creationRes._id
       nonAuthReq 'get', "#{endpoint}&type=works&search=#{label}&lang=fr"
+      .get 'results'
       .then (results)->
         worksIds = _.pluck results, '_id'
         (createdWorkId in worksIds).should.be.true()

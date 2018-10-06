@@ -8,32 +8,31 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 responses_ = __.require 'lib', 'responses'
+sanitize = __.require 'lib', 'sanitize/sanitize'
 error_ = __.require 'lib', 'error/error'
 searchType = require './lib/search_type'
 
-indexedTypes = [ 'works', 'humans', 'series', 'genres', 'movements', 'publishers', 'collections']
+indexedTypes = [
+  'works'
+  'humans'
+  'series'
+  'genres'
+  'movements'
+  'publishers'
+  'collections'
+]
+
+sanitization =
+  type:
+    whitelist: indexedTypes
+  search: {}
+  limit:
+    default: 20
 
 module.exports = (req, res)->
-  { type, search, limit } = req.query
-
-  _.info [ type, search, limit ], 'entities search per type'
-
-  unless _.isNonEmptyString search
-    return error_.bundleMissingQuery req, res, 'search'
-
-  unless _.isNonEmptyString type
-    return error_.bundleMissingQuery req, res, 'type'
-
-  unless type in indexedTypes
-    return error_.bundleInvalid req, res, 'type', type
-
-  limit or= '20'
-
-  unless _.isPositiveIntegerString limit
-    return error_.bundleInvalid req, res, 'limit', limit
-
-  limit = _.stringToInt limit
-
-  searchType search, type, limit
-  .then responses_.Send(res)
+  sanitize req, res, sanitization
+  .then (params)->
+    { type, search, limit } = params
+    return searchType search, type, limit
+  .then responses_.Wrap(res, 'results')
   .catch error_.Handler(req, res)

@@ -76,7 +76,7 @@ whitelistedStrings =
   format: arrayOrPipedStrings
   validate: (values, name, config)->
     for value in values
-      whitelistedString.validate(value, name, config)
+      whitelistedString.validate value, name, config
     return true
 
 generics =
@@ -92,12 +92,14 @@ module.exports =
   refresh: generics.boolean
   filter: whitelistedString
   ids: couchUuids
+  item: couchUuid
   lang:
     default: 'en'
     validate: _.isLang
   limit: _.extend {}, positiveInteger,
     min: 1
     default: 100
+  message: nonEmptyString
   offset: _.extend {}, positiveInteger, { default: 0 }
   password:
     secret: true
@@ -105,7 +107,10 @@ module.exports =
   range: _.extend {}, positiveInteger,
     default: 50
     max: 500
+  search: nonEmptyString
   token: nonEmptyString
+  transaction: couchUuid
+  type: whitelistedString
   uri: { validate: validations.common.entityUri }
   uris: entityUris
   user: couchUuid

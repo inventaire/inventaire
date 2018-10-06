@@ -6,11 +6,6 @@ module.exports = Comment = {}
 
 Comment.validations = validations = require './validations/comment'
 
-Comment.createItemComment = (userId, message, item)->
-  itemId = item._id
-  validations.pass 'itemId', itemId
-  createComment userId, message, 'item', itemId
-
 Comment.createTransactionComment = (userId, message, transactionId)->
   validations.pass 'transactionId', transactionId
   createComment userId, message, 'transaction', transactionId

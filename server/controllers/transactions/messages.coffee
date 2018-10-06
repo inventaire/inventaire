@@ -5,38 +5,34 @@ responses_ = __.require 'lib', 'responses'
 promises_ = __.require 'lib', 'promises'
 comments_ = __.require 'controllers', 'comments/lib/comments'
 transactions_ = require './lib/transactions'
+sanitize = __.require 'lib', 'sanitize/sanitize'
 radio = __.require 'lib', 'radio'
 { Track } = __.require 'lib', 'track'
 
+getSanitization =
+  transaction: {}
+
+postSanitization =
+  transaction: {}
+  message: {}
+
 module.exports =
   get: (req, res, next)->
-    { transaction } = req.query
-    comments_.byTransactionId(transaction)
-    .then responses_.Send(res)
+    sanitize req, res, getSanitization
+    .then (params)-> comments_.byTransactionId params.transactionId
+    .then responses_.Wrap(res, 'messages')
     .catch error_.Handler(req, res)
 
   post: (req, res, next)->
-    { transaction, message } = req.body
-    reqUserId = req.user._id
-
-    unless transaction?
-      return error_.bundleMissingBody req, res, 'transaction'
-
-    unless message?
-      return error_.bundleMissingBody req, res, 'message'
-
-    _.log [ transaction, message ], 'transaction, message'
-
-    transactions_.byId transaction
-    .then (transaction)->
-      promises_.resolve transactions_.verifyRightToInteract(reqUserId, transaction)
-      .get '_id'
-      .then comments_.addTransactionComment.bind(null, reqUserId, message)
-      .then (couchRes)->
-        transactions_.updateReadForNewMessage reqUserId, transaction
-        .then ->
-          radio.emit 'transaction:message', transaction
-          return couchRes
-    .then responses_.Send(res)
-    .then Track(req, ['transaction', 'message'])
+    sanitize req, res, postSanitization
+    .then (params)->
+      { transactionId, message, reqUserId } = params
+      transactions_.byId transactionId
+      .then (transaction)->
+        transactions_.verifyRightToInteract reqUserId, transaction
+        comments_.addTransactionComment reqUserId, message, transactionId
+        .then -> transactions_.updateReadForNewMessage reqUserId, transaction
+        .then -> radio.emit 'transaction:message', transaction
+    .then responses_.Ok(res)
+    .then Track(req, [ 'transaction', 'message' ])
     .catch error_.Handler(req, res)

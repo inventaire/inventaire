@@ -6,7 +6,7 @@
       "map": "(doc)->\n  emit [doc.user, doc.time], null"
     },
     "bySubject": {
-      "map": "(doc)->\n  data = doc.data\n  emit doc.user, 'user'\n  if data.user isnt doc.user then emit data.user, 'data:user'\n  switch doc.type\n    when 'newCommentOnFollowedItem' then emit data.item, 'item'\n    when 'groupUpdate', 'userMadeAdmin' then emit data.group, 'data:group'\n"
+      "map": "(doc)->\n  data = doc.data\n  emit doc.user, 'user'\n  if data.user isnt doc.user then emit data.user, 'data:user'\n  switch doc.type\n    when 'groupUpdate', 'userMadeAdmin' then emit data.group, 'data:group'\n"
     }
   }
 }

@@ -19,7 +19,7 @@ module.exports =
     authentified:
       'default': (req, res)->
         allUserGroups req.user._id
-        .then responses_.Send(res)
+        .then responses_.Wrap(res, 'groups')
         .catch error_.Handler(req, res)
 
   post: ActionsControllers
