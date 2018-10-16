@@ -1,9 +1,11 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
 
 set -eu
 
 folder=$(node -p "require('config').universalPath.path('dumps')")
-db_param(){ node -p "require('config').db.$1" }
+db_param(){
+  node -p "require('config').db.$1"
+}
 
 # Getting the database parameters to get ready for couchdb-dump
 host=$(db_param host)

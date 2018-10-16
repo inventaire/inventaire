@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
 
 set -eu
 
@@ -42,12 +42,14 @@ touch run/3006 run/3009
   npm run couch2elastic4sync:init && npm run couch2elastic4sync:load
 } || echo "ElasticSearch not found: init & load scripts skipped"
 
-# Create a local config file
-emptyConfigFile="
-# Override settings from ./default.coffee in this file
-module.exports =
-  db:
-    username: 'yourcouchdbusername'
-    password: 'yourcouchdbpassword'
-"
-echo "$emptyConfigFile" >> ./config/local.coffee
+[ -z ./config/local.coffee ] && {
+  # Create a local config file
+  emptyConfigFile="
+  # Override settings from ./default.coffee in this file
+  module.exports =
+    db:
+      username: 'yourcouchdbusername'
+      password: 'yourcouchdbpassword'
+  "
+  echo "$emptyConfigFile" >> ./config/local.coffee
+}

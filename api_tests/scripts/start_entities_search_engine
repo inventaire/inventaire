@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
 search_engine_path=$(node -p "require('config').entitiesSearchEngine.localPath")
 cwd=$(pwd)
 

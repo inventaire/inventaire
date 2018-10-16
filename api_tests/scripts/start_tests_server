@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
 
 # Use NODE_APP_INSTANCE=tests-alt to override local config with local-tests-alt
 export NODE_ENV=tests NODE_APP_INSTANCE=tests-alt FORCE_COLOR=true
@@ -9,7 +9,7 @@ entities_search_engine_host=$(node -p "require('config').entitiesSearchEngine.ho
 curl -s "$entities_search_engine_host" > /dev/null && echo "entities search engine found" || \
   # Using curly brackets to group those commands without starting a subshell from which exiting would be useless
   # cf https://ss64.com/bash/syntax-brackets.html
-  { ./api_tests/scripts/start_entities_search_engine && sleep 5 }
+  { ./api_tests/scripts/start_entities_search_engine && sleep 5 ; }
 
 # If the server is already up, return early
 (curl -s "$test_host" > /dev/null || [ "$(cat run/3009)" == "starting" ]) &&

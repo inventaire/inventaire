@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
 # Generate a pre-filtered dump of humans in Wikidata to ease development setup
 # cf https://github.com/inventaire/inventaire-deploy/blob/d280055/install_entities_search_engine#L24-L28
 
