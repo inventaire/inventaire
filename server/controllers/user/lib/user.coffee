@@ -80,7 +80,7 @@ user_ =
 
   getUsersIndexByUsernames: (reqUserId)-> (usernames)->
     user_.getUsersAuthorizedData user_.byUsernames(usernames), reqUserId
-    .then _.IndexBy('username')
+    .then (users)-> users.reduce indexByLowerCasedUsername, {}
 
   incrementUndeliveredMailCounter: (email)->
     user_.findOneByEmail email
@@ -119,6 +119,11 @@ findNearby = (latLng, meterRange, iterations = 0, strict = false)->
     else
       iterations += 1
       return findNearby latLng, meterRange * 2, iterations
+
+indexByLowerCasedUsername = (users, user)->
+  lowercasedUsername = user.username.toLowerCase()
+  users[lowercasedUsername] = user
+  return users
 
 token_ = require('./token')(db, user_)
 
