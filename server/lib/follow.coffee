@@ -10,7 +10,7 @@ dbHost = CONFIG.db.fullHost()
 { reset:resetFollow, freeze:freezeFollow, delay:delayFollow } = CONFIG.db.follow
 
 # Never follow in non-server mode.
-# This behaviors allows, in api_tests environement, to have the tests server
+# This behaviors allows, in API tests environement, to have the tests server
 # following, while scripts being called directly by tests don't compete
 # with the server
 freezeFollow = freezeFollow or not CONFIG.serverMode

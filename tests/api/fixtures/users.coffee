@@ -54,7 +54,7 @@ module.exports = API =
   getRefreshedUser: (userPromise)->
     userPromise
     # Get the up-to-date user doc while keeping the cookie
-    # set by api_tests/fixtures/users
+    # set by tests/api/fixtures/users
     .then (user)-> API.getUserWithCookie user.cookie
 
   createUsername: ->

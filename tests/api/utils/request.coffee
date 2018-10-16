@@ -16,7 +16,7 @@ request = (method, endpoint, body, cookie)->
 
 customAuthReq = (userPromise, method, endpoint, body)->
   userPromise
-  # gets a user doc to which api_tests/fixtures/users added a cookie attribute
+  # gets a user doc to which tests/api/fixtures/users added a cookie attribute
   .then (user)-> request method, endpoint, body, user.cookie
 
 module.exports = { request, customAuthReq }
