@@ -10,5 +10,5 @@
 (curl -s http://localhost:3009/api/tests > /dev/null &&
   echo "tests server is online" ||
   # If the server wasn't started before, start it
-  ./api_tests/scripts/start_tests_server ) &&
-./api_tests/scripts/run_api_tests $@
+  ./tests/api/scripts/start_tests_server ) &&
+./tests/api/scripts/run_api_tests $@

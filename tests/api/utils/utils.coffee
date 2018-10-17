@@ -31,4 +31,4 @@ module.exports = API =
   getAdminUser: getUserGetter 'admin', true
   getUserGetter: getUserGetter
 
-_.extend API, require('../../test/utils')
+_.extend API, require('../../unit/utils')

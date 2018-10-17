@@ -1,3 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 options=$1
-export NODE_ENV=tests; mocha --compilers coffee:coffee-script/register test/models/* test/libs/* test/controllers/* $options
+export NODE_ENV=tests
+mocha --compilers coffee:coffee-script/register tests/unit/models/* tests/unit/libs/* tests/unit/controllers/* $options
