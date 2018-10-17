@@ -1,13 +1,7 @@
-#!/usr/bin/env zsh
-
-alias mochac="mocha --compilers coffee:coffee-script/register"
+#!/usr/bin/env bash
 files=$@
 # If no test file is passed as argument, run all tests
 [ -z "$1" ] && files=api_tests/**/*test.coffee
 
-# Split files names, using a ZSH eval trick
-# cf http://zsh.sourceforge.net/FAQ/zshfaq03.html
-eval "files=($files)"
-
 # Run the tests
-export NODE_ENV=tests NODE_APP_INSTANCE=tests-alt; mochac $files --timeout 20000
+export NODE_ENV=tests NODE_APP_INSTANCE=tests-alt; mocha --compilers coffee:coffee-script/register $files --timeout 20000

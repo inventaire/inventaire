@@ -10,6 +10,7 @@ folder = __.path 'scripts', 'couch2elastic4sync'
 logsFolder = __.path 'logs', 'couch2elastic4sync'
 fs  = require 'fs'
 { syncDataList } = __.require 'db', 'elasticsearch/list'
+{ red } = require 'chalk'
 
 # Mapping to couch2elastic4sync API:
 # cliArg='sync' => couch2elastic4sync
@@ -34,8 +35,7 @@ module.exports = (cliArg)->
 
     childProcess = spawn command, args
     childProcess.stdout.pipe logStream
-    # Unfortunately, couch2elastic4sync writes errors to stdout so this line doesn't have much effect
-    childProcess.stderr.pipe logStream
+    childProcess.stderr.on 'data', logError
     return childProcess
 
   killChildrenProcesses = -> childProcesses.forEach (childProc)-> childProc.kill()
@@ -51,3 +51,5 @@ getLogStream = (dbName)->
   logStream = fs.createWriteStream logFile, { flags: 'a' }
   logStream.write "\n--------- restarting: #{new Date} ---------\n"
   return logStream
+
+logError = (chunk)-> console.error red('couch2elastic4sync err'), chunk.toString()

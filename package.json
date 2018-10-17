@@ -100,6 +100,7 @@
   "devDependencies": {
     "coffee-errors": "^0.8.6",
     "coffeelint": "^1.16.2",
+    "couchdb-backup": "^1.0.0",
     "diff": "^2.2.1",
     "doctoc": "^1.2.0",
     "faker": "^4.1.0",
