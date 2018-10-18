@@ -12,7 +12,7 @@
     "create-entities-dump": "./scripts/dumps/prepare_entities_ndjson_dump",
     "debug": "DEBUG=express:* coffee server.coffee",
     "delete-api-test-databases": "./tests/api/scripts/delete_databases",
-    "inspect": "node --inspect ./node_modules/.bin/coffee server.coffee",
+    "inspect": "node --inspect --inspect-brk ./node_modules/.bin/coffee server.coffee",
     "install-client": "./scripts/install-client",
     "kill-tests-server": "./tests/api/scripts/kill_tests_server",
     "lint": "coffeelint -f config/coffeelint.json --color always server.coffee server tests db/couchdb scripts",
