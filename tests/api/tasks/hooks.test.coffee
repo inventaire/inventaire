@@ -58,6 +58,7 @@ describe 'tasks:hooks', ->
           otherTask = tasks[1]
           { relationScore: taskRelationScore } = taskToUpdate
           update taskToUpdate._id, 'state', 'dismissed'
+          .delay 100
           .then -> getByIds otherTask._id
           .then (tasks)->
             updatedTask = tasks[0]
