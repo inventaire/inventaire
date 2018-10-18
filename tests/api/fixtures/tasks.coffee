@@ -1,28 +1,22 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-{ authReq, adminReq } = require '../utils/utils'
-promises_ = __.require 'lib', 'promises'
-randomString = __.require 'lib', './utils/random_string'
-{ createHuman, createWorkWithAuthor } = require './entities'
-collectEntitiesEndpoint = '/api/tasks?action=collect-entities'
-collectEntitiesPromise = null
+{ Promise } = __.require 'lib', 'promises'
+{ createHuman } = require './entities'
+{ checkEntities } = require '../utils/tasks'
 
-createHumanAndCollectEntities = ->
-  # Make sure there is at least one human in the database
-  promises_.all [
-    createHuman { labels: { en: 'Stanislas Lem' } }
-    createHuman { labels: { en: 'Stanislas Lem' } }
-  ]
-  .then (humans)->
-    adminReq 'post', collectEntitiesEndpoint
-    .delay 5000
-    .then (res)->
-      res.humans = humans
-      return res
+promises = {}
 
 module.exports = API =
-  collectEntities: (params = {})->
-    if not collectEntitiesPromise? or params.refresh
-      collectEntitiesPromise = createHumanAndCollectEntities()
-    return collectEntitiesPromise
+  createSomeTasks: (humanLabel)->
+    if promises[humanLabel]? then return promises[humanLabel]
+
+    promises[humanLabel] = Promise.all [
+        createHuman { labels: { en: humanLabel } }
+        createHuman { labels: { en: humanLabel } }
+      ]
+      .then (humans)->
+        checkEntities _.pluck(humans, 'uri')
+        .then (tasks)-> { tasks, humans }
+
+    return promises[humanLabel]

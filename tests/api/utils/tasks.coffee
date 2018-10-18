@@ -14,9 +14,20 @@ module.exports =
     nonAuthReq 'get', "#{endpoint}by-suspect-uri&uri=#{uri}"
     .get 'tasks'
 
-  getByScore: ->
-    nonAuthReq 'get', "#{endpoint}by-score&limit=1000"
+  getByScore: (options = {})->
+    url = "#{endpoint}by-score"
+    { limit, offset } = options
+    if limit? then url += "&limit=#{limit}"
+    if offset? then url += "&offset=#{offset}"
+    nonAuthReq 'get', url
     .get 'tasks'
 
   update: (id, attribute, value)->
-    adminReq 'put', '/api/tasks?action=update', { id, attribute, value }
+    adminReq 'put', "#{endpoint}update", { id, attribute, value }
+
+  checkEntities: (uris)->
+    uris = _.forceArray uris
+    adminReq 'post', "#{endpoint}check-entities", { uris }
+    .get 'tasks'
+
+  collectEntities: -> adminReq 'post', "#{endpoint}collect-entities"

@@ -2,19 +2,16 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ authReq, undesiredErr } = __.require 'apiTests', 'utils/utils'
-{ createHuman } = require '../fixtures/entities'
-{ collectEntities } = require '../fixtures/tasks'
-{ getBySuspectUri } = require '../utils/tasks'
-byScore = '/api/tasks?action=by-score'
+{ undesiredErr } = __.require 'apiTests', 'utils/utils'
+{ createSomeTasks } = require '../fixtures/tasks'
+{ getBySuspectUri, getByScore } = require '../utils/tasks'
 
+# Tests dependency: having a populated ElasticSearch wikidata index
 describe 'tasks:byScore', ->
   it 'should returns 10 or less tasks to deduplicates, by default', (done)->
-    collectEntities()
-    .then -> authReq 'get', byScore
-    .then (res)->
-      res.should.be.an.Object()
-      { tasks } = res
+    createSomeTasks 'Gilbert Simondon'
+    .then getByScore
+    .then (tasks)->
       tasks.length.should.be.belowOrEqual 10
       tasks.length.should.be.aboveOrEqual 1
       done()
@@ -23,24 +20,22 @@ describe 'tasks:byScore', ->
     return
 
   it 'should returns a limited array of tasks to deduplicate', (done)->
-    authReq 'get', byScore + '&limit=1'
-    .then (res)->
-      res.tasks.length.should.equal 1
+    createSomeTasks 'Gilbert Simondon'
+    .then -> getByScore { limit: 1 }
+    .then (tasks)->
+      tasks.length.should.equal 1
       done()
     .catch undesiredErr(done)
 
     return
 
   it 'should take an offset parameter', (done)->
-    collectEntities()
-    .then -> authReq 'get', byScore
-    .then (res)->
-      offset = 1
-      firstOffsetTask = res.tasks[offset]
-      authReq 'get', byScore + "&offset=#{offset}"
-      .then (res)->
-        firstTask = res.tasks[0]
-        firstTask.should.deepEqual firstOffsetTask
+    createSomeTasks 'Gilbert Simondon'
+    .then getByScore
+    .then (tasksA)->
+      getByScore { offset: 1 }
+      .then (tasksB)->
+        tasksA[1].should.deepEqual tasksB[0]
         done()
     .catch undesiredErr(done)
 
@@ -48,7 +43,7 @@ describe 'tasks:byScore', ->
 
 describe 'tasks:bySuspectUri', ->
   it 'should return an array of tasks', (done)->
-    collectEntities()
+    createSomeTasks 'Gilbert Simondon'
     .then (res)-> getBySuspectUri res.humans[0].uri
     .then (tasks)->
       suspectUris = _.pluck tasks, 'suspectUri'

@@ -31,13 +31,14 @@ module.exports = API =
   editionLabel: -> randomWords()
   workLabel: -> randomWords(5)
   humanName: humanName
-  createWorkWithAuthor: (human)->
+  createWorkWithAuthor: (human, label)->
     humanPromise = if human then Promise.resolve(human) else API.createHuman()
+    label or= workLabel()
 
     humanPromise
     .then (human)->
       authReq 'post', '/api/entities?action=create',
-        labels: { en: humanName() }
+        labels: { en: label }
         claims:
           'wdt:P31': [ 'wd:Q571' ]
           'wdt:P50': [ human.uri ]

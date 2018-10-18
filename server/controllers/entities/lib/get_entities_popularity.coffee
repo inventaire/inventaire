@@ -50,7 +50,7 @@ applyDefaultValue = (uri)-> (value)->
   # if the cache is empty, the entity isn't that popular
   return 0
 
-wdPopularityWorker = (jobId, uri, cb)->
+wdPopularityWorker = (jobId, uri)->
   key = buildKey uri
   _.log uri, 'wdPopularityWorker uri'
   # Check that the score wasn't calculated since this job was queued

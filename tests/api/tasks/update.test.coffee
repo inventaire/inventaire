@@ -2,15 +2,14 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ authReq, adminReq } = require '../utils/utils'
-updateEndpoint = '/api/tasks?action=update'
-{ collectEntities } = require '../fixtures/tasks'
-{ getByScore, update } = require '../utils/tasks'
+{ createHuman } = require '../fixtures/entities'
+{ update, checkEntities } = require '../utils/tasks'
 
+# Tests dependency: having a populated ElasticSearch wikidata index
 describe 'tasks:update', ->
   it 'should update a task', (done)->
-    collectEntities()
-    .then getByScore
+    createHuman { labels: { en: 'Fred Vargas' } }
+    .then (human)-> checkEntities human.uri
     .then (tasks)->
       task = tasks[0]
       update task._id, 'state', 'dismissed'
