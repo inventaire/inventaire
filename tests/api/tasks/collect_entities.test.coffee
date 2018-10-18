@@ -24,15 +24,3 @@ describe 'tasks:collect-entities', ->
       .catch undesiredErr(done)
 
     return
-
-  it 'should not re-create existing tasks', (done)->
-    collectEntities()
-    .then (res)->
-      getByScore()
-      .then (tasks)->
-        uniqSuspectUris = _.uniq _.pluck(tasks, 'suspectUri')
-        tasks.length.should.equal uniqSuspectUris.length
-        done()
-    .catch undesiredErr(done)
-
-    return
