@@ -6,6 +6,7 @@ should = require 'should'
 { checkEntities } = require '../utils/tasks'
 { createHuman, createWorkWithAuthor } = require '../fixtures/entities'
 
+# Tests dependency: having a populated ElasticSearch wikidata index
 describe 'tasks:has-encyclopedia-occurence', ->
   it 'should return true when author has work sourced in their wikipedia page', (done)->
     createHuman { labels: { en: 'Victor Hugo' } }

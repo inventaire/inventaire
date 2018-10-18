@@ -7,6 +7,7 @@ should = require 'should'
 { deleteByUris: deleteEntityByUris } = require '../utils/entities'
 { getByIds, getBySuspectUri, update, checkEntities } = require '../utils/tasks'
 
+# Tests dependency: having a populated ElasticSearch wikidata index
 describe 'tasks:hooks', ->
   describe 'entity merge', ->
     it 'should update same suspect tasks to merged state', (done) ->

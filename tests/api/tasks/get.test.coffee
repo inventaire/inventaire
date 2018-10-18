@@ -6,6 +6,7 @@ should = require 'should'
 { createSomeTasks } = require '../fixtures/tasks'
 { getBySuspectUri, getByScore } = require '../utils/tasks'
 
+# Tests dependency: having a populated ElasticSearch wikidata index
 describe 'tasks:byScore', ->
   it 'should returns 10 or less tasks to deduplicates, by default', (done)->
     createSomeTasks 'Gilbert Simondon'

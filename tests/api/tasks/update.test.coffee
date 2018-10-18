@@ -5,6 +5,7 @@ should = require 'should'
 { createHuman } = require '../fixtures/entities'
 { update, checkEntities } = require '../utils/tasks'
 
+# Tests dependency: having a populated ElasticSearch wikidata index
 describe 'tasks:update', ->
   it 'should update a task', (done)->
     createHuman { labels: { en: 'Fred Vargas' } }

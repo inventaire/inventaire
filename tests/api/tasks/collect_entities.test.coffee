@@ -7,6 +7,9 @@ should = require 'should'
 { getBySuspectUri, collectEntities } = require '../utils/tasks'
 { undesiredErr } = __.require 'apiTests', 'utils/utils'
 
+# Tests dependency:
+# - running after a database reset
+# - having a populated ElasticSearch wikidata index
 describe 'tasks:collect-entities', ->
   it 'should create new tasks', (done)->
     Promise.all [

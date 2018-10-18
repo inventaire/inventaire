@@ -6,6 +6,7 @@ should = require 'should'
 { undesiredErr } = __.require 'apiTests', 'utils/utils'
 { createHuman } = require '../fixtures/entities'
 
+# Tests dependency: having a populated ElasticSearch wikidata index
 describe 'tasks:check-entities', ->
   it 'should directly create tasks for the requested URIs', (done)->
     createHuman { labels: { en: 'Fred Vargas' } }
