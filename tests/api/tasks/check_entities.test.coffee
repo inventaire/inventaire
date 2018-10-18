@@ -10,7 +10,7 @@ describe 'tasks:check-entities', ->
   it 'should directly create tasks for the requested URIs', (done)->
     createHuman { labels: { en: 'Fred Vargas' } }
     .then (human)->
-      checkEntities [ human.uri ]
+      checkEntities human.uri
       .then (tasks)->
         tasks.should.be.an.Array()
         tasks[0].suspectUri.should.equal human.uri
@@ -22,11 +22,10 @@ describe 'tasks:check-entities', ->
   it 'should not re-create existing tasks', (done)->
     createHuman { labels: { en: 'Fred Vargas' } }
     .then (human)->
-      checkEntities [ human.uri ]
-      .then -> checkEntities [ human.uri ]
+      checkEntities human.uri
+      .then -> checkEntities human.uri
       .then -> getBySuspectUri human.uri
       .then (tasks)->
-        _.log tasks, 'tasks'
         uniqSuspectUris = _.uniq _.pluck(tasks, 'suspectUri')
         tasks.length.should.equal uniqSuspectUris.length
         done()
