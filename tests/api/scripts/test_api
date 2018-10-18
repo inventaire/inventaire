@@ -5,7 +5,7 @@
 # Deleting databases before the tests, so that tests can be run individually
 # without having to check for the databases existance, has those will not have
 # been deleted at the end of the tests
-./tests/api/scripts/delete_tests_databases > /dev/null &&
+./tests/api/scripts/delete_databases > /dev/null &&
 ./tests/api/scripts/start_tests_server &&
 ./tests/api/scripts/run_api_tests $@
 
