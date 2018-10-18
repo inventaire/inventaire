@@ -19,4 +19,8 @@ module.exports =
     .get 'tasks'
 
   update: (id, attribute, value)->
-    adminReq 'put', '/api/tasks?action=update', { id, attribute, value }
+    adminReq 'put', "#{endpoint}update", { id, attribute, value }
+
+  checkEntities: (uris)->
+    adminReq 'post', "#{endpoint}check-entities", { uris }
+    .get 'tasks'

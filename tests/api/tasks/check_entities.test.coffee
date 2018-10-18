@@ -1,0 +1,20 @@
+CONFIG = require 'config'
+__ = CONFIG.universalPath
+_ = __.require 'builders', 'utils'
+should = require 'should'
+{ checkEntities } = require '../utils/tasks'
+{ undesiredErr } = __.require 'apiTests', 'utils/utils'
+{ createHuman } = require '../fixtures/entities'
+
+describe 'tasks:check-entities', ->
+  it 'should directly create tasks for the requested URIs', (done)->
+    createHuman { labels: { en: 'Fred Vargas' } }
+    .then (human)->
+      checkEntities [ human.uri ]
+      .then (tasks)->
+        tasks.should.be.an.Array()
+        tasks[0].suspectUri.should.equal human.uri
+        done()
+    .catch undesiredErr(done)
+
+    return

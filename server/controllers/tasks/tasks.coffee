@@ -13,6 +13,7 @@ module.exports =
   post: ActionsControllers
     admin:
       'collect-entities': require './collect_entities'
+      'check-entities': require './check_entities'
 
   put: ActionsControllers
     admin:
