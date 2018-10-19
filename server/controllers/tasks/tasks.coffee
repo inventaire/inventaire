@@ -8,7 +8,7 @@ module.exports =
     public:
       'by-ids': require './by_ids'
       'by-score': require './by_score'
-      'by-suspect-uri': require './by_suspect_uri'
+      'by-suspect-uris': require './by_suspect_uris'
 
   post: ActionsControllers
     admin:
