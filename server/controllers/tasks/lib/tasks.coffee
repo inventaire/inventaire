@@ -37,3 +37,6 @@ module.exports = tasks_ =
 
   bySuspectUris: (suspectUris)->
     db.viewByKeys 'bySuspectUri', suspectUris
+
+  bySuggestionUris: (suggestionUris)->
+    db.viewByKeys 'bySuggestionUri', suggestionUris

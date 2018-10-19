@@ -19,6 +19,11 @@ module.exports = utils =
     utils.getBySuspectUris uri
     .get uri
 
+  getBySuggestionUris: (uris)->
+    uris = _.forceArray(uris).join '|'
+    nonAuthReq 'get', "#{endpoint}by-suggestion-uris&uris=#{uris}"
+    .get 'tasks'
+
   getByScore: (options = {})->
     url = "#{endpoint}by-score"
     { limit, offset } = options
