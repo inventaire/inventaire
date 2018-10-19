@@ -1,6 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
+error_ = __.require 'lib', 'error/error'
 getEntityByUri = __.require 'controllers', 'entities/lib/get_entity_by_uri'
 tasks_ = require './tasks'
 buildTaskDocs = require './build_task_docs'

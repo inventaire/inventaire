@@ -35,8 +35,27 @@ module.exports = tasks_ =
   bySuspectUri: (suspectUri)->
     db.viewByKey 'bySuspectUri', suspectUri
 
-  bySuspectUris: (suspectUris)->
+  bySuspectUris: (suspectUris, index)->
     db.viewByKeys 'bySuspectUri', suspectUris
+    .then (tasks)->
+      if index isnt true then return tasks
+      return tasks.reduce regroup.bySuspectUris, getIndexBase(suspectUris)
 
-  bySuggestionUris: (suggestionUris)->
-    db.viewByKeys 'bySuggestionUri', suggestionUris
+  bySuggestionUris: (suggestionUri, index)->
+    db.viewByKeys 'bySuggestionUri', suggestionUri
+    .then (tasks)->
+      if index isnt true then return tasks
+      return tasks.reduce regroup.bySuggestionUris, getIndexBase(suggestionUri)
+
+regroupBy = (uriName)-> (tasks, task)->
+  tasks[task[uriName]].push task
+  return tasks
+
+regroup =
+  bySuspectUris: regroupBy 'suspectUri'
+  bySuggestionUris: regroupBy 'suggestionUri'
+
+getIndexBase = (uris)-> index = uris.reduce buildIndex, {}
+buildIndex = (index, uri)->
+  index[uri] = []
+  return index

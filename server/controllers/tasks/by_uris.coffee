@@ -10,26 +10,10 @@ sanitization =
 
 byUris = (fnName)-> (req, res)->
   sanitize req, res, sanitization
-  .then (params)->
-    { uris } = params
-    tasks_[fnName](uris)
-    .then (tasks)->
-      index = uris.reduce buildIndex, {}
-      tasks.reduce regroup[fnName], index
+  .get 'uris'
+  .then (uris)-> tasks_[fnName](uris, true)
   .then responses_.Wrap(res, 'tasks')
   .catch error_.Handler(req, res)
-
-buildIndex = (index, uri)->
-  index[uri] = []
-  return index
-
-regroupBy = (uriName)-> (tasks, task)->
-  tasks[task[uriName]].push task
-  return tasks
-
-regroup =
-  bySuspectUris: regroupBy 'suspectUri'
-  bySuggestionUris: regroupBy 'suggestionUri'
 
 module.exports =
   bySuspectUris: byUris 'bySuspectUris'
