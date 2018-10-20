@@ -8,7 +8,7 @@ sanitize = __.require 'lib', 'sanitize/sanitize'
 sanitization =
   uris: {}
 
-byUris = (fnName)-> (req, res)->
+byEntityUris = (fnName)-> (req, res)->
   sanitize req, res, sanitization
   .get 'uris'
   .then (uris)-> tasks_[fnName](uris, true)
@@ -16,5 +16,5 @@ byUris = (fnName)-> (req, res)->
   .catch error_.Handler(req, res)
 
 module.exports =
-  bySuspectUris: byUris 'bySuspectUris'
-  bySuggestionUris: byUris 'bySuggestionUris'
+  bySuspectUris: byEntityUris 'bySuspectUris'
+  bySuggestionUris: byEntityUris 'bySuggestionUris'

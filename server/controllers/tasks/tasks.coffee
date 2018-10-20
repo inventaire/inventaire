@@ -1,7 +1,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 ActionsControllers = __.require 'lib', 'actions_controllers'
-{ bySuspectUris, bySuggestionUris } = require './by_uris'
+{ bySuspectUris, bySuggestionUris } = require './by_entity_uris'
 
 module.exports =
   get: ActionsControllers
