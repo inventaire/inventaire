@@ -8,6 +8,11 @@ formatEntityCommon = require './format_entity_common'
 addRedirection = require './add_redirection'
 { prefixifyInv, unprefixify } = __.require 'controllers', 'entities/lib/prefix'
 
+# Working around the circular dependency
+getEntityByUri = null
+lateRequire = -> getEntityByUri = require './get_entity_by_uri'
+setTimeout lateRequire, 0
+
 module.exports = (ids, refresh)->
   # Hypothesis: there is no need to look for Wikidata data here
   # as inv entities with an associated Wikidata entity use the Wikidata uri
@@ -33,9 +38,6 @@ Format = (refresh)-> (entity)->
   return formatEntityCommon entity
 
 getRedirectedEntity = (entity, refresh)->
-  # Circular dependency workaround: late require, relying on require caching mechanism
-  getEntityByUri = require './get_entity_by_uri'
-
   # Passing the refresh parameter as the entity data source might be Wikidata
   getEntityByUri entity.redirect, refresh
   .then addRedirection.bind(null, prefixifyInv(entity._id))
