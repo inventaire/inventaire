@@ -33,7 +33,7 @@ module.exports = API =
   humanName: humanName
   createWorkWithAuthor: (human, label)->
     humanPromise = if human then Promise.resolve(human) else API.createHuman()
-    label or= workLabel()
+    label or= API.workLabel()
 
     humanPromise
     .then (human)->
