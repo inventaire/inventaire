@@ -27,7 +27,7 @@ describe 'content', ->
 
       request params, (err, res)->
         res.statusCode.should.equal 400
-        res.body.status_verbose.should.equal 'invalid JSON body'
+        JSON.parse(res.body).status_verbose.should.equal 'invalid JSON body'
         done()
 
     it 'should make an exception for /api/submit', (done)->
