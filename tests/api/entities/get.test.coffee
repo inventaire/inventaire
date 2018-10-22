@@ -4,8 +4,8 @@ _ = __.require 'builders', 'utils'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
 { undesiredErr, undesiredRes } = require '../utils/utils'
-{ ensureEditionExists, createWorkWithAuthor, createEditionWithWorkAuthorAndSerie } = require '../fixtures/entities'
-{ getByUris } = require '../utils/entities'
+{ ensureEditionExists, createWorkWithAuthor, createEditionWithWorkAuthorAndSerie, createHuman } = require '../fixtures/entities'
+{ getByUris, merge } = require '../utils/entities'
 endpointBase = '/api/entities?action=by-uris&uris='
 workWithAuthorPromise = createWorkWithAuthor()
 
@@ -51,6 +51,22 @@ describe 'entities:get:by-uris', ->
     .then (res)->
       res.notFound.should.deepEqual [ fakeUri ]
       done()
+    .catch undesiredErr(done)
+
+    return
+
+  it 'should return redirected uris', (done)->
+    Promise.all [ createHuman(), createHuman() ]
+    .spread (humanA, humanB)->
+      merge humanA.uri, humanB.uri
+      .then -> getByUris humanA.uri
+      .then (res)->
+        Object.keys(res.entities).length.should.equal 1
+        res.entities[humanB.uri].should.be.an.Object()
+        res.entities[humanB.uri].uri.should.equal humanB.uri
+        res.redirects[humanA.uri].should.equal humanB.uri
+        should(res.notFound).not.be.ok()
+        done()
     .catch undesiredErr(done)
 
     return
