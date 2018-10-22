@@ -15,34 +15,55 @@ module.exports = (entity)->
     searchEntityDuplicatesSuggestions entity
     getAuthorWorksData entity._id
   ]
-  .spread (suggestionEntities, authorWorksData)->
-    { labels, langs, authorId } = authorWorksData
-    Promise.all(suggestionEntities.map(getSuggestionsWithOccurences(authorWorksData)))
+  .spread (suggestions, authorWorksData)->
+    Promise.all(suggestions.map(getOccurences(authorWorksData)))
     .then _.compact
-    .then (suggestionsWithOccurences)->
-      if suggestionEntities.length == 1 && labels[0].length > 12
-        turnIntoRedirection reconcilerUserId, authorId, suggestionsWithOccurences[0].uri
-        return []
-      relationScore = calculateRelationScore suggestionEntities
-      Promise.all suggestionEntities.map(create(authorWorksData, relationScore, suggestionsWithOccurences))
+    .then (occurences)->
+      unless _.some occurences
+        # create a task for every suggestions
+        relationScore = calculateRelationScore suggestions
+        return Promise.all suggestions.map(create(authorWorksData, relationScore, occurences))
+      createOrRedirectSuggestions(occurences, suggestions, authorWorksData)
 
-getSuggestionsWithOccurences = (authorWorksData)->
-  return (suggestionEntity)->
-    { labels, langs, authorId } = authorWorksData
-    hasWorksLabelsOccurrence suggestionEntity.uri, labels, langs
+createOrRedirectSuggestions = (occurences, suggestions, authorWorksData)->
+    { labels, authorId } = authorWorksData
+    unless canBeRedirected suggestions, labels[0]
+      # create a task for suggestions with occurences
+      relationScore = calculateRelationScore occurences
+      return suggestions.filter(suggestedEntities(occurences))
+      .map(create(authorWorksData, relationScore, occurences))
+
+    turnIntoRedirection reconcilerUserId, authorId, occurences[0].uri
+    []
+
+canBeRedirected = (suggestions, workLabel) ->
+  unless suggestions.length == 1
+    return false # several sugestions == has homonym
+  workLabel.length > 12
+
+suggestedEntities = (occurencesResult)->
+  return (suggestions)->
+    suggestionsUris = _.pluck suggestions, 'uri'
+    occurencesResultUris = _.pluck occurencesResult, 'uri'
+    _.intersection suggestionsUris, occurencesResultUris
+
+getOccurences = (authorWorksData)->
+  return (suggestion)->
+    { labels, langs } = authorWorksData
+    hasWorksLabelsOccurrence suggestion.uri, labels, langs
     .then (worksLabelsOccurrence)->
-      if worksLabelsOccurrence then suggestionEntity else false
+      if worksLabelsOccurrence then suggestion else false
 
 create = (authorWorksData, relationScore, suggestionsWithOccurences)->
-  return (suggestionEntity)->
+  return (suggestion)->
     { authorId } = authorWorksData
-    suggestionUri = suggestionEntity.uri
+    suggestionUri = suggestion.uri
     _.type suggestionUri, 'string'
     return {
       type: 'deduplicate'
       suspectUri: prefixifyInv(authorId)
-      suggestionUri: suggestionEntity.uri
-      lexicalScore: suggestionEntity._score
+      suggestionUri: suggestion.uri
+      lexicalScore: suggestion._score
       relationScore: relationScore
       hasEncyclopediaOccurence: _.some(suggestionsWithOccurences)
     }

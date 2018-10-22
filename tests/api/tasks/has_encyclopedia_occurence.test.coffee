@@ -9,16 +9,29 @@ should = require 'should'
 
 # Tests dependency: having a populated ElasticSearch wikidata index
 describe 'tasks:has-encyclopedia-occurence', ->
+  it 'should return false when author has no work', (done)->
+    humanLabel = 'Stanislas Lem' # has no homonyms
+    createHuman { labels: { en: humanLabel } }
+    .then (human)-> checkEntities human.uri
+    .then (tasks)->
+      tasks.length.should.aboveOrEqual 1
+      Q535Task = tasks.find (task)-> task.suggestionUri.match /wd:/
+      Q535Task.hasEncyclopediaOccurence.should.be.false()
+      done()
+    .catch undesiredErr(done)
+
+    return
+
   it 'should return true when author has work sourced in their wikipedia page', (done)->
-    humanLabel = 'Victor Hugo' # has homonyms
-    workLabel = 'Ruy Blas' # too short label to be trusted
+    humanLabel = 'Stanislas Lem' # has no homonyms
+    workLabel = 'Solaris' # too short label to be automerged
     createHuman { labels: { en: humanLabel } }
     .then (human)->
       createWorkWithAuthor human, workLabel
       .then (work)-> checkEntities human.uri
       .then (tasks)->
         tasks.length.should.aboveOrEqual 1
-        Q535Task = tasks.find (task)-> task.suggestionUri is 'wd:Q535'
+        Q535Task = tasks.find (task)-> task.suggestionUri.match /wd:/
         Q535Task.hasEncyclopediaOccurence.should.be.true()
         done()
     .catch undesiredErr(done)
@@ -49,10 +62,26 @@ describe 'tasks:has-encyclopedia-occurence', ->
     .then (human)->
       createWorkWithAuthor human, workLabel
       .then (work)-> checkEntities human.uri
-      .then -> getByUris human.uri
-      .get 'entities'
-      .then (entities)->
-        _.pluck(entities, 'uri')[0].should.match human.uri
+      .then (tasks)->
+        tasks.length.should.aboveOrEqual 1
+        Q535Task = tasks.find (task)-> task.suggestionUri.match /wd:/
+        Q535Task.hasEncyclopediaOccurence.should.be.true()
+        done()
+    .catch undesiredErr(done)
+
+    return
+
+  it 'should not merge entities if author has homonyms', (done)->
+    humanLabel = 'Alan Moore' # homonyms Q205739, Q1748845
+    workLabel = 'Voice of the Fire' # wd:Q3825051
+    createHuman { labels: { en: humanLabel } }
+    .then (human)->
+      createWorkWithAuthor human, workLabel
+      .then (work)-> checkEntities human.uri
+      .then (tasks)->
+        tasks.length.should.aboveOrEqual 1
+        Q535Task = tasks.find (task)-> task.suggestionUri.match /wd:/
+        Q535Task.hasEncyclopediaOccurence.should.be.true()
         done()
     .catch undesiredErr(done)
 
