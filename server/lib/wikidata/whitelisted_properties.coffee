@@ -30,11 +30,13 @@ module.exports = [
   'P195' # collection
   'P212' # isbn 13
   'P268' # BnF ID
+  'P269' # SUDOC authorities ID
   'P279' # subclass of
   'P356' # DOI
   'P361' # part of
   'P364' # original language of work
   'P407' # language of work
+  'P496' # ORCID ID
   'P577' # publication date
   'P569' # date of birth
   'P570' # date of death
@@ -52,6 +54,7 @@ module.exports = [
   'P957' # isbn 10
   'P1066' # student of
   'P1104' # number of pages
+  'P1433' # published in
   'P1412' # languages spoken, written or signed
   'P1476' # title
   'P1545' # series ordinal

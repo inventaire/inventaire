@@ -45,6 +45,8 @@ properties =
   'wdt:P179': bases.serieEntity
   # ISBN 13
   'wdt:P212': builders.isbnProperty 13
+  # SUDOC authorities ID
+  'wdt:P269': builders.externalId /^\d{8}[\dX]?$/
   # VIAF id
   'wdt:P214': builders.externalId /^[1-9]\d(\d{0,7}|\d{17,20})$/
   # BNF id
@@ -53,6 +55,8 @@ properties =
   'wdt:P364': bases.entity
   # language of work
   'wdt:P407': bases.entity
+  # ORCID ID
+  'wdt:P496': builders.externalId /^0000-000(1-[5-9]|2-[0-9]|3-[0-4])\d{3}-\d{3}[\dX]?$/
   # date of birth
   'wdt:P569': bases.uniqueSimpleDay
   # date of death
