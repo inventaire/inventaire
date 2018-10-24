@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+./scripts/replicate_tests_db.coffee
+./scripts/populate_users_fixtures.coffee

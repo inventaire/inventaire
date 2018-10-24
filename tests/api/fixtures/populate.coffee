@@ -9,14 +9,16 @@ populatePromise = null
 usersCount = 8
 publicItemsPerUser = 10
 
-module.exports = ->
-  if populatePromise? then return populatePromise
-  populatePromise = Promise.all _.times(usersCount, createUserWithItems)
-  return populatePromise
+module.exports = API =
+  populate: ->
+    if populatePromise? then return populatePromise
+    populatePromise = Promise.all _.times(usersCount, API.createUserWithItems)
+    return populatePromise
 
-createUserWithItems = ->
-  userPromise = createUser()
-  userPromise
-  .then ->
-    itemsData = _.times publicItemsPerUser, -> { listing: 'public' }
-    return createRandomizedItems userPromise, itemsData
+  createUserWithItems: ->
+    userPromise = createUser()
+    userPromise
+    .then ->
+      itemsData = _.times publicItemsPerUser, -> { listing: 'public' }
+      return createRandomizedItems userPromise, itemsData
+    .then -> userPromise
