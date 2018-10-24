@@ -14,4 +14,4 @@ updateInvLabel = (user, id, lang, value)->
   .then updateLabel.bind(null, lang, value, reqUserId)
   .then (updatedDoc)-> radio.emit 'entity:update:label', updatedDoc, lang, value
 
-module.exports = retryOnConflict updateInvLabel
+module.exports = retryOnConflict { updateFn: updateInvLabel }

@@ -42,4 +42,4 @@ updateClaim = (params)->
   .then Entity.updateClaim.bind(null, updatedDoc, property, oldVal)
   .then (updatedDoc)-> entities_.putUpdate { userId, currentDoc, updatedDoc }
 
-module.exports = retryOnConflict updateInvClaim
+module.exports = retryOnConflict { updateFn: updateInvClaim }
