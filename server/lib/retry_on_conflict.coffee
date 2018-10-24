@@ -21,7 +21,7 @@ module.exports = (params)->
     return run 1
 
 runAfterDelay = (run, attemptsCount, err)->
-  delay = attemptsCount * 100 + Math.random() * 100
+  delay = attemptsCount * 100 + Math.trunc(Math.random() * 100)
 
   promises_.resolve()
   .delay delay
