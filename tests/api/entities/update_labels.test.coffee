@@ -50,7 +50,7 @@ describe 'entities:update-labels', ->
 
   it 'should accept rapid updates on the same entity', (done)->
     name = 'Georges'
-    langs = [ 'en', 'fr', 'de', 'it', 'nl', 'es', 'pt' ]
+    langs = [ 'en', 'fr' ]
     humanPromise
     .then (human)->
       { _id: humanId, uri: humanUri } = human

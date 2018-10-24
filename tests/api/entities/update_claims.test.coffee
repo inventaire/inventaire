@@ -68,7 +68,7 @@ describe 'entities:update-claims', ->
     return
 
   it 'should accept rapid updates on the same entity', (done)->
-    authorsUris = [ 'wd:Q192214', 'wd:Q206685', 'wd:Q281411', 'wd:Q312835', 'wd:Q309945' ]
+    authorsUris = [ 'wd:Q192214', 'wd:Q206685' ]
     createWork()
     .then (work)->
       { uri: workUri } = work
