@@ -2,9 +2,9 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 { Promise } = __.require 'lib', 'promises'
 
-entities_ = __.require 'controllers', 'entities/lib/entities'
 searchEntityDuplicatesSuggestions = require './search_entity_duplicates_suggestions'
 { calculateRelationScore } = require './relation_score'
+getAuthorWorksData = require './get_author_works_data'
 hasWorksLabelsOccurrence = __.require 'controllers', 'entities/lib/has_works_labels_occurrence'
 { turnIntoRedirection } = __.require 'controllers', 'entities/lib/merge_entities'
 { prefixifyInv } = __.require 'controllers', 'entities/lib/prefix'
@@ -16,72 +16,68 @@ module.exports = (entity)->
     getAuthorWorksData entity._id
   ]
   .spread (suggestions, authorWorksData)->
-    Promise.all(suggestions.map(getOccurences(authorWorksData)))
-    .then _.compact
+    unless _.some suggestions then return []
+    Promise.all suggestions.map getOccurences authorWorksData
+    .then turnSuggestionIntoRedirection(suggestions, authorWorksData)
     .then (occurences)->
-      unless _.some occurences
-        # create a task for every suggestions
-        relationScore = calculateRelationScore suggestions
-        return Promise.all suggestions.map(create(authorWorksData, relationScore, occurences))
-      createOrRedirectSuggestions(occurences, suggestions, authorWorksData)
+      Promise.all filterSuggestions occurences, suggestions
+      .then createTasksDocs(authorWorksData, occurences)
 
-createOrRedirectSuggestions = (occurences, suggestions, authorWorksData)->
+turnSuggestionIntoRedirection = (suggestions, authorWorksData)->
+  return (occurences) ->
+    unless _.some(_.flattenDeep(occurences)) then return occurences
     { labels, authorId } = authorWorksData
-    unless canBeRedirected suggestions, labels[0]
-      # create a task for suggestions with occurences
-      relationScore = calculateRelationScore occurences
-      return suggestions.filter(suggestedEntities(occurences))
-      .map(create(authorWorksData, relationScore, occurences))
-
+    # Todo : check every labels to turn entity into redirection
+    unless canBeRedirected suggestions, labels[0] then return occurences
+    # assume first occurence is the right one to merge into
+    # only one suggestion necessary to merge
+    # occurences of first suggestion picked
     turnIntoRedirection reconcilerUserId, authorId, occurences[0].uri
     []
 
+filterSuggestions = (occurences, suggestions)->
+  # create a task for every suggestions
+  unless _.some(_.flattenDeep(occurences)) then return suggestions
+  # create tasks only for suggestions with occurences
+  suggestions.filter suggestionsWithOccurences occurences
+
+createTasksDocs = (authorWorksData, occurences) ->
+  return (suggestions) ->
+    relationScore = calculateRelationScore suggestions
+    return suggestions.map create authorWorksData, relationScore, occurences
+
 canBeRedirected = (suggestions, workLabel) ->
-  unless suggestions.length == 1
-    return false # several sugestions == has homonym
+  # several suggestions == has homonym
+  unless suggestions.length == 1 then return false
   workLabel.length > 12
 
-suggestedEntities = (occurencesResult)->
+suggestionsWithOccurences = (occurences)->
   return (suggestions)->
     suggestionsUris = _.pluck suggestions, 'uri'
-    occurencesResultUris = _.pluck occurencesResult, 'uri'
-    _.intersection suggestionsUris, occurencesResultUris
+    occurencesUris = _.pluck occurences, 'uri'
+    _.intersection suggestionsUris, occurencesUris
 
 getOccurences = (authorWorksData)->
   return (suggestion)->
     { labels, langs } = authorWorksData
     hasWorksLabelsOccurrence suggestion.uri, labels, langs
-    .then (worksLabelsOccurrence)->
-      if worksLabelsOccurrence then suggestion else false
+    .then (occurences)->
+      if _.isEmpty(_.flattenDeep(occurences)) then return []
+      return
+        uri: suggestion.uri
+        occurences: occurences
 
-create = (authorWorksData, relationScore, suggestionsWithOccurences)->
+create = (authorWorksData, relationScore, suggestionsOccurences)->
   return (suggestion)->
     { authorId } = authorWorksData
-    suggestionUri = suggestion.uri
-    _.type suggestionUri, 'string'
-    return {
+    suggestionOccurences = _.filter(suggestionsOccurences, {'uri': suggestion.uri})
+    unless _.isEmpty suggestionOccurences
+      occurences = suggestionOccurences[0]['occurences']
+
+    return
       type: 'deduplicate'
       suspectUri: prefixifyInv(authorId)
       suggestionUri: suggestion.uri
       lexicalScore: suggestion._score
       relationScore: relationScore
-      hasEncyclopediaOccurence: _.some(suggestionsWithOccurences)
-    }
-
-getAuthorWorksData = (authorId)->
-  entities_.byClaim 'wdt:P50', "inv:#{authorId}", true, true
-  .then (works)->
-    # works = [
-    #   { labels: { fr: 'Matiere et Memoire'} },
-    #   { labels: { en: 'foo' } }
-    # ]
-    base = { authorId, labels: [], langs: [] }
-    worksData = works.reduce aggregateWorksData, base
-    worksData.langs = _.uniq worksData.langs
-    return worksData
-
-aggregateWorksData = (worksData, work)->
-  for lang, label of work.labels
-    worksData.labels.push label
-    worksData.langs.push lang
-  return worksData
+      hasEncyclopediaOccurence: occurences or {}

@@ -9,20 +9,24 @@ should = require 'should'
 
 # Tests dependency: having a populated ElasticSearch wikidata index
 describe 'tasks:has-encyclopedia-occurence', ->
-  it 'should return false when author has no work', (done)->
+  it 'should return an empty object when author has no occurences', (done)->
     humanLabel = 'Stanislas Lem' # has no homonyms
+    workLabel = 'fakeworklabel'
     createHuman { labels: { en: humanLabel } }
-    .then (human)-> checkEntities human.uri
-    .then (tasks)->
-      tasks.length.should.aboveOrEqual 1
-      Q535Task = tasks.find (task)-> task.suggestionUri.match /wd:/
-      Q535Task.hasEncyclopediaOccurence.should.be.false()
-      done()
+    .then (human)->
+      createWorkWithAuthor human, workLabel
+      .then (work)-> checkEntities human.uri
+      .then (tasks)->
+        tasks.length.should.aboveOrEqual 1
+        task = tasks.find (task)-> task.suggestionUri
+        task.hasEncyclopediaOccurence.should.an.Object()
+        task.hasEncyclopediaOccurence.should.be.empty()
+        done()
     .catch undesiredErr(done)
 
     return
 
-  it 'should return true when author has work sourced in their wikipedia page', (done)->
+  it 'should return an object of occurences uris when author has work sourced in their wikipedia page', (done)->
     humanLabel = 'Stanislas Lem' # has no homonyms
     workLabel = 'Solaris' # too short label to be automerged
     createHuman { labels: { en: humanLabel } }
@@ -31,8 +35,10 @@ describe 'tasks:has-encyclopedia-occurence', ->
       .then (work)-> checkEntities human.uri
       .then (tasks)->
         tasks.length.should.aboveOrEqual 1
-        Q535Task = tasks.find (task)-> task.suggestionUri.match /wd:/
-        Q535Task.hasEncyclopediaOccurence.should.be.true()
+        task = tasks.find (task)-> task.suggestionUri.match /wd:/
+        task.hasEncyclopediaOccurence[0].uri.should.exist
+        task.hasEncyclopediaOccurence[0].url.should.exist
+        task.hasEncyclopediaOccurence[0].patternMatch.should.exist
         done()
     .catch undesiredErr(done)
 
@@ -64,8 +70,8 @@ describe 'tasks:has-encyclopedia-occurence', ->
       .then (work)-> checkEntities human.uri
       .then (tasks)->
         tasks.length.should.aboveOrEqual 1
-        Q535Task = tasks.find (task)-> task.suggestionUri.match /wd:/
-        Q535Task.hasEncyclopediaOccurence.should.be.true()
+        task = tasks.find (task)-> task.suggestionUri.match /wd:/
+        task.hasEncyclopediaOccurence.should.an.Object()
         done()
     .catch undesiredErr(done)
 
@@ -80,8 +86,8 @@ describe 'tasks:has-encyclopedia-occurence', ->
       .then (work)-> checkEntities human.uri
       .then (tasks)->
         tasks.length.should.aboveOrEqual 1
-        Q535Task = tasks.find (task)-> task.suggestionUri.match /wd:/
-        Q535Task.hasEncyclopediaOccurence.should.be.true()
+        task = tasks.find (task)-> task.suggestionUri.match /wd:/
+        task.hasEncyclopediaOccurence.should.an.Object()
         done()
     .catch undesiredErr(done)
 

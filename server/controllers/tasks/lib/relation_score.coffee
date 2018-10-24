@@ -4,8 +4,8 @@ _ = __.require 'builders', 'utils'
 tasks_ = require './tasks'
 # relationScore (between 0 & 1) express the number of tasks for the same suspect
 
-calculateRelationScore = (tasks)->
-  score = 1 / tasks.length
+calculateRelationScore = (list)->
+  score = 1 / list.length
   _.round score, 2
 
 updateRelationScore = (task)->

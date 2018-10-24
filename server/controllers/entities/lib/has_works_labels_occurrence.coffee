@@ -23,7 +23,7 @@ module.exports = (wdAuthorUri, worksLabels, worksLabelsLangs)->
   # Filter-out labels that are too short, as it could generate false positives
   worksLabels = worksLabels.filter (label)-> label.length > 5
 
-  if worksLabels.length is 0 then return promises_.resolve false
+  if worksLabels.length is 0 then return promises_.resolve []
 
   # get Wikipedia article title from URI
   getEntityByUri wdAuthorUri
@@ -34,7 +34,7 @@ module.exports = (wdAuthorUri, worksLabels, worksLabelsLangs)->
       hasWikipediaOccurrence authorEntity, worksLabels, worksLabelsLangs
       hasBnfOccurrence authorEntity, worksLabels
     ]
-  .spread (wpBool, bnfBool)-> wpBool or bnfBool
+  .then (res)-> _.compact(_.flatten(res))
   .catch (err)->
     _.error err, 'has works labels occurrence err'
     # Default to false if an error happened
@@ -45,14 +45,12 @@ hasWikipediaOccurrence = (authorEntity, worksLabels, worksLabelsLangs)->
   .then (articles)->
     # Match any of the works labels
     worksLabelsPattern = new RegExp(worksLabels.join('|'), 'gi')
-    for article in articles
-      if article.extract.match(worksLabelsPattern)? then return true
-    return false
+    articles.map createOccurenceDocs worksLabelsPattern, authorEntity
 
 getMostRelevantWikipediaArticles = (authorEntity, worksLabelsLangs)->
   { sitelinks, originalLang } = authorEntity
 
-  return _.uniq worksLabelsLangs.concat([ originalLang, 'en' ])
+  return _.uniq worksLabelsLangs.concat [ originalLang, 'en' ]
   .map (lang)->
     title = sitelinks["#{lang}wiki"]
     if title? then return { lang, title }
@@ -69,4 +67,13 @@ hasBnfOccurrence = (authorEntity, worksLabels)->
   # is wrong and we can't know which
   if bnfIds?.length isnt 1 then return false
   getBnfAuthorWorksTitles bnfIds[0]
-  .then (titles)-> _.haveAMatch titles, worksLabels
+  .then createOccurencDocs worksLabelsPattern, authorEntity
+
+createOccurenceDocs = (worksLabelsPattern, authorEntity)->
+  return (article)->
+    unless article.extract.match(worksLabelsPattern)?
+      return []
+    return
+      uri: authorEntity.uri
+      url: article.url
+      patternMatch: worksLabelsPattern
