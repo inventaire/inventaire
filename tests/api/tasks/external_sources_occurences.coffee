@@ -8,7 +8,7 @@ should = require 'should'
 { getByUris } = require '../utils/entities'
 
 # Tests dependency: having a populated ElasticSearch wikidata index
-describe 'tasks:has-encyclopedia-occurence', ->
+describe 'tasks:externalSourcesOccurences', ->
   it 'should return an empty object when author has no occurences', (done)->
     humanLabel = 'Stanislas Lem' # has no homonyms
     workLabel = 'fakeworklabel'
@@ -19,7 +19,7 @@ describe 'tasks:has-encyclopedia-occurence', ->
       .then (tasks)->
         tasks.length.should.aboveOrEqual 1
         task = tasks.find (task)-> task.suggestionUri
-        task.hasEncyclopediaOccurence.should.be.empty()
+        task.externalSourcesOccurences.should.be.empty()
         done()
     .catch undesiredErr(done)
 
@@ -35,8 +35,8 @@ describe 'tasks:has-encyclopedia-occurence', ->
       .then (tasks)->
         tasks.length.should.aboveOrEqual 1
         task = tasks.find (task)-> task.suggestionUri.match /wd:/
-        task.hasEncyclopediaOccurence.should.an.Array()
-        firstOccurence = task.hasEncyclopediaOccurence[0]
+        task.externalSourcesOccurences.should.an.Array()
+        firstOccurence = task.externalSourcesOccurences[0]
         firstOccurence.uri.should.be.ok()
         firstOccurence.url.should.be.ok()
         firstOccurence.matchedTitles.should.containEql workLabel

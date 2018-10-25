@@ -80,4 +80,4 @@ create = (authorWorksData, relationScore, suggestionsOccurences)->
       suggestionUri: suggestion.uri
       lexicalScore: suggestion._score
       relationScore: relationScore
-      hasEncyclopediaOccurence: occurences or []
+      externalSourcesOccurences: occurences or []

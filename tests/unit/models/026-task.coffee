@@ -11,7 +11,7 @@ validDoc = ->
   state: 'requested'
   lexicalScore: 4.2
   relationScore: 1
-  hasEncyclopediaOccurence: true
+  externalSourcesOccurences: true
 
 describe 'task model', ->
   describe 'create', ->
@@ -65,12 +65,12 @@ describe 'task model', ->
       taskDoc.should.throw()
       done()
 
-    it 'should throw if no hasEncyclopediaOccurence', (done)->
+    it 'should throw if no externalSourcesOccurences', (done)->
       invalidDoc = validDoc()
-      delete invalidDoc.hasEncyclopediaOccurence
+      delete invalidDoc.externalSourcesOccurences
       taskDoc = -> Task.create invalidDoc
       try taskDoc()
-      catch err then err.message.should.startWith 'invalid hasEncyclopediaOccurence'
+      catch err then err.message.should.startWith 'invalid externalSourcesOccurences'
       taskDoc.should.throw()
       done()
 
