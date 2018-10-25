@@ -19,7 +19,6 @@ describe 'tasks:has-encyclopedia-occurence', ->
       .then (tasks)->
         tasks.length.should.aboveOrEqual 1
         task = tasks.find (task)-> task.suggestionUri
-        task.hasEncyclopediaOccurence.should.an.Object()
         task.hasEncyclopediaOccurence.should.be.empty()
         done()
     .catch undesiredErr(done)
@@ -36,9 +35,11 @@ describe 'tasks:has-encyclopedia-occurence', ->
       .then (tasks)->
         tasks.length.should.aboveOrEqual 1
         task = tasks.find (task)-> task.suggestionUri.match /wd:/
-        task.hasEncyclopediaOccurence[0].uri.should.exist
-        task.hasEncyclopediaOccurence[0].url.should.exist
-        task.hasEncyclopediaOccurence[0].patternMatch.should.exist
+        task.hasEncyclopediaOccurence.should.an.Array()
+        firstOccurence = task.hasEncyclopediaOccurence[0]
+        firstOccurence.uri.should.be.ok()
+        firstOccurence.url.should.be.ok()
+        firstOccurence.matchedTitles.should.containEql workLabel
         done()
     .catch undesiredErr(done)
 
@@ -70,8 +71,6 @@ describe 'tasks:has-encyclopedia-occurence', ->
       .then (work)-> checkEntities human.uri
       .then (tasks)->
         tasks.length.should.aboveOrEqual 1
-        task = tasks.find (task)-> task.suggestionUri.match /wd:/
-        task.hasEncyclopediaOccurence.should.an.Object()
         done()
     .catch undesiredErr(done)
 
@@ -86,8 +85,6 @@ describe 'tasks:has-encyclopedia-occurence', ->
       .then (work)-> checkEntities human.uri
       .then (tasks)->
         tasks.length.should.aboveOrEqual 1
-        task = tasks.find (task)-> task.suggestionUri.match /wd:/
-        task.hasEncyclopediaOccurence.should.an.Object()
         done()
     .catch undesiredErr(done)
 

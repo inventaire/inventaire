@@ -45,12 +45,12 @@ hasWikipediaOccurrence = (authorEntity, worksLabels, worksLabelsLangs)->
   .then (articles)->
     # Match any of the works labels
     worksLabelsPattern = new RegExp(worksLabels.join('|'), 'gi')
-    articles.map createOccurenceDocs worksLabelsPattern, authorEntity
+    articles.map createOccurences(worksLabelsPattern, authorEntity)
 
 getMostRelevantWikipediaArticles = (authorEntity, worksLabelsLangs)->
   { sitelinks, originalLang } = authorEntity
 
-  return _.uniq worksLabelsLangs.concat [ originalLang, 'en' ]
+  return _.uniq worksLabelsLangs.concat([ originalLang, 'en' ])
   .map (lang)->
     title = sitelinks["#{lang}wiki"]
     if title? then return { lang, title }
@@ -67,13 +67,13 @@ hasBnfOccurrence = (authorEntity, worksLabels)->
   # is wrong and we can't know which
   if bnfIds?.length isnt 1 then return false
   getBnfAuthorWorksTitles bnfIds[0]
-  .then createOccurencDocs worksLabelsPattern, authorEntity
+  .then createOccurences(worksLabelsPattern, authorEntity)
 
-createOccurenceDocs = (worksLabelsPattern, authorEntity)->
+createOccurences = (worksLabelsPattern, authorEntity)->
   return (article)->
-    unless article.extract.match(worksLabelsPattern)?
-      return []
+    matchedTitles = _.uniq article.extract.match(worksLabelsPattern)
+    unless matchedTitles then return {}
     return
       uri: authorEntity.uri
       url: article.url
-      patternMatch: worksLabelsPattern
+      matchedTitles: matchedTitles

@@ -16,11 +16,11 @@ module.exports = (entity)->
     getAuthorWorksData entity._id
   ]
   .spread (suggestions, authorWorksData)->
-    unless _.some suggestions then return []
+    unless suggestions.length > 0 then return []
     Promise.all suggestions.map getOccurences authorWorksData
     .then turnSuggestionIntoRedirection(suggestions, authorWorksData)
     .then (occurences)->
-      Promise.all filterSuggestions occurences, suggestions
+      Promise.all filterSuggestions(occurences, suggestions)
       .then createTasksDocs(authorWorksData, occurences)
 
 turnSuggestionIntoRedirection = (suggestions, authorWorksData)->
@@ -68,16 +68,16 @@ getOccurences = (authorWorksData)->
         occurences: occurences
 
 create = (authorWorksData, relationScore, suggestionsOccurences)->
+  occurrencesBySuggestionUri = _.indexBy suggestionsOccurences, 'uri'
   return (suggestion)->
     { authorId } = authorWorksData
-    suggestionOccurences = _.filter(suggestionsOccurences, {'uri': suggestion.uri})
-    unless _.isEmpty suggestionOccurences
-      occurences = suggestionOccurences[0]['occurences']
-
+    occurencesObj = occurrencesBySuggestionUri[suggestion.uri]
+    unless _.isEmpty occurencesObj
+      occurences = occurencesObj['occurences']
     return
       type: 'deduplicate'
       suspectUri: prefixifyInv(authorId)
       suggestionUri: suggestion.uri
       lexicalScore: suggestion._score
       relationScore: relationScore
-      hasEncyclopediaOccurence: occurences or {}
+      hasEncyclopediaOccurence: occurences or []
