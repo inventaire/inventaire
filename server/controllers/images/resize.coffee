@@ -64,30 +64,31 @@ getResizeImage = (req, res, url, dimensions)->
   reqStream = request url
 
   reqStream
-  .on 'response', (response)->
-    { statusCode, statusMessage } = response
-    { 'content-type':contentType, 'content-length':contentLength } = response.headers
-    if statusCode >= 400
-      errMessage = "Remote response: #{statusCode} #{statusMessage}"
-
-    else if not validImageContentType.test(contentType)
-      errMessage = "invalid image content-type: #{contentType}"
-
-    else if contentLength > 10 * oneMB
-      errMessage = "image is too large: #{contentLength}"
-
-    if errMessage?
-      # Keep the internal service host private
-      context = url.replace /(\d{1,3}\.){3}(\d{1,3}):\d{4}/, 'internal-host'
-      err = error_.new errMessage, 400, context
-      err.privateContext = url
-      @emit 'error', err
-    else
-      res.header 'Content-Type', 'image/jpeg'
-      res.header 'Cache-Control', "public, max-age=#{oneYear}"
-      resizeFromStream reqStream, width, height, req, res
-
+  .on 'response', onResponse(reqStream, width, height, req, res)
   .on 'error', error_.Handler(req, res)
+
+onResponse = (reqStream, width, height, req, res)-> (response)->
+  { statusCode, statusMessage } = response
+  { 'content-type':contentType, 'content-length':contentLength } = response.headers
+  if statusCode >= 400
+    errMessage = "Remote response: #{statusCode} #{statusMessage}"
+
+  else if not validImageContentType.test(contentType)
+    errMessage = "invalid image content-type: #{contentType}"
+
+  else if contentLength > 10 * oneMB
+    errMessage = "image is too large: #{contentLength}"
+
+  if errMessage?
+    # Keep the internal service host private
+    context = url.replace /(\d{1,3}\.){3}(\d{1,3}):\d{4}/, 'internal-host'
+    err = error_.new errMessage, 400, context
+    err.privateContext = url
+    @emit 'error', err
+  else
+    res.header 'Content-Type', 'image/jpeg'
+    res.header 'Cache-Control', "public, max-age=#{oneYear}"
+    resizeFromStream reqStream, width, height, req, res
 
 # Accepting image/*
 # Accepting application/octet-stream (known case: media storages 'dumb' content type)
