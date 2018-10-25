@@ -3,10 +3,10 @@ __ = CONFIG.universalPath
 _ = __.require('builders', 'utils')
 { Promise } = __.require 'lib', 'promises'
 fs_ = __.require 'lib', 'fs'
-urlBase = CONFIG.images.urlBase()
+{ local: localStorage } = CONFIG.mediaStorage
+urlBase = localStorage.urlBase()
+storageFolder = localStorage.folder()
 
-base = '/public/uploads/'
-folder = "client#{base}"
 fileUrl = (filename)-> urlBase + filename
 filePath = (filename)-> folder + filename
 tmpFolderPath = (filename)-> '/tmp/' + filename

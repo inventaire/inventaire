@@ -1,4 +1,4 @@
-# retrieves pictures stocked on the server itself under the 'local' objectStorage mode
+# retrieves pictures stocked on the server itself under the 'local' mediaStorage mode
 # to be used in development only
 
 CONFIG = require 'config'
@@ -7,12 +7,13 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 images_ = __.require 'lib', 'images'
 promises_ = __.require 'lib', 'promises'
-base = __.path 'client', 'public/uploads'
 regex_ = __.require 'models', 'validations/regex'
-urlBase = CONFIG.images.urlBase()
+{ local: localStorage } = CONFIG.mediaStorage
+urlBase = localStorage.urlBase()
+storageFolder = localStorage.folder()
 
-# images urls looks like /img/#{hash}.#{extension}"
-# expect the pictures' files to be in #{base}
+# images urls look like /img/#{hash}.#{extension}"
+# expect the pictures' files to be in #{storageFolder}
 
 exports.get = (req, res, next)->
   filename = parseFilename req
@@ -24,10 +25,17 @@ exports.get = (req, res, next)->
   unless regex_.Sha1.test hash
     return error_.bundle req, res, 'invalid image hash', 400
 
-  unless extension is 'jpg'
-    return error_.bundle req, res, 'accepts jpg extension only', 400
+  # unless extension is 'jpg'
+    # return error_.bundle req, res, 'accepts jpg extension only', 400
 
-  res.sendFile "#{base}/#{filename}"
+  filepath = "#{storageFolder}/#{filename}"
+
+  options =
+    headers:
+      'Content-Type': 'image/jpeg'
+
+  res.sendFile filepath, options, (err)->
+    if err? then _.error err, "failed to send #{filepath}"
 
 parseFilename = (req)->
   { pathname } = req._parsedUrl

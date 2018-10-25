@@ -5,7 +5,7 @@ gm = require 'gm'
 { Promise } = __.require 'lib', 'promises'
 crypto_ = __.require 'lib', 'crypto'
 { readFile } =  __.require 'lib', 'fs'
-{ maxSize, maxWeight } = CONFIG.images
+{ maxSize, maxWeight } = CONFIG.mediaStorage.images
 error_ = __.require 'lib', 'error/error'
 
 shrink = (data, width, height)->

@@ -121,22 +121,30 @@ module.exports = config =
 
   # By default, media are saved locally instead of using a remove
   # object storage service such as Swift
-  objectStorage: 'local'
-  # Swift parameters are required only when objectStorage is set to 'swift'
-  swift:
-    username: 'customizedInLocalConfig'
-    password: 'customizedInLocalConfig'
-    authUrl: 'https://openstackEndpointToCustomize/v2.0'
-    publicURL: 'https://swiftPublicURL/'
-    tenantName: '12345678'
-    region: 'SBG-1'
-    container: 'customizedInLocalConfig'
-  images:
-    urlBase: -> '/local/'
-    localEndpoint: -> config.fullHost() + @urlBase()
-    maxSize: 1600
-    # 5MB
-    maxWeight: 5 * 1024 ** 2
+  mediaStorage:
+    images:
+      maxSize: 1600
+      # 5MB
+      maxWeight: 5 * 1024 ** 2
+      internalEndpoint: ->
+        { mode } = config.mediaStorage
+        return config.mediaStorage[mode].internalEndpoint()
+    mode: 'local'
+    # Swift parameters are required only when mediaStorage mode is set to 'swift'
+    swift:
+      username: 'customizedInLocalConfig'
+      password: 'customizedInLocalConfig'
+      authUrl: 'https://openstackEndpointToCustomize/v2.0'
+      publicURL: 'https://swiftPublicURL/'
+      tenantName: '12345678'
+      region: 'SBG-1'
+      container: 'customizedInLocalConfig'
+      internalEndpoint: -> @publicURL + '/' + @container + '/'
+    local:
+      folder: -> config.universalPath.path 'root', 'local_storage'
+      route: 'local'
+      urlBase: -> "/#{@route}/"
+      internalEndpoint: -> config.fullHost() + @urlBase()
 
   # Analytics service
   piwik:

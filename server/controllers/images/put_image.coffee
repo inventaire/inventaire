@@ -3,8 +3,8 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 images_ = __.require 'lib', 'images'
 # 'swift' or 'local'
-{ objectStorage:clientName } = CONFIG
-client = require "./lib/#{clientName}_client"
+{ mode } = CONFIG.mediaStorage
+client = require "./lib/#{mode}_client"
 
 module.exports =
   putImage: (fileData)->
