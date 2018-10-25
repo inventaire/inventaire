@@ -46,8 +46,8 @@ module.exports = (req, res)->
   # Get data from concerned entities
   getEntitiesByUris [ fromUri, toUri ], true
   .then merge(reqUserId, toPrefix, fromUri, toUri)
+  .tap -> radio.emit 'entity:merge', fromUri, toUri
   .then responses_.Ok(res)
-  .then -> radio.emit 'entity:merge', fromUri, toUri
   .catch error_.Handler(req, res)
 
 merge = (reqUserId, toPrefix, fromUri, toUri)-> (res)->

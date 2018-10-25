@@ -5,7 +5,7 @@ should = require 'should'
 { Promise } = __.require 'lib', 'promises'
 { authReq, getUserId, undesiredErr } = require '../utils/utils'
 { getByIds } = require '../utils/items'
-{ getByUris, merge, updateLabel, updateClaim } = require '../utils/entities'
+{ getByUris, merge, revertMerge, updateLabel, updateClaim } = require '../utils/entities'
 { ensureEditionExists } = require '../fixtures/entities'
 { createWork, createHuman, createSerie, addAuthor, addSerie, createEditionFromWorks, createWorkWithAuthor, humanName } = require '../fixtures/entities'
 { updateClaim } = require '../utils/entities'
@@ -218,6 +218,34 @@ describe 'items:snapshot', ->
         updatedAuthors = authorEntityB.labels.en
         updatedItem.snapshot['entity:authors'].should.equal updatedAuthors
         done()
+    .catch undesiredErr(done)
+
+    return
+
+  it 'should be updated when its local author entity is merged and reverted', (done)->
+    Promise.all [
+      getUserId()
+      createHuman()
+      createHuman()
+    ]
+    .spread (userId, authorEntityA, authorEntityB)->
+      createWorkWithAuthor authorEntityA
+      .then (workEntity)->
+        authReq 'post', '/api/items', { entity: workEntity.uri, lang: 'en' }
+      .delay 200
+      .tap -> merge authorEntityA.uri, authorEntityB.uri
+      .delay 200
+      .then getItem
+      .then (updatedItem)->
+        updatedAuthors = authorEntityB.labels.en
+        updatedItem.snapshot['entity:authors'].should.equal updatedAuthors
+        revertMerge authorEntityA.uri
+        .delay 200
+        .then -> getItem updatedItem
+        .then (reupdatedItem)->
+          oldAuthors = authorEntityA.labels.en
+          reupdatedItem.snapshot['entity:authors'].should.equal oldAuthors
+          done()
     .catch undesiredErr(done)
 
     return

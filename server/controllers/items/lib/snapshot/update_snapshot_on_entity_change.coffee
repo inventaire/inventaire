@@ -23,8 +23,7 @@ module.exports = ->
   radio.on 'entity:update:label', refreshSnapshot.fromDoc
   radio.on 'entity:update:claim', refreshSnapshot.fromDoc
   radio.on 'entity:merge', updateSnapshotOnEntityMerge
-  # TODO: implement
-  # radio.on 'entity:revert:merge', updateSnapshotOnRevertEntityMerge
+  radio.on 'entity:revert:merge', refreshSnapshot.fromUri
 
 updateSnapshotOnEntityMerge = (fromUri, toUri)->
   # Using the toUri as its the URI the items are using now

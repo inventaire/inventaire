@@ -3,6 +3,7 @@ _ = __.require 'builders', 'utils'
 responses_ = __.require 'lib', 'responses'
 error_ = __.require 'lib', 'error/error'
 revertMerge = require './lib/revert_merge'
+radio = __.require 'lib', 'radio'
 
 module.exports = (req, res)->
   { body } = req
@@ -18,5 +19,6 @@ module.exports = (req, res)->
     return error_.bundleInvalid req, res, 'from'
 
   revertMerge reqUserId, fromId
+  .tap -> radio.emit 'entity:revert:merge', fromUri
   .then responses_.Send(res)
   .catch error_.Handler(req, res)
