@@ -12,8 +12,8 @@ images_ = __.require 'lib', 'images'
 host = CONFIG.fullPublicHost()
 
 module.exports = (req, res, next)->
-  # Set ipfs=true to get a IPFS hash instead of a local URL
-  ipfs = dataseedEnabled and _.parseBooleanString(req.query.ipfs)
+  # Set hash=true to get an image hash instead of a local URL
+  hash = dataseedEnabled and _.parseBooleanString(req.query.hash)
 
   parseForm req
   .then (formData)->
@@ -27,14 +27,14 @@ module.exports = (req, res, next)->
       file.id = key
 
     return Promise.all _.values(files).map(putImage)
-  .map convertUrl(ipfs)
+  .map convertUrl(hash)
   .then indexCollection
   .then _.Log('upload post res')
   .then responses_.Send(res)
   .catch error_.Handler(req, res)
 
-convertUrl = (ipfs)-> (urlData)->
-  unless ipfs then return urlData
+convertUrl = (hash)-> (urlData)->
+  unless hash then return urlData
 
   getImageByUrl "#{host}#{urlData.url}"
   .get 'url'

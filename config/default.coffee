@@ -148,11 +148,6 @@ module.exports = config =
   dataseed:
     enabled: false
     host: 'http://localhost:9898'
-  ipfs:
-    # activate if you have a local instance running
-    enabled: false
-    localGateway: 'http://localhost:8080'
-    publicGateway: 'https://ipfs.io'
   searchTimeout: 10000
 
   gitlabLogging:
@@ -166,8 +161,6 @@ module.exports = config =
   # Config passed to the client
   client:
     piwik: 'https://your.piwik.instance'
-    ipfs:
-      gateway: 'https://ipfs.io'
 
   feed:
     limitLength: 50

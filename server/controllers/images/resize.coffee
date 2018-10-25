@@ -10,7 +10,6 @@ responses_ = __.require 'lib', 'responses'
 qs = require 'querystring'
 { oneYear } =  __.require 'lib', 'times'
 { offline, imageRedirection } = CONFIG
-{ localGateway, publicGateway } = CONFIG.ipfs
 oneMB = 1024 ** 2
 
 # resized images urls looks like
@@ -38,7 +37,7 @@ exports.get = (req, res, next)->
     rest = dimensions
     dimensions = null
 
-  if /^[0-9a-f]{40}.jpg$/.test rest
+  if /^[0-9a-f]{40}(.jpg)?$/.test rest
     url = "#{endpoint}#{rest}"
 
   else if /^[0-9]+$/.test rest
@@ -52,12 +51,6 @@ exports.get = (req, res, next)->
     # Here, we just check that we do get the same hash
     unless urlCode is rest
       return error_.bundle req, res, 'hash code and href dont match', 400
-
-    # Optimize where to fetch IPFS resources
-    if url.startsWith publicGateway
-      # The local gateway might already have the requested image in cache
-      # and should be way closer on the network
-      url = url.replace publicGateway, localGateway
 
   else
     return error_.bundle req, res, 'invalid image path', 400, rest

@@ -55,8 +55,8 @@ module.exports =
     validate: _.isPositiveIntegerString
     uniqueValue: true
 
-  ipfsPath:
-    datatype: 'ipfs-path'
+  imageHash:
+    datatype: 'image-hash'
     type: 'string'
-    validate: _.isIpfsPath
+    validate: _.isImageHash
     uniqueValue: true

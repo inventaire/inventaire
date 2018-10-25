@@ -57,7 +57,7 @@ buildOperation = (params)->
     snapshot['entity:series'] = seriesNames
     setOrdinal snapshot, works
 
-  # Filtering out Wikimedia File names, keeping only IPFS hashes or URLs
+  # Filtering out Wikimedia File names, keeping only images hashes or URLs
   if snapshotValidations['entity:image'](image)
     snapshot['entity:image'] = image
 

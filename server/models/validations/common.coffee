@@ -35,7 +35,7 @@ validations.boundedString = boundedString = (str, minLength, maxLength)->
 validations.BoundedString = (minLength, maxLength)-> (str)->
   boundedString str, minLength, maxLength
 
-validations.imgUrl = (url)-> validations.localImg(url) or _.isUrl(url) or _.isIpfsPath(url)
+validations.imgUrl = (url)-> validations.localImg(url) or _.isUrl(url) or _.isImageHash(url)
 
 validations.valid = (attribute, value, option)->
   test = @[attribute]
