@@ -4,18 +4,15 @@ _ = __.require('builders', 'utils')
 { Promise } = __.require 'lib', 'promises'
 fs_ = __.require 'lib', 'fs'
 { local: localStorage } = CONFIG.mediaStorage
-urlBase = localStorage.urlBase()
 storageFolder = localStorage.folder()
 
-fileUrl = (filename)-> urlBase + filename
-filePath = (filename)-> folder + filename
+filePath = (container, filename)-> "#{storageFolder}/#{container}/#{filename}"
 tmpFolderPath = (filename)-> '/tmp/' + filename
 
 module.exports =
-  putImage: (path, filename, type = 'image/jpeg')->
-    url = fileUrl filename
-    fs_.mv path, filePath(filename)
-    .then -> url
+  putImage: (container, path, filename)->
+    fs_.mv path, filePath(container, filename)
+    .then -> "/img/#{container}/#{filename}"
 
   deleteImages: (urls, headers)->
     promises = urls.map (url)->

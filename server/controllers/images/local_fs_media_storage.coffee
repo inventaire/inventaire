@@ -9,26 +9,23 @@ images_ = __.require 'lib', 'images'
 promises_ = __.require 'lib', 'promises'
 regex_ = __.require 'models', 'validations/regex'
 { local: localStorage } = CONFIG.mediaStorage
-urlBase = localStorage.urlBase()
 storageFolder = localStorage.folder()
 
 # images urls look like /img/#{hash}.#{extension}"
 # expect the pictures' files to be in #{storageFolder}
 
 exports.get = (req, res, next)->
-  filename = parseFilename req
+  { pathname } = req._parsedUrl
+  [ container, filename ] = pathname.split('/').slice(2)
   [ hash, extension, others... ] = filename.split '.'
 
   if others.length > 0
-    return error_.bundle req, res, 'invalid image path', 400
+    return error_.bundle req, res, 'invalid image path', 400, { filename }
 
   unless regex_.Sha1.test hash
-    return error_.bundle req, res, 'invalid image hash', 400
+    return error_.bundle req, res, 'invalid image hash', 400, { filename, hash, extension }
 
-  # unless extension is 'jpg'
-    # return error_.bundle req, res, 'accepts jpg extension only', 400
-
-  filepath = "#{storageFolder}/#{filename}"
+  filepath = "#{storageFolder}/#{container}/#{filename}"
 
   options =
     headers:
@@ -36,7 +33,3 @@ exports.get = (req, res, next)->
 
   res.sendFile filepath, options, (err)->
     if err? then _.error err, "failed to send #{filepath}"
-
-parseFilename = (req)->
-  { pathname } = req._parsedUrl
-  filename = pathname.replace urlBase, ''

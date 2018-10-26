@@ -21,18 +21,29 @@ shrink = (data, width, height)->
   # converting to progressive jpeg
   .interlace 'Line'
 
+removeExif = (data)->
+  gm data
+  .noProfile()
+
 module.exports =
-  getHashFilename: (path, extension = 'jpg')->
+  getHashFilename: (path, extension)->
     readFile path
     .then crypto_.sha1
-    .then (hash)-> "#{hash}.#{extension}"
+    .then (hash)->
+      if extension then "#{hash}.#{extension}"
+      else hash
 
-  shrink: (originalPath, resizedPath, width = maxSize, height = maxSize)->
-    new Promise (resolve, reject)->
-      shrink originalPath, width, height
-      .write resizedPath, ReturnNewPath(resizedPath, resolve, reject)
+  shrink: (path, width = maxSize, height = maxSize)->
+    return new Promise (resolve, reject)->
+      shrink path, width, height
+      .write path, returnPath(path, resolve, reject)
 
   shrinkStream: shrink
+
+  removeExif: (path)->
+    return new Promise (resolve, reject)->
+      removeExif path
+      .write path, returnPath(path, resolve, reject)
 
   applyLimits: (width, height)->
     return [ applyLimit(width), applyLimit(height) ]
@@ -42,7 +53,6 @@ applyLimit = (dimension = maxSize)->
   if dimension > maxSize then maxSize
   else dimension
 
-ReturnNewPath = (newPath, resolve, reject)->
-  return cb = (err)->
-    if err? then reject err
-    else resolve newPath
+returnPath = (newPath, resolve, reject)-> (err)->
+  if err? then reject err
+  else resolve newPath

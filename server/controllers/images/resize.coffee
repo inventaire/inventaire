@@ -2,13 +2,14 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
-endpoint = CONFIG.mediaStorage.images.internalEndpoint()
+mediaStorageEndpoint = CONFIG.mediaStorage.images.internalEndpoint()
 responses_ = __.require 'lib', 'responses'
 getResizedImage = require './lib/get_resized_image'
 { offline, imageRedirection } = CONFIG
+containersList = Object.keys __.require('controllers', 'images/lib/containers')
 
 # resized images urls looks like
-# /img/#{w}x#{h}/(#{hash}.jpg|#{external url hashCode?href=escaped url})"
+# /img/#{container}/#{w}x#{h}/(#{hash}(.jpg)?|#{external url hashCode?href=escaped url})"
 
 exports.get = (req, res, next)->
   # can be useful in development
@@ -23,7 +24,10 @@ exports.get = (req, res, next)->
     res.redirect imageRedirection + originalUrl
     return
 
-  [ dimensions, rest ] = parseReq req
+  [ container, dimensions, rest ] = parseReq req
+
+  unless container in containersList
+    return error_.bundleInvalid req, res, 'container', container
 
   # if no dimensions are passed, should return the maximum dimension
   unless /\d{2,4}x\d{2,4}/.test dimensions
@@ -31,7 +35,7 @@ exports.get = (req, res, next)->
     dimensions = null
 
   if /^[0-9a-f]{40}(.jpg)?$/.test rest
-    url = "#{endpoint}#{rest}"
+    url = "#{mediaStorageEndpoint}#{container}/#{rest}"
 
   else if /^[0-9]+$/.test rest
     url = req.query.href

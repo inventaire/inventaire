@@ -138,13 +138,11 @@ module.exports = config =
       publicURL: 'https://swiftPublicURL/'
       tenantName: '12345678'
       region: 'SBG-1'
-      container: 'customizedInLocalConfig'
-      internalEndpoint: -> @publicURL + '/' + @container + '/'
+      internalEndpoint: -> @publicURL + '/'
     local:
-      folder: -> config.universalPath.path 'root', 'local_storage'
+      folder: -> config.universalPath.path 'root', 'storage'
       route: 'local'
-      urlBase: -> "/#{@route}/"
-      internalEndpoint: -> config.fullHost() + @urlBase()
+      internalEndpoint: -> "#{config.fullHost()}/#{@route}/"
 
   # Analytics service
   piwik:

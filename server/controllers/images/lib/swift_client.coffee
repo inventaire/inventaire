@@ -6,23 +6,23 @@ fs_ = __.require 'lib', 'fs'
 request = require 'request'
 { Promise } = __.require 'lib', 'promises'
 getToken = require './get_swift_token'
-{ publicURL, container } = CONFIG.swift
+{ publicURL } = CONFIG.swift
 
-absoluteUrl = (filename)-> "#{publicURL}/#{container}/#{filename}"
-relativeUrl = (filename)-> "/img/#{filename}"
+absoluteUrl = (container, filename)-> "#{publicURL}/#{container}/#{filename}"
+relativeUrl = (filename)-> "/img/#{container}/#{filename}"
 
-getParams = (filename, body, type = 'application/json')->
+getParams = (container, filename, body, type = 'application/json')->
   getToken()
   .then (token)->
-    url: absoluteUrl filename
+    url: absoluteUrl container, filename
     headers:
       'Accept': 'application/json'
       'Content-Type': type
       'X-Auth-Token': token
     body: body
 
-action = (verb)-> (filename, body, type)->
-  getParams filename, body, type
+action = (verb)-> (container, filename, body, type)->
+  getParams container, filename, body, type
   .then _.Log('params')
   .then breq[verb]
   .then (res)-> res.body or { ok: true }
@@ -36,9 +36,9 @@ module.exports =
   delete: action 'delete'
 
   # inspired by https://github.com/Automattic/knox/blob/master/lib/client.js
-  putImage: (path, filename)->
+  putImage: (container, path, filename)->
     Promise.all [
-        getParams filename
+        getParams container, filename
         fs_.contentHeaders path
       ]
     .spread (params, additionalHeaders)->
@@ -48,4 +48,4 @@ module.exports =
         fs_.createReadStream path
         .pipe request({ method: 'PUT', url, headers })
         .on 'error', reject
-        .on 'end', resolve.bind(null, relativeUrl(filename))
+        .on 'end', resolve.bind(null, relativeUrl(container, filename))
