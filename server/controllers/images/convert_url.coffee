@@ -10,9 +10,11 @@ module.exports = (req, res, next)->
   { url } = req.body
 
   # If dataseed is disabled, we simply return the same url,
-  # instead of converting it to an IPFS hash
-  unless dataseedEnabled then res.json { url }
+  # instead of converting it to an image hash
+  unless dataseedEnabled then return res.json { url, converted: false }
 
   getImageByUrl url
-  .then responses_.Send(res)
+  .then (data)->
+    data.converted = true
+    responses_.send res, data
   .catch error_.Handler(req, res)
