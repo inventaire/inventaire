@@ -18,6 +18,7 @@ module.exports = (entity)->
   .spread (suggestions, authorWorksData)->
     unless suggestions.length > 0 then return []
     Promise.all suggestions.map getOccurences authorWorksData
+    .then _.compact
     .then turnSuggestionIntoRedirection(suggestions, authorWorksData)
     .then (occurences)->
       Promise.all filterSuggestions(occurences, suggestions)
@@ -25,44 +26,40 @@ module.exports = (entity)->
 
 turnSuggestionIntoRedirection = (suggestions, authorWorksData)->
   return (occurences) ->
-    unless _.some(_.flattenDeep(occurences)) then return occurences
+    unless occurences.length > 0 then return occurences
     { labels, authorId } = authorWorksData
     # Todo : check every labels to turn entity into redirection
     unless canBeRedirected suggestions, labels[0] then return occurences
     # assume first occurence is the right one to merge into
-    # only one suggestion necessary to merge
+    # since only one suggestion necessary to merge
     # occurences of first suggestion picked
     turnIntoRedirection reconcilerUserId, authorId, occurences[0].uri
-    []
+    return []
 
 filterSuggestions = (occurences, suggestions)->
   # create a task for every suggestions
-  unless _.some(_.flattenDeep(occurences)) then return suggestions
+  unless occurences.length > 0 then return suggestions
   # create tasks only for suggestions with occurences
-  suggestions.filter suggestionsWithOccurences occurences
+  suggestions.filter (suggestion)->
+    occurencesUris = _.pluck occurences, 'uri'
+    suggestion.uri in occurencesUris
 
 createTasksDocs = (authorWorksData, occurences) ->
   return (suggestions) ->
     relationScore = calculateRelationScore suggestions
-    return suggestions.map create authorWorksData, relationScore, occurences
+    return suggestions.map create(authorWorksData, relationScore, occurences)
 
 canBeRedirected = (suggestions, workLabel) ->
   # several suggestions == has homonym
   unless suggestions.length == 1 then return false
   workLabel.length > 12
 
-suggestionsWithOccurences = (occurences)->
-  return (suggestions)->
-    suggestionsUris = _.pluck suggestions, 'uri'
-    occurencesUris = _.pluck occurences, 'uri'
-    _.intersection suggestionsUris, occurencesUris
-
 getOccurences = (authorWorksData)->
   return (suggestion)->
     { labels, langs } = authorWorksData
     hasWorksLabelsOccurrence suggestion.uri, labels, langs
     .then (occurences)->
-      if _.isEmpty(_.flattenDeep(occurences)) then return []
+      if occurences.length is 0 then return false
       return
         uri: suggestion.uri
         occurences: occurences

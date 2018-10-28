@@ -37,9 +37,24 @@ describe 'tasks:externalSourcesOccurences', ->
         task = tasks.find (task)-> task.suggestionUri.match /wd:/
         task.externalSourcesOccurences.should.an.Array()
         firstOccurence = task.externalSourcesOccurences[0]
-        firstOccurence.uri.should.be.ok()
         firstOccurence.url.should.be.ok()
         firstOccurence.matchedTitles.should.containEql workLabel
+        done()
+    .catch undesiredErr(done)
+
+    return
+
+  it 'should return an object of occurences uris when author has work sourced in their bnf page', (done)->
+    humanLabel = 'Stanislas Lem'
+    workLabel = 'Solaris'
+    createHuman { labels: { en: humanLabel } }
+    .then (human)->
+      createWorkWithAuthor human, workLabel
+      .then (work)-> checkEntities human.uri
+      .then (tasks)->
+        task = tasks.find (task)-> task.suggestionUri.match /wd:/
+        occurencesUrls = _.pluck task.externalSourcesOccurences, 'url'
+        occurencesUrls.join().should.containEql /data.bnf.fr/
         done()
     .catch undesiredErr(done)
 
@@ -85,6 +100,8 @@ describe 'tasks:externalSourcesOccurences', ->
       .then (work)-> checkEntities human.uri
       .then (tasks)->
         tasks.length.should.aboveOrEqual 1
+        suggestionUris = _.pluck tasks, 'suggestionUri'
+        suggestionUris.should.not.containEql 'wd:Q4707357'
         done()
     .catch undesiredErr(done)
 

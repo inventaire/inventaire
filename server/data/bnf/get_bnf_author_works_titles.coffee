@@ -14,7 +14,9 @@ module.exports = (bnfId)->
       accept: '*/*'
   .then (res)->
     res.results.bindings
-    .map (result)-> result.title?.value
+    .map (result)->
+      quotation: result.title?.value
+      url: result.work?.value
 
 getQuery = (bnfId)->
   # TODO: restrict expressions of work result to Text only

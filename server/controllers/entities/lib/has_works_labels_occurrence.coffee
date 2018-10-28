@@ -42,10 +42,7 @@ module.exports = (wdAuthorUri, worksLabels, worksLabelsLangs)->
 
 hasWikipediaOccurrence = (authorEntity, worksLabels, worksLabelsLangs)->
   promises_.all getMostRelevantWikipediaArticles(authorEntity, worksLabelsLangs)
-  .then (articles)->
-    # Match any of the works labels
-    worksLabelsPattern = new RegExp(worksLabels.join('|'), 'gi')
-    articles.map createOccurences(worksLabelsPattern, authorEntity)
+  .map createOccurences(worksLabels)
 
 getMostRelevantWikipediaArticles = (authorEntity, worksLabelsLangs)->
   { sitelinks, originalLang } = authorEntity
@@ -62,18 +59,18 @@ getWikipediaArticleFromSitelinkData = (sitelinkData)->
   return getWikipediaArticle lang, title
 
 hasBnfOccurrence = (authorEntity, worksLabels)->
-  bnfIds = authorEntity.claims.P268
+  bnfIds = authorEntity.claims['wdt:P268']
   # Discard entities with several ids as one of the two
   # is wrong and we can't know which
   if bnfIds?.length isnt 1 then return false
   getBnfAuthorWorksTitles bnfIds[0]
-  .then createOccurences(worksLabelsPattern, authorEntity)
+  .map createOccurences(worksLabels)
 
-createOccurences = (worksLabelsPattern, authorEntity)->
+createOccurences = (worksLabels)->
+  worksLabelsPattern = new RegExp(worksLabels.join('|'), 'gi')
   return (article)->
-    matchedTitles = _.uniq article.extract.match(worksLabelsPattern)
-    unless matchedTitles then return {}
+    matchedTitles = _.uniq article.quotation.match(worksLabelsPattern)
+    unless matchedTitles.length > 0 then return false
     return
-      uri: authorEntity.uri
       url: article.url
       matchedTitles: matchedTitles

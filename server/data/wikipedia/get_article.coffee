@@ -12,7 +12,7 @@ module.exports = (lang, title, introOnly=false)->
       throw error_.new 'invalid extract response', 500, arguments, res.query
 
     return {
-      extract: cleanExtract _.values(pages)?[0]?.extract
+      quotation: cleanExtract _.values(pages)?[0]?.extract
       url: "https://#{lang}.wikipedia.org/wiki/#{title}"
     }
 
