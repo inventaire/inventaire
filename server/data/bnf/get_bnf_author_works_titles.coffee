@@ -17,11 +17,17 @@ module.exports = (bnfId)->
     .map (result)-> result.title?.value
 
 getQuery = (bnfId)->
+  # TODO: restrict expressions of work result to Text only
+  # probably with dcterms:type dcmitype:Text
   query = """
-  SELECT DISTINCT ?title WHERE {
+  PREFIX dcterms: <http://purl.org/dc/terms/>
+  SELECT DISTINCT ?title ?work WHERE {
     <http://data.bnf.fr/ark:/12148/cb#{bnfId}> foaf:focus ?person .
-    ?work dcterms:creator ?person ;
-        rdfs:label ?title .
+    { ?work dcterms:creator ?person ;
+        rdfs:label ?title . }
+    UNION
+    { ?work dcterms:contributor ?person ;
+        rdfs:label ?title . }
   }
   """
   return qs.escape query
