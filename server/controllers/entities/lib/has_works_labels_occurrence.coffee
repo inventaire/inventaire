@@ -34,7 +34,8 @@ module.exports = (wdAuthorUri, worksLabels, worksLabelsLangs)->
       hasWikipediaOccurrence authorEntity, worksLabels, worksLabelsLangs
       hasBnfOccurrence authorEntity, worksLabels
     ]
-  .then (res)-> _.compact(_.flatten(res))
+  .then _.flatten
+  .then _.compact
   .catch (err)->
     _.error err, 'has works labels occurrence err'
     # Default to false if an error happened

@@ -28,13 +28,18 @@ turnSuggestionIntoRedirection = (suggestions, authorWorksData)->
   return (occurences) ->
     unless occurences.length > 0 then return occurences
     { labels, authorId } = authorWorksData
+    matchedTitles = getMatchedTitles(occurences)
     # Todo : check every labels to turn entity into redirection
-    unless canBeRedirected suggestions, labels[0] then return occurences
+    unless canBeRedirected suggestions, matchedTitles then return occurences
     # assume first occurence is the right one to merge into
     # since only one suggestion necessary to merge
     # occurences of first suggestion picked
     turnIntoRedirection reconcilerUserId, authorId, occurences[0].uri
     return []
+
+getMatchedTitles = (occurences)->
+    matchedTitles = occurences.map (occ)-> _.pluck(occ.occurences,'matchedTitles')
+    _.flattenDeep matchedTitles
 
 filterSuggestions = (occurences, suggestions)->
   # create a task for every suggestions
@@ -49,10 +54,12 @@ createTasksDocs = (authorWorksData, occurences) ->
     relationScore = calculateRelationScore suggestions
     return suggestions.map create(authorWorksData, relationScore, occurences)
 
-canBeRedirected = (suggestions, workLabel) ->
-  # several suggestions == has homonym
+canBeRedirected = (suggestions, matchedTitles) ->
+  # several suggestions == has homonym => cannot be redirected
   unless suggestions.length == 1 then return false
-  workLabel.length > 12
+  longTitles = matchedTitles.filter (title) -> title.length > 12
+  longTitles.length > 0
+
 
 getOccurences = (authorWorksData)->
   return (suggestion)->
