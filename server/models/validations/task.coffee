@@ -15,4 +15,4 @@ module.exports =
   suspectUri: entityUri
   lexicalScore: _.isNumber
   relationScore: _.isNumber
-  externalSourcesOccurences: _.isArray
+  externalSourcesOccurrences: _.isArray

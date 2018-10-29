@@ -1,4 +1,4 @@
-# A module to look for works labels occurences in an author's Wikipedia articles.
+# A module to look for works labels occurrences in an author's Wikipedia articles.
 
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
@@ -31,8 +31,8 @@ module.exports = (wdAuthorUri, worksLabels, worksLabelsLangs)->
     # Known case: entities tagged as 'missing' or 'meta'
     unless authorEntity.sitelinks? then return false
     promises_.all [
-      hasWikipediaOccurrence authorEntity, worksLabels, worksLabelsLangs
-      hasBnfOccurrence authorEntity, worksLabels
+      getWikipediaOccurrences authorEntity, worksLabels, worksLabelsLangs
+      getBnfOccurrences authorEntity, worksLabels
     ]
   .then _.flatten
   .then _.compact
@@ -41,9 +41,9 @@ module.exports = (wdAuthorUri, worksLabels, worksLabelsLangs)->
     # Default to false if an error happened
     return false
 
-hasWikipediaOccurrence = (authorEntity, worksLabels, worksLabelsLangs)->
+getWikipediaOccurrences = (authorEntity, worksLabels, worksLabelsLangs)->
   promises_.all getMostRelevantWikipediaArticles(authorEntity, worksLabelsLangs)
-  .map createOccurences(worksLabels)
+  .map createOccurrences(worksLabels)
 
 getMostRelevantWikipediaArticles = (authorEntity, worksLabelsLangs)->
   { sitelinks, originalLang } = authorEntity
@@ -59,15 +59,15 @@ getWikipediaArticleFromSitelinkData = (sitelinkData)->
   { lang, title } = sitelinkData
   return getWikipediaArticle lang, title
 
-hasBnfOccurrence = (authorEntity, worksLabels)->
+getBnfOccurrences = (authorEntity, worksLabels)->
   bnfIds = authorEntity.claims['wdt:P268']
   # Discard entities with several ids as one of the two
   # is wrong and we can't know which
   if bnfIds?.length isnt 1 then return false
   getBnfAuthorWorksTitles bnfIds[0]
-  .map createOccurences(worksLabels)
+  .map createOccurrences(worksLabels)
 
-createOccurences = (worksLabels)->
+createOccurrences = (worksLabels)->
   worksLabelsPattern = new RegExp(worksLabels.join('|'), 'gi')
   return (article)->
     matchedTitles = _.uniq article.quotation.match(worksLabelsPattern)

@@ -8,8 +8,8 @@ should = require 'should'
 { getByUris } = require '../utils/entities'
 
 # Tests dependency: having a populated ElasticSearch wikidata index
-describe 'tasks:externalSourcesOccurences', ->
-  it 'should return an empty object when author has no occurences', (done)->
+describe 'tasks:externalSourcesOccurrences', ->
+  it 'should return an empty object when author has no occurrences', (done)->
     humanLabel = 'Stanislas Lem' # has no homonyms
     workLabel = 'fakeworklabel'
     createHuman { labels: { en: humanLabel } }
@@ -19,13 +19,13 @@ describe 'tasks:externalSourcesOccurences', ->
       .then (tasks)->
         tasks.length.should.aboveOrEqual 1
         task = tasks.find (task)-> task.suggestionUri
-        task.externalSourcesOccurences.should.be.empty()
+        task.externalSourcesOccurrences.should.be.empty()
         done()
     .catch undesiredErr(done)
 
     return
 
-  it 'should return an object of occurences uris when author has work sourced in their wikipedia page', (done)->
+  it 'should return an object of occurrences uris when author has work sourced in their wikipedia page', (done)->
     humanLabel = 'Stanislas Lem' # has no homonyms
     workLabel = 'Solaris' # too short label to be automerged
     createHuman { labels: { en: humanLabel } }
@@ -35,16 +35,16 @@ describe 'tasks:externalSourcesOccurences', ->
       .then (tasks)->
         tasks.length.should.aboveOrEqual 1
         task = tasks.find (task)-> task.suggestionUri.match /wd:/
-        task.externalSourcesOccurences.should.an.Array()
-        firstOccurence = task.externalSourcesOccurences[0]
-        firstOccurence.url.should.be.ok()
-        firstOccurence.matchedTitles.should.containEql workLabel
+        task.externalSourcesOccurrences.should.an.Array()
+        firstOccurrence = task.externalSourcesOccurrences[0]
+        firstOccurrence.url.should.be.ok()
+        firstOccurrence.matchedTitles.should.containEql workLabel
         done()
     .catch undesiredErr(done)
 
     return
 
-  it 'should return an object of occurences uris when author has work sourced in their bnf page', (done)->
+  it 'should return an object of occurrences uris when author has work sourced in their bnf page', (done)->
     humanLabel = 'Stanislas Lem'
     workLabel = 'Solaris'
     createHuman { labels: { en: humanLabel } }
@@ -53,8 +53,8 @@ describe 'tasks:externalSourcesOccurences', ->
       .then (work)-> checkEntities human.uri
       .then (tasks)->
         task = tasks.find (task)-> task.suggestionUri.match /wd:/
-        occurencesUrls = _.pluck task.externalSourcesOccurences, 'url'
-        occurencesUrls.join().should.containEql /data.bnf.fr/
+        occurrencesUrls = _.pluck task.externalSourcesOccurrences, 'url'
+        occurrencesUrls.join().should.containEql /data.bnf.fr/
         done()
     .catch undesiredErr(done)
 

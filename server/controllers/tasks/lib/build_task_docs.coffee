@@ -17,42 +17,42 @@ module.exports = (entity)->
   ]
   .spread (suggestions, authorWorksData)->
     unless suggestions.length > 0 then return []
-    Promise.all suggestions.map getOccurences authorWorksData
+    Promise.all suggestions.map getOccurrences authorWorksData
     .then _.compact
     .then turnSuggestionIntoRedirection(suggestions, authorWorksData)
-    .then (occurences)->
-      Promise.all filterSuggestions(occurences, suggestions)
-      .then createTasksDocs(authorWorksData, occurences)
+    .then (occurrences)->
+      Promise.all filterSuggestions(occurrences, suggestions)
+      .then createTasksDocs(authorWorksData, occurrences)
 
 turnSuggestionIntoRedirection = (suggestions, authorWorksData)->
-  return (occurences) ->
-    unless occurences.length > 0 then return occurences
+  return (occurrences) ->
+    unless occurrences.length > 0 then return occurrences
     { labels, authorId } = authorWorksData
-    matchedTitles = getMatchedTitles(occurences)
+    matchedTitles = getMatchedTitles(occurrences)
     # Todo : check every labels to turn entity into redirection
-    unless canBeRedirected suggestions, matchedTitles then return occurences
-    # assume first occurence is the right one to merge into
+    unless canBeRedirected suggestions, matchedTitles then return occurrences
+    # assume first occurrence is the right one to merge into
     # since only one suggestion necessary to merge
-    # occurences of first suggestion picked
-    turnIntoRedirection reconcilerUserId, authorId, occurences[0].uri
+    # occurrences of first suggestion picked
+    turnIntoRedirection reconcilerUserId, authorId, occurrences[0].uri
     return []
 
-getMatchedTitles = (occurences)->
-    matchedTitles = occurences.map (occ)-> _.pluck(occ.occurences,'matchedTitles')
+getMatchedTitles = (occurrences)->
+    matchedTitles = occurrences.map (occ)-> _.pluck(occ.occurrences,'matchedTitles')
     _.flattenDeep matchedTitles
 
-filterSuggestions = (occurences, suggestions)->
+filterSuggestions = (occurrences, suggestions)->
   # create a task for every suggestions
-  unless occurences.length > 0 then return suggestions
-  # create tasks only for suggestions with occurences
+  unless occurrences.length > 0 then return suggestions
+  # create tasks only for suggestions with occurrences
   suggestions.filter (suggestion)->
-    occurencesUris = _.pluck occurences, 'uri'
-    suggestion.uri in occurencesUris
+    occurrencesUris = _.pluck occurrences, 'uri'
+    suggestion.uri in occurrencesUris
 
-createTasksDocs = (authorWorksData, occurences) ->
+createTasksDocs = (authorWorksData, occurrences) ->
   return (suggestions) ->
     relationScore = calculateRelationScore suggestions
-    return suggestions.map create(authorWorksData, relationScore, occurences)
+    return suggestions.map create(authorWorksData, relationScore, occurrences)
 
 canBeRedirected = (suggestions, matchedTitles) ->
   # several suggestions == has homonym => cannot be redirected
@@ -61,27 +61,27 @@ canBeRedirected = (suggestions, matchedTitles) ->
   longTitles.length > 0
 
 
-getOccurences = (authorWorksData)->
+getOccurrences = (authorWorksData)->
   return (suggestion)->
     { labels, langs } = authorWorksData
     hasWorksLabelsOccurrence suggestion.uri, labels, langs
-    .then (occurences)->
-      if occurences.length is 0 then return false
+    .then (occurrences)->
+      if occurrences.length is 0 then return false
       return
         uri: suggestion.uri
-        occurences: occurences
+        occurrences: occurrences
 
-create = (authorWorksData, relationScore, suggestionsOccurences)->
-  occurrencesBySuggestionUri = _.indexBy suggestionsOccurences, 'uri'
+create = (authorWorksData, relationScore, suggestionsOccurrences)->
+  occurrencesBySuggestionUri = _.indexBy suggestionsOccurrences, 'uri'
   return (suggestion)->
     { authorId } = authorWorksData
-    occurencesObj = occurrencesBySuggestionUri[suggestion.uri]
-    unless _.isEmpty occurencesObj
-      occurences = occurencesObj['occurences']
+    occurrencesObj = occurrencesBySuggestionUri[suggestion.uri]
+    unless _.isEmpty occurrencesObj
+      occurrences = occurrencesObj['occurrences']
     return
       type: 'deduplicate'
       suspectUri: prefixifyInv(authorId)
       suggestionUri: suggestion.uri
       lexicalScore: suggestion._score
       relationScore: relationScore
-      externalSourcesOccurences: occurences or []
+      externalSourcesOccurrences: occurrences or []
