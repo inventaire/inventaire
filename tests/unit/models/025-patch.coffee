@@ -61,6 +61,12 @@ describe 'patch', ->
       .should.throw()
       done()
 
+    it 'should anticipate the doc incrementation when passed a beforeEntityRevUpdate flag', (done)->
+      patch = Patch.create { userId, currentDoc, updatedDoc, beforeEntityRevUpdate: true }
+      incrementedRev = parseInt(rev.split('-')) + 1
+      patch._id.should.equal "#{validDocId}:#{incrementedRev}"
+      done()
+
     it 'should throw if passed an invalid doc object', (done)->
       (-> Patch.create { userId, currentDoc: 'not an object', updatedDoc })
       .should.throw()

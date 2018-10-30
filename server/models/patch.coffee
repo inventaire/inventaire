@@ -7,7 +7,7 @@ validations = require './validations/common'
 
 module.exports =
   create: (params)->
-    { userId, currentDoc, updatedDoc, context } = params
+    { userId, currentDoc, updatedDoc, beforeEntityRevUpdate, context } = params
     validations.pass 'userId', userId
     _.type currentDoc, 'object'
     _.type updatedDoc, 'object'
@@ -30,7 +30,10 @@ module.exports =
     # to recover a mistakenly deleted entity document: two actions that would not
     # produce patches and that have for consequence that the next patch docRevId
     # will be the last patch docRevID + 3
-    docRevId = updatedDoc._rev.split('-')[0]
+    docRevId = parseInt updatedDoc._rev.split('-')[0]
+    # If the updatedDoc has not been posted and returned at the time of this patch creation
+    # the rev will not have been incremented
+    if beforeEntityRevUpdate then docRevId += 1
 
     patch =
       _id: "#{docId}:#{docRevId}"
