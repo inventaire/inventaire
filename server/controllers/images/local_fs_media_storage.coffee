@@ -32,4 +32,6 @@ exports.get = (req, res, next)->
       'Content-Type': 'image/jpeg'
 
   res.sendFile filepath, options, (err)->
-    if err? then _.error err, "failed to send #{filepath}"
+    if err?
+      _.error err, "failed to send #{filepath}"
+      res.status(err.statusCode).json err

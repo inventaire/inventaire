@@ -15,10 +15,10 @@ module.exports = (req, res, url, dimensions)->
   reqStream = request url
 
   reqStream
-  .on 'response', onResponse(reqStream, width, height, req, res)
+  .on 'response', onResponse(reqStream, url, width, height, req, res)
   .on 'error', error_.Handler(req, res)
 
-onResponse = (reqStream, width, height, req, res)-> (response)->
+onResponse = (reqStream, url, width, height, req, res)-> (response)->
   { statusCode, statusMessage } = response
   { 'content-type':contentType, 'content-length':contentLength } = response.headers
 
@@ -34,7 +34,8 @@ onResponse = (reqStream, width, height, req, res)-> (response)->
   if errMessage?
     # Keep the internal service host private
     context = url.replace /(\d{1,3}\.){3}(\d{1,3}):\d{4}/, 'internal-host'
-    err = error_.new errMessage, 400, context
+    statusCode = if statusCode is 404 then 404 else 400
+    err = error_.new errMessage, statusCode, context
     err.privateContext = url
     @emit 'error', err
   else
