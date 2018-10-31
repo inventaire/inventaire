@@ -13,4 +13,4 @@ module.exports =
     # see server/controllers/entities/lib/update_claims_hooks
     hook: userDoc 'hook', '001'
     # used by scripts/update_entities_schema
-    schemaUpdater: userDoc 'schema_updater', '003'
+    updater: userDoc 'updater', '003'
