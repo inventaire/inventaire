@@ -23,8 +23,8 @@ docDiff = __.require 'couchdb', 'doc_diffs'
 Patch = __.require 'models', 'patch'
 userId = __.require('couch', 'hard_coded_documents').users.updater._id
 
-[ updateFnFilePath, preview ] = process.argv.slice 2
-{ preview, getNextBatch, updateFn, stats } = require updateFnFilePath
+[ updateFnFilePath ] = process.argv.slice 2
+{ preview, silent, getNextBatch, updateFn, stats } = require updateFnFilePath
 
 preview = preview ?= true
 silent = silent ?= false
@@ -41,7 +41,7 @@ updateSequentially = ->
     updatesData = rows.map (row)->
       { doc: currentDoc } = row
       updatedDoc = updateFn _.cloneDeep(currentDoc)
-      docDiff currentDoc, updatedDoc, preview
+      unless silent then docDiff currentDoc, updatedDoc, preview
       return { currentDoc, updatedDoc }
 
     postEntitiesBulk updatesData
