@@ -1,7 +1,6 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 { getNames, aggregateClaims } = require './helpers'
-{ getOriginalLang } = __.require 'lib', 'wikidata/wikidata'
 error_ = __.require 'lib', 'error/error'
 wdk = require 'wikidata-sdk'
 { snapshotValidations } = __.require 'models', 'validations/item'
@@ -10,8 +9,8 @@ getBestLangValue = __.require('sharedLibs', 'get_best_lang_value')(_)
 module.exports =
   edition: (edition, works, authors, series)->
     title = edition.claims['wdt:P1476']?[0]
-    lang = getOriginalLang(edition.claims) or 'en'
-    image = edition.claims['wdt:P18']?[0]
+    lang = edition.originalLang or 'en'
+    image = edition.image?.url
     return buildOperation {
       type: 'edition'
       entity: edition,
