@@ -21,5 +21,8 @@ else
 # the database port will be taken from the local config
 migration = __.require('couchdb', './migration')(migrationParams)
 
-# will run the updateFunction on all documents emitted by the view
-migration.updateByView viewName, updateFunction
+if viewName
+  # will run the updateFunction on all documents emitted by the view
+  migration.updateByView viewName, updateFunction
+else
+  migration.updateAll updateFunction
