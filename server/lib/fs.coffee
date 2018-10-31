@@ -3,7 +3,6 @@ __ = CONFIG.universalPath
 _ = __.require('builders', 'utils')
 { Promise } = __.require 'lib', 'promises'
 fs = require 'fs'
-mv = require 'mv'
 mime = require 'mime'
 
 stat = Promise.promisify fs.stat
@@ -25,5 +24,5 @@ module.exports =
   readFile: Promise.promisify fs.readFile
   writeFile: Promise.promisify fs.writeFile
   createReadStream: fs.createReadStream
-  mv: Promise.promisify mv
+  mv: Promise.promisify fs.rename
   contentHeaders: contentHeaders

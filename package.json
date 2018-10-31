@@ -82,7 +82,6 @@
     "mime": "^1.3.4",
     "moment": "^2.21.0",
     "morgan": "^1.1.1",
-    "mv": "^2.1.1",
     "node-polyglot": "^1.0.0",
     "nodemailer": "git+https://github.com/maxlath/Nodemailer.git",
     "nodemailer-express-handlebars": "^2.0.0",
