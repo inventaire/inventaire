@@ -34,4 +34,5 @@ notes
 db/couchdb/migration_docs
 run
 dumps
-local_storage
+storage
+

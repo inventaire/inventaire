@@ -6,11 +6,10 @@ promises_ = __.require 'lib', 'promises'
 usersDb = __.require('couch', 'base')('users')
 
 module.exports = ->
-  updateDoc usersDb, users.seed
-  .then -> updateDoc usersDb, users.hook
+  Promise.all _.values(users).map(updateDoc(usersDb))
 
-updateDoc = (db, doc)->
-  { _id:id } = doc
+updateDoc = (db)-> (doc)->
+  { _id: id } = doc
   db.get id
   .then (currentDoc)->
     # Copy the _rev so that the doc have a chance to match

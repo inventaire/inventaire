@@ -4,11 +4,11 @@ _ = __.require 'builders', 'utils'
 gm = require 'gm'
 { Promise } = __.require 'lib', 'promises'
 crypto_ = __.require 'lib', 'crypto'
-fs_ =  __.require 'lib', 'fs'
-{ maxSize, maxWeight } = CONFIG.images
+{ readFile } =  __.require 'lib', 'fs'
+{ maxSize, maxWeight } = CONFIG.mediaStorage.images
 error_ = __.require 'lib', 'error/error'
 
-shrink = (data, width, height)->
+shrinkAndFormat = (data, width, height)->
   # gm accepts either a path string or a stream
   gm data
   .setFormat 'jpg'
@@ -21,28 +21,38 @@ shrink = (data, width, height)->
   # converting to progressive jpeg
   .interlace 'Line'
 
+removeExif = (data)->
+  gm data
+  .noProfile()
+
 module.exports =
-  getHashFilename: (path, extension = 'jpg')->
-    fs_.readFile path
+  getHashFilename: (path)->
+    readFile path
     .then crypto_.sha1
-    .then (hash)-> "#{hash}.#{extension}"
 
-  shrink: (originalPath, resizedPath, width = maxSize, height = maxSize)->
-    new Promise (resolve, reject)->
-      shrink originalPath, width, height
-      .write resizedPath, ReturnNewPath(resizedPath, resolve, reject)
+  shrinkAndFormat: (path, width = maxSize, height = maxSize)->
+    return new Promise (resolve, reject)->
+      shrinkAndFormat path, width, height
+      .write path, returnPath(path, resolve, reject)
 
-  shrinkStream: shrink
+  shrinkAndFormatStream: shrinkAndFormat
+
+  removeExif: (path)->
+    return new Promise (resolve, reject)->
+      removeExif path
+      .write path, returnPath(path, resolve, reject)
 
   applyLimits: (width, height)->
     return [ applyLimit(width), applyLimit(height) ]
+
+  getUrlFromImageHash: (container, filename)->
+    if filename? then "/img/#{container}/#{filename}"
 
 applyLimit = (dimension = maxSize)->
   dimension = Number dimension
   if dimension > maxSize then maxSize
   else dimension
 
-ReturnNewPath = (newPath, resolve, reject)->
-  return cb = (err)->
-    if err? then reject err
-    else resolve newPath
+returnPath = (newPath, resolve, reject)-> (err)->
+  if err? then reject err
+  else resolve newPath

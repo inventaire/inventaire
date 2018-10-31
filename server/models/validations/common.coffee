@@ -4,7 +4,7 @@ _ = __.require 'builders', 'utils'
 regex_ = require './regex'
 error_ = __.require 'lib', 'error/error'
 
-{ CouchUuid, Email, Username, EntityUri, Lang, WikiLang, LocalImg } = regex_
+{ CouchUuid, Email, Username, EntityUri, Lang, WikiLang, LocalImg, UserImg } = regex_
 
 # regex need to their context
 bindedTest = (regex)-> regex.test.bind regex
@@ -23,6 +23,7 @@ module.exports = validations =
   lang: bindedTest Lang
   wikiLang: bindedTest WikiLang
   localImg: bindedTest LocalImg
+  userImg: bindedTest UserImg
   boolean: _.isBoolean
   position: (latLng)->
     # allow the user or group to delete its position by passing a null value
@@ -35,7 +36,7 @@ validations.boundedString = boundedString = (str, minLength, maxLength)->
 validations.BoundedString = (minLength, maxLength)-> (str)->
   boundedString str, minLength, maxLength
 
-validations.imgUrl = (url)-> validations.localImg(url) or _.isUrl(url) or _.isIpfsPath(url)
+validations.imgUrl = (url)-> validations.localImg(url) or _.isUrl(url) or _.isImageHash(url)
 
 validations.valid = (attribute, value, option)->
   test = @[attribute]

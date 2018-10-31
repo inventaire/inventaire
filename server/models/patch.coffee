@@ -30,7 +30,7 @@ module.exports =
     # to recover a mistakenly deleted entity document: two actions that would not
     # produce patches and that have for consequence that the next patch docRevId
     # will be the last patch docRevID + 3
-    docRevId = updatedDoc._rev.split('-')[0]
+    docRevId = parseInt updatedDoc._rev.split('-')[0]
 
     patch =
       _id: "#{docId}:#{docRevId}"

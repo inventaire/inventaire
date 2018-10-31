@@ -38,13 +38,14 @@ module.exports = (params)->
   getAllDocsKeys = ->
     db.allDocsKeys()
     .then (res)->
-      ids = _.pluck res.rows, 'id'
+      rows = res.rows.filter (row)-> not row.id.startsWith('_design/')
+      ids = _.pluck rows, 'id'
       return _.success ids, 'doc ids found'
     .catch _.ErrorRethrow('getAllDocsKeys error')
 
   getViewKeys = (viewName)->
     db.view designDocName, viewName
-    .then (res)-> return res.rows.map _.property('id')
+    .then (res)-> res.rows.map _.property('id')
     .then Log('view ids')
 
   return API

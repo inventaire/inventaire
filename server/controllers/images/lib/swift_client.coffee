@@ -5,40 +5,40 @@ breq = require 'bluereq'
 fs_ = __.require 'lib', 'fs'
 request = require 'request'
 { Promise } = __.require 'lib', 'promises'
-
 getToken = require './get_swift_token'
-{ publicURL, container } = CONFIG.swift
+{ publicURL } = CONFIG.swift
 
-absoluteUrl = (filename)-> "#{publicURL}/#{container}/#{filename}"
-relativeUrl = (filename)-> "/img/#{filename}"
+absoluteUrl = (container, filename)-> "#{publicURL}/#{container}/#{filename}"
+relativeUrl = (filename)-> "/img/#{container}/#{filename}"
 
-getParams = (filename, body, type = 'application/json')->
+getParams = (container, filename, body, type = 'application/json')->
   getToken()
   .then (token)->
-    url: absoluteUrl filename
+    url: absoluteUrl container, filename
     headers:
       'Accept': 'application/json'
       'Content-Type': type
       'X-Auth-Token': token
     body: body
 
-action = (verb, filename, body, type)->
-  getParams filename, body, type
+action = (verb)-> (container, filename, body, type)->
+  getParams container, filename, body, type
   .then _.Log('params')
   .then breq[verb]
   .then (res)-> res.body or { ok: true }
   .then _.Log("#{verb} #{filename} body")
   .catch _.ErrorRethrow("#{verb} #{filename}")
 
-actions = {}
-[ 'get', 'post', 'put', 'delete' ].forEach (verb)->
-  actions[verb] = action.bind null, verb
+module.exports =
+  get: action 'get'
+  post: action 'post'
+  put: action 'put'
+  delete: action 'delete'
 
-module.exports = _.extend actions,
   # inspired by https://github.com/Automattic/knox/blob/master/lib/client.js
-  putImage: (path, filename)->
+  putImage: (container, path, filename)->
     Promise.all [
-        getParams filename
+        getParams container, filename
         fs_.contentHeaders path
       ]
     .spread (params, additionalHeaders)->
@@ -46,12 +46,6 @@ module.exports = _.extend actions,
       _.extend headers, additionalHeaders
       new Promise (resolve, reject)->
         fs_.createReadStream path
-        .pipe request(requestParams(url, headers))
+        .pipe request({ method: 'PUT', url, headers })
         .on 'error', reject
-        .on 'end', resolve.bind(null, relativeUrl(filename))
-
-requestParams = (url, headers)->
-  req =
-    method: 'PUT'
-    url: url
-    headers: headers
+        .on 'end', resolve.bind(null, relativeUrl(container, filename))

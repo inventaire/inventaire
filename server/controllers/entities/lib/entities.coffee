@@ -10,6 +10,7 @@ validateClaimValue = require('./validate_claim_value')(db)
 getInvEntityCanonicalUri = require './get_inv_entity_canonical_uri'
 getEntityType = require './get_entity_type'
 radio = __.require 'lib', 'radio'
+{ getUrlFromImageHash } = __.require 'lib', 'images'
 
 { properties, validateProperty } = require './properties'
 
@@ -103,6 +104,8 @@ module.exports = entities_ =
     .tap ->
       triggerUpdateEvent currentDoc, updatedDoc
       patches_.create params
+
+  getUrlFromEntityImageHash: getUrlFromImageHash.bind null, 'entities'
 
 parseCanonicalUri = (result)-> getInvEntityCanonicalUri(result.doc)[0]
 

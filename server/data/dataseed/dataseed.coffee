@@ -34,7 +34,7 @@ module.exports =
     unless isbn then return promises_.reject new Error('invalid isbn')
     promises_.get _.buildPath("#{host}/images", { isbn })
 
-  # Converts the url to an IPFS path
+  # Converts the url to an image hash
   getImageByUrl: (url)->
     url = encodeURIComponent url
     promises_.get _.buildPath("#{host}/images", { url })

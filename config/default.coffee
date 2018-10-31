@@ -121,22 +121,28 @@ module.exports = config =
 
   # By default, media are saved locally instead of using a remove
   # object storage service such as Swift
-  objectStorage: 'local'
-  # Swift parameters are requierd only when objectStorage is set to 'swift'
-  swift:
-    username: 'customizedInLocalConfig'
-    password: 'customizedInLocalConfig'
-    authUrl: 'https://openstackEndpointToCustomize/v2.0'
-    publicURL: 'https://swiftPublicURL/'
-    tenantName: '12345678'
-    region: 'SBG-1'
-    container: 'customizedInLocalConfig'
-  images:
-    urlBase: -> '/local/'
-    localEndpoint: -> config.fullHost() + @urlBase()
-    maxSize: 1600
-    # 5MB
-    maxWeight: 5 * 1024 ** 2
+  mediaStorage:
+    images:
+      maxSize: 1600
+      # 5MB
+      maxWeight: 5 * 1024 ** 2
+      internalEndpoint: ->
+        { mode } = config.mediaStorage
+        return config.mediaStorage[mode].internalEndpoint()
+    mode: 'local'
+    # Swift parameters are required only when mediaStorage mode is set to 'swift'
+    swift:
+      username: 'customizedInLocalConfig'
+      password: 'customizedInLocalConfig'
+      authUrl: 'https://openstackEndpointToCustomize/v2.0'
+      publicURL: 'https://swiftPublicURL/'
+      tenantName: '12345678'
+      region: 'SBG-1'
+      internalEndpoint: -> @publicURL + '/'
+    local:
+      folder: -> config.universalPath.path 'root', 'storage'
+      route: 'local'
+      internalEndpoint: -> "#{config.fullHost()}/#{@route}/"
 
   # Analytics service
   piwik:
@@ -148,11 +154,6 @@ module.exports = config =
   dataseed:
     enabled: false
     host: 'http://localhost:9898'
-  ipfs:
-    # activate if you have a local instance running
-    enabled: false
-    localGateway: 'http://localhost:8080'
-    publicGateway: 'https://ipfs.io'
   searchTimeout: 10000
 
   gitlabLogging:
@@ -166,8 +167,6 @@ module.exports = config =
   # Config passed to the client
   client:
     piwik: 'https://your.piwik.instance'
-    ipfs:
-      gateway: 'https://ipfs.io'
 
   feed:
     limitLength: 50

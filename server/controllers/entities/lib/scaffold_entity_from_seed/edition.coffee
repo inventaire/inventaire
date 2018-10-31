@@ -66,7 +66,7 @@ createEditionEntity = (seed, workPromise)->
     # wdt:P957 and wdt:P407 will be inferred from wdt:P212
 
   addClaimIfValid claims, 'wdt:P1476', seed.title
-  addClaimIfValid claims, 'wdt:P18', seed.image
+  addClaimIfValid claims, 'invp:P2', seed.image
   addClaimIfValid claims, 'wdt:P577', seed.publicationDate
   addClaimIfValid claims, 'wdt:P1104', seed.numberOfPages
 

@@ -36,11 +36,10 @@ module.exports = routes =
 if CONFIG.logMissingI18nKeys
   routes['api/i18n'] = require './i18n'
 
-if CONFIG.objectStorage is 'local'
-  # the /img endpoint is common to all the object storage modes
-  # but this route is served from nginx in other modes
-  endpointPath = CONFIG.images.urlBase().replace /^\//, ''
-  routes[endpointPath + '*'] = require './images/fake_object_storage'
+if CONFIG.mediaStorage.mode is 'local'
+  # serve images stored on the local file system
+  { route: localMediaRoute } = CONFIG.mediaStorage.local
+  routes[localMediaRoute + '/*'] = require './images/local_fs_media_storage'
 
 # setting CONFIG-based routes before the globs
 # so that they wont be overpassed by it
