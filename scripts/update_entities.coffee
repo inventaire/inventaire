@@ -15,6 +15,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 { Promise } = __.require 'lib', 'promises'
+error_ = __.require 'lib', 'error/error'
 entities_ = __.require 'controllers', 'entities/lib/entities'
 patches_ = __.require 'controllers', 'entities/lib/patches'
 { maxKey } = __.require 'lib', 'couch'
@@ -37,37 +38,31 @@ updateSequentially = ->
     { rows } = res
     if rows.length is 0 then return
 
-    updatesData = buildUpdatesData rows
+    updatesData = rows.map (row)->
+      { doc: currentDoc } = row
+      updatedDoc = updateFn _.cloneDeep(currentDoc)
+      docDiff currentDoc, updatedDoc, preview
+      return { currentDoc, updatedDoc }
 
-    if preview then return updateSequentially()
-
-    postBulks updatesData
+    postEntitiesBulk updatesData
+    .then postPatchesBulk(updatesData)
     .then updateSequentially
 
-buildUpdatesData = (rows)->
-  _.pluck rows, 'doc'
-  .map prepareUpdates
-  .reduce aggregateUpdates, { entities: [], patches: [] }
+postEntitiesBulk = (updatesData)->
+  entities_.db.bulk _.pluck(updatesData, 'updatedDoc')
 
-prepareUpdates = (currentDoc)->
-  updatedDoc = updateFn _.cloneDeep(currentDoc)
-  # Anticipate the rev incrementation that will happen once entities are posted
-  # on which the patch id depends
-  patch = Patch.create { userId, currentDoc, updatedDoc, beforeEntityRevUpdate: true }
-  if silent
-    docDiff currentDoc, updatedDoc, preview
-    _.log patch, 'patch'
-  return { entity: updatedDoc, patch }
+postPatchesBulk = (updatesData)-> (entityBulkRes)->
+  entityResById = _.indexBy entityBulkRes, 'id'
+  patches = updatesData.map buildPatches(entityResById)
+  return patches_.db.bulk patches
 
-aggregateUpdates = (data, updateData)->
-  data.entities.push updateData.entity
-  data.patches.push updateData.patch
-  return data
-
-postBulks = (updatesData)->
-  { entities, patches } = updatesData
-  entities_.db.bulk entities
-  .then -> patches_.db.bulk patches
+buildPatches = (entityResById)-> (updateData)->
+  { currentDoc, updatedDoc } = updateData
+  { _id } = updatedDoc
+  entityRes = entityResById[_id]
+  updatedDoc._rev = entityRes.rev
+  unless updatedDoc._rev? then throw error_.new 'rev not found', 500, { updateData, entityRes }
+  return Patch.create { userId, currentDoc, updatedDoc }
 
 updateSequentially()
 .then -> if stats? then _.log stats(), 'stats'
