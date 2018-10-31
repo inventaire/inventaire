@@ -55,13 +55,13 @@ resizeFromStream = (reqStream, width, height, req, res)->
     error_.handler req, res, err
     alreadySent = true
 
-  images_.shrinkStream reqStream, width, height
+  images_.shrinkAndFormatStream reqStream, width, height
   .stream (err, stdout, stderr)->
     if err? then return error_.handler req, res, err
     stdout.on 'error', handleBufferError
     stderr.on 'data', handleBufferError
 
-    # Non of the above seem to catch errors for the case when graphicsmagick
+    # None of the above seems to catch errors for the case when graphicsmagick
     # isn't installed, so instead of doing `stdout.pipe(res)`, we check
     # if data was actually passed before determining if it is a success
     # or an error

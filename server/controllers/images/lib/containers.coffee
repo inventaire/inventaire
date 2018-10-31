@@ -13,7 +13,7 @@ containerPutImage = (container, fnName)-> (fileData)->
 
 module.exports =
   users:
-    putImage: containerPutImage 'users', 'shrink'
+    putImage: containerPutImage 'users', 'shrinkAndFormat'
 
   entities:
     putImage: containerPutImage 'entities', 'removeExif'

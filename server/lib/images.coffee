@@ -8,7 +8,7 @@ crypto_ = __.require 'lib', 'crypto'
 { maxSize, maxWeight } = CONFIG.mediaStorage.images
 error_ = __.require 'lib', 'error/error'
 
-shrink = (data, width, height)->
+shrinkAndFormat = (data, width, height)->
   # gm accepts either a path string or a stream
   gm data
   .setFormat 'jpg'
@@ -33,12 +33,12 @@ module.exports =
     readFile path
     .then crypto_.sha1
 
-  shrink: (path, width = maxSize, height = maxSize)->
+  shrinkAndFormat: (path, width = maxSize, height = maxSize)->
     return new Promise (resolve, reject)->
-      shrink path, width, height
+      shrinkAndFormat path, width, height
       .write path, returnPath(path, resolve, reject)
 
-  shrinkStream: shrink
+  shrinkAndFormatStream: shrinkAndFormat
 
   removeExif: (path)->
     return new Promise (resolve, reject)->
