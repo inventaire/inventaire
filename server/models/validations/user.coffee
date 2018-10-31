@@ -3,7 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 notificationsSettingsList = __.require 'sharedLibs', 'notifications_settings_list'
 
-{ pass, userId, username, email, localImg, boolean, position, BoundedString } = require './common'
+{ pass, userId, username, email, userImg, boolean, position, BoundedString } = require './common'
 
 creationStrategies = ['local']
 
@@ -15,7 +15,7 @@ module.exports = validations =
   password: BoundedString 8, 128
   # accepting second level languages (like es-AR) but only using first level yet
   language: (lang)-> /^\w{2}(-\w{2})?$/.test(lang)
-  picture: localImg
+  picture: userImg
   creationStrategy: (creationStrategy)-> creationStrategy in creationStrategies
   bio: BoundedString 0, 1000
   settings: boolean

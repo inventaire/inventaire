@@ -11,7 +11,7 @@ regex_ = __.require 'models', 'validations/regex'
 { local: localStorage } = CONFIG.mediaStorage
 storageFolder = localStorage.folder()
 
-# images urls look like /img/#{hash}.#{extension}"
+# images urls look like /img/#{container}/#{hash}"
 # expect the pictures' files to be in #{storageFolder}
 
 exports.get = (req, res, next)->

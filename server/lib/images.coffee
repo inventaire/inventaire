@@ -29,12 +29,9 @@ getUrlFromImageHash = (container)-> (filename)->
   if filename? then "/img/#{container}/#{filename}"
 
 module.exports =
-  getHashFilename: (path, extension)->
+  getHashFilename: (path)->
     readFile path
     .then crypto_.sha1
-    .then (hash)->
-      if extension then "#{hash}.#{extension}"
-      else hash
 
   shrink: (path, width = maxSize, height = maxSize)->
     return new Promise (resolve, reject)->

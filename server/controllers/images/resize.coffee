@@ -9,7 +9,7 @@ getResizedImage = require './lib/get_resized_image'
 containersList = Object.keys __.require('controllers', 'images/lib/containers')
 
 # resized images urls looks like
-# /img/#{container}/#{w}x#{h}/(#{hash}(.jpg)?|#{external url hashCode?href=escaped url})"
+# /img/#{container}/#{w}x#{h}/(#{hash}|#{external url hashCode?href=escaped url})"
 
 exports.get = (req, res, next)->
   # can be useful in development
@@ -34,7 +34,7 @@ exports.get = (req, res, next)->
     rest = dimensions
     dimensions = null
 
-  if /^[0-9a-f]{40}(.jpg)?$/.test rest
+  if /^[0-9a-f]{40}$/.test rest
     url = "#{mediaStorageEndpoint}#{container}/#{rest}"
 
   else if /^[0-9]+$/.test rest
