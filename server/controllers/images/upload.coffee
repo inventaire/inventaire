@@ -1,13 +1,9 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-{ Promise } = __.require 'lib', 'promises'
 parseForm = require './lib/parse_form'
 responses_ = __.require 'lib', 'responses'
 error_ = __.require 'lib', 'error/error'
-images_ = __.require 'lib', 'images'
-{ getImageByUrl } = __.require 'data', 'dataseed/dataseed'
-host = CONFIG.fullPublicHost()
 containers = require './lib/containers'
 
 module.exports = (req, res, next)->
