@@ -28,7 +28,7 @@ builders = require './properties_config_builders'
 # and app/modules/entities/lib/editor/properties_per_type
 properties =
   # image
-  'wdt:P18': bases.imageHash
+  'invp:P2': bases.imageHash
   # instance of
   'wdt:P31': _.extend {}, bases.uniqueEntity, { adminUpdateOnly: true }
   # author

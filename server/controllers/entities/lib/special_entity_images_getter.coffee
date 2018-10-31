@@ -6,7 +6,7 @@ getSerieParts = require './get_serie_parts'
 getEntityImagesFromClaims = require './get_entity_images_from_claims'
 
 module.exports =
-  # Works images (wdt:P18) in Wikidat aren't satisfying, as not making use
+  # Works images (wdt:P18) in Wikidata aren't satisfying, as not making use
   # of the right to fair-use, thus the need to fetch editions covers instead
   work: (entity, limitPerLang)->
     { uri } = entity
@@ -29,7 +29,7 @@ getWorkEditions = (workUri, images, limitPerLang)->
 addEditionsImages = (images, limitPerLang = 3)-> (editions)->
   for edition in editions
     lang = getOriginalLang edition.claims
-    image = edition.claims['wdt:P18']?[0]
+    image = edition.claims['invp:P2']?[0]
     if lang? and image? then addImage images, lang, limitPerLang, image
 
   return images
