@@ -7,13 +7,14 @@
 # - run `npm run migrator migration_doc_filename`
 
 [ fileName ] = process.argv.slice(2)
-# Accept full file path
-fileName = fileName.split('/').slice(-1)[0]
 
 __ = require('config').universalPath
 
-# Set preview to false to apply the migration
-migrationParams = __.require 'couchdb', "migration_docs/#{fileName}"
+# Accept full file path
+if fileName[0] is '/'
+  migrationParams = require fileName
+else
+  migrationParams = __.require 'couchdb', "migration_docs/#{fileName}"
 
 { viewName, updateFunction } = migrationParams
 
