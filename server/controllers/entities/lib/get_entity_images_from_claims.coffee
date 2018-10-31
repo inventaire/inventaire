@@ -2,7 +2,7 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 { getAvatarsUrlsFromClaims } = require './get_avatars_from_claims'
 getCommonsFilenamesFromClaims = require './get_commons_filenames_from_claims'
-{ getUrlFromEntityImageHash } = __.require 'lib', 'images'
+{ getUrlFromEntityImageHash } = require './entities'
 
 module.exports = (entity)->
   { claims } = entity

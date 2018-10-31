@@ -25,9 +25,6 @@ removeExif = (data)->
   gm data
   .noProfile()
 
-getUrlFromImageHash = (container)-> (filename)->
-  if filename? then "/img/#{container}/#{filename}"
-
 module.exports =
   getHashFilename: (path)->
     readFile path
@@ -48,7 +45,8 @@ module.exports =
   applyLimits: (width, height)->
     return [ applyLimit(width), applyLimit(height) ]
 
-  getUrlFromEntityImageHash: getUrlFromImageHash 'entities'
+  getUrlFromImageHash: (container, filename)->
+    if filename? then "/img/#{container}/#{filename}"
 
 applyLimit = (dimension = maxSize)->
   dimension = Number dimension
