@@ -5,6 +5,7 @@ _ = __.require 'builders', 'utils'
 user_ = __.require 'controllers', 'user/lib/user'
 transactions_ = __.require 'controllers', 'transactions/lib/transactions'
 items_ = __.require 'controllers', 'items/lib/items'
+snapshot_ = __.require 'controllers', 'items/lib/snapshot/snapshot'
 promises_ = __.require 'lib', 'promises'
 comments_ = __.require 'controllers', 'comments/lib/comments'
 Transaction = __.require 'models', 'transaction'
@@ -34,10 +35,10 @@ catchErr = (err)->
 
 fetchData = (transaction)->
   promises_.all [
-    user_.byId(transaction.owner)
-    user_.byId(transaction.requester)
-    items_.byId(transaction.item)
-    comments_.byTransactionId(transaction._id)
+    user_.byId transaction.owner
+    user_.byId transaction.requester
+    items_.byId(transaction.item).then snapshot_.addToItem
+    comments_.byTransactionId transaction._id
   ]
   .spread (owner, requester, item, messages)->
     item.title = item.snapshot['entity:title']

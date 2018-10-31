@@ -6,7 +6,6 @@ attributes.updatable = [
   'listing'
   'details'
   'notes'
-  'snapshot'
   # Use case: change from a work entity to an edition entity
   'entity'
 ]
@@ -18,13 +17,7 @@ attributes.validAtCreation = [
   'listing'
   'details'
   'notes'
-  # For the list of attributes that can be in an item.snapshot object
-  # see server/models/tests/item.coffee inLocalSnapshot
-  # Snapshot data follow there source document: changes on the item entity
-  # will be reflected in the item's snapshot data
-  'snapshot'
-  # Required for items created from a language-ambiguous entity (like a work)
-  # to determine from which language the title should be snapshoted
+  # Legacy
   'lang'
 ]
 

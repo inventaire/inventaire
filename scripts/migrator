@@ -7,6 +7,8 @@
 # - run `npm run migrator migration_doc_filename`
 
 [ fileName ] = process.argv.slice(2)
+# Accept full file path
+fileName = fileName.split('/').slice(-1)[0]
 
 __ = require('config').universalPath
 

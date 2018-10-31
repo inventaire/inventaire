@@ -1,7 +1,7 @@
 module.exports =
   dbName: 'items'
   designDocName: 'items'
-  viewName: 'byOwner'
+  viewName: 'byOwnerAndEntityAndListing'
   preview: true
   updateFunction: (doc)->
     doc.snapshot = {}

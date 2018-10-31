@@ -3,7 +3,7 @@ _ = __.require 'builders', 'utils'
 items_ = __.require 'controllers', 'items/lib/items'
 user_ = __.require 'controllers', 'user/lib/user'
 promises_ = __.require 'lib', 'promises'
-{ addUsersData, Paginate } = require './queries_commons'
+{ addAssociatedData, Paginate } = require './queries_commons'
 
 module.exports = (page, usersIds)->
   # Allow to pass users ids either through the page object
@@ -14,7 +14,7 @@ module.exports = (page, usersIds)->
   getRelations reqUserId, usersIds
   .then fetchRelationsItems(reqUserId)
   .then Paginate(page)
-  .then addUsersData
+  .then addAssociatedData
 
 getRelations = (reqUserId, usersIds)->
   # All users are considered public users when the request isn't authentified

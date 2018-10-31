@@ -7,7 +7,7 @@ responses_ = __.require 'lib', 'responses'
 error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
 sanitize = __.require 'lib', 'sanitize/sanitize'
-{ addUsersData, listingIs, Paginate } = require './lib/queries_commons'
+{ addAssociatedData, listingIs, Paginate } = require './lib/queries_commons'
 { omitPrivateAttributes } = require './lib/filter_private_attributes'
 
 sanitization =
@@ -30,7 +30,7 @@ module.exports = (req, res)->
     # Paginating isn't really required when requesting items by ids
     # but it also handles sorting and the consistency of the API
     .then Paginate(params)
-    .then addUsersData
+    .then addAssociatedData
   .then responses_.Send(res)
   .catch error_.Handler(req, res)
 

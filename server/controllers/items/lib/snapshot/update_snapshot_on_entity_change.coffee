@@ -13,7 +13,7 @@ refreshSnapshot = require './refresh_snapshot'
 #   Wikidata's data is assumed to be more reliable, and less changing
 
 # TODO: filter update events by relevance to items snapshots:
-# IT doesn't matter that some entity got an update on some properties
+# It doesn't matter that some entity got an update on some properties
 # that aren't involved in generating the snapshot data. Ex: edition publisher.
 
 # TODO: use the Wikidata recentchanges API to follow remote entities updates
@@ -23,6 +23,7 @@ module.exports = ->
   radio.on 'entity:update:label', refreshSnapshot.fromDoc
   radio.on 'entity:update:claim', refreshSnapshot.fromDoc
   radio.on 'entity:merge', updateSnapshotOnEntityMerge
+  radio.on 'entity:revert:merge', refreshSnapshot.fromUri
 
 updateSnapshotOnEntityMerge = (fromUri, toUri)->
   # Using the toUri as its the URI the items are using now

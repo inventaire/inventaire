@@ -31,7 +31,6 @@ Item.create = (userId, item)->
 
   item.owner = userId
   item.created = Date.now()
-  item.snapshot or= {}
   return item
 
 passAttrTest = (item, attr)->
@@ -43,7 +42,8 @@ Item.update = (userId, updateAttributesData, doc)->
 
   nonUpdatedAttributes = _.omit updateAttributesData, attributes.known
   if Object.keys(nonUpdatedAttributes).length > 0
-    throw error_.new "invalid attribute(s): #{JSON.stringify(nonUpdatedAttributes)}", 400
+    nonUpdatedAttributesStr = JSON.stringify nonUpdatedAttributes
+    throw error_.new "invalid attribute(s): #{nonUpdatedAttributesStr}", 400
 
   # filter-out non-updatable attributes
   newData = _.pick updateAttributesData, attributes.updatable
@@ -109,13 +109,4 @@ Item.revertEntity = (fromUri, toUri, item)->
   item.entity = previousEntity
   item.previousEntity.shift()
 
-  return item
-
-Item.updateSnapshot = (item, updatedSnapshot)->
-  item.snapshot = updatedSnapshot
-  return item
-
-Item.updateSnapshotTitle = (title, item)->
-  item.snapshot or= {}
-  item.snapshot['entity:title'] = title
   return item
