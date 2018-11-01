@@ -16,6 +16,7 @@ _.extend Q,
   ]
   works: [
     'wd:Q571' # book
+    'wd:Q47461344' # written work
     'wd:Q2831984' # comic book album
     'wd:Q1004' # bande dessinée / comic book
     'wd:Q1760610' # comic book
