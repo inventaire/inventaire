@@ -119,7 +119,7 @@ module.exports =
   expectedType: expectedType
 
   validateProperty: (property)->
-    unless /^wdt:P\d+$/.test property
+    unless /^(wdt|invp):P\d+$/.test property
       throw error_.new 'invalid property', 400, property
 
     unless property in whitelist
