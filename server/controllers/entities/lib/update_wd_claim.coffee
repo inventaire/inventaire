@@ -6,6 +6,7 @@ promises_ = __.require 'lib', 'promises'
 getWdEntity = __.require 'data', 'wikidata/get_entity'
 wdk = require 'wikidata-sdk'
 wdEdit = require 'wikidata-edit'
+{ properties } = require './properties'
 { wikidataOAuth } = CONFIG
 
 module.exports = (user, id, property, oldVal, newVal)->
@@ -14,7 +15,7 @@ module.exports = (user, id, property, oldVal, newVal)->
   unless userWikidataOAuth?
     return error_.reject 'missing wikidata oauth tokens', 400
 
-  if _.isEntityUri(newVal) and newVal.split(':')[0] is 'inv'
+  if properties[property].datatype is 'entity' and _.isInvEntityUri newVal
     return error_.reject "wikidata entities can't link to inventaire entities", 400
 
   oldVal = dropPrefix oldVal
