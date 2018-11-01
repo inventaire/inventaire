@@ -2,13 +2,24 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
-{ users } = require './hard_coded_documents'
+users = _.values require('./hard_coded_documents').users
 usersDb = __.require('couch', 'base')('users')
 
 module.exports = ->
-  Promise.all _.values(users).map(updateDoc(usersDb))
+  # Updating sequentially so that blue-cot initialize only a cookie session only once.
+  # This seems to be required to avoid getting a 401 from CouchDB,
+  # especially when CouchDB just started
+  # Known case: when starting CouchDB and the server together with docker-compose
+  sequentialUpdate = ->
+    nextUser = users.shift()
+    unless nextUser? then return
 
-updateDoc = (db)-> (doc)->
+    updateDoc usersDb, nextUser
+    .then sequentialUpdate
+
+  return sequentialUpdate()
+
+updateDoc = (db, doc)->
   { _id: id } = doc
   db.get id
   .then (currentDoc)->
