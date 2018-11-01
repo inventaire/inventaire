@@ -1,4 +1,4 @@
-{ secret, cookieMaxAge, apiOpenBar } = require 'config'
+{ secret, cookieMaxAge } = require 'config'
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 user_ = __.require 'controllers', 'user/lib/user'
@@ -26,12 +26,3 @@ module.exports =
     # TODO: handle response to avoid text/plain 401 response
     # to keep the API consistent on Content-Type
     passport_.authenticate.basic req, res, next
-
-  # Obviously not to be used in production
-  openBarApi: (req, res, next)->
-    # turn apiOpenBar for testing or maintainance purpose
-    if apiOpenBar
-      req.user = apiOpenBar.user
-      _.warn apiOpenBar, '/!\\ API open bar: on'
-
-    next()

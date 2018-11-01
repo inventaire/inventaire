@@ -87,8 +87,6 @@ module.exports = config =
     ]
   # enable the api/i18n endpoint and its i18nMissingKeys controller
   logMissingI18nKeys: true
-  # disable restrictApiAccess middleware: no more Auth required
-  apiOpenBar: false
   # reset server/lib/cache.coffee
   resetCacheAtStartup: false
 
