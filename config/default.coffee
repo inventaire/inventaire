@@ -126,9 +126,6 @@ module.exports = config =
       maxSize: 1600
       # 5MB
       maxWeight: 5 * 1024 ** 2
-      internalEndpoint: ->
-        { mode } = config.mediaStorage
-        return config.mediaStorage[mode].internalEndpoint()
     mode: 'local'
     # Swift parameters are required only when mediaStorage mode is set to 'swift'
     swift:

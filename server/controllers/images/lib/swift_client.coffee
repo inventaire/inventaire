@@ -6,12 +6,12 @@ fs_ = __.require 'lib', 'fs'
 request = require 'request'
 { Promise } = __.require 'lib', 'promises'
 getToken = require './get_swift_token'
-{ publicURL } = CONFIG.swift
+{ publicURL } = CONFIG.mediaStorage.swift
 
 absoluteUrl = (container, filename)-> "#{publicURL}/#{container}/#{filename}"
-relativeUrl = (filename)-> "/img/#{container}/#{filename}"
+relativeUrl = (container, filename)-> "/img/#{container}/#{filename}"
 
-getParams = (container, filename, body, type = 'application/json')->
+getParams = (container, filename, body, type = 'application/octet-stream')->
   getToken()
   .then (token)->
     url: absoluteUrl container, filename

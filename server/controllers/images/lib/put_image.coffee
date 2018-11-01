@@ -4,6 +4,7 @@ _ = __.require 'builders', 'utils'
 images_ = __.require 'lib', 'images'
 # 'swift' or 'local'
 { mode } = CONFIG.mediaStorage
+_.info "media storage: #{mode}"
 client = require "./#{mode}_client"
 
 module.exports = (container, path, id, filename)->

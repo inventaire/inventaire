@@ -13,7 +13,7 @@ lastTokenExpirationTime = 0
 # let a 10 minutes margin before token expiration
 tokenExpired = -> Date.now() > (lastTokenExpirationTime - tenMinutes)
 
-{ username, password, authUrl, tenantName, region, publicURL } = CONFIG.swift
+{ username, password, authUrl, tenantName, region, publicURL } = CONFIG.mediaStorage.swift
 
 postParams =
   url: "#{authUrl}/tokens"
