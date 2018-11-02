@@ -8,8 +8,10 @@ getBestLangValue = __.require('sharedLibs', 'get_best_lang_value')(_)
 
 module.exports =
   edition: (edition, works, authors, series)->
-    title = edition.claims['wdt:P1476']?[0]
     lang = edition.originalLang or 'en'
+    title = edition.claims['wdt:P1476']?[0]
+    # Wikidata editions might not have a wdt:P1476 value
+    title or= getBestLangValue(lang, null, edition.labels).value
     image = edition.image?.url
     return buildOperation {
       type: 'edition'

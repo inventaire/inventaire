@@ -70,6 +70,6 @@ getEditionsSnapshots = (uri, works, authors, series)->
 getEditionSnapshot = (edition, works, authors, series)->
   _.types arguments, [ 'object', 'array', 'array', 'array' ]
 
-  [ uri ] = getInvEntityCanonicalUri edition
-  edition.uri = uri
+  # If it's a Wikidata entity, it will already have a uri
+  edition.uri or= getInvEntityCanonicalUri(edition)[0]
   return buildSnapshot.edition edition, works, authors, series
