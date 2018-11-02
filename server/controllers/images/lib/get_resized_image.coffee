@@ -40,7 +40,7 @@ onResponse = (reqStream, url, width, height, req, res)-> (response)->
     @emit 'error', err
   else
     res.header 'Content-Type', 'image/jpeg'
-    res.header 'Cache-Control', "public, max-age=#{oneYear}"
+    res.header 'Cache-Control', 'immutable'
     resizeFromStream reqStream, width, height, req, res
 
 # Accepting image/*
