@@ -9,6 +9,19 @@ should = require 'should'
 humanPromise = createHuman()
 
 describe 'entities:update-labels', ->
+  it 'should update a label', (done)->
+    humanPromise
+    .then (human)->
+      { uri } = human
+      updateLabel human._id, 'fr', 'foo'
+      .then -> getByUri human.uri
+      .then (updatedHuman)->
+        updatedHuman.labels.fr.should.equal 'foo'
+        done()
+    .catch undesiredErr(done)
+
+    return
+
   it 'should reject an update with an invalid lang', (done)->
     humanPromise
     .then (human)-> updateLabel human._id, 'zz', 'foo'
