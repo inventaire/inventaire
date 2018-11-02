@@ -1,20 +1,19 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 getEntityByUri = __.require 'controllers', 'entities/lib/get_entity_by_uri'
+getEntitiesByUris = __.require 'controllers', 'entities/lib/get_entities_by_uris'
 { Promise } = __.require 'lib', 'promises'
 { aggregateClaims } = require './helpers'
 
-# Pluralize works to account for composite editions
-getEditionWorks = (edition)->
-  Promise.all edition.claims['wdt:P629'].map(getEntityByUri)
-
-getWorkRelativeEntity = (relationProperty)-> (work)->
+getRelativeEntities = (relationProperty)-> (work)->
   uris = work.claims[relationProperty]
   unless uris?.length > 0 then return Promise.resolve []
-  return Promise.all uris.map(getEntityByUri)
+  getEntitiesByUris uris
+  .then (res)-> _.values(res.entities)
 
-getWorkAuthors = getWorkRelativeEntity 'wdt:P50'
-getWorkSeries = getWorkRelativeEntity 'wdt:P179'
+getEditionWorks = getRelativeEntities 'wdt:P629'
+getWorkAuthors = getRelativeEntities 'wdt:P50'
+getWorkSeries = getRelativeEntities 'wdt:P179'
 
 getWorkAuthorsAndSeries = (work)->
   Promise.all [
