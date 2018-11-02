@@ -17,7 +17,6 @@ Item.create = (userId, item)->
   item = _.omit item, ['_id', 'owner', 'created']
   passedAttributes = Object.keys item
 
-  item.pictures or= []
   item.listing = solveConstraint item, 'listing'
   item.transaction = solveConstraint item, 'transaction'
 
