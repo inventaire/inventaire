@@ -115,9 +115,9 @@ module.exports = Entity =
         propArray = _.without propArray, oldVal
 
         # Some properties are required.
-        # Ex: wdt:P629 is required on editions, so the last claim can't be removed
-        # without adding a new value
-        if propArray.length is 0 and property in criticalProperties
+        # Ex: wdt:P629 and wdt:P1476 are required on editions, so the last claim
+        # can't be removed without adding a new value
+        if propArray.length is 0 and properties[property].critical
           throw error_.new 'this property should at least have one value', 400, arguments
 
         setPossiblyEmptyPropertyArray doc, property, propArray
@@ -218,6 +218,3 @@ setPossiblyEmptyPropertyArray = (doc, property, propertyArray)->
     doc.claims = _.omit doc.claims, property
   else
     doc.claims[property] = propertyArray
-
-# Properties that need at least one value
-criticalProperties = [ 'wdt:P629' ]
