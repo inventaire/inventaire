@@ -35,7 +35,7 @@ exports.get = (req, res, next)->
     rest = dimensions
     dimensions = null
 
-  if /^[0-9a-f]{40}$/.test rest
+  if /^[0-9a-f]{40}$/.test(rest) or container is 'assets'
     url = "#{mediaStorageEndpoint}#{container}/#{rest}"
 
   else if /^[0-9]+$/.test rest

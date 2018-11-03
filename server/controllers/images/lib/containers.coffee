@@ -21,3 +21,5 @@ module.exports =
   # Placeholder to add 'remote' to the list of containers, when it's actually
   # used to fetch remote images
   remote: {}
+  # Same but for emails and client assets
+  assets: {}

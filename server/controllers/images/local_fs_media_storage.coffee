@@ -22,7 +22,7 @@ exports.get = (req, res, next)->
   if others.length > 0
     return error_.bundle req, res, 'invalid image path', 400, { filename }
 
-  unless regex_.Sha1.test hash
+  unless regex_.Sha1.test(hash) or container is 'assets'
     return error_.bundle req, res, 'invalid image hash', 400, { filename, hash, extension }
 
   filepath = "#{storageFolder}/#{container}/#{filename}"
