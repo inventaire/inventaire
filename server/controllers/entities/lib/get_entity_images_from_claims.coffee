@@ -11,5 +11,8 @@ module.exports = (entity)->
   unless claims? then return []
 
   invImageUrl = getUrlFromEntityImageHash claims['invp:P2']?[0]
+  invImageUrls = if invImageUrl? then [ invImageUrl ] else []
   claimsImages = getCommonsFilenamesFromClaims claims
-  return [ invImageUrl ].concat claimsImages, getAvatarsUrlsFromClaims(claims)
+  avatarsImages = getAvatarsUrlsFromClaims claims
+
+  return invImageUrls.concat claimsImages, avatarsImages
