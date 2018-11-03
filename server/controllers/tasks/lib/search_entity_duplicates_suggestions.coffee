@@ -1,7 +1,6 @@
 CONFIG = require 'config'
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
-promises_ = __.require 'lib', 'promises'
 search = __.require 'controllers', 'search/lib/get_wd_authors'
 { prefixifyWd } = __.require 'controllers', 'entities/lib/prefix'
 
