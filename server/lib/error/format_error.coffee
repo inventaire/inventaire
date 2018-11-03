@@ -31,7 +31,7 @@ getErrorEmittingLines = (err)->
 
 getErrorEmittingLine = (line)->
   line?.trim()
-  .replace 'at ', ''
+  .replace /^\s*at\s+/, ''
   # delete parenthesis around the file path
   .replace /(\(|\))/g, ''
   # delete machine specific path
