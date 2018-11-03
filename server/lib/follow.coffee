@@ -4,11 +4,12 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
+promises_ = __.require 'lib', 'promises'
 follow = require 'follow'
 meta = __.require 'lib', 'meta'
 breq = require 'bluereq'
 dbHost = CONFIG.db.fullHost()
-{ reset:resetFollow, freeze:freezeFollow, delay:delayFollow } = CONFIG.db.follow
+{ reset: resetFollow, freeze: freezeFollow, delay: delayFollow } = CONFIG.db.follow
 
 # Never follow in non-server mode.
 # This behaviors allows, in API tests environement, to have the tests server
@@ -20,8 +21,11 @@ freezeFollow = freezeFollow or not CONFIG.serverMode
 followers = {}
 
 module.exports = (params)->
-  { dbBaseName, filter, onChange } = params
-  _.types [ dbBaseName, filter, onChange ], [ 'string', 'function', 'function' ]
+  { dbBaseName, filter, onChange, reset } = params
+  _.type dbBaseName, 'string'
+  _.type filter, 'function'
+  _.type onChange, 'function'
+  _.type reset, 'function|undefined'
 
   dbName = CONFIG.db.name dbBaseName
 
@@ -40,12 +44,14 @@ module.exports = (params)->
     meta.get buildKey(dbName)
     # after a bit, to let other followers the time to register, and CouchDB
     # the time to initialize, while letting other initialization functions
-    # with a higher priority level some time to run
+    # with a higher priority level some time to run.
+    # It won't miss any changes as CouchDB will send everything that happened since
+    # the last saved sequence number
     .delay delayFollow
-    .then initFollow(dbName)
+    .then initFollow(dbName, reset)
     .catch _.ErrorRethrow('init follow err')
 
-initFollow = (dbName)-> (lastSeq = 0)->
+initFollow = (dbName, reset)-> (lastSeq = 0)->
   if resetFollow then lastSeq = 0
   _.type lastSeq, 'number'
 
@@ -62,19 +68,28 @@ initFollow = (dbName)-> (lastSeq = 0)->
       lastSeq = 0
       setLastSeq lastSeq
 
-    config =
-      db: dbUrl
-      include_docs: true
-      feed: 'continuous'
-      since: lastSeq
+    resetIfNeeded dbName, lastSeq, reset
+    .then -> startFollowingDb { dbName, dbUrl, lastSeq, setLastSeq }
 
-    follow config, (err, change)->
-      if err? then return _.error err, "#{dbName} follow err"
+resetIfNeeded = (dbName, lastSeq, reset)->
+  if lastSeq is 0 and reset? then reset()
+  else promises_.resolve()
 
-      { seq } = change
-      setLastSeq seq
-      for follower in followers[dbName]
-        if follower.filter(change.doc) then follower.onChange change
+startFollowingDb = (params)->
+  { dbName, dbUrl, lastSeq, setLastSeq } = params
+  dbFollowers = followers[dbName]
+
+  config =
+    db: dbUrl
+    include_docs: true
+    feed: 'continuous'
+    since: lastSeq
+
+  follow config, (err, change)->
+    if err? then return _.error err, "#{dbName} follow err"
+    setLastSeq change.seq
+    for follower in dbFollowers
+      if follower.filter(change.doc) then follower.onChange change
 
 SetLastSeq = (dbName)->
   key = buildKey dbName
