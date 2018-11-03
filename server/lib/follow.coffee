@@ -6,6 +6,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 follow = require 'follow'
 meta = __.require 'lib', 'meta'
+breq = require 'bluereq'
 dbHost = CONFIG.db.fullHost()
 { reset:resetFollow, freeze:freezeFollow, delay:delayFollow } = CONFIG.db.follow
 
@@ -48,17 +49,28 @@ initFollow = (dbName)-> (lastSeq = 0)->
   if resetFollow then lastSeq = 0
   _.type lastSeq, 'number'
 
-  config =
-    db: "#{dbHost}/#{dbName}"
-    include_docs: true
-    feed: 'continuous'
-    since: lastSeq
-
   setLastSeq = SetLastSeq dbName
+  dbUrl = "#{dbHost}/#{dbName}"
 
-  follow config, (err, change)->
-    if err? then _.error err, "#{dbName} follow err"
-    else
+  getDbLastSeq dbUrl
+  .then (dbLastSeq)->
+    # Reset lastSeq if the dbLastSeq is behind
+    # as this probably means the database was deleted and re-created
+    # and the leveldb-backed meta db kept the last_seq value of the previous db
+    if lastSeq > dbLastSeq
+      _.log { lastSeq, dbLastSeq }, "#{dbName} saved last_seq ahead of db: reseting", 'yellow'
+      lastSeq = 0
+      setLastSeq lastSeq
+
+    config =
+      db: dbUrl
+      include_docs: true
+      feed: 'continuous'
+      since: lastSeq
+
+    follow config, (err, change)->
+      if err? then return _.error err, "#{dbName} follow err"
+
       { seq } = change
       setLastSeq seq
       for follower in followers[dbName]
@@ -77,3 +89,8 @@ SetLastSeq = (dbName)->
   return _.debounce setLastSeq, 1000
 
 buildKey = (dbName)-> "#{dbName}-last-seq"
+
+getDbLastSeq = (dbUrl)->
+  breq.get "#{dbUrl}/_changes?limit=0&descending=true"
+  .get 'body'
+  .get 'last_seq'
