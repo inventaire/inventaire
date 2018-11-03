@@ -59,6 +59,7 @@ module.exports = items_ =
       descending: true
       include_docs: true
     .then FilterWithImage(assertImage)
+    .map snapshot_.addToItem
     .map filterPrivateAttributes(reqUserId)
 
   publicByLangAndDate: (limit, offset, lang, assertImage, reqUserId)->
@@ -70,6 +71,7 @@ module.exports = items_ =
       skip: offset or 0
       include_docs: true
     .then FilterWithImage(assertImage)
+    .map snapshot_.addToItem
     .map filterPrivateAttributes(reqUserId)
 
   byOwnersAndEntitiesAndListings: (ownersIds, uris, listingsKey, reqUserId)->
@@ -80,6 +82,7 @@ module.exports = items_ =
           keys.push [ ownerId, uri, listing ]
 
     db.viewByKeys 'byOwnerAndEntityAndListing', keys
+    .map snapshot_.addToItem
     .map filterPrivateAttributes(reqUserId)
 
   create: (userId, items)->
