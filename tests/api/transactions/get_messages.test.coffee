@@ -12,9 +12,10 @@ describe 'transactions:get:messages', ->
     createTransaction()
     .then (res1)->
       { transaction, userA, userB, userBItem } = res1
+      { _id } = transaction
       addMessage transaction
       .then (res2)->
-        authReq 'get', '/api/transactions?action=get-messages', { transaction }
+        authReq 'get', "/api/transactions?action=get-messages&transaction=#{_id}"
         .then (res3)->
           res3.messages.should.be.an.Array()
           should(res3.messages.length > 0).be.true()

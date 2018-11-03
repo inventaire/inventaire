@@ -9,6 +9,7 @@ authEndpoint = host + '/api/auth'
 faker = require 'faker'
 { makeUserAdmin } = __.require 'controllers', 'user/lib/user'
 { request } = require '../utils/request'
+randomString = __.require 'lib', './utils/random_string'
 
 connect = (endpoint, userData)-> breq.post { url: endpoint, body: userData }
 signup = (userData)-> connect "#{authEndpoint}?action=signup", userData
@@ -58,7 +59,9 @@ module.exports = API =
     .then (user)-> API.getUserWithCookie user.cookie
 
   createUsername: ->
-    faker.fake('{{name.firstName}}').replace /\W/, ''
+    # Add a random string to prevent creating several users with the same username
+    # and be rejected because of it
+    faker.fake('{{name.firstName}}').replace(/\W/, '') + randomString(2)
 
 parseCookie = (res)-> res.headers['set-cookie'].join ';'
 
