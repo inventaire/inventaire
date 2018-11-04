@@ -2,11 +2,11 @@
   "_id": "_design/tasks",
   "language": "coffeescript",
   "views": {
-    "bySuspectUri": {
-      "map": "(doc)->\n  unless doc.state \n    emit doc.suspectUri, null"
+    "bySuspectUriAndState": {
+      "map": "(doc)->\n  emit [ doc.suspectUri, doc.state ], null"
     },
-    "bySuggestionUri": {
-      "map": "(doc)->\n  unless doc.state \n    emit doc.suggestionUri, null"
+    "bySuggestionUriAndState": {
+      "map": "(doc)->\n  emit [ doc.suggestionUri, doc.state ], null"
     },
     "byScore": {
       "map": "(doc)->\n  unless doc.state \n    emit [doc.externalSourcesOccurrences, doc.relationScore, doc.elasticScore], doc"

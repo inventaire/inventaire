@@ -22,7 +22,7 @@ module.exports =
         title: "last_#{label}_books_more"
 
   embedUsersData: (items, users, position)->
-    users = indexById users
+    users = _.keyBy users, '_id'
     items.map (item)->
       user = users[item.owner]
       if user?
@@ -40,8 +40,6 @@ module.exports =
     return getItemsWithTransactionFirst lastItems, highlightedLength
 
 requiredUserData = [ 'username', 'picture' ]
-
-indexById = (users)-> _.keyBy users, '_id'
 
 getItemsWithTransactionFirst = (lastItems, highlightedLength)->
   # create a new array as items.pop() would affect lastItems everywhere

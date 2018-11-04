@@ -2,6 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
+tasks_ = require './lib/tasks'
 entities_ = __.require 'controllers', 'entities/lib/entities'
 responses_ = __.require 'lib', 'responses'
 { prefixifyInv } = __.require 'controllers', 'entities/lib/prefix'
@@ -37,7 +38,7 @@ deduplicateWorker = (jobId, uri)->
       throw err
 
 filterNotAlreadySuspectEntities = (uris)->
-  tasks_.bySuspectUris uris
+  tasks_.bySuspectUris uris, { includeArchived: true }
   .then (res)->
     alreadyCheckedUris = _.pluck res.rows, 'suspectUri'
     return _.difference uris, alreadyCheckedUris
