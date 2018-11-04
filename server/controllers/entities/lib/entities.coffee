@@ -43,10 +43,6 @@ module.exports = entities_ =
       if parseDoc then query.then couch_.mapDoc
       else query
 
-  idsByClaim: (property, value)->
-    entities_.byClaim property, value
-    .then couch_.mapId
-
   urisByClaim: (property, value)->
     entities_.byClaim property, value, true, true
     .map (doc)-> getInvEntityCanonicalUri(doc)[0]
