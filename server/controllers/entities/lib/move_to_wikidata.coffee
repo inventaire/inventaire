@@ -9,6 +9,7 @@ wdEdit = require 'wikidata-edit'
 mergeEntities = require './merge_entities'
 { properties } = require './properties'
 { prefixifyWd, unprefixify } = require './prefix'
+whitelistedEntityTypes = [ 'work', 'serie', 'human' ]
 
 module.exports = (user, invEntityUri)->
   { oauth, _id: reqUserId } = user
@@ -23,6 +24,7 @@ module.exports = (user, invEntityUri)->
 
   entities_.byId entityId
   .then validateWikidataCompliance
+  .then format
   .then wdEdit({ oauth }, 'entity/create')
   .then (res)->
     unless res.entity?
@@ -34,19 +36,34 @@ module.exports = (user, invEntityUri)->
     .then -> { uri: wdEntityUri }
 
 validateWikidataCompliance = (entity)->
-  { labels, claims, type } = entity
-
+  { claims } = entity
   unless claims? then throw error_.new 'invalid entity', 400, entity
 
-  for property, values of claims
-    unless properties[property].datatype is 'entity'
-      throw error_.new 'invalid datatype', 400, { entity, property, values }
+  entityType = getEntityType claims['wdt:P31']
+  unless entityType in whitelistedEntityTypes
+    throw error_.new 'invalid entity type', 400, { entityType, entity }
 
-    for value in values
-      if value.split(':')[0] isnt 'inv'
-        throw error_.new 'claim value is an inv uri', 400, { property, value }
+  for property, values of claims
+    if properties[property].datatype is 'entity'
+      for value in values
+        if value.split(':')[0] isnt 'inv'
+          throw error_.new 'claim value is an inv uri', 400, { property, value }
 
   return entity
 
-createItem = (oauth, entity)->
-  wdEdit({ oauth }, 'entity/create')(entity)
+format = (entity)->
+  { claims } = entity
+  entity.claims = Object.keys(claims)
+    .reduce unprefixifyClaims(claims), {}
+  return entity
+
+unprefixifyClaims = (claims)-> (formattedClaims, property)->
+  unprefixifiedProp = unprefixify property
+  propertyValues = claims[property]
+
+  if properties[property].datatype is 'entity'
+    formattedClaims[unprefixifiedProp] = propertyValues.map unprefixify
+  else
+    # datatype 'string' should not be unprefixified, ex: 'Jules Vernes'
+    formattedClaims[unprefixifiedProp] = propertyValues
+  return formattedClaims
