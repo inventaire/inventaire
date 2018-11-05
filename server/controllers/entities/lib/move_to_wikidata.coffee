@@ -6,7 +6,7 @@ promises_ = __.require 'lib', 'promises'
 getEntityType = require './get_entity_type'
 wdEdit = require 'wikidata-edit'
 { wikidataOAuth } = require('config')
-{ turnIntoRedirection } = require './merge_entities'
+mergeEntities = require './merge_entities'
 { properties } = require './properties'
 { prefixifyWd, unprefixify } = require './prefix'
 
@@ -28,8 +28,8 @@ module.exports = (user, entityUri)->
 
     wdEntityUri = prefixifyWd res.entity.id
 
-    turnIntoRedirection reqUserId, entityId, wdEntityUri
-    return { uri: wdEntityUri }
+    mergeEntities reqUserId, entityUri, wdEntityUri
+    .then -> { uri: wdEntityUri }
 
 validateWikidataCompliance = (entity)->
   { labels, claims, type } = entity
