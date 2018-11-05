@@ -22,11 +22,11 @@ module.exports = (user, entityUri)->
   entities_.byId entityId
   .then validateWikidataCompliance
   .then (entity)-> createItem(oauth, entity)
-  .get 'entity'
-  .then (wdItem)->
-    unless wdItem then return {}
-    itemUri = prefixifyWd wdItem
+  .then (res)->
+    unless res then return {}
+    itemUri = prefixifyWd res.entity.id
     turnIntoRedirection reqUserId, entityId, itemUri
+    return { uri: itemUri }
 
 validateWikidataCompliance = (entity)->
   { labels, claims, type } = entity
