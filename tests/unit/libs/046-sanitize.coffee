@@ -364,3 +364,28 @@ describe 'sanitize', ->
       .catch done
 
       return
+
+  describe 'relatives', ->
+    it 'should reject non whitelisted relatives', (done)->
+      req = { query: { relatives: [ 'bar', 'foo' ] } }
+      res = {}
+      configs = { relatives: { whitelist: [ 'bar' ] } }
+      sanitize req, res, configs
+      .catch (err)->
+        err.message.should.startWith 'invalid relative'
+        done()
+      .catch done
+
+      return
+
+    it 'should return relatives if whitelisted', (done)->
+      req = { query: { relatives: [ 'bar', 'foo' ] } }
+      res = {}
+      configs = { relatives: { whitelist: [ 'foo', 'bar' ] } }
+      sanitize req, res, configs
+      .then (input)->
+        input.relatives.should.deepEqual [ 'bar', 'foo' ]
+        done()
+      .catch done
+
+      return
