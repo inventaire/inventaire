@@ -64,7 +64,7 @@ properties =
   # publication date
   'wdt:P577': bases.uniqueSimpleDay
   # edition of
-  'wdt:P629': bases.workEntity
+  'wdt:P629': _.extend bases.workEntity, { critical: true }
   # Open Library id
   'wdt:P648': builders.externalId /^OL[1-9]\d{0,7}[AMW]$/
   # translator
@@ -86,7 +86,7 @@ properties =
   # languages of expression
   'wdt:P1412': bases.entity
   # title
-  'wdt:P1476': bases.uniqueString
+  'wdt:P1476': _.extend bases.uniqueString, { critical: true }
   # series ordinal
   'wdt:P1545': bases.ordinal
   # subtitle
