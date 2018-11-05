@@ -1,11 +1,8 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 entities_ = require './entities'
 promises_ = __.require 'lib', 'promises'
-# { Track } = __.require 'lib', 'track'
 getEntityType = require './get_entity_type'
 wdEdit = require 'wikidata-edit'
 { wikidataOAuth } = require('config')
@@ -17,7 +14,7 @@ module.exports = (user, entityUri)->
   { oauth, _id:reqUserId } = user
   userWikidataOAuth = user.oauth?.wikidata
   unless userWikidataOAuth?
-    return error_.reject 'missing wikidata oauth tokens', 400
+    throw error_.reject 'missing wikidata oauth tokens', 400
   oauth = _.extend userWikidataOAuth, wikidataOAuth
 
   entityId = unprefixify entityUri
@@ -29,22 +26,20 @@ module.exports = (user, entityUri)->
   .then (wdItem)->
     unless wdItem then return {}
     itemUri = prefixifyWd wdItem
-    itemUri = "wd:Q585"
     turnIntoRedirection reqUserId, entityId, itemUri
 
 validateWikidataCompliance = (entity)->
   { labels, claims, type } = entity
 
-  unless claims? then return false
+  unless claims? then throw error_.new 'invalid entity', 400, entity
 
-  for claim in claims
-    { property, values } = claim
+  for property, values in claims
     unless properties[property].datatype is 'entity'
-      return false
+      throw error_.reject "invalid datatype for #{entity}", 400
 
     for value in values
       if value.split(":")[0] isnt 'inv'
-        return error_.reject "claim #{claim} has a value with an inventaire Uri", 400
+        throw error_.reject "claim #{claim} has a value with an inventaire Uri", 400
 
   return entity
 
