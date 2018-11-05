@@ -3,7 +3,7 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 responses_ = __.require 'lib', 'responses'
 getEntitiesByUris = require './lib/get_entities_by_uris'
-{ merge:mergeEntities, turnIntoRedirection } = require './lib/merge_entities'
+mergeEntities = require './lib/merge_entities'
 radio = __.require 'lib', 'radio'
 
 # Assumptions:
@@ -77,14 +77,7 @@ merge = (reqUserId, toPrefix, fromUri, toUri)-> (res)->
   fromUri = replaceIsbnUriByInvUri fromUri, fromEntity._id
   toUri = replaceIsbnUriByInvUri toUri, toEntity._id
 
-  [ fromPrefix, fromId ] = fromUri.split ':'
-  [ toPrefix, toId ] = toUri.split ':'
-
-  if toPrefix is 'wd'
-    # no merge to do for Wikidata entities, simply creating a redirection
-    return turnIntoRedirection reqUserId, fromId, toUri
-  else
-    return mergeEntities reqUserId, fromId, toId
+  return mergeEntities reqUserId, fromUri, toUri
 
 replaceIsbnUriByInvUri = (uri, invId)->
   [ prefix ] = uri.split ':'

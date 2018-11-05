@@ -8,7 +8,17 @@ placeholders_ = require './placeholders'
 propagateRedirection = require './propagate_redirection'
 getInvEntityCanonicalUri = require './get_inv_entity_canonical_uri'
 
-merge = (userId, fromId, toId)->
+module.exports = (userId, fromUri, toUri)->
+  [ fromPrefix, fromId ] = fromUri.split ':'
+  [ toPrefix, toId ] = toUri.split ':'
+
+  if toPrefix is 'wd'
+    # no merge to do for Wikidata entities, simply creating a redirection
+    return turnIntoRedirection userId, fromId, toUri
+  else
+    return mergeEntities userId, fromId, toId
+
+mergeEntities = (userId, fromId, toId)->
   _.types arguments, 'strings...'
 
   # Fetching non-formmatted docs
@@ -99,5 +109,3 @@ deleteIfIsolated = (userId, fromId)-> (entityUri)->
   .filter (result)-> result.entity isnt fromId
   .then (results)->
     if results.length is 0 then return placeholders_.remove userId, entityId
-
-module.exports = { merge, turnIntoRedirection }
