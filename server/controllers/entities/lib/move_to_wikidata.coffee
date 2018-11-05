@@ -46,7 +46,7 @@ validateWikidataCompliance = (entity)->
   for property, values of claims
     if properties[property].datatype is 'entity'
       for value in values
-        if value.split(':')[0] isnt 'inv'
+        if value.split(':')[0] is 'inv'
           throw error_.new 'claim value is an inv uri', 400, { property, value }
 
   return entity
