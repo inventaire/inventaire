@@ -11,9 +11,8 @@ sanitization =
   uri: {}
 
 module.exports = (req, res)->
-  user = req.user
   sanitize req, res, sanitization
-  .then (params)-> moveToWikidata user, params.uri
+  .then (params)-> moveToWikidata req.user, params.uri
   .then responses_.Send(res)
   .then Track(req, ['entity', 'importToWikidata'])
   .catch error_.Handler(req, res)
