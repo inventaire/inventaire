@@ -21,10 +21,13 @@ module.exports = (user, entityUri)->
 
   entities_.byId entityId
   .then validateWikidataCompliance
-  .then (entity)-> createItem(oauth, entity)
+  .then wdEdit({ oauth }, 'entity/create')
   .then (res)->
-    unless res then return {}
+    unless res.entity?
+      throw error_.new('something wrong happened in wdEdit', 500, { entityUri, res })
+
     wdEntityUri = prefixifyWd res.entity.id
+
     turnIntoRedirection reqUserId, entityId, wdEntityUri
     return { uri: wdEntityUri }
 
@@ -33,17 +36,15 @@ validateWikidataCompliance = (entity)->
 
   unless claims? then throw error_.new 'invalid entity', 400, entity
 
-  for property, values in claims
+  for property, values of claims
     unless properties[property].datatype is 'entity'
-      throw error_.reject "invalid datatype for #{entity}", 400
+      throw error_.new 'invalid datatype', 400, { entity, property, values }
 
     for value in values
-      if value.split(":")[0] isnt 'inv'
-        throw error_.reject "claim #{claim} has a value with an inventaire Uri", 400
+      if value.split(':')[0] isnt 'inv'
+        throw error_.new 'claim value is an inv uri', 400, { property, value }
 
   return entity
 
 createItem = (oauth, entity)->
-  unless entity then return false
-  # wdEdit({ oauth }, 'entity/create')(entity)
-  {"entity":{ "id":"Q261281", "type":"work" }}
+  wdEdit({ oauth }, 'entity/create')(entity)
