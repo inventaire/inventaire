@@ -10,25 +10,27 @@ mergeEntities = require './merge_entities'
 { properties } = require './properties'
 { prefixifyWd, unprefixify } = require './prefix'
 
-module.exports = (user, entityUri)->
-  { oauth, _id:reqUserId } = user
+module.exports = (user, invEntityUri)->
+  { oauth, _id: reqUserId } = user
   userWikidataOAuth = user.oauth?.wikidata
+
   unless userWikidataOAuth?
     throw error_.reject 'missing wikidata oauth tokens', 400
+
   oauth = _.extend userWikidataOAuth, wikidataOAuth
 
-  entityId = unprefixify entityUri
+  entityId = unprefixify invEntityUri
 
   entities_.byId entityId
   .then validateWikidataCompliance
   .then wdEdit({ oauth }, 'entity/create')
   .then (res)->
     unless res.entity?
-      throw error_.new('something wrong happened in wdEdit', 500, { entityUri, res })
+      throw error_.new 'invalid wikidata-edit response', 500, { invEntityUri, res }
 
     wdEntityUri = prefixifyWd res.entity.id
 
-    mergeEntities reqUserId, entityUri, wdEntityUri
+    mergeEntities reqUserId, invEntityUri, wdEntityUri
     .then -> { uri: wdEntityUri }
 
 validateWikidataCompliance = (entity)->
