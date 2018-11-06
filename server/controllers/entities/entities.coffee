@@ -31,8 +31,8 @@ module.exports =
     authentified:
       'update-claim': require './update_claim'
       'update-label': require './update_label'
-    admin:
       'move-to-wikidata': require './move_to_wikidata'
+    admin:
       'merge': require './merge'
       'revert-merge': require './revert_merge'
 
