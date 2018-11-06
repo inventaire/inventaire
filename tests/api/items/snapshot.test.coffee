@@ -4,10 +4,10 @@ _ = __.require 'builders', 'utils'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
 { authReq, getUserId, undesiredErr } = require '../utils/utils'
-{ getByIds } = require '../utils/items'
-{ getByUris, merge, revertMerge, updateLabel, updateClaim } = require '../utils/entities'
+{ getById: getItem } = require '../utils/items'
+{ getByUri, getByUris, merge, revertMerge, updateLabel, updateClaim } = require '../utils/entities'
 { ensureEditionExists } = require '../fixtures/entities'
-{ createWork, createHuman, createSerie, addAuthor, addSerie, createEditionFromWorks, createWorkWithAuthor, humanName } = require '../fixtures/entities'
+{ createWork, createHuman, createSerie, addAuthor, addSerie, createEdition, createEditionFromWorks, createWorkWithAuthor, humanName, someImageHash } = require '../fixtures/entities'
 { updateClaim } = require '../utils/entities'
 
 describe 'items:snapshot', ->
@@ -75,6 +75,34 @@ describe 'items:snapshot', ->
             item.snapshot['entity:series'].should.equal seriesNames
             done()
     .catch undesiredErr(done)
+
+    return
+
+  it 'should snapshot the image of an edition', (done)->
+    createEdition()
+    .then (edition)->
+      edition.image.url.should.equal "/img/entities/#{someImageHash}"
+      authReq 'post', '/api/items', { entity: edition.uri }
+      .then (item)->
+        item.snapshot['entity:image'].should.equal edition.image.url
+        done()
+    .catch done
+
+    return
+
+  it 'should snapshot the image of an edition after a work-related refresh', (done)->
+    createEdition()
+    .then (edition)->
+      authReq 'post', '/api/items', { entity: edition.uri }
+      .then (item)->
+        item.snapshot['entity:image'].should.equal edition.image.url
+        workUri = edition.claims['wdt:P629'][0]
+        updateClaim workUri, 'wdt:P50', null, 'wd:Q535'
+        .then -> getItem item
+      .then (item)->
+        item.snapshot['entity:image'].should.equal edition.image.url
+        done()
+    .catch done
 
     return
 
@@ -291,9 +319,8 @@ describe 'items:snapshot', ->
         ]
         .delay 100
         .spread (editionEntity, item)->
-          getByIds item._id
-          .then (res)->
-            item = res.items[0]
+          getItem item
+          .then (item)->
             item.entity = editionEntity.uri
             return authReq 'put', '/api/items', item
           .then (updatedItem)->
@@ -318,7 +345,3 @@ addSerie = (subjectEntity)->
 
 addClaim = (property, subjectEntity)-> (entity)->
   updateClaim subjectEntity._id, property, null, entity.uri
-
-getItem = (item)->
-  getByIds item._id
-  .then (res)-> res.items[0]

@@ -3,7 +3,7 @@ _ = __.require 'builders', 'utils'
 items_ = require '../items'
 entities_ = __.require 'controllers', 'entities/lib/entities'
 getEntityByUri = __.require 'controllers', 'entities/lib/get_entity_by_uri'
-getInvEntityCanonicalUri = __.require 'controllers', 'entities/lib/get_inv_entity_canonical_uri'
+getEntitiesByUris = __.require 'controllers', 'entities/lib/get_entities_by_uris'
 buildSnapshot = require './build_snapshot'
 { getWorkAuthorsAndSeries, getEditionGraphEntities } = require './get_entities'
 { getDocData } = require './helpers'
@@ -64,12 +64,13 @@ getWorkSnapshot = (uri, work, authors, series)->
 getEditionsSnapshots = (uri, works, authors, series)->
   _.types arguments, [ 'string', 'array', 'array', 'array' ]
 
-  entities_.byClaim 'wdt:P629', uri, true, true
+  entities_.urisByClaim 'wdt:P629', uri
+  .then getEntitiesByUris
+  .then (res)-> _.values res.entities
   .map (edition)-> getEditionSnapshot edition, works, authors, series
 
 getEditionSnapshot = (edition, works, authors, series)->
   _.types arguments, [ 'object', 'array', 'array', 'array' ]
-
-  # If it's a Wikidata entity, it will already have a uri
-  edition.uri or= getInvEntityCanonicalUri(edition)[0]
+  # Expects a formatted edition
+  _.type edition.uri, 'string'
   return buildSnapshot.edition edition, works, authors, series

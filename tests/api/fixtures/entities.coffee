@@ -7,6 +7,7 @@ isbn_ = __.require 'lib', 'isbn/isbn'
 wdLang = require 'wikidata-lang'
 { getByUris, addClaim } = require '../utils/entities'
 faker = require 'faker'
+someImageHash = '00015893d54f5112b99b41b0dfd851f381798047'
 
 defaultEditionData = ->
   labels: {}
@@ -59,6 +60,7 @@ module.exports = API =
           'wdt:P629': worksUris
           'wdt:P1476': [ _.values(works[0].labels)[0] ]
           'wdt:P407': [ 'wd:' + wdLang.byCode[lang].wd ]
+          'invp:P2': [ someImageHash ]
 
   createEditionFromWorks: (works...)->
     params = { works }
@@ -94,6 +96,8 @@ module.exports = API =
           editionData.claims['wdt:P212'] = [ isbn_.toIsbn13h(id) ]
         editionData.claims['wdt:P629'] = [ workEntity.uri ]
         authReq 'post', '/api/entities?action=create', editionData
+
+  someImageHash: someImageHash
 
 addEntityClaim = (createFnName, property)-> (subjectEntity)->
   API[createFnName]()
