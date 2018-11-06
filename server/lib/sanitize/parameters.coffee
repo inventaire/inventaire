@@ -4,8 +4,9 @@ error_ = __.require 'lib', 'error/error'
 
 # Parameters attributes:
 # - format (optional)
-# - validate (required): throw an custom error or return a boolean
-#   for a generalist `invalid #{paramName} error`
+# - validate (required): throws a custom error or returns a boolean.
+#   In the case it returns false, the sanitize function will create
+#   an error object with an `invalid #{paramName}` message and throw it
 
 validations =
   common: __.require 'models', 'validations/common'
@@ -66,11 +67,10 @@ couchUuids =
 
 whitelistedString =
   validate: (value, name, config)->
-    if value in config.whitelist
-      return true
-    else
+    unless value in config.whitelist
       details = "possible values: #{config.whitelist.join(', ')}"
       throw error_.new "invalid #{name}: #{value} (#{details})", 400, { value }
+    return true
 
 whitelistedStrings =
   format: arrayOrPipedStrings
