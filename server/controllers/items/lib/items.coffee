@@ -15,6 +15,7 @@ radio = __.require 'lib', 'radio'
 listingsLists = require './listings_lists'
 snapshot_ = require './snapshot/snapshot'
 getEntityByUri = __.require 'controllers', 'entities/lib/get_entity_by_uri'
+getByAccessLevel = require './get_by_access_level'
 
 # Working around the circular dependency
 user_ = null
@@ -32,13 +33,6 @@ module.exports = items_ =
       startkey: [ ownerId ]
       endkey: [ ownerId, maxKey, maxKey ]
       include_docs: true
-
-  networkListings: (usersIds, reqUserId)->
-    bundleListings ['network', 'public'], usersIds, reqUserId
-
-  publicListings: (usersIds, reqUserId)->
-    usersIds = _.forceArray usersIds
-    bundleListings ['public'], usersIds, reqUserId
 
   byEntity: (entityUri)->
     assert_.string entityUri
@@ -141,7 +135,7 @@ module.exports = items_ =
     unless usersIds.length > 0 then return [[], []]
     return promises_.all [
       user_.getUsersByIds usersIds, reqUserId
-      items_.publicListings usersIds
+      getByAccessLevel.public usersIds
     ]
 
   # Data manipulation done on client-side view models (item.serializeData),

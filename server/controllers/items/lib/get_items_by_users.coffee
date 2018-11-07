@@ -4,6 +4,7 @@ items_ = __.require 'controllers', 'items/lib/items'
 user_ = __.require 'controllers', 'user/lib/user'
 promises_ = __.require 'lib', 'promises'
 { addAssociatedData, Paginate } = require './queries_commons'
+getByAccessLevel = require './get_by_access_level'
 
 module.exports = (page, usersIds)->
   # Allow to pass users ids either through the page object
@@ -36,10 +37,9 @@ getRelations = (reqUserId, usersIds)->
 fetchRelationsItems = (reqUserId)-> (relations)->
   itemsPromises = []
   { user, network, public:publik } = relations
-  # Includes ownerSafe attributes
-  if user? then itemsPromises.push items_.byOwner(user)
-  # Exclude ownerSafe attributes
-  if network? then itemsPromises.push items_.networkListings(network, reqUserId)
-  if publik? then itemsPromises.push items_.publicListings(publik, reqUserId)
+
+  if user? then itemsPromises.push getByAccessLevel.private(user, reqUserId)
+  if network? then itemsPromises.push getByAccessLevel.network(network, reqUserId)
+  if publik? then itemsPromises.push getByAccessLevel.public(publik, reqUserId)
 
   return promises_.all(itemsPromises).then _.flatten
