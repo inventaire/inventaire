@@ -22,7 +22,7 @@ init = ->
     follow
       dbBaseName: dbBaseName
       filter: isDesignDoc designDocsNames
-      onChange: syncDesignDocFile
+      onChange: _.debounce syncDesignDocFile, 1000
 
 isDesignDoc = (designDocsNames)-> (doc)->
   [ prefix, designDocsName ] = doc._id.split('/')

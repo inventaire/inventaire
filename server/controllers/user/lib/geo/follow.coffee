@@ -14,7 +14,7 @@ module.exports = (db)->
 
     return false
 
-  onChange = (change)->
+  updatePosition = (change)->
     { id, deleted, doc } = change
     { position } = doc
 
@@ -26,7 +26,7 @@ module.exports = (db)->
       db.getByKey id
       .catch (err)-> if err.notFound then return null else throw err
       .then updateIfNeeded.bind(null, id, lat, lon)
-      .catch _.Error('user geo onChange err')
+      .catch _.Error('user geo updatePosition err')
 
   updateIfNeeded = (id, lat, lon, res)->
     if res?
@@ -35,14 +35,8 @@ module.exports = (db)->
 
     db.put { lat, lon }, id, null
 
-  startFollowing = (res)-> follow { dbBaseName, filter, onChange }
+  reset = ->
+    _.log "reseting #{dbBaseName} geo index", null, 'yellow'
+    return db.reset()
 
-  resetIfNeeded = ->
-    if resetFollow then db.reset()
-    else promises_.resolved
-
-  resetIfNeeded()
-  .then startFollowing
-  # catching the error without rethrowing
-  # as nobody is listening/waiting for it
-  .catch _.Error('geo follow init error')
+  follow { dbBaseName, filter, onChange: updatePosition, reset }
