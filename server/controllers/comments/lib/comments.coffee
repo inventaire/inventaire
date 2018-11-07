@@ -26,17 +26,3 @@ module.exports =
   delete: (comment)->
     comment._deleted = true
     db.put comment
-
-  deleteByItemsIds: (itemsIds)->
-    # You absolutly don't want this id to be undefined
-    # as this would end up deleting the whole database
-    _.assertTypes itemsIds, 'strings...'
-    comments_.byItemsIds itemsIds
-    .then db.bulkDelete
-
-  deleteItemsCommentsByUserId: (userId)->
-    # You absolutly don't want this id to be undefined
-    # as this would end up deleting the whole database
-    _.assertType userId, 'string'
-    comments_.bySubjectAndUserId 'item', userId
-    .then db.bulkDelete

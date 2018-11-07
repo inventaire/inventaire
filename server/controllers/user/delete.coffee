@@ -5,7 +5,6 @@ responses_ = __.require 'lib', 'responses'
 promises_ = __.require 'lib', 'promises'
 user_ = __.require 'controllers', 'user/lib/user'
 relations_ = __.require 'controllers', 'relations/lib/queries'
-comments_ = __.require 'controllers', 'comments/lib/comments'
 deleteUserItems = __.require 'controllers', 'items/lib/delete_user_items'
 groups_ = __.require 'controllers', 'groups/lib/groups'
 notifs_ = __.require 'lib', 'notifications'
@@ -37,9 +36,6 @@ cleanEverything = (reqUserId)->
     groups_.leaveAllGroups reqUserId
     notifs_.deleteAllByUserId reqUserId
   ]
-  .then ->
-    # should be run after to avoid conflicts with items comments deletion
-    comments_.deleteItemsCommentsByUserId reqUserId
 
 logout = (req)->
   _.warn req.session, 'session before logout'
