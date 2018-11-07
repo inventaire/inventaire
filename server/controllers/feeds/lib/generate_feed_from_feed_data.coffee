@@ -3,6 +3,7 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 { feed:feedConfig } = CONFIG
 items_ = __.require 'controllers', 'items/lib/items'
+snapshot_ = __.require 'controllers', 'items/lib/snapshot/snapshot'
 serializeFeed = require './serialize_feed'
 
 module.exports = (lang)-> (feedData)->
@@ -15,6 +16,7 @@ getLastItemsFromUsersIds = (usersIds, semiPrivateAccessRight)->
   fnName = if semiPrivateAccessRight then 'networkListings' else 'publicListings'
   items_[fnName](usersIds)
   .then extractLastItems
+  .map snapshot_.addToItem
 
 extractLastItems = (items)->
   items

@@ -5,8 +5,8 @@ templateHelpers = __.require 'lib', 'emails/handlebars_helpers'
 transacColors = __.require 'lib', 'emails/activity_summary/transactions_colors'
 
 module.exports = (item, user, lang)->
-  { transaction, pictures, snapshot, details } = item
-  image = pictures[0] or snapshot['entity:image']
+  { transaction, snapshot, details } = item
+  image = snapshot['entity:image']
   title = snapshot['entity:title']
 
   if _.isNonEmptyString image
