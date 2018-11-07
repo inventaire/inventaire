@@ -5,8 +5,8 @@ getEntitiesByUris = __.require 'controllers', 'entities/lib/get_entities_by_uris
 { Promise } = __.require 'lib', 'promises'
 { aggregateClaims } = require './helpers'
 
-getRelativeEntities = (relationProperty)-> (work)->
-  uris = work.claims[relationProperty]
+getRelativeEntities = (relationProperty)-> (entity)->
+  uris = entity.claims[relationProperty]
   unless uris?.length > 0 then return Promise.resolve []
   getEntitiesByUris uris
   .then (res)-> _.values(res.entities)
