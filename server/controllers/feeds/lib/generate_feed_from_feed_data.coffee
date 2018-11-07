@@ -5,16 +5,16 @@ _ = __.require 'builders', 'utils'
 items_ = __.require 'controllers', 'items/lib/items'
 snapshot_ = __.require 'controllers', 'items/lib/snapshot/snapshot'
 serializeFeed = require './serialize_feed'
+getItemsByAccessLevel = __.require 'controllers', 'items/lib/get_by_access_level'
 
 module.exports = (lang)-> (feedData)->
-  { users, semiPrivateAccessRight, feedOptions } = feedData
+  { users, accessLevel, feedOptions } = feedData
   usersIds = users.map _.property('_id')
-  getLastItemsFromUsersIds usersIds, semiPrivateAccessRight
+  getLastItemsFromUsersIds usersIds, accessLevel
   .then (items)-> serializeFeed feedOptions, users, items, lang
 
-getLastItemsFromUsersIds = (usersIds, semiPrivateAccessRight)->
-  fnName = if semiPrivateAccessRight then 'networkListings' else 'publicListings'
-  items_[fnName](usersIds)
+getLastItemsFromUsersIds = (usersIds, accessLevel)->
+  getItemsByAccessLevel[accessLevel](usersIds)
   .then extractLastItems
   .map snapshot_.addToItem
 

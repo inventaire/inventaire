@@ -16,9 +16,9 @@ module.exports = (groupId, authentifiedUserPromise)->
     user_.byIds membersIds
     .then (users)->
       users: users
-      # Give access to semi-private items only if the requester
+      # Give access to semi-private ('network') items only if the requester
       # is a group member
-      semiPrivateAccessRight: requestedId in membersIds
+      accessLevel: if requestedId in membersIds then 'network' else 'public'
       feedOptions:
         title: group.name
         description: group.description
