@@ -22,7 +22,7 @@ module.exports = (req, res)->
   # to get access to req.user before it's cleared
   .tap Track(req, ['user', 'delete'])
   .then logout.bind(null, req)
-  .then responses_.OkWarning(res, 'account', 'we will miss you :(')
+  .then responses_.Ok(res)
   .catch error_.Handler(req, res)
 
 # what should happen to old:
