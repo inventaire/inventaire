@@ -12,7 +12,7 @@ updateRelationScore = (task)->
   tasks_.bySuspectUri task.suspectUri
   .then (tasks)->
     tasks_.update
-      ids: _.pluck tasks, '_id'
+      ids: _.map tasks, '_id'
       attribute: 'relationScore'
       newValue: calculateRelationScore tasks
 

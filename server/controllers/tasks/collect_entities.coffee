@@ -21,7 +21,7 @@ addEntitiesToQueue = ->
 
 getInvHumanUris = ->
   entities_.byClaim 'wdt:P31', 'wd:Q5'
-  .then (res)-> _.pluck(res.rows, 'id').map prefixifyInv
+  .then (res)-> _.map(res.rows, 'id').map prefixifyInv
 
 deduplicateWorker = (jobId, uri)->
   checkEntity uri

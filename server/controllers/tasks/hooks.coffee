@@ -6,7 +6,7 @@ radio = __.require 'lib', 'radio'
 archiveObsoleteEntityUriTasks = (uri)->
   tasks_.bySuspectUri uri
   .then (tasks)->
-    ids = _.pluck tasks, '_id'
+    ids = _.map tasks, '_id'
     tasks_.update { ids, attribute: 'state', newValue: 'merged' }
 
 module.exports = ->

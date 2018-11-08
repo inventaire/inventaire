@@ -24,13 +24,13 @@ describe 'items:get-by-users', ->
       createItem getUserB(), { listing: 'public' }
     ]
     .then (items)->
-      usersIds = _.pluck items.slice(1), 'owner'
-      itemsIds = _.pluck items, '_id'
+      usersIds = _.map items.slice(1), 'owner'
+      itemsIds = _.map items, '_id'
       authReq 'get', "/api/items?action=by-users&users=#{usersIds.join('|')}"
       .then (res)->
-        resUsersIds = _.uniq _.pluck(res.items, 'owner')
+        resUsersIds = _.uniq _.map(res.items, 'owner')
         resUsersIds.should.containDeep usersIds
-        resItemsIds = _.uniq _.pluck(res.items, '_id')
+        resItemsIds = _.uniq _.map(res.items, '_id')
         resItemsIds.should.containDeep itemsIds
         done()
     .catch undesiredErr(done)
@@ -45,12 +45,12 @@ describe 'items:get-by-users', ->
     ]
     .then (items)->
       privateItemId = items[0]._id
-      usersIds = _.pluck items.slice(1), 'owner'
+      usersIds = _.map items.slice(1), 'owner'
       authReq 'get', "/api/items?action=by-users&users=#{usersIds.join('|')}&filter=group"
       .then (res)->
-        resUsersIds = _.uniq _.pluck(res.items, 'owner')
+        resUsersIds = _.uniq _.map(res.items, 'owner')
         resUsersIds.should.containDeep usersIds
-        resItemsIds = _.uniq _.pluck(res.items, '_id')
+        resItemsIds = _.uniq _.map(res.items, '_id')
         resItemsIds.should.not.containEql privateItemId
         done()
     .catch undesiredErr(done)

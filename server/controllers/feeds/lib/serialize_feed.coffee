@@ -25,7 +25,7 @@ module.exports = (feedOptions, users, items, lang)->
     # source: http://www.therssweblog.com/?guid=20070529130637
     ttl: oneDayInMinutes
 
-  usersIndex = _.indexBy users, '_id'
+  usersIndex = _.keyBy users, '_id'
 
   items.map serializeItem(usersIndex, lang)
   .forEach feed.item.bind(feed)

@@ -4,7 +4,7 @@ _ = __.require 'builders', 'utils'
 getEntitiesPopularity = __.require 'controllers', 'entities/lib/get_entities_popularity'
 
 module.exports = (results)->
-  entityUris = _.compact _.pluck(results, 'uri')
+  entityUris = _.compact _.map(results, 'uri')
   getEntitiesPopularity entityUris
   .then sortResultsByPopularity(results)
 

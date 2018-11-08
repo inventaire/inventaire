@@ -17,7 +17,7 @@ module.exports = (userId, fromUri, toUri)->
     .then redirectEntitiesClaims(results, userId, fromUri, toUri)
 
 redirectEntitiesClaims = (results, userId, fromUri, toUri)-> (entities)->
-  entitiesIndex = _.indexBy entities, '_id'
+  entitiesIndex = _.keyBy entities, '_id'
   entitiesIndexBeforeUpdate = _.cloneDeep entitiesIndex
 
   # Apply all the redirection updates on the entities docs

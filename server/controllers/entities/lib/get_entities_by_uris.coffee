@@ -79,7 +79,7 @@ mergeResponses = (results)->
     if result.notFound?
       response.notFound = response.notFound.concat result.notFound
 
-  response.entities = _.indexBy response.entities, 'uri'
+  response.entities = _.keyBy response.entities, 'uri'
 
   if response.notFound.length is 0 then delete response.notFound
 

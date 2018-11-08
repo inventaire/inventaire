@@ -39,7 +39,7 @@ module.exports = (params)->
     db.allDocsKeys()
     .then (res)->
       rows = res.rows.filter (row)-> not row.id.startsWith('_design/')
-      ids = _.pluck rows, 'id'
+      ids = _.map rows, 'id'
       return _.success ids, 'doc ids found'
     .catch _.ErrorRethrow('getAllDocsKeys error')
 

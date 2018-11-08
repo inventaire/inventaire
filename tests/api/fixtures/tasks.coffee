@@ -16,7 +16,7 @@ module.exports = API =
         createHuman { labels: { en: humanLabel } }
       ]
       .then (humans)->
-        checkEntities _.pluck(humans, 'uri')
+        checkEntities _.map(humans, 'uri')
         .then (tasks)-> { tasks, humans }
 
     return promises[humanLabel]

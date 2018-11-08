@@ -27,7 +27,7 @@ module.exports = validations =
   position: (latLng)->
     # allow the user or group to delete its position by passing a null value
     if latLng is null then return true
-    _.isArray(latLng) and latLng.length is 2 and _.all latLng, _.isNumber
+    _.isArray(latLng) and latLng.length is 2 and _.every latLng, _.isNumber
 
 validations.boundedString = boundedString = (str, minLength, maxLength)->
   return _.isString(str) and minLength <= str.length <= maxLength

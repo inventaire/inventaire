@@ -13,7 +13,7 @@ exports.getUsersByIds = (user1Id, user2Id)->
   .catch _.Error('getUsersByIds err')
 
 parseUsersData = (user1Id, user2Id, usersData)->
-  usersData = _.indexBy usersData, '_id'
+  usersData = _.keyBy usersData, '_id'
   user1 = usersData[user1Id]
   user2 = usersData[user2Id]
   _.types [ user1, user2 ], [ 'object', 'object' ]

@@ -4,4 +4,4 @@ files=$@
 [ -z "$1" ] && files=tests/api/**/*test.coffee
 
 # Run the tests
-export NODE_ENV=tests NODE_APP_INSTANCE=tests-alt; mocha --compilers coffee:coffee-script/register $files --timeout 20000
+export NODE_ENV=tests NODE_APP_INSTANCE=tests-alt; mocha --exit --require coffee-script/register $files --timeout 20000

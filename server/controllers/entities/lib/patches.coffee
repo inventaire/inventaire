@@ -29,7 +29,7 @@ module.exports = patches_ =
     ]
     .spread (res, total)->
       data =
-        patches: _.pluck res.rows, 'doc'
+        patches: _.map res.rows, 'doc'
         total: total
       rangeEnd = offset + limit
       if rangeEnd < total then data.continue = rangeEnd

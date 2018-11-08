@@ -13,7 +13,7 @@ describe 'groups:get', ->
         authReq 'get', endpointAction
         .then (res)->
           res.groups.should.be.an.Array()
-          groupsIds = _.pluck res.groups, '_id'
+          groupsIds = _.map res.groups, '_id'
           should(group._id in groupsIds).be.true()
           done()
       .catch undesiredErr(done)

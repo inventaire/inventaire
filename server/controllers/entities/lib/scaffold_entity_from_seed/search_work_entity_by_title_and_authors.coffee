@@ -16,7 +16,7 @@ module.exports = (seed)->
   # unless a lang is explicitly passed, deduce it from the the ISBN groupLang
   lang or= groupLang
 
-  validAuthors = _.isArray(authors) and _.all authors, _.isNonEmptyString
+  validAuthors = _.isArray(authors) and _.every authors, _.isNonEmptyString
   unless _.isNonEmptyString(title) and validAuthors
     _.warn seed, 'unsufficient seed data to search a pre-existing work entity'
     return promises_.resolve()

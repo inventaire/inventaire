@@ -76,4 +76,4 @@ describe 'users:search', ->
 
     return
 
-usersIds = (res)-> _.pluck res.users, '_id'
+usersIds = (res)-> _.map res.users, '_id'

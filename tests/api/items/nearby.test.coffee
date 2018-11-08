@@ -16,7 +16,7 @@ describe 'items:nearby', ->
     .then (item)->
       customAuthReq geolocatedUser2Promise, 'get', endpoint
       .then (res)->
-        itemsIds = _.pluck res.items, '_id'
+        itemsIds = _.map res.items, '_id'
         itemsIds.includes(item._id).should.be.true()
         done()
     .catch undesiredErr(done)
@@ -29,7 +29,7 @@ describe 'items:nearby', ->
     .then (item)->
       customAuthReq geolocatedUser2Promise, 'get', "#{endpoint}&range=1&strict-range=true"
       .then (res)->
-        itemsIds = _.pluck res.items, '_id'
+        itemsIds = _.map res.items, '_id'
         itemsIds.includes(item._id).should.be.false()
         done()
     .catch undesiredErr(done)

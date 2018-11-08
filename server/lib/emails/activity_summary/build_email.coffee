@@ -52,7 +52,7 @@ getEmailData = (user)->
 
 filterOutDuplicatedItems = (results)->
   { lastFriendsBooks, lastNearbyPublicBooks } = results
-  lastFriendsBooksIds = _.pluck lastFriendsBooks.highlighted, '_id'
+  lastFriendsBooksIds = _.map lastFriendsBooks.highlighted, '_id'
   lastNearbyPublicBooks.highlighted = lastNearbyPublicBooks.highlighted
     .filter (item)-> item._id not in lastFriendsBooksIds
   return results

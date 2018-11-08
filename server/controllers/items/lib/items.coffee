@@ -91,7 +91,7 @@ module.exports = items_ =
     .map (item)-> Item.create userId, item
     .then db.bulk
     .then (res)->
-      itemsIds = _.pluck res, 'id'
+      itemsIds = _.map res, 'id'
       db.fetch itemsIds
       .tap -> radio.emit 'user:inventory:update', userId
 
