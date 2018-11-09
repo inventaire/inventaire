@@ -5,6 +5,7 @@ getEntityByUri = __.require 'controllers', 'entities/lib/get_entity_by_uri'
 tasks_ = require './tasks'
 buildTaskDocs = require './build_task_docs'
 keepNewTasks = require './keep_new_tasks'
+error_ = __.require 'lib', 'error/error'
 
 module.exports = (uri)->
   getEntityByUri uri
