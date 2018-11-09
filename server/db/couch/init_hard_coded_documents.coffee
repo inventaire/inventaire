@@ -27,7 +27,7 @@ updateDoc = (db, doc)->
     # and, if not, so that we can use db.put
     docPath = "#{db.name}/#{id}"
     doc._rev = currentDoc._rev
-    if _.eq currentDoc, doc
+    if _.isEqual currentDoc, doc
       _.info "#{docPath} is up-to-date"
       return
     else
