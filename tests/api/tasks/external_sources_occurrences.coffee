@@ -4,7 +4,7 @@ _ = __.require 'builders', 'utils'
 should = require 'should'
 { undesiredErr } = __.require 'apiTests', 'utils/utils'
 { checkEntities } = require '../utils/tasks'
-{ createHuman, createWorkWithAuthor } = require '../fixtures/entities'
+{ createHuman, createWorkWithAuthor, workLabel } = require '../fixtures/entities'
 { getByUris } = require '../utils/entities'
 
 # Tests dependency: having a populated ElasticSearch wikidata index
@@ -20,6 +20,37 @@ describe 'tasks:externalSourcesOccurrences', ->
         tasks.length.should.aboveOrEqual 1
         task = tasks.find (task)-> task.suggestionUri
         task.externalSourcesOccurrences.should.be.empty()
+        done()
+    .catch undesiredErr(done)
+
+    return
+
+  it 'should create tasks if author has no occurences', (done)->
+    humanLabel = 'Wolfgang Amadeus Mozart'
+    createHuman { labels: { en: humanLabel } }
+    .then (human)->
+      createWorkWithAuthor human, workLabel
+      .then (work)-> checkEntities human.uri
+      .then (tasks)->
+        tasks.length.should.aboveOrEqual 1
+        task = tasks.find (task)-> task.suggestionUri.match /wd:/
+        task.externalSourcesOccurrences.should.be.empty()
+        done()
+    .catch undesiredErr(done)
+
+    return
+
+  it 'should create tasks if author has homonyms and occurences', (done)->
+    humanLabel = 'Alan Moore' # homonyms Q205739, Q1748845
+    workLabel = 'Voice of the Fire' # wd:Q3825051
+    createHuman { labels: { en: humanLabel } }
+    .then (human)->
+      createWorkWithAuthor human, workLabel
+      .then (work)-> checkEntities human.uri
+      .then (tasks)->
+        tasks.length.should.aboveOrEqual 1
+        task = tasks.find (task)-> task.suggestionUri.match /wd:/
+        task.externalSourcesOccurrences.should.not.be.empty()
         done()
     .catch undesiredErr(done)
 
@@ -86,22 +117,6 @@ describe 'tasks:externalSourcesOccurrences', ->
       .then (work)-> checkEntities human.uri
       .then (tasks)->
         tasks.length.should.aboveOrEqual 1
-        done()
-    .catch undesiredErr(done)
-
-    return
-
-  it 'should not merge entities if author has homonyms', (done)->
-    humanLabel = 'Alan Moore' # homonyms Q205739, Q1748845
-    workLabel = 'Voice of the Fire' # wd:Q3825051
-    createHuman { labels: { en: humanLabel } }
-    .then (human)->
-      createWorkWithAuthor human, workLabel
-      .then (work)-> checkEntities human.uri
-      .then (tasks)->
-        tasks.length.should.aboveOrEqual 1
-        suggestionUris = _.pluck tasks, 'suggestionUri'
-        suggestionUris.should.not.containEql 'wd:Q4707357'
         done()
     .catch undesiredErr(done)
 
