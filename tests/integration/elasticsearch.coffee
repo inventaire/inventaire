@@ -18,7 +18,7 @@ describe 'elastic query of an author name within indexes of wikidata humans', ->
       lessGoodId: 'Q214986' # => label: 'Heinrich Marx'
 
     search authorInWdDescriptions.query, 'humans'
-    .then (results) ->
+    .then (results)->
       goodResult = _.find results, { _id: authorInWdDescriptions.goodId }
       badResult = _.find results, { _id: authorInWdDescriptions.lessGoodId }
 

@@ -72,7 +72,7 @@ describe 'entities:editions:create', ->
 
     return
 
-createEdition = (uri) ->
+createEdition = (uri)->
   authReq 'post', '/api/entities?action=create',
     claims:
       'wdt:P31': [ 'wd:Q3331189' ]
