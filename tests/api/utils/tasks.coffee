@@ -4,14 +4,24 @@ _ = __.require 'builders', 'utils'
 { nonAuthReq, adminReq } = require './utils'
 endpoint = '/api/tasks?action='
 
-module.exports =
+module.exports = utils =
   getByIds: (ids)->
     ids = _.forceArray(ids).join '|'
     nonAuthReq 'get', "#{endpoint}by-ids&ids=#{ids}"
     .get 'tasks'
 
+  getBySuspectUris: (uris)->
+    uris = _.forceArray(uris).join '|'
+    nonAuthReq 'get', "#{endpoint}by-suspect-uris&uris=#{uris}"
+    .get 'tasks'
+
   getBySuspectUri: (uri)->
-    nonAuthReq 'get', "#{endpoint}by-suspect-uri&uri=#{uri}"
+    utils.getBySuspectUris uri
+    .get uri
+
+  getBySuggestionUris: (uris)->
+    uris = _.forceArray(uris).join '|'
+    nonAuthReq 'get', "#{endpoint}by-suggestion-uris&uris=#{uris}"
     .get 'tasks'
 
   getByScore: (options = {})->

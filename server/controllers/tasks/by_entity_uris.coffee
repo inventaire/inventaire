@@ -6,11 +6,15 @@ tasks_ = require './lib/tasks'
 sanitize = __.require 'lib', 'sanitize/sanitize'
 
 sanitization =
-  uri: {}
+  uris: {}
 
-module.exports = (req, res)->
+byEntityUris = (fnName)-> (req, res)->
   sanitize req, res, sanitization
-  .get 'uri'
-  .then tasks_.bySuspectUri
+  .get 'uris'
+  .then (uris)-> tasks_[fnName](uris, true)
   .then responses_.Wrap(res, 'tasks')
   .catch error_.Handler(req, res)
+
+module.exports =
+  bySuspectUris: byEntityUris 'bySuspectUris'
+  bySuggestionUris: byEntityUris 'bySuggestionUris'

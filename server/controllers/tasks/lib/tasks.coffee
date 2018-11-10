@@ -35,5 +35,21 @@ module.exports = tasks_ =
   bySuspectUri: (suspectUri)->
     db.viewByKey 'bySuspectUri', suspectUri
 
-  bySuspectUris: (suspectUris)->
+  bySuspectUris: (suspectUris, index)->
     db.viewByKeys 'bySuspectUri', suspectUris
+    .then (tasks)->
+      if index isnt true then return tasks
+      tasksBySuspectUris = _.groupBy tasks, 'suspectUri'
+      return completeWithEmptyArrays tasksBySuspectUris, suspectUris
+
+  bySuggestionUris: (suggestionUris, index)->
+    db.viewByKeys 'bySuggestionUri', suggestionUris
+    .then (tasks)->
+      if index isnt true then return tasks
+      tasksBySuggestionUris = _.groupBy tasks, 'suggestionUri'
+      return completeWithEmptyArrays tasksBySuggestionUris, suggestionUris
+
+completeWithEmptyArrays = (tasksByUris, uris)->
+  for uri in uris
+    tasksByUris[uri] ?= []
+  return tasksByUris

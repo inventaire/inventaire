@@ -4,7 +4,7 @@ _ = __.require 'builders', 'utils'
 tasks_ = __.require 'controllers', 'tasks/lib/tasks'
 
 module.exports = (tasks)->
-  suspectUris = _.pluck tasks, 'suspectUri'
+  suspectUris = _.uniq _.pluck(tasks, 'suspectUri')
   tasks_.bySuspectUris suspectUris
   .then (existingTasks)->
     suggestionBySuspect = existingTasks.reduce indexSuggestionBySuspect, {}

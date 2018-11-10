@@ -1,14 +1,15 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
-
 ActionsControllers = __.require 'lib', 'actions_controllers'
+{ bySuspectUris, bySuggestionUris } = require './by_entity_uris'
 
 module.exports =
   get: ActionsControllers
     public:
       'by-ids': require './by_ids'
       'by-score': require './by_score'
-      'by-suspect-uri': require './by_suspect_uri'
+      'by-suspect-uris': bySuspectUris
+      'by-suggestion-uris': bySuggestionUris
 
   post: ActionsControllers
     admin:
