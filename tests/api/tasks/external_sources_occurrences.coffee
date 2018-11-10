@@ -4,17 +4,16 @@ _ = __.require 'builders', 'utils'
 should = require 'should'
 { undesiredErr } = __.require 'apiTests', 'utils/utils'
 { checkEntities } = require '../utils/tasks'
-{ createHuman, createWorkWithAuthor, workLabel } = require '../fixtures/entities'
+{ createHuman, createWorkWithAuthor, randomWorkLabel } = require '../fixtures/entities'
 { getByUris } = require '../utils/entities'
 
 # Tests dependency: having a populated ElasticSearch wikidata index
 describe 'tasks:externalSourcesOccurrences', ->
   it 'should return an empty object when author has no occurrences', (done)->
     humanLabel = 'Stanislas Lem' # has no homonyms
-    workLabel = 'fakeworklabel'
     createHuman { labels: { en: humanLabel } }
     .then (human)->
-      createWorkWithAuthor human, workLabel
+      createWorkWithAuthor human, randomWorkLabel()
       .then (work)-> checkEntities human.uri
       .then (tasks)->
         tasks.length.should.aboveOrEqual 1
@@ -29,7 +28,7 @@ describe 'tasks:externalSourcesOccurrences', ->
     humanLabel = 'Wolfgang Amadeus Mozart'
     createHuman { labels: { en: humanLabel } }
     .then (human)->
-      createWorkWithAuthor human, workLabel
+      createWorkWithAuthor human, randomWorkLabel()
       .then (work)-> checkEntities human.uri
       .then (tasks)->
         tasks.length.should.aboveOrEqual 1
