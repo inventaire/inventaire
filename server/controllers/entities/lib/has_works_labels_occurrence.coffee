@@ -1,4 +1,4 @@
-# A module to look for works labels occurences in an author's Wikipedia articles.
+# A module to look for works labels occurrences in an author's Wikipedia articles.
 
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
@@ -23,7 +23,7 @@ module.exports = (wdAuthorUri, worksLabels, worksLabelsLangs)->
   # Filter-out labels that are too short, as it could generate false positives
   worksLabels = worksLabels.filter (label)-> label.length > 5
 
-  if worksLabels.length is 0 then return promises_.resolve false
+  if worksLabels.length is 0 then return promises_.resolve []
 
   # get Wikipedia article title from URI
   getEntityByUri wdAuthorUri
@@ -31,23 +31,19 @@ module.exports = (wdAuthorUri, worksLabels, worksLabelsLangs)->
     # Known case: entities tagged as 'missing' or 'meta'
     unless authorEntity.sitelinks? then return false
     promises_.all [
-      hasWikipediaOccurrence authorEntity, worksLabels, worksLabelsLangs
-      hasBnfOccurrence authorEntity, worksLabels
+      getWikipediaOccurrences authorEntity, worksLabels, worksLabelsLangs
+      getBnfOccurrences authorEntity, worksLabels
     ]
-  .spread (wpBool, bnfBool)-> wpBool or bnfBool
+  .then _.flatten
+  .then _.compact
   .catch (err)->
     _.error err, 'has works labels occurrence err'
     # Default to false if an error happened
     return false
 
-hasWikipediaOccurrence = (authorEntity, worksLabels, worksLabelsLangs)->
+getWikipediaOccurrences = (authorEntity, worksLabels, worksLabelsLangs)->
   promises_.all getMostRelevantWikipediaArticles(authorEntity, worksLabelsLangs)
-  .then (articles)->
-    # Match any of the works labels
-    worksLabelsPattern = new RegExp(worksLabels.join('|'), 'gi')
-    for article in articles
-      if article.extract.match(worksLabelsPattern)? then return true
-    return false
+  .map createOccurrences(worksLabels)
 
 getMostRelevantWikipediaArticles = (authorEntity, worksLabelsLangs)->
   { sitelinks, originalLang } = authorEntity
@@ -57,16 +53,19 @@ getMostRelevantWikipediaArticles = (authorEntity, worksLabelsLangs)->
     title = sitelinks["#{lang}wiki"]
     if title? then return { lang, title }
   .filter _.identity
-  .map getWikipediaArticleFromSitelinkData
+  .map getWikipediaArticle
 
-getWikipediaArticleFromSitelinkData = (sitelinkData)->
-  { lang, title } = sitelinkData
-  return getWikipediaArticle lang, title
-
-hasBnfOccurrence = (authorEntity, worksLabels)->
-  bnfIds = authorEntity.claims.P268
+getBnfOccurrences = (authorEntity, worksLabels)->
+  bnfIds = authorEntity.claims['wdt:P268']
   # Discard entities with several ids as one of the two
   # is wrong and we can't know which
   if bnfIds?.length isnt 1 then return false
   getBnfAuthorWorksTitles bnfIds[0]
-  .then (titles)-> _.haveAMatch titles, worksLabels
+  .map createOccurrences(worksLabels)
+
+createOccurrences = (worksLabels)->
+  worksLabelsPattern = new RegExp(worksLabels.join('|'), 'gi')
+  return (article)->
+    matchedTitles = _.uniq article.quotation.match(worksLabelsPattern)
+    unless matchedTitles.length > 0 then return false
+    return { url: article.url, matchedTitles }

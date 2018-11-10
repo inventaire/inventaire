@@ -8,7 +8,7 @@ should = require 'should'
 
 # Tests dependency: having a populated ElasticSearch wikidata index
 describe 'tasks:check-entities', ->
-  it 'should directly create tasks for the requested URIs', (done)->
+  it 'should create tasks for the requested URIs', (done)->
     createHuman { labels: { en: 'Fred Vargas' } }
     .then (human)->
       checkEntities human.uri

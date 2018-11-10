@@ -3,7 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { nonAuthReq, authReq, undesiredRes, undesiredErr } = require '../utils/utils'
-{ ensureEditionExists, humanName, workLabel, editionLabel } = require '../fixtures/entities'
+{ ensureEditionExists, humanName, randomWorkLabel, editionLabel } = require '../fixtures/entities'
 
 describe 'entities:create', ->
   it 'should not be able to create an entity without a wdt:P31 value', (done)->
@@ -155,7 +155,7 @@ describe 'entities:create', ->
 
   it 'should reject creation with incorrect properties such as pages counts for works', (done)->
     authReq 'post', '/api/entities?action=create',
-      labels: { fr: workLabel() }
+      labels: { fr: randomWorkLabel() }
       claims:
         'wdt:P31': [ 'wd:Q571' ]
         'wdt:P1104': [ 124 ]

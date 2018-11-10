@@ -10,7 +10,7 @@ should = require 'should'
 # Tests dependency: having a populated ElasticSearch wikidata index
 describe 'tasks:hooks', ->
   describe 'entity merge', ->
-    it 'should update same suspect tasks to merged state', (done) ->
+    it 'should update same suspect tasks to merged state', (done)->
       # Alexander Kennedy is expected to have several merge suggestions
       createHuman { labels: { en: 'Alexander Kennedy' } }
       .then (human)-> checkEntities human.uri
@@ -28,7 +28,7 @@ describe 'tasks:hooks', ->
 
       return
 
-    it 'should update task state to merged', (done) ->
+    it 'should update task state to merged', (done)->
       createHuman { labels: { en: 'Fred Vargas' } }
       .then (human)-> checkEntities human.uri
       .then (tasks)->
@@ -64,7 +64,7 @@ describe 'tasks:hooks', ->
       return
 
   describe 'entity removed', ->
-    it 'should update tasks to merged state', (done) ->
+    it 'should update tasks to merged state', (done)->
       createHuman { labels: { en: 'Fred Vargas' } }
       .then (human)->
         checkEntities human.uri

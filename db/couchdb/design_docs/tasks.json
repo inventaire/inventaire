@@ -6,7 +6,7 @@
       "map": "(doc)->\n  unless doc.state \n    emit doc.suspectUri, null"
     },
     "byScore": {
-      "map": "(doc)->\n  unless doc.state \n    emit [doc.hasEncyclopediaOccurence, doc.relationScore, doc.elasticScore], doc"
+      "map": "(doc)->\n  unless doc.state \n    emit [doc.externalSourcesOccurences, doc.relationScore, doc.elasticScore], doc"
     }
   }
 }

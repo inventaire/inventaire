@@ -4,13 +4,13 @@ _ = __.require 'builders', 'utils'
 should = require 'should'
 { undesiredRes, undesiredErr } = require '../../utils/utils'
 { updateLabel } = require '../../utils/entities'
-{ createEdition, workLabel } = require '../../fixtures/entities'
+{ createEdition, randomWorkLabel } = require '../../fixtures/entities'
 
 describe 'entities:editions:update-labels', ->
   it 'should reject labels update', (done)->
     createEdition()
     .then (edition)->
-      updateLabel edition._id, 'fr', workLabel()
+      updateLabel edition._id, 'fr', randomWorkLabel()
       .then undesiredRes(done)
       .catch (err)->
         err.body.status_verbose.should.equal "editions can't have labels"
