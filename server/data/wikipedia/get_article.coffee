@@ -3,8 +3,15 @@ _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
 qs = require 'querystring'
+cache_ = __.require 'lib', 'cache'
 
-module.exports = (lang, title, introOnly=false)->
+module.exports = (params)->
+  { lang, title, introOnly } = params
+  keyBase = if introOnly then 'wpextract' else 'wparticle'
+  key = "#{keyBase}:#{lang}:#{title}"
+  return cache_.get key, getArticle.bind(null, lang, title, introOnly)
+
+getArticle = (lang, title, introOnly)->
   promises_.get apiQuery(lang, title, introOnly)
   .then (res)->
     { pages } = res.query

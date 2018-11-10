@@ -53,11 +53,7 @@ getMostRelevantWikipediaArticles = (authorEntity, worksLabelsLangs)->
     title = sitelinks["#{lang}wiki"]
     if title? then return { lang, title }
   .filter _.identity
-  .map getWikipediaArticleFromSitelinkData
-
-getWikipediaArticleFromSitelinkData = (sitelinkData)->
-  { lang, title } = sitelinkData
-  return getWikipediaArticle lang, title
+  .map getWikipediaArticle
 
 getBnfOccurrences = (authorEntity, worksLabels)->
   bnfIds = authorEntity.claims['wdt:P268']
@@ -72,6 +68,4 @@ createOccurrences = (worksLabels)->
   return (article)->
     matchedTitles = _.uniq article.quotation.match(worksLabelsPattern)
     unless matchedTitles.length > 0 then return false
-    return
-      url: article.url
-      matchedTitles: matchedTitles
+    return { url: article.url, matchedTitles }
