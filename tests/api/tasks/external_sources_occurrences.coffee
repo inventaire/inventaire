@@ -24,7 +24,7 @@ describe 'tasks:externalSourcesOccurrences', ->
 
     return
 
-  it 'should create tasks if author has no occurences', (done)->
+  it 'should create tasks if author has no occurrences', (done)->
     humanLabel = 'Wolfgang Amadeus Mozart'
     createHuman { labels: { en: humanLabel } }
     .then (human)->
@@ -39,7 +39,7 @@ describe 'tasks:externalSourcesOccurrences', ->
 
     return
 
-  it 'should create tasks if author has homonyms and occurences', (done)->
+  it 'should create tasks if author has homonyms and occurrences', (done)->
     humanLabel = 'Alan Moore' # homonyms Q205739, Q1748845
     workLabel = 'Voice of the Fire' # wd:Q3825051
     createHuman { labels: { en: humanLabel } }

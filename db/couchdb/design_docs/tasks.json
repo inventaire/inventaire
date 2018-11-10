@@ -9,7 +9,7 @@
       "map": "(doc)->\n  unless doc.state \n    emit doc.suggestionUri, null"
     },
     "byScore": {
-      "map": "(doc)->\n  unless doc.state \n    emit [doc.externalSourcesOccurences, doc.relationScore, doc.elasticScore], doc"
+      "map": "(doc)->\n  unless doc.state \n    emit [doc.externalSourcesOccurrences, doc.relationScore, doc.elasticScore], doc"
     }
   }
 }
