@@ -15,7 +15,7 @@ module.exports =
     validations.pass 'relationScore', relationScore
     validations.pass 'externalSourcesOccurrences', externalSourcesOccurrences
 
-    return task =
+    return {
       type: type
       suspectUri: suspectUri
       suggestionUri: suggestionUri
@@ -23,6 +23,7 @@ module.exports =
       relationScore: _.round relationScore, 2
       externalSourcesOccurrences: externalSourcesOccurrences
       created: Date.now()
+    }
 
   update: (task, attribute, value)->
     _.types arguments, [ 'object', 'string', 'string|number' ]

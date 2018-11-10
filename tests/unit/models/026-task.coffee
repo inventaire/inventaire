@@ -11,7 +11,7 @@ validDoc = ->
   state: 'requested'
   lexicalScore: 4.2
   relationScore: 1
-  externalSourcesOccurrences: true
+  externalSourcesOccurrences: []
 
 describe 'task model', ->
   describe 'create', ->
