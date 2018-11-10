@@ -3,15 +3,20 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
 qs = require 'querystring'
+cache_ = __.require 'lib', 'cache'
 
 endpoint = 'http://data.bnf.fr/sparql'
 base = "#{endpoint}?default-graph-uri=&format=json&timeout=60000&query="
+headers = { accept: '*/*' }
 
 module.exports = (bnfId)->
+  key = "bnf:author-works-titles:#{bnfId}"
+  return cache_.get key, getBnfAuthorWorksTitles.bind(null, bnfId)
+
+getBnfAuthorWorksTitles = (bnfId)->
   _.info bnfId, 'bnfId'
-  promises_.get base + getQuery(bnfId),
-    headers:
-      accept: '*/*'
+  url = base + getQuery(bnfId)
+  promises_.get { url, headers }
   .then (res)->
     res.results.bindings
     .map (result)->
