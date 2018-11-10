@@ -110,7 +110,6 @@
     "live-server": "^1.2.0",
     "lodash": "^4.17.11",
     "mailcomposer": "^2.1.0",
-    "mime": "^2.3.1",
     "mocha": "^5.2.0",
     "onchange": "^2.0.0",
     "shell-quote": "^1.4.3",
