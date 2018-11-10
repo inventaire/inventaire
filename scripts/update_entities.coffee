@@ -49,10 +49,10 @@ updateSequentially = ->
     .then updateSequentially
 
 postEntitiesBulk = (updatesData)->
-  entities_.db.bulk _.pluck(updatesData, 'updatedDoc')
+  entities_.db.bulk _.map(updatesData, 'updatedDoc')
 
 postPatchesBulk = (updatesData)-> (entityBulkRes)->
-  entityResById = _.indexBy entityBulkRes, 'id'
+  entityResById = _.keyBy entityBulkRes, 'id'
   patches = updatesData.map buildPatches(entityResById)
   return patches_.db.bulk patches
 

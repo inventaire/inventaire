@@ -16,7 +16,7 @@ describe 'entities:search', ->
       createdWorkId = creationRes._id
       search label, 'fr'
       .then (searchRes)->
-        worksIds = _.pluck searchRes.works, '_id'
+        worksIds = _.map searchRes.works, '_id'
         (createdWorkId in worksIds).should.be.true()
         done()
     .catch undesiredErr(done)
@@ -35,7 +35,7 @@ describe 'entities:search', ->
       .delay 1000
       .then -> search label, 'fr'
       .then (searchRes)->
-        worksIds = _.pluck searchRes.works, '_id'
+        worksIds = _.map searchRes.works, '_id'
         (toId in worksIds).should.be.true()
         (fromId not in worksIds).should.be.true()
         done()

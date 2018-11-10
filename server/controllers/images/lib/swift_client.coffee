@@ -39,11 +39,12 @@ module.exports =
   putImage: (container, path, filename)->
     Promise.all [
         getParams container, filename
-        fs_.contentHeaders path
+        fs_.getContentLength path
       ]
-    .spread (params, additionalHeaders)->
+    .spread (params, contentLength)->
       { headers, url } = params
-      _.extend headers, additionalHeaders
+      headers['Content-Length'] = contentLength
+      headers['Content-Type'] = 'application/octet-stream'
       new Promise (resolve, reject)->
         fs_.createReadStream path
         .pipe request({ method: 'PUT', url, headers })

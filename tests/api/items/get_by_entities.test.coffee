@@ -23,11 +23,11 @@ describe 'items:get-by-entities', ->
       createEditionAndItem getUser()
     ]
     .then (items)->
-      uris = _.uniq _.pluck(items, 'entity')
+      uris = _.uniq _.map(items, 'entity')
       _.log uris, 'uris'
       authReq 'get', "/api/items?action=by-entities&uris=#{uris.join('|')}"
       .then (res)->
-        resUserIds = _.uniq _.pluck(res.items, 'entity')
+        resUserIds = _.uniq _.map(res.items, 'entity')
         resUserIds.should.containDeep uris
         done()
     .catch undesiredErr(done)

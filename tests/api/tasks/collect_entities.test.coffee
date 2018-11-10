@@ -18,7 +18,7 @@ describe 'tasks:collect-entities', ->
       createHuman { labels: { en: 'Stanislas Lem' } }
     ]
     .then (humans)->
-      uris = _.pluck humans, 'uri'
+      uris = _.map humans, 'uri'
       collectEntities()
       .delay 5000
       .then -> Promise.all uris.map(getBySuspectUri)

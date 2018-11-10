@@ -13,7 +13,7 @@ module.exports = (params)->
 
   user_.getUsersByEmails parsedEmails, reqUserId
   .then (existingUsers)->
-    existingUsersEmails = _.pluck existingUsers, 'email'
+    existingUsersEmails = _.map existingUsers, 'email'
     remainingEmails = _.difference parsedEmails, existingUsersEmails
 
     sendInvitation user, group, remainingEmails, message

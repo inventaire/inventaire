@@ -22,7 +22,7 @@ describe 'elastic query of an author name within indexes of wikidata humans', ->
       goodResult = _.find results, { _id: authorInWdDescriptions.goodId }
       badResult = _.find results, { _id: authorInWdDescriptions.lessGoodId }
 
-      ids = _.pluck results, '_id'
+      ids = _.map results, '_id'
       ids.includes(authorInWdDescriptions.goodId).should.be.true()
       ids.includes(authorInWdDescriptions.lessGoodId).should.be.false()
 

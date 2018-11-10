@@ -16,7 +16,7 @@ describe 'items:get-by-user-and-entity', ->
     .then (item)->
       authReq 'get', "#{endpoint}&user=#{item.owner}&uri=#{item.entity}"
       .then (res)->
-        itemsIds = _.pluck res.items, '_id'
+        itemsIds = _.map res.items, '_id'
         itemsIds.includes(item._id).should.be.true()
         for resItem in res.items
           resItem.entity.should.equal item.entity
@@ -51,7 +51,7 @@ describe 'items:get-by-user-and-entity', ->
         authReq 'get', "#{endpoint}&user=#{itemA.owner}&uri=#{uri}"
         .then (res)->
           itemsIds = [ itemA._id, itemB._id ]
-          resItemsIds = _.pluck res.items, '_id'
+          resItemsIds = _.map res.items, '_id'
           resItemsIds.should.containDeep itemsIds
           done()
     .catch undesiredErr(done)

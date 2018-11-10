@@ -17,7 +17,7 @@ describe 'entities:search-type', ->
       nonAuthReq 'get', "#{endpoint}&type=works&search=#{workLabel}&lang=fr"
       .get 'results'
       .then (results)->
-        worksIds = _.pluck results, '_id'
+        worksIds = _.map results, '_id'
         (createdWorkId in worksIds).should.be.true()
         results[0].uri.should.be.ok()
         done()

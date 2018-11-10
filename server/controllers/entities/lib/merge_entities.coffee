@@ -38,7 +38,7 @@ mergeEntities = (userId, fromId, toId)->
     # if any difference can be found
     toEntityDocBeforeMerge = _.cloneDeep toEntityDoc
     toEntityDoc = Entity.mergeDocs fromEntityDoc, toEntityDoc
-    if _.eq toEntityDoc, toEntityDocBeforeMerge
+    if _.isEqual toEntityDoc, toEntityDocBeforeMerge
       # if the toEntityDoc after data transfer hasn't changed
       # don't run entities_.putUpdate as it will throw an 'empty patch' error
       transfer = promises_.resolved

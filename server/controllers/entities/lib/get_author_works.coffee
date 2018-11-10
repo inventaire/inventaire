@@ -89,7 +89,7 @@ formatInvEntity = (row)->
 
 ## COMMONS
 getPopularityScores = (results)->
-  uris = _.pluck results, 'uri'
+  uris = _.map results, 'uri'
   return getEntitiesPopularity uris
 
 spreadByType = (worksByTypes, rows)-> (scores)->

@@ -44,12 +44,12 @@ triggerInvitation = (user, group, emails, message)->
     radio.emit 'send:email:invitations', user, emails, message
 
 extractUnknownEmails = (emails, knownInvitedUsers)->
-  knownInvitedUsersEmails = _.pluck knownInvitedUsers, 'email'
+  knownInvitedUsersEmails = _.map knownInvitedUsers, 'email'
   return _.difference emails, knownInvitedUsersEmails
 
 extractCanBeInvited = (userId, groupId, knownInvitedUsers)->
   return knownInvitedUsers.filter Invited.canBeInvited(userId, groupId)
 
 concatRemainingEmails = (canBeInvited, unknownEmails)->
-  knownEmails = _.pluck canBeInvited, 'email'
+  knownEmails = _.map canBeInvited, 'email'
   return unknownEmails.concat knownEmails

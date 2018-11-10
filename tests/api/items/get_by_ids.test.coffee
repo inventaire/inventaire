@@ -21,10 +21,10 @@ describe 'items:get-by-ids', ->
     emptyItemsData = [ {}, {}, {} ]
     createItems getUser(), emptyItemsData
     .then (items)->
-      ids = _.pluck(items, '_id').sort()
+      ids = _.map(items, '_id').sort()
       authReq 'get', "/api/items?action=by-ids&ids=#{ids.join('|')}"
       .then (res)->
-        resIds = _.pluck(res.items, '_id').sort()
+        resIds = _.map(res.items, '_id').sort()
         resIds.should.deepEqual ids
         resIds.length.should.equal ids.length
         done()

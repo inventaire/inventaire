@@ -3,26 +3,16 @@ __ = CONFIG.universalPath
 _ = __.require('builders', 'utils')
 { Promise } = __.require 'lib', 'promises'
 fs = require 'fs'
-mime = require 'mime'
 
 stat = Promise.promisify fs.stat
 
-contentHeaders = (src)->
+getContentLength = (src)->
   stat src
-  .then (data)->
-    contentType = mime.lookup src
-    # Add charset if it's known.
-    charset = mime.charsets.lookup contentType
-    if charset then contentType += "; charset=#{charset}"
-    headers =
-      'Content-Length': data.size
-      'Content-Type': contentType
-  .then _.Log('headers')
-  .catch _.ErrorRethrow('content headers')
+  .get 'size'
 
 module.exports =
   readFile: Promise.promisify fs.readFile
   writeFile: Promise.promisify fs.writeFile
   createReadStream: fs.createReadStream
   mv: Promise.promisify fs.rename
-  contentHeaders: contentHeaders
+  getContentLength: getContentLength

@@ -49,7 +49,7 @@ module.exports = base =
     indexesArray.unshift {}
     return _.extend.apply _, indexesArray
 
-  IndexBy: (attribute)-> (array)-> _.indexBy array, attribute
+  KeyBy: (attribute)-> (array)-> _.keyBy array, attribute
 
   initCollectionsIndex: (names)-> names.reduce aggregateCollections, {}
 

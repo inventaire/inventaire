@@ -13,7 +13,7 @@ describe 'transactions:get', ->
       authReq 'get', '/api/transactions'
       .then (res2)->
         res2.transactions.should.be.an.Array()
-        transactionsIds = _.pluck res2.transactions, '_id'
+        transactionsIds = _.map res2.transactions, '_id'
         transactionsIds.should.containEql transaction._id
         done()
     .catch undesiredErr(done)

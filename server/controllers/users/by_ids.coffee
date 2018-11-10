@@ -22,4 +22,4 @@ parseAndValidateIds = (ids)->
   if ids?.length > 0 and validUsersIds(ids) then return ids
   else throw error_.newInvalid 'ids', ids
 
-validUsersIds = (ids)-> _.all ids, User.validations.userId
+validUsersIds = (ids)-> _.every ids, User.validations.userId

@@ -37,7 +37,7 @@ describe 'items:recent-public', ->
   it 'should take a lang parameter', (done)->
     populate()
     .then -> nonAuthReq 'get', "#{recentPublicUrl}&lang=de"
-    .then (res)-> _.all(res.items, itemLangIs('de')).should.be.true()
+    .then (res)-> _.every(res.items, itemLangIs('de')).should.be.true()
     .delay 10
     .then -> done()
     .catch undesiredErr(done)
@@ -46,7 +46,7 @@ describe 'items:recent-public', ->
   it 'should return the most recent items', (done)->
     populate()
     .then -> nonAuthReq 'get', recentPublicUrl
-    .then (res)-> _.all(res.items, createdLately).should.be.true()
+    .then (res)-> _.every(res.items, createdLately).should.be.true()
     .delay 10
     .then -> done()
     .catch undesiredErr(done)

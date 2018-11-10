@@ -51,4 +51,4 @@ describe 'groups:search', ->
 
     return
 
-groupsIds = (res)-> _.pluck res.groups, '_id'
+groupsIds = (res)-> _.map res.groups, '_id'

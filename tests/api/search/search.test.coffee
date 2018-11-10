@@ -59,7 +59,7 @@ describe 'search:global', ->
     .then (results)->
       results.should.be.an.Array()
       results.forEach (result)-> result.type.should.equal 'humans'
-      _.pluck(results, 'id').includes('Q184226').should.be.true()
+      _.map(results, 'id').includes('Q184226').should.be.true()
       done()
     .catch undesiredErr(done)
 
@@ -75,7 +75,7 @@ describe 'search:global', ->
       .then (results)->
         results.should.be.an.Array()
         results.forEach (result)-> result.type.should.equal 'humans'
-        _.pluck(results, 'id').includes(entity._id).should.be.true()
+        _.map(results, 'id').includes(entity._id).should.be.true()
         done()
     .catch undesiredErr(done)
 
@@ -91,7 +91,7 @@ describe 'search:global', ->
       .then (results)->
         results.should.be.an.Array()
         results.forEach (result)-> result.type.should.equal 'works'
-        _.pluck(results, 'id').includes(entity._id).should.be.true()
+        _.map(results, 'id').includes(entity._id).should.be.true()
         done()
     .catch undesiredErr(done)
 
@@ -102,7 +102,7 @@ describe 'search:global', ->
     .then (results)->
       results.should.be.an.Array()
       results.forEach (result)-> result.type.should.equal 'works'
-      _.pluck(results, 'id').includes('Q180736').should.be.true()
+      _.map(results, 'id').includes('Q180736').should.be.true()
       done()
     .catch undesiredErr(done)
 
@@ -118,7 +118,7 @@ describe 'search:global', ->
       .then (results)->
         results.should.be.an.Array()
         results.forEach (result)-> result.type.should.equal 'series'
-        _.pluck(results, 'id').includes(entity._id).should.be.true()
+        _.map(results, 'id').includes(entity._id).should.be.true()
         done()
     .catch undesiredErr(done)
 
@@ -129,7 +129,7 @@ describe 'search:global', ->
     .then (results)->
       results.should.be.an.Array()
       results.forEach (result)-> result.type.should.equal 'series'
-      _.pluck(results, 'id').includes('Q8337').should.be.true()
+      _.map(results, 'id').includes('Q8337').should.be.true()
       done()
     .catch undesiredErr(done)
 
@@ -143,7 +143,7 @@ describe 'search:global', ->
       .then (results)->
         results.should.be.an.Array()
         results.forEach (result)-> result.type.should.equal 'users'
-        _.pluck(results, 'id').includes(user._id).should.be.true()
+        _.map(results, 'id').includes(user._id).should.be.true()
         done()
     .catch undesiredErr(done)
 
@@ -158,7 +158,7 @@ describe 'search:global', ->
       .then (results)->
         results.should.be.an.Array()
         results.forEach (result)-> result.type.should.equal 'groups'
-        _.pluck(results, 'id').includes(group._id).should.be.true()
+        _.map(results, 'id').includes(group._id).should.be.true()
         done()
     .catch undesiredErr(done)
 
@@ -171,13 +171,13 @@ describe 'search:global', ->
     .then (group)->
       search 'groups', name
       .then (results)->
-        _.pluck(results, 'id').includes(group._id).should.be.false()
+        _.map(results, 'id').includes(group._id).should.be.false()
         # The same request but authentified with a group member account
         # should find the group
         authReq 'get', "/api/search?search=#{name}&types=groups&lang=fr"
         .then (res)->
           { results } = res
-          _.pluck(results, 'id').includes(group._id).should.be.true()
+          _.map(results, 'id').includes(group._id).should.be.true()
           done()
     .catch undesiredErr(done)
 

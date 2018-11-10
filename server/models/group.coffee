@@ -86,7 +86,7 @@ moveMembership = (userId, group, previousCategory, newCategory)->
   return group
 
 findMembership = (userId, group, previousCategory, wanted)->
-  membership = _.findWhere group[previousCategory], { user: userId }
+  membership = _.find group[previousCategory], { user: userId }
   if wanted
     # expect to find a membership
     if membership? then return membership

@@ -41,7 +41,7 @@ module.exports =
 
 requiredUserData = [ 'username', 'picture' ]
 
-indexById = (users)-> _.indexBy users, '_id'
+indexById = (users)-> _.keyBy users, '_id'
 
 getItemsWithTransactionFirst = (lastItems, highlightedLength)->
   # create a new array as items.pop() would affect lastItems everywhere

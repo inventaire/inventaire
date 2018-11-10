@@ -31,7 +31,7 @@ module.exports = (rawIsbns, refresh)->
       results = { entities: entities.concat(newEntities) }
 
       if notFound.length > 0
-        results.notFound = _.pluck(notFound, 'isbn').map prefixifyIsbn
+        results.notFound = _.map(notFound, 'isbn').map prefixifyIsbn
 
       return addRedirections results, redirections
 

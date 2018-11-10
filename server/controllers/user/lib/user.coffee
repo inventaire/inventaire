@@ -76,7 +76,7 @@ user_ =
 
   getUsersIndexByIds: (reqUserId)-> (ids)->
     user_.getUsersByIds ids, reqUserId
-    .then _.IndexBy('_id')
+    .then _.KeyBy('_id')
 
   getUsersIndexByUsernames: (reqUserId)-> (usernames)->
     user_.getUsersAuthorizedData user_.byUsernames(usernames), reqUserId

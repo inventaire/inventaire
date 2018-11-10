@@ -53,7 +53,7 @@ module.exports = API =
     worksPromise
     .then (works)->
       works = _.forceArray works
-      worksUris = _.pluck works, 'uri'
+      worksUris = _.map works, 'uri'
       authReq 'post', '/api/entities?action=create',
         claims:
           'wdt:P31': [ 'wd:Q3331189' ]
