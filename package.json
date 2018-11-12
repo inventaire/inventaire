@@ -78,7 +78,7 @@
     "leven": "^2.1.0",
     "method-override": "^2.3.10",
     "moment": "^2.21.0",
-    "morgan": "^1.1.1",
+    "morgan": "1.1.1",
     "node-polyglot": "^1.0.0",
     "nodemailer": "git+https://github.com/maxlath/Nodemailer.git",
     "nodemailer-express-handlebars": "^2.0.0",
