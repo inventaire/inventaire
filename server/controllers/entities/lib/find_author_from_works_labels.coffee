@@ -6,7 +6,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 typeSearch = __.require 'controllers', 'search/lib/type_search'
 { prefixifyWd } = __.require 'controllers', 'entities/lib/prefix'
-hasWorksLabelsOccurrence = require './has_works_labels_occurrence'
+getWorksLabelsOccurrence = require './get_works_labels_occurrence'
 
 # Returns a URI if an single author was identified
 # returns undefined otherwise
@@ -34,5 +34,7 @@ getWdAuthorUris = (res)->
   .map (hit)-> prefixifyWd hit._id
 
 getAuthorOccurrenceData = (worksLabels, worksLabelsLangs)-> (wdAuthorUri)->
-  hasWorksLabelsOccurrence wdAuthorUri, worksLabels, worksLabelsLangs
-  .then (hasOccurrence)-> { uri: wdAuthorUri, hasOccurrence }
+  getWorksLabelsOccurrence wdAuthorUri, worksLabels, worksLabelsLangs
+  .then (occurrence)->
+    hasOccurrence = occurrence.length > 0
+    return { uri: wdAuthorUri, hasOccurrence }

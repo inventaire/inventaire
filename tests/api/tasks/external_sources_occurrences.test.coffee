@@ -39,7 +39,7 @@ describe 'tasks:externalSourcesOccurrences', ->
 
     return
 
-  it 'should create tasks if author has homonyms and occurrences', (done)->
+  it 'should automerge if author has homonyms but only one has occurrences', (done)->
     humanLabel = 'Alan Moore' # homonyms Q205739, Q1748845
     workLabel = 'Voice of the Fire' # wd:Q3825051
     createHuman { labels: { en: humanLabel } }
@@ -47,9 +47,7 @@ describe 'tasks:externalSourcesOccurrences', ->
       createWorkWithAuthor human, workLabel
       .then (work)-> checkEntities human.uri
       .then (tasks)->
-        tasks.length.should.aboveOrEqual 1
-        task = tasks.find (task)-> task.suggestionUri.match /wd:/
-        task.externalSourcesOccurrences.should.not.be.empty()
+        tasks.length.should.equal 0
         done()
     .catch undesiredErr(done)
 

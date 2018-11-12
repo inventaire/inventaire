@@ -7,7 +7,7 @@ error_ = __.require 'lib', 'error/error'
 getWikipediaArticle = __.require 'data', 'wikipedia/get_article'
 getBnfAuthorWorksTitles = __.require 'data', 'bnf/get_bnf_author_works_titles'
 getEntityByUri = __.require 'controllers', 'entities/lib/get_entity_by_uri'
-wd_ = __.require 'lib', 'wikidata/wikidata'
+{ isWdEntityUri } = __.require 'lib', 'wikidata/wikidata'
 
 # - worksLabels: labels from works of an author suspected
 #   to be the same as the wdAuthorUri author
@@ -18,7 +18,7 @@ module.exports = (wdAuthorUri, worksLabels, worksLabelsLangs)->
   _.type worksLabels, 'array'
   _.type worksLabelsLangs, 'array'
 
-  unless wd_.isWdEntityUri wdAuthorUri then return promises_.resolve 0
+  unless isWdEntityUri wdAuthorUri then return promises_.resolve []
 
   # Filter-out labels that are too short, as it could generate false positives
   worksLabels = worksLabels.filter (label)-> label.length > 5
@@ -29,7 +29,8 @@ module.exports = (wdAuthorUri, worksLabels, worksLabelsLangs)->
   getEntityByUri wdAuthorUri
   .then (authorEntity)->
     # Known case: entities tagged as 'missing' or 'meta'
-    unless authorEntity.sitelinks? then return false
+    unless authorEntity.sitelinks? then return []
+
     promises_.all [
       getWikipediaOccurrences authorEntity, worksLabels, worksLabelsLangs
       getBnfOccurrences authorEntity, worksLabels
@@ -38,8 +39,7 @@ module.exports = (wdAuthorUri, worksLabels, worksLabelsLangs)->
   .then _.compact
   .catch (err)->
     _.error err, 'has works labels occurrence err'
-    # Default to false if an error happened
-    return false
+    return []
 
 getWikipediaOccurrences = (authorEntity, worksLabels, worksLabelsLangs)->
   promises_.all getMostRelevantWikipediaArticles(authorEntity, worksLabelsLangs)
