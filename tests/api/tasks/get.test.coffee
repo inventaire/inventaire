@@ -4,7 +4,7 @@ _ = __.require 'builders', 'utils'
 should = require 'should'
 { undesiredErr } = __.require 'apiTests', 'utils/utils'
 { createSomeTasks } = require '../fixtures/tasks'
-{ getByScore, getBySuspectUris, getBySuggestionUris } = require '../utils/tasks'
+{ getByScore, getBySuspectUris, getBySuggestionUris, update } = require '../utils/tasks'
 
 # Tests dependency: having a populated ElasticSearch wikidata index
 describe 'tasks:byScore', ->
@@ -52,6 +52,20 @@ describe 'tasks:bySuspectUris', ->
         Object.keys(tasks).length.should.equal 1
         tasks[uri].should.be.an.Array()
         tasks[uri][0].should.be.an.Object()
+        done()
+    .catch undesiredErr(done)
+
+    return
+
+  it 'should not return archived tasks', (done)->
+    createSomeTasks 'Gilbert Simondon'
+    .then (res)->
+      task = res.tasks[0]
+      { suspectUri } = task
+      update task._id, 'state', 'dismissed'
+      .then -> getBySuspectUris suspectUri
+      .then (tasks)->
+        tasks[suspectUri].length.should.equal 0
         done()
     .catch undesiredErr(done)
 

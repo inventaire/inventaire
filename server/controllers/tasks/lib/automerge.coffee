@@ -17,7 +17,7 @@ module.exports = (suggestions, authorWorksData)-> (occurrences)->
   return []
 
 getMatchedTitles = (occurrences)->
-  matchedTitles = occurrences.map (occ)-> _.pluck(occ.occurrences, 'matchedTitles')
+  matchedTitles = occurrences.map (occ)-> _.map(occ.occurrences, 'matchedTitles')
   return _.flattenDeep matchedTitles
 
 canBeAutomerged = (suggestions, matchedTitles)->

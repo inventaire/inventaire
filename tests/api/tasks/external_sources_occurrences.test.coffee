@@ -83,7 +83,7 @@ describe 'tasks:externalSourcesOccurrences', ->
       .then (work)-> checkEntities human.uri
       .then (tasks)->
         task = tasks.find (task)-> task.suggestionUri.match /wd:/
-        occurrencesUrls = _.pluck task.externalSourcesOccurrences, 'url'
+        occurrencesUrls = _.map task.externalSourcesOccurrences, 'url'
         occurrencesUrls.join().should.containEql /data.bnf.fr/
         done()
     .catch undesiredErr(done)
@@ -101,7 +101,7 @@ describe 'tasks:externalSourcesOccurrences', ->
       .get 'entities'
       .then (entities)->
         redirectionPrefix = /wd:/
-        _.pluck(entities, 'uri')[0].should.match redirectionPrefix
+        _.map(entities, 'uri')[0].should.match redirectionPrefix
         done()
     .catch undesiredErr(done)
 

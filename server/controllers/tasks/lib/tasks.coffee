@@ -37,7 +37,7 @@ module.exports = tasks_ =
 
   bySuspectUris: (suspectUris, options = {})->
     { index, includeArchived } = options
-    db.viewByKeys 'bySuspectUriAndState', getKeys(suspectUris, options)
+    db.viewByKeys 'bySuspectUriAndState', getKeys(suspectUris, includeArchived)
     .then (tasks)->
       if index isnt true then return tasks
       tasksBySuspectUris = _.groupBy tasks, 'suspectUri'
@@ -45,7 +45,7 @@ module.exports = tasks_ =
 
   bySuggestionUris: (suggestionUris, options = {})->
     { index, includeArchived } = options
-    db.viewByKeys 'bySuggestionUriAndState', getKeys(suggestionUris, options)
+    db.viewByKeys 'bySuggestionUriAndState', getKeys(suggestionUris, includeArchived)
     .then (tasks)->
       if index isnt true then return tasks
       tasksBySuggestionUris = _.groupBy tasks, 'suggestionUri'

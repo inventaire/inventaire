@@ -26,7 +26,7 @@ filterSuggestions = (occurrences, suggestions)->
   # Create a task for every suggestions
   unless occurrences.length > 0 then return suggestions
   # Create tasks only for suggestions with occurrences
-  occurrencesUris = _.pluck occurrences, 'uri'
+  occurrencesUris = _.map occurrences, 'uri'
   return suggestions.filter (suggestion)-> suggestion.uri in occurrencesUris
 
 createTasksDocs = (authorWorksData, occurrences)-> (suggestions)->
