@@ -42,7 +42,7 @@ getOccurrences = (authorWorksData)-> (suggestion)->
     return { uri, occurrences }
 
 createTaskDoc = (authorWorksData, relationScore, suggestionsOccurrences)->
-  occurrencesBySuggestionUri = _.indexBy suggestionsOccurrences, 'uri'
+  occurrencesBySuggestionUri = _.keyBy suggestionsOccurrences, 'uri'
   return (suggestion)->
     { authorId } = authorWorksData
     occurrencesObj = occurrencesBySuggestionUri[suggestion.uri]
