@@ -218,7 +218,8 @@ describe 'search:global', ->
         search 'works', workLabel
         .then (results)->
           firstEntityResult = results[0]
-          boostLimit = firstEntityResult.lexicalScore + workEditionsCreation.length
+          popularity = workEditionsCreation.length
+          boostLimit = firstEntityResult.lexicalScore * popularity
           firstEntityResult.globalScore.should.be.below boostLimit
           done()
     .catch undesiredErr(done)
