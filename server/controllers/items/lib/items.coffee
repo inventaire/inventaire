@@ -151,7 +151,7 @@ module.exports = items_ =
       { 'entity:title':title, 'entity:authors':authors, 'entity:image':image } = item.snapshot
       item.title = title
       item.authors = authors
-      if image? and item.pictures.length is 0 then item.pictures = [ image ]
+      if image? then item.pictures = [ image ]
       return item
 
 listingByEntities = (listing, uris, reqUserId)->
@@ -175,7 +175,7 @@ FilterWithImage = (assertImage)-> (items)->
     if assertImage then items.filter itemWithImage
     else items
 
-itemWithImage = (item)-> item.snapshot['entity:image'] or item.pictures.length > 0
+itemWithImage = (item)-> item.snapshot['entity:image']
 
 validateEntityType = (item)->
   getEntityByUri item.entity
