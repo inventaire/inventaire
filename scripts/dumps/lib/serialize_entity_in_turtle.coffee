@@ -9,6 +9,7 @@ module.exports = (entity)->
   text = "inv:#{_id} a wikibase:Item ;"
 
   for lang, value of entity.labels
+    value = formatStringValue value
     text += """\n  rdfs:label #{formatStringValue(value)}@#{lang} ;"""
     text += """\n  skos:prefLabel #{formatStringValue(value)}@#{lang} ;"""
 
@@ -30,15 +31,20 @@ datatypePropClaimsFormatter =
   'simple-day': (propClaims)-> propClaims.filter(validSimpleDay).map formatDate
 
 formatStringValue = (str)->
-  # May also be of type number
-  str = str.toString()
+  str = str
+    # May also be of type number
+    .toString()
+    # Remove parts of a string that would not validate
+    # ex: Alone with You (Harlequin Blaze\Made in Montana)
+    .replace /\(.*\.*\)/g, ''
+    # Replace any special spaces (including line breaks) by a normal space
+    .replace /\s/g, ' '
+    # Remove double quotes
+    .replace /"/g, ''
+    # Remove escape caracters
+    .replace /\\/g, ''
 
-  # Remove parts of a string that would not validate
-  # ex: Alone with You (Harlequin Blaze\Made in Montana)
-  str = str.replace /\(.*\.*\)/g, ''
-
-  if str.match('"')? then "'''" +  str.replace(/'''/g, '') + "'''"
-  else '"' + str + '"'
+  return '"' + _.superTrim(str) + '"'
 
 formatPositiveInteger = (number)-> '"+' + number + '"^^xsd:decimal'
 formatDate = (simpleDay)->
