@@ -77,6 +77,13 @@ echo "converting to turtle: $turtle_filename $turtle_with_seeds_filepath"
 cat "${today_folder}/${filtered_dump_filename}" | ./scripts/dumps/convert_ndjson_dump_to_ttl > "${today_folder}/${turtle_filename}"
 cat "${today_folder}/${filtered_dump_filename_with_seeds}" | ./scripts/dumps/convert_ndjson_dump_to_ttl > "${today_folder}/${turtle_with_seeds_filepath}"
 
+validate_ttl(){
+  echo "validating ttl: $1"
+  ttl $1
+}
+validate_ttl "${today_folder}/${turtle_filename}"
+validate_ttl "${today_folder}/${turtle_with_seeds_filepath}"
+
 cd "$today_folder"
 rm "$output_file"
 

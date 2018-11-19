@@ -92,6 +92,7 @@
     "split": "^1.0.1",
     "through": "^2.3.8",
     "transifexify": "^1.0.6",
+    "turtle-validator": "^1.0.2",
     "wikidata-edit": "^2.3.0",
     "wikidata-lang": "^2.0.3",
     "wikidata-sdk": "^5.9.0",
