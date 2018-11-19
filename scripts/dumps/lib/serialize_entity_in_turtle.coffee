@@ -48,8 +48,13 @@ formatStringValue = (str)->
 
 formatPositiveInteger = (number)-> '"+' + number + '"^^xsd:decimal'
 formatDate = (simpleDay)->
-  if simpleDay.length is 4 then simpleDay += '-01-01'
-  return '"' + simpleDay + 'T00:00:00Z"^^xsd:dateTime'
+  sign = if simpleDay[0] is '-' then '-' else ''
+  [ year, month, day ] = simpleDay.replace(/^-/, '').split('-')
+  year = _.padStart year, 4, '0'
+  month or= '01'
+  day or= '01'
+  formattedDay = "#{sign}#{year}-#{month}-#{day}"
+  return '"' + formattedDay + 'T00:00:00Z"^^xsd:dateTime'
 
 # Shouldn't be 0000-00-00 or 0000
 validSimpleDay = (simpleDay)-> not /^[0-]+$/.test(simpleDay)
