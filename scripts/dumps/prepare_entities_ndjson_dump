@@ -34,7 +34,7 @@ output_file="${today_folder}/${raw_db_json_filename}"
 filtered_dump_filename="entities.ndjson"
 filtered_dump_filename_with_seeds="entities_with_seeds.ndjson"
 redirections_dump="redirections.ndjson"
-alias drop_comma="sed 's/,$//'"
+drop_comma(){ sed 's/,$//' ; }
 
 # NDJSON dumps
 cd "$today_folder"
@@ -59,7 +59,7 @@ cat "${filtered_dump_filename_with_seeds}" |
 
 # JSON dump
 ndjson_to_json(){
-  { echo '[' && head -n -1 "$1" | sed 's/$/,/' && tail -n 1 "$1" && echo ']' } > "$2"
+  { echo '[' && head -n -1 "$1" | sed 's/$/,/' && tail -n 1 "$1" && echo ']' ;  } > "$2"
 }
 json_filename="entities.json"
 json_with_seeds_filename="entities_with_seeds.json"
