@@ -8,3 +8,4 @@
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix schema: <http://schema.org/> .
 @prefix inv: <http://inventaire.io/entity/> .
+@prefix invp: <http://inventaire.io/prop/direct/> .
