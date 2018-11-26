@@ -2,6 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 { properties } = __.require 'controllers', 'entities/lib/properties'
+{ yellow } = require 'chalk'
 
 module.exports = (entity)->
   { _id } = entity
@@ -19,6 +20,8 @@ module.exports = (entity)->
     if formatter?
       formattedPropClaims = formatter propClaims
       text += formatPropClaims property, formattedPropClaims
+    else
+      console.warn yellow('missing formatter'), datatype
 
   # Replace the last ';' by a '.' and add a line break
   # to have one line between each entity
