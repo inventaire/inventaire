@@ -29,6 +29,7 @@ datatypePropClaimsFormatter =
   string: (propClaims)-> propClaims.map formatStringValue
   'positive-integer': (propClaims)-> propClaims.map formatPositiveInteger
   'simple-day': (propClaims)-> propClaims.filter(validSimpleDay).map formatDate
+  'image-hash': (propClaims)-> propClaims.map formatImageHash
 
 formatStringValue = (str)->
   str = str
@@ -58,6 +59,8 @@ formatDate = (simpleDay)->
 
 # Shouldn't be 0000-00-00 or 0000
 validSimpleDay = (simpleDay)-> not /^[0-]+$/.test(simpleDay)
+
+formatImageHash = (imageHash)-> "invimg:#{imageHash}"
 
 formatPropClaims = (property, formattedPropClaims)->
   if formattedPropClaims.length is 0 then return ''

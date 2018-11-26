@@ -9,3 +9,4 @@
 @prefix schema: <http://schema.org/> .
 @prefix inv: <http://inventaire.io/entity/> .
 @prefix invp: <http://inventaire.io/prop/direct/> .
+@prefix invimg: <http://inventaire.io/img/entities/> .
