@@ -10,9 +10,9 @@ module.exports = (entity)->
   text = "inv:#{_id} a wikibase:Item ;"
 
   for lang, value of entity.labels
-    value = formatStringValue value
-    text += """\n  rdfs:label #{formatStringValue(value)}@#{lang} ;"""
-    text += """\n  skos:prefLabel #{formatStringValue(value)}@#{lang} ;"""
+    formattedLabel = formatStringValue value
+    text += """\n  rdfs:label #{formattedLabel}@#{lang} ;"""
+    text += """\n  skos:prefLabel #{formattedLabel}@#{lang} ;"""
 
   for property, propClaims of entity.claims
     { datatype } = properties[property]
