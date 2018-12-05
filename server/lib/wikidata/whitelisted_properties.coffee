@@ -44,6 +44,7 @@ module.exports = [
   'P648' # Open Library ID
   'P655' # translator
   'P674' # characters
+  'P724' # Internet Archive ID
   'P737' # influence by
   'P738' # influence of
   'P840' # narrative location
