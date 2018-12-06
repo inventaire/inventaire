@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 Polyglot = require 'node-polyglot'
-activeLangs = require './active_langs'
+{ active: activeLangs } = __.require 'i18nAssets', 'langs'
 moment = require 'moment'
 { appendToEmailsKeys } = __.require 'lib', 'i18n_autofix'
 translate = __.require 'sharedLibs', 'translate'
@@ -18,12 +18,10 @@ warnAndFix = (warning)->
   key = warning.split('"')[1]
   appendToEmailsKeys key
 
-langJSON = (lang)-> _.jsonReadAsync __.path('i18nDist', "#{lang}.json")
-extendPolyglot = (lang)-> (phrases)-> polyglots[lang].extend phrases
-
 activeLangs.forEach (lang)->
   polyglot = polyglots[lang] = new Polyglot { locale: lang, warn: warnAndFix }
-  langJSON(lang).then extendPolyglot(lang)
+  phrases = __.require 'i18nDist', "#{lang}.json"
+  polyglots[lang].extend phrases
   translators[lang] = translate lang, polyglot
 
 solveLang = (lang)->
