@@ -44,7 +44,7 @@ updateDoc = (params)->
     # Use a clone of the doc to keep the doc itself unmutated
     Promise.try -> updateFunction(_.cloneDeep(doc))
     .then (updatedDoc)->
-      if _.objDiff doc, updatedDoc
+      if objDiff doc, updatedDoc
         docDiff doc, updatedDoc, preview
         unless preview then return updatedDoc
       else
@@ -57,3 +57,5 @@ splitInSubgroups = (collection, groupsLength = 1000)->
     subgroups.push collection.splice(0, groupsLength)
 
   return subgroups
+
+objDiff = -> not _.sameObjects.apply(null, arguments)

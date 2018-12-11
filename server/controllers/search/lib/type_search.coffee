@@ -1,7 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-promises_ = __.require 'lib', 'promises'
+requests_ = __.require 'lib', 'requests'
 { host:elasticHost } = CONFIG.elasticsearch
 { formatError } = __.require 'lib', 'elasticsearch'
 getIndexesAndTypes = require './get_indexes_and_types'
@@ -18,5 +18,5 @@ module.exports = (types, search)->
 
   body = queryBodyBuilder search
 
-  return promises_.post { url, body }
+  return requests_.post { url, body }
   .catch formatError

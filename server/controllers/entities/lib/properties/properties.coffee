@@ -24,8 +24,7 @@ bases = require './properties_config_bases'
 # as possible to the property exact needs
 builders = require './properties_config_builders'
 
-# Keep in sync with app/modules/entities/lib/properties
-# and app/modules/entities/lib/editor/properties_per_type
+# Keep in sync with ./properties_per_type
 properties =
   # image
   'invp:P2': bases.imageHash

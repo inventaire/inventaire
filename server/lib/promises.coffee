@@ -9,15 +9,14 @@ _ = __.require 'builders', 'utils'
 Promise = require 'bluebird'
 Promise.config CONFIG.bluebird
 
-requests = require './requests'
-shared = __.require('sharedLibs', 'promises')(Promise)
-{ resolved } = shared
-
-promisesHandlers =
+module.exports = promisesHandlers =
   Promise: Promise
+  resolve: Promise.resolve
+  reject: Promise.reject
+  try: Promise.try
   all: Promise.all
   props: Promise.props
-  Timeout: (ms)-> (promise)-> promise.timeout ms
+
   # skip throws in a standard way to be catched later
   # by catchSkip and not be treated as an error.
   # It can be used to pass over steps of a promise chain
@@ -28,6 +27,10 @@ promisesHandlers =
     err.reason = reason
     err.context = context
     throw err
+
+  catchSkip: (label)-> (err)->
+    if err.skip then _.log err.context, "#{label} skipped: #{err.reason}"
+    else throw err
 
   # a proxy to Bluebird Promisify that keeps the names
   promisify: (mod, keys)->
@@ -60,10 +63,9 @@ promisesHandlers =
       promise
     }
 
-# bundling NonSkip and _.Error handlers
-promisesHandlers.catchSkip = (label)->
-  catcher = (err)->
-    if err.skip then _.log err.context, "#{label} skipped: #{err.reason}"
-    else throw err
-
-module.exports = _.extend {}, shared, requests, promisesHandlers
+  # Used has a way to create only one resolved promise to start promise chains.
+  # Unfortunatly, this object can't be froozen as it would be incompatible with
+  # bluebird cancellable promises.
+  # This may register as a premature micro-optimization
+  # cf http://stackoverflow.com/q/40683818/3324977
+  resolved: Promise.resolve()

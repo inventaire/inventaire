@@ -5,7 +5,7 @@ Polyglot = require 'node-polyglot'
 { active: activeLangs } = __.require 'i18nAssets', 'langs'
 moment = require 'moment'
 { appendToEmailsKeys } = __.require 'lib', 'i18n_autofix'
-translate = __.require 'sharedLibs', 'translate'
+translate = require './translate'
 
 polyglots = {}
 translators = {}

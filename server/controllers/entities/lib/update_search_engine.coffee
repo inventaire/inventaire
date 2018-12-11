@@ -13,7 +13,7 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-promises_ = __.require 'lib', 'promises'
+requests_ = __.require 'lib', 'requests'
 { offline } = CONFIG
 { updateEnabled, host, delay } = CONFIG.entitiesSearchEngine
 radio = __.require 'lib', 'radio'
@@ -27,7 +27,7 @@ module.exports = ->
 
   requestUpdate = ->
     [ body, urisPerType ] = [ urisPerType, {} ]
-    promises_.post { url: host, body }
+    requests_.post { url: host, body }
     .then -> _.log body, 'requested entities search engine updates'
     .catch (err)->
       if err.message.match 'ECONNREFUSED'

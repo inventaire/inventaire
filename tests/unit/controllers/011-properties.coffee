@@ -3,7 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 
-{ validateType } = __.require 'controllers', 'entities/lib/properties'
+{ validateType } = __.require 'controllers', 'entities/lib/properties/properties'
 
 describe 'properties', ->
   describe 'validateType', ->

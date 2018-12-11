@@ -42,3 +42,26 @@ describe 'utils', ->
       result.should.not.equal indexC
       result.should.not.equal indexD
       done()
+
+  describe 'buildPath', ->
+    it 'should return a string with parameters', (done)->
+      path = _.buildPath '/api', { action: 'man' }
+      path.should.be.a.String()
+      path.should.equal '/api?action=man'
+      done()
+
+    it 'should not add empty parameters', (done)->
+      path = _.buildPath '/api', { action: 'man', boudu: null }
+      path.should.equal '/api?action=man'
+      done()
+
+    it 'should stringify object value', (done)->
+      path = _.buildPath '/api', { action: 'man', data: { a: [ 'abc', 2 ] } }
+      path.should.equal '/api?action=man&data={"a":["abc",2]}'
+      done()
+
+    it 'should URI encode object values problematic query string characters', (done)->
+      data = { a: 'some string with ?!MM%** problematic characters' }
+      path = _.buildPath '/api', { data }
+      path.should.equal '/api?data={"a":"some string with %3F!MM%** problematic characters"}'
+      done()

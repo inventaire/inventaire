@@ -4,7 +4,7 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 wdk = require 'wikidata-sdk'
 { snapshotValidations } = __.require 'models', 'validations/item'
-getBestLangValue = __.require('sharedLibs', 'get_best_lang_value')(_)
+getBestLangValue = __.require 'lib', 'get_best_lang_value'
 
 module.exports =
   edition: (edition, works, authors, series)->

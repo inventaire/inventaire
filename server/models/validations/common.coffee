@@ -1,7 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-regex_ = require './regex'
+regex_ = __.require 'lib', 'regex'
 error_ = __.require 'lib', 'error/error'
 
 { CouchUuid, Email, Username, EntityUri, Lang, LocalImg, UserImg } = regex_

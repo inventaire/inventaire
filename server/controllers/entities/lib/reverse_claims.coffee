@@ -4,6 +4,7 @@ error_ = __.require 'lib', 'error/error'
 wdk = require 'wikidata-sdk'
 wd_ = __.require 'lib', 'wikidata/wikidata'
 promises_ = __.require 'lib', 'promises'
+requests_ = __.require 'lib', 'requests'
 entities_ = require './entities'
 { prefixifyWd, unprefixify } = __.require 'controllers', 'entities/lib/prefix'
 cache_ = __.require 'lib', 'cache'
@@ -68,7 +69,7 @@ _wikidataReverseClaims = (property, value)->
   caseInsensitive = property in caseInsensitiveProperties
   wdProp = unprefixify property
   _.log [ property, value ], 'reverse claim'
-  promises_.get wdk.getReverseClaims(wdProp, value, { caseInsensitive })
+  requests_.get wdk.getReverseClaims(wdProp, value, { caseInsensitive })
   .then wdk.simplifySparqlResults
   .map prefixifyWd
 

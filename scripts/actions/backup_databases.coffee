@@ -9,7 +9,7 @@ CONFIG = require('./lib/get_custom_config')(forcedArgs)
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 fs = require 'fs'
-promises_ = __.require 'lib', 'promises'
+requests_ = __.require 'lib', 'requests'
 
 { username, password, host, port } = CONFIG.db
 dbsNames = Object.keys __.require('couch', 'list')
@@ -30,7 +30,7 @@ zipBackupFolder = require './lib/zip_backup_folder'
 
 params = { host, port, username, password, backupFolder }
 
-promises_.get allDbsUrl
+requests_.get allDbsUrl
 .filter isDatabase
 .filter (dbName)-> dbName.match(suffix)
 .then _.Log('databases to backup')

@@ -4,7 +4,7 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 wdk = require 'wikidata-sdk'
 isbn_ = __.require 'lib', 'isbn/isbn'
-{ EntityUri, SimpleDay } = __.require 'sharedLibs', 'regex'
+{ EntityUri, SimpleDay } = __.require 'lib', 'regex'
 { BoundedString } = __.require 'models', 'validations/common'
 
 entity =

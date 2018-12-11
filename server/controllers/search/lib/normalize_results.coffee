@@ -1,7 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-getBestLangValue = __.require('sharedLibs', 'get_best_lang_value')(_)
+getBestLangValue = __.require 'lib', 'get_best_lang_value'
 
 module.exports = (lang)-> (results)->
   unless lang then return results

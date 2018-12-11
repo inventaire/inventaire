@@ -12,7 +12,7 @@ getEntityType = require './get_entity_type'
 radio = __.require 'lib', 'radio'
 { getUrlFromImageHash } = __.require 'lib', 'images'
 
-{ properties, validateProperty } = require './properties'
+{ properties, validateProperty } = require './properties/properties'
 
 module.exports = entities_ =
   db: db
