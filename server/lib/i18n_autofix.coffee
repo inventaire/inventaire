@@ -31,6 +31,6 @@ appendToI18nKeys = (path, newKeys, fullValue)->
 
   .catch _.Error('appendToI18nKeys err')
 
-full = __.path 'client', 'public/i18n/src/fullkey/en.json'
-short = __.path 'client', 'public/i18n/src/shortkey/en.json'
-emails = __.path 'i18nSrc', 'en.json'
+full = __.path 'i18nSrc', 'fullkey.en.json'
+short = __.path 'i18nSrc', 'shortkey.en.json'
+emails = __.path 'i18nSrc', 'emails.en.json'

@@ -6,18 +6,11 @@ set -eu
 # and that all the following isn't needed
 [ -e client ] && exit 0
 
-# Clone the server i18n before cloning the client as some client script depend on
-# this repo's convert_markdown lib. But generate lang after the client is installed
-# as it depends on script from the client: yes, this mess should be cleaned up
-echo 'trying to clone git clone -b i18n https://github.com/inventaire/inventaire.git ./server/lib/emails/i18n/src'
-git clone -b i18n https://github.com/inventaire/inventaire.git ./server/lib/emails/i18n/src
-git clone https://github.com/inventaire/inventaire-client.git ./client
+git clone https://github.com/inventaire/inventaire-i18n.git ./i18n
 
 # Needs to run before generate_lang_json so that client/public/i18n/dist is already populated
 npm run install-client
-
-mkdir -p ./server/lib/emails/i18n/dist
-./server/lib/emails/i18n/src/generate_lang_json.coffee all
+npm run install-i18n
 
 mkdir -p run db/leveldb
 

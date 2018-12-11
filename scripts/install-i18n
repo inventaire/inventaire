@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+# Keep 'inventaire-i18n' as the directory name to make this directory easy to ignore
+# in gitignore or text editor exclude patterns
+
+[ -e inventaire-i18n ] && {
+  cd inventaire-i18n
+  # Update dist files
+  git fetch origin dist
+  git checkout origin/dist
+  git checkout -B  dist
+  cd ..
+} || {
+  git clone https://github.com/inventaire/inventaire-i18n.git --branch dist
+}
