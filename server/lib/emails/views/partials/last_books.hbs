@@ -6,7 +6,7 @@
         {{#if pictures}}
           <tr>
             <td align="center">
-              <a href="{{href}}" title="{{title}}" style="text-decoration: none"><img src="{{src pictures 200}}" alt="{{title}}"></a>
+              <a href="{{href}}" title="{{title}}" style="text-decoration: none"><img src="{{imgSrc pictures 200}}" alt="{{title}}"></a>
             </td>
           </tr>
         {{/if}}
@@ -27,7 +27,7 @@
                 <td>
                   <a href="{{user.href}}" title="{{user.username}}">
                     {{!-- hacky aligning with the label--}}
-                    <img src="{{src user.picture 64}}" alt="{{user.username}}" height="64" width="64" style="margin-top: 4px;">
+                    <img src="{{imgSrc user.picture 64}}" alt="{{user.username}}" height="64" width="64" style="margin-top: 4px;">
                   </a>
                 </td>
                 <td>

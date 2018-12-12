@@ -12,7 +12,7 @@ module.exports = _.extend {}, i18n,
     return JSON.stringify(obj, null, 2)
 
   # Keep in sync with client/app/lib/handlebars_helpers/images
-  src: (path, width, height)->
+  imgSrc: (path, width, height)->
     if isDataUrl path then return path
 
     width = getImgDimension width, 1600
