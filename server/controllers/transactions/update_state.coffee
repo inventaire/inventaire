@@ -3,7 +3,7 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 responses_ = __.require 'lib', 'responses'
 transactions_ = require './lib/transactions'
-{ states, statesList } = __.require 'models', 'transaction'
+{ states, statesList } = __.require 'models', 'attributes/transaction'
 validations = __.require 'models', 'validations/common'
 { Track } = __.require 'lib', 'track'
 

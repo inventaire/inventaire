@@ -1,6 +1,6 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
-promises_ = __.require 'lib', 'promises'
+requests_ = __.require 'lib', 'requests'
 error_ = __.require 'lib', 'error/error'
 qs = require 'querystring'
 cache_ = __.require 'lib', 'cache'
@@ -12,7 +12,7 @@ module.exports = (params)->
   return cache_.get key, getArticle.bind(null, lang, title, introOnly)
 
 getArticle = (lang, title, introOnly)->
-  promises_.get apiQuery(lang, title, introOnly)
+  requests_.get apiQuery(lang, title, introOnly)
   .then (res)->
     { pages } = res.query
     unless pages?

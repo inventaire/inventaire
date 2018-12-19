@@ -1,11 +1,9 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-notificationsSettingsList = __.require 'sharedLibs', 'notifications_settings_list'
 
 { pass, userId, username, email, userImg, boolean, position, BoundedString } = require './common'
-
-creationStrategies = ['local']
+{ creationStrategies, notificationsSettings } = require '../attributes/user'
 
 module.exports = validations =
   pass: pass
@@ -26,8 +24,7 @@ deepAttributes =
   settings:
     notifications: {}
 
-for setting in notificationsSettingsList
+for setting in notificationsSettings
   deepAttributes.settings.notifications[setting] = true
 
-validations.deepAttributesExistance = (attribute)->
-  _.get(deepAttributes, attribute)?
+validations.deepAttributesExistance = (attribute)-> _.get(deepAttributes, attribute)?

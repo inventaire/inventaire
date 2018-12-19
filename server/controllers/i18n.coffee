@@ -12,7 +12,7 @@ i18nMissingKeys = (req, res, next)->
   unless missingKeys?
     return error_.bundleMissingBody req, res, 'token'
 
-  unless _.areStrings missingKeys
+  unless areStrings missingKeys
     return error_.bundleInvalid req, res, 'missingKeys', missingKeys
 
   _.info missingKeys, 'i18n missing keys'
@@ -34,5 +34,7 @@ i18nMissingKeys = (req, res, next)->
   appendToShortKeys shortKeys
   appendToFullKeys fullKeys
   responses_.ok res
+
+areStrings = (array)-> _.every array, _.isString
 
 module.exports = { post: i18nMissingKeys }

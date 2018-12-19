@@ -18,14 +18,14 @@ module.exports =
     .spread spreadRelations(usersIds)
 
   areFriends: (userId, otherId)->
-    _.types arguments, 'strings...'
+    _.assertTypes arguments, 'strings...'
     relations_.getStatus(userId, otherId)
     .then (status)->
       if status is 'friends' then return true
       else false
 
   areFriendsOrGroupCoMembers: (userId, otherId)->
-    _.types arguments, 'strings...'
+    _.assertTypes arguments, 'strings...'
     getFriendsAndGroupCoMembers userId
     .spread (friendsIds, coGroupMembersIds)->
       return otherId in friendsIds or otherId in coGroupMembersIds

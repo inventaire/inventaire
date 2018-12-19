@@ -1,10 +1,18 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
-{ Q } = __.require 'sharedLibs', 'wikidata_aliases'
 
 # TODO: replace this list by a SPARQL generated list
 # that can be refreshed from time to time
-_.extend Q,
+module.exports = typesAliases =
+  humans: [
+    'wd:Q5' # human
+    'wd:Q10648343' # duo
+    'wd:Q14073567' # sibling duo
+    'wd:Q36180' # writer
+    'wd:Q19913602' # house name
+    'wd:Q61002' # pseudonym
+  ]
+
   series: [
     'wd:Q277759' # book series
     'wd:Q14406742' # comic book series
@@ -98,14 +106,14 @@ _.extend Q,
 
 types = {}
 
-for type, typeIds of Q
+for type, typeIds of typesAliases
   # Drop the plural form, including when deriving from English uses,
   # notably: series => serie
   type = type.replace /s$/, ''
   for id in typeIds
     types[id] = type
 
-typesNames = Object.keys Q
+typesNames = Object.keys typesAliases
 
 getTypePluralNameByTypeUri = (uri)-> if types[uri] then "#{types[uri]}s"
 

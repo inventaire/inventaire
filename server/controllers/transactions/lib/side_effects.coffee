@@ -29,8 +29,12 @@ changeOwnerIfOneWay = (transacDoc)->
     items_.changeOwner transacDoc
     .catch _.ErrorRethrow('changeOwner')
 
-actions =
-  setItemBusyness: setItemBusyness
-  changeOwnerIfOneWay: changeOwnerIfOneWay
+setItemToBusy =  _.partial setItemBusyness, true
+setItemToNotBusy = _.partial setItemBusyness, false
 
-sideEffects = __.require('sharedLibs', 'transaction_side_effects')(actions, _)
+sideEffets =
+  accepted: setItemToBusy
+  declined: _.noop
+  confirmed: changeOwnerIfOneWay
+  returned: setItemToNotBusy
+  cancelled: setItemToNotBusy

@@ -8,6 +8,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
+requests_ = __.require 'lib', 'requests'
 isbn_ = __.require 'lib', 'isbn/isbn'
 
 { enabled, host } = CONFIG.dataseed
@@ -20,23 +21,23 @@ module.exports =
   # includeDocs: include the seeds docs
   search: (search, lang, refresh)->
     unless enabled then return promises_.resolve { isbns: [] }
-    promises_.get _.buildPath("#{host}/books", { search, lang, refresh })
+    requests_.get _.buildPath("#{host}/books", { search, lang, refresh })
 
   getByIsbns: (isbns, refresh)->
     isbns = _.forceArray isbns
     unless enabled then return promises_.resolve isbns.map(emptySeed)
     isbns = isbns.join '|'
-    promises_.get _.buildPath("#{host}/books", { isbns, refresh })
+    requests_.get _.buildPath("#{host}/books", { isbns, refresh })
 
   # Provides simply an image in a prompt maner
   getImageByIsbn: (isbn)->
     isbn = isbn_.toIsbn13 isbn
     unless isbn then return promises_.reject new Error('invalid isbn')
-    promises_.get _.buildPath("#{host}/images", { isbn })
+    requests_.get _.buildPath("#{host}/images", { isbn })
 
   # Converts the url to an image hash
   getImageByUrl: (url)->
     url = encodeURIComponent url
-    promises_.get _.buildPath("#{host}/images", { url })
+    requests_.get _.buildPath("#{host}/images", { url })
 
 emptySeed = (isbn)-> { isbn }

@@ -2,7 +2,7 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 entities_ = require './entities'
-{ Lang } = __.require 'models', 'validations/regex'
+{ Lang } = __.require 'lib', 'regex'
 promises_ = __.require 'lib', 'promises'
 { Track } = __.require 'lib', 'track'
 getEntityType = require './get_entity_type'
@@ -10,16 +10,16 @@ validateClaimProperty = require './validate_claim_property'
 typesWithoutLabels = require './types_without_labels'
 
 module.exports = (labels, claims, userId)->
-  _.types arguments, ['object', 'object', 'string']
+  _.assertTypes arguments, ['object', 'object', 'string']
   _.log arguments, 'entity to create'
 
-  promises_.try -> validateType claims['wdt:P31']
+  promises_.try -> validateValueType claims['wdt:P31']
   .tap (type)-> validateLabels labels, claims, type
   .then (type)-> validateClaims claims, type
   .then entities_.create
   .then entities_.edit.bind(null, userId, labels, claims)
 
-validateType = (wdtP31)->
+validateValueType = (wdtP31)->
   unless _.isNonEmptyArray wdtP31
     throw error_.new "wdt:P31 array can't be empty", 400, wdtP31
 

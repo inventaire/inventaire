@@ -1,7 +1,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 entities_ = require './entities'
-{ getOriginalLang } = __.require 'lib', 'wikidata/wikidata'
+getOriginalLang = __.require 'lib', 'wikidata/get_original_lang'
 { _id:hookUserId } = __.require('couch', 'hard_coded_documents').users.hook
 updateLabel = require './update_label'
 

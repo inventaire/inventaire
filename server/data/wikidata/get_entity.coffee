@@ -3,8 +3,9 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-requestGrouper = __.require 'lib', 'request_grouper'
 promises_ = __.require 'lib', 'promises'
+requests_ = __.require 'lib', 'requests'
+requestGrouper = __.require 'lib', 'request_grouper'
 { getEntities, getManyEntities } = require 'wikidata-sdk'
 
 requester = (ids)->
@@ -24,7 +25,7 @@ requester = (ids)->
     .get 'entities'
 
 # Limiting arguments to strictly 1
-getReq = (url)-> promises_.get url
+getReq = (url)-> requests_.get url
 mergeResults = (results)-> _.extend.apply _, results.map(_.property('entities'))
 
 # Expose a single requester

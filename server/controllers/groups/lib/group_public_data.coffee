@@ -8,7 +8,7 @@ error_ = __.require 'lib', 'error/error'
 
 module.exports = (groups_)->
   return getGroupData = (fnName, fnArgs, reqUserId)->
-    _.type fnArgs, 'array'
+    _.assertType fnArgs, 'array'
     groups_[fnName].apply null, fnArgs
     .then (group)->
       unless group? then throw error_.notFound groupId

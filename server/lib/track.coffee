@@ -5,7 +5,7 @@ _ = __.require 'builders', 'utils'
 { enabled, endpoint, idsite, rec } = CONFIG.piwik
 host = CONFIG.fullHost()
 placeholderUrl = '/unknown'
-promises_ = require './promises'
+requests_ = require './requests'
 
 track = (req, actionArray)->
   unless enabled then return
@@ -34,7 +34,7 @@ track = (req, actionArray)->
     ua: _.fixedEncodeURIComponent ua
     lang: language or _.fixedEncodeURIComponent al
 
-  promises_.get _.buildPath(endpoint, data)
+  requests_.get _.buildPath(endpoint, data)
   .catch _.Error('track error')
 
   # do not return the promise as a failing track request should make the rest

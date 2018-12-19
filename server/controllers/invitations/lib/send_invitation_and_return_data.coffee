@@ -5,11 +5,11 @@ sendInvitation = require './send_invitations'
 
 module.exports = (params)->
   { user, message, group, parsedEmails, reqUserId } = params
-  _.type user, 'object'
-  _.type message, 'string|null'
-  _.type group, 'object|null'
-  _.type parsedEmails, 'array'
-  _.type reqUserId, 'string'
+  _.assertType user, 'object'
+  _.assertType message, 'string|null'
+  _.assertType group, 'object|null'
+  _.assertType parsedEmails, 'array'
+  _.assertType reqUserId, 'string'
 
   user_.getUsersByEmails parsedEmails, reqUserId
   .then (existingUsers)->

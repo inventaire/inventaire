@@ -10,7 +10,7 @@ module.exports = (item, user, lang)->
   title = snapshot['entity:title']
 
   if _.isNonEmptyString image
-    imageSrc = templateHelpers.src image, 300
+    imageSrc = templateHelpers.imgSrc image, 300
     imageHtml = "<img src='#{imageSrc}' alt='#{title} cover'>"
   else
     imageHtml = ''
@@ -18,7 +18,7 @@ module.exports = (item, user, lang)->
   i18nKey = "#{transaction}_personalized_strong"
   transacLabel = templateHelpers.i18n lang, i18nKey, user
 
-  userProfilePic = templateHelpers.src user.picture, 64
+  userProfilePic = templateHelpers.imgSrc user.picture, 64
 
   transacColor = transacColors[transaction]
 

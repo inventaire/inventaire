@@ -165,7 +165,7 @@ transactionEmail = (transaction, role, label)->
 
 validateOptions = (options)->
   { user1, user2 } = options
-  _.types [ user1, user2 ], 'objects...'
+  _.assertTypes [ user1, user2 ], 'objects...'
   unless user1.email? then throw new Error 'missing user1 email'
   unless user2.username? then throw new Error 'missing user2 username'
   return [ user1, user2 ]

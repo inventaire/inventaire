@@ -16,7 +16,8 @@ setTimeout lateRequire, 0
 whitelistedTypesNames = [ 'series', 'works', 'articles' ]
 
 module.exports = (uri, refresh)->
-  _.types arguments, ['string', 'boolean|undefined'], 1
+  _.assertType uri, 'string'
+  if refresh? then _.assertType refresh, 'boolean'
   [ prefix, id ] = uri.split ':'
   promises = []
 

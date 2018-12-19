@@ -29,8 +29,8 @@ userId = __.require('couch', 'hard_coded_documents').users.updater._id
 preview = preview ?= true
 silent = silent ?= false
 
-_.type getNextBatch, 'function'
-_.type updateFn, 'function'
+_.assertType getNextBatch, 'function'
+_.assertType updateFn, 'function'
 
 updateSequentially = ->
   getNextBatch()

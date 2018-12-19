@@ -29,7 +29,7 @@ error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
 validLangs = Object.keys require('wikidata-lang').byCode
 
-{ properties, whitelist } = __.require 'controllers', 'entities/lib/properties'
+properties = __.require 'controllers', 'entities/lib/properties/properties_values_constraints'
 inferences = __.require 'controllers', 'entities/lib/inferences'
 
 module.exports = Entity =
@@ -39,7 +39,7 @@ module.exports = Entity =
     claims: {}
 
   setLabel: (doc, lang, value)->
-    _.types arguments, [ 'object', 'string', 'string' ]
+    _.assertTypes arguments, [ 'object', 'string', 'string' ]
 
     unless lang in validLangs
       throw error_.new 'invalid lang', 400, { doc, lang, value }

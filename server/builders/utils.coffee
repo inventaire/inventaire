@@ -2,15 +2,13 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = require 'lodash'
 server_ = __.require 'utils', 'base'
-shared_ = __.require('sharedLibs', 'utils')(_)
-types_ = __.require('sharedLibs', 'types')(_)
+types_ = __.require 'utils', 'assert_types'
 logs_ = __.require('utils', 'logs')(_)
 json_ = __.require 'utils', 'json'
-regex_ = __.require 'sharedLibs', 'regex'
-tests_ = __.require('sharedLibs', 'tests')(regex_, _)
+booleanValidations_ = __.require 'lib', 'boolean_validations'
 
 if not CONFIG.typeCheck
-  types_.type = _.noop
-  types_.types = _.noop
+  types_.assertType = _.noop
+  types_.assertTypes = _.noop
 
-module.exports = _.extend _, server_, shared_, types_, logs_, json_, tests_
+module.exports = _.extend _, server_, types_, logs_, json_, booleanValidations_

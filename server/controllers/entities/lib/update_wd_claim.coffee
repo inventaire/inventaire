@@ -6,7 +6,7 @@ promises_ = __.require 'lib', 'promises'
 getWdEntity = __.require 'data', 'wikidata/get_entity'
 wdk = require 'wikidata-sdk'
 wdEdit = require 'wikidata-edit'
-{ properties } = require './properties'
+properties = require './properties/properties_values_constraints'
 { wikidataOAuth } = CONFIG
 
 module.exports = (user, id, property, oldVal, newVal)->

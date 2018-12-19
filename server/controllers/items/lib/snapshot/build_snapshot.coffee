@@ -4,7 +4,7 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 wdk = require 'wikidata-sdk'
 { snapshotValidations } = __.require 'models', 'validations/item'
-getBestLangValue = __.require('sharedLibs', 'get_best_lang_value')(_)
+getBestLangValue = __.require 'lib', 'get_best_lang_value'
 
 module.exports =
   edition: (edition, works, authors, series)->
@@ -42,7 +42,7 @@ module.exports =
 
 buildOperation = (params)->
   { type, entity, works, title, lang, image, authors, series } = params
-  _.type works, 'array'
+  _.assertType works, 'array'
   unless _.isNonEmptyString title
     throw error_.new 'no title found', 400, entity
 
@@ -63,7 +63,7 @@ buildOperation = (params)->
     snapshot['entity:image'] = image
 
   { uri } = entity
-  _.type uri, 'string'
+  _.assertType uri, 'string'
 
   return { key: uri, value: snapshot }
 

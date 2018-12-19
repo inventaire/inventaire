@@ -13,6 +13,6 @@ _ = __.require 'builders', 'utils'
 
 module.exports = (fromUri, formattedEntity)->
   { uri:toUri } = formattedEntity
-  _.type toUri, 'string'
+  _.assertType toUri, 'string'
   formattedEntity.redirects = { from: fromUri, to: toUri }
   return formattedEntity

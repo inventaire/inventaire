@@ -6,7 +6,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 wdk = require 'wikidata-sdk'
-promises_ = __.require 'lib', 'promises'
+requests_ = __.require 'lib', 'requests'
 getWikidataEnrichedEntities = require './get_wikidata_enriched_entities'
 addRedirection = require './add_redirection'
 
@@ -21,7 +21,7 @@ module.exports = (uris, refresh)->
     # Requesting the minimum data possible as we just want to find the ids
     props: 'sitelinks'
 
-  promises_.get url
+  requests_.get url
   .then (res)->
     { entities } = res
     # If the title can't be resolved, entities['-1'] will contain data about

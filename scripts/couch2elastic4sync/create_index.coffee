@@ -1,12 +1,12 @@
 CONFIG = require 'config'
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
-promises_ = __.require 'lib', 'promises'
+requests_ = __.require 'lib', 'requests'
 { host } = CONFIG.elasticsearch
 
 module.exports = (dbName)->
   url = "#{host}/#{dbName}"
-  promises_.put url
+  requests_.put url
   .then _.Log("created: #{url}")
   .catch ignoreAlreadyExisting(url)
 

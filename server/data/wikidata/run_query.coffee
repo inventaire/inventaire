@@ -3,7 +3,7 @@ _ = __.require 'builders', 'utils'
 cache_ = __.require 'lib', 'cache'
 error_ = __.require 'lib', 'error/error'
 buildQuery = require './queries/build_query'
-promises_ = __.require 'lib', 'promises'
+requests_ = __.require 'lib', 'requests'
 wdk = require 'wikidata-sdk'
 
 queries = require './queries/queries'
@@ -32,7 +32,7 @@ module.exports = (params)->
 
   # Invalid the cache by passing refresh=true in the query.
   # Return null if refresh isn't truthy to let the cache set its default value
-  timespan = if refresh then 0 else null
+  timespan = if refresh is true then 0 else null
 
   # Building the cache key
   key = "wdQuery:#{queryName}"
@@ -50,6 +50,6 @@ runQuery = (params, key)->
   { query:queryName } = params
   url = buildQuery params
 
-  promises_.get url
+  requests_.get url
   .then wdk.simplifySparqlResults
   .catch _.ErrorRethrow(key)

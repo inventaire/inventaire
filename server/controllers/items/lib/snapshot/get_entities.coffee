@@ -24,7 +24,7 @@ getWorkAuthorsAndSeries = (work)->
 getEditionGraphFromEdition = (edition)->
   getEditionWorks edition
   .then (works)->
-    _.type works, 'array'
+    _.assertType works, 'array'
     getWorksAuthorsAndSeries works
     # Tailor output to be spreaded on buildSnapshot.edition
     .spread (authors, series)-> [ edition, works, authors, series ]

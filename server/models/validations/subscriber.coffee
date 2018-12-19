@@ -1,7 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-{ Lang } = require './regex'
+{ Lang } = __.require 'lib', 'regex'
 { pass, email } = require './common'
 
 module.exports = {

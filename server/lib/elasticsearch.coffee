@@ -1,7 +1,7 @@
 CONFIG = require 'config'
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
-promises_ = __.require 'lib', 'promises'
+requests_ = __.require 'lib', 'requests'
 { host:elasticHost } = CONFIG.elasticsearch
 
 buildSearcher = (params)->
@@ -11,7 +11,7 @@ buildSearcher = (params)->
   url = "#{elasticHost}/#{index}/_search"
 
   return (query, type, limit)->
-    _.type query, 'string'
+    _.assertType query, 'string'
 
     if _.isNonEmptyString type
       customUrl = url.replace '_search', "#{type}/_search"
@@ -20,7 +20,7 @@ buildSearcher = (params)->
 
     body = queryBodyBuilder query, limit
 
-    promises_.post { url: customUrl, body }
+    requests_.post { url: customUrl, body }
     .then parseResponse
     .catch formatError
     .catch _.ErrorRethrow("#{index} #{type} search err")

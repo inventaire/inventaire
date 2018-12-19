@@ -1,7 +1,6 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-error_ = __.require 'lib', 'error/error'
 
 # Each property configuration object is made of the following attributes:
 
@@ -24,9 +23,8 @@ bases = require './properties_config_bases'
 # as possible to the property exact needs
 builders = require './properties_config_builders'
 
-# Keep in sync with app/modules/entities/lib/properties
-# and app/modules/entities/lib/editor/properties_per_type
-properties =
+# Keep in sync with ./properties_per_type
+module.exports =
   # image
   'invp:P2': bases.imageHash
   # instance of
@@ -107,23 +105,3 @@ properties =
   'wdt:P2680': bases.humanEntity
   # Mastodon address
   'wdt:P4033': builders.externalId /^\w+@[a-z0-9\.\-]+[a-z0-9]+$/
-
-whitelist = Object.keys properties
-
-# Which type a property value should return when passed to _.typeOf
-expectedType = (property)->
-  properties[property].type or properties[property].datatype
-
-module.exports =
-  properties: properties
-  expectedType: expectedType
-
-  validateProperty: (property)->
-    unless /^(wdt|invp):P\d+$/.test property
-      throw error_.new 'invalid property', 400, property
-
-    unless property in whitelist
-      throw error_.new "property isn't whitelisted", 400, property
-
-  validateType: (property, value)->
-    _.typeOf(value) is expectedType property

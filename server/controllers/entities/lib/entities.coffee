@@ -12,7 +12,7 @@ getEntityType = require './get_entity_type'
 radio = __.require 'lib', 'radio'
 { getUrlFromImageHash } = __.require 'lib', 'images'
 
-{ properties, validateProperty } = require './properties'
+{ validateProperty } = require './properties/validations'
 
 module.exports = entities_ =
   db: db
@@ -75,10 +75,6 @@ module.exports = entities_ =
     promises_.try -> validateProperty property
     .then -> validateClaimValue params
 
-  # Assumes that the property is valid
-  validatePropertyValueSync: (property, value)->
-    properties[property].validate value
-
   getLastChangedEntitiesUris: (since, limit)->
     db.changes
       filter: 'entities/entities:only'
@@ -93,7 +89,7 @@ module.exports = entities_ =
 
   putUpdate: (params)->
     { userId, currentDoc, updatedDoc } = params
-    _.types [ userId, currentDoc, updatedDoc ], ['string', 'object', 'object']
+    _.assertTypes [ userId, currentDoc, updatedDoc ], ['string', 'object', 'object']
     # It is to the consumers responsability to check if there is an update:
     # empty patches at this stage will throw 500 errors
     db.putAndReturn updatedDoc

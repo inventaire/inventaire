@@ -2,16 +2,15 @@ _ = require 'lodash'
 
 module.exports = base =
   combinations: (array1, array2)->
-    @types arguments, [ 'array', 'array' ]
     results = []
-    for keys1 in array1
-      for keys2 in array2
+    array1.forEach (keys1)->
+      array2.forEach (keys2)->
         results.push [ keys1, keys2 ]
     return results
 
   sumValues: (obj)->
-    if @objLength(obj) > 0
-      @values(obj)?.reduce (a, b)-> a + b
+    if base.objLength(obj) > 0
+      _.values(obj)?.reduce (a, b)-> a + b
     else 0
 
   sameObjects: (a, b)-> JSON.stringify(a) is JSON.stringify(b)
@@ -58,6 +57,99 @@ module.exports = base =
 
   obfuscate: (str)-> str.replace /.{1}/g, '*'
 
+  # adapted from http://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
+  hashCode: (string)->
+    [ hash, i, len ] = [ 0, 0, string.length ]
+    if len is 0 then return hash
+
+    while i < len
+      chr = string.charCodeAt(i)
+      hash = ((hash << 5) - hash) + chr
+      hash |= 0 # Convert to 32bit integer
+      i++
+    Math.abs hash
+
+  buildPath: (pathname, queryObj, escape)->
+    queryObj = removeUndefined queryObj
+    if not queryObj? or _.isEmpty(queryObj) then return pathname
+
+    queryString = ''
+
+    for key, value of queryObj
+      if escape
+        value = dropSpecialCharacters value
+      if _.isObject value
+        value = escapeQueryStringValue JSON.stringify(value)
+      queryString += "&#{key}=#{value}"
+
+    return pathname + '?' + queryString[1..-1]
+
+  haveAMatch: (arrayA, arrayB)->
+    unless _.isArray(arrayA) and _.isArray(arrayB) then return false
+    for valueA in arrayA
+      for valueB in arrayB
+        # Return true as soon as possible
+        if valueA is valueB then return true
+    return false
+
+  objLength: (obj)-> Object.keys(obj)?.length
+
+  expired: (timestamp, ttl)-> Date.now() - timestamp > ttl
+
+  shortLang: (lang)-> lang?[0..1]
+
+  # encodeURIComponent ignores !, ', (, ), and *
+  # cf https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent#Description
+  fixedEncodeURIComponent: (str)->
+    encodeURIComponent(str).replace /[!'()*]/g, encodeCharacter
+
+  pickOne: (obj)->
+    key = Object.keys(obj)[0]
+    if key? then return obj[key]
+
+  parseBooleanString: (booleanString, defaultVal = false)->
+    if defaultVal is false
+      booleanString is 'true'
+    else
+      booleanString isnt 'false'
+
+  simpleDay: (date)->
+    if date? then new Date(date).toISOString().split('T')[0]
+    else new Date().toISOString().split('T')[0]
+
+  typeOf: (obj)->
+    # just handling what differes from typeof
+    type = typeof obj
+    if type is 'object'
+      if _.isNull(obj) then return 'null'
+      if _.isArray(obj) then return 'array'
+    if type is 'number'
+      if _.isNaN(obj) then return 'NaN'
+    return type
+
+  # helpers to simplify polymorphisms
+  forceArray: (keys)->
+    if (not keys?) or (keys is '') then return []
+    if _.isArray(keys) then keys
+    else [ keys ]
+
+encodeCharacter = (c)-> '%' + c.charCodeAt(0).toString(16)
+
+removeUndefined = (obj)->
+  newObj = {}
+  for key, value of obj
+    if value? then newObj[key] = value
+  return newObj
+
+dropSpecialCharacters = (str)->
+  str
+  .replace /\s+/g, ' '
+  .replace /(\?|\:)/g, ''
+
+# Only escape values that are problematic in a query string:
+# for the moment, only '?'
+escapeQueryStringValue = (str)-> str.replace /\?/g, '%3F'
+
 aggregateCollections = (index, name)->
   index[name] = []
   return index
@@ -65,5 +157,3 @@ aggregateCollections = (index, name)->
 aggragateFnApplication = (fn)-> (index, value)->
   index[value] = fn value
   return index
-
-base.objDiff = -> not base.sameObjects.apply(null, arguments)

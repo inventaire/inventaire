@@ -25,8 +25,8 @@ module.exports = responses_ =
     responses_.send res, obj
 
   send: (res, data)->
-    _.type res, 'object'
-    _.type data, 'object'
+    _.assertType res, 'object'
+    _.assertType data, 'object'
     setWarnings res, data
     res.json data
 

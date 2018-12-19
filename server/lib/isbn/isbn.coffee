@@ -1,39 +1,30 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
-isbn_ = __.require 'sharedLibs', 'isbn'
+{ parse: isbnParser } = require('isbn2').ISBN
+parse = require './parse'
 
-{ parse:isbnParser } = require('isbn2').ISBN
-groups = require './groups'
+# Removing any non-alpha numeric characters, especially '-' and spaces
+normalizeIsbn = (text)->
+  text
+  # Remove hypens
+  .replace /\W/g, ''
+  # Make sure any 'x' is an X
+  .toUpperCase()
 
-parse = (isbn)->
-  # The isbn2 parser would reject an ISBN formatted like 978-2070368228,
-  # so removing all hypens gives us more coverage
-  isbn = dehyphenate isbn
-  data = isbnParser(isbn)?.codes
+isNormalizedIsbn = (text)-> /^(97(8|9))?\d{9}(\d|X)$/.test text
 
-  # Some people input an isbn 13 without EAN prefix
-  # so if the first attempt to parse an ISBN-10 fails, try to consider it
-  # as an unnecessarily trunkated ISBN-13
-  if not data? and /^\d{10}$/.test(isbn) then return parse "978#{isbn}"
-
-  if data?
-    { prefix, group, publisher, isbn13h } = data
-    # It did happen that isbn2 parser returned without a prefix
-    prefix or= isbn13h.split('-')[0]
-    data.groupPrefix = groupPrefix = "#{prefix}-#{group}"
-    data.publisherPrefix = "#{groupPrefix}-#{publisher}"
-    langData = groups[groupPrefix]
-    if langData?
-      data.groupLang = langData.lang
-      data.groupLangUri = langData.wd
-
-  return data
-
-dehyphenate = (isbn)-> isbn.replace /-/g, ''
-
-module.exports = _.extend isbn_,
-  isValidIsbn: (isbn)-> isbnParser(isbn)?
+module.exports =
   parse: parse
+  normalizeIsbn: normalizeIsbn
+  looksLikeAnIsbn: (text)->
+    unless typeof text is 'string' then return false
+    cleanedText = normalizeIsbn text
+    if isNormalizedIsbn cleanedText
+      switch cleanedText.length
+        when 10 then return 10
+        when 13 then return 13
+    return false
+  isValidIsbn: (isbn)-> isbnParser(isbn)?
   toIsbn13: (isbn, hyphenate)->
     data = parse isbn
     unless data? then return

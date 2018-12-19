@@ -1,7 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-promises_ = __.require 'lib', 'promises'
+requests_ = __.require 'lib', 'requests'
 xml_ = __.require 'lib', 'xml'
 qs = require 'querystring'
 error_ = __.require 'lib', 'error/error'
@@ -18,7 +18,7 @@ module.exports = (file, width = 2000, refresh)->
 
 getThumbData = (file, width = 2000)->
   file = qs.escape file
-  promises_.get requestOptions(file, width)
+  requests_.get requestOptions(file, width)
   .then xml_.parse
   .then extractData
   .then formatData.bind(null, file)

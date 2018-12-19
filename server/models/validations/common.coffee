@@ -1,7 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-regex_ = require './regex'
+regex_ = __.require 'lib', 'regex'
 error_ = __.require 'lib', 'error/error'
 
 { CouchUuid, Email, Username, EntityUri, Lang, LocalImg, UserImg } = regex_
@@ -50,11 +50,11 @@ validations.pass = (attribute, value, option)->
     throw error_.newInvalid attribute, value
 
 validations.type = (attribute, typeArgs...)->
-  try _.type.apply _, typeArgs
+  try _.assertType.apply _, typeArgs
   catch err
     throw error_.complete err, "invalid #{attribute}", 400, typeArgs
 
 validations.types = (attribute, typesArgs...)->
-  try _.types.apply _, typesArgs
+  try _.assertTypes.apply _, typesArgs
   catch err
     throw error_.complete err, "invalid #{attribute}", 400, typesArgs

@@ -6,7 +6,7 @@ promises_ = __.require 'lib', 'promises'
 responses_ = __.require 'lib', 'responses'
 error_ = __.require 'lib', 'error/error'
 sanitize = __.require 'lib', 'sanitize/sanitize'
-{ Username } = __.require 'models', 'validations/regex'
+{ Username } = __.require 'lib', 'regex'
 
 sanitization =
   user: {}

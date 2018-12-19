@@ -40,7 +40,7 @@ module.exports = items_ =
     bundleListings ['public'], usersIds, reqUserId
 
   byEntity: (entityUri)->
-    _.type entityUri, 'string'
+    _.assertType entityUri, 'string'
     db.viewByKeys 'byEntity', entityUriKeys(entityUri)
 
   byPreviousEntity: (entityUri)-> db.viewByKey 'byPreviousEntity', entityUri
@@ -86,7 +86,7 @@ module.exports = items_ =
     .map filterPrivateAttributes(reqUserId)
 
   create: (userId, items)->
-    _.type items, 'array'
+    _.assertType items, 'array'
     promises_.all items.map(validateEntityType)
     .map (item)-> Item.create userId, item
     .then db.bulk
@@ -120,7 +120,7 @@ module.exports = items_ =
         radio.emit 'user:inventory:update', currentItem.owner
 
   setBusyness: (id, busy)->
-    _.types arguments, ['string', 'boolean']
+    _.assertTypes arguments, ['string', 'boolean']
     db.update id, BasicUpdater('busy', busy)
 
   changeOwner: (transacDoc)->

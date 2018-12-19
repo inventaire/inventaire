@@ -7,7 +7,7 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 images_ = __.require 'lib', 'images'
 promises_ = __.require 'lib', 'promises'
-regex_ = __.require 'models', 'validations/regex'
+regex_ = __.require 'lib', 'regex'
 { local: localStorage } = CONFIG.mediaStorage
 storageFolder = localStorage.folder()
 

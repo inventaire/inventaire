@@ -1,11 +1,11 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
-{ validateProperty } = require './properties'
-propertiesPerType = __.require 'controllers', 'entities/lib/properties_per_type'
+{ validateProperty } = require './properties/validations'
+propertiesPerType = __.require 'controllers', 'entities/lib/properties/properties_per_type'
 
 module.exports = (type, property)->
-  _.types arguments, 'strings...'
+  _.assertTypes arguments, 'strings...'
 
   validateProperty property
 

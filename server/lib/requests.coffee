@@ -1,7 +1,6 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 breq = require 'bluereq'
-chalk = require 'chalk'
 randomString = require('./utils/random_string').bind(null, 8)
 
 req = (verb, url, options)->

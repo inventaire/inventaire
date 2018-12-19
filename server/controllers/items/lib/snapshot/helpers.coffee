@@ -2,7 +2,7 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 getEntityType = __.require 'controllers', 'entities/lib/get_entity_type'
 getInvEntityCanonicalUri = __.require 'controllers', 'entities/lib/get_inv_entity_canonical_uri'
-getBestLangValue = __.require('sharedLibs', 'get_best_lang_value')(_)
+getBestLangValue = __.require 'lib', 'get_best_lang_value'
 
 module.exports =
   getDocData: (updatedDoc)->
@@ -24,8 +24,8 @@ module.exports =
     .join ', '
 
   aggregateClaims: (entities, property)->
-    _.type entities, 'array'
-    _.type property, 'string'
+    _.assertType entities, 'array'
+    _.assertType property, 'string'
 
     _(entities)
     .filter (entity)->

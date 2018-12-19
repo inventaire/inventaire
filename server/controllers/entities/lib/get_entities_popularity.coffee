@@ -11,7 +11,7 @@ jobs_ = __.require 'level', 'jobs'
 wdEntityBaseScore = 10
 
 module.exports = (uris, refresh)->
-  _.type uris, 'array'
+  _.assertType uris, 'array'
   if uris.length is 0 then return promises_.resolve {}
   urisPopularity = _.indexAppliedValue uris, getPopularity(refresh)
   return promises_.props urisPopularity

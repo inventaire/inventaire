@@ -1,6 +1,6 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
-getBestLangValue = __.require('sharedLibs', 'get_best_lang_value')(_)
+getBestLangValue = __.require 'lib', 'get_best_lang_value'
 stringsAreClose = __.require 'lib', 'strings_are_close'
 
 formatTitle = (str)->

@@ -9,7 +9,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 { parse:parseIsbn } = __.require 'lib', 'isbn/isbn'
-{ validatePropertyValueSync } = require '../entities'
+properties = require '../properties/properties_values_constraints'
 createEntity = require '../create_entity'
 # It is simpler to use a consistent, recognizable mocked user id
 # than to put exceptions everywhere
@@ -79,7 +79,7 @@ createEditionEntity = (seed, workPromise)->
   .catch _.ErrorRethrow('createEditionEntity err')
 
 addClaimIfValid = (claims, property, value)->
-  if value? and validatePropertyValueSync property, value
+  if value? and properties[property].validate value
     claims[property] = [ value ]
 
   return

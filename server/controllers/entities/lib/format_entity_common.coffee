@@ -1,7 +1,7 @@
 # Gathering entity formatting steps common to all the consumers
 # Keep in sync with get_wikidata_enriched_entities formatting
 __ = require('config').universalPath
-{ getOriginalLang } = __.require 'lib', 'wikidata/wikidata'
+getOriginalLang = __.require 'lib', 'wikidata/get_original_lang'
 getEntityImagesFromClaims = require './get_entity_images_from_claims'
 
 module.exports = (entity)->

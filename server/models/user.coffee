@@ -16,7 +16,8 @@ User.validations = validations = require './validations/user'
 # thus the try/catch returning error in a rejected promise
 User._create = (username, email, creationStrategy, language, password)->
   _.log [ username, email, creationStrategy, language, "password:#{password?}" ], 'creating user'
-  _.types arguments, ['string', 'string', 'string', 'string|undefined', 'string|undefined'], 3
+  _.assertTypes [ username, email, creationStrategy ], 'strings...'
+  if language? then _.assertType language, 'string'
 
   validations.pass 'username', username
   validations.pass 'email', email
@@ -115,15 +116,15 @@ User.updatePassword = (user, newHash)->
   return user
 
 User.setOauthTokens = (provider, data)-> (user)->
-  _.type provider, 'string'
-  _.type data, 'object'
+  _.assertType provider, 'string'
+  _.assertType data, 'object'
   user.oauth or= {}
   user.oauth[provider] = data
   return user
 
 User.updateItemsCounts = (itemsCounts)-> (user)->
-  _.type itemsCounts.private, 'object'
-  _.type itemsCounts.network, 'object'
-  _.type itemsCounts.public, 'object'
+  _.assertType itemsCounts.private, 'object'
+  _.assertType itemsCounts.network, 'object'
+  _.assertType itemsCounts.public, 'object'
   _.extend user.snapshot, itemsCounts
   return user

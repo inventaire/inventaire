@@ -4,12 +4,12 @@ couch_ = __.require 'lib', 'couch'
 
 module.exports = (db, _)->
   actionAndReturn = (verb, doc)->
-    _.type doc, 'object'
+    _.assertType doc, 'object'
     db[verb](doc)
     .then updateIdAndRev.bind(null, doc)
 
   bulkDelete = (docs)->
-    _.type docs, 'array'
+    _.assertType docs, 'array'
     _.warn docs, 'bulkDelete'
     db.bulk couch_.setDocsDeletedTrue(docs)
 

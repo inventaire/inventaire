@@ -1,10 +1,10 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
-promises_ = __.require 'lib', 'promises'
+requests_ = __.require 'lib', 'requests'
 error_ = __.require 'lib', 'error/error'
 
 module.exports = (url)->
-  promises_.head url
+  requests_.head url
   .then checkHeader.bind(null, url)
 
 checkHeader = (url, res)->

@@ -11,7 +11,7 @@ oneDayInMinutes = 24 * 60
 module.exports = (feedOptions, users, items, lang)->
   { title, description, queryString, pathname, image } = feedOptions
 
-  if image then image = templateHelpers.src image, 300
+  if image then image = templateHelpers.imgSrc image, 300
   else image = feedConfig.image
 
   feed = new Rss

@@ -2,9 +2,9 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
-{ findNextActions } = __.require('sharedLibs', 'transactions')(_)
-snapshotItemAttributes = __.require('models', 'attributes/item').snapshot
-snapshotUserAttributes = __.require('models', 'attributes/user').snapshot
+snapshotItemAttributes = require('./attributes/item').snapshot
+snapshotUserAttributes = require('./attributes/user').snapshot
+{ states, basicNextActions, nextActionsWithReturn } = require './attributes/transaction'
 
 module.exports = Transaction = {}
 
@@ -53,32 +53,6 @@ Transaction.validatePossibleState = (transaction, newState)->
   if newState is 'returned' and transaction.transaction isnt 'lending'
     throw error_.new 'transaction and state mismatch', 400, transaction, newState
 
-# actor: the key on which VerifyRights switches
-# see controllers/transactions/update_state.coffee
-Transaction.states = states =
-  requested:
-    # current action actor
-    actor: 'requester'
-    # next actions (the actor(s) may differ from the current one)
-    next: ['accepted', 'declined', 'cancelled']
-  accepted:
-    actor: 'owner'
-    next: ['confirmed', 'cancelled']
-  declined:
-    actor: 'owner'
-    next: []
-  confirmed:
-    actor: 'requester'
-    next: ['returned', 'cancelled']
-  returned:
-    actor: 'owner'
-    next: []
-  cancelled:
-    actor: 'both'
-    next: []
-
-Transaction.statesList = Object.keys states
-
 # do the item change of owner or return to its previous owner
 Transaction.isOneWay = (transacDoc)->
   unless _.isString transacDoc.transaction
@@ -91,13 +65,14 @@ oneWay =
   selling: true
 
 Transaction.isActive = (transacDoc)->
-  # if there are next actions, the transaction is active
-  findNextActions
+  transacData =
     name: transacDoc.transaction
     state: transacDoc.state
     # owner doesnt matter to find if the transaction is active
     # thus we just pass an arbitrary boolean
     mainUserIsOwner: true
+  # if there are next actions, the transaction is active
+  return findNextActions(transacData)?
 
 snapshotData = (itemDoc, ownerDoc, requesterDoc)->
   item: _.pick itemDoc, snapshotItemAttributes
@@ -112,3 +87,13 @@ getEntitySnapshotFromItemSnapshot = (itemSnapshot)->
     key = k.split(':')[1]
     entitySnapshot[key] = v
   return entitySnapshot
+
+getNextActionsList = (transactionName)->
+  if transactionName is 'lending' then nextActionsWithReturn
+  else basicNextActions
+
+findNextActions = (transacData)->
+  { name, state, mainUserIsOwner } = transacData
+  nextActions = getNextActionsList name, state
+  role = if mainUserIsOwner then 'owner' else 'requester'
+  return nextActions[state][role]

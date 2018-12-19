@@ -40,7 +40,7 @@ module.exports = (groups_)->
     groups_.usersIdsByAgregatedCategories group, ['requested']
 
   usersIdsByAgregatedCategories: (group, categories)->
-    _.type categories, 'array'
+    _.assertType categories, 'array'
     _(group).pick(categories).values().flatten()
     .map _.property('user')
     .value()

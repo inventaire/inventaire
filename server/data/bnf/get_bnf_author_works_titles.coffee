@@ -1,7 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-promises_ = __.require 'lib', 'promises'
+requests_ = __.require 'lib', 'requests'
 qs = require 'querystring'
 cache_ = __.require 'lib', 'cache'
 
@@ -16,7 +16,7 @@ module.exports = (bnfId)->
 getBnfAuthorWorksTitles = (bnfId)->
   _.info bnfId, 'bnfId'
   url = base + getQuery(bnfId)
-  promises_.get { url, headers }
+  requests_.get { url, headers }
   .then (res)->
     res.results.bindings
     .map (result)->

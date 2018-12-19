@@ -2,14 +2,14 @@
 CONFIG = require 'config'
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
-promises_ = __.require 'lib', 'promises'
+requests_ = __.require 'lib', 'requests'
 { host } = CONFIG.elasticsearch
 { indexesList } = __.require 'db', 'elasticsearch/list'
 createIndex = require './create_index'
 
 reset = (dbName)->
   url = "#{host}/#{dbName}"
-  promises_.delete url
+  requests_.delete url
   .then _.Log("delete #{url}")
   .catch ignoreMissing(url)
   .then createIndex.bind(null, dbName)
