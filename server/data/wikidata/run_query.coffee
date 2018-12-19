@@ -32,7 +32,7 @@ module.exports = (params)->
 
   # Invalid the cache by passing refresh=true in the query.
   # Return null if refresh isn't truthy to let the cache set its default value
-  timespan = if refresh then 0 else null
+  timespan = if refresh is true then 0 else null
 
   # Building the cache key
   key = "wdQuery:#{queryName}"
