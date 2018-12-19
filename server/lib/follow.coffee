@@ -25,7 +25,7 @@ module.exports = (params)->
   _.assertType dbBaseName, 'string'
   _.assertType filter, 'function'
   _.assertType onChange, 'function'
-  _.assertType reset, 'function|undefined'
+  if reset? then _.assertType reset, 'function'
 
   dbName = CONFIG.db.name dbBaseName
 

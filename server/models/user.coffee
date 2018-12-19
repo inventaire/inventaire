@@ -16,7 +16,8 @@ User.validations = validations = require './validations/user'
 # thus the try/catch returning error in a rejected promise
 User._create = (username, email, creationStrategy, language, password)->
   _.log [ username, email, creationStrategy, language, "password:#{password?}" ], 'creating user'
-  _.assertTypes arguments, ['string', 'string', 'string', 'string|undefined', 'string|undefined'], 3
+  _.assertTypes [ username, email, creationStrategy ], 'strings...'
+  if language? then _.assertType language, 'string'
 
   validations.pass 'username', username
   validations.pass 'email', email

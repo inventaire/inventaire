@@ -69,15 +69,16 @@ describe 'types utils', ->
         _.assertType(obj, 'object').should.equal obj
         done()
 
-      it 'should accept mutlitple possible types separated by | ', (done)->
+      it 'should accept piped types', (done)->
         (-> _.assertType(1252154, 'number|null')).should.not.throw()
         (-> _.assertType(null, 'number|null')).should.not.throw()
         (-> _.assertType('what?', 'number|null')).should.throw()
+        (-> _.assertType('what?', 'string|null')).should.not.throw()
         done()
 
-      it 'should throw when none of the multi-types is true', (done)->
+      it 'should throw when none of the piped types is true', (done)->
         (-> _.assertType('what?', 'number|null')).should.throw()
-        (-> _.assertType({ andthen: 'what?' }, 'array|string')).should.throw()
+        (-> _.assertType(123, 'array|string')).should.throw()
         done()
 
   describe 'types', ->
@@ -94,29 +95,21 @@ describe 'types utils', ->
       (-> _.assertTypes([ obj, 1, 'hello', 125], ['object', 'array', 'string', 'number'])).should.throw()
       done()
 
-    it 'should throw when not enought arguments', (done)->
-      (-> _.assertTypes([ { whoami: 'im an object' }, 1 ], [ 'object', 'number', 'array' ])).should.throw()
+    it 'should throw when not enough arguments are passed', (done)->
+      args = [ 'bla', 1 ]
+      types = [ 'string', 'number', 'array' ]
+      (-> _.assertTypes(args, types)).should.throw()
       done()
 
-    it 'should throw when too many arguments', (done)->
-      (-> _.assertTypes([ { whoami: 'im an object' }, [ 1, [ 123 ], 2, 3 ], 'object', 'number', 'array' ])).should.throw()
-      done()
-
-    it 'should not throw when less arguments than types but more or as many as minArgsLength', (done)->
-      (-> _.assertTypes([ 'i am a string' ], [ 'string', 'string' ])).should.throw()
-      (-> _.assertTypes([ 'i am a string' ], [ 'string', 'string' ], 0)).should.not.throw()
-      (-> _.assertTypes([ 'i am a string' ], [ 'string', 'string' ], 1)).should.not.throw()
-      (-> _.assertTypes([ 'i am a string' ], [ 'string', 'boolean|undefined' ], 1)).should.not.throw()
-      (-> _.assertTypes([ 'i am a string' ], [ 'string', 'boolean|undefined' ], 1)).should.not.throw()
-      (-> _.assertTypes([ 'i am a string' ], [ 'string' ], 0)).should.not.throw()
-      (-> _.assertTypes([ 'i am a string' ], [ 'string' ], 1)).should.not.throw()
-      done()
-
-    it 'should throw when less arguments than types and not more or as many as minArgsLength', (done)->
-      (-> _.assertTypes(['im am a string'], ['string', 'string'], 2)).should.throw()
+    it 'should throw when too many arguments are passed', (done)->
+      args = [ 'a', 'b', 'c' ]
+      types = [ 'string', 'string' ]
+      (-> _.assertTypes(args, types)).should.throw()
       done()
 
     it 'accepts a common type for all the args as a string', (done)->
+      (-> _.assertTypes([], 'numbers...')).should.not.throw()
+      (-> _.assertTypes([ 123 ], 'numbers...')).should.not.throw()
       (-> _.assertTypes([ 1, 2, 3, 41235115 ], 'numbers...')).should.not.throw()
       (-> _.assertTypes([ 1, 2, 3, 41235115, 'bobby'], 'numbers...')).should.throw()
       done()
@@ -128,14 +121,6 @@ describe 'types utils', ->
     it "should accept piped 's...' types", (done)->
       (-> _.assertTypes([ 1, 2, 'yo', 41235115 ], 'strings...|numbers...')).should.not.throw()
       (-> _.assertTypes([ 1, 2, 'yo', [], 41235115 ], 'strings...|numbers...')).should.throw()
-      done()
-
-    it 'common types should accept receiving 0 argument', (done)->
-      (-> _.assertTypes([], 'numbers...')).should.not.throw()
-      done()
-
-    it 'common types should accept receiving 1 argument', (done)->
-      (-> _.assertTypes([ 123 ], 'numbers...')).should.not.throw()
       done()
 
   describe 'force array', (done)->

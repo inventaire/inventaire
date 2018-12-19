@@ -7,7 +7,8 @@ error_ = __.require 'lib', 'error/error'
 # - validKeys: a limited set of possible keys
 # - valuesType: the expected type of values (optional)
 module.exports = (obj, validKeys, valuesType)->
-  _.assertTypes arguments, ['object', 'array', 'string|undefined'], 2
+  _.assertTypes [ obj, validKeys ], [ 'object', 'array' ]
+  if valuesType? then _.assertType valuesType, 'string'
 
   for key, value of obj
     unless key in validKeys

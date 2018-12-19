@@ -1,55 +1,42 @@
 { toArray } = require 'lodash'
 { typeOf } = require './base'
 
-module.exports = types_ =
-  assertType: (obj, type)->
-    trueType = typeOf obj
-    if trueType in type.split('|') then return obj
-    else
-      err = new Error "TypeError: expected #{type}, got #{obj} (#{trueType})"
-      err.context = arguments
-      throw err
+assertType = (obj, type)->
+  trueType = typeOf obj
+  if trueType in type.split('|') then return obj
+  else
+    err = new Error "TypeError: expected #{type}, got #{obj} (#{trueType})"
+    err.context = arguments
+    throw err
 
-  assertTypes: (args, types, minArgsLength)->
+assertTypes = (args, types)->
+  # in case it's an 'arguments' object
+  args = toArray args
 
-    # in case it's an 'arguments' object
-    args = toArray args
+  # accepts a common type for all the args as a string
+  # ex: types = 'numbers...'
+  # or even 'numbers...|strings...' to be translated as several 'number|string'
+  # => types = ['number', 'number', ... (args.length times)]
+  if typeof types is 'string' and types.split('s...').length > 1
+    uniqueType = types.split('s...').join ''
+    types = duplicatesArray uniqueType, args.length
 
-    # accepts a common type for all the args as a string
-    # ex: types = 'numbers...'
-    # or even 'numbers...|strings...' to be translated as several 'number|string'
-    # => types = ['number', 'number', ... (args.length times)]
-    if typeof types is 'string' and types.split('s...').length > 1
-      uniqueType = types.split('s...').join ''
-      types = duplicatesArray uniqueType, args.length
+  # testing arguments types once polymorphic interfaces are normalized
+  assertType args, 'array'
+  assertType types, 'array'
 
-    # testing arguments types once polymorphic interfaces are normalized
-    types_.assertType args, 'array'
-    types_.assertType types, 'array'
-    types_.assertType minArgsLength, 'number'  if minArgsLength?
+  unless args.length is types.length
+    err = new Error "arguments and types length don't match"
+    err.context = { args, types }
+    throw err
 
-    if minArgsLength?
-      test = types.length >= args.length >= minArgsLength
-    else test = args.length is types.length
-
-    unless test
-      if minArgsLength?
-        err = "expected between #{minArgsLength} and #{types.length} arguments ," +
-          "got #{args.length}: #{args}"
-      else
-        err = "expected #{types.length} arguments, got #{args.length}: #{args}"
-      console.log args
-      err = new Error err
-      err.context = arguments
-      throw err
-
-    i = 0
+  args.forEach (arg, i)->
     try
-      while i < args.length
-        types_.assertType args[i], types[i]
-        i += 1
+      assertType arg, types[i]
     catch err
-      err.context = arguments
+      err.context = args
       throw err
 
 duplicatesArray = (str, num)-> [0...num].map -> str
+
+module.exports = { assertType, assertTypes }

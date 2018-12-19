@@ -12,7 +12,7 @@ parseLatLng = (query)->
 
   try
     bbox = JSON.parse bbox
-    _.assertTypes bbox, 'numbers...', 4
+    _.assertTypes bbox, 'numbers...'
   catch err
     return error_.rejectInvalid 'bbox', bbox
 
