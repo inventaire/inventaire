@@ -21,7 +21,3 @@ module.exports =
 
   validateValueType: (property, value)->
     _.typeOf(value) is propertyType(property)
-
-  # Assumes that the property is valid
-  validatePropertyValueSync: (property, value)->
-    properties[property].validate value
