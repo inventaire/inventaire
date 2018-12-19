@@ -12,7 +12,7 @@ lateRequire = ->
 setTimeout lateRequire, 0
 
 properties = require './properties/properties_values_constraints'
-{ validateType, propertyType } = require './properties/validations'
+{ validateValueType, propertyType } = require './properties/validations'
 
 module.exports = (db)->
   validateClaimValue = (params)->
@@ -29,7 +29,7 @@ module.exports = (db)->
     if updatingValue and prop.adminUpdateOnly and not userIsAdmin
       return error_.reject "updating property requires admin's rights", 403, property, newVal
 
-    unless validateType property, newVal
+    unless validateValueType property, newVal
       expected = propertyType property
       actual = _.typeOf newVal
       message = "invalid value type: expected #{expected}, got #{actual}"

@@ -13,13 +13,13 @@ module.exports = (labels, claims, userId)->
   _.assertTypes arguments, ['object', 'object', 'string']
   _.log arguments, 'entity to create'
 
-  promises_.try -> validateType claims['wdt:P31']
+  promises_.try -> validateValueType claims['wdt:P31']
   .tap (type)-> validateLabels labels, claims, type
   .then (type)-> validateClaims claims, type
   .then entities_.create
   .then entities_.edit.bind(null, userId, labels, claims)
 
-validateType = (wdtP31)->
+validateValueType = (wdtP31)->
   unless _.isNonEmptyArray wdtP31
     throw error_.new "wdt:P31 array can't be empty", 400, wdtP31
 
