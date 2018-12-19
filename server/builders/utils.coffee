@@ -5,10 +5,10 @@ server_ = __.require 'utils', 'base'
 types_ = __.require 'utils', 'assert_types'
 logs_ = __.require('utils', 'logs')(_)
 json_ = __.require 'utils', 'json'
-booleanTests_ = __.require 'lib', 'boolean_tests'
+booleanValidations_ = __.require 'lib', 'boolean_validations'
 
 if not CONFIG.typeCheck
   types_.assertType = _.noop
   types_.assertTypes = _.noop
 
-module.exports = _.extend _, server_, types_, logs_, json_, booleanTests_
+module.exports = _.extend _, server_, types_, logs_, json_, booleanValidations_
