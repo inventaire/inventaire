@@ -12,7 +12,7 @@ getEntityType = require './get_entity_type'
 radio = __.require 'lib', 'radio'
 { getUrlFromImageHash } = __.require 'lib', 'images'
 
-{ properties, validateProperty } = require './properties/properties'
+{ validateProperty } = require './properties/validations'
 
 module.exports = entities_ =
   db: db
@@ -74,10 +74,6 @@ module.exports = entities_ =
     { property } = params
     promises_.try -> validateProperty property
     .then -> validateClaimValue params
-
-  # Assumes that the property is valid
-  validatePropertyValueSync: (property, value)->
-    properties[property].validate value
 
   getLastChangedEntitiesUris: (since, limit)->
     db.changes

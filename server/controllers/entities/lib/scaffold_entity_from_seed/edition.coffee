@@ -9,7 +9,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 { parse:parseIsbn } = __.require 'lib', 'isbn/isbn'
-{ validatePropertyValueSync } = require '../entities'
+{ validatePropertyValueSync } = require '../properties/validations'
 createEntity = require '../create_entity'
 # It is simpler to use a consistent, recognizable mocked user id
 # than to put exceptions everywhere

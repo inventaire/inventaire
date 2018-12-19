@@ -29,7 +29,7 @@ error_ = __.require 'lib', 'error/error'
 promises_ = __.require 'lib', 'promises'
 validLangs = Object.keys require('wikidata-lang').byCode
 
-{ properties, whitelist } = __.require 'controllers', 'entities/lib/properties/properties'
+properties = __.require 'controllers', 'entities/lib/properties/properties_values_constraints'
 inferences = __.require 'controllers', 'entities/lib/inferences'
 
 module.exports = Entity =

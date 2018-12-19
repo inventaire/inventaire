@@ -7,7 +7,7 @@ getEntityType = require './get_entity_type'
 wdEdit = require 'wikidata-edit'
 { wikidataOAuth } = require('config')
 mergeEntities = require './merge_entities'
-{ properties } = require './properties/properties'
+properties = require './properties/properties_values_constraints'
 { prefixifyWd, unprefixify } = require './prefix'
 whitelistedEntityTypes = [ 'work', 'serie', 'human' ]
 

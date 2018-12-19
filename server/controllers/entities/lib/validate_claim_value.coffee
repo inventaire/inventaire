@@ -11,7 +11,8 @@ lateRequire = ->
   entities_ = require './entities'
 setTimeout lateRequire, 0
 
-{ properties, validateType, propertyType } = require './properties/properties'
+properties = require './properties/properties_values_constraints'
+{ validateType, propertyType } = require './properties/validations'
 
 module.exports = (db)->
   validateClaimValue = (params)->
