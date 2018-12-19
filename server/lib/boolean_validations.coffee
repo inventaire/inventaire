@@ -4,6 +4,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = require 'lodash'
 regex_ = __.require 'lib', 'regex'
+wdk = require 'wikidata-sdk'
 
 bindedTest = (regexName)-> regex_[regexName].test.bind regex_[regexName]
 
@@ -22,6 +23,10 @@ module.exports = tests =
     unless isNonEmptyString uri then return false
     [ prefix, id ] = uri?.split ':'
     return prefix is 'inv' and isCouchUuid(id)
+  isWdEntityUri: (uri)->
+    unless _.isNonEmptyString uri then return false
+    [ prefix, id ] = uri?.split ':'
+    return prefix is 'wd' and wdk.isItemId(id)
   isEmail: bindedTest 'Email'
   isUserId: isCouchUuid
   isGroupId: isCouchUuid

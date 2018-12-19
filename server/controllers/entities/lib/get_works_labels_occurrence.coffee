@@ -7,7 +7,6 @@ error_ = __.require 'lib', 'error/error'
 getWikipediaArticle = __.require 'data', 'wikipedia/get_article'
 getBnfAuthorWorksTitles = __.require 'data', 'bnf/get_bnf_author_works_titles'
 getEntityByUri = __.require 'controllers', 'entities/lib/get_entity_by_uri'
-{ isWdEntityUri } = __.require 'lib', 'wikidata/wikidata'
 
 # - worksLabels: labels from works of an author suspected
 #   to be the same as the wdAuthorUri author
@@ -18,7 +17,7 @@ module.exports = (wdAuthorUri, worksLabels, worksLabelsLangs)->
   _.assertType worksLabels, 'array'
   _.assertType worksLabelsLangs, 'array'
 
-  unless isWdEntityUri wdAuthorUri then return promises_.resolve []
+  unless _.isWdEntityUri wdAuthorUri then return promises_.resolve []
 
   # Filter-out labels that are too short, as it could generate false positives
   worksLabels = worksLabels.filter (label)-> label.length > 5
