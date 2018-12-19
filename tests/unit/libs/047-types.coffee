@@ -4,7 +4,7 @@ _ = __.require 'builders', 'utils'
 require 'should'
 
 describe 'types utils', ->
-  describe 'typeof', ->
+  describe 'typeOf', ->
     it 'should return the right type', (done)->
       _.typeOf('hello').should.equal 'string'
       _.typeOf([ 'hello' ]).should.equal 'array'
@@ -16,7 +16,7 @@ describe 'types utils', ->
       _.typeOf(Number('boudu')).should.equal 'NaN'
       done()
 
-  describe 'type', ->
+  describe 'assertType', ->
     describe 'string', ->
       it 'should throw on false string', (done)->
         (-> _.assertType([ 'im an array' ], 'string')).should.throw()
@@ -61,6 +61,26 @@ describe 'types utils', ->
         (-> _.assertType({ whoami: 'im an object' }, 'object')).should.not.throw()
         done()
 
+    describe 'null', ->
+      it 'should throw on false null', (done)->
+        (-> _.assertType('im am a string', 'null')).should.throw()
+        done()
+
+      it 'should not throw on true null', (done)->
+        array = []
+        (-> _.assertType(null, 'null')).should.not.throw()
+        done()
+
+    describe 'undefined', ->
+      it 'should throw on false undefined', (done)->
+        (-> _.assertType('im am a string', 'undefined')).should.throw()
+        done()
+
+      it 'should not throw on true undefined', (done)->
+        array = []
+        (-> _.assertType(undefined, 'undefined')).should.not.throw()
+        done()
+
     describe 'general', ->
       it 'should return the passed object', (done)->
         array = [ 'im an array' ]
@@ -81,14 +101,14 @@ describe 'types utils', ->
         (-> _.assertType(123, 'array|string')).should.throw()
         done()
 
-  describe 'types', ->
+  describe 'assertTypes', ->
     it 'should handle multi arguments type', (done)->
       obj = { whoami: 'im an object' }
       (-> _.assertTypes([ obj ], [ 'object' ])).should.not.throw()
       (-> _.assertTypes([ obj, 2, 125 ], [ 'object', 'number', 'number' ])).should.not.throw()
       done()
 
-    it 'should handle throw when an argument is of the wrong type', (done)->
+    it 'should throw when an argument is of the wrong type', (done)->
       obj = { whoami: 'im an object' }
       args = [ obj, 1, 2, 125 ]
       (-> _.assertTypes(args, [ 'object', 'number', 'string', 'number' ])).should.throw()
@@ -123,7 +143,7 @@ describe 'types utils', ->
       (-> _.assertTypes([ 1, 2, 'yo', [], 41235115 ], 'strings...|numbers...')).should.throw()
       done()
 
-  describe 'force array', (done)->
+  describe 'forceArray', (done)->
     it 'should return an array for an array', (done)->
       a = _.forceArray [ 1, 2, 3, { zo: 'hello' }, null ]
       a.should.be.an.Array()
