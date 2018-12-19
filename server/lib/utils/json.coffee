@@ -2,24 +2,15 @@ Promise = require 'bluebird'
 fs = Promise.promisifyAll require('graceful-fs')
 parse = JSON.parse.bind(JSON)
 stringify = (data)-> JSON.stringify data, null, 4
+{ assertType, assertTypes } = require './assert_types'
 
 module.exports =
-  jsonRead: (path)->
-    @type path, 'string'
-    # /!\ cached until the server restarts
-    require path
-
   jsonReadAsync: (path)->
-    @type path, 'string'
+    assertType path, 'string'
     fs.readFileAsync path, 'utf-8'
     .then parse
 
   jsonWrite: (path, data)->
-    @types arguments, ['string', 'object']
+    assertTypes arguments, ['string', 'object']
     json = stringify data
     fs.writeFileSync path, json
-
-  jsonWriteAsync: (path)->
-    @type path, 'string'
-    json = stringify data
-    fs.writeFileAsync path, json

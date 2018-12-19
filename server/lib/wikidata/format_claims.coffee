@@ -10,7 +10,7 @@ options =
   timeConverter: 'simple-day'
 
 module.exports = (claims, wdId)->
-  _.types arguments, ['object', 'string']
+  _.assertTypes arguments, ['object', 'string']
   whitelistedClaims = _.pick claims, whitelistedProperties
   prefixedSimplifiedClaims = wdk.simplifyClaims whitelistedClaims, options
 

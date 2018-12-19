@@ -10,7 +10,7 @@ validateClaimProperty = require './validate_claim_property'
 typesWithoutLabels = require './types_without_labels'
 
 module.exports = (labels, claims, userId)->
-  _.types arguments, ['object', 'object', 'string']
+  _.assertTypes arguments, ['object', 'object', 'string']
   _.log arguments, 'entity to create'
 
   promises_.try -> validateType claims['wdt:P31']

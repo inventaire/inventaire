@@ -2,7 +2,6 @@ _ = require 'lodash'
 
 module.exports = base =
   combinations: (array1, array2)->
-    @types arguments, [ 'array', 'array' ]
     results = []
     for keys1 in array1
       for keys2 in array2
@@ -117,6 +116,22 @@ module.exports = base =
   simpleDay: (date)->
     if date? then new Date(date).toISOString().split('T')[0]
     else new Date().toISOString().split('T')[0]
+
+  typeOf: (obj)->
+    # just handling what differes from typeof
+    type = typeof obj
+    if type is 'object'
+      if _.isNull(obj) then return 'null'
+      if _.isArray(obj) then return 'array'
+    if type is 'number'
+      if _.isNaN(obj) then return 'NaN'
+    return type
+
+  # helpers to simplify polymorphisms
+  forceArray: (keys)->
+    if (not keys?) or (keys is '') then return []
+    if _.isArray(keys) then keys
+    else [ keys ]
 
 encodeCharacter = (c)-> '%' + c.charCodeAt(0).toString(16)
 

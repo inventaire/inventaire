@@ -10,7 +10,7 @@ Item.attributes = attributes = require './attributes/item'
 { solveConstraint } = require('./helpers')(attributes)
 
 Item.create = (userId, item)->
-  _.types arguments, ['string', 'object']
+  _.assertTypes arguments, ['string', 'object']
   # _id: We want to get couchdb sequential id so we need to let _id blank
   # owner: ignore any passed owner, the owner is the authentified user
   # created: ignore what the client may say, it will be re-set here
@@ -55,7 +55,7 @@ Item.update = (userId, updateAttributesData, doc)->
   return updatedDoc
 
 Item.changeOwner = (transacDoc, item)->
-  _.types arguments, 'objects...'
+  _.assertTypes arguments, 'objects...'
   _.log arguments, 'changeOwner'
 
   item = _.omit item, attributes.reset

@@ -22,7 +22,7 @@ module.exports =
 assertValidId = (id)->
   [ userA, userB ] = id.split ':'
   assert userA isnt userB
-  _.type userA, 'string'
+  _.assertType userA, 'string'
   assert userId(userA)
   assert userId(userB)
 

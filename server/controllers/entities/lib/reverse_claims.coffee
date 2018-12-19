@@ -25,7 +25,7 @@ blacklistedProperties = [
 
 module.exports = (params)->
   { property, value, refresh, sort } = params
-  _.types [ property, value ], 'strings...'
+  _.assertTypes [ property, value ], 'strings...'
 
   if property in blacklistedProperties
     return error_.reject 'blacklisted property', 400, { property }

@@ -8,7 +8,7 @@ parameters = require './parameters'
 
 module.exports = (req, res, configs)->
   Promise.try ->
-    _.type req.query, 'object'
+    _.assertType req.query, 'object'
 
     place = getPlace req.method
     input = _.cloneDeep req[place]

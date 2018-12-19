@@ -42,7 +42,7 @@ module.exports =
 
 buildOperation = (params)->
   { type, entity, works, title, lang, image, authors, series } = params
-  _.type works, 'array'
+  _.assertType works, 'array'
   unless _.isNonEmptyString title
     throw error_.new 'no title found', 400, entity
 
@@ -63,7 +63,7 @@ buildOperation = (params)->
     snapshot['entity:image'] = image
 
   { uri } = entity
-  _.type uri, 'string'
+  _.assertType uri, 'string'
 
   return { key: uri, value: snapshot }
 

@@ -14,7 +14,7 @@ randomString = __.require 'lib', './utils/random_string'
 { getInvEntityUri, prefixifyIsbn } = __.require 'controllers', 'entities/lib/prefix'
 
 module.exports = (query)->
-  _.type query, 'object'
+  _.assertType query, 'object'
   { disableDataseed, refresh } = query
 
   key = JSON.stringify(query) + ' ' + randomString(4)

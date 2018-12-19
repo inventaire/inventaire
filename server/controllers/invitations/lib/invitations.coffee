@@ -12,13 +12,13 @@ module.exports = invitations_ =
   findOneByEmail: findOneByEmail.bind null, db
   byEmails: byEmails.bind null, db
   createUnknownInvited: (inviterId, groupId, unknownEmails)->
-    _.types arguments, ['string', 'string|undefined', 'array']
+    _.assertTypes arguments, ['string', 'string|undefined', 'array']
     invitedDocs = unknownEmails.map Invited.create(inviterId, groupId)
     db.bulk invitedDocs
     .catch _.ErrorRethrow('createUnknownInvited')
 
   addInviter: (inviterId, groupId, invitedDocs)->
-    _.types arguments, ['string', 'string|undefined', 'array']
+    _.assertTypes arguments, ['string', 'string|undefined', 'array']
     addInviterFn = Invited.addInviter.bind null, inviterId, groupId
     invitedDocs = invitedDocs.map addInviterFn
     db.bulk invitedDocs

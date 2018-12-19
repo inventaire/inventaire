@@ -10,7 +10,7 @@ validateClaimProperty = require './validate_claim_property'
 inferredClaimUpdates = require './inferred_claim_updates'
 
 updateInvClaim = (user, id, property, oldVal, newVal)->
-  _.type user, 'object'
+  _.assertType user, 'object'
   { _id:userId, admin:userIsAdmin } = user
 
   entities_.byId id

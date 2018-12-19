@@ -39,7 +39,7 @@ module.exports = Entity =
     claims: {}
 
   setLabel: (doc, lang, value)->
-    _.types arguments, [ 'object', 'string', 'string' ]
+    _.assertTypes arguments, [ 'object', 'string', 'string' ]
 
     unless lang in validLangs
       throw error_.new 'invalid lang', 400, { doc, lang, value }

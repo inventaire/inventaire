@@ -7,7 +7,7 @@ qs = require 'querystring'
 
 module.exports = (query)->
   { search, refresh } = query
-  _.type search, 'string'
+  _.assertType search, 'string'
   key = "wd:search:#{search}"
   timestamp = if refresh then 0 else null
   cache_.get key, searchEntities.bind(null, search), timestamp

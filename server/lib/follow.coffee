@@ -22,10 +22,10 @@ followers = {}
 
 module.exports = (params)->
   { dbBaseName, filter, onChange, reset } = params
-  _.type dbBaseName, 'string'
-  _.type filter, 'function'
-  _.type onChange, 'function'
-  _.type reset, 'function|undefined'
+  _.assertType dbBaseName, 'string'
+  _.assertType filter, 'function'
+  _.assertType onChange, 'function'
+  _.assertType reset, 'function|undefined'
 
   dbName = CONFIG.db.name dbBaseName
 
@@ -53,7 +53,7 @@ module.exports = (params)->
 
 initFollow = (dbName, reset)-> (lastSeq = 0)->
   if resetFollow then lastSeq = 0
-  _.type lastSeq, 'number'
+  _.assertType lastSeq, 'number'
 
   setLastSeq = SetLastSeq dbName
   dbUrl = "#{dbHost}/#{dbName}"

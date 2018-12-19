@@ -9,8 +9,8 @@ queryBodyBuilder = require './query_body_builder'
 
 # types should be a subset of ./types possibleTypes
 module.exports = (types, search)->
-  _.type types, 'array'
-  _.type search, 'string'
+  _.assertType types, 'array'
+  _.assertType search, 'string'
 
   { indexes, types } = getIndexesAndTypes types
 

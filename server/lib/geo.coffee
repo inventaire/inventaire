@@ -4,7 +4,7 @@ _ = __.require 'builders', 'utils'
 
 module.exports =
   kmBetween: (latLngA, latLngB)->
-    _.types arguments, ['array', 'array']
+    _.assertTypes arguments, ['array', 'array']
     meters = distanceBetween latLngA, latLngB
     # 1km precision above 10km
     if meters > 10000 then Math.trunc(meters / 1000)

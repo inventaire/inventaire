@@ -15,6 +15,6 @@ module.exports = (dbName)->
   return API
 
 Search = (db)-> (latLng, kmRange)->
-  _.types arguments, [ 'array', 'number' ]
+  _.assertTypes arguments, [ 'array', 'number' ]
   [ lat, lon ] = latLng
   streamPromise db.search({ lat, lon }, kmRange * 1000)

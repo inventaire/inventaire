@@ -6,7 +6,7 @@ couch_ = __.require 'lib', 'couch'
 module.exports = (db, designDoc)->
   return byPosition = (bbox)->
     _.log bbox, 'bbox'
-    _.types bbox, 'numbers...'
+    _.assertTypes bbox, 'numbers...'
 
     console.time 'geo square keys'
     keys = getGeoSquareKeys bbox

@@ -1,16 +1,19 @@
-module.exports = (_)->
-  type: (obj, type)->
-    trueType = _.typeOf obj
+{ toArray } = require 'lodash'
+{ typeOf } = require './base'
+
+module.exports = types_ =
+  assertType: (obj, type)->
+    trueType = typeOf obj
     if trueType in type.split('|') then return obj
     else
       err = new Error "TypeError: expected #{type}, got #{obj} (#{trueType})"
       err.context = arguments
       throw err
 
-  types: (args, types, minArgsLength)->
+  assertTypes: (args, types, minArgsLength)->
 
     # in case it's an 'arguments' object
-    args = _.toArray(args)
+    args = toArray args
 
     # accepts a common type for all the args as a string
     # ex: types = 'numbers...'
@@ -21,9 +24,9 @@ module.exports = (_)->
       types = duplicatesArray uniqueType, args.length
 
     # testing arguments types once polymorphic interfaces are normalized
-    _.type args, 'array'
-    _.type types, 'array'
-    _.type minArgsLength, 'number'  if minArgsLength?
+    types_.assertType args, 'array'
+    types_.assertType types, 'array'
+    types_.assertType minArgsLength, 'number'  if minArgsLength?
 
     if minArgsLength?
       test = types.length >= args.length >= minArgsLength
@@ -43,39 +46,10 @@ module.exports = (_)->
     i = 0
     try
       while i < args.length
-        _.type args[i], types[i]
+        types_.assertType args[i], types[i]
         i += 1
     catch err
       err.context = arguments
       throw err
-
-  typeOf: (obj)->
-    # just handling what differes from typeof
-    type = typeof obj
-    if type is 'object'
-      if _.isNull(obj) then return 'null'
-      if _.isArray(obj) then return 'array'
-    if type is 'number'
-      if _.isNaN(obj) then return 'NaN'
-    return type
-
-  # soft testing: doesn't throw
-  areStrings: (array)-> _.every array, _.isString
-
-  typeString: (str)-> _.type str, 'string'
-  typeArray: (array)-> _.type array, 'array'
-
-  # helpers to simplify polymorphisms
-  forceArray: (keys)->
-    if not keys? or keys is '' then return []
-    unless _.isArray(keys) then [ keys ]
-    else keys
-
-  forceObject: (key, value)->
-    unless _.isObject key
-      obj = {}
-      obj[key] = value
-      return obj
-    else key
 
 duplicatesArray = (str, num)-> [0...num].map -> str

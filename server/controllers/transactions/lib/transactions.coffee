@@ -24,7 +24,7 @@ transactions_ =
       include_docs: true
 
   byUserAndItem: (userId, itemId)->
-    _.types arguments, 'strings...'
+    _.assertTypes arguments, 'strings...'
     db.viewByKey 'byUserAndItem', [ userId, itemId ]
 
   create: (itemDoc, ownerDoc, requesterDoc)->
@@ -36,7 +36,7 @@ transactions_ =
       return couchRes
 
   addMessage: (userId, message, transactionId)->
-    _.types arguments, 'strings...'
+    _.assertTypes arguments, 'strings...'
     if message?
       comments_.addTransactionComment(userId, message, transactionId)
 

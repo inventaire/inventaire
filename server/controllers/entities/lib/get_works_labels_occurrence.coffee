@@ -14,9 +14,9 @@ getEntityByUri = __.require 'controllers', 'entities/lib/get_entity_by_uri'
 # - worksLabelsLangs: those labels language, indicating which Wikipedia editions
 #   should be checked
 module.exports = (wdAuthorUri, worksLabels, worksLabelsLangs)->
-  _.type wdAuthorUri, 'string'
-  _.type worksLabels, 'array'
-  _.type worksLabelsLangs, 'array'
+  _.assertType wdAuthorUri, 'string'
+  _.assertType worksLabels, 'array'
+  _.assertType worksLabelsLangs, 'array'
 
   unless isWdEntityUri wdAuthorUri then return promises_.resolve []
 

@@ -58,11 +58,11 @@ getSnapshotsByType =
 refreshTypes = Object.keys getSnapshotsByType
 
 getWorkSnapshot = (uri, work, authors, series)->
-  _.types arguments, [ 'string', 'object', 'array', 'array' ]
+  _.assertTypes arguments, [ 'string', 'object', 'array', 'array' ]
   buildSnapshot.work work, authors, series
 
 getEditionsSnapshots = (uri, works, authors, series)->
-  _.types arguments, [ 'string', 'array', 'array', 'array' ]
+  _.assertTypes arguments, [ 'string', 'array', 'array', 'array' ]
 
   entities_.urisByClaim 'wdt:P629', uri
   .then getEntitiesByUris
@@ -70,7 +70,7 @@ getEditionsSnapshots = (uri, works, authors, series)->
   .map (edition)-> getEditionSnapshot edition, works, authors, series
 
 getEditionSnapshot = (edition, works, authors, series)->
-  _.types arguments, [ 'object', 'array', 'array', 'array' ]
+  _.assertTypes arguments, [ 'object', 'array', 'array', 'array' ]
   # Expects a formatted edition
-  _.type edition.uri, 'string'
+  _.assertType edition.uri, 'string'
   return buildSnapshot.edition edition, works, authors, series

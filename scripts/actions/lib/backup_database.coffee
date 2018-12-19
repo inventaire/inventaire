@@ -16,8 +16,8 @@ module.exports = (params, dbName)->
 # being accessible from the $PATH
 buildArgsArray = (params, dbName)->
   { host, port, username, password, backupFolder } = params
-  _.types [ host, username, password, dbName, backupFolder ], 'strings...'
-  _.type port, 'number|string'
+  _.assertTypes [ host, username, password, dbName, backupFolder ], 'strings...'
+  _.assertType port, 'number|string'
 
   outputFile = "#{backupFolder}/#{dbName}.json"
 

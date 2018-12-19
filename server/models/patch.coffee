@@ -9,11 +9,11 @@ module.exports =
   create: (params)->
     { userId, currentDoc, updatedDoc, context } = params
     validations.pass 'userId', userId
-    _.type currentDoc, 'object'
-    _.type updatedDoc, 'object'
+    _.assertType currentDoc, 'object'
+    _.assertType updatedDoc, 'object'
     validations.pass 'couchUuid', updatedDoc._id
 
-    if context? then _.type context, 'object'
+    if context? then _.assertType context, 'object'
 
     if currentDoc is updatedDoc
       throw error_.new 'invalid update: same document objects', 500, arguments

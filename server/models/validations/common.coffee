@@ -50,11 +50,11 @@ validations.pass = (attribute, value, option)->
     throw error_.newInvalid attribute, value
 
 validations.type = (attribute, typeArgs...)->
-  try _.type.apply _, typeArgs
+  try _.assertType.apply _, typeArgs
   catch err
     throw error_.complete err, "invalid #{attribute}", 400, typeArgs
 
 validations.types = (attribute, typesArgs...)->
-  try _.types.apply _, typesArgs
+  try _.assertTypes.apply _, typesArgs
   catch err
     throw error_.complete err, "invalid #{attribute}", 400, typesArgs

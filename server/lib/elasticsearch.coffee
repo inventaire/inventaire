@@ -11,7 +11,7 @@ buildSearcher = (params)->
   url = "#{elasticHost}/#{index}/_search"
 
   return (query, type, limit)->
-    _.type query, 'string'
+    _.assertType query, 'string'
 
     if _.isNonEmptyString type
       customUrl = url.replace '_search', "#{type}/_search"

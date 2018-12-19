@@ -16,7 +16,7 @@ parseUsersData = (user1Id, user2Id, usersData)->
   usersData = _.keyBy usersData, '_id'
   user1 = usersData[user1Id]
   user2 = usersData[user2Id]
-  _.types [ user1, user2 ], [ 'object', 'object' ]
+  _.assertTypes [ user1, user2 ], [ 'object', 'object' ]
   return [ user1, user2 ]
 
 

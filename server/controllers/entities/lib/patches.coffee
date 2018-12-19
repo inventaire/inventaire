@@ -56,7 +56,7 @@ module.exports = patches_ =
     .then (rows)-> rows.slice 0, 100
 
   getActivityFromLastDay: (days)->
-    _.type days, 'number'
+    _.assertType days, 'number'
     now = Date.now()
     startTime = now - oneDay * days
     today = _.simpleDay()

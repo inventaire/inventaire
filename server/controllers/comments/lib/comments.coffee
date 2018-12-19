@@ -13,7 +13,7 @@ module.exports =
     db.viewByKey 'byTransactionId', transactionId
 
   addTransactionComment: (userId, message, transactionId)->
-    _.types arguments, 'strings...'
+    _.assertTypes arguments, 'strings...'
     comment = Comment.createTransactionComment(userId, message, transactionId)
     db.post comment
 
@@ -30,13 +30,13 @@ module.exports =
   deleteByItemsIds: (itemsIds)->
     # You absolutly don't want this id to be undefined
     # as this would end up deleting the whole database
-    _.types itemsIds, 'strings...'
+    _.assertTypes itemsIds, 'strings...'
     comments_.byItemsIds itemsIds
     .then db.bulkDelete
 
   deleteItemsCommentsByUserId: (userId)->
     # You absolutly don't want this id to be undefined
     # as this would end up deleting the whole database
-    _.type userId, 'string'
+    _.assertType userId, 'string'
     comments_.bySubjectAndUserId 'item', userId
     .then db.bulkDelete

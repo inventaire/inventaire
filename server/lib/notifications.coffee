@@ -8,7 +8,7 @@ db = __.require('couch', 'base')('notifications')
 
 notifs_ =
   byUserId: (userId)->
-    _.type userId, 'string'
+    _.assertType userId, 'string'
     db.viewCustom 'byUserAndTime',
       startkey: [ userId, minKey ]
       endkey: [ userId, maxKey ]
@@ -22,7 +22,7 @@ notifs_ =
     .catch _.ErrorRethrow('bySubject')
 
   add: (userId, type, data)->
-    _.types arguments, [ 'string', 'string', 'object' ]
+    _.assertTypes arguments, [ 'string', 'string', 'object' ]
     db.post
       user: userId
       type: type
@@ -39,7 +39,7 @@ notifs_ =
   deleteAllBySubjectId: (subjectId)->
     # You absolutly don't want this id to be undefined
     # as this would end up deleting the whole database
-    _.type subjectId, 'string'
+    _.assertType subjectId, 'string'
     notifs_.bySubject subjectId
     .then db.bulkDelete
 
@@ -55,7 +55,7 @@ isUnread = (notif)-> notif.status is 'unread'
 
 callbacks =
   acceptedRequest: (userToNotify, newFriend)->
-    _.types arguments, [ 'string', 'string' ]
+    _.assertTypes arguments, [ 'string', 'string' ]
     notifs_.add userToNotify, 'friendAcceptedRequest',
       user: newFriend
 
@@ -82,7 +82,7 @@ callbacks =
   # Deleting notifications when their subject is deleted
   # to avoid having notification triggering requests for deleted resources
   deleteNotifications: (label, subjectId)->
-    _.types [ label, subjectId ], 'strings...'
+    _.assertTypes [ label, subjectId ], 'strings...'
     _.log "deleting #{label} notifications"
     notifs_.deleteAllBySubjectId subjectId
 

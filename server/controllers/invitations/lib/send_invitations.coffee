@@ -6,7 +6,7 @@ Invited = __.require 'models', 'invited'
 radio = __.require 'lib', 'radio'
 
 module.exports = (user, group, emails, message)->
-  _.types arguments, ['object', 'object|null', 'array', 'string|null']
+  _.assertTypes arguments, ['object', 'object|null', 'array', 'string|null']
   userId = user._id
   groupId = group?._id
   _.log emails, 'send_invitations emails'

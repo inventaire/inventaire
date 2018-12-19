@@ -17,7 +17,7 @@ module.exports = cache_ =
   # e.g. function = module.getData.bind(module, arg1, arg2)
   get: (key, fn, timespan = oneMonth, retry = true)->
     types = ['string', 'function', 'number', 'boolean']
-    try _.types arguments, types, 2
+    try _.assertTypes arguments, types, 2
     catch err then return error_.reject err, 500
 
     # Try to avoid cache miss when working offline (only useful in development)
@@ -39,7 +39,7 @@ module.exports = cache_ =
 
   # Return what's in cache. If nothing, return nothing: no request performed
   dryGet: (key, timespan = oneMonth)->
-    try _.types [ key, timespan ], [ 'string', 'number' ]
+    try _.assertTypes [ key, timespan ], [ 'string', 'number' ]
     catch err then return error_.reject err, 500
 
     checkCache key, timespan

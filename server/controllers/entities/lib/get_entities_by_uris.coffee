@@ -64,11 +64,11 @@ mergeResponses = (results)->
     notFound: []
 
   for result in results
-    _.type result.entities, 'array'
+    _.assertType result.entities, 'array'
     for entity in result.entities
       if entity.redirects?
         { from, to } = entity.redirects
-        _.types [ from, to ], 'strings...'
+        _.assertTypes [ from, to ], 'strings...'
         response.redirects[from] = to
         delete entity.redirects
 

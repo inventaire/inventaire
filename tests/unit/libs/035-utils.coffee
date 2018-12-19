@@ -6,8 +6,8 @@ should = require 'should'
 describe 'utils', ->
   describe 'env', ->
     it 'should have shared utils, loggers, types, tests and misc utils', (done)->
-      _.type.should.be.a.Function()
-      _.types.should.be.a.Function()
+      _.assertType.should.be.a.Function()
+      _.assertTypes.should.be.a.Function()
       _.isLocalImg.should.be.a.Function()
       _.isNonEmptyString.should.be.a.Function()
       done()
