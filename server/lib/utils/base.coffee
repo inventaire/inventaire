@@ -3,14 +3,14 @@ _ = require 'lodash'
 module.exports = base =
   combinations: (array1, array2)->
     results = []
-    for keys1 in array1
-      for keys2 in array2
+    array1.forEach (keys1)->
+      array2.forEach (keys2)->
         results.push [ keys1, keys2 ]
     return results
 
   sumValues: (obj)->
-    if @objLength(obj) > 0
-      @values(obj)?.reduce (a, b)-> a + b
+    if base.objLength(obj) > 0
+      _.values(obj)?.reduce (a, b)-> a + b
     else 0
 
   sameObjects: (a, b)-> JSON.stringify(a) is JSON.stringify(b)

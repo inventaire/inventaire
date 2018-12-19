@@ -5,7 +5,6 @@ server_ = __.require 'utils', 'base'
 types_ = __.require 'utils', 'assert_types'
 logs_ = __.require('utils', 'logs')(_)
 json_ = __.require 'utils', 'json'
-regex_ = __.require 'lib', 'regex'
 booleanTests_ = __.require 'lib', 'boolean_tests'
 
 if not CONFIG.typeCheck

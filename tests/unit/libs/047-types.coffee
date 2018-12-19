@@ -1,9 +1,10 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
+require 'should'
 
-describe 'Types utils', ->
-  describe 'TYPEOF', ->
+describe 'types utils', ->
+  describe 'typeof', ->
     it 'should return the right type', (done)->
       _.typeOf('hello').should.equal 'string'
       _.typeOf([ 'hello' ]).should.equal 'array'
@@ -15,8 +16,8 @@ describe 'Types utils', ->
       _.typeOf(Number('boudu')).should.equal 'NaN'
       done()
 
-  describe 'TYPE', ->
-    describe 'STRING', ->
+  describe 'type', ->
+    describe 'string', ->
       it 'should throw on false string', (done)->
         (-> _.assertType([ 'im an array' ], 'string')).should.throw()
         (-> _.assertType(1252154125123, 'string')).should.throw()
@@ -27,7 +28,7 @@ describe 'Types utils', ->
         (-> _.assertType('im am a string', 'string')).should.not.throw()
         done()
 
-    describe 'NUMBER', ->
+    describe 'number', ->
       it 'should throw on false number', (done)->
         (-> _.assertType([ 'im an array' ], 'number')).should.throw()
         (-> _.assertType('im am a string', 'number')).should.throw()
@@ -38,7 +39,7 @@ describe 'Types utils', ->
         (-> _.assertType(1252154125123, 'number')).should.not.throw()
         done()
 
-    describe 'ARRAY', ->
+    describe 'array', ->
       it 'should throw on false array', (done)->
         (-> _.assertType('im am a string', 'array')).should.throw()
         (-> _.assertType(1252154125123, 'array')).should.throw()
@@ -49,7 +50,7 @@ describe 'Types utils', ->
         (-> _.assertType(['im an array'], 'array')).should.not.throw()
         done()
 
-    describe 'OBJECT', ->
+    describe 'object', ->
       it 'should throw on false object', (done)->
         (-> _.assertType('im am a string', 'object')).should.throw()
         (-> _.assertType(1252154125123, 'object')).should.throw()
@@ -60,7 +61,7 @@ describe 'Types utils', ->
         (-> _.assertType({ whoami: 'im an object' }, 'object')).should.not.throw()
         done()
 
-    describe 'GENERAL', ->
+    describe 'general', ->
       it 'should return the passed object', (done)->
         array = [ 'im an array' ]
         _.assertType(array, 'array').should.equal array
@@ -79,7 +80,7 @@ describe 'Types utils', ->
         (-> _.assertType({ andthen: 'what?' }, 'array|string')).should.throw()
         done()
 
-  describe 'TYPES', ->
+  describe 'types', ->
     it 'should handle multi arguments type', (done)->
       obj = { whoami: 'im an object' }
       (-> _.assertTypes([ obj ], [ 'object' ])).should.not.throw()
@@ -137,19 +138,7 @@ describe 'Types utils', ->
       (-> _.assertTypes([ 123 ], 'numbers...')).should.not.throw()
       done()
 
-  describe 'ALL', ->
-    describe 'areStrings', ->
-      it 'should be true when all are strings', (done)->
-        _.areStrings([ 'a', 'b', 'c' ]).should.equal true
-        done()
-
-      it 'should be false when not all are strings', (done)->
-        _.areStrings([ 'a', 'b', 4 ]).should.equal false
-        _.areStrings([ 'a', { a: 12 }, 4 ]).should.equal false
-        _.areStrings([ [], 'e', 'f' ]).should.equal false
-        done()
-
-  describe 'forceArray', (done)->
+  describe 'force array', (done)->
     it 'should return an array for an array', (done)->
       a = _.forceArray [ 1, 2, 3, { zo: 'hello' }, null ]
       a.should.be.an.Array()
