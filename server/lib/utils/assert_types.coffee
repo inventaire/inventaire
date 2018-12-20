@@ -1,13 +1,15 @@
 { toArray } = require 'lodash'
 { typeOf } = require './base'
 
+# Working around the circular dependency
+error_ = null
+lateRequire = -> error_ = require '../error/error'
+setTimeout lateRequire, 0
+
 assertType = (obj, type)->
   trueType = typeOf obj
   if trueType in type.split('|') then return obj
-  else
-    err = new Error "TypeError: expected #{type}, got #{obj} (#{trueType})"
-    err.context = arguments
-    throw err
+  else throw error_.new "TypeError: expected #{type}, got #{obj} (#{trueType})", 500, arguments
 
 assertTypes = (args, types)->
   # in case it's an 'arguments' object
@@ -26,16 +28,9 @@ assertTypes = (args, types)->
   assertType types, 'array'
 
   unless args.length is types.length
-    err = new Error "arguments and types length don't match"
-    err.context = { args, types }
-    throw err
+    throw error_.new "arguments and types length don't match", 500, { args, types }
 
-  args.forEach (arg, i)->
-    try
-      assertType arg, types[i]
-    catch err
-      err.context = args
-      throw err
+  args.forEach (arg, i)-> assertType arg, types[i]
 
 duplicatesArray = (str, num)-> [0...num].map -> str
 
