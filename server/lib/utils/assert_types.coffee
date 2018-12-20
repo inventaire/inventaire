@@ -1,5 +1,5 @@
 CONFIG = require 'config'
-{ toArray, times } = require 'lodash'
+_ = require 'lodash'
 { typeOf } = require './base'
 
 # Working around the circular dependency
@@ -13,13 +13,16 @@ assertType = (type, obj)->
   else throw error_.new "TypeError: expected #{type}, got #{obj} (#{trueType})", 500, arguments
 
 assertTypes = (types, args)->
-  # Convert 'arguments' objects to real arrays
-  args = toArray args
-  types = parseTypes types, args
-
-  # Testing arguments types once polymorphic interfaces are normalized
-  assertType 'array', args
-  assertType 'array', types
+  if _.isArguments args
+    args = _.toArray args
+    unless _.isArray types
+      # Do not accept doted syntax types as we wouldn't know how many arguments are expected
+      errMessage = "types should be an array when used with 'arguments'"
+      throw error_.new errMessage, 500, { args, types }
+  else
+    types = parseTypes types, args
+    assertType 'array', args
+    assertType 'array', types
 
   unless args.length is types.length
     throw error_.new "arguments and types length don't match", 500, { args, types }
@@ -33,7 +36,7 @@ assertTypes = (types, args)->
 parseTypes = (types, args)->
   unless typeof types is 'string' and types.match('s...')? then return types
   multiTypes = types.split('s...').join ''
-  return times args.length, -> multiTypes
+  return _.times args.length, -> multiTypes
 
 module.exports =
   type: assertType

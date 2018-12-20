@@ -131,3 +131,8 @@ describe 'assert_', ->
       types = 'strings...|numbers...'
       (-> assert_.types(types, [ 1, '2', 3 ], )).should.not.throw()
       done()
+
+    it "should not accept piped 's...' types if 'arguments' is passed", (done)->
+      types = 'strings...'
+      (-> assert_.types(types, arguments)).should.throw()
+      done()
