@@ -3,14 +3,15 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 couch_ = __.require 'lib', 'couch'
 error_ = __.require 'lib', 'error/error'
+assert_ = __.require 'utils', 'assert_types'
 
 module.exports = handlers =
   byEmail: (db, email)->
-    _.assertType email, 'string'
+    assert_.string email
     db.viewByKey 'byEmail', email.toLowerCase()
 
   byEmails: (db, emails)->
-    _.assertType emails, 'array'
+    assert_.strings emails
     db.viewByKeys 'byEmail', emails.map(_.toLowerCase)
 
   findOneByEmail: (db, email)->

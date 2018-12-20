@@ -16,6 +16,7 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 { Promise } = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
+assert_ = __.require 'utils', 'assert_types'
 entities_ = __.require 'controllers', 'entities/lib/entities'
 patches_ = __.require 'controllers', 'entities/lib/patches'
 { maxKey } = __.require 'lib', 'couch'
@@ -29,8 +30,8 @@ userId = __.require('couch', 'hard_coded_documents').users.updater._id
 preview = preview ?= true
 silent = silent ?= false
 
-_.assertType getNextBatch, 'function'
-_.assertType updateFn, 'function'
+assert_.function getNextBatch
+assert_.function updateFn
 
 updateSequentially = ->
   getNextBatch()

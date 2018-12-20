@@ -4,6 +4,7 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
+assert_ = __.require 'utils', 'assert_types'
 getWikipediaArticle = __.require 'data', 'wikipedia/get_article'
 getBnfAuthorWorksTitles = __.require 'data', 'bnf/get_bnf_author_works_titles'
 getEntityByUri = __.require 'controllers', 'entities/lib/get_entity_by_uri'
@@ -13,9 +14,9 @@ getEntityByUri = __.require 'controllers', 'entities/lib/get_entity_by_uri'
 # - worksLabelsLangs: those labels language, indicating which Wikipedia editions
 #   should be checked
 module.exports = (wdAuthorUri, worksLabels, worksLabelsLangs)->
-  _.assertType wdAuthorUri, 'string'
-  _.assertType worksLabels, 'array'
-  _.assertType worksLabelsLangs, 'array'
+  assert_.string wdAuthorUri
+  assert_.strings worksLabels
+  assert_.strings worksLabelsLangs
 
   unless _.isWdEntityUri wdAuthorUri then return promises_.resolve []
 

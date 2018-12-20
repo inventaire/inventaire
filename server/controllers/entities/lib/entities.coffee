@@ -1,5 +1,6 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
+assert_ = __.require 'utils', 'assert_types'
 db = __.require('couch', 'base')('entities')
 promises_ = __.require 'lib', 'promises'
 Entity = __.require 'models', 'entity'
@@ -89,7 +90,7 @@ module.exports = entities_ =
 
   putUpdate: (params)->
     { userId, currentDoc, updatedDoc } = params
-    _.assertTypes [ userId, currentDoc, updatedDoc ], ['string', 'object', 'object']
+    assert_.types [ 'string', 'object', 'object' ], [ userId, currentDoc, updatedDoc ]
     # It is to the consumers responsability to check if there is an update:
     # empty patches at this stage will throw 500 errors
     db.putAndReturn updatedDoc

@@ -1,10 +1,11 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
+assert_ = __.require 'utils', 'assert_types'
 
 module.exports =
   kmBetween: (latLngA, latLngB)->
-    _.assertTypes arguments, ['array', 'array']
+    assert_.arrays arguments
     meters = distanceBetween latLngA, latLngB
     # 1km precision above 10km
     if meters > 10000 then Math.trunc(meters / 1000)

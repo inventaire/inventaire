@@ -1,6 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
+assert_ = __.require 'utils', 'assert_types'
 qs = require 'querystring'
 checkUserNotificationsSettings = require './check_user_notifications_settings'
 
@@ -165,7 +166,7 @@ transactionEmail = (transaction, role, label)->
 
 validateOptions = (options)->
   { user1, user2 } = options
-  _.assertTypes [ user1, user2 ], 'objects...'
+  assert_.objects [ user1, user2 ]
   unless user1.email? then throw new Error 'missing user1 email'
   unless user2.username? then throw new Error 'missing user2 username'
   return [ user1, user2 ]

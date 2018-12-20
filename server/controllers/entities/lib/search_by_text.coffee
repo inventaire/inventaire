@@ -10,11 +10,12 @@ getEntitiesByUris = require './get_entities_by_uris'
 GetEntitiesByUris = (refresh)-> (uris)-> getEntitiesByUris uris, refresh
 promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
+assert_ = __.require 'utils', 'assert_types'
 randomString = __.require 'lib', './utils/random_string'
 { getInvEntityUri, prefixifyIsbn } = __.require 'controllers', 'entities/lib/prefix'
 
 module.exports = (query)->
-  _.assertType query, 'object'
+  assert_.object query
   { disableDataseed, refresh } = query
 
   key = JSON.stringify(query) + ' ' + randomString(4)

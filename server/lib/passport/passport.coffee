@@ -3,16 +3,17 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 user_ = __.require 'controllers', 'user/lib/user'
 error_ = __.require 'lib', 'error/error'
+assert_ = __.require 'utils', 'assert_types'
 
 passport = require 'passport'
 
 passport.serializeUser (user, done)->
-  _.assertTypes [ user, done ], [ 'object', 'function' ]
+  assert_.types [ 'object', 'function' ], [ user, done ]
   _.success id = user._id, 'serializeUser'
   done null, id
 
 passport.deserializeUser (id, done)->
-  _.assertTypes [ id, done ], [ 'string', 'function' ]
+  assert_.types [ 'string', 'function' ], [ id, done ]
   user_.byId id
   .then (user)-> done null, user
   .catch (err)->

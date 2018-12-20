@@ -1,6 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
+assert_ = __.require 'utils', 'assert_types'
 Group = __.require 'models', 'group'
 
 module.exports = (groups_)->
@@ -40,7 +41,7 @@ module.exports = (groups_)->
     groups_.usersIdsByAgregatedCategories group, ['requested']
 
   usersIdsByAgregatedCategories: (group, categories)->
-    _.assertType categories, 'array'
+    assert_.array categories
     _(group).pick(categories).values().flatten()
     .map _.property('user')
     .value()

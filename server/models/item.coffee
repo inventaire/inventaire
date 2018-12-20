@@ -2,6 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
+assert_ = __.require 'utils', 'assert_types'
 
 module.exports = Item = {}
 
@@ -10,7 +11,7 @@ Item.attributes = attributes = require './attributes/item'
 { solveConstraint } = require('./helpers')(attributes)
 
 Item.create = (userId, item)->
-  _.assertTypes arguments, ['string', 'object']
+  assert_.types ['string', 'object'], [ userId, item ]
   # _id: We want to get couchdb sequential id so we need to let _id blank
   # owner: ignore any passed owner, the owner is the authentified user
   # created: ignore what the client may say, it will be re-set here
@@ -55,7 +56,7 @@ Item.update = (userId, updateAttributesData, doc)->
   return updatedDoc
 
 Item.changeOwner = (transacDoc, item)->
-  _.assertTypes arguments, 'objects...'
+  assert_.objects [ transacDoc, item ]
   _.log arguments, 'changeOwner'
 
   item = _.omit item, attributes.reset

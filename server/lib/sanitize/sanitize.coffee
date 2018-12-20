@@ -2,13 +2,14 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 { Promise } = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
+assert_ = __.require 'utils', 'assert_types'
 responses_ = __.require 'lib', 'responses'
 parameters = require './parameters'
 { generics } = parameters
 
 module.exports = (req, res, configs)->
   Promise.try ->
-    _.assertType req.query, 'object'
+    assert_.object req.query
 
     place = getPlace req.method
     input = _.cloneDeep req[place]

@@ -1,5 +1,6 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
+assert_ = __.require 'utils', 'assert_types'
 
 module.exports = responses_ =
   # returns a function triggering a standard confirmation response
@@ -22,8 +23,8 @@ module.exports = responses_ =
     responses_.send res, obj
 
   send: (res, data)->
-    _.assertType res, 'object'
-    _.assertType data, 'object'
+    assert_.object res
+    assert_.object data
     setWarnings res, data
     res.json data
 

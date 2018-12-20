@@ -4,6 +4,7 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
+assert_ = __.require 'utils', 'assert_types'
 
 parseLatLng = (query)->
   { bbox } = query
@@ -12,7 +13,7 @@ parseLatLng = (query)->
 
   try
     bbox = JSON.parse bbox
-    _.assertTypes bbox, 'numbers...'
+    assert_.numbers bbox
   catch err
     return error_.rejectInvalid 'bbox', bbox
 

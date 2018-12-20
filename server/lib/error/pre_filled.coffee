@@ -2,6 +2,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
+assert_ = __.require 'utils', 'assert_types'
 
 module.exports = (error_)->
   newFunctions =
@@ -20,7 +21,7 @@ module.exports = (error_)->
 
     # A standardized way to return a 400 invalid parameter
     newInvalid: (parameter, value)->
-      _.assertType parameter, 'string'
+      assert_.string parameter
       context = { parameter, value }
       err = error_.new "invalid #{parameter}: #{value}", 400, context
       err.error_type = 'invalid_parameter'

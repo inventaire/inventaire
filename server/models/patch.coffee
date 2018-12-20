@@ -1,6 +1,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
+assert_ = __.require 'utils', 'assert_types'
 jiff = require 'jiff'
 validations = require './validations/common'
 { versionned } = require './attributes/entity'
@@ -9,11 +10,11 @@ module.exports =
   create: (params)->
     { userId, currentDoc, updatedDoc, context } = params
     validations.pass 'userId', userId
-    _.assertType currentDoc, 'object'
-    _.assertType updatedDoc, 'object'
+    assert_.object currentDoc
+    assert_.object updatedDoc
     validations.pass 'couchUuid', updatedDoc._id
 
-    if context? then _.assertType context, 'object'
+    if context? then assert_.object context
 
     if currentDoc is updatedDoc
       throw error_.new 'invalid update: same document objects', 500, arguments

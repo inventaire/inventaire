@@ -3,11 +3,12 @@ _ = __.require 'builders', 'utils'
 wikidataSearch = __.require 'lib', 'wikidata/search'
 requests_ = __.require 'lib', 'requests'
 cache_ = __.require 'lib', 'cache'
+assert_ = __.require 'utils', 'assert_types'
 qs = require 'querystring'
 
 module.exports = (query)->
   { search, refresh } = query
-  _.assertType search, 'string'
+  assert_.string search
   key = "wd:search:#{search}"
   timestamp = if refresh then 0 else null
   cache_.get key, searchEntities.bind(null, search), timestamp

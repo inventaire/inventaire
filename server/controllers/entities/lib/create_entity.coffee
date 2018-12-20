@@ -1,6 +1,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
+assert_ = __.require 'utils', 'assert_types'
 entities_ = require './entities'
 { Lang } = __.require 'lib', 'regex'
 promises_ = __.require 'lib', 'promises'
@@ -10,7 +11,7 @@ validateClaimProperty = require './validate_claim_property'
 typesWithoutLabels = require './types_without_labels'
 
 module.exports = (labels, claims, userId)->
-  _.assertTypes arguments, ['object', 'object', 'string']
+  assert_.types ['object', 'object', 'string'], arguments
   _.log arguments, 'entity to create'
 
   promises_.try -> validateValueType claims['wdt:P31']

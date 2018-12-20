@@ -3,9 +3,10 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 { validateProperty } = require './properties/validations'
 propertiesPerType = __.require 'controllers', 'entities/lib/properties/properties_per_type'
+assert_ = __.require 'utils', 'assert_types'
 
 module.exports = (type, property)->
-  _.assertTypes arguments, 'strings...'
+  assert_.strings arguments
 
   validateProperty property
 

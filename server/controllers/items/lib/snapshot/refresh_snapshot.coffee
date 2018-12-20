@@ -1,5 +1,6 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
+assert_ = __.require 'utils', 'assert_types'
 items_ = require '../items'
 entities_ = __.require 'controllers', 'entities/lib/entities'
 getEntityByUri = __.require 'controllers', 'entities/lib/get_entity_by_uri'
@@ -58,11 +59,11 @@ getSnapshotsByType =
 refreshTypes = Object.keys getSnapshotsByType
 
 getWorkSnapshot = (uri, work, authors, series)->
-  _.assertTypes arguments, [ 'string', 'object', 'array', 'array' ]
+  assert_.types [ 'string', 'object', 'array', 'array' ], arguments
   buildSnapshot.work work, authors, series
 
 getEditionsSnapshots = (uri, works, authors, series)->
-  _.assertTypes arguments, [ 'string', 'array', 'array', 'array' ]
+  assert_.types [ 'string', 'array', 'array', 'array' ], arguments
 
   entities_.urisByClaim 'wdt:P629', uri
   .then getEntitiesByUris
@@ -70,7 +71,7 @@ getEditionsSnapshots = (uri, works, authors, series)->
   .map (edition)-> getEditionSnapshot edition, works, authors, series
 
 getEditionSnapshot = (edition, works, authors, series)->
-  _.assertTypes arguments, [ 'object', 'array', 'array', 'array' ]
+  assert_.types [ 'object', 'array', 'array', 'array' ], arguments
   # Expects a formatted edition
-  _.assertType edition.uri, 'string'
+  assert_.string edition.uri
   return buildSnapshot.edition edition, works, authors, series

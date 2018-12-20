@@ -1,5 +1,6 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
+assert_ = __.require 'utils', 'assert_types'
 getEntityType = __.require 'controllers', 'entities/lib/get_entity_type'
 getInvEntityCanonicalUri = __.require 'controllers', 'entities/lib/get_inv_entity_canonical_uri'
 getBestLangValue = __.require 'lib', 'get_best_lang_value'
@@ -24,8 +25,8 @@ module.exports =
     .join ', '
 
   aggregateClaims: (entities, property)->
-    _.assertType entities, 'array'
-    _.assertType property, 'string'
+    assert_.array entities
+    assert_.string property
 
     _(entities)
     .filter (entity)->

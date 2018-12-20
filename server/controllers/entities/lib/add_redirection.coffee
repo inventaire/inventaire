@@ -1,5 +1,6 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
+assert_ = __.require 'utils', 'assert_types'
 
 # Possibly overriding further redirects object
 # Notice a tricky naming issue here:
@@ -13,6 +14,6 @@ _ = __.require 'builders', 'utils'
 
 module.exports = (fromUri, formattedEntity)->
   { uri:toUri } = formattedEntity
-  _.assertType toUri, 'string'
+  assert_.string toUri
   formattedEntity.redirects = { from: fromUri, to: toUri }
   return formattedEntity

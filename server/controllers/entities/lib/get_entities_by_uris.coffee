@@ -1,6 +1,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
+assert_ = __.require 'utils', 'assert_types'
 promises_ = __.require 'lib', 'promises'
 wdk = require 'wikidata-sdk'
 { normalizeIsbn, isValidIsbn } = __.require 'lib', 'isbn/isbn'
@@ -64,11 +65,11 @@ mergeResponses = (results)->
     notFound: []
 
   for result in results
-    _.assertType result.entities, 'array'
+    assert_.array result.entities
     for entity in result.entities
       if entity.redirects?
         { from, to } = entity.redirects
-        _.assertTypes [ from, to ], 'strings...'
+        assert_.strings [ from, to ]
         response.redirects[from] = to
         delete entity.redirects
 

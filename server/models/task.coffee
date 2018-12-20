@@ -2,11 +2,12 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
+assert_ = __.require 'utils', 'assert_types'
 validations = require './validations/task'
 
 module.exports =
   create: (newTask)->
-    _.assertTypes arguments, [ 'object' ]
+    assert_.object newTask
     { type, suspectUri, suggestionUri, lexicalScore, relationScore, externalSourcesOccurrences } = newTask
 
     validations.pass 'type', type
@@ -26,7 +27,7 @@ module.exports =
     }
 
   update: (task, attribute, value)->
-    _.assertTypes arguments, [ 'object', 'string', 'string|number' ]
+    assert_.types [ 'object', 'string', 'string|number' ], arguments
 
     validations.pass 'attribute', attribute
     validations.pass attribute, value

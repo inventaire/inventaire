@@ -1,15 +1,17 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 couch_ = __.require 'lib', 'couch'
+promises_ = __.require 'lib', 'promises'
+assert_ = __.require 'utils', 'assert_types'
 
 module.exports = (db, _)->
   actionAndReturn = (verb, doc)->
-    _.assertType doc, 'object'
+    assert_.object doc
     db[verb](doc)
     .then updateIdAndRev.bind(null, doc)
 
   bulkDelete = (docs)->
-    _.assertType docs, 'array'
+    assert_.array docs
     _.warn docs, 'bulkDelete'
     db.bulk couch_.setDocsDeletedTrue(docs)
 

@@ -7,6 +7,7 @@ promises_ = __.require 'lib', 'promises'
 comments_ = __.require 'controllers', 'comments/lib/comments'
 { BasicUpdater } = __.require 'lib', 'doc_updates'
 { minKey, maxKey } = __.require 'lib', 'couch'
+assert_ = __.require 'utils', 'assert_types'
 
 radio = __.require 'lib', 'radio'
 sideEffects = require('./side_effects')()
@@ -24,7 +25,7 @@ transactions_ =
       include_docs: true
 
   byUserAndItem: (userId, itemId)->
-    _.assertTypes arguments, 'strings...'
+    assert_.strings arguments
     db.viewByKey 'byUserAndItem', [ userId, itemId ]
 
   create: (itemDoc, ownerDoc, requesterDoc)->
@@ -36,7 +37,7 @@ transactions_ =
       return couchRes
 
   addMessage: (userId, message, transactionId)->
-    _.assertTypes arguments, 'strings...'
+    assert_.strings arguments
     if message?
       comments_.addTransactionComment(userId, message, transactionId)
 

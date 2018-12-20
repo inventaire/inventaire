@@ -1,6 +1,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
+assert_ = __.require 'utils', 'assert_types'
 promises_ = __.require 'lib', 'promises'
 entities_ = require './entities'
 Entity = __.require 'models', 'entity'
@@ -19,7 +20,7 @@ module.exports = (userId, fromUri, toUri)->
     return mergeEntities userId, fromId, toId
 
 mergeEntities = (userId, fromId, toId)->
-  _.assertTypes arguments, 'strings...'
+  assert_.strings arguments
 
   # Fetching non-formmatted docs
   entities_.byIds [ fromId, toId ]
@@ -56,7 +57,7 @@ mergeEntities = (userId, fromId, toId)->
     .then -> turnIntoRedirection userId, fromId, newToUri, previousToUri
 
 turnIntoRedirection = (userId, fromId, toUri, previousToUri)->
-  _.assertTypes arguments, 'strings...'
+  assert_.strings arguments
 
   fromUri = "inv:#{fromId}"
 

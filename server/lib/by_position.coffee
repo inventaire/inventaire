@@ -2,11 +2,12 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 couch_ = __.require 'lib', 'couch'
+assert_ = __.require 'utils', 'assert_types'
 
 module.exports = (db, designDoc)->
   return byPosition = (bbox)->
     _.log bbox, 'bbox'
-    _.assertTypes bbox, 'numbers...'
+    assert_.numbers bbox
 
     console.time 'geo square keys'
     keys = getGeoSquareKeys bbox
