@@ -13,7 +13,6 @@ module.exports =
     password: 'OVERRIDE'
   noCache: true
   staticMaxAge: 0
-  typeCheck: false
   bluebird:
     warnings: false
     longStackTraces: false
