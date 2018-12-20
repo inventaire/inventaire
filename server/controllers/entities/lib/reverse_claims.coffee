@@ -2,7 +2,6 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 wdk = require 'wikidata-sdk'
-wd_ = __.require 'lib', 'wikidata/wikidata'
 promises_ = __.require 'lib', 'promises'
 requests_ = __.require 'lib', 'requests'
 entities_ = require './entities'
