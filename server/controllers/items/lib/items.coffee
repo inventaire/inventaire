@@ -57,18 +57,6 @@ module.exports = items_ =
     .map snapshot_.addToItem
     .map filterPrivateAttributes(reqUserId)
 
-  publicByLangAndDate: (limit, offset, lang, assertImage, reqUserId)->
-    db.viewCustom 'publicByLangAndDate',
-      startkey: [ lang, maxKey ]
-      endkey: [ lang, minKey ]
-      descending: true
-      limit: limit or 15
-      skip: offset or 0
-      include_docs: true
-    .then FilterWithImage(assertImage)
-    .map snapshot_.addToItem
-    .map filterPrivateAttributes(reqUserId)
-
   byOwnersAndEntitiesAndListings: (ownersIds, uris, listingsKey, reqUserId)->
     keys = []
     for ownerId in ownersIds
