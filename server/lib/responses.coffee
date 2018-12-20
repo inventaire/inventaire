@@ -14,9 +14,6 @@ module.exports = responses_ =
     res.status status
     responses_.send res, { ok: true }
 
-  OkWarning: (res, category, warning, status)->
-    responses_.okWarning.bind null, res, warning, status
-
   # FROM: .then (users)-> res.json { users }
   # TO: .then _.Wrap(res, 'users')
   Wrap: (res, key)-> (data)->
