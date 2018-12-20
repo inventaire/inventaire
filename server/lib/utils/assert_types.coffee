@@ -23,7 +23,7 @@ assertTypes = (args, types)->
   unless args.length is types.length
     throw error_.new "arguments and types length don't match", 500, { args, types }
 
-  args.forEach (arg, i)-> assertType arg, types[i]
+  return args.map (arg, i)-> assertType arg, types[i]
 
 # Accepts a common type for all the args as a string
 # ex: types = 'numbers...'
