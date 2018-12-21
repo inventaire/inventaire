@@ -1,13 +1,48 @@
-module.exports = (tasksCandidates, existingTasks)->
-  suggestionBySuspect = existingTasks.reduce indexSuggestionBySuspect, {}
-  return tasksCandidates.filter isNewTask(suggestionBySuspect)
+__ = require('config').universalPath
+_ = __.require 'builders', 'utils'
+{ Promise } = __.require 'lib', 'promises'
+searchEntityDuplicatesSuggestions = require './search_entity_duplicates_suggestions'
+{ calculateRelationScore } = require './relation_score'
+getAuthorWorksData = require './get_author_works_data'
+getWorksLabelsOccurrence = __.require 'controllers', 'entities/lib/get_works_labels_occurrence'
+{ prefixifyInv } = __.require 'controllers', 'entities/lib/prefix'
+automerge = require './automerge'
 
-isNewTask = (suggestionBySuspect)-> (newTask)->
-  matchingExistingTasksUris = suggestionBySuspect[newTask.suspectUri]
-  unless matchingExistingTasksUris? then return true
-  return newTask.suggestionUri not in matchingExistingTasksUris
+module.exports = (entity, existingTasks)->
+  { uri: suspectUri } = entity
+  Promise.all [
+    searchEntityDuplicatesSuggestions entity
+    getAuthorWorksData entity._id
+  ]
+  .spread (suggestions, authorWorksData)->
+    suggestions = filterOutExistingTasksSuggestions suggestions, existingTasks
+    unless suggestions.length > 0 then return []
+    Promise.all suggestions.map(addOccurrences(authorWorksData))
+    .then automerge(suspectUri)
+    # build tasks from remaining suggestions, if any
+    .then buildTasksDocs(suspectUri)
 
-indexSuggestionBySuspect = (index, task)->
-  index[task.suspectUri] or= []
-  index[task.suspectUri].push task.suggestionUri
-  return index
+addOccurrences = (authorWorksData)-> (suggestion)->
+  { labels, langs } = authorWorksData
+  { uri } = suggestion
+  getWorksLabelsOccurrence uri, labels, langs
+  .then (occurrences)->
+    _.log occurrences, 'occurrences'
+    suggestion.occurrences = occurrences
+    return suggestion
+
+buildTasksDocs = (suspectUri)-> (suggestions)->
+  relationScore = calculateRelationScore suggestions
+  return suggestions.map createTaskDoc(suspectUri, relationScore)
+
+createTaskDoc = (suspectUri, relationScore)-> (suggestion)->
+  type: 'deduplicate'
+  suspectUri: suspectUri
+  suggestionUri: suggestion.uri
+  lexicalScore: suggestion._score
+  relationScore: relationScore
+  externalSourcesOccurrences: suggestion.occurrences
+
+filterOutExistingTasksSuggestions = (suggestions, existingTasks)->
+  existingTasksUris = _.map existingTasks, 'suggestionUri'
+  return suggestions.filter (suggestion)-> suggestion.uri not in existingTasksUris
