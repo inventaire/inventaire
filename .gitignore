@@ -1,6 +1,5 @@
 db/couchdb/migrations
 db/couchdb/backups
-server/lib/emails/i18n
 node_modules
 logs
 npm-debug.log
