@@ -1,12 +1,22 @@
 #!/usr/bin/env bash
-files=$@
+
+files=''
+
 # If no test file is passed as argument, run all tests
-[ -z "$1" ] && files=tests/api/**/*test.coffee
+[ -z "$1" ] && files=tests/api/**/*.test.coffee
 
 for arg in $@
 do
-  echo "$arg" | grep ".test.coffee" > /dev/null || echo -e "\e[0;33mWARNING: test file misses .test.coffee in filename: $arg\e[0m" ;
+  # If this argument is a file path
+  if [[ -f "$arg" ]] ; then
+    # Warn if the file doesn't contain ".test.coffee"
+    echo "$arg" | grep ".test.coffee" > /dev/null || echo -e "\e[0;33mWARNING: test file misses .test.coffee in filename: $arg\e[0m"
+    # In any case, add the file to the list
+    files="$files $arg"
+  else
+    # Add the directory test files to the list
+    files="$files $arg/*.test.coffee"
+  fi
 done
 
-# Run the tests
 export NODE_ENV=tests NODE_APP_INSTANCE=tests-alt; mocha --exit --require coffee-script/register $files --timeout 20000
