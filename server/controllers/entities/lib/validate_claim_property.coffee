@@ -6,7 +6,7 @@ propertiesPerType = __.require 'controllers', 'entities/lib/properties/propertie
 assert_ = __.require 'utils', 'assert_types'
 
 module.exports = (type, property)->
-  assert_.strings arguments
+  assert_.strings [ type, property ]
 
   validateProperty property
 

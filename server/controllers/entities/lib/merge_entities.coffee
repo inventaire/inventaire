@@ -20,7 +20,7 @@ module.exports = (userId, fromUri, toUri)->
     return mergeEntities userId, fromId, toId
 
 mergeEntities = (userId, fromId, toId)->
-  assert_.strings arguments
+  assert_.strings [ userId, fromId, toId ]
 
   # Fetching non-formmatted docs
   entities_.byIds [ fromId, toId ]
@@ -57,7 +57,8 @@ mergeEntities = (userId, fromId, toId)->
     .then -> turnIntoRedirection userId, fromId, newToUri, previousToUri
 
 turnIntoRedirection = (userId, fromId, toUri, previousToUri)->
-  assert_.strings arguments
+  assert_.strings [ userId, fromId, toUri ]
+  if previousToUri? then assert_.string previousToUri
 
   fromUri = "inv:#{fromId}"
 

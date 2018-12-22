@@ -14,7 +14,7 @@ module.exports =
     db.viewByKey 'byTransactionId', transactionId
 
   addTransactionComment: (userId, message, transactionId)->
-    assert_.strings arguments
+    assert_.strings [ userId, message, transactionId ]
     comment = Comment.createTransactionComment(userId, message, transactionId)
     db.post comment
 

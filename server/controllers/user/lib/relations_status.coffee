@@ -19,14 +19,14 @@ module.exports =
     .spread spreadRelations(usersIds)
 
   areFriends: (userId, otherId)->
-    assert_.strings arguments
+    assert_.strings [ userId, otherId ]
     relations_.getStatus(userId, otherId)
     .then (status)->
       if status is 'friends' then return true
       else false
 
   areFriendsOrGroupCoMembers: (userId, otherId)->
-    assert_.strings arguments
+    assert_.strings [ userId, otherId ]
     getFriendsAndGroupCoMembers userId
     .spread (friendsIds, coGroupMembersIds)->
       return otherId in friendsIds or otherId in coGroupMembersIds
