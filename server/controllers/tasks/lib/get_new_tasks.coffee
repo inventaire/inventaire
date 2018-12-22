@@ -2,13 +2,12 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 { Promise } = __.require 'lib', 'promises'
 searchEntityDuplicatesSuggestions = require './search_entity_duplicates_suggestions'
-{ calculateRelationScore } = require './relation_score'
 getAuthorWorksData = require './get_author_works_data'
 getWorksLabelsOccurrence = __.require 'controllers', 'entities/lib/get_works_labels_occurrence'
 { prefixifyInv } = __.require 'controllers', 'entities/lib/prefix'
 automerge = require './automerge'
 
-module.exports = (entity, existingTasks)->
+module.exports = (entity)-> (existingTasks)->
   { uri: suspectUri } = entity
   Promise.all [
     searchEntityDuplicatesSuggestions entity
@@ -31,16 +30,13 @@ addOccurrences = (authorWorksData)-> (suggestion)->
     suggestion.occurrences = occurrences
     return suggestion
 
-buildTasksDocs = (suspectUri)-> (suggestions)->
-  relationScore = calculateRelationScore suggestions
-  return suggestions.map createTaskDoc(suspectUri, relationScore)
+buildTasksDocs = (suspectUri)-> (suggestions)-> suggestions.map createTaskDoc(suspectUri)
 
 createTaskDoc = (suspectUri, relationScore)-> (suggestion)->
   type: 'deduplicate'
   suspectUri: suspectUri
   suggestionUri: suggestion.uri
   lexicalScore: suggestion._score
-  relationScore: relationScore
   externalSourcesOccurrences: suggestion.occurrences
 
 filterOutExistingTasksSuggestions = (suggestions, existingTasks)->

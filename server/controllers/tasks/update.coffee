@@ -3,7 +3,7 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 { Track } = __.require 'lib', 'track'
 tasks_ = __.require 'controllers', 'tasks/lib/tasks'
-{ updateRelationScore } = require './lib/relation_score'
+updateRelationScore = require './lib/relation_score'
 
 promises_ = __.require 'lib', 'promises'
 
@@ -20,6 +20,6 @@ module.exports = (req, res, next)->
     newValue: value
   .then res.json.bind(res)
   .then -> tasks_.byId id
-  .then updateRelationScore
+  .then (task)-> updateRelationScore task.suspectUri
   .tap Track(req, [ 'task', 'update' ])
   .catch error_.Handler(req, res)
