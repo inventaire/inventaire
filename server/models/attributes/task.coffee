@@ -5,7 +5,7 @@ attributes.type = [
 ]
 
 attributes.state = [
-  'merged', 'dismissed'
+  'merged', 'dismissed', 'obsolete'
 ]
 
 attributes.relationScore = []

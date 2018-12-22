@@ -35,6 +35,9 @@ module.exports = tasks_ =
   bySuspectUri: (suspectUri)->
     db.viewByKey 'bySuspectUriAndState', [ suspectUri, null ]
 
+  bySuggestionUri: (suggestionUri)->
+    db.viewByKey 'bySuggestionUriAndState', [ suggestionUri, null ]
+
   bySuspectUris: (suspectUris, options = {})->
     { index, includeArchived } = options
     db.viewByKeys 'bySuspectUriAndState', getKeys(suspectUris, includeArchived)
