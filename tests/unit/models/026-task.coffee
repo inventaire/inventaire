@@ -56,15 +56,6 @@ describe 'task model', ->
       taskDoc.should.throw()
       done()
 
-    it 'should throw if no relationScore', (done)->
-      invalidDoc = validDoc()
-      delete invalidDoc.relationScore
-      taskDoc = -> Task.create invalidDoc
-      try taskDoc()
-      catch err then err.message.should.startWith 'invalid relationScore'
-      taskDoc.should.throw()
-      done()
-
     it 'should throw if no externalSourcesOccurrences', (done)->
       invalidDoc = validDoc()
       delete invalidDoc.externalSourcesOccurrences

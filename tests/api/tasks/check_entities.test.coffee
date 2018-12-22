@@ -27,8 +27,8 @@ describe 'tasks:check-entities', ->
       .then -> checkEntities human.uri
       .then -> getBySuspectUri human.uri
       .then (tasks)->
-        uniqSuspectUris = _.uniq _.map(tasks, 'suspectUri')
-        tasks.length.should.equal uniqSuspectUris.length
+        uniqSuggestiontUris = _.uniq _.map(tasks, 'suggestionUri')
+        tasks.length.should.equal uniqSuggestiontUris.length
         done()
     .catch undesiredErr(done)
 
