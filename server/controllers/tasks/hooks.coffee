@@ -25,5 +25,6 @@ archiveBySuggestionUriAndRecheckSuspects = (previousSuggestionUri, newSuggestion
   .map (task)-> checkEntity task.suspectUri
 
 archiveTasks = (tasks, newState)->
+  if tasks.length is 0 then return
   ids = _.map tasks, '_id'
   tasks_.update { ids, attribute: 'state', newValue: newState }
