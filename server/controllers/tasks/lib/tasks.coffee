@@ -8,10 +8,10 @@ Task = __.require 'models', 'task'
 db = __.require('couch', 'base')('tasks')
 
 module.exports = tasks_ =
-  create: (taskDoc)->
-    promises_.try -> Task.create taskDoc
-    .then db.postAndReturn
-    .then _.Log('task created')
+  createInBulk: (tasksDocs)->
+    promises_.try -> tasksDocs.map Task.create
+    .then db.bulk
+    .then _.Log('tasks created')
 
   update: (options)->
     { ids, attribute, newValue } = options

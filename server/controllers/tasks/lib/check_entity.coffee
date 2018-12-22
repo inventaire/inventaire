@@ -19,9 +19,7 @@ module.exports = (uri)->
 
     getExistingTasks uri
     .then getNewTasks(entity)
-    .then createTasks
+    .then tasks_.createInBulk
     .tap -> updateRelationScore uri
 
 getExistingTasks = (uri)-> tasks_.bySuspectUris [ uri ]
-
-createTasks = (newTasks)-> Promise.all newTasks.map(tasks_.create)
