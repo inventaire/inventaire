@@ -2,6 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
+assert_ = __.require 'utils', 'assert_types'
 user_ = __.require 'controllers', 'user/lib/user'
 groups_ = __.require 'controllers', 'groups/lib/groups'
 
@@ -16,7 +17,7 @@ parseUsersData = (user1Id, user2Id, usersData)->
   usersData = _.keyBy usersData, '_id'
   user1 = usersData[user1Id]
   user2 = usersData[user2Id]
-  _.assertTypes [ user1, user2 ], [ 'object', 'object' ]
+  assert_.objects [ user1, user2 ]
   return [ user1, user2 ]
 
 

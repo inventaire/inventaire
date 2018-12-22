@@ -5,6 +5,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
+assert_ = __.require 'utils', 'assert_types'
 follow = require 'follow'
 meta = __.require 'lib', 'meta'
 breq = require 'bluereq'
@@ -22,10 +23,10 @@ followers = {}
 
 module.exports = (params)->
   { dbBaseName, filter, onChange, reset } = params
-  _.assertType dbBaseName, 'string'
-  _.assertType filter, 'function'
-  _.assertType onChange, 'function'
-  if reset? then _.assertType reset, 'function'
+  assert_.string dbBaseName
+  assert_.function filter
+  assert_.function onChange
+  if reset? then assert_.function reset
 
   dbName = CONFIG.db.name dbBaseName
 
@@ -53,7 +54,7 @@ module.exports = (params)->
 
 initFollow = (dbName, reset)-> (lastSeq = 0)->
   if resetFollow then lastSeq = 0
-  _.assertType lastSeq, 'number'
+  assert_.number lastSeq
 
   setLastSeq = SetLastSeq dbName
   dbUrl = "#{dbHost}/#{dbName}"

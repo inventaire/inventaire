@@ -1,6 +1,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
+assert_ = __.require 'utils', 'assert_types'
 wdk = require 'wikidata-sdk'
 promises_ = __.require 'lib', 'promises'
 requests_ = __.require 'lib', 'requests'
@@ -24,7 +25,7 @@ blacklistedProperties = [
 
 module.exports = (params)->
   { property, value, refresh, sort } = params
-  _.assertTypes [ property, value ], 'strings...'
+  assert_.strings [ property, value ]
 
   if property in blacklistedProperties
     return error_.reject 'blacklisted property', 400, { property }

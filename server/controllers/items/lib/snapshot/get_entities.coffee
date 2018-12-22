@@ -1,5 +1,6 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
+assert_ = __.require 'utils', 'assert_types'
 getEntityByUri = __.require 'controllers', 'entities/lib/get_entity_by_uri'
 getEntitiesByUris = __.require 'controllers', 'entities/lib/get_entities_by_uris'
 { Promise } = __.require 'lib', 'promises'
@@ -24,7 +25,7 @@ getWorkAuthorsAndSeries = (work)->
 getEditionGraphFromEdition = (edition)->
   getEditionWorks edition
   .then (works)->
-    _.assertType works, 'array'
+    assert_.array works
     getWorksAuthorsAndSeries works
     # Tailor output to be spreaded on buildSnapshot.edition
     .spread (authors, series)-> [ edition, works, authors, series ]

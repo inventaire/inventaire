@@ -1,6 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
+assert_ = __.require 'utils', 'assert_types'
 { rawSubDb, Reset, streamPromise } = require './base'
 geo = require 'level-geospatial'
 promises_ = __.require 'lib', 'promises'
@@ -15,6 +16,6 @@ module.exports = (dbName)->
   return API
 
 Search = (db)-> (latLng, kmRange)->
-  _.assertTypes arguments, [ 'array', 'number' ]
+  assert_.types [ 'array', 'number' ], arguments
   [ lat, lon ] = latLng
   streamPromise db.search({ lat, lon }, kmRange * 1000)

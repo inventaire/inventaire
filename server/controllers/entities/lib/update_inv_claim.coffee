@@ -1,6 +1,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
+assert_ = __.require 'utils', 'assert_types'
 entities_ = require './entities'
 radio = __.require 'lib', 'radio'
 retryOnConflict = __.require 'lib', 'retry_on_conflict'
@@ -10,7 +11,7 @@ validateClaimProperty = require './validate_claim_property'
 inferredClaimUpdates = require './inferred_claim_updates'
 
 updateInvClaim = (user, id, property, oldVal, newVal)->
-  _.assertType user, 'object'
+  assert_.object user
   { _id:userId, admin:userIsAdmin } = user
 
   entities_.byId id

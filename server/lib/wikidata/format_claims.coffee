@@ -1,5 +1,6 @@
 __ = require('config').universalPath
 _ = __.require('builders', 'utils')
+assert_ = __.require 'utils', 'assert_types'
 wdk = require 'wikidata-sdk'
 whitelistedProperties = require './whitelisted_properties'
 regroupClaims = require './regroup_claims'
@@ -10,7 +11,7 @@ options =
   timeConverter: 'simple-day'
 
 module.exports = (claims, wdId)->
-  _.assertTypes arguments, ['object', 'string']
+  assert_.types ['object', 'string'], [ claims, wdId ]
   whitelistedClaims = _.pick claims, whitelistedProperties
   prefixedSimplifiedClaims = wdk.simplifyClaims whitelistedClaims, options
 

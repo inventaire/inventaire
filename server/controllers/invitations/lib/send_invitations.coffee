@@ -1,12 +1,13 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
+assert_ = __.require 'utils', 'assert_types'
 promises_ = __.require 'lib', 'promises'
 invitations_ = require './invitations'
 Invited = __.require 'models', 'invited'
 radio = __.require 'lib', 'radio'
 
 module.exports = (user, group, emails, message)->
-  _.assertTypes arguments, ['object', 'object|null', 'array', 'string|null']
+  assert_.types ['object', 'object|null', 'array', 'string|null'], arguments
   userId = user._id
   groupId = group?._id
   _.log emails, 'send_invitations emails'

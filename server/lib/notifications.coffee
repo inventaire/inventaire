@@ -3,12 +3,13 @@ _ = __.require 'builders', 'utils'
 radio = __.require 'lib', 'radio'
 { BasicUpdater } = __.require 'lib', 'doc_updates'
 { minKey, maxKey } = __.require 'lib', 'couch'
+assert_ = __.require 'utils', 'assert_types'
 
 db = __.require('couch', 'base')('notifications')
 
 notifs_ =
   byUserId: (userId)->
-    _.assertType userId, 'string'
+    assert_.string userId
     db.viewCustom 'byUserAndTime',
       startkey: [ userId, minKey ]
       endkey: [ userId, maxKey ]
@@ -22,7 +23,7 @@ notifs_ =
     .catch _.ErrorRethrow('bySubject')
 
   add: (userId, type, data)->
-    _.assertTypes arguments, [ 'string', 'string', 'object' ]
+    assert_.types [ 'string', 'string', 'object' ], arguments
     db.post
       user: userId
       type: type
@@ -39,7 +40,7 @@ notifs_ =
   deleteAllBySubjectId: (subjectId)->
     # You absolutly don't want this id to be undefined
     # as this would end up deleting the whole database
-    _.assertType subjectId, 'string'
+    assert_.string subjectId
     notifs_.bySubject subjectId
     .then db.bulkDelete
 
@@ -55,7 +56,7 @@ isUnread = (notif)-> notif.status is 'unread'
 
 callbacks =
   acceptedRequest: (userToNotify, newFriend)->
-    _.assertTypes arguments, [ 'string', 'string' ]
+    assert_.strings [ userToNotify, newFriend ]
     notifs_.add userToNotify, 'friendAcceptedRequest',
       user: newFriend
 
@@ -82,7 +83,7 @@ callbacks =
   # Deleting notifications when their subject is deleted
   # to avoid having notification triggering requests for deleted resources
   deleteNotifications: (label, subjectId)->
-    _.assertTypes [ label, subjectId ], 'strings...'
+    assert_.strings [ label, subjectId ]
     _.log "deleting #{label} notifications"
     notifs_.deleteAllBySubjectId subjectId
 

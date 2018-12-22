@@ -3,6 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
+assert_ = __.require 'utils', 'assert_types'
 cache_ = __.require 'lib', 'cache'
 getPopularityByUri = require './get_popularity_by_uri'
 jobs_ = __.require 'level', 'jobs'
@@ -11,7 +12,7 @@ jobs_ = __.require 'level', 'jobs'
 wdEntityBaseScore = 10
 
 module.exports = (uris, refresh)->
-  _.assertType uris, 'array'
+  assert_.strings uris
   if uris.length is 0 then return promises_.resolve {}
   urisPopularity = _.indexAppliedValue uris, getPopularity(refresh)
   return promises_.props urisPopularity

@@ -3,6 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
+assert_ = __.require 'utils', 'assert_types'
 
 couch_ = __.require 'lib', 'couch'
 User = __.require 'models', 'user'
@@ -22,7 +23,7 @@ user_ =
   findOneByEmail: findOneByEmail.bind(null, db)
 
   getUsersByEmails: (emails, reqUserId)->
-    _.assertType emails, 'array'
+    assert_.array emails
     # Keeping the email is required to map the users returned
     # with the initial input
     user_.getUsersAuthorizedData user_.byEmails(emails), reqUserId, 'email'
@@ -44,7 +45,7 @@ user_ =
     else user_.findOneByUsername(str)
 
   getUserFromUsername: (username, reqUserId)->
-    _.assertType username, 'string'
+    assert_.string username
     user_.getUsersAuthorizedData user_.byUsername(username), reqUserId
     .then (usersDocs)->
       userDoc = usersDocs[0]
@@ -52,7 +53,7 @@ user_ =
       else throw error_.notFound { username }
 
   getUserById: (id, reqUserId)->
-    _.assertType id, 'string'
+    assert_.string id
     user_.getUsersAuthorizedData user_.byIds([id]), reqUserId
     .then (users)->
       user = users[0]
@@ -60,7 +61,7 @@ user_ =
       else throw error_.notFound { userId: id }
 
   getUsersByIds: (ids, reqUserId)->
-    _.assertType ids, 'array'
+    assert_.array ids
     if ids.length is 0 then return promises_.resolve []
     user_.getUsersAuthorizedData user_.byIds(ids), reqUserId
 

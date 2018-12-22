@@ -3,6 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 couch_ = __.require 'lib', 'couch'
 assert = require 'assert'
+assert_ = __.require 'utils', 'assert_types'
 { userId } = require './validations/common'
 
 module.exports =
@@ -22,7 +23,7 @@ module.exports =
 assertValidId = (id)->
   [ userA, userB ] = id.split ':'
   assert userA isnt userB
-  _.assertType userA, 'string'
+  assert_.string userA
   assert userId(userA)
   assert userId(userB)
 

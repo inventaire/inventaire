@@ -4,6 +4,7 @@ _ = __.require 'builders', 'utils'
 groups_ = __.require 'controllers', 'groups/lib/groups'
 relations_ = __.require 'controllers', 'relations/lib/queries'
 promises_ = __.require 'lib', 'promises'
+assert_ = __.require 'utils', 'assert_types'
 
 module.exports =
   getUserRelations: (userId)->
@@ -18,14 +19,14 @@ module.exports =
     .spread spreadRelations(usersIds)
 
   areFriends: (userId, otherId)->
-    _.assertTypes arguments, 'strings...'
+    assert_.strings arguments
     relations_.getStatus(userId, otherId)
     .then (status)->
       if status is 'friends' then return true
       else false
 
   areFriendsOrGroupCoMembers: (userId, otherId)->
-    _.assertTypes arguments, 'strings...'
+    assert_.strings arguments
     getFriendsAndGroupCoMembers userId
     .spread (friendsIds, coGroupMembersIds)->
       return otherId in friendsIds or otherId in coGroupMembersIds

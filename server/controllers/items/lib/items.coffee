@@ -5,6 +5,7 @@ Item = __.require 'models', 'item'
 privateAttrs = Item.attributes.private
 listingsPossibilities = Item.attributes.constrained.listing.possibilities
 error_ = __.require 'lib', 'error/error'
+assert_ = __.require 'utils', 'assert_types'
 { BasicUpdater } = __.require 'lib', 'doc_updates'
 couch_ = __.require 'lib', 'couch'
 promises_ = __.require 'lib', 'promises'
@@ -40,7 +41,7 @@ module.exports = items_ =
     bundleListings ['public'], usersIds, reqUserId
 
   byEntity: (entityUri)->
-    _.assertType entityUri, 'string'
+    assert_.string entityUri
     db.viewByKeys 'byEntity', entityUriKeys(entityUri)
 
   byPreviousEntity: (entityUri)-> db.viewByKey 'byPreviousEntity', entityUri
@@ -86,7 +87,7 @@ module.exports = items_ =
     .map filterPrivateAttributes(reqUserId)
 
   create: (userId, items)->
-    _.assertType items, 'array'
+    assert_.array items
     promises_.all items.map(validateEntityType)
     .map (item)-> Item.create userId, item
     .then db.bulk
@@ -120,7 +121,7 @@ module.exports = items_ =
         radio.emit 'user:inventory:update', currentItem.owner
 
   setBusyness: (id, busy)->
-    _.assertTypes arguments, ['string', 'boolean']
+    assert_.types [ 'string', 'boolean' ], arguments
     db.update id, BasicUpdater('busy', busy)
 
   changeOwner: (transacDoc)->

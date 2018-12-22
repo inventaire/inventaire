@@ -2,6 +2,7 @@
 # to be in lined with scripts/actions/backup_databases
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
+assert_ = __.require 'utils', 'assert_types'
 execa = require 'execa'
 
 module.exports = (params, dbName)->
@@ -16,8 +17,8 @@ module.exports = (params, dbName)->
 # being accessible from the $PATH
 buildArgsArray = (params, dbName)->
   { host, port, username, password, backupFolder } = params
-  _.assertTypes [ host, username, password, dbName, backupFolder ], 'strings...'
-  _.assertType port, 'number|string'
+  assert_.strings [ host, username, password, dbName, backupFolder ]
+  assert_.type 'number|string', port
 
   outputFile = "#{backupFolder}/#{dbName}.json"
 

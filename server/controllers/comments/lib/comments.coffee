@@ -3,6 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 Comment = __.require 'models', 'comment'
 error_ = __.require 'lib', 'error/error'
+assert_ = __.require 'utils', 'assert_types'
 
 db = __.require('couch', 'base')('comments')
 
@@ -13,7 +14,7 @@ module.exports =
     db.viewByKey 'byTransactionId', transactionId
 
   addTransactionComment: (userId, message, transactionId)->
-    _.assertTypes arguments, 'strings...'
+    assert_.strings arguments
     comment = Comment.createTransactionComment(userId, message, transactionId)
     db.post comment
 

@@ -2,6 +2,7 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 { getNames, aggregateClaims } = require './helpers'
 error_ = __.require 'lib', 'error/error'
+assert_ = __.require 'utils', 'assert_types'
 wdk = require 'wikidata-sdk'
 { snapshotValidations } = __.require 'models', 'validations/item'
 getBestLangValue = __.require 'lib', 'get_best_lang_value'
@@ -42,7 +43,7 @@ module.exports =
 
 buildOperation = (params)->
   { type, entity, works, title, lang, image, authors, series } = params
-  _.assertType works, 'array'
+  assert_.array works
   unless _.isNonEmptyString title
     throw error_.new 'no title found', 400, entity
 
@@ -63,7 +64,7 @@ buildOperation = (params)->
     snapshot['entity:image'] = image
 
   { uri } = entity
-  _.assertType uri, 'string'
+  assert_.string uri
 
   return { key: uri, value: snapshot }
 

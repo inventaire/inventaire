@@ -2,6 +2,7 @@ CONFIG = require 'config'
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 requests_ = __.require 'lib', 'requests'
+assert_ = __.require 'utils', 'assert_types'
 { host:elasticHost } = CONFIG.elasticsearch
 
 buildSearcher = (params)->
@@ -11,7 +12,7 @@ buildSearcher = (params)->
   url = "#{elasticHost}/#{index}/_search"
 
   return (query, type, limit)->
-    _.assertType query, 'string'
+    assert_.string query
 
     if _.isNonEmptyString type
       customUrl = url.replace '_search', "#{type}/_search"

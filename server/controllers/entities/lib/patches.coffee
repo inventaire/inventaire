@@ -5,6 +5,7 @@ db = __.require('couch', 'base')('patches', designDocName)
 Patch = __.require 'models', 'patch'
 Entity = __.require 'models', 'entity'
 promises_ = __.require 'lib', 'promises'
+assert_ = __.require 'utils', 'assert_types'
 { maxKey } = __.require 'lib', 'couch'
 { oneDay } =  __.require 'lib', 'times'
 
@@ -56,7 +57,7 @@ module.exports = patches_ =
     .then (rows)-> rows.slice 0, 100
 
   getActivityFromLastDay: (days)->
-    _.assertType days, 'number'
+    assert_.number days
     now = Date.now()
     startTime = now - oneDay * days
     today = _.simpleDay()

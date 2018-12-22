@@ -26,6 +26,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
+assert_ = __.require 'utils', 'assert_types'
 promises_ = __.require 'lib', 'promises'
 validLangs = Object.keys require('wikidata-lang').byCode
 
@@ -39,7 +40,7 @@ module.exports = Entity =
     claims: {}
 
   setLabel: (doc, lang, value)->
-    _.assertTypes arguments, [ 'object', 'string', 'string' ]
+    assert_.types [ 'object', 'string', 'string' ], arguments
 
     unless lang in validLangs
       throw error_.new 'invalid lang', 400, { doc, lang, value }

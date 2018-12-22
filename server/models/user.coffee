@@ -3,6 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 pw_ = __.require('lib', 'crypto').passwords
 promises_ = __.require 'lib', 'promises'
+assert_ = __.require 'utils', 'assert_types'
 gravatar = __.require 'lib', 'gravatar'
 error_ = __.require 'lib', 'error/error'
 randomString = __.require 'lib', 'utils/random_string'
@@ -16,8 +17,8 @@ User.validations = validations = require './validations/user'
 # thus the try/catch returning error in a rejected promise
 User._create = (username, email, creationStrategy, language, password)->
   _.log [ username, email, creationStrategy, language, "password:#{password?}" ], 'creating user'
-  _.assertTypes [ username, email, creationStrategy ], 'strings...'
-  if language? then _.assertType language, 'string'
+  assert_.strings [ username, email, creationStrategy ]
+  if language? then assert_.string language
 
   validations.pass 'username', username
   validations.pass 'email', email
@@ -116,15 +117,15 @@ User.updatePassword = (user, newHash)->
   return user
 
 User.setOauthTokens = (provider, data)-> (user)->
-  _.assertType provider, 'string'
-  _.assertType data, 'object'
+  assert_.string provider
+  assert_.object data
   user.oauth or= {}
   user.oauth[provider] = data
   return user
 
 User.updateItemsCounts = (itemsCounts)-> (user)->
-  _.assertType itemsCounts.private, 'object'
-  _.assertType itemsCounts.network, 'object'
-  _.assertType itemsCounts.public, 'object'
+  assert_.object itemsCounts.private
+  assert_.object itemsCounts.network
+  assert_.object itemsCounts.public
   _.extend user.snapshot, itemsCounts
   return user

@@ -2,6 +2,7 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
+assert_ = __.require 'utils', 'assert_types'
 entities_ = require './entities'
 runWdQuery = __.require 'data', 'wikidata/run_query'
 { prefixifyWd } = __.require 'controllers', 'entities/lib/prefix'
@@ -16,8 +17,8 @@ setTimeout lateRequire, 0
 whitelistedTypesNames = [ 'series', 'works', 'articles' ]
 
 module.exports = (uri, refresh)->
-  _.assertType uri, 'string'
-  if refresh? then _.assertType refresh, 'boolean'
+  assert_.string uri
+  if refresh? then assert_.boolean refresh
   [ prefix, id ] = uri.split ':'
   promises = []
 

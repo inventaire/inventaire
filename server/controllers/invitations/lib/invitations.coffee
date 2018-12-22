@@ -1,6 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
+assert_ = __.require 'utils', 'assert_types'
 db = __.require('couch', 'base')('users', 'invited')
 { findOneByEmail, byEmails } = __.require 'controllers', 'user/lib/shared_user_handlers'
 Invited = __.require 'models', 'invited'
@@ -12,15 +13,15 @@ module.exports = invitations_ =
   findOneByEmail: findOneByEmail.bind null, db
   byEmails: byEmails.bind null, db
   createUnknownInvited: (inviterId, groupId, unknownEmails)->
-    _.assertTypes [ inviterId, unknownEmails ], [ 'string', 'array' ]
-    if groupId? then _.assertType groupId, 'string'
+    assert_.types [ 'string', 'array' ], [ inviterId, unknownEmails ]
+    if groupId? then assert_.string groupId
     invitedDocs = unknownEmails.map Invited.create(inviterId, groupId)
     db.bulk invitedDocs
     .catch _.ErrorRethrow('createUnknownInvited')
 
   addInviter: (inviterId, groupId, invitedDocs)->
-    _.assertTypes [ inviterId, invitedDocs ], [ 'string', 'array' ]
-    if groupId? then _.assertType groupId, 'string'
+    assert_.types [ 'string', 'array' ], [ inviterId, invitedDocs ]
+    if groupId? then assert_.string groupId
     addInviterFn = Invited.addInviter.bind null, inviterId, groupId
     invitedDocs = invitedDocs.map addInviterFn
     db.bulk invitedDocs
