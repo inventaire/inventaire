@@ -43,6 +43,7 @@ module.exports = typesAliases =
     'wd:Q128093' # ebook
     'wd:Q17518461' # posthumous work
     'wd:Q179461' # religious text
+    'wd:Q27560760' # сollection of fairy tales
   ]
   editions: [
     'wd:Q3331189' # edition
