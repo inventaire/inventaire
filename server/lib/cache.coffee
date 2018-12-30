@@ -75,30 +75,25 @@ module.exports = cache_ =
 checkCache = (key, timespan)->
   db.get key
   .then (res)->
+    # Returning nothing will trigger a new request
     unless res? then return
 
     { body, timestamp } = res
-    unless isFreshEnough(timestamp, timespan) then return
 
-    return retryIfEmpty res, key
+    # Reject outdated cached values
+    unless isFreshEnough timestamp, timespan then return
 
-retryIfEmpty = (res, key)->
-  { body, timestamp } = res
-  unless emptyBody body then return res
-  else
-    # if it was retried lately
-    if isFreshEnough timestamp, 2 * oneDay
-      _.log key, 'empty cache value: retried lately'
-      return res
-    else
+    # In case there was nothing in cache
+    if _.isEmpty body
+      # Prevent re-requesting if it was already retried lately
+      if isFreshEnough timestamp, 2 * oneDay
+        _.log key, 'empty cache value: retried lately'
+        return res
+      # Otherwise, trigger a new request by returning nothing
       _.log key, 'empty cache value: retrying'
       return
-
-emptyBody = (body)->
-  unless body? then return true
-  if _.isObject body then return _.objLength(body) is 0
-  if _.isString body then return body.length is 0
-  # doesnt expect other types
+    else
+      return res
 
 returnOldValue = (key, err)->
   checkCache key, Infinity
