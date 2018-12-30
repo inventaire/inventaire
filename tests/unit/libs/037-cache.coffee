@@ -148,57 +148,28 @@ describe 'cache', ->
         .catch done
         return
 
-  describe 'dryGet', ->
-    it 'should return a promise', (done)->
-      p = cache_.dryGet 'whatever'
-      p.should.have.property 'then'
-      p.should.have.property 'catch'
-      done()
-
-    it 'should return a rejected promise if not passed a key', (done)->
-      cache_.dryGet()
-      .catch -> done()
-
-      return
-
-    it 'should return a rejected promise if passed a non-number timestamp', (done)->
-      cache_.dryGet 'whatever', 'notanumber'
-      .catch -> done()
-
-      return
-
-    it 'should return a value only when a value was cached', (done)->
-      key = randomString 8
-      cache_.dryGet key
-      .then (cached)->
-        should(cached).not.be.ok()
-        # with caching
-        cache_.get { key, fn: workingFn.bind(null, key) }
-        .then (cached2)->
-          cache_.dryGet key
-          .then (cached3)->
-            should(cached3).be.ok()
-            cached3.should.equal cached2
+    describe 'dry', ->
+      it 'should get a cached value with a dry parameter', (done)->
+        key = randomString 4
+        fn = workingFn.bind null, 'foo'
+        cache_.get { key, fn }
+        .delay 100
+        .then (res1)->
+          cache_.get { key, dry: true }
+          .then (res2)->
+            res1.should.equal res2
             done()
-      .catch done
+        .catch done
+        return
 
-      return
-
-    it "should return a value only if the timestamp isn't expired", (done)->
-      key = randomString 8
-      cache_.get { key, fn: workingFn.bind(null, key) }
-      .then (cached)->
-        cache_.dryGet key, 10000
-        .delay 10
-        .then (cached2)->
-          should(cached2).be.ok()
-          cache_.dryGet key, 0
-          .then (cached3)->
-            should(cached3).not.be.ok()
-            done()
-      .catch done
-
-      return
+      it 'should return empty when no value was cached', (done)->
+        key = randomString 4
+        cache_.get { key, dry: true }
+        .then (res)->
+          should(res).not.be.ok()
+          done()
+        .catch done
+        return
 
   describe 'put', ->
     it 'should return a promise', (done)->
@@ -228,11 +199,11 @@ describe 'cache', ->
     it 'should put a value in the cache', (done)->
       key = randomString 8
       value = randomString 8
-      cache_.dryGet key
+      cache_.get { key, dry: true }
       .then (cached)->
         should(cached).not.be.ok()
         cache_.put key, value
-      .then -> cache_.dryGet key
+      .then -> cache_.get { key, dry: true }
       .then (cached2)->
         cached2.should.equal value
         done()

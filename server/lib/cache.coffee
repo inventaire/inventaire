@@ -17,13 +17,17 @@ module.exports = cache_ =
   # EXPECT function to come with context and arguments .bind'ed
   # e.g. fn = module.getData.bind(module, arg1, arg2)
   get: (params)->
-    { key, fn, timespan, retry, refresh } = params
+    { key, fn, timespan, retry, refresh, dry } = params
     if refresh then timespan = 0
     timespan ?= oneMonth
     retry ?= true
-    types = [ 'string', 'function', 'number', 'boolean' ]
-    try  assert_.types types, [ key, fn, timespan, retry ]
-    catch err then return error_.reject err, 500
+    dry ?= false
+
+    try
+      assert_.string key
+      unless dry then assert_.types [ 'function', 'number', 'boolean' ], [ fn, timespan, retry ]
+    catch err
+      return error_.reject err, 500
 
     # Try to avoid cache miss when working offline (only useful in development)
     if offline then timespan = Infinity
@@ -33,7 +37,7 @@ module.exports = cache_ =
     refuseOldValue = timespan is 0
 
     checkCache key, timespan, retry
-    .then requestOnlyIfNeeded.bind(null, key, fn, refuseOldValue)
+    .then requestOnlyIfNeeded.bind(null, key, fn, dry, refuseOldValue)
     .catch (err)->
       label = "final cache_ err: #{key}"
       # not logging the stack trace in case of 404 and alikes
@@ -41,14 +45,6 @@ module.exports = cache_ =
       else _.error err, label
 
       throw err
-
-  # Return what's in cache. If nothing, return nothing: no request performed
-  dryGet: (key, timespan = oneMonth)->
-    try assert_.types [ 'string', 'number' ], [ key, timespan ]
-    catch err then return error_.reject err, 500
-
-    checkCache key, timespan
-    .then (cached)-> cached?.body
 
   put: (key, value)->
     unless _.isNonEmptyString key then return error_.reject 'invalid key', 500
@@ -114,23 +110,27 @@ returnOldValue = (key, err)->
       err.old_value = null
       throw err
 
-requestOnlyIfNeeded = (key, fn, refuseOldValue, cached)->
+requestOnlyIfNeeded = (key, fn, dry, refuseOldValue, cached)->
   if cached?
     _.info "from cache: #{key}"
-    cached.body
-  else
-    fn()
-    .then (res)->
-      _.info "from remote data source: #{key}"
-      putResponseInCache key, res
-      return res
-    .catch (err)->
-      if refuseOldValue
-        _.warn err, "#{key} request err (returning nothing)"
-        return
-      else
-        _.warn err, "#{key} request err (returning old value)"
-        return returnOldValue key, err
+    return cached.body
+
+  if dry
+    _.info "empty cache on dry get: #{key}"
+    return
+
+  fn()
+  .then (res)->
+    _.info "from remote data source: #{key}"
+    putResponseInCache key, res
+    return res
+  .catch (err)->
+    if refuseOldValue
+      _.warn err, "#{key} request err (returning nothing)"
+      return
+    else
+      _.warn err, "#{key} request err (returning old value)"
+      return returnOldValue key, err
 
 putResponseInCache = (key, res)->
   _.info "caching #{key}"

@@ -54,7 +54,7 @@ wdPopularityWorker = (jobId, uri)->
   key = buildKey uri
   _.log uri, 'wdPopularityWorker uri'
   # Check that the score wasn't calculated since this job was queued
-  cache_.dryGet key
+  cache_.get { key, dry: true }
   .then (res)->
     if res? then return
     getPopularityByUri uri
