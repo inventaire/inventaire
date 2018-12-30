@@ -7,7 +7,6 @@ cache_ = __.require 'lib', 'cache'
 
 getSerieParts = require './get_serie_parts'
 getAuthorWorks = require './get_author_works'
-getLinksCount = require './get_links_count'
 
 # Working around circular dependencies
 items_ = null
@@ -55,23 +54,14 @@ getPartsScores = (uri)->
     return getWorksPopularity uris
 
 getAuthorWorksScores = (uri)->
-  getAuthorWorks { uri, dry: true }
-  .then (res)->
-    Promise.all [
-      # Only getting their links scores and not their full popularity score
-      # as it would count works in those series twice
-      getSeriesLinksCounts res.series.map(getUri)
-      getWorksPopularity res.works.map(getUri)
-    ]
-    .then _.sum
+  getAuthorWorks { uri }
+  .then (res)-> getWorksPopularity res.works.map(getUri)
 
 popularityGettersByType =
   edition: getItemsCount
   work: oneUriSeveralFunctions getItemsCount, getWorkEditionsScores
   serie: oneUriSeveralFunctions getPartsScores
   human: oneUriSeveralFunctions getAuthorWorksScores
-
-getSeriesLinksCounts = severalUrisOneFunction getLinksCount
 
 # Using getEntitiesPopularity instead of the more specific
 # popularityGettersByType.work to use cached value if available
