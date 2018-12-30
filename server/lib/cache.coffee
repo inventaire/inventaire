@@ -17,15 +17,14 @@ module.exports = cache_ =
   # EXPECT function to come with context and arguments .bind'ed
   # e.g. fn = module.getData.bind(module, arg1, arg2)
   get: (params)->
-    { key, fn, timespan, retry, refresh, dry } = params
+    { key, fn, timespan, refresh, dry } = params
     if refresh then timespan = 0
     timespan ?= oneMonth
-    retry ?= true
     dry ?= false
 
     try
       assert_.string key
-      unless dry then assert_.types [ 'function', 'number', 'boolean' ], [ fn, timespan, retry ]
+      unless dry then assert_.types [ 'function', 'number' ], [ fn, timespan ]
     catch err
       return error_.reject err, 500
 
@@ -36,7 +35,7 @@ module.exports = cache_ =
     # Refusing the old value is also a way to invalidate the current cache
     refuseOldValue = timespan is 0
 
-    checkCache key, timespan, retry
+    checkCache key, timespan
     .then requestOnlyIfNeeded.bind(null, key, fn, dry, refuseOldValue)
     .catch (err)->
       label = "final cache_ err: #{key}"
@@ -72,7 +71,7 @@ module.exports = cache_ =
     if timeSinceDataChange < defaultTime then timeSinceDataChange
     else defaultTime
 
-checkCache = (key, timespan, retry)->
+checkCache = (key, timespan)->
   db.get key
   .then (res)->
     unless res? then return
@@ -80,8 +79,7 @@ checkCache = (key, timespan, retry)->
     { body, timestamp } = res
     unless isFreshEnough(timestamp, timespan) then return
 
-    if retry then return retryIfEmpty res, key
-    else res
+    return retryIfEmpty res, key
 
 retryIfEmpty = (res, key)->
   { body, timestamp } = res
