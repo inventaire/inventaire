@@ -11,7 +11,7 @@ headers = { accept: '*/*' }
 
 module.exports = (bnfId)->
   key = "bnf:author-works-titles:#{bnfId}"
-  return cache_.get key, getBnfAuthorWorksTitles.bind(null, bnfId)
+  return cache_.get { key, fn: getBnfAuthorWorksTitles.bind(null, bnfId) }
 
 getBnfAuthorWorksTitles = (bnfId)->
   _.info bnfId, 'bnfId'

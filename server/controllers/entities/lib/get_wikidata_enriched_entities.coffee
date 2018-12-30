@@ -28,8 +28,9 @@ module.exports = (ids, refresh)->
 
 getCachedEnrichedEntity = (refresh)-> (wdId)->
   key = "wd:enriched:#{wdId}"
+  fn = getEnrichedEntity.bind null, wdId
   timespan = if refresh then 0 else null
-  cache_.get key, getEnrichedEntity.bind(null, wdId), timespan
+  cache_.get { key, fn, timespan }
 
 getEnrichedEntity = (wdId)->
   getWdEntity wdId

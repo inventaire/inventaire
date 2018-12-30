@@ -40,7 +40,7 @@ module.exports = (params)->
     value = params[k]
     key += ":#{value}"
 
-  cache_.get key, runQuery.bind(null, params, key), timespan
+  cache_.get { key, fn: runQuery.bind(null, params, key), timespan }
 
 parametersTests =
   qid: wdk.isItemId

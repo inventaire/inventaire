@@ -16,7 +16,10 @@ if CONFIG.resetCacheAtStartup then db.reset()
 module.exports = cache_ =
   # EXPECT function to come with context and arguments .bind'ed
   # e.g. function = module.getData.bind(module, arg1, arg2)
-  get: (key, fn, timespan = oneMonth, retry = true)->
+  get: (params)->
+    { key, fn, timespan, retry } = params
+    timespan ?= oneMonth
+    retry ?= true
     types = [ 'string', 'function', 'number', 'boolean' ]
     try  assert_.types types, [ key, fn, timespan, retry ]
     catch err then return error_.reject err, 500
@@ -59,7 +62,7 @@ module.exports = cache_ =
 
   # exemple:
   # timespan = cache_.solveExpirationTime 'commons'
-  # cache_.get key, fn, timespan
+  # cache_.get { key, fn, timespan }
 
   # once the default expiration time is greater than the time since
   # data change, just stop passing a timespan

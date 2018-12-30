@@ -24,7 +24,7 @@ getPopularity = (refresh)-> (uri)->
   timespan = if refresh then 0 else null
   fn = getPopularityByUriOrQueue.bind null, uri
 
-  cache_.get key, fn, timespan
+  cache_.get { key, fn, timespan }
   .then applyDefaultValue(uri)
 
 buildKey = (uri)-> "popularity:#{uri}"

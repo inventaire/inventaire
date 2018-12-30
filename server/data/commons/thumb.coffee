@@ -14,7 +14,7 @@ fullPublicHost = CONFIG.fullPublicHost()
 module.exports = (file, width = 2000, refresh)->
   key = "commons:#{file}:#{width}"
   timespan = if refresh is true then 0 else null
-  cache_.get key, getThumbData.bind(null, file, width), timespan
+  cache_.get { key, fn: getThumbData.bind(null, file, width), timespan }
 
 getThumbData = (file, width = 2000)->
   file = qs.escape file
