@@ -13,9 +13,12 @@ if CONFIG.resetCacheAtStartup then db.reset()
 
 { oneMinute, oneDay, oneMonth } =  __.require 'lib', 'times'
 
-module.exports = cache_ =
-  # EXPECT function to come with context and arguments .bind'ed
-  # e.g. fn = module.getData.bind(module, arg1, arg2)
+module.exports =
+  # key: the cache key
+  # fn: a function with its context and arguments binded
+  # timespan: maximum acceptable age of the cached value in ms
+  # refresh: alias for timespan=0
+  # dry: return what's in cache or nothing: if the cache is empty, do not call the function
   get: (params)->
     { key, fn, timespan, refresh, dry } = params
     if refresh then timespan = 0
