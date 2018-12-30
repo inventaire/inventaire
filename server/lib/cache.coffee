@@ -8,7 +8,6 @@ levelBase = __.require 'level', 'base'
 
 db = levelBase.simpleSubDb 'cache'
 
-if CONFIG.resetCacheAtStartup then db.reset()
 { offline } = CONFIG
 
 { oneMinute, oneDay, oneMonth } =  __.require 'lib', 'times'
