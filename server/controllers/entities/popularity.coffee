@@ -8,7 +8,7 @@ getEntitiesPopularity = require './lib/get_entities_popularity'
 
 sanitization =
   uris: {}
-  refresh: {}
+  refresh: { optional: true }
 
 module.exports = (req, res, next)->
   # TODO: when passing a refresh flag, return the old popularity value
