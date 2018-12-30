@@ -43,8 +43,10 @@ getItemsCount = (uri)->
 
 getWorkEditionsScores = (uri)->
   reverseClaims { property: 'wdt:P629', value: uri, dry: true }
-  .map getItemsCount
-  .then _.sum
+  .then (editonsUris)->
+    editonsCount = editonsUris.length
+    Promise.all editonsUris.map(getItemsCount)
+    .then (editionsItemsCounts)-> _.sum(editionsItemsCounts) + editonsCount
 
 getPartsScores = (uri)->
   getSerieParts { uri, dry: true }
