@@ -28,8 +28,9 @@ module.exports = cache_ =
     catch err
       return error_.reject err, 500
 
-    # Try to avoid cache miss when working offline (only useful in development)
-    if offline then timespan = Infinity
+    # Try to avoid cache miss when making a dry get
+    # or when working offline (only useful in development)
+    if dry or offline then timespan = Infinity
 
     # When passed a 0 timespan, it is expected to get a fresh value.
     # Refusing the old value is also a way to invalidate the current cache
