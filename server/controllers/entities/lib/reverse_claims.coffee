@@ -63,8 +63,7 @@ wikidataReverseClaims = (property, value, refresh)->
 generalWikidataReverseClaims = (property, value, refresh)->
   key = "wd:reverse-claim:#{property}:#{value}"
   fn = _wikidataReverseClaims.bind null, property, value
-  timestamp = if refresh then 0 else null
-  cache_.get { key, fn, timestamp }
+  cache_.get { key, fn, refresh }
 
 _wikidataReverseClaims = (property, value)->
   caseInsensitive = property in caseInsensitiveProperties

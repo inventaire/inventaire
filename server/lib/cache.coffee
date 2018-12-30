@@ -15,9 +15,10 @@ if CONFIG.resetCacheAtStartup then db.reset()
 
 module.exports = cache_ =
   # EXPECT function to come with context and arguments .bind'ed
-  # e.g. function = module.getData.bind(module, arg1, arg2)
+  # e.g. fn = module.getData.bind(module, arg1, arg2)
   get: (params)->
-    { key, fn, timespan, retry } = params
+    { key, fn, timespan, retry, refresh } = params
+    if refresh then timespan = 0
     timespan ?= oneMonth
     retry ?= true
     types = [ 'string', 'function', 'number', 'boolean' ]

@@ -130,6 +130,23 @@ describe 'cache', ->
       .catch done
       return
 
+    describe 'refresh', ->
+      it 'should accept a refresh parameter', (done)->
+        key = 'samekey'
+        fn = workingFn.bind null, 'foo'
+        cache_.get { key, fn, timespan: 10000 }
+        .delay 100
+        .then (res1)->
+          cache_.get { key, fn }
+          .then (res2)->
+            cache_.get { key, fn, refresh: true }
+            .then (res3)->
+              res1.should.equal res2
+              res1.should.not.equal res3
+              done()
+        .catch done
+        return
+
   describe 'dryGet', ->
     it 'should return a promise', (done)->
       p = cache_.dryGet 'whatever'
