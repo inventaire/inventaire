@@ -3,7 +3,6 @@ _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
 cache_ = __.require 'lib', 'cache'
-{ oneUriSeveralFunctions, severalUrisOneFunction, getUri } = require './popularity_helpers'
 
 getSerieParts = require './get_serie_parts'
 getAuthorWorks = require './get_author_works'
@@ -50,23 +49,23 @@ getWorkEditionsScores = (uri)->
 getPartsScores = (uri)->
   getSerieParts { uri, dry: true }
   .then (res)->
-    uris = res.parts.map getUri
-    return getWorksPopularity uris
+    partsUris = res.parts.map getUri
+    return getEntitiesPopularityTotal partsUris
 
 getAuthorWorksScores = (uri)->
-  getAuthorWorks { uri }
-  .then (res)-> getWorksPopularity res.works.map(getUri)
+  getAuthorWorks { uri, dry: true }
+  .then (res)->
+    worksUris = res.works.map getUri
+    return getEntitiesPopularityTotal worksUris
+
+getUri = _.property 'uri'
+
+getEntitiesPopularityTotal = (uris)->
+  getEntitiesPopularity uris, true
+  .then (results)-> _.sum _.values(results)
 
 popularityGettersByType =
   edition: getItemsCount
-  work: oneUriSeveralFunctions getItemsCount, getWorkEditionsScores
-  serie: oneUriSeveralFunctions getPartsScores
-  human: oneUriSeveralFunctions getAuthorWorksScores
-
-# Using getEntitiesPopularity instead of the more specific
-# popularityGettersByType.work to use cached value if available
-getCachedPopularity = (uri)->
-  getEntitiesPopularity [ uri ], false
-  .get uri
-
-getWorksPopularity = severalUrisOneFunction getCachedPopularity
+  work: getWorkEditionsScores
+  serie: getPartsScores
+  human: getAuthorWorksScores
