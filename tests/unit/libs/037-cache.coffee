@@ -66,22 +66,6 @@ describe 'cache', ->
       .catch done
       return
 
-    it 'should also accept an expiration timespan', (done)->
-      key = 'samekey'
-      cache_.get { key, fn: workingFn.bind(null, 'bla') }
-      .then (res1)->
-        cache_.get { key, fn: workingFn.bind(null, 'different arg'), timespan: 10000 }
-        .delay 100
-        .then (res2)->
-          cache_.get { key, fn: workingFn.bind(null, 'different arg'), timespan: 0 }
-          .delay 100
-          .then (res3)->
-            res1.should.equal res2
-            res2.should.not.equal res3
-            done()
-      .catch done
-      return
-
     it 'should return the outdated version if the new version returns an error', (done)->
       key = 'doden'
       cache_.get { key, fn: workingFn.bind(null, 'Vem är du?'), timespan: 0 }
@@ -95,20 +79,6 @@ describe 'cache', ->
             res1.should.equal res2
             res1.should.equal res3
             done()
-      .catch done
-      return
-
-    it 'should refuse old value when passed a 0 timespan', (done)->
-      key = 'doden'
-      cache_.get { key, fn: workingFn.bind(null, 'Vem är du?'), timespan: 0 }
-      .delay 10
-      .then (res1)->
-        # returns an error: should return old value
-        cache_.get { key, fn: failingFn.bind(null, 'Vem är du?'), timespan: 0 }
-        .then (res2)->
-          res1.should.be.ok()
-          should(res2).not.be.ok()
-          done()
       .catch done
       return
 
@@ -127,6 +97,37 @@ describe 'cache', ->
           should(res2).not.be.ok()
           spy.callCount.should.equal 1
           done()
+      .catch done
+      return
+
+    describe 'timespan', ->
+      it 'should refuse old value when passed a 0 timespan', (done)->
+        key = 'doden'
+        cache_.get { key, fn: workingFn.bind(null, 'Vem är du?'), timespan: 0 }
+        .delay 10
+        .then (res1)->
+          # returns an error: should return old value
+          cache_.get { key, fn: failingFn.bind(null, 'Vem är du?'), timespan: 0 }
+          .then (res2)->
+            res1.should.be.ok()
+            should(res2).not.be.ok()
+            done()
+        .catch done
+        return
+
+    it 'should also accept an expiration timespan', (done)->
+      key = 'samekey'
+      cache_.get { key, fn: workingFn.bind(null, 'bla') }
+      .then (res1)->
+        cache_.get { key, fn: workingFn.bind(null, 'different arg'), timespan: 10000 }
+        .delay 100
+        .then (res2)->
+          cache_.get { key, fn: workingFn.bind(null, 'different arg'), timespan: 0 }
+          .delay 100
+          .then (res3)->
+            res1.should.equal res2
+            res2.should.not.equal res3
+            done()
       .catch done
       return
 
