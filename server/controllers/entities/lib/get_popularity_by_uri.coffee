@@ -44,18 +44,18 @@ getItemsCount = (uri)->
   .then (owners)-> _.uniq(owners).length
 
 getWorkEditionsScores = (uri)->
-  reverseClaims { property: 'wdt:P629', value: uri }
+  reverseClaims { property: 'wdt:P629', value: uri, dry: true }
   .map getItemsCount
   .then _.sum
 
 getPartsScores = (uri)->
-  getSerieParts uri
+  getSerieParts { uri, dry: true }
   .then (res)->
     uris = res.parts.map getUri
     return getWorksPopularity uris
 
 getAuthorWorksScores = (uri)->
-  getAuthorWorks uri
+  getAuthorWorks { uri, dry: true }
   .then (res)->
     Promise.all [
       # Only getting their links scores and not their full popularity score

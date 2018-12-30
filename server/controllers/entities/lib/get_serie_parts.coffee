@@ -7,12 +7,13 @@ runWdQuery = __.require 'data', 'wikidata/run_query'
 { prefixifyWd } = __.require 'controllers', 'entities/lib/prefix'
 { getSimpleDayDate, sortByOrdinalOrDate } = require './queries_utils'
 
-module.exports = (uri, refresh)->
+module.exports = (params)->
+  { uri, refresh, dry } = params
   [ prefix, id ] = uri.split ':'
   promises = []
 
   # If the prefix is 'inv' or 'isbn', no need to check Wikidata
-  if prefix is 'wd' then promises.push getWdSerieParts(id, refresh)
+  if prefix is 'wd' then promises.push getWdSerieParts(id, refresh, dry)
 
   promises.push getInvSerieParts(uri)
 
@@ -21,8 +22,8 @@ module.exports = (uri, refresh)->
     parts: _.flatten(results...).sort(sortByOrdinalOrDate)
   .catch _.ErrorRethrow('get serie parts err')
 
-getWdSerieParts = (qid, refresh)->
-  runWdQuery { query: 'serie-parts', qid, refresh }
+getWdSerieParts = (qid, refresh, dry)->
+  runWdQuery { query: 'serie-parts', qid, refresh, dry }
   .map (result)->
     uri: prefixifyWd result.part
     date: getSimpleDayDate result.date

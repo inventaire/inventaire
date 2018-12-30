@@ -24,7 +24,7 @@ blacklistedProperties = [
 ]
 
 module.exports = (params)->
-  { property, value, refresh, sort } = params
+  { property, value, refresh, sort, dry } = params
   assert_.strings [ property, value ]
 
   if property in blacklistedProperties
@@ -37,33 +37,34 @@ module.exports = (params)->
   if isEntityValue
     [ prefix, id ] = value.split ':'
     # If the prefix is 'inv' or 'isbn', no need to check Wikidata
-    if prefix is 'wd' then promises.push wikidataReverseClaims(property, id, refresh)
+    if prefix is 'wd' then promises.push wikidataReverseClaims(property, id, refresh, dry)
   else
-    promises.push wikidataReverseClaims(property, value, refresh)
+    promises.push wikidataReverseClaims(property, value, refresh, dry)
 
   promises.push invReverseClaims(property, value)
 
   promises_.all promises
   .then _.flatten
+  .then _.compact
   .then (uris)->
     unless sort then return uris
 
     getEntitiesPopularity uris
     .then (scores)-> uris.sort sortByScore(scores)
 
-wikidataReverseClaims = (property, value, refresh)->
+wikidataReverseClaims = (property, value, refresh, dry)->
   type = typeTailoredQuery[property]
   if type?
     pid = property.split(':')[1]
-    runWdQuery { query: "#{type}_reverse_claims", pid, qid: value, refresh }
+    runWdQuery { query: "#{type}_reverse_claims", pid, qid: value, refresh, dry }
     .map prefixifyWd
   else
-    generalWikidataReverseClaims property, value, refresh
+    generalWikidataReverseClaims property, value, refresh, dry
 
-generalWikidataReverseClaims = (property, value, refresh)->
+generalWikidataReverseClaims = (property, value, refresh, dry)->
   key = "wd:reverse-claim:#{property}:#{value}"
   fn = _wikidataReverseClaims.bind null, property, value
-  cache_.get { key, fn, refresh }
+  cache_.get { key, fn, refresh, dry }
 
 _wikidataReverseClaims = (property, value)->
   caseInsensitive = property in caseInsensitiveProperties
