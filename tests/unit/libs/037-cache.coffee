@@ -171,6 +171,16 @@ describe 'cache', ->
         .catch done
         return
 
+      it 'should return the fallback value when specified', (done)->
+        key = randomString 4
+        dryFallbackValue = 123
+        cache_.get { key, dry: true, dryFallbackValue }
+        .then (res)->
+          res.should.equal dryFallbackValue
+          done()
+        .catch done
+        return
+
   describe 'put', ->
     it 'should return a promise', (done)->
       p = cache_.put 'whatever', 'somevalue'

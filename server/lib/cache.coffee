@@ -13,13 +13,15 @@ db = levelBase.simpleSubDb 'cache'
 { oneMinute, oneDay, oneMonth } =  __.require 'lib', 'times'
 
 module.exports =
-  # key: the cache key
-  # fn: a function with its context and arguments binded
-  # timespan: maximum acceptable age of the cached value in ms
-  # refresh: alias for timespan=0
-  # dry: return what's in cache or nothing: if the cache is empty, do not call the function
+  # - key: the cache key
+  # - fn: a function with its context and arguments binded
+  # - timespan: maximum acceptable age of the cached value in ms
+  # - refresh: alias for timespan=0
+  # - dry: return what's in cache or nothing: if the cache is empty, do not call the function
+  # - dryFallbackValue: the value to return when no cached value can be found, to keep responses
+  #   type consistent
   get: (params)->
-    { key, fn, timespan, refresh, dry } = params
+    { key, fn, timespan, refresh, dry, dryFallbackValue } = params
     if refresh then timespan = 0
     timespan ?= oneMonth
     dry ?= false
@@ -39,7 +41,7 @@ module.exports =
     refuseOldValue = timespan is 0
 
     checkCache key, timespan
-    .then requestOnlyIfNeeded.bind(null, key, fn, dry, refuseOldValue)
+    .then requestOnlyIfNeeded.bind(null, key, fn, dry, dryFallbackValue, refuseOldValue)
     .catch (err)->
       label = "final cache_ err: #{key}"
       # not logging the stack trace in case of 404 and alikes
@@ -106,14 +108,14 @@ returnOldValue = (key, err)->
       err.old_value = null
       throw err
 
-requestOnlyIfNeeded = (key, fn, dry, refuseOldValue, cached)->
+requestOnlyIfNeeded = (key, fn, dry, dryFallbackValue, refuseOldValue, cached)->
   if cached?
     _.info "from cache: #{key}"
     return cached.body
 
   if dry
     _.info "empty cache on dry get: #{key}"
-    return
+    return dryFallbackValue
 
   fn()
   .then (res)->
