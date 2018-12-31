@@ -33,13 +33,7 @@ module.exports = (params)->
   promises = []
 
   unless localOnly
-    isEntityValue = _.isEntityUri value
-    if isEntityValue
-      [ prefix, id ] = value.split ':'
-      # If the prefix is 'inv' or 'isbn', no need to check Wikidata
-      if prefix is 'wd' then promises.push wikidataReverseClaims(property, id, refresh, dry)
-    else
-      promises.push wikidataReverseClaims(property, value, refresh, dry)
+    promises.push requestWikidataReverseClaims(property, value, refresh, dry)
 
   promises.push invReverseClaims(property, value)
 
@@ -51,6 +45,14 @@ module.exports = (params)->
 
     getEntitiesPopularity uris
     .then (scores)-> uris.sort sortByScore(scores)
+
+requestWikidataReverseClaims = (property, value, refresh, dry)->
+  if _.isEntityUri value
+    [ prefix, id ] = value.split ':'
+    # If the prefix is 'inv' or 'isbn', no need to check Wikidata
+    if prefix is 'wd' then return wikidataReverseClaims property, id, refresh, dry
+  else
+    return wikidataReverseClaims property, value, refresh, dry
 
 wikidataReverseClaims = (property, value, refresh, dry)->
   type = typeTailoredQuery[property]
