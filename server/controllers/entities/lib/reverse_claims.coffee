@@ -24,7 +24,7 @@ blacklistedProperties = [
 ]
 
 module.exports = (params)->
-  { property, value, refresh, sort, dry } = params
+  { property, value, refresh, sort, dry, localOnly } = params
   assert_.strings [ property, value ]
 
   if property in blacklistedProperties
@@ -32,14 +32,14 @@ module.exports = (params)->
 
   promises = []
 
-  isEntityValue = _.isEntityUri value
-
-  if isEntityValue
-    [ prefix, id ] = value.split ':'
-    # If the prefix is 'inv' or 'isbn', no need to check Wikidata
-    if prefix is 'wd' then promises.push wikidataReverseClaims(property, id, refresh, dry)
-  else
-    promises.push wikidataReverseClaims(property, value, refresh, dry)
+  unless localOnly
+    isEntityValue = _.isEntityUri value
+    if isEntityValue
+      [ prefix, id ] = value.split ':'
+      # If the prefix is 'inv' or 'isbn', no need to check Wikidata
+      if prefix is 'wd' then promises.push wikidataReverseClaims(property, id, refresh, dry)
+    else
+      promises.push wikidataReverseClaims(property, value, refresh, dry)
 
   promises.push invReverseClaims(property, value)
 
