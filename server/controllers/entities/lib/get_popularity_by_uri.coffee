@@ -34,6 +34,7 @@ module.exports = (uri)->
       return 0
 
     return getter uri
+  .then addBonusPoints(uri)
 
 getItemsCount = (uri)->
   items_.byEntity uri
@@ -73,3 +74,9 @@ popularityGettersByType =
   work: getWorkEditionsScores
   serie: getPartsScores
   human: getAuthorWorksScores
+
+# Wikidata entities get a bonus as being on Wikidata is already kind of a proof of a certain
+# level of popularity
+addBonusPoints = (uri)-> (score)->
+  if _.isWdEntityUri uri then score + 10
+  else score
