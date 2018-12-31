@@ -49,7 +49,7 @@ AddAuthorsStrings = (lang)-> (result)->
     result.authors = []
     return result
 
-  getEntitiesByUris authorsUris
+  getEntitiesByUris { uris: authorsUris }
   .then ParseAuthorsStrings(lang)
   .then (authorsStrings)->
     result.authors = authorsStrings

@@ -7,7 +7,7 @@ searchInvEntities = require './search_inv_entities'
 { searchTimeout } = CONFIG
 { enabled:dataseedEnabled } = CONFIG.dataseed
 getEntitiesByUris = require './get_entities_by_uris'
-GetEntitiesByUris = (refresh)-> (uris)-> getEntitiesByUris uris, refresh
+GetEntitiesByUris = (refresh)-> (uris)-> getEntitiesByUris { uris, refresh }
 promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
 assert_ = __.require 'utils', 'assert_types'
@@ -85,7 +85,7 @@ ReplaceEditionsByTheirWork = (refresh)-> (entities)->
   missingWorkEntities = _.uniq missingWorkEntities
   _.log missingWorkEntities, 'missingWorkEntities from editions'
 
-  return getEntitiesByUris missingWorkEntities, refresh
+  return getEntitiesByUris { uris: missingWorkEntities, refresh }
   .then (results)-> _.extend entities, results.entities
 
 startTimer = (name, key)-> _.startTimer "#{name} #{key}"

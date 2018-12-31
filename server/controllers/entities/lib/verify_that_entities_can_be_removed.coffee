@@ -2,7 +2,6 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 { Promise } = __.require 'lib', 'promises'
-getEntitiesByUris = require './get_entities_by_uris'
 entities_ = require './entities'
 items_ = __.require 'controllers', 'items/lib/items'
 

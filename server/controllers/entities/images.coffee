@@ -37,7 +37,7 @@ module.exports = (req, res)->
     if height? and not _.isPositiveIntegerString(height)
       return error_.bundleInvalid req, res, 'height', height
 
-  getEntitiesByUris uris, refresh
+  getEntitiesByUris { uris, refresh }
   .get 'entities'
   .then getEntitiesImages
   .then (images)->

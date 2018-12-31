@@ -14,7 +14,8 @@ getters =
 
 prefixes = Object.keys getters
 
-module.exports = (uris, refresh)->
+module.exports = (params)->
+  { uris, refresh } = params
   domains = {}
 
   # validate per URI to be able to return a precise error message

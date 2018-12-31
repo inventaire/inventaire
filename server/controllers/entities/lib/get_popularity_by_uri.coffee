@@ -21,7 +21,7 @@ lateRequire = ->
 setTimeout lateRequire, 0
 
 module.exports = (uri)->
-  getEntityByUri uri
+  getEntityByUri { uri }
   .then (entity)->
     { type } = entity
     unless type?

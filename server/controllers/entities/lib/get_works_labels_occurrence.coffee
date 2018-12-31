@@ -26,7 +26,7 @@ module.exports = (wdAuthorUri, worksLabels, worksLabelsLangs)->
   if worksLabels.length is 0 then return promises_.resolve []
 
   # get Wikipedia article title from URI
-  getEntityByUri wdAuthorUri
+  getEntityByUri { uri: wdAuthorUri }
   .then (authorEntity)->
     # Known case: entities tagged as 'missing' or 'meta'
     unless authorEntity.sitelinks? then return []

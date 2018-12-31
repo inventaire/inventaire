@@ -15,7 +15,7 @@ module.exports = (relatives, refresh)->
 
     if additionalEntitiesUris.length is 0 then return results
 
-    getEntitiesByUris additionalEntitiesUris, refresh
+    getEntitiesByUris { uris: additionalEntitiesUris, refresh }
     # Recursively add relatives, so that an edition could be sent
     # with its works, and its works authors and series
     .then addRelatives

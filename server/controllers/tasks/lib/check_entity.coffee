@@ -10,7 +10,7 @@ error_ = __.require 'lib', 'error/error'
 updateRelationScore = require './relation_score'
 
 module.exports = (uri)->
-  getEntityByUri uri
+  getEntityByUri { uri }
   .then (entity)->
     unless entity? then throw error_.notFound { uri }
 

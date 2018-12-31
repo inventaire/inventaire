@@ -39,7 +39,7 @@ Format = (refresh)-> (entity)->
 
 getRedirectedEntity = (entity, refresh)->
   # Passing the refresh parameter as the entity data source might be Wikidata
-  getEntityByUri entity.redirect, refresh
+  getEntityByUri { uri: entity.redirect, refresh }
   .then addRedirection.bind(null, prefixifyInv(entity._id))
 
 aggregateFoundIds = (foundIds, entity)->
