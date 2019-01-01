@@ -21,8 +21,11 @@ lateRequire = ->
 setTimeout lateRequire, 0
 
 module.exports = (uri)->
-  getEntityByUri { uri }
+  getEntityByUri { uri, dry: true }
   .then (entity)->
+    # Case where the entity wasn't available in cache
+    unless entity? then return 0
+
     { type } = entity
     unless type?
       _.warn uri, "can't get popularity of entities without known type"

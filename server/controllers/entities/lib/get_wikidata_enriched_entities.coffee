@@ -22,14 +22,17 @@ radio = __.require 'lib', 'radio'
 propagateRedirection = require './propagate_redirection'
 { _id:hookUserId } = __.require('couch', 'hard_coded_documents').users.hook
 
-module.exports = (ids, refresh)->
-  promises_.all ids.map(getCachedEnrichedEntity(refresh))
-  .then (entities)-> { entities }
+module.exports = (ids, params)->
+  promises_.all ids.map(getCachedEnrichedEntity(params))
+  .then (entities)->
+    if params.dry then entities = _.compact entities
+    return { entities }
 
-getCachedEnrichedEntity = (refresh)-> (wdId)->
+getCachedEnrichedEntity = (params)-> (wdId)->
   key = "wd:enriched:#{wdId}"
   fn = getEnrichedEntity.bind null, wdId
-  cache_.get { key, fn, refresh }
+  { refresh, dry } = params
+  cache_.get { key, fn, refresh, dry }
 
 getEnrichedEntity = (wdId)->
   getWdEntity wdId

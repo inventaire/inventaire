@@ -9,8 +9,9 @@ formatEditionEntity = require './format_edition_entity'
 isbn_ = __.require 'lib', 'isbn/isbn'
 { prefixifyIsbn } = __.require 'controllers', 'entities/lib/prefix'
 
-module.exports = (rawIsbns, refresh)->
+module.exports = (rawIsbns, params)->
   [ isbns, redirections ] = getRedirections rawIsbns
+  { refresh } = params
   # search entities by isbn locally
   entities_.byIsbns isbns
   .then (entities)->
