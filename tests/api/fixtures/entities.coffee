@@ -5,7 +5,7 @@ _ = __.require 'builders', 'utils'
 { Promise } = __.require 'lib', 'promises'
 isbn_ = __.require 'lib', 'isbn/isbn'
 wdLang = require 'wikidata-lang'
-{ getByUris, addClaim } = require '../utils/entities'
+{ getByUri, getByUris, addClaim } = require '../utils/entities'
 faker = require 'faker'
 someImageHash = '00015893d54f5112b99b41b0dfd851f381798047'
 
@@ -66,9 +66,12 @@ module.exports = API =
     params = { works }
     API.createEdition params
 
-  createEditionWithWorkAuthorAndSerie: ->
+  createWorkWithAuthorAndSerie: ->
     API.createWorkWithAuthor()
-    .tap API.addSerie
+    .then API.addSerie
+
+  createEditionWithWorkAuthorAndSerie: ->
+    API.createWorkWithAuthorAndSerie()
     .then (work)-> API.createEdition { work }
 
   createItemFromEntityUri: (uri, data = {})->
@@ -101,7 +104,9 @@ module.exports = API =
 
 addEntityClaim = (createFnName, property)-> (subjectEntity)->
   API[createFnName]()
-  .tap (entity)-> addClaim subjectEntity.uri, property, entity.uri
+  .then (entity)-> addClaim subjectEntity.uri, property, entity.uri
+  # Get a refreshed version of the subject entity
+  .then -> getByUri subjectEntity.uri
 
 API.addAuthor = addEntityClaim 'createHuman', 'wdt:P50'
 API.addSerie = addEntityClaim 'createSerie', 'wdt:P179'
