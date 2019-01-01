@@ -14,11 +14,13 @@ sortResultsByPopularity = (results)-> (popularityByUri)->
   .sort (a, b)-> b.globalScore - a.globalScore
 
 setGlobalScore = (popularityByUri)-> (result)->
-  popularity = if result.uri? then popularityByUri[result.uri] else 1
+  popularity = if result.uri? then popularityByUri[result.uri] else 0
+  result.popularityScore = popularity
   result.globalScore = boostScore result.lexicalScore, popularity
   return result
 
 logFactor = 2
 # Inspired by https://www.elastic.co/guide/en/elasticsearch/guide/current/boosting-by-popularity.html
 boostScore = (score, popularity)->
-  return score * Math.log(1 + logFactor * popularity)
+  globalScore = score * Math.log(1 + logFactor * popularity)
+  return _.round globalScore, 2
