@@ -64,13 +64,18 @@ getAuthorWorksScores = (uri)->
   getAuthorWorks { uri, dry: true }
   .then (res)->
     worksUris = res.works.map getUri
+    seriesCount = res.series.length
+    articlesCount = res.articles.length
     return getEntitiesPopularityTotal worksUris
+    .then (worksScore)-> worksScore + seriesCount + articlesCount
 
 getUri = _.property 'uri'
 
 getEntitiesPopularityTotal = (uris)->
   getEntitiesPopularity uris, true
-  .then (results)-> _.sum _.values(results)
+  .then _.values
+  # Total = sum of all popularities + number of subentities
+  .then (results)-> _.sum(results) + results.length
 
 popularityGettersByType =
   edition: getItemsCount
