@@ -91,10 +91,10 @@ checkCache = (key, timespan)->
     if _.isEmpty body
       # Prevent re-requesting if it was already retried lately
       if isFreshEnough timestamp, 2 * oneDay
-        _.log key, 'empty cache value: retried lately'
+        # _.info key, 'empty cache value: retried lately'
         return res
       # Otherwise, trigger a new request by returning nothing
-      _.log key, 'empty cache value: retrying'
+      # _.info key, 'empty cache value: retrying'
       return
     else
       return res
@@ -110,16 +110,16 @@ returnOldValue = (key, err)->
 
 requestOnlyIfNeeded = (key, fn, dry, dryFallbackValue, refuseOldValue, cached)->
   if cached?
-    _.info "from cache: #{key}"
+    # _.info "from cache: #{key}"
     return cached.body
 
   if dry
-    _.info "empty cache on dry get: #{key}"
+    # _.info "empty cache on dry get: #{key}"
     return dryFallbackValue
 
   fn()
   .then (res)->
-    _.info "from remote data source: #{key}"
+    # _.info "from remote data source: #{key}"
     putResponseInCache key, res
     return res
   .catch (err)->
@@ -131,7 +131,7 @@ requestOnlyIfNeeded = (key, fn, dry, dryFallbackValue, refuseOldValue, cached)->
       return returnOldValue key, err
 
 putResponseInCache = (key, res)->
-  _.info "caching #{key}"
+  # _.info "caching #{key}"
   db.put key,
     body: res
     timestamp: new Date().getTime()
