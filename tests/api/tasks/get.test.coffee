@@ -4,7 +4,8 @@ _ = __.require 'builders', 'utils'
 should = require 'should'
 { undesiredErr } = __.require 'apiTests', 'utils/utils'
 { createSomeTasks } = require '../fixtures/tasks'
-{ getByScore, getBySuspectUris, getBySuggestionUris, update } = require '../utils/tasks'
+{ createHuman, createWorkWithAuthor } = require '../fixtures/entities'
+{ getByScore, getBySuspectUris, getBySuggestionUris, update, checkEntities } = require '../utils/tasks'
 
 # Tests dependency: having a populated ElasticSearch wikidata index
 describe 'tasks:byScore', ->
@@ -36,6 +37,27 @@ describe 'tasks:byScore', ->
       getByScore { offset: 1 }
       .then (tasksB)->
         tasksA[1].should.deepEqual tasksB[0]
+        done()
+    .catch undesiredErr(done)
+
+    return
+
+  it 'should return tasks in the right order', (done)->
+    humanLabel = 'Stanislas Lem' # has no homonyms
+    workLabel = 'Solaris' # too short label to be automerged
+    createSomeTasks 'Gilbert Simondon'
+    .then -> createHuman { labels: { en: humanLabel } }
+    .then (human)->
+      createWorkWithAuthor human, workLabel
+      .then (work)-> checkEntities human.uri
+      .then -> getByScore()
+      .then (tasks)->
+        tasks.forEach (task, i)->
+          previousTask = tasks[i-1]
+          unless previousTask? then return
+          prevOccurencesCount = previousTask.externalSourcesOccurrences.length
+          occurrencesCount = task.externalSourcesOccurrences.length
+          prevOccurencesCount.should.be.aboveOrEqual occurrencesCount
         done()
     .catch undesiredErr(done)
 
