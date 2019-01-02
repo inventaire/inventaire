@@ -30,17 +30,13 @@ module.exports = (params)->
     unless parametersTests[k](value)
       return error_.rejectInvalid k, params
 
-  # Invalid the cache by passing refresh=true in the query.
-  # Return null if refresh isn't truthy to let the cache set its default value
-  timespan = if refresh is true then 0 else null
-
   # Building the cache key
   key = "wdQuery:#{queryName}"
   for k in parameters
     value = params[k]
     key += ":#{value}"
 
-  cache_.get key, runQuery.bind(null, params, key), timespan
+  cache_.get { key, fn: runQuery.bind(null, params, key), refresh }
 
 parametersTests =
   qid: wdk.isItemId

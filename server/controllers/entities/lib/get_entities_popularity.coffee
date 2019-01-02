@@ -21,10 +21,9 @@ getPopularity = (refresh)-> (uri)->
   unless _.isEntityUri(uri) then throw error_.new 'invalid uri', 400, uri
 
   key = buildKey uri
-  timespan = if refresh then 0 else null
   fn = getPopularityByUriOrQueue.bind null, uri
 
-  cache_.get key, fn, timespan
+  cache_.get { key, fn, refresh }
   .then applyDefaultValue(uri)
 
 buildKey = (uri)-> "popularity:#{uri}"
@@ -55,7 +54,7 @@ wdPopularityWorker = (jobId, uri)->
   key = buildKey uri
   _.log uri, 'wdPopularityWorker uri'
   # Check that the score wasn't calculated since this job was queued
-  cache_.dryGet key
+  cache_.get { key, dry: true }
   .then (res)->
     if res? then return
     getPopularityByUri uri

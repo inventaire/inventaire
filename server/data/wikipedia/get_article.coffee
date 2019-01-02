@@ -9,7 +9,7 @@ module.exports = (params)->
   { lang, title, introOnly } = params
   keyBase = if introOnly then 'wpextract' else 'wparticle'
   key = "#{keyBase}:#{lang}:#{title}"
-  return cache_.get key, getArticle.bind(null, lang, title, introOnly)
+  return cache_.get { key, fn: getArticle.bind(null, lang, title, introOnly) }
 
 getArticle = (lang, title, introOnly)->
   requests_.get apiQuery(lang, title, introOnly)

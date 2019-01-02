@@ -8,28 +8,38 @@ levelBase = __.require 'level', 'base'
 
 db = levelBase.simpleSubDb 'cache'
 
-if CONFIG.resetCacheAtStartup then db.reset()
 { offline } = CONFIG
 
 { oneMinute, oneDay, oneMonth } =  __.require 'lib', 'times'
 
-module.exports = cache_ =
-  # EXPECT function to come with context and arguments .bind'ed
-  # e.g. function = module.getData.bind(module, arg1, arg2)
-  get: (key, fn, timespan = oneMonth, retry = true)->
-    types = [ 'string', 'function', 'number', 'boolean' ]
-    try  assert_.types types, [ key, fn, timespan, retry ]
-    catch err then return error_.reject err, 500
+module.exports =
+  # key: the cache key
+  # fn: a function with its context and arguments binded
+  # timespan: maximum acceptable age of the cached value in ms
+  # refresh: alias for timespan=0
+  # dry: return what's in cache or nothing: if the cache is empty, do not call the function
+  get: (params)->
+    { key, fn, timespan, refresh, dry } = params
+    if refresh then timespan = 0
+    timespan ?= oneMonth
+    dry ?= false
 
-    # Try to avoid cache miss when working offline (only useful in development)
-    if offline then timespan = Infinity
+    try
+      assert_.string key
+      unless dry then assert_.types [ 'function', 'number' ], [ fn, timespan ]
+    catch err
+      return error_.reject err, 500
+
+    # Try to avoid cache miss when making a dry get
+    # or when working offline (only useful in development)
+    if dry or offline then timespan = Infinity
 
     # When passed a 0 timespan, it is expected to get a fresh value.
     # Refusing the old value is also a way to invalidate the current cache
     refuseOldValue = timespan is 0
 
-    checkCache key, timespan, retry
-    .then requestOnlyIfNeeded.bind(null, key, fn, refuseOldValue)
+    checkCache key, timespan
+    .then requestOnlyIfNeeded.bind(null, key, fn, dry, refuseOldValue)
     .catch (err)->
       label = "final cache_ err: #{key}"
       # not logging the stack trace in case of 404 and alikes
@@ -37,14 +47,6 @@ module.exports = cache_ =
       else _.error err, label
 
       throw err
-
-  # Return what's in cache. If nothing, return nothing: no request performed
-  dryGet: (key, timespan = oneMonth)->
-    try assert_.types [ 'string', 'number' ], [ key, timespan ]
-    catch err then return error_.reject err, 500
-
-    checkCache key, timespan
-    .then (cached)-> cached?.body
 
   put: (key, value)->
     unless _.isNonEmptyString key then return error_.reject 'invalid key', 500
@@ -59,7 +61,7 @@ module.exports = cache_ =
 
   # exemple:
   # timespan = cache_.solveExpirationTime 'commons'
-  # cache_.get key, fn, timespan
+  # cache_.get { key, fn, timespan }
 
   # once the default expiration time is greater than the time since
   # data change, just stop passing a timespan
@@ -72,34 +74,28 @@ module.exports = cache_ =
     if timeSinceDataChange < defaultTime then timeSinceDataChange
     else defaultTime
 
-checkCache = (key, timespan, retry)->
+checkCache = (key, timespan)->
   db.get key
   .then (res)->
+    # Returning nothing will trigger a new request
     unless res? then return
 
     { body, timestamp } = res
-    unless isFreshEnough(timestamp, timespan) then return
 
-    if retry then return retryIfEmpty res, key
-    else res
+    # Reject outdated cached values
+    unless isFreshEnough timestamp, timespan then return
 
-retryIfEmpty = (res, key)->
-  { body, timestamp } = res
-  unless emptyBody body then return res
-  else
-    # if it was retried lately
-    if isFreshEnough timestamp, 2 * oneDay
-      _.log key, 'empty cache value: retried lately'
-      return res
-    else
+    # In case there was nothing in cache
+    if _.isEmpty body
+      # Prevent re-requesting if it was already retried lately
+      if isFreshEnough timestamp, 2 * oneDay
+        _.log key, 'empty cache value: retried lately'
+        return res
+      # Otherwise, trigger a new request by returning nothing
       _.log key, 'empty cache value: retrying'
       return
-
-emptyBody = (body)->
-  unless body? then return true
-  if _.isObject body then return _.objLength(body) is 0
-  if _.isString body then return body.length is 0
-  # doesnt expect other types
+    else
+      return res
 
 returnOldValue = (key, err)->
   checkCache key, Infinity
@@ -110,23 +106,27 @@ returnOldValue = (key, err)->
       err.old_value = null
       throw err
 
-requestOnlyIfNeeded = (key, fn, refuseOldValue, cached)->
+requestOnlyIfNeeded = (key, fn, dry, refuseOldValue, cached)->
   if cached?
     _.info "from cache: #{key}"
-    cached.body
-  else
-    fn()
-    .then (res)->
-      _.info "from remote data source: #{key}"
-      putResponseInCache key, res
-      return res
-    .catch (err)->
-      if refuseOldValue
-        _.warn err, "#{key} request err (returning nothing)"
-        return
-      else
-        _.warn err, "#{key} request err (returning old value)"
-        return returnOldValue key, err
+    return cached.body
+
+  if dry
+    _.info "empty cache on dry get: #{key}"
+    return
+
+  fn()
+  .then (res)->
+    _.info "from remote data source: #{key}"
+    putResponseInCache key, res
+    return res
+  .catch (err)->
+    if refuseOldValue
+      _.warn err, "#{key} request err (returning nothing)"
+      return
+    else
+      _.warn err, "#{key} request err (returning old value)"
+      return returnOldValue key, err
 
 putResponseInCache = (key, res)->
   _.info "caching #{key}"

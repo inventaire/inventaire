@@ -11,7 +11,7 @@ describe 'entities:popularity', ->
   describe 'edition', ->
     it 'should reject invalid uri', (done)->
       invalidUri = 'inv:aliduri'
-      getPopularity invalidUri, true
+      getPopularity invalidUri
       .then undesiredRes(done)
       .catch (err)->
         err.body.status_verbose.should.startWith 'invalid '
@@ -119,11 +119,11 @@ describe 'entities:popularity', ->
 
       return
 
-getPopularity = (uri, fast=false)->
-  nonAuthReq 'get', "/api/entities?action=popularity&uris=#{uri}&refresh=true&fast=#{fast}"
+getPopularity = (uri)->
+  nonAuthReq 'get', "/api/entities?action=popularity&uris=#{uri}&refresh=true"
 
-getScore = (uri, fast)->
-  getPopularity uri, fast
+getScore = (uri)->
+  getPopularity uri
   .then (res)-> res.scores[uri]
 
 scoreShouldEqual = (uri, value, done)->
