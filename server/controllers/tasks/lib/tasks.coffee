@@ -20,6 +20,8 @@ module.exports = tasks_ =
     .then db.bulk
     .then _.Log('tasks updated')
 
+  bulkDelete: db.bulkDelete
+
   byId: db.get
 
   byIds: db.fetch
