@@ -7,13 +7,12 @@ validations = require './validations/task'
 
 module.exports =
   create: (newTask)->
-    assert_.object newTask
-    { type, suspectUri, suggestionUri, lexicalScore, relationScore, externalSourcesOccurrences } = newTask
+    _.assertTypes arguments, [ 'object' ]
+    { type, suspectUri, suggestionUri, lexicalScore, externalSourcesOccurrences } = newTask
 
     validations.pass 'type', type
     validations.pass 'suspectUri', suspectUri
     validations.pass 'lexicalScore', lexicalScore
-    validations.pass 'relationScore', relationScore
     validations.pass 'externalSourcesOccurrences', externalSourcesOccurrences
 
     return {
@@ -21,7 +20,6 @@ module.exports =
       suspectUri: suspectUri
       suggestionUri: suggestionUri
       lexicalScore: _.round lexicalScore, 2
-      relationScore: _.round relationScore, 2
       externalSourcesOccurrences: externalSourcesOccurrences
       created: Date.now()
     }
