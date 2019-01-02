@@ -5,19 +5,14 @@ assert_ = __.require 'utils', 'assert_types'
 promises_ = __.require 'lib', 'promises'
 wdk = require 'wikidata-sdk'
 { normalizeIsbn, isValidIsbn } = __.require 'lib', 'isbn/isbn'
-{ prefixes:aliasesPrefixes, validators:aliasesValidators, looksLikeSitelink } = require './alias_uris'
-aliasesGetter = require './get_entities_by_alias_uris'
 
 # Getters take ids, return an object on the model { entities, notFound }
 getters =
   inv: require './get_inv_entities'
   wd: require './get_wikidata_enriched_entities'
   isbn: require './get_entities_by_isbns'
-  wmsite: require './get_wikidata_entites_by_sitelink'
 
-getGetter = (prefix)-> getters[prefix] or aliasesGetter
-
-prefixes = Object.keys(getters).concat aliasesPrefixes
+prefixes = Object.keys getters
 
 module.exports = (uris, refresh)->
   domains = {}
@@ -27,22 +22,15 @@ module.exports = (uris, refresh)->
     [ prefix, id ] = uri.split ':'
 
     unless prefix in prefixes
-      if looksLikeSitelink prefix
-        prefix = 'wmsite'
-      else
-        errMessage = "invalid uri prefix: #{prefix} (uri: #{uri})"
-        return error_.reject errMessage, 400, uri
+      errMessage = "invalid uri prefix: #{prefix} (uri: #{uri})"
+      return error_.reject errMessage, 400, uri
 
     unless validators[prefix](id)
       errMessage = "invalid uri id: #{id} (uri: #{uri})"
       return error_.reject errMessage, 400, uri
 
-    # Alias getters require the full URI as it handles multiple prefixes
-    if prefix in aliasesPrefixes or prefix is 'wmsite' then value = uri
-    else value = id
-
     domains[prefix] or= []
-    domains[prefix].push value
+    domains[prefix].push id
 
   getDomainsPromises domains, refresh
   .then mergeResponses
@@ -50,8 +38,9 @@ module.exports = (uris, refresh)->
 
 getDomainsPromises = (domains, refresh)->
   promises = []
+
   for prefix, uris of domains
-    promises.push getGetter(prefix)(uris, refresh)
+    promises.push getters[prefix](uris, refresh)
 
   return promises_.all promises
 
@@ -86,7 +75,7 @@ mergeResponses = (results)->
 
   return response
 
-validators = _.extend {}, aliasesValidators,
+validators =
   inv: _.isInvEntityId
   wd: wdk.isItemId
   isbn: isValidIsbn

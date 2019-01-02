@@ -23,7 +23,7 @@ describe 'entities:get:by-uris', ->
     return
 
   it 'should reject uri with wrong prefix', (done)->
-    invalidUri = 'twitter:isevil'
+    invalidUri = 'foo:Q535'
     getByUris invalidUri
     .then undesiredRes(done)
     .catch (err)->
