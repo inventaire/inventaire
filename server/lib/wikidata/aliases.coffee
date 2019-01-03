@@ -30,6 +30,7 @@ module.exports = typesAliases =
     'wd:Q1760610' # comic book
     'wd:Q838795' # comic strip
     'wd:Q8261' # novel / roman
+    'wd:Q149537' # novella
     'wd:Q725377' # graphic novel
     'wd:Q25379' # theatre play
     'wd:Q7725634' # literary work
@@ -38,12 +39,19 @@ module.exports = typesAliases =
     'wd:Q1279564' # short story collection
     'wd:Q386724' # work
     'wd:Q49084' # short story / conte
+    'wd:Q20730955' # tale
+    'wd:Q699' # fairy tale
     'wd:Q34620' # Greek tragedy
     'wd:Q8274' # manga
     'wd:Q128093' # ebook
     'wd:Q17518461' # posthumous work
     'wd:Q179461' # religious text
     'wd:Q27560760' # сollection of fairy tales
+    'wd:Q23622' # dictionary
+    'wd:Q2352616' # catalogue
+    'wd:Q780605' # exhibition catalogue
+    'wd:Q5185279' #poem
+    'wd:Q37484' # epic poem
   ]
   editions: [
     'wd:Q3331189' # edition
