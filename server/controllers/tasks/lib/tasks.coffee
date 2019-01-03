@@ -8,10 +8,10 @@ Task = __.require 'models', 'task'
 db = __.require('couch', 'base')('tasks')
 
 module.exports = tasks_ =
-  create: (taskDoc)->
-    promises_.try -> Task.create taskDoc
-    .then db.postAndReturn
-    .then _.Log('task created')
+  createInBulk: (tasksDocs)->
+    promises_.try -> tasksDocs.map Task.create
+    .then db.bulk
+    .then _.Log('tasks created')
 
   update: (options)->
     { ids, attribute, newValue } = options
@@ -19,6 +19,8 @@ module.exports = tasks_ =
     .map (task)-> Task.update task, attribute, newValue
     .then db.bulk
     .then _.Log('tasks updated')
+
+  bulkDelete: db.bulkDelete
 
   byId: db.get
 
@@ -34,6 +36,9 @@ module.exports = tasks_ =
 
   bySuspectUri: (suspectUri)->
     db.viewByKey 'bySuspectUriAndState', [ suspectUri, null ]
+
+  bySuggestionUri: (suggestionUri)->
+    db.viewByKey 'bySuggestionUriAndState', [ suggestionUri, null ]
 
   bySuspectUris: (suspectUris, options = {})->
     { index, includeArchived } = options

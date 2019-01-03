@@ -96,6 +96,7 @@ formatAndPropagateRedirection = (entity)->
     # if the redirected entity is used in Inventaire claims, redirect claims
     # to their new entity
     propagateRedirection hookUserId, entity.redirects.from, entity.redirects.to
+    radio.emit 'wikidata:entity:redirect', entity.redirects.from, entity.redirects.to
 
   return
 

@@ -38,6 +38,7 @@ module.exports = utils =
   checkEntities: (uris)->
     uris = _.forceArray uris
     adminReq 'post', "#{endpoint}check-entities", { uris }
-    .get 'tasks'
+    .then -> utils.getBySuspectUris uris
+    .then (tasksBySuspectUris)-> _.flatten _.values(tasksBySuspectUris)
 
   collectEntities: -> adminReq 'post', "#{endpoint}collect-entities"

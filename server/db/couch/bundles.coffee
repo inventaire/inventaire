@@ -11,7 +11,8 @@ module.exports = (db, _)->
     .then updateIdAndRev.bind(null, doc)
 
   bulkDelete = (docs)->
-    assert_.array docs
+    assert_.objects docs
+    if docs.length is 0 then return promises_.resolve []
     _.warn docs, 'bulkDelete'
     db.bulk couch_.setDocsDeletedTrue(docs)
 
