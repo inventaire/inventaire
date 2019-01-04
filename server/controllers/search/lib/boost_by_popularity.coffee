@@ -21,6 +21,6 @@ setGlobalScore = (popularityByUri)-> (result)->
 
 logFactor = 2
 # Inspired by https://www.elastic.co/guide/en/elasticsearch/guide/current/boosting-by-popularity.html
-boostScore = (score, popularity)->
-  globalScore = score * Math.log(1 + logFactor * popularity)
+boostScore = (lexicalScore, popularity)->
+  globalScore = lexicalScore * Math.log(1 + logFactor * popularity)
   return _.round globalScore, 2
