@@ -86,5 +86,5 @@ popularityGettersByType =
 # Wikidata entities get a bonus as being on Wikidata is already kind of a proof of a certain
 # level of popularity
 addBonusPoints = (uri)-> (score)->
-  if _.isWdEntityUri uri then score + 10
+  if _.isWdEntityUri uri then score + 5
   else score
