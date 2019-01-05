@@ -32,7 +32,7 @@ changeOwnerIfOneWay = (transacDoc)->
 setItemToBusy =  _.partial setItemBusyness, true
 setItemToNotBusy = _.partial setItemBusyness, false
 
-sideEffets =
+sideEffects =
   accepted: setItemToBusy
   declined: _.noop
   confirmed: changeOwnerIfOneWay

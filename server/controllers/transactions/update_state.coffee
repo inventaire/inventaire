@@ -4,25 +4,24 @@ error_ = __.require 'lib', 'error/error'
 responses_ = __.require 'lib', 'responses'
 transactions_ = require './lib/transactions'
 { states, statesList } = __.require 'models', 'attributes/transaction'
-validations = __.require 'models', 'validations/common'
+sanitize = __.require 'lib', 'sanitize/sanitize'
 { Track } = __.require 'lib', 'track'
 
+sanitization =
+  transaction: {}
+  state:
+    whitelist: statesList
+
 module.exports = (req, res, next)->
-  { id, state } = req.body
-  reqUserId = req.user._id
-
-  validations.pass 'transactionId', id
-
-  unless state in statesList
-    return error_.bundle req, res, 'unknown state', 400, id, state
-
-  _.log [ id, state ], 'update transaction state'
-
-  transactions_.byId id
-  .then VerifyRights(state, reqUserId)
-  .then transactions_.updateState.bind(null, state, reqUserId)
-  .then responses_.Send(res)
-  .then Track(req, ['transaction', 'update', state])
+  sanitize req, res, sanitization
+  .then (params)->
+    { transaction, state } = req.body
+    reqUserId = req.user._id
+    transactions_.byId transaction
+    .then VerifyRights(state, reqUserId)
+    .then transactions_.updateState.bind(null, state, reqUserId)
+    .then Track(req, ['transaction', 'update', state])
+  .then responses_.Ok(res)
   .catch error_.Handler(req, res)
 
 VerifyRights = (state, reqUserId)->
