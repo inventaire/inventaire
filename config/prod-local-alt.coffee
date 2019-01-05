@@ -19,7 +19,5 @@ module.exports =
   couch2elastic4sync:
     activated: true
   jobs:
-    'wd:popularity':
-      run: true
     'inv:deduplicate':
       run: true

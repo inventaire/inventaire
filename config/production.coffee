@@ -24,7 +24,5 @@ module.exports =
     disabled: false
   # Let the alt instance run the jobs
   jobs:
-    'wd:popularity':
-      run: false
     'inv:deduplicate':
       run: false
