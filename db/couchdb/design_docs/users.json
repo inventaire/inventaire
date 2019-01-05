@@ -6,13 +6,10 @@
       "map": "(doc)->\n  if doc.type is 'user'\n    emit doc.email.toLowerCase(), null"
     },
     "byUsername": {
-      "map": "(doc)->\n  if doc.type is 'user'\n    emit doc.username.toLowerCase(), null"
+      "map": "(doc)->\n  if doc.type is 'user' or doc.special\n    emit doc.username.toLowerCase(), null"
     },
     "byCreation": {
       "map": "(doc)->\n  if doc.type is 'user'\n    emit doc.created, doc.username"
-    },
-    "byId": {
-      "map": "(doc)->\n  if doc.type is 'user'\n    emit doc._id, null"
     },
     "nextSummary": {
       "map": "(doc)->\n  unless doc.type is 'user' then return\n  if doc.settings.notifications.global is false then return\n  if doc.settings.notifications['inventories_activity_summary'] is false then return\n  if doc.undeliveredEmail > 1 then return\n\n  lastSummary = doc.lastSummary or doc.created\n  summaryPeriodicity = doc.summaryPeriodicity or 20\n  nextSummary = lastSummary + summaryPeriodicity*24*3600*1000\n  emit nextSummary, null"
