@@ -39,7 +39,12 @@ getSnapshot = (uri, preventLoop)->
     if snapshot? then return snapshot
 
     if preventLoop is true
-      throw error_.new "couldn't refresh item snapshot", 500, { uri }
+      # Known case: addToItem was called for an item which entity is a serie
+      # thus, the related works and editions were refreshed but as series aren't
+      # supposed to be associated to items, no snapshot was created for the serie itself
+      err = error_.new "couldn't refresh item snapshot", 500, { uri }
+      _.error err, 'getSnapshot err'
+      return {}
 
     return refreshAndGet uri
 
