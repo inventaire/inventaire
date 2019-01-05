@@ -20,9 +20,9 @@ module.exports = (req, res, next)->
     transactions_.byId transaction
     .then VerifyRights(state, reqUserId)
     .then transactions_.updateState.bind(null, state, reqUserId)
-    .then responses_.Ok(res)
     .then Track(req, ['transaction', 'update', state])
-    .catch error_.Handler(req, res)
+  .then responses_.Ok(res)
+  .catch error_.Handler(req, res)
 
 VerifyRights = (state, reqUserId)->
   switch states[state].actor
