@@ -108,6 +108,7 @@ module.exports =
     default: 50
     max: 500
   search: nonEmptyString
+  state: whitelistedString
   token: nonEmptyString
   transaction: couchUuid
   type: whitelistedString
