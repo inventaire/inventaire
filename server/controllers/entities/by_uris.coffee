@@ -23,7 +23,7 @@ module.exports = (req, res, next)->
   sanitize req, res, sanitization
   .then (params)->
     { uris, refresh, relatives } = params
-    getEntitiesByUris uris, refresh
+    getEntitiesByUris { uris, refresh }
     .then addRelatives(relatives, refresh)
   .then responses_.Send(res)
   .catch error_.Handler(req, res)

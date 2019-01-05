@@ -14,7 +14,8 @@ getters =
 
 prefixes = Object.keys getters
 
-module.exports = (uris, refresh)->
+module.exports = (params)->
+  { uris } = params
   domains = {}
 
   # validate per URI to be able to return a precise error message
@@ -32,15 +33,15 @@ module.exports = (uris, refresh)->
     domains[prefix] or= []
     domains[prefix].push id
 
-  getDomainsPromises domains, refresh
+  getDomainsPromises domains, params
   .then mergeResponses
   .catch _.ErrorRethrow("getEntitiesByUris err: #{uris.join('|')}")
 
-getDomainsPromises = (domains, refresh)->
+getDomainsPromises = (domains, params)->
   promises = []
 
   for prefix, uris of domains
-    promises.push getters[prefix](uris, refresh)
+    promises.push getters[prefix](uris, params)
 
   return promises_.all promises
 

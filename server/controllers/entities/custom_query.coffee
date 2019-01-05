@@ -14,6 +14,6 @@ module.exports = (req, res, next)->
 
   refresh = _.parseBooleanString refresh
 
-  customQueries[action] uri, refresh
+  customQueries[action]({ uri, refresh })
   .then responses_.Send(res)
   .catch error_.Handler(req, res)

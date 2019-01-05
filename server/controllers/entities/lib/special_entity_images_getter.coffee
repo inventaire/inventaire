@@ -17,7 +17,7 @@ module.exports =
   serie: (entity)->
     { uri } = entity
     images = { claims: getEntityImagesFromClaims(entity) }
-    getSerieParts uri
+    getSerieParts { uri }
     .then (res)-> _.map(res.parts, 'uri')
     .map getOneWorkImagePerLang
     .reduce aggregateWorkImages, images

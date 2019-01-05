@@ -17,7 +17,7 @@ module.exports = (types, search)->
 
   url = "#{elasticHost}/#{indexes.join(',')}/#{types.join(',')}/_search"
 
-  body = queryBodyBuilder search
+  body = queryBodyBuilder search, 20
 
   return requests_.post { url, body }
   .catch formatError

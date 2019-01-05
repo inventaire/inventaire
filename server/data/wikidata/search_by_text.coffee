@@ -6,7 +6,7 @@ error_ = __.require 'lib', 'error/error'
 searchWikidataEntities = __.require 'data', 'wikidata/search_entities'
 { prefixifyWd } = __.require 'controllers', 'entities/lib/prefix'
 getEntitiesByUris = __.require 'controllers', 'entities/lib/get_entities_by_uris'
-GetEntitiesByUris = (refresh)-> (uris)-> getEntitiesByUris uris, refresh
+GetEntitiesByUris = (refresh)-> (uris)-> getEntitiesByUris { uris, refresh }
 
 { searchTimeout } = CONFIG
 

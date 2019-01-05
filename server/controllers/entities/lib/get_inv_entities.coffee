@@ -13,18 +13,18 @@ getEntityByUri = null
 lateRequire = -> getEntityByUri = require './get_entity_by_uri'
 setTimeout lateRequire, 0
 
-module.exports = (ids, refresh)->
+module.exports = (ids, params)->
   # Hypothesis: there is no need to look for Wikidata data here
   # as inv entities with an associated Wikidata entity use the Wikidata uri
   entities_.byIds ids
-  .map Format(refresh)
+  .map Format(params)
   .then (entities)->
     found = entities.reduce aggregateFoundIds, []
     notFound = _.difference(ids, found).map prefixifyInv
     return { entities, notFound }
 
-Format = (refresh)-> (entity)->
-  if entity.redirect? then return getRedirectedEntity entity, refresh
+Format = (params)-> (entity)->
+  if entity.redirect? then return getRedirectedEntity entity, params
 
   [ uri, redirects ] = getInvEntityCanonicalUri entity
   entity.uri = uri
@@ -37,9 +37,10 @@ Format = (refresh)-> (entity)->
   entity.type = getEntityType entity.claims['wdt:P31']
   return formatEntityCommon entity
 
-getRedirectedEntity = (entity, refresh)->
-  # Passing the refresh parameter as the entity data source might be Wikidata
-  getEntityByUri entity.redirect, refresh
+getRedirectedEntity = (entity, params)->
+  { refresh, dry } = params
+  # Passing the parameters as the entity data source might be Wikidata
+  getEntityByUri { uri: entity.redirect, refresh, dry }
   .then addRedirection.bind(null, prefixifyInv(entity._id))
 
 aggregateFoundIds = (foundIds, entity)->

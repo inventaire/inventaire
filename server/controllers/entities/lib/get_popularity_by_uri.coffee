@@ -3,11 +3,9 @@ _ = __.require 'builders', 'utils'
 promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
 cache_ = __.require 'lib', 'cache'
-{ oneUriSeveralFunctions, severalUrisOneFunction, getUri } = require './popularity_helpers'
 
 getSerieParts = require './get_serie_parts'
 getAuthorWorks = require './get_author_works'
-getLinksCount = require './get_links_count'
 
 # Working around circular dependencies
 items_ = null
@@ -23,8 +21,11 @@ lateRequire = ->
 setTimeout lateRequire, 0
 
 module.exports = (uri)->
-  getEntityByUri uri
+  getEntityByUri { uri, dry: true }
   .then (entity)->
+    # Case where the entity wasn't available in cache
+    unless entity? then return 0
+
     { type } = entity
     unless type?
       _.warn uri, "can't get popularity of entities without known type"
@@ -36,6 +37,7 @@ module.exports = (uri)->
       return 0
 
     return getter uri
+  .then addBonusPoints(uri)
 
 getItemsCount = (uri)->
   items_.byEntity uri
@@ -44,39 +46,45 @@ getItemsCount = (uri)->
   .then (owners)-> _.uniq(owners).length
 
 getWorkEditionsScores = (uri)->
-  reverseClaims { property: 'wdt:P629', value: uri }
-  .map getItemsCount
-  .then _.sum
+  # Limit request to local entities as Wikidata editions entities are currently ignored
+  # see https://github.com/inventaire/inventaire/issues/182
+  reverseClaims { property: 'wdt:P629', value: uri, dry: true, localOnly: true }
+  .then (editonsUris)->
+    editonsCount = editonsUris.length
+    Promise.all editonsUris.map(getItemsCount)
+    .then (editionsItemsCounts)-> _.sum(editionsItemsCounts) + editonsCount
 
 getPartsScores = (uri)->
-  getSerieParts uri
+  getSerieParts { uri, dry: true }
   .then (res)->
-    uris = res.parts.map getUri
-    return getWorksPopularity uris
+    partsUris = res.parts.map getUri
+    return getEntitiesPopularityTotal partsUris
 
 getAuthorWorksScores = (uri)->
-  getAuthorWorks uri
+  getAuthorWorks { uri, dry: true }
   .then (res)->
-    Promise.all [
-      # Only getting their links scores and not their full popularity score
-      # as it would count works in those series twice
-      getSeriesLinksCounts res.series.map(getUri)
-      getWorksPopularity res.works.map(getUri)
-    ]
-    .then _.sum
+    worksUris = res.works.map getUri
+    seriesCount = res.series.length
+    articlesCount = res.articles.length
+    return getEntitiesPopularityTotal worksUris
+    .then (worksScore)-> worksScore + seriesCount + articlesCount
+
+getUri = _.property 'uri'
+
+getEntitiesPopularityTotal = (uris)->
+  getEntitiesPopularity uris, true
+  .then _.values
+  # Total = sum of all popularities + number of subentities
+  .then (results)-> _.sum(results) + results.length
 
 popularityGettersByType =
   edition: getItemsCount
-  work: oneUriSeveralFunctions getItemsCount, getWorkEditionsScores
-  serie: oneUriSeveralFunctions getPartsScores
-  human: oneUriSeveralFunctions getAuthorWorksScores
+  work: getWorkEditionsScores
+  serie: getPartsScores
+  human: getAuthorWorksScores
 
-getSeriesLinksCounts = severalUrisOneFunction getLinksCount
-
-# Using getEntitiesPopularity instead of the more specific
-# popularityGettersByType.work to use cached value if available
-getCachedPopularity = (uri)->
-  getEntitiesPopularity [ uri ], false
-  .get uri
-
-getWorksPopularity = severalUrisOneFunction getCachedPopularity
+# Wikidata entities get a bonus as being on Wikidata is already kind of a proof of a certain
+# level of popularity
+addBonusPoints = (uri)-> (score)->
+  if _.isWdEntityUri uri then score + 5
+  else score

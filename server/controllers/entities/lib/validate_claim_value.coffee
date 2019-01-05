@@ -73,7 +73,7 @@ module.exports = (db)->
   verifyClaimEntityType = (restrictedType, value)->
     unless restrictedType? then return
 
-    getEntityByUri value
+    getEntityByUri { uri: value }
     .then (entity)->
       unless entity.type is restrictedType
         throw error_.new "invalid claim entity type: #{entity.type}", 400, value

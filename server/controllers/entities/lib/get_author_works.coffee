@@ -16,9 +16,8 @@ setTimeout lateRequire, 0
 
 whitelistedTypesNames = [ 'series', 'works', 'articles' ]
 
-module.exports = (uri, refresh)->
-  assert_.string uri
-  if refresh? then assert_.boolean refresh
+module.exports = (params)->
+  { uri } = params
   [ prefix, id ] = uri.split ':'
   promises = []
 
@@ -26,7 +25,7 @@ module.exports = (uri, refresh)->
 
   # If the prefix is 'inv' or 'isbn', no need to check Wikidata
   if prefix is 'wd'
-    promises.push getWdAuthorWorks(id, worksByTypes, refresh)
+    promises.push getWdAuthorWorks(id, worksByTypes, params)
 
   promises.push getInvAuthorWorks(uri, worksByTypes)
 
@@ -38,8 +37,9 @@ module.exports = (uri, refresh)->
   .catch _.ErrorRethrow('get author works err')
 
 ## WD
-getWdAuthorWorks = (qid, worksByTypes, refresh)->
-  runWdQuery { query: 'author-works', qid, refresh }
+getWdAuthorWorks = (qid, worksByTypes, params)->
+  { refresh, dry } = params
+  runWdQuery { query: 'author-works', qid, refresh, dry }
   .map formatWdEntity
   .filter _.identity
   .then (results)->

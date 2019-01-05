@@ -20,7 +20,7 @@ module.exports = (req, res)->
   .then _.flatten
   .then (items)->
     uris = _.uniq items.map(_.property('entity'))
-    getEntitiesByUris uris
+    getEntitiesByUris { uris }
     .get 'entities'
     .then replaceEditionsByTheirWork
     .then (data)->
@@ -47,7 +47,7 @@ replaceEditionsByTheirWork = (entities)->
   { editionsWorksUris, editionWorkMap } = editions.reduce aggregateEditionsWorksUris, data
   # Do no refetch works already fetched
   editionsWorksUris = _.uniq _.difference(editionsWorksUris, worksUris)
-  getEntitiesByUris editionsWorksUris
+  getEntitiesByUris { uris: editionsWorksUris }
   .get 'entities'
   .then (editionsWorksEntities)->
     works = works.concat _.values(editionsWorksEntities)

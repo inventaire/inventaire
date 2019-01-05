@@ -9,7 +9,7 @@ getEntitiesByUris = __.require 'controllers', 'entities/lib/get_entities_by_uris
 getRelativeEntities = (relationProperty)-> (entity)->
   uris = entity.claims[relationProperty]
   unless uris?.length > 0 then return Promise.resolve []
-  getEntitiesByUris uris
+  getEntitiesByUris { uris }
   .then (res)-> _.values(res.entities)
 
 getEditionWorks = getRelativeEntities 'wdt:P629'
@@ -41,7 +41,7 @@ mergeWorksClaims = (works)->
   'wdt:P179': aggregateClaims works, 'wdt:P179'
 
 getEditionGraphEntities = (uri)->
-  getEntityByUri uri
+  getEntityByUri { uri }
   .then getEditionGraphFromEdition
 
 getWorkGraphFromWork = (lang, work)->

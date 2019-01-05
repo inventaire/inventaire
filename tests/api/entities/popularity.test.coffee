@@ -56,27 +56,6 @@ describe 'entities:popularity', ->
 
       return
 
-    it 'should be incremented by every instances in inventories', (done)->
-      createWorkWithAnItem()
-      .then (work)-> scoreShouldEqual work.uri, 1, done
-      .catch done
-
-      return
-
-    it 'should be incremented by any statement made with it as value', (done)->
-      Promise.all [
-        createEdition()
-        createWork()
-      ]
-      .spread (edition, workB)->
-        workAUri = edition.claims['wdt:P629'][0]
-        scoreShouldEqual workAUri, 1
-        .then -> addClaim workB.uri, 'wdt:P921', workAUri
-        .then -> scoreShouldEqual workAUri, 2, done
-      .catch done
-
-      return
-
     it 'should be incremented by every instances of editions', (done)->
       createEdition()
       .then (edition)->
@@ -89,32 +68,25 @@ describe 'entities:popularity', ->
       return
 
   describe 'serie', ->
-    it 'should be made of the sum of its parts scores', (done)->
-      createSerieWithTwoWorksWithTwoClaims()
-      # 2: work items
-      # 2: work being claim values
-      # 2: the serie having both work linking to it
-      .spread (serie)-> scoreShouldEqual serie.uri, 6, done
+    it 'should be made of the sum of its parts scores + number of parts', (done)->
+      createSerieWithAWorkWithAnEditionWithAnItem()
+      # 1: item
+      # 1: edition
+      # 1: work
+      .spread (serie)-> scoreShouldEqual serie.uri, 3, done
       .catch done
 
       return
 
   describe 'human', ->
-    it 'should be made of the sum of its works scores + series links count', (done)->
-      createHuman()
-      .then (human)->
-        createSerieWithTwoWorksWithTwoClaims()
-        .spread (serie, workA, workB)->
-          Promise.all [
-            addClaim serie.uri, 'wdt:P50', human.uri
-            addClaim workA.uri, 'wdt:P50', human.uri
-            addClaim workB.uri, 'wdt:P50', human.uri
-          ]
-          # 2: work items
-          # 2: work being claim values
-          # 2: the serie having both work linking to it
-          # 3: the author having both work and the serie linking to it
-          .then -> scoreShouldEqual human.uri, 9, done
+    it 'should be made of the sum of its works scores + number of works and series', (done)->
+      createHumanWithAWorkWithAnEditionWithAnItem()
+      .spread (human)->
+        # 1: item
+        # 1: edition
+        # 1: work
+        # 1: serie
+        scoreShouldEqual human.uri, 4, done
       .catch done
 
       return
@@ -133,29 +105,27 @@ scoreShouldEqual = (uri, value, done)->
     done?()
     return score
 
-createWorkWithAnItem = ->
-  createWork()
-  .then (work)->
-    createItemFromEntityUri work.uri, { lang: 'en' }
-    .then -> return work
-
-createSerieWithTwoWorksWithTwoClaims = ->
+createSerieWithAWorkWithAnEditionWithAnItem = ->
   Promise.all [
+    createWork()
     createSerie()
-    createWorkWithAnItem()
-    createWorkWithAnItem()
   ]
-  .spread (serie, workA, workB)->
-    _.log serie, 'serie'
+  .spread (work, serie)->
     Promise.all [
-      addClaim workB.uri, 'wdt:P179', serie.uri
-      addClaim workA.uri, 'wdt:P179', serie.uri
+      createEdition { work }
+      addClaim work.uri, 'wdt:P179', serie.uri
     ]
-    .then ->
+    .spread (edition)->
+      createItemFromEntityUri edition.uri, { lang: 'en' }
+      .then (item)-> [ serie, work, edition, item ]
+
+createHumanWithAWorkWithAnEditionWithAnItem = ->
+  createHuman()
+  .then (human)->
+    createSerieWithAWorkWithAnEditionWithAnItem()
+    .spread (serie, work, edition, item)->
       Promise.all [
-        # Setting each others as work subject
-        # to increment each of their scores of 1
-        addClaim workB.uri, 'wdt:P921', workA.uri
-        addClaim workA.uri, 'wdt:P921', workB.uri
+        addClaim work.uri, 'wdt:P50', human.uri
+        addClaim serie.uri, 'wdt:P50', human.uri
       ]
-    .then -> return Promise.all [ serie, workA, workB ]
+      .then -> [ human, serie, work, edition, item ]

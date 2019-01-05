@@ -14,7 +14,7 @@ possibleQueries = Object.keys queries
 # - refresh
 # - custom parameters: see the query file
 module.exports = (params)->
-  { query:queryName, refresh } = params
+  { query:queryName, refresh, dry } = params
 
   # Converting from kebab case to snake case
   params.query = queryName = queryName.replace /-/g, '_'
@@ -36,7 +36,8 @@ module.exports = (params)->
     value = params[k]
     key += ":#{value}"
 
-  cache_.get { key, fn: runQuery.bind(null, params, key), refresh }
+  fn = runQuery.bind null, params, key
+  cache_.get { key, fn, refresh, dry, dryFallbackValue: [] }
 
 parametersTests =
   qid: wdk.isItemId

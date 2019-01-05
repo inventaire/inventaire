@@ -179,7 +179,7 @@ FilterWithImage = (assertImage)-> (items)->
 itemWithImage = (item)-> item.snapshot['entity:image']
 
 validateEntityType = (item)->
-  getEntityByUri item.entity
+  getEntityByUri { uri: item.entity }
   .then (entity)->
     { type } = entity
 

@@ -26,7 +26,7 @@ module.exports = (req, res)->
 
   createEntity labels, claims, reqUserId
   # Re-request the entity's data to get it formatted
-  .then (entity)-> getEntityByUri "inv:#{entity._id}", true
+  .then (entity)-> getEntityByUri { uri: "inv:#{entity._id}", refresh: true }
   .then responses_.Send(res)
   .then Track(req, ['entity', 'creation'])
   .catch error_.Handler(req, res)

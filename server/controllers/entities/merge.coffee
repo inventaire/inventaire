@@ -44,7 +44,7 @@ module.exports = (req, res)->
 
   # Let getEntitiesByUris test for the whole URI validity
   # Get data from concerned entities
-  getEntitiesByUris [ fromUri, toUri ], true
+  getEntitiesByUris { uris: [ fromUri, toUri ], refresh: true }
   .then merge(reqUserId, toPrefix, fromUri, toUri)
   .tap -> radio.emit 'entity:merge', fromUri, toUri
   .then responses_.Ok(res)

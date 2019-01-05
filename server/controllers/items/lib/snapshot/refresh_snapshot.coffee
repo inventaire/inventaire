@@ -25,7 +25,7 @@ fromDoc = (changedEntityDoc)->
   .then snapshot_.batch
 
 fromUri = (changedEntityUri)->
-  getEntityByUri changedEntityUri
+  getEntityByUri { uri: changedEntityUri }
   .then fromDoc
 
 module.exports = { fromDoc, fromUri }
@@ -43,7 +43,7 @@ getSnapshotsByType =
     .spread getEditionSnapshot
 
   work: (uri)->
-    getEntityByUri uri
+    getEntityByUri { uri }
     .then (work)->
       getWorkAuthorsAndSeries work
       .spread (authors, series)->
@@ -66,7 +66,7 @@ getEditionsSnapshots = (uri, works, authors, series)->
   assert_.types [ 'string', 'array', 'array', 'array' ], arguments
 
   entities_.urisByClaim 'wdt:P629', uri
-  .then getEntitiesByUris
+  .then (uris)-> getEntitiesByUris { uris }
   .then (res)-> _.values res.entities
   .map (edition)-> getEditionSnapshot edition, works, authors, series
 
