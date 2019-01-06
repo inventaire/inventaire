@@ -181,6 +181,20 @@ describe 'cache', ->
         .catch done
         return
 
+      it 'should populate the cache when requested', (done)->
+        key = randomString 4
+        fn = workingFn.bind null, 'foo'
+        cache_.get { key, fn, dry: true, dryPopulate: true }
+        .delay 10
+        .then (res1)->
+          should(res1).not.be.ok()
+          cache_.get { key, dry: true }
+          .then (res2)->
+            should(res2).be.ok()
+          done()
+        .catch done
+        return
+
   describe 'put', ->
     it 'should return a promise', (done)->
       p = cache_.put 'whatever', 'somevalue'
