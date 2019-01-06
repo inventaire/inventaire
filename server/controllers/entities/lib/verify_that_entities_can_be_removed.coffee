@@ -16,9 +16,9 @@ module.exports = (uris)->
     entitiesItemsChecks uris
   ]
 
-entitiesRelationsChecks = (uris)-> Promise.all uris.map entityIsntMuchUsed
+entitiesRelationsChecks = (uris)-> Promise.all uris.map(entityIsntUsedMuch)
 
-entityIsntMuchUsed = (uri)->
+entityIsntUsedMuch = (uri)->
   entities_.byClaimsValue uri
   .then (claims)->
     if claims.length > 1
@@ -28,7 +28,8 @@ entityIsntMuchUsed = (uri)->
       if claim.property in criticalClaimProperties
         throw error_.new 'this entity is used in a critical claim', 400, uri, claim
 
-entitiesItemsChecks = (uris)-> Promise.all uris.map entityIsntUsedByAnyItem
+entitiesItemsChecks = (uris)-> Promise.all uris.map(entityIsntUsedByAnyItem)
+
 entityIsntUsedByAnyItem = (uri)->
   items_.byEntity uri
   .then (items)->
