@@ -47,4 +47,12 @@ module.exports = entitiesUtils =
   addClaim: (uri, property, value)->
     entitiesUtils.updateClaim uri, property, null, value
 
+  getRefreshedPopularityByUris: (uris)->
+    if _.isArray(uris) then uris = uris.join('|')
+    nonAuthReq 'get', "/api/entities?action=popularity&uris=#{uris}&refresh=true"
+
+  getRefreshedPopularityByUri: (uri)->
+    entitiesUtils.getRefreshedPopularityByUris uri
+    .then (res)-> res.scores[uri]
+
 normalizeUri = (uri)-> if _.isInvEntityId(uri) then uri = "inv:#{uri}" else uri

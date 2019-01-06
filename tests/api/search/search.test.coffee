@@ -6,8 +6,8 @@ faker = require 'faker'
 { Promise } = __.require 'lib', 'promises'
 { nonAuthReq, authReq, undesiredRes, undesiredErr, getUser } = require '../utils/utils'
 randomString = __.require 'lib', './utils/random_string'
-{ createWork, createHuman, createSerie, humanName, randomWorkLabel } = require '../fixtures/entities'
-{ createEditionFromWorks } = require '../fixtures/entities'
+{ createWork, createHuman, createSerie, humanName, randomWorkLabel, createEditionFromWorks } = require '../fixtures/entities'
+{ getRefreshedPopularityByUris } = require '../utils/entities'
 
 describe 'search:global', ->
   it 'should reject empty searches', (done)->
@@ -192,6 +192,9 @@ describe 'search:global', ->
         createEditionFromWorks work
         createWork { labels: { fr: fullMatchLabel } }
       ]
+      # trigger a popularity refresh to avoid getting the default score on
+      # the search hereafter
+      .then -> getRefreshedPopularityByUris work.uri
       .delay 1000
       .then ->
         workWithEditionUri = work.uri
@@ -213,7 +216,10 @@ describe 'search:global', ->
         createEditionFromWorks work
       ]
       Promise.all workEditionsCreation
-      .delay 4000
+      # trigger a popularity refresh to avoid getting the default score on
+      # the search hereafter
+      .then (works)-> getRefreshedPopularityByUris _.map(works, 'uri')
+      .delay 2000
       .then ->
         search 'works', workLabel
         .then (results)->

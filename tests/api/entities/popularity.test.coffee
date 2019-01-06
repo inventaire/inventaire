@@ -4,7 +4,7 @@ _ = __.require 'builders', 'utils'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
 { authReq, nonAuthReq, undesiredErr, undesiredRes } = require '../utils/utils'
-{ addClaim } = require '../utils/entities'
+{ addClaim, getRefreshedPopularityByUri } = require '../utils/entities'
 { createEdition, createWork, createItemFromEntityUri, createSerie, createHuman } = require '../fixtures/entities'
 
 describe 'entities:popularity', ->
@@ -91,15 +91,8 @@ describe 'entities:popularity', ->
 
       return
 
-getPopularity = (uri)->
-  nonAuthReq 'get', "/api/entities?action=popularity&uris=#{uri}&refresh=true"
-
-getScore = (uri)->
-  getPopularity uri
-  .then (res)-> res.scores[uri]
-
 scoreShouldEqual = (uri, value, done)->
-  getScore uri
+  getRefreshedPopularityByUri uri
   .then (score)->
     score.should.equal value
     done?()
