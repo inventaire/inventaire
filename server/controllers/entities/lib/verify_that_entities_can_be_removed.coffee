@@ -4,6 +4,7 @@ error_ = __.require 'lib', 'error/error'
 { Promise } = __.require 'lib', 'promises'
 entities_ = require './entities'
 items_ = __.require 'controllers', 'items/lib/items'
+getEntitiesByUris = require './get_entities_by_uris'
 
 criticalClaimProperties = [
   # No edition should end up without an associated work because of a removed work
@@ -28,7 +29,16 @@ entityIsntUsedMuch = (uri)->
       if claim.property in criticalClaimProperties
         throw error_.new 'this entity is used in a critical claim', 400, uri, claim
 
-entitiesItemsChecks = (uris)-> Promise.all uris.map(entityIsntUsedByAnyItem)
+entitiesItemsChecks = (uris)->
+  getAllUris uris
+  .map entityIsntUsedByAnyItem
+
+getAllUris = (uris)->
+  getEntitiesByUris { uris }
+  .then (res)->
+    unless res.redirects? then return uris
+    missingCanonicalUris = _.values res.redirects
+    return uris.concat missingCanonicalUris
 
 entityIsntUsedByAnyItem = (uri)->
   items_.byEntity uri

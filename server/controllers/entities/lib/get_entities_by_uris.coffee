@@ -16,6 +16,7 @@ prefixes = Object.keys getters
 
 module.exports = (params)->
   { uris } = params
+  assert_.array uris
   domains = {}
 
   # validate per URI to be able to return a precise error message
