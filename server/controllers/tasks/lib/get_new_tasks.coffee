@@ -15,7 +15,7 @@ module.exports = (entity)-> (existingTasks)->
   .spread (newSuggestions, authorWorksData)->
     unless newSuggestions.length > 0 then return []
     Promise.all newSuggestions.map(addOccurrences(authorWorksData))
-    .then automerge(suspectUri)
+    .then automerge(entity, authorWorksData.labels)
     .then buildTaskObject(suspectUri)
 
 addOccurrences = (authorWorksData)-> (suggestion)->
