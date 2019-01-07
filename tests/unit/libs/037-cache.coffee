@@ -184,7 +184,7 @@ describe 'cache', ->
       it 'should populate the cache when requested', (done)->
         key = randomString 4
         fn = workingFn.bind null, 'foo'
-        cache_.get { key, fn, dry: true, dryPopulate: true }
+        cache_.get { key, fn, dryAndCache: true }
         .delay 10
         .then (res1)->
           should(res1).not.be.ok()

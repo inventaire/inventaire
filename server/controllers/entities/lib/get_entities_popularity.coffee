@@ -17,4 +17,4 @@ getPopularity = (refresh)-> (uri)->
   key = "popularity:#{uri}"
   fn = getPopularityByUri.bind null, uri
 
-  cache_.get { key, fn, refresh, dry: true, dryFallbackValue: 0, dryPopulate: true }
+  cache_.get { key, fn, refresh, dry: true, dryAndCache: true, dryFallbackValue: 0 }
