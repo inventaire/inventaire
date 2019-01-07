@@ -13,17 +13,18 @@ module.exports = (req, res, next)->
   sanitize req, res, sanitization
   .then (params)->
     { user } = req
-    { uris } = params
-    console.log('uris', uris)
-    uris = _.uniq uris
-
-    for uri in uris
-      # Wikidata entities can't be delete
-      # and neither can editions entities with an ISBN: they should be fixed
-      unless _.isInvEntityUri uri
-        throw error_.newInvalid 'uri', uri
-
+    uris = _.uniq params.uris
+    validateInvUris uris
     verifyThatEntitiesCanBeRemoved uris
     .then -> removeEntitiesByInvId user, uris
   .then responses_.Ok(res)
   .catch error_.Handler(req, res)
+
+validateInvUris = (uris)->
+  for uri in uris
+    # Wikidata entities can't be delete
+    # and neither can editions entities with an ISBN: they should be fixed
+    unless _.isInvEntityUri uri
+      throw error_.newInvalid 'uri', uri
+
+  return
