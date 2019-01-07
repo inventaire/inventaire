@@ -48,7 +48,7 @@ getItemsCount = (uri)->
 getWorkEditionsScores = (uri)->
   # Limit request to local entities as Wikidata editions entities are currently ignored
   # see https://github.com/inventaire/inventaire/issues/182
-  reverseClaims { property: 'wdt:P629', value: uri, dry: true, localOnly: true }
+  reverseClaims { property: 'wdt:P629', value: uri, dry: true }
   .then (editonsUris)->
     editonsCount = editonsUris.length
     Promise.all editonsUris.map(getItemsCount)

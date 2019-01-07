@@ -23,8 +23,12 @@ blacklistedProperties = [
   'wdt:P407'
 ]
 
+localOnlyProperties = [
+  'wdt:P629'
+]
+
 module.exports = (params)->
-  { property, value, refresh, sort, dry, localOnly } = params
+  { property, value, refresh, sort, dry } = params
   assert_.strings [ property, value ]
 
   if property in blacklistedProperties
@@ -32,7 +36,7 @@ module.exports = (params)->
 
   promises = []
 
-  unless localOnly
+  unless property in localOnlyProperties
     promises.push requestWikidataReverseClaims(property, value, refresh, dry)
 
   promises.push invReverseClaims(property, value)
