@@ -176,7 +176,7 @@ describe 'entities:delete:by-uris', ->
     return
 
   it 'should not remove editions with an ISBN and an item', (done)->
-    uri = 'isbn:9782298063264'
+    uri = 'isbn:9791020906427'
     ensureEditionExists uri
     .then (edition)->
       authReq 'post', '/api/items', { entity: uri, lang: 'en' }
