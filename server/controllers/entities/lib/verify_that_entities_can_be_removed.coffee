@@ -22,6 +22,8 @@ entitiesRelationsChecks = (uris)-> Promise.all uris.map(entityIsntUsedMuch)
 entityIsntUsedMuch = (uri)->
   entities_.byClaimsValue uri
   .then (claims)->
+    # Tolerating 1 claim: typically when a junk author entity is linked via a wdt:P50 claim
+    # to a work, the author can be deleted, which will also remove the claim on the work
     if claims.length > 1
       throw error_.new 'this entity has too many claims to be removed', 400, uri, claims
 
