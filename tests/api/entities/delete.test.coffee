@@ -12,7 +12,7 @@ describe 'entities:delete:by-uris', ->
   it 'should require admin rights', (done)->
     createHuman()
     .then (entity)->
-      authReq 'delete', "/api/entities?action=by-uris&uris=#{entity.uri}"
+      authReq 'post', '/api/entities?action=delete-by-uris', { uris: [ entity.uri ] }
     .then undesiredRes(done)
     .catch (err)->
       err.statusCode.should.equal 403
