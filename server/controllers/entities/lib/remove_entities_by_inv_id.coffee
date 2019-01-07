@@ -3,6 +3,7 @@ _ = __.require 'builders', 'utils'
 { Promise } = __.require 'lib', 'promises'
 entities_ = require './entities'
 updateInvClaim = require './update_inv_claim'
+verifyThatEntitiesCanBeRemoved = require './verify_that_entities_can_be_removed'
 placeholders_ = require './placeholders'
 { unprefixify } = __.require 'controllers', 'entities/lib/prefix'
 radio = __.require 'lib', 'radio'
@@ -21,10 +22,13 @@ module.exports = (user, uris)->
 
     _.warn uri, 'removing entity'
 
-    tolerantRemove reqUserId, id
-    .then -> deleteUriValueClaims user, uri
-    .delay 100
-    .then removeNext
+    entities_.byClaimsValue uri
+    .tap verifyThatEntitiesCanBeRemoved(uri)
+    .then (claims) ->
+      tolerantRemove reqUserId, id
+      .then deleteUriClaimsSequentially(user, uri, claims)
+      .delay 100
+      .then removeNext
 
   return removeNext()
 
@@ -45,11 +49,7 @@ tolerantRemove = (reqUserId, id)->
     else
       throw err
 
-deleteUriValueClaims = (user, uri)->
-  entities_.byClaimsValue uri
-  .then removeClaimsSequentially(user, uri)
-
-removeClaimsSequentially = (user, uri)-> (claimsData)->
+deleteUriClaimsSequentially = (user, uri, claimsData)->
   removeNextClaim = ->
     claimData = claimsData.pop()
     unless claimData? then return

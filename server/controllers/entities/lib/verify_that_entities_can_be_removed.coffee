@@ -10,25 +10,20 @@ criticalClaimProperties = [
   'wdt:P629'
 ]
 
-module.exports = (uris)->
+module.exports = (uri)-> (claims)->
   Promise.all [
-    entitiesRelationsChecks uris
-    entitiesItemsChecks uris
+    entityIsntMuchUsed(claims, uri)
+    entityIsntUsedByAnyItem uri
   ]
 
-entitiesRelationsChecks = (uris)-> Promise.all uris.map entityIsntMuchUsed
+entityIsntMuchUsed = (claims, uri)->
+  if claims.length > 1
+    throw error_.new 'this entity has too many claims to be removed', 400, uri, claims
 
-entityIsntMuchUsed = (uri)->
-  entities_.byClaimsValue uri
-  .then (claims)->
-    if claims.length > 1
-      throw error_.new 'this entity has too many claims to be removed', 400, uri, claims
+  for claim in claims
+    if claim.property in criticalClaimProperties
+      throw error_.new 'this entity is used in a critical claim', 400, uri, claim
 
-    for claim in claims
-      if claim.property in criticalClaimProperties
-        throw error_.new 'this entity is used in a critical claim', 400, uri, claim
-
-entitiesItemsChecks = (uris)-> Promise.all uris.map entityIsntUsedByAnyItem
 entityIsntUsedByAnyItem = (uri)->
   items_.byEntity uri
   .then (items)->
