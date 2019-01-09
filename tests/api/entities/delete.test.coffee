@@ -12,7 +12,7 @@ describe 'entities:delete:by-uris', ->
   it 'should require admin rights', (done)->
     createHuman()
     .then (entity)->
-      authReq 'delete', "/api/entities?action=by-uris&uris=#{entity.uri}"
+      authReq 'post', '/api/entities?action=delete-by-uris', { uris: [ entity.uri ] }
     .then undesiredRes(done)
     .catch (err)->
       err.statusCode.should.equal 403
@@ -106,7 +106,7 @@ describe 'entities:delete:by-uris', ->
     uri = 'isbn:9782298063264'
     ensureEditionExists uri
     .then (edition)->
-      # Using the inv URI, as the isbn one would be rejected earlier
+      # Using the inv URI, as the isbn one would be rejected
       invUri = 'inv:' + edition._id
       deleteByUris invUri
     .then -> done()
@@ -172,5 +172,22 @@ describe 'entities:delete:by-uris', ->
         err.body.status_verbose.should.equal "entities that are used by an item can't be removed"
         err.statusCode.should.equal 400
         done()
+    .catch undesiredErr(done)
+    return
+
+  it 'should not remove editions with an ISBN and an item', (done)->
+    uri = 'isbn:9791020906427'
+    ensureEditionExists uri
+    .then (edition)->
+      authReq 'post', '/api/items', { entity: uri, lang: 'en' }
+      .then ->
+        # Using the inv URI, as the isbn one would be rejected
+        invUri = 'inv:' + edition._id
+        deleteByUris invUri
+    .then undesiredRes(done)
+    .catch (err)->
+      err.body.status_verbose.should.equal "entities that are used by an item can't be removed"
+      err.statusCode.should.equal 400
+      done()
     .catch undesiredErr(done)
     return

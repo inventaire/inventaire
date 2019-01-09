@@ -4,6 +4,7 @@ error_ = __.require 'lib', 'error/error'
 { Promise } = __.require 'lib', 'promises'
 entities_ = require './entities'
 items_ = __.require 'controllers', 'items/lib/items'
+getEntitiesByUris = require './get_entities_by_uris'
 
 criticalClaimProperties = [
   # No edition should end up without an associated work because of a removed work
@@ -16,11 +17,13 @@ module.exports = (uris)->
     entitiesItemsChecks uris
   ]
 
-entitiesRelationsChecks = (uris)-> Promise.all uris.map entityIsntMuchUsed
+entitiesRelationsChecks = (uris)-> Promise.all uris.map(entityIsntUsedMuch)
 
-entityIsntMuchUsed = (uri)->
+entityIsntUsedMuch = (uri)->
   entities_.byClaimsValue uri
   .then (claims)->
+    # Tolerating 1 claim: typically when a junk author entity is linked via a wdt:P50 claim
+    # to a work, the author can be deleted, which will also remove the claim on the work
     if claims.length > 1
       throw error_.new 'this entity has too many claims to be removed', 400, uri, claims
 
@@ -28,7 +31,17 @@ entityIsntMuchUsed = (uri)->
       if claim.property in criticalClaimProperties
         throw error_.new 'this entity is used in a critical claim', 400, uri, claim
 
-entitiesItemsChecks = (uris)-> Promise.all uris.map entityIsntUsedByAnyItem
+entitiesItemsChecks = (uris)->
+  getAllUris uris
+  .map entityIsntUsedByAnyItem
+
+getAllUris = (uris)->
+  getEntitiesByUris { uris }
+  .then (res)->
+    unless res.redirects? then return uris
+    missingCanonicalUris = _.values res.redirects
+    return uris.concat missingCanonicalUris
+
 entityIsntUsedByAnyItem = (uri)->
   items_.byEntity uri
   .then (items)->

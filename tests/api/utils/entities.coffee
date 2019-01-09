@@ -18,8 +18,8 @@ module.exports = entitiesUtils =
     .then (res)-> res.entities[uri]
 
   deleteByUris: (uris)->
-    if _.isArray(uris) then uris = uris.join('|')
-    adminReq 'delete', "/api/entities?action=by-uris&uris=#{uris}"
+    uris = _.forceArray uris
+    adminReq 'post', '/api/entities?action=delete-by-uris', { uris }
 
   merge: (from, to)->
     from = normalizeUri from

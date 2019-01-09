@@ -26,6 +26,8 @@ module.exports =
     authentified:
       'create': require './create'
       'exists-or-create-from-seed': require './exists_or_create_from_seed'
+    admin:
+      'delete-by-uris': require './delete_by_uris'
 
   put: ActionsControllers
     authentified:
@@ -35,7 +37,3 @@ module.exports =
     admin:
       'merge': require './merge'
       'revert-merge': require './revert_merge'
-
-  delete: ActionsControllers
-    admin:
-      'by-uris': require './delete_by_uris'
