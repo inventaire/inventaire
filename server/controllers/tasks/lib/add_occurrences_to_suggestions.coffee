@@ -11,29 +11,37 @@ module.exports = (suspectWorksData)-> (suggestion)->
   { uri } = suggestion
 
   Promise.all [
-    getWorksLabelsOccurrence uri, labels, langs
-    getAuthorWorks({ uri, dry: true }).get('works')
+    getWorksLabelsOccurrence(uri, labels, langs)
+    getInventaireWorkOccurence(uri, labels)
   ]
-  .spread (occurrences, sugggestionWorks)->
-    suggestion.occurrences = occurrences
-    addIdenticalLabel(sugggestionWorks, labels, suggestion)
-
-addIdenticalLabel = (sugggestionWorks, suspectWorksLabels, suggestion)->
-  uris = sugggestionWorks.map _.property('uri')
-
-  getEntitiesByUris { uris }
-  .get 'entities'
-  .then _.values
-  .then (suggestionWorksData)->
-    for sugWork in suggestionWorksData
-      sugWorkLabels = _.values sugWork.labels
-      matchedTitles = []
-      for sugWorkLabel in sugWorkLabels
-        if sugWorkLabel in suspectWorksLabels
-          matchedTitles.push sugWorkLabel
-    suggestion.occurrences ?= []
-    if matchedTitles?
-      suggestion.occurrences.push
-        uri: sugWork.uri
-        matchedTitles: matchedTitles
+  .spread (externalOccurrences, inventaireOccurences)->
+    if externalOccurrences || inventaireOccurences
+      suggestion.occurrences = []
+      suggestion.occurrences.push externalOccurrences...
+      suggestion.occurrences.push inventaireOccurences...
     suggestion
+
+getInventaireWorkOccurence = (uri, suspectWorksLabels) ->
+  getAuthorWorks { uri, dry: true }
+  .then (res)->
+    uris = res.works.map _.property 'uri'
+    getEntitiesByUris { uris }
+    .get 'entities'
+    .then _.values
+    .then (suggestionWorksData)->
+      matchedTitles = []
+      for sugWork in suggestionWorksData
+        sugWorkLabels = _.values sugWork.labels
+        for sugWorkLabel in sugWorkLabels
+          if sugWorkLabel in suspectWorksLabels
+            matchedTitles.push sugWorkLabel
+      if matchedTitles.length > 0
+        occurence = []
+        occurence.push
+          uri: sugWork.uri
+          matchedTitles: matchedTitles
+        occurence
+
+
+
+
