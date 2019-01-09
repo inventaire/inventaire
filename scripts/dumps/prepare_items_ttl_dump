@@ -18,3 +18,4 @@ curl -s "${dbHost}/items-prod/_design/items/_view/byEntity" |
   sed 's/$/ ./' >> $items_dump
 
 validate_ttl $items_dump
+gzip -9f *ttl
