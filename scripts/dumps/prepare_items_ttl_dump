@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+source ./scripts/dumps/lib/utils.sh
+
+items_dump="${today_folder}/items.ttl"
+dbHost=$(node -p "require('config').db.fullHost()")
+
+echo "
+@prefix wdt: <http://www.wikidata.org/prop/direct/> .
+@prefix inv: <http://inventaire.io/entity/> .
+@prefix invexamplar: <http://inventaire.io/items/> .
+" > $items_dump
+
+# We only need the items entities for now
+curl -s "${dbHost}/items-prod/_design/items/_view/byEntity" |
+  jq '.rows[] | [.id, .key[0]] | join(" wdt:P1574 ")' |
+  sed 's/"//g' |
+  sed 's/^/invexamplar:/' |
+  sed 's/$/ ./' >> $items_dump
+
+validate_ttl $items_dump
