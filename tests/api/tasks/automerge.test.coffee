@@ -1,7 +1,7 @@
 should = require 'should'
 { undesiredErr } = require '../utils/utils'
 { checkEntities } = require '../utils/tasks'
-{ createHuman, createWorkWithAuthor } = require '../fixtures/entities'
+{ createHuman, createWorkWithAuthor, randomWorkLabel } = require '../fixtures/entities'
 
 # Tests dependency: having a populated ElasticSearch wikidata index
 describe 'tasks:automerge', ->
@@ -11,7 +11,24 @@ describe 'tasks:automerge', ->
     createHuman { labels: { en: humanLabel } }
     .then (human)->
       createWorkWithAuthor human, workLabel
-      .then (work)-> checkEntities human.uri
+      .then -> checkEntities human.uri
+      .then (tasks)->
+        tasks.length.should.equal 0
+        done()
+    .catch undesiredErr(done)
+
+    return
+
+  it 'should automerge if suspect and suggestion workLabel are similar', (done)->
+    humanLabel = 'Alain Damasio' # wdId Q2829704
+    workLabel = randomWorkLabel()
+    createHuman { labels: { en: humanLabel } }
+    .then (human)->
+      Promise.all [
+        createWorkWithAuthor { uri: "wd:Q2829704" }, workLabel
+        createWorkWithAuthor human, workLabel
+      ]
+      .then -> checkEntities human.uri
       .then (tasks)->
         tasks.length.should.equal 0
         done()
@@ -25,7 +42,7 @@ describe 'tasks:automerge', ->
     createHuman { labels: { en: humanLabel } }
     .then (human)->
       createWorkWithAuthor human, workLabel
-      .then (work)-> checkEntities human.uri
+      .then -> checkEntities human.uri
       .then (tasks)->
         tasks.length.should.aboveOrEqual 1
         done()
