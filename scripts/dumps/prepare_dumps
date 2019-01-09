@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+./scripts/dumps/prepare_entities_dumps
+./scripts/dumps/prepare_items_dumps
