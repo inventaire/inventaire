@@ -21,10 +21,13 @@ module.exports =
   # - dryFallbackValue: the value to return when no cached value can be found, to keep responses
   #   type consistent
   get: (params)->
-    { key, fn, timespan, refresh, dry, dryFallbackValue } = params
-    if refresh then timespan = 0
+    { key, fn, timespan, refresh, dry, dryAndCache, dryFallbackValue } = params
+    if refresh
+      timespan = 0
+      dry = false
     timespan ?= oneMonth
     dry ?= false
+    dryAndCache ?= false
 
     try
       assert_.string key
@@ -41,7 +44,7 @@ module.exports =
     refuseOldValue = timespan is 0
 
     checkCache key, timespan
-    .then requestOnlyIfNeeded.bind(null, key, fn, dry, dryFallbackValue, refuseOldValue)
+    .then requestOnlyIfNeeded(key, fn, dry, dryAndCache, dryFallbackValue, refuseOldValue)
     .catch (err)->
       label = "final cache_ err: #{key}"
       # not logging the stack trace in case of 404 and alikes
@@ -99,16 +102,7 @@ checkCache = (key, timespan)->
     else
       return res
 
-returnOldValue = (key, err)->
-  checkCache key, Infinity
-  .then (res)->
-    if res? then res.body
-    else
-      # rethrowing the previous error as it's probably more meaningful
-      err.old_value = null
-      throw err
-
-requestOnlyIfNeeded = (key, fn, dry, dryFallbackValue, refuseOldValue, cached)->
+requestOnlyIfNeeded = (key, fn, dry, dryAndCache, dryFallbackValue, refuseOldValue)-> (cached)->
   if cached?
     # _.info "from cache: #{key}"
     return cached.body
@@ -117,6 +111,15 @@ requestOnlyIfNeeded = (key, fn, dry, dryFallbackValue, refuseOldValue, cached)->
     # _.info "empty cache on dry get: #{key}"
     return dryFallbackValue
 
+  if dryAndCache
+    # _.info "returning and populating cache: #{key}"
+    populate key, fn, refuseOldValue
+    .catch _.Error("dryAndCache: #{key}")
+    return dryFallbackValue
+
+  return populate key, fn, refuseOldValue
+
+populate = (key, fn, refuseOldValue)->
   fn()
   .then (res)->
     # _.info "from remote data source: #{key}"
@@ -137,3 +140,12 @@ putResponseInCache = (key, res)->
     timestamp: new Date().getTime()
 
 isFreshEnough = (timestamp, timespan)-> not _.expired(timestamp, timespan)
+
+returnOldValue = (key, err)->
+  checkCache key, Infinity
+  .then (res)->
+    if res? then res.body
+    else
+      # rethrowing the previous error as it's probably more meaningful
+      err.old_value = null
+      throw err

@@ -14,9 +14,7 @@ module.exports = (uris, refresh)->
 getPopularity = (refresh)-> (uri)->
   unless _.isEntityUri(uri) then throw error_.new 'invalid uri', 400, uri
 
-  key = buildKey uri
+  key = "popularity:#{uri}"
   fn = getPopularityByUri.bind null, uri
 
-  cache_.get { key, fn, refresh }
-
-buildKey = (uri)-> "popularity:#{uri}"
+  cache_.get { key, fn, refresh, dry: true, dryAndCache: true, dryFallbackValue: 0 }
