@@ -148,4 +148,4 @@ see wiki: [API](https://github.com/inventaire/inventaire/wiki/API)
 *see [Labs settings](https://inventaire.io/settings/labs)*
 
 ## License
-[AGPL](LICENSE.md)
+[AGPL](LICENSE)
