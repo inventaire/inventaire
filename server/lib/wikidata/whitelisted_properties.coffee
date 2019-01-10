@@ -73,4 +73,5 @@ module.exports = [
   'P2716' # collage image
   'P2860' # cite
   'P4033' # Mastodon address
+  'P6338' # colorist
 ]
