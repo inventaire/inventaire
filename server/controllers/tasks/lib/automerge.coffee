@@ -4,15 +4,12 @@ mergeEntities = __.require 'controllers', 'entities/lib/merge_entities'
 { _id: reconcilerUserId } = __.require('couch', 'hard_coded_documents').users.reconciler
 { prefixifyInv } = __.require 'controllers', 'entities/lib/prefix'
 
-# Merge automatically if enough confidence between suspect and suggestion
+# Merge if enough confidence between the suspect and one suggestion
 # If confidence is too low, return best suggestions for task creation
 
-module.exports = (suspect, workLabels)-> (suggestions)->
-  # unable to define if occurences are relevant
-  # since author name will be found on external
-  # source pages
+module.exports = (suspect, workLabelsByLang)-> (suggestions)->
+  workLabels = _.values workLabelsByLang
   if authorNameInWorkTitles(suspect.labels, workLabels) then return suggestions
-
   sourcedSuggestions = suggestions.filter hasOccurrences
 
   if noSuggestion sourcedSuggestions
@@ -22,25 +19,23 @@ module.exports = (suspect, workLabels)-> (suggestions)->
   else
     # Only one suggestion, automerge possible
     uniqSuggestion = sourcedSuggestions[0]
-    unless canBeAutomerged uniqSuggestion
-      return sourcedSuggestions
 
+    unless canBeAutomerged(uniqSuggestion) then return sourcedSuggestions
 
-  mergeEntities reconcilerUserId, suspect.uri, uniqSuggestion.uri
-  # No suggestions since merged suspect
-  .then -> return []
+    mergeEntities reconcilerUserId, suspect.uri, uniqSuggestion.uri
+    # No suggestions since merged suspect
+    .then -> []
 
 noSuggestion = (sug)->  sug.length is 0
 
 manySuggestions = (sug)-> sug.length > 1
 
 authorNameInWorkTitles = (authorLabels, workLabels)->
-  works = _.values workLabels
-  authors = _.values authorLabels
-  for author in authors
-    for work in works
-      if work.indexOf(author) > -1
-        return true
+  # Unable to define if occurences are relevant
+  # since author name will be found on external source pages
+  for authorLabel in _.values(authorLabels)
+    for workLabel in workLabels
+      if workLabel.match(authorLabel)? then return true
 
 hasOccurrences = (suggestion)-> suggestion.occurrences.length > 0
 
