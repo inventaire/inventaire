@@ -11,37 +11,34 @@ module.exports = (suspectWorksData)-> (suggestion)->
   { uri } = suggestion
 
   Promise.all [
-    getWorksLabelsOccurrence(uri, labels, langs)
-    getInventaireWorkOccurence(uri, labels)
+    getWorksLabelsOccurrence uri, labels, langs
+    getInventaireWorkOccurence uri, labels
   ]
   .spread (externalOccurrences, inventaireOccurences)->
-    if externalOccurrences || inventaireOccurences
-      suggestion.occurrences = []
-      suggestion.occurrences.push externalOccurrences...
-      suggestion.occurrences.push inventaireOccurences...
-    suggestion
+    suggestion.occurrences = externalOccurrences.concat inventaireOccurences
+    return suggestion
 
 getInventaireWorkOccurence = (uri, suspectWorksLabels) ->
   getAuthorWorks { uri, dry: true }
-  .then (res)->
-    uris = res.works.map _.property 'uri'
-    getEntitiesByUris { uris }
-    .get 'entities'
-    .then _.values
-    .then (suggestionWorksData)->
-      matchedTitles = []
-      for sugWork in suggestionWorksData
-        sugWorkLabels = _.values sugWork.labels
-        for sugWorkLabel in sugWorkLabels
-          if sugWorkLabel in suspectWorksLabels
-            matchedTitles.push sugWorkLabel
+  .then getSuggestionWorks
+  .then (suggestionWorksData)->
+    occurences = []
+    for sugWork in suggestionWorksData
+      matchedTitles = getMatchingTitles suspectWorksLabels, _.values(sugWork.labels)
       if matchedTitles.length > 0
-        occurence = []
-        occurence.push
-          uri: sugWork.uri
-          matchedTitles: matchedTitles
-        occurence
+        { uri } = sugWork
+        occurences.push { uri, matchedTitles }
+    return occurences
 
+getSuggestionWorks = (res)->
+  uris = res.works.map _.property('uri')
+  getEntitiesByUris { uris }
+  .get 'entities'
+  .then _.values
 
-
-
+getMatchingTitles = (suspectWorksLabels, suggestionWorkLabels)->
+  matchedTitles = []
+  for sugWorkLabel in suggestionWorkLabels
+    if sugWorkLabel in suspectWorksLabels
+      matchedTitles.push sugWorkLabel
+  return matchedTitles
