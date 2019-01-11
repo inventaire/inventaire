@@ -39,20 +39,6 @@ describe 'tasks:externalSourcesOccurrences', ->
 
     return
 
-  it 'should automerge if author has homonyms but only one has occurrences', (done)->
-    humanLabel = 'Alan Moore' # homonyms Q205739, Q1748845
-    workLabel = 'Voice of the Fire' # wd:Q3825051
-    createHuman { labels: { en: humanLabel } }
-    .then (human)->
-      createWorkWithAuthor human, workLabel
-      .then (work)-> checkEntities human.uri
-      .then (tasks)->
-        tasks.length.should.equal 0
-        done()
-    .catch undesiredErr(done)
-
-    return
-
   it 'should return an object of occurrences uris when author has work sourced in their wikipedia page', (done)->
     humanLabel = 'Stanislas Lem' # has no homonyms
     workLabel = 'Solaris' # too short label to be automerged
