@@ -1,24 +1,9 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 getAuthorWorks = __.require 'controllers', 'entities/lib/get_author_works'
-getWorksLabelsOccurrence = __.require 'controllers', 'entities/lib/get_works_labels_occurrence'
 getEntitiesByUris = __.require 'controllers', 'entities/lib/get_entities_by_uris'
-{ Promise } = __.require 'lib', 'promises'
 
-module.exports = (suspectWorksData)-> (suggestion)->
-  unless suggestion? then return []
-  { labels, langs } = suspectWorksData
-  { uri } = suggestion
-
-  Promise.all [
-    getWorksLabelsOccurrence uri, labels, langs
-    getInventaireWorkOccurence uri, labels
-  ]
-  .spread (externalOccurrences, inventaireOccurences)->
-    suggestion.occurrences = externalOccurrences.concat inventaireOccurences
-    return suggestion
-
-getInventaireWorkOccurence = (uri, suspectWorksLabels) ->
+module.exports = (uri, suspectWorksLabels) ->
   getAuthorWorks { uri, dry: true }
   .then getSuggestionWorks
   .then (suggestionWorksData)->

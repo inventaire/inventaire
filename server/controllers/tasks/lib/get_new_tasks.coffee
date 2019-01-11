@@ -2,7 +2,7 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 { Promise } = __.require 'lib', 'promises'
 searchEntityDuplicatesSuggestions = require './search_entity_duplicates_suggestions'
-addOccurrencesToSuggestions = require './add_occurrences_to_suggestions'
+addOccurrencesToSuggestion = require './add_occurrences_to_suggestion'
 getAuthorWorksData = require './get_author_works_data'
 automerge = require './automerge'
 
@@ -15,7 +15,7 @@ module.exports = (entity)-> (existingTasks)->
   .spread (newSuggestions, suspectWorksData)->
     unless newSuggestions.length > 0 then return []
     suspectWorksLabels = suspectWorksData.labels
-    Promise.all newSuggestions.map(addOccurrencesToSuggestions(suspectWorksData))
+    Promise.all newSuggestions.map(addOccurrencesToSuggestion(suspectWorksData))
     .then automerge(entity, suspectWorksData.labels)
     .then buildTaskObject(suspectUri)
 

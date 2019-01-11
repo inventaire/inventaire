@@ -18,13 +18,6 @@ module.exports = (wdAuthorUri, worksLabels, worksLabelsLangs)->
   assert_.strings worksLabels
   assert_.strings worksLabelsLangs
 
-  unless _.isWdEntityUri wdAuthorUri then return promises_.resolve []
-
-  # Filter-out labels that are too short, as it could generate false positives
-  worksLabels = worksLabels.filter (label)-> label.length > 5
-
-  if worksLabels.length is 0 then return promises_.resolve []
-
   # get Wikipedia article title from URI
   getEntityByUri { uri: wdAuthorUri }
   .then (authorEntity)->
