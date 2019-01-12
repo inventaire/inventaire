@@ -6,7 +6,7 @@ pass = require './pass'
 if CONFIG.serveStaticFiles
   express = require 'express'
   publicPath = __.path 'client', 'public'
-  staticMiddleware = express.static publicPath, { maxAge: CONFIG.staticMaxAge }
+  staticMiddleware = express.static publicPath, { maxAge: CONFIG.staticMaxAge, fallthrough: false }
   # the 2 arguments array will be apply'ied to app.use by server/init_express
   exports.mountStaticFiles = [ '/public', staticMiddleware ]
 
