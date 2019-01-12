@@ -1,9 +1,8 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require('builders', 'utils')
-promises_ = __.require 'lib', 'promises'
 express = require 'express'
-{ env, port, host, name, verbosity } = CONFIG
+{ env, port, host, name } = CONFIG
 
 middlewares = require './middlewares/middlewares'
 middlewaresList = middlewares.common.concat (middlewares[CONFIG.env] or [])
