@@ -30,6 +30,7 @@
     "test-api": "./tests/api/scripts/test_api",
     "test-api-quick": "./tests/api/scripts/test_api_quick",
     "test-watch": "./scripts/test --watch --extensions js,coffee",
+    "update-i18n": "./scripts/update-i18n",
     "update-toc": "doctoc README.md",
     "watch": "./scripts/watch"
   },

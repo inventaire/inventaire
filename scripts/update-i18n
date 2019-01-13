@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+# Assumes inventaire/inventaire-i18n is installed or symboly linked from the project root
+cd ./inventaire-i18n
+npm run build-emails
