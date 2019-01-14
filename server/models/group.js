@@ -3,6 +3,7 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const { truncateLatLng } = __.require('lib', 'geo')
+const assert_ = __.require('utils', 'assert_types')
 
 const Group = module.exports = {}
 
@@ -127,7 +128,7 @@ const findMembership = (userId, group, previousCategory, wanted) => {
 }
 
 const userIsRole = role => (userId, group) => {
-  const ids = group[role].map(_.property('user'))
+  const ids = _.map(group[role], 'user')
   return ids.includes(userId)
 }
 
@@ -139,6 +140,13 @@ Group.userIsMember = (userId, group) => userIsAdmin(userId, group) || userIsNonA
 Group.categories = {
   members: [ 'admins', 'members' ],
   users: [ 'admins', 'members', 'invited', 'requested' ]
+}
+
+Group.getAllMembers = group => {
+  assert_.object(group)
+  const adminsIds = _.map(group.admins, 'user')
+  const membersIds = _.map(group.members, 'user')
+  return adminsIds.concat(membersIds)
 }
 
 Group.attributes = require('./attributes/group')

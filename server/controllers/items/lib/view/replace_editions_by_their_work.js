@@ -4,7 +4,7 @@ const getEntitiesByUris = __.require('controllers', 'entities/lib/get_entities_b
 
 module.exports = entities => {
   const { works, editions } = splitEntities(entities)
-  const worksUris = _.pluck(works, 'uri')
+  const worksUris = _.map(works, 'uri')
   const data = { editionsWorksUris: [], editionWorkMap: {} }
   let { editionsWorksUris, editionWorkMap } = editions.reduce(aggregateEditionsWorksUris, data)
   // Do no refetch works already fetched
