@@ -1,9 +1,4 @@
 __ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-items_ = __.require 'controllers', 'items/lib/items'
-error_ = __.require 'lib', 'error/error'
-responses_ = __.require 'lib', 'responses'
-
 ActionsControllers = __.require 'lib', 'actions_controllers'
 
 module.exports =
@@ -27,13 +22,6 @@ module.exports =
 
   put: require './update'
 
-  delete: (req, res, next)->
-    { id } = req.query
-    reqUserId = req.user._id
-
-    items_.verifyOwnership id, reqUserId
-    .then items_.delete.bind(null, id)
-    .then responses_.Send(res)
-    .catch error_.Handler(req, res)
+  delete: require './delete'
 
 require('./lib/snapshot/update_snapshot_on_entity_change')()
