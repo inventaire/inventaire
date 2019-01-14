@@ -1,19 +1,22 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
-const promises_ = __.require('lib', 'promises')
 const responses_ = __.require('lib', 'responses')
 const error_ = __.require('lib', 'error/error')
-const items_ = require('./lib/items')
-const { getNetworkIds } = __.require('controllers', 'user/lib/relations_status')
 const getEntitiesByUris = __.require('controllers', 'entities/lib/get_entities_by_uris')
-const getByAccessLevel = require('./lib/get_by_access_level')
 const replaceEditionsByTheirWork = require('./lib/view/replace_editions_by_their_work')
 const bundleViewData = require('./lib/view/bundle_view_data')
+const sanitize = __.require('lib', 'sanitize/sanitize')
+const getAuthorizedItems = require('./lib/get_authorized_items')
+
+const sanitization = {
+  user: { optional: true },
+  group: { optional: true }
+}
 
 module.exports = (req, res) => {
-  const { _id: reqUserId } = req.user
-
-  getAllNetworkItems(reqUserId)
+  sanitize(req, res, sanitization)
+  .then(validateUserOrGroup)
+  .then(getItems)
   .then(items => {
     return getItemsEntitiesData(items)
     .then(bundleViewData(items))
@@ -22,21 +25,21 @@ module.exports = (req, res) => {
   .catch(error_.Handler(req, res))
 }
 
-const getAllNetworkItems = reqUserId => {
-  return user_.getNetworkIds(reqUserId)
-  .then(getItems(reqUserId))
-  .then(_.flatten)
+const validateUserOrGroup = params => {
+  if (!(params.user || params.group)) {
+    throw error_.newMissingQuery('user|group', 400, params)
+  }
+  return params
 }
 
-const getItems = reqUserId => ids => {
-  return promises_.all([
-    items_.byOwner(reqUserId),
-    getByAccessLevel.network(ids, reqUserId)
-  ])
+const getItems = params => {
+  const { user, group, reqUserId } = params
+  if (user) return getAuthorizedItems.byUser(user, reqUserId)
+  else return getAuthorizedItems.byGroup(group, reqUserId)
 }
 
 const getItemsEntitiesData = items => {
-  const uris = _.uniq(items.map(_.property('entity')))
+  const uris = _.uniq(_.map(items, 'entity'))
   return getEntitiesByUris({ uris })
   .get('entities')
   .then(replaceEditionsByTheirWork)
