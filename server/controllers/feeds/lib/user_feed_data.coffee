@@ -7,11 +7,11 @@ promises_ = __.require 'lib', 'promises'
 module.exports = (userId, authentifiedUserPromise)->
   promises_.all [
     user_.byId userId
-    canAccessUserSemiPrivateItems userId, authentifiedUserPromise
+    getAccessLevel userId, authentifiedUserPromise
   ]
-  .spread (user, canAccessUserSemiPrivateItems)->
+  .spread (user, getAccessLevel)->
     users: [ user ]
-    semiPrivateAccessRight: canAccessUserSemiPrivateItems
+    accessLevel: getAccessLevel
     feedOptions:
       title: user.username
       description: user.bio
@@ -19,10 +19,14 @@ module.exports = (userId, authentifiedUserPromise)->
       queryString: "user=#{user._id}"
       pathname: "inventory/#{user._id}"
 
-canAccessUserSemiPrivateItems = (userId, authentifiedUserPromise)->
+getAccessLevel = (userId, authentifiedUserPromise)->
   authentifiedUserPromise
   .then (requester)->
-    if requester?
-      return user_.areFriendsOrGroupCoMembers userId, requester._id
-    else
-      return false
+    unless requester? then return 'public'
+
+    requesterId = requester._id
+
+    if requesterId is userId then return 'private'
+
+    user_.areFriendsOrGroupCoMembers userId, requester._id
+    .then (bool)-> if bool then 'network' else 'public'

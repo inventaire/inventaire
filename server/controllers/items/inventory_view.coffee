@@ -6,6 +6,7 @@ error_ = __.require 'lib', 'error/error'
 items_ = require './lib/items'
 user_ = __.require 'controllers', 'user/lib/user'
 getEntitiesByUris = __.require 'controllers', 'entities/lib/get_entities_by_uris'
+getByAccessLevel = require './lib/get_by_access_level'
 
 module.exports = (req, res)->
   { _id:reqUserId } = req.user
@@ -15,7 +16,7 @@ module.exports = (req, res)->
   .then (ids)->
     promises_.all [
       items_.byOwner reqUserId
-      items_.networkListings ids, reqUserId
+      getByAccessLevel.network ids, reqUserId
     ]
   .then _.flatten
   .then (items)->
