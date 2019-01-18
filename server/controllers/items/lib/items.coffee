@@ -78,6 +78,11 @@ module.exports = items_ =
       db.fetch itemsIds
       .tap -> radio.emit 'user:inventory:update', userId
 
+  bulkUpdate: (userId, ids, attribute, newValue)->
+    items_.byIds ids
+    .map (item)-> Item.bulkUpdate(userId, item, attribute, newValue)
+    .then db.bulk
+
   update: (userId, itemUpdateData)->
     db.get itemUpdateData._id
     .then (currentItem)->

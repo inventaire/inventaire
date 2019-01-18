@@ -97,6 +97,7 @@ generics =
 
 module.exports =
   authors: arrayOfStrings
+  attribute: nonEmptyString
   email: { validate: validations.common.email }
   generics: generics
   refresh: generics.boolean
@@ -130,3 +131,4 @@ module.exports =
   users: couchUuids
   username: { validate: validations.common.username }
   relatives: whitelistedStrings
+  value: nonEmptyString

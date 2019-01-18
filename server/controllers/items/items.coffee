@@ -20,7 +20,10 @@ module.exports =
     admin:
       'refresh-snapshot': require './refresh_snapshot'
 
-  put: require './update'
+  put: ActionsControllers
+    authentified:
+      default: require './update'
+      'bulk-update': require './bulk_update'
 
   delete: require './delete'
 

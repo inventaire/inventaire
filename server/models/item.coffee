@@ -55,6 +55,18 @@ Item.update = (userId, updateAttributesData, doc)->
   updatedDoc.updated = Date.now()
   return updatedDoc
 
+Item.bulkUpdate = (userId, item, attribute, value)->
+  assert_.types [ 'string', 'object', 'string', 'string|number' ], arguments
+
+  validations.pass 'attribute', attribute
+  validations.pass attribute, value
+
+  now = Date.now()
+
+  item[attribute] = value
+  item.updated = now
+  return item
+
 Item.changeOwner = (transacDoc, item)->
   assert_.objects [ transacDoc, item ]
   _.log arguments, 'changeOwner'
