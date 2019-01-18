@@ -1,8 +1,8 @@
 should = require 'should'
-{ authReq, undesiredErr } = require '../utils/utils'
+{ authReq, authReqB, undesiredErr } = require '../utils/utils'
 { newItemBase } = require './helpers'
 
-describe 'items:update-details', ->
+describe 'items:bulk-update', ->
   it 'should update an item details', (done)->
     authReq 'post', '/api/items', newItemBase()
     .then (item)->
@@ -20,6 +20,22 @@ describe 'items:update-details', ->
         .then (updatedItems)->
           updatedItems[0].transaction.should.equal newTransaction
           done()
+    .catch undesiredErr(done)
+
+    return
+
+  it 'should not update an item from another owner', (done)->
+    authReq 'post', '/api/items', newItemBase()
+    .then (item)->
+      ids = [ item._id ]
+      authReqB 'put', '/api/items?action=bulk-update',
+        ids: ids
+        attribute: 'transaction'
+        value: 'lending'
+      .catch (err)->
+        err.statusCode.should.equal 400
+        err.body.status_verbose.should.startWith 'user isnt item.owner'
+        done()
     .catch undesiredErr(done)
 
     return

@@ -57,6 +57,8 @@ Item.update = (userId, updateAttributesData, doc)->
 
 Item.bulkUpdate = (userId, item, attribute, value)->
   assert_.types [ 'string', 'object', 'string', 'string|number' ], arguments
+  unless item.owner is userId
+    throw error_.new "user isnt item.owner: #{userId}", 400, item.owner
 
   validations.pass 'attribute', attribute
   validations.pass attribute, value
