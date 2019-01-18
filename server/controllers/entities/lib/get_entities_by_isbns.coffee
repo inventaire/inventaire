@@ -16,9 +16,7 @@ module.exports = (rawIsbns, params)->
   entities_.byIsbns isbns
   .then (entities)->
     foundIsbns = entities.map getIsbn13h
-    _.log foundIsbns, 'foundIsbns'
     missingIsbns = _.difference isbns, foundIsbns
-    _.log missingIsbns, 'missingIsbns'
 
     entities = entities.map formatEditionEntity
 
