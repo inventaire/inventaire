@@ -14,7 +14,7 @@ describe 'items:bulk-update', ->
         attribute: 'transaction'
         value: newTransaction
       .then (res)->
-        res.ok.should.be.true
+        res.ok.should.be.true()
         authReq 'get', "/api/items?action=by-ids&ids=#{ids.join('|')}"
         .get 'items'
         .then (updatedItems)->
