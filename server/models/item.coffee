@@ -36,38 +36,22 @@ Item.create = (userId, item)->
 passAttrTest = (item, attr)->
   if item[attr]? then validations.pass attr, item[attr]
 
-Item.update = (userId, updateAttributesData, doc)->
-  unless doc?.owner is userId
-    throw new Error "user isnt doc.owner: #{userId} / #{doc.owner}"
+Item.update = (userId, newAttributes, oldItem)->
+  assert_.types [ 'string', 'object', 'object' ], arguments
+  unless oldItem.owner is userId
+    throw error_.new "user isnt item.owner: #{userId}", 400, oldItem.owner
 
-  nonUpdatedAttributes = _.omit updateAttributesData, attributes.known
-  if Object.keys(nonUpdatedAttributes).length > 0
-    nonUpdatedAttributesStr = JSON.stringify nonUpdatedAttributes
-    throw error_.new "invalid attribute(s): #{nonUpdatedAttributesStr}", 400
+  updatableAttributes = Object.keys(newAttributes).filter (attr)-> attr in attributes.updatable
+  newItem = _.clone oldItem
 
-  # filter-out non-updatable attributes
-  newData = _.pick updateAttributesData, attributes.updatable
-
-  for attr in attributes.updatable
-    passAttrTest updateAttributesData, attr
-
-  updatedDoc = _.extend {}, doc, newData
-  updatedDoc.updated = Date.now()
-  return updatedDoc
-
-Item.updateAttr = (userId, item, attribute, value)->
-  assert_.types [ 'string', 'object', 'string', 'string|number' ], arguments
-  unless item.owner is userId
-    throw error_.new "user isnt item.owner: #{userId}", 400, item.owner
-
-  validations.pass 'attribute', attribute
-  validations.pass attribute, value
+  for attr in updatableAttributes
+    newVal = newAttributes[attr]
+    validations.pass attr, newVal
+    newItem[attr] = newVal
 
   now = Date.now()
-
-  item[attribute] = value
-  item.updated = now
-  return item
+  newItem.updated = now
+  return newItem
 
 Item.changeOwner = (transacDoc, item)->
   assert_.objects [ transacDoc, item ]
