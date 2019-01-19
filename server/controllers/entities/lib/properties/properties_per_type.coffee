@@ -11,6 +11,7 @@ work = [
   'wdt:P179' # series
   'wdt:P364' # original language of work
   'wdt:P577' # publication date
+  'wdt:P648' # Open Library ID
   'wdt:P856' # official website
   'wdt:P921' # main subject
   'wdt:P941' # inspired by
@@ -43,6 +44,7 @@ module.exports =
     'wdt:P135' # movement
     'wdt:P569' # date of birth
     'wdt:P570' # date of death
+    'wdt:P648' # Open Library ID
     'wdt:P737' # influenced by
     'wdt:P856' # official website
     'wdt:P1412' # languages of expression
