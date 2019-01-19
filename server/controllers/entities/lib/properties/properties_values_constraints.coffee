@@ -41,12 +41,18 @@ module.exports =
   'wdt:P144': bases.workEntity
   # serie
   'wdt:P179': bases.serieEntity
+  # ISNI
+  'wdt:P213': builders.externalId /^\d{4} \d{4} \d{4} \d{3}[0-9X]$/
   # ISBN 13
   'wdt:P212': builders.isbnProperty 13
+  # OCLC control number
+  'wdt:P243': builders.externalId /^0*[1-9]\d*$/
   # SUDOC authorities ID
-  'wdt:P269': builders.externalId /^\d{8}[\dX]?$/
+  'wdt:P269': builders.externalId /^\d{8}[\dX]$/
   # VIAF id
   'wdt:P214': builders.externalId /^[1-9]\d(\d{0,7}|\d{17,20})$/
+  # GND ID
+  'wdt:P227': builders.externalId /^1[01]?\d{7}[0-9X]|[47]\d{6}-\d|[1-9]\d{0,7}-[0-9X]|3\d{7}[0-9X]$/
   # BNF id
   'wdt:P268': builders.externalId /^\d{8}[0-9bcdfghjkmnpqrstvwxz]$/
   # original language of work
@@ -67,6 +73,8 @@ module.exports =
   'wdt:P648': builders.externalId /^OL[1-9]\d{0,7}[AMW]$/
   # translator
   'wdt:P655': bases.humanEntity
+  # Google Books ID
+  'wdt:P675': builders.externalId /^[\w\-]{12}$/
   # influenced by
   'wdt:P737': bases.entity
   # narrative set in
@@ -79,8 +87,16 @@ module.exports =
   'wdt:P941': bases.workEntity
   # ISBN 10
   'wdt:P957': builders.isbnProperty 10
+  # SUDOC editions
+  'wdt:P1025': builders.externalId /^\d{8}[\dX]$/
+  # SWB editions
+  'wdt:P1044': builders.externalId /^\d{8}[0-9X]$/
+  # Librarything work ID
+  'wdt:P1085': builders.externalId /^\d{1,8}$/
   # number of pages
   'wdt:P1104': bases.positiveInteger
+  # DNB editions
+  'wdt:P1292': builders.externalId /^\d{8,9}[X\d]?$/
   # languages of expression
   'wdt:P1412': bases.entity
   # title
@@ -103,5 +119,15 @@ module.exports =
   'wdt:P2679': bases.humanEntity
   # author of afterword
   'wdt:P2680': bases.humanEntity
+  # GoodReads author ID
+  'wdt:P2963': builders.externalId /^[1-9]\d*$/
+  # GoodReads book ID
+  'wdt:P2969': builders.externalId /^[1-9]\d*$/
+  # Babelio author ID
+  'wdt:P3630': builders.externalId /^\d+$/
+  # Babelio work ID
+  'wdt:P3631': builders.externalId /^\d+$/
   # Mastodon address
   'wdt:P4033': builders.externalId /^\w+@[a-z0-9\.\-]+[a-z0-9]+$/
+  # OCLC work ID
+  'wdt:P5331': builders.externalId /^[1-9]\d*$/
