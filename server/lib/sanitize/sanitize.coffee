@@ -15,6 +15,10 @@ module.exports = (req, res, configs)->
     input = _.cloneDeep req[place]
     delete input.action
 
+    unless _.isPlainObject input
+      type = _.typeOf input
+      throw error_.new "#{place} should be an object, got #{type}", 400
+
     for name of input
       removeUnexpectedParameter input, name, configs, res
 
