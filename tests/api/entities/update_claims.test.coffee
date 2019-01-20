@@ -4,7 +4,7 @@ _ = __.require 'builders', 'utils'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
 { undesiredRes, undesiredErr } = require '../utils/utils'
-{ createWork, createEdition } = require '../fixtures/entities'
+{ createWork, createEdition, createHuman } = require '../fixtures/entities'
 { getByUri, updateClaim, merge } = require '../utils/entities'
 
 describe 'entities:update-claims', ->
@@ -83,3 +83,37 @@ describe 'entities:update-claims', ->
     .catch undesiredErr(done)
 
     return
+
+  it 'should accept a non-duplicated concurrent value', (done)->
+    createHuman()
+    .then (human)->
+      updateClaim human._id, 'wdt:P648', null, someOLid()
+      .then (res)->
+        should(res.ok).be.true()
+        done()
+    .catch undesiredErr(done)
+
+    return
+
+  it 'should reject an update with a duplicated concurrent value', (done)->
+    id = someOLid()
+    createHuman()
+    .then (human)->
+      updateClaim human._id, 'wdt:P648', null, id
+      .then (res)->
+        should(res.ok).be.true()
+        createHuman()
+    .then (human2)->
+      updateClaim human2._id, 'wdt:P648', null, id
+      .then undesiredRes(done)
+      .catch (err)->
+        err.statusCode.should.equal 400
+        err.body.status_verbose.should.equal 'this property value is already used'
+        done()
+    .catch undesiredErr(done)
+
+    return
+
+someOLid = ->
+  numbers = Math.random().toString().slice(2, 8).replace(/^0/, '')
+  return "OL#{numbers}Z"

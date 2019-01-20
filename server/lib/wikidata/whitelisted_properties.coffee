@@ -29,6 +29,8 @@ module.exports = [
   'P179' # series
   'P195' # collection
   'P212' # isbn 13
+  'P213' # ISNI
+  'P214' # VIAF ID
   'P268' # BnF ID
   'P269' # SUDOC authorities ID
   'P279' # subclass of
@@ -44,6 +46,7 @@ module.exports = [
   'P648' # Open Library ID
   'P655' # translator
   'P674' # characters
+  'P675' # Google Books ID
   'P724' # Internet Archive ID
   'P737' # influence by
   'P738' # influence of
@@ -53,7 +56,9 @@ module.exports = [
   'P941' # inspired by
   'P953' # full text available at
   'P957' # isbn 10
+  'P1044' # SWB editions
   'P1066' # student of
+  'P1085' # Librarything work ID
   'P1104' # number of pages
   'P1433' # published in
   'P1412' # languages spoken, written or signed
@@ -72,6 +77,12 @@ module.exports = [
   'P2680' # author of afterword
   'P2716' # collage image
   'P2860' # cite
+  'P2963' # GoodReads author ID
+  'P2969' # GoodReads book ID
+  'P3630' # Babelio author ID
+  'P3631' # Babelio work ID
   'P4033' # Mastodon address
+  'P4258' # Gallica ID
+  'P5331' # OCLC work ID
   'P6338' # colorist
 ]
