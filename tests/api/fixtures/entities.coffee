@@ -109,9 +109,12 @@ module.exports = API =
 
   someImageHash: someImageHash
 
-  someOpenLibraryId: (typeLetter = 'A')->
+  someOpenLibraryId: (type = 'author')->
+    types =
+      author: 'A',
+      work: 'W'
     numbers = Math.random().toString().slice(2, 7)
-    return "OL1#{numbers}#{typeLetter}"
+    return "OL1#{numbers}#{types[type]}"
 
 addEntityClaim = (createFnName, property)-> (subjectEntity)->
   subjectUri = if _.isString subjectEntity then subjectEntity else subjectEntity.uri

@@ -77,7 +77,7 @@ describe 'entities:resolve', ->
     return
 
   it 'should find inventaire work from external ids claims ', (done)->
-    olId = someOpenLibraryId 'W'
+    olId = someOpenLibraryId 'work'
     entry =
       edition: { isbn: '9782203399303' }
       works: [ { claims: { 'wdt:P648': [ olId ] } } ]
@@ -113,7 +113,7 @@ describe 'entities:resolve', ->
     return
 
   it 'should find inventaire author from external ids claims ', (done)->
-    olId = someOpenLibraryId 'A'
+    olId = someOpenLibraryId 'author'
     entry =
       edition: { isbn: '9782203399303' }
       authors: [ { claims: { 'wdt:P648': [ olId ] } } ]
