@@ -75,7 +75,9 @@ module.exports = API =
 
   createWorkWithAuthorAndSerie: ->
     API.createWorkWithAuthor()
-    .then API.addSerie
+    .tap API.addSerie
+    # Get a refreshed version of the work
+    .then (work)-> getByUri work.uri
 
   createEditionWithWorkAuthorAndSerie: ->
     API.createWorkWithAuthorAndSerie()
