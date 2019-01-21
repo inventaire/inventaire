@@ -23,7 +23,29 @@ describe 'entities:resolve', ->
 
     return
 
-  it 'should warn when entries have unknown properties', (done)->
+  it 'should reject if key "edition" is missing', (done)->
+    resolve { }
+    .catch (err)->
+      err.body.status_verbose.should.startWith 'missing parameter'
+      done()
+
+    .catch done
+
+    return
+
+  it 'should reject when claims key is not an array of objects', (done)->
+    resolve
+      edition:
+        claims: [ 'wdt:P31: wd:Q23' ]
+    .catch (err)->
+      err.body.status_verbose.should.startWith 'invalid claims'
+      done()
+
+    .catch done
+
+    return
+
+  it 'should warn when claims key has an unknown property', (done)->
     unknownProp = 'wdt:P6'
     resolve
       edition:
