@@ -4,8 +4,8 @@ _ = __.require 'builders', 'utils'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
 { undesiredRes, undesiredErr } = require '../utils/utils'
-{ createWork, createEdition, createHuman } = require '../fixtures/entities'
-{ getByUri, addClaim, updateClaim, merge } = require '../utils/entities'
+{ createWork, createEdition, createHuman, someOpenLibraryId } = require '../fixtures/entities'
+{ getByUri, updateClaim, merge } = require '../utils/entities'
 
 describe 'entities:update-claims', ->
   it 'should reject an update with an inappropriate property', (done)->
@@ -112,7 +112,7 @@ describe 'entities:update-claims', ->
   it 'should accept a non-duplicated concurrent value', (done)->
     createHuman()
     .then (human)->
-      updateClaim human.uri, 'wdt:P648', null, someOLid()
+      updateClaim human._id, 'wdt:P648', null, someOpenLibraryId()
       .then (res)->
         should(res.ok).be.true()
         done()
@@ -121,7 +121,7 @@ describe 'entities:update-claims', ->
     return
 
   it 'should reject an update with a duplicated concurrent value', (done)->
-    id = someOLid()
+    id = someOpenLibraryId()
     createHuman()
     .then (human)->
       updateClaim human.uri, 'wdt:P648', null, id
@@ -138,7 +138,3 @@ describe 'entities:update-claims', ->
     .catch undesiredErr(done)
 
     return
-
-someOLid = ->
-  numbers = Math.random().toString().slice(2, 8).replace(/^0/, '')
-  return "OL#{numbers}Z"

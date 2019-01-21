@@ -94,6 +94,16 @@ generics =
       if _.isString value then _.parseBooleanString value, config.default
       else value
     validate: (value)-> _.typeOf(value) is 'boolean'
+  object:
+    validate: _.isPlainObject
+  collection:
+    validate: (values, name, config)->
+      unless _.isCollection(values) then return false
+      { limit } = config
+      { length } = values
+      if limit? and length > limit
+        throw error_.new 'limit length exceeded', 400, { limit, length }
+      return true
 
 module.exports =
   authors: arrayOfStrings

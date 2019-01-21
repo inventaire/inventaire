@@ -26,6 +26,7 @@ module.exports =
     authentified:
       'create': require './create'
       'exists-or-create-from-seed': require './exists_or_create_from_seed'
+      'resolve': require './resolve'
     admin:
       'delete-by-uris': require './delete_by_uris'
 

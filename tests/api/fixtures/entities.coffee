@@ -108,6 +108,10 @@ module.exports = API =
 
   someImageHash: someImageHash
 
+  someOpenLibraryId: (typeLetter = 'A')->
+    numbers = Math.random().toString().slice(2, 7)
+    return "OL1#{numbers}#{typeLetter}"
+
 addEntityClaim = (createFnName, property)-> (subjectEntity)->
   API[createFnName]()
   .then (entity)-> addClaim subjectEntity.uri, property, entity.uri

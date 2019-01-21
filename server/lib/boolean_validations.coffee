@@ -57,3 +57,4 @@ module.exports = tests =
   isNonEmptyPlainObject: (obj)-> _.isPlainObject(obj) and Object.keys(obj).length > 0
   isPositiveIntegerString: (str)-> _.isString(str) and /^\d+$/.test str
   isExtendedUrl: (str)-> tests.isUrl(str) or tests.isLocalImg(str)
+  isCollection: (array)-> _.typeOf(array) is 'array' and _.every(array, _.isPlainObject)

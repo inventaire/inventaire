@@ -32,7 +32,7 @@ module.exports = responses_ =
 
   addWarning: (res, category, message)->
     res.warnings or= {}
-    res.warnings.parameters or= []
-    res.warnings.parameters.push message
+    res.warnings[category] or= []
+    res.warnings[category].push message
 
 setWarnings = (res, data)-> if res.warnings? then data.warnings = res.warnings

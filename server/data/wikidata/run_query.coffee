@@ -2,9 +2,9 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 cache_ = __.require 'lib', 'cache'
 error_ = __.require 'lib', 'error/error'
-buildQuery = require './queries/build_query'
 requests_ = __.require 'lib', 'requests'
 wdk = require 'wikidata-sdk'
+makeSparqlRequest = require './make_sparql_request'
 
 queries = require './queries/queries'
 possibleQueries = Object.keys queries
@@ -27,13 +27,15 @@ module.exports = (params)->
   # with keys matching parametersTests keys
   for k in parameters
     value = params[k]
-    unless parametersTests[k](value)
+    if parametersTests[k]? and not parametersTests[k](value)
       return error_.rejectInvalid k, params
 
   # Building the cache key
   key = "wdQuery:#{queryName}"
   for k in parameters
     value = params[k]
+    # Known case: resolve_external_ids expects an array of [ property, value ] pairs
+    unless _.isString value then value = JSON.stringify value
     key += ":#{value}"
 
   fn = runQuery.bind null, params, key
@@ -44,9 +46,9 @@ parametersTests =
   pid: wdk.isPropertyId
 
 runQuery = (params, key)->
-  { query:queryName } = params
-  url = buildQuery params
+  { query: queryName } = params
+  { query: queryBuilder } = queries[queryName]
+  sparql = queryBuilder params
 
-  requests_.get url
-  .then wdk.simplifySparqlResults
+  makeSparqlRequest sparql
   .catch _.ErrorRethrow(key)
