@@ -17,3 +17,4 @@ module.exports =
   externalId: (regex)->
     _.extend {}, concurrentString,
       validate: regex.test.bind regex
+      isExternalId: true
