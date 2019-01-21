@@ -334,14 +334,3 @@ describe 'items:snapshot', ->
   # TODO:
   # it 'should be updated when its remote author entity changes', (done)->
   # it 'should be updated when its remote work entity title changes', (done)->
-
-addAuthor = (subjectEntity)->
-  createHuman()
-  .tap addClaim('wdt:P50', subjectEntity)
-
-addSerie = (subjectEntity)->
-  createSerie()
-  .tap addClaim('wdt:P179', subjectEntity)
-
-addClaim = (property, subjectEntity)-> (entity)->
-  updateClaim subjectEntity._id, property, null, entity.uri

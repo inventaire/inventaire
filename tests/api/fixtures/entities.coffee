@@ -74,7 +74,9 @@ module.exports = API =
 
   createWorkWithAuthorAndSerie: ->
     API.createWorkWithAuthor()
-    .then API.addSerie
+    .tap API.addSerie
+    # Get a refreshed version of the work
+    .then (work)-> getByUri work.uri
 
   createEditionWithWorkAuthorAndSerie: ->
     API.createWorkWithAuthorAndSerie()
@@ -117,9 +119,7 @@ module.exports = API =
 
 addEntityClaim = (createFnName, property)-> (subjectEntity)->
   API[createFnName]()
-  .then (entity)-> addClaim subjectEntity.uri, property, entity.uri
-  # Get a refreshed version of the subject entity
-  .then -> getByUri subjectEntity.uri
+  .tap (valueEntity)-> addClaim subjectEntity.uri, property, valueEntity.uri
 
 API.addAuthor = addEntityClaim 'createHuman', 'wdt:P50'
 API.addSerie = addEntityClaim 'createSerie', 'wdt:P179'
