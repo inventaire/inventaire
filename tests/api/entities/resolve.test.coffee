@@ -2,11 +2,11 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-# { Promise } = __.require 'lib', 'promises'
+{ Promise } = __.require 'lib', 'promises'
 { authReq, undesiredRes, undesiredErr } = require '../utils/utils'
-{ createWork, createEdition, createHuman, someOpenLibraryId } = require '../fixtures/entities'
+{ createWork, createEdition, createHuman, someOpenLibraryId, createWorkWithAuthor } = require '../fixtures/entities'
 { addClaim } = require '../utils/entities'
-{ ensureEditionExists } = require '../fixtures/entities'
+{ ensureEditionExists, randomWorkLabel } = require '../fixtures/entities'
 resolve = (entry)-> authReq 'post', '/api/entities?action=resolve', entry
 
 describe 'entities:resolve', ->
@@ -16,7 +16,7 @@ describe 'entities:resolve', ->
     .get 'result'
     .then (result)->
       result.should.be.an.Object()
-      result.edition.should.equal 'isbn:9782203399303'
+      result.edition.uri.should.equal 'isbn:9782203399303'
       done()
 
     .catch done
@@ -128,6 +128,32 @@ describe 'entities:resolve', ->
         result.authors[0].should.be.an.Object()
         result.authors[0].uri.should.equal author.uri
         done()
+    .catch done
+
+    return
+
+  it 'should find existing work from labels and return a work uri thanks to author with external ids', (done)->
+    olId = someOpenLibraryId 'author'
+    missingWorkLabel = randomWorkLabel()
+    otherWorkLabel = randomWorkLabel()
+    entry =
+      edition: { isbn: '9782203399303' }
+      works: [ { labels: { en: missingWorkLabel }, claims: {} } ]
+      authors: [ { claims: { 'wdt:P648': [ olId ] } } ]
+    createHuman()
+    .tap (author)-> addClaim author.uri, 'wdt:P648', olId
+    .delay 10
+    .then (author)->
+      Promise.all [
+        createWorkWithAuthor author, missingWorkLabel
+        createWorkWithAuthor author, otherWorkLabel
+      ]
+      .spread (work, otherWork)->
+        resolve entry
+        .get 'result'
+        .then (result)->
+          result.works[0].uri.should.equal work.uri
+          done()
     .catch done
 
     return
