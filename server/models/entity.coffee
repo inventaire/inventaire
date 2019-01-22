@@ -38,6 +38,7 @@ module.exports = Entity =
     type: 'entity'
     labels: {}
     claims: {}
+    created: Date.now()
 
   setLabel: (doc, lang, value)->
     assert_.types [ 'object', 'string', 'string' ], arguments
@@ -53,6 +54,9 @@ module.exports = Entity =
       throw error_.new 'already up-to-date', 400, { doc, lang, value }
 
     doc.labels[lang] = value
+
+    doc.updated = Date.now()
+
     return doc
 
   setLabels: (doc, labels)->
@@ -84,6 +88,9 @@ module.exports = Entity =
         doc = Entity.createClaim doc, property, value
 
     delete doc._allClaimsProps
+
+    doc.updated = Date.now()
+
     return doc
 
   createClaim: (doc, property, value)->
@@ -127,6 +134,8 @@ module.exports = Entity =
       # if the old value is null, it plays the role of a createClaim
       doc.claims[property] or= []
       doc.claims[property].push newVal
+
+    doc.updated = Date.now()
 
     return updateInferredProperties doc, property, oldVal, newVal
 

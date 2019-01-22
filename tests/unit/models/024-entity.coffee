@@ -10,6 +10,8 @@ workDoc = ->
   doc._id = '12345678900987654321123456789012'
   doc.claims['wdt:P31'] = ['wd:Q571']
   doc.claims['wdt:P50'] = ['wd:Q535', 'wd:Q1541']
+  doc.created = Date.now()
+  doc.updated = Date.now()
   return doc
 
 editionDoc = ->
@@ -17,6 +19,8 @@ editionDoc = ->
   doc._id = '22345678900987654321123456789012'
   doc.claims['wdt:P31'] = ['wd:Q3331189']
   doc.claims['wdt:P629'] = ['wd:Q53592']
+  doc.created = Date.now()
+  doc.updated = Date.now()
   return doc
 
 # coffeelint: disable=no_unnecessary_double_quotes
@@ -31,17 +35,30 @@ nonTrimedString = """
 describe 'entity model', ->
   describe 'create', ->
     it 'should return an object with type entity and a claims object', (done)->
+      now = Date.now()
       entityDoc = Entity.create()
       entityDoc.should.be.an.Object()
       entityDoc.type.should.equal 'entity'
       entityDoc.labels.should.be.an.Object()
       entityDoc.claims.should.be.an.Object()
+      entityDoc.created.should.be.a.Number()
+      entityDoc.created.should.be.aboveOrEqual now
+      entityDoc.created.should.be.below now + 10
+      should(entityDoc.updated).not.be.ok()
       done()
 
   describe 'create claim', ->
     it 'should add a claim value', (done)->
       doc = Entity.createClaim workDoc(), 'wdt:P50', 'wd:Q42'
       _.last(doc.claims['wdt:P50']).should.equal 'wd:Q42'
+      done()
+
+    it 'should update the timestamp', (done)->
+      now = Date.now()
+      entityDoc = Entity.createClaim workDoc(), 'wdt:P50', 'wd:Q42'
+      entityDoc.updated.should.be.a.Number()
+      entityDoc.updated.should.be.aboveOrEqual now
+      entityDoc.updated.should.be.below now + 10
       done()
 
     it 'should return a doc with the new value for an existing property', (done)->
@@ -75,6 +92,17 @@ describe 'entity model', ->
         updater = -> Entity.updateClaim workDoc(), 'wdt:P50', null, 'wd:Q42'
         updater.should.not.throw()
         done()
+
+      it 'should update the timestamp', (done)->
+        now = Date.now()
+        entityDoc = workDoc()
+        update = ->
+          updatedDoc = Entity.updateClaim entityDoc, 'wdt:P135', null, 'wd:Q53121'
+          updatedDoc.updated.should.be.a.Number()
+          updatedDoc.updated.should.be.above now
+          updatedDoc.updated.should.be.below now + 10
+          done()
+        setTimeout update, 1
 
       it 'should return a doc with the new value for an existing property', (done)->
         entityDoc = workDoc()
@@ -141,6 +169,20 @@ describe 'entity model', ->
         updater.should.throw()
         done()
 
+      it 'should update the timestamp', (done)->
+        now = Date.now()
+        entityDoc = workDoc()
+        entityDoc.claims['wdt:P50'][0].should.equal 'wd:Q535'
+        update = ->
+          updatedDoc = Entity.updateClaim entityDoc, 'wdt:P50', 'wd:Q535', 'wd:Q42'
+          updatedDoc.claims['wdt:P50'][0].should.equal 'wd:Q42'
+          updatedDoc.updated.should.be.a.Number()
+          updatedDoc.updated.should.be.above now
+          updatedDoc.updated.should.be.below now + 10
+          done()
+
+        setTimeout update, 1
+
     describe 'delete claim', ->
       it 'should return with the claim value removed if passed an undefined new value', (done)->
         updatedDoc = Entity.updateClaim workDoc(), 'wdt:P50', 'wd:Q535', null
@@ -173,6 +215,21 @@ describe 'entity model', ->
         try updater()
         catch err then err.message.should.equal 'this property should at least have one value'
         done()
+
+      it 'should update the timestamp', (done)->
+        now = Date.now()
+        entityDoc = workDoc()
+        entityDoc.updated.should.be.a.Number()
+        entityDoc.updated.should.be.aboveOrEqual now
+        entityDoc.updated.should.be.below now + 10
+        update = ->
+          updatedDoc = Entity.updateClaim entityDoc, 'wdt:P50', 'wd:Q535', null
+          updatedDoc.updated.should.be.a.Number()
+          updatedDoc.updated.should.be.above now
+          updatedDoc.updated.should.be.below now + 10
+          done()
+
+        setTimeout update, 1
 
     describe 'set label', ->
       it 'should set the label in the given lang', (done)->
@@ -208,3 +265,17 @@ describe 'entity model', ->
         Entity.setLabel entityDoc, 'fr', nonTrimedString
         entityDoc.labels.fr.should.equal 'foo bar'
         done()
+
+      it 'should update the timestamp', (done)->
+        now = Date.now()
+        entityDoc = workDoc()
+        entityDoc.updated.should.be.a.Number()
+        entityDoc.updated.should.be.aboveOrEqual entityDoc.updated
+        entityDoc.updated.should.be.below entityDoc.updated + 10
+        update = ->
+          updatedDoc = Entity.setLabel entityDoc, 'fr', 'hello'
+          updatedDoc.updated.should.be.a.Number()
+          updatedDoc.updated.should.be.above now
+          updatedDoc.updated.should.be.below now + 10
+          done()
+        setTimeout update, 1
