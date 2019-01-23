@@ -279,3 +279,38 @@ describe 'entity model', ->
           updatedDoc.updated.should.be.below now + 10
           done()
         setTimeout update, 1
+
+    describe 'merge', ->
+      it 'should transfer labels', (done)->
+        entityA = workDoc()
+        entityB = workDoc()
+        Entity.setLabel entityA, 'da', 'foo'
+        Entity.mergeDocs entityA, entityB
+        entityB.labels.da.should.equal 'foo'
+        done()
+
+      it 'should not override existing labels', (done)->
+        entityA = workDoc()
+        entityB = workDoc()
+        Entity.setLabel entityA, 'da', 'foo'
+        Entity.setLabel entityB, 'da', 'bar'
+        Entity.mergeDocs entityA, entityB
+        entityB.labels.da.should.equal 'bar'
+        done()
+
+      it 'should transfer claims', (done)->
+        entityA = workDoc()
+        entityB = workDoc()
+        Entity.createClaim entityA, 'wdt:P921', 'wd:Q3'
+        Entity.mergeDocs entityA, entityB
+        entityB.claims['wdt:P921'].should.deepEqual [ 'wd:Q3' ]
+        done()
+
+      it 'should not override existing claims', (done)->
+        entityA = workDoc()
+        entityB = workDoc()
+        Entity.createClaim entityA, 'wdt:P921', 'wd:Q3'
+        Entity.createClaim entityB, 'wdt:P921', 'wd:Q1'
+        Entity.mergeDocs entityA, entityB
+        entityB.claims['wdt:P921'].should.deepEqual [ 'wd:Q1' ]
+        done()
