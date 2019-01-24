@@ -390,3 +390,26 @@ describe 'entity model', ->
           done()
 
         setTimeout redirect, 5
+
+    describe 'removePlaceholder', ->
+      it 'should return a removed placeholder doc', (done)->
+        entity = workDoc()
+        removedPlaceholder = Entity.removePlaceholder entity
+        removedPlaceholder.should.be.an.Object()
+        removedPlaceholder.labels.should.deepEqual entity.labels
+        removedPlaceholder.claims.should.deepEqual entity.claims
+        done()
+
+      it 'should be a different object', (done)->
+        entity = workDoc()
+        removedPlaceholder = Entity.removePlaceholder entity
+        should(removedPlaceholder is entity).not.be.true()
+        done()
+
+      it 'should update the timestamp', (done)->
+        entity = workDoc()
+        remove = ->
+          removedPlaceholder = Entity.removePlaceholder entity
+          removedPlaceholder.updated.should.be.above entity.updated
+          done()
+        setTimeout remove, 5

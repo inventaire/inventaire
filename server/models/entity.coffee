@@ -191,6 +191,7 @@ module.exports = Entity =
 
     removedDoc = _.cloneDeep entityDoc
     removedDoc.type = 'removed:placeholder'
+    removedDoc.updated = Date.now()
     return removedDoc
 
   recoverPlaceholder: (entityDoc)->
