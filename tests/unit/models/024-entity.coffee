@@ -302,13 +302,22 @@ describe 'entity model', ->
         entityB.claims['wdt:P921'].should.deepEqual [ 'wd:Q3' ]
         done()
 
-      it 'should not override existing claims', (done)->
+      it 'should add new claims on already used property', (done)->
         entityA = workDoc()
         entityB = workDoc()
         Entity.createClaim entityA, 'wdt:P921', 'wd:Q3'
         Entity.createClaim entityB, 'wdt:P921', 'wd:Q1'
         Entity.mergeDocs entityA, entityB
-        entityB.claims['wdt:P921'].should.deepEqual [ 'wd:Q1' ]
+        entityB.claims['wdt:P921'].should.deepEqual [ 'wd:Q1', 'wd:Q3' ]
+        done()
+
+      it 'should not create duplicated claims', (done)->
+        entityA = workDoc()
+        entityB = workDoc()
+        Entity.createClaim entityA, 'wdt:P921', 'wd:Q3'
+        Entity.createClaim entityB, 'wdt:P921', 'wd:Q3'
+        Entity.mergeDocs entityA, entityB
+        entityB.claims['wdt:P921'].should.deepEqual [ 'wd:Q3' ]
         done()
 
       it 'should update the timestamp', (done)->
@@ -323,3 +332,15 @@ describe 'entity model', ->
           entityB.updated.should.be.below now + 10
           done()
         setTimeout update, 1
+
+      it 'should not update the timestamp if no data was transfered', (done)->
+        entityA = workDoc()
+        entityB = workDoc()
+        initialTimestamp = entityB.updated
+        Entity.createClaim entityA, 'wdt:P921', 'wd:Q3'
+        Entity.createClaim entityB, 'wdt:P921', 'wd:Q3'
+        update = ->
+          Entity.mergeDocs entityA, entityB
+          entityB.updated.should.equal initialTimestamp
+          done()
+        setTimeout update, 10

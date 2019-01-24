@@ -145,10 +145,23 @@ module.exports = Entity =
   mergeDocs: (fromEntityDoc, toEntityDoc)->
     Entity.preventRedirectionEdit fromEntityDoc, 'mergeDocs (from)'
     Entity.preventRedirectionEdit toEntityDoc, 'mergeDocs (to)'
-    # Giving priority to the toEntityDoc labels and claims
-    toEntityDoc.labels = _.extend {}, fromEntityDoc.labels, toEntityDoc.labels
-    toEntityDoc.claims = _.extend {}, fromEntityDoc.claims, toEntityDoc.claims
-    toEntityDoc.updated = Date.now()
+
+    dataTransfered = false
+
+    for lang, value of fromEntityDoc.labels
+      unless toEntityDoc.labels[lang]?
+        toEntityDoc.labels[lang] = value
+        dataTransfered = true
+
+    for property, values of fromEntityDoc.claims
+      toEntityDoc.claims[property] ?= []
+      for value in values
+        unless value in toEntityDoc.claims[property]
+          toEntityDoc.claims[property].push value
+          dataTransfered = true
+
+    if dataTransfered then toEntityDoc.updated = Date.now()
+
     return toEntityDoc
 
   turnIntoRedirection: (fromEntityDoc, toUri, removedPlaceholdersIds)->
