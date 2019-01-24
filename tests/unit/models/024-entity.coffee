@@ -337,9 +337,9 @@ describe 'entity model', ->
       it 'should not update the timestamp if no data was transfered', (done)->
         entityA = workDoc()
         entityB = workDoc()
-        initialTimestamp = entityB.updated
         Entity.createClaim entityA, 'wdt:P921', 'wd:Q3'
         Entity.createClaim entityB, 'wdt:P921', 'wd:Q3'
+        initialTimestamp = entityB.updated
         update = ->
           Entity.mergeDocs entityA, entityB
           entityB.updated.should.equal initialTimestamp
