@@ -24,7 +24,7 @@ describe 'entities:resolve', ->
     return
 
   it 'should reject if key "edition" is missing', (done)->
-    resolve { }
+    resolve {}
     .catch (err)->
       err.body.status_verbose.should.startWith 'missing parameter'
       done()
@@ -139,7 +139,7 @@ describe 'entities:resolve in context', ->
     otherWorkLabel = randomWorkLabel()
     entry =
       edition: { isbn: '9782203399303' }
-      works: [ { labels: { en: missingWorkLabel }, claims: {} } ]
+      works: [ labels: { en: missingWorkLabel } ]
       authors: [ { claims: { 'wdt:P648': [ olId ] } } ]
     createHuman()
     .delay 10
@@ -159,7 +159,7 @@ describe 'entities:resolve in context', ->
 
     return
 
-  it 'should not resolve work from resolved author when author have several works with same label', (done)->
+  it 'should resolve work from resolved author when author have several works with same label', (done)->
     olId = someOpenLibraryId 'work'
     workLabel = randomWorkLabel()
     createHuman()
@@ -172,7 +172,7 @@ describe 'entities:resolve in context', ->
       .spread (work, otherWork)->
         entry =
           edition: { isbn: '9782203399303' }
-          works: [ { labels: { en: workLabel }, claims: {} } ]
+          works: [ { labels: { en: workLabel } } ]
           authors: [ { claims: { 'wdt:P648': [ olId ] } } ]
         resolve entry
         .get 'result'
@@ -195,7 +195,7 @@ describe 'entities:resolve in context', ->
         entry =
           edition: { isbn: '9782203399403' }
           works: [ { claims: { 'wdt:P648': [ olId ] } } ]
-          authors: [ { labels: author.labels, claims: {} } ]
+          authors: [ { labels: author.labels } ]
         resolve entry
         .get 'result'
         .then (result)->
@@ -205,7 +205,8 @@ describe 'entities:resolve in context', ->
 
     return
 
-  xit 'should resolve work & author when inv author and inv work labels exists', (done)->
+describe 'entities:resolve from labels', ->
+  it 'should resolve work & author when inv author & inv work labels exists', (done)->
     workLabel = randomWorkLabel()
     authorLabel = randomWorkLabel()
     createHuman()
@@ -215,8 +216,8 @@ describe 'entities:resolve in context', ->
       .then (work)->
         entry =
           edition: { isbn: '9782203399303' }
-          works: [ { labels: { en: workLabel }, claims: {} } ]
-          authors: [ { labels: { en: authorLabel }, claims: {} } ]
+          works: [ { labels: { en: workLabel } } ]
+          authors: [ { labels: { en: authorLabel } } ]
         resolve entry
         .get 'result'
         .then (result)->
@@ -226,4 +227,3 @@ describe 'entities:resolve in context', ->
     .catch done
 
     return
-
