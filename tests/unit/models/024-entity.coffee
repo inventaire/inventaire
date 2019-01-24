@@ -8,6 +8,7 @@ Entity = __.require 'models', 'entity'
 workDoc = ->
   doc = Entity.create()
   doc._id = '12345678900987654321123456789012'
+  doc._rev = '5-12345678900987654321123456789012'
   doc.claims['wdt:P31'] = ['wd:Q571']
   doc.claims['wdt:P50'] = ['wd:Q535', 'wd:Q1541']
   doc.created = Date.now()
@@ -102,7 +103,7 @@ describe 'entity model', ->
           updatedDoc.updated.should.be.above now
           updatedDoc.updated.should.be.below now + 10
           done()
-        setTimeout update, 1
+        setTimeout update, 5
 
       it 'should return a doc with the new value for an existing property', (done)->
         entityDoc = workDoc()
@@ -181,7 +182,7 @@ describe 'entity model', ->
           updatedDoc.updated.should.be.below now + 10
           done()
 
-        setTimeout update, 1
+        setTimeout update, 5
 
     describe 'delete claim', ->
       it 'should return with the claim value removed if passed an undefined new value', (done)->
@@ -227,7 +228,7 @@ describe 'entity model', ->
           updatedDoc.updated.should.be.below now + 10
           done()
 
-        setTimeout update, 1
+        setTimeout update, 5
 
     describe 'set label', ->
       it 'should set the label in the given lang', (done)->
@@ -274,7 +275,7 @@ describe 'entity model', ->
           updatedDoc.updated.should.be.above initialTimestamp
           updatedDoc.updated.should.be.below initialTimestamp + 10
           done()
-        setTimeout update, 1
+        setTimeout update, 5
 
     describe 'merge', ->
       it 'should transfer labels', (done)->
@@ -331,7 +332,7 @@ describe 'entity model', ->
           entityB.updated.should.be.above now
           entityB.updated.should.be.below now + 10
           done()
-        setTimeout update, 1
+        setTimeout update, 5
 
       it 'should not update the timestamp if no data was transfered', (done)->
         entityA = workDoc()
@@ -343,7 +344,7 @@ describe 'entity model', ->
           Entity.mergeDocs entityA, entityB
           entityB.updated.should.equal initialTimestamp
           done()
-        setTimeout update, 10
+        setTimeout update, 5
 
       it 'should reject merge implying to break claim uniqueness restrictions', (done)->
         entityA = workDoc()
@@ -352,3 +353,40 @@ describe 'entity model', ->
         Entity.createClaim entityB, 'wdt:P648', 'OL123457W'
         (-> Entity.mergeDocs entityA, entityB).should.throw 'merge would create mutliples wdt:P648 values'
         done()
+
+    describe 'turnIntoRedirection', ->
+      it 'should return a redirection doc', (done)->
+        fromEntityDoc = workDoc()
+        toUri = 'wd:Q3209796'
+        redirection = Entity.turnIntoRedirection fromEntityDoc, toUri
+        redirection.should.be.an.Object()
+        redirection._id.should.equal fromEntityDoc._id
+        redirection._rev.should.equal fromEntityDoc._rev
+        redirection.redirect.should.equal toUri
+        should(redirection.claims).not.be.ok()
+        should(redirection.labels).not.be.ok()
+        redirection.created.should.equal fromEntityDoc.created
+        redirection.updated.should.be.ok()
+        done()
+
+      it 'should be a different object', (done)->
+        fromEntityDoc = workDoc()
+        toUri = 'wd:Q3209796'
+        redirection = Entity.turnIntoRedirection fromEntityDoc, toUri
+        should(redirection is fromEntityDoc).not.be.true()
+        done()
+
+      it 'should update the timestamp', (done)->
+        fromEntityDoc = workDoc()
+        toUri = 'wd:Q3209796'
+        redirect = ->
+          redirection = Entity.turnIntoRedirection fromEntityDoc, toUri
+          redirection.should.be.an.Object()
+          redirection._id.should.equal fromEntityDoc._id
+          redirection._rev.should.equal fromEntityDoc._rev
+          redirection._rev.should.equal fromEntityDoc._rev
+          redirection.redirect.should.equal toUri
+          redirection.updated.should.be.above fromEntityDoc.updated
+          done()
+
+        setTimeout redirect, 5
