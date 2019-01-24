@@ -211,9 +211,7 @@ describe 'entity model', ->
       it 'should throw if a critical property got zero claims', (done)->
         doc = editionDoc()
         updater = -> Entity.updateClaim doc, 'wdt:P629', 'wd:Q53592', null
-        updater.should.throw()
-        try updater()
-        catch err then err.message.should.equal 'this property should at least have one value'
+        updater.should.throw('this property should at least have one value')
         done()
 
       it 'should update the timestamp', (done)->
