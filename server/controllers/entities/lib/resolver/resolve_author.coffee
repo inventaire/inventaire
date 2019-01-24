@@ -8,6 +8,6 @@ resolveExternalIds = require './resolve_external_ids'
 module.exports = (author)->
   resolveExternalIds author.claims
   .then (uris)->
-    unless uris then return work
+    unless uris? then return author
     if uris.length is 1 then author.uri = uris[0]
     return author

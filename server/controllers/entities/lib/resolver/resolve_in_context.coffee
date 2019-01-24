@@ -9,11 +9,27 @@ getEntitiesByUris = require '../get_entities_by_uris'
 module.exports = (entry)->
   { edition, works, authors } = entry
   Promise.all works.map addUriToWork(authors)
+  .then ->
+    Promise.all authors.map addUriToAuthor(works)
+
+addUriToAuthor = (works)-> (author)->
+  workUris = _.compact(works.map(_.property('uri')))
+  entryAuthorLabels = _.values(author.labels)
+  if author.uri? or _.isEmpty(workUris) then return
+  Promise.all getAuthorsFromWorksUris(workUris, entryAuthorLabels)
+  .then _.flatten
+  .map _.property('uri')
+  .then _.uniq
+  .then (authorUris)->
+    # Only one author entity found, then it must match entry author
+    if authorUris.length is 1
+      author.uri = authorUris[0]
 
 addUriToWork = (authors)-> (work)->
-  bestWorkLabel = _.values(work.labels)[0]
-
-  Promise.all getWorksFromAuthors(authors, bestWorkLabel)
+  authorUris = _.compact(authors.map(_.property('uri')))
+  entryWorkLabels = _.values(work.labels)
+  if work.uri? or _.isEmpty(authorUris) then return
+  Promise.all getWorksFromAuthors(authorUris, entryWorkLabels)
   .then _.flatten
   .map _.property('uri')
   .then _.uniq
@@ -21,13 +37,29 @@ addUriToWork = (authors)-> (work)->
     # Only one work entity found, then it must match entry work
     if workUris.length is 1
       work.uri = workUris[0]
-    return work
 
-getWorksFromAuthors = (authors, workLabel)->
-  authors.map (author)->
-    unless author.uri then return
-    getAuthorWorks({ uri: author.uri }).get 'works'
+getAuthorsFromWorksUris = (uris, authorLabels)->
+  getEntitiesByUris { uris }
+  .get 'entities'
+  .then _.values
+  .then (works)->
+    authorClaims = works.map (work)-> work.claims['wdt:P50']
+    authorUris = _.flatten authorClaims
+  .then (uris)-> getEntitiesByUris { uris }
+  .get 'entities'
+  .then _.values
+  .filter (existingAuthor)->
+    authorsLabels = Object.values(existingAuthor.labels)
+    _.intersection(authorLabels, authorsLabels).length > 0
+
+getWorksFromAuthors = (authorUris, workLabels)->
+  authorUris.map (uri)->
+    getAuthorWorks { uri }
+    .get 'works'
     .map _.property('uri')
-    .then (uris)-> getEntitiesByUris({ uris }).get 'entities'
+    .then (uris)-> getEntitiesByUris({ uris })
+    .get 'entities'
     .then _.values
-    .filter (work)-> workLabel in Object.values(work.labels)
+    .filter (existingWork)->
+      worksLabels = Object.values(existingWork.labels)
+      _.intersection(workLabels, worksLabels).length > 0
