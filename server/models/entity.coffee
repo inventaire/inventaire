@@ -148,6 +148,7 @@ module.exports = Entity =
     # Giving priority to the toEntityDoc labels and claims
     toEntityDoc.labels = _.extend {}, fromEntityDoc.labels, toEntityDoc.labels
     toEntityDoc.claims = _.extend {}, fromEntityDoc.claims, toEntityDoc.claims
+    toEntityDoc.updated = Date.now()
     return toEntityDoc
 
   turnIntoRedirection: (fromEntityDoc, toUri, removedPlaceholdersIds)->

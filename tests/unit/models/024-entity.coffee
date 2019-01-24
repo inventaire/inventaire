@@ -265,16 +265,14 @@ describe 'entity model', ->
         done()
 
       it 'should update the timestamp', (done)->
-        now = Date.now()
         entityDoc = workDoc()
+        initialTimestamp = entityDoc.updated
         entityDoc.updated.should.be.a.Number()
-        entityDoc.updated.should.be.aboveOrEqual entityDoc.updated
-        entityDoc.updated.should.be.below entityDoc.updated + 10
         update = ->
           updatedDoc = Entity.setLabel entityDoc, 'fr', 'hello'
           updatedDoc.updated.should.be.a.Number()
-          updatedDoc.updated.should.be.above now
-          updatedDoc.updated.should.be.below now + 10
+          updatedDoc.updated.should.be.above initialTimestamp
+          updatedDoc.updated.should.be.below initialTimestamp + 10
           done()
         setTimeout update, 1
 
@@ -312,3 +310,16 @@ describe 'entity model', ->
         Entity.mergeDocs entityA, entityB
         entityB.claims['wdt:P921'].should.deepEqual [ 'wd:Q1' ]
         done()
+
+      it 'should update the timestamp', (done)->
+        entityA = workDoc()
+        entityB = workDoc()
+        Entity.createClaim entityA, 'wdt:P921', 'wd:Q3'
+        now = Date.now()
+        update = ->
+          Entity.mergeDocs entityA, entityB
+          entityB.updated.should.be.a.Number()
+          entityB.updated.should.be.above now
+          entityB.updated.should.be.below now + 10
+          done()
+        setTimeout update, 1
