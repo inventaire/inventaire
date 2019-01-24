@@ -344,3 +344,11 @@ describe 'entity model', ->
           entityB.updated.should.equal initialTimestamp
           done()
         setTimeout update, 10
+
+      it 'should reject merge implying to break claim uniqueness restrictions', (done)->
+        entityA = workDoc()
+        entityB = workDoc()
+        Entity.createClaim entityA, 'wdt:P648', 'OL123456W'
+        Entity.createClaim entityB, 'wdt:P648', 'OL123457W'
+        (-> Entity.mergeDocs entityA, entityB).should.throw 'merge would create mutliples wdt:P648 values'
+        done()
