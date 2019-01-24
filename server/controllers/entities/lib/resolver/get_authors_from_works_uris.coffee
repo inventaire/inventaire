@@ -1,13 +1,11 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-getBestLangValue = __.require 'lib', 'get_best_lang_value'
-getAuthorWorks = __.require 'controllers', 'entities/lib/get_author_works'
 getEntitiesByUris = require '../get_entities_by_uris'
 { Promise } = __.require 'lib', 'promises'
 
-module.exports = (uris, authorLabels)->
-  getEntitiesByUris { uris }
+module.exports = (workUris, authorLabels)->
+  getEntitiesByUris { uris: workUris }
   .get 'entities'
   .then _.values
   .then (works)->
