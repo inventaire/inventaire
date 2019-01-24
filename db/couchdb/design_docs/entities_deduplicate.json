@@ -3,7 +3,7 @@
   "language": "coffeescript",
   "views": {
     "findHumansHomonymes": {
-      "map": "(doc)->\n  if doc.type isnt 'entity' then return\n\n  normalize = (label)->\n    label\n    .trim()\n    .replace(/\\s\\w{1}\\.\\s?/g, ' ')\n    .replace(/\\s\\s/g, ' ')\n    .toLowerCase()\n\n  # Keep only humans\n  unless doc.claims?['wdt:P31']?[0] is 'wd:Q5' then return\n\n  if doc.labels? and doc.claims?\n\n    labelsSet = {}\n\n    for lang, label of doc.labels\n      normalizedLabel = normalize label\n      labelsSet[normalizedLabel] = true\n\n    # Use a set to prevent emitting several times the same label\n    # just because an entity as the same label in several languages\n    Object.keys(labelsSet).forEach (label)-> emit label, null\n",
+      "map": "(doc)->\n  if doc.type isnt 'entity' or doc.redirect? then return\n\n  normalize = (label)->\n    label\n    .trim()\n    .replace(/\\s\\w{1}\\.\\s?/g, ' ')\n    .replace(/\\s\\s/g, ' ')\n    .toLowerCase()\n\n  # Keep only humans\n  unless doc.claims?['wdt:P31']?[0] is 'wd:Q5' then return\n\n  if doc.labels? and doc.claims?\n\n    labelsSet = {}\n\n    for lang, label of doc.labels\n      normalizedLabel = normalize label\n      labelsSet[normalizedLabel] = true\n\n    # Use a set to prevent emitting several times the same label\n    # just because an entity as the same label in several languages\n    Object.keys(labelsSet).forEach (label)-> emit label, null\n",
       "reduce": "_count"
     }
   }
