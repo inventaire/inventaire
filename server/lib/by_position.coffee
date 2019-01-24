@@ -4,18 +4,12 @@ _ = __.require 'builders', 'utils'
 couch_ = __.require 'lib', 'couch'
 assert_ = __.require 'utils', 'assert_types'
 
-module.exports = (db, designDoc)->
-  return byPosition = (bbox)->
-    _.log bbox, 'bbox'
-    assert_.numbers bbox
+module.exports = (db, designDoc)-> (bbox)->
+  assert_.numbers bbox
+  keys = getGeoSquareKeys bbox
 
-    console.time 'geo square keys'
-    keys = getGeoSquareKeys bbox
-    console.timeEnd 'geo square keys'
-    # _.log keys, 'keys'
-
-    db.viewKeys designDoc, 'byGeoSquare', keys, { include_docs: true }
-    .then couch_.mapDoc
+  db.viewKeys designDoc, 'byGeoSquare', keys, { include_docs: true }
+  .then couch_.mapDoc
 
 getGeoSquareKeys = (bbox)->
   # Using the same bbox order as Leaflet bounds.toBBoxString function.

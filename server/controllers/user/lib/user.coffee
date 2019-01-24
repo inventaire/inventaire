@@ -140,7 +140,7 @@ user_.setOauthTokens = (userId, provider, data)->
 
 user_.availability = availability_ = require('./availability')(user_)
 user_.create = require('./create')(db, token_, availability_)
-user_.byPosition = __.require('lib', 'by_position')(db, 'user')
+user_.byPosition = __.require('lib', 'by_position')(db, 'users')
 
 deleteUser = require('./delete')(db, user_)
 reqParsers = require './req_parsers'
