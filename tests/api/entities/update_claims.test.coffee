@@ -5,7 +5,7 @@ should = require 'should'
 { Promise } = __.require 'lib', 'promises'
 { undesiredRes, undesiredErr } = require '../utils/utils'
 { createWork, createEdition, createHuman } = require '../fixtures/entities'
-{ getByUri, updateClaim, merge } = require '../utils/entities'
+{ getByUri, addClaim, updateClaim, merge } = require '../utils/entities'
 
 describe 'entities:update-claims', ->
   it 'should reject an update with an inappropriate property', (done)->
@@ -46,6 +46,31 @@ describe 'entities:update-claims', ->
         err.body.status_verbose.should.equal 'this property should at least have one value'
         err.statusCode.should.equal 400
         done()
+    .catch undesiredErr(done)
+
+    return
+
+  it 'should reject an update on an unexisting claim (property with no claim)', (done)->
+    createEdition()
+    .then (edition)-> updateClaim edition.uri, 'wdt:P655', 'wd:Q23', 'wd:Q42'
+    .then undesiredRes(done)
+    .catch (err)->
+      err.statusCode.should.equal 400
+      err.body.status_verbose.should.equal 'claim property value not found'
+      done()
+    .catch undesiredErr(done)
+
+    return
+
+  it 'should reject an update on an unexisting claim (property with claims)', (done)->
+    createEdition()
+    .tap (edition)-> addClaim edition.uri, 'wdt:P655', 'wd:Q535'
+    .then (edition)-> updateClaim edition.uri, 'wdt:P655', 'wd:Q23', 'wd:Q42'
+    .then undesiredRes(done)
+    .catch (err)->
+      err.statusCode.should.equal 400
+      err.body.status_verbose.should.equal 'claim property value not found'
+      done()
     .catch undesiredErr(done)
 
     return
