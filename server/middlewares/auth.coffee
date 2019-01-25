@@ -1,7 +1,6 @@
 { secret, cookieMaxAge } = require 'config'
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
-user_ = __.require 'controllers', 'user/lib/user'
 
 passport = require 'passport'
 passport_ = __.require 'lib', 'passport/passport'
