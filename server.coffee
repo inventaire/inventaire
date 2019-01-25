@@ -16,11 +16,6 @@ couchInit = __.require('couch', 'init')()
 # all files from controllers, middlewares, libs, etc
 initExpress = require './server/init_express'
 
-if CONFIG.verbosity > 0
-  _.logErrorsCount()
-  _.log "env: #{CONFIG.env}"
-  _.log "host: #{CONFIG.fullHost()}"
-
 couchInit
 .then _.Log('couch init')
 .then initExpress
