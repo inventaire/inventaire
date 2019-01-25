@@ -4,14 +4,6 @@ CONFIG = require 'config'
 # and not simply scripts being executed in the wild
 CONFIG.serverMode = true
 
-[ port, host, env ] = process.argv.slice 2
-
-if port? then CONFIG.port = port
-if host? then CONFIG.host = host
-if env?
-  CONFIG.env = env
-  console.log 'env manual change', process.env.NODE_ENV = env
-
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 
