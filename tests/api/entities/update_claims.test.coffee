@@ -12,7 +12,7 @@ describe 'entities:update-claims', ->
     createWork()
     .then (work)->
       # A work entity should not have pages count
-      updateClaim work._id, 'wdt:P1104', null, 124
+      updateClaim work.uri, 'wdt:P1104', null, 124
       .then undesiredRes(done)
       .catch (err)->
         err.body.status_verbose.should.equal "works can't have a property wdt:P1104"
@@ -25,7 +25,7 @@ describe 'entities:update-claims', ->
   it 'should reject an update with an inappropriate property datatype', (done)->
     createWork()
     .then (work)->
-      updateClaim work._id, 'wdt:P50', null, 124
+      updateClaim work.uri, 'wdt:P50', null, 124
       .then undesiredRes(done)
       .catch (err)->
         err.body.status_verbose.should.equal 'invalid value type: expected string, got number'
@@ -40,7 +40,7 @@ describe 'entities:update-claims', ->
     .then (edition)->
       oldValue = edition.claims['wdt:P629'][0]
       # An edition entity should always have at least one wdt:P629 claim
-      updateClaim edition._id, 'wdt:P629', oldValue, null
+      updateClaim edition.uri, 'wdt:P629', oldValue, null
       .then undesiredRes(done)
       .catch (err)->
         err.body.status_verbose.should.equal 'this property should at least have one value'
@@ -56,8 +56,8 @@ describe 'entities:update-claims', ->
       createWork()
     ]
     .spread (workA, workB)->
-      merge workA._id, workB._id
-      .then -> updateClaim workA._id, 'wdt:P50', null, 'wd:Q535'
+      merge workA.uri, workB.uri
+      .then -> updateClaim workA.uri, 'wdt:P50', null, 'wd:Q535'
     .then undesiredRes(done)
     .catch (err)->
       err.statusCode.should.equal 400
@@ -72,7 +72,7 @@ describe 'entities:update-claims', ->
     createWork()
     .then (work)->
       { uri: workUri } = work
-      Promise.all authorsUris.map((uri)-> updateClaim work._id, 'wdt:P50', null, uri)
+      Promise.all authorsUris.map((uri)-> updateClaim work.uri, 'wdt:P50', null, uri)
       .then (responses)->
         responses.forEach (res)-> should(res.ok).be.true()
         getByUri work.uri
@@ -87,7 +87,7 @@ describe 'entities:update-claims', ->
   it 'should accept a non-duplicated concurrent value', (done)->
     createHuman()
     .then (human)->
-      updateClaim human._id, 'wdt:P648', null, someOLid()
+      updateClaim human.uri, 'wdt:P648', null, someOLid()
       .then (res)->
         should(res.ok).be.true()
         done()
@@ -99,12 +99,12 @@ describe 'entities:update-claims', ->
     id = someOLid()
     createHuman()
     .then (human)->
-      updateClaim human._id, 'wdt:P648', null, id
+      updateClaim human.uri, 'wdt:P648', null, id
       .then (res)->
         should(res.ok).be.true()
         createHuman()
     .then (human2)->
-      updateClaim human2._id, 'wdt:P648', null, id
+      updateClaim human2.uri, 'wdt:P648', null, id
       .then undesiredRes(done)
       .catch (err)->
         err.statusCode.should.equal 400

@@ -35,12 +35,12 @@ describe 'items:snapshot', ->
       ]
       .delay 100
       .spread (item, serieEntity)->
-        updateClaim workEntity._id, 'wdt:P1545', null, '5'
+        updateClaim workEntity.uri, 'wdt:P1545', null, '5'
         .delay 100
         .then -> getItem item
         .then (item)->
           item.snapshot['entity:ordinal'].should.equal '5'
-          updateClaim workEntity._id, 'wdt:P1545', '5', '6'
+          updateClaim workEntity.uri, 'wdt:P1545', '5', '6'
           .delay 100
           .then -> getItem item
           .then (item)->
