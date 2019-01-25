@@ -4,7 +4,12 @@ _ = __.require 'builders', 'utils'
 assert_ = __.require 'utils', 'assert_types'
 Group = __.require 'models', 'group'
 
-module.exports = (groups_)->
+# Working around the circular dependency
+groups_ = null
+lateRequire = -> groups_ = require './groups'
+setTimeout lateRequire, 0
+
+module.exports =
   userInGroup: (userId, groupId)->
     groups_.byId groupId
     .then groups_.allGroupMembers

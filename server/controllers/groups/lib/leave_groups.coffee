@@ -3,7 +3,12 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 Group = __.require 'models', 'group'
 
-module.exports = (db, groups_)->
+# Working around the circular dependency
+groups_ = null
+lateRequire = -> groups_ = require './groups'
+setTimeout lateRequire, 0
+
+module.exports =
   userCanLeave: (userId, groupId)->
     groups_.byId groupId
     .then (group)->
@@ -19,7 +24,7 @@ module.exports = (db, groups_)->
     # TODO: check if userCanLeave
     groups_.byUser userId
     .map removeUser.bind(null, userId)
-    .then db.bulk
+    .then groups_.db.bulk
 
 removeUser = (userId, groupDoc)->
   if userId in groupDoc.admins
