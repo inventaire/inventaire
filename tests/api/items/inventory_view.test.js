@@ -4,6 +4,7 @@ require('should')
 const { authReq, undesiredRes } = __.require('apiTests', 'utils/utils')
 const endpoint = '/api/items?action=inventory-view'
 const { groupPromise } = require('../fixtures/groups')
+const { createUserWithItems } = require('../fixtures/populate')
 
 describe('items:inventory-view', async () => {
   it('should reject requests without a user or a group', done => {
@@ -18,7 +19,7 @@ describe('items:inventory-view', async () => {
   })
 
   it('should return a user inventory-view', done => {
-    getUser()
+    createUserWithItems()
     .get('_id')
     .then(userId => authReq('get', `${endpoint}&user=${userId}`))
     .then(res => {
