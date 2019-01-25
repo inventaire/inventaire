@@ -18,26 +18,25 @@ exports.signup = (req, res)->
   sanitize req, res, sanitization
   .then (params)->
     { username, email, password } = params
-    next = LoggedIn req, res
+    next = loggedIn req, res
     # TODO: rewrite passport response to use responses_.send
     passport_.authenticate.localSignup req, res, next
   .catch error_.Handler(req, res)
 
 exports.login = (req, res)->
-  next = LoggedIn req, res
+  next = loggedIn req, res
   passport_.authenticate.localLogin req, res, next
 
-LoggedIn = (req, res)->
-  loggedIn = (result)->
-    if result instanceof Error then error_.handler req, res, result
-    else
-      setLoggedInCookie res
-      data = { ok: true }
-      # add a 'include-user-data' option to access user data directly from the login request
-      # Use case: inventaire-wiki (jingo) login
-      # https://github.com/inventaire/jingo/blob/635f5417b7ca5a99bad60b32c1758ccecd0e3afa/lib/auth/local-strategy.js#L26
-      if req.query['include-user-data'] then data.user = ownerSafeData req.user
-      res.json data
+loggedIn = (req, res)-> (result)->
+  if result instanceof Error then return error_.handler req, res, result
+
+  setLoggedInCookie res
+  data = { ok: true }
+  # add a 'include-user-data' option to access user data directly from the login request
+  # Use case: inventaire-wiki (jingo) login
+  # https://github.com/inventaire/jingo/blob/635f5417b7ca5a99bad60b32c1758ccecd0e3afa/lib/auth/local-strategy.js#L26
+  if req.query['include-user-data'] then data.user = ownerSafeData req.user
+  res.json data
 
 exports.logoutRedirect = logoutRedirect = (redirect, req, res, next)->
   res.clearCookie 'loggedIn'
