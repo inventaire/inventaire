@@ -46,7 +46,7 @@ getWdAuthorWorks = (qid, worksByTypes, params)->
     # Known case of duplicate: when an entity has two P31 values that both
     # resolve to the same whitelisted type
     # ex: Q23701761 → P31 → Q571/Q17518461
-    # Deduplicate after formatting so that if an entity as one valid P31
+    # Deduplicate after formatting so that if an entity has one valid P31
     # and an invalid one, it still gets one
     uris = []
     return results.filter deduplicate(uris)

@@ -5,6 +5,8 @@ getOriginalLang = __.require 'lib', 'wikidata/get_original_lang'
 { _id:hookUserId } = __.require('couch', 'hard_coded_documents').users.hook
 updateLabel = require './update_label'
 
+# TODO: also check for edition subtitle
+
 module.exports = (edition, oldTitle)->
   workUris = edition.claims['wdt:P629']
   # Ignore composite editions

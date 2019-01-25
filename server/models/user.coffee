@@ -13,8 +13,7 @@ module.exports = User = {}
 
 User.validations = validations = require './validations/user'
 
-# should always return a promise
-# thus the try/catch returning error in a rejected promise
+# TODO: remove the last traces of creationStrategy=browserid: optional password
 User._create = (username, email, creationStrategy, language, password)->
   _.log [ username, email, creationStrategy, language, "password:#{password?}" ], 'creating user'
   assert_.strings [ username, email, creationStrategy ]
@@ -97,7 +96,7 @@ User.updateEmail = (doc, email)->
   return doc
 
 archivePreviousEmail = (doc)->
-  # don't save the previous email if it had not been validated
+  # Don't save the previous email if it had not been validated
   if doc.validEmail
     doc.previousEmails or= []
     doc.previousEmails.push doc.email
