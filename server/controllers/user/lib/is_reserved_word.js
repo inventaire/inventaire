@@ -26,6 +26,7 @@ const reservedWords = [
   'username',
   'email',
   'nearby',
+  'network',
   'map',
   'last',
   'group',
