@@ -37,6 +37,10 @@ module.exports = (params)->
   unless prop.validate newVal
     return error_.reject 'invalid property value', 400, property, newVal
 
+  if oldVal? and oldVal not in currentClaims[property]
+    context = { property, propClaims: currentClaims[property], oldVal }
+    return error_.reject "the old value couldn't be found", 400, context
+
   # If the property expects a uniqueValue and that there is already a value defined
   # any action other than editing the current value should be rejected
   if prop.uniqueValue
