@@ -24,10 +24,12 @@ const buildWorkUriItemsMap = editionWorkMap => (workUriItemsMap, item) => {
 
 const aggregateOwnersWorks = editionWorkMap => (index, item) => {
   const { _id: itemId, owner: ownerId, entity: entityUri } = item
-  const workUri = editionWorkMap[entityUri] || entityUri
+  const worksUris = editionWorkMap[entityUri] || [ entityUri ]
   index[ownerId] = index[ownerId] || {}
-  index[ownerId][workUri] = index[ownerId][workUri] || []
-  index[ownerId][workUri].push(itemId)
+  for (const workUri of worksUris) {
+    index[ownerId][workUri] = index[ownerId][workUri] || []
+    index[ownerId][workUri].push(itemId)
+  }
   return index
 }
 
