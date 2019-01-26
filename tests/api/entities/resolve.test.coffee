@@ -10,7 +10,7 @@ should = require 'should'
 resolve = (entry)-> authReq 'post', '/api/entities?action=resolve', entry
 
 describe 'entities:resolve', ->
-  it 'should find an edition from an ISBN', (done)->
+  it 'should resolve an edition from an ISBN', (done)->
     ensureEditionExists 'isbn:9782203399303'
     .then -> resolve { edition: { isbn: '9782203399303' } }
     .get 'result'
@@ -59,7 +59,8 @@ describe 'entities:resolve', ->
 
     return
 
-  it 'should find wikidata work from external ids claims', (done)->
+describe 'entities:resolve:external-id', ->
+  it 'should resolve wikidata work from external ids claim', (done)->
     edition = { isbn: '9782203399303' }
     work =
       claims:
@@ -76,7 +77,7 @@ describe 'entities:resolve', ->
 
     return
 
-  it 'should find inventaire work from external ids claims', (done)->
+  it 'should resolve inventaire work from external ids claim', (done)->
     olId = someOpenLibraryId 'work'
     entry =
       edition: { isbn: '9782203399303' }
@@ -96,7 +97,7 @@ describe 'entities:resolve', ->
 
     return
 
-  it 'should find wikidata author from external ids claims', (done)->
+  it 'should resolve wikidata author from external ids claim', (done)->
     edition = { isbn: '9782203399303' }
     author =
       claims:
@@ -112,7 +113,7 @@ describe 'entities:resolve', ->
 
     return
 
-  it 'should find inventaire author from external ids claims ', (done)->
+  it 'should resolve inventaire author from external ids claim', (done)->
     olId = someOpenLibraryId 'author'
     entry =
       edition: { isbn: '9782203399303' }
@@ -133,8 +134,8 @@ describe 'entities:resolve', ->
 
     return
 
-describe 'entities:resolve in context', ->
-  it 'should resolve work from inv work label and inv author with external ids', (done)->
+describe 'entities:resolve:in-context', ->
+  it 'should resolve work from work label and author with external ids claim', (done)->
     olId = someOpenLibraryId 'author'
     missingWorkLabel = randomWorkLabel()
     otherWorkLabel = randomWorkLabel()
@@ -160,10 +161,12 @@ describe 'entities:resolve in context', ->
 
     return
 
-  it 'should resolve work from resolved author when author have several works with same label', (done)->
+  it 'should not resolve work from resolved author when author have several works with same label', (done)->
     olId = someOpenLibraryId 'work'
     workLabel = randomWorkLabel()
     createHuman()
+    .delay 10
+    .tap (author)-> addClaim author.uri, 'wdt:P648', olId
     .delay 10
     .then (author)->
       Promise.all [
@@ -178,13 +181,14 @@ describe 'entities:resolve in context', ->
         resolve entry
         .get 'result'
         .then (result)->
-          should(result.authors[0].uri).not.be.ok()
+          should(result.works[0].uri).not.be.ok()
+          should(result.authors[0].uri).be.ok()
           done()
     .catch done
 
     return
 
-  it 'should resolve author from inv author label and inv work with external id', (done)->
+  it 'should resolve author from inv author with same label, and an inv work with external id', (done)->
     olId = someOpenLibraryId 'work'
     workLabel = randomWorkLabel()
     createHuman()
@@ -206,8 +210,8 @@ describe 'entities:resolve in context', ->
 
     return
 
-describe 'entities:resolve from labels', ->
-  it 'should resolve work & author when inv author & inv work labels exists', (done)->
+describe 'entities:resolve:from-labels', ->
+  it 'should resolve work & author from inv author & inv work labels', (done)->
     createHuman()
     .then (author)->
       workLabel = randomWorkLabel()
@@ -228,7 +232,7 @@ describe 'entities:resolve from labels', ->
 
     return
 
-  it 'should not resolve when several inv authors & inv works labels exist', (done)->
+  it 'should reject when several authors/works pairs exist', (done)->
     createHuman()
     .then (author)->
       authReq 'post', '/api/entities?action=create',
