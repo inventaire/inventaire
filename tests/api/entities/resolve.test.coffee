@@ -118,6 +118,7 @@ describe 'entities:resolve', ->
       edition: { isbn: '9782203399303' }
       authors: [ { claims: { 'wdt:P648': [ olId ] } } ]
     createHuman()
+    .delay 10
     .tap (author)-> addClaim author.uri, 'wdt:P648', olId
     .delay 10
     .then (author)->
@@ -139,7 +140,7 @@ describe 'entities:resolve in context', ->
     otherWorkLabel = randomWorkLabel()
     entry =
       edition: { isbn: '9782203399303' }
-      works: [ labels: { en: missingWorkLabel } ]
+      works: [ { labels: { en: missingWorkLabel } } ]
       authors: [ { claims: { 'wdt:P648': [ olId ] } } ]
     createHuman()
     .delay 10
@@ -207,23 +208,50 @@ describe 'entities:resolve in context', ->
 
 describe 'entities:resolve from labels', ->
   it 'should resolve work & author when inv author & inv work labels exists', (done)->
-    workLabel = randomWorkLabel()
-    authorLabel = randomWorkLabel()
     createHuman()
-    .delay 10
     .then (author)->
+      workLabel = randomWorkLabel()
       createWorkWithAuthor author, workLabel
+      .delay 3500
       .then (work)->
         entry =
           edition: { isbn: '9782203399303' }
-          works: [ { labels: { en: workLabel } } ]
-          authors: [ { labels: { en: authorLabel } } ]
+          works: [ { labels: work.labels } ]
+          authors: [ { labels: author.labels } ]
         resolve entry
         .get 'result'
         .then (result)->
           result.works[0].uri.should.equal work.uri
           result.authors[0].uri.should.equal author.uri
           done()
+    .catch done
+
+    return
+
+  it 'should not resolve when several inv authors & inv works labels exist', (done)->
+    createHuman()
+    .then (author)->
+      authReq 'post', '/api/entities?action=create',
+        labels: author.labels
+        claims: { 'wdt:P31': [ 'wd:Q5' ] }
+      .then (sameLabelAuthor)->
+        workLabel = randomWorkLabel()
+        Promise.all [
+          createWorkWithAuthor author, workLabel
+          createWorkWithAuthor sameLabelAuthor, workLabel
+        ]
+        .delay 3500
+        .then (works)->
+          entry =
+            edition: { isbn: '9782203399303' }
+            works: [ { labels: { en: workLabel } } ]
+            authors: [ { labels: author.labels } ]
+          resolve entry
+          .get 'result'
+          .then (result)->
+            should(result.works[0].uri).not.be.ok()
+            should(result.authors[0].uri).not.be.ok()
+            done()
     .catch done
 
     return

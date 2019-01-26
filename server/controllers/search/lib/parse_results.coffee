@@ -3,13 +3,12 @@ __ = CONFIG.universalPath
 getEntityType = __.require 'controllers', 'entities/lib/get_entity_type'
 Group = __.require 'models', 'group'
 
-module.exports = (types, reqUserId)-> (res)->
+module.exports = (types)-> (res)->
   unless res.hits?.hits? then return []
 
   res.hits.hits
   .map fixEntityType
   .filter isOfDesiredTypes(types)
-  .filter isSearchable(reqUserId)
 
 fixEntityType = (result)->
   result._db_type = result._type
@@ -29,10 +28,3 @@ fixEntityType = (result)->
 isOfDesiredTypes = (types)-> (result)->
   if result._db_type is 'entity' then return result._type in types
   else return true
-
-isSearchable = (reqUserId)-> (result)->
-  if result._type isnt 'groups' then return true
-  if result._source.searchable then return true
-  unless reqUserId? then return false
-  # Only members should be allowed to find non-searchable groups in search
-  return Group.userIsMember reqUserId, result._source
