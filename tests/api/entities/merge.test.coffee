@@ -189,17 +189,15 @@ describe 'entities:merge', ->
 
     return
 
-  it 'should reject merge of a redirection to a wd entity', (done)->
-    wdEntityUri = 'wd:Q618719'
+  it 'should reject a circular merge', (done)->
     createWork()
-    .then (workA)->
-      merge workA.uri, wdEntityUri
-      .then -> merge workA.uri, wdEntityUri
+    .then (work)->
+      merge work.uri, work.uri
       .then undesiredRes(done)
       .catch (err)->
         err.statusCode.should.equal 400
         err.body.status_verbose
-        .should.equal 'turnIntoRedirection failed: the entity is a redirection'
+        .should.equal "can't merge an entity into itself"
         done()
     .catch undesiredErr(done)
 

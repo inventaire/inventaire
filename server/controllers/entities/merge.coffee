@@ -58,6 +58,9 @@ merge = (reqUserId, toPrefix, fromUri, toUri)-> (res)->
   toEntity = entities[toUri] or entities[redirects[toUri]]
   unless toEntity? then throw notFound 'to', toUri
 
+  if fromEntity.uri is toEntity.uri
+    throw error_.new "can't merge an entity into itself", 400, { fromUri, toUri }
+
   unless fromEntity.type is toEntity.type
     # Exception: authors can be organizations and collectives of all kinds
     # which will not get a 'human' type
