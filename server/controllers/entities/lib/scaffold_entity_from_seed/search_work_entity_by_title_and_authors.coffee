@@ -7,7 +7,7 @@ searchByText = require '../search_by_text'
 getBestLangValue = __.require 'lib', 'get_best_lang_value'
 getEntitiesByUris = require '../get_entities_by_uris'
 workEntitiesCache = require './work_entity_search_deduplicating_cache'
-{ MatchTitle, MatchAuthor } = require './work_entity_search_utils'
+{ matchTitle, matchAuthor } = require './work_entity_search_utils'
 
 # Search an existing work by title and authors from a seed
 # to avoid creating duplicates if a corresponding work already exists
@@ -31,11 +31,11 @@ module.exports = (seed)->
     disableDataseed: true
   .filter isWork
   # Make a first filter from the results we got
-  .filter MatchTitle(title, lang)
+  .filter matchTitle(title, lang)
   # Fetch the data we miss to check author match
   .map AddAuthorsStrings(lang)
   # Filter the remaining results on authors
-  .filter MatchAuthor(authors, lang)
+  .filter matchAuthor(authors, lang)
   .then (matches)->
     if matches.length > 1 then _.warn matches, 'possible duplicates'
     return matches[0]
