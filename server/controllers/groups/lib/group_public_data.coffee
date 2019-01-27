@@ -1,20 +1,24 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-promises_ = __.require 'lib', 'promises'
-user_ = __.require 'controllers', 'user/lib/user'
-items_ = __.require 'controllers', 'items/lib/items'
 error_ = __.require 'lib', 'error/error'
 assert_ = __.require 'utils', 'assert_types'
 
-module.exports = (groups_)->
-  return getGroupData = (fnName, fnArgs, reqUserId)->
-    assert_.array fnArgs
-    groups_[fnName].apply null, fnArgs
-    .then (group)->
-      unless group? then throw error_.notFound groupId
+# Working around the circular dependency
+groups_ = null
+user_ = null
+lateRequire = ->
+  groups_ = require './groups'
+  user_ = __.require 'controllers', 'user/lib/user'
+setTimeout lateRequire, 0
 
-      usersIds = groups_.allGroupMembers group
+module.exports = (fnName, fnArgs, reqUserId)->
+  assert_.array fnArgs
+  groups_[fnName].apply null, fnArgs
+  .then (group)->
+    unless group? then throw error_.notFound groupId
 
-      user_.getUsersByIds usersIds, reqUserId
-      .then (users)-> { group, users }
+    usersIds = groups_.allGroupMembers group
+
+    user_.getUsersByIds usersIds, reqUserId
+    .then (users)-> { group, users }

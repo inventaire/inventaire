@@ -10,7 +10,12 @@ getGroup = (groupId)->
   authReq 'get', "#{endpointAction}=by-id&id=#{groupId}"
   .get 'group'
 
-createGroup = (name)-> authReq 'post', "#{endpointBase}?action=create", { name }
+createGroup = (name)->
+  authReq 'post', "#{endpointBase}?action=create", {
+    name,
+    position: [ 1, 1 ],
+    searchable: true
+  }
 
 membershipAction = (reqFn, action, groupId, userId)->
   reqFn 'put', endpointBase, { action, group: groupId, user: userId }

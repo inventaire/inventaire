@@ -8,6 +8,7 @@ Group = __.require 'models', 'group'
 db = __.require('couch', 'base')('groups')
 
 module.exports = groups_ =
+  db: db
   # using a view to avoid returning users or relations
   byId: db.viewFindOneByKey.bind db, 'byId'
   bySlug: db.viewFindOneByKey.bind db, 'bySlug'
@@ -60,11 +61,11 @@ module.exports = groups_ =
 groups_.byPosition = __.require('lib', 'by_position')(db, 'groups')
 
 membershipActions = require('./membership_actions')(db)
-usersLists = require('./users_lists')(groups_)
-updateSettings = require('./update_settings')(db, groups_)
-counts = require('./counts')(groups_, _)
-leaveGroups = require('./leave_groups')(db, groups_)
-getSlug = require('./get_slug')(groups_)
+usersLists = require './users_lists'
+updateSettings = require './update_settings'
+counts = require './counts'
+leaveGroups = require './leave_groups'
+getSlug = require './get_slug'
 
 addSlug = (group)->
   getSlug group.name, group._id
@@ -75,13 +76,6 @@ addSlug = (group)->
 _.extend groups_, membershipActions, usersLists, counts, leaveGroups, {
   updateSettings,
   getSlug,
-  addSlug
+  addSlug,
+  getGroupData: require './group_public_data'
 }
-
-# getGroupData depends on user_ which depends on groups_.
-# Initializing at next tick allows to work around this dependency loop
-# /!\ getGroupData will be undefined until lateInit runs:
-# avoid `{ getGroupData } = groups_`
-# prefer keeping a reference to groups_: `groups_.getGroupData`
-process.nextTick ->
-  groups_.getGroupData = require('./group_public_data')(groups_)

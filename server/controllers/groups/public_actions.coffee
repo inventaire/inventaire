@@ -53,7 +53,7 @@ module.exports =
       # "parseBbox(...).then(...).then(...).catch(...).filter is not a function"
       groups_.byPosition bbox
       .filter searchable
-    .then responses_.Send(res)
+    .then responses_.Wrap(res, 'groups')
     .catch error_.Handler(req, res)
 
   lastGroups: (req, res)->

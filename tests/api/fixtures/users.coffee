@@ -41,6 +41,7 @@ module.exports = API =
     .then parseCookie
     .then API.getUserWithCookie
     .tap setCustomData(customData)
+    .then refreshUser
 
   createAdminUser: (data)->
     API.createUser data
@@ -79,3 +80,5 @@ setCustomData = (customData)-> (user)->
 
 setUserAttribute = (user, attribute, value)->
   request 'put', '/api/user', { attribute, value }, user.cookie
+
+refreshUser = (user)-> API.getUserWithCookie user.cookie

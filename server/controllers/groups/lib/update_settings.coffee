@@ -8,38 +8,38 @@ error_ = __.require 'lib', 'error/error'
 { BasicUpdater } = __.require 'lib', 'doc_updates'
 radio = __.require 'lib', 'radio'
 
-module.exports = (db, groups_)->
-  updateSettings = (data, userId)->
-    { group:groupId, attribute, value } = data
+# Working around the circular dependency
+groups_ = null
+lateRequire = -> groups_ = require './groups'
+setTimeout lateRequire, 0
 
-    unless attribute in updatable
-      throw error_.new "#{attribute} can't be updated", 400, data
+module.exports = (data, userId)->
+  { group:groupId, attribute, value } = data
 
-    unless validations[attribute](value)
-      throw error_.newInvalid attribute, value
+  unless attribute in updatable
+    throw error_.new "#{attribute} can't be updated", 400, data
 
-    db.get groupId
-    .then (groupDoc)->
-      notifData = getNotificationData groupId, userId, groupDoc, attribute, value
+  unless validations[attribute](value)
+    throw error_.newInvalid attribute, value
 
-      groupDoc[attribute] = value
+  groups_.db.get groupId
+  .then (groupDoc)->
+    notifData = getNotificationData groupId, userId, groupDoc, attribute, value
 
-      return applyEditHooks attribute, groupDoc
-      .spread (updatedDoc, hooksUpdates)->
-        db.put updatedDoc
-        .then ->
-          radio.emit 'group:update', notifData
-          return { update: hooksUpdates }
+    groupDoc[attribute] = value
 
-  applyEditHooks = (attribute, groupDoc)->
-    if attribute is 'name'
-      groups_.addSlug groupDoc
-      .then (updatedDoc)->
-        return [ updatedDoc, _.pick(updatedDoc, 'slug') ]
-    else
-      promises_.resolve [ groupDoc, {} ]
+    return applyEditHooks attribute, groupDoc
+    .spread (updatedDoc, hooksUpdates)->
+      groups_.db.put updatedDoc
+      .then ->
+        radio.emit 'group:update', notifData
+        return { update: hooksUpdates }
 
-  return updateSettings
+applyEditHooks = (attribute, groupDoc)->
+  if attribute isnt 'name' then return promises_.resolve [ groupDoc, {} ]
+
+  groups_.addSlug groupDoc
+  .then (updatedDoc)-> [ updatedDoc, _.pick(updatedDoc, 'slug') ]
 
 getNotificationData = (groupId, userId, groupDoc, attribute, value)->
   usersToNotify: getUsersToNotify groupDoc
