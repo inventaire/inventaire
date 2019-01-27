@@ -15,6 +15,8 @@ module.exports = tasks_ =
 
   update: (options)->
     { ids, attribute, newValue } = options
+    if ids.length is 0 then return promises_.resolve []
+
     tasks_.byIds ids
     .map (task)-> Task.update task, attribute, newValue
     .then db.bulk
