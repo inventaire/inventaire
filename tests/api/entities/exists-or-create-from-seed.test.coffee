@@ -3,7 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { nonAuthReq, authReq, undesiredErr } = require '../utils/utils'
-{ createIsbn, humanName, randomWorkLabel } = require '../fixtures/entities'
+{ getSomeIsbn, humanName, randomWorkLabel } = require '../fixtures/entities'
 
 describe 'entities:exists-or-create-from-seed', ->
   it 'should reject if params isbn is missing', (done)->
@@ -17,7 +17,7 @@ describe 'entities:exists-or-create-from-seed', ->
 
   it 'should reject if params title is missing', (done)->
     authReq 'post', '/api/entities?action=exists-or-create-from-seed',
-      isbn: createIsbn()
+      isbn: getSomeIsbn()
     .catch (err)->
       err.body.status_verbose.should.startWith 'missing parameter'
       done()
@@ -27,7 +27,7 @@ describe 'entities:exists-or-create-from-seed', ->
 
   it 'should reject if authors is not a string', (done)->
     authReq 'post', '/api/entities?action=exists-or-create-from-seed',
-      isbn: createIsbn()
+      isbn: getSomeIsbn()
       title: randomWorkLabel()
       authors: 1
     .catch (err)->
@@ -50,7 +50,7 @@ describe 'entities:exists-or-create-from-seed', ->
 
   it 'should accept if params authors is missing', (done)->
     authReq 'post', '/api/entities?action=exists-or-create-from-seed',
-      isbn: createIsbn()
+      isbn: getSomeIsbn()
       title: randomWorkLabel()
     .then (res)->
       res._id.should.be.a.String()
@@ -61,7 +61,7 @@ describe 'entities:exists-or-create-from-seed', ->
 
   it 'should create an edition and a work from seed', (done)->
     authReq 'post', '/api/entities?action=exists-or-create-from-seed',
-      isbn: createIsbn()
+      isbn: getSomeIsbn()
       title: randomWorkLabel()
       authors: [ randomWorkLabel() ]
     .then (res)->

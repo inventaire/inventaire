@@ -34,7 +34,7 @@ module.exports = API =
   createHuman: createEntity 'wd:Q5'
   createWork: createEntity 'wd:Q571'
   createSerie: createEntity 'wd:Q277759'
-  createIsbn: -> _.sample someIsbns
+  getSomeIsbn: -> _.sample someIsbns
   editionLabel: -> randomWords()
   randomWorkLabel: -> randomWords(5)
   humanName: humanName
