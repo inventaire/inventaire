@@ -4,49 +4,21 @@ CONFIG = require 'config'
 # and not simply scripts being executed in the wild
 CONFIG.serverMode = true
 
-[ port, host, env ] = process.argv.slice 2
-
-if port? then CONFIG.port = port
-if host? then CONFIG.host = host
-if env?
-  CONFIG.env = env
-  console.log 'env manual change', process.env.NODE_ENV = env
-
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-fs = require 'fs'
 
-# Needs to be run before the first promise is fired
-# so that the configuration applies to all
-{ Promise } = __.require 'lib', 'promises'
+__.require('lib', 'startup/before')()
 
-couchInit = __.require 'couch', 'init'
+# Starting to make CouchDB initialization checks
+couchInit = __.require('couch', 'init')()
+# Meanwhile, start setting up the server.
+# Startup time is mostly due to the time needed to require
+# all files from controllers, middlewares, libs, etc
+initExpress = require './server/init_express'
 
-__.require('lib', 'before_startup')()
-
-if CONFIG.verbosity > 0
-  _.logErrorsCount()
-  _.log "env: #{CONFIG.env}"
-  _.log "host: #{CONFIG.fullHost()}"
-
-couchInit()
+couchInit
 .then _.Log('couch init')
-.then ->
-  require('./server/init_express')()
-  .then ->
-    # Provides a way to know when the server
-    # started listening by observing file change
-    # Expected by scripts/test_api
-    # Pass noop as callback to avoid getting a DeprecationWarning
-    fs.writeFile "./run/#{CONFIG.port}", process.pid, _.noop
-    console.timeEnd 'startup'
-
-  if CONFIG.couch2elastic4sync.activated
-    # Need to wait for databases to exist
-    __.require('scripts', 'couch2elastic4sync/exec')('sync')
-
-  # Run once the databases are ready to prevent having multiple error messages
-  # if databases aren't properly setup
-  __.require('lib', 'emails/mailer')()
-
+.then initExpress
+.tap -> console.timeEnd 'startup'
+.then __.require('lib', 'startup/after')
 .catch _.Error('init err')
