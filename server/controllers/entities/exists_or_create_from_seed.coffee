@@ -8,6 +8,7 @@ error_ = __.require 'lib', 'error/error'
 { Track } = __.require 'lib', 'track'
 promises_ = __.require 'lib', 'promises'
 responses_ = __.require 'lib', 'responses'
+sanitize = __.require 'lib', 'sanitize/sanitize'
 error_ = __.require 'lib', 'error/error'
 isbn_ = __.require 'lib', 'isbn/isbn'
 entities_ = require './lib/entities'
@@ -16,32 +17,25 @@ scaffoldEditionEntityFromSeed = require './lib/scaffold_entity_from_seed/edition
 dataseed = __.require 'data', 'dataseed/dataseed'
 formatEditionEntity = require './lib/format_edition_entity'
 
+sanitization =
+  isbn: {}
+  title: {}
+  authors: { optional: true }
+
 module.exports = (req, res)->
-  { body:seed } = req
-  { isbn, title, authors } = seed
+  sanitize req, res, sanitization
+  .then (seed)->
+    { isbn, title, authors } = seed
+    authors or= []
 
-  unless isbn_.isValidIsbn isbn
-    return error_.bundleInvalid req, res, 'isbn', isbn
+    seed.authors = authors.filter (author)-> author?.length > 0
 
-  unless _.isNonEmptyString title
-    return error_.bundleInvalid req, res, 'title', title
-
-  # Let it be splitted as a string
-  if _.isArray(authors) and authors.length is 1 then authors = authors[0]
-
-  if _.isString authors
-    # Convert authors provided as strings as an array of strings
-    seed.authors = authors.split(/(,|&|\set\s|\sand\s)/).map (author)-> author.trim()
-
-  seed.authors or= []
-  seed.authors = seed.authors.filter (author)-> author?.length > 0
-
-  entities_.byIsbn isbn
-  .then (entityDoc)->
-    if entityDoc then return entityDoc
-    else return addImage(seed).then scaffoldEditionEntityFromSeed
-  .then formatEditionEntity
-  .then responses_.Send(res)
+    entities_.byIsbn isbn
+    .then (entityDoc)->
+      if entityDoc then return entityDoc
+      else return addImage(seed).then scaffoldEditionEntityFromSeed
+    .then formatEditionEntity
+    .then responses_.Send(res)
   .catch error_.Handler(req, res)
 
 addImage = (seed)->

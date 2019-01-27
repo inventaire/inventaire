@@ -1,6 +1,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
+isbn_ = __.require 'lib', 'isbn/isbn'
 
 # Parameters attributes:
 # - format (optional)
@@ -65,6 +66,14 @@ couchUuids =
   format: arrayOrPipedStrings
   validate: arrayOfAKind validations.common.couchUuid
 
+arrayOfStrings =
+  format: arrayOrPipedStrings
+  validate: arrayOfAKind _.isString
+
+isbn =
+  format: isbn_.normalizeIsbn
+  validate: isbn_.isValidIsbn
+
 whitelistedString =
   validate: (value, name, config)->
     unless value in config.whitelist
@@ -87,11 +96,13 @@ generics =
     validate: (value)-> _.typeOf(value) is 'boolean'
 
 module.exports =
+  authors: arrayOfStrings
   email: { validate: validations.common.email }
   generics: generics
   refresh: generics.boolean
   filter: whitelistedString
   ids: couchUuids
+  isbn: isbn
   item: couchUuid
   lang:
     default: 'en'
