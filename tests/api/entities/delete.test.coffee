@@ -6,7 +6,7 @@ should = require 'should'
 { authReq, undesiredRes, undesiredErr } = require '../utils/utils'
 { getByUris, deleteByUris } = require '../utils/entities'
 { getByIds: getItemsByIds } = require '../utils/items'
-{ createHuman, createWork, createWorkWithAuthor, createEdition, ensureEditionExists, getSomeIsbn } = require '../fixtures/entities'
+{ createHuman, createWork, createWorkWithAuthor, createEdition, ensureEditionExists, generateIsbn13 } = require '../fixtures/entities'
 
 describe 'entities:delete:by-uris', ->
   it 'should require admin rights', (done)->
@@ -104,7 +104,7 @@ describe 'entities:delete:by-uris', ->
     return
 
   it 'should remove edition entities with an ISBN', (done)->
-    ensureEditionExists "isbn:#{getSomeIsbn()}"
+    ensureEditionExists "isbn:#{generateIsbn13()}"
     .then (edition)->
       # Using the inv URI, as the isbn one would be rejected
       invUri = 'inv:' + edition._id

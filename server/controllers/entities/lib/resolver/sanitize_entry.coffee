@@ -4,6 +4,7 @@ _ = __.require 'builders', 'utils'
 properties = require '../properties/properties_values_constraints'
 responses_ = __.require 'lib', 'responses'
 error_ = __.require 'lib', 'error/error'
+{ isValidIsbn } = __.require 'lib', 'isbn/isbn'
 
 # Validate and format
 module.exports = (res)-> (entry)->
@@ -18,6 +19,9 @@ sanitizeCollection = (res, entry, name)->
   collection.forEach (entity)-> sanitizeEntityDraft res, entity
 
 sanitizeEntityDraft = (res, entity)->
+  if entity.isbn and not isValidIsbn(entity.isbn)
+    throw error_.new 'invalid isbn', 400, { entity }
+
   entity.labels ?= {}
   unless _.isPlainObject entity.labels
     throw error_.new 'invalid labels', 400, { entity }
