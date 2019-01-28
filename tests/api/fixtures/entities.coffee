@@ -8,11 +8,6 @@ wdLang = require 'wikidata-lang'
 { getByUri, getByUris, addClaim } = require '../utils/entities'
 faker = require 'faker'
 someImageHash = '00015893d54f5112b99b41b0dfd851f381798047'
-someIsbns = [ '9780007419135', '9780521029773', '9781852852016',
-  '9780140148237', '9780416812503', '9783525353912', '9780226820132',
-  '9780791458693', '9780415303095', '9780099527091', '9780521554596',
-  '9780299129309', '9780415377072', '9780752436517', '9780520210813',
-  '9782262022822', '9780140148244' ]
 
 defaultEditionData = ->
   labels: {}
@@ -34,7 +29,7 @@ module.exports = API =
   createHuman: createEntity 'wd:Q5'
   createWork: createEntity 'wd:Q571'
   createSerie: createEntity 'wd:Q277759'
-  getSomeIsbn: -> _.sample someIsbns
+  getSomeIsbn: -> API.generateIsbn13()
   editionLabel: -> randomWords()
   randomWorkLabel: -> randomWords(5)
   humanName: humanName
@@ -116,6 +111,11 @@ module.exports = API =
       work: 'W'
     numbers = Math.random().toString().slice(2, 7)
     return "OL1#{numbers}#{types[type]}"
+
+  generateIsbn13: ->
+    isbn = '9780' + _.join(_.sampleSize(_.split('0123456789', ''), 9), '')
+    if isbn_.isValidIsbn(isbn) then return isbn
+    API.generateIsbn13()
 
 addEntityClaim = (createFnName, property)-> (subjectEntity)->
   API[createFnName]()
