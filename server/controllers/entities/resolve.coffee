@@ -7,6 +7,10 @@ sanitize = __.require 'lib', 'sanitize/sanitize'
 sanitizeEntry = require './lib/resolver/sanitize_entry'
 resolve = require './lib/resolver/resolve'
 
+options = [
+  'create'
+]
+
 sanitization =
   edition:
     generic: 'object'
@@ -16,10 +20,14 @@ sanitization =
   authors:
     generic: 'collection'
     optional: true
+  options:
+    whitelist: options
+    optional: true
 
 module.exports = (req, res)->
+  reqUserId = req.user._id
   sanitize req, res, sanitization
   .then sanitizeEntry(res)
-  .then resolve
+  .then resolve(reqUserId)
   .then responses_.Wrap(res, 'result')
   .catch error_.Handler(req, res)

@@ -122,6 +122,7 @@ module.exports =
     default: 100
   message: nonEmptyString
   offset: _.extend {}, positiveInteger, { default: 0 }
+  options: whitelistedStrings
   password:
     secret: true
     validate: validations.user.password
