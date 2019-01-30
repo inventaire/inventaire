@@ -108,9 +108,8 @@ generics =
 module.exports =
   authors: arrayOfStrings
   email: { validate: validations.common.email }
-  generics: generics
-  refresh: generics.boolean
   filter: whitelistedString
+  generics: generics
   ids: couchUuids
   isbn: isbn
   item: couchUuid
@@ -126,15 +125,16 @@ module.exports =
   password:
     secret: true
     validate: validations.user.password
+  refresh: generics.boolean
   range: _.extend {}, positiveInteger,
     default: 50
     max: 500
   search: nonEmptyString
   state: whitelistedString
+  title: nonEmptyString
   token: nonEmptyString
   transaction: couchUuid
   type: whitelistedString
-  title: nonEmptyString
   uri: { validate: validations.common.entityUri }
   uris: entityUris
   user: couchUuid
