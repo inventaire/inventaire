@@ -153,7 +153,7 @@ describe 'entities:resolve:in-context', ->
         .get 'result'
         .then (result)->
           should(result.works[0].uri).be.ok()
-          should(result.works[0].created).not.be.ok()
+          should(result.works[0].uri).be.ok()
           done()
     .catch done
 
@@ -179,8 +179,8 @@ describe 'entities:resolve:in-context', ->
         resolve entry
         .get 'result'
         .then (result)->
-          # as it was created, work could not have been resolved
-          should(result.works[0].created).be.ok()
+          # if created is true, work was created, not resolved
+          should(result.works[0].uri).not.be.ok()
           should(result.authors[0].uri).be.ok()
           done()
     .catch done
@@ -252,9 +252,8 @@ describe 'entities:resolve:from-labels', ->
           resolve entry
           .get 'result'
           .then (result)->
-            # as it was created, work could not have been resolved
-            should(result.works[0].created).be.ok()
-            should(result.authors[0].created).be.ok()
+            should(result.works[0].uri).not.be.ok()
+            should(result.authors[0].uri).not.be.ok()
             done()
     .catch done
 

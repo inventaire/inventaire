@@ -5,7 +5,7 @@ should = require 'should'
 { Promise } = __.require 'lib', 'promises'
 { authReq, undesiredErr } = require '../utils/utils'
 { getByUris } = require '../utils/entities'
-{ randomWorkLabel, humanName, generateIsbn13  } = require '../fixtures/entities'
+{ randomWorkLabel, humanName, generateIsbn13, someOpenLibraryId  } = require '../fixtures/entities'
 resolve = (entry)-> authReq 'post', '/api/entities?action=resolve', entry
 
 describe 'entities:resolve:create-unresolved', ->
@@ -71,6 +71,64 @@ describe 'entities:resolve:create-unresolved', ->
       .then (res)->
         newEditionTitle = _.values(res.entities)[0].claims['wdt:P1476'][0]
         newEditionTitle.should.equal editionLabel
+        done()
+    .catch done
+
+    return
+
+  it 'should add optional claims to created edition', (done)->
+    frenchLang = 'wd:Q150'
+    resolve
+      edition: { isbn: generateIsbn13(), claims: { 'wdt:P407': [ frenchLang ]} }
+      works: [ { labels: { en: randomWorkLabel() } } ]
+      options: [ 'create' ]
+    .get 'result'
+    .then (result)->
+      should(result.edition.uri).be.ok()
+      { edition } = result
+      getByUris edition.uri
+      .then (res)->
+        newWorkClaimValue = _.values(res.entities)[0].claims['wdt:P407'][0]
+        newWorkClaimValue.should.equal frenchLang
+        done()
+    .catch done
+
+    return
+
+  it 'should add optional claims to created works', (done)->
+    olId = someOpenLibraryId 'work'
+    resolve
+      edition: { isbn: generateIsbn13(),  }
+      works: [ { claims: { 'wdt:P648': [ olId ] }, labels: { en: randomWorkLabel() } } ]
+      options: [ 'create' ]
+    .get 'result'
+    .then (result)->
+      should(result.edition.uri).be.ok()
+      { works } = result
+      getByUris works.map(_.property('uri'))
+      .then (res)->
+        newWorkClaimValue = _.values(res.entities)[0].claims['wdt:P648'][0]
+        newWorkClaimValue.should.equal olId
+        done()
+    .catch done
+
+    return
+
+  it 'should add optional claims to created authors', (done)->
+    olId = someOpenLibraryId 'author'
+    resolve
+      edition: { isbn: generateIsbn13() }
+      works: [ { labels: { en: randomWorkLabel() } } ]
+      authors: [ { claims: { 'wdt:P648': [ olId ] }, labels: { en: randomWorkLabel() } } ]
+      options: [ 'create' ]
+    .get 'result'
+    .then (result)->
+      should(result.edition.uri).be.ok()
+      { authors } = result
+      getByUris authors.map(_.property('uri'))
+      .then (res)->
+        newWorkClaimValue = _.values(res.entities)[0].claims['wdt:P648'][0]
+        newWorkClaimValue.should.equal olId
         done()
     .catch done
 
