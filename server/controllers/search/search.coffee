@@ -21,7 +21,9 @@ module.exports =
     sanitize req, res, sanitization
     .then (params)->
       { types, search, lang, limit, reqUserId } = params
-      typeSearch types, search
+      # Extend the search to the next 10 results, so that the popularity boost
+      # can save some good results a bit further down the limit
+      typeSearch types, search, limit + 10
       .then parseResults(types, reqUserId)
       .then normalizeResults(lang)
       .then boostByPopularity
