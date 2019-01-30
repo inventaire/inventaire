@@ -37,18 +37,7 @@ describe 'search:global', ->
     .then undesiredRes(done)
     .catch (err)->
       err.statusCode.should.equal 400
-      err.body.status_verbose.should.equal 'invalid type: da'
-      done()
-    .catch undesiredErr(done)
-
-    return
-
-  it 'should reject search without lang', (done)->
-    nonAuthReq 'get', '/api/search?search=yo&types=works'
-    .then undesiredRes(done)
-    .catch (err)->
-      err.statusCode.should.equal 400
-      err.body.status_verbose.should.equal 'missing parameter in query: lang'
+      err.body.status_verbose.should.startWith 'invalid types: da'
       done()
     .catch undesiredErr(done)
 

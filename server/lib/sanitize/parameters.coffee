@@ -126,6 +126,7 @@ module.exports =
   token: nonEmptyString
   transaction: couchUuid
   type: whitelistedString
+  types: whitelistedStrings
   title: nonEmptyString
   uri: { validate: validations.common.entityUri }
   uris: entityUris
