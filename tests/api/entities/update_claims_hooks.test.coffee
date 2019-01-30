@@ -15,7 +15,7 @@ describe 'entities:update-claims-hooks', ->
       .then (edition)->
         value = edition.claims['wdt:P1476'][0]
         updatedValue = value + 'updated'
-        updateClaim edition._id, 'wdt:P1476', value, updatedValue
+        updateClaim edition.uri, 'wdt:P1476', value, updatedValue
         .delay 100
         .then ->
           getByUris work.uri
@@ -38,7 +38,7 @@ describe 'entities:update-claims-hooks', ->
       .spread (editionA, editionB)->
         valueA = editionA.claims['wdt:P1476'][0]
         updatedValueA = valueA + 'updated'
-        updateClaim editionA._id, 'wdt:P1476', valueA, updatedValueA
+        updateClaim editionA.uri, 'wdt:P1476', valueA, updatedValueA
         .delay 100
         .then ->
           getByUris work.uri
