@@ -34,8 +34,8 @@ selectRecentItems = (lang, limit)-> (items)->
 
   for item in items
     if recentItems.length is limit then return recentItems
+    itemsCountByOwner[item.owner] ?= 0
     if item.snapshot['entity:lang'] is lang and itemsCountByOwner[item.owner] < 3
-      itemsCountByOwner[item.owner] ?= 0
       itemsCountByOwner[item.owner]++
       recentItems.push item
     else
