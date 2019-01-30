@@ -114,9 +114,8 @@ module.exports =
   authors: arrayOfStrings
   attribute: nonEmptyString
   email: { validate: validations.common.email }
-  generics: generics
-  refresh: generics.boolean
   filter: whitelistedString
+  generics: generics
   ids: couchUuids
   isbn: isbn
   item: couchUuid
@@ -134,11 +133,13 @@ module.exports =
     validate: validations.user.password
   prefix: whitelistedString
   property: { validate: _.isPropertyUri }
+  refresh: generics.boolean
   range: _.extend {}, positiveInteger,
     default: 50
     max: 500
   search: nonEmptyString
   state: whitelistedString
+  title: nonEmptyString
   token: nonEmptyString
   transaction: couchUuid
   type: whitelistedString
