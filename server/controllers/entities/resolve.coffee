@@ -6,6 +6,7 @@ responses_ = __.require 'lib', 'responses'
 sanitize = __.require 'lib', 'sanitize/sanitize'
 sanitizeEntry = require './lib/resolver/sanitize_entry'
 resolve = require './lib/resolver/resolve'
+createUnresolvedEntry = require './lib/resolver/create_unresolved_entry'
 
 options = [
   'create'
@@ -25,9 +26,12 @@ sanitization =
     optional: true
 
 module.exports = (req, res)->
+  { options } = req.body
   reqUserId = req.user._id
   sanitize req, res, sanitization
   .then sanitizeEntry(res)
-  .then resolve(reqUserId)
+  .then resolve()
+  .then createUnresolvedEntry(options, reqUserId)
   .then responses_.Wrap(res, 'result')
   .catch error_.Handler(req, res)
+

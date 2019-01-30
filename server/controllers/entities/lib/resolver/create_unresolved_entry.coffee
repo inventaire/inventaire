@@ -6,19 +6,28 @@ createEntity = require '../create_entity'
 properties = require '../properties/properties_values_constraints'
 isbn_ = __.require 'lib', 'isbn/isbn'
 
-module.exports = (entry, userId)->
+module.exports = (options, userId)-> (entry)->
   { edition, works, authors } = entry
+  unless _.includes(options, 'create') then return entry
 
   createAuthors authors, userId
   .then -> createWorks(works, authors, userId)
   .then -> createEdition(edition, works, userId)
+  .then -> entry
 
 createAuthors = (authors, userId)->
-  claims = { 'wdt:P31': [ 'wd:Q5' ] }
   unresolvedAuthors = _.reject authors, 'uri'
 
   Promise.all unresolvedAuthors.map (author)->
-    { labels } = author
+    { labels, claims:entryClaims } = author
+    unless _.isNonEmptyPlainObject(labels) then return
+    claims = {}
+
+    for property, values of entryClaims
+      addClaimIfValid(claims, property, values)
+
+    addClaimIfValid claims, 'wdt:P31', [ 'wd:Q5' ]
+
     createEntity labels, claims, userId
     .then _.Log('created work entity')
     .catch _.ErrorRethrow('createAuthorEntity err')
@@ -29,11 +38,15 @@ createWorks = (works, authors, userId)->
   unresolvedWorks = _.reject works, 'uri'
 
   Promise.all unresolvedWorks.map (work)->
-    { labels } = work
+    { labels, claims:entryClaims } = work
     unless _.isNonEmptyPlainObject(labels) then return
-    claims =
-      'wdt:P31': [ 'wd:Q571' ]
-      'wdt:P50': authorsUris
+    claims = {}
+
+    for property, values of entryClaims
+      addClaimIfValid(claims, property, values)
+
+    addClaimIfValid claims, 'wdt:P31', [ 'wd:Q571' ]
+    addClaimIfValid claims, 'wdt:P50', authorsUris
 
     createEntity labels, claims, userId
     .then addUriCreated(work)
@@ -41,18 +54,22 @@ createWorks = (works, authors, userId)->
     .catch _.ErrorRethrow('createWorkEntity err')
 
 createEdition = (edition, works, userId)->
-  { isbn, claims } = edition
+  { isbn, claims:entryClaims } = edition
   unless isbn_.isValidIsbn(isbn) then return edition
 
   editionTitle = buildBestEditionTitle(edition, works)
   worksUris = _.map works, _.property('uri')
   formatedIsbn = isbn_.toIsbn13h(isbn)
   labels = {}
-  claims =
-    'wdt:P31': [ 'wd:Q3331189' ]
-    'wdt:P212': [ formatedIsbn ]
-    'wdt:P1476': [ editionTitle ]
-    'wdt:P629': worksUris
+  claims = {}
+
+  for property, values of entryClaims
+    addClaimIfValid(claims, property, values)
+
+  addClaimIfValid claims, 'wdt:P31', [ 'wd:Q3331189' ]
+  addClaimIfValid claims, 'wdt:P212', [ formatedIsbn ]
+  addClaimIfValid claims, 'wdt:P1476', [ editionTitle ]
+  addClaimIfValid claims, 'wdt:P629', worksUris
 
   createEntity labels, claims, userId
   .then addUriCreated(edition)
@@ -68,3 +85,11 @@ buildBestEditionTitle = (edition, works)->
   if edition.claims['wdt:P1476'] then return edition.claims['wdt:P1476'][0]
   titles = works.map (work)-> _.uniq(_.values(work.labels))
   _.join(_.uniq(_.flatten(titles)), '-')
+
+addClaimIfValid = (claims, property, values)->
+  for value in values
+    if value? and properties[property].validate value
+      if claims[property]?
+        claims[property].push value
+      else
+        claims[property] = [ value ]
