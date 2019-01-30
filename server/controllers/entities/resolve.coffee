@@ -24,6 +24,9 @@ sanitization =
   options:
     whitelist: options
     optional: true
+  series:
+    generic: 'collection'
+    optional: true
 
 module.exports = (req, res)->
   { options } = req.body
