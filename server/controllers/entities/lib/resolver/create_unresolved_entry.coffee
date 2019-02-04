@@ -29,7 +29,7 @@ createAuthors = (authors, userId)->
     addClaimIfValid claims, 'wdt:P31', [ 'wd:Q5' ]
 
     createEntity labels, claims, userId
-    .then _.Log('created work entity')
+    .then _.Log('created author entity')
     .catch _.ErrorRethrow('createAuthorEntity err')
     .then addUriCreated(author)
 
@@ -54,35 +54,44 @@ createWorks = (works, authors, userId)->
     .catch _.ErrorRethrow('createWorkEntity err')
 
 createEdition = (edition, works, userId)->
-  { isbn, claims:entryClaims } = edition
-  unless isbn_.isValidIsbn(isbn) then return edition
+  Promise.all edition.map (edition)->
+    { claims:entryClaims, isbn } = edition
+    if edition.uri? then return
 
-  editionTitle = buildBestEditionTitle(edition, works)
-  worksUris = _.map works, _.property('uri')
-  formatedIsbn = isbn_.toIsbn13h(isbn)
-  labels = {}
-  claims = {}
+    worksUris = _.map works, _.property('uri')
+    claims = {}
 
-  for property, values of entryClaims
-    addClaimIfValid(claims, property, values)
+    addClaimIfValid claims, 'wdt:P31', [ 'wd:Q3331189' ]
+    addClaimIfValid claims, 'wdt:P629', worksUris
 
-  addClaimIfValid claims, 'wdt:P31', [ 'wd:Q3331189' ]
-  addClaimIfValid claims, 'wdt:P212', [ formatedIsbn ]
-  addClaimIfValid claims, 'wdt:P1476', [ editionTitle ]
-  addClaimIfValid claims, 'wdt:P629', worksUris
+    for property, values of entryClaims
+      addClaimIfValid(claims, property, values)
 
-  createEntity labels, claims, userId
-  .then addUriCreated(edition)
-  .then _.Log('created edition entity')
-  .catch _.ErrorRethrow('createEditionEntity err')
+    if isbn?
+      hyphenatedIsbn = isbn_.toIsbn13h(isbn)
+      addClaimIfValid(claims, 'wdt:P212', [ hyphenatedIsbn ])
+
+    addClaimEditionTitle(edition, works, claims)
+
+    createEntity {}, claims, userId
+    .then addUriCreated(edition)
+    .then _.Log('created edition entity')
+    .catch _.ErrorRethrow('createEditionEntity err')
 
 addUriCreated = (entryEntity)-> (createdEntity)->
   unless createdEntity._id? then return
   entryEntity.uri = "inv:#{createdEntity._id}"
   entryEntity.created = true
 
+addClaimEditionTitle = (edition, works, claims)->
+  editionTitle = buildBestEditionTitle(edition, works)
+  unless claims['wdt:P1476']?
+    addClaimIfValid claims, 'wdt:P1476', [ editionTitle ]
+
 buildBestEditionTitle = (edition, works)->
+  # return in priority values of wdt:P1476, which shall have only one element
   if edition.claims['wdt:P1476'] then return edition.claims['wdt:P1476'][0]
+  # return best guess, joining hyphenated titles found
   titles = works.map (work)-> _.uniq(_.values(work.labels))
   _.join(_.uniq(_.flatten(titles)), '-')
 

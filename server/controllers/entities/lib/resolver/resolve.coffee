@@ -13,7 +13,7 @@ addUriFromLabels = require './add_uri_from_labels'
 module.exports = (userId)-> (entry)->
   { edition, works, authors } = entry
 
-  resolveEdition edition
+  resolveCollection edition, resolveEdition
   .then -> resolveCollection works, resolveWork
   .then -> resolveCollection authors, resolveAuthor
   .then -> resolveInContext authors, works, getAuthorsFromWorksUris

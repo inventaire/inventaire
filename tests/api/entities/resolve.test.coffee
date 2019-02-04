@@ -12,11 +12,11 @@ resolve = (entry)-> authReq 'post', '/api/entities?action=resolve', entry
 describe 'entities:resolve', ->
   it 'should resolve an edition from an ISBN', (done)->
     ensureEditionExists 'isbn:9782203399303'
-    .then -> resolve { edition: { isbn: '9782203399303' } }
+    .then -> resolve { edition: [ { isbn: '9782203399303' } ] }
     .get 'result'
     .then (result)->
       result.should.be.an.Object()
-      result.edition.uri.should.equal 'isbn:9782203399303'
+      result.edition[0].uri.should.equal 'isbn:9782203399303'
       done()
     .catch done
 
@@ -33,8 +33,8 @@ describe 'entities:resolve', ->
 
   it 'should reject when claims key is not an array of objects', (done)->
     resolve
-      edition:
-        claims: [ 'wdt:P31: wd:Q23' ]
+      edition: [ { isbn: generateIsbn13() } ]
+      works: [ { claims: [ 'wdt:P31: wd:Q23' ] } ]
     .catch (err)->
       err.body.status_verbose.should.startWith 'invalid claims'
       done()
@@ -45,9 +45,10 @@ describe 'entities:resolve', ->
   it 'should warn when claims key has an unknown property', (done)->
     unknownProp = 'wdt:P6'
     resolve
-      edition:
+      edition: [
         isbn: generateIsbn13()
         claims: { "#{unknownProp}": [ 'wd:Q23' ] }
+      ]
     .then (res)->
       res.warnings.should.be.an.Object()
       res.warnings.resolver.should.deepEqual [ "unknown property: #{unknownProp}" ]
@@ -58,7 +59,7 @@ describe 'entities:resolve', ->
 
 describe 'entities:resolve:external-id', ->
   it 'should resolve wikidata work from external ids claim', (done)->
-    edition = { isbn: generateIsbn13() }
+    edition = [ { isbn: generateIsbn13() } ]
     work =
       claims:
         'wdt:P648': [ 'OL52556W' ]
@@ -77,7 +78,7 @@ describe 'entities:resolve:external-id', ->
   it 'should resolve inventaire work from external ids claim', (done)->
     olId = someOpenLibraryId 'work'
     entry =
-      edition: { isbn: generateIsbn13() }
+      edition: [ { isbn: generateIsbn13() } ]
       works: [ { claims: { 'wdt:P648': [ olId ] } } ]
     createWork()
     .tap (work)-> addClaim work.uri, 'wdt:P648', olId
@@ -95,7 +96,7 @@ describe 'entities:resolve:external-id', ->
     return
 
   it 'should resolve wikidata author from external ids claim', (done)->
-    edition = { isbn: generateIsbn13() }
+    edition = [ { isbn: generateIsbn13() } ]
     author =
       claims:
         'wdt:P648': [ 'OL28127A' ]
@@ -113,7 +114,7 @@ describe 'entities:resolve:external-id', ->
   it 'should resolve inventaire author from external ids claim', (done)->
     olId = someOpenLibraryId 'author'
     entry =
-      edition: { isbn: generateIsbn13() }
+      edition: [ { isbn: generateIsbn13() } ]
       authors: [ { claims: { 'wdt:P648': [ olId ] } } ]
     createHuman()
     .delay 10
@@ -137,7 +138,7 @@ describe 'entities:resolve:in-context', ->
     missingWorkLabel = randomWorkLabel()
     otherWorkLabel = randomWorkLabel()
     entry =
-      edition: { isbn: generateIsbn13() }
+      edition: [ { isbn: generateIsbn13() } ]
       works: [ { labels: { en: missingWorkLabel } } ]
       authors: [ { claims: { 'wdt:P648': [ olId ] } } ]
     createHuman()
@@ -173,7 +174,7 @@ describe 'entities:resolve:in-context', ->
       ]
       .spread (work, otherWork)->
         entry =
-          edition: { isbn: generateIsbn13() }
+          edition: [ { isbn: generateIsbn13() } ]
           works: [ { labels: { en: workLabel } } ]
           authors: [ { claims: { 'wdt:P648': [ olId ] } } ]
         resolve entry
@@ -197,7 +198,7 @@ describe 'entities:resolve:in-context', ->
       .tap (work)-> addClaim work.uri, 'wdt:P648', olId
       .then (work)->
         entry =
-          edition: { isbn: generateIsbn13() }
+          edition: [ { isbn: generateIsbn13() } ]
           works: [ { claims: { 'wdt:P648': [ olId ] } } ]
           authors: [ { labels: author.labels } ]
         resolve entry
@@ -218,7 +219,7 @@ describe 'entities:resolve:from-labels', ->
       .delay 3500
       .then (work)->
         entry =
-          edition: { isbn: generateIsbn13() }
+          edition: [ { isbn: generateIsbn13() } ]
           works: [ { labels: work.labels } ]
           authors: [ { labels: author.labels } ]
         resolve entry
@@ -246,7 +247,7 @@ describe 'entities:resolve:from-labels', ->
         .delay 3500
         .then (works)->
           entry =
-            edition: { isbn: generateIsbn13() }
+            edition: [ { isbn: generateIsbn13() } ]
             works: [ { labels: { en: workLabel } } ]
             authors: [ { labels: author.labels } ]
           resolve entry

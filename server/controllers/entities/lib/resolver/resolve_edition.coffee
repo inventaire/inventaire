@@ -6,7 +6,7 @@ entities_ = require '../entities'
 getInvEntityCanonicalUri = require '../get_inv_entity_canonical_uri'
 
 module.exports = (edition)->
-  { isbn, labels, claims } = edition
+  { isbn } = edition
 
   resolveIsbn isbn
   .then (uri)-> edition.uri = uri

@@ -14,7 +14,7 @@ options = [
 
 sanitization =
   edition:
-    generic: 'object'
+    generic: 'collection'
   works:
     generic: 'collection'
     optional: true
