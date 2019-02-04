@@ -43,10 +43,10 @@ describe 'entities:resolve:create-unresolved', ->
       options: [ 'create' ]
     .get 'result'
     .then (result)->
-      result.edition.created.should.equal true
+      result.edition[0].created.should.equal true
       result.authors[0].created.should.equal true
       result.works[0].created.should.equal true
-      should(result.edition.uri).be.ok()
+      should(result.edition[0].uri).be.ok()
       should(result.works[0].uri).be.ok()
       should(result.authors[0].uri).be.ok()
       done()
@@ -64,12 +64,16 @@ describe 'entities:resolve:create-unresolved', ->
       options: [ 'create' ]
     .get 'result'
     .then (result)->
-      should(result.edition.uri).be.ok()
+      should(result.edition[0].uri).be.ok()
       { edition } = result
 
-      getByUris [ edition.uri ]
-      .then (res)->
-        newEditionTitle = _.values(res.entities)[0].claims['wdt:P1476'][0]
+      getByUris edition[0].uri
+      .get 'entities'
+      .then (entities)->
+        editionClaims = _.values(entities)[0].claims
+        newEditionTitle = editionClaims['wdt:P1476'][0]
+
+        should(editionClaims['wdt:P212'][0]).be.ok()
         newEditionTitle.should.equal editionLabel
         done()
     .catch done
@@ -84,9 +88,9 @@ describe 'entities:resolve:create-unresolved', ->
       options: [ 'create' ]
     .get 'result'
     .then (result)->
-      should(result.edition.uri).be.ok()
+      should(result.edition[0].uri).be.ok()
       { edition } = result
-      getByUris edition.uri
+      getByUris edition[0].uri
       .then (res)->
         newWorkClaimValue = _.values(res.entities)[0].claims['wdt:P407'][0]
         newWorkClaimValue.should.equal frenchLang
@@ -103,7 +107,7 @@ describe 'entities:resolve:create-unresolved', ->
       options: [ 'create' ]
     .get 'result'
     .then (result)->
-      should(result.edition.uri).be.ok()
+      should(result.edition[0].uri).be.ok()
       { works } = result
       getByUris works.map(_.property('uri'))
       .then (res)->
@@ -123,7 +127,7 @@ describe 'entities:resolve:create-unresolved', ->
       options: [ 'create' ]
     .get 'result'
     .then (result)->
-      should(result.edition.uri).be.ok()
+      should(result.edition[0].uri).be.ok()
       { authors } = result
       getByUris authors.map(_.property('uri'))
       .then (res)->
