@@ -5,7 +5,7 @@ should = require 'should'
 { Promise } = __.require 'lib', 'promises'
 { undesiredRes, undesiredErr } = require '../utils/utils'
 { createWork, createEdition, createHuman, someOpenLibraryId } = require '../fixtures/entities'
-{ getByUri, addClaim, updateClaim, merge } = require '../utils/entities'
+{ getByUri, updateClaim, merge } = require '../utils/entities'
 
 describe 'entities:update-claims', ->
   it 'should reject an update with an inappropriate property', (done)->
@@ -134,6 +134,20 @@ describe 'entities:update-claims', ->
       .catch (err)->
         err.statusCode.should.equal 400
         err.body.status_verbose.should.equal 'this property value is already used'
+        done()
+    .catch undesiredErr(done)
+
+    return
+
+  it 'should reject an update with a wrong type value', (done)->
+    id = someOpenLibraryId 'work'
+    createHuman()
+    .then (human)->
+      updateClaim human.uri, 'wdt:P648', null, id
+      .then undesiredRes(done)
+      .catch (err)->
+        err.statusCode.should.equal 400
+        err.body.status_verbose.should.equal 'this claim value is not valid for type'
         done()
     .catch undesiredErr(done)
 
