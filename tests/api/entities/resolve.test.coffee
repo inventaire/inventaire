@@ -31,6 +31,18 @@ describe 'entities:resolve', ->
 
     return
 
+  it 'should reject when no isbn is found', (done)->
+    entry =
+      edition: [ { claims: { 'wdt:P1476': randomWorkLabel() }} ]
+      works: [ { labels: { en: randomWorkLabel() } } ]
+    resolve entry
+    .catch (err)->
+      err.body.status_verbose.should.startWith 'no isbn found'
+      done()
+    .catch done
+
+    return
+
   it 'should reject when claims key is not an array of objects', (done)->
     resolve
       edition: [ { isbn: generateIsbn13() } ]
