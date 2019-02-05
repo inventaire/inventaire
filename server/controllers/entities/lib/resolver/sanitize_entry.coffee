@@ -22,11 +22,11 @@ sanitizeCollection = (res, entry, name)->
 
 sanitizeEdition = (edition)->
   rawIsbn = getIsbn(edition)
-  isbn = isbn_.normalizeIsbn(rawIsbn)
 
-  unless isbn
+  unless rawIsbn
     throw error_.new 'no isbn found', 400, edition
 
+  isbn = isbn_.normalizeIsbn(rawIsbn)
   if isbn and not isbn_.isValidIsbn(isbn)
     throw error_.new 'invalid isbn', 400, { edition }
 

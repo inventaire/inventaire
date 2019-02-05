@@ -9,7 +9,7 @@ module.exports = (edition)->
   { isbn } = edition
 
   resolveIsbn isbn
-  .then (uri)-> edition.uri = uri
+  .then (uri)-> if uri then edition.uri = uri
 
 resolveIsbn = (isbn)->
   unless isbn? then return Promise.resolved

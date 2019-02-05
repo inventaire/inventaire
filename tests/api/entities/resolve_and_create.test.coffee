@@ -50,7 +50,7 @@ describe 'entities:resolve:create-unresolved', ->
       should(result.works[0].uri).be.ok()
       should(result.authors[0].uri).be.ok()
       done()
-    .catch done
+    .catch undesiredErr(done)
 
     return
 
@@ -76,7 +76,7 @@ describe 'entities:resolve:create-unresolved', ->
         should(editionClaims['wdt:P212'][0]).be.ok()
         newEditionTitle.should.equal editionLabel
         done()
-    .catch done
+    .catch undesiredErr(done)
 
     return
 
@@ -95,7 +95,7 @@ describe 'entities:resolve:create-unresolved', ->
         newWorkClaimValue = _.values(res.entities)[0].claims['wdt:P407'][0]
         newWorkClaimValue.should.equal frenchLang
         done()
-    .catch done
+    .catch undesiredErr(done)
 
     return
 
@@ -114,7 +114,7 @@ describe 'entities:resolve:create-unresolved', ->
         newWorkClaimValue = _.values(res.entities)[0].claims['wdt:P648'][0]
         newWorkClaimValue.should.equal olId
         done()
-    .catch done
+    .catch undesiredErr(done)
 
     return
 
@@ -134,6 +134,6 @@ describe 'entities:resolve:create-unresolved', ->
         newWorkClaimValue = _.values(res.entities)[0].claims['wdt:P648'][0]
         newWorkClaimValue.should.equal olId
         done()
-    .catch done
+    .catch undesiredErr(done)
 
     return
