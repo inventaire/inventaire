@@ -5,7 +5,7 @@ should = require 'should'
 { Promise } = __.require 'lib', 'promises'
 { undesiredRes, undesiredErr } = require '../utils/utils'
 { createWork, createEdition, createHuman, someOpenLibraryId } = require '../fixtures/entities'
-{ getByUri, updateClaim, merge } = require '../utils/entities'
+{ getByUri, addClaim, updateClaim, merge } = require '../utils/entities'
 
 describe 'entities:update-claims', ->
   it 'should reject an update with an inappropriate property', (done)->
