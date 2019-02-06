@@ -19,4 +19,16 @@ do
   fi
 done
 
-export NODE_ENV=tests NODE_APP_INSTANCE=tests-alt; mocha --exit --require coffee-script/register $files --timeout 20000
+wait_for_server(){
+  curl -s http://localhost:3009/api/tests --connect-timeout 1 > /dev/null && {
+     echo -e "\e[0;32mtests server is ready\e[0;30m"
+  } || {
+     echo -e "\e[0;30mwaiting for tests server\e[0;30m"
+    # If the server can't be reached, retry in 0.5s
+    sleep 0.5 && wait_for_server
+  }
+}
+
+wait_for_server && {
+  export NODE_ENV=tests NODE_APP_INSTANCE=tests-alt; mocha --exit --require coffee-script/register $files --timeout 20000
+}

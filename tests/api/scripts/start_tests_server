@@ -11,17 +11,7 @@ curl -s "$entities_search_engine_host" > /dev/null && echo "entities search engi
   # cf https://ss64.com/bash/syntax-brackets.html
   { ./tests/api/scripts/start_entities_search_engine && sleep 5 ; }
 
-# If the server is already up, return early
-(curl -s "$test_host" > /dev/null || [ "$(cat run/3009)" == "starting" ]) &&
-echo "server already started" &&
-exit 0
-
 # Start a test server in the background
 npm run watch > logs/test-server.log 2>&1 &
-
-# Will be replaced by the process pid once the server started
-echo "starting" > run/3009
-
-echo "waiting for server start..." &&
-inotifywait run/3009 -e modify > /dev/null 2>&1 &&
-echo "ok, let's go!"
+# Store watch script pid to be able to know if it's still running
+echo $! > run/3009-watcher
