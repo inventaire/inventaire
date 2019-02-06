@@ -39,6 +39,7 @@ module.exports = Entity =
     labels: {}
     claims: {}
     created: Date.now()
+    updated: Date.now()
 
   setLabel: (doc, lang, value)->
     assert_.types [ 'object', 'string', 'string' ], arguments

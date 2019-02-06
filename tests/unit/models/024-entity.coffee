@@ -45,7 +45,7 @@ describe 'entity model', ->
       entityDoc.created.should.be.a.Number()
       entityDoc.created.should.be.aboveOrEqual now
       entityDoc.created.should.be.below now + 10
-      should(entityDoc.updated).not.be.ok()
+      entityDoc.updated.should.be.ok()
       done()
 
   describe 'create claim', ->
