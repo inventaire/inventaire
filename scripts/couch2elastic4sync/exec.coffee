@@ -38,13 +38,13 @@ module.exports = (cliArg)->
     childProcess.stderr.on 'data', logError
     return childProcess
 
-  killChildrenProcesses = -> childProcesses.forEach (childProc)-> childProc.kill()
-
-  process.on 'exit', killChildrenProcesses
-  process.on 'SIGINT', ->
-    killChildrenProcesses()
-    # Exit the process itself as we overrided the default SIGINT behavior
+  killChildrenProcessesAndExit = ->
+    childProcesses.forEach (childProc)-> childProc.kill 'SIGTERM'
+    # Exit the process itself as we overrided the default SIG(INT|TERM) behavior
     process.exit 0
+
+  process.on 'SIGTERM', killChildrenProcessesAndExit
+  process.on 'SIGINT', killChildrenProcessesAndExit
 
 getLogStream = (dbName)->
   logFile = "#{logsFolder}/#{dbName}"
