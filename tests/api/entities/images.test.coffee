@@ -4,7 +4,7 @@ _ = __.require 'builders', 'utils'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
 { nonAuthReq, undesiredRes, undesiredErr } = require '../utils/utils'
-breq = require 'bluereq'
+{ rawRequest } = require '../utils/request'
 host = CONFIG.fullHost()
 
 describe 'entities:images', ->
@@ -29,7 +29,8 @@ describe 'entities:images', ->
     return
 
   it 'should redirect to the image if requested in options', (done)->
-    breq.get "#{host}/api/entities?action=images&uris=wd:Q535&redirect=true&width=32"
+    url = "#{host}/api/entities?action=images&uris=wd:Q535&redirect=true&width=32"
+    rawRequest 'get', { url }
     .then (res)->
       res.headers['content-type'].should.equal('image/jpeg')
       done()

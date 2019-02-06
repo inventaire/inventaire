@@ -1,17 +1,16 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-breq = require 'bluereq'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
 host = CONFIG.fullHost()
 authEndpoint = host + '/api/auth'
 faker = require 'faker'
 { makeUserAdmin } = __.require 'controllers', 'user/lib/user'
-{ request } = require '../utils/request'
+{ request, rawRequest } = require '../utils/request'
 randomString = __.require 'lib', './utils/random_string'
 
-connect = (endpoint, userData)-> breq.post { url: endpoint, body: userData }
+connect = (endpoint, userData)-> rawRequest 'post', { url: endpoint, body: userData }
 signup = (userData)-> connect "#{authEndpoint}?action=signup", userData
 login = (userData)->
   connect "#{authEndpoint}?action=login", userData

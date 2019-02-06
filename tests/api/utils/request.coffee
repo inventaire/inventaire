@@ -1,8 +1,26 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
+{ Promise } = __.require 'lib', 'promises'
 host = CONFIG.fullHost()
 breq = require 'bluereq'
+
+testServerAvailability = ->
+  breq.get "#{host}/api/tests"
+  .then (res)-> _.success 'tests server is ready'
+  .timeout 1000
+  .catch (err)->
+    unless err.code is 'ECONNREFUSED' then throw err
+    _.log 'waiting for tests server', null, 'grey'
+    Promise.resolve()
+    .delay 500
+    .then testServerAvailability
+
+waitForTestServer = testServerAvailability()
+
+rawRequest = (method, breqParams)->
+  waitForTestServer
+  .then -> breq[method](breqParams)
 
 request = (method, endpoint, body, cookie)->
   data =
@@ -11,7 +29,8 @@ request = (method, endpoint, body, cookie)->
 
   if body? then data.body = body
 
-  return breq[method](data).get 'body'
+  waitForTestServer
+  .then -> breq[method](data).get 'body'
   # .catch _.ErrorRethrow("#{method} #{endpoint} #{JSON.stringify(body)} err")
 
 customAuthReq = (userPromise, method, endpoint, body)->
@@ -19,4 +38,4 @@ customAuthReq = (userPromise, method, endpoint, body)->
   # gets a user doc to which tests/api/fixtures/users added a cookie attribute
   .then (user)-> request method, endpoint, body, user.cookie
 
-module.exports = { request, customAuthReq }
+module.exports = { request, rawRequest, customAuthReq }
