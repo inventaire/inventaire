@@ -11,6 +11,7 @@ module.exports = ->
   initUncaughtExceptionCatcher()
 
   _.logErrorsCount()
+  _.log "pid: #{process.pid}"
   _.log "env: #{CONFIG.env}"
   _.log "host: #{CONFIG.fullHost()}"
 

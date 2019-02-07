@@ -4,7 +4,7 @@ _ = __.require 'builders', 'utils'
 should = require 'should'
 { nonAuthReq, undesiredRes, getUser } = require '../utils/utils'
 randomString = __.require 'lib', './utils/random_string'
-breq = require 'bluereq'
+{ rawRequest } = require '../utils/request'
 host = CONFIG.fullHost()
 
 describe 'token:reset-password', ->
@@ -20,7 +20,7 @@ describe 'token:reset-password', ->
 
 describe 'token:validation-email', ->
   it 'should reject requests without email', (done)->
-    breq.get
+    rawRequest 'get',
       url: "#{host}/api/token?action=validation-email"
       followRedirect: false
     .then (res)->

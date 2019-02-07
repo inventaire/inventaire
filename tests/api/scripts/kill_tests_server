@@ -1,21 +1,13 @@
-#!/usr/bin/env sh
-serverpid=$(cat run/3009)
-supervisorpid=$(ps auxf |
-  grep "$serverpid" -B 1 |
-  grep "supervisor" |
-  grep -v "grep" |
-  grep -v "ps" |
-  awk '{printf $2}')
+#!/usr/bin/env bash
 
-watchshellpids=$(ps auxf |
-  grep "$serverpid" -B 3 |
-  grep "watch" |
-  awk '{printf $2 " "}')
+if [[ -f ./run/3009-supervisor ]] ;
+then
+  supervisor_pid=$(cat ./run/3009-supervisor)
+fi
 
-kill $watchshellpids 2> /dev/null
-kill $supervisorpid 2> /dev/null
-kill $serverpid 2> /dev/null ||
-echo "no server to kill"
-
-# Remove any stored state, either the pid or 'starting'
-echo '' > run/3009
+if [[ "$supervisor_pid" != '' ]] ;
+then
+  kill $supervisor_pid
+else
+  echo "no test server to kill"
+fi

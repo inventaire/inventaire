@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 # Same as ./test_api but without deleting the databases and restarting the server
 # each times: can be used to quickly run tests that don't need a complete
@@ -7,8 +7,13 @@
 # server libs/controllers as possible).
 # Known case: deleting an entity isn't possible from the API
 
-(curl -s http://localhost:3009/api/tests > /dev/null &&
-  echo "tests server is online" ||
+if [[ -f ./run/3009-supervisor ]] ;
+then
+  echo -e "\e[0;32mtests server is running\e[0;30m"
+else
+  echo -e "\e[0;34mstarting test server\e[0;30m"
   # If the server wasn't started before, start it
-  ./tests/api/scripts/start_tests_server ) &&
+  ./tests/api/scripts/start_tests_server
+fi
+
 ./tests/api/scripts/run_api_tests $@

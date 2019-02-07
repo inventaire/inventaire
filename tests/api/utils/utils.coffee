@@ -1,7 +1,6 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-breq = require 'bluereq'
 should = require 'should'
 promises_ = __.require 'lib', 'promises'
 host = CONFIG.fullHost()
