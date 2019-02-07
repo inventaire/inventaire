@@ -27,6 +27,7 @@ module.exports =
       'create': require './create'
       'exists-or-create-from-seed': require './exists_or_create_from_seed'
       'resolve': require './resolve'
+      'resolve-entries': require './resolve_entries'
     admin:
       'delete-by-uris': require './delete_by_uris'
 
