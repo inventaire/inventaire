@@ -100,11 +100,14 @@ npm run watch
 
 #### [server](http://github.com/inventaire/inventaire)
 - [**master**](http://github.com/inventaire/inventaire/tree/master): the stable branch. Unstable work should happen in feature-specific branches and trigger pull requests when ready to be merged in master. See [Code Contributor Guidelines](https://github.com/inventaire/inventaire/wiki/Code-Contributor-Guidelines).
-- [**i18n**](http://github.com/inventaire/inventaire/tree/i18n): the branch tracking strings used in emails in all the supported languages (contributions should happen in Transifex: [emails](https://www.transifex.com/inventaire/inventaire/emails/))
 
 #### [client](http://github.com/inventaire/inventaire-client)
 - [**master**](http://github.com/inventaire/inventaire-client/tree/master): the stable branch. Unstable work should happen in feature-specific branches and trigger pull requests when ready to be merged in master. See [Code Contributor Guidelines](https://github.com/inventaire/inventaire/wiki/Code-Contributor-Guidelines).
-- [**i18n**](http://github.com/inventaire/inventaire-client/tree/i18n): the branch tracking strings used in the client in all the supported languages (contributions should happen in Transifex: [fullkey](https://www.transifex.com/inventaire/inventaire/fullkey/) (strings where the key match the English value), [shortkey](https://www.transifex.com/inventaire/inventaire/shortkey/) (strings where the key doesn't match the English value: usually a short key with underscores used to point to long piece of text, possibly with variables))
+
+#### [i18n](http://github.com/inventaire/inventaire-i18n)
+the repo tracking strings used in the client and emails in all the supported languages. For helping to translate, see [translate.inventaire.io](http://translate.inventaire.io)
+- [**master**](http://github.com/inventaire/inventaire-i18n/tree/master): tracking translations fetched from the [translation tool](http://translate.inventaire.io) and build scripts
+- [**dist**](http://github.com/inventaire/inventaire-i18n/tree/dist): same as master but with pre-built files
 
 #### [deploy](http://github.com/inventaire/deploy)
 tracking installation scripts and documentation to run inventaire in production
