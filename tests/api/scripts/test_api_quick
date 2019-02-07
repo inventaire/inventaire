@@ -7,15 +7,13 @@
 # server libs/controllers as possible).
 # Known case: deleting an entity isn't possible from the API
 
-touch run/3009-watcher
-watcher_pid=$(cat run/3009-watcher)
-
-[[ "$watcher_pid" != '' ]] && ps --pid $watcher_pid | grep npm > /dev/null && {
+if [[ -f ./run/3009-supervisor ]] ;
+then
   echo -e "\e[0;32mtests server is running\e[0;30m"
-} || {
-    echo -e "\e[0;34mstarting test server\e[0;30m"
-    # If the server wasn't started before, start it
-    ./tests/api/scripts/start_tests_server
-} && {
-  ./tests/api/scripts/run_api_tests $@
-}
+else
+  echo -e "\e[0;34mstarting test server\e[0;30m"
+  # If the server wasn't started before, start it
+  ./tests/api/scripts/start_tests_server
+fi
+
+./tests/api/scripts/run_api_tests $@

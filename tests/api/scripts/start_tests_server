@@ -13,5 +13,3 @@ curl -s "$entities_search_engine_host" > /dev/null && echo "entities search engi
 
 # Start a test server in the background
 npm run watch > logs/test-server.log 2>&1 &
-# Store watch script pid to be able to know if it's still running
-echo $! > run/3009-watcher

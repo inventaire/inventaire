@@ -1,3 +1,11 @@
 #!/usr/bin/env bash
 [ -z "$NODE_ENV" ] && export NODE_ENV=dev
-supervisor --watch server,server.coffee,config,db/couchdb --extensions coffee,json,hbs server.coffee
+
+server_port=$(node -p "require('config').port")
+# supervisor pid is used by tests/api/scripts
+supervisor_pid_file="./run/${server_port}-supervisor"
+
+supervisor \
+  --watch server,server.coffee,config,db/couchdb \
+  --save-pid  $supervisor_pid_file \
+  --extensions coffee,json,hbs server.coffee

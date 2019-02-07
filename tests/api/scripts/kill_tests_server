@@ -1,22 +1,13 @@
 #!/usr/bin/env bash
-server_pid=$(lsof -i | grep 3009 | awk '{printf $2}')
 
-[[ "$server_pid" != '' ]] && {
-  supervisor_pid=$(ps auxf |
-    grep "$server_pid" -B 1 |
-    grep "supervisor" |
-    grep -v "grep" |
-    grep -v "ps" |
-    awk '{printf $2}')
+if [[ -f ./run/3009-supervisor ]] ;
+then
+  supervisor_pid=$(cat ./run/3009-supervisor)
+fi
 
-  watch_shell_pids=$(ps auxf |
-    grep "$server_pid" -B 3 |
-    grep "watch" |
-    awk '{printf $2 " "}')
-
-  kill $watch_shell_pids 2> /dev/null
-  kill $supervisorpi_d 2> /dev/null
-  kill $server_pid 2> /dev/null
-} || {
-  echo "no server to kill"
-}
+if [[ "$supervisor_pid" != '' ]] ;
+then
+  kill $supervisor_pid
+else
+  echo "no test server to kill"
+fi
