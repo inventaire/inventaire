@@ -9,11 +9,14 @@ sanitizeEntry = require './lib/resolver/sanitize_entry'
 resolve = require './lib/resolver/resolve'
 createUnresolvedEntry = require './lib/resolver/create_unresolved_entry'
 
-options = [ 'create' ]
+whitelistedOptions = [ 'create', 'update' ]
 
 sanitization =
   entries:
     generic: 'collection'
+  options:
+    whitelist: whitelistedOptions
+    optional: true
 
 module.exports = (req, res)->
   { options } = req.body

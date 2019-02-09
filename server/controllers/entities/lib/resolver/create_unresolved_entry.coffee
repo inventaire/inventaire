@@ -18,8 +18,6 @@ module.exports = (options, userId)-> (entry)->
 createAuthors = (authors, userId)->
   unresolvedAuthors = _.reject authors, 'uri'
 
-
-
   Promise.all unresolvedAuthors.map (author)->
     createEntityFromEntry('author', author, null, userId)
 

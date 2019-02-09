@@ -7,10 +7,9 @@ sanitize = __.require 'lib', 'sanitize/sanitize'
 sanitizeEntry = require './lib/resolver/sanitize_entry'
 resolve = require './lib/resolver/resolve'
 createUnresolvedEntry = require './lib/resolver/create_unresolved_entry'
+updateResolvedEntry = require './lib/resolver/update_resolved_entry'
 
-options = [
-  'create'
-]
+whitelistedOptions = [ 'create', 'update' ]
 
 sanitization =
   edition:
@@ -21,11 +20,11 @@ sanitization =
   authors:
     generic: 'collection'
     optional: true
-  options:
-    whitelist: options
-    optional: true
   series:
     generic: 'collection'
+    optional: true
+  options:
+    whitelist: whitelistedOptions
     optional: true
 
 module.exports = (req, res)->
@@ -34,7 +33,7 @@ module.exports = (req, res)->
   sanitize req, res, sanitization
   .then sanitizeEntry(res)
   .then resolve()
+  .then updateResolvedEntry(options, reqUserId)
   .then createUnresolvedEntry(options, reqUserId)
   .then responses_.Wrap(res, 'result')
   .catch error_.Handler(req, res)
-
