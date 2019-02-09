@@ -71,6 +71,11 @@ module.exports = entities_ =
 
     .then (updatedDoc)-> entities_.putUpdate { userId, currentDoc, updatedDoc }
 
+  addClaims: (userId, updatedClaims, currentDoc)->
+    updatedDoc = _.cloneDeep currentDoc
+    promises_.try -> Entity.addClaims updatedDoc, updatedClaims
+    .then -> entities_.putUpdate { userId, currentDoc, updatedDoc }
+
   validateClaim: (params)->
     { property } = params
     promises_.try -> validateProperty property
