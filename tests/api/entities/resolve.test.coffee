@@ -16,7 +16,7 @@ describe 'entities:resolve', ->
     .get 'result'
     .then (result)->
       result.should.be.an.Object()
-      result.edition[0].uri.should.equal 'isbn:9782203399303'
+      result.edition[0].uri.should.startWith 'isbn:'
       done()
     .catch done
 
