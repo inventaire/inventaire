@@ -63,7 +63,8 @@ module.exports = entities_ =
     # This constituts the basis on which next modifications patch
     db.postAndReturn Entity.create()
 
-  edit: (userId, updatedLabels, updatedClaims, currentDoc)->
+  edit: (params)->
+    { userId, updatedLabels, updatedClaims, currentDoc } = params
     updatedDoc = _.cloneDeep currentDoc
     promises_.try ->
       updatedDoc = Entity.setLabels updatedDoc, updatedLabels

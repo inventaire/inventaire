@@ -18,7 +18,10 @@ module.exports = (labels, claims, userId)->
   .tap (type)-> validateLabels labels, claims, type
   .then (type)-> validateClaims claims, type
   .then entities_.create
-  .then entities_.edit.bind(null, userId, labels, claims)
+  .then (currentDoc)->
+    updatedLabels = labels
+    updatedClaims = claims
+    entities_.edit { userId, updatedLabels, updatedClaims, currentDoc, summary }
 
 validateValueType = (wdtP31)->
   unless _.isNonEmptyArray wdtP31
