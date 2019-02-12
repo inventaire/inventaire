@@ -3,7 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
-{ authReq, undesiredErr } = require '../utils/utils'
+{ authReq, adminReq, getUser, undesiredErr } = require '../utils/utils'
 { getByUris } = require '../utils/entities'
 { randomLabel, humanName, generateIsbn13, someOpenLibraryId  } = require '../fixtures/entities'
 resolve = (entry)-> authReq 'post', '/api/entities?action=resolve', entry
@@ -91,8 +91,9 @@ describe 'entities:resolve:create-unresolved', ->
       should(result.edition[0].uri).be.ok()
       { edition } = result
       getByUris edition[0].uri
-      .then (res)->
-        newWorkClaimValue = _.values(res.entities)[0].claims['wdt:P407'][0]
+      .get 'entities'
+      .then (entities)->
+        newWorkClaimValue = _.values(entities)[0].claims['wdt:P407'][0]
         newWorkClaimValue.should.equal frenchLang
         done()
     .catch undesiredErr(done)
@@ -110,8 +111,9 @@ describe 'entities:resolve:create-unresolved', ->
       should(result.edition[0].uri).be.ok()
       { works } = result
       getByUris works.map(_.property('uri'))
-      .then (res)->
-        newWorkClaimValue = _.values(res.entities)[0].claims['wdt:P648'][0]
+      .get 'entities'
+      .then (entities)->
+        newWorkClaimValue = _.values(entities)[0].claims['wdt:P648'][0]
         newWorkClaimValue.should.equal olId
         done()
     .catch undesiredErr(done)
@@ -130,10 +132,37 @@ describe 'entities:resolve:create-unresolved', ->
       should(result.edition[0].uri).be.ok()
       { authors } = result
       getByUris authors.map(_.property('uri'))
-      .then (res)->
-        newWorkClaimValue = _.values(res.entities)[0].claims['wdt:P648'][0]
+      .get 'entities'
+      .then (entities)->
+        newWorkClaimValue = _.values(entities)[0].claims['wdt:P648'][0]
         newWorkClaimValue.should.equal olId
         done()
+    .catch undesiredErr(done)
+
+    return
+
+  it 'should add an arbitrary summary in entities patch', (done)->
+    olId = someOpenLibraryId 'work'
+    summary = { summary: 'arbitrary dump donation' }
+    resolve
+      edition: [ { isbn: generateIsbn13() } ]
+      works: [
+        claims: { 'wdt:P648': [ olId ] }
+        labels: { en: randomWorkLabel() }
+      ]
+      options: [ 'create' ]
+      summary: summary
+    .get 'result'
+    .then (result)->
+      getUser()
+      .then (user)->
+        { _id } = user
+        adminReq 'get', "/api/entities?action=contributions&user=#{_id}&limit=5"
+        .get 'patches'
+        .then (patches)->
+          patchedContext = patches[1].context
+          patchedContext.should.deepEqual summary
+          done()
     .catch undesiredErr(done)
 
     return

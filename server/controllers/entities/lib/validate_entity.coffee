@@ -1,6 +1,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
+assert_ = __.require 'utils', 'assert_types'
 entities_ = require './entities'
 { Lang } = __.require 'lib', 'regex'
 promises_ = __.require 'lib', 'promises'
@@ -10,6 +11,9 @@ typesWithoutLabels = require './types_without_labels'
 
 module.exports = (entity)->
   { labels, claims } = entity
+  assert_.object labels
+  assert_.object claims
+
   promises_.try -> validateValueType claims['wdt:P31']
   .tap (type)-> validateLabels labels, claims, type
   .then (type)-> validateClaims claims, type

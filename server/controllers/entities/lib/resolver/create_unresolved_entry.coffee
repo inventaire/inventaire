@@ -6,60 +6,64 @@ createEntity = require '../create_entity'
 properties = require '../properties/properties_values_constraints'
 isbn_ = __.require 'lib', 'isbn/isbn'
 
-module.exports = (options, userId)-> (entry)->
+module.exports = (options, userId, summary)-> (entry)->
   { edition, works, authors } = entry
   unless _.includes(options, 'create') then return entry
 
-  createAuthors authors, userId
-  .then -> createWorks(works, authors, userId)
-  .then -> createEdition(edition, works, userId)
+  createAuthors authors, userId, summary
+  .then -> createWorks(works, authors, userId, summary)
+  .then -> createEdition(edition, works, userId, summary)
   .then -> entry
 
-createAuthors = (authors, userId)->
+createAuthors = (authors, userId, summary)->
   unresolvedAuthors = _.reject authors, 'uri'
-
   Promise.all unresolvedAuthors.map (author)->
-    createEntityFromEntry('author', author, null, userId)
+    claims = { }
 
-createWorks = (works, authors, userId)->
-  unresolvedWorks = _.reject works, 'uri'
-
-  Promise.all unresolvedWorks.map (work)->
-    createEntityFromEntry('work', work, authors, userId)
-
-createEdition = (edition, works, userId)->
-  Promise.all edition.map (edition)->
-    createEntityFromEntry('edition', edition, works, userId)
-
-createEntityFromEntry = (name, entity, relatives, userId)->
-  { labels, claims:entryClaims } = entity
-  if entity.uri? then return
-
-  claims = {}
-  for property, values of entryClaims
-    addClaimIfValid(claims, property, values)
-
-  relativeUris = _.compact(_.map(relatives, 'uri'))
-  if name is 'author'
     addClaimIfValid claims, 'wdt:P31', [ 'wd:Q5' ]
-  else if name is 'work'
+    createEntityFromEntry author, claims, userId, summary
+
+createWorks = (works, authors, userId, summary)->
+  unresolvedWorks = _.reject works, 'uri'
+  relativesUris = getRelativeUris authors
+  Promise.all unresolvedWorks.map (work)->
+    claims = { }
+
     addClaimIfValid claims, 'wdt:P31', [ 'wd:Q571' ]
-    addClaimIfValid claims, 'wdt:P50', relativeUris
-  else if name is 'edition'
-    { isbn } = entity
-    labels = {}
+    addClaimIfValid claims, 'wdt:P50', relativesUris
+    createEntityFromEntry work, claims, userId, summary
+
+createEdition = (edition, works, userId, summary)->
+  relativesUris = getRelativeUris works
+  Promise.all edition.map (edition)->
+    { isbn } = edition
+    claims = { }
+
     addClaimIfValid claims, 'wdt:P31', [ 'wd:Q3331189' ]
-    addClaimIfValid claims, 'wdt:P629', relativeUris
+    addClaimIfValid claims, 'wdt:P629', relativesUris
 
     if isbn?
       hyphenatedIsbn = isbn_.toIsbn13h(isbn)
-      addClaimIfValid(claims, 'wdt:P212', [ hyphenatedIsbn ])
+      addClaimIfValid claims, 'wdt:P212', [ hyphenatedIsbn ]
 
-    addClaimEditionTitle(entity, relatives, claims)
+    addClaimEditionTitle edition, works, claims
 
-  createEntity labels, claims, userId
-  .then _.Log("created #{ name } entity")
-  .catch _.ErrorRethrow("create#{ name }Entity err")
+    # garantee that an edition shall not have label
+    edition.labels = { }
+    createEntityFromEntry edition, claims, userId, summary
+
+getRelativeUris = (relatives)->
+  _.compact(_.map(relatives, 'uri'))
+
+createEntityFromEntry = (entity, claims, userId, summary)->
+  { labels, claims:entryClaims } = entity
+
+  for property, values of entryClaims
+    addClaimIfValid claims, property, values
+
+  createEntity labels, claims, userId, summary
+  .then _.Log("created entity")
+  .catch _.ErrorRethrow("createEntity err")
   .then addUriCreated(entity)
 
 addUriCreated = (entryEntity)-> (createdEntity)->

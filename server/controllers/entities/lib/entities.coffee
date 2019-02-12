@@ -64,13 +64,13 @@ module.exports = entities_ =
     db.postAndReturn Entity.create()
 
   edit: (params)->
-    { userId, updatedLabels, updatedClaims, currentDoc } = params
+    { userId, updatedLabels, updatedClaims, currentDoc, summary } = params
     updatedDoc = _.cloneDeep currentDoc
     promises_.try ->
       updatedDoc = Entity.setLabels updatedDoc, updatedLabels
       return Entity.addClaims updatedDoc, updatedClaims
-
-    .then (updatedDoc)-> entities_.putUpdate { userId, currentDoc, updatedDoc }
+    .then (updatedDoc)->
+      entities_.putUpdate { userId, currentDoc, updatedDoc, summary }
 
   addClaims: (userId, updatedClaims, currentDoc)->
     updatedDoc = _.cloneDeep currentDoc
