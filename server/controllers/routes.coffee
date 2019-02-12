@@ -20,7 +20,6 @@ module.exports = routes =
   'api/entities': endpoint './entities/entities'
   'api/search': endpoint './search/search'
   'api/notifications': endpoint './notifications'
-  'api/cookie': endpoint './cookie'
   'api/images': endpoint './images/images'
   'api/tests*': endpoint './tests'
   'api/data': endpoint './data'
