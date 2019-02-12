@@ -11,7 +11,8 @@ module.exports = (params)->
 
   validateEntity { labels, claims }
   .then -> entities_.create()
-  .then entities_.edit.bind(null, userId, labels, claims)
+  .then (currentDoc)->
+    entities_.edit { userId, currentDoc, updatedLabels: labels, updatedClaims: claims }
   .then (entity)->
     entity.uri = prefixifyInv entity._id
     return entity
