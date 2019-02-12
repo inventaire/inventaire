@@ -26,14 +26,17 @@ sanitization =
   options:
     whitelist: whitelistedOptions
     optional: true
+  summary:
+    generic: 'object'
+    optional: true
 
 module.exports = (req, res)->
-  { options } = req.body
+  { options, summary } = req.body
   reqUserId = req.user._id
   sanitize req, res, sanitization
   .then sanitizeEntry(res)
   .then resolve()
   .then updateResolvedEntry(options, reqUserId)
-  .then createUnresolvedEntry(options, reqUserId)
+  .then createUnresolvedEntry(options, reqUserId, summary)
   .then responses_.Wrap(res, 'result')
   .catch error_.Handler(req, res)

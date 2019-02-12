@@ -69,8 +69,9 @@ module.exports = entities_ =
     promises_.try ->
       updatedDoc = Entity.setLabels updatedDoc, updatedLabels
       return Entity.addClaims updatedDoc, updatedClaims
-
-    .then (updatedDoc)-> entities_.putUpdate { userId, currentDoc, updatedDoc }
+    .then (updatedDoc)->
+      context = summary
+      entities_.putUpdate { userId, currentDoc, updatedDoc, context }
 
   addClaims: (userId, updatedClaims, currentDoc)->
     updatedDoc = _.cloneDeep currentDoc

@@ -10,8 +10,8 @@ getEntityType = require './get_entity_type'
 validateClaimProperty = require './validate_claim_property'
 typesWithoutLabels = require './types_without_labels'
 
-module.exports = (labels, claims, userId)->
-  assert_.types ['object', 'object', 'string'], arguments
+module.exports = (labels, claims, userId, summary)->
+  assert_.types ['object', 'object', 'string'], [ labels, claims, userId ]
   _.log arguments, 'entity to create'
 
   promises_.try -> validateValueType claims['wdt:P31']
