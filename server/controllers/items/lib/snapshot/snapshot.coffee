@@ -30,6 +30,10 @@ module.exports =
     .then (snapshot)->
       item.snapshot = snapshot
       return item
+    .catch (err)->
+      _.error err, 'snapshot_.addToItem error'
+      item.snapshot or= {}
+      return item
 
   batch: (ops)-> db.batch _.forceArray(ops)
 
