@@ -74,7 +74,7 @@ describe 'tasks:externalSourcesOccurrences', ->
 
     return
 
-  it 'should return occurence when author has work sourced in their OpenLibrary page', (done)->
+  it 'should return occurence when author has work sourced on OpenLibrary', (done)->
     humanLabel = 'Stanislas Lem'
     workLabel = 'Solaris'
     createHuman { labels: { en: humanLabel } }
