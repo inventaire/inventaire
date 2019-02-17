@@ -74,6 +74,22 @@ describe 'tasks:externalSourcesOccurrences', ->
 
     return
 
+  it 'should return occurence when author has work sourced in their OpenLibrary page', (done)->
+    humanLabel = 'Stanislas Lem'
+    workLabel = 'Solaris'
+    createHuman { labels: { en: humanLabel } }
+    .then (human)->
+      createWorkWithAuthor human, workLabel
+      .then (work)-> checkEntities human.uri
+      .then (tasks)->
+        task = tasks.find (task)-> task.suggestionUri.match /wd:/
+        occurrencesUrls = _.map task.externalSourcesOccurrences, 'url'
+        occurrencesUrls.join().should.containEql /openlibrary.org/
+        done()
+    .catch undesiredErr(done)
+
+    return
+
   it 'should auto-merge entities if works labels is sufficient', (done)->
     humanLabel = 'Alain Damasio'
     workLabel = 'La horde du Contrevent'
