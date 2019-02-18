@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ createPublisher } = require '../../fixtures/entities'
+{ randomLabel, createPublisher } = require '../../fixtures/entities'
 { authReq, undesiredErr } = require '../../utils/utils'
 
 describe 'entities:publishers:create', ->
@@ -12,3 +12,9 @@ describe 'entities:publishers:create', ->
     .catch undesiredErr(done)
 
     return
+
+createPublisher = ->
+  authReq 'post', '/api/entities?action=create',
+    labels: { en: randomLabel() }
+    claims:
+      'wdt:P31': [ 'wd:Q2085381' ]

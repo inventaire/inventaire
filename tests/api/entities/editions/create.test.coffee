@@ -3,7 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { nonAuthReq, authReq, undesiredErr, undesiredRes } = require '../../utils/utils'
-{ createWork, createSerie, randomWorkLabel, editionLabel } = require '../../fixtures/entities'
+{ createWork, createSerie, randomLabel, editionLabel } = require '../../fixtures/entities'
 workEntityPromise = createWork()
 
 describe 'entities:editions:create', ->
@@ -39,7 +39,7 @@ describe 'entities:editions:create', ->
     workEntityPromise
     .then (workEntity)->
       authReq 'post', '/api/entities?action=create',
-        labels: { fr: randomWorkLabel() }
+        labels: { fr: randomLabel() }
         claims:
           'wdt:P31': [ 'wd:Q3331189' ]
           'wdt:P629': [ workEntity.uri ]

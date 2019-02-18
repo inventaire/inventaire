@@ -4,12 +4,12 @@ _ = __.require 'builders', 'utils'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
 { getUserId, undesiredErr } = require '../utils/utils'
-{ createWork, randomWorkLabel } = require '../fixtures/entities'
+{ createWork, randomLabel } = require '../fixtures/entities'
 { search, merge } = require '../utils/entities'
 
 describe 'entities:search', ->
   it 'should return a recently created entity', (done)->
-    label = randomWorkLabel()
+    label = randomLabel()
     createWork { labels: { fr: label } }
     .delay 1000
     .then (creationRes)->
@@ -24,7 +24,7 @@ describe 'entities:search', ->
     return
 
   it 'should not return a removed:placeholder entity', (done)->
-    label = randomWorkLabel()
+    label = randomLabel()
     Promise.all [
       getUserId()
       createWork({ labels: { fr: label } }).get '_id'

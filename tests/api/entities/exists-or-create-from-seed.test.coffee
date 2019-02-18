@@ -3,7 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { nonAuthReq, authReq, undesiredErr } = require '../utils/utils'
-{ getSomeIsbn, humanName, randomWorkLabel } = require '../fixtures/entities'
+{ getSomeIsbn, humanName, randomLabel } = require '../fixtures/entities'
 
 describe 'entities:exists-or-create-from-seed', ->
   it 'should reject if params isbn is missing', (done)->
@@ -28,7 +28,7 @@ describe 'entities:exists-or-create-from-seed', ->
   it 'should reject if authors is not a string', (done)->
     authReq 'post', '/api/entities?action=exists-or-create-from-seed',
       isbn: getSomeIsbn()
-      title: randomWorkLabel()
+      title: randomLabel()
       authors: 1
     .catch (err)->
       err.body.status_verbose.should.startWith 'invalid authors'
@@ -40,7 +40,7 @@ describe 'entities:exists-or-create-from-seed', ->
   it 'should reject if isbn is invalid', (done)->
     authReq 'post', '/api/entities?action=exists-or-create-from-seed',
       isbn: '000000'
-      title: randomWorkLabel()
+      title: randomLabel()
     .catch (err)->
       err.body.status_verbose.should.startWith 'invalid isbn'
       done()
@@ -51,7 +51,7 @@ describe 'entities:exists-or-create-from-seed', ->
   it 'should accept if params authors is missing', (done)->
     authReq 'post', '/api/entities?action=exists-or-create-from-seed',
       isbn: getSomeIsbn()
-      title: randomWorkLabel()
+      title: randomLabel()
     .then (res)->
       res._id.should.be.a.String()
       done()
@@ -62,8 +62,8 @@ describe 'entities:exists-or-create-from-seed', ->
   it 'should create an edition and a work from seed', (done)->
     authReq 'post', '/api/entities?action=exists-or-create-from-seed',
       isbn: getSomeIsbn()
-      title: randomWorkLabel()
-      authors: [ randomWorkLabel() ]
+      title: randomLabel()
+      authors: [ randomLabel() ]
     .then (res)->
       res._id.should.be.a.String()
       workUri = res.claims['wdt:P629'][0]

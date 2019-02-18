@@ -4,7 +4,7 @@ _ = __.require 'builders', 'utils'
 should = require 'should'
 { undesiredErr } = __.require 'apiTests', 'utils/utils'
 { checkEntities } = require '../utils/tasks'
-{ createHuman, createWorkWithAuthor, randomWorkLabel } = require '../fixtures/entities'
+{ createHuman, createWorkWithAuthor, randomLabel } = require '../fixtures/entities'
 { getByUris } = require '../utils/entities'
 
 # Tests dependency: having a populated ElasticSearch wikidata index
@@ -13,7 +13,7 @@ describe 'tasks:externalSourcesOccurrences', ->
     humanLabel = 'Stanislas Lem' # has no homonyms
     createHuman { labels: { en: humanLabel } }
     .then (human)->
-      createWorkWithAuthor human, randomWorkLabel()
+      createWorkWithAuthor human, randomLabel()
       .then (work)-> checkEntities human.uri
       .then (tasks)->
         tasks.length.should.aboveOrEqual 1
@@ -28,7 +28,7 @@ describe 'tasks:externalSourcesOccurrences', ->
     humanLabel = 'Wolfgang Amadeus Mozart'
     createHuman { labels: { en: humanLabel } }
     .then (human)->
-      createWorkWithAuthor human, randomWorkLabel()
+      createWorkWithAuthor human, randomLabel()
       .then (work)-> checkEntities human.uri
       .then (tasks)->
         tasks.length.should.aboveOrEqual 1
