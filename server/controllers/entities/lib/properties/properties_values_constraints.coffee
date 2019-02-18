@@ -27,12 +27,18 @@ builders = require './properties_config_builders'
 module.exports =
   # image
   'invp:P2': bases.imageHash
+  # country
+  'wdt:P17': bases.entity
   # instance of
   'wdt:P31': _.extend {}, bases.uniqueEntity, { adminUpdateOnly: true }
   # author
   'wdt:P50': bases.humanEntity
+  # founded by
+  'wdt:P112': bases.humanEntity
   # publisher
   'wdt:P123': bases.uniqueEntity
+  # owned by
+  'wdt:P127': bases.entity
   # movement
   'wdt:P135': bases.entity
   # genre
@@ -65,6 +71,8 @@ module.exports =
   'wdt:P569': bases.uniqueSimpleDay
   # date of death
   'wdt:P570': bases.uniqueSimpleDay
+  # inception
+  'wdt:P571': bases.uniqueSimpleDay
   # publication date
   'wdt:P577': bases.uniqueSimpleDay
   # edition of
@@ -123,6 +131,8 @@ module.exports =
   'wdt:P2963': builders.externalId /^[1-9]\d*$/
   # GoodReads book ID
   'wdt:P2969': builders.externalId /^[1-9]\d*$/
+  # ISBN publisher
+  'wdt:P3035': builders.externalId /^978-\d-\d{1,}$/
   # Babelio author ID
   'wdt:P3630': builders.externalId /^\d+$/
   # Babelio work ID
