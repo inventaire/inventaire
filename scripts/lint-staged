@@ -1,10 +1,10 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 set -eu
 
 # keep A (added) and M (modified) files
 # only if staged (0 space before/2 space after the letter)
-staged=$(git status --porcelain |grep "[AM]  " |grep "\.coffee" |sed 's/^[AM]  //')
+staged=$(git status --porcelain | grep "[AM]  " | grep "\.coffee" | sed 's/^[AM]  //')
 if [ -z "$staged" ]
   then
     echo 'no file to lint'
