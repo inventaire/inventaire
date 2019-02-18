@@ -6,7 +6,7 @@ faker = require 'faker'
 { Promise } = __.require 'lib', 'promises'
 { nonAuthReq, authReq, undesiredRes, undesiredErr, getUser } = require '../utils/utils'
 randomString = __.require 'lib', './utils/random_string'
-{ createWork, createHuman, createSerie, humanName, randomWorkLabel, createEditionFromWorks } = require '../fixtures/entities'
+{ createWork, createHuman, createSerie, humanName, randomLabel, createEditionFromWorks } = require '../fixtures/entities'
 { getRefreshedPopularityByUris } = require '../utils/entities'
 
 describe 'search:global', ->
@@ -98,7 +98,7 @@ describe 'search:global', ->
     return
 
   it 'should return a local serie', (done)->
-    label = randomWorkLabel()
+    label = randomLabel()
     createSerie { labels: { fr: label } }
     # Let the time for Elastic Search indexation
     .delay 1000
@@ -197,7 +197,7 @@ describe 'search:global', ->
     return
 
   it 'should return a global score boosted by a logarithmic popularity', (done)->
-    workLabel = randomWorkLabel()
+    workLabel = randomLabel()
     createWork { labels: { fr: workLabel } }
     .then (work)->
       workEditionsCreation = [
