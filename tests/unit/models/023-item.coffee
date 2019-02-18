@@ -108,6 +108,12 @@ describe 'item model', ->
 
     it 'should throw when updated with an invalid attribute', (done)->
       doc = create validItem
+      updateAttributesData = { foo: '123' }
+      (-> update(updateAttributesData, doc)).should.throw()
+      done()
+
+    it 'should throw when updated with an invalid attribute value', (done)->
+      doc = create validItem
       updateAttributesData = { listing: 'chocolat' }
       (-> update(updateAttributesData, doc)).should.throw()
       done()
