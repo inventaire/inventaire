@@ -45,6 +45,8 @@ module.exports =
     # - `{ mergeFrom: entityId }` where entityId is the entity being merged
     #   with the current entity. This is useful to be able to easily find
     #   the merge patch during a merge revert
+    # - `{ redirectClaims: { fromUri } }` where fromUri is the entity that was merged
+    #   in the patched entity, and from which claims that had it as value are being redirected
     if context? then patch.context = context
 
     return patch
