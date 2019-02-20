@@ -92,22 +92,6 @@ module.exports = items_ =
     .then db.bulk
     .tap -> radio.emit 'user:inventory:update', userId
 
-  verifyOwnership: (itemId, userId)->
-    db.get itemId
-    .then (item)->
-      unless userId is item?.owner
-        throw error_.new 'user isnt item.owner', 403, userId, item.owner
-
-      return item
-
-  delete: (id, rev)->
-    db.get id
-    .then (currentItem)->
-      db.update id, couch_.setDeletedTrue
-      .tap ->
-        radio.emit 'resource:destroyed', 'item', id
-        radio.emit 'user:inventory:update', currentItem.owner
-
   setBusyness: (id, busy)->
     assert_.types [ 'string', 'boolean' ], arguments
     db.update id, BasicUpdater('busy', busy)
