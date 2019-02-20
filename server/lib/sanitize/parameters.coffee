@@ -45,6 +45,9 @@ arrayOfAKind = (validation)-> (values, kind)->
     details = "expected array, got #{_.typeOf(values)}"
     throw error_.new "invalid #{kind}: #{details}", 400, { values }
 
+  if values.length is 0
+    throw error_.new "#{kind} array can't be empty", 400
+
   for value in values
     unless validation value
       # approximative way to get singular of a word
