@@ -17,6 +17,7 @@ module.exports =
   post: ActionsControllers
     authentified:
       default: require './create'
+      'delete-by-ids': require './delete_by_ids'
     admin:
       'refresh-snapshot': require './refresh_snapshot'
 
@@ -24,7 +25,5 @@ module.exports =
     authentified:
       default: require './update'
       'bulk-update': require './bulk_update'
-
-  delete: require './delete'
 
 require('./lib/snapshot/update_snapshot_on_entity_change')()
