@@ -74,3 +74,18 @@ describe 'items:delete-by-ids', ->
     .catch done
 
     return
+
+  it 'should ignore already deleted items', (done)->
+    createItem()
+    .then (item)->
+      { _id: itemId } = item
+      deleteByIds itemId
+      .then (res)->
+        res.ok.should.be.true()
+        deleteByIds itemId
+        .then (res)->
+          res.ok.should.be.true()
+          done()
+    .catch done
+
+    return

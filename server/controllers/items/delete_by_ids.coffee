@@ -18,6 +18,7 @@ module.exports = (req, res, next)->
 deleteByIds = (params)->
   { ids, reqUserId } = params
   items_.byIds ids
+  .then _.compact
   .then verifyOwnership(reqUserId)
   .then items_.bulkDelete
   .then -> radio.emit 'user:inventory:update', reqUserId
