@@ -80,6 +80,7 @@ module.exports =
     'wdt:P112' # founded by
     'wdt:P127' # owned by
     'wdt:P571' # inception
+    'wdt:P576' # dissolution
     'wdt:P856' # official website
     'wdt:P3035' # ISBN publisher prefix
   ]

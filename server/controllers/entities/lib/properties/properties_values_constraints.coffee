@@ -76,6 +76,8 @@ module.exports =
   'wdt:P570': bases.uniqueSimpleDay
   # inception
   'wdt:P571': bases.uniqueSimpleDay
+  # dissolution date
+  'wdt:P576': bases.uniqueSimpleDay
   # publication date
   'wdt:P577': bases.uniqueSimpleDay
   # edition of
