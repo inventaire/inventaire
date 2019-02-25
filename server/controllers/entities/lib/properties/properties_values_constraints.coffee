@@ -48,6 +48,8 @@ module.exports =
   'wdt:P136': bases.entity
   # based on
   'wdt:P144': bases.workEntity
+  # headquarters location
+  'wdt:P159': bases.entity
   # serie
   'wdt:P179': bases.serieEntity
   # ISNI
@@ -76,8 +78,6 @@ module.exports =
   'wdt:P570': bases.uniqueSimpleDay
   # inception
   'wdt:P571': bases.uniqueSimpleDay
-  # dissolution date
-  'wdt:P576': bases.uniqueSimpleDay
   # publication date
   'wdt:P577': bases.uniqueSimpleDay
   # edition of
@@ -136,7 +136,7 @@ module.exports =
   'wdt:P2963': builders.externalId /^[1-9]\d*$/
   # GoodReads book ID
   'wdt:P2969': builders.externalId /^[1-9]\d*$/
-  # ISBN publisher
+  # ISBN publisher prefix
   'wdt:P3035': builders.externalId /^978-\d-\d{1,}$/
   # Babelio author ID
   'wdt:P3630': builders.externalId /^\d+$/
