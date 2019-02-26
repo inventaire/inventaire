@@ -8,7 +8,7 @@ items_ = __.require 'controllers', 'items/lib/items'
 snapshot_ = __.require 'controllers', 'items/lib/snapshot/snapshot'
 promises_ = __.require 'lib', 'promises'
 comments_ = __.require 'controllers', 'comments/lib/comments'
-Transaction = __.require 'models', 'transaction'
+{ states } = __.require 'models', 'attributes/transaction'
 
 email_ = require './email'
 
@@ -62,9 +62,9 @@ findUserToNotify = (transaction)->
   else null
 
 newTransaction = (transaction)->
-  ownerActed = _.any transaction.actions, ownerIsActor
+  ownerActed = _.some transaction.actions, ownerIsActor
   if ownerActed then return false
-  ownerSentMessage = _.any transaction.messages, OwnerIsSender(transaction)
+  ownerSentMessage = _.some transaction.messages, OwnerIsSender(transaction)
   if ownerSentMessage then return false
   else return true
 
@@ -123,7 +123,7 @@ findMainUser = (transaction)->
   if owner._id is other._id then requester
   else owner
 
-ownerIsActor = (action)-> Transaction.states[action.action].actor is 'owner'
+ownerIsActor = (action)-> states[action.action].actor is 'owner'
 OwnerIsSender = (transaction)-> (message)-> message.user is transaction.owner
 ownerIsMessager = (owner, message)-> message.user is owner._id
 
