@@ -2,7 +2,7 @@
 
 set -eu
 
-staged_files_count=$(git status --porcelain | grep -E "^(A|M) " | wc -l)
+staged_files_count=$(git status --porcelain | grep -E "^(A|M)" | wc -l)
 [[ $staged_files_count  == "0" ]] && echo "no file staged" && exit 1
 
 echo -e "\e[0;30mstarting to lint...\e[0m"
