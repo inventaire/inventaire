@@ -11,6 +11,7 @@ module.exports =
   edition: (edition, works, authors, series)->
     lang = edition.originalLang or 'en'
     title = edition.claims['wdt:P1476']?[0]
+    subtitle = edition.claims['wdt:P1680']?[0]
     # Wikidata editions might not have a wdt:P1476 value
     title or= getBestLangValue(lang, null, edition.labels).value
     image = edition.image?.url
@@ -19,6 +20,7 @@ module.exports =
       entity: edition,
       works,
       title,
+      subtitle,
       lang,
       image,
       authors,
@@ -42,7 +44,7 @@ module.exports =
     }
 
 buildOperation = (params)->
-  { type, entity, works, title, lang, image, authors, series } = params
+  { type, entity, works, title, subtitle, lang, image, authors, series } = params
   assert_.array works
   unless _.isNonEmptyString title
     throw error_.new 'no title found', 400, entity
@@ -62,6 +64,9 @@ buildOperation = (params)->
   # Filtering out Wikimedia File names, keeping only images hashes or URLs
   if snapshotValidations['entity:image'](image)
     snapshot['entity:image'] = image
+
+  if _.isNonEmptyString subtitle
+    snapshot['entity:subtitle'] = subtitle
 
   { uri } = entity
   assert_.string uri

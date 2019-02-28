@@ -90,6 +90,19 @@ describe 'items:snapshot', ->
 
     return
 
+  it 'should snapshot the subtitle of an edition', (done)->
+    createEdition()
+    .then (edition)->
+      subtitle = edition.claims['wdt:P1680'][0]
+      subtitle.should.a.String()
+      authReq 'post', '/api/items', { entity: edition.uri }
+      .then (item)->
+        item.snapshot['entity:subtitle'].should.equal subtitle
+        done()
+    .catch done
+
+    return
+
   it 'should snapshot the image of an edition after a work-related refresh', (done)->
     createEdition()
     .then (edition)->
