@@ -15,7 +15,7 @@ module.exports =
   CouchUuid: /^[0-9a-f]{32}$/
   # minimanlist email regex
   # cf http://davidcel.is/blog/2012/09/06/stop-validating-email-addresses-with-regex/
-  Email: /.+@.+\..+/i
+  Email: /^[^@]+@[^@]+\.[^@]+$/
   EntityUri: /^(wd:Q\d+|inv:[0-9a-f]{32}|isbn:\w{10}(\w{3})?)$/
   ImageHash: /^[0-9a-f]{40}$/
   Url: new RegExp urlPattern , 'i'
