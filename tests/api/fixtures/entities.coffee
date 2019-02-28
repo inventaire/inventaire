@@ -65,6 +65,7 @@ module.exports = API =
           'wdt:P31': [ 'wd:Q3331189' ]
           'wdt:P629': worksUris
           'wdt:P1476': [ _.values(works[0].labels)[0] ]
+          'wdt:P1680': [ randomWords() ]
           'wdt:P407': [ 'wd:' + wdLang.byCode[lang].wd ]
           'invp:P2': [ someImageHash ]
 
