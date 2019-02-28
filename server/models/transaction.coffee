@@ -82,10 +82,8 @@ snapshotData = (itemDoc, ownerDoc, requesterDoc)->
 
 getEntitySnapshotFromItemSnapshot = (itemSnapshot)->
   entitySnapshot = {}
-  for k, v of itemSnapshot
-    # Ex: keep only 'image' in the key 'entity:image'
-    key = k.split(':')[1]
-    entitySnapshot[key] = v
+  if itemSnapshot['entity:image']? then entitySnapshot.image = itemSnapshot['entity:image']
+  if itemSnapshot['entity:authors']? then entitySnapshot.authors = itemSnapshot['entity:authors']
   return entitySnapshot
 
 getNextActionsList = (transactionName)->
