@@ -28,7 +28,7 @@ module.exports =
   # image
   'invp:P2': bases.imageHash
   # country
-  'wdt:P17': bases.entity
+  'wdt:P17': bases.countryEntity
   # instance of
   'wdt:P31': _.extend {}, bases.uniqueEntity, { adminUpdateOnly: true }
   # author

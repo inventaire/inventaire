@@ -82,14 +82,20 @@ module.exports = typesAliases =
     # bandes dessinées publishing company
     'wd:Q3279251'
   ]
-
+  # Types required to update the entity search engine
+  # see server/controllers/entities/lib/update_search_engine
+  countries: [
+    'wd:Q7275'
+    'wd:Q6256'
+    'wd:Q3624078'
+    'wd:Q3024240'
+  ]
   collections: [
     # editorial collection
     'wd:Q20655472'
     # monographic series
     'wd:Q1700470'
   ]
-
   movements: [
     # cultural movement
     'wd:Q2198855'
