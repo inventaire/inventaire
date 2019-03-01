@@ -76,7 +76,6 @@ module.exports =
   ]
 
   publisher: all.concat [
-    'wdt:P17' # country
     'wdt:P112' # founded by
     'wdt:P127' # owned by
     'wdt:P571' # inception

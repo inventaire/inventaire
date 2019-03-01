@@ -30,8 +30,6 @@ extend = (base, extension)-> _.extend {}, base, extension
 module.exports =
   # image
   'invp:P2': bases.imageHash
-  # country
-  'wdt:P17': bases.entity
   # instance of
   'wdt:P31': extend bases.uniqueEntity, { adminUpdateOnly: true }
   # author
@@ -48,24 +46,22 @@ module.exports =
   'wdt:P136': bases.entity
   # based on
   'wdt:P144': bases.workEntity
-  # headquarters location
-  'wdt:P159': bases.entity
   # serie
   'wdt:P179': bases.serieEntity
-  # ISNI
-  'wdt:P213': builders.externalId /^\d{4} \d{4} \d{4} \d{3}[0-9X]$/
   # ISBN 13
   'wdt:P212': builders.isbnProperty 13
-  # OCLC control number
-  'wdt:P243': builders.externalId /^0*[1-9]\d*$/
-  # SUDOC authorities ID
-  'wdt:P269': builders.externalId /^\d{8}[\dX]$/
+  # ISNI
+  'wdt:P213': builders.externalId /^\d{4} \d{4} \d{4} \d{3}[0-9X]$/
   # VIAF id
   'wdt:P214': builders.externalId /^[1-9]\d(\d{0,7}|\d{17,20})$/
   # GND ID
   'wdt:P227': builders.externalId /^1[01]?\d{7}[0-9X]|[47]\d{6}-\d|[1-9]\d{0,7}-[0-9X]|3\d{7}[0-9X]$/
+  # OCLC control number
+  'wdt:P243': builders.externalId /^0*[1-9]\d*$/
   # BNF id
   'wdt:P268': builders.externalId /^\d{8}[0-9bcdfghjkmnpqrstvwxz]$/
+  # SUDOC authorities ID
+  'wdt:P269': builders.externalId /^\d{8}[\dX]$/
   # original language of work
   'wdt:P364': bases.entity
   # language of work
@@ -78,6 +74,8 @@ module.exports =
   'wdt:P570': bases.uniqueSimpleDay
   # inception
   'wdt:P571': bases.uniqueSimpleDay
+  # dissolution date
+  'wdt:P576': bases.uniqueSimpleDay
   # publication date
   'wdt:P577': bases.uniqueSimpleDay
   # edition of
@@ -137,7 +135,7 @@ module.exports =
   # GoodReads book ID
   'wdt:P2969': builders.externalId /^[1-9]\d*$/
   # ISBN publisher prefix
-  'wdt:P3035': builders.externalId /^978-\d-\d{1,}$/
+  'wdt:P3035': builders.externalId /^97(8|9)-\d{1,5}-\d{2,7}$/
   # Babelio author ID
   'wdt:P3630': builders.externalId /^\d+$/
   # Babelio work ID

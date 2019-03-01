@@ -20,7 +20,6 @@ indexedTypes = [
   'movements'
   'publishers'
   'collections'
-  'countries'
 ]
 
 sanitization =
