@@ -25,6 +25,7 @@ module.exports =
     if refresh
       timespan = 0
       dry = false
+      dryAndCache = false
     timespan ?= oneMonth
     dry ?= false
     dryAndCache ?= false
