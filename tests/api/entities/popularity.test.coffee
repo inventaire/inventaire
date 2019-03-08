@@ -11,7 +11,7 @@ describe 'entities:popularity', ->
   describe 'edition', ->
     it 'should reject invalid uri', (done)->
       invalidUri = 'inv:aliduri'
-      getPopularity invalidUri
+      getRefreshedPopularityByUri invalidUri
       .then undesiredRes(done)
       .catch (err)->
         err.body.status_verbose.should.startWith 'invalid '

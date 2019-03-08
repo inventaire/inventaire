@@ -195,6 +195,17 @@ describe 'cache', ->
         .catch done
         return
 
+      it 'should be overriden by refresh', (done)->
+        key = randomString 4
+        fn = workingFn.bind null, 'foo'
+        cache_.get { key, fn, refresh:true, dryAndCache: true }
+        .delay 10
+        .then (res1)->
+          should(res1).be.ok()
+          done()
+        .catch done
+        return
+
   describe 'put', ->
     it 'should return a promise', (done)->
       p = cache_.put 'whatever', 'somevalue'
