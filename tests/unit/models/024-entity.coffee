@@ -8,8 +8,11 @@ Entity = __.require 'models', 'entity'
 workDoc = ->
   doc = Entity.create()
   doc._id = '12345678900987654321123456789012'
+  doc._rev = '5-12345678900987654321123456789012'
   doc.claims['wdt:P31'] = ['wd:Q571']
   doc.claims['wdt:P50'] = ['wd:Q535', 'wd:Q1541']
+  doc.created = Date.now()
+  doc.updated = Date.now()
   return doc
 
 editionDoc = ->
@@ -17,6 +20,8 @@ editionDoc = ->
   doc._id = '22345678900987654321123456789012'
   doc.claims['wdt:P31'] = ['wd:Q3331189']
   doc.claims['wdt:P629'] = ['wd:Q53592']
+  doc.created = Date.now()
+  doc.updated = Date.now()
   return doc
 
 # coffeelint: disable=no_unnecessary_double_quotes
@@ -31,17 +36,30 @@ nonTrimedString = """
 describe 'entity model', ->
   describe 'create', ->
     it 'should return an object with type entity and a claims object', (done)->
+      now = Date.now()
       entityDoc = Entity.create()
       entityDoc.should.be.an.Object()
       entityDoc.type.should.equal 'entity'
       entityDoc.labels.should.be.an.Object()
       entityDoc.claims.should.be.an.Object()
+      entityDoc.created.should.be.a.Number()
+      entityDoc.created.should.be.aboveOrEqual now
+      entityDoc.created.should.be.below now + 10
+      entityDoc.updated.should.be.ok()
       done()
 
   describe 'create claim', ->
     it 'should add a claim value', (done)->
       doc = Entity.createClaim workDoc(), 'wdt:P50', 'wd:Q42'
       _.last(doc.claims['wdt:P50']).should.equal 'wd:Q42'
+      done()
+
+    it 'should update the timestamp', (done)->
+      now = Date.now()
+      entityDoc = Entity.createClaim workDoc(), 'wdt:P50', 'wd:Q42'
+      entityDoc.updated.should.be.a.Number()
+      entityDoc.updated.should.be.aboveOrEqual now
+      entityDoc.updated.should.be.below now + 10
       done()
 
     it 'should return a doc with the new value for an existing property', (done)->
@@ -75,6 +93,17 @@ describe 'entity model', ->
         updater = -> Entity.updateClaim workDoc(), 'wdt:P50', null, 'wd:Q42'
         updater.should.not.throw()
         done()
+
+      it 'should update the timestamp', (done)->
+        now = Date.now()
+        entityDoc = workDoc()
+        update = ->
+          updatedDoc = Entity.updateClaim entityDoc, 'wdt:P135', null, 'wd:Q53121'
+          updatedDoc.updated.should.be.a.Number()
+          updatedDoc.updated.should.be.above now
+          updatedDoc.updated.should.be.below now + 10
+          done()
+        setTimeout update, 5
 
       it 'should return a doc with the new value for an existing property', (done)->
         entityDoc = workDoc()
@@ -141,6 +170,20 @@ describe 'entity model', ->
         updater.should.throw()
         done()
 
+      it 'should update the timestamp', (done)->
+        now = Date.now()
+        entityDoc = workDoc()
+        entityDoc.claims['wdt:P50'][0].should.equal 'wd:Q535'
+        update = ->
+          updatedDoc = Entity.updateClaim entityDoc, 'wdt:P50', 'wd:Q535', 'wd:Q42'
+          updatedDoc.claims['wdt:P50'][0].should.equal 'wd:Q42'
+          updatedDoc.updated.should.be.a.Number()
+          updatedDoc.updated.should.be.above now
+          updatedDoc.updated.should.be.below now + 10
+          done()
+
+        setTimeout update, 5
+
     describe 'delete claim', ->
       it 'should return with the claim value removed if passed an undefined new value', (done)->
         updatedDoc = Entity.updateClaim workDoc(), 'wdt:P50', 'wd:Q535', null
@@ -169,10 +212,23 @@ describe 'entity model', ->
       it 'should throw if a critical property got zero claims', (done)->
         doc = editionDoc()
         updater = -> Entity.updateClaim doc, 'wdt:P629', 'wd:Q53592', null
-        updater.should.throw()
-        try updater()
-        catch err then err.message.should.equal 'this property should at least have one value'
+        updater.should.throw('this property should at least have one value')
         done()
+
+      it 'should update the timestamp', (done)->
+        now = Date.now()
+        entityDoc = workDoc()
+        entityDoc.updated.should.be.a.Number()
+        entityDoc.updated.should.be.aboveOrEqual now
+        entityDoc.updated.should.be.below now + 10
+        update = ->
+          updatedDoc = Entity.updateClaim entityDoc, 'wdt:P50', 'wd:Q535', null
+          updatedDoc.updated.should.be.a.Number()
+          updatedDoc.updated.should.be.above now
+          updatedDoc.updated.should.be.below now + 10
+          done()
+
+        setTimeout update, 5
 
     describe 'set label', ->
       it 'should set the label in the given lang', (done)->
@@ -208,3 +264,152 @@ describe 'entity model', ->
         Entity.setLabel entityDoc, 'fr', nonTrimedString
         entityDoc.labels.fr.should.equal 'foo bar'
         done()
+
+      it 'should update the timestamp', (done)->
+        entityDoc = workDoc()
+        initialTimestamp = entityDoc.updated
+        entityDoc.updated.should.be.a.Number()
+        update = ->
+          updatedDoc = Entity.setLabel entityDoc, 'fr', 'hello'
+          updatedDoc.updated.should.be.a.Number()
+          updatedDoc.updated.should.be.above initialTimestamp
+          updatedDoc.updated.should.be.below initialTimestamp + 10
+          done()
+        setTimeout update, 5
+
+    describe 'merge', ->
+      it 'should transfer labels', (done)->
+        entityA = workDoc()
+        entityB = workDoc()
+        Entity.setLabel entityA, 'da', 'foo'
+        Entity.mergeDocs entityA, entityB
+        entityB.labels.da.should.equal 'foo'
+        done()
+
+      it 'should not override existing labels', (done)->
+        entityA = workDoc()
+        entityB = workDoc()
+        Entity.setLabel entityA, 'da', 'foo'
+        Entity.setLabel entityB, 'da', 'bar'
+        Entity.mergeDocs entityA, entityB
+        entityB.labels.da.should.equal 'bar'
+        done()
+
+      it 'should transfer claims', (done)->
+        entityA = workDoc()
+        entityB = workDoc()
+        Entity.createClaim entityA, 'wdt:P921', 'wd:Q3'
+        Entity.mergeDocs entityA, entityB
+        entityB.claims['wdt:P921'].should.deepEqual [ 'wd:Q3' ]
+        done()
+
+      it 'should add new claims on already used property', (done)->
+        entityA = workDoc()
+        entityB = workDoc()
+        Entity.createClaim entityA, 'wdt:P921', 'wd:Q3'
+        Entity.createClaim entityB, 'wdt:P921', 'wd:Q1'
+        Entity.mergeDocs entityA, entityB
+        entityB.claims['wdt:P921'].should.deepEqual [ 'wd:Q1', 'wd:Q3' ]
+        done()
+
+      it 'should not create duplicated claims', (done)->
+        entityA = workDoc()
+        entityB = workDoc()
+        Entity.createClaim entityA, 'wdt:P921', 'wd:Q3'
+        Entity.createClaim entityB, 'wdt:P921', 'wd:Q3'
+        Entity.mergeDocs entityA, entityB
+        entityB.claims['wdt:P921'].should.deepEqual [ 'wd:Q3' ]
+        done()
+
+      it 'should update the timestamp', (done)->
+        entityA = workDoc()
+        entityB = workDoc()
+        Entity.createClaim entityA, 'wdt:P921', 'wd:Q3'
+        now = Date.now()
+        update = ->
+          Entity.mergeDocs entityA, entityB
+          entityB.updated.should.be.a.Number()
+          entityB.updated.should.be.above now
+          entityB.updated.should.be.below now + 10
+          done()
+        setTimeout update, 5
+
+      it 'should not update the timestamp if no data was transfered', (done)->
+        entityA = workDoc()
+        entityB = workDoc()
+        Entity.createClaim entityA, 'wdt:P921', 'wd:Q3'
+        Entity.createClaim entityB, 'wdt:P921', 'wd:Q3'
+        initialTimestamp = entityB.updated
+        update = ->
+          Entity.mergeDocs entityA, entityB
+          entityB.updated.should.equal initialTimestamp
+          done()
+        setTimeout update, 5
+
+      it 'should reject merge implying to break claim uniqueness restrictions', (done)->
+        entityA = workDoc()
+        entityB = workDoc()
+        Entity.createClaim entityA, 'wdt:P648', 'OL123456W'
+        Entity.createClaim entityB, 'wdt:P648', 'OL123457W'
+        (-> Entity.mergeDocs entityA, entityB).should.throw 'merge would create mutliples wdt:P648 values'
+        done()
+
+    describe 'turnIntoRedirection', ->
+      it 'should return a redirection doc', (done)->
+        fromEntityDoc = workDoc()
+        toUri = 'wd:Q3209796'
+        redirection = Entity.turnIntoRedirection fromEntityDoc, toUri
+        redirection.should.be.an.Object()
+        redirection._id.should.equal fromEntityDoc._id
+        redirection._rev.should.equal fromEntityDoc._rev
+        redirection.redirect.should.equal toUri
+        should(redirection.claims).not.be.ok()
+        should(redirection.labels).not.be.ok()
+        redirection.created.should.equal fromEntityDoc.created
+        redirection.updated.should.be.ok()
+        done()
+
+      it 'should be a different object', (done)->
+        fromEntityDoc = workDoc()
+        toUri = 'wd:Q3209796'
+        redirection = Entity.turnIntoRedirection fromEntityDoc, toUri
+        should(redirection is fromEntityDoc).not.be.true()
+        done()
+
+      it 'should update the timestamp', (done)->
+        fromEntityDoc = workDoc()
+        toUri = 'wd:Q3209796'
+        redirect = ->
+          redirection = Entity.turnIntoRedirection fromEntityDoc, toUri
+          redirection.should.be.an.Object()
+          redirection._id.should.equal fromEntityDoc._id
+          redirection._rev.should.equal fromEntityDoc._rev
+          redirection._rev.should.equal fromEntityDoc._rev
+          redirection.redirect.should.equal toUri
+          redirection.updated.should.be.above fromEntityDoc.updated
+          done()
+
+        setTimeout redirect, 5
+
+    describe 'removePlaceholder', ->
+      it 'should return a removed placeholder doc', (done)->
+        entity = workDoc()
+        removedPlaceholder = Entity.removePlaceholder entity
+        removedPlaceholder.should.be.an.Object()
+        removedPlaceholder.labels.should.deepEqual entity.labels
+        removedPlaceholder.claims.should.deepEqual entity.claims
+        done()
+
+      it 'should be a different object', (done)->
+        entity = workDoc()
+        removedPlaceholder = Entity.removePlaceholder entity
+        should(removedPlaceholder is entity).not.be.true()
+        done()
+
+      it 'should update the timestamp', (done)->
+        entity = workDoc()
+        remove = ->
+          removedPlaceholder = Entity.removePlaceholder entity
+          removedPlaceholder.updated.should.be.above entity.updated
+          done()
+        setTimeout remove, 5

@@ -38,6 +38,8 @@ module.exports = Entity =
     type: 'entity'
     labels: {}
     claims: {}
+    created: Date.now()
+    updated: Date.now()
 
   setLabel: (doc, lang, value)->
     assert_.types [ 'object', 'string', 'string' ], arguments
@@ -53,6 +55,9 @@ module.exports = Entity =
       throw error_.new 'already up-to-date', 400, { doc, lang, value }
 
     doc.labels[lang] = value
+
+    doc.updated = Date.now()
+
     return doc
 
   setLabels: (doc, labels)->
@@ -84,6 +89,9 @@ module.exports = Entity =
         doc = Entity.createClaim doc, property, value
 
     delete doc._allClaimsProps
+
+    doc.updated = Date.now()
+
     return doc
 
   createClaim: (doc, property, value)->
@@ -128,6 +136,8 @@ module.exports = Entity =
       doc.claims[property] or= []
       doc.claims[property].push newVal
 
+    doc.updated = Date.now()
+
     return updateInferredProperties doc, property, oldVal, newVal
 
   # 'from' and 'to' refer to the redirection process which rely on merging
@@ -136,9 +146,26 @@ module.exports = Entity =
   mergeDocs: (fromEntityDoc, toEntityDoc)->
     Entity.preventRedirectionEdit fromEntityDoc, 'mergeDocs (from)'
     Entity.preventRedirectionEdit toEntityDoc, 'mergeDocs (to)'
-    # Giving priority to the toEntityDoc labels and claims
-    toEntityDoc.labels = _.extend {}, fromEntityDoc.labels, toEntityDoc.labels
-    toEntityDoc.claims = _.extend {}, fromEntityDoc.claims, toEntityDoc.claims
+
+    dataTransfered = false
+
+    for lang, value of fromEntityDoc.labels
+      unless toEntityDoc.labels[lang]?
+        toEntityDoc.labels[lang] = value
+        dataTransfered = true
+
+    for property, values of fromEntityDoc.claims
+      toEntityDoc.claims[property] ?= []
+      for value in values
+        unless value in toEntityDoc.claims[property]
+          toEntityDoc.claims[property].push value
+          if properties[property].uniqueValue and toEntityDoc.claims[property].length > 1
+            context = { toEntityDoc, property, values: toEntityDoc.claims[property] }
+            throw error_.new "merge would create mutliples #{property} values", 400, context
+          dataTransfered = true
+
+    if dataTransfered then toEntityDoc.updated = Date.now()
+
     return toEntityDoc
 
   turnIntoRedirection: (fromEntityDoc, toUri, removedPlaceholdersIds)->
@@ -147,14 +174,16 @@ module.exports = Entity =
     if prefix is 'inv' and id is fromEntityDoc._id
       throw error_.new 'circular redirection', 500, arguments
 
-    return {
-      _id: fromEntityDoc._id
-      _rev: fromEntityDoc._rev
-      type: 'entity'
-      redirect: toUri
-      # the list of placeholders entities to recover if the merge as to be reverted
-      removedPlaceholdersIds: removedPlaceholdersIds
-    }
+    redirection = _.cloneDeep fromEntityDoc
+
+    redirection.redirect = toUri
+    delete redirection.labels
+    delete redirection.claims
+    redirection.updated = Date.now()
+    # the list of placeholders entities to recover if the merge as to be reverted
+    redirection.removedPlaceholdersIds = removedPlaceholdersIds
+
+    return redirection
 
   removePlaceholder: (entityDoc)->
     if entityDoc.redirect?
@@ -163,6 +192,7 @@ module.exports = Entity =
 
     removedDoc = _.cloneDeep entityDoc
     removedDoc.type = 'removed:placeholder'
+    removedDoc.updated = Date.now()
     return removedDoc
 
   recoverPlaceholder: (entityDoc)->
