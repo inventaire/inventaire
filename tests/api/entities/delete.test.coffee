@@ -174,20 +174,3 @@ describe 'entities:delete:by-uris', ->
         done()
     .catch undesiredErr(done)
     return
-
-  it 'should not remove editions with an ISBN and an item', (done)->
-    uri = 'isbn:9791020906427'
-    ensureEditionExists uri
-    .then (edition)->
-      authReq 'post', '/api/items', { entity: uri, lang: 'en' }
-      .then ->
-        # Using the inv URI, as the isbn one would be rejected
-        invUri = 'inv:' + edition._id
-        deleteByUris invUri
-    .then undesiredRes(done)
-    .catch (err)->
-      err.body.status_verbose.should.equal "entities that are used by an item can't be removed"
-      err.statusCode.should.equal 400
-      done()
-    .catch undesiredErr(done)
-    return
