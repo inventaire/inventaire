@@ -7,8 +7,8 @@ module.exports =
 
     """
     SELECT ?part ?date ?ordinal WHERE {
-      ?part wdt:P179|wdt:P361 #{serieQid} .
-      FILTER NOT EXISTS { #{serieQid} wdt:P179|wdt:P361 ?part }
+      ?part wdt:P179|wdt:P361 wd:#{serieQid} .
+      FILTER NOT EXISTS { wd:#{serieQid} wdt:P179|wdt:P361 ?part }
       OPTIONAL { ?part wdt:P577 ?date . }
       OPTIONAL { ?part wdt:P1545 ?ordinal . }
     }
