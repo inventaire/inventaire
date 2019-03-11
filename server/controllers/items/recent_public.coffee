@@ -5,7 +5,6 @@ items_ = __.require 'controllers', 'items/lib/items'
 sanitize = __.require 'lib', 'sanitize/sanitize'
 bundleOwnersToItems = require './lib/bundle_owners_to_items'
 itemsQueryLimit = 100
-maxItemsPerOwner = 3
 offset = 0
 
 sanitization =
@@ -18,13 +17,12 @@ sanitization =
     default: 15
 
 module.exports = (req, res)->
-  reqUserId = req.user?._id
   sanitize req, res, sanitization
   .then (params)->
-    { assertImage, lang, limit } = params
+    { assertImage, lang, limit, reqUserId } = params
     items_.publicByDate itemsQueryLimit, offset, assertImage, reqUserId
     .then selectRecentItems(lang, limit)
-  .then bundleOwnersToItems.bind(null, res, reqUserId)
+    .then bundleOwnersToItems.bind(null, res, reqUserId)
   .catch error_.Handler(req, res)
 
 selectRecentItems = (lang, limit)-> (items)->
@@ -44,6 +42,4 @@ selectRecentItems = (lang, limit)-> (items)->
   missingItemsCount = limit - recentItems.length
   itemsToFill = discardedItems.slice 0, missingItemsCount
   recentItems.push itemsToFill...
-  recentItems
-
-itemsOwnerId = (item)-> item.owner
+  return recentItems
