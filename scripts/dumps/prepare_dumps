@@ -1,3 +1,14 @@
 #!/usr/bin/env bash
 ./scripts/dumps/prepare_entities_dumps
-./scripts/dumps/prepare_items_dumps
+
+# prepare_items_dumps validation fails with error 'Undefined prefix "isbn:"'
+# but publishing the id of private items might be problematic anyway
+# as they are not random but sequential
+# (see https://docs.couchdb.org/en/stable/config/misc.html#uuids-configuration)
+# so, given an import of items sharing the same id prefix, you could make the assumption
+# that an item id is owned by a given user, breaking the privacy of this item.
+# The fix could be to publish only counts of items linked to a given entity,
+# instead of publishing the ids, but keeping those counts updated would be more complex
+# than just removing and re-adding all triples with an item as subject
+
+# ./scripts/dumps/prepare_items_dumps
