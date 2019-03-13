@@ -14,10 +14,11 @@ module.exports = (olId, workTitle)->
 
 getAuthorWorksTitles = (olId, workTitle)->
   _.info olId, 'olId'
-  url = base + "?title=#{workTitle}&format=json"
+  url = base + "?title=#{workTitle}"
   requests_.get { url, headers }
   .then (res)->
-    res.docs.filter (doc)-> _.includes(doc.author_key, olId)
+    res.docs
+    .filter (doc)-> _.includes(doc.author_key, olId)
     .map (result)->
       quotation: result.title_suggest
       url: endpoint + result.key
