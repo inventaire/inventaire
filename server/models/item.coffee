@@ -41,10 +41,13 @@ Item.update = (userId, newAttributes, oldItem)->
   unless oldItem.owner is userId
     throw error_.new "user isnt item.owner: #{userId}", 400, oldItem.owner
 
-  updatableAttributes = Object.keys(newAttributes).filter (attr)-> attr in attributes.updatable
   newItem = _.clone oldItem
 
-  for attr in updatableAttributes
+  passedAttributes = Object.keys newAttributes
+
+  for attr in passedAttributes
+    unless attr in attributes.updatable
+      throw error_.new "invalid attribute: #{attr}", 400, arguments
     newVal = newAttributes[attr]
     validations.pass attr, newVal
     newItem[attr] = newVal
