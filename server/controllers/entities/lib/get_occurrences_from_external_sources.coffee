@@ -1,4 +1,4 @@
-# A module to look for works labels occurrences in an author's Wikipedia articles.
+# A module to look for works labels occurrences in an author's external databases reference.
 
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
@@ -7,6 +7,7 @@ error_ = __.require 'lib', 'error/error'
 assert_ = __.require 'utils', 'assert_types'
 getWikipediaArticle = __.require 'data', 'wikipedia/get_article'
 getBnfAuthorWorksTitles = __.require 'data', 'bnf/get_bnf_author_works_titles'
+getOlAuthorWorksTitles = __.require 'data', 'openlibrary/get_ol_author_works_titles'
 getEntityByUri = __.require 'controllers', 'entities/lib/get_entity_by_uri'
 
 # - worksLabels: labels from works of an author suspected
@@ -27,6 +28,7 @@ module.exports = (wdAuthorUri, worksLabels, worksLabelsLangs)->
     promises_.all [
       getWikipediaOccurrences authorEntity, worksLabels, worksLabelsLangs
       getBnfOccurrences authorEntity, worksLabels
+      getOpenLibraryOccurrences authorEntity, worksLabels
     ]
   .then _.flatten
   .then _.compact
@@ -55,6 +57,15 @@ getBnfOccurrences = (authorEntity, worksLabels)->
   if bnfIds?.length isnt 1 then return false
   getBnfAuthorWorksTitles bnfIds[0]
   .map createOccurrences(worksLabels)
+
+getOpenLibraryOccurrences = (authorEntity, worksLabels)->
+  olIds = authorEntity.claims['wdt:P648']
+  # Discard entities with several ids as one of the two
+  # is wrong and we can't know which
+  if olIds?.length isnt 1 then return false
+  Promise.all worksLabels.map (workTitle)-> getOlAuthorWorksTitles(olIds[0], workTitle)
+  .then _.flatten
+  .then (res)-> _.map(res, createOccurrences(worksLabels))
 
 createOccurrences = (worksLabels)->
   worksLabelsPattern = new RegExp(worksLabels.join('|'), 'gi')
