@@ -11,6 +11,7 @@ module.exports = validations =
   entity: entityUri
   lang: (lang)-> if lang then _.isLang(lang) else true
   pictures: (pictures)-> _.isArray(pictures) and _.every(pictures, imgUrl)
+  attribute: (attribute)-> attribute in _.keys(constrained)
   transaction: (transaction)->
     transaction in constrained.transaction.possibilities
   listing: (listing)->

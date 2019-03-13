@@ -80,10 +80,16 @@ module.exports = items_ =
 
   update: (userId, itemUpdateData)->
     db.get itemUpdateData._id
-    .then (currentItem)->
-      updatedItem = Item.update userId, itemUpdateData, currentItem
-      return updatedItem
+    .then (currentItem)-> Item.update(userId, itemUpdateData, currentItem)
     .then db.putAndReturn
+    .tap -> radio.emit 'user:inventory:update', userId
+
+  bulkUpdate: (userId, ids, attribute, newValue)->
+    itemUpdateData = {}
+    itemUpdateData[attribute] = newValue
+    items_.byIds ids
+    .map (currentItem)-> Item.update(userId, itemUpdateData, currentItem)
+    .then db.bulk
     .tap -> radio.emit 'user:inventory:update', userId
 
   verifyOwnership: (itemId, userId)->
