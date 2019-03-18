@@ -6,9 +6,9 @@ createEntity = require '../create_entity'
 properties = require '../properties/properties_values_constraints'
 isbn_ = __.require 'lib', 'isbn/isbn'
 
-module.exports = (options, userId, summary)-> (entry)->
+module.exports = (createOption, userId, summary)-> (entry)->
   { edition, works, authors } = entry
-  unless _.includes(options, 'create') then return entry
+  unless createOption then return entry
 
   createAuthors authors, userId, summary
   .then -> createWorks(works, authors, userId, summary)

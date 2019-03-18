@@ -25,9 +25,9 @@ describe 'entities:resolve:create-unresolved', ->
   it 'should throw when invalid isbn is passed', (done)->
     invalidIsbn = '9780000000000'
     resolve
-      edition: { isbn: invalidIsbn }
+      edition: [ { isbn: invalidIsbn } ]
       works: [ { labels: { en: randomLabel() } } ]
-      options: [ 'create' ]
+      create: true
     .catch (err)->
       err.body.status_verbose.should.startWith 'invalid isbn'
       done()
@@ -40,7 +40,7 @@ describe 'entities:resolve:create-unresolved', ->
       edition: { isbn: generateIsbn13() }
       works:   [ { labels: { en: randomLabel() } } ]
       authors: [ { labels: { en: humanName() } } ]
-      options: [ 'create' ]
+      create: true
     .get 'result'
     .then (result)->
       result.edition[0].created.should.equal true
@@ -57,11 +57,9 @@ describe 'entities:resolve:create-unresolved', ->
   it 'should create edition title with favorising edition title claim value', (done)->
     editionLabel = randomLabel()
     resolve
-      edition:
-        isbn: generateIsbn13(),
-        claims: { 'wdt:P1476': [ editionLabel ] }
+      edition: [ { isbn: generateIsbn13(), claims: { 'wdt:P1476': editionLabel } } ]
       works: [ { labels: { en: randomLabel() } } ]
-      options: [ 'create' ]
+      create: true
     .get 'result'
     .then (result)->
       should(result.edition[0].uri).be.ok()
@@ -83,9 +81,9 @@ describe 'entities:resolve:create-unresolved', ->
   it 'should add optional claims to created edition', (done)->
     frenchLang = 'wd:Q150'
     resolve
-      edition: { isbn: generateIsbn13(), claims: { 'wdt:P407': [ frenchLang ]} }
+      edition: [ { isbn: generateIsbn13(), claims: { 'wdt:P407': [ frenchLang ]} } ]
       works: [ { labels: { en: randomLabel() } } ]
-      options: [ 'create' ]
+      create: true
     .get 'result'
     .then (result)->
       should(result.edition[0].uri).be.ok()
@@ -103,9 +101,9 @@ describe 'entities:resolve:create-unresolved', ->
   it 'should add optional claims to created works', (done)->
     olId = someOpenLibraryId 'work'
     resolve
-      edition: { isbn: generateIsbn13(),  }
+      edition: [ { isbn: generateIsbn13() } ]
       works: [ { claims: { 'wdt:P648': [ olId ] }, labels: { en: randomLabel() } } ]
-      options: [ 'create' ]
+      create: true
     .get 'result'
     .then (result)->
       should(result.edition[0].uri).be.ok()
@@ -123,10 +121,10 @@ describe 'entities:resolve:create-unresolved', ->
   it 'should add optional claims to created authors', (done)->
     olId = someOpenLibraryId 'author'
     resolve
-      edition: { isbn: generateIsbn13() }
+      edition: [ { isbn: generateIsbn13() } ]
       works: [ { labels: { en: randomLabel() } } ]
       authors: [ { claims: { 'wdt:P648': [ olId ] }, labels: { en: randomLabel() } } ]
-      options: [ 'create' ]
+      create: true
     .get 'result'
     .then (result)->
       should(result.edition[0].uri).be.ok()
@@ -148,9 +146,9 @@ describe 'entities:resolve:create-unresolved', ->
       edition: [ { isbn: generateIsbn13() } ]
       works: [
         claims: { 'wdt:P648': [ olId ] }
-        labels: { en: randomWorkLabel() }
+        labels: { en: randomLabel() }
       ]
-      options: [ 'create' ]
+      create: true
       summary: summary
     .get 'result'
     .then (result)->

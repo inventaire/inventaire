@@ -33,8 +33,8 @@ describe 'entities:resolve', ->
 
   it 'should reject when no isbn is found', (done)->
     entry =
-      edition: [ { claims: { 'wdt:P1476': randomWorkLabel() }} ]
-      works: [ { labels: { en: randomWorkLabel() } } ]
+      edition: [ { claims: { 'wdt:P1476': randomLabel() }} ]
+      works: [ { labels: { en: randomLabel() } } ]
     resolve entry
     .catch (err)->
       err.body.status_verbose.should.startWith 'no isbn found'

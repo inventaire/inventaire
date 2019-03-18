@@ -4,9 +4,9 @@ _ = __.require 'builders', 'utils'
 { Promise } = __.require 'lib', 'promises'
 entities_ = require '../entities'
 
-module.exports = (options, userId)-> (entry)->
+module.exports = (updateOption, userId)-> (entry)->
   { edition, works, authors } = entry
-  unless _.includes(options, 'update') then return entry
+  unless updateOption then return entry
 
   updateAuthors authors, userId
   .then -> updateWorks(works, userId)

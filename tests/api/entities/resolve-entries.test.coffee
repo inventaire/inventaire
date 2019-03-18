@@ -7,7 +7,7 @@ should = require 'should'
 { createWork, createEdition, createHuman, someOpenLibraryId, createWorkWithAuthor, generateIsbn13 } = require '../fixtures/entities'
 { getByUris } = require '../utils/entities'
 { addClaim } = require '../utils/entities'
-{ ensureEditionExists, randomWorkLabel, humanName } = require '../fixtures/entities'
+{ ensureEditionExists, randomLabel, humanName } = require '../fixtures/entities'
 resolveEntries = (entry)-> authReq 'post', '/api/entities?action=resolve-entries', entry
 
 describe 'entities:resolve-entries', ->
@@ -28,9 +28,9 @@ describe 'entities:resolve-entries', ->
     resolveEntries
       entries: [
         edition: [ { isbn: generateIsbn13() } ]
-        works: [ { labels: { en: randomWorkLabel() } } ]
+        works: [ { labels: { en: randomLabel() } } ]
       ]
-      options: [ 'create' ]
+      create: true
     .get 'result'
     .then (result)->
       entityUri = result[0].edition[0].uri

@@ -9,8 +9,6 @@ resolve = require './lib/resolver/resolve'
 createUnresolvedEntry = require './lib/resolver/create_unresolved_entry'
 updateResolvedEntry = require './lib/resolver/update_resolved_entry'
 
-whitelistedOptions = [ 'create', 'update' ]
-
 sanitization =
   edition:
     generic: 'collection'
@@ -23,20 +21,23 @@ sanitization =
   series:
     generic: 'collection'
     optional: true
-  options:
-    whitelist: whitelistedOptions
+  create:
+    generic: 'boolean'
+    optional: true
+  update:
+    generic: 'boolean'
     optional: true
   summary:
     generic: 'object'
     optional: true
 
 module.exports = (req, res)->
-  { options, summary } = req.body
+  { create, update, summary } = req.body
   reqUserId = req.user._id
   sanitize req, res, sanitization
   .then sanitizeEntry(res)
   .then resolve()
-  .then updateResolvedEntry(options, reqUserId)
-  .then createUnresolvedEntry(options, reqUserId, summary)
+  .then updateResolvedEntry(update, reqUserId)
+  .then createUnresolvedEntry(create, reqUserId, summary)
   .then responses_.Wrap(res, 'result')
   .catch error_.Handler(req, res)
