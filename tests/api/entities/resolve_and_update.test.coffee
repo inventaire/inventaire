@@ -6,7 +6,7 @@ should = require 'should'
 { authReq, undesiredErr } = require '../utils/utils'
 { getByUris, addClaim } = require '../utils/entities'
 { createWork, createHuman, ensureEditionExists, someOpenLibraryId, randomLabel, generateIsbn13 } = require '../fixtures/entities'
-resolve = (entry)-> authReq 'post', '/api/entities?action=resolve', entry
+resolve = (entry)-> authReq 'post', '/api/entities?action=resolve', { entries: [ entry ] }
 
 describe 'entities:resolver:update-resolved', ->
   it 'should update works claim values if property does not exist', (done)->
@@ -24,9 +24,10 @@ describe 'entities:resolver:update-resolved', ->
     createWork()
     .tap (work)-> addClaim work.uri, 'wdt:P648', olId
     .then (work)->
-      resolve(entry).get('result')
-      .then (result)->
-        entityUri = result.works[0].uri
+      resolve(entry)
+      .get('results')
+      .then (results)->
+        entityUri = results[0].works[0].uri
         getByUris(entityUri).get 'entities'
         .then (entities)->
           authorClaimValues = _.values(entities)[0].claims['wdt:P50']
@@ -53,9 +54,9 @@ describe 'entities:resolver:update-resolved', ->
     .tap (work)-> addClaim work.uri, 'wdt:P648', olId
     .tap (work)-> addClaim work.uri, 'wdt:P50', authorUri2
     .then (work)->
-      resolve(entry).get('result')
-      .then (result)->
-        entityUri = result.works[0].uri
+      resolve(entry).get('results')
+      .then (results)->
+        entityUri = results[0].works[0].uri
         getByUris(entityUri).get 'entities'
         .then (entities)->
           authorClaimValues = _.values(entities)[0].claims['wdt:P50']
@@ -79,9 +80,9 @@ describe 'entities:resolver:update-resolved', ->
     createHuman()
     .tap (human)-> addClaim human.uri, 'wdt:P648', olId
     .then (work)->
-      resolve(entry).get('result')
-      .then (result)->
-        entityUri = result.authors[0].uri
+      resolve(entry).get('results')
+      .then (results)->
+        entityUri = results[0].authors[0].uri
         getByUris(entityUri).get 'entities'
         .then (entities)->
           authorClaimValues = _.values(entities)[0].claims['wdt:P856']
@@ -109,8 +110,8 @@ describe 'entities:resolver:update-resolved', ->
           claims: { 'wdt:P123': publisher }
         ]
         update: true
-      resolve(entry).get('result').delay(10)
-      .then (result)->
+      resolve(entry).get('results').delay(10)
+      .then (results)->
         getByUris editionUri
         .get 'entities'
         .then (editions)->

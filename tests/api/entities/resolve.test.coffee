@@ -7,16 +7,16 @@ should = require 'should'
 { createWork, createEdition, createHuman, someOpenLibraryId, createWorkWithAuthor, generateIsbn13 } = require '../fixtures/entities'
 { addClaim } = require '../utils/entities'
 { ensureEditionExists, randomLabel, humanName } = require '../fixtures/entities'
-resolve = (entry)-> authReq 'post', '/api/entities?action=resolve', entry
+resolve = (entry)-> authReq 'post', '/api/entities?action=resolve', { entries: [ entry ] }
 
 describe 'entities:resolve', ->
   it 'should resolve an edition from an ISBN', (done)->
     ensureEditionExists 'isbn:9782203399303'
     .then -> resolve { edition: [ { isbn: '9782203399303' } ] }
-    .get 'result'
-    .then (result)->
-      result.should.be.an.Object()
-      result.edition[0].uri.should.startWith 'isbn:'
+    .get 'results'
+    .then (results)->
+      results[0].should.be.an.Object()
+      results[0].edition[0].uri.should.startWith 'isbn:'
       done()
     .catch done
 
@@ -77,11 +77,11 @@ describe 'entities:resolve:external-id', ->
         'wdt:P648': [ 'OL52556W' ]
         'wdt:P1085': [ '28158' ]
     resolve { edition, works: [ work ] }
-    .get 'result'
-    .then (result)->
-      result.works.should.be.an.Array()
-      result.works[0].should.be.an.Object()
-      result.works[0].uri.should.equal 'wd:Q151883'
+    .get 'results'
+    .then (results)->
+      results[0].works.should.be.an.Array()
+      results[0].works[0].should.be.an.Object()
+      results[0].works[0].uri.should.equal 'wd:Q151883'
       done()
     .catch done
 
@@ -97,11 +97,11 @@ describe 'entities:resolve:external-id', ->
     .delay 10
     .then (work)->
       resolve entry
-      .get 'result'
-      .then (result)->
-        result.works.should.be.an.Array()
-        result.works[0].should.be.an.Object()
-        result.works[0].uri.should.equal work.uri
+      .get 'results'
+      .then (results)->
+        results[0].works.should.be.an.Array()
+        results[0].works[0].should.be.an.Object()
+        results[0].works[0].uri.should.equal work.uri
         done()
     .catch done
 
@@ -113,11 +113,11 @@ describe 'entities:resolve:external-id', ->
       claims:
         'wdt:P648': [ 'OL28127A' ]
     resolve { edition, authors: [ author ] }
-    .get 'result'
-    .then (result)->
-      result.authors.should.be.an.Array()
-      result.authors[0].should.be.an.Object()
-      result.authors[0].uri.should.equal 'wd:Q16867'
+    .get 'results'
+    .then (results)->
+      results[0].authors.should.be.an.Array()
+      results[0].authors[0].should.be.an.Object()
+      results[0].authors[0].uri.should.equal 'wd:Q16867'
       done()
     .catch done
 
@@ -134,11 +134,11 @@ describe 'entities:resolve:external-id', ->
     .delay 10
     .then (author)->
       resolve entry
-      .get 'result'
-      .then (result)->
-        result.authors.should.be.an.Array()
-        result.authors[0].should.be.an.Object()
-        result.authors[0].uri.should.equal author.uri
+      .get 'results'
+      .then (results)->
+        results[0].authors.should.be.an.Array()
+        results[0].authors[0].should.be.an.Object()
+        results[0].authors[0].uri.should.equal author.uri
         done()
     .catch done
 
@@ -163,10 +163,10 @@ describe 'entities:resolve:in-context', ->
       ]
       .spread (work, otherWork)->
         resolve entry
-        .get 'result'
-        .then (result)->
-          should(result.works[0].uri).be.ok()
-          should(result.works[0].uri).be.ok()
+        .get 'results'
+        .then (results)->
+          should(results[0].works[0].uri).be.ok()
+          should(results[0].works[0].uri).be.ok()
           done()
     .catch done
 
@@ -190,11 +190,11 @@ describe 'entities:resolve:in-context', ->
           works: [ { labels: { en: workLabel } } ]
           authors: [ { claims: { 'wdt:P648': [ olId ] } } ]
         resolve entry
-        .get 'result'
-        .then (result)->
+        .get 'results'
+        .then (results)->
           # if created is true, work was created, not resolved
-          should(result.works[0].uri).not.be.ok()
-          should(result.authors[0].uri).be.ok()
+          should(results[0].works[0].uri).not.be.ok()
+          should(results[0].authors[0].uri).be.ok()
           done()
     .catch done
 
@@ -214,9 +214,9 @@ describe 'entities:resolve:in-context', ->
           works: [ { claims: { 'wdt:P648': [ olId ] } } ]
           authors: [ { labels: author.labels } ]
         resolve entry
-        .get 'result'
-        .then (result)->
-          result.authors[0].uri.should.equal author.uri
+        .get 'results'
+        .then (results)->
+          results[0].authors[0].uri.should.equal author.uri
           done()
     .catch done
 
@@ -228,17 +228,17 @@ describe 'entities:resolve:from-labels', ->
     .then (author)->
       workLabel = randomLabel()
       createWorkWithAuthor author, workLabel
-      .delay 3500
+      .delay 5000
       .then (work)->
         entry =
           edition: [ { isbn: generateIsbn13() } ]
           works: [ { labels: work.labels } ]
           authors: [ { labels: author.labels } ]
         resolve entry
-        .get 'result'
-        .then (result)->
-          result.works[0].uri.should.equal work.uri
-          result.authors[0].uri.should.equal author.uri
+        .get 'results'
+        .then (results)->
+          results[0].works[0].uri.should.equal work.uri
+          results[0].authors[0].uri.should.equal author.uri
           done()
     .catch done
 
@@ -256,17 +256,17 @@ describe 'entities:resolve:from-labels', ->
           createWorkWithAuthor author, workLabel
           createWorkWithAuthor sameLabelAuthor, workLabel
         ]
-        .delay 3500
+        .delay 5000
         .then (works)->
           entry =
             edition: [ { isbn: generateIsbn13() } ]
             works: [ { labels: { en: workLabel } } ]
             authors: [ { labels: author.labels } ]
           resolve entry
-          .get 'result'
-          .then (result)->
-            should(result.works[0].uri).not.be.ok()
-            should(result.authors[0].uri).not.be.ok()
+          .get 'results'
+          .then (results)->
+            should(results[0].works[0].uri).not.be.ok()
+            should(results[0].authors[0].uri).not.be.ok()
             done()
     .catch done
 

@@ -8,7 +8,7 @@ should = require 'should'
 { getByUris } = require '../utils/entities'
 { addClaim } = require '../utils/entities'
 { ensureEditionExists, randomLabel, humanName } = require '../fixtures/entities'
-resolveEntries = (entry)-> authReq 'post', '/api/entities?action=resolve-entries', entry
+resolveEntries = (body)-> authReq 'post', '/api/entities?action=resolve', body
 
 describe 'entities:resolve-entries', ->
   it 'should resolve entries of editions from an ISBN', (done)->
