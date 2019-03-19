@@ -1,19 +1,22 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-getEntitiesByUris = require '../get_entities_by_uris'
 { Promise } = __.require 'lib', 'promises'
+getEntitiesByUris = require '../get_entities_by_uris'
 
-module.exports = (workUris, authorLabels)->
-  getEntitiesByUris { uris: workUris }
+module.exports = (workUris, authorSeedLabels)->
+  getEntities workUris
+  .then getAuthorUris
+  .then _.flatten
+  .then getEntities
+  .filter (author)->
+    authorEntityLabels = _.values author.labels
+    _.intersection(authorSeedLabels, authorEntityLabels).length > 0
+
+getAuthorUris = (works)->
+  works.map (work)-> work.claims['wdt:P50']
+
+getEntities = (uris)->
+  getEntitiesByUris { uris }
   .get 'entities'
   .then _.values
-  .then (works)->
-    authorClaims = works.map (work)-> work.claims['wdt:P50']
-    authorUris = _.flatten authorClaims
-  .then (uris)-> getEntitiesByUris { uris }
-  .get 'entities'
-  .then _.values
-  .filter (existingAuthor)->
-    authorsLabels = Object.values(existingAuthor.labels)
-    _.intersection(authorLabels, authorsLabels).length > 0
