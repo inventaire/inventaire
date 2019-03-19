@@ -4,7 +4,7 @@ _ = __.require 'builders', 'utils'
 { Promise } = __.require 'lib', 'promises'
 entities_ = require '../entities'
 
-module.exports = (updateOption, userId)-> (entry)->
+module.exports = (updateOption, userId, summary)-> (entry)->
   { edition, works, authors } = entry
   unless updateOption then return entry
 
@@ -46,7 +46,7 @@ updateClaims = (entry, userId)-> (currentDoc)->
 
   _.mapKeys entry.claims, (entryValues, entryProp)->
     unless entryProp in currentProps
-      _.assign newClaims, { "#{entryProp}": entryValues }
+      newClaims[entryProp] = entryValues
 
   if _.isEmpty(newClaims) then return
 

@@ -18,7 +18,7 @@ describe 'entities:resolve-entries', ->
     .get 'result'
     .then (result)->
       result.should.be.an.Object()
-      result[0].edition[0].uri.should.equal 'isbn:9782203399303'
+      result[0].edition.uri.should.equal 'isbn:9782203399303'
       done()
     .catch done
 
@@ -33,7 +33,7 @@ describe 'entities:resolve-entries', ->
       create: true
     .get 'result'
     .then (result)->
-      entityUri = result[0].edition[0].uri
+      entityUri = result[0].edition.uri
       should(entityUri).be.ok()
       getByUris entityUri
       .get 'entities'

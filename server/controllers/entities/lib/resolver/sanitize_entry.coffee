@@ -8,31 +8,34 @@ isbn_ = __.require 'lib', 'isbn/isbn'
 
 # Validate and format
 module.exports = (res)-> (entry)->
-  { edition, works, authors } = entry
-  sanitizeCollection res, entry, 'edition'
+  { edition } = entry
+  # entry must have an edition to resolve from
+  unless edition?
+    throw error_.new 'missing edition in entry', 400, entry
+
+  # Resolver handles only one edition to resolve from
+  if _.isArray(edition) then entry.edition = edition[0]
+  sanitizeEdition res, entry.edition
   sanitizeCollection res, entry, 'works'
   sanitizeCollection res, entry, 'authors'
   return entry
 
-sanitizeCollection = (res, entry, name)->
-  collection = entry[name] ?= []
-  collection.forEach (entity)->
-    if name is 'edition' then sanitizeEdition(entity)
-    sanitizeEntityDraft res, entity, name
+sanitizeEdition = (res, edition)->
+  rawIsbn = getIsbn edition
 
-sanitizeEdition = (edition)->
-  rawIsbn = getIsbn(edition)
+  unless rawIsbn?
+    throw error_.new 'no isbn found', 400, { edition }
 
-  unless rawIsbn
-    throw error_.new 'no isbn found', 400, edition
-
-  isbn = isbn_.normalizeIsbn(rawIsbn)
-  if isbn and not isbn_.isValidIsbn(isbn)
+  unless isbn_.isValidIsbn rawIsbn
     throw error_.new 'invalid isbn', 400, { edition }
 
-  edition.isbn = isbn
+  sanitizeEntityDraft res, edition
 
-sanitizeEntityDraft = (res, entity, name)->
+sanitizeCollection = (res, entry, name)->
+  collection = entry[name] ?= []
+  collection.forEach (entity)-> sanitizeEntityDraft res, entity
+
+sanitizeEntityDraft = (res, entity)->
   entity.labels ?= {}
   unless _.isPlainObject entity.labels
     throw error_.new 'invalid labels', 400, { entity }

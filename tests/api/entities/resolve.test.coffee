@@ -11,12 +11,13 @@ resolve = (entry)-> authReq 'post', '/api/entities?action=resolve', { entries: [
 
 describe 'entities:resolve', ->
   it 'should resolve an edition from an ISBN', (done)->
-    ensureEditionExists 'isbn:9782203399303'
-    .then -> resolve { edition: [ { isbn: '9782203399303' } ] }
+    rawIsbn = '9782203399303'
+    ensureEditionExists "isbn:#{rawIsbn}"
+    .then -> resolve { edition: [ { isbn: rawIsbn } ] }
     .get 'results'
     .then (results)->
       results[0].should.be.an.Object()
-      results[0].edition[0].uri.should.startWith 'isbn:'
+      results[0].edition.uri.should.equal "isbn:#{rawIsbn}"
       done()
     .catch done
 
@@ -24,8 +25,9 @@ describe 'entities:resolve', ->
 
   it 'should reject if key "edition" is missing', (done)->
     resolve {}
+    .then undesiredRes(done)
     .catch (err)->
-      err.body.status_verbose.should.startWith 'missing parameter'
+      err.body.status_verbose.should.startWith 'missing edition in entry'
       done()
     .catch done
 

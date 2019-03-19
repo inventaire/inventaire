@@ -43,10 +43,10 @@ describe 'entities:resolve:create-unresolved', ->
       create: true
     .get 'results'
     .then (results)->
-      result.edition[0].created.should.equal true
+      result.edition.created.should.equal true
       result.authors[0].created.should.equal true
       result.works[0].created.should.equal true
-      should(result.edition[0].uri).be.ok()
+      should(result.edition.uri).be.ok()
       should(result.works[0].uri).be.ok()
       should(result.authors[0].uri).be.ok()
       done()
@@ -62,10 +62,10 @@ describe 'entities:resolve:create-unresolved', ->
       create: true
     .get 'result'
     .then (result)->
-      should(result.edition[0].uri).be.ok()
+      should(result.edition.uri).be.ok()
       { edition } = result
 
-      getByUris edition[0].uri
+      getByUris edition.uri
       .get 'entities'
       .then (entities)->
         editionClaims = _.values(entities)[0].claims
@@ -86,9 +86,9 @@ describe 'entities:resolve:create-unresolved', ->
       create: true
     .get 'result'
     .then (result)->
-      should(result.edition[0].uri).be.ok()
+      should(result.edition.uri).be.ok()
       { edition } = result
-      getByUris edition[0].uri
+      getByUris edition.uri
       .get 'entities'
       .then (entities)->
         newWorkClaimValue = _.values(entities)[0].claims['wdt:P407'][0]
@@ -106,7 +106,7 @@ describe 'entities:resolve:create-unresolved', ->
       create: true
     .get 'result'
     .then (result)->
-      should(result.edition[0].uri).be.ok()
+      should(result.edition.uri).be.ok()
       { works } = result
       getByUris works.map(_.property('uri'))
       .get 'entities'
@@ -127,7 +127,7 @@ describe 'entities:resolve:create-unresolved', ->
       create: true
     .get 'result'
     .then (result)->
-      should(result.edition[0].uri).be.ok()
+      should(result.edition.uri).be.ok()
       { authors } = result
       getByUris authors.map(_.property('uri'))
       .get 'entities'
