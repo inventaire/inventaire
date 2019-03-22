@@ -26,20 +26,21 @@ sanitization =
     optional: true
 
 module.exports = (req, res)->
-  { create, update, summary } = req.body
-  reqUserId = req.user._id
   sanitize req, res, sanitization
-  .get 'entries'
-  .then (entries)-> Promise.all entries.map(sanitizeEntry(res))
-  .then (entries)-> sequentialResolve(entries, result = [])(create, update, reqUserId, summary)
+  .then (params)->
+    resolvedEntries = []
+    Promise.all params.entries.map(sanitizeEntry(res))
+    .then (entries)-> sequentialResolve(entries, resolvedEntries)(params)
   .then responses_.Wrap(res, 'results')
   .catch error_.Handler(req, res)
 
-sequentialResolve = (entries, result)-> (create, update, reqUserId, summary)->
+sequentialResolve = (entries, resolvedEntries)-> (params)->
+  { create, update, reqUserId, summary } = params
   nextEntry = entries.shift()
-  unless nextEntry? then return result
-  resolve(reqUserId)(nextEntry)
+  unless nextEntry? then return resolvedEntries
+
+  resolve(nextEntry)
   .then updateResolvedEntry(update, reqUserId, summary)
   .then createUnresolvedEntry(create, reqUserId, summary)
-  .then (entry)-> result.push entry
-  .then sequentialResolve(entries, result)
+  .then (entry)-> resolvedEntries.push entry
+  .then sequentialResolve(entries, resolvedEntries)

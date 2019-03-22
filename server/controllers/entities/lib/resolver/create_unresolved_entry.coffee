@@ -7,8 +7,8 @@ properties = require '../properties/properties_values_constraints'
 isbn_ = __.require 'lib', 'isbn/isbn'
 
 module.exports = (createOption, userId, summary)-> (entry)->
-  { edition, works, authors } = entry
   unless createOption then return entry
+  { edition, works, authors } = entry
 
   createAuthors authors, userId, summary
   .then -> createWorks(works, authors, userId, summary)
@@ -21,7 +21,7 @@ createAuthors = (authors, userId, summary)->
     claims = { }
 
     addClaimIfValid claims, 'wdt:P31', [ 'wd:Q5' ]
-    createEntityFromEntry author, claims, userId, summary
+    createEntityFromSeed author, claims, userId, summary
 
 createWorks = (works, authors, userId, summary)->
   unresolvedWorks = _.reject works, 'uri'
@@ -31,7 +31,7 @@ createWorks = (works, authors, userId, summary)->
 
     addClaimIfValid claims, 'wdt:P31', [ 'wd:Q571' ]
     addClaimIfValid claims, 'wdt:P50', relativesUris
-    createEntityFromEntry work, claims, userId, summary
+    createEntityFromSeed work, claims, userId, summary
 
 createEdition = (edition, works, userId, summary)->
   relativesUris = getRelativeUris works
@@ -50,12 +50,12 @@ createEdition = (edition, works, userId, summary)->
 
     # garantee that an edition shall not have label
     edition.labels = { }
-    createEntityFromEntry edition, claims, userId, summary
+    createEntityFromSeed edition, claims, userId, summary
 
 getRelativeUris = (relatives)->
   _.compact(_.map(relatives, 'uri'))
 
-createEntityFromEntry = (entity, claims, userId, summary)->
+createEntityFromSeed = (entity, claims, userId, summary)->
   { labels, claims:entryClaims } = entity
 
   for property, values of entryClaims

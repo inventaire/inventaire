@@ -6,47 +6,43 @@ responses_ = __.require 'lib', 'responses'
 error_ = __.require 'lib', 'error/error'
 isbn_ = __.require 'lib', 'isbn/isbn'
 
-# Validate and format
+# Validate : requires only one edition to resolve from and a valid isbn
+# Format : if edition is a list, force pick the first edition
+# Warn : when a property is unknown
+
 module.exports = (res)-> (entry)->
   { edition } = entry
-  # entry must have an edition to resolve from
   unless edition?
     throw error_.new 'missing edition in entry', 400, entry
 
-  # Resolver handles only one edition to resolve from
   if _.isArray(edition) then entry.edition = edition[0]
+  authorsSeeds = entry['authors'] ?= []
+  worksSeeds = entry['works'] ?= []
+
   sanitizeEdition res, entry.edition
-  sanitizeCollection res, entry, 'works'
-  sanitizeCollection res, entry, 'authors'
+  sanitizeCollection res, authorsSeeds
+  sanitizeCollection res, worksSeeds
   return entry
 
 sanitizeEdition = (res, edition)->
   rawIsbn = getIsbn edition
+  unless rawIsbn? then throw error_.new 'no isbn found', 400, { edition }
+  unless isbn_.isValidIsbn(rawIsbn) then throw error_.new 'invalid isbn', 400, { edition }
 
-  unless rawIsbn?
-    throw error_.new 'no isbn found', 400, { edition }
+  sanitizeSeed res, edition
 
-  unless isbn_.isValidIsbn rawIsbn
-    throw error_.new 'invalid isbn', 400, { edition }
+sanitizeCollection = (res, seeds)->
+  seeds.forEach (seed)-> sanitizeSeed res, seed
 
-  sanitizeEntityDraft res, edition
+sanitizeSeed = (res, seed)->
+  seed.labels ?= {}
+  unless _.isPlainObject seed.labels
+    throw error_.new 'invalid labels', 400, { seed }
 
-sanitizeCollection = (res, entry, name)->
-  collection = entry[name] ?= []
-  collection.forEach (entity)-> sanitizeEntityDraft res, entity
+  claims = seed.claims ?= {}
+  unless _.isPlainObject seed.claims
+    throw error_.new 'invalid claims', 400, { seed }
 
-sanitizeEntityDraft = (res, entity)->
-  entity.labels ?= {}
-  unless _.isPlainObject entity.labels
-    throw error_.new 'invalid labels', 400, { entity }
-
-  entity.claims ?= {}
-  unless _.isPlainObject entity.claims
-    throw error_.new 'invalid claims', 400, { entity }
-
-  sanitizeClaims res, entity.claims
-
-sanitizeClaims = (res, claims)->
   Object.keys(claims).forEach (prop)->
     unless properties[prop]?
       responses_.addWarning res, 'resolver', "unknown property: #{prop}"

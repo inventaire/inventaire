@@ -13,7 +13,7 @@ getWorksFromAuthorsUri = (workSeedLabels)-> (authorUri)->
   getAuthorWorks { uri: authorUri }
   .get 'works'
   .map _.property('uri')
-  # fetch full-fledged entity, as getAuthorWorks returns an incomplete entity
+  # get full-fledged entity, as getAuthorWorks returns an entity without labels
   .then getEntities
   .filter (work)-> matchSeedLabels(work, workSeedLabels)
 

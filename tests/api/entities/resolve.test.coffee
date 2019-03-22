@@ -10,10 +10,12 @@ should = require 'should'
 resolve = (entry)-> authReq 'post', '/api/entities?action=resolve', { entries: [ entry ] }
 
 describe 'entities:resolve', ->
-  it 'should resolve an edition from an ISBN', (done)->
-    rawIsbn = '9782203399303'
+  it 'should resolve an edition entry from an ISBN', (done)->
+    rawIsbn = generateIsbn13()
+    editionSeed = { isbn: rawIsbn }
+    entry = { edition: [ editionSeed ] }
     ensureEditionExists "isbn:#{rawIsbn}"
-    .then -> resolve { edition: [ { isbn: rawIsbn } ] }
+    .then -> resolve entry
     .get 'results'
     .then (results)->
       results[0].should.be.an.Object()
@@ -47,8 +49,9 @@ describe 'entities:resolve', ->
 
   it 'should reject when claims key is not an array of objects', (done)->
     resolve
-      edition: [ { isbn: generateIsbn13() } ]
+      edition: { isbn: generateIsbn13() }
       works: [ { claims: [ 'wdt:P31: wd:Q23' ] } ]
+    .then undesiredRes(done)
     .catch (err)->
       err.body.status_verbose.should.startWith 'invalid claims'
       done()
@@ -58,11 +61,10 @@ describe 'entities:resolve', ->
 
   it 'should warn when claims key has an unknown property', (done)->
     unknownProp = 'wdt:P6'
-    resolve
-      edition: [
-        isbn: generateIsbn13()
-        claims: { "#{unknownProp}": [ 'wd:Q23' ] }
-      ]
+    seed =
+      isbn: generateIsbn13()
+      claims: { "#{unknownProp}": [ 'wd:Q23' ] }
+    resolve { edition: seed }
     .then (res)->
       res.warnings.should.be.an.Object()
       res.warnings.resolver.should.deepEqual [ "unknown property: #{unknownProp}" ]
@@ -152,12 +154,13 @@ describe 'entities:resolve:in-context', ->
     missingWorkLabel = randomLabel()
     otherWorkLabel = randomLabel()
     entry =
-      edition: [ { isbn: generateIsbn13() } ]
+      edition: { isbn: generateIsbn13() }
       works: [ { labels: { en: missingWorkLabel } } ]
       authors: [ { claims: { 'wdt:P648': [ olId ] } } ]
     createHuman()
     .delay 10
     .tap (author)-> addClaim author.uri, 'wdt:P648', olId
+    .delay 10
     .then (author)->
       Promise.all [
         createWorkWithAuthor author, missingWorkLabel
@@ -188,7 +191,7 @@ describe 'entities:resolve:in-context', ->
       ]
       .spread (work, otherWork)->
         entry =
-          edition: [ { isbn: generateIsbn13() } ]
+          edition: { isbn: generateIsbn13() }
           works: [ { labels: { en: workLabel } } ]
           authors: [ { claims: { 'wdt:P648': [ olId ] } } ]
         resolve entry
@@ -212,7 +215,7 @@ describe 'entities:resolve:in-context', ->
       .tap (work)-> addClaim work.uri, 'wdt:P648', olId
       .then (work)->
         entry =
-          edition: [ { isbn: generateIsbn13() } ]
+          edition: { isbn: generateIsbn13() }
           works: [ { claims: { 'wdt:P648': [ olId ] } } ]
           authors: [ { labels: author.labels } ]
         resolve entry
@@ -229,14 +232,11 @@ describe 'entities:resolve:from-labels', ->
     createHuman()
     .then (author)->
       workLabel = randomLabel()
+      authorLabel = author.labels.en
       createWorkWithAuthor author, workLabel
-      .delay 5000
+      .delay 5000 # update elasticSearch
       .then (work)->
-        entry =
-          edition: [ { isbn: generateIsbn13() } ]
-          works: [ { labels: work.labels } ]
-          authors: [ { labels: author.labels } ]
-        resolve entry
+        resolve basicEntry(workLabel, authorLabel)
         .get 'results'
         .then (results)->
           results[0].works[0].uri.should.equal work.uri
@@ -246,25 +246,19 @@ describe 'entities:resolve:from-labels', ->
 
     return
 
-  it 'should reject when several authors/works pairs exist', (done)->
+  it 'should not resolve when several authors/works pairs exist', (done)->
     createHuman()
     .then (author)->
-      authReq 'post', '/api/entities?action=create',
-        labels: author.labels
-        claims: { 'wdt:P31': [ 'wd:Q5' ] }
+      createHuman { labels: author.labels }
       .then (sameLabelAuthor)->
         workLabel = randomLabel()
         Promise.all [
           createWorkWithAuthor author, workLabel
           createWorkWithAuthor sameLabelAuthor, workLabel
         ]
-        .delay 5000
+        .delay 5000 # update elasticSearch
         .then (works)->
-          entry =
-            edition: [ { isbn: generateIsbn13() } ]
-            works: [ { labels: { en: workLabel } } ]
-            authors: [ { labels: author.labels } ]
-          resolve entry
+          resolve basicEntry(workLabel, author.labels.en)
           .get 'results'
           .then (results)->
             should(results[0].works[0].uri).not.be.ok()
@@ -273,3 +267,9 @@ describe 'entities:resolve:from-labels', ->
     .catch done
 
     return
+
+basicEntry = (workLabel, authorLabel) ->
+  return
+    edition: { isbn: generateIsbn13() },
+    works: [ { labels: { en: workLabel } } ],
+    authors: [ { labels: { en: authorLabel } } ]
