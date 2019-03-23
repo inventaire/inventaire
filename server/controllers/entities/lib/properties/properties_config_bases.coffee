@@ -25,7 +25,7 @@ module.exports =
   workEntity: restrictedEntityType 'work'
   serieEntity: restrictedEntityType 'serie'
   humanEntity: restrictedEntityType 'human'
-  countryEntity: restrictedEntityType 'countrie'
+  countryEntity: restrictedEntityType 'country'
   uniqueEntity: _.extend {}, entity, { uniqueValue: true }
 
   uniqueString: uniqueString

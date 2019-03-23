@@ -121,15 +121,23 @@ module.exports = typesAliases =
 
 types = {}
 
-for type, typeIds of typesAliases
-  # Drop the plural form, including when deriving from English uses,
-  # notably: series => serie
-  type = type.replace /s$/, ''
+singularize = (pluralType)->
+  if pluralType is 'countries' then 'country'
+  else pluralType.replace /s$/, ''
+
+pluralize = (singularType)->
+  if singularType is 'country' then 'countries'
+  else singularType + 's'
+
+for pluralType, typeIds of typesAliases
+  singularType =  singularize pluralType
   for id in typeIds
-    types[id] = type
+    types[id] = singularType
 
 typesNames = Object.keys typesAliases
 
-getTypePluralNameByTypeUri = (uri)-> if types[uri] then "#{types[uri]}s"
+getTypePluralNameByTypeUri = (uri)->
+  singularType = types[uri]
+  if singularType? then return pluralize singularType
 
 module.exports = { types, typesNames, getTypePluralNameByTypeUri }
