@@ -55,8 +55,10 @@ arrayOfAKind = (validation)-> (values, kind)->
   return true
 
 arrayOrPipedStrings = (value)->
-  if _.isString value then return value.split '|'
-  return value
+  if _.isString value then value = value.split '|'
+  if _.isArray value then return _.uniq value
+  # Let the 'validate' function reject non-arrayfied values
+  else return value
 
 entityUris =
   format: arrayOrPipedStrings

@@ -327,6 +327,18 @@ describe 'sanitize', ->
 
       return
 
+    it 'should deduplicate ids', (done)->
+      id = '5ac0fc497813d9817047e0b89301e502'
+      req = { query: { ids: [ id, id ] } }
+      configs = { ids: {} }
+      sanitize req, {}, configs
+      .then (input)->
+        input.ids.should.deepEqual [ id ]
+        done()
+      .catch done
+
+      return
+
   describe 'lang', ->
     it "should default to 'en'", (done)->
       req = { query: {} }
