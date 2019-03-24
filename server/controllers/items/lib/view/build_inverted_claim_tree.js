@@ -1,4 +1,8 @@
-module.exports = entities => entities.reduce(addToTree, {})
+const base = () => ({
+  author: {},
+  genre: {},
+  subject: {}
+})
 
 const viewProperties = {
   'wdt:P50': 'author',
@@ -10,7 +14,6 @@ const addToTree = (tree, entity) => {
   const { uri } = entity
   for (const property in viewProperties) {
     const name = viewProperties[property]
-    tree[name] = tree[name] || { unknown: [] }
     const values = entity.claims[property]
     if (values != null) {
       for (const value of values) {
@@ -18,9 +21,12 @@ const addToTree = (tree, entity) => {
         tree[name][value].push(uri)
       }
     } else {
+      tree[name].unknown = tree[name].unknown || []
       tree[name].unknown.push(uri)
     }
   }
 
   return tree
 }
+
+module.exports = entities => entities.reduce(addToTree, base())
