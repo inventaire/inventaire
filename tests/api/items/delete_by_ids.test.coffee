@@ -13,6 +13,32 @@ deleteByIds = (ids, authReqFn)->
   authReqFn 'post', '/api/items?action=delete-by-ids', { ids }
 
 describe 'items:delete-by-ids', ->
+  it 'should reject an empty list of ids', (done)->
+    deleteByIds []
+    .then undesiredRes(done)
+    .catch (err)->
+      err.statusCode.should.equal 400
+      err.body.status_verbose.should.equal "ids array can't be empty"
+      done()
+    .catch done
+
+    return
+
+  it 'should ignore already deleted items', (done)->
+    createItem()
+    .then (item)->
+      { _id: itemId } = item
+      deleteByIds itemId
+      .then (res)->
+        res.ok.should.be.true()
+        deleteByIds itemId
+        .then (res)->
+          res.ok.should.be.true()
+          done()
+    .catch done
+
+    return
+
   it 'should delete an item', (done)->
     createItem()
     .then (item)->
@@ -42,8 +68,6 @@ describe 'items:delete-by-ids', ->
           getUser()
           .then (userAfter)->
             countChange = CountChange userBefore.snapshot, userAfter.snapshot
-            countChange('private').should.equal 0
-            countChange('network').should.equal 0
             countChange('public').should.equal -1
             done()
     .catch done
@@ -60,32 +84,6 @@ describe 'items:delete-by-ids', ->
         err.statusCode.should.equal 403
         err.body.status_verbose.should.equal "user isn't item owner"
         done()
-    .catch done
-
-    return
-
-  it 'should reject an empty list of ids', (done)->
-    deleteByIds []
-    .then undesiredRes(done)
-    .catch (err)->
-      err.statusCode.should.equal 400
-      err.body.status_verbose.should.equal "ids array can't be empty"
-      done()
-    .catch done
-
-    return
-
-  it 'should ignore already deleted items', (done)->
-    createItem()
-    .then (item)->
-      { _id: itemId } = item
-      deleteByIds itemId
-      .then (res)->
-        res.ok.should.be.true()
-        deleteByIds itemId
-        .then (res)->
-          res.ok.should.be.true()
-          done()
     .catch done
 
     return
