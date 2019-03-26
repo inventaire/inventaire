@@ -15,6 +15,7 @@ module.exports = promisesHandlers =
   reject: Promise.reject
   try: Promise.try
   all: Promise.all
+  map: (array, fn)-> Promise.all array.map(fn)
   props: Promise.props
 
   # skip throws in a standard way to be catched later

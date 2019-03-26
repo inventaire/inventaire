@@ -1,6 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
+promises_ = __.require 'lib', 'promises'
 should = require 'should'
 { undesiredRes, undesiredErr } = require '../utils/utils'
 { createHuman } = require '../fixtures/entities'
@@ -67,7 +68,7 @@ describe 'entities:update-labels', ->
     humanPromise
     .then (human)->
       { _id: humanId, uri: humanUri } = human
-      Promise.all langs.map((lang)-> updateLabel humanId, lang, name)
+      promises_.map langs, (lang)-> updateLabel humanId, lang, name
       .then (responses)->
         responses.forEach (res)-> should(res.ok).be.true()
         getByUri human.uri
