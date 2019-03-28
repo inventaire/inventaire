@@ -4,7 +4,8 @@ _ = __.require 'builders', 'utils'
 { Promise } = __.require 'lib', 'promises'
 getEntitiesByIsbns = require '../get_entities_by_isbns'
 
-module.exports = (edition)->
+module.exports = (entry)->
+  { edition } = entry
   { isbn } = edition
 
   unless isbn? then return Promise.resolved
@@ -12,6 +13,7 @@ module.exports = (edition)->
   getEntitiesByIsbns [ isbn ], refresh = {}
   .then (res)->
     { entities } = res
-    if _.some entities
-      # should return only one uri as edition entity isbn is unique
-      edition.uri = entities[0].uri
+    if entities.length is 1
+      # return only one uri, as entity isbn should be unique
+      entry.edition.uri = entities[0].uri
+  .then -> entry

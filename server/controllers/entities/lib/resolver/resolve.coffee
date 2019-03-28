@@ -2,20 +2,31 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 resolveEdition = require './resolve_edition'
-resolveWork = require './resolve_work'
-resolveAuthor = require './resolve_author'
+resolveSeedsByExternalIds = require './resolve_seeds_by_external_ids'
 resolveInContext = require './resolve_in_context'
 resolveOnLabels = require './resolve_on_labels'
 { Promise } = __.require 'lib', 'promises'
 
 module.exports = (entry)->
-  { edition, works, authors } = entry
+  resolveEdition entry
+  .then resolveAuthors
+  .then resolveWorks
+  .then resolveInContext
+  .then resolveOnLabels
 
-  Promise.resolve resolveEdition(edition)
-  .then -> resolveCollection works, resolveWork
-  .then -> resolveCollection authors, resolveAuthor
-  .then -> resolveInContext works, authors
-  .then -> resolveOnLabels works, authors
+resolveAuthors = (entry)->
+  { authors } = entry
+  unless _.some(authors) then return entry
+
+  Promise.all resolveSeedsByExternalIds(authors)
+  .then (authors)-> entry.authors = authors
   .then -> entry
 
-resolveCollection = (seeds, resolveSeed)-> Promise.all seeds.map(resolveSeed)
+resolveWorks = (entry)->
+  { works } = entry
+  unless _.some(works) then return entry
+
+  Promise.all resolveSeedsByExternalIds(works)
+  .then (works)-> entry.works = works
+  .then -> entry
+

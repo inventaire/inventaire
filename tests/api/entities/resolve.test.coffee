@@ -171,7 +171,6 @@ describe 'entities:resolve:in-context', ->
         .get 'results'
         .then (results)->
           should(results[0].works[0].uri).be.ok()
-          should(results[0].works[0].uri).be.ok()
           done()
     .catch done
 
@@ -227,8 +226,8 @@ describe 'entities:resolve:in-context', ->
 
     return
 
-describe 'entities:resolve:from-labels', ->
-  it 'should resolve work & author from inv author & inv work labels', (done)->
+describe 'entities:resolve:on-labels', ->
+  it 'should resolve author and work pair by searching for labels exact', (done)->
     createHuman()
     .then (author)->
       workLabel = randomLabel()
@@ -246,7 +245,7 @@ describe 'entities:resolve:from-labels', ->
 
     return
 
-  it 'should not resolve when several authors/works pairs exist', (done)->
+  it 'should not resolve when several works exist', (done)->
     createHuman()
     .then (author)->
       createHuman { labels: author.labels }
