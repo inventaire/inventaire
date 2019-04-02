@@ -5,8 +5,12 @@ should = require 'should'
 { Promise } = __.require 'lib', 'promises'
 { authReq, adminReq, getUser, undesiredErr } = require '../utils/utils'
 { getByUris } = require '../utils/entities'
-{ randomLabel, humanName, generateIsbn13, someOpenLibraryId  } = require '../fixtures/entities'
-resolve = (entry)-> authReq 'post', '/api/entities?action=resolve', entry
+{ randomLabel, humanName, generateIsbn13, someOpenLibraryId } = require '../fixtures/entities'
+resolveAndCreate = (entry, summary)->
+  authReq 'post', '/api/entities?action=resolve',
+    entries: [ entry ]
+    create: true
+    summary: summary
 
 describe 'entities:resolve:create-unresolved', ->
   it 'should create unresolved works with resolved authors', (done)->
@@ -24,10 +28,9 @@ describe 'entities:resolve:create-unresolved', ->
 
   it 'should throw when invalid isbn is passed', (done)->
     invalidIsbn = '9780000000000'
-    resolve
+    resolveAndCreate
       edition: [ { isbn: invalidIsbn } ]
       works: [ { labels: { en: randomLabel() } } ]
-      create: true
     .catch (err)->
       err.body.status_verbose.should.startWith 'invalid isbn'
       done()
@@ -36,13 +39,13 @@ describe 'entities:resolve:create-unresolved', ->
     return
 
   it 'should create unresolved edition, work and author (the trinity)', (done)->
-    resolve
-      edition: { isbn: generateIsbn13() }
-      works:   [ { labels: { en: randomLabel() } } ]
+    resolveAndCreate
+      edition: [ { isbn: generateIsbn13() } ]
+      works: [ { labels: { en: randomLabel() } } ]
       authors: [ { labels: { en: humanName() } } ]
-      create: true
     .get 'results'
     .then (results)->
+      result = results[0]
       result.edition.created.should.equal true
       result.authors[0].created.should.equal true
       result.works[0].created.should.equal true
@@ -54,14 +57,14 @@ describe 'entities:resolve:create-unresolved', ->
 
     return
 
-  it 'should create edition title with favorising edition title claim value', (done)->
+  it 'should create edition with title and isbn', (done)->
     editionLabel = randomLabel()
-    resolve
+    resolveAndCreate
       edition: [ { isbn: generateIsbn13(), claims: { 'wdt:P1476': editionLabel } } ]
       works: [ { labels: { en: randomLabel() } } ]
-      create: true
-    .get 'result'
-    .then (result)->
+    .get 'results'
+    .then (results)->
+      result = results[0]
       should(result.edition.uri).be.ok()
       { edition } = result
 
@@ -80,12 +83,12 @@ describe 'entities:resolve:create-unresolved', ->
 
   it 'should add optional claims to created edition', (done)->
     frenchLang = 'wd:Q150'
-    resolve
-      edition: [ { isbn: generateIsbn13(), claims: { 'wdt:P407': [ frenchLang ]} } ]
+    resolveAndCreate
+      edition: [ { isbn: generateIsbn13(), claims: { 'wdt:P407': [ frenchLang ] } } ]
       works: [ { labels: { en: randomLabel() } } ]
-      create: true
-    .get 'result'
-    .then (result)->
+    .get 'results'
+    .then (results)->
+      result = results[0]
       should(result.edition.uri).be.ok()
       { edition } = result
       getByUris edition.uri
@@ -100,12 +103,12 @@ describe 'entities:resolve:create-unresolved', ->
 
   it 'should add optional claims to created works', (done)->
     olId = someOpenLibraryId 'work'
-    resolve
+    resolveAndCreate
       edition: [ { isbn: generateIsbn13() } ]
       works: [ { claims: { 'wdt:P648': [ olId ] }, labels: { en: randomLabel() } } ]
-      create: true
-    .get 'result'
-    .then (result)->
+    .get 'results'
+    .then (results)->
+      result = results[0]
       should(result.edition.uri).be.ok()
       { works } = result
       getByUris works.map(_.property('uri'))
@@ -120,13 +123,13 @@ describe 'entities:resolve:create-unresolved', ->
 
   it 'should add optional claims to created authors', (done)->
     olId = someOpenLibraryId 'author'
-    resolve
+    resolveAndCreate
       edition: [ { isbn: generateIsbn13() } ]
       works: [ { labels: { en: randomLabel() } } ]
       authors: [ { claims: { 'wdt:P648': [ olId ] }, labels: { en: randomLabel() } } ]
-      create: true
-    .get 'result'
-    .then (result)->
+    .get 'results'
+    .then (results)->
+      result = results[0]
       should(result.edition.uri).be.ok()
       { authors } = result
       getByUris authors.map(_.property('uri'))
@@ -142,16 +145,16 @@ describe 'entities:resolve:create-unresolved', ->
   it 'should add an arbitrary summary in entities patch', (done)->
     olId = someOpenLibraryId 'work'
     summary = { summary: 'arbitrary dump donation' }
-    resolve
+    work =
+      claims: { 'wdt:P648': [ olId ] }
+      labels: { en: randomLabel() }
+    entry =
       edition: [ { isbn: generateIsbn13() } ]
-      works: [
-        claims: { 'wdt:P648': [ olId ] }
-        labels: { en: randomLabel() }
-      ]
-      create: true
-      summary: summary
-    .get 'result'
-    .then (result)->
+      works: [ work ]
+    resolveAndCreate entry, summary
+    .get 'results'
+    .then (results)->
+      result = results[0]
       getUser()
       .then (user)->
         { _id } = user

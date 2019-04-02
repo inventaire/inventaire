@@ -6,7 +6,10 @@ should = require 'should'
 { authReq, undesiredErr } = require '../utils/utils'
 { getByUris, addClaim } = require '../utils/entities'
 { createWork, createHuman, ensureEditionExists, someOpenLibraryId, randomLabel, generateIsbn13 } = require '../fixtures/entities'
-resolve = (entry)-> authReq 'post', '/api/entities?action=resolve', { entries: [ entry ] }
+resolve = (entry)->
+  authReq 'post', '/api/entities?action=resolve',
+    entries: [ entry ]
+    update: true
 
 describe 'entities:resolver:update-resolved', ->
   it 'should update works claim values if property does not exist', (done)->
@@ -20,7 +23,6 @@ describe 'entities:resolver:update-resolved', ->
           'wdt:P648': [ olId ],
           'wdt:P50': [ authorUri, authorUri2 ]
       ]
-      update: true
     createWork()
     .tap (work)-> addClaim work.uri, 'wdt:P648', olId
     .then (work)->
@@ -49,7 +51,6 @@ describe 'entities:resolver:update-resolved', ->
           'wdt:P648': [ olId ],
           'wdt:P50': [ authorUri ]
       ]
-      update: true
     createWork()
     .tap (work)-> addClaim work.uri, 'wdt:P648', olId
     .tap (work)-> addClaim work.uri, 'wdt:P50', authorUri2
@@ -57,7 +58,8 @@ describe 'entities:resolver:update-resolved', ->
       resolve(entry).get('results')
       .then (results)->
         entityUri = results[0].works[0].uri
-        getByUris(entityUri).get 'entities'
+        getByUris(entityUri)
+        .get 'entities'
         .then (entities)->
           authorClaimValues = _.values(entities)[0].claims['wdt:P50']
           authorClaimValues.should.not.containEql authorUri
@@ -76,14 +78,14 @@ describe 'entities:resolver:update-resolved', ->
           'wdt:P648': [ olId ],
           'wdt:P856': [ officialWebsite ]
       ]
-      update: true
     createHuman()
     .tap (human)-> addClaim human.uri, 'wdt:P648', olId
     .then (work)->
       resolve(entry).get('results')
       .then (results)->
         entityUri = results[0].authors[0].uri
-        getByUris(entityUri).get 'entities'
+        getByUris(entityUri)
+        .get 'entities'
         .then (entities)->
           authorClaimValues = _.values(entities)[0].claims['wdt:P856']
           authorClaimValues.should.containEql officialWebsite
@@ -109,8 +111,9 @@ describe 'entities:resolver:update-resolved', ->
           isbn: isbn
           claims: { 'wdt:P123': publisher }
         ]
-        update: true
-      resolve(entry).get('results').delay(10)
+      resolve(entry)
+      .get('results')
+      .delay(10)
       .then (results)->
         getByUris editionUri
         .get 'entities'
