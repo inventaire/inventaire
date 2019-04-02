@@ -4,13 +4,12 @@ _ = __.require 'builders', 'utils'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
 { authReq, adminReq, getUser, undesiredErr } = require '../utils/utils'
-{ getByUris } = require '../utils/entities'
+{ getByUris, getHistory } = require '../utils/entities'
 { randomLabel, humanName, generateIsbn13, someOpenLibraryId } = require '../fixtures/entities'
-resolveAndCreate = (entry, summary)->
+resolveAndCreate = (entry)->
   authReq 'post', '/api/entities?action=resolve',
     entries: [ entry ]
     create: true
-    summary: summary
 
 describe 'entities:resolve:create-unresolved', ->
   it 'should create unresolved works with resolved authors', (done)->
@@ -142,28 +141,29 @@ describe 'entities:resolve:create-unresolved', ->
 
     return
 
-  it 'should add an arbitrary summary in entities patch', (done)->
+  it 'should add a batch timestamp to patches', (done)->
+    startTime = Date.now()
     olId = someOpenLibraryId 'work'
-    summary = { summary: 'arbitrary dump donation' }
     work =
       claims: { 'wdt:P648': [ olId ] }
       labels: { en: randomLabel() }
     entry =
       edition: [ { isbn: generateIsbn13() } ]
       works: [ work ]
-    resolveAndCreate entry, summary
+    resolveAndCreate entry
     .get 'results'
     .then (results)->
       result = results[0]
-      getUser()
-      .then (user)->
-        { _id } = user
-        adminReq 'get', "/api/entities?action=contributions&user=#{_id}&limit=5"
-        .get 'patches'
-        .then (patches)->
-          patchedContext = patches[1].context
-          patchedContext.should.deepEqual summary
-          done()
+      { uri: editionUri } = result.edition
+      editionId = editionUri.split(':')[1]
+      getHistory editionId
+      .get 'patches'
+      .then (patches)->
+        patch = patches[0]
+        patch.batch.should.be.a.Number()
+        patch.batch.should.above startTime
+        patch.batch.should.below Date.now()
+        done()
     .catch undesiredErr(done)
 
     return

@@ -21,26 +21,24 @@ sanitization =
   update:
     generic: 'boolean'
     optional: true
-  summary:
-    generic: 'object'
-    optional: true
 
 module.exports = (req, res)->
   sanitize req, res, sanitization
   .then (params)->
+    batchId = Date.now()
     resolvedEntries = []
     Promise.all params.entries.map(sanitizeEntry(res))
-    .then (entries)-> sequentialResolve(entries, resolvedEntries)(params)
+    .then (entries)-> sequentialResolve(entries, resolvedEntries, batchId)(params)
   .then responses_.Wrap(res, 'results')
   .catch error_.Handler(req, res)
 
-sequentialResolve = (entries, resolvedEntries)-> (params)->
-  { create, update, reqUserId, summary } = params
+sequentialResolve = (entries, resolvedEntries, batchId)-> (params)->
+  { create, update, reqUserId } = params
   nextEntry = entries.shift()
   unless nextEntry? then return resolvedEntries
 
   resolve(nextEntry)
-  .then updateResolvedEntry(update, reqUserId, summary)
-  .then createUnresolvedEntry(create, reqUserId, summary)
+  .then updateResolvedEntry(update, reqUserId, batchId)
+  .then createUnresolvedEntry(create, reqUserId, batchId)
   .then (entry)-> resolvedEntries.push entry
   .then sequentialResolve(entries, resolvedEntries)

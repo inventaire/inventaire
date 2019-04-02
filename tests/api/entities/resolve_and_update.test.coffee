@@ -3,31 +3,31 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
-{ authReq, undesiredErr } = require '../utils/utils'
-{ getByUris, addClaim } = require '../utils/entities'
-{ createWork, createHuman, ensureEditionExists, someOpenLibraryId, randomLabel, generateIsbn13 } = require '../fixtures/entities'
-resolve = (entry)->
+{ authReq, undesiredErr, undesiredRes } = require '../utils/utils'
+{ getByUris, addClaim, getHistory } = require '../utils/entities'
+{ createWork, createHuman, ensureEditionExists, someGoodReadsId, randomLabel, generateIsbn13 } = require '../fixtures/entities'
+resolveAndUpdate = (entry)->
   authReq 'post', '/api/entities?action=resolve',
     entries: [ entry ]
     update: true
 
 describe 'entities:resolver:update-resolved', ->
   it 'should update works claim values if property does not exist', (done)->
-    olId = someOpenLibraryId 'work'
+    goodReadsId = someGoodReadsId()
     authorUri = 'wd:Q35802'
     authorUri2 = 'wd:Q184226'
     entry =
       edition: [ { isbn: generateIsbn13() } ]
       works: [
         claims:
-          'wdt:P648': [ olId ],
+          'wdt:P2969': [ goodReadsId ],
           'wdt:P50': [ authorUri, authorUri2 ]
       ]
     createWork()
-    .tap (work)-> addClaim work.uri, 'wdt:P648', olId
+    .tap (work)-> addClaim work.uri, 'wdt:P2969', goodReadsId
     .then (work)->
-      resolve(entry)
-      .get('results')
+      resolveAndUpdate entry
+      .get 'results'
       .then (results)->
         entityUri = results[0].works[0].uri
         getByUris(entityUri).get 'entities'
@@ -41,21 +41,22 @@ describe 'entities:resolver:update-resolved', ->
     return
 
   it 'should not update works claim values if property exists', (done)->
-    olId = someOpenLibraryId 'work'
+    goodReadsId = someGoodReadsId()
     authorUri = 'wd:Q35802'
     authorUri2 = 'wd:Q184226'
     entry =
       edition: [ { isbn: generateIsbn13() } ]
       works: [
         claims:
-          'wdt:P648': [ olId ],
+          'wdt:P2969': [ goodReadsId ],
           'wdt:P50': [ authorUri ]
       ]
     createWork()
-    .tap (work)-> addClaim work.uri, 'wdt:P648', olId
+    .tap (work)-> addClaim work.uri, 'wdt:P2969', goodReadsId
     .tap (work)-> addClaim work.uri, 'wdt:P50', authorUri2
     .then (work)->
-      resolve(entry).get('results')
+      resolveAndUpdate entry
+      .get 'results'
       .then (results)->
         entityUri = results[0].works[0].uri
         getByUris(entityUri)
@@ -122,5 +123,35 @@ describe 'entities:resolver:update-resolved', ->
           authorClaimValues.should.containEql publisher
           done()
     .catch done
+
+    return
+
+  it 'should add a batch timestamp to patches', (done)->
+    startTime = Date.now()
+    goodReadsId = someGoodReadsId()
+    authorUri = 'wd:Q35802'
+    authorUri2 = 'wd:Q184226'
+    entry =
+      edition: [ { isbn: generateIsbn13() } ]
+      works: [
+        claims:
+          'wdt:P2969': [ goodReadsId ],
+          'wdt:P50': [ authorUri, authorUri2 ]
+      ]
+    createWork()
+    .tap (work)-> addClaim work.uri, 'wdt:P2969', goodReadsId
+    .then (work)->
+      workId = work.uri.split(':')[1]
+      resolveAndUpdate entry
+      .then ->
+        getHistory workId
+        .get 'patches'
+        .then (patches)->
+          patch = patches.slice(-1)[0]
+          patch.batch.should.be.a.Number()
+          patch.batch.should.above startTime
+          patch.batch.should.below Date.now()
+          done()
+    .catch undesiredErr(done)
 
     return

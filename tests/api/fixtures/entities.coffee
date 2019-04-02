@@ -112,6 +112,10 @@ module.exports = API =
     numbers = Math.random().toString().slice(2, 7)
     return "OL1#{numbers}#{types[type]}"
 
+  someGoodReadsId: ->
+    numbers = Math.random().toString().slice(2, 7)
+    return "100000000#{numbers}"
+
   generateIsbn13: ->
     isbn = '9780' + _.join(_.sampleSize(_.split('0123456789', ''), 9), '')
     if isbn_.isValidIsbn(isbn) then return isbn
