@@ -6,7 +6,7 @@ entities_ = require './entities'
 { Lang } = __.require 'lib', 'regex'
 promises_ = __.require 'lib', 'promises'
 getEntityType = require './get_entity_type'
-validateClaimProperty = require './validate_claim_property'
+validateClaims =  require './validate_claims'
 typesWithoutLabels = require './types_without_labels'
 
 module.exports = (entity)->
@@ -18,7 +18,7 @@ module.exports = (entity)->
     type = getValueType claims
     validateValueType type, claims['wdt:P31']
     validateLabels labels, type
-    validateClaims claims, type
+    return validateClaims { newClaims: claims, currentClaims: {}, creating: true }
 
 getValueType = (claims)->
   wdtP31 = claims['wdt:P31']
@@ -44,41 +44,3 @@ validateLabels = (labels, type)->
 
       unless _.isNonEmptyString value
         throw error_.new "invalid label value: #{value}", 400, labels
-
-validateClaims = (claims, type)->
-  unless _.isNonEmptyPlainObject claims
-    throw error_.new 'invalid claims', 400, claims
-
-  typeTestFn = perTypeClaimsTests[type] or _.noop
-  typeTestFn claims
-
-  promises = []
-  currentClaims = {}
-  oldVal = null
-
-  for property, array of claims
-    validateClaimProperty type, property
-
-    unless _.isArray array
-      throw error_.new 'invalid property array', 400, { property, array }
-
-    claims[property] = array = _.uniq array
-    for newVal in array
-      params = { currentClaims, property, oldVal, newVal, letEmptyValuePass: false }
-      promises.push entities_.validateClaim(params)
-
-  return promises_.all promises
-
-perTypeClaimsTests =
-  edition: (claims)->
-    entityLabel = 'an edition'
-    assertPropertyHasValue claims, 'wdt:P629', entityLabel, 'an associated work'
-    assertPropertyHasValue claims, 'wdt:P1476', entityLabel, 'a title'
-    return
-
-assertPropertyHasValue = (claims, property, entityLabel, propertyLabel)->
-  unless claims[property]?[0]?
-    message = "#{entityLabel} should have #{propertyLabel} (#{property})"
-    throw error_.new message, 400, claims
-
-  return

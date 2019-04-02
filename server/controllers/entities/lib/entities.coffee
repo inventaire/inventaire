@@ -7,7 +7,7 @@ Entity = __.require 'models', 'entity'
 patches_ = require './patches'
 isbn_ = __.require 'lib', 'isbn/isbn'
 couch_ = __.require 'lib', 'couch'
-validateClaimValue = require './validate_claim_value'
+validateClaims =  require './validate_claims'
 getInvEntityCanonicalUri = require './get_inv_entity_canonical_uri'
 getEntityType = require './get_entity_type'
 radio = __.require 'lib', 'radio'
@@ -72,15 +72,11 @@ module.exports = entities_ =
     .then (updatedDoc)->
       entities_.putUpdate { userId, currentDoc, updatedDoc, batchId }
 
-  addClaims: (userId, updatedClaims, currentDoc, batchId)->
+  addClaims: (userId, newClaims, currentDoc, batchId)->
     updatedDoc = _.cloneDeep currentDoc
-    promises_.try -> Entity.addClaims updatedDoc, updatedClaims
+    validateClaims { newClaims, currentClaims: currentDoc.claims }
+    .then -> Entity.addClaims updatedDoc, newClaims
     .then -> entities_.putUpdate { userId, currentDoc, updatedDoc, batchId }
-
-  validateClaim: (params)->
-    { property } = params
-    promises_.try -> validateProperty property
-    .then -> validateClaimValue params
 
   getLastChangedEntitiesUris: (since, limit)->
     db.changes

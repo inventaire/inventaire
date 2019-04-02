@@ -88,14 +88,14 @@ describe 'entities:create', ->
 
     return
 
-  it 'should reject invalid claim property array', (done)->
+  it 'should reject invalid claim property values', (done)->
     authReq 'post', '/api/entities?action=create',
       labels: { fr: humanName() }
       claims:
         'wdt:P31': [ 'wd:Q571' ]
         'wdt:P50': 'wd:Q535'
     .catch (err)->
-      err.body.status_verbose.should.equal 'invalid property array'
+      err.body.status_verbose.should.equal 'invalid property values'
       err.statusCode.should.equal 400
       done()
     .catch undesiredErr(done)
