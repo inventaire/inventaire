@@ -18,7 +18,7 @@ resolveAuthors = (entry)->
   { authors } = entry
   unless _.some(authors) then return entry
 
-  Promise.all resolveSeedsByExternalIds(authors)
+  resolveSeedsByExternalIds authors
   .then (authors)-> entry.authors = authors
   .then -> entry
 
@@ -26,7 +26,6 @@ resolveWorks = (entry)->
   { works } = entry
   unless _.some(works) then return entry
 
-  Promise.all resolveSeedsByExternalIds(works)
+  resolveSeedsByExternalIds works
   .then (works)-> entry.works = works
   .then -> entry
-
