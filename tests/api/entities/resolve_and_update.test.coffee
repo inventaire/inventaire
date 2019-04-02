@@ -70,33 +70,36 @@ describe 'entities:resolver:update-resolved', ->
     return
 
   it 'should update authors claim values', (done)->
-    olId = someOpenLibraryId 'author'
+    goodReadsId = someGoodReadsId()
     officialWebsite = 'http://Q35802.org'
     entry =
       edition: [ { isbn: generateIsbn13() } ]
       authors: [
         claims:
-          'wdt:P648': [ olId ],
+          'wdt:P2963': [ goodReadsId ],
           'wdt:P856': [ officialWebsite ]
       ]
     createHuman()
-    .tap (human)-> addClaim human.uri, 'wdt:P648', olId
-    .then (work)->
-      resolve(entry).get('results')
+    .tap (human)-> addClaim human.uri, 'wdt:P2963', goodReadsId
+    .then (human)->
+      resolveAndUpdate entry
+      .get 'results'
       .then (results)->
-        entityUri = results[0].authors[0].uri
-        getByUris(entityUri)
+        authorUri = results[0].authors[0].uri
+        authorUri.should.equal human.uri
+        getByUris authorUri
         .get 'entities'
         .then (entities)->
-          authorClaimValues = _.values(entities)[0].claims['wdt:P856']
-          authorClaimValues.should.containEql officialWebsite
+          updatedAuthor = entities[authorUri]
+          authorWebsiteClaimValues = updatedAuthor.claims['wdt:P856']
+          authorWebsiteClaimValues.should.containEql officialWebsite
           done()
     .catch done
 
     return
 
-  it 'should update edition claim values', (done)->
-    publisher = 'Raimonde'
+  it 'should update edition claims', (done)->
+    numberOfPages = 3
     isbn = generateIsbn13()
     editionUri = "isbn:#{isbn}"
     title = randomLabel()
@@ -110,17 +113,18 @@ describe 'entities:resolver:update-resolved', ->
       entry =
         edition: [
           isbn: isbn
-          claims: { 'wdt:P123': publisher }
+          claims: { 'wdt:P1104': numberOfPages }
         ]
-      resolve(entry)
-      .get('results')
-      .delay(10)
+      resolveAndUpdate entry
+      .get 'results'
+      .delay 10
       .then (results)->
         getByUris editionUri
         .get 'entities'
-        .then (editions)->
-          authorClaimValues = _.values(editions)[0].claims['wdt:P123']
-          authorClaimValues.should.containEql publisher
+        .then (entities)->
+          edition = entities[editionUri]
+          numberOfPagesClaimsValues = edition.claims['wdt:P1104']
+          numberOfPagesClaimsValues.should.containEql numberOfPages
           done()
     .catch done
 

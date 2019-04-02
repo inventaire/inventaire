@@ -4,7 +4,7 @@ _ = __.require 'builders', 'utils'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
 { authReq, undesiredRes, undesiredErr } = require '../utils/utils'
-{ createWork, createEdition, createHuman, someOpenLibraryId, createWorkWithAuthor, generateIsbn13 } = require '../fixtures/entities'
+{ createWork, createEdition, createHuman, someGoodReadsId, createWorkWithAuthor, generateIsbn13 } = require '../fixtures/entities'
 { addClaim } = require '../utils/entities'
 { ensureEditionExists, randomLabel, humanName } = require '../fixtures/entities'
 resolve = (entry)-> authReq 'post', '/api/entities?action=resolve', { entries: [ entry ] }
@@ -75,12 +75,13 @@ describe 'entities:resolve', ->
 
 describe 'entities:resolve:external-id', ->
   it 'should resolve wikidata work from external ids claim', (done)->
-    edition = [ { isbn: generateIsbn13() } ]
-    work =
-      claims:
-        'wdt:P648': [ 'OL52556W' ]
-        'wdt:P1085': [ '28158' ]
-    resolve { edition, works: [ work ] }
+    resolve
+      edition: { isbn: generateIsbn13() }
+      works: [
+        claims:
+          'wdt:P2963': [ 'OL52556W' ]
+          'wdt:P1085': [ '28158' ]
+      ]
     .get 'results'
     .then (results)->
       results[0].works.should.be.an.Array()
@@ -92,15 +93,14 @@ describe 'entities:resolve:external-id', ->
     return
 
   it 'should resolve inventaire work from external ids claim', (done)->
-    olId = someOpenLibraryId 'work'
-    entry =
-      edition: [ { isbn: generateIsbn13() } ]
-      works: [ { claims: { 'wdt:P648': [ olId ] } } ]
+    goodReadsId = someGoodReadsId()
     createWork()
-    .tap (work)-> addClaim work.uri, 'wdt:P648', olId
+    .tap (work)-> addClaim work.uri, 'wdt:P2969', goodReadsId
     .delay 10
     .then (work)->
-      resolve entry
+      resolve
+        edition: [ { isbn: generateIsbn13() } ]
+        works: [ { claims: { 'wdt:P2969': [ goodReadsId ] } } ]
       .get 'results'
       .then (results)->
         results[0].works.should.be.an.Array()
@@ -112,11 +112,12 @@ describe 'entities:resolve:external-id', ->
     return
 
   it 'should resolve wikidata author from external ids claim', (done)->
-    edition = [ { isbn: generateIsbn13() } ]
-    author =
-      claims:
-        'wdt:P648': [ 'OL28127A' ]
-    resolve { edition, authors: [ author ] }
+    resolve
+      edition: { isbn: generateIsbn13() }
+      authors: [
+        claims:
+          'wdt:P648': [ 'OL28127A' ]
+      ]
     .get 'results'
     .then (results)->
       results[0].authors.should.be.an.Array()
@@ -128,16 +129,15 @@ describe 'entities:resolve:external-id', ->
     return
 
   it 'should resolve inventaire author from external ids claim', (done)->
-    olId = someOpenLibraryId 'author'
-    entry =
-      edition: [ { isbn: generateIsbn13() } ]
-      authors: [ { claims: { 'wdt:P648': [ olId ] } } ]
+    goodReadsId = someGoodReadsId()
     createHuman()
     .delay 10
-    .tap (author)-> addClaim author.uri, 'wdt:P648', olId
+    .tap (author)-> addClaim author.uri, 'wdt:P2963', goodReadsId
     .delay 10
     .then (author)->
-      resolve entry
+      resolve
+        edition: [ { isbn: generateIsbn13() } ]
+        authors: [ { claims: { 'wdt:P2963': [ goodReadsId ] } } ]
       .get 'results'
       .then (results)->
         results[0].authors.should.be.an.Array()
@@ -150,16 +150,12 @@ describe 'entities:resolve:external-id', ->
 
 describe 'entities:resolve:in-context', ->
   it 'should resolve work from work label and author with external ids claim', (done)->
-    olId = someOpenLibraryId 'author'
+    goodReadsId = someGoodReadsId()
     missingWorkLabel = randomLabel()
     otherWorkLabel = randomLabel()
-    entry =
-      edition: { isbn: generateIsbn13() }
-      works: [ { labels: { en: missingWorkLabel } } ]
-      authors: [ { claims: { 'wdt:P648': [ olId ] } } ]
     createHuman()
     .delay 10
-    .tap (author)-> addClaim author.uri, 'wdt:P648', olId
+    .tap (author)-> addClaim author.uri, 'wdt:P2963', goodReadsId
     .delay 10
     .then (author)->
       Promise.all [
@@ -167,7 +163,10 @@ describe 'entities:resolve:in-context', ->
         createWorkWithAuthor author, otherWorkLabel
       ]
       .spread (work, otherWork)->
-        resolve entry
+        resolve
+          edition: { isbn: generateIsbn13() }
+          works: [ { labels: { en: missingWorkLabel } } ]
+          authors: [ { claims: { 'wdt:P2963': [ goodReadsId ] } } ]
         .get 'results'
         .then (results)->
           should(results[0].works[0].uri).be.ok()
@@ -176,12 +175,12 @@ describe 'entities:resolve:in-context', ->
 
     return
 
-  it 'should not resolve work from resolved author when author have several works with same label', (done)->
-    olId = someOpenLibraryId 'work'
+  it 'should not resolve work from resolved author when author have several works with same labels', (done)->
+    goodReadsId = someGoodReadsId()
     workLabel = randomLabel()
     createHuman()
     .delay 10
-    .tap (author)-> addClaim author.uri, 'wdt:P648', olId
+    .tap (author)-> addClaim author.uri, 'wdt:P2963', goodReadsId
     .delay 10
     .then (author)->
       Promise.all [
@@ -192,35 +191,34 @@ describe 'entities:resolve:in-context', ->
         entry =
           edition: { isbn: generateIsbn13() }
           works: [ { labels: { en: workLabel } } ]
-          authors: [ { claims: { 'wdt:P648': [ olId ] } } ]
+          authors: [ { claims: { 'wdt:P2963': [ goodReadsId ] } } ]
         resolve entry
         .get 'results'
         .then (results)->
-          # if created is true, work was created, not resolved
           should(results[0].works[0].uri).not.be.ok()
-          should(results[0].authors[0].uri).be.ok()
           done()
     .catch done
 
     return
 
   it 'should resolve author from inv author with same label, and an inv work with external id', (done)->
-    olId = someOpenLibraryId 'work'
+    goodReadsId = someGoodReadsId()
     workLabel = randomLabel()
     createHuman()
     .delay 10
     .then (author)->
       createWorkWithAuthor author, workLabel
-      .tap (work)-> addClaim work.uri, 'wdt:P648', olId
+      .tap (work)-> addClaim work.uri, 'wdt:P2969', goodReadsId
       .then (work)->
         entry =
           edition: { isbn: generateIsbn13() }
-          works: [ { claims: { 'wdt:P648': [ olId ] } } ]
+          works: [ { claims: { 'wdt:P2969': [ goodReadsId ] } } ]
           authors: [ { labels: author.labels } ]
         resolve entry
         .get 'results'
         .then (results)->
-          results[0].authors[0].uri.should.equal author.uri
+          should(results[0].works[0].uri).be.ok()
+          should(results[0].authors[0].uri).be.ok()
           done()
     .catch done
 
