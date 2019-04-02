@@ -9,8 +9,8 @@ module.exports = (updateOption, userId, summary)-> (entry)->
   unless updateOption then return entry
 
   updateAuthors authors, userId
-  .then -> updateWorks(works, userId)
-  .then -> updateEdition(edition, userId)
+  .then -> updateWorks works, userId
+  .then -> updateEntityFromEntry edition, userId
   .then -> entry
 
 updateAuthors = (authors, userId)->
@@ -22,10 +22,6 @@ updateWorks = (works, userId)->
   resolvedWorks = _.filter works, 'uri'
   Promise.all resolvedWorks.map (work)->
     updateEntityFromEntry(work, userId)
-
-updateEdition = (edition, userId)->
-  Promise.all edition.map (edition)->
-    updateEntityFromEntry(edition, userId)
 
 updateEntityFromEntry = (entry, userId)->
   { uri, claims:entryClaims } = entry
@@ -42,7 +38,7 @@ updateEntityFromEntry = (entry, userId)->
 
 updateClaims = (entry, userId)-> (currentDoc)->
   currentProps = Object.keys currentDoc.claims
-  newClaims = { }
+  newClaims = {}
 
   _.mapKeys entry.claims, (entryValues, entryProp)->
     unless entryProp in currentProps
@@ -51,4 +47,3 @@ updateClaims = (entry, userId)-> (currentDoc)->
   if _.isEmpty(newClaims) then return
 
   entities_.addClaims userId, newClaims, currentDoc
-
