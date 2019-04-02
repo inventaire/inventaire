@@ -10,7 +10,7 @@ module.exports = (params)->
   _.log params, 'inv entity creation'
 
   validateEntity { labels, claims }
-  .then -> entities_.create()
+  .then -> entities_.createBlank()
   .then (currentDoc)->
     entities_.edit {
       userId,

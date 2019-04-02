@@ -58,7 +58,7 @@ module.exports = entities_ =
         entity: row.id
         property: row.value
 
-  create: ->
+  createBlank: ->
     # Create a new entity doc.
     # This constituts the basis on which next modifications patch
     db.postAndReturn Entity.create()

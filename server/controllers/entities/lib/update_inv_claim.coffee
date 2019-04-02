@@ -7,6 +7,7 @@ radio = __.require 'lib', 'radio'
 retryOnConflict = __.require 'lib', 'retry_on_conflict'
 Entity = __.require 'models', 'entity'
 getEntityType = require './get_entity_type'
+validateClaim = require './validate_claim'
 validateClaimProperty = require './validate_claim_property'
 inferredClaimUpdates = require './inferred_claim_updates'
 
@@ -39,7 +40,7 @@ updateClaim = (params)->
   params.currentClaims = currentDoc.claims
   params.letEmptyValuePass = true
 
-  entities_.validateClaim params
+  validateClaim params
   .then Entity.updateClaim.bind(null, updatedDoc, property, oldVal)
   .then (updatedDoc)-> entities_.putUpdate { userId, currentDoc, updatedDoc }
 
