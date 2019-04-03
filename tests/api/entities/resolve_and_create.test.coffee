@@ -3,7 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
-{ authReq, adminReq, getUser, undesiredErr } = require '../utils/utils'
+{ authReq, adminReq, getUser, undesiredErr, undesiredRes } = require '../utils/utils'
 { getByUris, getHistory } = require '../utils/entities'
 { randomLabel, humanName, generateIsbn13, someGoodReadsId, ensureEditionExists } = require '../fixtures/entities'
 resolveAndCreate = (entry)->
@@ -28,7 +28,7 @@ describe 'entities:resolve:create-unresolved', ->
   it 'should throw when invalid isbn is passed', (done)->
     invalidIsbn = '9780000000000'
     resolveAndCreate
-      edition: [ { isbn: invalidIsbn } ]
+      edition: { isbn: invalidIsbn }
       works: [ { labels: { en: randomLabel() } } ]
     .catch (err)->
       err.body.status_verbose.should.startWith 'invalid isbn'
@@ -39,7 +39,7 @@ describe 'entities:resolve:create-unresolved', ->
 
   it 'should create unresolved edition, work and author (the trinity)', (done)->
     resolveAndCreate
-      edition: [ { isbn: generateIsbn13() } ]
+      edition: { isbn: generateIsbn13() }
       works: [ { labels: { en: randomLabel() } } ]
       authors: [ { labels: { en: humanName() } } ]
     .get 'results'
@@ -58,9 +58,8 @@ describe 'entities:resolve:create-unresolved', ->
 
   it 'should resolve and not create an existing edition', (done)->
     rawIsbn = generateIsbn13()
-    editionSeed = { isbn: rawIsbn }
     ensureEditionExists "isbn:#{rawIsbn}"
-    .then -> resolveAndCreate { edition: [ editionSeed ] }
+    .then ->  resolveAndCreate { edition: { isbn: rawIsbn } }
     .get 'results'
     .then (results)->
       results[0].should.be.an.Object()
@@ -73,7 +72,7 @@ describe 'entities:resolve:create-unresolved', ->
   it 'should create edition with title and isbn', (done)->
     editionLabel = randomLabel()
     resolveAndCreate
-      edition: [ { isbn: generateIsbn13(), claims: { 'wdt:P1476': editionLabel } } ]
+      edition: { isbn: generateIsbn13(), claims: { 'wdt:P1476': editionLabel } }
       works: [ { labels: { en: randomLabel() } } ]
     .get 'results'
     .then (results)->
@@ -97,7 +96,7 @@ describe 'entities:resolve:create-unresolved', ->
   it 'should add optional claims to created edition', (done)->
     frenchLang = 'wd:Q150'
     resolveAndCreate
-      edition: [ { isbn: generateIsbn13(), claims: { 'wdt:P407': [ frenchLang ] } } ]
+      edition: { isbn: generateIsbn13(), claims: { 'wdt:P407': [ frenchLang ] } }
       works: [ { labels: { en: randomLabel() } } ]
     .get 'results'
     .then (results)->
@@ -117,7 +116,7 @@ describe 'entities:resolve:create-unresolved', ->
   it 'should add optional claims to created works', (done)->
     goodReadsId = someGoodReadsId()
     resolveAndCreate
-      edition: [ { isbn: generateIsbn13() } ]
+      edition: { isbn: generateIsbn13() }
       works: [ { claims: { 'wdt:P2969': [ goodReadsId ] }, labels: { en: randomLabel() } } ]
     .get 'results'
     .then (results)->
@@ -137,7 +136,7 @@ describe 'entities:resolve:create-unresolved', ->
   it 'should add optional claims to created authors', (done)->
     goodReadsId = someGoodReadsId()
     resolveAndCreate
-      edition: [ { isbn: generateIsbn13() } ]
+      edition: { isbn: generateIsbn13() }
       works: [ { labels: { en: randomLabel() } } ]
       authors: [ { claims: { 'wdt:P2963': [ goodReadsId ] }, labels: { en: humanName() } } ]
     .get 'results'
@@ -158,7 +157,7 @@ describe 'entities:resolve:create-unresolved', ->
   it 'should add a batch timestamp to patches', (done)->
     startTime = Date.now()
     entry =
-      edition: [ { isbn: generateIsbn13() } ]
+      edition: { isbn: generateIsbn13() }
       works: [ { claims: { 'wdt:P2969': [ someGoodReadsId() ] }, labels: { en: humanName() } } ]
     resolveAndCreate entry
     .get 'results'
@@ -180,8 +179,8 @@ describe 'entities:resolve:create-unresolved', ->
 
   it 'should add created authors to created works', (done)->
     resolveAndCreate
-      edition: [ { isbn: generateIsbn13() } ]
-      works: [ { labels: { en: randomWorkLabel() } } ]
+      edition: { isbn: generateIsbn13() }
+      works: [ { labels: { en: randomLabel() } } ]
       authors: [ { labels: { en: humanName() } } ]
     .get 'results'
     .then (results)->
@@ -195,5 +194,40 @@ describe 'entities:resolve:create-unresolved', ->
         workAuthors.includes(result.authors[0].uri).should.be.true()
       done()
     .catch undesiredErr(done)
+
+    return
+
+  it 'should create a work entity from the edition seed', (done)->
+    title = randomLabel()
+    resolveAndCreate
+      edition:
+        isbn: generateIsbn13()
+        claims: { 'wdt:P1476': [ title ] }
+    .get 'results'
+    .then (results)->
+      result = results[0]
+      workUri = result.works[0].uri
+      getByUris workUri
+      .get 'entities'
+      .then (entities)->
+        work = entities[workUri]
+        work.labels.en.should.equal title
+      done()
+    .catch undesiredErr(done)
+
+    return
+
+  it 'should not create works without labels', (done)->
+    title = randomLabel()
+    resolveAndCreate
+      edition:
+        isbn: generateIsbn13()
+        claims: { 'wdt:P1476': [ title ] }
+      works: [ {} ]
+    .then undesiredRes(done)
+    .catch (err)->
+      err.body.status_verbose.should.startWith 'invalid labels'
+      done()
+    .catch done
 
     return

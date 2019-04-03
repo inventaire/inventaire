@@ -45,7 +45,7 @@ createEdition = (edition, works, userId, batchId)->
   addClaimIfValid claims, 'wdt:P629', relativesUris
 
   if isbn?
-    hyphenatedIsbn = isbn_.toIsbn13h(isbn)
+    hyphenatedIsbn = isbn_.toIsbn13h isbn
     addClaimIfValid claims, 'wdt:P212', [ hyphenatedIsbn ]
 
   unless edition.claims['wdt:P1476']?.length is 1

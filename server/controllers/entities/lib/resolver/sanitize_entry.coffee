@@ -5,6 +5,7 @@ properties = require '../properties/properties_values_constraints'
 responses_ = __.require 'lib', 'responses'
 error_ = __.require 'lib', 'error/error'
 isbn_ = __.require 'lib', 'isbn/isbn'
+wdLang = require 'wikidata-lang'
 
 # Validate : requires only one edition to resolve from and a valid isbn
 # Format : if edition is a list, force pick the first edition
@@ -17,11 +18,14 @@ module.exports = (res)-> (entry)->
 
   if _.isArray(edition) then entry.edition = edition[0]
   authorsSeeds = entry['authors'] ?= []
-  worksSeeds = entry['works'] ?= []
+
+  unless _.isNonEmptyArray entry['works']
+    work = createWorkSeedFromEdition edition
+    entry['works'] = if work? then [ work ] else []
 
   sanitizeEdition res, entry.edition
   sanitizeCollection res, authorsSeeds
-  sanitizeCollection res, worksSeeds
+  sanitizeCollection res, entry.works
   return entry
 
 sanitizeEdition = (res, edition)->
@@ -52,3 +56,12 @@ sanitizeSeed = (res, seed)->
 getIsbn = (edition)->
   if edition.isbn then return edition.isbn
   if edition.claims and edition.claims['wdt:P212'] then edition.claims['wdt:P212']
+
+createWorkSeedFromEdition = (edition)->
+  unless edition.claims?['wdt:P1476']?[0]? then return
+  title = edition.claims['wdt:P1476'][0]
+  langUri = edition.claims['wdt:P407']?[0]
+  if langUri? then lang = wdLang.byWdId[langUri]?.code
+  unless lang? then lang = isbn_.guessLangFromIsbn edition.isbn
+  lang ?= 'en'
+  return { labels: { "#{lang}": title } }
