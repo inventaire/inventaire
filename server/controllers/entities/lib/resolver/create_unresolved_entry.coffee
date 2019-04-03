@@ -22,6 +22,7 @@ createAuthors = (authors, userId, batchId)->
 
     addClaimIfValid claims, 'wdt:P31', [ 'wd:Q5' ]
     createEntityFromSeed author, claims, userId, batchId
+    .then addUriCreated(author)
 
 createWorks = (works, authors, userId, batchId)->
   unresolvedWorks = _.reject works, 'uri'
@@ -32,6 +33,7 @@ createWorks = (works, authors, userId, batchId)->
     addClaimIfValid claims, 'wdt:P31', [ 'wd:Q571' ]
     addClaimIfValid claims, 'wdt:P50', relativesUris
     createEntityFromSeed work, claims, userId, batchId
+    .then addUriCreated(work)
 
 createEdition = (edition, works, userId, batchId)->
   if edition.uri? then return
@@ -53,6 +55,7 @@ createEdition = (edition, works, userId, batchId)->
   # garantee that an edition shall not have label
   edition.labels = {}
   createEntityFromSeed edition, claims, userId, batchId
+  .then addUriCreated(edition)
 
 getRelativeUris = (relatives)-> _.compact _.map(relatives, 'uri')
 
@@ -62,8 +65,7 @@ createEntityFromSeed = (seed, entityClaims, userId, batchId)->
   for property, values of seedClaims
     addClaimIfValid entityClaims, property, values
 
-  createInvEntity { labels, claims, userId, batchId }
-  .then addUriCreated(seed)
+  createInvEntity { labels, claims: entityClaims, userId, batchId }
 
 addUriCreated = (entryEntity)-> (createdEntity)->
   unless createdEntity._id? then return
