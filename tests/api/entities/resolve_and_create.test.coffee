@@ -177,3 +177,23 @@ describe 'entities:resolve:create-unresolved', ->
     .catch undesiredErr(done)
 
     return
+
+  it 'should add created authors to created works', (done)->
+    resolveAndCreate
+      edition: [ { isbn: generateIsbn13() } ]
+      works: [ { labels: { en: randomWorkLabel() } } ]
+      authors: [ { labels: { en: humanName() } } ]
+    .get 'results'
+    .then (results)->
+      result = results[0]
+      workUri = result.works[0].uri
+      getByUris workUri
+      .get 'entities'
+      .then (entities)->
+        work = entities[workUri]
+        workAuthors = work.claims['wdt:P50']
+        workAuthors.includes(result.authors[0].uri).should.be.true()
+      done()
+    .catch undesiredErr(done)
+
+    return
