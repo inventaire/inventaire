@@ -45,45 +45,44 @@ createEdition = (edition, works, userId, batchId)->
     hyphenatedIsbn = isbn_.toIsbn13h(isbn)
     addClaimIfValid claims, 'wdt:P212', [ hyphenatedIsbn ]
 
-  addClaimEditionTitle edition, works, claims
+  unless edition.claims['wdt:P1476']?.length is 1
+    title = buildBestEditionTitle edition, works
+    edition.claims['wdt:P1476'] = [ title ]
 
   # garantee that an edition shall not have label
   edition.labels = {}
   createEntityFromSeed edition, claims, userId, batchId
 
-getRelativeUris = (relatives)->
-  _.compact(_.map(relatives, 'uri'))
+getRelativeUris = (relatives)-> _.compact _.map(relatives, 'uri')
 
-createEntityFromSeed = (entity, claims, userId, batchId)->
-  { labels, claims:entryClaims } = entity
+createEntityFromSeed = (seed, entityClaims, userId, batchId)->
+  { labels, claims: seedClaims } = seed
 
-  for property, values of entryClaims
-    addClaimIfValid claims, property, values
+  for property, values of seedClaims
+    addClaimIfValid entityClaims, property, values
 
   createInvEntity { labels, claims, userId, batchId }
-  .then addUriCreated(entity)
+  .then addUriCreated(seed)
 
 addUriCreated = (entryEntity)-> (createdEntity)->
   unless createdEntity._id? then return
   entryEntity.uri = "inv:#{createdEntity._id}"
   entryEntity.created = true
 
-addClaimEditionTitle = (edition, works, claims)->
-  editionTitle = buildBestEditionTitle(edition, works)
-  unless claims['wdt:P1476']?
-    addClaimIfValid claims, 'wdt:P1476', [ editionTitle ]
-
 buildBestEditionTitle = (edition, works)->
   # return in priority values of wdt:P1476, which shall have only one element
-  if edition.claims['wdt:P1476'] then return edition.claims['wdt:P1476'][0]
-  # return best guess, hyphenate works labels
-  titles = works.map (work)-> _.uniq(_.values(work.labels))
-  _.join(_.uniq(_.flatten(titles)), '-')
+  if edition.claims['wdt:P1476']
+    edition.claims['wdt:P1476'][0]
+  else
+    # return best guess, hyphenate works labels
+    _(works)
+    .map (work)-> _.uniq _.values(work.labels)
+    .flatten()
+    .uniq()
+    .join ' - '
 
 addClaimIfValid = (claims, property, values)->
   for value in values
     if value? and properties[property].validate value
-      if claims[property]?
-        claims[property].push value
-      else
-        claims[property] = [ value ]
+      claims[property] ?= []
+      claims[property].push value
