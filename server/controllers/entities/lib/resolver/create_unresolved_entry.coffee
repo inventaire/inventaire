@@ -34,6 +34,7 @@ createWorks = (works, authors, userId, batchId)->
     createEntityFromSeed work, claims, userId, batchId
 
 createEdition = (edition, works, userId, batchId)->
+  if edition.uri? then return
   relativesUris = getRelativeUris works
   { isbn } = edition
   claims = {}

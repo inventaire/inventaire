@@ -5,9 +5,8 @@ should = require 'should'
 { Promise } = __.require 'lib', 'promises'
 { authReq, adminReq, getUser, undesiredErr } = require '../utils/utils'
 { getByUris, getHistory } = require '../utils/entities'
-{ randomLabel, humanName, generateIsbn13, someOpenLibraryId } = require '../fixtures/entities'
+{ randomLabel, humanName, generateIsbn13, someGoodReadsId, ensureEditionExists } = require '../fixtures/entities'
 resolveAndCreate = (entry)->
-
   authReq 'post', '/api/entities?action=resolve',
     entries: [ entry ]
     create: true
@@ -54,6 +53,20 @@ describe 'entities:resolve:create-unresolved', ->
       should(result.authors[0].uri).be.ok()
       done()
     .catch undesiredErr(done)
+
+    return
+
+  it 'should resolve and not create an existing edition', (done)->
+    rawIsbn = generateIsbn13()
+    editionSeed = { isbn: rawIsbn }
+    ensureEditionExists "isbn:#{rawIsbn}"
+    .then -> resolveAndCreate { edition: [ editionSeed ] }
+    .get 'results'
+    .then (results)->
+      results[0].should.be.an.Object()
+      results[0].edition.uri.should.equal "isbn:#{rawIsbn}"
+      done()
+    .catch done
 
     return
 
