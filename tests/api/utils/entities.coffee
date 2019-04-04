@@ -27,7 +27,9 @@ module.exports = entitiesUtils =
     adminReq 'put', '/api/entities?action=revert-merge', { from }
 
   getHistory: (entityId)->
+    entityId = entityId.replace 'inv:', ''
     nonAuthReq 'get', "/api/entities?action=history&id=#{entityId}"
+    .get 'patches'
 
   updateLabel: (uri, lang, value)->
     uri = normalizeUri uri

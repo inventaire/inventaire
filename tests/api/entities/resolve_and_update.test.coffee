@@ -145,11 +145,9 @@ describe 'entities:resolver:update-resolved', ->
     createWork()
     .tap (work)-> addClaim work.uri, 'wdt:P2969', goodReadsId
     .then (work)->
-      workId = work.uri.split(':')[1]
       resolveAndUpdate entry
       .then ->
-        getHistory workId
-        .get 'patches'
+        getHistory work.uri
         .then (patches)->
           patch = patches.slice(-1)[0]
           patch.batch.should.be.a.Number()

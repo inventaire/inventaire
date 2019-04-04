@@ -164,9 +164,7 @@ describe 'entities:resolve:create-unresolved', ->
     .then (results)->
       result = results[0]
       { uri: editionUri } = result.edition
-      editionId = editionUri.split(':')[1]
-      getHistory editionId
-      .get 'patches'
+      getHistory editionUri
       .then (patches)->
         patch = patches[0]
         patch.batch.should.be.a.Number()
