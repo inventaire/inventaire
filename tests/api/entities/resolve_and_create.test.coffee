@@ -197,10 +197,13 @@ describe 'entities:resolve:create-unresolved', ->
 
   it 'should create a work entity from the edition seed', (done)->
     title = randomLabel()
+    title = randomLabel()
+    dutchLangUri = 'wd:Q7411'
+    dutchLangCode = 'nl'
     resolveAndCreate
       edition:
         isbn: generateIsbn13()
-        claims: { 'wdt:P1476': [ title ] }
+        claims: { 'wdt:P1476': [ title ], 'wdt:P407': [ dutchLangUri ] }
     .get 'entries'
     .then (entries)->
       result = entries[0]
@@ -209,7 +212,7 @@ describe 'entities:resolve:create-unresolved', ->
       .get 'entities'
       .then (entities)->
         work = entities[workUri]
-        work.labels.en.should.equal title
+        work.labels[dutchLangCode].should.equal title
       done()
     .catch undesiredErr(done)
 
