@@ -27,7 +27,7 @@ module.exports = (req, res)->
     resolvedEntries = []
     Promise.all params.entries.map(sanitizeEntry(res))
     .then (entries)-> sequentialResolve(entries, resolvedEntries, batchId, params)
-  .then responses_.Wrap(res, 'results')
+  .then responses_.Wrap(res, 'entries')
   .catch error_.Handler(req, res)
 
 sequentialResolve = (entries, resolvedEntries, batchId, params)->

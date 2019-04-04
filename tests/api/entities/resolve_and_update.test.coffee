@@ -24,10 +24,10 @@ describe 'entities:resolver:update-resolved', ->
     ]
     .spread (workA, workB)->
       resolveAndUpdate [ entryA, entryB ]
-      .get 'results'
-      .then (results)->
-        workAUri = results[0].works[0].uri
-        workBUri = results[1].works[0].uri
+      .get 'entries'
+      .then (entries)->
+        workAUri = entries[0].works[0].uri
+        workBUri = entries[1].works[0].uri
         getByUris [ workAUri, workBUri ]
         .get 'entities'
         .then (entities)->
@@ -56,9 +56,9 @@ describe 'entities:resolver:update-resolved', ->
     .tap (work)-> addClaim work.uri, 'wdt:P50', authorUri2
     .then (work)->
       resolveAndUpdate entry
-      .get 'results'
-      .then (results)->
-        entityUri = results[0].works[0].uri
+      .get 'entries'
+      .then (entries)->
+        entityUri = entries[0].works[0].uri
         getByUris(entityUri)
         .get 'entities'
         .then (entities)->
@@ -83,9 +83,9 @@ describe 'entities:resolver:update-resolved', ->
     .tap (human)-> addClaim human.uri, 'wdt:P2963', goodReadsId
     .then (human)->
       resolveAndUpdate entry
-      .get 'results'
-      .then (results)->
-        authorUri = results[0].authors[0].uri
+      .get 'entries'
+      .then (entries)->
+        authorUri = entries[0].authors[0].uri
         authorUri.should.equal human.uri
         getByUris authorUri
         .get 'entities'
@@ -116,9 +116,9 @@ describe 'entities:resolver:update-resolved', ->
           claims: { 'wdt:P1104': numberOfPages }
         ]
       resolveAndUpdate entry
-      .get 'results'
+      .get 'entries'
       .delay 10
-      .then (results)->
+      .then (entries)->
         getByUris editionUri
         .get 'entities'
         .then (entities)->

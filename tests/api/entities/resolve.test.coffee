@@ -18,10 +18,10 @@ describe 'entities:resolve', ->
     entry = { edition: editionSeed }
     ensureEditionExists "isbn:#{rawIsbn}"
     .then -> resolve entry
-    .get 'results'
-    .then (results)->
-      results[0].should.be.an.Object()
-      results[0].edition.uri.should.equal "isbn:#{rawIsbn}"
+    .get 'entries'
+    .then (entries)->
+      entries[0].should.be.an.Object()
+      entries[0].edition.uri.should.equal "isbn:#{rawIsbn}"
       done()
     .catch done
 
@@ -37,12 +37,12 @@ describe 'entities:resolve', ->
       ensureEditionExists "isbn:#{rawIsbnB}"
     ]
     .then -> resolve [ entryA, entryB ]
-    .get 'results'
-    .then (results)->
-      results[0].should.be.an.Object()
-      results[0].edition.uri.should.equal "isbn:#{rawIsbnA}"
-      results[1].should.be.an.Object()
-      results[1].edition.uri.should.equal "isbn:#{rawIsbnB}"
+    .get 'entries'
+    .then (entries)->
+      entries[0].should.be.an.Object()
+      entries[0].edition.uri.should.equal "isbn:#{rawIsbnA}"
+      entries[1].should.be.an.Object()
+      entries[1].edition.uri.should.equal "isbn:#{rawIsbnB}"
       done()
     .catch done
 
@@ -105,11 +105,11 @@ describe 'entities:resolve:external-id', ->
           'wdt:P2963': [ 'OL52556W' ]
           'wdt:P1085': [ '28158' ]
       ]
-    .get 'results'
-    .then (results)->
-      results[0].works.should.be.an.Array()
-      results[0].works[0].should.be.an.Object()
-      results[0].works[0].uri.should.equal 'wd:Q151883'
+    .get 'entries'
+    .then (entries)->
+      entries[0].works.should.be.an.Array()
+      entries[0].works[0].should.be.an.Object()
+      entries[0].works[0].uri.should.equal 'wd:Q151883'
       done()
     .catch done
 
@@ -124,11 +124,11 @@ describe 'entities:resolve:external-id', ->
       resolve
         edition: { isbn: generateIsbn13() }
         works: [ { claims: { 'wdt:P2969': [ goodReadsId ] } } ]
-      .get 'results'
-      .then (results)->
-        results[0].works.should.be.an.Array()
-        results[0].works[0].should.be.an.Object()
-        results[0].works[0].uri.should.equal work.uri
+      .get 'entries'
+      .then (entries)->
+        entries[0].works.should.be.an.Array()
+        entries[0].works[0].should.be.an.Object()
+        entries[0].works[0].uri.should.equal work.uri
         done()
     .catch done
 
@@ -141,11 +141,11 @@ describe 'entities:resolve:external-id', ->
         claims:
           'wdt:P648': [ 'OL28127A' ]
       ]
-    .get 'results'
-    .then (results)->
-      results[0].authors.should.be.an.Array()
-      results[0].authors[0].should.be.an.Object()
-      results[0].authors[0].uri.should.equal 'wd:Q16867'
+    .get 'entries'
+    .then (entries)->
+      entries[0].authors.should.be.an.Array()
+      entries[0].authors[0].should.be.an.Object()
+      entries[0].authors[0].uri.should.equal 'wd:Q16867'
       done()
     .catch done
 
@@ -161,11 +161,11 @@ describe 'entities:resolve:external-id', ->
       resolve
         edition: { isbn: generateIsbn13() }
         authors: [ { claims: { 'wdt:P2963': [ goodReadsId ] } } ]
-      .get 'results'
-      .then (results)->
-        results[0].authors.should.be.an.Array()
-        results[0].authors[0].should.be.an.Object()
-        results[0].authors[0].uri.should.equal author.uri
+      .get 'entries'
+      .then (entries)->
+        entries[0].authors.should.be.an.Array()
+        entries[0].authors[0].should.be.an.Object()
+        entries[0].authors[0].uri.should.equal author.uri
         done()
     .catch done
 
@@ -190,9 +190,9 @@ describe 'entities:resolve:in-context', ->
           edition: { isbn: generateIsbn13() }
           works: [ { labels: { en: missingWorkLabel } } ]
           authors: [ { claims: { 'wdt:P2963': [ goodReadsId ] } } ]
-        .get 'results'
-        .then (results)->
-          should(results[0].works[0].uri).be.ok()
+        .get 'entries'
+        .then (entries)->
+          should(entries[0].works[0].uri).be.ok()
           done()
     .catch done
 
@@ -216,9 +216,9 @@ describe 'entities:resolve:in-context', ->
           works: [ { labels: { en: workLabel } } ]
           authors: [ { claims: { 'wdt:P2963': [ goodReadsId ] } } ]
         resolve entry
-        .get 'results'
-        .then (results)->
-          should(results[0].works[0].uri).not.be.ok()
+        .get 'entries'
+        .then (entries)->
+          should(entries[0].works[0].uri).not.be.ok()
           done()
     .catch done
 
@@ -238,10 +238,10 @@ describe 'entities:resolve:in-context', ->
           works: [ { claims: { 'wdt:P2969': [ goodReadsId ] } } ]
           authors: [ { labels: author.labels } ]
         resolve entry
-        .get 'results'
-        .then (results)->
-          should(results[0].works[0].uri).be.ok()
-          should(results[0].authors[0].uri).be.ok()
+        .get 'entries'
+        .then (entries)->
+          should(entries[0].works[0].uri).be.ok()
+          should(entries[0].authors[0].uri).be.ok()
           done()
     .catch done
 
@@ -257,10 +257,10 @@ describe 'entities:resolve:on-labels', ->
       .delay 5000 # update elasticSearch
       .then (work)->
         resolve basicEntry(workLabel, authorLabel)
-        .get 'results'
-        .then (results)->
-          results[0].works[0].uri.should.equal work.uri
-          results[0].authors[0].uri.should.equal author.uri
+        .get 'entries'
+        .then (entries)->
+          entries[0].works[0].uri.should.equal work.uri
+          entries[0].authors[0].uri.should.equal author.uri
           done()
     .catch done
 
@@ -279,10 +279,10 @@ describe 'entities:resolve:on-labels', ->
         .delay 5000 # update elasticSearch
         .then (works)->
           resolve basicEntry(workLabel, author.labels.en)
-          .get 'results'
-          .then (results)->
-            should(results[0].works[0].uri).not.be.ok()
-            should(results[0].authors[0].uri).not.be.ok()
+          .get 'entries'
+          .then (entries)->
+            should(entries[0].works[0].uri).not.be.ok()
+            should(entries[0].authors[0].uri).not.be.ok()
             done()
     .catch done
 
