@@ -9,34 +9,50 @@ isbn_ = __.require 'lib', 'isbn/isbn'
 module.exports = (userId, batchId)-> (entry)->
   { edition, works, authors } = entry
 
-  createAuthors authors, userId, batchId
-  .then -> createWorks works, authors, userId, batchId
-  .then -> createEdition edition, works, userId, batchId
+  createAuthors entry, userId, batchId
+  .then -> createWorks entry, userId, batchId
+  .then -> createEdition entry, userId, batchId
   .then -> entry
 
-createAuthors = (authors, userId, batchId)->
-  unresolvedAuthors = _.reject authors, 'uri'
-  Promise.all unresolvedAuthors.map (author)->
-    claims = {}
+createAuthors = (entry, userId, batchId)->
+  { authors } = entry
+  Promise.all authors.map(createAuthor(userId, batchId))
 
-    addClaimIfValid claims, 'wdt:P31', [ 'wd:Q5' ]
-    createEntityFromSeed author, claims, userId, batchId
-    .then addUriCreated(author)
+createAuthor = (userId, batchId)-> (author)->
+  if author.uri? then return author
+  claims = {}
 
-createWorks = (works, authors, userId, batchId)->
-  unresolvedWorks = _.reject works, 'uri'
-  relativesUris = getRelativeUris authors
-  Promise.all unresolvedWorks.map (work)->
-    claims = {}
+  addClaimIfValid claims, 'wdt:P31', [ 'wd:Q5' ]
+  createSeed author, claims, userId, batchId
 
-    addClaimIfValid claims, 'wdt:P31', [ 'wd:Q571' ]
-    addClaimIfValid claims, 'wdt:P50', relativesUris
-    createEntityFromSeed work, claims, userId, batchId
-    .then addUriCreated(work)
+createSeed = (seed, claims, userId, batchId)->
+  createInvEntity {
+    labels: seed.labels,
+    claims: buildClaims(seed.claims, claims),
+    userId,
+    batchId
+  }
+  .then addCreatedUriToSeed(seed)
 
-createEdition = (edition, works, userId, batchId)->
-  if edition.uri? then return
-  relativesUris = getRelativeUris works
+createWorks = (entry, userId, batchId)->
+  { works, authors } = entry
+  Promise.all works.map(createWork(userId, batchId, authors))
+
+createWork = (userId, batchId, relatives)-> (work)->
+  relativesUris = getUris relatives
+
+  if work.uri? then return work
+  claims = {}
+
+  addClaimIfValid claims, 'wdt:P31', [ 'wd:Q571' ]
+  addClaimIfValid claims, 'wdt:P50', relativesUris
+  createSeed work, claims, userId, batchId
+
+createEdition = (entry, userId, batchId)->
+  { edition, works } = entry
+
+  if edition.uri? then return Promise.resolve()
+  relativesUris = getUris works
   { isbn } = edition
   claims = {}
 
@@ -53,20 +69,17 @@ createEdition = (edition, works, userId, batchId)->
 
   # garantee that an edition shall not have label
   edition.labels = {}
-  createEntityFromSeed edition, claims, userId, batchId
-  .then addUriCreated(edition)
 
-getRelativeUris = (relatives)-> _.compact _.map(relatives, 'uri')
+  createSeed edition, claims, userId, batchId
 
-createEntityFromSeed = (seed, entityClaims, userId, batchId)->
-  { labels, claims: seedClaims } = seed
+getUris = (relatives)-> _.compact _.map(relatives, 'uri')
 
+buildClaims = (seedClaims, entityClaims)->
   for property, values of seedClaims
     addClaimIfValid entityClaims, property, values
+  return entityClaims
 
-  createInvEntity { labels, claims: entityClaims, userId, batchId }
-
-addUriCreated = (entryEntity)-> (createdEntity)->
+addCreatedUriToSeed = (entryEntity)-> (createdEntity)->
   unless createdEntity._id? then return
   entryEntity.uri = "inv:#{createdEntity._id}"
   entryEntity.created = true
