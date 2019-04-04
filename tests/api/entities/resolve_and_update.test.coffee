@@ -45,7 +45,7 @@ describe 'entities:resolver:update-resolved', ->
     authorUri = 'wd:Q35802'
     authorUri2 = 'wd:Q184226'
     entry =
-      edition: [ { isbn: generateIsbn13() } ]
+      edition: { isbn: generateIsbn13() }
       works: [
         claims:
           'wdt:P2969': [ goodReadsId ],
@@ -73,7 +73,7 @@ describe 'entities:resolver:update-resolved', ->
     goodReadsId = someGoodReadsId()
     officialWebsite = 'http://Q35802.org'
     entry =
-      edition: [ { isbn: generateIsbn13() } ]
+      edition: { isbn: generateIsbn13() }
       authors: [
         claims:
           'wdt:P2963': [ goodReadsId ],
@@ -111,10 +111,9 @@ describe 'entities:resolver:update-resolved', ->
         'wdt:P1476': [ title ]
     .then (edition)->
       entry =
-        edition: [
+        edition:
           isbn: isbn
           claims: { 'wdt:P1104': numberOfPages }
-        ]
       resolveAndUpdate entry
       .get 'entries'
       .delay 10
@@ -161,7 +160,7 @@ describe 'entities:resolver:update-resolved', ->
     return
 
 someEntryWithAGoodReadsWorkId = ->
-  edition: [ { isbn: generateIsbn13() } ]
+  edition: { isbn: generateIsbn13() }
   works: [
     claims:
       'wdt:P2969': [ someGoodReadsId() ],
