@@ -16,7 +16,11 @@ module.exports = (res)-> (entry)->
   unless edition?
     throw error_.new 'missing edition in entry', 400, entry
 
-  if _.isArray(edition) then entry.edition = edition[0]
+  if _.isArray edition
+    if edition.length > 1
+      responses_.addWarning res, 'resolver', 'multiple editions not supported, picked the first one'
+    entry.edition = edition[0]
+
   authorsSeeds = entry['authors'] ?= []
 
   unless _.isNonEmptyArray entry['works']
