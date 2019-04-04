@@ -7,19 +7,42 @@ should = require 'should'
 { createWork, createEdition, createHuman, someGoodReadsId, createWorkWithAuthor, generateIsbn13 } = require '../fixtures/entities'
 { addClaim } = require '../utils/entities'
 { ensureEditionExists, randomLabel, humanName } = require '../fixtures/entities'
-resolve = (entry)-> authReq 'post', '/api/entities?action=resolve', { entries: [ entry ] }
+resolve = (entries)->
+  entries = _.forceArray entries
+  authReq 'post', '/api/entities?action=resolve', { entries }
 
 describe 'entities:resolve', ->
   it 'should resolve an edition entry from an ISBN', (done)->
     rawIsbn = generateIsbn13()
     editionSeed = { isbn: rawIsbn }
-    entry = { edition: [ editionSeed ] }
+    entry = { edition: editionSeed }
     ensureEditionExists "isbn:#{rawIsbn}"
     .then -> resolve entry
     .get 'results'
     .then (results)->
       results[0].should.be.an.Object()
       results[0].edition.uri.should.equal "isbn:#{rawIsbn}"
+      done()
+    .catch done
+
+    return
+
+  it 'should resolve multiple entries', (done)->
+    rawIsbnA = generateIsbn13()
+    rawIsbnB = generateIsbn13()
+    entryA = { edition: { isbn: rawIsbnA } }
+    entryB = { edition: { isbn: rawIsbnB } }
+    Promise.all [
+      ensureEditionExists "isbn:#{rawIsbnA}"
+      ensureEditionExists "isbn:#{rawIsbnB}"
+    ]
+    .then -> resolve [ entryA, entryB ]
+    .get 'results'
+    .then (results)->
+      results[0].should.be.an.Object()
+      results[0].edition.uri.should.equal "isbn:#{rawIsbnA}"
+      results[1].should.be.an.Object()
+      results[1].edition.uri.should.equal "isbn:#{rawIsbnB}"
       done()
     .catch done
 
@@ -99,7 +122,7 @@ describe 'entities:resolve:external-id', ->
     .delay 10
     .then (work)->
       resolve
-        edition: [ { isbn: generateIsbn13() } ]
+        edition: { isbn: generateIsbn13() }
         works: [ { claims: { 'wdt:P2969': [ goodReadsId ] } } ]
       .get 'results'
       .then (results)->
@@ -136,7 +159,7 @@ describe 'entities:resolve:external-id', ->
     .delay 10
     .then (author)->
       resolve
-        edition: [ { isbn: generateIsbn13() } ]
+        edition: { isbn: generateIsbn13() }
         authors: [ { claims: { 'wdt:P2963': [ goodReadsId ] } } ]
       .get 'results'
       .then (results)->
@@ -266,7 +289,6 @@ describe 'entities:resolve:on-labels', ->
     return
 
 basicEntry = (workLabel, authorLabel) ->
-  return
-    edition: { isbn: generateIsbn13() },
-    works: [ { labels: { en: workLabel } } ],
-    authors: [ { labels: { en: authorLabel } } ]
+  edition: { isbn: generateIsbn13() },
+  works: [ { labels: { en: workLabel } } ],
+  authors: [ { labels: { en: authorLabel } } ]
