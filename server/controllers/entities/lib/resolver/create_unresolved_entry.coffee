@@ -6,8 +6,7 @@ createInvEntity = require '../create_inv_entity'
 properties = require '../properties/properties_values_constraints'
 isbn_ = __.require 'lib', 'isbn/isbn'
 
-module.exports = (createOption, userId, batchId)-> (entry)->
-  unless createOption then return entry
+module.exports = (userId, batchId)-> (entry)->
   { edition, works, authors } = entry
 
   createAuthors authors, userId, batchId

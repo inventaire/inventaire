@@ -7,8 +7,8 @@ responses_ = __.require 'lib', 'responses'
 sanitize = __.require 'lib', 'sanitize/sanitize'
 sanitizeEntry = require './lib/resolver/sanitize_entry'
 resolve = require './lib/resolver/resolve'
-createUnresolvedEntry = require './lib/resolver/create_unresolved_entry'
-updateResolvedEntry = require './lib/resolver/update_resolved_entry'
+UpdateResolvedEntry = require './lib/resolver/update_resolved_entry'
+CreateUnresolvedEntry = require './lib/resolver/create_unresolved_entry'
 
 sanitization =
   entries:
@@ -23,20 +23,27 @@ sanitization =
 module.exports = (req, res)->
   sanitize req, res, sanitization
   .then (params)->
-    batchId = Date.now()
+    params.batchId = Date.now()
     resolvedEntries = []
-    Promise.all params.entries.map(sanitizeEntry(res))
-    .then (entries)-> sequentialResolve(entries, resolvedEntries, batchId, params)
+    entries = params.entries.map(sanitizeEntry(res))
+    sequentialResolve entries, buildUpdateFn(params), buildCreateFn(params), resolvedEntries
   .then responses_.Wrap(res, 'entries')
   .catch error_.Handler(req, res)
 
-sequentialResolve = (entries, resolvedEntries, batchId, params)->
-  { create, update, reqUserId } = params
+sequentialResolve = (entries, updateResolvedEntry, createUnresolvedEntry, resolvedEntries)->
   nextEntry = entries.shift()
   unless nextEntry? then return resolvedEntries
 
   resolve nextEntry
-  .then updateResolvedEntry(update, reqUserId, batchId)
-  .then createUnresolvedEntry(create, reqUserId, batchId)
+  .then updateResolvedEntry
+  .then createUnresolvedEntry
   .then (entry)-> resolvedEntries.push entry
-  .then -> sequentialResolve entries, resolvedEntries, batchId, params
+  .then -> sequentialResolve entries, updateResolvedEntry, createUnresolvedEntry, resolvedEntries
+
+buildUpdateFn = (params)->
+  { update, reqUserId, batchId } = params
+  if update then UpdateResolvedEntry reqUserId, batchId else _.identity
+
+buildCreateFn = (params)->
+  { create, reqUserId, batchId } = params
+  if create then CreateUnresolvedEntry reqUserId, batchId else _.identity

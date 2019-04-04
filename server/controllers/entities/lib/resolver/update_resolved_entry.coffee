@@ -4,9 +4,8 @@ _ = __.require 'builders', 'utils'
 { Promise } = __.require 'lib', 'promises'
 entities_ = require '../entities'
 
-module.exports = (updateOption, userId, batchId)-> (entry)->
+module.exports = (userId, batchId)-> (entry)->
   { edition, works, authors } = entry
-  unless updateOption then return entry
 
   updateAuthors authors, userId, batchId
   .then -> updateWorks works, userId, batchId
