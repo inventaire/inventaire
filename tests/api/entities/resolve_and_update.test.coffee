@@ -6,35 +6,35 @@ should = require 'should'
 { authReq, undesiredErr, undesiredRes } = require '../utils/utils'
 { getByUris, addClaim, getHistory } = require '../utils/entities'
 { createWork, createHuman, ensureEditionExists, someGoodReadsId, randomLabel, generateIsbn13 } = require '../fixtures/entities'
-resolveAndUpdate = (entry)->
+resolveAndUpdate = (entries)->
+  entries = _.forceArray entries
   authReq 'post', '/api/entities?action=resolve',
-    entries: [ entry ]
+    entries: entries
     update: true
 
 describe 'entities:resolver:update-resolved', ->
   it 'should update works claim values if property does not exist', (done)->
-    goodReadsId = someGoodReadsId()
-    authorUri = 'wd:Q35802'
-    authorUri2 = 'wd:Q184226'
-    entry =
-      edition: [ { isbn: generateIsbn13() } ]
-      works: [
-        claims:
-          'wdt:P2969': [ goodReadsId ],
-          'wdt:P50': [ authorUri, authorUri2 ]
-      ]
-    createWork()
-    .tap (work)-> addClaim work.uri, 'wdt:P2969', goodReadsId
-    .then (work)->
-      resolveAndUpdate entry
+    entryA = someEntryWithAGoodReadsWorkId()
+    entryB = someEntryWithAGoodReadsWorkId()
+    goodReadsIdA = entryA.works[0].claims['wdt:P2969'][0]
+    goodReadsIdB = entryB.works[0].claims['wdt:P2969'][0]
+    Promise.all [
+      createWork().tap (work)-> addClaim work.uri, 'wdt:P2969', goodReadsIdA
+      createWork().tap (work)-> addClaim work.uri, 'wdt:P2969', goodReadsIdB
+    ]
+    .spread (workA, workB)->
+      resolveAndUpdate [ entryA, entryB ]
       .get 'results'
       .then (results)->
-        entityUri = results[0].works[0].uri
-        getByUris(entityUri).get 'entities'
+        workAUri = results[0].works[0].uri
+        workBUri = results[1].works[0].uri
+        getByUris [ workAUri, workBUri ]
+        .get 'entities'
         .then (entities)->
-          authorClaimValues = _.values(entities)[0].claims['wdt:P50']
-          authorClaimValues.should.containEql authorUri
-          authorClaimValues.should.containEql authorUri2
+          workA = entities[workAUri]
+          workB = entities[workBUri]
+          workA.claims['wdt:P50'][0].should.equal entryA.works[0].claims['wdt:P50'][0]
+          workB.claims['wdt:P50'][0].should.equal entryB.works[0].claims['wdt:P50'][0]
           done()
     .catch done
 
@@ -132,28 +132,38 @@ describe 'entities:resolver:update-resolved', ->
 
   it 'should add a batch timestamp to patches', (done)->
     startTime = Date.now()
-    goodReadsId = someGoodReadsId()
-    authorUri = 'wd:Q35802'
-    authorUri2 = 'wd:Q184226'
-    entry =
-      edition: [ { isbn: generateIsbn13() } ]
-      works: [
-        claims:
-          'wdt:P2969': [ goodReadsId ],
-          'wdt:P50': [ authorUri, authorUri2 ]
-      ]
-    createWork()
-    .tap (work)-> addClaim work.uri, 'wdt:P2969', goodReadsId
-    .then (work)->
-      resolveAndUpdate entry
+    entryA = someEntryWithAGoodReadsWorkId()
+    entryB = someEntryWithAGoodReadsWorkId()
+    goodReadsIdA = entryA.works[0].claims['wdt:P2969'][0]
+    goodReadsIdB = entryB.works[0].claims['wdt:P2969'][0]
+    Promise.all [
+      createWork().tap (work)-> addClaim work.uri, 'wdt:P2969', goodReadsIdA
+      createWork().tap (work)-> addClaim work.uri, 'wdt:P2969', goodReadsIdB
+    ]
+    .spread (workA, workB)->
+      resolveAndUpdate [ entryA, entryB ]
       .then ->
-        getHistory work.uri
-        .then (patches)->
-          patch = patches.slice(-1)[0]
-          patch.batch.should.be.a.Number()
-          patch.batch.should.above startTime
-          patch.batch.should.below Date.now()
+        Promise.all [
+          getHistory workA.uri
+          getHistory workB.uri
+        ]
+        .spread (workAPatches, workBPatches)->
+          lastWorkAPatch = workAPatches.slice(-1)[0]
+          lastWorkBPatch = workBPatches.slice(-1)[0]
+          lastWorkBPatch.batch.should.equal lastWorkAPatch.batch
+          { batch: batchId } = lastWorkAPatch
+          batchId.should.be.a.Number()
+          batchId.should.above startTime
+          batchId.should.below Date.now()
           done()
     .catch undesiredErr(done)
 
     return
+
+someEntryWithAGoodReadsWorkId = ->
+  edition: [ { isbn: generateIsbn13() } ]
+  works: [
+    claims:
+      'wdt:P2969': [ someGoodReadsId() ],
+      'wdt:P50': [ 'wd:Q35802' ]
+  ]
