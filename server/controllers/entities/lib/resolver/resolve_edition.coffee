@@ -1,19 +1,18 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-{ Promise } = __.require 'lib', 'promises'
-getEntitiesByIsbns = require '../get_entities_by_isbns'
+entities_ = require '../entities'
+getInvEntityCanonicalUri = require '../get_inv_entity_canonical_uri'
 
 module.exports = (entry)->
-  { edition } = entry
-  { isbn } = edition
+  { isbn } = entry.edition
 
-  unless isbn? then return Promise.resolved
-
-  getEntitiesByIsbns [ isbn ], refresh = {}
-  .then (res)->
-    { entities } = res
-    if entities.length is 1
-      # return only one uri, as entity isbn should be unique
-      entry.edition.uri = entities[0].uri
+  # Resolve directly on the database to avoid making undersired requests to dataseed
+  entities_.byIsbn isbn
+  .then addEditionUri(entry)
   .then -> entry
+
+addEditionUri = (entry)-> (doc)->
+  if doc?
+    editionUri = getInvEntityCanonicalUri(doc)[0]
+    entry.edition.uri = editionUri
