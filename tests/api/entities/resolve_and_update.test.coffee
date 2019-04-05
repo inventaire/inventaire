@@ -13,7 +13,36 @@ resolveAndUpdate = (entries)->
     update: true
 
 describe 'entities:resolver:update-resolved', ->
-  it 'should update works claim values if property does not exist', (done)->
+  it 'should not update entity claim values if property exists', (done)->
+    goodReadsId = someGoodReadsId()
+    authorUri = 'wd:Q35802'
+    authorUri2 = 'wd:Q184226'
+    entry =
+      edition: { isbn: generateIsbn13() }
+      works: [
+        claims:
+          'wdt:P2969': [ goodReadsId ],
+          'wdt:P50': [ authorUri ]
+      ]
+    createWork()
+    .tap (work)-> addClaim work.uri, 'wdt:P2969', goodReadsId
+    .tap (work)-> addClaim work.uri, 'wdt:P50', authorUri2
+    .then (work)->
+      resolveAndUpdate entry
+      .get 'entries'
+      .then (entries)->
+        entityUri = entries[0].works[0].uri
+        getByUris(entityUri)
+        .get 'entities'
+        .then (entities)->
+          workAuthorsUris = _.values(entities)[0].claims['wdt:P50']
+          workAuthorsUris.should.not.containEql authorUri
+          done()
+    .catch done
+
+    return
+
+  it 'should update entities claims values if property does not exist', (done)->
     entryA = someEntryWithAGoodReadsWorkId()
     entryB = someEntryWithAGoodReadsWorkId()
     goodReadsIdA = entryA.works[0].claims['wdt:P2969'][0]
@@ -40,36 +69,7 @@ describe 'entities:resolver:update-resolved', ->
 
     return
 
-  it 'should not update works claim values if property exists', (done)->
-    goodReadsId = someGoodReadsId()
-    authorUri = 'wd:Q35802'
-    authorUri2 = 'wd:Q184226'
-    entry =
-      edition: { isbn: generateIsbn13() }
-      works: [
-        claims:
-          'wdt:P2969': [ goodReadsId ],
-          'wdt:P50': [ authorUri ]
-      ]
-    createWork()
-    .tap (work)-> addClaim work.uri, 'wdt:P2969', goodReadsId
-    .tap (work)-> addClaim work.uri, 'wdt:P50', authorUri2
-    .then (work)->
-      resolveAndUpdate entry
-      .get 'entries'
-      .then (entries)->
-        entityUri = entries[0].works[0].uri
-        getByUris(entityUri)
-        .get 'entities'
-        .then (entities)->
-          authorClaimValues = _.values(entities)[0].claims['wdt:P50']
-          authorClaimValues.should.not.containEql authorUri
-          done()
-    .catch done
-
-    return
-
-  it 'should update authors claim values', (done)->
+  it 'should update authors claims', (done)->
     goodReadsId = someGoodReadsId()
     officialWebsite = 'http://Q35802.org'
     entry =

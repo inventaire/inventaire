@@ -9,41 +9,43 @@ module.exports = (userId, batchId)-> (entry)->
 
   updateAuthors authors, userId, batchId
   .then -> updateWorks works, userId, batchId
-  .then -> updateEntityFromEntry edition, userId, batchId
+  .then -> updateEntityFromSeed(userId, batchId)(edition)
   .then -> entry
 
 updateAuthors = (authors, userId, batchId)->
   resolvedAuthors = _.filter authors, 'uri'
-  Promise.all resolvedAuthors.map (author)->
-    updateEntityFromEntry(author, userId, batchId)
+  Promise.all resolvedAuthors.map updateEntityFromSeed(userId, batchId)
 
 updateWorks = (works, userId, batchId)->
   resolvedWorks = _.filter works, 'uri'
-  Promise.all resolvedWorks.map (work)->
-    updateEntityFromEntry(work, userId, batchId)
+  Promise.all resolvedWorks.map updateEntityFromSeed(userId, batchId)
 
-updateEntityFromEntry = (entry, userId, batchId)->
-  { uri, claims:entryClaims } = entry
+updateEntityFromSeed = (userId, batchId)-> (seed)->
+  { uri, claims:seedClaims } = seed
   unless uri then return
-  [ prefix, entityId ] = uri.split ':'
-  # Skip wd uris, to update only inventaire entities for the moment
-  if prefix is 'wd' then return
 
+  getEntity uri
+  .then updateClaims(seedClaims, userId, batchId)
+
+getEntity = (uri)->
+  [ prefix, entityId ] = uri.split ':'
+  # Skip wikidata entities for the moment
+  if prefix is 'wd' then return
   if prefix is 'isbn'
     entities_.byIsbn entityId
-    .then updateClaims(entry, userId, batchId)
   else
     entities_.byId entityId
-    .then updateClaims(entry, userId, batchId)
 
-updateClaims = (entry, userId, batchId)-> (currentDoc)->
-  currentProps = Object.keys currentDoc.claims
+updateClaims = (seedClaims, userId, batchId)-> (entity)->
+  entityProps = Object.keys entity.claims
   newClaims = {}
 
-  _.mapKeys entry.claims, (entryValues, entryProp)->
-    unless entryProp in currentProps
-      newClaims[entryProp] = entryValues
+  _.mapKeys seedClaims, (seedValues, seedProp)->
+    # do not update if property already exists
+    # known cases: avoid updating authors who are actually edition translators
+    unless seedProp in entityProps
+      newClaims[seedProp] = seedValues
 
   if _.isEmpty(newClaims) then return
 
-  entities_.addClaims userId, newClaims, currentDoc, batchId
+  entities_.addClaims userId, newClaims, entity, batchId
