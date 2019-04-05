@@ -4,6 +4,7 @@ _ = __.require 'builders', 'utils'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
 { authReq, undesiredRes, undesiredErr } = require '../utils/utils'
+elasticsearchUpdateDelay = CONFIG.entitiesSearchEngine.elasticsearchUpdateDelay or 1000
 { createWork, createEdition, createHuman, someGoodReadsId, createWorkWithAuthor, generateIsbn13 } = require '../fixtures/entities'
 { addClaim } = require '../utils/entities'
 { ensureEditionExists, randomLabel, humanName } = require '../fixtures/entities'
@@ -264,7 +265,7 @@ describe 'entities:resolve:on-labels', ->
       workLabel = randomLabel()
       authorLabel = author.labels.en
       createWorkWithAuthor author, workLabel
-      .delay 5000 # update elasticSearch
+      .delay elasticsearchUpdateDelay # update elasticSearch
       .then (work)->
         resolve basicEntry(workLabel, authorLabel)
         .get 'entries'
@@ -286,7 +287,7 @@ describe 'entities:resolve:on-labels', ->
           createWorkWithAuthor author, workLabel
           createWorkWithAuthor sameLabelAuthor, workLabel
         ]
-        .delay 5000 # update elasticSearch
+        .delay elasticsearchUpdateDelay # update elasticSearch
         .then (works)->
           resolve basicEntry(workLabel, author.labels.en)
           .get 'entries'
