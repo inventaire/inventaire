@@ -13,7 +13,7 @@ module.exports =
 
     # Case when a raw entity doc is passed,
     # which can only be an inv entity doc
-    [ uri ] = getInvEntityCanonicalUri updatedDoc
+    uri = getInvEntityCanonicalUri updatedDoc
     type = getEntityType updatedDoc.claims['wdt:P31']
     return [ uri, type ]
 

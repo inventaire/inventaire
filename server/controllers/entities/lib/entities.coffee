@@ -46,7 +46,7 @@ module.exports = entities_ =
 
   urisByClaim: (property, value)->
     entities_.byClaim property, value, true, true
-    .map (doc)-> getInvEntityCanonicalUri(doc)[0]
+    .map getInvEntityCanonicalUri
 
   byClaimsValue: (value, count)->
     db.view 'entities', 'byClaimValue',
@@ -102,7 +102,7 @@ module.exports = entities_ =
 
   getUrlFromEntityImageHash: getUrlFromImageHash.bind null, 'entities'
 
-parseCanonicalUri = (result)-> getInvEntityCanonicalUri(result.doc)[0]
+parseCanonicalUri = (result)-> getInvEntityCanonicalUri(result.doc)
 
 triggerUpdateEvent = (currentDoc, updatedDoc)->
   # Use currentDoc claims if the update removed the claims object

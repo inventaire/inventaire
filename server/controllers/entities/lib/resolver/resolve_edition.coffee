@@ -12,7 +12,7 @@ module.exports = (entry)->
   .then addEditionUri(entry)
   .then -> entry
 
-addEditionUri = (entry)-> (doc)->
-  if doc?
-    editionUri = getInvEntityCanonicalUri(doc)[0]
+addEditionUri = (entry)-> (edition)->
+  if edition?
+    editionUri = getInvEntityCanonicalUri edition
     entry.edition.uri = editionUri

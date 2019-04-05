@@ -33,7 +33,7 @@ mergeEntities = (userId, fromId, toId)->
     unless toEntityDoc._id is toId
       throw error_.new "'to' entity doc not found", 500
 
-    [ previousToUri ] = getInvEntityCanonicalUri toEntityDoc
+    previousToUri = getInvEntityCanonicalUri toEntityDoc
 
     # Transfer all data from the 'fromEntity' to the 'toEntity'
     # if any difference can be found
@@ -51,7 +51,7 @@ mergeEntities = (userId, fromId, toId)->
         context: { mergeFrom: "inv:#{fromId}" }
 
     # Refresh the URI in case an ISBN was transfered and the URI changed
-    [ newToUri ] = getInvEntityCanonicalUri toEntityDoc
+    newToUri = getInvEntityCanonicalUri toEntityDoc
 
     transfer
     .then -> turnIntoRedirection userId, fromId, newToUri, previousToUri
