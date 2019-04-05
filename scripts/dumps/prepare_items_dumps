@@ -1,13 +1,18 @@
 #!/usr/bin/env bash
+set -eu
+
 source ./scripts/dumps/lib/utils.sh
 
 items_dump="${today_folder}/items.ttl"
 dbHost=$(node -p "require('config').db.fullHost()")
 
 echo "
+@prefix wd: <http://www.wikidata.org/entity/> .
+@prefix wdt: <http://www.wikidata.org/prop/direct/> .
 @prefix wdt: <http://www.wikidata.org/prop/direct/> .
 @prefix inv: <http://inventaire.io/entity/> .
 @prefix invexamplar: <http://inventaire.io/items/> .
+@prefix isbn: <http://inventaire.io/isbn/> .
 " > $items_dump
 
 # We only need the items entities for now
@@ -18,4 +23,6 @@ curl -s "${dbHost}/items-prod/_design/items/_view/byEntity" |
   sed 's/$/ ./' >> $items_dump
 
 validate_ttl $items_dump
+
+cd "$today_folder"
 gzip -9f *ttl
