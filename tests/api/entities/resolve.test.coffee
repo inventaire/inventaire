@@ -12,6 +12,16 @@ resolve = (entries)->
   authReq 'post', '/api/entities?action=resolve', { entries }
 
 describe 'entities:resolve', ->
+  it 'should throw when invalid isbn is passed', (done)->
+    invalidIsbn = '9780000000000'
+    resolve { edition: { isbn: invalidIsbn } }
+    .catch (err)->
+      err.body.status_verbose.should.startWith 'invalid isbn'
+      done()
+    .catch undesiredErr(done)
+
+    return
+
   it 'should resolve an edition entry from an ISBN', (done)->
     rawIsbn = generateIsbn13()
     editionSeed = { isbn: rawIsbn }
