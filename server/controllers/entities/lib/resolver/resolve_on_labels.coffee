@@ -12,22 +12,25 @@ parseResults = __.require 'controllers', 'search/lib/parse_results'
 
 module.exports = (entry)->
   { authors, works } = entry
-  unless _.some(authors) then return entry
-  unless _.some(works) then return entry
+  if authors.length is 0 or works.length is 0 then return entry
 
-  Promise.all authors.map (author)->
-    if author.uri? or not author? then return
-    searchUrisByAuthorLabels _.values(author.labels)
-    .then resolveWorksAndAuthor(works, author)
+  Promise.all authors.map(searchAuthorAndResolve(works))
   .then -> entry
 
+searchAuthorAndResolve = (works)-> (author)->
+  if not author? or author.uri? then return
+  searchUrisByAuthorLabels author.labels
+  .then resolveWorksAndAuthor(works, author)
+
 resolveWorksAndAuthor = (works, author)-> (authorsUris)->
-  Promise.all works.map (work)->
-    if work.uri? or not work? then return
-    workLabels = _.uniq _.values(work.labels)
-    Promise.all getWorksFromAuthorsUris(authorsUris, workLabels)
-    .then _.flatten
-    .then getMatchedUris(authorsUris, author, work)
+  Promise.all works.map(resolveWorkAndAuthor(author, authorsUris))
+
+resolveWorkAndAuthor = (author, authorsUris)-> (work)->
+  if work.uri? or not work? then return
+  workLabels = _.uniq _.values(work.labels)
+  Promise.all getWorksFromAuthorsUris(authorsUris, workLabels)
+  .then _.flatten
+  .then getMatchedUris(authorsUris, author, work)
 
 getMatchedUris = (authorsUris, authorSeed, workSeed)-> (searchedWorks)->
   # Several searchedWorks could match authors homonyms/duplicates
@@ -42,16 +45,19 @@ getMatchedUris = (authorsUris, authorSeed, workSeed)-> (searchedWorks)->
 
 getAuthorsUris = (work)-> work.claims['wdt:P50']
 
+# Check every author labels, in every lang
+# TODO: extend search to aliases
 searchUrisByAuthorLabels = (labels)->
-  # Check every author labels, in every lang
-  # TODO: extend search to aliases
-  types = [ 'humans' ]
-  Promise.all labels.map (label)->
-    typeSearch types, label
-    .then parseResults(types)
-    # Exact match on author labels
-    .filter (hit)-> label in _.values(hit._source.labels)
-    .map (hit)-> hit._source.uri
-    .then _.compact
+  labels = _.uniq _.values(labels)
+  Promise.all labels.map(searchUrisByAuthorLabel)
   .then _.flatten
   .then _.uniq
+
+types = [ 'humans' ]
+searchUrisByAuthorLabel = (label)->
+  typeSearch types, label
+  .then parseResults(types)
+  # Exact match on author labels
+  .filter (hit)-> label in _.values(hit._source.labels)
+  .map (hit)-> hit._source.uri
+  .then _.compact
