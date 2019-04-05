@@ -58,8 +58,7 @@ sanitizeSeed = (res, seed)->
     claims[prop] = _.forceArray claims[prop]
 
 getIsbn = (edition)->
-  if edition.isbn then return edition.isbn
-  if edition.claims and edition.claims['wdt:P212'] then edition.claims['wdt:P212']
+  edition.isbn or edition.claims?['wdt:P212'] or edition.claims?['wdt:P957']
 
 createWorkSeedFromEdition = (edition)->
   unless edition.claims?['wdt:P1476']?[0]? then return
