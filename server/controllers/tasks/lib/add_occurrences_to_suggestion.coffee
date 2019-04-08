@@ -14,7 +14,7 @@ module.exports = (suspectWorksData)-> (suggestion)->
 
   if labels.length is 0
     suggestion.occurrences = []
-    return promises_.resolve suggestion
+    return Promise.resolve suggestion
 
   Promise.all [
     getOccurrencesFromExternalSources uri, labels, langs
