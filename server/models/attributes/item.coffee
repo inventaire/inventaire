@@ -22,7 +22,7 @@ attributes.validAtCreation = [
 ]
 
 # not updatable by the user
-notUpdatable = [
+attributes.notUpdatable = [
   '_id'
   '_rev'
   'lang'
@@ -41,7 +41,7 @@ notUpdatable = [
 
 ]
 
-attributes.known = notUpdatable.concat attributes.updatable
+attributes.known = attributes.notUpdatable.concat attributes.updatable
 
 attributes.private = [
   'notes'
