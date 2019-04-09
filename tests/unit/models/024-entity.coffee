@@ -354,6 +354,15 @@ describe 'entity model', ->
         Entity.mergeDocs(entityA, entityB).claims['wdt:P648'].should.deepEqual [ 'OL123457W' ]
         done()
 
+      it 'should refuse to merge redirections', (done)->
+        redirection = { redirect: 'wd:Q1' }
+        entity = workDoc()
+        (-> Entity.mergeDocs(redirection, entity))
+        .should.throw('mergeDocs (from) failed: the entity is a redirection')
+        (-> Entity.mergeDocs(entity, redirection))
+        .should.throw('mergeDocs (to) failed: the entity is a redirection')
+        done()
+
     describe 'turnIntoRedirection', ->
       it 'should return a redirection doc', (done)->
         fromEntityDoc = workDoc()
