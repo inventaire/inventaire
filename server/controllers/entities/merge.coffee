@@ -11,7 +11,7 @@ radio = __.require 'lib', 'radio'
 #   out of the case of merging with an existing Wikidata edition entity
 #   but those are ignored for the moment: not enough of them, data mixed with works, etc.
 # - The merged entity data may be lost: the entity was probably a placeholder
-#   what matter is the redirection. Or more fine, reconciling strategy can be developed later
+#   what matters the most is the redirection. Or more fine, reconciling strategy can be developed later
 
 # Only inv entities can be merged yet
 validFromPrefix = [ 'inv', 'isbn' ]
@@ -43,7 +43,6 @@ module.exports = (req, res)->
   _.log { merge: body, user: reqUserId }, 'entity merge request'
 
   # Let getEntitiesByUris test for the whole URI validity
-  # Get data from concerned entities
   getEntitiesByUris { uris: [ fromUri, toUri ], refresh: true }
   .then merge(reqUserId, toPrefix, fromUri, toUri)
   .tap -> radio.emit 'entity:merge', fromUri, toUri
@@ -57,6 +56,12 @@ merge = (reqUserId, toPrefix, fromUri, toUri)-> (res)->
 
   toEntity = entities[toUri] or entities[redirects[toUri]]
   unless toEntity? then throw notFound 'to', toUri
+
+  if fromEntity.uri isnt fromUri
+    throw error_.new "'from' entity is already a redirection", 400, { fromUri, toUri }
+
+  if toEntity.uri isnt toUri
+    throw error_.new "'to' entity is already a redirection", 400, { fromUri, toUri }
 
   if fromEntity.uri is toEntity.uri
     throw error_.new "can't merge an entity into itself", 400, { fromUri, toUri }
