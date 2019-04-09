@@ -346,12 +346,12 @@ describe 'entity model', ->
           done()
         setTimeout update, 5
 
-      it 'should reject merge implying to break claim uniqueness restrictions', (done)->
+      it 'should keep the target claim in case of claim uniqueness restrictions', (done)->
         entityA = workDoc()
         entityB = workDoc()
         Entity.createClaim entityA, 'wdt:P648', 'OL123456W'
         Entity.createClaim entityB, 'wdt:P648', 'OL123457W'
-        (-> Entity.mergeDocs entityA, entityB).should.throw 'merge would create mutliples wdt:P648 values'
+        Entity.mergeDocs(entityA, entityB).claims['wdt:P648'].should.deepEqual [ 'OL123457W' ]
         done()
 
     describe 'turnIntoRedirection', ->

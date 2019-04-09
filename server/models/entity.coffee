@@ -158,11 +158,11 @@ module.exports = Entity =
       toEntityDoc.claims[property] ?= []
       for value in values
         unless value in toEntityDoc.claims[property]
-          toEntityDoc.claims[property].push value
-          if properties[property].uniqueValue and toEntityDoc.claims[property].length > 1
-            context = { toEntityDoc, property, values: toEntityDoc.claims[property] }
-            throw error_.new "merge would create mutliples #{property} values", 400, context
-          dataTransfered = true
+          if properties[property].uniqueValue and toEntityDoc.claims[property].length > 0
+            _.warn value, "#{property} can have only one value: ignoring merged entity value"
+          else
+            toEntityDoc.claims[property].push value
+            dataTransfered = true
 
     if dataTransfered then toEntityDoc.updated = Date.now()
 
