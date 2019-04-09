@@ -3,8 +3,8 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { getUserGetter, customAuthReq, undesiredErr } = __.require 'apiTests', 'utils/utils'
-geolocatedUser1Promise = getUserGetter('geo1', false, { position: [ 1, 1 ] })().delay 1000
-geolocatedUser2Promise = getUserGetter('geo2', false, { position: [ 40, 40 ] })().delay 1000
+geolocatedUser1Promise = getUserGetter('geo1', false, { position: [ 1, 1 ] })().delay 2000
+geolocatedUser2Promise = getUserGetter('geo2', false, { position: [ 40, 40 ] })().delay 2000
 endpoint = '/api/users?action=nearby'
 
 describe 'users:nearby', ->
