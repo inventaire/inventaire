@@ -158,8 +158,14 @@ module.exports = Entity =
       toEntityDoc.claims[property] ?= []
       for value in values
         unless value in toEntityDoc.claims[property]
-          if properties[property].uniqueValue and toEntityDoc.claims[property].length > 0
-            _.warn value, "#{property} can have only one value: ignoring merged entity value"
+          if toEntityDoc.claims[property].length > 0
+            if properties[property].uniqueValue
+              _.warn value, "#{property} can have only one value: ignoring merged entity value"
+            else if properties[property].hasPlaceholders
+              _.warn value, "#{property} values may be placeholders: ignoring merged entity value"
+            else
+              toEntityDoc.claims[property].push value
+              dataTransfered = true
           else
             toEntityDoc.claims[property].push value
             dataTransfered = true
