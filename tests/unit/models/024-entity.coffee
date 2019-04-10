@@ -312,6 +312,14 @@ describe 'entity model', ->
         entityB.claims['wdt:P921'].should.deepEqual [ 'wd:Q1', 'wd:Q3' ]
         done()
 
+      it 'should not add new claims on already used property linking to potential placeholders', (done)->
+        entityA = workDoc()
+        entityB = workDoc()
+        entityB.claims['wdt:P50'] = [ 'wd:Q1' ]
+        Entity.mergeDocs entityA, entityB
+        entityB.claims['wdt:P50'].should.deepEqual [ 'wd:Q1' ]
+        done()
+
       it 'should not create duplicated claims', (done)->
         entityA = workDoc()
         entityB = workDoc()

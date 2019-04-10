@@ -30,7 +30,7 @@ module.exports =
   # instance of
   'wdt:P31': _.extend {}, bases.uniqueEntity, { adminUpdateOnly: true }
   # author
-  'wdt:P50': bases.humanEntity
+  'wdt:P50': _.extend {}, bases.humanEntity, { hasPlaceholders: true }
   # publisher
   'wdt:P123': bases.uniqueEntity
   # movement

@@ -7,7 +7,7 @@ should = require 'should'
 randomString = __.require 'lib', './utils/random_string'
 { getByUris, merge, getHistory, addClaim } = require '../utils/entities'
 { getByIds: getItemsByIds } = require '../utils/items'
-{ createWork, createHuman, createEdition, ensureEditionExists, createItemFromEntityUri } = require '../fixtures/entities'
+{ createWork, createHuman, createEdition, ensureEditionExists, createItemFromEntityUri, createWorkWithAuthor } = require '../fixtures/entities'
 
 describe 'entities:merge', ->
   it 'should merge two entities with an inv URI', (done)->
@@ -216,5 +216,22 @@ describe 'entities:merge', ->
         .should.equal "can't merge an entity into itself"
         done()
     .catch undesiredErr(done)
+
+    return
+
+  it 'should remove isolated human "placeholders" entities on works merge', (done) ->
+    Promise.all [
+      createWorkWithAuthor()
+      createWorkWithAuthor()
+    ]
+    .spread (workA, workB)->
+      humanAUri = workA.claims['wdt:P50'][0]
+      merge workA.uri, workB.uri
+      .then -> getByUris humanAUri
+      .then (res)->
+        entity = res.entities[humanAUri]
+        entity._meta_type.should.equal 'removed:placeholder'
+        done()
+    .catch done
 
     return
