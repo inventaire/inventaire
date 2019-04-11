@@ -6,7 +6,7 @@ should = require 'should'
 { undesiredErr } = require '../utils/utils'
 randomString = __.require 'lib', './utils/random_string'
 { getByUris, merge, revertMerge, updateLabel, addClaim } = require '../utils/entities'
-{ createWork, createHuman } = require '../fixtures/entities'
+{ createWork, createHuman, createWorkWithAuthor } = require '../fixtures/entities'
 
 describe 'entities:revert-merge', ->
   it 'should revert merge two entities with an inv URI', (done)->
@@ -138,5 +138,25 @@ describe 'entities:revert-merge', ->
         authorsUris.should.deepEqual [ humanA.uri ]
         done()
     .catch undesiredErr(done)
+
+    return
+
+  it 'should restore removed human placeholders', (done)->
+    Promise.all [
+      createWorkWithAuthor()
+      createWorkWithAuthor()
+    ]
+    .spread (workA, workB)->
+      humanAUri = workA.claims['wdt:P50'][0]
+      merge workA.uri, workB.uri
+      .then -> revertMerge workA.uri
+      .then -> getByUris [ workA.uri, humanAUri ]
+      .then (res)->
+        humanA = res.entities[humanAUri]
+        workA = res.entities[workA.uri]
+        should(humanA._meta_type).not.be.ok()
+        workA.claims['wdt:P50'].should.deepEqual [ humanAUri ]
+        done()
+    .catch done
 
     return
