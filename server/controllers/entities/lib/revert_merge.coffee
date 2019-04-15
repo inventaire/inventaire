@@ -25,7 +25,7 @@ module.exports = (userId, fromId)->
         currentDoc: currentVersion
         updatedDoc: targetVersion
       .tap -> updateItemEntity.afterRevert fromUri, toUri
-      .tap -> recoverPlaceholders currentVersion.removedPlaceholdersIds
+      .tap -> recoverPlaceholders userId, currentVersion.removedPlaceholdersIds
       .tap -> revertMergePatch userId, fromUri, toUri
       .tap -> revertClaimsRedirections userId, fromUri, toUri
 
