@@ -21,6 +21,16 @@ module.exports = typesAliases =
     'wd:Q3297186' # limited series
     'wd:Q21191134' # comic strip series
     'wd:Q17489659' # group of works
+    'wd:Q867335' # literary cycle
+    'wd:Q1700470' # monographic series
+    'wd:Q13593966' # literary trilogy
+    'wd:Q17710980' # literary tetralogy
+    'wd:Q17710986' # literary pentalogy
+    'wd:Q52269333' # literary hexalogy
+    'wd:Q53843792' # literary dylogy
+    'wd:Q2005755' # novel sequence
+    'wd:Q21190961' # fumetti series
+    'wd:Q54294944' # webcomic series
   ]
   works: [
     'wd:Q571' # book
