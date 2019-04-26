@@ -33,15 +33,15 @@ Item.create = (userId, item)->
   item.created = Date.now()
   return item
 
-passAttrTest = (item, attr)->
-  if item[attr]? then validations.pass attr, item[attr]
-
 Item.update = (userId, newAttributes, oldItem)->
   assert_.types [ 'string', 'object', 'object' ], arguments
+
   unless oldItem.owner is userId
     throw error_.new "user isnt item.owner: #{userId}", 400, oldItem.owner
 
   newItem = _.clone oldItem
+
+  newAttributes = _.omit newAttributes, attributes.notUpdatable
 
   passedAttributes = Object.keys newAttributes
 

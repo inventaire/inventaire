@@ -312,6 +312,14 @@ describe 'entity model', ->
         entityB.claims['wdt:P921'].should.deepEqual [ 'wd:Q1', 'wd:Q3' ]
         done()
 
+      it 'should not add new claims on already used property linking to potential placeholders', (done)->
+        entityA = workDoc()
+        entityB = workDoc()
+        entityB.claims['wdt:P50'] = [ 'wd:Q1' ]
+        Entity.mergeDocs entityA, entityB
+        entityB.claims['wdt:P50'].should.deepEqual [ 'wd:Q1' ]
+        done()
+
       it 'should not create duplicated claims', (done)->
         entityA = workDoc()
         entityB = workDoc()
@@ -346,12 +354,21 @@ describe 'entity model', ->
           done()
         setTimeout update, 5
 
-      it 'should reject merge implying to break claim uniqueness restrictions', (done)->
+      it 'should keep the target claim in case of claim uniqueness restrictions', (done)->
         entityA = workDoc()
         entityB = workDoc()
         Entity.createClaim entityA, 'wdt:P648', 'OL123456W'
         Entity.createClaim entityB, 'wdt:P648', 'OL123457W'
-        (-> Entity.mergeDocs entityA, entityB).should.throw 'merge would create mutliples wdt:P648 values'
+        Entity.mergeDocs(entityA, entityB).claims['wdt:P648'].should.deepEqual [ 'OL123457W' ]
+        done()
+
+      it 'should refuse to merge redirections', (done)->
+        redirection = { redirect: 'wd:Q1' }
+        entity = workDoc()
+        (-> Entity.mergeDocs(redirection, entity))
+        .should.throw('mergeDocs (from) failed: the entity is a redirection')
+        (-> Entity.mergeDocs(entity, redirection))
+        .should.throw('mergeDocs (to) failed: the entity is a redirection')
         done()
 
     describe 'turnIntoRedirection', ->

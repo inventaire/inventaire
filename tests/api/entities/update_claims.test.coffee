@@ -141,4 +141,4 @@ describe 'entities:update-claims', ->
 
 someOLid = ->
   numbers = Math.random().toString().slice(2, 8).replace(/^0/, '')
-  return "OL#{numbers}Z"
+  return "OL#{numbers}W"

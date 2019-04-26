@@ -10,7 +10,6 @@ describe 'entities:author-works', ->
   it 'should get an authors works', (done)->
     workWithSeriePromise
     .then (work)->
-      _.log work, 'work'
       serieUri = work.claims['wdt:P179'][0]
       nonAuthReq 'get', "/api/entities?action=serie-parts&uri=#{serieUri}"
       .then (res)->

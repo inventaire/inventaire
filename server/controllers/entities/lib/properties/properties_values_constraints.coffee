@@ -23,14 +23,17 @@ bases = require './properties_config_bases'
 # as possible to the property exact needs
 builders = require './properties_config_builders'
 
+# Make sure to not mutate the base, while letting the last word to the extension
+extend = (base, extension)-> _.extend {}, base, extension
+
 # Keep in sync with ./properties_per_type
 module.exports =
   # image
   'invp:P2': bases.imageHash
   # instance of
-  'wdt:P31': _.extend {}, bases.uniqueEntity, { adminUpdateOnly: true }
+  'wdt:P31': extend bases.uniqueEntity, { adminUpdateOnly: true }
   # author
-  'wdt:P50': bases.humanEntity
+  'wdt:P50': extend bases.humanEntity, { hasPlaceholders: true }
   # publisher
   'wdt:P123': bases.uniqueEntity
   # movement
@@ -68,7 +71,7 @@ module.exports =
   # publication date
   'wdt:P577': bases.uniqueSimpleDay
   # edition of
-  'wdt:P629': _.extend bases.workEntity, { critical: true }
+  'wdt:P629': extend bases.workEntity, { critical: true }
   # Open Library id
   'wdt:P648': builders.externalId /^OL[1-9]\d{0,7}[AMW]$/
   # translator
@@ -100,7 +103,7 @@ module.exports =
   # languages of expression
   'wdt:P1412': bases.entity
   # title
-  'wdt:P1476': _.extend bases.uniqueString, { critical: true }
+  'wdt:P1476': extend bases.uniqueString, { critical: true }
   # series ordinal
   'wdt:P1545': bases.ordinal
   # subtitle

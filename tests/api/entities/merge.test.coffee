@@ -7,7 +7,7 @@ should = require 'should'
 randomString = __.require 'lib', './utils/random_string'
 { getByUris, merge, getHistory, addClaim } = require '../utils/entities'
 { getByIds: getItemsByIds } = require '../utils/items'
-{ createWork, createHuman, createEdition, ensureEditionExists, createItemFromEntityUri } = require '../fixtures/entities'
+{ createWork, createHuman, createEdition, ensureEditionExists, createItemFromEntityUri, createWorkWithAuthor } = require '../fixtures/entities'
 
 describe 'entities:merge', ->
   it 'should merge two entities with an inv URI', (done)->
@@ -82,9 +82,7 @@ describe 'entities:merge', ->
       ensureEditionExists 'isbn:9782211225915'
     ]
     .spread (editionA, editionB)->
-      editionAInvUri = 'inv:' + editionA._id
-      editionBInvUri = 'inv:' + editionB._id
-      merge editionAInvUri, editionBInvUri
+      merge 'isbn:9782298063264', 'isbn:9782211225915'
       .then undesiredRes(done)
       .catch (err)->
         # That's not a very specific error report, but it does the job
@@ -171,19 +169,37 @@ describe 'entities:merge', ->
 
     return
 
-  it 'should reject merge of a redirection to an inv entity', (done)->
+  it 'should reject a merge from a redirection', (done)->
     Promise.all [
       createWork()
       createWork()
+      createWork()
     ]
-    .spread (workA, workB)->
+    .spread (workA, workB, workC)->
       merge workA.uri, workB.uri
-      .then -> merge workA.uri, workB.uri
+      .then -> merge workA.uri, workC.uri
       .then undesiredRes(done)
       .catch (err)->
         err.statusCode.should.equal 400
-        err.body.status_verbose
-        .should.equal 'mergeDocs (from) failed: the entity is a redirection'
+        err.body.status_verbose.should.equal "'from' entity is already a redirection"
+        done()
+    .catch undesiredErr(done)
+
+    return
+
+  it 'should reject a merge to a redirection', (done)->
+    Promise.all [
+      createWork()
+      createWork()
+      createWork()
+    ]
+    .spread (workA, workB, workC)->
+      merge workA.uri, workB.uri
+      .then -> merge workC.uri, workA.uri
+      .then undesiredRes(done)
+      .catch (err)->
+        err.statusCode.should.equal 400
+        err.body.status_verbose.should.equal "'to' entity is already a redirection"
         done()
     .catch undesiredErr(done)
 
@@ -200,5 +216,22 @@ describe 'entities:merge', ->
         .should.equal "can't merge an entity into itself"
         done()
     .catch undesiredErr(done)
+
+    return
+
+  it 'should remove isolated human "placeholders" entities on works merge', (done) ->
+    Promise.all [
+      createWorkWithAuthor()
+      createWorkWithAuthor()
+    ]
+    .spread (workA, workB)->
+      humanAUri = workA.claims['wdt:P50'][0]
+      merge workA.uri, workB.uri
+      .then -> getByUris humanAUri
+      .then (res)->
+        entity = res.entities[humanAUri]
+        entity._meta_type.should.equal 'removed:placeholder'
+        done()
+    .catch done
 
     return
