@@ -9,7 +9,7 @@ getIndexesAndTypes = require './get_indexes_and_types'
 queryBodyBuilder = require './query_body_builder'
 
 # types should be a subset of ./types possibleTypes
-module.exports = (types, search)->
+module.exports = (types, search, limit = 20)->
   assert_.array types
   assert_.string search
 
@@ -17,7 +17,7 @@ module.exports = (types, search)->
 
   url = "#{elasticHost}/#{indexes.join(',')}/#{types.join(',')}/_search"
 
-  body = queryBodyBuilder search, 20
+  body = queryBodyBuilder search, limit
 
   return requests_.post { url, body }
   .catch formatError
