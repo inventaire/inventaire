@@ -1,9 +1,14 @@
-# Same as ./search_type.coffee but only for inventaire entities
-# instead of both wikidata and inventaire
 CONFIG = require 'config'
-__ = require('config').universalPath
+__ = CONFIG.universalPath
+_ = __.require 'builders', 'utils'
 { buildSearcher } = __.require 'lib', 'elasticsearch'
 
 module.exports = buildSearcher
   dbBaseName: 'entities'
-  queryBodyBuilder: require './common_query_body_builder'
+  queryBodyBuilder: (search, limit = 20)->
+    should = [
+      { match: { _all: search } }
+      { prefix: { _all: _.last search.split(' ') } }
+    ]
+
+    return { size: limit, query: { bool: { should } } }

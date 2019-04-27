@@ -35,5 +35,9 @@ formatters =
   works: entityFormatter
   humans: entityFormatter
   series: entityFormatter
+  publishers: entityFormatter
+  genres: entityFormatter
+  movements: entityFormatter
+  collections: entityFormatter
   users: networkFormatter 'username', 'bio'
   groups: networkFormatter 'name', 'description'
