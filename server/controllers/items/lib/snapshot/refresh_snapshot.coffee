@@ -1,7 +1,6 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 assert_ = __.require 'utils', 'assert_types'
-items_ = require '../items'
 entities_ = __.require 'controllers', 'entities/lib/entities'
 getEntityByUri = __.require 'controllers', 'entities/lib/get_entity_by_uri'
 getEntitiesByUris = __.require 'controllers', 'entities/lib/get_entities_by_uris'

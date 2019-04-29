@@ -344,9 +344,49 @@ describe 'items:snapshot', ->
 
       return
 
-  # TODO:
-  # it 'should be updated when its remote author entity changes', (done)->
-  # it 'should be updated when its remote work entity title changes', (done)->
+    it 'should be updated when its remote work entity changes', (done)->
+      # Simulating a change on the Wikidata work by merging an inv work into it
+      Promise.all [
+        getUserId()
+        createWork()
+      ]
+      .spread (userId, workEntity)->
+        createEditionFromWorks workEntity
+        .then (editionEntity)->
+          authReq 'post', '/api/items', { entity: editionEntity.uri }
+          .delay 200
+          .tap -> merge workEntity.uri, 'wd:Q3209796'
+          .delay 200
+          .then (item)->
+            getItem item
+            .then (updatedItem)->
+              updatedItem.snapshot['entity:authors'].should.equal 'Alain Damasio'
+              done()
+      .catch undesiredErr(done)
+
+      return
+
+    it 'should be updated when its remote author entity changes', (done)->
+      # Simulating a change on the Wikidata author by merging an inv author into it
+      createWork()
+      .then (work)->
+        Promise.all [
+          createEdition { work }
+          addAuthor work
+        ]
+        .spread (edition, author)->
+          authReq 'post', '/api/items', { entity: edition.uri }
+          .delay 200
+          .tap -> merge author.uri, 'wd:Q2829704'
+          .delay 200
+          .then (item)->
+            getItem item
+            .then (updatedItem)->
+              updatedItem.snapshot['entity:authors'].should.equal 'Alain Damasio'
+              done()
+      .catch undesiredErr(done)
+
+      return
 
 addAuthor = (subjectEntity)->
   createHuman()
