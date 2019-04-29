@@ -34,7 +34,7 @@ Format = (params)-> (entity)->
   # to the let the search engine unindex it
   if entity.type isnt 'entity' then entity._meta_type = entity.type
 
-  entity.type = getEntityType entity.claims['wdt:P31']
+  entity.type = getEntityType entity.claims
   return formatEntityCommon entity
 
 getRedirectedEntity = (entity, params)->

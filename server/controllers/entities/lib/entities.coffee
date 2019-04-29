@@ -108,5 +108,5 @@ triggerUpdateEvent = (currentDoc, updatedDoc)->
   # Use currentDoc claims if the update removed the claims object
   # Known case: when an entity is turned into a redirection
   claims = updatedDoc.claims or currentDoc.claims
-  type = getEntityType claims['wdt:P31']
+  type = getEntityType claims
   radio.emit 'inv:entity:update', updatedDoc._id, type

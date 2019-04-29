@@ -25,7 +25,7 @@ updateInvClaim = (user, id, property, oldVal, newVal)->
       context = { id, property, oldVal, newVal }
       throw error_.new 'this entity is obsolete', 400, context
 
-    type = getEntityType currentDoc.claims['wdt:P31']
+    type = getEntityType currentDoc.claims
     validateClaimProperty type, property
     updateClaim { type, property, oldVal, newVal, userId, currentDoc, userIsAdmin }
 

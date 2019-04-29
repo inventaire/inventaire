@@ -14,7 +14,7 @@ module.exports = (lang, value, userId, currentDoc)->
   return entities_.putUpdate { userId, currentDoc, updatedDoc }
 
 checkEntityTypeCanHaveLabel = (currentDoc)->
-  type = getEntityType currentDoc.claims['wdt:P31']
+  type = getEntityType currentDoc.claims
 
   if type in typesWithoutLabels
     throw error_.new "#{type}s can't have labels", 400

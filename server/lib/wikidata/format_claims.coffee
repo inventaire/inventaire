@@ -9,7 +9,6 @@ options =
   propertyPrefix: 'wdt'
   timeConverter: 'simple-day'
 
-module.exports = (claims, wdId)->
-  assert_.types ['object', 'string'], [ claims, wdId ]
+module.exports = (claims)->
   whitelistedClaims = _.pick claims, whitelistedProperties
   return wdk.simplifyClaims whitelistedClaims, options

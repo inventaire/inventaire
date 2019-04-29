@@ -18,7 +18,7 @@ fixEntityType = (result)->
   # thus the need to recover it
   else if result._type is 'entity'
     # Type is pluralzed, thus the +'s'
-    result._type = getEntityType(result._source.claims['wdt:P31']) + 's'
+    result._type = getEntityType(result._source.claims) + 's'
 
   return result
 
