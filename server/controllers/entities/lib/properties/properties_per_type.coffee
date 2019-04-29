@@ -74,3 +74,12 @@ module.exports =
     'wdt:P3630' # Babelio author ID
     'wdt:P4033' # Mastodon address
   ]
+
+  publisher: all.concat [
+    'wdt:P112' # founded by
+    'wdt:P127' # owned by
+    'wdt:P571' # inception
+    'wdt:P576' # dissolution
+    'wdt:P856' # official website
+    'wdt:P3035' # ISBN publisher prefix
+  ]

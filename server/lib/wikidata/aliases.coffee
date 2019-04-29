@@ -79,9 +79,6 @@ module.exports = typesAliases =
     'wd:Q5151404' # comedic genre
     'wd:Q21114848' # magazine genre
   ]
-
-  # Types required to update the entity search engine
-  # see server/controllers/entities/lib/update_search_engine
   publishers: [
     # publisher
     'wd:Q2085381'
@@ -92,14 +89,14 @@ module.exports = typesAliases =
     # bandes dessinées publishing company
     'wd:Q3279251'
   ]
-
+  # Types required to update the entity search engine
+  # see server/controllers/entities/lib/update_search_engine
   collections: [
     # editorial collection
     'wd:Q20655472'
     # monographic series
     'wd:Q1700470'
   ]
-
   movements: [
     # cultural movement
     'wd:Q2198855'

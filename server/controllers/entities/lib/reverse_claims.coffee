@@ -25,6 +25,7 @@ blacklistedProperties = [
 
 localOnlyProperties = [
   'wdt:P629'
+  'wdt:P123'
 ]
 
 module.exports = (params)->

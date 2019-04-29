@@ -2,7 +2,7 @@ should = require 'should'
 { undesiredErr } = require '../utils/utils'
 { checkEntities } = require '../utils/tasks'
 { getByUris } = require '../utils/entities'
-{ createHuman, createWorkWithAuthor, randomWorkLabel } = require '../fixtures/entities'
+{ createHuman, createWorkWithAuthor, randomLabel } = require '../fixtures/entities'
 
 
 # Tests dependency: having a populated ElasticSearch wikidata index
@@ -30,7 +30,7 @@ describe 'tasks:automerge', ->
   it 'should automerge if suspect and suggestion workLabel are similar', (done)->
     humanLabel = 'Alain Damasio' # wdId Q2829704
     wikidataUri = 'wd:Q2829704'
-    workLabel = randomWorkLabel()
+    workLabel = randomLabel()
     createHuman { labels: { en: humanLabel } }
     .then (human)->
       Promise.all [

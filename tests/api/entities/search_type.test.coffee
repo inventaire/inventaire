@@ -4,12 +4,12 @@ _ = __.require 'builders', 'utils'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
 { nonAuthReq, undesiredErr } = require '../utils/utils'
-{ createWork, randomWorkLabel } = require '../fixtures/entities'
+{ createWork, randomLabel } = require '../fixtures/entities'
 endpoint = '/api/entities?action=search-type'
 
 describe 'entities:search-type', ->
   it 'should return a recently created entity', (done)->
-    workLabel = randomWorkLabel()
+    workLabel = randomLabel()
     createWork { labels: { fr: workLabel } }
     .delay 1000
     .then (creationRes)->
