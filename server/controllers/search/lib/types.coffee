@@ -2,6 +2,7 @@ CONFIG = require 'config'
 
 localAndRemoteEntity = (type)-> { indexes: [ 'wikidata', CONFIG.db.name('entities') ], type }
 remoteOnlyEntity = (type)-> { indexes: [ 'wikidata' ], type }
+localDatabase = (dbBaseName, type)-> { indexes: [ CONFIG.db.name(dbBaseName) ], type }
 
 typesData =
   works: localAndRemoteEntity 'works'
@@ -11,8 +12,8 @@ typesData =
   movements: remoteOnlyEntity 'movements'
   publishers: remoteOnlyEntity 'publishers'
   collections: remoteOnlyEntity 'collections'
-  users: { indexes: [ CONFIG.db.name('users') ], type: 'user' }
-  groups: { indexes: [ CONFIG.db.name('groups') ], type: 'group' }
+  users: localDatabase 'users', 'user'
+  groups: localDatabase 'groups', 'group'
 
 possibleTypes =  Object.keys typesData
 
