@@ -4,12 +4,13 @@ requests_ = __.require 'lib', 'requests'
 error_ = __.require 'lib', 'error/error'
 qs = require 'querystring'
 cache_ = __.require 'lib', 'cache'
+{ oneMonth } =  __.require 'lib', 'times'
 
 module.exports = (params)->
   { lang, title, introOnly } = params
   keyBase = if introOnly then 'wpextract' else 'wparticle'
   key = "#{keyBase}:#{lang}:#{title}"
-  return cache_.get { key, fn: getArticle.bind(null, lang, title, introOnly) }
+  return cache_.get { key, fn: getArticle.bind(null, lang, title, introOnly), timespan: 3*oneMonth }
 
 getArticle = (lang, title, introOnly)->
   requests_.get apiQuery(lang, title, introOnly)

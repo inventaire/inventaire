@@ -4,6 +4,7 @@ _ = __.require 'builders', 'utils'
 requests_ = __.require 'lib', 'requests'
 qs = require 'querystring'
 cache_ = __.require 'lib', 'cache'
+{ oneMonth } =  __.require 'lib', 'times'
 
 endpoint = 'http://data.bnf.fr/sparql'
 base = "#{endpoint}?default-graph-uri=&format=json&timeout=60000&query="
@@ -11,7 +12,7 @@ headers = { accept: '*/*' }
 
 module.exports = (bnfId)->
   key = "bnf:author-works-titles:#{bnfId}"
-  return cache_.get { key, fn: getBnfAuthorWorksTitles.bind(null, bnfId) }
+  return cache_.get { key, fn: getBnfAuthorWorksTitles.bind(null, bnfId), timespan: 3*oneMonth }
 
 getBnfAuthorWorksTitles = (bnfId)->
   _.info bnfId, 'bnfId'

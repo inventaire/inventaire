@@ -50,22 +50,17 @@ getMostRelevantWikipediaArticles = (authorEntity, worksLabelsLangs)->
   .filter _.identity
   .map getWikipediaArticle
 
-getBnfOccurrences = (authorEntity, worksLabels)->
-  bnfIds = authorEntity.claims['wdt:P268']
+getAndCreateOccurencesFromIds = (prop, getWorkTitlesFn)-> (authorEntity, worksLabels)->
+  ids = authorEntity.claims[prop]
   # Discard entities with several ids as one of the two
   # is wrong and we can't know which
-  if bnfIds?.length isnt 1 then return false
-  getBnfAuthorWorksTitles bnfIds[0]
+  if ids?.length isnt 1 then return false
+  getWorkTitlesFn ids[0]
+  .filter (doc)-> _.includes worksLabels, doc.quotation
   .map createOccurrences(worksLabels)
 
-getOpenLibraryOccurrences = (authorEntity, worksLabels)->
-  olIds = authorEntity.claims['wdt:P648']
-  # Discard entities with several ids as one of the two
-  # is wrong and we can't know which
-  if olIds?.length isnt 1 then return false
-  Promise.all worksLabels.map (workTitle)-> getOlAuthorWorksTitles(olIds[0], workTitle)
-  .then _.flatten
-  .then (res)-> _.map(res, createOccurrences(worksLabels))
+getBnfOccurrences = getAndCreateOccurencesFromIds 'wdt:P268', getBnfAuthorWorksTitles
+getOpenLibraryOccurrences = getAndCreateOccurencesFromIds 'wdt:P648', getOlAuthorWorksTitles
 
 createOccurrences = (worksLabels)->
   worksLabelsPattern = new RegExp(worksLabels.join('|'), 'gi')

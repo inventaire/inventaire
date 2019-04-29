@@ -13,12 +13,7 @@ module.exports = (entity, existingTasks)->
     searchResult
     .filter (result)-> result._score > 4
     .map formatResult
-  .then filterOutTasks(existingTasks)
   .catch _.ErrorRethrow("#{name} search err")
-
-filterOutTasks = (existingTasks)-> (suggestions)->
-  existingTasksUris = _.map existingTasks, 'suggestionUri'
-  return suggestions.filter (suggestion)-> suggestion.uri not in existingTasksUris
 
 formatResult = (result)->
   _score: result._score

@@ -17,6 +17,7 @@ module.exports = (entity)-> (existingTasks)->
     suspectWorksLabels = suspectWorksData.labels
     Promise.all newSuggestions.map(addOccurrencesToSuggestion(suspectWorksData))
     .then automerge(entity, suspectWorksData.labels)
+    .then filterOutTasks(existingTasks)
     .then buildTaskObject(suspectUri)
 
 buildTaskObject = (suspectUri)-> (suggestions)->
@@ -26,3 +27,7 @@ buildTaskObject = (suspectUri)-> (suggestions)->
     suggestionUri: suggestion.uri
     lexicalScore: suggestion._score
     externalSourcesOccurrences: suggestion.occurrences
+
+filterOutTasks = (existingTasks)-> (suggestions)->
+  existingTasksUris = _.map existingTasks, 'suggestionUri'
+  return suggestions.filter (suggestion)-> suggestion.uri not in existingTasksUris
