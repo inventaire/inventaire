@@ -3,6 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 requests_ = __.require 'lib', 'requests'
 cache_ = __.require 'lib', 'cache'
+{ oneMonth } =  __.require 'lib', 'times'
 
 endpoint = 'https://openlibrary.org'
 base = "#{endpoint}/search.json"
@@ -10,7 +11,7 @@ headers = { accept: '*/*' }
 
 module.exports = (olId, workTitle)->
   key = "ol:author-works-titles:#{olId}"
-  return cache_.get { key, fn: getAuthorWorksTitles.bind(null, olId, workTitle) }
+  return cache_.get { key, fn: getAuthorWorksTitles.bind(null, olId, workTitle), timespan: 3*oneMonth }
 
 getAuthorWorksTitles = (olId, workTitle)->
   _.info olId, 'olId'
