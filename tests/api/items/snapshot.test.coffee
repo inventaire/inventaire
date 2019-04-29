@@ -354,9 +354,8 @@ describe 'items:snapshot', ->
         createEditionFromWorks workEntity
         .then (editionEntity)->
           authReq 'post', '/api/items', { entity: editionEntity.uri }
-          .delay 200
           .tap -> merge workEntity.uri, 'wd:Q3209796'
-          .delay 200
+          .delay 1000
           .then (item)->
             getItem item
             .then (updatedItem)->
