@@ -54,11 +54,12 @@ getMostRelevantWikipediaArticles = (authorEntity, worksLabelsLangs)->
 
 getAndCreateOccurencesFromIds = (prop, getWorkTitlesFn)-> (authorEntity, worksLabels)->
   ids = authorEntity.claims[prop]
-  # Discard entities with several ids as one of the two
-  # is wrong and we can't know which
-  if ids?.length isnt 1 then return false
-  getWorkTitlesFn ids[0]
+  # Check every ids
+  if ids?.length < 1 then return false
+  promises_.all ids.map(getWorkTitlesFn)
+  .then _.flatten
   .filter (doc)-> _.includes worksLabels, doc.quotation
+  .then _.uniq
   .map createOccurrences(worksLabels)
 
 getBnfOccurrences = getAndCreateOccurencesFromIds 'wdt:P268', getBnfAuthorWorksTitles
