@@ -73,6 +73,7 @@ module.exports =
     'wdt:P2963' # GoodReads author ID
     'wdt:P3630' # Babelio author ID
     'wdt:P4033' # Mastodon address
+    'wdt:P5361' # BNB person ID
   ]
 
   publisher: all.concat [

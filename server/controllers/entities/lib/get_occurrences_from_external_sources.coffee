@@ -7,6 +7,7 @@ error_ = __.require 'lib', 'error/error'
 assert_ = __.require 'utils', 'assert_types'
 getWikipediaArticle = __.require 'data', 'wikipedia/get_article'
 getBnfAuthorWorksTitles = __.require 'data', 'bnf/get_bnf_author_works_titles'
+getBnbAuthorWorksTitles = __.require 'data', 'bnb/get_bnb_author_works_titles'
 getOlAuthorWorksTitles = __.require 'data', 'openlibrary/get_ol_author_works_titles'
 getEntityByUri = __.require 'controllers', 'entities/lib/get_entity_by_uri'
 
@@ -29,6 +30,7 @@ module.exports = (wdAuthorUri, worksLabels, worksLabelsLangs)->
       getWikipediaOccurrences authorEntity, worksLabels, worksLabelsLangs
       getBnfOccurrences authorEntity, worksLabels
       getOpenLibraryOccurrences authorEntity, worksLabels
+      getBnbOccurrences authorEntity, worksLabels
     ]
   .then _.flatten
   .then _.compact
@@ -61,6 +63,7 @@ getAndCreateOccurencesFromIds = (prop, getWorkTitlesFn)-> (authorEntity, worksLa
 
 getBnfOccurrences = getAndCreateOccurencesFromIds 'wdt:P268', getBnfAuthorWorksTitles
 getOpenLibraryOccurrences = getAndCreateOccurencesFromIds 'wdt:P648', getOlAuthorWorksTitles
+getBnbOccurrences = getAndCreateOccurencesFromIds 'wdt:P5361', getBnbAuthorWorksTitles
 
 createOccurrences = (worksLabels)->
   worksLabelsPattern = new RegExp(worksLabels.join('|'), 'gi')

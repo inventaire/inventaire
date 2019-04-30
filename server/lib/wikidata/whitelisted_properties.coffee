@@ -84,5 +84,6 @@ module.exports = [
   'P4033' # Mastodon address
   'P4258' # Gallica ID
   'P5331' # OCLC work ID
+  'P5361' # BNB person ID
   'P6338' # colorist
 ]

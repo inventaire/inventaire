@@ -74,6 +74,22 @@ describe 'tasks:externalSourcesOccurrences', ->
 
     return
 
+  it 'should return an object of occurrences uris when author has work sourced in their bnb page', (done)->
+    humanLabel = 'Stanislas Lem'
+    workLabel = 'Solaris'
+    createHuman { labels: { en: humanLabel } }
+    .then (human)->
+      createWorkWithAuthor human, workLabel
+      .then (work)-> checkEntities human.uri
+      .then (tasks)->
+        task = tasks.find (task)-> task.suggestionUri.match /wd:/
+        occurrencesUrls = _.map task.externalSourcesOccurrences, 'url'
+        occurrencesUrls.join().should.containEql /bnb.data.bl.uk/
+        done()
+    .catch undesiredErr(done)
+
+    return
+
   it 'should return occurence when author has work sourced on OpenLibrary', (done)->
     humanLabel = 'Stanislas Lem'
     workLabel = 'Solaris'
