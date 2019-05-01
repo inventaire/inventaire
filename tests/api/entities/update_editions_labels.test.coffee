@@ -2,9 +2,9 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ undesiredRes, undesiredErr } = require '../../utils/utils'
-{ updateLabel } = require '../../utils/entities'
-{ createEdition, randomLabel } = require '../../fixtures/entities'
+{ undesiredRes, undesiredErr } = require '../utils/utils'
+{ updateLabel } = require '../utils/entities'
+{ createEdition, randomLabel } = require '../fixtures/entities'
 
 describe 'entities:editions:update-labels', ->
   it 'should reject labels update', (done)->

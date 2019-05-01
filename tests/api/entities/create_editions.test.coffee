@@ -2,8 +2,8 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ nonAuthReq, authReq, undesiredErr, undesiredRes } = require '../../utils/utils'
-{ createWork, createSerie, randomLabel } = require '../../fixtures/entities'
+{ nonAuthReq, authReq, undesiredErr, undesiredRes } = require '../utils/utils'
+{ createWork, createSerie, randomLabel } = require '../fixtures/entities'
 workEntityPromise = createWork()
 
 describe 'entities:editions:create', ->

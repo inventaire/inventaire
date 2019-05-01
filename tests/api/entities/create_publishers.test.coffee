@@ -2,12 +2,12 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ createEdition, createPublisher } = require '../../fixtures/entities'
-{ updateClaim } = require '../../utils/entities'
-{ undesiredErr } = require '../../utils/utils'
+{ randomLabel, createEdition, createPublisher } = require '../fixtures/entities'
+{ updateClaim } = require '../utils/entities'
+{ authReq, undesiredErr } = require '../utils/utils'
 
 describe 'entities:publishers:create', ->
-  it 'should create a local publisher entity', (done)->
+  it 'should create an inventaire publisher entity', (done)->
     createPublisher()
     .then (publisherDoc) ->
       publisherDoc.type.should.equal 'publisher'
@@ -16,7 +16,7 @@ describe 'entities:publishers:create', ->
 
     return
 
-  it 'should update an edition claim with a local publisher entity', (done)->
+  it 'should update an edition claim with an inventaire publisher entity', (done)->
     createEdition()
     .then (edition)->
       editionUri = "inv:#{edition._id}"
@@ -25,7 +25,7 @@ describe 'entities:publishers:create', ->
         oldVal = null
         newVal = "inv:#{publisher._id}"
         property = 'wdt:P123'
-        updateClaim editionUri, property, oldVal, newVal
+        updateClaim(editionUri, property, oldVal, newVal)
         .then (res)-> done()
     .catch undesiredErr(done)
 
