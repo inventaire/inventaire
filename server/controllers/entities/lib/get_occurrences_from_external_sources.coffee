@@ -8,6 +8,7 @@ assert_ = __.require 'utils', 'assert_types'
 getWikipediaArticle = __.require 'data', 'wikipedia/get_article'
 getBnfAuthorWorksTitles = __.require 'data', 'bnf/get_bnf_author_works_titles'
 getBnbAuthorWorksTitles = __.require 'data', 'bnb/get_bnb_author_works_titles'
+getBneAuthorWorksTitles = __.require 'data', 'bne/get_bne_author_works_titles'
 getOlAuthorWorksTitles = __.require 'data', 'openlibrary/get_ol_author_works_titles'
 getEntityByUri = __.require 'controllers', 'entities/lib/get_entity_by_uri'
 
@@ -31,6 +32,7 @@ module.exports = (wdAuthorUri, worksLabels, worksLabelsLangs)->
       getBnfOccurrences authorEntity, worksLabels
       getOpenLibraryOccurrences authorEntity, worksLabels
       getBnbOccurrences authorEntity, worksLabels
+      getBneOccurrences authorEntity, worksLabels
     ]
   .then _.flatten
   .then _.compact
@@ -55,7 +57,7 @@ getMostRelevantWikipediaArticles = (authorEntity, worksLabelsLangs)->
 getAndCreateOccurencesFromIds = (prop, getWorkTitlesFn)-> (authorEntity, worksLabels)->
   ids = authorEntity.claims[prop]
   # Check every ids
-  if ids?.length < 1 then return false
+  unless ids? then return false
   promises_.all ids.map(getWorkTitlesFn)
   .then _.flatten
   .filter (doc)-> _.includes worksLabels, doc.quotation
@@ -65,6 +67,7 @@ getAndCreateOccurencesFromIds = (prop, getWorkTitlesFn)-> (authorEntity, worksLa
 getBnfOccurrences = getAndCreateOccurencesFromIds 'wdt:P268', getBnfAuthorWorksTitles
 getOpenLibraryOccurrences = getAndCreateOccurencesFromIds 'wdt:P648', getOlAuthorWorksTitles
 getBnbOccurrences = getAndCreateOccurencesFromIds 'wdt:P5361', getBnbAuthorWorksTitles
+getBneOccurrences = getAndCreateOccurencesFromIds 'wdt:P950', getBneAuthorWorksTitles
 
 createOccurrences = (worksLabels)->
   worksLabelsPattern = new RegExp(worksLabels.join('|'), 'gi')

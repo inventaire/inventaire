@@ -7,7 +7,7 @@ cache_ = __.require 'lib', 'cache'
 { oneMonth } =  __.require 'lib', 'times'
 
 endpoint = 'http://bnb.data.bl.uk/sparql'
-base = "#{endpoint}?format=json&query="
+base = "#{endpoint}?query="
 headers = { accept: 'application/sparql-results+json' }
 
 module.exports = (bnbId)->

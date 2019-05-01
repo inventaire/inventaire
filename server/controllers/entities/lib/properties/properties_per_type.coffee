@@ -65,6 +65,7 @@ module.exports =
     'wdt:P648' # Open Library ID
     'wdt:P737' # influenced by
     'wdt:P856' # official website
+    'wdt:P950' # BNE ID
     'wdt:P1412' # languages of expression
     'wdt:P2002' # Twitter account
     'wdt:P2003' # Instagram username
