@@ -1,33 +1,20 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-requests_ = __.require 'lib', 'requests'
-qs = require 'querystring'
+fetchExternalAuthorWorksTitles = __.require 'data', 'lib/fetch_external_author_works_titles'
 cache_ = __.require 'lib', 'cache'
 { oneMonth } =  __.require 'lib', 'times'
 
 endpoint = 'http://data.bnf.fr/sparql'
-base = "#{endpoint}?default-graph-uri=&format=json&timeout=60000&query="
-headers = { accept: '*/*' }
 
 module.exports = (bnfId)->
   key = "bnf:author-works-titles:#{bnfId}"
-  return cache_.get { key, fn: getBnfAuthorWorksTitles.bind(null, bnfId), timespan: 3*oneMonth }
-
-getBnfAuthorWorksTitles = (bnfId)->
-  _.info bnfId, 'bnfId'
-  url = base + getQuery(bnfId)
-  requests_.get { url, headers }
-  .then (res)->
-    res.results.bindings
-    .map (result)->
-      quotation: result.title?.value
-      url: result.work?.value
+  return cache_.get { key, fn: fetchExternalAuthorWorksTitles.bind(null, endpoint, getQuery(bnfId)), timespan: 3*oneMonth }
 
 getQuery = (bnfId)->
   # TODO: restrict expressions of work result to Text only
   # probably with dcterms:type dcmitype:Text
-  query = """
+  """
   PREFIX dcterms: <http://purl.org/dc/terms/>
   SELECT DISTINCT ?title ?work WHERE {
     <http://data.bnf.fr/ark:/12148/cb#{bnfId}> foaf:focus ?person .
@@ -38,4 +25,3 @@ getQuery = (bnfId)->
         rdfs:label ?title . }
   }
   """
-  return qs.escape query
