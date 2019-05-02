@@ -37,6 +37,7 @@ module.exports = [
   'P356' # DOI
   'P361' # part of
   'P364' # original language of work
+  'P349' # NDL of Japan Auth ID
   'P407' # language of work
   'P496' # ORCID ID
   'P577' # publication date

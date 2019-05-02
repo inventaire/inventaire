@@ -73,6 +73,7 @@ describe 'tasks:externalSourcesOccurrences', ->
         occurrencesUrls.join().should.containEql /datos.bne.es/
         occurrencesUrls.join().should.containEql /libris.kb.se/
         occurrencesUrls.join().should.containEql /data.bibliotheken.nl/
+        occurrencesUrls.join().should.containEql /jpsearch.go.jp/
         done()
     .catch undesiredErr(done)
 

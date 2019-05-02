@@ -59,6 +59,7 @@ module.exports =
     'wdt:P214' # VIAF ID
     'wdt:P227' # GND ID
     'wdt:P269' # SUDOC authorities ID
+    'wdt:P349' # NDL of Japan Auth ID
     'wdt:P496' # ORCID ID
     'wdt:P569' # date of birth
     'wdt:P570' # date of death
