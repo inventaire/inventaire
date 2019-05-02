@@ -9,6 +9,7 @@ getWikipediaArticle = __.require 'data', 'wikipedia/get_article'
 getBnfAuthorWorksTitles = __.require 'data', 'bnf/get_bnf_author_works_titles'
 getBnbAuthorWorksTitles = __.require 'data', 'bnb/get_bnb_author_works_titles'
 getBneAuthorWorksTitles = __.require 'data', 'bne/get_bne_author_works_titles'
+getSelibrAuthorWorksTitle = __.require 'data', 'selibr/get_selibr_author_works_titles'
 getOlAuthorWorksTitles = __.require 'data', 'openlibrary/get_ol_author_works_titles'
 getEntityByUri = __.require 'controllers', 'entities/lib/get_entity_by_uri'
 
@@ -33,6 +34,7 @@ module.exports = (wdAuthorUri, worksLabels, worksLabelsLangs)->
       getOpenLibraryOccurrences authorEntity, worksLabels
       getBnbOccurrences authorEntity, worksLabels
       getBneOccurrences authorEntity, worksLabels
+      getSelibrOccurrences authorEntity, worksLabels
     ]
   .then _.flatten
   .then _.compact
@@ -68,6 +70,7 @@ getBnfOccurrences = getAndCreateOccurencesFromIds 'wdt:P268', getBnfAuthorWorksT
 getOpenLibraryOccurrences = getAndCreateOccurencesFromIds 'wdt:P648', getOlAuthorWorksTitles
 getBnbOccurrences = getAndCreateOccurencesFromIds 'wdt:P5361', getBnbAuthorWorksTitles
 getBneOccurrences = getAndCreateOccurencesFromIds 'wdt:P950', getBneAuthorWorksTitles
+getSelibrOccurrences = getAndCreateOccurencesFromIds 'wdt:P906', getSelibrAuthorWorksTitle
 
 createOccurrences = (worksLabels)->
   worksLabelsPattern = new RegExp(worksLabels.join('|'), 'gi')

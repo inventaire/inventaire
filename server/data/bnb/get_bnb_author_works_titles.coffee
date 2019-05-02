@@ -25,8 +25,6 @@ getBnbAuthorWorksTitles = (bnbId)->
       url: result.work?.value
 
 getQuery = (bnbId)->
-  # TODO: restrict expressions of work result to Text only
-  # probably with dcterms:type dcmitype:Text
   query = """
   PREFIX dct: <http://purl.org/dc/terms/>
   SELECT DISTINCT ?title ?work WHERE {

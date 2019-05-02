@@ -55,6 +55,7 @@ module.exports = [
   'P921' # main subject
   'P941' # inspired by
   'P953' # full text available at
+  'P906' # SELIBR ID (Swedish)
   'P950' # BNE ID
   'P957' # isbn 10
   'P1044' # SWB editions

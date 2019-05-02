@@ -58,7 +58,7 @@ describe 'tasks:externalSourcesOccurrences', ->
 
     return
 
-  it 'should return an occurrence when work is on author bnf, bne & bnb page', (done)->
+  it 'should return an occurrence when work is referenced on national libraries page', (done)->
     humanLabel = 'Stanislas Lem'
     workLabel = 'Solaris'
     createHuman { labels: { en: humanLabel } }
@@ -71,6 +71,7 @@ describe 'tasks:externalSourcesOccurrences', ->
         occurrencesUrls.join().should.containEql /data.bnf.fr/
         occurrencesUrls.join().should.containEql /bnb.data.bl.uk/
         occurrencesUrls.join().should.containEql /datos.bne.es/
+        occurrencesUrls.join().should.containEql /libris.kb.se/
         done()
     .catch undesiredErr(done)
 
