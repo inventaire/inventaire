@@ -4,7 +4,6 @@ should = require 'should'
 { getByUris } = require '../utils/entities'
 { createHuman, createWorkWithAuthor, randomLabel } = require '../fixtures/entities'
 
-
 # Tests dependency: having a populated ElasticSearch wikidata index
 describe 'tasks:automerge', ->
   it 'should automerge if author has homonyms but only one has occurrences', (done)->

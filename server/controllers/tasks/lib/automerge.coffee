@@ -10,7 +10,13 @@ mergeEntities = __.require 'controllers', 'entities/lib/merge_entities'
 module.exports = (suspect, workLabelsByLang)-> (suggestions)->
   workLabels = _.values workLabelsByLang
   if authorNameInWorkTitles(suspect.labels, workLabels) then return suggestions
-  sourcedSuggestions = suggestions.filter hasOccurrences
+  sourcedSuggestions = suggestions.filter (sug)-> occurrencesCount(sug) > 0
+
+  for suggestion in sourcedSuggestions
+    # Merge suggestion with more than 2 occurences, since only two wikipedias are checked
+    if occurrencesCount(suggestion) > 2
+      return mergeEntities reconcilerUserId, suspect.uri, suggestion.uri
+      .then -> []
 
   if noSuggestion sourcedSuggestions
     return suggestions
@@ -37,7 +43,7 @@ authorNameInWorkTitles = (authorLabels, workLabels)->
     for workLabel in workLabels
       if workLabel.match(authorLabel)? then return true
 
-hasOccurrences = (suggestion)-> suggestion.occurrences.length > 0
+occurrencesCount = (suggestion)-> suggestion.occurrences.length
 
 canBeAutomerged = (suggestion)->
   matchedTitles =  _.flatten _.map(suggestion.occurrences, 'matchedTitles')
