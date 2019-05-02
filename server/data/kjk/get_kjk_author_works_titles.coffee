@@ -6,18 +6,18 @@ qs = require 'querystring'
 cache_ = __.require 'lib', 'cache'
 { oneMonth } =  __.require 'lib', 'times'
 
-endpoint = 'http://datos.bne.es/sparql'
+endpoint = 'http://data.bibliotheken.nl/sparql'
 base = "#{endpoint}?query="
 headers = { accept: 'application/sparql-results+json' }
 
-module.exports = (bneId)->
-  key = "bne:author-works-titles:#{bneId}"
+module.exports = (kjkId)->
+  key = "kjk:author-works-titles:#{kjkId}"
 
-  return cache_.get { key, fn: getBneAuthorWorksTitles.bind(null, bneId), timespan: 3*oneMonth }
+  return cache_.get { key, fn: getKjkAuthorWorksTitles.bind(null, kjkId), timespan: 3*oneMonth }
 
-getBneAuthorWorksTitles = (bneId)->
-  _.info bneId, 'bneId'
-  url = base + getQuery(bneId)
+getKjkAuthorWorksTitles = (kjkId)->
+  _.info kjkId, 'kjkId'
+  url = base + getQuery(kjkId)
   requests_.get { url, headers }
   .then (res)->
     res.results.bindings
@@ -25,11 +25,11 @@ getBneAuthorWorksTitles = (bneId)->
       quotation: result.title?.value
       url: result.work?.value
 
-getQuery = (bneId)->
+getQuery = (kjkId)->
   query = """
   SELECT ?work ?title WHERE {
-    <http://datos.bne.es/resource/#{bneId}> <http://datos.bne.es/def/OP5001> ?work .
-    ?work <http://datos.bne.es/def/P1001> ?title
+    ?work <http://schema.org/author> <http://data.bibliotheken.nl/id/thes/p#{kjkId}> .
+    ?work <http://schema.org/name> ?title .
   }
   """
   return qs.escape query

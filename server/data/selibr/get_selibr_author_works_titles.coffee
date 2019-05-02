@@ -12,6 +12,7 @@ headers = { accept: 'application/sparql-results+json' }
 
 module.exports = (selibrId)->
   key = "selibr:author-works-titles:#{selibrId}"
+
   return cache_.get { key, fn: getBnbAuthorWorksTitles.bind(null, selibrId), timespan: 3*oneMonth }
 
 getBnbAuthorWorksTitles = (selibrId)->

@@ -67,6 +67,7 @@ module.exports =
     'wdt:P856' # official website
     'wdt:P906' # SELIBR ID (Swedish)
     'wdt:P950' # BNE ID
+    'wdt:P1006' # Dutch National for Author Names ID
     'wdt:P1412' # languages of expression
     'wdt:P2002' # Twitter account
     'wdt:P2003' # Instagram username
