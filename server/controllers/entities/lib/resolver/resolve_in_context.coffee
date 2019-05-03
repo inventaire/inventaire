@@ -24,15 +24,15 @@ getAlreadyResolvedUris = (seed)-> _.compact _.map(seed, 'uri')
 
 resolveAuthor = (worksUris)-> (author)->
   if author.uri? or _.isEmpty(worksUris) then return author
-  authorSeedLabels = getLabels(author)
+  authorSeedLabels = getLabels author
   getAuthorsFromWorksUris worksUris
   .filter ifSomeLabelsMatch(authorSeedLabels)
   .then resolveSeed(author)
 
 resolveWork = (authorsUris)-> (work)->
   if work.uri? or _.isEmpty(authorsUris) then return work
-  workSeedLabels = getLabels(work)
-  Promise.all getWorksFromAuthorsLabels authorsUris
+  workSeedLabels = getLabels work
+  Promise.all getWorksFromAuthorsLabels(authorsUris)
   .filter ifSomeLabelsMatch(workSeedLabels)
   .then resolveSeed(work)
 
@@ -40,11 +40,9 @@ ifSomeLabelsMatch = (seedLabels)-> (entity)->
   entitiesLabels = _.values entity.labels
   _.intersection(seedLabels, entitiesLabels).length > 0
 
-exactMatchLabels = (labels1, labels2)-> _.intersection(labels1, labels2)
-
 getLabels = (seed)-> _.values seed.labels
 
 resolveSeed = (seed)-> (entities)->
   # When only one entity is found, then seed is considered resolved
   if entities.length is 1 then seed.uri = entities[0].uri
-  seed
+  return seed

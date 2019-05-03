@@ -71,7 +71,7 @@ describe 'entities:resolve', ->
 
   it 'should reject when no isbn is found', (done)->
     entry =
-      edition: [ { claims: { 'wdt:P1476': randomLabel() }} ]
+      edition: [ { claims: { 'wdt:P1476': randomLabel() } } ]
       works: [ { labels: { en: randomLabel() } } ]
     resolve entry
     .catch (err)->
