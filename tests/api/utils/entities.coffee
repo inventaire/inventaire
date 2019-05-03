@@ -45,6 +45,9 @@ module.exports = entitiesUtils =
   addClaim: (uri, property, value)-> entitiesUtils.updateClaim uri, property, null, value
   removeClaim: (uri, property, value)-> entitiesUtils.updateClaim uri, property, value, null
 
+  removeClaim: (uri, property, value)->
+    entitiesUtils.updateClaim uri, property, value, null
+
   getRefreshedPopularityByUris: (uris)->
     if _.isArray(uris) then uris = uris.join('|')
     nonAuthReq 'get', "/api/entities?action=popularity&uris=#{uris}&refresh=true"
