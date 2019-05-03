@@ -61,6 +61,8 @@ module.exports = API =
           'wdt:P1476': [ _.values(works[0].labels)[0] ]
           'wdt:P1680': [ randomWords() ]
           'wdt:P407': [ 'wd:' + wdLang.byCode[lang].wd ]
+          'wdt:P123': [ 'wd:Q3213930' ]
+          'wdt:P577': [ '2019' ]
           'invp:P2': [ someImageHash ]
 
   createEditionFromWorks: (works...)->

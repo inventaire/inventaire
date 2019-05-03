@@ -22,7 +22,7 @@ describe 'entities:publishers:create', ->
       editionUri = "inv:#{edition._id}"
       createPublisher()
       .then (publisher)->
-        oldVal = null
+        oldVal = edition.claims['wdt:P123'][0]
         newVal = "inv:#{publisher._id}"
         property = 'wdt:P123'
         updateClaim(editionUri, property, oldVal, newVal)

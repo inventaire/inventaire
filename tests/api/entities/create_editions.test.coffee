@@ -3,7 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { nonAuthReq, authReq, undesiredErr, undesiredRes } = require '../utils/utils'
-{ createWork, createSerie, randomLabel } = require '../fixtures/entities'
+{ createEdition, createWork, createSerie, randomLabel } = require '../fixtures/entities'
 workEntityPromise = createWork()
 
 describe 'entities:editions:create', ->
@@ -54,7 +54,7 @@ describe 'entities:editions:create', ->
 
   it 'should accept an edition without a labels object', (done)->
     workEntityPromise
-    .then (workEntity)-> createEdition workEntity.uri
+    .then (workEntity)-> createEdition { work: workEntity }
     .then -> done()
     .catch undesiredErr(done)
 
@@ -62,7 +62,7 @@ describe 'entities:editions:create', ->
 
   it 'should not be able to create an edition entity with a non-work entity', (done)->
     createSerie()
-    .then (serieEntity)-> createEdition serieEntity.uri
+    .then (serieEntity)-> createEdition { work: serieEntity }
     .then undesiredRes(done)
     .catch (err)->
       err.statusCode.should.equal 400
@@ -72,9 +72,40 @@ describe 'entities:editions:create', ->
 
     return
 
-createEdition = (uri)->
-  authReq 'post', '/api/entities?action=create',
-    claims:
-      'wdt:P31': [ 'wd:Q3331189' ]
-      'wdt:P629': [ uri ]
-      'wdt:P1476': [ randomLabel() ]
+  it 'should reject an edition without an ISBN without a publisher', (done)->
+    workEntityPromise
+    .then (workEntity)->
+      authReq 'post', '/api/entities?action=create',
+        labels: {}
+        claims:
+          'wdt:P31': [ 'wd:Q3331189' ]
+          'wdt:P629': [ workEntity.uri ]
+          'wdt:P1476': [ randomLabel() ]
+          'wdt:P577': [ '2019' ]
+    .then undesiredRes(done)
+    .catch (err)->
+      err.statusCode.should.equal 400
+      err.body.status_verbose.should.startWith 'an edition without ISBN should have a publisher'
+      done()
+    .catch undesiredErr(done)
+
+    return
+
+  it 'should reject an edition without an ISBN without a publication date', (done)->
+    workEntityPromise
+    .then (workEntity)->
+      authReq 'post', '/api/entities?action=create',
+        labels: {}
+        claims:
+          'wdt:P31': [ 'wd:Q3331189' ]
+          'wdt:P629': [ workEntity.uri ]
+          'wdt:P1476': [ randomLabel() ]
+          'wdt:P123': [ 'wd:Q3213930' ]
+    .then undesiredRes(done)
+    .catch (err)->
+      err.statusCode.should.equal 400
+      err.body.status_verbose.should.startWith 'an edition without ISBN should have a publication date'
+      done()
+    .catch undesiredErr(done)
+
+    return
