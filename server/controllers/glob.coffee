@@ -21,7 +21,7 @@ module.exports =
   jsonRedirection: (req, res)->
     { pathname } = req._parsedUrl
     [ domain, id ] = pathname.split('/').slice(1)
-    id = id.replace /\.json$/, ''
+    id = id?.replace /\.json$/, ''
     redirectionFn = redirections[domain]
 
     unless redirectionFn?
