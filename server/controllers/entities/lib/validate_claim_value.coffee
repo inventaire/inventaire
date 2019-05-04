@@ -15,9 +15,13 @@ properties = require './properties/properties_values_constraints'
 { validateValueType, propertyType } = require './properties/validations'
 
 module.exports = (params)->
+  # Always return a promise
+  promises_.try -> validateClaimValue params
+
+validateClaimValue = (params)->
   { currentClaims, property, oldVal, newVal, letEmptyValuePass, userIsAdmin } = params
   # letEmptyValuePass to let it be interpreted as a claim deletion
-  if letEmptyValuePass and not newVal? then return promises_.resolve null
+  if letEmptyValuePass and not newVal? then return null
 
   prop = properties[property]
 
@@ -26,23 +30,23 @@ module.exports = (params)->
 
   # Ex: a user can freely set a wdt:P31 value, but only an admin can change it
   if updatingValue and prop.adminUpdateOnly and not userIsAdmin
-    return error_.reject "updating property requires admin's rights", 403, property, newVal
+    throw error_.new "updating property requires admin's rights", 403, property, newVal
 
   unless validateValueType property, newVal
     expected = propertyType property
     actual = _.typeOf newVal
     message = "invalid value type: expected #{expected}, got #{actual}"
-    return error_.reject message, 400, property, newVal
+    throw error_.new message, 400, property, newVal
 
   unless prop.validate newVal
-    return error_.reject 'invalid property value', 400, property, newVal
+    throw error_.new 'invalid property value', 400, property, newVal
 
   # If the property expects a uniqueValue and that there is already a value defined
   # any action other than editing the current value should be rejected
   if prop.uniqueValue
     propArray = currentClaims[property]
     if propArray?.length > 0 and oldVal isnt propArray[0]
-      return error_.reject 'this property accepts only one value', 400, arguments
+      throw error_.new 'this property accepts only one value', 400, arguments
 
   formattedValue = if prop.format? then prop.format(newVal) else newVal
 
