@@ -110,10 +110,11 @@ module.exports = API =
   someImageHash: someImageHash
 
 addEntityClaim = (createFnName, property)-> (subjectEntity)->
+  subjectUri = if _.isString subjectEntity then subjectEntity else subjectEntity.uri
   API[createFnName]()
-  .then (entity)-> addClaim subjectEntity.uri, property, entity.uri
+  .then (entity)-> addClaim subjectUri, property, entity.uri
   # Get a refreshed version of the subject entity
-  .then -> getByUri subjectEntity.uri
+  .then -> getByUri subjectUri
 
 API.addAuthor = addEntityClaim 'createHuman', 'wdt:P50'
 API.addSerie = addEntityClaim 'createSerie', 'wdt:P179'

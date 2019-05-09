@@ -3,6 +3,7 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 responses_ = __.require 'lib', 'responses'
 items_ = __.require 'controllers', 'items/lib/items'
+snapshot_ = __.require 'controllers', 'items/lib/snapshot/snapshot'
 transactions_ = require './lib/transactions'
 user_ = __.require 'controllers', 'user/lib/user'
 sanitize = __.require 'lib', 'sanitize/sanitize'
@@ -21,6 +22,7 @@ module.exports = (req, res, nex)->
 
     items_.byId item
     .then transactions_.verifyRightToRequest.bind(null, reqUserId)
+    .then snapshot_.addToItem
     .then (itemDoc)->
       { owner:ownerId } = itemDoc
       user_.byIds [ ownerId, reqUserId ]
