@@ -339,6 +339,18 @@ describe 'sanitize', ->
 
       return
 
+    it 'should reject an empty array', (done)->
+      req = { query: { ids: [] } }
+      configs = { ids: {} }
+      sanitize req, {}, configs
+      .then undesiredRes(done)
+      .catch (err)->
+        err.message.should.startWith "ids array can't be empty"
+        done()
+      .catch done
+
+      return
+
   describe 'lang', ->
     it "should default to 'en'", (done)->
       req = { query: {} }
