@@ -82,6 +82,7 @@ snapshotData = (itemDoc, ownerDoc, requesterDoc)->
 
 getEntitySnapshotFromItemSnapshot = (itemSnapshot)->
   entitySnapshot = {}
+  if itemSnapshot['entity:title']? then entitySnapshot.title = itemSnapshot['entity:title']
   if itemSnapshot['entity:image']? then entitySnapshot.image = itemSnapshot['entity:image']
   if itemSnapshot['entity:authors']? then entitySnapshot.authors = itemSnapshot['entity:authors']
   return entitySnapshot
