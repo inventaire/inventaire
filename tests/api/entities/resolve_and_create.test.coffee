@@ -165,7 +165,7 @@ describe 'entities:resolve:create-unresolved', ->
         work = entities[workUri]
         workAuthors = work.claims['wdt:P50']
         workAuthors.includes(result.authors[0].uri).should.be.true()
-      done()
+        done()
     .catch undesiredErr(done)
 
     return
@@ -181,13 +181,8 @@ describe 'entities:resolve:create-unresolved', ->
         claims: { 'wdt:P1476': [ title ], 'wdt:P407': [ dutchLangUri ] }
     .get 'entries'
     .then (entries)->
-      result = entries[0]
-      workUri = result.works[0].uri
-      getByUris workUri
-      .get 'entities'
-      .then (entities)->
-        work = entities[workUri]
-        work.labels[dutchLangCode].should.equal title
+      work = entries[0].works[0]
+      work.labels[dutchLangCode].should.equal title
       done()
     .catch undesiredErr(done)
 

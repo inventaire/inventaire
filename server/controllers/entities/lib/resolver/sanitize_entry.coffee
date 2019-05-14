@@ -71,8 +71,8 @@ getIsbn = (edition)->
 createWorkSeedFromEdition = (edition)->
   unless edition.claims?['wdt:P1476']?[0]? then return
   title = edition.claims['wdt:P1476'][0]
-  langUri = edition.claims['wdt:P407']?[0]
-  if langUri? then lang = wdLang.byWdId[langUri]?.code
+  langWdId = edition.claims['wdt:P407']?[0].split(':')[1]
+  if langWdId? then lang = wdLang.byWdId[langWdId]?.code
   unless lang? then lang = isbn_.guessLangFromIsbn edition.isbn
   lang ?= 'en'
   return { labels: { "#{lang}": title } }
