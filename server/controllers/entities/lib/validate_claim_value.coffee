@@ -13,6 +13,7 @@ setTimeout lateRequire, 0
 
 properties = require './properties/properties_values_constraints'
 { validateValueType, propertyType } = require './properties/validations'
+validateClaimValueSync = require './validate_claim_value_sync'
 
 module.exports = (params)->
   # Always return a promise
@@ -32,14 +33,7 @@ validateClaimValue = (params)->
   if updatingValue and prop.adminUpdateOnly and not userIsAdmin
     throw error_.new "updating property requires admin's rights", 403, property, newVal
 
-  unless validateValueType property, newVal
-    expected = propertyType property
-    actual = _.typeOf newVal
-    message = "invalid value type: expected #{expected}, got #{actual}"
-    throw error_.new message, 400, property, newVal
-
-  unless prop.validate newVal
-    throw error_.new 'invalid property value', 400, property, newVal
+  validateClaimValueSync property, newVal
 
   # If the property expects a uniqueValue and that there is already a value defined
   # any action other than editing the current value should be rejected

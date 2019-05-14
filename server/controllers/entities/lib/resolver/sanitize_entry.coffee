@@ -1,11 +1,13 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-properties = require '../properties/properties_values_constraints'
 responses_ = __.require 'lib', 'responses'
 error_ = __.require 'lib', 'error/error'
 isbn_ = __.require 'lib', 'isbn/isbn'
 wdLang = require 'wikidata-lang'
+properties = require '../properties/properties_values_constraints'
+validateClaimValueSync = require '../validate_claim_value_sync'
+{ validateProperty } = require '../properties/validations'
 
 # Validate : requires only one edition to resolve from and a valid isbn
 # Format : if edition is a list, force pick the first edition
@@ -52,10 +54,9 @@ sanitizeSeed = (res, seed)->
     throw error_.new 'invalid claims', 400, { seed }
 
   Object.keys(claims).forEach (prop)->
-    unless properties[prop]?
-      responses_.addWarning res, 'resolver', "unknown property: #{prop}"
-      delete claims[prop]
+    validateProperty prop
     claims[prop] = _.forceArray claims[prop]
+    claims[prop].forEach validateClaimValueSync.bind(null, prop)
 
 getIsbn = (edition)->
   edition.isbn or edition.claims?['wdt:P212'] or edition.claims?['wdt:P957']

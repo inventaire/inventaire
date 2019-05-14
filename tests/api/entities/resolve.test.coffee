@@ -17,6 +17,7 @@ describe 'entities:resolve', ->
     invalidIsbn = '9780000000000'
     resolve { edition: { isbn: invalidIsbn } }
     .catch (err)->
+      err.statusCode.should.equal 400
       err.body.status_verbose.should.startWith 'invalid isbn'
       done()
     .catch undesiredErr(done)
@@ -63,6 +64,7 @@ describe 'entities:resolve', ->
     resolve {}
     .then undesiredRes(done)
     .catch (err)->
+      err.statusCode.should.equal 400
       err.body.status_verbose.should.startWith 'missing edition in entry'
       done()
     .catch done
@@ -75,6 +77,7 @@ describe 'entities:resolve', ->
       works: [ { labels: { en: randomLabel() } } ]
     resolve entry
     .catch (err)->
+      err.statusCode.should.equal 400
       err.body.status_verbose.should.startWith 'no isbn found'
       done()
     .catch done
@@ -87,21 +90,36 @@ describe 'entities:resolve', ->
       works: [ { claims: [ 'wdt:P31: wd:Q23' ] } ]
     .then undesiredRes(done)
     .catch (err)->
+      err.statusCode.should.equal 400
       err.body.status_verbose.should.startWith 'invalid claims'
       done()
     .catch done
 
     return
 
-  it 'should warn when claims key has an unknown property', (done)->
+  it 'should reject when claims value is invalid', (done)->
+    resolve
+      edition: { isbn: generateIsbn13() }
+      works: [ { claims: { 'wdt:P50': [ 'not a valid entity uri' ] } } ]
+    .then undesiredRes(done)
+    .catch (err)->
+      err.statusCode.should.equal 400
+      err.body.status_verbose.should.equal 'invalid property value'
+      done()
+    .catch done
+
+    return
+
+  it 'should reject when claims key has an unknown property', (done)->
     unknownProp = 'wdt:P6'
     seed =
       isbn: generateIsbn13()
       claims: { "#{unknownProp}": [ 'wd:Q23' ] }
     resolve { edition: seed }
-    .then (res)->
-      res.warnings.should.be.an.Object()
-      res.warnings.resolver.should.deepEqual [ "unknown property: #{unknownProp}" ]
+    .then undesiredRes(done)
+    .catch (err)->
+      err.statusCode.should.equal 400
+      err.body.status_verbose.should.equal "property isn't whitelisted"
       done()
     .catch done
 
@@ -113,7 +131,6 @@ describe 'entities:resolve:external-id', ->
       edition: { isbn: generateIsbn13() }
       works: [
         claims:
-          'wdt:P2963': [ 'OL52556W' ]
           'wdt:P1085': [ '28158' ]
       ]
     .get 'entries'
@@ -259,7 +276,7 @@ describe 'entities:resolve:in-context', ->
     return
 
 describe 'entities:resolve:on-labels', ->
-  it 'should resolve author and work pair by searching for labels exact', (done)->
+  it 'should resolve author and work pair by searching for exact labels', (done)->
     createHuman()
     .then (author)->
       workLabel = randomLabel()
