@@ -49,6 +49,13 @@ sanitizeSeed = (res, seed)->
   unless _.isPlainObject seed.labels
     throw error_.new 'invalid labels', 400, { seed }
 
+  for lang, label of seed.labels
+    unless _.isLang lang
+      throw error_.new 'invalid label lang', 400, { lang, label }
+
+    unless _.isNonEmptyString label
+      throw error_.new 'invalid label', 400, { lang, label }
+
   claims = seed.claims ?= {}
   unless _.isPlainObject seed.claims
     throw error_.new 'invalid claims', 400, { seed }

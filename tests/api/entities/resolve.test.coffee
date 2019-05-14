@@ -84,6 +84,32 @@ describe 'entities:resolve', ->
 
     return
 
+  it 'should reject when label lang is invalid', (done)->
+    resolve
+      edition: { isbn: generateIsbn13() }
+      works: [ { labels: { notalang: 'foo' } } ]
+    .then undesiredRes(done)
+    .catch (err)->
+      err.statusCode.should.equal 400
+      err.body.status_verbose.should.equal 'invalid label lang'
+      done()
+    .catch done
+
+    return
+
+  it 'should reject when label value is invalid', (done)->
+    resolve
+      edition: { isbn: generateIsbn13() }
+      works: [ { labels: { fr: [ 'foo' ] } } ]
+    .then undesiredRes(done)
+    .catch (err)->
+      err.statusCode.should.equal 400
+      err.body.status_verbose.should.equal 'invalid label'
+      done()
+    .catch done
+
+    return
+
   it 'should reject when claims key is not an array of objects', (done)->
     resolve
       edition: { isbn: generateIsbn13() }
