@@ -11,17 +11,14 @@ trustworthyDomains = [
   'openlibrary.org'
 ]
 
-module.exports = (occurences)->
-  _.inspect occurences,"##### 1a ##"
-  unless _.some occurrences then return false
-  _.inspect occurences,"##### 15 ##"
-  result = occurences.map (occurence)->
-    unless occurence.matchedTitles? then return false
-    domain = getDomainName occurence.url
-    _.includes(trustworthyDomains, domain)
-  .filter (bool)-> bool is true
+module.exports = (occurrences)->
+  unless _.some(occurrences) then return false
+  trustedOccurences = _.filter occurrences, isTrustedOccurence
+  trustedOccurences.length > 1
 
-  result.length > 0
+isTrustedOccurence = (occurence)->
+  unless occurence.matchedTitles? then return false
+  domain = getDomainName occurence.url
+  return domain in trustworthyDomains
 
-getDomainName = (url)->
-  _.split(url, '/')[2]
+getDomainName = (url)-> url.split('/')[2]

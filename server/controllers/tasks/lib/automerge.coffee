@@ -8,27 +8,23 @@ areTrustedOccurences = require './are_trusted_occurences'
 # If confidence is too low, return best suggestions for task creation
 
 module.exports = (suspect, workLabelsByLang)-> (suggestions)->
+  if suggestions.length is 0 then return []
   workLabels = _.values workLabelsByLang
   if authorNameInWorkTitles(suspect.labels, workLabels) then return suggestions
-  sourcedSuggestions = suggestions.filter (sug)-> sug.occurrences.length > 0
-
-  for suggestion in sourcedSuggestions
-    # Merge suggestion with more than 2 occurences, since only two wikipedias are checked
-    if suggestion.occurences? and areTrustedOccurences suggestion.occurences
-      return mergeEntities reconcilerUserId, suspect.uri, suggestion.uri
-      .then -> []
-
-  if sourcedSuggestions.length is 0
-    return suggestions
-  else if sourcedSuggestions.length > 1
-    return sourcedSuggestions
-  else
-    # Only one suggestion, automerge possible
-    suggestion = sourcedSuggestions[0]
-    unless canBeAutomerged(suggestion) then return sourcedSuggestions
-    mergeEntities reconcilerUserId, suspect.uri, suggestion.uri
-    # No suggestions since merged suspect
+  # get suggestions with at least 2 occurences from trustworthy domains
+  trustedSuggestions = suggestions.filter (sug)-> areTrustedOccurences(sug.occurrences)
+  if trustedSuggestions.length is 1
+    return mergeEntities reconcilerUserId, suspect.uri, trustedSuggestions[0].uri
     .then -> []
+  suggestions = suggestions.filter (sug)-> sug.occurrences.length > 0
+  # Cannot merge if several suggestions have occurences
+  if suggestions.length > 1 then return suggestions
+  uniqSuggestion = suggestions[0]
+  # or when title is long enoughœ
+  if canBeAutomerged(uniqSuggestion)
+    return mergeEntities reconcilerUserId, suspect.uri, uniqSuggestion.uri
+    .then -> []
+  suggestions
 
 authorNameInWorkTitles = (authorLabels, workLabels)->
   # Unable to define if occurences are relevant
