@@ -39,12 +39,8 @@ describe 'tasks automerge', ->
     shouldNotMerge suggestions, matchedTitles
     done()
 
-  it 'should merge when no occurrence exists but suspect and suggestion work titles is long enough', (done)->
-    urls = [
-      'https://fr.wikipedia.org/wiki/Faujour'
-      'https://pl.wikipedia.org/wiki/Faujour'
-      'https://la.wikipedia.org/wiki/Faujour'
-    ]
+  it 'should merge when untrusted occurrence exists but suspect and suggestion work titles is long enough', (done)->
+    urls = [ 'https://la.wikipedia.org/wiki/Faujour' ]
     suggestions = createSuggestions()
     matchedTitles = [ 'very very long title' ]
     addOccurrence suggestions[0], urls, matchedTitles

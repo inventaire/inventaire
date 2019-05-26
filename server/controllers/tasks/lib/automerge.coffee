@@ -28,7 +28,9 @@ module.exports = (suspect, workLabelsByLang)-> (suggestions)->
 
 mergeSuggestion = (suspectUri, suggestionUri)->
   mergeEntities reconcilerUserId, suspectUri, suggestionUri
-  .then -> []
+  .then ->
+    _.info { suspectUri, suggestionUri }, "entities automerge"
+    []
 
 filterIfOccurences = (suggestions)->
   suggestions.filter (sug)-> sug.occurrences.length > 0
