@@ -55,9 +55,9 @@ describe 'tasks:byScore', ->
         tasks.forEach (task, i)->
           previousTask = tasks[i-1]
           unless previousTask? then return
-          prevOccurencesCount = previousTask.externalSourcesOccurrences.length
+          prevOccurrencesCount = previousTask.externalSourcesOccurrences.length
           occurrencesCount = task.externalSourcesOccurrences.length
-          prevOccurencesCount.should.be.aboveOrEqual occurrencesCount
+          prevOccurrencesCount.should.be.aboveOrEqual occurrencesCount
         done()
     .catch undesiredErr(done)
 

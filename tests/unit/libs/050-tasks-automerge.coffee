@@ -9,7 +9,7 @@ suspect =
   labels: { en: 'Loic Faujour' }
   claims: { 'wdt:P31': [ 'wd:Q5' ] }
 
-# small title length otherwise merge is possible without occurences
+# small title length otherwise merge is possible without occurrences
 matchedTitles = [ 'short title' ]
 
 addOccurrence = (suggestion, urls, matchedTitles)->
@@ -52,7 +52,7 @@ describe 'tasks automerge', ->
     shouldMerge suggestions, matchedTitles
     done()
 
-  it 'should merge and return a Promise when trustworthy occurences are passed', (done)->
+  it 'should merge and return a Promise when trustworthy occurrences are passed', (done)->
     urls = [
       'http://data.bnf.fr/ark:/12345/cb410608300#about'
       'http://datos.bne.es/resource/XX2052428'
@@ -64,7 +64,7 @@ describe 'tasks automerge', ->
     shouldMerge suggestions, matchedTitles
     done()
 
-  it 'should not merge when several suggestions have occurences', (done)->
+  it 'should not merge when several suggestions have occurrences', (done)->
     urls1 = [
       'http://data.bnf.fr/ark:/12345/cb410608300#about'
       'http://datos.bne.es/resource/XX12345'
@@ -97,7 +97,7 @@ describe 'tasks automerge', ->
     shouldNotMerge suggestions, matchedTitles
     done()
 
-  it 'should merge when one suggestions have trusted occurences', (done)->
+  it 'should merge when one suggestions have trusted occurrences', (done)->
     urls1 = [
       'http://data.bnf.fr/ark:/12345/cb410608300#about'
       'http://datos.bne.es/resource/XX12345'
@@ -114,7 +114,7 @@ describe 'tasks automerge', ->
     shouldMerge suggestions, matchedTitles
     done()
 
-  it 'should not merge when two suggestions have trusted occurences', (done)->
+  it 'should not merge when two suggestions have trusted occurrences', (done)->
     urls1 = [
       'http://data.bnf.fr/ark:/12345/cb410608300#about'
       'http://datos.bne.es/resource/XX12345'
