@@ -3,8 +3,15 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 requests_ = __.require 'lib', 'requests'
 qs = require 'querystring'
+cache_ = __.require 'lib', 'cache'
+{ oneMonth } =  __.require 'lib', 'times'
+timespan = 3 * oneMonth
 
-module.exports = (endpoint, query)->
+module.exports = (name, endpoint, getQuery)-> (id)->
+  key = "#{name}:author-works-titles:#{id}"
+  return cache_.get { key, fn: fetch.bind(null, endpoint, getQuery(id), id), timespan  }
+
+fetch = (endpoint, query)->
   escapedQuery = qs.escape query
   base = "#{endpoint}?query="
   headers = { accept: 'application/sparql-results+json' }

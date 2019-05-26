@@ -2,14 +2,8 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 fetchExternalAuthorWorksTitles = __.require 'data', 'lib/fetch_external_author_works_titles'
-cache_ = __.require 'lib', 'cache'
-{ oneMonth } =  __.require 'lib', 'times'
 
 endpoint = 'http://data.bnf.fr/sparql'
-
-module.exports = (bnfId)->
-  key = "bnf:author-works-titles:#{bnfId}"
-  return cache_.get { key, fn: fetchExternalAuthorWorksTitles.bind(null, endpoint, getQuery(bnfId)), timespan: 3*oneMonth }
 
 getQuery = (bnfId)->
   # TODO: restrict expressions of work result to Text only
@@ -25,3 +19,5 @@ getQuery = (bnfId)->
         rdfs:label ?title . }
   }
   """
+
+module.exports = fetchExternalAuthorWorksTitles 'bnf', endpoint, getQuery
