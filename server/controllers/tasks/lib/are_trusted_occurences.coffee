@@ -17,7 +17,7 @@ module.exports = (occurrences)->
   trustedOccurences.length > 1
 
 isTrustedOccurence = (occurence)->
-  unless occurence.matchedTitles? then return false
+  unless occurence.matchedTitles and occurence.url then return false
   domain = getDomainName occurence.url
   return domain in trustworthyDomains
 

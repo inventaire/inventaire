@@ -39,7 +39,7 @@ describe 'tasks automerge', ->
     shouldNotMerge suggestions, matchedTitles
     done()
 
-  it 'should merge when no occurrence exists but title is long enough', (done)->
+  it 'should merge when no occurrence exists but suspect and suggestion work titles is long enough', (done)->
     urls = [
       'https://fr.wikipedia.org/wiki/Faujour'
       'https://pl.wikipedia.org/wiki/Faujour'
@@ -73,6 +73,22 @@ describe 'tasks automerge', ->
       'http://data.bnf.fr/ark:/54321/cb410608300#about'
       'http://datos.bne.es/resource/XX54321'
     ]
+    suggestions = createSuggestions()
+    suggestions.push { uri: 'wd:Q6530', occurrences: [] }
+    addOccurrence suggestions[0], urls1, matchedTitles
+    addOccurrence suggestions[1], urls2, matchedTitles
+
+    shouldNotMerge suggestions, matchedTitles
+    done()
+
+  it 'should not merge when several suggestions match a long title', (done)->
+    urls1 = [
+      'https://fr.wikipedia.org/wiki/Faujour'
+    ]
+    urls2 = [
+      'https://pl.wikipedia.org/wiki/Stanialas Lem'
+    ]
+    matchedTitles = [ 'very very long title' ]
     suggestions = createSuggestions()
     suggestions.push { uri: 'wd:Q6530', occurrences: [] }
     addOccurrence suggestions[0], urls1, matchedTitles
