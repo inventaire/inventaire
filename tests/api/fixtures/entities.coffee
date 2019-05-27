@@ -124,9 +124,7 @@ module.exports = API =
 addEntityClaim = (createFnName, property)-> (subjectEntity)->
   subjectUri = if _.isString subjectEntity then subjectEntity else subjectEntity.uri
   API[createFnName]()
-  .then (entity)-> addClaim subjectUri, property, entity.uri
-  # Get a refreshed version of the subject entity
-  .then -> getByUri subjectUri
+  .tap (entity)-> addClaim subjectUri, property, entity.uri
 
 API.addAuthor = addEntityClaim 'createHuman', 'wdt:P50'
 API.addSerie = addEntityClaim 'createSerie', 'wdt:P179'
