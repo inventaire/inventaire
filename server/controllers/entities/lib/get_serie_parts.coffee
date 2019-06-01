@@ -29,6 +29,7 @@ getWdSerieParts = (qid, refresh, dry)->
     date: getSimpleDayDate result.date
     ordinal: result.ordinal
     subparts: result.subparts
+    superpart: prefixifyWd result.superpart
 
 getInvSerieParts = (uri)->
   # Querying only for 'serie' (wdt:P179) and not 'part of' (wdt:P361)
