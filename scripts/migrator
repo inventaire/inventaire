@@ -2,7 +2,7 @@
 
 # HOW TO:
 # -----------------
-# - create a new migration doc based on ./migration_docs/sample
+# - create a new migration doc based on db/couchdb/migration_docs
 # - eventually, export NODE_ENV=prod-migration to use config/prod-migration
 # - run `npm run migrator migration_doc_filename`
 
