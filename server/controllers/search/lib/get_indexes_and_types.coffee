@@ -6,10 +6,10 @@ _ = __.require 'builders', 'utils'
 module.exports = (typesList)->
   data = { indexes: [], types: [] }
   { indexes, types } = typesList.reduce aggregateIndexesAndTypes, data
-  return { indexes: _.uniq(indexes), types: _.uniq(types) }
+  return { indexes: _.uniq(indexes), types }
 
-aggregateIndexesAndTypes = (data, type)->
-  { indexes, types } = typesData[type]
+aggregateIndexesAndTypes = (data, nextType)->
+  { indexes, type } = typesData[nextType]
   data.indexes = data.indexes.concat indexes
-  data.types = data.types.concat types
+  data.types.push type
   return data

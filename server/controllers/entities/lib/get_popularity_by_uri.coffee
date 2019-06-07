@@ -45,14 +45,17 @@ getItemsCount = (uri)->
   # Count the owners so that no more than one item per user is counted
   .then (owners)-> _.uniq(owners).length
 
-getWorkEditionsScores = (uri)->
+getEditionsScores = (property)-> (uri)->
   # Limit request to local entities as Wikidata editions entities are currently ignored
   # see https://github.com/inventaire/inventaire/issues/182
-  reverseClaims { property: 'wdt:P629', value: uri, dry: true }
+  reverseClaims { property, value: uri, dry: true }
   .then (editonsUris)->
     editonsCount = editonsUris.length
     Promise.all editonsUris.map(getItemsCount)
     .then (editionsItemsCounts)-> _.sum(editionsItemsCounts) + editonsCount
+
+getWorkEditionsScores = getEditionsScores 'wdt:P629'
+getPublisherScore = getEditionsScores 'wdt:P123'
 
 getPartsScores = (uri)->
   getSerieParts { uri, dry: true }
@@ -82,6 +85,7 @@ popularityGettersByType =
   work: getWorkEditionsScores
   serie: getPartsScores
   human: getAuthorWorksScores
+  publisher: getPublisherScore
 
 # Wikidata entities get a bonus as being on Wikidata is already kind of a proof of a certain
 # level of popularity
