@@ -3,19 +3,18 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 responses_ = __.require 'lib', 'responses'
 reverseClaims = require './lib/reverse_claims'
+sanitize = __.require 'lib', 'sanitize/sanitize'
 
-module.exports = (req, res, next)->
-  { property, uri, refresh, sort } = req.query
+sanitization =
+  property: {}
+  value: {}
+  refresh: { optional: true }
+  sort:
+    generic: 'boolean'
+    default: false
 
-  unless _.isPropertyUri property
-    return error_.bundleInvalid req, res, 'property', property
-
-  unless _.isEntityUri uri
-    return error_.bundleInvalid req, res, 'uri', uri
-
-  refresh = _.parseBooleanString refresh
-  sort = _.parseBooleanString sort
-
-  reverseClaims { property, value: uri, refresh, sort }
+module.exports = (req, res)->
+  sanitize req, res, sanitization
+  .then reverseClaims
   .then responses_.Wrap(res, 'uris')
   .catch error_.Handler(req, res)
