@@ -1,3 +1,4 @@
+CONFIG = require('config')
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 cache_ = __.require 'lib', 'cache'
@@ -43,10 +44,15 @@ parametersTests =
   qid: wdk.isItemId
   pid: wdk.isPropertyId
 
+requestOptions =
+  headers:
+    # Required to avoid getting a 403
+    'user-agent': CONFIG.name
+
 runQuery = (params, key)->
   { query:queryName } = params
   url = buildQuery params
 
-  requests_.get url
+  requests_.get url, requestOptions
   .then wdk.simplifySparqlResults
   .catch _.ErrorRethrow(key)
