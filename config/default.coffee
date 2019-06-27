@@ -24,6 +24,9 @@ module.exports = config =
   fullPublicHost: -> "#{@publicProtocol}://#{@publicHost}:#{@port}"
   invHost: 'https://inventaire.io'
   secret: 'yoursecrethere'
+  # Set to the url of an instance of https://github.com/maxlath/mini-proxy
+  # ex: 'http://51.77.140.190:4124'
+  miniProxy: null
   # Debug mode:
   # - log requests body
   debug: false

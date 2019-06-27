@@ -6,6 +6,7 @@ randomString = require('./utils/random_string').bind(null, 8)
 { repository } = __.require('root', 'package.json')
 userAgent = "#{CONFIG.name} (#{repository.url})"
 requestId = 0
+{ miniProxy } = CONFIG
 
 req = (verb)-> (url, options)->
   key = startTimer verb, url
@@ -39,7 +40,11 @@ mergeOptions = (url, options = {})->
 
   # If the url was in the options
   # the url object will be overriden
-  return _.extend { url }, baseOptions, options
+  options = _.extend { url }, baseOptions, options
+
+  if miniProxy? then options.url = "#{miniProxy}/#{options.url}"
+
+  return options
 
 startTimer = (verb, url)->
   # url could be an object
