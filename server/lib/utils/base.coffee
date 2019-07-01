@@ -133,6 +133,25 @@ module.exports = base =
     if _.isArray(keys) then keys
     else [ keys ]
 
+  mapKeysValues: (obj, fn)->
+    Object.keys(obj).reduce aggregateMappedKeysValues(obj, fn), {}
+
+aggregateMappedKeysValues = (obj, fn)-> (newObj, key)->
+  value = obj[key]
+  newKeyValue = fn key, value
+
+  unless _.isArray newKeyValue
+    errMessage = "function should return a [ key, value ] array (got #{newKeyValue})"
+    throw new Error errMessage
+
+  [ newKey, newValue ] = newKeyValue
+
+  unless newKey? then throw new Error("missing new key (old key: #{key})")
+  unless newValue? then throw new Error("missing new value (old value: #{value})")
+
+  newObj[newKey] = newValue
+  return newObj
+
 encodeCharacter = (c)-> '%' + c.charCodeAt(0).toString(16)
 
 removeUndefined = (obj)->

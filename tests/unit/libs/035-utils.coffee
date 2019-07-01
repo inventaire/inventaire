@@ -127,3 +127,18 @@ describe 'utils', ->
       a.should.be.an.Array()
       a.length.should.equal 0
       done()
+
+  describe 'mapKeysValues', ->
+    it 'should return a new object', (done)->
+      obj = { a: 1, b: 2 }
+      fn = (key, value)-> [ key, value ]
+      newObj = _.mapKeysValues obj, fn
+      newObj.should.be.an.Object()
+      newObj.should.not.equal(obj)
+      done()
+
+    it 'should return new keys and values', (done)->
+      obj = { a: 1, b: 2 }
+      fn = (key, value)-> [ key + key, value + value ]
+      _.mapKeysValues(obj, fn).should.deepEqual { aa: 2, bb: 4 }
+      done()
