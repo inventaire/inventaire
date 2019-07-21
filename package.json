@@ -1,9 +1,8 @@
 {
   "name": "inventaire",
   "homepage": "https://inventaire.io",
-  "version": "2.1.0",
   "description": "a libre collaborative resources mapper powered by open-knowledge (server-side)",
-  "main": "index.coffee",
+  "main": "server.coffee",
   "scripts": {
     "add-new-active-lang": "./scripts/add_new_active_lang",
     "couch2elastic4sync:init": "./scripts/couch2elastic4sync/init",
@@ -34,11 +33,10 @@
     "update-toc": "doctoc README.md",
     "watch": "./scripts/watch"
   },
-  "author": "maxlath",
   "license": "AGPL-3.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/maxlath/inventaire"
+    "url": "https://github.com/inventaire/inventaire"
   },
   "dependencies": {
     "blue-cot": "^3.6.1",
@@ -78,7 +76,7 @@
     "moment": "^2.21.0",
     "morgan": "1.1.1",
     "node-polyglot": "^1.0.0",
-    "nodemailer": "git+https://github.com/maxlath/Nodemailer.git",
+    "nodemailer": "git+https://github.com/inventaire/Nodemailer.git",
     "nodemailer-express-handlebars": "^2.0.0",
     "passport": "^0.2.2",
     "passport-http": "^0.3.0",
