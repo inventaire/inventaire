@@ -44,15 +44,10 @@ parametersTests =
   qid: wdk.isItemId
   pid: wdk.isPropertyId
 
-requestOptions =
-  headers:
-    # Required to avoid getting a 403
-    'user-agent': CONFIG.name
-
 runQuery = (params, key)->
   { query:queryName } = params
   url = buildQuery params
 
-  requests_.get url, requestOptions
+  requests_.get url
   .then wdk.simplifySparqlResults
   .catch _.ErrorRethrow(key)
