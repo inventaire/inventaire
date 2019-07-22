@@ -1,0 +1,9 @@
+{
+  "_id": "_design/patches_tmp",
+  "language": "coffeescript",
+  "views": {
+    "invalid_values": {
+      "map": "(doc)->\n  doc.patch.forEach (patch)->\n    patch.value.forEach (value)->\n      if value isnt value.trim() then emit patch.path, value\n"
+    }
+  }
+}

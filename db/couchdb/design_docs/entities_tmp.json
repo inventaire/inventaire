@@ -1,0 +1,9 @@
+{
+  "_id": "_design/entities_tmp",
+  "language": "coffeescript",
+  "views": {
+    "invalid_values": {
+      "map": "(doc)->\n  if doc.type isnt 'entity' then return\n  for prop, claims of doc.claims\n    for claim in claims\n      if typeof claim is 'string' and claim isnt claim.trim()\n        emit prop, claim"
+    }
+  }
+}
