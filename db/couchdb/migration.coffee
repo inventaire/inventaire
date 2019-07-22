@@ -44,7 +44,7 @@ module.exports = (params)->
     .catch _.ErrorRethrow('getAllDocsKeys error')
 
   getViewKeys = (viewName)->
-    db.view designDocName, viewName
+    db.view designDocName, viewName, { reduce: false }
     .then (res)-> res.rows.map _.property('id')
     .then Log('view ids')
 

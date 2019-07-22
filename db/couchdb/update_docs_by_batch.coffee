@@ -3,6 +3,9 @@ _ = __.require 'builders', 'utils'
 Promise = require 'bluebird'
 
 module.exports = (params)-> (ids)->
+  ids = _.compact ids
+  if ids.length is 0 then throw new Error('no doc ids found')
+
   { db } = params
   docUpdater = updateDoc params
   updateByBatches = nextBatchUpdater db, ids, docUpdater
