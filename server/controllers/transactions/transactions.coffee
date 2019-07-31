@@ -17,3 +17,5 @@ module.exports =
     authentified:
       'update-state': require './update_state'
       'mark-as-read': require './mark_as_read'
+
+require('./lib/side_effects')()

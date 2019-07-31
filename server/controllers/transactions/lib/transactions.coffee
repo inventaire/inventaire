@@ -10,7 +10,6 @@ comments_ = __.require 'controllers', 'comments/lib/comments'
 assert_ = __.require 'utils', 'assert_types'
 
 radio = __.require 'lib', 'radio'
-sideEffects = require('./side_effects')()
 
 db = __.require('couch', 'base')('transactions')
 
