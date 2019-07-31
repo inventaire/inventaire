@@ -1,6 +1,7 @@
 execa = require 'execa'
+{ backupGeneralFolder, backupFolder, day } = require('./get_backup_folder_data')()
 
-module.exports = (backupGeneralFolder, backupFolder, day)->
+module.exports = ->
   execa 'tar', [
       '-zcf'
       # Output

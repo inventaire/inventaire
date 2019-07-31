@@ -59,6 +59,7 @@ module.exports = config =
     debug: false
     # Keep the design doc files in sync with CouchDB design docs
     enableDesignDocSync: false
+    backupFolder: '/path/to/backup/folder'
     # db settings for script actions
     # see scripts/lib/action_by_input.coffee
     actionsScripts:
