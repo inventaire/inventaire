@@ -6,17 +6,16 @@ promises_ = __.require 'lib', 'promises'
 getWdEntity = __.require 'data', 'wikidata/get_entity'
 wdk = require 'wikidata-sdk'
 wdEdit = require 'wikidata-edit'
+wdOauth = require './wikidata_oauth'
 properties = require './properties/properties_values_constraints'
-{ wikidataOAuth } = CONFIG
 
-module.exports = (user, id, property, oldVal, newVal)->
-  { oauth } = user
-  userWikidataOAuth = user.oauth?.wikidata
-  unless userWikidataOAuth?
-    return error_.reject 'missing wikidata oauth tokens', 400
+module.exports = (args...)-> Promise.try -> updateWdClaim args...
+
+updateWdClaim = (user, id, property, oldVal, newVal)->
+  wdOauth.validate user
 
   if properties[property].datatype is 'entity' and _.isInvEntityUri newVal
-    return error_.reject "wikidata entities can't link to inventaire entities", 400
+    throw error_.new "wikidata entities can't link to inventaire entities", 400
 
   oldVal = dropPrefix oldVal
   newVal = dropPrefix newVal
@@ -24,9 +23,9 @@ module.exports = (user, id, property, oldVal, newVal)->
   [ propertyPrefix, propertyId ] = property.split ':'
 
   unless propertyPrefix is 'wdt'
-    return error_.rejectInvalid 'property', propertyPrefix
+    throw error_.newInvalid 'property', propertyPrefix
 
-  oauth = _.extend userWikidataOAuth, wikidataOAuth
+  oauth = wdOauth.getFullCredentials user
 
   if newVal?
     if oldVal?

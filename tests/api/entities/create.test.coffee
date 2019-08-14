@@ -168,4 +168,18 @@ describe 'entities:create', ->
 
     return
 
+  it 'should reject invalid prefixes', (done)->
+    authReq 'post', '/api/entities?action=create',
+      prefix: 'foo'
+      labels: {}
+      claims: {}
+    .then undesiredRes(done)
+    .catch (err)->
+      err.body.status_verbose.should.startWith 'invalid prefix: foo'
+      err.statusCode.should.equal 400
+      done()
+    .catch undesiredErr(done)
+
+    return
+
   # See also: edititons/create.test.coffee
