@@ -30,9 +30,12 @@ sanitizeParameter = (input, name, config, place, res)->
   parameter = if generic? then generics[generic] else parameters[name]
 
   unless parameter?
-    addWarning res, "unexpected config parameter: #{name}"
-    delete input[name]
-    return
+    if generic?
+      throw error_.new 'invalid generic name', 500, { generic }
+    else
+      addWarning res, "unexpected config parameter: #{name}"
+      delete input[name]
+      return
 
   unless input[name]? then applyDefaultValue input, name, config, parameter
   unless input[name]?

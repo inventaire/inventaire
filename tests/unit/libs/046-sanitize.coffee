@@ -117,6 +117,25 @@ describe 'sanitize', ->
 
       return
 
+    it 'should throw when passed an invalid generic name', (done)->
+      req = { query: {} }
+      res = {}
+
+      obj = {}
+
+      configs =
+        foo:
+          generic: 'bar'
+
+      sanitize req, res, configs
+      .then undesiredRes(done)
+      .catch (err)->
+        err.message.should.equal 'invalid generic name'
+        done()
+      .catch done
+
+      return
+
   describe 'strictly positive integer', ->
     it 'should accept string values', (done)->
       req = { query: { limit: '5' } }
