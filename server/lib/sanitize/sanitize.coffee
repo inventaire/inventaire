@@ -70,8 +70,8 @@ format = (input, name, formatFn, config)->
   if formatFn? then input[name] = formatFn input[name], name, config
 
 applyDefaultValue = (input, name, config, parameter)->
-  if config.default? then input[name] = config.default
-  else if parameter.default? then input[name] = parameter.default
+  if config.default? then input[name] = _.cloneDeep config.default
+  else if parameter.default? then input[name] = _.cloneDeep  parameter.default
 
 obfuscateSecret = (parameter, err)->
   if parameter.secret then err.context.value = _.obfuscate err.context.value
