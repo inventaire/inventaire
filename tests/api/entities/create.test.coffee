@@ -66,10 +66,10 @@ describe 'entities:create', ->
   it 'should reject invalid labels object', (done)->
     authReq 'post', '/api/entities?action=create',
       # Invalid labels type: array instead of object
-      labels: [ { fr: humanName() } ]
-      claims: { 'wdt:P31': [ 'wd:Q571' ] }
+      labels: []
+      claims: {}
     .catch (err)->
-      err.body.status_verbose.should.equal 'labels should be an object'
+      err.body.status_verbose.should.equal 'invalid labels: []'
       err.statusCode.should.equal 400
       done()
     .catch undesiredErr(done)
@@ -78,10 +78,10 @@ describe 'entities:create', ->
 
   it 'should reject invalid claims type: array instead of object', (done)->
     authReq 'post', '/api/entities?action=create',
-      labels: { fr: humanName() }
-      claims: [ { 'wdt:P31': [ 'wd:Q571' ] } ]
+      labels: {}
+      claims: []
     .catch (err)->
-      err.body.status_verbose.should.equal 'claims should be an object'
+      err.body.status_verbose.should.equal 'invalid claims: []'
       err.statusCode.should.equal 400
       done()
     .catch undesiredErr(done)

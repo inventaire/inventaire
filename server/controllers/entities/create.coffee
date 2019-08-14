@@ -5,26 +5,20 @@ error_ = __.require 'lib', 'error/error'
 { Track } = __.require 'lib', 'track'
 createEntity = require './lib/create_entity'
 getEntityByUri = require './lib/get_entity_by_uri'
+sanitize = __.require 'lib', 'sanitize/sanitize'
+
+sanitization =
+  labels:
+    generic: 'object'
+    default: {}
+  claims:
+    generic: 'object'
 
 module.exports = (req, res)->
-  { body:entityData } = req
-
-  unless _.isNonEmptyPlainObject entityData
-    return error_.bundle req, res, 'bad query', 400
-
-  { _id:reqUserId } = req.user
-  { labels, claims } = entityData
-
-  # Editions entities don't have labels
-  labels ?= {}
-
-  unless _.isPlainObject labels
-    return error_.bundle req, res, 'labels should be an object', 400, entityData
-
-  unless _.isPlainObject claims
-    return error_.bundle req, res, 'claims should be an object', 400, entityData
-
-  createEntity labels, claims, reqUserId
+  sanitize req, res, sanitization
+  .then (params)->
+    { labels, claims, reqUserId } = params
+    return createEntity labels, claims, reqUserId
   # Re-request the entity's data to get it formatted
   .then (entity)-> getEntityByUri { uri: "inv:#{entity._id}", refresh: true }
   .then responses_.Send(res)
