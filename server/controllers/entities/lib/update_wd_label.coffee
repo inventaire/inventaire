@@ -4,16 +4,14 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 wdk = require 'wikidata-sdk'
 wdEdit = require 'wikidata-edit'
-{ wikidataOAuth } = CONFIG
+wdOauth = require './wikidata_oauth'
 
-module.exports = (user, id, lang, value)->
-  { oauth } = user
-  userWikidataOAuth = user.oauth?.wikidata
-  unless userWikidataOAuth?
-    return error_.reject 'missing wikidata oauth tokens', 400
+module.exports = (args...)-> Promise.try -> updateWdLabel args...
 
-  unless wdk.isItemId id then return error_.rejectInvalid 'id', id
+updateWdLabel = (user, id, lang, value)->
+  unless wdk.isItemId id then throw error_.newInvalid 'id', id
 
-  oauth = _.extend userWikidataOAuth, wikidataOAuth
+  wdOauth.validate user
+  oauth = wdOauth.getFullCredentials user
 
   return wdEdit({ oauth }, 'label/set')(id, lang, value)

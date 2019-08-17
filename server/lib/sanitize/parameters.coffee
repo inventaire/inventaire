@@ -99,6 +99,8 @@ generics =
       if _.isString value then _.parseBooleanString value, config.default
       else value
     validate: (value)-> _.typeOf(value) is 'boolean'
+  object:
+    validate: (value)-> _.typeOf(value) is 'object'
 
 module.exports =
   authors: arrayOfStrings
@@ -121,6 +123,7 @@ module.exports =
   password:
     secret: true
     validate: validations.user.password
+  prefix: whitelistedString
   range: _.extend {}, positiveInteger,
     default: 50
     max: 500

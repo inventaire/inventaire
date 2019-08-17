@@ -117,6 +117,45 @@ describe 'sanitize', ->
 
       return
 
+    it 'should throw when passed an invalid generic name', (done)->
+      req = { query: {} }
+      res = {}
+
+      obj = {}
+
+      configs =
+        foo:
+          generic: 'bar'
+
+      sanitize req, res, configs
+      .then undesiredRes(done)
+      .catch (err)->
+        err.message.should.equal 'invalid generic name'
+        done()
+      .catch done
+
+      return
+
+    it 'should clone default values', (done)->
+      req = { query: {} }
+      res = {}
+
+      obj = {}
+
+      configs =
+        foo:
+          generic: 'object'
+          default: obj
+
+      sanitize req, res, configs
+      .then (input)->
+        input.foo.should.deepEqual {}
+        input.foo.should.not.equal obj
+        done()
+      .catch done
+
+      return
+
   describe 'strictly positive integer', ->
     it 'should accept string values', (done)->
       req = { query: { limit: '5' } }
@@ -237,6 +276,23 @@ describe 'sanitize', ->
       .then undesiredRes(done)
       .catch (err)->
         err.message.should.equal 'invalid token length: expected 32, got 3'
+        done()
+      .catch done
+
+      return
+
+  describe 'objects', ->
+    it 'should stringify invalid values', (done)->
+      req = { query: { foo: [ 123 ] } }
+
+      configs =
+        foo:
+          generic: 'object'
+
+      sanitize req, {}, configs
+      .then undesiredRes(done)
+      .catch (err)->
+        err.message.should.equal 'invalid foo: [123]'
         done()
       .catch done
 

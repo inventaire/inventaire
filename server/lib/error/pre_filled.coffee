@@ -22,8 +22,10 @@ module.exports = (error_)->
     # A standardized way to return a 400 invalid parameter
     newInvalid: (parameter, value)->
       assert_.string parameter
-      context = { parameter, value }
-      err = error_.new "invalid #{parameter}: #{value}", 400, context
+      type = _.typeOf value
+      context = { parameter, value, type }
+      valueStr = if typeof value is 'object' then JSON.stringify(value) else value
+      err = error_.new "invalid #{parameter}: #{valueStr}", 400, context
       err.error_type = 'invalid_parameter'
       err.error_name = "invalid_#{parameter}"
       return err

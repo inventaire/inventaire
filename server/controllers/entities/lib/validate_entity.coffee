@@ -1,24 +1,19 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
-assert_ = __.require 'utils', 'assert_types'
 entities_ = require './entities'
 { Lang } = __.require 'lib', 'regex'
 promises_ = __.require 'lib', 'promises'
-{ Track } = __.require 'lib', 'track'
 getEntityType = require './get_entity_type'
 validateClaimProperty = require './validate_claim_property'
 typesWithoutLabels = require './types_without_labels'
 
-module.exports = (labels, claims, userId)->
-  assert_.types ['object', 'object', 'string'], arguments
-  _.log arguments, 'entity to create'
-
+module.exports = (entity)->
+  { labels, claims } = entity
   promises_.try -> validateValueType claims['wdt:P31']
   .tap (type)-> validateLabels labels, claims, type
   .then (type)-> validateClaims claims, type
-  .then entities_.create
-  .then entities_.edit.bind(null, userId, labels, claims)
+  .then -> entity
 
 validateValueType = (wdtP31)->
   unless _.isNonEmptyArray wdtP31
