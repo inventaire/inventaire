@@ -6,8 +6,6 @@ set -eu
 # and that all the following isn't needed
 [ -e client ] && exit 0
 
-git clone https://github.com/inventaire/inventaire-i18n.git ./i18n
-
 # Needs to run before generate_lang_json so that client/public/i18n/dist is already populated
 npm run install-client
 npm run install-i18n
@@ -45,4 +43,4 @@ touch run/3006 run/3009
       password: 'yourcouchdbpassword'
   "
   echo "$emptyConfigFile" >> ./config/local.coffee
-}
+} || echo './config/local.coffee file already exist: skipping creation'
