@@ -2,6 +2,7 @@ CONFIG = require('config')
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
+{ Promise } = __.require 'lib', 'promises'
 wdk = require 'wikidata-sdk'
 wdEdit = require 'wikidata-edit'
 wdOauth = require './wikidata_oauth'
