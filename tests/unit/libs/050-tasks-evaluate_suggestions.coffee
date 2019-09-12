@@ -29,6 +29,10 @@ describe 'tasks: evaluate suggestions', ->
     shouldNotMerge suggestions, matchedTitles
     done()
 
+  it 'should not merge when no suggestions has occurrences', (done)->
+    suggestions = createSuggestions()
+    done()
+
   it 'should not merge when untrustworthy occurrences are passed', (done)->
     urls = [
       'https://fr.wikipedia.org/wiki/Faujour'

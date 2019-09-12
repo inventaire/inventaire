@@ -17,17 +17,21 @@ module.exports = (suspect, workLabelsByLang)-> (suggestions)->
 
   suggestionsWithOccurrences = suggestions.filter hasOccurrence
 
+  if suggestionsWithOccurrences.length is 0
+    return { suggestions }
+
   # Cannot merge if several suggestions have occurrences
-  if suggestionsWithOccurrences.length > 1
+  else if suggestionsWithOccurrences.length > 1
     return { suggestions: suggestionsWithOccurrences }
 
-  uniqSuggestionWithOccurrence = suggestionsWithOccurrences[0]
+  else
+    uniqSuggestionWithOccurrence = suggestionsWithOccurrences[0]
 
-  # Merge when title is long enough
-  if canBeAutomerged uniqSuggestionWithOccurrence
-    return mergeData suspectUri, uniqSuggestionWithOccurrence.uri
+    # Merge when title is long enough
+    if canBeAutomerged uniqSuggestionWithOccurrence
+      return mergeData suspectUri, uniqSuggestionWithOccurrence.uri
 
-  return { suggestions: suggestionsWithOccurrences }
+    return { suggestions }
 
 mergeData = (from, to)-> { merge: { from, to } }
 suggestionsData = (suggestions)-> { suggestions }
