@@ -1,7 +1,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 getOccurrencesFromExternalSources = __.require 'controllers', 'entities/lib/get_occurrences_from_external_sources'
-getOccurencesFromEntities = __.require 'controllers', 'entities/lib/get_occurences_from_entities'
+getOccurrencesFromEntities = __.require 'controllers', 'entities/lib/get_occurrences_from_entities'
 { Promise } = __.require 'lib', 'promises'
 
 module.exports = (suspectWorksData)-> (suggestion)->
@@ -18,8 +18,8 @@ module.exports = (suspectWorksData)-> (suggestion)->
 
   Promise.all [
     getOccurrencesFromExternalSources uri, labels, langs
-    getOccurencesFromEntities uri, labels
+    getOccurrencesFromEntities uri, labels
   ]
-  .spread (externalOccurrences, entitiesOccurences)->
-    suggestion.occurrences = externalOccurrences.concat entitiesOccurences
+  .spread (externalOccurrences, entitiesOccurrences)->
+    suggestion.occurrences = externalOccurrences.concat entitiesOccurrences
     return suggestion

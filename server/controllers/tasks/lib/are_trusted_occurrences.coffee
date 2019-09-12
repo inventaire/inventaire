@@ -13,12 +13,12 @@ trustworthyDomains = [
 
 module.exports = (occurrences)->
   unless _.some(occurrences) then return false
-  trustedOccurences = _.filter occurrences, isTrustedOccurence
-  trustedOccurences.length > 1
+  trustedOccurrences = _.filter occurrences, isTrustedOccurrence
+  trustedOccurrences.length > 1
 
-isTrustedOccurence = (occurence)->
-  unless occurence.matchedTitles and occurence.url then return false
-  domain = getDomainName occurence.url
+isTrustedOccurrence = (occurrence)->
+  unless occurrence.matchedTitles and occurrence.url then return false
+  domain = getDomainName occurrence.url
   return domain in trustworthyDomains
 
 getDomainName = (url)-> url.split('/')[2]

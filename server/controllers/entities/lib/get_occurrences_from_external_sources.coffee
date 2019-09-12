@@ -60,7 +60,7 @@ getMostRelevantWikipediaArticles = (authorEntity, worksLabelsLangs)->
   .filter _.identity
   .map getWikipediaArticle
 
-getAndCreateOccurencesFromIds = (prop, getWorkTitlesFn)-> (authorEntity, worksLabels)->
+getAndCreateOccurrencesFromIds = (prop, getWorkTitlesFn)-> (authorEntity, worksLabels)->
   ids = authorEntity.claims[prop]
   # Check every ids
   unless ids? then return false
@@ -70,13 +70,13 @@ getAndCreateOccurencesFromIds = (prop, getWorkTitlesFn)-> (authorEntity, worksLa
   .then _.uniq
   .map createOccurrences(worksLabels)
 
-getBnfOccurrences = getAndCreateOccurencesFromIds 'wdt:P268', getBnfAuthorWorksTitles
-getOpenLibraryOccurrences = getAndCreateOccurencesFromIds 'wdt:P648', getOlAuthorWorksTitles
-getBnbOccurrences = getAndCreateOccurencesFromIds 'wdt:P5361', getBnbAuthorWorksTitles
-getBneOccurrences = getAndCreateOccurencesFromIds 'wdt:P950', getBneAuthorWorksTitles
-getSelibrOccurrences = getAndCreateOccurencesFromIds 'wdt:P906', getSelibrAuthorWorksTitle
-getKjkOccurrences = getAndCreateOccurencesFromIds 'wdt:P1006', getKjkAuthorWorksTitle
-getNdlOccurrences = getAndCreateOccurencesFromIds 'wdt:P349', getNdlAuthorWorksTitle
+getBnfOccurrences = getAndCreateOccurrencesFromIds 'wdt:P268', getBnfAuthorWorksTitles
+getOpenLibraryOccurrences = getAndCreateOccurrencesFromIds 'wdt:P648', getOlAuthorWorksTitles
+getBnbOccurrences = getAndCreateOccurrencesFromIds 'wdt:P5361', getBnbAuthorWorksTitles
+getBneOccurrences = getAndCreateOccurrencesFromIds 'wdt:P950', getBneAuthorWorksTitles
+getSelibrOccurrences = getAndCreateOccurrencesFromIds 'wdt:P906', getSelibrAuthorWorksTitle
+getKjkOccurrences = getAndCreateOccurrencesFromIds 'wdt:P1006', getKjkAuthorWorksTitle
+getNdlOccurrences = getAndCreateOccurrencesFromIds 'wdt:P349', getNdlAuthorWorksTitle
 
 createOccurrences = (worksLabels)->
   worksLabelsPattern = new RegExp(worksLabels.join('|'), 'gi')

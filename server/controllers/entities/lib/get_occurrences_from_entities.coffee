@@ -7,13 +7,13 @@ module.exports = (uri, suspectWorksLabels) ->
   getAuthorWorks { uri, dry: true }
   .then getSuggestionWorks
   .then (suggestionWorksData)->
-    occurences = []
+    occurrences = []
     for sugWork in suggestionWorksData
       matchedTitles = getMatchingTitles suspectWorksLabels, _.values(sugWork.labels)
       if matchedTitles.length > 0
         { uri } = sugWork
-        occurences.push { uri, matchedTitles }
-    return occurences
+        occurrences.push { uri, matchedTitles }
+    return occurrences
 
 getSuggestionWorks = (res)->
   uris = res.works.map _.property('uri')
