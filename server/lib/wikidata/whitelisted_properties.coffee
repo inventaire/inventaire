@@ -37,6 +37,7 @@ module.exports = [
   'P356' # DOI
   'P361' # part of
   'P364' # original language of work
+  'P349' # NDL of Japan Auth ID
   'P407' # language of work
   'P496' # ORCID ID
   'P577' # publication date
@@ -55,6 +56,9 @@ module.exports = [
   'P921' # main subject
   'P941' # inspired by
   'P953' # full text available at
+  'P906' # SELIBR ID (Swedish)
+  'P950' # BNE ID
+  'P1006' # Dutch National for Author Names ID
   'P957' # isbn 10
   'P1044' # SWB editions
   'P1066' # student of
@@ -84,5 +88,6 @@ module.exports = [
   'P4033' # Mastodon address
   'P4258' # Gallica ID
   'P5331' # OCLC work ID
+  'P5361' # BNB person ID
   'P6338' # colorist
 ]
