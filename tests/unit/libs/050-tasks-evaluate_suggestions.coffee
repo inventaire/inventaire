@@ -1,8 +1,8 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
-require 'should'
-automergeFn = __.require 'controllers', 'tasks/lib/automerge'
+should = require 'should'
+evaluateSuggestions = __.require 'controllers', 'tasks/lib/evaluate_suggestions'
 
 suspect =
   uri: 'inv:00000000000000000000000000000000'
@@ -17,11 +17,13 @@ addOccurrence = (suggestion, urls, matchedTitles)->
 
 createSuggestions = -> [ uri: 'wd:Q3067358', occurrences: [] ]
 
-# automerge should return a mergeEntities promise
-shouldMerge = (suggestions, matchedTitles)-> automerge(suggestions, matchedTitles).should.be.Promise()
-shouldNotMerge = (suggestions, matchedTitles)-> automerge(suggestions, matchedTitles).should.deepEqual suggestions
+shouldMerge = (suggestions, matchedTitles)->
+  evaluateSuggestions(suspect, matchedTitles)(suggestions).merge.should.be.ok()
 
-describe 'tasks automerge', ->
+shouldNotMerge = (suggestions, matchedTitles)->
+  should(evaluateSuggestions(suspect, matchedTitles)(suggestions).merge).not.be.ok()
+
+describe 'tasks: evaluate suggestions', ->
   it 'should not merge when no suggestions exists', (done)->
     suggestions = []
     shouldNotMerge suggestions, matchedTitles
@@ -140,6 +142,3 @@ describe 'tasks automerge', ->
 
     shouldNotMerge suggestions, matchedTitles
     done()
-
-automerge = (suggestions, matchedTitles)->
-  automergeFn(suspect, matchedTitles)(suggestions)
