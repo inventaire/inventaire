@@ -12,19 +12,23 @@ module.exports = (suspect, workLabelsByLang)-> (suggestions)->
   if suggestions.length is 0 then return []
   if authorNameInWorkTitles(suspect.labels, workLabelsByLang) then return suggestions
   { uri : suspectUri } = suspect
-  # get suggestions with at least 2 occurrences from trustworthy domains
-  trustedSuggestions = suggestions.filter (sug)-> areTrustedOccurrences(sug.occurrences)
+
+  # Get suggestions with at least 2 occurrences from trustworthy domains
+  trustedSuggestions = suggestions.filter hasTrustedOccurrences
   if trustedSuggestions.length is 1
     return mergeSuggestion suspectUri, trustedSuggestions[0].uri
-  occurrencedSuggestions = filterIfOccurrences suggestions
+  suggestionsWithOccurrences = suggestions.filter hasOccurrence
 
-  # cannot merge if several suggestions have occurrences
-  if occurrencedSuggestions.length > 1 then return occurrencedSuggestions
-  uniqSuggestion = occurrencedSuggestions[0]
-  # merge when title is long enough
-  if canBeAutomerged uniqSuggestion
-    return mergeSuggestion suspectUri, uniqSuggestion.uri
-  occurrencedSuggestions
+  # Cannot merge if several suggestions have occurrences
+  if suggestionsWithOccurrences.length > 1 then return suggestionsWithOccurrences
+
+  uniqSuggestionWithOccurrence = suggestionsWithOccurrences[0]
+
+  # Merge when title is long enough
+  if canBeAutomerged uniqSuggestionWithOccurrence
+    return mergeSuggestion suspectUri, uniqSuggestionWithOccurrence.uri
+
+  return suggestionsWithOccurrences
 
 mergeSuggestion = (suspectUri, suggestionUri)->
   mergeEntities reconcilerUserId, suspectUri, suggestionUri
@@ -32,8 +36,8 @@ mergeSuggestion = (suspectUri, suggestionUri)->
     _.info { suspectUri, suggestionUri }, 'entities automerge'
     []
 
-filterIfOccurrences = (suggestions)->
-  suggestions.filter (sug)-> sug.occurrences.length > 0
+hasTrustedOccurrences = (sug)-> areTrustedOccurrences(sug.occurrences)
+hasOccurrence = (sug)-> sug.occurrences.length > 0
 
 authorNameInWorkTitles = (authorLabels, workLabelsByLang)->
   # when author name and work title are the same, occurrences can not be relevant
