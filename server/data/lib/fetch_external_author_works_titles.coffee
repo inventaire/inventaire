@@ -9,7 +9,11 @@ timespan = 3 * oneMonth
 
 module.exports = (name, endpoint, getQuery)-> (id)->
   key = "#{name}:author-works-titles:#{id}"
-  return cache_.get { key, fn: fetch.bind(null, endpoint, getQuery(id), id), timespan  }
+  return cache_.get { key, fn: fetch.bind(null, endpoint, getQuery(id), id), timespan }
+  .timeout 20000
+  .catch (err)->
+    _.error err, "#{name} error fetching #{id}"
+    return []
 
 fetch = (endpoint, query)->
   escapedQuery = qs.escape query
