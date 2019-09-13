@@ -24,26 +24,30 @@ module.exports = (req, res)->
   sanitize req, res, sanitization
   .then (params)->
     params.batchId = Date.now()
-    resolvedEntries = []
     entries = params.entries.map(sanitizeEntry(res))
-    sequentialResolve entries, buildUpdateFn(params), buildCreateFn(params), resolvedEntries
+    return sequentialResolve entries, params
   .then responses_.Wrap(res, 'entries')
   .catch error_.Handler(req, res)
 
-sequentialResolve = (entries, updateResolvedEntry, createUnresolvedEntry, resolvedEntries)->
-  nextEntry = entries.shift()
-  unless nextEntry? then return resolvedEntries
+sequentialResolve = (entries, params)->
+  { create, update } = params
+  updateResolvedEntry = buildActionFn update, UpdateResolvedEntry, params
+  createUnresolvedEntry = buildActionFn create, CreateUnresolvedEntry, params
+  resolvedEntries = []
 
-  resolve nextEntry
-  .then updateResolvedEntry
-  .then createUnresolvedEntry
-  .then (entry)-> resolvedEntries.push entry
-  .then -> sequentialResolve entries, updateResolvedEntry, createUnresolvedEntry, resolvedEntries
+  resolveNext = ->
+    nextEntry = entries.shift()
+    unless nextEntry? then return resolvedEntries
 
-buildUpdateFn = (params)->
-  { update, reqUserId, batchId } = params
-  if update then UpdateResolvedEntry reqUserId, batchId else _.identity
+    resolve nextEntry
+    .then updateResolvedEntry
+    .then createUnresolvedEntry
+    .then (entry)-> resolvedEntries.push entry
+    .then resolveNext
 
-buildCreateFn = (params)->
-  { create, reqUserId, batchId } = params
-  if create then CreateUnresolvedEntry reqUserId, batchId else _.identity
+  return resolveNext()
+
+buildActionFn = (flag, ActionFn, params)->
+  { reqUserId, batchId } = params
+  if flag then ActionFn reqUserId, batchId
+  else _.identity
