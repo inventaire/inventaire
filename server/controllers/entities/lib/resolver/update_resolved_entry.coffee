@@ -7,25 +7,19 @@ entities_ = require '../entities'
 module.exports = (userId, batchId)-> (entry)->
   { edition, works, authors } = entry
 
-  updateAuthors authors, userId, batchId
-  .then -> updateWorks works, userId, batchId
-  .then -> updateEntityFromSeed(userId, batchId)(edition)
+  allResolvedSeeds = [ edition ].concat(works, authors).filter hasUri
+
+  Promise.all allResolvedSeeds.map(updateEntityFromSeed(userId, batchId))
   .then -> entry
 
-updateAuthors = (authors, userId, batchId)->
-  resolvedAuthors = _.filter authors, 'uri'
-  Promise.all resolvedAuthors.map updateEntityFromSeed(userId, batchId)
-
-updateWorks = (works, userId, batchId)->
-  resolvedWorks = _.filter works, 'uri'
-  Promise.all resolvedWorks.map updateEntityFromSeed(userId, batchId)
+hasUri = (seed)-> seed.uri?
 
 updateEntityFromSeed = (userId, batchId)-> (seed)->
-  { uri, claims:seedClaims } = seed
+  { uri, claims: seedClaims } = seed
   unless uri then return
 
   getEntity uri
-  .then updateClaims(seedClaims, userId, batchId)
+  .then addMissingClaims(seedClaims, userId, batchId)
 
 getEntity = (uri)->
   [ prefix, entityId ] = uri.split ':'
@@ -36,16 +30,9 @@ getEntity = (uri)->
   else
     entities_.byId entityId
 
-updateClaims = (seedClaims, userId, batchId)-> (entity)->
-  entityProps = Object.keys entity.claims
-  newClaims = {}
-
-  _.mapKeys seedClaims, (seedValues, seedProp)->
-    # do not update if property already exists
-    # known cases: avoid updating authors who are actually edition translators
-    unless seedProp in entityProps
-      newClaims[seedProp] = seedValues
-
+addMissingClaims = (seedClaims, userId, batchId)-> (entity)->
+  # Do not update if property already exists
+  # Known cases: avoid updating authors who are actually edition translators
+  newClaims = _.omit seedClaims, Object.keys(entity.claims)
   if _.isEmpty(newClaims) then return
-
   entities_.addClaims userId, newClaims, entity, batchId
