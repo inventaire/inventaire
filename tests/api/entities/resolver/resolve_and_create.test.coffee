@@ -3,9 +3,10 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
-{ authReq, adminReq, getUser, undesiredErr, undesiredRes } = require '../utils/utils'
-{ getByUris, getHistory } = require '../utils/entities'
-{ randomLabel, humanName, generateIsbn13, someGoodReadsId, ensureEditionExists } = require '../fixtures/entities'
+{ authReq, adminReq, getUser, undesiredErr, undesiredRes } = __.require 'apiTests', 'utils/utils'
+{ getByUris, getHistory } = __.require 'apiTests', 'utils/entities'
+{ randomLabel, humanName, generateIsbn13, someGoodReadsId, ensureEditionExists } = __.require 'apiTests', 'fixtures/entities'
+
 resolveAndCreate = (entry)->
   authReq 'post', '/api/entities?action=resolve',
     entries: [ entry ]

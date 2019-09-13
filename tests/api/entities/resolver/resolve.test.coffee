@@ -3,11 +3,12 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { Promise } = __.require 'lib', 'promises'
-{ authReq, undesiredRes, undesiredErr } = require '../utils/utils'
+{ authReq, undesiredRes, undesiredErr } = __.require 'apiTests', 'utils/utils'
 elasticsearchUpdateDelay = CONFIG.entitiesSearchEngine.elasticsearchUpdateDelay or 1000
-{ createWork, createEdition, createHuman, someGoodReadsId, createWorkWithAuthor, generateIsbn13 } = require '../fixtures/entities'
-{ addClaim } = require '../utils/entities'
-{ ensureEditionExists, randomLabel, humanName } = require '../fixtures/entities'
+{ createWork, createEdition, createHuman, someGoodReadsId, createWorkWithAuthor, generateIsbn13 } = __.require 'apiTests', 'fixtures/entities'
+{ addClaim } = __.require 'apiTests', 'utils/entities'
+{ ensureEditionExists, randomLabel, humanName } = __.require 'apiTests', 'fixtures/entities'
+
 resolve = (entries)->
   entries = _.forceArray entries
   authReq 'post', '/api/entities?action=resolve', { entries }
