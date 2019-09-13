@@ -8,6 +8,7 @@ elasticsearchUpdateDelay = CONFIG.entitiesSearchEngine.elasticsearchUpdateDelay 
 { createWork, createEdition, createHuman, someGoodReadsId, createWorkWithAuthor, generateIsbn13 } = __.require 'apiTests', 'fixtures/entities'
 { addClaim } = __.require 'apiTests', 'utils/entities'
 { ensureEditionExists, randomLabel, humanName } = __.require 'apiTests', 'fixtures/entities'
+{ toIsbn13h } = __.require 'lib', 'isbn/isbn'
 
 resolve = (entries)->
   entries = _.forceArray entries
@@ -35,6 +36,22 @@ describe 'entities:resolve', ->
     .then (entries)->
       entries[0].should.be.an.Object()
       entries[0].edition.uri.should.equal "isbn:#{rawIsbn}"
+      done()
+    .catch done
+
+    return
+
+  it 'should resolve an edition entry from an ISBN set in the claims', (done)->
+    isbn13 = generateIsbn13()
+    isbn13h = toIsbn13h isbn13
+    editionSeed = { claims: { 'wdt:P212': isbn13h } }
+    entry = { edition: editionSeed }
+    ensureEditionExists "isbn:#{isbn13}"
+    .then -> resolve entry
+    .get 'entries'
+    .then (entries)->
+      entries[0].should.be.an.Object()
+      entries[0].edition.uri.should.equal "isbn:#{isbn13}"
       done()
     .catch done
 

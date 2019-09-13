@@ -3,7 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 responses_ = __.require 'lib', 'responses'
 error_ = __.require 'lib', 'error/error'
-isbn_ = __.require 'lib', 'isbn/isbn'
+{ isValidIsbn, normalizeIsbn } = __.require 'lib', 'isbn/isbn'
 wdLang = require 'wikidata-lang'
 properties = require '../properties/properties_values_constraints'
 validateClaimValueSync = require '../validate_claim_value_sync'
@@ -37,7 +37,9 @@ module.exports = (res)-> (entry)->
 sanitizeEdition = (res, edition)->
   rawIsbn = getIsbn edition
   unless rawIsbn? then throw error_.new 'no isbn found', 400, { edition }
-  unless isbn_.isValidIsbn(rawIsbn) then throw error_.new 'invalid isbn', 400, { edition }
+  unless isValidIsbn(rawIsbn) then throw error_.new 'invalid isbn', 400, { edition }
+
+  edition.isbn = normalizeIsbn rawIsbn
 
   sanitizeSeed res, edition
 
