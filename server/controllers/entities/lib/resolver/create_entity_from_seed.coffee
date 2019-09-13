@@ -11,24 +11,24 @@ createAuthor = (userId, batchId)-> (author)->
   claims = {}
 
   addClaimIfValid claims, 'wdt:P31', [ 'wd:Q5' ]
-  createSeed author, claims, userId, batchId
+  createEntityFromSeed author, claims, userId, batchId
 
-createWork = (userId, batchId, relatives)-> (work)->
+createWork = (userId, batchId, authors)-> (work)->
   if work.uri? then return work
-  relativesUris = _.compact _.map(relatives, 'uri')
+  authorsUris = _.compact _.map(authors, 'uri')
   claims = {}
   addClaimIfValid claims, 'wdt:P31', [ 'wd:Q571' ]
-  addClaimIfValid claims, 'wdt:P50', relativesUris
-  createSeed work, claims, userId, batchId
+  addClaimIfValid claims, 'wdt:P50', authorsUris
+  createEntityFromSeed work, claims, userId, batchId
 
 createEdition = (edition, works, userId, batchId)->
   if edition.uri? then return Promise.resolve()
   { isbn } = edition
-  relativesUris = _.compact _.map(works, 'uri')
+  worksUris = _.compact _.map(works, 'uri')
   claims = {}
 
   addClaimIfValid claims, 'wdt:P31', [ 'wd:Q3331189' ]
-  addClaimIfValid claims, 'wdt:P629', relativesUris
+  addClaimIfValid claims, 'wdt:P629', worksUris
 
   if isbn?
     hyphenatedIsbn = isbn_.toIsbn13h isbn
@@ -41,7 +41,7 @@ createEdition = (edition, works, userId, batchId)->
   # garantee that an edition shall not have label
   edition.labels = {}
 
-  createSeed edition, claims, userId, batchId
+  createEntityFromSeed edition, claims, userId, batchId
 
 addClaimIfValid = (claims, property, values)->
   for value in values
@@ -49,13 +49,12 @@ addClaimIfValid = (claims, property, values)->
       claims[property] ?= []
       claims[property].push value
 
-createSeed = (seed, claims, userId, batchId)->
-  createInvEntity {
-    labels: seed.labels,
-    claims: buildClaims(seed.claims, claims),
-    userId,
-    batchId
-  }
+createEntityFromSeed = (seed, claims, userId, batchId)->
+  createInvEntity
+    labels: seed.labels
+    claims: buildClaims seed.claims, claims
+    userId: userId
+    batchId: batchId
   .then addCreatedUriToSeed(seed)
 
 buildClaims = (seedClaims, entityClaims)->
