@@ -32,12 +32,12 @@ describe 'loginAttemps', ->
 
   describe 'tooMany', ->
     it 'should return false when attempts are lower than limit', (done)->
-      loginAttemps.tooMany('notabot').should.equal false
+      loginAttemps.tooMany('notabot').should.be.false()
       done()
 
     it 'should return true when attempts are higher or equal to the limit', (done)->
       for i in [1..10]
         loginAttemps.recordFail('notabot')
         _.log loginAttemps.tooMany('notabot')
-      loginAttemps.tooMany('notabot').should.equal true
+      loginAttemps.tooMany('notabot').should.be.true()
       done()

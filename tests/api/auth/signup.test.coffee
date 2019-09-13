@@ -45,7 +45,7 @@ describe 'auth:signup', ->
       email: "bla#{randomString(4)}@foo.bar"
       password: randomString 8
     .then (res)->
-      res.ok.should.equal true
+      res.ok.should.be.true()
       done()
     .catch done
 

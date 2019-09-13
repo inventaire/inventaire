@@ -21,9 +21,9 @@ describe 'entities:resolve:create-unresolved', ->
     .get 'entries'
     .then (entries)->
       result = entries[0]
-      result.edition.created.should.equal true
-      result.authors[0].created.should.equal true
-      result.works[0].created.should.equal true
+      result.edition.created.should.be.true()
+      result.authors[0].created.should.be.true()
+      result.works[0].created.should.be.true()
       should(result.edition.uri).be.ok()
       should(result.works[0].uri).be.ok()
       should(result.authors[0].uri).be.ok()

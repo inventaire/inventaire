@@ -96,7 +96,7 @@ describe 'item model', ->
     describe 'created', ->
       it 'should return an object with a created time', (done)->
         item = create validItem
-        _.expired(item.created, 100).should.equal false
+        _.expired(item.created, 100).should.be.false()
         done()
 
   describe 'update', ->
