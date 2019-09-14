@@ -18,20 +18,15 @@ module.exports = (entry)->
     if entry.authors then entry.authors.forEach(addResolvedFlag)
     return entry
 
-resolveAuthors = (entry)->
-  { authors } = entry
-  unless _.some(authors) then return entry
+resolveSectionSeedsByExternalIds = (section)-> (entry)->
+  seeds = entry[section]
+  unless _.some(seeds) then return entry
 
-  resolveSeedsByExternalIds authors
-  .then (authors)-> entry.authors = authors
+  resolveSeedsByExternalIds seeds
+  .then (seeds)-> entry[section] = seeds
   .then -> entry
 
-resolveWorks = (entry)->
-  { works } = entry
-  unless _.some(works) then return entry
-
-  resolveSeedsByExternalIds works
-  .then (works)-> entry.works = works
-  .then -> entry
+resolveAuthors = resolveSectionSeedsByExternalIds 'authors'
+resolveWorks = resolveSectionSeedsByExternalIds 'works'
 
 addResolvedFlag = (seed)-> seed.resolved = seed.uri?
