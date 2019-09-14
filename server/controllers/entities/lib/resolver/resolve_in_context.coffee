@@ -9,16 +9,19 @@ getWorksFromAuthorsLabels = require './get_works_from_authors_uris'
 
 module.exports = (entry)->
   { authors, works } = entry
-  # If one of the seeds group is empty, no resolve can be done
-  unless _.some(authors) and _.some(works) then return entry
+  unless _.some(works) then return entry
+
   worksUris = getAlreadyResolvedUris works
-  authorsUris = getAlreadyResolvedUris authors
+  worksAuthorsUris = _.compact _.flatten(works.map(getAuthorsUris))
+  authorsUris = _.uniq getAlreadyResolvedUris(authors).concat(worksAuthorsUris)
 
   Promise.all authors.map(resolveAuthor(worksUris))
   .then (authors)-> entry.authors = authors
   .then -> Promise.all works.map(resolveWork(authorsUris))
   .then (works)-> entry.works = works
   .then -> entry
+
+getAuthorsUris = (work)-> work.claims['wdt:P50']
 
 getAlreadyResolvedUris = (seed)-> _.compact _.map(seed, 'uri')
 

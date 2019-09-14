@@ -270,6 +270,21 @@ describe 'entities:resolve:in-context', ->
 
     return
 
+  it 'should resolve work from author found in work author claims', (done)->
+    createWorkWithAuthor()
+    .then (work)->
+      { labels, claims } = work
+      resolve
+        edition: { isbn: generateIsbn13() }
+        works: [ { labels, claims } ]
+      .get 'entries'
+      .then (entries)->
+        should(entries[0].works[0].uri).be.ok()
+        done()
+    .catch done
+
+    return
+
   it 'should not resolve work from resolved author when author have several works with same labels', (done)->
     goodReadsId = someGoodReadsId()
     workLabel = randomLabel()
