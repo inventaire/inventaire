@@ -12,6 +12,11 @@ module.exports = (entry)->
   .then resolveWorks
   .then resolveInContext
   .then resolveOnLabels
+  .then (entry)->
+    addResolvedFlag(entry.edition)
+    if entry.works then entry.works.forEach(addResolvedFlag)
+    if entry.authors then entry.authors.forEach(addResolvedFlag)
+    return entry
 
 resolveAuthors = (entry)->
   { authors } = entry
@@ -28,3 +33,5 @@ resolveWorks = (entry)->
   resolveSeedsByExternalIds works
   .then (works)-> entry.works = works
   .then -> entry
+
+addResolvedFlag = (seed)-> seed.resolved = seed.uri?
