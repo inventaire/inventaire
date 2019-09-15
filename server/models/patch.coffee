@@ -56,7 +56,7 @@ module.exports =
   # Reverts the effects of a patch on a entity doc
   revert: (currentDoc, patch)->
     inversePatch = jiff.inverse patch.patch
-    _.inspect inversePatch, "inverse patch #{patch._id}"
+    _.log inversePatch, "inverse patch #{patch._id}"
     updatedDoc = applyInversePatch currentDoc, inversePatch
     return updatedDoc
 

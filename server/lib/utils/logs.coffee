@@ -7,6 +7,9 @@ chalk = require 'chalk'
 { grey, red } = chalk
 openIssue = require './open_issue'
 
+# Log full objects
+require('util').inspect.defaultOptions.depth = null
+
 BaseLogger = (color, operation)->
   return logger = (obj, label)->
     # fully display deep objects
@@ -23,8 +26,6 @@ module.exports = (_)->
 
   customLoggers =
     stringify: stringify
-    inspect: inspect
-    Inspect: (label)-> fn = (obj)-> inspect obj, label
 
     error: (err, label, logStack = true)->
       unless err instanceof Error

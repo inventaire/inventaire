@@ -51,7 +51,7 @@ Reset = (sub)-> ()->
 
 Inspect = (sub)-> ()->
   streamPromise sub.createReadStream()
-  .then _.Inspect('sub dump')
+  .then _.Log('sub dump')
 
 streamPromise = (stream)->
   new Promise (resolve, reject)->

@@ -202,8 +202,6 @@ describe 'patch', ->
         currentDoc: authorDocUpdatedA
         updatedDoc: authorDocUpdatedB
 
-      _.inspect patchB, 'patchB'
-
       authorDocUpdatedC = _.cloneDeep authorDocUpdatedB
       authorDocUpdatedC.claims['wdt:P50'] = [ 'wd:Q237087' ]
 
