@@ -105,12 +105,10 @@ module.exports = API =
 
   someImageHash: someImageHash
 
-  someOpenLibraryId: (type = 'author')->
-    types =
-      author: 'A',
-      work: 'W'
+  someOpenLibraryId: (type = 'human')->
     numbers = Math.random().toString().slice(2, 7)
-    return "OL1#{numbers}#{types[type]}"
+    typeLetter = openLibraryTypeLetters[type]
+    return "OL1#{numbers}#{typeLetter}"
 
   someGoodReadsId: ->
     numbers = Math.random().toString().slice(2, 7)
@@ -128,3 +126,8 @@ addEntityClaim = (createFnName, property)-> (subjectEntity)->
 
 API.addAuthor = addEntityClaim 'createHuman', 'wdt:P50'
 API.addSerie = addEntityClaim 'createSerie', 'wdt:P179'
+
+openLibraryTypeLetters =
+  edition: 'M'
+  work: 'W'
+  human: 'A'

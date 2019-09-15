@@ -30,8 +30,8 @@ module.exports = (res)-> (entry)->
     entry['works'] = if work? then [ work ] else []
 
   sanitizeEdition res, entry.edition
-  sanitizeCollection res, authorsSeeds
-  sanitizeCollection res, entry.works
+  sanitizeCollection res, authorsSeeds, 'human'
+  sanitizeCollection res, entry.works, 'work'
   return entry
 
 sanitizeEdition = (res, edition)->
@@ -41,12 +41,12 @@ sanitizeEdition = (res, edition)->
 
   edition.isbn = normalizeIsbn rawIsbn
 
-  sanitizeSeed res, edition
+  sanitizeSeed res, edition, 'edition'
 
-sanitizeCollection = (res, seeds)->
-  seeds.forEach (seed)-> sanitizeSeed res, seed
+sanitizeCollection = (res, seeds, type)->
+  seeds.forEach (seed)-> sanitizeSeed res, seed, type
 
-sanitizeSeed = (res, seed)->
+sanitizeSeed = (res, seed, type)->
   seed.labels ?= {}
   unless _.isPlainObject seed.labels
     throw error_.new 'invalid labels', 400, { seed }
@@ -65,7 +65,7 @@ sanitizeSeed = (res, seed)->
   Object.keys(claims).forEach (prop)->
     validateProperty prop
     claims[prop] = _.forceArray claims[prop]
-    claims[prop].forEach validateClaimValueSync.bind(null, prop)
+    claims[prop].forEach (value)-> validateClaimValueSync prop, value, type
 
 getIsbn = (edition)->
   edition.isbn or edition.claims?['wdt:P212'] or edition.claims?['wdt:P957']

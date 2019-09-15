@@ -27,7 +27,7 @@ updateInvClaim = (user, id, property, oldVal, newVal)->
 
     type = getEntityType currentDoc.claims['wdt:P31']
     validateClaimProperty type, property
-    updateClaim { property, oldVal, newVal, userId, currentDoc, userIsAdmin }
+    updateClaim { type, property, oldVal, newVal, userId, currentDoc, userIsAdmin }
 
   .then (updatedDoc)->
     radio.emit 'entity:update:claim', updatedDoc, property, oldVal, newVal

@@ -3,7 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { nonAuthReq, authReq, undesiredRes, undesiredErr } = require '../utils/utils'
-{ ensureEditionExists, humanName, randomLabel } = require '../fixtures/entities'
+{ ensureEditionExists, humanName, randomLabel, someOpenLibraryId } = require '../fixtures/entities'
 
 describe 'entities:create', ->
   it 'should not be able to create an entity without a wdt:P31 value', (done)->
@@ -43,6 +43,18 @@ describe 'entities:create', ->
     authReq 'post', '/api/entities?action=create',
       labels: { fr: humanName() }
       claims: { 'wdt:P31': [ 'wd:Q571' ] }
+    .then (res)->
+      res._id.should.be.a.String()
+      res._rev.should.be.a.String()
+      done()
+    .catch undesiredErr(done)
+
+    return
+
+  it 'should create an entity with a claim with a type specific validation', (done)->
+    authReq 'post', '/api/entities?action=create',
+      labels: { fr: humanName() }
+      claims: { 'wdt:P31': [ 'wd:Q571' ], 'wdt:P648': [ someOpenLibraryId('work') ] }
     .then (res)->
       res._id.should.be.a.String()
       res._rev.should.be.a.String()

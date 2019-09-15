@@ -20,7 +20,7 @@ module.exports = (params)->
   promises_.try -> validateClaimValue params
 
 validateClaimValue = (params)->
-  { currentClaims, property, oldVal, newVal, letEmptyValuePass, userIsAdmin } = params
+  { type, currentClaims, property, oldVal, newVal, letEmptyValuePass, userIsAdmin } = params
   # letEmptyValuePass to let it be interpreted as a claim deletion
   if letEmptyValuePass and not newVal? then return null
 
@@ -33,7 +33,7 @@ validateClaimValue = (params)->
   if updatingValue and prop.adminUpdateOnly and not userIsAdmin
     throw error_.new "updating property requires admin's rights", 403, property, newVal
 
-  validateClaimValueSync property, newVal
+  validateClaimValueSync property, newVal, type
 
   # If the property expects a uniqueValue and that there is already a value defined
   # any action other than editing the current value should be rejected

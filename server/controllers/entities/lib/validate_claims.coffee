@@ -34,8 +34,14 @@ validatePropertyClaims = (newClaims, currentClaims, type)-> (property)->
     throw error_.new 'invalid property values', 400, { property, values }
   newClaims[property] = values = _.uniq values
   values.map (newVal)->
-    params = { currentClaims, property, oldVal: null, newVal, letEmptyValuePass: false }
-    return validateClaim params
+    validateClaim {
+      type,
+      currentClaims,
+      property,
+      oldVal: null,
+      newVal,
+      letEmptyValuePass: false
+    }
 
 perTypeClaimsTests =
   edition: (newClaims, creating)->

@@ -35,6 +35,7 @@ module.exports =
     'wdt:P407' # language
     'wdt:P577' # publication date
     'wdt:P629' # edition or translation of
+    'wdt:P648' # Open Library ID
     'wdt:P655' # translator
     'wdt:P957' # ISBN-10
     'wdt:P1025' # SUDOC editions

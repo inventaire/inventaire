@@ -11,7 +11,7 @@ createAuthor = (userId, batchId)-> (author)->
   claims = {}
 
   addClaimIfValid claims, 'wdt:P31', [ 'wd:Q5' ]
-  createEntityFromSeed author, claims, userId, batchId
+  createEntityFromSeed { type: 'human', seed: author, claims, userId, batchId }
 
 createWork = (userId, batchId, authors)-> (work)->
   if work.uri? then return work
@@ -19,7 +19,7 @@ createWork = (userId, batchId, authors)-> (work)->
   claims = {}
   addClaimIfValid claims, 'wdt:P31', [ 'wd:Q571' ]
   addClaimIfValid claims, 'wdt:P50', authorsUris
-  createEntityFromSeed work, claims, userId, batchId
+  createEntityFromSeed { type: 'work', seed: work, claims, userId, batchId }
 
 createEdition = (edition, works, userId, batchId)->
   if edition.uri? then return Promise.resolve()
@@ -41,25 +41,28 @@ createEdition = (edition, works, userId, batchId)->
   # garantee that an edition shall not have label
   edition.labels = {}
 
-  createEntityFromSeed edition, claims, userId, batchId
+  createEntityFromSeed { type: 'edition', seed: edition, claims, userId, batchId }
 
-addClaimIfValid = (claims, property, values)->
+# An entity type is required only for properties with validation functions requiring a type
+# Ex: typedExternalId properties
+addClaimIfValid = (claims, property, values, type)->
   for value in values
-    if value? and properties[property].validate value
+    if value? and properties[property].validate value, type
       claims[property] ?= []
       claims[property].push value
 
-createEntityFromSeed = (seed, claims, userId, batchId)->
+createEntityFromSeed = (params)->
+  { type, seed, claims, userId, batchId } = params
   createInvEntity
     labels: seed.labels
-    claims: buildClaims seed.claims, claims
+    claims: buildClaims seed.claims, claims, type
     userId: userId
     batchId: batchId
   .then addCreatedUriToSeed(seed)
 
-buildClaims = (seedClaims, entityClaims)->
+buildClaims = (seedClaims, entityClaims, type)->
   for property, values of seedClaims
-    addClaimIfValid entityClaims, property, values
+    addClaimIfValid entityClaims, property, values, type
   return entityClaims
 
 addCreatedUriToSeed = (entryEntity)-> (createdEntity)->

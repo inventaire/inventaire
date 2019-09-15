@@ -133,6 +133,19 @@ describe 'entities:update-claims', ->
 
     return
 
+  it 'should reject invalid value for type-specific value formats', (done)->
+    createHuman()
+    .then (human)->
+      updateClaim human.uri, 'wdt:P648', null, someOpenLibraryId('work')
+      .then undesiredRes(done)
+      .catch (err)->
+        err.statusCode.should.equal 400
+        err.body.status_verbose.should.equal 'invalid property value for entity type human'
+        done()
+    .catch undesiredErr(done)
+
+    return
+
   it 'should reject an update with a duplicated concurrent value', (done)->
     id = someOpenLibraryId()
     createHuman()
