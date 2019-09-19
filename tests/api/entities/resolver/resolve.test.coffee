@@ -6,7 +6,7 @@ should = require 'should'
 { authReq, undesiredRes, undesiredErr } = __.require 'apiTests', 'utils/utils'
 elasticsearchUpdateDelay = CONFIG.entitiesSearchEngine.elasticsearchUpdateDelay or 1000
 { createWork, createEdition, createHuman, someGoodReadsId, createWorkWithAuthor, generateIsbn13 } = __.require 'apiTests', 'fixtures/entities'
-{ addClaim } = __.require 'apiTests', 'utils/entities'
+{ addClaim, getByUri } = __.require 'apiTests', 'utils/entities'
 { ensureEditionExists, randomLabel, humanName } = __.require 'apiTests', 'fixtures/entities'
 { toIsbn13h } = __.require 'lib', 'isbn/isbn'
 
@@ -329,6 +329,23 @@ describe 'entities:resolve:in-context', ->
         .then (entries)->
           should(entries[0].works[0].uri).be.ok()
           should(entries[0].authors[0].uri).be.ok()
+          done()
+    .catch done
+
+    return
+
+  it 'should resolve work from resolve edition', (done)->
+    isbn = generateIsbn13()
+    ensureEditionExists "isbn:#{isbn}"
+    .then (edition)->
+      getByUri edition.claims['wdt:P629'][0]
+      .then (work)->
+        { labels } = work
+        resolve
+          edition: { isbn }
+          works: [ { labels } ]
+        .then (res)->
+          res.entries[0].works[0].uri.should.equal work.uri
           done()
     .catch done
 
