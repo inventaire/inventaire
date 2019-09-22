@@ -5,6 +5,7 @@ breq = require 'bluereq'
 randomString = require('./utils/random_string').bind(null, 8)
 { repository } = __.require('root', 'package.json')
 userAgent = "#{CONFIG.name} (#{repository.url})"
+requestId = 0
 
 req = (verb)-> (url, options)->
   key = startTimer verb, url
@@ -46,7 +47,7 @@ startTimer = (verb, url)->
     # Prevent logging Basic Auth credentials
     .replace /\/\/\w+:[^@:]+@/, '//'
 
-  return _.startTimer "#{verb.toUpperCase()} #{url} [#{randomString()}]"
+  return _.startTimer "#{verb.toUpperCase()} #{url} [r#{++requestId}]"
 
 module.exports =
   get: req 'get'
