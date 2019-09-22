@@ -3,7 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { nonAuthReq, authReq, undesiredErr, undesiredRes } = require '../../utils/utils'
-{ createWork, createSerie, randomLabel, editionLabel } = require '../../fixtures/entities'
+{ createWork, createSerie, randomLabel } = require '../../fixtures/entities'
 workEntityPromise = createWork()
 
 describe 'entities:editions:create', ->
@@ -43,7 +43,7 @@ describe 'entities:editions:create', ->
         claims:
           'wdt:P31': [ 'wd:Q3331189' ]
           'wdt:P629': [ workEntity.uri ]
-          'wdt:P1476': [ editionLabel() ]
+          'wdt:P1476': [ randomLabel() ]
     .catch (err)->
       err.statusCode.should.equal 400
       err.body.status_verbose.should.equal "editions can't have labels"
@@ -77,4 +77,4 @@ createEdition = (uri)->
     claims:
       'wdt:P31': [ 'wd:Q3331189' ]
       'wdt:P629': [ uri ]
-      'wdt:P1476': [ editionLabel() ]
+      'wdt:P1476': [ randomLabel() ]
