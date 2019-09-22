@@ -14,15 +14,6 @@ isbn_ = __.require 'lib', 'isbn/isbn'
 { enabled, host } = CONFIG.dataseed
 
 module.exports =
-  # Search query parameters:
-  # search: the text to search
-  # lang: the language code to prioritize
-  # refresh: request fresh data
-  # includeDocs: include the seeds docs
-  search: (search, lang, refresh)->
-    unless enabled then return promises_.resolve { isbns: [] }
-    requests_.get _.buildPath("#{host}/books", { search, lang, refresh })
-
   getByIsbns: (isbns, refresh)->
     isbns = _.forceArray isbns
     unless enabled then return promises_.resolve isbns.map(emptySeed)
