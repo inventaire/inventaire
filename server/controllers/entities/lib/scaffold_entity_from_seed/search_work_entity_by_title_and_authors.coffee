@@ -24,11 +24,7 @@ module.exports = (seed)->
   cachedWorkPromise = workEntitiesCache.get seed
   if cachedWorkPromise? then return cachedWorkPromise
 
-  searchByText
-    search: title
-    lang: lang
-    # Having dataseed enable would trigger a hell of a loop
-    disableDataseed: true
+  searchByText { search: title, lang }
   .filter isWork
   # Make a first filter from the results we got
   .filter matchTitle(title, lang)

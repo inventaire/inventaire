@@ -5,7 +5,6 @@ customQuery = require './custom_query'
 module.exports =
   get: ActionsControllers
     public:
-      'search': require './search'
       'by-uris': require './by_uris'
       'changes': require './changes'
       'reverse-claims': require './reverse_claims'

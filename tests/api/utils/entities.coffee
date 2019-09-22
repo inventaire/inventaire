@@ -4,10 +4,6 @@ _ = __.require 'builders', 'utils'
 { nonAuthReq, authReq, adminReq } = require './utils'
 
 module.exports = entitiesUtils =
-  search: (search, lang)->
-    url = _.buildPath '/api/entities', { action: 'search', search, lang }
-    nonAuthReq 'get', url
-
   getByUris: (uris, relatives)->
     if _.isArray(uris) then uris = uris.join('|')
     url = _.buildPath '/api/entities', { action: 'by-uris', uris, relatives }

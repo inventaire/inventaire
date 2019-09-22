@@ -3,71 +3,40 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 searchWikidataByText = __.require 'data', 'wikidata/search_by_text'
 searchInvEntities = require './search_inv_entities'
-{ search:searchDataseed } = __.require 'data', 'dataseed/dataseed'
-{ searchTimeout } = CONFIG
-{ enabled:dataseedEnabled } = CONFIG.dataseed
 getEntitiesByUris = require './get_entities_by_uris'
-GetEntitiesByUris = (refresh)-> (uris)-> getEntitiesByUris { uris, refresh }
 promises_ = __.require 'lib', 'promises'
 error_ = __.require 'lib', 'error/error'
 assert_ = __.require 'utils', 'assert_types'
-randomString = __.require 'lib', './utils/random_string'
-{ getInvEntityUri, prefixifyIsbn } = __.require 'controllers', 'entities/lib/prefix'
+{ getInvEntityUri } = __.require 'controllers', 'entities/lib/prefix'
 
 module.exports = (query)->
   assert_.object query
-  { disableDataseed, refresh } = query
+  { refresh } = query
 
-  key = JSON.stringify(query) + ' ' + randomString(4)
-
-  promises = [
-    searchWikidataByText query, key
-    searchInvByText query, key
+  promises_.all [
+    searchWikidataByText query
+    searchInvByText query
   ]
-
-  if dataseedEnabled and not disableDataseed
-    promises.push searchDataseedByText(query, key)
-
-  promises_.all promises
   .then mergeResults
-  .then ReplaceEditionsByTheirWork(refresh)
+  .then replaceEditionsByTheirWork(refresh)
   .then _.values
   .catch _.ErrorRethrow('search by text err')
 
 searchInvByText = (query, key)->
   { search } = query
-  key = startTimer 'searchInvByText', key
 
   searchInvEntities search
-  .timeout searchTimeout
   # It's ok to use the inv URI even if its not the canonical URI
   # (wd and isbn URI are prefered) as getEntitiesByUris will
   # take care of finding the right URI downward
   .map getInvEntityUri
-  .then GetEntitiesByUris(query.refresh)
+  .then (uris)-> getEntitiesByUris { uris }
   .catch error_.notFound
-  .finally _.EndTimer(key)
-
-searchDataseedByText = (query, key)->
-  key = startTimer 'searchDataseedByText', key
-
-  _.log query, 'query'
-  { search, lang, refresh } = query
-  # Get a list of matching ISBNs
-  searchDataseed search, lang, refresh
-  .timeout searchTimeout
-  .get 'isbns'
-  .map prefixifyIsbn
-  # For which we now request the associated entities:
-  # that's where the entity scaffolding from data seeds takes place
-  .then GetEntitiesByUris(refresh)
-  .catch error_.notFound
-  .finally _.EndTimer(key)
 
 mergeResults = (results)->
   _.flattenIndexes _.compact(results).map(_.property('entities'))
 
-ReplaceEditionsByTheirWork = (refresh)-> (entities)->
+replaceEditionsByTheirWork = (refresh)-> (entities)->
   missingWorkEntities = []
   for uri, entity of entities
     if entity.type is 'edition'
@@ -87,5 +56,3 @@ ReplaceEditionsByTheirWork = (refresh)-> (entities)->
 
   return getEntitiesByUris { uris: missingWorkEntities, refresh }
   .then (results)-> _.extend entities, results.entities
-
-startTimer = (name, key)-> _.startTimer "#{name} #{key}"
