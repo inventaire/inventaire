@@ -153,6 +153,8 @@ itemWithImage = (item)-> item.snapshot['entity:image']
 validateEntityType = (item)->
   getEntityByUri { uri: item.entity }
   .then (entity)->
+    unless entity? then throw error_.new 'entity not found', 400, { item }
+
     { type } = entity
 
     unless type in whitelistedEntityTypes

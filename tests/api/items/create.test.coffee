@@ -133,6 +133,16 @@ describe 'items:create', ->
 
     return
 
+  it 'should reject an item created with an unknown entity', (done)->
+    authReq 'post', '/api/items', { entity: 'isbn:9782290711217', lang: 'fr' }
+    .catch (err)->
+      err.statusCode.should.equal 400
+      err.body.status_verbose.should.equal 'entity not found'
+      done()
+    .catch undesiredErr(done)
+
+    return
+
   it 'should reject an item created with a non-whitelisted entity type', (done)->
     authReq 'post', '/api/items', { entity: 'wd:Q1', lang: 'fr' }
     .catch (err)->
