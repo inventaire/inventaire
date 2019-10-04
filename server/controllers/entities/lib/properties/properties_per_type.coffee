@@ -22,8 +22,10 @@ workAndSerie = all.concat [
   'wdt:P941' # inspired by
   'wdt:P1085' # Librarything work ID
   'wdt:P1545' # series ordinal
+  'wdt:P1984' # Anime News Network manga ID
   'wdt:P2969' # GoodReads book ID
   'wdt:P3631' # Babelio work ID
+  'wdt:P4087' # MyAnimeList manga ID
   'wdt:P5331' # OCLC work ID
 ]
 
@@ -71,6 +73,8 @@ module.exports =
     'wdt:P950' # BNE ID
     'wdt:P1006' # Dutch National for Author Names ID
     'wdt:P1412' # languages of expression
+    'wdt:P1960' # Google Scholar author ID
+    'wdt:P1982' # Anime News Network person ID
     'wdt:P2002' # Twitter account
     'wdt:P2003' # Instagram username
     'wdt:P2013' # Facebook account
@@ -78,7 +82,10 @@ module.exports =
     'wdt:P2963' # GoodReads author ID
     'wdt:P3630' # Babelio author ID
     'wdt:P4033' # Mastodon address
+    'wdt:P4084' # MyAnimeList people ID
+    'wdt:P4285' # Theses.fr person ID
     'wdt:P5361' # BNB person ID
+    'wdt:P7400' # LibraryThing author ID
   ]
 
   publisher: all.concat [
@@ -87,5 +94,6 @@ module.exports =
     'wdt:P571' # inception
     'wdt:P576' # dissolution
     'wdt:P856' # official website
+    'wdt:P1983' # Anime News Network company ID
     'wdt:P3035' # ISBN publisher prefix
   ]

@@ -58,8 +58,8 @@ module.exports = [
   'P953' # full text available at
   'P906' # SELIBR ID (Swedish)
   'P950' # BNE ID
-  'P1006' # Dutch National for Author Names ID
   'P957' # isbn 10
+  'P1006' # Dutch National for Author Names ID
   'P1044' # SWB editions
   'P1066' # student of
   'P1085' # Librarything work ID
@@ -70,6 +70,10 @@ module.exports = [
   'P1545' # series ordinal
   'P1680' # subtitle
   'P1938' # Project Gutenberg author ID
+  'P1960' # Google Scholar author ID
+  'P1982' # Anime News Network person ID
+  'P1983' # Anime News Network company ID
+  'P1984' # Anime News Network manga ID
   'P2002' # twitter
   'P2003' # instagram
   'P2013' # facebook
@@ -87,7 +91,11 @@ module.exports = [
   'P3631' # Babelio work ID
   'P4033' # Mastodon address
   'P4258' # Gallica ID
+  'P4285' # Theses.fr person ID
+  'P4084' # MyAnimeList people ID
+  'P4087' # MyAnimeList manga ID
   'P5331' # OCLC work ID
   'P5361' # BNB person ID
   'P6338' # colorist
+  'P7400' # LibraryThing author ID
 ]
