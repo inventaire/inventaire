@@ -69,6 +69,22 @@ describe 'entities:resolve:create-unresolved', ->
 
     return
 
+  it 'should ignore unresolved work from resolve edition', (done)->
+    isbn = generateIsbn13()
+    ensureEditionExists "isbn:#{isbn}"
+    .then (edition)->
+      resolveAndCreate
+        edition: { isbn }
+        works: [ { labels: { en: randomLabel() } } ]
+      .then (res)->
+        entry = res.entries[0]
+        entry.works[0].resolved.should.be.false()
+        entry.works[0].created.should.be.false()
+        done()
+    .catch done
+
+    return
+
   it 'should add optional claims to created edition', (done)->
     frenchLang = 'wd:Q150'
     resolveAndCreate

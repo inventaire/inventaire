@@ -3,17 +3,16 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 { Promise } = __.require 'lib', 'promises'
 { getAlreadyResolvedUris, ifSomeLabelsMatch, getLabels, resolveSeed } = require './helpers'
-getEntityByUri = __.require 'controllers', 'entities/lib/get_entity_by_uri'
+entities_ = require '../entities'
 getEntitiesList = require '../get_entities_list'
 
 module.exports = (worksSeeds, editionSeed)->
-  unless editionSeed.uri? then return Promise.resolve worksSeeds
-
-  getEntityByUri { uri: editionSeed.uri }
+  entities_.byIsbn editionSeed.isbn
   .then (editionEntity)->
+    unless editionEntity? then return worksSeeds
     worksUris = editionEntity.claims['wdt:P629']
     getEntitiesList worksUris
-  .then (worksEntities)-> worksSeeds.map resolveWork(worksEntities)
+    .then (worksEntities)-> worksSeeds.map resolveWork(worksEntities)
 
 resolveWork = (worksEntities)-> (workSeed)->
   workSeedLabels = getLabels workSeed

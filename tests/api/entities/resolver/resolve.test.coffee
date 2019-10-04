@@ -351,6 +351,21 @@ describe 'entities:resolve:in-context', ->
 
     return
 
+  it 'should ignore unresolved work from resolve edition', (done)->
+    isbn = generateIsbn13()
+    ensureEditionExists "isbn:#{isbn}"
+    .then (edition)->
+      resolve
+        edition: { isbn }
+        works: [ { labels: { en: randomLabel() } } ]
+      .then (res)->
+        entry = res.entries[0]
+        entry.works[0].resolved.should.be.false()
+        done()
+    .catch done
+
+    return
+
 describe 'entities:resolve:on-labels', ->
   it 'should resolve author and work pair by searching for exact labels', (done)->
     createHuman()
