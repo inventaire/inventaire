@@ -13,15 +13,15 @@ validateClaimValueSync = require '../validate_claim_value_sync'
 # Format : if edition is a list, force pick the first edition
 # Warn : when a property is unknown
 
-module.exports = (res)-> (entry)->
+module.exports = (entry)->
   { edition } = entry
-  unless edition?
-    throw error_.new 'missing edition in entry', 400, entry
 
   if _.isArray edition
-    if edition.length > 1
-      responses_.addWarning res, 'resolver', 'multiple editions not supported, picked the first one'
-    entry.edition = edition[0]
+    if edition.length > 1 then throw error_.new 'multiple editions not supported', 400, { edition }
+    else edition = entry.edition = edition[0]
+
+  unless edition?
+    throw error_.new 'missing edition in entry', 400, { entry }
 
   authorsSeeds = entry['authors'] ?= []
 
@@ -29,15 +29,15 @@ module.exports = (res)-> (entry)->
     work = createWorkSeedFromEdition edition
     entry['works'] = if work? then [ work ] else []
 
-  sanitizeEdition res, entry.edition
-  sanitizeCollection res, authorsSeeds, 'human'
-  sanitizeCollection res, entry.works, 'work'
+  sanitizeEdition entry.edition
+  sanitizeCollection authorsSeeds, 'human'
+  sanitizeCollection entry.works, 'work'
   return entry
 
-sanitizeEdition = (res, edition)->
+sanitizeEdition = (edition)->
   rawIsbn = getIsbn edition
 
-  sanitizeSeed res, edition, 'edition'
+  sanitizeSeed edition, 'edition'
 
   if rawIsbn?
     unless isValidIsbn(rawIsbn) then throw error_.new 'invalid isbn', 400, { edition }
@@ -51,10 +51,10 @@ sanitizeEdition = (res, edition)->
 
 isExternalIdProperty = (propertyId)-> properties[propertyId].isExternalId
 
-sanitizeCollection = (res, seeds, type)->
-  seeds.forEach (seed)-> sanitizeSeed res, seed, type
+sanitizeCollection = (seeds, type)->
+  seeds.forEach (seed)-> sanitizeSeed seed, type
 
-sanitizeSeed = (res, seed, type)->
+sanitizeSeed = (seed, type)->
   seed.labels ?= {}
   unless _.isPlainObject seed.labels
     throw error_.new 'invalid labels', 400, { seed }

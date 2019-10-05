@@ -24,7 +24,7 @@ module.exports = (req, res)->
   sanitize req, res, sanitization
   .then (params)->
     params.batchId = Date.now()
-    entries = params.entries.map(sanitizeEntry(res))
+    entries = params.entries.map(sanitizeEntry)
     return sequentialResolve entries, params
   .then responses_.Wrap(res, 'entries')
   .catch error_.Handler(req, res)
