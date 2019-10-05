@@ -5,7 +5,7 @@ should = require 'should'
 { Promise } = __.require 'lib', 'promises'
 { authReq, undesiredRes, undesiredErr } = __.require 'apiTests', 'utils/utils'
 elasticsearchUpdateDelay = CONFIG.entitiesSearchEngine.elasticsearchUpdateDelay or 1000
-{ createWork, createEdition, createHuman, someGoodReadsId, createWorkWithAuthor, generateIsbn13 } = __.require 'apiTests', 'fixtures/entities'
+{ createWork, createEdition, createHuman, someGoodReadsId, someOpenLibraryId, createWorkWithAuthor, generateIsbn13 } = __.require 'apiTests', 'fixtures/entities'
 { addClaim, getByUri } = __.require 'apiTests', 'utils/entities'
 { ensureEditionExists, randomLabel, humanName } = __.require 'apiTests', 'fixtures/entities'
 { toIsbn13h } = __.require 'lib', 'isbn/isbn'
@@ -27,16 +27,33 @@ describe 'entities:resolve', ->
     return
 
   it 'should resolve an edition entry from an ISBN', (done)->
-    rawIsbn = generateIsbn13()
-    editionSeed = { isbn: rawIsbn }
+    isbn13 = generateIsbn13()
+    editionSeed = { isbn: isbn13 }
     entry = { edition: editionSeed }
-    ensureEditionExists "isbn:#{rawIsbn}"
+    ensureEditionExists "isbn:#{isbn13}"
     .then -> resolve entry
     .get 'entries'
     .then (entries)->
       entries[0].should.be.an.Object()
-      entries[0].edition.uri.should.equal "isbn:#{rawIsbn}"
+      entries[0].edition.uri.should.equal "isbn:#{isbn13}"
       done()
+    .catch done
+
+    return
+
+  it 'should resolve an edition from a known edition external id', (done)->
+    openLibraryId = someOpenLibraryId 'edition'
+    isbn13 = generateIsbn13()
+    ensureEditionExists "isbn:#{isbn13}"
+    .tap (edition)-> addClaim "inv:#{edition._id}", 'wdt:P648', openLibraryId
+    .then (edition)->
+      editionSeed = { claims: { 'wdt:P648': [ openLibraryId ] } }
+      entry = { edition: editionSeed }
+      resolve entry
+      .get 'entries'
+      .then (entries)->
+        entries[0].edition.uri.should.equal edition.uri
+        done()
     .catch done
 
     return
@@ -58,21 +75,21 @@ describe 'entities:resolve', ->
     return
 
   it 'should resolve multiple entries', (done)->
-    rawIsbnA = generateIsbn13()
-    rawIsbnB = generateIsbn13()
-    entryA = { edition: { isbn: rawIsbnA } }
-    entryB = { edition: { isbn: rawIsbnB } }
+    isbn13A = generateIsbn13()
+    isbn13B = generateIsbn13()
+    entryA = { edition: { isbn: isbn13A } }
+    entryB = { edition: { isbn: isbn13B } }
     Promise.all [
-      ensureEditionExists "isbn:#{rawIsbnA}"
-      ensureEditionExists "isbn:#{rawIsbnB}"
+      ensureEditionExists "isbn:#{isbn13A}"
+      ensureEditionExists "isbn:#{isbn13B}"
     ]
     .then -> resolve [ entryA, entryB ]
     .get 'entries'
     .then (entries)->
       entries[0].should.be.an.Object()
-      entries[0].edition.uri.should.equal "isbn:#{rawIsbnA}"
+      entries[0].edition.uri.should.equal "isbn:#{isbn13A}"
       entries[1].should.be.an.Object()
-      entries[1].edition.uri.should.equal "isbn:#{rawIsbnB}"
+      entries[1].edition.uri.should.equal "isbn:#{isbn13B}"
       done()
     .catch done
 
@@ -96,7 +113,7 @@ describe 'entities:resolve', ->
     resolve entry
     .catch (err)->
       err.statusCode.should.equal 400
-      err.body.status_verbose.should.startWith 'no isbn found'
+      err.body.status_verbose.should.startWith 'no isbn or external id claims found'
       done()
     .catch done
 

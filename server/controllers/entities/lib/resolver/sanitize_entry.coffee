@@ -36,12 +36,20 @@ module.exports = (res)-> (entry)->
 
 sanitizeEdition = (res, edition)->
   rawIsbn = getIsbn edition
-  unless rawIsbn? then throw error_.new 'no isbn found', 400, { edition }
-  unless isValidIsbn(rawIsbn) then throw error_.new 'invalid isbn', 400, { edition }
-
-  edition.isbn = normalizeIsbn rawIsbn
 
   sanitizeSeed res, edition, 'edition'
+
+  if rawIsbn?
+    unless isValidIsbn(rawIsbn) then throw error_.new 'invalid isbn', 400, { edition }
+    edition.isbn = normalizeIsbn rawIsbn
+  else
+    claims = edition.claims or {}
+    claimsProperties = Object.keys claims
+    externalIdProperties = claimsProperties.filter isExternalIdProperty
+    unless _.some claimsProperties, isExternalIdProperty
+      throw error_.new 'no isbn or external id claims found', 400, { edition }
+
+isExternalIdProperty = (propertyId)-> properties[propertyId].isExternalId
 
 sanitizeCollection = (res, seeds, type)->
   seeds.forEach (seed)-> sanitizeSeed res, seed, type
