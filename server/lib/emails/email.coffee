@@ -89,7 +89,7 @@ module.exports =
       template: 'group'
       context: { title, button, group, groupContext, lang, host }
 
-  feedback: (subject, message, user, unknownUser, uris)->
+  feedback: (subject, message, user, unknownUser, uris, context)->
     # no email settings to check here ;)
     username = user?.username or 'anonymous'
     return data =
@@ -97,7 +97,7 @@ module.exports =
       replyTo: user?.email
       subject: "[feedback][#{username}] #{subject}"
       template: 'feedback'
-      context: { subject, message, user , unknownUser, uris, host }
+      context: { subject, message, user, unknownUser, uris, host, context }
 
   FriendInvitation: (inviter, message)->
     # No email settings to check here:

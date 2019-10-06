@@ -7,7 +7,7 @@ radio = __.require 'lib', 'radio'
 module.exports =
   post: (req, res, next)->
     { user } = req
-    { subject, message, uris, unknownUser } = req.body
+    { subject, message, uris, context, unknownUser } = req.body
 
     unless subject? or message?
       return error_.bundle req, res, 'message is empty', 400
@@ -20,8 +20,8 @@ module.exports =
     automaticReport = uris?
 
     if not automaticReport or isNewAutomaticReport(subject)
-      _.log { subject, message, uris, unknownUser }, 'sending feedback'
-      radio.emit 'received:feedback', subject, message, user, unknownUser, uris
+      _.log { subject, message, uris, unknownUser, context }, 'sending feedback'
+      radio.emit 'received:feedback', subject, message, user, unknownUser, uris, context
     else
       _.info subject, 'not re-sending automatic report'
 

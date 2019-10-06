@@ -23,4 +23,7 @@
       {{/each}}
     </ul>
   {{/if}}
+  {{#each context}}
+    {{#if this}}<p>{{@key}}: {{this}}</p>{{/if}}
+  {{/each}}
 {{>paragraph_bottom}}
