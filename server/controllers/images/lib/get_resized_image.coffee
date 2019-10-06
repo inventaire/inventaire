@@ -45,7 +45,8 @@ onResponse = (reqStream, url, width, height, req, res)-> (response)->
 
 # Accepting image/*
 # Accepting application/octet-stream (known case: media storages 'dumb' content type)
-validImageContentType = /^(image\/[\w\+]+|application\/octet-stream)$/
+# Ignore charset instructions (known case: image/jpeg;charset=UTF-8)
+validImageContentType = /^(image\/[\w\+]+|application\/octet-stream)/
 
 resizeFromStream = (reqStream, width, height, req, res)->
   alreadySent = false
