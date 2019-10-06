@@ -90,3 +90,32 @@ describe 'automerge_works', ->
     .catch undesiredErr(done)
 
     return
+
+  it 'should not automerge work if suggestion is a serie or part of a serie', (done)->
+    # known case : work could be the volume of a serie
+    workLabel = randomLabel()
+
+    createHuman { labels: { en: randomLabel() } }
+    .then (human)->
+      Promise.all [
+        createWorkWithAuthor human, workLabel
+        createWorkWithAuthor human, workLabel
+      ]
+      .spread (work1, work2)->
+        addSerie(work1)
+        .then ->
+          automergeWorks(human.uri)
+          .delay 300
+          .then ->
+            Promise.all [
+              getByUris(work1.uri).get('entities')
+              getByUris(work2.uri).get('entities')
+            ]
+            .spread (res1, res2)->
+              res1[work1.uri].should.be.ok()
+              res2[work2.uri].should.be.ok()
+
+              done()
+    .catch undesiredErr(done)
+
+    return

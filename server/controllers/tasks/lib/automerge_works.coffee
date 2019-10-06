@@ -15,15 +15,23 @@ filterMergeableWorks = (works)->
   uris = _.map(works, _.property('uri'))
   getEntitiesByUris { uris }
   .get 'entities'
+  .then rejectSerieWorks
   .then getPossibleWorksMerge
   .then filterDuplicatedMerge
+
+rejectSerieWorks = (works)->
+  _.mapValues works, (work)->
+    if work.claims['wdt:P179'] then return
+    work
 
 getPossibleWorksMerge = (works)->
   possibleMerge = _.mapValues(works, -> [])
   _.mapValues works, (work)->
+    unless work then return
     { uri:workUri } = work
     workLabels = _.values work.labels
     _.mapValues works, (work2)->
+      unless work2 then return
       { uri:work2Uri } = work2
       work2Labels = _.values work2.labels
       addSuggestionUriToSuspectUri(workUri, workLabels, work2Uri, work2Labels, possibleMerge)
