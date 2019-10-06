@@ -124,6 +124,7 @@ module.exports =
     secret: true
     validate: validations.user.password
   prefix: whitelistedString
+  property: { validate: _.isPropertyUri }
   range: _.extend {}, positiveInteger,
     default: 50
     max: 500
