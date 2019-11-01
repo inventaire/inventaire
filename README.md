@@ -119,7 +119,7 @@ tracking installation scripts and documentation to run inventaire in production
 the app has a few core concepts:
 - Users
 - Entities : which can be authors (ex: [wd:Q353](https://inventaire.io/entity/wd:Q535)), books (ex: [wd:Q393018](https://inventaire.io/entity/wd:Q393018)) and books' specific editions (ex: [isbn:9782070389162](https://inventaire.io/entity/isbn:9782070389162)). The term *entities* comes from wikidata terminology. See the [entities map](https://inventaire.github.io/entities-map/).
-- Items : instances of book entities that a user says it has. It can be an instance of a work or a specific edition of a work.
+- Items : instances of book entities that a user says they have. It can be an instance of a work or a specific edition of a work.
 - Transactions : discussion between two users about a specific item with an open transaction mode (giving, lending, selling). Transactions have effects on items: giving and selling an item make it move from the owner to the requester inventory; lending an item shows it as unavailable.
 - Groups: groups of users with one or more admins
 
