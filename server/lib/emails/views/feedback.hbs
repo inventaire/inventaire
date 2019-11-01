@@ -1,19 +1,17 @@
 {{>paragraph_top}}
   {{#if user}}
     <h4>{{user.username}}</h4>
-    {{user.email}} - {{user._id}}
-    confirmed email: {{user.validEmail}}
+    {{user.email}} - {{user._id}}<br>
+    confirmed email: {{user.validEmail}}<br>
+    language: {{user.language}}<br>
   {{else}}
     <h4>{{unknownUser}}</h4>
   {{/if}}
   <hr>
-  <p>
-    {{subject}}
-  </p>
+  <p>{{subject}}</p>
   <hr>
-  <p>
-    {{message}}
-  </p>
+  {{!-- preserver line-breaks --}}
+  <p style="white-space: pre-line;">{{message}}</p>
   {{#if uris}}
     <ul>
       {{#each uris}}
@@ -23,7 +21,8 @@
       {{/each}}
     </ul>
   {{/if}}
+  <hr>
   {{#each context}}
-    {{#if this}}<p>{{@key}}: {{this}}</p>{{/if}}
+    {{#if this}}<pre style="font-size: 14px;">{{@key}}: {{this}}</pre><br>{{/if}}
   {{/each}}
 {{>paragraph_bottom}}
