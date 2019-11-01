@@ -43,7 +43,7 @@ This repository tracks the server-side developments, while the (heavy) [client-s
 *This is the installation documentation for a developement environment. For production setup, see*: [inventaire-deploy](https://github.com/inventaire/inventaire-deploy)
 
 ### Dependencies to install manually:
-- [git](https://git-scm.com/), [curl](http://curl.haxx.se) (used in some installation scripts), [graphicsmagick](www.graphicsmagick.org/README.html) (used to resize images), [zsh](http://www.zsh.org/) (used in some scripts, no need to make it your default shell), [inotify-tools](https://github.com/rvoicilas/inotify-tools) (used in API tests scripts)
+- [git](https://git-scm.com/), [curl](http://curl.haxx.se) (used in some installation scripts), [graphicsmagick](www.graphicsmagick.org/README.html) (used to resize images), [inotify-tools](https://github.com/rvoicilas/inotify-tools) (used in API tests scripts)
 - [NodeJS](http://nodejs.org/) (>=6, [NVM](https://github.com/creationix/nvm) is a great way to install it)
 - a [CouchDB](http://couchdb.apache.org/) (>=1.6) instance (on port 5984 for default config)
 - an [ElasticSearch](https://www.elastic.co/fr/products/elasticsearch) (>=2.4) instance (on port 9200 for default config)
@@ -52,7 +52,7 @@ To install those on Ubuntu that could give something like:
 ```sh
 sudo add-apt-repository ppa:couchdb/stable -y
 sudo apt-get update
-sudo apt-get install git curl wget graphicsmagick zsh couchdb cowsay inotify-tools
+sudo apt-get install git curl wget graphicsmagick couchdb cowsay inotify-tools
 
 # Install ElasticSearch and its main dependency: Java
 # You might want to make sure that no previous version of Java is installed first as it might trigger version issues:
