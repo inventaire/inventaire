@@ -43,16 +43,16 @@ This repository tracks the server-side developments, while the (heavy) [client-s
 *This is the installation documentation for a developement environment. For production setup, see*: [inventaire-deploy](https://github.com/inventaire/inventaire-deploy)
 
 ### Dependencies to install manually:
-- [git](https://git-scm.com/), [curl](http://curl.haxx.se) (used in some installation scripts), [graphicsmagick](www.graphicsmagick.org/README.html) (used to resize images), [zsh](http://www.zsh.org/) (used in some scripts, no need to make it your default shell), [inotify-tools](https://github.com/rvoicilas/inotify-tools) (used in API tests scripts)
-- [NodeJS](http://nodejs.org/) (>=6, [NVM](https://github.com/creationix/nvm) is a great way to install it)
-- a [CouchDB](http://couchdb.apache.org/) (>=1.6) instance (on port 5984 for default config)
+- [git](https://git-scm.com/), [curl](http://curl.haxx.se) (used in some installation scripts), [graphicsmagick](www.graphicsmagick.org/README.html) (used to resize images), [inotify-tools](https://github.com/rvoicilas/inotify-tools) (used in API tests scripts)
+- [NodeJS](http://nodejs.org/) (>=6, recommended 12.2), [NVM](https://github.com/creationix/nvm) (allows great version update flexibility)
+- a [CouchDB](http://couchdb.apache.org/) (>=1.6, recommended 1.7) instance (on port 5984 for default config)
 - an [ElasticSearch](https://www.elastic.co/fr/products/elasticsearch) (>=2.4) instance (on port 9200 for default config)
 
 To install those on Ubuntu that could give something like:
 ```sh
 sudo add-apt-repository ppa:couchdb/stable -y
 sudo apt-get update
-sudo apt-get install git curl wget graphicsmagick zsh couchdb cowsay inotify-tools
+sudo apt-get install git curl wget graphicsmagick couchdb inotify-tools
 
 # Install ElasticSearch and its main dependency: Java
 # You might want to make sure that no previous version of Java is installed first as it might trigger version issues:
@@ -61,7 +61,7 @@ sudo apt-get install git curl wget graphicsmagick zsh couchdb cowsay inotify-too
 curl https://raw.githubusercontent.com/inventaire/inventaire-deploy/d8c8bee46c241ceca0ddf3d9c319d84bfb0734d9/install_elasticsearch | bash
 
 # Installing NodeJs and NPM using NVM, the Node Version Manager https://github.com/creationix/nvm
-# (same remarque as above on piping a script)
+# (see above text on piping a script)
 curl https://raw.githubusercontent.com/creationix/nvm/v0.32.1/install.sh | bash
 exit
 ```
@@ -71,7 +71,6 @@ exit
 # If you get a 'command not found' error, check NVM documentation https://github.com/creationix/nvm#installation
 nvm
 nvm install 8
-cowsay -f dragon "♫ ♪ copy/paste code, copy/paste code, the world is beautiful when all's in simple mode ♪ ♫"
 ```
 
 ### Project development environment installation
@@ -82,11 +81,11 @@ npm install
 # If you haven't done it previously, set an admin on CouchDB and update ./config/local.coffee accordingly
 curl -XPUT http://localhost:5984/_config/admins/yourcouchdbusername -d '"'yourcouchdbpassword'"'
 ```
-We are all set! You can now start the server (in watch mode so that it reboots on file changes)
+You are all set! You can now start the server (in watch mode so that it reboots on file changes)
 ```sh
 npm run watch
 ```
-If you want to work on the client code, we also need to start Brunch in another terminal
+If you want to work on the client code, you also need to start Brunch in another terminal
 ```sh
 cd client
 npm run watch
@@ -117,11 +116,11 @@ tracking installation scripts and documentation to run inventaire in production
 [![stack](https://raw.githubusercontent.com/inventaire/stack/master/snapshots/stack-from-server.png)](https://inventaire.github.io/stack/)
 
 ## Concepts map
-the whole app turns around a few core concepts:
+the app has a few core concepts:
 - Users
-- Entities : encompass authors (ex: [wd:Q353](https://inventaire.io/entity/wd:Q535)), books (ex: [wd:Q393018](https://inventaire.io/entity/wd:Q393018)) and books' specific editions (ex: [isbn:9782070389162](https://inventaire.io/entity/isbn:9782070389162)). The term *entities* is inherited from wikidata terminology. See the [entities map](https://inventaire.github.io/entities-map/).
-- Items : instances of book entities that a user declare to own. Can be an instance of a work or a specific edition of a work.
-- Transactions : discussion between two users involving a specific item with an open transaction mode (giving, lending, selling). Transactions have effects on items: giving and selling an item make it move from the owner to the requester inventory; lending an item make it appear as unavailable.
+- Entities : which can be authors (ex: [wd:Q353](https://inventaire.io/entity/wd:Q535)), books (ex: [wd:Q393018](https://inventaire.io/entity/wd:Q393018)) and books' specific editions (ex: [isbn:9782070389162](https://inventaire.io/entity/isbn:9782070389162)). The term *entities* comes from wikidata terminology. See the [entities map](https://inventaire.github.io/entities-map/).
+- Items : instances of book entities that a user says it has. It can be an instance of a work or a specific edition of a work.
+- Transactions : discussion between two users about a specific item with an open transaction mode (giving, lending, selling). Transactions have effects on items: giving and selling an item make it move from the owner to the requester inventory; lending an item shows it as unavailable.
 - Groups: groups of users with one or more admins
 
 ![concepts map](https://raw.githubusercontent.com/inventaire/inventaire/master/docs/visualizations/concepts.jpg)
