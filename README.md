@@ -52,7 +52,7 @@ To install those on Ubuntu that could give something like:
 ```sh
 sudo add-apt-repository ppa:couchdb/stable -y
 sudo apt-get update
-sudo apt-get install git curl wget graphicsmagick couchdb cowsay inotify-tools
+sudo apt-get install git curl wget graphicsmagick couchdb inotify-tools
 
 # Install ElasticSearch and its main dependency: Java
 # You might want to make sure that no previous version of Java is installed first as it might trigger version issues:
@@ -71,7 +71,6 @@ exit
 # If you get a 'command not found' error, check NVM documentation https://github.com/creationix/nvm#installation
 nvm
 nvm install 8
-cowsay -f dragon "♫ ♪ copy/paste code, copy/paste code, the world is beautiful when all's in simple mode ♪ ♫"
 ```
 
 ### Project development environment installation
