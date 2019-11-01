@@ -81,11 +81,11 @@ npm install
 # If you haven't done it previously, set an admin on CouchDB and update ./config/local.coffee accordingly
 curl -XPUT http://localhost:5984/_config/admins/yourcouchdbusername -d '"'yourcouchdbpassword'"'
 ```
-We are all set! You can now start the server (in watch mode so that it reboots on file changes)
+You are all set! You can now start the server (in watch mode so that it reboots on file changes)
 ```sh
 npm run watch
 ```
-If you want to work on the client code, we also need to start Brunch in another terminal
+If you want to work on the client code, you also need to start Brunch in another terminal
 ```sh
 cd client
 npm run watch
