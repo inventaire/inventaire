@@ -69,6 +69,8 @@ sequentialResolve = (entries, params)->
     nextEntry = entries.shift()
     unless nextEntry? then return resolvedEntries
 
+    _.log nextEntry, 'nextEntry'
+
     resolve nextEntry
     .then updateResolvedEntry
     .then createUnresolvedEntry

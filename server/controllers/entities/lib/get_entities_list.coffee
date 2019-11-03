@@ -9,4 +9,4 @@ getEntitiesByUris = require './get_entities_by_uris'
 
 module.exports = (uris)->
   unless uris? then return Promise.resolve []
-  getEntitiesByUris { uris, list: true }
+  getEntitiesByUris { uris, list: true }

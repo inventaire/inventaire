@@ -8,6 +8,7 @@ module.exports = (workUris)->
   getEntitiesList workUris
   .then getAuthorUris
   .then _.flatten
+  .then _.compact
   .then getEntitiesList
 
 getAuthorUris = (works)->
