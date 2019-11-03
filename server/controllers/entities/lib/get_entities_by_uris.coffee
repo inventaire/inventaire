@@ -15,7 +15,7 @@ getters =
 prefixes = Object.keys getters
 
 module.exports = (params)->
-  { uris } = params
+  { uris, list } = params
   assert_.array uris
   domains = {}
 
@@ -34,6 +34,8 @@ module.exports = (params)->
     domains[prefix] or= []
     domains[prefix].push id
 
+  mergeResponses = if list then formatList else formatRichResults
+
   getDomainsPromises domains, params
   .then mergeResponses
   .catch _.ErrorRethrow("getEntitiesByUris err: #{uris.join('|')}")
@@ -46,7 +48,9 @@ getDomainsPromises = (domains, params)->
 
   return promises_.all promises
 
-mergeResponses = (results)->
+formatList = (results)-> _.flatten _.map(results, 'entities')
+
+formatRichResults = (results)->
   response =
     # entities are a array until they are indexed by uri hereafter
     entities: []

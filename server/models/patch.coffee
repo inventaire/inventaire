@@ -8,13 +8,14 @@ validations = require './validations/common'
 
 module.exports =
   create: (params)->
-    { userId, currentDoc, updatedDoc, context } = params
+    { userId, currentDoc, updatedDoc, context, batchId } = params
     validations.pass 'userId', userId
     assert_.object currentDoc
     assert_.object updatedDoc
     validations.pass 'couchUuid', updatedDoc._id
 
     if context? then assert_.object context
+    if batchId? then assert_.number batchId
 
     if currentDoc is updatedDoc
       throw error_.new 'invalid update: same document objects', 500, arguments
@@ -50,6 +51,7 @@ module.exports =
     # - `{ revertPatch: mergePatchId }` where mergePatchId is the patch where the merge
     #    being reverted was done
     if context? then patch.context = context
+    if batchId? then patch.batch = batchId
 
     return patch
 

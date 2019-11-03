@@ -83,7 +83,7 @@ describe 'patch', ->
       now = _.now()
       patch = Patch.create { userId, currentDoc, updatedDoc }
       patch.timestamp.should.be.a.Number()
-      (patch.timestamp >= now).should.equal true
+      (patch.timestamp >= now).should.be.true()
       done()
 
     it 'should return with a patch object', (done)->

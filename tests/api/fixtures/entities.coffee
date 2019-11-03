@@ -8,11 +8,6 @@ wdLang = require 'wikidata-lang'
 { getByUri, getByUris, addClaim } = require '../utils/entities'
 faker = require 'faker'
 someImageHash = '00015893d54f5112b99b41b0dfd851f381798047'
-someIsbns = [ '9780007419135', '9780521029773', '9781852852016',
-  '9780140148237', '9780416812503', '9783525353912', '9780226820132',
-  '9780791458693', '9780415303095', '9780099527091', '9780521554596',
-  '9780299129309', '9780415377072', '9780752436517', '9780520210813',
-  '9782262022822', '9780140148244' ]
 
 defaultEditionData = ->
   labels: {}
@@ -35,7 +30,6 @@ module.exports = API =
   createWork: createEntity 'wd:Q571'
   createSerie: createEntity 'wd:Q277759'
   createPublisher: createEntity 'wd:Q2085381'
-  getSomeIsbn: -> _.sample someIsbns
   randomLabel: (length = 5)-> randomWords(length)
   humanName: humanName
   createWorkWithAuthor: (human, label)->
@@ -75,7 +69,9 @@ module.exports = API =
 
   createWorkWithAuthorAndSerie: ->
     API.createWorkWithAuthor()
-    .then API.addSerie
+    .tap API.addSerie
+    # Get a refreshed version of the work
+    .then (work)-> getByUri work.uri
 
   createEditionWithWorkAuthorAndSerie: ->
     API.createWorkWithAuthorAndSerie()
@@ -109,12 +105,29 @@ module.exports = API =
 
   someImageHash: someImageHash
 
+  someOpenLibraryId: (type = 'human')->
+    numbers = Math.random().toString().slice(2, 7)
+    typeLetter = openLibraryTypeLetters[type]
+    return "OL1#{numbers}#{typeLetter}"
+
+  someGoodReadsId: ->
+    numbers = Math.random().toString().slice(2, 7)
+    return "100000000#{numbers}"
+
+  generateIsbn13: ->
+    isbn = '9780' + _.join(_.sampleSize(_.split('0123456789', ''), 9), '')
+    if isbn_.isValidIsbn(isbn) then return isbn
+    API.generateIsbn13()
+
 addEntityClaim = (createFnName, property)-> (subjectEntity)->
   subjectUri = if _.isString subjectEntity then subjectEntity else subjectEntity.uri
   API[createFnName]()
-  .then (entity)-> addClaim subjectUri, property, entity.uri
-  # Get a refreshed version of the subject entity
-  .then -> getByUri subjectUri
+  .tap (entity)-> addClaim subjectUri, property, entity.uri
 
 API.addAuthor = addEntityClaim 'createHuman', 'wdt:P50'
 API.addSerie = addEntityClaim 'createSerie', 'wdt:P179'
+
+openLibraryTypeLetters =
+  edition: 'M'
+  work: 'W'
+  human: 'A'

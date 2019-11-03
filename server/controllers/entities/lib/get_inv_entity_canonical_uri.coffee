@@ -8,7 +8,7 @@ __ = require('config').universalPath
 { normalizeIsbn } = __.require 'lib', 'isbn/isbn'
 error_ = __.require 'lib', 'error/error'
 
-module.exports = (entity)->
+module.exports = (entity, options)->
   { _id:invId, redirect } = entity
 
   unless invId? then throw error_.new 'missing id', 500, entity
@@ -18,10 +18,8 @@ module.exports = (entity)->
   # Case when the entity document is simply a redirection to another entity
   # signaled via the 'redirect' attribute on the entity document
   if redirect?
-    redirectsObj =
-      from: invUri
-      to: redirect
-    return [ redirect, redirectsObj ]
+    redirectsObj = { from: invUri, to: redirect }
+    return formatResult redirect, redirectsObj, options
 
   # Case when the entity document is a proper entity document
   # but has a more broadly recognized URI available, currently only an ISBN
@@ -35,8 +33,10 @@ module.exports = (entity)->
 
   redirectsObj = null
   if uri isnt invUri
-    redirectsObj =
-      from: invUri
-      to: uri
+    redirectsObj = { from: invUri, to: uri }
 
-  return [ uri, redirectsObj ]
+  return formatResult uri, redirectsObj, options
+
+formatResult = (uri, redirectsObj, options)->
+  if options?.includeRedirection then [ uri, redirectsObj ]
+  else uri

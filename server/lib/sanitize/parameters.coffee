@@ -100,15 +100,22 @@ generics =
       else value
     validate: (value)-> _.typeOf(value) is 'boolean'
   object:
-    validate: (value)-> _.typeOf(value) is 'object'
+    validate: _.isPlainObject
+  collection:
+    validate: (values, name, config)->
+      unless _.isCollection(values) then return false
+      { limit } = config
+      { length } = values
+      if limit? and length > limit
+        throw error_.new 'limit length exceeded', 400, { limit, length }
+      return true
 
 module.exports =
   authors: arrayOfStrings
   attribute: nonEmptyString
   email: { validate: validations.common.email }
-  generics: generics
-  refresh: generics.boolean
   filter: whitelistedString
+  generics: generics
   ids: couchUuids
   isbn: isbn
   item: couchUuid
@@ -120,21 +127,23 @@ module.exports =
     default: 100
   message: nonEmptyString
   offset: _.extend {}, positiveInteger, { default: 0 }
+  options: whitelistedStrings
   password:
     secret: true
     validate: validations.user.password
   prefix: whitelistedString
   property: { validate: _.isPropertyUri }
+  refresh: generics.boolean
   range: _.extend {}, positiveInteger,
     default: 50
     max: 500
   search: nonEmptyString
   state: whitelistedString
+  title: nonEmptyString
   token: nonEmptyString
   transaction: couchUuid
   type: whitelistedString
   types: whitelistedStrings
-  title: nonEmptyString
   uri: { validate: validations.common.entityUri }
   uris: entityUris
   user: couchUuid

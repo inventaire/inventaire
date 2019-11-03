@@ -1,7 +1,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 getAuthorWorks = __.require 'controllers', 'entities/lib/get_author_works'
-getEntitiesByUris = __.require 'controllers', 'entities/lib/get_entities_by_uris'
+getEntitiesList = __.require 'controllers', 'entities/lib/get_entities_list'
 
 module.exports = (uri, suspectWorksLabels) ->
   getAuthorWorks { uri, dry: true }
@@ -17,9 +17,7 @@ module.exports = (uri, suspectWorksLabels) ->
 
 getSuggestionWorks = (res)->
   uris = res.works.map _.property('uri')
-  getEntitiesByUris { uris }
-  .get 'entities'
-  .then _.values
+  getEntitiesList uris
 
 getMatchingTitles = (suspectWorksLabels, suggestionWorkLabels)->
   matchedTitles = []

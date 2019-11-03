@@ -38,3 +38,5 @@ addAuthorToItemEditionWork = (item)->
   .then (edition)->
     workUri = edition.claims['wdt:P629'][0]
     return addAuthor workUri
+  # Wait for the item snapshot refresh
+  .delay 1000

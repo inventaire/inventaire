@@ -3,7 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { nonAuthReq, authReq, undesiredRes, undesiredErr } = require '../utils/utils'
-{ ensureEditionExists, humanName, randomLabel } = require '../fixtures/entities'
+{ ensureEditionExists, humanName, randomLabel, someOpenLibraryId } = require '../fixtures/entities'
 
 describe 'entities:create', ->
   it 'should not be able to create an entity without a wdt:P31 value', (done)->
@@ -51,6 +51,18 @@ describe 'entities:create', ->
 
     return
 
+  it 'should create an entity with a claim with a type specific validation', (done)->
+    authReq 'post', '/api/entities?action=create',
+      labels: { fr: humanName() }
+      claims: { 'wdt:P31': [ 'wd:Q571' ], 'wdt:P648': [ someOpenLibraryId('work') ] }
+    .then (res)->
+      res._id.should.be.a.String()
+      res._rev.should.be.a.String()
+      done()
+    .catch undesiredErr(done)
+
+    return
+
   it 'should reject an entity with several values for a property that take one', (done)->
     authReq 'post', '/api/entities?action=create',
       labels: { fr: humanName() }
@@ -88,14 +100,14 @@ describe 'entities:create', ->
 
     return
 
-  it 'should reject invalid claim property array', (done)->
+  it 'should reject invalid claim property values', (done)->
     authReq 'post', '/api/entities?action=create',
       labels: { fr: humanName() }
       claims:
         'wdt:P31': [ 'wd:Q571' ]
         'wdt:P50': 'wd:Q535'
     .catch (err)->
-      err.body.status_verbose.should.equal 'invalid property array'
+      err.body.status_verbose.should.equal 'invalid property values'
       err.statusCode.should.equal 400
       done()
     .catch undesiredErr(done)

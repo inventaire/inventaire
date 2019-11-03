@@ -10,7 +10,7 @@ describe 'error_', ->
     it 'should return an Error object', (done)->
       err = error_.new('doh', 500)
       err.should.be.an.Object()
-      (err instanceof Error).should.equal true
+      (err instanceof Error).should.be.true()
       done()
 
     it 'should have a message property', (done)->

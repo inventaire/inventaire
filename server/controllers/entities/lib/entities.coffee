@@ -7,7 +7,7 @@ Entity = __.require 'models', 'entity'
 patches_ = require './patches'
 isbn_ = __.require 'lib', 'isbn/isbn'
 couch_ = __.require 'lib', 'couch'
-validateClaimValue = require './validate_claim_value'
+validateClaims =  require './validate_claims'
 getInvEntityCanonicalUri = require './get_inv_entity_canonical_uri'
 getEntityType = require './get_entity_type'
 radio = __.require 'lib', 'radio'
@@ -46,7 +46,7 @@ module.exports = entities_ =
 
   urisByClaim: (property, value)->
     entities_.byClaim property, value, true, true
-    .map (doc)-> getInvEntityCanonicalUri(doc)[0]
+    .map getInvEntityCanonicalUri
 
   byClaimsValue: (value, count)->
     db.view 'entities', 'byClaimValue',
@@ -58,23 +58,25 @@ module.exports = entities_ =
         entity: row.id
         property: row.value
 
-  create: ->
+  createBlank: ->
     # Create a new entity doc.
     # This constituts the basis on which next modifications patch
     db.postAndReturn Entity.create()
 
-  edit: (userId, updatedLabels, updatedClaims, currentDoc)->
+  edit: (params)->
+    { userId, updatedLabels, updatedClaims, currentDoc, batchId } = params
     updatedDoc = _.cloneDeep currentDoc
     promises_.try ->
       updatedDoc = Entity.setLabels updatedDoc, updatedLabels
       return Entity.addClaims updatedDoc, updatedClaims
+    .then (updatedDoc)->
+      entities_.putUpdate { userId, currentDoc, updatedDoc, batchId }
 
-    .then (updatedDoc)-> entities_.putUpdate { userId, currentDoc, updatedDoc }
-
-  validateClaim: (params)->
-    { property } = params
-    promises_.try -> validateProperty property
-    .then -> validateClaimValue params
+  addClaims: (userId, newClaims, currentDoc, batchId)->
+    updatedDoc = _.cloneDeep currentDoc
+    validateClaims { newClaims, currentClaims: currentDoc.claims }
+    .then -> Entity.addClaims updatedDoc, newClaims
+    .then -> entities_.putUpdate { userId, currentDoc, updatedDoc, batchId }
 
   getLastChangedEntitiesUris: (since, limit)->
     db.changes
@@ -100,7 +102,7 @@ module.exports = entities_ =
 
   getUrlFromEntityImageHash: getUrlFromImageHash.bind null, 'entities'
 
-parseCanonicalUri = (result)-> getInvEntityCanonicalUri(result.doc)[0]
+parseCanonicalUri = (result)-> getInvEntityCanonicalUri(result.doc)
 
 triggerUpdateEvent = (currentDoc, updatedDoc)->
   # Use currentDoc claims if the update removed the claims object

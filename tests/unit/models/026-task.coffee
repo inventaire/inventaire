@@ -25,7 +25,7 @@ describe 'task model', ->
       taskDoc = Task.create validDoc()
       taskDoc.suspectUri.should.equal validDoc().suspectUri
       taskDoc.suggestionUri.should.equal validDoc().suggestionUri
-      _.expired(taskDoc.created, 100).should.equal false
+      _.expired(taskDoc.created, 100).should.be.false()
       done()
 
     it 'should throw if no suspect', (done)->

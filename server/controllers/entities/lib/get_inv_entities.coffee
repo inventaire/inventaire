@@ -26,7 +26,7 @@ module.exports = (ids, params)->
 Format = (params)-> (entity)->
   if entity.redirect? then return getRedirectedEntity entity, params
 
-  [ uri, redirects ] = getInvEntityCanonicalUri entity
+  [ uri, redirects ] = getInvEntityCanonicalUri entity, { includeRedirection: true }
   entity.uri = uri
   if redirects? then entity.redirects = redirects
 

@@ -27,7 +27,9 @@ module.exports = entitiesUtils =
     adminReq 'put', '/api/entities?action=revert-merge', { from }
 
   getHistory: (entityId)->
+    entityId = entityId.replace 'inv:', ''
     nonAuthReq 'get', "/api/entities?action=history&id=#{entityId}"
+    .get 'patches'
 
   updateLabel: (uri, lang, value)->
     uri = normalizeUri uri
@@ -40,8 +42,8 @@ module.exports = entitiesUtils =
     if newValue? then body['new-value'] = newValue
     authReq 'put', '/api/entities?action=update-claim', body
 
-  addClaim: (uri, property, value)->
-    entitiesUtils.updateClaim uri, property, null, value
+  addClaim: (uri, property, value)-> entitiesUtils.updateClaim uri, property, null, value
+  removeClaim: (uri, property, value)-> entitiesUtils.updateClaim uri, property, value, null
 
   getRefreshedPopularityByUris: (uris)->
     if _.isArray(uris) then uris = uris.join('|')

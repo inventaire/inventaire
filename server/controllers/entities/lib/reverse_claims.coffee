@@ -83,7 +83,7 @@ _wikidataReverseClaims = (property, value)->
 
 invReverseClaims = (property, value)->
   entities_.byClaim property, value, true, true
-  .map (entity)-> getInvEntityCanonicalUri(entity)[0]
+  .map getInvEntityCanonicalUri
   .catch (err)->
     # Allow to request reverse claims for properties that aren't yet
     # whitelisted to be added to inv properties: simply ignore inv entities

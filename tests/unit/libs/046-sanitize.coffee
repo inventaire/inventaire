@@ -111,7 +111,7 @@ describe 'sanitize', ->
 
       sanitize req, res, configs
       .then (input)->
-        input.includeUsers.should.equal true
+        input.includeUsers.should.be.true()
         done()
       .catch done
 

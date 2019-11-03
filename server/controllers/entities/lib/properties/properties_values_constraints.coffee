@@ -81,7 +81,10 @@ module.exports =
   # edition of
   'wdt:P629': extend bases.workEntity, { critical: true }
   # Open Library id
-  'wdt:P648': builders.externalId /^OL[1-9]\d{0,7}[AMW]$/
+  'wdt:P648': builders.typedExternalId
+    edition:  /^OL[1-9]\d{0,7}M$/
+    work:  /^OL[1-9]\d{0,7}W$/
+    human:  /^OL[1-9]\d{0,7}A$/
   # translator
   'wdt:P655': bases.humanEntity
   # Google Books ID

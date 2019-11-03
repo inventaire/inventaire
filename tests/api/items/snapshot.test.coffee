@@ -386,14 +386,3 @@ describe 'items:snapshot', ->
       .catch undesiredErr(done)
 
       return
-
-addAuthor = (subjectEntity)->
-  createHuman()
-  .tap addClaim('wdt:P50', subjectEntity)
-
-addSerie = (subjectEntity)->
-  createSerie()
-  .tap addClaim('wdt:P179', subjectEntity)
-
-addClaim = (property, subjectEntity)-> (entity)->
-  updateClaim subjectEntity._id, property, null, entity.uri

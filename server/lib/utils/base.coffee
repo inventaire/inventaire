@@ -133,6 +133,8 @@ module.exports = base =
     if _.isArray(keys) then keys
     else [ keys ]
 
+  # Iterates on an object, with the passed function: fn(key, value)
+  # Expected returned value: [ newKey, newValue ]
   mapKeysValues: (obj, fn)->
     Object.keys(obj).reduce aggregateMappedKeysValues(obj, fn), {}
 

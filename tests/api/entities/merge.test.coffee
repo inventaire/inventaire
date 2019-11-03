@@ -137,8 +137,8 @@ describe 'entities:merge', ->
       addClaim workA.uri, 'wdt:P50', 'wd:Q535'
       .then -> merge workA.uri, workB.uri
       .then -> getHistory workB._id
-      .then (res)->
-        res.patches[1].context.mergeFrom.should.equal workA.uri
+      .then (patches)->
+        patches[1].context.mergeFrom.should.equal workA.uri
         done()
     .catch undesiredErr(done)
 
@@ -158,11 +158,11 @@ describe 'entities:merge', ->
         authorsUris = res.entities[work.uri].claims['wdt:P50']
         authorsUris.should.deepEqual [ humanB.uri ]
       .then -> getHistory work._id
-      .then (res)->
+      .then (patches)->
         # patch 0: create the work entity
         # patch 1: add a wdt:P50 claim pointing to to humanA
         # patch 2: redirect to humanB
-        res.patches[2].context.redirectClaims
+        patches[2].context.redirectClaims
         .should.deepEqual { fromUri: humanA.uri }
         done()
     .catch undesiredErr(done)

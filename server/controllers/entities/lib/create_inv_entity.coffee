@@ -6,12 +6,19 @@ validateEntity = require './validate_entity'
 { prefixifyInv, unprefixify } = require './prefix'
 
 module.exports = (params)->
-  { labels, claims, userId } = params
+  { labels, claims, userId, batchId } = params
   _.log params, 'inv entity creation'
 
   validateEntity { labels, claims }
-  .then -> entities_.create()
-  .then entities_.edit.bind(null, userId, labels, claims)
+  .then -> entities_.createBlank()
+  .then (currentDoc)->
+    entities_.edit {
+      userId,
+      currentDoc,
+      updatedLabels: labels,
+      updatedClaims: claims,
+      batchId
+    }
   .then (entity)->
     entity.uri = prefixifyInv entity._id
     return entity

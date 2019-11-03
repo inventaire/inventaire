@@ -2,6 +2,7 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 { parse: isbnParser } = require('isbn2').ISBN
 parse = require './parse'
+wdLang = require 'wikidata-lang'
 
 # Removing any non-alpha numeric characters, especially '-' and spaces
 normalizeIsbn = (text)->
@@ -32,3 +33,9 @@ module.exports =
 
   toIsbn13h: (isbn)-> parse(isbn).isbn13h
   toIsbn10h: (isbn)-> parse(isbn).isbn10h
+
+  guessLangFromIsbn: (isbn)->
+    langUri = parse(isbn)?.groupLangUri
+    unless langUri? then return
+    wdId = langUri.split(':')[1]
+    return wdLang.byWdId[wdId]?.code
