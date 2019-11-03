@@ -9,6 +9,7 @@ sanitizeEntry = require './lib/resolver/sanitize_entry'
 resolve = require './lib/resolver/resolve'
 UpdateResolvedEntry = require './lib/resolver/update_resolved_entry'
 CreateUnresolvedEntry = require './lib/resolver/create_unresolved_entry'
+{ oneHour } =  __.require 'lib', 'times'
 
 sanitization =
   entries:
@@ -25,6 +26,8 @@ sanitization =
     default: true
 
 module.exports = (req, res)->
+  req.setTimeout oneHour
+
   sanitize req, res, sanitization
   .then (params)->
     params.batchId = Date.now()
