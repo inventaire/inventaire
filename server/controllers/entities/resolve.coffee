@@ -85,5 +85,6 @@ buildActionFn = (flag, ActionFn, params)->
   else _.identity
 
 formatError = (err)->
-  message: err.message
-  entry: err.entry
+  { message, entry, context } = err
+  if context is entry then { message, entry }
+  else { message, context, entry }
