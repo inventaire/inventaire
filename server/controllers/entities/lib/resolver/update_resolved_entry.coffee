@@ -18,13 +18,14 @@ updateEntityFromSeed = (userId, batchId)-> (seed)->
   { uri, claims: seedClaims } = seed
   unless uri then return
 
-  getEntity uri
+  [ prefix, entityId ] = uri.split ':'
+  # Do not try to update Wikidata for the moment
+  if prefix is 'wd' then return
+
+  getEntity prefix, entityId
   .then addMissingClaims(seedClaims, userId, batchId)
 
-getEntity = (uri)->
-  [ prefix, entityId ] = uri.split ':'
-  # Skip wikidata entities for the moment
-  if prefix is 'wd' then return
+getEntity = (prefix, entityId)->
   if prefix is 'isbn'
     entities_.byIsbn entityId
   else
