@@ -48,4 +48,5 @@ makeRequest = (url)->
 
   return makePatientRequest()
 
-logStats = -> _.info { waiting, ongoing }, 'wikidata sparql requests queue stats'
+logStats = ->
+  if waiting > 0 then _.info { waiting, ongoing }, 'wikidata sparql requests queue stats'
