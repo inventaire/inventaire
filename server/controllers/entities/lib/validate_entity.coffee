@@ -49,6 +49,5 @@ validateLabels = (labels, type)->
         throw error_.new "invalid label value: #{value}", 400, { type, labels }
 
 addErrorContext = (entity)-> (err)->
-  err.context ?= {}
-  err.context.entity = entity
+  err.context ?= { entity }
   throw err
