@@ -424,6 +424,21 @@ describe 'entities:resolve:on-labels', ->
 
     return
 
+describe 'entities:resolve:non-strict', ->
+  it 'should accept a strict=false flag', (done)->
+    entry = { edition: {} }
+    entries = [ entry ]
+    authReq 'post', '/api/entities?action=resolve', { entries, strict: false }
+    .then (res)->
+      res.entries.should.deepEqual([])
+      res.errors.should.be.an.Array()
+      res.errors[0].message.should.be.a.String()
+      res.errors[0].entry.should.be.an.Object()
+      done()
+    .catch done
+
+    return
+
 basicEntry = (workLabel, authorLabel) ->
   edition: { isbn: generateIsbn13() },
   works: [ { labels: { en: workLabel } } ],

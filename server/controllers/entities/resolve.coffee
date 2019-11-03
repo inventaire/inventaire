@@ -19,18 +19,45 @@ sanitization =
   update:
     generic: 'boolean'
     optional: true
+  strict:
+    generic: 'boolean'
+    optional: true
+    default: true
 
 module.exports = (req, res)->
   sanitize req, res, sanitization
   .then (params)->
     params.batchId = Date.now()
-    entries = params.entries.map(sanitizeEntry)
+    { strict } = params
+    { entries, errors } = sanitizeEntries params.entries, strict
+
     return sequentialResolve entries, params
-  .then responses_.Wrap(res, 'entries')
+    .then (resolvedEntries)->
+      data = { entries: resolvedEntries }
+      unless strict then data.errors = errors.map formatError
+      responses_.send res, data
+
   .catch error_.Handler(req, res)
 
+sanitizeEntries = (entries, strict)->
+  errors = []
+  sanitizedEntries = []
+  entries.forEach sanitizeEntryAndDispatch(sanitizedEntries, errors, strict)
+  return { entries: sanitizedEntries, errors }
+
+sanitizeEntryAndDispatch = (sanitizedEntries, errors, strict)-> (entry)->
+  try sanitizedEntries.push sanitizeEntry(entry)
+  catch err
+    if strict then throw err
+    else
+      err.entry = entry
+      errors.push err
+  return
+
 sequentialResolve = (entries, params)->
-  { create, update } = params
+  if entries.length is 0 then return Promise.resolve []
+
+  { create, update, strict } = params
   updateResolvedEntry = buildActionFn update, UpdateResolvedEntry, params
   createUnresolvedEntry = buildActionFn create, CreateUnresolvedEntry, params
   resolvedEntries = []
@@ -51,3 +78,7 @@ buildActionFn = (flag, ActionFn, params)->
   { reqUserId, batchId } = params
   if flag then ActionFn reqUserId, batchId
   else _.identity
+
+formatError = (err)->
+  message: err.message
+  entry: err.entry
