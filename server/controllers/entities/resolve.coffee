@@ -34,7 +34,7 @@ module.exports = (req, res)->
     { strict } = params
     { entries, errors } = sanitizeEntries params.entries, strict
 
-    return sequentialResolve entries, params
+    return sequentialResolve entries, params, errors
     .then (resolvedEntries)->
       data = { entries: resolvedEntries }
       unless strict then data.errors = errors.map formatError
@@ -50,31 +50,29 @@ sanitizeEntries = (entries, strict)->
 
 sanitizeEntryAndDispatch = (sanitizedEntries, errors, strict)-> (entry)->
   try sanitizedEntries.push sanitizeEntry(entry)
-  catch err
-    if strict then throw err
-    else
-      err.entry = entry
-      errors.push err
+  catch err then handleError strict, errors, err, entry
   return
 
-sequentialResolve = (entries, params)->
+sequentialResolve = (entries, params, errors)->
   if entries.length is 0 then return Promise.resolve []
 
   { create, update, strict } = params
   updateResolvedEntry = buildActionFn update, UpdateResolvedEntry, params
   createUnresolvedEntry = buildActionFn create, CreateUnresolvedEntry, params
+  addResolvedEntry = (entry)-> resolvedEntries.push entry
   resolvedEntries = []
 
   resolveNext = ->
     nextEntry = entries.shift()
     unless nextEntry? then return resolvedEntries
 
-    _.log nextEntry, 'nextEntry'
+    _.log nextEntry, 'next entry'
 
     resolve nextEntry
     .then updateResolvedEntry
     .then createUnresolvedEntry
-    .then (entry)-> resolvedEntries.push entry
+    .then addResolvedEntry
+    .catch (err)-> handleError strict, errors, err, nextEntry
     .then resolveNext
 
   return resolveNext()
@@ -83,6 +81,14 @@ buildActionFn = (flag, ActionFn, params)->
   { reqUserId, batchId } = params
   if flag then ActionFn reqUserId, batchId
   else _.identity
+
+handleError = (strict, errors, err, entry)->
+  if strict
+    throw err
+  else
+    err.entry = entry
+    errors.push err
+    return
 
 formatError = (err)->
   { message, entry, context } = err
