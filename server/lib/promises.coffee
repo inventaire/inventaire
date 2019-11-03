@@ -69,3 +69,5 @@ module.exports = promisesHandlers =
   # This may register as a premature micro-optimization
   # cf http://stackoverflow.com/q/40683818/3324977
   resolved: Promise.resolve()
+
+  wait: (ms)-> Promise.resolve().delay ms

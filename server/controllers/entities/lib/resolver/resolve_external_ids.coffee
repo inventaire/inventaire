@@ -3,7 +3,6 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 { Promise } = __.require 'lib', 'promises'
 properties = require '../properties/properties_values_constraints'
-makeSparqlRequest = __.require 'data', 'wikidata/make_sparql_request'
 { prefixifyWd, prefixifyInv } = __.require 'controllers', 'entities/lib/prefix'
 entities_ = __.require 'controllers', 'entities/lib/entities'
 runWdQuery = __.require 'data', 'wikidata/run_query'
