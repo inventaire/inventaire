@@ -17,7 +17,7 @@ module.exports =
       throw error_.new 'invalid property', 400, property
 
     unless property in whitelist
-      throw error_.new "property isn't whitelisted", 400, property
+      throw error_.new "property isn't whitelisted", 400, { property, whitelist }
 
   validateValueType: (property, value)->
     _.typeOf(value) is propertyType(property)
