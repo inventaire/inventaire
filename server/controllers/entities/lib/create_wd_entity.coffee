@@ -18,7 +18,7 @@ createWdEntity = (params)->
   wdOauth.validate user
   oauth = wdOauth.getFullCredentials user
 
-  entity = { labels, claims }
+  entity = { labels, claims, isWdEntity: true }
 
   _.log entity, 'wd entity creation'
 
