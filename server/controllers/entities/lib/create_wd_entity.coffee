@@ -18,11 +18,14 @@ createWdEntity = (params)->
   wdOauth.validate user
   oauth = wdOauth.getFullCredentials user
 
-  _.log { labels, claims }, 'wd entity creation'
+  entity = { labels, claims }
 
-  validateEntity { labels, claims }
-  .then validateWikidataCompliance
-  .then format
+  _.log entity, 'wd entity creation'
+
+  validateEntity entity
+  .then ->
+    validateWikidataCompliance entity
+    return format entity
   .then wdEdit({ oauth }, 'entity/create')
   .then (res)->
     { entity } = res
