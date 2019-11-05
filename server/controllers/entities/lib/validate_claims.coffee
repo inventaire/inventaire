@@ -27,7 +27,7 @@ validatePropertiesClaims = (params)->
   .map validatePropertyClaims(params)
 
 validatePropertyClaims = (params)-> (property)->
-  { newClaims, currentClaims, type, isWdEntity } = params
+  { newClaims, currentClaims, type } = params
   validateClaimProperty type, property
   values = newClaims[property]
 
@@ -43,8 +43,7 @@ validatePropertyClaims = (params)-> (property)->
       property,
       oldVal: null,
       newVal,
-      letEmptyValuePass: false,
-      isWdEntity
+      letEmptyValuePass: false
     }
 
 perTypeClaimsTests =

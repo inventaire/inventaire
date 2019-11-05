@@ -14,15 +14,15 @@ whitelistedEntityTypes = [ 'work', 'serie', 'human' ]
 module.exports = (params)-> Promise.try -> createWdEntity params
 
 createWdEntity = (params)->
-  { labels, claims, user } = params
+  { labels, claims, user, isAlreadyValidated } = params
   wdOauth.validate user
   oauth = wdOauth.getFullCredentials user
 
-  entity = { labels, claims, isWdEntity: true }
+  entity = { labels, claims }
 
   _.log entity, 'wd entity creation'
 
-  validateEntity entity
+  validate entity, isAlreadyValidated
   .then ->
     validateWikidataCompliance entity
     return format entity
@@ -34,6 +34,10 @@ createWdEntity = (params)->
 
     entity.uri = prefixifyWd entity.id
     return entity
+
+validate = (entity, isAlreadyValidated)->
+  if isAlreadyValidated then Promise.resolve()
+  else validateEntity entity
 
 validateWikidataCompliance = (entity)->
   { claims } = entity

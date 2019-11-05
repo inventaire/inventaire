@@ -20,7 +20,7 @@ module.exports = (params)->
   promises_.try -> validateClaimValue params
 
 validateClaimValue = (params)->
-  { type, currentClaims, property, oldVal, newVal, letEmptyValuePass, isWdEntity, userIsAdmin } = params
+  { type, currentClaims, property, oldVal, newVal, letEmptyValuePass, userIsAdmin } = params
   # letEmptyValuePass to let it be interpreted as a claim deletion
   if letEmptyValuePass and not newVal? then return null
 
@@ -45,12 +45,6 @@ validateClaimValue = (params)->
   formattedValue = if prop.format? then prop.format(newVal) else newVal
 
   { concurrency, restrictedType } = prop
-
-  # Disable concurrency checks for claims being made on Wikidata entities
-  # as the only current case is when we move an Inventaire entity to Wikidata
-  # in which case the concurrency check will fail as the property value
-  # is already used by the entity currently in Inventaire itself
-  if isWdEntity then concurrency = false
 
   # Resolve only if all async tests pass
   return promises_.all [

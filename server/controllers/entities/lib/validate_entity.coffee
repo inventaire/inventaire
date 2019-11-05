@@ -14,7 +14,7 @@ module.exports = (entity)->
   .catch addErrorContext(entity)
 
 validate = (entity)->
-  { labels, claims, isWdEntity } = entity
+  { labels, claims } = entity
   assert_.object labels
   assert_.object claims
 
@@ -24,8 +24,7 @@ validate = (entity)->
   return validateClaims {
     newClaims: claims,
     currentClaims: {},
-    creating: true,
-    isWdEntity
+    creating: true
   }
 
 getValueType = (claims)->
