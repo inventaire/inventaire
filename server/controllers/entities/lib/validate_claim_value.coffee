@@ -44,10 +44,12 @@ validateClaimValue = (params)->
 
   formattedValue = if prop.format? then prop.format(newVal) else newVal
 
+  { concurrency, restrictedType } = prop
+
   # Resolve only if all async tests pass
   return promises_.all [
-    verifyClaimConcurrency prop.concurrency, property, formattedValue
-    verifyClaimEntityType prop.restrictedType, formattedValue
+    verifyClaimConcurrency concurrency, property, formattedValue
+    verifyClaimEntityType restrictedType, formattedValue
   ]
   .then -> formattedValue
 

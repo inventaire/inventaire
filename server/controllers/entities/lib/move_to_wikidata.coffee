@@ -13,7 +13,7 @@ module.exports = (user, invEntityUri)->
   entities_.byId entityId
   .then (entity)->
     { labels, claims } = entity
-    createWdEntity { labels, claims, user }
+    createWdEntity { labels, claims, user, isAlreadyValidated: true }
   .then (createdEntity)->
     { uri: wdEntityUri } = createdEntity
     mergeEntities reqUserId, invEntityUri, wdEntityUri

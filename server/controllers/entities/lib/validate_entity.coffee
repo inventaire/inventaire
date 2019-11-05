@@ -21,7 +21,11 @@ validate = (entity)->
   type = getValueType claims
   validateValueType type, claims['wdt:P31']
   validateLabels labels, type
-  return validateClaims { newClaims: claims, currentClaims: {}, creating: true }
+  return validateClaims {
+    newClaims: claims,
+    currentClaims: {},
+    creating: true
+  }
 
 getValueType = (claims)->
   wdtP31 = claims['wdt:P31']
