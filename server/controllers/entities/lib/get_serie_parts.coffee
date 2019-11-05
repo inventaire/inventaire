@@ -28,6 +28,8 @@ getWdSerieParts = (qid, refresh, dry)->
     uri: prefixifyWd result.part
     date: getSimpleDayDate result.date
     ordinal: result.ordinal
+    subparts: result.subparts
+    superpart: prefixifyWd result.superpart
 
 getInvSerieParts = (uri)->
   # Querying only for 'serie' (wdt:P179) and not 'part of' (wdt:P361)
@@ -40,3 +42,4 @@ parseRow = (row)->
   uri: "inv:#{row.id}"
   date: row.doc.claims['wdt:P577']?[0]
   ordinal: row.doc.claims['wdt:P1545']?[0]
+  subparts: 0
