@@ -1,6 +1,7 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
+error_ = __.require 'lib', 'error/error'
 wdEdit = require 'wikidata-edit'
 wdOauth = require './wikidata_oauth'
 { Promise } = __.require 'lib', 'promises'
