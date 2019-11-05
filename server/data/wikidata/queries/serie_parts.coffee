@@ -8,12 +8,21 @@ module.exports =
       ?part p:P179|p:P361 ?serie_statement .
       ?serie_statement ps:P179|ps:P361 wd:#{serieQid} .
 
-      # reject circular series/parts relations
+      # Reject circular series/parts relations
       FILTER NOT EXISTS { wd:#{serieQid} wdt:P179|wdt:P361 ?part }
 
-      # reject editions
-      FILTER NOT EXISTS { ?part wdt:P31 wd:Q3331189 }
+      # Reject parts that have an associated work (duck-typing editions)
       FILTER NOT EXISTS { ?part wdt:P629 ?work }
+
+      # Reject parts that are instance of editions
+      FILTER NOT EXISTS {
+        ?part wdt:P31 wd:Q3331189
+        # but recover parts that are also instances of work
+        FILTER NOT EXISTS {
+          VALUES (?work_type) { (wd:Q571) (wd:Q47461344) (wd:Q2831984) (wd:Q1760610) (wd:Q8274) } .
+          ?part wdt:P31 ?work_type .
+        }
+      }
 
       OPTIONAL { ?part wdt:P577 ?date . }
       OPTIONAL { ?part wdt:P1545 ?ordinal . }
