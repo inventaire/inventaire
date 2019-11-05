@@ -5,8 +5,8 @@ getAuthorWorks = __.require 'controllers', 'entities/lib/get_author_works'
 getEntitiesByUris = __.require 'controllers', 'entities/lib/get_entities_by_uris'
 { _id: reconcilerUserId } = __.require('couch', 'hard_coded_documents').users.reconciler
 
-module.exports = (AuthorUri)->
-  getAuthorWorks { uri:AuthorUri }
+module.exports = (authorUri)->
+  getAuthorWorks { uri: authorUri }
   .get 'works'
   .then filterMergeableWorks
   .then automergeWorks
@@ -34,25 +34,25 @@ getPossibleWorksMerge = (works)->
       unless work2 then return
       { uri:work2Uri } = work2
       work2Labels = _.values work2.labels
-      addSuggestionUriToSuspectUri(workUri, workLabels, work2Uri, work2Labels, possibleMerge)
+      findPossibleMerge(workUri, workLabels, work2Uri, work2Labels, possibleMerge)
   possibleMerge
 
-addSuggestionUriToSuspectUri = (workUri, workLabels, work2Uri, work2Labels, possibleMerge)->
+findPossibleMerge = (workUri, workLabels, work2Uri, work2Labels, possibleMerge)->
   if work2Uri is workUri then return
   if _.includes possibleMerge[work2Uri], workUri then return
   if _.some _.intersection(workLabels, work2Labels)
     possibleMerge[workUri].push work2Uri
 
 filterDuplicatedMerge = (possibleWorksMerge)->
-  _.mapValues possibleWorksMerge, (sugUris)->
-    if _.isEmpty(sugUris) then return
-    for susUri2, sugUris2 of possibleWorksMerge
-      unless _.isWdEntityUri susUri2
-        cleanedSugUris = _.difference sugUris, sugUris2
-        possibleWorksMerge[susUri2] = cleanedSugUris
+  _.mapValues possibleWorksMerge, (toUris)->
+    if _.isEmpty(toUris) then return
+    for fromUri2, toUris2 of possibleWorksMerge
+      unless _.isWdEntityUri fromUri2
+        cleanedtoUris = _.difference toUris, toUris2
+        possibleWorksMerge[fromUri2] = cleanedtoUris
   possibleWorksMerge
 
 automergeWorks = (worksToMerge)->
-  for susUri, sugUris of worksToMerge
-    _.map sugUris, (sugUri)->
-      mergeEntities reconcilerUserId, sugUri, susUri
+  for fromUri, toUris of worksToMerge
+    _.map toUris, (toUri)->
+      mergeEntities reconcilerUserId, toUri, fromUri

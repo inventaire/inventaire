@@ -4,13 +4,13 @@ _ = __.require 'builders', 'utils'
 { Promise } = __.require 'lib', 'promises'
 should = require 'should'
 
-automergeWorks = __.require 'controllers', 'tasks/lib/automerge_works'
+automergeAuthorWorks = __.require 'controllers', 'tasks/lib/automerge_author_works'
 { undesiredErr } = require '../utils/utils'
 { checkEntities } = require '../utils/tasks'
 { getByUris } = require '../utils/entities'
 { createHuman, createWorkWithAuthor, createWorkWithAuthorAndSerie, randomLabel, addSerie } = require '../fixtures/entities'
 
-describe 'automerge_works', ->
+describe 'automerge_author_works', ->
   it 'should automerge inv works to a wd work', (done)->
     # Alan Moore uri
     authorUri = 'wd:Q205739'
@@ -22,7 +22,7 @@ describe 'automerge_works', ->
       createWorkWithAuthor { uri: authorUri }, workLabel
     ]
     .spread (work1, work2)->
-      automergeWorks authorUri
+      automergeAuthorWorks authorUri
       .delay 300
       .then ->
         Promise.all [
@@ -49,7 +49,7 @@ describe 'automerge_works', ->
         createWorkWithAuthor human, workLabel
       ]
       .spread (work1, work2)->
-        automergeWorks human.uri
+        automergeAuthorWorks human.uri
         .delay 300
         .then ->
           Promise.all [
@@ -75,7 +75,7 @@ describe 'automerge_works', ->
         createWorkWithAuthor human, workLabel2
       ]
       .spread (work1, work2)->
-        automergeWorks human.uri
+        automergeAuthorWorks human.uri
         .delay 300
         .then ->
           Promise.all [
@@ -104,7 +104,7 @@ describe 'automerge_works', ->
       .spread (work1, work2)->
         addSerie(work1)
         .then ->
-          automergeWorks(human.uri)
+          automergeAuthorWorks(human.uri)
           .delay 300
           .then ->
             Promise.all [
