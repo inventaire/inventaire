@@ -9,7 +9,7 @@ validateEntity = require './validate_entity'
 getEntityType = require './get_entity_type'
 properties = require './properties/properties_values_constraints'
 { prefixifyWd, unprefixify } = require './prefix'
-whitelistedEntityTypes = [ 'work', 'serie', 'human' ]
+whitelistedEntityTypes = [ 'work', 'serie', 'human', 'publisher' ]
 
 module.exports = (params)-> Promise.try -> createWdEntity params
 
