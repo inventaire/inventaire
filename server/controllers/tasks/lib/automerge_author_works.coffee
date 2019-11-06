@@ -2,57 +2,64 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 mergeEntities = __.require 'controllers', 'entities/lib/merge_entities'
 getAuthorWorks = __.require 'controllers', 'entities/lib/get_author_works'
-getEntitiesByUris = __.require 'controllers', 'entities/lib/get_entities_by_uris'
+getEntitiesList = __.require 'controllers', 'entities/lib/get_entities_list'
 { _id: reconcilerUserId } = __.require('couch', 'hard_coded_documents').users.reconciler
 
 module.exports = (authorUri)->
-  getAuthorWorks { uri: authorUri }
-  .get 'works'
-  .then filterMergeableWorks
+  getAuthorWorksByDomain authorUri
+  .then findMergeableWorks
   .then automergeWorks
 
-filterMergeableWorks = (works)->
-  uris = _.map(works, _.property('uri'))
-  getEntitiesByUris { uris }
-  .get 'entities'
-  .then rejectSerieWorks
-  .then getPossibleWorksMerge
-  .then filterDuplicatedMerge
+getAuthorWorksByDomain = (authorUri)->
+  getAuthorWorks { uri: authorUri }
+  .get 'works'
+  .then (works)->
+    uris = _.map works, _.property('uri')
+    return getEntitiesList uris
 
-rejectSerieWorks = (works)->
-  _.mapValues works, (work)->
-    if work.claims['wdt:P179'] then return
-    work
+findMergeableWorks = (works)->
+  { wd: wdWorks, inv: invWorks } = works
+    .reduce spreadWorksPerDomain, { wd: [], inv: [] }
+  invWorks = invWorks.filter isntSeriePart
+  return getPossibleWorksMerge wdWorks, invWorks
 
-getPossibleWorksMerge = (works)->
-  possibleMerge = _.mapValues(works, -> [])
-  _.mapValues works, (work)->
-    unless work then return
-    { uri:workUri } = work
-    workLabels = _.values work.labels
-    _.mapValues works, (work2)->
-      unless work2 then return
-      { uri:work2Uri } = work2
-      work2Labels = _.values work2.labels
-      findPossibleMerge(workUri, workLabels, work2Uri, work2Labels, possibleMerge)
-  possibleMerge
+spreadWorksPerDomain = (lists, work)->
+  prefix = work.uri.split(':')[0]
+  lists[prefix].push work
+  return lists
 
-findPossibleMerge = (workUri, workLabels, work2Uri, work2Labels, possibleMerge)->
-  if work2Uri is workUri then return
-  if _.includes possibleMerge[work2Uri], workUri then return
-  if _.some _.intersection(workLabels, work2Labels)
-    possibleMerge[workUri].push work2Uri
+isntSeriePart = (work)-> not work.claims['wdt:P179']?
 
-filterDuplicatedMerge = (possibleWorksMerge)->
-  _.mapValues possibleWorksMerge, (toUris)->
-    if _.isEmpty(toUris) then return
-    for fromUri2, toUris2 of possibleWorksMerge
-      unless _.isWdEntityUri fromUri2
-        cleanedtoUris = _.difference toUris, toUris2
-        possibleWorksMerge[fromUri2] = cleanedtoUris
-  possibleWorksMerge
+getPossibleWorksMerge = (wdWorks, invWorks)->
+  wdWorks = wdWorks.map addNormalizedTerms
+  invWorks = invWorks.map addNormalizedTerms
+  return _.compact invWorks.map(findPossibleMerge(wdWorks))
 
-automergeWorks = (worksToMerge)->
-  for fromUri, toUris of worksToMerge
-    _.map toUris, (toUri)->
-      mergeEntities reconcilerUserId, toUri, fromUri
+findPossibleMerge = (wdWorks)-> (invWork)->
+  matches = wdWorks.filter (wdWork)-> haveSomeMatchingTerms invWork, wdWork
+  if matches.length is 1 then return [ invWork.uri, matches[0].uri ]
+
+haveSomeMatchingTerms = (invWork, wdWork)->
+  for invWorkTerm in invWork.terms
+    for wdWorkTerm in wdWork.terms
+      if invWorkTerm is wdWorkTerm then return true
+
+  return false
+
+addNormalizedTerms = (work)->
+  terms = _.values work.labels
+    .concat _.values(work.aliases)
+    .map _.toLower
+  work.terms = _.uniq terms
+  return work
+
+automergeWorks = (mergeableCouples)->
+  if mergeableCouples.length is 0 then return
+
+  mergeNext = ->
+    nextCouple = mergeableCouples.pop()
+    unless nextCouple? then return
+    mergeEntities reconcilerUserId, nextCouple...
+    .then mergeNext
+
+  return mergeNext()

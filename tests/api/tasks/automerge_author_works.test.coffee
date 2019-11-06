@@ -10,7 +10,7 @@ automergeAuthorWorks = __.require 'controllers', 'tasks/lib/automerge_author_wor
 { getByUris } = require '../utils/entities'
 { createHuman, createWorkWithAuthor, createWorkWithAuthorAndSerie, randomLabel, addSerie } = require '../fixtures/entities'
 
-describe 'automerge_author_works', ->
+describe 'automerge_author_works: only from inv works to wd works', ->
   it 'should automerge inv works to a wd work', (done)->
     # Alan Moore uri
     authorUri = 'wd:Q205739'
@@ -39,83 +39,40 @@ describe 'automerge_author_works', ->
 
     return
 
-  it 'should automerge inv works if authors works match exactly', (done)->
-    workLabel = randomLabel()
-
-    createHuman { labels: { en: randomLabel() } }
-    .then (human)->
-      Promise.all [
-        createWorkWithAuthor human, workLabel
-        createWorkWithAuthor human, workLabel
-      ]
-      .spread (work1, work2)->
-        automergeAuthorWorks human.uri
-        .delay 300
-        .then ->
-          Promise.all [
-            getByUris(work1.uri).get('redirects')
-            getByUris(work2.uri).get('redirects')
-          ]
-          .then (redirects)->
-            redirectCount = redirects.map((redirect)-> Object.keys(redirect))
-            _.flatten(redirectCount).length.should.equal 1
-            done()
-    .catch undesiredErr(done)
-
-    return
-
   it 'should not automerge if authors works do not match', (done)->
-    workLabel = randomLabel()
-    workLabel2 = "#{workLabel} Vol. 1"
+    # Alan Moore uri
+    authorUri = 'wd:Q205739'
+    # Corresponding to wd:Q3825051 label
+    workLabel = 'Voice of the Fire'
 
-    createHuman { labels: { en: randomLabel() } }
-    .then (human)->
-      Promise.all [
-        createWorkWithAuthor human, workLabel
-        createWorkWithAuthor human, workLabel2
-      ]
-      .spread (work1, work2)->
-        automergeAuthorWorks human.uri
-        .delay 300
-        .then ->
-          Promise.all [
-            getByUris(work1.uri).get('entities')
-            getByUris(work2.uri).get('entities')
-          ]
-          .spread (res1, res2)->
-            res1[work1.uri].should.be.ok()
-            res2[work2.uri].should.be.ok()
-
-            done()
+    createWorkWithAuthor { uri: authorUri }, "#{workLabel} Vol. 1"
+    .then (invWork)->
+      automergeAuthorWorks authorUri
+      .delay 300
+      .then -> getByUris invWork.uri
+      .then (res)->
+        res.entities[invWork.uri].should.be.ok()
+        done()
     .catch undesiredErr(done)
 
     return
 
   it 'should not automerge work if suggestion is a serie or part of a serie', (done)->
-    # known case : work could be the volume of a serie
-    workLabel = randomLabel()
+    # Alan Moore uri
+    authorUri = 'wd:Q205739'
+    # Corresponding to wd:Q3825051 label
+    workLabel = 'Voice of the Fire'
 
-    createHuman { labels: { en: randomLabel() } }
-    .then (human)->
-      Promise.all [
-        createWorkWithAuthor human, workLabel
-        createWorkWithAuthor human, workLabel
-      ]
-      .spread (work1, work2)->
-        addSerie(work1)
-        .then ->
-          automergeAuthorWorks(human.uri)
-          .delay 300
-          .then ->
-            Promise.all [
-              getByUris(work1.uri).get('entities')
-              getByUris(work2.uri).get('entities')
-            ]
-            .spread (res1, res2)->
-              res1[work1.uri].should.be.ok()
-              res2[work2.uri].should.be.ok()
-
-              done()
+    createWorkWithAuthor { uri: authorUri }, workLabel
+    .tap (invWork)-> addSerie invWork
+    .delay 300
+    .then (invWork)->
+      automergeAuthorWorks authorUri
+      .delay 300
+      .then -> getByUris invWork.uri
+      .then (res)->
+        res.entities[invWork.uri].should.be.ok()
+        done()
     .catch undesiredErr(done)
 
     return

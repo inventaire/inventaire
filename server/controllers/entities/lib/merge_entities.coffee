@@ -24,6 +24,8 @@ module.exports = (userId, fromUri, toUri)->
     # no merge to do for Wikidata entities, simply creating a redirection
     return turnIntoRedirection userId, fromId, toUri
   else
+    # TODO: invert fromId and toId if the merged entity is more popular
+    # to reduce the amount of documents that need to be updated
     return mergeEntities userId, fromId, toId
 
 mergeEntities = (userId, fromId, toId)->
