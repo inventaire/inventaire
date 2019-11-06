@@ -105,10 +105,18 @@ module.exports =
   'wdt:P1025': builders.externalId /^\d{8}[\dX]$/
   # SWB editions
   'wdt:P1044': builders.externalId /^\d{8}[0-9X]$/
+  # Dutch National for Author Names ID
+  'wdt:P1006': builders.externalId /^\d{8}(\d|X)$/
   # Librarything work ID
   'wdt:P1085': builders.externalId /^\d{1,8}$/
   # number of pages
   'wdt:P1104': bases.positiveInteger
+  # BN (Argentine) editions
+  'wdt:P1143': builders.externalId /^\d{9}$/
+  # LIBRIS editions
+  'wdt:P1182': builders.externalId /^[1-9]\d*$/
+  # ISFDB title ID
+  'wdt:P1274': builders.externalId /^[1-9]\d{0,6}$/
   # DNB editions
   'wdt:P1292': builders.externalId /^\d{8,9}[X\d]?$/
   # languages of expression
@@ -119,6 +127,18 @@ module.exports =
   'wdt:P1545': bases.ordinal
   # subtitle
   'wdt:P1680': bases.uniqueString
+  # HathiTrust ID
+  'wdt:P1844': builders.externalId /^\d{9}$/
+  # Project Gutenberg author ID
+  'wdt:P1938': builders.externalId /^[1-9]\d{0,4}$/
+  # Google Scholar author ID
+  'wdt:P1960': builders.externalId /^[-\w]{12}$/
+  # Anime News Network person ID
+  'wdt:P1982': builders.externalId /^[1-9]\d{0,5}$/
+  # Anime News Network company ID
+  'wdt:P1983': builders.externalId /^[1-9]\d{0,4}$/
+  # Anime News Network manga ID
+  'wdt:P1984': builders.externalId /^[1-9]\d*$/
   # Twitter account
   'wdt:P2002': builders.externalId /^\w{1,15}$/
   # Instagram username
@@ -139,11 +159,25 @@ module.exports =
   'wdt:P2969': builders.externalId /^[1-9]\d*$/
   # ISBN publisher prefix
   'wdt:P3035': builders.externalId /^97(8|9)-\d{1,5}-\d{2,7}$/
+  # Czech National Bibliography book ID
+  'wdt:P3184': builders.externalId /^cnb[0-9]{9}$/
   # Babelio author ID
   'wdt:P3630': builders.externalId /^\d+$/
   # Babelio work ID
   'wdt:P3631': builders.externalId /^\d+$/
   # Mastodon address
   'wdt:P4033': builders.externalId /^\w+@[a-z0-9\.\-]+[a-z0-9]+$/
+  # Theses.fr person ID
+  'wdt:P4285': builders.externalId /^\d+$/
+  # MyAnimeList people ID
+  'wdt:P4084': builders.externalId /^\d+$/
+  # MyAnimeList manga ID
+  'wdt:P4087': builders.externalId /^\d+$/
+  # BNB person ID
+  'wdt:P5361': builders.externalId /^[^ ?.=]{2,80}$/
   # OCLC work ID
   'wdt:P5331': builders.externalId /^[1-9]\d*$/
+  # NooSFere book ID
+  'wdt:P5571': builders.externalId /^[1-9]\d*$/
+  # Librarything author ID
+  'wdt:P7400': builders.externalId /^[^\s\/]+$/
