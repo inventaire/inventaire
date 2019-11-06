@@ -14,9 +14,13 @@ batchLength = 1000
 
 module.exports = (req, res)->
   refresh = _.parseBooleanString req.query.refresh
+
   addEntitiesToQueueSequentially refresh
-  .then responses_.Ok(res)
-  .catch error_.Handler(req, res)
+  .catch _.Error('addEntitiesToQueueSequentially err')
+
+  # Not waiting for the queue to be loaded as that will take a while
+  # and no useful data has to be returned
+  responses_.ok res
 
 addEntitiesToQueueSequentially = (refresh)->
   pagination = { offset: 0, total: 0 }
