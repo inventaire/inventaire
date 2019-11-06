@@ -8,14 +8,14 @@ longTitleLimit = 12
 # Merge if perfect matched of works title and if title is long enough
 module.exports = (suspectUri, suggestion)->
   { uri:suggestionUri } = suggestion
-  unless validateAutomerge(suggestion.occurrences)
+  unless isValidateAutomerge(suggestion.occurrences)
     return [ suggestion ]
 
   mergeEntities reconcilerUserId, suspectUri, suggestionUri
   .then -> automergeAuthorWorks suggestionUri
   .then -> return [] # merged suspect
 
-validateAutomerge = (suggestionOccurrences)->
+isValidateAutomerge = (suggestionOccurrences)->
   matchedTitles =  _.flatten _.map(suggestionOccurrences, 'matchedTitles')
   longTitles = matchedTitles.filter isLongTitle
   return longTitles.length > 0
