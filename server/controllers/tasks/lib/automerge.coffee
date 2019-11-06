@@ -11,7 +11,12 @@ module.exports = (suspectUri, suggestion)->
   unless isValidateAutomerge(suggestion.occurrences)
     return [ suggestion ]
 
+  _.log { suspectUri, suggestionUri }, 'automerging'
+
   mergeEntities reconcilerUserId, suspectUri, suggestionUri
+  # Give the time to CouchDB to update its views so that the works
+  # of the merged author are correctly found
+  .delay 100
   .then -> automergeAuthorWorks suggestionUri
   .then -> return [] # merged suspect
 

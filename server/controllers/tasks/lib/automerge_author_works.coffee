@@ -9,7 +9,7 @@ getEntityNormalizedTerms = __.require 'controllers', 'entities/lib/get_entity_no
 module.exports = (authorUri)->
   getAuthorWorksByDomain authorUri
   .then findMergeableWorks
-  .then automergeWorks
+  .then automergeWorks(authorUri)
 
 getAuthorWorksByDomain = (authorUri)->
   getAuthorWorks { uri: authorUri }
@@ -46,8 +46,10 @@ findPossibleMerge = (wdWorks)-> (invWork)->
 
 haveSomeMatchingTerms = (invWork)-> (wdWork)-> _.haveAMatch invWork.terms, wdWork.terms
 
-automergeWorks = (mergeableCouples)->
+automergeWorks = (authorUri)-> (mergeableCouples)->
   if mergeableCouples.length is 0 then return
+
+  _.log mergeableCouples, "automerging works from author #{authorUri}"
 
   mergeNext = ->
     nextCouple = mergeableCouples.pop()
