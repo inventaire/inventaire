@@ -9,9 +9,6 @@ module.exports = (suspectWorksData)-> (suggestion)->
   { labels, langs } = suspectWorksData
   { uri } = suggestion
 
-  # Filter-out labels that are too short, as it could generate false positives
-  labels = labels.filter (label)-> label.length > 5
-
   if labels.length is 0
     suggestion.occurrences = []
     return Promise.resolve suggestion
