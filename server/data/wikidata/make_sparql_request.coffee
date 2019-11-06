@@ -3,6 +3,7 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 requests_ = __.require 'lib', 'requests'
 { wait } = __.require 'lib', 'promises'
+error_ = __.require 'lib', 'error/error'
 wdk = require 'wikidata-sdk'
 requestOptions =
   headers:
@@ -18,6 +19,9 @@ ongoing = 0
 
 module.exports = (sparql)->
   url = wdk.sparqlQuery sparql
+
+  if waiting > 50
+    return Promise.reject error_.new('too many requests in queue', 500, { sparql })
 
   persistentRequest = ->
     makeRequest url
@@ -42,7 +46,9 @@ makeRequest = (url)->
     ongoing += 1
     requests_.get url, requestOptions
     .then wdk.simplifySparqlResults
-    .tap ->
+    # Don't let a query block the queue more than 30 seconds
+    .timeout 30000
+    .finally ->
       ongoing -= 1
       logStats()
 
