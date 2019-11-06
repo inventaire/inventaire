@@ -2,6 +2,7 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 getAuthorWorks = __.require 'controllers', 'entities/lib/get_author_works'
 getEntitiesList = __.require 'controllers', 'entities/lib/get_entities_list'
+getEntityNormalizedTerms = __.require 'controllers', 'entities/lib/get_entity_normalized_terms'
 
 module.exports = (uri, suspectWorksLabels) ->
   getAuthorWorks { uri, dry: true }
@@ -9,7 +10,8 @@ module.exports = (uri, suspectWorksLabels) ->
   .then (suggestionWorksData)->
     occurrences = []
     for sugWork in suggestionWorksData
-      matchedTitles = getMatchingTitles suspectWorksLabels, _.values(sugWork.labels)
+      sugWorkTerms = getEntityNormalizedTerms sugWork
+      matchedTitles = _.intersection suspectWorksLabels, sugWorkTerms
       if matchedTitles.length > 0
         { uri } = sugWork
         occurrences.push { uri, matchedTitles }
@@ -18,10 +20,3 @@ module.exports = (uri, suspectWorksLabels) ->
 getSuggestionWorks = (res)->
   uris = res.works.map _.property('uri')
   getEntitiesList uris
-
-getMatchingTitles = (suspectWorksLabels, suggestionWorkLabels)->
-  matchedTitles = []
-  for sugWorkLabel in suggestionWorkLabels
-    if sugWorkLabel in suspectWorksLabels
-      matchedTitles.push sugWorkLabel
-  return matchedTitles

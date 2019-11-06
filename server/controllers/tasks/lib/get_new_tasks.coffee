@@ -5,6 +5,7 @@ searchEntityDuplicatesSuggestions = require './search_entity_duplicates_suggesti
 addOccurrencesToSuggestion = require './add_occurrences_to_suggestion'
 getAuthorWorksData = require './get_author_works_data'
 evaluateSuggestions = require './evaluate_suggestions'
+automerge = require './automerge'
 mergeEntities = __.require 'controllers', 'entities/lib/merge_entities'
 { _id: reconcilerUserId } = __.require('couch', 'hard_coded_documents').users.reconciler
 
@@ -16,33 +17,20 @@ module.exports = (entity)-> (existingTasks)->
   ]
   .spread (newSuggestions, suspectWorksData)->
     unless newSuggestions.length > 0 then return []
-    suspectWorksLabels = suspectWorksData.labels
+    { labels:worksLabels } = suspectWorksData
     Promise.all newSuggestions.map(addOccurrencesToSuggestion(suspectWorksData))
-    .then evaluateSuggestions(entity, suspectWorksData.labels)
-    .then (results)->
-      { merge, suggestions } = results
-      if merge?
-        mergeEntities reconcilerUserId, merge.from, merge.to
-        .then ->
-          _.info merge, 'entities automerged'
-          return noTasks()
+    .then evaluateSuggestions(entity, worksLabels)
+    .then filterOutExistingTasks(existingTasks)
+    .then buildTaskObjects(suspectUri)
 
-      else if suggestions?
-        newSuggestions = filterOutExistingTasks existingTasks, suggestions
-        return newSuggestions.map buildTaskObject(suspectUri)
+buildTaskObjects = (suspectUri)-> (suggestions)->
+  suggestions.map (suggestion) ->
+    type: 'deduplicate'
+    suspectUri: suspectUri
+    suggestionUri: suggestion.uri
+    lexicalScore: suggestion._score
+    externalSourcesOccurrences: suggestion.occurrences
 
-      else
-        return noTasks()
-
-noTasks = -> []
-
-buildTaskObject = (suspectUri)-> (suggestion)->
-  type: 'deduplicate'
-  suspectUri: suspectUri
-  suggestionUri: suggestion.uri
-  lexicalScore: suggestion._score
-  externalSourcesOccurrences: suggestion.occurrences
-
-filterOutExistingTasks = (existingTasks, suggestions)->
+filterOutExistingTasks = (existingTasks)-> (suggestions)->
   existingTasksUris = _.map existingTasks, 'suggestionUri'
-  return suggestions.filter (suggestion)-> suggestion.uri not in existingTasksUris
+  return suggestions.filter((suggestion)-> suggestion.uri not in existingTasksUris)

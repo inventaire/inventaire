@@ -13,10 +13,19 @@ module.exports = (userId, fromUri, toUri)->
   [ fromPrefix, fromId ] = fromUri.split ':'
   [ toPrefix, toId ] = toUri.split ':'
 
+  if fromPrefix is 'wd'
+    if toPrefix is 'inv'
+      _.info { fromUri, toUri }, 'merge: switching fromUri and toUri'
+      [ fromPrefix, fromId, toPrefix, toId ] = [ toPrefix, toId, fromPrefix, fromId ]
+    else
+      throw error_.new 'cannot merge wd entites', 500, { fromUri, toUri }
+
   if toPrefix is 'wd'
     # no merge to do for Wikidata entities, simply creating a redirection
     return turnIntoRedirection userId, fromId, toUri
   else
+    # TODO: invert fromId and toId if the merged entity is more popular
+    # to reduce the amount of documents that need to be updated
     return mergeEntities userId, fromId, toId
 
 mergeEntities = (userId, fromId, toId)->

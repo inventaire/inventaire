@@ -82,8 +82,6 @@ formatValidEntity = (entity)->
   delete entity.ns
   delete entity.title
   delete entity.lastrevid
-  # Testing without aliases: the only use would be for local entity search(?)
-  delete entity.aliases
 
   return addImageData entity
 
