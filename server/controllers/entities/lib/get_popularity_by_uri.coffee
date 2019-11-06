@@ -27,14 +27,10 @@ module.exports = (uri)->
     unless entity? then return 0
 
     { type } = entity
-    unless type?
-      _.warn uri, "can't get popularity of entities without known type"
-      return 0
+    unless type? then return 0
 
     getter = popularityGettersByType[type]
-    unless getter?
-      _.warn type, 'no popularity getter for this type'
-      return 0
+    unless getter? then return 0
 
     return getter uri
   .then addBonusPoints(uri)
