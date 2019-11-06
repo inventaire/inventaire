@@ -111,6 +111,12 @@ module.exports =
   'wdt:P1085': builders.externalId /^\d{1,8}$/
   # number of pages
   'wdt:P1104': bases.positiveInteger
+  # BN (Argentine) editions
+  'wdt:P1143': builders.externalId /^\d{9}$/
+  # LIBRIS editions
+  'wdt:P1182': builders.externalId /^[1-9]\d*$/
+  # ISFDB title ID
+  'wdt:P1274': builders.externalId /^[1-9]\d{0,6}$/
   # DNB editions
   'wdt:P1292': builders.externalId /^\d{8,9}[X\d]?$/
   # languages of expression
@@ -121,6 +127,8 @@ module.exports =
   'wdt:P1545': bases.ordinal
   # subtitle
   'wdt:P1680': bases.uniqueString
+  # HathiTrust ID
+  'wdt:P1844': builders.externalId /^\d{9}$/
   # Project Gutenberg author ID
   'wdt:P1938': builders.externalId /^[1-9]\d{0,4}$/
   # Google Scholar author ID
@@ -151,6 +159,8 @@ module.exports =
   'wdt:P2969': builders.externalId /^[1-9]\d*$/
   # ISBN publisher prefix
   'wdt:P3035': builders.externalId /^97(8|9)-\d{1,5}-\d{2,7}$/
+  # Czech National Bibliography book ID
+  'wdt:P3184': builders.externalId /^cnb[0-9]{9}$/
   # Babelio author ID
   'wdt:P3630': builders.externalId /^\d+$/
   # Babelio work ID
@@ -167,5 +177,7 @@ module.exports =
   'wdt:P5361': builders.externalId /^[^ ?.=]{2,80}$/
   # OCLC work ID
   'wdt:P5331': builders.externalId /^[1-9]\d*$/
+  # NooSFere book ID
+  'wdt:P5571': builders.externalId /^[1-9]\d*$/
   # Librarything author ID
   'wdt:P7400': builders.externalId /^[^\s\/]+$/

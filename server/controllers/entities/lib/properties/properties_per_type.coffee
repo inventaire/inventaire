@@ -21,9 +21,12 @@ workAndSerie = all.concat [
   'wdt:P921' # main subject
   'wdt:P941' # inspired by
   'wdt:P1085' # Librarything work ID
+  'wdt:P1143' # BN (Argentine) editions
   'wdt:P1545' # series ordinal
+  'wdt:P1844' # HathiTrust ID
   'wdt:P1984' # Anime News Network manga ID
   'wdt:P2969' # GoodReads book ID
+  'wdt:P3184' # Czech National Bibliography book ID
   'wdt:P3631' # Babelio work ID
   'wdt:P4087' # MyAnimeList manga ID
   'wdt:P5331' # OCLC work ID
@@ -39,15 +42,21 @@ module.exports =
     'wdt:P629' # edition or translation of
     'wdt:P648' # Open Library ID
     'wdt:P655' # translator
+    'wdt:P675' # identifiant Google Livres
     'wdt:P957' # ISBN-10
     'wdt:P1025' # SUDOC editions
     'wdt:P1044' # SWB editions
-    'wdt:P1476' # title
     'wdt:P1104' # number of pages
+    'wdt:P1182' # LIBRIS editions
+    'wdt:P1274' # ISFDB title ID
+    'wdt:P1292' # DNB editions
+    'wdt:P1476' # title
     'wdt:P1680' # subtitle
     'wdt:P2635' # number of volumes
     'wdt:P2679' # author of foreword
     'wdt:P2680' # author of afterword
+    'wdt:P3184' # Czech National Bibliography book ID
+    'wdt:P5571' # NooSFere book ID
     'invp:P2' # cover image hash
   ]
 
