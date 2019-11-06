@@ -10,7 +10,7 @@ testServerAvailability = ->
   .then (res)-> _.success 'tests server is ready'
   .timeout 1000
   .catch (err)->
-    unless err.code is 'ECONNREFUSED' then throw err
+    unless err.code is 'ECONNREFUSED' or err.name is 'TimeoutError' then throw err
     _.log 'waiting for tests server', null, 'grey'
     Promise.resolve()
     .delay 500
