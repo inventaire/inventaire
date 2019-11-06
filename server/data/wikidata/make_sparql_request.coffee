@@ -42,7 +42,9 @@ makeRequest = (url)->
     ongoing += 1
     requests_.get url, requestOptions
     .then wdk.simplifySparqlResults
-    .tap ->
+    # Don't let a query block the queue more than 30 seconds
+    .timeout 30000
+    .finally ->
       ongoing -= 1
       logStats()
 
