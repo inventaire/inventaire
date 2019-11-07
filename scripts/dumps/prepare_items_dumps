@@ -11,7 +11,7 @@ echo "
 @prefix wdt: <http://www.wikidata.org/prop/direct/> .
 @prefix wdt: <http://www.wikidata.org/prop/direct/> .
 @prefix inv: <http://inventaire.io/entity/> .
-@prefix invexamplar: <http://inventaire.io/items/> .
+@prefix invex: <http://inventaire.io/items/> .
 @prefix isbn: <http://inventaire.io/isbn/> .
 " > $items_dump
 
@@ -19,7 +19,7 @@ echo "
 curl -s "${dbHost}/items-prod/_design/items/_view/byEntity" |
   jq '.rows[] | [.id, .key[0]] | join(" wdt:P1574 ")' |
   sed 's/"//g' |
-  sed 's/^/invexamplar:/' |
+  sed 's/^/invex:/' |
   sed 's/$/ ./' >> $items_dump
 
 validate_ttl $items_dump
