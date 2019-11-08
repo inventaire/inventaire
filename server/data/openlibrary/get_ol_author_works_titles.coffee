@@ -20,5 +20,5 @@ getAuthorWorksTitles = (olId)->
   .then (res)->
     res.docs
     .map (result)->
-      quotation: result.title_suggest
+      title: result.title_suggest
       url: endpoint + result.key

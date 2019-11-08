@@ -6,7 +6,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 { defer } = __.require 'lib', 'promises'
-{ formatTitle, formatAuthor } = require './work_entity_search_utils'
+{ normalizeTerm } = __.require 'controllers', 'entities/lib/terms_normalization'
 { oneMinute } =  __.require 'lib', 'times'
 
 cache = {}
@@ -45,7 +45,7 @@ module.exports =
 
 buildKey = (seed)->
   { title, authors } = seed
-  return formatTitle(title) + ' ' + authors.map(formatAuthor).sort().join(' ')
+  return normalizeTerm(title) + ' ' + authors.map(normalizeTerm).sort().join(' ')
 
 clean = ->
   for key, deferred of cache

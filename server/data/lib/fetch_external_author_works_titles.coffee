@@ -25,5 +25,5 @@ fetch = (endpoint, query)->
   .then (res)->
     res.results.bindings
     .map (result)->
-      quotation: result.title?.value
+      title: result.title?.value
       url: result.work?.value

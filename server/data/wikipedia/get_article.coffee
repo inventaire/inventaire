@@ -20,7 +20,7 @@ getArticle = (lang, title, introOnly)->
       throw error_.new 'invalid extract response', 500, arguments, res.query
 
     return {
-      quotation: cleanExtract _.values(pages)?[0]?.extract
+      extract: cleanExtract _.values(pages)?[0]?.extract
       url: "https://#{lang}.wikipedia.org/wiki/#{title}"
     }
 

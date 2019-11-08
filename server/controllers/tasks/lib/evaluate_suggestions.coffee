@@ -1,7 +1,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 automerge = require './automerge'
-getEntityNormalizedTerms = __.require 'controllers', 'entities/lib/get_entity_normalized_terms'
+{ getEntityNormalizedTerms } = __.require 'controllers', 'entities/lib/terms_normalization'
 
 module.exports = (suspect, workLabels)-> (suggestions)->
   suspectTerms = getEntityNormalizedTerms suspect
