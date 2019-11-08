@@ -21,7 +21,7 @@ module.exports = (sparql)->
   url = wdk.sparqlQuery sparql
 
   if waiting > 50
-    return Promise.reject error_.new('too many requests in queue', 500, { sparql })
+    return error_.reject 'too many requests in queue', 500, { sparql }
 
   persistentRequest = ->
     makeRequest url

@@ -1,6 +1,5 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
-promises_ = __.require 'lib', 'promises'
 assert_ = __.require 'utils', 'assert_types'
 formatError = require './format_error'
 
