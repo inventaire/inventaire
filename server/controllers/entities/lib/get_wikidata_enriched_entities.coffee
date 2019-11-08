@@ -68,6 +68,7 @@ formatValidEntity = (entity)->
   { id:wdId } = entity
   entity.uri = "wd:#{wdId}"
   entity.labels = simplify.labels entity.labels
+  entity.aliases = simplify.aliases entity.aliases
   entity.descriptions = simplify.descriptions entity.descriptions
   entity.sitelinks = simplify.sitelinks entity.sitelinks
   entity.claims = formatClaims entity.claims, wdId
