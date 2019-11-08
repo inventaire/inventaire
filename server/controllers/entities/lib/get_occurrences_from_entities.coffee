@@ -5,7 +5,7 @@ getEntitiesList = __.require 'controllers', 'entities/lib/get_entities_list'
 { getEntityNormalizedTerms } = __.require 'controllers', 'entities/lib/terms_normalization'
 
 module.exports = (uri, suspectWorksLabels) ->
-  getAuthorWorks { uri, dry: true }
+  getAuthorWorks { uri }
   .then getSuggestionWorks
   .then (suggestionWorksData)->
     occurrences = []
@@ -14,7 +14,7 @@ module.exports = (uri, suspectWorksLabels) ->
       matchedTitles = _.intersection suspectWorksLabels, sugWorkTerms
       if matchedTitles.length > 0
         { uri } = sugWork
-        occurrences.push { uri, matchedTitles }
+        occurrences.push { uri, matchedTitles, structuredDataSource: true }
     return occurrences
 
 getSuggestionWorks = (res)->

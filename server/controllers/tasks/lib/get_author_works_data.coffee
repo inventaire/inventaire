@@ -11,13 +11,8 @@ module.exports = (authorId)->
     #   { labels: { fr: 'Matiere et Memoire'} },
     #   { labels: { en: 'foo' } }
     # ]
-
     labels = _.uniq _.flatten(works.map(getEntityNormalizedTerms))
-      # Filter-out labels that are too short, as it could generate false positives
-      .filter (label)-> label.length > 5
-
     langs = _.uniq _.flatten(works.map(getLangs))
-
     return { authorId, labels, langs }
 
 getLangs = (work)-> Object.keys work.labels

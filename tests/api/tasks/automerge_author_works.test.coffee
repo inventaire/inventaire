@@ -15,7 +15,7 @@ describe 'automerge_author_works: only from inv works to wd works', ->
     # Alan Moore uri
     authorUri = 'wd:Q205739'
     workLabel = 'Voice of the Fire'
-    wdWorkUri = 'wd:Q3825051' # 'Voice of the Fire' uri
+    workWdUri = 'wd:Q3825051' # 'Voice of the Fire' uri
 
     Promise.all [
       createWorkWithAuthor { uri: authorUri }, workLabel
@@ -24,17 +24,32 @@ describe 'automerge_author_works: only from inv works to wd works', ->
     .spread (work1, work2)->
       automergeAuthorWorks authorUri
       .delay 300
-      .then ->
-        Promise.all [
-          getByUris(work1.uri)
-          getByUris(work2.uri)
-        ]
-        .spread (work1, work2)->
-          # entity should have merged, thus URI is now a WD uri
-          _.values(work1.redirects)[0].should.equal wdWorkUri
-          _.values(work2.redirects)[0].should.equal wdWorkUri
+      .then -> getByUris [ work1.uri, work2.uri ]
+      .then (res)->
+        res.redirects[work1.uri].should.equal workWdUri
+        res.redirects[work2.uri].should.equal workWdUri
+        done()
+    .catch undesiredErr(done)
 
-          done()
+    return
+
+  it 'should automerge if suspect and suggestion wd and inv short works labels match', (done)->
+    humanLabel = 'Michael Crichton'
+    humanWdUri = 'wd:Q172140'
+    workLabel = 'Timeline' # wd:Q732060
+    workWdUri = 'wd:Q732060'
+    createHuman { labels: { en: humanLabel } }
+    .then (human)->
+      createWorkWithAuthor { uri: human.uri }, workLabel
+      .then (work)->
+        checkEntities human.uri
+        .then _.Log('tasks')
+        .then (tasks)->
+          tasks.length.should.equal 0
+          getByUris work.uri
+          .then (res)->
+            res.redirects[work.uri].should.equal workWdUri
+            done()
     .catch undesiredErr(done)
 
     return

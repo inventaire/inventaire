@@ -8,7 +8,7 @@ should = require 'should'
 # Tests dependency: having a populated ElasticSearch wikidata index
 describe 'tasks:automerge', ->
   it 'should automerge if author has homonyms but only one has occurrences', (done)->
-    humanLabel = 'Alan Moore' # homonyms Q205739, Q1748845
+    humanLabel = 'Alan Moore' # homonyms wd:Q205739, wd:Q1748845
     WdUri = 'wd:Q205739'
     workLabel = 'Voice of the Fire' # wd:Q3825051
     createHuman { labels: { en: humanLabel } }
@@ -27,8 +27,8 @@ describe 'tasks:automerge', ->
 
     return
 
-  it 'should automerge if suspect and suggestion workLabel are similar', (done)->
-    humanLabel = 'Alain Damasio' # wdId Q2829704
+  it 'should automerge if suspect and suggestion inv works labels match', (done)->
+    humanLabel = 'Alain Damasio' # wd:Q2829704
     wikidataUri = 'wd:Q2829704'
     workLabel = randomLabel()
     createHuman { labels: { en: humanLabel } }

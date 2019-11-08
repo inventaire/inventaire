@@ -17,6 +17,6 @@ module.exports = (req, res)->
     { lang, title } = params
     getArticle { lang, title, introOnly: true }
   .then (data)->
-    { url, quotation: extract } = data
+    { url, extract } = data
     responses_.send res, { url, extract }
   .catch error_.Handler(req, res)

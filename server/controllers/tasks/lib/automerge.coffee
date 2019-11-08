@@ -21,6 +21,9 @@ module.exports = (suspectUri, suggestion)->
   .then -> return [] # merged suspect
 
 isValidateAutomerge = (suggestionOccurrences)->
+  hasOccurencesInStructuredDataSources =  _.some _.map(suggestionOccurrences, 'structuredDataSource')
+  if hasOccurencesInStructuredDataSources then return true
+
   matchedTitles =  _.flatten _.map(suggestionOccurrences, 'matchedTitles')
   longTitles = matchedTitles.filter isLongTitle
   return longTitles.length > 0

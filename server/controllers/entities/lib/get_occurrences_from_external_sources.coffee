@@ -14,6 +14,7 @@ getKjkAuthorWorksTitle = __.require 'data', 'kjk/get_kjk_author_works_titles'
 getNdlAuthorWorksTitle = __.require 'data', 'ndl/get_ndl_author_works_titles'
 getOlAuthorWorksTitles = __.require 'data', 'openlibrary/get_ol_author_works_titles'
 getEntityByUri = __.require 'controllers', 'entities/lib/get_entity_by_uri'
+{ normalizeTerm } = __.require 'controllers', 'entities/lib/terms_normalization'
 
 # - worksLabels: labels from works of an author suspected
 #   to be the same as the wdAuthorUri author
@@ -48,7 +49,7 @@ module.exports = (wdAuthorUri, worksLabels, worksLabelsLangs)->
 
 getWikipediaOccurrences = (authorEntity, worksLabels, worksLabelsLangs)->
   promises_.all getMostRelevantWikipediaArticles(authorEntity, worksLabelsLangs)
-  .map createOccurrences(worksLabels)
+  .map createOccurrencesFromUnstructuredArticle(worksLabels)
 
 getMostRelevantWikipediaArticles = (authorEntity, worksLabelsLangs)->
   { sitelinks, originalLang } = authorEntity
@@ -61,14 +62,13 @@ getMostRelevantWikipediaArticles = (authorEntity, worksLabelsLangs)->
   .map getWikipediaArticle
 
 getAndCreateOccurrencesFromIds = (prop, getWorkTitlesFn)-> (authorEntity, worksLabels)->
+  # An author should normally have only 1 value per external id property
+  # but if there are several, check every available ids
   ids = authorEntity.claims[prop]
-  # Check every ids
-  unless ids? then return false
+  unless ids? then return
   promises_.all ids.map(getWorkTitlesFn)
   .then _.flatten
-  .filter (doc)-> _.includes worksLabels, doc.quotation
-  .then _.uniq
-  .map createOccurrences(worksLabels)
+  .map createOccurrencesFromExactTitles(worksLabels)
 
 getBnfOccurrences = getAndCreateOccurrencesFromIds 'wdt:P268', getBnfAuthorWorksTitles
 getOpenLibraryOccurrences = getAndCreateOccurrencesFromIds 'wdt:P648', getOlAuthorWorksTitles
@@ -78,9 +78,16 @@ getSelibrOccurrences = getAndCreateOccurrencesFromIds 'wdt:P906', getSelibrAutho
 getKjkOccurrences = getAndCreateOccurrencesFromIds 'wdt:P1006', getKjkAuthorWorksTitle
 getNdlOccurrences = getAndCreateOccurrencesFromIds 'wdt:P349', getNdlAuthorWorksTitle
 
-createOccurrences = (worksLabels)->
+createOccurrencesFromUnstructuredArticle = (worksLabels)->
   worksLabelsPattern = new RegExp(worksLabels.join('|'), 'gi')
   return (article)->
-    matchedTitles = _.uniq article.quotation.match(worksLabelsPattern)
-    unless matchedTitles.length > 0 then return false
-    return { url: article.url, matchedTitles }
+    matchedTitles = _.uniq article.extract.match(worksLabelsPattern)
+    unless matchedTitles.length > 0 then return
+    return { url: article.url, matchedTitles, structuredDataSource: false }
+
+createOccurrencesFromExactTitles = (worksLabels)-> (result)->
+  title = normalizeTerm result.title
+  if title in worksLabels
+    return { url: result.url, matchedTitles: [ title ], structuredDataSource: true }
+  else
+    return
