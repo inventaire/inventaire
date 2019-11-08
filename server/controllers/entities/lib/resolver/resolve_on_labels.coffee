@@ -28,20 +28,23 @@ resolveWorksAndAuthor = (works, author)-> (authorsUris)->
 resolveWorkAndAuthor = (author, authorsUris)-> (work)->
   if work.uri? or not work? then return
   workLabels = _.uniq _.values(work.labels)
-  Promise.all getWorksFromAuthorsUris(authorsUris, workLabels)
+  Promise.all getWorksFromAuthorsUris(authorsUris)
   .then _.flatten
   .then getMatchedUris(authorsUris, author, work)
 
 getMatchedUris = (authorsUris, authorSeed, workSeed)-> (searchedWorks)->
   # Several searchedWorks could match authors homonyms/duplicates
   unless searchedWorks.length is 1 then return
-  work = searchedWorks[0]
-  matchedAuthorsUris = _.intersection getAuthorsUris(work), authorsUris
+  searchedWork = searchedWorks[0]
+  matchedAuthorsUris = _.intersection getAuthorsUris(searchedWork), authorsUris
   # If unique author to avoid assigning a work to a duplicated author
   unless matchedAuthorsUris.length is 1 then return
+  searchedWorkLabels = getLabels searchedWork.labels
+  matchedWorkLabels = _.intersection workLabels, searchedWorkLabels
+  if matchedWorkLabels.length is 0 then return
 
   authorSeed.uri = matchedAuthorsUris[0]
-  workSeed.uri = work.uri
+  workSeed.uri = searchedWork.uri
 
 getAuthorsUris = (work)-> work.claims['wdt:P50']
 
@@ -54,6 +57,7 @@ searchUrisByAuthorLabels = (labels)->
   .then _.uniq
 
 types = [ 'humans' ]
+
 searchUrisByAuthorLabel = (label)->
   typeSearch types, label
   .then parseResults(types)
