@@ -3,12 +3,28 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { checkEntities, getBySuspectUri } = require '../utils/tasks'
-{ undesiredErr } = __.require 'apiTests', 'utils/utils'
+{ undesiredErr, undesiredRes } = __.require 'apiTests', 'utils/utils'
 { getByUris } = require '../utils/entities'
-{ createHuman, createWorkWithAuthor, randomLabel } = require '../fixtures/entities'
+{ createHuman, createWorkWithAuthor, createWork, randomLabel } = require '../fixtures/entities'
 
 # Tests dependency: having a populated ElasticSearch wikidata index
 describe 'tasks:check-entities', ->
+  it 'should refuse to check entities of non-whitelisted types', (done)->
+    # Currently, only humans can be checked for duplicates,
+    # or at least are the entrypoint for duplicate checks
+    createWork()
+    .then (work)->
+      checkEntities work.uri
+      .then undesiredRes(done)
+      .catch (err)->
+        err.statusCode.should.equal 400
+        err.body.status_verbose.should.equal 'unsupported type: work'
+        err.message
+        done()
+    .catch undesiredErr(done)
+
+    return
+
   it 'should create tasks for the requested URIs', (done)->
     createHuman { labels: { en: 'Fred Vargas' } }
     .then (human)->
