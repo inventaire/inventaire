@@ -3,7 +3,7 @@ _ = __.require 'builders', 'utils'
 mergeEntities = __.require 'controllers', 'entities/lib/merge_entities'
 getAuthorWorks = __.require 'controllers', 'entities/lib/get_author_works'
 getEntitiesList = __.require 'controllers', 'entities/lib/get_entities_list'
-getEntityNormalizedTerms = __.require 'controllers', 'entities/lib/get_entity_normalized_terms'
+{ getEntityNormalizedTerms } = __.require 'controllers', 'entities/lib/terms_normalization'
 { _id: reconcilerUserId } = __.require('couch', 'hard_coded_documents').users.reconciler
 
 module.exports = (authorUri)->
