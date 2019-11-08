@@ -24,7 +24,7 @@ searchAuthorAndResolve = (works)-> (author)->
 
 # TODO: extend search to aliases
 searchUrisByAuthorLabels = (labels)->
-  labels = getLabels(labels)
+  labels = getLabels labels
   Promise.all labels.map(searchUrisByAuthorLabel)
   .then _.flatten
   .then _.uniq
@@ -50,6 +50,7 @@ getWorkAndResolve = (authorSeed, authorsUris)-> (work)->
   .then resolveWorkAndAuthor(authorsUris, authorSeed, work, workLabels)
 
 resolveWorkAndAuthor = (authorsUris, authorSeed, workSeed, workLabels)-> (searchedWorks)->
+  lowerSeedLabels = workLabels.map _.toLower
   # Several searchedWorks could match authors homonyms/duplicates
   unless searchedWorks.length is 1 then return
   searchedWork = searchedWorks[0]
@@ -57,7 +58,8 @@ resolveWorkAndAuthor = (authorsUris, authorSeed, workSeed, workLabels)-> (search
   # If unique author to avoid assigning a work to a duplicated author
   unless matchedAuthorsUris.length is 1 then return
   searchedWorkLabels = getLabels searchedWork.labels
-  matchedWorkLabels = _.intersection workLabels, searchedWorkLabels
+  lowerSearchedWorkLabels = searchedWorkLabels.map _.toLower
+  matchedWorkLabels = _.intersection lowerSeedLabels, lowerSearchedWorkLabels
   if matchedWorkLabels.length is 0 then return
 
   authorSeed.uri = matchedAuthorsUris[0]

@@ -420,6 +420,25 @@ describe 'entities:resolve:on-labels', ->
 
     return
 
+  it 'should resolve work pair with case insentive labels', (done)->
+    createHuman()
+    .then (author)->
+      workLabel = randomLabel()
+      seedLabel = workLabel.toUpperCase()
+      authorLabel = author.labels.en
+      createWorkWithAuthor author, workLabel
+      .delay elasticsearchUpdateDelay
+      .then (work)->
+        resolve basicEntry(seedLabel, authorLabel)
+        .get 'entries'
+        .then (entries)->
+          entries[0].works[0].uri.should.equal work.uri
+          entries[0].authors[0].uri.should.equal author.uri
+          done()
+    .catch done
+
+    return
+
   it 'should not resolve when several works exist', (done)->
     createHuman()
     .then (author)->
