@@ -384,15 +384,52 @@ describe 'entities:resolve:in-context', ->
     return
 
 describe 'entities:resolve:on-labels', ->
+  it 'should not resolve work pair if no labels match', (done)->
+    createHuman()
+    .then (author)->
+      workLabel = randomLabel()
+      seedLabel = randomLabel()
+      authorLabel = author.labels.en
+      createWorkWithAuthor author, workLabel
+      .delay elasticsearchUpdateDelay
+      .then (work)->
+        resolve basicEntry(seedLabel, authorLabel)
+        .get 'entries'
+        .then (entries)->
+          should(entries[0].works[0].uri).not.be.ok()
+          done()
+    .catch done
+
+    return
+
   it 'should resolve author and work pair by searching for exact labels', (done)->
     createHuman()
     .then (author)->
       workLabel = randomLabel()
       authorLabel = author.labels.en
       createWorkWithAuthor author, workLabel
-      .delay elasticsearchUpdateDelay # update elasticSearch
+      .delay elasticsearchUpdateDelay
       .then (work)->
         resolve basicEntry(workLabel, authorLabel)
+        .get 'entries'
+        .then (entries)->
+          entries[0].works[0].uri.should.equal work.uri
+          entries[0].authors[0].uri.should.equal author.uri
+          done()
+    .catch done
+
+    return
+
+  it 'should resolve work pair with case insentive labels', (done)->
+    createHuman()
+    .then (author)->
+      workLabel = randomLabel()
+      seedLabel = workLabel.toUpperCase()
+      authorLabel = author.labels.en
+      createWorkWithAuthor author, workLabel
+      .delay elasticsearchUpdateDelay
+      .then (work)->
+        resolve basicEntry(seedLabel, authorLabel)
         .get 'entries'
         .then (entries)->
           entries[0].works[0].uri.should.equal work.uri
@@ -412,7 +449,7 @@ describe 'entities:resolve:on-labels', ->
           createWorkWithAuthor author, workLabel
           createWorkWithAuthor sameLabelAuthor, workLabel
         ]
-        .delay elasticsearchUpdateDelay # update elasticSearch
+        .delay elasticsearchUpdateDelay
         .then (works)->
           resolve basicEntry(workLabel, author.labels.en)
           .get 'entries'
