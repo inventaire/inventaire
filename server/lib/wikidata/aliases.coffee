@@ -17,6 +17,7 @@ module.exports = typesAliases =
     'wd:Q277759' # book series
     'wd:Q14406742' # comic book series
     'wd:Q21198342' # manga series
+    'wd:Q74262765' # manhwa series
     'wd:Q1667921' # novel series
     'wd:Q3297186' # limited series
     'wd:Q21191134' # comic strip series
@@ -53,6 +54,7 @@ module.exports = typesAliases =
     'wd:Q699' # fairy tale
     'wd:Q34620' # Greek tragedy
     'wd:Q8274' # manga
+    'wd:Q562214' # manhwa
     'wd:Q128093' # ebook
     'wd:Q17518461' # posthumous work
     'wd:Q179461' # religious text
