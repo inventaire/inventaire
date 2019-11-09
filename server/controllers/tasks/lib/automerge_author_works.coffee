@@ -44,7 +44,7 @@ findPossibleMerge = (wdWorks)-> (invWork)->
   matches = wdWorks.filter haveSomeMatchingTerms(invWork)
   if matches.length is 1 then return [ invWork.uri, matches[0].uri ]
 
-haveSomeMatchingTerms = (invWork)-> (wdWork)-> _.haveAMatch invWork.terms, wdWork.terms
+haveSomeMatchingTerms = (invWork)-> (wdWork)-> _.someMatch invWork.terms, wdWork.terms
 
 automergeWorks = (authorUri)-> (mergeableCouples)->
   if mergeableCouples.length is 0 then return

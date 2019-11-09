@@ -13,8 +13,8 @@ getSelibrAuthorWorksTitle = __.require 'data', 'selibr/get_selibr_author_works_t
 getKjkAuthorWorksTitle = __.require 'data', 'kjk/get_kjk_author_works_titles'
 getNdlAuthorWorksTitle = __.require 'data', 'ndl/get_ndl_author_works_titles'
 getOlAuthorWorksTitles = __.require 'data', 'openlibrary/get_ol_author_works_titles'
-getEntityByUri = __.require 'controllers', 'entities/lib/get_entity_by_uri'
-{ normalizeTerm } = __.require 'controllers', 'entities/lib/terms_normalization'
+getEntityByUri = require './get_entity_by_uri'
+{ normalizeTerm } = require './terms_normalization'
 
 # - worksLabels: labels from works of an author suspected
 #   to be the same as the wdAuthorUri author

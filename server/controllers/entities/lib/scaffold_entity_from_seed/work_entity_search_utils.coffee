@@ -2,7 +2,7 @@ __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 getBestLangValue = __.require 'lib', 'get_best_lang_value'
 stringsAreClose = __.require 'lib', 'strings_are_close'
-{ normalizeTerm } = __.require 'controllers', 'entities/lib/terms_normalization'
+{ normalizeTerm } = require '../terms_normalization'
 
 matchAuthor = (authors, lang)-> (result)->
   unless _.isArray(authors) and _.isArray(result.authors) then return false

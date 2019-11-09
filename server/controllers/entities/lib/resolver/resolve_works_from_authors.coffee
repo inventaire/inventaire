@@ -3,7 +3,8 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 { Promise } = __.require 'lib', 'promises'
 getWorksFromAuthorsLabels = require './get_works_from_authors_uris'
-{ getAlreadyResolvedUris, ifSomeLabelsMatch, getLabels, resolveSeed } = require './helpers'
+{ getAlreadyResolvedUris, someTermsMatch, resolveSeed } = require './helpers'
+{ getEntityNormalizedTerms } = require '../terms_normalization'
 getAuthorsUris = require '../get_authors_uris'
 
 module.exports = (works, authors)->
@@ -13,7 +14,7 @@ module.exports = (works, authors)->
 
 resolveWork = (authorsUris)-> (work)->
   if work.uri? or _.isEmpty(authorsUris) then return work
-  workSeedLabels = getLabels work
+  workSeedTerms = getEntityNormalizedTerms work
   Promise.all getWorksFromAuthorsLabels(authorsUris)
-  .filter ifSomeLabelsMatch(workSeedLabels)
+  .filter someTermsMatch(workSeedTerms)
   .then resolveSeed(work)

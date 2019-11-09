@@ -1,15 +1,14 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
+{ getEntityNormalizedTerms } = require '../terms_normalization'
 
 module.exports =
   getAlreadyResolvedUris: (seed)-> _.compact _.map(seed, 'uri')
 
-  ifSomeLabelsMatch: (seedLabels)-> (entity)->
-    entitiesLabels = _.values entity.labels
-    _.intersection(seedLabels, entitiesLabels).length > 0
-
-  getLabels: (seed)-> _.values seed.labels
+  someTermsMatch: (seedTerms)-> (entity)->
+    entityTerms = getEntityNormalizedTerms entity
+    return _.someMatch seedTerms, entityTerms
 
   resolveSeed: (seed)-> (entities)->
     # When only one entity is found, then seed is considered resolved

@@ -5,11 +5,11 @@ _ = __.require 'builders', 'utils'
 getWorksFromAuthorsUris = require './get_works_from_authors_uris'
 typeSearch = __.require 'controllers', 'search/lib/type_search'
 parseResults = __.require 'controllers', 'search/lib/parse_results'
-{ getEntityNormalizedTerms } = __.require 'controllers', 'entities/lib/terms_normalization'
+{ getEntityNormalizedTerms } = require '../terms_normalization'
 getAuthorsUris = require '../get_authors_uris'
 
 # resolve :
-# - if seeds labels match entities labels
+# - if seeds terms match entities terms
 # - if no other entities are in the search result (only one entity found)
 
 module.exports = (entry)->
@@ -58,8 +58,8 @@ resolveWorkAndAuthor = (authorsUris, authorSeed, workSeed, workTerms)-> (searche
   # If unique author to avoid assigning a work to a duplicated author
   unless matchedAuthorsUris.length is 1 then return
   searchedWorkTerms = getEntityNormalizedTerms searchedWork
-  matchedWorkLabels = _.intersection workTerms, searchedWorkTerms
-  if matchedWorkLabels.length is 0 then return
+
+  unless _.someMatch workTerms, searchedWorkTerms then return
 
   authorSeed.uri = matchedAuthorsUris[0]
   workSeed.uri = searchedWork.uri
