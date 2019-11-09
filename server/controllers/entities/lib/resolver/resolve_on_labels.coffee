@@ -5,6 +5,7 @@ _ = __.require 'builders', 'utils'
 getWorksFromAuthorsUris = require './get_works_from_authors_uris'
 typeSearch = __.require 'controllers', 'search/lib/type_search'
 parseResults = __.require 'controllers', 'search/lib/parse_results'
+{ getEntityNormalizedTerms } = __.require 'controllers', 'entities/lib/terms_normalization'
 
 # resolve :
 # - if seeds labels match entities labels
@@ -44,22 +45,20 @@ resolveWorksAndAuthor = (works, author)-> (authorsUris)->
 
 getWorkAndResolve = (authorSeed, authorsUris)-> (work)->
   if work.uri? or not work? then return
-  workLabels = getLabels work.labels
+  workTerms = getEntityNormalizedTerms work
   Promise.all getWorksFromAuthorsUris(authorsUris)
   .then _.flatten
-  .then resolveWorkAndAuthor(authorsUris, authorSeed, work, workLabels)
+  .then resolveWorkAndAuthor(authorsUris, authorSeed, work, workTerms)
 
-resolveWorkAndAuthor = (authorsUris, authorSeed, workSeed, workLabels)-> (searchedWorks)->
-  lowerSeedLabels = workLabels.map _.toLower
+resolveWorkAndAuthor = (authorsUris, authorSeed, workSeed, workTerms)-> (searchedWorks)->
   # Several searchedWorks could match authors homonyms/duplicates
   unless searchedWorks.length is 1 then return
   searchedWork = searchedWorks[0]
   matchedAuthorsUris = _.intersection getAuthorsUris(searchedWork), authorsUris
   # If unique author to avoid assigning a work to a duplicated author
   unless matchedAuthorsUris.length is 1 then return
-  searchedWorkLabels = getLabels searchedWork.labels
-  lowerSearchedWorkLabels = searchedWorkLabels.map _.toLower
-  matchedWorkLabels = _.intersection lowerSeedLabels, lowerSearchedWorkLabels
+  searchedWorkTerms = getEntityNormalizedTerms searchedWork
+  matchedWorkLabels = _.intersection workTerms, searchedWorkTerms
   if matchedWorkLabels.length is 0 then return
 
   authorSeed.uri = matchedAuthorsUris[0]
