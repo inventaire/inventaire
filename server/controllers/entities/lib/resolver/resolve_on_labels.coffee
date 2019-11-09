@@ -20,23 +20,22 @@ module.exports = (entry)->
 
 searchAuthorAndResolve = (works)-> (author)->
   if not author? or author.uri? then return
-  searchUrisByAuthorLabels author.labels
+  authorTerms = getEntityNormalizedTerms author
+  searchUrisByAuthorTerms authorTerms
   .then resolveWorksAndAuthor(works, author)
 
-# TODO: extend search to aliases
-searchUrisByAuthorLabels = (labels)->
-  labels = getLabels labels
-  Promise.all labels.map(searchUrisByAuthorLabel)
+searchUrisByAuthorTerms = (terms)->
+  Promise.all terms.map(searchUrisByAuthorLabel)
   .then _.flatten
   .then _.uniq
 
 types = [ 'humans' ]
 
-searchUrisByAuthorLabel = (label)->
-  typeSearch types, label
+searchUrisByAuthorLabel = (term)->
+  typeSearch types, term
   .then parseResults(types)
-  # Exact match on author labels
-  .filter (hit)-> label in _.values(hit._source.labels)
+  # Exact match on normalized author terms
+  .filter (hit)-> term in getEntityNormalizedTerms(hit._source)
   .map (hit)-> hit._source.uri
   .then _.compact
 
@@ -63,7 +62,5 @@ resolveWorkAndAuthor = (authorsUris, authorSeed, workSeed, workTerms)-> (searche
 
   authorSeed.uri = matchedAuthorsUris[0]
   workSeed.uri = searchedWork.uri
-
-getLabels = (labels)-> _.uniq _.values labels
 
 getAuthorsUris = (work)-> work.claims['wdt:P50']
