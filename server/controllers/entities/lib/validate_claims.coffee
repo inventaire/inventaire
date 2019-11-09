@@ -7,9 +7,10 @@ getEntityType = require './get_entity_type'
 validateClaimProperty = require './validate_claim_property'
 
 module.exports = (params)->
-  { newClaims, currentClaims, creating } = params
-  wdtP31 = currentClaims['wdt:P31'] or newClaims['wdt:P31']
-  params.type = type = getEntityType wdtP31
+  { newClaims, currentClaims, creating, domain } = params
+  # Determine type from claims, giving priority to new claims
+  typedClaims = _.extend {}, currentClaims, newClaims
+  params.type = type = getEntityType[domain](typedClaims)
 
   unless _.isNonEmptyPlainObject newClaims
     throw error_.new 'invalid claims', 400, { newClaims }

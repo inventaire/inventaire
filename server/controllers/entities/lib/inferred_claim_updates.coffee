@@ -4,12 +4,12 @@
 
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
-getEntityType = require './get_entity_type'
+{ inv: getEntityType } = require './get_entity_type'
 promises_ = __.require 'lib', 'promises'
 keepWorkLabelAndEditionTitleInSync = require './keep_work_label_and_edition_title_in_sync'
 
 module.exports = (updatedDoc, property, oldVal)->
-  type = getEntityType updatedDoc.claims['wdt:P31']
+  type = getEntityType updatedDoc.claims
   if type is 'edition'
     if property is 'wdt:P1476'
       return keepWorkLabelAndEditionTitleInSync updatedDoc, oldVal

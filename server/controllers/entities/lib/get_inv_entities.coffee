@@ -2,7 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 entities_ = require './entities'
-getEntityType = require './get_entity_type'
+{ inv: getEntityType } = require './get_entity_type'
 getInvEntityCanonicalUri = require './get_inv_entity_canonical_uri'
 formatEntityCommon = require './format_entity_common'
 addRedirection = require './add_redirection'
@@ -34,7 +34,7 @@ Format = (params)-> (entity)->
   # to the let the search engine unindex it
   if entity.type isnt 'entity' then entity._meta_type = entity.type
 
-  entity.type = getEntityType entity.claims['wdt:P31']
+  entity.type = getEntityType entity.claims
   return formatEntityCommon entity
 
 getRedirectedEntity = (entity, params)->

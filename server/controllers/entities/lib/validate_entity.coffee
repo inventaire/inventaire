@@ -9,29 +9,33 @@ getEntityType = require './get_entity_type'
 validateClaims =  require './validate_claims'
 typesWithoutLabels = require './types_without_labels'
 
-module.exports = (entity)->
-  promises_.try -> validate entity
+module.exports = (entity, domain)->
+  promises_.try ->
+    assert_.object entity
+    assert_.string domain
+    validate entity, domain
   .catch addErrorContext(entity)
 
-validate = (entity)->
+validate = (entity, domain)->
   { labels, claims } = entity
   assert_.object labels
   assert_.object claims
 
-  type = getValueType claims
+  type = getValueType claims, domain
   validateValueType type, claims['wdt:P31']
   validateLabels labels, type
   return validateClaims {
     newClaims: claims,
     currentClaims: {},
-    creating: true
+    creating: true,
+    domain
   }
 
-getValueType = (claims)->
+getValueType = (claims, domain)->
   wdtP31 = claims['wdt:P31']
   unless _.isNonEmptyArray wdtP31
     throw error_.new "wdt:P31 array can't be empty", 400, wdtP31
-  return getEntityType wdtP31
+  return getEntityType[domain](claims)
 
 validateValueType = (type, wdtP31)->
   unless type?

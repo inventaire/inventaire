@@ -6,7 +6,7 @@ entities_ = require './entities'
 radio = __.require 'lib', 'radio'
 retryOnConflict = __.require 'lib', 'retry_on_conflict'
 Entity = __.require 'models', 'entity'
-getEntityType = require './get_entity_type'
+{ inv: getEntityType } = require './get_entity_type'
 validateClaim = require './validate_claim'
 validateClaimProperty = require './validate_claim_property'
 inferredClaimUpdates = require './inferred_claim_updates'
@@ -25,7 +25,7 @@ updateInvClaim = (user, id, property, oldVal, newVal)->
       context = { id, property, oldVal, newVal }
       throw error_.new 'this entity is obsolete', 400, context
 
-    type = getEntityType currentDoc.claims['wdt:P31']
+    type = getEntityType currentDoc.claims
     validateClaimProperty type, property
     updateClaim { type, property, oldVal, newVal, userId, currentDoc, userIsAdmin }
 

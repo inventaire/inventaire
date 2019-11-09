@@ -11,7 +11,7 @@ wdk = require 'wikidata-sdk'
 getOriginalLang = __.require 'lib', 'wikidata/get_original_lang'
 formatClaims = __.require 'lib', 'wikidata/format_claims'
 { simplify } = wdk
-getEntityType = require './get_entity_type'
+{ wd: getEntityType } = require './get_entity_type'
 { prefixifyWd } = __.require 'controllers', 'entities/lib/prefix'
 entities_ = require './entities'
 cache_ = __.require 'lib', 'cache'
@@ -20,7 +20,7 @@ getWdEntity = __.require 'data', 'wikidata/get_entity'
 addImageData = require './add_image_data'
 radio = __.require 'lib', 'radio'
 propagateRedirection = require './propagate_redirection'
-{ _id:hookUserId } = __.require('couch', 'hard_coded_documents').users.hook
+{ _id: hookUserId } = __.require('couch', 'hard_coded_documents').users.hook
 
 module.exports = (ids, params)->
   promises_.all ids.map(getCachedEnrichedEntity(params))
@@ -44,16 +44,12 @@ format = (entity)->
     radio.emit 'wikidata:entity:cache:miss', entity.id
     return formatEmpty 'missing', entity
 
-  { P31, P279 } = entity.claims
-  if P31? or P279?
-    simplifiedP31 = wdk.simplifyPropertyClaims P31, simplifyClaimsOptions
-    simplifiedP279 = wdk.simplifyPropertyClaims P279, simplifyClaimsOptions
-    entity.type = getEntityType simplifiedP31, simplifiedP279
-  else
-    # Make sure to override the type as Wikidata entities have a type with
-    # another role in Wikibase, and we need this absence of known type to
-    # filter-out entities that aren't in our focus (i.e. not works, author, etc)
-    entity.type = null
+  entity.claims = formatClaims entity.claims
+
+  # Make sure to override the type as Wikidata entities have a type with
+  # another role in Wikibase, and we need this absence of known type to
+  # filter-out entities that aren't in our focus (i.e. not works, humans, etc)
+  entity.type = getEntityType entity.claims
 
   radio.emit 'wikidata:entity:cache:miss', entity.id, entity.type
 
@@ -65,13 +61,12 @@ format = (entity)->
 simplifyClaimsOptions = { entityPrefix: 'wd' }
 
 formatValidEntity = (entity)->
-  { id:wdId } = entity
+  { id: wdId } = entity
   entity.uri = "wd:#{wdId}"
   entity.labels = simplify.labels entity.labels
   entity.aliases = simplify.aliases entity.aliases
   entity.descriptions = simplify.descriptions entity.descriptions
   entity.sitelinks = simplify.sitelinks entity.sitelinks
-  entity.claims = formatClaims entity.claims, wdId
   entity.originalLang = getOriginalLang entity.claims
 
   formatAndPropagateRedirection entity

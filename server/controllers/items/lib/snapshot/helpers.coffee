@@ -14,7 +14,8 @@ module.exports =
     # Case when a raw entity doc is passed,
     # which can only be an inv entity doc
     uri = getInvEntityCanonicalUri updatedDoc
-    type = getEntityType updatedDoc.claims['wdt:P31']
+    domain = if uri.startsWith('wd') then 'wd' else 'inv'
+    type = getEntityType[domain](updatedDoc.claims)
     return [ uri, type ]
 
   getNames: (preferedLang, entities)->

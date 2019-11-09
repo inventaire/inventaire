@@ -9,7 +9,7 @@ module.exports = (params)->
   { labels, claims, userId, batchId } = params
   _.log params, 'inv entity creation'
 
-  validateEntity { labels, claims }
+  validateEntity { labels, claims }, 'inv'
   .then -> entities_.createBlank()
   .then (currentDoc)->
     entities_.edit {
