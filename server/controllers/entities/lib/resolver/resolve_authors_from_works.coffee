@@ -8,10 +8,11 @@ getAuthorsFromWorksUris = require './get_authors_from_works_uris'
 
 module.exports = (authors, works)->
   worksUris = getAlreadyResolvedUris works
+  if worksUris.length is 0 then return Promise.resolve authors
   Promise.all authors.map(resolveAuthor(worksUris))
 
 resolveAuthor = (worksUris)-> (author)->
-  if author.uri? or _.isEmpty(worksUris) then return author
+  if author.uri? then return author
   authorSeedTerms = getEntityNormalizedTerms author
   getAuthorsFromWorksUris worksUris
   .filter someTermsMatch(authorSeedTerms)
