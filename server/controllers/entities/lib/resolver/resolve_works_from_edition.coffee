@@ -2,10 +2,11 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 { Promise } = __.require 'lib', 'promises'
-{ getAlreadyResolvedUris, ifSomeLabelsMatch, getLabels, resolveSeed } = require './helpers'
+{ getAlreadyResolvedUris, someTermsMatch, resolveSeed } = require './helpers'
 entities_ = require '../entities'
 getEntitiesList = require '../get_entities_list'
 getEntityByUri = require '../get_entity_by_uri'
+{ getEntityNormalizedTerms } = require '../terms_normalization'
 
 module.exports = (worksSeeds, editionSeed)->
   unless editionSeed.uri? then return Promise.resolve worksSeeds
@@ -18,6 +19,6 @@ module.exports = (worksSeeds, editionSeed)->
     .then (worksEntities)-> worksSeeds.map resolveWork(worksEntities)
 
 resolveWork = (worksEntities)-> (workSeed)->
-  workSeedLabels = getLabels workSeed
-  matchingWorks = worksEntities.filter(ifSomeLabelsMatch(workSeedLabels))
+  workSeedTerms = getEntityNormalizedTerms workSeed
+  matchingWorks = worksEntities.filter(someTermsMatch(workSeedTerms))
   return resolveSeed(workSeed)(matchingWorks)

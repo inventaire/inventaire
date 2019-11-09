@@ -5,9 +5,11 @@ _ = __.require 'builders', 'utils'
 getWorksFromAuthorsUris = require './get_works_from_authors_uris'
 typeSearch = __.require 'controllers', 'search/lib/type_search'
 parseResults = __.require 'controllers', 'search/lib/parse_results'
+{ getEntityNormalizedTerms } = require '../terms_normalization'
+getAuthorsUris = require '../get_authors_uris'
 
 # resolve :
-# - if seeds labels match entities labels
+# - if seeds terms match entities terms
 # - if no other entities are in the search result (only one entity found)
 
 module.exports = (entry)->
@@ -19,23 +21,22 @@ module.exports = (entry)->
 
 searchAuthorAndResolve = (works)-> (author)->
   if not author? or author.uri? then return
-  searchUrisByAuthorLabels author.labels
+  authorTerms = getEntityNormalizedTerms author
+  searchUrisByAuthorTerms authorTerms
   .then resolveWorksAndAuthor(works, author)
 
-# TODO: extend search to aliases
-searchUrisByAuthorLabels = (labels)->
-  labels = getLabels labels
-  Promise.all labels.map(searchUrisByAuthorLabel)
+searchUrisByAuthorTerms = (terms)->
+  Promise.all terms.map(searchUrisByAuthorLabel)
   .then _.flatten
   .then _.uniq
 
 types = [ 'humans' ]
 
-searchUrisByAuthorLabel = (label)->
-  typeSearch types, label
+searchUrisByAuthorLabel = (term)->
+  typeSearch types, term
   .then parseResults(types)
-  # Exact match on author labels
-  .filter (hit)-> label in _.values(hit._source.labels)
+  # Exact match on normalized author terms
+  .filter (hit)-> term in getEntityNormalizedTerms(hit._source)
   .map (hit)-> hit._source.uri
   .then _.compact
 
@@ -44,27 +45,21 @@ resolveWorksAndAuthor = (works, author)-> (authorsUris)->
 
 getWorkAndResolve = (authorSeed, authorsUris)-> (work)->
   if work.uri? or not work? then return
-  workLabels = getLabels work.labels
+  workTerms = getEntityNormalizedTerms work
   Promise.all getWorksFromAuthorsUris(authorsUris)
   .then _.flatten
-  .then resolveWorkAndAuthor(authorsUris, authorSeed, work, workLabels)
+  .then resolveWorkAndAuthor(authorsUris, authorSeed, work, workTerms)
 
-resolveWorkAndAuthor = (authorsUris, authorSeed, workSeed, workLabels)-> (searchedWorks)->
-  lowerSeedLabels = workLabels.map _.toLower
+resolveWorkAndAuthor = (authorsUris, authorSeed, workSeed, workTerms)-> (searchedWorks)->
   # Several searchedWorks could match authors homonyms/duplicates
   unless searchedWorks.length is 1 then return
   searchedWork = searchedWorks[0]
   matchedAuthorsUris = _.intersection getAuthorsUris(searchedWork), authorsUris
   # If unique author to avoid assigning a work to a duplicated author
   unless matchedAuthorsUris.length is 1 then return
-  searchedWorkLabels = getLabels searchedWork.labels
-  lowerSearchedWorkLabels = searchedWorkLabels.map _.toLower
-  matchedWorkLabels = _.intersection lowerSeedLabels, lowerSearchedWorkLabels
-  if matchedWorkLabels.length is 0 then return
+  searchedWorkTerms = getEntityNormalizedTerms searchedWork
+
+  unless _.someMatch workTerms, searchedWorkTerms then return
 
   authorSeed.uri = matchedAuthorsUris[0]
   workSeed.uri = searchedWork.uri
-
-getLabels = (labels)-> _.uniq _.values labels
-
-getAuthorsUris = (work)-> work.claims['wdt:P50']

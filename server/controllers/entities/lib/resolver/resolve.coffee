@@ -4,14 +4,14 @@ _ = __.require 'builders', 'utils'
 resolveEdition = require './resolve_edition'
 resolveSeedsByExternalIds = require './resolve_seeds_by_external_ids'
 resolveInContext = require './resolve_in_context'
-resolveOnLabels = require './resolve_on_labels'
+resolveOnTerms = require './resolve_on_terms'
 
 module.exports = (entry)->
   resolveEdition entry
   .then resolveAuthors
   .then resolveWorks
   .then resolveInContext
-  .then resolveOnLabels
+  .then resolveOnTerms
   .then (entry)->
     addResolvedFlag(entry.edition)
     if entry.works then entry.works.forEach(addResolvedFlag)

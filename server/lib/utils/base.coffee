@@ -84,7 +84,7 @@ module.exports = base =
 
     return pathname + '?' + queryString[1..-1]
 
-  haveAMatch: (arrayA, arrayB)->
+  someMatch: (arrayA, arrayB)->
     unless _.isArray(arrayA) and _.isArray(arrayB) then return false
     for valueA in arrayA
       for valueB in arrayB

@@ -6,7 +6,7 @@
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
 { defer } = __.require 'lib', 'promises'
-{ normalizeTerm } = __.require 'controllers', 'entities/lib/terms_normalization'
+{ normalizeTerm } = require '../terms_normalization'
 { oneMinute } =  __.require 'lib', 'times'
 
 cache = {}
