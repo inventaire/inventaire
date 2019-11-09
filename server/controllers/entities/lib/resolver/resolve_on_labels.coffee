@@ -6,6 +6,7 @@ getWorksFromAuthorsUris = require './get_works_from_authors_uris'
 typeSearch = __.require 'controllers', 'search/lib/type_search'
 parseResults = __.require 'controllers', 'search/lib/parse_results'
 { getEntityNormalizedTerms } = __.require 'controllers', 'entities/lib/terms_normalization'
+getAuthorsUris = require '../get_authors_uris'
 
 # resolve :
 # - if seeds labels match entities labels
@@ -62,5 +63,3 @@ resolveWorkAndAuthor = (authorsUris, authorSeed, workSeed, workTerms)-> (searche
 
   authorSeed.uri = matchedAuthorsUris[0]
   workSeed.uri = searchedWork.uri
-
-getAuthorsUris = (work)-> work.claims['wdt:P50']
