@@ -3,7 +3,7 @@ _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
 entities_ = require './entities'
 Entity = __.require 'models', 'entity'
-getEntityType = require './get_entity_type'
+{ inv: getEntityType } = require './get_entity_type'
 typesWithoutLabels = require './types_without_labels'
 
 module.exports = (lang, value, userId, currentDoc)->

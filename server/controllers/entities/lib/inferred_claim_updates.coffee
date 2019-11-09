@@ -4,7 +4,7 @@
 
 __ = require('config').universalPath
 _ = __.require 'builders', 'utils'
-getEntityType = require './get_entity_type'
+{ inv: getEntityType } = require './get_entity_type'
 promises_ = __.require 'lib', 'promises'
 keepWorkLabelAndEditionTitleInSync = require './keep_work_label_and_edition_title_in_sync'
 

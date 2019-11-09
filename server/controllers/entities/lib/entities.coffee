@@ -9,7 +9,7 @@ isbn_ = __.require 'lib', 'isbn/isbn'
 couch_ = __.require 'lib', 'couch'
 validateClaims =  require './validate_claims'
 getInvEntityCanonicalUri = require './get_inv_entity_canonical_uri'
-getEntityType = require './get_entity_type'
+{ inv: getEntityType } = require './get_entity_type'
 radio = __.require 'lib', 'radio'
 { getUrlFromImageHash } = __.require 'lib', 'images'
 
@@ -74,7 +74,7 @@ module.exports = entities_ =
 
   addClaims: (userId, newClaims, currentDoc, batchId)->
     updatedDoc = _.cloneDeep currentDoc
-    validateClaims { newClaims, currentClaims: currentDoc.claims }
+    validateClaims { newClaims, currentClaims: currentDoc.claims, domain: 'inv' }
     .then -> Entity.addClaims updatedDoc, newClaims
     .then -> entities_.putUpdate { userId, currentDoc, updatedDoc, batchId }
 

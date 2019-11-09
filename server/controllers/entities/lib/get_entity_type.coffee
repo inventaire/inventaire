@@ -6,14 +6,19 @@ _ = __.require 'builders', 'utils'
 # Returns a entity type string: work, edition, article, human, genre
 # If no type is found from wdt:P31 (instance of), try with wdt:P279 (subclass of)
 # (useful for Wikidata entities only, as all inv entities have a known P31)
-module.exports = (claims)->
-  type = guessType claims, 'wdt:P31'
-  if type? then return type
+module.exports =
+  inv: (claims)->
+    typeClaim = claims['wdt:P31'][0]
+    return getType typeClaim
 
-  type = guessType claims, 'wdt:P279'
-  if type? then return type
+  wd: (claims)->
+    type = guessType claims, 'wdt:P31'
+    if type? then return type
 
-  return
+    type = guessType claims, 'wdt:P279'
+    if type? then return type
+
+    return
 
 guessType = (claims, property)->
   propertyClaims = claims[property]
@@ -30,8 +35,11 @@ guessType = (claims, property)->
         # Wikidata contributors may have set an item to be an edition, while it's actually a mix
         # of work and edition attributes. In absence of a clear edition shape, we consider it to be
         # a work
-        unless claims['wdt:P629']? then return 'work'
-      return type
+        # /!\ Edition quarantine: return undefined instead of 'edition'
+        if claims['wdt:P629']? then return
+        else return 'work'
+      else
+        return type
     else
       # Case with multiple P31 values: try to guess the most credible type
       isWork = 'work' in propertyTypes
@@ -39,7 +47,8 @@ guessType = (claims, property)->
       isSerie = 'serie' in propertyTypes
 
       # If it has 'edition of' claims, consider that it's an edition
-      if isEdition and claims['wdt:P629']? then return 'edition'
+      # /!\ Edition quarantine: return undefined instead of 'edition'
+      if isEdition and claims['wdt:P629']? then return
       # If it can be considered a serie, prefer that type over others
       if isSerie then return 'serie'
       if isWork then return 'work'

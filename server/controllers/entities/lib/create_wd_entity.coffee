@@ -6,7 +6,7 @@ wdEdit = require 'wikidata-edit'
 wdOauth = require './wikidata_oauth'
 { Promise } = __.require 'lib', 'promises'
 validateEntity = require './validate_entity'
-getEntityType = require './get_entity_type'
+{ wd: getEntityType } = require './get_entity_type'
 properties = require './properties/properties_values_constraints'
 { prefixifyWd, unprefixify } = require './prefix'
 whitelistedEntityTypes = [ 'work', 'serie', 'human', 'publisher' ]
@@ -37,7 +37,7 @@ createWdEntity = (params)->
 
 validate = (entity, isAlreadyValidated)->
   if isAlreadyValidated then Promise.resolve()
-  else validateEntity entity
+  else validateEntity entity, 'wd'
 
 validateWikidataCompliance = (entity)->
   { claims } = entity
