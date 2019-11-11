@@ -11,3 +11,5 @@ module.exports =
   get: require './get'
   put: require './update'
   delete: require './delete'
+
+require('./lib/keep_snapshot_items_counts_updated')()

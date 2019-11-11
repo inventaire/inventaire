@@ -36,3 +36,5 @@ module.exports =
     admin:
       'merge': require './merge'
       'revert-merge': require './revert_merge'
+
+require('./lib/update_search_engine')()

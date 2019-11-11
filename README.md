@@ -130,9 +130,11 @@ the app has a few core concepts:
 ## Contribute
 see [wiki](https://github.com/inventaire/inventaire/wiki) to get started, especially the [new contributors](https://github.com/inventaire/inventaire/wiki#new-contributors) section
 
-
 ## API
 see wiki: [API](https://github.com/inventaire/inventaire/wiki/API)
+
+## Administration
+see [Administration](./docs/administration.md)
 
 ## Day-dreaming on future evolutions
 

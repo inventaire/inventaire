@@ -117,7 +117,3 @@ undesiredPropertiesPerType =
   # Ignoring ISBN data set on work entities, as those
   # should be the responsability of edition entities
   work: [ 'P212', 'P957' ]
-
-# Not really related, out of the fact that it listen for
-# 'wikidata:entity:cache:miss', but that needed to be initialized somewhere
-require('./update_search_engine')()

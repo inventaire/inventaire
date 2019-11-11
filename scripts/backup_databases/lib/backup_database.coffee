@@ -1,12 +1,13 @@
-# If the need arise to use CONFIG directly, make sure to use get_custom_config
-# to be in lined with scripts/actions/backup_databases
-__ = require('config').universalPath
+CONFIG = require 'config'
+__ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 assert_ = __.require 'utils', 'assert_types'
 execa = require 'execa'
+{ backupFolder } = require('./get_backup_folder_data')()
+{ username, password, host, port } = CONFIG.db
 
-module.exports = (params, dbName)->
-  args = buildArgsArray params, dbName
+module.exports = (dbName)->
+  args = buildArgsArray backupFolder, dbName
 
   execa 'couchdb-backup', args
   .then (res)->
@@ -15,11 +16,7 @@ module.exports = (params, dbName)->
 
 # Depends on 'couchdb-backup' (from https://github.com/danielebailo/couchdb-dump)
 # being accessible from the $PATH
-buildArgsArray = (params, dbName)->
-  { host, port, username, password, backupFolder } = params
-  assert_.strings [ host, username, password, dbName, backupFolder ]
-  assert_.type 'number|string', port
-
+buildArgsArray = (backupFolder, dbName)->
   outputFile = "#{backupFolder}/#{dbName}.json"
 
   return [

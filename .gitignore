@@ -11,7 +11,6 @@ config/runtime.json
 db/leveldb*
 erl_crash.dump
 client
-docs
 wiki
 github-wiki
 .lev_history
