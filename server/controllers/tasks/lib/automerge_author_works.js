@@ -57,19 +57,19 @@ var addNormalizedTerms = function(work){
 
 var findPossibleMerge = wdWorks => (function(invWork) {
   const matches = wdWorks.filter(haveSomeMatchingTerms(invWork))
-  if (matches.length === 1) { return [ invWork.uri, matches[0].uri ] }
+  if (matches.length === 1) return [ invWork.uri, matches[0].uri ]
 })
 
 var haveSomeMatchingTerms = invWork => wdWork => _.someMatch(invWork.terms, wdWork.terms)
 
 var automergeWorks = authorUri => (function(mergeableCouples) {
-  if (mergeableCouples.length === 0) { return }
+  if (mergeableCouples.length === 0) return 
 
   _.log(mergeableCouples, `automerging works from author ${authorUri}`)
 
   var mergeNext = function() {
     const nextCouple = mergeableCouples.pop()
-    if (nextCouple == null) { return }
+    if (nextCouple == null) return 
     return mergeEntities(reconcilerUserId, ...Array.from(nextCouple))
     .then(mergeNext)
   }

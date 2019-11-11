@@ -27,7 +27,7 @@ describe('tasks:automerge', () => {
     .then((entities) => {
       // entity should have merged, thus URI is now a a WD uri
       entities[WdUri].should.be.ok()
-      return done()
+      done()
     }))).catch(undesiredErr(done))
 
   })
@@ -46,12 +46,12 @@ describe('tasks:automerge', () => {
     .get('entities')
     .then((entities) => {
       entities[wikidataUri].should.be.ok()
-      return done()
+      done()
     }))).catch(undesiredErr(done))
 
   })
 
-  return it('should not automerge if author name is in work title', (done) => {
+  it('should not automerge if author name is in work title', (done) => {
     const humanLabel = 'Frédéric Lordon'
     const workLabel = humanLabel
     createHuman({ labels: { en: humanLabel } })
@@ -61,7 +61,7 @@ describe('tasks:automerge', () => {
       tasks.length.should.aboveOrEqual(1)
       const firstOccurenceMatch = tasks[0].externalSourcesOccurrences[0].matchedTitles[0]
       firstOccurenceMatch.should.equal(humanLabel)
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })

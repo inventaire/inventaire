@@ -21,9 +21,9 @@ module.exports = function(req, res){
   _.log(req.body, 'update label body')
   if (_.isInvEntityId(id) && (uri == null)) { uri = `inv:${id}` }
 
-  if (uri == null) { return error_.bundleMissingBody(req, res, 'uri') }
-  if (lang == null) { return error_.bundleMissingBody(req, res, 'lang') }
-  if (value == null) { return error_.bundleMissingBody(req, res, 'value') }
+  if (uri == null) return error_.bundleMissingBody(req, res, 'uri')
+  if (lang == null) return error_.bundleMissingBody(req, res, 'lang')
+  if (value == null) return error_.bundleMissingBody(req, res, 'value')
 
   [ prefix, id ] = Array.from(uri.split(':'))
   const updater = updaters[prefix]

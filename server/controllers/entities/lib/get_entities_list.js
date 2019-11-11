@@ -16,6 +16,6 @@ const getEntitiesByUris = require('./get_entities_by_uris')
 // ex: getSomeUris.then(getEntitiesList)
 
 module.exports = function(uris){
-  if (uris == null) { return Promise.resolve([]) }
+  if (uris == null) return Promise.resolve([])
   return getEntitiesByUris({ uris, list: true })
 }

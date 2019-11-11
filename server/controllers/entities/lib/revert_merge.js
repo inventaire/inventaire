@@ -52,7 +52,7 @@ var findVersionBeforeRedirect = function(patches){
 var isntRedirection =  version => version.redirect == null
 
 var recoverPlaceholders = function(userId, removedPlaceholdersIds){
-  if ((removedPlaceholdersIds != null ? removedPlaceholdersIds.length : undefined) <= 0) { return promises_.resolved }
+  if ((removedPlaceholdersIds != null ? removedPlaceholdersIds.length : undefined) <= 0) return promises_.resolved
 
   const recoverFn = placeholders_.recover.bind(null, userId)
   return promises_.all(removedPlaceholdersIds.map(recoverFn))
@@ -60,7 +60,7 @@ var recoverPlaceholders = function(userId, removedPlaceholdersIds){
 
 var revertMergePatch = function(userId, fromUri, toUri){
   const [ prefix, toId ] = Array.from(toUri.split(':'))
-  if (prefix !== 'inv') { return }
+  if (prefix !== 'inv') return 
 
   return promises_.all([
     entities_.byId(toId),

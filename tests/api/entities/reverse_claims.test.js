@@ -22,7 +22,7 @@ describe('entities:reverse-claims', () => {
     .then(undesiredRes(done))
     .catch((err) => {
       err.body.status_verbose.should.equal('blacklisted property')
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -30,15 +30,15 @@ describe('entities:reverse-claims', () => {
     nonAuthReq('get', buildUrl('wdt:P921', 'wd:Q456'))
     .then((res) => {
       res.uris.should.be.an.Array()
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
-  return it('should accept whitelisted string value properties', (done) => {
+  it('should accept whitelisted string value properties', (done) => {
     nonAuthReq('get', buildUrl('wdt:P3035', '978-2-505'))
     .then((res) => {
       res.uris.should.be.an.Array()
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 })

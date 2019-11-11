@@ -21,11 +21,11 @@ describe('entities:resolve:non-strict mode', () => {
       res.errors.should.be.an.Array()
       res.errors[0].message.should.equal('no isbn or external id claims found')
       res.errors[0].entry.should.be.an.Object()
-      return done()}).catch(done)
+      done()}).catch(done)
 
   })
 
-  return it('should ignore and report create errors', (done) => {
+  it('should ignore and report create errors', (done) => {
     const entry = {
       edition: {
         isbn: generateIsbn13(),
@@ -40,7 +40,7 @@ describe('entities:resolve:non-strict mode', () => {
       res.errors.should.be.an.Array()
       res.errors[0].message.should.equal('invalid labels')
       res.errors[0].entry.should.be.an.Object()
-      return done()}).catch(done)
+      done()}).catch(done)
 
   })
 })

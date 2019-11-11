@@ -23,7 +23,7 @@ describe('groups:search-by-position', () => it('should get groups by position', 
       res.users.should.be.an.Array()
       const usersIds = _.map(res.users, '_id')
       should(usersIds.includes(user._id)).be.true()
-      return done()
+      done()
     })}).catch(done)
 
 }))

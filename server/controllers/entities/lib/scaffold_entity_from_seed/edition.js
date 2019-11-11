@@ -43,7 +43,7 @@ module.exports = function(seed){
 
   const isbnData = parseIsbn(seed.isbn)
 
-  if (isbnData == null) { return error_.reject('invalid isbn', 400, seed) }
+  if (isbnData == null) return error_.reject('invalid isbn', 400, seed)
 
   _.extend(seed, isbnData)
 

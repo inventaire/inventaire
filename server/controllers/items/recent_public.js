@@ -42,7 +42,7 @@ var selectRecentItems = (lang, limit) => (function(items) {
   const itemsCountByOwner = {}
 
   for (const item of items) {
-    if (recentItems.length === limit) { return recentItems }
+    if (recentItems.length === limit) return recentItems
     if (itemsCountByOwner[item.owner] == null) { itemsCountByOwner[item.owner] = 0 }
     if ((item.snapshot['entity:lang'] === lang) && (itemsCountByOwner[item.owner] < 3)) {
       itemsCountByOwner[item.owner]++

@@ -42,7 +42,7 @@ describe('Request Grouper', () => {
     })
 
     singleRequest.should.be.a.Function()
-    return done()
+    done()
   })
 
   it('should return a function that returns a promise', (done) => {
@@ -70,12 +70,12 @@ describe('Request Grouper', () => {
     ])
     .then(() => {
       spy.callCount.should.equal(1)
-      return done()
+      done()
     })
 
   })
 
-  return it('should throttle, not debounce: not waiting for inputs after the delay', (done) => {
+  it('should throttle, not debounce: not waiting for inputs after the delay', (done) => {
     const spy = sinon.spy()
     const fn = requestGrouper({
       delay: 10,
@@ -89,7 +89,7 @@ describe('Request Grouper', () => {
     .then((res) => {
       res.should.equal(mockRequesterSingleSync('input3'))
       spy.callCount.should.equal(2)
-      return done()
+      done()
     })
 
     setTimeout(late, 11)

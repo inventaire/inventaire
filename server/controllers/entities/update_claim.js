@@ -21,8 +21,8 @@ module.exports = function(req, res){
   _.log(req.body, 'update claim input')
   if (_.isInvEntityId(id) && (uri == null)) { uri = `inv:${id}` }
 
-  if (uri == null) { return error_.bundleMissingBody(req, res, 'uri') }
-  if (property == null) { return error_.bundleMissingBody(req, res, 'property') }
+  if (uri == null) return error_.bundleMissingBody(req, res, 'uri')
+  if (property == null) return error_.bundleMissingBody(req, res, 'property')
   if ((oldVal == null) && (newVal == null)) {
     return error_.bundleMissingBody(req, res, 'old-value|new-value')
   }

@@ -31,11 +31,11 @@ module.exports = (userId, authentifiedUserPromise) => promises_.all([
 
 var getAccessLevel = (userId, authentifiedUserPromise) => authentifiedUserPromise
 .then((requester) => {
-  if (requester == null) { return 'public' }
+  if (requester == null) return 'public'
 
   const requesterId = requester._id
 
-  if (requesterId === userId) { return 'private' }
+  if (requesterId === userId) return 'private'
 
   return user_.areFriendsOrGroupCoMembers(userId, requester._id)
   .then((bool) => { if (bool) { return 'network' } else { return 'public' } })

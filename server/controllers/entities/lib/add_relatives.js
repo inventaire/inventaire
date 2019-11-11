@@ -14,14 +14,14 @@ const _ = __.require('builders', 'utils')
 const getEntitiesByUris = require('./get_entities_by_uris')
 
 module.exports = function(relatives, refresh){
-  if (relatives == null) { return _.identity }
+  if (relatives == null) return _.identity
 
   var addRelatives = function(results){
     const { entities } = results
 
     const additionalEntitiesUris = getAdditionalEntitiesUris(entities, relatives)
 
-    if (additionalEntitiesUris.length === 0) { return results }
+    if (additionalEntitiesUris.length === 0) return results
 
     return getEntitiesByUris({ uris: additionalEntitiesUris, refresh })
     // Recursively add relatives, so that an edition could be sent

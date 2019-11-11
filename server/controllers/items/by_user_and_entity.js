@@ -41,9 +41,9 @@ var getItemsFromUser = (reqUserId, uri) => (function(user) {
 })
 
 var getAuthorizationLevel = function(reqUserId, ownerId){
-  if (reqUserId == null) { return promises_.resolve('public') }
+  if (reqUserId == null) return promises_.resolve('public')
 
-  if (reqUserId === ownerId) { return promises_.resolve('user') }
+  if (reqUserId === ownerId) return promises_.resolve('user')
 
   return user_.areFriendsOrGroupCoMembers(reqUserId, ownerId)
   .then((bool) => { if (bool) { return 'network' } else { return 'public' } })

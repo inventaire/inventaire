@@ -19,7 +19,7 @@ describe('token:reset-password', () => it('should reject requests without email'
   .then(undesiredRes(done))
   .catch((err) => {
     err.body.status_verbose.should.equal('missing parameter in query: email')
-    return done()}).catch(done)
+    done()}).catch(done)
 
 }))
 
@@ -29,6 +29,6 @@ describe('token:validation-email', () => it('should reject requests without emai
     followRedirect: false
   }).then((res) => {
     res.headers.location.should.equal('/?validEmail=false')
-    return done()}).catch(done)
+    done()}).catch(done)
 
 }))

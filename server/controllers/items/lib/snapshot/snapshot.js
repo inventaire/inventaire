@@ -32,7 +32,7 @@ const error_ = __.require('lib', 'error/error')
 
 module.exports = {
   addToItem(item){
-    if (item.snapshot != null) { return Promise.resolve(item) }
+    if (item.snapshot != null) return Promise.resolve(item)
 
     return getSnapshot(item.entity)
     .then((snapshot) => {
@@ -49,7 +49,7 @@ module.exports = {
 
 var getSnapshot = (uri, preventLoop) => db.get(uri)
 .then((snapshot) => {
-  if (snapshot != null) { return snapshot }
+  if (snapshot != null) return snapshot
 
   if (preventLoop === true) {
     // Known case: addToItem was called for an item which entity is a serie

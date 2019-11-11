@@ -26,8 +26,8 @@ module.exports = function(entry){
   let { edition } = entry
 
   if (_.isArray(edition)) {
-    if (edition.length > 1) { throw error_.new('multiple editions not supported', 400, { edition })
-    } else { edition = (entry.edition = edition[0]) }
+    if (edition.length > 1) throw error_.new('multiple editions not supported', 400, { edition })
+    else { edition = (entry.edition = edition[0]) }
   }
 
   if (edition == null) {
@@ -53,7 +53,7 @@ var sanitizeEdition = function(edition){
   sanitizeSeed(edition, 'edition')
 
   if (rawIsbn != null) {
-    if (!isValidIsbn(rawIsbn)) { throw error_.new('invalid isbn', 400, { edition }) }
+    if (!isValidIsbn(rawIsbn)) throw error_.new('invalid isbn', 400, { edition })
     return edition.isbn = normalizeIsbn(rawIsbn)
   } else {
     const claims = edition.claims || {}
@@ -102,7 +102,7 @@ var getIsbn = edition => edition.isbn || (edition.claims != null ? edition.claim
 
 var createWorkSeedFromEdition = function(edition){
   let lang
-  if (__guard__(edition.claims != null ? edition.claims['wdt:P1476'] : undefined, x => x[0]) == null) { return }
+  if (__guard__(edition.claims != null ? edition.claims['wdt:P1476'] : undefined, x => x[0]) == null) return
   const title = edition.claims['wdt:P1476'][0]
   const langWdId = edition.claims['wdt:P407'] != null ? edition.claims['wdt:P407'][0].split(':')[1] : undefined
   if (langWdId != null) { lang = wdLang.byWdId[langWdId] != null ? wdLang.byWdId[langWdId].code : undefined }

@@ -31,7 +31,7 @@ var deleteBySuggestionUriAndRecheckSuspects = (previousSuggestionUri, newSuggest
 .map(task => checkEntity(task.suspectUri))
 
 var archiveTasks = function(tasks){
-  if (tasks.length === 0) { return }
+  if (tasks.length === 0) return 
   const ids = _.map(tasks, '_id')
   return tasks_.update({ ids, attribute: 'state', newValue: 'merged' })
 }

@@ -82,7 +82,7 @@ module.exports = {
   slug(req, res){
     const { name, group:groupId } = req.query
 
-    if (name == null) { return error_.bundleMissingQuery(req, res, 'name') }
+    if (name == null) return error_.bundleMissingQuery(req, res, 'name')
 
     if ((groupId != null) && !_.isGroupId(groupId)) {
       return error_.bundleInvalid(req, res, 'group', groupId)

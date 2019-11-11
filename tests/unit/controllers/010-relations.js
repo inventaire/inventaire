@@ -54,7 +54,7 @@ describe('relations', () => describe('solveIntent', () => {
       spies.acceptRequest.callCount.should.equal(1)
       spies = resetSpies()
       spies.acceptRequest.callCount.should.equal(0)
-      return done()
+      done()
     })
 
     it("should makeRequest on status 'none'", (done) => {
@@ -62,26 +62,26 @@ describe('relations', () => describe('solveIntent', () => {
       solveIntent.requestFriend('a', 'b', 'none')
       spies.makeRequest.callCount.should.equal(1)
       totalSpiesCount().should.equal(1)
-      return done()
+      done()
     })
 
     it("should do nothing on status 'userRequested'", (done) => {
       solveIntent.requestFriend('a', 'b', 'userRequested')
       totalSpiesCount().should.equal(0)
-      return done()
+      done()
     })
 
     it("should simultaneousRequest on status 'otherRequested'", (done) => {
       solveIntent.requestFriend('a', 'b', 'otherRequested')
       spies.simultaneousRequest.callCount.should.equal(1)
       totalSpiesCount().should.equal(1)
-      return done()
+      done()
     })
 
-    return it("should do nothing on status 'friends'", (done) => {
+    it("should do nothing on status 'friends'", (done) => {
       solveIntent.requestFriend('a', 'b', 'friends')
       totalSpiesCount().should.equal(0)
-      return done()
+      done()
     })
   })
 
@@ -90,26 +90,26 @@ describe('relations', () => describe('solveIntent', () => {
     it("should do nothing on status 'none'", (done) => {
       solveIntent.cancelFriendRequest('a', 'b', 'none')
       totalSpiesCount().should.equal(0)
-      return done()
+      done()
     })
 
     it("should removeRelation on status 'userRequested'", (done) => {
       solveIntent.cancelFriendRequest('a', 'b', 'userRequested')
       spies.removeRelation.callCount.should.equal(1)
       totalSpiesCount().should.equal(1)
-      return done()
+      done()
     })
 
     it("should do nothing on status 'otherRequested'", (done) => {
       solveIntent.cancelFriendRequest('a', 'b', 'otherRequested')
       totalSpiesCount().should.equal(0)
-      return done()
+      done()
     })
 
-    return it("should do nothing on status 'friends'", (done) => {
+    it("should do nothing on status 'friends'", (done) => {
       solveIntent.cancelFriendRequest('a', 'b', 'friends')
       totalSpiesCount().should.equal(0)
-      return done()
+      done()
     })
   })
 
@@ -118,28 +118,28 @@ describe('relations', () => describe('solveIntent', () => {
     it("should do nothing on status 'none'", (done) => {
       solveIntent.removeFriendship('a', 'b', 'none')
       totalSpiesCount().should.equal(0)
-      return done()
+      done()
     })
 
     it("should removeRelation on status 'userRequested'", (done) => {
       solveIntent.removeFriendship('a', 'b', 'userRequested')
       spies.removeRelation.callCount.should.equal(1)
       totalSpiesCount().should.equal(1)
-      return done()
+      done()
     })
 
     it("should removeRelation on status 'otherRequested'", (done) => {
       solveIntent.removeFriendship('a', 'b', 'otherRequested')
       spies.removeRelation.callCount.should.equal(1)
       totalSpiesCount().should.equal(1)
-      return done()
+      done()
     })
 
-    return it("should removeRelation on status 'friends'", (done) => {
+    it("should removeRelation on status 'friends'", (done) => {
       solveIntent.removeFriendship('a', 'b', 'friends')
       spies.removeRelation.callCount.should.equal(1)
       totalSpiesCount().should.equal(1)
-      return done()
+      done()
     })
   })
 }))

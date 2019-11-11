@@ -27,13 +27,13 @@ describe('entities:update-claims-hooks', () => {
       .then((res) => {
         const refreshedWork = res.entities[work.uri]
         refreshedWork.labels.en.should.equal(updatedValue)
-        return done()
+        done()
       }))
     })).catch(undesiredErr(done))
 
   })
 
-  return it('should not update a work label if editions disagree on the title', (done) => {
+  it('should not update a work label if editions disagree on the title', (done) => {
     createWork()
     .then(work => promises_.all([
       createEditionFromWorks(work),
@@ -48,7 +48,7 @@ describe('entities:update-claims-hooks', () => {
       .then((res) => {
         const refreshedWork = res.entities[work.uri]
         refreshedWork.labels.en.should.equal(work.labels.en)
-        return done()
+        done()
       }))
     })).catch(undesiredErr(done))
 

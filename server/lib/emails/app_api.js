@@ -14,7 +14,7 @@ const root = CONFIG.fullPublicHost()
 module.exports = {
   // Keep in sync with client/app/api/img
   img(path, width = 1600, height = 1600){
-    if (!_.isNonEmptyString(path)) { return }
+    if (!_.isNonEmptyString(path)) return 
 
     if (path.startsWith('/ipfs/')) {
       console.warn('outdated img path', path)

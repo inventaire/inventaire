@@ -24,7 +24,7 @@ describe('transactions:update-state', () => it('should update state and apply si
     })
     .then((updateRes) => {
       updateRes.ok.should.be.true()
-      return done()
+      done()
     })}).catch(undesiredErr(done))
 
 }))

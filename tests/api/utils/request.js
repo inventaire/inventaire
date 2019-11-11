@@ -17,7 +17,7 @@ var testServerAvailability = () => breq.get(`${host}/api/tests`)
 .then(res => _.success('tests server is ready'))
 .timeout(1000)
 .catch((err) => {
-  if ((err.code !== 'ECONNREFUSED') && (err.name !== 'TimeoutError')) { throw err }
+  if ((err.code !== 'ECONNREFUSED') && (err.name !== 'TimeoutError')) throw err
   _.log('waiting for tests server', null, 'grey')
   return Promise.resolve()
   .delay(500)

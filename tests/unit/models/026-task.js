@@ -27,7 +27,7 @@ describe('task model', () => {
       const taskDoc = Task.create(validDoc())
       taskDoc.should.be.an.Object()
       taskDoc.type.should.equal('deduplicate')
-      return done()
+      done()
     })
 
     it('should return suspectUri and a suggestionUri', (done) => {
@@ -35,7 +35,7 @@ describe('task model', () => {
       taskDoc.suspectUri.should.equal(validDoc().suspectUri)
       taskDoc.suggestionUri.should.equal(validDoc().suggestionUri)
       _.expired(taskDoc.created, 100).should.be.false()
-      return done()
+      done()
     })
 
     it('should throw if no suspect', (done) => {
@@ -45,7 +45,7 @@ describe('task model', () => {
       }
       const taskDoc = () => Task.create(invalidDoc)
       taskDoc.should.throw()
-      return done()
+      done()
     })
 
     it('should throw if empty suspect', (done) => {
@@ -58,7 +58,7 @@ describe('task model', () => {
       try { taskDoc() }
       catch (err) { err.message.should.startWith('invalid suspect') }
       taskDoc.should.throw()
-      return done()
+      done()
     })
 
     it('should throw if no lexicalScore', (done) => {
@@ -68,17 +68,17 @@ describe('task model', () => {
       try { taskDoc() }
       catch (err) { err.message.should.startWith('invalid lexicalScore') }
       taskDoc.should.throw()
-      return done()
+      done()
     })
 
-    return it('should throw if no externalSourcesOccurrences', (done) => {
+    it('should throw if no externalSourcesOccurrences', (done) => {
       const invalidDoc = validDoc()
       delete invalidDoc.externalSourcesOccurrences
       const taskDoc = () => Task.create(invalidDoc)
       try { taskDoc() }
       catch (err) { err.message.should.startWith('invalid externalSourcesOccurrences') }
       taskDoc.should.throw()
-      return done()
+      done()
     })
   })
 
@@ -86,7 +86,7 @@ describe('task model', () => {
     it('should update a valid task with an dismissed state', (done) => {
       const taskDoc = Task.update(validDoc(), 'state', 'dismissed')
       taskDoc.state.should.equal('dismissed')
-      return done()
+      done()
     })
 
     it('should throw if invalid attribute to update', (done) => {
@@ -94,15 +94,15 @@ describe('task model', () => {
       try { taskDoc() }
       catch (err) { err.message.should.startWith('invalid attribute') }
       taskDoc.should.throw()
-      return done()
+      done()
     })
 
-    return it('should throw if invalid value', (done) => {
+    it('should throw if invalid value', (done) => {
       const taskDoc = () => Task.update(validDoc(), 'state', 'invalidValue')
       try { taskDoc() }
       catch (err) { err.message.should.startWith('invalid state') }
       taskDoc.should.throw()
-      return done()
+      done()
     })
   })
 })

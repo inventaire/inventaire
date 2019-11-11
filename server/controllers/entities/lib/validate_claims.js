@@ -60,7 +60,7 @@ var validatePropertyClaims = params => (function(property) {
 
 var perTypeClaimsTests = {
   edition(newClaims, creating){
-    if (!creating) { return }
+    if (!creating) return 
     const entityLabel = 'an edition'
     assertPropertyHasValue(newClaims, 'wdt:P629', entityLabel, 'an associated work')
     assertPropertyHasValue(newClaims, 'wdt:P1476', entityLabel, 'a title')

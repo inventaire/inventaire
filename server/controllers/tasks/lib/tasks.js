@@ -25,7 +25,7 @@ module.exports = (tasks_ = {
 
   update(options){
     const { ids, attribute, newValue } = options
-    if (ids.length === 0) { return promises_.resolve([]) }
+    if (ids.length === 0) return promises_.resolve([])
 
     return tasks_.byIds(ids)
     .map(task => Task.update(task, attribute, newValue))
@@ -62,7 +62,7 @@ module.exports = (tasks_ = {
     const { index, includeArchived } = options
     return db.viewByKeys('bySuspectUriAndState', getKeys(suspectUris, includeArchived))
     .then((tasks) => {
-      if (index !== true) { return tasks }
+      if (index !== true) return tasks
       const tasksBySuspectUris = _.groupBy(tasks, 'suspectUri')
       return completeWithEmptyArrays(tasksBySuspectUris, suspectUris)
     })
@@ -72,7 +72,7 @@ module.exports = (tasks_ = {
     const { index, includeArchived } = options
     return db.viewByKeys('bySuggestionUriAndState', getKeys(suggestionUris, includeArchived))
     .then((tasks) => {
-      if (index !== true) { return tasks }
+      if (index !== true) return tasks
       const tasksBySuggestionUris = _.groupBy(tasks, 'suggestionUri')
       return completeWithEmptyArrays(tasksBySuggestionUris, suggestionUris)
     })
@@ -81,7 +81,7 @@ module.exports = (tasks_ = {
 
 var getKeys = function(uris, includeArchived){
   const keys = uris.map(buildKey(null))
-  if (includeArchived == null) { return keys }
+  if (includeArchived == null) return keys
   const mergedKeys = uris.map(buildKey('merged'))
   const dissmissedKeys = uris.map(buildKey('dismissed'))
   return keys.concat(mergedKeys, dissmissedKeys)

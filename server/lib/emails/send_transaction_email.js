@@ -74,7 +74,7 @@ var findUserToNotify = function(transaction){
 
 const newTransaction = function(transaction){
   const ownerActed = _.some(transaction.actions, ownerIsActor)
-  if (ownerActed) { return false }
+  if (ownerActed) return false
   const ownerSentMessage = _.some(transaction.messages, OwnerIsSender(transaction))
   if (ownerSentMessage) { return false
   } else { return true }

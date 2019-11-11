@@ -23,12 +23,12 @@ const host = CONFIG.fullPublicHost()
 module.exports = function(req, res, next){
   let { url } = req.query
 
-  if (url == null) { return error_.bundleMissingQuery(req, res, 'url') }
+  if (url == null) return error_.bundleMissingQuery(req, res, 'url')
 
   url = decodeURIComponent(url)
   if (url[0] === '/') { url = host + url }
 
-  if (!_.isUrl(url)) { return error_.bundleInvalid(req, res, 'url', url) }
+  if (!_.isUrl(url)) return error_.bundleInvalid(req, res, 'url', url)
 
   return getImageDataUrl(url)
   .then(responses_.Wrap(res, 'data-url'))

@@ -34,7 +34,7 @@ module.exports = function(seed){
   }
 
   const cachedWorkPromise = workEntitiesCache.get(seed)
-  if (cachedWorkPromise != null) { return cachedWorkPromise }
+  if (cachedWorkPromise != null) return cachedWorkPromise
 
   return searchByText({ search: title, lang })
   .filter(isWork)

@@ -55,7 +55,7 @@ module.exports = function(data, callback){
   //   return callback new Error('Unsupported configuration, downgrade Nodemailer to v0.7.1 to use it')
 
   this._processPlugins('compile', mail, (err)=> {
-    if (err) { return callback(err) }
+    if (err) return callback(err)
     mail.message = mailcomposer(mail.data)
 
     // if mail.data.xMailer != false
@@ -74,7 +74,7 @@ module.exports = function(data, callback){
     // do not add anything, since all messages are 'Normal' by default
 
     return this._processPlugins('stream', mail, (err) => {
-      if (err) { return callback(err) }
+      if (err) return callback(err)
       // you can either be in preview or send mode
       // if preview
       const previewDir = data.previewDir || '/tmp/nodemailer-preview'

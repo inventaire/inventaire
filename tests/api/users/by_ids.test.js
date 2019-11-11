@@ -20,7 +20,7 @@ describe('users:by-ids', () => it('should get a user', (done) => {
       res.users.should.be.an.Object()
       res.users[userId].should.be.an.Object()
       res.users[userId]._id.should.equal(userId)
-      return done()
+      done()
     })}).catch(undesiredErr(done))
 
 }))

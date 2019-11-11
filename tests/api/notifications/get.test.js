@@ -15,6 +15,6 @@ describe('notifications:get', () => it('should get user notifications', (done) =
   authReq('get', '/api/notifications')
   .then((res) => {
     res.notifications.should.be.an.Array()
-    return done()}).catch(undesiredErr(done))
+    done()}).catch(undesiredErr(done))
 
 }))

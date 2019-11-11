@@ -22,7 +22,7 @@ const dbsList = require('./list')
 const designDocFolder = __.path('couchdb', 'design_docs')
 
 module.exports = function() {
-  if (!CONFIG.db.enableDesignDocSync) { return }
+  if (!CONFIG.db.enableDesignDocSync) return 
   // Wait for the end of the server initalization
   return setTimeout(init, 2000)
 }
@@ -42,11 +42,11 @@ var init = () => (() => {
 
 var isDesignDoc = designDocsNames => (function(doc) {
   const [ prefix, designDocsName ] = Array.from(doc._id.split('/'))
-  if (prefix !== '_design') { return false }
+  if (prefix !== '_design') return false
   // Design docs that aren't in the list aren't persisted:
   // this allows to have draft design docs in CouchDB that aren't worth
   // to be tracked by git without turning them into untracked files
-  if (!designDocsNames.includes(designDocsName)) { return false }
+  if (!designDocsNames.includes(designDocsName)) return false
   return true
 })
 
@@ -59,7 +59,7 @@ var syncDesignDocFile = function(change){
 
   return fs_.readFile(designDocPath, { encoding: 'utf-8' })
   .then((file) => {
-    if (updatedDesignDoc === file) { return }
+    if (updatedDesignDoc === file) return 
     return fs_.writeFile(designDocPath, updatedDesignDoc)
     .then(() => _.success(`${designDocName} design doc updated`))}).catch(_.Error(`${designDocName} design doc update err`))
 }

@@ -26,7 +26,7 @@ module.exports = function(claims, resolveOnWikidata = true){
     }
   }
 
-  if (externalIds.length === 0) { return Promise.resolve() }
+  if (externalIds.length === 0) return Promise.resolve()
 
   const requests = [ invQuery(externalIds) ]
   if (resolveOnWikidata) { requests.push(wdQuery(externalIds)) }

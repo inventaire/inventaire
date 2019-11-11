@@ -118,7 +118,7 @@ var applyInversePatch = function(currentDoc, inversePatch){
 // to work around cases known to crash
 var fixOperation = (currentDoc, inversePatch) => (function(op, index) {
   const opFn = operationFix[op.op]
-  if (opFn != null) { return opFn(currentDoc, inversePatch, op, index) }
+  if (opFn != null) return opFn(currentDoc, inversePatch, op, index)
 })
 
 var operationFix = {

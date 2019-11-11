@@ -18,30 +18,30 @@ describe('error_', () => {
       const err = error_.new('doh', 500)
       err.should.be.an.Object();
       (err instanceof Error).should.be.true()
-      return done()
+      done()
     })
 
     it('should have a message property', (done) => {
       const err = error_.new('doh', 500)
       err.message.should.equal('doh')
-      return done()
+      done()
     })
 
     it('should convert a number filter into a status code', (done) => {
       const err = error_.new('doh', 456)
       err.statusCode.should.equal(456)
       should(err.type).not.be.ok()
-      return done()
+      done()
     })
 
     it('should convert a string filter into an error type', (done) => {
       const err = error_.new('doh', 'pinaiz')
       err.type.should.equal('pinaiz')
       should(err.statusCode).not.be.ok()
-      return done()
+      done()
     })
 
-    return it('should pass following arguments as an array of context', (done) => {
+    it('should pass following arguments as an array of context', (done) => {
       const err = error_.new('doh', 'pinaiz', 'pizza', 'macharoni')
       err.type.should.equal('pinaiz')
       should(err.statusCode).not.be.ok()
@@ -49,7 +49,7 @@ describe('error_', () => {
       err.context.length.should.equal(2)
       err.context[0].should.equal('pizza')
       err.context[1].should.equal('macharoni')
-      return done()
+      done()
     })
   })
 
@@ -57,7 +57,7 @@ describe('error_', () => {
     error_.handler.should.be.a.Function()
     error_.Handler.should.be.a.Function()
     error_.Handler('yo').should.be.a.Function()
-    return done()
+    done()
   }))
 
   return describe('reject', () => {
@@ -68,16 +68,16 @@ describe('error_', () => {
       failed.catch((err) => {
         err.message.should.equal('doh')
         err.statusCode.should.equal(500)
-        return done()
+        done()
       })
 
     })
 
-    return it('should return a rejecting promise from an error object', (done) => {
+    it('should return a rejecting promise from an error object', (done) => {
       error_.reject(new Error('doh'), 500)
       .catch((err) => {
         err.message.should.equal('doh')
-        return done()
+        done()
       })
 
     })

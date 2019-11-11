@@ -23,9 +23,9 @@ module.exports = {
     const { user:userId, group:groupId, requester, token } = query
 
     if (requester != null) {
-      if (token == null) { return error_.bundleMissingQuery(req, res, 'token') }
+      if (token == null) return error_.bundleMissingQuery(req, res, 'token')
     } else {
-      if (token != null) { return error_.bundleMissingQuery(req, res, 'requester') }
+      if (token != null) return error_.bundleMissingQuery(req, res, 'requester')
     }
 
     // The reason to have this authentifying token system on a public endpoint

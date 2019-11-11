@@ -25,7 +25,7 @@ module.exports = function(req, res){
 }
 
 var parseAndValidateIds = function(ids){
-  if (!_.isNonEmptyString(ids)) { throw error_.newMissingQuery('ids') }
+  if (!_.isNonEmptyString(ids)) throw error_.newMissingQuery('ids')
 
   ids = ids.split('|')
   if (((ids != null ? ids.length : undefined) > 0) && validUsersIds(ids)) { return ids

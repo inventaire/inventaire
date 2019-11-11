@@ -24,7 +24,7 @@ describe('entities:update-labels', () => {
       .then(() => getByUri(human.uri))
       .then((updatedHuman) => {
         updatedHuman.labels.fr.should.equal('foo')
-        return done()
+        done()
       })}).catch(undesiredErr(done))
 
   })
@@ -36,7 +36,7 @@ describe('entities:update-labels', () => {
       .catch((err) => {
         err.statusCode.should.equal(400)
         err.body.status_verbose.should.startWith('invalid lang')
-        return done()}).catch(undesiredErr(done))
+        done()}).catch(undesiredErr(done))
 
   })
 
@@ -47,7 +47,7 @@ describe('entities:update-labels', () => {
       .catch((err) => {
         err.statusCode.should.equal(400)
         err.body.status_verbose.should.startWith('invalid value')
-        return done()}).catch(undesiredErr(done))
+        done()}).catch(undesiredErr(done))
 
   })
 
@@ -60,12 +60,12 @@ describe('entities:update-labels', () => {
     .catch((err) => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.startWith('already up-to-date')
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
 
-  return it('should accept rapid updates on the same entity', (done) => {
+  it('should accept rapid updates on the same entity', (done) => {
     const name = 'Georges'
     const langs = [ 'en', 'fr' ]
     humanPromise
@@ -77,7 +77,7 @@ describe('entities:update-labels', () => {
         return getByUri(human.uri)
         .then((updatedHuman) => {
           langs.forEach(lang => updatedHuman.labels[lang].should.equal(name))
-          return done()
+          done()
         })
       })}).catch(undesiredErr(done))
 

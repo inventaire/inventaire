@@ -21,7 +21,7 @@ const assert_ = __.require('utils', 'assert_types')
 const parseLatLng = function(query){
   let { bbox } = query
 
-  if (bbox == null) { return error_.rejectMissingQuery('bbox') }
+  if (bbox == null) return error_.rejectMissingQuery('bbox')
 
   try {
     bbox = JSON.parse(bbox)

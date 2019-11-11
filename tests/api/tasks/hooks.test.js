@@ -31,7 +31,7 @@ describe('tasks:hooks', () => {
         .then((tasks) => {
           const updatedTask = tasks[0]
           updatedTask.state.should.equal('merged')
-          return done()
+          done()
         })}).catch(done)
 
     })
@@ -47,12 +47,12 @@ describe('tasks:hooks', () => {
         .then((tasks) => {
           const updatedTask = tasks[0]
           updatedTask.state.should.equal('merged')
-          return done()
+          done()
         })}).catch(done)
 
     })
 
-    return it('should update relationScore of tasks with same suspect', (done) => {
+    it('should update relationScore of tasks with same suspect', (done) => {
       // John Smith is expected to have several merge suggestions
       createHuman({ labels: { en: 'John Smith' } })
       .then(human => checkEntities(human.uri))
@@ -66,7 +66,7 @@ describe('tasks:hooks', () => {
         .then((tasks) => {
           const updatedTask = tasks[0]
           updatedTask.relationScore.should.not.equal(taskRelationScore)
-          return done()
+          done()
         })}).catch(done)
 
     })
@@ -80,11 +80,11 @@ describe('tasks:hooks', () => {
         tasks.length.should.be.aboveOrEqual(1)
         return deleteEntityByUris(human.uri)}).then(() => getBySuspectUri(human.uri))).then((tasks) => {
         tasks.length.should.equal(0)
-        return done()}).catch(done)
+        done()}).catch(done)
 
     })
 
-    return it('should update tasks to merged state when an entity is deleted as a removed placeholder', (done) => {
+    it('should update tasks to merged state when an entity is deleted as a removed placeholder', (done) => {
       Promise.all([
         createHuman({ labels: { en: 'Fred Vargas' } }),
         createHuman({ labels: { en: 'Fred Vargas' } })
@@ -104,7 +104,7 @@ describe('tasks:hooks', () => {
         .then(() => getByIds(tasksA[0]._id))
         .then((remainingTasks) => {
           remainingTasks[0].state.should.equal('merged')
-          return done()
+          done()
         })
       })).catch(done)
 

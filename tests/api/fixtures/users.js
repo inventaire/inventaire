@@ -23,7 +23,7 @@ const connect = (endpoint, userData) => rawRequest('post', { url: endpoint, body
 const signup = userData => connect(`${authEndpoint}?action=signup`, userData)
 const login = userData => connect(`${authEndpoint}?action=login`, userData)
 .catch((err) => {
-  if (err.statusCode !== 401) { throw err }
+  if (err.statusCode !== 401) throw err
   return signup(userData)
 })
 

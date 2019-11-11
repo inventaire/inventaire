@@ -13,7 +13,7 @@ const { prefixifyWd } = __.require('controllers', 'entities/lib/prefix')
 
 module.exports = function(entity, existingTasks){
   const name = _.values(entity.labels)[0]
-  if (!_.isNonEmptyString(name)) { return }
+  if (!_.isNonEmptyString(name)) return 
 
   return search(name, 'humans')
   .then(searchResult => searchResult

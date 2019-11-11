@@ -71,5 +71,5 @@ var makeRequest = function(url){
 }
 
 var logStats = function() {
-  if (waiting > 0) { return _.info({ waiting, ongoing }, 'wikidata sparql requests queue stats') }
+  if (waiting > 0) return _.info({ waiting, ongoing }, 'wikidata sparql requests queue stats')
 }

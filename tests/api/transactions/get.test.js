@@ -21,7 +21,7 @@ describe('transactions:get', () => it('should get user transactions', (done) => 
       res2.transactions.should.be.an.Array()
       const transactionsIds = _.map(res2.transactions, '_id')
       transactionsIds.should.containEql(transaction._id)
-      return done()
+      done()
     })}).catch(undesiredErr(done))
 
 }))

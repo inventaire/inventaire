@@ -20,7 +20,7 @@ describe('groups:get', () => {
       res.groups.should.be.an.Array()
       const groupsIds = _.map(res.groups, '_id')
       should(groupsIds.includes(group._id)).be.true()
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   }))
@@ -33,7 +33,7 @@ describe('groups:get', () => {
       res.group._id.should.equal(group._id)
       res.group.name.should.equal(group.name)
       res.group.slug.should.equal(group.slug)
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   }))
@@ -46,7 +46,7 @@ describe('groups:get', () => {
       res.group._id.should.equal(group._id)
       res.group.name.should.equal(group.name)
       res.group.slug.should.equal(group.slug)
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   }))

@@ -15,7 +15,7 @@ const { undesiredRes } = require('../utils')
 describe('sanitize', () => {
   it('should be a function', (done) => {
     sanitize.should.be.a.Function()
-    return done()
+    done()
   })
 
   it('should return a promise', (done) => {
@@ -28,7 +28,7 @@ describe('sanitize', () => {
     sanitize(req, {}, configs)
     .catch((err) => {
       err.message.should.startWith('TypeError: expected object, got undefined')
-      return done()}).catch(done)
+      done()}).catch(done)
 
   })
 
@@ -45,7 +45,7 @@ describe('sanitize', () => {
       res.warnings.parameters.should.deepEqual([
         'unexpected config parameter: foo'
       ])
-      return done()}).catch(done)
+      done()}).catch(done)
 
   })
 
@@ -60,7 +60,7 @@ describe('sanitize', () => {
       res.warnings.parameters.should.deepEqual([
         'unexpected parameter: limit'
       ])
-      return done()}).catch(done)
+      done()}).catch(done)
 
   })
 
@@ -73,11 +73,11 @@ describe('sanitize', () => {
       sanitize(req, res, configs)
       .then((input) => {
         Object.keys(input).length.should.equal(0)
-        return done()}).catch(done)
+        done()}).catch(done)
 
     })
 
-    return it('should still validate optional parameters', (done) => {
+    it('should still validate optional parameters', (done) => {
       const req = { query: { lang: '1212515' } }
       const res = {}
       const configs = { lang: { optional: true } }
@@ -85,7 +85,7 @@ describe('sanitize', () => {
       .then(undesiredRes(done))
       .catch((err) => {
         err.message.should.equal('invalid lang: 1212515')
-        return done()}).catch(done)
+        done()}).catch(done)
 
     })
   })
@@ -97,7 +97,7 @@ describe('sanitize', () => {
     .then(undesiredRes(done))
     .catch((err) => {
       err.context.value.should.equal('*')
-      return done()}).catch(done)
+      done()}).catch(done)
 
   }))
 
@@ -116,7 +116,7 @@ describe('sanitize', () => {
       sanitize(req, res, configs)
       .then((input) => {
         input.includeUsers.should.be.true()
-        return done()}).catch(done)
+        done()}).catch(done)
 
     })
 
@@ -136,11 +136,11 @@ describe('sanitize', () => {
       .then(undesiredRes(done))
       .catch((err) => {
         err.message.should.equal('invalid generic name')
-        return done()}).catch(done)
+        done()}).catch(done)
 
     })
 
-    return it('should clone default values', (done) => {
+    it('should clone default values', (done) => {
       const req = { query: {} }
       const res = {}
 
@@ -157,7 +157,7 @@ describe('sanitize', () => {
       .then((input) => {
         input.foo.should.deepEqual({})
         input.foo.should.not.equal(obj)
-        return done()}).catch(done)
+        done()}).catch(done)
 
     })
   })
@@ -169,7 +169,7 @@ describe('sanitize', () => {
       sanitize(req, {}, configs)
       .then((input) => {
         input.limit.should.equal(5)
-        return done()}).catch(done)
+        done()}).catch(done)
 
     })
 
@@ -179,7 +179,7 @@ describe('sanitize', () => {
       sanitize(req, {}, configs)
       .then((input) => {
         input.limit.should.equal(100)
-        return done()}).catch(done)
+        done()}).catch(done)
 
     })
 
@@ -194,7 +194,7 @@ describe('sanitize', () => {
         res.warnings.parameters.should.deepEqual([
           "limit can't be over 500"
         ])
-        return done()}).catch(done)
+        done()}).catch(done)
 
     })
 
@@ -205,7 +205,7 @@ describe('sanitize', () => {
       .then(undesiredRes(done))
       .catch((err) => {
         err.message.should.equal('invalid limit: -5')
-        return done()}).catch(done)
+        done()}).catch(done)
 
     })
 
@@ -216,18 +216,18 @@ describe('sanitize', () => {
       .then(undesiredRes(done))
       .catch((err) => {
         err.message.should.equal('invalid limit: 5.5')
-        return done()}).catch(done)
+        done()}).catch(done)
 
     })
 
-    return it('should reject non-number values', (done) => {
+    it('should reject non-number values', (done) => {
       const req = { query: { limit: 'bla' } }
       const configs = { limit: {} }
       sanitize(req, {}, configs)
       .then(undesiredRes(done))
       .catch((err) => {
         err.message.should.equal('invalid limit: bla')
-        return done()}).catch(done)
+        done()}).catch(done)
 
     })
   })
@@ -240,18 +240,18 @@ describe('sanitize', () => {
       .then(undesiredRes(done))
       .catch((err) => {
         err.message.should.equal('invalid user: foo')
-        return done()}).catch(done)
+        done()}).catch(done)
 
     })
 
-    return it('should accept valid uuids', (done) => {
+    it('should accept valid uuids', (done) => {
       const req = { query: { user: '00000000000000000000000000000000' } }
       const configs = { user: {} }
       sanitize(req, {}, configs)
       .then((input) => {
         input.user.should.equal('00000000000000000000000000000000')
         input.userId.should.equal('00000000000000000000000000000000')
-        return done()}).catch(done)
+        done()}).catch(done)
 
     })
   })
@@ -264,18 +264,18 @@ describe('sanitize', () => {
       .then(undesiredRes(done))
       .catch((err) => {
         err.message.should.equal('invalid token: expected string, got number')
-        return done()}).catch(done)
+        done()}).catch(done)
 
     })
 
-    return it('should reject an invalid token', (done) => {
+    it('should reject an invalid token', (done) => {
       const req = { query: { token: 'foo' } }
       const configs = { token: { length: 32 } }
       sanitize(req, {}, configs)
       .then(undesiredRes(done))
       .catch((err) => {
         err.message.should.equal('invalid token length: expected 32, got 3')
-        return done()}).catch(done)
+        done()}).catch(done)
 
     })
   })
@@ -293,7 +293,7 @@ describe('sanitize', () => {
     .then(undesiredRes(done))
     .catch((err) => {
       err.message.should.equal('invalid foo: [123]')
-      return done()}).catch(done)
+      done()}).catch(done)
 
   }))
 
@@ -305,7 +305,7 @@ describe('sanitize', () => {
       .then(undesiredRes(done))
       .catch((err) => {
         err.message.should.equal('invalid uris: expected array, got number')
-        return done()}).catch(done)
+        done()}).catch(done)
 
     })
 
@@ -316,7 +316,7 @@ describe('sanitize', () => {
       .then(undesiredRes(done))
       .catch((err) => {
         err.message.should.startWith('invalid uri: expected uri, got')
-        return done()}).catch(done)
+        done()}).catch(done)
 
     })
 
@@ -326,17 +326,17 @@ describe('sanitize', () => {
       sanitize(req, {}, configs)
       .then((input) => {
         input.uris.should.deepEqual(req.query.uris)
-        return done()}).catch(done)
+        done()}).catch(done)
 
     })
 
-    return it('should accept uris as a pipe separated string', (done) => {
+    it('should accept uris as a pipe separated string', (done) => {
       const req = { query: { uris: 'wd:Q535|isbn:9782330056315' } }
       const configs = { uris: {} }
       sanitize(req, {}, configs)
       .then((input) => {
         input.uris.should.deepEqual(req.query.uris.split('|'))
-        return done()}).catch(done)
+        done()}).catch(done)
 
     })
   })
@@ -348,7 +348,7 @@ describe('sanitize', () => {
     .then(undesiredRes(done))
     .catch((err) => {
       err.message.should.startWith('invalid uri')
-      return done()}).catch(done)
+      done()}).catch(done)
 
   }))
 
@@ -360,7 +360,7 @@ describe('sanitize', () => {
       .then(undesiredRes(done))
       .catch((err) => {
         err.message.should.equal('invalid ids: expected array, got number')
-        return done()}).catch(done)
+        done()}).catch(done)
 
     })
 
@@ -371,7 +371,7 @@ describe('sanitize', () => {
       .then(undesiredRes(done))
       .catch((err) => {
         err.message.should.startWith('invalid id: expected id, got')
-        return done()}).catch(done)
+        done()}).catch(done)
 
     })
 
@@ -382,18 +382,18 @@ describe('sanitize', () => {
       sanitize(req, {}, configs)
       .then((input) => {
         input.ids.should.deepEqual([ id ])
-        return done()}).catch(done)
+        done()}).catch(done)
 
     })
 
-    return it('should reject an empty array', (done) => {
+    it('should reject an empty array', (done) => {
       const req = { query: { ids: [] } }
       const configs = { ids: {} }
       sanitize(req, {}, configs)
       .then(undesiredRes(done))
       .catch((err) => {
         err.message.should.startWith("ids array can't be empty")
-        return done()}).catch(done)
+        done()}).catch(done)
 
     })
   })
@@ -406,7 +406,7 @@ describe('sanitize', () => {
       sanitize(req, res, configs)
       .then((input) => {
         input.lang.should.equal('en')
-        return done()}).catch(done)
+        done()}).catch(done)
 
     })
 
@@ -417,11 +417,11 @@ describe('sanitize', () => {
       sanitize(req, res, configs)
       .then((input) => {
         input.lang.should.equal('fr')
-        return done()}).catch(done)
+        done()}).catch(done)
 
     })
 
-    return it('should reject an invalid lang', (done) => {
+    it('should reject an invalid lang', (done) => {
       const req = { query: { lang: '12512' } }
       const res = {}
       const configs = { lang: {} }
@@ -429,7 +429,7 @@ describe('sanitize', () => {
       .then(undesiredRes(done))
       .catch((err) => {
         err.message.should.equal('invalid lang: 12512')
-        return done()}).catch(done)
+        done()}).catch(done)
 
     })
   })
@@ -442,18 +442,18 @@ describe('sanitize', () => {
       sanitize(req, res, configs)
       .catch((err) => {
         err.message.should.startWith('invalid relative')
-        return done()}).catch(done)
+        done()}).catch(done)
 
     })
 
-    return it('should return relatives if whitelisted', (done) => {
+    it('should return relatives if whitelisted', (done) => {
       const req = { query: { relatives: [ 'bar', 'foo' ] } }
       const res = {}
       const configs = { relatives: { whitelist: [ 'foo', 'bar' ] } }
       sanitize(req, res, configs)
       .then((input) => {
         input.relatives.should.deepEqual([ 'bar', 'foo' ])
-        return done()}).catch(done)
+        done()}).catch(done)
 
     })
   })

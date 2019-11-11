@@ -22,7 +22,7 @@ module.exports = {
   },
 
   getRelationsStatuses(userId, usersIds){
-    if (userId == null) { return promises_.resolve([ [], [], usersIds ]) }
+    if (userId == null) return promises_.resolve([ [], [], usersIds ])
 
     return getFriendsAndGroupCoMembers(userId)
     .spread(spreadRelations(usersIds))
@@ -44,7 +44,7 @@ module.exports = {
   },
 
   getNetworkIds(userId){
-    if (userId == null) { return promises_.resolve([]) }
+    if (userId == null) return promises_.resolve([])
     return getFriendsAndGroupCoMembers(userId)
     .then(_.flatten)
   }

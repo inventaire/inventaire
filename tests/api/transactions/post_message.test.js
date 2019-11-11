@@ -19,7 +19,7 @@ describe('transactions:post:message', () => it('should create a transaction', (d
     return addMessage(transaction)
     .then((res2) => {
       res2.ok.should.be.true()
-      return done()
+      done()
     })}).catch(undesiredErr(done))
 
 }))

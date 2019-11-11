@@ -35,13 +35,13 @@ setTimeout(lateRequire, 0)
 module.exports = uri => getEntityByUri({ uri, dry: true })
 .then((entity) => {
   // Case where the entity wasn't available in cache
-  if (entity == null) { return 0 }
+  if (entity == null) return 0
 
   const { type } = entity
-  if (type == null) { return 0 }
+  if (type == null) return 0
 
   const getter = popularityGettersByType[type]
-  if (getter == null) { return 0 }
+  if (getter == null) return 0
 
   return getter(uri)}).then(addBonusPoints(uri))
 

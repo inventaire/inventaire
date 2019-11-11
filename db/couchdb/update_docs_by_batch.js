@@ -14,7 +14,7 @@ const Promise = require('bluebird')
 
 module.exports = params => (function(ids) {
   ids = _.compact(ids)
-  if (ids.length === 0) { throw new Error('no doc ids found') }
+  if (ids.length === 0) throw new Error('no doc ids found')
 
   const { db } = params
   const docUpdater = updateDoc(params)
@@ -26,7 +26,7 @@ var nextBatchUpdater = function(db, ids, docUpdater){
   const subgroups = splitInSubgroups(ids)
 
   var updateNextBatch = function() {
-    if (subgroups.length === 0) { return _.success('done updating !!') }
+    if (subgroups.length === 0) return _.success('done updating !!')
 
     const nextIdsBatch = subgroups.shift()
     _.log(nextIdsBatch.length, 'next bulk length')
@@ -40,7 +40,7 @@ var nextBatchUpdater = function(db, ids, docUpdater){
     // Remove docs that don't need an update
     .filter(_.identity)
     .then((docsToUpdate) => {
-      if (docsToUpdate.length === 0) { return }
+      if (docsToUpdate.length === 0) return 
       return db.bulk(docsToUpdate)
       // Let CouchDB breath
       .delay(interBulkDelay)}).then(updateNextBatch)
@@ -60,7 +60,7 @@ var updateDoc = function(params){
   .then((updatedDoc) => {
     if (objDiff(doc, updatedDoc)) {
       docDiff(doc, updatedDoc, preview)
-      if (!preview) { return updatedDoc }
+      if (!preview) return updatedDoc
     } else {
       log(doc._id, 'no changes')
       return

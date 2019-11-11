@@ -18,7 +18,7 @@ const placeholderUrl = '/unknown'
 const requests_ = require('./requests')
 
 const track = function(req, actionArray){
-  if (!enabled) { return }
+  if (!enabled) return 
 
   const { _id:userId, language } = req.user
   let { referer:url, 'user-agent':ua, 'accept-language':al } = req.headers

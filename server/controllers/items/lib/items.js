@@ -137,7 +137,7 @@ module.exports = (items_ = {
 
   getUsersAndItemsPublicData(reqUserId){ return function(usersIds){
     _.log(usersIds, 'usersIds')
-    if (usersIds.length <= 0) { return [ [], [] ] }
+    if (usersIds.length <= 0) return [ [], [] ]
     return promises_.all([
       user_.getUsersByIds(usersIds, reqUserId),
       getByAccessLevel.public(usersIds)
@@ -184,7 +184,7 @@ var itemWithImage = item => item.snapshot['entity:image']
 
 var validateEntityType = item => getEntityByUri({ uri: item.entity })
 .then((entity) => {
-  if (entity == null) { throw error_.new('entity not found', 400, { item }) }
+  if (entity == null) throw error_.new('entity not found', 400, { item })
 
   const { type } = entity
 

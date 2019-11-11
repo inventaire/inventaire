@@ -27,7 +27,7 @@ const { updateEnabled, host, delay } = CONFIG.entitiesSearchEngine
 const radio = __.require('lib', 'radio')
 
 module.exports = function() {
-  if (!updateEnabled || offline) { return }
+  if (!updateEnabled || offline) return 
 
   _.info('initializing entitiesSearchEngine update')
 

@@ -19,7 +19,7 @@ describe('auth:signup', () => {
     .then(undesiredRes(done))
     .catch((err) => {
       err.body.status_verbose.should.equal('missing parameter in body: username')
-      return done()}).catch(done)
+      done()}).catch(done)
 
   })
 
@@ -28,7 +28,7 @@ describe('auth:signup', () => {
     .then(undesiredRes(done))
     .catch((err) => {
       err.body.status_verbose.should.equal('missing parameter in body: email')
-      return done()}).catch(done)
+      done()}).catch(done)
 
   })
 
@@ -39,18 +39,18 @@ describe('auth:signup', () => {
     }).then(undesiredRes(done))
     .catch((err) => {
       err.body.status_verbose.should.equal('missing parameter in body: password')
-      return done()}).catch(done)
+      done()}).catch(done)
 
   })
 
-  return it('should create a user', (done) => {
+  it('should create a user', (done) => {
     nonAuthReq('post', endpoint, {
       username: randomString(4),
       email: `bla${randomString(4)}@foo.bar`,
       password: randomString(8)
     }).then((res) => {
       res.ok.should.be.true()
-      return done()}).catch(done)
+      done()}).catch(done)
 
   })
 })

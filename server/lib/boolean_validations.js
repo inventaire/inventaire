@@ -29,12 +29,12 @@ module.exports = (tests = {
   isLang: bindedTest('Lang'),
   isInvEntityId: isCouchUuid,
   isInvEntityUri(uri){
-    if (!isNonEmptyString(uri)) { return false }
+    if (!isNonEmptyString(uri)) return false
     const [ prefix, id ] = Array.from(uri != null ? uri.split(':') : undefined)
     return (prefix === 'inv') && isCouchUuid(id)
   },
   isWdEntityUri(uri){
-    if (!_.isNonEmptyString(uri)) { return false }
+    if (!_.isNonEmptyString(uri)) return false
     const [ prefix, id ] = Array.from(uri != null ? uri.split(':') : undefined)
     return (prefix === 'wd') && wdk.isItemId(id)
   },

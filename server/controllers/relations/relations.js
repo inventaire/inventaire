@@ -15,7 +15,7 @@ const { Promise } = __.require('lib', 'promises')
 
 module.exports = {
   get(req, res){
-    if (req.user == null) { return error_.unauthorizedApiAccess(req, res) }
+    if (req.user == null) return error_.unauthorizedApiAccess(req, res)
 
     return Promise.all([
       user_.getUserRelations(req.user._id),

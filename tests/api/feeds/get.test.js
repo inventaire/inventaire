@@ -21,7 +21,7 @@ describe('feeds:get', () => {
       return nonAuthReq('get', `/api/feeds?user=${userId}`)
       .then((res) => {
         res.startsWith('<?xml').should.be.true()
-        return done()
+        done()
       })}).catch(undesiredErr(done))
 
   })
@@ -39,7 +39,7 @@ describe('feeds:get', () => {
       return nonAuthReq('get', `/api/feeds?user=${userId}`)
       .then((res) => {
         res.includes(item._id).should.be.true()
-        return done()
+        done()
       })}).catch(undesiredErr(done))
 
   })
@@ -61,12 +61,12 @@ describe('feeds:get', () => {
         res.startsWith('<?xml').should.be.true()
         res.includes(itemA._id).should.be.false()
         res.includes(itemB._id).should.be.false()
-        return done()
+        done()
       })}).catch(undesiredErr(done))
 
   })
 
-  return it('should return private items when authorized', (done) => {
+  it('should return private items when authorized', (done) => {
     const userPromise = getUser()
     const itemAPromise = createItem(userPromise, { listing: 'private' })
     const itemBPromise = createItem(userPromise, { listing: 'network' })
@@ -83,7 +83,7 @@ describe('feeds:get', () => {
         res.startsWith('<?xml').should.be.true()
         res.includes(itemA._id).should.be.true()
         res.includes(itemB._id).should.be.true()
-        return done()
+        done()
       })}).catch(undesiredErr(done))
 
   })

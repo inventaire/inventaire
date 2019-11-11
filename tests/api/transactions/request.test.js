@@ -28,6 +28,6 @@ describe('transactions:request', () => it('should create a transaction', (done) 
     snapshot.requester.picture.should.equal(userA.picture)
     snapshot.entity.image.should.equal(userBItem.snapshot['entity:image'])
     snapshot.entity.authors.should.equal(userBItem.snapshot['entity:authors'])
-    return done()}).catch(undesiredErr(done))
+    done()}).catch(undesiredErr(done))
 
 }))

@@ -68,7 +68,7 @@ var sanitizeEntryAndDispatch = (sanitizedEntries, errors, strict) => (function(e
 })
 
 var sequentialResolve = function(entries, params, errors){
-  if (entries.length === 0) { return Promise.resolve([]) }
+  if (entries.length === 0) return Promise.resolve([])
 
   const { create, update, strict } = params
   const updateResolvedEntry = buildActionFn(update, UpdateResolvedEntry, params)
@@ -78,7 +78,7 @@ var sequentialResolve = function(entries, params, errors){
 
   var resolveNext = function() {
     const nextEntry = entries.shift()
-    if (nextEntry == null) { return resolvedEntries }
+    if (nextEntry == null) return resolvedEntries
 
     _.log(nextEntry, 'next entry')
 
@@ -111,6 +111,6 @@ var handleError = function(strict, errors, err, entry){
 
 var formatError = function(err){
   const { message, entry, context } = err
-  if (context === entry) { return { message, entry }
-  } else { return { message, context, entry } }
+  if (context === entry) return { message, entry }
+  else return { message, context, entry }
 }

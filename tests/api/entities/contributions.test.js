@@ -20,7 +20,7 @@ describe('entities:get:contributions', () => {
       return adminReq('get', `/api/entities?action=contributions&user=${_id}`)
       .then((res) => {
         res.patches.should.be.an.Array()
-        return done()
+        done()
       })}).catch(undesiredErr(done))
 
   })
@@ -37,7 +37,7 @@ describe('entities:get:contributions', () => {
         (patchesIds.includes(workB._id)).should.be.true();
         (patchesIds.includes(workA._id)).should.be.true();
         (patches[0].timestamp > patches[1].timestamp).should.be.true()
-        return done()
+        done()
       })}).catch(undesiredErr(done))
 
   })
@@ -52,7 +52,7 @@ describe('entities:get:contributions', () => {
         const { patches } = res
         patches.length.should.equal(1)
         workB._id.should.equal(patches[0]._id.split(':')[0])
-        return done()
+        done()
       })}).catch(undesiredErr(done))
 
   })
@@ -67,12 +67,12 @@ describe('entities:get:contributions', () => {
         const { patches } = res
         patches.length.should.equal(1)
         workA._id.should.equal(patches[0]._id.split(':')[0])
-        return done()
+        done()
       })}).catch(undesiredErr(done))
 
   })
 
-  return it('should return total and continue data', (done) => {
+  it('should return total and continue data', (done) => {
     create2WorksAndGetUser()
     .delay(1000)
     .spread((workA, workB, user) => {
@@ -96,7 +96,7 @@ describe('entities:get:contributions', () => {
           return adminReq('get', `/api/entities?action=contributions&user=${_id}&offset=3`)
           .then((res3) => {
             getWorkId(res3.patches[0]._id).should.equal(workA._id)
-            return done()
+            done()
           })
         }))
       })}).catch(undesiredErr(done))

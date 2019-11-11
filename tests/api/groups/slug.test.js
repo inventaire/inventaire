@@ -18,6 +18,6 @@ describe('groups:get:slug', () => it('should return a slug', (done) => {
   nonAuthReq('get', `/api/groups?action=slug&name=${encodedName}`)
   .then((res) => {
     res.slug.should.equal(slugify(name))
-    return done()}).catch(undesiredErr(done))
+    done()}).catch(undesiredErr(done))
 
 }))

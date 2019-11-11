@@ -17,7 +17,7 @@ describe('entities:exists-or-create-from-seed', () => {
     authReq('post', '/api/entities?action=exists-or-create-from-seed')
     .catch((err) => {
       err.body.status_verbose.should.startWith('missing parameter')
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -26,7 +26,7 @@ describe('entities:exists-or-create-from-seed', () => {
       { isbn: generateIsbn13() })
     .catch((err) => {
       err.body.status_verbose.should.startWith('missing parameter')
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -37,7 +37,7 @@ describe('entities:exists-or-create-from-seed', () => {
       authors: 1
     }).catch((err) => {
       err.body.status_verbose.should.startWith('invalid authors')
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -47,7 +47,7 @@ describe('entities:exists-or-create-from-seed', () => {
       title: randomLabel()
     }).catch((err) => {
       err.body.status_verbose.should.startWith('invalid isbn')
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -57,11 +57,11 @@ describe('entities:exists-or-create-from-seed', () => {
       title: randomLabel()
     }).then((res) => {
       res._id.should.be.a.String()
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
-  return it('should create an edition and a work from seed', (done) => {
+  it('should create an edition and a work from seed', (done) => {
     authReq('post', '/api/entities?action=exists-or-create-from-seed', {
       isbn: generateIsbn13(),
       title: randomLabel(),
@@ -74,7 +74,7 @@ describe('entities:exists-or-create-from-seed', () => {
       .get('entities')
       .then((entities) => {
         entities[workUri].should.be.an.Object()
-        return done()
+        done()
       })}).catch(undesiredErr(done))
 
   })

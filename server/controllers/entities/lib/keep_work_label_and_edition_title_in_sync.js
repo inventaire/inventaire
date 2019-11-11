@@ -19,7 +19,7 @@ const updateLabel = require('./update_label')
 module.exports = function(edition, oldTitle){
   const workUris = edition.claims['wdt:P629']
   // Ignore composite editions
-  if (workUris.length !== 1) { return }
+  if (workUris.length !== 1) return 
   const workUri = workUris[0]
   const editionLang = getOriginalLang(edition.claims)
 
@@ -30,12 +30,12 @@ module.exports = function(edition, oldTitle){
 
   const [ prefix, id ] = Array.from(workUri.split(':'))
   // local work entity all have an 'inv' prefix
-  if (prefix !== 'inv') { return }
+  if (prefix !== 'inv') return 
 
   // Check the opinion from other editions of this lang
   return fetchLangConsensusTitle(workUri, editionLang)
   .then((consensusEditionTitle) => {
-    if (!_.isNonEmptyString(consensusEditionTitle)) { return }
+    if (!_.isNonEmptyString(consensusEditionTitle)) return 
     return entities_.byId(id)
     .then(updateWorkLabel(editionLang, oldTitle, consensusEditionTitle))}).catch(_.Error('hook update err'))
 }

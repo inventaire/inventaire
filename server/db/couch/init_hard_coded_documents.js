@@ -20,7 +20,7 @@ module.exports = function() {
   // Known case: when starting CouchDB and the server together with docker-compose
   var sequentialUpdate = function() {
     const nextUser = users.shift()
-    if (nextUser == null) { return }
+    if (nextUser == null) return 
 
     return updateDoc(usersDb, nextUser)
     .then(sequentialUpdate)

@@ -25,7 +25,7 @@ describe('entities:popularity', () => {
       .then(undesiredRes(done))
       .catch((err) => {
         err.body.status_verbose.should.startWith('invalid ')
-        return done()}).catch(undesiredErr(done))
+        done()}).catch(undesiredErr(done))
 
     })
 
@@ -45,7 +45,7 @@ describe('entities:popularity', () => {
 
     })
 
-    return it('should count only one instance per owner', (done) => {
+    it('should count only one instance per owner', (done) => {
       createEdition()
       .then((edition) => {
         const { uri } = edition
@@ -64,7 +64,7 @@ describe('entities:popularity', () => {
 
     })
 
-    return it('should be incremented by every instances of editions', (done) => {
+    it('should be incremented by every instances of editions', (done) => {
       createEdition()
       .then((edition) => {
         const workUri = edition.claims['wdt:P629'][0]

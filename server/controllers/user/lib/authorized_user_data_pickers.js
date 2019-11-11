@@ -24,12 +24,12 @@ module.exports = {
     const attributes = getAttributes(extraAttribute)
     return function(userDoc){
       const userId = userDoc._id
-      if (userId === reqUserId) { return ownerSafeData(userDoc) }
+      if (userId === reqUserId) return ownerSafeData(userDoc)
 
       userDoc = _.pick(userDoc, attributes)
       delete userDoc.snapshot.private
 
-      if (networkIds.includes(userId)) { return userDoc }
+      if (networkIds.includes(userId)) return userDoc
 
       delete userDoc.snapshot.network
       return userDoc

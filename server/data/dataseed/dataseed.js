@@ -23,7 +23,7 @@ const { enabled, host } = CONFIG.dataseed
 module.exports = {
   getByIsbns(isbns, refresh){
     isbns = _.forceArray(isbns)
-    if (!enabled) { return promises_.resolve(isbns.map(emptySeed)) }
+    if (!enabled) return promises_.resolve(isbns.map(emptySeed))
     isbns = isbns.join('|')
     return requests_.get(_.buildPath(`${host}/books`, { isbns, refresh }))
   },
@@ -31,7 +31,7 @@ module.exports = {
   // Provides simply an image in a prompt maner
   getImageByIsbn(isbn){
     isbn = isbn_.toIsbn13(isbn)
-    if (!isbn) { return promises_.reject(new Error('invalid isbn')) }
+    if (!isbn) return promises_.reject(new Error('invalid isbn'))
     return requests_.get(_.buildPath(`${host}/images`, { isbn }))
   },
 

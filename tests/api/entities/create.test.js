@@ -20,7 +20,7 @@ describe('entities:create', () => {
     })
     .catch((err) => {
       err.body.status_verbose.should.equal("wdt:P31 array can't be empty")
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -31,7 +31,7 @@ describe('entities:create', () => {
     })
     .catch((err) => {
       err.body.status_verbose.should.equal('invalid labels')
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -42,7 +42,7 @@ describe('entities:create', () => {
     })
     .catch((err) => {
       err.body.status_verbose.should.equal("wdt:P31 value isn't a known valid value")
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -54,7 +54,7 @@ describe('entities:create', () => {
     .then((res) => {
       res._id.should.be.a.String()
       res._rev.should.be.a.String()
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -66,7 +66,7 @@ describe('entities:create', () => {
     .then((res) => {
       res._id.should.be.a.String()
       res._rev.should.be.a.String()
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -78,7 +78,7 @@ describe('entities:create', () => {
     .catch((err) => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.match(/expects a unique value/).should.be.ok()
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -91,7 +91,7 @@ describe('entities:create', () => {
     .catch((err) => {
       err.body.status_verbose.should.equal('invalid labels: []')
       err.statusCode.should.equal(400)
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -103,7 +103,7 @@ describe('entities:create', () => {
     .catch((err) => {
       err.body.status_verbose.should.equal('invalid claims: []')
       err.statusCode.should.equal(400)
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -117,7 +117,7 @@ describe('entities:create', () => {
     }).catch((err) => {
       err.body.status_verbose.should.equal('invalid property values')
       err.statusCode.should.equal(400)
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -133,7 +133,7 @@ describe('entities:create', () => {
     .catch((err) => {
       err.body.status_verbose.should.equal('invalid property')
       err.statusCode.should.equal(400)
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -149,7 +149,7 @@ describe('entities:create', () => {
     .catch((err) => {
       err.body.status_verbose.should.equal('invalid property value')
       err.statusCode.should.equal(400)
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -172,7 +172,7 @@ describe('entities:create', () => {
     .catch((err) => {
       err.body.status_verbose.should.equal('this property value is already used')
       err.statusCode.should.equal(400)
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -188,11 +188,11 @@ describe('entities:create', () => {
     .catch((err) => {
       err.body.status_verbose.should.equal("works can't have a property wdt:P1104")
       err.statusCode.should.equal(400)
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
-  return it('should reject invalid prefixes', (done) => {
+  it('should reject invalid prefixes', (done) => {
     authReq('post', '/api/entities?action=create', {
       prefix: 'foo',
       labels: {},
@@ -202,7 +202,7 @@ describe('entities:create', () => {
     .catch((err) => {
       err.body.status_verbose.should.startWith('invalid prefix: foo')
       err.statusCode.should.equal(400)
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 })

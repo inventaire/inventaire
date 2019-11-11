@@ -22,14 +22,14 @@ module.exports = _.extend({}, i18n, {
 
   // Keep in sync with client/app/lib/handlebars_helpers/images
   imgSrc(path, width, height){
-    if (isDataUrl(path)) { return path }
+    if (isDataUrl(path)) return path
 
     width = getImgDimension(width, 1600)
     width = bestImageWidth(width)
     height = getImgDimension(height, width)
     path = onePictureOnly(path)
 
-    if (path == null) { return '' }
+    if (path == null) return ''
 
     return appApi.img(path, width, height)
   }
@@ -37,7 +37,8 @@ module.exports = _.extend({}, i18n, {
 )
 
 var onePictureOnly = function(arg){
-  if (_.isArray(arg)) { return arg[0] } else { return arg }
+  if (_.isArray(arg)) return arg[0]
+  else return arg
 }
 
 var getImgDimension = function(dimension, defaultValue){

@@ -52,7 +52,7 @@ var validate = function(entity, isAlreadyValidated){
 
 var validateWikidataCompliance = function(entity){
   const { claims } = entity
-  if (claims == null) { throw error_.new('invalid entity', 400, entity) }
+  if (claims == null) throw error_.new('invalid entity', 400, entity)
 
   const entityType = getEntityType(claims['wdt:P31'])
   if (!whitelistedEntityTypes.includes(entityType)) {

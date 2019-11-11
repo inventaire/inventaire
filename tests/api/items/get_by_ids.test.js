@@ -18,7 +18,7 @@ describe('items:get-by-ids', () => {
     .then(item => authReq('get', `/api/items?action=by-ids&ids=${item._id}`)
     .then((res) => {
       res.items[0]._id.should.equal(item._id)
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
@@ -33,18 +33,18 @@ describe('items:get-by-ids', () => {
         const resIds = _.map(res.items, '_id').sort()
         resIds.should.deepEqual(ids)
         resIds.length.should.equal(ids.length)
-        return done()
+        done()
       })}).catch(undesiredErr(done))
 
   })
 
-  return it('should include users if requested', (done) => {
+  it('should include users if requested', (done) => {
     createItem(getUser())
     .then(item => authReq('get', `/api/items?action=by-ids&ids=${item._id}&include-users=true`)
     .then((res) => {
       res.items[0]._id.should.equal(item._id)
       res.users[0]._id.should.equal(item.owner)
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })

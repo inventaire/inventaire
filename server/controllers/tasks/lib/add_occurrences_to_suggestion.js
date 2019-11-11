@@ -13,7 +13,7 @@ const getOccurrencesFromEntities = __.require('controllers', 'entities/lib/get_o
 const { Promise } = __.require('lib', 'promises')
 
 module.exports = suspectWorksData => (function(suggestion) {
-  if (suggestion == null) { return [] }
+  if (suggestion == null) return []
   const { labels, langs } = suspectWorksData
   const { uri } = suggestion
 

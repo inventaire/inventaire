@@ -27,7 +27,7 @@ describe('groups:search', () => {
       .then((searchRes) => {
         let needle;
         ((needle = groupId, groupsIds(searchRes).includes(needle))).should.be.true()
-        return done()
+        done()
       })}).catch(undesiredErr(done))
 
   })
@@ -43,12 +43,12 @@ describe('groups:search', () => {
       .then((searchRes) => {
         let needle;
         ((needle = groupId, groupsIds(searchRes).includes(needle))).should.be.true()
-        return done()
+        done()
       })}).catch(undesiredErr(done))
 
   })
 
-  return it('should not find a group when not searchable', (done) => {
+  it('should not find a group when not searchable', (done) => {
     const name = groupName()
     authReq('post', '/api/groups?action=create', { name, searchable: false })
     .delay(1000)
@@ -58,7 +58,7 @@ describe('groups:search', () => {
       .then((searchRes) => {
         let needle;
         ((needle = groupId, groupsIds(searchRes).includes(needle))).should.not.be.true()
-        return done()
+        done()
       })}).catch(undesiredErr(done))
 
   })

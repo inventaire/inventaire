@@ -35,13 +35,13 @@ module.exports = {
   // Assumes that a requests made twice with the same body within 2 secondes
   // is an erronous request that should be blocked
   deduplicateRequests(req, res, next){
-    if (!deduplicateRequests) { return next() }
+    if (!deduplicateRequests) return next()
 
     const { method, url } = req
-    if (!methodsWithBody.includes(method)) { return next() }
+    if (!methodsWithBody.includes(method)) return next()
 
     const { pathname } = req._parsedUrl
-    if (ignorePathname.includes(pathname)) { return next() }
+    if (ignorePathname.includes(pathname)) return next()
 
     // If the request as no session cookie, simply use a hash of the header
     // Different users might have the same but users using Basic Auth will be distincts

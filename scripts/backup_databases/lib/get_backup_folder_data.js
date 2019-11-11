@@ -13,7 +13,7 @@ module.exports = function() {
   try {
     fs.mkdirSync(backupFolder)
   } catch (err) {
-    if (err.code !== 'EEXIST') { throw err }
+    if (err.code !== 'EEXIST') throw err
   }
 
   return { backupFolder, backupGeneralFolder, day }

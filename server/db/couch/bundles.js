@@ -21,7 +21,7 @@ module.exports = function(db, _){
 
   const bulkDelete = function(docs){
     assert_.objects(docs)
-    if (docs.length === 0) { return promises_.resolve([]) }
+    if (docs.length === 0) return promises_.resolve([])
     _.warn(docs, 'bulkDelete')
     return db.bulk(couch_.setDocsDeletedTrue(docs))
   }

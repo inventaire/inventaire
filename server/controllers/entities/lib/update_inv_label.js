@@ -15,7 +15,7 @@ const updateLabel = require('./update_label')
 const updateInvLabel = function(user, id, lang, value){
   const { _id:reqUserId } = user
 
-  if (!_.isInvEntityId(id)) { return error_.rejectInvalid('id', id) }
+  if (!_.isInvEntityId(id)) return error_.rejectInvalid('id', id)
 
   return entities_.byId(id)
   .then(updateLabel.bind(null, lang, value, reqUserId))

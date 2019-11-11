@@ -21,17 +21,17 @@ describe('items:last-public', () => {
       publicItemsPerUser: limit + 1 }).then(() => nonAuthReq('get', lastPublicUrl + `&limit=${limit}`))
     .then((res) => {
       res.items.length.should.equal(limit)
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
-  return it('should fetch 15 last-public items', (done) => {
+  it('should fetch 15 last-public items', (done) => {
     populate({
       usersCount: 1,
       publicItemsPerUser: 16 }).then(() => nonAuthReq('get', lastPublicUrl))
     .then((res) => {
       res.items.length.should.equal(15)
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 })

@@ -21,7 +21,7 @@ describe('entities:images', () => {
       res.images.should.be.an.Object()
       res.images['wd:Q535'].should.be.an.Array()
       res.images['wd:Q535'][0].should.be.a.String()
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -30,17 +30,17 @@ describe('entities:images', () => {
     .then(undesiredRes(done))
     .catch((err) => {
       err.statusCode.should.equal(400)
-      return done()
+      done()
     })
 
   })
 
-  return it('should redirect to the image if requested in options', (done) => {
+  it('should redirect to the image if requested in options', (done) => {
     const url = `${host}/api/entities?action=images&uris=wd:Q535&redirect=true&width=32`
     rawRequest('get', { url })
     .then((res) => {
       res.headers['content-type'].should.equal('image/jpeg')
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 })

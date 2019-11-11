@@ -87,7 +87,7 @@ var formatData = function(file, parsedData){
 
 const textInMarkups = /<.+>(.*)<\/\w+>/
 var removeMarkups = function(text){
-  if (text == null) { return }
+  if (text == null) return 
   // avoiding very long credits
   // including whole html documents
   // cf: http://tools.wmflabs.org/magnus-toolserver/commonsapi.php?image=F%C3%A9lix_Nadar_1820-1910_portraits_Jules_Verne.jpg&thumbwidth=1000

@@ -18,7 +18,7 @@ describe('items:get-by-users', () => {
     .then(item => authReq('get', `/api/items?action=by-users&users=${item.owner}`)
     .then((res) => {
       res.items[0]._id.should.equal(item._id)
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
@@ -38,7 +38,7 @@ describe('items:get-by-users', () => {
         resUsersIds.should.containDeep(usersIds)
         const resItemsIds = _.uniq(_.map(res.items, '_id'))
         resItemsIds.should.containDeep(itemsIds)
-        return done()
+        done()
       })}).catch(undesiredErr(done))
 
   })
@@ -58,12 +58,12 @@ describe('items:get-by-users', () => {
         resUsersIds.should.containDeep(usersIds)
         const resItemsIds = _.uniq(_.map(res.items, '_id'))
         resItemsIds.should.not.containEql(privateItemId)
-        return done()
+        done()
       })}).catch(undesiredErr(done))
 
   })
 
-  return it("should reject invalid filters'", (done) => {
+  it("should reject invalid filters'", (done) => {
     getUser()
     .then((user) => {
       const { _id: userId } = user
@@ -71,7 +71,7 @@ describe('items:get-by-users', () => {
     .catch((err) => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.startWith('invalid filter')
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 })

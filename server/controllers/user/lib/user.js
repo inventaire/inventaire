@@ -77,7 +77,7 @@ var user_ = {
 
   getUsersByIds(ids, reqUserId){
     assert_.array(ids)
-    if (ids.length === 0) { return promises_.resolve([]) }
+    if (ids.length === 0) return promises_.resolve([])
     return user_.getUsersAuthorizedData(user_.byIds(ids), reqUserId)
   },
 

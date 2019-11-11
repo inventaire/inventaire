@@ -43,7 +43,7 @@ module.exports = function(_){
         throw new Error('invalid error object')
       }
 
-      if (err._hasBeenLogged) { return }
+      if (err._hasBeenLogged) return 
 
       // If the error is of a lower lever than 500, make it a warning, not an error
       if ((err.statusCode != null) && (err.statusCode < 500)) {
@@ -76,7 +76,7 @@ module.exports = function(_){
       // Errors that have a status code of 404 don't need to be logged
       // as they will be logged by the request logger middleware (morgan)
       // and logging the error object is of no help, everything is in the URL
-      if (err._hasBeenLogged || (err.statusCode === 404)) { return }
+      if (err._hasBeenLogged || (err.statusCode === 404)) return 
       if (err instanceof Error) {
         // shorten the stack trace
         err.stack = err.stack.split('\n').slice(0, 3).join('\n')

@@ -15,7 +15,7 @@ const { getLastItems, formatData, embedUsersData, getHighlightedItems } = requir
 module.exports = function(user, limitDate = 0){
   const { _id:userId, position, lang } = user
 
-  if (position == null) { return formatData([], 'nearby', lang, []) }
+  if (position == null) return formatData([], 'nearby', lang, [])
 
   return items_.nearby(userId, 20, true)
   .spread(formatItems(limitDate, position, lang))

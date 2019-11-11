@@ -21,7 +21,7 @@ var isMatchingDatabase = function(suffix){
 
   return function(dbName){
     // Filtering-out _replicator and _users
-    if (dbName[0] === '_') { return false }
+    if (dbName[0] === '_') return false
     return dbName.match(dbNamePattern)
   }
 }

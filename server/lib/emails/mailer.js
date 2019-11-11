@@ -17,7 +17,7 @@ module.exports = function() {
 }
 
 var initMailer = function() {
-  if (disabled) { return _.warn('mailer disabled') }
+  if (disabled) return _.warn('mailer disabled')
 
   _.info('mailer enabled')
 

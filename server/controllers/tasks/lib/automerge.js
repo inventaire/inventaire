@@ -31,7 +31,7 @@ module.exports = function(suspectUri, suggestion){
 
 var isValidateAutomerge = function(suggestionOccurrences){
   const hasOccurencesInStructuredDataSources =  _.some(_.map(suggestionOccurrences, 'structuredDataSource'))
-  if (hasOccurencesInStructuredDataSources) { return true }
+  if (hasOccurencesInStructuredDataSources) return true
 
   const matchedTitles =  _.flatten(_.map(suggestionOccurrences, 'matchedTitles'))
   const longTitles = matchedTitles.filter(isLongTitle)

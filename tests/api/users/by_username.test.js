@@ -27,7 +27,7 @@ describe('users:by-usernames', () => it('should get a user with a non lowercase 
       should(users[username]).not.be.ok()
       users[lowerCasedUsername].should.be.an.Object()
       users[lowerCasedUsername].username.should.equal(username)
-      return done()
+      done()
     })}).catch(undesiredErr(done))
 
 }))

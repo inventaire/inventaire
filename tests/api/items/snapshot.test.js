@@ -29,7 +29,7 @@ describe('items:snapshot', () => {
     .then((item) => {
       const title = _.values(serieEntity.labels)[0]
       item.snapshot['entity:series'].should.equal(title)
-      return done()
+      done()
     }))).catch(undesiredErr(done))
 
   })
@@ -51,7 +51,7 @@ describe('items:snapshot', () => {
       .then(() => getItem(item))
       .then((item) => {
         item.snapshot['entity:ordinal'].should.equal('6')
-        return done()
+        done()
       })
     }))).catch(undesiredErr(done))
 
@@ -77,7 +77,7 @@ describe('items:snapshot', () => {
       const seriesNames = series.map(serie => serie.labels.en).join(', ')
       item.snapshot['entity:authors'].should.equal(authorsNames)
       item.snapshot['entity:series'].should.equal(seriesNames)
-      return done()
+      done()
     })))).catch(undesiredErr(done))
 
   })
@@ -89,7 +89,7 @@ describe('items:snapshot', () => {
       return authReq('post', '/api/items', { entity: edition.uri })
       .then((item) => {
         item.snapshot['entity:image'].should.equal(edition.image.url)
-        return done()
+        done()
       })}).catch(done)
 
   })
@@ -102,7 +102,7 @@ describe('items:snapshot', () => {
       return authReq('post', '/api/items', { entity: edition.uri })
       .then((item) => {
         item.snapshot['entity:subtitle'].should.equal(subtitle)
-        return done()
+        done()
       })}).catch(done)
 
   })
@@ -116,7 +116,7 @@ describe('items:snapshot', () => {
       return updateClaim(workUri, 'wdt:P50', null, 'wd:Q535')
       .then(() => getItem(item))}).then((item) => {
       item.snapshot['entity:image'].should.equal(edition.image.url)
-      return done()
+      done()
     })).catch(done)
 
   })
@@ -137,7 +137,7 @@ describe('items:snapshot', () => {
           .then(() => getItem(item))
           .then((updatedItem) => {
             updatedItem.snapshot['entity:title'].should.equal(updatedTitle)
-            return done()
+            done()
           })
         })}).catch(undesiredErr(done))
 
@@ -156,7 +156,7 @@ describe('items:snapshot', () => {
           .then(() => getItem(item))
           .then((updatedItem) => {
             updatedItem.snapshot['entity:title'].should.equal(updatedTitle)
-            return done()
+            done()
           })
         })}).catch(undesiredErr(done))
 
@@ -179,7 +179,7 @@ describe('items:snapshot', () => {
           .then(() => getItem(item))
           .then((reupdatedItem) => {
             reupdatedItem.snapshot['entity:series'].should.equal(updatedTitle)
-            return done()
+            done()
           })
         })
       }))).catch(undesiredErr(done))
@@ -209,7 +209,7 @@ describe('items:snapshot', () => {
           .then(() => getItem(item))
           .then((updatedItem) => {
             updatedItem.snapshot['entity:authors'].should.equal(updateAuthorName)
-            return done()
+            done()
           })
         })}).catch(undesiredErr(done))
 
@@ -226,7 +226,7 @@ describe('items:snapshot', () => {
         .then(() => getItem(item))
         .then((item) => {
           item.snapshot['entity:authors'].should.equal(updateAuthorName)
-          return done()
+          done()
         })
       })).catch(undesiredErr(done))
 
@@ -244,7 +244,7 @@ describe('items:snapshot', () => {
       .then((updatedItem) => {
         const updatedTitle = workEntityB.labels.en
         updatedItem.snapshot['entity:title'].should.equal(updatedTitle)
-        return done()
+        done()
       })).catch(undesiredErr(done))
 
     })
@@ -267,7 +267,7 @@ describe('items:snapshot', () => {
       .then((updatedItem) => {
         const authorName = _.values(addedAuthor.labels)[0]
         updatedItem.snapshot['entity:authors'].should.equal(authorName)
-        return done()
+        done()
       })))).catch(undesiredErr(done))
 
     })
@@ -287,7 +287,7 @@ describe('items:snapshot', () => {
       .then((updatedItem) => {
         const updatedAuthors = authorEntityB.labels.en
         updatedItem.snapshot['entity:authors'].should.equal(updatedAuthors)
-        return done()
+        done()
       })).catch(undesiredErr(done))
 
     })
@@ -313,7 +313,7 @@ describe('items:snapshot', () => {
         .then((reupdatedItem) => {
           const oldAuthors = authorEntityA.labels.en
           reupdatedItem.snapshot['entity:authors'].should.equal(oldAuthors)
-          return done()
+          done()
         })
       })).catch(undesiredErr(done))
 
@@ -335,7 +335,7 @@ describe('items:snapshot', () => {
         return authReq('put', '/api/items', item)}).then((updatedItem) => {
         const editionTitle = editionEntity.claims['wdt:P1476'][0]
         updatedItem.snapshot['entity:title'].should.equal(editionTitle)
-        return done()
+        done()
       }))).catch(undesiredErr(done))
 
     })
@@ -353,12 +353,12 @@ describe('items:snapshot', () => {
       .then(item => getItem(item)
       .then((updatedItem) => {
         updatedItem.snapshot['entity:authors'].should.equal('Alain Damasio')
-        return done()
+        done()
       })))).catch(undesiredErr(done))
 
     })
 
-    return it('should be updated when its remote author entity changes', (done) => {
+    it('should be updated when its remote author entity changes', (done) => {
       // Simulating a change on the Wikidata author by merging an inv author into it
       createWork()
       .then(work => Promise.all([
@@ -372,7 +372,7 @@ describe('items:snapshot', () => {
       .then(item => getItem(item)
       .then((updatedItem) => {
         updatedItem.snapshot['entity:authors'].should.equal('Alain Damasio')
-        return done()
+        done()
       })))).catch(undesiredErr(done))
 
     })

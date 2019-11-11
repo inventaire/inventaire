@@ -14,17 +14,17 @@ module.exports = (suspect, workLabels) => (function(suggestions) {
   const suspectTerms = getEntityNormalizedTerms(suspect)
   // Do not automerge if author name is in work title
   // as it confuses occurences finding on WP pages
-  if (authorNameInWorkTitles(suspectTerms, workLabels)) { return suggestions }
+  if (authorNameInWorkTitles(suspectTerms, workLabels)) return suggestions
   const sourcedSuggestions = findSourced(suggestions)
-  if (sourcedSuggestions.length === 0) { return suggestions }
-  if (sourcedSuggestions.length > 1) { return sourcedSuggestions }
+  if (sourcedSuggestions.length === 0) return suggestions
+  if (sourcedSuggestions.length > 1) return sourcedSuggestions
   return automerge(suspect.uri, sourcedSuggestions[0])
 })
 
 var authorNameInWorkTitles = function(authorTerms, workLabels){
   for (const authorLabel of authorTerms) {
     for (const workLabel of workLabels) {
-      if (workLabel.match(authorLabel)) { return true }
+      if (workLabel.match(authorLabel)) return true
     }
   }
   return false

@@ -57,7 +57,7 @@ module.exports = function(params){
   .then(_.flatten)
   .then(_.compact)
   .then((uris) => {
-    if (!sort) { return uris }
+    if (!sort) return uris
 
     return getEntitiesPopularity(uris)
     .then(scores => uris.sort(sortByScore(scores)))
@@ -68,7 +68,7 @@ var requestWikidataReverseClaims = function(property, value, refresh, dry){
   if (_.isEntityUri(value)) {
     const [ prefix, id ] = Array.from(value.split(':'))
     // If the prefix is 'inv' or 'isbn', no need to check Wikidata
-    if (prefix === 'wd') { return wikidataReverseClaims(property, id, refresh, dry) }
+    if (prefix === 'wd') return wikidataReverseClaims(property, id, refresh, dry)
   } else {
     return wikidataReverseClaims(property, value, refresh, dry)
   }

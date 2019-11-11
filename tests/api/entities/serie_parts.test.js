@@ -22,7 +22,7 @@ describe('entities:author-works', () => it('should get an authors works', (done)
       res.parts.should.be.an.Array()
       res.parts[0].should.be.an.Object()
       res.parts[0].uri.should.equal(`inv:${work._id}`)
-      return done()
+      done()
     })}).catch(undesiredErr(done))
 
 }))

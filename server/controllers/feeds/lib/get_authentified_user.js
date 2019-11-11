@@ -14,7 +14,7 @@ const user_ = __.require('controllers', 'user/lib/user')
 const promises_ = __.require('lib', 'promises')
 
 module.exports = function(requester, readToken){
-  if (requester == null) { return promises_.resolve(null) }
+  if (requester == null) return promises_.resolve(null)
 
   return user_.byId(requester)
   .catch(formatNotFound(requester))

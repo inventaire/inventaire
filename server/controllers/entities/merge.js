@@ -30,8 +30,8 @@ module.exports = function(req, res){
   const { from:fromUri, to:toUri } = body
   const { _id:reqUserId } = req.user
 
-  if (fromUri == null) { return error_.bundleMissingBody(req, res, 'from') }
-  if (!toUri) { return error_.bundleMissingBody(req, res, 'to') }
+  if (fromUri == null) return error_.bundleMissingBody(req, res, 'from')
+  if (!toUri) return error_.bundleMissingBody(req, res, 'to')
 
   // Not using _.isEntityUri, letting the logic hereafter check specific prefixes
   if (!_.isNonEmptyString(fromUri)) {
@@ -65,10 +65,10 @@ module.exports = function(req, res){
 var merge = (reqUserId, toPrefix, fromUri, toUri) => (function(res) {
   const { entities, redirects } = res
   const fromEntity = entities[fromUri] || entities[redirects[fromUri]]
-  if (fromEntity == null) { throw notFound('from', fromUri) }
+  if (fromEntity == null) throw notFound('from', fromUri)
 
   const toEntity = entities[toUri] || entities[redirects[toUri]]
-  if (toEntity == null) { throw notFound('to', toUri) }
+  if (toEntity == null) throw notFound('to', toUri)
 
   if (fromEntity.uri !== fromUri) {
     throw error_.new("'from' entity is already a redirection", 400, { fromUri, toUri })
@@ -111,7 +111,7 @@ var merge = (reqUserId, toPrefix, fromUri, toUri) => (function(res) {
 var replaceIsbnUriByInvUri = function(uri, invId){
   const [ prefix ] = Array.from(uri.split(':'))
   // Prefer inv id over isbn to prepare for ./lib/merge_entities
-  if (prefix === 'isbn') { return `inv:${invId}` }
+  if (prefix === 'isbn') return `inv:${invId}`
   return uri
 }
 

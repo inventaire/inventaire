@@ -28,7 +28,7 @@ describe('items:get-by-user-and-entity', () => {
         resItem.entity.should.equal(item.entity)
         resItem.owner.should.equal(item.owner)
       }
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
@@ -44,12 +44,12 @@ describe('items:get-by-user-and-entity', () => {
       .then((res) => {
         res.items.length.should.equal(1)
         res.items[0].should.deepEqual(userItem)
-        return done()
+        done()
       })}).catch(undesiredErr(done))
 
   })
 
-  return it('should get items by their entity uri', (done) => {
+  it('should get items by their entity uri', (done) => {
     createEditionAndItem(getUser())
     .then((itemA) => {
       const uri = itemA.entity
@@ -59,7 +59,7 @@ describe('items:get-by-user-and-entity', () => {
         const itemsIds = [ itemA._id, itemB._id ]
         const resItemsIds = _.map(res.items, '_id')
         resItemsIds.should.containDeep(itemsIds)
-        return done()
+        done()
       }))}).catch(undesiredErr(done))
 
   })

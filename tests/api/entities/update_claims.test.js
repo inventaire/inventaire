@@ -26,7 +26,7 @@ describe('entities:update-claims', () => {
     .catch((err) => {
       err.body.status_verbose.should.equal("works can't have a property wdt:P1104")
       err.statusCode.should.equal(400)
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
@@ -38,7 +38,7 @@ describe('entities:update-claims', () => {
     .catch((err) => {
       err.body.status_verbose.should.equal('invalid value type: expected string, got number')
       err.statusCode.should.equal(400)
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
@@ -50,7 +50,7 @@ describe('entities:update-claims', () => {
     .catch((err) => {
       err.body.status_verbose.should.equal('invalid property value')
       err.statusCode.should.equal(400)
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
@@ -65,7 +65,7 @@ describe('entities:update-claims', () => {
       .catch((err) => {
         err.body.status_verbose.should.equal('this property should at least have one value')
         err.statusCode.should.equal(400)
-        return done()
+        done()
       })}).catch(undesiredErr(done))
 
   })
@@ -77,7 +77,7 @@ describe('entities:update-claims', () => {
     .catch((err) => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal('claim property value not found')
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -89,7 +89,7 @@ describe('entities:update-claims', () => {
     .catch((err) => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal('claim property value not found')
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -103,7 +103,7 @@ describe('entities:update-claims', () => {
     .catch((err) => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal('this entity is obsolete')
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -119,7 +119,7 @@ describe('entities:update-claims', () => {
         .then((updatedWork) => {
           const addedAuthorsUris = updatedWork.claims['wdt:P50']
           authorsUris.forEach(uri => should(addedAuthorsUris.includes(uri)).be.true())
-          return done()
+          done()
         })
       })}).catch(undesiredErr(done))
 
@@ -130,7 +130,7 @@ describe('entities:update-claims', () => {
     .then(human => addClaim(human._id, 'wdt:P648', someOpenLibraryId())
     .then((res) => {
       should(res.ok).be.true()
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
@@ -142,12 +142,12 @@ describe('entities:update-claims', () => {
     .catch((err) => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal('invalid property value for entity type human')
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
 
-  return it('should reject an update with a duplicated concurrent value', (done) => {
+  it('should reject an update with a duplicated concurrent value', (done) => {
     const id = someOpenLibraryId()
     createHuman()
     .then(human => addClaim(human.uri, 'wdt:P648', id)
@@ -159,7 +159,7 @@ describe('entities:update-claims', () => {
     .catch((err) => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal('this property value is already used')
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })

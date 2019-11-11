@@ -256,7 +256,7 @@ module.exports = (Entity = {
   },
 
   preventRedirectionEdit(doc, editLabel){
-    if (doc.redirect == null) { return }
+    if (doc.redirect == null) return 
     throw error_.new(`${editLabel} failed: the entity is a redirection`, 400, arguments)
   }
 })

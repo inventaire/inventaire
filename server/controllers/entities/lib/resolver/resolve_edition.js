@@ -32,7 +32,7 @@ module.exports = function(entry){
 }
 
 var resolveByIsbn = function(isbn){
-  if (isbn == null) { return }
+  if (isbn == null) return 
   // Resolve directly on the database to avoid making undersired requests to dataseed
   return entities_.byIsbn(isbn)
   .then((edition) => { if (edition != null) { return getInvEntityCanonicalUri(edition) } })
@@ -40,7 +40,7 @@ var resolveByIsbn = function(isbn){
 
 var pickUriFromResolversResponses = function(uriFoundByIsbn, urisFoundByExternalIds){
   // TODO: handle possible conflict between uriFoundByIsbn and urisFoundByExternalIds
-  if (uriFoundByIsbn != null) { return uriFoundByIsbn }
+  if (uriFoundByIsbn != null) return uriFoundByIsbn
   if ((urisFoundByExternalIds != null) && (urisFoundByExternalIds.length === 1)) {
     return urisFoundByExternalIds[0]
   }

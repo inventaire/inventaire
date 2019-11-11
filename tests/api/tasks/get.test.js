@@ -23,7 +23,7 @@ describe('tasks:byScore', () => {
     .then((tasks) => {
       tasks.length.should.be.belowOrEqual(10)
       tasks.length.should.be.aboveOrEqual(1)
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -32,7 +32,7 @@ describe('tasks:byScore', () => {
     .then(() => getByScore({ limit: 1 }))
     .then((tasks) => {
       tasks.length.should.equal(1)
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -42,12 +42,12 @@ describe('tasks:byScore', () => {
     .then(tasksA => getByScore({ offset: 1 })
     .then((tasksB) => {
       tasksA[1].should.deepEqual(tasksB[0])
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
 
-  return it('should return tasks in the right order', (done) => {
+  it('should return tasks in the right order', (done) => {
     const humanLabel = 'Stanislas Lem' // has no homonyms
     const workLabel = 'Solaris' // too short label to be automerged
     createSomeTasks('Gilbert Simondon')
@@ -58,12 +58,12 @@ describe('tasks:byScore', () => {
     .then((tasks) => {
       tasks.forEach((task, i) => {
         const previousTask = tasks[i-1]
-        if (previousTask == null) { return }
+        if (previousTask == null) return 
         const prevOccurrencesCount = previousTask.externalSourcesOccurrences.length
         const occurrencesCount = task.externalSourcesOccurrences.length
         return prevOccurrencesCount.should.be.aboveOrEqual(occurrencesCount)
       })
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
@@ -80,7 +80,7 @@ describe('tasks:bySuspectUris', () => {
         Object.keys(tasks).length.should.equal(1)
         tasks[uri].should.be.an.Array()
         tasks[uri][0].should.be.an.Object()
-        return done()
+        done()
       })}).catch(undesiredErr(done))
 
   })
@@ -94,12 +94,12 @@ describe('tasks:bySuspectUris', () => {
       .then(() => getBySuspectUris(suspectUri))
       .then((tasks) => {
         tasks[suspectUri].length.should.equal(0)
-        return done()
+        done()
       })}).catch(undesiredErr(done))
 
   })
 
-  return it('should return an array of tasks even when no tasks is found', (done) => {
+  it('should return an array of tasks even when no tasks is found', (done) => {
     const fakeUri = 'inv:00000000000000000000000000000000'
     getBySuspectUris(fakeUri)
     .then((tasks) => {
@@ -107,7 +107,7 @@ describe('tasks:bySuspectUris', () => {
       Object.keys(tasks).length.should.equal(1)
       tasks[fakeUri].should.be.an.Array()
       tasks[fakeUri].length.should.equal(0)
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 })
@@ -122,12 +122,12 @@ describe('tasks:bySuggestionUris', () => {
       Object.keys(tasks).length.should.equal(1)
       tasks[uri].should.be.an.Array()
       tasks[uri][0].should.be.an.Object()
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
 
-  return it('should return an array of tasks even when no tasks is found', (done) => {
+  it('should return an array of tasks even when no tasks is found', (done) => {
     const uri = 'wd:Q32193244'
     getBySuggestionUris(uri)
     .then((tasks) => {
@@ -135,7 +135,7 @@ describe('tasks:bySuggestionUris', () => {
       Object.keys(tasks).length.should.equal(1)
       tasks[uri].should.be.an.Array()
       tasks[uri].length.should.equal(0)
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 })

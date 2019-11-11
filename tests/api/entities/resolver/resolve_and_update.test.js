@@ -49,7 +49,7 @@ describe('entities:resolver:update-resolved', () => {
       .then((entities) => {
         const workAuthorsUris = _.values(entities)[0].claims['wdt:P50']
         workAuthorsUris.should.not.containEql(authorUri)
-        return done()
+        done()
       })
     })).catch(done)
 
@@ -76,7 +76,7 @@ describe('entities:resolver:update-resolved', () => {
         workB = entities[workBUri]
         workA.claims['wdt:P50'][0].should.equal(entryA.works[0].claims['wdt:P50'][0])
         workB.claims['wdt:P50'][0].should.equal(entryB.works[0].claims['wdt:P50'][0])
-        return done()
+        done()
       })
     })).catch(done)
 
@@ -108,7 +108,7 @@ describe('entities:resolver:update-resolved', () => {
         const updatedAuthor = entities[authorUri]
         const authorWebsiteClaimValues = updatedAuthor.claims['wdt:P856']
         authorWebsiteClaimValues.should.containEql(officialWebsite)
-        return done()
+        done()
       })
     })).catch(done)
 
@@ -143,12 +143,12 @@ describe('entities:resolver:update-resolved', () => {
         edition = entities[editionUri]
         const numberOfPagesClaimsValues = edition.claims['wdt:P1104']
         numberOfPagesClaimsValues.should.containEql(numberOfPages)
-        return done()
+        done()
       }))}).catch(done)
 
   })
 
-  return it('should add a batch timestamp to patches', (done) => {
+  it('should add a batch timestamp to patches', (done) => {
     const startTime = Date.now()
     const entryA = someEntryWithAGoodReadsWorkId()
     const entryB = someEntryWithAGoodReadsWorkId()
@@ -171,7 +171,7 @@ describe('entities:resolver:update-resolved', () => {
       batchId.should.be.a.Number()
       batchId.should.above(startTime)
       batchId.should.below(Date.now())
-      return done()
+      done()
     }))).catch(undesiredErr(done))
 
   })

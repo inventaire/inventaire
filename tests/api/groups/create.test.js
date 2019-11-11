@@ -22,17 +22,17 @@ describe('groups:create', () => {
       res.slug.should.equal(slugify(name))
       res.searchable.should.be.true()
       res.creator.should.equal(res.admins[0].user)
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
-  return it('should reject a group with an empty name or generated slug', (done) => {
+  it('should reject a group with an empty name or generated slug', (done) => {
     const name = '??'
     authReq('post', '/api/groups?action=create', { name })
     .catch((err) => {
       err.statusCode.should.equal(400)
       err.body.error_name.should.equal('invalid_name')
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 })

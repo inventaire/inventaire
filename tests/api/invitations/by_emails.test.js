@@ -27,7 +27,7 @@ describe('invitations:by-emails', () => {
         { emails: 'a@foo.org' })
       .then((res) => {
         res.emails[0].should.equal('a@foo.org')
-        return done()}).catch(undesiredErr(done))
+        done()}).catch(undesiredErr(done))
 
     })
 
@@ -37,7 +37,7 @@ describe('invitations:by-emails', () => {
       .then((res) => {
         res.emails[0].should.equal('a@foo.org')
         res.emails[1].should.equal('b@foo.org')
-        return done()}).catch(undesiredErr(done))
+        done()}).catch(undesiredErr(done))
 
     })
 
@@ -47,7 +47,7 @@ describe('invitations:by-emails', () => {
       .then((res) => {
         res.emails[0].should.equal('a@foo.org')
         res.emails[1].should.equal('b@foo.org')
-        return done()}).catch(undesiredErr(done))
+        done()}).catch(undesiredErr(done))
 
     })
 
@@ -56,7 +56,7 @@ describe('invitations:by-emails', () => {
       .then(undesiredRes(done))
       .catch((err) => {
         err.body.status_verbose.should.equal('missing parameter in body: emails')
-        return done()
+        done()
       })
 
     })
@@ -70,11 +70,11 @@ describe('invitations:by-emails', () => {
       .catch((err) => {
         err.statusCode.should.equal(400)
         err.body.status_verbose.should.match(/invalid message:/)
-        return done()}).catch(undesiredErr(done))
+        done()}).catch(undesiredErr(done))
 
     })
 
-    return it('should trigger an friend request on signup', (done) => {
+    it('should trigger an friend request on signup', (done) => {
       const email = randomEmail()
 
       const invite = () => authReq('post', '/api/invitations?action=by-emails', { emails: email })
@@ -86,7 +86,7 @@ describe('invitations:by-emails', () => {
       .then((res) => {
         res.users[0].email.should.equal(email);
         (relations.userRequested.includes(res.users[0]._id)).should.be.true()
-        return done()
+        done()
       })).catch(undesiredErr(done))
 
     })
@@ -101,7 +101,7 @@ describe('invitations:by-emails', () => {
       .catch((err) => {
         err.statusCode.should.equal(400)
         err.body.status_verbose.should.equal('invalid group id: abc')
-        return done()}).catch(undesiredErr(done))
+        done()}).catch(undesiredErr(done))
 
     })
 
@@ -112,7 +112,7 @@ describe('invitations:by-emails', () => {
         group: group._id
       }).then((res) => {
         res.emails[0].should.equal('a@foo.org')
-        return done()
+        done()
       })).catch(undesiredErr(done))
 
     })
@@ -125,7 +125,7 @@ describe('invitations:by-emails', () => {
           group: group._id
         })).then((res) => {
         res.emails[0].should.equal('a@foo.org')
-        return done()}).catch(undesiredErr(done))
+        done()}).catch(undesiredErr(done))
 
     })
 
@@ -138,11 +138,11 @@ describe('invitations:by-emails', () => {
         })).catch((err) => {
         err.statusCode.should.equal(403)
         err.body.status_verbose.should.equal("user isn't a group member")
-        return done()}).catch(undesiredErr(done))
+        done()}).catch(undesiredErr(done))
 
     })
 
-    return it('should trigger an invite on signup', (done) => {
+    it('should trigger an invite on signup', (done) => {
       const email = randomEmail()
       groupPromise
       .then((group) => {
@@ -164,7 +164,7 @@ describe('invitations:by-emails', () => {
           .then((res) => {
             res.users[0].email.should.equal(email)
             res.users[0]._id.should.equal(lastUserId)
-            return done()
+            done()
           })
         })}).catch(undesiredErr(done))
 

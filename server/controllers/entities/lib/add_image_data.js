@@ -39,7 +39,7 @@ var pickBestPic = (entity, commonsFilename, enwikiTitle, openLibraryId) => Promi
   return bestPicData || getAvatarsDataFromClaims(entity.claims)[0]})
 
 var getSourcePromise = function(fn, ...args){
-  if (args[0] == null) { return null }
+  if (args[0] == null) return null
 
   return fn.apply(null, args)
   .timeout(5000)

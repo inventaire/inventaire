@@ -214,8 +214,8 @@ var transactionEmail = function(transaction, role, label){
 var validateOptions = function(options){
   const { user1, user2 } = options
   assert_.objects([ user1, user2 ])
-  if (user1.email == null) { throw new Error('missing user1 email') }
-  if (user2.username == null) { throw new Error('missing user2 username') }
+  if (user1.email == null) throw new Error('missing user1 email')
+  if (user2.username == null) throw new Error('missing user2 username')
   return [ user1, user2 ]
 }
 

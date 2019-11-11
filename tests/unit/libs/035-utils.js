@@ -14,12 +14,12 @@ describe('utils', () => {
     _.Log.should.be.a.Function()
     _.isLocalImg.should.be.a.Function()
     _.hashCode.should.be.a.Function()
-    return done()
+    done()
   }))
 
   describe('hashCode', () => it('should return a hash', (done) => {
     _.hashCode('whatever').should.be.a.Number()
-    return done()
+    done()
   }))
 
   describe('flattenIndexes', () => {
@@ -33,10 +33,10 @@ describe('utils', () => {
       result.c.should.equal(3)
       result.d.should.equal(5)
       Object.keys(result).length.should.equal(4)
-      return done()
+      done()
     })
 
-    return it('should return a new index without modifiy the passed indexes', (done) => {
+    it('should return a new index without modifiy the passed indexes', (done) => {
       const indexA = { a: 1 }
       const indexB = { b: 2 }
       const indexC = { c: 3 }
@@ -47,7 +47,7 @@ describe('utils', () => {
       result.should.not.equal(indexB)
       result.should.not.equal(indexC)
       result.should.not.equal(indexD)
-      return done()
+      done()
     })
   })
 
@@ -56,26 +56,26 @@ describe('utils', () => {
       const path = _.buildPath('/api', { action: 'man' })
       path.should.be.a.String()
       path.should.equal('/api?action=man')
-      return done()
+      done()
     })
 
     it('should not add empty parameters', (done) => {
       const path = _.buildPath('/api', { action: 'man', boudu: null })
       path.should.equal('/api?action=man')
-      return done()
+      done()
     })
 
     it('should stringify object value', (done) => {
       const path = _.buildPath('/api', { action: 'man', data: { a: [ 'abc', 2 ] } })
       path.should.equal('/api?action=man&data={"a":["abc",2]}')
-      return done()
+      done()
     })
 
-    return it('should URI encode object values problematic query string characters', (done) => {
+    it('should URI encode object values problematic query string characters', (done) => {
       const data = { a: 'some string with ?!MM%** problematic characters' }
       const path = _.buildPath('/api', { data })
       path.should.equal('/api?data={"a":"some string with %3F!MM%** problematic characters"}')
-      return done()
+      done()
     })
   })
 
@@ -88,7 +88,7 @@ describe('utils', () => {
     _.typeOf().should.equal('undefined')
     _.typeOf(false).should.equal('boolean')
     _.typeOf(Number('boudu')).should.equal('NaN')
-    return done()
+    done()
   }))
 
   describe('forceArray', (done) => {
@@ -96,14 +96,14 @@ describe('utils', () => {
       const a = _.forceArray([ 1, 2, 3, { zo: 'hello' }, null ])
       a.should.be.an.Array()
       a.length.should.equal(5)
-      return done()
+      done()
     })
 
     it('should return an array for a string', (done) => {
       const a = _.forceArray('yolo')
       a.should.be.an.Array()
       a.length.should.equal(1)
-      return done()
+      done()
     })
 
     it('should return an array for a number', (done) => {
@@ -113,42 +113,42 @@ describe('utils', () => {
       const b = _.forceArray(-12612125)
       b.should.be.an.Array()
       b.length.should.equal(1)
-      return done()
+      done()
     })
 
     it('should return an array for an object', (done) => {
       const a = _.forceArray({ bon: 'jour' })
       a.should.be.an.Array()
       a.length.should.equal(1)
-      return done()
+      done()
     })
 
     it('should return an empty array for null', (done) => {
       const a = _.forceArray(null)
       a.should.be.an.Array()
       a.length.should.equal(0)
-      return done()
+      done()
     })
 
     it('should return an empty array for undefined', (done) => {
       const a = _.forceArray(null)
       a.should.be.an.Array()
       a.length.should.equal(0)
-      return done()
+      done()
     })
 
     it('should return an empty array for an empty input', (done) => {
       const a = _.forceArray()
       a.should.be.an.Array()
       a.length.should.equal(0)
-      return done()
+      done()
     })
 
-    return it('should return an empty array for an empty string', (done) => {
+    it('should return an empty array for an empty string', (done) => {
       const a = _.forceArray('')
       a.should.be.an.Array()
       a.length.should.equal(0)
-      return done()
+      done()
     })
   })
 
@@ -159,14 +159,14 @@ describe('utils', () => {
       const newObj = _.mapKeysValues(obj, fn)
       newObj.should.be.an.Object()
       newObj.should.not.equal(obj)
-      return done()
+      done()
     })
 
-    return it('should return new keys and values', (done) => {
+    it('should return new keys and values', (done) => {
       const obj = { a: 1, b: 2 }
       const fn = (key, value) => [ key + key, value + value ]
       _.mapKeysValues(obj, fn).should.deepEqual({ aa: 2, bb: 4 })
-      return done()
+      done()
     })
   })
 })

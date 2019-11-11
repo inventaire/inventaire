@@ -49,13 +49,13 @@ var getEntitiesItems = function(page){
 }
 
 var getUserItems = function(reqUserId, uris){
-  if (reqUserId == null) { return [] }
+  if (reqUserId == null) return []
 
   return items_.byOwnersAndEntitiesAndListings([ reqUserId ], uris, 'user', reqUserId)
 }
 
 var getNetworkItems = function(reqUserId, uris){
-  if (reqUserId == null) { return [] }
+  if (reqUserId == null) return []
 
   return relations_.getUserFriendsAndCoGroupsMembers(reqUserId)
   .then(networkUsersIds => items_.byOwnersAndEntitiesAndListings(networkUsersIds, uris, 'network', reqUserId))

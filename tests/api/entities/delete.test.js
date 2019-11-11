@@ -22,7 +22,7 @@ describe('entities:delete:by-uris', () => {
     .then(undesiredRes(done))
     .catch((err) => {
       err.statusCode.should.equal(403)
-      return done()
+      done()
     })
 
   })
@@ -33,7 +33,7 @@ describe('entities:delete:by-uris', () => {
     .catch((err) => {
       err.body.status_verbose.should.equal('invalid uri: wd:Q535')
       err.statusCode.should.equal(400)
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -46,7 +46,7 @@ describe('entities:delete:by-uris', () => {
       .then((res) => {
         entity = res.entities[uri]
         entity._meta_type.should.equal('removed:placeholder')
-        return done()
+        done()
       })}).catch(undesiredErr(done))
 
   })
@@ -65,7 +65,7 @@ describe('entities:delete:by-uris', () => {
           const uri = res.entities[entity]
           entity._meta_type.should.equal('removed:placeholder')
         }
-        return done()
+        done()
       })}).catch(undesiredErr(done))
 
   })
@@ -80,7 +80,7 @@ describe('entities:delete:by-uris', () => {
       .then((res) => {
         const updatedWork = res.entities[workUri]
         should(updatedWork.claims['wdt:P50']).not.be.ok()
-        return done()
+        done()
       })}).catch(undesiredErr(done))
 
   })
@@ -96,7 +96,7 @@ describe('entities:delete:by-uris', () => {
     .catch((err) => {
       err.body.status_verbose.should.equal('this entity has too many claims to be removed')
       err.statusCode.should.equal(400)
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
   })
 
   it('should remove edition entities without an ISBN', (done) => {
@@ -124,7 +124,7 @@ describe('entities:delete:by-uris', () => {
     .catch((err) => {
       err.body.status_verbose.should.equal('this entity is used in a critical claim')
       err.statusCode.should.equal(400)
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
   })
 
   it('should remove deleted entities from items snapshot', (done) => {
@@ -141,7 +141,7 @@ describe('entities:delete:by-uris', () => {
         const updatedItem = res.items[0]
         updatedItem.snapshot['entity:title'].should.equal(work.labels.en)
         should(updatedItem.snapshot['entity:authors']).not.be.ok()
-        return done()
+        done()
       })
     }))).catch(undesiredErr(done))
 
@@ -169,11 +169,11 @@ describe('entities:delete:by-uris', () => {
     .catch((err) => {
       err.body.status_verbose.should.equal("entities that are used by an item can't be removed")
       err.statusCode.should.equal(400)
-      return done()
+      done()
     })).catch(undesiredErr(done))
   })
 
-  return it('should not remove editions with an ISBN and an item', (done) => {
+  it('should not remove editions with an ISBN and an item', (done) => {
     const uri = 'isbn:9791020906427'
     ensureEditionExists(uri)
     .then(edition => authReq('post', '/api/items', { entity: uri, lang: 'en' })
@@ -185,6 +185,6 @@ describe('entities:delete:by-uris', () => {
     .catch((err) => {
       err.body.status_verbose.should.equal("entities that are used by an item can't be removed")
       err.statusCode.should.equal(400)
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
   })
 })

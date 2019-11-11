@@ -25,7 +25,7 @@ module.exports = function(user, uris){
   // This makes it a potentially slow operation, which is OK, as it's an admin task
   var removeNext = function() {
     const uri = uris.pop()
-    if (uri == null) { return }
+    if (uri == null) return 
 
     const id = unprefixify(uri)
 
@@ -63,7 +63,7 @@ var deleteUriValueClaims = (user, uri) => entities_.byClaimsValue(uri)
 var removeClaimsSequentially = (user, uri) => (function(claimsData) {
   var removeNextClaim = function() {
     const claimData = claimsData.pop()
-    if (claimData == null) { return }
+    if (claimData == null) return 
     _.warn(claimData, `removing claims with value: ${uri}`)
     return removeClaim(user, uri, claimData)
     .delay(100)

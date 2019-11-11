@@ -21,11 +21,11 @@ describe('isbn', () => // Test only what was added on top of the isbn2 module
       const data = isbn_.parse('9788420646657')
       data.should.be.an.Object()
       data.isbn13.should.equal('9788420646657')
-      return done()
+      done()
     })
 
-    return it('should recover truncated ISBN-13', (done) => {
+    it('should recover truncated ISBN-13', (done) => {
       isbn_.parse('8420646657').should.be.an.Object()
-      return done()
+      done()
     })
   }))

@@ -60,14 +60,14 @@ var aggregateWorkImages = function(images, workImages){
 
 var addImage = function(images, lang, limitPerLang, image){
   if (!images[lang]) { images[lang] = [] }
-  if (images[lang].length >= limitPerLang) { return }
+  if (images[lang].length >= limitPerLang) return 
   // Prevent duplicates that could be caused by multi-works editions
   // Where several work consider having the same edition and thus
   // would here return the same image.
   // Multi-work editions images shouldn't be discarded as they often
   // are actually better non-work specific illustrations of series
   // ex: https://inventaire.io/entity/isbn:9782302019249
-  if (images[lang].includes(image)) { return }
+  if (images[lang].includes(image)) return 
   // Index images by language so that we can illustrate a work
   // with the cover from an edition of the user's language
   // when possible

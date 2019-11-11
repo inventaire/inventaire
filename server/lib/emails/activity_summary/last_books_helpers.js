@@ -53,7 +53,7 @@ module.exports = {
   },
 
   getHighlightedItems(lastItems, highlightedLength){
-    if (lastItems.length <= highlightedLength) { return lastItems }
+    if (lastItems.length <= highlightedLength) return lastItems
     return getItemsWithTransactionFirst(lastItems, highlightedLength)
   }
 }

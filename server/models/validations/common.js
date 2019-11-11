@@ -35,7 +35,7 @@ module.exports = (validations = {
   boolean: _.isBoolean,
   position(latLng){
     // allow the user or group to delete its position by passing a null value
-    if (latLng === null) { return true }
+    if (latLng === null) return true
     return _.isArray(latLng) && (latLng.length === 2) && _.every(latLng, _.isNumber)
   }
 })

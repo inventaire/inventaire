@@ -15,28 +15,28 @@ const slugify = __.require('controllers', 'groups/lib/slugify')
 describe('slugify', () => {
   it('should be a function', (done) => {
     slugify.should.be.a.Function()
-    return done()
+    done()
   })
 
   it('should take a string and return a string', (done) => {
     slugify('bla').should.be.a.String()
     slugify('bla&mémùémd ùdém^&²Mdù é:azdza').should.be.a.String()
-    return done()
+    done()
   })
 
   it('should replace URL reserved characters', (done) => {
     slugify("L:a;:? M[!Y]$'@,\"|N=.E - é<(h)>o").should.equal('la-myn-e-ého')
-    return done()
+    done()
   })
 
   it('should preserve non-ASCII characters', (done) => {
     slugify('『青チョークの男』').should.equal('『青チョークの男』')
-    return done()
+    done()
   })
 
-  return it('should drop dashes at the extremities', (done) => {
+  it('should drop dashes at the extremities', (done) => {
     slugify('-hello-').should.equal('hello')
     slugify('?hello?').should.equal('hello')
-    return done()
+    done()
   })
 })

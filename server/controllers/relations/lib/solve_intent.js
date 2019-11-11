@@ -14,7 +14,7 @@ module.exports = function(actions){
   const API = {
     requestFriend(userId, otherId, status){
       // useful for development
-      if (godMode) { return actions.forceFriendship(userId, otherId) }
+      if (godMode) return actions.forceFriendship(userId, otherId)
       switch (status) {
       case 'none':
         return actions.makeRequest(userId, otherId)

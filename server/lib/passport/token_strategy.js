@@ -56,7 +56,7 @@ var invalidEmailOrToken = function(done, email, label, err){
 }
 
 var verifyToken = function(user, token){
-  if (user.token == null) { return error_.reject('no token found', 401) }
+  if (user.token == null) return error_.reject('no token found', 401)
   return pw_.verify(user.token, token, tokenDaysToLive)
 }
 

@@ -72,7 +72,7 @@ describe('items:create', () => {
       user.snapshot.public['items:last-add'].should.be.greaterThan(timestamp)
       user.snapshot.network['items:count'].should.equal(0)
       user.snapshot.private['items:count'].should.equal(0)
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -90,7 +90,7 @@ describe('items:create', () => {
     .then((item) => {
       item.snapshot.should.be.an.Object()
       item.snapshot['entity:title'].should.equal(title)
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
@@ -102,7 +102,7 @@ describe('items:create', () => {
     .then((item) => {
       item.snapshot.should.be.an.Object()
       item.snapshot['entity:authors'].should.equal(author.labels.en)
-      return done()
+      done()
     }))).catch(undesiredErr(done))
 
   })
@@ -127,7 +127,7 @@ describe('items:create', () => {
       const authorLabel = _.values(author.labels)[0]
       item.snapshot.should.be.an.Object()
       item.snapshot['entity:authors'].should.equal(authorLabel)
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
@@ -137,7 +137,7 @@ describe('items:create', () => {
     .catch((err) => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal('entity not found')
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -146,7 +146,7 @@ describe('items:create', () => {
     .catch((err) => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal('invalid entity type')
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -156,7 +156,7 @@ describe('items:create', () => {
       item.snapshot.should.be.an.Object()
       item.snapshot['entity:title'].should.equal('Die Hochzeit von Lyon')
       item.snapshot['entity:lang'].should.equal('de')
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -165,12 +165,12 @@ describe('items:create', () => {
     .catch((err) => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal('invalid uri id: 9782800051922 (uri: isbn:9782800051922)')
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
   // Should not create edition conflicts on the user document
-  return it('should keep the snapshot data updated even when created in bulk', (done) => {
+  it('should keep the snapshot data updated even when created in bulk', (done) => {
     const userPromise = createUser()
     Promise.all([
       createItem(userPromise, { listing: 'public' }),
@@ -183,7 +183,7 @@ describe('items:create', () => {
       user.snapshot.public['items:count'].should.equal(1)
       user.snapshot.network['items:count'].should.equal(1)
       user.snapshot.private['items:count'].should.equal(1)
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 })

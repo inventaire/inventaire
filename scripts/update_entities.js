@@ -48,7 +48,7 @@ assert_.function(updateFn)
 var updateSequentially = () => getNextBatch()
 .then((res) => {
   const { rows } = res
-  if (rows.length === 0) { return }
+  if (rows.length === 0) return 
 
   const updatesData = rows.map((row) => {
     const { doc: currentDoc } = row
@@ -74,7 +74,7 @@ var buildPatches = entityResById => (function(updateData) {
   const { _id } = updatedDoc
   const entityRes = entityResById[_id]
   updatedDoc._rev = entityRes.rev
-  if (updatedDoc._rev == null) { throw error_.new('rev not found', 500, { updateData, entityRes }) }
+  if (updatedDoc._rev == null) throw error_.new('rev not found', 500, { updateData, entityRes })
   return Patch.create({ userId, currentDoc, updatedDoc })
 })
 

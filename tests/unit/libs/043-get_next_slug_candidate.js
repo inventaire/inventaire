@@ -18,5 +18,5 @@ describe('get next slug candidate', () => it('should return an iterated slug', (
   getNextSlugCandidate('hello.15').should.equal('hello.16')
   getNextSlugCandidate('hello.15.2').should.equal('hello.15.3')
   getNextSlugCandidate('hel.lo.15.20199124').should.equal('hel.lo.15.20199125')
-  return done()
+  done()
 }))

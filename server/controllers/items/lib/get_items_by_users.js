@@ -28,7 +28,7 @@ module.exports = function(page, usersIds){
 
 var getRelations = function(reqUserId, usersIds){
   // All users are considered public users when the request isn't authentified
-  if (reqUserId == null) { return promises_.resolve({ public: usersIds }) }
+  if (reqUserId == null) return promises_.resolve({ public: usersIds })
 
   const relations = {}
   if (usersIds.includes(reqUserId)) {
@@ -36,7 +36,7 @@ var getRelations = function(reqUserId, usersIds){
     usersIds = _.without(usersIds, reqUserId)
   }
 
-  if (usersIds.length === 0) { return promises_.resolve(relations) }
+  if (usersIds.length === 0) return promises_.resolve(relations)
 
   return user_.getRelationsStatuses(reqUserId, usersIds)
   .spread((friends, coGroupMembers, publik) => {

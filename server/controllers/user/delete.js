@@ -19,7 +19,7 @@ const notifs_ = __.require('lib', 'notifications')
 const { Track } = __.require('lib', 'track')
 
 module.exports = function(req, res){
-  if (req.user == null) { return error_.unauthorizedApiAccess(req, res) }
+  if (req.user == null) return error_.unauthorizedApiAccess(req, res)
   const reqUserId = req.user._id
 
   _.warn(req.user, 'deleting user')

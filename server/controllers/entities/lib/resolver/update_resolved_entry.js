@@ -26,11 +26,11 @@ var hasUri = seed => seed.uri != null
 
 var updateEntityFromSeed = (userId, batchId) => (function(seed) {
   const { uri, claims: seedClaims } = seed
-  if (!uri) { return }
+  if (!uri) return 
 
   const [ prefix, entityId ] = Array.from(uri.split(':'))
   // Do not try to update Wikidata for the moment
-  if (prefix === 'wd') { return }
+  if (prefix === 'wd') return 
 
   return getEntity(prefix, entityId)
   .then(addMissingClaims(seedClaims, userId, batchId))
@@ -48,6 +48,6 @@ var addMissingClaims = (seedClaims, userId, batchId) => (function(entity) {
   // Do not update if property already exists
   // Known cases: avoid updating authors who are actually edition translators
   const newClaims = _.omit(seedClaims, Object.keys(entity.claims))
-  if (_.isEmpty(newClaims)) { return }
+  if (_.isEmpty(newClaims)) return 
   return entities_.addClaims(userId, newClaims, entity, batchId)
 })

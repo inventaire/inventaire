@@ -32,7 +32,7 @@ describe('item model', () => {
     it('should return an object', (done) => {
       const item = create(validItem)
       item.should.be.an.Object()
-      return done()
+      done()
     })
 
     it('should throw when passed invalid attributes', (done) => {
@@ -40,25 +40,25 @@ describe('item model', () => {
       ((() => create(item))).should.throw()
       const item2 = extendItem({ updated: Date.now() });
       ((() => create(item2))).should.throw()
-      return done()
+      done()
     })
 
     describe('id', () => it('should return an object without id', (done) => {
       const item = create(validItem)
       should(item._id).not.be.ok()
-      return done()
+      done()
     }))
 
     describe('entity', () => {
       it('should return an object with a entity', (done) => {
         const item = create(validItem)
         item.entity.should.equal(validItem.entity)
-        return done()
+        done()
       })
 
-      return it('should throw on missing entity', (done) => {
+      it('should throw on missing entity', (done) => {
         ((() => create(extendItem({ entity: null })))).should.throw()
-        return done()
+        done()
       })
     })
 
@@ -66,19 +66,19 @@ describe('item model', () => {
       it('should return an object with a listing', (done) => {
         const item = create(validItem)
         item.listing.should.equal(validItem.listing)
-        return done()
+        done()
       })
 
       it('should use a default listing value', (done) => {
         const item = create(extendItem({ listing: null }))
         item.listing.should.equal('private')
-        return done()
+        done()
       })
 
-      return it('should override a bad listing with default value', (done) => {
+      it('should override a bad listing with default value', (done) => {
         const item = create(extendItem({ listing: 'evillist' }))
         item.listing.should.equal('private')
-        return done()
+        done()
       })
     })
 
@@ -86,19 +86,19 @@ describe('item model', () => {
       it('should return an object with a transaction', (done) => {
         const item = create(validItem)
         item.transaction.should.equal(validItem.transaction)
-        return done()
+        done()
       })
 
       it('should override a bad transaction with default value', (done) => {
         const item = create(extendItem({ transaction: null }))
         item.transaction.should.equal('inventorying')
-        return done()
+        done()
       })
 
-      return it('should override a bad transaction with default value', (done) => {
+      it('should override a bad transaction with default value', (done) => {
         const item = create(extendItem({ transaction: 'eviltransac' }))
         item.transaction.should.equal('inventorying')
-        return done()
+        done()
       })
     })
 
@@ -106,20 +106,20 @@ describe('item model', () => {
       it('should return an object with an owner', (done) => {
         const item = create(validItem)
         item.owner.should.equal(someUserId)
-        return done()
+        done()
       })
 
-      return it('should ignore an owner passed in the data', (done) => {
+      it('should ignore an owner passed in the data', (done) => {
         const item = create(extendItem({ owner: 'whatever' }))
         item.owner.should.equal(someUserId)
-        return done()
+        done()
       })
     })
 
     return describe('created', () => it('should return an object with a created time', (done) => {
       const item = create(validItem)
       _.expired(item.created, 100).should.be.false()
-      return done()
+      done()
     }))
   })
 
@@ -128,21 +128,21 @@ describe('item model', () => {
       const doc = create(validItem)
       const updateAttributesData = { listing: 'private' };
       ((() => update(updateAttributesData, doc))).should.not.throw()
-      return done()
+      done()
     })
 
     it('should throw when updated with an invalid attribute', (done) => {
       const doc = create(validItem)
       const updateAttributesData = { foo: '123' };
       ((() => update(updateAttributesData, doc))).should.throw('invalid attribute: foo')
-      return done()
+      done()
     })
 
-    return it('should throw when updated with an invalid attribute value', (done) => {
+    it('should throw when updated with an invalid attribute value', (done) => {
       const doc = create(validItem)
       const updateAttributesData = { listing: 'chocolat' };
       ((() => update(updateAttributesData, doc))).should.throw()
-      return done()
+      done()
     })
   })
 })

@@ -25,7 +25,7 @@ module.exports = function(uri){
 
   return getEntityByUri({ uri })
   .then((entity) => {
-    if (entity == null) { throw error_.notFound({ uri }) }
+    if (entity == null) throw error_.notFound({ uri })
 
     if (entity.uri.split(':')[0] === 'wd') {
       throw error_.new('entity is already a redirection', 400, { uri })

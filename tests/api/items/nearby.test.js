@@ -24,19 +24,19 @@ describe('items:nearby', () => {
     .then((res) => {
       const itemsIds = _.map(res.items, '_id')
       itemsIds.includes(item._id).should.be.true()
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
 
-  return it('should accept a range', (done) => {
+  it('should accept a range', (done) => {
     createItem(geolocatedUser1Promise)
     .delay(500)
     .then(item => customAuthReq(geolocatedUser2Promise, 'get', `${endpoint}&range=1&strict-range=true`)
     .then((res) => {
       const itemsIds = _.map(res.items, '_id')
       itemsIds.includes(item._id).should.be.false()
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })

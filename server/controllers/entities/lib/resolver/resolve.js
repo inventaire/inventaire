@@ -28,7 +28,7 @@ module.exports = entry => resolveEdition(entry)
 
 const resolveSectionSeedsByExternalIds = section => (function(entry) {
   const seeds = entry[section]
-  if (!_.some(seeds)) { return entry }
+  if (!_.some(seeds)) return entry
 
   return resolveSeedsByExternalIds(seeds)
   .then(seeds => entry[section] = seeds)

@@ -15,7 +15,7 @@ const waitingEmails = require('./waiting_emails')
 const sendDebouncedEmail = require('./send_debounced_email')
 
 module.exports = function() {
-  if (!disabled) { return setInterval(crawl, crawlPeriod) }
+  if (!disabled) return setInterval(crawl, crawlPeriod)
 }
 
 // key structure: sendEmailFunctionName:id:time

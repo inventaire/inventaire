@@ -26,13 +26,13 @@ describe('items:bulk-update', () => {
         .get('items')
         .then((updatedItems) => {
           updatedItems[0].transaction.should.equal(newTransaction)
-          return done()
+          done()
         })
       })}).catch(undesiredErr(done))
 
   })
 
-  return it('should not update an item from another owner', (done) => {
+  it('should not update an item from another owner', (done) => {
     authReq('post', '/api/items', newItemBase())
     .then((item) => {
       const ids = [ item._id ]
@@ -43,7 +43,7 @@ describe('items:bulk-update', () => {
       }).catch((err) => {
         err.statusCode.should.equal(400)
         err.body.status_verbose.should.startWith('user isnt item.owner')
-        return done()
+        done()
       })}).catch(undesiredErr(done))
 
   })

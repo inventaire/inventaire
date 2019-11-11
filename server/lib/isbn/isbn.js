@@ -26,7 +26,7 @@ module.exports = {
   parse,
   normalizeIsbn,
   looksLikeAnIsbn(text){
-    if (typeof text !== 'string') { return false }
+    if (typeof text !== 'string') return false
     const cleanedText = normalizeIsbn(text)
     if (isNormalizedIsbn(cleanedText)) {
       switch (cleanedText.length) {
@@ -39,8 +39,9 @@ module.exports = {
   isValidIsbn(isbn){ return (isbnParser(isbn) != null) },
   toIsbn13(isbn, hyphenate){
     const data = parse(isbn)
-    if (data == null) { return }
-    if (hyphenate) { return data.isbn13h } else { return data.isbn13 }
+    if (data == null) return
+    if (hyphenate) return data.isbn13h
+    else return data.isbn13
   },
 
   toIsbn13h(isbn){ return parse(isbn).isbn13h },
@@ -48,7 +49,7 @@ module.exports = {
 
   guessLangFromIsbn(isbn){
     const langUri = __guard__(parse(isbn), x => x.groupLangUri)
-    if (langUri == null) { return }
+    if (langUri == null) return
     const wdId = langUri.split(':')[1]
     return (wdLang.byWdId[wdId] != null ? wdLang.byWdId[wdId].code : undefined)
   }

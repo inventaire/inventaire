@@ -19,7 +19,7 @@ const resolveWorksFromAuthors = require('./resolve_works_from_authors')
 module.exports = function(entry){
   const { authors, works, edition } = entry
 
-  if (!_.some(works)) { return entry }
+  if (!_.some(works)) return entry
 
   return resolveWorksFromEdition(works, edition)
   .then((works) => {

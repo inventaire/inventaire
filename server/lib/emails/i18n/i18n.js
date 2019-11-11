@@ -39,7 +39,8 @@ activeLangs.forEach((lang) => {
 const solveLang = function(lang){
   // there is only support for 2 letters languages for now
   lang = __guard__(lang, x => x.slice(0, 2))
-  if (activeLangs.includes(lang)) { return lang } else { return 'en' }
+  if (activeLangs.includes(lang)) return lang
+  else return 'en'
 }
 
 module.exports = (helpers = {

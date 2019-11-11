@@ -44,7 +44,7 @@ module.exports = (invitations_ = {
   convertInvitations(userDoc){
     let { _id:userId, inviters, invitersGroups } = userDoc
 
-    if ((inviters == null) && (invitersGroups == null)) { return promises_.resolved }
+    if ((inviters == null) && (invitersGroups == null)) return promises_.resolved
 
     if (!invitersGroups) { invitersGroups = {} }
     const groupInvitersIds = _.values(invitersGroups)

@@ -84,6 +84,6 @@ var validSimpleDay = simpleDay => !/^[0-]+$/.test(simpleDay);
 var formatImageHash = imageHash => `invimg:${imageHash}`;
 
 var formatPropClaims = function(property, formattedPropClaims){
-  if (formattedPropClaims.length === 0) { return ''; }
+  if (formattedPropClaims.length === 0) return '';
   return `\n  ${property} ${formattedPropClaims.join(',\n    ')} ;`;
 };

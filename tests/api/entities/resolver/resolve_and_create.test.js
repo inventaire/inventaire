@@ -35,7 +35,7 @@ describe('entities:resolve:create-unresolved', () => {
       should(result.edition.uri).be.ok()
       should(result.works[0].uri).be.ok()
       should(result.authors[0].uri).be.ok()
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -47,7 +47,7 @@ describe('entities:resolve:create-unresolved', () => {
     .then((entries) => {
       entries[0].should.be.an.Object()
       entries[0].edition.uri.should.equal(`isbn:${rawIsbn}`)
-      return done()}).catch(done)
+      done()}).catch(done)
 
   })
 
@@ -70,7 +70,7 @@ describe('entities:resolve:create-unresolved', () => {
 
         should(editionClaims['wdt:P212'][0]).be.ok()
         newEditionTitle.should.equal(editionLabel)
-        return done()
+        done()
       })}).catch(undesiredErr(done))
 
   })
@@ -85,7 +85,7 @@ describe('entities:resolve:create-unresolved', () => {
       const entry = res.entries[0]
       entry.works[0].resolved.should.be.false()
       entry.works[0].created.should.be.false()
-      return done()
+      done()
     })).catch(done)
 
   })
@@ -105,7 +105,7 @@ describe('entities:resolve:create-unresolved', () => {
       .then((entities) => {
         const newWorkClaimValue = _.values(entities)[0].claims['wdt:P407'][0]
         newWorkClaimValue.should.equal(frenchLang)
-        return done()
+        done()
       })}).catch(undesiredErr(done))
 
   })
@@ -125,7 +125,7 @@ describe('entities:resolve:create-unresolved', () => {
       .then((entities) => {
         const newWorkClaimValue = _.values(entities)[0].claims['wdt:P2969'][0]
         newWorkClaimValue.should.equal(goodReadsId)
-        return done()
+        done()
       })}).catch(undesiredErr(done))
 
   })
@@ -146,7 +146,7 @@ describe('entities:resolve:create-unresolved', () => {
       .then((entities) => {
         const newWorkClaimValue = _.values(entities)[0].claims['wdt:P2963'][0]
         newWorkClaimValue.should.equal(goodReadsId)
-        return done()
+        done()
       })}).catch(undesiredErr(done))
 
   })
@@ -168,7 +168,7 @@ describe('entities:resolve:create-unresolved', () => {
         patch.batch.should.be.a.Number()
         patch.batch.should.above(startTime)
         patch.batch.should.below(Date.now())
-        return done()
+        done()
       })}).catch(undesiredErr(done))
 
   })
@@ -188,7 +188,7 @@ describe('entities:resolve:create-unresolved', () => {
         const work = entities[workUri]
         const workAuthors = work.claims['wdt:P50']
         workAuthors.includes(result.authors[0].uri).should.be.true()
-        return done()
+        done()
       })}).catch(undesiredErr(done))
 
   })
@@ -207,11 +207,11 @@ describe('entities:resolve:create-unresolved', () => {
     .then((entries) => {
       const work = entries[0].works[0]
       work.labels[dutchLangCode].should.equal(title)
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
-  return it('should not create works without labels', (done) => {
+  it('should not create works without labels', (done) => {
     const title = randomLabel()
     resolveAndCreate({
       edition: {
@@ -222,7 +222,7 @@ describe('entities:resolve:create-unresolved', () => {
     .then(undesiredRes(done))
     .catch((err) => {
       err.body.status_verbose.should.startWith('invalid labels')
-      return done()}).catch(done)
+      done()}).catch(done)
 
   })
 })

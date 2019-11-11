@@ -29,7 +29,7 @@ const { Track } = __.require('lib', 'track')
 // - update-settings
 
 module.exports = function(req, res){
-  if (req.user == null) { return error_.unauthorizedApiAccess(req, res) }
+  if (req.user == null) return error_.unauthorizedApiAccess(req, res)
   // Allow to pass the action in either the query or the body, as ActionsControllers
   let action = req.body.action || req.query.action
 

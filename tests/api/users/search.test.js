@@ -24,7 +24,7 @@ describe('users:search', () => {
       .then((res) => {
         let needle;
         ((needle = user._id, usersIds(res).includes(needle))).should.be.true()
-        return done()
+        done()
       })}).catch(undesiredErr(done))
 
   })
@@ -38,7 +38,7 @@ describe('users:search', () => {
       .then((res) => {
         let needle;
         ((needle = user._id, usersIds(res).includes(needle))).should.be.true()
-        return done()
+        done()
       })}).catch(undesiredErr(done))
 
   })
@@ -53,7 +53,7 @@ describe('users:search', () => {
     .then((res) => {
       let needle;
       ((needle = user._id, usersIds(res).includes(needle))).should.be.true()
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
@@ -66,12 +66,12 @@ describe('users:search', () => {
       let needle;
       ((needle = user._id, usersIds(res).includes(needle))).should.be.true()
       should(res.users[0].snapshot).not.be.ok()
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
 
-  return it('should find a user by its bio', (done) => {
+  it('should find a user by its bio', (done) => {
     authReq('put', '/api/user', { attribute: 'bio', value: 'blablablayouhou' })
     .catch((err) => {
       if (err.body.status_verbose === 'already up-to-date') { return
@@ -81,7 +81,7 @@ describe('users:search', () => {
     .then((res) => {
       let needle;
       ((needle = user._id, usersIds(res).includes(needle))).should.be.true()
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })

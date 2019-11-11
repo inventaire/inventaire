@@ -15,7 +15,7 @@ const _ = __.require('builders', 'utils')
 module.exports = {
   dumpDb(name){
     const db = findDb(name)
-    if (db == null) { throw new Error('cant find db') }
+    if (db == null) throw new Error('cant find db')
 
     const dump = {}
 
@@ -46,7 +46,7 @@ module.exports = {
 }
 
 var findDb = function(name){
-  if (name == null) { throw new Error('missing name') }
+  if (name == null) throw new Error('missing name')
   const [ dbName, subName ] = Array.from(name.split(':'))
 
   const dbPath = __.path('leveldb', dbName)

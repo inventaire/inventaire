@@ -18,7 +18,7 @@ module.exports = function(req, res, next){
 
   // If dataseed is disabled, we simply return the same url,
   // instead of converting it to an image hash
-  if (!dataseedEnabled) { return res.json({ url, converted: false }) }
+  if (!dataseedEnabled) return res.json({ url, converted: false })
 
   return getImageByUrl(url)
   .then((data) => {

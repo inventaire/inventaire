@@ -27,7 +27,7 @@ describe('items:delete-by-ids', () => {
     .catch((err) => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal("ids array can't be empty")
-      return done()}).catch(done)
+      done()}).catch(done)
 
   })
 
@@ -41,7 +41,7 @@ describe('items:delete-by-ids', () => {
         return deleteByIds(itemId)
         .then((res) => {
           res.ok.should.be.true()
-          return done()
+          done()
         })
       })}).catch(done)
 
@@ -57,7 +57,7 @@ describe('items:delete-by-ids', () => {
         return authReq('get', `/api/items?action=by-ids&ids=${itemId}`)
         .then((res) => {
           res.items.length.should.equal(0)
-          return done()
+          done()
         })
       })}).catch(done)
 
@@ -75,12 +75,12 @@ describe('items:delete-by-ids', () => {
     .then((userAfter) => {
       const countChange = CountChange(userBefore.snapshot, userAfter.snapshot)
       countChange('public').should.equal(-1)
-      return done()
+      done()
     })))).catch(done)
 
   })
 
-  return it('should reject deletion of an item owned by another user', (done) => {
+  it('should reject deletion of an item owned by another user', (done) => {
     createItem()
     .then((item) => {
       const { _id: itemId } = item
@@ -89,7 +89,7 @@ describe('items:delete-by-ids', () => {
       .catch((err) => {
         err.statusCode.should.equal(403)
         err.body.status_verbose.should.equal("user isn't item owner")
-        return done()
+        done()
       })}).catch(done)
 
   })

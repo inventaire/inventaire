@@ -30,7 +30,7 @@ describe('entities:revert-merge', () => {
     .then((res) => {
       should(res.redirects[workA.uri]).not.be.ok()
       res.entities[workA.uri].should.be.ok()
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
@@ -51,7 +51,7 @@ describe('entities:revert-merge', () => {
     .then((res) => {
       const authorsUris = res.entities[workB.uri].claims['wdt:P50']
       should(authorsUris).not.be.ok()
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
@@ -69,7 +69,7 @@ describe('entities:revert-merge', () => {
       return revertMerge(workA.uri)}).then(() => getByUris(workB.uri))
     .then((res) => {
       should(res.entities[workB.uri].labels.zh).not.be.ok()
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
@@ -93,7 +93,7 @@ describe('entities:revert-merge', () => {
     .then((res) => {
       const authorsUris = res.entities[workB.uri].claims['wdt:P50']
       authorsUris.should.deepEqual([ authorB.uri ])
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
@@ -114,7 +114,7 @@ describe('entities:revert-merge', () => {
       return revertMerge(workA.uri)}).then(() => getByUris(workB.uri))
     .then((res) => {
       should(res.entities[workB.uri].labels.zh).not.be.ok()
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
@@ -132,12 +132,12 @@ describe('entities:revert-merge', () => {
     .then((res) => {
       const authorsUris = res.entities[work.uri].claims['wdt:P50']
       authorsUris.should.deepEqual([ humanA.uri ])
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
 
-  return it('should restore removed human placeholders', (done) => {
+  it('should restore removed human placeholders', (done) => {
     Promise.all([
       createWorkWithAuthor(),
       createWorkWithAuthor()
@@ -152,7 +152,7 @@ describe('entities:revert-merge', () => {
         workA = res.entities[workA.uri]
         should(humanA._meta_type).not.be.ok()
         workA.claims['wdt:P50'].should.deepEqual([ humanAUri ])
-        return done()
+        done()
       })}).catch(done)
 
   })

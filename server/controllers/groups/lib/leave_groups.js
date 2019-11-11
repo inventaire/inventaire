@@ -21,7 +21,7 @@ module.exports = {
     .then((group) => {
       const { admins, members } = group
       const adminsIds = admins.map(_.property('user'))
-      if (!adminsIds.includes(userId)) { return true }
+      if (!adminsIds.includes(userId)) return true
       const mainUserIsTheOnlyAdmin = admins.length === 1
       const thereAreOtherMembers = members.length > 0
       if (mainUserIsTheOnlyAdmin && thereAreOtherMembers) { return false

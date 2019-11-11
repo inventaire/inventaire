@@ -17,7 +17,7 @@ describe('entities:changes', () => {
     .then((res) => {
       res.uris.should.be.an.Array()
       res.lastSeq.should.be.an.Number()
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -26,15 +26,15 @@ describe('entities:changes', () => {
     .then((res) => {
       res.uris.should.be.an.Array()
       res.lastSeq.should.be.an.Number()
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
-  return it('should throw when passed an invalid since parameter', (done) => {
+  it('should throw when passed an invalid since parameter', (done) => {
     nonAuthReq('get', '/api/entities?action=changes&since=-2')
     .catch((err) => {
       err.body.error_name.should.equal('invalid_since')
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 })

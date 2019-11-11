@@ -17,7 +17,7 @@ const { coverByOlId } = require('./api')
 
 module.exports = function(openLibraryId, entityType){
   let type
-  if (!openLibraryId) { return Promise.resolve(null) }
+  if (!openLibraryId) return Promise.resolve(null)
 
   switch (entityType) {
   case 'human': type = 'a'; break

@@ -29,7 +29,7 @@ module.exports = function(params){
   console.log('silent mode:', silent)
 
   params.db = (db = __.require('couch', 'base')(dbName, designDocName))
-  if (db == null) { throw new Error('bad dbName') }
+  if (db == null) throw new Error('bad dbName')
 
   const updater = function(docsIdsPromise, updateFunction, label){
     if (!preview) { logMigration(dbName, updateFunction, label) }

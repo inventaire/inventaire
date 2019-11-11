@@ -107,8 +107,8 @@ var updateReadStates = function(userId, transaction){
 
 var userRole = function(userId, transaction){
   const { owner, requester } = transaction
-  if (userId === owner) { return 'owner' }
-  if (userId === requester) { return 'requester' }
+  if (userId === owner) return 'owner'
+  if (userId === requester) return 'requester'
   return (() => { throw error_.new('no role found', 500, arguments) })()
 }
 

@@ -22,7 +22,7 @@ module.exports = (parse = function(isbn){
   // Some people input an isbn 13 without EAN prefix
   // so if the first attempt to parse an ISBN-10 fails, try to consider it
   // as an unnecessarily trunkated ISBN-13
-  if ((data == null) && /^\d{10}$/.test(isbn)) { return parse(`978${isbn}`) }
+  if ((data == null) && /^\d{10}$/.test(isbn)) return parse(`978${isbn}`)
 
   if (data != null) {
     let groupPrefix

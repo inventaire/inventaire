@@ -16,7 +16,7 @@ const { aggregateClaims } = require('./helpers')
 
 const getRelativeEntities = relationProperty => (function(entity) {
   const uris = entity.claims[relationProperty]
-  if ((uris != null ? uris.length : undefined) <= 0) { return Promise.resolve([]) }
+  if ((uris != null ? uris.length : undefined) <= 0) return Promise.resolve([])
   return getEntitiesByUris({ uris })
   .then(res => _.values(res.entities))
 })

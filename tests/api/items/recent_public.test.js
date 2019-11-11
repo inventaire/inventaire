@@ -64,15 +64,15 @@ describe('items:recent-public', () => {
     .then(undesiredRes(done))
     .catch((err) => {
       err.body.status_verbose.should.equal('invalid limit: bla')
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
   })
 
-  return it('should reject invalid lang', (done) => {
+  it('should reject invalid lang', (done) => {
     nonAuthReq('get', `${recentPublicUrl}&lang=bla`)
     .then(undesiredRes(done))
     .catch((err) => {
       err.body.status_verbose.should.equal('invalid lang: bla')
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
   })
 })
 

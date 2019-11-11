@@ -31,7 +31,7 @@ describe('user:delete', () => it('should delete the user', (done) => {
       should(deletedUser.readToken).not.be.ok()
       should(deletedUser.picture).not.be.ok()
       should(deletedUser.snapshot).not.be.ok()
-      return done()
+      done()
     })}).catch(done))
 
 }))

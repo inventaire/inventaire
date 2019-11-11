@@ -23,7 +23,7 @@ module.exports = entity => (function(existingTasks) {
     getAuthorWorksData(entity._id)
   ])
   .spread((newSuggestions, suspectWorksData) => {
-    if (newSuggestions.length <= 0) { return [] }
+    if (newSuggestions.length <= 0) return []
     const { labels:worksLabels } = suspectWorksData
     return Promise.all(newSuggestions.map(addOccurrencesToSuggestion(suspectWorksData)))
     .then(evaluateSuggestions(entity, worksLabels))

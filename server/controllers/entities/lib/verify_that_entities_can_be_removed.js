@@ -53,7 +53,7 @@ var entitiesItemsChecks = uris => getAllUris(uris)
 
 var getAllUris = uris => getEntitiesByUris({ uris })
 .then((res) => {
-  if (res.redirects == null) { return uris }
+  if (res.redirects == null) return uris
   const missingCanonicalUris = _.values(res.redirects)
   return uris.concat(missingCanonicalUris)
 })

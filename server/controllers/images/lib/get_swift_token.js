@@ -35,7 +35,7 @@ const postParams = {
 }
 
 module.exports = function() {
-  if ((lastToken != null) && !tokenExpired()) { return promises_.resolve(lastToken) }
+  if ((lastToken != null) && !tokenExpired()) return promises_.resolve(lastToken)
 
   return breq.post(postParams)
   .get('body')

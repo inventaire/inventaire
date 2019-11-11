@@ -17,9 +17,9 @@ module.exports = function(req, res, next){
   var logRequest = function() {
     res.removeListener('finish', logRequest)
     res.removeListener('close', logRequest)
-    if (skip(req, res)) { return }
+    if (skip(req, res)) return 
     const line = format(req, res)
-    if (line == null) { return }
+    if (line == null) return 
     return process.stdout.write(line + '\n')
   }
 
@@ -56,7 +56,7 @@ var format = function(req, res){
 }
 
 var responseTime = function(req, res){
-  if ((res._header == null) || (req._startAt == null)) { return '' }
+  if ((res._header == null) || (req._startAt == null)) return ''
   const [ seconds, nanoseconds ] = Array.from(process.hrtime(req._startAt))
   const ms = (seconds * 1000) + (nanoseconds / 1000000)
   return ms.toFixed(3)

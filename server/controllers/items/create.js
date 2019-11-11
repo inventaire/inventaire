@@ -25,7 +25,7 @@ module.exports = function(req, res, next){
 
   for (const item of items) {
     const { entity:entityUri } = item
-    if (entityUri == null) { return error_.bundleMissingBody(req, res, 'entity') }
+    if (entityUri == null) return error_.bundleMissingBody(req, res, 'entity')
 
     if (!_.isEntityUri(entityUri)) {
       return error_.bundleInvalid(req, res, 'entity', entityUri)

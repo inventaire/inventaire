@@ -13,8 +13,8 @@ const wdk = require('wikidata-sdk')
 const isbn_ = __.require('lib', 'isbn/isbn')
 
 const prefixify = function(id, prefix){
-  if (id == null) { return }
-  if (prefix != null) { return `${prefix}:${id}` }
+  if (id == null) return 
+  if (prefix != null) return `${prefix}:${id}`
 
   if (wdk.isItemId(id)) { return `wd:${id}`
   } else if (_.isInvEntityId(id)) { return `inv:${id}`
@@ -33,7 +33,7 @@ const unprefixify = uri => uri.split(':')[1]
 
 const getInvEntityUri = function(entity){
   const { _id } = entity
-  if (_id != null) { return `inv:${_id}` }
+  if (_id != null) return `inv:${_id}`
 }
 
 module.exports = { prefixify, Prefixify, unprefixify, prefixifyWd, prefixifyInv, prefixifyIsbn, getInvEntityUri }

@@ -23,7 +23,7 @@ describe('search:global', () => {
     .catch((err) => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal('missing parameter in query: search')
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -33,7 +33,7 @@ describe('search:global', () => {
     .catch((err) => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal('missing parameter in query: types')
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -43,7 +43,7 @@ describe('search:global', () => {
     .catch((err) => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.startWith('invalid types: da')
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -53,7 +53,7 @@ describe('search:global', () => {
       results.should.be.an.Array()
       results.forEach(result => result.type.should.equal('humans'))
       _.map(results, 'id').includes('Q184226').should.be.true()
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -67,7 +67,7 @@ describe('search:global', () => {
       results.should.be.an.Array()
       results.forEach(result => result.type.should.equal('humans'))
       _.map(results, 'id').includes(entity._id).should.be.true()
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
@@ -82,7 +82,7 @@ describe('search:global', () => {
       results.should.be.an.Array()
       results.forEach(result => result.type.should.equal('works'))
       _.map(results, 'id').includes(entity._id).should.be.true()
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
@@ -93,7 +93,7 @@ describe('search:global', () => {
       results.should.be.an.Array()
       results.forEach(result => result.type.should.equal('works'))
       _.map(results, 'id').includes('Q180736').should.be.true()
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -107,7 +107,7 @@ describe('search:global', () => {
       results.should.be.an.Array()
       results.forEach(result => result.type.should.equal('series'))
       _.map(results, 'id').includes(entity._id).should.be.true()
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
@@ -118,7 +118,7 @@ describe('search:global', () => {
       results.should.be.an.Array()
       results.forEach(result => result.type.should.equal('series'))
       _.map(results, 'id').includes('Q8337').should.be.true()
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -130,7 +130,7 @@ describe('search:global', () => {
       results.should.be.an.Array()
       results.forEach(result => result.type.should.equal('users'))
       _.map(results, 'id').includes(user._id).should.be.true()
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
@@ -144,7 +144,7 @@ describe('search:global', () => {
       results.should.be.an.Array()
       results.forEach(result => result.type.should.equal('groups'))
       _.map(results, 'id').includes(group._id).should.be.true()
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
@@ -162,7 +162,7 @@ describe('search:global', () => {
       .then((res) => {
         ({ results } = res)
         _.map(results, 'id').includes(group._id).should.be.true()
-        return done()
+        done()
       })
     })).catch(undesiredErr(done))
 
@@ -186,13 +186,13 @@ describe('search:global', () => {
       .then((results) => {
         const firstResultUri = results[0].uri
         firstResultUri.should.equal(workWithEditionUri)
-        return done()
+        done()
       })
     })).catch(undesiredErr(done))
 
   })
 
-  return it('should return a global score boosted by a logarithmic popularity', (done) => {
+  it('should return a global score boosted by a logarithmic popularity', (done) => {
     const workLabel = randomLabel()
     createWork({ labels: { fr: workLabel } })
     .then((work) => {
@@ -211,7 +211,7 @@ describe('search:global', () => {
         const popularity = workEditionsCreation.length
         const boostLimit = firstEntityResult.lexicalScore * popularity
         firstEntityResult.globalScore.should.be.below(boostLimit)
-        return done()
+        done()
       }))}).catch(undesiredErr(done))
 
   })

@@ -23,7 +23,7 @@ describe('transactions:get:messages', () => it('should get a transaction message
     .then((res3) => {
       res3.messages.should.be.an.Array()
       should(res3.messages.length > 0).be.true()
-      return done()
+      done()
     }))}).catch(undesiredErr(done))
 
 }))

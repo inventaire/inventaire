@@ -37,7 +37,7 @@ module.exports = function(wdAuthorUri, worksLabels, worksLabelsLangs){
   return getEntityByUri({ uri: wdAuthorUri })
   .then((authorEntity) => {
     // Known case: entities tagged as 'missing' or 'meta'
-    if (authorEntity.sitelinks == null) { return [] }
+    if (authorEntity.sitelinks == null) return []
 
     return promises_.all([
       getWikipediaOccurrences(authorEntity, worksLabels, worksLabelsLangs),
@@ -65,7 +65,7 @@ var getMostRelevantWikipediaArticles = function(authorEntity, worksLabelsLangs){
   return _.uniq(worksLabelsLangs.concat([ originalLang, 'en' ]))
   .map((lang) => {
     const title = sitelinks[`${lang}wiki`]
-    if (title != null) { return { lang, title } }})
+    if (title != null) return { lang, title }})
   .filter(_.identity)
   .map(getWikipediaArticle)
 }
@@ -74,7 +74,7 @@ const getAndCreateOccurrencesFromIds = (prop, getWorkTitlesFn) => (function(auth
   // An author should normally have only 1 value per external id property
   // but if there are several, check every available ids
   const ids = authorEntity.claims[prop]
-  if (ids == null) { return }
+  if (ids == null) return 
   return promises_.all(ids.map(getWorkTitlesFn))
   .then(_.flatten)
   .map(createOccurrencesFromExactTitles(worksLabels))
@@ -92,7 +92,7 @@ var createOccurrencesFromUnstructuredArticle = function(worksLabels){
   const worksLabelsPattern = new RegExp(worksLabels.join('|'), 'gi')
   return function(article){
     const matchedTitles = _.uniq(article.extract.match(worksLabelsPattern))
-    if (matchedTitles.length <= 0) { return }
+    if (matchedTitles.length <= 0) return 
     return { url: article.url, matchedTitles, structuredDataSource: false }
   }
 }

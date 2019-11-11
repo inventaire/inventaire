@@ -44,9 +44,9 @@ module.exports = {
 }
 
 var isSearchable = reqUserId => (function(result) {
-  if (result._type !== 'groups') { return true }
-  if (result._source.searchable) { return true }
-  if (reqUserId == null) { return false }
+  if (result._type !== 'groups') return true
+  if (result._source.searchable) return true
+  if (reqUserId == null) return false
   // Only members should be allowed to find non-searchable groups in search
   return Group.userIsMember(reqUserId, result._source)
 })

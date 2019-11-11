@@ -16,6 +16,6 @@ describe('wikipedia:extract', () => it('should get an extract of a Wikipedia art
   .then((res) => {
     res.url.should.equal('https://fr.wikipedia.org/wiki/Gilbert_Simondon')
     res.extract.should.startWith('Gilbert Simondon')
-    return done()}).catch(done)
+    done()}).catch(done)
 
 }))

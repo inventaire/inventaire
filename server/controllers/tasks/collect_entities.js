@@ -38,7 +38,7 @@ var addEntitiesToQueueSequentially = function(refresh){
     return getNextInvHumanUrisBatch(pagination)
     .then((uris) => {
       pagination.total += uris.length
-      if (uris.length === 0) { return _.success(pagination.total, 'done. total entities queued:') }
+      if (uris.length === 0) return _.success(pagination.total, 'done. total entities queued:')
       return getFilteredUris(uris, refresh)
       .then(invTasksEntitiesQueue.pushBatch)
       .then(addNextBatch)

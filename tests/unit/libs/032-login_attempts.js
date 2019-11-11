@@ -19,7 +19,7 @@ describe('loginAttemps', () => {
     loginAttemps._fails.should.be.a.Function()
     loginAttemps.recordFail.should.be.a.Function()
     loginAttemps.tooMany.should.be.a.Function()
-    return done()
+    done()
   })
 
   loginAttemps._flushFails()
@@ -30,30 +30,30 @@ describe('loginAttemps', () => {
       should(loginAttemps._fails()['bobby']).not.be.ok()
       bobbyAttempt().should.equal(1)
       loginAttemps._fails()['bobby'].should.equal(1)
-      return done()
+      done()
     })
 
-    return it('should increment username counter', (done) => {
+    it('should increment username counter', (done) => {
       bobbyAttempt().should.equal(2)
       bobbyAttempt().should.equal(3)
       bobbyAttempt().should.equal(4)
-      return done()
+      done()
     })
   })
 
   return describe('tooMany', () => {
     it('should return false when attempts are lower than limit', (done) => {
       loginAttemps.tooMany('notabot').should.be.false()
-      return done()
+      done()
     })
 
-    return it('should return true when attempts are higher or equal to the limit', (done) => {
+    it('should return true when attempts are higher or equal to the limit', (done) => {
       for (let i = 1; i <= 10; i++) {
         loginAttemps.recordFail('notabot')
         _.log(loginAttemps.tooMany('notabot'))
       }
       loginAttemps.tooMany('notabot').should.be.true()
-      return done()
+      done()
     })
   })
 })

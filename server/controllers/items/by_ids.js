@@ -59,10 +59,10 @@ var filterByAuthorization = (reqUserId, networkIds) => (function(item) {
 
   } else if (networkIds.includes(ownerId)) {
     // Filter-out private item for network users
-    if (listing !== 'private') { return omitPrivateAttributes(item) }
+    if (listing !== 'private') return omitPrivateAttributes(item)
 
   } else {
     // Filter-out all non-public items for non-network users
-    if (listing === 'public') { return omitPrivateAttributes(item) }
+    if (listing === 'public') return omitPrivateAttributes(item)
   }
 })

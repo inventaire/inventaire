@@ -17,7 +17,7 @@ const wdOauth = require('./wikidata_oauth')
 module.exports = (...args) => Promise.try(() => updateWdLabel(...Array.from(args || [])))
 
 var updateWdLabel = function(user, id, lang, value){
-  if (!wdk.isItemId(id)) { throw error_.newInvalid('id', id) }
+  if (!wdk.isItemId(id)) throw error_.newInvalid('id', id)
 
   wdOauth.validate(user)
   const oauth = wdOauth.getFullCredentials(user)

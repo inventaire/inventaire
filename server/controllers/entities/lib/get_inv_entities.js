@@ -35,7 +35,7 @@ module.exports = (ids, params) => // Hypothesis: there is no need to look for Wi
   return { entities, notFound }})
 
 var Format = params => (function(entity) {
-  if (entity.redirect != null) { return getRedirectedEntity(entity, params) }
+  if (entity.redirect != null) return getRedirectedEntity(entity, params)
 
   const [ uri, redirects ] = Array.from(getInvEntityCanonicalUri(entity, { includeRedirection: true }))
   entity.uri = uri

@@ -34,7 +34,7 @@ describe('elastic query of an author name within indexes of wikidata humans', ()
     ids.includes(authorInWdDescriptions.goodId).should.be.true()
     ids.includes(authorInWdDescriptions.lessGoodId).should.be.false()
 
-    return done()
+    done()
   })
 
 }))

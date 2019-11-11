@@ -16,7 +16,7 @@ var buildQuery = function(externalIds){
 }
 
 var buildBody = function(externalIds){
-  if (externalIds.length === 1) { return buildTriple(externalIds[0]) }
+  if (externalIds.length === 1) return buildTriple(externalIds[0])
 
   const unions = externalIds
     .map(buildTriple)

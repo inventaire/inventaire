@@ -23,9 +23,10 @@ const validations = {
 }
 
 const parseNumberString = function(value){
-  if (_.isNumber(value)) { return value }
+  if (_.isNumber(value)) return value
   const parsedValue = parseFloat(value)
-  if (_.isNaN(parsedValue)) { return value } else { return parsedValue }
+  if (_.isNaN(parsedValue)) return value
+  else return parsedValue
 }
 
 const couchUuid = {
@@ -140,7 +141,7 @@ const generics = {
   },
   collection: {
     validate(values, name, config){
-      if (!_.isCollection(values)) { return false }
+      if (!_.isCollection(values)) return false
       const { limit } = config
       const { length } = values
       if ((limit != null) && (length > limit)) {

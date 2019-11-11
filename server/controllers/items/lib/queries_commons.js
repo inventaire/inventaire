@@ -37,7 +37,7 @@ module.exports = (queriesCommons = {
 
   addUsersData(page){
     const { reqUserId, includeUsers } = page
-    if (includeUsers === false) { return page }
+    if (includeUsers === false) return page
 
     const { items } = page
     if (items.length === 0) {

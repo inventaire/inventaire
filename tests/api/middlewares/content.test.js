@@ -33,11 +33,11 @@ describe('content', () => describe('body-parser', () => {
     return request(params, (err, res) => {
       res.statusCode.should.equal(400)
       JSON.parse(res.body).status_verbose.should.equal('invalid JSON body')
-      return done()
+      done()
     })
   })
 
-  return it('should make an exception for /api/submit', (done) => {
+  it('should make an exception for /api/submit', (done) => {
     const params = {
       method: 'POST',
       url: `${host}/api/submit?redirect=foo`,
@@ -50,7 +50,7 @@ describe('content', () => describe('body-parser', () => {
     return request(params, (err, res) => {
       res.statusCode.should.equal(302)
       res.headers.location.should.equal('/foo')
-      return done()
+      done()
     })
   })
 }))
@@ -70,7 +70,7 @@ var makeRequest = function(contentType, done){
     } else {
       res.statusCode.should.equal(200)
       JSON.parse(res.body).body.bla.should.equal(123)
-      return done()
+      done()
     }
   })
 }

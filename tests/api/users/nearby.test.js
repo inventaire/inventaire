@@ -21,18 +21,18 @@ describe('users:nearby', () => {
     .then((res) => {
       const usersIds = _.map(res.users, '_id')
       usersIds.includes(user1._id).should.be.true()
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
 
-  return it('should accept a range', (done) => {
+  it('should accept a range', (done) => {
     geolocatedUser1Promise
     .then(user1 => customAuthReq(geolocatedUser2Promise, 'get', `${endpoint}&range=1`)
     .then((res) => {
       const usersIds = _.map(res.users, '_id')
       usersIds.includes(user1._id).should.be.false()
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })

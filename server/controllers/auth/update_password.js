@@ -59,7 +59,7 @@ var updatePassword = (user, newPassword) => pw_.hash(newPassword)
 var verifyCurrentPassword = (user, currentPassword) => pw_.verify(user.password, currentPassword)
 
 var filterInvalid = function(isValid){
-  if (!isValid) { throw error_.newInvalid('new-password') }
+  if (!isValid) throw error_.newInvalid('new-password')
 }
 
 var updateUserPassword = (userId, user, newHash) => user_.db.update(userId, User.updatePassword.bind(null, user, newHash))

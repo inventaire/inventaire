@@ -57,27 +57,27 @@ describe('patch', () => {
       const params =
       ((() => Patch.create({ userId: 'invalid user id', currentDoc, updatedDoc })))
       .should.throw()
-      return done()
+      done()
     })
 
     it('should throw if passed identical objects', (done) => {
       ((() => Patch.create({ userId, currentDoc, updatedDoc: currentDoc })))
       .should.throw()
-      return done()
+      done()
     })
 
     it('should throw if there are no changes', (done) => {
       const docClone = _.cloneDeep(currentDoc);
       ((() => Patch.create({ userId, currentDoc, updatedDoc: docClone })))
       .should.throw()
-      return done()
+      done()
     })
 
     it('should throw if passed an updated doc without id', (done) => {
       const invalidDoc = _.extend({}, updatedDoc, { _id: 'invalid id' });
       ((() => Patch.create({ userId, currentDoc, updatedDoc: invalidDoc })))
       .should.throw()
-      return done()
+      done()
     })
 
     it('should throw if passed an invalid doc object', (done) => {
@@ -85,20 +85,20 @@ describe('patch', () => {
       .should.throw();
       ((() => Patch.create({ userId, currentDoc, updatedDoc: 'not an object' })))
       .should.throw()
-      return done()
+      done()
     })
 
     it('should return an object of type patch', (done) => {
       const patch = Patch.create({ userId, currentDoc, updatedDoc })
       patch.should.be.an.Object()
       patch.type.should.equal('patch')
-      return done()
+      done()
     })
 
     it('should return with user set to the user passed', (done) => {
       const patch = Patch.create({ userId, currentDoc, updatedDoc })
       patch.user.should.equal(userId)
-      return done()
+      done()
     })
 
     it('should return with a timestamp', (done) => {
@@ -106,7 +106,7 @@ describe('patch', () => {
       const patch = Patch.create({ userId, currentDoc, updatedDoc })
       patch.timestamp.should.be.a.Number();
       (patch.timestamp >= now).should.be.true()
-      return done()
+      done()
     })
 
     it('should return with a patch object', (done) => {
@@ -121,7 +121,7 @@ describe('patch', () => {
       const updateFromPatch = jiff.patch(patch.patch, currentDoc)
       updateFromPatch.claims.should.deepEqual(updatedDoc.claims)
       updateFromPatch.labels.should.deepEqual(updatedDoc.labels)
-      return done()
+      done()
     })
 
     it('should ignore data out of versionned attributes', (done) => {
@@ -129,7 +129,7 @@ describe('patch', () => {
       const updateFromPatch = jiff.patch(patch.patch, currentDoc)
       updateFromPatch.notTrackedAttr.should.equal(currentDoc.notTrackedAttr)
       updateFromPatch.notTrackedAttr.should.not.equal(updatedDoc.notTrackedAttr)
-      return done()
+      done()
     })
 
     it('should return with an _id built from the document id and the version', (done) => {
@@ -138,15 +138,15 @@ describe('patch', () => {
       const version = updatedDoc._rev.split('-')[0]
       patch._id.split(':')[0].should.equal(docId)
       patch._id.split(':')[1].should.equal(version)
-      return done()
+      done()
     })
 
-    return it('should accept an arbitrary context object', (done) => {
+    it('should accept an arbitrary context object', (done) => {
       const params = { userId, currentDoc, updatedDoc, context: { mergeFrom: 'bla' } }
       const patch = Patch.create(params)
       patch.should.be.an.Object()
       patch.type.should.equal('patch')
-      return done()
+      done()
     })
   })
 
@@ -156,7 +156,7 @@ describe('patch', () => {
       const revertedDoc = Patch.revert(updatedDoc, patch)
       revertedDoc.labels.should.deepEqual(currentDoc.labels)
       revertedDoc.claims.should.deepEqual(currentDoc.claims)
-      return done()
+      done()
     })
 
     it('should revert an update patch', (done) => {
@@ -172,7 +172,7 @@ describe('patch', () => {
 
       const revertedDoc = Patch.revert(authorDocUpdatedB, patchB)
       revertedDoc.claims['wdt:P50'].should.deepEqual([ 'wd:Q535' ])
-      return done()
+      done()
     })
 
     it('should revert a patch between patches', (done) => {
@@ -189,7 +189,7 @@ describe('patch', () => {
 
       const revertedDoc = Patch.revert(authorDocUpdatedB, patchA)
       revertedDoc.claims['wdt:P50'].should.deepEqual([ 'wd:Q184226' ])
-      return done()
+      done()
     })
 
     it('should revert a patch between more patches', (done) => {
@@ -209,7 +209,7 @@ describe('patch', () => {
 
       const revertedDoc = Patch.revert(authorDocUpdatedC, patchB)
       revertedDoc.claims['wdt:P50'].should.deepEqual([ 'wd:Q535', 'wd:Q237087' ])
-      return done()
+      done()
     })
 
     it('should revert a delete patch', (done) => {
@@ -226,7 +226,7 @@ describe('patch', () => {
 
       const revertedDoc = Patch.revert(authorDocUpdatedB, patchB)
       revertedDoc.claims['wdt:P50'].should.deepEqual([ 'wd:Q535' ])
-      return done()
+      done()
     })
 
     it('should revert a delete patch after the doc was re-edited', (done) => {
@@ -246,7 +246,7 @@ describe('patch', () => {
 
       const revertedDoc = Patch.revert(authorDocUpdatedC, patchB)
       revertedDoc.claims['wdt:P50'].should.deepEqual([ 'wd:Q237087', 'wd:Q535' ])
-      return done()
+      done()
     })
 
     it('should revert a patch between patches on different claims', (done) => {
@@ -265,10 +265,10 @@ describe('patch', () => {
       const revertedDoc = Patch.revert(authorDocUpdatedB, patchB)
       revertedDoc.claims['wdt:P50'].should.deepEqual([ 'wd:Q535' ])
       should(revertedDoc.claims['wdt:P58']).not.be.ok()
-      return done()
+      done()
     })
 
-    return it('should revert successive patches', (done) => {
+    it('should revert successive patches', (done) => {
       const authorDocUpdatedA = _.cloneDeep(authorDoc)
       authorDocUpdatedA.claims['wdt:P50'] = [ 'wd:Q535' ]
 
@@ -296,7 +296,7 @@ describe('patch', () => {
       revertedDoc = Patch.revert(revertedDoc, patchC)
       revertedDoc.claims['wdt:P50'].should.deepEqual([ 'wd:Q535' ])
 
-      return done()
+      done()
     })
   })
 })

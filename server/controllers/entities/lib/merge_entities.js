@@ -134,11 +134,11 @@ var propertiesToCheckForPlaceholderDeletion = [
 var deleteIfIsolated = (userId, fromId) => (function(entityUri) {
   const [ prefix, entityId ] = Array.from(entityUri.split(':'))
   // Ignore wd or isbn entities
-  if (prefix !== 'inv') { return }
+  if (prefix !== 'inv') return 
 
   return entities_.byClaimsValue(entityUri)
   .filter(result => result.entity !== fromId)
   .then((results) => {
-    if (results.length === 0) { return placeholders_.remove(userId, entityId) }
+    if (results.length === 0) return placeholders_.remove(userId, entityId)
   })
 })

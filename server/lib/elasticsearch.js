@@ -47,7 +47,7 @@ var parseResponse = res => res.hits.hits.map(parseHit)
 var formatError = function(err){
   // Directly rethrow errors that aren't from ElasticSearch
   // like ECONNREFUSED errors
-  if (err.body == null) { throw err }
+  if (err.body == null) throw err
 
   err.body.error.root_cause = err.body.error.root_cause[0]
   err.body = err.body.error

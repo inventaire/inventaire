@@ -76,7 +76,7 @@ var resizeFromStream = function(reqStream, width, height, req, res){
 
   return images_.shrinkAndFormatStream(reqStream, width, height)
   .stream((err, stdout, stderr) => {
-    if (err != null) { return error_.handler(req, res, err) }
+    if (err != null) return error_.handler(req, res, err)
     stdout.on('error', handleBufferError)
     stderr.on('data', handleBufferError)
 
@@ -92,7 +92,7 @@ var resizeFromStream = function(reqStream, width, height, req, res){
 
     return stdout.on('close', (data) => {
       // Addresses the case when the response was already sent by an error handler
-      if (alreadySent) { return }
+      if (alreadySent) return 
       if (receivedData) { return res.end()
       // usually solved by `sudo apt-get install graphicsmagick`
       } else {

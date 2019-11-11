@@ -34,7 +34,7 @@ describe('automerge_author_works: only from inv works to wd works', () => {
     .then((res) => {
       res.redirects[work1.uri].should.equal(workWdUri)
       res.redirects[work2.uri].should.equal(workWdUri)
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
@@ -53,7 +53,7 @@ describe('automerge_author_works: only from inv works to wd works', () => {
       return getByUris(work.uri)
       .then((res) => {
         res.redirects[work.uri].should.equal(workWdUri)
-        return done()
+        done()
       })
     }))).catch(undesiredErr(done))
 
@@ -71,12 +71,12 @@ describe('automerge_author_works: only from inv works to wd works', () => {
     .then(() => getByUris(invWork.uri))
     .then((res) => {
       res.entities[invWork.uri].should.be.ok()
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
 
-  return it('should not automerge work if suggestion is a serie or part of a serie', (done) => {
+  it('should not automerge work if suggestion is a serie or part of a serie', (done) => {
     // Alan Moore uri
     const authorUri = 'wd:Q205739'
     // Corresponding to wd:Q3825051 label
@@ -90,7 +90,7 @@ describe('automerge_author_works: only from inv works to wd works', () => {
     .then(() => getByUris(invWork.uri))
     .then((res) => {
       res.entities[invWork.uri].should.be.ok()
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })

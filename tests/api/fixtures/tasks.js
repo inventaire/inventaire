@@ -18,7 +18,7 @@ const promises = {}
 
 module.exports = (API = {
   createSomeTasks(humanLabel){
-    if (promises[humanLabel] != null) { return promises[humanLabel] }
+    if (promises[humanLabel] != null) return promises[humanLabel]
 
     promises[humanLabel] = Promise.all([
       createHuman({ labels: { en: humanLabel } }),

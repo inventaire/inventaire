@@ -15,7 +15,7 @@ module.exports = (userId, fromUri, toUri) => entities_.byClaimsValue(fromUri)
 .then((results) => {
   const entitiesToEditIds = _.map(results, 'entity')
   _.log(entitiesToEditIds, 'entitiesToEditIds')
-  if (entitiesToEditIds.length === 0) { return }
+  if (entitiesToEditIds.length === 0) return 
   // Doing all the redirects at once to avoid conflicts
   // within a same entity pointing several times to the redirected entity.
   // There is no identified case at the moment though.

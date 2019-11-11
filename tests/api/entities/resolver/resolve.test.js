@@ -29,7 +29,7 @@ describe('entities:resolve', () => {
     .catch((err) => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.startWith('invalid isbn')
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -43,7 +43,7 @@ describe('entities:resolve', () => {
     .then((entries) => {
       entries[0].should.be.an.Object()
       entries[0].edition.uri.should.equal(`isbn:${isbn13}`)
-      return done()}).catch(done)
+      done()}).catch(done)
 
   })
 
@@ -59,7 +59,7 @@ describe('entities:resolve', () => {
       .get('entries')
       .then((entries) => {
         entries[0].edition.uri.should.equal(edition.uri)
-        return done()
+        done()
       })}).catch(done)
 
   })
@@ -75,7 +75,7 @@ describe('entities:resolve', () => {
     .then((entries) => {
       entries[0].should.be.an.Object()
       entries[0].edition.uri.should.equal(`isbn:${isbn13}`)
-      return done()}).catch(done)
+      done()}).catch(done)
 
   })
 
@@ -95,7 +95,7 @@ describe('entities:resolve', () => {
       entries[0].edition.uri.should.equal(`isbn:${isbn13A}`)
       entries[1].should.be.an.Object()
       entries[1].edition.uri.should.equal(`isbn:${isbn13B}`)
-      return done()}).catch(done)
+      done()}).catch(done)
 
   })
 
@@ -105,7 +105,7 @@ describe('entities:resolve', () => {
     .catch((err) => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.startWith('missing edition in entry')
-      return done()}).catch(done)
+      done()}).catch(done)
 
   })
 
@@ -118,7 +118,7 @@ describe('entities:resolve', () => {
     .catch((err) => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.startWith('no isbn or external id claims found')
-      return done()}).catch(done)
+      done()}).catch(done)
 
   })
 
@@ -130,7 +130,7 @@ describe('entities:resolve', () => {
     .catch((err) => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal('invalid label lang')
-      return done()}).catch(done)
+      done()}).catch(done)
 
   })
 
@@ -142,7 +142,7 @@ describe('entities:resolve', () => {
     .catch((err) => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal('invalid label')
-      return done()}).catch(done)
+      done()}).catch(done)
 
   })
 
@@ -154,7 +154,7 @@ describe('entities:resolve', () => {
     .catch((err) => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.startWith('invalid claims')
-      return done()}).catch(done)
+      done()}).catch(done)
 
   })
 
@@ -166,11 +166,11 @@ describe('entities:resolve', () => {
     .catch((err) => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal('invalid property value')
-      return done()}).catch(done)
+      done()}).catch(done)
 
   })
 
-  return it('should reject when claims key has an unknown property', (done) => {
+  it('should reject when claims key has an unknown property', (done) => {
     const unknownProp = 'wdt:P6'
     const seed = {
       isbn: generateIsbn13(),
@@ -181,7 +181,7 @@ describe('entities:resolve', () => {
     .catch((err) => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal("property isn't whitelisted")
-      return done()}).catch(done)
+      done()}).catch(done)
 
   })
 })
@@ -201,7 +201,7 @@ describe('entities:resolve:external-id', () => {
       entries[0].works.should.be.an.Array()
       entries[0].works[0].should.be.an.Object()
       entries[0].works[0].uri.should.equal('wd:Q151883')
-      return done()}).catch(done)
+      done()}).catch(done)
 
   })
 
@@ -218,7 +218,7 @@ describe('entities:resolve:external-id', () => {
       entries[0].works.should.be.an.Array()
       entries[0].works[0].should.be.an.Object()
       entries[0].works[0].uri.should.equal(work.uri)
-      return done()
+      done()
     })).catch(done)
 
   })
@@ -237,11 +237,11 @@ describe('entities:resolve:external-id', () => {
       entries[0].authors.should.be.an.Array()
       entries[0].authors[0].should.be.an.Object()
       entries[0].authors[0].uri.should.equal('wd:Q16867')
-      return done()}).catch(done)
+      done()}).catch(done)
 
   })
 
-  return it('should resolve inventaire author from external ids claim', (done) => {
+  it('should resolve inventaire author from external ids claim', (done) => {
     const goodReadsId = someGoodReadsId()
     createHuman()
     .delay(10)
@@ -255,7 +255,7 @@ describe('entities:resolve:external-id', () => {
       entries[0].authors.should.be.an.Array()
       entries[0].authors[0].should.be.an.Object()
       entries[0].authors[0].uri.should.equal(author.uri)
-      return done()
+      done()
     })).catch(done)
 
   })
@@ -281,7 +281,7 @@ describe('entities:resolve:in-context', () => {
     .get('entries')
     .then((entries) => {
       should(entries[0].works[0].uri).be.ok()
-      return done()
+      done()
     }))).catch(done)
 
   })
@@ -296,7 +296,7 @@ describe('entities:resolve:in-context', () => {
       .get('entries')
       .then((entries) => {
         should(entries[0].works[0].uri).be.ok()
-        return done()
+        done()
       })}).catch(done)
 
   })
@@ -322,7 +322,7 @@ describe('entities:resolve:in-context', () => {
       .get('entries')
       .then((entries) => {
         should(entries[0].works[0].uri).not.be.ok()
-        return done()
+        done()
       })
     })).catch(done)
 
@@ -346,7 +346,7 @@ describe('entities:resolve:in-context', () => {
       .then((entries) => {
         should(entries[0].works[0].uri).be.ok()
         should(entries[0].authors[0].uri).be.ok()
-        return done()
+        done()
       })
     })).catch(done)
 
@@ -363,13 +363,13 @@ describe('entities:resolve:in-context', () => {
         works: [ { labels } ] })
       .then((res) => {
         res.entries[0].works[0].uri.should.equal(work.uri)
-        return done()
+        done()
       })
     })).catch(done)
 
   })
 
-  return it('should ignore unresolved work from resolve edition', (done) => {
+  it('should ignore unresolved work from resolve edition', (done) => {
     const isbn = generateIsbn13()
     ensureEditionExists(`isbn:${isbn}`)
     .then(edition => resolve({
@@ -378,7 +378,7 @@ describe('entities:resolve:in-context', () => {
     .then((res) => {
       const entry = res.entries[0]
       entry.works[0].resolved.should.be.false()
-      return done()
+      done()
     })).catch(done)
 
   })
@@ -397,7 +397,7 @@ describe('entities:resolve:on-labels', () => {
       .get('entries')
       .then((entries) => {
         should(entries[0].works[0].uri).not.be.ok()
-        return done()
+        done()
       }))}).catch(done)
 
   })
@@ -414,7 +414,7 @@ describe('entities:resolve:on-labels', () => {
       .then((entries) => {
         entries[0].works[0].uri.should.equal(work.uri)
         entries[0].authors[0].uri.should.equal(author.uri)
-        return done()
+        done()
       }))}).catch(done)
 
   })
@@ -432,12 +432,12 @@ describe('entities:resolve:on-labels', () => {
       .then((entries) => {
         entries[0].works[0].uri.should.equal(work.uri)
         entries[0].authors[0].uri.should.equal(author.uri)
-        return done()
+        done()
       }))}).catch(done)
 
   })
 
-  return it('should not resolve when several works exist', (done) => {
+  it('should not resolve when several works exist', (done) => {
     createHuman()
     .then(author => createHuman({ labels: author.labels })
     .then((sameLabelAuthor) => {
@@ -452,7 +452,7 @@ describe('entities:resolve:on-labels', () => {
       .then((entries) => {
         should(entries[0].works[0].uri).not.be.ok()
         should(entries[0].authors[0].uri).not.be.ok()
-        return done()
+        done()
       }))
     })).catch(done)
 

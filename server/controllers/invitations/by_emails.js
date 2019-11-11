@@ -58,7 +58,7 @@ var parseAndValidateEmails = (emails, userEmail) => promises_.try(() => {
 })
 
 var validateGroup = function(groupId, reqUserId){
-  if (groupId == null) { return promises_.resolve(null) }
+  if (groupId == null) return promises_.resolve(null)
 
   if (!_.isGroupId(groupId)) {
     return error_.rejectInvalid('group id', groupId)

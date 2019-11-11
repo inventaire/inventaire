@@ -45,7 +45,7 @@ module.exports = function(data, userId){
 }
 
 var applyEditHooks = function(attribute, groupDoc){
-  if (attribute !== 'name') { return promises_.resolve([ groupDoc, {} ]) }
+  if (attribute !== 'name') return promises_.resolve([ groupDoc, {} ])
 
   return groups_.addSlug(groupDoc)
   .then(updatedDoc => [ updatedDoc, _.pick(updatedDoc, 'slug') ])

@@ -23,7 +23,7 @@ setTimeout(lateRequire, 0)
 
 const fromDoc = function(changedEntityDoc){
   const [ uri, type ] = Array.from(getDocData(changedEntityDoc))
-  if (!refreshTypes.includes(type)) { return }
+  if (!refreshTypes.includes(type)) return 
 
   const label = `${uri} items snapshot refresh`
 

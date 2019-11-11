@@ -18,12 +18,12 @@ describe('items:get-by-entities', () => {
     .then(item => authReq('get', `/api/items?action=by-entities&uris=${item.entity}`)
     .then((res) => {
       res.items[0].entity.should.equal(item.entity)
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
 
-  return it('should get items by entities uris', (done) => {
+  it('should get items by entities uris', (done) => {
     Promise.all([
       createEditionAndItem(getUser()),
       createEditionAndItem(getUser())
@@ -35,7 +35,7 @@ describe('items:get-by-entities', () => {
       .then((res) => {
         const resUserIds = _.uniq(_.map(res.items, 'entity'))
         resUserIds.should.containDeep(uris)
-        return done()
+        done()
       })}).catch(undesiredErr(done))
 
   })

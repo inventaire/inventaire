@@ -15,7 +15,7 @@ module.exports = function(entity){
   const { claims } = entity
   // Test claims existance to prevent crash when used on meta entities
   // for which entities claims were deleted
-  if (claims == null) { return [] }
+  if (claims == null) return []
 
   const invImageUrl = getUrlFromEntityImageHash(claims['invp:P2'] != null ? claims['invp:P2'][0] : undefined)
   const invImageUrls = (invImageUrl != null) ? [ invImageUrl ] : []

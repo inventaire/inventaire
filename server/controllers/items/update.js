@@ -17,7 +17,7 @@ const radio = __.require('lib', 'radio')
 const { Track } = __.require('lib', 'track')
 
 module.exports = function(req, res, next){
-  if (req.user == null) { return error_.unauthorizedApiAccess(req, res) }
+  if (req.user == null) return error_.unauthorizedApiAccess(req, res)
   const { body:item } = req
   const { _id, entity } = item
 
@@ -26,8 +26,8 @@ module.exports = function(req, res, next){
 
   _.log(item, 'item update')
 
-  if (_id == null) { return error_.bundleMissingBody(req, res, '_id') }
-  if (entity == null) { return error_.bundleMissingBody(req, res, 'entity') }
+  if (_id == null) return error_.bundleMissingBody(req, res, '_id')
+  if (entity == null) return error_.bundleMissingBody(req, res, 'entity')
 
   if (!_.isItemId(_id)) {
     return error_.bundleInvalid(req, res, '_id', _id)

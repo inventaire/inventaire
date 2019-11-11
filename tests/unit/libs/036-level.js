@@ -22,7 +22,7 @@ describe('simplified level', () => {
     .then((res) => {
       res.should.be.an.Object()
       res.ahoy.should.equal('georges')
-      return done()}).catch(done)
+      done()}).catch(done)
 
   })
 
@@ -46,7 +46,7 @@ describe('simplified level', () => {
         { key: 'e', value: { f: 1 } },
         { key: 'i', value: 'j' }
       ])
-      return done()
+      done()
     })
 
   })
@@ -56,11 +56,11 @@ describe('simplified level', () => {
     .then(() => db.get('what'))
     .then((res) => {
       res.should.equal('zup')
-      return done()}).catch(done)
+      done()}).catch(done)
 
   })
 
-  return it('should catch notFound errors', (done) => {
+  it('should catch notFound errors', (done) => {
     let spyCount = 0
     db.get('not defined')
     .catch((err) => {
@@ -68,7 +68,7 @@ describe('simplified level', () => {
       return spyCount++}).then((res) => {
       spyCount.should.equal(0)
       should(res).not.be.ok()
-      return done()}).catch(done)
+      done()}).catch(done)
 
   })
 })

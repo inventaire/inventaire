@@ -26,7 +26,7 @@ if (disableUserUpdate) {
 }
 
 module.exports = function(user){
-  if (user == null) { return _.info('no user waiting for summary') }
+  if (user == null) return _.info('no user waiting for summary')
 
   const userId = user._id
 

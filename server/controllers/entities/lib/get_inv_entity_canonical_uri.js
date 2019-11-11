@@ -20,7 +20,7 @@ module.exports = function(entity, options){
   let redirectsObj, uri
   const { _id:invId, redirect } = entity
 
-  if (invId == null) { throw error_.new('missing id', 500, entity) }
+  if (invId == null) throw error_.new('missing id', 500, entity)
 
   const invUri = `inv:${invId}`
 

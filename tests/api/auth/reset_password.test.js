@@ -19,16 +19,16 @@ describe('auth:reset-password', () => {
     .then(undesiredRes(done))
     .catch((err) => {
       err.body.status_verbose.should.equal('missing parameter in body: email')
-      return done()}).catch(done)
+      done()}).catch(done)
 
   })
 
-  return it('should send a reset password email', (done) => {
+  it('should send a reset password email', (done) => {
     getUser()
     .then(user => nonAuthReq('post', endpoint, { email: user.email }))
     .then((res) => {
       res.ok.should.be.true()
-      return done()}).catch(done)
+      done()}).catch(done)
 
   })
 })

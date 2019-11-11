@@ -12,7 +12,7 @@ const wdLang = require('wikidata-lang')
 
 module.exports = function(claims){
   const langClaims = _.pick(claims, langProperties)
-  if (_.objLength(langClaims) === 0) { return }
+  if (_.objLength(langClaims) === 0) return 
 
   const originalLangUri = __guard__(_.pickOne(langClaims), x => x[0])
   if (originalLangUri != null) {

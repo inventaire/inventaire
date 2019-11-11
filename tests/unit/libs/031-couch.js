@@ -16,7 +16,7 @@ const couch_ = __.require('lib', 'couch')
 describe('couch_', () => {
   it('env', (done) => {
     couch_.should.be.an.Object()
-    return done()
+    done()
   })
 
   return describe('joinOrderedIds', () => it('should return ordered id', (done) => {
@@ -26,6 +26,6 @@ describe('couch_', () => {
     id2.should.equal('azerty:qwerty')
     const id3 = couch_.joinOrderedIds('qwerty', '15hello')
     id3.should.equal('15hello:qwerty')
-    return done()
+    done()
   }))
 })

@@ -111,7 +111,7 @@ module.exports = (API = {
     return getByUris(uri)
     .get('entities')
     .then((entities) => {
-      if (entities[uri] != null) { return entities[uri] }
+      if (entities[uri] != null) return entities[uri]
       if (!workData) { workData = {
         labels: { fr: API.randomLabel() },
         claims: { 'wdt:P31': [ 'wd:Q571' ] }
@@ -149,7 +149,7 @@ module.exports = (API = {
 
   generateIsbn13() {
     const isbn = '9780' + _.join(_.sampleSize(_.split('0123456789', ''), 9), '')
-    if (isbn_.isValidIsbn(isbn)) { return isbn }
+    if (isbn_.isValidIsbn(isbn)) return isbn
     return API.generateIsbn13()
   }
 })

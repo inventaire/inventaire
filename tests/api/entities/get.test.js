@@ -24,7 +24,7 @@ describe('entities:get:by-uris', () => {
     .catch((err) => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.startWith('invalid uri')
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -35,7 +35,7 @@ describe('entities:get:by-uris', () => {
     .catch((err) => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.startWith('invalid uri')
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -44,7 +44,7 @@ describe('entities:get:by-uris', () => {
     .then(work => getByUris(work.uri)
     .then((res) => {
       res.entities[work.uri].should.be.an.Object()
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
@@ -54,7 +54,7 @@ describe('entities:get:by-uris', () => {
     getByUris(fakeUri)
     .then((res) => {
       res.notFound.should.deepEqual([ fakeUri ])
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -68,7 +68,7 @@ describe('entities:get:by-uris', () => {
       res.entities[humanB.uri].uri.should.equal(humanB.uri)
       res.redirects[humanA.uri].should.equal(humanB.uri)
       should(res.notFound).not.be.ok()
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
@@ -80,7 +80,7 @@ describe('entities:get:by-uris', () => {
     .then((res) => {
       const entity = res.entities[validWdUri]
       entity.uri.should.equal(validWdUri)
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -91,7 +91,7 @@ describe('entities:get:by-uris', () => {
     .then((res) => {
       const entity = res.entities[isbn13Uri]
       entity.uri.should.equal(isbn13Uri)
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -105,7 +105,7 @@ describe('entities:get:by-uris', () => {
         .then((res) => {
           res.entities[workUri].should.be.an.Object()
           res.entities[authorUri].should.be.an.Object()
-          return done()
+          done()
         })}).catch(undesiredErr(done))
 
     })
@@ -119,12 +119,12 @@ describe('entities:get:by-uris', () => {
         .catch((err) => {
           err.statusCode.should.equal(400)
           err.body.status_verbose.should.startWith('invalid relative')
-          return done()
+          done()
         })}).catch(undesiredErr(done))
 
     })
 
-    return it('should be able to include the works, authors, and series of an edition', (done) => {
+    it('should be able to include the works, authors, and series of an edition', (done) => {
       createEditionWithWorkAuthorAndSerie()
       .get('uri')
       .then(editionUri => getByUris(editionUri, 'wdt:P50|wdt:P179|wdt:P629')
@@ -144,7 +144,7 @@ describe('entities:get:by-uris', () => {
         const serie = res.entities[serieUri]
         serie.should.be.an.Object()
 
-        return done()
+        done()
       })).catch(undesiredErr(done))
 
     })

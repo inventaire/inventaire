@@ -25,7 +25,7 @@ module.exports = function(fnName, fnArgs, reqUserId){
   assert_.array(fnArgs)
   return groups_[fnName].apply(null, fnArgs)
   .then((group) => {
-    if (group == null) { throw error_.notFound(groupId) }
+    if (group == null) throw error_.notFound(groupId)
 
     const usersIds = groups_.allGroupMembers(group)
 

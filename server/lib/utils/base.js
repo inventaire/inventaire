@@ -32,22 +32,22 @@ module.exports = (base = {
   toLowerCase(str){ return str.toLowerCase() },
 
   stringToInt(str){
-    if (typeof str !== 'string') { throw new Error(`expected a string: ${str}`) }
+    if (typeof str !== 'string') throw new Error(`expected a string: ${str}`)
     // testing the validity of the string is needed
     // to avoid getting NaN from parseInt
-    if (!/^-?\d+$/.test(str)) { throw new Error(`invalid integer string: ${str}`) }
+    if (!/^-?\d+$/.test(str)) throw new Error(`invalid integer string: ${str}`)
     return parseInt(str)
   },
 
   parsePositiveInteger(str){
     // /!\ Difference with parseInt: not throwing
-    if ((typeof str !== 'string') || !/^\d+$/.test(str)) { return }
+    if ((typeof str !== 'string') || !/^\d+$/.test(str)) return 
     return parseInt(str)
   },
 
   stringToFloat(str){
-    if (typeof str !== 'string') { throw new Error(`expected a string: ${str}`) }
-    if (!/^[-?\d\.]+$/.test(str)) { throw new Error(`invalid integer string: ${str}`) }
+    if (typeof str !== 'string') throw new Error(`expected a string: ${str}`)
+    if (!/^[-?\d\.]+$/.test(str)) throw new Error(`invalid integer string: ${str}`)
     return parseFloat(str)
   },
 
@@ -80,7 +80,7 @@ module.exports = (base = {
   // adapted from http://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
   hashCode(string){
     let [ hash, i, len ] = Array.from([ 0, 0, string.length ])
-    if (len === 0) { return hash }
+    if (len === 0) return hash
 
     while (i < len) {
       const chr = string.charCodeAt(i)
@@ -93,7 +93,7 @@ module.exports = (base = {
 
   buildPath(pathname, queryObj, escape){
     queryObj = removeUndefined(queryObj)
-    if ((queryObj == null) || _.isEmpty(queryObj)) { return pathname }
+    if ((queryObj == null) || _.isEmpty(queryObj)) return pathname
 
     let queryString = ''
 
@@ -112,11 +112,11 @@ module.exports = (base = {
   },
 
   someMatch(arrayA, arrayB){
-    if (!_.isArray(arrayA) || !_.isArray(arrayB)) { return false }
+    if (!_.isArray(arrayA) || !_.isArray(arrayB)) return false
     for (const valueA of arrayA) {
       for (const valueB of arrayB) {
         // Return true as soon as possible
-        if (valueA === valueB) { return true }
+        if (valueA === valueB) return true
       }
     }
     return false
@@ -136,7 +136,7 @@ module.exports = (base = {
 
   pickOne(obj){
     const key = Object.keys(obj)[0]
-    if (key != null) { return obj[key] }
+    if (key != null) return obj[key]
   },
 
   parseBooleanString(booleanString, defaultVal = false){
@@ -156,18 +156,18 @@ module.exports = (base = {
     // just handling what differes from typeof
     const type = typeof obj
     if (type === 'object') {
-      if (_.isNull(obj)) { return 'null' }
-      if (_.isArray(obj)) { return 'array' }
+      if (_.isNull(obj)) return 'null'
+      if (_.isArray(obj)) return 'array'
     }
     if (type === 'number') {
-      if (_.isNaN(obj)) { return 'NaN' }
+      if (_.isNaN(obj)) return 'NaN'
     }
     return type
   },
 
   // helpers to simplify polymorphisms
   forceArray(keys){
-    if (((keys == null)) || (keys === '')) { return [] }
+    if (((keys == null)) || (keys === '')) return []
     if (_.isArray(keys)) { return keys
     } else { return [ keys ] }
   },
@@ -190,8 +190,8 @@ var aggregateMappedKeysValues = (obj, fn) => (function(newObj, key) {
 
   const [ newKey, newValue ] = Array.from(newKeyValue)
 
-  if (newKey == null) { throw new Error(`missing new key (old key: ${key})`) }
-  if (newValue == null) { throw new Error(`missing new value (old value: ${value})`) }
+  if (newKey == null) throw new Error(`missing new key (old key: ${key})`)
+  if (newValue == null) throw new Error(`missing new value (old value: ${value})`)
 
   newObj[newKey] = newValue
   return newObj

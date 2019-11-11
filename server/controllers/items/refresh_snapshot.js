@@ -29,7 +29,7 @@ var refreshSequentially = function(uris){
   var refreshNext = function() {
     const nextUri = uris.pop()
 
-    if (nextUri == null) { return promises_.resolved }
+    if (nextUri == null) return promises_.resolved
 
     if (!_.isEntityUri(nextUri)) {
       _.warn(nextUri, 'invalid entity URI: not refreshing')

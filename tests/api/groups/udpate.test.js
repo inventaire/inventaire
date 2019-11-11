@@ -31,7 +31,7 @@ describe('groups:update-settings', () => {
           ({ group } = getRes)
           group.name.should.equal(updatedName)
           group.slug.should.equal(slugify(updatedName))
-          return done()
+          done()
         })
       })}).catch(undesiredErr(done))
 
@@ -50,12 +50,12 @@ describe('groups:update-settings', () => {
       .then((updateRes) => {
         updateRes.ok.should.be.true()
         updateRes.update.slug.should.equal(slugify(updatedName))
-        return done()
+        done()
       })}).catch(undesiredErr(done))
 
   })
 
-  return it('should update description', (done) => {
+  it('should update description', (done) => {
     const updatedDescription = 'Lorem ipsum dolor sit amet'
     groupPromise
     .then((group) => {
@@ -72,7 +72,7 @@ describe('groups:update-settings', () => {
         .then((getRes) => {
           ({ group } = getRes)
           group.description.should.equal(updatedDescription)
-          return done()
+          done()
         })
       })}).catch(undesiredErr(done))
 

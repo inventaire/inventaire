@@ -18,7 +18,7 @@ module.exports = function(req, res){
   const { 'user-agent':userAgent } = headers
 
   // Excluding bots from online counts
-  if (isBot(userAgent)) { return _.ok(res) }
+  if (isBot(userAgent)) return _.ok(res)
 
   onlineUsers({
     userId: (req.user != null ? req.user._id : undefined),

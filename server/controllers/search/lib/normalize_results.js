@@ -12,7 +12,7 @@ const _ = __.require('builders', 'utils')
 const getBestLangValue = __.require('lib', 'get_best_lang_value')
 
 module.exports = lang => (function(results) {
-  if (!lang) { return results }
+  if (!lang) return results
 
   return results
   .map((result) => {

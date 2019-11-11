@@ -19,7 +19,7 @@ const { reset:resetFollow } = CONFIG.db.follow
 module.exports = function(db){
   const filter = function(doc){
     if (doc.type === 'user') {
-      if (doc.position != null) { return true }
+      if (doc.position != null) return true
     }
 
     return false
@@ -44,7 +44,7 @@ module.exports = function(db){
   var updateIfNeeded = function(id, lat, lon, res){
     if (res != null) {
       const { position } = res
-      if ((lat === position.lat) && (lon === position.lon)) { return }
+      if ((lat === position.lat) && (lon === position.lon)) return 
     }
 
     return db.put({ lat, lon }, id, null)

@@ -21,7 +21,7 @@ describe('images:data-url', () => {
     .catch((err) => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal('missing parameter in query: url')
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -31,7 +31,7 @@ describe('images:data-url', () => {
     .catch((err) => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal('invalid url: bla')
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -42,15 +42,15 @@ describe('images:data-url', () => {
     .catch((err) => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal('invalid content type')
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
-  return it('should return a data-url', (done) => {
+  it('should return a data-url', (done) => {
     authReq('get', `/api/images?action=data-url&url=${imageUrl}`)
     .then((res) => {
       res['data-url'].should.be.a.String()
       res['data-url'].should.startWith(dataUrlStart)
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 })

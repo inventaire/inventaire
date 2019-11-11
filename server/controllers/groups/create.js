@@ -19,7 +19,7 @@ const { Track } = __.require('lib', 'track')
 
 module.exports = function(req, res){
   let { name, searchable, description, position } = req.body
-  if (name == null) { return error_.bundleMissingBody(req, res, 'name') }
+  if (name == null) return error_.bundleMissingBody(req, res, 'name')
 
   if (searchable == null) { searchable = true }
 

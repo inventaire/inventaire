@@ -80,7 +80,8 @@ var sanitizeParameter = function(input, name, config, place, res){
 }
 
 var getPlace = function(method){
-  if ((method === 'POST') || (method === 'PUT')) { return 'body' } else { return 'query' }
+  if ((method === 'POST') || (method === 'PUT')) return 'body'
+  else { return 'query' }
 }
 
 var removeUnexpectedParameter = function(input, name, configs, res){
@@ -91,7 +92,7 @@ var removeUnexpectedParameter = function(input, name, configs, res){
 }
 
 var format = function(input, name, formatFn, config){
-  if (formatFn != null) { return input[name] = formatFn(input[name], name, config) }
+  if (formatFn != null) return input[name] = formatFn(input[name], name, config)
 }
 
 var applyDefaultValue = function(input, name, config, parameter){
@@ -100,7 +101,7 @@ var applyDefaultValue = function(input, name, config, parameter){
 }
 
 var obfuscateSecret = function(parameter, err){
-  if (parameter.secret) { return err.context.value = _.obfuscate(err.context.value) }
+  if (parameter.secret) return err.context.value = _.obfuscate(err.context.value)
 }
 
 var enforceBoundaries = function(input, name, config, parameter, res){
@@ -119,7 +120,7 @@ var enforceBoundary = function(input, name, boundary, res, position){
 }
 
 var renameParameter = function(input, name, renameFn){
-  if (renameFn == null) { return }
+  if (renameFn == null) return
   const aliasedName = renameFn(name)
   return input[aliasedName] = input[name]
 }

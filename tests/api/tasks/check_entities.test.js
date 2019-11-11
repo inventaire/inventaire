@@ -26,7 +26,7 @@ describe('tasks:check-entities', () => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal('unsupported type: work')
       err.message
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
@@ -43,12 +43,12 @@ describe('tasks:check-entities', () => {
       task.lexicalScore.should.be.a.Number()
       task.relationScore.should.be.a.Number()
       task.externalSourcesOccurrences.should.be.an.Array()
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
 
-  return it('should not re-create existing tasks', (done) => {
+  it('should not re-create existing tasks', (done) => {
     createHuman({ labels: { en: 'Fred Vargas' } })
     .then(human => checkEntities(human.uri)
     .then(() => checkEntities(human.uri))
@@ -56,7 +56,7 @@ describe('tasks:check-entities', () => {
     .then((tasks) => {
       const uniqSuggestiontUris = _.uniq(_.map(tasks, 'suggestionUri'))
       tasks.length.should.equal(uniqSuggestiontUris.length)
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
@@ -76,7 +76,7 @@ describe('tasks:automerge', () => {
     .then((entities) => {
       // entity should have merged, thus URI is now a a WD uri
       entities[authorWdUri].should.be.ok()
-      return done()
+      done()
     }))).catch(undesiredErr(done))
 
   })
@@ -95,12 +95,12 @@ describe('tasks:automerge', () => {
     .get('entities')
     .then((entities) => {
       entities[wikidataUri].should.be.ok()
-      return done()
+      done()
     }))).catch(undesiredErr(done))
 
   })
 
-  return it('should not automerge if author name is in work title', (done) => {
+  it('should not automerge if author name is in work title', (done) => {
     const authorLabel = 'Frédéric Lordon'
     const workLabel = authorLabel
     createHuman({ labels: { en: authorLabel } })
@@ -110,7 +110,7 @@ describe('tasks:automerge', () => {
       tasks.length.should.aboveOrEqual(1)
       const firstOccurenceMatch = tasks[0].externalSourcesOccurrences[0].matchedTitles[0]
       firstOccurenceMatch.should.equal(authorLabel)
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })

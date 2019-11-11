@@ -23,11 +23,11 @@ const earliestDate = -10000
 var getPartScore = function(obj){
   const { date, ordinal, subparts } = obj
   // Push parts with subparts up if they don't have a date or ordinal of their own
-  if ((subparts > 0) && (date == null) && (ordinal == null)) { return earliestDate - subparts }
+  if ((subparts > 0) && (date == null) && (ordinal == null)) return earliestDate - subparts
   // Fake a very early date to be ranked before any entity
   // with a date but no ordinal
-  if (ordinal != null) { return earliestDate + ordinalNum(ordinal) }
-  if (date != null) { return new Date(date).getTime() }
+  if (ordinal != null) return earliestDate + ordinalNum(ordinal)
+  if (date != null) return new Date(date).getTime()
   return lastYearTime
 }
 

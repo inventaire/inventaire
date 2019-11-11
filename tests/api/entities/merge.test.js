@@ -27,7 +27,7 @@ describe('entities:merge', () => {
     .then((res) => {
       res.redirects[workA.uri].should.equal(workB.uri)
       res.entities[workB.uri].should.be.ok()
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
@@ -49,7 +49,7 @@ describe('entities:merge', () => {
         entitiesRes.redirects[editionA.uri].should.equal(editionB.uri)
         entitiesRes.entities[editionB.uri].should.be.ok()
         itemsRes.items[0].entity.should.equal(editionB.uri)
-        return done()
+        done()
       })
     })).catch(undesiredErr(done))
 
@@ -73,7 +73,7 @@ describe('entities:merge', () => {
       .should.deepEqual(editionA.claims['wdt:P212'])
       const isbnUri = editionA.uri
       itemsRes.items[0].entity.should.equal(isbnUri)
-      return done()
+      done()
     }))).catch(undesiredErr(done))
 
   })
@@ -91,7 +91,7 @@ describe('entities:merge', () => {
       err.body.status_verbose
       .should.equal("can't merge editions with different ISBNs")
       err.statusCode.should.equal(400)
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
@@ -107,7 +107,7 @@ describe('entities:merge', () => {
     .then((res) => {
       const authorsUris = res.entities[workB.uri].claims['wdt:P50']
       authorsUris.should.deepEqual([ 'wd:Q535' ])
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
@@ -122,7 +122,7 @@ describe('entities:merge', () => {
     .then(() => getByUris(workB.uri))
     .then((res) => {
       res.entities[workB.uri].labels.zh.should.equal(label)
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
@@ -137,7 +137,7 @@ describe('entities:merge', () => {
     .then(() => getHistory(workB._id))
     .then((patches) => {
       patches[1].context.mergeFrom.should.equal(workA.uri)
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
@@ -161,7 +161,7 @@ describe('entities:merge', () => {
       // patch 2: redirect to humanB
       patches[2].context.redirectClaims
       .should.deepEqual({ fromUri: humanA.uri })
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
@@ -178,7 +178,7 @@ describe('entities:merge', () => {
     .catch((err) => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal("'from' entity is already a redirection")
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
@@ -195,7 +195,7 @@ describe('entities:merge', () => {
     .catch((err) => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal("'to' entity is already a redirection")
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
@@ -208,12 +208,12 @@ describe('entities:merge', () => {
       err.statusCode.should.equal(400)
       err.body.status_verbose
       .should.equal("can't merge an entity into itself")
-      return done()
+      done()
     })).catch(undesiredErr(done))
 
   })
 
-  return it('should remove isolated human "placeholders" entities on works merge', (done) => {
+  it('should remove isolated human "placeholders" entities on works merge', (done) => {
     Promise.all([
       createWorkWithAuthor(),
       createWorkWithAuthor()
@@ -225,7 +225,7 @@ describe('entities:merge', () => {
       .then((res) => {
         const entity = res.entities[humanAUri]
         entity._meta_type.should.equal('removed:placeholder')
-        return done()
+        done()
       })}).catch(done)
 
   })

@@ -16,7 +16,7 @@ const createInvEntity = require('../create_inv_entity')
 const isbn_ = __.require('lib', 'isbn/isbn')
 
 const createAuthor = (userId, batchId) => (function(author) {
-  if (author.uri != null) { return author }
+  if (author.uri != null) return author
   const claims = {}
 
   addClaimIfValid(claims, 'wdt:P31', [ 'wd:Q5' ])
@@ -24,7 +24,7 @@ const createAuthor = (userId, batchId) => (function(author) {
 })
 
 const createWork = (userId, batchId, authors) => (function(work) {
-  if (work.uri != null) { return work }
+  if (work.uri != null) return work
   const authorsUris = _.compact(_.map(authors, 'uri'))
   const claims = {}
   addClaimIfValid(claims, 'wdt:P31', [ 'wd:Q571' ])
@@ -33,7 +33,7 @@ const createWork = (userId, batchId, authors) => (function(work) {
 })
 
 const createEdition = function(edition, works, userId, batchId){
-  if (edition.uri != null) { return Promise.resolve() }
+  if (edition.uri != null) return Promise.resolve()
   const { isbn } = edition
   const worksUris = _.compact(_.map(works, 'uri'))
   const claims = {}
@@ -90,7 +90,7 @@ var buildClaims = function(seedClaims, entityClaims, type){
 }
 
 var addCreatedUriToSeed = entryEntity => (function(createdEntity) {
-  if (createdEntity._id == null) { return }
+  if (createdEntity._id == null) return 
   entryEntity.uri = `inv:${createdEntity._id}`
   return entryEntity.created = true
 })

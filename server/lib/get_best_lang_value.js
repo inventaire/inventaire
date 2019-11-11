@@ -9,14 +9,14 @@ const { uniq } = require('lodash')
 
 // data: labels or descriptions
 module.exports = function(lang, originalLang, data){
-  if (!data) { return {} }
+  if (!data) return {}
 
   const order = getLangPriorityOrder(lang, originalLang, data)
 
   while (order.length > 0) {
     const nextLang = order.shift()
     const value = data[nextLang]
-    if (value != null) { return { value, lang: nextLang } }
+    if (value != null) return { value, lang: nextLang }
   }
 
   return {}

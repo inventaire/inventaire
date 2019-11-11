@@ -72,7 +72,7 @@ module.exports = (entities_ = {
       key: value,
       include_docs: false
     }).then((res) => {
-      if (count) { return res.rows.length }
+      if (count) return res.rows.length
       return res.rows.map(row => ({
         entity: row.id,
         property: row.value

@@ -57,7 +57,7 @@ module.exports = {
   },
 
   getUrlFromImageHash(container, filename){
-    if (filename != null) { return `/img/${container}/${filename}` }
+    if (filename != null) return `/img/${container}/${filename}`
   }
 }
 

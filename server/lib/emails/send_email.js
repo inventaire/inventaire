@@ -72,7 +72,7 @@ var sendSequentially = function(emailAddresses, emailFactory, label){
   const addresses = _.clone(emailAddresses)
   var sendNext = function() {
     const nextAddress = addresses.pop()
-    if (!nextAddress) { return }
+    if (!nextAddress) return 
 
     _.info(nextAddress, `${label}: next. Remaining: ${addresses.length}`)
 

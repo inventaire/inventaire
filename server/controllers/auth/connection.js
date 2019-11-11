@@ -36,7 +36,7 @@ exports.login = function(req, res){
 }
 
 var loggedIn = (req, res) => (function(result) {
-  if (result instanceof Error) { return error_.handler(req, res, result) }
+  if (result instanceof Error) return error_.handler(req, res, result)
 
   setLoggedInCookie(res)
   const data = { ok: true }

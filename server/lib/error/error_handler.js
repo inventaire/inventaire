@@ -45,7 +45,7 @@ module.exports = function(req, res, err, status){
 }
 
 var emptyContext = function(context){
-  if ((context == null)) { return true }
+  if ((context == null)) return true
   switch (_.typeOf(context)) {
   case 'array': case 'string': return context.length === 0
   case 'object': return _.objLength(context) === 0

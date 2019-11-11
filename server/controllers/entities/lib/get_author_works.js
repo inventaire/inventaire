@@ -81,7 +81,7 @@ var formatWdEntity = function(result){
   const typeUri = `wd:${typeWdId}`
   const typeName = getTypePluralNameByTypeUri(typeUri)
 
-  if (!whitelistedTypesNames.includes(typeName)) { return }
+  if (!whitelistedTypesNames.includes(typeName)) return 
 
   date = getSimpleDayDate(date)
   serie = prefixifyWd(serie)
@@ -97,7 +97,7 @@ var getInvAuthorWorks = (uri, worksByTypes) => entities_.byClaim('wdt:P50', uri,
 var formatInvEntity = function(row){
   const typeUri = row.value
   const typeName = getTypePluralNameByTypeUri(typeUri)
-  if (!whitelistedTypesNames.includes(typeName)) { return }
+  if (!whitelistedTypesNames.includes(typeName)) return 
   return {
     uri: `inv:${row.id}`,
     date: (row.doc.claims['wdt:P577'] != null ? row.doc.claims['wdt:P577'][0] : undefined),

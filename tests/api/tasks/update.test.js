@@ -22,16 +22,16 @@ describe('tasks:update', () => {
       return update(task._id, 'state', 'dismissed')
       .then((updatedTask) => {
         updatedTask[0].ok.should.be.true()
-        return done()
+        done()
       })}).catch(done)
 
   })
 
-  return it('should throw if invalid task id', (done) => {
+  it('should throw if invalid task id', (done) => {
     update('')
     .catch((err) => {
       err.body.status_verbose.should.be.a.String()
-      return done()}).catch(done)
+      done()}).catch(done)
 
   })
 })

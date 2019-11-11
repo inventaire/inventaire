@@ -17,7 +17,7 @@ module.exports = {
   findLanguage(req){
     const accept = req.headers['accept-language']
     const language = __guardMethod__(accept, 'split', o => o.split(',')[0])
-    if (User.validations.language(language)) { return language }
+    if (User.validations.language(language)) return language
   }
 }
 

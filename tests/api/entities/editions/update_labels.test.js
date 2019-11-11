@@ -20,7 +20,7 @@ describe('entities:editions:update-labels', () => it('should reject labels updat
   .catch((err) => {
     err.body.status_verbose.should.equal("editions can't have labels")
     err.statusCode.should.equal(400)
-    return done()
+    done()
   })).catch(undesiredErr(done))
 
 }))

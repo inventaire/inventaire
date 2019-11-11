@@ -14,7 +14,7 @@ module.exports = suspectUri => tasks_.bySuspectUri(suspectUri)
 .then((tasks) => {
   const relationScore = calculateRelationScore(tasks)
   const tasksToUpdate = tasks.filter(relationScoreIsntUpToDate(relationScore))
-  if (tasksToUpdate.length === 0) { return }
+  if (tasksToUpdate.length === 0) return 
   return tasks_.update({
     ids: _.map(tasksToUpdate, '_id'),
     attribute: 'relationScore',

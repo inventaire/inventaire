@@ -22,7 +22,7 @@ describe('entities:editions:create', () => {
     .catch((err) => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal('an edition should have an associated work (wdt:P629)')
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -38,7 +38,7 @@ describe('entities:editions:create', () => {
     .catch((err) => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal('an edition should have a title (wdt:P1476)')
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -55,7 +55,7 @@ describe('entities:editions:create', () => {
     .catch((err) => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal("editions can't have labels")
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 
@@ -67,14 +67,14 @@ describe('entities:editions:create', () => {
 
   })
 
-  return it('should not be able to create an edition entity with a non-work entity', (done) => {
+  it('should not be able to create an edition entity with a non-work entity', (done) => {
     createSerie()
     .then(serieEntity => createEdition(serieEntity.uri))
     .then(undesiredRes(done))
     .catch((err) => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal('invalid claim entity type: serie')
-      return done()}).catch(undesiredErr(done))
+      done()}).catch(undesiredErr(done))
 
   })
 })

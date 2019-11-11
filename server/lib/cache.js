@@ -72,9 +72,9 @@ module.exports = {
   },
 
   put(key, value){
-    if (!_.isNonEmptyString(key)) { return error_.reject('invalid key', 500) }
+    if (!_.isNonEmptyString(key)) return error_.reject('invalid key', 500)
 
-    if (value == null) { return error_.reject('missing value', 500) }
+    if (value == null) return error_.reject('missing value', 500)
 
     return putResponseInCache(key, value)
   }
@@ -83,12 +83,12 @@ module.exports = {
 var checkCache = (key, timespan) => db.get(key)
 .then((res) => {
   // Returning nothing will trigger a new request
-  if (res == null) { return }
+  if (res == null) return 
 
   const { body, timestamp } = res
 
   // Reject outdated cached values
-  if (!isFreshEnough(timestamp, timespan)) { return }
+  if (!isFreshEnough(timestamp, timespan)) return 
 
   // In case there was nothing in cache
   if (_.isEmpty(body)) {

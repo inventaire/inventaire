@@ -48,7 +48,7 @@ module.exports = (req, res) => sanitize(req, res, sanitization)
   .then(responses_.Send(res))}).catch(error_.Handler(req, res))
 
 var addImage = function(seed){
-  if (!dataseedEnabled) { return promises_.resolve(seed) }
+  if (!dataseedEnabled) return promises_.resolve(seed)
 
   // Try to find an image from the seed ISBN
   return dataseed.getImageByIsbn(seed.isbn)
@@ -58,7 +58,7 @@ var addImage = function(seed){
       return seed
     } else {
       const { image } = seed
-      if (image == null) { return seed }
+      if (image == null) return seed
 
       // Else, if an image was provided in the seed, try to use it
       return dataseed.getImageByUrl(seed.image)

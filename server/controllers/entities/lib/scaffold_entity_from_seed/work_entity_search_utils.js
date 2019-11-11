@@ -12,7 +12,7 @@ const stringsAreClose = __.require('lib', 'strings_are_close')
 const { normalizeTerm } = require('../terms_normalization')
 
 const matchAuthor = (authors, lang) => (function(result) {
-  if (!_.isArray(authors) || !_.isArray(result.authors)) { return false }
+  if (!_.isArray(authors) || !_.isArray(result.authors)) return false
   // Consider its a match if one or more author match
   // given we already know that the title matches
   authors = _.compact(authors).map(normalizeTerm)
@@ -20,7 +20,7 @@ const matchAuthor = (authors, lang) => (function(result) {
 
   for (const authorA of authors) {
     for (const authorB of resultAuthors) {
-      if (stringsAreClose(authorA, authorB)) { return true }
+      if (stringsAreClose(authorA, authorB)) return true
     }
   }
 
@@ -32,7 +32,7 @@ const matchTitle = (title, lang) => (function(result) {
   // TODO: Compare on other languages and aliases too
   // Ex: "Virginie Lou" should be matched with "Virginie Lou-nony"
   const resultTitle = getBestLangValue(lang, result.originalLang, result.labels).value
-  if (!_.isString(title) || !_.isString(resultTitle)) { return false }
+  if (!_.isString(title) || !_.isString(resultTitle)) return false
 
   const formattedTitle = normalizeTerm(title)
   const formattedResultTitle = normalizeTerm(resultTitle)

@@ -37,7 +37,7 @@ describe('cache', () => {
       const p = cache_.get({ key: 'whatever', fn: mookPromise.bind(null, 'yo') })
       p.should.have.property('then')
       p.should.have.property('catch')
-      return done()
+      done()
     })
 
     it('should accept a key and a promisified function', (done) => {
@@ -75,7 +75,7 @@ describe('cache', () => {
                 res.should.equal(hash)
                 // DHO [>.<]
                 spy.callCount.should.equal(2)
-                return done()
+                done()
               })
             })
           })
@@ -92,7 +92,7 @@ describe('cache', () => {
       .then((res3) => {
         res1.should.equal(res2)
         res1.should.equal(res3)
-        return done()
+        done()
       }))).catch(done)
     })
 
@@ -111,7 +111,7 @@ describe('cache', () => {
         .then((res2) => {
           should(res2).not.be.ok()
           spy.callCount.should.equal(1)
-          return done()
+          done()
         })}).catch(done)
     })
 
@@ -124,7 +124,7 @@ describe('cache', () => {
       .then((res2) => {
         res1.should.be.ok()
         should(res2).not.be.ok()
-        return done()
+        done()
       })).catch(done)
     }))
 
@@ -138,7 +138,7 @@ describe('cache', () => {
       .then((res3) => {
         res1.should.equal(res2)
         res2.should.not.equal(res3)
-        return done()
+        done()
       }))).catch(done)
     })
 
@@ -152,7 +152,7 @@ describe('cache', () => {
       .then((res3) => {
         res1.should.equal(res2)
         res1.should.not.equal(res3)
-        return done()
+        done()
       }))).catch(done)
     }))
 
@@ -165,7 +165,7 @@ describe('cache', () => {
         .then(res1 => cache_.get({ key, dry: true })
         .then((res2) => {
           res1.should.equal(res2)
-          return done()
+          done()
         })).catch(done)
       })
 
@@ -174,7 +174,7 @@ describe('cache', () => {
         cache_.get({ key, dry: true })
         .then((res) => {
           should(res).not.be.ok()
-          return done()}).catch(done)
+          done()}).catch(done)
       })
 
       it('should return the fallback value when specified', (done) => {
@@ -183,7 +183,7 @@ describe('cache', () => {
         cache_.get({ key, dry: true, dryFallbackValue })
         .then((res) => {
           res.should.equal(dryFallbackValue)
-          return done()}).catch(done)
+          done()}).catch(done)
       })
 
       it('should populate the cache when requested', (done) => {
@@ -195,17 +195,17 @@ describe('cache', () => {
           should(res1).not.be.ok()
           cache_.get({ key, dry: true })
           .then(res2 => should(res2).be.ok())
-          return done()}).catch(done)
+          done()}).catch(done)
       })
 
-      return it('should be overriden by refresh', (done) => {
+      it('should be overriden by refresh', (done) => {
         const key = randomString(4)
         const fn = workingFn.bind(null, 'foo')
         cache_.get({ key, fn, refresh:true, dryAndCache: true })
         .delay(10)
         .then((res1) => {
           should(res1).be.ok()
-          return done()}).catch(done)
+          done()}).catch(done)
       })
     })
   })
@@ -215,14 +215,14 @@ describe('cache', () => {
       const p = cache_.put('whatever', 'somevalue')
       p.should.have.property('then')
       p.should.have.property('catch')
-      return done()
+      done()
     })
 
     it('should return a rejected promise if not passed a key', (done) => {
       cache_.put(null, 'somevalue')
       .catch((err) => {
         err.message.should.equal('invalid key')
-        return done()}).catch(done)
+        done()}).catch(done)
 
     })
 
@@ -230,11 +230,11 @@ describe('cache', () => {
       cache_.put('whatever', null)
       .catch((err) => {
         err.message.should.equal('missing value')
-        return done()}).catch(done)
+        done()}).catch(done)
 
     })
 
-    return it('should put a value in the cache', (done) => {
+    it('should put a value in the cache', (done) => {
       const key = randomString(8)
       const value = randomString(8)
       cache_.get({ key, dry: true })
@@ -243,7 +243,7 @@ describe('cache', () => {
         return cache_.put(key, value)}).then(() => cache_.get({ key, dry: true }))
       .then((cached2) => {
         cached2.should.equal(value)
-        return done()}).catch(done)
+        done()}).catch(done)
 
     })
   })

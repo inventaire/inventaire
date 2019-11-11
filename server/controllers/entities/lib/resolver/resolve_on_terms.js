@@ -24,14 +24,14 @@ const getAuthorsUris = require('../get_authors_uris')
 
 module.exports = function(entry){
   const { authors, works } = entry
-  if ((authors.length === 0) || (works.length === 0)) { return entry }
+  if ((authors.length === 0) || (works.length === 0)) return entry
 
   return Promise.all(authors.map(searchAuthorAndResolve(works)))
   .then(() => entry)
 }
 
 var searchAuthorAndResolve = works => (function(author) {
-  if ((author == null) || (author.uri != null)) { return }
+  if ((author == null) || (author.uri != null)) return 
   const authorTerms = getEntityNormalizedTerms(author)
   return searchUrisByAuthorTerms(authorTerms)
   .then(resolveWorksAndAuthor(works, author))
@@ -54,7 +54,7 @@ var searchUrisByAuthorLabel = term => typeSearch(types, term)
 var resolveWorksAndAuthor = (works, author) => authorsUris => Promise.all(works.map(getWorkAndResolve(author, authorsUris)))
 
 var getWorkAndResolve = (authorSeed, authorsUris) => (function(work) {
-  if ((work.uri != null) || (work == null)) { return }
+  if ((work.uri != null) || (work == null)) return 
   const workTerms = getEntityNormalizedTerms(work)
   return Promise.all(getWorksFromAuthorsUris(authorsUris))
   .then(_.flatten)
@@ -63,14 +63,14 @@ var getWorkAndResolve = (authorSeed, authorsUris) => (function(work) {
 
 var resolveWorkAndAuthor = (authorsUris, authorSeed, workSeed, workTerms) => (function(searchedWorks) {
   // Several searchedWorks could match authors homonyms/duplicates
-  if (searchedWorks.length !== 1) { return }
+  if (searchedWorks.length !== 1) return 
   const searchedWork = searchedWorks[0]
   const matchedAuthorsUris = _.intersection(getAuthorsUris(searchedWork), authorsUris)
   // If unique author to avoid assigning a work to a duplicated author
-  if (matchedAuthorsUris.length !== 1) { return }
+  if (matchedAuthorsUris.length !== 1) return 
   const searchedWorkTerms = getEntityNormalizedTerms(searchedWork)
 
-  if (!_.someMatch(workTerms, searchedWorkTerms)) { return }
+  if (!_.someMatch(workTerms, searchedWorkTerms)) return 
 
   authorSeed.uri = matchedAuthorsUris[0]
   return workSeed.uri = searchedWork.uri
