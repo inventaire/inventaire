@@ -124,7 +124,7 @@ var sortAndFilterContributions = rows => rows
 .sort((a, b) => b.contributions - a.contributions)
 
 // Filtering-out special users automated contributions
-// see server/db/couch/hard_coded_documents.coffee
+// see server/db/couch/hard_coded_documents.js
 var noSpecialUser = row => !row.user.startsWith('000000000000000000000000000000')
 
 var getUserTotalContributions = userId => db.view(designDocName, 'byUserId', {

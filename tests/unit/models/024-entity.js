@@ -33,7 +33,6 @@ const editionDoc = function() {
   return doc
 }
 
-// coffeelint: disable=no_unnecessary_double_quotes
 const nonTrimedString = `\
 
       foo

@@ -9,7 +9,7 @@ const syncDataList = [
   { dbBaseName: 'users', type: 'user' },
   { dbBaseName: 'groups', type: 'group' }
   // No 'entities' entry as it is fully handled by the entities search engine
-  // See server/controllers/entities/lib/update_search_engine.coffee
+  // See server/controllers/entities/lib/update_search_engine.js
 ]
 .map((data) => {
   data.dbName = CONFIG.db.name(data.dbBaseName)

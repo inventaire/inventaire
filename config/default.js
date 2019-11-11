@@ -25,7 +25,7 @@ module.exports = (config = {
   verbosity: 1,
   protocol: 'http',
   port: 3006,
-  // Override in ./local.coffee when working offline to prevent trying to fetch remote resources (like images) when possible
+  // Override in ./local.js when working offline to prevent trying to fetch remote resources (like images) when possible
   offline: false,
   fullHost() { return `${this.protocol}://${this.host}:${this.port}` },
   publicProtocol: 'http',
@@ -38,7 +38,7 @@ module.exports = (config = {
   debug: false,
   // Use to prefix images path to a custom domain, typically used to point to
   // prod server images URLs when working in development with prod databases
-  // cf config/prod-dbs.coffee
+  // cf config/prod-dbs.js
   imageRedirection: false,
   // CouchDB settings
   db: {
@@ -84,7 +84,7 @@ module.exports = (config = {
   // can be useful for development
   godMode: false,
   hashPasswords: true,
-  // see server/controllers/tests.coffee
+  // see server/controllers/tests.js
   morgan: {
     mutedDomains: [],
     mutedPath: [
@@ -158,7 +158,7 @@ module.exports = (config = {
     idsite: 1,
     rec: 1
   },
-  // see server/data/dataseed/search.coffee
+  // see server/data/dataseed/search.js
   dataseed: {
     enabled: false,
     host: 'http://localhost:9898'

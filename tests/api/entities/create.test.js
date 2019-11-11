@@ -207,4 +207,4 @@ describe('entities:create', () => {
   })
 })
 
-// See also: edititons/create.test.coffee
+// See also: editions/create.test.js

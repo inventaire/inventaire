@@ -57,7 +57,7 @@ var buildError = function(message, labels, errData, req){
   return err
 }
 
-// Faking an error object for the needs of server/lib/utils/open_issue.coffee
+// Faking an error object for the needs of server/lib/utils/open_issue.js
 // Define the stack first to stringify only what was reported
 var getErrStack = function(err){
   let { message, stack } = err

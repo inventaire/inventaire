@@ -14,7 +14,7 @@ const _ = __.require('builders', 'utils')
 // validated by XHR calls, in order to be catched by browsers
 // password manager or other field suggestions tools
 // Using a different endpoint (/api/submit) than /api/auth so that
-// server/middlewares/content.coffee fakeSubmitException can be applied
+// server/middlewares/content.js fakeSubmitException can be applied
 // to the strict minimum
 module.exports = {
   post(req, res, next){

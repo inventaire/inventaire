@@ -36,7 +36,7 @@ var addInviter = function(inviterId, groupId, doc){
   return doc
 }
 
-// The stopEmails flag is added with scripts/lib/stop_emails.coffee
+// The stopEmails flag is added with scripts/lib/stop_emails.js
 // to users sending an email at stop-email@inventaire.io
 // or reporting inventaire.io emails as spam.
 // This could be made more secure and automated

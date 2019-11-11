@@ -23,7 +23,7 @@ module.exports = {
   // Not using '*/*' as this would include multipart/form-data
   // used for image upload
   jsonBodyParser: require('body-parser').json({ type: 'application/*', limit: '5mb' }),
-  // server/controllers/auth/fake_submit.coffee relies on the possibility
+  // server/controllers/auth/fake_submit.js relies on the possibility
   // to submit a url encoded form data, so it needs to have the body-parser ready for it,
   // otherwise it throws a 'SyntaxError: Unexpected token # in JSON at position 0' error
   // This middleware will only apply for requests on the '/api/submit' endpoint

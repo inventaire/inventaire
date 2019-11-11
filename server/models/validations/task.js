@@ -15,7 +15,7 @@ const attributes = require('../attributes/task')
 
 module.exports = {
   pass,
-  // in attributes/task.coffee, attributes keys should match
+  // in attributes/task.js, attributes keys should match
   // db keys to verify if attribute is updatable
   attribute(attribute){ let needle
     return (needle = attribute, _.keys(attributes).includes(needle)) },

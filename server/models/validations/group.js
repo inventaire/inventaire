@@ -10,7 +10,7 @@ module.exports = {
   pass,
 
   // tests expected to be found on Group.tests for updates,
-  // cf server/controllers/groups/lib/update_group.coffee:
+  // cf server/controllers/groups/lib/update_group.js :
   // Group.tests[attribute](value)
 
   // Make sure the generated slug isn't an empty string

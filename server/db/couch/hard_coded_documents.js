@@ -17,7 +17,7 @@ const userDoc = (username, idLastCharacters) => ({
 module.exports = {
   users: {
     // A fake user used to sign entities edit generated from dataseed
-    // see server/data/dataseed/dataseed.coffee
+    // see server/data/dataseed/dataseed.js
     seed: userDoc('seed', '000'),
     // see server/controllers/entities/lib/update_claims_hooks
     hook: userDoc('hook', '001'),

@@ -14,12 +14,12 @@ mkdir -p run db/leveldb
 
 # Expected by couch2elastic4sync scripts
 mkdir -p ./logs
-# Expected by scripts/couch2elastic4sync/exec.coffee
+# Expected by scripts/couch2elastic4sync/exec.js
 mkdir -p ./logs/couch2elastic4sync
 # Expected by scripts/couch2elastic4sync/init
 mkdir -p scripts/couch2elastic4sync/configs
 touch ./logs/server.log ./logs/error.log
-# Expected by scripts/actions/backup_databases.coffee
+# Expected by scripts/actions/backup_databases.js
 mkdir -p ./db/couchdb/backups
 # Expected by scripts/test_api
 mkdir -p run
@@ -36,7 +36,7 @@ touch run/3006 run/3009
 [ -z ./config/local.coffee ] && {
   # Create a local config file
   emptyConfigFile="
-  # Override settings from ./default.coffee in this file
+  # Override settings from ./default.js in this file
   module.exports =
     db:
       username: 'yourcouchdbusername'

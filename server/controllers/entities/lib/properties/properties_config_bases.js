@@ -45,7 +45,7 @@ module.exports = {
   uniqueSimpleDay: {
     datatype: 'simple-day',
     type: 'string',
-    // See SimpleDay specifications in [inventaire-client]/test/106-regex.coffee
+    // See SimpleDay specifications in [inventaire-client]/test/106-regex.js
     validate: _.isSimpleDay,
     uniqueValue: true
   },

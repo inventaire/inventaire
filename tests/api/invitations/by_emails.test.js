@@ -119,7 +119,7 @@ describe('invitations:by-emails', () => {
 
     it('should accept non-user admin requests to invite to a group', (done) => {
       groupPromise
-      .then(group => // User B is a member (see ../fixtures/groups.coffee)
+      .then(group => // User B is a member (see ../fixtures/groups.js)
         authReqB('post', '/api/invitations?action=by-emails', {
           emails: 'a@foo.org',
           group: group._id

@@ -71,12 +71,12 @@ var validateClaimValue = function(params){
 // For properties that don't tolerate having several entities
 // sharing the same value
 var verifyClaimConcurrency = function(concurrency, property, value){
-  if (!concurrency) return 
+  if (!concurrency) return
   return entities_.byClaim(property, value)
   .then((res) => {
     if (res.rows.length > 0) {
       // /!\ The client relies on this exact message
-      // client/app/modules/entities/lib/creation_partials.coffee
+      // client/app/modules/entities/lib/creation_partials.js
       const message = 'this property value is already used'
       const entity = 'inv:' + res.rows[0].id
       // /!\ The client relies on the entity being passed in the context
@@ -87,7 +87,7 @@ var verifyClaimConcurrency = function(concurrency, property, value){
 // For claims that have an entity URI as value
 // check that the target entity is of the expected type
 var verifyClaimEntityType = function(restrictedType, value){
-  if (restrictedType == null) return 
+  if (restrictedType == null) return
 
   return getEntityByUri({ uri: value })
   .then((entity) => {

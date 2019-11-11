@@ -3,7 +3,7 @@
 // Keep in sync with client/app/modules/transactions/lib/transactions
 
 // actor: the key on which VerifyRights switches
-// see controllers/transactions/update_state.coffee
+// see controllers/transactions/update_state.js
 const states = {
   requested: {
     // current action actor
