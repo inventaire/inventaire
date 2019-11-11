@@ -1,30 +1,37 @@
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-error_ = __.require 'lib', 'error/error'
-responses_ = __.require 'lib', 'responses'
-user_ = __.require 'controllers', 'user/lib/user'
-notifs_ = __.require 'lib', 'notifications'
-promises_ = __.require 'lib', 'promises'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const error_ = __.require('lib', 'error/error');
+const responses_ = __.require('lib', 'responses');
+const user_ = __.require('controllers', 'user/lib/user');
+const notifs_ = __.require('lib', 'notifications');
+const promises_ = __.require('lib', 'promises');
 
-get = (req, res)->
-  unless req.user? then return error_.unauthorizedApiAccess req, res
+const get = function(req, res){
+  if (req.user == null) { return error_.unauthorizedApiAccess(req, res); }
 
-  notifs_.byUserId req.user._id
-  .then responses_.Wrap(res, 'notifications')
-  .catch error_.Handler(req, res)
+  return notifs_.byUserId(req.user._id)
+  .then(responses_.Wrap(res, 'notifications'))
+  .catch(error_.Handler(req, res));
+};
 
-updateStatus = (req, res)->
-  unless req.user? then return error_.unauthorizedApiAccess req, res
-  reqUserId = req.user._id
+const updateStatus = function(req, res){
+  if (req.user == null) { return error_.unauthorizedApiAccess(req, res); }
+  const reqUserId = req.user._id;
 
-  { times } = req.body
-  unless _.isArray(times) and times.length > 0 then return _.ok res
+  const { times } = req.body;
+  if (!_.isArray(times) || (times.length <= 0)) { return _.ok(res); }
 
-  # could probably be replaced by a batch operation
-  promises_.all times.map(notifs_.updateReadStatus.bind(null, reqUserId))
-  .then ->
-    _.success [ reqUserId, times ], 'notifs marked as read'
-    responses_.ok res
-  .catch error_.Handler(req, res)
+  // could probably be replaced by a batch operation
+  return promises_.all(times.map(notifs_.updateReadStatus.bind(null, reqUserId)))
+  .then(function() {
+    _.success([ reqUserId, times ], 'notifs marked as read');
+    return responses_.ok(res);}).catch(error_.Handler(req, res));
+};
 
-module.exports = { get, post: updateStatus }
+module.exports = { get, post: updateStatus };

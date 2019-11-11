@@ -1,37 +1,46 @@
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-getBestLangValue = __.require 'lib', 'get_best_lang_value'
-stringsAreClose = __.require 'lib', 'strings_are_close'
-{ normalizeTerm } = require '../terms_normalization'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const getBestLangValue = __.require('lib', 'get_best_lang_value');
+const stringsAreClose = __.require('lib', 'strings_are_close');
+const { normalizeTerm } = require('../terms_normalization');
 
-matchAuthor = (authors, lang)-> (result)->
-  unless _.isArray(authors) and _.isArray(result.authors) then return false
-  # Consider its a match if one or more author match
-  # given we already know that the title matches
-  authors = _.compact(authors).map(normalizeTerm)
-  resultAuthors = _.compact(result.authors).map(normalizeTerm)
+const matchAuthor = (authors, lang) => (function(result) {
+  if (!_.isArray(authors) || !_.isArray(result.authors)) { return false; }
+  // Consider its a match if one or more author match
+  // given we already know that the title matches
+  authors = _.compact(authors).map(normalizeTerm);
+  const resultAuthors = _.compact(result.authors).map(normalizeTerm);
 
-  for authorA in authors
-    for authorB in resultAuthors
-      if stringsAreClose(authorA, authorB) then return true
+  for (let authorA of authors) {
+    for (let authorB of resultAuthors) {
+      if (stringsAreClose(authorA, authorB)) { return true; }
+    }
+  }
 
-  return false
+  return false;
+});
 
-# We want to have a rather high level of certitude that this is the same
-matchTitle = (title, lang)-> (result)->
-  # TODO: Compare on other languages and aliases too
-  # Ex: "Virginie Lou" should be matched with "Virginie Lou-nony"
-  resultTitle = getBestLangValue(lang, result.originalLang, result.labels).value
-  unless _.isString(title) and _.isString(resultTitle) then return false
+// We want to have a rather high level of certitude that this is the same
+const matchTitle = (title, lang) => (function(result) {
+  // TODO: Compare on other languages and aliases too
+  // Ex: "Virginie Lou" should be matched with "Virginie Lou-nony"
+  const resultTitle = getBestLangValue(lang, result.originalLang, result.labels).value;
+  if (!_.isString(title) || !_.isString(resultTitle)) { return false; }
 
-  formattedTitle = normalizeTerm title
-  formattedResultTitle = normalizeTerm resultTitle
+  const formattedTitle = normalizeTerm(title);
+  const formattedResultTitle = normalizeTerm(resultTitle);
 
-  if volumePattern.test title then return title is resultTitle
-  else return stringsAreClose formattedTitle, formattedResultTitle
+  if (volumePattern.test(title)) { return title === resultTitle;
+  } else { return stringsAreClose(formattedTitle, formattedResultTitle); }
+});
 
-# Conservative assumption: consider any title with a number to potentially be a volume title
-# and thus be more strict in those cases
-volumePattern = /\d+/
+// Conservative assumption: consider any title with a number to potentially be a volume title
+// and thus be more strict in those cases
+var volumePattern = /\d+/;
 
-module.exports = { matchAuthor, matchTitle }
+module.exports = { matchAuthor, matchTitle };

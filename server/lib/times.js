@@ -1,11 +1,12 @@
-oneMinute = 60 * 1000
-oneHour = 60 * oneMinute
-oneDay = 24 * oneHour
+const oneMinute = 60 * 1000;
+const oneHour = 60 * oneMinute;
+const oneDay = 24 * oneHour;
 
-module.exports =
-  oneMinute: oneMinute
-  tenMinutes: 10 * oneMinute
-  oneHour: oneHour
-  oneDay: oneDay
-  oneMonth: 30 * oneDay
+module.exports = {
+  oneMinute,
+  tenMinutes: 10 * oneMinute,
+  oneHour,
+  oneDay,
+  oneMonth: 30 * oneDay,
   oneYear: 365 * oneDay
+};

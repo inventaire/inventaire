@@ -1,35 +1,33 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-{ authReq, authReqB, getUserB } = require '../utils/utils'
-faker = require 'faker'
-endpointBase = '/api/groups'
-endpointAction = endpointBase + '?action'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const { authReq, authReqB, getUserB } = require('../utils/utils');
+const faker = require('faker');
+const endpointBase = '/api/groups';
+const endpointAction = endpointBase + '?action';
 
-getGroup = (groupId)->
-  authReq 'get', "#{endpointAction}=by-id&id=#{groupId}"
-  .get 'group'
+const getGroup = groupId => authReq('get', `${endpointAction}=by-id&id=${groupId}`)
+.get('group');
 
-createGroup = (name)->
-  authReq 'post', "#{endpointBase}?action=create", {
-    name,
-    position: [ 1, 1 ],
-    searchable: true
-  }
+const createGroup = name => authReq('post', `${endpointBase}?action=create`, {
+  name,
+  position: [ 1, 1 ],
+  searchable: true
+});
 
-membershipAction = (reqFn, action, groupId, userId)->
-  reqFn 'put', endpointBase, { action, group: groupId, user: userId }
+const membershipAction = (reqFn, action, groupId, userId) => reqFn('put', endpointBase, { action, group: groupId, user: userId });
 
-groupName = -> faker.lorem.word() + ' group'
+const groupName = () => faker.lorem.word() + ' group';
 
-# Resolves to a group with userA as admin and userB as member
-groupPromise = createGroup groupName()
-  .then (group)->
-    membershipAction authReqB, 'request', group._id
-    .then -> getUserB()
-    .then (userB)->
-      membershipAction authReq, 'accept-request', group._id, userB._id
-    # Return the group doc
-    .then -> getGroup group._id
+// Resolves to a group with userA as admin and userB as member
+const groupPromise = createGroup(groupName())
+  .then(group => membershipAction(authReqB, 'request', group._id)
+.then(() => getUserB())
+.then(userB => membershipAction(authReq, 'accept-request', group._id, userB._id)).then(() => getGroup(group._id)));
 
-module.exports = { endpointBase, endpointAction, groupPromise, getGroup, groupName }
+module.exports = { endpointBase, endpointAction, groupPromise, getGroup, groupName };

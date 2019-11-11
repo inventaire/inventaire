@@ -1,52 +1,65 @@
-CONFIG = require 'config'
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-error_ = __.require 'lib', 'error/error'
-headers_ = __.require 'lib', 'headers'
-getAuthentifiedUser = require './lib/get_authentified_user'
-userFeedData = require './lib/user_feed_data'
-groupFeedData = require './lib/group_feed_data'
-generateFeedFromFeedData = require './lib/generate_feed_from_feed_data'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const error_ = __.require('lib', 'error/error');
+const headers_ = __.require('lib', 'headers');
+const getAuthentifiedUser = require('./lib/get_authentified_user');
+const userFeedData = require('./lib/user_feed_data');
+const groupFeedData = require('./lib/group_feed_data');
+const generateFeedFromFeedData = require('./lib/generate_feed_from_feed_data');
 
-module.exports =
-  get: (req, res, next)->
-    { query } = req
-    { user:userId, group:groupId, requester, token } = query
+module.exports = {
+  get(req, res, next){
+    let feedDataPromise;
+    const { query } = req;
+    const { user:userId, group:groupId, requester, token } = query;
 
-    if requester?
-      unless token? then return error_.bundleMissingQuery req, res, 'token'
-    else
-      if token? then return error_.bundleMissingQuery req, res, 'requester'
+    if (requester != null) {
+      if (token == null) { return error_.bundleMissingQuery(req, res, 'token'); }
+    } else {
+      if (token != null) { return error_.bundleMissingQuery(req, res, 'requester'); }
+    }
 
-    # The reason to have this authentifying token system on a public endpoint
-    # is that relying on the general 'restrictApiAccess' middleware
-    # would have implyied creating a general token authentification strategy,
-    # but with a lower authorization level (only read operations), and for
-    # a limitied amount of whitelisted routes.
-    # It is way easier to simply have this ad-hoc token authentification strategy
-    # that we know opens only the limited rights we wish it to open.
-    authentifiedUserPromise = getAuthentifiedUser requester, token
+    // The reason to have this authentifying token system on a public endpoint
+    // is that relying on the general 'restrictApiAccess' middleware
+    // would have implyied creating a general token authentification strategy,
+    // but with a lower authorization level (only read operations), and for
+    // a limitied amount of whitelisted routes.
+    // It is way easier to simply have this ad-hoc token authentification strategy
+    // that we know opens only the limited rights we wish it to open.
+    const authentifiedUserPromise = getAuthentifiedUser(requester, token);
 
-    if userId?
-      unless _.isUserId userId
-        return error_.bundleInvalid req, res, 'user', userId
+    if (userId != null) {
+      if (!_.isUserId(userId)) {
+        return error_.bundleInvalid(req, res, 'user', userId);
+      }
 
-      feedDataPromise = userFeedData userId, authentifiedUserPromise
+      feedDataPromise = userFeedData(userId, authentifiedUserPromise);
 
-    else if groupId?
-      unless _.isGroupId groupId
-        return error_.bundleInvalid req, res, 'group', groupId
+    } else if (groupId != null) {
+      if (!_.isGroupId(groupId)) {
+        return error_.bundleInvalid(req, res, 'group', groupId);
+      }
 
-      feedDataPromise = groupFeedData groupId, authentifiedUserPromise
+      feedDataPromise = groupFeedData(groupId, authentifiedUserPromise);
 
-    else
-      return error_.bundleMissingQuery req, res, 'user|group', 400
+    } else {
+      return error_.bundleMissingQuery(req, res, 'user|group', 400);
+    }
 
-    # Guess the lang from the query string or from the request headers
-    # that might be passed by the feeds aggregator
-    lang = req.query.lang or headers_.getReqLang(req)
+    // Guess the lang from the query string or from the request headers
+    // that might be passed by the feeds aggregator
+    const lang = req.query.lang || headers_.getReqLang(req);
 
-    feedDataPromise
-    .then generateFeedFromFeedData(lang)
-    .then res.send.bind(res)
-    .catch error_.Handler(req, res)
+    return feedDataPromise
+    .then(generateFeedFromFeedData(lang))
+    .then(res.send.bind(res))
+    .catch(error_.Handler(req, res));
+  }
+};

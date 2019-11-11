@@ -1,63 +1,83 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-{ allowTransaction } = __.require 'models', 'item'
-{ kmBetween } = __.require 'lib', 'geo'
-host = CONFIG.fullPublicHost()
-transacColors = require './transactions_colors'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const { allowTransaction } = __.require('models', 'item');
+const { kmBetween } = __.require('lib', 'geo');
+const host = CONFIG.fullPublicHost();
+const transacColors = require('./transactions_colors');
 
-module.exports =
-  getLastItems: (limitDate, items)->
-    return items.filter (item)-> item.created > limitDate
+module.exports = {
+  getLastItems(limitDate, items){
+    return items.filter(item => item.created > limitDate);
+  },
 
-  formatData: (lastItems, label, lang, highlighted)->
-    more = lastItems.length - highlighted.length
-    return formattedItems =
-      display: highlighted.length > 0
-      highlighted: highlighted.map addUserLang(lang)
-      title: "last_#{label}_books"
-      more:
-        display: more > 0
-        smart_count: more
-        title: "last_#{label}_books_more"
+  formatData(lastItems, label, lang, highlighted){
+    let formattedItems;
+    const more = lastItems.length - highlighted.length;
+    return formattedItems = {
+      display: highlighted.length > 0,
+      highlighted: highlighted.map(addUserLang(lang)),
+      title: `last_${label}_books`,
+      more: {
+        display: more > 0,
+        smart_count: more,
+        title: `last_${label}_books_more`
+      }
+    };
+  },
 
-  embedUsersData: (items, users, position)->
-    users = _.keyBy users, '_id'
-    items.map (item)->
-      user = users[item.owner]
-      if user?
-        item.href = "#{host}/items/#{item._id}"
-        item.user = _.pick user, requiredUserData
-        if user.position? and position?
-          item.user.distance = kmBetween user.position, position
-        item.user.href = "#{host}/inventory/#{user.username}"
-        item.transacLabel = "#{item.transaction}_personalized_strong"
-        item.transacColor = transacColors[item.transaction]
-      return item
+  embedUsersData(items, users, position){
+    users = _.keyBy(users, '_id');
+    return items.map(function(item){
+      const user = users[item.owner];
+      if (user != null) {
+        item.href = `${host}/items/${item._id}`;
+        item.user = _.pick(user, requiredUserData);
+        if ((user.position != null) && (position != null)) {
+          item.user.distance = kmBetween(user.position, position);
+        }
+        item.user.href = `${host}/inventory/${user.username}`;
+        item.transacLabel = `${item.transaction}_personalized_strong`;
+        item.transacColor = transacColors[item.transaction];
+      }
+      return item;
+    });
+  },
 
-  getHighlightedItems: (lastItems, highlightedLength)->
-    if lastItems.length <= highlightedLength then return lastItems
-    return getItemsWithTransactionFirst lastItems, highlightedLength
+  getHighlightedItems(lastItems, highlightedLength){
+    if (lastItems.length <= highlightedLength) { return lastItems; }
+    return getItemsWithTransactionFirst(lastItems, highlightedLength);
+  }
+};
 
-requiredUserData = [ 'username', 'picture' ]
+var requiredUserData = [ 'username', 'picture' ];
 
-getItemsWithTransactionFirst = (lastItems, highlightedLength)->
-  # create a new array as items.pop() would affect lastItems everywhere
-  items = _.clone lastItems
-  withTransaction = []
-  withoutTransaction = []
-  # go through all items until withTransaction is equal to
-  # the expected amount of highlightedItems
-  while withTransaction.length < highlightedLength and items.length > 0
-    item = items.pop()
-    if allowTransaction(item) then withTransaction.push item
-    else withoutTransaction.push item
+var getItemsWithTransactionFirst = function(lastItems, highlightedLength){
+  // create a new array as items.pop() would affect lastItems everywhere
+  const items = _.clone(lastItems);
+  const withTransaction = [];
+  const withoutTransaction = [];
+  // go through all items until withTransaction is equal to
+  // the expected amount of highlightedItems
+  while ((withTransaction.length < highlightedLength) && (items.length > 0)) {
+    const item = items.pop();
+    if (allowTransaction(item)) { withTransaction.push(item);
+    } else { withoutTransaction.push(item); }
+  }
 
-  if withTransaction.length is highlightedLength then return withTransaction
-  # in case there are less items with transactions than expected
-  # concating items without transactions
-  else return withTransaction.concat(withoutTransaction)[0...highlightedLength]
+  if (withTransaction.length === highlightedLength) { return withTransaction;
+  // in case there are less items with transactions than expected
+  // concating items without transactions
+  } else { return withTransaction.concat(withoutTransaction).slice(0, highlightedLength); }
+};
 
-addUserLang = (lang)-> (item)->
-  item.userLang = lang
-  return item
+var addUserLang = lang => (function(item) {
+  item.userLang = lang;
+  return item;
+});

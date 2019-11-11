@@ -1,13 +1,19 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-resolveExternalIds = require './resolve_external_ids'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const resolveExternalIds = require('./resolve_external_ids');
 
-module.exports = (seeds)-> Promise.all seeds.map(resolveSeed)
+module.exports = seeds => Promise.all(seeds.map(resolveSeed));
 
-resolveSeed = (seed)->
-  resolveExternalIds seed.claims
-  .then (uris)->
-    unless uris? then return seed
-    if uris.length is 1 then seed.uri = uris[0]
-    return seed
+var resolveSeed = seed => resolveExternalIds(seed.claims)
+.then(function(uris){
+  if (uris == null) { return seed; }
+  if (uris.length === 1) { seed.uri = uris[0]; }
+  return seed;
+});

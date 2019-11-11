@@ -1,16 +1,23 @@
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-promises_ = __.require 'lib', 'promises'
-error_ = __.require 'lib', 'error/error'
-responses_ = __.require 'lib', 'responses'
-runQuery = require './run_query'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const promises_ = __.require('lib', 'promises');
+const error_ = __.require('lib', 'error/error');
+const responses_ = __.require('lib', 'responses');
+const runQuery = require('./run_query');
 
-module.exports = (req, res)->
-  { query:queryName, refresh } = req.query
+module.exports = function(req, res){
+  const { query:queryName, refresh } = req.query;
 
-  unless _.isNonEmptyString queryName
-    return error_.bundleMissingQuery 'query'
+  if (!_.isNonEmptyString(queryName)) {
+    return error_.bundleMissingQuery('query');
+  }
 
-  runQuery req.query
-  .then responses_.Wrap(res, 'entities')
-  .catch error_.Handler(req, res)
+  return runQuery(req.query)
+  .then(responses_.Wrap(res, 'entities'))
+  .catch(error_.Handler(req, res));
+};

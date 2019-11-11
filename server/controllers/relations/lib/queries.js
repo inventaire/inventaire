@@ -1,55 +1,71 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-couch_ = __.require 'lib', 'couch'
-userRelativeRequest = require './user-relative_request'
-db = __.require('couch', 'base')('users', 'relations')
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const couch_ = __.require('lib', 'couch');
+const userRelativeRequest = require('./user-relative_request');
+const db = __.require('couch', 'base')('users', 'relations');
 
-Relation = __.require('models', 'relation')
+const Relation = __.require('models', 'relation');
 
-get = (userId, otherId)->
-  db.get Relation.docId(userId, otherId)
+const get = (userId, otherId) => db.get(Relation.docId(userId, otherId));
 
-putStatus = (userId, otherId, status)->
-  docId = Relation.docId(userId, otherId)
-  # blue-cot handles get-put-with-rev and inexistant doc errors
-  db.update docId, updateStatus.bind(null, docId, status)
+const putStatus = function(userId, otherId, status){
+  const docId = Relation.docId(userId, otherId);
+  // blue-cot handles get-put-with-rev and inexistant doc errors
+  return db.update(docId, updateStatus.bind(null, docId, status));
+};
 
-updateStatus = (docId, status, doc)->
-  # if doc doesnt exist, cot creates one: { _id: doc._id }
-  # thus the need to test doc.status instead
-  if doc?.status? then doc.status = status
-  else doc = Relation.create(docId, status)
-  doc.updated = Date.now()
-  return doc
+var updateStatus = function(docId, status, doc){
+  // if doc doesnt exist, cot creates one: { _id: doc._id }
+  // thus the need to test doc.status instead
+  if ((doc != null ? doc.status : undefined) != null) { doc.status = status;
+  } else { doc = Relation.create(docId, status); }
+  doc.updated = Date.now();
+  return doc;
+};
 
-queries =
-  get: get
-  putStatus: putStatus
-  getStatus: (userId, otherId)->
-    get(userId, otherId)
-    .catch couch_.ignoreNotFound
-    .then (doc)->
-      if doc?.status?
-        return userRelativeRequest(userId, otherId, doc.status)
-      else 'none'
+const queries = {
+  get,
+  putStatus,
+  getStatus(userId, otherId){
+    return get(userId, otherId)
+    .catch(couch_.ignoreNotFound)
+    .then(function(doc){
+      if ((doc != null ? doc.status : undefined) != null) {
+        return userRelativeRequest(userId, otherId, doc.status);
+      } else { return 'none'; }
+    });
+  },
 
-  putFriendStatus: (userId, otherId)->
-    putStatus userId, otherId, 'friends'
+  putFriendStatus(userId, otherId){
+    return putStatus(userId, otherId, 'friends');
+  },
 
-  putRequestedStatus: (userId, otherId)->
-    if userId < otherId then status = 'a-requested'
-    else status = 'b-requested'
-    putStatus userId, otherId, status
+  putRequestedStatus(userId, otherId){
+    let status;
+    if (userId < otherId) { status = 'a-requested';
+    } else { status = 'b-requested'; }
+    return putStatus(userId, otherId, status);
+  },
 
-  putNoneStatus: (userId, otherId)->
-    putStatus userId, otherId, 'none'
+  putNoneStatus(userId, otherId){
+    return putStatus(userId, otherId, 'none');
+  }
+};
 
-lists = require('./lists')(db)
+const lists = require('./lists')(db);
 
-counts =
-  pendingFriendsRequestsCount: (userId)->
-    lists.getUserRelations userId
-    .then (relations)-> relations.otherRequested.length
+const counts = {
+  pendingFriendsRequestsCount(userId){
+    return lists.getUserRelations(userId)
+    .then(relations => relations.otherRequested.length);
+  }
+};
 
-module.exports = _.extend {}, queries, lists, counts
+module.exports = _.extend({}, queries, lists, counts);

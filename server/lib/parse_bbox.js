@@ -1,36 +1,45 @@
-# this module is doomed to be replaced by a geobox parser
-# to fit search_by_positions needs: keeping it as a placeholder
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-promises_ = __.require 'lib', 'promises'
-error_ = __.require 'lib', 'error/error'
-assert_ = __.require 'utils', 'assert_types'
+/*
+ * decaffeinate suggestions:
+ * DS101: Remove unnecessary use of Array.from
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+// this module is doomed to be replaced by a geobox parser
+// to fit search_by_positions needs: keeping it as a placeholder
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const promises_ = __.require('lib', 'promises');
+const error_ = __.require('lib', 'error/error');
+const assert_ = __.require('utils', 'assert_types');
 
-parseLatLng = (query)->
-  { bbox } = query
+const parseLatLng = function(query){
+  let { bbox } = query;
 
-  unless bbox? then return error_.rejectMissingQuery 'bbox'
+  if (bbox == null) { return error_.rejectMissingQuery('bbox'); }
 
-  try
-    bbox = JSON.parse bbox
-    assert_.numbers bbox
-  catch err
-    return error_.rejectInvalid 'bbox', bbox
+  try {
+    bbox = JSON.parse(bbox);
+    assert_.numbers(bbox);
+  } catch (err) {
+    return error_.rejectInvalid('bbox', bbox);
+  }
 
-  [ minLng, minLat, maxLng, maxLat ] = bbox
-  _.log bbox, 'minLng, minLat, maxLng, maxLat'
+  let [ minLng, minLat, maxLng, maxLat ] = Array.from(bbox);
+  _.log(bbox, 'minLng, minLat, maxLng, maxLat');
 
-  unless minLng < maxLng and minLat < maxLat
-    return error_.rejectInvalid 'bbox coordinates', bbox
+  if ((minLng >= maxLng) || (minLat >= maxLat)) {
+    return error_.rejectInvalid('bbox coordinates', bbox);
+  }
 
-  # not throwing an error when a coordinate is over its limit
-  # but replacing it by the limit to make following calculations lighter
-  if minLng < -180 then minLng = -180
-  if maxLng > 180 then maxLng = 180
-  if minLat < -90 then minLat = -90
-  if maxLng > 90 then maxLng = 90
+  // not throwing an error when a coordinate is over its limit
+  // but replacing it by the limit to make following calculations lighter
+  if (minLng < -180) { minLng = -180; }
+  if (maxLng > 180) { maxLng = 180; }
+  if (minLat < -90) { minLat = -90; }
+  if (maxLng > 90) { maxLng = 90; }
 
-  return [ minLng, minLat, maxLng, maxLat ]
+  return [ minLng, minLat, maxLng, maxLat ];
+};
 
-module.exports = (query)->
-  promises_.try parseLatLng.bind(null, query)
+module.exports = query => promises_.try(parseLatLng.bind(null, query));

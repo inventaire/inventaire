@@ -1,73 +1,95 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-promises_ = __.require 'lib', 'promises'
-error_ = __.require 'lib', 'error/error'
-Task = __.require 'models', 'task'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+let tasks_;
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const promises_ = __.require('lib', 'promises');
+const error_ = __.require('lib', 'error/error');
+const Task = __.require('models', 'task');
 
-db = __.require('couch', 'base')('tasks')
+const db = __.require('couch', 'base')('tasks');
 
-module.exports = tasks_ =
-  createInBulk: (tasksDocs)->
-    promises_.try -> tasksDocs.map Task.create
-    .then db.bulk
-    .then _.Log('tasks created')
+module.exports = (tasks_ = {
+  createInBulk(tasksDocs){
+    return promises_.try(() => tasksDocs.map(Task.create))
+    .then(db.bulk)
+    .then(_.Log('tasks created'));
+  },
 
-  update: (options)->
-    { ids, attribute, newValue } = options
-    if ids.length is 0 then return promises_.resolve []
+  update(options){
+    const { ids, attribute, newValue } = options;
+    if (ids.length === 0) { return promises_.resolve([]); }
 
-    tasks_.byIds ids
-    .map (task)-> Task.update task, attribute, newValue
-    .then db.bulk
-    .then _.Log('tasks updated')
+    return tasks_.byIds(ids)
+    .map(task => Task.update(task, attribute, newValue))
+    .then(db.bulk)
+    .then(_.Log('tasks updated'));
+  },
 
-  bulkDelete: db.bulkDelete
+  bulkDelete: db.bulkDelete,
 
-  byId: db.get
+  byId: db.get,
 
-  byIds: db.fetch
+  byIds: db.fetch,
 
-  byScore: (options)->
-    { limit, offset } = options
-    db.viewCustom 'byScore',
-      limit: limit
-      skip: offset
-      descending: true
+  byScore(options){
+    const { limit, offset } = options;
+    return db.viewCustom('byScore', {
+      limit,
+      skip: offset,
+      descending: true,
       include_docs: true
+    }
+    );
+  },
 
-  bySuspectUri: (suspectUri)->
-    db.viewByKey 'bySuspectUriAndState', [ suspectUri, null ]
+  bySuspectUri(suspectUri){
+    return db.viewByKey('bySuspectUriAndState', [ suspectUri, null ]);
+  },
 
-  bySuggestionUri: (suggestionUri)->
-    db.viewByKey 'bySuggestionUriAndState', [ suggestionUri, null ]
+  bySuggestionUri(suggestionUri){
+    return db.viewByKey('bySuggestionUriAndState', [ suggestionUri, null ]);
+  },
 
-  bySuspectUris: (suspectUris, options = {})->
-    { index, includeArchived } = options
-    db.viewByKeys 'bySuspectUriAndState', getKeys(suspectUris, includeArchived)
-    .then (tasks)->
-      if index isnt true then return tasks
-      tasksBySuspectUris = _.groupBy tasks, 'suspectUri'
-      return completeWithEmptyArrays tasksBySuspectUris, suspectUris
+  bySuspectUris(suspectUris, options = {}){
+    const { index, includeArchived } = options;
+    return db.viewByKeys('bySuspectUriAndState', getKeys(suspectUris, includeArchived))
+    .then(function(tasks){
+      if (index !== true) { return tasks; }
+      const tasksBySuspectUris = _.groupBy(tasks, 'suspectUri');
+      return completeWithEmptyArrays(tasksBySuspectUris, suspectUris);
+    });
+  },
 
-  bySuggestionUris: (suggestionUris, options = {})->
-    { index, includeArchived } = options
-    db.viewByKeys 'bySuggestionUriAndState', getKeys(suggestionUris, includeArchived)
-    .then (tasks)->
-      if index isnt true then return tasks
-      tasksBySuggestionUris = _.groupBy tasks, 'suggestionUri'
-      return completeWithEmptyArrays tasksBySuggestionUris, suggestionUris
+  bySuggestionUris(suggestionUris, options = {}){
+    const { index, includeArchived } = options;
+    return db.viewByKeys('bySuggestionUriAndState', getKeys(suggestionUris, includeArchived))
+    .then(function(tasks){
+      if (index !== true) { return tasks; }
+      const tasksBySuggestionUris = _.groupBy(tasks, 'suggestionUri');
+      return completeWithEmptyArrays(tasksBySuggestionUris, suggestionUris);
+    });
+  }
+});
 
-getKeys = (uris, includeArchived)->
-  keys = uris.map buildKey(null)
-  unless includeArchived? then return keys
-  mergedKeys = uris.map buildKey('merged')
-  dissmissedKeys = uris.map buildKey('dismissed')
-  return keys.concat mergedKeys, dissmissedKeys
+var getKeys = function(uris, includeArchived){
+  const keys = uris.map(buildKey(null));
+  if (includeArchived == null) { return keys; }
+  const mergedKeys = uris.map(buildKey('merged'));
+  const dissmissedKeys = uris.map(buildKey('dismissed'));
+  return keys.concat(mergedKeys, dissmissedKeys);
+};
 
-buildKey = (state)-> (uri)-> [ uri, state ]
+var buildKey = state => uri => [ uri, state ];
 
-completeWithEmptyArrays = (tasksByUris, uris)->
-  for uri in uris
-    tasksByUris[uri] ?= []
-  return tasksByUris
+var completeWithEmptyArrays = function(tasksByUris, uris){
+  for (let uri of uris) {
+    if (tasksByUris[uri] == null) { tasksByUris[uri] = []; }
+  }
+  return tasksByUris;
+};

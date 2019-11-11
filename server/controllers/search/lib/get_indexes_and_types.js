@@ -1,15 +1,17 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-{ typesData } = require './types'
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const { typesData } = require('./types');
 
-module.exports = (typesList)->
-  data = { indexes: [], types: [] }
-  { indexes, types } = typesList.reduce aggregateIndexesAndTypes, data
-  return { indexes: _.uniq(indexes), types }
+module.exports = function(typesList){
+  const data = { indexes: [], types: [] };
+  const { indexes, types } = typesList.reduce(aggregateIndexesAndTypes, data);
+  return { indexes: _.uniq(indexes), types };
+};
 
-aggregateIndexesAndTypes = (data, nextType)->
-  { indexes, type } = typesData[nextType]
-  data.indexes = data.indexes.concat indexes
-  data.types.push type
-  return data
+var aggregateIndexesAndTypes = function(data, nextType){
+  const { indexes, type } = typesData[nextType];
+  data.indexes = data.indexes.concat(indexes);
+  data.types.push(type);
+  return data;
+};

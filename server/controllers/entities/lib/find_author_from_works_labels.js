@@ -1,40 +1,44 @@
-# Tries to identify an author from the occurrences of their works labels
-# in their Wikipedia article. It can thus only work for authors known by Wikidata
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+// Tries to identify an author from the occurrences of their works labels
+// in their Wikipedia article. It can thus only work for authors known by Wikidata
 
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-typeSearch = __.require 'controllers', 'search/lib/type_search'
-{ prefixifyWd } = __.require 'controllers', 'entities/lib/prefix'
-getOccurrencesFromExternalSources = require './get_occurrences_from_external_sources'
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const typeSearch = __.require('controllers', 'search/lib/type_search');
+const { prefixifyWd } = __.require('controllers', 'entities/lib/prefix');
+const getOccurrencesFromExternalSources = require('./get_occurrences_from_external_sources');
 
-# Returns a URI if an single author was identified
-# returns undefined otherwise
-module.exports = (authorStr, worksLabels, worksLabelsLangs)->
-  searchHumans authorStr
-  .then getWdAuthorUris
-  .map getAuthorOccurrenceData(worksLabels, worksLabelsLangs)
-  .filter _.property('hasOccurrence')
-  .then (authorsData)->
-    if authorsData.length is 0 then return
-    else if authorsData.length is 1
-      { uri } = authorsData[0]
-      _.log uri, 'author found from work label'
-      return uri
-    else
-      context = { authorStr, authorsData, worksLabels, worksLabelsLangs }
-      _.warn context, 'found more than one matching author'
-      return
+// Returns a URI if an single author was identified
+// returns undefined otherwise
+module.exports = (authorStr, worksLabels, worksLabelsLangs) => searchHumans(authorStr)
+.then(getWdAuthorUris)
+.map(getAuthorOccurrenceData(worksLabels, worksLabelsLangs))
+.filter(_.property('hasOccurrence'))
+.then(function(authorsData){
+  if (authorsData.length === 0) { return;
+  } else if (authorsData.length === 1) {
+    const { uri } = authorsData[0];
+    _.log(uri, 'author found from work label');
+    return uri;
+  } else {
+    const context = { authorStr, authorsData, worksLabels, worksLabelsLangs };
+    _.warn(context, 'found more than one matching author');
+    return;
+  }
+});
 
-searchHumans = typeSearch.bind null, [ 'humans' ]
+var searchHumans = typeSearch.bind(null, [ 'humans' ]);
 
-getWdAuthorUris = (res)->
-  res.hits.hits
-  .filter (hit)-> hit._index is 'wikidata' and hit._score > 1
-  .map (hit)-> prefixifyWd hit._id
+var getWdAuthorUris = res => res.hits.hits
+.filter(hit => (hit._index === 'wikidata') && (hit._score > 1))
+.map(hit => prefixifyWd(hit._id));
 
-getAuthorOccurrenceData = (worksLabels, worksLabelsLangs)-> (wdAuthorUri)->
-  getOccurrencesFromExternalSources wdAuthorUri, worksLabels, worksLabelsLangs
-  .then (occurrences)->
-    hasOccurrence = occurrences.length > 0
-    return { uri: wdAuthorUri, hasOccurrence }
+var getAuthorOccurrenceData = (worksLabels, worksLabelsLangs) => wdAuthorUri => getOccurrencesFromExternalSources(wdAuthorUri, worksLabels, worksLabelsLangs)
+.then(function(occurrences){
+  const hasOccurrence = occurrences.length > 0;
+  return { uri: wdAuthorUri, hasOccurrence };});

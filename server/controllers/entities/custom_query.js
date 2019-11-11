@@ -1,19 +1,27 @@
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-responses_ = __.require 'lib', 'responses'
-error_ = __.require 'lib', 'error/error'
-customQueries =
-  'author-works': require './lib/get_author_works'
-  'serie-parts': require './lib/get_serie_parts'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const responses_ = __.require('lib', 'responses');
+const error_ = __.require('lib', 'error/error');
+const customQueries = {
+  'author-works': require('./lib/get_author_works'),
+  'serie-parts': require('./lib/get_serie_parts')
+};
 
-module.exports = (req, res, next)->
-  { uri, refresh, action } = req.query
+module.exports = function(req, res, next){
+  let { uri, refresh, action } = req.query;
 
-  unless _.isEntityUri uri
-    return error_.bundleInvalid req, res, 'uri', uri
+  if (!_.isEntityUri(uri)) {
+    return error_.bundleInvalid(req, res, 'uri', uri);
+  }
 
-  refresh = _.parseBooleanString refresh
+  refresh = _.parseBooleanString(refresh);
 
-  customQueries[action]({ uri, refresh })
-  .then responses_.Send(res)
-  .catch error_.Handler(req, res)
+  return customQueries[action]({ uri, refresh })
+  .then(responses_.Send(res))
+  .catch(error_.Handler(req, res));
+};

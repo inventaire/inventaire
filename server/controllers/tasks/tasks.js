@@ -1,23 +1,30 @@
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-ActionsControllers = __.require 'lib', 'actions_controllers'
-{ bySuspectUris, bySuggestionUris } = require './by_entity_uris'
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const ActionsControllers = __.require('lib', 'actions_controllers');
+const { bySuspectUris, bySuggestionUris } = require('./by_entity_uris');
 
-module.exports =
-  get: ActionsControllers
-    public:
-      'by-ids': require './by_ids'
-      'by-score': require './by_score'
-      'by-suspect-uris': bySuspectUris
+module.exports = {
+  get: ActionsControllers({
+    public: {
+      'by-ids': require('./by_ids'),
+      'by-score': require('./by_score'),
+      'by-suspect-uris': bySuspectUris,
       'by-suggestion-uris': bySuggestionUris
+    }
+  }),
 
-  post: ActionsControllers
-    admin:
-      'collect-entities': require './collect_entities'
-      'check-entities': require './check_entities'
+  post: ActionsControllers({
+    admin: {
+      'collect-entities': require('./collect_entities'),
+      'check-entities': require('./check_entities')
+    }
+  }),
 
-  put: ActionsControllers
-    admin:
-      'update': require './update'
+  put: ActionsControllers({
+    admin: {
+      'update': require('./update')
+    }
+  })
+};
 
-require('./hooks')()
+require('./hooks')();

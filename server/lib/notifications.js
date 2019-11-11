@@ -1,98 +1,120 @@
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-radio = __.require 'lib', 'radio'
-{ BasicUpdater } = __.require 'lib', 'doc_updates'
-{ minKey, maxKey } = __.require 'lib', 'couch'
-assert_ = __.require 'utils', 'assert_types'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const radio = __.require('lib', 'radio');
+const { BasicUpdater } = __.require('lib', 'doc_updates');
+const { minKey, maxKey } = __.require('lib', 'couch');
+const assert_ = __.require('utils', 'assert_types');
 
-db = __.require('couch', 'base')('notifications')
+const db = __.require('couch', 'base')('notifications');
 
-notifs_ =
-  byUserId: (userId)->
-    assert_.string userId
-    db.viewCustom 'byUserAndTime',
-      startkey: [ userId, minKey ]
-      endkey: [ userId, maxKey ]
+var notifs_ = {
+  byUserId(userId){
+    assert_.string(userId);
+    return db.viewCustom('byUserAndTime', {
+      startkey: [ userId, minKey ],
+      endkey: [ userId, maxKey ],
       include_docs: true
-    .catch _.ErrorRethrow('byUserId')
+    }).catch(_.ErrorRethrow('byUserId'));
+  },
 
-  # make notifications accessible by the subjects they involve:
-  # user, group, item etc
-  bySubject: (subjectId)->
-    db.viewByKey 'bySubject', subjectId
-    .catch _.ErrorRethrow('bySubject')
+  // make notifications accessible by the subjects they involve:
+  // user, group, item etc
+  bySubject(subjectId){
+    return db.viewByKey('bySubject', subjectId)
+    .catch(_.ErrorRethrow('bySubject'));
+  },
 
-  add: (userId, type, data)->
-    assert_.types [ 'string', 'string', 'object' ], arguments
-    db.post
-      user: userId
-      type: type
-      data: data
-      status: 'unread'
+  add(userId, type, data){
+    assert_.types([ 'string', 'string', 'object' ], arguments);
+    return db.post({
+      user: userId,
+      type,
+      data,
+      status: 'unread',
       time: Date.now()
+    });
+  },
 
-  updateReadStatus: (userId, time)->
-    time = Number(time)
-    db.viewFindOneByKey 'byUserAndTime', [ userId, time ]
-    .then (doc)->
-      db.update doc._id, BasicUpdater('status', 'read')
+  updateReadStatus(userId, time){
+    time = Number(time);
+    return db.viewFindOneByKey('byUserAndTime', [ userId, time ])
+    .then(doc => db.update(doc._id, BasicUpdater('status', 'read')));
+  },
 
-  deleteAllBySubjectId: (subjectId)->
-    # You absolutly don't want this id to be undefined
-    # as this would end up deleting the whole database
-    assert_.string subjectId
-    notifs_.bySubject subjectId
-    .then db.bulkDelete
+  deleteAllBySubjectId(subjectId){
+    // You absolutly don't want this id to be undefined
+    // as this would end up deleting the whole database
+    assert_.string(subjectId);
+    return notifs_.bySubject(subjectId)
+    .then(db.bulkDelete);
+  },
 
-  unreadCount: (userId)->
-    notifs_.byUserId userId
-    .then getUnreadCount
+  unreadCount(userId){
+    return notifs_.byUserId(userId)
+    .then(getUnreadCount);
+  }
+};
 
-# alias
-notifs_.deleteAllByUserId = notifs_.deleteAllBySubjectId
+// alias
+notifs_.deleteAllByUserId = notifs_.deleteAllBySubjectId;
 
-getUnreadCount = (notifs)-> notifs.filter(isUnread).length
-isUnread = (notif)-> notif.status is 'unread'
+var getUnreadCount = notifs => notifs.filter(isUnread).length;
+var isUnread = notif => notif.status === 'unread';
 
-callbacks =
-  acceptedRequest: (userToNotify, newFriend)->
-    assert_.strings [ userToNotify, newFriend ]
-    notifs_.add userToNotify, 'friendAcceptedRequest',
-      user: newFriend
+const callbacks = {
+  acceptedRequest(userToNotify, newFriend){
+    assert_.strings([ userToNotify, newFriend ]);
+    return notifs_.add(userToNotify, 'friendAcceptedRequest',
+      {user: newFriend});
+  },
 
-  userMadeAdmin: (groupId, actorAdminId, newAdminId)->
-    notifs_.add newAdminId, 'userMadeAdmin',
-      group: groupId
+  userMadeAdmin(groupId, actorAdminId, newAdminId){
+    return notifs_.add(newAdminId, 'userMadeAdmin', {
+      group: groupId,
       user: actorAdminId
+    }
+    );
+  },
 
-  groupUpdate: (data)->
-    { attribute } = data
-    if attribute in groupAttributeWithNotification
-      { usersToNotify, groupId, actorId, previousValue, newValue } = data
-      # creates a lot of similar documents:
-      # could be refactored to use a single document
-      # including a read status per-user: { user: id, read: boolean }
-      for userToNotify in usersToNotify
-        notifs_.add userToNotify, 'groupUpdate',
-          group: groupId
-          user: actorId
-          attribute: attribute
-          previousValue: previousValue
-          newValue: newValue
+  groupUpdate(data){
+    const { attribute } = data;
+    if (groupAttributeWithNotification.includes(attribute)) {
+      const { usersToNotify, groupId, actorId, previousValue, newValue } = data;
+      // creates a lot of similar documents:
+      // could be refactored to use a single document
+      // including a read status per-user: { user: id, read: boolean }
+      return usersToNotify.map((userToNotify) =>
+        notifs_.add(userToNotify, 'groupUpdate', {
+          group: groupId,
+          user: actorId,
+          attribute,
+          previousValue,
+          newValue
+        }
+        ));
+    }
+  },
 
-  # Deleting notifications when their subject is deleted
-  # to avoid having notification triggering requests for deleted resources
-  deleteNotifications: (label, subjectId)->
-    assert_.strings [ label, subjectId ]
-    _.log "deleting #{label} notifications"
-    notifs_.deleteAllBySubjectId subjectId
+  // Deleting notifications when their subject is deleted
+  // to avoid having notification triggering requests for deleted resources
+  deleteNotifications(label, subjectId){
+    assert_.strings([ label, subjectId ]);
+    _.log(`deleting ${label} notifications`);
+    return notifs_.deleteAllBySubjectId(subjectId);
+  }
+};
 
-groupAttributeWithNotification = [ 'name', 'description' ]
+var groupAttributeWithNotification = [ 'name', 'description' ];
 
-radio.on 'notify:friend:request:accepted', callbacks.acceptedRequest
-radio.on 'group:makeAdmin', callbacks.userMadeAdmin
-radio.on 'group:update', callbacks.groupUpdate
+radio.on('notify:friend:request:accepted', callbacks.acceptedRequest);
+radio.on('group:makeAdmin', callbacks.userMadeAdmin);
+radio.on('group:update', callbacks.groupUpdate);
 
-radio.on 'resource:destroyed', callbacks.deleteNotifications
+radio.on('resource:destroyed', callbacks.deleteNotifications);
 
-module.exports = notifs_
+module.exports = notifs_;

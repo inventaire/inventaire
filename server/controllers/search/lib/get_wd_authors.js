@@ -1,31 +1,41 @@
-CONFIG = require('config')
-__ = CONFIG.universalPath
-promises_ = __.require 'lib', 'promises'
-{ buildSearcher } = __.require 'lib', 'elasticsearch'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const promises_ = __.require('lib', 'promises');
+const { buildSearcher } = __.require('lib', 'elasticsearch');
 
-index = 'wikidata'
+const index = 'wikidata';
 
-queryBodyBuilder = (title)->
-  query:
-    bool:
+const queryBodyBuilder = title => ({
+  query: {
+    bool: {
       should: [
         {
-        # boost policy : 'Aaron Swartz' > ( 'Aaron' AND 'Swartz' )
-        # type 'phrase' == exact match of full query aka 'Aaron Swartz'
-        multi_match:
-          query: title
-          type: 'phrase'
-          fields: [ 'labels.*' ]
+        // boost policy : 'Aaron Swartz' > ( 'Aaron' AND 'Swartz' )
+        // type 'phrase' == exact match of full query aka 'Aaron Swartz'
+        multi_match: {
+          query: title,
+          type: 'phrase',
+          fields: [ 'labels.*' ],
           boost: 5
+        }
         },
         {
-        # operator AND == can match 'Aaron Michael Swartz'
-        multi_match:
-          query: title
-          fields: [ 'labels.*', 'aliases.*' ]
-          operator: 'and'
+        // operator AND == can match 'Aaron Michael Swartz'
+        multi_match: {
+          query: title,
+          fields: [ 'labels.*', 'aliases.*' ],
+          operator: 'and',
           boost: 2
         }
+        }
       ]
+    }
+  }
+});
 
-module.exports = buildSearcher { index, queryBodyBuilder }
+module.exports = buildSearcher({ index, queryBodyBuilder });

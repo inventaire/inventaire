@@ -1,25 +1,31 @@
-# Get the amount of entities linking to a given entity
+/*
+ * decaffeinate suggestions:
+ * DS101: Remove unnecessary use of Array.from
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+// Get the amount of entities linking to a given entity
 
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-promises_ = __.require 'lib', 'promises'
-entities_ = require './entities'
-runWdQuery = __.require 'data', 'wikidata/run_query'
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const promises_ = __.require('lib', 'promises');
+const entities_ = require('./entities');
+const runWdQuery = __.require('data', 'wikidata/run_query');
 
-module.exports = (uri, refresh)->
-  [ prefix, id ] = uri.split ':'
-  promises = []
+module.exports = function(uri, refresh){
+  const [ prefix, id ] = Array.from(uri.split(':'));
+  const promises = [];
 
-  if prefix is 'wd' then promises.push getWdLinksScore(id, refresh)
+  if (prefix === 'wd') { promises.push(getWdLinksScore(id, refresh)); }
 
-  promises.push getLocalLinksCount(uri)
+  promises.push(getLocalLinksCount(uri));
 
-  promises_.all promises
-  .then _.sum
-  .catch _.ErrorRethrow('get links count err')
+  return promises_.all(promises)
+  .then(_.sum)
+  .catch(_.ErrorRethrow('get links count err'));
+};
 
-getWdLinksScore = (qid, refresh)->
-  runWdQuery { query: 'links-count', qid, refresh }
-  .then _.first
+var getWdLinksScore = (qid, refresh) => runWdQuery({ query: 'links-count', qid, refresh })
+.then(_.first);
 
-getLocalLinksCount = (uri)-> entities_.byClaimsValue uri, true
+var getLocalLinksCount = uri => entities_.byClaimsValue(uri, true);

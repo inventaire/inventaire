@@ -1,65 +1,75 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-{ Promise } = __.require 'lib', 'promises'
-getWorksFromAuthorsUris = require './get_works_from_authors_uris'
-typeSearch = __.require 'controllers', 'search/lib/type_search'
-parseResults = __.require 'controllers', 'search/lib/parse_results'
-{ getEntityNormalizedTerms } = require '../terms_normalization'
-getAuthorsUris = require '../get_authors_uris'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS104: Avoid inline assignments
+ * DS204: Change includes calls to have a more natural evaluation order
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const { Promise } = __.require('lib', 'promises');
+const getWorksFromAuthorsUris = require('./get_works_from_authors_uris');
+const typeSearch = __.require('controllers', 'search/lib/type_search');
+const parseResults = __.require('controllers', 'search/lib/parse_results');
+const { getEntityNormalizedTerms } = require('../terms_normalization');
+const getAuthorsUris = require('../get_authors_uris');
 
-# resolve :
-# - if seeds terms match entities terms
-# - if no other entities are in the search result (only one entity found)
+// resolve :
+// - if seeds terms match entities terms
+// - if no other entities are in the search result (only one entity found)
 
-module.exports = (entry)->
-  { authors, works } = entry
-  if authors.length is 0 or works.length is 0 then return entry
+module.exports = function(entry){
+  const { authors, works } = entry;
+  if ((authors.length === 0) || (works.length === 0)) { return entry; }
 
-  Promise.all authors.map(searchAuthorAndResolve(works))
-  .then -> entry
+  return Promise.all(authors.map(searchAuthorAndResolve(works)))
+  .then(() => entry);
+};
 
-searchAuthorAndResolve = (works)-> (author)->
-  if not author? or author.uri? then return
-  authorTerms = getEntityNormalizedTerms author
-  searchUrisByAuthorTerms authorTerms
-  .then resolveWorksAndAuthor(works, author)
+var searchAuthorAndResolve = works => (function(author) {
+  if ((author == null) || (author.uri != null)) { return; }
+  const authorTerms = getEntityNormalizedTerms(author);
+  return searchUrisByAuthorTerms(authorTerms)
+  .then(resolveWorksAndAuthor(works, author));
+});
 
-searchUrisByAuthorTerms = (terms)->
-  Promise.all terms.map(searchUrisByAuthorLabel)
-  .then _.flatten
-  .then _.uniq
+var searchUrisByAuthorTerms = terms => Promise.all(terms.map(searchUrisByAuthorLabel))
+.then(_.flatten)
+.then(_.uniq);
 
-types = [ 'humans' ]
+const types = [ 'humans' ];
 
-searchUrisByAuthorLabel = (term)->
-  typeSearch types, term
-  .then parseResults(types)
-  # Exact match on normalized author terms
-  .filter (hit)-> term in getEntityNormalizedTerms(hit._source)
-  .map (hit)-> hit._source.uri
-  .then _.compact
+var searchUrisByAuthorLabel = term => typeSearch(types, term)
+.then(parseResults(types))
+// Exact match on normalized author terms
+.filter(function(hit){ let needle;
+return (needle = term, getEntityNormalizedTerms(hit._source).includes(needle)); })
+.map(hit => hit._source.uri)
+.then(_.compact);
 
-resolveWorksAndAuthor = (works, author)-> (authorsUris)->
-  Promise.all works.map(getWorkAndResolve(author, authorsUris))
+var resolveWorksAndAuthor = (works, author) => authorsUris => Promise.all(works.map(getWorkAndResolve(author, authorsUris)));
 
-getWorkAndResolve = (authorSeed, authorsUris)-> (work)->
-  if work.uri? or not work? then return
-  workTerms = getEntityNormalizedTerms work
-  Promise.all getWorksFromAuthorsUris(authorsUris)
-  .then _.flatten
-  .then resolveWorkAndAuthor(authorsUris, authorSeed, work, workTerms)
+var getWorkAndResolve = (authorSeed, authorsUris) => (function(work) {
+  if ((work.uri != null) || (work == null)) { return; }
+  const workTerms = getEntityNormalizedTerms(work);
+  return Promise.all(getWorksFromAuthorsUris(authorsUris))
+  .then(_.flatten)
+  .then(resolveWorkAndAuthor(authorsUris, authorSeed, work, workTerms));
+});
 
-resolveWorkAndAuthor = (authorsUris, authorSeed, workSeed, workTerms)-> (searchedWorks)->
-  # Several searchedWorks could match authors homonyms/duplicates
-  unless searchedWorks.length is 1 then return
-  searchedWork = searchedWorks[0]
-  matchedAuthorsUris = _.intersection getAuthorsUris(searchedWork), authorsUris
-  # If unique author to avoid assigning a work to a duplicated author
-  unless matchedAuthorsUris.length is 1 then return
-  searchedWorkTerms = getEntityNormalizedTerms searchedWork
+var resolveWorkAndAuthor = (authorsUris, authorSeed, workSeed, workTerms) => (function(searchedWorks) {
+  // Several searchedWorks could match authors homonyms/duplicates
+  if (searchedWorks.length !== 1) { return; }
+  const searchedWork = searchedWorks[0];
+  const matchedAuthorsUris = _.intersection(getAuthorsUris(searchedWork), authorsUris);
+  // If unique author to avoid assigning a work to a duplicated author
+  if (matchedAuthorsUris.length !== 1) { return; }
+  const searchedWorkTerms = getEntityNormalizedTerms(searchedWork);
 
-  unless _.someMatch workTerms, searchedWorkTerms then return
+  if (!_.someMatch(workTerms, searchedWorkTerms)) { return; }
 
-  authorSeed.uri = matchedAuthorsUris[0]
-  workSeed.uri = searchedWork.uri
+  authorSeed.uri = matchedAuthorsUris[0];
+  return workSeed.uri = searchedWork.uri;
+});

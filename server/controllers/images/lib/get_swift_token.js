@@ -1,46 +1,59 @@
-# Identity: v2
-# Swift: v1
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+// Identity: v2
+// Swift: v1
 
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-promises_ = __.require 'lib', 'promises'
-breq = require 'bluereq'
-{ tenMinutes } =  __.require 'lib', 'times'
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const promises_ = __.require('lib', 'promises');
+const breq = require('bluereq');
+const { tenMinutes } =  __.require('lib', 'times');
 
-lastToken = null
-lastTokenExpirationTime = 0
-# let a 10 minutes margin before token expiration
-tokenExpired = -> Date.now() > (lastTokenExpirationTime - tenMinutes)
+let lastToken = null;
+let lastTokenExpirationTime = 0;
+// let a 10 minutes margin before token expiration
+const tokenExpired = () => Date.now() > (lastTokenExpirationTime - tenMinutes);
 
-{ username, password, authUrl, tenantName, region, publicURL } = CONFIG.mediaStorage.swift
+const { username, password, authUrl, tenantName, region, publicURL } = CONFIG.mediaStorage.swift;
 
-postParams =
-  url: "#{authUrl}/tokens"
-  headers: { 'Content-Type': 'application/json' }
-  body:
-    auth:
-      passwordCredentials: { username, password }
-      tenantName: tenantName
+const postParams = {
+  url: `${authUrl}/tokens`,
+  headers: { 'Content-Type': 'application/json' },
+  body: {
+    auth: {
+      passwordCredentials: { username, password },
+      tenantName
+    }
+  }
+};
 
-module.exports = ->
-  if lastToken? and not tokenExpired() then return promises_.resolve lastToken
+module.exports = function() {
+  if ((lastToken != null) && !tokenExpired()) { return promises_.resolve(lastToken); }
 
-  breq.post postParams
-  .get 'body'
-  .then parseIdentificationRes
-  .catch _.ErrorRethrow('getToken')
+  return breq.post(postParams)
+  .get('body')
+  .then(parseIdentificationRes)
+  .catch(_.ErrorRethrow('getToken'));
+};
 
-parseIdentificationRes = (res)->
-  { token, serviceCatalog } = res.access
-  verifyEndpoint serviceCatalog
-  { expires, id } = token
-  lastToken = id
-  lastTokenExpirationTime = new Date(expires).getTime()
-  return id
+var parseIdentificationRes = function(res){
+  const { token, serviceCatalog } = res.access;
+  verifyEndpoint(serviceCatalog);
+  const { expires, id } = token;
+  lastToken = id;
+  lastTokenExpirationTime = new Date(expires).getTime();
+  return id;
+};
 
-verifyEndpoint = (serviceCatalog)->
-  swiftData = _.find serviceCatalog, { name: 'swift' }
-  endpoint = _.find swiftData.endpoints, { region }
-  if endpoint.publicURL isnt publicURL
-    throw new Error "config publicURL and returned publicURL don't match"
+var verifyEndpoint = function(serviceCatalog){
+  const swiftData = _.find(serviceCatalog, { name: 'swift' });
+  const endpoint = _.find(swiftData.endpoints, { region });
+  if (endpoint.publicURL !== publicURL) {
+    throw new Error("config publicURL and returned publicURL don't match");
+  }
+};

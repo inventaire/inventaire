@@ -1,36 +1,37 @@
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-error_ = __.require 'lib', 'error/error'
-responses_ = __.require 'lib', 'responses'
-items_ = __.require 'controllers', 'items/lib/items'
-snapshot_ = __.require 'controllers', 'items/lib/snapshot/snapshot'
-transactions_ = require './lib/transactions'
-user_ = __.require 'controllers', 'user/lib/user'
-sanitize = __.require 'lib', 'sanitize/sanitize'
-{ Track } = __.require 'lib', 'track'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const error_ = __.require('lib', 'error/error');
+const responses_ = __.require('lib', 'responses');
+const items_ = __.require('controllers', 'items/lib/items');
+const snapshot_ = __.require('controllers', 'items/lib/snapshot/snapshot');
+const transactions_ = require('./lib/transactions');
+const user_ = __.require('controllers', 'user/lib/user');
+const sanitize = __.require('lib', 'sanitize/sanitize');
+const { Track } = __.require('lib', 'track');
 
-sanitization =
-  item: {}
+const sanitization = {
+  item: {},
   message: {}
+};
 
-module.exports = (req, res, nex)->
-  sanitize req, res, sanitization
-  .then (params)->
-    { item, message, reqUserId } = params
+module.exports = (req, res, nex) => sanitize(req, res, sanitization)
+.then(function(params){
+  const { item, message, reqUserId } = params;
 
-    _.log [ item, message ], 'item request'
+  _.log([ item, message ], 'item request');
 
-    items_.byId item
-    .then transactions_.verifyRightToRequest.bind(null, reqUserId)
-    .then snapshot_.addToItem
-    .then (itemDoc)->
-      { owner:ownerId } = itemDoc
-      user_.byIds [ ownerId, reqUserId ]
-      .spread transactions_.create.bind(null, itemDoc)
-    .get 'id'
-    .then (id)->
-      transactions_.addMessage reqUserId, message, id
-      .then -> transactions_.byId id
-    .then responses_.Wrap(res, 'transaction')
-  .then Track(req, [ 'transaction', 'request' ])
-  .catch error_.Handler(req, res)
+  return items_.byId(item)
+  .then(transactions_.verifyRightToRequest.bind(null, reqUserId))
+  .then(snapshot_.addToItem)
+  .then(function(itemDoc){
+    const { owner:ownerId } = itemDoc;
+    return user_.byIds([ ownerId, reqUserId ])
+    .spread(transactions_.create.bind(null, itemDoc));}).get('id')
+  .then(id => transactions_.addMessage(reqUserId, message, id)
+  .then(() => transactions_.byId(id))).then(responses_.Wrap(res, 'transaction'));}).then(Track(req, [ 'transaction', 'request' ]))
+.catch(error_.Handler(req, res));

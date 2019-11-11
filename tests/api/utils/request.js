@@ -1,41 +1,47 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-{ Promise } = __.require 'lib', 'promises'
-host = CONFIG.fullHost()
-breq = require 'bluereq'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const { Promise } = __.require('lib', 'promises');
+const host = CONFIG.fullHost();
+const breq = require('bluereq');
 
-testServerAvailability = ->
-  breq.get "#{host}/api/tests"
-  .then (res)-> _.success 'tests server is ready'
-  .timeout 1000
-  .catch (err)->
-    unless err.code is 'ECONNREFUSED' or err.name is 'TimeoutError' then throw err
-    _.log 'waiting for tests server', null, 'grey'
-    Promise.resolve()
-    .delay 500
-    .then testServerAvailability
+var testServerAvailability = () => breq.get(`${host}/api/tests`)
+.then(res => _.success('tests server is ready'))
+.timeout(1000)
+.catch(function(err){
+  if ((err.code !== 'ECONNREFUSED') && (err.name !== 'TimeoutError')) { throw err; }
+  _.log('waiting for tests server', null, 'grey');
+  return Promise.resolve()
+  .delay(500)
+  .then(testServerAvailability);
+});
 
-waitForTestServer = testServerAvailability()
+const waitForTestServer = testServerAvailability();
 
-rawRequest = (method, breqParams)->
-  waitForTestServer
-  .then -> breq[method](breqParams)
+const rawRequest = (method, breqParams) => waitForTestServer
+.then(() => breq[method](breqParams));
 
-request = (method, endpoint, body, cookie)->
-  data =
-    url: host + endpoint
+const request = function(method, endpoint, body, cookie){
+  const data = {
+    url: host + endpoint,
     headers: { cookie }
+  };
 
-  if body? then data.body = body
+  if (body != null) { data.body = body; }
 
-  waitForTestServer
-  .then -> breq[method](data).get 'body'
-  # .catch _.ErrorRethrow("#{method} #{endpoint} #{JSON.stringify(body)} err")
+  return waitForTestServer
+  .then(() => breq[method](data).get('body'));
+};
+  // .catch _.ErrorRethrow("#{method} #{endpoint} #{JSON.stringify(body)} err")
 
-customAuthReq = (userPromise, method, endpoint, body)->
-  userPromise
-  # gets a user doc to which tests/api/fixtures/users added a cookie attribute
-  .then (user)-> request method, endpoint, body, user.cookie
+const customAuthReq = (userPromise, method, endpoint, body) => userPromise
+// gets a user doc to which tests/api/fixtures/users added a cookie attribute
+.then(user => request(method, endpoint, body, user.cookie));
 
-module.exports = { request, rawRequest, customAuthReq }
+module.exports = { request, rawRequest, customAuthReq };

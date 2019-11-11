@@ -1,34 +1,48 @@
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-error_ = __.require 'lib', 'error/error'
-responses_ = __.require 'lib', 'responses'
-radio = __.require 'lib', 'radio'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const error_ = __.require('lib', 'error/error');
+const responses_ = __.require('lib', 'responses');
+const radio = __.require('lib', 'radio');
 
-module.exports =
-  post: (req, res, next)->
-    { user } = req
-    { subject, message, uris, context, unknownUser } = req.body
+module.exports = {
+  post(req, res, next){
+    const { user } = req;
+    const { subject, message, uris, context, unknownUser } = req.body;
 
-    unless subject? or message?
-      return error_.bundle req, res, 'message is empty', 400
+    if ((subject == null) && (message == null)) {
+      return error_.bundle(req, res, 'message is empty', 400);
+    }
 
-    if uris?
-      for uri in uris
-        unless _.isEntityUri uri
-          return error_.bundle req, res, 'invalid entity uri', 400, { uri }
+    if (uris != null) {
+      for (let uri of uris) {
+        if (!_.isEntityUri(uri)) {
+          return error_.bundle(req, res, 'invalid entity uri', 400, { uri });
+        }
+      }
+    }
 
-    automaticReport = uris?
+    const automaticReport = (uris != null);
 
-    if not automaticReport or isNewAutomaticReport(subject)
-      _.log { subject, message, uris, unknownUser, context }, 'sending feedback'
-      radio.emit 'received:feedback', subject, message, user, unknownUser, uris, context
-    else
-      _.info subject, 'not re-sending automatic report'
+    if (!automaticReport || isNewAutomaticReport(subject)) {
+      _.log({ subject, message, uris, unknownUser, context }, 'sending feedback');
+      radio.emit('received:feedback', subject, message, user, unknownUser, uris, context);
+    } else {
+      _.info(subject, 'not re-sending automatic report');
+    }
 
-    responses_.ok res, 201
+    return responses_.ok(res, 201);
+  }
+};
 
-cache = {}
-isNewAutomaticReport = (subject)->
-  isNew = not cache[subject]?
-  cache[subject] = true
-  return isNew
+const cache = {};
+var isNewAutomaticReport = function(subject){
+  const isNew = (cache[subject] == null);
+  cache[subject] = true;
+  return isNew;
+};

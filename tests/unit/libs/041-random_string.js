@@ -1,13 +1,18 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
 
-should = require 'should'
-randomString = __.require 'lib', 'utils/random_string'
+const should = require('should');
+const randomString = __.require('lib', 'utils/random_string');
 
-describe 'random string', ->
-  it 'should return a string of the requested length', (done)->
-    randomString(2).length.should.equal 2
-    randomString(32).length.should.equal 32
-    randomString(623).length.should.equal 623
-    done()
+describe('random string', () => it('should return a string of the requested length', function(done){
+  randomString(2).length.should.equal(2);
+  randomString(32).length.should.equal(32);
+  randomString(623).length.should.equal(623);
+  return done();
+}));

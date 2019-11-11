@@ -1,39 +1,51 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-couch_ = __.require 'lib', 'couch'
-{ minKey, maxKey } = couch_
-parseRelations = require './parse_relations'
-groups_ = __.require 'controllers', 'groups/lib/groups'
-{ Promise } = __.require 'lib', 'promises'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const couch_ = __.require('lib', 'couch');
+const { minKey, maxKey } = couch_;
+const parseRelations = require('./parse_relations');
+const groups_ = __.require('controllers', 'groups/lib/groups');
+const { Promise } = __.require('lib', 'promises');
 
-module.exports = (db)->
+module.exports = function(db){
 
-  getAllUserRelations = (userId, includeDocs = false)->
-    db.view 'relations', 'byStatus',
-      startkey: [ userId, minKey ]
-      endkey: [ userId, maxKey ]
-      include_docs: includeDocs
+  let lists;
+  const getAllUserRelations = (userId, includeDocs = false) => db.view('relations', 'byStatus', {
+    startkey: [ userId, minKey ],
+    endkey: [ userId, maxKey ],
+    include_docs: includeDocs
+  }
+  );
 
-  return lists =
-    getUserRelations: (userId)->
-      getAllUserRelations userId
-      .then parseRelations
+  return lists = {
+    getUserRelations(userId){
+      return getAllUserRelations(userId)
+      .then(parseRelations);
+    },
 
-    getUserFriends: (userId)->
-      query = { key: [ userId, 'friends' ] }
-      db.view 'relations', 'byStatus', query
-      .then couch_.mapValue
+    getUserFriends(userId){
+      const query = { key: [ userId, 'friends' ] };
+      return db.view('relations', 'byStatus', query)
+      .then(couch_.mapValue);
+    },
 
-    deleteUserRelations: (userId)->
-      getAllUserRelations userId, true
-      .then couch_.mapDoc
-      .then db.bulkDelete
+    deleteUserRelations(userId){
+      return getAllUserRelations(userId, true)
+      .then(couch_.mapDoc)
+      .then(db.bulkDelete);
+    },
 
-    getUserFriendsAndCoGroupsMembers: (userId)->
-      Promise.all [
-        lists.getUserFriends userId
-        groups_.findUserGroupsCoMembers userId
-      ]
-      .spread (friends, coMembers)->
-        return _.uniq friends.concat(coMembers)
+    getUserFriendsAndCoGroupsMembers(userId){
+      return Promise.all([
+        lists.getUserFriends(userId),
+        groups_.findUserGroupsCoMembers(userId)
+      ])
+      .spread((friends, coMembers) => _.uniq(friends.concat(coMembers)));
+    }
+  };
+};

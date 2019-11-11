@@ -1,34 +1,44 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require('builders', 'utils')
-express = require 'express'
-{ env, port, host, name } = CONFIG
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const express = require('express');
+const { env, port, host, name } = CONFIG;
 
-middlewares = require './middlewares/middlewares'
-middlewaresList = middlewares.common.concat (middlewares[CONFIG.env] or [])
+const middlewares = require('./middlewares/middlewares');
+const middlewaresList = middlewares.common.concat((middlewares[CONFIG.env] || []));
 
-routes = require './controllers/routes'
+const routes = require('./controllers/routes');
 
-app = express()
+const app = express();
 
-for middleware in middlewaresList
-  if _.isArray(middleware) then app.use.apply app, middleware
-  else app.use middleware
+for (let middleware of middlewaresList) {
+  if (_.isArray(middleware)) { app.use.apply(app, middleware);
+  } else { app.use(middleware); }
+}
 
-for endpoint, controllers of routes
-  for verb, controller of controllers
-    app[verb]("/#{endpoint}", controller)
+for (let endpoint in routes) {
+  const controllers = routes[endpoint];
+  for (let verb in controllers) {
+    const controller = controllers[verb];
+    app[verb](`/${endpoint}`, controller);
+  }
+}
 
-# Should be used after all middlewares and routes
-# cf http://expressjs.com/fr/guide/error-handling.html
-app.use require('./middlewares/error_handler')
+// Should be used after all middlewares and routes
+// cf http://expressjs.com/fr/guide/error-handling.html
+app.use(require('./middlewares/error_handler'));
 
-app.disable 'x-powered-by'
+app.disable('x-powered-by');
 
-module.exports = ->
-  return new Promise (resolve, reject)->
-    app.listen port, host, (err)->
-      if err then reject err
-      else
-        _.info "#{name} server is listening on port #{port}..."
-        resolve app
+module.exports = () => new Promise((resolve, reject) => app.listen(port, host, function(err){
+  if (err) { return reject(err);
+  } else {
+    _.info(`${name} server is listening on port ${port}...`);
+    return resolve(app);
+  }
+}));

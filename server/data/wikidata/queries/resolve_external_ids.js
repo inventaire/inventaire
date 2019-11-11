@@ -1,20 +1,29 @@
-module.exports =
-  parameters: [ 'externalIds' ]
-  query: (params)-> buildQuery params.externalIds
+/*
+ * decaffeinate suggestions:
+ * DS101: Remove unnecessary use of Array.from
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+module.exports = {
+  parameters: [ 'externalIds' ],
+  query(params){ return buildQuery(params.externalIds); }
+};
 
-buildQuery = (externalIds)->
-  body = buildBody externalIds
-  return "SELECT DISTINCT ?work WHERE { #{body} }"
+var buildQuery = function(externalIds){
+  const body = buildBody(externalIds);
+  return `SELECT DISTINCT ?work WHERE { ${body} }`;
+};
 
-buildBody = (externalIds)->
-  if externalIds.length is 1 then return buildTriple externalIds[0]
+var buildBody = function(externalIds){
+  if (externalIds.length === 1) { return buildTriple(externalIds[0]); }
 
-  unions = externalIds
-    .map buildTriple
-    .join ' } UNION { '
+  const unions = externalIds
+    .map(buildTriple)
+    .join(' } UNION { ');
 
-  return "{ #{unions} }"
+  return `{ ${unions} }`;
+};
 
-buildTriple = (pair)->
-  [ prop, value ] = pair
-  return "?work #{prop} '#{value}'"
+var buildTriple = function(pair){
+  const [ prop, value ] = Array.from(pair);
+  return `?work ${prop} '${value}'`;
+};

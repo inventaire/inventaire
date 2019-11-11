@@ -1,17 +1,21 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-fetchExternalAuthorWorksTitles = __.require 'data', 'lib/fetch_external_author_works_titles'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const fetchExternalAuthorWorksTitles = __.require('data', 'lib/fetch_external_author_works_titles');
 
-endpoint = 'http://bnb.data.bl.uk/sparql'
+const endpoint = 'http://bnb.data.bl.uk/sparql';
 
-getQuery = (bnbId)->
-  """
-  PREFIX dct: <http://purl.org/dc/terms/>
-  SELECT DISTINCT ?title ?work WHERE {
-    ?work dct:creator <http://bnb.data.bl.uk/id/person/#{bnbId}>;
-        dct:title ?title .
-  }
-  """
+const getQuery = bnbId => `\
+PREFIX dct: <http://purl.org/dc/terms/>
+SELECT DISTINCT ?title ?work WHERE {
+?work dct:creator <http://bnb.data.bl.uk/id/person/${bnbId}>;
+    dct:title ?title .
+}\
+`;
 
-module.exports = fetchExternalAuthorWorksTitles 'bnb', endpoint, getQuery
+module.exports = fetchExternalAuthorWorksTitles('bnb', endpoint, getQuery);

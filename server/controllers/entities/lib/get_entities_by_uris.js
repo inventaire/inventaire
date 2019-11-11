@@ -1,87 +1,110 @@
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-error_ = __.require 'lib', 'error/error'
-assert_ = __.require 'utils', 'assert_types'
-promises_ = __.require 'lib', 'promises'
-wdk = require 'wikidata-sdk'
-{ normalizeIsbn, isValidIsbn } = __.require 'lib', 'isbn/isbn'
+/*
+ * decaffeinate suggestions:
+ * DS101: Remove unnecessary use of Array.from
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const error_ = __.require('lib', 'error/error');
+const assert_ = __.require('utils', 'assert_types');
+const promises_ = __.require('lib', 'promises');
+const wdk = require('wikidata-sdk');
+const { normalizeIsbn, isValidIsbn } = __.require('lib', 'isbn/isbn');
 
-# Getters take ids, return an object on the model { entities, notFound }
-getters =
-  inv: require './get_inv_entities'
-  wd: require './get_wikidata_enriched_entities'
-  isbn: require './get_entities_by_isbns'
+// Getters take ids, return an object on the model { entities, notFound }
+const getters = {
+  inv: require('./get_inv_entities'),
+  wd: require('./get_wikidata_enriched_entities'),
+  isbn: require('./get_entities_by_isbns')
+};
 
-prefixes = Object.keys getters
+const prefixes = Object.keys(getters);
 
-module.exports = (params)->
-  { uris, list } = params
-  assert_.array uris
-  domains = {}
+module.exports = function(params){
+  const { uris, list } = params;
+  assert_.array(uris);
+  const domains = {};
 
-  # validate per URI to be able to return a precise error message
-  for uri in uris
-    [ prefix, id ] = uri.split ':'
+  // validate per URI to be able to return a precise error message
+  for (let uri of uris) {
+    var errMessage;
+    const [ prefix, id ] = Array.from(uri.split(':'));
 
-    unless prefix in prefixes
-      errMessage = "invalid uri prefix: #{prefix} (uri: #{uri})"
-      return error_.reject errMessage, 400, uri
+    if (!prefixes.includes(prefix)) {
+      errMessage = `invalid uri prefix: ${prefix} (uri: ${uri})`;
+      return error_.reject(errMessage, 400, uri);
+    }
 
-    unless validators[prefix](id)
-      errMessage = "invalid uri id: #{id} (uri: #{uri})"
-      return error_.reject errMessage, 400, uri
+    if (!validators[prefix](id)) {
+      errMessage = `invalid uri id: ${id} (uri: ${uri})`;
+      return error_.reject(errMessage, 400, uri);
+    }
 
-    domains[prefix] or= []
-    domains[prefix].push id
+    if (!domains[prefix]) { domains[prefix] = []; }
+    domains[prefix].push(id);
+  }
 
-  mergeResponses = if list then formatList else formatRichResults
+  const mergeResponses = list ? formatList : formatRichResults;
 
-  getDomainsPromises domains, params
-  .then mergeResponses
-  .catch _.ErrorRethrow("getEntitiesByUris err: #{uris.join('|')}")
+  return getDomainsPromises(domains, params)
+  .then(mergeResponses)
+  .catch(_.ErrorRethrow(`getEntitiesByUris err: ${uris.join('|')}`));
+};
 
-getDomainsPromises = (domains, params)->
-  promises = []
+var getDomainsPromises = function(domains, params){
+  const promises = [];
 
-  for prefix, uris of domains
-    promises.push getters[prefix](uris, params)
+  for (let prefix in domains) {
+    const uris = domains[prefix];
+    promises.push(getters[prefix](uris, params));
+  }
 
-  return promises_.all promises
+  return promises_.all(promises);
+};
 
-formatList = (results)-> _.flatten _.map(results, 'entities')
+var formatList = results => _.flatten(_.map(results, 'entities'));
 
-formatRichResults = (results)->
-  response =
-    # entities are a array until they are indexed by uri hereafter
-    entities: []
-    # collect redirections at the response root to let the possibility
-    # to the client to alias entities
-    redirects: {}
+var formatRichResults = function(results){
+  const response = {
+    // entities are a array until they are indexed by uri hereafter
+    entities: [],
+    // collect redirections at the response root to let the possibility
+    // to the client to alias entities
+    redirects: {},
     notFound: []
+  };
 
-  for result in results
-    assert_.array result.entities
-    for entity in result.entities
-      if entity.redirects?
-        { from, to } = entity.redirects
-        assert_.strings [ from, to ]
-        response.redirects[from] = to
-        delete entity.redirects
+  for (let result of results) {
+    assert_.array(result.entities);
+    for (let entity of result.entities) {
+      if (entity.redirects != null) {
+        const { from, to } = entity.redirects;
+        assert_.strings([ from, to ]);
+        response.redirects[from] = to;
+        delete entity.redirects;
+      }
+    }
 
-    # concat all entities
-    response.entities = response.entities.concat result.entities
+    // concat all entities
+    response.entities = response.entities.concat(result.entities);
 
-    # concat the list of not found URIs
-    if result.notFound?
-      response.notFound = response.notFound.concat result.notFound
+    // concat the list of not found URIs
+    if (result.notFound != null) {
+      response.notFound = response.notFound.concat(result.notFound);
+    }
+  }
 
-  response.entities = _.keyBy response.entities, 'uri'
+  response.entities = _.keyBy(response.entities, 'uri');
 
-  if response.notFound.length is 0 then delete response.notFound
+  if (response.notFound.length === 0) { delete response.notFound; }
 
-  return response
+  return response;
+};
 
-validators =
-  inv: _.isInvEntityId
-  wd: wdk.isItemId
+var validators = {
+  inv: _.isInvEntityId,
+  wd: wdk.isItemId,
   isbn: isValidIsbn
+};

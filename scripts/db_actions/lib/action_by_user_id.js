@@ -1,12 +1,17 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-ActionByInput = require './action_by_input'
+/*
+ * decaffeinate suggestions:
+ * DS101: Remove unnecessary use of Array.from
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const ActionByInput = require('./action_by_input');
 
-[ userId ] = process.argv.slice 2
+const [ userId ] = Array.from(process.argv.slice(2));
 
-_.log userId, 'userId'
+_.log(userId, 'userId');
 
-unless _.isUserId userId then throw new Error('invalid userId')
+if (!_.isUserId(userId)) { throw new Error('invalid userId'); }
 
-module.exports = ActionByInput userId
+module.exports = ActionByInput(userId);

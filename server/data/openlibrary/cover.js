@@ -1,28 +1,38 @@
-# a service to know if a cover is available
-# could actually be turned into a generalist 'image-check' service
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-{ Promise } = __.require 'lib', 'promises'
-error_ = __.require 'lib', 'error/error'
-checkCoverExistance = require './check_cover_existance'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+// a service to know if a cover is available
+// could actually be turned into a generalist 'image-check' service
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const { Promise } = __.require('lib', 'promises');
+const error_ = __.require('lib', 'error/error');
+const checkCoverExistance = require('./check_cover_existance');
 
-{ coverByOlId } = require './api'
+const { coverByOlId } = require('./api');
 
-module.exports = (openLibraryId, entityType)->
-  unless openLibraryId then return Promise.resolve null
+module.exports = function(openLibraryId, entityType){
+  let type;
+  if (!openLibraryId) { return Promise.resolve(null); }
 
-  switch entityType
-    when 'human' then type = 'a'
-    when 'work', 'edition' then type = 'b'
-    else return Promise.resolve null
+  switch (entityType) {
+    case 'human': type = 'a'; break;
+    case 'work': case 'edition': type = 'b'; break;
+    default: return Promise.resolve(null);
+  }
 
-  url = coverByOlId openLibraryId, type
+  const url = coverByOlId(openLibraryId, type);
 
-  checkCoverExistance url
-  .then _.Log('open library url found')
-  .then (url)->
-    url: url
-    credits:
-      text: 'OpenLibrary'
-      url: url
-  .catch _.ErrorRethrow('get openlibrary cover err')
+  return checkCoverExistance(url)
+  .then(_.Log('open library url found'))
+  .then(url => ({
+    url,
+
+    credits: {
+      text: 'OpenLibrary',
+      url
+    }
+  })).catch(_.ErrorRethrow('get openlibrary cover err'));
+};

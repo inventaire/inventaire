@@ -1,33 +1,41 @@
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-isbn_ = __.require 'lib', 'isbn/isbn'
-error_ = __.require 'lib', 'error/error'
-dataseed = __.require 'data', 'dataseed/dataseed'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const isbn_ = __.require('lib', 'isbn/isbn');
+const error_ = __.require('lib', 'error/error');
+const dataseed = __.require('data', 'dataseed/dataseed');
 
-# An endpoint to get basic facts from an ISBN
-# Returns a merge of isbn2 and dataseed data
-module.exports = (req, res)->
-  { isbn, refresh } = req.query
+// An endpoint to get basic facts from an ISBN
+// Returns a merge of isbn2 and dataseed data
+module.exports = function(req, res){
+  let { isbn, refresh } = req.query;
 
-  unless _.isNonEmptyString isbn
-    return error_.bundleMissingQuery req, res, 'isbn'
+  if (!_.isNonEmptyString(isbn)) {
+    return error_.bundleMissingQuery(req, res, 'isbn');
+  }
 
-  data = isbn_.parse isbn
+  const data = isbn_.parse(isbn);
 
-  unless data?
-    return error_.bundleInvalid req, res, 'isbn', isbn
+  if (data == null) {
+    return error_.bundleInvalid(req, res, 'isbn', isbn);
+  }
 
-  # Not using source to pass the original input as 'source'
-  # has another meaning in entities search
-  delete data.source
-  data.query = isbn
+  // Not using source to pass the original input as 'source'
+  // has another meaning in entities search
+  delete data.source;
+  data.query = isbn;
 
-  refresh = _.parseBooleanString refresh
+  refresh = _.parseBooleanString(refresh);
 
-  dataseed.getByIsbns data.isbn13, refresh
-  .then (resp)->
-    seed = resp[0] or {}
-    delete seed.isbn
-    _.extend data, seed
-    res.json data
-  .catch error_.Handler(req, res)
+  return dataseed.getByIsbns(data.isbn13, refresh)
+  .then(function(resp){
+    const seed = resp[0] || {};
+    delete seed.isbn;
+    _.extend(data, seed);
+    return res.json(data);}).catch(error_.Handler(req, res));
+};

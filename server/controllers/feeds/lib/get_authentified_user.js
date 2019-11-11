@@ -1,21 +1,30 @@
-CONFIG = require 'config'
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-error_ = __.require 'lib', 'error/error'
-user_ = __.require 'controllers', 'user/lib/user'
-promises_ = __.require 'lib', 'promises'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const error_ = __.require('lib', 'error/error');
+const user_ = __.require('controllers', 'user/lib/user');
+const promises_ = __.require('lib', 'promises');
 
-module.exports = (requester, readToken)->
-  unless requester? then return promises_.resolve null
+module.exports = function(requester, readToken){
+  if (requester == null) { return promises_.resolve(null); }
 
-  user_.byId requester
-  .catch formatNotFound(requester)
-  .then validateUserReadToken(readToken)
+  return user_.byId(requester)
+  .catch(formatNotFound(requester))
+  .then(validateUserReadToken(readToken));
+};
 
-formatNotFound = (requester)-> (err)->
-  if err.statusCode is 404 then err = error_.newInvalid 'requester', requester
-  throw err
+var formatNotFound = requester => (function(err) {
+  if (err.statusCode === 404) { err = error_.newInvalid('requester', requester); }
+  throw err;
+});
 
-validateUserReadToken = (readToken)-> (user)->
-  if user.readToken is readToken then return user
-  else throw error_.newInvalid 'token', readToken
+var validateUserReadToken = readToken => (function(user) {
+  if (user.readToken === readToken) { return user;
+  } else { throw error_.newInvalid('token', readToken); }
+});

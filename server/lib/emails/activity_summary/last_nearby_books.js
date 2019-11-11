@@ -1,20 +1,28 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-items_ = __.require 'controllers', 'items/lib/items'
-{ getLastItems, formatData, embedUsersData, getHighlightedItems } = require './last_books_helpers'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const items_ = __.require('controllers', 'items/lib/items');
+const { getLastItems, formatData, embedUsersData, getHighlightedItems } = require('./last_books_helpers');
 
-module.exports = (user, limitDate = 0)->
-  { _id:userId, position, lang } = user
+module.exports = function(user, limitDate = 0){
+  const { _id:userId, position, lang } = user;
 
-  unless position? then return formatData [], 'nearby', lang, []
+  if (position == null) { return formatData([], 'nearby', lang, []); }
 
-  items_.nearby userId, 20, true
-  .spread formatItems(limitDate, position, lang)
+  return items_.nearby(userId, 20, true)
+  .spread(formatItems(limitDate, position, lang));
+};
 
-formatItems = (limitDate, position, lang)-> (users, items)->
-  items = items.map items_.serializeData
-  lastItems = getLastItems limitDate, items
-  highlighted = getHighlightedItems lastItems, 10
-  lastItems = embedUsersData lastItems, users, position
-  return formatData lastItems, 'nearby', lang, highlighted
+var formatItems = (limitDate, position, lang) => (function(users, items) {
+  items = items.map(items_.serializeData);
+  let lastItems = getLastItems(limitDate, items);
+  const highlighted = getHighlightedItems(lastItems, 10);
+  lastItems = embedUsersData(lastItems, users, position);
+  return formatData(lastItems, 'nearby', lang, highlighted);
+});

@@ -1,8 +1,8 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-{ membershipActionsList } = __.require 'models', 'group'
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const { membershipActionsList } = __.require('models', 'group');
 
-otherActions = [ 'updateSettings' ]
+const otherActions = [ 'updateSettings' ];
 
 module.exports =
-  possibleActions: membershipActionsList.concat otherActions
+  {possibleActions: membershipActionsList.concat(otherActions)};

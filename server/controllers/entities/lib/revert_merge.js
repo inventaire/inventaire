@@ -1,81 +1,91 @@
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-promises_ = __.require 'lib', 'promises'
-error_ = __.require 'lib', 'error/error'
-entities_ = require './entities'
-patches_ = require './patches'
-placeholders_ = require './placeholders'
-updateItemEntity = __.require 'controllers', 'items/lib/update_entity'
-entities_ = require './entities'
-Patch = __.require 'models', 'patch'
+/*
+ * decaffeinate suggestions:
+ * DS101: Remove unnecessary use of Array.from
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const promises_ = __.require('lib', 'promises');
+const error_ = __.require('lib', 'error/error');
+let entities_ = require('./entities');
+const patches_ = require('./patches');
+const placeholders_ = require('./placeholders');
+const updateItemEntity = __.require('controllers', 'items/lib/update_entity');
+entities_ = require('./entities');
+const Patch = __.require('models', 'patch');
 
-module.exports = (userId, fromId)->
-  patches_.getSnapshots fromId
-  .then findVersionBeforeRedirect
-  .then (targetVersion)->
-    entities_.byId fromId
-    .then (currentVersion)->
-      toUri = currentVersion.redirect
-      fromUri = "inv:#{fromId}"
-      targetVersion._id = currentVersion._id
-      targetVersion._rev = currentVersion._rev
+module.exports = (userId, fromId) => patches_.getSnapshots(fromId)
+.then(findVersionBeforeRedirect)
+.then(targetVersion => entities_.byId(fromId)
+.then(function(currentVersion){
+  const toUri = currentVersion.redirect;
+  const fromUri = `inv:${fromId}`;
+  targetVersion._id = currentVersion._id;
+  targetVersion._rev = currentVersion._rev;
 
-      entities_.putUpdate
-        userId: userId
-        currentDoc: currentVersion
-        updatedDoc: targetVersion
-      .tap -> updateItemEntity.afterRevert fromUri, toUri
-      .tap -> recoverPlaceholders userId, currentVersion.removedPlaceholdersIds
-      .tap -> revertMergePatch userId, fromUri, toUri
-      .tap -> revertClaimsRedirections userId, fromUri, toUri
+  return entities_.putUpdate({
+    userId,
+    currentDoc: currentVersion,
+    updatedDoc: targetVersion}).tap(() => updateItemEntity.afterRevert(fromUri, toUri))
+  .tap(() => recoverPlaceholders(userId, currentVersion.removedPlaceholdersIds))
+  .tap(() => revertMergePatch(userId, fromUri, toUri))
+  .tap(() => revertClaimsRedirections(userId, fromUri, toUri));
+}));
 
-findVersionBeforeRedirect = (patches)->
-  versions = patches.map _.property('snapshot')
-  lastVersion = _.last versions
-  unless lastVersion.redirect?
-    throw error_.new "last version isn't a redirection", 400, lastVersion
+var findVersionBeforeRedirect = function(patches){
+  const versions = patches.map(_.property('snapshot'));
+  const lastVersion = _.last(versions);
+  if (lastVersion.redirect == null) {
+    throw error_.new("last version isn't a redirection", 400, lastVersion);
+  }
 
   return versions
-  .filter isntRedirection
-  # Take the last
-  .slice(-1)[0]
+  .filter(isntRedirection)
+  // Take the last
+  .slice(-1)[0];
+};
 
-isntRedirection =  (version)-> not version.redirect?
+var isntRedirection =  version => version.redirect == null;
 
-recoverPlaceholders = (userId, removedPlaceholdersIds)->
-  unless removedPlaceholdersIds?.length > 0 then return promises_.resolved
+var recoverPlaceholders = function(userId, removedPlaceholdersIds){
+  if ((removedPlaceholdersIds != null ? removedPlaceholdersIds.length : undefined) <= 0) { return promises_.resolved; }
 
-  recoverFn = placeholders_.recover.bind(null, userId)
-  return promises_.all removedPlaceholdersIds.map(recoverFn)
+  const recoverFn = placeholders_.recover.bind(null, userId);
+  return promises_.all(removedPlaceholdersIds.map(recoverFn));
+};
 
-revertMergePatch = (userId, fromUri, toUri)->
-  [ prefix, toId ] = toUri.split ':'
-  if prefix isnt 'inv' then return
+var revertMergePatch = function(userId, fromUri, toUri){
+  const [ prefix, toId ] = Array.from(toUri.split(':'));
+  if (prefix !== 'inv') { return; }
 
-  promises_.all [
-    entities_.byId toId
-    patches_.byEntityId toId
-  ]
-  .spread (currentDoc, patches)->
-    mergePatch = patches.find (patch)-> patch.context?.mergeFrom is fromUri
-    unless mergePatch?
-      # This happens when the merged entity didn't bring any label or claim
-      # value that the merge target hadn't already
-      _.warn { fromUri, toUri }, 'no merge patch found'
-      return
+  return promises_.all([
+    entities_.byId(toId),
+    patches_.byEntityId(toId)
+  ])
+  .spread(function(currentDoc, patches){
+    const mergePatch = patches.find(patch => (patch.context != null ? patch.context.mergeFrom : undefined) === fromUri);
+    if (mergePatch == null) {
+      // This happens when the merged entity didn't bring any label or claim
+      // value that the merge target hadn't already
+      _.warn({ fromUri, toUri }, 'no merge patch found');
+      return;
+    }
 
-    updatedDoc = Patch.revert currentDoc, mergePatch
-    context = { revertPatch: mergePatch._id }
-    return entities_.putUpdate { userId, currentDoc, updatedDoc, context }
+    const updatedDoc = Patch.revert(currentDoc, mergePatch);
+    const context = { revertPatch: mergePatch._id };
+    return entities_.putUpdate({ userId, currentDoc, updatedDoc, context });});
+};
 
-revertClaimsRedirections = (userId, fromUri, toUri)->
-  patches_.byRedirectUri fromUri
-  .map revertClaimsRedirectionFromPatch(userId)
+var revertClaimsRedirections = (userId, fromUri, toUri) => patches_.byRedirectUri(fromUri)
+.map(revertClaimsRedirectionFromPatch(userId));
 
-revertClaimsRedirectionFromPatch = (userId)-> (patch)->
-  entityId = patch._id.split(':')[0]
-  entities_.byId entityId
-  .then (currentDoc)->
-    updatedDoc = Patch.revert currentDoc, patch
-    context = { revertPatch: patch._id }
-    return entities_.putUpdate { userId, currentDoc, updatedDoc, context }
+var revertClaimsRedirectionFromPatch = userId => (function(patch) {
+  const entityId = patch._id.split(':')[0];
+  return entities_.byId(entityId)
+  .then(function(currentDoc){
+    const updatedDoc = Patch.revert(currentDoc, patch);
+    const context = { revertPatch: patch._id };
+    return entities_.putUpdate({ userId, currentDoc, updatedDoc, context });});
+});

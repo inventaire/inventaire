@@ -1,27 +1,34 @@
-#!/usr/bin/env coffee
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-breq = require 'bluereq'
-{ exec } = require 'child_process'
-{ Promise } = __.require 'lib', 'promises'
-error_ = __.require 'lib', 'error/error'
+#!/usr/bin/env node
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const breq = require('bluereq');
+const { exec } = require('child_process');
+const { Promise } = __.require('lib', 'promises');
+const error_ = __.require('lib', 'error/error');
 
-dbHost = require('config').db.fullHost()
-allDbsUrl = dbHost + '/_all_dbs'
+const dbHost = require('config').db.fullHost();
+const allDbsUrl = dbHost + '/_all_dbs';
 
-dbUrl = (dbName)-> "#{dbHost}/#{dbName}"
-dbsBaseNames = Object.keys __.require('couch', 'list')
+const dbUrl = dbName => `${dbHost}/${dbName}`;
+const dbsBaseNames = Object.keys(__.require('couch', 'list'));
 
-Promise.all dbsBaseNames
-.map (dbName)->
-  dbTestName = "#{dbName}-tests"
-  repDoc =
-    source: dbUrl dbTestName
-    target: dbUrl dbName
-  breq.post "#{dbHost}/_replicate", repDoc
-  .then (res)-> res.body
-  .then _.Log("#{dbTestName} replication response")
-.catch (err)->
-  console.log "#{err.body.reason}\n\
-  Hum, have you ran the tests first ?"
-  error_.catchNotFound err
+Promise.all(dbsBaseNames)
+.map(function(dbName){
+  const dbTestName = `${dbName}-tests`;
+  const repDoc = {
+    source: dbUrl(dbTestName),
+    target: dbUrl(dbName)
+  };
+  return breq.post(`${dbHost}/_replicate`, repDoc)
+  .then(res => res.body)
+  .then(_.Log(`${dbTestName} replication response`));}).catch(function(err){
+  console.log(`${err.body.reason}\n\
+Hum, have you ran the tests first ?`
+  );
+  return error_.catchNotFound(err);
+});

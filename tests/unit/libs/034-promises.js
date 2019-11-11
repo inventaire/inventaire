@@ -1,7 +1,7 @@
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-should = require 'should'
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const should = require('should');
 
-promises_ = __.require 'lib', 'promises'
+const promises_ = __.require('lib', 'promises');
 
-describe 'promises_', ->
+describe('promises_', function() {});

@@ -1,39 +1,51 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-{ Promise } = __.require 'lib', 'promises'
-entities_ = require '../entities'
+/*
+ * decaffeinate suggestions:
+ * DS101: Remove unnecessary use of Array.from
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const { Promise } = __.require('lib', 'promises');
+const entities_ = require('../entities');
 
-module.exports = (userId, batchId)-> (entry)->
-  { edition, works, authors } = entry
+module.exports = (userId, batchId) => (function(entry) {
+  const { edition, works, authors } = entry;
 
-  allResolvedSeeds = [ edition ].concat(works, authors).filter hasUri
+  const allResolvedSeeds = [ edition ].concat(works, authors).filter(hasUri);
 
-  Promise.all allResolvedSeeds.map(updateEntityFromSeed(userId, batchId))
-  .then -> entry
+  return Promise.all(allResolvedSeeds.map(updateEntityFromSeed(userId, batchId)))
+  .then(() => entry);
+});
 
-hasUri = (seed)-> seed.uri?
+var hasUri = seed => seed.uri != null;
 
-updateEntityFromSeed = (userId, batchId)-> (seed)->
-  { uri, claims: seedClaims } = seed
-  unless uri then return
+var updateEntityFromSeed = (userId, batchId) => (function(seed) {
+  const { uri, claims: seedClaims } = seed;
+  if (!uri) { return; }
 
-  [ prefix, entityId ] = uri.split ':'
-  # Do not try to update Wikidata for the moment
-  if prefix is 'wd' then return
+  const [ prefix, entityId ] = Array.from(uri.split(':'));
+  // Do not try to update Wikidata for the moment
+  if (prefix === 'wd') { return; }
 
-  getEntity prefix, entityId
-  .then addMissingClaims(seedClaims, userId, batchId)
+  return getEntity(prefix, entityId)
+  .then(addMissingClaims(seedClaims, userId, batchId));
+});
 
-getEntity = (prefix, entityId)->
-  if prefix is 'isbn'
-    entities_.byIsbn entityId
-  else
-    entities_.byId entityId
+var getEntity = function(prefix, entityId){
+  if (prefix === 'isbn') {
+    return entities_.byIsbn(entityId);
+  } else {
+    return entities_.byId(entityId);
+  }
+};
 
-addMissingClaims = (seedClaims, userId, batchId)-> (entity)->
-  # Do not update if property already exists
-  # Known cases: avoid updating authors who are actually edition translators
-  newClaims = _.omit seedClaims, Object.keys(entity.claims)
-  if _.isEmpty(newClaims) then return
-  entities_.addClaims userId, newClaims, entity, batchId
+var addMissingClaims = (seedClaims, userId, batchId) => (function(entity) {
+  // Do not update if property already exists
+  // Known cases: avoid updating authors who are actually edition translators
+  const newClaims = _.omit(seedClaims, Object.keys(entity.claims));
+  if (_.isEmpty(newClaims)) { return; }
+  return entities_.addClaims(userId, newClaims, entity, batchId);
+});

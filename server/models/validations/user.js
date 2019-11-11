@@ -1,30 +1,40 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
+/*
+ * decaffeinate suggestions:
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+let validations;
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
 
-{ pass, userId, username, email, userImg, boolean, position, BoundedString } = require './common'
-{ creationStrategies, notificationsSettings } = require '../attributes/user'
+const { pass, userId, username, email, userImg, boolean, position, BoundedString } = require('./common');
+const { creationStrategies, notificationsSettings } = require('../attributes/user');
 
-module.exports = validations =
-  pass: pass
-  userId: userId
-  username: username
-  email: email
-  password: BoundedString 8, 128
-  # accepting second level languages (like es-AR) but only using first level yet
-  language: (lang)-> /^\w{2}(-\w{2})?$/.test(lang)
-  picture: userImg
-  creationStrategy: (creationStrategy)-> creationStrategy in creationStrategies
-  bio: BoundedString 0, 1000
-  settings: boolean
-  position: position
-  summaryPeriodicity: (days)-> Number.isInteger(days) and days >= 1
+module.exports = (validations = {
+  pass,
+  userId,
+  username,
+  email,
+  password: BoundedString(8, 128),
+  // accepting second level languages (like es-AR) but only using first level yet
+  language(lang){ return /^\w{2}(-\w{2})?$/.test(lang); },
+  picture: userImg,
+  creationStrategy(creationStrategy){ return creationStrategies.includes(creationStrategy); },
+  bio: BoundedString(0, 1000),
+  settings: boolean,
+  position,
+  summaryPeriodicity(days){ return Number.isInteger(days) && (days >= 1); }
+});
 
-deepAttributes =
-  settings:
+const deepAttributes = {
+  settings: {
     notifications: {}
+  }
+};
 
-for setting in notificationsSettings
-  deepAttributes.settings.notifications[setting] = true
+for (let setting of notificationsSettings) {
+  deepAttributes.settings.notifications[setting] = true;
+}
 
-validations.deepAttributesExistance = (attribute)-> _.get(deepAttributes, attribute)?
+validations.deepAttributesExistance = attribute => _.get(deepAttributes, attribute) != null;

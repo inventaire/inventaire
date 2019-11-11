@@ -1,12 +1,12 @@
-_ = require 'lodash'
+const _ = require('lodash');
 
-imageClaims = [
-  # image
-  'wdt:P18'
-  # logo image
-  'wdt:P154'
-  # collage image
+const imageClaims = [
+  // image
+  'wdt:P18',
+  // logo image
+  'wdt:P154',
+  // collage image
   'wdt:P2716'
-]
+];
 
-module.exports = (claims)-> _.flatten _.values(_.pick(claims, imageClaims))
+module.exports = claims => _.flatten(_.values(_.pick(claims, imageClaims)));

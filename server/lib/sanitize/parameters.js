@@ -1,153 +1,199 @@
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-error_ = __.require 'lib', 'error/error'
-isbn_ = __.require 'lib', 'isbn/isbn'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const error_ = __.require('lib', 'error/error');
+const isbn_ = __.require('lib', 'isbn/isbn');
 
-# Parameters attributes:
-# - format (optional)
-# - validate (required): throws a custom error or returns a boolean.
-#   In the case it returns false, the sanitize function will create
-#   an error object with an `invalid #{paramName}` message and throw it
+// Parameters attributes:
+// - format (optional)
+// - validate (required): throws a custom error or returns a boolean.
+//   In the case it returns false, the sanitize function will create
+//   an error object with an `invalid #{paramName}` message and throw it
 
-validations =
-  common: __.require 'models', 'validations/common'
-  user: __.require 'models', 'validations/user'
+const validations = {
+  common: __.require('models', 'validations/common'),
+  user: __.require('models', 'validations/user')
+};
 
-parseNumberString = (value)->
-  if _.isNumber value then return value
-  parsedValue = parseFloat value
-  return if _.isNaN parsedValue then value else parsedValue
+const parseNumberString = function(value){
+  if (_.isNumber(value)) { return value; }
+  const parsedValue = parseFloat(value);
+  if (_.isNaN(parsedValue)) { return value; } else { return parsedValue; }
+};
 
-couchUuid =
-  validate: validations.common.couchUuid
-  rename: (name)-> "#{name}Id"
+const couchUuid = {
+  validate: validations.common.couchUuid,
+  rename(name){ return `${name}Id`; }
+};
 
-positiveInteger =
-  format: parseNumberString
-  validate: (num)-> _.isNumber(num) and /^\d+$/.test(num.toString())
+const positiveInteger = {
+  format: parseNumberString,
+  validate(num){ return _.isNumber(num) && /^\d+$/.test(num.toString()); }
+};
 
-nonEmptyString =
-  validate: (value, name, config)->
-    unless _.isString value
-      message = "invalid #{name}"
-      details = "expected string, got #{_.typeOf(value)}"
-      throw error_.new "invalid #{name}: #{details}", 400, { value }
+const nonEmptyString = {
+  validate(value, name, config){
+    let details, message;
+    if (!_.isString(value)) {
+      message = `invalid ${name}`;
+      details = `expected string, got ${_.typeOf(value)}`;
+      throw error_.new(`invalid ${name}: ${details}`, 400, { value });
+    }
 
-    if config.length and value.length isnt config.length
-      message = "invalid #{name} length"
-      details = "expected #{config.length}, got #{value.length}"
-      throw error_.new "#{message}: #{details}", 400, { value }
+    if (config.length && (value.length !== config.length)) {
+      message = `invalid ${name} length`;
+      details = `expected ${config.length}, got ${value.length}`;
+      throw error_.new(`${message}: ${details}`, 400, { value });
+    }
 
-    return true
+    return true;
+  }
+};
 
-arrayOfAKind = (validation)-> (values, kind)->
-  unless _.isArray values
-    details = "expected array, got #{_.typeOf(values)}"
-    throw error_.new "invalid #{kind}: #{details}", 400, { values }
+const arrayOfAKind = validation => (function(values, kind) {
+  let details;
+  if (!_.isArray(values)) {
+    details = `expected array, got ${_.typeOf(values)}`;
+    throw error_.new(`invalid ${kind}: ${details}`, 400, { values });
+  }
 
-  if values.length is 0
-    throw error_.new "#{kind} array can't be empty", 400
+  if (values.length === 0) {
+    throw error_.new(`${kind} array can't be empty`, 400);
+  }
 
-  for value in values
-    unless validation value
-      # approximative way to get singular of a word
-      singularKind = kind.replace /s$/, ''
-      details = "expected #{singularKind}, got #{value} (#{_.typeOf(values)})"
-      throw error_.new "invalid #{singularKind}: #{details}", 400, { values }
+  for (let value of values) {
+    if (!validation(value)) {
+      // approximative way to get singular of a word
+      const singularKind = kind.replace(/s$/, '');
+      details = `expected ${singularKind}, got ${value} (${_.typeOf(values)})`;
+      throw error_.new(`invalid ${singularKind}: ${details}`, 400, { values });
+    }
+  }
 
-  return true
+  return true;
+});
 
-arrayOrPipedStrings = (value)->
-  if _.isString value then value = value.split '|'
-  if _.isArray value then return _.uniq value
-  # Let the 'validate' function reject non-arrayfied values
-  else return value
+const arrayOrPipedStrings = function(value){
+  if (_.isString(value)) { value = value.split('|'); }
+  if (_.isArray(value)) { return _.uniq(value);
+  // Let the 'validate' function reject non-arrayfied values
+  } else { return value; }
+};
 
-entityUris =
-  format: arrayOrPipedStrings
-  validate: arrayOfAKind validations.common.entityUri
+const entityUris = {
+  format: arrayOrPipedStrings,
+  validate: arrayOfAKind(validations.common.entityUri)
+};
 
-couchUuids =
-  format: arrayOrPipedStrings
-  validate: arrayOfAKind validations.common.couchUuid
+const couchUuids = {
+  format: arrayOrPipedStrings,
+  validate: arrayOfAKind(validations.common.couchUuid)
+};
 
-arrayOfStrings =
-  format: arrayOrPipedStrings
-  validate: arrayOfAKind _.isString
+const arrayOfStrings = {
+  format: arrayOrPipedStrings,
+  validate: arrayOfAKind(_.isString)
+};
 
-isbn =
-  format: isbn_.normalizeIsbn
+const isbn = {
+  format: isbn_.normalizeIsbn,
   validate: isbn_.isValidIsbn
+};
 
-whitelistedString =
-  validate: (value, name, config)->
-    unless value in config.whitelist
-      details = "possible values: #{config.whitelist.join(', ')}"
-      throw error_.new "invalid #{name}: #{value} (#{details})", 400, { value }
-    return true
+const whitelistedString = {
+  validate(value, name, config){
+    if (!config.whitelist.includes(value)) {
+      const details = `possible values: ${config.whitelist.join(', ')}`;
+      throw error_.new(`invalid ${name}: ${value} (${details})`, 400, { value });
+    }
+    return true;
+  }
+};
 
-whitelistedStrings =
-  format: arrayOrPipedStrings
-  validate: (values, name, config)->
-    for value in values
-      whitelistedString.validate value, name, config
-    return true
+const whitelistedStrings = {
+  format: arrayOrPipedStrings,
+  validate(values, name, config){
+    for (let value of values) {
+      whitelistedString.validate(value, name, config);
+    }
+    return true;
+  }
+};
 
-generics =
-  boolean:
-    format: (value, name, config)->
-      if _.isString value then _.parseBooleanString value, config.default
-      else value
-    validate: (value)-> _.typeOf(value) is 'boolean'
-  object:
+const generics = {
+  boolean: {
+    format(value, name, config){
+      if (_.isString(value)) { return _.parseBooleanString(value, config.default);
+      } else { return value; }
+    },
+    validate(value){ return _.typeOf(value) === 'boolean'; }
+  },
+  object: {
     validate: _.isPlainObject
-  collection:
-    validate: (values, name, config)->
-      unless _.isCollection(values) then return false
-      { limit } = config
-      { length } = values
-      if limit? and length > limit
-        throw error_.new 'limit length exceeded', 400, { limit, length }
-      return true
+  },
+  collection: {
+    validate(values, name, config){
+      if (!_.isCollection(values)) { return false; }
+      const { limit } = config;
+      const { length } = values;
+      if ((limit != null) && (length > limit)) {
+        throw error_.new('limit length exceeded', 400, { limit, length });
+      }
+      return true;
+    }
+  }
+};
 
-module.exports =
-  authors: arrayOfStrings
-  attribute: nonEmptyString
-  email: { validate: validations.common.email }
-  filter: whitelistedString
-  generics: generics
-  ids: couchUuids
-  isbn: isbn
-  item: couchUuid
-  lang:
-    default: 'en'
+module.exports = {
+  authors: arrayOfStrings,
+  attribute: nonEmptyString,
+  email: { validate: validations.common.email },
+  filter: whitelistedString,
+  generics,
+  ids: couchUuids,
+  isbn,
+  item: couchUuid,
+  lang: {
+    default: 'en',
     validate: _.isLang
-  limit: _.extend {}, positiveInteger,
-    min: 1
+  },
+  limit: _.extend({}, positiveInteger, {
+    min: 1,
     default: 100
-  message: nonEmptyString
-  offset: _.extend {}, positiveInteger, { default: 0 }
-  options: whitelistedStrings
-  password:
-    secret: true
+  }
+  ),
+  message: nonEmptyString,
+  offset: _.extend({}, positiveInteger, { default: 0 }),
+  options: whitelistedStrings,
+  password: {
+    secret: true,
     validate: validations.user.password
-  prefix: whitelistedString
-  property: { validate: _.isPropertyUri }
-  refresh: generics.boolean
-  range: _.extend {}, positiveInteger,
-    default: 50
+  },
+  prefix: whitelistedString,
+  property: { validate: _.isPropertyUri },
+  refresh: generics.boolean,
+  range: _.extend({}, positiveInteger, {
+    default: 50,
     max: 500
-  search: nonEmptyString
-  state: whitelistedString
-  title: nonEmptyString
-  token: nonEmptyString
-  transaction: couchUuid
-  type: whitelistedString
-  types: whitelistedStrings
-  uri: { validate: validations.common.entityUri }
-  uris: entityUris
-  user: couchUuid
-  users: couchUuids
-  username: { validate: validations.common.username }
-  relatives: whitelistedStrings
+  }
+  ),
+  search: nonEmptyString,
+  state: whitelistedString,
+  title: nonEmptyString,
+  token: nonEmptyString,
+  transaction: couchUuid,
+  type: whitelistedString,
+  types: whitelistedStrings,
+  uri: { validate: validations.common.entityUri },
+  uris: entityUris,
+  user: couchUuid,
+  users: couchUuids,
+  username: { validate: validations.common.username },
+  relatives: whitelistedStrings,
   value: nonEmptyString
+};

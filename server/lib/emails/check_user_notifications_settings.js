@@ -1,21 +1,30 @@
-__ = require('config').universalPath
-error_ = __.require 'lib', 'error/error'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const __ = require('config').universalPath;
+const error_ = __.require('lib', 'error/error');
 
-module.exports = (user, notificationLabel)->
-  { _id, settings, undeliveredEmail } = user
-  if undeliveredEmail > 1
-    throw emailDisabled { user: _id, reason: 'too many undelivered emails' }
+module.exports = function(user, notificationLabel){
+  const { _id, settings, undeliveredEmail } = user;
+  if (undeliveredEmail > 1) {
+    throw emailDisabled({ user: _id, reason: 'too many undelivered emails' });
+  }
 
-  { notifications } = settings
-  checkSetting _id, notifications, 'global'
-  checkSetting _id, notifications, notificationLabel
+  const { notifications } = settings;
+  checkSetting(_id, notifications, 'global');
+  return checkSetting(_id, notifications, notificationLabel);
+};
 
-checkSetting = (userId, notifications, label)->
-  # settings might be undefined, defaulting to true (activated)
-  if notifications[label] is false
-    throw emailDisabled
-      user: userId
+var checkSetting = function(userId, notifications, label){
+  // settings might be undefined, defaulting to true (activated)
+  if (notifications[label] === false) {
+    throw emailDisabled({
+      user: userId,
       notification: label
+    });
+  }
+};
 
-emailDisabled = (context)->
-  error_.new 'email disabled', 'email_disabled', context
+var emailDisabled = context => error_.new('email disabled', 'email_disabled', context);

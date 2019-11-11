@@ -1,13 +1,15 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
 
-params =
-  hostname: CONFIG.db.host
-  port: CONFIG.db.port
-  auth: CONFIG.db.auth()
+const params = {
+  hostname: CONFIG.db.host,
+  port: CONFIG.db.port,
+  auth: CONFIG.db.auth(),
   debug: CONFIG.db.debug
+};
 
-if CONFIG.db.protocol is 'https'
-  params.ssl = true
+if (CONFIG.db.protocol === 'https') {
+  params.ssl = true;
+}
 
-module.exports = require('blue-cot')(params)
+module.exports = require('blue-cot')(params);

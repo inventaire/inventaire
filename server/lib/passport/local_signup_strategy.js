@@ -1,30 +1,35 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-user_ = __.require 'controllers', 'user/lib/user'
-pw_ = __.require('lib', 'crypto').passwords
-loginAttempts = require './login_attempts'
-{ track } = __.require 'lib', 'track'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const user_ = __.require('controllers', 'user/lib/user');
+const pw_ = __.require('lib', 'crypto').passwords;
+const loginAttempts = require('./login_attempts');
+const { track } = __.require('lib', 'track');
 
-{ Strategy:LocalStrategy } = require 'passport-local'
+const { Strategy:LocalStrategy } = require('passport-local');
 
-options =
-  passReqToCallback: true
+const options =
+  {passReqToCallback: true};
 
-verify = (req, username, password, done)->
-  { email } = req.body
-  language = user_.findLanguage(req)
-  user_.create username, email, 'local', language, password
-  .then (user)->
-    if user?
-      done null, user
-      req.user = user
-      track req, ['auth', 'signup', 'local']
-    else
-      # case when user_.byId fails, rather unprobable
-      done new Error("couldn't get user")
+const verify = function(req, username, password, done){
+  const { email } = req.body;
+  const language = user_.findLanguage(req);
+  return user_.create(username, email, 'local', language, password)
+  .then(function(user){
+    if (user != null) {
+      done(null, user);
+      req.user = user;
+      return track(req, ['auth', 'signup', 'local']);
+    } else {
+      // case when user_.byId fails, rather unprobable
+      return done(new Error("couldn't get user"));
+    }}).catch(done);
+};
 
-  # the error will be logged by the final error_.handler
-  .catch done
-
-module.exports = new LocalStrategy options, verify
+module.exports = new LocalStrategy(options, verify);

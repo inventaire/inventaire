@@ -1,27 +1,41 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-{ newsKey } = CONFIG.activitySummary
-{ oneDay } =  __.require 'lib', 'times'
-{ BasicUpdater } = __.require 'lib', 'doc_updates'
-couch_ = __.require 'lib', 'couch'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const { newsKey } = CONFIG.activitySummary;
+const { oneDay } =  __.require('lib', 'times');
+const { BasicUpdater } = __.require('lib', 'doc_updates');
+const couch_ = __.require('lib', 'couch');
 
-module.exports = (db)->
-  return summary_ =
-    waitingForSummary: (limit)->
-      # pick users with next summary between epoch 0 and now
-      db.viewCustom 'nextSummary',
-        include_docs: true
-        limit: limit
-        startkey: 0
+module.exports = function(db){
+  let summary_;
+  return summary_ = {
+    waitingForSummary(limit){
+      // pick users with next summary between epoch 0 and now
+      return db.viewCustom('nextSummary', {
+        include_docs: true,
+        limit,
+        startkey: 0,
         endkey: Date.now()
+      }
+      );
+    },
 
-    findOneWaitingForSummary: ->
-      summary_.waitingForSummary 1
-      .then couch_.firstDoc
+    findOneWaitingForSummary() {
+      return summary_.waitingForSummary(1)
+      .then(couch_.firstDoc);
+    },
 
-    justReceivedActivitySummary: (id)->
-      updater = BasicUpdater
-        lastSummary: Date.now()
+    justReceivedActivitySummary(id){
+      const updater = BasicUpdater({
+        lastSummary: Date.now(),
         lastNews: newsKey
+      });
 
-      db.update id, updater
+      return db.update(id, updater);
+    }
+  };
+};

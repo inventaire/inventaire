@@ -1,40 +1,52 @@
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-responses_ = __.require 'lib', 'responses'
-headersToKeep = [ 'user-agent', 'content-type', 'content-length', 'referer' ]
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const responses_ = __.require('lib', 'responses');
+const headersToKeep = [ 'user-agent', 'content-type', 'content-length', 'referer' ];
 
-module.exports = (req, res, err, status)->
-  # only accepts Error instances
-  unless err instanceof Error
-    _.error err, 'bad error object'
-    return res.status(500).send(err)
+module.exports = function(req, res, err, status){
+  // only accepts Error instances
+  if (!(err instanceof Error)) {
+    _.error(err, 'bad error object');
+    return res.status(500).send(err);
+  }
 
-  # if a status code was attached to the error, use it
-  statusCode = err.statusCode or 500
+  // if a status code was attached to the error, use it
+  const statusCode = err.statusCode || 500;
 
-  err.user = _.pick req.user, '_id', 'username'
-  err.headers = _.pick req.headers, headersToKeep
+  err.user = _.pick(req.user, '_id', 'username');
+  err.headers = _.pick(req.headers, headersToKeep);
 
-  # Ex: to pass req.query as err.context, set err.attachReqContext = 'query'
-  if err.attachReqContext and emptyContext err.context
-    err.context = _.pick(req, err.attachReqContext)
+  // Ex: to pass req.query as err.context, set err.attachReqContext = 'query'
+  if (err.attachReqContext && emptyContext(err.context)) {
+    err.context = _.pick(req, err.attachReqContext);
+  }
 
-  if /^4/.test statusCode then _.warn err, statusCode
-  else _.error err, err.message
+  if (/^4/.test(statusCode)) { _.warn(err, statusCode);
+  } else { _.error(err, err.message); }
 
-  res.status statusCode
-  responses_.send res,
-    status: statusCode
-    status_verbose: err.message
-    error_type: err.error_type
-    error_name: err.error_name
+  res.status(statusCode);
+  responses_.send(res, {
+    status: statusCode,
+    status_verbose: err.message,
+    error_type: err.error_type,
+    error_name: err.error_name,
     context: err.context
+  }
+  );
 
-  return
+};
 
-emptyContext = (context)->
-  if not context? then return true
-  switch _.typeOf context
-    when 'array', 'string' then context.length is 0
-    when 'object' then _.objLength(context) is 0
-    else true
+var emptyContext = function(context){
+  if ((context == null)) { return true; }
+  switch (_.typeOf(context)) {
+    case 'array': case 'string': return context.length === 0;
+    case 'object': return _.objLength(context) === 0;
+    default: return true;
+  }
+};

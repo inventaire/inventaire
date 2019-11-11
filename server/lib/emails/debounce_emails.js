@@ -1,29 +1,36 @@
-# Add emails to the waiting list to let server/lib/emails/debounced_emails_crawler
-# find and send them
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+// Add emails to the waiting list to let server/lib/emails/debounced_emails_crawler
+// find and send them
 
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-waitingEmails = require './waiting_emails'
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const waitingEmails = require('./waiting_emails');
 
-module.exports =
-  transactionUpdate: (transaction)->
-    # Polymorphism: accepts transaction doc or directly the transaction _id
-    if _.isObject transaction then transactionId = transaction._id
-    else if _.isString transaction then transactionId = transaction
-    else return _.error arguments, 'bad type at transactionUpdate'
+module.exports = {
+  transactionUpdate(transaction){
+    // Polymorphism: accepts transaction doc or directly the transaction _id
+    let transactionId;
+    if (_.isObject(transaction)) { transactionId = transaction._id;
+    } else if (_.isString(transaction)) { transactionId = transaction;
+    } else { return _.error(arguments, 'bad type at transactionUpdate'); }
 
-    addToWaitingList 'transactionUpdate', transactionId
+    return addToWaitingList('transactionUpdate', transactionId);
+  }
+};
 
-# Delete and repost with new time to wait
-# as long as updates are arriving fast (i.e. in a 30 minutes timespan)
-addToWaitingList = (domain, id)->
-  waitingEmails.sub.createKeyStream
-    gt: "#{domain}:#{id}:0"
-    lt: "#{domain}:#{id}::"
-  .on 'data', waitingEmails.del
-  .on 'end', createNewWaiter.bind(null, domain, id)
+// Delete and repost with new time to wait
+// as long as updates are arriving fast (i.e. in a 30 minutes timespan)
+var addToWaitingList = (domain, id) => waitingEmails.sub.createKeyStream({
+  gt: `${domain}:${id}:0`,
+  lt: `${domain}:${id}::`}).on('data', waitingEmails.del)
+.on('end', createNewWaiter.bind(null, domain, id));
 
-createNewWaiter = (domain, id)->
-  key = "#{domain}:#{id}:#{Date.now()}"
-  waitingEmails.put key, {}
+var createNewWaiter = function(domain, id){
+  const key = `${domain}:${id}:${Date.now()}`;
+  return waitingEmails.put(key, {});
+};

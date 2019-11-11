@@ -1,47 +1,58 @@
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-error_ = __.require 'lib', 'error/error'
-assert_ = __.require 'utils', 'assert_types'
-entities_ = require './entities'
-radio = __.require 'lib', 'radio'
-retryOnConflict = __.require 'lib', 'retry_on_conflict'
-Entity = __.require 'models', 'entity'
-getEntityType = require './get_entity_type'
-validateClaim = require './validate_claim'
-validateClaimProperty = require './validate_claim_property'
-inferredClaimUpdates = require './inferred_claim_updates'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const error_ = __.require('lib', 'error/error');
+const assert_ = __.require('utils', 'assert_types');
+const entities_ = require('./entities');
+const radio = __.require('lib', 'radio');
+const retryOnConflict = __.require('lib', 'retry_on_conflict');
+const Entity = __.require('models', 'entity');
+const getEntityType = require('./get_entity_type');
+const validateClaim = require('./validate_claim');
+const validateClaimProperty = require('./validate_claim_property');
+const inferredClaimUpdates = require('./inferred_claim_updates');
 
-updateInvClaim = (user, id, property, oldVal, newVal)->
-  assert_.object user
-  { _id:userId, admin:userIsAdmin } = user
+const updateInvClaim = function(user, id, property, oldVal, newVal){
+  assert_.object(user);
+  const { _id:userId, admin:userIsAdmin } = user;
 
-  entities_.byId id
-  .then (currentDoc)->
-    unless currentDoc?
-      throw error_.new 'entity not found', 400, { id, property, oldVal, newVal }
+  return entities_.byId(id)
+  .then(function(currentDoc){
+    if (currentDoc == null) {
+      throw error_.new('entity not found', 400, { id, property, oldVal, newVal });
+    }
 
-    # Known cases: entities turned into redirections or removed:placeholders
-    unless currentDoc?.claims?
-      context = { id, property, oldVal, newVal }
-      throw error_.new 'this entity is obsolete', 400, context
+    // Known cases: entities turned into redirections or removed:placeholders
+    if ((currentDoc != null ? currentDoc.claims : undefined) == null) {
+      const context = { id, property, oldVal, newVal };
+      throw error_.new('this entity is obsolete', 400, context);
+    }
 
-    type = getEntityType currentDoc.claims['wdt:P31']
-    validateClaimProperty type, property
-    updateClaim { type, property, oldVal, newVal, userId, currentDoc, userIsAdmin }
+    const type = getEntityType(currentDoc.claims['wdt:P31']);
+    validateClaimProperty(type, property);
+    return updateClaim({ type, property, oldVal, newVal, userId, currentDoc, userIsAdmin });})
 
-  .then (updatedDoc)->
-    radio.emit 'entity:update:claim', updatedDoc, property, oldVal, newVal
-    # Wait for inferred updates
-    return inferredClaimUpdates updatedDoc, property, oldVal
+  .then(function(updatedDoc){
+    radio.emit('entity:update:claim', updatedDoc, property, oldVal, newVal);
+    // Wait for inferred updates
+    return inferredClaimUpdates(updatedDoc, property, oldVal);
+  });
+};
 
-updateClaim = (params)->
-  { property, oldVal, userId, currentDoc } = params
-  updatedDoc = _.cloneDeep currentDoc
-  params.currentClaims = currentDoc.claims
-  params.letEmptyValuePass = true
+var updateClaim = function(params){
+  const { property, oldVal, userId, currentDoc } = params;
+  const updatedDoc = _.cloneDeep(currentDoc);
+  params.currentClaims = currentDoc.claims;
+  params.letEmptyValuePass = true;
 
-  validateClaim params
-  .then Entity.updateClaim.bind(null, updatedDoc, property, oldVal)
-  .then (updatedDoc)-> entities_.putUpdate { userId, currentDoc, updatedDoc }
+  return validateClaim(params)
+  .then(Entity.updateClaim.bind(null, updatedDoc, property, oldVal))
+  .then(updatedDoc => entities_.putUpdate({ userId, currentDoc, updatedDoc }));
+};
 
-module.exports = retryOnConflict { updateFn: updateInvClaim }
+module.exports = retryOnConflict({ updateFn: updateInvClaim });

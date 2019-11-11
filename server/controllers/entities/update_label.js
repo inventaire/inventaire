@@ -1,34 +1,47 @@
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-error_ = __.require 'lib', 'error/error'
-responses_ = __.require 'lib', 'responses'
+/*
+ * decaffeinate suggestions:
+ * DS101: Remove unnecessary use of Array.from
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const error_ = __.require('lib', 'error/error');
+const responses_ = __.require('lib', 'responses');
 
-module.exports = (req, res)->
-  { id, uri, lang, value } = req.body
-  _.log req.body, 'update label body'
-  if _.isInvEntityId(id) and not uri? then uri = "inv:#{id}"
+module.exports = function(req, res){
+  let prefix;
+  let { id, uri, lang, value } = req.body;
+  _.log(req.body, 'update label body');
+  if (_.isInvEntityId(id) && (uri == null)) { uri = `inv:${id}`; }
 
-  unless uri? then return error_.bundleMissingBody req, res, 'uri'
-  unless lang? then return error_.bundleMissingBody req, res, 'lang'
-  unless value? then return error_.bundleMissingBody req, res, 'value'
+  if (uri == null) { return error_.bundleMissingBody(req, res, 'uri'); }
+  if (lang == null) { return error_.bundleMissingBody(req, res, 'lang'); }
+  if (value == null) { return error_.bundleMissingBody(req, res, 'value'); }
 
-  [ prefix, id ] = uri.split ':'
-  updater = updaters[prefix]
-  unless updater?
-    return error_.bundle req, res, "unsupported uri prefix: #{prefix}", 400, uri
+  [ prefix, id ] = Array.from(uri.split(':'));
+  const updater = updaters[prefix];
+  if (updater == null) {
+    return error_.bundle(req, res, `unsupported uri prefix: ${prefix}`, 400, uri);
+  }
 
-  unless _.isLang lang
-    return error_.bundleInvalid req, res, 'lang', lang
+  if (!_.isLang(lang)) {
+    return error_.bundleInvalid(req, res, 'lang', lang);
+  }
 
-  value = if _.isString(value) then value.trim() else value
+  value = _.isString(value) ? value.trim() : value;
 
-  unless _.isNonEmptyString value
-    return error_.bundleInvalid req, res, 'value', value
+  if (!_.isNonEmptyString(value)) {
+    return error_.bundleInvalid(req, res, 'value', value);
+  }
 
-  updater req.user, id, lang, value
-  .then responses_.Ok(res)
-  .catch error_.Handler(req, res)
+  return updater(req.user, id, lang, value)
+  .then(responses_.Ok(res))
+  .catch(error_.Handler(req, res));
+};
 
-updaters =
-  inv: require './lib/update_inv_label'
-  wd: require './lib/update_wd_label'
+var updaters = {
+  inv: require('./lib/update_inv_label'),
+  wd: require('./lib/update_wd_label')
+};

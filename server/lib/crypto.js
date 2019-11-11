@@ -1,28 +1,37 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-pw = require './password_hashing'
-error_ = __.require 'lib', 'error/error'
-crypto = require 'crypto'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const pw = require('./password_hashing');
+const error_ = __.require('lib', 'error/error');
+const crypto = require('crypto');
 
-exports.passwords =
-  hash: (password)->
-    unless password? then return error_.reject('missing password', 400)
-    pw.hash password
+exports.passwords = {
+  hash(password){
+    if (password == null) { return error_.reject('missing password', 400); }
+    return pw.hash(password);
+  },
 
-  verify: (hash, password, tokenDaysToLive)->
-    unless hash? then return error_.reject 'missing hash', 400
+  verify(hash, password, tokenDaysToLive){
+    if (hash == null) { return error_.reject('missing hash', 400); }
 
-    if tokenDaysToLive? and pw.expired hash, tokenDaysToLive
-      return error_.reject 'token expired', 401
+    if ((tokenDaysToLive != null) && pw.expired(hash, tokenDaysToLive)) {
+      return error_.reject('token expired', 401);
+    }
 
-    unless password? then return error_.reject 'missing password', 400
+    if (password == null) { return error_.reject('missing password', 400); }
 
-    pw.verify hash, password
+    return pw.verify(hash, password);
+  }
+};
 
-hash = (algo, input)->
-  crypto.createHash algo
-  .update input
-  .digest 'hex'
+const hash = (algo, input) => crypto.createHash(algo)
+.update(input)
+.digest('hex');
 
-exports.sha1 = hash.bind null, 'sha1'
-exports.md5 = hash.bind null, 'md5'
+exports.sha1 = hash.bind(null, 'sha1');
+exports.md5 = hash.bind(null, 'md5');

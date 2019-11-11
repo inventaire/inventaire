@@ -1,29 +1,37 @@
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-{ BoundedString } = __.require 'models', 'validations/common'
-wdk = require 'wikidata-sdk'
-isbn_ = __.require 'lib', 'isbn/isbn'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const { BoundedString } = __.require('models', 'validations/common');
+const wdk = require('wikidata-sdk');
+const isbn_ = __.require('lib', 'isbn/isbn');
 
-prefixify = (id, prefix)->
-  unless id? then return
-  if prefix? then return "#{prefix}:#{id}"
+const prefixify = function(id, prefix){
+  if (id == null) { return; }
+  if (prefix != null) { return `${prefix}:${id}`; }
 
-  if wdk.isItemId id then return "wd:#{id}"
-  else if _.isInvEntityId id then return "inv:#{id}"
-  else if wdk.isPropertyId id then return "wdt:#{id}"
-  else if isbn_.isValidIsbn id then return "isbn:#{isbn_.normalizeIsbn(id)}"
-  else throw new Error 'unknown id format'
+  if (wdk.isItemId(id)) { return `wd:${id}`;
+  } else if (_.isInvEntityId(id)) { return `inv:${id}`;
+  } else if (wdk.isPropertyId(id)) { return `wdt:${id}`;
+  } else if (isbn_.isValidIsbn(id)) { return `isbn:${isbn_.normalizeIsbn(id)}`;
+  } else { throw new Error('unknown id format'); }
+};
 
-Prefixify = (prefix)-> (id)-> prefixify id, prefix
+const Prefixify = prefix => id => prefixify(id, prefix);
 
-prefixifyWd = Prefixify 'wd'
-prefixifyInv = Prefixify 'inv'
-prefixifyIsbn = (isbn)-> prefixify isbn_.normalizeIsbn(isbn), 'isbn'
+const prefixifyWd = Prefixify('wd');
+const prefixifyInv = Prefixify('inv');
+const prefixifyIsbn = isbn => prefixify(isbn_.normalizeIsbn(isbn), 'isbn');
 
-unprefixify = (uri)-> uri.split(':')[1]
+const unprefixify = uri => uri.split(':')[1];
 
-getInvEntityUri = (entity)->
-  { _id } = entity
-  if _id? then "inv:#{_id}"
+const getInvEntityUri = function(entity){
+  const { _id } = entity;
+  if (_id != null) { return `inv:${_id}`; }
+};
 
-module.exports = { prefixify, Prefixify, unprefixify, prefixifyWd, prefixifyInv, prefixifyIsbn, getInvEntityUri }
+module.exports = { prefixify, Prefixify, unprefixify, prefixifyWd, prefixifyInv, prefixifyIsbn, getInvEntityUri };

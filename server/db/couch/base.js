@@ -1,15 +1,16 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-getDbApi = require './cot_base'
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const getDbApi = require('./cot_base');
 
-# if no designDocName is provided,
-# assumes it is the same as the dbBaseName
-module.exports = (dbBaseName, designDocName)->
-  dbName = CONFIG.db.name dbBaseName
-  designDocName or= dbBaseName
+// if no designDocName is provided,
+// assumes it is the same as the dbBaseName
+module.exports = function(dbBaseName, designDocName){
+  const dbName = CONFIG.db.name(dbBaseName);
+  if (!designDocName) { designDocName = dbBaseName; }
 
-  db = getDbApi dbName, designDocName
-  bundles = require('./bundles')(db, _)
+  const db = getDbApi(dbName, designDocName);
+  const bundles = require('./bundles')(db, _);
 
-  return _.extend db, bundles
+  return _.extend(db, bundles);
+};

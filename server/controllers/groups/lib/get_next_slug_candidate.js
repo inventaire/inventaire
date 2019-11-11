@@ -1,12 +1,14 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
 
-module.exports = (slug)->
-  parts = slug.split('.')
-  lastPart = _.last parts
-  if _.isPositiveIntegerString lastPart
-    next = parseInt(lastPart) + 1
-    return parts.slice(0, -1).join('.') + ".#{next}"
-  else
-    return slug + '.1'
+module.exports = function(slug){
+  const parts = slug.split('.');
+  const lastPart = _.last(parts);
+  if (_.isPositiveIntegerString(lastPart)) {
+    const next = parseInt(lastPart) + 1;
+    return parts.slice(0, -1).join('.') + `.${next}`;
+  } else {
+    return slug + '.1';
+  }
+};

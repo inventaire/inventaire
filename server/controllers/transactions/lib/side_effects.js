@@ -1,40 +1,49 @@
-# Transactions side effects:
-# mainly changing item availability (toggling items' "busy" attribute)
-# and moving items between inventories (actually archiving in one and forking in the other)
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+// Transactions side effects:
+// mainly changing item availability (toggling items' "busy" attribute)
+// and moving items between inventories (actually archiving in one and forking in the other)
 
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-radio = __.require 'lib', 'radio'
-Transaction = __.require 'models', 'transaction'
-items_ = __.require 'controllers', 'items/lib/items'
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const radio = __.require('lib', 'radio');
+const Transaction = __.require('models', 'transaction');
+const items_ = __.require('controllers', 'items/lib/items');
 
-module.exports = ->
-  radio.on 'transaction:update', applySideEffects
+module.exports = () => radio.on('transaction:update', applySideEffects);
 
-applySideEffects = (transacDoc, newState)->
-  _.log arguments, 'applySideEffects'
-  sideEffects[newState](transacDoc, newState)
+var applySideEffects = function(transacDoc, newState){
+  _.log(arguments, 'applySideEffects');
+  return sideEffects[newState](transacDoc, newState);
+};
 
-setItemBusyness = (busy, transacDoc)->
-  _.log arguments, 'setItemBusyness'
-  { item } = transacDoc
-  items_.setBusyness item, busy
-  .catch _.Error('setItemBusyness')
+const setItemBusyness = function(busy, transacDoc){
+  _.log(arguments, 'setItemBusyness');
+  const { item } = transacDoc;
+  return items_.setBusyness(item, busy)
+  .catch(_.Error('setItemBusyness'));
+};
 
-changeOwnerIfOneWay = (transacDoc)->
-  if Transaction.isOneWay transacDoc
-    _.log arguments, 'changeOwner'
-    { item, requester } = transacDoc
-    items_.changeOwner transacDoc
-    .catch _.ErrorRethrow('changeOwner')
+const changeOwnerIfOneWay = function(transacDoc){
+  if (Transaction.isOneWay(transacDoc)) {
+    _.log(arguments, 'changeOwner');
+    const { item, requester } = transacDoc;
+    return items_.changeOwner(transacDoc)
+    .catch(_.ErrorRethrow('changeOwner'));
+  }
+};
 
-setItemToBusy =  _.partial setItemBusyness, true
-setItemToNotBusy = _.partial setItemBusyness, false
+const setItemToBusy =  _.partial(setItemBusyness, true);
+const setItemToNotBusy = _.partial(setItemBusyness, false);
 
-sideEffects =
-  accepted: setItemToBusy
-  declined: _.noop
-  confirmed: changeOwnerIfOneWay
-  returned: setItemToNotBusy
+var sideEffects = {
+  accepted: setItemToBusy,
+  declined: _.noop,
+  confirmed: changeOwnerIfOneWay,
+  returned: setItemToNotBusy,
   cancelled: setItemToNotBusy
+};

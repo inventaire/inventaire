@@ -1,17 +1,23 @@
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-entities_ = require './entities'
-radio = __.require 'lib', 'radio'
-retryOnConflict = __.require 'lib', 'retry_on_conflict'
-updateLabel = require './update_label'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const entities_ = require('./entities');
+const radio = __.require('lib', 'radio');
+const retryOnConflict = __.require('lib', 'retry_on_conflict');
+const updateLabel = require('./update_label');
 
-updateInvLabel = (user, id, lang, value)->
-  { _id:reqUserId } = user
+const updateInvLabel = function(user, id, lang, value){
+  const { _id:reqUserId } = user;
 
-  unless _.isInvEntityId id then return error_.rejectInvalid 'id', id
+  if (!_.isInvEntityId(id)) { return error_.rejectInvalid('id', id); }
 
-  entities_.byId id
-  .then updateLabel.bind(null, lang, value, reqUserId)
-  .then (updatedDoc)-> radio.emit 'entity:update:label', updatedDoc, lang, value
+  return entities_.byId(id)
+  .then(updateLabel.bind(null, lang, value, reqUserId))
+  .then(updatedDoc => radio.emit('entity:update:label', updatedDoc, lang, value));
+};
 
-module.exports = retryOnConflict { updateFn: updateInvLabel }
+module.exports = retryOnConflict({ updateFn: updateInvLabel });

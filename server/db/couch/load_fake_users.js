@@ -1,36 +1,54 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-bluereq = require 'bluereq'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const bluereq = require('bluereq');
 
-module.exports = ->
+module.exports = function() {
   [
-    'bobby', 'tony', 'luigi', 'rocky', 'shanapaul', 'Hubert_Bonisseur_de_la_Bath'
-    'bambi', 'bartolome', 'boris', 'bastogne', 'baraka'
+    'bobby', 'tony', 'luigi', 'rocky', 'shanapaul', 'Hubert_Bonisseur_de_la_Bath',
+    'bambi', 'bartolome', 'boris', 'bastogne', 'baraka',
     'babidi', 'boo', 'bamboo', 'baratin'
   ]
-  .forEach loadFakeUser
-  loadFakeUser() for [1..50]
+  .forEach(loadFakeUser);
+  return __range__(1, 50, true).map((i) => loadFakeUser());
+};
 
-keepUsers =
-  path: __.path 'couchdb', 'keep_users.json'
-  body: -> require @path
+const keepUsers = {
+  path: __.path('couchdb', 'keep_users.json'),
+  body() { return require(this.path); }
+};
 
-loadFakeUser = (username)->
-  bluereq.get('http://api.randomuser.me/')
-  .then getUserData.bind(null, username)
-  .then postUser
-  .catch _.Error('loadFakeUser')
+var loadFakeUser = username => bluereq.get('http://api.randomuser.me/')
+.then(getUserData.bind(null, username))
+.then(postUser)
+.catch(_.Error('loadFakeUser'));
 
-getUserData = (username, res)->
-  fake = res.body.results[0].user
-  return userData =
-    username: username or fake.username
-    email: fake.email
-    picture: fake.picture.medium
+var getUserData = function(username, res){
+  let userData;
+  const fake = res.body.results[0].user;
+  return userData = {
+    username: username || fake.username,
+    email: fake.email,
+    picture: fake.picture.medium,
     created: Date.now()
+  };
+};
 
-postUser = (data)->
-  bluereq.post usersDbUrl, data
-  .then (res)-> _.info res.body, 'postUser'
-  .catch _.Error('postUser')
+var postUser = data => bluereq.post(usersDbUrl, data)
+.then(res => _.info(res.body, 'postUser'))
+.catch(_.Error('postUser'));
+
+function __range__(left, right, inclusive) {
+  let range = [];
+  let ascending = left < right;
+  let end = !inclusive ? right : ascending ? right + 1 : right - 1;
+  for (let i = left; ascending ? i < end : i > end; ascending ? i++ : i--) {
+    range.push(i);
+  }
+  return range;
+}

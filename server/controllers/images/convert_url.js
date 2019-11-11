@@ -1,20 +1,25 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-responses_ = __.require 'lib', 'responses'
-error_ = __.require 'lib', 'error/error'
-{ getImageByUrl } = __.require 'data', 'dataseed/dataseed'
-{ enabled: dataseedEnabled } = CONFIG.dataseed
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const responses_ = __.require('lib', 'responses');
+const error_ = __.require('lib', 'error/error');
+const { getImageByUrl } = __.require('data', 'dataseed/dataseed');
+const { enabled: dataseedEnabled } = CONFIG.dataseed;
 
-module.exports = (req, res, next)->
-  { url } = req.body
+module.exports = function(req, res, next){
+  const { url } = req.body;
 
-  # If dataseed is disabled, we simply return the same url,
-  # instead of converting it to an image hash
-  unless dataseedEnabled then return res.json { url, converted: false }
+  // If dataseed is disabled, we simply return the same url,
+  // instead of converting it to an image hash
+  if (!dataseedEnabled) { return res.json({ url, converted: false }); }
 
-  getImageByUrl url
-  .then (data)->
-    data.converted = true
-    responses_.send res, data
-  .catch error_.Handler(req, res)
+  return getImageByUrl(url)
+  .then(function(data){
+    data.converted = true;
+    return responses_.send(res, data);}).catch(error_.Handler(req, res));
+};

@@ -1,29 +1,39 @@
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-promises_ = __.require 'lib', 'promises'
-error_ = __.require 'lib', 'error/error'
-responses_ = __.require 'lib', 'responses'
-user_ = __.require 'controllers', 'user/lib/user'
-User = __.require 'models', 'user'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const promises_ = __.require('lib', 'promises');
+const error_ = __.require('lib', 'error/error');
+const responses_ = __.require('lib', 'responses');
+const user_ = __.require('controllers', 'user/lib/user');
+const User = __.require('models', 'user');
 
-module.exports = (req, res)->
-  { usernames } = req.query
-  reqUserId = req.user?._id
+module.exports = function(req, res){
+  const { usernames } = req.query;
+  const reqUserId = req.user != null ? req.user._id : undefined;
 
-  promises_.try parseAndValidateUsernames.bind(null, usernames)
-  .then user_.getUsersIndexByUsernames(reqUserId)
-  .then responses_.Wrap(res, 'users')
-  .catch error_.Handler(req, res)
+  return promises_.try(parseAndValidateUsernames.bind(null, usernames))
+  .then(user_.getUsersIndexByUsernames(reqUserId))
+  .then(responses_.Wrap(res, 'users'))
+  .catch(error_.Handler(req, res));
+};
 
-parseAndValidateUsernames = (usernames)->
-  unless _.isNonEmptyString usernames
-    throw error_.newMissingQuery 'usernames'
+var parseAndValidateUsernames = function(usernames){
+  if (!_.isNonEmptyString(usernames)) {
+    throw error_.newMissingQuery('usernames');
+  }
 
-  usernames = usernames.split '|'
+  usernames = usernames.split('|');
 
-  if usernames?.length > 0 and validUsersUsernames(usernames)
-    return usernames
-  else
-    throw error_.newInvalid 'usernames', usernames
+  if (((usernames != null ? usernames.length : undefined) > 0) && validUsersUsernames(usernames)) {
+    return usernames;
+  } else {
+    throw error_.newInvalid('usernames', usernames);
+  }
+};
 
-validUsersUsernames = (usernames)-> _.every usernames, User.validations.username
+var validUsersUsernames = usernames => _.every(usernames, User.validations.username);

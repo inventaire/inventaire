@@ -1,63 +1,73 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-requests_ = __.require 'lib', 'requests'
-error_ = __.require 'lib', 'error/error'
-root = CONFIG.fullPublicHost()
-{ consumer_key, consumer_secret } = CONFIG.wikidataOAuth
-qs = require 'querystring'
-user_ = __.require 'controllers', 'user/lib/user'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const requests_ = __.require('lib', 'requests');
+const error_ = __.require('lib', 'error/error');
+const root = CONFIG.fullPublicHost();
+const { consumer_key, consumer_secret } = CONFIG.wikidataOAuth;
+const qs = require('querystring');
+const user_ = __.require('controllers', 'user/lib/user');
 
-# Alternatively using the nice or the non-nice URL
-# see https://mediawiki.org/wiki/OAuth/For_Developers#Notes
-wdHost = 'https://www.wikidata.org'
-wdBaseNice = "#{wdHost}/wiki/"
-wdBaseNonNice = "#{wdHost}/w/index.php?title="
-step1Url = "#{wdBaseNonNice}Special:OAuth/initiate"
-step2Url = "#{wdBaseNice}Special:OAuth/authorize"
-step3Url = "#{wdBaseNonNice}Special:OAuth/token"
-reqTokenSecrets = {}
+// Alternatively using the nice or the non-nice URL
+// see https://mediawiki.org/wiki/OAuth/For_Developers#Notes
+const wdHost = 'https://www.wikidata.org';
+const wdBaseNice = `${wdHost}/wiki/`;
+const wdBaseNonNice = `${wdHost}/w/index.php?title=`;
+const step1Url = `${wdBaseNonNice}Special:OAuth/initiate`;
+const step2Url = `${wdBaseNice}Special:OAuth/authorize`;
+const step3Url = `${wdBaseNonNice}Special:OAuth/token`;
+const reqTokenSecrets = {};
 
-module.exports = (req, res)->
-  { _id:reqUserId } = req.user
-  { oauth_verifier:verifier, oauth_token:reqToken, redirect } = req.query
+module.exports = function(req, res){
+  const { _id:reqUserId } = req.user;
+  const { oauth_verifier:verifier, oauth_token:reqToken, redirect } = req.query;
 
-  step1 = not (verifier? and reqToken?)
+  const step1 = !((verifier != null) && (reqToken != null));
 
-  if step1
-    getStep1Token redirect
-    .then (step1Res)->
-      { oauth_token_secret:reqTokenSecret } = qs.parse step1Res
-      reqTokenSecrets[reqUserId] = reqTokenSecret
-      res.redirect "#{step2Url}?#{step1Res}"
-    .catch error_.Handler(req, res)
-  else
-    getStep3 reqUserId, verifier, reqToken
-    .then saveUserTokens(reqUserId)
-    .then -> res.redirect "#{root}#{redirect}"
-    .catch error_.Handler(req, res)
+  if (step1) {
+    return getStep1Token(redirect)
+    .then(function(step1Res){
+      const { oauth_token_secret:reqTokenSecret } = qs.parse(step1Res);
+      reqTokenSecrets[reqUserId] = reqTokenSecret;
+      return res.redirect(`${step2Url}?${step1Res}`);}).catch(error_.Handler(req, res));
+  } else {
+    return getStep3(reqUserId, verifier, reqToken)
+    .then(saveUserTokens(reqUserId))
+    .then(() => res.redirect(`${root}${redirect}`))
+    .catch(error_.Handler(req, res));
+  }
+};
 
-getStep1Token = (redirect)->
-  requests_.post
-    url: step1Url
-    oauth:
-      callback: "#{root}/api/auth?action=wikidata-oauth&redirect=#{redirect}"
-      consumer_key: consumer_key
-      consumer_secret: consumer_secret
+var getStep1Token = redirect => requests_.post({
+  url: step1Url,
+  oauth: {
+    callback: `${root}/api/auth?action=wikidata-oauth&redirect=${redirect}`,
+    consumer_key,
+    consumer_secret
+  }
+});
 
-getStep3 = (reqUserId, verifier, oauthToken)->
-  reqTokenSecret = reqTokenSecrets[reqUserId]
-  requests_.post
-    url: step3Url
-    oauth:
-      consumer_key: consumer_key
-      consumer_secret: consumer_secret
-      token: oauthToken
-      token_secret: reqTokenSecret
-      verifier: verifier
-  .finally -> delete reqTokenSecrets[reqUserId]
+var getStep3 = function(reqUserId, verifier, oauthToken){
+  const reqTokenSecret = reqTokenSecrets[reqUserId];
+  return requests_.post({
+    url: step3Url,
+    oauth: {
+      consumer_key,
+      consumer_secret,
+      token: oauthToken,
+      token_secret: reqTokenSecret,
+      verifier
+    }}).finally(() => delete reqTokenSecrets[reqUserId]);
+};
 
-saveUserTokens = (reqUserId)-> (step3Res)->
-  { oauth_token_secret:userTokenSecret, oauth_token:userToken } = qs.parse step3Res
-  data = { token: userToken, token_secret: userTokenSecret }
-  user_.setOauthTokens reqUserId, 'wikidata', data
+var saveUserTokens = reqUserId => (function(step3Res) {
+  const { oauth_token_secret:userTokenSecret, oauth_token:userToken } = qs.parse(step3Res);
+  const data = { token: userToken, token_secret: userTokenSecret };
+  return user_.setOauthTokens(reqUserId, 'wikidata', data);
+});

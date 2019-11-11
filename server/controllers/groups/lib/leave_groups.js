@@ -1,36 +1,48 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-Group = __.require 'models', 'group'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const Group = __.require('models', 'group');
 
-# Working around the circular dependency
-groups_ = null
-lateRequire = -> groups_ = require './groups'
-setTimeout lateRequire, 0
+// Working around the circular dependency
+let groups_ = null;
+const lateRequire = () => groups_ = require('./groups');
+setTimeout(lateRequire, 0);
 
-module.exports =
-  userCanLeave: (userId, groupId)->
-    groups_.byId groupId
-    .then (group)->
-      { admins, members } = group
-      adminsIds = admins.map _.property('user')
-      unless userId in adminsIds then return true
-      mainUserIsTheOnlyAdmin = admins.length is 1
-      thereAreOtherMembers = members.length > 0
-      if mainUserIsTheOnlyAdmin and thereAreOtherMembers then false
-      else true
+module.exports = {
+  userCanLeave(userId, groupId){
+    return groups_.byId(groupId)
+    .then(function(group){
+      const { admins, members } = group;
+      const adminsIds = admins.map(_.property('user'));
+      if (!adminsIds.includes(userId)) { return true; }
+      const mainUserIsTheOnlyAdmin = admins.length === 1;
+      const thereAreOtherMembers = members.length > 0;
+      if (mainUserIsTheOnlyAdmin && thereAreOtherMembers) { return false;
+      } else { return true; }
+    });
+  },
 
-  leaveAllGroups: (userId)->
-    # TODO: check if userCanLeave
-    groups_.byUser userId
-    .map removeUser.bind(null, userId)
-    .then groups_.db.bulk
+  leaveAllGroups(userId){
+    // TODO: check if userCanLeave
+    return groups_.byUser(userId)
+    .map(removeUser.bind(null, userId))
+    .then(groups_.db.bulk);
+  }
+};
 
-removeUser = (userId, groupDoc)->
-  if userId in groupDoc.admins
-    _.warn arguments, "removing a user from a group she's admin of"
+var removeUser = function(userId, groupDoc){
+  if (groupDoc.admins.includes(userId)) {
+    _.warn(arguments, "removing a user from a group she's admin of");
+  }
 
-  for list in Group.attributes.usersLists
-    groupDoc[list] = _.without groupDoc[list], userId
+  for (let list of Group.attributes.usersLists) {
+    groupDoc[list] = _.without(groupDoc[list], userId);
+  }
 
-  return groupDoc
+  return groupDoc;
+};

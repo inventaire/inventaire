@@ -1,60 +1,72 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-error_ = __.require 'lib', 'error/error'
-{ possibleActions } = require './lib/actions_lists'
-groups_ = require './lib/groups'
-rightsVerification = require './lib/rights_verification'
-{ Track } = __.require 'lib', 'track'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const error_ = __.require('lib', 'error/error');
+const { possibleActions } = require('./lib/actions_lists');
+const groups_ = require('./lib/groups');
+const rightsVerification = require('./lib/rights_verification');
+const { Track } = __.require('lib', 'track');
 
-# Actions:
-# - invite
-# - accept
-# - decline
-# - request
-# - cancel-request
-# - accept-request
-# - refuse-request
-# - make-admin
-# - kick
-# - leave
-# - update-settings
+// Actions:
+// - invite
+// - accept
+// - decline
+// - request
+// - cancel-request
+// - accept-request
+// - refuse-request
+// - make-admin
+// - kick
+// - leave
+// - update-settings
 
-module.exports = (req, res)->
-  unless req.user? then return error_.unauthorizedApiAccess req, res
-  # Allow to pass the action in either the query or the body, as ActionsControllers
-  action = req.body.action or req.query.action
+module.exports = function(req, res){
+  if (req.user == null) { return error_.unauthorizedApiAccess(req, res); }
+  // Allow to pass the action in either the query or the body, as ActionsControllers
+  let action = req.body.action || req.query.action;
 
-  # don't convert an undefined action to an empty string
-  # it makes debugging confusing
-  if action?
-    action = _.camelCase action
+  // don't convert an undefined action to an empty string
+  // it makes debugging confusing
+  if (action != null) {
+    action = _.camelCase(action);
+  }
 
-  unless action in possibleActions
-    return error_.unknownAction req, res, action
+  if (!possibleActions.includes(action)) {
+    return error_.unknownAction(req, res, action);
+  }
 
-  handleAction action, req, res
+  return handleAction(action, req, res);
+};
 
-handleAction = (action, req, res)->
-  { body } = req
-  # user is needed for invite, acceptRequest, refuseRequest controllers only
-  { group:groupId, user:userId } = body
-  reqUserId = req.user._id
+var handleAction = function(action, req, res){
+  const { body } = req;
+  // user is needed for invite, acceptRequest, refuseRequest controllers only
+  const { group:groupId, user:userId } = body;
+  const reqUserId = req.user._id;
 
-  _.log [ reqUserId, body ], 'group action'
+  _.log([ reqUserId, body ], 'group action');
 
-  if userId? and not _.isUserId userId
-    return error_.bundleInvalid req, res, 'user', userId
+  if ((userId != null) && !_.isUserId(userId)) {
+    return error_.bundleInvalid(req, res, 'user', userId);
+  }
 
-  if groupId? and not _.isGroupId groupId
-    return error_.bundleInvalid req, res, 'group', groupId
+  if ((groupId != null) && !_.isGroupId(groupId)) {
+    return error_.bundleInvalid(req, res, 'group', groupId);
+  }
 
-  rightsVerification[action](reqUserId, groupId, userId)
-  .then groups_[action].bind(null, body, reqUserId)
-  # Allow to pass an update object, with key/values to be updated on the model
-  # as the results of update hooks
-  .then addUpdateData(res)
-  .then Track(req, ['groups', action])
-  .catch error_.Handler(req, res)
+  return rightsVerification[action](reqUserId, groupId, userId)
+  .then(groups_[action].bind(null, body, reqUserId))
+  // Allow to pass an update object, with key/values to be updated on the model
+  // as the results of update hooks
+  .then(addUpdateData(res))
+  .then(Track(req, ['groups', action]))
+  .catch(error_.Handler(req, res));
+};
 
-addUpdateData = (res)-> (data = {})-> res.json { ok: true, update: data.update }
+var addUpdateData = res => (data = {}) => res.json({ ok: true, update: data.update });

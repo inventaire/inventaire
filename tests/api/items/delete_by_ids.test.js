@@ -1,89 +1,94 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-should = require 'should'
-{ authReq, authReqB, getUser, undesiredRes } = require '../utils/utils'
-{ CountChange } = require './helpers'
-{ createItem } = require '../fixtures/items'
-debounceDelay = CONFIG.itemsCountDebounceTime + 100
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const should = require('should');
+const { authReq, authReqB, getUser, undesiredRes } = require('../utils/utils');
+const { CountChange } = require('./helpers');
+const { createItem } = require('../fixtures/items');
+const debounceDelay = CONFIG.itemsCountDebounceTime + 100;
 
-deleteByIds = (ids, authReqFn)->
-  authReqFn or= authReq
-  ids = _.forceArray ids
-  authReqFn 'post', '/api/items?action=delete-by-ids', { ids }
+const deleteByIds = function(ids, authReqFn){
+  if (!authReqFn) { authReqFn = authReq; }
+  ids = _.forceArray(ids);
+  return authReqFn('post', '/api/items?action=delete-by-ids', { ids });
+};
 
-describe 'items:delete-by-ids', ->
-  it 'should reject an empty list of ids', (done)->
-    deleteByIds []
-    .then undesiredRes(done)
-    .catch (err)->
-      err.statusCode.should.equal 400
-      err.body.status_verbose.should.equal "ids array can't be empty"
-      done()
-    .catch done
+describe('items:delete-by-ids', function() {
+  it('should reject an empty list of ids', function(done){
+    deleteByIds([])
+    .then(undesiredRes(done))
+    .catch(function(err){
+      err.statusCode.should.equal(400);
+      err.body.status_verbose.should.equal("ids array can't be empty");
+      return done();}).catch(done);
 
-    return
+  });
 
-  it 'should ignore already deleted items', (done)->
+  it('should ignore already deleted items', function(done){
     createItem()
-    .then (item)->
-      { _id: itemId } = item
-      deleteByIds itemId
-      .then (res)->
-        res.ok.should.be.true()
-        deleteByIds itemId
-        .then (res)->
-          res.ok.should.be.true()
-          done()
-    .catch done
+    .then(function(item){
+      const { _id: itemId } = item;
+      return deleteByIds(itemId)
+      .then(function(res){
+        res.ok.should.be.true();
+        return deleteByIds(itemId)
+        .then(function(res){
+          res.ok.should.be.true();
+          return done();
+        });
+      });}).catch(done);
 
-    return
+  });
 
-  it 'should delete an item', (done)->
+  it('should delete an item', function(done){
     createItem()
-    .then (item)->
-      { _id: itemId } = item
-      deleteByIds itemId
-      .then (res)->
-        res.ok.should.be.true()
-        authReq 'get', "/api/items?action=by-ids&ids=#{itemId}"
-        .then (res)->
-          res.items.length.should.equal 0
-          done()
-    .catch done
+    .then(function(item){
+      const { _id: itemId } = item;
+      return deleteByIds(itemId)
+      .then(function(res){
+        res.ok.should.be.true();
+        return authReq('get', `/api/items?action=by-ids&ids=${itemId}`)
+        .then(function(res){
+          res.items.length.should.equal(0);
+          return done();
+        });
+      });}).catch(done);
 
-    return
+  });
 
-  it 'should trigger an update of the users items counters', (done)->
+  it('should trigger an update of the users items counters', function(done){
     createItem()
-    # Delay to let the time to the item counter to be updated
-    .delay debounceDelay
-    .then (item)->
-      getUser()
-      .then (userBefore)->
-        deleteByIds item._id
-        # Delay to request the user after its items count was updated
-        .delay debounceDelay
-        .then (res)->
-          getUser()
-          .then (userAfter)->
-            countChange = CountChange userBefore.snapshot, userAfter.snapshot
-            countChange('public').should.equal -1
-            done()
-    .catch done
+    // Delay to let the time to the item counter to be updated
+    .delay(debounceDelay)
+    .then(item => getUser()
+    .then(userBefore => deleteByIds(item._id)
+    // Delay to request the user after its items count was updated
+    .delay(debounceDelay)
+    .then(res => getUser()
+    .then(function(userAfter){
+      const countChange = CountChange(userBefore.snapshot, userAfter.snapshot);
+      countChange('public').should.equal(-1);
+      return done();
+    })))).catch(done);
 
-    return
+  });
 
-  it 'should reject deletion of an item owned by another user', (done)->
+  return it('should reject deletion of an item owned by another user', function(done){
     createItem()
-    .then (item)->
-      { _id: itemId } = item
-      deleteByIds itemId, authReqB
-      .then undesiredRes(done)
-      .catch (err)->
-        err.statusCode.should.equal 403
-        err.body.status_verbose.should.equal "user isn't item owner"
-        done()
-    .catch done
+    .then(function(item){
+      const { _id: itemId } = item;
+      return deleteByIds(itemId, authReqB)
+      .then(undesiredRes(done))
+      .catch(function(err){
+        err.statusCode.should.equal(403);
+        err.body.status_verbose.should.equal("user isn't item owner");
+        return done();
+      });}).catch(done);
 
-    return
+  });
+});

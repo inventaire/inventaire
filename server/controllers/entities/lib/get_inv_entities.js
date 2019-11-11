@@ -1,51 +1,60 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-entities_ = require './entities'
-getEntityType = require './get_entity_type'
-getInvEntityCanonicalUri = require './get_inv_entity_canonical_uri'
-formatEntityCommon = require './format_entity_common'
-addRedirection = require './add_redirection'
-{ prefixifyInv, unprefixify } = __.require 'controllers', 'entities/lib/prefix'
+/*
+ * decaffeinate suggestions:
+ * DS101: Remove unnecessary use of Array.from
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const entities_ = require('./entities');
+const getEntityType = require('./get_entity_type');
+const getInvEntityCanonicalUri = require('./get_inv_entity_canonical_uri');
+const formatEntityCommon = require('./format_entity_common');
+const addRedirection = require('./add_redirection');
+const { prefixifyInv, unprefixify } = __.require('controllers', 'entities/lib/prefix');
 
-# Working around the circular dependency
-getEntityByUri = null
-lateRequire = -> getEntityByUri = require './get_entity_by_uri'
-setTimeout lateRequire, 0
+// Working around the circular dependency
+let getEntityByUri = null;
+const lateRequire = () => getEntityByUri = require('./get_entity_by_uri');
+setTimeout(lateRequire, 0);
 
-module.exports = (ids, params)->
-  # Hypothesis: there is no need to look for Wikidata data here
-  # as inv entities with an associated Wikidata entity use the Wikidata uri
-  entities_.byIds ids
-  .map Format(params)
-  .then (entities)->
-    found = entities.reduce aggregateFoundIds, []
-    notFound = _.difference(ids, found).map prefixifyInv
-    return { entities, notFound }
+module.exports = (ids, params) => // Hypothesis: there is no need to look for Wikidata data here
+// as inv entities with an associated Wikidata entity use the Wikidata uri
+entities_.byIds(ids)
+.map(Format(params))
+.then(function(entities){
+  const found = entities.reduce(aggregateFoundIds, []);
+  const notFound = _.difference(ids, found).map(prefixifyInv);
+  return { entities, notFound };});
 
-Format = (params)-> (entity)->
-  if entity.redirect? then return getRedirectedEntity entity, params
+var Format = params => (function(entity) {
+  if (entity.redirect != null) { return getRedirectedEntity(entity, params); }
 
-  [ uri, redirects ] = getInvEntityCanonicalUri entity, { includeRedirection: true }
-  entity.uri = uri
-  if redirects? then entity.redirects = redirects
+  const [ uri, redirects ] = Array.from(getInvEntityCanonicalUri(entity, { includeRedirection: true }));
+  entity.uri = uri;
+  if (redirects != null) { entity.redirects = redirects; }
 
-  # Keep track of special types such as removed:placehoder
-  # to the let the search engine unindex it
-  if entity.type isnt 'entity' then entity._meta_type = entity.type
+  // Keep track of special types such as removed:placehoder
+  // to the let the search engine unindex it
+  if (entity.type !== 'entity') { entity._meta_type = entity.type; }
 
-  entity.type = getEntityType entity.claims['wdt:P31']
-  return formatEntityCommon entity
+  entity.type = getEntityType(entity.claims['wdt:P31']);
+  return formatEntityCommon(entity);
+});
 
-getRedirectedEntity = (entity, params)->
-  { refresh, dry } = params
-  # Passing the parameters as the entity data source might be Wikidata
-  getEntityByUri { uri: entity.redirect, refresh, dry }
-  .then addRedirection.bind(null, prefixifyInv(entity._id))
+var getRedirectedEntity = function(entity, params){
+  const { refresh, dry } = params;
+  // Passing the parameters as the entity data source might be Wikidata
+  return getEntityByUri({ uri: entity.redirect, refresh, dry })
+  .then(addRedirection.bind(null, prefixifyInv(entity._id)));
+};
 
-aggregateFoundIds = (foundIds, entity)->
-  { _id, redirects } = entity
-  # Won't be true if the entity redirected to a Wikidata entity
-  if _id? then foundIds.push _id
-  if redirects? then foundIds.push unprefixify(redirects.from)
-  return foundIds
+var aggregateFoundIds = function(foundIds, entity){
+  const { _id, redirects } = entity;
+  // Won't be true if the entity redirected to a Wikidata entity
+  if (_id != null) { foundIds.push(_id); }
+  if (redirects != null) { foundIds.push(unprefixify(redirects.from)); }
+  return foundIds;
+};

@@ -1,24 +1,35 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-error_ = __.require 'lib', 'error/error'
-assert_ = __.require 'utils', 'assert_types'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const error_ = __.require('lib', 'error/error');
+const assert_ = __.require('utils', 'assert_types');
 
-# Working around the circular dependency
-groups_ = null
-user_ = null
-lateRequire = ->
-  groups_ = require './groups'
-  user_ = __.require 'controllers', 'user/lib/user'
-setTimeout lateRequire, 0
+// Working around the circular dependency
+let groups_ = null;
+let user_ = null;
+const lateRequire = function() {
+  groups_ = require('./groups');
+  return user_ = __.require('controllers', 'user/lib/user');
+};
+setTimeout(lateRequire, 0);
 
-module.exports = (fnName, fnArgs, reqUserId)->
-  assert_.array fnArgs
-  groups_[fnName].apply null, fnArgs
-  .then (group)->
-    unless group? then throw error_.notFound groupId
+module.exports = function(fnName, fnArgs, reqUserId){
+  assert_.array(fnArgs);
+  return groups_[fnName].apply(null, fnArgs)
+  .then(function(group){
+    if (group == null) { throw error_.notFound(groupId); }
 
-    usersIds = groups_.allGroupMembers group
+    const usersIds = groups_.allGroupMembers(group);
 
-    user_.getUsersByIds usersIds, reqUserId
-    .then (users)-> { group, users }
+    return user_.getUsersByIds(usersIds, reqUserId)
+    .then(users => ({
+      group,
+      users
+    }));});
+};

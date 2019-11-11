@@ -1,13 +1,13 @@
-#!/usr/bin/env coffee
-exec = require './exec'
-CONFIG = require 'config'
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-promises_ = __.require 'lib', 'promises'
-{ indexesList } = __.require 'db', 'elasticsearch/list'
-createIndex = require './create_index'
+#!/usr/bin/env node
+const exec = require('./exec');
+const CONFIG = require('config');
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const promises_ = __.require('lib', 'promises');
+const { indexesList } = __.require('db', 'elasticsearch/list');
+const createIndex = require('./create_index');
 
-promises_.all indexesList.map(createIndex)
-.then -> exec 'load'
-.then -> _.success 'started loading (spawned processes)'
-.catch _.Error('load')
+promises_.all(indexesList.map(createIndex))
+.then(() => exec('load'))
+.then(() => _.success('started loading (spawned processes)'))
+.catch(_.Error('load'));

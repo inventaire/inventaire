@@ -1,54 +1,68 @@
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-cache_ = __.require 'lib', 'cache'
-error_ = __.require 'lib', 'error/error'
-requests_ = __.require 'lib', 'requests'
-wdk = require 'wikidata-sdk'
-makeSparqlRequest = require './make_sparql_request'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const cache_ = __.require('lib', 'cache');
+const error_ = __.require('lib', 'error/error');
+const requests_ = __.require('lib', 'requests');
+const wdk = require('wikidata-sdk');
+const makeSparqlRequest = require('./make_sparql_request');
 
-queries = require './queries/queries'
-possibleQueries = Object.keys queries
+const queries = require('./queries/queries');
+const possibleQueries = Object.keys(queries);
 
-# Params:
-# - query: the name of the query to use from './queries/queries'
-# - refresh
-# - custom parameters: see the query file
-module.exports = (params)->
-  { query:queryName, refresh, dry } = params
+// Params:
+// - query: the name of the query to use from './queries/queries'
+// - refresh
+// - custom parameters: see the query file
+module.exports = function(params){
+  let k, value;
+  let { query:queryName, refresh, dry } = params;
 
-  # Converting from kebab case to snake case
-  params.query = queryName = queryName.replace /-/g, '_'
-  unless queryName in possibleQueries
-    return error_.reject 'unknown query', 400, params
+  // Converting from kebab case to snake case
+  params.query = (queryName = queryName.replace(/-/g, '_'));
+  if (!possibleQueries.includes(queryName)) {
+    return error_.reject('unknown query', 400, params);
+  }
 
-  { parameters } = queries[queryName]
+  const { parameters } = queries[queryName];
 
-  # Every type of query should specify which parameters it needs
-  # with keys matching parametersTests keys
-  for k in parameters
-    value = params[k]
-    if parametersTests[k]? and not parametersTests[k](value)
-      return error_.rejectInvalid k, params
+  // Every type of query should specify which parameters it needs
+  // with keys matching parametersTests keys
+  for (k of parameters) {
+    value = params[k];
+    if ((parametersTests[k] != null) && !parametersTests[k](value)) {
+      return error_.rejectInvalid(k, params);
+    }
+  }
 
-  # Building the cache key
-  key = "wdQuery:#{queryName}"
-  for k in parameters
-    value = params[k]
-    # Known case: resolve_external_ids expects an array of [ property, value ] pairs
-    unless _.isString value then value = JSON.stringify value
-    key += ":#{value}"
+  // Building the cache key
+  let key = `wdQuery:${queryName}`;
+  for (k of parameters) {
+    value = params[k];
+    // Known case: resolve_external_ids expects an array of [ property, value ] pairs
+    if (!_.isString(value)) { value = JSON.stringify(value); }
+    key += `:${value}`;
+  }
 
-  fn = runQuery.bind null, params, key
-  cache_.get { key, fn, refresh, dry, dryFallbackValue: [] }
+  const fn = runQuery.bind(null, params, key);
+  return cache_.get({ key, fn, refresh, dry, dryFallbackValue: [] });
+};
 
-parametersTests =
-  qid: wdk.isItemId
+var parametersTests = {
+  qid: wdk.isItemId,
   pid: wdk.isPropertyId
+};
 
-runQuery = (params, key)->
-  { query: queryName } = params
-  { query: queryBuilder } = queries[queryName]
-  sparql = queryBuilder params
+var runQuery = function(params, key){
+  const { query: queryName } = params;
+  const { query: queryBuilder } = queries[queryName];
+  const sparql = queryBuilder(params);
 
-  makeSparqlRequest sparql
-  .catch _.ErrorRethrow(key)
+  return makeSparqlRequest(sparql)
+  .catch(_.ErrorRethrow(key));
+};

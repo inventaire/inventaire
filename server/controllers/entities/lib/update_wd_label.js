@@ -1,18 +1,24 @@
-CONFIG = require('config')
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-error_ = __.require 'lib', 'error/error'
-{ Promise } = __.require 'lib', 'promises'
-wdk = require 'wikidata-sdk'
-wdEdit = require 'wikidata-edit'
-wdOauth = require './wikidata_oauth'
+/*
+ * decaffeinate suggestions:
+ * DS101: Remove unnecessary use of Array.from
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const error_ = __.require('lib', 'error/error');
+const { Promise } = __.require('lib', 'promises');
+const wdk = require('wikidata-sdk');
+const wdEdit = require('wikidata-edit');
+const wdOauth = require('./wikidata_oauth');
 
-module.exports = (args...)-> Promise.try -> updateWdLabel args...
+module.exports = (...args) => Promise.try(() => updateWdLabel(...Array.from(args || [])));
 
-updateWdLabel = (user, id, lang, value)->
-  unless wdk.isItemId id then throw error_.newInvalid 'id', id
+var updateWdLabel = function(user, id, lang, value){
+  if (!wdk.isItemId(id)) { throw error_.newInvalid('id', id); }
 
-  wdOauth.validate user
-  oauth = wdOauth.getFullCredentials user
+  wdOauth.validate(user);
+  const oauth = wdOauth.getFullCredentials(user);
 
-  return wdEdit({ oauth }, 'label/set')(id, lang, value)
+  return wdEdit({ oauth }, 'label/set')(id, lang, value);
+};

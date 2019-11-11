@@ -1,34 +1,46 @@
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-error_ = __.require 'lib', 'error/error'
-responses_ = __.require 'lib', 'responses'
+/*
+ * decaffeinate suggestions:
+ * DS101: Remove unnecessary use of Array.from
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const error_ = __.require('lib', 'error/error');
+const responses_ = __.require('lib', 'responses');
 
-module.exports = (req, res)->
-  { id, uri, property, 'old-value':oldVal, 'new-value': newVal } = req.body
-  _.log req.body, 'update claim input'
-  if _.isInvEntityId(id) and not uri? then uri = "inv:#{id}"
+module.exports = function(req, res){
+  let prefix;
+  let { id, uri, property, 'old-value':oldVal, 'new-value': newVal } = req.body;
+  _.log(req.body, 'update claim input');
+  if (_.isInvEntityId(id) && (uri == null)) { uri = `inv:${id}`; }
 
-  unless uri? then return error_.bundleMissingBody req, res, 'uri'
-  unless property? then return error_.bundleMissingBody req, res, 'property'
-  unless oldVal? or newVal?
-    return error_.bundleMissingBody req, res, 'old-value|new-value'
+  if (uri == null) { return error_.bundleMissingBody(req, res, 'uri'); }
+  if (property == null) { return error_.bundleMissingBody(req, res, 'property'); }
+  if ((oldVal == null) && (newVal == null)) {
+    return error_.bundleMissingBody(req, res, 'old-value|new-value');
+  }
 
-  # An empty string is interpreted as a null value
-  oldVal = parseEmptyValue oldVal
-  newVal = parseEmptyValue newVal
+  // An empty string is interpreted as a null value
+  oldVal = parseEmptyValue(oldVal);
+  newVal = parseEmptyValue(newVal);
 
-  [ prefix, id ] = uri.split ':'
-  updater = updaters[prefix]
-  unless updater?
-    return error_.bundle req, res, "unsupported uri prefix: #{prefix}", 400, uri
+  [ prefix, id ] = Array.from(uri.split(':'));
+  const updater = updaters[prefix];
+  if (updater == null) {
+    return error_.bundle(req, res, `unsupported uri prefix: ${prefix}`, 400, uri);
+  }
 
-  updater req.user, id, property, oldVal, newVal
-  .then responses_.Ok(res)
-  .catch error_.Handler(req, res)
+  return updater(req.user, id, property, oldVal, newVal)
+  .then(responses_.Ok(res))
+  .catch(error_.Handler(req, res));
+};
 
-parseEmptyValue = (value)-> if value is '' then null else value
+var parseEmptyValue = function(value){ if (value === '') { return null; } else { return value; } };
 
-updaters =
-  # TODO: accept ISBN URIs
-  inv: require './lib/update_inv_claim'
-  wd: require './lib/update_wd_claim'
+var updaters = {
+  // TODO: accept ISBN URIs
+  inv: require('./lib/update_inv_claim'),
+  wd: require('./lib/update_wd_claim')
+};

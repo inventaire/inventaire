@@ -1,45 +1,52 @@
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-promises_ = __.require 'lib', 'promises'
-entities_ = require './entities'
-Entity = __.require 'models', 'entity'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const promises_ = __.require('lib', 'promises');
+const entities_ = require('./entities');
+const Entity = __.require('models', 'entity');
 
-module.exports = (userId, fromUri, toUri)->
-  entities_.byClaimsValue fromUri
-  .then (results)->
-    entitiesToEditIds = _.map results, 'entity'
-    _.log entitiesToEditIds, 'entitiesToEditIds'
-    if entitiesToEditIds.length is 0 then return
-    # Doing all the redirects at once to avoid conflicts
-    # within a same entity pointing several times to the redirected entity.
-    # There is no identified case at the moment though.
-    entities_.byIds entitiesToEditIds
-    .then redirectEntitiesClaims(results, userId, fromUri, toUri)
+module.exports = (userId, fromUri, toUri) => entities_.byClaimsValue(fromUri)
+.then(function(results){
+  const entitiesToEditIds = _.map(results, 'entity');
+  _.log(entitiesToEditIds, 'entitiesToEditIds');
+  if (entitiesToEditIds.length === 0) { return; }
+  // Doing all the redirects at once to avoid conflicts
+  // within a same entity pointing several times to the redirected entity.
+  // There is no identified case at the moment though.
+  return entities_.byIds(entitiesToEditIds)
+  .then(redirectEntitiesClaims(results, userId, fromUri, toUri));
+});
 
-redirectEntitiesClaims = (results, userId, fromUri, toUri)-> (entities)->
-  entitiesIndex = _.keyBy entities, '_id'
-  entitiesIndexBeforeUpdate = _.cloneDeep entitiesIndex
+var redirectEntitiesClaims = (results, userId, fromUri, toUri) => (function(entities) {
+  const entitiesIndex = _.keyBy(entities, '_id');
+  const entitiesIndexBeforeUpdate = _.cloneDeep(entitiesIndex);
 
-  # Apply all the redirection updates on the entities docs
-  results.forEach applyRedirections(entitiesIndex, fromUri, toUri)
+  // Apply all the redirection updates on the entities docs
+  results.forEach(applyRedirections(entitiesIndex, fromUri, toUri));
 
-  # Then, post the updates all at once
-  updatesPromises = _.values(entitiesIndex).map (updatedDoc)->
-    currentDoc = entitiesIndexBeforeUpdate[updatedDoc._id]
-    # Add a context in case we need to revert those redirections later on
-    context = { redirectClaims: { fromUri } }
-    return entities_.putUpdate { userId, currentDoc, updatedDoc, context }
+  // Then, post the updates all at once
+  const updatesPromises = _.values(entitiesIndex).map(function(updatedDoc){
+    const currentDoc = entitiesIndexBeforeUpdate[updatedDoc._id];
+    // Add a context in case we need to revert those redirections later on
+    const context = { redirectClaims: { fromUri } };
+    return entities_.putUpdate({ userId, currentDoc, updatedDoc, context });});
 
-  return promises_.all updatesPromises
+  return promises_.all(updatesPromises);
+});
 
-applyRedirections = (entitiesIndex, fromUri, toUri)-> (result)->
-  { property, entity } = result
-  doc = entitiesIndex[entity]
+var applyRedirections = (entitiesIndex, fromUri, toUri) => (function(result) {
+  let newVal;
+  const { property, entity } = result;
+  const doc = entitiesIndex[entity];
 
-  # If the toUri is already a claim value, delete the fromUri claim
-  # instead of creating a duplicated claim
-  if toUri in doc.claims[property] then newVal = null
-  else newVal = toUri
+  // If the toUri is already a claim value, delete the fromUri claim
+  // instead of creating a duplicated claim
+  if (doc.claims[property].includes(toUri)) { newVal = null;
+  } else { newVal = toUri; }
 
-  entitiesIndex[entity] = Entity.updateClaim doc, property, fromUri, newVal
-  return
+  entitiesIndex[entity] = Entity.updateClaim(doc, property, fromUri, newVal);
+});

@@ -1,35 +1,42 @@
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-error_ = __.require 'lib', 'error/error'
-responses_ = __.require 'lib', 'responses'
-transactions_ = require './lib/transactions'
-{ states, statesList } = __.require 'models', 'attributes/transaction'
-sanitize = __.require 'lib', 'sanitize/sanitize'
-{ Track } = __.require 'lib', 'track'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const error_ = __.require('lib', 'error/error');
+const responses_ = __.require('lib', 'responses');
+const transactions_ = require('./lib/transactions');
+const { states, statesList } = __.require('models', 'attributes/transaction');
+const sanitize = __.require('lib', 'sanitize/sanitize');
+const { Track } = __.require('lib', 'track');
 
-sanitization =
-  transaction: {}
-  state:
+const sanitization = {
+  transaction: {},
+  state: {
     whitelist: statesList
+  }
+};
 
-module.exports = (req, res, next)->
-  sanitize req, res, sanitization
-  .then (params)->
-    { transaction, state } = req.body
-    reqUserId = req.user._id
-    transactions_.byId transaction
-    .then VerifyRights(state, reqUserId)
-    .then transactions_.updateState.bind(null, state, reqUserId)
-    .then Track(req, ['transaction', 'update', state])
-  .then responses_.Ok(res)
-  .catch error_.Handler(req, res)
+module.exports = (req, res, next) => sanitize(req, res, sanitization)
+.then(function(params){
+  const { transaction, state } = req.body;
+  const reqUserId = req.user._id;
+  return transactions_.byId(transaction)
+  .then(VerifyRights(state, reqUserId))
+  .then(transactions_.updateState.bind(null, state, reqUserId))
+  .then(Track(req, ['transaction', 'update', state]));}).then(responses_.Ok(res))
+.catch(error_.Handler(req, res));
 
-VerifyRights = (state, reqUserId)->
-  switch states[state].actor
-    when 'requester'
-      transactions_.verifyIsRequester.bind(null, reqUserId)
-    when 'owner'
-      transactions_.verifyIsOwner.bind(null, reqUserId)
-    when 'both'
-      transactions_.verifyRightToInteract.bind(null, reqUserId)
-    else throw error_.new 'unknown actor', 500, arguments
+var VerifyRights = function(state, reqUserId){
+  switch (states[state].actor) {
+    case 'requester':
+      return transactions_.verifyIsRequester.bind(null, reqUserId);
+    case 'owner':
+      return transactions_.verifyIsOwner.bind(null, reqUserId);
+    case 'both':
+      return transactions_.verifyRightToInteract.bind(null, reqUserId);
+    default: throw error_.new('unknown actor', 500, arguments);
+  }
+};

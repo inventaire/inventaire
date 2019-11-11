@@ -1,37 +1,45 @@
-# Get an image data-url from a URL
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+// Get an image data-url from a URL
 
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-error_ = __.require 'lib', 'error/error'
-responses_ = __.require 'lib', 'responses'
-{ Promise } = __.require 'lib', 'promises'
-breq = require 'bluereq'
-host = CONFIG.fullPublicHost()
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const error_ = __.require('lib', 'error/error');
+const responses_ = __.require('lib', 'responses');
+const { Promise } = __.require('lib', 'promises');
+const breq = require('bluereq');
+const host = CONFIG.fullPublicHost();
 
-module.exports = (req, res, next)->
-  { url } = req.query
+module.exports = function(req, res, next){
+  let { url } = req.query;
 
-  unless url? then return error_.bundleMissingQuery req, res, 'url'
+  if (url == null) { return error_.bundleMissingQuery(req, res, 'url'); }
 
-  url = decodeURIComponent url
-  if url[0] is '/' then url = host + url
+  url = decodeURIComponent(url);
+  if (url[0] === '/') { url = host + url; }
 
-  unless _.isUrl(url) then return error_.bundleInvalid req, res, 'url', url
+  if (!_.isUrl(url)) { return error_.bundleInvalid(req, res, 'url', url); }
 
-  getImageDataUrl url
-  .then responses_.Wrap(res, 'data-url')
-  .catch error_.Handler(req, res)
+  return getImageDataUrl(url)
+  .then(responses_.Wrap(res, 'data-url'))
+  .catch(error_.Handler(req, res));
+};
 
-getImageDataUrl = (url)->
-  # Set encoding as null to get the response as a buffer
-  # see https://stackoverflow.com/a/17133012/3324977
-  breq.get { url, encoding: null }
-  .then (res)->
-    contentType = res.headers['content-type']
+var getImageDataUrl = url => // Set encoding as null to get the response as a buffer
+// see https://stackoverflow.com/a/17133012/3324977
+breq.get({ url, encoding: null })
+.then(function(res){
+  const contentType = res.headers['content-type'];
 
-    if contentType.split('/')[0] isnt 'image'
-      throw error_.new 'invalid content type', 400, url, contentType
+  if (contentType.split('/')[0] !== 'image') {
+    throw error_.new('invalid content type', 400, url, contentType);
+  }
 
-    buffer = new Buffer(res.body).toString('base64')
-    return "data:#{contentType};base64,#{buffer}"
+  const buffer = new Buffer(res.body).toString('base64');
+  return `data:${contentType};base64,${buffer}`;
+});

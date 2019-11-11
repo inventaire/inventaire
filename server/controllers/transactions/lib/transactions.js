@@ -1,97 +1,124 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-Transaction = __.require 'models', 'transaction'
-error_ = __.require 'lib', 'error/error'
-promises_ = __.require 'lib', 'promises'
-comments_ = __.require 'controllers', 'comments/lib/comments'
-{ BasicUpdater } = __.require 'lib', 'doc_updates'
-{ minKey, maxKey } = __.require 'lib', 'couch'
-assert_ = __.require 'utils', 'assert_types'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const Transaction = __.require('models', 'transaction');
+const error_ = __.require('lib', 'error/error');
+const promises_ = __.require('lib', 'promises');
+const comments_ = __.require('controllers', 'comments/lib/comments');
+const { BasicUpdater } = __.require('lib', 'doc_updates');
+const { minKey, maxKey } = __.require('lib', 'couch');
+const assert_ = __.require('utils', 'assert_types');
 
-radio = __.require 'lib', 'radio'
+const radio = __.require('lib', 'radio');
 
-db = __.require('couch', 'base')('transactions')
+const db = __.require('couch', 'base')('transactions');
 
-transactions_ =
-  db: db
-  byId: db.get
-  byUser: (userId)->
-    db.viewCustom 'byUserAndItem',
-      # get all the docs with this userId
-      startkey: [ userId, minKey ]
-      endkey: [ userId, maxKey ]
+const transactions_ = {
+  db,
+  byId: db.get,
+  byUser(userId){
+    return db.viewCustom('byUserAndItem', {
+      // get all the docs with this userId
+      startkey: [ userId, minKey ],
+      endkey: [ userId, maxKey ],
       include_docs: true
+    }
+    );
+  },
 
-  byUserAndItem: (userId, itemId)->
-    assert_.strings [ userId, itemId ]
-    db.viewByKey 'byUserAndItem', [ userId, itemId ]
+  byUserAndItem(userId, itemId){
+    assert_.strings([ userId, itemId ]);
+    return db.viewByKey('byUserAndItem', [ userId, itemId ]);
+  },
 
-  create: (itemDoc, ownerDoc, requesterDoc)->
-    transaction = Transaction.create(itemDoc, ownerDoc, requesterDoc)
-    _.log transaction, 'transaction'
-    db.post transaction
-    .then (couchRes)->
-      radio.emit 'transaction:request', couchRes.id
-      return couchRes
+  create(itemDoc, ownerDoc, requesterDoc){
+    const transaction = Transaction.create(itemDoc, ownerDoc, requesterDoc);
+    _.log(transaction, 'transaction');
+    return db.post(transaction)
+    .then(function(couchRes){
+      radio.emit('transaction:request', couchRes.id);
+      return couchRes;
+    });
+  },
 
-  addMessage: (userId, message, transactionId)->
-    assert_.strings [ userId, message, transactionId ]
-    if message?
-      comments_.addTransactionComment(userId, message, transactionId)
+  addMessage(userId, message, transactionId){
+    assert_.strings([ userId, message, transactionId ]);
+    if (message != null) {
+      return comments_.addTransactionComment(userId, message, transactionId);
+    }
+  },
 
-  updateState: (newState, userId, transaction)->
-    Transaction.validatePossibleState transaction, newState
-    db.update transaction._id, stateUpdater(newState, userId, transaction)
-    .then -> radio.emit 'transaction:update', transaction, newState
+  updateState(newState, userId, transaction){
+    Transaction.validatePossibleState(transaction, newState);
+    return db.update(transaction._id, stateUpdater(newState, userId, transaction))
+    .then(() => radio.emit('transaction:update', transaction, newState));
+  },
 
-  markAsRead: (userId, transaction)->
-    role = userRole userId, transaction
-    # not handling cases when both user are connected:
-    # should be clarified once sockets/server events will be implemented
-    db.update transaction._id, BasicUpdater("read.#{role}", true)
+  markAsRead(userId, transaction){
+    const role = userRole(userId, transaction);
+    // not handling cases when both user are connected:
+    // should be clarified once sockets/server events will be implemented
+    return db.update(transaction._id, BasicUpdater(`read.${role}`, true));
+  },
 
-  updateReadForNewMessage: (userId, transaction)->
-    updatedReadStates = updateReadStates userId, transaction
-    # spares a db write if updatedReadStates is already the current read state object
-    if _.sameObjects updatedReadStates, transaction.read then promises_.resolved
-    else db.update transaction._id, BasicUpdater('read', updatedReadStates)
+  updateReadForNewMessage(userId, transaction){
+    const updatedReadStates = updateReadStates(userId, transaction);
+    // spares a db write if updatedReadStates is already the current read state object
+    if (_.sameObjects(updatedReadStates, transaction.read)) { return promises_.resolved;
+    } else { return db.update(transaction._id, BasicUpdater('read', updatedReadStates)); }
+  }
+};
 
-stateUpdater = (state, userId, transaction)->
-  updatedReadStates = updateReadStates userId, transaction
-  return updater = (doc)->
-    doc.state = state
-    action = { action: state, timestamp: Date.now() }
-    # keep track of the actor when it can be both
-    if state in actorCanBeBoth
-      role = userRole userId, transaction
-      action.actor = role
-    doc.actions.push action
-    doc.read = updatedReadStates
-    return doc
+var stateUpdater = function(state, userId, transaction){
+  let updater;
+  const updatedReadStates = updateReadStates(userId, transaction);
+  return updater = function(doc){
+    doc.state = state;
+    const action = { action: state, timestamp: Date.now() };
+    // keep track of the actor when it can be both
+    if (actorCanBeBoth.includes(state)) {
+      const role = userRole(userId, transaction);
+      action.actor = role;
+    }
+    doc.actions.push(action);
+    doc.read = updatedReadStates;
+    return doc;
+  };
+};
 
-actorCanBeBoth = ['cancelled']
+var actorCanBeBoth = ['cancelled'];
 
-updateReadStates = (userId, transaction)->
-  role = userRole userId, transaction
-  switch role
-    when 'owner' then return { owner: true, requester: false }
-    when 'requester' then return { owner: false, requester: true }
-    else throw error_.new 'updateReadStates err', 500, arguments
+var updateReadStates = function(userId, transaction){
+  const role = userRole(userId, transaction);
+  switch (role) {
+    case 'owner': return { owner: true, requester: false };
+    case 'requester': return { owner: false, requester: true };
+    default: throw error_.new('updateReadStates err', 500, arguments);
+  }
+};
 
-userRole = (userId, transaction)->
-  { owner, requester } = transaction
-  if userId is owner then return 'owner'
-  if userId is requester then return 'requester'
-  return throw error_.new 'no role found', 500, arguments
+var userRole = function(userId, transaction){
+  const { owner, requester } = transaction;
+  if (userId === owner) { return 'owner'; }
+  if (userId === requester) { return 'requester'; }
+  return (() => { throw error_.new('no role found', 500, arguments); })();
+};
 
-counts =
-  activeTransactions: (userId)->
-    transactions_.byUser userId
-    .then activeCount
+const counts = {
+  activeTransactions(userId){
+    return transactions_.byUser(userId)
+    .then(activeCount);
+  }
+};
 
-activeCount = (transacs)-> transacs.filter(Transaction.isActive).length
+var activeCount = transacs => transacs.filter(Transaction.isActive).length;
 
-rightsVerification = require('./rights_verification')(transactions_)
+const rightsVerification = require('./rights_verification')(transactions_);
 
-module.exports = _.extend transactions_, rightsVerification, counts
+module.exports = _.extend(transactions_, rightsVerification, counts);

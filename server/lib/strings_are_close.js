@@ -1,8 +1,9 @@
-leven = require 'leven'
+const leven = require('leven');
 
-module.exports = (a, b)->
-  averageLength = (a.length + b.length) / 2
-  # If the Levenshtein distance between the two strings
-  # is below a fourth of the average string length,
-  # we consider the two strings to be quite close
-  return leven(a.toLowerCase(), b.toLowerCase()) <= averageLength / 4
+module.exports = function(a, b){
+  const averageLength = (a.length + b.length) / 2;
+  // If the Levenshtein distance between the two strings
+  // is below a fourth of the average string length,
+  // we consider the two strings to be quite close
+  return leven(a.toLowerCase(), b.toLowerCase()) <= (averageLength / 4);
+};

@@ -1,20 +1,30 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require('builders', 'utils')
-{ Promise } = __.require 'lib', 'promises'
-fs_ = __.require 'lib', 'fs'
-{ local: localStorage } = CONFIG.mediaStorage
-storageFolder = localStorage.folder()
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const { Promise } = __.require('lib', 'promises');
+const fs_ = __.require('lib', 'fs');
+const { local: localStorage } = CONFIG.mediaStorage;
+const storageFolder = localStorage.folder();
 
-filePath = (container, filename)-> "#{storageFolder}/#{container}/#{filename}"
-tmpFolderPath = (filename)-> '/tmp/' + filename
+const filePath = (container, filename) => `${storageFolder}/${container}/${filename}`;
+const tmpFolderPath = filename => '/tmp/' + filename;
 
-module.exports =
-  putImage: (container, path, filename)->
-    fs_.mv path, filePath(container, filename)
-    .then -> "/img/#{container}/#{filename}"
+module.exports = {
+  putImage(container, path, filename){
+    return fs_.mv(path, filePath(container, filename))
+    .then(() => `/img/${container}/${filename}`);
+  },
 
-  deleteImages: (urls, headers)->
-    promises = urls.map (url)->
-      filename = url.split(base)[1]
-      fs_.mv filePath(filename), tmpFolderPath(filename)
+  deleteImages(urls, headers){
+    let promises;
+    return promises = urls.map(function(url){
+      const filename = url.split(base)[1];
+      return fs_.mv(filePath(filename), tmpFolderPath(filename));
+    });
+  }
+};

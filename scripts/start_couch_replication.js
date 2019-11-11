@@ -1,96 +1,115 @@
-#!/usr/bin/env coffee
+#!/usr/bin/env node
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
 
-breq = require 'bluereq'
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-chalk = require 'chalk'
-{ green, red, blue } = chalk
+const breq = require('bluereq');
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const chalk = require('chalk');
+const { green, red, blue } = chalk;
 
-# equivalent to curl -k
-# required to use self-signed ssl keys
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
+// equivalent to curl -k
+// required to use self-signed ssl keys
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
-IP = /^[0-9.]{7,15}$/
-{ from, ip, suffix, protocol, port, localPort, continuous, persist } = CONFIG.replication
-protocol or= 'https'
-port or= 6984
-localPort or= 6984
-continuous ?= true
+const IP = /^[0-9.]{7,15}$/;
+let { from, ip, suffix, protocol, port, localPort, continuous, persist } = CONFIG.replication;
+if (!protocol) { protocol = 'https'; }
+if (!port) { port = 6984; }
+if (!localPort) { localPort = 6984; }
+if (continuous == null) { continuous = true; }
 
-persistFromArgv = process.argv.slice(2)[0] is 'persist'
+const persistFromArgv = process.argv.slice(2)[0] === 'persist';
 
-endpoint = if persist or persistFromArgv then '_replicator' else '_replicate'
+const endpoint = persist || persistFromArgv ? '_replicator' : '_replicate';
 
-unless from?
-  throw new Error "bad CONFIG.replication.from: #{from}"
-unless IP.test(ip)
-  throw new Error "bad CONFIG.replication.ip: #{ip}"
-unless suffix?
-  throw new Error "bad CONFIG.replication.suffix: #{suffix}"
-console.log green('valid replication config found: ') + "#{from} @ #{ip}"
+if (from == null) {
+  throw new Error(`bad CONFIG.replication.from: ${from}`);
+}
+if (!IP.test(ip)) {
+  throw new Error(`bad CONFIG.replication.ip: ${ip}`);
+}
+if (suffix == null) {
+  throw new Error(`bad CONFIG.replication.suffix: ${suffix}`);
+}
+console.log(green('valid replication config found: ') + `${from} @ ${ip}`);
 
-{ username, password } = CONFIG.db
-unless username? and password?
-  throw new Error 'missing username or password in CONFIG.db'
+const { username, password } = CONFIG.db;
+if ((username == null) || (password == null)) {
+  throw new Error('missing username or password in CONFIG.db');
+}
 
-{ username:remoteUsername, password:remotePassword } = CONFIG.replication
-# If no replication credentials where passed, assume those are the same as the local ones
-remoteUsername or= username
-remotePassword or= password
+let { username:remoteUsername, password:remotePassword } = CONFIG.replication;
+// If no replication credentials where passed, assume those are the same as the local ones
+if (!remoteUsername) { remoteUsername = username; }
+if (!remotePassword) { remotePassword = password; }
 
-pw = [3..password.length]
-.map -> '•'
-.join ''
-pw = password[0..2] + pw
+let pw = __range__(3, password.length, true)
+.map(() => '•')
+.join('');
+pw = password.slice(0, 3) + pw;
 
-console.log green('valid username and password found: ') + "#{username} / #{pw}"
+console.log(green('valid username and password found: ') + `${username} / ${pw}`);
 
-dbsNames = Object.keys __.require('db', 'couch/list')
-dbsNames = dbsNames.map (name)-> "#{name}-#{suffix}"
-console.log green('dbs names found: ') +  dbsNames
+let dbsNames = Object.keys(__.require('db', 'couch/list'));
+dbsNames = dbsNames.map(name => `${name}-${suffix}`);
+console.log(green('dbs names found: ') +  dbsNames);
 
-localDb = (dbName)->
-  "#{protocol}://#{username}:#{password}@localhost:#{localPort}/#{dbName}"
+const localDb = dbName => `${protocol}://${username}:${password}@localhost:${localPort}/${dbName}`;
 
-localReplicate = (dbName)->
-  "#{protocol}://#{username}:#{password}@localhost:#{localPort}/#{endpoint}"
+const localReplicate = dbName => `${protocol}://${username}:${password}@localhost:${localPort}/${endpoint}`;
 
-remoteDb = (dbName)->
-  "#{protocol}://#{remoteUsername}:#{remotePassword}@#{ip}:#{port}/#{dbName}"
+const remoteDb = dbName => `${protocol}://${remoteUsername}:${remotePassword}@${ip}:${port}/${dbName}`;
 
-dbsNames.forEach (dbName)->
-  # pulling seems better than pushing
-  # http://wiki.apache.org/couchdb/How_to_replicate_a_database
-  repDoc =
-    source: remoteDb(dbName)
-    target: localDb(dbName)
-    continuous: continuous
+dbsNames.forEach(function(dbName){
+  // pulling seems better than pushing
+  // http://wiki.apache.org/couchdb/How_to_replicate_a_database
+  const repDoc = {
+    source: remoteDb(dbName),
+    target: localDb(dbName),
+    continuous
+  };
 
-  breq.get remoteDb(dbName)
-  .then (res)->
-    console.log green("#{dbName} handcheck: ")
-    console.log res.body
-    breq.post localReplicate(dbName), repDoc
-    .then (res)->
-      if res.body.ok? then color = 'green'
-      else color = 'red'
-      console.log chalk[color]("#{dbName} replication response: ")
-      console.log res.body
+  return breq.get(remoteDb(dbName))
+  .then(function(res){
+    console.log(green(`${dbName} handcheck: `));
+    console.log(res.body);
+    return breq.post(localReplicate(dbName), repDoc)
+    .then(function(res){
+      let color;
+      if (res.body.ok != null) { color = 'green';
+      } else { color = 'red'; }
+      console.log(chalk[color](`${dbName} replication response: `));
+      return console.log(res.body);
+    });}).timeout(20000)
+  .catch(err => console.log(err));
+});
 
-  # excessive time could mean that the firewall isn't opened to this machine
-  .timeout 20000
-  .catch (err)-> console.log err
+// TRYING TO PUT SECURITY DOC
+// will fail if db where already initialized
 
-# TRYING TO PUT SECURITY DOC
-# will fail if db where already initialized
+const _securityDoc = __.require('couchdb', 'security_doc');
 
-_securityDoc = __.require 'couchdb', 'security_doc'
+const putSecurityDoc = function(dbUrl){
+  const url = `${dbUrl}/_security`;
+  console.log(url, blue('trying to put security doc'));
+  return breq.put(url, _securityDoc)
+  .then(res => console.log(res.body, green('putSecurityDoc')))
+  .catch(err => console.error(err, red('putSecurityDoc')));
+};
 
-putSecurityDoc = (dbUrl)->
-  url = "#{dbUrl}/_security"
-  console.log url, blue('trying to put security doc')
-  breq.put url, _securityDoc
-  .then (res)-> console.log res.body, green('putSecurityDoc')
-  .catch (err)-> console.error err, red('putSecurityDoc')
+dbsNames.forEach(dbName => putSecurityDoc(localDb(dbName)));
 
-dbsNames.forEach (dbName)-> putSecurityDoc localDb(dbName)
+function __range__(left, right, inclusive) {
+  let range = [];
+  let ascending = left < right;
+  let end = !inclusive ? right : ascending ? right + 1 : right - 1;
+  for (let i = left; ascending ? i < end : i > end; ascending ? i++ : i--) {
+    range.push(i);
+  }
+  return range;
+}

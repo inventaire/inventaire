@@ -1,23 +1,25 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-requests_ = __.require 'lib', 'requests'
-assert_ = __.require 'utils', 'assert_types'
-{ host:elasticHost } = CONFIG.elasticsearch
-{ formatError } = __.require 'lib', 'elasticsearch'
-getIndexesAndTypes = require './get_indexes_and_types'
-queryBodyBuilder = require './query_body_builder'
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const requests_ = __.require('lib', 'requests');
+const assert_ = __.require('utils', 'assert_types');
+const { host:elasticHost } = CONFIG.elasticsearch;
+const { formatError } = __.require('lib', 'elasticsearch');
+const getIndexesAndTypes = require('./get_indexes_and_types');
+const queryBodyBuilder = require('./query_body_builder');
 
-# types should be a subset of ./types possibleTypes
-module.exports = (types, search, limit = 20)->
-  assert_.array types
-  assert_.string search
+// types should be a subset of ./types possibleTypes
+module.exports = function(types, search, limit = 20){
+  let indexes;
+  assert_.array(types);
+  assert_.string(search);
 
-  { indexes, types } = getIndexesAndTypes types
+  ({ indexes, types } = getIndexesAndTypes(types));
 
-  url = "#{elasticHost}/#{indexes.join(',')}/#{types.join(',')}/_search"
+  const url = `${elasticHost}/${indexes.join(',')}/${types.join(',')}/_search`;
 
-  body = queryBodyBuilder search, limit
+  const body = queryBodyBuilder(search, limit);
 
-  return requests_.post { url, body }
-  .catch formatError
+  return requests_.post({ url, body })
+  .catch(formatError);
+};

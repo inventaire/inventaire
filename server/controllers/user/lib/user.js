@@ -1,150 +1,169 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-promises_ = __.require 'lib', 'promises'
-error_ = __.require 'lib', 'error/error'
-assert_ = __.require 'utils', 'assert_types'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+let availability_;
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const promises_ = __.require('lib', 'promises');
+const error_ = __.require('lib', 'error/error');
+const assert_ = __.require('utils', 'assert_types');
 
-couch_ = __.require 'lib', 'couch'
-User = __.require 'models', 'user'
-{ byEmail, byEmails, findOneByEmail } = require './shared_user_handlers'
-{ omitPrivateData } = require './authorized_user_data_pickers'
-{ BasicUpdater } = __.require 'lib', 'doc_updates'
+const couch_ = __.require('lib', 'couch');
+const User = __.require('models', 'user');
+const { byEmail, byEmails, findOneByEmail } = require('./shared_user_handlers');
+const { omitPrivateData } = require('./authorized_user_data_pickers');
+const { BasicUpdater } = __.require('lib', 'doc_updates');
 
-db = __.require('couch', 'base')('users')
-geo = require('./geo/geo')()
+const db = __.require('couch', 'base')('users');
+const geo = require('./geo/geo')();
 
-user_ =
-  db: db
-  byId: db.get
-  byIds: db.fetch
-  byEmail: byEmail.bind(null, db)
-  byEmails: byEmails.bind(null, db)
-  findOneByEmail: findOneByEmail.bind(null, db)
+var user_ = {
+  db,
+  byId: db.get,
+  byIds: db.fetch,
+  byEmail: byEmail.bind(null, db),
+  byEmails: byEmails.bind(null, db),
+  findOneByEmail: findOneByEmail.bind(null, db),
 
-  getUsersByEmails: (emails, reqUserId)->
-    assert_.array emails
-    # Keeping the email is required to map the users returned
-    # with the initial input
-    user_.getUsersAuthorizedData user_.byEmails(emails), reqUserId, 'email'
+  getUsersByEmails(emails, reqUserId){
+    assert_.array(emails);
+    // Keeping the email is required to map the users returned
+    // with the initial input
+    return user_.getUsersAuthorizedData(user_.byEmails(emails), reqUserId, 'email');
+  },
 
-  byUsername: (username)-> db.viewByKey 'byUsername', username.toLowerCase()
-  byUsernames: (usernames)->
-    db.viewByKeys 'byUsername', usernames.map(_.toLowerCase)
+  byUsername(username){ return db.viewByKey('byUsername', username.toLowerCase()); },
+  byUsernames(usernames){
+    return db.viewByKeys('byUsername', usernames.map(_.toLowerCase));
+  },
 
-  findOneByUsername: (username)->
-    user_.byUsername username
-    .then couch_.firstDoc
-    .then (user)->
-      # ignoring case as expected does the database
-      if user?.username.toLowerCase() is username.toLowerCase() then return user
-      else throw error_.notFound { username }
+  findOneByUsername(username){
+    return user_.byUsername(username)
+    .then(couch_.firstDoc)
+    .then(function(user){
+      // ignoring case as expected does the database
+      if ((user != null ? user.username.toLowerCase() : undefined) === username.toLowerCase()) { return user;
+      } else { throw error_.notFound({ username }); }});
+  },
 
-  findOneByUsernameOrEmail: (str)->
-    if User.validations.email(str) then user_.findOneByEmail str
-    else user_.findOneByUsername(str)
+  findOneByUsernameOrEmail(str){
+    if (User.validations.email(str)) { return user_.findOneByEmail(str);
+    } else { return user_.findOneByUsername(str); }
+  },
 
-  getUserFromUsername: (username, reqUserId)->
-    assert_.string username
-    user_.getUsersAuthorizedData user_.byUsername(username), reqUserId
-    .then (usersDocs)->
-      userDoc = usersDocs[0]
-      if userDoc? then return userDoc
-      else throw error_.notFound { username }
+  getUserFromUsername(username, reqUserId){
+    assert_.string(username);
+    return user_.getUsersAuthorizedData(user_.byUsername(username), reqUserId)
+    .then(function(usersDocs){
+      const userDoc = usersDocs[0];
+      if (userDoc != null) { return userDoc;
+      } else { throw error_.notFound({ username }); }});
+  },
 
-  getUserById: (id, reqUserId)->
-    assert_.string id
-    user_.getUsersAuthorizedData user_.byIds([id]), reqUserId
-    .then (users)->
-      user = users[0]
-      if user? then return user
-      else throw error_.notFound { userId: id }
+  getUserById(id, reqUserId){
+    assert_.string(id);
+    return user_.getUsersAuthorizedData(user_.byIds([id]), reqUserId)
+    .then(function(users){
+      const user = users[0];
+      if (user != null) { return user;
+      } else { throw error_.notFound({ userId: id }); }});
+  },
 
-  getUsersByIds: (ids, reqUserId)->
-    assert_.array ids
-    if ids.length is 0 then return promises_.resolve []
-    user_.getUsersAuthorizedData user_.byIds(ids), reqUserId
+  getUsersByIds(ids, reqUserId){
+    assert_.array(ids);
+    if (ids.length === 0) { return promises_.resolve([]); }
+    return user_.getUsersAuthorizedData(user_.byIds(ids), reqUserId);
+  },
 
-  getUsersAuthorizedData: (usersDocsPromise, reqUserId, extraAttribute)->
-    promises_.all [
-      usersDocsPromise
-      user_.getNetworkIds reqUserId
-    ]
-    .spread (usersDocs, networkIds)->
-      _.compact usersDocs
-      .filter (user)-> user.type isnt 'deletedUser'
-      .map omitPrivateData(reqUserId, networkIds, extraAttribute)
+  getUsersAuthorizedData(usersDocsPromise, reqUserId, extraAttribute){
+    return promises_.all([
+      usersDocsPromise,
+      user_.getNetworkIds(reqUserId)
+    ])
+    .spread((usersDocs, networkIds) => _.compact(usersDocs)
+    .filter(user => user.type !== 'deletedUser')
+    .map(omitPrivateData(reqUserId, networkIds, extraAttribute)));
+  },
 
-  getUsersIndexByIds: (reqUserId)-> (ids)->
-    user_.getUsersByIds ids, reqUserId
-    .then _.KeyBy('_id')
+  getUsersIndexByIds(reqUserId){ return ids => user_.getUsersByIds(ids, reqUserId)
+  .then(_.KeyBy('_id')); },
 
-  getUsersIndexByUsernames: (reqUserId)-> (usernames)->
-    user_.getUsersAuthorizedData user_.byUsernames(usernames), reqUserId
-    .then (users)-> users.reduce indexByLowerCasedUsername, {}
+  getUsersIndexByUsernames(reqUserId){ return usernames => user_.getUsersAuthorizedData(user_.byUsernames(usernames), reqUserId)
+  .then(users => users.reduce(indexByLowerCasedUsername, {})); },
 
-  incrementUndeliveredMailCounter: (email)->
-    user_.findOneByEmail email
-    .then (doc)->
-      { _id } = doc
-      db.update _id, (doc)->
-        doc.undeliveredEmail or= 0
-        doc.undeliveredEmail += 1
-        return doc
+  incrementUndeliveredMailCounter(email){
+    return user_.findOneByEmail(email)
+    .then(function(doc){
+      const { _id } = doc;
+      return db.update(_id, function(doc){
+        if (!doc.undeliveredEmail) { doc.undeliveredEmail = 0; }
+        doc.undeliveredEmail += 1;
+        return doc;
+      });
+    });
+  },
 
-  makeUserAdmin: (userId)-> db.update userId, BasicUpdater('admin', true)
+  makeUserAdmin(userId){ return db.update(userId, BasicUpdater('admin', true)); },
 
-  nearby: (userId, meterRange, strict)->
-    user_.byId userId
-    .then (user)->
-      { position } = user
-      unless position?
-        throw error_.new 'user has no position set', 400, userId
+  nearby(userId, meterRange, strict){
+    return user_.byId(userId)
+    .then(function(user){
+      const { position } = user;
+      if (position == null) {
+        throw error_.new('user has no position set', 400, userId);
+      }
 
-      findNearby position, meterRange, null, strict
-      .then (res)->
-        ids = res.map _.property('id')
-        return _.without ids, userId
+      return findNearby(position, meterRange, null, strict)
+      .then(function(res){
+        const ids = res.map(_.property('id'));
+        return _.without(ids, userId);
+      });}).catch(_.ErrorRethrow('nearby err'));
+  }
+};
 
-    .catch _.ErrorRethrow('nearby err')
+var findNearby = (latLng, meterRange, iterations = 0, strict = false) => geo.search(latLng, meterRange)
+.then(function(res){
+  // Try to get the 10 closest (11 minus the main user)
+  // If strict, don't augment the range, just return what was found;
+  // else double the range
+  // But stop after 10 iterations to avoid creating an infinit loop
+  // if there are no users geolocated
+  if ((res.length > 11) || strict || (iterations > 10)) { return res;
+  } else {
+    iterations += 1;
+    return findNearby(latLng, meterRange * 2, iterations);
+  }
+});
 
-findNearby = (latLng, meterRange, iterations = 0, strict = false)->
-  geo.search latLng, meterRange
-  .then (res)->
-    # Try to get the 10 closest (11 minus the main user)
-    # If strict, don't augment the range, just return what was found;
-    # else double the range
-    # But stop after 10 iterations to avoid creating an infinit loop
-    # if there are no users geolocated
-    if res.length > 11 or strict or iterations > 10 then return res
-    else
-      iterations += 1
-      return findNearby latLng, meterRange * 2, iterations
+var indexByLowerCasedUsername = function(users, user){
+  const lowercasedUsername = user.username.toLowerCase();
+  users[lowercasedUsername] = user;
+  return users;
+};
 
-indexByLowerCasedUsername = (users, user)->
-  lowercasedUsername = user.username.toLowerCase()
-  users[lowercasedUsername] = user
-  return users
+const token_ = require('./token')(db, user_);
 
-token_ = require('./token')(db, user_)
+user_.updateEmail = function(user, email){
+  user = User.updateEmail(user, email);
+  return db.put(user)
+  // sendValidationEmail doesn't need to access the last _rev
+  // so it's ok to pass the user as it was before the database was updated
+  .then(() => token_.sendValidationEmail(user));
+};
 
-user_.updateEmail = (user, email)->
-  user = User.updateEmail user, email
-  db.put user
-  # sendValidationEmail doesn't need to access the last _rev
-  # so it's ok to pass the user as it was before the database was updated
-  .then -> token_.sendValidationEmail user
+user_.setOauthTokens = (userId, provider, data) => db.update(userId, User.setOauthTokens(provider, data));
 
-user_.setOauthTokens = (userId, provider, data)->
-  db.update userId, User.setOauthTokens(provider, data)
+user_.availability = (availability_ = require('./availability')(user_));
+user_.create = require('./create')(db, token_, availability_);
+user_.byPosition = __.require('lib', 'by_position')(db, 'users');
 
-user_.availability = availability_ = require('./availability')(user_)
-user_.create = require('./create')(db, token_, availability_)
-user_.byPosition = __.require('lib', 'by_position')(db, 'users')
+const deleteUser = require('./delete')(db, user_);
+const reqParsers = require('./req_parsers');
+const relationsStatus = require('./relations_status');
+const summary_ = require('./summary')(db);
 
-deleteUser = require('./delete')(db, user_)
-reqParsers = require './req_parsers'
-relationsStatus = require './relations_status'
-summary_ = require('./summary')(db)
-
-module.exports = _.extend user_, token_, relationsStatus, reqParsers, deleteUser, summary_
+module.exports = _.extend(user_, token_, relationsStatus, reqParsers, deleteUser, summary_);

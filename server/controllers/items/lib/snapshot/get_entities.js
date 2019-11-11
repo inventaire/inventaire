@@ -1,56 +1,61 @@
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-assert_ = __.require 'utils', 'assert_types'
-getEntityByUri = __.require 'controllers', 'entities/lib/get_entity_by_uri'
-getEntitiesByUris = __.require 'controllers', 'entities/lib/get_entities_by_uris'
-{ Promise } = __.require 'lib', 'promises'
-{ aggregateClaims } = require './helpers'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const assert_ = __.require('utils', 'assert_types');
+const getEntityByUri = __.require('controllers', 'entities/lib/get_entity_by_uri');
+const getEntitiesByUris = __.require('controllers', 'entities/lib/get_entities_by_uris');
+const { Promise } = __.require('lib', 'promises');
+const { aggregateClaims } = require('./helpers');
 
-getRelativeEntities = (relationProperty)-> (entity)->
-  uris = entity.claims[relationProperty]
-  unless uris?.length > 0 then return Promise.resolve []
-  getEntitiesByUris { uris }
-  .then (res)-> _.values(res.entities)
+const getRelativeEntities = relationProperty => (function(entity) {
+  const uris = entity.claims[relationProperty];
+  if ((uris != null ? uris.length : undefined) <= 0) { return Promise.resolve([]); }
+  return getEntitiesByUris({ uris })
+  .then(res => _.values(res.entities));
+});
 
-getEditionWorks = getRelativeEntities 'wdt:P629'
-getWorkAuthors = getRelativeEntities 'wdt:P50'
-getWorkSeries = getRelativeEntities 'wdt:P179'
+const getEditionWorks = getRelativeEntities('wdt:P629');
+const getWorkAuthors = getRelativeEntities('wdt:P50');
+const getWorkSeries = getRelativeEntities('wdt:P179');
 
-getWorkAuthorsAndSeries = (work)->
-  Promise.all [
-    getWorkAuthors work
-    getWorkSeries work
-  ]
+const getWorkAuthorsAndSeries = work => Promise.all([
+  getWorkAuthors(work),
+  getWorkSeries(work)
+]);
 
-getEditionGraphFromEdition = (edition)->
-  getEditionWorks edition
-  .then (works)->
-    assert_.array works
-    getWorksAuthorsAndSeries works
-    # Tailor output to be spreaded on buildSnapshot.edition
-    .spread (authors, series)-> [ edition, works, authors, series ]
+const getEditionGraphFromEdition = edition => getEditionWorks(edition)
+.then(function(works){
+  assert_.array(works);
+  return getWorksAuthorsAndSeries(works)
+  // Tailor output to be spreaded on buildSnapshot.edition
+  .spread((authors, series) => [ edition, works, authors, series ]);});
 
-getWorksAuthorsAndSeries = (works)->
-  mergedWorks = { claims: mergeWorksClaims(works) }
-  return getWorkAuthorsAndSeries mergedWorks
+var getWorksAuthorsAndSeries = function(works){
+  const mergedWorks = { claims: mergeWorksClaims(works) };
+  return getWorkAuthorsAndSeries(mergedWorks);
+};
 
-# Aggregating edition's potentially multiple works claims to fit
-# dependent functions' needs
-mergeWorksClaims = (works)->
-  'wdt:P50': aggregateClaims works, 'wdt:P50'
-  'wdt:P179': aggregateClaims works, 'wdt:P179'
+// Aggregating edition's potentially multiple works claims to fit
+// dependent functions' needs
+var mergeWorksClaims = works => ({
+  'wdt:P50': aggregateClaims(works, 'wdt:P50'),
+  'wdt:P179': aggregateClaims(works, 'wdt:P179')
+});
 
-getEditionGraphEntities = (uri)->
-  getEntityByUri { uri }
-  .then getEditionGraphFromEdition
+const getEditionGraphEntities = uri => getEntityByUri({ uri })
+.then(getEditionGraphFromEdition);
 
-getWorkGraphFromWork = (lang, work)->
-  getWorkAuthorsAndSeries work
-  .spread (authors, series)-> [ lang, work, authors, series ]
+const getWorkGraphFromWork = (lang, work) => getWorkAuthorsAndSeries(work)
+.spread((authors, series) => [ lang, work, authors, series ]);
 
 module.exports = {
-  getWorkAuthorsAndSeries
+  getWorkAuthorsAndSeries,
   getEditionGraphFromEdition,
   getEditionGraphEntities,
   getWorkGraphFromWork,
-}
+};

@@ -1,37 +1,51 @@
-# retrieves pictures stocked on the server itself under the 'local' mediaStorage mode
-# to be used in development only
+/*
+ * decaffeinate suggestions:
+ * DS101: Remove unnecessary use of Array.from
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+// retrieves pictures stocked on the server itself under the 'local' mediaStorage mode
+// to be used in development only
 
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-error_ = __.require 'lib', 'error/error'
-images_ = __.require 'lib', 'images'
-promises_ = __.require 'lib', 'promises'
-regex_ = __.require 'lib', 'regex'
-{ local: localStorage } = CONFIG.mediaStorage
-storageFolder = localStorage.folder()
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const error_ = __.require('lib', 'error/error');
+const images_ = __.require('lib', 'images');
+const promises_ = __.require('lib', 'promises');
+const regex_ = __.require('lib', 'regex');
+const { local: localStorage } = CONFIG.mediaStorage;
+const storageFolder = localStorage.folder();
 
-# images urls look like /img/#{container}/#{hash}"
-# expect the pictures' files to be in #{storageFolder}
+// images urls look like /img/#{container}/#{hash}"
+// expect the pictures' files to be in #{storageFolder}
 
-exports.get = (req, res, next)->
-  { pathname } = req._parsedUrl
-  [ container, filename ] = pathname.split('/').slice(2)
-  [ hash, extension, others... ] = filename.split '.'
+exports.get = function(req, res, next){
+  const { pathname } = req._parsedUrl;
+  const [ container, filename ] = Array.from(pathname.split('/').slice(2));
+  const [ hash, extension, ...others ] = Array.from(filename.split('.'));
 
-  if others.length > 0
-    return error_.bundle req, res, 'invalid image path', 400, { filename }
+  if (others.length > 0) {
+    return error_.bundle(req, res, 'invalid image path', 400, { filename });
+  }
 
-  unless regex_.Sha1.test(hash) or container is 'assets'
-    return error_.bundle req, res, 'invalid image hash', 400, { filename, hash, extension }
+  if (!regex_.Sha1.test(hash) && (container !== 'assets')) {
+    return error_.bundle(req, res, 'invalid image hash', 400, { filename, hash, extension });
+  }
 
-  filepath = "#{storageFolder}/#{container}/#{filename}"
+  const filepath = `${storageFolder}/${container}/${filename}`;
 
-  options =
-    headers:
+  const options = {
+    headers: {
       'Content-Type': 'image/jpeg'
+    }
+  };
 
-  res.sendFile filepath, options, (err)->
-    if err?
-      _.error err, "failed to send #{filepath}"
-      res.status(err.statusCode).json err
+  return res.sendFile(filepath, options, function(err){
+    if (err != null) {
+      _.error(err, `failed to send ${filepath}`);
+      return res.status(err.statusCode).json(err);
+    }
+  });
+};

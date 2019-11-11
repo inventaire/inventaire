@@ -1,15 +1,17 @@
-__ = require('config').universalPath
-_ = __.require('builders', 'utils')
-assert_ = __.require 'utils', 'assert_types'
-wdk = require 'wikidata-sdk'
-whitelistedProperties = require './whitelisted_properties'
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const assert_ = __.require('utils', 'assert_types');
+const wdk = require('wikidata-sdk');
+const whitelistedProperties = require('./whitelisted_properties');
 
-options =
-  entityPrefix: 'wd'
-  propertyPrefix: 'wdt'
+const options = {
+  entityPrefix: 'wd',
+  propertyPrefix: 'wdt',
   timeConverter: 'simple-day'
+};
 
-module.exports = (claims, wdId)->
-  assert_.types ['object', 'string'], [ claims, wdId ]
-  whitelistedClaims = _.pick claims, whitelistedProperties
-  return wdk.simplifyClaims whitelistedClaims, options
+module.exports = function(claims, wdId){
+  assert_.types(['object', 'string'], [ claims, wdId ]);
+  const whitelistedClaims = _.pick(claims, whitelistedProperties);
+  return wdk.simplifyClaims(whitelistedClaims, options);
+};

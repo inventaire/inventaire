@@ -1,17 +1,25 @@
-{ yellow, cyan, green, red, grey } = require 'chalk'
-write = process.stdout.write.bind(process.stdout)
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const { yellow, cyan, green, red, grey } = require('chalk');
+const write = process.stdout.write.bind(process.stdout);
 
-{ diffLines } = require 'diff'
-stringify = (obj)-> JSON.stringify obj, null, 2
+const { diffLines } = require('diff');
+const stringify = obj => JSON.stringify(obj, null, 2);
 
-module.exports = (current, update, preview)->
-  if preview then console.log cyan('PREVIEW')
-  else console.log yellow('CHANGE')
-  diffLines stringify(current), stringify(update)
-  .forEach (part)->
-    { added, removed, value } = part
-    if added? then write green(value)
-    else if removed? then write red(value)
-    else write grey(value)
+module.exports = function(current, update, preview){
+  if (preview) { console.log(cyan('PREVIEW'));
+  } else { console.log(yellow('CHANGE')); }
+  diffLines(stringify(current), stringify(update))
+  .forEach(function(part){
+    const { added, removed, value } = part;
+    if (added != null) { return write(green(value));
+    } else if (removed != null) { return write(red(value));
+    } else { return write(grey(value)); }
+  });
 
-  write '\n'
+  return write('\n');
+};

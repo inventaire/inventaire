@@ -1,14 +1,22 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
 
-module.exports =
-  legacyApiRedirect: (req, res, next)->
-    parts = req._parsedUrl.pathname.split('/')
-    if parts[3] is 'public'
-      rewroteUrl = req.url.replace '/public', ''
-      res.redirect rewroteUrl
-    else
-      next()
+module.exports = {
+  legacyApiRedirect(req, res, next){
+    const parts = req._parsedUrl.pathname.split('/');
+    if (parts[3] === 'public') {
+      const rewroteUrl = req.url.replace('/public', '');
+      return res.redirect(rewroteUrl);
+    } else {
+      return next();
+    }
+  },
 
   methodOverride: require('method-override')()
+};

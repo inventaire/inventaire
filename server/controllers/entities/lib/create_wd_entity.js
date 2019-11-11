@@ -1,73 +1,92 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-error_ = __.require 'lib', 'error/error'
-wdEdit = require 'wikidata-edit'
-wdOauth = require './wikidata_oauth'
-{ Promise } = __.require 'lib', 'promises'
-validateEntity = require './validate_entity'
-getEntityType = require './get_entity_type'
-properties = require './properties/properties_values_constraints'
-{ prefixifyWd, unprefixify } = require './prefix'
-whitelistedEntityTypes = [ 'work', 'serie', 'human', 'publisher' ]
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const error_ = __.require('lib', 'error/error');
+const wdEdit = require('wikidata-edit');
+const wdOauth = require('./wikidata_oauth');
+const { Promise } = __.require('lib', 'promises');
+const validateEntity = require('./validate_entity');
+const getEntityType = require('./get_entity_type');
+const properties = require('./properties/properties_values_constraints');
+const { prefixifyWd, unprefixify } = require('./prefix');
+const whitelistedEntityTypes = [ 'work', 'serie', 'human', 'publisher' ];
 
-module.exports = (params)-> Promise.try -> createWdEntity params
+module.exports = params => Promise.try(() => createWdEntity(params));
 
-createWdEntity = (params)->
-  { labels, claims, user, isAlreadyValidated } = params
-  wdOauth.validate user
-  oauth = wdOauth.getFullCredentials user
+var createWdEntity = function(params){
+  const { labels, claims, user, isAlreadyValidated } = params;
+  wdOauth.validate(user);
+  const oauth = wdOauth.getFullCredentials(user);
 
-  entity = { labels, claims }
+  let entity = { labels, claims };
 
-  _.log entity, 'wd entity creation'
+  _.log(entity, 'wd entity creation');
 
-  validate entity, isAlreadyValidated
-  .then ->
-    validateWikidataCompliance entity
-    return format entity
-  .then wdEdit({ oauth }, 'entity/create')
-  .then (res)->
-    { entity } = res
-    unless entity?
-      throw error_.new 'invalid wikidata-edit response', 500, { res }
+  return validate(entity, isAlreadyValidated)
+  .then(function() {
+    validateWikidataCompliance(entity);
+    return format(entity);}).then(wdEdit({ oauth }, 'entity/create'))
+  .then(function(res){
+    ({ entity } = res);
+    if (entity == null) {
+      throw error_.new('invalid wikidata-edit response', 500, { res });
+    }
 
-    entity.uri = prefixifyWd entity.id
-    return entity
+    entity.uri = prefixifyWd(entity.id);
+    return entity;
+  });
+};
 
-validate = (entity, isAlreadyValidated)->
-  if isAlreadyValidated then Promise.resolve()
-  else validateEntity entity
+var validate = function(entity, isAlreadyValidated){
+  if (isAlreadyValidated) { return Promise.resolve();
+  } else { return validateEntity(entity); }
+};
 
-validateWikidataCompliance = (entity)->
-  { claims } = entity
-  unless claims? then throw error_.new 'invalid entity', 400, entity
+var validateWikidataCompliance = function(entity){
+  const { claims } = entity;
+  if (claims == null) { throw error_.new('invalid entity', 400, entity); }
 
-  entityType = getEntityType claims['wdt:P31']
-  unless entityType in whitelistedEntityTypes
-    throw error_.new 'invalid entity type', 400, { entityType, entity }
+  const entityType = getEntityType(claims['wdt:P31']);
+  if (!whitelistedEntityTypes.includes(entityType)) {
+    throw error_.new('invalid entity type', 400, { entityType, entity });
+  }
 
-  for property, values of claims
-    if properties[property].datatype is 'entity'
-      for value in values
-        if value.split(':')[0] is 'inv'
-          throw error_.new 'claim value is an inv uri', 400, { property, value }
+  for (let property in claims) {
+    const values = claims[property];
+    if (properties[property].datatype === 'entity') {
+      for (let value of values) {
+        if (value.split(':')[0] === 'inv') {
+          throw error_.new('claim value is an inv uri', 400, { property, value });
+        }
+      }
+    }
+  }
 
-  return entity
+  return entity;
+};
 
-format = (entity)->
-  { claims } = entity
+var format = function(entity){
+  const { claims } = entity;
   entity.claims = Object.keys(claims)
-    .reduce unprefixifyClaims(claims), {}
-  return entity
+    .reduce(unprefixifyClaims(claims), {});
+  return entity;
+};
 
-unprefixifyClaims = (claims)-> (formattedClaims, property)->
-  unprefixifiedProp = unprefixify property
-  propertyValues = claims[property]
+var unprefixifyClaims = claims => (function(formattedClaims, property) {
+  const unprefixifiedProp = unprefixify(property);
+  const propertyValues = claims[property];
 
-  if properties[property].datatype is 'entity'
-    formattedClaims[unprefixifiedProp] = propertyValues.map unprefixify
-  else
-    # datatype 'string' should not be unprefixified, ex: 'Jules Vernes'
-    formattedClaims[unprefixifiedProp] = propertyValues
-  return formattedClaims
+  if (properties[property].datatype === 'entity') {
+    formattedClaims[unprefixifiedProp] = propertyValues.map(unprefixify);
+  } else {
+    // datatype 'string' should not be unprefixified, ex: 'Jules Vernes'
+    formattedClaims[unprefixifiedProp] = propertyValues;
+  }
+  return formattedClaims;
+});

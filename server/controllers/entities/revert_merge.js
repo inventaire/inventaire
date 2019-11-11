@@ -1,24 +1,33 @@
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-responses_ = __.require 'lib', 'responses'
-error_ = __.require 'lib', 'error/error'
-revertMerge = require './lib/revert_merge'
-radio = __.require 'lib', 'radio'
+/*
+ * decaffeinate suggestions:
+ * DS101: Remove unnecessary use of Array.from
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const responses_ = __.require('lib', 'responses');
+const error_ = __.require('lib', 'error/error');
+const revertMerge = require('./lib/revert_merge');
+const radio = __.require('lib', 'radio');
 
-module.exports = (req, res)->
-  { body } = req
-  { from:fromUri } = body
-  { _id:reqUserId } = req.user
+module.exports = function(req, res){
+  const { body } = req;
+  const { from:fromUri } = body;
+  const { _id:reqUserId } = req.user;
 
-  unless _.isNonEmptyString fromUri
-    return error_.bundleMissingBody req, res, 'from'
+  if (!_.isNonEmptyString(fromUri)) {
+    return error_.bundleMissingBody(req, res, 'from');
+  }
 
-  [ fromPrefix, fromId ] = fromUri.split ':'
+  const [ fromPrefix, fromId ] = Array.from(fromUri.split(':'));
 
-  unless fromPrefix is 'inv' and _.isInvEntityId fromId
-    return error_.bundleInvalid req, res, 'from'
+  if ((fromPrefix !== 'inv') || !_.isInvEntityId(fromId)) {
+    return error_.bundleInvalid(req, res, 'from');
+  }
 
-  revertMerge reqUserId, fromId
-  .tap -> radio.emit 'entity:revert:merge', fromUri
-  .then responses_.Send(res)
-  .catch error_.Handler(req, res)
+  return revertMerge(reqUserId, fromId)
+  .tap(() => radio.emit('entity:revert:merge', fromUri))
+  .then(responses_.Send(res))
+  .catch(error_.Handler(req, res));
+};

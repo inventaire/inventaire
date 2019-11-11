@@ -1,16 +1,18 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-backupGeneralFolder = CONFIG.db.backupFolder
-fs = require 'fs'
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const backupGeneralFolder = CONFIG.db.backupFolder;
+const fs = require('fs');
 
-module.exports = ->
-  day = _.simpleDay()
-  backupFolder = "#{backupGeneralFolder}/#{day}"
+module.exports = function() {
+  const day = _.simpleDay();
+  const backupFolder = `${backupGeneralFolder}/${day}`;
 
-  try
-    fs.mkdirSync backupFolder
-  catch err
-    if err.code isnt 'EEXIST' then throw err
+  try {
+    fs.mkdirSync(backupFolder);
+  } catch (err) {
+    if (err.code !== 'EEXIST') { throw err; }
+  }
 
-  return { backupFolder, backupGeneralFolder, day }
+  return { backupFolder, backupGeneralFolder, day };
+};

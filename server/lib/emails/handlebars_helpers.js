@@ -1,41 +1,54 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-i18n = require './i18n/i18n'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const i18n = require('./i18n/i18n');
 
-appApi = require './app_api'
+const appApi = require('./app_api');
 
-module.exports = _.extend {}, i18n,
-  # Prevent passing more than 2 arguments
-  debug: (obj, label)->
-    _.log obj, label
-    return JSON.stringify(obj, null, 2)
+module.exports = _.extend({}, i18n, {
+  // Prevent passing more than 2 arguments
+  debug(obj, label){
+    _.log(obj, label);
+    return JSON.stringify(obj, null, 2);
+  },
 
-  # Keep in sync with client/app/lib/handlebars_helpers/images
-  imgSrc: (path, width, height)->
-    if isDataUrl path then return path
+  // Keep in sync with client/app/lib/handlebars_helpers/images
+  imgSrc(path, width, height){
+    if (isDataUrl(path)) { return path; }
 
-    width = getImgDimension width, 1600
-    width = bestImageWidth width
-    height = getImgDimension height, width
-    path = onePictureOnly path
+    width = getImgDimension(width, 1600);
+    width = bestImageWidth(width);
+    height = getImgDimension(height, width);
+    path = onePictureOnly(path);
 
-    unless path? then return ''
+    if (path == null) { return ''; }
 
-    return appApi.img path, width, height
+    return appApi.img(path, width, height);
+  }
+}
+);
 
-onePictureOnly = (arg)->
-  if _.isArray(arg) then return arg[0] else arg
+var onePictureOnly = function(arg){
+  if (_.isArray(arg)) { return arg[0]; } else { return arg; }
+};
 
-getImgDimension = (dimension, defaultValue)->
-  if _.isNumber dimension then return dimension
-  else defaultValue
+var getImgDimension = function(dimension, defaultValue){
+  if (_.isNumber(dimension)) { return dimension;
+  } else { return defaultValue; }
+};
 
-isDataUrl = (str)-> /^data:image/.test str
+var isDataUrl = str => /^data:image/.test(str);
 
-bestImageWidth = (width)->
-  # under 500, it's useful to keep the freedom to get exactly 64 or 128px etc
-  # while still grouping on the initially requested width
-  if width < 500 then return width
-  # group image width above 500 by levels of 100px to limit generated versions
-  else return Math.ceil(width / 100) * 100
+var bestImageWidth = function(width){
+  // under 500, it's useful to keep the freedom to get exactly 64 or 128px etc
+  // while still grouping on the initially requested width
+  if (width < 500) { return width;
+  // group image width above 500 by levels of 100px to limit generated versions
+  } else { return Math.ceil(width / 100) * 100; }
+};

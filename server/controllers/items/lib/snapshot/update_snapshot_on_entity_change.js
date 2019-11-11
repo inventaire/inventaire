@@ -1,30 +1,35 @@
-__ = require('config').universalPath
-radio = __.require 'lib', 'radio'
-refreshSnapshot = require './refresh_snapshot'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const __ = require('config').universalPath;
+const radio = __.require('lib', 'radio');
+const refreshSnapshot = require('./refresh_snapshot');
 
-# Items keep some data about their related entities, and those entities graphs
-# to make querying items quick, while keeping the required data at end
-# to display basic information on the given item.
-# This is sort of a caching system, with all the problems related to updating
-# cached data.
-# The strategy here:
-# - update local entities snapshot data directly on change
-# - update remote entities snapshot data once in a while:
-#   Wikidata's data is assumed to be more reliable, and less changing
+// Items keep some data about their related entities, and those entities graphs
+// to make querying items quick, while keeping the required data at end
+// to display basic information on the given item.
+// This is sort of a caching system, with all the problems related to updating
+// cached data.
+// The strategy here:
+// - update local entities snapshot data directly on change
+// - update remote entities snapshot data once in a while:
+//   Wikidata's data is assumed to be more reliable, and less changing
 
-# TODO: filter update events by relevance to items snapshots:
-# It doesn't matter that some entity got an update on some properties
-# that aren't involved in generating the snapshot data. Ex: edition publisher.
+// TODO: filter update events by relevance to items snapshots:
+// It doesn't matter that some entity got an update on some properties
+// that aren't involved in generating the snapshot data. Ex: edition publisher.
 
-# TODO: use the Wikidata recentchanges API to follow remote entities updates
-# https://www.wikidata.org/w/api.php?action=help&modules=query%2Brecentchanges
+// TODO: use the Wikidata recentchanges API to follow remote entities updates
+// https://www.wikidata.org/w/api.php?action=help&modules=query%2Brecentchanges
 
-module.exports = ->
-  radio.on 'entity:update:label', refreshSnapshot.fromDoc
-  radio.on 'entity:update:claim', refreshSnapshot.fromDoc
-  radio.on 'entity:merge', updateSnapshotOnEntityMerge
-  radio.on 'entity:revert:merge', refreshSnapshot.fromUri
+module.exports = function() {
+  radio.on('entity:update:label', refreshSnapshot.fromDoc);
+  radio.on('entity:update:claim', refreshSnapshot.fromDoc);
+  radio.on('entity:merge', updateSnapshotOnEntityMerge);
+  return radio.on('entity:revert:merge', refreshSnapshot.fromUri);
+};
 
-updateSnapshotOnEntityMerge = (fromUri, toUri)->
-  # Using the toUri as its the URI the items are using now
-  refreshSnapshot.fromUri toUri
+var updateSnapshotOnEntityMerge = (fromUri, toUri) => // Using the toUri as its the URI the items are using now
+refreshSnapshot.fromUri(toUri);

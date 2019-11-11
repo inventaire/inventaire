@@ -1,24 +1,31 @@
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-wikidataSearch = __.require 'lib', 'wikidata/search'
-requests_ = __.require 'lib', 'requests'
-cache_ = __.require 'lib', 'cache'
-assert_ = __.require 'utils', 'assert_types'
-qs = require 'querystring'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const wikidataSearch = __.require('lib', 'wikidata/search');
+const requests_ = __.require('lib', 'requests');
+const cache_ = __.require('lib', 'cache');
+const assert_ = __.require('utils', 'assert_types');
+const qs = require('querystring');
 
-module.exports = (query)->
-  { search, refresh } = query
-  assert_.string search
-  key = "wd:search:#{search}"
-  cache_.get { key, fn: searchEntities.bind(null, search), refresh }
+module.exports = function(query){
+  const { search, refresh } = query;
+  assert_.string(search);
+  const key = `wd:search:${search}`;
+  return cache_.get({ key, fn: searchEntities.bind(null, search), refresh });
+};
 
-searchEntities = (search)->
-  search = qs.escape search
-  url = wikidataSearch search
-  _.log url, 'searchEntities'
+var searchEntities = function(search){
+  search = qs.escape(search);
+  const url = wikidataSearch(search);
+  _.log(url, 'searchEntities');
 
-  requests_.get url
-  .then extractWdIds
-  .then _.Success('wd ids found')
+  return requests_.get(url)
+  .then(extractWdIds)
+  .then(_.Success('wd ids found'));
+};
 
-extractWdIds = (res)-> res.query.search.map _.property('title')
+var extractWdIds = res => res.query.search.map(_.property('title'));

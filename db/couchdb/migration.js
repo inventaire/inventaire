@@ -1,64 +1,74 @@
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-Promise = require 'bluebird'
-Promise.longStackTraces()
-fs = require 'fs'
-updateDocsByBatch = require './update_docs_by_batch'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const Promise = require('bluebird');
+Promise.longStackTraces();
+const fs = require('fs');
+const updateDocsByBatch = require('./update_docs_by_batch');
 
-module.exports = (params)->
-  { dbName, designDocName, preview, silent, showDiff } = params
-  params.preview = preview ?= true
-  params.silent = silent ?= false
-  params.showDiff ?= true
-  params.log = log = if silent then _.identity else _.log
-  Log = (label)-> (obj)-> log obj, label
+module.exports = function(params){
+  let db, log;
+  let { dbName, designDocName, preview, silent, showDiff } = params;
+  params.preview = preview != null ? preview : (preview = true);
+  params.silent = silent != null ? silent : (silent = false);
+  if (params.showDiff == null) { params.showDiff = true; }
+  params.log = (log = silent ? _.identity : _.log);
+  const Log = label => obj => log(obj, label);
 
-  console.log 'preview mode:', preview
-  console.log 'silent mode:', silent
+  console.log('preview mode:', preview);
+  console.log('silent mode:', silent);
 
-  params.db = db = __.require('couch', 'base')(dbName, designDocName)
-  unless db? then throw new Error('bad dbName')
+  params.db = (db = __.require('couch', 'base')(dbName, designDocName));
+  if (db == null) { throw new Error('bad dbName'); }
 
-  updater = (docsIdsPromise, updateFunction, label)->
-    unless preview then logMigration dbName, updateFunction, label
+  const updater = function(docsIdsPromise, updateFunction, label){
+    if (!preview) { logMigration(dbName, updateFunction, label); }
 
-    params.updateFunction = updateFunction
+    params.updateFunction = updateFunction;
 
-    docsIdsPromise
-    .filter isntDesignDoc
-    .then updateDocsByBatch(params)
+    return docsIdsPromise
+    .filter(isntDesignDoc)
+    .then(updateDocsByBatch(params));
+  };
 
-  API =
-    updateAll: (updateFunction, label)->
-      updater getAllDocsKeys(), updateFunction, label
+  const API = {
+    updateAll(updateFunction, label){
+      return updater(getAllDocsKeys(), updateFunction, label);
+    },
 
-    updateByView: (viewName, updateFunction, label)->
-      updater getViewKeys(viewName), updateFunction, label
+    updateByView(viewName, updateFunction, label){
+      return updater(getViewKeys(viewName), updateFunction, label);
+    }
+  };
 
-  getAllDocsKeys = ->
-    db.allDocsKeys()
-    .then (res)->
-      rows = res.rows.filter (row)-> not row.id.startsWith('_design/')
-      ids = _.map rows, 'id'
-      return _.success ids, 'doc ids found'
-    .catch _.ErrorRethrow('getAllDocsKeys error')
+  var getAllDocsKeys = () => db.allDocsKeys()
+  .then(function(res){
+    const rows = res.rows.filter(row => !row.id.startsWith('_design/'));
+    const ids = _.map(rows, 'id');
+    return _.success(ids, 'doc ids found');}).catch(_.ErrorRethrow('getAllDocsKeys error'));
 
-  getViewKeys = (viewName)->
-    db.view designDocName, viewName, { reduce: false }
-    .then (res)-> res.rows.map _.property('id')
-    .then Log('view ids')
+  var getViewKeys = viewName => db.view(designDocName, viewName, { reduce: false })
+  .then(res => res.rows.map(_.property('id')))
+  .then(Log('view ids'));
 
-  return API
+  return API;
+};
 
-logMigration = (dbName, updateFunction, label = 'updateFunction')->
-  date = new Date().toJSON()
-  name = "migrations/#{dbName}-#{date}.json"
-  path = __.path('couchdb', name)
-  obj = {}
-  obj[label] = updateFunction.toString()
-  _.log obj, 'obj'
-  json = JSON.stringify obj, null, 4
-  fs.writeFileSync(path, json)
-  _.success "migration logged at #{path}: #{json}"
+var logMigration = function(dbName, updateFunction, label = 'updateFunction'){
+  const date = new Date().toJSON();
+  const name = `migrations/${dbName}-${date}.json`;
+  const path = __.path('couchdb', name);
+  const obj = {};
+  obj[label] = updateFunction.toString();
+  _.log(obj, 'obj');
+  const json = JSON.stringify(obj, null, 4);
+  fs.writeFileSync(path, json);
+  return _.success(`migration logged at ${path}: ${json}`);
+};
 
-isntDesignDoc = (id)-> not /^_design/.test id
+var isntDesignDoc = id => !/^_design/.test(id);

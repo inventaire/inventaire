@@ -1,18 +1,25 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-requests_ = __.require 'lib', 'requests'
-allDbsUrl = CONFIG.db.fullHost() + '/_all_dbs'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const requests_ = __.require('lib', 'requests');
+const allDbsUrl = CONFIG.db.fullHost() + '/_all_dbs';
 
-module.exports = (suffix)->
-  requests_.get allDbsUrl
-  .filter isMatchingDatabase(suffix)
+module.exports = suffix => requests_.get(allDbsUrl)
+.filter(isMatchingDatabase(suffix));
 
-isMatchingDatabase = (suffix)->
-  patternString = if suffix? then "^\\w+-#{suffix}$" else '^\\w+$'
-  dbNamePattern = new RegExp patternString
+var isMatchingDatabase = function(suffix){
+  const patternString = (suffix != null) ? `^\\w+-${suffix}$` : '^\\w+$';
+  const dbNamePattern = new RegExp(patternString);
 
-  return (dbName)->
-    # Filtering-out _replicator and _users
-    if dbName[0] is '_' then return false
-    return dbName.match dbNamePattern
+  return function(dbName){
+    // Filtering-out _replicator and _users
+    if (dbName[0] === '_') { return false; }
+    return dbName.match(dbNamePattern);
+  };
+};

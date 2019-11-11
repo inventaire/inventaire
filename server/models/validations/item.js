@@ -1,28 +1,41 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-{ pass, itemId, userId, entityUri, BoundedString, imgUrl } = require './common'
-{ constrained } = require '../attributes/item'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS104: Avoid inline assignments
+ * DS204: Change includes calls to have a more natural evaluation order
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+let snapshotValidations, validations;
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const { pass, itemId, userId, entityUri, BoundedString, imgUrl } = require('./common');
+const { constrained } = require('../attributes/item');
 
-module.exports = validations =
-  pass: pass
-  itemId: itemId
-  userId: userId
-  entity: entityUri
-  lang: (lang)-> if lang then _.isLang(lang) else true
-  pictures: (pictures)-> _.isArray(pictures) and _.every(pictures, imgUrl)
-  attribute: (attribute)-> attribute in _.keys(constrained)
-  transaction: (transaction)->
-    transaction in constrained.transaction.possibilities
-  listing: (listing)->
-    return listing in constrained.listing.possibilities
-  details: _.isString
+module.exports = (validations = {
+  pass,
+  itemId,
+  userId,
+  entity: entityUri,
+  lang(lang){ if (lang) { return _.isLang(lang); } else { return true; } },
+  pictures(pictures){ return _.isArray(pictures) && _.every(pictures, imgUrl); },
+  attribute(attribute){ let needle;
+  return (needle = attribute, _.keys(constrained).includes(needle)); },
+  transaction(transaction){
+    return constrained.transaction.possibilities.includes(transaction);
+  },
+  listing(listing){
+    return constrained.listing.possibilities.includes(listing);
+  },
+  details: _.isString,
   notes: _.isString
+});
 
-validations.snapshotValidations = snapshotValidations =
-  'entity:title': BoundedString 1, 500
-  'entity:image': _.isExtendedUrl
-  'entity:lang': _.isLang
-  'entity:authors': _.isString
-  'entity:series': _.isString
+validations.snapshotValidations = (snapshotValidations = {
+  'entity:title': BoundedString(1, 500),
+  'entity:image': _.isExtendedUrl,
+  'entity:lang': _.isLang,
+  'entity:authors': _.isString,
+  'entity:series': _.isString,
   'entity:ordinal': _.isString
+});

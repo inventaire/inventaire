@@ -1,22 +1,27 @@
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-cache_ = __.require 'lib', 'cache'
-error_ = __.require 'lib', 'error/error'
-responses_ = __.require 'lib', 'responses'
-validations = __.require 'models', 'validations/common'
-getArticle = require './get_article'
-sanitize = __.require 'lib', 'sanitize/sanitize'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const cache_ = __.require('lib', 'cache');
+const error_ = __.require('lib', 'error/error');
+const responses_ = __.require('lib', 'responses');
+const validations = __.require('models', 'validations/common');
+const getArticle = require('./get_article');
+const sanitize = __.require('lib', 'sanitize/sanitize');
 
-sanitization =
-  title: {}
+const sanitization = {
+  title: {},
   lang: {}
+};
 
-module.exports = (req, res)->
-  sanitize req, res, sanitization
-  .then (params)->
-    { lang, title } = params
-    getArticle { lang, title, introOnly: true }
-  .then (data)->
-    { url, extract } = data
-    responses_.send res, { url, extract }
-  .catch error_.Handler(req, res)
+module.exports = (req, res) => sanitize(req, res, sanitization)
+.then(function(params){
+  const { lang, title } = params;
+  return getArticle({ lang, title, introOnly: true });})
+.then(function(data){
+  const { url, extract } = data;
+  return responses_.send(res, { url, extract });})
+.catch(error_.Handler(req, res));

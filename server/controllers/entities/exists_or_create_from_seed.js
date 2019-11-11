@@ -1,63 +1,69 @@
-# An endpoint to take advantage of data we are given thourgh data imports
-# instead of relying on dataseed
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+// An endpoint to take advantage of data we are given thourgh data imports
+// instead of relying on dataseed
 
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-error_ = __.require 'lib', 'error/error'
-{ Track } = __.require 'lib', 'track'
-promises_ = __.require 'lib', 'promises'
-responses_ = __.require 'lib', 'responses'
-sanitize = __.require 'lib', 'sanitize/sanitize'
-error_ = __.require 'lib', 'error/error'
-isbn_ = __.require 'lib', 'isbn/isbn'
-entities_ = require './lib/entities'
-scaffoldEditionEntityFromSeed = require './lib/scaffold_entity_from_seed/edition'
-{ enabled:dataseedEnabled } = CONFIG.dataseed
-dataseed = __.require 'data', 'dataseed/dataseed'
-formatEditionEntity = require './lib/format_edition_entity'
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+let error_ = __.require('lib', 'error/error');
+const { Track } = __.require('lib', 'track');
+const promises_ = __.require('lib', 'promises');
+const responses_ = __.require('lib', 'responses');
+const sanitize = __.require('lib', 'sanitize/sanitize');
+error_ = __.require('lib', 'error/error');
+const isbn_ = __.require('lib', 'isbn/isbn');
+const entities_ = require('./lib/entities');
+const scaffoldEditionEntityFromSeed = require('./lib/scaffold_entity_from_seed/edition');
+const { enabled:dataseedEnabled } = CONFIG.dataseed;
+const dataseed = __.require('data', 'dataseed/dataseed');
+const formatEditionEntity = require('./lib/format_edition_entity');
 
-sanitization =
-  isbn: {}
-  title: {}
+const sanitization = {
+  isbn: {},
+  title: {},
   authors: { optional: true }
+};
 
-module.exports = (req, res)->
-  sanitize req, res, sanitization
-  .then (seed)->
-    { isbn, title, authors } = seed
-    authors or= []
+module.exports = (req, res) => sanitize(req, res, sanitization)
+.then(function(seed){
+  let { isbn, title, authors } = seed;
+  if (!authors) { authors = []; }
 
-    seed.authors = authors.filter (author)-> author?.length > 0
+  seed.authors = authors.filter(author => (author != null ? author.length : undefined) > 0);
 
-    entities_.byIsbn isbn
-    .then (entityDoc)->
-      if entityDoc then return entityDoc
-      else return addImage(seed).then scaffoldEditionEntityFromSeed
-    .then formatEditionEntity
-    .then responses_.Send(res)
-  .catch error_.Handler(req, res)
+  return entities_.byIsbn(isbn)
+  .then(function(entityDoc){
+    if (entityDoc) { return entityDoc;
+    } else { return addImage(seed).then(scaffoldEditionEntityFromSeed); }}).then(formatEditionEntity)
+  .then(responses_.Send(res));}).catch(error_.Handler(req, res));
 
-addImage = (seed)->
-  unless dataseedEnabled then return promises_.resolve seed
+var addImage = function(seed){
+  if (!dataseedEnabled) { return promises_.resolve(seed); }
 
-  # Try to find an image from the seed ISBN
-  dataseed.getImageByIsbn seed.isbn
-  .then (res)->
-    if res.url
-      seed.image = res.url
-      return seed
-    else
-      { image } = seed
-      unless image? then return seed
+  // Try to find an image from the seed ISBN
+  return dataseed.getImageByIsbn(seed.isbn)
+  .then(function(res){
+    if (res.url) {
+      seed.image = res.url;
+      return seed;
+    } else {
+      const { image } = seed;
+      if (image == null) { return seed; }
 
-      # Else, if an image was provided in the seed, try to use it
-      dataseed.getImageByUrl seed.image
-      .then (res2)->
-        if res.url then seed.image = res2.url
-        else delete seed.image
-        return seed
-
-  .catch (err)->
-    _.error err, 'add image err'
-    return seed
+      // Else, if an image was provided in the seed, try to use it
+      return dataseed.getImageByUrl(seed.image)
+      .then(function(res2){
+        if (res.url) { seed.image = res2.url;
+        } else { delete seed.image; }
+        return seed;
+      });
+    }}).catch(function(err){
+    _.error(err, 'add image err');
+    return seed;
+  });
+};

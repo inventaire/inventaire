@@ -1,42 +1,57 @@
-# keep in sync the users database and the geo index
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-follow = __.require 'lib', 'follow'
-promises_ = __.require 'lib', 'promises'
-dbBaseName = 'users'
-{ reset:resetFollow } = CONFIG.db.follow
+/*
+ * decaffeinate suggestions:
+ * DS101: Remove unnecessary use of Array.from
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+// keep in sync the users database and the geo index
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const follow = __.require('lib', 'follow');
+const promises_ = __.require('lib', 'promises');
+const dbBaseName = 'users';
+const { reset:resetFollow } = CONFIG.db.follow;
 
-module.exports = (db)->
-  filter = (doc)->
-    if doc.type is 'user'
-      if doc.position? then return true
+module.exports = function(db){
+  const filter = function(doc){
+    if (doc.type === 'user') {
+      if (doc.position != null) { return true; }
+    }
 
-    return false
+    return false;
+  };
 
-  updatePosition = (change)->
-    { id, deleted, doc } = change
-    { position } = doc
+  const updatePosition = function(change){
+    const { id, deleted, doc } = change;
+    const { position } = doc;
 
-    if deleted then return db.del id
-    else
-      [ lat, lon ] = position
-      # Most of the user doc change wont imply a position change
-      # so it should make sense to get the doc to check the need to write
-      db.getByKey id
-      .catch (err)-> if err.notFound then return null else throw err
-      .then updateIfNeeded.bind(null, id, lat, lon)
-      .catch _.Error('user geo updatePosition err')
+    if (deleted) { return db.del(id);
+    } else {
+      const [ lat, lon ] = Array.from(position);
+      // Most of the user doc change wont imply a position change
+      // so it should make sense to get the doc to check the need to write
+      return db.getByKey(id)
+      .catch(function(err){ if (err.notFound) { return null; } else { throw err; } })
+      .then(updateIfNeeded.bind(null, id, lat, lon))
+      .catch(_.Error('user geo updatePosition err'));
+    }
+  };
 
-  updateIfNeeded = (id, lat, lon, res)->
-    if res?
-      { position } = res
-      if lat is position.lat and lon is position.lon then return
+  var updateIfNeeded = function(id, lat, lon, res){
+    if (res != null) {
+      const { position } = res;
+      if ((lat === position.lat) && (lon === position.lon)) { return; }
+    }
 
-    db.put { lat, lon }, id, null
+    return db.put({ lat, lon }, id, null);
+  };
 
-  reset = ->
-    _.log "reseting #{dbBaseName} geo index", null, 'yellow'
-    return db.reset()
+  const reset = function() {
+    _.log(`reseting ${dbBaseName} geo index`, null, 'yellow');
+    return db.reset();
+  };
 
-  follow { dbBaseName, filter, onChange: updatePosition, reset }
+  return follow({ dbBaseName, filter, onChange: updatePosition, reset });
+};

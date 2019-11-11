@@ -1,18 +1,22 @@
-CONFIG = require 'config'
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-entities_ = __.require 'controllers', 'entities/lib/entities'
-{ getEntityNormalizedTerms } = __.require 'controllers', 'entities/lib/terms_normalization'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const entities_ = __.require('controllers', 'entities/lib/entities');
+const { getEntityNormalizedTerms } = __.require('controllers', 'entities/lib/terms_normalization');
 
-module.exports = (authorId)->
-  entities_.byClaim 'wdt:P50', "inv:#{authorId}", true, true
-  .then (works)->
-    # works = [
-    #   { labels: { fr: 'Matiere et Memoire'} },
-    #   { labels: { en: 'foo' } }
-    # ]
-    labels = _.uniq _.flatten(works.map(getEntityNormalizedTerms))
-    langs = _.uniq _.flatten(works.map(getLangs))
-    return { authorId, labels, langs }
+module.exports = authorId => entities_.byClaim('wdt:P50', `inv:${authorId}`, true, true)
+.then(function(works){
+  // works = [
+  //   { labels: { fr: 'Matiere et Memoire'} },
+  //   { labels: { en: 'foo' } }
+  // ]
+  const labels = _.uniq(_.flatten(works.map(getEntityNormalizedTerms)));
+  const langs = _.uniq(_.flatten(works.map(getLangs)));
+  return { authorId, labels, langs };});
 
-getLangs = (work)-> Object.keys work.labels
+var getLangs = work => Object.keys(work.labels);

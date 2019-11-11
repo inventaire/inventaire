@@ -1,20 +1,27 @@
-CONFIG = require 'config'
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-{ filterPrivateAttributes } = require './filter_private_attributes'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const { filterPrivateAttributes } = require('./filter_private_attributes');
 
-# Working around the circular dependency
-items_ = null
-lateRequire = -> items_ = require './items'
-setTimeout lateRequire, 0
+// Working around the circular dependency
+let items_ = null;
+const lateRequire = () => items_ = require('./items');
+setTimeout(lateRequire, 0);
 
-bundleListings = (listingsTypes)-> (usersIds, reqUserId)->
-  usersIds = _.forceArray usersIds
-  listings = _.combinations usersIds, listingsTypes
-  items_.db.viewByKeys 'byListing', listings
-  .map filterPrivateAttributes(reqUserId)
+const bundleListings = listingsTypes => (function(usersIds, reqUserId) {
+  usersIds = _.forceArray(usersIds);
+  const listings = _.combinations(usersIds, listingsTypes);
+  return items_.db.viewByKeys('byListing', listings)
+  .map(filterPrivateAttributes(reqUserId));
+});
 
-module.exports =
-  private: bundleListings [ 'public', 'network', 'private' ]
-  network: bundleListings [ 'public', 'network' ]
-  public: bundleListings [ 'public' ]
+module.exports = {
+  private: bundleListings([ 'public', 'network', 'private' ]),
+  network: bundleListings([ 'public', 'network' ]),
+  public: bundleListings([ 'public' ])
+};

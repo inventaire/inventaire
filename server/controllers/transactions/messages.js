@@ -1,38 +1,47 @@
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-error_ = __.require 'lib', 'error/error'
-responses_ = __.require 'lib', 'responses'
-promises_ = __.require 'lib', 'promises'
-comments_ = __.require 'controllers', 'comments/lib/comments'
-transactions_ = require './lib/transactions'
-sanitize = __.require 'lib', 'sanitize/sanitize'
-radio = __.require 'lib', 'radio'
-{ Track } = __.require 'lib', 'track'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const error_ = __.require('lib', 'error/error');
+const responses_ = __.require('lib', 'responses');
+const promises_ = __.require('lib', 'promises');
+const comments_ = __.require('controllers', 'comments/lib/comments');
+const transactions_ = require('./lib/transactions');
+const sanitize = __.require('lib', 'sanitize/sanitize');
+const radio = __.require('lib', 'radio');
+const { Track } = __.require('lib', 'track');
 
-getSanitization =
-  transaction: {}
+const getSanitization =
+  {transaction: {}};
 
-postSanitization =
-  transaction: {}
+const postSanitization = {
+  transaction: {},
   message: {}
+};
 
-module.exports =
-  get: (req, res, next)->
-    sanitize req, res, getSanitization
-    .then (params)-> comments_.byTransactionId params.transactionId
-    .then responses_.Wrap(res, 'messages')
-    .catch error_.Handler(req, res)
+module.exports = {
+  get(req, res, next){
+    return sanitize(req, res, getSanitization)
+    .then(params => comments_.byTransactionId(params.transactionId))
+    .then(responses_.Wrap(res, 'messages'))
+    .catch(error_.Handler(req, res));
+  },
 
-  post: (req, res, next)->
-    sanitize req, res, postSanitization
-    .then (params)->
-      { transactionId, message, reqUserId } = params
-      transactions_.byId transactionId
-      .then (transaction)->
-        transactions_.verifyRightToInteract reqUserId, transaction
-        comments_.addTransactionComment reqUserId, message, transactionId
-        .then -> transactions_.updateReadForNewMessage reqUserId, transaction
-        .then -> radio.emit 'transaction:message', transaction
-    .then responses_.Ok(res)
-    .then Track(req, [ 'transaction', 'message' ])
-    .catch error_.Handler(req, res)
+  post(req, res, next){
+    return sanitize(req, res, postSanitization)
+    .then(function(params){
+      const { transactionId, message, reqUserId } = params;
+      return transactions_.byId(transactionId)
+      .then(function(transaction){
+        transactions_.verifyRightToInteract(reqUserId, transaction);
+        return comments_.addTransactionComment(reqUserId, message, transactionId)
+        .then(() => transactions_.updateReadForNewMessage(reqUserId, transaction))
+        .then(() => radio.emit('transaction:message', transaction));
+      });}).then(responses_.Ok(res))
+    .then(Track(req, [ 'transaction', 'message' ]))
+    .catch(error_.Handler(req, res));
+  }
+};

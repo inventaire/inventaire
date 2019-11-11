@@ -1,139 +1,162 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
 
-user_ = __.require 'controllers', 'user/lib/user'
-transactions_ = __.require 'controllers', 'transactions/lib/transactions'
-items_ = __.require 'controllers', 'items/lib/items'
-snapshot_ = __.require 'controllers', 'items/lib/snapshot/snapshot'
-promises_ = __.require 'lib', 'promises'
-comments_ = __.require 'controllers', 'comments/lib/comments'
-{ states } = __.require 'models', 'attributes/transaction'
+const user_ = __.require('controllers', 'user/lib/user');
+const transactions_ = __.require('controllers', 'transactions/lib/transactions');
+const items_ = __.require('controllers', 'items/lib/items');
+const snapshot_ = __.require('controllers', 'items/lib/snapshot/snapshot');
+const promises_ = __.require('lib', 'promises');
+const comments_ = __.require('controllers', 'comments/lib/comments');
+const { states } = __.require('models', 'attributes/transaction');
 
-email_ = require './email'
+const email_ = require('./email');
 
-module.exports = (transactionId)->
-  transactions_.byId transactionId
-  .then emailIsRequired
-  .then fetchData
-  .then sendTailoredEmail
-  # catched in the final promise chain: in send_debounced_email transactionUpdate
-  # after all the actions to skip are passed
+module.exports = transactionId => transactions_.byId(transactionId)
+.then(emailIsRequired)
+.then(fetchData)
+.then(sendTailoredEmail);
+  // catched in the final promise chain: in send_debounced_email transactionUpdate
+  // after all the actions to skip are passed
 
-emailIsRequired = (transaction)->
-  role = findUserToNotify transaction
-  if role?
-    # progressively building the email ViewModel
-    transaction.role = role
-    return transaction
-  else
-    throw promises_.skip "sending an email isn't required", transaction
+var emailIsRequired = function(transaction){
+  const role = findUserToNotify(transaction);
+  if (role != null) {
+    // progressively building the email ViewModel
+    transaction.role = role;
+    return transaction;
+  } else {
+    throw promises_.skip("sending an email isn't required", transaction);
+  }
+};
 
-catchErr = (err)->
-  if err.message is 'email_not_required' then return
-  else _.error err, 'send_transaction_email err'
+const catchErr = function(err){
+  if (err.message === 'email_not_required') { return;
+  } else { return _.error(err, 'send_transaction_email err'); }
+};
 
-fetchData = (transaction)->
-  promises_.all [
-    user_.byId transaction.owner
-    user_.byId transaction.requester
-    items_.byId(transaction.item).then snapshot_.addToItem
-    comments_.byTransactionId transaction._id
-  ]
-  .spread (owner, requester, item, messages)->
-    item.title = item.snapshot['entity:title']
-    image = item.snapshot['entity:image'] or transaction.snapshot.entity?.image
-    # Overriding transaction document ids by the ids' docs (owner, requester, etc.)
-    # for the email ViewModel
-    return _.extend transaction, { owner, requester, item, messages, image }
-  .then buildTimeline
-  .then aliasUsers
-  # .then completeActionsData
+var fetchData = transaction => promises_.all([
+  user_.byId(transaction.owner),
+  user_.byId(transaction.requester),
+  items_.byId(transaction.item).then(snapshot_.addToItem),
+  comments_.byTransactionId(transaction._id)
+])
+.spread(function(owner, requester, item, messages){
+  item.title = item.snapshot['entity:title'];
+  const image = item.snapshot['entity:image'] || (transaction.snapshot.entity != null ? transaction.snapshot.entity.image : undefined);
+  // Overriding transaction document ids by the ids' docs (owner, requester, etc.)
+  // for the email ViewModel
+  return _.extend(transaction, { owner, requester, item, messages, image });})
+.then(buildTimeline)
+.then(aliasUsers);
+  // .then completeActionsData
 
-sendTailoredEmail = (transaction)->
-  emailType = findEmailType transaction
-  email_.transactions[emailType](transaction)
+var sendTailoredEmail = function(transaction){
+  const emailType = findEmailType(transaction);
+  return email_.transactions[emailType](transaction);
+};
 
-findUserToNotify = (transaction)->
-  { read } = transaction
-  # assumes that both can't have unread updates
-  if not read.owner then return 'owner'
-  else if not read.requester then return 'requester'
-  else null
+var findUserToNotify = function(transaction){
+  const { read } = transaction;
+  // assumes that both can't have unread updates
+  if (!read.owner) { return 'owner';
+  } else if (!read.requester) { return 'requester';
+  } else { return null; }
+};
 
-newTransaction = (transaction)->
-  ownerActed = _.some transaction.actions, ownerIsActor
-  if ownerActed then return false
-  ownerSentMessage = _.some transaction.messages, OwnerIsSender(transaction)
-  if ownerSentMessage then return false
-  else return true
+const newTransaction = function(transaction){
+  const ownerActed = _.some(transaction.actions, ownerIsActor);
+  if (ownerActed) { return false; }
+  const ownerSentMessage = _.some(transaction.messages, OwnerIsSender(transaction));
+  if (ownerSentMessage) { return false;
+  } else { return true; }
+};
 
-findEmailType = (transaction)->
-  if transaction.role is 'owner'
-    if newTransaction(transaction) then 'yourItemWasRequested'
-    else 'updateOnYourItem'
-  else 'updateOnItemYouRequested'
+var findEmailType = function(transaction){
+  if (transaction.role === 'owner') {
+    if (newTransaction(transaction)) { return 'yourItemWasRequested';
+    } else { return 'updateOnYourItem'; }
+  } else { return 'updateOnItemYouRequested'; }
+};
 
-buildTimeline = (transaction)->
-  { actions, messages } = transaction
-  actions = formatActions transaction, actions
-  messages = formatMessages transaction, messages
-  timeline = _.union actions, messages
-  timeline = _.sortBy timeline, (ev)-> ev.created or ev.timestamp
+var buildTimeline = function(transaction){
+  let { actions, messages } = transaction;
+  actions = formatActions(transaction, actions);
+  messages = formatMessages(transaction, messages);
+  let timeline = _.union(actions, messages);
+  timeline = _.sortBy(timeline, ev => ev.created || ev.timestamp);
 
-  return extractTimelineLastSequence transaction, timeline
+  return extractTimelineLastSequence(transaction, timeline);
+};
 
-# format actions and messages for ViewModels
-formatActions = (transaction, actions)->
-  { owner, requester } = transaction
-  return actions.map (action)->
-    action.user = if ownerIsActor action then owner else requester
-    return action
+// format actions and messages for ViewModels
+var formatActions = function(transaction, actions){
+  const { owner, requester } = transaction;
+  return actions.map(function(action){
+    action.user = ownerIsActor(action) ? owner : requester;
+    return action;
+  });
+};
 
-formatMessages = (transaction, messages)->
-  { owner, requester } = transaction
-  return messages.map (message)->
-    message.user = if ownerIsMessager owner, message then owner else requester
-    return message
+var formatMessages = function(transaction, messages){
+  const { owner, requester } = transaction;
+  return messages.map(function(message){
+    message.user = ownerIsMessager(owner, message) ? owner : requester;
+    return message;
+  });
+};
 
-extractTimelineLastSequence = (transaction, timeline)->
-  lastSequence = []
-  lastEvent = timeline.pop()
-  lastSequence.push lastEvent
-  sameSequence = true
-  while timeline.length > 0 and sameSequence
-    prevEvent = timeline.pop()
-    if prevEvent.user._id is lastEvent.user._id
-      lastSequence.unshift prevEvent
-    else sameSequence = false
+var extractTimelineLastSequence = function(transaction, timeline){
+  const lastSequence = [];
+  const lastEvent = timeline.pop();
+  lastSequence.push(lastEvent);
+  let sameSequence = true;
+  while ((timeline.length > 0) && sameSequence) {
+    const prevEvent = timeline.pop();
+    if (prevEvent.user._id === lastEvent.user._id) {
+      lastSequence.unshift(prevEvent);
+    } else { sameSequence = false; }
+  }
 
-  transaction.timeline = lastSequence
-  return transaction
+  transaction.timeline = lastSequence;
+  return transaction;
+};
 
-aliasUsers = (transaction)->
-  lastEvent = transaction.timeline.slice(-1)[0]
-  # deducing main and other user from the last sequence
-  # as the user notified (mainUser) is necessarly the one that hasn't acted last
-  transaction.other = lastEvent.user
-  transaction.mainUser = findMainUser transaction
-  return transaction
+var aliasUsers = function(transaction){
+  const lastEvent = transaction.timeline.slice(-1)[0];
+  // deducing main and other user from the last sequence
+  // as the user notified (mainUser) is necessarly the one that hasn't acted last
+  transaction.other = lastEvent.user;
+  transaction.mainUser = findMainUser(transaction);
+  return transaction;
+};
 
-findMainUser = (transaction)->
-  { owner, requester, other } = transaction
-  if owner._id is other._id then requester
-  else owner
+var findMainUser = function(transaction){
+  const { owner, requester, other } = transaction;
+  if (owner._id === other._id) { return requester;
+  } else { return owner; }
+};
 
-ownerIsActor = (action)-> states[action.action].actor is 'owner'
-OwnerIsSender = (transaction)-> (message)-> message.user is transaction.owner
-ownerIsMessager = (owner, message)-> message.user is owner._id
+var ownerIsActor = action => states[action.action].actor === 'owner';
+var OwnerIsSender = transaction => message => message.user === transaction.owner;
+var ownerIsMessager = (owner, message) => message.user === owner._id;
 
-completeActionsData = (transaction)->
-  { timeline, other, mainUser } = transaction
-  transaction.timeline = timeline.map (ev)->
-    if ev.action?
-      # need to be copyied on action to be accessible
-      # from inside handlebasr {{#each}} loop
-      ev.lang = mainUser.language
-      ev.other = other
-    return ev
-  return transaction
+const completeActionsData = function(transaction){
+  const { timeline, other, mainUser } = transaction;
+  transaction.timeline = timeline.map(function(ev){
+    if (ev.action != null) {
+      // need to be copyied on action to be accessible
+      // from inside handlebasr {{#each}} loop
+      ev.lang = mainUser.language;
+      ev.other = other;
+    }
+    return ev;
+  });
+  return transaction;
+};

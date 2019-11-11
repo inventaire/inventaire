@@ -1,27 +1,37 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
 
-should = require 'should'
-validateObject = __.require 'lib', 'validate_object'
+const should = require('should');
+const validateObject = __.require('lib', 'validate_object');
 
-describe 'validate object', ->
-  it 'should throw when passed an object with an invalid key', (done)->
-    validKeys = [ 'b' ]
-    (-> validateObject { a: 1 }, validKeys).should.throw()
-    done()
+describe('validate object', function() {
+  it('should throw when passed an object with an invalid key', function(done){
+    const validKeys = [ 'b' ];
+    ((() => validateObject({ a: 1 }, validKeys))).should.throw();
+    return done();
+  });
 
-  it 'should not throw when passed an object with a valid key', (done)->
-    validKeys = [ 'b' ]
-    (-> validateObject { b: 1 }, validKeys).should.not.throw()
-    done()
+  it('should not throw when passed an object with a valid key', function(done){
+    const validKeys = [ 'b' ];
+    ((() => validateObject({ b: 1 }, validKeys))).should.not.throw();
+    return done();
+  });
 
-  it 'should throw when passed an object with an invalid value', (done)->
-    validKeys = [ 'b' ]
-    (-> validateObject { b: 1 }, validKeys, 'string').should.throw()
-    done()
+  it('should throw when passed an object with an invalid value', function(done){
+    const validKeys = [ 'b' ];
+    ((() => validateObject({ b: 1 }, validKeys, 'string'))).should.throw();
+    return done();
+  });
 
-  it 'should not throw when passed an object with a valid value', (done)->
-    validKeys = [ 'b' ]
-    (-> validateObject { b: 1 }, validKeys, 'number').should.not.throw()
-    done()
+  return it('should not throw when passed an object with a valid value', function(done){
+    const validKeys = [ 'b' ];
+    ((() => validateObject({ b: 1 }, validKeys, 'number'))).should.not.throw();
+    return done();
+  });
+});

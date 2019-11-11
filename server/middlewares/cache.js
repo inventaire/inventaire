@@ -1,10 +1,17 @@
-CONFIG = require 'config'
-pass = require './pass'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const pass = require('./pass');
 
-# Applies to both API and static files requests
-if CONFIG.noCache
-  exports.cacheControl = (req, res, next)->
-    res.header 'Cache-Control', 'no-cache, no-store, must-revalidate'
-    next()
-else
-  exports.cacheControl = pass
+// Applies to both API and static files requests
+if (CONFIG.noCache) {
+  exports.cacheControl = function(req, res, next){
+    res.header('Cache-Control', 'no-cache, no-store, must-revalidate');
+    return next();
+  };
+} else {
+  exports.cacheControl = pass;
+}

@@ -1,29 +1,34 @@
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-sanitize = __.require 'lib', 'sanitize/sanitize'
-responses_ = __.require 'lib', 'responses'
-error_ = __.require 'lib', 'error/error'
-getEntitiesByUris = require './lib/get_entities_by_uris'
-addRelatives = require './lib/add_relatives'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const sanitize = __.require('lib', 'sanitize/sanitize');
+const responses_ = __.require('lib', 'responses');
+const error_ = __.require('lib', 'error/error');
+const getEntitiesByUris = require('./lib/get_entities_by_uris');
+const addRelatives = require('./lib/add_relatives');
 
-validRelativesProperties = [
-  'wdt:P50'
-  'wdt:P179'
+const validRelativesProperties = [
+  'wdt:P50',
+  'wdt:P179',
   'wdt:P629'
-]
+];
 
-sanitization =
-  uris: {}
-  refresh: { optional: true }
-  relatives:
-    whitelist: validRelativesProperties
+const sanitization = {
+  uris: {},
+  refresh: { optional: true },
+  relatives: {
+    whitelist: validRelativesProperties,
     optional: true
+  }
+};
 
-module.exports = (req, res, next)->
-  sanitize req, res, sanitization
-  .then (params)->
-    { uris, refresh, relatives } = params
-    getEntitiesByUris { uris, refresh }
-    .then addRelatives(relatives, refresh)
-  .then responses_.Send(res)
-  .catch error_.Handler(req, res)
+module.exports = (req, res, next) => sanitize(req, res, sanitization)
+.then(function(params){
+  const { uris, refresh, relatives } = params;
+  return getEntitiesByUris({ uris, refresh })
+  .then(addRelatives(relatives, refresh));}).then(responses_.Send(res))
+.catch(error_.Handler(req, res));

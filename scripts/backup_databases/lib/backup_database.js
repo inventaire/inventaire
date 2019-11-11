@@ -1,32 +1,40 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-assert_ = __.require 'utils', 'assert_types'
-execa = require 'execa'
-{ backupFolder } = require('./get_backup_folder_data')()
-{ username, password, host, port } = CONFIG.db
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const assert_ = __.require('utils', 'assert_types');
+const execa = require('execa');
+const { backupFolder } = require('./get_backup_folder_data')();
+const { username, password, host, port } = CONFIG.db;
 
-module.exports = (dbName)->
-  args = buildArgsArray backupFolder, dbName
+module.exports = function(dbName){
+  const args = buildArgsArray(backupFolder, dbName);
 
-  execa 'couchdb-backup', args
-  .then (res)->
-    _.log res.stdout, "#{dbName} stdout"
-    _.warn res.stderr, "#{dbName} stderr"
+  return execa('couchdb-backup', args)
+  .then(function(res){
+    _.log(res.stdout, `${dbName} stdout`);
+    return _.warn(res.stderr, `${dbName} stderr`);
+  });
+};
 
-# Depends on 'couchdb-backup' (from https://github.com/danielebailo/couchdb-dump)
-# being accessible from the $PATH
-buildArgsArray = (backupFolder, dbName)->
-  outputFile = "#{backupFolder}/#{dbName}.json"
+// Depends on 'couchdb-backup' (from https://github.com/danielebailo/couchdb-dump)
+// being accessible from the $PATH
+var buildArgsArray = function(backupFolder, dbName){
+  const outputFile = `${backupFolder}/${dbName}.json`;
 
   return [
-    # Common parameters
-    '-b' # backup mode
-    '-H', host
-    '-P', port
-    '-u', username
-    '-p', password
-    # Database-specific
-    '-d', dbName
+    // Common parameters
+    '-b', // backup mode
+    '-H', host,
+    '-P', port,
+    '-u', username,
+    '-p', password,
+    // Database-specific
+    '-d', dbName,
     '-f', outputFile
-  ]
+  ];
+};

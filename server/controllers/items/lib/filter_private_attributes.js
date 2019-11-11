@@ -1,12 +1,19 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require('builders', 'utils')
-{ private:privateAttrs } = __.require('models', 'item').attributes
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const { private:privateAttrs } = __.require('models', 'item').attributes;
 
-omitPrivateAttributes = (item)-> _.omit item, privateAttrs
+const omitPrivateAttributes = item => _.omit(item, privateAttrs);
 
-module.exports =
-  omitPrivateAttributes: omitPrivateAttributes
-  filterPrivateAttributes: (reqUserId)-> (item)->
-    if item.owner is reqUserId then return item
-    else return omitPrivateAttributes item
+module.exports = {
+  omitPrivateAttributes,
+  filterPrivateAttributes(reqUserId){ return function(item){
+    if (item.owner === reqUserId) { return item;
+    } else { return omitPrivateAttributes(item); }
+  }; }
+};

@@ -1,13 +1,20 @@
-CONFIG = require 'config'
+const CONFIG = require('config');
 
-module.exports = (->
-  username = CONFIG.db.username
-  unless typeof username is 'string'
-    throw new Error("bad CONFIG.db.username: #{username}")
+module.exports = (function() {
+  let securityDoc;
+  const {
+    username
+  } = CONFIG.db;
+  if (typeof username !== 'string') {
+    throw new Error(`bad CONFIG.db.username: ${username}`);
+  }
 
-  return securityDoc =
-    admins:
+  return securityDoc = {
+    admins: {
       names: [username]
-    members:
+    },
+    members: {
       names: [username]
-  )()
+    }
+  };
+  })();

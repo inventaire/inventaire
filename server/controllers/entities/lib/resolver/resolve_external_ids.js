@@ -1,37 +1,46 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-{ Promise } = __.require 'lib', 'promises'
-properties = require '../properties/properties_values_constraints'
-{ prefixifyWd, prefixifyInv } = __.require 'controllers', 'entities/lib/prefix'
-entities_ = __.require 'controllers', 'entities/lib/entities'
-runWdQuery = __.require 'data', 'wikidata/run_query'
-getInvEntityCanonicalUri = require '../get_inv_entity_canonical_uri'
+/*
+ * decaffeinate suggestions:
+ * DS101: Remove unnecessary use of Array.from
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const { Promise } = __.require('lib', 'promises');
+const properties = require('../properties/properties_values_constraints');
+const { prefixifyWd, prefixifyInv } = __.require('controllers', 'entities/lib/prefix');
+const entities_ = __.require('controllers', 'entities/lib/entities');
+const runWdQuery = __.require('data', 'wikidata/run_query');
+const getInvEntityCanonicalUri = require('../get_inv_entity_canonical_uri');
 
-module.exports = (claims, resolveOnWikidata = true)->
-  externalIds = []
+module.exports = function(claims, resolveOnWikidata = true){
+  const externalIds = [];
 
-  for prop, values of claims
-    if properties[prop].isExternalId
-      values.forEach (value)-> externalIds.push [ prop, value ]
+  for (var prop in claims) {
+    const values = claims[prop];
+    if (properties[prop].isExternalId) {
+      values.forEach(value => externalIds.push([ prop, value ]));
+    }
+  }
 
-  if externalIds.length is 0 then return Promise.resolve()
+  if (externalIds.length === 0) { return Promise.resolve(); }
 
-  requests = [ invQuery(externalIds) ]
-  if resolveOnWikidata then requests.push wdQuery(externalIds)
+  const requests = [ invQuery(externalIds) ];
+  if (resolveOnWikidata) { requests.push(wdQuery(externalIds)); }
 
-  Promise.all requests
-  .then _.flatten
+  return Promise.all(requests)
+  .then(_.flatten);
+};
 
-wdQuery = (externalIds)->
-  runWdQuery { query: 'resolve-external-ids', externalIds }
-  .map prefixifyWd
+var wdQuery = externalIds => runWdQuery({ query: 'resolve-external-ids', externalIds })
+.map(prefixifyWd);
 
-invQuery = (externalIds)->
-  Promise.all externalIds.map(invByClaim)
-  .then _.flatten
+var invQuery = externalIds => Promise.all(externalIds.map(invByClaim))
+.then(_.flatten);
 
-invByClaim = (pair)->
-  [ prop, value ] = pair
-  entities_.byClaim prop, value, true, true
-  .map getInvEntityCanonicalUri
+var invByClaim = function(pair){
+  const [ prop, value ] = Array.from(pair);
+  return entities_.byClaim(prop, value, true, true)
+  .map(getInvEntityCanonicalUri);
+};

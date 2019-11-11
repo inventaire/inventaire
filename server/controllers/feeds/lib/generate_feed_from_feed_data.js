@@ -1,24 +1,28 @@
-CONFIG = require 'config'
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-{ feed:feedConfig } = CONFIG
-items_ = __.require 'controllers', 'items/lib/items'
-snapshot_ = __.require 'controllers', 'items/lib/snapshot/snapshot'
-serializeFeed = require './serialize_feed'
-getItemsByAccessLevel = __.require 'controllers', 'items/lib/get_by_access_level'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const { feed:feedConfig } = CONFIG;
+const items_ = __.require('controllers', 'items/lib/items');
+const snapshot_ = __.require('controllers', 'items/lib/snapshot/snapshot');
+const serializeFeed = require('./serialize_feed');
+const getItemsByAccessLevel = __.require('controllers', 'items/lib/get_by_access_level');
 
-module.exports = (lang)-> (feedData)->
-  { users, accessLevel, feedOptions } = feedData
-  usersIds = users.map _.property('_id')
-  getLastItemsFromUsersIds usersIds, accessLevel
-  .then (items)-> serializeFeed feedOptions, users, items, lang
+module.exports = lang => (function(feedData) {
+  const { users, accessLevel, feedOptions } = feedData;
+  const usersIds = users.map(_.property('_id'));
+  return getLastItemsFromUsersIds(usersIds, accessLevel)
+  .then(items => serializeFeed(feedOptions, users, items, lang));
+});
 
-getLastItemsFromUsersIds = (usersIds, accessLevel)->
-  getItemsByAccessLevel[accessLevel](usersIds)
-  .then extractLastItems
-  .map snapshot_.addToItem
+var getLastItemsFromUsersIds = (usersIds, accessLevel) => getItemsByAccessLevel[accessLevel](usersIds)
+.then(extractLastItems)
+.map(snapshot_.addToItem);
 
-extractLastItems = (items)->
-  items
-  .sort (a, b)-> b.created - a.created
-  .slice 0, feedConfig.limitLength
+var extractLastItems = items => items
+.sort((a, b) => b.created - a.created)
+.slice(0, feedConfig.limitLength);

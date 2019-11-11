@@ -1,40 +1,47 @@
-# Enrich ../by_uris results with entities related to the directly
-# requested entities, following those entities claims
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+// Enrich ../by_uris results with entities related to the directly
+// requested entities, following those entities claims
 
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-getEntitiesByUris = require './get_entities_by_uris'
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const getEntitiesByUris = require('./get_entities_by_uris');
 
-module.exports = (relatives, refresh)->
-  unless relatives? then return _.identity
+module.exports = function(relatives, refresh){
+  if (relatives == null) { return _.identity; }
 
-  addRelatives = (results)->
-    { entities } = results
+  var addRelatives = function(results){
+    const { entities } = results;
 
-    additionalEntitiesUris = getAdditionalEntitiesUris entities, relatives
+    const additionalEntitiesUris = getAdditionalEntitiesUris(entities, relatives);
 
-    if additionalEntitiesUris.length is 0 then return results
+    if (additionalEntitiesUris.length === 0) { return results; }
 
-    getEntitiesByUris { uris: additionalEntitiesUris, refresh }
-    # Recursively add relatives, so that an edition could be sent
-    # with its works, and its works authors and series
-    .then addRelatives
-    .then (additionalResults)->
-      # We only need to extend entities, as those additional URIs
-      # should already be the canonical URIs (no redirection needed)
-      # and all URIs should resolve to an existing entity
-      _.extend results.entities, additionalResults.entities
-      return results
+    return getEntitiesByUris({ uris: additionalEntitiesUris, refresh })
+    // Recursively add relatives, so that an edition could be sent
+    // with its works, and its works authors and series
+    .then(addRelatives)
+    .then(function(additionalResults){
+      // We only need to extend entities, as those additional URIs
+      // should already be the canonical URIs (no redirection needed)
+      // and all URIs should resolve to an existing entity
+      _.extend(results.entities, additionalResults.entities);
+      return results;
+    });
+  };
 
-  return addRelatives
+  return addRelatives;
+};
 
-getAdditionalEntitiesUris = (entities, relatives)->
-  _(entities)
-  .values()
-  .map getEntityRelativesUris(relatives)
-  .flattenDeep()
-  .uniq()
-  .value()
+var getAdditionalEntitiesUris = (entities, relatives) => _(entities)
+.values()
+.map(getEntityRelativesUris(relatives))
+.flattenDeep()
+.uniq()
+.value();
 
-getEntityRelativesUris = (relatives)-> (entity)->
-  _.values _.pick(entity.claims, relatives)
+var getEntityRelativesUris = relatives => entity => _.values(_.pick(entity.claims, relatives));

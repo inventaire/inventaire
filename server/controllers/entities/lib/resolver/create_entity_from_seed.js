@@ -1,85 +1,110 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-{ Promise } = __.require 'lib', 'promises'
-properties = require '../properties/properties_values_constraints'
-createInvEntity = require '../create_inv_entity'
-isbn_ = __.require 'lib', 'isbn/isbn'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS205: Consider reworking code to avoid use of IIFEs
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const { Promise } = __.require('lib', 'promises');
+const properties = require('../properties/properties_values_constraints');
+const createInvEntity = require('../create_inv_entity');
+const isbn_ = __.require('lib', 'isbn/isbn');
 
-createAuthor = (userId, batchId)-> (author)->
-  if author.uri? then return author
-  claims = {}
+const createAuthor = (userId, batchId) => (function(author) {
+  if (author.uri != null) { return author; }
+  const claims = {};
 
-  addClaimIfValid claims, 'wdt:P31', [ 'wd:Q5' ]
-  createEntityFromSeed { type: 'human', seed: author, claims, userId, batchId }
+  addClaimIfValid(claims, 'wdt:P31', [ 'wd:Q5' ]);
+  return createEntityFromSeed({ type: 'human', seed: author, claims, userId, batchId });
+});
 
-createWork = (userId, batchId, authors)-> (work)->
-  if work.uri? then return work
-  authorsUris = _.compact _.map(authors, 'uri')
-  claims = {}
-  addClaimIfValid claims, 'wdt:P31', [ 'wd:Q571' ]
-  addClaimIfValid claims, 'wdt:P50', authorsUris
-  createEntityFromSeed { type: 'work', seed: work, claims, userId, batchId }
+const createWork = (userId, batchId, authors) => (function(work) {
+  if (work.uri != null) { return work; }
+  const authorsUris = _.compact(_.map(authors, 'uri'));
+  const claims = {};
+  addClaimIfValid(claims, 'wdt:P31', [ 'wd:Q571' ]);
+  addClaimIfValid(claims, 'wdt:P50', authorsUris);
+  return createEntityFromSeed({ type: 'work', seed: work, claims, userId, batchId });
+});
 
-createEdition = (edition, works, userId, batchId)->
-  if edition.uri? then return Promise.resolve()
-  { isbn } = edition
-  worksUris = _.compact _.map(works, 'uri')
-  claims = {}
+const createEdition = function(edition, works, userId, batchId){
+  if (edition.uri != null) { return Promise.resolve(); }
+  const { isbn } = edition;
+  const worksUris = _.compact(_.map(works, 'uri'));
+  const claims = {};
 
-  addClaimIfValid claims, 'wdt:P31', [ 'wd:Q3331189' ]
-  addClaimIfValid claims, 'wdt:P629', worksUris
+  addClaimIfValid(claims, 'wdt:P31', [ 'wd:Q3331189' ]);
+  addClaimIfValid(claims, 'wdt:P629', worksUris);
 
-  if isbn?
-    hyphenatedIsbn = isbn_.toIsbn13h isbn
-    addClaimIfValid claims, 'wdt:P212', [ hyphenatedIsbn ]
+  if (isbn != null) {
+    const hyphenatedIsbn = isbn_.toIsbn13h(isbn);
+    addClaimIfValid(claims, 'wdt:P212', [ hyphenatedIsbn ]);
+  }
 
-  unless edition.claims['wdt:P1476']?.length is 1
-    title = buildBestEditionTitle edition, works
-    edition.claims['wdt:P1476'] = [ title ]
+  if ((edition.claims['wdt:P1476'] != null ? edition.claims['wdt:P1476'].length : undefined) !== 1) {
+    const title = buildBestEditionTitle(edition, works);
+    edition.claims['wdt:P1476'] = [ title ];
+  }
 
-  # garantee that an edition shall not have label
-  edition.labels = {}
+  // garantee that an edition shall not have label
+  edition.labels = {};
 
-  createEntityFromSeed { type: 'edition', seed: edition, claims, userId, batchId }
+  return createEntityFromSeed({ type: 'edition', seed: edition, claims, userId, batchId });
+};
 
-# An entity type is required only for properties with validation functions requiring a type
-# Ex: typedExternalId properties
-addClaimIfValid = (claims, property, values, type)->
-  for value in values
-    if value? and properties[property].validate value, type
-      claims[property] ?= []
-      claims[property].push value
+// An entity type is required only for properties with validation functions requiring a type
+// Ex: typedExternalId properties
+var addClaimIfValid = (claims, property, values, type) => (() => {
+  const result = [];
+  for (let value of values) {
+    if ((value != null) && properties[property].validate(value, type)) {
+      if (claims[property] == null) { claims[property] = []; }
+      result.push(claims[property].push(value));
+    } else {
+      result.push(undefined);
+    }
+  }
+  return result;
+})();
 
-createEntityFromSeed = (params)->
-  { type, seed, claims, userId, batchId } = params
-  createInvEntity
-    labels: seed.labels
-    claims: buildClaims seed.claims, claims, type
-    userId: userId
-    batchId: batchId
-  .then addCreatedUriToSeed(seed)
+var createEntityFromSeed = function(params){
+  const { type, seed, claims, userId, batchId } = params;
+  return createInvEntity({
+    labels: seed.labels,
+    claims: buildClaims(seed.claims, claims, type),
+    userId,
+    batchId}).then(addCreatedUriToSeed(seed));
+};
 
-buildClaims = (seedClaims, entityClaims, type)->
-  for property, values of seedClaims
-    addClaimIfValid entityClaims, property, values, type
-  return entityClaims
+var buildClaims = function(seedClaims, entityClaims, type){
+  for (let property in seedClaims) {
+    const values = seedClaims[property];
+    addClaimIfValid(entityClaims, property, values, type);
+  }
+  return entityClaims;
+};
 
-addCreatedUriToSeed = (entryEntity)-> (createdEntity)->
-  unless createdEntity._id? then return
-  entryEntity.uri = "inv:#{createdEntity._id}"
-  entryEntity.created = true
+var addCreatedUriToSeed = entryEntity => (function(createdEntity) {
+  if (createdEntity._id == null) { return; }
+  entryEntity.uri = `inv:${createdEntity._id}`;
+  return entryEntity.created = true;
+});
 
-buildBestEditionTitle = (edition, works)->
-  # return in priority values of wdt:P1476, which shall have only one element
-  if edition.claims['wdt:P1476']
-    edition.claims['wdt:P1476'][0]
-  else
-    # return best guess, hyphenate works labels
-    _(works)
-    .map (work)-> _.uniq _.values(work.labels)
+var buildBestEditionTitle = function(edition, works){
+  // return in priority values of wdt:P1476, which shall have only one element
+  if (edition.claims['wdt:P1476']) {
+    return edition.claims['wdt:P1476'][0];
+  } else {
+    // return best guess, hyphenate works labels
+    return _(works)
+    .map(work => _.uniq(_.values(work.labels)))
     .flatten()
     .uniq()
-    .join ' - '
+    .join(' - ');
+  }
+};
 
-module.exports = { createAuthor, createWork, createEdition }
+module.exports = { createAuthor, createWork, createEdition };

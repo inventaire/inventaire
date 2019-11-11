@@ -1,11 +1,11 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-{ Lang } = __.require 'lib', 'regex'
-{ pass, email } = require './common'
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const { Lang } = __.require('lib', 'regex');
+const { pass, email } = require('./common');
 
 module.exports = {
   pass,
   email,
-  language: (lang)-> /^\w{2}(-\w{2})?$/.test(lang)
-}
+  language(lang){ return /^\w{2}(-\w{2})?$/.test(lang); }
+};

@@ -1,58 +1,70 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-searchWikidataByText = __.require 'data', 'wikidata/search_by_text'
-searchInvEntities = require './search_inv_entities'
-getEntitiesByUris = require './get_entities_by_uris'
-promises_ = __.require 'lib', 'promises'
-error_ = __.require 'lib', 'error/error'
-assert_ = __.require 'utils', 'assert_types'
-{ getInvEntityUri } = __.require 'controllers', 'entities/lib/prefix'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const searchWikidataByText = __.require('data', 'wikidata/search_by_text');
+const searchInvEntities = require('./search_inv_entities');
+const getEntitiesByUris = require('./get_entities_by_uris');
+const promises_ = __.require('lib', 'promises');
+const error_ = __.require('lib', 'error/error');
+const assert_ = __.require('utils', 'assert_types');
+const { getInvEntityUri } = __.require('controllers', 'entities/lib/prefix');
 
-module.exports = (query)->
-  assert_.object query
-  { refresh } = query
+module.exports = function(query){
+  assert_.object(query);
+  const { refresh } = query;
 
-  promises_.all [
-    searchWikidataByText query
-    searchInvByText query
-  ]
-  .then mergeResults
-  .then replaceEditionsByTheirWork(refresh)
-  .then _.values
-  .catch _.ErrorRethrow('search by text err')
+  return promises_.all([
+    searchWikidataByText(query),
+    searchInvByText(query)
+  ])
+  .then(mergeResults)
+  .then(replaceEditionsByTheirWork(refresh))
+  .then(_.values)
+  .catch(_.ErrorRethrow('search by text err'));
+};
 
-searchInvByText = (query, key)->
-  { search } = query
+var searchInvByText = function(query, key){
+  const { search } = query;
 
-  searchInvEntities search
-  # It's ok to use the inv URI even if its not the canonical URI
-  # (wd and isbn URI are prefered) as getEntitiesByUris will
-  # take care of finding the right URI downward
-  .map getInvEntityUri
-  .then (uris)-> getEntitiesByUris { uris }
-  .catch error_.notFound
+  return searchInvEntities(search)
+  // It's ok to use the inv URI even if its not the canonical URI
+  // (wd and isbn URI are prefered) as getEntitiesByUris will
+  // take care of finding the right URI downward
+  .map(getInvEntityUri)
+  .then(uris => getEntitiesByUris({ uris }))
+  .catch(error_.notFound);
+};
 
-mergeResults = (results)->
-  _.flattenIndexes _.compact(results).map(_.property('entities'))
+var mergeResults = results => _.flattenIndexes(_.compact(results).map(_.property('entities')));
 
-replaceEditionsByTheirWork = (refresh)-> (entities)->
-  missingWorkEntities = []
-  for uri, entity of entities
-    if entity.type is 'edition'
-      workUri = entity.claims['wdt:P629']?[0]
-      if workUri?
-        # Ensure that the edition work is in the results
-        unless entities[workUri]? then missingWorkEntities.push workUri
-        # Remove the edition from the results as it will be fetched later
-        # as an edition of its work
-      else
-        # Example: wd:Q24200032
-        _.warn entity, 'edition without an associated work: ignored'
-      delete entities[uri]
+var replaceEditionsByTheirWork = refresh => (function(entities) {
+  let missingWorkEntities = [];
+  for (let uri in entities) {
+    const entity = entities[uri];
+    if (entity.type === 'edition') {
+      const workUri = entity.claims['wdt:P629'] != null ? entity.claims['wdt:P629'][0] : undefined;
+      if (workUri != null) {
+        // Ensure that the edition work is in the results
+        if (entities[workUri] == null) { missingWorkEntities.push(workUri); }
+        // Remove the edition from the results as it will be fetched later
+        // as an edition of its work
+      } else {
+        // Example: wd:Q24200032
+        _.warn(entity, 'edition without an associated work: ignored');
+      }
+      delete entities[uri];
+    }
+  }
 
-  missingWorkEntities = _.uniq missingWorkEntities
-  _.log missingWorkEntities, 'missingWorkEntities from editions'
+  missingWorkEntities = _.uniq(missingWorkEntities);
+  _.log(missingWorkEntities, 'missingWorkEntities from editions');
 
-  return getEntitiesByUris { uris: missingWorkEntities, refresh }
-  .then (results)-> _.extend entities, results.entities
+  return getEntitiesByUris({ uris: missingWorkEntities, refresh })
+  .then(results => _.extend(entities, results.entities));
+});

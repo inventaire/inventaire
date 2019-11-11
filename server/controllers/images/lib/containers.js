@@ -1,25 +1,34 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-images_ = __.require 'lib', 'images'
-putImage = require './put_image'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const images_ = __.require('lib', 'images');
+const putImage = require('./put_image');
 
-containerPutImage = (container, fnName)-> (fileData)->
-  { id, path } = fileData
+const containerPutImage = (container, fnName) => (function(fileData) {
+  const { id, path } = fileData;
 
-  images_[fnName](path)
-  .then -> images_.getHashFilename path
-  .then (filename)-> putImage container, path, id, filename
+  return images_[fnName](path)
+  .then(() => images_.getHashFilename(path))
+  .then(filename => putImage(container, path, id, filename));
+});
 
-module.exports =
-  users:
-    putImage: containerPutImage 'users', 'shrinkAndFormat'
+module.exports = {
+  users: {
+    putImage: containerPutImage('users', 'shrinkAndFormat')
+  },
 
-  entities:
-    putImage: containerPutImage 'entities', 'removeExif'
+  entities: {
+    putImage: containerPutImage('entities', 'removeExif')
+  },
 
-  # Placeholder to add 'remote' to the list of containers, when it's actually
-  # used to fetch remote images
-  remote: {}
-  # Same but for emails and client assets
+  // Placeholder to add 'remote' to the list of containers, when it's actually
+  // used to fetch remote images
+  remote: {},
+  // Same but for emails and client assets
   assets: {}
+};

@@ -1,91 +1,107 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-error_ = __.require 'lib', 'error/error'
-responses_ = __.require 'lib', 'responses'
-promises_ = __.require 'lib', 'promises'
-groups_ = require './lib/groups'
-user_ = __.require 'controllers', 'user/lib/user'
-items_ = __.require 'controllers', 'items/lib/items'
-parseBbox = __.require 'lib', 'parse_bbox'
-{ buildSearcher } = __.require 'lib', 'elasticsearch'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const error_ = __.require('lib', 'error/error');
+const responses_ = __.require('lib', 'responses');
+const promises_ = __.require('lib', 'promises');
+const groups_ = require('./lib/groups');
+const user_ = __.require('controllers', 'user/lib/user');
+const items_ = __.require('controllers', 'items/lib/items');
+const parseBbox = __.require('lib', 'parse_bbox');
+const { buildSearcher } = __.require('lib', 'elasticsearch');
 
-module.exports =
-  byId: (req, res)->
-    { id } = req.query
-    reqUserId = req.user?._id
+module.exports = {
+  byId(req, res){
+    const { id } = req.query;
+    const reqUserId = req.user != null ? req.user._id : undefined;
 
-    unless  _.isGroupId id
-      return error_.bundleInvalid req, res, 'id', id
+    if  (!_.isGroupId(id)) {
+      return error_.bundleInvalid(req, res, 'id', id);
+    }
 
-    groups_.getGroupData 'byId', [ id ], reqUserId
-    .then responses_.Send(res)
-    .catch error_.Handler(req, res)
+    return groups_.getGroupData('byId', [ id ], reqUserId)
+    .then(responses_.Send(res))
+    .catch(error_.Handler(req, res));
+  },
 
-  bySlug: (req, res)->
-    { slug } = req.query
-    reqUserId = req.user?._id
+  bySlug(req, res){
+    const { slug } = req.query;
+    const reqUserId = req.user != null ? req.user._id : undefined;
 
-    unless _.isNonEmptyString slug
-      return error_.bundleMissingQuery req, res, 'slug'
+    if (!_.isNonEmptyString(slug)) {
+      return error_.bundleMissingQuery(req, res, 'slug');
+    }
 
-    groups_.getGroupData 'bySlug', [ slug ], reqUserId
-    .then responses_.Send(res)
-    .catch error_.Handler(req, res)
+    return groups_.getGroupData('bySlug', [ slug ], reqUserId)
+    .then(responses_.Send(res))
+    .catch(error_.Handler(req, res));
+  },
 
-  searchByText: (req, res)->
-    { query } = req
-    search = query.search?.trim()
-    reqUserId = req.user?._id
+  searchByText(req, res){
+    const { query } = req;
+    const search = query.search != null ? query.search.trim() : undefined;
+    const reqUserId = req.user != null ? req.user._id : undefined;
 
-    unless _.isNonEmptyString search
-      return error_.bundleInvalid req, res, 'search', search
+    if (!_.isNonEmptyString(search)) {
+      return error_.bundleInvalid(req, res, 'search', search);
+    }
 
-    searchByText search
-    .filter searchable
-    .then responses_.Wrap(res, 'groups')
-    .catch error_.Handler(req, res)
+    return searchByText(search)
+    .filter(searchable)
+    .then(responses_.Wrap(res, 'groups'))
+    .catch(error_.Handler(req, res));
+  },
 
-  searchByPositon: (req, res)->
-    parseBbox req.query
-    .then (bbox)->
-      # can't be chained directy as .filter makes problems when parseBbox throws:
-      # "parseBbox(...).then(...).then(...).catch(...).filter is not a function"
-      groups_.byPosition bbox
-      .filter searchable
-    .then responses_.Wrap(res, 'groups')
-    .catch error_.Handler(req, res)
+  searchByPositon(req, res){
+    return parseBbox(req.query)
+    .then(bbox => // can't be chained directy as .filter makes problems when parseBbox throws:
+    // "parseBbox(...).then(...).then(...).catch(...).filter is not a function"
+    groups_.byPosition(bbox)
+    .filter(searchable)).then(responses_.Wrap(res, 'groups'))
+    .catch(error_.Handler(req, res));
+  },
 
-  lastGroups: (req, res)->
-    groups_.byCreation()
-    .filter searchable
-    .then responses_.Wrap(res, 'groups')
-    .catch error_.Handler(req, res)
+  lastGroups(req, res){
+    return groups_.byCreation()
+    .filter(searchable)
+    .then(responses_.Wrap(res, 'groups'))
+    .catch(error_.Handler(req, res));
+  },
 
-  slug: (req, res)->
-    { name, group:groupId } = req.query
+  slug(req, res){
+    const { name, group:groupId } = req.query;
 
-    unless name? then return error_.bundleMissingQuery req, res, 'name'
+    if (name == null) { return error_.bundleMissingQuery(req, res, 'name'); }
 
-    if groupId? and not _.isGroupId groupId
-      return error_.bundleInvalid req, res, 'group', groupId
+    if ((groupId != null) && !_.isGroupId(groupId)) {
+      return error_.bundleInvalid(req, res, 'group', groupId);
+    }
 
-    groups_.getSlug name, groupId
-    .then responses_.Wrap(res, 'slug')
-    .catch error_.Handler(req, res)
+    return groups_.getSlug(name, groupId)
+    .then(responses_.Wrap(res, 'slug'))
+    .catch(error_.Handler(req, res));
+  }
+};
 
-searchByText = buildSearcher
-  dbBaseName: 'groups'
-  queryBodyBuilder: (search)->
-    should = [
-      # Name
-      { match: { name: { query: search, boost: 5 } } }
-      { match_phrase_prefix: { name: { query: search, boost: 4 } } }
-      { fuzzy: { name: search } }
-      # Description
+var searchByText = buildSearcher({
+  dbBaseName: 'groups',
+  queryBodyBuilder(search){
+    const should = [
+      // Name
+      { match: { name: { query: search, boost: 5 } } },
+      { match_phrase_prefix: { name: { query: search, boost: 4 } } },
+      { fuzzy: { name: search } },
+      // Description
       { match: { description: search } }
-    ]
+    ];
 
-    return { query: { bool: { should } } }
+    return { query: { bool: { should } } };
+  }});
 
-searchable = _.property 'searchable'
+var searchable = _.property('searchable');

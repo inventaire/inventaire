@@ -1,30 +1,39 @@
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-error_ = __.require 'lib', 'error/error'
-responses_ = __.require 'lib', 'responses'
-{ buildSearcher } = __.require 'lib', 'elasticsearch'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const error_ = __.require('lib', 'error/error');
+const responses_ = __.require('lib', 'responses');
+const { buildSearcher } = __.require('lib', 'elasticsearch');
 
-module.exports = (req, res)->
-  { query } = req
-  search = query.search?.trim()
+module.exports = function(req, res){
+  const { query } = req;
+  const search = query.search != null ? query.search.trim() : undefined;
 
-  unless _.isNonEmptyString search
-    return error_.bundleInvalid req, res, 'search', search
+  if (!_.isNonEmptyString(search)) {
+    return error_.bundleInvalid(req, res, 'search', search);
+  }
 
-  searchByText search
-  .then responses_.Wrap(res, 'users')
-  .catch error_.Handler(req, res)
+  return searchByText(search)
+  .then(responses_.Wrap(res, 'users'))
+  .catch(error_.Handler(req, res));
+};
 
-searchByText = buildSearcher
-  dbBaseName: 'users'
-  queryBodyBuilder: (search)->
-    should = [
-      # Username
-      { match: { username: { query: search, boost: 5 } } }
-      { match_phrase_prefix: { username: { query: search, boost: 4 } } }
-      { fuzzy: { username: search } }
-      # Bio
+var searchByText = buildSearcher({
+  dbBaseName: 'users',
+  queryBodyBuilder(search){
+    const should = [
+      // Username
+      { match: { username: { query: search, boost: 5 } } },
+      { match_phrase_prefix: { username: { query: search, boost: 4 } } },
+      { fuzzy: { username: search } },
+      // Bio
       { match: { bio: search } }
-    ]
+    ];
 
-    return { query: { bool: { should } } }
+    return { query: { bool: { should } } };
+  }});

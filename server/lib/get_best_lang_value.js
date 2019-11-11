@@ -1,21 +1,29 @@
-{ uniq } = require 'lodash'
+/*
+ * decaffeinate suggestions:
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const { uniq } = require('lodash');
 
-# data: labels or descriptions
-module.exports = (lang, originalLang, data)->
-  unless data then return {}
+// data: labels or descriptions
+module.exports = function(lang, originalLang, data){
+  if (!data) { return {}; }
 
-  order = getLangPriorityOrder lang, originalLang, data
+  const order = getLangPriorityOrder(lang, originalLang, data);
 
-  while order.length > 0
-    nextLang = order.shift()
-    value = data[nextLang]
-    if value? then return { value, lang: nextLang }
+  while (order.length > 0) {
+    const nextLang = order.shift();
+    const value = data[nextLang];
+    if (value != null) { return { value, lang: nextLang }; }
+  }
 
-  return {}
+  return {};
+};
 
-getLangPriorityOrder = (lang, originalLang, data)->
-  order = [ lang ]
-  if originalLang? then order.push originalLang
-  order.push 'en'
-  availableLangs = Object.keys data
-  return uniq order.concat(availableLangs)
+var getLangPriorityOrder = function(lang, originalLang, data){
+  const order = [ lang ];
+  if (originalLang != null) { order.push(originalLang); }
+  order.push('en');
+  const availableLangs = Object.keys(data);
+  return uniq(order.concat(availableLangs));
+};

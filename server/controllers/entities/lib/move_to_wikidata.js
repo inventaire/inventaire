@@ -1,20 +1,28 @@
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-entities_ = require './entities'
-mergeEntities = require './merge_entities'
-{ unprefixify } = require './prefix'
-createWdEntity = require './create_wd_entity'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const entities_ = require('./entities');
+const mergeEntities = require('./merge_entities');
+const { unprefixify } = require('./prefix');
+const createWdEntity = require('./create_wd_entity');
 
-module.exports = (user, invEntityUri)->
-  { _id: reqUserId } = user
+module.exports = function(user, invEntityUri){
+  const { _id: reqUserId } = user;
 
-  entityId = unprefixify invEntityUri
+  const entityId = unprefixify(invEntityUri);
 
-  entities_.byId entityId
-  .then (entity)->
-    { labels, claims } = entity
-    createWdEntity { labels, claims, user, isAlreadyValidated: true }
-  .then (createdEntity)->
-    { uri: wdEntityUri } = createdEntity
-    mergeEntities reqUserId, invEntityUri, wdEntityUri
-    .then -> { uri: wdEntityUri }
+  return entities_.byId(entityId)
+  .then(function(entity){
+    const { labels, claims } = entity;
+    return createWdEntity({ labels, claims, user, isAlreadyValidated: true });})
+  .then(function(createdEntity){
+    const { uri: wdEntityUri } = createdEntity;
+    return mergeEntities(reqUserId, invEntityUri, wdEntityUri)
+    .then(() => ({
+      uri: wdEntityUri
+    }));});
+};

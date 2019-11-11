@@ -1,9 +1,10 @@
-module.exports = attributes = {}
+let attributes;
+module.exports = (attributes = {});
 
 attributes.versionned = [
-  'type'
-  'labels'
-  'claims'
-  'redirect'
+  'type',
+  'labels',
+  'claims',
+  'redirect',
   '_deleted'
-]
+];

@@ -1,22 +1,28 @@
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-{ getNames, aggregateClaims } = require './helpers'
-error_ = __.require 'lib', 'error/error'
-assert_ = __.require 'utils', 'assert_types'
-wdk = require 'wikidata-sdk'
-{ snapshotValidations } = __.require 'models', 'validations/item'
-getBestLangValue = __.require 'lib', 'get_best_lang_value'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const { getNames, aggregateClaims } = require('./helpers');
+const error_ = __.require('lib', 'error/error');
+const assert_ = __.require('utils', 'assert_types');
+const wdk = require('wikidata-sdk');
+const { snapshotValidations } = __.require('models', 'validations/item');
+const getBestLangValue = __.require('lib', 'get_best_lang_value');
 
-module.exports =
-  edition: (edition, works, authors, series)->
-    lang = edition.originalLang or 'en'
-    title = edition.claims['wdt:P1476']?[0]
-    subtitle = edition.claims['wdt:P1680']?[0]
-    # Wikidata editions might not have a wdt:P1476 value
-    title or= getBestLangValue(lang, null, edition.labels).value
-    image = edition.image?.url
-    return buildOperation {
-      type: 'edition'
+module.exports = {
+  edition(edition, works, authors, series){
+    const lang = edition.originalLang || 'en';
+    let title = edition.claims['wdt:P1476'] != null ? edition.claims['wdt:P1476'][0] : undefined;
+    const subtitle = edition.claims['wdt:P1680'] != null ? edition.claims['wdt:P1680'][0] : undefined;
+    // Wikidata editions might not have a wdt:P1476 value
+    if (!title) { title = getBestLangValue(lang, null, edition.labels).value; }
+    const image = edition.image != null ? edition.image.url : undefined;
+    return buildOperation({
+      type: 'edition',
       entity: edition,
       works,
       title,
@@ -25,15 +31,16 @@ module.exports =
       image,
       authors,
       series
-    }
+    });
+  },
 
-  work: (work, authors, series)->
-    { originalLang: lang } = work
-    title = getBestLangValue(lang, null, work.labels).value
-    image = work.claims['wdt:P18']?[0]
-    works = [ work ]
-    return buildOperation {
-      type: 'work'
+  work(work, authors, series){
+    const { originalLang: lang } = work;
+    const title = getBestLangValue(lang, null, work.labels).value;
+    const image = work.claims['wdt:P18'] != null ? work.claims['wdt:P18'][0] : undefined;
+    const works = [ work ];
+    return buildOperation({
+      type: 'work',
       entity: work,
       works,
       title,
@@ -41,46 +48,57 @@ module.exports =
       image,
       authors,
       series
-    }
+    });
+  }
+};
 
-buildOperation = (params)->
-  { type, entity, works, title, subtitle, lang, image, authors, series } = params
-  assert_.array works
-  unless _.isNonEmptyString title
-    throw error_.new 'no title found', 400, entity
+var buildOperation = function(params){
+  const { type, entity, works, title, subtitle, lang, image, authors, series } = params;
+  assert_.array(works);
+  if (!_.isNonEmptyString(title)) {
+    throw error_.new('no title found', 400, entity);
+  }
 
-  snapshot =
-    'entity:title': title
+  const snapshot = {
+    'entity:title': title,
     'entity:lang': lang
+  };
 
-  authorsNames = getNames lang, authors
-  seriesNames = getNames lang, series
+  const authorsNames = getNames(lang, authors);
+  const seriesNames = getNames(lang, series);
 
-  if authorsNames? then snapshot['entity:authors'] = authorsNames
-  if seriesNames?
-    snapshot['entity:series'] = seriesNames
-    setOrdinal snapshot, works
+  if (authorsNames != null) { snapshot['entity:authors'] = authorsNames; }
+  if (seriesNames != null) {
+    snapshot['entity:series'] = seriesNames;
+    setOrdinal(snapshot, works);
+  }
 
-  # Filtering out Wikimedia File names, keeping only images hashes or URLs
-  if snapshotValidations['entity:image'](image)
-    snapshot['entity:image'] = image
+  // Filtering out Wikimedia File names, keeping only images hashes or URLs
+  if (snapshotValidations['entity:image'](image)) {
+    snapshot['entity:image'] = image;
+  }
 
-  if _.isNonEmptyString subtitle
-    snapshot['entity:subtitle'] = subtitle
+  if (_.isNonEmptyString(subtitle)) {
+    snapshot['entity:subtitle'] = subtitle;
+  }
 
-  { uri } = entity
-  assert_.string uri
+  const { uri } = entity;
+  assert_.string(uri);
 
-  return { key: uri, value: snapshot }
+  return { key: uri, value: snapshot };
+};
 
-setOrdinal = (snapshot, works)->
-  if works.length is 1
-    work = works[0]
-    ordinal = work.claims['wdt:P1545']?[0]
-    if ordinal? then snapshot['entity:ordinal'] = ordinal
-  else
-    series = aggregateClaims works, 'wdt:P179'
-    # Aggregate ordinals only if works are from the same unique serie
-    if series.length is 1
-      ordinals = aggregateClaims works, 'wdt:P1545'
-      if ordinals.length > 0 then snapshot['entity:ordinal'] = ordinals.join(',')
+var setOrdinal = function(snapshot, works){
+  if (works.length === 1) {
+    const work = works[0];
+    const ordinal = work.claims['wdt:P1545'] != null ? work.claims['wdt:P1545'][0] : undefined;
+    if (ordinal != null) { return snapshot['entity:ordinal'] = ordinal; }
+  } else {
+    const series = aggregateClaims(works, 'wdt:P179');
+    // Aggregate ordinals only if works are from the same unique serie
+    if (series.length === 1) {
+      const ordinals = aggregateClaims(works, 'wdt:P1545');
+      if (ordinals.length > 0) { return snapshot['entity:ordinal'] = ordinals.join(','); }
+    }
+  }
+};

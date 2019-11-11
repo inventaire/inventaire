@@ -1,124 +1,120 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-should = require 'should'
-{ Promise } = __.require 'lib', 'promises'
-{ authReq, nonAuthReq, undesiredErr, undesiredRes } = require '../utils/utils'
-{ addClaim, getRefreshedPopularityByUri } = require '../utils/entities'
-{ createEdition, createWork, createItemFromEntityUri, createSerie, createHuman } = require '../fixtures/entities'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const should = require('should');
+const { Promise } = __.require('lib', 'promises');
+const { authReq, nonAuthReq, undesiredErr, undesiredRes } = require('../utils/utils');
+const { addClaim, getRefreshedPopularityByUri } = require('../utils/entities');
+const { createEdition, createWork, createItemFromEntityUri, createSerie, createHuman } = require('../fixtures/entities');
 
-describe 'entities:popularity', ->
-  describe 'edition', ->
-    it 'should reject invalid uri', (done)->
-      invalidUri = 'inv:aliduri'
-      getRefreshedPopularityByUri invalidUri
-      .then undesiredRes(done)
-      .catch (err)->
-        err.body.status_verbose.should.startWith 'invalid '
-        done()
-      .catch undesiredErr(done)
+describe('entities:popularity', function() {
+  describe('edition', function() {
+    it('should reject invalid uri', function(done){
+      const invalidUri = 'inv:aliduri';
+      getRefreshedPopularityByUri(invalidUri)
+      .then(undesiredRes(done))
+      .catch(function(err){
+        err.body.status_verbose.should.startWith('invalid ');
+        return done();}).catch(undesiredErr(done));
 
-      return
+    });
 
-    it 'should default to 0', (done)->
+    it('should default to 0', function(done){
       createEdition()
-      .then (edition)-> scoreShouldEqual edition.uri, 0, done
-      .catch done
+      .then(edition => scoreShouldEqual(edition.uri, 0, done))
+      .catch(done);
 
-      return
-    it 'should equal the amount of instances in inventories', (done)->
+    });
+    it('should equal the amount of instances in inventories', function(done){
       createEdition()
-      .then (edition)->
-        { uri } = edition
-        scoreShouldEqual uri, 0
-        .then -> createItemFromEntityUri uri
-        .then -> scoreShouldEqual uri, 1, done
-      .catch done
+      .then(function(edition){
+        const { uri } = edition;
+        return scoreShouldEqual(uri, 0)
+        .then(() => createItemFromEntityUri(uri))
+        .then(() => scoreShouldEqual(uri, 1, done));}).catch(done);
 
-      return
+    });
 
-    it 'should count only one instance per owner', (done)->
+    return it('should count only one instance per owner', function(done){
       createEdition()
-      .then (edition)->
-        { uri } = edition
-        createItemFromEntityUri uri, { details: '1' }
-        .then -> createItemFromEntityUri uri, { details: '2' }
-        .then -> scoreShouldEqual uri, 1, done
-      .catch done
+      .then(function(edition){
+        const { uri } = edition;
+        return createItemFromEntityUri(uri, { details: '1' })
+        .then(() => createItemFromEntityUri(uri, { details: '2' }))
+        .then(() => scoreShouldEqual(uri, 1, done));}).catch(done);
 
-      return
+    });
+  });
 
-  describe 'work', ->
-    it 'should default to 0', (done)->
+  describe('work', function() {
+    it('should default to 0', function(done){
       createWork()
-      .then (work)-> scoreShouldEqual work.uri, 0, done
-      .catch done
+      .then(work => scoreShouldEqual(work.uri, 0, done))
+      .catch(done);
 
-      return
+    });
 
-    it 'should be incremented by every instances of editions', (done)->
+    return it('should be incremented by every instances of editions', function(done){
       createEdition()
-      .then (edition)->
-        workUri = edition.claims['wdt:P629'][0]
-        scoreShouldEqual workUri, 1
-        .then createItemFromEntityUri.bind(null, edition.uri)
-        .then -> scoreShouldEqual workUri, 2, done
-      .catch done
+      .then(function(edition){
+        const workUri = edition.claims['wdt:P629'][0];
+        return scoreShouldEqual(workUri, 1)
+        .then(createItemFromEntityUri.bind(null, edition.uri))
+        .then(() => scoreShouldEqual(workUri, 2, done));}).catch(done);
 
-      return
+    });
+  });
 
-  describe 'serie', ->
-    it 'should be made of the sum of its parts scores + number of parts', (done)->
-      createSerieWithAWorkWithAnEditionWithAnItem()
-      # 1: item
-      # 1: edition
-      # 1: work
-      .spread (serie)-> scoreShouldEqual serie.uri, 3, done
-      .catch done
-
-      return
-
-  describe 'human', ->
-    it 'should be made of the sum of its works scores + number of works and series', (done)->
-      createHumanWithAWorkWithAnEditionWithAnItem()
-      .spread (human)->
-        # 1: item
-        # 1: edition
-        # 1: work
-        # 1: serie
-        scoreShouldEqual human.uri, 4, done
-      .catch done
-
-      return
-
-scoreShouldEqual = (uri, value, done)->
-  getRefreshedPopularityByUri uri
-  .then (score)->
-    score.should.equal value
-    done?()
-    return score
-
-createSerieWithAWorkWithAnEditionWithAnItem = ->
-  Promise.all [
-    createWork()
-    createSerie()
-  ]
-  .spread (work, serie)->
-    Promise.all [
-      createEdition { work }
-      addClaim work.uri, 'wdt:P179', serie.uri
-    ]
-    .spread (edition)->
-      createItemFromEntityUri edition.uri, { lang: 'en' }
-      .then (item)-> [ serie, work, edition, item ]
-
-createHumanWithAWorkWithAnEditionWithAnItem = ->
-  createHuman()
-  .then (human)->
+  describe('serie', () => it('should be made of the sum of its parts scores + number of parts', function(done){
     createSerieWithAWorkWithAnEditionWithAnItem()
-    .spread (serie, work, edition, item)->
-      Promise.all [
-        addClaim work.uri, 'wdt:P50', human.uri
-        addClaim serie.uri, 'wdt:P50', human.uri
-      ]
-      .then -> [ human, serie, work, edition, item ]
+    // 1: item
+    // 1: edition
+    // 1: work
+    .spread(serie => scoreShouldEqual(serie.uri, 3, done))
+    .catch(done);
+
+  }));
+
+  return describe('human', () => it('should be made of the sum of its works scores + number of works and series', function(done){
+    createHumanWithAWorkWithAnEditionWithAnItem()
+    .spread(human => // 1: item
+    // 1: edition
+    // 1: work
+    // 1: serie
+    scoreShouldEqual(human.uri, 4, done)).catch(done);
+
+  }));
+});
+
+var scoreShouldEqual = (uri, value, done) => getRefreshedPopularityByUri(uri)
+.then(function(score){
+  score.should.equal(value);
+  if (typeof done === 'function') {
+    done();
+  }
+  return score;
+});
+
+var createSerieWithAWorkWithAnEditionWithAnItem = () => Promise.all([
+  createWork(),
+  createSerie()
+])
+.spread((work, serie) => Promise.all([
+  createEdition({ work }),
+  addClaim(work.uri, 'wdt:P179', serie.uri)
+])
+.spread(edition => createItemFromEntityUri(edition.uri, { lang: 'en' })
+.then(item => [ serie, work, edition, item ])));
+
+var createHumanWithAWorkWithAnEditionWithAnItem = () => createHuman()
+.then(human => createSerieWithAWorkWithAnEditionWithAnItem()
+.spread((serie, work, edition, item) => Promise.all([
+  addClaim(work.uri, 'wdt:P50', human.uri),
+  addClaim(serie.uri, 'wdt:P50', human.uri)
+])
+.then(() => [ human, serie, work, edition, item ])));

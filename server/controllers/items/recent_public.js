@@ -1,45 +1,57 @@
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-error_ = __.require 'lib', 'error/error'
-items_ = __.require 'controllers', 'items/lib/items'
-sanitize = __.require 'lib', 'sanitize/sanitize'
-bundleOwnersToItems = require './lib/bundle_owners_to_items'
-itemsQueryLimit = 100
-offset = 0
+/*
+ * decaffeinate suggestions:
+ * DS101: Remove unnecessary use of Array.from
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const error_ = __.require('lib', 'error/error');
+const items_ = __.require('controllers', 'items/lib/items');
+const sanitize = __.require('lib', 'sanitize/sanitize');
+const bundleOwnersToItems = require('./lib/bundle_owners_to_items');
+const itemsQueryLimit = 100;
+const offset = 0;
 
-sanitization =
-  'assert-image':
-    generic: 'boolean'
+const sanitization = {
+  'assert-image': {
+    generic: 'boolean',
     default: false
-  lang:
+  },
+  lang: {
     default: 'en'
-  limit:
+  },
+  limit: {
     default: 15
+  }
+};
 
-module.exports = (req, res)->
-  sanitize req, res, sanitization
-  .then (params)->
-    { assertImage, lang, limit, reqUserId } = params
-    items_.publicByDate itemsQueryLimit, offset, assertImage, reqUserId
-    .then selectRecentItems(lang, limit)
-    .then bundleOwnersToItems.bind(null, res, reqUserId)
-  .catch error_.Handler(req, res)
+module.exports = (req, res) => sanitize(req, res, sanitization)
+.then(function(params){
+  const { assertImage, lang, limit, reqUserId } = params;
+  return items_.publicByDate(itemsQueryLimit, offset, assertImage, reqUserId)
+  .then(selectRecentItems(lang, limit))
+  .then(bundleOwnersToItems.bind(null, res, reqUserId));}).catch(error_.Handler(req, res));
 
-selectRecentItems = (lang, limit)-> (items)->
-  recentItems = []
-  discardedItems = []
-  itemsCountByOwner = {}
+var selectRecentItems = (lang, limit) => (function(items) {
+  const recentItems = [];
+  const discardedItems = [];
+  const itemsCountByOwner = {};
 
-  for item in items
-    if recentItems.length is limit then return recentItems
-    itemsCountByOwner[item.owner] ?= 0
-    if item.snapshot['entity:lang'] is lang and itemsCountByOwner[item.owner] < 3
-      itemsCountByOwner[item.owner]++
-      recentItems.push item
-    else
-      discardedItems.push item
+  for (let item of items) {
+    if (recentItems.length === limit) { return recentItems; }
+    if (itemsCountByOwner[item.owner] == null) { itemsCountByOwner[item.owner] = 0; }
+    if ((item.snapshot['entity:lang'] === lang) && (itemsCountByOwner[item.owner] < 3)) {
+      itemsCountByOwner[item.owner]++;
+      recentItems.push(item);
+    } else {
+      discardedItems.push(item);
+    }
+  }
 
-  missingItemsCount = limit - recentItems.length
-  itemsToFill = discardedItems.slice 0, missingItemsCount
-  recentItems.push itemsToFill...
-  return recentItems
+  const missingItemsCount = limit - recentItems.length;
+  const itemsToFill = discardedItems.slice(0, missingItemsCount);
+  recentItems.push(...Array.from(itemsToFill || []));
+  return recentItems;
+});

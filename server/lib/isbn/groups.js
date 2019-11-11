@@ -1,16 +1,28 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-wdLang = require 'wikidata-lang'
-groupsData = require 'isbn-groups'
+/*
+ * decaffeinate suggestions:
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+let groupsMap;
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const wdLang = require('wikidata-lang');
+const groupsData = require('isbn-groups');
 
-module.exports = groupsMap = {}
+module.exports = (groupsMap = {});
 
-for gs1Prefix, gs1PrefixData of groupsData
-  for groupId, groupData of gs1PrefixData
-    { lang } = groupData
-    if lang?
-      wdId = 'wd:' + wdLang.byCode[lang].wd
-      groupsMap["#{gs1Prefix}-#{groupId}"] =
-        lang: lang
+for (let gs1Prefix in groupsData) {
+  const gs1PrefixData = groupsData[gs1Prefix];
+  for (let groupId in gs1PrefixData) {
+    const groupData = gs1PrefixData[groupId];
+    const { lang } = groupData;
+    if (lang != null) {
+      const wdId = 'wd:' + wdLang.byCode[lang].wd;
+      groupsMap[`${gs1Prefix}-${groupId}`] = {
+        lang,
         wd: wdId
+      };
+    }
+  }
+}

@@ -1,22 +1,31 @@
-CONFIG = require 'config'
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-{ oneMinute } =  __.require 'lib', 'times'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const { oneMinute } =  __.require('lib', 'times');
 
-attemptsLimit = 10
-periodMinutes = 5
+const attemptsLimit = 10;
+const periodMinutes = 5;
 
-fails = {}
-flushFails = -> fails = {}
+let fails = {};
+const flushFails = () => fails = {};
 
-setInterval flushFails, periodMinutes * oneMinute
+setInterval(flushFails, periodMinutes * oneMinute);
 
-module.exports =
-  _fails: -> fails
-  _flushFails: flushFails
-  recordFail: (username, label)->
-    fails[username] or= 0
-    ++fails[username]
+module.exports = {
+  _fails() { return fails; },
+  _flushFails: flushFails,
+  recordFail(username, label){
+    if (!fails[username]) { fails[username] = 0; }
+    return ++fails[username];
+  },
 
-  tooMany: (username)->
-    fails[username]? and fails[username] >= attemptsLimit
+  tooMany(username){
+    return (fails[username] != null) && (fails[username] >= attemptsLimit);
+  }
+};

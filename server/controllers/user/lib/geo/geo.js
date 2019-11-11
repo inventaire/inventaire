@@ -1,12 +1,14 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-db = __.require('level', 'geo')('geo')
-promises_ = __.require 'lib', 'promises'
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const db = __.require('level', 'geo')('geo');
+const promises_ = __.require('lib', 'promises');
 
-module.exports = ->
-  # Start following for changes
-  require('./follow')(db)
+module.exports = function() {
+  // Start following for changes
+  let API;
+  require('./follow')(db);
 
   return API =
-    search: (latLng, kmRange)-> db.search latLng, kmRange
+    {search(latLng, kmRange){ return db.search(latLng, kmRange); }};
+};

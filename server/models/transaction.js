@@ -1,98 +1,122 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-error_ = __.require 'lib', 'error/error'
-snapshotItemAttributes = require('./attributes/item').snapshot
-snapshotUserAttributes = require('./attributes/user').snapshot
-{ states, basicNextActions, nextActionsWithReturn } = require './attributes/transaction'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+let Transaction, validations;
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const error_ = __.require('lib', 'error/error');
+const snapshotItemAttributes = require('./attributes/item').snapshot;
+const snapshotUserAttributes = require('./attributes/user').snapshot;
+const { states, basicNextActions, nextActionsWithReturn } = require('./attributes/transaction');
 
-module.exports = Transaction = {}
+module.exports = (Transaction = {});
 
-Transaction.validations = validations = require './validations/transaction'
+Transaction.validations = (validations = require('./validations/transaction'));
 
-Transaction.create = (itemDoc, ownerDoc, requesterDoc)->
-  itemId = itemDoc._id
-  ownerId = ownerDoc._id
-  requesterId = requesterDoc._id
+Transaction.create = function(itemDoc, ownerDoc, requesterDoc){
+  let transaction;
+  const itemId = itemDoc._id;
+  const ownerId = ownerDoc._id;
+  const requesterId = requesterDoc._id;
 
-  validations.pass 'itemId', itemId
-  validations.pass 'userId', ownerId
-  validations.pass 'userId', requesterId
+  validations.pass('itemId', itemId);
+  validations.pass('userId', ownerId);
+  validations.pass('userId', requesterId);
 
-  unless itemDoc.transaction in requestable
-    throw error_.new "this item can't be requested", 400, itemDoc
+  if (!requestable.includes(itemDoc.transaction)) {
+    throw error_.new("this item can't be requested", 400, itemDoc);
+  }
 
-  now = Date.now()
+  const now = Date.now();
 
-  return transaction =
-    item: itemId
-    owner: ownerId
-    requester: requesterId
-    transaction: itemDoc.transaction
-    state: 'requested'
-    created: now
-    actions: [ { action: 'requested', timestamp: now } ]
-    read:
-      requester: true
+  return transaction = {
+    item: itemId,
+    owner: ownerId,
+    requester: requesterId,
+    transaction: itemDoc.transaction,
+    state: 'requested',
+    created: now,
+    actions: [ { action: 'requested', timestamp: now } ],
+    read: {
+      requester: true,
       owner: false
-    # keeping a copy of basic data to provide for when those
-    # will not be accessible anymore
-    # ex: item visibility change, deleted user, etc.
-    snapshot: snapshotData itemDoc, ownerDoc, requesterDoc
+    },
+    // keeping a copy of basic data to provide for when those
+    // will not be accessible anymore
+    // ex: item visibility change, deleted user, etc.
+    snapshot: snapshotData(itemDoc, ownerDoc, requesterDoc)
+  };
+};
 
-requestable = [
-  'giving'
-  'lending'
+var requestable = [
+  'giving',
+  'lending',
   'selling'
-]
+];
 
-Transaction.validatePossibleState = (transaction, newState)->
-  unless newState in states[transaction.state].next
-    throw error_.new 'invalid state update', 400, transaction, newState
+Transaction.validatePossibleState = function(transaction, newState){
+  if (!states[transaction.state].next.includes(newState)) {
+    throw error_.new('invalid state update', 400, transaction, newState);
+  }
 
-  if newState is 'returned' and transaction.transaction isnt 'lending'
-    throw error_.new 'transaction and state mismatch', 400, transaction, newState
+  if ((newState === 'returned') && (transaction.transaction !== 'lending')) {
+    throw error_.new('transaction and state mismatch', 400, transaction, newState);
+  }
+};
 
-# do the item change of owner or return to its previous owner
-Transaction.isOneWay = (transacDoc)->
-  unless _.isString transacDoc.transaction
-    throw error_.new 'transaction transaction inaccessible', 500, transacDoc
-  oneWay[transacDoc.transaction]
+// do the item change of owner or return to its previous owner
+Transaction.isOneWay = function(transacDoc){
+  if (!_.isString(transacDoc.transaction)) {
+    throw error_.new('transaction transaction inaccessible', 500, transacDoc);
+  }
+  return oneWay[transacDoc.transaction];
+};
 
-oneWay =
-  giving: true
-  lending: false
+var oneWay = {
+  giving: true,
+  lending: false,
   selling: true
+};
 
-Transaction.isActive = (transacDoc)->
-  transacData =
-    name: transacDoc.transaction
-    state: transacDoc.state
-    # owner doesnt matter to find if the transaction is active
-    # thus we just pass an arbitrary boolean
+Transaction.isActive = function(transacDoc){
+  const transacData = {
+    name: transacDoc.transaction,
+    state: transacDoc.state,
+    // owner doesnt matter to find if the transaction is active
+    // thus we just pass an arbitrary boolean
     mainUserIsOwner: true
-  # if there are next actions, the transaction is active
-  return findNextActions(transacData)?
+  };
+  // if there are next actions, the transaction is active
+  return (findNextActions(transacData) != null);
+};
 
-snapshotData = (itemDoc, ownerDoc, requesterDoc)->
-  item: _.pick itemDoc, snapshotItemAttributes
-  entity: getEntitySnapshotFromItemSnapshot itemDoc.snapshot
-  owner: _.pick ownerDoc, snapshotUserAttributes
-  requester: _.pick requesterDoc, snapshotUserAttributes
+var snapshotData = (itemDoc, ownerDoc, requesterDoc) => ({
+  item: _.pick(itemDoc, snapshotItemAttributes),
+  entity: getEntitySnapshotFromItemSnapshot(itemDoc.snapshot),
+  owner: _.pick(ownerDoc, snapshotUserAttributes),
+  requester: _.pick(requesterDoc, snapshotUserAttributes)
+});
 
-getEntitySnapshotFromItemSnapshot = (itemSnapshot)->
-  entitySnapshot = {}
-  if itemSnapshot['entity:title']? then entitySnapshot.title = itemSnapshot['entity:title']
-  if itemSnapshot['entity:image']? then entitySnapshot.image = itemSnapshot['entity:image']
-  if itemSnapshot['entity:authors']? then entitySnapshot.authors = itemSnapshot['entity:authors']
-  return entitySnapshot
+var getEntitySnapshotFromItemSnapshot = function(itemSnapshot){
+  const entitySnapshot = {};
+  if (itemSnapshot['entity:title'] != null) { entitySnapshot.title = itemSnapshot['entity:title']; }
+  if (itemSnapshot['entity:image'] != null) { entitySnapshot.image = itemSnapshot['entity:image']; }
+  if (itemSnapshot['entity:authors'] != null) { entitySnapshot.authors = itemSnapshot['entity:authors']; }
+  return entitySnapshot;
+};
 
-getNextActionsList = (transactionName)->
-  if transactionName is 'lending' then nextActionsWithReturn
-  else basicNextActions
+const getNextActionsList = function(transactionName){
+  if (transactionName === 'lending') { return nextActionsWithReturn;
+  } else { return basicNextActions; }
+};
 
-findNextActions = (transacData)->
-  { name, state, mainUserIsOwner } = transacData
-  nextActions = getNextActionsList name, state
-  role = if mainUserIsOwner then 'owner' else 'requester'
-  return nextActions[state][role]
+var findNextActions = function(transacData){
+  const { name, state, mainUserIsOwner } = transacData;
+  const nextActions = getNextActionsList(name, state);
+  const role = mainUserIsOwner ? 'owner' : 'requester';
+  return nextActions[state][role];
+};

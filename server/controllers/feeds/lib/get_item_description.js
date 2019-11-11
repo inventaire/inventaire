@@ -1,39 +1,42 @@
-CONFIG = require 'config'
-__ = require('config').universalPath
-_ = __.require 'builders', 'utils'
-templateHelpers = __.require 'lib', 'emails/handlebars_helpers'
-transacColors = __.require 'lib', 'emails/activity_summary/transactions_colors'
+const CONFIG = require('config');
+const __ = require('config').universalPath;
+const _ = __.require('builders', 'utils');
+const templateHelpers = __.require('lib', 'emails/handlebars_helpers');
+const transacColors = __.require('lib', 'emails/activity_summary/transactions_colors');
 
-module.exports = (item, user, lang)->
-  { transaction, snapshot, details } = item
-  image = snapshot['entity:image']
-  title = snapshot['entity:title']
+module.exports = function(item, user, lang){
+  let imageHtml;
+  const { transaction, snapshot, details } = item;
+  const image = snapshot['entity:image'];
+  const title = snapshot['entity:title'];
 
-  if _.isNonEmptyString image
-    imageSrc = templateHelpers.imgSrc image, 300
-    imageHtml = "<img src='#{imageSrc}' alt='#{title} cover'>"
-  else
-    imageHtml = ''
+  if (_.isNonEmptyString(image)) {
+    const imageSrc = templateHelpers.imgSrc(image, 300);
+    imageHtml = `<img src='${imageSrc}' alt='${title} cover'>`;
+  } else {
+    imageHtml = '';
+  }
 
-  i18nKey = "#{transaction}_personalized_strong"
-  transacLabel = templateHelpers.i18n lang, i18nKey, user
+  const i18nKey = `${transaction}_personalized_strong`;
+  const transacLabel = templateHelpers.i18n(lang, i18nKey, user);
 
-  userProfilePic = templateHelpers.imgSrc user.picture, 64
+  const userProfilePic = templateHelpers.imgSrc(user.picture, 64);
 
-  transacColor = transacColors[transaction]
+  const transacColor = transacColors[transaction];
 
-  detailsHtml = if _.isNonEmptyString details then "<p>#{item.details}<p>" else ''
+  const detailsHtml = _.isNonEmptyString(details) ? `<p>${item.details}<p>` : '';
 
-  return """<a href="#{item.href}" alt="#{title}">#{imageHtml}</a>
-  <table width="300"><tr>
-    <td>
-      <a href="#{user.href}" title="#{user.username}">
-        <img src="#{userProfilePic}" alt="#{user.username}">
-      </a>
-    </td>
-    <td>
-      <a href="#{item.href}" title="#{title}" style="color: white; text-decoration: none; background-color: #{transacColor}; text-align: center; padding: 16px; height: 64px;" >#{transacLabel}</a>
-    </td>
-  </tr></table>
-  #{detailsHtml}
-  <small>item:#{item._id} - #{item.entity}<small>"""
+  return `<a href="${item.href}" alt="${title}">${imageHtml}</a>
+<table width="300"><tr>
+  <td>
+    <a href="${user.href}" title="${user.username}">
+      <img src="${userProfilePic}" alt="${user.username}">
+    </a>
+  </td>
+  <td>
+    <a href="${item.href}" title="${title}" style="color: white; text-decoration: none; background-color: ${transacColor}; text-align: center; padding: 16px; height: 64px;" >${transacLabel}</a>
+  </td>
+</tr></table>
+${detailsHtml}
+<small>item:${item._id} - ${item.entity}<small>`;
+};

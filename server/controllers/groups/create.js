@@ -1,23 +1,29 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-responses_ = __.require 'lib', 'responses'
-error_ = __.require 'lib', 'error/error'
-groups_ = require './lib/groups'
-{ Track } = __.require 'lib', 'track'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const responses_ = __.require('lib', 'responses');
+const error_ = __.require('lib', 'error/error');
+const groups_ = require('./lib/groups');
+const { Track } = __.require('lib', 'track');
 
-module.exports = (req, res)->
-  { name, searchable, description, position } = req.body
-  unless name? then return error_.bundleMissingBody req, res, 'name'
+module.exports = function(req, res){
+  let { name, searchable, description, position } = req.body;
+  if (name == null) { return error_.bundleMissingBody(req, res, 'name'); }
 
-  searchable ?= true
+  if (searchable == null) { searchable = true; }
 
-  groups_.create
-    name: name
-    description: description or ''
-    searchable: searchable
-    position: position or null
-    creatorId: req.user._id
-  .then responses_.Send(res)
-  .then Track(req, ['groups', 'create'])
-  .catch error_.Handler(req, res)
+  return groups_.create({
+    name,
+    description: description || '',
+    searchable,
+    position: position || null,
+    creatorId: req.user._id}).then(responses_.Send(res))
+  .then(Track(req, ['groups', 'create']))
+  .catch(error_.Handler(req, res));
+};

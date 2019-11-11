@@ -1,6 +1,6 @@
-CONFIG = require 'config'
-__ = CONFIG.universalPath
-_ = __.require 'builders', 'utils'
-{ pass, userId, itemId } = require './common'
+const CONFIG = require('config');
+const __ = CONFIG.universalPath;
+const _ = __.require('builders', 'utils');
+const { pass, userId, itemId } = require('./common');
 
-module.exports = { pass, userId, itemId }
+module.exports = { pass, userId, itemId };
