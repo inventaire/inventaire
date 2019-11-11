@@ -1,3 +1,8 @@
+/* eslint-disable
+    prefer-const,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
@@ -12,83 +17,83 @@
 // Primary use case: feed ElasticSearch documents with an 'images' object
 // from which to pick the best illustration for live search results
 
-const __ = require('config').universalPath;
-const _ = __.require('builders', 'utils');
-const error_ = __.require('lib', 'error/error');
-const { Promise } = __.require('lib', 'promises');
-const getEntitiesByUris = require('./lib/get_entities_by_uris');
-const specialEntityImagesGetter = require('./lib/special_entity_images_getter');
-const getEntityImagesFromClaims = require('./lib/get_entity_images_from_claims');
-const { img:imgUrlBuilder } = __.require('lib', 'emails/app_api');
-const getThumbData = __.require('data', 'commons/thumb');
+const __ = require('config').universalPath
+const _ = __.require('builders', 'utils')
+const error_ = __.require('lib', 'error/error')
+const { Promise } = __.require('lib', 'promises')
+const getEntitiesByUris = require('./lib/get_entities_by_uris')
+const specialEntityImagesGetter = require('./lib/special_entity_images_getter')
+const getEntityImagesFromClaims = require('./lib/get_entity_images_from_claims')
+const { img:imgUrlBuilder } = __.require('lib', 'emails/app_api')
+const getThumbData = __.require('data', 'commons/thumb')
 
 module.exports = function(req, res){
-  let { uris, refresh, redirect, width, height } = req.query;
+  let { uris, refresh, redirect, width, height } = req.query
 
   if (!_.isNonEmptyString(uris)) {
-    return error_.bundleMissingQuery(req, res, 'uris');
+    return error_.bundleMissingQuery(req, res, 'uris')
   }
 
-  uris = uris.split('|');
-  refresh = _.parseBooleanString(refresh);
-  redirect = _.parseBooleanString(redirect);
+  uris = uris.split('|')
+  refresh = _.parseBooleanString(refresh)
+  redirect = _.parseBooleanString(redirect)
 
   if (redirect) {
     if (uris.length !== 1) {
-      const message = 'only one URI is allowed in redirect mode';
-      return error_.bundle(req, res, message, 400, req.query);
+      const message = 'only one URI is allowed in redirect mode'
+      return error_.bundle(req, res, message, 400, req.query)
     }
 
     if ((width != null) && !_.isPositiveIntegerString(width)) {
-      return error_.bundleInvalid(req, res, 'width', width);
+      return error_.bundleInvalid(req, res, 'width', width)
     }
 
     if ((height != null) && !_.isPositiveIntegerString(height)) {
-      return error_.bundleInvalid(req, res, 'height', height);
+      return error_.bundleInvalid(req, res, 'height', height)
     }
   }
 
   return getEntitiesByUris({ uris, refresh })
   .get('entities')
   .then(getEntitiesImages)
-  .then(function(images){
+  .then((images) => {
     if (redirect) {
-      return redirectToRawImage(res, uris[0], images, width, height);
+      return redirectToRawImage(res, uris[0], images, width, height)
     } else {
-      return res.json({ images });
+      return res.json({ images })
     }})
-  .catch(error_.Handler(req, res));
-};
+  .catch(error_.Handler(req, res))
+}
 
-var getEntitiesImages = entities => Promise.props(Object.keys(entities).reduce(getEntityImages(entities), {}));
+var getEntitiesImages = entities => Promise.props(Object.keys(entities).reduce(getEntityImages(entities), {}))
 
 var getEntityImages = entities => (function(promises, id) {
-  const entity = entities[id];
+  const entity = entities[id]
   // All entities type that don't have a specialEntityImagesGetter will
   // simply return their first wdt:P18 claim value, if any
-  const getter = specialEntityImagesGetter[entity.type] || getEntityImagesFromClaims;
-  promises[id] = getter(entity);
-  return promises;
-});
+  const getter = specialEntityImagesGetter[entity.type] || getEntityImagesFromClaims
+  promises[id] = getter(entity)
+  return promises
+})
 
 var redirectToRawImage = function(res, uri, images, width, height){
-  const image = images[uri] != null ? images[uri][0] : undefined;
+  const image = images[uri] != null ? images[uri][0] : undefined
   if (image == null) {
-    const err = error_.notFound({ uri });
-    err.quiet = true;
-    throw err;
+    const err = error_.notFound({ uri })
+    err.quiet = true
+    throw err
   }
 
   return replaceWikimediaFilename(image)
   .then(finalUrl => imgUrlBuilder(finalUrl, width, height))
-  .then(res.redirect.bind(res));
-};
+  .then(res.redirect.bind(res))
+}
 
 var replaceWikimediaFilename = function(image){
   // Wikimedia file name neither start by 'http' or '/'
   if (!/^(http|\/)/.test(image)) {
-    return getThumbData(image).get('url');
+    return getThumbData(image).get('url')
   } else {
-    return Promise.resolve(image);
+    return Promise.resolve(image)
   }
-};
+}

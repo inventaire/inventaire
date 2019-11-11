@@ -1,3 +1,5 @@
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
 // List of properties an entity of a given type can have
 // Keep in sync with client/app/modules/entities/lib/editor/properties_per_type
 
@@ -5,7 +7,7 @@ const all = [
   'wdt:P31', // instance of
   'wdt:P243', // OCLC control number
   'wdt:P268' // BNF ID
-];
+]
 
 const workAndSerie = all.concat([
   'wdt:P50', // author
@@ -30,7 +32,7 @@ const workAndSerie = all.concat([
   'wdt:P3631', // Babelio work ID
   'wdt:P4087', // MyAnimeList manga ID
   'wdt:P5331' // OCLC work ID
-]);
+])
 
 module.exports = {
   edition: all.concat([
@@ -106,4 +108,4 @@ module.exports = {
     'wdt:P1983', // Anime News Network company ID
     'wdt:P3035' // ISBN publisher prefix
   ])
-};
+}

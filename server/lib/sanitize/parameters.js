@@ -1,13 +1,15 @@
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-const __ = require('config').universalPath;
-const _ = __.require('builders', 'utils');
-const error_ = __.require('lib', 'error/error');
-const isbn_ = __.require('lib', 'isbn/isbn');
+const __ = require('config').universalPath
+const _ = __.require('builders', 'utils')
+const error_ = __.require('lib', 'error/error')
+const isbn_ = __.require('lib', 'isbn/isbn')
 
 // Parameters attributes:
 // - format (optional)
@@ -18,136 +20,136 @@ const isbn_ = __.require('lib', 'isbn/isbn');
 const validations = {
   common: __.require('models', 'validations/common'),
   user: __.require('models', 'validations/user')
-};
+}
 
 const parseNumberString = function(value){
-  if (_.isNumber(value)) { return value; }
-  const parsedValue = parseFloat(value);
-  if (_.isNaN(parsedValue)) { return value; } else { return parsedValue; }
-};
+  if (_.isNumber(value)) { return value }
+  const parsedValue = parseFloat(value)
+  if (_.isNaN(parsedValue)) { return value } else { return parsedValue }
+}
 
 const couchUuid = {
   validate: validations.common.couchUuid,
-  rename(name){ return `${name}Id`; }
-};
+  rename(name){ return `${name}Id` }
+}
 
 const positiveInteger = {
   format: parseNumberString,
-  validate(num){ return _.isNumber(num) && /^\d+$/.test(num.toString()); }
-};
+  validate(num){ return _.isNumber(num) && /^\d+$/.test(num.toString()) }
+}
 
 const nonEmptyString = {
   validate(value, name, config){
-    let details, message;
+    let details, message
     if (!_.isString(value)) {
-      message = `invalid ${name}`;
-      details = `expected string, got ${_.typeOf(value)}`;
-      throw error_.new(`invalid ${name}: ${details}`, 400, { value });
+      message = `invalid ${name}`
+      details = `expected string, got ${_.typeOf(value)}`
+      throw error_.new(`invalid ${name}: ${details}`, 400, { value })
     }
 
     if (config.length && (value.length !== config.length)) {
-      message = `invalid ${name} length`;
-      details = `expected ${config.length}, got ${value.length}`;
-      throw error_.new(`${message}: ${details}`, 400, { value });
+      message = `invalid ${name} length`
+      details = `expected ${config.length}, got ${value.length}`
+      throw error_.new(`${message}: ${details}`, 400, { value })
     }
 
-    return true;
+    return true
   }
-};
+}
 
 const arrayOfAKind = validation => (function(values, kind) {
-  let details;
+  let details
   if (!_.isArray(values)) {
-    details = `expected array, got ${_.typeOf(values)}`;
-    throw error_.new(`invalid ${kind}: ${details}`, 400, { values });
+    details = `expected array, got ${_.typeOf(values)}`
+    throw error_.new(`invalid ${kind}: ${details}`, 400, { values })
   }
 
   if (values.length === 0) {
-    throw error_.new(`${kind} array can't be empty`, 400);
+    throw error_.new(`${kind} array can't be empty`, 400)
   }
 
-  for (let value of values) {
+  for (const value of values) {
     if (!validation(value)) {
       // approximative way to get singular of a word
-      const singularKind = kind.replace(/s$/, '');
-      details = `expected ${singularKind}, got ${value} (${_.typeOf(values)})`;
-      throw error_.new(`invalid ${singularKind}: ${details}`, 400, { values });
+      const singularKind = kind.replace(/s$/, '')
+      details = `expected ${singularKind}, got ${value} (${_.typeOf(values)})`
+      throw error_.new(`invalid ${singularKind}: ${details}`, 400, { values })
     }
   }
 
-  return true;
-});
+  return true
+})
 
 const arrayOrPipedStrings = function(value){
-  if (_.isString(value)) { value = value.split('|'); }
-  if (_.isArray(value)) { return _.uniq(value);
+  if (_.isString(value)) { value = value.split('|') }
+  if (_.isArray(value)) { return _.uniq(value)
   // Let the 'validate' function reject non-arrayfied values
-  } else { return value; }
-};
+  } else { return value }
+}
 
 const entityUris = {
   format: arrayOrPipedStrings,
   validate: arrayOfAKind(validations.common.entityUri)
-};
+}
 
 const couchUuids = {
   format: arrayOrPipedStrings,
   validate: arrayOfAKind(validations.common.couchUuid)
-};
+}
 
 const arrayOfStrings = {
   format: arrayOrPipedStrings,
   validate: arrayOfAKind(_.isString)
-};
+}
 
 const isbn = {
   format: isbn_.normalizeIsbn,
   validate: isbn_.isValidIsbn
-};
+}
 
 const whitelistedString = {
   validate(value, name, config){
     if (!config.whitelist.includes(value)) {
-      const details = `possible values: ${config.whitelist.join(', ')}`;
-      throw error_.new(`invalid ${name}: ${value} (${details})`, 400, { value });
+      const details = `possible values: ${config.whitelist.join(', ')}`
+      throw error_.new(`invalid ${name}: ${value} (${details})`, 400, { value })
     }
-    return true;
+    return true
   }
-};
+}
 
 const whitelistedStrings = {
   format: arrayOrPipedStrings,
   validate(values, name, config){
-    for (let value of values) {
-      whitelistedString.validate(value, name, config);
+    for (const value of values) {
+      whitelistedString.validate(value, name, config)
     }
-    return true;
+    return true
   }
-};
+}
 
 const generics = {
   boolean: {
     format(value, name, config){
-      if (_.isString(value)) { return _.parseBooleanString(value, config.default);
-      } else { return value; }
+      if (_.isString(value)) { return _.parseBooleanString(value, config.default)
+      } else { return value }
     },
-    validate(value){ return _.typeOf(value) === 'boolean'; }
+    validate(value){ return _.typeOf(value) === 'boolean' }
   },
   object: {
     validate: _.isPlainObject
   },
   collection: {
     validate(values, name, config){
-      if (!_.isCollection(values)) { return false; }
-      const { limit } = config;
-      const { length } = values;
+      if (!_.isCollection(values)) { return false }
+      const { limit } = config
+      const { length } = values
       if ((limit != null) && (length > limit)) {
-        throw error_.new('limit length exceeded', 400, { limit, length });
+        throw error_.new('limit length exceeded', 400, { limit, length })
       }
-      return true;
+      return true
     }
   }
-};
+}
 
 module.exports = {
   authors: arrayOfStrings,
@@ -196,4 +198,4 @@ module.exports = {
   username: { validate: validations.common.username },
   relatives: whitelistedStrings,
   value: nonEmptyString
-};
+}

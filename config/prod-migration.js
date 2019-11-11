@@ -1,3 +1,5 @@
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
 // Apply migration on production databases
 
 //# HOW TO:
@@ -11,4 +13,4 @@ module.exports = {
     suffix: 'prod',
     port: 3456
   }
-};
+}

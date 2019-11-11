@@ -1,3 +1,5 @@
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
@@ -5,13 +7,13 @@
  */
 // A request regrouper to query entities full data one by one
 // while requests are actually regrouped in the background
-const CONFIG = require('config');
-const __ = CONFIG.universalPath;
-const _ = __.require('builders', 'utils');
-const promises_ = __.require('lib', 'promises');
-const requests_ = __.require('lib', 'requests');
-const requestGrouper = __.require('lib', 'request_grouper');
-const { getEntities, getManyEntities } = require('wikidata-sdk');
+const CONFIG = require('config')
+const __ = CONFIG.universalPath
+const _ = __.require('builders', 'utils')
+const promises_ = __.require('lib', 'promises')
+const requests_ = __.require('lib', 'requests')
+const requestGrouper = __.require('lib', 'request_grouper')
+const { getEntities, getManyEntities } = require('wikidata-sdk')
 
 const requester = function(ids){
   if (ids.length > 50) {
@@ -19,23 +21,23 @@ const requester = function(ids){
     // But, normally, caching should allow to limit its use to some
     // exceptionnal requests (like when someone wants refreshed data
     // of the whole Victor Hugo bibliographie)
-    const urls = getManyEntities(ids);
-    _.log(urls, 'get many wikidata entities');
+    const urls = getManyEntities(ids)
+    _.log(urls, 'get many wikidata entities')
     return promises_.all(urls.map(getReq))
-    .then(mergeResults);
+    .then(mergeResults)
 
   } else {
-    const url = getEntities(ids);
+    const url = getEntities(ids)
     return getReq(url)
-    .get('entities');
+    .get('entities')
   }
-};
+}
 
 // Limiting arguments to strictly 1
-var getReq = url => requests_.get(url);
-var mergeResults = results => _.extend.apply(_, results.map(_.property('entities')));
+var getReq = url => requests_.get(url)
+var mergeResults = results => _.extend.apply(_, results.map(_.property('entities')))
 
 // Expose a single requester
 // Taking a Wikidata Id
 // Returning the corresponding entity object
-module.exports = requestGrouper({ requester, delay: 5 });
+module.exports = requestGrouper({ requester, delay: 5 })

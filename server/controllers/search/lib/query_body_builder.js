@@ -1,13 +1,15 @@
-const CONFIG = require('config');
-const __ = CONFIG.universalPath;
-const _ = __.require('builders', 'utils');
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
+const CONFIG = require('config')
+const __ = CONFIG.universalPath
+const _ = __.require('builders', 'utils')
 
 module.exports = function(search, size){
   const should = [
     { match_phrase_prefix: { _all: { query: search, boost: 5 } } },
     { match: { _all: { query: search, boost: 5 } } },
     { prefix: { _all: _.last(search.split(' ')) } }
-  ];
+  ]
 
-  return { query: { bool: { should } }, size, min_score: 0.5 };
-};
+  return { query: { bool: { should } }, size, min_score: 0.5 }
+}

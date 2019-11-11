@@ -1,34 +1,36 @@
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-const __ = require('config').universalPath;
-const _ = __.require('builders', 'utils');
-const assert_ = __.require('utils', 'assert_types');
-const promises_ = __.require('lib', 'promises');
-const invitations_ = require('./invitations');
-const Invited = __.require('models', 'invited');
-const radio = __.require('lib', 'radio');
+const __ = require('config').universalPath
+const _ = __.require('builders', 'utils')
+const assert_ = __.require('utils', 'assert_types')
+const promises_ = __.require('lib', 'promises')
+const invitations_ = require('./invitations')
+const Invited = __.require('models', 'invited')
+const radio = __.require('lib', 'radio')
 
 module.exports = function(user, group, emails, message){
-  assert_.types(['object', 'object|null', 'array', 'string|null'], arguments);
-  const userId = user._id;
-  const groupId = group != null ? group._id : undefined;
-  _.log(emails, 'send_invitations emails');
+  assert_.types([ 'object', 'object|null', 'array', 'string|null' ], arguments)
+  const userId = user._id
+  const groupId = group != null ? group._id : undefined
+  _.log(emails, 'send_invitations emails')
 
   return invitations_.byEmails(emails)
   .then(_.Log('known invited'))
-  .then(function(existingInvitedUsers){
+  .then((existingInvitedUsers) => {
 
     // Emails already invited by others but not this user
-    const canBeInvited = extractCanBeInvited(userId, groupId, existingInvitedUsers);
-    _.log(canBeInvited, 'known emails that canBeInvited by the current user');
+    const canBeInvited = extractCanBeInvited(userId, groupId, existingInvitedUsers)
+    _.log(canBeInvited, 'known emails that canBeInvited by the current user')
 
     // Find emails that were never invited by anyone
-    const unknownEmails = extractUnknownEmails(emails, existingInvitedUsers);
-    _.log(unknownEmails, 'unknown emails');
+    const unknownEmails = extractUnknownEmails(emails, existingInvitedUsers)
+    _.log(unknownEmails, 'unknown emails')
 
     return promises_.all([
       // Create an invitation doc for unknown emails
@@ -36,30 +38,30 @@ module.exports = function(user, group, emails, message){
       // Add the invitation to the existing doc for known emails
       invitations_.addInviter(userId, groupId, canBeInvited)
     ])
-    .then(function() {
-      const remainingEmails = concatRemainingEmails(canBeInvited, unknownEmails);
-      _.log(remainingEmails, 'effectively sent emails');
+    .then(() => {
+      const remainingEmails = concatRemainingEmails(canBeInvited, unknownEmails)
+      _.log(remainingEmails, 'effectively sent emails')
 
-      return triggerInvitation(user, group, remainingEmails, message);
-    });}).catch(_.Error('send invitations err'));
-};
+      return triggerInvitation(user, group, remainingEmails, message)
+    })}).catch(_.Error('send invitations err'))
+}
 
 var triggerInvitation = function(user, group, emails, message){
   if (group != null) {
-    return radio.emit('send:group:email:invitations', user, group, emails, message);
+    return radio.emit('send:group:email:invitations', user, group, emails, message)
   } else {
-    return radio.emit('send:email:invitations', user, emails, message);
+    return radio.emit('send:email:invitations', user, emails, message)
   }
-};
+}
 
 var extractUnknownEmails = function(emails, knownInvitedUsers){
-  const knownInvitedUsersEmails = _.map(knownInvitedUsers, 'email');
-  return _.difference(emails, knownInvitedUsersEmails);
-};
+  const knownInvitedUsersEmails = _.map(knownInvitedUsers, 'email')
+  return _.difference(emails, knownInvitedUsersEmails)
+}
 
-var extractCanBeInvited = (userId, groupId, knownInvitedUsers) => knownInvitedUsers.filter(Invited.canBeInvited(userId, groupId));
+var extractCanBeInvited = (userId, groupId, knownInvitedUsers) => knownInvitedUsers.filter(Invited.canBeInvited(userId, groupId))
 
 var concatRemainingEmails = function(canBeInvited, unknownEmails){
-  const knownEmails = _.map(canBeInvited, 'email');
-  return unknownEmails.concat(knownEmails);
-};
+  const knownEmails = _.map(canBeInvited, 'email')
+  return unknownEmails.concat(knownEmails)
+}

@@ -1,3 +1,8 @@
+/* eslint-disable
+    prefer-const,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
@@ -8,46 +13,46 @@
 // A module to listen for changes in a CouchDB database, and dispatch the change
 // event to all the subscribed followers
 
-const CONFIG = require('config');
-const __ = CONFIG.universalPath;
-const _ = __.require('builders', 'utils');
-const promises_ = __.require('lib', 'promises');
-const assert_ = __.require('utils', 'assert_types');
-const follow = require('follow');
-const meta = __.require('lib', 'meta');
-const breq = require('bluereq');
-const dbHost = CONFIG.db.fullHost();
-let { reset: resetFollow, freeze: freezeFollow, delay: delayFollow } = CONFIG.db.follow;
+const CONFIG = require('config')
+const __ = CONFIG.universalPath
+const _ = __.require('builders', 'utils')
+const promises_ = __.require('lib', 'promises')
+const assert_ = __.require('utils', 'assert_types')
+const follow = require('follow')
+const meta = __.require('lib', 'meta')
+const breq = require('bluereq')
+const dbHost = CONFIG.db.fullHost()
+let { reset: resetFollow, freeze: freezeFollow, delay: delayFollow } = CONFIG.db.follow
 
 // Never follow in non-server mode.
 // This behaviors allows, in API tests environement, to have the tests server
 // following, while scripts being called directly by tests don't compete
 // with the server
-freezeFollow = freezeFollow || !CONFIG.serverMode;
+freezeFollow = freezeFollow || !CONFIG.serverMode
 
 // filter and an onChange functions register, indexed per dbBaseNames
-const followers = {};
+const followers = {}
 
 module.exports = function(params){
-  const { dbBaseName, filter, onChange, reset } = params;
-  assert_.string(dbBaseName);
-  assert_.function(filter);
-  assert_.function(onChange);
-  if (reset != null) { assert_.function(reset); }
+  const { dbBaseName, filter, onChange, reset } = params
+  assert_.string(dbBaseName)
+  assert_.function(filter)
+  assert_.function(onChange)
+  if (reset != null) { assert_.function(reset) }
 
-  const dbName = CONFIG.db.name(dbBaseName);
+  const dbName = CONFIG.db.name(dbBaseName)
 
   if (freezeFollow) {
-    _.warn(dbName, 'freezed follow');
-    return;
+    _.warn(dbName, 'freezed follow')
+    return
   }
 
   if (followers[dbName] != null) {
     // Add this follower to the exist db follower register
-    return followers[dbName].push(params);
+    return followers[dbName].push(params)
   } else {
     // Create a db follower register, and add it this follower
-    followers[dbName] = [ params ];
+    followers[dbName] = [ params ]
 
     // Then start follow this database
     return meta.get(buildKey(dbName))
@@ -58,77 +63,77 @@ module.exports = function(params){
     // the last saved sequence number
     .delay(delayFollow)
     .then(initFollow(dbName, reset))
-    .catch(_.ErrorRethrow('init follow err'));
+    .catch(_.ErrorRethrow('init follow err'))
   }
-};
+}
 
 var initFollow = (dbName, reset) => (function(lastSeq = 0) {
-  if (resetFollow) { lastSeq = 0; }
-  assert_.number(lastSeq);
+  if (resetFollow) { lastSeq = 0 }
+  assert_.number(lastSeq)
 
-  const setLastSeq = SetLastSeq(dbName);
-  const dbUrl = `${dbHost}/${dbName}`;
+  const setLastSeq = SetLastSeq(dbName)
+  const dbUrl = `${dbHost}/${dbName}`
 
   return getDbLastSeq(dbUrl)
-  .then(function(dbLastSeq){
+  .then((dbLastSeq) => {
     // Reset lastSeq if the dbLastSeq is behind
     // as this probably means the database was deleted and re-created
     // and the leveldb-backed meta db kept the last_seq value of the previous db
     if (lastSeq > dbLastSeq) {
-      _.log({ lastSeq, dbLastSeq }, `${dbName} saved last_seq ahead of db: reseting`, 'yellow');
-      lastSeq = 0;
-      setLastSeq(lastSeq);
+      _.log({ lastSeq, dbLastSeq }, `${dbName} saved last_seq ahead of db: reseting`, 'yellow')
+      lastSeq = 0
+      setLastSeq(lastSeq)
     }
 
     return resetIfNeeded(dbName, lastSeq, reset)
-    .then(() => startFollowingDb({ dbName, dbUrl, lastSeq, setLastSeq }));});
-});
+    .then(() => startFollowingDb({ dbName, dbUrl, lastSeq, setLastSeq }))})
+})
 
 var resetIfNeeded = function(dbName, lastSeq, reset){
-  if ((lastSeq === 0) && (reset != null)) { return reset();
-  } else { return promises_.resolve(); }
-};
+  if ((lastSeq === 0) && (reset != null)) { return reset()
+  } else { return promises_.resolve() }
+}
 
 var startFollowingDb = function(params){
-  const { dbName, dbUrl, lastSeq, setLastSeq } = params;
-  const dbFollowers = followers[dbName];
+  const { dbName, dbUrl, lastSeq, setLastSeq } = params
+  const dbFollowers = followers[dbName]
 
   const config = {
     db: dbUrl,
     include_docs: true,
     feed: 'continuous',
     since: lastSeq
-  };
+  }
 
-  return follow(config, function(err, change){
-    if (err != null) { return _.error(err, `${dbName} follow err`); }
-    setLastSeq(change.seq);
+  return follow(config, (err, change) => {
+    if (err != null) { return _.error(err, `${dbName} follow err`) }
+    setLastSeq(change.seq)
     return (() => {
-      const result = [];
-      for (let follower of dbFollowers) {
-        if (follower.filter(change.doc)) { result.push(follower.onChange(change)); } else {
-          result.push(undefined);
+      const result = []
+      for (const follower of dbFollowers) {
+        if (follower.filter(change.doc)) { result.push(follower.onChange(change)) } else {
+          result.push(undefined)
         }
       }
-      return result;
-    })();
-  });
-};
+      return result
+    })()
+  })
+}
 
 var SetLastSeq = function(dbName){
-  const key = buildKey(dbName);
+  const key = buildKey(dbName)
   // Creating a closure on dbName to underline that
   // this function shouldn't be shared between databases
   // as it could miss updates due to the debouncer
   const setLastSeq = seq => meta.put(key, seq)
-  .catch(_.Error(`${dbName} setLastSeq err`));
+  .catch(_.Error(`${dbName} setLastSeq err`))
   // setLastSeq might be triggered many times if a log of changes arrive at once
   // no need to write to the database at each times, just the last
-  return _.debounce(setLastSeq, 1000);
-};
+  return _.debounce(setLastSeq, 1000)
+}
 
-var buildKey = dbName => `${dbName}-last-seq`;
+var buildKey = dbName => `${dbName}-last-seq`
 
 var getDbLastSeq = dbUrl => breq.get(`${dbUrl}/_changes?limit=0&descending=true`)
 .get('body')
-.get('last_seq');
+.get('last_seq')

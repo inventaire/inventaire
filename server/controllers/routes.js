@@ -1,9 +1,11 @@
-let routes;
-const CONFIG = require('config');
-const __ = CONFIG.universalPath;
-const _ = __.require('builders', 'utils');
-const endpoint = require('./endpoint');
-const glob = require('./glob');
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
+let routes
+const CONFIG = require('config')
+const __ = CONFIG.universalPath
+const _ = __.require('builders', 'utils')
+const endpoint = require('./endpoint')
+const glob = require('./glob')
 
 // Routes structure:
 // 1 - api is the default prefix for server-side routes
@@ -32,16 +34,16 @@ module.exports = (routes = {
   'api/tasks': endpoint('./tasks/tasks'),
   'api/submit': require('./auth/fake_submit'),
   'img/*': endpoint('./images/resize')
-});
+})
 
 if (CONFIG.logMissingI18nKeys) {
-  routes['api/i18n'] = require('./i18n');
+  routes['api/i18n'] = require('./i18n')
 }
 
 if (CONFIG.mediaStorage.mode === 'local') {
   // serve images stored on the local file system
-  const { route: localMediaRoute } = CONFIG.mediaStorage.local;
-  routes[localMediaRoute + '/*'] = require('./images/local_fs_media_storage');
+  const { route: localMediaRoute } = CONFIG.mediaStorage.local
+  routes[localMediaRoute + '/*'] = require('./images/local_fs_media_storage')
 }
 
 // setting CONFIG-based routes before the globs
@@ -60,4 +62,4 @@ _.extend(routes, {
     get: glob.get
   }
 }
-);
+)

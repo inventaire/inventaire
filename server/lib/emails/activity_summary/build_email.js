@@ -1,39 +1,41 @@
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-const CONFIG = require('config');
-const __ = CONFIG.universalPath;
-const _ = __.require('builders', 'utils');
-const promises_ = __.require('lib', 'promises');
-const host = CONFIG.fullPublicHost();
-const { i18n } = require('../i18n/i18n');
-const { contactAddress } = CONFIG;
-const { newsKey, didYouKnowKeyCount } = CONFIG.activitySummary;
+const CONFIG = require('config')
+const __ = CONFIG.universalPath
+const _ = __.require('builders', 'utils')
+const promises_ = __.require('lib', 'promises')
+const host = CONFIG.fullPublicHost()
+const { i18n } = require('../i18n/i18n')
+const { contactAddress } = CONFIG
+const { newsKey, didYouKnowKeyCount } = CONFIG.activitySummary
 // keep in sync with the nextSummary view in the user design_docs
 // and defaultPeriodicity in the client's notifications_settings
-const defaultPeriodicity = 20;
+const defaultPeriodicity = 20
 
-const user_ = __.require('controllers', 'user/lib/user');
-const relations_ = __.require('controllers', 'relations/lib/queries');
-const groups_ = __.require('controllers', 'groups/lib/groups');
-const notifs_ = __.require('lib', 'notifications');
-const transactions_ = __.require('controllers', 'transactions/lib/transactions');
+const user_ = __.require('controllers', 'user/lib/user')
+const relations_ = __.require('controllers', 'relations/lib/queries')
+const groups_ = __.require('controllers', 'groups/lib/groups')
+const notifs_ = __.require('lib', 'notifications')
+const transactions_ = __.require('controllers', 'transactions/lib/transactions')
 
-const getLastNetworkBooks = require('./last_network_books');
-const getLastNearbyPublicBooks = require('./last_nearby_books');
+const getLastNetworkBooks = require('./last_network_books')
+const getLastNearbyPublicBooks = require('./last_nearby_books')
 
 module.exports = function(user){
-  user.lang = _.shortLang(user.language);
+  user.lang = _.shortLang(user.language)
 
   return getEmailData(user)
   .then(filterOutDuplicatedItems)
-  .then(spreadEmailData(user));
-};
+  .then(spreadEmailData(user))
+}
 
 var getEmailData = function(user){
-  const { _id:userId, lang, lastSummary } = user;
+  const { _id:userId, lang, lastSummary } = user
   return promises_.props({
     // pending friends requests
     friendsRequests: relations_.pendingFriendsRequestsCount(userId),
@@ -48,26 +50,26 @@ var getEmailData = function(user){
     lastFriendsBooks: getLastNetworkBooks(userId, lang, lastSummary),
     // new books nearby
     lastNearbyPublicBooks: getLastNearbyPublicBooks(user, lastSummary)
-  });
-};
+  })
+}
 
-    // FUTURE TODO
-    // waiting transaction
-      // where you have an action to do
-      // where you have been waiting for the other's action for long now
-    // new users nearby
-    // new users in groups
+// FUTURE TODO
+// waiting transaction
+// where you have an action to do
+// where you have been waiting for the other's action for long now
+// new users nearby
+// new users in groups
 
 var filterOutDuplicatedItems = function(results){
-  const { lastFriendsBooks, lastNearbyPublicBooks } = results;
-  const lastFriendsBooksIds = _.map(lastFriendsBooks.highlighted, '_id');
+  const { lastFriendsBooks, lastNearbyPublicBooks } = results
+  const lastFriendsBooksIds = _.map(lastFriendsBooks.highlighted, '_id')
   lastNearbyPublicBooks.highlighted = lastNearbyPublicBooks.highlighted
-    .filter(item => !lastFriendsBooksIds.includes(item._id));
-  return results;
-};
+    .filter(item => !lastFriendsBooksIds.includes(item._id))
+  return results
+}
 
 var spreadEmailData = user => (function(results) {
-  let data;
+  let data
   const {
     friendsRequests,
     groupInvitations,
@@ -76,9 +78,9 @@ var spreadEmailData = user => (function(results) {
     activeTransactions,
     lastFriendsBooks,
     lastNearbyPublicBooks
-  } = results;
+  } = results
 
-  const { email, summaryPeriodicity, lang } = user;
+  const { email, summaryPeriodicity, lang } = user
 
   const countTotal = friendsRequests +
     groupInvitations +
@@ -86,19 +88,19 @@ var spreadEmailData = user => (function(results) {
     unreadNotifications +
     activeTransactions +
     lastFriendsBooks.highlighted.length +
-    lastNearbyPublicBooks.highlighted.length;
+    lastNearbyPublicBooks.highlighted.length
 
-  const periodicity = user.summaryPeriodicity || defaultPeriodicity;
+  const periodicity = user.summaryPeriodicity || defaultPeriodicity
 
-  const news = newsData(user);
+  const news = newsData(user)
 
   if ((news.display === false) && (countTotal === 0)) {
-    throw promises_.skip('empty activity summary', user._id);
+    throw promises_.skip('empty activity summary', user._id)
   }
 
   // attach the lang to make accessible for the last_books partial
-  lastFriendsBooks.lang = lang;
-  lastNearbyPublicBooks.lang = lang;
+  lastFriendsBooks.lang = lang
+  lastNearbyPublicBooks.lang = lang
 
   return data = {
     to: email,
@@ -124,28 +126,28 @@ var spreadEmailData = user => (function(results) {
       didYouKnowKey: getDidYouKnowKey(),
       hasActivities: countTotal > 0
     }
-  };
-});
+  }
+})
 
 var counter = (count, path) => ({
   display: count > 0,
   smart_count: count,
   href: host + path
-});
+})
 
 var newsData = function(user){
-  const { lastNews } = user;
+  const { lastNews } = user
   if (lastNews !== newsKey) {
     return {
       display: true,
       key: newsKey
-    };
+    }
   } else {
-    return {display: false};
+    return { display: false }
   }
-};
+}
 
 var getDidYouKnowKey = function() {
-  const num = _.random(1, didYouKnowKeyCount);
-  return `did_you_know_${num}`;
-};
+  const num = _.random(1, didYouKnowKeyCount)
+  return `did_you_know_${num}`
+}

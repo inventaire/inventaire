@@ -1,35 +1,37 @@
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-let items_;
-const CONFIG = require('config');
-const __ = CONFIG.universalPath;
-const _ = __.require('builders', 'utils');
-const Item = __.require('models', 'item');
-const privateAttrs = Item.attributes.private;
-const listingsPossibilities = Item.attributes.constrained.listing.possibilities;
-const error_ = __.require('lib', 'error/error');
-const assert_ = __.require('utils', 'assert_types');
-const { BasicUpdater } = __.require('lib', 'doc_updates');
-const couch_ = __.require('lib', 'couch');
-const promises_ = __.require('lib', 'promises');
-const radio = __.require('lib', 'radio');
-const { filterPrivateAttributes } = require('./filter_private_attributes');
-const { minKey, maxKey } = __.require('lib', 'couch');
-const listingsLists = require('./listings_lists');
-const snapshot_ = require('./snapshot/snapshot');
-const getEntityByUri = __.require('controllers', 'entities/lib/get_entity_by_uri');
-const getByAccessLevel = require('./get_by_access_level');
+let items_
+const CONFIG = require('config')
+const __ = CONFIG.universalPath
+const _ = __.require('builders', 'utils')
+const Item = __.require('models', 'item')
+const privateAttrs = Item.attributes.private
+const listingsPossibilities = Item.attributes.constrained.listing.possibilities
+const error_ = __.require('lib', 'error/error')
+const assert_ = __.require('utils', 'assert_types')
+const { BasicUpdater } = __.require('lib', 'doc_updates')
+const couch_ = __.require('lib', 'couch')
+const promises_ = __.require('lib', 'promises')
+const radio = __.require('lib', 'radio')
+const { filterPrivateAttributes } = require('./filter_private_attributes')
+const { minKey, maxKey } = __.require('lib', 'couch')
+const listingsLists = require('./listings_lists')
+const snapshot_ = require('./snapshot/snapshot')
+const getEntityByUri = __.require('controllers', 'entities/lib/get_entity_by_uri')
+const getByAccessLevel = require('./get_by_access_level')
 
 // Working around the circular dependency
-let user_ = null;
-const lateRequire = () => user_ = __.require('controllers', 'user/lib/user');
-setTimeout(lateRequire, 0);
+let user_ = null
+const lateRequire = () => user_ = __.require('controllers', 'user/lib/user')
+setTimeout(lateRequire, 0)
 
-const db = __.require('couch', 'base')('items');
+const db = __.require('couch', 'base')('items')
 
 module.exports = (items_ = {
   db,
@@ -41,23 +43,23 @@ module.exports = (items_ = {
       endkey: [ ownerId, maxKey, maxKey ],
       include_docs: true
     }
-    );
+    )
   },
 
   byEntity(entityUri){
-    assert_.string(entityUri);
-    return db.viewByKeys('byEntity', entityUriKeys(entityUri));
+    assert_.string(entityUri)
+    return db.viewByKeys('byEntity', entityUriKeys(entityUri))
   },
 
-  byPreviousEntity(entityUri){ return db.viewByKey('byPreviousEntity', entityUri); },
+  byPreviousEntity(entityUri){ return db.viewByKey('byPreviousEntity', entityUri) },
 
   // all items from an entity that require a specific authorization
   authorizedByEntities(uris, reqUserId){
-    return listingByEntities('network', uris, reqUserId);
+    return listingByEntities('network', uris, reqUserId)
   },
 
   publicByEntities(uris, reqUserId){
-    return listingByEntities('public', uris, reqUserId);
+    return listingByEntities('public', uris, reqUserId)
   },
 
   publicByDate(limit = 15, offset = 0, assertImage = false, reqUserId){
@@ -68,129 +70,129 @@ module.exports = (items_ = {
       include_docs: true
     }).then(FilterWithImage(assertImage))
     .map(snapshot_.addToItem)
-    .map(filterPrivateAttributes(reqUserId));
+    .map(filterPrivateAttributes(reqUserId))
   },
 
   byOwnersAndEntitiesAndListings(ownersIds, uris, listingsKey, reqUserId){
-    const keys = [];
-    for (let ownerId of ownersIds) {
-      for (let uri of uris) {
-        for (let listing of listingsLists[listingsKey]) {
-          keys.push([ ownerId, uri, listing ]);
+    const keys = []
+    for (const ownerId of ownersIds) {
+      for (const uri of uris) {
+        for (const listing of listingsLists[listingsKey]) {
+          keys.push([ ownerId, uri, listing ])
         }
       }
     }
 
     return db.viewByKeys('byOwnerAndEntityAndListing', keys)
     .map(snapshot_.addToItem)
-    .map(filterPrivateAttributes(reqUserId));
+    .map(filterPrivateAttributes(reqUserId))
   },
 
   create(userId, items){
-    assert_.array(items);
+    assert_.array(items)
     return promises_.all(items.map(validateEntityType))
     .map(item => Item.create(userId, item))
     .then(db.bulk)
-    .then(function(res){
-      const itemsIds = _.map(res, 'id');
+    .then((res) => {
+      const itemsIds = _.map(res, 'id')
       return db.fetch(itemsIds)
-      .tap(() => radio.emit('user:inventory:update', userId));
-    });
+      .tap(() => radio.emit('user:inventory:update', userId))
+    })
   },
 
   update(userId, itemUpdateData){
     return db.get(itemUpdateData._id)
     .then(currentItem => Item.update(userId, itemUpdateData, currentItem))
     .then(db.putAndReturn)
-    .tap(() => radio.emit('user:inventory:update', userId));
+    .tap(() => radio.emit('user:inventory:update', userId))
   },
 
   bulkUpdate(userId, ids, attribute, newValue){
-    const itemUpdateData = {};
-    itemUpdateData[attribute] = newValue;
+    const itemUpdateData = {}
+    itemUpdateData[attribute] = newValue
     return items_.byIds(ids)
     .map(currentItem => Item.update(userId, itemUpdateData, currentItem))
     .then(db.bulk)
-    .tap(() => radio.emit('user:inventory:update', userId));
+    .tap(() => radio.emit('user:inventory:update', userId))
   },
 
   setBusyness(id, busy){
-    assert_.types([ 'string', 'boolean' ], arguments);
-    return db.update(id, BasicUpdater('busy', busy));
+    assert_.types([ 'string', 'boolean' ], arguments)
+    return db.update(id, BasicUpdater('busy', busy))
   },
 
   changeOwner(transacDoc){
-    const { item } = transacDoc;
+    const { item } = transacDoc
     return db.get(item)
     .then(Item.changeOwner.bind(null, transacDoc))
-    .then(db.postAndReturn);
+    .then(db.postAndReturn)
   },
 
   bulkDelete: db.bulkDelete,
 
   nearby(reqUserId, range = 50, strict = false){
     return user_.nearby(reqUserId, range, strict)
-    .then(items_.getUsersAndItemsPublicData(reqUserId));
+    .then(items_.getUsersAndItemsPublicData(reqUserId))
   },
 
   getUsersAndItemsPublicData(reqUserId){ return function(usersIds){
-    _.log(usersIds, 'usersIds');
-    if (usersIds.length <= 0) { return [[], []]; }
+    _.log(usersIds, 'usersIds')
+    if (usersIds.length <= 0) { return [ [], [] ] }
     return promises_.all([
       user_.getUsersByIds(usersIds, reqUserId),
       getByAccessLevel.public(usersIds)
-    ]);
-  }; },
+    ])
+  } },
 
   // Data manipulation done on client-side view models (item.serializeData),
   // but useful to have server-side for emails view models
   serializeData(item){
     return snapshot_.addToItem(item)
-    .then(function(item){
-      const { 'entity:title':title, 'entity:authors':authors, 'entity:image':image } = item.snapshot;
-      item.title = title;
-      item.authors = authors;
-      if (image != null) { item.pictures = [ image ]; }
-      return item;
-    });
+    .then((item) => {
+      const { 'entity:title':title, 'entity:authors':authors, 'entity:image':image } = item.snapshot
+      item.title = title
+      item.authors = authors
+      if (image != null) { item.pictures = [ image ] }
+      return item
+    })
   }
-});
+})
 
 var listingByEntities = function(listing, uris, reqUserId){
-  const keys = uris.map(uri => [ uri, listing ]);
+  const keys = uris.map(uri => [ uri, listing ])
   return db.viewByKeys('byEntity', keys)
-  .map(filterPrivateAttributes(reqUserId));
-};
+  .map(filterPrivateAttributes(reqUserId))
+}
 
 const bundleListings = function(listingsTypes, usersIds, reqUserId){
-  const listings = _.combinations(usersIds, listingsTypes);
+  const listings = _.combinations(usersIds, listingsTypes)
   return db.viewByKeys('byListing', listings)
-  .map(filterPrivateAttributes(reqUserId));
-};
+  .map(filterPrivateAttributes(reqUserId))
+}
 
-var entityUriKeys = entityUri => listingsPossibilities.map(listing => [ entityUri, listing ]);
+var entityUriKeys = entityUri => listingsPossibilities.map(listing => [ entityUri, listing ])
 
-const safeItem = item => _.omit(item, privateAttrs);
+const safeItem = item => _.omit(item, privateAttrs)
 
 var FilterWithImage = assertImage => items => Promise.all(items.map(snapshot_.addToItem))
-.then(function(items){
-  if (assertImage) { return items.filter(itemWithImage);
-  } else { return items; }
-});
+.then((items) => {
+  if (assertImage) { return items.filter(itemWithImage)
+  } else { return items }
+})
 
-var itemWithImage = item => item.snapshot['entity:image'];
+var itemWithImage = item => item.snapshot['entity:image']
 
 var validateEntityType = item => getEntityByUri({ uri: item.entity })
-.then(function(entity){
-  if (entity == null) { throw error_.new('entity not found', 400, { item }); }
+.then((entity) => {
+  if (entity == null) { throw error_.new('entity not found', 400, { item }) }
 
-  const { type } = entity;
+  const { type } = entity
 
   if (!whitelistedEntityTypes.includes(type)) {
-    throw error_.new('invalid entity type', 400, { item, type });
+    throw error_.new('invalid entity type', 400, { item, type })
   }
 
-  return item;
-});
+  return item
+})
 
-var whitelistedEntityTypes = [ 'edition', 'work' ];
+var whitelistedEntityTypes = [ 'edition', 'work' ]

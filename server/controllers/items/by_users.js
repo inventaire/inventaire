@@ -1,17 +1,19 @@
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-const __ = require('config').universalPath;
-const _ = __.require('builders', 'utils');
-const items_ = __.require('controllers', 'items/lib/items');
-const error_ = __.require('lib', 'error/error');
-const promises_ = __.require('lib', 'promises');
-const sanitize = __.require('lib', 'sanitize/sanitize');
-const responses_ = __.require('lib', 'responses');
-const { validFilters } = require('./lib/queries_commons');
-const getItemsByUsers = require('./lib/get_items_by_users');
+const __ = require('config').universalPath
+const _ = __.require('builders', 'utils')
+const items_ = __.require('controllers', 'items/lib/items')
+const error_ = __.require('lib', 'error/error')
+const promises_ = __.require('lib', 'promises')
+const sanitize = __.require('lib', 'sanitize/sanitize')
+const responses_ = __.require('lib', 'responses')
+const { validFilters } = require('./lib/queries_commons')
+const getItemsByUsers = require('./lib/get_items_by_users')
 
 const sanitization = {
   users: {},
@@ -27,9 +29,9 @@ const sanitization = {
     // the requester already knows the users
     default: false
   }
-};
+}
 
 module.exports = (req, res) => sanitize(req, res, sanitization)
 .then(getItemsByUsers)
 .then(responses_.Send(res))
-.catch(error_.Handler(req, res));
+.catch(error_.Handler(req, res))

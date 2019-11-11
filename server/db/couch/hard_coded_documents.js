@@ -1,3 +1,5 @@
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
@@ -10,7 +12,7 @@ const userDoc = (username, idLastCharacters) => ({
 
   // Data required to avoid crashing users logic
   snapshot:  {}
-});
+})
 
 module.exports = {
   users: {
@@ -23,4 +25,4 @@ module.exports = {
     // used by scripts/update_entities_schema
     updater: userDoc('updater', '003')
   }
-};
+}

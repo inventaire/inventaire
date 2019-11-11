@@ -1,3 +1,5 @@
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
 // The list of all the properties used server-side or client-side
 // to keep when formatting Wikidata entities
 // Motivations:
@@ -98,4 +100,4 @@ module.exports = [
   'P5361', // BNB person ID
   'P6338', // colorist
   'P7400' // LibraryThing author ID
-];
+]

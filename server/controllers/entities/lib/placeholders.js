@@ -1,3 +1,5 @@
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
@@ -10,40 +12,40 @@
 // But mistakes happen, and some merges will need to be reverted:
 // thus the remove/recover mechanism hereafter
 
-const __ = require('config').universalPath;
-const _ = __.require('builders', 'utils');
-const entities_ = require('./entities');
-const Entity = __.require('models', 'entity');
-const radio = __.require('lib', 'radio');
+const __ = require('config').universalPath
+const _ = __.require('builders', 'utils')
+const entities_ = require('./entities')
+const Entity = __.require('models', 'entity')
+const radio = __.require('lib', 'radio')
 
 const PlaceholderHandler = function(actionName){
-  const modelFnName = `${actionName}Placeholder`;
+  const modelFnName = `${actionName}Placeholder`
   return function(userId, entityId){
-    _.warn(entityId, `${modelFnName} entity`);
+    _.warn(entityId, `${modelFnName} entity`)
     // Using db.get anticipates a possible future where db.byId filters-out
     // non type='entity' docs, thus making type='removed:placeholder' not accessible
     return entities_.db.get(entityId)
-    .then(function(currentDoc){
-      let updatedDoc;
+    .then((currentDoc) => {
+      let updatedDoc
       try {
-        updatedDoc = Entity[modelFnName](currentDoc);
+        updatedDoc = Entity[modelFnName](currentDoc)
       } catch (err) {
         if (err.message === "can't turn a redirection into a removed placeholder") {
           // Ignore this error as the effects of those two states are close
           // (so much so that it might be worth just having redirections)
-          _.warn(currentDoc, err.message);
-          return;
+          _.warn(currentDoc, err.message)
+          return
         } else {
-          throw err;
+          throw err
         }
       }
 
       return entities_.putUpdate({ userId, currentDoc, updatedDoc })
-      .then(() => currentDoc._id);}).tap(() => radio.emit(`entity:${actionName}`, `inv:${entityId}`));
-  };
-};
+      .then(() => currentDoc._id)}).tap(() => radio.emit(`entity:${actionName}`, `inv:${entityId}`))
+  }
+}
 
 module.exports = {
   remove: PlaceholderHandler('remove'),
   recover: PlaceholderHandler('recover')
-};
+}

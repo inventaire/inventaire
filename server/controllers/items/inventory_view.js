@@ -1,3 +1,8 @@
+/* eslint-disable
+    prefer-const,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
@@ -5,18 +10,18 @@
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-const __ = require('config').universalPath;
-const _ = __.require('builders', 'utils');
-const promises_ = __.require('lib', 'promises');
-const responses_ = __.require('lib', 'responses');
-const error_ = __.require('lib', 'error/error');
-const items_ = require('./lib/items');
-const user_ = __.require('controllers', 'user/lib/user');
-const getEntitiesByUris = __.require('controllers', 'entities/lib/get_entities_by_uris');
-const getByAccessLevel = require('./lib/get_by_access_level');
+const __ = require('config').universalPath
+const _ = __.require('builders', 'utils')
+const promises_ = __.require('lib', 'promises')
+const responses_ = __.require('lib', 'responses')
+const error_ = __.require('lib', 'error/error')
+const items_ = require('./lib/items')
+const user_ = __.require('controllers', 'user/lib/user')
+const getEntitiesByUris = __.require('controllers', 'entities/lib/get_entities_by_uris')
+const getByAccessLevel = require('./lib/get_by_access_level')
 
 module.exports = function(req, res){
-  const { _id:reqUserId } = req.user;
+  const { _id:reqUserId } = req.user
 
   // get all network items
   return user_.getNetworkIds(reqUserId)
@@ -25,109 +30,109 @@ module.exports = function(req, res){
     getByAccessLevel.network(ids, reqUserId)
   ]))
   .then(_.flatten)
-  .then(function(items){
-    const uris = _.uniq(items.map(_.property('entity')));
+  .then((items) => {
+    const uris = _.uniq(items.map(_.property('entity')))
     return getEntitiesByUris({ uris })
     .get('entities')
     .then(replaceEditionsByTheirWork)
-    .then(function(data){
-      const { works, editionWorkMap } = data;
-      const worksTree = buildInvertedClaimTree(works);
-      const workUriItemsMap = items.reduce(buildWorkUriItemsMap(editionWorkMap), {});
-      const itemsByDate = getItemsByDate(items);
-      const worksByOwner = items.reduce(aggregateOwnersWorks(editionWorkMap), {});
-      worksTree.owner = worksByOwner;
-      return { worksTree, workUriItemsMap, itemsByDate };});})
+    .then((data) => {
+      const { works, editionWorkMap } = data
+      const worksTree = buildInvertedClaimTree(works)
+      const workUriItemsMap = items.reduce(buildWorkUriItemsMap(editionWorkMap), {})
+      const itemsByDate = getItemsByDate(items)
+      const worksByOwner = items.reduce(aggregateOwnersWorks(editionWorkMap), {})
+      worksTree.owner = worksByOwner
+      return { worksTree, workUriItemsMap, itemsByDate }})})
 
   // get associated entities
   // sort items by entities properties
   .then(responses_.Send(res))
-  .catch(error_.Handler(req, res));
-};
+  .catch(error_.Handler(req, res))
+}
 
 // Maybe we need a system of per-user inventory view
 // than can be aggregated per-visibility
 
 var replaceEditionsByTheirWork = function(entities){
-  let { works, editions } = splitEntities(entities);
-  const worksUris = works.map(_.property('uri'));
-  const data = { editionsWorksUris: [], editionWorkMap: {} };
-  let { editionsWorksUris, editionWorkMap } = editions.reduce(aggregateEditionsWorksUris, data);
+  let { works, editions } = splitEntities(entities)
+  const worksUris = works.map(_.property('uri'))
+  const data = { editionsWorksUris: [], editionWorkMap: {} }
+  let { editionsWorksUris, editionWorkMap } = editions.reduce(aggregateEditionsWorksUris, data)
   // Do no refetch works already fetched
-  editionsWorksUris = _.uniq(_.difference(editionsWorksUris, worksUris));
+  editionsWorksUris = _.uniq(_.difference(editionsWorksUris, worksUris))
   return getEntitiesByUris({ uris: editionsWorksUris })
   .get('entities')
-  .then(function(editionsWorksEntities){
-    works = works.concat(_.values(editionsWorksEntities));
-    return { works, editionWorkMap };});
-};
+  .then((editionsWorksEntities) => {
+    works = works.concat(_.values(editionsWorksEntities))
+    return { works, editionWorkMap }})
+}
 
-var splitEntities = entities => _.values(entities).reduce(splitWorksAndEditions, { works: [], editions: [] });
+var splitEntities = entities => _.values(entities).reduce(splitWorksAndEditions, { works: [], editions: [] })
 
 var splitWorksAndEditions = function(results, entity){
   switch (entity.type) {
-    case 'work': results.works.push(entity); break;
-    case 'edition': results.editions.push(entity); break;
-    default: _.warn(entity, 'invalid item entity type');
+  case 'work': results.works.push(entity); break
+  case 'edition': results.editions.push(entity); break
+  default: _.warn(entity, 'invalid item entity type')
   }
-  return results;
-};
+  return results
+}
 
 var aggregateEditionsWorksUris = function(data, edition){
-  const worksUris = edition.claims['wdt:P629'];
+  const worksUris = edition.claims['wdt:P629']
   if (worksUris != null) {
-    data.editionWorkMap[edition.uri] = worksUris;
-    data.editionsWorksUris.push(...Array.from(worksUris || []));
+    data.editionWorkMap[edition.uri] = worksUris
+    data.editionsWorksUris.push(...Array.from(worksUris || []))
   } else {
-    _.warn(edition, 'edition without work');
+    _.warn(edition, 'edition without work')
   }
-  return data;
-};
+  return data
+}
 
-var buildInvertedClaimTree = entities => entities.reduce(addToTree, {});
+var buildInvertedClaimTree = entities => entities.reduce(addToTree, {})
 
-const viewProperties = [ 'wdt:P50', 'wdt:P136', 'wdt:P921' ];
+const viewProperties = [ 'wdt:P50', 'wdt:P136', 'wdt:P921' ]
 
 var addToTree = function(tree, entity){
-  const { uri, claims } = entity;
-  for (let property of viewProperties) {
-    if (!tree[property]) { tree[property] = { unknown: [] }; }
-    const values = entity.claims[property];
+  const { uri, claims } = entity
+  for (const property of viewProperties) {
+    if (!tree[property]) { tree[property] = { unknown: [] } }
+    const values = entity.claims[property]
     if (values != null) {
-      for (let value of values) {
-        if (!tree[property][value]) { tree[property][value] = []; }
-        tree[property][value].push(uri);
+      for (const value of values) {
+        if (!tree[property][value]) { tree[property][value] = [] }
+        tree[property][value].push(uri)
       }
     } else {
-      tree[property].unknown.push(uri);
+      tree[property].unknown.push(uri)
     }
   }
 
-  return tree;
-};
+  return tree
+}
 
 var buildWorkUriItemsMap = editionWorkMap => (function(workUriItemsMap, item) {
-  const { _id:itemId, entity:itemEntityUri } = item;
-  const itemWorksUris = editionWorkMap[itemEntityUri] || [ itemEntityUri ];
-  for (let workUri of itemWorksUris) {
-    if (!workUriItemsMap[workUri]) { workUriItemsMap[workUri] = []; }
-    workUriItemsMap[workUri].push(itemId);
+  const { _id:itemId, entity:itemEntityUri } = item
+  const itemWorksUris = editionWorkMap[itemEntityUri] || [ itemEntityUri ]
+  for (const workUri of itemWorksUris) {
+    if (!workUriItemsMap[workUri]) { workUriItemsMap[workUri] = [] }
+    workUriItemsMap[workUri].push(itemId)
   }
-  return workUriItemsMap;
-});
+  return workUriItemsMap
+})
 
 var getItemsByDate = items => items
 .sort(sortByCreationDate)
-.map(getId);
+.map(getId)
 
-var getId = _.property('_id');
-var sortByCreationDate = (a, b) => b.created - a.created;
+var getId = _.property('_id')
+var sortByCreationDate = (a, b) => b.created - a.created
 
 var aggregateOwnersWorks = editionWorkMap => (function(index, item) {
-  const { _id:itemId, owner:ownerId, entity:entityUri } = item;
-  const workUri = editionWorkMap[entityUri] || entityUri;
-  if (!index[ownerId]) { index[ownerId] = {}; }
-  if (!index[ownerId][workUri]) { index[ownerId][workUri] = []; }
-  index[ownerId][workUri].push(itemId);
-  return index;
-});
+  const { _id:itemId, owner:ownerId, entity:entityUri } = item
+  const workUri = editionWorkMap[entityUri] || entityUri
+  if (!index[ownerId]) { index[ownerId] = {} }
+  if (!index[ownerId][workUri]) { index[ownerId][workUri] = [] }
+  index[ownerId][workUri].push(itemId)
+  return index
+})

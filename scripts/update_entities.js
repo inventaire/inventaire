@@ -1,4 +1,9 @@
 #!/usr/bin/env node
+/* eslint-disable
+    prefer-const,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
@@ -19,60 +24,60 @@
 //   - updateFn: Function: entity doc -> updated entity doc
 //   - stats: Function: -> stats object
 
-const __ = require('config').universalPath;
-const _ = __.require('builders', 'utils');
-const { Promise } = __.require('lib', 'promises');
-const error_ = __.require('lib', 'error/error');
-const assert_ = __.require('utils', 'assert_types');
-const entities_ = __.require('controllers', 'entities/lib/entities');
-const patches_ = __.require('controllers', 'entities/lib/patches');
-const { maxKey } = __.require('lib', 'couch');
-const docDiff = __.require('couchdb', 'doc_diffs');
-const Patch = __.require('models', 'patch');
-const userId = __.require('couch', 'hard_coded_documents').users.updater._id;
+const __ = require('config').universalPath
+const _ = __.require('builders', 'utils')
+const { Promise } = __.require('lib', 'promises')
+const error_ = __.require('lib', 'error/error')
+const assert_ = __.require('utils', 'assert_types')
+const entities_ = __.require('controllers', 'entities/lib/entities')
+const patches_ = __.require('controllers', 'entities/lib/patches')
+const { maxKey } = __.require('lib', 'couch')
+const docDiff = __.require('couchdb', 'doc_diffs')
+const Patch = __.require('models', 'patch')
+const userId = __.require('couch', 'hard_coded_documents').users.updater._id
 
-const [ updateFnFilePath ] = Array.from(process.argv.slice(2));
-let { preview, silent, getNextBatch, updateFn, stats } = require(updateFnFilePath);
+const [ updateFnFilePath ] = Array.from(process.argv.slice(2))
+let { preview, silent, getNextBatch, updateFn, stats } = require(updateFnFilePath)
 
-preview = preview != null ? preview : (preview = true);
-silent = silent != null ? silent : (silent = false);
+preview = preview != null ? preview : (preview = true)
+silent = silent != null ? silent : (silent = false)
 
-assert_.function(getNextBatch);
-assert_.function(updateFn);
+assert_.function(getNextBatch)
+assert_.function(updateFn)
 
 var updateSequentially = () => getNextBatch()
-.then(function(res){
-  const { rows } = res;
-  if (rows.length === 0) { return; }
+.then((res) => {
+  const { rows } = res
+  if (rows.length === 0) { return }
 
-  const updatesData = rows.map(function(row){
-    const { doc: currentDoc } = row;
-    const updatedDoc = updateFn(_.cloneDeep(currentDoc));
-    if (!silent) { docDiff(currentDoc, updatedDoc, preview); }
-    return { currentDoc, updatedDoc };});
+  const updatesData = rows.map((row) => {
+    const { doc: currentDoc } = row
+    const updatedDoc = updateFn(_.cloneDeep(currentDoc))
+    if (!silent) { docDiff(currentDoc, updatedDoc, preview) }
+    return { currentDoc, updatedDoc }})
 
   return postEntitiesBulk(updatesData)
   .then(postPatchesBulk(updatesData))
-  .then(updateSequentially);
-});
+  .then(updateSequentially)
+})
 
-var postEntitiesBulk = updatesData => entities_.db.bulk(_.map(updatesData, 'updatedDoc'));
+var postEntitiesBulk = updatesData => entities_.db.bulk(_.map(updatesData, 'updatedDoc'))
 
 var postPatchesBulk = updatesData => (function(entityBulkRes) {
-  const entityResById = _.keyBy(entityBulkRes, 'id');
-  const patches = updatesData.map(buildPatches(entityResById));
-  return patches_.db.bulk(patches);
-});
+  const entityResById = _.keyBy(entityBulkRes, 'id')
+  const patches = updatesData.map(buildPatches(entityResById))
+  return patches_.db.bulk(patches)
+})
 
 var buildPatches = entityResById => (function(updateData) {
-  const { currentDoc, updatedDoc } = updateData;
-  const { _id } = updatedDoc;
-  const entityRes = entityResById[_id];
-  updatedDoc._rev = entityRes.rev;
-  if (updatedDoc._rev == null) { throw error_.new('rev not found', 500, { updateData, entityRes }); }
-  return Patch.create({ userId, currentDoc, updatedDoc });
-});
+  const { currentDoc, updatedDoc } = updateData
+  const { _id } = updatedDoc
+  const entityRes = entityResById[_id]
+  updatedDoc._rev = entityRes.rev
+  if (updatedDoc._rev == null) { throw error_.new('rev not found', 500, { updateData, entityRes }) }
+  return Patch.create({ userId, currentDoc, updatedDoc })
+})
 
 updateSequentially()
-.then(function() { if (stats != null) { return _.log(stats(), 'stats'); } })
-.catch(_.Error('global error'));
+.then(() => { if (stats != null) { return _.log(stats(), 'stats') } })
+.catch(_.Error('global error'))

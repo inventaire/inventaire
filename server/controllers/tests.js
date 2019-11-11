@@ -1,11 +1,13 @@
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-const CONFIG = require('config');
-const __ = CONFIG.universalPath;
-const _ = __.require('builders', 'utils');
+const CONFIG = require('config')
+const __ = CONFIG.universalPath
+const _ = __.require('builders', 'utils')
 
 module.exports = {
   all(req, res, next){
@@ -13,25 +15,25 @@ module.exports = {
 
     // useful to see text/plain bodys
     if (isPlainText(req)) {
-      return rawBody(req, res, next);
+      return rawBody(req, res, next)
     } else {
       // _.log req.query, 'query'
       // _.log req.body, 'body'
-      return res.json({ ok: true, method: req.method, body: req.body });
+      return res.json({ ok: true, method: req.method, body: req.body })
     }
   }
-};
+}
 
-var isPlainText = req => req.headers['content-type'] === 'text/plain';
+var isPlainText = req => req.headers['content-type'] === 'text/plain'
 
 // overpassing the bodyParser middleware
 // as it handles json only
 // cf http://stackoverflow.com/questions/22143105/node-js-express-express-json-and-express-urlencoded-with-form-submit
 var rawBody = function(req, res, next){
-  let body = '';
-  req.on('data', chunk => body += chunk);
-  return req.on('end', function() {
-    _.log(body, 'body');
-    return res.send(body);
-  });
-};
+  let body = ''
+  req.on('data', chunk => body += chunk)
+  return req.on('end', () => {
+    _.log(body, 'body')
+    return res.send(body)
+  })
+}

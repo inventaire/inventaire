@@ -1,7 +1,9 @@
-const CONFIG = require('config');
-const __ = CONFIG.universalPath;
-const _ = __.require('builders', 'utils');
-const { buildSearcher } = __.require('lib', 'elasticsearch');
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
+const CONFIG = require('config')
+const __ = CONFIG.universalPath
+const _ = __.require('builders', 'utils')
+const { buildSearcher } = __.require('lib', 'elasticsearch')
 
 module.exports = buildSearcher({
   dbBaseName: 'entities',
@@ -9,7 +11,7 @@ module.exports = buildSearcher({
     const should = [
       { match: { _all: search } },
       { prefix: { _all: _.last(search.split(' ')) } }
-    ];
+    ]
 
-    return { size: limit, query: { bool: { should } } };
-  }});
+    return { size: limit, query: { bool: { should } } }
+  } })

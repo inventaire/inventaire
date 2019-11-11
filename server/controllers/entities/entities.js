@@ -1,6 +1,8 @@
-const __ = require('config').universalPath;
-const ActionsControllers = __.require('lib', 'actions_controllers');
-const customQuery = require('./custom_query');
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
+const __ = require('config').universalPath
+const ActionsControllers = __.require('lib', 'actions_controllers')
+const customQuery = require('./custom_query')
 
 module.exports = {
   get: ActionsControllers({
@@ -46,6 +48,6 @@ module.exports = {
       'revert-merge': require('./revert_merge')
     }
   })
-};
+}
 
-require('./lib/update_search_engine')();
+require('./lib/update_search_engine')()

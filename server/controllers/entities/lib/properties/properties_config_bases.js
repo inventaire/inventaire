@@ -1,26 +1,28 @@
-const CONFIG = require('config');
-const __ = CONFIG.universalPath;
-const _ = __.require('builders', 'utils');
-const error_ = __.require('lib', 'error/error');
-const wdk = require('wikidata-sdk');
-const isbn_ = __.require('lib', 'isbn/isbn');
-const { EntityUri, SimpleDay } = __.require('lib', 'regex');
-const { BoundedString } = __.require('models', 'validations/common');
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
+const CONFIG = require('config')
+const __ = CONFIG.universalPath
+const _ = __.require('builders', 'utils')
+const error_ = __.require('lib', 'error/error')
+const wdk = require('wikidata-sdk')
+const isbn_ = __.require('lib', 'isbn/isbn')
+const { EntityUri, SimpleDay } = __.require('lib', 'regex')
+const { BoundedString } = __.require('models', 'validations/common')
 
 const entity = {
   datatype: 'entity',
   type: 'string',
   validate: EntityUri.test.bind(EntityUri)
-};
+}
 
 const uniqueString = {
   datatype: 'string',
   // Arbitrary max length
   validate: BoundedString(1, 5000),
   uniqueValue: true
-};
+}
 
-const restrictedEntityType = type => _.extend({ restrictedType: type }, entity);
+const restrictedEntityType = type => _.extend({ restrictedType: type }, entity)
 
 module.exports = {
   entity,
@@ -51,7 +53,7 @@ module.exports = {
   positiveInteger: {
     datatype: 'positive-integer',
     type: 'number',
-    validate(value){ return _.isNumber(value) && ((value % 1) === 0) && (value > 0); },
+    validate(value){ return _.isNumber(value) && ((value % 1) === 0) && (value > 0) },
     uniqueValue: true
   },
 
@@ -67,4 +69,4 @@ module.exports = {
     validate: _.isImageHash,
     uniqueValue: true
   }
-};
+}

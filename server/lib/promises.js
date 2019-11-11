@@ -1,19 +1,21 @@
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-let promisesHandlers;
-const CONFIG = require('config');
-const __ = CONFIG.universalPath;
-const _ = __.require('builders', 'utils');
+let promisesHandlers
+const CONFIG = require('config')
+const __ = CONFIG.universalPath
+const _ = __.require('builders', 'utils')
 
 // Here should be the only direct require of bluebird
 // so that every other dependency to it passed through this file
 // and get the associated configuration
 // Exception: cases when this policy would produce dependecy loops
-const Promise = require('bluebird');
-Promise.config(CONFIG.bluebird);
+const Promise = require('bluebird')
+Promise.config(CONFIG.bluebird)
 
 module.exports = (promisesHandlers = {
   Promise,
@@ -28,42 +30,42 @@ module.exports = (promisesHandlers = {
   // It can be used to pass over steps of a promise chain
   // made unnecessary for some reason
   skip(reason, context){
-    const err = new Error('skip');
-    err.skip = true;
-    err.reason = reason;
-    err.context = context;
-    throw err;
+    const err = new Error('skip')
+    err.skip = true
+    err.reason = reason
+    err.context = context
+    throw err
   },
 
   catchSkip(label){ return function(err){
-    if (err.skip) { return _.log(err.context, `${label} skipped: ${err.reason}`);
-    } else { throw err; }
-  }; },
+    if (err.skip) { return _.log(err.context, `${label} skipped: ${err.reason}`)
+    } else { throw err }
+  } },
 
   // a proxy to Bluebird Promisify that keeps the names
   promisify(mod, keys){
     // Allow to pass an array of the desired keys
     // or let keys undefined to get all the keys
-    if (!_.isArray(keys)) { keys = Object.keys(mod); }
-    const API = {};
-    for (let k of keys) {
-      API[k] = Promise.promisify(mod[k]);
+    if (!_.isArray(keys)) { keys = Object.keys(mod) }
+    const API = {}
+    for (const k of keys) {
+      API[k] = Promise.promisify(mod[k])
     }
-    return API;
+    return API
   },
 
   // source: http://bluebirdjs.com/docs/api/deferred-migration.html
   defer() {
     // Initialize in the defer function scope
-    let resolve = null;
-    let reject = null;
+    let resolve = null
+    let reject = null
 
-    const promise = new Promise(function(resolveFn, rejectFn){
+    const promise = new Promise(((resolveFn, rejectFn) => {
       // Set the previously initialized variables
       // to the promise internal resolve/reject functions
-      resolve = resolveFn;
-      return reject = rejectFn;
-    });
+      resolve = resolveFn
+      return reject = rejectFn
+    }))
 
     return {
       // A function to resolve the promise at will:
@@ -72,7 +74,7 @@ module.exports = (promisesHandlers = {
       reject,
       // The promise object, still pending at the moment this is returned
       promise
-    };
+    }
   },
 
   // Used has a way to create only one resolved promise to start promise chains.
@@ -82,5 +84,5 @@ module.exports = (promisesHandlers = {
   // cf http://stackoverflow.com/q/40683818/3324977
   resolved: Promise.resolve(),
 
-  wait(ms){ return Promise.resolve().delay(ms); }
-});
+  wait(ms){ return Promise.resolve().delay(ms) }
+})

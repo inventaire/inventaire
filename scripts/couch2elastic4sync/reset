@@ -1,32 +1,34 @@
 #!/usr/bin/env node
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-const CONFIG = require('config');
-const __ = require('config').universalPath;
-const _ = __.require('builders', 'utils');
-const requests_ = __.require('lib', 'requests');
-const { host } = CONFIG.elasticsearch;
-const { indexesList } = __.require('db', 'elasticsearch/list');
-const createIndex = require('./create_index');
+const CONFIG = require('config')
+const __ = require('config').universalPath
+const _ = __.require('builders', 'utils')
+const requests_ = __.require('lib', 'requests')
+const { host } = CONFIG.elasticsearch
+const { indexesList } = __.require('db', 'elasticsearch/list')
+const createIndex = require('./create_index')
 
 const reset = function(dbName){
-  const url = `${host}/${dbName}`;
+  const url = `${host}/${dbName}`
   return requests_.delete(url)
   .then(_.Log(`delete ${url}`))
   .catch(ignoreMissing(url))
   .then(createIndex.bind(null, dbName))
-  .catch(_.Error('reset'));
-};
+  .catch(_.Error('reset'))
+}
 
 var ignoreMissing = url => (function(err) {
   if (err.statusCode === 404) {
-    return _.warn(url, 'no database to delete');
+    return _.warn(url, 'no database to delete')
   } else {
-    throw err;
+    throw err
   }
-});
+})
 
-indexesList.forEach(reset);
+indexesList.forEach(reset)

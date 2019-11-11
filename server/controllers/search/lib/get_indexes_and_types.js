@@ -1,17 +1,19 @@
-const CONFIG = require('config');
-const __ = CONFIG.universalPath;
-const _ = __.require('builders', 'utils');
-const { typesData } = require('./types');
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
+const CONFIG = require('config')
+const __ = CONFIG.universalPath
+const _ = __.require('builders', 'utils')
+const { typesData } = require('./types')
 
 module.exports = function(typesList){
-  const data = { indexes: [], types: [] };
-  const { indexes, types } = typesList.reduce(aggregateIndexesAndTypes, data);
-  return { indexes: _.uniq(indexes), types };
-};
+  const data = { indexes: [], types: [] }
+  const { indexes, types } = typesList.reduce(aggregateIndexesAndTypes, data)
+  return { indexes: _.uniq(indexes), types }
+}
 
 var aggregateIndexesAndTypes = function(data, nextType){
-  const { indexes, type } = typesData[nextType];
-  data.indexes = data.indexes.concat(indexes);
-  data.types.push(type);
-  return data;
-};
+  const { indexes, type } = typesData[nextType]
+  data.indexes = data.indexes.concat(indexes)
+  data.types.push(type)
+  return data
+}

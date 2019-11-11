@@ -1,3 +1,5 @@
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
@@ -29,17 +31,17 @@
 // Inventaire properties:
 // invp:P2: Image Hash
 
-let Entity;
-const CONFIG = require('config');
-const __ = CONFIG.universalPath;
-const _ = __.require('builders', 'utils');
-const error_ = __.require('lib', 'error/error');
-const assert_ = __.require('utils', 'assert_types');
-const promises_ = __.require('lib', 'promises');
-const validLangs = Object.keys(require('wikidata-lang').byCode);
+let Entity
+const CONFIG = require('config')
+const __ = CONFIG.universalPath
+const _ = __.require('builders', 'utils')
+const error_ = __.require('lib', 'error/error')
+const assert_ = __.require('utils', 'assert_types')
+const promises_ = __.require('lib', 'promises')
+const validLangs = Object.keys(require('wikidata-lang').byCode)
 
-const properties = __.require('controllers', 'entities/lib/properties/properties_values_constraints');
-const inferences = __.require('controllers', 'entities/lib/inferences');
+const properties = __.require('controllers', 'entities/lib/properties/properties_values_constraints')
+const inferences = __.require('controllers', 'entities/lib/inferences')
 
 module.exports = (Entity = {
   create() {
@@ -49,239 +51,239 @@ module.exports = (Entity = {
       claims: {},
       created: Date.now(),
       updated: Date.now()
-    };
+    }
   },
 
   setLabel(doc, lang, value){
-    assert_.types([ 'object', 'string', 'string' ], arguments);
+    assert_.types([ 'object', 'string', 'string' ], arguments)
 
     if (!validLangs.includes(lang)) {
-      throw error_.new('invalid lang', 400, { doc, lang, value });
+      throw error_.new('invalid lang', 400, { doc, lang, value })
     }
 
-    Entity.preventRedirectionEdit(doc, 'setLabel');
+    Entity.preventRedirectionEdit(doc, 'setLabel')
 
-    value = _.superTrim(value);
+    value = _.superTrim(value)
 
     if (doc.labels[lang] === value) {
-      throw error_.new('already up-to-date', 400, { doc, lang, value });
+      throw error_.new('already up-to-date', 400, { doc, lang, value })
     }
 
-    doc.labels[lang] = value;
+    doc.labels[lang] = value
 
-    doc.updated = Date.now();
+    doc.updated = Date.now()
 
-    return doc;
+    return doc
   },
 
   setLabels(doc, labels){
-    Entity.preventRedirectionEdit(doc, 'setLabels');
-    for (let lang in labels) {
-      const value = labels[lang];
-      doc = Entity.setLabel(doc, lang, value);
+    Entity.preventRedirectionEdit(doc, 'setLabels')
+    for (const lang in labels) {
+      const value = labels[lang]
+      doc = Entity.setLabel(doc, lang, value)
     }
 
-    return doc;
+    return doc
   },
 
   addClaims(doc, claims){
-    Entity.preventRedirectionEdit(doc, 'addClaims');
+    Entity.preventRedirectionEdit(doc, 'addClaims')
 
     // Pass the list of all edited properties, so that wen trying to infer property
     // values, we know which one should not be infered at the risk of creating
     // a conflict
-    doc._allClaimsProps = Object.keys(claims);
+    doc._allClaimsProps = Object.keys(claims)
 
-    for (let property in claims) {
-      const array = claims[property];
-      const prop = properties[property];
+    for (const property in claims) {
+      const array = claims[property]
+      const prop = properties[property]
       // claims will be validated one by one later but some collective checks are needed
 
       if (prop.uniqueValue) {
         if (array.length > 1) {
-          const message = `${property} expects a unique value, got ${array}`;
-          throw error_.new(message, 400, arguments);
+          const message = `${property} expects a unique value, got ${array}`
+          throw error_.new(message, 400, arguments)
         }
       }
 
 
-      for (let value of array) {
-        doc = Entity.createClaim(doc, property, value);
+      for (const value of array) {
+        doc = Entity.createClaim(doc, property, value)
       }
     }
 
-    delete doc._allClaimsProps;
+    delete doc._allClaimsProps
 
-    doc.updated = Date.now();
+    doc.updated = Date.now()
 
-    return doc;
+    return doc
   },
 
   createClaim(doc, property, value){
-    Entity.preventRedirectionEdit(doc, 'createClaim');
-    return Entity.updateClaim(doc, property, null, value);
+    Entity.preventRedirectionEdit(doc, 'createClaim')
+    return Entity.updateClaim(doc, property, null, value)
   },
 
   updateClaim(doc, property, oldVal, newVal){
-    Entity.preventRedirectionEdit(doc, 'updateClaim');
+    Entity.preventRedirectionEdit(doc, 'updateClaim')
     if ((oldVal == null) && (newVal == null)) {
-      throw error_.new('missing old or new value', 400, arguments);
+      throw error_.new('missing old or new value', 400, arguments)
     }
 
-    if (_.isString(oldVal)) { oldVal = _.superTrim(oldVal); }
-    if (_.isString(newVal)) { newVal = _.superTrim(newVal); }
+    if (_.isString(oldVal)) { oldVal = _.superTrim(oldVal) }
+    if (_.isString(newVal)) { newVal = _.superTrim(newVal) }
 
-    let propArray = _.get(doc, `claims.${property}`);
-    _.info(`${property} propArray: ${propArray} /oldVal: ${oldVal} /newVal: ${newVal}`);
+    let propArray = _.get(doc, `claims.${property}`)
+    _.info(`${property} propArray: ${propArray} /oldVal: ${oldVal} /newVal: ${newVal}`)
 
     if ((propArray != null) && (newVal != null) && propArray.includes(newVal)) {
-      throw error_.new('claim property new value already exist', 400, [ propArray, newVal ]);
+      throw error_.new('claim property new value already exist', 400, [ propArray, newVal ])
     }
 
     if (oldVal != null) {
       if ((propArray == null) || !propArray.includes(oldVal)) {
-        throw error_.new('claim property value not found', 400, arguments);
+        throw error_.new('claim property value not found', 400, arguments)
       }
 
       if (newVal != null) {
-        const index = propArray.indexOf(oldVal);
-        doc.claims[property][index] = newVal;
+        const index = propArray.indexOf(oldVal)
+        doc.claims[property][index] = newVal
       } else {
         // if the new value is null, it plays the role of a removeClaim
-        propArray = _.without(propArray, oldVal);
+        propArray = _.without(propArray, oldVal)
 
         // Some properties are required.
         // Ex: wdt:P629 and wdt:P1476 are required on editions, so the last claim
         // can't be removed without adding a new value
         if ((propArray.length === 0) && properties[property].critical) {
-          throw error_.new('this property should at least have one value', 400, arguments);
+          throw error_.new('this property should at least have one value', 400, arguments)
         }
 
-        setPossiblyEmptyPropertyArray(doc, property, propArray);
+        setPossiblyEmptyPropertyArray(doc, property, propArray)
       }
 
     } else {
       // if the old value is null, it plays the role of a createClaim
-      if (!doc.claims[property]) { doc.claims[property] = []; }
-      doc.claims[property].push(newVal);
+      if (!doc.claims[property]) { doc.claims[property] = [] }
+      doc.claims[property].push(newVal)
     }
 
-    doc.updated = Date.now();
+    doc.updated = Date.now()
 
-    return updateInferredProperties(doc, property, oldVal, newVal);
+    return updateInferredProperties(doc, property, oldVal, newVal)
   },
 
   // 'from' and 'to' refer to the redirection process which rely on merging
   // two existing document: redirecting from an entity to another entity,
   // only the 'to' doc will survive
   mergeDocs(fromEntityDoc, toEntityDoc){
-    let value;
-    Entity.preventRedirectionEdit(fromEntityDoc, 'mergeDocs (from)');
-    Entity.preventRedirectionEdit(toEntityDoc, 'mergeDocs (to)');
+    let value
+    Entity.preventRedirectionEdit(fromEntityDoc, 'mergeDocs (from)')
+    Entity.preventRedirectionEdit(toEntityDoc, 'mergeDocs (to)')
 
-    let dataTransfered = false;
+    let dataTransfered = false
 
-    for (let lang in fromEntityDoc.labels) {
-      value = fromEntityDoc.labels[lang];
+    for (const lang in fromEntityDoc.labels) {
+      value = fromEntityDoc.labels[lang]
       if (toEntityDoc.labels[lang] == null) {
-        toEntityDoc.labels[lang] = value;
-        dataTransfered = true;
+        toEntityDoc.labels[lang] = value
+        dataTransfered = true
       }
     }
 
-    for (let property in fromEntityDoc.claims) {
-      const values = fromEntityDoc.claims[property];
-      if (toEntityDoc.claims[property] == null) { toEntityDoc.claims[property] = []; }
+    for (const property in fromEntityDoc.claims) {
+      const values = fromEntityDoc.claims[property]
+      if (toEntityDoc.claims[property] == null) { toEntityDoc.claims[property] = [] }
       for (value of values) {
         if (!toEntityDoc.claims[property].includes(value)) {
           if (toEntityDoc.claims[property].length > 0) {
             if (properties[property].uniqueValue) {
-              _.warn(value, `${property} can have only one value: ignoring merged entity value`);
+              _.warn(value, `${property} can have only one value: ignoring merged entity value`)
             } else if (properties[property].hasPlaceholders) {
-              _.warn(value, `${property} values may be placeholders: ignoring merged entity value`);
+              _.warn(value, `${property} values may be placeholders: ignoring merged entity value`)
             } else {
-              toEntityDoc.claims[property].push(value);
-              dataTransfered = true;
+              toEntityDoc.claims[property].push(value)
+              dataTransfered = true
             }
           } else {
-            toEntityDoc.claims[property].push(value);
-            dataTransfered = true;
+            toEntityDoc.claims[property].push(value)
+            dataTransfered = true
           }
         }
       }
     }
 
-    if (dataTransfered) { toEntityDoc.updated = Date.now(); }
+    if (dataTransfered) { toEntityDoc.updated = Date.now() }
 
-    return toEntityDoc;
+    return toEntityDoc
   },
 
   turnIntoRedirection(fromEntityDoc, toUri, removedPlaceholdersIds){
-    const [ prefix, id ] = Array.from(toUri.split(':'));
+    const [ prefix, id ] = Array.from(toUri.split(':'))
 
     if ((prefix === 'inv') && (id === fromEntityDoc._id)) {
-      throw error_.new('circular redirection', 500, arguments);
+      throw error_.new('circular redirection', 500, arguments)
     }
 
-    const redirection = _.cloneDeep(fromEntityDoc);
+    const redirection = _.cloneDeep(fromEntityDoc)
 
-    redirection.redirect = toUri;
-    delete redirection.labels;
-    delete redirection.claims;
-    redirection.updated = Date.now();
+    redirection.redirect = toUri
+    delete redirection.labels
+    delete redirection.claims
+    redirection.updated = Date.now()
     // the list of placeholders entities to recover if the merge as to be reverted
-    redirection.removedPlaceholdersIds = removedPlaceholdersIds;
+    redirection.removedPlaceholdersIds = removedPlaceholdersIds
 
-    return redirection;
+    return redirection
   },
 
   removePlaceholder(entityDoc){
     if (entityDoc.redirect != null) {
-      const message = "can't turn a redirection into a removed placeholder";
-      throw error_.new(message, 400, entityDoc);
+      const message = "can't turn a redirection into a removed placeholder"
+      throw error_.new(message, 400, entityDoc)
     }
 
-    const removedDoc = _.cloneDeep(entityDoc);
-    removedDoc.type = 'removed:placeholder';
-    removedDoc.updated = Date.now();
-    return removedDoc;
+    const removedDoc = _.cloneDeep(entityDoc)
+    removedDoc.type = 'removed:placeholder'
+    removedDoc.updated = Date.now()
+    return removedDoc
   },
 
   recoverPlaceholder(entityDoc){
-    const recoveredDoc = _.cloneDeep(entityDoc);
-    recoveredDoc.type = 'entity';
-    return recoveredDoc;
+    const recoveredDoc = _.cloneDeep(entityDoc)
+    recoveredDoc.type = 'entity'
+    return recoveredDoc
   },
 
   preventRedirectionEdit(doc, editLabel){
-    if (doc.redirect == null) { return; }
-    throw error_.new(`${editLabel} failed: the entity is a redirection`, 400, arguments);
+    if (doc.redirect == null) { return }
+    throw error_.new(`${editLabel} failed: the entity is a redirection`, 400, arguments)
   }
-});
+})
 
 var updateInferredProperties = function(doc, property, oldVal, newVal){
-  const declaredProperties = doc._allClaimsProps || [];
+  const declaredProperties = doc._allClaimsProps || []
   // Use _allClaimsProps to list properties that shouldn't be inferred
-  const propInferences = _.omit(inferences[property], declaredProperties);
+  const propInferences = _.omit(inferences[property], declaredProperties)
 
-  const addingOrUpdatingValue = (newVal != null);
+  const addingOrUpdatingValue = (newVal != null)
 
-  for (let inferredProperty in propInferences) {
-    var inferredValue;
-    const convertor = propInferences[inferredProperty];
-    let inferredPropertyArray = doc.claims[inferredProperty] || [];
+  for (const inferredProperty in propInferences) {
+    var inferredValue
+    const convertor = propInferences[inferredProperty]
+    let inferredPropertyArray = doc.claims[inferredProperty] || []
 
     if (addingOrUpdatingValue) {
-      inferredValue = convertor(newVal);
+      inferredValue = convertor(newVal)
       // Known case of missing infered value:
       // ISBN-13 with a 979 prefix will not have an ISBN-10
       if (inferredValue != null) {
         if (!inferredPropertyArray.includes(inferredValue)) {
-          inferredPropertyArray.push(inferredValue);
-          _.log(inferredValue, `added inferred ${inferredProperty} from ${property}`);
+          inferredPropertyArray.push(inferredValue)
+          _.log(inferredValue, `added inferred ${inferredProperty} from ${property}`)
         }
       } else {
-        _.warn(newVal, `inferred value not found for ${inferredProperty} from ${property}`);
+        _.warn(newVal, `inferred value not found for ${inferredProperty} from ${property}`)
       }
 
     } else {
@@ -293,24 +295,24 @@ var updateInferredProperties = function(doc, property, oldVal, newVal){
       //   value: "claim value",
       //   inferredFrom: 'claim id'
       // }
-      inferredValue = convertor(oldVal);
+      inferredValue = convertor(oldVal)
       if (inferredPropertyArray.includes(inferredValue)) {
-        inferredPropertyArray = _.without(inferredPropertyArray, inferredValue);
-        _.log(inferredValue, `removed inferred ${inferredProperty} from ${property}`);
+        inferredPropertyArray = _.without(inferredPropertyArray, inferredValue)
+        _.log(inferredValue, `removed inferred ${inferredProperty} from ${property}`)
       }
     }
 
-    setPossiblyEmptyPropertyArray(doc, inferredProperty, inferredPropertyArray);
+    setPossiblyEmptyPropertyArray(doc, inferredProperty, inferredPropertyArray)
   }
 
-  return doc;
-};
+  return doc
+}
 
 var setPossiblyEmptyPropertyArray = function(doc, property, propertyArray){
   if (propertyArray.length === 0) {
     // if empty, clean the doc from the property
-    return doc.claims = _.omit(doc.claims, property);
+    return doc.claims = _.omit(doc.claims, property)
   } else {
-    return doc.claims[property] = propertyArray;
+    return doc.claims[property] = propertyArray
   }
-};
+}

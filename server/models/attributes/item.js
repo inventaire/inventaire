@@ -1,5 +1,7 @@
-let attributes;
-module.exports = (attributes = {});
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
+let attributes
+module.exports = (attributes = {})
 
 attributes.updatable = [
   'transaction',
@@ -9,7 +11,7 @@ attributes.updatable = [
   'notes',
   // Use case: change from a work entity to an edition entity
   'entity'
-];
+]
 
 attributes.validAtCreation = [
   'entity',
@@ -20,7 +22,7 @@ attributes.validAtCreation = [
   'notes',
   // Legacy
   'lang'
-];
+]
 
 // not updatable by the user
 attributes.notUpdatable = [
@@ -40,26 +42,26 @@ attributes.notUpdatable = [
   // updated as side effects of entity redirections
   'previousEntity'
 
-];
+]
 
-attributes.known = attributes.notUpdatable.concat(attributes.updatable);
+attributes.known = attributes.notUpdatable.concat(attributes.updatable)
 
 attributes.private = [
   'notes',
   'listing'
-];
+]
 
 // attribute to reset on owner change
 attributes.reset = attributes.private.concat([
   'details',
   'busy'
-]);
+])
 
-const allowTransaction = [ 'giving', 'lending', 'selling'];
-const doesntAllowTransaction = [ 'inventorying'];
+const allowTransaction = [ 'giving', 'lending', 'selling' ]
+const doesntAllowTransaction = [ 'inventorying' ]
 
-attributes.allowTransaction = allowTransaction;
-attributes.doesntAllowTransaction = doesntAllowTransaction;
+attributes.allowTransaction = allowTransaction
+attributes.doesntAllowTransaction = doesntAllowTransaction
 
 attributes.constrained = {
   transaction: {
@@ -70,7 +72,7 @@ attributes.constrained = {
     possibilities: [ 'private', 'network', 'public' ],
     defaultValue: 'private'
   }
-};
+}
 
 // attributes to keep in documents where a stakeholder might loose
 // access to those data
@@ -78,6 +80,6 @@ attributes.constrained = {
 // Attributes such as _id and transaction are already recorded by a transaction
 // thus their absence here as long as only transactions doc uses snaphshot
 attributes.snapshot = [
- 'entity',
- 'details'
-];
+  'entity',
+  'details'
+]

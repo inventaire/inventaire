@@ -1,70 +1,75 @@
+/* eslint-disable
+    prefer-const,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-const CONFIG = require('config');
-const __ = require('config').universalPath;
-const _ = __.require('builders', 'utils');
-const ActionsControllers = __.require('lib', 'actions_controllers');
-const error_ = __.require('lib', 'error/error');
-const responses_ = __.require('lib', 'responses');
+const CONFIG = require('config')
+const __ = require('config').universalPath
+const _ = __.require('builders', 'utils')
+const ActionsControllers = __.require('lib', 'actions_controllers')
+const error_ = __.require('lib', 'error/error')
+const responses_ = __.require('lib', 'responses')
 
 const cspReport = function(req, res){
-  const { 'csp-report':errData } = req.body;
+  const { 'csp-report':errData } = req.body
 
   if (errData == null) {
-    return error_.bundleMissingBody(req, res, 'csp-report');
+    return error_.bundleMissingBody(req, res, 'csp-report')
   }
 
-  const err = buildError('csp report', 'csp', errData, req);
-  _.error(err, 'csp report', false);
-  return responses_.ok(res);
-};
+  const err = buildError('csp report', 'csp', errData, req)
+  _.error(err, 'csp report', false)
+  return responses_.ok(res)
+}
 
 const errorReport = function(req, res){
-  const { error:errData } = req.body;
+  const { error:errData } = req.body
 
   if (errData == null) {
-    return error_.bundleMissingBody(req, res, 'error');
+    return error_.bundleMissingBody(req, res, 'error')
   }
 
-  const message = errData.message || 'client error';
+  const message = errData.message || 'client error'
 
-  const err = buildError(message, 'client error report', errData, req);
-  _.error(err, 'client error report');
-  return responses_.ok(res);
-};
+  const err = buildError(message, 'client error report', errData, req)
+  _.error(err, 'client error report')
+  return responses_.ok(res)
+}
 
 var buildError = function(message, labels, errData, req){
-  const context = _.omit(errData, 'stack');
-  const statusCode = errData.statusCode || 500;
-  const err = error_.new(message, statusCode, context);
+  const context = _.omit(errData, 'stack')
+  const statusCode = errData.statusCode || 500
+  const err = error_.new(message, statusCode, context)
   // Do not add an emitter stack on client reports as it makes it be confused
   // with the client error stack itself
-  delete err.emitter;
+  delete err.emitter
   // Labels to be used by gitlab-logging
-  err.labels = labels;
-  err.stack = getErrStack(errData);
-  err.referer = req.headers.referer;
-  err['user-agent'] = req.headers['user-agent'];
-  return err;
-};
+  err.labels = labels
+  err.stack = getErrStack(errData)
+  err.referer = req.headers.referer
+  err['user-agent'] = req.headers['user-agent']
+  return err
+}
 
 // Faking an error object for the needs of server/lib/utils/open_issue.coffee
 // Define the stack first to stringify only what was reported
 var getErrStack = function(err){
-  let { message, stack } = err;
-  stack = err.stack || JSON.stringify(err, null, 2);
+  let { message, stack } = err
+  stack = err.stack || JSON.stringify(err, null, 2)
   // Adding the message at the top of the stack trace
   // as expected by _.error that will log only the stack trace, assuming it
   // contains the error message too
   if (_.isNonEmptyString(message) && (stack.search(message) === -1)) {
-    stack = message + '\n' + stack;
+    stack = message + '\n' + stack
   }
-  return stack;
-};
+  return stack
+}
 
 module.exports = {
   post: ActionsControllers({
@@ -74,4 +79,4 @@ module.exports = {
       'online': require('./online_report')
     }
   })
-};
+}

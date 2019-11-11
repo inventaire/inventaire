@@ -1,6 +1,8 @@
-const CONFIG = require('config');
-const __ = CONFIG.universalPath;
-const _ = __.require('builders', 'utils');
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
+const CONFIG = require('config')
+const __ = CONFIG.universalPath
+const _ = __.require('builders', 'utils')
 
 // Each property configuration object is made of the following attributes:
 
@@ -18,13 +20,13 @@ const _ = __.require('builders', 'utils');
 // Bases and builders are an attempt to keep those configuration objects DRY:
 // Bases represent the most common configuration objects, and can be extended
 // into more specific configs
-const bases = require('./properties_config_bases');
+const bases = require('./properties_config_bases')
 // Builders are functions to generate config objects tailored as closely
 // as possible to the property exact needs
-const builders = require('./properties_config_builders');
+const builders = require('./properties_config_builders')
 
 // Make sure to not mutate the base, while letting the last word to the extension
-const extend = (base, extension) => _.extend({}, base, extension);
+const extend = (base, extension) => _.extend({}, base, extension)
 
 // Keep in sync with ./properties_per_type
 module.exports = {
@@ -182,4 +184,4 @@ module.exports = {
   'wdt:P5571': builders.externalId(/^[1-9]\d*$/),
   // Librarything author ID
   'wdt:P7400': builders.externalId(/^[^\s\/]+$/)
-};
+}

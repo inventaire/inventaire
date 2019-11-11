@@ -1,9 +1,11 @@
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-const _ = require('lodash');
+const _ = require('lodash')
 
 const normalizeTerm = term => term
 .toLowerCase()
@@ -18,13 +20,13 @@ const normalizeTerm = term => term
 //# Work around the various author name notations
 .replace(/\./g, ' ')
 //# Replace all groups of spaces that might have emerged above by a single space
-.replace(/\s+/g, ' ');
+.replace(/\s+/g, ' ')
 
 const getEntityNormalizedTerms = function(entity){
-  const labels = _.values(entity.labels);
-  const aliases = _.flatten(_.values(entity.aliases));
-  const terms = labels.concat(aliases).map(normalizeTerm);
-  return _.uniq(terms);
-};
+  const labels = _.values(entity.labels)
+  const aliases = _.flatten(_.values(entity.aliases))
+  const terms = labels.concat(aliases).map(normalizeTerm)
+  return _.uniq(terms)
+}
 
-module.exports = { normalizeTerm, getEntityNormalizedTerms };
+module.exports = { normalizeTerm, getEntityNormalizedTerms }

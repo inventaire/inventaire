@@ -1,34 +1,39 @@
+/* eslint-disable
+    implicit-arrow-linebreak,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-const CONFIG = require('config');
-const __ = CONFIG.universalPath;
-const _ = __.require('builders', 'utils');
-const items_ = __.require('controllers', 'items/lib/items');
-const getItemsByAccessLevel = __.require('controllers', 'items/lib/get_by_access_level');
-const relations_ = __.require('controllers', 'relations/lib/queries');
-const user_ = __.require('controllers', 'user/lib/user');
-const { getLastItems, formatData, embedUsersData, getHighlightedItems } = require('./last_books_helpers');
+const CONFIG = require('config')
+const __ = CONFIG.universalPath
+const _ = __.require('builders', 'utils')
+const items_ = __.require('controllers', 'items/lib/items')
+const getItemsByAccessLevel = __.require('controllers', 'items/lib/get_by_access_level')
+const relations_ = __.require('controllers', 'relations/lib/queries')
+const user_ = __.require('controllers', 'user/lib/user')
+const { getLastItems, formatData, embedUsersData, getHighlightedItems } = require('./last_books_helpers')
 
 module.exports = (userId, lang, limitDate = 0) => // get network ids
-relations_.getUserFriendsAndCoGroupsMembers(userId)
+  relations_.getUserFriendsAndCoGroupsMembers(userId)
 // get last network items available for a transaction
 .then(getItemsByAccessLevel.network)
 .map(items_.serializeData)
 .then(getLastItems.bind(null, limitDate))
 .then(extractHighlightedItems(lang))
-.catch(_.ErrorRethrow('last network items'));
+.catch(_.ErrorRethrow('last network items'))
 
 var extractHighlightedItems = lang => (function(lastItems) {
-  const highlighted = getHighlightedItems(lastItems, 10);
+  const highlighted = getHighlightedItems(lastItems, 10)
   return attachUsersData(highlighted)
-  .then(formatData.bind(null, lastItems, 'network', lang));
-});
+  .then(formatData.bind(null, lastItems, 'network', lang))
+})
 
 var attachUsersData = function(items, lang){
-  const usersIds = _.uniq(items.map(_.property('owner')));
+  const usersIds = _.uniq(items.map(_.property('owner')))
   return user_.byIds(usersIds)
-  .then(embedUsersData.bind(null, items));
-};
+  .then(embedUsersData.bind(null, items))
+}

@@ -1,9 +1,11 @@
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
 module.exports = {
   env: 'production',
   verbosity: 2,
   publicHost: 'OVERRIDE',
   publicProtocol: 'https',
-  fullPublicHost() { return `${this.publicProtocol}://${this.publicHost}`; },
+  fullPublicHost() { return `${this.publicProtocol}://${this.publicHost}` },
   secret: 'OVERRIDE',
   // Let Nginx serve the static files
   // https://github.com/inventaire/inventaire-deploy/blob/master/nginx/inventaire.original.nginx
@@ -32,4 +34,4 @@ module.exports = {
       run: false
     }
   }
-};
+}

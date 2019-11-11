@@ -1,24 +1,26 @@
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-const { secret, cookieMaxAge } = require('config');
-const __ = require('config').universalPath;
-const _ = __.require('builders', 'utils');
+const { secret, cookieMaxAge } = require('config')
+const __ = require('config').universalPath
+const _ = __.require('builders', 'utils')
 
-const passport = require('passport');
-const passport_ = __.require('lib', 'passport/passport');
+const passport = require('passport')
+const passport_ = __.require('lib', 'passport/passport')
 
-const cookieParser = require('cookie-parser');
-const session = require('cookie-session');
+const cookieParser = require('cookie-parser')
+const session = require('cookie-session')
 const sessionParams = {
   maxAge: cookieMaxAge,
   secret,
   // see https://github.com/expressjs/session#resave
   resave: false
-};
+}
 
 module.exports = {
   cookieParser: cookieParser(),
@@ -29,9 +31,9 @@ module.exports = {
   },
 
   basicAuth(req, res, next){
-    if (req.headers.authorization == null) { return next(); }
+    if (req.headers.authorization == null) { return next() }
     // TODO: handle response to avoid text/plain 401 response
     // to keep the API consistent on Content-Type
-    return passport_.authenticate.basic(req, res, next);
+    return passport_.authenticate.basic(req, res, next)
   }
-};
+}

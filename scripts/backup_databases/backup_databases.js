@@ -1,19 +1,21 @@
 #!/usr/bin/env node
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 
-const [ suffix ] = Array.from(process.argv.slice(2));
+const [ suffix ] = Array.from(process.argv.slice(2))
 
-const CONFIG = require('config');
-const __ = CONFIG.universalPath;
-const _ = __.require('builders', 'utils');
+const CONFIG = require('config')
+const __ = CONFIG.universalPath
+const _ = __.require('builders', 'utils')
 
-const getDatabasesNames = require('./lib/get_databases_names');
-const backupDatabase = require('./lib/backup_database');
-const zipBackupFolder = require('./lib/zip_backup_folder');
+const getDatabasesNames = require('./lib/get_databases_names')
+const backupDatabase = require('./lib/backup_database')
+const zipBackupFolder = require('./lib/zip_backup_folder')
 
 getDatabasesNames(suffix)
 .then(_.Log('databases to backup'))
@@ -21,4 +23,4 @@ getDatabasesNames(suffix)
 .then(() => _.log('done doing backup'))
 .then(zipBackupFolder)
 .then(() => _.log('cleaned'))
-.catch(_.Error('databases backup err'));
+.catch(_.Error('databases backup err'))

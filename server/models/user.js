@@ -1,38 +1,40 @@
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-let User, validations;
-const CONFIG = require('config');
-const __ = CONFIG.universalPath;
-const _ = __.require('builders', 'utils');
-const pw_ = __.require('lib', 'crypto').passwords;
-const promises_ = __.require('lib', 'promises');
-const assert_ = __.require('utils', 'assert_types');
-const gravatar = __.require('lib', 'gravatar');
-const error_ = __.require('lib', 'error/error');
-const randomString = __.require('lib', 'utils/random_string');
-const generateReadToken = randomString.bind(null, 32);
+let User, validations
+const CONFIG = require('config')
+const __ = CONFIG.universalPath
+const _ = __.require('builders', 'utils')
+const pw_ = __.require('lib', 'crypto').passwords
+const promises_ = __.require('lib', 'promises')
+const assert_ = __.require('utils', 'assert_types')
+const gravatar = __.require('lib', 'gravatar')
+const error_ = __.require('lib', 'error/error')
+const randomString = __.require('lib', 'utils/random_string')
+const generateReadToken = randomString.bind(null, 32)
 
-module.exports = (User = {});
+module.exports = (User = {})
 
-User.validations = (validations = require('./validations/user'));
+User.validations = (validations = require('./validations/user'))
 
 // TODO: remove the last traces of creationStrategy=browserid: optional password
 User._create = function(username, email, creationStrategy, language, password){
-  _.log([ username, email, creationStrategy, language, `password:${(password != null)}` ], 'creating user');
-  assert_.strings([ username, email, creationStrategy ]);
-  if (language != null) { assert_.string(language); }
+  _.log([ username, email, creationStrategy, language, `password:${(password != null)}` ], 'creating user')
+  assert_.strings([ username, email, creationStrategy ])
+  if (language != null) { assert_.string(language) }
 
-  validations.pass('username', username);
-  validations.pass('email', email);
-  validations.pass('creationStrategy', creationStrategy);
+  validations.pass('username', username)
+  validations.pass('email', email)
+  validations.pass('creationStrategy', creationStrategy)
 
   // it's ok to have an undefined language
   if ((language != null) && !validations.language(language)) {
-    throw error_.newInvalid('language', language);
+    throw error_.newInvalid('language', language)
   }
 
   const user = {
@@ -57,98 +59,98 @@ User._create = function(username, email, creationStrategy, language, password){
       network: { 'items:count': 0 },
       public: { 'items:count': 0 }
     }
-  };
+  }
 
   switch (creationStrategy) {
-    case 'local':
-      user.validEmail = false;
-      if (!validations.password(password)) {
-        // Do NOT pass the password as context, as it would be logged
-        // and returned in the response
-        throw error_.new('invalid password', 400);
-      }
-      user.password = password;
-      break;
-    default:
-      throw error_.new('unknown strategy', 400);
+  case 'local':
+    user.validEmail = false
+    if (!validations.password(password)) {
+      // Do NOT pass the password as context, as it would be logged
+      // and returned in the response
+      throw error_.new('invalid password', 400)
+    }
+    user.password = password
+    break
+  default:
+    throw error_.new('unknown strategy', 400)
   }
 
-  return user;
-};
+  return user
+}
 
 User.create = (...args) => promises_.try(() => User._create.apply(null, args))
-.then(withHashedPassword);
+.then(withHashedPassword)
 
 User.upgradeInvited = function(invitedDoc, username, creationStrategy, language, password){
-  const { email } = invitedDoc;
+  const { email } = invitedDoc
   return User.create(username, email, creationStrategy, language, password)
   // Will override type but keep inviters and inviting groups
-  .then(userDoc => _.extend(invitedDoc, userDoc));
-};
+  .then(userDoc => _.extend(invitedDoc, userDoc))
+}
 
 var withHashedPassword = function(user){
-  const { password } = user;
+  const { password } = user
   if (password != null) {
-    return pw_.hash(password).then(replacePassword.bind(null, user));
+    return pw_.hash(password).then(replacePassword.bind(null, user))
   } else {
-    return promises_.resolve(user);
+    return promises_.resolve(user)
   }
-};
+}
 
 var replacePassword = function(user, hash){
-  user.password = hash;
-  return user;
-};
+  user.password = hash
+  return user
+}
 
-User.attributes = require('./attributes/user');
+User.attributes = require('./attributes/user')
 
 User.softDelete = function(userDoc){
-  const userSouvenir = _.pick(userDoc, User.attributes.critical);
-  userSouvenir.type = 'deletedUser';
-  return userSouvenir;
-};
+  const userSouvenir = _.pick(userDoc, User.attributes.critical)
+  userSouvenir.type = 'deletedUser'
+  return userSouvenir
+}
 
 User.updateEmail = function(doc, email){
-  doc = archivePreviousEmail(doc);
-  doc.email = email;
-  return doc;
-};
+  doc = archivePreviousEmail(doc)
+  doc.email = email
+  return doc
+}
 
 var archivePreviousEmail = function(doc){
   // Don't save the previous email if it had not been validated
   if (doc.validEmail) {
-    if (!doc.previousEmails) { doc.previousEmails = []; }
-    doc.previousEmails.push(doc.email);
-    doc.previousEmails = _.uniq(doc.previousEmails);
-    doc.validEmail = false;
+    if (!doc.previousEmails) { doc.previousEmails = [] }
+    doc.previousEmails.push(doc.email)
+    doc.previousEmails = _.uniq(doc.previousEmails)
+    doc.validEmail = false
   }
-  return doc;
-};
+  return doc
+}
 
 User.updatePassword = function(user, newHash){
-  user.password = newHash;
-  user = _.omit(user, 'resetPassword');
+  user.password = newHash
+  user = _.omit(user, 'resetPassword')
   // Unlocking password-related functionalities on client-side
   // for users originally created with browserid if they ask for a password reset
-  if (user.creationStrategy === 'browserid') { user.hasPassword = true; }
+  if (user.creationStrategy === 'browserid') { user.hasPassword = true }
   // Also change the read token, following Github practice
   // https://github.com/blog/16-token-private-feeds
-  user.readToken = generateReadToken();
-  return user;
-};
+  user.readToken = generateReadToken()
+  return user
+}
 
 User.setOauthTokens = (provider, data) => (function(user) {
-  assert_.string(provider);
-  assert_.object(data);
-  if (!user.oauth) { user.oauth = {}; }
-  user.oauth[provider] = data;
-  return user;
-});
+  assert_.string(provider)
+  assert_.object(data)
+  if (!user.oauth) { user.oauth = {} }
+  user.oauth[provider] = data
+  return user
+})
 
 User.updateItemsCounts = itemsCounts => (function(user) {
-  assert_.object(itemsCounts.private);
-  assert_.object(itemsCounts.network);
-  assert_.object(itemsCounts.public);
-  _.extend(user.snapshot, itemsCounts);
-  return user;
-});
+  assert_.object(itemsCounts.private)
+  assert_.object(itemsCounts.network)
+  assert_.object(itemsCounts.public)
+  _.extend(user.snapshot, itemsCounts)
+  return user
+})

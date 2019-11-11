@@ -1,3 +1,8 @@
+/* eslint-disable
+    prefer-const,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
@@ -6,47 +11,47 @@
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-let base;
-const _ = require('lodash');
+let base
+const _ = require('lodash')
 
 module.exports = (base = {
   combinations(array1, array2){
-    const results = [];
-    array1.forEach(keys1 => array2.forEach(keys2 => results.push([ keys1, keys2 ])));
-    return results;
+    const results = []
+    array1.forEach(keys1 => array2.forEach(keys2 => results.push([ keys1, keys2 ])))
+    return results
   },
 
   sumValues(obj){
     if (base.objLength(obj) > 0) {
-      return __guard__(_.values(obj), x => x.reduce((a, b) => a + b));
-    } else { return 0; }
+      return __guard__(_.values(obj), x => x.reduce((a, b) => a + b))
+    } else { return 0 }
   },
 
-  sameObjects(a, b){ return JSON.stringify(a) === JSON.stringify(b); },
+  sameObjects(a, b){ return JSON.stringify(a) === JSON.stringify(b) },
 
-  toLowerCase(str){ return str.toLowerCase(); },
+  toLowerCase(str){ return str.toLowerCase() },
 
   stringToInt(str){
-    if (typeof str !== 'string') { throw new Error(`expected a string: ${str}`); }
+    if (typeof str !== 'string') { throw new Error(`expected a string: ${str}`) }
     // testing the validity of the string is needed
     // to avoid getting NaN from parseInt
-    if (!/^-?\d+$/.test(str)) { throw new Error(`invalid integer string: ${str}`); }
-    return parseInt(str);
+    if (!/^-?\d+$/.test(str)) { throw new Error(`invalid integer string: ${str}`) }
+    return parseInt(str)
   },
 
   parsePositiveInteger(str){
     // /!\ Difference with parseInt: not throwing
-    if ((typeof str !== 'string') || !/^\d+$/.test(str)) { return; }
-    return parseInt(str);
+    if ((typeof str !== 'string') || !/^\d+$/.test(str)) { return }
+    return parseInt(str)
   },
 
   stringToFloat(str){
-    if (typeof str !== 'string') { throw new Error(`expected a string: ${str}`); }
-    if (!/^[-?\d\.]+$/.test(str)) { throw new Error(`invalid integer string: ${str}`); }
-    return parseFloat(str);
+    if (typeof str !== 'string') { throw new Error(`expected a string: ${str}`) }
+    if (!/^[-?\d\.]+$/.test(str)) { throw new Error(`invalid integer string: ${str}`) }
+    return parseFloat(str)
   },
 
-  isArrayLike(obj){ return _.isArray(obj) || _.isArguments(obj); },
+  isArrayLike(obj){ return _.isArray(obj) || _.isArguments(obj) },
 
   // Remove any superfluous spaces
   superTrim(str){
@@ -54,173 +59,173 @@ module.exports = (base = {
     .replace(/^\s+/, ' ')
     .replace(/\s+$/, ' ')
     .replace(/\s+/g, ' ')
-    .trim();
+    .trim()
   },
 
   flattenIndexes(indexesArray){
-    indexesArray.unshift({});
-    return _.extend.apply(_, indexesArray);
+    indexesArray.unshift({})
+    return _.extend.apply(_, indexesArray)
   },
 
-  KeyBy(attribute){ return array => _.keyBy(array, attribute); },
+  KeyBy(attribute){ return array => _.keyBy(array, attribute) },
 
-  initCollectionsIndex(names){ return names.reduce(aggregateCollections, {}); },
+  initCollectionsIndex(names){ return names.reduce(aggregateCollections, {}) },
 
   indexAppliedValue(array, fn){
-    return array.reduce(aggragateFnApplication(fn), {});
+    return array.reduce(aggragateFnApplication(fn), {})
   },
 
-  obfuscate(str){ return str.replace(/.{1}/g, '*'); },
+  obfuscate(str){ return str.replace(/.{1}/g, '*') },
 
   // adapted from http://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
   hashCode(string){
-    let [ hash, i, len ] = Array.from([ 0, 0, string.length ]);
-    if (len === 0) { return hash; }
+    let [ hash, i, len ] = Array.from([ 0, 0, string.length ])
+    if (len === 0) { return hash }
 
     while (i < len) {
-      const chr = string.charCodeAt(i);
-      hash = ((hash << 5) - hash) + chr;
-      hash |= 0; // Convert to 32bit integer
-      i++;
+      const chr = string.charCodeAt(i)
+      hash = ((hash << 5) - hash) + chr
+      hash |= 0 // Convert to 32bit integer
+      i++
     }
-    return Math.abs(hash);
+    return Math.abs(hash)
   },
 
   buildPath(pathname, queryObj, escape){
-    queryObj = removeUndefined(queryObj);
-    if ((queryObj == null) || _.isEmpty(queryObj)) { return pathname; }
+    queryObj = removeUndefined(queryObj)
+    if ((queryObj == null) || _.isEmpty(queryObj)) { return pathname }
 
-    let queryString = '';
+    let queryString = ''
 
-    for (let key in queryObj) {
-      let value = queryObj[key];
+    for (const key in queryObj) {
+      let value = queryObj[key]
       if (escape) {
-        value = dropSpecialCharacters(value);
+        value = dropSpecialCharacters(value)
       }
       if (_.isObject(value)) {
-        value = escapeQueryStringValue(JSON.stringify(value));
+        value = escapeQueryStringValue(JSON.stringify(value))
       }
-      queryString += `&${key}=${value}`;
+      queryString += `&${key}=${value}`
     }
 
-    return pathname + '?' + queryString.slice(1);
+    return pathname + '?' + queryString.slice(1)
   },
 
   someMatch(arrayA, arrayB){
-    if (!_.isArray(arrayA) || !_.isArray(arrayB)) { return false; }
-    for (let valueA of arrayA) {
-      for (let valueB of arrayB) {
+    if (!_.isArray(arrayA) || !_.isArray(arrayB)) { return false }
+    for (const valueA of arrayA) {
+      for (const valueB of arrayB) {
         // Return true as soon as possible
-        if (valueA === valueB) { return true; }
+        if (valueA === valueB) { return true }
       }
     }
-    return false;
+    return false
   },
 
-  objLength(obj){ return __guard__(Object.keys(obj), x => x.length); },
+  objLength(obj){ return __guard__(Object.keys(obj), x => x.length) },
 
-  expired(timestamp, ttl){ return (Date.now() - timestamp) > ttl; },
+  expired(timestamp, ttl){ return (Date.now() - timestamp) > ttl },
 
-  shortLang(lang){ return __guard__(lang, x => x.slice(0, 2)); },
+  shortLang(lang){ return __guard__(lang, x => x.slice(0, 2)) },
 
   // encodeURIComponent ignores !, ', (, ), and *
   // cf https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent#Description
   fixedEncodeURIComponent(str){
-    return encodeURIComponent(str).replace(/[!'()*]/g, encodeCharacter);
+    return encodeURIComponent(str).replace(/[!'()*]/g, encodeCharacter)
   },
 
   pickOne(obj){
-    const key = Object.keys(obj)[0];
-    if (key != null) { return obj[key]; }
+    const key = Object.keys(obj)[0]
+    if (key != null) { return obj[key] }
   },
 
   parseBooleanString(booleanString, defaultVal = false){
     if (defaultVal === false) {
-      return booleanString === 'true';
+      return booleanString === 'true'
     } else {
-      return booleanString !== 'false';
+      return booleanString !== 'false'
     }
   },
 
   simpleDay(date){
-    if (date != null) { return new (Date(date).toISOString().split('T')[0]);
-    } else { return new (Date().toISOString().split('T')[0]); }
+    if (date != null) { return new (Date(date).toISOString().split('T')[0])
+    } else { return new (Date().toISOString().split('T')[0]) }
   },
 
   typeOf(obj){
     // just handling what differes from typeof
-    const type = typeof obj;
+    const type = typeof obj
     if (type === 'object') {
-      if (_.isNull(obj)) { return 'null'; }
-      if (_.isArray(obj)) { return 'array'; }
+      if (_.isNull(obj)) { return 'null' }
+      if (_.isArray(obj)) { return 'array' }
     }
     if (type === 'number') {
-      if (_.isNaN(obj)) { return 'NaN'; }
+      if (_.isNaN(obj)) { return 'NaN' }
     }
-    return type;
+    return type
   },
 
   // helpers to simplify polymorphisms
   forceArray(keys){
-    if (((keys == null)) || (keys === '')) { return []; }
-    if (_.isArray(keys)) { return keys;
-    } else { return [ keys ]; }
+    if (((keys == null)) || (keys === '')) { return [] }
+    if (_.isArray(keys)) { return keys
+    } else { return [ keys ] }
   },
 
   // Iterates on an object, with the passed function: fn(key, value)
   // Expected returned value: [ newKey, newValue ]
   mapKeysValues(obj, fn){
-    return Object.keys(obj).reduce(aggregateMappedKeysValues(obj, fn), {});
+    return Object.keys(obj).reduce(aggregateMappedKeysValues(obj, fn), {})
   }
-});
+})
 
 var aggregateMappedKeysValues = (obj, fn) => (function(newObj, key) {
-  const value = obj[key];
-  const newKeyValue = fn(key, value);
+  const value = obj[key]
+  const newKeyValue = fn(key, value)
 
   if (!_.isArray(newKeyValue)) {
-    const errMessage = `function should return a [ key, value ] array (got ${newKeyValue})`;
-    throw new Error(errMessage);
+    const errMessage = `function should return a [ key, value ] array (got ${newKeyValue})`
+    throw new Error(errMessage)
   }
 
-  const [ newKey, newValue ] = Array.from(newKeyValue);
+  const [ newKey, newValue ] = Array.from(newKeyValue)
 
-  if (newKey == null) { throw new Error(`missing new key (old key: ${key})`); }
-  if (newValue == null) { throw new Error(`missing new value (old value: ${value})`); }
+  if (newKey == null) { throw new Error(`missing new key (old key: ${key})`) }
+  if (newValue == null) { throw new Error(`missing new value (old value: ${value})`) }
 
-  newObj[newKey] = newValue;
-  return newObj;
-});
+  newObj[newKey] = newValue
+  return newObj
+})
 
-var encodeCharacter = c => '%' + c.charCodeAt(0).toString(16);
+var encodeCharacter = c => '%' + c.charCodeAt(0).toString(16)
 
 var removeUndefined = function(obj){
-  const newObj = {};
-  for (let key in obj) {
-    const value = obj[key];
-    if (value != null) { newObj[key] = value; }
+  const newObj = {}
+  for (const key in obj) {
+    const value = obj[key]
+    if (value != null) { newObj[key] = value }
   }
-  return newObj;
-};
+  return newObj
+}
 
 var dropSpecialCharacters = str => str
 .replace(/\s+/g, ' ')
-.replace(/(\?|\:)/g, '');
+.replace(/(\?|\:)/g, '')
 
 // Only escape values that are problematic in a query string:
 // for the moment, only '?'
-var escapeQueryStringValue = str => str.replace(/\?/g, '%3F');
+var escapeQueryStringValue = str => str.replace(/\?/g, '%3F')
 
 var aggregateCollections = function(index, name){
-  index[name] = [];
-  return index;
-};
+  index[name] = []
+  return index
+}
 
 var aggragateFnApplication = fn => (function(index, value) {
-  index[value] = fn(value);
-  return index;
-});
+  index[value] = fn(value)
+  return index
+})
 
 function __guard__(value, transform) {
-  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
+  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined
 }

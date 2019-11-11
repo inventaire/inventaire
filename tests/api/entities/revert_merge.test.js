@@ -1,39 +1,41 @@
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-const CONFIG = require('config');
-const __ = CONFIG.universalPath;
-const _ = __.require('builders', 'utils');
-const should = require('should');
-const { Promise } = __.require('lib', 'promises');
-const { undesiredErr } = require('../utils/utils');
-const randomString = __.require('lib', './utils/random_string');
-const { getByUris, merge, revertMerge, updateLabel, addClaim } = require('../utils/entities');
-const { createWork, createHuman, createWorkWithAuthor } = require('../fixtures/entities');
+const CONFIG = require('config')
+const __ = CONFIG.universalPath
+const _ = __.require('builders', 'utils')
+const should = require('should')
+const { Promise } = __.require('lib', 'promises')
+const { undesiredErr } = require('../utils/utils')
+const randomString = __.require('lib', './utils/random_string')
+const { getByUris, merge, revertMerge, updateLabel, addClaim } = require('../utils/entities')
+const { createWork, createHuman, createWorkWithAuthor } = require('../fixtures/entities')
 
-describe('entities:revert-merge', function() {
-  it('should revert merge two entities with an inv URI', function(done){
+describe('entities:revert-merge', () => {
+  it('should revert merge two entities with an inv URI', (done) => {
     Promise.all([
       createWork(),
       createWork()
     ])
     .spread((workA, workB) => merge(workA.uri, workB.uri)
     .then(() => getByUris(workA.uri))
-    .then(function(res){
-      res.redirects[workA.uri].should.equal(workB.uri);
-      res.entities[workB.uri].should.be.ok();
-      return revertMerge(workA.uri);}).then(() => getByUris(workA.uri))
-    .then(function(res){
-      should(res.redirects[workA.uri]).not.be.ok();
-      res.entities[workA.uri].should.be.ok();
-      return done();
-    })).catch(undesiredErr(done));
+    .then((res) => {
+      res.redirects[workA.uri].should.equal(workB.uri)
+      res.entities[workB.uri].should.be.ok()
+      return revertMerge(workA.uri)}).then(() => getByUris(workA.uri))
+    .then((res) => {
+      should(res.redirects[workA.uri]).not.be.ok()
+      res.entities[workA.uri].should.be.ok()
+      return done()
+    })).catch(undesiredErr(done))
 
-  });
+  })
 
-  it('should revert claims transfer', function(done){
+  it('should revert claims transfer', (done) => {
     Promise.all([
       createWork(),
       createWork(),
@@ -42,37 +44,37 @@ describe('entities:revert-merge', function() {
     .spread((workA, workB, author) => addClaim(workA.uri, 'wdt:P50', author.uri)
     .then(() => merge(workA.uri, workB.uri))
     .then(() => getByUris(workB.uri))
-    .then(function(res){
-      const authorsUris = res.entities[workB.uri].claims['wdt:P50'];
-      authorsUris.should.deepEqual([ author.uri ]);
-      return revertMerge(workA.uri);}).then(() => getByUris(workB.uri))
-    .then(function(res){
-      const authorsUris = res.entities[workB.uri].claims['wdt:P50'];
-      should(authorsUris).not.be.ok();
-      return done();
-    })).catch(undesiredErr(done));
+    .then((res) => {
+      const authorsUris = res.entities[workB.uri].claims['wdt:P50']
+      authorsUris.should.deepEqual([ author.uri ])
+      return revertMerge(workA.uri)}).then(() => getByUris(workB.uri))
+    .then((res) => {
+      const authorsUris = res.entities[workB.uri].claims['wdt:P50']
+      should(authorsUris).not.be.ok()
+      return done()
+    })).catch(undesiredErr(done))
 
-  });
+  })
 
-  it('should revert labels transfer', function(done){
-    const label = randomString(6);
+  it('should revert labels transfer', (done) => {
+    const label = randomString(6)
     Promise.all([
       createWork({ labels: { zh: label } }),
       createWork()
     ])
     .spread((workA, workB) => merge(workA.uri, workB.uri)
     .then(() => getByUris(workB.uri))
-    .then(function(res){
-      res.entities[workB.uri].labels.zh.should.equal(label);
-      return revertMerge(workA.uri);}).then(() => getByUris(workB.uri))
-    .then(function(res){
-      should(res.entities[workB.uri].labels.zh).not.be.ok();
-      return done();
-    })).catch(undesiredErr(done));
+    .then((res) => {
+      res.entities[workB.uri].labels.zh.should.equal(label)
+      return revertMerge(workA.uri)}).then(() => getByUris(workB.uri))
+    .then((res) => {
+      should(res.entities[workB.uri].labels.zh).not.be.ok()
+      return done()
+    })).catch(undesiredErr(done))
 
-  });
+  })
 
-  it('should revert claim transfers, even when several patches away', function(done){
+  it('should revert claim transfers, even when several patches away', (done) => {
     Promise.all([
       createWork(),
       createWork(),
@@ -84,21 +86,21 @@ describe('entities:revert-merge', function() {
     .then(() => getByUris(workB.uri))
     // Make another edit between the merge and the revert-merge
     .tap(() => addClaim(workB.uri, 'wdt:P50', authorB.uri))
-    .then(function(res){
-      const authorsUris = res.entities[workB.uri].claims['wdt:P50'];
-      authorsUris.should.deepEqual([ authorA.uri ]);
-      return revertMerge(workA.uri);}).then(() => getByUris(workB.uri))
-    .then(function(res){
-      const authorsUris = res.entities[workB.uri].claims['wdt:P50'];
-      authorsUris.should.deepEqual([ authorB.uri ]);
-      return done();
-    })).catch(undesiredErr(done));
+    .then((res) => {
+      const authorsUris = res.entities[workB.uri].claims['wdt:P50']
+      authorsUris.should.deepEqual([ authorA.uri ])
+      return revertMerge(workA.uri)}).then(() => getByUris(workB.uri))
+    .then((res) => {
+      const authorsUris = res.entities[workB.uri].claims['wdt:P50']
+      authorsUris.should.deepEqual([ authorB.uri ])
+      return done()
+    })).catch(undesiredErr(done))
 
-  });
+  })
 
-  it('should revert labels transfer', function(done){
-    const labelA = randomString(6);
-    const labelB = randomString(6);
+  it('should revert labels transfer', (done) => {
+    const labelA = randomString(6)
+    const labelB = randomString(6)
     Promise.all([
       createWork({ labels: { zh: labelA } }),
       createWork()
@@ -107,17 +109,17 @@ describe('entities:revert-merge', function() {
     .then(() => getByUris(workB.uri))
     // Make another edit between the merge and the revert-merge
     .tap(() => updateLabel(workB.uri, 'nl', labelB))
-    .then(function(res){
-      res.entities[workB.uri].labels.zh.should.equal(labelA);
-      return revertMerge(workA.uri);}).then(() => getByUris(workB.uri))
-    .then(function(res){
-      should(res.entities[workB.uri].labels.zh).not.be.ok();
-      return done();
-    })).catch(undesiredErr(done));
+    .then((res) => {
+      res.entities[workB.uri].labels.zh.should.equal(labelA)
+      return revertMerge(workA.uri)}).then(() => getByUris(workB.uri))
+    .then((res) => {
+      should(res.entities[workB.uri].labels.zh).not.be.ok()
+      return done()
+    })).catch(undesiredErr(done))
 
-  });
+  })
 
-  it('should revert redirected claims', function(done){
+  it('should revert redirected claims', (done) => {
     Promise.all([
       createHuman(),
       createHuman(),
@@ -127,31 +129,31 @@ describe('entities:revert-merge', function() {
     .then(() => merge(humanA.uri, humanB.uri))
     .then(() => revertMerge(humanA.uri))
     .then(() => getByUris(work.uri))
-    .then(function(res){
-      const authorsUris = res.entities[work.uri].claims['wdt:P50'];
-      authorsUris.should.deepEqual([ humanA.uri ]);
-      return done();
-    })).catch(undesiredErr(done));
+    .then((res) => {
+      const authorsUris = res.entities[work.uri].claims['wdt:P50']
+      authorsUris.should.deepEqual([ humanA.uri ])
+      return done()
+    })).catch(undesiredErr(done))
 
-  });
+  })
 
-  return it('should restore removed human placeholders', function(done){
+  return it('should restore removed human placeholders', (done) => {
     Promise.all([
       createWorkWithAuthor(),
       createWorkWithAuthor()
     ])
-    .spread(function(workA, workB){
-      const humanAUri = workA.claims['wdt:P50'][0];
+    .spread((workA, workB) => {
+      const humanAUri = workA.claims['wdt:P50'][0]
       return merge(workA.uri, workB.uri)
       .then(() => revertMerge(workA.uri))
       .then(() => getByUris([ workA.uri, humanAUri ]))
-      .then(function(res){
-        const humanA = res.entities[humanAUri];
-        workA = res.entities[workA.uri];
-        should(humanA._meta_type).not.be.ok();
-        workA.claims['wdt:P50'].should.deepEqual([ humanAUri ]);
-        return done();
-      });}).catch(done);
+      .then((res) => {
+        const humanA = res.entities[humanAUri]
+        workA = res.entities[workA.uri]
+        should(humanA._meta_type).not.be.ok()
+        workA.claims['wdt:P50'].should.deepEqual([ humanAUri ])
+        return done()
+      })}).catch(done)
 
-  });
-});
+  })
+})

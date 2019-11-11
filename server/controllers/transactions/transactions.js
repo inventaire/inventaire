@@ -1,6 +1,8 @@
-const __ = require('config').universalPath;
-const messages = require('./messages');
-const ActionsControllers = __.require('lib', 'actions_controllers');
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
+const __ = require('config').universalPath
+const messages = require('./messages')
+const ActionsControllers = __.require('lib', 'actions_controllers')
 
 module.exports = {
   get: ActionsControllers({
@@ -23,6 +25,6 @@ module.exports = {
       'mark-as-read': require('./mark_as_read')
     }
   })
-};
+}
 
-require('./lib/side_effects')();
+require('./lib/side_effects')()

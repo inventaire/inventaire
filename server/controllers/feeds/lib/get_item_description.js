@@ -1,30 +1,32 @@
-const CONFIG = require('config');
-const __ = require('config').universalPath;
-const _ = __.require('builders', 'utils');
-const templateHelpers = __.require('lib', 'emails/handlebars_helpers');
-const transacColors = __.require('lib', 'emails/activity_summary/transactions_colors');
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
+const CONFIG = require('config')
+const __ = require('config').universalPath
+const _ = __.require('builders', 'utils')
+const templateHelpers = __.require('lib', 'emails/handlebars_helpers')
+const transacColors = __.require('lib', 'emails/activity_summary/transactions_colors')
 
 module.exports = function(item, user, lang){
-  let imageHtml;
-  const { transaction, snapshot, details } = item;
-  const image = snapshot['entity:image'];
-  const title = snapshot['entity:title'];
+  let imageHtml
+  const { transaction, snapshot, details } = item
+  const image = snapshot['entity:image']
+  const title = snapshot['entity:title']
 
   if (_.isNonEmptyString(image)) {
-    const imageSrc = templateHelpers.imgSrc(image, 300);
-    imageHtml = `<img src='${imageSrc}' alt='${title} cover'>`;
+    const imageSrc = templateHelpers.imgSrc(image, 300)
+    imageHtml = `<img src='${imageSrc}' alt='${title} cover'>`
   } else {
-    imageHtml = '';
+    imageHtml = ''
   }
 
-  const i18nKey = `${transaction}_personalized_strong`;
-  const transacLabel = templateHelpers.i18n(lang, i18nKey, user);
+  const i18nKey = `${transaction}_personalized_strong`
+  const transacLabel = templateHelpers.i18n(lang, i18nKey, user)
 
-  const userProfilePic = templateHelpers.imgSrc(user.picture, 64);
+  const userProfilePic = templateHelpers.imgSrc(user.picture, 64)
 
-  const transacColor = transacColors[transaction];
+  const transacColor = transacColors[transaction]
 
-  const detailsHtml = _.isNonEmptyString(details) ? `<p>${item.details}<p>` : '';
+  const detailsHtml = _.isNonEmptyString(details) ? `<p>${item.details}<p>` : ''
 
   return `<a href="${item.href}" alt="${title}">${imageHtml}</a>
 <table width="300"><tr>
@@ -38,5 +40,5 @@ module.exports = function(item, user, lang){
   </td>
 </tr></table>
 ${detailsHtml}
-<small>item:${item._id} - ${item.entity}<small>`;
-};
+<small>item:${item._id} - ${item.entity}<small>`
+}

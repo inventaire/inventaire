@@ -1,3 +1,5 @@
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
 // Keep in sync with client/lib/regex
 
 // Adapted from http://stackoverflow.com/a/14582229/3324977
@@ -9,7 +11,7 @@ const urlPattern = '^(https?:\\/\\/)'+ // protocol
   '(\\:\\d+)?' + // port?
   '(\\/[-a-z\\d%_.~+]*)*'+ // path
   '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string?
-  '(\\#[-a-z\\d_]*)?$'; //fragment?
+  '(\\#[-a-z\\d_]*)?$' //fragment?
 
 module.exports = {
   CouchUuid: /^[0-9a-f]{32}$/,
@@ -31,4 +33,4 @@ module.exports = {
   Sha1: /^[0-9a-f]{40}$/,
   SimpleDay: /^-?([1-9]{1}[0-9]{0,3}|0)(-\d{2})?(-\d{2})?$/,
   StringNumber: /^-?[0-9]+(\.[0-9]+)?$/
-};
+}

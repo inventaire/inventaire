@@ -1,15 +1,17 @@
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-const CONFIG = require('config');
-const { deduplicateRequests } = CONFIG;
-const { debug } = CONFIG;
-const __ = require('config').universalPath;
-const _ = __.require('builders', 'utils');
-const error_ = __.require('lib', 'error/error');
+const CONFIG = require('config')
+const { deduplicateRequests } = CONFIG
+const { debug } = CONFIG
+const __ = require('config').universalPath
+const _ = __.require('builders', 'utils')
+const error_ = __.require('lib', 'error/error')
 
 module.exports = {
   // Assume JSON content-type for, among others:
@@ -33,54 +35,54 @@ module.exports = {
   // Assumes that a requests made twice with the same body within 2 secondes
   // is an erronous request that should be blocked
   deduplicateRequests(req, res, next){
-    if (!deduplicateRequests) { return next(); }
+    if (!deduplicateRequests) { return next() }
 
-    const { method, url } = req;
-    if (!methodsWithBody.includes(method)) { return next(); }
+    const { method, url } = req
+    if (!methodsWithBody.includes(method)) { return next() }
 
-    const { pathname } = req._parsedUrl;
-    if (ignorePathname.includes(pathname)) { return next(); }
+    const { pathname } = req._parsedUrl
+    if (ignorePathname.includes(pathname)) { return next() }
 
     // If the request as no session cookie, simply use a hash of the header
     // Different users might have the same but users using Basic Auth will be distincts
     // so it only let unauthentified POST/PUT requests with the exact same body at risk
     // of unjustified request denial, which should be a rather small risk
-    const sessionId = (req.cookies != null ? req.cookies['express:sess.sig'] : undefined) || headersHash(req);
+    const sessionId = (req.cookies != null ? req.cookies['express:sess.sig'] : undefined) || headersHash(req)
 
     // Known case with an empty body:
     // - image upload: its using application/octet-stream header instead of json
     //   thus body-parser won't populate req.body
-    const data = _.hashCode(JSON.stringify(req.body || {}));
+    const data = _.hashCode(JSON.stringify(req.body || {}))
 
-    const key = `${sessionId}:${method}:${url}`;
-    const previousData = requestsCache[key];
+    const key = `${sessionId}:${method}:${url}`
+    const previousData = requestsCache[key]
 
     if (data === previousData) {
-      return error_.bundle(req, res, 'duplicated request', 429, [ key, req.body ]);
+      return error_.bundle(req, res, 'duplicated request', 429, [ key, req.body ])
     }
 
-    temporaryLock(key, data);
+    temporaryLock(key, data)
 
-    if (debug) { _.log(req.body, `${method}:${url} body`); }
+    if (debug) { _.log(req.body, `${method}:${url} body`) }
 
-    return next();
+    return next()
   }
-};
+}
 
-var headersHash = req => _.hashCode(JSON.stringify(req.headers));
+var headersHash = req => _.hashCode(JSON.stringify(req.headers))
 
 var temporaryLock = function(key, data){
-  requestsCache[key] = data;
+  requestsCache[key] = data
   // _.log key, 'preventing duplicated request for the next 2 secondes'
   // unlock after 2 secondes
-  const unlock = () => requestsCache[key] = null;
-  return setTimeout(unlock, 2000);
-};
+  const unlock = () => requestsCache[key] = null
+  return setTimeout(unlock, 2000)
+}
 
 // can be problematic in cluster mode as it won't be shared between instances
-var requestsCache = {};
+var requestsCache = {}
 
-var methodsWithBody = [ 'POST', 'PUT' ];
+var methodsWithBody = [ 'POST', 'PUT' ]
 var ignorePathname = [
   '/api/reports'
-];
+]

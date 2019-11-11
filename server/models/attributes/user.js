@@ -1,5 +1,7 @@
-let attributes;
-module.exports = (attributes = {});
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
+let attributes
+module.exports = (attributes = {})
 
 // attributes that can be send to the owner
 attributes.ownerSafe = [
@@ -20,7 +22,7 @@ attributes.ownerSafe = [
   'admin',
   'readToken',
   'snapshot'
-];
+]
 
 attributes.public = [
   '_id',
@@ -36,13 +38,13 @@ attributes.public = [
   // snapshot.network (unless requested by someone of the user network)
   // cf server/controllers/user/lib/authorized_user_data_pickers omitPrivateData
   'snapshot'
-];
+]
 
 // attributes that need availability check before update
 attributes.concurrencial = [
   'username',
   'email'
-];
+]
 
 // attributes that can be changed with a simple validity check
 attributes.updatable = [
@@ -52,14 +54,14 @@ attributes.updatable = [
   'settings',
   'position',
   'summaryPeriodicity'
-];
+]
 
 // attributes that are kept after a user deleted her account
 attributes.critical = [
   '_id',
   '_rev',
   'username'
-];
+]
 
 // attributes to keep in documents where a stakeholder might loose
 // access to those data
@@ -67,15 +69,15 @@ attributes.critical = [
 // The _id is already recorded by a transaction
 // thus its absence here as long as only transactions doc uses snaphshot
 attributes.snapshot = [
- 'username',
- 'picture'
-];
+  'username',
+  'picture'
+]
 
 attributes.acceptNullValue = [
   'position'
-];
+]
 
-attributes.creationStrategies = [ 'local' ];
+attributes.creationStrategies = [ 'local' ]
 
 attributes.notificationsSettings = [
   // GLOBAL
@@ -95,4 +97,4 @@ attributes.notificationsSettings = [
   'your_item_was_requested',
   'update_on_your_item',
   'update_on_item_you_requested'
-];
+]

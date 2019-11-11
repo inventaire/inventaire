@@ -1,31 +1,33 @@
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-const __ = require('config').universalPath;
-const _ = __.require('builders', 'utils');
-const wikidataSearch = __.require('lib', 'wikidata/search');
-const requests_ = __.require('lib', 'requests');
-const cache_ = __.require('lib', 'cache');
-const assert_ = __.require('utils', 'assert_types');
-const qs = require('querystring');
+const __ = require('config').universalPath
+const _ = __.require('builders', 'utils')
+const wikidataSearch = __.require('lib', 'wikidata/search')
+const requests_ = __.require('lib', 'requests')
+const cache_ = __.require('lib', 'cache')
+const assert_ = __.require('utils', 'assert_types')
+const qs = require('querystring')
 
 module.exports = function(query){
-  const { search, refresh } = query;
-  assert_.string(search);
-  const key = `wd:search:${search}`;
-  return cache_.get({ key, fn: searchEntities.bind(null, search), refresh });
-};
+  const { search, refresh } = query
+  assert_.string(search)
+  const key = `wd:search:${search}`
+  return cache_.get({ key, fn: searchEntities.bind(null, search), refresh })
+}
 
 var searchEntities = function(search){
-  search = qs.escape(search);
-  const url = wikidataSearch(search);
-  _.log(url, 'searchEntities');
+  search = qs.escape(search)
+  const url = wikidataSearch(search)
+  _.log(url, 'searchEntities')
 
   return requests_.get(url)
   .then(extractWdIds)
-  .then(_.Success('wd ids found'));
-};
+  .then(_.Success('wd ids found'))
+}
 
-var extractWdIds = res => res.query.search.map(_.property('title'));
+var extractWdIds = res => res.query.search.map(_.property('title'))

@@ -1,7 +1,9 @@
-const __ = require('config').universalPath;
-const _ = __.require('builders', 'utils');
-const ActionsControllers = __.require('lib', 'actions_controllers');
-const error_ = __.require('lib', 'error/error');
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
+const __ = require('config').universalPath
+const _ = __.require('builders', 'utils')
+const ActionsControllers = __.require('lib', 'actions_controllers')
+const error_ = __.require('lib', 'error/error')
 
 module.exports = {
   get: ActionsControllers({
@@ -11,4 +13,4 @@ module.exports = {
       'isbn': __.require('data', 'isbn')
     }
   })
-};
+}

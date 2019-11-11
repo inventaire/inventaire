@@ -1,3 +1,5 @@
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
@@ -26,7 +28,7 @@
 // and that those explanation aren't clear enough, please open an issue
 // to help make it clearer
 
-const appRoot = __dirname.replace('/config', '');
+const appRoot = __dirname.replace('/config', '')
 
 module.exports = {
   paths: {
@@ -55,10 +57,10 @@ module.exports = {
     dumps: '/dumps/inv'
   },
   path(route, name){
-    const path = this.paths[route];
-    const rootedPath = `${appRoot}${path}`;
-    if (name != null) { return `${rootedPath}/${name}`;
-    } else { return rootedPath; }
+    const path = this.paths[route]
+    const rootedPath = `${appRoot}${path}`
+    if (name != null) { return `${rootedPath}/${name}`
+    } else { return rootedPath }
   },
-  require(route, name){ return require(this.path(route, name)); }
-};
+  require(route, name){ return require(this.path(route, name)) }
+}

@@ -1,3 +1,8 @@
+/* eslint-disable
+    prefer-const,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
@@ -5,23 +10,23 @@
  * DS103: Rewrite code to no longer use __guard__
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-const CONFIG = require('config');
-const __ = require('config').universalPath;
-const _ = __.require('builders', 'utils');
-const Rss = require('rss');
-const root = CONFIG.fullPublicHost();
-const { feed:feedConfig } = CONFIG;
-const templateHelpers = __.require('lib', 'emails/handlebars_helpers');
-const getItemDescription = require('./get_item_description');
-const oneDayInMinutes = 24 * 60;
+const CONFIG = require('config')
+const __ = require('config').universalPath
+const _ = __.require('builders', 'utils')
+const Rss = require('rss')
+const root = CONFIG.fullPublicHost()
+const { feed:feedConfig } = CONFIG
+const templateHelpers = __.require('lib', 'emails/handlebars_helpers')
+const getItemDescription = require('./get_item_description')
+const oneDayInMinutes = 24 * 60
 
 module.exports = function(feedOptions, users, items, lang){
-  let { title, description, queryString, pathname, image } = feedOptions;
+  let { title, description, queryString, pathname, image } = feedOptions
 
-  if (image) { image = templateHelpers.imgSrc(image, 300);
+  if (image) { image = templateHelpers.imgSrc(image, 300)
   } else { ({
     image
-  } = feedConfig); }
+  } = feedConfig) }
 
   const feed = new Rss({
     title,
@@ -33,21 +38,21 @@ module.exports = function(feedOptions, users, items, lang){
     // Not always respected, we probably need to cache generated feeds anyway
     // source: http://www.therssweblog.com/?guid=20070529130637
     ttl: oneDayInMinutes
-  });
+  })
 
-  const usersIndex = _.keyBy(users, '_id');
+  const usersIndex = _.keyBy(users, '_id')
 
   items.map(serializeItem(usersIndex, lang))
-  .forEach(feed.item.bind(feed));
+  .forEach(feed.item.bind(feed))
 
-  return feed.xml();
-};
+  return feed.xml()
+}
 
 var serializeItem = (usersIndex, lang) => (function(item) {
-  const { owner } = item;
-  const user = usersIndex[owner];
-  user.href = `${root}/inventory/${user._id}`;
-  item.href = `${root}/items/${item._id}`;
+  const { owner } = item
+  const user = usersIndex[owner]
+  user.href = `${root}/inventory/${user._id}`
+  item.href = `${root}/items/${item._id}`
 
   const data = {
     title: getItemTitle(item, user, lang),
@@ -56,30 +61,30 @@ var serializeItem = (usersIndex, lang) => (function(item) {
     guid: item._id,
     url: item.href,
     date: item.created
-  };
-
-  if (_.isArray(user.position)) {
-    const [ lat, long ] = Array.from(user.position);
-    data.lat = lat;
-    data.long = long;
   }
 
-  return data;
-});
+  if (_.isArray(user.position)) {
+    const [ lat, long ] = Array.from(user.position)
+    data.lat = lat
+    data.long = long
+  }
+
+  return data
+})
 
 var getItemTitle = function(item, user, lang){
-  const { transaction, snapshot } = item;
-  let title = snapshot['entity:title'];
-  const authors = snapshot['entity:authors'];
-  if (_.isNonEmptyString(authors)) { title += ` - ${authors}`; }
+  const { transaction, snapshot } = item
+  let title = snapshot['entity:title']
+  const authors = snapshot['entity:authors']
+  if (_.isNonEmptyString(authors)) { title += ` - ${authors}` }
 
-  const i18nKey = `${transaction}_personalized`;
-  const transactionLabel = templateHelpers.i18n(lang, i18nKey, user);
-  title += ` [${transactionLabel}]`;
+  const i18nKey = `${transaction}_personalized`
+  const transactionLabel = templateHelpers.i18n(lang, i18nKey, user)
+  title += ` [${transactionLabel}]`
 
-  return title;
-};
+  return title
+}
 
 function __guard__(value, transform) {
-  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
+  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined
 }

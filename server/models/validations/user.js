@@ -1,15 +1,17 @@
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
 /*
  * decaffeinate suggestions:
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-let validations;
-const CONFIG = require('config');
-const __ = CONFIG.universalPath;
-const _ = __.require('builders', 'utils');
+let validations
+const CONFIG = require('config')
+const __ = CONFIG.universalPath
+const _ = __.require('builders', 'utils')
 
-const { pass, userId, username, email, userImg, boolean, position, BoundedString } = require('./common');
-const { creationStrategies, notificationsSettings } = require('../attributes/user');
+const { pass, userId, username, email, userImg, boolean, position, BoundedString } = require('./common')
+const { creationStrategies, notificationsSettings } = require('../attributes/user')
 
 module.exports = (validations = {
   pass,
@@ -18,23 +20,23 @@ module.exports = (validations = {
   email,
   password: BoundedString(8, 128),
   // accepting second level languages (like es-AR) but only using first level yet
-  language(lang){ return /^\w{2}(-\w{2})?$/.test(lang); },
+  language(lang){ return /^\w{2}(-\w{2})?$/.test(lang) },
   picture: userImg,
-  creationStrategy(creationStrategy){ return creationStrategies.includes(creationStrategy); },
+  creationStrategy(creationStrategy){ return creationStrategies.includes(creationStrategy) },
   bio: BoundedString(0, 1000),
   settings: boolean,
   position,
-  summaryPeriodicity(days){ return Number.isInteger(days) && (days >= 1); }
-});
+  summaryPeriodicity(days){ return Number.isInteger(days) && (days >= 1) }
+})
 
 const deepAttributes = {
   settings: {
     notifications: {}
   }
-};
-
-for (let setting of notificationsSettings) {
-  deepAttributes.settings.notifications[setting] = true;
 }
 
-validations.deepAttributesExistance = attribute => _.get(deepAttributes, attribute) != null;
+for (const setting of notificationsSettings) {
+  deepAttributes.settings.notifications[setting] = true
+}
+
+validations.deepAttributesExistance = attribute => _.get(deepAttributes, attribute) != null

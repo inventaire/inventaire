@@ -1,37 +1,39 @@
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-let Transaction, validations;
-const CONFIG = require('config');
-const __ = CONFIG.universalPath;
-const _ = __.require('builders', 'utils');
-const error_ = __.require('lib', 'error/error');
-const snapshotItemAttributes = require('./attributes/item').snapshot;
-const snapshotUserAttributes = require('./attributes/user').snapshot;
-const { states, basicNextActions, nextActionsWithReturn } = require('./attributes/transaction');
+let Transaction, validations
+const CONFIG = require('config')
+const __ = CONFIG.universalPath
+const _ = __.require('builders', 'utils')
+const error_ = __.require('lib', 'error/error')
+const snapshotItemAttributes = require('./attributes/item').snapshot
+const snapshotUserAttributes = require('./attributes/user').snapshot
+const { states, basicNextActions, nextActionsWithReturn } = require('./attributes/transaction')
 
-module.exports = (Transaction = {});
+module.exports = (Transaction = {})
 
-Transaction.validations = (validations = require('./validations/transaction'));
+Transaction.validations = (validations = require('./validations/transaction'))
 
 Transaction.create = function(itemDoc, ownerDoc, requesterDoc){
-  let transaction;
-  const itemId = itemDoc._id;
-  const ownerId = ownerDoc._id;
-  const requesterId = requesterDoc._id;
+  let transaction
+  const itemId = itemDoc._id
+  const ownerId = ownerDoc._id
+  const requesterId = requesterDoc._id
 
-  validations.pass('itemId', itemId);
-  validations.pass('userId', ownerId);
-  validations.pass('userId', requesterId);
+  validations.pass('itemId', itemId)
+  validations.pass('userId', ownerId)
+  validations.pass('userId', requesterId)
 
   if (!requestable.includes(itemDoc.transaction)) {
-    throw error_.new("this item can't be requested", 400, itemDoc);
+    throw error_.new("this item can't be requested", 400, itemDoc)
   }
 
-  const now = Date.now();
+  const now = Date.now()
 
   return transaction = {
     item: itemId,
@@ -49,38 +51,38 @@ Transaction.create = function(itemDoc, ownerDoc, requesterDoc){
     // will not be accessible anymore
     // ex: item visibility change, deleted user, etc.
     snapshot: snapshotData(itemDoc, ownerDoc, requesterDoc)
-  };
-};
+  }
+}
 
 var requestable = [
   'giving',
   'lending',
   'selling'
-];
+]
 
 Transaction.validatePossibleState = function(transaction, newState){
   if (!states[transaction.state].next.includes(newState)) {
-    throw error_.new('invalid state update', 400, transaction, newState);
+    throw error_.new('invalid state update', 400, transaction, newState)
   }
 
   if ((newState === 'returned') && (transaction.transaction !== 'lending')) {
-    throw error_.new('transaction and state mismatch', 400, transaction, newState);
+    throw error_.new('transaction and state mismatch', 400, transaction, newState)
   }
-};
+}
 
 // do the item change of owner or return to its previous owner
 Transaction.isOneWay = function(transacDoc){
   if (!_.isString(transacDoc.transaction)) {
-    throw error_.new('transaction transaction inaccessible', 500, transacDoc);
+    throw error_.new('transaction transaction inaccessible', 500, transacDoc)
   }
-  return oneWay[transacDoc.transaction];
-};
+  return oneWay[transacDoc.transaction]
+}
 
 var oneWay = {
   giving: true,
   lending: false,
   selling: true
-};
+}
 
 Transaction.isActive = function(transacDoc){
   const transacData = {
@@ -89,34 +91,34 @@ Transaction.isActive = function(transacDoc){
     // owner doesnt matter to find if the transaction is active
     // thus we just pass an arbitrary boolean
     mainUserIsOwner: true
-  };
+  }
   // if there are next actions, the transaction is active
-  return (findNextActions(transacData) != null);
-};
+  return (findNextActions(transacData) != null)
+}
 
 var snapshotData = (itemDoc, ownerDoc, requesterDoc) => ({
   item: _.pick(itemDoc, snapshotItemAttributes),
   entity: getEntitySnapshotFromItemSnapshot(itemDoc.snapshot),
   owner: _.pick(ownerDoc, snapshotUserAttributes),
   requester: _.pick(requesterDoc, snapshotUserAttributes)
-});
+})
 
 var getEntitySnapshotFromItemSnapshot = function(itemSnapshot){
-  const entitySnapshot = {};
-  if (itemSnapshot['entity:title'] != null) { entitySnapshot.title = itemSnapshot['entity:title']; }
-  if (itemSnapshot['entity:image'] != null) { entitySnapshot.image = itemSnapshot['entity:image']; }
-  if (itemSnapshot['entity:authors'] != null) { entitySnapshot.authors = itemSnapshot['entity:authors']; }
-  return entitySnapshot;
-};
+  const entitySnapshot = {}
+  if (itemSnapshot['entity:title'] != null) { entitySnapshot.title = itemSnapshot['entity:title'] }
+  if (itemSnapshot['entity:image'] != null) { entitySnapshot.image = itemSnapshot['entity:image'] }
+  if (itemSnapshot['entity:authors'] != null) { entitySnapshot.authors = itemSnapshot['entity:authors'] }
+  return entitySnapshot
+}
 
 const getNextActionsList = function(transactionName){
-  if (transactionName === 'lending') { return nextActionsWithReturn;
-  } else { return basicNextActions; }
-};
+  if (transactionName === 'lending') { return nextActionsWithReturn
+  } else { return basicNextActions }
+}
 
 var findNextActions = function(transacData){
-  const { name, state, mainUserIsOwner } = transacData;
-  const nextActions = getNextActionsList(name, state);
-  const role = mainUserIsOwner ? 'owner' : 'requester';
-  return nextActions[state][role];
-};
+  const { name, state, mainUserIsOwner } = transacData
+  const nextActions = getNextActionsList(name, state)
+  const role = mainUserIsOwner ? 'owner' : 'requester'
+  return nextActions[state][role]
+}

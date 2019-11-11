@@ -1,3 +1,5 @@
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
 // 'default' keys/values are used by couch init
 // keys -> dbs names
 // values -> design docs
@@ -15,4 +17,4 @@ module.exports = {
   patches: [ 'patches' ],
   notifications: [ 'notifications' ],
   tasks: [ 'tasks' ]
-};
+}

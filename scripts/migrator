@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
@@ -11,26 +13,26 @@
 // - eventually, export NODE_ENV=prod-migration to use config/prod-migration
 // - run `npm run migrator migration_doc_filename`
 
-let migrationParams;
-const [ fileName ] = Array.from(process.argv.slice(2));
+let migrationParams
+const [ fileName ] = Array.from(process.argv.slice(2))
 
-const __ = require('config').universalPath;
+const __ = require('config').universalPath
 
 // Accept full file path
 if (fileName[0] === '/') {
-  migrationParams = require(fileName);
+  migrationParams = require(fileName)
 } else {
-  migrationParams = __.require('couchdb', `migration_docs/${fileName}`);
+  migrationParams = __.require('couchdb', `migration_docs/${fileName}`)
 }
 
-const { viewName, updateFunction } = migrationParams;
+const { viewName, updateFunction } = migrationParams
 
 // the database port will be taken from the local config
-const migration = __.require('couchdb', './migration')(migrationParams);
+const migration = __.require('couchdb', './migration')(migrationParams)
 
 if (viewName) {
   // will run the updateFunction on all documents emitted by the view
-  migration.updateByView(viewName, updateFunction);
+  migration.updateByView(viewName, updateFunction)
 } else {
-  migration.updateAll(updateFunction);
+  migration.updateAll(updateFunction)
 }

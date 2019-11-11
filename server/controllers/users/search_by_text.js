@@ -1,27 +1,29 @@
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-const __ = require('config').universalPath;
-const _ = __.require('builders', 'utils');
-const error_ = __.require('lib', 'error/error');
-const responses_ = __.require('lib', 'responses');
-const { buildSearcher } = __.require('lib', 'elasticsearch');
+const __ = require('config').universalPath
+const _ = __.require('builders', 'utils')
+const error_ = __.require('lib', 'error/error')
+const responses_ = __.require('lib', 'responses')
+const { buildSearcher } = __.require('lib', 'elasticsearch')
 
 module.exports = function(req, res){
-  const { query } = req;
-  const search = query.search != null ? query.search.trim() : undefined;
+  const { query } = req
+  const search = query.search != null ? query.search.trim() : undefined
 
   if (!_.isNonEmptyString(search)) {
-    return error_.bundleInvalid(req, res, 'search', search);
+    return error_.bundleInvalid(req, res, 'search', search)
   }
 
   return searchByText(search)
   .then(responses_.Wrap(res, 'users'))
-  .catch(error_.Handler(req, res));
-};
+  .catch(error_.Handler(req, res))
+}
 
 var searchByText = buildSearcher({
   dbBaseName: 'users',
@@ -33,7 +35,7 @@ var searchByText = buildSearcher({
       { fuzzy: { username: search } },
       // Bio
       { match: { bio: search } }
-    ];
+    ]
 
-    return { query: { bool: { should } } };
-  }});
+    return { query: { bool: { should } } }
+  } })

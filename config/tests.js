@@ -1,3 +1,5 @@
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
 // Use by setting NODE_ENV=tests
 // Will be overriden by local.coffee
 
@@ -8,7 +10,7 @@ module.exports = {
   host: 'localhost',
   port: 3009,
   verbosity: 0,
-  fullHost() { return `${this.protocol}://${this.host}:${this.port}`; },
+  fullHost() { return `${this.protocol}://${this.host}:${this.port}` },
   db: {
     suffix: 'tests',
     // debug: true
@@ -44,4 +46,4 @@ module.exports = {
   },
 
   itemsCountDebounceTime: 500
-};
+}

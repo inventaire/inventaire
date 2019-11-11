@@ -1,14 +1,16 @@
-const CONFIG = require('config');
-const __ = require('config').universalPath;
-const _ = __.require('builders', 'utils');
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
+const CONFIG = require('config')
+const __ = require('config').universalPath
+const _ = __.require('builders', 'utils')
 
-const routes = require('./routes');
-const auth = require('./auth');
-const security = require('./security');
-const statics = require('./statics');
-const cache = require('./cache');
-const logger = require('./logger');
-const content = require('./content');
+const routes = require('./routes')
+const auth = require('./auth')
+const security = require('./security')
+const statics = require('./statics')
+const cache = require('./cache')
+const logger = require('./logger')
+const content = require('./content')
 
 module.exports = {
   common: [
@@ -44,4 +46,4 @@ module.exports = {
     // (see https://github.com/inventaire/inventaire-deploy)
     security.addSecurityHeaders
   ]
-};
+}

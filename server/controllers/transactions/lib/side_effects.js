@@ -1,3 +1,5 @@
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
@@ -7,38 +9,38 @@
 // mainly changing item availability (toggling items' "busy" attribute)
 // and moving items between inventories (actually archiving in one and forking in the other)
 
-const CONFIG = require('config');
-const __ = CONFIG.universalPath;
-const _ = __.require('builders', 'utils');
-const radio = __.require('lib', 'radio');
-const Transaction = __.require('models', 'transaction');
-const items_ = __.require('controllers', 'items/lib/items');
+const CONFIG = require('config')
+const __ = CONFIG.universalPath
+const _ = __.require('builders', 'utils')
+const radio = __.require('lib', 'radio')
+const Transaction = __.require('models', 'transaction')
+const items_ = __.require('controllers', 'items/lib/items')
 
-module.exports = () => radio.on('transaction:update', applySideEffects);
+module.exports = () => radio.on('transaction:update', applySideEffects)
 
 var applySideEffects = function(transacDoc, newState){
-  _.log(arguments, 'applySideEffects');
-  return sideEffects[newState](transacDoc, newState);
-};
+  _.log(arguments, 'applySideEffects')
+  return sideEffects[newState](transacDoc, newState)
+}
 
 const setItemBusyness = function(busy, transacDoc){
-  _.log(arguments, 'setItemBusyness');
-  const { item } = transacDoc;
+  _.log(arguments, 'setItemBusyness')
+  const { item } = transacDoc
   return items_.setBusyness(item, busy)
-  .catch(_.Error('setItemBusyness'));
-};
+  .catch(_.Error('setItemBusyness'))
+}
 
 const changeOwnerIfOneWay = function(transacDoc){
   if (Transaction.isOneWay(transacDoc)) {
-    _.log(arguments, 'changeOwner');
-    const { item, requester } = transacDoc;
+    _.log(arguments, 'changeOwner')
+    const { item, requester } = transacDoc
     return items_.changeOwner(transacDoc)
-    .catch(_.ErrorRethrow('changeOwner'));
+    .catch(_.ErrorRethrow('changeOwner'))
   }
-};
+}
 
-const setItemToBusy =  _.partial(setItemBusyness, true);
-const setItemToNotBusy = _.partial(setItemBusyness, false);
+const setItemToBusy =  _.partial(setItemBusyness, true)
+const setItemToNotBusy = _.partial(setItemBusyness, false)
 
 var sideEffects = {
   accepted: setItemToBusy,
@@ -46,4 +48,4 @@ var sideEffects = {
   confirmed: changeOwnerIfOneWay,
   returned: setItemToNotBusy,
   cancelled: setItemToNotBusy
-};
+}

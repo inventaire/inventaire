@@ -1,17 +1,19 @@
-const CONFIG = require('config');
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
+const CONFIG = require('config')
 
 const localAndRemoteEntity = type => ({
   indexes: [ 'wikidata', CONFIG.db.name('entities') ],
   type
-});
+})
 const remoteOnlyEntity = type => ({
   indexes: [ 'wikidata' ],
   type
-});
+})
 const localDatabase = (dbBaseName, type) => ({
   indexes: [ CONFIG.db.name(dbBaseName) ],
   type
-});
+})
 
 const typesData = {
   works: localAndRemoteEntity('works'),
@@ -23,8 +25,8 @@ const typesData = {
   collections: remoteOnlyEntity('collections'),
   users: localDatabase('users', 'user'),
   groups: localDatabase('groups', 'group')
-};
+}
 
-const possibleTypes =  Object.keys(typesData);
+const possibleTypes =  Object.keys(typesData)
 
-module.exports = { typesData, possibleTypes };
+module.exports = { typesData, possibleTypes }

@@ -1,6 +1,8 @@
-let typesAliases;
-const __ = require('config').universalPath;
-const _ = __.require('builders', 'utils');
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
+let typesAliases
+const __ = require('config').universalPath
+const _ = __.require('builders', 'utils')
 
 // TODO: replace this list by a SPARQL generated list
 // that can be refreshed from time to time
@@ -122,22 +124,22 @@ module.exports = (typesAliases = {
     'wd:Q4167836', // Wikimedia category
     'wd:Q4167410' // Wikimedia disambiguation page
   ]
-});
+})
 
-const types = {};
+const types = {}
 
 for (let type in typesAliases) {
   // Drop the plural form, including when deriving from English uses,
   // notably: series => serie
-  const typeIds = typesAliases[type];
-  type = type.replace(/s$/, '');
-  for (let id of typeIds) {
-    types[id] = type;
+  const typeIds = typesAliases[type]
+  type = type.replace(/s$/, '')
+  for (const id of typeIds) {
+    types[id] = type
   }
 }
 
-const typesNames = Object.keys(typesAliases);
+const typesNames = Object.keys(typesAliases)
 
-const getTypePluralNameByTypeUri = function(uri){ if (types[uri]) { return `${types[uri]}s`; } };
+const getTypePluralNameByTypeUri = function(uri){ if (types[uri]) { return `${types[uri]}s` } }
 
-module.exports = { types, typesNames, getTypePluralNameByTypeUri };
+module.exports = { types, typesNames, getTypePluralNameByTypeUri }

@@ -1,15 +1,20 @@
+/* eslint-disable
+    implicit-arrow-linebreak,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-const __ = require('config').universalPath;
-const _ = __.require('builders', 'utils');
-const responses_ = __.require('lib', 'responses');
-const error_ = __.require('lib', 'error/error');
-const { Track } = __.require('lib', 'track');
-const getEntityByUri = require('./lib/get_entity_by_uri');
-const sanitize = __.require('lib', 'sanitize/sanitize');
+const __ = require('config').universalPath
+const _ = __.require('builders', 'utils')
+const responses_ = __.require('lib', 'responses')
+const error_ = __.require('lib', 'error/error')
+const { Track } = __.require('lib', 'track')
+const getEntityByUri = require('./lib/get_entity_by_uri')
+const sanitize = __.require('lib', 'sanitize/sanitize')
 
 const sanitization = {
   labels: {
@@ -23,23 +28,23 @@ const sanitization = {
     whitelist: [ 'inv', 'wd' ],
     default: 'inv'
   }
-};
+}
 
 module.exports = (req, res) => sanitize(req, res, sanitization)
-.then(function(params){
-  const { prefix, labels, claims, reqUserId } = params;
-  const createFn = creators[prefix];
-  params = { labels, claims };
-  if (prefix === 'wd') { params.user = req.user;
-  } else { params.userId = reqUserId; }
+.then((params) => {
+  const { prefix, labels, claims, reqUserId } = params
+  const createFn = creators[prefix]
+  params = { labels, claims }
+  if (prefix === 'wd') { params.user = req.user
+  } else { params.userId = reqUserId }
   return createFn(params)
   .then(entity => // Re-request the entity's data to get it formatted
-  getEntityByUri({ uri: entity.uri, refresh: true }));})
+    getEntityByUri({ uri: entity.uri, refresh: true }))})
 .then(responses_.Send(res))
 .then(Track(req, [ 'entity', 'creation' ]))
-.catch(error_.Handler(req, res));
+.catch(error_.Handler(req, res))
 
 var creators = {
   inv: require('./lib/create_inv_entity'),
   wd: require('./lib/create_wd_entity')
-};
+}

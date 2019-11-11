@@ -1,3 +1,5 @@
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
@@ -20,46 +22,46 @@
 // allows to display basic data or filter large lists of items by text
 // without having to query from 3 to 10+ entities per item
 
-const __ = require('config').universalPath;
-const _ = __.require('builders', 'utils');
-const { Promise } = __.require('lib', 'promises');
-const levelBase = __.require('level', 'base');
-const db = levelBase.simpleSubDb('snapshot');
-const refreshSnapshot = require('./refresh_snapshot');
-const error_ = __.require('lib', 'error/error');
+const __ = require('config').universalPath
+const _ = __.require('builders', 'utils')
+const { Promise } = __.require('lib', 'promises')
+const levelBase = __.require('level', 'base')
+const db = levelBase.simpleSubDb('snapshot')
+const refreshSnapshot = require('./refresh_snapshot')
+const error_ = __.require('lib', 'error/error')
 
 module.exports = {
   addToItem(item){
-    if (item.snapshot != null) { return Promise.resolve(item); }
+    if (item.snapshot != null) { return Promise.resolve(item) }
 
     return getSnapshot(item.entity)
-    .then(function(snapshot){
-      item.snapshot = snapshot;
-      return item;}).catch(function(err){
-      _.error(err, 'snapshot_.addToItem error');
-      if (!item.snapshot) { item.snapshot = {}; }
-      return item;
-    });
+    .then((snapshot) => {
+      item.snapshot = snapshot
+      return item}).catch((err) => {
+      _.error(err, 'snapshot_.addToItem error')
+      if (!item.snapshot) { item.snapshot = {} }
+      return item
+    })
   },
 
-  batch(ops){ return db.batch(_.forceArray(ops)); }
-};
+  batch(ops){ return db.batch(_.forceArray(ops)) }
+}
 
 var getSnapshot = (uri, preventLoop) => db.get(uri)
-.then(function(snapshot){
-  if (snapshot != null) { return snapshot; }
+.then((snapshot) => {
+  if (snapshot != null) { return snapshot }
 
   if (preventLoop === true) {
     // Known case: addToItem was called for an item which entity is a serie
     // thus, the related works and editions were refreshed but as series aren't
     // supposed to be associated to items, no snapshot was created for the serie itself
-    const err = error_.new("couldn't refresh item snapshot", 500, { uri });
-    _.error(err, 'getSnapshot err');
-    return {};
+    const err = error_.new("couldn't refresh item snapshot", 500, { uri })
+    _.error(err, 'getSnapshot err')
+    return {}
   }
 
-  return refreshAndGet(uri);
-});
+  return refreshAndGet(uri)
+})
 
 var refreshAndGet = uri => refreshSnapshot.fromUri(uri)
-.then(() => getSnapshot(uri, true));
+.then(() => getSnapshot(uri, true))

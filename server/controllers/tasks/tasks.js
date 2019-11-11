@@ -1,7 +1,9 @@
-const __ = require('config').universalPath;
-const _ = __.require('builders', 'utils');
-const ActionsControllers = __.require('lib', 'actions_controllers');
-const { bySuspectUris, bySuggestionUris } = require('./by_entity_uris');
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
+const __ = require('config').universalPath
+const _ = __.require('builders', 'utils')
+const ActionsControllers = __.require('lib', 'actions_controllers')
+const { bySuspectUris, bySuggestionUris } = require('./by_entity_uris')
 
 module.exports = {
   get: ActionsControllers({
@@ -25,6 +27,6 @@ module.exports = {
       'update': require('./update')
     }
   })
-};
+}
 
-require('./hooks')();
+require('./hooks')()

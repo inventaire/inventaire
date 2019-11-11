@@ -1,3 +1,5 @@
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
@@ -5,13 +7,13 @@
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-const __ = require('config').universalPath;
-const _ = __.require('builders', 'utils');
-const error_ = __.require('lib', 'error/error');
-const responses_ = __.require('lib', 'responses');
-const getEntitiesByUris = require('./lib/get_entities_by_uris');
-const mergeEntities = require('./lib/merge_entities');
-const radio = __.require('lib', 'radio');
+const __ = require('config').universalPath
+const _ = __.require('builders', 'utils')
+const error_ = __.require('lib', 'error/error')
+const responses_ = __.require('lib', 'responses')
+const getEntitiesByUris = require('./lib/get_entities_by_uris')
+const mergeEntities = require('./lib/merge_entities')
+const radio = __.require('lib', 'radio')
 
 // Assumptions:
 // - ISBN are already desambiguated and should thus never need merge
@@ -21,71 +23,71 @@ const radio = __.require('lib', 'radio');
 //   what matters the most is the redirection. Or more fine, reconciling strategy can be developed later
 
 // Only inv entities can be merged yet
-const validFromPrefix = [ 'inv', 'isbn' ];
+const validFromPrefix = [ 'inv', 'isbn' ]
 
 module.exports = function(req, res){
-  const { body } = req;
-  const { from:fromUri, to:toUri } = body;
-  const { _id:reqUserId } = req.user;
+  const { body } = req
+  const { from:fromUri, to:toUri } = body
+  const { _id:reqUserId } = req.user
 
-  if (fromUri == null) { return error_.bundleMissingBody(req, res, 'from'); }
-  if (!toUri) { return error_.bundleMissingBody(req, res, 'to'); }
+  if (fromUri == null) { return error_.bundleMissingBody(req, res, 'from') }
+  if (!toUri) { return error_.bundleMissingBody(req, res, 'to') }
 
   // Not using _.isEntityUri, letting the logic hereafter check specific prefixes
   if (!_.isNonEmptyString(fromUri)) {
-    return error_.bundleInvalid(req, res, 'from', fromUri);
+    return error_.bundleInvalid(req, res, 'from', fromUri)
   }
 
   if (!_.isNonEmptyString(toUri)) {
-    return error_.bundleInvalid(req, res, 'to', toUri);
+    return error_.bundleInvalid(req, res, 'to', toUri)
   }
 
-  const [ fromPrefix, fromId ] = Array.from(fromUri.split(':'));
-  const [ toPrefix, toId ] = Array.from(toUri.split(':'));
+  const [ fromPrefix, fromId ] = Array.from(fromUri.split(':'))
+  const [ toPrefix, toId ] = Array.from(toUri.split(':'))
 
   if (!validFromPrefix.includes(fromPrefix)) {
-    const message = `invalid 'from' uri domain: ${fromPrefix}. Accepted domains: ${validFromPrefix}`;
-    return error_.bundle(req, res, message, 400, body);
+    const message = `invalid 'from' uri domain: ${fromPrefix}. Accepted domains: ${validFromPrefix}`
+    return error_.bundle(req, res, message, 400, body)
   }
 
   // 'to' prefix doesn't need validation as it can be anything
 
-  _.log({ merge: body, user: reqUserId }, 'entity merge request');
+  _.log({ merge: body, user: reqUserId }, 'entity merge request')
 
   // Let getEntitiesByUris test for the whole URI validity
   return getEntitiesByUris({ uris: [ fromUri, toUri ], refresh: true })
   .then(merge(reqUserId, toPrefix, fromUri, toUri))
   .tap(() => radio.emit('entity:merge', fromUri, toUri))
   .then(responses_.Ok(res))
-  .catch(error_.Handler(req, res));
-};
+  .catch(error_.Handler(req, res))
+}
 
 var merge = (reqUserId, toPrefix, fromUri, toUri) => (function(res) {
-  const { entities, redirects } = res;
-  const fromEntity = entities[fromUri] || entities[redirects[fromUri]];
-  if (fromEntity == null) { throw notFound('from', fromUri); }
+  const { entities, redirects } = res
+  const fromEntity = entities[fromUri] || entities[redirects[fromUri]]
+  if (fromEntity == null) { throw notFound('from', fromUri) }
 
-  const toEntity = entities[toUri] || entities[redirects[toUri]];
-  if (toEntity == null) { throw notFound('to', toUri); }
+  const toEntity = entities[toUri] || entities[redirects[toUri]]
+  if (toEntity == null) { throw notFound('to', toUri) }
 
   if (fromEntity.uri !== fromUri) {
-    throw error_.new("'from' entity is already a redirection", 400, { fromUri, toUri });
+    throw error_.new("'from' entity is already a redirection", 400, { fromUri, toUri })
   }
 
   if (toEntity.uri !== toUri) {
-    throw error_.new("'to' entity is already a redirection", 400, { fromUri, toUri });
+    throw error_.new("'to' entity is already a redirection", 400, { fromUri, toUri })
   }
 
   if (fromEntity.uri === toEntity.uri) {
-    throw error_.new("can't merge an entity into itself", 400, { fromUri, toUri });
+    throw error_.new("can't merge an entity into itself", 400, { fromUri, toUri })
   }
 
   if (fromEntity.type !== toEntity.type) {
     // Exception: authors can be organizations and collectives of all kinds
     // which will not get a 'human' type
     if ((fromEntity.type !== 'human') || !(toEntity.type == null)) {
-      const message = `type don't match: ${fromEntity.type} / ${toEntity.type}`;
-      throw error_.new(message, 400, fromUri, toUri);
+      const message = `type don't match: ${fromEntity.type} / ${toEntity.type}`
+      throw error_.new(message, 400, fromUri, toUri)
     }
   }
 
@@ -93,24 +95,24 @@ var merge = (reqUserId, toPrefix, fromUri, toUri) => (function(res) {
   // where the uniqueness check failed because two entities with the same ISBN
   // were created at about the same time. Other cases should be rejected.
   if (fromEntity.type === 'edition') {
-    const fromEntityIsbn = fromEntity.claims['wdt:P212'] != null ? fromEntity.claims['wdt:P212'][0] : undefined;
-    const toEntityIsbn = toEntity.claims['wdt:P212'] != null ? toEntity.claims['wdt:P212'][0] : undefined;
+    const fromEntityIsbn = fromEntity.claims['wdt:P212'] != null ? fromEntity.claims['wdt:P212'][0] : undefined
+    const toEntityIsbn = toEntity.claims['wdt:P212'] != null ? toEntity.claims['wdt:P212'][0] : undefined
     if ((fromEntityIsbn != null) && (toEntityIsbn != null) && (fromEntityIsbn !== toEntityIsbn)) {
-      throw error_.new("can't merge editions with different ISBNs", 400, fromUri, toUri);
+      throw error_.new("can't merge editions with different ISBNs", 400, fromUri, toUri)
     }
   }
 
-  fromUri = replaceIsbnUriByInvUri(fromUri, fromEntity._id);
-  toUri = replaceIsbnUriByInvUri(toUri, toEntity._id);
+  fromUri = replaceIsbnUriByInvUri(fromUri, fromEntity._id)
+  toUri = replaceIsbnUriByInvUri(toUri, toEntity._id)
 
-  return mergeEntities(reqUserId, fromUri, toUri);
-});
+  return mergeEntities(reqUserId, fromUri, toUri)
+})
 
 var replaceIsbnUriByInvUri = function(uri, invId){
-  const [ prefix ] = Array.from(uri.split(':'));
+  const [ prefix ] = Array.from(uri.split(':'))
   // Prefer inv id over isbn to prepare for ./lib/merge_entities
-  if (prefix === 'isbn') { return `inv:${invId}`; }
-  return uri;
-};
+  if (prefix === 'isbn') { return `inv:${invId}` }
+  return uri
+}
 
-var notFound = (label, context) => error_.new(`'${label}' entity not found`, 400, context);
+var notFound = (label, context) => error_.new(`'${label}' entity not found`, 400, context)

@@ -1,3 +1,5 @@
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
@@ -6,7 +8,7 @@
 module.exports = {
   parameters: [ 'pid', 'qid' ],
   query(params){
-    const { pid, qid } = params;
+    const { pid, qid } = params
     return `\
 SELECT DISTINCT ?item WHERE {
   ?item wdt:${pid} wd:${qid} .
@@ -15,6 +17,6 @@ SELECT DISTINCT ?item WHERE {
   FILTER NOT EXISTS { ?item wdt:P31 wd:Q571 }
 }
 LIMIT 1000\
-`;
+`
   }
-};
+}

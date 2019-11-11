@@ -1,10 +1,12 @@
-const __ = require('config').universalPath;
-const { normalizeIsbn } = __.require('lib', 'isbn/isbn');
-const formatEntityCommon = require('./format_entity_common');
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
+const __ = require('config').universalPath
+const { normalizeIsbn } = __.require('lib', 'isbn/isbn')
+const formatEntityCommon = require('./format_entity_common')
 
 module.exports = function(entity){
-  const isbn = entity.claims['wdt:P212'][0];
-  entity.uri = `isbn:${normalizeIsbn(isbn)}`;
-  entity.type = 'edition';
-  return formatEntityCommon(entity);
-};
+  const isbn = entity.claims['wdt:P212'][0]
+  entity.uri = `isbn:${normalizeIsbn(isbn)}`
+  entity.type = 'edition'
+  return formatEntityCommon(entity)
+}

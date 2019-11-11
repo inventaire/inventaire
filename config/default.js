@@ -1,3 +1,5 @@
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
@@ -9,8 +11,8 @@
 // in this same folder
 // See the config module doc: https://npmjs.com/package/config
 
-let config;
-const contactAddress = 'hello@inventaire.io';
+let config
+const contactAddress = 'hello@inventaire.io'
 
 module.exports = (config = {
   name: 'inventaire',
@@ -25,10 +27,10 @@ module.exports = (config = {
   port: 3006,
   // Override in ./local.coffee when working offline to prevent trying to fetch remote resources (like images) when possible
   offline: false,
-  fullHost() { return `${this.protocol}://${this.host}:${this.port}`; },
+  fullHost() { return `${this.protocol}://${this.host}:${this.port}` },
   publicProtocol: 'http',
   publicHost: 'localhost',
-  fullPublicHost() { return `${this.publicProtocol}://${this.publicHost}:${this.port}`; },
+  fullPublicHost() { return `${this.publicProtocol}://${this.publicHost}:${this.port}` },
   invHost: 'https://inventaire.io',
   secret: 'yoursecrethere',
   // Debug mode:
@@ -43,14 +45,14 @@ module.exports = (config = {
     protocol: 'http',
     host: 'localhost',
     port: 5984,
-    fullHost() { return `${this.protocol}://${this.username}:${this.password}@${this.host}:${this.port}`; },
+    fullHost() { return `${this.protocol}://${this.username}:${this.password}@${this.host}:${this.port}` },
     username: 'yourcouchdbusername',
     password: 'yourcouchdbpassword',
-    auth() { return `${this.username}:${this.password}`; },
+    auth() { return `${this.username}:${this.password}` },
     suffix: null,
     name(dbBaseName){
-      if (this.suffix != null) { return `${dbBaseName}-${this.suffix}`;
-      } else { return dbBaseName; }
+      if (this.suffix != null) { return `${dbBaseName}-${this.suffix}`
+      } else { return dbBaseName }
     },
     follow: {
       // Make external indexes restart from the first seq
@@ -140,12 +142,12 @@ module.exports = (config = {
       publicURL: 'https://swiftPublicURL/',
       tenantName: '12345678',
       region: 'SBG-1',
-      internalEndpoint() { return this.publicURL + '/'; }
+      internalEndpoint() { return this.publicURL + '/' }
     },
     local: {
-      folder() { return config.universalPath.path('root', 'storage'); },
+      folder() { return config.universalPath.path('root', 'storage') },
       route: 'local',
-      internalEndpoint() { return `${config.fullHost()}/${this.route}/`; }
+      internalEndpoint() { return `${config.fullHost()}/${this.route}/` }
     }
   },
 
@@ -214,4 +216,4 @@ module.exports = (config = {
       interval: 3000
     }
   }
-});
+})

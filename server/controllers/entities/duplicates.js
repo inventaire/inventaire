@@ -1,3 +1,5 @@
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
@@ -9,16 +11,16 @@
 // to sort it by reduced values, which isn't supported by CouchDB
 // see https://stackoverflow.com/questions/2817703/sorting-couchdb-views-by-value
 
-const __ = require('config').universalPath;
-const _ = __.require('builders', 'utils');
-const error_ = __.require('lib', 'error/error');
-const responses_ = __.require('lib', 'responses');
-const designDocName = 'entities_deduplicate';
-const db = __.require('couch', 'base')('entities', designDocName);
+const __ = require('config').universalPath
+const _ = __.require('builders', 'utils')
+const error_ = __.require('lib', 'error/error')
+const responses_ = __.require('lib', 'responses')
+const designDocName = 'entities_deduplicate'
+const db = __.require('couch', 'base')('entities', designDocName)
 
 module.exports = (req, res) => getHomonymes()
 .then(responses_.Wrap(res, 'names'))
-.catch(error_.Handler(req, res));
+.catch(error_.Handler(req, res))
 
 var getHomonymes = () => db.view(designDocName, 'findHumansHomonymes', { group_level: 1 })
 .then(res => res.rows
@@ -26,4 +28,4 @@ var getHomonymes = () => db.view(designDocName, 'findHumansHomonymes', { group_l
 // TODO: delete those erronous entities
 .filter(row => (row.value > 1) && /\w{1}\w+/.test(row.key))
 .sort((a, b) => b.value - a.value)
-.slice(0, 100));
+.slice(0, 100))

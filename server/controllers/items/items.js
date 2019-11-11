@@ -1,5 +1,7 @@
-const __ = require('config').universalPath;
-const ActionsControllers = __.require('lib', 'actions_controllers');
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
+const __ = require('config').universalPath
+const ActionsControllers = __.require('lib', 'actions_controllers')
 
 module.exports = {
   get: ActionsControllers({
@@ -33,6 +35,6 @@ module.exports = {
       'bulk-update': require('./bulk_update')
     }
   })
-};
+}
 
-require('./lib/snapshot/update_snapshot_on_entity_change')();
+require('./lib/snapshot/update_snapshot_on_entity_change')()

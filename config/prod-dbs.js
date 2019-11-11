@@ -1,3 +1,5 @@
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
 // Use production databases
 
 //# HOW TO:
@@ -24,4 +26,4 @@ module.exports = {
   elasticsearch: {
     host: 'http://localhost:9201'
   }
-};
+}

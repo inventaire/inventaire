@@ -1,7 +1,9 @@
-const __ = require('config').universalPath;
-const ActionsControllers = __.require('lib', 'actions_controllers');
-const { signup, login, logout } = require('./connection');
-const { usernameAvailability, emailAvailability } = require('./availability');
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
+const __ = require('config').universalPath
+const ActionsControllers = __.require('lib', 'actions_controllers')
+const { signup, login, logout } = require('./connection')
+const { usernameAvailability, emailAvailability } = require('./availability')
 
 module.exports = {
   get: ActionsControllers({
@@ -16,9 +18,9 @@ module.exports = {
 
   post: ActionsControllers({
     public: {
-      'signup': signup,
-      'login': login,
-      'logout': logout,
+      signup,
+      login,
+      logout,
       'reset-password': require('./reset_password')
     },
     authentified: {
@@ -26,4 +28,4 @@ module.exports = {
       'update-password': require('./update_password')
     }
   })
-};
+}

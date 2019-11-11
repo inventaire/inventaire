@@ -1,16 +1,18 @@
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-const CONFIG = require('config');
-const __ = CONFIG.universalPath;
-const _ = __.require('builders', 'utils');
-const responses_ = __.require('lib', 'responses');
-const error_ = __.require('lib', 'error/error');
-const publicActions = require('./public_actions');
-const { allUserGroups } = require('./lib/groups');
-const ActionsControllers = __.require('lib', 'actions_controllers');
+const CONFIG = require('config')
+const __ = CONFIG.universalPath
+const _ = __.require('builders', 'utils')
+const responses_ = __.require('lib', 'responses')
+const error_ = __.require('lib', 'error/error')
+const publicActions = require('./public_actions')
+const { allUserGroups } = require('./lib/groups')
+const ActionsControllers = __.require('lib', 'actions_controllers')
 
 module.exports = {
   get: ActionsControllers({
@@ -26,7 +28,7 @@ module.exports = {
       'default'(req, res){
         return allUserGroups(req.user._id)
         .then(responses_.Wrap(res, 'groups'))
-        .catch(error_.Handler(req, res));
+        .catch(error_.Handler(req, res))
       }
     }
   }),
@@ -38,4 +40,4 @@ module.exports = {
   }),
 
   put: require('./update')
-};
+}

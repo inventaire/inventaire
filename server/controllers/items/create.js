@@ -1,46 +1,48 @@
+// TODO: This file was created by bulk-decaffeinate.
+// Sanity-check the conversion and remove this comment.
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-const __ = require('config').universalPath;
-const _ = __.require('builders', 'utils');
-const items_ = __.require('controllers', 'items/lib/items');
-const snapshot_ = require('./lib/snapshot/snapshot');
-const error_ = __.require('lib', 'error/error');
-const { Track } = __.require('lib', 'track');
-const { Promise } = __.require('lib', 'promises');
+const __ = require('config').universalPath
+const _ = __.require('builders', 'utils')
+const items_ = __.require('controllers', 'items/lib/items')
+const snapshot_ = require('./lib/snapshot/snapshot')
+const error_ = __.require('lib', 'error/error')
+const { Track } = __.require('lib', 'track')
+const { Promise } = __.require('lib', 'promises')
 
 module.exports = function(req, res, next){
-  let { body:items } = req;
+  let { body:items } = req
 
-  const singleItemMode = _.isPlainObject(items);
+  const singleItemMode = _.isPlainObject(items)
 
-  items = _.forceArray(items);
+  items = _.forceArray(items)
 
-  _.log(items, 'create items');
+  _.log(items, 'create items')
 
-  for (let item of items) {
-    const { entity:entityUri } = item;
-    if (entityUri == null) { return error_.bundleMissingBody(req, res, 'entity'); }
+  for (const item of items) {
+    const { entity:entityUri } = item
+    if (entityUri == null) { return error_.bundleMissingBody(req, res, 'entity') }
 
     if (!_.isEntityUri(entityUri)) {
-      return error_.bundleInvalid(req, res, 'entity', entityUri);
+      return error_.bundleInvalid(req, res, 'entity', entityUri)
     }
   }
 
-  const reqUserId = req.user._id;
+  const reqUserId = req.user._id
 
   return items_.create(reqUserId, items)
-  .then(function(itemsDocs){
+  .then((itemsDocs) => {
     // When only one item was sent, without being wrapped in an array
     // return the created item object, instead of an array
     if (singleItemMode) {
-      return snapshot_.addToItem(itemsDocs[0]);
+      return snapshot_.addToItem(itemsDocs[0])
     } else {
-      return Promise.all(itemsDocs.map(snapshot_.addToItem));
+      return Promise.all(itemsDocs.map(snapshot_.addToItem))
     }}).then(data => res.status(201).json(data))
   .tap(Track(req, [ 'item', 'creation', null, items.length ]))
-  .catch(error_.Handler(req, res));
-};
+  .catch(error_.Handler(req, res))
+}
