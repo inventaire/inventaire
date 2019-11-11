@@ -16,8 +16,8 @@ const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
 
 module.exports = function(req, res){
-  let prefix
-  let { id, uri, lang, value } = req.body
+  let { uri, lang, value } = req.body
+  var { id } = req.body
   _.log(req.body, 'update label body')
   if (_.isInvEntityId(id) && (uri == null)) { uri = `inv:${id}` }
 
