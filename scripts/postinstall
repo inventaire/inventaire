@@ -33,7 +33,7 @@ touch run/3006 run/3009
   npm run couch2elastic4sync:init && npm run couch2elastic4sync:load
 } || echo "ElasticSearch not found: init & load scripts skipped"
 
-[ -z ./config/local.coffee ] && {
+[ -z ./config/local.js ] && {
   # Create a local config file
   emptyConfigFile="
   # Override settings from ./default.js in this file
@@ -42,5 +42,5 @@ touch run/3006 run/3009
       username: 'yourcouchdbusername'
       password: 'yourcouchdbpassword'
   "
-  echo "$emptyConfigFile" >> ./config/local.coffee
-} || echo './config/local.coffee file already exist: skipping creation'
+  echo "$emptyConfigFile" >> ./config/local.js
+} || echo './config/local.js file already exist: skipping creation'

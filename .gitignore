@@ -6,7 +6,7 @@ npm-debug.log
 scripts/couch2elastic4sync/configs
 scripts/assets
 scripts/local
-config/*local*.coffee
+config/*local*.js
 config/runtime.json
 db/leveldb*
 erl_crash.dump
