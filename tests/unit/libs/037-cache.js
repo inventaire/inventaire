@@ -156,7 +156,7 @@ describe('cache', () => {
       }))).catch(done)
     }))
 
-    return describe('dry', () => {
+    describe('dry', () => {
       it('should get a cached value with a dry parameter', (done) => {
         const key = randomString(4)
         const fn = workingFn.bind(null, 'foo')
@@ -210,7 +210,7 @@ describe('cache', () => {
     })
   })
 
-  return describe('put', () => {
+  describe('put', () => {
     it('should return a promise', (done) => {
       const p = cache_.put('whatever', 'somevalue')
       p.should.have.property('then')

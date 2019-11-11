@@ -45,7 +45,7 @@ describe('user model', () => {
     })
   })
 
-  return describe('local signup', () => {
+  describe('local signup', () => {
     it('should return a user on valid args', (done) => {
       const user = create(validUser())
       user.should.be.an.Object()
@@ -100,7 +100,7 @@ describe('user model', () => {
       })
     })
 
-    return describe('password validation', () => {
+    describe('password validation', () => {
       it('should throw on passwords too short', (done) => {
         const args = replaceParam(4, 'shortpw');
         ((() => _create(args))).should.throw()

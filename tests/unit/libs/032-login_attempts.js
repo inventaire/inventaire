@@ -41,7 +41,7 @@ describe('loginAttemps', () => {
     })
   })
 
-  return describe('tooMany', () => {
+  describe('tooMany', () => {
     it('should return false when attempts are lower than limit', (done) => {
       loginAttemps.tooMany('notabot').should.be.false()
       done()

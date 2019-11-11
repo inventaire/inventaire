@@ -152,7 +152,7 @@ describe('utils', () => {
     })
   })
 
-  return describe('mapKeysValues', () => {
+  describe('mapKeysValues', () => {
     it('should return a new object', (done) => {
       const obj = { a: 1, b: 2 }
       const fn = (key, value) => [ key, value ]

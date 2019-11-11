@@ -102,7 +102,7 @@ describe('entity model', () => {
     })
   })
 
-  return describe('update claim', () => {
+  describe('update claim', () => {
     describe('create claim', () => {
       it('should not throw if not passed an old value', (done) => {
         const updater = () => Entity.updateClaim(workDoc(), 'wdt:P50', null, 'wd:Q42')
@@ -475,7 +475,7 @@ describe('entity model', () => {
       })
     })
 
-    return describe('removePlaceholder', () => {
+    describe('removePlaceholder', () => {
       it('should return a removed placeholder doc', (done) => {
         const entity = workDoc()
         const removedPlaceholder = Entity.removePlaceholder(entity)

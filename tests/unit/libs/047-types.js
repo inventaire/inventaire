@@ -94,7 +94,7 @@ describe('assert_', () => {
       })
     })
 
-    return describe('general', () => {
+    describe('general', () => {
       it('should return the passed object', (done) => {
         const array = [ 'im an array' ]
         assert_.type('array', array).should.equal(array)
@@ -119,7 +119,7 @@ describe('assert_', () => {
     })
   })
 
-  return describe('types', () => {
+  describe('types', () => {
     it('should handle multi arguments type', (done) => {
       const args = [ 1, '2' ]
       const types = [ 'number', 'string' ];

@@ -92,7 +92,7 @@ describe('invitations:by-emails', () => {
     })
   })
 
-  return describe('groups', () => {
+  describe('groups', () => {
     it('should reject invalid group ids', (done) => {
       authReq('post', '/api/invitations?action=by-emails', {
         emails: 'a@foo.org',

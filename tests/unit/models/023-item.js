@@ -116,14 +116,14 @@ describe('item model', () => {
       })
     })
 
-    return describe('created', () => it('should return an object with a created time', (done) => {
+    describe('created', () => it('should return an object with a created time', (done) => {
       const item = create(validItem)
       _.expired(item.created, 100).should.be.false()
       done()
     }))
   })
 
-  return describe('update', () => {
+  describe('update', () => {
     it('should not throw when updated with a valid attribute', (done) => {
       const doc = create(validItem)
       const updateAttributesData = { listing: 'private' };

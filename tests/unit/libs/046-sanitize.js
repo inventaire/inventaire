@@ -434,7 +434,7 @@ describe('sanitize', () => {
     })
   })
 
-  return describe('relatives', () => {
+  describe('relatives', () => {
     it('should reject non whitelisted relatives', (done) => {
       const req = { query: { relatives: [ 'bar', 'foo' ] } }
       const res = {}

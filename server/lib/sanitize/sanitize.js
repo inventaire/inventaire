@@ -81,7 +81,7 @@ var sanitizeParameter = function(input, name, config, place, res){
 
 var getPlace = function(method){
   if ((method === 'POST') || (method === 'PUT')) return 'body'
-  else { return 'query' }
+  else return 'query'
 }
 
 var removeUnexpectedParameter = function(input, name, configs, res){

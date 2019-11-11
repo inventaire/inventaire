@@ -82,7 +82,7 @@ describe('task model', () => {
     })
   })
 
-  return describe('update', () => {
+  describe('update', () => {
     it('should update a valid task with an dismissed state', (done) => {
       const taskDoc = Task.update(validDoc(), 'state', 'dismissed')
       taskDoc.state.should.equal('dismissed')

@@ -150,7 +150,7 @@ describe('patch', () => {
     })
   })
 
-  return describe('revert', () => {
+  describe('revert', () => {
     it('should revert a patch', (done) => {
       const patch = Patch.create({ userId, currentDoc, updatedDoc })
       const revertedDoc = Patch.revert(updatedDoc, patch)

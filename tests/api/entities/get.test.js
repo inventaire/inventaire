@@ -95,7 +95,7 @@ describe('entities:get:by-uris', () => {
 
   })
 
-  return describe('relatives', () => {
+  describe('relatives', () => {
     it("should accept a 'relatives' parameter", (done) => {
       workWithAuthorPromise
       .then((work) => {

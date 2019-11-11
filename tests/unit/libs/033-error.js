@@ -60,7 +60,7 @@ describe('error_', () => {
     done()
   }))
 
-  return describe('reject', () => {
+  describe('reject', () => {
     it('should return a rejecting promise from a string', (done) => {
       const failed = error_.reject('doh', 500)
       failed.should.be.an.Object()

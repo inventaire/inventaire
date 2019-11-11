@@ -72,7 +72,7 @@ describe('tasks:hooks', () => {
     })
   })
 
-  return describe('entity removed', () => {
+  describe('entity removed', () => {
     it('should update tasks to merged state when the entity is deleted', (done) => {
       createHuman({ labels: { en: 'Fred Vargas' } })
       .then(human => checkEntities(human.uri)

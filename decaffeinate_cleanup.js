@@ -19,6 +19,7 @@ const cleanupLine = (line) => {
   .replace(/(^\s+else) { throw\s?(.*) }/g, '$1 throw $2')
   .replace(/return done\(\)/, 'done()')
   .replace(/return it\(/, 'it(')
+  .replace(/return describe\(/, 'describe(')
   .replace(/: \((.*)\) => {/g, ' \($1\) {')
 }
 

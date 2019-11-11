@@ -19,7 +19,7 @@ describe('couch_', () => {
     done()
   })
 
-  return describe('joinOrderedIds', () => it('should return ordered id', (done) => {
+  describe('joinOrderedIds', () => it('should return ordered id', (done) => {
     const id1 = couch_.joinOrderedIds('azerty', 'qwerty')
     id1.should.equal('azerty:qwerty')
     const id2 = couch_.joinOrderedIds('qwerty', 'azerty')

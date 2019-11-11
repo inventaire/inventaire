@@ -85,7 +85,7 @@ describe('entities:popularity', () => {
 
   }))
 
-  return describe('human', () => it('should be made of the sum of its works scores + number of works and series', (done) => {
+  describe('human', () => it('should be made of the sum of its works scores + number of works and series', (done) => {
     createHumanWithAWorkWithAnEditionWithAnItem()
     .spread(human => // 1: item
     // 1: edition

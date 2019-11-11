@@ -121,7 +121,7 @@ describe('items:snapshot', () => {
 
   })
 
-  return describe('update', () => {
+  describe('update', () => {
     it('should be updated when its local edition entity title changes', (done) => {
       createWork()
       .then(createEditionFromWorks)

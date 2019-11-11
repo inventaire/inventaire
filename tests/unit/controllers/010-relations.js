@@ -113,7 +113,7 @@ describe('relations', () => describe('solveIntent', () => {
     })
   })
 
-  return describe('removeFriendship', () => {
+  describe('removeFriendship', () => {
     beforeEach(() => spies = resetSpies())
     it("should do nothing on status 'none'", (done) => {
       solveIntent.removeFriendship('a', 'b', 'none')

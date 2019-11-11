@@ -38,7 +38,7 @@ describe('groups:get', () => {
 
   }))
 
-  return describe('by-slug', () => it('should get a group by slug', (done) => {
+  describe('by-slug', () => it('should get a group by slug', (done) => {
     groupPromise
     .delay(500)
     .then(group => nonAuthReq('get', `${endpointAction}=by-slug&slug=${group.slug}`)
