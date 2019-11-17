@@ -1,9 +1,19 @@
-// This config file is used by standardx to override standardjs rules.
-// Using standardx was preferred to using eslint with eslint-config-standard
-// as standard also bundles a bunch of eslint-plugins
-// See package.json scripts: lint, lint-fix
+// This config file is used by eslint
+// See package.json scripts: lint*
 // Rules documentation: https://eslint.org/docs/rules/
 {
+  "env": {
+      "browser": false,
+      "commonjs": true,
+      "es6": true
+  },
+  "parserOptions": {
+      "ecmaVersion": 2018
+  },
+  "extends": [
+      // See https://github.com/standard/eslint-config-standard/blob/master/eslintrc.json
+      "standard"
+  ],
   "rules": {
     "array-bracket-spacing": [ "error", "always" ],
     "arrow-parens": [ "error", "as-needed", { "requireForBlockBody": true } ],
@@ -16,8 +26,5 @@
     "prefer-arrow-callback": [ "error" ],
     "prefer-const": [ "error", { "destructuring": "any" } ],
     "semi": [ "error", "never" ]
-  },
-  "parserOptions": {
-      "ecmaVersion": 6
   }
 }
