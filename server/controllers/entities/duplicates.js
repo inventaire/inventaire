@@ -12,7 +12,6 @@
 // see https://stackoverflow.com/questions/2817703/sorting-couchdb-views-by-value
 
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
 const designDocName = 'entities_deduplicate'
@@ -22,7 +21,7 @@ module.exports = (req, res) => getHomonymes()
 .then(responses_.Wrap(res, 'names'))
 .catch(error_.Handler(req, res))
 
-var getHomonymes = () => db.view(designDocName, 'findHumansHomonymes', { group_level: 1 })
+const getHomonymes = () => db.view(designDocName, 'findHumansHomonymes', { group_level: 1 })
 .then(res => res.rows
 // Filtering-out keys that are only ponctuation or a single letter
 // TODO: delete those erronous entities

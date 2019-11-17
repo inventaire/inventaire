@@ -7,8 +7,6 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const promises_ = __.require('lib', 'promises')
 const user_ = __.require('controllers', 'user/lib/user')
 const error_ = __.require('lib', 'error/error')
 const sanitize = __.require('lib', 'sanitize/sanitize')
@@ -17,7 +15,7 @@ const responses_ = __.require('lib', 'responses')
 const sanitization =
   { range: {} }
 
-module.exports = function(req, res){
+module.exports = (req, res) => {
   const reqUserId = req.user != null ? req.user._id : undefined
   return sanitize(req, res, sanitization)
   .then(params => user_.nearby(reqUserId, params.range))

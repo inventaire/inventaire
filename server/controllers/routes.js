@@ -43,13 +43,13 @@ if (CONFIG.logMissingI18nKeys) {
 if (CONFIG.mediaStorage.mode === 'local') {
   // serve images stored on the local file system
   const { route: localMediaRoute } = CONFIG.mediaStorage.local
-  routes[localMediaRoute + '/*'] = require('./images/local_fs_media_storage')
+  routes[`${localMediaRoute}/*`] = require('./images/local_fs_media_storage')
 }
 
 // setting CONFIG-based routes before the globs
 // so that they wont be overpassed by it
 _.extend(routes, {
-  'api': {
+  api: {
     get: glob.redirectToApiDoc
   },
   'api/*': {

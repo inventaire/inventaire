@@ -28,7 +28,7 @@ const { Track } = __.require('lib', 'track')
 // - leave
 // - update-settings
 
-module.exports = function(req, res){
+module.exports = (req, res) => {
   if (req.user == null) return error_.unauthorizedApiAccess(req, res)
   // Allow to pass the action in either the query or the body, as ActionsControllers
   let action = req.body.action || req.query.action
@@ -46,10 +46,10 @@ module.exports = function(req, res){
   return handleAction(action, req, res)
 }
 
-var handleAction = function(action, req, res){
+const handleAction = (action, req, res) => {
   const { body } = req
   // user is needed for invite, acceptRequest, refuseRequest controllers only
-  const { group:groupId, user:userId } = body
+  const { group: groupId, user: userId } = body
   const reqUserId = req.user._id
 
   _.log([ reqUserId, body ], 'group action')
@@ -71,4 +71,4 @@ var handleAction = function(action, req, res){
   .catch(error_.Handler(req, res))
 }
 
-var addUpdateData = res => (data = {}) => res.json({ ok: true, update: data.update })
+const addUpdateData = res => (data = {}) => res.json({ ok: true, update: data.update })

@@ -15,7 +15,7 @@ const assert_ = __.require('utils', 'assert_types')
 const { userId } = require('./validations/common')
 
 module.exports = {
-  create(id, status){
+  create: (id, status) => {
     let relation
     assertValidId(id)
     assertValidStatus(status)
@@ -28,23 +28,23 @@ module.exports = {
     )
   },
 
-  docId(userId, otherId){
+  docId: (userId, otherId) => {
     // TODO: add a receiver-read flag to stop notifying already read requestes
     return couch_.joinOrderedIds(userId, otherId)
   }
 }
 
-var assertValidId = function(id){
-  const [ userA, userB ] = Array.from(id.split(':'))
+const assertValidId = id => {
+  const [ userA, userB ] = id.split(':')
   assert(userA !== userB)
   assert_.string(userA)
   assert(userId(userA))
   return assert(userId(userB))
 }
 
-var assertValidStatus = status => assert(statuses.includes(status))
+const assertValidStatus = status => assert(statuses.includes(status))
 
-var statuses = [
+const statuses = [
   'friends',
   'a-requested',
   'b-requested',

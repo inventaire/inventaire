@@ -17,13 +17,13 @@ const { getWorkAuthorsAndSeries, getEditionGraphEntities } = require('./get_enti
 const { getDocData } = require('./helpers')
 
 // Working around circular dependencies
-let snapshot_ = null
+let snapshot_
 const lateRequire = () => snapshot_ = require('./snapshot')
 setTimeout(lateRequire, 0)
 
-const fromDoc = function(changedEntityDoc){
+const fromDoc = changedEntityDoc => {
   const [ uri, type ] = Array.from(getDocData(changedEntityDoc))
-  if (!refreshTypes.includes(type)) return 
+  if (!refreshTypes.includes(type)) return
 
   const label = `${uri} items snapshot refresh`
 
@@ -41,15 +41,15 @@ const multiWorkRefresh = relationProperty => uri => entities_.urisByClaim(relati
 .map(getSnapshotsByType.work)
 .then(_.flatten)
 
-var getSnapshotsByType = {
-  edition(uri){
+const getSnapshotsByType = {
+  edition: uri => {
     // Get all the entities docs required to build the snapshot
     return getEditionGraphEntities(uri)
     // Build common updated snapshot
     .spread(getEditionSnapshot)
   },
 
-  work(uri){
+  work: uri => {
     return getEntityByUri({ uri })
     .then(work => getWorkAuthorsAndSeries(work)
     .spread((authors, series) => Promise.all([
@@ -63,14 +63,14 @@ var getSnapshotsByType = {
   serie: multiWorkRefresh('wdt:P179')
 }
 
-var refreshTypes = Object.keys(getSnapshotsByType)
+const refreshTypes = Object.keys(getSnapshotsByType)
 
-var getWorkSnapshot = function(uri, work, authors, series){
+const getWorkSnapshot = (uri, work, authors, series) => {
   assert_.types([ 'string', 'object', 'array', 'array' ], arguments)
   return buildSnapshot.work(work, authors, series)
 }
 
-var getEditionsSnapshots = function(uri, works, authors, series){
+const getEditionsSnapshots = (uri, works, authors, series) => {
   assert_.types([ 'string', 'array', 'array', 'array' ], arguments)
 
   return entities_.urisByClaim('wdt:P629', uri)
@@ -79,7 +79,7 @@ var getEditionsSnapshots = function(uri, works, authors, series){
   .map(edition => getEditionSnapshot(edition, works, authors, series))
 }
 
-var getEditionSnapshot = function(edition, works, authors, series){
+const getEditionSnapshot = (edition, works, authors, series) => {
   assert_.types([ 'object', 'array', 'array', 'array' ], arguments)
   // Expects a formatted edition
   assert_.string(edition.uri)

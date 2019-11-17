@@ -6,9 +6,7 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const should = require('should')
+require('should')
 // Using the request lib to have total control on the generated request content type
 const request = require('request')
 const host = CONFIG.fullHost()
@@ -20,7 +18,7 @@ describe('content', () => describe('body-parser', () => {
 
   it('should accept JSON with application/x-www-form-urlencoded content-type', done => makeRequest('application/x-www-form-urlencoded', done))
 
-  it('should reject url encoded bodies', (done) => {
+  it('should reject url encoded bodies', done => {
     const params = {
       method: 'POST',
       url: `${host}/api/tests`,
@@ -31,13 +29,14 @@ describe('content', () => describe('body-parser', () => {
     }
 
     return request(params, (err, res) => {
+      if (err) return console.error(err)
       res.statusCode.should.equal(400)
       JSON.parse(res.body).status_verbose.should.equal('invalid JSON body')
       done()
     })
   })
 
-  it('should make an exception for /api/submit', (done) => {
+  it('should make an exception for /api/submit', done => {
     const params = {
       method: 'POST',
       url: `${host}/api/submit?redirect=foo`,
@@ -48,6 +47,7 @@ describe('content', () => describe('body-parser', () => {
     }
 
     return request(params, (err, res) => {
+      if (err) return console.error(err)
       res.statusCode.should.equal(302)
       res.headers.location.should.equal('/foo')
       done()
@@ -55,7 +55,7 @@ describe('content', () => describe('body-parser', () => {
   })
 }))
 
-var makeRequest = function(contentType, done){
+const makeRequest = (contentType, done) => {
   const params = {
     method: 'POST',
     url: `${host}/api/tests`,
@@ -66,7 +66,8 @@ var makeRequest = function(contentType, done){
   }
 
   return request(params, (err, res) => {
-    if (err) { return done(err)
+    if (err) {
+      return done(err)
     } else {
       res.statusCode.should.equal(200)
       JSON.parse(res.body).body.bla.should.equal(123)

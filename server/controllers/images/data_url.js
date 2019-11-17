@@ -16,11 +16,10 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
-const { Promise } = __.require('lib', 'promises')
 const breq = require('bluereq')
 const host = CONFIG.fullPublicHost()
 
-module.exports = function(req, res, next){
+module.exports = (req, res, next) => {
   let { url } = req.query
 
   if (url == null) return error_.bundleMissingQuery(req, res, 'url')
@@ -35,10 +34,10 @@ module.exports = function(req, res, next){
   .catch(error_.Handler(req, res))
 }
 
-var getImageDataUrl = url => // Set encoding as null to get the response as a buffer
+const getImageDataUrl = url => // Set encoding as null to get the response as a buffer
 // see https://stackoverflow.com/a/17133012/3324977
   breq.get({ url, encoding: null })
-.then((res) => {
+.then(res => {
   const contentType = res.headers['content-type']
 
   if (contentType.split('/')[0] !== 'image') {

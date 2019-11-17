@@ -9,7 +9,7 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 
-module.exports = function(res){
+module.exports = res => {
   const relations = _.initCollectionsIndex(relationsTypes)
   for (const row of res.rows) {
     spreadRelation(relations, row)
@@ -17,16 +17,18 @@ module.exports = function(res){
   return relations
 }
 
-var spreadRelation = function(relations, row){
+const spreadRelation = (relations, row) => {
   // view key looks like userId:relationType
   const type = row.key[1]
   const id = row.value
   if (relationsTypes.includes(type) && (id != null)) {
     return relations[type].push(id)
-  } else { throw new Error(`spreadRelation err: type=${type}, id=${id}`) }
+  } else {
+    throw new Error(`spreadRelation err: type=${type}, id=${id}`)
+  }
 }
 
-var relationsTypes = [
+const relationsTypes = [
   'friends',
   'userRequested',
   'otherRequested',

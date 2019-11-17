@@ -16,7 +16,7 @@ const validateEntity = require('./validate_entity')
 let { unprefixify } = require('./prefix');
 ({ prefixifyInv, unprefixify } = require('./prefix'))
 
-module.exports = function(params){
+module.exports = params => {
   const { labels, claims, userId, batchId } = params
   _.log(params, 'inv entity creation')
 
@@ -29,7 +29,7 @@ module.exports = function(params){
     updatedClaims: claims,
     batchId
   }))
-  .then((entity) => {
+  .then(entity => {
     entity.uri = prefixifyInv(entity._id)
     return entity
   })

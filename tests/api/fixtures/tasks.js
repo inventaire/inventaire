@@ -17,7 +17,7 @@ const { checkEntities } = require('../utils/tasks')
 const promises = {}
 
 module.exports = (API = {
-  createSomeTasks(humanLabel){
+  createSomeTasks: humanLabel => {
     if (promises[humanLabel] != null) return promises[humanLabel]
 
     promises[humanLabel] = Promise.all([

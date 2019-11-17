@@ -13,10 +13,10 @@ const { Promise } = __.require('lib', 'promises')
 const host = CONFIG.fullHost()
 const breq = require('bluereq')
 
-var testServerAvailability = () => breq.get(`${host}/api/tests`)
+const testServerAvailability = () => breq.get(`${host}/api/tests`)
 .then(res => _.success('tests server is ready'))
 .timeout(1000)
-.catch((err) => {
+.catch(err => {
   if ((err.code !== 'ECONNREFUSED') && (err.name !== 'TimeoutError')) throw err
   _.log('waiting for tests server', null, 'grey')
   return Promise.resolve()
@@ -29,7 +29,7 @@ const waitForTestServer = testServerAvailability()
 const rawRequest = (method, breqParams) => waitForTestServer
 .then(() => breq[method](breqParams))
 
-const request = function(method, endpoint, body, cookie){
+const request = (method, endpoint, body, cookie) => {
   const data = {
     url: host + endpoint,
     headers: { cookie }

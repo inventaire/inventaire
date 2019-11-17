@@ -2,7 +2,7 @@
 // Sanity-check the conversion and remove this comment.
 const leven = require('leven')
 
-module.exports = function(a, b){
+module.exports = (a, b) => {
   const averageLength = (a.length + b.length) / 2
   // If the Levenshtein distance between the two strings
   // is below a fourth of the average string length,

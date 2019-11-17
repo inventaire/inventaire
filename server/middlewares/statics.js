@@ -7,7 +7,6 @@
  */
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
 const pass = require('./pass')
 
 if (CONFIG.serveStaticFiles) {
@@ -19,13 +18,12 @@ if (CONFIG.serveStaticFiles) {
 
   const faviconPath = __.path('client', 'public/favicon.ico')
   exports.favicon = require('serve-favicon')(faviconPath)
-
 } else {
   exports.mountStaticFiles = pass
   exports.favicon = pass
 }
 
-exports.enableCors = function(req, res, next){
+exports.enableCors = (req, res, next) => {
   if (req.originalUrl.startsWith('/public')) {
     res.setHeader('Access-Control-Allow-Origin', '*')
     res.setHeader('Access-Control-Allow-Method', 'GET')

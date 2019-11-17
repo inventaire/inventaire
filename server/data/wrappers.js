@@ -6,7 +6,7 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 module.exports = {
-  stringObject(val){
+  stringObject: val => {
     return {
       type: 'string',
       value: val

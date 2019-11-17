@@ -5,13 +5,11 @@
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
 const { getAvatarsUrlsFromClaims } = require('./get_avatars_from_claims')
 const getCommonsFilenamesFromClaims = require('./get_commons_filenames_from_claims')
 const { getUrlFromEntityImageHash } = require('./entities')
 
-module.exports = function(entity){
+module.exports = entity => {
   const { claims } = entity
   // Test claims existance to prevent crash when used on meta entities
   // for which entities claims were deleted

@@ -1,7 +1,6 @@
 // TODO: This file was created by bulk-decaffeinate.
 // Sanity-check the conversion and remove this comment.
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
 const { BasicUpdater } = __.require('lib', 'doc_updates')
 
 const couch_ = require('inv-couch')

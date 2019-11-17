@@ -1,8 +1,6 @@
 // TODO: This file was created by bulk-decaffeinate.
 // Sanity-check the conversion and remove this comment.
 let typesAliases
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
 
 // TODO: replace this list by a SPARQL generated list
 // that can be refreshed from time to time
@@ -65,7 +63,7 @@ module.exports = (typesAliases = {
     'wd:Q23622', // dictionary
     'wd:Q2352616', // catalogue
     'wd:Q780605', // exhibition catalogue
-    'wd:Q5185279', //poem
+    'wd:Q5185279', // poem
     'wd:Q37484' // epic poem
   ],
   editions: [
@@ -140,6 +138,6 @@ for (let type in typesAliases) {
 
 const typesNames = Object.keys(typesAliases)
 
-const getTypePluralNameByTypeUri = function(uri){ if (types[uri]) { return `${types[uri]}s` } }
+const getTypePluralNameByTypeUri = uri => types[uri] ? `${types[uri]}s` : null
 
 module.exports = { types, typesNames, getTypePluralNameByTypeUri }

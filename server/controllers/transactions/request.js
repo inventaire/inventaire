@@ -22,7 +22,7 @@ const sanitization = {
 }
 
 module.exports = (req, res, nex) => sanitize(req, res, sanitization)
-.then((params) => {
+.then(params => {
   const { item, message, reqUserId } = params
 
   _.log([ item, message ], 'item request')
@@ -30,10 +30,12 @@ module.exports = (req, res, nex) => sanitize(req, res, sanitization)
   return items_.byId(item)
   .then(transactions_.verifyRightToRequest.bind(null, reqUserId))
   .then(snapshot_.addToItem)
-  .then((itemDoc) => {
-    const { owner:ownerId } = itemDoc
+  .then(itemDoc => {
+    const { owner: ownerId } = itemDoc
     return user_.byIds([ ownerId, reqUserId ])
-    .spread(transactions_.create.bind(null, itemDoc))}).get('id')
+    .spread(transactions_.create.bind(null, itemDoc))
+  }).get('id')
   .then(id => transactions_.addMessage(reqUserId, message, id)
-  .then(() => transactions_.byId(id))).then(responses_.Wrap(res, 'transaction'))}).then(Track(req, [ 'transaction', 'request' ]))
+  .then(() => transactions_.byId(id))).then(responses_.Wrap(res, 'transaction'))
+}).then(Track(req, [ 'transaction', 'request' ]))
 .catch(error_.Handler(req, res))

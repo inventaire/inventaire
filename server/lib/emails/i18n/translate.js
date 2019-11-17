@@ -5,23 +5,26 @@
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-module.exports = function(lang, polyglot){
+module.exports = (lang, polyglot) => {
   const modifier = (modifiers[lang] != null) ? modifiers[lang] : undefined
 
-  return function(key, ctx){
+  return (key, ctx) => {
     const val = polyglot.t(key, ctx)
-    if (modifier != null) { return modifier(polyglot, key, val, ctx)
-    } else { return val }
+    if (modifier != null) {
+      return modifier(polyglot, key, val, ctx)
+    } else {
+      return val
+    }
   }
 }
 
 const isShortkey = key => /_/.test(key)
 const vowels = 'aeiouy'
 
-var modifiers = {
+const modifiers = {
   // make _.i18n('user_comment', { username: 'adamsberg' })
   // return "Commentaire d'adamsberg" instead of "Commentaire de adamsberg"
-  fr(polyglot, key, val, data){
+  fr: (polyglot, key, val, data) => {
     if ((data != null) && isShortkey(key)) {
       const k = polyglot.phrases[key]
       const { username } = data

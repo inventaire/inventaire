@@ -6,7 +6,6 @@
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-const CONFIG = require('config')
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
@@ -15,12 +14,12 @@ const user_ = __.require('controllers', 'user/lib/user')
 const promises_ = __.require('lib', 'promises')
 const User = __.require('models', 'user')
 const pw_ = __.require('lib', 'crypto').passwords
-const { oneHour } =  __.require('lib', 'times')
+const { oneHour } = __.require('lib', 'times')
 
-module.exports = function(req, res, next){
+module.exports = (req, res, next) => {
   let test
   const { user, body } = req
-  const { 'current-password':currentPassword, 'new-password':newPassword } = body
+  const { 'current-password': currentPassword, 'new-password': newPassword } = body
   const { resetPassword } = user
 
   if (!User.validations.password(newPassword)) {
@@ -53,18 +52,18 @@ module.exports = function(req, res, next){
   .catch(error_.Handler(req, res))
 }
 
-var updatePassword = (user, newPassword) => pw_.hash(newPassword)
+const updatePassword = (user, newPassword) => pw_.hash(newPassword)
 .then(updateUserPassword.bind(null, user._id, user))
 
-var verifyCurrentPassword = (user, currentPassword) => pw_.verify(user.password, currentPassword)
+const verifyCurrentPassword = (user, currentPassword) => pw_.verify(user.password, currentPassword)
 
-var filterInvalid = function(isValid){
+const filterInvalid = isValid => {
   if (!isValid) throw error_.newInvalid('new-password')
 }
 
-var updateUserPassword = (userId, user, newHash) => user_.db.update(userId, User.updatePassword.bind(null, user, newHash))
+const updateUserPassword = (userId, user, newHash) => user_.db.update(userId, User.updatePassword.bind(null, user, newHash))
 
-var testOpenResetPasswordWindow = function(resetPassword){
+const testOpenResetPasswordWindow = resetPassword => {
   if (_.expired(resetPassword, oneHour)) {
     return error_.reject('reset password timespan experied', 400)
   } else {

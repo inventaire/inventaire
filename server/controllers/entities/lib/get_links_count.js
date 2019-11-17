@@ -14,8 +14,8 @@ const promises_ = __.require('lib', 'promises')
 const entities_ = require('./entities')
 const runWdQuery = __.require('data', 'wikidata/run_query')
 
-module.exports = function(uri, refresh){
-  const [ prefix, id ] = Array.from(uri.split(':'))
+module.exports = (uri, refresh) => {
+  const [ prefix, id ] = uri.split(':')
   const promises = []
 
   if (prefix === 'wd') { promises.push(getWdLinksScore(id, refresh)) }
@@ -27,7 +27,7 @@ module.exports = function(uri, refresh){
   .catch(_.ErrorRethrow('get links count err'))
 }
 
-var getWdLinksScore = (qid, refresh) => runWdQuery({ query: 'links-count', qid, refresh })
+const getWdLinksScore = (qid, refresh) => runWdQuery({ query: 'links-count', qid, refresh })
 .then(_.first)
 
-var getLocalLinksCount = uri => entities_.byClaimsValue(uri, true)
+const getLocalLinksCount = uri => entities_.byClaimsValue(uri, true)

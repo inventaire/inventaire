@@ -11,17 +11,20 @@
 const fs = require('fs')
 const mailcomposer = require('mailcomposer')
 
-const callbackPromise = function(resolve, reject){
+const callbackPromise = (resolve, reject) => {
   let cb
-  return cb = function(...args){
+  return cb = (...args) => {
     const err = args.shift()
-    if (err) { return reject(err)
-    } else { return resolve.apply(null, args) }
+    if (err) {
+      return reject(err)
+    } else {
+      return resolve.apply(null, args)
+    }
   }
 }
 
-module.exports = function(data, callback){
-  let promise = undefined
+module.exports = (data, callback) => {
+  let promise
 
   if (!callback && (typeof Promise === 'function')) {
     promise = new Promise((resolve, reject) => callback = callbackPromise(resolve, reject))
@@ -29,7 +32,7 @@ module.exports = function(data, callback){
 
   if (!data) { data = {} }
   if (!data.headers) { data.headers = {} }
-  if (!callback) { callback = function() {} }
+  if (!callback) { callback = () => {} }
 
   // apply defaults
   // Object.keys @_defaults
@@ -54,7 +57,7 @@ module.exports = function(data, callback){
   // if typeof @transporter == 'string'
   //   return callback new Error('Unsupported configuration, downgrade Nodemailer to v0.7.1 to use it')
 
-  this._processPlugins('compile', mail, (err)=> {
+  this._processPlugins('compile', mail, err => {
     if (err) return callback(err)
     mail.message = mailcomposer(mail.data)
 
@@ -73,20 +76,20 @@ module.exports = function(data, callback){
     //       mail.message.setHeader 'Importance', 'Low'
     // do not add anything, since all messages are 'Normal' by default
 
-    return this._processPlugins('stream', mail, (err) => {
+    return this._processPlugins('stream', mail, err => {
       if (err) return callback(err)
       // you can either be in preview or send mode
       // if preview
       const previewDir = data.previewDir || '/tmp/nodemailer-preview'
       const previewFilename = data.previewFilename || 'index.html'
-      const previewFilePath = previewDir + '/' + previewFilename
-      const previewDataPath = previewDir + '/data.json'
+      const previewFilePath = `${previewDir}/${previewFilename}`
+      const previewDataPath = `${previewDir}/data.json`
       if (!fs.existsSync(previewDir)) { fs.mkdirSync(previewDir) }
 
       console.log('email not sent, updated email preview:', previewFilePath)
       const json = JSON.stringify(mail.data, null, 4)
       let { html } = mail.data
-      html = "<p style='text-align:center'><a href='/data.json'>data</a></p>" + html
+      html = `<p style='text-align:center'><a href='/data.json'>data</a></p>${html}`
       fs.writeFile(previewFilePath, html)
       return fs.writeFile(previewDataPath, json, callback)
     })

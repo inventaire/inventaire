@@ -6,11 +6,9 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
 
 module.exports = {
-  legacyApiRedirect(req, res, next){
+  legacyApiRedirect: (req, res, next) => {
     const parts = req._parsedUrl.pathname.split('/')
     if (parts[3] === 'public') {
       const rewroteUrl = req.url.replace('/public', '')

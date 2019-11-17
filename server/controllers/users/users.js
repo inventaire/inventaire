@@ -8,11 +8,11 @@ module.exports = {
     public: {
       'by-ids': require('./by_ids'),
       'by-usernames': require('./by_usernames'),
-      'search': require('./search_by_text'),
+      search: require('./search_by_text'),
       'search-by-position': require('./search_by_position')
     },
     authentified: {
-      'nearby': require('./nearby')
+      nearby: require('./nearby')
     }
   })
 }

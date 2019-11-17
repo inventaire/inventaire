@@ -6,35 +6,36 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const should = require('should')
+require('should')
 const { nonAuthReq, undesiredErr } = require('../utils/utils')
 
 describe('entities:changes', () => {
-  it('should returns an array of changes', (done) => {
+  it('should returns an array of changes', done => {
     nonAuthReq('get', '/api/entities?action=changes')
-    .then((res) => {
+    .then(res => {
       res.uris.should.be.an.Array()
       res.lastSeq.should.be.an.Number()
-      done()}).catch(undesiredErr(done))
-
+      done()
+    })
+    .catch(undesiredErr(done))
   })
 
-  it('should take a since parameter', (done) => {
+  it('should take a since parameter', done => {
     nonAuthReq('get', '/api/entities?action=changes&since=2')
-    .then((res) => {
+    .then(res => {
       res.uris.should.be.an.Array()
       res.lastSeq.should.be.an.Number()
-      done()}).catch(undesiredErr(done))
-
+      done()
+    })
+    .catch(undesiredErr(done))
   })
 
-  it('should throw when passed an invalid since parameter', (done) => {
+  it('should throw when passed an invalid since parameter', done => {
     nonAuthReq('get', '/api/entities?action=changes&since=-2')
-    .catch((err) => {
+    .catch(err => {
       err.body.error_name.should.equal('invalid_since')
-      done()}).catch(undesiredErr(done))
-
+      done()
+    })
+    .catch(undesiredErr(done))
   })
 })

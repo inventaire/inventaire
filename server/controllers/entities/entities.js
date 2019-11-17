@@ -8,18 +8,18 @@ module.exports = {
   get: ActionsControllers({
     public: {
       'by-uris': require('./by_uris'),
-      'changes': require('./changes'),
+      changes: require('./changes'),
       'reverse-claims': require('./reverse_claims'),
       'author-works': customQuery,
       'serie-parts': customQuery,
-      'history': require('./history'),
-      'images': require('./images'),
-      'popularity': require('./popularity')
+      history: require('./history'),
+      images: require('./images'),
+      popularity: require('./popularity')
     },
     admin: {
-      'contributions': require('./contributions'),
-      'duplicates': require('./duplicates'),
-      'activity': require('./activity')
+      contributions: require('./contributions'),
+      duplicates: require('./duplicates'),
+      activity: require('./activity')
     }
   }),
 
@@ -28,9 +28,9 @@ module.exports = {
       'by-uris': require('./by_uris')
     },
     authentified: {
-      'create': require('./create'),
+      create: require('./create'),
       'exists-or-create-from-seed': require('./exists_or_create_from_seed'),
-      'resolve': require('./resolve')
+      resolve: require('./resolve')
     },
     admin: {
       'delete-by-uris': require('./delete_by_uris')
@@ -44,7 +44,7 @@ module.exports = {
       'move-to-wikidata': require('./move_to_wikidata')
     },
     admin: {
-      'merge': require('./merge'),
+      merge: require('./merge'),
       'revert-merge': require('./revert_merge')
     }
   })

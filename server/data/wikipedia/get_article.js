@@ -13,17 +13,17 @@ const requests_ = __.require('lib', 'requests')
 const error_ = __.require('lib', 'error/error')
 const qs = require('querystring')
 const cache_ = __.require('lib', 'cache')
-const { oneMonth } =  __.require('lib', 'times')
+const { oneMonth } = __.require('lib', 'times')
 
-module.exports = function(params){
+module.exports = params => {
   const { lang, title, introOnly } = params
   const keyBase = introOnly ? 'wpextract' : 'wparticle'
   const key = `${keyBase}:${lang}:${title}`
-  return cache_.get({ key, fn: getArticle.bind(null, lang, title, introOnly), timespan: 3*oneMonth })
+  return cache_.get({ key, fn: getArticle.bind(null, lang, title, introOnly), timespan: 3 * oneMonth })
 }
 
-var getArticle = (lang, title, introOnly) => requests_.get(apiQuery(lang, title, introOnly))
-.then(function(res){
+const getArticle = (lang, title, introOnly) => requests_.get(apiQuery(lang, title, introOnly))
+.then(function (res) {
   const { pages } = res.query
   if (pages == null) {
     throw error_.new('invalid extract response', 500, arguments, res.query)
@@ -32,9 +32,10 @@ var getArticle = (lang, title, introOnly) => requests_.get(apiQuery(lang, title,
   return {
     extract: cleanExtract(__guard__(__guard__(_.values(pages), x1 => x1[0]), x => x.extract)),
     url: `https://${lang}.wikipedia.org/wiki/${title}`
-  }})
+  }
+})
 
-var apiQuery = function(lang, title, introOnly){
+const apiQuery = (lang, title, introOnly) => {
   title = qs.escape(title)
 
   // doc:
@@ -57,8 +58,8 @@ var apiQuery = function(lang, title, introOnly){
 }
 
 // Commas between references aren't removed, thus the presence of aggregated commas
-var cleanExtract = str => str != null ? str.replace(/,,/g, ',').replace(/,\./g, '.') : undefined
+const cleanExtract = str => str != null ? str.replace(/,,/g, ',').replace(/,\./g, '.') : undefined
 
-function __guard__(value, transform) {
+function __guard__ (value, transform) {
   return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined
 }

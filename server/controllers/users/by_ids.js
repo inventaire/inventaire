@@ -14,7 +14,7 @@ const responses_ = __.require('lib', 'responses')
 const user_ = __.require('controllers', 'user/lib/user')
 const User = __.require('models', 'user')
 
-module.exports = function(req, res){
+module.exports = (req, res) => {
   const { ids } = req.query
   const reqUserId = req.user != null ? req.user._id : undefined
 
@@ -24,12 +24,15 @@ module.exports = function(req, res){
   .catch(error_.Handler(req, res))
 }
 
-var parseAndValidateIds = function(ids){
+const parseAndValidateIds = ids => {
   if (!_.isNonEmptyString(ids)) throw error_.newMissingQuery('ids')
 
   ids = ids.split('|')
-  if (((ids != null ? ids.length : undefined) > 0) && validUsersIds(ids)) { return ids
-  } else { throw error_.newInvalid('ids', ids) }
+  if (((ids != null ? ids.length : undefined) > 0) && validUsersIds(ids)) {
+    return ids
+  } else {
+    throw error_.newInvalid('ids', ids)
+  }
 }
 
-var validUsersIds = ids => _.every(ids, User.validations.userId)
+const validUsersIds = ids => _.every(ids, User.validations.userId)

@@ -6,122 +6,130 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const should = require('should')
+require('should')
 const { nonAuthReq, authReq, undesiredRes, undesiredErr } = require('../utils/utils')
 const { ensureEditionExists, humanName, randomLabel, someOpenLibraryId } = require('../fixtures/entities')
 
 describe('entities:create', () => {
-  it('should not be able to create an entity without a wdt:P31 value', (done) => {
+  it('should not be able to create an entity without a wdt:P31 value', done => {
     authReq('post', '/api/entities?action=create', {
       labels: { de: humanName() },
       claims: { 'wdt:P50': [ 'wd:Q535' ] }
     })
-    .catch((err) => {
+    .catch(err => {
       err.body.status_verbose.should.equal("wdt:P31 array can't be empty")
-      done()}).catch(undesiredErr(done))
-
+      done()
+    })
+    .catch(undesiredErr(done))
   })
 
-  it('should not be able to create an entity without a label (unless specific types)', (done) => {
+  it('should not be able to create an entity without a label (unless specific types)', done => {
     authReq('post', '/api/entities?action=create', {
       labels: {},
       claims: { 'wdt:P31': [ 'wd:Q571' ] }
     })
-    .catch((err) => {
+    .catch(err => {
       err.body.status_verbose.should.equal('invalid labels')
-      done()}).catch(undesiredErr(done))
-
+      done()
+    })
+    .catch(undesiredErr(done))
   })
 
-  it('should not be able to create an entity without a known valid wdt:P31 value', (done) => {
+  it('should not be able to create an entity without a known valid wdt:P31 value', done => {
     authReq('post', '/api/entities?action=create', {
       labels: { de: humanName() },
       claims: { 'wdt:P31': [ 'wd:Q535' ] }
     })
-    .catch((err) => {
+    .catch(err => {
       err.body.status_verbose.should.equal("wdt:P31 value isn't a known valid value")
-      done()}).catch(undesiredErr(done))
-
+      done()
+    })
+    .catch(undesiredErr(done))
   })
 
-  it('should create an entity', (done) => {
+  it('should create an entity', done => {
     authReq('post', '/api/entities?action=create', {
       labels: { fr: humanName() },
       claims: { 'wdt:P31': [ 'wd:Q571' ] }
     })
-    .then((res) => {
+    .then(res => {
       res._id.should.be.a.String()
       res._rev.should.be.a.String()
-      done()}).catch(undesiredErr(done))
-
+      done()
+    })
+    .catch(undesiredErr(done))
   })
 
-  it('should create an entity with a claim with a type specific validation', (done) => {
+  it('should create an entity with a claim with a type specific validation', done => {
     authReq('post', '/api/entities?action=create', {
       labels: { fr: humanName() },
       claims: { 'wdt:P31': [ 'wd:Q571' ], 'wdt:P648': [ someOpenLibraryId('work') ] }
     })
-    .then((res) => {
+    .then(res => {
       res._id.should.be.a.String()
       res._rev.should.be.a.String()
-      done()}).catch(undesiredErr(done))
-
+      done()
+    })
+    .catch(undesiredErr(done))
   })
 
-  it('should reject an entity with several values for a property that take one', (done) => {
+  it('should reject an entity with several values for a property that take one', done => {
     authReq('post', '/api/entities?action=create', {
       labels: { fr: humanName() },
       claims: { 'wdt:P31': [ 'wd:Q571', 'wd:Q572' ] }
     })
-    .catch((err) => {
+    .catch(err => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.match(/expects a unique value/).should.be.ok()
-      done()}).catch(undesiredErr(done))
-
+      done()
+    })
+    .catch(undesiredErr(done))
   })
 
-  it('should reject invalid labels object', (done) => {
+  it('should reject invalid labels object', done => {
     authReq('post', '/api/entities?action=create', {
       // Invalid labels type: array instead of object
       labels: [],
       claims: {}
     })
-    .catch((err) => {
+    .catch(err => {
       err.body.status_verbose.should.equal('invalid labels: []')
       err.statusCode.should.equal(400)
-      done()}).catch(undesiredErr(done))
-
+      done()
+    })
+    .catch(undesiredErr(done))
   })
 
-  it('should reject invalid claims type: array instead of object', (done) => {
+  it('should reject invalid claims type: array instead of object', done => {
     authReq('post', '/api/entities?action=create', {
       labels: {},
       claims: []
     })
-    .catch((err) => {
+    .catch(err => {
       err.body.status_verbose.should.equal('invalid claims: []')
       err.statusCode.should.equal(400)
-      done()}).catch(undesiredErr(done))
-
+      done()
+    })
+    .catch(undesiredErr(done))
   })
 
-  it('should reject invalid claim property values', (done) => {
+  it('should reject invalid claim property values', done => {
     authReq('post', '/api/entities?action=create', {
       labels: { fr: humanName() },
       claims: {
         'wdt:P31': [ 'wd:Q571' ],
         'wdt:P50': 'wd:Q535'
       }
-    }).catch((err) => {
+    })
+    .catch(err => {
       err.body.status_verbose.should.equal('invalid property values')
       err.statusCode.should.equal(400)
-      done()}).catch(undesiredErr(done))
-
+      done()
+    })
+    .catch(undesiredErr(done))
   })
 
-  it('should reject invalid claim property', (done) => {
+  it('should reject invalid claim property', done => {
     authReq('post', '/api/entities?action=create', {
       labels: { fr: humanName() },
       claims: {
@@ -130,14 +138,15 @@ describe('entities:create', () => {
         'wd:P50': [ 'wd:Q535' ]
       }
     })
-    .catch((err) => {
+    .catch(err => {
       err.body.status_verbose.should.equal('invalid property')
       err.statusCode.should.equal(400)
-      done()}).catch(undesiredErr(done))
-
+      done()
+    })
+    .catch(undesiredErr(done))
   })
 
-  it('should reject invalid claim property value', (done) => {
+  it('should reject invalid claim property value', done => {
     authReq('post', '/api/entities?action=create', {
       labels: { fr: humanName() },
       claims: {
@@ -146,14 +155,15 @@ describe('entities:create', () => {
         'wdt:P50': [ 'wd####Q535' ]
       }
     })
-    .catch((err) => {
+    .catch(err => {
       err.body.status_verbose.should.equal('invalid property value')
       err.statusCode.should.equal(400)
-      done()}).catch(undesiredErr(done))
-
+      done()
+    })
+    .catch(undesiredErr(done))
   })
 
-  it('should reject an entity created with a concurrent property with a value already taken', (done) => {
+  it('should reject an entity created with a concurrent property with a value already taken', done => {
     ensureEditionExists('isbn:9782315006113', null, {
       claims: {
         'wdt:P31': [ 'wd:Q3331189' ],
@@ -169,14 +179,15 @@ describe('entities:create', () => {
         'wdt:P629': editionEntity.claims['wdt:P629']
       }
     }))
-    .catch((err) => {
+    .catch(err => {
       err.body.status_verbose.should.equal('this property value is already used')
       err.statusCode.should.equal(400)
-      done()}).catch(undesiredErr(done))
-
+      done()
+    })
+    .catch(undesiredErr(done))
   })
 
-  it('should reject creation with incorrect properties such as pages counts for works', (done) => {
+  it('should reject creation with incorrect properties such as pages counts for works', done => {
     authReq('post', '/api/entities?action=create', {
       labels: { fr: randomLabel() },
       claims: {
@@ -185,25 +196,27 @@ describe('entities:create', () => {
       }
     })
     .then(undesiredRes(done))
-    .catch((err) => {
+    .catch(err => {
       err.body.status_verbose.should.equal("works can't have a property wdt:P1104")
       err.statusCode.should.equal(400)
-      done()}).catch(undesiredErr(done))
-
+      done()
+    })
+    .catch(undesiredErr(done))
   })
 
-  it('should reject invalid prefixes', (done) => {
+  it('should reject invalid prefixes', done => {
     authReq('post', '/api/entities?action=create', {
       prefix: 'foo',
       labels: {},
       claims: {}
     })
     .then(undesiredRes(done))
-    .catch((err) => {
+    .catch(err => {
       err.body.status_verbose.should.startWith('invalid prefix: foo')
       err.statusCode.should.equal(400)
-      done()}).catch(undesiredErr(done))
-
+      done()
+    })
+    .catch(undesiredErr(done))
   })
 })
 

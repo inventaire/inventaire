@@ -10,13 +10,12 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 
 const transporter_ = require('./transporter')
-const email_ = require('./email')
 const sendTransactionEmail = require('./send_transaction_email')
 const helpers_ = require('./helpers')
 const promises_ = __.require('lib', 'promises')
 
 module.exports = {
-  transactionUpdate(transactionId){
+  transactionUpdate: transactionId => {
     return sendTransactionEmail(transactionId)
     .then(transporter_.sendMail)
     .catch(helpers_.catchDisabledEmails)

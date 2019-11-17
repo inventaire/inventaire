@@ -10,9 +10,9 @@ const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const wdLang = require('wikidata-lang')
 
-module.exports = function(claims){
+module.exports = claims => {
   const langClaims = _.pick(claims, langProperties)
-  if (_.objLength(langClaims) === 0) return 
+  if (_.objLength(langClaims) === 0) return
 
   const originalLangUri = __guard__(_.pickOne(langClaims), x => x[0])
   if (originalLangUri != null) {
@@ -21,7 +21,7 @@ module.exports = function(claims){
   }
 }
 
-var langProperties = [
+const langProperties = [
   'wdt:P103', // native language
   'wdt:P407', // language of work
   'wdt:P1412', // languages spoken, written or signed
@@ -31,8 +31,8 @@ var langProperties = [
 ]
 
 // Unprefixify both entities ('item' in Wikidata lexic) and properties
-var unprefixify = value => value != null ? value.replace(/^wdt?:/, '') : undefined
+const unprefixify = value => value != null ? value.replace(/^wdt?:/, '') : undefined
 
-function __guard__(value, transform) {
+function __guard__ (value, transform) {
   return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined
 }

@@ -16,9 +16,9 @@ const __ = require('config').universalPath
 const { normalizeIsbn } = __.require('lib', 'isbn/isbn')
 const error_ = __.require('lib', 'error/error')
 
-module.exports = function(entity, options){
+module.exports = (entity, options) => {
   let redirectsObj, uri
-  const { _id:invId, redirect } = entity
+  const { _id: invId, redirect } = entity
 
   if (invId == null) throw error_.new('missing id', 500, entity)
 
@@ -38,8 +38,11 @@ module.exports = function(entity, options){
   // Those URIs are aliases but, when available, always use the canonical id,
   // that is, in the only current, the ISBN
   // By internal convention, ISBN URIs are without hyphen
-  if (isbn != null) { uri = `isbn:${normalizeIsbn(isbn)}`
-  } else { uri = invUri }
+  if (isbn != null) {
+    uri = `isbn:${normalizeIsbn(isbn)}`
+  } else {
+    uri = invUri
+  }
 
   redirectsObj = null
   if (uri !== invUri) {
@@ -49,7 +52,10 @@ module.exports = function(entity, options){
   return formatResult(uri, redirectsObj, options)
 }
 
-var formatResult = function(uri, redirectsObj, options){
-  if ((options != null ? options.includeRedirection : undefined)) { return [ uri, redirectsObj ]
-  } else { return uri }
+const formatResult = (uri, redirectsObj, options) => {
+  if ((options != null ? options.includeRedirection : undefined)) {
+    return [ uri, redirectsObj ]
+  } else {
+    return uri
+  }
 }

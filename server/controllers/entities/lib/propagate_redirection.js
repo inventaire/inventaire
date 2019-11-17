@@ -6,12 +6,11 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
 const promises_ = __.require('lib', 'promises')
 const redirectClaims = require('./redirect_claims')
 const updateItemEntity = __.require('controllers', 'items/lib/update_entity')
 
-module.exports = function(userId, fromUri, toUri, previousToUri){
+module.exports = (userId, fromUri, toUri, previousToUri) => {
   const actions = [
     redirectClaims(userId, fromUri, toUri),
     updateItemEntity.afterMerge(fromUri, toUri)

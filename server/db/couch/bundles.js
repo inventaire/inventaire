@@ -6,20 +6,19 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
 const couch_ = __.require('lib', 'couch')
 const promises_ = __.require('lib', 'promises')
 const assert_ = __.require('utils', 'assert_types')
 
-module.exports = function(db, _){
+module.exports = (db, _) => {
   let bundles
-  const actionAndReturn = function(verb, doc){
+  const actionAndReturn = (verb, doc) => {
     assert_.object(doc)
     return db[verb](doc)
     .then(updateIdAndRev.bind(null, doc))
   }
 
-  const bulkDelete = function(docs){
+  const bulkDelete = docs => {
     assert_.objects(docs)
     if (docs.length === 0) return promises_.resolve([])
     _.warn(docs, 'bulkDelete')
@@ -33,7 +32,7 @@ module.exports = function(db, _){
   }
 }
 
-var updateIdAndRev = function(doc, couchRes){
+const updateIdAndRev = (doc, couchRes) => {
   if (!doc._id) { doc._id = couchRes.id }
   doc._rev = couchRes.rev
   return doc

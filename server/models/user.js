@@ -23,7 +23,7 @@ module.exports = (User = {})
 User.validations = (validations = require('./validations/user'))
 
 // TODO: remove the last traces of creationStrategy=browserid: optional password
-User._create = function(username, email, creationStrategy, language, password){
+User._create = (username, email, creationStrategy, language, password) => {
   _.log([ username, email, creationStrategy, language, `password:${(password != null)}` ], 'creating user')
   assert_.strings([ username, email, creationStrategy ])
   if (language != null) { assert_.string(language) }
@@ -81,14 +81,14 @@ User._create = function(username, email, creationStrategy, language, password){
 User.create = (...args) => promises_.try(() => User._create.apply(null, args))
 .then(withHashedPassword)
 
-User.upgradeInvited = function(invitedDoc, username, creationStrategy, language, password){
+User.upgradeInvited = (invitedDoc, username, creationStrategy, language, password) => {
   const { email } = invitedDoc
   return User.create(username, email, creationStrategy, language, password)
   // Will override type but keep inviters and inviting groups
   .then(userDoc => _.extend(invitedDoc, userDoc))
 }
 
-var withHashedPassword = function(user){
+const withHashedPassword = user => {
   const { password } = user
   if (password != null) {
     return pw_.hash(password).then(replacePassword.bind(null, user))
@@ -97,26 +97,26 @@ var withHashedPassword = function(user){
   }
 }
 
-var replacePassword = function(user, hash){
+const replacePassword = (user, hash) => {
   user.password = hash
   return user
 }
 
 User.attributes = require('./attributes/user')
 
-User.softDelete = function(userDoc){
+User.softDelete = userDoc => {
   const userSouvenir = _.pick(userDoc, User.attributes.critical)
   userSouvenir.type = 'deletedUser'
   return userSouvenir
 }
 
-User.updateEmail = function(doc, email){
+User.updateEmail = (doc, email) => {
   doc = archivePreviousEmail(doc)
   doc.email = email
   return doc
 }
 
-var archivePreviousEmail = function(doc){
+const archivePreviousEmail = doc => {
   // Don't save the previous email if it had not been validated
   if (doc.validEmail) {
     if (!doc.previousEmails) { doc.previousEmails = [] }
@@ -127,7 +127,7 @@ var archivePreviousEmail = function(doc){
   return doc
 }
 
-User.updatePassword = function(user, newHash){
+User.updatePassword = (user, newHash) => {
   user.password = newHash
   user = _.omit(user, 'resetPassword')
   // Unlocking password-related functionalities on client-side
@@ -139,18 +139,18 @@ User.updatePassword = function(user, newHash){
   return user
 }
 
-User.setOauthTokens = (provider, data) => (function(user) {
+User.setOauthTokens = (provider, data) => user => {
   assert_.string(provider)
   assert_.object(data)
   if (!user.oauth) { user.oauth = {} }
   user.oauth[provider] = data
   return user
-})
+}
 
-User.updateItemsCounts = itemsCounts => (function(user) {
+User.updateItemsCounts = itemsCounts => user => {
   assert_.object(itemsCounts.private)
   assert_.object(itemsCounts.network)
   assert_.object(itemsCounts.public)
   _.extend(user.snapshot, itemsCounts)
   return user
-})
+}

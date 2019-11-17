@@ -6,7 +6,7 @@ const error_ = __.require('lib', 'error/error')
 const { validateValueType, propertyType } = require('./properties/validations')
 const properties = require('./properties/properties_values_constraints')
 
-module.exports = function(property, value, entityType){
+module.exports = (property, value, entityType) => {
   let message
   if (!validateValueType(property, value)) {
     const expected = propertyType(property)

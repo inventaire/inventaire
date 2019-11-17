@@ -12,9 +12,7 @@ const { Track } = __.require('lib', 'track')
 const tasks_ = __.require('controllers', 'tasks/lib/tasks')
 const updateRelationScore = require('./lib/relation_score')
 
-const promises_ = __.require('lib', 'promises')
-
-module.exports = function(req, res, next){
+module.exports = (req, res, next) => {
   const { id, attribute, value } = req.body
   _.log(id, 'update task')
 
@@ -25,7 +23,9 @@ module.exports = function(req, res, next){
   return tasks_.update({
     ids: [ id ],
     attribute,
-    newValue: value }).then(res.json.bind(res))
+    newValue: value
+  })
+  .then(res.json.bind(res))
   .then(() => tasks_.byId(id))
   .then(task => updateRelationScore(task.suspectUri))
   .tap(Track(req, [ 'task', 'update' ]))

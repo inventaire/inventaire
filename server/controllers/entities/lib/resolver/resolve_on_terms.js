@@ -22,7 +22,7 @@ const getAuthorsUris = require('../get_authors_uris')
 // - if seeds terms match entities terms
 // - if no other entities are in the search result (only one entity found)
 
-module.exports = function(entry){
+module.exports = entry => {
   const { authors, works } = entry
   if ((authors.length === 0) || (works.length === 0)) return entry
 
@@ -30,48 +30,50 @@ module.exports = function(entry){
   .then(() => entry)
 }
 
-var searchAuthorAndResolve = works => (function(author) {
-  if ((author == null) || (author.uri != null)) return 
+const searchAuthorAndResolve = works => author => {
+  if ((author == null) || (author.uri != null)) return
   const authorTerms = getEntityNormalizedTerms(author)
   return searchUrisByAuthorTerms(authorTerms)
   .then(resolveWorksAndAuthor(works, author))
-})
+}
 
-var searchUrisByAuthorTerms = terms => Promise.all(terms.map(searchUrisByAuthorLabel))
+const searchUrisByAuthorTerms = terms => Promise.all(terms.map(searchUrisByAuthorLabel))
 .then(_.flatten)
 .then(_.uniq)
 
 const types = [ 'humans' ]
 
-var searchUrisByAuthorLabel = term => typeSearch(types, term)
+const searchUrisByAuthorLabel = term => typeSearch(types, term)
 .then(parseResults(types))
 // Exact match on normalized author terms
-.filter((hit) => { let needle
-  return (needle = term, getEntityNormalizedTerms(hit._source).includes(needle)) })
+.filter(hit => {
+  let needle
+  return (needle = term, getEntityNormalizedTerms(hit._source).includes(needle))
+})
 .map(hit => hit._source.uri)
 .then(_.compact)
 
-var resolveWorksAndAuthor = (works, author) => authorsUris => Promise.all(works.map(getWorkAndResolve(author, authorsUris)))
+const resolveWorksAndAuthor = (works, author) => authorsUris => Promise.all(works.map(getWorkAndResolve(author, authorsUris)))
 
-var getWorkAndResolve = (authorSeed, authorsUris) => (function(work) {
-  if ((work.uri != null) || (work == null)) return 
+const getWorkAndResolve = (authorSeed, authorsUris) => work => {
+  if ((work.uri != null) || (work == null)) return
   const workTerms = getEntityNormalizedTerms(work)
   return Promise.all(getWorksFromAuthorsUris(authorsUris))
   .then(_.flatten)
   .then(resolveWorkAndAuthor(authorsUris, authorSeed, work, workTerms))
-})
+}
 
-var resolveWorkAndAuthor = (authorsUris, authorSeed, workSeed, workTerms) => (function(searchedWorks) {
+const resolveWorkAndAuthor = (authorsUris, authorSeed, workSeed, workTerms) => searchedWorks => {
   // Several searchedWorks could match authors homonyms/duplicates
-  if (searchedWorks.length !== 1) return 
+  if (searchedWorks.length !== 1) return
   const searchedWork = searchedWorks[0]
   const matchedAuthorsUris = _.intersection(getAuthorsUris(searchedWork), authorsUris)
   // If unique author to avoid assigning a work to a duplicated author
-  if (matchedAuthorsUris.length !== 1) return 
+  if (matchedAuthorsUris.length !== 1) return
   const searchedWorkTerms = getEntityNormalizedTerms(searchedWork)
 
-  if (!_.someMatch(workTerms, searchedWorkTerms)) return 
+  if (!_.someMatch(workTerms, searchedWorkTerms)) return
 
   authorSeed.uri = matchedAuthorsUris[0]
   return workSeed.uri = searchedWork.uri
-})
+}

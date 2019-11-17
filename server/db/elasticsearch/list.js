@@ -11,7 +11,7 @@ const syncDataList = [
   // No 'entities' entry as it is fully handled by the entities search engine
   // See server/controllers/entities/lib/update_search_engine.js
 ]
-.map((data) => {
+.map(data => {
   data.dbName = CONFIG.db.name(data.dbBaseName)
   return data
 })

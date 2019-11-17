@@ -19,15 +19,14 @@ const { WrappedUpdater } = __.require('lib', 'doc_updates')
 const randomString = __.require('lib', 'utils/random_string')
 const testToken = pw_.verify
 
-module.exports = function(db, user_){
-
+module.exports = (db, user_) => {
   const wrappedUpdate = WrappedUpdater(db)
 
   const tokenLength = 32
 
   const token_ = { tokenLength }
 
-  token_.sendValidationEmail = function(user){
+  token_.sendValidationEmail = user => {
     if (user.validEmail) {
       const log = _.pick(user, [ '_id', 'creationStrategy' ])
       _.warn(log, 'email was already validated')
@@ -35,7 +34,7 @@ module.exports = function(db, user_){
     }
 
     return getTokenData(tokenLength)
-    .then((tokenData) => {
+    .then(tokenData => {
       const [ token, tokenHash ] = Array.from(tokenData)
       radio.emit('validation:email', user, token)
       wrappedUpdate(user._id, 'emailValidation', tokenHash)
@@ -45,12 +44,15 @@ module.exports = function(db, user_){
 
   token_.confirmEmailValidity = (email, token) => user_.findOneByEmail(email)
   .then(updateIfValidToken.bind(null, token))
-  .catch((err) => {
-    if (err.notFound) { throw noEmailValidationFound(token, email)
-    } else { throw err }
+  .catch(err => {
+    if (err.notFound) {
+      throw noEmailValidationFound(token, email)
+    } else {
+      throw err
+    }
   })
 
-  var updateIfValidToken = function(token, user){
+  const updateIfValidToken = (token, user) => {
     const { emailValidation, _id } = user
     if (emailValidation == null) {
       throw noEmailValidationFound(token, _id)
@@ -60,17 +62,17 @@ module.exports = function(db, user_){
     .then(updateValidEmail.bind(null, db, _id))
   }
 
-  var noEmailValidationFound = (...context) => error_.new('no email validation token found', 401, context)
+  const noEmailValidationFound = (...context) => error_.new('no email validation token found', 401, context)
 
   token_.sendResetPasswordEmail = user => getTokenData(tokenLength)
-  .then((tokenData) => {
+  .then(tokenData => {
     const [ token, tokenHash ] = Array.from(tokenData)
     radio.emit('reset:password:email', user, token)
     wrappedUpdate(user._id, 'token', tokenHash)
     return user
   })
 
-  token_.openPasswordUpdateWindow = user => db.update(user._id, (doc) => {
+  token_.openPasswordUpdateWindow = user => db.update(user._id, doc => {
     doc.token = null
     doc.resetPassword = Date.now()
     return doc
@@ -79,17 +81,20 @@ module.exports = function(db, user_){
   return token_
 }
 
-var updateValidEmail = function(db, _id, valid){
-  if (valid) { return db.update(_id, emailIsValid)
-  } else { throw error_.new('token is invalid or expired', 401, _id) }
+const updateValidEmail = (db, _id, valid) => {
+  if (valid) {
+    return db.update(_id, emailIsValid)
+  } else {
+    throw error_.new('token is invalid or expired', 401, _id)
+  }
 }
 
-var emailIsValid = function(user){
+const emailIsValid = user => {
   user.validEmail = true
   return _.omit(user, 'emailValidation')
 }
 
-var getTokenData = function(tokenLength){
+const getTokenData = tokenLength => {
   const token = randomString(tokenLength)
   return pw_.hash(token)
   .then(tokenHash => [ token, tokenHash ])

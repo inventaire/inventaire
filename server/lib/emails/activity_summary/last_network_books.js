@@ -26,13 +26,13 @@ module.exports = (userId, lang, limitDate = 0) => // get network ids
 .then(extractHighlightedItems(lang))
 .catch(_.ErrorRethrow('last network items'))
 
-var extractHighlightedItems = lang => (function(lastItems) {
+const extractHighlightedItems = lang => lastItems => {
   const highlighted = getHighlightedItems(lastItems, 10)
   return attachUsersData(highlighted)
   .then(formatData.bind(null, lastItems, 'network', lang))
-})
+}
 
-var attachUsersData = function(items, lang){
+const attachUsersData = (items, lang) => {
   const usersIds = _.uniq(items.map(_.property('owner')))
   return user_.byIds(usersIds)
   .then(embedUsersData.bind(null, items))

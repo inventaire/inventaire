@@ -10,12 +10,11 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const { Promise } = __.require('lib', 'promises')
-const error_ = __.require('lib', 'error/error')
 const checkCoverExistance = require('./check_cover_existance')
 
 const { coverByOlId } = require('./api')
 
-module.exports = function(openLibraryId, entityType){
+module.exports = (openLibraryId, entityType) => {
   let type
   if (!openLibraryId) return Promise.resolve(null)
 

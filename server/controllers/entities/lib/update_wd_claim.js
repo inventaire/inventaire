@@ -20,7 +20,7 @@ const properties = require('./properties/properties_values_constraints')
 
 module.exports = (...args) => Promise.try(() => updateWdClaim(...Array.from(args || [])))
 
-var updateWdClaim = function(user, id, property, oldVal, newVal){
+const updateWdClaim = (user, id, property, oldVal, newVal) => {
   wdOauth.validate(user)
 
   if ((properties[property].datatype === 'entity') && _.isInvEntityUri(newVal)) {
@@ -30,7 +30,7 @@ var updateWdClaim = function(user, id, property, oldVal, newVal){
   oldVal = dropPrefix(oldVal)
   newVal = dropPrefix(newVal)
 
-  const [ propertyPrefix, propertyId ] = Array.from(property.split(':'))
+  const [ propertyPrefix, propertyId ] = property.split(':')
 
   if (propertyPrefix !== 'wdt') {
     throw error_.newInvalid('property', propertyPrefix)
@@ -49,16 +49,16 @@ var updateWdClaim = function(user, id, property, oldVal, newVal){
   }
 }
 
-var addClaim = (oauth, id, propertyId, newVal) => wdEdit({ oauth }, 'claim/add')(id, propertyId, newVal)
+const addClaim = (oauth, id, propertyId, newVal) => wdEdit({ oauth }, 'claim/add')(id, propertyId, newVal)
 
-var removeClaim = (oauth, id, propertyId, oldVal) => getClaimGuid(id, propertyId, oldVal)
+const removeClaim = (oauth, id, propertyId, oldVal) => getClaimGuid(id, propertyId, oldVal)
 .then(guid => wdEdit({ oauth }, 'claim/remove')(guid))
 
-var updateClaim = (oauth, id, propertyId, oldVal, newVal) => removeClaim(oauth, id, propertyId, oldVal)
+const updateClaim = (oauth, id, propertyId, oldVal, newVal) => removeClaim(oauth, id, propertyId, oldVal)
 .then(() => addClaim(oauth, id, propertyId, newVal))
 
-var getClaimGuid = (id, propertyId, oldVal) => getWdEntity([ id ])
-.then((entity) => {
+const getClaimGuid = (id, propertyId, oldVal) => getWdEntity([ id ])
+.then(entity => {
   const propClaims = entity.claims[propertyId]
   const simplifyPropClaims = wdk.simplify.propertyClaims(propClaims)
   const oldValIndex = simplifyPropClaims.indexOf(oldVal)
@@ -66,7 +66,10 @@ var getClaimGuid = (id, propertyId, oldVal) => getWdEntity([ id ])
   return targetClaim.id
 })
 
-var dropPrefix = function(value){
-  if (_.isEntityUri(value)) { return value.replace('wd:', '')
-  } else { return value }
+const dropPrefix = value => {
+  if (_.isEntityUri(value)) {
+    return value.replace('wd:', '')
+  } else {
+    return value
+  }
 }

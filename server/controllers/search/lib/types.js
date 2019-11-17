@@ -27,6 +27,6 @@ const typesData = {
   groups: localDatabase('groups', 'group')
 }
 
-const possibleTypes =  Object.keys(typesData)
+const possibleTypes = Object.keys(typesData)
 
 module.exports = { typesData, possibleTypes }

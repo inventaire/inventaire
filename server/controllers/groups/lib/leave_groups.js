@@ -11,25 +11,28 @@ const _ = __.require('builders', 'utils')
 const Group = __.require('models', 'group')
 
 // Working around the circular dependency
-let groups_ = null
+let groups_
 const lateRequire = () => groups_ = require('./groups')
 setTimeout(lateRequire, 0)
 
 module.exports = {
-  userCanLeave(userId, groupId){
+  userCanLeave: (userId, groupId) => {
     return groups_.byId(groupId)
-    .then((group) => {
+    .then(group => {
       const { admins, members } = group
       const adminsIds = admins.map(_.property('user'))
       if (!adminsIds.includes(userId)) return true
       const mainUserIsTheOnlyAdmin = admins.length === 1
       const thereAreOtherMembers = members.length > 0
-      if (mainUserIsTheOnlyAdmin && thereAreOtherMembers) { return false
-      } else { return true }
+      if (mainUserIsTheOnlyAdmin && thereAreOtherMembers) {
+        return false
+      } else {
+        return true
+      }
     })
   },
 
-  leaveAllGroups(userId){
+  leaveAllGroups: userId => {
     // TODO: check if userCanLeave
     return groups_.byUser(userId)
     .map(removeUser.bind(null, userId))
@@ -37,7 +40,7 @@ module.exports = {
   }
 }
 
-var removeUser = function(userId, groupDoc){
+const removeUser = (userId, groupDoc) => {
   if (groupDoc.admins.includes(userId)) {
     _.warn(arguments, "removing a user from a group she's admin of")
   }

@@ -11,19 +11,19 @@ const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const entities_ = require('./entities')
 const promises_ = __.require('lib', 'promises')
-const { parse:parseIsbn, normalizeIsbn } = __.require('lib', 'isbn/isbn')
+const { parse: parseIsbn, normalizeIsbn } = __.require('lib', 'isbn/isbn')
 const dataseed = __.require('data', 'dataseed/dataseed')
 const scaffoldEditionEntityFromSeed = require('./scaffold_entity_from_seed/edition')
 const formatEditionEntity = require('./format_edition_entity')
 const isbn_ = __.require('lib', 'isbn/isbn')
 const { prefixifyIsbn } = __.require('controllers', 'entities/lib/prefix')
 
-module.exports = function(rawIsbns, params){
+module.exports = (rawIsbns, params) => {
   const [ isbns, redirections ] = Array.from(getRedirections(rawIsbns))
   const { refresh } = params
   // search entities by isbn locally
   return entities_.byIsbns(isbns)
-  .then((entities) => {
+  .then(entities => {
     let results
     const foundIsbns = entities.map(getIsbn13h)
     const missingIsbns = _.difference(isbns, foundIsbns)
@@ -49,25 +49,29 @@ module.exports = function(rawIsbns, params){
   })
 }
 
-var getIsbn13h = entity => entity.claims['wdt:P212'][0]
+const getIsbn13h = entity => entity.claims['wdt:P212'][0]
 
-var getMissingEditionEntitiesFromSeeds = (isbns, refresh) => dataseed.getByIsbns(isbns, refresh)
-.then((seeds) => {
+const getMissingEditionEntitiesFromSeeds = (isbns, refresh) => dataseed.getByIsbns(isbns, refresh)
+.then(seeds => {
   const insufficientData = []
   const validSeeds = []
   // TODO: Filter out more aggressively bad quality seeds
   // - titles with punctuations
   // - authors with punctuations or single word
   for (const seed of seeds) {
-    if (_.isNonEmptyString(seed.title)) { validSeeds.push(seed)
-    } else { insufficientData.push(seed) }
+    if (_.isNonEmptyString(seed.title)) {
+      validSeeds.push(seed)
+    } else {
+      insufficientData.push(seed)
+    }
   }
 
   return promises_.all(validSeeds.map(scaffoldEditionEntityFromSeed))
   .map(formatEditionEntity)
-  .then(newEntities => [ newEntities, insufficientData ])})
+  .then(newEntities => [ newEntities, insufficientData ])
+})
 
-var getRedirections = function(isbns){
+const getRedirections = isbns => {
   // isbns list, redirections object
   const accumulator = [ [], {} ]
   return isbns.reduce(aggregateIsbnRedirections, accumulator)
@@ -75,8 +79,8 @@ var getRedirections = function(isbns){
 
 // Redirection mechanism is coupled with the way
 // ./get_entities_by_uris 'mergeResponses' parses redirections
-var aggregateIsbnRedirections = function(accumulator, rawIsbn){
-  const { isbn13:uriIsbn, isbn13h:claimIsbn } = isbn_.parse(rawIsbn)
+const aggregateIsbnRedirections = (accumulator, rawIsbn) => {
+  const { isbn13: uriIsbn, isbn13h: claimIsbn } = isbn_.parse(rawIsbn)
   const rawUri = `isbn:${rawIsbn}`
   const uri = `isbn:${uriIsbn}`
   accumulator[0].push(claimIsbn)
@@ -84,8 +88,8 @@ var aggregateIsbnRedirections = function(accumulator, rawIsbn){
   return accumulator
 }
 
-var addRedirections = function(results, redirections){
-  results.entities = results.entities.map((entity) => {
+const addRedirections = (results, redirections) => {
+  results.entities = results.entities.map(entity => {
     const { uri } = entity
     const redirects = redirections[uri]
     if (redirects != null) { entity.redirects = redirects }

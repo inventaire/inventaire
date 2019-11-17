@@ -12,7 +12,7 @@ const Group = __.require('models', 'group')
 const radio = __.require('lib', 'radio')
 const initMembershipUpdateHooks = require('./membership_update_hooks')
 
-module.exports = function(db){
+module.exports = db => {
   const actions = {}
   membershipActionsList.forEach(action => actions[action] = membershipUpdate(db, action))
 
@@ -21,8 +21,8 @@ module.exports = function(db){
   return actions
 }
 
-var membershipUpdate = (db, action) => (function(data, userId) {
-  const { group:groupId, user:secondaryUserId } = data
+const membershipUpdate = (db, action) => (data, userId) => {
+  const { group: groupId, user: secondaryUserId } = data
   return db.update(groupId, Group[action].bind(null, userId, secondaryUserId))
   .then(() => radio.emit(`group:${action}`, groupId, userId, secondaryUserId))
-})
+}

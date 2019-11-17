@@ -14,7 +14,7 @@ const responses_ = __.require('lib', 'responses')
 const error_ = __.require('lib', 'error/error')
 const containers = require('./lib/containers')
 
-module.exports = function(req, res, next){
+module.exports = (req, res, next) => {
   const { container } = req.query
 
   if ((container == null) || (containers[container] == null)) {
@@ -24,17 +24,18 @@ module.exports = function(req, res, next){
   const { putImage } = containers[container]
 
   return parseForm(req)
-  .then((formData) => {
+  .then(formData => {
     const files = getFilesFromFormData(formData)
     if (container === 'users') { files.forEach(validateFile) }
-    return files}).map(putImage)
+    return files
+  }).map(putImage)
   .then(indexCollection)
   .then(_.Log('upload post res'))
   .then(responses_.Send(res))
   .catch(error_.Handler(req, res))
 }
 
-var getFilesFromFormData = function(formData){
+const getFilesFromFormData = formData => {
   const { files } = formData
 
   if (!_.isNonEmptyPlainObject(files)) {
@@ -49,14 +50,14 @@ var getFilesFromFormData = function(formData){
   return _.values(files)
 }
 
-var validateFile = function(file){
+const validateFile = file => {
   const { type } = file
   if (type !== 'image/jpeg') {
     throw error_.new('only jpeg are accepted', 400, file)
   }
 }
 
-var indexCollection = function(collection){
+const indexCollection = collection => {
   const index = {}
   for (const data of collection) {
     const { id, url } = data

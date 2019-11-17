@@ -33,7 +33,7 @@ freezeFollow = freezeFollow || !CONFIG.serverMode
 // filter and an onChange functions register, indexed per dbBaseNames
 const followers = {}
 
-module.exports = function(params){
+module.exports = params => {
   const { dbBaseName, filter, onChange, reset } = params
   assert_.string(dbBaseName)
   assert_.function(filter)
@@ -67,7 +67,7 @@ module.exports = function(params){
   }
 }
 
-var initFollow = (dbName, reset) => (function(lastSeq = 0) {
+const initFollow = (dbName, reset) => (lastSeq = 0) => {
   if (resetFollow) { lastSeq = 0 }
   assert_.number(lastSeq)
 
@@ -75,7 +75,7 @@ var initFollow = (dbName, reset) => (function(lastSeq = 0) {
   const dbUrl = `${dbHost}/${dbName}`
 
   return getDbLastSeq(dbUrl)
-  .then((dbLastSeq) => {
+  .then(dbLastSeq => {
     // Reset lastSeq if the dbLastSeq is behind
     // as this probably means the database was deleted and re-created
     // and the leveldb-backed meta db kept the last_seq value of the previous db
@@ -86,15 +86,19 @@ var initFollow = (dbName, reset) => (function(lastSeq = 0) {
     }
 
     return resetIfNeeded(dbName, lastSeq, reset)
-    .then(() => startFollowingDb({ dbName, dbUrl, lastSeq, setLastSeq }))})
-})
-
-var resetIfNeeded = function(dbName, lastSeq, reset){
-  if ((lastSeq === 0) && (reset != null)) { return reset()
-  } else { return promises_.resolve() }
+    .then(() => startFollowingDb({ dbName, dbUrl, lastSeq, setLastSeq }))
+  })
 }
 
-var startFollowingDb = function(params){
+const resetIfNeeded = (dbName, lastSeq, reset) => {
+  if ((lastSeq === 0) && (reset != null)) {
+    return reset()
+  } else {
+    return promises_.resolve()
+  }
+}
+
+const startFollowingDb = params => {
   const { dbName, dbUrl, lastSeq, setLastSeq } = params
   const dbFollowers = followers[dbName]
 
@@ -111,15 +115,14 @@ var startFollowingDb = function(params){
     return (() => {
       const result = []
       for (const follower of dbFollowers) {
-        if (follower.filter(change.doc)) { result.push(follower.onChange(change)) }
-        else result.push(undefined)
+        if (follower.filter(change.doc)) { result.push(follower.onChange(change)) } else result.push(undefined)
       }
       return result
     })()
   })
 }
 
-var SetLastSeq = function(dbName){
+const SetLastSeq = dbName => {
   const key = buildKey(dbName)
   // Creating a closure on dbName to underline that
   // this function shouldn't be shared between databases
@@ -131,8 +134,8 @@ var SetLastSeq = function(dbName){
   return _.debounce(setLastSeq, 1000)
 }
 
-var buildKey = dbName => `${dbName}-last-seq`
+const buildKey = dbName => `${dbName}-last-seq`
 
-var getDbLastSeq = dbUrl => breq.get(`${dbUrl}/_changes?limit=0&descending=true`)
+const getDbLastSeq = dbUrl => breq.get(`${dbUrl}/_changes?limit=0&descending=true`)
 .get('body')
 .get('last_seq')

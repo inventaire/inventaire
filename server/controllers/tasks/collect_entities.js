@@ -8,7 +8,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
 const tasks_ = require('./lib/tasks')
 const entities_ = __.require('controllers', 'entities/lib/entities')
 const promises_ = __.require('lib', 'promises')
@@ -19,7 +18,7 @@ const checkEntity = require('./lib/check_entity')
 const { interval } = CONFIG.jobs['inv:deduplicate']
 const batchLength = 1000
 
-module.exports = function(req, res){
+module.exports = (req, res) => {
   const refresh = _.parseBooleanString(req.query.refresh)
 
   addEntitiesToQueueSequentially(refresh)
@@ -30,13 +29,13 @@ module.exports = function(req, res){
   return responses_.ok(res)
 }
 
-var addEntitiesToQueueSequentially = function(refresh){
+const addEntitiesToQueueSequentially = refresh => {
   const pagination = { offset: 0, total: 0 }
 
-  var addNextBatch = function() {
+  const addNextBatch = () => {
     _.info(pagination, 'get entities next batch')
     return getNextInvHumanUrisBatch(pagination)
-    .then((uris) => {
+    .then(uris => {
       pagination.total += uris.length
       if (uris.length === 0) return _.success(pagination.total, 'done. total entities queued:')
       return getFilteredUris(uris, refresh)
@@ -48,37 +47,41 @@ var addEntitiesToQueueSequentially = function(refresh){
   return addNextBatch()
 }
 
-var getNextInvHumanUrisBatch = function(pagination){
+const getNextInvHumanUrisBatch = pagination => {
   const { offset } = pagination
   return entities_.db.view('entities', 'byClaim', {
     key: [ 'wdt:P31', 'wd:Q5' ],
     limit: batchLength,
     skip: offset
-  }).tap(() => pagination.offset += batchLength)
+  })
+  .tap(() => pagination.offset += batchLength)
   .then(getUris)
 }
 
-var getFilteredUris = function(uris, refresh){
-  if (refresh) { return promises_.resolve(uris)
-  } else { return filterNotAlreadySuspectEntities(uris) }
+const getFilteredUris = (uris, refresh) => {
+  if (refresh) {
+    return promises_.resolve(uris)
+  } else {
+    return filterNotAlreadySuspectEntities(uris)
+  }
 }
 
-var getUris = res => _.map(res.rows, 'id').map(prefixifyInv)
+const getUris = res => _.map(res.rows, 'id').map(prefixifyInv)
 
 const deduplicateWorker = (jobId, uri) => checkEntity(uri)
 .delay(interval)
-.catch((err) => {
-  if (err.statusCode === 400) { return
+.catch(err => {
+  if (err.statusCode === 400) {
   } else {
     _.error(err, 'deduplicateWorker err')
     throw err
   }
 })
 
-var filterNotAlreadySuspectEntities = uris => tasks_.bySuspectUris(uris, { includeArchived: true })
-.then((res) => {
+const filterNotAlreadySuspectEntities = uris => tasks_.bySuspectUris(uris, { includeArchived: true })
+.then(res => {
   const alreadyCheckedUris = _.map(res.rows, 'suspectUri')
   return _.difference(uris, alreadyCheckedUris)
 })
 
-var invTasksEntitiesQueue = jobs_.initQueue('inv:deduplicate', deduplicateWorker, 1)
+const invTasksEntitiesQueue = jobs_.initQueue('inv:deduplicate', deduplicateWorker, 1)

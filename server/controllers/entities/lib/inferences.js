@@ -12,11 +12,11 @@ const isbn_ = __.require('lib', 'isbn/isbn')
 // Inferences are property values deduced from another property
 module.exports = {
   'wdt:P212': {
-    'wdt:P957'(isbn13){ return __guard__(isbn_.parse(isbn13), x => x.isbn10h) },
-    'wdt:P407'(isbn13){ return __guard__(isbn_.parse(isbn13), x => x.groupLangUri) }
+    'wdt:P957' (isbn13) { return __guard__(isbn_.parse(isbn13), x => x.isbn10h) },
+    'wdt:P407' (isbn13) { return __guard__(isbn_.parse(isbn13), x => x.groupLangUri) }
   }
 }
 
-function __guard__(value, transform) {
+function __guard__ (value, transform) {
   return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined
 }

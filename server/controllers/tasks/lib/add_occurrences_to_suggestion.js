@@ -7,12 +7,11 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
 const getOccurrencesFromExternalSources = __.require('controllers', 'entities/lib/get_occurrences_from_external_sources')
 const getOccurrencesFromEntities = __.require('controllers', 'entities/lib/get_occurrences_from_entities')
 const { Promise } = __.require('lib', 'promises')
 
-module.exports = suspectWorksData => (function(suggestion) {
+module.exports = suspectWorksData => suggestion => {
   if (suggestion == null) return []
   const { labels, langs } = suspectWorksData
   const { uri } = suggestion
@@ -30,4 +29,4 @@ module.exports = suspectWorksData => (function(suggestion) {
     suggestion.occurrences = externalOccurrences.concat(entitiesOccurrences)
     return suggestion
   })
-})
+}

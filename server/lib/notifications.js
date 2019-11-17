@@ -14,24 +14,25 @@ const assert_ = __.require('utils', 'assert_types')
 
 const db = __.require('couch', 'base')('notifications')
 
-var notifs_ = {
-  byUserId(userId){
+const notifs_ = {
+  byUserId: userId => {
     assert_.string(userId)
     return db.viewCustom('byUserAndTime', {
       startkey: [ userId, minKey ],
       endkey: [ userId, maxKey ],
       include_docs: true
-    }).catch(_.ErrorRethrow('byUserId'))
+    })
+    .catch(_.ErrorRethrow('byUserId'))
   },
 
   // make notifications accessible by the subjects they involve:
   // user, group, item etc
-  bySubject(subjectId){
+  bySubject: subjectId => {
     return db.viewByKey('bySubject', subjectId)
     .catch(_.ErrorRethrow('bySubject'))
   },
 
-  add(userId, type, data){
+  add: (userId, type, data) => {
     assert_.types([ 'string', 'string', 'object' ], arguments)
     return db.post({
       user: userId,
@@ -42,13 +43,13 @@ var notifs_ = {
     })
   },
 
-  updateReadStatus(userId, time){
+  updateReadStatus: (userId, time) => {
     time = Number(time)
     return db.viewFindOneByKey('byUserAndTime', [ userId, time ])
     .then(doc => db.update(doc._id, BasicUpdater('status', 'read')))
   },
 
-  deleteAllBySubjectId(subjectId){
+  deleteAllBySubjectId: subjectId => {
     // You absolutly don't want this id to be undefined
     // as this would end up deleting the whole database
     assert_.string(subjectId)
@@ -56,7 +57,7 @@ var notifs_ = {
     .then(db.bulkDelete)
   },
 
-  unreadCount(userId){
+  unreadCount: userId => {
     return notifs_.byUserId(userId)
     .then(getUnreadCount)
   }
@@ -65,17 +66,17 @@ var notifs_ = {
 // alias
 notifs_.deleteAllByUserId = notifs_.deleteAllBySubjectId
 
-var getUnreadCount = notifs => notifs.filter(isUnread).length
-var isUnread = notif => notif.status === 'unread'
+const getUnreadCount = notifs => notifs.filter(isUnread).length
+const isUnread = notif => notif.status === 'unread'
 
 const callbacks = {
-  acceptedRequest(userToNotify, newFriend){
+  acceptedRequest: (userToNotify, newFriend) => {
     assert_.strings([ userToNotify, newFriend ])
     return notifs_.add(userToNotify, 'friendAcceptedRequest',
       { user: newFriend })
   },
 
-  userMadeAdmin(groupId, actorAdminId, newAdminId){
+  userMadeAdmin: (groupId, actorAdminId, newAdminId) => {
     return notifs_.add(newAdminId, 'userMadeAdmin', {
       group: groupId,
       user: actorAdminId
@@ -83,7 +84,7 @@ const callbacks = {
     )
   },
 
-  groupUpdate(data){
+  groupUpdate: data => {
     const { attribute } = data
     if (groupAttributeWithNotification.includes(attribute)) {
       const { usersToNotify, groupId, actorId, previousValue, newValue } = data
@@ -103,14 +104,14 @@ const callbacks = {
 
   // Deleting notifications when their subject is deleted
   // to avoid having notification triggering requests for deleted resources
-  deleteNotifications(label, subjectId){
+  deleteNotifications: (label, subjectId) => {
     assert_.strings([ label, subjectId ])
     _.log(`deleting ${label} notifications`)
     return notifs_.deleteAllBySubjectId(subjectId)
   }
 }
 
-var groupAttributeWithNotification = [ 'name', 'description' ]
+const groupAttributeWithNotification = [ 'name', 'description' ]
 
 radio.on('notify:friend:request:accepted', callbacks.acceptedRequest)
 radio.on('group:makeAdmin', callbacks.userMadeAdmin)

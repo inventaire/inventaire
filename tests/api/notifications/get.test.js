@@ -7,14 +7,14 @@
  */
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const should = require('should')
+require('should')
 const { authReq, undesiredErr } = __.require('apiTests', 'utils/utils')
 
-describe('notifications:get', () => it('should get user notifications', (done) => {
+describe('notifications:get', () => it('should get user notifications', done => {
   authReq('get', '/api/notifications')
-  .then((res) => {
+  .then(res => {
     res.notifications.should.be.an.Array()
-    done()}).catch(undesiredErr(done))
-
+    done()
+  })
+  .catch(undesiredErr(done))
 }))

@@ -13,10 +13,10 @@ const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const getEntitiesByUris = require('./get_entities_by_uris')
 
-module.exports = function(relatives, refresh){
+module.exports = (relatives, refresh) => {
   if (relatives == null) return _.identity
 
-  var addRelatives = function(results){
+  const addRelatives = results => {
     const { entities } = results
 
     const additionalEntitiesUris = getAdditionalEntitiesUris(entities, relatives)
@@ -27,7 +27,7 @@ module.exports = function(relatives, refresh){
     // Recursively add relatives, so that an edition could be sent
     // with its works, and its works authors and series
     .then(addRelatives)
-    .then((additionalResults) => {
+    .then(additionalResults => {
       // We only need to extend entities, as those additional URIs
       // should already be the canonical URIs (no redirection needed)
       // and all URIs should resolve to an existing entity
@@ -39,11 +39,11 @@ module.exports = function(relatives, refresh){
   return addRelatives
 }
 
-var getAdditionalEntitiesUris = (entities, relatives) => _(entities)
+const getAdditionalEntitiesUris = (entities, relatives) => _(entities)
 .values()
 .map(getEntityRelativesUris(relatives))
 .flattenDeep()
 .uniq()
 .value()
 
-var getEntityRelativesUris = relatives => entity => _.values(_.pick(entity.claims, relatives))
+const getEntityRelativesUris = relatives => entity => _.values(_.pick(entity.claims, relatives))

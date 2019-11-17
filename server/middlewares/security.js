@@ -6,12 +6,10 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
 const { invHost } = CONFIG
 const devEnv = CONFIG.env === 'dev'
 
-exports.enableCorsOnPublicApiRoutes = function(req, res, next){
+exports.enableCorsOnPublicApiRoutes = (req, res, next) => {
   // Only have cross domain requests wide open for GET requests
   // to avoid CSRF on request altering the database
   if (req.method === 'GET') {
@@ -49,7 +47,7 @@ const policy = `default-src 'self' www.wikidata.org ${ws};` +
   `img-src 'self' ${altHost} https://commons.wikimedia.org https://upload.wikimedia.org https://api.tiles.mapbox.com data:;` +
   'report-uri /api/reports?action=csp-report;'
 
-exports.addSecurityHeaders = function(req, res, next){
+exports.addSecurityHeaders = (req, res, next) => {
   res.header('X-XSS-Protection', '1; mode=block; report=/api/reports?action=csp-report;')
   res.header('X-Frame-Options', 'SAMEORIGIN')
   res.header('Content-Security-Policy', policy)

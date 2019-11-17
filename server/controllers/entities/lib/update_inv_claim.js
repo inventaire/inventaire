@@ -19,12 +19,12 @@ const validateClaim = require('./validate_claim')
 const validateClaimProperty = require('./validate_claim_property')
 const inferredClaimUpdates = require('./inferred_claim_updates')
 
-const updateInvClaim = function(user, id, property, oldVal, newVal){
+const updateInvClaim = (user, id, property, oldVal, newVal) => {
   assert_.object(user)
-  const { _id:userId, admin:userIsAdmin } = user
+  const { _id: userId, admin: userIsAdmin } = user
 
   return entities_.byId(id)
-  .then((currentDoc) => {
+  .then(currentDoc => {
     if (currentDoc == null) {
       throw error_.new('entity not found', 400, { id, property, oldVal, newVal })
     }
@@ -37,16 +37,17 @@ const updateInvClaim = function(user, id, property, oldVal, newVal){
 
     const type = getEntityType(currentDoc.claims['wdt:P31'])
     validateClaimProperty(type, property)
-    return updateClaim({ type, property, oldVal, newVal, userId, currentDoc, userIsAdmin })})
+    return updateClaim({ type, property, oldVal, newVal, userId, currentDoc, userIsAdmin })
+  })
 
-  .then((updatedDoc) => {
+  .then(updatedDoc => {
     radio.emit('entity:update:claim', updatedDoc, property, oldVal, newVal)
     // Wait for inferred updates
     return inferredClaimUpdates(updatedDoc, property, oldVal)
   })
 }
 
-var updateClaim = function(params){
+const updateClaim = params => {
   const { property, oldVal, userId, currentDoc } = params
   const updatedDoc = _.cloneDeep(currentDoc)
   params.currentClaims = currentDoc.claims

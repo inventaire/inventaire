@@ -31,7 +31,7 @@ const designDocFolder = __.path('couchdb', 'design_docs')
 module.exports = () => couchInit(dbBaseUrl, formattedList, designDocFolder)
 .tap(initHardCodedDocuments)
 .tap(initDesignDocSync)
-.catch((err) => {
+.catch(err => {
   if (err.message !== 'CouchDB name or password is incorrect') throw err
 
   const context = _.pick(CONFIG.db, 'protocol', 'host', 'port', 'username', 'password')

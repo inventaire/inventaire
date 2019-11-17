@@ -15,7 +15,7 @@ const { Promise } = __.require('lib', 'promises')
 module.exports = {
   // always return an object with 'push' and 'pushBatch' function
   // taking a payload and returning a promise
-  initQueue(jobName, worker, maxConcurrency){
+  initQueue: (jobName, worker, maxConcurrency) => {
     const db = levelBase.rawSubDb(`job:${jobName}`)
 
     if (typeof (CONFIG.jobs[jobName] != null ? CONFIG.jobs[jobName].run : undefined) !== 'boolean') {
@@ -41,12 +41,12 @@ module.exports = {
   }
 }
 
-var promisify = function(API){
+const promisify = API => {
   API.push = Promise.promisify(API.push, { context: API })
   API.pushBatch = Promise.promisify(API.pushBatch, { context: API })
   return API
 }
 
-var workerDepromisifier = workerFn => (jobId, payload, cb) => workerFn(jobId, payload)
+const workerDepromisifier = workerFn => (jobId, payload, cb) => workerFn(jobId, payload)
 .then(() => cb())
 .catch(cb)

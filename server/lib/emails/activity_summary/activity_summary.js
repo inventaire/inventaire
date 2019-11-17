@@ -12,15 +12,15 @@ const user_ = __.require('controllers', 'user/lib/user')
 const User = __.require('models', 'user')
 const sendActivitySummary = require('./send_activity_summary')
 
-const { oneHour } =  __.require('lib', 'times')
+const { oneHour } = __.require('lib', 'times')
 const { maxEmailsPerHour } = CONFIG.activitySummary
 const emailsInterval = oneHour / maxEmailsPerHour
 
-module.exports = function() {
+module.exports = () => {
   _.info(CONFIG.activitySummary, 'activity summary')
   return setInterval(sendOneUserSummary, emailsInterval)
 }
 
-var sendOneUserSummary = () => user_.findOneWaitingForSummary()
+const sendOneUserSummary = () => user_.findOneWaitingForSummary()
 .then(sendActivitySummary)
 .catch(_.Error('waitingForSummary err'))

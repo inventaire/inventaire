@@ -13,16 +13,16 @@ const checkEntity = require('./lib/check_entity')
 
 // TODO:
 // - revert archiveObsoleteEntityUriTasks on revert-merge
-module.exports = function() {
+module.exports = () => {
   radio.on('entity:merge', archiveObsoleteEntityUriTasks)
   radio.on('entity:remove', archiveObsoleteEntityUriTasks)
   return radio.on('wikidata:entity:redirect', deleteBySuggestionUriAndRecheckSuspects)
 }
 
-var archiveObsoleteEntityUriTasks = uri => tasks_.bySuspectUri(uri)
+const archiveObsoleteEntityUriTasks = uri => tasks_.bySuspectUri(uri)
 .then(archiveTasks)
 
-var deleteBySuggestionUriAndRecheckSuspects = (previousSuggestionUri, newSuggestionUri) => tasks_.bySuggestionUri(previousSuggestionUri)
+const deleteBySuggestionUriAndRecheckSuspects = (previousSuggestionUri, newSuggestionUri) => tasks_.bySuggestionUri(previousSuggestionUri)
 .tap(tasks_.bulkDelete)
 // Re-check entities after having archived obsolete tasks so that relationScores
 // are updated once every doc is in place.
@@ -30,8 +30,8 @@ var deleteBySuggestionUriAndRecheckSuspects = (previousSuggestionUri, newSuggest
 // if it is relevant
 .map(task => checkEntity(task.suspectUri))
 
-var archiveTasks = function(tasks){
-  if (tasks.length === 0) return 
+const archiveTasks = tasks => {
+  if (tasks.length === 0) return
   const ids = _.map(tasks, '_id')
   return tasks_.update({ ids, attribute: 'state', newValue: 'merged' })
 }

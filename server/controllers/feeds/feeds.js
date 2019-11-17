@@ -6,7 +6,6 @@
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-const CONFIG = require('config')
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
@@ -17,10 +16,10 @@ const groupFeedData = require('./lib/group_feed_data')
 const generateFeedFromFeedData = require('./lib/generate_feed_from_feed_data')
 
 module.exports = {
-  get(req, res, next){
+  get: (req, res, next) => {
     let feedDataPromise
     const { query } = req
-    const { user:userId, group:groupId, requester, token } = query
+    const { user: userId, group: groupId, requester, token } = query
 
     if (requester != null) {
       if (token == null) return error_.bundleMissingQuery(req, res, 'token')
@@ -43,14 +42,12 @@ module.exports = {
       }
 
       feedDataPromise = userFeedData(userId, authentifiedUserPromise)
-
     } else if (groupId != null) {
       if (!_.isGroupId(groupId)) {
         return error_.bundleInvalid(req, res, 'group', groupId)
       }
 
       feedDataPromise = groupFeedData(groupId, authentifiedUserPromise)
-
     } else {
       return error_.bundleMissingQuery(req, res, 'user|group', 400)
     }

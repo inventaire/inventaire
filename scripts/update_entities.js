@@ -26,7 +26,6 @@
 
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
-const { Promise } = __.require('lib', 'promises')
 const error_ = __.require('lib', 'error/error')
 const assert_ = __.require('utils', 'assert_types')
 const entities_ = __.require('controllers', 'entities/lib/entities')
@@ -45,38 +44,39 @@ silent = silent != null ? silent : (silent = false)
 assert_.function(getNextBatch)
 assert_.function(updateFn)
 
-var updateSequentially = () => getNextBatch()
-.then((res) => {
+const updateSequentially = () => getNextBatch()
+.then(res => {
   const { rows } = res
-  if (rows.length === 0) return 
+  if (rows.length === 0) return
 
-  const updatesData = rows.map((row) => {
+  const updatesData = rows.map(row => {
     const { doc: currentDoc } = row
     const updatedDoc = updateFn(_.cloneDeep(currentDoc))
     if (!silent) { docDiff(currentDoc, updatedDoc, preview) }
-    return { currentDoc, updatedDoc }})
+    return { currentDoc, updatedDoc }
+  })
 
   return postEntitiesBulk(updatesData)
   .then(postPatchesBulk(updatesData))
   .then(updateSequentially)
 })
 
-var postEntitiesBulk = updatesData => entities_.db.bulk(_.map(updatesData, 'updatedDoc'))
+const postEntitiesBulk = updatesData => entities_.db.bulk(_.map(updatesData, 'updatedDoc'))
 
-var postPatchesBulk = updatesData => (function(entityBulkRes) {
+const postPatchesBulk = updatesData => entityBulkRes => {
   const entityResById = _.keyBy(entityBulkRes, 'id')
   const patches = updatesData.map(buildPatches(entityResById))
   return patches_.db.bulk(patches)
-})
+}
 
-var buildPatches = entityResById => (function(updateData) {
+const buildPatches = entityResById => updateData => {
   const { currentDoc, updatedDoc } = updateData
   const { _id } = updatedDoc
   const entityRes = entityResById[_id]
   updatedDoc._rev = entityRes.rev
   if (updatedDoc._rev == null) throw error_.new('rev not found', 500, { updateData, entityRes })
   return Patch.create({ userId, currentDoc, updatedDoc })
-})
+}
 
 updateSequentially()
 .then(() => { if (stats != null) { return _.log(stats(), 'stats') } })

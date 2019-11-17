@@ -16,14 +16,14 @@ const Entity = __.require('models', 'entity')
 const promises_ = __.require('lib', 'promises')
 const assert_ = __.require('utils', 'assert_types')
 const { maxKey } = __.require('lib', 'couch')
-const { oneDay } =  __.require('lib', 'times')
+const { oneDay } = __.require('lib', 'times')
 
 module.exports = (patches_ = {
   db,
   byId: db.get,
-  byEntityId(entityId){ return db.viewByKeys('byEntityId', [ entityId ]) },
-  byEntityIds(entityIds){ return db.viewByKeys('byEntityId', entityIds) },
-  byUserId(userId, limit, offset){
+  byEntityId: entityId => db.viewByKeys('byEntityId', [ entityId ]),
+  byEntityIds: entityIds => db.viewByKeys('byEntityId', entityIds),
+  byUserId: (userId, limit, offset) => {
     return promises_.all([
       db.view(designDocName, 'byUserId', {
         startkey: [ userId, maxKey ],
@@ -52,20 +52,20 @@ module.exports = (patches_ = {
 
   byRedirectUri: db.viewByKey.bind(null, 'byRedirectUri'),
 
-  create(params){
+  create: params => {
     return promises_.try(() => Patch.create(params))
     .then(db.postAndReturn)
   },
 
-  getSnapshots(entityId){
+  getSnapshots: entityId => {
     return byEntityId(entityId)
-    .then((patchDocs) => {
+    .then(patchDocs => {
       const base = Entity.create()
       return Patch.getSnapshots(base, patchDocs)
     })
   },
 
-  getGlobalActivity() {
+  getGlobalActivity: () => {
     return db.view(designDocName, 'byUserId', { group_level: 1 })
     .get('rows')
     .map(formatRow)
@@ -74,7 +74,7 @@ module.exports = (patches_ = {
     .then(rows => rows.slice(0, 100))
   },
 
-  getActivityFromLastDay(days){
+  getActivityFromLastDay: days => {
     assert_.number(days)
     const now = Date.now()
     const startTime = now - (oneDay * days)
@@ -95,14 +95,14 @@ module.exports = (patches_ = {
   }
 })
 
-var byEntityId = entityId => db.viewByKey('byEntityId', entityId)
+const byEntityId = entityId => db.viewByKey('byEntityId', entityId)
 
-var formatRow = row => ({
+const formatRow = row => ({
   user: row.key[0],
   contributions: row.value
 })
 
-var aggregatePeriodContributions = function(counts, row){
+const aggregatePeriodContributions = (counts, row) => {
   const userId = row.key[1]
   const contributions = row.value
   if (counts[userId] == null) { counts[userId] = 0 }
@@ -110,7 +110,7 @@ var aggregatePeriodContributions = function(counts, row){
   return counts
 }
 
-var convertToArray = function(counts){
+const convertToArray = counts => {
   const data = []
   for (const userId in counts) {
     const contributions = counts[userId]
@@ -119,15 +119,15 @@ var convertToArray = function(counts){
   return sortAndFilterContributions(data)
 }
 
-var sortAndFilterContributions = rows => rows
+const sortAndFilterContributions = rows => rows
 .filter(noSpecialUser)
 .sort((a, b) => b.contributions - a.contributions)
 
 // Filtering-out special users automated contributions
 // see server/db/couch/hard_coded_documents.js
-var noSpecialUser = row => !row.user.startsWith('000000000000000000000000000000')
+const noSpecialUser = row => !row.user.startsWith('000000000000000000000000000000')
 
-var getUserTotalContributions = userId => db.view(designDocName, 'byUserId', {
+const getUserTotalContributions = userId => db.view(designDocName, 'byUserId', {
   group_level: 1,
   // Maybe there is a way to only pass the userId key
   // but I couln't find it

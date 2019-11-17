@@ -31,24 +31,26 @@ const refreshSnapshot = require('./refresh_snapshot')
 const error_ = __.require('lib', 'error/error')
 
 module.exports = {
-  addToItem(item){
+  addToItem: item => {
     if (item.snapshot != null) return Promise.resolve(item)
 
     return getSnapshot(item.entity)
-    .then((snapshot) => {
+    .then(snapshot => {
       item.snapshot = snapshot
-      return item}).catch((err) => {
+      return item
+    })
+    .catch(err => {
       _.error(err, 'snapshot_.addToItem error')
       if (!item.snapshot) { item.snapshot = {} }
       return item
     })
   },
 
-  batch(ops){ return db.batch(_.forceArray(ops)) }
+  batch: ops => db.batch(_.forceArray(ops))
 }
 
-var getSnapshot = (uri, preventLoop) => db.get(uri)
-.then((snapshot) => {
+const getSnapshot = (uri, preventLoop) => db.get(uri)
+.then(snapshot => {
   if (snapshot != null) return snapshot
 
   if (preventLoop === true) {
@@ -63,5 +65,5 @@ var getSnapshot = (uri, preventLoop) => db.get(uri)
   return refreshAndGet(uri)
 })
 
-var refreshAndGet = uri => refreshSnapshot.fromUri(uri)
+const refreshAndGet = uri => refreshSnapshot.fromUri(uri)
 .then(() => getSnapshot(uri, true))

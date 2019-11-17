@@ -10,20 +10,19 @@
 
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const { elasticsearch:elasticConfig } = CONFIG
+const { elasticsearch: elasticConfig } = CONFIG
 const { spawn } = require('child_process')
 const folder = __.path('scripts', 'couch2elastic4sync')
 const logsFolder = __.path('logs', 'couch2elastic4sync')
-const fs  = require('fs')
+const fs = require('fs')
 const { syncDataList } = __.require('db', 'elasticsearch/list')
 const { red } = require('chalk')
 
 // Mapping to couch2elastic4sync API:
 // cliArg='sync' => couch2elastic4sync
 // cliArg='load' => couch2elastic4sync load
-module.exports = function(cliArg){
-  const childProcesses = syncDataList.map((syncData) => {
+module.exports = cliArg => {
+  const childProcesses = syncDataList.map(syncData => {
     const { dbName } = syncData
 
     // Prefixing the command with nice, so that it get reniced to 10,
@@ -46,7 +45,7 @@ module.exports = function(cliArg){
     return childProcess
   })
 
-  const killChildrenProcessesAndExit = function() {
+  const killChildrenProcessesAndExit = () => {
     childProcesses.forEach(childProc => childProc.kill('SIGTERM'))
     // Exit the process itself as we overrided the default SIG(INT|TERM) behavior
     return process.exit(0)
@@ -56,11 +55,11 @@ module.exports = function(cliArg){
   return process.on('SIGINT', killChildrenProcessesAndExit)
 }
 
-var getLogStream = function(dbName){
+const getLogStream = dbName => {
   const logFile = `${logsFolder}/${dbName}`
   const logStream = fs.createWriteStream(logFile, { flags: 'a' })
-  logStream.write(`\n--------- restarting: ${new Date} ---------\n`)
+  logStream.write(`\n--------- restarting: ${new Date()} ---------\n`)
   return logStream
 }
 
-var logError = chunk => console.error(red('couch2elastic4sync err'), chunk.toString())
+const logError = chunk => console.error(red('couch2elastic4sync err'), chunk.toString())

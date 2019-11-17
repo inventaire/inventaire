@@ -7,11 +7,10 @@
  */
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
 const { Promise } = __.require('lib', 'promises')
 const { createEdition, createWork, createAuthor } = require('./create_entity_from_seed')
 
-module.exports = (userId, batchId) => (function(entry) {
+module.exports = (userId, batchId) => entry => {
   const { edition, works, authors } = entry
 
   // If the edition has been resolved but not its associated works
@@ -29,16 +28,16 @@ module.exports = (userId, batchId) => (function(entry) {
   .then(() => createWorks(entry, userId, batchId))
   .then(() => createEdition(edition, works, userId, batchId))
   .then(() => entry)
-})
+}
 
-var createAuthors = function(entry, userId, batchId){
+const createAuthors = (entry, userId, batchId) => {
   const { authors } = entry
   return Promise.all(authors.map(createAuthor(userId, batchId)))
 }
 
-var createWorks = function(entry, userId, batchId){
+const createWorks = (entry, userId, batchId) => {
   const { works, authors } = entry
   return Promise.all(works.map(createWork(userId, batchId, authors)))
 }
 
-var addNotCreatedFlag = seed => seed.created = false
+const addNotCreatedFlag = seed => seed.created = false

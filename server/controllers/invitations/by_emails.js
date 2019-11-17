@@ -23,10 +23,10 @@ const groups_ = __.require('controllers', 'groups/lib/groups')
 const Group = __.require('models', 'group')
 const { Track } = __.require('lib', 'track')
 
-module.exports = function(req, res){
+module.exports = (req, res) => {
   const { user, body } = req
-  let { emails, message, group:groupId } = body
-  const { _id:reqUserId } = req.user
+  let { emails, message, group: groupId } = body
+  const { _id: reqUserId } = req.user
 
   if (message != null) {
     if (_.isString(message)) {
@@ -49,7 +49,7 @@ module.exports = function(req, res){
   .then(Track(req, [ 'invitation', 'email', null, parsedEmails.length ]))).catch(error_.Handler(req, res))
 }
 
-var parseAndValidateEmails = (emails, userEmail) => promises_.try(() => {
+const parseAndValidateEmails = (emails, userEmail) => promises_.try(() => {
   const parsedEmails = parseEmails(emails)
   // Removing the requesting user email if for some reason
   // it ended up in the list
@@ -57,7 +57,7 @@ var parseAndValidateEmails = (emails, userEmail) => promises_.try(() => {
   return applyLimit(filteredEmails)
 })
 
-var validateGroup = function(groupId, reqUserId){
+const validateGroup = (groupId, reqUserId) => {
   if (groupId == null) return promises_.resolve(null)
 
   if (!_.isGroupId(groupId)) {
@@ -65,12 +65,14 @@ var validateGroup = function(groupId, reqUserId){
   }
 
   return groups_.byId(groupId)
-  .then((group) => {
+  .then(group => {
     const userIsMember = Group.userIsMember(reqUserId, group)
     if (!userIsMember) {
       throw error_.new("user isn't a group member", 403, { groupId, reqUserId })
     }
-    return group}).catch((err) => {
+    return group
+  })
+  .catch(err => {
     if (err.statusCode === 404) {
       throw error_.new('group not found', 404, { groupId, reqUserId })
     } else {
@@ -82,7 +84,7 @@ var validateGroup = function(groupId, reqUserId){
 // this is totally arbitrary but sending too many invites at a time
 // will probably end up being reported as spam
 const limit = 50
-var applyLimit = function(emails){
+const applyLimit = emails => {
   if (emails.length > limit) {
     throw error_.new(`you can't send more than ${limit} invitations at a time`, 400)
   } else {

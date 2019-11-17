@@ -6,7 +6,7 @@ const __ = require('config').universalPath
 const getOriginalLang = __.require('lib', 'wikidata/get_original_lang')
 const getEntityImagesFromClaims = require('./get_entity_images_from_claims')
 
-module.exports = function(entity){
+module.exports = entity => {
   entity.originalLang = getOriginalLang(entity.claims)
 
   // Matching Wikidata entities format for images

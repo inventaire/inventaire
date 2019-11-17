@@ -11,13 +11,12 @@
  */
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
 const responses_ = __.require('lib', 'responses')
 const error_ = __.require('lib', 'error/error')
 const groups_ = require('./lib/groups')
 const { Track } = __.require('lib', 'track')
 
-module.exports = function(req, res){
+module.exports = (req, res) => {
   let { name, searchable, description, position } = req.body
   if (name == null) return error_.bundleMissingBody(req, res, 'name')
 
@@ -28,7 +27,9 @@ module.exports = function(req, res){
     description: description || '',
     searchable,
     position: position || null,
-    creatorId: req.user._id }).then(responses_.Send(res))
+    creatorId: req.user._id
+  })
+  .then(responses_.Send(res))
   .then(Track(req, [ 'groups', 'create' ]))
   .catch(error_.Handler(req, res))
 }

@@ -8,7 +8,6 @@
  */
 const { secret, cookieMaxAge } = require('config')
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
 
 const passport = require('passport')
 const passport_ = __.require('lib', 'passport/passport')
@@ -30,7 +29,7 @@ module.exports = {
     session: passport.session({ pauseStream: true })
   },
 
-  basicAuth(req, res, next){
+  basicAuth: (req, res, next) => {
     if (req.headers.authorization == null) return next()
     // TODO: handle response to avoid text/plain 401 response
     // to keep the API consistent on Content-Type

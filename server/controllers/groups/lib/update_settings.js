@@ -16,12 +16,12 @@ const { BasicUpdater } = __.require('lib', 'doc_updates')
 const radio = __.require('lib', 'radio')
 
 // Working around the circular dependency
-let groups_ = null
+let groups_
 const lateRequire = () => groups_ = require('./groups')
 setTimeout(lateRequire, 0)
 
-module.exports = function(data, userId){
-  const { group:groupId, attribute, value } = data
+module.exports = (data, userId) => {
+  const { group: groupId, attribute, value } = data
 
   if (!updatable.includes(attribute)) {
     throw error_.new(`${attribute} can't be updated`, 400, data)
@@ -32,7 +32,7 @@ module.exports = function(data, userId){
   }
 
   return groups_.db.get(groupId)
-  .then((groupDoc) => {
+  .then(groupDoc => {
     const notifData = getNotificationData(groupId, userId, groupDoc, attribute, value)
 
     groupDoc[attribute] = value
@@ -41,17 +41,19 @@ module.exports = function(data, userId){
     .spread((updatedDoc, hooksUpdates) => groups_.db.put(updatedDoc)
     .then(() => {
       radio.emit('group:update', notifData)
-      return { update: hooksUpdates }}))})
+      return { update: hooksUpdates }
+    }))
+  })
 }
 
-var applyEditHooks = function(attribute, groupDoc){
+const applyEditHooks = (attribute, groupDoc) => {
   if (attribute !== 'name') return promises_.resolve([ groupDoc, {} ])
 
   return groups_.addSlug(groupDoc)
   .then(updatedDoc => [ updatedDoc, _.pick(updatedDoc, 'slug') ])
 }
 
-var getNotificationData = (groupId, userId, groupDoc, attribute, value) => ({
+const getNotificationData = (groupId, userId, groupDoc, attribute, value) => ({
   usersToNotify: getUsersToNotify(groupDoc),
   groupId,
   actorId: userId,
@@ -60,7 +62,7 @@ var getNotificationData = (groupId, userId, groupDoc, attribute, value) => ({
   previousValue: groupDoc[attribute]
 })
 
-var getUsersToNotify = groupDoc => _(groupDoc)
+const getUsersToNotify = groupDoc => _(groupDoc)
 .pick('admins', 'members')
 .values()
 .flatten()

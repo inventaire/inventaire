@@ -29,12 +29,12 @@ const refreshSnapshot = require('./refresh_snapshot')
 // TODO: use the Wikidata recentchanges API to follow remote entities updates
 // https://www.wikidata.org/w/api.php?action=help&modules=query%2Brecentchanges
 
-module.exports = function() {
+module.exports = () => {
   radio.on('entity:update:label', refreshSnapshot.fromDoc)
   radio.on('entity:update:claim', refreshSnapshot.fromDoc)
   radio.on('entity:merge', updateSnapshotOnEntityMerge)
   return radio.on('entity:revert:merge', refreshSnapshot.fromUri)
 }
 
-var updateSnapshotOnEntityMerge = (fromUri, toUri) => // Using the toUri as its the URI the items are using now
+const updateSnapshotOnEntityMerge = (fromUri, toUri) => // Using the toUri as its the URI the items are using now
   refreshSnapshot.fromUri(toUri)

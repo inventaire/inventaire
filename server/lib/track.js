@@ -17,11 +17,11 @@ const host = CONFIG.fullHost()
 const placeholderUrl = '/unknown'
 const requests_ = require('./requests')
 
-const track = function(req, actionArray){
-  if (!enabled) return 
+const track = (req, actionArray) => {
+  if (!enabled) return
 
-  const { _id:userId, language } = req.user
-  let { referer:url, 'user-agent':ua, 'accept-language':al } = req.headers
+  const { _id: userId, language } = req.user
+  let { referer: url, 'user-agent': ua, 'accept-language': al } = req.headers
   const [ category, action, name, value ] = Array.from(actionArray)
 
   // a url is required so we use a placeholder if not provided in parameter
@@ -54,5 +54,5 @@ const track = function(req, actionArray){
 
 module.exports = {
   track,
-  Track(...args){ return () => track.apply(null, args) }
+  Track: (...args) => () => track.apply(null, args)
 }

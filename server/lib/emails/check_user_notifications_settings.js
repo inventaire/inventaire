@@ -8,7 +8,7 @@
 const __ = require('config').universalPath
 const error_ = __.require('lib', 'error/error')
 
-module.exports = function(user, notificationLabel){
+module.exports = (user, notificationLabel) => {
   const { _id, settings, undeliveredEmail } = user
   if (undeliveredEmail > 1) {
     throw emailDisabled({ user: _id, reason: 'too many undelivered emails' })
@@ -19,7 +19,7 @@ module.exports = function(user, notificationLabel){
   return checkSetting(_id, notifications, notificationLabel)
 }
 
-var checkSetting = function(userId, notifications, label){
+const checkSetting = (userId, notifications, label) => {
   // settings might be undefined, defaulting to true (activated)
   if (notifications[label] === false) {
     throw emailDisabled({
@@ -29,4 +29,4 @@ var checkSetting = function(userId, notifications, label){
   }
 }
 
-var emailDisabled = context => error_.new('email disabled', 'email_disabled', context)
+const emailDisabled = context => error_.new('email disabled', 'email_disabled', context)

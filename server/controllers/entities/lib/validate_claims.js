@@ -14,7 +14,7 @@ const validateClaim = require('./validate_claim')
 const getEntityType = require('./get_entity_type')
 const validateClaimProperty = require('./validate_claim_property')
 
-module.exports = function(params){
+module.exports = params => {
   let type
   const { newClaims, currentClaims, creating } = params
   const wdtP31 = currentClaims['wdt:P31'] || newClaims['wdt:P31']
@@ -34,10 +34,10 @@ module.exports = function(params){
   return promises_.all(_.flatten(validatePropertiesClaims(params)))
 }
 
-var validatePropertiesClaims = params => Object.keys(params.newClaims)
+const validatePropertiesClaims = params => Object.keys(params.newClaims)
 .map(validatePropertyClaims(params))
 
-var validatePropertyClaims = params => (function(property) {
+const validatePropertyClaims = params => property => {
   const { newClaims, currentClaims, type } = params
   validateClaimProperty(type, property)
   let values = newClaims[property]
@@ -56,21 +56,20 @@ var validatePropertyClaims = params => (function(property) {
     newVal,
     letEmptyValuePass: false
   }))
-})
+}
 
-var perTypeClaimsTests = {
-  edition(newClaims, creating){
-    if (!creating) return 
+const perTypeClaimsTests = {
+  edition: (newClaims, creating) => {
+    if (!creating) return
     const entityLabel = 'an edition'
     assertPropertyHasValue(newClaims, 'wdt:P629', entityLabel, 'an associated work')
     assertPropertyHasValue(newClaims, 'wdt:P1476', entityLabel, 'a title')
   }
 }
 
-var assertPropertyHasValue = function(claims, property, entityLabel, propertyLabel){
+const assertPropertyHasValue = (claims, property, entityLabel, propertyLabel) => {
   if ((claims[property] != null ? claims[property][0] : undefined) == null) {
     const message = `${entityLabel} should have ${propertyLabel} (${property})`
     throw error_.new(message, 400, claims)
   }
-
 }

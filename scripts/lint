@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if [[ "$1" == "" ]] ; then
-  files_to_lint="server.js server tests db/couchdb scripts"
+  files_to_lint="server tests db/couchdb scripts"
 else
   files_to_lint="$@"
 fi

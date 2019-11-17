@@ -20,13 +20,13 @@ module.exports = (validations = {
   email,
   password: BoundedString(8, 128),
   // accepting second level languages (like es-AR) but only using first level yet
-  language(lang){ return /^\w{2}(-\w{2})?$/.test(lang) },
+  language: lang => /^\w{2}(-\w{2})?$/.test(lang),
   picture: userImg,
-  creationStrategy(creationStrategy){ return creationStrategies.includes(creationStrategy) },
+  creationStrategy: creationStrategy => creationStrategies.includes(creationStrategy),
   bio: BoundedString(0, 1000),
   settings: boolean,
   position,
-  summaryPeriodicity(days){ return Number.isInteger(days) && (days >= 1) }
+  summaryPeriodicity: days => Number.isInteger(days) && (days >= 1)
 })
 
 const deepAttributes = {

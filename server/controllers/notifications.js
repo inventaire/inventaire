@@ -10,11 +10,10 @@ const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
-const user_ = __.require('controllers', 'user/lib/user')
 const notifs_ = __.require('lib', 'notifications')
 const promises_ = __.require('lib', 'promises')
 
-const get = function(req, res){
+const get = (req, res) => {
   if (req.user == null) return error_.unauthorizedApiAccess(req, res)
 
   return notifs_.byUserId(req.user._id)
@@ -22,7 +21,7 @@ const get = function(req, res){
   .catch(error_.Handler(req, res))
 }
 
-const updateStatus = function(req, res){
+const updateStatus = (req, res) => {
   if (req.user == null) return error_.unauthorizedApiAccess(req, res)
   const reqUserId = req.user._id
 
@@ -33,7 +32,9 @@ const updateStatus = function(req, res){
   return promises_.all(times.map(notifs_.updateReadStatus.bind(null, reqUserId)))
   .then(() => {
     _.success([ reqUserId, times ], 'notifs marked as read')
-    return responses_.ok(res)}).catch(error_.Handler(req, res))
+    return responses_.ok(res)
+  })
+  .catch(error_.Handler(req, res))
 }
 
 module.exports = { get, post: updateStatus }

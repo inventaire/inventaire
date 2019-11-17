@@ -20,8 +20,8 @@ const user_ = __.require('controllers', 'user/lib/user')
 const getEntitiesByUris = __.require('controllers', 'entities/lib/get_entities_by_uris')
 const getByAccessLevel = require('./lib/get_by_access_level')
 
-module.exports = function(req, res){
-  const { _id:reqUserId } = req.user
+module.exports = (req, res) => {
+  const { _id: reqUserId } = req.user
 
   // get all network items
   return user_.getNetworkIds(reqUserId)
@@ -30,19 +30,21 @@ module.exports = function(req, res){
     getByAccessLevel.network(ids, reqUserId)
   ]))
   .then(_.flatten)
-  .then((items) => {
+  .then(items => {
     const uris = _.uniq(items.map(_.property('entity')))
     return getEntitiesByUris({ uris })
     .get('entities')
     .then(replaceEditionsByTheirWork)
-    .then((data) => {
+    .then(data => {
       const { works, editionWorkMap } = data
       const worksTree = buildInvertedClaimTree(works)
       const workUriItemsMap = items.reduce(buildWorkUriItemsMap(editionWorkMap), {})
       const itemsByDate = getItemsByDate(items)
       const worksByOwner = items.reduce(aggregateOwnersWorks(editionWorkMap), {})
       worksTree.owner = worksByOwner
-      return { worksTree, workUriItemsMap, itemsByDate }})})
+      return { worksTree, workUriItemsMap, itemsByDate }
+    })
+  })
 
   // get associated entities
   // sort items by entities properties
@@ -53,7 +55,7 @@ module.exports = function(req, res){
 // Maybe we need a system of per-user inventory view
 // than can be aggregated per-visibility
 
-var replaceEditionsByTheirWork = function(entities){
+const replaceEditionsByTheirWork = entities => {
   let { works, editions } = splitEntities(entities)
   const worksUris = works.map(_.property('uri'))
   const data = { editionsWorksUris: [], editionWorkMap: {} }
@@ -62,14 +64,15 @@ var replaceEditionsByTheirWork = function(entities){
   editionsWorksUris = _.uniq(_.difference(editionsWorksUris, worksUris))
   return getEntitiesByUris({ uris: editionsWorksUris })
   .get('entities')
-  .then((editionsWorksEntities) => {
+  .then(editionsWorksEntities => {
     works = works.concat(_.values(editionsWorksEntities))
-    return { works, editionWorkMap }})
+    return { works, editionWorkMap }
+  })
 }
 
-var splitEntities = entities => _.values(entities).reduce(splitWorksAndEditions, { works: [], editions: [] })
+const splitEntities = entities => _.values(entities).reduce(splitWorksAndEditions, { works: [], editions: [] })
 
-var splitWorksAndEditions = function(results, entity){
+const splitWorksAndEditions = (results, entity) => {
   switch (entity.type) {
   case 'work': results.works.push(entity); break
   case 'edition': results.editions.push(entity); break
@@ -78,7 +81,7 @@ var splitWorksAndEditions = function(results, entity){
   return results
 }
 
-var aggregateEditionsWorksUris = function(data, edition){
+const aggregateEditionsWorksUris = (data, edition) => {
   const worksUris = edition.claims['wdt:P629']
   if (worksUris != null) {
     data.editionWorkMap[edition.uri] = worksUris
@@ -89,11 +92,11 @@ var aggregateEditionsWorksUris = function(data, edition){
   return data
 }
 
-var buildInvertedClaimTree = entities => entities.reduce(addToTree, {})
+const buildInvertedClaimTree = entities => entities.reduce(addToTree, {})
 
 const viewProperties = [ 'wdt:P50', 'wdt:P136', 'wdt:P921' ]
 
-var addToTree = function(tree, entity){
+const addToTree = (tree, entity) => {
   const { uri, claims } = entity
   for (const property of viewProperties) {
     if (!tree[property]) { tree[property] = { unknown: [] } }
@@ -111,28 +114,28 @@ var addToTree = function(tree, entity){
   return tree
 }
 
-var buildWorkUriItemsMap = editionWorkMap => (function(workUriItemsMap, item) {
-  const { _id:itemId, entity:itemEntityUri } = item
+const buildWorkUriItemsMap = editionWorkMap => (workUriItemsMap, item) => {
+  const { _id: itemId, entity: itemEntityUri } = item
   const itemWorksUris = editionWorkMap[itemEntityUri] || [ itemEntityUri ]
   for (const workUri of itemWorksUris) {
     if (!workUriItemsMap[workUri]) { workUriItemsMap[workUri] = [] }
     workUriItemsMap[workUri].push(itemId)
   }
   return workUriItemsMap
-})
+}
 
-var getItemsByDate = items => items
+const getItemsByDate = items => items
 .sort(sortByCreationDate)
 .map(getId)
 
-var getId = _.property('_id')
-var sortByCreationDate = (a, b) => b.created - a.created
+const getId = _.property('_id')
+const sortByCreationDate = (a, b) => b.created - a.created
 
-var aggregateOwnersWorks = editionWorkMap => (function(index, item) {
-  const { _id:itemId, owner:ownerId, entity:entityUri } = item
+const aggregateOwnersWorks = editionWorkMap => (index, item) => {
+  const { _id: itemId, owner: ownerId, entity: entityUri } = item
   const workUri = editionWorkMap[entityUri] || entityUri
   if (!index[ownerId]) { index[ownerId] = {} }
   if (!index[ownerId][workUri]) { index[ownerId][workUri] = [] }
   index[ownerId][workUri].push(itemId)
   return index
-})
+}

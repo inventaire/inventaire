@@ -11,7 +11,6 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const promises_ = __.require('lib', 'promises')
-const error_ = __.require('lib', 'error/error')
 const assert_ = __.require('utils', 'assert_types')
 const getWikipediaArticle = __.require('data', 'wikipedia/get_article')
 const getBnfAuthorWorksTitles = __.require('data', 'bnf/get_bnf_author_works_titles')
@@ -28,14 +27,14 @@ const { normalizeTerm } = require('./terms_normalization')
 //   to be the same as the wdAuthorUri author
 // - worksLabelsLangs: those labels language, indicating which Wikipedia editions
 //   should be checked
-module.exports = function(wdAuthorUri, worksLabels, worksLabelsLangs){
+module.exports = (wdAuthorUri, worksLabels, worksLabelsLangs) => {
   assert_.string(wdAuthorUri)
   assert_.strings(worksLabels)
   assert_.strings(worksLabelsLangs)
 
   // get Wikipedia article title from URI
   return getEntityByUri({ uri: wdAuthorUri })
-  .then((authorEntity) => {
+  .then(authorEntity => {
     // Known case: entities tagged as 'missing' or 'meta'
     if (authorEntity.sitelinks == null) return []
 
@@ -48,60 +47,63 @@ module.exports = function(wdAuthorUri, worksLabels, worksLabelsLangs){
       getSelibrOccurrences(authorEntity, worksLabels),
       getKjkOccurrences(authorEntity, worksLabels),
       getNdlOccurrences(authorEntity, worksLabels)
-    ])})
+    ])
+  })
   .then(_.flatten)
   .then(_.compact)
-  .catch((err) => {
+  .catch(err => {
     _.error(err, 'has works labels occurrence err')
-    return []})
+    return []
+  })
 }
 
-var getWikipediaOccurrences = (authorEntity, worksLabels, worksLabelsLangs) => promises_.all(getMostRelevantWikipediaArticles(authorEntity, worksLabelsLangs))
+const getWikipediaOccurrences = (authorEntity, worksLabels, worksLabelsLangs) => promises_.all(getMostRelevantWikipediaArticles(authorEntity, worksLabelsLangs))
 .map(createOccurrencesFromUnstructuredArticle(worksLabels))
 
-var getMostRelevantWikipediaArticles = function(authorEntity, worksLabelsLangs){
+const getMostRelevantWikipediaArticles = (authorEntity, worksLabelsLangs) => {
   const { sitelinks, originalLang } = authorEntity
 
   return _.uniq(worksLabelsLangs.concat([ originalLang, 'en' ]))
-  .map((lang) => {
+  .map(lang => {
     const title = sitelinks[`${lang}wiki`]
-    if (title != null) return { lang, title }})
+    if (title != null) return { lang, title }
+  })
   .filter(_.identity)
   .map(getWikipediaArticle)
 }
 
-const getAndCreateOccurrencesFromIds = (prop, getWorkTitlesFn) => (function(authorEntity, worksLabels) {
+const getAndCreateOccurrencesFromIds = (prop, getWorkTitlesFn) => (authorEntity, worksLabels) => {
   // An author should normally have only 1 value per external id property
   // but if there are several, check every available ids
   const ids = authorEntity.claims[prop]
-  if (ids == null) return 
+  if (ids == null) return
   return promises_.all(ids.map(getWorkTitlesFn))
   .then(_.flatten)
   .map(createOccurrencesFromExactTitles(worksLabels))
-})
+}
 
-var getBnfOccurrences = getAndCreateOccurrencesFromIds('wdt:P268', getBnfAuthorWorksTitles)
-var getOpenLibraryOccurrences = getAndCreateOccurrencesFromIds('wdt:P648', getOlAuthorWorksTitles)
-var getBnbOccurrences = getAndCreateOccurrencesFromIds('wdt:P5361', getBnbAuthorWorksTitles)
-var getBneOccurrences = getAndCreateOccurrencesFromIds('wdt:P950', getBneAuthorWorksTitles)
-var getSelibrOccurrences = getAndCreateOccurrencesFromIds('wdt:P906', getSelibrAuthorWorksTitle)
-var getKjkOccurrences = getAndCreateOccurrencesFromIds('wdt:P1006', getKjkAuthorWorksTitle)
-var getNdlOccurrences = getAndCreateOccurrencesFromIds('wdt:P349', getNdlAuthorWorksTitle)
+const getBnfOccurrences = getAndCreateOccurrencesFromIds('wdt:P268', getBnfAuthorWorksTitles)
+const getOpenLibraryOccurrences = getAndCreateOccurrencesFromIds('wdt:P648', getOlAuthorWorksTitles)
+const getBnbOccurrences = getAndCreateOccurrencesFromIds('wdt:P5361', getBnbAuthorWorksTitles)
+const getBneOccurrences = getAndCreateOccurrencesFromIds('wdt:P950', getBneAuthorWorksTitles)
+const getSelibrOccurrences = getAndCreateOccurrencesFromIds('wdt:P906', getSelibrAuthorWorksTitle)
+const getKjkOccurrences = getAndCreateOccurrencesFromIds('wdt:P1006', getKjkAuthorWorksTitle)
+const getNdlOccurrences = getAndCreateOccurrencesFromIds('wdt:P349', getNdlAuthorWorksTitle)
 
-var createOccurrencesFromUnstructuredArticle = function(worksLabels){
+const createOccurrencesFromUnstructuredArticle = worksLabels => {
   const worksLabelsPattern = new RegExp(worksLabels.join('|'), 'gi')
-  return function(article){
+  return article => {
     const matchedTitles = _.uniq(article.extract.match(worksLabelsPattern))
-    if (matchedTitles.length <= 0) return 
+    if (matchedTitles.length <= 0) return
     return { url: article.url, matchedTitles, structuredDataSource: false }
   }
 }
 
-var createOccurrencesFromExactTitles = worksLabels => (function(result) {
+const createOccurrencesFromExactTitles = worksLabels => result => {
   const title = normalizeTerm(result.title)
   if (worksLabels.includes(title)) {
     return { url: result.url, matchedTitles: [ title ], structuredDataSource: true }
   } else {
-    return
+
   }
-})
+}

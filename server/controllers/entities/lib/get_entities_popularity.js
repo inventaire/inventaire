@@ -13,17 +13,17 @@ const error_ = __.require('lib', 'error/error')
 const cache_ = __.require('lib', 'cache')
 const getPopularityByUri = require('./get_popularity_by_uri')
 
-module.exports = function(uris, refresh){
+module.exports = (uris, refresh) => {
   if (uris.length === 0) return promises_.resolve({})
   const urisPopularity = _.indexAppliedValue(uris, getPopularity(refresh))
   return promises_.props(urisPopularity)
 }
 
-var getPopularity = refresh => (function(uri) {
+const getPopularity = refresh => uri => {
   if (!_.isEntityUri(uri)) throw error_.new('invalid uri', 400, uri)
 
   const key = `popularity:${uri}`
   const fn = getPopularityByUri.bind(null, uri)
 
   return cache_.get({ key, fn, refresh, dryAndCache: true, dryFallbackValue: 0 })
-})
+}

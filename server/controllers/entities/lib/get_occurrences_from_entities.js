@@ -13,7 +13,7 @@ const { getEntityNormalizedTerms } = require('./terms_normalization')
 
 module.exports = (uri, suspectWorksLabels) => getAuthorWorks({ uri })
 .then(getSuggestionWorks)
-.then((suggestionWorksData) => {
+.then(suggestionWorksData => {
   const occurrences = []
   for (const sugWork of suggestionWorksData) {
     const sugWorkTerms = getEntityNormalizedTerms(sugWork)
@@ -26,7 +26,7 @@ module.exports = (uri, suspectWorksLabels) => getAuthorWorks({ uri })
   return occurrences
 })
 
-var getSuggestionWorks = function(res){
+const getSuggestionWorks = res => {
   const uris = res.works.map(_.property('uri'))
   return getEntitiesList(uris)
 }

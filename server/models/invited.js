@@ -12,18 +12,18 @@ const _ = __.require('builders', 'utils')
 const validations = __.require('models', 'validations/common')
 const { BasicUpdater } = __.require('lib', 'doc_updates')
 
-const create = (inviterId, groupId) => (function(email) {
+const create = (inviterId, groupId) => email => {
   validations.pass('email', email)
   return addInviter(inviterId, groupId, baseDoc(email))
-})
+}
 
-var baseDoc = email => ({
+const baseDoc = email => ({
   type: 'invited',
   email,
   inviters: {}
 })
 
-var addInviter = function(inviterId, groupId, doc){
+const addInviter = (inviterId, groupId, doc) => {
   // The doc shouldn't be updated if the inviter already did invited
   // but in the undesired case it happens, keep the first timestamp
   if (!doc.inviters[inviterId]) { doc.inviters[inviterId] = Date.now() }
@@ -43,7 +43,7 @@ var addInviter = function(inviterId, groupId, doc){
 // by sending an unsubscribe link with a token
 const stopEmails = BasicUpdater('stopEmails', true)
 
-const canBeInvited = (inviterId, groupId) => (function(doc) {
+const canBeInvited = (inviterId, groupId) => doc => {
   if (doc.stopEmails) {
     _.warn([ inviterId, doc ], 'stopEmails: invitation aborted')
     return false
@@ -67,6 +67,6 @@ const canBeInvited = (inviterId, groupId) => (function(doc) {
   }
 
   return true
-})
+}
 
 module.exports = { create, addInviter, canBeInvited, stopEmails }

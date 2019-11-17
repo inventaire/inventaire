@@ -34,7 +34,7 @@ module.exports = {
 
   // Assumes that a requests made twice with the same body within 2 secondes
   // is an erronous request that should be blocked
-  deduplicateRequests(req, res, next){
+  deduplicateRequests: (req, res, next) => {
     if (!deduplicateRequests) return next()
 
     const { method, url } = req
@@ -69,9 +69,9 @@ module.exports = {
   }
 }
 
-var headersHash = req => _.hashCode(JSON.stringify(req.headers))
+const headersHash = req => _.hashCode(JSON.stringify(req.headers))
 
-var temporaryLock = function(key, data){
+const temporaryLock = (key, data) => {
   requestsCache[key] = data
   // _.log key, 'preventing duplicated request for the next 2 secondes'
   // unlock after 2 secondes
@@ -80,9 +80,9 @@ var temporaryLock = function(key, data){
 }
 
 // can be problematic in cluster mode as it won't be shared between instances
-var requestsCache = {}
+const requestsCache = {}
 
-var methodsWithBody = [ 'POST', 'PUT' ]
-var ignorePathname = [
+const methodsWithBody = [ 'POST', 'PUT' ]
+const ignorePathname = [
   '/api/reports'
 ]

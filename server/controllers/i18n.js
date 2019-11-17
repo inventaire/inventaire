@@ -14,8 +14,8 @@ const { appendToFullKeys, appendToShortKeys } = __.require('lib', 'i18n_autofix'
 
 // if this route is enabled by CONFIG
 // allows the client to notify the server of i18n keys without a value
-const i18nMissingKeys = function(req, res, next){
-  let { missingKeys } = req.body
+const i18nMissingKeys = (req, res, next) => {
+  let { missingKeys } = req.body
 
   if (missingKeys == null) {
     return error_.bundleMissingBody(req, res, 'token')
@@ -37,8 +37,11 @@ const i18nMissingKeys = function(req, res, next){
     // using _ as the convention to identify short keys: ex: awesome_title
     // (that is, keys with an english value different than the key itself)
     // the underscore should be surrended by letters, not spaces
-    if (/\w+_\w+/.test(key)) { shortKeys.push(key)
-    } else { fullKeys.push(key) }
+    if (/\w+_\w+/.test(key)) {
+      shortKeys.push(key)
+    } else {
+      fullKeys.push(key)
+    }
   }
 
   appendToShortKeys(shortKeys)
@@ -46,6 +49,6 @@ const i18nMissingKeys = function(req, res, next){
   return responses_.ok(res)
 }
 
-var areStrings = array => _.every(array, _.isString)
+const areStrings = array => _.every(array, _.isString)
 
 module.exports = { post: i18nMissingKeys }

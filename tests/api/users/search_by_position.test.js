@@ -13,17 +13,18 @@ const { nonAuthReq, getUser, undesiredErr } = require('../utils/utils')
 const { createUser } = require('../fixtures/users')
 const qs = require('querystring')
 
-describe('groups:search-by-position', () => it('should get groups by position', (done) => {
+describe('groups:search-by-position', () => it('should get groups by position', done => {
   createUser({ position: [ 1, 1 ] })
   .delay(100)
-  .then((user) => {
+  .then(user => {
     const bbox = qs.escape(JSON.stringify([ 0, 0, 2, 2 ]))
     return nonAuthReq('get', `/api/users?action=search-by-position&bbox=${bbox}`)
-    .then((res) => {
+    .then(res => {
       res.users.should.be.an.Array()
       const usersIds = _.map(res.users, '_id')
       should(usersIds.includes(user._id)).be.true()
       done()
-    })}).catch(done)
-
+    })
+  })
+  .catch(done)
 }))

@@ -6,7 +6,6 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
 const transactions_ = require('./lib/transactions')
@@ -22,16 +21,17 @@ const sanitization = {
 }
 
 module.exports = (req, res, next) => sanitize(req, res, sanitization)
-.then((params) => {
+.then(params => {
   const { transaction, state } = req.body
   const reqUserId = req.user._id
   return transactions_.byId(transaction)
   .then(VerifyRights(state, reqUserId))
   .then(transactions_.updateState.bind(null, state, reqUserId))
-  .then(Track(req, [ 'transaction', 'update', state ]))}).then(responses_.Ok(res))
+  .then(Track(req, [ 'transaction', 'update', state ]))
+}).then(responses_.Ok(res))
 .catch(error_.Handler(req, res))
 
-var VerifyRights = function(state, reqUserId){
+const VerifyRights = (state, reqUserId) => {
   switch (states[state].actor) {
   case 'requester':
     return transactions_.verifyIsRequester.bind(null, reqUserId)

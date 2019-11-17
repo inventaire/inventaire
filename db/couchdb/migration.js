@@ -16,7 +16,7 @@ Promise.longStackTraces()
 const fs = require('fs')
 const updateDocsByBatch = require('./update_docs_by_batch')
 
-module.exports = function(params){
+module.exports = params => {
   let db, log
   let { dbName, designDocName, preview, silent, showDiff } = params
   params.preview = preview != null ? preview : (preview = true)
@@ -31,7 +31,7 @@ module.exports = function(params){
   params.db = (db = __.require('couch', 'base')(dbName, designDocName))
   if (db == null) throw new Error('bad dbName')
 
-  const updater = function(docsIdsPromise, updateFunction, label){
+  const updater = (docsIdsPromise, updateFunction, label) => {
     if (!preview) { logMigration(dbName, updateFunction, label) }
 
     params.updateFunction = updateFunction
@@ -42,29 +42,31 @@ module.exports = function(params){
   }
 
   const API = {
-    updateAll(updateFunction, label){
+    updateAll: (updateFunction, label) => {
       return updater(getAllDocsKeys(), updateFunction, label)
     },
 
-    updateByView(viewName, updateFunction, label){
+    updateByView: (viewName, updateFunction, label) => {
       return updater(getViewKeys(viewName), updateFunction, label)
     }
   }
 
-  var getAllDocsKeys = () => db.allDocsKeys()
-  .then((res) => {
+  const getAllDocsKeys = () => db.allDocsKeys()
+  .then(res => {
     const rows = res.rows.filter(row => !row.id.startsWith('_design/'))
     const ids = _.map(rows, 'id')
-    return _.success(ids, 'doc ids found')}).catch(_.ErrorRethrow('getAllDocsKeys error'))
+    return _.success(ids, 'doc ids found')
+  })
+  .catch(_.ErrorRethrow('getAllDocsKeys error'))
 
-  var getViewKeys = viewName => db.view(designDocName, viewName, { reduce: false })
+  const getViewKeys = viewName => db.view(designDocName, viewName, { reduce: false })
   .then(res => res.rows.map(_.property('id')))
   .then(Log('view ids'))
 
   return API
 }
 
-var logMigration = function(dbName, updateFunction, label = 'updateFunction'){
+const logMigration = (dbName, updateFunction, label = 'updateFunction') => {
   const date = new Date().toJSON()
   const name = `migrations/${dbName}-${date}.json`
   const path = __.path('couchdb', name)
@@ -76,4 +78,4 @@ var logMigration = function(dbName, updateFunction, label = 'updateFunction'){
   return _.success(`migration logged at ${path}: ${json}`)
 }
 
-var isntDesignDoc = id => !/^_design/.test(id)
+const isntDesignDoc = id => !/^_design/.test(id)

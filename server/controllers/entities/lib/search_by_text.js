@@ -17,7 +17,7 @@ const error_ = __.require('lib', 'error/error')
 const assert_ = __.require('utils', 'assert_types')
 const { getInvEntityUri } = __.require('controllers', 'entities/lib/prefix')
 
-module.exports = function(query){
+module.exports = query => {
   assert_.object(query)
   const { refresh } = query
 
@@ -31,7 +31,7 @@ module.exports = function(query){
   .catch(_.ErrorRethrow('search by text err'))
 }
 
-var searchInvByText = function(query, key){
+const searchInvByText = (query, key) => {
   const { search } = query
 
   return searchInvEntities(search)
@@ -43,9 +43,9 @@ var searchInvByText = function(query, key){
   .catch(error_.notFound)
 }
 
-var mergeResults = results => _.flattenIndexes(_.compact(results).map(_.property('entities')))
+const mergeResults = results => _.flattenIndexes(_.compact(results).map(_.property('entities')))
 
-var replaceEditionsByTheirWork = refresh => (function(entities) {
+const replaceEditionsByTheirWork = refresh => entities => {
   let missingWorkEntities = []
   for (const uri in entities) {
     const entity = entities[uri]
@@ -69,4 +69,4 @@ var replaceEditionsByTheirWork = refresh => (function(entities) {
 
   return getEntitiesByUris({ uris: missingWorkEntities, refresh })
   .then(results => _.extend(entities, results.entities))
-})
+}

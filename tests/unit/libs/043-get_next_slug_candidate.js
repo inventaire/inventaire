@@ -7,12 +7,11 @@
  */
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
 
-const should = require('should')
+require('should')
 const getNextSlugCandidate = __.require('controllers', 'groups/lib/get_next_slug_candidate')
 
-describe('get next slug candidate', () => it('should return an iterated slug', (done) => {
+describe('get next slug candidate', () => it('should return an iterated slug', done => {
   getNextSlugCandidate('hello').should.equal('hello.1')
   getNextSlugCandidate('hello.1').should.equal('hello.2')
   getNextSlugCandidate('hello.15').should.equal('hello.16')

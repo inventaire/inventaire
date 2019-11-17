@@ -11,12 +11,11 @@ const _ = __.require('builders', 'utils')
 const { getNames, aggregateClaims } = require('./helpers')
 const error_ = __.require('lib', 'error/error')
 const assert_ = __.require('utils', 'assert_types')
-const wdk = require('wikidata-sdk')
 const { snapshotValidations } = __.require('models', 'validations/item')
 const getBestLangValue = __.require('lib', 'get_best_lang_value')
 
 module.exports = {
-  edition(edition, works, authors, series){
+  edition: (edition, works, authors, series) => {
     const lang = edition.originalLang || 'en'
     let title = edition.claims['wdt:P1476'] != null ? edition.claims['wdt:P1476'][0] : undefined
     const subtitle = edition.claims['wdt:P1680'] != null ? edition.claims['wdt:P1680'][0] : undefined
@@ -36,7 +35,7 @@ module.exports = {
     })
   },
 
-  work(work, authors, series){
+  work: (work, authors, series) => {
     const { originalLang: lang } = work
     const title = getBestLangValue(lang, null, work.labels).value
     const image = work.claims['wdt:P18'] != null ? work.claims['wdt:P18'][0] : undefined
@@ -54,7 +53,7 @@ module.exports = {
   }
 }
 
-var buildOperation = function(params){
+const buildOperation = params => {
   const { type, entity, works, title, subtitle, lang, image, authors, series } = params
   assert_.array(works)
   if (!_.isNonEmptyString(title)) {
@@ -90,7 +89,7 @@ var buildOperation = function(params){
   return { key: uri, value: snapshot }
 }
 
-var setOrdinal = function(snapshot, works){
+const setOrdinal = (snapshot, works) => {
   if (works.length === 1) {
     const work = works[0]
     const ordinal = work.claims['wdt:P1545'] != null ? work.claims['wdt:P1545'][0] : undefined

@@ -7,8 +7,6 @@
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
 const { parse: isbnParser } = require('isbn2').ISBN
 const parse = require('./parse')
 const wdLang = require('wikidata-lang')
@@ -25,7 +23,7 @@ const isNormalizedIsbn = text => /^(97(8|9))?\d{9}(\d|X)$/.test(text)
 module.exports = {
   parse,
   normalizeIsbn,
-  looksLikeAnIsbn(text){
+  looksLikeAnIsbn: text => {
     if (typeof text !== 'string') return false
     const cleanedText = normalizeIsbn(text)
     if (isNormalizedIsbn(cleanedText)) {
@@ -36,18 +34,18 @@ module.exports = {
     }
     return false
   },
-  isValidIsbn(isbn){ return (isbnParser(isbn) != null) },
-  toIsbn13(isbn, hyphenate){
+  isValidIsbn: isbn => (isbnParser(isbn) != null),
+  toIsbn13: (isbn, hyphenate) => {
     const data = parse(isbn)
     if (data == null) return
     if (hyphenate) return data.isbn13h
     else return data.isbn13
   },
 
-  toIsbn13h(isbn){ return parse(isbn).isbn13h },
-  toIsbn10h(isbn){ return parse(isbn).isbn10h },
+  toIsbn13h: isbn => parse(isbn).isbn13h,
+  toIsbn10h: isbn => parse(isbn).isbn10h,
 
-  guessLangFromIsbn(isbn){
+  guessLangFromIsbn: isbn => {
     const langUri = __guard__(parse(isbn), x => x.groupLangUri)
     if (langUri == null) return
     const wdId = langUri.split(':')[1]
@@ -55,6 +53,6 @@ module.exports = {
   }
 }
 
-function __guard__(value, transform) {
+function __guard__ (value, transform) {
   return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined
 }

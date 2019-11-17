@@ -14,9 +14,9 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const promises_ = __.require('lib', 'promises')
 const breq = require('bluereq')
-const { tenMinutes } =  __.require('lib', 'times')
+const { tenMinutes } = __.require('lib', 'times')
 
-let lastToken = null
+let lastToken
 let lastTokenExpirationTime = 0
 // let a 10 minutes margin before token expiration
 const tokenExpired = () => Date.now() > (lastTokenExpirationTime - tenMinutes)
@@ -34,7 +34,7 @@ const postParams = {
   }
 }
 
-module.exports = function() {
+module.exports = () => {
   if ((lastToken != null) && !tokenExpired()) return promises_.resolve(lastToken)
 
   return breq.post(postParams)
@@ -43,7 +43,7 @@ module.exports = function() {
   .catch(_.ErrorRethrow('getToken'))
 }
 
-var parseIdentificationRes = function(res){
+const parseIdentificationRes = res => {
   const { token, serviceCatalog } = res.access
   verifyEndpoint(serviceCatalog)
   const { expires, id } = token
@@ -52,7 +52,7 @@ var parseIdentificationRes = function(res){
   return id
 }
 
-var verifyEndpoint = function(serviceCatalog){
+const verifyEndpoint = serviceCatalog => {
   const swiftData = _.find(serviceCatalog, { name: 'swift' })
   const endpoint = _.find(swiftData.endpoints, { region })
   if (endpoint.publicURL !== publicURL) {

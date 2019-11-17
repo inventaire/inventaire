@@ -6,7 +6,6 @@
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-const CONFIG = require('config')
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const user_ = __.require('controllers', 'user/lib/user')
@@ -38,7 +37,7 @@ module.exports = (groupId, authentifiedUserPromise) => promises_.all([
   }))
 })
 
-var getGroupMembersIds = function(group){
+const getGroupMembersIds = group => {
   const { admins, members } = group
   return admins.concat(members).map(_.property('user'))
 }

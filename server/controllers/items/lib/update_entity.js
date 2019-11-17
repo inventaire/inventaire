@@ -7,11 +7,10 @@
  */
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
 const Item = __.require('models', 'item')
 
 // Working around circular dependencies
-let items_ = null
+let items_
 const lateRequire = () => items_ = require('./items')
 setTimeout(lateRequire, 0)
 

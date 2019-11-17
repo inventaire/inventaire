@@ -11,7 +11,6 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const groups_ = require('./groups')
-const user_ = __.require('controllers', 'user/lib/user')
 const promises_ = __.require('lib', 'promises')
 const { possibleActions } = require('./actions_lists')
 
@@ -29,7 +28,7 @@ const verifyJoinRequestHandlingRights = (reqUserId, groupId, requesterId) => pro
 })
 
 const verifyRightsToInvite = (reqUserId, groupId, invitedUserId) => groups_.userInGroup(reqUserId, groupId)
-.then((invitorInGroup) => {
+.then(invitorInGroup => {
   if (!invitorInGroup) {
     const context = { reqUserId, groupId, invitedUserId }
     throw error_.new("invitor isn't in group", 403, context)
@@ -37,7 +36,7 @@ const verifyRightsToInvite = (reqUserId, groupId, invitedUserId) => groups_.user
 })
 
 const verifyAdminRights = (reqUserId, groupId) => groups_.userInAdmins(reqUserId, groupId)
-.then((bool) => {
+.then(bool => {
   if (!bool) {
     throw error_.new('user isnt a group admin', 403, reqUserId, groupId)
   }
@@ -75,18 +74,18 @@ module.exports = (verificators = {
   // /!\ groups_.userInvited returns a group doc, not a boolean
   accept: groups_.userInvited,
   decline: groups_.userInvited,
-  request(reqUserId, groupId){
+  request: (reqUserId, groupId) => {
     return groups_.userInGroupOrOut(reqUserId, groupId)
-    .then((bool) => {
+    .then(bool => {
       if (bool) {
         throw error_.new('user is already in group', 403, reqUserId, groupId)
       }
     })
   },
 
-  cancelRequest(reqUserId, groupId){
+  cancelRequest: (reqUserId, groupId) => {
     return groups_.userInRequested(reqUserId, groupId)
-    .then((bool) => {
+    .then(bool => {
       if (!bool) {
         throw error_.new('request not found', 403, reqUserId, groupId)
       }

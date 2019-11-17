@@ -26,15 +26,15 @@ const maxConcurrency = 4
 let waiting = 0
 let ongoing = 0
 
-module.exports = function(sparql){
+module.exports = sparql => {
   const url = wdk.sparqlQuery(sparql)
 
   if (waiting > 50) {
     return error_.reject('too many requests in queue', 500, { sparql })
   }
 
-  var persistentRequest = () => makeRequest(url)
-  .catch((err) => {
+  const persistentRequest = () => makeRequest(url)
+  .catch(err => {
     if (err.statusCode === 429) {
       _.warn(url, `${err.message}: retrying in 2s`)
       return wait(2000).then(persistentRequest)
@@ -46,11 +46,11 @@ module.exports = function(sparql){
   return persistentRequest()
 }
 
-var makeRequest = function(url){
+const makeRequest = url => {
   logStats()
   waiting += 1
 
-  var makePatientRequest = function() {
+  const makePatientRequest = () => {
     if (ongoing >= maxConcurrency) {
       return wait(100).then(makePatientRequest)
     }
@@ -70,6 +70,6 @@ var makeRequest = function(url){
   return makePatientRequest()
 }
 
-var logStats = function() {
+const logStats = () => {
   if (waiting > 0) return _.info({ waiting, ongoing }, 'wikidata sparql requests queue stats')
 }

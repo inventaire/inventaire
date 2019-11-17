@@ -17,7 +17,7 @@ const customQueries = {
   'serie-parts': require('./lib/get_serie_parts')
 }
 
-module.exports = function(req, res, next){
+module.exports = (req, res, next) => {
   let { uri, refresh, action } = req.query
 
   if (!_.isEntityUri(uri)) {

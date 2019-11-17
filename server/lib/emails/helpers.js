@@ -15,20 +15,20 @@ const user_ = __.require('controllers', 'user/lib/user')
 const groups_ = __.require('controllers', 'groups/lib/groups')
 
 exports.getUsersByIds = (user1Id, user2Id) => user_.byIds([ user1Id, user2Id ])
-.then((usersData) => {
+.then(usersData => {
   let context
   const [ user1, user2 ] = Array.from(parseUsersData(user1Id, user2Id, usersData))
-  return context = { user1, user2 }})
+  return context = { user1, user2 }
+})
 .catch(_.Error('getUsersByIds err'))
 
-var parseUsersData = function(user1Id, user2Id, usersData){
+const parseUsersData = (user1Id, user2Id, usersData) => {
   usersData = _.keyBy(usersData, '_id')
   const user1 = usersData[user1Id]
   const user2 = usersData[user2Id]
   assert_.objects([ user1, user2 ])
   return [ user1, user2 ]
 }
-
 
 exports.getGroupAndUsersData = (groupId, actingUserId, userToNotifyId) => promises_.all([
   groups_.byId(groupId),
@@ -44,7 +44,10 @@ exports.getGroupAndUsersData = (groupId, actingUserId, userToNotifyId) => promis
   }
 })
 
-exports.catchDisabledEmails = function(err){
-  if (err.type === 'email_disabled') { return _.warn(err.context, err.message)
-  } else { throw err }
+exports.catchDisabledEmails = err => {
+  if (err.type === 'email_disabled') {
+    return _.warn(err.context, err.message)
+  } else {
+    throw err
+  }
 }

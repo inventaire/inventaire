@@ -13,8 +13,6 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const promises_ = __.require('lib', 'promises')
-const error_ = __.require('lib', 'error/error')
-const assert_ = __.require('utils', 'assert_types')
 const entities_ = require('./entities')
 const runWdQuery = __.require('data', 'wikidata/run_query')
 const { prefixifyWd } = __.require('controllers', 'entities/lib/prefix')
@@ -22,15 +20,15 @@ const { getSimpleDayDate, sortByScore } = require('./queries_utils')
 const { types, typesNames, getTypePluralNameByTypeUri } = __.require('lib', 'wikidata/aliases')
 
 // Working around the circular dependency
-let getEntitiesPopularity = null
+let getEntitiesPopularity
 const lateRequire = () => getEntitiesPopularity = require('./get_entities_popularity')
 setTimeout(lateRequire, 0)
 
 const whitelistedTypesNames = [ 'series', 'works', 'articles' ]
 
-module.exports = function(params){
+module.exports = params => {
   const { uri } = params
-  const [ prefix, id ] = Array.from(uri.split(':'))
+  const [ prefix, id ] = uri.split(':')
   const promises = []
 
   const worksByTypes = _.initCollectionsIndex(whitelistedTypesNames)
@@ -48,13 +46,13 @@ module.exports = function(params){
   .then(spreadByType(worksByTypes, results))).catch(_.ErrorRethrow('get author works err'))
 }
 
-//# WD
-var getWdAuthorWorks = function(qid, worksByTypes, params){
+// # WD
+const getWdAuthorWorks = (qid, worksByTypes, params) => {
   const { refresh, dry } = params
   return runWdQuery({ query: 'author-works', qid, refresh, dry })
   .map(formatWdEntity)
   .filter(_.identity)
-  .then((results) => {
+  .then(results => {
     // Known case of duplicate: when an entity has two P31 values that both
     // resolve to the same whitelisted type
     // ex: Q23701761 → P31 → Q571/Q17518461
@@ -65,7 +63,7 @@ var getWdAuthorWorks = function(qid, worksByTypes, params){
   })
 }
 
-var deduplicate = uris => (function(result) {
+const deduplicate = uris => result => {
   const { uri } = result
   if (uris.includes(uri)) {
     _.warn(uri, `duplicated id: ${uri}`)
@@ -74,30 +72,30 @@ var deduplicate = uris => (function(result) {
     uris.push(uri)
     return true
   }
-})
+}
 
-var formatWdEntity = function(result){
-  let { work:wdId, type:typeWdId, date, serie } = result
+const formatWdEntity = result => {
+  let { work: wdId, type: typeWdId, date, serie } = result
   const typeUri = `wd:${typeWdId}`
   const typeName = getTypePluralNameByTypeUri(typeUri)
 
-  if (!whitelistedTypesNames.includes(typeName)) return 
+  if (!whitelistedTypesNames.includes(typeName)) return
 
   date = getSimpleDayDate(date)
   serie = prefixifyWd(serie)
   return { type: typeName, uri: `wd:${wdId}`, date, serie }
 }
 
-//# INV
-var getInvAuthorWorks = (uri, worksByTypes) => entities_.byClaim('wdt:P50', uri, true)
+// # INV
+const getInvAuthorWorks = (uri, worksByTypes) => entities_.byClaim('wdt:P50', uri, true)
 .get('rows')
 .map(formatInvEntity)
 .filter(_.identity)
 
-var formatInvEntity = function(row){
+const formatInvEntity = row => {
   const typeUri = row.value
   const typeName = getTypePluralNameByTypeUri(typeUri)
-  if (!whitelistedTypesNames.includes(typeName)) return 
+  if (!whitelistedTypesNames.includes(typeName)) return
   return {
     uri: `inv:${row.id}`,
     date: (row.doc.claims['wdt:P577'] != null ? row.doc.claims['wdt:P577'][0] : undefined),
@@ -106,13 +104,13 @@ var formatInvEntity = function(row){
   }
 }
 
-//# COMMONS
-var getPopularityScores = function(results){
+// # COMMONS
+const getPopularityScores = results => {
   const uris = _.map(results, 'uri')
   return getEntitiesPopularity(uris)
 }
 
-var spreadByType = (worksByTypes, rows) => (function(scores) {
+const spreadByType = (worksByTypes, rows) => scores => {
   for (const row of rows) {
     const { type } = row
     delete row.type
@@ -121,11 +119,11 @@ var spreadByType = (worksByTypes, rows) => (function(scores) {
   }
 
   return sortTypesByScore(worksByTypes)
-})
+}
 
 // TODO: prevent a work with several wdt:P577 values to appear several times
 // ex: https://inventaire.io/api/entities?action=serie-parts&uri=wd:Q8337
-var sortTypesByScore = function(worksByTypes){
+const sortTypesByScore = worksByTypes => {
   for (const name in worksByTypes) {
     const results = worksByTypes[name]
     worksByTypes[name] = results.sort(sortByScore)

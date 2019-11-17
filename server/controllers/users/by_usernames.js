@@ -14,7 +14,7 @@ const responses_ = __.require('lib', 'responses')
 const user_ = __.require('controllers', 'user/lib/user')
 const User = __.require('models', 'user')
 
-module.exports = function(req, res){
+module.exports = (req, res) => {
   const { usernames } = req.query
   const reqUserId = req.user != null ? req.user._id : undefined
 
@@ -24,7 +24,7 @@ module.exports = function(req, res){
   .catch(error_.Handler(req, res))
 }
 
-var parseAndValidateUsernames = function(usernames){
+const parseAndValidateUsernames = usernames => {
   if (!_.isNonEmptyString(usernames)) {
     throw error_.newMissingQuery('usernames')
   }
@@ -38,4 +38,4 @@ var parseAndValidateUsernames = function(usernames){
   }
 }
 
-var validUsersUsernames = usernames => _.every(usernames, User.validations.username)
+const validUsersUsernames = usernames => _.every(usernames, User.validations.username)

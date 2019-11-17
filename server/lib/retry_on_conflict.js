@@ -9,15 +9,14 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
 const promises_ = __.require('lib', 'promises')
 const error_ = __.require('lib', 'error/error')
 
-module.exports = function(params){
+module.exports = params => {
   let { updateFn, maxAttempts } = params
   if (!maxAttempts) { maxAttempts = 10 }
-  return function(...args){
-    var run = function(attemptsCount){
+  return (...args) => {
+    const run = attemptsCount => {
       if (attemptsCount > maxAttempts) {
         throw error_.new('maximum attempt reached', 400, { updateFn, maxAttempts, args })
       }
@@ -25,9 +24,12 @@ module.exports = function(params){
       attemptsCount += 1
 
       return updateFn.apply(null, args)
-      .catch((err) => {
-        if (err.statusCode === 409) { return runAfterDelay(run, attemptsCount, err)
-        } else { throw err }
+      .catch(err => {
+        if (err.statusCode === 409) {
+          return runAfterDelay(run, attemptsCount, err)
+        } else {
+          throw err
+        }
       })
     }
 
@@ -35,7 +37,7 @@ module.exports = function(params){
   }
 }
 
-var runAfterDelay = function(run, attemptsCount, err){
+const runAfterDelay = (run, attemptsCount, err) => {
   const delay = (attemptsCount * 100) + Math.trunc(Math.random() * 100)
 
   return promises_.resolve()

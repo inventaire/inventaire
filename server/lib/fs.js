@@ -7,7 +7,6 @@
  */
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
 const { Promise } = __.require('lib', 'promises')
 const fs = require('fs')
 

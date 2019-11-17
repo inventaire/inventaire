@@ -14,15 +14,15 @@ const { repository } = __.require('root', 'package.json')
 const userAgent = `${CONFIG.name} (${repository.url})`
 let requestId = 0
 
-const req = verb => (function(url, options) {
+const req = verb => (url, options) => {
   const key = startTimer(verb, url)
 
   return breq[verb](mergeOptions(url, options))
   .get('body')
   .finally(_.EndTimer(key))
-})
+}
 
-const head = function(url, options){
+const head = (url, options) => {
   const key = startTimer('head', url)
 
   return breq.head(mergeOptions(url, options))
@@ -42,7 +42,7 @@ const baseOptions = {
 
 // merge options to fit the 'request' lib interface
 // which is wrapped by bluereq
-var mergeOptions = function(url, options = {}){
+const mergeOptions = (url, options = {}) => {
   // accept to get the url in the options
   if (_.isObject(url)) {
     options = url
@@ -54,7 +54,7 @@ var mergeOptions = function(url, options = {}){
   return _.extend({ url }, baseOptions, options)
 }
 
-var startTimer = function(verb, url){
+const startTimer = (verb, url) => {
   // url could be an object
   url = JSON.stringify(url)
     // Prevent logging Basic Auth credentials

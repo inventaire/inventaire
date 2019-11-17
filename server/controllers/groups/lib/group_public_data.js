@@ -8,23 +8,22 @@
  */
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const assert_ = __.require('utils', 'assert_types')
 
 // Working around the circular dependency
-let groups_ = null
-let user_ = null
-const lateRequire = function() {
+let groups_
+let user_
+const lateRequire = () => {
   groups_ = require('./groups')
   return user_ = __.require('controllers', 'user/lib/user')
 }
 setTimeout(lateRequire, 0)
 
-module.exports = function(fnName, fnArgs, reqUserId){
+module.exports = (fnName, fnArgs, reqUserId) => {
   assert_.array(fnArgs)
   return groups_[fnName].apply(null, fnArgs)
-  .then((group) => {
+  .then(group => {
     if (group == null) throw error_.notFound(groupId)
 
     const usersIds = groups_.allGroupMembers(group)
@@ -33,5 +32,6 @@ module.exports = function(fnName, fnArgs, reqUserId){
     .then(users => ({
       group,
       users
-    }))})
+    }))
+  })
 }

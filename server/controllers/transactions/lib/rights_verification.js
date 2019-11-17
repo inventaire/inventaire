@@ -6,16 +6,14 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
 const interactions_ = __.require('lib', 'interactions')
 const error_ = __.require('lib', 'error/error')
 const Transaction = __.require('models', 'transaction')
 
-module.exports = function(transactions_){
-
+module.exports = transactions_ => {
   let API
   const verifyNoExistingTransaction = (requester, item) => transactions_.byUserAndItem(requester, item._id)
-  .then((transactionsDocs) => {
+  .then(transactionsDocs => {
     const activeTransactionsDocs = transactionsDocs.filter(Transaction.isActive)
 
     if (activeTransactionsDocs.length > 0) {
@@ -27,7 +25,7 @@ module.exports = function(transactions_){
   })
 
   return API = {
-    verifyRightToRequest(requester, item){
+    verifyRightToRequest: (requester, item) => {
       if (item.busy) {
         throw error_.new('this item is busy', 403, item)
       }
@@ -40,22 +38,31 @@ module.exports = function(transactions_){
       return verifyNoExistingTransaction(requester, item)
     },
 
-    verifyRightToInteract(userId, transaction){
+    verifyRightToInteract: (userId, transaction) => {
       const { _id, owner, requester } = transaction
-      if ((userId === owner) || (userId === requester)) { return transaction
-      } else { throw error_.new('wrong user', 403, userId, transaction) }
+      if ((userId === owner) || (userId === requester)) {
+        return transaction
+      } else {
+        throw error_.new('wrong user', 403, userId, transaction)
+      }
     },
 
-    verifyIsOwner(userId, transaction){
+    verifyIsOwner: (userId, transaction) => {
       const { owner } = transaction
-      if (userId === owner) { return transaction
-      } else { throw error_.new('wrong user', 403, userId, transaction) }
+      if (userId === owner) {
+        return transaction
+      } else {
+        throw error_.new('wrong user', 403, userId, transaction)
+      }
     },
 
-    verifyIsRequester(userId, transaction){
+    verifyIsRequester: (userId, transaction) => {
       const { requester } = transaction
-      if (userId === requester) { return transaction
-      } else { throw error_.new('wrong user', 403, userId, transaction) }
+      if (userId === requester) {
+        return transaction
+      } else {
+        throw error_.new('wrong user', 403, userId, transaction)
+      }
     }
   }
 }

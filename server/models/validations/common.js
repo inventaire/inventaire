@@ -33,7 +33,7 @@ module.exports = (validations = {
   localImg: bindedTest(LocalImg),
   userImg: bindedTest(UserImg),
   boolean: _.isBoolean,
-  position(latLng){
+  position: latLng => {
     // allow the user or group to delete its position by passing a null value
     if (latLng === null) return true
     return _.isArray(latLng) && (latLng.length === 2) && _.every(latLng, _.isNumber)
@@ -46,7 +46,7 @@ validations.BoundedString = (minLength, maxLength) => str => boundedString(str, 
 
 validations.imgUrl = url => validations.localImg(url) || _.isUrl(url) || _.isImageHash(url)
 
-validations.valid = function(attribute, value, option){
+validations.valid = (attribute, value, option) => {
   let test = this[attribute]
   // if no test are set at this attribute for this context
   // default to common validations
@@ -54,7 +54,7 @@ validations.valid = function(attribute, value, option){
   return test(value, option)
 }
 
-validations.pass = function(attribute, value, option){
+validations.pass = (attribute, value, option) => {
   if (!validations.valid.call(this, attribute, value, option)) {
     if (_.isObject(value)) { value = JSON.stringify(value) }
     throw error_.newInvalid(attribute, value)

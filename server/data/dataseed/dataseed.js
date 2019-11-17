@@ -21,7 +21,7 @@ const isbn_ = __.require('lib', 'isbn/isbn')
 const { enabled, host } = CONFIG.dataseed
 
 module.exports = {
-  getByIsbns(isbns, refresh){
+  getByIsbns: (isbns, refresh) => {
     isbns = _.forceArray(isbns)
     if (!enabled) return promises_.resolve(isbns.map(emptySeed))
     isbns = isbns.join('|')
@@ -29,19 +29,19 @@ module.exports = {
   },
 
   // Provides simply an image in a prompt maner
-  getImageByIsbn(isbn){
+  getImageByIsbn: isbn => {
     isbn = isbn_.toIsbn13(isbn)
     if (!isbn) return promises_.reject(new Error('invalid isbn'))
     return requests_.get(_.buildPath(`${host}/images`, { isbn }))
   },
 
   // Converts the url to an image hash
-  getImageByUrl(url){
+  getImageByUrl: url => {
     url = encodeURIComponent(url)
     return requests_.get(_.buildPath(`${host}/images`, { url }))
   }
 }
 
-var emptySeed = isbn => ({
+const emptySeed = isbn => ({
   isbn
 })

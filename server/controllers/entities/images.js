@@ -24,10 +24,10 @@ const { Promise } = __.require('lib', 'promises')
 const getEntitiesByUris = require('./lib/get_entities_by_uris')
 const specialEntityImagesGetter = require('./lib/special_entity_images_getter')
 const getEntityImagesFromClaims = require('./lib/get_entity_images_from_claims')
-const { img:imgUrlBuilder } = __.require('lib', 'emails/app_api')
+const { img: imgUrlBuilder } = __.require('lib', 'emails/app_api')
 const getThumbData = __.require('data', 'commons/thumb')
 
-module.exports = function(req, res){
+module.exports = (req, res) => {
   let { uris, refresh, redirect, width, height } = req.query
 
   if (!_.isNonEmptyString(uris)) {
@@ -56,27 +56,28 @@ module.exports = function(req, res){
   return getEntitiesByUris({ uris, refresh })
   .get('entities')
   .then(getEntitiesImages)
-  .then((images) => {
+  .then(images => {
     if (redirect) {
       return redirectToRawImage(res, uris[0], images, width, height)
     } else {
       return res.json({ images })
-    }})
+    }
+  })
   .catch(error_.Handler(req, res))
 }
 
-var getEntitiesImages = entities => Promise.props(Object.keys(entities).reduce(getEntityImages(entities), {}))
+const getEntitiesImages = entities => Promise.props(Object.keys(entities).reduce(getEntityImages(entities), {}))
 
-var getEntityImages = entities => (function(promises, id) {
+const getEntityImages = entities => (promises, id) => {
   const entity = entities[id]
   // All entities type that don't have a specialEntityImagesGetter will
   // simply return their first wdt:P18 claim value, if any
   const getter = specialEntityImagesGetter[entity.type] || getEntityImagesFromClaims
   promises[id] = getter(entity)
   return promises
-})
+}
 
-var redirectToRawImage = function(res, uri, images, width, height){
+const redirectToRawImage = (res, uri, images, width, height) => {
   const image = images[uri] != null ? images[uri][0] : undefined
   if (image == null) {
     const err = error_.notFound({ uri })
@@ -89,7 +90,7 @@ var redirectToRawImage = function(res, uri, images, width, height){
   .then(res.redirect.bind(res))
 }
 
-var replaceWikimediaFilename = function(image){
+const replaceWikimediaFilename = image => {
   // Wikimedia file name neither start by 'http' or '/'
   if (!/^(http|\/)/.test(image)) {
     return getThumbData(image).get('url')

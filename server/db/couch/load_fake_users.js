@@ -10,7 +10,7 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const bluereq = require('bluereq')
 
-module.exports = function() {
+module.exports = () => {
   [
     'bobby', 'tony', 'luigi', 'rocky', 'shanapaul', 'Hubert_Bonisseur_de_la_Bath',
     'bambi', 'bartolome', 'boris', 'bastogne', 'baraka',
@@ -22,15 +22,15 @@ module.exports = function() {
 
 const keepUsers = {
   path: __.path('couchdb', 'keep_users.json'),
-  body() { return require(this.path) }
+  body: () => require(this.path)
 }
 
-var loadFakeUser = username => bluereq.get('http://api.randomuser.me/')
+const loadFakeUser = username => bluereq.get('http://api.randomuser.me/')
 .then(getUserData.bind(null, username))
 .then(postUser)
 .catch(_.Error('loadFakeUser'))
 
-var getUserData = function(username, res){
+const getUserData = (username, res) => {
   let userData
   const fake = res.body.results[0].user
   return userData = {
@@ -41,11 +41,11 @@ var getUserData = function(username, res){
   }
 }
 
-var postUser = data => bluereq.post(usersDbUrl, data)
+const postUser = data => bluereq.post(usersDbUrl, data)
 .then(res => _.info(res.body, 'postUser'))
 .catch(_.Error('postUser'))
 
-function __range__(left, right, inclusive) {
+function __range__ (left, right, inclusive) {
   const range = []
   const ascending = left < right
   const end = !inclusive ? right : ascending ? right + 1 : right - 1

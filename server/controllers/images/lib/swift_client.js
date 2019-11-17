@@ -23,7 +23,7 @@ const getParams = (container, filename, body, type = 'application/octet-stream')
   url: absoluteUrl(container, filename),
 
   headers: {
-    'Accept': 'application/json',
+    Accept: 'application/json',
     'Content-Type': type,
     'X-Auth-Token': token
   },
@@ -45,7 +45,7 @@ module.exports = {
   delete: action('delete'),
 
   // inspired by https://github.com/Automattic/knox/blob/master/lib/client.js
-  putImage(container, path, filename){
+  putImage: (container, path, filename) => {
     return Promise.all([
       getParams(container, filename),
       fs_.getContentLength(path)

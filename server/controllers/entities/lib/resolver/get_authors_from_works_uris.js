@@ -8,7 +8,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const { Promise } = __.require('lib', 'promises')
 const getEntitiesList = require('../get_entities_list')
 
 module.exports = workUris => getEntitiesList(workUris)
@@ -17,4 +16,4 @@ module.exports = workUris => getEntitiesList(workUris)
 .then(_.compact)
 .then(getEntitiesList)
 
-var getAuthorUris = works => works.map(work => work.claims['wdt:P50'])
+const getAuthorUris = works => works.map(work => work.claims['wdt:P50'])

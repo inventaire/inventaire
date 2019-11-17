@@ -19,23 +19,23 @@ module.exports = entry => resolveEdition(entry)
 .then(resolveWorks)
 .then(resolveInContext)
 .then(resolveOnTerms)
-.then((entry) => {
+.then(entry => {
   addResolvedFlag(entry.edition)
   if (entry.works) { entry.works.forEach(addResolvedFlag) }
   if (entry.authors) { entry.authors.forEach(addResolvedFlag) }
   return entry
 })
 
-const resolveSectionSeedsByExternalIds = section => (function(entry) {
+const resolveSectionSeedsByExternalIds = section => entry => {
   const seeds = entry[section]
   if (!_.some(seeds)) return entry
 
   return resolveSeedsByExternalIds(seeds)
   .then(seeds => entry[section] = seeds)
   .then(() => entry)
-})
+}
 
-var resolveAuthors = resolveSectionSeedsByExternalIds('authors')
-var resolveWorks = resolveSectionSeedsByExternalIds('works')
+const resolveAuthors = resolveSectionSeedsByExternalIds('authors')
+const resolveWorks = resolveSectionSeedsByExternalIds('works')
 
-var addResolvedFlag = seed => seed.resolved = (seed.uri != null)
+const addResolvedFlag = seed => seed.resolved = (seed.uri != null)

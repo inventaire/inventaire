@@ -14,18 +14,18 @@ const { crawlPeriod, debounceDelay, disabled } = CONFIG.debouncedEmail
 const waitingEmails = require('./waiting_emails')
 const sendDebouncedEmail = require('./send_debounced_email')
 
-module.exports = function() {
+module.exports = () => {
   if (!disabled) return setInterval(crawl, crawlPeriod)
 }
 
 // key structure: sendEmailFunctionName:id:time
 
-var crawl = () => waitingEmails.sub.createReadStream()
+const crawl = () => waitingEmails.sub.createReadStream()
 .on('data', onData)
 
-var onData = function(data){
+const onData = data => {
   const { key, value } = data
-  const [ domain, id, time ] = Array.from(key.split(':'))
+  const [ domain, id, time ] = key.split(':')
 
   // if the last event happened more than debounceDelay ago
   if (_.expired(time, debounceDelay)) {
@@ -34,4 +34,4 @@ var onData = function(data){
   }
 }
 
-var cleanup = waitingEmails.del
+const cleanup = waitingEmails.del

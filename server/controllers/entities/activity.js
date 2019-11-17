@@ -14,7 +14,7 @@ const responses_ = __.require('lib', 'responses')
 const error_ = __.require('lib', 'error/error')
 const patches_ = require('./lib/patches')
 
-module.exports = function(req, res){
+module.exports = (req, res) => {
   let { period } = req.query
 
   if (period != null) {
@@ -27,9 +27,7 @@ module.exports = function(req, res){
     return patches_.getActivityFromLastDay(period)
     .then(responses_.Send(res))
     .catch(error_.Handler(req, res))
-
   } else {
-
     return patches_.getGlobalActivity()
     .then(responses_.Wrap(res, 'activity'))
     .catch(error_.Handler(req, res))

@@ -14,15 +14,15 @@ const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const requests_ = __.require('lib', 'requests')
 const assert_ = __.require('utils', 'assert_types')
-const { host:elasticHost } = CONFIG.elasticsearch
+const { host: elasticHost } = CONFIG.elasticsearch
 
-const buildSearcher = function(params){
+const buildSearcher = params => {
   let { index, dbBaseName, queryBodyBuilder } = params
   if (!index) { index = CONFIG.db.name(dbBaseName) }
 
   const url = `${elasticHost}/${index}/_search`
 
-  return function(query, type, limit){
+  return (query, type, limit) => {
     let customUrl
     assert_.string(query)
 
@@ -41,10 +41,10 @@ const buildSearcher = function(params){
   }
 }
 
-var parseResponse = res => res.hits.hits.map(parseHit)
+const parseResponse = res => res.hits.hits.map(parseHit)
 
 // Reshape the error object to be fully displayed when logged by _.warn
-var formatError = function(err){
+const formatError = err => {
   // Directly rethrow errors that aren't from ElasticSearch
   // like ECONNREFUSED errors
   if (err.body == null) throw err
@@ -54,8 +54,8 @@ var formatError = function(err){
   throw err
 }
 
-var parseHit = function(hit){
-  const { _source:data, _id, _score } = hit
+const parseHit = hit => {
+  const { _source: data, _id, _score } = hit
   data._id = _id
   data._score = _score
   return data

@@ -7,8 +7,8 @@
  */
 module.exports = {
   parameters: [ 'qid' ],
-  query(params){
-    const { qid:authorQid } = params
+  query: params => {
+    const { qid: authorQid } = params
     return `\
 SELECT ?work ?type ?date ?serie WHERE {
   ?work wdt:P50|wdt:P58|wdt:P110|wdt:P6338 wd:${authorQid} .

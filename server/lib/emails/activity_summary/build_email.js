@@ -17,7 +17,6 @@ const { newsKey, didYouKnowKeyCount } = CONFIG.activitySummary
 // and defaultPeriodicity in the client's notifications_settings
 const defaultPeriodicity = 20
 
-const user_ = __.require('controllers', 'user/lib/user')
 const relations_ = __.require('controllers', 'relations/lib/queries')
 const groups_ = __.require('controllers', 'groups/lib/groups')
 const notifs_ = __.require('lib', 'notifications')
@@ -26,7 +25,7 @@ const transactions_ = __.require('controllers', 'transactions/lib/transactions')
 const getLastNetworkBooks = require('./last_network_books')
 const getLastNearbyPublicBooks = require('./last_nearby_books')
 
-module.exports = function(user){
+module.exports = user => {
   user.lang = _.shortLang(user.language)
 
   return getEmailData(user)
@@ -34,8 +33,8 @@ module.exports = function(user){
   .then(spreadEmailData(user))
 }
 
-var getEmailData = function(user){
-  const { _id:userId, lang, lastSummary } = user
+const getEmailData = user => {
+  const { _id: userId, lang, lastSummary } = user
   return promises_.props({
     // pending friends requests
     friendsRequests: relations_.pendingFriendsRequestsCount(userId),
@@ -60,7 +59,7 @@ var getEmailData = function(user){
 // new users nearby
 // new users in groups
 
-var filterOutDuplicatedItems = function(results){
+const filterOutDuplicatedItems = results => {
   const { lastFriendsBooks, lastNearbyPublicBooks } = results
   const lastFriendsBooksIds = _.map(lastFriendsBooks.highlighted, '_id')
   lastNearbyPublicBooks.highlighted = lastNearbyPublicBooks.highlighted
@@ -68,7 +67,7 @@ var filterOutDuplicatedItems = function(results){
   return results
 }
 
-var spreadEmailData = user => (function(results) {
+const spreadEmailData = user => results => {
   let data
   const {
     friendsRequests,
@@ -112,7 +111,7 @@ var spreadEmailData = user => (function(results) {
       meta: {
         host,
         periodicity,
-        settingsHref: host + '/settings/notifications',
+        settingsHref: `${host}/settings/notifications`,
         contactAddress
       },
       friendsRequests: counter(friendsRequests, '/network/friends'),
@@ -127,15 +126,15 @@ var spreadEmailData = user => (function(results) {
       hasActivities: countTotal > 0
     }
   }
-})
+}
 
-var counter = (count, path) => ({
+const counter = (count, path) => ({
   display: count > 0,
   smart_count: count,
   href: host + path
 })
 
-var newsData = function(user){
+const newsData = user => {
   const { lastNews } = user
   if (lastNews !== newsKey) {
     return {
@@ -147,7 +146,7 @@ var newsData = function(user){
   }
 }
 
-var getDidYouKnowKey = function() {
+const getDidYouKnowKey = () => {
   const num = _.random(1, didYouKnowKeyCount)
   return `did_you_know_${num}`
 }

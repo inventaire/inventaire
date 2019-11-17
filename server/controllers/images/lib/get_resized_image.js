@@ -12,15 +12,14 @@
  */
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const images_ = __.require('lib', 'images')
 const { maxSize } = CONFIG.mediaStorage.images
 const request = require('request')
-const { oneYear } =  __.require('lib', 'times')
+const { oneYear } = __.require('lib', 'times')
 const oneMB = Math.pow(1024, 2)
 
-module.exports = function(req, res, url, dimensions){
+module.exports = (req, res, url, dimensions) => {
   let [ width, height ] = Array.from((dimensions != null ? dimensions.split('x') : undefined) || [ maxSize, maxSize ]);
   [ width, height ] = Array.from(images_.applyLimits(width, height))
 
@@ -31,17 +30,15 @@ module.exports = function(req, res, url, dimensions){
   .on('error', error_.Handler(req, res))
 }
 
-var onResponse = (reqStream, url, width, height, req, res) => (function(response) {
+const onResponse = (reqStream, url, width, height, req, res) => response => {
   let errMessage
   let { statusCode, statusMessage } = response
-  const { 'content-type':contentType, 'content-length':contentLength } = response.headers
+  const { 'content-type': contentType, 'content-length': contentLength } = response.headers
 
   if (statusCode >= 400) {
     errMessage = `Remote response: ${statusCode} ${statusMessage}`
-
   } else if (!validImageContentType.test(contentType)) {
     errMessage = `invalid image content-type: ${contentType}`
-
   } else if (contentLength > (10 * oneMB)) {
     errMessage = `image is too large: ${contentLength}`
   }
@@ -58,17 +55,17 @@ var onResponse = (reqStream, url, width, height, req, res) => (function(response
     res.header('Cache-Control', 'immutable')
     return resizeFromStream(reqStream, width, height, req, res)
   }
-})
+}
 
 // Accepting image/*
 // Accepting application/octet-stream (known case: media storages 'dumb' content type)
 // Ignore charset instructions (known case: image/jpeg;charset=UTF-8)
-var validImageContentType = /^(image\/[\w\+]+|application\/octet-stream)/
+const validImageContentType = /^(image\/[\w\+]+|application\/octet-stream)/
 
-var resizeFromStream = function(reqStream, width, height, req, res){
+const resizeFromStream = (reqStream, width, height, req, res) => {
   let alreadySent = false
 
-  const handleBufferError = function(buf){
+  const handleBufferError = buf => {
     const err = new Error(buf.toString())
     error_.handler(req, res, err)
     return alreadySent = true
@@ -85,19 +82,20 @@ var resizeFromStream = function(reqStream, width, height, req, res){
     // if data was actually passed before determining if it is a success
     // or an error
     let receivedData = false
-    stdout.on('data', (data) => {
+    stdout.on('data', data => {
       receivedData = true
       return res.write(data)
     })
 
-    return stdout.on('close', (data) => {
+    return stdout.on('close', data => {
       // Addresses the case when the response was already sent by an error handler
-      if (alreadySent) return 
-      if (receivedData) { return res.end()
+      if (alreadySent) return
+      if (receivedData) {
+        return res.end()
       // usually solved by `sudo apt-get install graphicsmagick`
       } else {
         const message = 'empty graphicsmagick response: make sure graphicsmagick is installed'
-        return error_.bundle(req, res, message , 500)
+        return error_.bundle(req, res, message, 500)
       }
     })
   })

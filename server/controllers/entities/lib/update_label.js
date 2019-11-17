@@ -8,7 +8,7 @@ const Entity = __.require('models', 'entity')
 const getEntityType = require('./get_entity_type')
 const typesWithoutLabels = require('./types_without_labels')
 
-module.exports = function(lang, value, userId, currentDoc){
+module.exports = (lang, value, userId, currentDoc) => {
   checkEntityTypeCanHaveLabel(currentDoc)
 
   let updatedDoc = _.cloneDeep(currentDoc)
@@ -16,7 +16,7 @@ module.exports = function(lang, value, userId, currentDoc){
   return entities_.putUpdate({ userId, currentDoc, updatedDoc })
 }
 
-var checkEntityTypeCanHaveLabel = function(currentDoc){
+const checkEntityTypeCanHaveLabel = currentDoc => {
   const type = getEntityType(currentDoc.claims['wdt:P31'])
 
   if (typesWithoutLabels.includes(type)) {

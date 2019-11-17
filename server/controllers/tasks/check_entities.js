@@ -17,8 +17,9 @@ const sanitization =
   { uris: {} }
 
 module.exports = (req, res) => sanitize(req, res, sanitization)
-.then((params) => {
+.then(params => {
   const { uris } = params
-  return Promise.all(uris.map(checkEntity))}).then(_.flatten)
+  return Promise.all(uris.map(checkEntity))
+}).then(_.flatten)
 .then(responses_.Wrap(res, 'tasks'))
 .catch(error_.Handler(req, res))

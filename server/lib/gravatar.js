@@ -2,7 +2,7 @@
 // Sanity-check the conversion and remove this comment.
 const gravatar = require('gravatar')
 
-module.exports = function(email){
+module.exports = email => {
   // gravatar url params:
   // email, options= { d: default image, s: size }, https
   let url = gravatar.url(email, { d: 'mm', s: '500' }, true)

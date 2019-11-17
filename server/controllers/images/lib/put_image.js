@@ -8,7 +8,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const images_ = __.require('lib', 'images')
 // 'swift' or 'local'
 const { mode } = CONFIG.mediaStorage
 _.info(`media storage: ${mode}`)

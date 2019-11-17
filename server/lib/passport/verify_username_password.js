@@ -6,17 +6,15 @@
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-const CONFIG = require('config')
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const user_ = __.require('controllers', 'user/lib/user')
 const pw_ = __.require('lib', 'crypto').passwords
 const loginAttempts = require('./login_attempts')
 
-const { Strategy:LocalStrategy } = require('passport-local')
+const { Strategy: LocalStrategy } = require('passport-local')
 
-module.exports = function(username, password, done){
-
+module.exports = (username, password, done) => {
   if (loginAttempts.tooMany(username)) {
     return done(null, false, { message: 'too_many_attempts' })
   }
@@ -28,26 +26,31 @@ module.exports = function(username, password, done){
   .catch(finalError.bind(null, done))
 }
 
-var returnIfValid = function(done, password, username, user){
+const returnIfValid = (done, password, username, user) => {
   // need to check user existance to avoid
   // to call invalidUsernameOrPassword a second time
   // in case findOneByUsername returned an error
   if (user != null) {
     return verifyUserPassword(user, password)
-    .then((valid) => {
-      if (valid) { return done(null, user)
-      } else { return invalidUsernameOrPassword(done, username, 'validity test') }}).catch(invalidUsernameOrPassword.bind(null, done, username, 'verifyUserPassword'))
+    .then(valid => {
+      if (valid) {
+        return done(null, user)
+      } else {
+        return invalidUsernameOrPassword(done, username, 'validity test')
+      }
+    })
+    .catch(invalidUsernameOrPassword.bind(null, done, username, 'verifyUserPassword'))
   }
 }
 
-var invalidUsernameOrPassword = function(done, username, label){
+const invalidUsernameOrPassword = (done, username, label) => {
   loginAttempts.recordFail(username, label)
   return done(null, false, { message: 'invalid_username_or_password' })
 }
 
-var verifyUserPassword = (user, password) => pw_.verify(user.password, password)
+const verifyUserPassword = (user, password) => pw_.verify(user.password, password)
 
-var finalError = function(done, err){
+const finalError = (done, err) => {
   _.error(err, 'username/password verify err')
   return done(err)
 }

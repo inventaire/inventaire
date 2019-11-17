@@ -19,4 +19,4 @@ module.exports = () => execa('tar', [
 ])
 .then(() => deleteFolder(backupFolder))
 
-var deleteFolder = backupFolder => execa('rm', [ '-rf', backupFolder ])
+const deleteFolder = backupFolder => execa('rm', [ '-rf', backupFolder ])

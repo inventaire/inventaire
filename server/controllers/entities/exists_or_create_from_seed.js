@@ -21,10 +21,9 @@ const promises_ = __.require('lib', 'promises')
 const responses_ = __.require('lib', 'responses')
 const sanitize = __.require('lib', 'sanitize/sanitize')
 error_ = __.require('lib', 'error/error')
-const isbn_ = __.require('lib', 'isbn/isbn')
 const entities_ = require('./lib/entities')
 const scaffoldEditionEntityFromSeed = require('./lib/scaffold_entity_from_seed/edition')
-const { enabled:dataseedEnabled } = CONFIG.dataseed
+const { enabled: dataseedEnabled } = CONFIG.dataseed
 const dataseed = __.require('data', 'dataseed/dataseed')
 const formatEditionEntity = require('./lib/format_edition_entity')
 
@@ -35,24 +34,30 @@ const sanitization = {
 }
 
 module.exports = (req, res) => sanitize(req, res, sanitization)
-.then((seed) => {
+.then(seed => {
   let { isbn, title, authors } = seed
   if (!authors) { authors = [] }
 
   seed.authors = authors.filter(author => (author != null ? author.length : undefined) > 0)
 
   return entities_.byIsbn(isbn)
-  .then((entityDoc) => {
-    if (entityDoc) { return entityDoc
-    } else { return addImage(seed).then(scaffoldEditionEntityFromSeed) }}).then(formatEditionEntity)
-  .then(responses_.Send(res))}).catch(error_.Handler(req, res))
+  .then(entityDoc => {
+    if (entityDoc) {
+      return entityDoc
+    } else {
+      return addImage(seed).then(scaffoldEditionEntityFromSeed)
+    }
+  })
+  .then(formatEditionEntity)
+  .then(responses_.Send(res))
+}).catch(error_.Handler(req, res))
 
-var addImage = function(seed){
+const addImage = seed => {
   if (!dataseedEnabled) return promises_.resolve(seed)
 
   // Try to find an image from the seed ISBN
   return dataseed.getImageByIsbn(seed.isbn)
-  .then((res) => {
+  .then(res => {
     if (res.url) {
       seed.image = res.url
       return seed
@@ -62,12 +67,17 @@ var addImage = function(seed){
 
       // Else, if an image was provided in the seed, try to use it
       return dataseed.getImageByUrl(seed.image)
-      .then((res2) => {
-        if (res.url) { seed.image = res2.url
-        } else { delete seed.image }
+      .then(res2 => {
+        if (res.url) {
+          seed.image = res2.url
+        } else {
+          delete seed.image
+        }
         return seed
       })
-    }}).catch((err) => {
+    }
+  })
+  .catch(err => {
     _.error(err, 'add image err')
     return seed
   })

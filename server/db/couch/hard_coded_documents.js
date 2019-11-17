@@ -11,7 +11,7 @@ const userDoc = (username, idLastCharacters) => ({
   special: true,
 
   // Data required to avoid crashing users logic
-  snapshot:  {}
+  snapshot: {}
 })
 
 module.exports = {

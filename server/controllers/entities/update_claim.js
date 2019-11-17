@@ -15,9 +15,9 @@ const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
 
-module.exports = function(req, res){
+module.exports = (req, res) => {
   let prefix
-  let { id, uri, property, 'old-value':oldVal, 'new-value': newVal } = req.body
+  let { id, uri, property, 'old-value': oldVal, 'new-value': newVal } = req.body
   _.log(req.body, 'update claim input')
   if (_.isInvEntityId(id) && (uri == null)) { uri = `inv:${id}` }
 
@@ -31,7 +31,7 @@ module.exports = function(req, res){
   oldVal = parseEmptyValue(oldVal)
   newVal = parseEmptyValue(newVal);
 
-  [ prefix, id ] = Array.from(uri.split(':'))
+  [ prefix, id ] = uri.split(':')
   const updater = updaters[prefix]
   if (updater == null) {
     return error_.bundle(req, res, `unsupported uri prefix: ${prefix}`, 400, uri)
@@ -42,9 +42,9 @@ module.exports = function(req, res){
   .catch(error_.Handler(req, res))
 }
 
-var parseEmptyValue = function(value){ if (value === '') { return null } else { return value } }
+const parseEmptyValue = value => value === '' ? null : value
 
-var updaters = {
+const updaters = {
   // TODO: accept ISBN URIs
   inv: require('./lib/update_inv_claim'),
   wd: require('./lib/update_wd_claim')

@@ -42,7 +42,7 @@ module.exports = (req, res, configs) => Promise.try(() => {
   return input
 })
 
-var sanitizeParameter = function(input, name, config, place, res){
+const sanitizeParameter = (input, name, config, place, res) => {
   const { generic } = config
   const parameter = (generic != null) ? generics[generic] : parameters[name]
 
@@ -58,8 +58,11 @@ var sanitizeParameter = function(input, name, config, place, res){
 
   if (input[name] == null) { applyDefaultValue(input, name, config, parameter) }
   if (input[name] == null) {
-    if (config.optional) { return
-    } else { throw error_.newMissing(place, name) }
+    if (config.optional) {
+      return
+    } else {
+      throw error_.newMissing(place, name)
+    }
   }
 
   format(input, name, parameter.format, config)
@@ -76,35 +79,35 @@ var sanitizeParameter = function(input, name, config, place, res){
 
   renameParameter(input, name, _.camelCase)
   renameParameter(input, name, parameter.rename)
-
 }
 
-var getPlace = function(method){
+const getPlace = method => {
   if ((method === 'POST') || (method === 'PUT')) return 'body'
   else return 'query'
 }
 
-var removeUnexpectedParameter = function(input, name, configs, res){
+const removeUnexpectedParameter = (input, name, configs, res) => {
   if (configs[name] == null) {
     addWarning(res, `unexpected parameter: ${name}`)
     return delete input[name]
   }
 }
 
-var format = function(input, name, formatFn, config){
+const format = (input, name, formatFn, config) => {
   if (formatFn != null) return input[name] = formatFn(input[name], name, config)
 }
 
-var applyDefaultValue = function(input, name, config, parameter){
-  if (config.default != null) { return input[name] = _.cloneDeep(config.default)
+const applyDefaultValue = (input, name, config, parameter) => {
+  if (config.default != null) {
+    return input[name] = _.cloneDeep(config.default)
   } else if (parameter.default != null) { return input[name] = _.cloneDeep(parameter.default) }
 }
 
-var obfuscateSecret = function(parameter, err){
+const obfuscateSecret = (parameter, err) => {
   if (parameter.secret) return err.context.value = _.obfuscate(err.context.value)
 }
 
-var enforceBoundaries = function(input, name, config, parameter, res){
+const enforceBoundaries = (input, name, config, parameter, res) => {
   const min = config.min || parameter.min
   const max = config.max || parameter.max
   if ((min != null) && (input[name] < min)) {
@@ -114,18 +117,18 @@ var enforceBoundaries = function(input, name, config, parameter, res){
   }
 }
 
-var enforceBoundary = function(input, name, boundary, res, position){
+const enforceBoundary = (input, name, boundary, res, position) => {
   input[name] = boundary
   return addWarning(res, `${name} can't be ${position} ${boundary}`)
 }
 
-var renameParameter = function(input, name, renameFn){
+const renameParameter = (input, name, renameFn) => {
   if (renameFn == null) return
   const aliasedName = renameFn(name)
   return input[aliasedName] = input[name]
 }
 
-var addWarning = function(res, message){
+const addWarning = (res, message) => {
   _.warn(message)
   return responses_.addWarning(res, 'parameters', message)
 }

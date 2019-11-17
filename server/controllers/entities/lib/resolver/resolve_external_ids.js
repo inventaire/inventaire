@@ -16,10 +16,10 @@ const entities_ = __.require('controllers', 'entities/lib/entities')
 const runWdQuery = __.require('data', 'wikidata/run_query')
 const getInvEntityCanonicalUri = require('../get_inv_entity_canonical_uri')
 
-module.exports = function(claims, resolveOnWikidata = true){
+module.exports = (claims, resolveOnWikidata = true) => {
   const externalIds = []
 
-  for (var prop in claims) {
+  for (const prop in claims) {
     const values = claims[prop]
     if (properties[prop].isExternalId) {
       values.forEach(value => externalIds.push([ prop, value ]))
@@ -35,13 +35,13 @@ module.exports = function(claims, resolveOnWikidata = true){
   .then(_.flatten)
 }
 
-var wdQuery = externalIds => runWdQuery({ query: 'resolve-external-ids', externalIds })
+const wdQuery = externalIds => runWdQuery({ query: 'resolve-external-ids', externalIds })
 .map(prefixifyWd)
 
-var invQuery = externalIds => Promise.all(externalIds.map(invByClaim))
+const invQuery = externalIds => Promise.all(externalIds.map(invByClaim))
 .then(_.flatten)
 
-var invByClaim = function(pair){
+const invByClaim = pair => {
   const [ prop, value ] = Array.from(pair)
   return entities_.byClaim(prop, value, true, true)
   .map(getInvEntityCanonicalUri)

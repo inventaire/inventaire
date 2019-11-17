@@ -41,14 +41,14 @@ if (!IP.test(ip)) {
 if (suffix == null) {
   throw new Error(`bad CONFIG.replication.suffix: ${suffix}`)
 }
-console.log(green('valid replication config found: ') + `${from} @ ${ip}`)
+console.log(`${green('valid replication config found: ')}${from} @ ${ip}`)
 
 const { username, password } = CONFIG.db
 if ((username == null) || (password == null)) {
   throw new Error('missing username or password in CONFIG.db')
 }
 
-let { username:remoteUsername, password:remotePassword } = CONFIG.replication
+let { username: remoteUsername, password: remotePassword } = CONFIG.replication
 // If no replication credentials where passed, assume those are the same as the local ones
 if (!remoteUsername) { remoteUsername = username }
 if (!remotePassword) { remotePassword = password }
@@ -58,11 +58,11 @@ let pw = __range__(3, password.length, true)
 .join('')
 pw = password.slice(0, 3) + pw
 
-console.log(green('valid username and password found: ') + `${username} / ${pw}`)
+console.log(`${green('valid username and password found: ')}${username} / ${pw}`)
 
 let dbsNames = Object.keys(__.require('db', 'couch/list'))
 dbsNames = dbsNames.map(name => `${name}-${suffix}`)
-console.log(green('dbs names found: ') +  dbsNames)
+console.log(green('dbs names found: ') + dbsNames)
 
 const localDb = dbName => `${protocol}://${username}:${password}@localhost:${localPort}/${dbName}`
 
@@ -70,7 +70,7 @@ const localReplicate = dbName => `${protocol}://${username}:${password}@localhos
 
 const remoteDb = dbName => `${protocol}://${remoteUsername}:${remotePassword}@${ip}:${port}/${dbName}`
 
-dbsNames.forEach((dbName) => {
+dbsNames.forEach(dbName => {
   // pulling seems better than pushing
   // http://wiki.apache.org/couchdb/How_to_replicate_a_database
   const repDoc = {
@@ -80,17 +80,21 @@ dbsNames.forEach((dbName) => {
   }
 
   return breq.get(remoteDb(dbName))
-  .then((res) => {
+  .then(res => {
     console.log(green(`${dbName} handcheck: `))
     console.log(res.body)
     return breq.post(localReplicate(dbName), repDoc)
-    .then((res) => {
+    .then(res => {
       let color
-      if (res.body.ok != null) { color = 'green'
-      } else { color = 'red' }
+      if (res.body.ok != null) {
+        color = 'green'
+      } else {
+        color = 'red'
+      }
       console.log(chalk[color](`${dbName} replication response: `))
       return console.log(res.body)
-    })}).timeout(20000)
+    })
+  }).timeout(20000)
   .catch(err => console.log(err))
 })
 
@@ -99,7 +103,7 @@ dbsNames.forEach((dbName) => {
 
 const _securityDoc = __.require('couchdb', 'security_doc')
 
-const putSecurityDoc = function(dbUrl){
+const putSecurityDoc = dbUrl => {
   const url = `${dbUrl}/_security`
   console.log(url, blue('trying to put security doc'))
   return breq.put(url, _securityDoc)
@@ -109,7 +113,7 @@ const putSecurityDoc = function(dbUrl){
 
 dbsNames.forEach(dbName => putSecurityDoc(localDb(dbName)))
 
-function __range__(left, right, inclusive) {
+function __range__ (left, right, inclusive) {
   const range = []
   const ascending = left < right
   const end = !inclusive ? right : ascending ? right + 1 : right - 1

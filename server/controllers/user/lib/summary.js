@@ -8,14 +8,14 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const { newsKey } = CONFIG.activitySummary
-const { oneDay } =  __.require('lib', 'times')
+const { oneDay } = __.require('lib', 'times')
 const { BasicUpdater } = __.require('lib', 'doc_updates')
 const couch_ = __.require('lib', 'couch')
 
-module.exports = function(db){
+module.exports = db => {
   let summary_
   return summary_ = {
-    waitingForSummary(limit){
+    waitingForSummary: limit => {
       // pick users with next summary between epoch 0 and now
       return db.viewCustom('nextSummary', {
         include_docs: true,
@@ -26,12 +26,12 @@ module.exports = function(db){
       )
     },
 
-    findOneWaitingForSummary() {
+    findOneWaitingForSummary: () => {
       return summary_.waitingForSummary(1)
       .then(couch_.firstDoc)
     },
 
-    justReceivedActivitySummary(id){
+    justReceivedActivitySummary: id => {
       const updater = BasicUpdater({
         lastSummary: Date.now(),
         lastNews: newsKey

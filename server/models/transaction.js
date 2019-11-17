@@ -19,7 +19,7 @@ module.exports = (Transaction = {})
 
 Transaction.validations = (validations = require('./validations/transaction'))
 
-Transaction.create = function(itemDoc, ownerDoc, requesterDoc){
+Transaction.create = (itemDoc, ownerDoc, requesterDoc) => {
   let transaction
   const itemId = itemDoc._id
   const ownerId = ownerDoc._id
@@ -54,13 +54,13 @@ Transaction.create = function(itemDoc, ownerDoc, requesterDoc){
   }
 }
 
-var requestable = [
+const requestable = [
   'giving',
   'lending',
   'selling'
 ]
 
-Transaction.validatePossibleState = function(transaction, newState){
+Transaction.validatePossibleState = (transaction, newState) => {
   if (!states[transaction.state].next.includes(newState)) {
     throw error_.new('invalid state update', 400, transaction, newState)
   }
@@ -71,20 +71,20 @@ Transaction.validatePossibleState = function(transaction, newState){
 }
 
 // do the item change of owner or return to its previous owner
-Transaction.isOneWay = function(transacDoc){
+Transaction.isOneWay = transacDoc => {
   if (!_.isString(transacDoc.transaction)) {
     throw error_.new('transaction transaction inaccessible', 500, transacDoc)
   }
   return oneWay[transacDoc.transaction]
 }
 
-var oneWay = {
+const oneWay = {
   giving: true,
   lending: false,
   selling: true
 }
 
-Transaction.isActive = function(transacDoc){
+Transaction.isActive = transacDoc => {
   const transacData = {
     name: transacDoc.transaction,
     state: transacDoc.state,
@@ -96,14 +96,14 @@ Transaction.isActive = function(transacDoc){
   return (findNextActions(transacData) != null)
 }
 
-var snapshotData = (itemDoc, ownerDoc, requesterDoc) => ({
+const snapshotData = (itemDoc, ownerDoc, requesterDoc) => ({
   item: _.pick(itemDoc, snapshotItemAttributes),
   entity: getEntitySnapshotFromItemSnapshot(itemDoc.snapshot),
   owner: _.pick(ownerDoc, snapshotUserAttributes),
   requester: _.pick(requesterDoc, snapshotUserAttributes)
 })
 
-var getEntitySnapshotFromItemSnapshot = function(itemSnapshot){
+const getEntitySnapshotFromItemSnapshot = itemSnapshot => {
   const entitySnapshot = {}
   if (itemSnapshot['entity:title'] != null) { entitySnapshot.title = itemSnapshot['entity:title'] }
   if (itemSnapshot['entity:image'] != null) { entitySnapshot.image = itemSnapshot['entity:image'] }
@@ -111,12 +111,15 @@ var getEntitySnapshotFromItemSnapshot = function(itemSnapshot){
   return entitySnapshot
 }
 
-const getNextActionsList = function(transactionName){
-  if (transactionName === 'lending') { return nextActionsWithReturn
-  } else { return basicNextActions }
+const getNextActionsList = transactionName => {
+  if (transactionName === 'lending') {
+    return nextActionsWithReturn
+  } else {
+    return basicNextActions
+  }
 }
 
-var findNextActions = function(transacData){
+const findNextActions = transacData => {
   const { name, state, mainUserIsOwner } = transacData
   const nextActions = getNextActionsList(name, state)
   const role = mainUserIsOwner ? 'owner' : 'requester'

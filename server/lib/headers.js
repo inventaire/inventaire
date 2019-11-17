@@ -6,4 +6,4 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 module.exports =
-  { getReqLang(req){ return req.headers['accept-language'] != null ? req.headers['accept-language'].split(/\W/)[0] : undefined } }
+  { getReqLang (req) { return req.headers['accept-language'] != null ? req.headers['accept-language'].split(/\W/)[0] : undefined } }

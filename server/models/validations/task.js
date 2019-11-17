@@ -17,10 +17,12 @@ module.exports = {
   pass,
   // in attributes/task.js, attributes keys should match
   // db keys to verify if attribute is updatable
-  attribute(attribute){ let needle
-    return (needle = attribute, _.keys(attributes).includes(needle)) },
-  type(taskType){ return attributes.type.includes(taskType) },
-  state(taskState){ return attributes.state.includes(taskState) },
+  attribute: attribute => {
+    let needle
+    return (needle = attribute, _.keys(attributes).includes(needle))
+  },
+  type: taskType => attributes.type.includes(taskType),
+  state: taskState => attributes.state.includes(taskState),
   suspectUri: entityUri,
   lexicalScore: _.isNumber,
   relationScore: _.isNumber,

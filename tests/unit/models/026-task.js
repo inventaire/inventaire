@@ -8,7 +8,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const should = require('should')
+require('should')
 const Task = __.require('models', 'task')
 
 const validDoc = () => ({
@@ -23,14 +23,14 @@ const validDoc = () => ({
 
 describe('task model', () => {
   describe('create', () => {
-    it('should return an object with type', (done) => {
+    it('should return an object with type', done => {
       const taskDoc = Task.create(validDoc())
       taskDoc.should.be.an.Object()
       taskDoc.type.should.equal('deduplicate')
       done()
     })
 
-    it('should return suspectUri and a suggestionUri', (done) => {
+    it('should return suspectUri and a suggestionUri', done => {
       const taskDoc = Task.create(validDoc())
       taskDoc.suspectUri.should.equal(validDoc().suspectUri)
       taskDoc.suggestionUri.should.equal(validDoc().suggestionUri)
@@ -38,7 +38,7 @@ describe('task model', () => {
       done()
     })
 
-    it('should throw if no suspect', (done) => {
+    it('should throw if no suspect', done => {
       const invalidDoc = {
         type: 'deduplicate',
         suggestionUri: 'wd:Q42'
@@ -48,59 +48,58 @@ describe('task model', () => {
       done()
     })
 
-    it('should throw if empty suspect', (done) => {
+    it('should throw if empty suspect', done => {
       const invalidDoc = {
         type: 'deduplicate',
         suspectId: '',
         suggestionUri: 'wd:Q42'
       }
       const taskDoc = () => Task.create(invalidDoc)
-      try { taskDoc() }
-      catch (err) { err.message.should.startWith('invalid suspect') }
+      try {
+        taskDoc()
+      } catch (err) {
+        err.message.should.startWith('invalid suspect')
+      }
       taskDoc.should.throw()
       done()
     })
 
-    it('should throw if no lexicalScore', (done) => {
+    it('should throw if no lexicalScore', done => {
       const invalidDoc = validDoc()
       delete invalidDoc.lexicalScore
       const taskDoc = () => Task.create(invalidDoc)
-      try { taskDoc() }
-      catch (err) { err.message.should.startWith('invalid lexicalScore') }
+      try { taskDoc() } catch (err) { err.message.should.startWith('invalid lexicalScore') }
       taskDoc.should.throw()
       done()
     })
 
-    it('should throw if no externalSourcesOccurrences', (done) => {
+    it('should throw if no externalSourcesOccurrences', done => {
       const invalidDoc = validDoc()
       delete invalidDoc.externalSourcesOccurrences
       const taskDoc = () => Task.create(invalidDoc)
-      try { taskDoc() }
-      catch (err) { err.message.should.startWith('invalid externalSourcesOccurrences') }
+      try { taskDoc() } catch (err) { err.message.should.startWith('invalid externalSourcesOccurrences') }
       taskDoc.should.throw()
       done()
     })
   })
 
   describe('update', () => {
-    it('should update a valid task with an dismissed state', (done) => {
+    it('should update a valid task with an dismissed state', done => {
       const taskDoc = Task.update(validDoc(), 'state', 'dismissed')
       taskDoc.state.should.equal('dismissed')
       done()
     })
 
-    it('should throw if invalid attribute to update', (done) => {
+    it('should throw if invalid attribute to update', done => {
       const taskDoc = () => Task.update(validDoc(), 'blob', 'dismissed')
-      try { taskDoc() }
-      catch (err) { err.message.should.startWith('invalid attribute') }
+      try { taskDoc() } catch (err) { err.message.should.startWith('invalid attribute') }
       taskDoc.should.throw()
       done()
     })
 
-    it('should throw if invalid value', (done) => {
+    it('should throw if invalid value', done => {
       const taskDoc = () => Task.update(validDoc(), 'state', 'invalidValue')
-      try { taskDoc() }
-      catch (err) { err.message.should.startWith('invalid state') }
+      try { taskDoc() } catch (err) { err.message.should.startWith('invalid state') }
       taskDoc.should.throw()
       done()
     })

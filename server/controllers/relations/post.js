@@ -8,14 +8,13 @@
  */
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
-const user_ = __.require('controllers', 'user/lib/user')
 const intent = require('./lib/intent')
 const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
 const promises_ = __.require('lib', 'promises')
 const { Track } = __.require('lib', 'track')
 
-module.exports = function(req, res, next){
+module.exports = (req, res, next) => {
   if (req.user == null) return error_.unauthorizedApiAccess(req, res)
 
   const { user, action } = req.body
@@ -36,7 +35,7 @@ module.exports = function(req, res, next){
   .catch(error_.Handler(req, res))
 }
 
-var solveNewRelation = function(action, othersId, reqUserId){
+const solveNewRelation = (action, othersId, reqUserId) => {
   if (reqUserId === othersId) {
     throw error_.new('cant create relation between identical ids', 400, arguments)
   }
@@ -45,7 +44,7 @@ var solveNewRelation = function(action, othersId, reqUserId){
   return intent[type](reqUserId, othersId)
 }
 
-var actions = {
+const actions = {
   request: 'requestFriend',
   cancel: 'cancelFriendRequest',
   accept: 'acceptRequest',
@@ -53,4 +52,4 @@ var actions = {
   unfriend: 'removeFriendship'
 }
 
-var possibleActions = Object.keys(actions)
+const possibleActions = Object.keys(actions)

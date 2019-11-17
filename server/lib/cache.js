@@ -22,7 +22,7 @@ const db = levelBase.simpleSubDb('cache')
 
 const { offline } = CONFIG
 
-const { oneMinute, oneDay, oneMonth } =  __.require('lib', 'times')
+const { oneMinute, oneDay, oneMonth } = __.require('lib', 'times')
 
 module.exports = {
   // - key: the cache key
@@ -32,7 +32,7 @@ module.exports = {
   // - dry: return what's in cache or nothing: if the cache is empty, do not call the function
   // - dryFallbackValue: the value to return when no cached value can be found, to keep responses
   //   type consistent
-  get(params){
+  get: params => {
     let { key, fn, timespan, refresh, dry, dryAndCache, dryFallbackValue } = params
     if (refresh) {
       timespan = 0
@@ -61,17 +61,20 @@ module.exports = {
 
     return checkCache(key, timespan)
     .then(requestOnlyIfNeeded(key, fn, dry, dryAndCache, dryFallbackValue, refuseOldValue))
-    .catch((err) => {
+    .catch(err => {
       const label = `final cache_ err: ${key}`
       // not logging the stack trace in case of 404 and alikes
-      if (/^4/.test(err.statusCode)) { _.warn(err, label)
-      } else { _.error(err, label) }
+      if (/^4/.test(err.statusCode)) {
+        _.warn(err, label)
+      } else {
+        _.error(err, label)
+      }
 
       throw err
     })
   },
 
-  put(key, value){
+  put: (key, value) => {
     if (!_.isNonEmptyString(key)) return error_.reject('invalid key', 500)
 
     if (value == null) return error_.reject('missing value', 500)
@@ -80,15 +83,15 @@ module.exports = {
   }
 }
 
-var checkCache = (key, timespan) => db.get(key)
-.then((res) => {
+const checkCache = (key, timespan) => db.get(key)
+.then(res => {
   // Returning nothing will trigger a new request
-  if (res == null) return 
+  if (res == null) return
 
   const { body, timestamp } = res
 
   // Reject outdated cached values
-  if (!isFreshEnough(timestamp, timespan)) return 
+  if (!isFreshEnough(timestamp, timespan)) return
 
   // In case there was nothing in cache
   if (_.isEmpty(body)) {
@@ -99,13 +102,12 @@ var checkCache = (key, timespan) => db.get(key)
     }
     // Otherwise, trigger a new request by returning nothing
     // _.info key, 'empty cache value: retrying'
-    return
   } else {
     return res
   }
 })
 
-var requestOnlyIfNeeded = (key, fn, dry, dryAndCache, dryFallbackValue, refuseOldValue) => (function(cached) {
+const requestOnlyIfNeeded = (key, fn, dry, dryAndCache, dryFallbackValue, refuseOldValue) => cached => {
   if (cached != null) {
     // _.info "from cache: #{key}"
     return cached.body
@@ -124,33 +126,34 @@ var requestOnlyIfNeeded = (key, fn, dry, dryAndCache, dryFallbackValue, refuseOl
   }
 
   return populate(key, fn, refuseOldValue)
-})
+}
 
-var populate = (key, fn, refuseOldValue) => fn()
-.then((res) => {
+const populate = (key, fn, refuseOldValue) => fn()
+.then(res => {
   // _.info "from remote data source: #{key}"
   putResponseInCache(key, res)
-  return res}).catch((err) => {
+  return res
+}).catch(err => {
   if (refuseOldValue) {
     _.warn(err, `${key} request err (returning nothing)`)
-    return
   } else {
     _.warn(err, `${key} request err (returning old value)`)
     return returnOldValue(key, err)
   }
 })
 
-var putResponseInCache = (key, res) => // _.info "caching #{key}"
+const putResponseInCache = (key, res) => // _.info "caching #{key}"
   db.put(key, {
     body: res,
     timestamp: new Date().getTime()
   })
 
-var isFreshEnough = (timestamp, timespan) => !_.expired(timestamp, timespan)
+const isFreshEnough = (timestamp, timespan) => !_.expired(timestamp, timespan)
 
-var returnOldValue = (key, err) => checkCache(key, Infinity)
-.then((res) => {
-  if (res != null) { return res.body
+const returnOldValue = (key, err) => checkCache(key, Infinity)
+.then(res => {
+  if (res != null) {
+    return res.body
   } else {
     // rethrowing the previous error as it's probably more meaningful
     err.old_value = null

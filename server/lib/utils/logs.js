@@ -18,9 +18,9 @@ const openIssue = require('./open_issue')
 // Log full objects
 require('util').inspect.defaultOptions.depth = null
 
-const BaseLogger = function(color, operation){
+const BaseLogger = (color, operation) => {
   let logger
-  return logger = function(obj, label){
+  return logger = (obj, label) => {
     // fully display deep objects
     console.log(grey('****') + chalk[color](`${label}`) + grey('****'))
     console.log(operation(obj))
@@ -29,21 +29,21 @@ const BaseLogger = function(color, operation){
   }
 }
 
-module.exports = function(_){
+module.exports = _ => {
   if (CONFIG.verbosity === 0) { loggers_.log = _.identity }
 
   const inspect = BaseLogger('magenta', obj => util.inspect(obj, false, null))
   const stringify = BaseLogger('yellow', JSON.stringify)
 
-  var customLoggers = {
+  const customLoggers = {
     stringify,
 
-    error(err, label, logStack = true){
+    error: (err, label, logStack = true) => {
       if (!(err instanceof Error)) {
         throw new Error('invalid error object')
       }
 
-      if (err._hasBeenLogged) return 
+      if (err._hasBeenLogged) return
 
       // If the error is of a lower lever than 500, make it a warning, not an error
       if ((err.statusCode != null) && (err.statusCode < 500)) {
@@ -72,11 +72,11 @@ module.exports = function(_){
       errorCounter++
     },
 
-    warn(err, label){
+    warn: (err, label) => {
       // Errors that have a status code of 404 don't need to be logged
       // as they will be logged by the request logger middleware (morgan)
       // and logging the error object is of no help, everything is in the URL
-      if (err._hasBeenLogged || (err.statusCode === 404)) return 
+      if (err._hasBeenLogged || (err.statusCode === 404)) return
       if (err instanceof Error) {
         // shorten the stack trace
         err.stack = err.stack.split('\n').slice(0, 3).join('\n')
@@ -86,14 +86,14 @@ module.exports = function(_){
       err._hasBeenLogged = true
     },
 
-    errorCount() { return errorCounter },
+    errorCount: () => errorCounter,
 
     // logs the errors total if there was an error
     // in the last 5 seconds
     // -> just a convenience for debugging
-    logErrorsCount() {
+    logErrorsCount: () => {
       let prev = 0
-      const counter = function() {
+      const counter = () => {
         const errs = this.errorCount()
         if (errs !== prev) {
           prev = errs
@@ -104,26 +104,30 @@ module.exports = function(_){
       return setInterval(counter.bind(this), 5000)
     },
 
-    startTimer(key){
+    startTimer: key => {
       console.time(chalk.magenta(key))
       // Make sure to return the non-formated key
       return key
     },
 
     // To be used in promise chains
-    StartTimer(key){ return function(data){
-      customLoggers.startTimer(key)
-      return data
-    } },
+    StartTimer: key => {
+      return data => {
+        customLoggers.startTimer(key)
+        return data
+      }
+    },
 
-    EndTimer(key){ return function(data){
-      console.timeEnd(chalk.magenta(key))
-      return data
-    } }
+    EndTimer: key => {
+      return data => {
+        console.timeEnd(chalk.magenta(key))
+        return data
+      }
+    }
   }
 
   // The same as inv-loggers::errorRethrow but using customLoggers.error instead
-  const errorRethrow = function(err, label){
+  const errorRethrow = (err, label) => {
     customLoggers.error(err, label)
     throw err
   }

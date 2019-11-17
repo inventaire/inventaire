@@ -13,12 +13,15 @@ const error_ = __.require('lib', 'error/error')
 const entities_ = require('./lib/entities')
 const defaultLimit = 100
 
-module.exports = function(req, res){
+module.exports = (req, res) => {
   let { since } = req.query
 
   if (since != null) {
-    if (_.isPositiveIntegerString(since)) { since = _.stringToInt(since)
-    } else { return error_.bundleInvalid(req, res, 'since', since) }
+    if (_.isPositiveIntegerString(since)) {
+      since = _.stringToInt(since)
+    } else {
+      return error_.bundleInvalid(req, res, 'since', since)
+    }
   }
 
   return entities_.getLastChangedEntitiesUris(since, defaultLimit)

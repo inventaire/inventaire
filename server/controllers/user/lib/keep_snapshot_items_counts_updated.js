@@ -14,22 +14,22 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const radio = __.require('lib', 'radio')
 const updateSnapshotItemsCounts = require('./update_snapshot_items_counts')
-const { itemsCountDebounceTime:delay } = CONFIG
+const { itemsCountDebounceTime: delay } = CONFIG
 const totalCount = 0
 const debounceCount = 0
 
-module.exports = function() {
+module.exports = () => {
   const debouncedUpdaters = {}
 
-  const itemsCountsUpdater = userId => (function() {
+  const itemsCountsUpdater = userId => () => {
     // When it gets to be called, remove the lazy updater
     // to prevent blocking memory undefinitely
     delete debouncedUpdaters[userId]
     return updateSnapshotItemsCounts(userId)
     .catch(_.Error('user updateSnapshotItemsCounts err'))
-  })
+  }
 
-  return radio.on('user:inventory:update', (userId) => {
+  return radio.on('user:inventory:update', userId => {
     // Creating a personnalized debouncer as a global debounce would be delayed
     // undefinitely "at scale"
     if (!debouncedUpdaters[userId]) { debouncedUpdaters[userId] = _.debounce(itemsCountsUpdater(userId), delay) }

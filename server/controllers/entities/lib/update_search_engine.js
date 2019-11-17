@@ -26,19 +26,19 @@ const { offline } = CONFIG
 const { updateEnabled, host, delay } = CONFIG.entitiesSearchEngine
 const radio = __.require('lib', 'radio')
 
-module.exports = function() {
-  if (!updateEnabled || offline) return 
+module.exports = () => {
+  if (!updateEnabled || offline) return
 
   _.info('initializing entitiesSearchEngine update')
 
   let urisPerType = {}
 
-  const requestUpdate = function() {
+  const requestUpdate = () => {
     let body;
     [ body, urisPerType ] = Array.from([ urisPerType, {} ])
     return requests_.post({ url: host, body })
     .then(() => _.log(body, 'requested entities search engine updates'))
-    .catch((err) => {
+    .catch(err => {
       if (err.message.match('ECONNREFUSED')) {
         return _.warn('entities search engine updater is offline')
       } else {
@@ -50,12 +50,12 @@ module.exports = function() {
   // Send a batch every #{delay} milliseconds max
   const lazyRequestUpdate = _.throttle(requestUpdate, delay, { leading: false })
 
-  const add = function(uri, type = 'other'){
+  const add = (uri, type = 'other') => {
     // Also include entities without known type
     // so that a Wikidata entity that got a wdt:P31 update
     // that doesn't match any known type still triggers an update
     // to unindex the formerly known type
-    const pluralizedType = type + 's'
+    const pluralizedType = `${type}s`
     if (!urisPerType[pluralizedType]) { urisPerType[pluralizedType] = [] }
 
     // Deduplicating

@@ -8,13 +8,13 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const should = require('should')
+require('should')
 const { nonAuthReq, undesiredRes, undesiredErr } = __.require('apiTests', 'utils/utils')
 const { populate } = require('../fixtures/populate')
 const recentPublicUrl = '/api/items?action=recent-public'
 
 describe('items:recent-public', () => {
-  it('should fetch 15 recent-public items', (done) => {
+  it('should fetch 15 recent-public items', done => {
     populate()
     .then(() => nonAuthReq('get', recentPublicUrl))
     .then(res => res.items.length.should.equal(15))
@@ -23,7 +23,7 @@ describe('items:recent-public', () => {
     .catch(undesiredErr(done))
   })
 
-  it('should fetch items from different owners', (done) => {
+  it('should fetch items from different owners', done => {
     populate()
     .then(() => nonAuthReq('get', recentPublicUrl))
     .then(res => res.users.length.should.be.above(1))
@@ -32,7 +32,7 @@ describe('items:recent-public', () => {
     .catch(undesiredErr(done))
   })
 
-  it('should take a limit parameter', (done) => {
+  it('should take a limit parameter', done => {
     populate()
     .then(() => nonAuthReq('get', `${recentPublicUrl}&limit=3`))
     .then(res => res.items.length.should.equal(3))
@@ -41,7 +41,7 @@ describe('items:recent-public', () => {
     .catch(undesiredErr(done))
   })
 
-  it('should take a lang parameter', (done) => {
+  it('should take a lang parameter', done => {
     populate()
     .then(() => nonAuthReq('get', `${recentPublicUrl}&lang=en`))
     .then(res => _.some(res.items, itemLangIs('en')).should.be.true())
@@ -50,7 +50,7 @@ describe('items:recent-public', () => {
     .catch(undesiredErr(done))
   })
 
-  it('should return some of the most recent items', (done) => {
+  it('should return some of the most recent items', done => {
     populate()
     .then(() => nonAuthReq('get', recentPublicUrl))
     .then(res => _.some(res.items, createdLately).should.be.true())
@@ -59,22 +59,26 @@ describe('items:recent-public', () => {
     .catch(undesiredErr(done))
   })
 
-  it('should reject invalid limit', (done) => {
+  it('should reject invalid limit', done => {
     nonAuthReq('get', `${recentPublicUrl}&limit=bla`)
     .then(undesiredRes(done))
-    .catch((err) => {
+    .catch(err => {
       err.body.status_verbose.should.equal('invalid limit: bla')
-      done()}).catch(undesiredErr(done))
+      done()
+    })
+    .catch(undesiredErr(done))
   })
 
-  it('should reject invalid lang', (done) => {
+  it('should reject invalid lang', done => {
     nonAuthReq('get', `${recentPublicUrl}&lang=bla`)
     .then(undesiredRes(done))
-    .catch((err) => {
+    .catch(err => {
       err.body.status_verbose.should.equal('invalid lang: bla')
-      done()}).catch(undesiredErr(done))
+      done()
+    })
+    .catch(undesiredErr(done))
   })
 })
 
-var itemLangIs = lang => item => item.snapshot['entity:lang'] === lang
-var createdLately = item => !_.expired(item.created, 120000)
+const itemLangIs = lang => item => item.snapshot['entity:lang'] === lang
+const createdLately = item => !_.expired(item.created, 120000)

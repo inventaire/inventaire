@@ -17,7 +17,7 @@ const dataseed = __.require('data', 'dataseed/dataseed')
 
 // An endpoint to get basic facts from an ISBN
 // Returns a merge of isbn2 and dataseed data
-module.exports = function(req, res){
+module.exports = (req, res) => {
   let { isbn, refresh } = req.query
 
   if (!_.isNonEmptyString(isbn)) {
@@ -38,9 +38,11 @@ module.exports = function(req, res){
   refresh = _.parseBooleanString(refresh)
 
   return dataseed.getByIsbns(data.isbn13, refresh)
-  .then((resp) => {
+  .then(resp => {
     const seed = resp[0] || {}
     delete seed.isbn
     _.extend(data, seed)
-    return res.json(data)}).catch(error_.Handler(req, res))
+    return res.json(data)
+  })
+  .catch(error_.Handler(req, res))
 }

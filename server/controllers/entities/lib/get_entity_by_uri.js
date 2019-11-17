@@ -11,7 +11,7 @@ const getEntitiesByUris = require('./get_entities_by_uris')
 
 // Get only the entity formatted doc you needs instead of an object
 // with entities and redirects
-module.exports = function(params){
+module.exports = params => {
   const { uri, refresh, dry } = params
   const uris = [ uri ]
   return getEntitiesByUris({ uris, refresh, dry })

@@ -5,7 +5,6 @@
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-const CONFIG = require('config')
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const user_ = __.require('controllers', 'user/lib/user')
@@ -25,7 +24,7 @@ passport.deserializeUser((id, done) => {
   assert_.types([ 'string', 'function' ], [ id, done ])
   return user_.byId(id)
   .then(user => done(null, user))
-  .catch((err) => {
+  .catch(err => {
     if (err.statusCode === 404) {
       err = error_.new("Couldn't deserialize cookies: user not found", 400, id)
       err.name = 'SessionError'

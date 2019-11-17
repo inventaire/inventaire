@@ -24,7 +24,7 @@ const db = __.require('couch', 'base')('transactions')
 const transactions_ = {
   db,
   byId: db.get,
-  byUser(userId){
+  byUser: userId => {
     return db.viewCustom('byUserAndItem', {
       // get all the docs with this userId
       startkey: [ userId, minKey ],
@@ -34,53 +34,56 @@ const transactions_ = {
     )
   },
 
-  byUserAndItem(userId, itemId){
+  byUserAndItem: (userId, itemId) => {
     assert_.strings([ userId, itemId ])
     return db.viewByKey('byUserAndItem', [ userId, itemId ])
   },
 
-  create(itemDoc, ownerDoc, requesterDoc){
+  create: (itemDoc, ownerDoc, requesterDoc) => {
     const transaction = Transaction.create(itemDoc, ownerDoc, requesterDoc)
     _.log(transaction, 'transaction')
     return db.post(transaction)
-    .then((couchRes) => {
+    .then(couchRes => {
       radio.emit('transaction:request', couchRes.id)
       return couchRes
     })
   },
 
-  addMessage(userId, message, transactionId){
+  addMessage: (userId, message, transactionId) => {
     assert_.strings([ userId, message, transactionId ])
     if (message != null) {
       return comments_.addTransactionComment(userId, message, transactionId)
     }
   },
 
-  updateState(newState, userId, transaction){
+  updateState: (newState, userId, transaction) => {
     Transaction.validatePossibleState(transaction, newState)
     return db.update(transaction._id, stateUpdater(newState, userId, transaction))
     .then(() => radio.emit('transaction:update', transaction, newState))
   },
 
-  markAsRead(userId, transaction){
+  markAsRead: (userId, transaction) => {
     const role = userRole(userId, transaction)
     // not handling cases when both user are connected:
     // should be clarified once sockets/server events will be implemented
     return db.update(transaction._id, BasicUpdater(`read.${role}`, true))
   },
 
-  updateReadForNewMessage(userId, transaction){
+  updateReadForNewMessage: (userId, transaction) => {
     const updatedReadStates = updateReadStates(userId, transaction)
     // spares a db write if updatedReadStates is already the current read state object
-    if (_.sameObjects(updatedReadStates, transaction.read)) { return promises_.resolved
-    } else { return db.update(transaction._id, BasicUpdater('read', updatedReadStates)) }
+    if (_.sameObjects(updatedReadStates, transaction.read)) {
+      return promises_.resolved
+    } else {
+      return db.update(transaction._id, BasicUpdater('read', updatedReadStates))
+    }
   }
 }
 
-var stateUpdater = function(state, userId, transaction){
+const stateUpdater = (state, userId, transaction) => {
   let updater
   const updatedReadStates = updateReadStates(userId, transaction)
-  return updater = function(doc){
+  return updater = doc => {
     doc.state = state
     const action = { action: state, timestamp: Date.now() }
     // keep track of the actor when it can be both
@@ -94,9 +97,9 @@ var stateUpdater = function(state, userId, transaction){
   }
 }
 
-var actorCanBeBoth = [ 'cancelled' ]
+const actorCanBeBoth = [ 'cancelled' ]
 
-var updateReadStates = function(userId, transaction){
+const updateReadStates = (userId, transaction) => {
   const role = userRole(userId, transaction)
   switch (role) {
   case 'owner': return { owner: true, requester: false }
@@ -105,7 +108,7 @@ var updateReadStates = function(userId, transaction){
   }
 }
 
-var userRole = function(userId, transaction){
+const userRole = (userId, transaction) => {
   const { owner, requester } = transaction
   if (userId === owner) return 'owner'
   if (userId === requester) return 'requester'
@@ -113,13 +116,13 @@ var userRole = function(userId, transaction){
 }
 
 const counts = {
-  activeTransactions(userId){
+  activeTransactions: userId => {
     return transactions_.byUser(userId)
     .then(activeCount)
   }
 }
 
-var activeCount = transacs => transacs.filter(Transaction.isActive).length
+const activeCount = transacs => transacs.filter(Transaction.isActive).length
 
 const rightsVerification = require('./rights_verification')(transactions_)
 

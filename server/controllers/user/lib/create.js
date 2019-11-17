@@ -13,21 +13,23 @@ const preventMultiAccountsCreation = require('./prevent_multi_accounts_creation'
 const invitations_ = __.require('controllers', 'invitations/lib/invitations')
 const User = __.require('models', 'user')
 
-module.exports = function(db, token_, availability_){
+module.exports = (db, token_, availability_) => {
   const create = (username, email, creationStrategy, language, password) => promises_.try(preventMultiAccountsCreation.bind(null, username))
   .then(() => availability_.username(username))
   .then(invitations_.findOneByEmail.bind(null, email))
   .then(_.Log('invitedDoc'))
   .then(invitedDoc => User.upgradeInvited(invitedDoc, username, creationStrategy, language, password)
-  .then(db.putAndReturn)).catch((err) => {
+  .then(db.putAndReturn)).catch(err => {
     if (err.notFound) {
       return User.create(username, email, creationStrategy, language, password)
       .then(db.postAndReturn)
     } else {
       throw err
-    }}).then(postCreation)
+    }
+  })
+  .then(postCreation)
 
-  var postCreation = user => promises_.all([
+  const postCreation = user => promises_.all([
     // can be parallelized without risk of conflict as
     // convertInvitations doesnt edit the user document
     // but we do need both to be over to be sure that the user will

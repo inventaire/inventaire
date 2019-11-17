@@ -3,9 +3,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
-const wdk = require('wikidata-sdk')
-const isbn_ = __.require('lib', 'isbn/isbn')
 const { EntityUri, SimpleDay } = __.require('lib', 'regex')
 const { BoundedString } = __.require('models', 'validations/common')
 
@@ -53,7 +50,7 @@ module.exports = {
   positiveInteger: {
     datatype: 'positive-integer',
     type: 'number',
-    validate(value){ return _.isNumber(value) && ((value % 1) === 0) && (value > 0) },
+    validate: value => _.isNumber(value) && ((value % 1) === 0) && (value > 0),
     uniqueValue: true
   },
 

@@ -18,14 +18,14 @@ const entities_ = require('./entities')
 const Entity = __.require('models', 'entity')
 const radio = __.require('lib', 'radio')
 
-const PlaceholderHandler = function(actionName){
+const PlaceholderHandler = actionName => {
   const modelFnName = `${actionName}Placeholder`
-  return function(userId, entityId){
+  return (userId, entityId) => {
     _.warn(entityId, `${modelFnName} entity`)
     // Using db.get anticipates a possible future where db.byId filters-out
     // non type='entity' docs, thus making type='removed:placeholder' not accessible
     return entities_.db.get(entityId)
-    .then((currentDoc) => {
+    .then(currentDoc => {
       let updatedDoc
       try {
         updatedDoc = Entity[modelFnName](currentDoc)
@@ -41,7 +41,9 @@ const PlaceholderHandler = function(actionName){
       }
 
       return entities_.putUpdate({ userId, currentDoc, updatedDoc })
-      .then(() => currentDoc._id)}).tap(() => radio.emit(`entity:${actionName}`, `inv:${entityId}`))
+      .then(() => currentDoc._id)
+    })
+    .tap(() => radio.emit(`entity:${actionName}`, `inv:${entityId}`))
   }
 }
 

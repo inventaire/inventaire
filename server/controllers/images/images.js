@@ -2,7 +2,6 @@
 // Sanity-check the conversion and remove this comment.
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
 const ActionsControllers = __.require('lib', 'actions_controllers')
 
 module.exports = {
@@ -14,7 +13,7 @@ module.exports = {
 
   post: ActionsControllers({
     authentified: {
-      'upload': require('./upload'),
+      upload: require('./upload'),
       'convert-url': require('./convert_url')
     }
   })

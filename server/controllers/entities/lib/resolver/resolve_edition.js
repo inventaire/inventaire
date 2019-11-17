@@ -8,7 +8,6 @@
  */
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
 const { Promise } = __.require('lib', 'promises')
 const entities_ = require('../entities')
 const getInvEntityCanonicalUri = require('../get_inv_entity_canonical_uri')
@@ -17,7 +16,7 @@ const resolveExternalIds = require('./resolve_external_ids')
 // cf https://github.com/inventaire/inventaire/issues/182
 const resolveOnWikidata = false
 
-module.exports = function(entry){
+module.exports = entry => {
   const { isbn, claims } = entry.edition
 
   return Promise.all([
@@ -25,20 +24,20 @@ module.exports = function(entry){
     resolveExternalIds(claims, resolveOnWikidata)
   ])
   .spread(pickUriFromResolversResponses)
-  .then((uri) => {
+  .then(uri => {
     if (uri != null) { entry.edition.uri = uri }
     return entry
   })
 }
 
-var resolveByIsbn = function(isbn){
-  if (isbn == null) return 
+const resolveByIsbn = isbn => {
+  if (isbn == null) return
   // Resolve directly on the database to avoid making undersired requests to dataseed
   return entities_.byIsbn(isbn)
-  .then((edition) => { if (edition != null) { return getInvEntityCanonicalUri(edition) } })
+  .then(edition => { if (edition != null) { return getInvEntityCanonicalUri(edition) } })
 }
 
-var pickUriFromResolversResponses = function(uriFoundByIsbn, urisFoundByExternalIds){
+const pickUriFromResolversResponses = (uriFoundByIsbn, urisFoundByExternalIds) => {
   // TODO: handle possible conflict between uriFoundByIsbn and urisFoundByExternalIds
   if (uriFoundByIsbn != null) return uriFoundByIsbn
   if ((urisFoundByExternalIds != null) && (urisFoundByExternalIds.length === 1)) {

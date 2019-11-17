@@ -13,12 +13,12 @@ const error_ = __.require('lib', 'error/error')
 const crypto = require('crypto')
 
 exports.passwords = {
-  hash(password){
+  hash: password => {
     if (password == null) return error_.reject('missing password', 400)
     return pw.hash(password)
   },
 
-  verify(hash, password, tokenDaysToLive){
+  verify: (hash, password, tokenDaysToLive) => {
     if (hash == null) return error_.reject('missing hash', 400)
 
     if ((tokenDaysToLive != null) && pw.expired(hash, tokenDaysToLive)) {

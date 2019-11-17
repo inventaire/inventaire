@@ -8,12 +8,11 @@
  */
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
 const items_ = __.require('controllers', 'items/lib/items')
 const { getLastItems, formatData, embedUsersData, getHighlightedItems } = require('./last_books_helpers')
 
-module.exports = function(user, limitDate = 0){
-  const { _id:userId, position, lang } = user
+module.exports = (user, limitDate = 0) => {
+  const { _id: userId, position, lang } = user
 
   if (position == null) return formatData([], 'nearby', lang, [])
 
@@ -21,10 +20,10 @@ module.exports = function(user, limitDate = 0){
   .spread(formatItems(limitDate, position, lang))
 }
 
-var formatItems = (limitDate, position, lang) => (function(users, items) {
+const formatItems = (limitDate, position, lang) => (users, items) => {
   items = items.map(items_.serializeData)
   let lastItems = getLastItems(limitDate, items)
   const highlighted = getHighlightedItems(lastItems, 10)
   lastItems = embedUsersData(lastItems, users, position)
   return formatData(lastItems, 'nearby', lang, highlighted)
-})
+}

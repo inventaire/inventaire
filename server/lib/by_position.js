@@ -12,15 +12,15 @@ const _ = __.require('builders', 'utils')
 const couch_ = __.require('lib', 'couch')
 const assert_ = __.require('utils', 'assert_types')
 
-module.exports = (db, designDoc) => (function(bbox) {
+module.exports = (db, designDoc) => bbox => {
   assert_.numbers(bbox)
   const keys = getGeoSquareKeys(bbox)
 
   return db.viewKeys(designDoc, 'byGeoSquare', keys, { include_docs: true })
   .then(couch_.mapDoc)
-})
+}
 
-var getGeoSquareKeys = function(bbox){
+const getGeoSquareKeys = bbox => {
   // Using the same bbox order as Leaflet bounds.toBBoxString function.
   // Use Math.floor and not Math.trunc as they have different behaviors
   // on negative numbers: Math.floor(-2.512) => -3 /// Math.trunc(-2.512) => -2
@@ -33,7 +33,7 @@ var getGeoSquareKeys = function(bbox){
   return _.combinations(latRange, lngRange)
 }
 
-function __range__(left, right, inclusive) {
+function __range__ (left, right, inclusive) {
   const range = []
   const ascending = left < right
   const end = !inclusive ? right : ascending ? right + 1 : right - 1

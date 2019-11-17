@@ -15,7 +15,7 @@ const isReservedWord = require('./is_reserved_word')
 const error_ = __.require('lib', 'error/error')
 
 module.exports = user_ => ({
-  username(username, currentUsername){
+  username: (username, currentUsername) => {
     // If a currentUsername is provided
     // return true if the new username is the same but with a different case
     // (used for username update)
@@ -37,7 +37,7 @@ module.exports = user_ => ({
     .then(checkAvailability.bind(null, username, 'username'))
   },
 
-  email(email){
+  email: email => {
     if (!User.validations.email(email)) {
       return error_.rejectInvalid('email', email)
     }
@@ -47,7 +47,7 @@ module.exports = user_ => ({
   }
 })
 
-var checkAvailability = function(value, label, docs){
+const checkAvailability = (value, label, docs) => {
   if (docs.length !== 0) {
     throw error_.new(`this ${label} is already used`, 400, value)
   }

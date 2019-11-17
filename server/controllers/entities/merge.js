@@ -25,10 +25,10 @@ const radio = __.require('lib', 'radio')
 // Only inv entities can be merged yet
 const validFromPrefix = [ 'inv', 'isbn' ]
 
-module.exports = function(req, res){
+module.exports = (req, res) => {
   const { body } = req
-  const { from:fromUri, to:toUri } = body
-  const { _id:reqUserId } = req.user
+  const { from: fromUri, to: toUri } = body
+  const { _id: reqUserId } = req.user
 
   if (fromUri == null) return error_.bundleMissingBody(req, res, 'from')
   if (!toUri) return error_.bundleMissingBody(req, res, 'to')
@@ -42,8 +42,8 @@ module.exports = function(req, res){
     return error_.bundleInvalid(req, res, 'to', toUri)
   }
 
-  const [ fromPrefix, fromId ] = Array.from(fromUri.split(':'))
-  const [ toPrefix, toId ] = Array.from(toUri.split(':'))
+  const [ fromPrefix, fromId ] = fromUri.split(':')
+  const [ toPrefix, toId ] = toUri.split(':')
 
   if (!validFromPrefix.includes(fromPrefix)) {
     const message = `invalid 'from' uri domain: ${fromPrefix}. Accepted domains: ${validFromPrefix}`
@@ -62,7 +62,7 @@ module.exports = function(req, res){
   .catch(error_.Handler(req, res))
 }
 
-var merge = (reqUserId, toPrefix, fromUri, toUri) => (function(res) {
+const merge = (reqUserId, toPrefix, fromUri, toUri) => res => {
   const { entities, redirects } = res
   const fromEntity = entities[fromUri] || entities[redirects[fromUri]]
   if (fromEntity == null) throw notFound('from', fromUri)
@@ -106,13 +106,13 @@ var merge = (reqUserId, toPrefix, fromUri, toUri) => (function(res) {
   toUri = replaceIsbnUriByInvUri(toUri, toEntity._id)
 
   return mergeEntities(reqUserId, fromUri, toUri)
-})
+}
 
-var replaceIsbnUriByInvUri = function(uri, invId){
-  const [ prefix ] = Array.from(uri.split(':'))
+const replaceIsbnUriByInvUri = (uri, invId) => {
+  const [ prefix ] = uri.split(':')
   // Prefer inv id over isbn to prepare for ./lib/merge_entities
   if (prefix === 'isbn') return `inv:${invId}`
   return uri
 }
 
-var notFound = (label, context) => error_.new(`'${label}' entity not found`, 400, context)
+const notFound = (label, context) => error_.new(`'${label}' entity not found`, 400, context)

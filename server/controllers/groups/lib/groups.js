@@ -10,7 +10,6 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const promises_ = __.require('lib', 'promises')
-const error_ = __.require('lib', 'error/error')
 const Group = __.require('models', 'group')
 
 const db = __.require('couch', 'base')('groups')
@@ -22,7 +21,7 @@ module.exports = (groups_ = {
   bySlug: db.viewFindOneByKey.bind(db, 'bySlug'),
   byUser: db.viewByKey.bind(db, 'byUser'),
   byInvitedUser: db.viewByKey.bind(db, 'byInvitedUser'),
-  byAdmin(userId){
+  byAdmin: userId => {
     // could be simplified by making the byUser view
     // emit an arrey key with the role as second parameter
     // but it would make groups_.byUser more complex
@@ -32,11 +31,11 @@ module.exports = (groups_ = {
   },
 
   // /!\ the 'byName' view does return groups with 'searchable' set to false
-  nameStartBy(name, limit = 10){
+  nameStartBy: (name, limit = 10) => {
     name = name.toLowerCase()
     return db.viewCustom('byName', {
       startkey: name,
-      endkey: name + 'Z',
+      endkey: `${name}Z`,
       include_docs: true,
       limit
     }
@@ -44,7 +43,7 @@ module.exports = (groups_ = {
   },
 
   // including invitations
-  allUserGroups(userId){
+  allUserGroups: userId => {
     return promises_.all([
       groups_.byUser(userId),
       groups_.byInvitedUser(userId)
@@ -52,26 +51,26 @@ module.exports = (groups_ = {
     .spread(_.union.bind(_))
   },
 
-  create(options){
+  create: options => {
     return promises_.try(() => Group.create(options))
     .then(addSlug)
     .then(db.postAndReturn)
     .then(_.Log('group created'))
   },
 
-  findUserGroupsCoMembers(userId){
+  findUserGroupsCoMembers: userId => {
     return groups_.byUser(userId)
     .then(groups_.allGroupsMembers)
     // Deduplicate and remove the user own id from the list
     .then(usersIds => _.uniq(_.without(usersIds, userId)))
   },
 
-  userInvited(userId, groupId){
+  userInvited: (userId, groupId) => {
     return groups_.byId(groupId)
     .then(_.partial(Group.findInvitation, userId, _, true))
   },
 
-  byCreation(limit = 10){
+  byCreation: (limit = 10) => {
     return db.viewCustom('byCreation', { limit, descending: true, include_docs: true })
   }
 })
@@ -85,8 +84,8 @@ const counts = require('./counts')
 const leaveGroups = require('./leave_groups')
 const getSlug = require('./get_slug')
 
-var addSlug = group => getSlug(group.name, group._id)
-.then((slug) => {
+const addSlug = group => getSlug(group.name, group._id)
+.then(slug => {
   group.slug = slug
   return group
 })

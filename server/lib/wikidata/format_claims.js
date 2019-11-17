@@ -12,7 +12,7 @@ const options = {
   timeConverter: 'simple-day'
 }
 
-module.exports = function(claims, wdId){
+module.exports = (claims, wdId) => {
   assert_.types([ 'object', 'string' ], [ claims, wdId ])
   const whitelistedClaims = _.pick(claims, whitelistedProperties)
   return wdk.simplifyClaims(whitelistedClaims, options)

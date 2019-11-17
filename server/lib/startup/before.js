@@ -10,11 +10,10 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 // Needs to be run before the first promise is fired
 // so that the configuration applies to all
-const { Promise } = __.require('lib', 'promises')
 
 const { red } = require('chalk')
 
-module.exports = function() {
+module.exports = () => {
   initUncaughtExceptionCatcher()
 
   _.logErrorsCount()
@@ -23,4 +22,4 @@ module.exports = function() {
   return _.log(`host: ${CONFIG.fullHost()}`)
 }
 
-var initUncaughtExceptionCatcher = () => process.on('uncaughtException', err => console.error(red('uncaughtException'), err))
+const initUncaughtExceptionCatcher = () => process.on('uncaughtException', err => console.error(red('uncaughtException'), err))

@@ -10,58 +10,61 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const should = require('should')
+require('should')
 const faker = require('faker')
 const { authReq, nonAuthReq, undesiredErr } = require('../utils/utils')
 const { groupName } = require('../fixtures/groups')
 const slugify = __.require('controllers', 'groups/lib/slugify')
 
 describe('groups:search', () => {
-  it('should find a group by its name', (done) => {
+  it('should find a group by its name', done => {
     const name = groupName()
     authReq('post', '/api/groups?action=create', { name })
     .delay(1000)
-    .then((creationRes) => {
+    .then(creationRes => {
       const groupId = creationRes._id
       return nonAuthReq('get', `/api/groups?action=search&search=${name}`)
-      .then((searchRes) => {
+      .then(searchRes => {
         let needle;
         ((needle = groupId, groupsIds(searchRes).includes(needle))).should.be.true()
         done()
-      })}).catch(undesiredErr(done))
-
+      })
+    })
+    .catch(undesiredErr(done))
   })
 
-  it('should find a group by its description', (done) => {
+  it('should find a group by its description', done => {
     const name = groupName()
     const description = faker.lorem.paragraph()
     authReq('post', '/api/groups?action=create', { name, description })
     .delay(1000)
-    .then((creationRes) => {
+    .then(creationRes => {
       const groupId = creationRes._id
       return nonAuthReq('get', `/api/groups?action=search&search=${description}`)
-      .then((searchRes) => {
+      .then(searchRes => {
         let needle;
         ((needle = groupId, groupsIds(searchRes).includes(needle))).should.be.true()
         done()
-      })}).catch(undesiredErr(done))
-
+      })
+    })
+    .catch(undesiredErr(done))
   })
 
-  it('should not find a group when not searchable', (done) => {
+  it('should not find a group when not searchable', done => {
     const name = groupName()
     authReq('post', '/api/groups?action=create', { name, searchable: false })
     .delay(1000)
-    .then((creationRes) => {
+    .then(creationRes => {
       const groupId = creationRes._id
       return nonAuthReq('get', `/api/groups?action=search&search=${name}`)
-      .then((searchRes) => {
+      .then(searchRes => {
         let needle;
         ((needle = groupId, groupsIds(searchRes).includes(needle))).should.not.be.true()
         done()
-      })}).catch(undesiredErr(done))
-
+      })
+    })
+    .catch(undesiredErr(done))
   })
 })
 
-var groupsIds = res => _.map(res.groups, '_id')
+const groupsIds = res => _.map(res.groups, '_id')

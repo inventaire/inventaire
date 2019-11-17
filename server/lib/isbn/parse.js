@@ -13,7 +13,7 @@ let parse
 const { parse: isbnParser } = require('isbn2').ISBN
 const groups = require('./groups')
 
-module.exports = (parse = function(isbn){
+module.exports = (parse = isbn => {
   // The isbn2 parser would reject an ISBN formatted like 978-2070368228,
   // so removing all hypens gives us more coverage
   isbn = dehyphenate(isbn)
@@ -41,8 +41,8 @@ module.exports = (parse = function(isbn){
   return data
 })
 
-var dehyphenate = isbn => isbn.replace(/-/g, '')
+const dehyphenate = isbn => isbn.replace(/-/g, '')
 
-function __guard__(value, transform) {
+function __guard__ (value, transform) {
   return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined
 }

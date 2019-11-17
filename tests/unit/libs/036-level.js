@@ -9,24 +9,24 @@ const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 
 const should = require('should')
-const { Promise } = __.require('lib', 'promises')
 const { undesiredRes } = require('../utils')
 
 const levelBase = __.require('level', 'base')
 const db = levelBase.simpleSubDb('test db')
 
 describe('simplified level', () => {
-  it('should put and get an object value', (done) => {
+  it('should put and get an object value', done => {
     db.put('ohoh', { ahoy: 'georges' })
     .then(() => db.get('ohoh'))
-    .then((res) => {
+    .then(res => {
       res.should.be.an.Object()
       res.ahoy.should.equal('georges')
-      done()}).catch(done)
-
+      done()
+    })
+    .catch(done)
   })
 
-  it('should batch and reset', (done) => {
+  it('should batch and reset', done => {
     db.reset()
     .then(() => db.batch([
       { key: 'a', value: 'b' },
@@ -40,7 +40,7 @@ describe('simplified level', () => {
       { type: 'put', key: 'i', value: 'j' }
     ]))
     .then(() => levelBase.streamPromise(db.sub.createReadStream()))
-    .then((dump) => {
+    .then(dump => {
       dump.should.deepEqual([
         { key: 'a', value: 'b' },
         { key: 'e', value: { f: 1 } },
@@ -48,27 +48,30 @@ describe('simplified level', () => {
       ])
       done()
     })
-
   })
 
-  it('should put and get a string value', (done) => {
+  it('should put and get a string value', done => {
     db.put('what', 'zup')
     .then(() => db.get('what'))
-    .then((res) => {
+    .then(res => {
       res.should.equal('zup')
-      done()}).catch(done)
-
+      done()
+    })
+    .catch(done)
   })
 
-  it('should catch notFound errors', (done) => {
+  it('should catch notFound errors', done => {
     let spyCount = 0
     db.get('not defined')
-    .catch((err) => {
+    .catch(err => {
       _.error(err, 'GET err')
-      return spyCount++}).then((res) => {
+      return spyCount++
+    })
+    .then(res => {
       spyCount.should.equal(0)
       should(res).not.be.ok()
-      done()}).catch(done)
-
+      done()
+    })
+    .catch(done)
   })
 })

@@ -7,12 +7,9 @@
  */
 // An endpoint to list entities edits made by a user
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
-const promises_ = __.require('lib', 'promises')
 const sanitize = __.require('lib', 'sanitize/sanitize')
 const responses_ = __.require('lib', 'responses')
-const entities_ = require('./lib/entities')
 const patches_ = require('./lib/patches')
 
 const sanitization = {
@@ -22,7 +19,8 @@ const sanitization = {
 }
 
 module.exports = (req, res) => sanitize(req, res, sanitization)
-.then((params) => {
-  const { user:userId, limit, offset } = params
-  return patches_.byUserId(userId, limit, offset)}).then(responses_.Send(res))
+.then(params => {
+  const { user: userId, limit, offset } = params
+  return patches_.byUserId(userId, limit, offset)
+}).then(responses_.Send(res))
 .catch(error_.Handler(req, res))

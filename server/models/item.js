@@ -18,7 +18,7 @@ Item.validations = (validations = require('./validations/item'))
 Item.attributes = (attributes = require('./attributes/item'))
 const { solveConstraint } = require('./helpers')(attributes)
 
-Item.create = function(userId, item){
+Item.create = (userId, item) => {
   assert_.types([ 'string', 'object' ], [ userId, item ])
   // _id: We want to get couchdb sequential id so we need to let _id blank
   // owner: ignore any passed owner, the owner is the authentified user
@@ -44,7 +44,7 @@ Item.create = function(userId, item){
   return item
 }
 
-Item.update = function(userId, newAttributes, oldItem){
+Item.update = (userId, newAttributes, oldItem) => {
   assert_.types([ 'string', 'object', 'object' ], arguments)
 
   if (oldItem.owner !== userId) {
@@ -71,7 +71,7 @@ Item.update = function(userId, newAttributes, oldItem){
   return newItem
 }
 
-Item.changeOwner = function(transacDoc, item){
+Item.changeOwner = (transacDoc, item) => {
   assert_.objects([ transacDoc, item ])
   _.log(arguments, 'changeOwner')
 
@@ -105,7 +105,7 @@ Item.changeOwner = function(transacDoc, item){
 
 Item.allowTransaction = item => attributes.allowTransaction.includes(item.transaction)
 
-Item.updateEntity = function(fromUri, toUri, item){
+Item.updateEntity = (fromUri, toUri, item) => {
   if (item.entity !== fromUri) {
     throw error_.new(`wrong entity uri: expected ${fromUri}, got ${item.entity}`, 500)
   }
@@ -118,7 +118,7 @@ Item.updateEntity = function(fromUri, toUri, item){
   return item
 }
 
-Item.revertEntity = function(fromUri, toUri, item){
+Item.revertEntity = (fromUri, toUri, item) => {
   const { entity } = item
   const previousEntity = item.previousEntity[0]
   if (item.entity !== toUri) {

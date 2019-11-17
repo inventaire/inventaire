@@ -21,7 +21,7 @@ const whitelistedEntityTypes = [ 'work', 'serie', 'human', 'publisher' ]
 
 module.exports = params => Promise.try(() => createWdEntity(params))
 
-var createWdEntity = function(params){
+const createWdEntity = params => {
   const { labels, claims, user, isAlreadyValidated } = params
   wdOauth.validate(user)
   const oauth = wdOauth.getFullCredentials(user)
@@ -33,8 +33,10 @@ var createWdEntity = function(params){
   return validate(entity, isAlreadyValidated)
   .then(() => {
     validateWikidataCompliance(entity)
-    return format(entity)}).then(wdEdit({ oauth }, 'entity/create'))
-  .then((res) => {
+    return format(entity)
+  })
+  .then(wdEdit({ oauth }, 'entity/create'))
+  .then(res => {
     ({ entity } = res)
     if (entity == null) {
       throw error_.new('invalid wikidata-edit response', 500, { res })
@@ -45,18 +47,21 @@ var createWdEntity = function(params){
   })
 }
 
-var validate = function(entity, isAlreadyValidated){
-  if (isAlreadyValidated) { return Promise.resolve()
-  } else { return validateEntity(entity) }
+const validate = (entity, isAlreadyValidated) => {
+  if (isAlreadyValidated) {
+    return Promise.resolve()
+  } else {
+    return validateEntity(entity)
+  }
 }
 
-var validateWikidataCompliance = function(entity){
+const validateWikidataCompliance = entity => {
   const { claims } = entity
   if (claims == null) throw error_.new('invalid entity', 400, entity)
 
   const entityType = getEntityType(claims['wdt:P31'])
   if (!whitelistedEntityTypes.includes(entityType)) {
-    throw error_.new('invalid entity type', 400, { entityType, entity })
+    throw error_.new('invalid entity type', 400, { entityType, entity })
   }
 
   for (const property in claims) {
@@ -73,14 +78,14 @@ var validateWikidataCompliance = function(entity){
   return entity
 }
 
-var format = function(entity){
-  const { claims } = entity
+const format = entity => {
+  const { claims } = entity
   entity.claims = Object.keys(claims)
     .reduce(unprefixifyClaims(claims), {})
   return entity
 }
 
-var unprefixifyClaims = claims => (function(formattedClaims, property) {
+const unprefixifyClaims = claims => (formattedClaims, property) => {
   const unprefixifiedProp = unprefixify(property)
   const propertyValues = claims[property]
 
@@ -91,4 +96,4 @@ var unprefixifyClaims = claims => (function(formattedClaims, property) {
     formattedClaims[unprefixifiedProp] = propertyValues
   }
   return formattedClaims
-})
+}

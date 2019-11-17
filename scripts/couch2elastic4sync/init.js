@@ -16,7 +16,7 @@ const { writeFile } = __.require('lib', 'fs')
 const { syncDataList, indexesList } = __.require('db', 'elasticsearch/list')
 const createIndex = require('./create_index')
 
-const writeConfigFile = function(syncData){
+const writeConfigFile = syncData => {
   const { dbName, type } = syncData
 
   const data = {

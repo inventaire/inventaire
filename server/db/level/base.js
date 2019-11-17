@@ -29,18 +29,18 @@ if (CONFIG.leveldbMemoryBackend) {
   DB = sublevel(level(DBPath, config))
 }
 
-const rawSubDb = function(dbName, valueEncoding){
+const rawSubDb = (dbName, valueEncoding) => {
   _.success(`${dbName} opened`)
   return DB.sublevel(dbName, { valueEncoding })
 }
 
 // Promisified and with a few additional functions
-const simpleSubDb = function(dbName){
+const simpleSubDb = dbName => {
   let API
   const sub = Promise.promisifyAll(rawSubDb(dbName, 'json'))
 
   return API = {
-    get(key){
+    get: key => {
       return sub.getAsync(key)
       // TODO: remove to keep the convention that notFound cases
       // should be handled in catch functions
@@ -54,25 +54,28 @@ const simpleSubDb = function(dbName){
   }
 }
 
-var Reset = sub => () => new Promise(((resolve, reject) => {
+const Reset = sub => () => new Promise((resolve, reject) => {
   const ops = []
   return sub.createKeyStream()
   .on('data', key => ops.push({ type: 'del', key }))
   .on('end', () => sub.batch(ops, (err, res) => {
-    if (err) { return reject(err)
-    } else { return resolve(res) }
+    if (err) {
+      return reject(err)
+    } else {
+      return resolve(res)
+    }
   }))
-}))
+})
 
 const Inspect = sub => () => streamPromise(sub.createReadStream())
 .then(_.Log('sub dump'))
 
-var streamPromise = stream => new Promise(((resolve, reject) => {
+const streamPromise = stream => new Promise((resolve, reject) => {
   const results = []
   return stream
   .on('data', results.push.bind(results))
   .on('end', () => resolve(results))
   .on('error', reject)
-}))
+})
 
 module.exports = { rawSubDb, simpleSubDb, Reset, Inspect, streamPromise }

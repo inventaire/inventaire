@@ -14,7 +14,7 @@ const invitations_ = require('./invitations')
 const Invited = __.require('models', 'invited')
 const radio = __.require('lib', 'radio')
 
-module.exports = function(user, group, emails, message){
+module.exports = (user, group, emails, message) => {
   assert_.types([ 'object', 'object|null', 'array', 'string|null' ], arguments)
   const userId = user._id
   const groupId = group != null ? group._id : undefined
@@ -22,8 +22,7 @@ module.exports = function(user, group, emails, message){
 
   return invitations_.byEmails(emails)
   .then(_.Log('known invited'))
-  .then((existingInvitedUsers) => {
-
+  .then(existingInvitedUsers => {
     // Emails already invited by others but not this user
     const canBeInvited = extractCanBeInvited(userId, groupId, existingInvitedUsers)
     _.log(canBeInvited, 'known emails that canBeInvited by the current user')
@@ -43,10 +42,12 @@ module.exports = function(user, group, emails, message){
       _.log(remainingEmails, 'effectively sent emails')
 
       return triggerInvitation(user, group, remainingEmails, message)
-    })}).catch(_.Error('send invitations err'))
+    })
+  })
+  .catch(_.Error('send invitations err'))
 }
 
-var triggerInvitation = function(user, group, emails, message){
+const triggerInvitation = (user, group, emails, message) => {
   if (group != null) {
     return radio.emit('send:group:email:invitations', user, group, emails, message)
   } else {
@@ -54,14 +55,14 @@ var triggerInvitation = function(user, group, emails, message){
   }
 }
 
-var extractUnknownEmails = function(emails, knownInvitedUsers){
+const extractUnknownEmails = (emails, knownInvitedUsers) => {
   const knownInvitedUsersEmails = _.map(knownInvitedUsers, 'email')
   return _.difference(emails, knownInvitedUsersEmails)
 }
 
-var extractCanBeInvited = (userId, groupId, knownInvitedUsers) => knownInvitedUsers.filter(Invited.canBeInvited(userId, groupId))
+const extractCanBeInvited = (userId, groupId, knownInvitedUsers) => knownInvitedUsers.filter(Invited.canBeInvited(userId, groupId))
 
-var concatRemainingEmails = function(canBeInvited, unknownEmails){
+const concatRemainingEmails = (canBeInvited, unknownEmails) => {
   const knownEmails = _.map(canBeInvited, 'email')
   return unknownEmails.concat(knownEmails)
 }

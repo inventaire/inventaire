@@ -13,7 +13,7 @@ const items_ = __.require('controllers', 'items/lib/items')
 const User = __.require('models', 'user')
 
 // Working around the circular dependency
-let user_ = null
+let user_
 const lateRequire = () => user_ = __.require('controllers', 'user/lib/user')
 setTimeout(lateRequire, 0)
 
@@ -21,10 +21,10 @@ module.exports = userId => getItemsCounts(userId)
 .then(itemsCounts => user_.db.update(userId, User.updateItemsCounts(itemsCounts))).then(() => _.info(`${userId} items counts updated`))
 .catch(_.Error('user updateSnapshotItemsCounts err'))
 
-var getItemsCounts = userId => items_.byOwner(userId)
+const getItemsCounts = userId => items_.byOwner(userId)
 .then(items => items.reduce(aggregateCounts, itemsCountsBase()))
 
-var aggregateCounts = function(index, item){
+const aggregateCounts = (index, item) => {
   const { listing, created } = item
   index[listing]['items:count'] += 1
 
@@ -36,8 +36,8 @@ var aggregateCounts = function(index, item){
   return index
 }
 
-var itemsCountsBase = () => ({
-  'private': { 'items:count': 0 },
-  'network': { 'items:count': 0 },
-  'public': { 'items:count': 0 }
+const itemsCountsBase = () => ({
+  private: { 'items:count': 0 },
+  network: { 'items:count': 0 },
+  public: { 'items:count': 0 }
 })

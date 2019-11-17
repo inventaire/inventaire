@@ -19,7 +19,7 @@ const translate = require('./translate')
 const polyglots = {}
 const translators = {}
 
-const warnAndFix = function(warning){
+const warnAndFix = warning => {
   if (!/Missing\stranslation/.test(warning)) {
     return _.warn(warning)
   }
@@ -29,14 +29,14 @@ const warnAndFix = function(warning){
   return appendToEmailsKeys(key)
 }
 
-activeLangs.forEach((lang) => {
+activeLangs.forEach(lang => {
   const polyglot = (polyglots[lang] = new Polyglot({ locale: lang, warn: warnAndFix }))
   const phrases = __.require('i18nDist', `${lang}.json`)
   polyglots[lang].extend(phrases)
   return translators[lang] = translate(lang, polyglot)
 })
 
-const solveLang = function(lang){
+const solveLang = lang => {
   // there is only support for 2 letters languages for now
   lang = __guard__(lang, x => x.slice(0, 2))
   if (activeLangs.includes(lang)) return lang
@@ -44,18 +44,18 @@ const solveLang = function(lang){
 }
 
 module.exports = (helpers = {
-  i18n(lang, key, args){
+  i18n: (lang, key, args) => {
     lang = solveLang(lang)
     return translators[lang](key, args)
   },
 
-  I18n(...args){
+  I18n: (...args) => {
     const text = helpers.i18n.apply(null, args)
     const firstLetter = text[0].toUpperCase()
     return firstLetter + text.slice(1)
   },
 
-  dateI18n(lang, epochTime, format){
+  dateI18n: (lang, epochTime, format) => {
     // set default while neutralizeing handlebars object
     if (!_.isString(format)) { format = 'LLL' }
     lang = solveLang(lang)
@@ -64,6 +64,6 @@ module.exports = (helpers = {
   }
 })
 
-function __guard__(value, transform) {
+function __guard__ (value, transform) {
   return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined
 }

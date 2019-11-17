@@ -11,7 +11,7 @@ const _ = __.require('builders', 'utils')
 const responses_ = __.require('lib', 'responses')
 const headersToKeep = [ 'user-agent', 'content-type', 'content-length', 'referer' ]
 
-module.exports = function(req, res, err, status){
+module.exports = (req, res, err, status) => {
   // only accepts Error instances
   if (!(err instanceof Error)) {
     _.error(err, 'bad error object')
@@ -29,8 +29,11 @@ module.exports = function(req, res, err, status){
     err.context = _.pick(req, err.attachReqContext)
   }
 
-  if (/^4/.test(statusCode)) { _.warn(err, statusCode)
-  } else { _.error(err, err.message) }
+  if (/^4/.test(statusCode)) {
+    _.warn(err, statusCode)
+  } else {
+    _.error(err, err.message)
+  }
 
   res.status(statusCode)
   responses_.send(res, {
@@ -41,10 +44,9 @@ module.exports = function(req, res, err, status){
     context: err.context
   }
   )
-
 }
 
-var emptyContext = function(context){
+const emptyContext = context => {
   if ((context == null)) return true
   switch (_.typeOf(context)) {
   case 'array': case 'string': return context.length === 0

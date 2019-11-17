@@ -9,15 +9,14 @@
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-const CONFIG = require('config')
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const ActionsControllers = __.require('lib', 'actions_controllers')
 const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
 
-const cspReport = function(req, res){
-  const { 'csp-report':errData } = req.body
+const cspReport = (req, res) => {
+  const { 'csp-report': errData } = req.body
 
   if (errData == null) {
     return error_.bundleMissingBody(req, res, 'csp-report')
@@ -28,8 +27,8 @@ const cspReport = function(req, res){
   return responses_.ok(res)
 }
 
-const errorReport = function(req, res){
-  const { error:errData } = req.body
+const errorReport = (req, res) => {
+  const { error: errData } = req.body
 
   if (errData == null) {
     return error_.bundleMissingBody(req, res, 'error')
@@ -42,7 +41,7 @@ const errorReport = function(req, res){
   return responses_.ok(res)
 }
 
-var buildError = function(message, labels, errData, req){
+const buildError = (message, labels, errData, req) => {
   const context = _.omit(errData, 'stack')
   const statusCode = errData.statusCode || 500
   const err = error_.new(message, statusCode, context)
@@ -59,14 +58,14 @@ var buildError = function(message, labels, errData, req){
 
 // Faking an error object for the needs of server/lib/utils/open_issue.js
 // Define the stack first to stringify only what was reported
-var getErrStack = function(err){
+const getErrStack = err => {
   let { message, stack } = err
   stack = err.stack || JSON.stringify(err, null, 2)
   // Adding the message at the top of the stack trace
   // as expected by _.error that will log only the stack trace, assuming it
   // contains the error message too
   if (_.isNonEmptyString(message) && (stack.search(message) === -1)) {
-    stack = message + '\n' + stack
+    stack = `${message}\n${stack}`
   }
   return stack
 }
@@ -74,9 +73,9 @@ var getErrStack = function(err){
 module.exports = {
   post: ActionsControllers({
     public: {
-      'csp-report':  cspReport,
-      'error-report':  errorReport,
-      'online': require('./online_report')
+      'csp-report': cspReport,
+      'error-report': errorReport,
+      online: require('./online_report')
     }
   })
 }

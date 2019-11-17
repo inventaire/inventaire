@@ -10,11 +10,9 @@ const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
-const promises_ = __.require('lib', 'promises')
-const entities_ = require('./lib/entities')
 const patches_ = require('./lib/patches')
 
-module.exports = function(req, res){
+module.exports = (req, res) => {
   const { id } = req.query
 
   if (!_.isInvEntityId(id)) {

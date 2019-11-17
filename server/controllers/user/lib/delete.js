@@ -11,15 +11,14 @@ const _ = __.require('builders', 'utils')
 const couch_ = __.require('lib', 'couch')
 const User = __.require('models', 'user')
 
-module.exports = function(db, user_){
-
+module.exports = (db, user_) => {
   let API
   const deleteUser = user => db.del(user._id, user._rev)
 
   const softDeleteById = userId => db.update(userId, User.softDelete)
 
   // only used by tests so far
-  const deleteByUsername = function(username){
+  const deleteByUsername = username => {
     _.info(username, 'deleteUserbyUsername')
     return user_.byUsername(username)
     .then(couch_.firstDoc)

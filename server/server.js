@@ -1,5 +1,3 @@
-// TODO: This file was created by bulk-decaffeinate.
-// Sanity-check the conversion and remove this comment.
 console.time('startup')
 const CONFIG = require('config')
 // Signal to other CONFIG consumers that they are in a server context
@@ -16,7 +14,7 @@ const couchInit = __.require('couch', 'init')()
 // Meanwhile, start setting up the server.
 // Startup time is mostly due to the time needed to require
 // all files from controllers, middlewares, libs, etc
-const initExpress = require('./server/init_express')
+const initExpress = require('./init_express')
 
 couchInit
 .then(_.Log('couch init'))

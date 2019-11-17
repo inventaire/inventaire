@@ -8,7 +8,6 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const items_ = __.require('controllers', 'items/lib/items')
 const sanitize = __.require('lib', 'sanitize/sanitize')
@@ -30,13 +29,14 @@ const sanitization = {
 }
 
 module.exports = (req, res) => sanitize(req, res, sanitization)
-.then((params) => {
+.then(params => {
   const { assertImage, lang, limit, reqUserId } = params
   return items_.publicByDate(itemsQueryLimit, offset, assertImage, reqUserId)
   .then(selectRecentItems(lang, limit))
-  .then(bundleOwnersToItems.bind(null, res, reqUserId))}).catch(error_.Handler(req, res))
+  .then(bundleOwnersToItems.bind(null, res, reqUserId))
+}).catch(error_.Handler(req, res))
 
-var selectRecentItems = (lang, limit) => (function(items) {
+const selectRecentItems = (lang, limit) => items => {
   const recentItems = []
   const discardedItems = []
   const itemsCountByOwner = {}
@@ -56,4 +56,4 @@ var selectRecentItems = (lang, limit) => (function(items) {
   const itemsToFill = discardedItems.slice(0, missingItemsCount)
   recentItems.push(...Array.from(itemsToFill || []))
   return recentItems
-})
+}

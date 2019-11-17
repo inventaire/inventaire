@@ -18,7 +18,7 @@ const propertyType = property => properties[property].type || properties[propert
 module.exports = {
   propertyType,
 
-  validateProperty(property){
+  validateProperty: property => {
     if (!/^(wdt|invp):P\d+$/.test(property)) {
       throw error_.new('invalid property', 400, property)
     }
@@ -28,7 +28,7 @@ module.exports = {
     }
   },
 
-  validateValueType(property, value){
+  validateValueType: (property, value) => {
     return _.typeOf(value) === propertyType(property)
   }
 }

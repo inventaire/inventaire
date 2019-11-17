@@ -16,7 +16,7 @@ module.exports = (Group = {})
 
 Group.validations = (validations = require('./validations/group'))
 
-Group.create = function(options){
+Group.create = options => {
   let group
   _.log(options, 'group create')
   const { name, description, searchable, position, creatorId } = options
@@ -48,7 +48,7 @@ Group.findInvitation = (userId, group, wanted) => findMembership(userId, group, 
 
 const inviteSection = CONFIG.godMode ? 'members' : 'invited'
 const membershipActions = {
-  invite(invitorId, invitedId, group){
+  invite: (invitorId, invitedId, group) => {
     // Using Group.findInvitation as a validator throwing
     // if the document isn't in the desired state
     Group.findInvitation(invitedId, group, false)
@@ -58,32 +58,32 @@ const membershipActions = {
 
   // there is room for a secondaryUserId but only some actions actually need it:
   // the empty variable is thus passed to 'placeholder'
-  accept(userId, placeholder, group){
+  accept: (userId, placeholder, group) => {
     return moveMembership(userId, group, 'invited', 'members')
   },
-  decline(userId, placeholder, group){
+  decline: (userId, placeholder, group) => {
     return moveMembership(userId, group, 'invited', 'declined')
   },
-  request(userId, placeholder, group){
+  request: (userId, placeholder, group) => {
     group.requested.push(createMembership(userId, null))
     return group
   },
-  cancelRequest(userId, placeholder, group){
+  cancelRequest: (userId, placeholder, group) => {
     return moveMembership(userId, group, 'requested', null)
   },
-  acceptRequest(adminId, requesterId, group){
+  acceptRequest: (adminId, requesterId, group) => {
     return moveMembership(requesterId, group, 'requested', 'members')
   },
-  refuseRequest(adminId, requesterId, group){
+  refuseRequest: (adminId, requesterId, group) => {
     return moveMembership(requesterId, group, 'requested', null)
   },
-  makeAdmin(adminId, memberId, group){
+  makeAdmin: (adminId, memberId, group) => {
     return moveMembership(memberId, group, 'members', 'admins')
   },
-  kick(adminId, memberId, group){
+  kick: (adminId, memberId, group) => {
     return moveMembership(memberId, group, 'members', null)
   },
-  leave(userId, placeholder, group){
+  leave: (userId, placeholder, group) => {
     const role = userIsAdmin(userId, group) ? 'admins' : 'members'
     return moveMembership(userId, group, role, null)
   }
@@ -93,14 +93,14 @@ Group.membershipActionsList = Object.keys(membershipActions)
 _.extend(Group, membershipActions)
 
 // create user's membership object that will be moved between categories
-var createMembership = (userId, invitorId) => ({
+const createMembership = (userId, invitorId) => ({
   user: userId,
   invitor: invitorId,
   timestamp: Date.now()
 })
 
 // moving membership object from previousCategory to newCategory
-var moveMembership = function(userId, group, previousCategory, newCategory){
+const moveMembership = (userId, group, previousCategory, newCategory) => {
   const membership = findMembership(userId, group, previousCategory, true)
   group[previousCategory] = _.without(group[previousCategory], membership)
   // let the possibility to just destroy the membership
@@ -109,12 +109,13 @@ var moveMembership = function(userId, group, previousCategory, newCategory){
   return group
 }
 
-var findMembership = function(userId, group, previousCategory, wanted){
+const findMembership = (userId, group, previousCategory, wanted) => {
   let context
   const membership = _.find(group[previousCategory], { user: userId })
   if (wanted) {
     // expect to find a membership
-    if (membership != null) { return membership
+    if (membership != null) {
+      return membership
     } else {
       context = { userId }
       context[previousCategory] = group[previousCategory]
@@ -127,14 +128,16 @@ var findMembership = function(userId, group, previousCategory, wanted){
       // while the membership does exist
       context = { groupId: group._id, userId }
       throw error_.new('membership already exist', 200, context)
-    } else { return }
+    } else {
+
+    }
   }
 }
 
-const userIsRole = role => (function(userId, group) {
+const userIsRole = role => (userId, group) => {
   const ids = group[role].map(_.property('user'))
   return ids.includes(userId)
-})
+}
 
 Group.userIsAdmin = (userIsAdmin = userIsRole('admins'))
 const userIsNonAdminMember = userIsRole('members')

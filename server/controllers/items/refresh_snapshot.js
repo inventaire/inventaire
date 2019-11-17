@@ -13,7 +13,7 @@ const responses_ = __.require('lib', 'responses')
 const promises_ = __.require('lib', 'promises')
 const refreshSnapshot = require('./lib/snapshot/refresh_snapshot')
 
-module.exports = function(req, res){
+module.exports = (req, res) => {
   const { uris } = req.body
 
   if (!_.isArray(uris)) {
@@ -25,8 +25,8 @@ module.exports = function(req, res){
   .catch(error_.Handler(req, res))
 }
 
-var refreshSequentially = function(uris){
-  var refreshNext = function() {
+const refreshSequentially = uris => {
+  const refreshNext = () => {
     const nextUri = uris.pop()
 
     if (nextUri == null) return promises_.resolved

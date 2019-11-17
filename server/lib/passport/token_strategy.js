@@ -13,7 +13,7 @@ const user_ = __.require('controllers', 'user/lib/user')
 const pw_ = __.require('lib', 'crypto').passwords
 const error_ = __.require('lib', 'error/error')
 const loginAttempts = require('./login_attempts')
-const { Strategy:LocalStrategy } = require('passport-local')
+const { Strategy: LocalStrategy } = require('passport-local')
 const { tokenDaysToLive } = CONFIG
 
 // reusing LocalStrategy but substituing username/password by email/token
@@ -23,7 +23,7 @@ const options = {
   passReqToCallback: true
 }
 
-const verify = function(req, email, token, done){
+const verify = (req, email, token, done) => {
   if (loginAttempts.tooMany(email)) {
     return done(null, false, { message: 'too_many_attempts' })
   }
@@ -34,33 +34,37 @@ const verify = function(req, email, token, done){
   .catch(finalError.bind(null, done))
 }
 
-var returnIfValid = function(done, token, email, user){
+const returnIfValid = (done, token, email, user) => {
   // need to check user existance to avoid
   // to call invalidEmailOrToken a second time
   // in case findOneByemail returned an error
   if (user != null) {
     return verifyToken(user, token)
-    .then((valid) => {
+    .then(valid => {
       if (valid) {
         console.log('valid', valid)
         return user_.openPasswordUpdateWindow(user)
         .then(_.Log('clearToken res'))
         .then(() => done(null, user))
-      } else { return invalidEmailOrToken(done, email, 'validity test') }}).catch(invalidEmailOrToken.bind(null, done, email, 'verifyToken'))
+      } else {
+        return invalidEmailOrToken(done, email, 'validity test')
+      }
+    })
+    .catch(invalidEmailOrToken.bind(null, done, email, 'verifyToken'))
   }
 }
 
-var invalidEmailOrToken = function(done, email, label, err){
+const invalidEmailOrToken = (done, email, label, err) => {
   loginAttempts.recordFail(email, label)
   return done(null, false, { message: 'invalid_username_or_token' })
 }
 
-var verifyToken = function(user, token){
+const verifyToken = (user, token) => {
   if (user.token == null) return error_.reject('no token found', 401)
   return pw_.verify(user.token, token, tokenDaysToLive)
 }
 
-var finalError = function(done, err){
+const finalError = (done, err) => {
   _.error(err, 'TokenStrategy verify err')
   return done(err)
 }

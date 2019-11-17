@@ -17,7 +17,7 @@ const getEntitiesByUris = __.require('controllers', 'entities/lib/get_entities_b
 
 const { searchTimeout } = CONFIG
 
-module.exports = function(query){
+module.exports = query => {
   const { search, refresh } = query
   return searchWikidataEntities({ search, refresh })
   .timeout(searchTimeout)
@@ -27,7 +27,7 @@ module.exports = function(query){
   .catch(error_.notFound)
 }
 
-var filterOutIrrelevantTypes = function(result){
+const filterOutIrrelevantTypes = result => {
   for (const uri in result.entities) {
     const entity = result.entities[uri]
     const { type } = entity

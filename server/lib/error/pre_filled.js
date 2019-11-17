@@ -12,11 +12,11 @@ const _ = __.require('builders', 'utils')
 const promises_ = __.require('lib', 'promises')
 const assert_ = __.require('utils', 'assert_types')
 
-module.exports = function(error_){
+module.exports = error_ => {
   const newFunctions = {
     // A standardized way to return a 400 missing parameter
     // either in the request query or body
-    newMissing(place, parameter){
+    newMissing: (place, parameter) => {
       // Allow to pass several possible parameters separated by pipes
       // Ex: 'user|username'
       parameter = parameter.split('|').join(' or ')
@@ -29,7 +29,7 @@ module.exports = function(error_){
     },
 
     // A standardized way to return a 400 invalid parameter
-    newInvalid(parameter, value){
+    newInvalid: (parameter, value) => {
       assert_.string(parameter)
       const type = _.typeOf(value)
       const context = { parameter, value, type }
@@ -46,7 +46,7 @@ module.exports = function(error_){
 
   // Same as error_.new but returns a promise
   // also accepts Error instances
-  const Reject = newFnName => (function(...args) {
+  const Reject = newFnName => (...args) => {
     let currentNewFnName
     if ((newFnName === 'new') && args[0] instanceof Error) {
       // Do NOT assign 'complete' to newFnName
@@ -58,7 +58,7 @@ module.exports = function(error_){
 
     const err = error_[currentNewFnName].apply(null, args)
     return promises_.reject(err)
-  })
+  }
 
   const rejects = {
     reject: Reject('new'),
@@ -70,12 +70,12 @@ module.exports = function(error_){
   // while out or at the end of a promise chain
   // DO NOT use inside a promise chain as error_.handler
   // send res, which, if there is an error, should be done by the final .catch
-  const Bundle = newFnName => (function(req, res, ...args) {
+  const Bundle = newFnName => (req, res, ...args) => {
     // First create the new error
     const err = error_[newFnName].apply(null, args)
     // then make the handler deal with the res object
     return error_.handler(req, res, err)
-  })
+  }
 
   const bundles = {
     bundle: Bundle('new'),
@@ -83,16 +83,16 @@ module.exports = function(error_){
     bundleMissingBody: Bundle('newMissingBody'),
     bundleInvalid: Bundle('newInvalid'),
 
-    unauthorizedApiAccess(req, res, context){
+    unauthorizedApiAccess: (req, res, context) => {
       return error_.bundle(req, res, 'unauthorized api access', 401, context)
     },
 
-    unauthorizedAdminApiAccess(req, res, context){
+    unauthorizedAdminApiAccess: (req, res, context) => {
       return error_.bundle(req, res, 'unauthorized admin api access', 403, context)
     },
 
     // A standardized way to return a 400 unknown action
-    unknownAction(req, res, context){
+    unknownAction: (req, res, context) => {
       if (context == null) {
         context = _.pick(req, [ 'method', 'query', 'body' ])
         context.url = req.originalUrl

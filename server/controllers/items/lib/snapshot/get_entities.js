@@ -14,12 +14,12 @@ const getEntitiesByUris = __.require('controllers', 'entities/lib/get_entities_b
 const { Promise } = __.require('lib', 'promises')
 const { aggregateClaims } = require('./helpers')
 
-const getRelativeEntities = relationProperty => (function(entity) {
+const getRelativeEntities = relationProperty => entity => {
   const uris = entity.claims[relationProperty]
   if ((uris != null ? uris.length : undefined) <= 0) return Promise.resolve([])
   return getEntitiesByUris({ uris })
   .then(res => _.values(res.entities))
-})
+}
 
 const getEditionWorks = getRelativeEntities('wdt:P629')
 const getWorkAuthors = getRelativeEntities('wdt:P50')
@@ -31,20 +31,21 @@ const getWorkAuthorsAndSeries = work => Promise.all([
 ])
 
 const getEditionGraphFromEdition = edition => getEditionWorks(edition)
-.then((works) => {
+.then(works => {
   assert_.array(works)
   return getWorksAuthorsAndSeries(works)
   // Tailor output to be spreaded on buildSnapshot.edition
-  .spread((authors, series) => [ edition, works, authors, series ])})
+  .spread((authors, series) => [ edition, works, authors, series ])
+})
 
-var getWorksAuthorsAndSeries = function(works){
+const getWorksAuthorsAndSeries = works => {
   const mergedWorks = { claims: mergeWorksClaims(works) }
   return getWorkAuthorsAndSeries(mergedWorks)
 }
 
 // Aggregating edition's potentially multiple works claims to fit
 // dependent functions' needs
-var mergeWorksClaims = works => ({
+const mergeWorksClaims = works => ({
   'wdt:P50': aggregateClaims(works, 'wdt:P50'),
   'wdt:P179': aggregateClaims(works, 'wdt:P179')
 })
@@ -59,5 +60,5 @@ module.exports = {
   getWorkAuthorsAndSeries,
   getEditionGraphFromEdition,
   getEditionGraphEntities,
-  getWorkGraphFromWork,
+  getWorkGraphFromWork
 }

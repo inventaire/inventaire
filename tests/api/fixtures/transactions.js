@@ -8,7 +8,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const should = require('should')
+require('should')
 const { Promise } = __.require('lib', 'promises')
 const { getUser, getUserB, authReq } = __.require('apiTests', 'utils/utils')
 const { createItem } = require('./items')
@@ -17,7 +17,7 @@ const { getByUri: getEntityByUri } = require('../utils/entities')
 const { getById: getRefreshedItem } = require('../utils/items')
 
 module.exports = {
-  createTransaction() {
+  createTransaction: () => {
     return createItem(getUserB(), { listing: 'public', transaction: 'giving' })
     .tap(addAuthorToItemEditionWork)
     .then(getRefreshedItem)
@@ -28,13 +28,14 @@ module.exports = {
     .spread((userA, userB) => authReq('post', '/api/transactions?action=request', {
       item: userBItem._id,
       message: 'yo'
-    }).then((res) => {
+    })
+    .then(res => {
       _.extend(res, { userA, userB, userBItem })
       return res
     })))
   },
 
-  addMessage(transaction){
+  addMessage: transaction => {
     return authReq('post', '/api/transactions?action=message', {
       action: 'message',
       transaction: transaction._id,
@@ -44,7 +45,8 @@ module.exports = {
   }
 }
 
-var addAuthorToItemEditionWork = item => getEntityByUri(item.entity)
-.then((edition) => {
+const addAuthorToItemEditionWork = item => getEntityByUri(item.entity)
+.then(edition => {
   const workUri = edition.claims['wdt:P629'][0]
-  return addAuthor(workUri)}).delay(1000)
+  return addAuthor(workUri)
+}).delay(1000)

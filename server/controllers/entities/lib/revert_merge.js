@@ -21,7 +21,7 @@ const Patch = __.require('models', 'patch')
 module.exports = (userId, fromId) => patches_.getSnapshots(fromId)
 .then(findVersionBeforeRedirect)
 .then(targetVersion => entities_.byId(fromId)
-.then((currentVersion) => {
+.then(currentVersion => {
   const toUri = currentVersion.redirect
   const fromUri = `inv:${fromId}`
   targetVersion._id = currentVersion._id
@@ -30,13 +30,15 @@ module.exports = (userId, fromId) => patches_.getSnapshots(fromId)
   return entities_.putUpdate({
     userId,
     currentDoc: currentVersion,
-    updatedDoc: targetVersion }).tap(() => updateItemEntity.afterRevert(fromUri, toUri))
+    updatedDoc: targetVersion
+  })
+  .tap(() => updateItemEntity.afterRevert(fromUri, toUri))
   .tap(() => recoverPlaceholders(userId, currentVersion.removedPlaceholdersIds))
   .tap(() => revertMergePatch(userId, fromUri, toUri))
   .tap(() => revertClaimsRedirections(userId, fromUri, toUri))
 }))
 
-var findVersionBeforeRedirect = function(patches){
+const findVersionBeforeRedirect = patches => {
   const versions = patches.map(_.property('snapshot'))
   const lastVersion = _.last(versions)
   if (lastVersion.redirect == null) {
@@ -49,18 +51,18 @@ var findVersionBeforeRedirect = function(patches){
   .slice(-1)[0]
 }
 
-var isntRedirection =  version => version.redirect == null
+const isntRedirection = version => version.redirect == null
 
-var recoverPlaceholders = function(userId, removedPlaceholdersIds){
+const recoverPlaceholders = (userId, removedPlaceholdersIds) => {
   if ((removedPlaceholdersIds != null ? removedPlaceholdersIds.length : undefined) <= 0) return promises_.resolved
 
   const recoverFn = placeholders_.recover.bind(null, userId)
   return promises_.all(removedPlaceholdersIds.map(recoverFn))
 }
 
-var revertMergePatch = function(userId, fromUri, toUri){
-  const [ prefix, toId ] = Array.from(toUri.split(':'))
-  if (prefix !== 'inv') return 
+const revertMergePatch = (userId, fromUri, toUri) => {
+  const [ prefix, toId ] = toUri.split(':')
+  if (prefix !== 'inv') return
 
   return promises_.all([
     entities_.byId(toId),
@@ -77,17 +79,19 @@ var revertMergePatch = function(userId, fromUri, toUri){
 
     const updatedDoc = Patch.revert(currentDoc, mergePatch)
     const context = { revertPatch: mergePatch._id }
-    return entities_.putUpdate({ userId, currentDoc, updatedDoc, context })})
+    return entities_.putUpdate({ userId, currentDoc, updatedDoc, context })
+  })
 }
 
-var revertClaimsRedirections = (userId, fromUri, toUri) => patches_.byRedirectUri(fromUri)
+const revertClaimsRedirections = (userId, fromUri, toUri) => patches_.byRedirectUri(fromUri)
 .map(revertClaimsRedirectionFromPatch(userId))
 
-var revertClaimsRedirectionFromPatch = userId => (function(patch) {
+const revertClaimsRedirectionFromPatch = userId => patch => {
   const entityId = patch._id.split(':')[0]
   return entities_.byId(entityId)
-  .then((currentDoc) => {
+  .then(currentDoc => {
     const updatedDoc = Patch.revert(currentDoc, patch)
     const context = { revertPatch: patch._id }
-    return entities_.putUpdate({ userId, currentDoc, updatedDoc, context })})
-})
+    return entities_.putUpdate({ userId, currentDoc, updatedDoc, context })
+  })
+}

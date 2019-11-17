@@ -8,7 +8,7 @@
 const { uniq } = require('lodash')
 
 // data: labels or descriptions
-module.exports = function(lang, originalLang, data){
+module.exports = (lang, originalLang, data) => {
   if (!data) return {}
 
   const order = getLangPriorityOrder(lang, originalLang, data)
@@ -22,7 +22,7 @@ module.exports = function(lang, originalLang, data){
   return {}
 }
 
-var getLangPriorityOrder = function(lang, originalLang, data){
+const getLangPriorityOrder = (lang, originalLang, data) => {
   const order = [ lang ]
   if (originalLang != null) { order.push(originalLang) }
   order.push('en')

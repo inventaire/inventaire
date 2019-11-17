@@ -8,37 +8,40 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const should = require('should')
+require('should')
 const { nonAuthReq, undesiredErr, undesiredRes } = require('../utils/utils')
 
-const buildUrl = function(property, value){
+const buildUrl = (property, value) => {
   let url
   return url = _.buildPath('/api/entities', { action: 'reverse-claims', property, value })
 }
 
 describe('entities:reverse-claims', () => {
-  it('should reject wdt:P31 requests', (done) => {
+  it('should reject wdt:P31 requests', done => {
     nonAuthReq('get', buildUrl('wdt:P31', 'wd:Q571'))
     .then(undesiredRes(done))
-    .catch((err) => {
+    .catch(err => {
       err.body.status_verbose.should.equal('blacklisted property')
-      done()}).catch(undesiredErr(done))
-
+      done()
+    })
+    .catch(undesiredErr(done))
   })
 
-  it('should accept whitelisted entity value properties', (done) => {
+  it('should accept whitelisted entity value properties', done => {
     nonAuthReq('get', buildUrl('wdt:P921', 'wd:Q456'))
-    .then((res) => {
+    .then(res => {
       res.uris.should.be.an.Array()
-      done()}).catch(undesiredErr(done))
-
+      done()
+    })
+    .catch(undesiredErr(done))
   })
 
-  it('should accept whitelisted string value properties', (done) => {
+  it('should accept whitelisted string value properties', done => {
     nonAuthReq('get', buildUrl('wdt:P3035', '978-2-505'))
-    .then((res) => {
+    .then(res => {
       res.uris.should.be.an.Array()
-      done()}).catch(undesiredErr(done))
-
+      done()
+    })
+    .catch(undesiredErr(done))
   })
 })

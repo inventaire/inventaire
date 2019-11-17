@@ -16,7 +16,6 @@ const listingsPossibilities = Item.attributes.constrained.listing.possibilities
 const error_ = __.require('lib', 'error/error')
 const assert_ = __.require('utils', 'assert_types')
 const { BasicUpdater } = __.require('lib', 'doc_updates')
-const couch_ = __.require('lib', 'couch')
 const promises_ = __.require('lib', 'promises')
 const radio = __.require('lib', 'radio')
 const { filterPrivateAttributes } = require('./filter_private_attributes')
@@ -27,7 +26,7 @@ const getEntityByUri = __.require('controllers', 'entities/lib/get_entity_by_uri
 const getByAccessLevel = require('./get_by_access_level')
 
 // Working around the circular dependency
-let user_ = null
+let user_
 const lateRequire = () => user_ = __.require('controllers', 'user/lib/user')
 setTimeout(lateRequire, 0)
 
@@ -37,7 +36,7 @@ module.exports = (items_ = {
   db,
   byId: db.get,
   byIds: db.fetch,
-  byOwner(ownerId){
+  byOwner: ownerId => {
     return db.viewCustom('byOwnerAndEntityAndListing', {
       startkey: [ ownerId ],
       endkey: [ ownerId, maxKey, maxKey ],
@@ -46,34 +45,35 @@ module.exports = (items_ = {
     )
   },
 
-  byEntity(entityUri){
+  byEntity: entityUri => {
     assert_.string(entityUri)
     return db.viewByKeys('byEntity', entityUriKeys(entityUri))
   },
 
-  byPreviousEntity(entityUri){ return db.viewByKey('byPreviousEntity', entityUri) },
+  byPreviousEntity: entityUri => db.viewByKey('byPreviousEntity', entityUri),
 
   // all items from an entity that require a specific authorization
-  authorizedByEntities(uris, reqUserId){
+  authorizedByEntities: (uris, reqUserId) => {
     return listingByEntities('network', uris, reqUserId)
   },
 
-  publicByEntities(uris, reqUserId){
+  publicByEntities: (uris, reqUserId) => {
     return listingByEntities('public', uris, reqUserId)
   },
 
-  publicByDate(limit = 15, offset = 0, assertImage = false, reqUserId){
+  publicByDate: (limit = 15, offset = 0, assertImage = false, reqUserId) => {
     return db.viewCustom('publicByDate', {
       limit,
       skip: offset,
       descending: true,
       include_docs: true
-    }).then(FilterWithImage(assertImage))
+    })
+    .then(FilterWithImage(assertImage))
     .map(snapshot_.addToItem)
     .map(filterPrivateAttributes(reqUserId))
   },
 
-  byOwnersAndEntitiesAndListings(ownersIds, uris, listingsKey, reqUserId){
+  byOwnersAndEntitiesAndListings: (ownersIds, uris, listingsKey, reqUserId) => {
     const keys = []
     for (const ownerId of ownersIds) {
       for (const uri of uris) {
@@ -88,26 +88,26 @@ module.exports = (items_ = {
     .map(filterPrivateAttributes(reqUserId))
   },
 
-  create(userId, items){
+  create: (userId, items) => {
     assert_.array(items)
     return promises_.all(items.map(validateEntityType))
     .map(item => Item.create(userId, item))
     .then(db.bulk)
-    .then((res) => {
+    .then(res => {
       const itemsIds = _.map(res, 'id')
       return db.fetch(itemsIds)
       .tap(() => radio.emit('user:inventory:update', userId))
     })
   },
 
-  update(userId, itemUpdateData){
+  update: (userId, itemUpdateData) => {
     return db.get(itemUpdateData._id)
     .then(currentItem => Item.update(userId, itemUpdateData, currentItem))
     .then(db.putAndReturn)
     .tap(() => radio.emit('user:inventory:update', userId))
   },
 
-  bulkUpdate(userId, ids, attribute, newValue){
+  bulkUpdate: (userId, ids, attribute, newValue) => {
     const itemUpdateData = {}
     itemUpdateData[attribute] = newValue
     return items_.byIds(ids)
@@ -116,12 +116,12 @@ module.exports = (items_ = {
     .tap(() => radio.emit('user:inventory:update', userId))
   },
 
-  setBusyness(id, busy){
+  setBusyness: (id, busy) => {
     assert_.types([ 'string', 'boolean' ], arguments)
     return db.update(id, BasicUpdater('busy', busy))
   },
 
-  changeOwner(transacDoc){
+  changeOwner: transacDoc => {
     const { item } = transacDoc
     return db.get(item)
     .then(Item.changeOwner.bind(null, transacDoc))
@@ -130,26 +130,28 @@ module.exports = (items_ = {
 
   bulkDelete: db.bulkDelete,
 
-  nearby(reqUserId, range = 50, strict = false){
+  nearby: (reqUserId, range = 50, strict = false) => {
     return user_.nearby(reqUserId, range, strict)
     .then(items_.getUsersAndItemsPublicData(reqUserId))
   },
 
-  getUsersAndItemsPublicData(reqUserId){ return function(usersIds){
-    _.log(usersIds, 'usersIds')
-    if (usersIds.length <= 0) return [ [], [] ]
-    return promises_.all([
-      user_.getUsersByIds(usersIds, reqUserId),
-      getByAccessLevel.public(usersIds)
-    ])
-  } },
+  getUsersAndItemsPublicData: reqUserId => {
+    return usersIds => {
+      _.log(usersIds, 'usersIds')
+      if (usersIds.length <= 0) return [ [], [] ]
+      return promises_.all([
+        user_.getUsersByIds(usersIds, reqUserId),
+        getByAccessLevel.public(usersIds)
+      ])
+    }
+  },
 
   // Data manipulation done on client-side view models (item.serializeData),
   // but useful to have server-side for emails view models
-  serializeData(item){
+  serializeData: item => {
     return snapshot_.addToItem(item)
-    .then((item) => {
-      const { 'entity:title':title, 'entity:authors':authors, 'entity:image':image } = item.snapshot
+    .then(item => {
+      const { 'entity:title': title, 'entity:authors': authors, 'entity:image': image } = item.snapshot
       item.title = title
       item.authors = authors
       if (image != null) { item.pictures = [ image ] }
@@ -158,32 +160,35 @@ module.exports = (items_ = {
   }
 })
 
-var listingByEntities = function(listing, uris, reqUserId){
+const listingByEntities = (listing, uris, reqUserId) => {
   const keys = uris.map(uri => [ uri, listing ])
   return db.viewByKeys('byEntity', keys)
   .map(filterPrivateAttributes(reqUserId))
 }
 
-const bundleListings = function(listingsTypes, usersIds, reqUserId){
+const bundleListings = (listingsTypes, usersIds, reqUserId) => {
   const listings = _.combinations(usersIds, listingsTypes)
   return db.viewByKeys('byListing', listings)
   .map(filterPrivateAttributes(reqUserId))
 }
 
-var entityUriKeys = entityUri => listingsPossibilities.map(listing => [ entityUri, listing ])
+const entityUriKeys = entityUri => listingsPossibilities.map(listing => [ entityUri, listing ])
 
 const safeItem = item => _.omit(item, privateAttrs)
 
-var FilterWithImage = assertImage => items => Promise.all(items.map(snapshot_.addToItem))
-.then((items) => {
-  if (assertImage) { return items.filter(itemWithImage)
-  } else { return items }
+const FilterWithImage = assertImage => items => Promise.all(items.map(snapshot_.addToItem))
+.then(items => {
+  if (assertImage) {
+    return items.filter(itemWithImage)
+  } else {
+    return items
+  }
 })
 
-var itemWithImage = item => item.snapshot['entity:image']
+const itemWithImage = item => item.snapshot['entity:image']
 
-var validateEntityType = item => getEntityByUri({ uri: item.entity })
-.then((entity) => {
+const validateEntityType = item => getEntityByUri({ uri: item.entity })
+.then(entity => {
   if (entity == null) throw error_.new('entity not found', 400, { item })
 
   const { type } = entity
@@ -195,4 +200,4 @@ var validateEntityType = item => getEntityByUri({ uri: item.entity })
   return item
 })
 
-var whitelistedEntityTypes = [ 'edition', 'work' ]
+const whitelistedEntityTypes = [ 'edition', 'work' ]

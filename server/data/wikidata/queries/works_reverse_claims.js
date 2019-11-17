@@ -7,7 +7,7 @@
  */
 module.exports = {
   parameters: [ 'pid', 'qid' ],
-  query(params){
+  query: params => {
     const { pid, qid } = params
     return `\
 SELECT DISTINCT ?item WHERE {

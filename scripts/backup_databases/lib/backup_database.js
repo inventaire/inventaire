@@ -8,16 +8,15 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const assert_ = __.require('utils', 'assert_types')
 const execa = require('execa')
 const { backupFolder } = require('./get_backup_folder_data')()
 const { username, password, host, port } = CONFIG.db
 
-module.exports = function(dbName){
+module.exports = dbName => {
   const args = buildArgsArray(backupFolder, dbName)
 
   return execa('couchdb-backup', args)
-  .then((res) => {
+  .then(res => {
     _.log(res.stdout, `${dbName} stdout`)
     return _.warn(res.stderr, `${dbName} stderr`)
   })
@@ -25,7 +24,7 @@ module.exports = function(dbName){
 
 // Depends on 'couchdb-backup' (from https://github.com/danielebailo/couchdb-dump)
 // being accessible from the $PATH
-var buildArgsArray = function(backupFolder, dbName){
+const buildArgsArray = (backupFolder, dbName) => {
   const outputFile = `${backupFolder}/${dbName}.json`
 
   return [

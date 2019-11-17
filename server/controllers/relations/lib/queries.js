@@ -17,17 +17,20 @@ const Relation = __.require('models', 'relation')
 
 const get = (userId, otherId) => db.get(Relation.docId(userId, otherId))
 
-const putStatus = function(userId, otherId, status){
+const putStatus = (userId, otherId, status) => {
   const docId = Relation.docId(userId, otherId)
   // blue-cot handles get-put-with-rev and inexistant doc errors
   return db.update(docId, updateStatus.bind(null, docId, status))
 }
 
-var updateStatus = function(docId, status, doc){
+const updateStatus = (docId, status, doc) => {
   // if doc doesnt exist, cot creates one: { _id: doc._id }
   // thus the need to test doc.status instead
-  if ((doc != null ? doc.status : undefined) != null) { doc.status = status
-  } else { doc = Relation.create(docId, status) }
+  if ((doc != null ? doc.status : undefined) != null) {
+    doc.status = status
+  } else {
+    doc = Relation.create(docId, status)
+  }
   doc.updated = Date.now()
   return doc
 }
@@ -35,28 +38,33 @@ var updateStatus = function(docId, status, doc){
 const queries = {
   get,
   putStatus,
-  getStatus(userId, otherId){
+  getStatus: (userId, otherId) => {
     return get(userId, otherId)
     .catch(couch_.ignoreNotFound)
-    .then((doc) => {
+    .then(doc => {
       if ((doc != null ? doc.status : undefined) != null) {
         return userRelativeRequest(userId, otherId, doc.status)
-      } else { return 'none' }
+      } else {
+        return 'none'
+      }
     })
   },
 
-  putFriendStatus(userId, otherId){
+  putFriendStatus: (userId, otherId) => {
     return putStatus(userId, otherId, 'friends')
   },
 
-  putRequestedStatus(userId, otherId){
+  putRequestedStatus: (userId, otherId) => {
     let status
-    if (userId < otherId) { status = 'a-requested'
-    } else { status = 'b-requested' }
+    if (userId < otherId) {
+      status = 'a-requested'
+    } else {
+      status = 'b-requested'
+    }
     return putStatus(userId, otherId, status)
   },
 
-  putNoneStatus(userId, otherId){
+  putNoneStatus: (userId, otherId) => {
     return putStatus(userId, otherId, 'none')
   }
 }
@@ -64,7 +72,7 @@ const queries = {
 const lists = require('./lists')(db)
 
 const counts = {
-  pendingFriendsRequestsCount(userId){
+  pendingFriendsRequestsCount: userId => {
     return lists.getUserRelations(userId)
     .then(relations => relations.otherRequested.length)
   }

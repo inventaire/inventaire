@@ -18,7 +18,6 @@ const entities_ = require('./entities')
 const { prefixifyWd, unprefixify } = __.require('controllers', 'entities/lib/prefix')
 const cache_ = __.require('lib', 'cache')
 const getInvEntityCanonicalUri = require('./get_inv_entity_canonical_uri')
-const couch_ = __.require('lib', 'couch')
 const runWdQuery = __.require('data', 'wikidata/run_query')
 const getEntitiesPopularity = require('./get_entities_popularity')
 
@@ -37,7 +36,7 @@ const localOnlyProperties = [
   'wdt:P123'
 ]
 
-module.exports = function(params){
+module.exports = params => {
   const { property, value, refresh, sort, dry } = params
   assert_.strings([ property, value ])
 
@@ -56,7 +55,7 @@ module.exports = function(params){
   return promises_.all(promises)
   .then(_.flatten)
   .then(_.compact)
-  .then((uris) => {
+  .then(uris => {
     if (!sort) return uris
 
     return getEntitiesPopularity(uris)
@@ -64,9 +63,9 @@ module.exports = function(params){
   })
 }
 
-var requestWikidataReverseClaims = function(property, value, refresh, dry){
+const requestWikidataReverseClaims = (property, value, refresh, dry) => {
   if (_.isEntityUri(value)) {
-    const [ prefix, id ] = Array.from(value.split(':'))
+    const [ prefix, id ] = value.split(':')
     // If the prefix is 'inv' or 'isbn', no need to check Wikidata
     if (prefix === 'wd') return wikidataReverseClaims(property, id, refresh, dry)
   } else {
@@ -74,7 +73,7 @@ var requestWikidataReverseClaims = function(property, value, refresh, dry){
   }
 }
 
-var wikidataReverseClaims = function(property, value, refresh, dry){
+const wikidataReverseClaims = (property, value, refresh, dry) => {
   const type = typeTailoredQuery[property]
   if (type != null) {
     const pid = property.split(':')[1]
@@ -85,13 +84,13 @@ var wikidataReverseClaims = function(property, value, refresh, dry){
   }
 }
 
-var generalWikidataReverseClaims = function(property, value, refresh, dry){
+const generalWikidataReverseClaims = (property, value, refresh, dry) => {
   const key = `wd:reverse-claim:${property}:${value}`
   const fn = _wikidataReverseClaims.bind(null, property, value)
   return cache_.get({ key, fn, refresh, dry, dryFallbackValue: [] })
 }
 
-var _wikidataReverseClaims = function(property, value){
+const _wikidataReverseClaims = (property, value) => {
   const caseInsensitive = caseInsensitiveProperties.includes(property)
   const wdProp = unprefixify(property)
   _.log([ property, value ], 'reverse claim')
@@ -100,19 +99,22 @@ var _wikidataReverseClaims = function(property, value){
   .map(prefixifyWd)
 }
 
-var invReverseClaims = (property, value) => entities_.byClaim(property, value, true, true)
+const invReverseClaims = (property, value) => entities_.byClaim(property, value, true, true)
 .map(getInvEntityCanonicalUri)
-.catch((err) => {
+.catch(err => {
   // Allow to request reverse claims for properties that aren't yet
   // whitelisted to be added to inv properties: simply ignore inv entities
-  if (err.message === "property isn't whitelisted") { return []
-  } else { throw err }
+  if (err.message === "property isn't whitelisted") {
+    return []
+  } else {
+    throw err
+  }
 })
 
 // Customize queries to tailor for specific types of results
 // Ex: 'wdt:P921' reverse claims should not include films, etc
 // but only works or series
-var typeTailoredQuery = {
+const typeTailoredQuery = {
   // country of citizenship
   'wdt:P27': 'humans',
   // educated at
@@ -147,4 +149,4 @@ var typeTailoredQuery = {
   'wdt:P941': 'works'
 }
 
-var sortByScore = scores => (a, b) => scores[b] - scores[a]
+const sortByScore = scores => (a, b) => scores[b] - scores[a]

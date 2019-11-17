@@ -15,7 +15,7 @@ const requests_ = __.require('lib', 'requests')
 const requestGrouper = __.require('lib', 'request_grouper')
 const { getEntities, getManyEntities } = require('wikidata-sdk')
 
-const requester = function(ids){
+const requester = ids => {
   if (ids.length > 50) {
     // Using getManyEntities to work around the 50 entities limit
     // But, normally, caching should allow to limit its use to some
@@ -25,7 +25,6 @@ const requester = function(ids){
     _.log(urls, 'get many wikidata entities')
     return promises_.all(urls.map(getReq))
     .then(mergeResults)
-
   } else {
     const url = getEntities(ids)
     return getReq(url)
@@ -34,8 +33,8 @@ const requester = function(ids){
 }
 
 // Limiting arguments to strictly 1
-var getReq = url => requests_.get(url)
-var mergeResults = results => _.extend.apply(_, results.map(_.property('entities')))
+const getReq = url => requests_.get(url)
+const mergeResults = results => _.extend.apply(_, results.map(_.property('entities')))
 
 // Expose a single requester
 // Taking a Wikidata Id

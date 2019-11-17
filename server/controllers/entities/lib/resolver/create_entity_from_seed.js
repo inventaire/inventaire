@@ -15,24 +15,24 @@ const properties = require('../properties/properties_values_constraints')
 const createInvEntity = require('../create_inv_entity')
 const isbn_ = __.require('lib', 'isbn/isbn')
 
-const createAuthor = (userId, batchId) => (function(author) {
+const createAuthor = (userId, batchId) => author => {
   if (author.uri != null) return author
   const claims = {}
 
   addClaimIfValid(claims, 'wdt:P31', [ 'wd:Q5' ])
   return createEntityFromSeed({ type: 'human', seed: author, claims, userId, batchId })
-})
+}
 
-const createWork = (userId, batchId, authors) => (function(work) {
+const createWork = (userId, batchId, authors) => work => {
   if (work.uri != null) return work
   const authorsUris = _.compact(_.map(authors, 'uri'))
   const claims = {}
   addClaimIfValid(claims, 'wdt:P31', [ 'wd:Q571' ])
   addClaimIfValid(claims, 'wdt:P50', authorsUris)
   return createEntityFromSeed({ type: 'work', seed: work, claims, userId, batchId })
-})
+}
 
-const createEdition = function(edition, works, userId, batchId){
+const createEdition = (edition, works, userId, batchId) => {
   if (edition.uri != null) return Promise.resolve()
   const { isbn } = edition
   const worksUris = _.compact(_.map(works, 'uri'))
@@ -59,7 +59,7 @@ const createEdition = function(edition, works, userId, batchId){
 
 // An entity type is required only for properties with validation functions requiring a type
 // Ex: typedExternalId properties
-var addClaimIfValid = (claims, property, values, type) => (() => {
+const addClaimIfValid = (claims, property, values, type) => (() => {
   const result = []
   for (const value of values) {
     if ((value != null) && properties[property].validate(value, type)) {
@@ -72,16 +72,18 @@ var addClaimIfValid = (claims, property, values, type) => (() => {
   return result
 })()
 
-var createEntityFromSeed = function(params){
+const createEntityFromSeed = params => {
   const { type, seed, claims, userId, batchId } = params
   return createInvEntity({
     labels: seed.labels,
     claims: buildClaims(seed.claims, claims, type),
     userId,
-    batchId }).then(addCreatedUriToSeed(seed))
+    batchId
+  })
+  .then(addCreatedUriToSeed(seed))
 }
 
-var buildClaims = function(seedClaims, entityClaims, type){
+const buildClaims = (seedClaims, entityClaims, type) => {
   for (const property in seedClaims) {
     const values = seedClaims[property]
     addClaimIfValid(entityClaims, property, values, type)
@@ -89,13 +91,13 @@ var buildClaims = function(seedClaims, entityClaims, type){
   return entityClaims
 }
 
-var addCreatedUriToSeed = entryEntity => (function(createdEntity) {
-  if (createdEntity._id == null) return 
+const addCreatedUriToSeed = entryEntity => createdEntity => {
+  if (createdEntity._id == null) return
   entryEntity.uri = `inv:${createdEntity._id}`
   return entryEntity.created = true
-})
+}
 
-var buildBestEditionTitle = function(edition, works){
+const buildBestEditionTitle = (edition, works) => {
   // return in priority values of wdt:P1476, which shall have only one element
   if (edition.claims['wdt:P1476']) {
     return edition.claims['wdt:P1476'][0]

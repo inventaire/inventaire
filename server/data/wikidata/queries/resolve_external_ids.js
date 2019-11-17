@@ -7,15 +7,15 @@
  */
 module.exports = {
   parameters: [ 'externalIds' ],
-  query(params){ return buildQuery(params.externalIds) }
+  query: params => buildQuery(params.externalIds)
 }
 
-var buildQuery = function(externalIds){
+const buildQuery = externalIds => {
   const body = buildBody(externalIds)
   return `SELECT DISTINCT ?work WHERE { ${body} }`
 }
 
-var buildBody = function(externalIds){
+const buildBody = externalIds => {
   if (externalIds.length === 1) return buildTriple(externalIds[0])
 
   const unions = externalIds
@@ -25,7 +25,7 @@ var buildBody = function(externalIds){
   return `{ ${unions} }`
 }
 
-var buildTriple = function(pair){
+const buildTriple = pair => {
   const [ prop, value ] = Array.from(pair)
   return `?work ${prop} '${value}'`
 }

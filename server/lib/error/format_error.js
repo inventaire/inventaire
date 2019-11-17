@@ -13,7 +13,7 @@ const _ = __.require('builders', 'utils')
 // - all error objects should have a statusCode (mimicking HTTP status codes)
 //   this is already the case for errors rejected by bluereq and blue-cot
 
-module.exports = function(err, filter, context){
+module.exports = (err, filter, context) => {
   context = _.forceArray(context)
   // numbers filters are used as HTTP codes
   // while string will be taken as a type
@@ -33,12 +33,12 @@ module.exports = function(err, filter, context){
   return err
 }
 
-var getErrorEmittingLines = err => err.stack.split('\n')
+const getErrorEmittingLines = err => err.stack.split('\n')
 .filter(line => !line.match(/lib\/error/))
 .slice(0, 5)
 .map(getErrorEmittingLine)
 
-var getErrorEmittingLine = line => line != null ? line.trim()
+const getErrorEmittingLine = line => line != null ? line.trim()
 .replace(/^\s*at\s+/, '')
 // delete parenthesis around the file path
 .replace(/(\(|\))/g, '')

@@ -7,19 +7,18 @@
  */
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
 
-const should = require('should')
+require('should')
 
 const couch_ = __.require('lib', 'couch')
 
 describe('couch_', () => {
-  it('env', (done) => {
+  it('env', done => {
     couch_.should.be.an.Object()
     done()
   })
 
-  describe('joinOrderedIds', () => it('should return ordered id', (done) => {
+  describe('joinOrderedIds', () => it('should return ordered id', done => {
     const id1 = couch_.joinOrderedIds('azerty', 'qwerty')
     id1.should.equal('azerty:qwerty')
     const id2 = couch_.joinOrderedIds('qwerty', 'azerty')

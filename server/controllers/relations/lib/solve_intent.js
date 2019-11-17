@@ -10,9 +10,9 @@ const __ = CONFIG.universalPath
 const { godMode } = CONFIG
 const _ = __.require('builders', 'utils')
 
-module.exports = function(actions){
+module.exports = actions => {
   const API = {
-    requestFriend(userId, otherId, status){
+    requestFriend: (userId, otherId, status) => {
       // useful for development
       if (godMode) return actions.forceFriendship(userId, otherId)
       switch (status) {
@@ -24,7 +24,7 @@ module.exports = function(actions){
       }
     },
 
-    cancelFriendRequest(userId, otherId, status){
+    cancelFriendRequest: (userId, otherId, status) => {
       switch (status) {
       case 'userRequested':
         return actions.removeRelation(userId, otherId)
@@ -32,7 +32,7 @@ module.exports = function(actions){
       }
     },
 
-    removeFriendship(userId, otherId, status){
+    removeFriendship: (userId, otherId, status) => {
       switch (status) {
       case 'friends': case 'userRequested': case 'otherRequested':
         return actions.removeRelation(userId, otherId)
@@ -40,7 +40,7 @@ module.exports = function(actions){
       }
     },
 
-    acceptRequest(userId, otherId, status){
+    acceptRequest: (userId, otherId, status) => {
       switch (status) {
       case 'otherRequested':
         return actions.acceptRequest(userId, otherId)
@@ -50,7 +50,7 @@ module.exports = function(actions){
       }
     },
 
-    discardRequest(userId, otherId, status){
+    discardRequest: (userId, otherId, status) => {
       switch (status) {
       case 'otherRequested':
         return actions.removeRelation(userId, otherId)
@@ -62,7 +62,7 @@ module.exports = function(actions){
   return API
 }
 
-var doNothing = function(status, method, userId, otherId){
+const doNothing = (status, method, userId, otherId) => {
   _.warn(`Status mismatch: got status '${status}' \
 at ${method} for relation ${userId}, ${otherId}. \
 (it happens but it shouldn't be to often). \

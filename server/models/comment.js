@@ -7,19 +7,17 @@
  */
 let Comment, validations
 const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const error_ = __.require('lib', 'error/error')
 
 module.exports = (Comment = {})
 
 Comment.validations = (validations = require('./validations/comment'))
 
-Comment.createTransactionComment = function(userId, message, transactionId){
+Comment.createTransactionComment = (userId, message, transactionId) => {
   validations.pass('transactionId', transactionId)
   return createComment(userId, message, 'transaction', transactionId)
 }
 
-var createComment = function(userId, message, key, value){
+const createComment = (userId, message, key, value) => {
   validations.pass('userId', userId)
   validations.pass('message', message)
 

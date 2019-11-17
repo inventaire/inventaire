@@ -13,7 +13,7 @@ const responses_ = __.require('lib', 'responses')
 const radio = __.require('lib', 'radio')
 
 module.exports = {
-  post(req, res, next){
+  post: (req, res, next) => {
     const { user } = req
     const { subject, message, uris, context, unknownUser } = req.body
 
@@ -43,7 +43,7 @@ module.exports = {
 }
 
 const cache = {}
-var isNewAutomaticReport = function(subject){
+const isNewAutomaticReport = subject => {
   const isNew = (cache[subject] == null)
   cache[subject] = true
   return isNew

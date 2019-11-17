@@ -18,9 +18,9 @@ const placeholders_ = require('./placeholders')
 const propagateRedirection = require('./propagate_redirection')
 const getInvEntityCanonicalUri = require('./get_inv_entity_canonical_uri')
 
-module.exports = function(userId, fromUri, toUri){
-  let [ fromPrefix, fromId ] = Array.from(fromUri.split(':'))
-  let [ toPrefix, toId ] = Array.from(toUri.split(':'))
+module.exports = (userId, fromUri, toUri) => {
+  let [ fromPrefix, fromId ] = fromUri.split(':')
+  let [ toPrefix, toId ] = toUri.split(':')
 
   if (fromPrefix === 'wd') {
     if (toPrefix === 'inv') {
@@ -41,7 +41,7 @@ module.exports = function(userId, fromUri, toUri){
   }
 }
 
-var mergeEntities = function(userId, fromId, toId){
+const mergeEntities = (userId, fromId, toId) => {
   assert_.strings([ userId, fromId, toId ])
 
   // Fetching non-formmatted docs
@@ -73,7 +73,8 @@ var mergeEntities = function(userId, fromId, toId){
         userId,
         currentDoc: toEntityDocBeforeMerge,
         updatedDoc: toEntityDoc,
-        context: { mergeFrom: `inv:${fromId}` } })
+        context: { mergeFrom: `inv:${fromId}` }
+      })
     }
 
     // Refresh the URI in case an ISBN was transfered and the URI changed
@@ -84,32 +85,34 @@ var mergeEntities = function(userId, fromId, toId){
   })
 }
 
-var turnIntoRedirection = function(userId, fromId, toUri, previousToUri){
+const turnIntoRedirection = (userId, fromId, toUri, previousToUri) => {
   assert_.strings([ userId, fromId, toUri ])
   if (previousToUri != null) { assert_.string(previousToUri) }
 
   const fromUri = `inv:${fromId}`
 
   return entities_.byId(fromId)
-  .then((currentFromDoc) => {
+  .then(currentFromDoc => {
     Entity.preventRedirectionEdit(currentFromDoc, 'turnIntoRedirection')
     // If an author has no more links to it, remove it
     return removeObsoletePlaceholderEntities(userId, currentFromDoc)
-    .then((removedIds) => {
+    .then(removedIds => {
       const updatedFromDoc = Entity.turnIntoRedirection(currentFromDoc, toUri, removedIds)
       return entities_.putUpdate({
         userId,
         currentDoc: currentFromDoc,
         updatedDoc: updatedFromDoc
       })
-    })}).then(propagateRedirection.bind(null, userId, fromUri, toUri, previousToUri))
+    })
+  })
+  .then(propagateRedirection.bind(null, userId, fromUri, toUri, previousToUri))
 }
 
 // Removing the entities that were needed only by the entity about to be turned
 // into a redirection: this entity now don't have anymore reason to be and is quite
 // probably a duplicate of an existing entity referenced by the redirection
 // destination entity.
-var removeObsoletePlaceholderEntities = function(userId, entityDocBeforeRedirection){
+const removeObsoletePlaceholderEntities = (userId, entityDocBeforeRedirection) => {
   const entityUrisToCheck = getEntityUrisToCheck(entityDocBeforeRedirection.claims)
   _.log(entityUrisToCheck, 'entityUrisToCheck')
   const fromId = entityDocBeforeRedirection._id
@@ -118,7 +121,7 @@ var removeObsoletePlaceholderEntities = function(userId, entityDocBeforeRedirect
   .then(_.compact)
 }
 
-var getEntityUrisToCheck = claims => _(claims)
+const getEntityUrisToCheck = claims => _(claims)
 .pick(propertiesToCheckForPlaceholderDeletion)
 .values()
 // Merge properties arrays
@@ -126,19 +129,19 @@ var getEntityUrisToCheck = claims => _(claims)
 .uniq()
 .value()
 
-var propertiesToCheckForPlaceholderDeletion = [
+const propertiesToCheckForPlaceholderDeletion = [
   // author
   'wdt:P50'
 ]
 
-var deleteIfIsolated = (userId, fromId) => (function(entityUri) {
-  const [ prefix, entityId ] = Array.from(entityUri.split(':'))
+const deleteIfIsolated = (userId, fromId) => entityUri => {
+  const [ prefix, entityId ] = entityUri.split(':')
   // Ignore wd or isbn entities
-  if (prefix !== 'inv') return 
+  if (prefix !== 'inv') return
 
   return entities_.byClaimsValue(entityUri)
   .filter(result => result.entity !== fromId)
-  .then((results) => {
+  .then(results => {
     if (results.length === 0) return placeholders_.remove(userId, entityId)
   })
-})
+}

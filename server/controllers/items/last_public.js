@@ -7,7 +7,6 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const items_ = __.require('controllers', 'items/lib/items')
 const sanitize = __.require('lib', 'sanitize/sanitize')
@@ -27,12 +26,14 @@ const sanitization = {
   }
 }
 
-module.exports = function(req, res){
+module.exports = (req, res) => {
   const reqUserId = req.user != null ? req.user._id : undefined
 
   return sanitize(req, res, sanitization)
-  .then((params) => {
+  .then(params => {
     const { limit, offset, assertImage } = params
-    return items_.publicByDate(limit, offset, assertImage, reqUserId)}).then(bundleOwnersToItems.bind(null, res, reqUserId))
+    return items_.publicByDate(limit, offset, assertImage, reqUserId)
+  })
+  .then(bundleOwnersToItems.bind(null, res, reqUserId))
   .catch(error_.Handler(req, res))
 }

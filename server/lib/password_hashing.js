@@ -18,8 +18,8 @@ if (hashPasswords) {
     hash: Promise.resolve,
     // Thus verifying the password is simply comparing the input password
     // with the password set in the database
-    verify(hash, password){ return Promise.resolve(hash === password) },
+    verify: (hash, password) => Promise.resolve(hash === password),
     // In this mode, tokens never expire
-    expired() { return false }
+    expired: () => false
   }
 }

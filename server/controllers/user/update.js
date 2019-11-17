@@ -18,7 +18,7 @@ const { basicUpdater } = __.require('lib', 'doc_updates')
 const User = __.require('models', 'user')
 const { Track } = __.require('lib', 'track')
 
-module.exports = function(req, res, next){
+module.exports = (req, res, next) => {
   if (req.user == null) return error_.unauthorizedApiAccess(req, res)
   const { user, body } = req
   const { attribute, value } = body
@@ -71,7 +71,7 @@ module.exports = function(req, res, next){
   return error_.bundle(req, res, `forbidden update: ${attribute} - ${value}`, 403)
 }
 
-var updateAttribute = function(user, attribute, value){
+const updateAttribute = (user, attribute, value) => {
   if (attribute === 'email') {
     return user_.updateEmail(user, value)
   } else {

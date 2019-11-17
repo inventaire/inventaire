@@ -25,10 +25,10 @@ module.exports = uris => Promise.all([
   entitiesItemsChecks(uris)
 ])
 
-var entitiesRelationsChecks = uris => Promise.all(uris.map(entityIsntUsedMuch))
+const entitiesRelationsChecks = uris => Promise.all(uris.map(entityIsntUsedMuch))
 
-var entityIsntUsedMuch = uri => entities_.byClaimsValue(uri)
-.then((claims) => {
+const entityIsntUsedMuch = uri => entities_.byClaimsValue(uri)
+.then(claims => {
   // Tolerating 1 claim: typically when a junk author entity is linked via a wdt:P50 claim
   // to a work, the author can be deleted, which will also remove the claim on the work
   if (claims.length > 1) {
@@ -48,18 +48,18 @@ var entityIsntUsedMuch = uri => entities_.byClaimsValue(uri)
   })()
 })
 
-var entitiesItemsChecks = uris => getAllUris(uris)
+const entitiesItemsChecks = uris => getAllUris(uris)
 .map(entityIsntUsedByAnyItem)
 
-var getAllUris = uris => getEntitiesByUris({ uris })
-.then((res) => {
+const getAllUris = uris => getEntitiesByUris({ uris })
+.then(res => {
   if (res.redirects == null) return uris
   const missingCanonicalUris = _.values(res.redirects)
   return uris.concat(missingCanonicalUris)
 })
 
-var entityIsntUsedByAnyItem = uri => items_.byEntity(uri)
-.then((items) => {
+const entityIsntUsedByAnyItem = uri => items_.byEntity(uri)
+.then(items => {
   if (items.length > 0) {
     throw error_.new("entities that are used by an item can't be removed", 400, uri)
   }

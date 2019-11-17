@@ -16,7 +16,6 @@ const _ = __.require('builders', 'utils')
 const requests_ = __.require('lib', 'requests')
 const xml_ = __.require('lib', 'xml')
 const qs = require('querystring')
-const error_ = __.require('lib', 'error/error')
 const cache_ = __.require('lib', 'cache')
 const fullPublicHost = CONFIG.fullPublicHost()
 // Defaulting to a high width as if the width is higher than the original,
@@ -24,12 +23,12 @@ const fullPublicHost = CONFIG.fullPublicHost()
 // But not too high though so that we don't get super heavy files
 const width = 2000
 
-module.exports = function(file){
+module.exports = file => {
   const key = `commons:${file}:${width}`
   return cache_.get({ key, fn: getThumbData.bind(null, file) })
 }
 
-var getThumbData = function(file){
+const getThumbData = file => {
   file = qs.escape(file)
   return requests_.get(requestOptions(file, width))
   .then(xml_.parse)
@@ -45,7 +44,7 @@ var getThumbData = function(file){
 
 const commonsApiEndpoint = 'http://tools.wmflabs.org/magnus-toolserver/commonsapi.php'
 
-var requestOptions = (image, thumbwidth) => ({
+const requestOptions = (image, thumbwidth) => ({
   url: _.buildPath(commonsApiEndpoint, { image, thumbwidth }),
 
   headers: {
@@ -55,7 +54,7 @@ var requestOptions = (image, thumbwidth) => ({
   }
 })
 
-var extractData = function(res){
+const extractData = res => {
   let data
   const { file, licenses, error } = res.response
   return data = {
@@ -66,7 +65,7 @@ var extractData = function(res){
   }
 }
 
-var formatData = function(file, parsedData){
+const formatData = (file, parsedData) => {
   let text
   let { url, error, author, license } = parsedData
   author = removeMarkups(author)
@@ -78,16 +77,19 @@ var formatData = function(file, parsedData){
     throw err
   }
 
-  if ((author != null) && (license != null)) { text = `${author} - ${license}`
-  } else { text = author || license || 'Wikimedia Commons' }
+  if ((author != null) && (license != null)) {
+    text = `${author} - ${license}`
+  } else {
+    text = author || license || 'Wikimedia Commons'
+  }
 
   const credits = { text, url: `https://commons.wikimedia.org/wiki/File:${file}` }
   return { url, credits }
 }
 
 const textInMarkups = /<.+>(.*)<\/\w+>/
-var removeMarkups = function(text){
-  if (text == null) return 
+const removeMarkups = text => {
+  if (text == null) return
   // avoiding very long credits
   // including whole html documents
   // cf: http://tools.wmflabs.org/magnus-toolserver/commonsapi.php?image=F%C3%A9lix_Nadar_1820-1910_portraits_Jules_Verne.jpg&thumbwidth=1000
@@ -97,16 +99,18 @@ var removeMarkups = function(text){
   }
 
   text = text.replace(textInMarkups, '$1')
-  if (text === '') { return
-  } else { return text }
+  if (text === '') {
+  } else {
+    return text
+  }
 }
 
-var fallback = file => (function(err) {
+const fallback = file => err => {
   _.warn(err, 'commonsapi or xml parse error: ignoring')
   // Redirects to the desired resized image, but we miss credits
   return { url: `https://commons.wikimedia.org/wiki/Special:FilePath/${file}?width=${width}` }
-})
+}
 
-function __guard__(value, transform) {
+function __guard__ (value, transform) {
   return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined
 }

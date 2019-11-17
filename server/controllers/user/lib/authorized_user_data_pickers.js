@@ -11,7 +11,7 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const User = __.require('models', 'user')
 
-const ownerSafeData = function(user){
+const ownerSafeData = user => {
   const safeUserDoc = _.pick(user, User.attributes.ownerSafe)
   safeUserDoc.oauth = (user.oauth != null) ? Object.keys(user.oauth) : []
   return safeUserDoc
@@ -20,9 +20,9 @@ const ownerSafeData = function(user){
 module.exports = {
   ownerSafeData,
   // Adapts the result to the requester authorization level
-  omitPrivateData(reqUserId, networkIds, extraAttribute){
+  omitPrivateData: (reqUserId, networkIds, extraAttribute) => {
     const attributes = getAttributes(extraAttribute)
-    return function(userDoc){
+    return userDoc => {
       const userId = userDoc._id
       if (userId === reqUserId) return ownerSafeData(userDoc)
 
@@ -37,11 +37,14 @@ module.exports = {
   }
 }
 
-var getAttributes = function(extraAttribute){
+const getAttributes = extraAttribute => {
   const attributes = User.attributes.public
   // Making sure we are not dealing with a map index accidently
   // passed as second argument.
   // Returning a different object
-  if (_.isString(extraAttribute)) { return [ extraAttribute ].concat(attributes)
-  } else { return attributes }
+  if (_.isString(extraAttribute)) {
+    return [ extraAttribute ].concat(attributes)
+  } else {
+    return attributes
+  }
 }

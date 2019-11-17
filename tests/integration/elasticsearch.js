@@ -8,17 +8,16 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const { Promise } = __.require('lib', 'promises')
-const should = require('should')
+require('should')
 
 const search = __.require('controllers', 'search/lib/get_wd_authors')
 
 const authorsWithLongerName = {
-  search() { return search('Zach Weinersmith', 'humans') },
+  search: () => search('Zach Weinersmith', 'humans'),
   lessGoodId: 'Q3574507' // => Zach Weiner
 }
 
-describe('elastic query of an author name within indexes of wikidata humans', () => it('only full phrase match should appear in result', (done) => {
+describe('elastic query of an author name within indexes of wikidata humans', () => it('only full phrase match should appear in result', done => {
   const authorInWdDescriptions = {
     query: 'Karl Marx',
     goodId: 'Q9061', // => label: 'Karl Marx'
@@ -26,7 +25,7 @@ describe('elastic query of an author name within indexes of wikidata humans', ()
   }
 
   search(authorInWdDescriptions.query, 'humans')
-  .then((results) => {
+  .then(results => {
     const goodResult = _.find(results, { _id: authorInWdDescriptions.goodId })
     const badResult = _.find(results, { _id: authorInWdDescriptions.lessGoodId })
 
@@ -36,5 +35,4 @@ describe('elastic query of an author name within indexes of wikidata humans', ()
 
     done()
   })
-
 }))

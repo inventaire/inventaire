@@ -9,7 +9,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const fs = require('fs')
 
-module.exports = function() {
+module.exports = () => {
   if (CONFIG.couch2elastic4sync.activated) {
     // Need to wait for databases to exist
     __.require('scripts', 'couch2elastic4sync/exec')('sync')

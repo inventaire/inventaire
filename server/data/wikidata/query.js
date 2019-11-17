@@ -7,13 +7,12 @@
  */
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
-const promises_ = __.require('lib', 'promises')
 const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
 const runQuery = require('./run_query')
 
-module.exports = function(req, res){
-  const { query:queryName, refresh } = req.query
+module.exports = (req, res) => {
+  const { query: queryName, refresh } = req.query
 
   if (!_.isNonEmptyString(queryName)) {
     return error_.bundleMissingQuery('query')

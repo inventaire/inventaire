@@ -14,24 +14,26 @@ const { Promise } = __.require('lib', 'promises')
 const { createUser } = require('./users')
 const { createRandomizedItems } = require('./items')
 
-let populatePromise = null
+let populatePromise
 const usersCount = 8
 const publicItemsPerUser = 10
 
 module.exports = (API = {
-  populate() {
+  populate: () => {
     if (populatePromise != null) return populatePromise
     populatePromise = Promise.all(_.times(usersCount, API.createUserWithItems))
     return populatePromise
   },
 
-  createUserWithItems() {
+  createUserWithItems: () => {
     const userPromise = createUser()
     return userPromise
     .then(() => {
       const itemsData = _.times(publicItemsPerUser, () => ({
         listing: 'public'
       }))
-      return createRandomizedItems(userPromise, itemsData)}).then(() => userPromise)
+      return createRandomizedItems(userPromise, itemsData)
+    })
+    .then(() => userPromise)
   }
 })

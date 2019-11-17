@@ -11,12 +11,12 @@ const _ = __.require('builders', 'utils')
 const delayedInit = setTimeout
 const { initDelay, disabled } = CONFIG.mailer
 
-module.exports = function() {
+module.exports = () => {
   initMailer()
   return initActivitySummary()
 }
 
-var initMailer = function() {
+const initMailer = () => {
   if (disabled) return _.warn('mailer disabled')
 
   _.info('mailer enabled')
@@ -26,7 +26,7 @@ var initMailer = function() {
   return delayedInit(initMailerEventListeners, initDelay)
 }
 
-var initMailerEventListeners = function() {
+const initMailerEventListeners = () => {
   const radio = __.require('lib', 'radio')
   const sendEmail = require('./send_email')
   const debounceEmails = require('./debounce_emails')
@@ -53,7 +53,7 @@ var initMailerEventListeners = function() {
   return _.info('mailer events listeners ready!')
 }
 
-var initActivitySummary = function() {
+const initActivitySummary = () => {
   if (CONFIG.activitySummary.disabled) {
     return _.warn('activity summary disabled')
   }

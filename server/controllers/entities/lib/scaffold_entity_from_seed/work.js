@@ -24,9 +24,9 @@ const seedUserId = __.require('couch', 'hard_coded_documents').users.seed._id
 const workEntitiesCache = require('./work_entity_search_deduplicating_cache')
 
 // Working around the circular dependencies
-let searchWorkEntityByTitleAndAuthors = null
-let findAuthorFromWorksLabels = null
-const lateRequire = function() {
+let searchWorkEntityByTitleAndAuthors
+let findAuthorFromWorksLabels
+const lateRequire = () => {
   searchWorkEntityByTitleAndAuthors = require('./search_work_entity_by_title_and_authors')
   return findAuthorFromWorksLabels = __.require('controllers', 'entities/lib/find_author_from_works_labels')
 }
@@ -35,7 +35,7 @@ setTimeout(lateRequire, 0)
 // seed attributes:
 // MUST have: title
 
-module.exports = function(seed){
+module.exports = seed => {
   let { title, authors } = seed
   if (!_.isNonEmptyString(title)) {
     return error_.reject('missing title', 400, title)
@@ -53,7 +53,7 @@ module.exports = function(seed){
   const lang = seed.lang || seed.groupLang || 'en'
 
   return searchWorkEntityByTitleAndAuthors(seed)
-  .then((workEntity) => {
+  .then(workEntity => {
     let workPromise
     if (workEntity != null) {
       _.log(seed, `scaffolding from existing work entity: ${workEntity.uri}`)
@@ -63,7 +63,7 @@ module.exports = function(seed){
     }
 
     return findAuthorsFromWorksTitleOrCreate(title, authors, lang)
-    .then((authorsUris) => {
+    .then(authorsUris => {
       _.log(seed, 'scaffolding work from scratch')
       workPromise = createWorkEntity(title, lang, authorsUris)
       workEntitiesCache.set(seed, workPromise)
@@ -72,11 +72,11 @@ module.exports = function(seed){
   })
 }
 
-var findAuthorsFromWorksTitleOrCreate = (title, authorsNames, lang) => promises_.all(authorsNames.map(findAuthorFromWorkTitleOrCreate(title, lang)))
+const findAuthorsFromWorksTitleOrCreate = (title, authorsNames, lang) => promises_.all(authorsNames.map(findAuthorFromWorkTitleOrCreate(title, lang)))
 
 // Returns a URI in any case, either from an existing entity or a newly created one
-var findAuthorFromWorkTitleOrCreate = (title, lang) => authorName => findAuthorFromWorksLabels(authorName, [ title ], [ lang ])
-.then((uri) => {
+const findAuthorFromWorkTitleOrCreate = (title, lang) => authorName => findAuthorFromWorksLabels(authorName, [ title ], [ lang ])
+.then(uri => {
   if (uri != null) {
     return uri
   } else {
@@ -85,7 +85,7 @@ var findAuthorFromWorkTitleOrCreate = (title, lang) => authorName => findAuthorF
   }
 })
 
-var createAuthorEntity = function(authorName, lang){
+const createAuthorEntity = (authorName, lang) => {
   const labels = {}
   labels[lang] = authorName
   const claims =
@@ -96,7 +96,7 @@ var createAuthorEntity = function(authorName, lang){
   .catch(_.ErrorRethrow('createAuthorEntity err'))
 }
 
-var createWorkEntity = function(title, lang, authorsUris){
+const createWorkEntity = (title, lang, authorsUris) => {
   const labels = {}
   if (_.isNonEmptyString(title)) { labels[lang] = title }
   const claims = {

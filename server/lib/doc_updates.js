@@ -12,11 +12,14 @@ const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 
 // the simplest doc update: set one or several key/values
-const basicUpdater = function(attribute, value, doc){
+const basicUpdater = (attribute, value, doc) => {
   // /!\ imperfect polymorphism:
   // _.extend doesn't handle deep values while _.set does
-  if (_.isObject(attribute)) { return _.extend(doc, attribute)
-  } else { return _.set(doc, attribute, value) }
+  if (_.isObject(attribute)) {
+    return _.extend(doc, attribute)
+  } else {
+    return _.set(doc, attribute, value)
+  }
 }
 
 const BasicUpdater = (attribute, value) => // in case key/values are passed in one object

@@ -22,7 +22,7 @@ const validations = {
   user: __.require('models', 'validations/user')
 }
 
-const parseNumberString = function(value){
+const parseNumberString = value => {
   if (_.isNumber(value)) return value
   const parsedValue = parseFloat(value)
   if (_.isNaN(parsedValue)) return value
@@ -31,16 +31,16 @@ const parseNumberString = function(value){
 
 const couchUuid = {
   validate: validations.common.couchUuid,
-  rename(name){ return `${name}Id` }
+  rename: name => `${name}Id`
 }
 
 const positiveInteger = {
   format: parseNumberString,
-  validate(num){ return _.isNumber(num) && /^\d+$/.test(num.toString()) }
+  validate: num => _.isNumber(num) && /^\d+$/.test(num.toString())
 }
 
 const nonEmptyString = {
-  validate(value, name, config){
+  validate: (value, name, config) => {
     let details, message
     if (!_.isString(value)) {
       message = `invalid ${name}`
@@ -58,7 +58,7 @@ const nonEmptyString = {
   }
 }
 
-const arrayOfAKind = validation => (function(values, kind) {
+const arrayOfAKind = validation => (values, kind) => {
   let details
   if (!_.isArray(values)) {
     details = `expected array, got ${_.typeOf(values)}`
@@ -79,13 +79,16 @@ const arrayOfAKind = validation => (function(values, kind) {
   }
 
   return true
-})
+}
 
-const arrayOrPipedStrings = function(value){
+const arrayOrPipedStrings = value => {
   if (_.isString(value)) { value = value.split('|') }
-  if (_.isArray(value)) { return _.uniq(value)
+  if (_.isArray(value)) {
+    return _.uniq(value)
   // Let the 'validate' function reject non-arrayfied values
-  } else { return value }
+  } else {
+    return value
+  }
 }
 
 const entityUris = {
@@ -109,7 +112,7 @@ const isbn = {
 }
 
 const whitelistedString = {
-  validate(value, name, config){
+  validate: (value, name, config) => {
     if (!config.whitelist.includes(value)) {
       const details = `possible values: ${config.whitelist.join(', ')}`
       throw error_.new(`invalid ${name}: ${value} (${details})`, 400, { value })
@@ -120,7 +123,7 @@ const whitelistedString = {
 
 const whitelistedStrings = {
   format: arrayOrPipedStrings,
-  validate(values, name, config){
+  validate: (values, name, config) => {
     for (const value of values) {
       whitelistedString.validate(value, name, config)
     }
@@ -130,17 +133,20 @@ const whitelistedStrings = {
 
 const generics = {
   boolean: {
-    format(value, name, config){
-      if (_.isString(value)) { return _.parseBooleanString(value, config.default)
-      } else { return value }
+    format (value, name, config) {
+      if (_.isString(value)) {
+        return _.parseBooleanString(value, config.default)
+      } else {
+        return value
+      }
     },
-    validate(value){ return _.typeOf(value) === 'boolean' }
+    validate: value => _.typeOf(value) === 'boolean'
   },
   object: {
     validate: _.isPlainObject
   },
   collection: {
-    validate(values, name, config){
+    validate: (values, name, config) => {
       if (!_.isCollection(values)) return false
       const { limit } = config
       const { length } = values

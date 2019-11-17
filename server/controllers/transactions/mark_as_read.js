@@ -8,13 +8,12 @@
 // mark the whole transaction as read
 
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
 const validations = __.require('models', 'validations/common')
 const transactions_ = require('./lib/transactions')
 
-module.exports = function(req, res, next){
+module.exports = (req, res, next) => {
   const { id } = req.body
   validations.pass('transactionId', id)
   const reqUserId = req.user._id

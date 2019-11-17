@@ -12,7 +12,7 @@ const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const Promise = require('bluebird')
 
-module.exports = params => (function(ids) {
+module.exports = params => ids => {
   ids = _.compact(ids)
   if (ids.length === 0) throw new Error('no doc ids found')
 
@@ -20,12 +20,12 @@ module.exports = params => (function(ids) {
   const docUpdater = updateDoc(params)
   const updateByBatches = nextBatchUpdater(db, ids, docUpdater)
   return updateByBatches()
-})
+}
 
-var nextBatchUpdater = function(db, ids, docUpdater){
+const nextBatchUpdater = (db, ids, docUpdater) => {
   const subgroups = splitInSubgroups(ids)
 
-  var updateNextBatch = function() {
+  const updateNextBatch = () => {
     if (subgroups.length === 0) return _.success('done updating !!')
 
     const nextIdsBatch = subgroups.shift()
@@ -39,17 +39,19 @@ var nextBatchUpdater = function(db, ids, docUpdater){
     .map(docUpdater)
     // Remove docs that don't need an update
     .filter(_.identity)
-    .then((docsToUpdate) => {
-      if (docsToUpdate.length === 0) return 
+    .then(docsToUpdate => {
+      if (docsToUpdate.length === 0) return
       return db.bulk(docsToUpdate)
       // Let CouchDB breath
-      .delay(interBulkDelay)}).then(updateNextBatch)
+      .delay(interBulkDelay)
+    })
+    .then(updateNextBatch)
   }
 
   return updateNextBatch
 }
 
-var updateDoc = function(params){
+const updateDoc = params => {
   const { updateFunction, log, showDiff, preview } = params
   const docDiff = showDiff ? require('./doc_diffs') : _.noop
 
@@ -57,18 +59,17 @@ var updateDoc = function(params){
   // to promises too, to keep it consistent
   // Use a clone of the doc to keep the doc itself unmutated
     Promise.try(() => updateFunction(_.cloneDeep(doc)))
-  .then((updatedDoc) => {
+  .then(updatedDoc => {
     if (objDiff(doc, updatedDoc)) {
       docDiff(doc, updatedDoc, preview)
       if (!preview) return updatedDoc
     } else {
       log(doc._id, 'no changes')
-      return
     }
   })
 }
 
-var splitInSubgroups = function(collection, groupsLength = 1000){
+const splitInSubgroups = (collection, groupsLength = 1000) => {
   const subgroups = []
   while (collection.length > 0) {
     subgroups.push(collection.splice(0, groupsLength))
@@ -77,4 +78,4 @@ var splitInSubgroups = function(collection, groupsLength = 1000){
   return subgroups
 }
 
-var objDiff = function() { return !_.sameObjects.apply(null, arguments) }
+const objDiff = () => !_.sameObjects.apply(null, arguments)

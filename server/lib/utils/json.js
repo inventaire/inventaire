@@ -12,13 +12,13 @@ const stringify = data => JSON.stringify(data, null, 4)
 const assert_ = require('./assert_types')
 
 module.exports = {
-  jsonReadAsync(path){
+  jsonReadAsync: path => {
     assert_.string(path)
     return fs.readFileAsync(path, 'utf-8')
     .then(parse)
   },
 
-  jsonWrite(path, data){
+  jsonWrite: (path, data) => {
     assert_.types([ 'string', 'object' ], [ path, data ])
     const json = stringify(data)
     return fs.writeFileSync(path, json)

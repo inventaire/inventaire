@@ -1,12 +1,11 @@
 // TODO: This file was created by bulk-decaffeinate.
 // Sanity-check the conversion and remove this comment.
-const CONFIG = require('config')
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const templateHelpers = __.require('lib', 'emails/handlebars_helpers')
 const transacColors = __.require('lib', 'emails/activity_summary/transactions_colors')
 
-module.exports = function(item, user, lang){
+module.exports = (item, user, lang) => {
   let imageHtml
   const { transaction, snapshot, details } = item
   const image = snapshot['entity:image']

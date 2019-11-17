@@ -6,7 +6,7 @@ const _ = __.require('builders', 'utils')
 const backupGeneralFolder = CONFIG.db.backupFolder
 const fs = require('fs')
 
-module.exports = function() {
+module.exports = () => {
   const day = _.simpleDay()
   const backupFolder = `${backupGeneralFolder}/${day}`
 

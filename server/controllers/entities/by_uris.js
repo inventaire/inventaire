@@ -6,7 +6,6 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
 const sanitize = __.require('lib', 'sanitize/sanitize')
 const responses_ = __.require('lib', 'responses')
 const error_ = __.require('lib', 'error/error')
@@ -29,8 +28,9 @@ const sanitization = {
 }
 
 module.exports = (req, res, next) => sanitize(req, res, sanitization)
-.then((params) => {
+.then(params => {
   const { uris, refresh, relatives } = params
   return getEntitiesByUris({ uris, refresh })
-  .then(addRelatives(relatives, refresh))}).then(responses_.Send(res))
+  .then(addRelatives(relatives, refresh))
+}).then(responses_.Send(res))
 .catch(error_.Handler(req, res))

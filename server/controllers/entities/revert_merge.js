@@ -13,16 +13,16 @@ const error_ = __.require('lib', 'error/error')
 const revertMerge = require('./lib/revert_merge')
 const radio = __.require('lib', 'radio')
 
-module.exports = function(req, res){
+module.exports = (req, res) => {
   const { body } = req
-  const { from:fromUri } = body
-  const { _id:reqUserId } = req.user
+  const { from: fromUri } = body
+  const { _id: reqUserId } = req.user
 
   if (!_.isNonEmptyString(fromUri)) {
     return error_.bundleMissingBody(req, res, 'from')
   }
 
-  const [ fromPrefix, fromId ] = Array.from(fromUri.split(':'))
+  const [ fromPrefix, fromId ] = fromUri.split(':')
 
   if ((fromPrefix !== 'inv') || !_.isInvEntityId(fromId)) {
     return error_.bundleInvalid(req, res, 'from')

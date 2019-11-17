@@ -14,7 +14,7 @@ module.exports = {
   // Group.tests[attribute](value)
 
   // Make sure the generated slug isn't an empty string
-  name(str){ return boundedString(str, 1, 60) && _.isNonEmptyString(slugify(str)) },
+  name: str => boundedString(str, 1, 60) && _.isNonEmptyString(slugify(str)),
   picture: localImg,
   description: BoundedString(0, 5000),
   searchable: boolean,

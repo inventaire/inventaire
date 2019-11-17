@@ -17,54 +17,57 @@ const { addClaim, getByUri } = __.require('apiTests', 'utils/entities')
 const { ensureEditionExists, randomLabel, humanName } = __.require('apiTests', 'fixtures/entities')
 const { toIsbn13h } = __.require('lib', 'isbn/isbn')
 
-const resolve = function(entries){
+const resolve = entries => {
   entries = _.forceArray(entries)
   return authReq('post', '/api/entities?action=resolve', { entries })
 }
 
 describe('entities:resolve', () => {
-  it('should throw when invalid isbn is passed', (done) => {
+  it('should throw when invalid isbn is passed', done => {
     const invalidIsbn = '9780000000000'
     resolve({ edition: { isbn: invalidIsbn } })
-    .catch((err) => {
+    .catch(err => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.startWith('invalid isbn')
-      done()}).catch(undesiredErr(done))
-
+      done()
+    })
+    .catch(undesiredErr(done))
   })
 
-  it('should resolve an edition entry from an ISBN', (done) => {
+  it('should resolve an edition entry from an ISBN', done => {
     const isbn13 = generateIsbn13()
     const editionSeed = { isbn: isbn13 }
     const entry = { edition: editionSeed }
     ensureEditionExists(`isbn:${isbn13}`)
     .then(() => resolve(entry))
     .get('entries')
-    .then((entries) => {
+    .then(entries => {
       entries[0].should.be.an.Object()
       entries[0].edition.uri.should.equal(`isbn:${isbn13}`)
-      done()}).catch(done)
-
+      done()
+    })
+    .catch(done)
   })
 
-  it('should resolve an edition from a known edition external id', (done) => {
+  it('should resolve an edition from a known edition external id', done => {
     const openLibraryId = someOpenLibraryId('edition')
     const isbn13 = generateIsbn13()
     ensureEditionExists(`isbn:${isbn13}`)
     .tap(edition => addClaim(`inv:${edition._id}`, 'wdt:P648', openLibraryId))
-    .then((edition) => {
+    .then(edition => {
       const editionSeed = { claims: { 'wdt:P648': [ openLibraryId ] } }
       const entry = { edition: editionSeed }
       return resolve(entry)
       .get('entries')
-      .then((entries) => {
+      .then(entries => {
         entries[0].edition.uri.should.equal(edition.uri)
         done()
-      })}).catch(done)
-
+      })
+    })
+    .catch(done)
   })
 
-  it('should resolve an edition entry from an ISBN set in the claims', (done) => {
+  it('should resolve an edition entry from an ISBN set in the claims', done => {
     const isbn13 = generateIsbn13()
     const isbn13h = toIsbn13h(isbn13)
     const editionSeed = { claims: { 'wdt:P212': isbn13h } }
@@ -72,14 +75,15 @@ describe('entities:resolve', () => {
     ensureEditionExists(`isbn:${isbn13}`)
     .then(() => resolve(entry))
     .get('entries')
-    .then((entries) => {
+    .then(entries => {
       entries[0].should.be.an.Object()
       entries[0].edition.uri.should.equal(`isbn:${isbn13}`)
-      done()}).catch(done)
-
+      done()
+    })
+    .catch(done)
   })
 
-  it('should resolve multiple entries', (done) => {
+  it('should resolve multiple entries', done => {
     const isbn13A = generateIsbn13()
     const isbn13B = generateIsbn13()
     const entryA = { edition: { isbn: isbn13A } }
@@ -90,87 +94,98 @@ describe('entities:resolve', () => {
     ])
     .then(() => resolve([ entryA, entryB ]))
     .get('entries')
-    .then((entries) => {
+    .then(entries => {
       entries[0].should.be.an.Object()
       entries[0].edition.uri.should.equal(`isbn:${isbn13A}`)
       entries[1].should.be.an.Object()
       entries[1].edition.uri.should.equal(`isbn:${isbn13B}`)
-      done()}).catch(done)
-
+      done()
+    })
+    .catch(done)
   })
 
-  it('should reject if key "edition" is missing', (done) => {
+  it('should reject if key "edition" is missing', done => {
     resolve({})
     .then(undesiredRes(done))
-    .catch((err) => {
+    .catch(err => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.startWith('missing edition in entry')
-      done()}).catch(done)
-
+      done()
+    })
+    .catch(done)
   })
 
-  it('should reject when no isbn is found', (done) => {
+  it('should reject when no isbn is found', done => {
     const entry = {
       edition: [ { claims: { 'wdt:P1476': randomLabel() } } ],
       works: [ { labels: { en: randomLabel() } } ]
     }
     resolve(entry)
-    .catch((err) => {
+    .catch(err => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.startWith('no isbn or external id claims found')
-      done()}).catch(done)
-
+      done()
+    })
+    .catch(done)
   })
 
-  it('should reject when label lang is invalid', (done) => {
+  it('should reject when label lang is invalid', done => {
     resolve({
       edition: { isbn: generateIsbn13() },
-      works: [ { labels: { notalang: 'foo' } } ] })
+      works: [ { labels: { notalang: 'foo' } } ]
+    })
     .then(undesiredRes(done))
-    .catch((err) => {
+    .catch(err => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal('invalid label lang')
-      done()}).catch(done)
-
+      done()
+    })
+    .catch(done)
   })
 
-  it('should reject when label value is invalid', (done) => {
+  it('should reject when label value is invalid', done => {
     resolve({
       edition: { isbn: generateIsbn13() },
-      works: [ { labels: { fr: [ 'foo' ] } } ] })
+      works: [ { labels: { fr: [ 'foo' ] } } ]
+    })
     .then(undesiredRes(done))
-    .catch((err) => {
+    .catch(err => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal('invalid label')
-      done()}).catch(done)
-
+      done()
+    })
+    .catch(done)
   })
 
-  it('should reject when claims key is not an array of objects', (done) => {
+  it('should reject when claims key is not an array of objects', done => {
     resolve({
       edition: { isbn: generateIsbn13() },
-      works: [ { claims: [ 'wdt:P31: wd:Q23' ] } ] })
+      works: [ { claims: [ 'wdt:P31: wd:Q23' ] } ]
+    })
     .then(undesiredRes(done))
-    .catch((err) => {
+    .catch(err => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.startWith('invalid claims')
-      done()}).catch(done)
-
+      done()
+    })
+    .catch(done)
   })
 
-  it('should reject when claims value is invalid', (done) => {
+  it('should reject when claims value is invalid', done => {
     resolve({
       edition: { isbn: generateIsbn13() },
-      works: [ { claims: { 'wdt:P50': [ 'not a valid entity uri' ] } } ] })
+      works: [ { claims: { 'wdt:P50': [ 'not a valid entity uri' ] } } ]
+    })
     .then(undesiredRes(done))
-    .catch((err) => {
+    .catch(err => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal('invalid property value')
-      done()}).catch(done)
-
+      done()
+    })
+    .catch(done)
   })
 
-  it('should reject when claims key has an unknown property', (done) => {
+  it('should reject when claims key has an unknown property', done => {
     const unknownProp = 'wdt:P6'
     const seed = {
       isbn: generateIsbn13(),
@@ -178,16 +193,17 @@ describe('entities:resolve', () => {
     }
     resolve({ edition: seed })
     .then(undesiredRes(done))
-    .catch((err) => {
+    .catch(err => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal("property isn't whitelisted")
-      done()}).catch(done)
-
+      done()
+    })
+    .catch(done)
   })
 })
 
 describe('entities:resolve:external-id', () => {
-  it('should resolve wikidata work from external ids claim', (done) => {
+  it('should resolve wikidata work from external ids claim', done => {
     resolve({
       edition: { isbn: generateIsbn13() },
       works: [ {
@@ -195,35 +211,37 @@ describe('entities:resolve:external-id', () => {
           'wdt:P1085': [ '28158' ]
         }
       }
-      ] })
+      ]
+    })
     .get('entries')
-    .then((entries) => {
+    .then(entries => {
       entries[0].works.should.be.an.Array()
       entries[0].works[0].should.be.an.Object()
       entries[0].works[0].uri.should.equal('wd:Q151883')
-      done()}).catch(done)
-
+      done()
+    })
+    .catch(done)
   })
 
-  it('should resolve inventaire work from external ids claim', (done) => {
+  it('should resolve inventaire work from external ids claim', done => {
     const goodReadsId = someGoodReadsId()
     createWork()
     .tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsId))
     .delay(10)
     .then(work => resolve({
       edition: { isbn: generateIsbn13() },
-      works: [ { claims: { 'wdt:P2969': [ goodReadsId ] } } ] })
+      works: [ { claims: { 'wdt:P2969': [ goodReadsId ] } } ]
+    })
     .get('entries')
-    .then((entries) => {
+    .then(entries => {
       entries[0].works.should.be.an.Array()
       entries[0].works[0].should.be.an.Object()
       entries[0].works[0].uri.should.equal(work.uri)
       done()
     })).catch(done)
-
   })
 
-  it('should resolve wikidata author from external ids claim', (done) => {
+  it('should resolve wikidata author from external ids claim', done => {
     resolve({
       edition: { isbn: generateIsbn13() },
       authors: [ {
@@ -231,17 +249,19 @@ describe('entities:resolve:external-id', () => {
           'wdt:P648': [ 'OL28127A' ]
         }
       }
-      ] })
+      ]
+    })
     .get('entries')
-    .then((entries) => {
+    .then(entries => {
       entries[0].authors.should.be.an.Array()
       entries[0].authors[0].should.be.an.Object()
       entries[0].authors[0].uri.should.equal('wd:Q16867')
-      done()}).catch(done)
-
+      done()
+    })
+    .catch(done)
   })
 
-  it('should resolve inventaire author from external ids claim', (done) => {
+  it('should resolve inventaire author from external ids claim', done => {
     const goodReadsId = someGoodReadsId()
     createHuman()
     .delay(10)
@@ -249,20 +269,20 @@ describe('entities:resolve:external-id', () => {
     .delay(10)
     .then(author => resolve({
       edition: { isbn: generateIsbn13() },
-      authors: [ { claims: { 'wdt:P2963': [ goodReadsId ] } } ] })
+      authors: [ { claims: { 'wdt:P2963': [ goodReadsId ] } } ]
+    })
     .get('entries')
-    .then((entries) => {
+    .then(entries => {
       entries[0].authors.should.be.an.Array()
       entries[0].authors[0].should.be.an.Object()
       entries[0].authors[0].uri.should.equal(author.uri)
       done()
     })).catch(done)
-
   })
 })
 
 describe('entities:resolve:in-context', () => {
-  it('should resolve work from work label and author with external ids claim', (done) => {
+  it('should resolve work from work label and author with external ids claim', done => {
     const goodReadsId = someGoodReadsId()
     const missingWorkLabel = randomLabel()
     const otherWorkLabel = randomLabel()
@@ -277,31 +297,33 @@ describe('entities:resolve:in-context', () => {
     .spread((work, otherWork) => resolve({
       edition: { isbn: generateIsbn13() },
       works: [ { labels: { en: missingWorkLabel } } ],
-      authors: [ { claims: { 'wdt:P2963': [ goodReadsId ] } } ] })
+      authors: [ { claims: { 'wdt:P2963': [ goodReadsId ] } } ]
+    })
     .get('entries')
-    .then((entries) => {
+    .then(entries => {
       should(entries[0].works[0].uri).be.ok()
       done()
     }))).catch(done)
-
   })
 
-  it('should resolve work from author found in work author claims', (done) => {
+  it('should resolve work from author found in work author claims', done => {
     createWorkWithAuthor()
-    .then((work) => {
+    .then(work => {
       const { labels, claims } = work
       return resolve({
         edition: { isbn: generateIsbn13() },
-        works: [ { labels, claims } ] })
+        works: [ { labels, claims } ]
+      })
       .get('entries')
-      .then((entries) => {
+      .then(entries => {
         should(entries[0].works[0].uri).be.ok()
         done()
-      })}).catch(done)
-
+      })
+    })
+    .catch(done)
   })
 
-  it('should not resolve work from resolved author when author have several works with same labels', (done) => {
+  it('should not resolve work from resolved author when author have several works with same labels', done => {
     const goodReadsId = someGoodReadsId()
     const workLabel = randomLabel()
     createHuman()
@@ -320,22 +342,21 @@ describe('entities:resolve:in-context', () => {
       }
       return resolve(entry)
       .get('entries')
-      .then((entries) => {
+      .then(entries => {
         should(entries[0].works[0].uri).not.be.ok()
         done()
       })
     })).catch(done)
-
   })
 
-  it('should resolve author from inv author with same label, and an inv work with external id', (done) => {
+  it('should resolve author from inv author with same label, and an inv work with external id', done => {
     const goodReadsId = someGoodReadsId()
     const workLabel = randomLabel()
     createHuman()
     .delay(10)
     .then(author => createWorkWithAuthor(author, workLabel)
     .tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsId))
-    .then((work) => {
+    .then(work => {
       const entry = {
         edition: { isbn: generateIsbn13() },
         works: [ { claims: { 'wdt:P2969': [ goodReadsId ] } } ],
@@ -343,51 +364,50 @@ describe('entities:resolve:in-context', () => {
       }
       return resolve(entry)
       .get('entries')
-      .then((entries) => {
+      .then(entries => {
         should(entries[0].works[0].uri).be.ok()
         should(entries[0].authors[0].uri).be.ok()
         done()
       })
     })).catch(done)
-
   })
 
-  it('should resolve work from resolve edition', (done) => {
+  it('should resolve work from resolve edition', done => {
     const isbn = generateIsbn13()
     ensureEditionExists(`isbn:${isbn}`)
     .then(edition => getByUri(edition.claims['wdt:P629'][0])
-    .then((work) => {
+    .then(work => {
       const { labels } = work
       return resolve({
         edition: { isbn },
-        works: [ { labels } ] })
-      .then((res) => {
+        works: [ { labels } ]
+      })
+      .then(res => {
         res.entries[0].works[0].uri.should.equal(work.uri)
         done()
       })
     })).catch(done)
-
   })
 
-  it('should ignore unresolved work from resolve edition', (done) => {
+  it('should ignore unresolved work from resolve edition', done => {
     const isbn = generateIsbn13()
     ensureEditionExists(`isbn:${isbn}`)
     .then(edition => resolve({
       edition: { isbn },
-      works: [ { labels: { en: randomLabel() } } ] })
-    .then((res) => {
+      works: [ { labels: { en: randomLabel() } } ]
+    })
+    .then(res => {
       const entry = res.entries[0]
       entry.works[0].resolved.should.be.false()
       done()
     })).catch(done)
-
   })
 })
 
 describe('entities:resolve:on-labels', () => {
-  it('should not resolve work pair if no labels match', (done) => {
+  it('should not resolve work pair if no labels match', done => {
     createHuman()
-    .then((author) => {
+    .then(author => {
       const workLabel = randomLabel()
       const seedLabel = randomLabel()
       const authorLabel = author.labels.en
@@ -395,33 +415,35 @@ describe('entities:resolve:on-labels', () => {
       .delay(elasticsearchUpdateDelay)
       .then(work => resolve(basicEntry(seedLabel, authorLabel))
       .get('entries')
-      .then((entries) => {
+      .then(entries => {
         should(entries[0].works[0].uri).not.be.ok()
         done()
-      }))}).catch(done)
-
+      }))
+    })
+    .catch(done)
   })
 
-  it('should resolve author and work pair by searching for exact labels', (done) => {
+  it('should resolve author and work pair by searching for exact labels', done => {
     createHuman()
-    .then((author) => {
+    .then(author => {
       const workLabel = randomLabel()
       const authorLabel = author.labels.en
       return createWorkWithAuthor(author, workLabel)
       .delay(elasticsearchUpdateDelay)
       .then(work => resolve(basicEntry(workLabel, authorLabel))
       .get('entries')
-      .then((entries) => {
+      .then(entries => {
         entries[0].works[0].uri.should.equal(work.uri)
         entries[0].authors[0].uri.should.equal(author.uri)
         done()
-      }))}).catch(done)
-
+      }))
+    })
+    .catch(done)
   })
 
-  it('should resolve work pair with case insentive labels', (done) => {
+  it('should resolve work pair with case insentive labels', done => {
     createHuman()
-    .then((author) => {
+    .then(author => {
       const workLabel = randomLabel()
       const seedLabel = workLabel.toUpperCase()
       const authorLabel = author.labels.en
@@ -429,18 +451,19 @@ describe('entities:resolve:on-labels', () => {
       .delay(elasticsearchUpdateDelay)
       .then(work => resolve(basicEntry(seedLabel, authorLabel))
       .get('entries')
-      .then((entries) => {
+      .then(entries => {
         entries[0].works[0].uri.should.equal(work.uri)
         entries[0].authors[0].uri.should.equal(author.uri)
         done()
-      }))}).catch(done)
-
+      }))
+    })
+    .catch(done)
   })
 
-  it('should not resolve when several works exist', (done) => {
+  it('should not resolve when several works exist', done => {
     createHuman()
     .then(author => createHuman({ labels: author.labels })
-    .then((sameLabelAuthor) => {
+    .then(sameLabelAuthor => {
       const workLabel = randomLabel()
       return Promise.all([
         createWorkWithAuthor(author, workLabel),
@@ -449,17 +472,16 @@ describe('entities:resolve:on-labels', () => {
       .delay(elasticsearchUpdateDelay)
       .then(works => resolve(basicEntry(workLabel, author.labels.en))
       .get('entries')
-      .then((entries) => {
+      .then(entries => {
         should(entries[0].works[0].uri).not.be.ok()
         should(entries[0].authors[0].uri).not.be.ok()
         done()
       }))
     })).catch(done)
-
   })
 })
 
-var basicEntry = (workLabel, authorLabel) => ({
+const basicEntry = (workLabel, authorLabel) => ({
   edition: { isbn: generateIsbn13() },
   works: [ { labels: { en: workLabel } } ],
   authors: [ { labels: { en: authorLabel } } ]

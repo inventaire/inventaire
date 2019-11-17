@@ -28,12 +28,12 @@ module.exports = (tests = {
   isUserImg: bindedTest('UserImg'),
   isLang: bindedTest('Lang'),
   isInvEntityId: isCouchUuid,
-  isInvEntityUri(uri){
+  isInvEntityUri: uri => {
     if (!isNonEmptyString(uri)) return false
     const [ prefix, id ] = Array.from(uri != null ? uri.split(':') : undefined)
     return (prefix === 'inv') && isCouchUuid(id)
   },
-  isWdEntityUri(uri){
+  isWdEntityUri: uri => {
     if (!_.isNonEmptyString(uri)) return false
     const [ prefix, id ] = Array.from(uri != null ? uri.split(':') : undefined)
     return (prefix === 'wd') && wdk.isItemId(id)
@@ -44,14 +44,14 @@ module.exports = (tests = {
   isItemId: isCouchUuid,
   isUsername: bindedTest('Username'),
   isEntityUri: bindedTest('EntityUri'),
-  isExtendedEntityUri(uri){
-    const [ prefix, id ] = Array.from(uri.split(':'))
+  isExtendedEntityUri: uri => {
+    const [ prefix, id ] = uri.split(':')
     // Accept alias URIs.
     // Ex: twitter:Bouletcorp -> wd:Q1524522
     return isNonEmptyString(prefix) && isNonEmptyString(id)
   },
   isPropertyUri: bindedTest('PropertyUri'),
-  isSimpleDay(str){
+  isSimpleDay: str => {
     let isValidDate = false
     try {
       // This line will throw if the date is invalid
@@ -67,9 +67,9 @@ module.exports = (tests = {
     return isValidDate && regex_.SimpleDay.test(str)
   },
   isNonEmptyString,
-  isNonEmptyArray(array){ return _.isArray(array) && (array.length > 0) },
-  isNonEmptyPlainObject(obj){ return _.isPlainObject(obj) && (Object.keys(obj).length > 0) },
-  isPositiveIntegerString(str){ return _.isString(str) && /^\d+$/.test(str) },
-  isExtendedUrl(str){ return tests.isUrl(str) || tests.isLocalImg(str) },
-  isCollection(array){ return (_.typeOf(array) === 'array') && _.every(array, _.isPlainObject) }
+  isNonEmptyArray: array => _.isArray(array) && (array.length > 0),
+  isNonEmptyPlainObject: obj => _.isPlainObject(obj) && (Object.keys(obj).length > 0),
+  isPositiveIntegerString: str => _.isString(str) && /^\d+$/.test(str),
+  isExtendedUrl: str => tests.isUrl(str) || tests.isLocalImg(str),
+  isCollection: array => (_.typeOf(array) === 'array') && _.every(array, _.isPlainObject)
 })

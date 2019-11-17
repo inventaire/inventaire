@@ -6,13 +6,12 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const validateObject = __.require('lib', 'validate_object')
 
-module.exports = function(controllers){
+module.exports = controllers => {
   const actions = getActions(controllers)
-  return function(req, res){
+  return (req, res) => {
     // Accepting the action to be passed either as a query string
     // or as a body parameter for more flexibility
     const action = req.query.action || req.body.action
@@ -35,15 +34,14 @@ module.exports = function(controllers){
     }
 
     actionData.controller(req, res)
-
   }
 }
 
-var getActions = function(controllers){
+const getActions = controllers => {
   let controller, key
   validateObject(controllers, [ 'public', 'authentified', 'admin' ], 'object')
 
-  const { authentified, public:publik, admin } = controllers
+  const { authentified, public: publik, admin } = controllers
 
   const actions = {}
 

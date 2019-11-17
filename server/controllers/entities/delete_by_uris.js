@@ -17,15 +17,16 @@ const sanitization =
   { uris: {} }
 
 module.exports = (req, res, next) => sanitize(req, res, sanitization)
-.then((params) => {
+.then(params => {
   const { user } = req
   const uris = _.uniq(params.uris)
   validateInvUris(uris)
   return verifyThatEntitiesCanBeRemoved(uris)
-  .then(() => removeEntitiesByInvId(user, uris))}).then(responses_.Ok(res))
+  .then(() => removeEntitiesByInvId(user, uris))
+}).then(responses_.Ok(res))
 .catch(error_.Handler(req, res))
 
-var validateInvUris = function(uris){
+const validateInvUris = uris => {
   for (const uri of uris) {
     // Wikidata entities can't be delete
     // and neither can editions entities with an ISBN: they should be fixed
@@ -33,5 +34,4 @@ var validateInvUris = function(uris){
       throw error_.newInvalid('uri', uri)
     }
   }
-
 }

@@ -10,7 +10,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const responses_ = __.require('lib', 'responses')
 const error_ = __.require('lib', 'error/error')
 const { isValidIsbn, normalizeIsbn } = __.require('lib', 'isbn/isbn')
 const wdLang = require('wikidata-lang')
@@ -22,7 +21,7 @@ const { validateProperty } = require('../properties/validations')
 // Format : if edition is a list, force pick the first edition
 // Warn : when a property is unknown
 
-module.exports = function(entry){
+module.exports = entry => {
   let { edition } = entry
 
   if (_.isArray(edition)) {
@@ -34,11 +33,11 @@ module.exports = function(entry){
     throw error_.new('missing edition in entry', 400, { entry })
   }
 
-  const authorsSeeds = entry['authors'] != null ? entry['authors'] : (entry['authors'] = [])
+  const authorsSeeds = entry.authors != null ? entry.authors : (entry.authors = [])
 
-  if (!_.isNonEmptyArray(entry['works'])) {
+  if (!_.isNonEmptyArray(entry.works)) {
     const work = createWorkSeedFromEdition(edition)
-    entry['works'] = (work != null) ? [ work ] : []
+    entry.works = (work != null) ? [ work ] : []
   }
 
   sanitizeEdition(entry.edition)
@@ -47,7 +46,7 @@ module.exports = function(entry){
   return entry
 }
 
-var sanitizeEdition = function(edition){
+const sanitizeEdition = edition => {
   const rawIsbn = getIsbn(edition)
 
   sanitizeSeed(edition, 'edition')
@@ -65,11 +64,11 @@ var sanitizeEdition = function(edition){
   }
 }
 
-var isExternalIdProperty = propertyId => properties[propertyId].isExternalId
+const isExternalIdProperty = propertyId => properties[propertyId].isExternalId
 
-var sanitizeCollection = (seeds, type) => seeds.forEach(seed => sanitizeSeed(seed, type))
+const sanitizeCollection = (seeds, type) => seeds.forEach(seed => sanitizeSeed(seed, type))
 
-var sanitizeSeed = function(seed, type){
+const sanitizeSeed = (seed, type) => {
   if (seed.labels == null) { seed.labels = {} }
   if (!_.isPlainObject(seed.labels)) {
     throw error_.new('invalid labels', 400, { seed })
@@ -91,16 +90,16 @@ var sanitizeSeed = function(seed, type){
     throw error_.new('invalid claims', 400, { seed })
   }
 
-  return Object.keys(claims).forEach((prop) => {
+  return Object.keys(claims).forEach(prop => {
     validateProperty(prop)
     claims[prop] = _.forceArray(claims[prop])
     return claims[prop].forEach(value => validateClaimValueSync(prop, value, type))
   })
 }
 
-var getIsbn = edition => edition.isbn || (edition.claims != null ? edition.claims['wdt:P212'] : undefined) || (edition.claims != null ? edition.claims['wdt:P957'] : undefined)
+const getIsbn = edition => edition.isbn || (edition.claims != null ? edition.claims['wdt:P212'] : undefined) || (edition.claims != null ? edition.claims['wdt:P957'] : undefined)
 
-var createWorkSeedFromEdition = function(edition){
+const createWorkSeedFromEdition = edition => {
   let lang
   if (__guard__(edition.claims != null ? edition.claims['wdt:P1476'] : undefined, x => x[0]) == null) return
   const title = edition.claims['wdt:P1476'][0]
@@ -111,6 +110,6 @@ var createWorkSeedFromEdition = function(edition){
   return { labels: { [lang]: title } }
 }
 
-function __guard__(value, transform) {
+function __guard__ (value, transform) {
   return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined
 }

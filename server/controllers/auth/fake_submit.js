@@ -7,8 +7,6 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
 
 // Allows authentification forms to submit a form already
 // validated by XHR calls, in order to be catched by browsers
@@ -17,7 +15,7 @@ const _ = __.require('builders', 'utils')
 // server/middlewares/content.js fakeSubmitException can be applied
 // to the strict minimum
 module.exports = {
-  post(req, res, next){
+  post: (req, res, next) => {
     const { redirect } = req.query
     const { referer } = req.headers
     const route = solveRoute(redirect, referer)
@@ -29,7 +27,10 @@ module.exports = {
 // - a redirect parameter in the query string
 // - the referer found in headers
 // - the root
-var solveRoute = function(redirect, referer){
-  if (redirect != null) { return `/${redirect}`
-  } else { return referer || '/' }
+const solveRoute = (redirect, referer) => {
+  if (redirect != null) {
+    return `/${redirect}`
+  } else {
+    return referer || '/'
+  }
 }

@@ -15,12 +15,12 @@ const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const { defer } = __.require('lib', 'promises')
 const { normalizeTerm } = require('../terms_normalization')
-const { oneMinute } =  __.require('lib', 'times')
+const { oneMinute } = __.require('lib', 'times')
 
 const cache = {}
 
 module.exports = {
-  get(seed){
+  get: seed => {
     const key = buildKey(seed)
     let deferred = cache[key]
     if (deferred != null) {
@@ -37,11 +37,10 @@ module.exports = {
       // Init the counter of seeds depending on this promise
       _.info(key, 'creating deferred')
       deferred.depending = 1
-      return
     }
   },
 
-  set(seed, workPromise){
+  set: (seed, workPromise) => {
     const key = buildKey(seed)
     // It would be sad but the cache might have been emptied since the cache get
     // that init the defer
@@ -54,12 +53,12 @@ module.exports = {
   }
 }
 
-var buildKey = function(seed){
+const buildKey = seed => {
   const { title, authors } = seed
-  return normalizeTerm(title) + ' ' + authors.map(normalizeTerm).sort().join(' ')
+  return `${normalizeTerm(title)} ${authors.map(normalizeTerm).sort().join(' ')}`
 }
 
-const clean = function() {
+const clean = () => {
   for (const key in cache) {
     const deferred = cache[key]
     const { depending, kept } = deferred
@@ -78,4 +77,4 @@ const clean = function() {
 }
 
 // This cache should span long enough to let the time to CouchDB and ElasticSearch to be aware of the new entity work
-var cleanAfterBatch = _.debounce(clean, 5000)
+const cleanAfterBatch = _.debounce(clean, 5000)

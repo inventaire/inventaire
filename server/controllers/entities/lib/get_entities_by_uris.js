@@ -24,15 +24,15 @@ const getters = {
 
 const prefixes = Object.keys(getters)
 
-module.exports = function(params){
+module.exports = params => {
   const { uris, list } = params
   assert_.array(uris)
   const domains = {}
 
   // validate per URI to be able to return a precise error message
   for (const uri of uris) {
-    var errMessage
-    const [ prefix, id ] = Array.from(uri.split(':'))
+    let errMessage
+    const [ prefix, id ] = uri.split(':')
 
     if (!prefixes.includes(prefix)) {
       errMessage = `invalid uri prefix: ${prefix} (uri: ${uri})`
@@ -55,7 +55,7 @@ module.exports = function(params){
   .catch(_.ErrorRethrow(`getEntitiesByUris err: ${uris.join('|')}`))
 }
 
-var getDomainsPromises = function(domains, params){
+const getDomainsPromises = (domains, params) => {
   const promises = []
 
   for (const prefix in domains) {
@@ -66,9 +66,9 @@ var getDomainsPromises = function(domains, params){
   return promises_.all(promises)
 }
 
-var formatList = results => _.flatten(_.map(results, 'entities'))
+const formatList = results => _.flatten(_.map(results, 'entities'))
 
-var formatRichResults = function(results){
+const formatRichResults = results => {
   const response = {
     // entities are a array until they are indexed by uri hereafter
     entities: [],
@@ -105,7 +105,7 @@ var formatRichResults = function(results){
   return response
 }
 
-var validators = {
+const validators = {
   inv: _.isInvEntityId,
   wd: wdk.isItemId,
   isbn: isValidIsbn

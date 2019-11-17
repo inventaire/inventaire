@@ -21,8 +21,8 @@ module.exports = (authorStr, worksLabels, worksLabelsLangs) => searchHumans(auth
 .then(getWdAuthorUris)
 .map(getAuthorOccurrenceData(worksLabels, worksLabelsLangs))
 .filter(_.property('hasOccurrence'))
-.then((authorsData) => {
-  if (authorsData.length === 0) { return
+.then(authorsData => {
+  if (authorsData.length === 0) {
   } else if (authorsData.length === 1) {
     const { uri } = authorsData[0]
     _.log(uri, 'author found from work label')
@@ -30,17 +30,17 @@ module.exports = (authorStr, worksLabels, worksLabelsLangs) => searchHumans(auth
   } else {
     const context = { authorStr, authorsData, worksLabels, worksLabelsLangs }
     _.warn(context, 'found more than one matching author')
-    return
   }
 })
 
-var searchHumans = typeSearch.bind(null, [ 'humans' ])
+const searchHumans = typeSearch.bind(null, [ 'humans' ])
 
-var getWdAuthorUris = res => res.hits.hits
+const getWdAuthorUris = res => res.hits.hits
 .filter(hit => (hit._index === 'wikidata') && (hit._score > 1))
 .map(hit => prefixifyWd(hit._id))
 
-var getAuthorOccurrenceData = (worksLabels, worksLabelsLangs) => wdAuthorUri => getOccurrencesFromExternalSources(wdAuthorUri, worksLabels, worksLabelsLangs)
-.then((occurrences) => {
+const getAuthorOccurrenceData = (worksLabels, worksLabelsLangs) => wdAuthorUri => getOccurrencesFromExternalSources(wdAuthorUri, worksLabels, worksLabelsLangs)
+.then(occurrences => {
   const hasOccurrence = occurrences.length > 0
-  return { uri: wdAuthorUri, hasOccurrence }})
+  return { uri: wdAuthorUri, hasOccurrence }
+})

@@ -7,24 +7,23 @@
  */
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const should = require('should')
+require('should')
 const { undesiredErr } = __.require('apiTests', 'utils/utils')
 const { createTransaction } = require('../fixtures/transactions')
 const { authReq, authReqB } = __.require('apiTests', 'utils/utils')
 
-
-describe('transactions:update-state', () => it('should update state and apply side effects', (done) => {
+describe('transactions:update-state', () => it('should update state and apply side effects', done => {
   createTransaction()
-  .then((transactionRes) => {
+  .then(transactionRes => {
     const { transaction, userA, userB, userBItem } = transactionRes
     return authReqB('put', '/api/transactions?action=update-state', {
       transaction: transaction._id,
       state: 'accepted'
     })
-    .then((updateRes) => {
+    .then(updateRes => {
       updateRes.ok.should.be.true()
       done()
-    })}).catch(undesiredErr(done))
-
+    })
+  })
+  .catch(undesiredErr(done))
 }))

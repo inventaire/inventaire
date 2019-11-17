@@ -19,14 +19,16 @@ module.exports = (validations = {
   itemId,
   userId,
   entity: entityUri,
-  lang(lang){ if (lang) { return _.isLang(lang) } else { return true } },
-  pictures(pictures){ return _.isArray(pictures) && _.every(pictures, imgUrl) },
-  attribute(attribute){ let needle
-    return (needle = attribute, _.keys(constrained).includes(needle)) },
-  transaction(transaction){
+  lang: lang => lang ? _.isLang(lang) : true
+  pictures: (pictures) => _.isArray(pictures) && _.every(pictures, imgUrl) ,
+  attribute: (attribute) => {
+    let needle
+    return (needle = attribute, _.keys(constrained).includes(needle))
+  },
+  transaction: (transaction) => {
     return constrained.transaction.possibilities.includes(transaction)
   },
-  listing(listing){
+  listing: (listing) => {
     return constrained.listing.possibilities.includes(listing)
   },
   details: _.isString,

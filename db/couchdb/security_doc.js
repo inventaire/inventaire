@@ -2,7 +2,7 @@
 // Sanity-check the conversion and remove this comment.
 const CONFIG = require('config')
 
-module.exports = (function() {
+module.exports = (function () {
   let securityDoc
   const {
     username

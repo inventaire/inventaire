@@ -13,7 +13,6 @@ const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const cache_ = __.require('lib', 'cache')
 const error_ = __.require('lib', 'error/error')
-const requests_ = __.require('lib', 'requests')
 const wdk = require('wikidata-sdk')
 const makeSparqlRequest = require('./make_sparql_request')
 
@@ -24,9 +23,9 @@ const possibleQueries = Object.keys(queries)
 // - query: the name of the query to use from './queries/queries'
 // - refresh
 // - custom parameters: see the query file
-module.exports = function(params){
+module.exports = params => {
   let k, value
-  let { query:queryName, refresh, dry } = params
+  let { query: queryName, refresh, dry } = params
 
   // Converting from kebab case to snake case
   params.query = (queryName = queryName.replace(/-/g, '_'))
@@ -58,12 +57,12 @@ module.exports = function(params){
   return cache_.get({ key, fn, refresh, dry, dryFallbackValue: [] })
 }
 
-var parametersTests = {
+const parametersTests = {
   qid: wdk.isItemId,
   pid: wdk.isPropertyId
 }
 
-var runQuery = function(params, key){
+const runQuery = (params, key) => {
   const { query: queryName } = params
   const { query: queryBuilder } = queries[queryName]
   const sparql = queryBuilder(params)

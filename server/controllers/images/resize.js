@@ -23,7 +23,7 @@ const containersList = Object.keys(__.require('controllers', 'images/lib/contain
 // resized images urls looks like
 // /img/#{container}/#{w}x#{h}/(#{hash}|#{external url hashCode?href=escaped url})"
 
-exports.get = function(req, res, next){
+exports.get = (req, res, next) => {
   // can be useful in development
   let url
   if (offline) {
@@ -53,7 +53,6 @@ exports.get = function(req, res, next){
 
   if (/^[0-9a-f]{40}$/.test(rest) || (container === 'assets')) {
     url = `${mediaStorageEndpoint}${container}/${rest}`
-
   } else if (/^[0-9]+$/.test(rest)) {
     url = req.query.href
     if (!_.isUrl(url)) {
@@ -67,7 +66,6 @@ exports.get = function(req, res, next){
     if (urlCode !== rest) {
       return error_.bundle(req, res, 'hash code and href dont match', 400)
     }
-
   } else {
     return error_.bundle(req, res, 'invalid image path', 400, rest)
   }
@@ -75,7 +73,7 @@ exports.get = function(req, res, next){
   return getResizedImage(req, res, url, dimensions)
 }
 
-var parseReq = function(req){
+const parseReq = req => {
   let { pathname } = req._parsedUrl
   pathname = pathname.replace('/img/', '')
   return pathname.split('/')

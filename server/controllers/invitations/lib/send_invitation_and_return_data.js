@@ -11,7 +11,7 @@ const assert_ = __.require('utils', 'assert_types')
 const user_ = __.require('controllers', 'user/lib/user')
 const sendInvitation = require('./send_invitations')
 
-module.exports = function(params){
+module.exports = params => {
   const { user, message, group, parsedEmails, reqUserId } = params
   assert_.object(user)
   assert_.type('string|null', message)
@@ -20,7 +20,7 @@ module.exports = function(params){
   assert_.string(reqUserId)
 
   return user_.getUsersByEmails(parsedEmails, reqUserId)
-  .then((existingUsers) => {
+  .then(existingUsers => {
     const existingUsersEmails = _.map(existingUsers, 'email')
     const remainingEmails = _.difference(parsedEmails, existingUsersEmails)
 

@@ -12,7 +12,7 @@ const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
 const { buildSearcher } = __.require('lib', 'elasticsearch')
 
-module.exports = function(req, res){
+module.exports = (req, res) => {
   const { query } = req
   const search = query.search != null ? query.search.trim() : undefined
 
@@ -25,9 +25,9 @@ module.exports = function(req, res){
   .catch(error_.Handler(req, res))
 }
 
-var searchByText = buildSearcher({
+const searchByText = buildSearcher({
   dbBaseName: 'users',
-  queryBodyBuilder(search){
+  queryBodyBuilder: search => {
     const should = [
       // Username
       { match: { username: { query: search, boost: 5 } } },
@@ -38,4 +38,5 @@ var searchByText = buildSearcher({
     ]
 
     return { query: { bool: { should } } }
-  } })
+  }
+})

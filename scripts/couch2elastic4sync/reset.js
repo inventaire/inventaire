@@ -14,7 +14,7 @@ const { host } = CONFIG.elasticsearch
 const { indexesList } = __.require('db', 'elasticsearch/list')
 const createIndex = require('./create_index')
 
-const reset = function(dbName){
+const reset = dbName => {
   const url = `${host}/${dbName}`
   return requests_.delete(url)
   .then(_.Log(`delete ${url}`))
@@ -23,12 +23,12 @@ const reset = function(dbName){
   .catch(_.Error('reset'))
 }
 
-var ignoreMissing = url => (function(err) {
+const ignoreMissing = url => err => {
   if (err.statusCode === 404) {
     return _.warn(url, 'no database to delete')
   } else {
     throw err
   }
-})
+}
 
 indexesList.forEach(reset)

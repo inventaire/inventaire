@@ -13,15 +13,14 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const promises_ = __.require('lib', 'promises')
-const error_ = __.require('lib', 'error/error')
 const entities_ = require('./entities')
 const runWdQuery = __.require('data', 'wikidata/run_query')
 const { prefixifyWd } = __.require('controllers', 'entities/lib/prefix')
 const { getSimpleDayDate, sortByOrdinalOrDate } = require('./queries_utils')
 
-module.exports = function(params){
+module.exports = params => {
   const { uri, refresh, dry } = params
-  const [ prefix, id ] = Array.from(uri.split(':'))
+  const [ prefix, id ] = uri.split(':')
   const promises = []
 
   // If the prefix is 'inv' or 'isbn', no need to check Wikidata
@@ -35,7 +34,7 @@ module.exports = function(params){
   })).catch(_.ErrorRethrow('get serie parts err'))
 }
 
-var getWdSerieParts = (qid, refresh, dry) => runWdQuery({ query: 'serie-parts', qid, refresh, dry })
+const getWdSerieParts = (qid, refresh, dry) => runWdQuery({ query: 'serie-parts', qid, refresh, dry })
 .map(result => ({
   uri: prefixifyWd(result.part),
   date: getSimpleDayDate(result.date),
@@ -44,13 +43,13 @@ var getWdSerieParts = (qid, refresh, dry) => runWdQuery({ query: 'serie-parts', 
   superpart: prefixifyWd(result.superpart)
 }))
 
-var getInvSerieParts = uri => // Querying only for 'serie' (wdt:P179) and not 'part of' (wdt:P361)
+const getInvSerieParts = uri => // Querying only for 'serie' (wdt:P179) and not 'part of' (wdt:P361)
 // as we use only wdt:P179 internally
   entities_.byClaim('wdt:P179', uri, true)
 .get('rows')
 .map(parseRow)
 
-var parseRow = row => ({
+const parseRow = row => ({
   uri: `inv:${row.id}`,
   date: (row.doc.claims['wdt:P577'] != null ? row.doc.claims['wdt:P577'][0] : undefined),
   ordinal: (row.doc.claims['wdt:P1545'] != null ? row.doc.claims['wdt:P1545'][0] : undefined),

@@ -7,23 +7,25 @@
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-const CONFIG = require('config')
 const _ = require('lodash')
 const { typeOf } = require('./base')
 
 // Working around the circular dependency
-let error_ = null
+let error_
 const lateRequire = () => error_ = require('../error/error')
 setTimeout(lateRequire, 0)
 
-const assertType = function(type, obj){
+const assertType = (type, obj) => {
   let needle
   const trueType = typeOf(obj)
-  if ((needle = trueType, type.split('|').includes(needle))) { return obj
-  } else { throw error_.new(`TypeError: expected ${type}, got ${obj} (${trueType})`, 500, arguments) }
+  if ((needle = trueType, type.split('|').includes(needle))) {
+    return obj
+  } else {
+    throw error_.new(`TypeError: expected ${type}, got ${obj} (${trueType})`, 500, arguments)
+  }
 }
 
-const assertTypes = function(types, args){
+const assertTypes = (types, args) => {
   if (_.isArguments(args)) {
     args = _.toArray(args)
     if (!_.isArray(types)) {
@@ -48,7 +50,7 @@ const assertTypes = function(types, args){
 // ex: types = 'numbers...'
 // Or even 'numbers...|strings...' to be translated as several 'number|string'
 // => types = ['number', 'number', ... (args.length times)]
-var parseTypes = function(types, args){
+const parseTypes = (types, args) => {
   if ((typeof types !== 'string') || (types.match('s...') == null)) return types
   const multiTypes = types.split('s...').join('')
   return _.times(args.length, () => multiTypes)

@@ -7,7 +7,6 @@
  */
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const promises_ = __.require('lib', 'promises')
 const { buildSearcher } = __.require('lib', 'elasticsearch')
 
 const index = 'wikidata'

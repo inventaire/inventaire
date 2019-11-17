@@ -6,32 +6,32 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const should = require('should')
+require('should')
 const { createHuman } = require('../fixtures/entities')
 const { update, checkEntities } = require('../utils/tasks')
 
 // Tests dependency: having a populated ElasticSearch wikidata index
 describe('tasks:update', () => {
-  it('should update a task', (done) => {
+  it('should update a task', done => {
     createHuman({ labels: { en: 'Fred Vargas' } })
     .then(human => checkEntities(human.uri))
-    .then((tasks) => {
+    .then(tasks => {
       const task = tasks[0]
       return update(task._id, 'state', 'dismissed')
-      .then((updatedTask) => {
+      .then(updatedTask => {
         updatedTask[0].ok.should.be.true()
         done()
-      })}).catch(done)
-
+      })
+    })
+    .catch(done)
   })
 
-  it('should throw if invalid task id', (done) => {
+  it('should throw if invalid task id', done => {
     update('')
-    .catch((err) => {
+    .catch(err => {
       err.body.status_verbose.should.be.a.String()
-      done()}).catch(done)
-
+      done()
+    })
+    .catch(done)
   })
 })

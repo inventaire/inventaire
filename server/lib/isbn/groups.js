@@ -7,8 +7,6 @@
  */
 let groupsMap
 const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
 const wdLang = require('wikidata-lang')
 const groupsData = require('isbn-groups')
 
@@ -20,7 +18,7 @@ for (const gs1Prefix in groupsData) {
     const groupData = gs1PrefixData[groupId]
     const { lang } = groupData
     if (lang != null) {
-      const wdId = 'wd:' + wdLang.byCode[lang].wd
+      const wdId = `wd:${wdLang.byCode[lang].wd}`
       groupsMap[`${gs1Prefix}-${groupId}`] = {
         lang,
         wd: wdId

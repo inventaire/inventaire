@@ -5,8 +5,8 @@ module.exports = {
   designDocName: 'items',
   viewName: 'byOwnerAndEntityAndListing',
   preview: true,
-  updateFunction(doc){
-    doc.snapshot = {};
-    return doc;
+  updateFunction: doc => {
+    doc.snapshot = {}
+    return doc
   }
-};
+}

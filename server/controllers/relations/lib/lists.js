@@ -14,8 +14,7 @@ const parseRelations = require('./parse_relations')
 const groups_ = __.require('controllers', 'groups/lib/groups')
 const { Promise } = __.require('lib', 'promises')
 
-module.exports = function(db){
-
+module.exports = db => {
   let lists
   const getAllUserRelations = (userId, includeDocs = false) => db.view('relations', 'byStatus', {
     startkey: [ userId, minKey ],
@@ -25,24 +24,24 @@ module.exports = function(db){
   )
 
   return lists = {
-    getUserRelations(userId){
+    getUserRelations: userId => {
       return getAllUserRelations(userId)
       .then(parseRelations)
     },
 
-    getUserFriends(userId){
+    getUserFriends: userId => {
       const query = { key: [ userId, 'friends' ] }
       return db.view('relations', 'byStatus', query)
       .then(couch_.mapValue)
     },
 
-    deleteUserRelations(userId){
+    deleteUserRelations: userId => {
       return getAllUserRelations(userId, true)
       .then(couch_.mapDoc)
       .then(db.bulkDelete)
     },
 
-    getUserFriendsAndCoGroupsMembers(userId){
+    getUserFriendsAndCoGroupsMembers: userId => {
       return Promise.all([
         lists.getUserFriends(userId),
         groups_.findUserGroupsCoMembers(userId)

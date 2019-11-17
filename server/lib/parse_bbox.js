@@ -18,7 +18,7 @@ const promises_ = __.require('lib', 'promises')
 const error_ = __.require('lib', 'error/error')
 const assert_ = __.require('utils', 'assert_types')
 
-const parseLatLng = function(query){
+const parseLatLng = query => {
   let { bbox } = query
 
   if (bbox == null) return error_.rejectMissingQuery('bbox')

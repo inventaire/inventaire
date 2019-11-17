@@ -7,11 +7,10 @@
  */
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const user_ = __.require('controllers', 'user/lib/user')
 
-exports.usernameAvailability = function(req, res, next){
+exports.usernameAvailability = (req, res, next) => {
   const { username } = req.query
   // checks for validity, availability, reserve words
   return user_.availability.username(username)
@@ -19,7 +18,7 @@ exports.usernameAvailability = function(req, res, next){
   .catch(error_.Handler(req, res))
 }
 
-exports.emailAvailability = function(req, res, next){
+exports.emailAvailability = (req, res, next) => {
   const { email } = req.query
   // checks for validity, availability
   return user_.availability.email(email)

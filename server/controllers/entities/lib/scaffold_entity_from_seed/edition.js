@@ -16,7 +16,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
-const { parse:parseIsbn } = __.require('lib', 'isbn/isbn')
+const { parse: parseIsbn } = __.require('lib', 'isbn/isbn')
 const properties = require('../properties/properties_values_constraints')
 const createInvEntity = require('../create_inv_entity')
 // It is simpler to use a consistent, recognizable mocked user id
@@ -33,7 +33,7 @@ const scaffoldWorkEntityFromSeed = require('./work')
 // Every isbn needs to have its edition entity and an associated author entity,
 // thus we create the expected entities whatsoever
 
-module.exports = function(seed){
+module.exports = seed => {
   const { isbn } = seed
   if (!_.isNonEmptyString(isbn)) {
     return error_.reject('missing isbn', 400, seed)
@@ -60,15 +60,15 @@ module.exports = function(seed){
 
 // Use a cache to prevent creating several entities with the same ISBN
 // at about the same time
-var cache = {}
+const cache = {}
 
-var clearCache = isbn13 => (function() {
+const clearCache = isbn13 => () => {
   const remove = () => delete cache[isbn13]
   // Let a large delay to be sure CouchDB view had the time to update
   return setTimeout(remove, 10000)
-})
+}
 
-var createEditionEntity = function(seed, workPromise){
+const createEditionEntity = (seed, workPromise) => {
   // The title is set hereafter as monolingual title (wdt:P1476)
   // instead of as a label
   const labels = {}
@@ -84,17 +84,17 @@ var createEditionEntity = function(seed, workPromise){
   addClaimIfValid(claims, 'wdt:P1104', seed.numberOfPages)
 
   return workPromise
-  .then((work) => {
+  .then(work => {
     const workUri = work.uri || `inv:${work._id}`
     claims['wdt:P629'] = [ workUri ]
-    return createInvEntity({ labels, claims, userId: seedUserId })})
+    return createInvEntity({ labels, claims, userId: seedUserId })
+  })
   .then(_.Log('created edition entity'))
   .catch(_.ErrorRethrow('createEditionEntity err'))
 }
 
-var addClaimIfValid = function(claims, property, value){
+const addClaimIfValid = (claims, property, value) => {
   if ((value != null) && properties[property].validate(value)) {
     claims[property] = [ value ]
   }
-
 }

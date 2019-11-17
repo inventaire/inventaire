@@ -7,9 +7,8 @@
  */
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
 
-const should = require('should')
+require('should')
 const sinon = require('sinon')
 
 let spies = {}
@@ -23,14 +22,14 @@ const resetSpies = () => ({
 })
 
 const actions = {
-  acceptRequest() { return spies.acceptRequest() },
-  simultaneousRequest() { return spies.simultaneousRequest() },
-  makeRequest() { return spies.makeRequest() },
-  removeRelation() { return spies.removeRelation() },
-  forceFriendship() { return spies.forceFriendship() }
+  acceptRequest: () => spies.acceptRequest(),
+  simultaneousRequest: () => spies.simultaneousRequest(),
+  makeRequest: () => spies.makeRequest(),
+  removeRelation: () => spies.removeRelation(),
+  forceFriendship () { return spies.forceFriendship() }
 }
 
-const totalSpiesCount = function() {
+const totalSpiesCount = () => {
   let count = 0
   for (const key in spies) {
     const value = spies[key]
@@ -44,7 +43,7 @@ const solveIntent = __.require('controllers', 'relations/lib/solve_intent')(acti
 describe('relations', () => describe('solveIntent', () => {
   describe('requestFriend', () => {
     beforeEach(() => spies = resetSpies())
-    it('env', (done) => {
+    it('env', done => {
       solveIntent.should.be.an.Object()
       solveIntent.requestFriend.should.be.a.Function()
       spies.should.be.an.Object()
@@ -57,7 +56,7 @@ describe('relations', () => describe('solveIntent', () => {
       done()
     })
 
-    it("should makeRequest on status 'none'", (done) => {
+    it("should makeRequest on status 'none'", done => {
       spies.makeRequest.callCount.should.equal(0)
       solveIntent.requestFriend('a', 'b', 'none')
       spies.makeRequest.callCount.should.equal(1)
@@ -65,20 +64,20 @@ describe('relations', () => describe('solveIntent', () => {
       done()
     })
 
-    it("should do nothing on status 'userRequested'", (done) => {
+    it("should do nothing on status 'userRequested'", done => {
       solveIntent.requestFriend('a', 'b', 'userRequested')
       totalSpiesCount().should.equal(0)
       done()
     })
 
-    it("should simultaneousRequest on status 'otherRequested'", (done) => {
+    it("should simultaneousRequest on status 'otherRequested'", done => {
       solveIntent.requestFriend('a', 'b', 'otherRequested')
       spies.simultaneousRequest.callCount.should.equal(1)
       totalSpiesCount().should.equal(1)
       done()
     })
 
-    it("should do nothing on status 'friends'", (done) => {
+    it("should do nothing on status 'friends'", done => {
       solveIntent.requestFriend('a', 'b', 'friends')
       totalSpiesCount().should.equal(0)
       done()
@@ -87,26 +86,26 @@ describe('relations', () => describe('solveIntent', () => {
 
   describe('cancelFriendRequest', () => {
     beforeEach(() => spies = resetSpies())
-    it("should do nothing on status 'none'", (done) => {
+    it("should do nothing on status 'none'", done => {
       solveIntent.cancelFriendRequest('a', 'b', 'none')
       totalSpiesCount().should.equal(0)
       done()
     })
 
-    it("should removeRelation on status 'userRequested'", (done) => {
+    it("should removeRelation on status 'userRequested'", done => {
       solveIntent.cancelFriendRequest('a', 'b', 'userRequested')
       spies.removeRelation.callCount.should.equal(1)
       totalSpiesCount().should.equal(1)
       done()
     })
 
-    it("should do nothing on status 'otherRequested'", (done) => {
+    it("should do nothing on status 'otherRequested'", done => {
       solveIntent.cancelFriendRequest('a', 'b', 'otherRequested')
       totalSpiesCount().should.equal(0)
       done()
     })
 
-    it("should do nothing on status 'friends'", (done) => {
+    it("should do nothing on status 'friends'", done => {
       solveIntent.cancelFriendRequest('a', 'b', 'friends')
       totalSpiesCount().should.equal(0)
       done()
@@ -115,27 +114,27 @@ describe('relations', () => describe('solveIntent', () => {
 
   describe('removeFriendship', () => {
     beforeEach(() => spies = resetSpies())
-    it("should do nothing on status 'none'", (done) => {
+    it("should do nothing on status 'none'", done => {
       solveIntent.removeFriendship('a', 'b', 'none')
       totalSpiesCount().should.equal(0)
       done()
     })
 
-    it("should removeRelation on status 'userRequested'", (done) => {
+    it("should removeRelation on status 'userRequested'", done => {
       solveIntent.removeFriendship('a', 'b', 'userRequested')
       spies.removeRelation.callCount.should.equal(1)
       totalSpiesCount().should.equal(1)
       done()
     })
 
-    it("should removeRelation on status 'otherRequested'", (done) => {
+    it("should removeRelation on status 'otherRequested'", done => {
       solveIntent.removeFriendship('a', 'b', 'otherRequested')
       spies.removeRelation.callCount.should.equal(1)
       totalSpiesCount().should.equal(1)
       done()
     })
 
-    it("should removeRelation on status 'friends'", (done) => {
+    it("should removeRelation on status 'friends'", done => {
       solveIntent.removeFriendship('a', 'b', 'friends')
       spies.removeRelation.callCount.should.equal(1)
       totalSpiesCount().should.equal(1)

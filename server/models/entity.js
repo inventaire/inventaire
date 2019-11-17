@@ -37,14 +37,13 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const assert_ = __.require('utils', 'assert_types')
-const promises_ = __.require('lib', 'promises')
 const validLangs = Object.keys(require('wikidata-lang').byCode)
 
 const properties = __.require('controllers', 'entities/lib/properties/properties_values_constraints')
 const inferences = __.require('controllers', 'entities/lib/inferences')
 
 module.exports = (Entity = {
-  create() {
+  create: () => {
     return {
       type: 'entity',
       labels: {},
@@ -54,7 +53,7 @@ module.exports = (Entity = {
     }
   },
 
-  setLabel(doc, lang, value){
+  setLabel: (doc, lang, value) => {
     assert_.types([ 'object', 'string', 'string' ], arguments)
 
     if (!validLangs.includes(lang)) {
@@ -76,7 +75,7 @@ module.exports = (Entity = {
     return doc
   },
 
-  setLabels(doc, labels){
+  setLabels: (doc, labels) => {
     Entity.preventRedirectionEdit(doc, 'setLabels')
     for (const lang in labels) {
       const value = labels[lang]
@@ -86,7 +85,7 @@ module.exports = (Entity = {
     return doc
   },
 
-  addClaims(doc, claims){
+  addClaims: (doc, claims) => {
     Entity.preventRedirectionEdit(doc, 'addClaims')
 
     // Pass the list of all edited properties, so that wen trying to infer property
@@ -106,7 +105,6 @@ module.exports = (Entity = {
         }
       }
 
-
       for (const value of array) {
         doc = Entity.createClaim(doc, property, value)
       }
@@ -119,12 +117,12 @@ module.exports = (Entity = {
     return doc
   },
 
-  createClaim(doc, property, value){
+  createClaim: (doc, property, value) => {
     Entity.preventRedirectionEdit(doc, 'createClaim')
     return Entity.updateClaim(doc, property, null, value)
   },
 
-  updateClaim(doc, property, oldVal, newVal){
+  updateClaim: (doc, property, oldVal, newVal) => {
     Entity.preventRedirectionEdit(doc, 'updateClaim')
     if ((oldVal == null) && (newVal == null)) {
       throw error_.new('missing old or new value', 400, arguments)
@@ -161,7 +159,6 @@ module.exports = (Entity = {
 
         setPossiblyEmptyPropertyArray(doc, property, propArray)
       }
-
     } else {
       // if the old value is null, it plays the role of a createClaim
       if (!doc.claims[property]) { doc.claims[property] = [] }
@@ -176,7 +173,7 @@ module.exports = (Entity = {
   // 'from' and 'to' refer to the redirection process which rely on merging
   // two existing document: redirecting from an entity to another entity,
   // only the 'to' doc will survive
-  mergeDocs(fromEntityDoc, toEntityDoc){
+  mergeDocs: (fromEntityDoc, toEntityDoc) => {
     let value
     Entity.preventRedirectionEdit(fromEntityDoc, 'mergeDocs (from)')
     Entity.preventRedirectionEdit(toEntityDoc, 'mergeDocs (to)')
@@ -218,8 +215,8 @@ module.exports = (Entity = {
     return toEntityDoc
   },
 
-  turnIntoRedirection(fromEntityDoc, toUri, removedPlaceholdersIds){
-    const [ prefix, id ] = Array.from(toUri.split(':'))
+  turnIntoRedirection: (fromEntityDoc, toUri, removedPlaceholdersIds) => {
+    const [ prefix, id ] = toUri.split(':')
 
     if ((prefix === 'inv') && (id === fromEntityDoc._id)) {
       throw error_.new('circular redirection', 500, arguments)
@@ -237,7 +234,7 @@ module.exports = (Entity = {
     return redirection
   },
 
-  removePlaceholder(entityDoc){
+  removePlaceholder: entityDoc => {
     if (entityDoc.redirect != null) {
       const message = "can't turn a redirection into a removed placeholder"
       throw error_.new(message, 400, entityDoc)
@@ -249,19 +246,19 @@ module.exports = (Entity = {
     return removedDoc
   },
 
-  recoverPlaceholder(entityDoc){
+  recoverPlaceholder: entityDoc => {
     const recoveredDoc = _.cloneDeep(entityDoc)
     recoveredDoc.type = 'entity'
     return recoveredDoc
   },
 
-  preventRedirectionEdit(doc, editLabel){
-    if (doc.redirect == null) return 
+  preventRedirectionEdit: (doc, editLabel) => {
+    if (doc.redirect == null) return
     throw error_.new(`${editLabel} failed: the entity is a redirection`, 400, arguments)
   }
 })
 
-var updateInferredProperties = function(doc, property, oldVal, newVal){
+const updateInferredProperties = (doc, property, oldVal, newVal) => {
   const declaredProperties = doc._allClaimsProps || []
   // Use _allClaimsProps to list properties that shouldn't be inferred
   const propInferences = _.omit(inferences[property], declaredProperties)
@@ -269,7 +266,7 @@ var updateInferredProperties = function(doc, property, oldVal, newVal){
   const addingOrUpdatingValue = (newVal != null)
 
   for (const inferredProperty in propInferences) {
-    var inferredValue
+    let inferredValue
     const convertor = propInferences[inferredProperty]
     let inferredPropertyArray = doc.claims[inferredProperty] || []
 
@@ -285,7 +282,6 @@ var updateInferredProperties = function(doc, property, oldVal, newVal){
       } else {
         _.warn(newVal, `inferred value not found for ${inferredProperty} from ${property}`)
       }
-
     } else {
       // The current entity data model doesn't allow to check if the claim was
       // indeed inferred or if it was manually added.
@@ -308,7 +304,7 @@ var updateInferredProperties = function(doc, property, oldVal, newVal){
   return doc
 }
 
-var setPossiblyEmptyPropertyArray = function(doc, property, propertyArray){
+const setPossiblyEmptyPropertyArray = (doc, property, propertyArray) => {
   if (propertyArray.length === 0) {
     // if empty, clean the doc from the property
     return doc.claims = _.omit(doc.claims, property)

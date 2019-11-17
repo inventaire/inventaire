@@ -15,22 +15,25 @@ const error_ = __.require('lib', 'error/error')
 const assert_ = __.require('utils', 'assert_types')
 
 module.exports = (handlers = {
-  byEmail(db, email){
+  byEmail: (db, email) => {
     assert_.string(email)
     return db.viewByKey('byEmail', email.toLowerCase())
   },
 
-  byEmails(db, emails){
+  byEmails: (db, emails) => {
     assert_.strings(emails)
     return db.viewByKeys('byEmail', emails.map(_.toLowerCase))
   },
 
-  findOneByEmail(db, email){
+  findOneByEmail: (db, email) => {
     return handlers.byEmail(db, email)
     .then(couch_.firstDoc)
-    .then((user) => {
-      if (user != null) { return user
-      } else { throw error_.notFound(email) }
+    .then(user => {
+      if (user != null) {
+        return user
+      } else {
+        throw error_.notFound(email)
+      }
     })
   }
 })

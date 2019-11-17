@@ -8,18 +8,17 @@
  */
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
 const getBestLangValue = __.require('lib', 'get_best_lang_value')
 
-module.exports = lang => (function(results) {
+module.exports = lang => results => {
   if (!lang) return results
 
   return results
-  .map((result) => {
+  .map(result => {
     const { _type, _source } = result
     return formatters[_type](result, _source, lang)
   })
-})
+}
 
 const entityFormatter = (result, _source, lang) => ({
   id: result._id,
@@ -31,7 +30,7 @@ const entityFormatter = (result, _source, lang) => ({
   lexicalScore: result._score
 })
 
-var getUri = function(index, id){ if (index === 'wikidata') { return `wd:${id}` } else { return `inv:${id}` } }
+const getUri = (index, id) => index === 'wikidata' ? `wd:${id}` : `inv:${id}`
 
 const networkFormatter = (labelAttr, descAttr) => (result, _source, lang) => ({
   id: result._id,
@@ -42,7 +41,7 @@ const networkFormatter = (labelAttr, descAttr) => (result, _source, lang) => ({
   lexicalScore: result._score
 })
 
-var formatters = {
+const formatters = {
   works: entityFormatter,
   humans: entityFormatter,
   series: entityFormatter,
@@ -54,6 +53,6 @@ var formatters = {
   groups: networkFormatter('name', 'description')
 }
 
-function __guard__(value, transform) {
+function __guard__ (value, transform) {
   return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined
 }

@@ -7,7 +7,7 @@ const getDbApi = require('./cot_base')
 
 // if no designDocName is provided,
 // assumes it is the same as the dbBaseName
-module.exports = function(dbBaseName, designDocName){
+module.exports = (dbBaseName, designDocName) => {
   const dbName = CONFIG.db.name(dbBaseName)
   if (!designDocName) { designDocName = dbBaseName }
 

@@ -52,4 +52,4 @@ const reservedWords = [
   'feedback'
 ]
 
-module.exports =  username => reservedWords.includes(username)
+module.exports = username => reservedWords.includes(username)

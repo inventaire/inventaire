@@ -12,15 +12,18 @@ const express = require('express')
 const { env, port, host, name } = CONFIG
 
 const middlewares = require('./middlewares/middlewares')
-const middlewaresList = middlewares.common.concat((middlewares[CONFIG.env] || []))
+const middlewaresList = middlewares.common.concat((middlewares[env] || []))
 
 const routes = require('./controllers/routes')
 
 const app = express()
 
 for (const middleware of middlewaresList) {
-  if (_.isArray(middleware)) { app.use.apply(app, middleware)
-  } else { app.use(middleware) }
+  if (_.isArray(middleware)) {
+    app.use.apply(app, middleware)
+  } else {
+    app.use(middleware)
+  }
 }
 
 for (const endpoint in routes) {
@@ -37,8 +40,9 @@ app.use(require('./middlewares/error_handler'))
 
 app.disable('x-powered-by')
 
-module.exports = () => new Promise((resolve, reject) => app.listen(port, host, (err) => {
-  if (err) { return reject(err)
+module.exports = () => new Promise((resolve, reject) => app.listen(port, host, err => {
+  if (err) {
+    return reject(err)
   } else {
     _.info(`${name} server is listening on port ${port}...`)
     return resolve(app)

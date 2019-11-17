@@ -7,28 +7,30 @@
  */
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const should = require('should')
+require('should')
 const { nonAuthReq, undesiredRes, getUser } = require('../utils/utils')
 const randomString = __.require('lib', './utils/random_string')
 const { rawRequest } = require('../utils/request')
 const host = CONFIG.fullHost()
 
-describe('token:reset-password', () => it('should reject requests without email', (done) => {
+describe('token:reset-password', () => it('should reject requests without email', done => {
   nonAuthReq('get', '/api/token?action=reset-password')
   .then(undesiredRes(done))
-  .catch((err) => {
+  .catch(err => {
     err.body.status_verbose.should.equal('missing parameter in query: email')
-    done()}).catch(done)
-
+    done()
+  })
+  .catch(done)
 }))
 
-describe('token:validation-email', () => it('should reject requests without email', (done) => {
+describe('token:validation-email', () => it('should reject requests without email', done => {
   rawRequest('get', {
     url: `${host}/api/token?action=validation-email`,
     followRedirect: false
-  }).then((res) => {
+  })
+  .then(res => {
     res.headers.location.should.equal('/?validEmail=false')
-    done()}).catch(done)
-
+    done()
+  })
+  .catch(done)
 }))

@@ -14,7 +14,7 @@ const getInvEntityCanonicalUri = __.require('controllers', 'entities/lib/get_inv
 const getBestLangValue = __.require('lib', 'get_best_lang_value')
 
 module.exports = {
-  getDocData(updatedDoc){
+  getDocData: updatedDoc => {
     let { uri, type } = updatedDoc
     // Case when a formatted entity doc is passed
     if (uri != null) return [ uri, type ]
@@ -26,25 +26,26 @@ module.exports = {
     return [ uri, type ]
   },
 
-  getNames(preferedLang, entities){
-    if (!_.isNonEmptyArray(entities)) return 
+  getNames: (preferedLang, entities) => {
+    if (!_.isNonEmptyArray(entities)) return
 
     return entities
     .map(getName(preferedLang))
     .join(', ')
   },
 
-  aggregateClaims(entities, property){
+  aggregateClaims: (entities, property) => {
     assert_.array(entities)
     assert_.string(property)
 
     return _(entities)
-    .filter((entity) => {
+    .filter(entity => {
       const hasClaims = (entity.claims != null)
       if (hasClaims) return true
       // Trying to identify how entities with no claims arrive here
       _.warn(entity, 'entity with no claim at aggregateClaims')
-      return false}).map(entity => entity.claims[property])
+      return false
+    }).map(entity => entity.claims[property])
     .flatten()
     .compact()
     .uniq()
@@ -52,4 +53,4 @@ module.exports = {
   }
 }
 
-var getName = lang => entity => getBestLangValue(lang, entity.originalLang, entity.labels).value
+const getName = lang => entity => getBestLangValue(lang, entity.originalLang, entity.labels).value

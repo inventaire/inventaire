@@ -20,7 +20,7 @@ const { i18n } = require('./i18n/i18n')
 const { kmBetween } = __.require('lib', 'geo')
 
 module.exports = {
-  validationEmail(user, token){
+  validationEmail: (user, token) => {
     // purposedly not checking notifications settings
     let data
     const { username, email, language } = user
@@ -35,7 +35,7 @@ module.exports = {
     }
   },
 
-  resetPassword(user, token){
+  resetPassword: (user, token) => {
     // purposedly not checking notifications settings
     let data
     const { username, email, language } = user
@@ -50,7 +50,7 @@ module.exports = {
     }
   },
 
-  friendAcceptedRequest(options){
+  friendAcceptedRequest: options => {
     let data
     const [ user1, user2 ] = Array.from(validateOptions(options))
     const lang = _.shortLang(user1.language)
@@ -65,7 +65,7 @@ module.exports = {
     }
   },
 
-  friendshipRequest(options){
+  friendshipRequest: options => {
     let data
     const [ user1, user2 ] = Array.from(validateOptions(options))
     const lang = _.shortLang(user1.language)
@@ -76,7 +76,7 @@ module.exports = {
 
     let { bio } = user2
     if (bio == null) { bio = '' }
-    if (bio.length > 200) { bio = bio.slice(0, 201) + '...' }
+    if (bio.length > 200) { bio = `${bio.slice(0, 201)}...` }
     user2.bio = bio
 
     if ((user1.position != null) && (user2.position != null)) {
@@ -91,7 +91,7 @@ module.exports = {
     }
   },
 
-  group(action, context){
+  group: (action, context) => {
     let data
     const { group, actingUser, userToNotify } = context
     const { language, email } = userToNotify
@@ -115,7 +115,7 @@ module.exports = {
     }
   },
 
-  feedback(subject, message, user, unknownUser, uris, context){
+  feedback: (subject, message, user, unknownUser, uris, context) => {
     // no email settings to check here ;)
     let data
     const username = (user != null ? user.username : undefined) || 'anonymous'
@@ -128,7 +128,7 @@ module.exports = {
     }
   },
 
-  FriendInvitation(inviter, message){
+  FriendInvitation: (inviter, message) => {
     // No email settings to check here:
     // - Existing users aren't sent an email invitation but get a friend request
     //   where their notifications settings will be applied
@@ -139,7 +139,7 @@ module.exports = {
     const lang = _.shortLang(language)
 
     inviter.pathname = `${host}/users/${username}`
-    return emailFactory = function(emailAddress){
+    return emailFactory = emailAddress => {
       let data
       return data = {
         to: emailAddress,
@@ -151,7 +151,7 @@ module.exports = {
     }
   },
 
-  GroupInvitation(inviter, group, message){
+  GroupInvitation: (inviter, group, message) => {
     // No email settings to check here neither (idem FriendInvitation)
     let emailFactory
     const { username, language } = inviter
@@ -170,21 +170,21 @@ module.exports = {
   },
 
   transactions: {
-    yourItemWasRequested(transaction){
+    yourItemWasRequested: transaction => {
       return transactionEmail(transaction, 'owner', 'your_item_was_requested')
     },
 
-    updateOnYourItem(transaction){
+    updateOnYourItem: transaction => {
       return transactionEmail(transaction, 'owner', 'update_on_your_item')
     },
 
-    updateOnItemYouRequested(transaction){
+    updateOnItemYouRequested: transaction => {
       return transactionEmail(transaction, 'requester', 'update_on_item_you_requested')
     }
   }
 }
 
-var transactionEmail = function(transaction, role, label){
+const transactionEmail = (transaction, role, label) => {
   let data
   checkUserNotificationsSettings(transaction.mainUser, label)
   const other = role === 'owner' ? 'requester' : 'owner'
@@ -211,7 +211,7 @@ var transactionEmail = function(transaction, role, label){
   }
 }
 
-var validateOptions = function(options){
+const validateOptions = options => {
   const { user1, user2 } = options
   assert_.objects([ user1, user2 ])
   if (user1.email == null) throw new Error('missing user1 email')
@@ -219,4 +219,4 @@ var validateOptions = function(options){
   return [ user1, user2 ]
 }
 
-var buildTokenUrl = (action, email, token) => _.buildPath(`${host}/api/token`, { action, email: qs.escape(email), token })
+const buildTokenUrl = (action, email, token) => _.buildPath(`${host}/api/token`, { action, email: qs.escape(email), token })

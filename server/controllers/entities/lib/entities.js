@@ -18,7 +18,7 @@ const Entity = __.require('models', 'entity')
 const patches_ = require('./patches')
 const isbn_ = __.require('lib', 'isbn/isbn')
 const couch_ = __.require('lib', 'couch')
-const validateClaims =  require('./validate_claims')
+const validateClaims = require('./validate_claims')
 const getInvEntityCanonicalUri = require('./get_inv_entity_canonical_uri')
 const getEntityType = require('./get_entity_type')
 const radio = __.require('lib', 'radio')
@@ -30,13 +30,13 @@ module.exports = (entities_ = {
   db,
   byId: db.get,
 
-  byIds(ids){
+  byIds: ids => {
     ids = _.forceArray(ids)
     return db.fetch(ids)
     .then(_.compact)
   },
 
-  byIsbns(isbns){
+  byIsbns: isbns => {
     const keys = isbns
       .map(isbn => isbn_.toIsbn13(isbn, true))
       .filter(_.identity)
@@ -44,12 +44,12 @@ module.exports = (entities_ = {
     return db.viewByKeys('byClaim', keys)
   },
 
-  byIsbn(isbn){
+  byIsbn: isbn => {
     return entities_.byIsbns([ isbn ])
     .then(couch_.firstDoc)
   },
 
-  byClaim(property, value, includeDocs = false, parseDoc = false){
+  byClaim: (property, value, includeDocs = false, parseDoc = false) => {
     return promises_.try(() => validateProperty(property))
     .then(() => {
       const query = db.view('entities', 'byClaim', {
@@ -57,21 +57,25 @@ module.exports = (entities_ = {
         include_docs: includeDocs
       }
       )
-      if (parseDoc) { return query.then(couch_.mapDoc)
-      } else { return query }
+      if (parseDoc) {
+        return query.then(couch_.mapDoc)
+      } else {
+        return query
+      }
     })
   },
 
-  urisByClaim(property, value){
+  urisByClaim: (property, value) => {
     return entities_.byClaim(property, value, true, true)
     .map(getInvEntityCanonicalUri)
   },
 
-  byClaimsValue(value, count){
+  byClaimsValue: (value, count) => {
     return db.view('entities', 'byClaimValue', {
       key: value,
       include_docs: false
-    }).then((res) => {
+    })
+    .then(res => {
       if (count) return res.rows.length
       return res.rows.map(row => ({
         entity: row.id,
@@ -80,41 +84,45 @@ module.exports = (entities_ = {
     })
   },
 
-  createBlank() {
+  createBlank: () => {
     // Create a new entity doc.
     // This constituts the basis on which next modifications patch
     return db.postAndReturn(Entity.create())
   },
 
-  edit(params){
+  edit: params => {
     const { userId, updatedLabels, updatedClaims, currentDoc, batchId } = params
     let updatedDoc = _.cloneDeep(currentDoc)
     return promises_.try(() => {
       updatedDoc = Entity.setLabels(updatedDoc, updatedLabels)
-      return Entity.addClaims(updatedDoc, updatedClaims)}).then(updatedDoc => entities_.putUpdate({ userId, currentDoc, updatedDoc, batchId }))
+      return Entity.addClaims(updatedDoc, updatedClaims)
+    })
+    .then(updatedDoc => entities_.putUpdate({ userId, currentDoc, updatedDoc, batchId }))
   },
 
-  addClaims(userId, newClaims, currentDoc, batchId){
+  addClaims: (userId, newClaims, currentDoc, batchId) => {
     const updatedDoc = _.cloneDeep(currentDoc)
     return validateClaims({ newClaims, currentClaims: currentDoc.claims })
     .then(() => Entity.addClaims(updatedDoc, newClaims))
     .then(() => entities_.putUpdate({ userId, currentDoc, updatedDoc, batchId }))
   },
 
-  getLastChangedEntitiesUris(since, limit){
+  getLastChangedEntitiesUris: (since, limit) => {
     return db.changes({
       filter: 'entities/entities:only',
       limit,
       since,
       include_docs: true,
-      descending: true }).then(res => // TODO: return URIs in no-redirect mode so that redirections appear in entity changes
+      descending: true
+    })
+    .then(res => // TODO: return URIs in no-redirect mode so that redirections appear in entity changes
       ({
         uris: res.results.map(parseCanonicalUri),
         lastSeq: res.last_seq
       }))
   },
 
-  putUpdate(params){
+  putUpdate: params => {
     const { userId, currentDoc, updatedDoc } = params
     assert_.types([ 'string', 'object', 'object' ], [ userId, currentDoc, updatedDoc ])
     // It is to the consumers responsability to check if there is an update:
@@ -129,9 +137,9 @@ module.exports = (entities_ = {
   getUrlFromEntityImageHash: getUrlFromImageHash.bind(null, 'entities')
 })
 
-var parseCanonicalUri = result => getInvEntityCanonicalUri(result.doc)
+const parseCanonicalUri = result => getInvEntityCanonicalUri(result.doc)
 
-var triggerUpdateEvent = function(currentDoc, updatedDoc){
+const triggerUpdateEvent = (currentDoc, updatedDoc) => {
   // Use currentDoc claims if the update removed the claims object
   // Known case: when an entity is turned into a redirection
   const claims = updatedDoc.claims || currentDoc.claims

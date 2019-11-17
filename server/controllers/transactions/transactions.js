@@ -7,15 +7,15 @@ const ActionsControllers = __.require('lib', 'actions_controllers')
 module.exports = {
   get: ActionsControllers({
     authentified: {
-      'default': require('./get'),
+      default: require('./get'),
       'get-messages': messages.get
     }
   }),
 
   post: ActionsControllers({
     authentified: {
-      'request': require('./request'),
-      'message': messages.post
+      request: require('./request'),
+      message: messages.post
     }
   }),
 

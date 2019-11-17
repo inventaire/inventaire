@@ -21,7 +21,7 @@ module.exports = (req, res, next) => sanitize(req, res, sanitization)
 .then(responses_.Ok(res))
 .catch(error_.Handler(req, res))
 
-var deleteByIds = function(params){
+const deleteByIds = params => {
   const { ids, reqUserId } = params
   return items_.byIds(ids)
   .then(_.compact)
@@ -30,11 +30,11 @@ var deleteByIds = function(params){
   .then(() => radio.emit('user:inventory:update', reqUserId))
 }
 
-var verifyOwnership = reqUserId => (function(items) {
+const verifyOwnership = reqUserId => items => {
   for (const item of items) {
     if (item.owner !== reqUserId) {
       throw error_.new("user isn't item owner", 403, { reqUserId, itemId: item._id })
     }
   }
   return items
-})
+}

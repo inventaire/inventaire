@@ -6,10 +6,8 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
-const promises_ = __.require('lib', 'promises')
 const comments_ = __.require('controllers', 'comments/lib/comments')
 const transactions_ = require('./lib/transactions')
 const sanitize = __.require('lib', 'sanitize/sanitize')
@@ -25,24 +23,26 @@ const postSanitization = {
 }
 
 module.exports = {
-  get(req, res, next){
+  get: (req, res, next) => {
     return sanitize(req, res, getSanitization)
     .then(params => comments_.byTransactionId(params.transactionId))
     .then(responses_.Wrap(res, 'messages'))
     .catch(error_.Handler(req, res))
   },
 
-  post(req, res, next){
+  post: (req, res, next) => {
     return sanitize(req, res, postSanitization)
-    .then((params) => {
+    .then(params => {
       const { transactionId, message, reqUserId } = params
       return transactions_.byId(transactionId)
-      .then((transaction) => {
+      .then(transaction => {
         transactions_.verifyRightToInteract(reqUserId, transaction)
         return comments_.addTransactionComment(reqUserId, message, transactionId)
         .then(() => transactions_.updateReadForNewMessage(reqUserId, transaction))
         .then(() => radio.emit('transaction:message', transaction))
-      })}).then(responses_.Ok(res))
+      })
+    })
+    .then(responses_.Ok(res))
     .then(Track(req, [ 'transaction', 'message' ]))
     .catch(error_.Handler(req, res))
   }

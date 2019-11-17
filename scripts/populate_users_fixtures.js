@@ -12,10 +12,11 @@ const _ = __.require('builders', 'utils')
 const { createUserWithItems } = require('../api_tests/fixtures/populate')
 
 createUserWithItems()
-.then((userCreated) => {
+.then(userCreated => {
   _.success('#### New User available ####')
   console.log(`Your can now login with :\n\
 - Username : ${userCreated.username} \n\
 - Password : 12345678`
   )
-  return process.exit(0)}).catch(_.Error(err))
+  return process.exit(0)
+}).catch(_.Error(err))

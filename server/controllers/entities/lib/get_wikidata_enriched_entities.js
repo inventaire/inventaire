@@ -17,38 +17,37 @@
 
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
-const { Promise } = __.require('lib', 'promises')
 const wdk = require('wikidata-sdk')
 const getOriginalLang = __.require('lib', 'wikidata/get_original_lang')
 const formatClaims = __.require('lib', 'wikidata/format_claims')
 const { simplify } = wdk
 const getEntityType = require('./get_entity_type')
 const { prefixifyWd } = __.require('controllers', 'entities/lib/prefix')
-const entities_ = require('./entities')
 const cache_ = __.require('lib', 'cache')
 const promises_ = __.require('lib', 'promises')
 const getWdEntity = __.require('data', 'wikidata/get_entity')
 const addImageData = require('./add_image_data')
 const radio = __.require('lib', 'radio')
 const propagateRedirection = require('./propagate_redirection')
-const { _id:hookUserId } = __.require('couch', 'hard_coded_documents').users.hook
+const { _id: hookUserId } = __.require('couch', 'hard_coded_documents').users.hook
 
 module.exports = (ids, params) => promises_.all(ids.map(getCachedEnrichedEntity(params)))
-.then((entities) => {
+.then(entities => {
   if (params.dry) { entities = _.compact(entities) }
-  return { entities }})
+  return { entities }
+})
 
-var getCachedEnrichedEntity = params => (function(wdId) {
+const getCachedEnrichedEntity = params => wdId => {
   const key = `wd:enriched:${wdId}`
   const fn = getEnrichedEntity.bind(null, wdId)
   const { refresh, dry } = params
   return cache_.get({ key, fn, refresh, dry })
-})
+}
 
-var getEnrichedEntity = wdId => getWdEntity(wdId)
+const getEnrichedEntity = wdId => getWdEntity(wdId)
 .then(format)
 
-var format = function(entity){
+const format = entity => {
   if (entity.missing != null) {
     // Make sure the entity is unindexed
     radio.emit('wikidata:entity:cache:miss', entity.id)
@@ -71,14 +70,17 @@ var format = function(entity){
 
   entity.claims = omitUndesiredPropertiesPerType(entity.type, entity.claims)
 
-  if (entity.type === 'meta') { return formatEmpty('meta', entity)
-  } else { return formatValidEntity(entity) }
+  if (entity.type === 'meta') {
+    return formatEmpty('meta', entity)
+  } else {
+    return formatValidEntity(entity)
+  }
 }
 
-var simplifyClaimsOptions = { entityPrefix: 'wd' }
+const simplifyClaimsOptions = { entityPrefix: 'wd' }
 
-var formatValidEntity = function(entity){
-  const { id:wdId } = entity
+const formatValidEntity = entity => {
+  const { id: wdId } = entity
   entity.uri = `wd:${wdId}`
   entity.labels = simplify.labels(entity.labels)
   entity.aliases = simplify.aliases(entity.aliases)
@@ -100,7 +102,7 @@ var formatValidEntity = function(entity){
   return addImageData(entity)
 }
 
-var formatAndPropagateRedirection = function(entity){
+const formatAndPropagateRedirection = entity => {
   if (entity.redirects != null) {
     const { from, to } = entity.redirects
     entity.redirects = {
@@ -115,23 +117,25 @@ var formatAndPropagateRedirection = function(entity){
     propagateRedirection(hookUserId, entity.redirects.from, entity.redirects.to)
     radio.emit('wikidata:entity:redirect', entity.redirects.from, entity.redirects.to)
   }
-
 }
 
-var formatEmpty = (type, entity) => // Keeping just enough data to filter-out while not cluttering the cache
+const formatEmpty = (type, entity) => // Keeping just enough data to filter-out while not cluttering the cache
   ({
     id: entity.id,
     uri: `wd:${entity.id}`,
     type
   })
 
-var omitUndesiredPropertiesPerType = function(type, claims){
+const omitUndesiredPropertiesPerType = (type, claims) => {
   const propertiesToOmit = undesiredPropertiesPerType[type]
-  if (propertiesToOmit != null) { return _.omit(claims, propertiesToOmit)
-  } else { return claims }
+  if (propertiesToOmit != null) {
+    return _.omit(claims, propertiesToOmit)
+  } else {
+    return claims
+  }
 }
 
-var undesiredPropertiesPerType =
+const undesiredPropertiesPerType =
   // Ignoring ISBN data set on work entities, as those
   // should be the responsability of edition entities
   { work: [ 'P212', 'P957' ] }

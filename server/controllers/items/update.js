@@ -11,14 +11,13 @@ const _ = __.require('builders', 'utils')
 const items_ = __.require('controllers', 'items/lib/items')
 const snapshot_ = require('./lib/snapshot/snapshot')
 const error_ = __.require('lib', 'error/error')
-const promises_ = __.require('lib', 'promises')
 const responses_ = __.require('lib', 'responses')
 const radio = __.require('lib', 'radio')
 const { Track } = __.require('lib', 'track')
 
-module.exports = function(req, res, next){
+module.exports = (req, res, next) => {
   if (req.user == null) return error_.unauthorizedApiAccess(req, res)
-  const { body:item } = req
+  const { body: item } = req
   const { _id, entity } = item
 
   // Remove if passed accidentally as it is included in the server responses

@@ -14,19 +14,16 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
-const promises_ = __.require('lib', 'promises')
 const groups_ = require('./lib/groups')
-const user_ = __.require('controllers', 'user/lib/user')
-const items_ = __.require('controllers', 'items/lib/items')
 const parseBbox = __.require('lib', 'parse_bbox')
 const { buildSearcher } = __.require('lib', 'elasticsearch')
 
 module.exports = {
-  byId(req, res){
+  byId: (req, res) => {
     const { id } = req.query
     const reqUserId = req.user != null ? req.user._id : undefined
 
-    if  (!_.isGroupId(id)) {
+    if (!_.isGroupId(id)) {
       return error_.bundleInvalid(req, res, 'id', id)
     }
 
@@ -35,7 +32,7 @@ module.exports = {
     .catch(error_.Handler(req, res))
   },
 
-  bySlug(req, res){
+  bySlug: (req, res) => {
     const { slug } = req.query
     const reqUserId = req.user != null ? req.user._id : undefined
 
@@ -48,7 +45,7 @@ module.exports = {
     .catch(error_.Handler(req, res))
   },
 
-  searchByText(req, res){
+  searchByText: (req, res) => {
     const { query } = req
     const search = query.search != null ? query.search.trim() : undefined
     const reqUserId = req.user != null ? req.user._id : undefined
@@ -63,7 +60,7 @@ module.exports = {
     .catch(error_.Handler(req, res))
   },
 
-  searchByPositon(req, res){
+  searchByPositon: (req, res) => {
     return parseBbox(req.query)
     .then(bbox => // can't be chained directy as .filter makes problems when parseBbox throws:
     // "parseBbox(...).then(...).then(...).catch(...).filter is not a function"
@@ -72,15 +69,15 @@ module.exports = {
     .catch(error_.Handler(req, res))
   },
 
-  lastGroups(req, res){
+  lastGroups: (req, res) => {
     return groups_.byCreation()
     .filter(searchable)
     .then(responses_.Wrap(res, 'groups'))
     .catch(error_.Handler(req, res))
   },
 
-  slug(req, res){
-    const { name, group:groupId } = req.query
+  slug: (req, res) => {
+    const { name, group: groupId } = req.query
 
     if (name == null) return error_.bundleMissingQuery(req, res, 'name')
 
@@ -94,9 +91,9 @@ module.exports = {
   }
 }
 
-var searchByText = buildSearcher({
+const searchByText = buildSearcher({
   dbBaseName: 'groups',
-  queryBodyBuilder(search){
+  queryBodyBuilder: search => {
     const should = [
       // Name
       { match: { name: { query: search, boost: 5 } } },
@@ -107,6 +104,7 @@ var searchByText = buildSearcher({
     ]
 
     return { query: { bool: { should } } }
-  } })
+  }
+})
 
-var searchable = _.property('searchable')
+const searchable = _.property('searchable')

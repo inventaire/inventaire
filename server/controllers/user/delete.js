@@ -18,7 +18,7 @@ const groups_ = __.require('controllers', 'groups/lib/groups')
 const notifs_ = __.require('lib', 'notifications')
 const { Track } = __.require('lib', 'track')
 
-module.exports = function(req, res){
+module.exports = (req, res) => {
   if (req.user == null) return error_.unauthorizedApiAccess(req, res)
   const reqUserId = req.user._id
 
@@ -38,14 +38,14 @@ module.exports = function(req, res){
 // commentaries => deleted (the user will expect it to clean her online presence )
 // transactions => kept: those are private and remain useful for the other user
 
-var cleanEverything = reqUserId => promises_.all([
+const cleanEverything = reqUserId => promises_.all([
   relations_.deleteUserRelations(reqUserId),
   deleteUserItems(reqUserId),
   groups_.leaveAllGroups(reqUserId),
   notifs_.deleteAllByUserId(reqUserId)
 ])
 
-var logout = function(req){
+const logout = req => {
   _.warn(req.session, 'session before logout')
   return req.logout()
 }

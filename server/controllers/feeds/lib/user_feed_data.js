@@ -6,9 +6,7 @@
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-const CONFIG = require('config')
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
 const user_ = __.require('controllers', 'user/lib/user')
 const promises_ = __.require('lib', 'promises')
 
@@ -29,8 +27,8 @@ module.exports = (userId, authentifiedUserPromise) => promises_.all([
   }
 }))
 
-var getAccessLevel = (userId, authentifiedUserPromise) => authentifiedUserPromise
-.then((requester) => {
+const getAccessLevel = (userId, authentifiedUserPromise) => authentifiedUserPromise
+.then(requester => {
   if (requester == null) return 'public'
 
   const requesterId = requester._id
@@ -38,5 +36,5 @@ var getAccessLevel = (userId, authentifiedUserPromise) => authentifiedUserPromis
   if (requesterId === userId) return 'private'
 
   return user_.areFriendsOrGroupCoMembers(userId, requester._id)
-  .then((bool) => { if (bool) { return 'network' } else { return 'public' } })
+  .then(bool => { if (bool) { return 'network' } else { return 'public' } })
 })

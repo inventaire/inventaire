@@ -8,23 +8,25 @@
  */
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
 const assert_ = __.require('utils', 'assert_types')
 
 module.exports = {
-  kmBetween(latLngA, latLngB){
+  kmBetween: (latLngA, latLngB) => {
     assert_.arrays([ latLngA, latLngB ])
     const meters = distanceBetween(latLngA, latLngB)
     // 1km precision above 10km
-    if (meters > 10000) { return Math.trunc(meters / 1000)
+    if (meters > 10000) {
+      return Math.trunc(meters / 1000)
     // 100m precision under
-    } else { return Math.trunc(meters / 100) / 10 }
+    } else {
+      return Math.trunc(meters / 100) / 10
+    }
   }
 }
 
 // Distance between LatLng
 // adapted from Leaflet distanceTo
-var distanceBetween = function(latLngA, latLngB){
+const distanceBetween = (latLngA, latLngB) => {
   const [ latA, lngA ] = Array.from(latLngA)
   const [ latB, lngB ] = Array.from(latLngB)
   const dLat = (latB - latA) * d2r
@@ -40,6 +42,6 @@ var distanceBetween = function(latLngA, latLngB){
 }
 
 // earth radius in meters
-var R = 6378137
+const R = 6378137
 // DEG_TO_RAD
-var d2r = Math.PI / 180
+const d2r = Math.PI / 180

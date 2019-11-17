@@ -14,12 +14,16 @@ const _ = __.require('builders', 'utils')
 const waitingEmails = require('./waiting_emails')
 
 module.exports = {
-  transactionUpdate(transaction){
+  transactionUpdate: transaction => {
     // Polymorphism: accepts transaction doc or directly the transaction _id
     let transactionId
-    if (_.isObject(transaction)) { transactionId = transaction._id
-    } else if (_.isString(transaction)) { transactionId = transaction
-    } else { return _.error(arguments, 'bad type at transactionUpdate') }
+    if (_.isObject(transaction)) {
+      transactionId = transaction._id
+    } else if (_.isString(transaction)) {
+      transactionId = transaction
+    } else {
+      return _.error(arguments, 'bad type at transactionUpdate')
+    }
 
     return addToWaitingList('transactionUpdate', transactionId)
   }
@@ -27,12 +31,13 @@ module.exports = {
 
 // Delete and repost with new time to wait
 // as long as updates are arriving fast (i.e. in a 30 minutes timespan)
-var addToWaitingList = (domain, id) => waitingEmails.sub.createKeyStream({
+const addToWaitingList = (domain, id) => waitingEmails.sub.createKeyStream({
   gt: `${domain}:${id}:0`,
-  lt: `${domain}:${id}::` }).on('data', waitingEmails.del)
+  lt: `${domain}:${id}::`
+}).on('data', waitingEmails.del)
 .on('end', createNewWaiter.bind(null, domain, id))
 
-var createNewWaiter = function(domain, id){
+const createNewWaiter = (domain, id) => {
   const key = `${domain}:${id}:${Date.now()}`
   return waitingEmails.put(key, {})
 }

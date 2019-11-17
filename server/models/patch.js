@@ -15,7 +15,7 @@ const validations = require('./validations/common')
 const { versionned } = require('./attributes/entity')
 
 module.exports = {
-  create(params){
+  create: params => {
     const { userId, currentDoc, updatedDoc, context, batchId } = params
     validations.pass('userId', userId)
     assert_.object(currentDoc)
@@ -67,14 +67,14 @@ module.exports = {
   },
 
   // Reverts the effects of a patch on a entity doc
-  revert(currentDoc, patch){
+  revert: (currentDoc, patch) => {
     const inversePatch = jiff.inverse(patch.patch)
     _.log(inversePatch, `inverse patch ${patch._id}`)
     const updatedDoc = applyInversePatch(currentDoc, inversePatch)
     return updatedDoc
   },
 
-  getSnapshots(base, patchDocs){
+  getSnapshots: (base, patchDocs) => {
     let previousVersion = base
     for (const patchDoc of patchDocs) {
       patchDoc.snapshot = jiff.patch(patchDoc.patch, previousVersion)
@@ -87,7 +87,7 @@ module.exports = {
   }
 }
 
-var getDiff = function(currentDoc, updatedDoc){
+const getDiff = (currentDoc, updatedDoc) => {
   currentDoc = _.pick(currentDoc, versionned)
   updatedDoc = _.pick(updatedDoc, versionned)
   const patch = jiff.diff(currentDoc, updatedDoc)
@@ -99,7 +99,7 @@ var getDiff = function(currentDoc, updatedDoc){
   return patch
 }
 
-var applyInversePatch = function(currentDoc, inversePatch){
+const applyInversePatch = (currentDoc, inversePatch) => {
   currentDoc = _.cloneDeep(currentDoc)
   inversePatch.forEach(fixOperation(currentDoc, inversePatch))
 
@@ -116,13 +116,13 @@ var applyInversePatch = function(currentDoc, inversePatch){
 
 // Make the required modification for the jiff.patch to success
 // to work around cases known to crash
-var fixOperation = (currentDoc, inversePatch) => (function(op, index) {
+const fixOperation = (currentDoc, inversePatch) => (op, index) => {
   const opFn = operationFix[op.op]
   if (opFn != null) return opFn(currentDoc, inversePatch, op, index)
-})
+}
 
-var operationFix = {
-  add(currentDoc, inversePatch, op, index){
+const operationFix = {
+  add: (currentDoc, inversePatch, op, index) => {
     const { path, value } = op
     if (_.isArray(value) && (value.length === 1)) {
       const currentArray = getFromPatchPath(currentDoc, path)
@@ -138,7 +138,7 @@ var operationFix = {
     }
   },
 
-  test(currentDoc, inversePatch, op, index){
+  test: (currentDoc, inversePatch, op, index) => {
     const { value } = op
     const nextOp = inversePatch[index + 1]
     if ((nextOp.path === op.path) && (nextOp.op === 'remove')) {
@@ -160,7 +160,7 @@ var operationFix = {
   }
 }
 
-var getFromPatchPath = function(obj, path){
+const getFromPatchPath = (obj, path) => {
   const key = path.slice(1).replace(/\//g, '.')
   return _.get(obj, key)
 }

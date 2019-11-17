@@ -44,11 +44,11 @@ if (preview) {
 transporter.use('compile', hbs(options))
 
 module.exports = {
-  sendMail(email){
+  sendMail: email => {
     // Make sure to return a bluebird promise
     return Promise.resolve(transporter.sendMail(email))
     .then(_.Success('email sent'))
-    .catch((err) => {
+    .catch(err => {
       _.error(err, 'email error')
       return _.warn(email, 'associated email')
     })

@@ -19,7 +19,7 @@ const error_ = __.require('lib', 'error/error')
 let lockedUsernames = []
 const errMessage = 'an account is already in the process of being created with this username'
 
-module.exports = function(username){
+module.exports = username => {
   const recentUsernames = lockedUsernames.map(_.property('username'))
   if (recentUsernames.includes(username)) {
     throw error_.new(errMessage, 400, username, recentUsernames)
@@ -28,7 +28,7 @@ module.exports = function(username){
   }
 }
 
-var lock = username => lockedUsernames.push({
+const lock = username => lockedUsernames.push({
   username,
   timestamp: Date.now()
 })

@@ -14,7 +14,7 @@ const assert_ = __.require('utils', 'assert_types')
 // Throws if the passed object doesn't respect the provided constraints:
 // - validKeys: a limited set of possible keys
 // - valuesType: the expected type of values (optional)
-module.exports = function(obj, validKeys, valuesType){
+module.exports = (obj, validKeys, valuesType) => {
   assert_.types([ 'object', 'array' ], [ obj, validKeys ])
   if (valuesType != null) { assert_.string(valuesType) }
 
@@ -30,5 +30,4 @@ module.exports = function(obj, validKeys, valuesType){
       }
     }
   }
-
 }

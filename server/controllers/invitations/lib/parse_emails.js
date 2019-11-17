@@ -14,7 +14,7 @@ const error_ = __.require('lib', 'error/error')
 // Takes a string (or an array) containing email addresses
 // (typically, the value of a text input filled with emails by a user)
 // and returns an array of parsed emails addresses
-module.exports = function(emails){
+module.exports = emails => {
   const emailsString = _.isArray(emails) ? emails.join(',') : emails
 
   if (!_.isNonEmptyString(emailsString)) {
@@ -35,7 +35,7 @@ module.exports = function(emails){
 }
 
 // providing to 'email-addresses' known limitations
-var prepareEmails = emails => emails.trim()
+const prepareEmails = emails => emails.trim()
 // Replace line breaks, tabs, semi-colons by a comma
 .replace(/(\n|\t|;)/g, ',')
 // Replace successive commas

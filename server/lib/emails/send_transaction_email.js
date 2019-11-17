@@ -27,7 +27,7 @@ module.exports = transactionId => transactions_.byId(transactionId)
 // catched in the final promise chain: in send_debounced_email transactionUpdate
 // after all the actions to skip are passed
 
-var emailIsRequired = function(transaction){
+const emailIsRequired = transaction => {
   const role = findUserToNotify(transaction)
   if (role != null) {
     // progressively building the email ViewModel
@@ -38,12 +38,14 @@ var emailIsRequired = function(transaction){
   }
 }
 
-const catchErr = function(err){
-  if (err.message === 'email_not_required') { return
-  } else { return _.error(err, 'send_transaction_email err') }
+const catchErr = err => {
+  if (err.message === 'email_not_required') {
+  } else {
+    return _.error(err, 'send_transaction_email err')
+  }
 }
 
-var fetchData = transaction => promises_.all([
+const fetchData = transaction => promises_.all([
   user_.byId(transaction.owner),
   user_.byId(transaction.requester),
   items_.byId(transaction.item).then(snapshot_.addToItem),
@@ -54,40 +56,53 @@ var fetchData = transaction => promises_.all([
   const image = item.snapshot['entity:image'] || (transaction.snapshot.entity != null ? transaction.snapshot.entity.image : undefined)
   // Overriding transaction document ids by the ids' docs (owner, requester, etc.)
   // for the email ViewModel
-  return _.extend(transaction, { owner, requester, item, messages, image })})
+  return _.extend(transaction, { owner, requester, item, messages, image })
+})
 .then(buildTimeline)
 .then(aliasUsers)
 // .then completeActionsData
 
-var sendTailoredEmail = function(transaction){
+const sendTailoredEmail = transaction => {
   const emailType = findEmailType(transaction)
   return email_.transactions[emailType](transaction)
 }
 
-var findUserToNotify = function(transaction){
+const findUserToNotify = transaction => {
   const { read } = transaction
   // assumes that both can't have unread updates
-  if (!read.owner) { return 'owner'
-  } else if (!read.requester) { return 'requester'
-  } else { return null }
+  if (!read.owner) {
+    return 'owner'
+  } else if (!read.requester) {
+    return 'requester'
+  } else {
+    return null
+  }
 }
 
-const newTransaction = function(transaction){
+const newTransaction = transaction => {
   const ownerActed = _.some(transaction.actions, ownerIsActor)
   if (ownerActed) return false
   const ownerSentMessage = _.some(transaction.messages, OwnerIsSender(transaction))
-  if (ownerSentMessage) { return false
-  } else { return true }
+  if (ownerSentMessage) {
+    return false
+  } else {
+    return true
+  }
 }
 
-var findEmailType = function(transaction){
+const findEmailType = transaction => {
   if (transaction.role === 'owner') {
-    if (newTransaction(transaction)) { return 'yourItemWasRequested'
-    } else { return 'updateOnYourItem' }
-  } else { return 'updateOnItemYouRequested' }
+    if (newTransaction(transaction)) {
+      return 'yourItemWasRequested'
+    } else {
+      return 'updateOnYourItem'
+    }
+  } else {
+    return 'updateOnItemYouRequested'
+  }
 }
 
-var buildTimeline = function(transaction){
+const buildTimeline = transaction => {
   let { actions, messages } = transaction
   actions = formatActions(transaction, actions)
   messages = formatMessages(transaction, messages)
@@ -98,23 +113,23 @@ var buildTimeline = function(transaction){
 }
 
 // format actions and messages for ViewModels
-var formatActions = function(transaction, actions){
+const formatActions = (transaction, actions) => {
   const { owner, requester } = transaction
-  return actions.map((action) => {
+  return actions.map(action => {
     action.user = ownerIsActor(action) ? owner : requester
     return action
   })
 }
 
-var formatMessages = function(transaction, messages){
+const formatMessages = (transaction, messages) => {
   const { owner, requester } = transaction
-  return messages.map((message) => {
+  return messages.map(message => {
     message.user = ownerIsMessager(owner, message) ? owner : requester
     return message
   })
 }
 
-var extractTimelineLastSequence = function(transaction, timeline){
+const extractTimelineLastSequence = (transaction, timeline) => {
   const lastSequence = []
   const lastEvent = timeline.pop()
   lastSequence.push(lastEvent)
@@ -123,14 +138,16 @@ var extractTimelineLastSequence = function(transaction, timeline){
     const prevEvent = timeline.pop()
     if (prevEvent.user._id === lastEvent.user._id) {
       lastSequence.unshift(prevEvent)
-    } else { sameSequence = false }
+    } else {
+      sameSequence = false
+    }
   }
 
   transaction.timeline = lastSequence
   return transaction
 }
 
-var aliasUsers = function(transaction){
+const aliasUsers = transaction => {
   const lastEvent = transaction.timeline.slice(-1)[0]
   // deducing main and other user from the last sequence
   // as the user notified (mainUser) is necessarly the one that hasn't acted last
@@ -139,19 +156,22 @@ var aliasUsers = function(transaction){
   return transaction
 }
 
-var findMainUser = function(transaction){
+const findMainUser = transaction => {
   const { owner, requester, other } = transaction
-  if (owner._id === other._id) { return requester
-  } else { return owner }
+  if (owner._id === other._id) {
+    return requester
+  } else {
+    return owner
+  }
 }
 
-var ownerIsActor = action => states[action.action].actor === 'owner'
-var OwnerIsSender = transaction => message => message.user === transaction.owner
-var ownerIsMessager = (owner, message) => message.user === owner._id
+const ownerIsActor = action => states[action.action].actor === 'owner'
+const OwnerIsSender = transaction => message => message.user === transaction.owner
+const ownerIsMessager = (owner, message) => message.user === owner._id
 
-const completeActionsData = function(transaction){
+const completeActionsData = transaction => {
   const { timeline, other, mainUser } = transaction
-  transaction.timeline = timeline.map((ev) => {
+  transaction.timeline = timeline.map(ev => {
     if (ev.action != null) {
       // need to be copyied on action to be accessible
       // from inside handlebasr {{#each}} loop

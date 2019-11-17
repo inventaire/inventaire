@@ -25,7 +25,7 @@ if (disableUserUpdate) {
   updateUser = user_.justReceivedActivitySummary
 }
 
-module.exports = function(user){
+module.exports = user => {
   if (user == null) return _.info('no user waiting for summary')
 
   const userId = user._id

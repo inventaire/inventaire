@@ -15,18 +15,21 @@ const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const Rss = require('rss')
 const root = CONFIG.fullPublicHost()
-const { feed:feedConfig } = CONFIG
+const { feed: feedConfig } = CONFIG
 const templateHelpers = __.require('lib', 'emails/handlebars_helpers')
 const getItemDescription = require('./get_item_description')
 const oneDayInMinutes = 24 * 60
 
-module.exports = function(feedOptions, users, items, lang){
+module.exports = (feedOptions, users, items, lang) => {
   let { title, description, queryString, pathname, image } = feedOptions
 
-  if (image) { image = templateHelpers.imgSrc(image, 300)
-  } else { ({
-    image
-  } = feedConfig) }
+  if (image) {
+    image = templateHelpers.imgSrc(image, 300)
+  } else {
+    ({
+      image
+    } = feedConfig)
+  }
 
   const feed = new Rss({
     title,
@@ -48,7 +51,7 @@ module.exports = function(feedOptions, users, items, lang){
   return feed.xml()
 }
 
-var serializeItem = (usersIndex, lang) => (function(item) {
+const serializeItem = (usersIndex, lang) => item => {
   const { owner } = item
   const user = usersIndex[owner]
   user.href = `${root}/inventory/${user._id}`
@@ -70,9 +73,9 @@ var serializeItem = (usersIndex, lang) => (function(item) {
   }
 
   return data
-})
+}
 
-var getItemTitle = function(item, user, lang){
+const getItemTitle = (item, user, lang) => {
   const { transaction, snapshot } = item
   let title = snapshot['entity:title']
   const authors = snapshot['entity:authors']
@@ -85,6 +88,6 @@ var getItemTitle = function(item, user, lang){
   return title
 }
 
-function __guard__(value, transform) {
+function __guard__ (value, transform) {
   return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined
 }
