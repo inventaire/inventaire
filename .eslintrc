@@ -26,5 +26,11 @@
     "prefer-arrow-callback": [ "error" ],
     "prefer-const": [ "error", { "destructuring": "any" } ],
     "semi": [ "error", "never" ]
+  },
+  "globals": {
+    // Mocha globals
+    "it": "readonly",
+    "describe": "readonly",
+    "beforeEach": "readonly"
   }
 }
