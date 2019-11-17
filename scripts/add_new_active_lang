@@ -6,7 +6,7 @@ new_lang=$1
 
 wikidata_archive=./client/public/i18n/src/wikidata/archive/$new_lang.json
 
-./scripts/validate_lang $new_lang
+./scripts/validate_lang.js $new_lang
 
 echo "Starting wd props -l $new_lang > $wikidata_archive"
 wd props --lang $1 > $wikidata_archive
