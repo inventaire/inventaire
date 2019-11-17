@@ -1,24 +1,4 @@
-db/couchdb/migrations
-db/couchdb/backups
-node_modules
-logs
-npm-debug.log
-scripts/couch2elastic4sync/configs
-scripts/assets
-scripts/local
-config/*local*.js
-config/runtime.json
-db/leveldb*
-erl_crash.dump
-client
-docs
-wiki
-github-wiki
-.lev_history
-exports
-db/couchdb/migration_docs
-notes
-run
-dumps
-storage
-inventaire-i18n
+# Run `export DEBUG=eslint:file-enumerator ; npm run lint`
+# to get the list of checked files, and thus find those that should be ignored
+
+# So far, none needs to be ignored as ./scripts/lint whitelist is already quite specific
