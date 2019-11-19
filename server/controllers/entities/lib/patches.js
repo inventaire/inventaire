@@ -6,7 +6,6 @@
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-let patches_
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const designDocName = 'patches'
@@ -18,7 +17,7 @@ const assert_ = __.require('utils', 'assert_types')
 const { maxKey } = __.require('lib', 'couch')
 const { oneDay } = __.require('lib', 'times')
 
-module.exports = (patches_ = {
+module.exports = {
   db,
   byId: db.get,
   byEntityId: entityId => db.viewByKeys('byEntityId', [ entityId ]),
@@ -93,7 +92,7 @@ module.exports = (patches_ = {
       end: today
     }))
   }
-})
+}
 
 const byEntityId = entityId => db.viewByKey('byEntityId', entityId)
 

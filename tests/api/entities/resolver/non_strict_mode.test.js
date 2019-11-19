@@ -33,7 +33,6 @@ describe('entities:resolve:non-strict mode', () => {
       },
       works: [ {} ]
     }
-    const entries = [ entry ]
     authReq('post', '/api/entities?action=resolve', { entries: [ entry ], create: true, strict: false })
     .then(res => {
       res.entries.should.deepEqual([])

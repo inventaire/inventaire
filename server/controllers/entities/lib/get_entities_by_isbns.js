@@ -11,7 +11,6 @@ const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const entities_ = require('./entities')
 const promises_ = __.require('lib', 'promises')
-const { parse: parseIsbn, normalizeIsbn } = __.require('lib', 'isbn/isbn')
 const dataseed = __.require('data', 'dataseed/dataseed')
 const scaffoldEditionEntityFromSeed = require('./scaffold_entity_from_seed/edition')
 const formatEditionEntity = require('./format_edition_entity')

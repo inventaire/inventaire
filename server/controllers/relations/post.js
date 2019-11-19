@@ -37,7 +37,7 @@ module.exports = (req, res, next) => {
 
 const solveNewRelation = (action, othersId, reqUserId) => {
   if (reqUserId === othersId) {
-    throw error_.new('cant create relation between identical ids', 400, arguments)
+    throw error_.new('cant create relation between identical ids', 400, { action, othersId, reqUserId })
   }
 
   const type = actions[action]

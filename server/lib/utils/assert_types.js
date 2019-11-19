@@ -21,7 +21,7 @@ const assertType = (type, obj) => {
   if ((needle = trueType, type.split('|').includes(needle))) {
     return obj
   } else {
-    throw error_.new(`TypeError: expected ${type}, got ${obj} (${trueType})`, 500, arguments)
+    throw error_.new(`TypeError: expected ${type}, got ${obj} (${trueType})`, 500, { type, obj })
   }
 }
 

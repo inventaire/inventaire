@@ -14,7 +14,7 @@ const responses_ = __.require('lib', 'responses')
 const error_ = __.require('lib', 'error/error')
 const promises_ = __.require('lib', 'promises')
 const sanitize = __.require('lib', 'sanitize/sanitize')
-const { addAssociatedData, listingIs, Paginate } = require('./lib/queries_commons')
+const { addAssociatedData, Paginate } = require('./lib/queries_commons')
 const { omitPrivateAttributes } = require('./lib/filter_private_attributes')
 
 const sanitization = {
@@ -29,7 +29,7 @@ const sanitization = {
 
 module.exports = (req, res) => sanitize(req, res, sanitization)
 .then(params => {
-  const { ids, includeUsers, reqUserId } = params
+  const { ids, reqUserId } = params
   return promises_.all([
     items_.byIds(ids),
     getNetworkIds(reqUserId)

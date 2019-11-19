@@ -16,7 +16,6 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 let error_ = __.require('lib', 'error/error')
-const { Track } = __.require('lib', 'track')
 const promises_ = __.require('lib', 'promises')
 const responses_ = __.require('lib', 'responses')
 const sanitize = __.require('lib', 'sanitize/sanitize')
@@ -35,7 +34,7 @@ const sanitization = {
 
 module.exports = (req, res) => sanitize(req, res, sanitization)
 .then(seed => {
-  let { isbn, title, authors } = seed
+  let { isbn, authors } = seed
   if (!authors) { authors = [] }
 
   seed.authors = authors.filter(author => (author != null ? author.length : undefined) > 0)

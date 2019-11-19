@@ -10,12 +10,12 @@ const __ = CONFIG.universalPath
 require('should')
 const { undesiredErr } = __.require('apiTests', 'utils/utils')
 const { createTransaction } = require('../fixtures/transactions')
-const { authReq, authReqB } = __.require('apiTests', 'utils/utils')
+const { authReqB } = __.require('apiTests', 'utils/utils')
 
 describe('transactions:update-state', () => it('should update state and apply side effects', done => {
   createTransaction()
   .then(transactionRes => {
-    const { transaction, userA, userB, userBItem } = transactionRes
+    const { transaction } = transactionRes
     return authReqB('put', '/api/transactions?action=update-state', {
       transaction: transaction._id,
       state: 'accepted'

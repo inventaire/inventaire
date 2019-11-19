@@ -9,7 +9,6 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const breq = require('bluereq')
-const randomString = require('./utils/random_string').bind(null, 8)
 const { repository } = __.require('root', 'package.json')
 const userAgent = `${CONFIG.name} (${repository.url})`
 let requestId = 0

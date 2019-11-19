@@ -14,9 +14,9 @@ const { createUserWithItems } = require('../api_tests/fixtures/populate')
 createUserWithItems()
 .then(userCreated => {
   _.success('#### New User available ####')
-  console.log(`Your can now login with :\n\
-- Username : ${userCreated.username} \n\
-- Password : 12345678`
-  )
+  console.log(`Your can now login with :
+  - Username : ${userCreated.username}
+  - Password : 12345678`)
   return process.exit(0)
-}).catch(_.Error(err))
+})
+.catch(_.Error('users fixture err'))

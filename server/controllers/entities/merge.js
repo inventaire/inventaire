@@ -42,8 +42,8 @@ module.exports = (req, res) => {
     return error_.bundleInvalid(req, res, 'to', toUri)
   }
 
-  const [ fromPrefix, fromId ] = fromUri.split(':')
-  const [ toPrefix, toId ] = toUri.split(':')
+  const [ fromPrefix ] = fromUri.split(':')
+  const [ toPrefix ] = toUri.split(':')
 
   if (!validFromPrefix.includes(fromPrefix)) {
     const message = `invalid 'from' uri domain: ${fromPrefix}. Accepted domains: ${validFromPrefix}`

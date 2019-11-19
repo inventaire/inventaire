@@ -15,9 +15,9 @@ require('should')
 const { Promise } = __.require('lib', 'promises')
 const { authReq, getUserId, undesiredErr } = require('../utils/utils')
 const { getById: getItem } = require('../utils/items')
-let { getByUri, getByUris, merge, revertMerge, updateLabel, updateClaim } = require('../utils/entities')
+let { getByUris, merge, revertMerge, updateLabel, updateClaim } = require('../utils/entities')
 const { ensureEditionExists } = require('../fixtures/entities')
-const { createWork, createHuman, createSerie, addAuthor, addSerie, createEdition, createEditionFromWorks, createWorkWithAuthor, humanName, someImageHash } = require('../fixtures/entities');
+const { createWork, createHuman, addAuthor, addSerie, createEdition, createEditionFromWorks, createWorkWithAuthor, humanName, someImageHash } = require('../fixtures/entities');
 ({ updateClaim } = require('../utils/entities'))
 
 describe('items:snapshot', () => {

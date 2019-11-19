@@ -13,7 +13,6 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const follow = __.require('lib', 'follow')
 const dbBaseName = 'users'
-const { reset: resetFollow } = CONFIG.db.follow
 
 module.exports = db => {
   const filter = doc => {

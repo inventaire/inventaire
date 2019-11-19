@@ -11,6 +11,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
+const isbn_ = __.require('lib', 'isbn/isbn')
 const { isValidIsbn, normalizeIsbn } = __.require('lib', 'isbn/isbn')
 const wdLang = require('wikidata-lang')
 const properties = require('../properties/properties_values_constraints')
@@ -57,7 +58,6 @@ const sanitizeEdition = edition => {
   } else {
     const claims = edition.claims || {}
     const claimsProperties = Object.keys(claims)
-    const externalIdProperties = claimsProperties.filter(isExternalIdProperty)
     if (!_.some(claimsProperties, isExternalIdProperty)) {
       throw error_.new('no isbn or external id claims found', 400, { edition })
     }

@@ -15,7 +15,6 @@ const user_ = __.require('controllers', 'user/lib/user')
 const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
 const { basicUpdater } = __.require('lib', 'doc_updates')
-const User = __.require('models', 'user')
 const { Track } = __.require('lib', 'track')
 
 module.exports = (req, res, next) => {

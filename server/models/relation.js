@@ -8,7 +8,6 @@
  */
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
 const couch_ = __.require('lib', 'couch')
 const assert = require('assert')
 const assert_ = __.require('utils', 'assert_types')
@@ -16,16 +15,14 @@ const { userId } = require('./validations/common')
 
 module.exports = {
   create: (id, status) => {
-    let relation
     assertValidId(id)
     assertValidStatus(status)
-    return _.log(relation = {
+    return {
       _id: id,
       type: 'relation',
       status,
       created: Date.now()
     }
-    )
   },
 
   docId: (userId, otherId) => {

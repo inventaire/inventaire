@@ -10,29 +10,24 @@ const CONFIG = require('config')
 const { offline } = CONFIG
 let errorCounter = 0
 const loggers_ = require('inv-loggers')
-const util = require('util')
 const chalk = require('chalk')
 const { grey, red } = chalk
 const openIssue = require('./open_issue')
 
 // Log full objects
-require('util').inspect.defaultOptions.depth = null
+require('util').inspect.defaultOptions.depth = 20
 
-const BaseLogger = (color, operation) => {
-  let logger
-  return logger = (obj, label) => {
-    // fully display deep objects
-    console.log(grey('****') + chalk[color](`${label}`) + grey('****'))
-    console.log(operation(obj))
-    console.log(grey('----------'))
-    return obj
-  }
+const BaseLogger = (color, operation) => (obj, label) => {
+  // fully display deep objects
+  console.log(grey('****') + chalk[color](`${label}`) + grey('****'))
+  console.log(operation(obj))
+  console.log(grey('----------'))
+  return obj
 }
 
 module.exports = _ => {
   if (CONFIG.verbosity === 0) { loggers_.log = _.identity }
 
-  const inspect = BaseLogger('magenta', obj => util.inspect(obj, false, null))
   const stringify = BaseLogger('yellow', JSON.stringify)
 
   const customLoggers = {
@@ -82,7 +77,7 @@ module.exports = _ => {
         err.stack = err.stack.split('\n').slice(0, 3).join('\n')
       }
 
-      loggers_.warn.apply(null, arguments)
+      loggers_.warn(err, label)
       err._hasBeenLogged = true
     },
 

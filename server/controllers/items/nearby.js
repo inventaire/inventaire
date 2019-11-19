@@ -11,7 +11,6 @@ const getItemsByUsers = require('./lib/get_items_by_users')
 const sanitize = __.require('lib', 'sanitize/sanitize')
 const responses_ = __.require('lib', 'responses')
 const error_ = __.require('lib', 'error/error')
-const { validateLimitAndOffset } = require('./lib/queries_commons')
 
 const sanitization = {
   limit: {},

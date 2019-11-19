@@ -55,9 +55,8 @@ const requestOptions = (image, thumbwidth) => ({
 })
 
 const extractData = res => {
-  let data
   const { file, licenses, error } = res.response
-  return data = {
+  return {
     url: __guard__(__guard__(__guard__(__guard__(file != null ? file[0] : undefined, x3 => x3.urls), x2 => x2[0]), x1 => x1.thumbnail), x => x[0]),
     license: __guard__(__guard__(__guard__(__guard__(licenses != null ? licenses[0] : undefined, x7 => x7.license), x6 => x6[0]), x5 => x5.name), x4 => x4.toString()),
     author: __guard__(__guard__(file != null ? file[0] : undefined, x9 => x9.author), x8 => x8.toString()),

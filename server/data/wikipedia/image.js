@@ -41,8 +41,6 @@ module.exports = title => {
   }))
 }
 
-const underscorize = text => text.replace(/\s/g, '_')
-
 // using the thumb fully built URL instead of build the URL
 // from the filename md5 hash, making it less hazardous
 const parseThumbUrl = url => // removing the last part and the thumb name

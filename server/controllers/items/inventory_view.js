@@ -97,7 +97,7 @@ const buildInvertedClaimTree = entities => entities.reduce(addToTree, {})
 const viewProperties = [ 'wdt:P50', 'wdt:P136', 'wdt:P921' ]
 
 const addToTree = (tree, entity) => {
-  const { uri, claims } = entity
+  const { uri } = entity
   for (const property of viewProperties) {
     if (!tree[property]) { tree[property] = { unknown: [] } }
     const values = entity.claims[property]

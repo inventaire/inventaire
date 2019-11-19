@@ -12,8 +12,6 @@ const user_ = __.require('controllers', 'user/lib/user')
 const pw_ = __.require('lib', 'crypto').passwords
 const loginAttempts = require('./login_attempts')
 
-const { Strategy: LocalStrategy } = require('passport-local')
-
 module.exports = (username, password, done) => {
   if (loginAttempts.tooMany(username)) {
     return done(null, false, { message: 'too_many_attempts' })

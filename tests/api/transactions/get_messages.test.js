@@ -15,7 +15,7 @@ const { authReq } = __.require('apiTests', 'utils/utils')
 describe('transactions:get:messages', () => it('should get a transaction messages', done => {
   createTransaction()
   .then(res1 => {
-    const { transaction, userA, userB, userBItem } = res1
+    const { transaction } = res1
     const { _id } = transaction
     return addMessage(transaction)
     .then(res2 => authReq('get', `/api/transactions?action=get-messages&transaction=${_id}`)

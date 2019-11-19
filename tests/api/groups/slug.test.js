@@ -8,7 +8,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
-const { nonAuthReq, getUser, undesiredErr } = require('../utils/utils')
+const { nonAuthReq, undesiredErr } = require('../utils/utils')
 const slugify = __.require('controllers', 'groups/lib/slugify')
 
 describe('groups:get:slug', () => it('should return a slug', done => {

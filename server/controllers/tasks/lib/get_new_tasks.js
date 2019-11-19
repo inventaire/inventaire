@@ -12,8 +12,6 @@ const searchEntityDuplicatesSuggestions = require('./search_entity_duplicates_su
 const addOccurrencesToSuggestion = require('./add_occurrences_to_suggestion')
 const getAuthorWorksData = require('./get_author_works_data')
 const evaluateSuggestions = require('./evaluate_suggestions')
-const automerge = require('./automerge')
-const { _id: reconcilerUserId } = __.require('couch', 'hard_coded_documents').users.reconciler
 
 module.exports = entity => existingTasks => {
   const { uri: suspectUri } = entity

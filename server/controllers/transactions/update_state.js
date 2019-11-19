@@ -28,17 +28,14 @@ module.exports = (req, res, next) => sanitize(req, res, sanitization)
   .then(VerifyRights(state, reqUserId))
   .then(transactions_.updateState.bind(null, state, reqUserId))
   .then(Track(req, [ 'transaction', 'update', state ]))
-}).then(responses_.Ok(res))
+})
+.then(responses_.Ok(res))
 .catch(error_.Handler(req, res))
 
 const VerifyRights = (state, reqUserId) => {
-  switch (states[state].actor) {
-  case 'requester':
-    return transactions_.verifyIsRequester.bind(null, reqUserId)
-  case 'owner':
-    return transactions_.verifyIsOwner.bind(null, reqUserId)
-  case 'both':
-    return transactions_.verifyRightToInteract.bind(null, reqUserId)
-  default: throw error_.new('unknown actor', 500, arguments)
-  }
+  const { actor } = states[state]
+  if (actor === 'requester') return transactions_.verifyIsRequester.bind(null, reqUserId)
+  else if (actor === 'owner') return transactions_.verifyIsOwner.bind(null, reqUserId)
+  else if (actor === 'both') return transactions_.verifyRightToInteract.bind(null, reqUserId)
+  else throw error_.new('unknown actor', 500, { state, reqUserId })
 }

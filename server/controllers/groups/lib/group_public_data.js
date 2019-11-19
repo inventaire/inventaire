@@ -16,22 +16,21 @@ let groups_
 let user_
 const lateRequire = () => {
   groups_ = require('./groups')
-  return user_ = __.require('controllers', 'user/lib/user')
+  user_ = __.require('controllers', 'user/lib/user')
 }
 setTimeout(lateRequire, 0)
 
+// fnName: byId or bySlug
+// fnArgs: [ id ] or [ slug ]
 module.exports = (fnName, fnArgs, reqUserId) => {
   assert_.array(fnArgs)
   return groups_[fnName].apply(null, fnArgs)
   .then(group => {
-    if (group == null) throw error_.notFound(groupId)
+    if (group == null) throw error_.notFound(fnArgs[0])
 
     const usersIds = groups_.allGroupMembers(group)
 
     return user_.getUsersByIds(usersIds, reqUserId)
-    .then(users => ({
-      group,
-      users
-    }))
+    .then(users => ({ group, users }))
   })
 }

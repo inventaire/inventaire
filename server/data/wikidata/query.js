@@ -12,7 +12,7 @@ const responses_ = __.require('lib', 'responses')
 const runQuery = require('./run_query')
 
 module.exports = (req, res) => {
-  const { query: queryName, refresh } = req.query
+  const { query: queryName } = req.query
 
   if (!_.isNonEmptyString(queryName)) {
     return error_.bundleMissingQuery('query')

@@ -19,12 +19,12 @@ const items_ = __.require('controllers', 'items/lib/items')
 module.exports = () => radio.on('transaction:update', applySideEffects)
 
 const applySideEffects = (transacDoc, newState) => {
-  _.log(arguments, 'applySideEffects')
+  _.log({ transacDoc, newState }, 'applySideEffects')
   return sideEffects[newState](transacDoc, newState)
 }
 
 const setItemBusyness = (busy, transacDoc) => {
-  _.log(arguments, 'setItemBusyness')
+  _.log({ busy, transacDoc }, 'setItemBusyness')
   const { item } = transacDoc
   return items_.setBusyness(item, busy)
   .catch(_.Error('setItemBusyness'))
@@ -32,8 +32,7 @@ const setItemBusyness = (busy, transacDoc) => {
 
 const changeOwnerIfOneWay = transacDoc => {
   if (Transaction.isOneWay(transacDoc)) {
-    _.log(arguments, 'changeOwner')
-    const { item, requester } = transacDoc
+    _.log({ transacDoc }, 'changeOwner')
     return items_.changeOwner(transacDoc)
     .catch(_.ErrorRethrow('changeOwner'))
   }

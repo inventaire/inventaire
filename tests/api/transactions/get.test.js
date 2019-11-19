@@ -15,7 +15,7 @@ const { createTransaction } = require('../fixtures/transactions')
 describe('transactions:get', () => it('should get user transactions', done => {
   createTransaction()
   .then(res1 => {
-    const { transaction, userA, userB, userBItem } = res1
+    const { transaction } = res1
     return authReq('get', '/api/transactions')
     .then(res2 => {
       res2.transactions.should.be.an.Array()

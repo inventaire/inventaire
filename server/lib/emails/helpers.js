@@ -14,13 +14,12 @@ const assert_ = __.require('utils', 'assert_types')
 const user_ = __.require('controllers', 'user/lib/user')
 const groups_ = __.require('controllers', 'groups/lib/groups')
 
-exports.getUsersByIds = (user1Id, user2Id) => user_.byIds([ user1Id, user2Id ])
-.then(usersData => {
-  let context
-  const [ user1, user2 ] = Array.from(parseUsersData(user1Id, user2Id, usersData))
-  return context = { user1, user2 }
-})
-.catch(_.Error('getUsersByIds err'))
+const getUsersByIds = (user1Id, user2Id) => user_.byIds([ user1Id, user2Id ])
+  .then(usersData => {
+    const [ user1, user2 ] = Array.from(parseUsersData(user1Id, user2Id, usersData))
+    return { user1, user2 }
+  })
+  .catch(_.Error('getUsersByIds err'))
 
 const parseUsersData = (user1Id, user2Id, usersData) => {
   usersData = _.keyBy(usersData, '_id')
@@ -30,24 +29,18 @@ const parseUsersData = (user1Id, user2Id, usersData) => {
   return [ user1, user2 ]
 }
 
-exports.getGroupAndUsersData = (groupId, actingUserId, userToNotifyId) => promises_.all([
-  groups_.byId(groupId),
-  user_.byId(actingUserId),
-  user_.byId(userToNotifyId)
-])
-.spread((group, actingUser, userToNotify) => {
-  let context
-  return context = {
-    group,
-    actingUser,
-    userToNotify
-  }
-})
-
-exports.catchDisabledEmails = err => {
-  if (err.type === 'email_disabled') {
-    return _.warn(err.context, err.message)
-  } else {
-    throw err
-  }
+const getGroupAndUsersData = (groupId, actingUserId, userToNotifyId) => {
+  return promises_.all([
+    groups_.byId(groupId),
+    user_.byId(actingUserId),
+    user_.byId(userToNotifyId)
+  ])
+  .spread((group, actingUser, userToNotify) => ({ group, actingUser, userToNotify }))
 }
+
+const catchDisabledEmails = err => {
+  if (err.type === 'email_disabled') _.warn(err.context, err.message)
+  else throw err
+}
+
+module.exports = { getUsersByIds, getGroupAndUsersData, catchDisabledEmails }

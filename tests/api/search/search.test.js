@@ -13,7 +13,7 @@ const faker = require('faker')
 const { Promise } = __.require('lib', 'promises')
 const { nonAuthReq, authReq, undesiredRes, undesiredErr, getUser } = require('../utils/utils')
 const randomString = __.require('lib', './utils/random_string')
-const { createWork, createHuman, createSerie, humanName, randomLabel, createEditionFromWorks } = require('../fixtures/entities')
+const { createWork, createHuman, createSerie, randomLabel, createEditionFromWorks } = require('../fixtures/entities')
 const { getRefreshedPopularityByUris } = require('../utils/entities')
 
 describe('search:global', () => {

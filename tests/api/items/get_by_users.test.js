@@ -10,7 +10,7 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
 const { getUser, getUserB, authReq, undesiredErr, undesiredRes } = __.require('apiTests', 'utils/utils')
-const { createItem, createItems } = require('../fixtures/items')
+const { createItem } = require('../fixtures/items')
 
 describe('items:get-by-users', () => {
   it('should get an item by id', done => {

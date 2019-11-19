@@ -8,7 +8,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const should = require('should')
-const { nonAuthReq, getUser, undesiredErr } = require('../utils/utils')
+const { nonAuthReq, undesiredErr } = require('../utils/utils')
 const { createUser } = require('../fixtures/users')
 const randomString = __.require('lib', './utils/random_string')
 

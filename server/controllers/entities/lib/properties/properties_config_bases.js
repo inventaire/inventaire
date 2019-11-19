@@ -3,7 +3,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const { EntityUri, SimpleDay } = __.require('lib', 'regex')
+const { EntityUri } = __.require('lib', 'regex')
 const { BoundedString } = __.require('models', 'validations/common')
 
 const entity = {

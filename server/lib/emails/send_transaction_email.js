@@ -38,7 +38,6 @@ const emailIsRequired = transaction => {
   }
 }
 
-const catchErr = err => {
   if (err.message === 'email_not_required') {
   } else {
     return _.error(err, 'send_transaction_email err')

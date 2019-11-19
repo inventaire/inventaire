@@ -11,7 +11,6 @@ const error_ = __.require('lib', 'error/error')
 const Transaction = __.require('models', 'transaction')
 
 module.exports = transactions_ => {
-  let API
   const verifyNoExistingTransaction = (requester, item) => transactions_.byUserAndItem(requester, item._id)
   .then(transactionsDocs => {
     const activeTransactionsDocs = transactionsDocs.filter(Transaction.isActive)
@@ -24,7 +23,7 @@ module.exports = transactions_ => {
     }
   })
 
-  return API = {
+  return {
     verifyRightToRequest: (requester, item) => {
       if (item.busy) {
         throw error_.new('this item is busy', 403, item)
@@ -39,7 +38,7 @@ module.exports = transactions_ => {
     },
 
     verifyRightToInteract: (userId, transaction) => {
-      const { _id, owner, requester } = transaction
+      const { owner, requester } = transaction
       if ((userId === owner) || (userId === requester)) {
         return transaction
       } else {

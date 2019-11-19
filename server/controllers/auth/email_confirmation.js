@@ -8,7 +8,6 @@
  */
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const User = __.require('models', 'user')
 const user_ = __.require('controllers', 'user/lib/user')
 const promises_ = __.require('lib', 'promises')
 const responses_ = __.require('lib', 'responses')
@@ -26,7 +25,7 @@ module.exports = (req, res, next) => {
 }
 
 const sendEmailValidation = user => {
-  const { _id, creationStrategy, validEmail } = user
+  const { creationStrategy, validEmail } = user
   if (creationStrategy !== 'local') {
     throw error_.new('wrong authentification creationStrategy', 400)
   }

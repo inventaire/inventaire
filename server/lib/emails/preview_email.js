@@ -12,8 +12,7 @@ const fs = require('fs')
 const mailcomposer = require('mailcomposer')
 
 const callbackPromise = (resolve, reject) => {
-  let cb
-  return cb = (...args) => {
+  return (...args) => {
     const err = args.shift()
     if (err) {
       return reject(err)

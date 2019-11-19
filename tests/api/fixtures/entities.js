@@ -1,16 +1,3 @@
-/* eslint-disable
-    prefer-const,
-*/
-// TODO: This file was created by bulk-decaffeinate.
-// Fix any style issues and re-enable lint.
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
-let API
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
@@ -43,7 +30,7 @@ const createEntity = P31 => (params = {}) => {
 const humanName = () => faker.fake('{{name.firstName}} {{name.lastName}}')
 const randomWords = length => faker.random.words(length)
 
-module.exports = (API = {
+const API = module.exports = {
   createHuman: createEntity('wd:Q5'),
   createWork: createEntity('wd:Q571'),
   createSerie: createEntity('wd:Q277759'),
@@ -129,7 +116,7 @@ module.exports = (API = {
       })
       .then(workEntity => {
         if (!editionData) { editionData = defaultEditionData() }
-        const [ prefix, id ] = uri.split(':')
+        const id = uri.split(':')[1]
         if (isbn_.isValidIsbn(id)) {
           editionData.claims['wdt:P212'] = [ isbn_.toIsbn13h(id) ]
         }
@@ -157,7 +144,7 @@ module.exports = (API = {
     if (isbn_.isValidIsbn(isbn)) return isbn
     return API.generateIsbn13()
   }
-})
+}
 
 const addEntityClaim = (createFnName, property) => subjectEntity => {
   const subjectUri = _.isString(subjectEntity) ? subjectEntity : subjectEntity.uri

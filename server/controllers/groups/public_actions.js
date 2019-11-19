@@ -48,7 +48,6 @@ module.exports = {
   searchByText: (req, res) => {
     const { query } = req
     const search = query.search != null ? query.search.trim() : undefined
-    const reqUserId = req.user != null ? req.user._id : undefined
 
     if (!_.isNonEmptyString(search)) {
       return error_.bundleInvalid(req, res, 'search', search)

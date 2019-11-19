@@ -9,7 +9,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
-const { getUser, getUserB, authReq, undesiredErr } = __.require('apiTests', 'utils/utils')
+const { getUser, authReq, undesiredErr } = __.require('apiTests', 'utils/utils')
 const { createItem, createEditionAndItem } = require('../fixtures/items')
 const { createUser } = require('../fixtures/users')
 const { Promise } = __.require('lib', 'promises')

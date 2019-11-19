@@ -12,7 +12,6 @@ const { Promise } = __.require('lib', 'promises')
 const { undesiredErr, undesiredRes } = require('../utils/utils')
 const { ensureEditionExists, createWorkWithAuthor, createEditionWithWorkAuthorAndSerie, createHuman } = require('../fixtures/entities')
 const { getByUris, merge } = require('../utils/entities')
-const endpointBase = '/api/entities?action=by-uris&uris='
 const workWithAuthorPromise = createWorkWithAuthor()
 
 describe('entities:get:by-uris', () => {

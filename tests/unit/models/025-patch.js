@@ -54,7 +54,6 @@ const authorDoc = {
 describe('patch', () => {
   describe('create', () => {
     it('should throw if passed an invalid user id', done => {
-      const params =
       ((() => Patch.create({ userId: 'invalid user id', currentDoc, updatedDoc })))
       .should.throw()
       done()

@@ -13,7 +13,7 @@ const error_ = __.require('lib', 'error/error')
 const assert_ = __.require('utils', 'assert_types')
 const promises_ = __.require('lib', 'promises')
 const wdk = require('wikidata-sdk')
-const { normalizeIsbn, isValidIsbn } = __.require('lib', 'isbn/isbn')
+const { isValidIsbn } = __.require('lib', 'isbn/isbn')
 
 // Getters take ids, return an object on the model { entities, notFound }
 const getters = {

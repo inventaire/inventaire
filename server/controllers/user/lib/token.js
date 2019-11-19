@@ -11,7 +11,6 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const radio = __.require('lib', 'radio')
-const User = __.require('models', 'user')
 const error_ = __.require('lib', 'error/error')
 const pw_ = __.require('lib', 'crypto').passwords
 const { tokenDaysToLive } = CONFIG

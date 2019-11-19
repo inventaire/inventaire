@@ -8,7 +8,6 @@
  */
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
-const { BoundedString } = __.require('models', 'validations/common')
 const wdk = require('wikidata-sdk')
 const isbn_ = __.require('lib', 'isbn/isbn')
 

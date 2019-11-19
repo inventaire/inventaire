@@ -8,13 +8,12 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const { Promise, defer } = __.require('lib', 'promises')
+const { defer } = __.require('lib', 'promises')
 
 // Goal: Make one grouped request return several individual promises
 // Use case: we got several entities to fetch on Wikidata at about the same time
 // but the requests can't be merged upstream to keep cache per-entity
 module.exports = params => {
-  let singleRequest
   const { delay, requester } = params
 
   let keys = []
@@ -41,7 +40,7 @@ module.exports = params => {
   // This is the request grouped only interface:
   // make a request for a single piece, get the result for this single piece.
   // The request grouper abstract all the rest, namely the request grouping
-  return singleRequest = key => {
+  return key => {
     keys.push(key)
 
     return getGroupedRequestPromise()

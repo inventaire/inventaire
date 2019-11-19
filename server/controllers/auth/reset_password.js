@@ -1,28 +1,26 @@
-// TODO: This file was created by bulk-decaffeinate.
-// Sanity-check the conversion and remove this comment.
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 const __ = require('config').universalPath
 const error_ = __.require('lib', 'error/error')
 const sanitize = __.require('lib', 'sanitize/sanitize')
 const responses_ = __.require('lib', 'responses')
 const user_ = __.require('controllers', 'user/lib/user')
-const isValidEmail = __.require('models', 'validations/user').email
 
-const sanitization =
-  { email: {} }
+const sanitization = {
+  email: {}
+}
 
-module.exports = (req, res, next) => sanitize(req, res, sanitization)
-.then(params => user_.findOneByEmail(params.email))
-.catch(err => {
-  if (err.statusCode === 404) {
-    throw error_.new('email not found', 400, email)
-  } else {
-    throw err
-  }
-}).then(user_.sendResetPasswordEmail)
-.then(responses_.Ok(res))
-.catch(error_.Handler(req, res))
+module.exports = (req, res, next) => {
+  sanitize(req, res, sanitization)
+  .then(params => {
+    const { email } = params
+    return user_.findOneByEmail(email)
+    .then(user_.sendResetPasswordEmail)
+    .catch(catchEmailNotFoundErr(email))
+  })
+  .then(responses_.Ok(res))
+  .catch(error_.Handler(req, res))
+}
+
+const catchEmailNotFoundErr = email => err => {
+  if (err.statusCode === 404) throw error_.new('email not found', 400, email)
+  else throw err
+}

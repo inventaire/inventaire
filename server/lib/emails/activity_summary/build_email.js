@@ -68,7 +68,6 @@ const filterOutDuplicatedItems = results => {
 }
 
 const spreadEmailData = user => results => {
-  let data
   const {
     friendsRequests,
     groupInvitations,
@@ -79,7 +78,7 @@ const spreadEmailData = user => results => {
     lastNearbyPublicBooks
   } = results
 
-  const { email, summaryPeriodicity, lang } = user
+  const { email, lang } = user
 
   const countTotal = friendsRequests +
     groupInvitations +
@@ -101,7 +100,7 @@ const spreadEmailData = user => results => {
   lastFriendsBooks.lang = lang
   lastNearbyPublicBooks.lang = lang
 
-  return data = {
+  return {
     to: email,
     subject: i18n(lang, 'activity_summary_title'),
     template: 'activity_summary',

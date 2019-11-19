@@ -28,8 +28,7 @@ module.exports = params => {
     .then(() => {
       // letting the client do the friends requests
       // to the existing users so that it updates itself
-      let data
-      return data = {
+      return {
         users: existingUsers,
         emails: remainingEmails
       }

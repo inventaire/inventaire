@@ -78,4 +78,4 @@ const splitInSubgroups = (collection, groupsLength = 1000) => {
   return subgroups
 }
 
-const objDiff = () => !_.sameObjects.apply(null, arguments)
+const objDiff = (...args) => !_.sameObjects.apply(null, args)

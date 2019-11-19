@@ -42,7 +42,7 @@ module.exports = {
 
 const removeUser = (userId, groupDoc) => {
   if (groupDoc.admins.includes(userId)) {
-    _.warn(arguments, "removing a user from a group she's admin of")
+    _.warn({ userId, groupDoc }, "removing a user from a group she's admin of")
   }
 
   for (const list of Group.attributes.usersLists) {

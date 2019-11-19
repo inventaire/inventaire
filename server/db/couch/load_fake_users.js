@@ -20,11 +20,6 @@ module.exports = () => {
   return __range__(1, 50, true).map(i => loadFakeUser())
 }
 
-const keepUsers = {
-  path: __.path('couchdb', 'keep_users.json'),
-  body: () => require(this.path)
-}
-
 const loadFakeUser = username => bluereq.get('http://api.randomuser.me/')
 .then(getUserData.bind(null, username))
 .then(postUser)

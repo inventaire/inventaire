@@ -36,10 +36,9 @@ const rawSubDb = (dbName, valueEncoding) => {
 
 // Promisified and with a few additional functions
 const simpleSubDb = dbName => {
-  let API
   const sub = Promise.promisifyAll(rawSubDb(dbName, 'json'))
 
-  return API = {
+  return {
     get: key => {
       return sub.getAsync(key)
       // TODO: remove to keep the convention that notFound cases

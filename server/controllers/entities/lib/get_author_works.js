@@ -17,7 +17,7 @@ const entities_ = require('./entities')
 const runWdQuery = __.require('data', 'wikidata/run_query')
 const { prefixifyWd } = __.require('controllers', 'entities/lib/prefix')
 const { getSimpleDayDate, sortByScore } = require('./queries_utils')
-const { types, typesNames, getTypePluralNameByTypeUri } = __.require('lib', 'wikidata/aliases')
+const { getTypePluralNameByTypeUri } = __.require('lib', 'wikidata/aliases')
 
 // Working around the circular dependency
 let getEntitiesPopularity

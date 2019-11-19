@@ -20,7 +20,6 @@ module.exports = (Transaction = {})
 Transaction.validations = (validations = require('./validations/transaction'))
 
 Transaction.create = (itemDoc, ownerDoc, requesterDoc) => {
-  let transaction
   const itemId = itemDoc._id
   const ownerId = ownerDoc._id
   const requesterId = requesterDoc._id
@@ -35,7 +34,7 @@ Transaction.create = (itemDoc, ownerDoc, requesterDoc) => {
 
   const now = Date.now()
 
-  return transaction = {
+  return {
     item: itemId,
     owner: ownerId,
     requester: requesterId,

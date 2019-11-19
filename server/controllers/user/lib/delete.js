@@ -12,7 +12,6 @@ const couch_ = __.require('lib', 'couch')
 const User = __.require('models', 'user')
 
 module.exports = (db, user_) => {
-  let API
   const deleteUser = user => db.del(user._id, user._rev)
 
   const softDeleteById = userId => db.update(userId, User.softDelete)
@@ -26,7 +25,7 @@ module.exports = (db, user_) => {
     .catch(_.Error('deleteUserbyUsername err'))
   }
 
-  return API = {
+  return {
     softDeleteById,
     deleteByUsername
   }

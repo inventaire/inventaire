@@ -15,7 +15,10 @@ const Invited = __.require('models', 'invited')
 const radio = __.require('lib', 'radio')
 
 module.exports = (user, group, emails, message) => {
-  assert_.types([ 'object', 'object|null', 'array', 'string|null' ], arguments)
+  assert_.type(user, 'object')
+  assert_.type(group, 'object|null')
+  assert_.type(emails, 'array')
+  assert_.type(message, 'string|null')
   const userId = user._id
   const groupId = group != null ? group._id : undefined
   _.log(emails, 'send_invitations emails')

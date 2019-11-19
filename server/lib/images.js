@@ -15,7 +15,7 @@ const gm = require('gm')
 const { Promise } = __.require('lib', 'promises')
 const crypto_ = __.require('lib', 'crypto')
 const { readFile } = __.require('lib', 'fs')
-const { maxSize, maxWeight } = CONFIG.mediaStorage.images
+const { maxSize } = CONFIG.mediaStorage.images
 
 const shrinkAndFormat = (data, width, height) => // gm accepts either a path string or a stream
   gm(data)

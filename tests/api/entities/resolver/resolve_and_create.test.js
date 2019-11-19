@@ -9,7 +9,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const should = require('should')
-const { authReq, adminReq, getUser, undesiredErr, undesiredRes } = __.require('apiTests', 'utils/utils')
+const { authReq, undesiredErr, undesiredRes } = __.require('apiTests', 'utils/utils')
 const { getByUris, getHistory } = __.require('apiTests', 'utils/entities')
 const { randomLabel, humanName, generateIsbn13, someGoodReadsId, ensureEditionExists } = __.require('apiTests', 'fixtures/entities')
 

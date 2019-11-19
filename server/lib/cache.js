@@ -22,7 +22,7 @@ const db = levelBase.simpleSubDb('cache')
 
 const { offline } = CONFIG
 
-const { oneMinute, oneDay, oneMonth } = __.require('lib', 'times')
+const { oneDay, oneMonth } = __.require('lib', 'times')
 
 module.exports = {
   // - key: the cache key

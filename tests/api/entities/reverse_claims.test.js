@@ -12,8 +12,7 @@ require('should')
 const { nonAuthReq, undesiredErr, undesiredRes } = require('../utils/utils')
 
 const buildUrl = (property, value) => {
-  let url
-  return url = _.buildPath('/api/entities', { action: 'reverse-claims', property, value })
+  return _.buildPath('/api/entities', { action: 'reverse-claims', property, value })
 }
 
 describe('entities:reverse-claims', () => {

@@ -5,12 +5,9 @@
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 require('should')
 const { nonAuthReq, undesiredRes, getUser } = require('../utils/utils')
 const endpoint = '/api/auth?action=reset-password'
-const randomString = __.require('lib', './utils/random_string')
 
 describe('auth:reset-password', () => {
   it('should reject requests without email', done => {

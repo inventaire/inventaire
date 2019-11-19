@@ -6,7 +6,6 @@
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-let API
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
@@ -16,20 +15,17 @@ const { checkEntities } = require('../utils/tasks')
 
 const promises = {}
 
-module.exports = (API = {
+module.exports = {
   createSomeTasks: humanLabel => {
     if (promises[humanLabel] != null) return promises[humanLabel]
 
     promises[humanLabel] = Promise.all([
-      createHuman({ labels: { en: humanLabel } }),
-      createHuman({ labels: { en: humanLabel } })
-    ])
+        createHuman({ labels: { en: humanLabel } }),
+        createHuman({ labels: { en: humanLabel } })
+      ])
       .then(humans => checkEntities(_.map(humans, 'uri'))
-    .then(tasks => ({
-      tasks,
-      humans
-    })))
+      .then(tasks => ({ tasks, humans }))
 
     return promises[humanLabel]
   }
-})
+}

@@ -12,8 +12,6 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
-const host = CONFIG.fullHost()
-const authEndpoint = `${host}/api/auth`
 const { createUser, createAdminUser, getRefreshedUser } = require('../fixtures/users')
 const { request, customAuthReq } = require('./request')
 

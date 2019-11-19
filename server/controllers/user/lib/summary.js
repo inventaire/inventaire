@@ -8,7 +8,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const { newsKey } = CONFIG.activitySummary
-const { oneDay } = __.require('lib', 'times')
 const { BasicUpdater } = __.require('lib', 'doc_updates')
 const couch_ = __.require('lib', 'couch')
 

@@ -24,7 +24,7 @@ const crawl = () => waitingEmails.sub.createReadStream()
 .on('data', onData)
 
 const onData = data => {
-  const { key, value } = data
+  const { key } = data
   const [ domain, id, time ] = key.split(':')
 
   // if the last event happened more than debounceDelay ago

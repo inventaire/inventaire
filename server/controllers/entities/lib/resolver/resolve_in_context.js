@@ -30,5 +30,3 @@ module.exports = entry => {
   .then(works => entry.works = works)
   .then(() => entry)
 }
-
-const hasAuthorClaims = work => work.claims['wdt:P50'] != null

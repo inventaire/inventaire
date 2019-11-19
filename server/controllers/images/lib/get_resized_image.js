@@ -16,7 +16,6 @@ const error_ = __.require('lib', 'error/error')
 const images_ = __.require('lib', 'images')
 const { maxSize } = CONFIG.mediaStorage.images
 const request = require('request')
-const { oneYear } = __.require('lib', 'times')
 const oneMB = Math.pow(1024, 2)
 
 module.exports = (req, res, url, dimensions) => {

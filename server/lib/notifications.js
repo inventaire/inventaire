@@ -33,7 +33,9 @@ const notifs_ = {
   },
 
   add: (userId, type, data) => {
-    assert_.types([ 'string', 'string', 'object' ], arguments)
+    assert_.string(userId)
+    assert_.string(type)
+    assert_.object(data)
     return db.post({
       user: userId,
       type,

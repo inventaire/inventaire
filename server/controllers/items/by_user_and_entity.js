@@ -13,7 +13,6 @@ const promises_ = __.require('lib', 'promises')
 const responses_ = __.require('lib', 'responses')
 const error_ = __.require('lib', 'error/error')
 const sanitize = __.require('lib', 'sanitize/sanitize')
-const { Username } = __.require('lib', 'regex')
 
 const sanitization = {
   user: {},

@@ -11,7 +11,6 @@ const CONFIG = require('config')
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const user_ = __.require('controllers', 'user/lib/user')
-const User = __.require('models', 'user')
 const transporter_ = require('../transporter')
 const buildEmail = require('./build_email')
 const promises_ = __.require('lib', 'promises')

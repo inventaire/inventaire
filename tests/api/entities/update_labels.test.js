@@ -5,7 +5,6 @@
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-const CONFIG = require('config')
 const should = require('should')
 const { undesiredRes, undesiredErr } = require('../utils/utils')
 const { createHuman } = require('../fixtures/entities')
@@ -17,7 +16,6 @@ describe('entities:update-labels', () => {
   it('should update a label', done => {
     humanPromise
     .then(human => {
-      const { uri } = human
       return updateLabel(human._id, 'fr', 'foo')
       .then(() => getByUri(human.uri))
       .then(updatedHuman => {
@@ -70,7 +68,7 @@ describe('entities:update-labels', () => {
     const langs = [ 'en', 'fr' ]
     humanPromise
     .then(human => {
-      const { _id: humanId, uri: humanUri } = human
+      const { _id: humanId } = human
       return Promise.all(langs.map(lang => updateLabel(humanId, lang, name)))
       .then(responses => {
         responses.forEach(res => should(res.ok).be.true())

@@ -10,7 +10,6 @@
 
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const { elasticsearch: elasticConfig } = CONFIG
 const { spawn } = require('child_process')
 const folder = __.path('scripts', 'couch2elastic4sync')
 const logsFolder = __.path('logs', 'couch2elastic4sync')

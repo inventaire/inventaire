@@ -12,7 +12,6 @@ const { attributes, validations } = __.require('models', 'group')
 const { updatable } = attributes
 const promises_ = __.require('lib', 'promises')
 const error_ = __.require('lib', 'error/error')
-const { BasicUpdater } = __.require('lib', 'doc_updates')
 const radio = __.require('lib', 'radio')
 
 // Working around the circular dependency

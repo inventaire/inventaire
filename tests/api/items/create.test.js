@@ -10,7 +10,7 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
 const { Promise } = __.require('lib', 'promises')
-const { authReq, getUser, undesiredErr, undesiredRes } = require('../utils/utils')
+const { authReq, getUser, undesiredErr } = require('../utils/utils')
 const { ensureEditionExists, createEdition, createWorkWithAuthor, createHuman } = require('../fixtures/entities')
 const { createItem } = require('../fixtures/items')
 const { createUser, getRefreshedUser } = require('../fixtures/users')

@@ -12,6 +12,6 @@ module.exports = (type, property) => {
   validateProperty(property)
 
   if (!propertiesPerType[type].includes(property)) {
-    throw error_.new(`${type}s can't have a property ${property}`, 400, arguments)
+    throw error_.new(`${type}s can't have a property ${property}`, 400, { type, property })
   }
 }

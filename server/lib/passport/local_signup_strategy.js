@@ -9,7 +9,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const user_ = __.require('controllers', 'user/lib/user')
-const loginAttempts = require('./login_attempts')
 const { track } = __.require('lib', 'track')
 
 const { Strategy: LocalStrategy } = require('passport-local')

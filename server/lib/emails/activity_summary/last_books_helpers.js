@@ -19,10 +19,9 @@ module.exports = {
     return items.filter(item => item.created > limitDate)
   },
 
-  formatData (lastItems, label, lang, highlighted) {
-    let formattedItems
+  formatData: (lastItems, label, lang, highlighted) => {
     const more = lastItems.length - highlighted.length
-    return formattedItems = {
+    return {
       display: highlighted.length > 0,
       highlighted: highlighted.map(addUserLang(lang)),
       title: `last_${label}_books`,

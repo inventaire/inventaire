@@ -6,10 +6,8 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 const CONFIG = require('config')
-const __ = CONFIG.universalPath
 require('should')
-const { nonAuthReq, undesiredRes, getUser } = require('../utils/utils')
-const randomString = __.require('lib', './utils/random_string')
+const { nonAuthReq, undesiredRes } = require('../utils/utils')
 const { rawRequest } = require('../utils/request')
 const host = CONFIG.fullHost()
 

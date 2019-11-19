@@ -26,8 +26,7 @@ module.exports = (req, res) => {
   if (value == null) {
     return error_.bundleMissingBody(req, res, 'value')
 
-  [prefix, id] = uri.split(':')
-  }
+  const [ prefix, id ] = uri.split(':')
   const updater = updaters[prefix]
   if (updater == null) {
     return error_.bundle(req, res, `unsupported uri prefix: ${prefix}`, 400, uri)

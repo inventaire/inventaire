@@ -8,13 +8,11 @@
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-let prefixifyInv
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const entities_ = require('./entities')
 const validateEntity = require('./validate_entity')
-let { unprefixify } = require('./prefix');
-({ prefixifyInv, unprefixify } = require('./prefix'))
+const { prefixifyInv } = require('./prefix'))
 
 module.exports = params => {
   const { labels, claims, userId, batchId } = params

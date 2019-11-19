@@ -12,9 +12,9 @@ const should = require('should')
 const { Promise } = __.require('lib', 'promises')
 const { authReq, undesiredRes, undesiredErr } = __.require('apiTests', 'utils/utils')
 const elasticsearchUpdateDelay = CONFIG.entitiesSearchEngine.elasticsearchUpdateDelay || 1000
-const { createWork, createEdition, createHuman, someGoodReadsId, someOpenLibraryId, createWorkWithAuthor, generateIsbn13 } = __.require('apiTests', 'fixtures/entities')
+const { createWork, createHuman, someGoodReadsId, someOpenLibraryId, createWorkWithAuthor, generateIsbn13 } = __.require('apiTests', 'fixtures/entities')
 const { addClaim, getByUri } = __.require('apiTests', 'utils/entities')
-const { ensureEditionExists, randomLabel, humanName } = __.require('apiTests', 'fixtures/entities')
+const { ensureEditionExists, randomLabel } = __.require('apiTests', 'fixtures/entities')
 const { toIsbn13h } = __.require('lib', 'isbn/isbn')
 
 const resolve = entries => {

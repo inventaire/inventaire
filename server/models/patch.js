@@ -26,7 +26,7 @@ module.exports = {
     if (batchId != null) { assert_.number(batchId) }
 
     if (currentDoc === updatedDoc) {
-      throw error_.new('invalid update: same document objects', 500, arguments)
+      throw error_.new('invalid update: same document objects', 500, { currentDoc, updatedDoc })
     }
 
     // Use the updated doc _id as the the current doc
@@ -93,7 +93,7 @@ const getDiff = (currentDoc, updatedDoc) => {
   const patch = jiff.diff(currentDoc, updatedDoc)
 
   if (patch.length === 0) {
-    throw error_.new('empty patch', 500, arguments)
+    throw error_.new('empty patch', 500, { currentDoc, updatedDoc })
   }
 
   return patch

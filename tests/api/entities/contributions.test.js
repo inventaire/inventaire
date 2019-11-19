@@ -5,7 +5,6 @@
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-const CONFIG = require('config')
 const should = require('should')
 const { adminReq, getUser, undesiredErr } = require('../utils/utils')
 const { createWork } = require('../fixtures/entities')

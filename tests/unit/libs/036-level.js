@@ -9,7 +9,6 @@ const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 
 const should = require('should')
-const { undesiredRes } = require('../utils')
 
 const levelBase = __.require('level', 'base')
 const db = levelBase.simpleSubDb('test db')

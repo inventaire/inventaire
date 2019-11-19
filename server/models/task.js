@@ -27,7 +27,9 @@ module.exports = {
   },
 
   update: (task, attribute, value) => {
-    assert_.types([ 'object', 'string', 'string|number' ], arguments)
+    assert_.object(task)
+    assert_.string(attribute)
+    assert_.type('string|number', value)
 
     validations.pass('attribute', attribute)
     validations.pass(attribute, value)

@@ -5,10 +5,9 @@
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-const CONFIG = require('config')
 require('should')
-const { nonAuthReq, authReq, undesiredErr } = require('../utils/utils')
-const { generateIsbn13, humanName, randomLabel } = require('../fixtures/entities')
+const { authReq, undesiredErr } = require('../utils/utils')
+const { generateIsbn13, randomLabel } = require('../fixtures/entities')
 
 describe('entities:exists-or-create-from-seed', () => {
   it('should reject if params isbn is missing', done => {

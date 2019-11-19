@@ -31,7 +31,7 @@ Item.create = (userId, item) => {
 
   for (const attr of passedAttributes) {
     if (!attributes.validAtCreation.includes(attr)) {
-      throw error_.new(`invalid attribute: ${attr}`, 400, arguments)
+      throw error_.new(`invalid attribute: ${attr}`, 400, { userId, item })
     }
 
     validations.pass(attr, item[attr])
@@ -45,7 +45,9 @@ Item.create = (userId, item) => {
 }
 
 Item.update = (userId, newAttributes, oldItem) => {
-  assert_.types([ 'string', 'object', 'object' ], arguments)
+  assert_.string(userId)
+  assert_.object(newAttributes)
+  assert_.object(oldItem)
 
   if (oldItem.owner !== userId) {
     throw error_.new(`user isnt item.owner: ${userId}`, 400, oldItem.owner)
@@ -59,7 +61,7 @@ Item.update = (userId, newAttributes, oldItem) => {
 
   for (const attr of passedAttributes) {
     if (!attributes.updatable.includes(attr)) {
-      throw error_.new(`invalid attribute: ${attr}`, 400, arguments)
+      throw error_.new(`invalid attribute: ${attr}`, 400, { userId, newAttributes, oldItem })
     }
     const newVal = newAttributes[attr]
     validations.pass(attr, newVal)
@@ -73,7 +75,7 @@ Item.update = (userId, newAttributes, oldItem) => {
 
 Item.changeOwner = (transacDoc, item) => {
   assert_.objects([ transacDoc, item ])
-  _.log(arguments, 'changeOwner')
+  _.log({ transacDoc, item }, 'changeOwner')
 
   item = _.omit(item, attributes.reset)
   _.log(item, 'item without reset attributes')

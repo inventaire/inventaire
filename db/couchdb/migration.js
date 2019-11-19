@@ -18,7 +18,7 @@ const updateDocsByBatch = require('./update_docs_by_batch')
 
 module.exports = params => {
   let db, log
-  let { dbName, designDocName, preview, silent, showDiff } = params
+  let { dbName, designDocName, preview, silent } = params
   params.preview = preview != null ? preview : (preview = true)
   params.silent = silent != null ? silent : (silent = false)
   if (params.showDiff == null) { params.showDiff = true }

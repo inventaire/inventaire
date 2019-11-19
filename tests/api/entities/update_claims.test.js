@@ -111,7 +111,6 @@ describe('entities:update-claims', () => {
     const authorsUris = [ 'wd:Q192214', 'wd:Q206685' ]
     createWork()
     .then(work => {
-      const { uri: workUri } = work
       return Promise.all(authorsUris.map(uri => addClaim(work.uri, 'wdt:P50', uri)))
       .then(responses => {
         responses.forEach(res => should(res.ok).be.true())

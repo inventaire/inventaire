@@ -8,7 +8,6 @@
 const __ = require('config').universalPath
 const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
-const validations = __.require('models', 'validations/common')
 const getArticle = require('./get_article')
 const sanitize = __.require('lib', 'sanitize/sanitize')
 

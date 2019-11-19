@@ -12,11 +12,6 @@ require('should')
 
 const search = __.require('controllers', 'search/lib/get_wd_authors')
 
-const authorsWithLongerName = {
-  search: () => search('Zach Weinersmith', 'humans'),
-  lessGoodId: 'Q3574507' // => Zach Weiner
-}
-
 describe('elastic query of an author name within indexes of wikidata humans', () => it('only full phrase match should appear in result', done => {
   const authorInWdDescriptions = {
     query: 'Karl Marx',

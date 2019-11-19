@@ -6,7 +6,6 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 let Comment, validations
-const CONFIG = require('config')
 
 module.exports = (Comment = {})
 

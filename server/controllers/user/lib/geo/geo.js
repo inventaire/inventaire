@@ -6,9 +6,9 @@ const db = __.require('level', 'geo')('geo')
 
 module.exports = () => {
   // Start following for changes
-  let API
   require('./follow')(db)
 
-  return API =
-    { search (latLng, kmRange) { return db.search(latLng, kmRange) } }
+  return {
+    search: (latLng, kmRange) => db.search(latLng, kmRange)
+  }
 }

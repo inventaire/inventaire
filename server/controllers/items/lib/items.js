@@ -19,7 +19,7 @@ const { BasicUpdater } = __.require('lib', 'doc_updates')
 const promises_ = __.require('lib', 'promises')
 const radio = __.require('lib', 'radio')
 const { filterPrivateAttributes } = require('./filter_private_attributes')
-const { minKey, maxKey } = __.require('lib', 'couch')
+const { maxKey } = __.require('lib', 'couch')
 const listingsLists = require('./listings_lists')
 const snapshot_ = require('./snapshot/snapshot')
 const getEntityByUri = __.require('controllers', 'entities/lib/get_entity_by_uri')
@@ -163,12 +163,6 @@ module.exports = (items_ = {
 const listingByEntities = (listing, uris, reqUserId) => {
   const keys = uris.map(uri => [ uri, listing ])
   return db.viewByKeys('byEntity', keys)
-  .map(filterPrivateAttributes(reqUserId))
-}
-
-const bundleListings = (listingsTypes, usersIds, reqUserId) => {
-  const listings = _.combinations(usersIds, listingsTypes)
-  return db.viewByKeys('byListing', listings)
   .map(filterPrivateAttributes(reqUserId))
 }
 

@@ -15,7 +15,7 @@ const automergeAuthorWorks = __.require('controllers', 'tasks/lib/automerge_auth
 const { undesiredErr } = require('../utils/utils')
 const { checkEntities } = require('../utils/tasks')
 const { getByUris } = require('../utils/entities')
-const { createHuman, createWorkWithAuthor, createWorkWithAuthorAndSerie, randomLabel, addSerie } = require('../fixtures/entities')
+const { createHuman, createWorkWithAuthor, addSerie } = require('../fixtures/entities')
 
 describe('automerge_author_works: only from inv works to wd works', () => {
   it('should automerge inv works to a wd work', done => {
@@ -40,7 +40,6 @@ describe('automerge_author_works: only from inv works to wd works', () => {
 
   it('should automerge if suspect and suggestion wd and inv short works labels match', done => {
     const humanLabel = 'Michael Crichton'
-    const humanWdUri = 'wd:Q172140'
     const workLabel = 'Timeline' // wd:Q732060
     const workWdUri = 'wd:Q732060'
     createHuman({ labels: { en: humanLabel } })

@@ -12,7 +12,6 @@ const items_ = __.require('controllers', 'items/lib/items')
 const snapshot_ = require('./lib/snapshot/snapshot')
 const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
-const radio = __.require('lib', 'radio')
 const { Track } = __.require('lib', 'track')
 
 module.exports = (req, res, next) => {
@@ -37,7 +36,6 @@ module.exports = (req, res, next) => {
   }
 
   const reqUserId = req.user._id
-  const itemId = item._id
 
   return items_.update(reqUserId, item)
   .then(snapshot_.addToItem)

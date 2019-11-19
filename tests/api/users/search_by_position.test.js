@@ -9,7 +9,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const should = require('should')
-const { nonAuthReq, getUser, undesiredErr } = require('../utils/utils')
+const { nonAuthReq } = require('../utils/utils')
 const { createUser } = require('../fixtures/users')
 const qs = require('querystring')
 

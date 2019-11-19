@@ -7,7 +7,6 @@
  */
 let logoutRedirect
 const CONFIG = require('config')
-const { cookieMaxAge } = CONFIG
 const __ = CONFIG.universalPath
 const sanitize = __.require('lib', 'sanitize/sanitize')
 const error_ = __.require('lib', 'error/error')
@@ -24,7 +23,6 @@ const sanitization = {
 // TODO: rate limit to 10 signup per IP per 10 minutes
 exports.signup = (req, res) => sanitize(req, res, sanitization)
 .then(params => {
-  const { username, email, password } = params
   const next = loggedIn(req, res)
   // TODO: rewrite passport response to use responses_.send
   return passport_.authenticate.localSignup(req, res, next)

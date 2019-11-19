@@ -17,7 +17,6 @@ module.exports = (Group = {})
 Group.validations = (validations = require('./validations/group'))
 
 Group.create = options => {
-  let group
   _.log(options, 'group create')
   const { name, description, searchable, position, creatorId } = options
   validations.pass('name', name)
@@ -27,7 +26,7 @@ Group.create = options => {
 
   const creator = createMembership(creatorId, null)
 
-  return group = {
+  return {
     type: 'group',
     name,
     description,

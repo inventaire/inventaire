@@ -39,5 +39,3 @@ const isValidateAutomerge = suggestionOccurrences => {
 }
 
 const isLongTitle = title => title.length > longTitleLimit
-
-const findSourced = suggestions => suggestions.filter(sug => sug.occurrences.length > 0)

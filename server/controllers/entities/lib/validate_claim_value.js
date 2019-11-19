@@ -23,7 +23,6 @@ const lateRequire = () => {
 setTimeout(lateRequire, 0)
 
 const properties = require('./properties/properties_values_constraints')
-const { validateValueType, propertyType } = require('./properties/validations')
 const validateClaimValueSync = require('./validate_claim_value_sync')
 
 module.exports = params => // Always return a promise
@@ -51,7 +50,7 @@ const validateClaimValue = params => {
   if (prop.uniqueValue) {
     const propArray = currentClaims[property]
     if (((propArray != null ? propArray.length : undefined) > 0) && (oldVal !== propArray[0])) {
-      throw error_.new('this property accepts only one value', 400, arguments)
+      throw error_.new('this property accepts only one value', 400, params)
     }
   }
 

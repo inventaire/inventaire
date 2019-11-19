@@ -6,7 +6,6 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 let groupsMap
-const CONFIG = require('config')
 const wdLang = require('wikidata-lang')
 const groupsData = require('isbn-groups')
 

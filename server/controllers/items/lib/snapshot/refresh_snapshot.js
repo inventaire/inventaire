@@ -66,12 +66,18 @@ const getSnapshotsByType = {
 const refreshTypes = Object.keys(getSnapshotsByType)
 
 const getWorkSnapshot = (uri, work, authors, series) => {
-  assert_.types([ 'string', 'object', 'array', 'array' ], arguments)
+  assert_.string(uri)
+  assert_.array(works)
+  assert_.array(authors)
+  assert_.array(series)
   return buildSnapshot.work(work, authors, series)
 }
 
 const getEditionsSnapshots = (uri, works, authors, series) => {
-  assert_.types([ 'string', 'array', 'array', 'array' ], arguments)
+  assert_.string(uri)
+  assert_.array(works)
+  assert_.array(authors)
+  assert_.array(series)
 
   return entities_.urisByClaim('wdt:P629', uri)
   .then(uris => getEntitiesByUris({ uris }))
@@ -80,7 +86,10 @@ const getEditionsSnapshots = (uri, works, authors, series) => {
 }
 
 const getEditionSnapshot = (edition, works, authors, series) => {
-  assert_.types([ 'object', 'array', 'array', 'array' ], arguments)
+  assert_.object(edition)
+  assert_.array(works)
+  assert_.array(authors)
+  assert_.array(series)
   // Expects a formatted edition
   assert_.string(edition.uri)
   return buildSnapshot.edition(edition, works, authors, series)

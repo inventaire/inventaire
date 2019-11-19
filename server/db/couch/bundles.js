@@ -11,7 +11,6 @@ const promises_ = __.require('lib', 'promises')
 const assert_ = __.require('utils', 'assert_types')
 
 module.exports = (db, _) => {
-  let bundles
   const actionAndReturn = (verb, doc) => {
     assert_.object(doc)
     return db[verb](doc)
@@ -25,7 +24,7 @@ module.exports = (db, _) => {
     return db.bulk(couch_.setDocsDeletedTrue(docs))
   }
 
-  return bundles = {
+  return {
     postAndReturn: actionAndReturn.bind(null, 'post'),
     putAndReturn: actionAndReturn.bind(null, 'put'),
     bulkDelete

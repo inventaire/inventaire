@@ -30,7 +30,6 @@ const error_ = __.require('lib', 'error/error')
 const assert_ = __.require('utils', 'assert_types')
 const entities_ = __.require('controllers', 'entities/lib/entities')
 const patches_ = __.require('controllers', 'entities/lib/patches')
-const { maxKey } = __.require('lib', 'couch')
 const docDiff = __.require('couchdb', 'doc_diffs')
 const Patch = __.require('models', 'patch')
 const userId = __.require('couch', 'hard_coded_documents').users.updater._id

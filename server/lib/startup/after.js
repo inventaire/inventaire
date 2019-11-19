@@ -7,7 +7,6 @@
  */
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const fs = require('fs')
 
 module.exports = () => {
   if (CONFIG.couch2elastic4sync.activated) {

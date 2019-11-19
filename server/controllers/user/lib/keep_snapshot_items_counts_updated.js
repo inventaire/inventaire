@@ -15,8 +15,6 @@ const _ = __.require('builders', 'utils')
 const radio = __.require('lib', 'radio')
 const updateSnapshotItemsCounts = require('./update_snapshot_items_counts')
 const { itemsCountDebounceTime: delay } = CONFIG
-const totalCount = 0
-const debounceCount = 0
 
 module.exports = () => {
   const debouncedUpdaters = {}

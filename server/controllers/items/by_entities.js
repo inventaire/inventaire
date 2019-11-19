@@ -15,7 +15,6 @@ const promises_ = __.require('lib', 'promises')
 const sanitize = __.require('lib', 'sanitize/sanitize')
 const responses_ = __.require('lib', 'responses')
 const { addAssociatedData, Paginate } = require('./lib/queries_commons')
-const { filterPrivateAttributes } = require('./lib/filter_private_attributes')
 
 const sanitization = {
   uris: {},

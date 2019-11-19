@@ -14,7 +14,6 @@ require('should')
 const faker = require('faker')
 const { authReq, nonAuthReq, undesiredErr } = require('../utils/utils')
 const { groupName } = require('../fixtures/groups')
-const slugify = __.require('controllers', 'groups/lib/slugify')
 
 describe('groups:search', () => {
   it('should find a group by its name', done => {

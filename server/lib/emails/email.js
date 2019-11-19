@@ -22,12 +22,11 @@ const { kmBetween } = __.require('lib', 'geo')
 module.exports = {
   validationEmail: (user, token) => {
     // purposedly not checking notifications settings
-    let data
-    const { username, email, language } = user
+    const { email, language } = user
     const lang = _.shortLang(language)
     const href = buildTokenUrl('validation-email', email, token)
 
-    return data = {
+    return {
       to: email,
       subject: i18n(lang, 'email_confirmation_subject'),
       template: 'validation_email',
@@ -37,12 +36,11 @@ module.exports = {
 
   resetPassword: (user, token) => {
     // purposedly not checking notifications settings
-    let data
-    const { username, email, language } = user
+    const { email, language } = user
     const lang = _.shortLang(language)
     const href = buildTokenUrl('reset-password', email, token)
 
-    return data = {
+    return {
       to: email,
       subject: i18n(lang, 'reset_password_subject'),
       template: 'reset_password',
@@ -51,13 +49,12 @@ module.exports = {
   },
 
   friendAcceptedRequest: options => {
-    let data
     const [ user1, user2 ] = Array.from(validateOptions(options))
     const lang = _.shortLang(user1.language)
 
     checkUserNotificationsSettings(user1, 'friend_accepted_request')
 
-    return data = {
+    return {
       to: user1.email,
       subject: i18n(lang, 'friend_accepted_request_subject', user2),
       template: 'friend_accepted_request',
@@ -66,7 +63,6 @@ module.exports = {
   },
 
   friendshipRequest: options => {
-    let data
     const [ user1, user2 ] = Array.from(validateOptions(options))
     const lang = _.shortLang(user1.language)
 
@@ -83,7 +79,7 @@ module.exports = {
       user2.distance = kmBetween(user1.position, user2.position)
     }
 
-    return data = {
+    return {
       to: user1.email,
       subject: i18n(lang, 'friendship_request_subject', user2),
       template: 'friendship_request',
@@ -92,7 +88,6 @@ module.exports = {
   },
 
   group: (action, context) => {
-    let data
     const { group, actingUser, userToNotify } = context
     const { language, email } = userToNotify
     const lang = _.shortLang(language)
@@ -107,7 +102,7 @@ module.exports = {
     const title = `group_${action}_subject`
     const button = `group_${action}_button`
 
-    return data = {
+    return {
       to: email,
       subject: i18n(lang, `group_${action}_subject`, groupContext),
       template: 'group',
@@ -117,9 +112,8 @@ module.exports = {
 
   feedback: (subject, message, user, unknownUser, uris, context) => {
     // no email settings to check here ;)
-    let data
     const username = (user != null ? user.username : undefined) || 'anonymous'
-    return data = {
+    return {
       to: defaultFrom,
       replyTo: (user != null ? user.email : undefined),
       subject: `[feedback][${username}] ${subject}`,
@@ -134,14 +128,12 @@ module.exports = {
     //   where their notifications settings will be applied
     // - Invited users who don't want more emails should have been filtered-out
     //   by invitations/lib/send_invitations extractCanBeInvited
-    let emailFactory
     const { username, language } = inviter
     const lang = _.shortLang(language)
 
     inviter.pathname = `${host}/users/${username}`
-    return emailFactory = emailAddress => {
-      let data
-      return data = {
+    return emailAddress => {
+      return {
         to: emailAddress,
         replyTo: inviter.email,
         subject: i18n(lang, 'email_invitation_subject', inviter),
@@ -153,20 +145,18 @@ module.exports = {
 
   GroupInvitation: (inviter, group, message) => {
     // No email settings to check here neither (idem FriendInvitation)
-    let emailFactory
-    const { username, language } = inviter
+    const { language } = inviter
     const lang = _.shortLang(language)
 
     group.pathname = `${host}/groups/${group.slug}`
     // Object required to pass as i18n strings context
-    let data = { username: inviter.username, groupName: group.name }
-    return emailFactory = emailAddress => data = {
+    return emailAddress => ({
       to: emailAddress,
       replyTo: inviter.email,
-      subject: i18n(lang, 'group_email_invitation_subject', data),
+      subject: i18n(lang, 'group_email_invitation_subject'),
       template: 'group_email_invitation',
-      context: { data, message, lang, host }
-    }
+      context: { message, lang, host }
+    })
   },
 
   transactions: {
@@ -185,7 +175,6 @@ module.exports = {
 }
 
 const transactionEmail = (transaction, role, label) => {
-  let data
   checkUserNotificationsSettings(transaction.mainUser, label)
   const other = role === 'owner' ? 'requester' : 'owner'
   const lang = _.shortLang(transaction.mainUser.language)
@@ -194,7 +183,7 @@ const transactionEmail = (transaction, role, label) => {
     username: transaction[other].username,
     title: transaction.item.title
   }
-  return data = {
+  return {
     to: transaction[role].email,
     subject: i18n(lang, `${label}_title`, titleContext),
     template: 'transaction_update',

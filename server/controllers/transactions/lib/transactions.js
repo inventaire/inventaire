@@ -81,9 +81,8 @@ const transactions_ = {
 }
 
 const stateUpdater = (state, userId, transaction) => {
-  let updater
   const updatedReadStates = updateReadStates(userId, transaction)
-  return updater = doc => {
+  return doc => {
     doc.state = state
     const action = { action: state, timestamp: Date.now() }
     // keep track of the actor when it can be both
@@ -104,7 +103,7 @@ const updateReadStates = (userId, transaction) => {
   switch (role) {
   case 'owner': return { owner: true, requester: false }
   case 'requester': return { owner: false, requester: true }
-  default: throw error_.new('updateReadStates err', 500, arguments)
+  default: throw error_.new('updateReadStates err', 500, { userId, transaction })
   }
 }
 
@@ -112,7 +111,7 @@ const userRole = (userId, transaction) => {
   const { owner, requester } = transaction
   if (userId === owner) return 'owner'
   if (userId === requester) return 'requester'
-  return (() => { throw error_.new('no role found', 500, arguments) })()
+  return (() => { throw error_.new('no role found', 500, { userId, transaction }) })()
 }
 
 const counts = {

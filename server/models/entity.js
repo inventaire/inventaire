@@ -54,7 +54,9 @@ module.exports = (Entity = {
   },
 
   setLabel: (doc, lang, value) => {
-    assert_.types([ 'object', 'string', 'string' ], arguments)
+    assert_.object(doc)
+    assert_.string(lang)
+    assert_.string(value)
 
     if (!validLangs.includes(lang)) {
       throw error_.new('invalid lang', 400, { doc, lang, value })
@@ -101,7 +103,7 @@ module.exports = (Entity = {
       if (prop.uniqueValue) {
         if (array.length > 1) {
           const message = `${property} expects a unique value, got ${array}`
-          throw error_.new(message, 400, arguments)
+          throw error_.new(message, 400, { doc, claims })
         }
       }
 
@@ -123,9 +125,10 @@ module.exports = (Entity = {
   },
 
   updateClaim: (doc, property, oldVal, newVal) => {
+    const context = { doc, property, oldVal, newVal }
     Entity.preventRedirectionEdit(doc, 'updateClaim')
     if ((oldVal == null) && (newVal == null)) {
-      throw error_.new('missing old or new value', 400, arguments)
+      throw error_.new('missing old or new value', 400, context)
     }
 
     if (_.isString(oldVal)) { oldVal = _.superTrim(oldVal) }
@@ -140,7 +143,7 @@ module.exports = (Entity = {
 
     if (oldVal != null) {
       if ((propArray == null) || !propArray.includes(oldVal)) {
-        throw error_.new('claim property value not found', 400, arguments)
+        throw error_.new('claim property value not found', 400, context)
       }
 
       if (newVal != null) {
@@ -154,7 +157,7 @@ module.exports = (Entity = {
         // Ex: wdt:P629 and wdt:P1476 are required on editions, so the last claim
         // can't be removed without adding a new value
         if ((propArray.length === 0) && properties[property].critical) {
-          throw error_.new('this property should at least have one value', 400, arguments)
+          throw error_.new('this property should at least have one value', 400, context)
         }
 
         setPossiblyEmptyPropertyArray(doc, property, propArray)
@@ -219,7 +222,7 @@ module.exports = (Entity = {
     const [ prefix, id ] = toUri.split(':')
 
     if ((prefix === 'inv') && (id === fromEntityDoc._id)) {
-      throw error_.new('circular redirection', 500, arguments)
+      throw error_.new('circular redirection', 500, { fromEntityDoc, toUri, removedPlaceholdersIds })
     }
 
     const redirection = _.cloneDeep(fromEntityDoc)
@@ -254,7 +257,7 @@ module.exports = (Entity = {
 
   preventRedirectionEdit: (doc, editLabel) => {
     if (doc.redirect == null) return
-    throw error_.new(`${editLabel} failed: the entity is a redirection`, 400, arguments)
+    throw error_.new(`${editLabel} failed: the entity is a redirection`, 400, { doc, editLabel })
   }
 })
 

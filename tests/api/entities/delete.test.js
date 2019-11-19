@@ -62,7 +62,6 @@ describe('entities:delete:by-uris', () => {
       .then(() => getByUris(uris))
       .then(res => {
         for (let entity = 0; entity < res.entities.length; entity++) {
-          const uri = res.entities[entity]
           entity._meta_type.should.equal('removed:placeholder')
         }
         done()
@@ -74,12 +73,11 @@ describe('entities:delete:by-uris', () => {
   it('should delete the claims where this entity is the value', done => {
     createWorkWithAuthor()
     .then(work => {
-      const { uri: workUri } = work
       const authorUri = work.claims['wdt:P50'][0]
       return deleteByUris(authorUri)
-      .then(() => getByUris(workUri))
+      .then(() => getByUris(work.uri))
       .then(res => {
-        const updatedWork = res.entities[workUri]
+        const updatedWork = res.entities[work.uri]
         should(updatedWork.claims['wdt:P50']).not.be.ok()
         done()
       })
@@ -92,7 +90,6 @@ describe('entities:delete:by-uris', () => {
     createHuman()
     .then(author => Promise.all([ createWorkWithAuthor(author), createWorkWithAuthor(author) ]))
     .spread((workA, workB) => {
-      const { uri: workUri } = workA
       const authorUri = workA.claims['wdt:P50'][0]
       return deleteByUris(authorUri)
     })

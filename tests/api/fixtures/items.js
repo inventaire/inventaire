@@ -63,7 +63,6 @@ module.exports = (API = {
 })
 
 const randomizedItem = itemData => {
-  const { entity, listing, transaction } = itemData
   if (!itemData.listing) { itemData.listing = _.sample(listings) }
   if (!itemData.transaction) { itemData.transaction = _.sample(transactions) }
   itemData.details = faker.hacker.phrase()

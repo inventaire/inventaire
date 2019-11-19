@@ -54,7 +54,7 @@ module.exports = {
 }
 
 const buildOperation = params => {
-  const { type, entity, works, title, subtitle, lang, image, authors, series } = params
+  const { entity, works, title, subtitle, lang, image, authors, series } = params
   assert_.array(works)
   if (!_.isNonEmptyString(title)) {
     throw error_.new('no title found', 400, entity)

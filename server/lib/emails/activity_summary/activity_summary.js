@@ -9,7 +9,6 @@ const CONFIG = require('config')
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const user_ = __.require('controllers', 'user/lib/user')
-const User = __.require('models', 'user')
 const sendActivitySummary = require('./send_activity_summary')
 
 const { oneHour } = __.require('lib', 'times')
