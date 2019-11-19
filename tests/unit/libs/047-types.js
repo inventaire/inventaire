@@ -169,7 +169,9 @@ describe('assert_', () => {
 
     it("should not accept piped 's...' types if 'arguments' is passed", done => {
       const types = 'strings...';
-      ((...args) => assert_.types(types, args)).should.throw()
+      (function () {
+        assert_.types(types, arguments)
+      }).should.throw("types should be an array when used with 'arguments'")
       done()
     })
   })

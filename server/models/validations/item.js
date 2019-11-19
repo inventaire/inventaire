@@ -19,8 +19,8 @@ module.exports = (validations = {
   itemId,
   userId,
   entity: entityUri,
-  lang: lang => lang ? _.isLang(lang) : true
-  pictures: (pictures) => _.isArray(pictures) && _.every(pictures, imgUrl) ,
+  lang: lang => lang ? _.isLang(lang) : true,
+  pictures: (pictures) => _.isArray(pictures) && _.every(pictures, imgUrl),
   attribute: (attribute) => {
     let needle
     return (needle = attribute, _.keys(constrained).includes(needle))
