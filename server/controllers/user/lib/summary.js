@@ -1,10 +1,3 @@
-// TODO: This file was created by bulk-decaffeinate.
-// Sanity-check the conversion and remove this comment.
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const { newsKey } = CONFIG.activitySummary
@@ -12,21 +5,21 @@ const { BasicUpdater } = __.require('lib', 'doc_updates')
 const couch_ = __.require('lib', 'couch')
 
 module.exports = db => {
-  let summary_
-  return summary_ = {
-    waitingForSummary: limit => {
-      // pick users with next summary between epoch 0 and now
-      return db.viewCustom('nextSummary', {
-        include_docs: true,
-        limit,
-        startkey: 0,
-        endkey: Date.now()
-      }
-      )
-    },
+  const waitingForSummary = limit => {
+    // Pick users with next summary between epoch 0 and now
+    return db.viewCustom('nextSummary', {
+      include_docs: true,
+      limit,
+      startkey: 0,
+      endkey: Date.now()
+    })
+  }
+
+  return {
+    waitingForSummary,
 
     findOneWaitingForSummary: () => {
-      return summary_.waitingForSummary(1)
+      return waitingForSummary(1)
       .then(couch_.firstDoc)
     },
 

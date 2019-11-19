@@ -4,7 +4,6 @@
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
  * DS104: Avoid inline assignments
- * DS204: Change includes calls to have a more natural evaluation order
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 const CONFIG = require('config')
@@ -22,8 +21,7 @@ describe('users:search', () => {
       const { username } = user
       return nonAuthReq('get', `/api/users?action=search&search=${username}`)
       .then(res => {
-        let needle;
-        ((needle = user._id, usersIds(res).includes(needle))).should.be.true()
+        usersIds(res).includes(user._id).should.be.true()
         done()
       })
     })
@@ -37,8 +35,7 @@ describe('users:search', () => {
       const prefix = user.username.slice(0, 5)
       return nonAuthReq('get', `/api/users?action=search&search=${prefix}`)
       .then(res => {
-        let needle;
-        ((needle = user._id, usersIds(res).includes(needle))).should.be.true()
+        usersIds(res).includes(user._id).should.be.true()
         done()
       })
     })
@@ -53,8 +50,7 @@ describe('users:search', () => {
     .delay(1000)
     .then(user => customAuthReq(userPromise, 'get', '/api/users?action=search&search=testusr')
     .then(res => {
-      let needle;
-      ((needle = user._id, usersIds(res).includes(needle))).should.be.true()
+      usersIds(res).includes(user._id).should.be.true()
       done()
     })).catch(undesiredErr(done))
   })
@@ -64,8 +60,7 @@ describe('users:search', () => {
     .delay(1000)
     .then(user => authReq('get', `/api/users?action=search&search=${user.username}`)
     .then(res => {
-      let needle;
-      ((needle = user._id, usersIds(res).includes(needle))).should.be.true()
+      usersIds(res).includes(user._id).should.be.true()
       should(res.users[0].snapshot).not.be.ok()
       done()
     })).catch(undesiredErr(done))
@@ -74,17 +69,13 @@ describe('users:search', () => {
   it('should find a user by its bio', done => {
     authReq('put', '/api/user', { attribute: 'bio', value: 'blablablayouhou' })
     .catch(err => {
-      if (err.body.status_verbose === 'already up-to-date') {
-      } else {
-        throw err
-      }
+      if (err.body.status_verbose !== 'already up-to-date') throw err
     })
     .then(getUser)
     .delay(1000)
     .then(user => nonAuthReq('get', `/api/users?action=search&search=${user.bio}`)
     .then(res => {
-      let needle;
-      ((needle = user._id, usersIds(res).includes(needle))).should.be.true()
+      usersIds(res).includes(user._id).should.be.true()
       done()
     })).catch(undesiredErr(done))
   })

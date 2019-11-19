@@ -4,7 +4,6 @@
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
  * DS104: Avoid inline assignments
- * DS204: Change includes calls to have a more natural evaluation order
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 const CONFIG = require('config')
@@ -24,8 +23,7 @@ describe('groups:search', () => {
       const groupId = creationRes._id
       return nonAuthReq('get', `/api/groups?action=search&search=${name}`)
       .then(searchRes => {
-        let needle;
-        ((needle = groupId, groupsIds(searchRes).includes(needle))).should.be.true()
+        groupsIds(searchRes).includes(groupId).should.be.true()
         done()
       })
     })
@@ -41,8 +39,7 @@ describe('groups:search', () => {
       const groupId = creationRes._id
       return nonAuthReq('get', `/api/groups?action=search&search=${description}`)
       .then(searchRes => {
-        let needle;
-        ((needle = groupId, groupsIds(searchRes).includes(needle))).should.be.true()
+        groupsIds(searchRes).includes(groupId).should.be.true()
         done()
       })
     })
@@ -57,8 +54,7 @@ describe('groups:search', () => {
       const groupId = creationRes._id
       return nonAuthReq('get', `/api/groups?action=search&search=${name}`)
       .then(searchRes => {
-        let needle;
-        ((needle = groupId, groupsIds(searchRes).includes(needle))).should.not.be.true()
+        groupsIds(searchRes).includes(groupId).should.be.true()
         done()
       })
     })

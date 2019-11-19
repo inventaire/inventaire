@@ -3,7 +3,6 @@
 /*
  * decaffeinate suggestions:
  * DS104: Avoid inline assignments
- * DS204: Change includes calls to have a more natural evaluation order
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
@@ -12,17 +11,13 @@ const { typeOf } = require('./base')
 
 // Working around the circular dependency
 let error_
-const lateRequire = () => error_ = require('../error/error')
+const lateRequire = () => { error_ = require('../error/error') }
 setTimeout(lateRequire, 0)
 
 const assertType = (type, obj) => {
-  let needle
   const trueType = typeOf(obj)
-  if ((needle = trueType, type.split('|').includes(needle))) {
-    return obj
-  } else {
-    throw error_.new(`TypeError: expected ${type}, got ${obj} (${trueType})`, 500, { type, obj })
-  }
+  if (type.split('|').includes(trueType)) return obj
+  else throw error_.new(`TypeError: expected ${type}, got ${obj} (${trueType})`, 500, { type, obj })
 }
 
 const assertTypes = (types, args) => {

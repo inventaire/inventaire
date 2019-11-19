@@ -14,11 +14,10 @@ const error_ = __.require('lib', 'error/error')
 const promises_ = __.require('lib', 'promises')
 
 // Working around circular dependencies
-let getEntityByUri
-let entities_
+let getEntityByUri, entities_
 const lateRequire = () => {
   getEntityByUri = require('./get_entity_by_uri')
-  return entities_ = require('./entities')
+  entities_ = require('./entities')
 }
 setTimeout(lateRequire, 0)
 

@@ -4,7 +4,6 @@
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
  * DS104: Avoid inline assignments
- * DS204: Change includes calls to have a more natural evaluation order
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
@@ -46,10 +45,7 @@ const types = [ 'humans' ]
 const searchUrisByAuthorLabel = term => typeSearch(types, term)
 .then(parseResults(types))
 // Exact match on normalized author terms
-.filter(hit => {
-  let needle
-  return (needle = term, getEntityNormalizedTerms(hit._source).includes(needle))
-})
+.filter(hit => getEntityNormalizedTerms(hit._source).includes(term))
 .map(hit => hit._source.uri)
 .then(_.compact)
 
@@ -75,5 +71,6 @@ const resolveWorkAndAuthor = (authorsUris, authorSeed, workSeed, workTerms) => s
   if (!_.someMatch(workTerms, searchedWorkTerms)) return
 
   authorSeed.uri = matchedAuthorsUris[0]
-  return workSeed.uri = searchedWork.uri
+  workSeed.uri = searchedWork.uri
+  return workSeed.uri
 }
