@@ -13,14 +13,11 @@ const crypto_ = __.require('lib', 'crypto')
 module.exports = data => {
   const fingerPrint = getFingerPrint(data)
   // If we have a user id, the user is logged in
-  if (data.userId != null) {
-    return onlineUsers[fingerPrint] = 1
-  } else {
-    return onlineUsers[fingerPrint] = 0
-  }
+  if (data.userId) onlineUsers[fingerPrint] = 1
+  else onlineUsers[fingerPrint] = 0
 }
 
-const onlineUsers = {}
+let onlineUsers = {}
 let last
 
 const updateOnlineUsers = () => {
@@ -31,7 +28,7 @@ const updateOnlineUsers = () => {
   // Only log the amount of users online when there is a change
   if (report !== last) { _.info(report) }
   last = report
-  return onlineUsers = {}
+  onlineUsers = {}
 }
 
 const getFingerPrint = (...args) => {

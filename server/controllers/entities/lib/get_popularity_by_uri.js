@@ -16,15 +16,12 @@ const getSerieParts = require('./get_serie_parts')
 const getAuthorWorks = require('./get_author_works')
 
 // Working around circular dependencies
-let items_
-let getEntityByUri
-let reverseClaims
-let getEntitiesPopularity
+let items_, getEntityByUri, reverseClaims, getEntitiesPopularity
 const lateRequire = () => {
   items_ = __.require('controllers', 'items/lib/items')
   getEntityByUri = require('./get_entity_by_uri')
   reverseClaims = require('./reverse_claims')
-  return getEntitiesPopularity = require('./get_entities_popularity')
+  getEntitiesPopularity = require('./get_entities_popularity')
 }
 
 setTimeout(lateRequire, 0)

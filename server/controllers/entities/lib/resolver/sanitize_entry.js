@@ -54,7 +54,7 @@ const sanitizeEdition = edition => {
 
   if (rawIsbn != null) {
     if (!isValidIsbn(rawIsbn)) throw error_.new('invalid isbn', 400, { edition })
-    return edition.isbn = normalizeIsbn(rawIsbn)
+    edition.isbn = normalizeIsbn(rawIsbn)
   } else {
     const claims = edition.claims || {}
     const claimsProperties = Object.keys(claims)

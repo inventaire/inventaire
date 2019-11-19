@@ -14,7 +14,9 @@ const initMembershipUpdateHooks = require('./membership_update_hooks')
 
 module.exports = db => {
   const actions = {}
-  membershipActionsList.forEach(action => actions[action] = membershipUpdate(db, action))
+  membershipActionsList.forEach(action => {
+    actions[action] = membershipUpdate(db, action)
+  })
 
   initMembershipUpdateHooks(db)
 

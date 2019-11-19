@@ -24,9 +24,9 @@ module.exports = entry => {
   .then(works => {
     entry.works = works
     return resolveAuthorsFromWorks(authors, works)
-    .then(authors => entry.authors = authors)
+    .then(authors => { entry.authors = authors })
     .then(() => resolveWorksFromAuthors(works, authors))
   })
-  .then(works => entry.works = works)
+  .then(works => { entry.works = works })
   .then(() => entry)
 }

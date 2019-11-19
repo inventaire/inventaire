@@ -18,7 +18,7 @@ const { getDocData } = require('./helpers')
 
 // Working around circular dependencies
 let snapshot_
-const lateRequire = () => snapshot_ = require('./snapshot')
+const lateRequire = () => { snapshot_ = require('./snapshot') }
 setTimeout(lateRequire, 0)
 
 const fromDoc = changedEntityDoc => {
@@ -67,7 +67,7 @@ const refreshTypes = Object.keys(getSnapshotsByType)
 
 const getWorkSnapshot = (uri, work, authors, series) => {
   assert_.string(uri)
-  assert_.array(works)
+  assert_.array(work)
   assert_.array(authors)
   assert_.array(series)
   return buildSnapshot.work(work, authors, series)

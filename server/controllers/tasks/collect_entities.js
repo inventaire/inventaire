@@ -54,7 +54,7 @@ const getNextInvHumanUrisBatch = pagination => {
     limit: batchLength,
     skip: offset
   })
-  .tap(() => pagination.offset += batchLength)
+  .tap(() => { pagination.offset += batchLength })
   .then(getUris)
 }
 

@@ -133,7 +133,7 @@ const operationFix = {
       // at the end of the existing array
       if (currentArray != null) {
         op.value = value[0]
-        return op.path += `/${currentArray.length}`
+        op.path += `/${currentArray.length}`
       }
     }
   },
@@ -155,7 +155,7 @@ const operationFix = {
       const currentValueIndex = patchedArray.indexOf(op.value)
       // Update the operation path to the current value index
       // to avoid removing the wrong value if changes messed with the value index
-      return op.path = (nextOp.path = op.path.replace(/\/\d+$/, `/${currentValueIndex}`))
+      op.path = nextOp.path = op.path.replace(/\/\d+$/, `/${currentValueIndex}`)
     }
   }
 }

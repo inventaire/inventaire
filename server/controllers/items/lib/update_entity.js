@@ -11,7 +11,7 @@ const Item = __.require('models', 'item')
 
 // Working around circular dependencies
 let items_
-const lateRequire = () => items_ = require('./items')
+const lateRequire = () => { items_ = require('./items') }
 setTimeout(lateRequire, 0)
 
 const AfterFn = (viewName, modelFnName) => (fromUri, toUri) => items_[viewName](fromUri)

@@ -93,13 +93,13 @@ const setOrdinal = (snapshot, works) => {
   if (works.length === 1) {
     const work = works[0]
     const ordinal = work.claims['wdt:P1545'] != null ? work.claims['wdt:P1545'][0] : undefined
-    if (ordinal != null) return snapshot['entity:ordinal'] = ordinal
+    if (ordinal != null) snapshot['entity:ordinal'] = ordinal
   } else {
     const series = aggregateClaims(works, 'wdt:P179')
     // Aggregate ordinals only if works are from the same unique serie
     if (series.length === 1) {
       const ordinals = aggregateClaims(works, 'wdt:P1545')
-      if (ordinals.length > 0) return snapshot['entity:ordinal'] = ordinals.join(',')
+      if (ordinals.length > 0) snapshot['entity:ordinal'] = ordinals.join(',')
     }
   }
 }

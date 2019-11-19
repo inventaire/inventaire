@@ -310,8 +310,8 @@ const updateInferredProperties = (doc, property, oldVal, newVal) => {
 const setPossiblyEmptyPropertyArray = (doc, property, propertyArray) => {
   if (propertyArray.length === 0) {
     // if empty, clean the doc from the property
-    return doc.claims = _.omit(doc.claims, property)
+    doc.claims = _.omit(doc.claims, property)
   } else {
-    return doc.claims[property] = propertyArray
+    doc.claims[property] = propertyArray
   }
 }

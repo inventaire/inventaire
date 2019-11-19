@@ -28,7 +28,7 @@ let searchWorkEntityByTitleAndAuthors
 let findAuthorFromWorksLabels
 const lateRequire = () => {
   searchWorkEntityByTitleAndAuthors = require('./search_work_entity_by_title_and_authors')
-  return findAuthorFromWorksLabels = __.require('controllers', 'entities/lib/find_author_from_works_labels')
+  findAuthorFromWorksLabels = __.require('controllers', 'entities/lib/find_author_from_works_labels')
 }
 setTimeout(lateRequire, 0)
 

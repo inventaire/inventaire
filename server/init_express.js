@@ -42,9 +42,9 @@ app.disable('x-powered-by')
 
 module.exports = () => new Promise((resolve, reject) => app.listen(port, host, err => {
   if (err) {
-    return reject(err)
+    reject(err)
   } else {
     _.info(`${name} server is listening on port ${port}...`)
-    return resolve(app)
+    resolve(app)
   }
 }))

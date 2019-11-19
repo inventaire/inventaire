@@ -40,4 +40,6 @@ const createWorks = (entry, userId, batchId) => {
   return Promise.all(works.map(createWork(userId, batchId, authors)))
 }
 
-const addNotCreatedFlag = seed => seed.created = false
+const addNotCreatedFlag = seed => {
+  seed.created = false
+}

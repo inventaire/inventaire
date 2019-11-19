@@ -22,7 +22,7 @@ const { prefixifyInv, unprefixify } = __.require('controllers', 'entities/lib/pr
 
 // Working around the circular dependency
 let getEntityByUri
-const lateRequire = () => getEntityByUri = require('./get_entity_by_uri')
+const lateRequire = () => { getEntityByUri = require('./get_entity_by_uri') }
 setTimeout(lateRequire, 0)
 
 module.exports = (ids, params) => // Hypothesis: there is no need to look for Wikidata data here

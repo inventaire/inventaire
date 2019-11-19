@@ -52,7 +52,7 @@ const searchUrisByAuthorLabel = term => typeSearch(types, term)
 const resolveWorksAndAuthor = (works, author) => authorsUris => Promise.all(works.map(getWorkAndResolve(author, authorsUris)))
 
 const getWorkAndResolve = (authorSeed, authorsUris) => work => {
-  if ((work.uri != null) || (work == null)) return
+  if (work == null || work.uri != null) return
   const workTerms = getEntityNormalizedTerms(work)
   return Promise.all(getWorksFromAuthorsUris(authorsUris))
   .then(_.flatten)

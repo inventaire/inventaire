@@ -22,7 +22,7 @@ module.exports = params => {
   const reset = () => {
     keys = []
     groupedPromise = defer()
-    return timeout = null
+    timeout = null
   }
 
   const getGroupedRequestPromise = () => {
@@ -34,7 +34,7 @@ module.exports = params => {
 
   const doGroupedRequest = () => {
     groupedPromise.resolve(requester(keys))
-    return reset()
+    reset()
   }
 
   // This is the request grouped only interface:

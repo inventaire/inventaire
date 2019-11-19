@@ -27,7 +27,7 @@ const getByAccessLevel = require('./get_by_access_level')
 
 // Working around the circular dependency
 let user_
-const lateRequire = () => user_ = __.require('controllers', 'user/lib/user')
+const lateRequire = () => { user_ = __.require('controllers', 'user/lib/user') }
 setTimeout(lateRequire, 0)
 
 const db = __.require('couch', 'base')('items')

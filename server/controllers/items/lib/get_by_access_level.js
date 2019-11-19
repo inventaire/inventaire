@@ -11,7 +11,7 @@ const { filterPrivateAttributes } = require('./filter_private_attributes')
 
 // Working around the circular dependency
 let items_
-const lateRequire = () => items_ = require('./items')
+const lateRequire = () => { items_ = require('./items') }
 setTimeout(lateRequire, 0)
 
 const bundleListings = listingsTypes => (usersIds, reqUserId) => {

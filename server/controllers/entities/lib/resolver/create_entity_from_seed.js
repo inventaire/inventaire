@@ -94,7 +94,7 @@ const buildClaims = (seedClaims, entityClaims, type) => {
 const addCreatedUriToSeed = entryEntity => createdEntity => {
   if (createdEntity._id == null) return
   entryEntity.uri = `inv:${createdEntity._id}`
-  return entryEntity.created = true
+  entryEntity.created = true
 }
 
 const buildBestEditionTitle = (edition, works) => {

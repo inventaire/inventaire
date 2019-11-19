@@ -14,11 +14,8 @@ const mailcomposer = require('mailcomposer')
 const callbackPromise = (resolve, reject) => {
   return (...args) => {
     const err = args.shift()
-    if (err) {
-      return reject(err)
-    } else {
-      return resolve.apply(null, args)
-    }
+    if (err) reject(err)
+    else resolve.apply(null, args)
   }
 }
 
@@ -26,7 +23,9 @@ module.exports = (data, callback) => {
   let promise
 
   if (!callback && (typeof Promise === 'function')) {
-    promise = new Promise((resolve, reject) => callback = callbackPromise(resolve, reject))
+    promise = new Promise((resolve, reject) => {
+      callback = callbackPromise(resolve, reject)
+    })
   }
 
   if (!data) { data = {} }

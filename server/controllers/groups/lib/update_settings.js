@@ -16,7 +16,7 @@ const radio = __.require('lib', 'radio')
 
 // Working around the circular dependency
 let groups_
-const lateRequire = () => groups_ = require('./groups')
+const lateRequire = () => { groups_ = require('./groups') }
 setTimeout(lateRequire, 0)
 
 module.exports = (data, userId) => {

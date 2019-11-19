@@ -73,10 +73,9 @@ const headersHash = req => _.hashCode(JSON.stringify(req.headers))
 
 const temporaryLock = (key, data) => {
   requestsCache[key] = data
-  // _.log key, 'preventing duplicated request for the next 2 secondes'
-  // unlock after 2 secondes
-  const unlock = () => requestsCache[key] = null
-  return setTimeout(unlock, 2000)
+  // Unlock after 2 secondes
+  const unlock = () => { requestsCache[key] = null }
+  setTimeout(unlock, 2000)
 }
 
 // can be problematic in cluster mode as it won't be shared between instances

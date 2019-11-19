@@ -14,7 +14,7 @@ const User = __.require('models', 'user')
 
 // Working around the circular dependency
 let user_
-const lateRequire = () => user_ = __.require('controllers', 'user/lib/user')
+const lateRequire = () => { user_ = __.require('controllers', 'user/lib/user') }
 setTimeout(lateRequire, 0)
 
 module.exports = userId => getItemsCounts(userId)

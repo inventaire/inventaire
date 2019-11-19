@@ -31,11 +31,13 @@ const resolveSectionSeedsByExternalIds = section => entry => {
   if (!_.some(seeds)) return entry
 
   return resolveSeedsByExternalIds(seeds)
-  .then(seeds => entry[section] = seeds)
+  .then(seeds => { entry[section] = seeds })
   .then(() => entry)
 }
 
 const resolveAuthors = resolveSectionSeedsByExternalIds('authors')
 const resolveWorks = resolveSectionSeedsByExternalIds('works')
 
-const addResolvedFlag = seed => seed.resolved = (seed.uri != null)
+const addResolvedFlag = seed => {
+  seed.resolved = (seed.uri != null)
+}

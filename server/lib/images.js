@@ -50,9 +50,7 @@ module.exports = {
     .write(path, returnPath(path, resolve, reject)))
   },
 
-  applyLimits: (width, height) => {
-    return [ applyLimit(width), applyLimit(height) ]
-  },
+  applyLimits: (width, height) => [ applyLimit(width), applyLimit(height) ],
 
   getUrlFromImageHash: (container, filename) => {
     if (filename != null) return `/img/${container}/${filename}`
@@ -61,17 +59,10 @@ module.exports = {
 
 const applyLimit = (dimension = maxSize) => {
   dimension = Number(dimension)
-  if (dimension > maxSize) {
-    return maxSize
-  } else {
-    return dimension
-  }
+  return dimension > maxSize ? maxSize : dimension
 }
 
 const returnPath = (newPath, resolve, reject) => err => {
-  if (err != null) {
-    return reject(err)
-  } else {
-    return resolve(newPath)
-  }
+  if (err) reject(err)
+  else resolve(newPath)
 }

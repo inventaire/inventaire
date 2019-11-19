@@ -21,7 +21,7 @@ const { getTypePluralNameByTypeUri } = __.require('lib', 'wikidata/aliases')
 
 // Working around the circular dependency
 let getEntitiesPopularity
-const lateRequire = () => getEntitiesPopularity = require('./get_entities_popularity')
+const lateRequire = () => { getEntitiesPopularity = require('./get_entities_popularity') }
 setTimeout(lateRequire, 0)
 
 const whitelistedTypesNames = [ 'series', 'works', 'articles' ]

@@ -23,10 +23,10 @@ module.exports = (req, res) => {
 
   if (uri == null) return error_.bundleMissingBody(req, res, 'uri')
   if (lang == null) return error_.bundleMissingBody(req, res, 'lang')
-  if (value == null) {
-    return error_.bundleMissingBody(req, res, 'value')
+  if (value == null) return error_.bundleMissingBody(req, res, 'value')
 
-  const [ prefix, id ] = uri.split(':')
+  let prefix
+  [ prefix, id ] = uri.split(':')
   const updater = updaters[prefix]
   if (updater == null) {
     return error_.bundle(req, res, `unsupported uri prefix: ${prefix}`, 400, uri)

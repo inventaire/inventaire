@@ -58,11 +58,7 @@ const sanitizeParameter = (input, name, config, place, res) => {
 
   if (input[name] == null) { applyDefaultValue(input, name, config, parameter) }
   if (input[name] == null) {
-    if (config.optional) {
-      return
-    } else {
-      throw error_.newMissing(place, name)
-    }
+    if (!config.optional) throw error_.newMissing(place, name)
   }
 
   format(input, name, parameter.format, config)
@@ -89,46 +85,48 @@ const getPlace = method => {
 const removeUnexpectedParameter = (input, name, configs, res) => {
   if (configs[name] == null) {
     addWarning(res, `unexpected parameter: ${name}`)
-    return delete input[name]
+    delete input[name]
   }
 }
 
 const format = (input, name, formatFn, config) => {
-  if (formatFn != null) return input[name] = formatFn(input[name], name, config)
+  if (formatFn != null) input[name] = formatFn(input[name], name, config)
 }
 
 const applyDefaultValue = (input, name, config, parameter) => {
   if (config.default != null) {
-    return input[name] = _.cloneDeep(config.default)
-  } else if (parameter.default != null) { return input[name] = _.cloneDeep(parameter.default) }
+    input[name] = _.cloneDeep(config.default)
+  } else if (parameter.default != null) {
+    input[name] = _.cloneDeep(parameter.default)
+  }
 }
 
 const obfuscateSecret = (parameter, err) => {
-  if (parameter.secret) return err.context.value = _.obfuscate(err.context.value)
+  if (parameter.secret) err.context.value = _.obfuscate(err.context.value)
 }
 
 const enforceBoundaries = (input, name, config, parameter, res) => {
   const min = config.min || parameter.min
   const max = config.max || parameter.max
   if ((min != null) && (input[name] < min)) {
-    return enforceBoundary(input, name, min, res, 'under')
+    enforceBoundary(input, name, min, res, 'under')
   } else if ((max != null) && (input[name] > max)) {
-    return enforceBoundary(input, name, max, res, 'over')
+    enforceBoundary(input, name, max, res, 'over')
   }
 }
 
 const enforceBoundary = (input, name, boundary, res, position) => {
   input[name] = boundary
-  return addWarning(res, `${name} can't be ${position} ${boundary}`)
+  addWarning(res, `${name} can't be ${position} ${boundary}`)
 }
 
 const renameParameter = (input, name, renameFn) => {
   if (renameFn == null) return
   const aliasedName = renameFn(name)
-  return input[aliasedName] = input[name]
+  input[aliasedName] = input[name]
 }
 
 const addWarning = (res, message) => {
   _.warn(message)
-  return responses_.addWarning(res, 'parameters', message)
+  responses_.addWarning(res, 'parameters', message)
 }

@@ -67,7 +67,7 @@ const resizeFromStream = (reqStream, width, height, req, res) => {
   const handleBufferError = buf => {
     const err = new Error(buf.toString())
     error_.handler(req, res, err)
-    return alreadySent = true
+    alreadySent = true
   }
 
   return images_.shrinkAndFormatStream(reqStream, width, height)

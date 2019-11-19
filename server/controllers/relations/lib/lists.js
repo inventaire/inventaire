@@ -15,7 +15,6 @@ const groups_ = __.require('controllers', 'groups/lib/groups')
 const { Promise } = __.require('lib', 'promises')
 
 module.exports = db => {
-  let lists
   const getAllUserRelations = (userId, includeDocs = false) => db.view('relations', 'byStatus', {
     startkey: [ userId, minKey ],
     endkey: [ userId, maxKey ],
@@ -23,7 +22,7 @@ module.exports = db => {
   }
   )
 
-  return lists = {
+  const lists = {
     getUserRelations: userId => {
       return getAllUserRelations(userId)
       .then(parseRelations)
@@ -49,4 +48,6 @@ module.exports = db => {
       .spread((friends, coMembers) => _.uniq(friends.concat(coMembers)))
     }
   }
+
+  return lists
 }

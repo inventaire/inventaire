@@ -33,7 +33,7 @@ activeLangs.forEach(lang => {
   const polyglot = (polyglots[lang] = new Polyglot({ locale: lang, warn: warnAndFix }))
   const phrases = __.require('i18nDist', `${lang}.json`)
   polyglots[lang].extend(phrases)
-  return translators[lang] = translate(lang, polyglot)
+  translators[lang] = translate(lang, polyglot)
 })
 
 const solveLang = lang => {

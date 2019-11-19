@@ -24,19 +24,24 @@ module.exports = username => {
   if (recentUsernames.includes(username)) {
     throw error_.new(errMessage, 400, username, recentUsernames)
   } else {
-    return lock(username)
+    lock(username)
   }
 }
 
-const lock = username => lockedUsernames.push({
-  username,
-  timestamp: Date.now()
-})
+const lock = username => {
+  lockedUsernames.push({
+    username,
+    timestamp: Date.now()
+  })
+}
 
-// once a username is added to the list, it has 5 seconds to create the account
+// Once a username is added to the list, it has 5 seconds to create the account
 // (which should be at least twice more than what is needed)
 // after what the lock is removed
-const removeExpiredLocks = () => lockedUsernames = lockedUsernames.filter(data => // only keep accounts that start to be created less than 5 secondes ago
-  !_.expired(data.timestamp, 5000))
+const removeExpiredLocks = () => {
+  lockedUsernames = lockedUsernames
+    // Only keep accounts that started to be created less than 5 secondes ago
+    .filter(data => !_.expired(data.timestamp, 5000))
+}
 
 setInterval(removeExpiredLocks, 10 * 1000)

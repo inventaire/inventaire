@@ -42,7 +42,8 @@ const solveIntent = __.require('controllers', 'relations/lib/solve_intent')(acti
 
 describe('relations', () => describe('solveIntent', () => {
   describe('requestFriend', () => {
-    beforeEach(() => spies = resetSpies())
+    beforeEach(() => { spies = resetSpies() })
+
     it('env', done => {
       solveIntent.should.be.an.Object()
       solveIntent.requestFriend.should.be.a.Function()
@@ -85,7 +86,8 @@ describe('relations', () => describe('solveIntent', () => {
   })
 
   describe('cancelFriendRequest', () => {
-    beforeEach(() => spies = resetSpies())
+    beforeEach(() => { spies = resetSpies() })
+
     it("should do nothing on status 'none'", done => {
       solveIntent.cancelFriendRequest('a', 'b', 'none')
       totalSpiesCount().should.equal(0)
@@ -113,7 +115,8 @@ describe('relations', () => describe('solveIntent', () => {
   })
 
   describe('removeFriendship', () => {
-    beforeEach(() => spies = resetSpies())
+    beforeEach(() => { spies = resetSpies() })
+
     it("should do nothing on status 'none'", done => {
       solveIntent.removeFriendship('a', 'b', 'none')
       totalSpiesCount().should.equal(0)

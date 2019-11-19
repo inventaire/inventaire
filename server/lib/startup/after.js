@@ -16,5 +16,5 @@ module.exports = () => {
 
   // Run once the databases are ready to prevent having multiple error messages
   // if databases aren't properly setup
-  return __.require('lib', 'emails/mailer')()
+  __.require('lib', 'emails/mailer')()
 }

@@ -13,7 +13,7 @@ const slugify = require('./slugify')
 
 // Working around the circular dependency
 groups_ = null
-const lateRequire = () => groups_ = require('./groups')
+const lateRequire = () => { groups_ = require('./groups') }
 setTimeout(lateRequire, 0)
 
 module.exports = (name, groupId) => trySlugCandidate(slugify(name), groupId)

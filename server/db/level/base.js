@@ -58,11 +58,8 @@ const Reset = sub => () => new Promise((resolve, reject) => {
   return sub.createKeyStream()
   .on('data', key => ops.push({ type: 'del', key }))
   .on('end', () => sub.batch(ops, (err, res) => {
-    if (err) {
-      return reject(err)
-    } else {
-      return resolve(res)
-    }
+    if (err) reject(err)
+    else resolve(res)
   }))
 })
 
