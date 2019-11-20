@@ -1,5 +1,4 @@
 
-
 const routes = require('./routes')
 const auth = require('./auth')
 const security = require('./security')

@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-
 // HOW TO:
 // -----------------
 // - create a new migration doc based on db/couchdb/migration_docs

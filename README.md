@@ -20,7 +20,6 @@ This repository tracks the server-side developments, while the (heavy) [client-s
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-
 - [Installation](#installation)
   - [Dependencies to install manually:](#dependencies-to-install-manually)
   - [Project development environment installation](#project-development-environment-installation)

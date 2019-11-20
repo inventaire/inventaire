@@ -1,5 +1,4 @@
 
-
 const __ = require('config').universalPath
 const responses_ = __.require('lib', 'responses')
 const error_ = __.require('lib', 'error/error')

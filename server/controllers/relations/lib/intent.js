@@ -1,5 +1,4 @@
 
-
 const queries = require('./queries')
 const actions = require('./actions')
 const solve = require('./solve_intent')(actions)

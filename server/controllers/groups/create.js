@@ -1,5 +1,4 @@
 
-
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const responses_ = __.require('lib', 'responses')

@@ -1,5 +1,4 @@
 
-
 module.exports = {
   legacyApiRedirect: (req, res, next) => {
     const parts = req._parsedUrl.pathname.split('/')

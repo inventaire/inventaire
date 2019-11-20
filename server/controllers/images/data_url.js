@@ -1,5 +1,4 @@
 
-
 // Get an image data-url from a URL
 
 const CONFIG = require('config')

@@ -1,5 +1,4 @@
 
-
 // this module is doomed to be replaced by a geobox parser
 // to fit search_by_positions needs: keeping it as a placeholder
 const __ = require('config').universalPath

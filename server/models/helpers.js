@@ -1,5 +1,4 @@
 
-
 module.exports = attributes => ({
   solveConstraint: (model, attribute) => {
     const { possibilities, defaultValue } = attributes.constrained[attribute]

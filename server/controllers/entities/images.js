@@ -1,5 +1,4 @@
 
-
 // An endpoint to get entities images, directly from claims,
 // or from sub-entities claims if considered better illustrations
 // Ex: requesting images for a work, this endpoint would return images URLs

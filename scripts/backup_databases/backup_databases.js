@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-
 const [ suffix ] = Array.from(process.argv.slice(2))
 
 const CONFIG = require('config')

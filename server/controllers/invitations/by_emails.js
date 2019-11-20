@@ -1,5 +1,4 @@
 
-
 // Send an email to invite someone to connect to the requester as friends
 // If a group id is passed, invite to join the group instead (group admins only)
 

@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-
 // a little script that throws if it isn't passed
 // a valid 2-letter language code as first argument
 // and does nothing otherwise
