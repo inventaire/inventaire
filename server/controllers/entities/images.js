@@ -1,6 +1,4 @@
-/* eslint-disable
-    prefer-const,
-*/
+
 
 // Fix any style issues and re-enable lint.
 // An endpoint to get entities images, directly from claims,

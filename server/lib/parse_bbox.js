@@ -1,6 +1,4 @@
-/* eslint-disable
-    prefer-const,
-*/
+
 
 // Fix any style issues and re-enable lint.
 // this module is doomed to be replaced by a geobox parser

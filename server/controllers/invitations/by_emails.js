@@ -1,6 +1,4 @@
-/* eslint-disable
-    prefer-const,
-*/
+
 
 // Fix any style issues and re-enable lint.
 // Send an email to invite someone to connect to the requester as friends

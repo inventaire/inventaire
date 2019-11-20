@@ -1,6 +1,4 @@
-/* eslint-disable
-    implicit-arrow-linebreak,
-*/
+
 
 // Fix any style issues and re-enable lint.
 // Get and format Wikidata entities to match Inventaire entities:

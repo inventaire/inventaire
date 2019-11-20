@@ -1,6 +1,4 @@
-/* eslint-disable
-    prefer-const,
-*/
+
 
 // Fix any style issues and re-enable lint.
 // Doc: http://developer.piwik.org/api-reference/tracking-api

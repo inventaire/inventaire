@@ -1,6 +1,4 @@
-/* eslint-disable
-    prefer-const,
-*/
+
 
 // Fix any style issues and re-enable lint.
 const __ = require('config').universalPath

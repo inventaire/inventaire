@@ -1,7 +1,5 @@
 #!/usr/bin/env node
-/* eslint-disable
-    prefer-const,
-*/
+
 
 // Fix any style issues and re-enable lint.
 
