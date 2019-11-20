@@ -6,18 +6,24 @@ const fs = require('fs')
 const updateDocsByBatch = require('./update_docs_by_batch')
 
 module.exports = params => {
-  let db, log
-  let { dbName, designDocName, preview, silent } = params
-  params.preview = preview != null ? preview : (preview = true)
-  params.silent = silent != null ? silent : (silent = false)
-  if (params.showDiff == null) { params.showDiff = true }
-  params.log = (log = silent ? _.identity : _.log)
+  const { dbName, designDocName } = params
+
+  // Default to true
+  params.preview = params.preview !== false
+  // Default to false
+  params.silent = params.silent === true
+  // Default to true
+  params.showDiff = params.showDiff !== false
+
+  const { preview, silent } = params
+
+  const log = params.log = (silent ? _.identity : _.log)
   const Log = label => obj => log(obj, label)
 
   console.log('preview mode:', preview)
   console.log('silent mode:', silent)
 
-  params.db = (db = __.require('couch', 'base')(dbName, designDocName))
+  const db = params.db = __.require('couch', 'base')(dbName, designDocName)
   if (db == null) throw new Error('bad dbName')
 
   const updater = (docsIdsPromise, updateFunction, label) => {
@@ -40,17 +46,21 @@ module.exports = params => {
     }
   }
 
-  const getAllDocsKeys = () => db.allDocsKeys()
-  .then(res => {
-    const rows = res.rows.filter(row => !row.id.startsWith('_design/'))
-    const ids = _.map(rows, 'id')
-    return _.success(ids, 'doc ids found')
-  })
-  .catch(_.ErrorRethrow('getAllDocsKeys error'))
+  const getAllDocsKeys = () => {
+    return db.allDocsKeys()
+    .then(res => {
+      const rows = res.rows.filter(row => !row.id.startsWith('_design/'))
+      const ids = _.map(rows, 'id')
+      return _.success(ids, 'doc ids found')
+    })
+    .catch(_.ErrorRethrow('getAllDocsKeys error'))
+  }
 
-  const getViewKeys = viewName => db.view(designDocName, viewName, { reduce: false })
-  .then(res => res.rows.map(_.property('id')))
-  .then(Log('view ids'))
+  const getViewKeys = viewName => {
+    return db.view(designDocName, viewName, { reduce: false })
+    .then(res => res.rows.map(_.property('id')))
+    .then(Log('view ids'))
+  }
 
   return API
 }

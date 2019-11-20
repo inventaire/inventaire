@@ -7,7 +7,7 @@
 // - run `npm run migrator migration_doc_filename`
 
 let migrationParams
-const [ fileName ] = Array.from(process.argv.slice(2))
+const [ fileName ] = process.argv.slice(2)
 
 const __ = require('config').universalPath
 

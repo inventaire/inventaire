@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const breq = require('bluereq')
@@ -21,9 +20,9 @@ Promise.all(dbsBaseNames)
   return breq.post(`${dbHost}/_replicate`, repDoc)
   .then(res => res.body)
   .then(_.Log(`${dbTestName} replication response`))
-}).catch(err => {
+})
+.catch(err => {
   console.log(`${err.body.reason}\n\
-Hum, have you ran the tests first ?`
-  )
+  Hum, have you ran the tests first ?`)
   return error_.catchNotFound(err)
 })

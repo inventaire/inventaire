@@ -12,7 +12,7 @@ module.exports = dbName => {
 }
 
 const ignoreAlreadyExisting = url => err => {
-  if ((err.body != null ? err.body.error.type : undefined) === 'index_already_exists_exception') {
+  if (err.body && err.body.error.type === 'index_already_exists_exception') {
     return _.warn(url, 'database already exist')
   } else {
     throw err

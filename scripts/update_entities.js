@@ -22,31 +22,36 @@ const docDiff = __.require('couchdb', 'doc_diffs')
 const Patch = __.require('models', 'patch')
 const userId = __.require('couch', 'hard_coded_documents').users.updater._id
 
-const [ updateFnFilePath ] = Array.from(process.argv.slice(2))
-let { preview, silent, getNextBatch, updateFn, stats } = require(updateFnFilePath)
+const [ updateFnFilePath ] = process.argv.slice(2)
+const { getNextBatch, updateFn, stats } = require(updateFnFilePath)
+let { preview, silent } = require(updateFnFilePath)
 
-preview = preview != null ? preview : (preview = true)
-silent = silent != null ? silent : (silent = false)
+// Default to true
+preview = preview !== false
+// Default to false
+silent = silent === true
 
 assert_.function(getNextBatch)
 assert_.function(updateFn)
 
-const updateSequentially = () => getNextBatch()
-.then(res => {
-  const { rows } = res
-  if (rows.length === 0) return
+const updateSequentially = () => {
+  return getNextBatch()
+  .then(res => {
+    const { rows } = res
+    if (rows.length === 0) return
 
-  const updatesData = rows.map(row => {
-    const { doc: currentDoc } = row
-    const updatedDoc = updateFn(_.cloneDeep(currentDoc))
-    if (!silent) { docDiff(currentDoc, updatedDoc, preview) }
-    return { currentDoc, updatedDoc }
+    const updatesData = rows.map(row => {
+      const { doc: currentDoc } = row
+      const updatedDoc = updateFn(_.cloneDeep(currentDoc))
+      if (!silent) { docDiff(currentDoc, updatedDoc, preview) }
+      return { currentDoc, updatedDoc }
+    })
+
+    return postEntitiesBulk(updatesData)
+    .then(postPatchesBulk(updatesData))
+    .then(updateSequentially)
   })
-
-  return postEntitiesBulk(updatesData)
-  .then(postPatchesBulk(updatesData))
-  .then(updateSequentially)
-})
+}
 
 const postEntitiesBulk = updatesData => entities_.db.bulk(_.map(updatesData, 'updatedDoc'))
 
@@ -66,5 +71,7 @@ const buildPatches = entityResById => updateData => {
 }
 
 updateSequentially()
-.then(() => { if (stats != null) { return _.log(stats(), 'stats') } })
+.then(() => {
+  if (stats) _.log(stats(), 'stats')
+})
 .catch(_.Error('global error'))

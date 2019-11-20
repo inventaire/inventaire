@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-
 const breq = require('bluereq')
 const CONFIG = require('config')
 const __ = CONFIG.universalPath

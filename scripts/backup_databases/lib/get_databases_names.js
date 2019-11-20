@@ -3,8 +3,10 @@ const __ = CONFIG.universalPath
 const requests_ = __.require('lib', 'requests')
 const allDbsUrl = `${CONFIG.db.fullHost()}/_all_dbs`
 
-module.exports = suffix => requests_.get(allDbsUrl)
-.filter(isMatchingDatabase(suffix))
+module.exports = suffix => {
+  return requests_.get(allDbsUrl)
+  .filter(isMatchingDatabase(suffix))
+}
 
 const isMatchingDatabase = suffix => {
   const patternString = (suffix != null) ? `^\\w+-${suffix}$` : '^\\w+$'

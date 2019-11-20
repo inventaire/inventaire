@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')

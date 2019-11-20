@@ -68,14 +68,14 @@ ndjson_to_json "$filtered_dump_filename" "${json_filename}"
 ndjson_to_json "$filtered_dump_filename_with_seeds" "${json_with_seeds_filename}"
 
 # TTL dump
-# We need to return to the root directory so that convert_ndjson_dump_to_ttl
+# We need to return to the root directory so that convert_ndjson_dump_to_ttl.js
 # can find the CONFIG
 cd $root_cwd
 turtle_filename="entities.ttl"
 turtle_with_seeds_filepath="entities_with_seeds.ttl"
 echo "converting to turtle: $turtle_filename $turtle_with_seeds_filepath"
-cat "${today_folder}/${filtered_dump_filename}" | ./scripts/dumps/convert_ndjson_dump_to_ttl > "${today_folder}/${turtle_filename}"
-cat "${today_folder}/${filtered_dump_filename_with_seeds}" | ./scripts/dumps/convert_ndjson_dump_to_ttl > "${today_folder}/${turtle_with_seeds_filepath}"
+cat "${today_folder}/${filtered_dump_filename}" | ./scripts/dumps/convert_ndjson_dump_to_ttl.js > "${today_folder}/${turtle_filename}"
+cat "${today_folder}/${filtered_dump_filename_with_seeds}" | ./scripts/dumps/convert_ndjson_dump_to_ttl.js > "${today_folder}/${turtle_with_seeds_filepath}"
 
 validate_ttl(){
   echo "validating ttl: $1"

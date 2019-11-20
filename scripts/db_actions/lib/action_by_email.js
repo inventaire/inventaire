@@ -3,7 +3,7 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const ActionByInput = require('./action_by_input')
 
-const [ email ] = Array.from(process.argv.slice(2))
+const [ email ] = process.argv.slice(2)
 
 _.log(email, 'email')
 

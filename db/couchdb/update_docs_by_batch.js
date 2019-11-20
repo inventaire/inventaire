@@ -45,18 +45,20 @@ const updateDoc = params => {
   const { updateFunction, log, showDiff, preview } = params
   const docDiff = showDiff ? require('./doc_diffs') : _.noop
 
-  return doc => // updateFunction can return a promise, so we need to convert sync functions
-  // to promises too, to keep it consistent
-  // Use a clone of the doc to keep the doc itself unmutated
+  return doc => {
+    // updateFunction can return a promise, so we need to convert sync functions
+    // to promises too, to keep it consistent
+    // Use a clone of the doc to keep the doc itself unmutated
     Promise.try(() => updateFunction(_.cloneDeep(doc)))
-  .then(updatedDoc => {
-    if (objDiff(doc, updatedDoc)) {
-      docDiff(doc, updatedDoc, preview)
-      if (!preview) return updatedDoc
-    } else {
-      log(doc._id, 'no changes')
-    }
-  })
+    .then(updatedDoc => {
+      if (objDiff(doc, updatedDoc)) {
+        docDiff(doc, updatedDoc, preview)
+        if (!preview) return updatedDoc
+      } else {
+        log(doc._id, 'no changes')
+      }
+    })
+  }
 }
 
 const splitInSubgroups = (collection, groupsLength = 1000) => {

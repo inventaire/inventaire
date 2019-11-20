@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-
 const exec = require('./exec')
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
