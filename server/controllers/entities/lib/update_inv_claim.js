@@ -22,7 +22,7 @@ const updateInvClaim = (user, id, property, oldVal, newVal) => {
     }
 
     // Known cases: entities turned into redirections or removed:placeholders
-    if ((currentDoc != null ? currentDoc.claims : undefined) == null) {
+    if (currentDoc.claims == null) {
       const context = { id, property, oldVal, newVal }
       throw error_.new('this entity is obsolete', 400, context)
     }

@@ -1,4 +1,3 @@
-let helpers
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
@@ -35,7 +34,7 @@ const solveLang = lang => {
   else return 'en'
 }
 
-module.exports = (helpers = {
+const helpers = module.exports = {
   i18n: (lang, key, args) => {
     lang = solveLang(lang)
     return translators[lang](key, args)
@@ -54,4 +53,4 @@ module.exports = (helpers = {
     moment.locale(lang)
     return moment(epochTime).format(format)
   }
-})
+}

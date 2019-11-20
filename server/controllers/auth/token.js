@@ -23,7 +23,7 @@ const confirmEmailValidity = (req, res) => {
 }
 
 const redirectValidEmail = (res, bool, resp) => {
-  if (!bool) { _.error(resp, 'email validation failed') }
+  if (!bool) _.error(resp, 'email validation failed')
   return res.redirect(`/?validEmail=${bool}`)
 }
 

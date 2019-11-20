@@ -1,4 +1,3 @@
-
 const CONFIG = require('config')
 require('should')
 // Using the request lib to have total control on the generated request content type

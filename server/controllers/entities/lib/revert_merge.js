@@ -9,25 +9,27 @@ const updateItemEntity = __.require('controllers', 'items/lib/update_entity')
 entities_ = require('./entities')
 const Patch = __.require('models', 'patch')
 
-module.exports = (userId, fromId) => patches_.getSnapshots(fromId)
-.then(findVersionBeforeRedirect)
-.then(targetVersion => entities_.byId(fromId)
-.then(currentVersion => {
-  const toUri = currentVersion.redirect
-  const fromUri = `inv:${fromId}`
-  targetVersion._id = currentVersion._id
-  targetVersion._rev = currentVersion._rev
+module.exports = (userId, fromId) => {
+  return patches_.getSnapshots(fromId)
+  .then(findVersionBeforeRedirect)
+  .then(targetVersion => entities_.byId(fromId)
+  .then(currentVersion => {
+    const toUri = currentVersion.redirect
+    const fromUri = `inv:${fromId}`
+    targetVersion._id = currentVersion._id
+    targetVersion._rev = currentVersion._rev
 
-  return entities_.putUpdate({
-    userId,
-    currentDoc: currentVersion,
-    updatedDoc: targetVersion
-  })
-  .tap(() => updateItemEntity.afterRevert(fromUri, toUri))
-  .tap(() => recoverPlaceholders(userId, currentVersion.removedPlaceholdersIds))
-  .tap(() => revertMergePatch(userId, fromUri, toUri))
-  .tap(() => revertClaimsRedirections(userId, fromUri, toUri))
-}))
+    return entities_.putUpdate({
+      userId,
+      currentDoc: currentVersion,
+      updatedDoc: targetVersion
+    })
+    .tap(() => updateItemEntity.afterRevert(fromUri, toUri))
+    .tap(() => recoverPlaceholders(userId, currentVersion.removedPlaceholdersIds))
+    .tap(() => revertMergePatch(userId, fromUri, toUri))
+    .tap(() => revertClaimsRedirections(userId, fromUri, toUri))
+  }))
+}
 
 const findVersionBeforeRedirect = patches => {
   const versions = patches.map(_.property('snapshot'))
@@ -60,7 +62,10 @@ const revertMergePatch = (userId, fromUri, toUri) => {
     patches_.byEntityId(toId)
   ])
   .spread((currentDoc, patches) => {
-    const mergePatch = patches.find(patch => (patch.context != null ? patch.context.mergeFrom : undefined) === fromUri)
+    const mergePatch = patches.find(patch => {
+      return patch.context && patch.context.mergeFrom === fromUri
+    })
+
     if (mergePatch == null) {
       // This happens when the merged entity didn't bring any label or claim
       // value that the merge target hadn't already
@@ -74,8 +79,10 @@ const revertMergePatch = (userId, fromUri, toUri) => {
   })
 }
 
-const revertClaimsRedirections = (userId, fromUri, toUri) => patches_.byRedirectUri(fromUri)
-.map(revertClaimsRedirectionFromPatch(userId))
+const revertClaimsRedirections = (userId, fromUri, toUri) => {
+  return patches_.byRedirectUri(fromUri)
+  .map(revertClaimsRedirectionFromPatch(userId))
+}
 
 const revertClaimsRedirectionFromPatch = userId => patch => {
   const entityId = patch._id.split(':')[0]

@@ -1,5 +1,3 @@
-
-let API
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
@@ -19,7 +17,7 @@ const login = userData => connect(`${authEndpoint}?action=login`, userData)
   return signup(userData)
 })
 
-module.exports = (API = {
+const API = module.exports = {
   signup: email => {
     return signup({
       email,
@@ -72,7 +70,7 @@ module.exports = (API = {
     // and be rejected because of it
     return faker.fake('{{name.firstName}}').replace(/\W/, '') + randomString(2)
   }
-})
+}
 
 const parseCookie = res => res.headers['set-cookie'].join(';')
 

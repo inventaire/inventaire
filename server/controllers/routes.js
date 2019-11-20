@@ -1,4 +1,3 @@
-let routes
 const CONFIG = require('config')
 const endpoint = require('./endpoint')
 const glob = require('./glob')
@@ -7,7 +6,7 @@ const glob = require('./glob')
 // 1 - api is the default prefix for server-side routes
 // 2 - the controller / module name
 
-module.exports = (routes = {
+const routes = module.exports = {
   'api/auth': endpoint('./auth/auth'),
   'api/token': endpoint('./auth/token'),
   'api/user': endpoint('./user/user'),
@@ -30,7 +29,7 @@ module.exports = (routes = {
   'api/tasks': endpoint('./tasks/tasks'),
   'api/submit': require('./auth/fake_submit'),
   'img/*': endpoint('./images/resize')
-})
+}
 
 if (CONFIG.logMissingI18nKeys) {
   routes['api/i18n'] = require('./i18n')

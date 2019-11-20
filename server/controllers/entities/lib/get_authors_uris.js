@@ -10,9 +10,11 @@ const authorProperties = [
   'wdt:P6338'
 ]
 
-module.exports = work => _(work.claims)
-.pick(authorProperties)
-.values()
-.flatten()
-.uniq()
-.value()
+module.exports = work => {
+  return _(work.claims)
+  .pick(authorProperties)
+  .values()
+  .flatten()
+  .uniq()
+  .value()
+}

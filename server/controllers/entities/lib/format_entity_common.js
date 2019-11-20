@@ -9,8 +9,7 @@ module.exports = entity => {
 
   // Matching Wikidata entities format for images
   // Here we are missing license, credits, and author attributes
-  entity.image =
-    { url: getEntityImagesFromClaims(entity)[0] }
+  entity.image = { url: getEntityImagesFromClaims(entity)[0] }
 
   return entity
 }

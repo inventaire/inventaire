@@ -1,8 +1,7 @@
-let responses_
 const __ = require('config').universalPath
 const assert_ = __.require('utils', 'assert_types')
 
-module.exports = (responses_ = {
+const responses_ = module.exports = {
   // returns a function triggering a standard confirmation response
   ok: (res, status = 200) => {
     res.status(status)
@@ -41,7 +40,7 @@ module.exports = (responses_ = {
     if (!res.warnings[category]) { res.warnings[category] = [] }
     return res.warnings[category].push(message)
   }
-})
+}
 
 const setWarnings = (res, data) => {
   if (res.warnings) data.warnings = res.warnings

@@ -16,6 +16,7 @@ module.exports = (req, res) => {
   .then(params => {
     const { user: userId, limit, offset } = params
     return patches_.byUserId(userId, limit, offset)
-  }).then(responses_.Send(res))
+  })
+  .then(responses_.Send(res))
   .catch(error_.Handler(req, res))
 }

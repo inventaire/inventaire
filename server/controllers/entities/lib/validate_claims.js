@@ -7,10 +7,9 @@ const getEntityType = require('./get_entity_type')
 const validateClaimProperty = require('./validate_claim_property')
 
 module.exports = params => {
-  let type
   const { newClaims, currentClaims, creating } = params
   const wdtP31 = currentClaims['wdt:P31'] || newClaims['wdt:P31']
-  params.type = (type = getEntityType(wdtP31))
+  const type = params.type = getEntityType(wdtP31)
 
   if (!_.isNonEmptyPlainObject(newClaims)) {
     throw error_.new('invalid claims', 400, { newClaims })
@@ -26,8 +25,10 @@ module.exports = params => {
   return promises_.all(_.flatten(validatePropertiesClaims(params)))
 }
 
-const validatePropertiesClaims = params => Object.keys(params.newClaims)
-.map(validatePropertyClaims(params))
+const validatePropertiesClaims = params => {
+  return Object.keys(params.newClaims)
+  .map(validatePropertyClaims(params))
+}
 
 const validatePropertyClaims = params => property => {
   const { newClaims, currentClaims, type } = params
@@ -60,7 +61,7 @@ const perTypeClaimsTests = {
 }
 
 const assertPropertyHasValue = (claims, property, entityLabel, propertyLabel) => {
-  if ((claims[property] != null ? claims[property][0] : undefined) == null) {
+  if (!(claims[property] && claims[property][0] != null)) {
     const message = `${entityLabel} should have ${propertyLabel} (${property})`
     throw error_.new(message, 400, claims)
   }

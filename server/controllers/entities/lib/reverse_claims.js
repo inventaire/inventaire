@@ -90,17 +90,19 @@ const _wikidataReverseClaims = (property, value) => {
   .map(prefixifyWd)
 }
 
-const invReverseClaims = (property, value) => entities_.byClaim(property, value, true, true)
-.map(getInvEntityCanonicalUri)
-.catch(err => {
-  // Allow to request reverse claims for properties that aren't yet
-  // whitelisted to be added to inv properties: simply ignore inv entities
-  if (err.message === "property isn't whitelisted") {
-    return []
-  } else {
-    throw err
-  }
-})
+const invReverseClaims = (property, value) => {
+  return entities_.byClaim(property, value, true, true)
+  .map(getInvEntityCanonicalUri)
+  .catch(err => {
+    // Allow to request reverse claims for properties that aren't yet
+    // whitelisted to be added to inv properties: simply ignore inv entities
+    if (err.message === "property isn't whitelisted") {
+      return []
+    } else {
+      throw err
+    }
+  })
+}
 
 // Customize queries to tailor for specific types of results
 // Ex: 'wdt:P921' reverse claims should not include films, etc

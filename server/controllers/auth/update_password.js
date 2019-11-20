@@ -9,7 +9,6 @@ const pw_ = __.require('lib', 'crypto').passwords
 const { oneHour } = __.require('lib', 'times')
 
 module.exports = (req, res, next) => {
-  let test
   const { user, body } = req
   const { 'current-password': currentPassword, 'new-password': newPassword } = body
   const { resetPassword } = user
@@ -17,6 +16,8 @@ module.exports = (req, res, next) => {
   if (!User.validations.password(newPassword)) {
     return error_.bundleInvalid(req, res, 'new-password', newPassword)
   }
+
+  let test
 
   // classic password update
   if (currentPassword != null) {
@@ -44,8 +45,10 @@ module.exports = (req, res, next) => {
   .catch(error_.Handler(req, res))
 }
 
-const updatePassword = (user, newPassword) => pw_.hash(newPassword)
-.then(updateUserPassword.bind(null, user._id, user))
+const updatePassword = (user, newPassword) => {
+  return pw_.hash(newPassword)
+  .then(updateUserPassword.bind(null, user._id, user))
+}
 
 const verifyCurrentPassword = (user, currentPassword) => pw_.verify(user.password, currentPassword)
 
@@ -53,7 +56,10 @@ const filterInvalid = isValid => {
   if (!isValid) throw error_.newInvalid('new-password')
 }
 
-const updateUserPassword = (userId, user, newHash) => user_.db.update(userId, User.updatePassword.bind(null, user, newHash))
+const updateUserPassword = (userId, user, newHash) => {
+  const updateFn = User.updatePassword.bind(null, user, newHash)
+  return user_.db.update(userId, updateFn)
+}
 
 const testOpenResetPasswordWindow = resetPassword => {
   if (_.expired(resetPassword, oneHour)) {

@@ -18,7 +18,7 @@ const createWdEntity = params => {
   wdOauth.validate(user)
   const oauth = wdOauth.getFullCredentials(user)
 
-  let entity = { labels, claims }
+  const entity = { labels, claims }
 
   _.log(entity, 'wd entity creation')
 
@@ -29,22 +29,19 @@ const createWdEntity = params => {
   })
   .then(wdEdit({ oauth }, 'entity/create'))
   .then(res => {
-    ({ entity } = res)
-    if (entity == null) {
+    const { entity: createdEntity } = res
+    if (createdEntity == null) {
       throw error_.new('invalid wikidata-edit response', 500, { res })
     }
 
-    entity.uri = prefixifyWd(entity.id)
-    return entity
+    createdEntity.uri = prefixifyWd(createdEntity.id)
+    return createdEntity
   })
 }
 
 const validate = (entity, isAlreadyValidated) => {
-  if (isAlreadyValidated) {
-    return Promise.resolve()
-  } else {
-    return validateEntity(entity)
-  }
+  if (isAlreadyValidated) return Promise.resolve()
+  else return validateEntity(entity)
 }
 
 const validateWikidataCompliance = entity => {

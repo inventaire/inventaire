@@ -1,4 +1,3 @@
-
 require('should')
 const { createEdition, createPublisher } = require('../../fixtures/entities')
 const { updateClaim } = require('../../utils/entities')

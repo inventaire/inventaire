@@ -28,24 +28,28 @@ module.exports = (user, uris) => {
   return removeNext()
 }
 
-const tolerantRemove = (reqUserId, id) => // Turning deleted entities into removed:placeholder as it as largely the same effect
+// Turning deleted entities into removed:placeholder as it as largely the same effect
 // as deleting (not indexed by views any more) but it's reversible, and already
 // understood by other services, that will either unindex it (search engine updater)
 // or ignore it (client)
-  placeholders_.remove(reqUserId, id)
-.catch(err => {
-  // If the entity was already turned into a removed:placeholder
-  // there is no new change and this operation produces and 'empty patch' error
-  // that we can ignore, as it's simply already in the desired state
-  if (err.message === 'empty patch') {
-    _.warn(id, 'this entity is already a removed:placeholder: ignored')
-  } else {
-    throw err
-  }
-})
+const tolerantRemove = (reqUserId, id) => {
+  return placeholders_.remove(reqUserId, id)
+  .catch(err => {
+    // If the entity was already turned into a removed:placeholder
+    // there is no new change and this operation produces and 'empty patch' error
+    // that we can ignore, as it's simply already in the desired state
+    if (err.message === 'empty patch') {
+      _.warn(id, 'this entity is already a removed:placeholder: ignored')
+    } else {
+      throw err
+    }
+  })
+}
 
-const deleteUriValueClaims = (user, uri) => entities_.byClaimsValue(uri)
-.then(removeClaimsSequentially(user, uri))
+const deleteUriValueClaims = (user, uri) => {
+  return entities_.byClaimsValue(uri)
+  .then(removeClaimsSequentially(user, uri))
+}
 
 const removeClaimsSequentially = (user, uri) => claimsData => {
   const removeNextClaim = () => {

@@ -1,10 +1,12 @@
 module.exports = {
   getSimpleDayDate: date => {
-    // Parse ISO date
-    return (date != null ? date.split('T')[0]
-    // If the date is a January 1st, it's very probably because
-    // its a year-precision date
-    .replace('-01-01', '') : undefined)
+    if (date) {
+      // Parse ISO date
+      date.split('T')[0]
+      // If the date is a January 1st, it's very probably because
+      // its a year-precision date
+      .replace('-01-01', '')
+    }
   },
 
   sortByOrdinalOrDate: (a, b) => getPartScore(a) - getPartScore(b),
@@ -29,9 +31,6 @@ const lastYearTime = new Date('2100').getTime()
 
 const lastOrdinal = 1000
 const ordinalNum = ordinal => {
-  if (/^\d+$/.test(ordinal)) {
-    return parseInt(ordinal)
-  } else {
-    return lastOrdinal
-  }
+  if (/^\d+$/.test(ordinal)) return parseInt(ordinal)
+  else return lastOrdinal
 }

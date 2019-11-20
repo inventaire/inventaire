@@ -16,8 +16,6 @@ module.exports = (user, invEntityUri) => {
   .then(createdEntity => {
     const { uri: wdEntityUri } = createdEntity
     return mergeEntities(reqUserId, invEntityUri, wdEntityUri)
-    .then(() => ({
-      uri: wdEntityUri
-    }))
+    .then(() => ({ uri: wdEntityUri }))
   })
 }

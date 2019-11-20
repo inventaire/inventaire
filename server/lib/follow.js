@@ -100,13 +100,11 @@ const startFollowingDb = params => {
   return follow(config, (err, change) => {
     if (err != null) return _.error(err, `${dbName} follow err`)
     setLastSeq(change.seq)
-    return (() => {
-      const result = []
-      for (const follower of dbFollowers) {
-        if (follower.filter(change.doc)) { result.push(follower.onChange(change)) } else result.push(undefined)
+    for (const follower of dbFollowers) {
+      if (follower.filter(change.doc)) {
+        follower.onChange(change)
       }
-      return result
-    })()
+    }
   })
 }
 

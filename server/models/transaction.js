@@ -1,4 +1,3 @@
-let Transaction, validations
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
@@ -7,9 +6,9 @@ const snapshotItemAttributes = require('./attributes/item').snapshot
 const snapshotUserAttributes = require('./attributes/user').snapshot
 const { states, basicNextActions, nextActionsWithReturn } = require('./attributes/transaction')
 
-module.exports = (Transaction = {})
+const Transaction = module.exports = {}
 
-Transaction.validations = (validations = require('./validations/transaction'))
+const validations = Transaction.validations = require('./validations/transaction')
 
 Transaction.create = (itemDoc, ownerDoc, requesterDoc) => {
   const itemId = itemDoc._id

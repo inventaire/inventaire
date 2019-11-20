@@ -1,9 +1,8 @@
-let error_, errorHandler
 const __ = require('config').universalPath
 const assert_ = __.require('utils', 'assert_types')
 const formatError = require('./format_error')
 
-module.exports = (error_ = {})
+const error_ = module.exports = {}
 
 // help bundling information at error instanciation
 // so that it can be catched and parsed in a standardized way
@@ -25,7 +24,7 @@ error_.Complete = (...args) => err => {
   throw error_.complete.apply(null, [ err ].concat(args))
 }
 
-error_.handler = (errorHandler = require('./error_handler'))
+const errorHandler = error_.handler = require('./error_handler')
 
 // error_.handler with a binded res object
 // to be used in final promise chains like so:

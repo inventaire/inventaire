@@ -1,4 +1,3 @@
-
 require('should')
 const { nonAuthReq, undesiredErr } = require('../utils/utils')
 const { createWorkWithAuthorAndSerie } = require('../fixtures/entities')

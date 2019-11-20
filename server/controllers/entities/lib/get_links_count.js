@@ -1,5 +1,4 @@
 // Get the amount of entities linking to a given entity
-
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const promises_ = __.require('lib', 'promises')
@@ -19,7 +18,9 @@ module.exports = (uri, refresh) => {
   .catch(_.ErrorRethrow('get links count err'))
 }
 
-const getWdLinksScore = (qid, refresh) => runWdQuery({ query: 'links-count', qid, refresh })
-.then(_.first)
+const getWdLinksScore = (qid, refresh) => {
+  return runWdQuery({ query: 'links-count', qid, refresh })
+  .then(_.first)
+}
 
 const getLocalLinksCount = uri => entities_.byClaimsValue(uri, true)

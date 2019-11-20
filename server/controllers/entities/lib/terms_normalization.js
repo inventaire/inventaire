@@ -1,19 +1,21 @@
 const _ = require('lodash')
 
-const normalizeTerm = term => term
-.toLowerCase()
+const normalizeTerm = term => {
+  return term
+  .toLowerCase()
 
-// title
-// # remove part in parenthesis at then end of a title
-.replace(/\s\([^)]+\)$/, '')
-// # Ignore leading articles as they are a big source of false negative match
-.replace(/^(the|a|le|la|l'|der|die|das)\s/ig, '')
+  // title
+  // - remove part in parenthesis at then end of a title
+  .replace(/\s\([^)]+\)$/, '')
+  // - Ignore leading articles as they are a big source of false negative match
+  .replace(/^(the|a|le|la|l'|der|die|das)\s/ig, '')
 
-// authors
-// # Work around the various author name notations
-.replace(/\./g, ' ')
-// # Replace all groups of spaces that might have emerged above by a single space
-.replace(/\s+/g, ' ')
+  // authors
+  // - Work around the various author name notations
+  .replace(/\./g, ' ')
+  // - Replace all groups of spaces that might have emerged above by a single space
+  .replace(/\s+/g, ' ')
+}
 
 const getEntityNormalizedTerms = entity => {
   const labels = _.values(entity.labels)

@@ -10,14 +10,18 @@ const responses_ = __.require('lib', 'responses')
 const designDocName = 'entities_deduplicate'
 const db = __.require('couch', 'base')('entities', designDocName)
 
-module.exports = (req, res) => getHomonymes()
-.then(responses_.Wrap(res, 'names'))
-.catch(error_.Handler(req, res))
+module.exports = (req, res) => {
+  return getHomonymes()
+  .then(responses_.Wrap(res, 'names'))
+  .catch(error_.Handler(req, res))
+}
 
-const getHomonymes = () => db.view(designDocName, 'findHumansHomonymes', { group_level: 1 })
-.then(res => res.rows
-// Filtering-out keys that are only ponctuation or a single letter
-// TODO: delete those erronous entities
-.filter(row => (row.value > 1) && /\w{1}\w+/.test(row.key))
-.sort((a, b) => b.value - a.value)
-.slice(0, 100))
+const getHomonymes = () => {
+  return db.view(designDocName, 'findHumansHomonymes', { group_level: 1 })
+  .then(res => res.rows
+  // Filtering-out keys that are only ponctuation or a single letter
+  // TODO: delete those erronous entities
+  .filter(row => (row.value > 1) && /\w{1}\w+/.test(row.key))
+  .sort((a, b) => b.value - a.value)
+  .slice(0, 100))
+}

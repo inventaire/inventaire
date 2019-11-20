@@ -1,11 +1,11 @@
-
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 
 require('should')
 const isbn_ = __.require('lib', 'isbn/isbn')
 
-describe('isbn', () => // Test only what was added on top of the isbn2 module
+describe('isbn', () => {
+  // Test only what was added on top of the isbn2 module
   describe('parse', () => {
     it('should return a ISBN data object', done => {
       const data = isbn_.parse('9788420646657')
@@ -18,4 +18,5 @@ describe('isbn', () => // Test only what was added on top of the isbn2 module
       isbn_.parse('8420646657').should.be.an.Object()
       done()
     })
-  }))
+  })
+})

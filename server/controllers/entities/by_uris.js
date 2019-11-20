@@ -26,6 +26,7 @@ module.exports = (req, res, next) => {
     const { uris, refresh, relatives } = params
     return getEntitiesByUris({ uris, refresh })
     .then(addRelatives(relatives, refresh))
-  }).then(responses_.Send(res))
+  })
+  .then(responses_.Send(res))
   .catch(error_.Handler(req, res))
 }

@@ -1,4 +1,3 @@
-
 const CONFIG = require('config')
 const should = require('should')
 const { authReq, getUser, undesiredErr } = require('../utils/utils')

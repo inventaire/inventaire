@@ -55,7 +55,9 @@ module.exports = (req, res) => {
   .catch(error_.Handler(req, res))
 }
 
-const getEntitiesImages = entities => Promise.props(Object.keys(entities).reduce(getEntityImages(entities), {}))
+const getEntitiesImages = entities => {
+  return Promise.props(Object.keys(entities).reduce(getEntityImages(entities), {}))
+}
 
 const getEntityImages = entities => (promises, id) => {
   const entity = entities[id]
@@ -67,7 +69,7 @@ const getEntityImages = entities => (promises, id) => {
 }
 
 const redirectToRawImage = (res, uri, images, width, height) => {
-  const image = images[uri] != null ? images[uri][0] : undefined
+  const image = images[uri] && images[uri][0]
   if (image == null) {
     const err = error_.notFound({ uri })
     err.quiet = true

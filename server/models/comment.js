@@ -1,12 +1,12 @@
-let Comment, validations
+const validations = require('./validations/comment')
 
-module.exports = (Comment = {})
+module.exports = {
+  createTransactionComment: (userId, message, transactionId) => {
+    validations.pass('transactionId', transactionId)
+    return createComment(userId, message, 'transaction', transactionId)
+  },
 
-Comment.validations = (validations = require('./validations/comment'))
-
-Comment.createTransactionComment = (userId, message, transactionId) => {
-  validations.pass('transactionId', transactionId)
-  return createComment(userId, message, 'transaction', transactionId)
+  validations
 }
 
 const createComment = (userId, message, key, value) => {

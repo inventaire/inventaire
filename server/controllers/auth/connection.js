@@ -1,4 +1,3 @@
-let logoutRedirect
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const sanitize = __.require('lib', 'sanitize/sanitize')
@@ -13,20 +12,32 @@ const sanitization = {
   password: {}
 }
 
-// TODO: rate limit to 10 signup per IP per 10 minutes
-exports.signup = (req, res) => {
-  sanitize(req, res, sanitization)
-  .then(params => {
-    const next = loggedIn(req, res)
-    // TODO: rewrite passport response to use responses_.send
-    return passport_.authenticate.localSignup(req, res, next)
-  })
-  .catch(error_.Handler(req, res))
+const logoutRedirect = (redirect, req, res, next) => {
+  res.clearCookie('loggedIn')
+  req.logout()
+  return res.redirect(redirect)
 }
 
-exports.login = (req, res) => {
-  const next = loggedIn(req, res)
-  return passport_.authenticate.localLogin(req, res, next)
+module.exports = {
+  // TODO: rate limit to 10 signup per IP per 10 minutes
+  signup: (req, res) => {
+    sanitize(req, res, sanitization)
+    .then(params => {
+      const next = loggedIn(req, res)
+      // TODO: rewrite passport response to use responses_.send
+      return passport_.authenticate.localSignup(req, res, next)
+    })
+    .catch(error_.Handler(req, res))
+  },
+
+  login: (req, res) => {
+    const next = loggedIn(req, res)
+    return passport_.authenticate.localLogin(req, res, next)
+  },
+
+  logoutRedirect,
+
+  logout: logoutRedirect.bind(null, '/')
 }
 
 const loggedIn = (req, res) => result => {
@@ -37,14 +48,6 @@ const loggedIn = (req, res) => result => {
   // add a 'include-user-data' option to access user data directly from the login request
   // Use case: inventaire-wiki (jingo) login
   // https://github.com/inventaire/jingo/blob/635f5417b7ca5a99bad60b32c1758ccecd0e3afa/lib/auth/local-strategy.js#L26
-  if (req.query['include-user-data']) { data.user = ownerSafeData(req.user) }
+  if (req.query['include-user-data']) data.user = ownerSafeData(req.user)
   return res.json(data)
 }
-
-exports.logoutRedirect = (logoutRedirect = (redirect, req, res, next) => {
-  res.clearCookie('loggedIn')
-  req.logout()
-  return res.redirect(redirect)
-})
-
-exports.logout = logoutRedirect.bind(null, '/')

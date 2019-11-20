@@ -1,4 +1,3 @@
-let verificators
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
@@ -62,7 +61,7 @@ const verifyUserRightToLeave = (reqUserId, groupId) => promises_.all([
   }
 })
 
-module.exports = (verificators = {
+const verificators = module.exports = {
   invite: verifyRightsToInvite,
   // /!\ groups_.userInvited returns a group doc, not a boolean
   accept: groups_.userInvited,
@@ -91,7 +90,7 @@ module.exports = (verificators = {
   makeAdmin: verifyAdminRights,
   kick: verifyAdminRightsWithoutAdminsConflict,
   leave: verifyUserRightToLeave
-})
+}
 
 // just checking that everything looks right
 const verificatorsList = Object.keys(verificators)

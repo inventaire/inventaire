@@ -1,5 +1,3 @@
-
-let API
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
@@ -26,7 +24,7 @@ const getEditionUri = () => {
 const listings = [ 'private', 'network', 'public' ]
 const transactions = [ 'giving', 'lending', 'selling', 'inventorying' ]
 
-module.exports = (API = {
+const API = module.exports = {
   createItems: (userPromise, itemsData = []) => {
     if (!userPromise) { userPromise = getUser() }
     const entity = (itemsData[0] != null) ? itemsData[0].entity : undefined
@@ -53,7 +51,7 @@ module.exports = (API = {
   createRandomizedItems: (userPromise, itemsData) => {
     return API.createItems(userPromise, itemsData.map(randomizedItem))
   }
-})
+}
 
 const randomizedItem = itemData => {
   if (!itemData.listing) { itemData.listing = _.sample(listings) }

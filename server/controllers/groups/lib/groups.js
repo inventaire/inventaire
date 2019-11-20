@@ -1,4 +1,3 @@
-let groups_
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
@@ -7,7 +6,7 @@ const Group = __.require('models', 'group')
 
 const db = __.require('couch', 'base')('groups')
 
-module.exports = (groups_ = {
+const groups_ = module.exports = {
   db,
   // using a view to avoid returning users or relations
   byId: db.viewFindOneByKey.bind(db, 'byId'),
@@ -65,7 +64,7 @@ module.exports = (groups_ = {
   byCreation: (limit = 10) => {
     return db.viewCustom('byCreation', { limit, descending: true, include_docs: true })
   }
-})
+}
 
 groups_.byPosition = __.require('lib', 'by_position')(db, 'groups')
 

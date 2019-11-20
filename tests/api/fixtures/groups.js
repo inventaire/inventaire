@@ -1,4 +1,3 @@
-
 const { authReq, authReqB, getUserB } = require('../utils/utils')
 const faker = require('faker')
 const endpointBase = '/api/groups'

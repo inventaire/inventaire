@@ -50,18 +50,14 @@ const createEdition = (edition, works, userId, batchId) => {
 
 // An entity type is required only for properties with validation functions requiring a type
 // Ex: typedExternalId properties
-const addClaimIfValid = (claims, property, values, type) => (() => {
-  const result = []
+const addClaimIfValid = (claims, property, values, type) => {
   for (const value of values) {
-    if ((value != null) && properties[property].validate(value, type)) {
-      if (claims[property] == null) { claims[property] = [] }
-      result.push(claims[property].push(value))
-    } else {
-      result.push(undefined)
+    if (value != null && properties[property].validate(value, type)) {
+      if (claims[property] == null) claims[property] = []
+      claims[property].push(value)
     }
   }
-  return result
-})()
+}
 
 const createEntityFromSeed = params => {
   const { type, seed, claims, userId, batchId } = params

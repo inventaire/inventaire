@@ -13,15 +13,17 @@ let getEntityByUri
 const lateRequire = () => { getEntityByUri = require('./get_entity_by_uri') }
 setTimeout(lateRequire, 0)
 
-module.exports = (ids, params) => // Hypothesis: there is no need to look for Wikidata data here
+// Hypothesis: there is no need to look for Wikidata data here
 // as inv entities with an associated Wikidata entity use the Wikidata uri
-  entities_.byIds(ids)
-.map(Format(params))
-.then(entities => {
-  const found = entities.reduce(aggregateFoundIds, [])
-  const notFound = _.difference(ids, found).map(prefixifyInv)
-  return { entities, notFound }
-})
+module.exports = (ids, params) => {
+  return entities_.byIds(ids)
+  .map(Format(params))
+  .then(entities => {
+    const found = entities.reduce(aggregateFoundIds, [])
+    const notFound = _.difference(ids, found).map(prefixifyInv)
+    return { entities, notFound }
+  })
+}
 
 const Format = params => entity => {
   if (entity.redirect != null) return getRedirectedEntity(entity, params)

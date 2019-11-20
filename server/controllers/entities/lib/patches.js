@@ -35,7 +35,7 @@ module.exports = {
         total
       }
       const rangeEnd = offset + limit
-      if (rangeEnd < total) { data.continue = rangeEnd }
+      if (rangeEnd < total) data.continue = rangeEnd
       return data
     })
   },
@@ -109,20 +109,27 @@ const convertToArray = counts => {
   return sortAndFilterContributions(data)
 }
 
-const sortAndFilterContributions = rows => rows
-.filter(noSpecialUser)
-.sort((a, b) => b.contributions - a.contributions)
+const sortAndFilterContributions = rows => {
+  return rows
+  .filter(noSpecialUser)
+  .sort((a, b) => b.contributions - a.contributions)
+}
 
 // Filtering-out special users automated contributions
 // see server/db/couch/hard_coded_documents.js
 const noSpecialUser = row => !row.user.startsWith('000000000000000000000000000000')
 
-const getUserTotalContributions = userId => db.view(designDocName, 'byUserId', {
-  group_level: 1,
-  // Maybe there is a way to only pass the userId key
-  // but I couln't find it
-  startkey: [ userId ],
-  endkey: [ userId, maxKey ]
-})
-// Testing the row existance in case we got an invalid user id
-.then(res => (res.rows[0] != null ? res.rows[0].value : undefined) || 0)
+const getUserTotalContributions = userId => {
+  return db.view(designDocName, 'byUserId', {
+    group_level: 1,
+    // Maybe there is a way to only pass the userId key
+    // but I couln't find it
+    startkey: [ userId ],
+    endkey: [ userId, maxKey ]
+  })
+  // Testing the row existance in case we got an invalid user id
+  .then(res => {
+    const userRow = res.rows[0]
+    return userRow ? userRow.value : 0
+  })
+}

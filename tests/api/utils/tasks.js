@@ -1,12 +1,10 @@
-
-let utils
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const { nonAuthReq, adminReq } = require('./utils')
 const endpoint = '/api/tasks?action='
 
-module.exports = (utils = {
+const utils = module.exports = {
   getByIds: ids => {
     ids = _.forceArray(ids).join('|')
     return nonAuthReq('get', `${endpoint}by-ids&ids=${ids}`)
@@ -51,4 +49,4 @@ module.exports = (utils = {
   },
 
   collectEntities: () => adminReq('post', `${endpoint}collect-entities`)
-})
+}

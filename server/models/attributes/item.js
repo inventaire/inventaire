@@ -1,5 +1,4 @@
-let attributes
-module.exports = (attributes = {})
+const attributes = module.exports = {}
 
 attributes.updatable = [
   'transaction',

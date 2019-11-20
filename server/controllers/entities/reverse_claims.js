@@ -7,7 +7,9 @@ const sanitize = __.require('lib', 'sanitize/sanitize')
 const sanitization = {
   property: {},
   value: {},
-  refresh: { optional: true },
+  refresh: {
+    optional: true
+  },
   sort: {
     generic: 'boolean',
     default: false

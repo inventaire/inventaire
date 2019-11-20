@@ -1,4 +1,3 @@
-
 require('should')
 const { createUser, createAdminUser, getRefreshedUser } = require('../fixtures/users')
 const { request, customAuthReq } = require('./request')
@@ -15,10 +14,10 @@ const getUserGetter = (key, admin = false, customData) => () => {
 const API = module.exports = {
   nonAuthReq: request,
   customAuthReq,
-  authReq: (...args) => customAuthReq(API.getUser(), ...Array.from(args)),
-  authReqB: (...args) => customAuthReq(API.getUserB(), ...Array.from(args)),
-  authReqC: (...args) => customAuthReq(API.getUserC(), ...Array.from(args)),
-  adminReq: (...args) => customAuthReq(API.getAdminUser(), ...Array.from(args)),
+  authReq: (...args) => customAuthReq(API.getUser(), ...args),
+  authReqB: (...args) => customAuthReq(API.getUserB(), ...args),
+  authReqC: (...args) => customAuthReq(API.getUserC(), ...args),
+  adminReq: (...args) => customAuthReq(API.getAdminUser(), ...args),
 
   // Create users only if needed by the current test suite
   getUser: getUserGetter('a'),

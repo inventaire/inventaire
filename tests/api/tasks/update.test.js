@@ -1,4 +1,3 @@
-
 require('should')
 const { createHuman } = require('../fixtures/entities')
 const { update, checkEntities } = require('../utils/tasks')

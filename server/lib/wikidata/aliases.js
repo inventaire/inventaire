@@ -1,8 +1,6 @@
-let typesAliases
-
 // TODO: replace this list by a SPARQL generated list
 // that can be refreshed from time to time
-module.exports = (typesAliases = {
+const typesAliases = module.exports = {
   humans: [
     'wd:Q5', // human
     'wd:Q10648343', // duo
@@ -120,7 +118,7 @@ module.exports = (typesAliases = {
     'wd:Q4167836', // Wikimedia category
     'wd:Q4167410' // Wikimedia disambiguation page
   ]
-})
+}
 
 const types = {}
 

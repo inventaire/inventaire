@@ -1,5 +1,4 @@
-let attributes
-module.exports = (attributes = {})
+const attributes = module.exports = {}
 
 // attributes that can be send to the owner
 attributes.ownerSafe = [

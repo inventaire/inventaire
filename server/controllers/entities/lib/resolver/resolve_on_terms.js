@@ -27,20 +27,26 @@ const searchAuthorAndResolve = works => author => {
   .then(resolveWorksAndAuthor(works, author))
 }
 
-const searchUrisByAuthorTerms = terms => Promise.all(terms.map(searchUrisByAuthorLabel))
-.then(_.flatten)
-.then(_.uniq)
+const searchUrisByAuthorTerms = terms => {
+  return Promise.all(terms.map(searchUrisByAuthorLabel))
+  .then(_.flatten)
+  .then(_.uniq)
+}
 
 const types = [ 'humans' ]
 
-const searchUrisByAuthorLabel = term => typeSearch(types, term)
-.then(parseResults(types))
-// Exact match on normalized author terms
-.filter(hit => getEntityNormalizedTerms(hit._source).includes(term))
-.map(hit => hit._source.uri)
-.then(_.compact)
+const searchUrisByAuthorLabel = term => {
+  return typeSearch(types, term)
+  .then(parseResults(types))
+  // Exact match on normalized author terms
+  .filter(hit => getEntityNormalizedTerms(hit._source).includes(term))
+  .map(hit => hit._source.uri)
+  .then(_.compact)
+}
 
-const resolveWorksAndAuthor = (works, author) => authorsUris => Promise.all(works.map(getWorkAndResolve(author, authorsUris)))
+const resolveWorksAndAuthor = (works, author) => authorsUris => {
+  return Promise.all(works.map(getWorkAndResolve(author, authorsUris)))
+}
 
 const getWorkAndResolve = (authorSeed, authorsUris) => work => {
   if (work == null || work.uri != null) return

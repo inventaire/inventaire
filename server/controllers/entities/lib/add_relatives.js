@@ -31,11 +31,13 @@ module.exports = (relatives, refresh) => {
   return addRelatives
 }
 
-const getAdditionalEntitiesUris = (entities, relatives) => _(entities)
-.values()
-.map(getEntityRelativesUris(relatives))
-.flattenDeep()
-.uniq()
-.value()
+const getAdditionalEntitiesUris = (entities, relatives) => {
+  return _(entities)
+  .values()
+  .map(getEntityRelativesUris(relatives))
+  .flattenDeep()
+  .uniq()
+  .value()
+}
 
 const getEntityRelativesUris = relatives => entity => _.values(_.pick(entity.claims, relatives))

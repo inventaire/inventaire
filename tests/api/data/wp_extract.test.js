@@ -1,4 +1,3 @@
-
 require('should')
 const { nonAuthReq } = require('../utils/utils')
 

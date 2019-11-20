@@ -1,4 +1,3 @@
-
 require('should')
 const { undesiredRes, undesiredErr } = require('../../utils/utils')
 const { updateLabel } = require('../../utils/entities')

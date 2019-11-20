@@ -1,4 +1,3 @@
-
 const should = require('should')
 const { undesiredRes, undesiredErr } = require('../utils/utils')
 const { createHuman } = require('../fixtures/entities')

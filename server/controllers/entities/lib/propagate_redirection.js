@@ -9,7 +9,7 @@ module.exports = (userId, fromUri, toUri, previousToUri) => {
     updateItemEntity.afterMerge(fromUri, toUri)
   ]
 
-  if ((previousToUri != null) && (toUri !== previousToUri)) {
+  if (previousToUri && toUri !== previousToUri) {
     actions.push(updateItemEntity.afterMerge(previousToUri, toUri))
   }
 

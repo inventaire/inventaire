@@ -1,4 +1,3 @@
-
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
@@ -116,30 +115,32 @@ describe('invitations:by-emails', () => {
 
     it('should accept non-user admin requests to invite to a group', done => {
       groupPromise
-      .then(group => // User B is a member (see ../fixtures/groups.js)
-        authReqB('post', '/api/invitations?action=by-emails', {
-          emails: 'a@foo.org',
-          group: group._id
-        }))
-        .then(res => {
-          res.emails[0].should.equal('a@foo.org')
-          done()
-        })
+      // User B is a member (see ../fixtures/groups.js)
+      .then(group => authReqB('post', '/api/invitations?action=by-emails', {
+        emails: 'a@foo.org',
+        group: group._id
+      }))
+      .then(res => {
+        res.emails[0].should.equal('a@foo.org')
+        done()
+      })
       .catch(undesiredErr(done))
     })
 
     it('should reject non-member requests to invite to a group', done => {
       groupPromise
-      .then(group => // User C isnt a member
-        authReqC('post', '/api/invitations?action=by-emails', {
+      // User C isnt a member
+      .then(group => {
+        return authReqC('post', '/api/invitations?action=by-emails', {
           emails: 'a@foo.org',
           group: group._id
-        }))
+        })
         .catch(err => {
           err.statusCode.should.equal(403)
           err.body.status_verbose.should.equal("user isn't a group member")
           done()
         })
+      })
       .catch(undesiredErr(done))
     })
 

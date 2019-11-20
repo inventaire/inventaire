@@ -1,4 +1,3 @@
-let User, validations
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
@@ -10,9 +9,9 @@ const error_ = __.require('lib', 'error/error')
 const randomString = __.require('lib', 'utils/random_string')
 const generateReadToken = randomString.bind(null, 32)
 
-module.exports = (User = {})
+const User = module.exports = {}
 
-User.validations = (validations = require('./validations/user'))
+const validations = User.validations = require('./validations/user')
 
 // TODO: remove the last traces of creationStrategy=browserid: optional password
 User._create = (username, email, creationStrategy, language, password) => {

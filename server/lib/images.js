@@ -6,20 +6,21 @@ const crypto_ = __.require('lib', 'crypto')
 const { readFile } = __.require('lib', 'fs')
 const { maxSize } = CONFIG.mediaStorage.images
 
-const shrinkAndFormat = (data, width, height) => // gm accepts either a path string or a stream
-  gm(data)
-.setFormat('jpg')
-// only resize if bigger
-.resize(width, height, '>')
-// removing EXIF data
-.noProfile()
-// replace the alpha layer by a white background
-.flatten()
-// converting to progressive jpeg
-.interlace('Line')
+// gm accepts either a path string or a stream
+const shrinkAndFormat = (data, width, height) => {
+  return gm(data)
+  .setFormat('jpg')
+  // only resize if bigger
+  .resize(width, height, '>')
+  // removing EXIF data
+  .noProfile()
+  // replace the alpha layer by a white background
+  .flatten()
+  // converting to progressive jpeg
+  .interlace('Line')
+}
 
-const removeExif = data => gm(data)
-.noProfile()
+const removeExif = data => gm(data).noProfile()
 
 module.exports = {
   getHashFilename: path => {
@@ -42,7 +43,7 @@ module.exports = {
   applyLimits: (width, height) => [ applyLimit(width), applyLimit(height) ],
 
   getUrlFromImageHash: (container, filename) => {
-    if (filename != null) return `/img/${container}/${filename}`
+    if (filename) return `/img/${container}/${filename}`
   }
 }
 

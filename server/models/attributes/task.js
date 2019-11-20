@@ -1,12 +1,7 @@
-let attributes
-module.exports = (attributes = {})
+module.exports = {
+  type: [ 'deduplicate' ],
 
-attributes.type = [
-  'deduplicate'
-]
+  state: [ 'merged', 'dismissed' ],
 
-attributes.state = [
-  'merged', 'dismissed'
-]
-
-attributes.relationScore = []
+  relationScore: []
+}

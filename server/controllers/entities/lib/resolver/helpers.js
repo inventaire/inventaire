@@ -13,11 +13,9 @@ module.exports = {
     }
   },
 
-  resolveSeed: seed => {
-    return entities => {
+  resolveSeed: seed => entities => {
     // When only one entity is found, then seed is considered resolved
-      if (entities.length === 1) { seed.uri = entities[0].uri }
-      return seed
-    }
+    if (entities.length === 1) seed.uri = entities[0].uri
+    return seed
   }
 }

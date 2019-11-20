@@ -72,7 +72,7 @@ const formatRichResults = results => {
   for (const result of results) {
     assert_.array(result.entities)
     for (const entity of result.entities) {
-      if (entity.redirects != null) {
+      if (entity.redirects) {
         const { from, to } = entity.redirects
         assert_.strings([ from, to ])
         response.redirects[from] = to
@@ -80,18 +80,18 @@ const formatRichResults = results => {
       }
     }
 
-    // concat all entities
+    // Concat all entities
     response.entities = response.entities.concat(result.entities)
 
-    // concat the list of not found URIs
-    if (result.notFound != null) {
+    // Concat the list of not found URIs
+    if (result.notFound) {
       response.notFound = response.notFound.concat(result.notFound)
     }
   }
 
   response.entities = _.keyBy(response.entities, 'uri')
 
-  if (response.notFound.length === 0) { delete response.notFound }
+  if (response.notFound.length === 0) delete response.notFound
 
   return response
 }

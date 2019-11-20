@@ -1,4 +1,3 @@
-
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
@@ -25,6 +24,7 @@ describe('entities:popularity', () => {
       .then(edition => scoreShouldEqual(edition.uri, 0, done))
       .catch(done)
     })
+
     it('should equal the amount of instances in inventories', done => {
       createEdition()
       .then(edition => {
@@ -67,49 +67,60 @@ describe('entities:popularity', () => {
     })
   })
 
-  describe('serie', () => it('should be made of the sum of its parts scores + number of parts', done => {
-    createSerieWithAWorkWithAnEditionWithAnItem()
-    // 1: item
-    // 1: edition
-    // 1: work
-    .spread(serie => scoreShouldEqual(serie.uri, 3, done))
-    .catch(done)
-  }))
+  describe('serie', () => {
+    it('should be made of the sum of its parts scores + number of parts', done => {
+      createSerieWithAWorkWithAnEditionWithAnItem()
+      // 1: item
+      // 1: edition
+      // 1: work
+      .spread(serie => scoreShouldEqual(serie.uri, 3, done))
+      .catch(done)
+    })
+  })
 
-  describe('human', () => it('should be made of the sum of its works scores + number of works and series', done => {
-    createHumanWithAWorkWithAnEditionWithAnItem()
-    .spread(human => // 1: item
-    // 1: edition
-    // 1: work
-    // 1: serie
-      scoreShouldEqual(human.uri, 4, done)).catch(done)
-  }))
+  describe('human', () => {
+    it('should be made of the sum of its works scores + number of works and series', done => {
+      createHumanWithAWorkWithAnEditionWithAnItem()
+      // 1: item
+      // 1: edition
+      // 1: work
+      // 1: serie
+      .spread(human => scoreShouldEqual(human.uri, 4, done))
+      .catch(done)
+    })
+  })
 })
 
-const scoreShouldEqual = (uri, value, done) => getRefreshedPopularityByUri(uri)
-.then(score => {
-  score.should.equal(value)
-  if (typeof done === 'function') {
-    done()
-  }
-  return score
-})
+const scoreShouldEqual = (uri, value, done) => {
+  return getRefreshedPopularityByUri(uri)
+  .then(score => {
+    score.should.equal(value)
+    if (typeof done === 'function') {
+      done()
+    }
+    return score
+  })
+}
 
-const createSerieWithAWorkWithAnEditionWithAnItem = () => Promise.all([
-  createWork(),
-  createSerie()
-])
-.spread((work, serie) => Promise.all([
-  createEdition({ work }),
-  addClaim(work.uri, 'wdt:P179', serie.uri)
-])
-.spread(edition => createItemFromEntityUri(edition.uri, { lang: 'en' })
-.then(item => [ serie, work, edition, item ])))
+const createSerieWithAWorkWithAnEditionWithAnItem = () => {
+  return Promise.all([
+    createWork(),
+    createSerie()
+  ])
+  .spread((work, serie) => Promise.all([
+    createEdition({ work }),
+    addClaim(work.uri, 'wdt:P179', serie.uri)
+  ])
+  .spread(edition => createItemFromEntityUri(edition.uri, { lang: 'en' })
+  .then(item => [ serie, work, edition, item ])))
+}
 
-const createHumanWithAWorkWithAnEditionWithAnItem = () => createHuman()
-.then(human => createSerieWithAWorkWithAnEditionWithAnItem()
-.spread((serie, work, edition, item) => Promise.all([
-  addClaim(work.uri, 'wdt:P50', human.uri),
-  addClaim(serie.uri, 'wdt:P50', human.uri)
-])
-.then(() => [ human, serie, work, edition, item ])))
+const createHumanWithAWorkWithAnEditionWithAnItem = () => {
+  return createHuman()
+  .then(human => createSerieWithAWorkWithAnEditionWithAnItem()
+  .spread((serie, work, edition, item) => Promise.all([
+    addClaim(work.uri, 'wdt:P50', human.uri),
+    addClaim(serie.uri, 'wdt:P50', human.uri)
+  ])
+  .then(() => [ human, serie, work, edition, item ])))
+}

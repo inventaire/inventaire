@@ -1,4 +1,3 @@
-let entities_
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const assert_ = __.require('utils', 'assert_types')
@@ -16,7 +15,7 @@ const { getUrlFromImageHash } = __.require('lib', 'images')
 
 const { validateProperty } = require('./properties/validations')
 
-module.exports = (entities_ = {
+const entities_ = module.exports = {
   db,
   byId: db.get,
 
@@ -47,11 +46,8 @@ module.exports = (entities_ = {
         include_docs: includeDocs
       })
 
-      if (parseDoc) {
-        return query.then(couch_.mapDoc)
-      } else {
-        return query
-      }
+      if (parseDoc) return query.then(couch_.mapDoc)
+      else return query
     })
   },
 
@@ -105,11 +101,11 @@ module.exports = (entities_ = {
       include_docs: true,
       descending: true
     })
-    .then(res => // TODO: return URIs in no-redirect mode so that redirections appear in entity changes
-      ({
-        uris: res.results.map(parseCanonicalUri),
-        lastSeq: res.last_seq
-      }))
+    // TODO: return URIs in no-redirect mode so that redirections appear in entity changes
+    .then(res => ({
+      uris: res.results.map(parseCanonicalUri),
+      lastSeq: res.last_seq
+    }))
   },
 
   putUpdate: params => {
@@ -125,7 +121,7 @@ module.exports = (entities_ = {
   },
 
   getUrlFromEntityImageHash: getUrlFromImageHash.bind(null, 'entities')
-})
+}
 
 const parseCanonicalUri = result => getInvEntityCanonicalUri(result.doc)
 

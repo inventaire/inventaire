@@ -18,18 +18,16 @@ module.exports = () => {
   return setTimeout(init, 2000)
 }
 
-const init = () => (() => {
-  const result = []
+const init = () => {
   for (const dbBaseName in dbsList) {
     const designDocsNames = dbsList[dbBaseName]
-    result.push(follow({
+    follow({
       dbBaseName,
       filter: isDesignDoc(designDocsNames),
       onChange: _.debounce(syncDesignDocFile, 1000)
-    }))
+    })
   }
-  return result
-})()
+}
 
 const isDesignDoc = designDocsNames => doc => {
   const [ prefix, designDocsName ] = Array.from(doc._id.split('/'))

@@ -1,4 +1,3 @@
-let tasks_
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
@@ -7,7 +6,7 @@ const Task = __.require('models', 'task')
 
 const db = __.require('couch', 'base')('tasks')
 
-module.exports = (tasks_ = {
+const tasks_ = module.exports = {
   createInBulk: tasksDocs => {
     return promises_.try(() => tasksDocs.map(Task.create))
     .then(db.bulk)
@@ -67,7 +66,7 @@ module.exports = (tasks_ = {
       return completeWithEmptyArrays(tasksBySuggestionUris, suggestionUris)
     })
   }
-})
+}
 
 const getKeys = (uris, includeArchived) => {
   const keys = uris.map(buildKey(null))

@@ -1,4 +1,3 @@
-
 require('should')
 const { nonAuthReq, undesiredRes, getUser } = require('../utils/utils')
 const endpoint = '/api/auth?action=reset-password'

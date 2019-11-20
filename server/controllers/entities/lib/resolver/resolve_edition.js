@@ -26,13 +26,15 @@ const resolveByIsbn = isbn => {
   if (isbn == null) return
   // Resolve directly on the database to avoid making undersired requests to dataseed
   return entities_.byIsbn(isbn)
-  .then(edition => { if (edition != null) { return getInvEntityCanonicalUri(edition) } })
+  .then(edition => {
+    if (edition != null) return getInvEntityCanonicalUri(edition)
+  })
 }
 
 const pickUriFromResolversResponses = (uriFoundByIsbn, urisFoundByExternalIds) => {
   // TODO: handle possible conflict between uriFoundByIsbn and urisFoundByExternalIds
-  if (uriFoundByIsbn != null) return uriFoundByIsbn
-  if ((urisFoundByExternalIds != null) && (urisFoundByExternalIds.length === 1)) {
+  if (uriFoundByIsbn) return uriFoundByIsbn
+  if (urisFoundByExternalIds && urisFoundByExternalIds.length === 1) {
     return urisFoundByExternalIds[0]
   }
 }

@@ -13,13 +13,13 @@ setTimeout(lateRequire, 0)
 const properties = require('./properties/properties_values_constraints')
 const validateClaimValueSync = require('./validate_claim_value_sync')
 
-module.exports = params => // Always return a promise
-  promises_.try(() => validateClaimValue(params))
+// Always return a promise
+module.exports = params => promises_.try(() => validateClaimValue(params))
 
 const validateClaimValue = params => {
   const { type, currentClaims, property, oldVal, newVal, letEmptyValuePass, userIsAdmin } = params
   // letEmptyValuePass to let it be interpreted as a claim deletion
-  if (letEmptyValuePass && (newVal == null)) return null
+  if (letEmptyValuePass && newVal == null) return null
 
   const prop = properties[property]
 
@@ -37,12 +37,12 @@ const validateClaimValue = params => {
   // any action other than editing the current value should be rejected
   if (prop.uniqueValue) {
     const propArray = currentClaims[property]
-    if (((propArray != null ? propArray.length : undefined) > 0) && (oldVal !== propArray[0])) {
+    if (propArray && propArray.length > 0 && oldVal !== propArray[0]) {
       throw error_.new('this property accepts only one value', 400, params)
     }
   }
 
-  const formattedValue = (prop.format != null) ? prop.format(newVal) : newVal
+  const formattedValue = prop.format != null ? prop.format(newVal) : newVal
 
   const { concurrency, restrictedType } = prop
 

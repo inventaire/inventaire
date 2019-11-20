@@ -1,4 +1,3 @@
-let validations
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
@@ -6,7 +5,7 @@ const _ = __.require('builders', 'utils')
 const { pass, userId, username, email, userImg, boolean, position, BoundedString } = require('./common')
 const { creationStrategies, notificationsSettings } = require('../attributes/user')
 
-module.exports = (validations = {
+const validations = module.exports = {
   pass,
   userId,
   username,
@@ -20,7 +19,7 @@ module.exports = (validations = {
   settings: boolean,
   position,
   summaryPeriodicity: days => Number.isInteger(days) && (days >= 1)
-})
+}
 
 const deepAttributes = {
   settings: {

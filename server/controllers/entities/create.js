@@ -31,8 +31,8 @@ module.exports = (req, res) => {
       params.userId = reqUserId
     }
     return createFn(params)
-    .then(entity => // Re-request the entity's data to get it formatted
-      getEntityByUri({ uri: entity.uri, refresh: true }))
+    // Re-request the entity's data to get it formatted
+    .then(entity => getEntityByUri({ uri: entity.uri, refresh: true }))
   })
   .then(responses_.Send(res))
   .then(Track(req, [ 'entity', 'creation' ]))

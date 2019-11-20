@@ -48,7 +48,7 @@ module.exports = {
   positiveInteger: {
     datatype: 'positive-integer',
     type: 'number',
-    validate: value => _.isNumber(value) && ((value % 1) === 0) && (value > 0),
+    validate: value => _.isNumber(value) && (value % 1 === 0) && value > 0,
     uniqueValue: true
   },
 

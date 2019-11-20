@@ -33,17 +33,19 @@ module.exports = (edition, oldTitle) => {
   .catch(_.Error('hook update err'))
 }
 
-const fetchLangConsensusTitle = (workUri, editionLang) => entities_.byClaim('wdt:P629', workUri, true, true)
-.filter(edition => getOriginalLang(edition.claims) === editionLang)
-.map(edition => edition.claims['wdt:P1476'][0])
-.then(titles => {
-  const differentTitles = _.uniq(titles)
-  if (differentTitles.length === 1) {
-    return differentTitles[0]
-  } else {
-    return null
-  }
-})
+const fetchLangConsensusTitle = (workUri, editionLang) => {
+  return entities_.byClaim('wdt:P629', workUri, true, true)
+  .filter(edition => getOriginalLang(edition.claims) === editionLang)
+  .map(edition => edition.claims['wdt:P1476'][0])
+  .then(titles => {
+    const differentTitles = _.uniq(titles)
+    if (differentTitles.length === 1) {
+      return differentTitles[0]
+    } else {
+      return null
+    }
+  })
+}
 
 const updateWorkLabel = (editionLang, oldTitle, consensusEditionTitle) => workDoc => {
   const currentEditionLangLabel = workDoc.labels[editionLang]

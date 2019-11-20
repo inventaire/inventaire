@@ -57,7 +57,11 @@ const sanitizeEntries = (entries, strict) => {
 }
 
 const sanitizeEntryAndDispatch = (sanitizedEntries, errors, strict) => entry => {
-  try { sanitizedEntries.push(sanitizeEntry(entry)) } catch (err) { handleError(strict, errors, err, entry) }
+  try {
+    sanitizedEntries.push(sanitizeEntry(entry))
+  } catch (err) {
+    handleError(strict, errors, err, entry)
+  }
 }
 
 const sequentialResolve = (entries, params, errors) => {

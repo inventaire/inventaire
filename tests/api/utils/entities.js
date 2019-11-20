@@ -1,11 +1,9 @@
-
-let entitiesUtils
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const { nonAuthReq, authReq, adminReq } = require('./utils')
 
-module.exports = (entitiesUtils = {
+const entitiesUtils = module.exports = {
   getByUris: (uris, relatives) => {
     if (_.isArray(uris)) { uris = uris.join('|') }
     const url = _.buildPath('/api/entities', { action: 'by-uris', uris, relatives })
@@ -64,6 +62,6 @@ module.exports = (entitiesUtils = {
     return entitiesUtils.getRefreshedPopularityByUris(uri)
     .then(res => res.scores[uri])
   }
-})
+}
 
 const normalizeUri = uri => _.isInvEntityId(uri) ? `inv:${uri}` : uri

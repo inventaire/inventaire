@@ -6,7 +6,7 @@ const wdk = require('wikidata-sdk')
 const wdEdit = require('wikidata-edit')
 const wdOauth = require('./wikidata_oauth')
 
-module.exports = (...args) => Promise.try(() => updateWdLabel(...Array.from(args || [])))
+module.exports = (...args) => Promise.try(() => updateWdLabel(...args))
 
 const updateWdLabel = (user, id, lang, value) => {
   if (!wdk.isItemId(id)) throw error_.newInvalid('id', id)

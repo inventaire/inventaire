@@ -1,4 +1,3 @@
-
 require('should')
 const { nonAuthReq, getUser, undesiredErr } = require('../utils/utils')
 

@@ -1,5 +1,4 @@
 // A module to look for works labels occurrences in an author's external databases reference.
-
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const promises_ = __.require('lib', 'promises')
@@ -49,8 +48,10 @@ module.exports = (wdAuthorUri, worksLabels, worksLabelsLangs) => {
   })
 }
 
-const getWikipediaOccurrences = (authorEntity, worksLabels, worksLabelsLangs) => promises_.all(getMostRelevantWikipediaArticles(authorEntity, worksLabelsLangs))
-.map(createOccurrencesFromUnstructuredArticle(worksLabels))
+const getWikipediaOccurrences = (authorEntity, worksLabels, worksLabelsLangs) => {
+  return promises_.all(getMostRelevantWikipediaArticles(authorEntity, worksLabelsLangs))
+  .map(createOccurrencesFromUnstructuredArticle(worksLabels))
+}
 
 const getMostRelevantWikipediaArticles = (authorEntity, worksLabelsLangs) => {
   const { sitelinks, originalLang } = authorEntity
@@ -58,7 +59,7 @@ const getMostRelevantWikipediaArticles = (authorEntity, worksLabelsLangs) => {
   return _.uniq(worksLabelsLangs.concat([ originalLang, 'en' ]))
   .map(lang => {
     const title = sitelinks[`${lang}wiki`]
-    if (title != null) return { lang, title }
+    if (title) return { lang, title }
   })
   .filter(_.identity)
   .map(getWikipediaArticle)
@@ -94,8 +95,10 @@ const createOccurrencesFromUnstructuredArticle = worksLabels => {
 const createOccurrencesFromExactTitles = worksLabels => result => {
   const title = normalizeTerm(result.title)
   if (worksLabels.includes(title)) {
-    return { url: result.url, matchedTitles: [ title ], structuredDataSource: true }
-  } else {
-
+    return {
+      url: result.url,
+      matchedTitles: [ title ],
+      structuredDataSource: true
+    }
   }
 }

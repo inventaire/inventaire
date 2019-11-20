@@ -1,4 +1,3 @@
-
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const assert_ = __.require('utils', 'assert_types')
@@ -163,6 +162,7 @@ describe('assert_', () => {
 
     it("should not accept piped 's...' types if 'arguments' is passed", done => {
       const types = 'strings...';
+      // eslint-disable-next-line prefer-arrow/prefer-arrow-functions
       (function () {
         assert_.types(types, arguments)
       }).should.throw("types should be an array when used with 'arguments'")

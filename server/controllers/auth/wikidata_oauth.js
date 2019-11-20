@@ -22,7 +22,7 @@ module.exports = (req, res) => {
   const { _id: reqUserId } = req.user
   const { oauth_verifier: verifier, oauth_token: reqToken, redirect } = req.query
 
-  const step1 = !((verifier != null) && (reqToken != null))
+  const step1 = verifier != null || reqToken != null
 
   if (step1) {
     return getStep1Token(redirect)
@@ -40,14 +40,16 @@ module.exports = (req, res) => {
   }
 }
 
-const getStep1Token = redirect => requests_.post({
-  url: step1Url,
-  oauth: {
-    callback: `${root}/api/auth?action=wikidata-oauth&redirect=${redirect}`,
-    consumer_key,
-    consumer_secret
-  }
-})
+const getStep1Token = redirect => {
+  return requests_.post({
+    url: step1Url,
+    oauth: {
+      callback: `${root}/api/auth?action=wikidata-oauth&redirect=${redirect}`,
+      consumer_key,
+      consumer_secret
+    }
+  })
+}
 
 const getStep3 = (reqUserId, verifier, oauthToken) => {
   const reqTokenSecret = reqTokenSecrets[reqUserId]

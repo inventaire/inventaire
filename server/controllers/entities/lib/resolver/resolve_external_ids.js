@@ -27,11 +27,15 @@ module.exports = (claims, resolveOnWikidata = true) => {
   .then(_.flatten)
 }
 
-const wdQuery = externalIds => runWdQuery({ query: 'resolve-external-ids', externalIds })
-.map(prefixifyWd)
+const wdQuery = externalIds => {
+  return runWdQuery({ query: 'resolve-external-ids', externalIds })
+  .map(prefixifyWd)
+}
 
-const invQuery = externalIds => Promise.all(externalIds.map(invByClaim))
-.then(_.flatten)
+const invQuery = externalIds => {
+  return Promise.all(externalIds.map(invByClaim))
+  .then(_.flatten)
+}
 
 const invByClaim = pair => {
   const [ prop, value ] = Array.from(pair)

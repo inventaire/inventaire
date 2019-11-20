@@ -1,4 +1,3 @@
-
 module.exports = {
   newItemBase: () => ({ entity: 'wd:Q3548806', lang: 'fr' }),
 

@@ -1,6 +1,4 @@
 // Keep in sync with client/app/lib/boolean_tests
-
-let tests
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = require('lodash')
@@ -12,7 +10,7 @@ const bindedTest = regexName => regex_[regexName].test.bind(regex_[regexName])
 const isCouchUuid = regex_.CouchUuid.test.bind(regex_.CouchUuid)
 const isNonEmptyString = str => _.isString(str) && (str.length > 0)
 
-module.exports = (tests = {
+const tests = module.exports = {
   isUrl: bindedTest('Url'),
   isImageHash: bindedTest('ImageHash'),
   isLocalImg: bindedTest('LocalImg'),
@@ -64,4 +62,4 @@ module.exports = (tests = {
   isPositiveIntegerString: str => _.isString(str) && /^\d+$/.test(str),
   isExtendedUrl: str => tests.isUrl(str) || tests.isLocalImg(str),
   isCollection: array => (_.typeOf(array) === 'array') && _.every(array, _.isPlainObject)
-})
+}

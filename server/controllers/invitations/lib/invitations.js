@@ -1,4 +1,3 @@
-let invitations_
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
@@ -10,7 +9,7 @@ const promises_ = __.require('lib', 'promises')
 const { makeRequest } = __.require('controllers', 'relations/lib/actions')
 const { invite: groupInvite } = __.require('controllers', 'groups/lib/groups')
 
-module.exports = (invitations_ = {
+const invitations_ = module.exports = {
   findOneByEmail: findOneByEmail.bind(null, db),
   byEmails: byEmails.bind(null, db),
   createUnknownInvited: (inviterId, groupId, unknownEmails) => {
@@ -53,7 +52,7 @@ module.exports = (invitations_ = {
     .then(doc => db.update(doc._id, Invited.stopEmails))
     .catch(_.ErrorRethrow('stopEmails'))
   }
-})
+}
 
 const emailNotification = false
 const convertFriendInvitations = (invitersIds, newUserId) => invitersIds

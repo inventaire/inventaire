@@ -1,4 +1,3 @@
-
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
@@ -75,15 +74,19 @@ describe('cache', () => {
     it('should return the outdated version if the new version returns an error', done => {
       const key = 'doden'
       cache_.get({ key, fn: workingFn.bind(null, 'Vem är du?'), timespan: 0 })
-      .then(res1 => // returns an error: should return old value
-        cache_.get({ key, fn: failingFn.bind(null, 'Vem är du?'), timespan: 1 })
-      .then(res2 => // the error shouldnt have overriden the value
-        cache_.get({ key, fn: workingFn.bind(null, 'Vem är du?'), timespan: 5000 })
-      .then(res3 => {
-        res1.should.equal(res2)
-        res1.should.equal(res3)
-        done()
-      })))
+      .then(res1 => {
+        // returns an error: should return old value
+        return cache_.get({ key, fn: failingFn.bind(null, 'Vem är du?'), timespan: 1 })
+        .then(res2 => {
+          // the error shouldnt have overriden the value
+          return cache_.get({ key, fn: workingFn.bind(null, 'Vem är du?'), timespan: 5000 })
+          .then(res3 => {
+            res1.should.equal(res2)
+            res1.should.equal(res3)
+            done()
+          })
+        })
+      })
       .catch(done)
     })
 
@@ -112,13 +115,15 @@ describe('cache', () => {
       const key = 'doden'
       cache_.get({ key, fn: workingFn.bind(null, 'Vem är du?'), timespan: 0 })
       .delay(10)
-      .then(res1 => // returns an error: should return old value
-        cache_.get({ key, fn: failingFn.bind(null, 'Vem är du?'), timespan: 0 })
-      .then(res2 => {
-        res1.should.be.ok()
-        should(res2).not.be.ok()
-        done()
-      }))
+      .then(res1 => {
+        // returns an error: should return old value
+        return cache_.get({ key, fn: failingFn.bind(null, 'Vem är du?'), timespan: 0 })
+        .then(res2 => {
+          res1.should.be.ok()
+          should(res2).not.be.ok()
+          done()
+        })
+      })
       .catch(done)
     }))
 

@@ -1,4 +1,3 @@
-let handlers
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
@@ -6,7 +5,7 @@ const couch_ = __.require('lib', 'couch')
 const error_ = __.require('lib', 'error/error')
 const assert_ = __.require('utils', 'assert_types')
 
-module.exports = (handlers = {
+const handlers = module.exports = {
   byEmail: (db, email) => {
     assert_.string(email)
     return db.viewByKey('byEmail', email.toLowerCase())
@@ -28,4 +27,4 @@ module.exports = (handlers = {
       }
     })
   }
-})
+}

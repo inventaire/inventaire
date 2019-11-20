@@ -11,9 +11,9 @@ const { matchTitle, matchAuthor } = require('./work_entity_search_utils')
 // Search an existing work by title and authors from a seed
 // to avoid creating duplicates if a corresponding work already exists
 module.exports = seed => {
-  let { title, authors, lang, groupLang } = seed
-  // unless a lang is explicitly passed, deduce it from the the ISBN groupLang
-  if (!lang) { lang = groupLang }
+  const { title, authors, groupLang } = seed
+  // Unless a lang is explicitly passed, deduce it from the the ISBN groupLang
+  const lang = seed.lang || groupLang
 
   const validAuthors = _.isArray(authors) && _.every(authors, _.isNonEmptyString)
   if (!_.isNonEmptyString(title) || !validAuthors) {
@@ -29,32 +29,37 @@ module.exports = seed => {
   // Make a first filter from the results we got
   .filter(matchTitle(title, lang))
   // Fetch the data we miss to check author match
-  .map(AddAuthorsStrings(lang))
+  .map(addAuthorsStrings(lang))
   // Filter the remaining results on authors
   .filter(matchAuthor(authors, lang))
   .then(matches => {
-    if (matches.length > 1) { _.warn(matches, 'possible duplicates') }
+    if (matches.length > 1) _.warn(matches, 'possible duplicates')
     return matches[0]
   })
 }
 
 const isWork = entity => entity.type === 'work'
 
-const AddAuthorsStrings = lang => result => {
+const addAuthorsStrings = lang => result => {
   const authorsUris = result.claims['wdt:P50']
-  if ((authorsUris != null ? authorsUris.length : undefined) <= 0) {
+  if (!(authorsUris && authorsUris.length > 0)) {
     _.warn(result, 'no authors to add')
     result.authors = []
     return result
   }
 
   return getEntitiesByUris({ uris: authorsUris })
-  .then(ParseAuthorsStrings(lang))
+  .then(parseAuthorsStrings(lang))
   .then(authorsStrings => {
     result.authors = authorsStrings
     return result
   })
 }
 
-const ParseAuthorsStrings = lang => res => _.values(res.entities)
-.map(authorEntity => getBestLangValue(lang, authorEntity.originalLang, authorEntity.labels).value)
+const parseAuthorsStrings = lang => res => {
+  return _.values(res.entities)
+  .map(authorEntity => {
+    const { originalLang, labels } = authorEntity
+    return getBestLangValue(lang, originalLang, labels).value
+  })
+}

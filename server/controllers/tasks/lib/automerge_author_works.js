@@ -58,7 +58,7 @@ const automergeWorks = authorUri => mergeableCouples => {
   const mergeNext = () => {
     const nextCouple = mergeableCouples.pop()
     if (nextCouple == null) return
-    return mergeEntities(reconcilerUserId, ...Array.from(nextCouple))
+    return mergeEntities(reconcilerUserId, ...nextCouple)
     .then(mergeNext)
   }
 

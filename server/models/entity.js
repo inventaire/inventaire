@@ -22,7 +22,6 @@
 // Inventaire properties:
 // invp:P2: Image Hash
 
-let Entity
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
@@ -33,7 +32,7 @@ const validLangs = Object.keys(require('wikidata-lang').byCode)
 const properties = __.require('controllers', 'entities/lib/properties/properties_values_constraints')
 const inferences = __.require('controllers', 'entities/lib/inferences')
 
-module.exports = (Entity = {
+const Entity = module.exports = {
   create: () => {
     return {
       type: 'entity',
@@ -250,7 +249,7 @@ module.exports = (Entity = {
     if (doc.redirect == null) return
     throw error_.new(`${editLabel} failed: the entity is a redirection`, 400, { doc, editLabel })
   }
-})
+}
 
 const updateInferredProperties = (doc, property, oldVal, newVal) => {
   const declaredProperties = doc._allClaimsProps || []

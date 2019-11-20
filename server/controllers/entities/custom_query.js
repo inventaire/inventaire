@@ -8,13 +8,13 @@ const customQueries = {
 }
 
 module.exports = (req, res, next) => {
-  let { uri, refresh, action } = req.query
+  const { uri, action } = req.query
 
   if (!_.isEntityUri(uri)) {
     return error_.bundleInvalid(req, res, 'uri', uri)
   }
 
-  refresh = _.parseBooleanString(refresh)
+  const refresh = _.parseBooleanString(req.query.refresh)
 
   return customQueries[action]({ uri, refresh })
   .then(responses_.Send(res))

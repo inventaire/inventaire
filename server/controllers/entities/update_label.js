@@ -4,10 +4,12 @@ const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
 
 module.exports = (req, res) => {
-  let { uri, lang, value } = req.body
-  let { id } = req.body
+  let { uri, id, value } = req.body
+  const { lang } = req.body
+
   _.log(req.body, 'update label body')
-  if (_.isInvEntityId(id) && (uri == null)) { uri = `inv:${id}` }
+
+  if (_.isInvEntityId(id) && (uri == null)) uri = `inv:${id}`
 
   if (uri == null) return error_.bundleMissingBody(req, res, 'uri')
   if (lang == null) return error_.bundleMissingBody(req, res, 'lang')

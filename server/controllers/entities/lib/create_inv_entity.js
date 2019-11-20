@@ -10,13 +10,15 @@ module.exports = params => {
 
   return validateEntity({ labels, claims })
   .then(() => entities_.createBlank())
-  .then(currentDoc => entities_.edit({
-    userId,
-    currentDoc,
-    updatedLabels: labels,
-    updatedClaims: claims,
-    batchId
-  }))
+  .then(currentDoc => {
+    return entities_.edit({
+      userId,
+      currentDoc,
+      updatedLabels: labels,
+      updatedClaims: claims,
+      batchId
+    })
+  })
   .then(entity => {
     entity.uri = prefixifyInv(entity._id)
     return entity

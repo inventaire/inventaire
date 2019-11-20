@@ -18,9 +18,6 @@ module.exports = {
 // - the referer found in headers
 // - the root
 const solveRoute = (redirect, referer) => {
-  if (redirect != null) {
-    return `/${redirect}`
-  } else {
-    return referer || '/'
-  }
+  if (redirect) return `/${redirect}`
+  else return referer || '/'
 }

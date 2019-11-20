@@ -48,6 +48,6 @@ const selectRecentItems = (lang, limit) => items => {
 
   const missingItemsCount = limit - recentItems.length
   const itemsToFill = discardedItems.slice(0, missingItemsCount)
-  recentItems.push(...Array.from(itemsToFill || []))
+  recentItems.push(...itemsToFill)
   return recentItems
 }

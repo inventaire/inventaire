@@ -1,14 +1,13 @@
-let attributes, Item, validations
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const assert_ = __.require('utils', 'assert_types')
 
-module.exports = (Item = {})
+const Item = module.exports = {}
 
-Item.validations = (validations = require('./validations/item'))
-Item.attributes = (attributes = require('./attributes/item'))
+const validations = Item.validations = require('./validations/item')
+const attributes = Item.attributes = require('./attributes/item')
 const { solveConstraint } = require('./helpers')(attributes)
 
 Item.create = (userId, item) => {

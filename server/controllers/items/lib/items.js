@@ -1,4 +1,3 @@
-let items_
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
@@ -23,7 +22,7 @@ setTimeout(lateRequire, 0)
 
 const db = __.require('couch', 'base')('items')
 
-module.exports = (items_ = {
+const items_ = module.exports = {
   db,
   byId: db.get,
   byIds: db.fetch,
@@ -149,7 +148,7 @@ module.exports = (items_ = {
       return item
     })
   }
-})
+}
 
 const listingByEntities = (listing, uris, reqUserId) => {
   const keys = uris.map(uri => [ uri, listing ])

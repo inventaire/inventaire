@@ -1,4 +1,3 @@
-
 const should = require('should')
 const { adminReq, getUser, undesiredErr } = require('../utils/utils')
 const { createWork } = require('../fixtures/entities')

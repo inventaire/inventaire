@@ -39,13 +39,14 @@ const mergeResults = results => _.flattenIndexes(_.compact(results).map(_.proper
 
 const replaceEditionsByTheirWork = refresh => entities => {
   let missingWorkEntities = []
+
   for (const uri in entities) {
     const entity = entities[uri]
     if (entity.type === 'edition') {
-      const workUri = entity.claims['wdt:P629'] != null ? entity.claims['wdt:P629'][0] : undefined
-      if (workUri != null) {
+      const workUri = _.get(entity.claims, 'wdt:P629.0')
+      if (workUri) {
         // Ensure that the edition work is in the results
-        if (entities[workUri] == null) { missingWorkEntities.push(workUri) }
+        if (entities[workUri] == null) missingWorkEntities.push(workUri)
         // Remove the edition from the results as it will be fetched later
         // as an edition of its work
       } else {

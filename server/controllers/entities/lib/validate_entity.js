@@ -8,8 +8,10 @@ const getEntityType = require('./get_entity_type')
 const validateClaims = require('./validate_claims')
 const typesWithoutLabels = require('./types_without_labels')
 
-module.exports = entity => promises_.try(() => validate(entity))
-.catch(addErrorContext(entity))
+module.exports = entity => {
+  return promises_.try(() => validate(entity))
+  .catch(addErrorContext(entity))
+}
 
 const validate = entity => {
   const { labels, claims } = entity
@@ -50,26 +52,20 @@ const validateLabels = (labels, type) => {
       throw error_.new('invalid labels', 400, { type, labels })
     }
 
-    return (() => {
-      const result = []
-      for (const lang in labels) {
-        const value = labels[lang]
-        if (!Lang.test(lang)) {
-          throw error_.new(`invalid label language: ${lang}`, 400, { type, labels })
-        }
-
-        if (!_.isNonEmptyString(value)) {
-          throw error_.new(`invalid label value: ${value}`, 400, { type, labels })
-        } else {
-          result.push(undefined)
-        }
+    for (const lang in labels) {
+      const value = labels[lang]
+      if (!Lang.test(lang)) {
+        throw error_.new(`invalid label language: ${lang}`, 400, { type, labels })
       }
-      return result
-    })()
+
+      if (!_.isNonEmptyString(value)) {
+        throw error_.new(`invalid label value: ${value}`, 400, { type, labels })
+      }
+    }
   }
 }
 
 const addErrorContext = entity => err => {
-  if (err.context == null) { err.context = { entity } }
+  if (err.context == null) err.context = { entity }
   throw err
 }

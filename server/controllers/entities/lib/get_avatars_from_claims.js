@@ -18,7 +18,7 @@ const platforms = {
 const platformsProperties = Object.keys(platforms)
 
 const aggregateAvatars = claims => (array, property) => {
-  const websiteUserId = claims[property] != null ? claims[property][0] : undefined
+  const websiteUserId = claims[property] && claims[property][0]
   if (websiteUserId) {
     const platform = platforms[property]
     array.push(avatarData(platform, websiteUserId))

@@ -26,8 +26,8 @@ module.exports = () => {
   let urisPerType = {}
 
   const requestUpdate = () => {
-    let body;
-    [ body, urisPerType ] = Array.from([ urisPerType, {} ])
+    let body
+    [ body, urisPerType ] = [ urisPerType, {} ]
     return requests_.post({ url: host, body })
     .then(() => _.log(body, 'requested entities search engine updates'))
     .catch(err => {
@@ -48,7 +48,7 @@ module.exports = () => {
     // that doesn't match any known type still triggers an update
     // to unindex the formerly known type
     const pluralizedType = `${type}s`
-    if (!urisPerType[pluralizedType]) { urisPerType[pluralizedType] = [] }
+    urisPerType[pluralizedType] = urisPerType[pluralizedType] || []
 
     // Deduplicating
     if (!urisPerType[pluralizedType].includes(uri)) {

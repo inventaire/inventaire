@@ -20,11 +20,13 @@ const radio = __.require('lib', 'radio')
 const propagateRedirection = require('./propagate_redirection')
 const { _id: hookUserId } = __.require('couch', 'hard_coded_documents').users.hook
 
-module.exports = (ids, params) => promises_.all(ids.map(getCachedEnrichedEntity(params)))
-.then(entities => {
-  if (params.dry) { entities = _.compact(entities) }
-  return { entities }
-})
+module.exports = (ids, params) => {
+  return promises_.all(ids.map(getCachedEnrichedEntity(params)))
+  .then(entities => {
+    if (params.dry) { entities = _.compact(entities) }
+    return { entities }
+  })
+}
 
 const getCachedEnrichedEntity = params => wdId => {
   const key = `wd:enriched:${wdId}`
@@ -33,8 +35,10 @@ const getCachedEnrichedEntity = params => wdId => {
   return cache_.get({ key, fn, refresh, dry })
 }
 
-const getEnrichedEntity = wdId => getWdEntity(wdId)
-.then(format)
+const getEnrichedEntity = wdId => {
+  return getWdEntity(wdId)
+  .then(format)
+}
 
 const format = entity => {
   if (entity.missing != null) {
@@ -44,7 +48,7 @@ const format = entity => {
   }
 
   const { P31, P279 } = entity.claims
-  if ((P31 != null) || (P279 != null)) {
+  if (P31 || P279) {
     const simplifiedP31 = wdk.simplifyPropertyClaims(P31, simplifyClaimsOptions)
     const simplifiedP279 = wdk.simplifyPropertyClaims(P279, simplifyClaimsOptions)
     entity.type = getEntityType(simplifiedP31, simplifiedP279)
@@ -108,23 +112,24 @@ const formatAndPropagateRedirection = entity => {
   }
 }
 
-const formatEmpty = (type, entity) => // Keeping just enough data to filter-out while not cluttering the cache
-  ({
-    id: entity.id,
-    uri: `wd:${entity.id}`,
-    type
-  })
+// Keeping just enough data to filter-out while not cluttering the cache
+const formatEmpty = (type, entity) => ({
+  id: entity.id,
+  uri: `wd:${entity.id}`,
+  type
+})
 
 const omitUndesiredPropertiesPerType = (type, claims) => {
   const propertiesToOmit = undesiredPropertiesPerType[type]
-  if (propertiesToOmit != null) {
+  if (propertiesToOmit) {
     return _.omit(claims, propertiesToOmit)
   } else {
     return claims
   }
 }
 
-const undesiredPropertiesPerType =
-  // Ignoring ISBN data set on work entities, as those
-  // should be the responsability of edition entities
-  { work: [ 'P212', 'P957' ] }
+// Ignoring ISBN data set on work entities, as those
+// should be the responsability of edition entities
+const undesiredPropertiesPerType = {
+  work: [ 'P212', 'P957' ]
+}

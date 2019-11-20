@@ -39,9 +39,9 @@ module.exports = entry => {
 }
 
 const sanitizeEdition = edition => {
-  const rawIsbn = getIsbn(edition)
-
   sanitizeSeed(edition, 'edition')
+
+  const rawIsbn = getIsbn(edition)
 
   if (rawIsbn != null) {
     if (!isValidIsbn(rawIsbn)) throw error_.new('invalid isbn', 400, { edition })
@@ -76,8 +76,9 @@ const sanitizeSeed = (seed, type) => {
     }
   }
 
-  const claims = seed.claims != null ? seed.claims : (seed.claims = {})
-  if (!_.isPlainObject(seed.claims)) {
+  const claims = seed.claims = seed.claims || {}
+
+  if (!_.isPlainObject(claims)) {
     throw error_.new('invalid claims', 400, { seed })
   }
 
@@ -88,7 +89,12 @@ const sanitizeSeed = (seed, type) => {
   })
 }
 
-const getIsbn = edition => edition.isbn || (edition.claims != null ? edition.claims['wdt:P212'] : undefined) || (edition.claims != null ? edition.claims['wdt:P957'] : undefined)
+const getIsbn = edition => {
+  const { isbn, claims } = edition
+  if (isbn) return isbn
+  const isbnClaims = claims['wdt:P212'] || claims['wdt:P957']
+  if (isbnClaims) return isbnClaims[0]
+}
 
 const createWorkSeedFromEdition = edition => {
   const titleClaim = _.get(edition, 'claims.wdt:P1476.0')

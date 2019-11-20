@@ -1,5 +1,3 @@
-
-let API
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
@@ -11,7 +9,7 @@ let populatePromise
 const usersCount = 8
 const publicItemsPerUser = 10
 
-module.exports = (API = {
+const API = module.exports = {
   populate: () => {
     if (populatePromise != null) return populatePromise
     populatePromise = Promise.all(_.times(usersCount, API.createUserWithItems))
@@ -29,4 +27,4 @@ module.exports = (API = {
     })
     .then(() => userPromise)
   }
-})
+}

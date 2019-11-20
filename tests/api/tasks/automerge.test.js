@@ -1,4 +1,3 @@
-
 require('should')
 const { undesiredErr } = require('../utils/utils')
 const { checkEntities } = require('../utils/tasks')

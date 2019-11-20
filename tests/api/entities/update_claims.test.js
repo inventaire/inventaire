@@ -1,4 +1,3 @@
-
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const should = require('should')
@@ -10,14 +9,14 @@ const { getByUri, addClaim, updateClaim, removeClaim, merge } = require('../util
 describe('entities:update-claims', () => {
   it('should reject an update with an inappropriate property', done => {
     createWork()
-    .then(work => // A work entity should not have pages count
-      addClaim(work.uri, 'wdt:P1104', 124)
+    // A work entity should not have pages count
+    .then(work => addClaim(work.uri, 'wdt:P1104', 124))
     .then(undesiredRes(done))
     .catch(err => {
       err.body.status_verbose.should.equal("works can't have a property wdt:P1104")
       err.statusCode.should.equal(400)
       done()
-    }))
+    })
     .catch(undesiredErr(done))
   })
 

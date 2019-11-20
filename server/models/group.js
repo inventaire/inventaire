@@ -1,12 +1,11 @@
-let Group, userIsAdmin, validations
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 
-module.exports = (Group = {})
+const Group = module.exports = {}
 
-Group.validations = (validations = require('./validations/group'))
+const validations = Group.validations = require('./validations/group')
 
 Group.create = options => {
   _.log(options, 'group create')
@@ -130,7 +129,7 @@ const userIsRole = role => (userId, group) => {
   return ids.includes(userId)
 }
 
-Group.userIsAdmin = (userIsAdmin = userIsRole('admins'))
+const userIsAdmin = Group.userIsAdmin = userIsRole('admins')
 const userIsNonAdminMember = userIsRole('members')
 
 Group.userIsMember = (userId, group) => userIsAdmin(userId, group) || userIsNonAdminMember(userId, group)

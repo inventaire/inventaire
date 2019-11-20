@@ -24,10 +24,10 @@ const sanitization = {
 module.exports = (req, res) => {
   sanitize(req, res, sanitization)
   .then(seed => {
-    let { isbn, authors } = seed
-    if (!authors) { authors = [] }
+    const { isbn } = seed
+    const authors = seed.authors || []
 
-    seed.authors = authors.filter(author => (author != null ? author.length : undefined) > 0)
+    seed.authors = authors.filter(_.isNonEmptyString)
 
     return entities_.byIsbn(isbn)
     .then(entityDoc => {
@@ -60,11 +60,8 @@ const addImage = seed => {
       // Else, if an image was provided in the seed, try to use it
       return dataseed.getImageByUrl(seed.image)
       .then(res2 => {
-        if (res.url) {
-          seed.image = res2.url
-        } else {
-          delete seed.image
-        }
+        if (res.url) seed.image = res2.url
+        else delete seed.image
         return seed
       })
     }

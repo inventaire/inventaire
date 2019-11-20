@@ -16,7 +16,7 @@ module.exports = (userId, fromUri, toUri) => {
   if (fromPrefix === 'wd') {
     if (toPrefix === 'inv') {
       _.info({ fromUri, toUri }, 'merge: switching fromUri and toUri');
-      [ fromPrefix, fromId, toPrefix, toId ] = Array.from([ toPrefix, toId, fromPrefix, fromId ])
+      [ fromPrefix, fromId, toPrefix, toId ] = [ toPrefix, toId, fromPrefix, fromId ]
     } else {
       throw error_.new('cannot merge wd entites', 500, { fromUri, toUri })
     }
@@ -112,13 +112,15 @@ const removeObsoletePlaceholderEntities = (userId, entityDocBeforeRedirection) =
   .then(_.compact)
 }
 
-const getEntityUrisToCheck = claims => _(claims)
-.pick(propertiesToCheckForPlaceholderDeletion)
-.values()
-// Merge properties arrays
-.flatten()
-.uniq()
-.value()
+const getEntityUrisToCheck = claims => {
+  return _(claims)
+  .pick(propertiesToCheckForPlaceholderDeletion)
+  .values()
+  // Merge properties arrays
+  .flatten()
+  .uniq()
+  .value()
+}
 
 const propertiesToCheckForPlaceholderDeletion = [
   // author

@@ -1,4 +1,3 @@
-
 require('should')
 const { authReq, undesiredErr, undesiredRes } = require('../../utils/utils')
 const { createWork, createSerie, randomLabel } = require('../../fixtures/entities')

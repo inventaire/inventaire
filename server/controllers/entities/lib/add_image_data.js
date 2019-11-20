@@ -18,7 +18,7 @@ module.exports = entity => {
 const findAnImage = entity => {
   const commonsFilename = getCommonsFilenamesFromClaims(entity.claims)[0]
   const enwikiTitle = entity.sitelinks.enwiki
-  const openLibraryId = entity.claims['wdt:P648'] != null ? entity.claims['wdt:P648'][0] : undefined
+  const openLibraryId = _.get(entity, 'claims.wdt:P648.0')
   return pickBestPic(entity, commonsFilename, enwikiTitle, openLibraryId)
 }
 

@@ -16,8 +16,7 @@ const seedUserId = __.require('couch', 'hard_coded_documents').users.seed._id
 const workEntitiesCache = require('./work_entity_search_deduplicating_cache')
 
 // Working around the circular dependencies
-let searchWorkEntityByTitleAndAuthors
-let findAuthorFromWorksLabels
+let searchWorkEntityByTitleAndAuthors, findAuthorFromWorksLabels
 const lateRequire = () => {
   searchWorkEntityByTitleAndAuthors = require('./search_work_entity_by_title_and_authors')
   findAuthorFromWorksLabels = __.require('controllers', 'entities/lib/find_author_from_works_labels')
@@ -29,6 +28,7 @@ setTimeout(lateRequire, 0)
 
 module.exports = seed => {
   let { title, authors } = seed
+
   if (!_.isNonEmptyString(title)) {
     return error_.reject('missing title', 400, title)
   }
@@ -47,7 +47,7 @@ module.exports = seed => {
   return searchWorkEntityByTitleAndAuthors(seed)
   .then(workEntity => {
     let workPromise
-    if (workEntity != null) {
+    if (workEntity) {
       _.log(seed, `scaffolding from existing work entity: ${workEntity.uri}`)
       workPromise = promises_.resolve(workEntity)
       workEntitiesCache.set(seed, workPromise)
@@ -64,24 +64,27 @@ module.exports = seed => {
   })
 }
 
-const findAuthorsFromWorksTitleOrCreate = (title, authorsNames, lang) => promises_.all(authorsNames.map(findAuthorFromWorkTitleOrCreate(title, lang)))
+const findAuthorsFromWorksTitleOrCreate = (title, authorsNames, lang) => {
+  return promises_.all(authorsNames.map(findAuthorFromWorkTitleOrCreate(title, lang)))
+}
 
 // Returns a URI in any case, either from an existing entity or a newly created one
-const findAuthorFromWorkTitleOrCreate = (title, lang) => authorName => findAuthorFromWorksLabels(authorName, [ title ], [ lang ])
-.then(uri => {
-  if (uri != null) {
-    return uri
-  } else {
-    return createAuthorEntity(authorName, lang)
-    .then(authorDoc => `inv:${authorDoc._id}`)
-  }
-})
+const findAuthorFromWorkTitleOrCreate = (title, lang) => authorName => {
+  return findAuthorFromWorksLabels(authorName, [ title ], [ lang ])
+  .then(uri => {
+    if (uri) {
+      return uri
+    } else {
+      return createAuthorEntity(authorName, lang)
+      .then(authorDoc => `inv:${authorDoc._id}`)
+    }
+  })
+}
 
 const createAuthorEntity = (authorName, lang) => {
   const labels = {}
   labels[lang] = authorName
-  const claims =
-    { 'wdt:P31': [ 'wd:Q5' ] }
+  const claims = { 'wdt:P31': [ 'wd:Q5' ] }
 
   return createInvEntity({ labels, claims, userId: seedUserId })
   .then(_.Log('created author entity'))
@@ -90,7 +93,7 @@ const createAuthorEntity = (authorName, lang) => {
 
 const createWorkEntity = (title, lang, authorsUris) => {
   const labels = {}
-  if (_.isNonEmptyString(title)) { labels[lang] = title }
+  if (_.isNonEmptyString(title)) labels[lang] = title
   const claims = {
     'wdt:P31': [ 'wd:Q571' ],
     'wdt:P50': authorsUris

@@ -25,14 +25,16 @@ module.exports = {
   }
 }
 
-const getWorkEditions = (workUri, images, limitPerLang) => entities_.byClaim('wdt:P629', workUri, true, true)
-.then(addEditionsImages(images, limitPerLang))
+const getWorkEditions = (workUri, images, limitPerLang) => {
+  return entities_.byClaim('wdt:P629', workUri, true, true)
+  .then(addEditionsImages(images, limitPerLang))
+}
 
 const addEditionsImages = (images, limitPerLang = 3) => editions => {
   for (const edition of editions) {
     const lang = getOriginalLang(edition.claims)
-    const image = edition.claims['invp:P2'] != null ? edition.claims['invp:P2'][0] : undefined
-    if ((lang != null) && (image != null)) { addImage(images, lang, limitPerLang, image) }
+    const image = _.get(edition.claims, 'invp:P2.0')
+    if (lang && image) addImage(images, lang, limitPerLang, image)
   }
 
   return images
@@ -44,7 +46,7 @@ const aggregateWorkImages = (images, workImages) => {
   for (const key in workImages) {
     // Ignore work claims images
     const values = workImages[key]
-    if (_.isLang(key)) { addImage(images, key, 3, values[0]) }
+    if (_.isLang(key)) addImage(images, key, 3, values[0])
   }
 
   return images
