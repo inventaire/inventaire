@@ -1,9 +1,4 @@
 
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 // Dataseed is a blackboxed service getting some basic facts on books from the web
 // it is closed source as possibly in a legal grey zone
 // It's a placeholder to make search results within inventaire acceptable

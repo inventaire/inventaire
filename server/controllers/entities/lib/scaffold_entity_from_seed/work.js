@@ -1,10 +1,4 @@
 
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 // A module to put the basis of an edition entity based on the results
 // from dataseed. It tries to find the associated works and authors
 // from Wikidata and Inventaire search (using searchWorkEntityByTitleAndAuthors)

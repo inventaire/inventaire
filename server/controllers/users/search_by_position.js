@@ -1,10 +1,4 @@
 
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 const __ = require('config').universalPath
 const parseBbox = __.require('lib', 'parse_bbox')
 const user_ = __.require('controllers', 'user/lib/user')

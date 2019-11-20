@@ -1,9 +1,4 @@
 
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 const Promise = require('bluebird')
 const fs = Promise.promisifyAll(require('graceful-fs'))
 const parse = JSON.parse.bind(JSON)

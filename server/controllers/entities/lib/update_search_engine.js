@@ -1,10 +1,4 @@
 
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 // Keep our entitiesSearchEngine instance updated by requesting it
 // to update its data everytime an entity with a type is requested here:
 // Every cache miss triggers an update request, meaning that 'refresh' request

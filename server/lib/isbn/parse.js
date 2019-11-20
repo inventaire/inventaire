@@ -3,11 +3,6 @@
 */
 
 // Fix any style issues and re-enable lint.
-/*
- * decaffeinate suggestions:
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 const { parse: isbnParser } = require('isbn2').ISBN
 const groups = require('./groups')
 

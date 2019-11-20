@@ -1,9 +1,4 @@
 
-/*
- * decaffeinate suggestions:
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 const __ = require('config').universalPath
 const promises_ = __.require('lib', 'promises')
 const redirectClaims = require('./redirect_claims')

@@ -1,9 +1,4 @@
 
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 const __ = require('config').universalPath
 const couch_ = __.require('lib', 'couch')
 const promises_ = __.require('lib', 'promises')

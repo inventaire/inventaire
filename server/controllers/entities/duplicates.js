@@ -1,9 +1,4 @@
 
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 // An endpoint to feed client-side entities deduplication interfaces
 // with the data it needs. This is an admin-only endpoint as it's queries are
 // quite expensive, requiring to parse the whole findHumansHomonymes view

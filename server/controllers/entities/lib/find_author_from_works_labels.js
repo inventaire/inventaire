@@ -1,9 +1,4 @@
 
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 // Tries to identify an author from the occurrences of their works labels
 // in their Wikipedia article. It can thus only work for authors known by Wikidata
 

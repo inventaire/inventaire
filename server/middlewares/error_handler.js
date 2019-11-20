@@ -1,9 +1,4 @@
 
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 // A middleware to catch other middlewares errors and repackage them
 // in JSON and with more readable error reports
 const CONFIG = require('config')

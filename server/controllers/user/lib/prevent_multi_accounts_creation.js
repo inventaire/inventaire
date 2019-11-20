@@ -3,11 +3,6 @@
 */
 
 // Fix any style issues and re-enable lint.
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 // preventing several accounts to be created at the same time
 // given that the creation process is considerably slowed by bcrypt
 

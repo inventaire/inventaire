@@ -3,13 +3,6 @@
 */
 
 // Fix any style issues and re-enable lint.
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 // this module is doomed to be replaced by a geobox parser
 // to fit search_by_positions needs: keeping it as a placeholder
 const __ = require('config').universalPath

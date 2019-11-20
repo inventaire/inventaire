@@ -1,11 +1,4 @@
 
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS205: Consider reworking code to avoid use of IIFEs
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 // Keep the design doc files in sync with CouchDB design docs
 // once CouchDB design docs were updated to match the design doc files
 // This allows to modify design docs in CouchDB GUI instead of having

@@ -1,9 +1,4 @@
 
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 require('should')
 const { nonAuthReq, undesiredRes, getUser } = require('../utils/utils')
 const endpoint = '/api/auth?action=reset-password'

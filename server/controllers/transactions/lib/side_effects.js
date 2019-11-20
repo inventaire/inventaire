@@ -1,9 +1,4 @@
 
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 // Transactions side effects:
 // mainly changing item availability (toggling items' "busy" attribute)
 // and moving items between inventories (actually archiving in one and forking in the other)

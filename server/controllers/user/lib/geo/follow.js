@@ -1,11 +1,4 @@
 
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 // keep in sync the users database and the geo index
 const CONFIG = require('config')
 const __ = CONFIG.universalPath

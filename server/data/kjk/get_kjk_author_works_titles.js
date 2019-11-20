@@ -1,9 +1,4 @@
 
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const fetchExternalAuthorWorksTitles = __.require('data', 'lib/fetch_external_author_works_titles')

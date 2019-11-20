@@ -1,9 +1,4 @@
 
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 // An endpoint to list entities edits made by a user
 const __ = require('config').universalPath
 const error_ = __.require('lib', 'error/error')

@@ -1,9 +1,4 @@
 
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 // Placeholders are entities automatically created without checking that a similar
 // entity existed locally or in Wikidata. Those entities have thus high chances
 // to be duplicates and to be deleted by merge operations.

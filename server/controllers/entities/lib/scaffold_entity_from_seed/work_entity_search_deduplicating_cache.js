@@ -1,10 +1,4 @@
 
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 // Deduplicate work entity creation: every seed checks if a seed with matching title
 // and authors let a work entity promise around, else creates one
 // This allow to work around the fact that multiple seed might be looking for the same

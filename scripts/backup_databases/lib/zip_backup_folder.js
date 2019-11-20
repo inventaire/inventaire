@@ -1,9 +1,4 @@
 
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 const execa = require('execa')
 const { backupGeneralFolder, backupFolder, day } = require('./get_backup_folder_data')()
 

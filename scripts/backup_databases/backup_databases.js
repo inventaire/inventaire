@@ -1,10 +1,5 @@
 #!/usr/bin/env node
 
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 
 const [ suffix ] = Array.from(process.argv.slice(2))
 

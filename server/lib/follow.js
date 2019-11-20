@@ -3,13 +3,6 @@
 */
 
 // Fix any style issues and re-enable lint.
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * DS205: Consider reworking code to avoid use of IIFEs
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 // A module to listen for changes in a CouchDB database, and dispatch the change
 // event to all the subscribed followers
 

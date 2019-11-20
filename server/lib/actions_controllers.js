@@ -1,9 +1,4 @@
 
-/*
- * decaffeinate suggestions:
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 const __ = require('config').universalPath
 const error_ = __.require('lib', 'error/error')
 const validateObject = __.require('lib', 'validate_object')

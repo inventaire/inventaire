@@ -1,8 +1,4 @@
 
-/*
- * decaffeinate suggestions:
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const isbn_ = __.require('lib', 'isbn/isbn')
