@@ -1,4 +1,3 @@
-
 // Keep in sync with client/app/lib/boolean_tests
 
 let tests

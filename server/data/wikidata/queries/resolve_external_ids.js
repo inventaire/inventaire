@@ -1,4 +1,3 @@
-
 module.exports = {
   parameters: [ 'externalIds' ],
   query: params => buildQuery(params.externalIds)

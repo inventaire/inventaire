@@ -1,4 +1,3 @@
-
 let updateUser
 const CONFIG = require('config')
 const __ = require('config').universalPath

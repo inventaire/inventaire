@@ -1,4 +1,3 @@
-
 // Keep the design doc files in sync with CouchDB design docs
 // once CouchDB design docs were updated to match the design doc files
 // This allows to modify design docs in CouchDB GUI instead of having

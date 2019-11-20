@@ -1,4 +1,3 @@
-
 const execa = require('execa')
 const { backupGeneralFolder, backupFolder, day } = require('./get_backup_folder_data')()
 

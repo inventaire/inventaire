@@ -1,4 +1,3 @@
-
 const __ = require('config').universalPath
 const { BasicUpdater } = __.require('lib', 'doc_updates')
 

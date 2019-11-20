@@ -1,4 +1,3 @@
-
 const { cookieMaxAge } = require('config')
 
 // used to trigger logged in UI on the client-side

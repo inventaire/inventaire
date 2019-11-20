@@ -1,4 +1,3 @@
-
 const __ = require('config').universalPath
 const automerge = require('./automerge')
 const { getEntityNormalizedTerms } = __.require('controllers', 'entities/lib/terms_normalization')

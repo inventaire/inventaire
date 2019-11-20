@@ -1,4 +1,3 @@
-
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const intent = require('./lib/intent')

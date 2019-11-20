@@ -1,4 +1,3 @@
-
 // additionnaly all 1 letter strings are reserved words
 // but the restriction is handled by the username regex
 const reservedWords = [

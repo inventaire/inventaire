@@ -1,4 +1,3 @@
-
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const base = 'https://www.wikidata.org/w/api.php'

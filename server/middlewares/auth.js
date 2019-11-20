@@ -1,4 +1,3 @@
-
 const { secret, cookieMaxAge } = require('config')
 const __ = require('config').universalPath
 

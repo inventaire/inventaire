@@ -1,4 +1,3 @@
-
 const __ = require('config').universalPath
 const error_ = __.require('lib', 'error/error')
 const items_ = __.require('controllers', 'items/lib/items')

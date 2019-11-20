@@ -1,4 +1,3 @@
-
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const mergeEntities = __.require('controllers', 'entities/lib/merge_entities')

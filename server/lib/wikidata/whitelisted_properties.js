@@ -1,4 +1,3 @@
-
 // The list of all the properties used server-side or client-side
 // to keep when formatting Wikidata entities
 // Motivations:

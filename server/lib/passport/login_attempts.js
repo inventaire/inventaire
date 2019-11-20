@@ -1,4 +1,3 @@
-
 const __ = require('config').universalPath
 const { oneMinute } = __.require('lib', 'times')
 

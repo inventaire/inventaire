@@ -1,4 +1,3 @@
-
 const { getAvatarsUrlsFromClaims } = require('./get_avatars_from_claims')
 const getCommonsFilenamesFromClaims = require('./get_commons_filenames_from_claims')
 const { getUrlFromEntityImageHash } = require('./entities')

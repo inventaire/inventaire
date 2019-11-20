@@ -1,4 +1,3 @@
-
 // A middleware to catch other middlewares errors and repackage them
 // in JSON and with more readable error reports
 const CONFIG = require('config')

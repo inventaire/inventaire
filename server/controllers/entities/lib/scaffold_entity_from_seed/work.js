@@ -1,4 +1,3 @@
-
 // A module to put the basis of an edition entity based on the results
 // from dataseed. It tries to find the associated works and authors
 // from Wikidata and Inventaire search (using searchWorkEntityByTitleAndAuthors)

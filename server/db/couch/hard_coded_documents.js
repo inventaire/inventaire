@@ -1,4 +1,3 @@
-
 const userDoc = (username, idLastCharacters) => ({
   _id: `00000000000000000000000000000${idLastCharacters}`,
   username,

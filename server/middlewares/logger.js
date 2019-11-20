@@ -1,4 +1,3 @@
-
 const CONFIG = require('config')
 const { mutedDomains, mutedPath } = CONFIG.morgan
 

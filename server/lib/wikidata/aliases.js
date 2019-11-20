@@ -1,4 +1,3 @@
-
 let typesAliases
 
 // TODO: replace this list by a SPARQL generated list

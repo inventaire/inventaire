@@ -1,4 +1,3 @@
-
 const __ = require('config').universalPath
 const messages = require('./messages')
 const ActionsControllers = __.require('lib', 'actions_controllers')

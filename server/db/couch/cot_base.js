@@ -1,4 +1,3 @@
-
 const CONFIG = require('config')
 
 const params = {

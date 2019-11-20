@@ -1,4 +1,3 @@
-
 // mimicking Nodemailer::sendMail
 // to make it render a preview instead of sending an email
 

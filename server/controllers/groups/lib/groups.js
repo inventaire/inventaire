@@ -1,4 +1,3 @@
-
 let groups_
 const CONFIG = require('config')
 const __ = CONFIG.universalPath

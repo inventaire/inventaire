@@ -1,4 +1,3 @@
-
 const { pass, userId, transactionId } = require('./common')
 
 module.exports = {

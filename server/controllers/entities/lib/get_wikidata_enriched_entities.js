@@ -1,4 +1,3 @@
-
 // Get and format Wikidata entities to match Inventaire entities:
 // - simplify claims
 // - add attributes: uri, originalLang

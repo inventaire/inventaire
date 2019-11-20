@@ -1,4 +1,3 @@
-
 // Enrich ../by_uris results with entities related to the directly
 // requested entities, following those entities claims
 

@@ -1,4 +1,3 @@
-
 let Comment, validations
 
 module.exports = (Comment = {})

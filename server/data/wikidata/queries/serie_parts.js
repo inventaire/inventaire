@@ -1,4 +1,3 @@
-
 module.exports = {
   parameters: [ 'qid' ],
   query: params => {

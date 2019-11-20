@@ -1,4 +1,3 @@
-
 // Allows authentification forms to submit a form already
 // validated by XHR calls, in order to be catched by browsers
 // password manager or other field suggestions tools

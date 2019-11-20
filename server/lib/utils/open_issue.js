@@ -1,4 +1,3 @@
-
 // Open a new issue in a dedicated Gitlab repo if the error is a new error
 const CONFIG = require('config')
 

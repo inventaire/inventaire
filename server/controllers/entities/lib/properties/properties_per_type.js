@@ -1,4 +1,3 @@
-
 // List of properties an entity of a given type can have
 // Keep in sync with client/app/modules/entities/lib/editor/properties_per_type
 

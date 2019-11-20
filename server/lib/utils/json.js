@@ -1,4 +1,3 @@
-
 const Promise = require('bluebird')
 const fs = Promise.promisifyAll(require('graceful-fs'))
 const parse = JSON.parse.bind(JSON)

@@ -1,4 +1,3 @@
-
 let error_, errorHandler
 const __ = require('config').universalPath
 const assert_ = __.require('utils', 'assert_types')

@@ -1,4 +1,3 @@
-
 module.exports = {
   env: 'production',
   verbosity: 2,

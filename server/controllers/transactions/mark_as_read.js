@@ -1,4 +1,3 @@
-
 // mark the whole transaction as read
 
 const __ = require('config').universalPath

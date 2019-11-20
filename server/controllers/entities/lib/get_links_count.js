@@ -1,4 +1,3 @@
-
 // Get the amount of entities linking to a given entity
 
 const __ = require('config').universalPath

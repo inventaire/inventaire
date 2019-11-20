@@ -1,4 +1,3 @@
-
 module.exports = (lang, polyglot) => {
   const modifier = (modifiers[lang] != null) ? modifiers[lang] : undefined
 

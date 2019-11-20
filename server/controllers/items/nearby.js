@@ -1,4 +1,3 @@
-
 const __ = require('config').universalPath
 const user_ = __.require('controllers', 'user/lib/user')
 const getItemsByUsers = require('./lib/get_items_by_users')

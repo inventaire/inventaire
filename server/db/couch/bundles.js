@@ -1,4 +1,3 @@
-
 const __ = require('config').universalPath
 const couch_ = __.require('lib', 'couch')
 const promises_ = __.require('lib', 'promises')

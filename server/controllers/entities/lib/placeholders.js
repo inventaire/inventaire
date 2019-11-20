@@ -1,4 +1,3 @@
-
 // Placeholders are entities automatically created without checking that a similar
 // entity existed locally or in Wikidata. Those entities have thus high chances
 // to be duplicates and to be deleted by merge operations.

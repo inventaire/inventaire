@@ -1,4 +1,3 @@
-
 const __ = require('config').universalPath
 const parseBbox = __.require('lib', 'parse_bbox')
 const user_ = __.require('controllers', 'user/lib/user')

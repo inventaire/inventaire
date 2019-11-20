@@ -1,4 +1,3 @@
-
 // Keep in sync with client/lib/regex
 
 // Adapted from http://stackoverflow.com/a/14582229/3324977

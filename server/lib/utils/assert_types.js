@@ -1,4 +1,3 @@
-
 const _ = require('lodash')
 const { typeOf } = require('./base')
 

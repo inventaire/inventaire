@@ -1,4 +1,3 @@
-
 let attributes
 module.exports = (attributes = {})
 

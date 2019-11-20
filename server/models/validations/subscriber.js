@@ -1,4 +1,3 @@
-
 const { pass, email } = require('./common')
 
 module.exports = {

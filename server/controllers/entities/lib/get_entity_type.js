@@ -1,4 +1,3 @@
-
 const __ = require('config').universalPath
 const { types } = __.require('lib', 'wikidata/aliases')
 

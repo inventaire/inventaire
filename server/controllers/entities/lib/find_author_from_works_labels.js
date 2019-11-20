@@ -1,4 +1,3 @@
-
 // Tries to identify an author from the occurrences of their works labels
 // in their Wikipedia article. It can thus only work for authors known by Wikidata
 

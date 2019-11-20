@@ -1,4 +1,3 @@
-
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const getEntityType = __.require('controllers', 'entities/lib/get_entity_type')

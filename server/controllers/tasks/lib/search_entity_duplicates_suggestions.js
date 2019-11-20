@@ -1,4 +1,3 @@
-
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const search = __.require('controllers', 'search/lib/get_wd_authors')

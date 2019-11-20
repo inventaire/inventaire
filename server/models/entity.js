@@ -1,4 +1,3 @@
-
 // DATA MODEL
 // _id: CouchDB uuid
 // claims: an object with properties and their associated statements

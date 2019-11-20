@@ -1,4 +1,3 @@
-
 const CONFIG = require('config')
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')

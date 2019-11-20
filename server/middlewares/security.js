@@ -1,4 +1,3 @@
-
 const CONFIG = require('config')
 const { invHost } = CONFIG
 const devEnv = CONFIG.env === 'dev'

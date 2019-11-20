@@ -1,4 +1,3 @@
-
 // The 'user' endpoint is dedicated to opeartions on the user
 // by the user herself once authentified.
 

@@ -1,4 +1,3 @@
-
 const resolveExternalIds = require('./resolve_external_ids')
 
 module.exports = seeds => Promise.all(seeds.map(resolveSeed))

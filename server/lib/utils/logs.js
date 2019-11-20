@@ -1,4 +1,3 @@
-
 const CONFIG = require('config')
 const { offline } = CONFIG
 let errorCounter = 0

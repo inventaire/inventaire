@@ -1,4 +1,3 @@
-
 // retrieves pictures stocked on the server itself under the 'local' mediaStorage mode
 // to be used in development only
 

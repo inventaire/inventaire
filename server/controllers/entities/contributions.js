@@ -1,4 +1,3 @@
-
 // An endpoint to list entities edits made by a user
 const __ = require('config').universalPath
 const error_ = __.require('lib', 'error/error')

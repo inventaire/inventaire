@@ -1,4 +1,3 @@
-
 let groupsMap
 const wdLang = require('wikidata-lang')
 const groupsData = require('isbn-groups')

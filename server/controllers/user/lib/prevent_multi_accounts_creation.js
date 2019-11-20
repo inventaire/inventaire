@@ -1,4 +1,3 @@
-
 // preventing several accounts to be created at the same time
 // given that the creation process is considerably slowed by bcrypt
 

@@ -1,4 +1,3 @@
-
 const __ = require('config').universalPath
 const ActionsControllers = __.require('lib', 'actions_controllers')
 const customQuery = require('./custom_query')

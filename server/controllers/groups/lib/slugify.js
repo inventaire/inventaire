@@ -1,4 +1,3 @@
-
 module.exports = str => str.trim().toLowerCase()
 // Remove reserved characters
 .replace(/[/?!'"@,;=$<>&:#()|[\]]+/g, '')

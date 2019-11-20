@@ -1,4 +1,3 @@
-
 // keep in sync with client/app/modules/general/scss/_colors.scss
 module.exports = {
   giving: '#FEB1BA',

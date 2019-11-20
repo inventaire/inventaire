@@ -1,4 +1,3 @@
-
 const { yellow, cyan, green, red, grey } = require('chalk')
 const write = process.stdout.write.bind(process.stdout)
 

@@ -1,4 +1,3 @@
-
 const __ = require('config').universalPath
 const promises_ = __.require('lib', 'promises')
 const validateClaimValue = require('./validate_claim_value')

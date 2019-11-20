@@ -1,4 +1,3 @@
-
 // Entity data snapshots are an attributes of the snapshot object associated with item documents:
 // - entity:title
 // - entity:lang

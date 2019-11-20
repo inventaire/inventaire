@@ -1,4 +1,3 @@
-
 module.exports = {
   dbName: 'items',
   designDocName: 'items',

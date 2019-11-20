@@ -1,4 +1,3 @@
-
 let verificators
 const CONFIG = require('config')
 const __ = CONFIG.universalPath

@@ -1,4 +1,3 @@
-
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const getBestLangValue = __.require('lib', 'get_best_lang_value')
@@ -18,7 +17,7 @@ const entityFormatter = (result, _source, lang) => ({
   type: result._type,
   uri: getUri(result._index, result._id),
   label: getBestLangValue(lang, null, _source.labels).value,
-  description: getShortDescription(_source.descriptions, lang)
+  description: getShortDescription(_source.descriptions, lang),
   image: getBestLangValue(lang, null, _source.images).value,
   lexicalScore: result._score
 })

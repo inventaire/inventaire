@@ -1,4 +1,3 @@
-
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const getEntitiesByUris = require('./get_entities_by_uris')

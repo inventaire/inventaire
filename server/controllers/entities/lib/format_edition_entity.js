@@ -1,4 +1,3 @@
-
 const __ = require('config').universalPath
 const { normalizeIsbn } = __.require('lib', 'isbn/isbn')
 const formatEntityCommon = require('./format_entity_common')

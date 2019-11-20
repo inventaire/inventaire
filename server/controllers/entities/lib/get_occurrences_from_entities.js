@@ -1,4 +1,3 @@
-
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const getAuthorWorks = __.require('controllers', 'entities/lib/get_author_works')

@@ -1,4 +1,3 @@
-
 // Doc: http://developer.piwik.org/api-reference/tracking-api
 const CONFIG = require('config')
 const __ = CONFIG.universalPath

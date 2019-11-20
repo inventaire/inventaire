@@ -1,4 +1,3 @@
-
 const __ = require('config').universalPath
 const { IncomingForm } = require('formidable')
 const { Promise } = __.require('lib', 'promises')

@@ -1,4 +1,3 @@
-
 module.exports = (userId, otherId, status) => {
   switch (status) {
   case 'friends': return 'friends'

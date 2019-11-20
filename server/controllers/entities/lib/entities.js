@@ -1,4 +1,3 @@
-
 let entities_
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')

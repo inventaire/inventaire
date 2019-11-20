@@ -1,4 +1,3 @@
-
 const __ = require('config').universalPath
 const sanitize = __.require('lib', 'sanitize/sanitize')
 const items_ = __.require('controllers', 'items/lib/items')

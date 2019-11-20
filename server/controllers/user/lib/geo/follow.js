@@ -1,4 +1,3 @@
-
 // keep in sync the users database and the geo index
 const CONFIG = require('config')
 const __ = CONFIG.universalPath

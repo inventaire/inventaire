@@ -1,4 +1,3 @@
-
 const _ = require('lodash')
 const alphabet = 'abcdefghijklmnopqrstuvwxyz'
 const possibleChars = `${alphabet + alphabet.toUpperCase()}0123456789`

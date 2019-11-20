@@ -1,4 +1,3 @@
-
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const tasks_ = __.require('controllers', 'tasks/lib/tasks')

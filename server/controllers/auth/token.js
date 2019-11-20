@@ -1,4 +1,3 @@
-
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
@@ -11,7 +10,9 @@ const setLoggedInCookie = require('./lib/set_logged_in_cookie')
 
 const sanitization = {
   email: {},
-  token: { length: user_.tokenLength }
+  token: {
+    length: user_.tokenLength
+  }
 }
 
 const confirmEmailValidity = (req, res) => {
@@ -31,10 +32,11 @@ const redirectValidEmail = (res, bool, resp) => {
 //    => redirect to the reset-password page
 const allowPasswordReset = (req, res) => {
   sanitize(req, res, sanitization)
-.then(() => passport_.authenticate.resetPassword(req, res, Redirect(res)))
-// Only handling sanitization rejected errors,
-// passport_.authenticate, deals with its own errors
-.catch(error_.Handler(req, res))
+  .then(() => passport_.authenticate.resetPassword(req, res, Redirect(res)))
+  // Only handling sanitization rejected errors,
+  // passport_.authenticate, deals with its own errors
+  .catch(error_.Handler(req, res))
+}
 
 const Redirect = res => () => {
   setLoggedInCookie(res)

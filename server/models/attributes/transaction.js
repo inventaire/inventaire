@@ -1,4 +1,3 @@
-
 // Keep in sync with client/app/modules/transactions/lib/transactions
 
 // actor: the key on which VerifyRights switches

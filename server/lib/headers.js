@@ -1,4 +1,3 @@
-
 module.exports = {
   getLang: headers => {
     const acceptLanguage = headers['accept-language']

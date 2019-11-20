@@ -1,4 +1,3 @@
-
 // Keep our entitiesSearchEngine instance updated by requesting it
 // to update its data everytime an entity with a type is requested here:
 // Every cache miss triggers an update request, meaning that 'refresh' request

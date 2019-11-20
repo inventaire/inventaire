@@ -1,4 +1,3 @@
-
 // A module to put the basis of an edition entity based on the results
 // from dataseed. It assumes that any seed arriving here found no match to its ISBN
 // thus that a new edition entity is needed, for which we need to find a work.

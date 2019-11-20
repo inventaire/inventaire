@@ -1,4 +1,3 @@
-
 // A canonical URI is the prefered URI to refer to an entity,
 // typically, an isbn: URI rather than an inv: one
 // Those URIs are the only URIs used to bound items to entities and

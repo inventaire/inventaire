@@ -1,4 +1,3 @@
-
 // Infer entity updates from other entity updates
 // Ex: see if a work label should be updated after one of its editions
 // got it's title updated

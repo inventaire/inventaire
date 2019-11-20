@@ -1,4 +1,3 @@
-
 let routes
 const CONFIG = require('config')
 const endpoint = require('./endpoint')

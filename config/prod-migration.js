@@ -1,4 +1,3 @@
-
 // Apply migration on production databases
 
 // # HOW TO:

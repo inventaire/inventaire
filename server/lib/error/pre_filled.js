@@ -1,4 +1,3 @@
-
 // Pre-formatted error handlers to make error responses consistent
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')

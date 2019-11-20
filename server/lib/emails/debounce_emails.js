@@ -1,4 +1,3 @@
-
 // Add emails to the waiting list to let server/lib/emails/debounced_emails_crawler
 // find and send them
 

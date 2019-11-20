@@ -1,4 +1,3 @@
-
 const { uniq } = require('lodash')
 
 // data: labels or descriptions

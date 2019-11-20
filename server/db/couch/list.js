@@ -1,4 +1,3 @@
-
 // 'default' keys/values are used by couch init
 // keys -> dbs names
 // values -> design docs

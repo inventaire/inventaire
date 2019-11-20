@@ -1,4 +1,3 @@
-
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const { buildSearcher } = __.require('lib', 'elasticsearch')

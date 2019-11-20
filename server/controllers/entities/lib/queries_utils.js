@@ -1,4 +1,3 @@
-
 module.exports = {
   getSimpleDayDate: date => {
     // Parse ISO date

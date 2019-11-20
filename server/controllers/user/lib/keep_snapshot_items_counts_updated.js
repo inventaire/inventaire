@@ -1,4 +1,3 @@
-
 // Keep the user snapshot data about the state of her items updated
 // taking care of avoiding edit conflicts on the user document when several items
 // are created/edited in a short period of time

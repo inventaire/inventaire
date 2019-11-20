@@ -1,4 +1,3 @@
-
 // An endpoint to get entities history as snapshots and diffs
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')

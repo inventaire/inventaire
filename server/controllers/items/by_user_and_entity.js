@@ -1,4 +1,3 @@
-
 const __ = require('config').universalPath
 const items_ = __.require('controllers', 'items/lib/items')
 const user_ = __.require('controllers', 'user/lib/user')

@@ -1,4 +1,3 @@
-
 const __ = require('config').universalPath
 const promises_ = __.require('lib', 'promises')
 const redirectClaims = require('./redirect_claims')

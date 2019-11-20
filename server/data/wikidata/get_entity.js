@@ -1,4 +1,3 @@
-
 // A request regrouper to query entities full data one by one
 // while requests are actually regrouped in the background
 const CONFIG = require('config')

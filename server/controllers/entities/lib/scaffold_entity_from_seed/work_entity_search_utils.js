@@ -1,4 +1,3 @@
-
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const getBestLangValue = __.require('lib', 'get_best_lang_value')

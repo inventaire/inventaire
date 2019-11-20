@@ -1,4 +1,3 @@
-
 // A module to look for works labels occurrences in an author's external databases reference.
 
 const __ = require('config').universalPath

@@ -1,4 +1,3 @@
-
 const { parse: isbnParser } = require('isbn2').ISBN
 const groups = require('./groups')
 

@@ -1,4 +1,3 @@
-
 const __ = require('config').universalPath
 const user_ = __.require('controllers', 'user/lib/user')
 const promises_ = __.require('lib', 'promises')
