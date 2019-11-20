@@ -12,11 +12,14 @@ const { Track } = __.require('lib', 'track')
 const sanitize = __.require('lib', 'sanitize/sanitize')
 const moveToWikidata = require('./lib/move_to_wikidata')
 
-const sanitization =
-  { uri: {} }
+const sanitization = {
+  uri: {}
+}
 
-module.exports = (req, res) => sanitize(req, res, sanitization)
-.then(params => moveToWikidata(req.user, params.uri))
-.then(responses_.Send(res))
-.then(Track(req, [ 'entity', 'moveToWikidata' ]))
-.catch(error_.Handler(req, res))
+module.exports = (req, res) => {
+  sanitize(req, res, sanitization)
+  .then(params => moveToWikidata(req.user, params.uri))
+  .then(responses_.Send(res))
+  .then(Track(req, [ 'entity', 'moveToWikidata' ]))
+  .catch(error_.Handler(req, res))
+}

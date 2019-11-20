@@ -6,7 +6,6 @@
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
- * DS103: Rewrite code to no longer use __guard__
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
@@ -57,11 +56,16 @@ const requestOptions = (image, thumbwidth) => ({
 const extractData = res => {
   const { file, licenses, error } = res.response
   return {
-    url: __guard__(__guard__(__guard__(__guard__(file != null ? file[0] : undefined, x3 => x3.urls), x2 => x2[0]), x1 => x1.thumbnail), x => x[0]),
-    license: __guard__(__guard__(__guard__(__guard__(licenses != null ? licenses[0] : undefined, x7 => x7.license), x6 => x6[0]), x5 => x5.name), x4 => x4.toString()),
-    author: __guard__(__guard__(file != null ? file[0] : undefined, x9 => x9.author), x8 => x8.toString()),
-    error: (error != null ? error[0] : undefined)
+    url: _.get(file, '0.urls.0.thumbnail.0')
+    license: getString(licenses, '0.license.0.name')
+    author: getString(file, '0.author')
+    error: error && error[0]
   }
+}
+
+const getString = (obj, path) => {
+  const value = _.get(obj, path)
+  if (value) return value.toString()
 }
 
 const formatData = (file, parsedData) => {
@@ -108,8 +112,4 @@ const fallback = file => err => {
   _.warn(err, 'commonsapi or xml parse error: ignoring')
   // Redirects to the desired resized image, but we miss credits
   return { url: `https://commons.wikimedia.org/wiki/Special:FilePath/${file}?width=${width}` }
-}
-
-function __guard__ (value, transform) {
-  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined
 }

@@ -45,7 +45,8 @@ module.exports = {
       // Trying to identify how entities with no claims arrive here
       _.warn(entity, 'entity with no claim at aggregateClaims')
       return false
-    }).map(entity => entity.claims[property])
+    })
+    .map(entity => entity.claims[property])
     .flatten()
     .compact()
     .uniq()

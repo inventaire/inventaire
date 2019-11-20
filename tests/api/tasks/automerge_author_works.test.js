@@ -35,7 +35,8 @@ describe('automerge_author_works: only from inv works to wd works', () => {
       res.redirects[work1.uri].should.equal(workWdUri)
       res.redirects[work2.uri].should.equal(workWdUri)
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 
   it('should automerge if suspect and suggestion wd and inv short works labels match', done => {
@@ -53,7 +54,8 @@ describe('automerge_author_works: only from inv works to wd works', () => {
         res.redirects[work.uri].should.equal(workWdUri)
         done()
       })
-    }))).catch(undesiredErr(done))
+    })))
+    .catch(undesiredErr(done))
   })
 
   it('should not automerge if authors works do not match', done => {
@@ -69,7 +71,8 @@ describe('automerge_author_works: only from inv works to wd works', () => {
     .then(res => {
       res.entities[invWork.uri].should.be.ok()
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 
   it('should not automerge work if suggestion is a serie or part of a serie', done => {
@@ -87,6 +90,7 @@ describe('automerge_author_works: only from inv works to wd works', () => {
     .then(res => {
       res.entities[invWork.uri].should.be.ok()
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 })

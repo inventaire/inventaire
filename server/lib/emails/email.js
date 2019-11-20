@@ -195,8 +195,8 @@ const transactionEmail = (transaction, role, label) => {
       subject: `${label}_subject`,
       button: `${label}_button`,
       lang
-    }
-    )
+    })
+
   }
 }
 

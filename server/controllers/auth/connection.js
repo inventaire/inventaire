@@ -21,12 +21,15 @@ const sanitization = {
 }
 
 // TODO: rate limit to 10 signup per IP per 10 minutes
-exports.signup = (req, res) => sanitize(req, res, sanitization)
-.then(params => {
-  const next = loggedIn(req, res)
-  // TODO: rewrite passport response to use responses_.send
-  return passport_.authenticate.localSignup(req, res, next)
-}).catch(error_.Handler(req, res))
+exports.signup = (req, res) => {
+  sanitize(req, res, sanitization)
+  .then(params => {
+    const next = loggedIn(req, res)
+    // TODO: rewrite passport response to use responses_.send
+    return passport_.authenticate.localSignup(req, res, next)
+  })
+  .catch(error_.Handler(req, res))
+}
 
 exports.login = (req, res) => {
   const next = loggedIn(req, res)

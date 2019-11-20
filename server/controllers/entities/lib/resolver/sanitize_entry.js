@@ -3,7 +3,6 @@
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
- * DS103: Rewrite code to no longer use __guard__
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
@@ -100,16 +99,17 @@ const sanitizeSeed = (seed, type) => {
 const getIsbn = edition => edition.isbn || (edition.claims != null ? edition.claims['wdt:P212'] : undefined) || (edition.claims != null ? edition.claims['wdt:P957'] : undefined)
 
 const createWorkSeedFromEdition = edition => {
-  let lang
-  if (__guard__(edition.claims != null ? edition.claims['wdt:P1476'] : undefined, x => x[0]) == null) return
+  const titleClaim = _.get(edition, 'claims.wdt:P1476.0')
+  if (titleClaim == null) return
   const title = edition.claims['wdt:P1476'][0]
-  const langWdId = edition.claims['wdt:P407'] != null ? edition.claims['wdt:P407'][0].split(':')[1] : undefined
-  if (langWdId != null) { lang = wdLang.byWdId[langWdId] != null ? wdLang.byWdId[langWdId].code : undefined }
-  if (lang == null) { lang = isbn_.guessLangFromIsbn(edition.isbn) }
-  if (lang == null) { lang = 'en' }
-  return { labels: { [lang]: title } }
-}
-
-function __guard__ (value, transform) {
-  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined
+  const langClaim = _.get(edition, 'claims.wdt:P407.0')
+  const langWdId = langClaim != null ? langClaim.split(':')[1] : undefined
+  let lang
+  if (langWdId && wdLang.byWdId[langWdId]) lang = wdLang.byWdId[langWdId].code
+  lang = lang || isbn_.guessLangFromIsbn(edition.isbn) || 'en'
+  return {
+    labels: {
+      [lang]: title
+    }
+  }
 }

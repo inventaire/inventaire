@@ -27,20 +27,23 @@ const sanitization = {
   }
 }
 
-module.exports = (req, res) => sanitize(req, res, sanitization)
-.then(params => {
-  const { ids, reqUserId } = params
-  return promises_.all([
-    items_.byIds(ids),
-    getNetworkIds(reqUserId)
-  ])
-  .spread(filterAuthorizedItems(reqUserId))
-  // Paginating isn't really required when requesting items by ids
-  // but it also handles sorting and the consistency of the API
-  .then(Paginate(params))
-  .then(addAssociatedData)
-}).then(responses_.Send(res))
-.catch(error_.Handler(req, res))
+module.exports = (req, res) => {
+  sanitize(req, res, sanitization)
+  .then(params => {
+    const { ids, reqUserId } = params
+    return promises_.all([
+      items_.byIds(ids),
+      getNetworkIds(reqUserId)
+    ])
+    .spread(filterAuthorizedItems(reqUserId))
+    // Paginating isn't really required when requesting items by ids
+    // but it also handles sorting and the consistency of the API
+    .then(Paginate(params))
+    .then(addAssociatedData)
+  })
+  .then(responses_.Send(res))
+  .catch(error_.Handler(req, res))
+}
 
 const getNetworkIds = reqUserId => {
   if (reqUserId != null) {

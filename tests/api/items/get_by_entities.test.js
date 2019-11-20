@@ -19,7 +19,8 @@ describe('items:get-by-entities', () => {
     .then(res => {
       res.items[0].entity.should.equal(item.entity)
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 
   it('should get items by entities uris', done => {

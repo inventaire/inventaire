@@ -7,7 +7,6 @@
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
  * DS102: Remove unnecessary code created because of implicit returns
- * DS103: Rewrite code to no longer use __guard__
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 const CONFIG = require('config')
@@ -34,7 +33,7 @@ module.exports = (feedOptions, users, items, lang) => {
   const feed = new Rss({
     title,
     // Arbitrary limiting the description to 300 characters as it should stay short
-    description: __guard__(description, x => x.slice(0, 301)),
+    description: description && description.slice(0, 300),
     feed_url: `${root}/api/feeds?${queryString}`,
     site_url: `${root}/${pathname}`,
     image_url: image,
@@ -86,8 +85,4 @@ const getItemTitle = (item, user, lang) => {
   title += ` [${transactionLabel}]`
 
   return title
-}
-
-function __guard__ (value, transform) {
-  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined
 }

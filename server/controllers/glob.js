@@ -51,8 +51,8 @@ module.exports = {
     return error_.bundle(req, res, 'wrong API route or http verb', 400, {
       verb: req.method,
       url: req._parsedUrl.href
-    }
-    )
+    })
+
   }
 }
 

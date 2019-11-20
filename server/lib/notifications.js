@@ -82,8 +82,8 @@ const callbacks = {
     return notifs_.add(newAdminId, 'userMadeAdmin', {
       group: groupId,
       user: actorAdminId
-    }
-    )
+    })
+
   },
 
   groupUpdate: data => {
@@ -99,8 +99,8 @@ const callbacks = {
         attribute,
         previousValue,
         newValue
-      }
-      ))
+      })
+)
     }
   },
 

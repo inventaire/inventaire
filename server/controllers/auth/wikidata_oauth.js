@@ -67,7 +67,8 @@ const getStep3 = (reqUserId, verifier, oauthToken) => {
       token_secret: reqTokenSecret,
       verifier
     }
-  }).finally(() => delete reqTokenSecrets[reqUserId])
+  })
+  .finally(() => delete reqTokenSecrets[reqUserId])
 }
 
 const saveUserTokens = reqUserId => step3Res => {

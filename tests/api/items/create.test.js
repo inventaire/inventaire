@@ -33,7 +33,8 @@ describe('items:create', () => {
         item.listing.should.equal('private')
         item.transaction.should.equal('inventorying')
         return item.owner.should.equal(userId)
-      }).delay(10)
+      })
+      .delay(10)
       .then(() => done())
     })
     .catch(undesiredErr(done))
@@ -59,7 +60,8 @@ describe('items:create', () => {
         items[1].listing.should.equal('public')
         items[1].transaction.should.equal('lending')
         return items[1].owner.should.equal(userId)
-      }).delay(10)
+      })
+      .delay(10)
       .then(() => done())
     })
     .catch(undesiredErr(done))
@@ -96,7 +98,8 @@ describe('items:create', () => {
       item.snapshot.should.be.an.Object()
       item.snapshot['entity:title'].should.equal(title)
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 
   it('should deduce the author from a work entity', done => {
@@ -107,7 +110,8 @@ describe('items:create', () => {
       item.snapshot.should.be.an.Object()
       item.snapshot['entity:authors'].should.equal(author.labels.en)
       done()
-    }))).catch(undesiredErr(done))
+    })))
+    .catch(undesiredErr(done))
   })
 
   it('should deduce the author from an edition entity', done => {
@@ -131,7 +135,8 @@ describe('items:create', () => {
       item.snapshot.should.be.an.Object()
       item.snapshot['entity:authors'].should.equal(authorLabel)
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 
   it('should reject an item created with an unknown entity', done => {

@@ -3,7 +3,6 @@
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
- * DS103: Rewrite code to no longer use __guard__
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
@@ -46,13 +45,12 @@ module.exports = {
   toIsbn10h: isbn => parse(isbn).isbn10h,
 
   guessLangFromIsbn: isbn => {
-    const langUri = __guard__(parse(isbn), x => x.groupLangUri)
+    const isbnData = parse(isbn)
+    if (isbnData == null) return
+    const langUri = isbnData.groupLangUri
     if (langUri == null) return
     const wdId = langUri.split(':')[1]
-    return (wdLang.byWdId[wdId] != null ? wdLang.byWdId[wdId].code : undefined)
+    const wdLangData = wdLang.byWdId[wdId]
+    if (wdLangData) return wdLangData.code
   }
-}
-
-function __guard__ (value, transform) {
-  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined
 }

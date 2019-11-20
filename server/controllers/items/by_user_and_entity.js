@@ -21,13 +21,16 @@ const sanitization = {
   offset: { optional: true }
 }
 
-module.exports = (req, res) => sanitize(req, res, sanitization)
-.then(params => {
-  const { userId, uri, reqUserId } = params
-  return user_.getUserById(userId, reqUserId)
-  .then(getItemsFromUser(reqUserId, uri))
-}).then(responses_.Send(res))
-.catch(error_.Handler(req, res))
+module.exports = (req, res) => {
+  sanitize(req, res, sanitization)
+  .then(params => {
+    const { userId, uri, reqUserId } = params
+    return user_.getUserById(userId, reqUserId)
+    .then(getItemsFromUser(reqUserId, uri))
+  })
+  .then(responses_.Send(res))
+  .catch(error_.Handler(req, res))
+}
 
 const getItemsFromUser = (reqUserId, uri) => user => {
   const { _id: ownerId } = user

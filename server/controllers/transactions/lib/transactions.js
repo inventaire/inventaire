@@ -30,8 +30,8 @@ const transactions_ = {
       startkey: [ userId, minKey ],
       endkey: [ userId, maxKey ],
       include_docs: true
-    }
-    )
+    })
+
   },
 
   byUserAndItem: (userId, itemId) => {

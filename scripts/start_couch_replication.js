@@ -53,9 +53,9 @@ let { username: remoteUsername, password: remotePassword } = CONFIG.replication
 if (!remoteUsername) { remoteUsername = username }
 if (!remotePassword) { remotePassword = password }
 
-let pw = __range__(3, password.length, true)
-.map(() => '•')
-.join('')
+let pw = _.range(3, password.length + 1)
+  .map(() => '•')
+  .join('')
 pw = password.slice(0, 3) + pw
 
 console.log(`${green('valid username and password found: ')}${username} / ${pw}`)
@@ -94,7 +94,8 @@ dbsNames.forEach(dbName => {
       console.log(chalk[color](`${dbName} replication response: `))
       return console.log(res.body)
     })
-  }).timeout(20000)
+  })
+  .timeout(20000)
   .catch(err => console.log(err))
 })
 
@@ -112,13 +113,3 @@ const putSecurityDoc = dbUrl => {
 }
 
 dbsNames.forEach(dbName => putSecurityDoc(localDb(dbName)))
-
-function __range__ (left, right, inclusive) {
-  const range = []
-  const ascending = left < right
-  const end = !inclusive ? right : ascending ? right + 1 : right - 1
-  for (let i = left; ascending ? i < end : i > end; ascending ? i++ : i--) {
-    range.push(i)
-  }
-  return range
-}

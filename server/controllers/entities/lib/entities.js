@@ -55,8 +55,8 @@ module.exports = (entities_ = {
       const query = db.view('entities', 'byClaim', {
         key: [ property, value ],
         include_docs: includeDocs
-      }
-      )
+      })
+
       if (parseDoc) {
         return query.then(couch_.mapDoc)
       } else {

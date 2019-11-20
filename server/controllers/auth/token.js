@@ -20,10 +20,12 @@ const sanitization = {
   token: { length: user_.tokenLength }
 }
 
-const confirmEmailValidity = (req, res) => sanitize(req, res, sanitization)
-.then(params => user_.confirmEmailValidity(params.email, params.token))
-.then(redirectValidEmail.bind(null, res, true))
-.catch(redirectValidEmail.bind(null, res, false))
+const confirmEmailValidity = (req, res) => {
+  sanitize(req, res, sanitization)
+  .then(params => user_.confirmEmailValidity(params.email, params.token))
+  .then(redirectValidEmail.bind(null, res, true))
+  .catch(redirectValidEmail.bind(null, res, false))
+}
 
 const redirectValidEmail = (res, bool, resp) => {
   if (!bool) { _.error(resp, 'email validation failed') }
@@ -33,7 +35,8 @@ const redirectValidEmail = (res, bool, resp) => {
 // reset password =
 //    => start a session with email/token instead of username/pw
 //    => redirect to the reset-password page
-const allowPasswordReset = (req, res) => sanitize(req, res, sanitization)
+const allowPasswordReset = (req, res) => {
+  sanitize(req, res, sanitization)
 .then(() => passport_.authenticate.resetPassword(req, res, Redirect(res)))
 // Only handling sanitization rejected errors,
 // passport_.authenticate, deals with its own errors

@@ -20,17 +20,19 @@ const sanitization = {
   }
 }
 
-module.exports = (req, res, next) => sanitize(req, res, sanitization)
-.then(params => {
-  const { transaction, state } = req.body
-  const reqUserId = req.user._id
-  return transactions_.byId(transaction)
-  .then(VerifyRights(state, reqUserId))
-  .then(transactions_.updateState.bind(null, state, reqUserId))
-  .then(Track(req, [ 'transaction', 'update', state ]))
-})
-.then(responses_.Ok(res))
-.catch(error_.Handler(req, res))
+module.exports = (req, res, next) => {
+  sanitize(req, res, sanitization)
+  .then(params => {
+    const { transaction, state } = req.body
+    const reqUserId = req.user._id
+    return transactions_.byId(transaction)
+    .then(VerifyRights(state, reqUserId))
+    .then(transactions_.updateState.bind(null, state, reqUserId))
+    .then(Track(req, [ 'transaction', 'update', state ]))
+  })
+  .then(responses_.Ok(res))
+  .catch(error_.Handler(req, res))
+}
 
 const VerifyRights = (state, reqUserId) => {
   const { actor } = states[state]

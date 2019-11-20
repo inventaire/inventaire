@@ -52,7 +52,8 @@ describe('users:search', () => {
     .then(res => {
       usersIds(res).includes(user._id).should.be.true()
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 
   it('should not return snapshot data', done => {
@@ -63,7 +64,8 @@ describe('users:search', () => {
       usersIds(res).includes(user._id).should.be.true()
       should(res.users[0].snapshot).not.be.ok()
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 
   it('should find a user by its bio', done => {
@@ -77,7 +79,8 @@ describe('users:search', () => {
     .then(res => {
       usersIds(res).includes(user._id).should.be.true()
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 })
 

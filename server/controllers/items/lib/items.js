@@ -41,8 +41,8 @@ module.exports = (items_ = {
       startkey: [ ownerId ],
       endkey: [ ownerId, maxKey, maxKey ],
       include_docs: true
-    }
-    )
+    })
+
   },
 
   byEntity: entityUri => {

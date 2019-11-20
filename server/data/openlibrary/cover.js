@@ -35,5 +35,6 @@ module.exports = (openLibraryId, entityType) => {
       text: 'OpenLibrary',
       url
     }
-  })).catch(_.ErrorRethrow('get openlibrary cover err'))
+  }))
+  .catch(_.ErrorRethrow('get openlibrary cover err'))
 }

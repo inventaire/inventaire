@@ -18,9 +18,11 @@ const sanitization = {
   offset: { default: 0 }
 }
 
-module.exports = (req, res) => sanitize(req, res, sanitization)
-.then(params => {
-  const { user: userId, limit, offset } = params
-  return patches_.byUserId(userId, limit, offset)
-}).then(responses_.Send(res))
-.catch(error_.Handler(req, res))
+module.exports = (req, res) => {
+  sanitize(req, res, sanitization)
+  .then(params => {
+    const { user: userId, limit, offset } = params
+    return patches_.byUserId(userId, limit, offset)
+  }).then(responses_.Send(res))
+  .catch(error_.Handler(req, res))
+}

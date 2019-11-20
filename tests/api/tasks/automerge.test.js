@@ -27,7 +27,8 @@ describe('tasks:automerge', () => {
       // entity should have merged, thus URI is now a a WD uri
       entities[WdUri].should.be.ok()
       done()
-    }))).catch(undesiredErr(done))
+    })))
+    .catch(undesiredErr(done))
   })
 
   it('should automerge if suspect and suggestion inv works labels match', done => {
@@ -45,7 +46,8 @@ describe('tasks:automerge', () => {
     .then(entities => {
       entities[wikidataUri].should.be.ok()
       done()
-    }))).catch(undesiredErr(done))
+    })))
+    .catch(undesiredErr(done))
   })
 
   it('should not automerge if author name is in work title', done => {
@@ -59,6 +61,7 @@ describe('tasks:automerge', () => {
       const firstOccurenceMatch = tasks[0].externalSourcesOccurrences[0].matchedTitles[0]
       firstOccurenceMatch.should.equal(humanLabel)
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 })

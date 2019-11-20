@@ -28,7 +28,8 @@ module.exports = (req, res, next) => {
     const files = getFilesFromFormData(formData)
     if (container === 'users') { files.forEach(validateFile) }
     return files
-  }).map(putImage)
+  })
+  .map(putImage)
   .then(indexCollection)
   .then(_.Log('upload post res'))
   .then(responses_.Send(res))

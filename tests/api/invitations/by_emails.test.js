@@ -90,7 +90,8 @@ describe('invitations:by-emails', () => {
         res.users[0].email.should.equal(email);
         (relations.userRequested.includes(res.users[0]._id)).should.be.true()
         done()
-      })).catch(undesiredErr(done))
+      }))
+      .catch(undesiredErr(done))
     })
   })
 
@@ -118,7 +119,8 @@ describe('invitations:by-emails', () => {
       .then(res => {
         res.emails[0].should.equal('a@foo.org')
         done()
-      })).catch(undesiredErr(done))
+      }))
+      .catch(undesiredErr(done))
     })
 
     it('should accept non-user admin requests to invite to a group', done => {
@@ -127,7 +129,8 @@ describe('invitations:by-emails', () => {
         authReqB('post', '/api/invitations?action=by-emails', {
           emails: 'a@foo.org',
           group: group._id
-        })).then(res => {
+        }))
+        .then(res => {
         res.emails[0].should.equal('a@foo.org')
         done()
       })
@@ -140,7 +143,8 @@ describe('invitations:by-emails', () => {
         authReqC('post', '/api/invitations?action=by-emails', {
           emails: 'a@foo.org',
           group: group._id
-        })).catch(err => {
+        }))
+        .catch(err => {
         err.statusCode.should.equal(403)
         err.body.status_verbose.should.equal("user isn't a group member")
         done()
@@ -155,8 +159,8 @@ describe('invitations:by-emails', () => {
         const invite = () => authReq('post', '/api/invitations?action=by-emails', {
           emails: email,
           group: group._id
-        }
-        )
+        })
+
 
         return invite()
         .then(() => signup(email))

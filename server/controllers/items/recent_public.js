@@ -28,13 +28,16 @@ const sanitization = {
   }
 }
 
-module.exports = (req, res) => sanitize(req, res, sanitization)
-.then(params => {
-  const { assertImage, lang, limit, reqUserId } = params
-  return items_.publicByDate(itemsQueryLimit, offset, assertImage, reqUserId)
-  .then(selectRecentItems(lang, limit))
-  .then(bundleOwnersToItems.bind(null, res, reqUserId))
-}).catch(error_.Handler(req, res))
+module.exports = (req, res) => {
+  sanitize(req, res, sanitization)
+  .then(params => {
+    const { assertImage, lang, limit, reqUserId } = params
+    return items_.publicByDate(itemsQueryLimit, offset, assertImage, reqUserId)
+    .then(selectRecentItems(lang, limit))
+    .then(bundleOwnersToItems.bind(null, res, reqUserId))
+  })
+  .catch(error_.Handler(req, res))
+}
 
 const selectRecentItems = (lang, limit) => items => {
   const recentItems = []

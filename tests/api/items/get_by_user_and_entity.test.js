@@ -28,7 +28,8 @@ describe('items:get-by-user-and-entity', () => {
         resItem.owner.should.equal(item.owner)
       }
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 
   it('should get items by their owner id', done => {

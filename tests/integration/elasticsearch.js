@@ -21,13 +21,9 @@ describe('elastic query of an author name within indexes of wikidata humans', ()
 
   search(authorInWdDescriptions.query, 'humans')
   .then(results => {
-    const goodResult = _.find(results, { _id: authorInWdDescriptions.goodId })
-    const badResult = _.find(results, { _id: authorInWdDescriptions.lessGoodId })
-
     const ids = _.map(results, '_id')
     ids.includes(authorInWdDescriptions.goodId).should.be.true()
     ids.includes(authorInWdDescriptions.lessGoodId).should.be.false()
-
     done()
   })
 }))

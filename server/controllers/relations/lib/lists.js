@@ -19,8 +19,8 @@ module.exports = db => {
     startkey: [ userId, minKey ],
     endkey: [ userId, maxKey ],
     include_docs: includeDocs
-  }
-  )
+  })
+
 
   const lists = {
     getUserRelations: userId => {

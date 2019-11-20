@@ -36,8 +36,8 @@ module.exports = {
         redirect: true,
         width,
         height
-      }
-      )
+      })
+
 
     // Assumes this is a Wikimedia Commons filename
     } else if (path[0] !== '/') {

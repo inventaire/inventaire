@@ -91,7 +91,8 @@ describe('entities:resolve:create-unresolved', () => {
       entry.works[0].resolved.should.be.false()
       entry.works[0].created.should.be.false()
       done()
-    })).catch(done)
+    }))
+    .catch(done)
   })
 
   it('should add optional claims to created edition', done => {

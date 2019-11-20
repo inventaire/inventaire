@@ -31,7 +31,8 @@ module.exports = params => {
   return promises_.all(promises)
   .then((...results) => ({
     parts: _.flatten(...Array.from(results || [])).sort(sortByOrdinalOrDate)
-  })).catch(_.ErrorRethrow('get serie parts err'))
+  }))
+  .catch(_.ErrorRethrow('get serie parts err'))
 }
 
 const getWdSerieParts = (qid, refresh, dry) => runWdQuery({ query: 'serie-parts', qid, refresh, dry })

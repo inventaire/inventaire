@@ -38,8 +38,8 @@ module.exports = (groups_ = {
       endkey: `${name}Z`,
       include_docs: true,
       limit
-    }
-    )
+    })
+
   },
 
   // including invitations

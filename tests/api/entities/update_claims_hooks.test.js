@@ -28,7 +28,8 @@ describe('entities:update-claims-hooks', () => {
         refreshedWork.labels.en.should.equal(updatedValue)
         done()
       }))
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 
   it('should not update a work label if editions disagree on the title', done => {
@@ -48,6 +49,7 @@ describe('entities:update-claims-hooks', () => {
         refreshedWork.labels.en.should.equal(work.labels.en)
         done()
       }))
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 })

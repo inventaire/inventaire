@@ -3,7 +3,6 @@
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
- * DS103: Rewrite code to no longer use __guard__
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
@@ -30,7 +29,7 @@ const getArticle = (lang, title, introOnly) => requests_.get(apiQuery(lang, titl
   }
 
   return {
-    extract: cleanExtract(__guard__(__guard__(_.values(pages), x1 => x1[0]), x => x.extract)),
+    extract: getCleanExtract(_.values(pages)),
     url: `https://${lang}.wikipedia.org/wiki/${title}`
   }
 })
@@ -58,8 +57,11 @@ const apiQuery = (lang, title, introOnly) => {
 }
 
 // Commas between references aren't removed, thus the presence of aggregated commas
-const cleanExtract = str => str != null ? str.replace(/,,/g, ',').replace(/,\./g, '.') : undefined
-
-function __guard__ (value, transform) {
-  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined
+const getCleanExtract = pages => {
+  const extract = pages && pages[0] && pages[0].extract
+  if (extract) {
+    return extract
+    .replace(/,,/g, ',')
+    .replace(/,\./g, '.')
+  }
 }

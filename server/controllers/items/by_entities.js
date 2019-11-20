@@ -22,11 +22,13 @@ const sanitization = {
   offset: { optional: true }
 }
 
-module.exports = (req, res) => sanitize(req, res, sanitization)
-.then(getEntitiesItems)
-.then(addAssociatedData)
-.then(responses_.Send(res))
-.catch(error_.Handler(req, res))
+module.exports = (req, res) => {
+  sanitize(req, res, sanitization)
+  .then(getEntitiesItems)
+  .then(addAssociatedData)
+  .then(responses_.Send(res))
+  .catch(error_.Handler(req, res))
+}
 
 const getEntitiesItems = page => {
   const { uris, reqUserId } = page

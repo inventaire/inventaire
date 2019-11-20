@@ -27,10 +27,12 @@ const sanitization = {
   }
 }
 
-module.exports = (req, res, next) => sanitize(req, res, sanitization)
-.then(params => {
-  const { uris, refresh, relatives } = params
-  return getEntitiesByUris({ uris, refresh })
-  .then(addRelatives(relatives, refresh))
-}).then(responses_.Send(res))
-.catch(error_.Handler(req, res))
+module.exports = (req, res, next) => {
+  sanitize(req, res, sanitization)
+  .then(params => {
+    const { uris, refresh, relatives } = params
+    return getEntitiesByUris({ uris, refresh })
+    .then(addRelatives(relatives, refresh))
+  }).then(responses_.Send(res))
+  .catch(error_.Handler(req, res))
+}

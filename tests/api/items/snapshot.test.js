@@ -30,7 +30,8 @@ describe('items:snapshot', () => {
       const title = _.values(serieEntity.labels)[0]
       item.snapshot['entity:series'].should.equal(title)
       done()
-    }))).catch(undesiredErr(done))
+    })))
+    .catch(undesiredErr(done))
   })
 
   it("should snapshot the item's work series ordinal", done => {
@@ -52,7 +53,8 @@ describe('items:snapshot', () => {
         item.snapshot['entity:ordinal'].should.equal('6')
         done()
       })
-    }))).catch(undesiredErr(done))
+    })))
+    .catch(undesiredErr(done))
   })
 
   it('should snapshot data from all the works of a composite edition', done => {
@@ -76,7 +78,8 @@ describe('items:snapshot', () => {
       item.snapshot['entity:authors'].should.equal(authorsNames)
       item.snapshot['entity:series'].should.equal(seriesNames)
       done()
-    })))).catch(undesiredErr(done))
+    }))))
+    .catch(undesiredErr(done))
   })
 
   it('should snapshot the image of an edition', done => {
@@ -118,7 +121,8 @@ describe('items:snapshot', () => {
     .then(item => {
       item.snapshot['entity:image'].should.equal(edition.image.url)
       done()
-    })).catch(done)
+    }))
+    .catch(done)
   })
 
   describe('update', () => {
@@ -184,7 +188,8 @@ describe('items:snapshot', () => {
             done()
           })
         })
-      }))).catch(undesiredErr(done))
+      })))
+      .catch(undesiredErr(done))
     })
 
     it('should be updated when its local author entity title changes (edition entity)', done => {
@@ -232,7 +237,8 @@ describe('items:snapshot', () => {
           item.snapshot['entity:authors'].should.equal(updateAuthorName)
           done()
         })
-      })).catch(undesiredErr(done))
+      }))
+      .catch(undesiredErr(done))
     })
 
     it('should be updated when its local work entity is merged (work entity)', done => {
@@ -248,7 +254,8 @@ describe('items:snapshot', () => {
         const updatedTitle = workEntityB.labels.en
         updatedItem.snapshot['entity:title'].should.equal(updatedTitle)
         done()
-      })).catch(undesiredErr(done))
+      }))
+      .catch(undesiredErr(done))
     })
 
     it('should be updated when its local work entity is merged (edition entity)', done => {
@@ -270,7 +277,8 @@ describe('items:snapshot', () => {
         const authorName = _.values(addedAuthor.labels)[0]
         updatedItem.snapshot['entity:authors'].should.equal(authorName)
         done()
-      })))).catch(undesiredErr(done))
+      }))))
+      .catch(undesiredErr(done))
     })
 
     it('should be updated when its local author entity is merged', done => {
@@ -289,7 +297,8 @@ describe('items:snapshot', () => {
         const updatedAuthors = authorEntityB.labels.en
         updatedItem.snapshot['entity:authors'].should.equal(updatedAuthors)
         done()
-      })).catch(undesiredErr(done))
+      }))
+      .catch(undesiredErr(done))
     })
 
     it('should be updated when its local author entity is merged and reverted', done => {
@@ -315,7 +324,8 @@ describe('items:snapshot', () => {
           reupdatedItem.snapshot['entity:authors'].should.equal(oldAuthors)
           done()
         })
-      })).catch(undesiredErr(done))
+      }))
+      .catch(undesiredErr(done))
     })
 
     it('should be updated when its entity changes', done => {
@@ -337,7 +347,8 @@ describe('items:snapshot', () => {
         const editionTitle = editionEntity.claims['wdt:P1476'][0]
         updatedItem.snapshot['entity:title'].should.equal(editionTitle)
         done()
-      }))).catch(undesiredErr(done))
+      })))
+      .catch(undesiredErr(done))
     })
 
     it('should be updated when its remote work entity changes', done => {
@@ -354,7 +365,8 @@ describe('items:snapshot', () => {
       .then(updatedItem => {
         updatedItem.snapshot['entity:authors'].should.equal('Alain Damasio')
         done()
-      })))).catch(undesiredErr(done))
+      }))))
+      .catch(undesiredErr(done))
     })
 
     it('should be updated when its remote author entity changes', done => {
@@ -372,7 +384,8 @@ describe('items:snapshot', () => {
       .then(updatedItem => {
         updatedItem.snapshot['entity:authors'].should.equal('Alain Damasio')
         done()
-      })))).catch(undesiredErr(done))
+      }))))
+      .catch(undesiredErr(done))
     })
   })
 })

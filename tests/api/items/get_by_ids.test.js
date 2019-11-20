@@ -19,7 +19,8 @@ describe('items:get-by-ids', () => {
     .then(res => {
       res.items[0]._id.should.equal(item._id)
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 
   it('should get items by ids', done => {
@@ -45,6 +46,7 @@ describe('items:get-by-ids', () => {
       res.items[0]._id.should.equal(item._id)
       res.users[0]._id.should.equal(item.owner)
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 })

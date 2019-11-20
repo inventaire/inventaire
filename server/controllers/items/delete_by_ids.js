@@ -13,13 +13,16 @@ const responses_ = __.require('lib', 'responses')
 const sanitize = __.require('lib', 'sanitize/sanitize')
 const radio = __.require('lib', 'radio')
 
-const sanitization =
-  { ids: {} }
+const sanitization = {
+  ids: {}
+}
 
-module.exports = (req, res, next) => sanitize(req, res, sanitization)
-.then(deleteByIds)
-.then(responses_.Ok(res))
-.catch(error_.Handler(req, res))
+module.exports = (req, res, next) => {
+  sanitize(req, res, sanitization)
+  .then(deleteByIds)
+  .then(responses_.Ok(res))
+  .catch(error_.Handler(req, res))
+}
 
 const deleteByIds = params => {
   const { ids, reqUserId } = params

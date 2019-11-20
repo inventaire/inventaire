@@ -45,8 +45,8 @@ module.exports = (tasks_ = {
       skip: offset,
       descending: true,
       include_docs: true
-    }
-    )
+    })
+
   },
 
   bySuspectUri: suspectUri => {

@@ -22,7 +22,8 @@ describe('groups:update-settings', () => {
         group: groupId,
         attribute: 'name',
         value: updatedName
-      }).delay(50)
+      })
+      .delay(50)
       .then(updateRes => {
         updateRes.ok.should.be.true()
         return nonAuthReq('get', `${endpointAction}=by-id&id=${groupId}`)
@@ -46,7 +47,8 @@ describe('groups:update-settings', () => {
         group: groupId,
         attribute: 'name',
         value: updatedName
-      }).delay(50)
+      })
+      .delay(50)
       .then(updateRes => {
         updateRes.ok.should.be.true()
         updateRes.update.slug.should.equal(slugify(updatedName))
@@ -65,7 +67,8 @@ describe('groups:update-settings', () => {
         group: groupId,
         attribute: 'description',
         value: updatedDescription
-      }).delay(50)
+      })
+      .delay(50)
       .then(updateRes => {
         updateRes.ok.should.be.true()
         Object.keys(updateRes.update).length.should.equal(0)

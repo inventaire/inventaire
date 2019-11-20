@@ -238,7 +238,8 @@ describe('entities:resolve:external-id', () => {
       entries[0].works[0].should.be.an.Object()
       entries[0].works[0].uri.should.equal(work.uri)
       done()
-    })).catch(done)
+    }))
+    .catch(done)
   })
 
   it('should resolve wikidata author from external ids claim', done => {
@@ -277,7 +278,8 @@ describe('entities:resolve:external-id', () => {
       entries[0].authors[0].should.be.an.Object()
       entries[0].authors[0].uri.should.equal(author.uri)
       done()
-    })).catch(done)
+    }))
+    .catch(done)
   })
 })
 
@@ -303,7 +305,8 @@ describe('entities:resolve:in-context', () => {
     .then(entries => {
       should(entries[0].works[0].uri).be.ok()
       done()
-    }))).catch(done)
+    })))
+    .catch(done)
   })
 
   it('should resolve work from author found in work author claims', done => {
@@ -346,7 +349,8 @@ describe('entities:resolve:in-context', () => {
         should(entries[0].works[0].uri).not.be.ok()
         done()
       })
-    })).catch(done)
+    }))
+    .catch(done)
   })
 
   it('should resolve author from inv author with same label, and an inv work with external id', done => {
@@ -369,7 +373,8 @@ describe('entities:resolve:in-context', () => {
         should(entries[0].authors[0].uri).be.ok()
         done()
       })
-    })).catch(done)
+    }))
+    .catch(done)
   })
 
   it('should resolve work from resolve edition', done => {
@@ -386,7 +391,8 @@ describe('entities:resolve:in-context', () => {
         res.entries[0].works[0].uri.should.equal(work.uri)
         done()
       })
-    })).catch(done)
+    }))
+    .catch(done)
   })
 
   it('should ignore unresolved work from resolve edition', done => {
@@ -400,7 +406,8 @@ describe('entities:resolve:in-context', () => {
       const entry = res.entries[0]
       entry.works[0].resolved.should.be.false()
       done()
-    })).catch(done)
+    }))
+    .catch(done)
   })
 })
 
@@ -477,7 +484,8 @@ describe('entities:resolve:on-labels', () => {
         should(entries[0].authors[0].uri).not.be.ok()
         done()
       }))
-    })).catch(done)
+    }))
+    .catch(done)
   })
 })
 

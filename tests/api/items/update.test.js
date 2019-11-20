@@ -64,6 +64,7 @@ describe('items:update', () => {
           done()
         })
       })
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 })

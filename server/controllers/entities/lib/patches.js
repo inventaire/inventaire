@@ -32,8 +32,8 @@ module.exports = {
         skip: offset,
         include_docs: true,
         reduce: false
-      }
-      ),
+      })
+,
       // Unfortunately, the response doesn't gives the total range length
       // so we need to query it separately
       getUserTotalContributions(userId)

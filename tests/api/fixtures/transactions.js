@@ -40,8 +40,8 @@ module.exports = {
       action: 'message',
       transaction: transaction._id,
       message: 'yo'
-    }
-    )
+    })
+
   }
 }
 

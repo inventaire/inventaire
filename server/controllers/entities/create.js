@@ -29,23 +29,25 @@ const sanitization = {
   }
 }
 
-module.exports = (req, res) => sanitize(req, res, sanitization)
-.then(params => {
-  const { prefix, labels, claims, reqUserId } = params
-  const createFn = creators[prefix]
-  params = { labels, claims }
-  if (prefix === 'wd') {
-    params.user = req.user
-  } else {
-    params.userId = reqUserId
-  }
-  return createFn(params)
-  .then(entity => // Re-request the entity's data to get it formatted
-    getEntityByUri({ uri: entity.uri, refresh: true }))
-})
-.then(responses_.Send(res))
-.then(Track(req, [ 'entity', 'creation' ]))
-.catch(error_.Handler(req, res))
+module.exports = (req, res) => {
+  sanitize(req, res, sanitization)
+  .then(params => {
+    const { prefix, labels, claims, reqUserId } = params
+    const createFn = creators[prefix]
+    params = { labels, claims }
+    if (prefix === 'wd') {
+      params.user = req.user
+    } else {
+      params.userId = reqUserId
+    }
+    return createFn(params)
+    .then(entity => // Re-request the entity's data to get it formatted
+      getEntityByUri({ uri: entity.uri, refresh: true }))
+  })
+  .then(responses_.Send(res))
+  .then(Track(req, [ 'entity', 'creation' ]))
+  .catch(error_.Handler(req, res))
+}
 
 const creators = {
   inv: require('./lib/create_inv_entity'),

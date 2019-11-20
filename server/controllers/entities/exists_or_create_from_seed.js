@@ -32,24 +32,28 @@ const sanitization = {
   authors: { optional: true }
 }
 
-module.exports = (req, res) => sanitize(req, res, sanitization)
-.then(seed => {
-  let { isbn, authors } = seed
-  if (!authors) { authors = [] }
+module.exports = (req, res) => {
+  sanitize(req, res, sanitization)
+  .then(seed => {
+    let { isbn, authors } = seed
+    if (!authors) { authors = [] }
 
-  seed.authors = authors.filter(author => (author != null ? author.length : undefined) > 0)
+    seed.authors = authors.filter(author => (author != null ? author.length : undefined) > 0)
 
-  return entities_.byIsbn(isbn)
-  .then(entityDoc => {
-    if (entityDoc) {
-      return entityDoc
-    } else {
-      return addImage(seed).then(scaffoldEditionEntityFromSeed)
-    }
+    return entities_.byIsbn(isbn)
+    .then(entityDoc => {
+      if (entityDoc) {
+        return entityDoc
+      } else {
+        return addImage(seed)
+        .then(scaffoldEditionEntityFromSeed)
+      }
+    })
+    .then(formatEditionEntity)
+    .then(responses_.Send(res))
   })
-  .then(formatEditionEntity)
-  .then(responses_.Send(res))
-}).catch(error_.Handler(req, res))
+  .catch(error_.Handler(req, res))
+}
 
 const addImage = seed => {
   if (!dataseedEnabled) return promises_.resolve(seed)

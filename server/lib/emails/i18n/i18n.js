@@ -3,7 +3,6 @@
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
- * DS103: Rewrite code to no longer use __guard__
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 let helpers
@@ -37,8 +36,8 @@ activeLangs.forEach(lang => {
 })
 
 const solveLang = lang => {
-  // there is only support for 2 letters languages for now
-  lang = __guard__(lang, x => x.slice(0, 2))
+  // There is only support for 2 letters languages for now
+  lang = _.shortLang(lang)
   if (activeLangs.includes(lang)) return lang
   else return 'en'
 }
@@ -63,7 +62,3 @@ module.exports = (helpers = {
     return moment(epochTime).format(format)
   }
 })
-
-function __guard__ (value, transform) {
-  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined
-}

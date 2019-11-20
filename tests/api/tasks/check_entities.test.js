@@ -27,7 +27,8 @@ describe('tasks:check-entities', () => {
       err.body.status_verbose.should.equal('unsupported type: work')
       err.message
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 
   it('should create tasks for the requested URIs', done => {
@@ -43,7 +44,8 @@ describe('tasks:check-entities', () => {
       task.relationScore.should.be.a.Number()
       task.externalSourcesOccurrences.should.be.an.Array()
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 
   it('should not re-create existing tasks', done => {
@@ -55,7 +57,8 @@ describe('tasks:check-entities', () => {
       const uniqSuggestiontUris = _.uniq(_.map(tasks, 'suggestionUri'))
       tasks.length.should.equal(uniqSuggestiontUris.length)
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 })
 
@@ -74,7 +77,8 @@ describe('tasks:automerge', () => {
       // entity should have merged, thus URI is now a a WD uri
       entities[authorWdUri].should.be.ok()
       done()
-    }))).catch(undesiredErr(done))
+    })))
+    .catch(undesiredErr(done))
   })
 
   it('should automerge if suspect and suggestion workLabel are similar', done => {
@@ -92,7 +96,8 @@ describe('tasks:automerge', () => {
     .then(entities => {
       entities[wikidataUri].should.be.ok()
       done()
-    }))).catch(undesiredErr(done))
+    })))
+    .catch(undesiredErr(done))
   })
 
   it('should not automerge if author name is in work title', done => {
@@ -106,6 +111,7 @@ describe('tasks:automerge', () => {
       const firstOccurenceMatch = tasks[0].externalSourcesOccurrences[0].matchedTitles[0]
       firstOccurenceMatch.should.equal(authorLabel)
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 })

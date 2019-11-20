@@ -8,7 +8,6 @@
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-let hashKey
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
@@ -25,15 +24,14 @@ const promises_ = __.require('lib', 'promises')
 const cache_ = __.require('lib', 'cache')
 const randomString = __.require('lib', './utils/random_string')
 
-const mookPromise = (hashKey = key => promises_.resolve(_.hashCode(key)))
-
+const hashKey = key => promises_.resolve(_.hashCode(key))
 const workingFn = key => hashKey(key + randomString(8))
 const failingFn = key => promises_.reject('Jag är Döden')
 
 describe('cache', () => {
   describe('get', () => {
     it('should return a promise', done => {
-      const p = cache_.get({ key: 'whatever', fn: mookPromise.bind(null, 'yo') })
+      const p = cache_.get({ key: 'whatever', fn: hashKey.bind(null, 'yo') })
       p.should.have.property('then')
       p.should.have.property('catch')
       done()
@@ -41,7 +39,7 @@ describe('cache', () => {
 
     it('should accept a key and a promisified function', done => {
       const key = 'whatever'
-      cache_.get({ key, fn: mookPromise.bind(null, key) })
+      cache_.get({ key, fn: hashKey.bind(null, key) })
       .then(() => done())
       .catch(done)
     })
@@ -94,7 +92,8 @@ describe('cache', () => {
         res1.should.equal(res2)
         res1.should.equal(res3)
         done()
-      }))).catch(done)
+      })))
+      .catch(done)
     })
 
     it('should cache non-error empty results', done => {
@@ -128,7 +127,8 @@ describe('cache', () => {
         res1.should.be.ok()
         should(res2).not.be.ok()
         done()
-      })).catch(done)
+      }))
+      .catch(done)
     }))
 
     it('should also accept an expiration timespan', done => {
@@ -142,7 +142,8 @@ describe('cache', () => {
         res1.should.equal(res2)
         res2.should.not.equal(res3)
         done()
-      }))).catch(done)
+      })))
+      .catch(done)
     })
 
     describe('refresh', () => it('should accept a refresh parameter', done => {
@@ -156,7 +157,8 @@ describe('cache', () => {
         res1.should.equal(res2)
         res1.should.not.equal(res3)
         done()
-      }))).catch(done)
+      })))
+      .catch(done)
     }))
 
     describe('dry', () => {
@@ -169,7 +171,8 @@ describe('cache', () => {
         .then(res2 => {
           res1.should.equal(res2)
           done()
-        })).catch(done)
+        }))
+        .catch(done)
       })
 
       it('should return empty when no value was cached', done => {

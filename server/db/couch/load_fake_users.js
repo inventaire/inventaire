@@ -9,15 +9,15 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const bluereq = require('bluereq')
+const someFakeUsernames =   [
+  'bobby', 'tony', 'luigi', 'rocky', 'shanapaul', 'Hubert_Bonisseur_de_la_Bath',
+  'bambi', 'bartolome', 'boris', 'bastogne', 'baraka',
+  'babidi', 'boo', 'bamboo', 'baratin'
+]
 
 module.exports = () => {
-  [
-    'bobby', 'tony', 'luigi', 'rocky', 'shanapaul', 'Hubert_Bonisseur_de_la_Bath',
-    'bambi', 'bartolome', 'boris', 'bastogne', 'baraka',
-    'babidi', 'boo', 'bamboo', 'baratin'
-  ]
-  .forEach(loadFakeUser)
-  return __range__(1, 50, true).map(i => loadFakeUser())
+  someFakeUsernames.forEach(loadFakeUser)
+  return _.range(0, 50).map(i => loadFakeUser())
 }
 
 const loadFakeUser = username => bluereq.get('http://api.randomuser.me/')
@@ -26,9 +26,8 @@ const loadFakeUser = username => bluereq.get('http://api.randomuser.me/')
 .catch(_.Error('loadFakeUser'))
 
 const getUserData = (username, res) => {
-  let userData
   const fake = res.body.results[0].user
-  return userData = {
+  return {
     username: username || fake.username,
     email: fake.email,
     picture: fake.picture.medium,
@@ -39,13 +38,3 @@ const getUserData = (username, res) => {
 const postUser = data => bluereq.post(usersDbUrl, data)
 .then(res => _.info(res.body, 'postUser'))
 .catch(_.Error('postUser'))
-
-function __range__ (left, right, inclusive) {
-  const range = []
-  const ascending = left < right
-  const end = !inclusive ? right : ascending ? right + 1 : right - 1
-  for (let i = left; ascending ? i < end : i > end; ascending ? i++ : i--) {
-    range.push(i)
-  }
-  return range
-}

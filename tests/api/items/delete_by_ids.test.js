@@ -79,7 +79,8 @@ describe('items:delete-by-ids', () => {
       const countChange = CountChange(userBefore.snapshot, userAfter.snapshot)
       countChange('public').should.equal(-1)
       done()
-    })))).catch(done)
+    }))))
+    .catch(done)
   })
 
   it('should reject deletion of an item owned by another user', done => {

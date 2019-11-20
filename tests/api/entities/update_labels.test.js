@@ -60,7 +60,8 @@ describe('entities:update-labels', () => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.startWith('already up-to-date')
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 
   it('should accept rapid updates on the same entity', done => {

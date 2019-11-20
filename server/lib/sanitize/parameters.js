@@ -174,8 +174,8 @@ module.exports = {
   limit: _.extend({}, positiveInteger, {
     min: 1,
     default: 100
-  }
-  ),
+  })
+,
   message: nonEmptyString,
   offset: _.extend({}, positiveInteger, { default: 0 }),
   options: whitelistedStrings,
@@ -189,8 +189,8 @@ module.exports = {
   range: _.extend({}, positiveInteger, {
     default: 50,
     max: 500
-  }
-  ),
+  })
+,
   search: nonEmptyString,
   state: whitelistedString,
   title: nonEmptyString,

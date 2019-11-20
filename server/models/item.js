@@ -101,8 +101,8 @@ Item.changeOwner = (transacDoc, item) => {
     transaction: 'inventorying',
     listing: 'private',
     updated: Date.now()
-  }
-  )
+  })
+
 }
 
 Item.allowTransaction = item => attributes.allowTransaction.includes(item.transaction)

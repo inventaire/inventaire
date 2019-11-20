@@ -21,7 +21,8 @@ describe('groups:get', () => {
       const groupsIds = _.map(res.groups, '_id')
       should(groupsIds.includes(group._id)).be.true()
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   }))
 
   describe('by-id', () => it('should get a group by id', done => {
@@ -33,7 +34,8 @@ describe('groups:get', () => {
       res.group.name.should.equal(group.name)
       res.group.slug.should.equal(group.slug)
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   }))
 
   describe('by-slug', () => it('should get a group by slug', done => {
@@ -45,6 +47,7 @@ describe('groups:get', () => {
       res.group.name.should.equal(group.name)
       res.group.slug.should.equal(group.slug)
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   }))
 })

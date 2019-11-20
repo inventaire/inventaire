@@ -21,7 +21,9 @@ const sanitization = {
   }
 }
 
-module.exports = (req, res) => sanitize(req, res, sanitization)
-.then(reverseClaims)
-.then(responses_.Wrap(res, 'uris'))
-.catch(error_.Handler(req, res))
+module.exports = (req, res) => {
+  sanitize(req, res, sanitization)
+  .then(reverseClaims)
+  .then(responses_.Wrap(res, 'uris'))
+  .catch(error_.Handler(req, res))
+}

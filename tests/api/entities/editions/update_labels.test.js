@@ -19,6 +19,7 @@ describe('entities:editions:update-labels', () => {
       err.body.status_verbose.should.equal("editions can't have labels")
       err.statusCode.should.equal(400)
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 })

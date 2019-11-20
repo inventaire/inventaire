@@ -7,27 +7,19 @@
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
  * DS102: Remove unnecessary code created because of implicit returns
- * DS103: Rewrite code to no longer use __guard__
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-let base
 const _ = require('lodash')
 
-module.exports = (base = {
+const base = module.exports = {
   combinations: (array1, array2) => {
     const results = []
     array1.forEach(keys1 => array2.forEach(keys2 => results.push([ keys1, keys2 ])))
     return results
   },
 
-  sumValues: obj => {
-    if (base.objLength(obj) > 0) {
-      return __guard__(_.values(obj), x => x.reduce((a, b) => a + b))
-    } else {
-      return 0
-    }
-  },
+  sumValues: obj => _.sum(_.values(obj)),
 
   sameObjects: (a, b) => JSON.stringify(a) === JSON.stringify(b),
 
@@ -124,11 +116,11 @@ module.exports = (base = {
     return false
   },
 
-  objLength: obj => __guard__(Object.keys(obj), x => x.length),
+  objLength: obj => _.keys(obj).length,
 
   expired: (timestamp, ttl) => (Date.now() - timestamp) > ttl,
 
-  shortLang: lang => __guard__(lang, x => x.slice(0, 2)),
+  shortLang: lang => lang && lang.slice(0, 2),
 
   // encodeURIComponent ignores !, ', (, ), and *
   // cf https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent#Description
@@ -142,11 +134,8 @@ module.exports = (base = {
   },
 
   parseBooleanString: (booleanString, defaultVal = false) => {
-    if (defaultVal === false) {
-      return booleanString === 'true'
-    } else {
-      return booleanString !== 'false'
-    }
+    if (defaultVal === false) return booleanString === 'true'
+    else return booleanString !== 'false'
   },
 
   simpleDay: date => {
@@ -185,7 +174,7 @@ module.exports = (base = {
   mapKeysValues: (obj, fn) => {
     return Object.keys(obj).reduce(aggregateMappedKeysValues(obj, fn), {})
   }
-})
+}
 
 const aggregateMappedKeysValues = (obj, fn) => (newObj, key) => {
   const value = obj[key]
@@ -232,8 +221,4 @@ const aggregateCollections = (index, name) => {
 const aggragateFnApplication = fn => (index, value) => {
   index[value] = fn(value)
   return index
-}
-
-function __guard__ (value, transform) {
-  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined
 }

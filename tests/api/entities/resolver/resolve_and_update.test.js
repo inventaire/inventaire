@@ -18,8 +18,8 @@ const resolveAndUpdate = entries => {
   return authReq('post', '/api/entities?action=resolve', {
     entries,
     update: true
-  }
-  )
+  })
+
 }
 
 describe('entities:resolver:update-resolved', () => {
@@ -51,7 +51,8 @@ describe('entities:resolver:update-resolved', () => {
         workAuthorsUris.should.not.containEql(authorUri)
         done()
       })
-    })).catch(done)
+    }))
+    .catch(done)
   })
 
   it('should update entities claims values if property does not exist', done => {
@@ -77,7 +78,8 @@ describe('entities:resolver:update-resolved', () => {
         workB.claims['wdt:P50'][0].should.equal(entryB.works[0].claims['wdt:P50'][0])
         done()
       })
-    })).catch(done)
+    }))
+    .catch(done)
   })
 
   it('should update authors claims', done => {
@@ -108,7 +110,8 @@ describe('entities:resolver:update-resolved', () => {
         authorWebsiteClaimValues.should.containEql(officialWebsite)
         done()
       })
-    })).catch(done)
+    }))
+    .catch(done)
   })
 
   it('should update edition claims', done => {
@@ -170,7 +173,8 @@ describe('entities:resolver:update-resolved', () => {
       batchId.should.above(startTime)
       batchId.should.below(Date.now())
       done()
-    }))).catch(undesiredErr(done))
+    })))
+    .catch(undesiredErr(done))
   })
 })
 

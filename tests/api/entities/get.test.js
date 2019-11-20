@@ -45,7 +45,8 @@ describe('entities:get:by-uris', () => {
     .then(res => {
       res.entities[work.uri].should.be.an.Object()
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 
   it('should return uris not found', done => {
@@ -69,7 +70,8 @@ describe('entities:get:by-uris', () => {
       res.redirects[humanA.uri].should.equal(humanB.uri)
       should(res.notFound).not.be.ok()
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 
   it('should accept wikidata uri', done => {
@@ -148,7 +150,8 @@ describe('entities:get:by-uris', () => {
         serie.should.be.an.Object()
 
         done()
-      })).catch(undesiredErr(done))
+      }))
+      .catch(undesiredErr(done))
     })
   })
 })

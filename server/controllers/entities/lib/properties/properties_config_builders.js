@@ -3,7 +3,6 @@
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
- * DS103: Rewrite code to no longer use __guard__
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
@@ -18,12 +17,17 @@ const { concurrentString } = require('./properties_config_bases')
 module.exports = {
   isbnProperty: num => {
     return _.extend({}, concurrentString, {
-      validate: isbn => (isbn != null) && (isbn === __guard__(isbn_.parse(isbn), x => x[`isbn${num}h`])),
+      validate: isbn => {
+        if (isbn == null) return false
+        const isbnData = isbn_.parse(isbn)
+        if (isbnData == null) return false
+        return isbn === isbnData[`isbn${num}h`]
+      },
       uniqueValue: true,
       format: isbn_[`toIsbn${num}h`],
       adminUpdateOnly: true
-    }
-    )
+    })
+
   },
 
   // External ids regexs can be found
@@ -32,8 +36,7 @@ module.exports = {
     return _.extend({}, concurrentString, {
       validate: regex.test.bind(regex),
       isExternalId: true
-    }
-    )
+    })
   },
 
   typedExternalId: regexPerType => {
@@ -47,11 +50,6 @@ module.exports = {
         }
         return regexPerType[entityType].test(value)
       }
-    }
-    )
+    })
   }
-}
-
-function __guard__ (value, transform) {
-  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined
 }

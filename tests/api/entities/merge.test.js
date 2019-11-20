@@ -27,7 +27,8 @@ describe('entities:merge', () => {
       res.redirects[workA.uri].should.equal(workB.uri)
       res.entities[workB.uri].should.be.ok()
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 
   it('should merge entities with inv and isbn URIs', done => {
@@ -49,7 +50,8 @@ describe('entities:merge', () => {
         itemsRes.items[0].entity.should.equal(editionB.uri)
         done()
       })
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 
   it('should merge an entity with an ISBN', done => {
@@ -71,7 +73,8 @@ describe('entities:merge', () => {
       const isbnUri = editionA.uri
       itemsRes.items[0].entity.should.equal(isbnUri)
       done()
-    }))).catch(undesiredErr(done))
+    })))
+    .catch(undesiredErr(done))
   })
 
   it('should reject merge with different ISBNs', done => {
@@ -88,7 +91,8 @@ describe('entities:merge', () => {
       .should.equal("can't merge editions with different ISBNs")
       err.statusCode.should.equal(400)
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 
   it('should transfer claims', done => {
@@ -103,7 +107,8 @@ describe('entities:merge', () => {
       const authorsUris = res.entities[workB.uri].claims['wdt:P50']
       authorsUris.should.deepEqual([ 'wd:Q535' ])
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 
   it('should transfer labels', done => {
@@ -117,7 +122,8 @@ describe('entities:merge', () => {
     .then(res => {
       res.entities[workB.uri].labels.zh.should.equal(label)
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 
   it('should keep track of the patch context', done => {
@@ -131,7 +137,8 @@ describe('entities:merge', () => {
     .then(patches => {
       patches[1].context.mergeFrom.should.equal(workA.uri)
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 
   it('should redirect claims', done => {
@@ -155,7 +162,8 @@ describe('entities:merge', () => {
       patches[2].context.redirectClaims
       .should.deepEqual({ fromUri: humanA.uri })
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 
   it('should reject a merge from a redirection', done => {
@@ -171,7 +179,8 @@ describe('entities:merge', () => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal("'from' entity is already a redirection")
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 
   it('should reject a merge to a redirection', done => {
@@ -187,7 +196,8 @@ describe('entities:merge', () => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal("'to' entity is already a redirection")
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 
   it('should reject a circular merge', done => {
@@ -199,7 +209,8 @@ describe('entities:merge', () => {
       err.body.status_verbose
       .should.equal("can't merge an entity into itself")
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 
   it('should remove isolated human "placeholders" entities on works merge', done => {

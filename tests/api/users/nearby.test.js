@@ -22,7 +22,8 @@ describe('users:nearby', () => {
       const usersIds = _.map(res.users, '_id')
       usersIds.includes(user1._id).should.be.true()
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 
   it('should accept a range', done => {
@@ -32,6 +33,7 @@ describe('users:nearby', () => {
       const usersIds = _.map(res.users, '_id')
       usersIds.includes(user1._id).should.be.false()
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 })

@@ -3,7 +3,6 @@
 /*
  * decaffeinate suggestions:
  * DS102: Remove unnecessary code created because of implicit returns
- * DS103: Rewrite code to no longer use __guard__
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 const CONFIG = require('config')
@@ -25,10 +24,15 @@ const entityFormatter = (result, _source, lang) => ({
   type: result._type,
   uri: getUri(result._index, result._id),
   label: getBestLangValue(lang, null, _source.labels).value,
-  description: __guard__(getBestLangValue(lang, null, _source.descriptions).value, x => x.slice(0, 201)),
+  description: getShortDescription(_source.descriptions, lang)
   image: getBestLangValue(lang, null, _source.images).value,
   lexicalScore: result._score
 })
+
+const getShortDescription = (descriptions, lang) => {
+  const { value } = getBestLangValue(lang, null, descriptions)
+  if (value) return value.slice(0, 200)
+}
 
 const getUri = (index, id) => index === 'wikidata' ? `wd:${id}` : `inv:${id}`
 
@@ -36,7 +40,7 @@ const networkFormatter = (labelAttr, descAttr) => (result, _source, lang) => ({
   id: result._id,
   type: result._type,
   label: _source[labelAttr],
-  description: __guard__(_source[descAttr], x => x.slice(0, 201)),
+  description: _source[descAttr] && _source[descAttr].slice(0, 200),
   image: _source.picture,
   lexicalScore: result._score
 })
@@ -51,8 +55,4 @@ const formatters = {
   collections: entityFormatter,
   users: networkFormatter('username', 'bio'),
   groups: networkFormatter('name', 'description')
-}
-
-function __guard__ (value, transform) {
-  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined
 }

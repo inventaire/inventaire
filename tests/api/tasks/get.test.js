@@ -44,7 +44,8 @@ describe('tasks:byScore', () => {
     .then(tasksB => {
       tasksA[1].should.deepEqual(tasksB[0])
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 
   it('should return tasks in the right order', done => {
@@ -64,7 +65,8 @@ describe('tasks:byScore', () => {
         return prevOccurrencesCount.should.be.aboveOrEqual(occurrencesCount)
       })
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 })
 
@@ -125,7 +127,8 @@ describe('tasks:bySuggestionUris', () => {
       tasks[uri].should.be.an.Array()
       tasks[uri][0].should.be.an.Object()
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 
   it('should return an array of tasks even when no tasks is found', done => {

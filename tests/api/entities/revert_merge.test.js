@@ -32,7 +32,8 @@ describe('entities:revert-merge', () => {
       should(res.redirects[workA.uri]).not.be.ok()
       res.entities[workA.uri].should.be.ok()
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 
   it('should revert claims transfer', done => {
@@ -54,7 +55,8 @@ describe('entities:revert-merge', () => {
       const authorsUris = res.entities[workB.uri].claims['wdt:P50']
       should(authorsUris).not.be.ok()
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 
   it('should revert labels transfer', done => {
@@ -73,7 +75,8 @@ describe('entities:revert-merge', () => {
     .then(res => {
       should(res.entities[workB.uri].labels.zh).not.be.ok()
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 
   it('should revert claim transfers, even when several patches away', done => {
@@ -98,7 +101,8 @@ describe('entities:revert-merge', () => {
       const authorsUris = res.entities[workB.uri].claims['wdt:P50']
       authorsUris.should.deepEqual([ authorB.uri ])
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 
   it('should revert labels transfer', done => {
@@ -120,7 +124,8 @@ describe('entities:revert-merge', () => {
     .then(res => {
       should(res.entities[workB.uri].labels.zh).not.be.ok()
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 
   it('should revert redirected claims', done => {
@@ -137,7 +142,8 @@ describe('entities:revert-merge', () => {
       const authorsUris = res.entities[work.uri].claims['wdt:P50']
       authorsUris.should.deepEqual([ humanA.uri ])
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 
   it('should restore removed human placeholders', done => {

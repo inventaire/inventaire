@@ -154,7 +154,8 @@ describe('entities:delete:by-uris', () => {
         should(updatedItem.snapshot['entity:authors']).not.be.ok()
         done()
       })
-    }))).catch(undesiredErr(done))
+    })))
+    .catch(undesiredErr(done))
   })
 
   it('should ignore entities that where already turned into removed:placeholder', done => {
@@ -181,7 +182,8 @@ describe('entities:delete:by-uris', () => {
       err.body.status_verbose.should.equal("entities that are used by an item can't be removed")
       err.statusCode.should.equal(400)
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 
   it('should not remove editions with an ISBN and an item', done => {
@@ -192,7 +194,8 @@ describe('entities:delete:by-uris', () => {
       // Using the inv URI, as the isbn one would be rejected
       const invUri = `inv:${edition._id}`
       return deleteByUris(invUri)
-    })).then(undesiredRes(done))
+    }))
+    .then(undesiredRes(done))
     .catch(err => {
       err.body.status_verbose.should.equal("entities that are used by an item can't be removed")
       err.statusCode.should.equal(400)

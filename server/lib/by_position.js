@@ -24,21 +24,11 @@ const getGeoSquareKeys = bbox => {
   // Using the same bbox order as Leaflet bounds.toBBoxString function.
   // Use Math.floor and not Math.trunc as they have different behaviors
   // on negative numbers: Math.floor(-2.512) => -3 /// Math.trunc(-2.512) => -2
-  const [ minLng, minLat, maxLng, maxLat ] = Array.from(bbox.map(Math.floor))
+  const [ minLng, minLat, maxLng, maxLat ] = bbox.map(Math.floor)
 
-  const latRange = __range__(minLat, maxLat, true)
-  const lngRange = __range__(minLng, maxLng, true)
+  const latRange = _.range(minLat, maxLat + 1)
+  const lngRange = _.range(minLng, maxLng + 1)
 
   // Keep keys format in sync with Couchdb byGeoSquare views
   return _.combinations(latRange, lngRange)
-}
-
-function __range__ (left, right, inclusive) {
-  const range = []
-  const ascending = left < right
-  const end = !inclusive ? right : ascending ? right + 1 : right - 1
-  for (let i = left; ascending ? i < end : i > end; ascending ? i++ : i--) {
-    range.push(i)
-  }
-  return range
 }

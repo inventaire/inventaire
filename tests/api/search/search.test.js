@@ -72,7 +72,8 @@ describe('search:global', () => {
       results.forEach(result => result.type.should.equal('humans'))
       _.map(results, 'id').includes(entity._id).should.be.true()
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 
   it('should return a local work', done => {
@@ -86,7 +87,8 @@ describe('search:global', () => {
       results.forEach(result => result.type.should.equal('works'))
       _.map(results, 'id').includes(entity._id).should.be.true()
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 
   it('should return a wikidata work', done => {
@@ -111,7 +113,8 @@ describe('search:global', () => {
       results.forEach(result => result.type.should.equal('series'))
       _.map(results, 'id').includes(entity._id).should.be.true()
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 
   it('should return a wikidata serie', done => {
@@ -134,7 +137,8 @@ describe('search:global', () => {
       results.forEach(result => result.type.should.equal('users'))
       _.map(results, 'id').includes(user._id).should.be.true()
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 
   it('should return a group', done => {
@@ -147,7 +151,8 @@ describe('search:global', () => {
       results.forEach(result => result.type.should.equal('groups'))
       _.map(results, 'id').includes(group._id).should.be.true()
       done()
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 
   it('should not return a private group unless requester is a member', done => {
@@ -165,7 +170,8 @@ describe('search:global', () => {
         _.map(results, 'id').includes(group._id).should.be.true()
         done()
       })
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 
   it('should sort entities by global score', done => {
@@ -188,7 +194,8 @@ describe('search:global', () => {
         firstResultUri.should.equal(workWithEditionUri)
         done()
       })
-    })).catch(undesiredErr(done))
+    }))
+    .catch(undesiredErr(done))
   })
 
   it('should return a global score boosted by a logarithmic popularity', done => {
