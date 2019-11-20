@@ -1,6 +1,5 @@
 
 
-// Fix any style issues and re-enable lint.
 // A module to listen for changes in a CouchDB database, and dispatch the change
 // event to all the subscribed followers
 

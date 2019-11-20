@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 
-// Fix any style issues and re-enable lint.
 
 const breq = require('bluereq')
 const CONFIG = require('config')

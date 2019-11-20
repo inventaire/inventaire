@@ -1,6 +1,5 @@
 
 
-// Fix any style issues and re-enable lint.
 // An endpoint to take advantage of data we are given thourgh data imports
 // instead of relying on dataseed
 

@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 
-// Fix any style issues and re-enable lint.
 
 // This is the alternative to ./migrator for entities, as entities doc edits require
 // to also create patch documents. This patch will be signed by a special user: updater

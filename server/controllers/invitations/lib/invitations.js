@@ -1,6 +1,5 @@
 
 
-// Fix any style issues and re-enable lint.
 let invitations_
 const CONFIG = require('config')
 const __ = CONFIG.universalPath

@@ -1,6 +1,5 @@
 
 
-// Fix any style issues and re-enable lint.
 const _ = require('lodash')
 
 module.exports = {

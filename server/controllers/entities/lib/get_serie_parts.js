@@ -1,6 +1,5 @@
 
 
-// Fix any style issues and re-enable lint.
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const promises_ = __.require('lib', 'promises')
