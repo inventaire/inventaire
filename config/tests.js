@@ -5,11 +5,11 @@
 module.exports = {
   env: 'tests',
   protocol: 'http',
-  name: "inventaire",
+  name: 'inventaire',
   host: 'localhost',
   port: 3009,
   verbosity: 0,
-  fullHost() { return `${this.protocol}://${this.host}:${this.port}` },
+  fullHost () { return `${this.protocol}://${this.host}:${this.port}` },
   db: {
     suffix: 'tests',
     // debug: true

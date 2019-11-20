@@ -1,4 +1,3 @@
-
 // Used with NODE_APP_INSTANCE=alt to start an instance dedicated to
 // - answering Prerender (thus getting the logs aside)
 // - update handle database change hooks (based on follow)

@@ -1,4 +1,3 @@
-
 // This is where all the path magic happens!
 // By always passing by this module that nows the appRoot
 // we can copy dependency imports from one file to the other
@@ -6,12 +5,12 @@
 
 // Example:
 
-//> CONFIG = require 'config'
-//> __ = CONFIG.universalPath
-//> Item = __.require 'models', 'item'
+// > CONFIG = require 'config'
+// > __ = CONFIG.universalPath
+// > Item = __.require 'models', 'item'
 
 // Pasting those 3 lines anywhere in the code base will have the same result:
-//> require "#{appRoot}/server/models/item"
+// > require "#{appRoot}/server/models/item"
 
 // Goodbye '../../../models/item' hard to maintain horrors, hello Freedom, Easyness and Beauty!
 
@@ -49,11 +48,13 @@ module.exports = {
     modulesBin: '/node_modules/.bin',
     dumps: '/dumps/inv'
   },
-  path(route, name){
+  path: function (route, name) {
     const path = this.paths[route]
     const rootedPath = `${appRoot}${path}`
-    if (name != null) { return `${rootedPath}/${name}`
-    } else { return rootedPath }
+    if (name != null) return `${rootedPath}/${name}`
+    else return rootedPath
   },
-  require(route, name){ return require(this.path(route, name)) }
+  require: function (route, name) {
+    return require(this.path(route, name))
+  }
 }

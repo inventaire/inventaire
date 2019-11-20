@@ -1,4 +1,3 @@
-
 // Custom config for API tests
 // Use NODE_APP_INSTANCE=tests-alt to override local config with local-tests config
 

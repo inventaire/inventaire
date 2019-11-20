@@ -1,9 +1,8 @@
-
 // Use production databases
 
-//# HOW TO:
+// # HOW TO:
 
-//# SERVER
+// # SERVER
 // - Update databases: ./scripts/start_couch_replication.js
 // - To use this config file: export NODE_ENV=prod-dbs ; npm run watch
 // - Start a tunnel to the prod elastic search if you need to work with search

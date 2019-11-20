@@ -1,13 +1,11 @@
-
 // This config file contains the default values for a development environment.
 // Override by creating per-environment files following the same structure
 // in this same folder
 // See the config module doc: https://npmjs.com/package/config
 
-let config
 const contactAddress = 'hello@inventaire.io'
 
-module.exports = (config = {
+const config = module.exports = {
   name: 'inventaire',
   env: 'default',
   host: 'localhost',
@@ -20,10 +18,14 @@ module.exports = (config = {
   port: 3006,
   // Override in ./local.js when working offline to prevent trying to fetch remote resources (like images) when possible
   offline: false,
-  fullHost() { return `${this.protocol}://${this.host}:${this.port}` },
+  fullHost: function () {
+    return `${this.protocol}://${this.host}:${this.port}`
+  },
   publicProtocol: 'http',
   publicHost: 'localhost',
-  fullPublicHost() { return `${this.publicProtocol}://${this.publicHost}:${this.port}` },
+  fullPublicHost: function () {
+    return `${this.publicProtocol}://${this.publicHost}:${this.port}`
+  },
   invHost: 'https://inventaire.io',
   secret: 'yoursecrethere',
   // Debug mode:
@@ -38,14 +40,18 @@ module.exports = (config = {
     protocol: 'http',
     host: 'localhost',
     port: 5984,
-    fullHost() { return `${this.protocol}://${this.username}:${this.password}@${this.host}:${this.port}` },
+    fullHost: function () {
+      return `${this.protocol}://${this.username}:${this.password}@${this.host}:${this.port}`
+    },
     username: 'yourcouchdbusername',
     password: 'yourcouchdbpassword',
-    auth() { return `${this.username}:${this.password}` },
+    auth: function () {
+      return `${this.username}:${this.password}`
+    },
     suffix: null,
-    name(dbBaseName){
-      if (this.suffix != null) { return `${dbBaseName}-${this.suffix}`
-      } else { return dbBaseName }
+    name: function (dbBaseName) {
+      if (this.suffix != null) return `${dbBaseName}-${this.suffix}`
+      else return dbBaseName
     },
     follow: {
       // Make external indexes restart from the first seq
@@ -135,12 +141,16 @@ module.exports = (config = {
       publicURL: 'https://swiftPublicURL/',
       tenantName: '12345678',
       region: 'SBG-1',
-      internalEndpoint() { return this.publicURL + '/' }
+      internalEndpoint: function () {
+        return `${this.publicURL}/`
+      }
     },
     local: {
-      folder() { return config.universalPath.path('root', 'storage') },
+      folder: () => config.universalPath.path('root', 'storage'),
       route: 'local',
-      internalEndpoint() { return `${config.fullHost()}/${this.route}/` }
+      internalEndpoint: function () {
+        return `${config.fullHost()}/${this.route}/`
+      }
     }
   },
 
@@ -209,4 +219,4 @@ module.exports = (config = {
       interval: 3000
     }
   }
-})
+}

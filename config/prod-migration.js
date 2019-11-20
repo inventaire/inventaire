@@ -1,7 +1,7 @@
 
 // Apply migration on production databases
 
-//# HOW TO:
+// # HOW TO:
 
 // - Open SSH tunnel on production CouchDB on port 3456
 // - run migration by passing the appropriate environment name:
