@@ -8,4 +8,5 @@ supervisor_pid_file="./run/${server_port}-supervisor"
 supervisor \
   --watch server,config,db/couchdb \
   --save-pid  $supervisor_pid_file \
-  --extensions js,json,hbs
+  --extensions js,json,hbs \
+  server/server.js
