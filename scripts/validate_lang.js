@@ -1,6 +1,5 @@
 #!/usr/bin/env node
-// TODO: This file was created by bulk-decaffeinate.
-// Sanity-check the conversion and remove this comment.
+
 
 // a little script that throws if it isn't passed
 // a valid 2-letter language code as first argument

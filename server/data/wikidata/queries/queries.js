@@ -1,5 +1,4 @@
-// TODO: This file was created by bulk-decaffeinate.
-// Sanity-check the conversion and remove this comment.
+
 module.exports = {
   author_works: require('./author_works'),
   serie_parts: require('./serie_parts'),

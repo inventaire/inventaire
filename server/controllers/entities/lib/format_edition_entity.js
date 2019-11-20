@@ -1,5 +1,4 @@
-// TODO: This file was created by bulk-decaffeinate.
-// Sanity-check the conversion and remove this comment.
+
 const __ = require('config').universalPath
 const { normalizeIsbn } = __.require('lib', 'isbn/isbn')
 const formatEntityCommon = require('./format_entity_common')

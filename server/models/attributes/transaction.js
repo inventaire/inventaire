@@ -1,5 +1,4 @@
-// TODO: This file was created by bulk-decaffeinate.
-// Sanity-check the conversion and remove this comment.
+
 // Keep in sync with client/app/modules/transactions/lib/transactions
 
 // actor: the key on which VerifyRights switches

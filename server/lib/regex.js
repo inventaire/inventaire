@@ -1,5 +1,4 @@
-// TODO: This file was created by bulk-decaffeinate.
-// Sanity-check the conversion and remove this comment.
+
 // Keep in sync with client/lib/regex
 
 // Adapted from http://stackoverflow.com/a/14582229/3324977

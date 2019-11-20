@@ -1,5 +1,4 @@
-// TODO: This file was created by bulk-decaffeinate.
-// Sanity-check the conversion and remove this comment.
+
 const _ = require('lodash')
 const alphabet = 'abcdefghijklmnopqrstuvwxyz'
 const possibleChars = `${alphabet + alphabet.toUpperCase()}0123456789`

@@ -1,5 +1,4 @@
-// TODO: This file was created by bulk-decaffeinate.
-// Sanity-check the conversion and remove this comment.
+
 // Infer entity updates from other entity updates
 // Ex: see if a work label should be updated after one of its editions
 // got it's title updated

@@ -1,5 +1,4 @@
-// TODO: This file was created by bulk-decaffeinate.
-// Sanity-check the conversion and remove this comment.
+
 // Gathering entity formatting steps common to all the consumers
 // Keep in sync with get_wikidata_enriched_entities formatting
 const __ = require('config').universalPath

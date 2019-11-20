@@ -1,5 +1,4 @@
-// TODO: This file was created by bulk-decaffeinate.
-// Sanity-check the conversion and remove this comment.
+
 // Use by setting NODE_ENV=tests
 // Will be overriden by local.js
 

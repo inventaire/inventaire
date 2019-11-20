@@ -1,7 +1,7 @@
 /* eslint-disable
     implicit-arrow-linebreak,
 */
-// TODO: This file was created by bulk-decaffeinate.
+
 // Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:

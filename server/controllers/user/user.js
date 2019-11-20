@@ -1,5 +1,4 @@
-// TODO: This file was created by bulk-decaffeinate.
-// Sanity-check the conversion and remove this comment.
+
 // The 'user' endpoint is dedicated to opeartions on the user
 // by the user herself once authentified.
 
