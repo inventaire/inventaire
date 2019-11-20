@@ -13,10 +13,14 @@ module.exports = lang => feedData => {
   .then(items => serializeFeed(feedOptions, users, items, lang))
 }
 
-const getLastItemsFromUsersIds = (usersIds, accessLevel) => getItemsByAccessLevel[accessLevel](usersIds)
-.then(extractLastItems)
-.map(snapshot_.addToItem)
+const getLastItemsFromUsersIds = (usersIds, accessLevel) => {
+  return getItemsByAccessLevel[accessLevel](usersIds)
+  .then(extractLastItems)
+  .map(snapshot_.addToItem)
+}
 
-const extractLastItems = items => items
-.sort((a, b) => b.created - a.created)
-.slice(0, feedConfig.limitLength)
+const extractLastItems = items => {
+  return items
+  .sort((a, b) => b.created - a.created)
+  .slice(0, feedConfig.limitLength)
+}

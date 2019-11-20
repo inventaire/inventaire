@@ -49,22 +49,21 @@ const queriesCommons = module.exports = {
 
   listingIs: listing => item => item.listing === listing,
 
-  Paginate: page => {
-    return items => {
-      let { limit, offset, filter } = page
-      items = items.sort(byCreationDate)
-      if (filter != null) { items = items.filter(filters[filter]) }
-      const total = items.length
-      if (offset == null) { offset = 0 }
-      const last = offset + limit
-      if (limit != null) {
-        items = items.slice(offset, last)
-        const data = { items, total, offset, filter }
-        if (last < total) { data.continue = last }
-        return data
-      } else {
-        return { items, total, offset, filter }
-      }
+  Paginate: page => items => {
+    let { limit, offset, filter } = page
+    items = items.sort(byCreationDate)
+    if (filter != null) items = items.filter(filters[filter])
+    const total = items.length
+    if (offset == null) offset = 0
+    const last = offset + limit
+
+    if (limit != null) {
+      items = items.slice(offset, last)
+      const data = { items, total, offset, filter }
+      if (last < total) data.continue = last
+      return data
+    } else {
+      return { items, total, offset, filter }
     }
   }
 }

@@ -18,7 +18,8 @@ module.exports = entity => {
 const findAnImage = entity => {
   const commonsFilename = getCommonsFilenamesFromClaims(entity.claims)[0]
   const enwikiTitle = entity.sitelinks.enwiki
-  const openLibraryId = _.get(entity, 'claims.wdt:P648.0')
+  const { claims } = entity
+  const openLibraryId = claims['wdt:P648'] && claims['wdt:P648'][0]
   return pickBestPic(entity, commonsFilename, enwikiTitle, openLibraryId)
 }
 
@@ -62,7 +63,8 @@ const getPicSourceOrder = entity => {
 // while querying images from English Wikipedia articles
 // can give quite random results
 const getWorkSourceOrder = work => {
-  const publicationDateClaim = _.get(work, 'claims.wdt:P577.0')
+  const { claims } = work
+  const publicationDateClaim = claims['wdt:P577'] && claims['wdt:P577'][0]
   const publicationYear = publicationDateClaim && publicationDateClaim.split('-')[0]
   if ((publicationYear != null) && (parseInt(publicationYear) < yearsAgo(70))) {
     return [ 'ol', 'wm', 'wp' ]

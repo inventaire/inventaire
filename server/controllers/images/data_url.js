@@ -14,7 +14,7 @@ module.exports = (req, res, next) => {
   if (url == null) return error_.bundleMissingQuery(req, res, 'url')
 
   url = decodeURIComponent(url)
-  if (url[0] === '/') { url = host + url }
+  if (url[0] === '/') url = `${host}${url}`
 
   if (!_.isUrl(url)) return error_.bundleInvalid(req, res, 'url', url)
 
@@ -23,16 +23,18 @@ module.exports = (req, res, next) => {
   .catch(error_.Handler(req, res))
 }
 
-const getImageDataUrl = url => // Set encoding as null to get the response as a buffer
+// Set encoding as null to get the response as a buffer
 // see https://stackoverflow.com/a/17133012/3324977
-  breq.get({ url, encoding: null })
-.then(res => {
-  const contentType = res.headers['content-type']
+const getImageDataUrl = url => {
+  return breq.get({ url, encoding: null })
+  .then(res => {
+    const contentType = res.headers['content-type']
 
-  if (contentType.split('/')[0] !== 'image') {
-    throw error_.new('invalid content type', 400, url, contentType)
-  }
+    if (contentType.split('/')[0] !== 'image') {
+      throw error_.new('invalid content type', 400, url, contentType)
+    }
 
-  const buffer = new Buffer(res.body).toString('base64')
-  return `data:${contentType};base64,${buffer}`
-})
+    const buffer = Buffer.from(res.body).toString('base64')
+    return `data:${contentType};base64,${buffer}`
+  })
+}

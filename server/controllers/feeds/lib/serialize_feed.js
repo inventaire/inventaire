@@ -9,7 +9,8 @@ const getItemDescription = require('./get_item_description')
 const oneDayInMinutes = 24 * 60
 
 module.exports = (feedOptions, users, items, lang) => {
-  let { title, description, queryString, pathname, image } = feedOptions
+  const { title, description, queryString, pathname } = feedOptions
+  let { image } = feedOptions
 
   if (image) {
     image = templateHelpers.imgSrc(image, 300)

@@ -12,7 +12,7 @@ module.exports = (user, group, emails, message) => {
   assert_.type(emails, 'array')
   assert_.type(message, 'string|null')
   const userId = user._id
-  const groupId = group != null ? group._id : undefined
+  const groupId = group && group._id
   _.log(emails, 'send_invitations emails')
 
   return invitations_.byEmails(emails)
@@ -43,7 +43,7 @@ module.exports = (user, group, emails, message) => {
 }
 
 const triggerInvitation = (user, group, emails, message) => {
-  if (group != null) {
+  if (group) {
     return radio.emit('send:group:email:invitations', user, group, emails, message)
   } else {
     return radio.emit('send:email:invitations', user, emails, message)
@@ -55,7 +55,9 @@ const extractUnknownEmails = (emails, knownInvitedUsers) => {
   return _.difference(emails, knownInvitedUsersEmails)
 }
 
-const extractCanBeInvited = (userId, groupId, knownInvitedUsers) => knownInvitedUsers.filter(Invited.canBeInvited(userId, groupId))
+const extractCanBeInvited = (userId, groupId, knownInvitedUsers) => {
+  return knownInvitedUsers.filter(Invited.canBeInvited(userId, groupId))
+}
 
 const concatRemainingEmails = (canBeInvited, unknownEmails) => {
   const knownEmails = _.map(canBeInvited, 'email')

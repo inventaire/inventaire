@@ -19,7 +19,7 @@ module.exports = (req, res) => {
 
   // Not waiting for the queue to be loaded as that will take a while
   // and no useful data has to be returned
-  return responses_.ok(res)
+  responses_.ok(res)
 }
 
 const addEntitiesToQueueSequentially = refresh => {
@@ -61,20 +61,24 @@ const getFilteredUris = (uris, refresh) => {
 
 const getUris = res => _.map(res.rows, 'id').map(prefixifyInv)
 
-const deduplicateWorker = (jobId, uri) => checkEntity(uri)
-.delay(interval)
-.catch(err => {
-  if (err.statusCode === 400) {
-  } else {
-    _.error(err, 'deduplicateWorker err')
-    throw err
-  }
-})
+const deduplicateWorker = (jobId, uri) => {
+  return checkEntity(uri)
+  .delay(interval)
+  .catch(err => {
+    if (err.statusCode === 400) {
+    } else {
+      _.error(err, 'deduplicateWorker err')
+      throw err
+    }
+  })
+}
 
-const filterNotAlreadySuspectEntities = uris => tasks_.bySuspectUris(uris, { includeArchived: true })
-.then(res => {
-  const alreadyCheckedUris = _.map(res.rows, 'suspectUri')
-  return _.difference(uris, alreadyCheckedUris)
-})
+const filterNotAlreadySuspectEntities = uris => {
+  return tasks_.bySuspectUris(uris, { includeArchived: true })
+  .then(res => {
+    const alreadyCheckedUris = _.map(res.rows, 'suspectUri')
+    return _.difference(uris, alreadyCheckedUris)
+  })
+}
 
 const invTasksEntitiesQueue = jobs_.initQueue('inv:deduplicate', deduplicateWorker, 1)

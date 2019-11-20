@@ -6,60 +6,70 @@ const groups_ = require('./groups')
 const promises_ = __.require('lib', 'promises')
 const { possibleActions } = require('./actions_lists')
 
-const verifyJoinRequestHandlingRights = (reqUserId, groupId, requesterId) => promises_.all([
-  groups_.userInAdmins(reqUserId, groupId),
-  groups_.userInRequested(requesterId, groupId)
-])
-.spread((userInAdmins, requesterInRequested) => {
-  if (!userInAdmins) {
-    throw error_.new('user isnt admin', 403, reqUserId, groupId)
-  }
-  if (!requesterInRequested) {
-    throw error_.new('request not found', 401, requesterId, groupId)
-  }
-})
+const verifyJoinRequestHandlingRights = (reqUserId, groupId, requesterId) => {
+  return promises_.all([
+    groups_.userInAdmins(reqUserId, groupId),
+    groups_.userInRequested(requesterId, groupId)
+  ])
+  .spread((userInAdmins, requesterInRequested) => {
+    if (!userInAdmins) {
+      throw error_.new('user isnt admin', 403, reqUserId, groupId)
+    }
+    if (!requesterInRequested) {
+      throw error_.new('request not found', 401, requesterId, groupId)
+    }
+  })
+}
 
-const verifyRightsToInvite = (reqUserId, groupId, invitedUserId) => groups_.userInGroup(reqUserId, groupId)
-.then(invitorInGroup => {
-  if (!invitorInGroup) {
-    const context = { reqUserId, groupId, invitedUserId }
-    throw error_.new("invitor isn't in group", 403, context)
-  }
-})
+const verifyRightsToInvite = (reqUserId, groupId, invitedUserId) => {
+  return groups_.userInGroup(reqUserId, groupId)
+  .then(invitorInGroup => {
+    if (!invitorInGroup) {
+      const context = { reqUserId, groupId, invitedUserId }
+      throw error_.new("invitor isn't in group", 403, context)
+    }
+  })
+}
 
-const verifyAdminRights = (reqUserId, groupId) => groups_.userInAdmins(reqUserId, groupId)
-.then(bool => {
-  if (!bool) {
-    throw error_.new('user isnt a group admin', 403, reqUserId, groupId)
-  }
-})
+const verifyAdminRights = (reqUserId, groupId) => {
+  return groups_.userInAdmins(reqUserId, groupId)
+  .then(bool => {
+    if (!bool) {
+      throw error_.new('user isnt a group admin', 403, reqUserId, groupId)
+    }
+  })
+}
 
-const verifyAdminRightsWithoutAdminsConflict = (reqUserId, groupId, targetId) => promises_.all([
-  groups_.userInAdmins(reqUserId, groupId),
-  groups_.userInAdmins(targetId, groupId)
-])
-.spread((userIsAdmin, targetIsAdmin) => {
-  if (!userIsAdmin) {
-    throw error_.new('user isnt a group admin', 403, reqUserId, groupId)
-  }
-  if (targetIsAdmin) {
-    throw error_.new('target user is also a group admin', 403, reqUserId, groupId, targetId)
-  }
-})
+const verifyAdminRightsWithoutAdminsConflict = (reqUserId, groupId, targetId) => {
+  promises_.all([
+    groups_.userInAdmins(reqUserId, groupId),
+    groups_.userInAdmins(targetId, groupId)
+  ])
+  .spread((userIsAdmin, targetIsAdmin) => {
+    if (!userIsAdmin) {
+      throw error_.new('user isnt a group admin', 403, reqUserId, groupId)
+    }
+    if (targetIsAdmin) {
+      throw error_.new('target user is also a group admin', 403, reqUserId, groupId, targetId)
+    }
+  })
+}
 
-const verifyUserRightToLeave = (reqUserId, groupId) => promises_.all([
-  groups_.userInGroup(reqUserId, groupId),
-  groups_.userCanLeave(reqUserId, groupId)
-])
-.spread((userInGroup, userCanLeave) => {
-  if (!userInGroup) {
-    throw error_.new('user isnt in the group', 403, reqUserId, groupId)
-  }
-  if (!userCanLeave) {
-    const message = "the last group admin can't leave before naming another admin"
-    throw error_.new(message, 403, reqUserId, groupId)
-  }
-})
+const verifyUserRightToLeave = (reqUserId, groupId) => {
+  return promises_.all([
+    groups_.userInGroup(reqUserId, groupId),
+    groups_.userCanLeave(reqUserId, groupId)
+  ])
+  .spread((userInGroup, userCanLeave) => {
+    if (!userInGroup) {
+      throw error_.new('user isnt in the group', 403, reqUserId, groupId)
+    }
+    if (!userCanLeave) {
+      const message = "the last group admin can't leave before naming another admin"
+      throw error_.new(message, 403, reqUserId, groupId)
+    }
+  })
+}
 
 const verificators = module.exports = {
   invite: verifyRightsToInvite,

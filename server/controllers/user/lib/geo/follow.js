@@ -10,7 +10,6 @@ module.exports = db => {
     if (doc.type === 'user') {
       if (doc.position != null) return true
     }
-
     return false
   }
 
@@ -25,7 +24,10 @@ module.exports = db => {
       // Most of the user doc change wont imply a position change
       // so it should make sense to get the doc to check the need to write
       return db.getByKey(id)
-      .catch(err => { if (err.notFound) { return null } else { throw err } })
+      .catch(err => {
+        if (err.notFound) return null
+        else throw err
+      })
       .then(updateIfNeeded.bind(null, id, lat, lon))
       .catch(_.Error('user geo updatePosition err'))
     }

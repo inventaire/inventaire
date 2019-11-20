@@ -75,11 +75,13 @@ const counts = require('./counts')
 const leaveGroups = require('./leave_groups')
 const getSlug = require('./get_slug')
 
-const addSlug = group => getSlug(group.name, group._id)
-.then(slug => {
-  group.slug = slug
-  return group
-})
+const addSlug = group => {
+  return getSlug(group.name, group._id)
+  .then(slug => {
+    group.slug = slug
+    return group
+  })
+}
 
 Object.assign(groups_, membershipActions, usersLists, counts, leaveGroups, {
   updateSettings,

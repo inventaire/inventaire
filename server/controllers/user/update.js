@@ -59,7 +59,7 @@ module.exports = (req, res, next) => {
     .catch(error_.Handler(req, res))
   }
 
-  return error_.bundle(req, res, `forbidden update: ${attribute} - ${value}`, 403)
+  error_.bundle(req, res, `forbidden update: ${attribute} - ${value}`, 403)
 }
 
 const updateAttribute = (user, attribute, value) => {

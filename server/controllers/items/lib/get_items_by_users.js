@@ -41,9 +41,17 @@ const fetchRelationsItems = reqUserId => relations => {
   const itemsPromises = []
   const { user, network, public: publik } = relations
 
-  if (user != null) { itemsPromises.push(getByAccessLevel.private(user, reqUserId)) }
-  if (network != null) { itemsPromises.push(getByAccessLevel.network(network, reqUserId)) }
-  if (publik != null) { itemsPromises.push(getByAccessLevel.public(publik, reqUserId)) }
+  if (user) {
+    itemsPromises.push(getByAccessLevel.private(user, reqUserId))
+  }
+
+  if (network) {
+    itemsPromises.push(getByAccessLevel.network(network, reqUserId))
+  }
+
+  if (publik) {
+    itemsPromises.push(getByAccessLevel.public(publik, reqUserId))
+  }
 
   return promises_.all(itemsPromises).then(_.flatten)
 }

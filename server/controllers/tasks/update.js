@@ -13,7 +13,7 @@ module.exports = (req, res, next) => {
     return error_.bundleMissingBody(req, res, 'id')
   }
 
-  return tasks_.update({
+  tasks_.update({
     ids: [ id ],
     attribute,
     newValue: value

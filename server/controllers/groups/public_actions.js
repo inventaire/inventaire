@@ -10,7 +10,7 @@ const { buildSearcher } = __.require('lib', 'elasticsearch')
 module.exports = {
   byId: (req, res) => {
     const { id } = req.query
-    const reqUserId = req.user != null ? req.user._id : undefined
+    const reqUserId = req.user && req.user._id
 
     if (!_.isGroupId(id)) {
       return error_.bundleInvalid(req, res, 'id', id)
@@ -23,7 +23,7 @@ module.exports = {
 
   bySlug: (req, res) => {
     const { slug } = req.query
-    const reqUserId = req.user != null ? req.user._id : undefined
+    const reqUserId = req.user && req.user._id
 
     if (!_.isNonEmptyString(slug)) {
       return error_.bundleMissingQuery(req, res, 'slug')
@@ -36,7 +36,7 @@ module.exports = {
 
   searchByText: (req, res) => {
     const { query } = req
-    const search = query.search != null ? query.search.trim() : undefined
+    const search = query.search && query.search.trim()
 
     if (!_.isNonEmptyString(search)) {
       return error_.bundleInvalid(req, res, 'search', search)
@@ -50,10 +50,11 @@ module.exports = {
 
   searchByPositon: (req, res) => {
     return parseBbox(req.query)
-    .then(bbox => // can't be chained directy as .filter makes problems when parseBbox throws:
+    // Can't be chained directy as .filter makes problems when parseBbox throws:
     // "parseBbox(...).then(...).then(...).catch(...).filter is not a function"
-      groups_.byPosition(bbox)
-    .filter(searchable)).then(responses_.Wrap(res, 'groups'))
+    .then(bbox => groups_.byPosition(bbox))
+    .filter(searchable)
+    .then(responses_.Wrap(res, 'groups'))
     .catch(error_.Handler(req, res))
   },
 

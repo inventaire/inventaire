@@ -33,7 +33,7 @@ const sanitization = {
 module.exports = (req, res) => {
   req.setTimeout(oneHour)
 
-  return sanitize(req, res, sanitization)
+  sanitize(req, res, sanitization)
   .then(params => {
     params.batchId = Date.now()
     const { strict } = params

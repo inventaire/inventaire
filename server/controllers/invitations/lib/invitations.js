@@ -11,10 +11,13 @@ const { invite: groupInvite } = __.require('controllers', 'groups/lib/groups')
 
 const invitations_ = module.exports = {
   findOneByEmail: findOneByEmail.bind(null, db),
+
   byEmails: byEmails.bind(null, db),
+
   createUnknownInvited: (inviterId, groupId, unknownEmails) => {
-    assert_.types([ 'string', 'array' ], [ inviterId, unknownEmails ])
-    if (groupId != null) { assert_.string(groupId) }
+    assert_.string(inviterId)
+    assert_.array(unknownEmails)
+    if (groupId) assert_.string(groupId)
     const invitedDocs = unknownEmails.map(Invited.create(inviterId, groupId))
     return db.bulk(invitedDocs)
     .catch(_.ErrorRethrow('createUnknownInvited'))
@@ -30,11 +33,12 @@ const invitations_ = module.exports = {
   },
 
   convertInvitations: userDoc => {
-    let { _id: userId, inviters, invitersGroups } = userDoc
+    const { _id: userId, inviters } = userDoc
+    let { invitersGroups } = userDoc
 
-    if ((inviters == null) && (invitersGroups == null)) return promises_.resolved
+    if (inviters == null && invitersGroups == null) return promises_.resolved
 
-    if (!invitersGroups) { invitersGroups = {} }
+    invitersGroups = invitersGroups || {}
     const groupInvitersIds = _.values(invitersGroups)
     _.log(groupInvitersIds, 'groupInvitersIds')
 
@@ -55,14 +59,20 @@ const invitations_ = module.exports = {
 }
 
 const emailNotification = false
-const convertFriendInvitations = (invitersIds, newUserId) => invitersIds
-.map(inviterId => makeRequest(inviterId, newUserId, emailNotification)
-// Prevent crashing the signup request for one failed request
-.catch(_.Error(`friend invitation convertion err: ${inviterId}/${newUserId}`)))
+const convertFriendInvitations = (invitersIds, newUserId) => {
+  return invitersIds
+  .map(inviterId => {
+    return makeRequest(inviterId, newUserId, emailNotification)
+    // Prevent crashing the signup request for one failed request
+    .catch(_.Error(`friend invitation convertion err: ${inviterId}/${newUserId}`))
+  })
+}
 
-const convertGroupsInvitations = (invitersGroups, newUserId) => Object.keys(invitersGroups)
-.map(groupId => {
-  const inviterId = invitersGroups[groupId]
-  return groupInvite({ group: groupId, user: newUserId }, inviterId)
-  .catch(_.Error(`group invitation convertion err: ${inviterId}/${newUserId}`))
-})
+const convertGroupsInvitations = (invitersGroups, newUserId) => {
+  return Object.keys(invitersGroups)
+  .map(groupId => {
+    const inviterId = invitersGroups[groupId]
+    return groupInvite({ group: groupId, user: newUserId }, inviterId)
+    .catch(_.Error(`group invitation convertion err: ${inviterId}/${newUserId}`))
+  })
+}

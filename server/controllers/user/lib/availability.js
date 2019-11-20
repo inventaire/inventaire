@@ -11,7 +11,7 @@ module.exports = user_ => ({
     // If a currentUsername is provided
     // return true if the new username is the same but with a different case
     // (used for username update)
-    if (currentUsername != null) {
+    if (currentUsername) {
       if (username.toLowerCase() === currentUsername.toLowerCase()) {
         return promises_.resolved
       }

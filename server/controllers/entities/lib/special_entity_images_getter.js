@@ -32,8 +32,9 @@ const getWorkEditions = (workUri, images, limitPerLang) => {
 
 const addEditionsImages = (images, limitPerLang = 3) => editions => {
   for (const edition of editions) {
-    const lang = getOriginalLang(edition.claims)
-    const image = _.get(edition.claims, 'invp:P2.0')
+    const { claims } = edition
+    const lang = getOriginalLang(claims)
+    const image = claims['invp:P2'] && claims['invp:P2'][0]
     if (lang && image) addImage(images, lang, limitPerLang, image)
   }
 

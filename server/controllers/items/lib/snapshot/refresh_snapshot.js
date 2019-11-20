@@ -14,7 +14,7 @@ const lateRequire = () => { snapshot_ = require('./snapshot') }
 setTimeout(lateRequire, 0)
 
 const fromDoc = changedEntityDoc => {
-  const [ uri, type ] = Array.from(getDocData(changedEntityDoc))
+  const [ uri, type ] = getDocData(changedEntityDoc)
   if (!refreshTypes.includes(type)) return
 
   const label = `${uri} items snapshot refresh`
@@ -24,14 +24,18 @@ const fromDoc = changedEntityDoc => {
   .then(snapshot_.batch)
 }
 
-const fromUri = changedEntityUri => getEntityByUri({ uri: changedEntityUri })
-.then(fromDoc)
+const fromUri = changedEntityUri => {
+  return getEntityByUri({ uri: changedEntityUri })
+  .then(fromDoc)
+}
 
 module.exports = { fromDoc, fromUri }
 
-const multiWorkRefresh = relationProperty => uri => entities_.urisByClaim(relationProperty, uri)
-.map(getSnapshotsByType.work)
-.then(_.flatten)
+const multiWorkRefresh = relationProperty => uri => {
+  return entities_.urisByClaim(relationProperty, uri)
+  .map(getSnapshotsByType.work)
+  .then(_.flatten)
+}
 
 const getSnapshotsByType = {
   edition: uri => {

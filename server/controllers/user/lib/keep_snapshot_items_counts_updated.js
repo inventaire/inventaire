@@ -20,10 +20,12 @@ module.exports = () => {
     .catch(_.Error('user updateSnapshotItemsCounts err'))
   }
 
-  return radio.on('user:inventory:update', userId => {
+  radio.on('user:inventory:update', userId => {
     // Creating a personnalized debouncer as a global debounce would be delayed
     // undefinitely "at scale"
-    if (!debouncedUpdaters[userId]) { debouncedUpdaters[userId] = _.debounce(itemsCountsUpdater(userId), delay) }
+    if (!debouncedUpdaters[userId]) {
+      debouncedUpdaters[userId] = _.debounce(itemsCountsUpdater(userId), delay)
+    }
     return debouncedUpdaters[userId]()
   })
 }

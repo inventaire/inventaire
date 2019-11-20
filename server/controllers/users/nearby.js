@@ -9,7 +9,7 @@ const sanitization =
 
 module.exports = (req, res) => {
   const reqUserId = req.user != null ? req.user._id : undefined
-  return sanitize(req, res, sanitization)
+  sanitize(req, res, sanitization)
   .then(params => user_.nearby(reqUserId, params.range))
   .then(usersIds => user_.getUsersByIds(usersIds, reqUserId))
   .then(responses_.Wrap(res, 'users'))

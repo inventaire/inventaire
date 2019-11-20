@@ -9,14 +9,13 @@ const generateFeedFromFeedData = require('./lib/generate_feed_from_feed_data')
 
 module.exports = {
   get: (req, res, next) => {
-    let feedDataPromise
     const { query } = req
     const { user: userId, group: groupId, requester, token } = query
 
-    if (requester != null) {
+    if (requester) {
       if (token == null) return error_.bundleMissingQuery(req, res, 'token')
     } else {
-      if (token != null) return error_.bundleMissingQuery(req, res, 'requester')
+      if (token) return error_.bundleMissingQuery(req, res, 'requester')
     }
 
     // The reason to have this authentifying token system on a public endpoint
@@ -28,6 +27,7 @@ module.exports = {
     // that we know opens only the limited rights we wish it to open.
     const authentifiedUserPromise = getAuthentifiedUser(requester, token)
 
+    let feedDataPromise
     if (userId != null) {
       if (!_.isUserId(userId)) {
         return error_.bundleInvalid(req, res, 'user', userId)

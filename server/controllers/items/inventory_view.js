@@ -61,11 +61,10 @@ const replaceEditionsByTheirWork = entities => {
 const splitEntities = entities => _.values(entities).reduce(splitWorksAndEditions, { works: [], editions: [] })
 
 const splitWorksAndEditions = (results, entity) => {
-  switch (entity.type) {
-  case 'work': results.works.push(entity); break
-  case 'edition': results.editions.push(entity); break
-  default: _.warn(entity, 'invalid item entity type')
-  }
+  const { type } = entity
+  if (type === 'work') results.works.push(entity)
+  else if (type === 'edition') results.editions.push(entity)
+  else _.warn(entity, 'invalid item entity type')
   return results
 }
 
@@ -112,9 +111,11 @@ const buildWorkUriItemsMap = editionWorkMap => (workUriItemsMap, item) => {
   return workUriItemsMap
 }
 
-const getItemsByDate = items => items
-.sort(sortByCreationDate)
-.map(getId)
+const getItemsByDate = items => {
+  return items
+  .sort(sortByCreationDate)
+  .map(getId)
+}
 
 const getId = _.property('_id')
 const sortByCreationDate = (a, b) => b.created - a.created

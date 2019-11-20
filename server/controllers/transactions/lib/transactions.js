@@ -42,7 +42,7 @@ const transactions_ = {
 
   addMessage: (userId, message, transactionId) => {
     assert_.strings([ userId, message, transactionId ])
-    if (message != null) {
+    if (message) {
       return comments_.addTransactionComment(userId, message, transactionId)
     }
   },
@@ -91,18 +91,16 @@ const actorCanBeBoth = [ 'cancelled' ]
 
 const updateReadStates = (userId, transaction) => {
   const role = userRole(userId, transaction)
-  switch (role) {
-  case 'owner': return { owner: true, requester: false }
-  case 'requester': return { owner: false, requester: true }
-  default: throw error_.new('updateReadStates err', 500, { userId, transaction })
-  }
+  if (role === 'owner') return { owner: true, requester: false }
+  else if (role === 'requester') return { owner: false, requester: true }
+  else throw error_.new('updateReadStates err', 500, { userId, transaction })
 }
 
 const userRole = (userId, transaction) => {
   const { owner, requester } = transaction
   if (userId === owner) return 'owner'
-  if (userId === requester) return 'requester'
-  return (() => { throw error_.new('no role found', 500, { userId, transaction }) })()
+  else if (userId === requester) return 'requester'
+  else throw error_.new('no role found', 500, { userId, transaction })
 }
 
 const counts = {

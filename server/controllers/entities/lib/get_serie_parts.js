@@ -42,9 +42,12 @@ const getInvSerieParts = uri => {
   .map(parseRow)
 }
 
-const parseRow = row => ({
-  uri: `inv:${row.id}`,
-  date: _.get(row.doc.claims, 'wdt:P577.0'),
-  ordinal: _.get(row.doc.claims, 'wdt:P1545.0'),
-  subparts: 0
-})
+const parseRow = row => {
+  const { claims } = row.doc
+  return {
+    uri: `inv:${row.id}`,
+    date: claims['wdt:P577'] && claims['wdt:P577'][0],
+    ordinal: claims['wdt:P1545'] && claims['wdt:P1545'][0],
+    subparts: 0
+  }
+}

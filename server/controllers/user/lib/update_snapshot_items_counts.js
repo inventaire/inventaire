@@ -9,12 +9,16 @@ let user_
 const lateRequire = () => { user_ = __.require('controllers', 'user/lib/user') }
 setTimeout(lateRequire, 0)
 
-module.exports = userId => getItemsCounts(userId)
-.then(itemsCounts => user_.db.update(userId, User.updateItemsCounts(itemsCounts))).then(() => _.info(`${userId} items counts updated`))
-.catch(_.Error('user updateSnapshotItemsCounts err'))
+module.exports = userId => {
+  return getItemsCounts(userId)
+  .then(itemsCounts => user_.db.update(userId, User.updateItemsCounts(itemsCounts))).then(() => _.info(`${userId} items counts updated`))
+  .catch(_.Error('user updateSnapshotItemsCounts err'))
+}
 
-const getItemsCounts = userId => items_.byOwner(userId)
-.then(items => items.reduce(aggregateCounts, itemsCountsBase()))
+const getItemsCounts = userId => {
+  return items_.byOwner(userId)
+  .then(items => items.reduce(aggregateCounts, itemsCountsBase()))
+}
 
 const aggregateCounts = (index, item) => {
   const { listing, created } = item

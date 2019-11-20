@@ -57,7 +57,7 @@ const items_ = module.exports = {
       descending: true,
       include_docs: true
     })
-    .then(FilterWithImage(assertImage))
+    .then(filterWithImage(assertImage))
     .map(snapshot_.addToItem)
     .map(filterPrivateAttributes(reqUserId))
   },
@@ -158,14 +158,13 @@ const listingByEntities = (listing, uris, reqUserId) => {
 
 const entityUriKeys = entityUri => listingsPossibilities.map(listing => [ entityUri, listing ])
 
-const FilterWithImage = assertImage => items => Promise.all(items.map(snapshot_.addToItem))
-.then(items => {
-  if (assertImage) {
-    return items.filter(itemWithImage)
-  } else {
-    return items
-  }
-})
+const filterWithImage = assertImage => items => {
+  return Promise.all(items.map(snapshot_.addToItem))
+  .then(items => {
+    if (assertImage) return items.filter(itemWithImage)
+    else return items
+  })
+}
 
 const itemWithImage = item => item.snapshot['entity:image']
 

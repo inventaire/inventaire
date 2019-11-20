@@ -23,13 +23,7 @@ module.exports = {
   areFriends: (userId, otherId) => {
     assert_.strings([ userId, otherId ])
     return relations_.getStatus(userId, otherId)
-    .then(status => {
-      if (status === 'friends') {
-        return true
-      } else {
-        return false
-      }
-    })
+    .then(status => status === 'friends')
   },
 
   areFriendsOrGroupCoMembers: (userId, otherId) => {

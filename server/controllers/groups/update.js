@@ -63,4 +63,6 @@ const handleAction = (action, req, res) => {
   .catch(error_.Handler(req, res))
 }
 
-const addUpdateData = res => (data = {}) => res.json({ ok: true, update: data.update })
+const addUpdateData = res => (data = {}) => {
+  res.json({ ok: true, update: data.update })
+}

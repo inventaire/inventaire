@@ -54,9 +54,11 @@ const getNotificationData = (groupId, userId, groupDoc, attribute, value) => ({
   previousValue: groupDoc[attribute]
 })
 
-const getUsersToNotify = groupDoc => _(groupDoc)
-.pick('admins', 'members')
-.values()
-.flatten()
-.map(_.property('user'))
-.value()
+const getUsersToNotify = groupDoc => {
+  return _(groupDoc)
+  .pick('admins', 'members')
+  .values()
+  .flatten()
+  .map(_.property('user'))
+  .value()
+}

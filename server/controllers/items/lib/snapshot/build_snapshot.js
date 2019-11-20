@@ -9,19 +9,18 @@ const getBestLangValue = __.require('lib', 'get_best_lang_value')
 module.exports = {
   edition: (edition, works, authors, series) => {
     const lang = edition.originalLang || 'en'
-    let title = edition.claims['wdt:P1476'] != null ? edition.claims['wdt:P1476'][0] : undefined
-    const subtitle = edition.claims['wdt:P1680'] != null ? edition.claims['wdt:P1680'][0] : undefined
+    const { claims } = edition
+    let title = claims['wdt:P1476'] && claims['wdt:P1476'][0]
     // Wikidata editions might not have a wdt:P1476 value
-    if (!title) { title = getBestLangValue(lang, null, edition.labels).value }
-    const image = edition.image != null ? edition.image.url : undefined
+    title = title || getBestLangValue(lang, null, edition.labels).value
     return buildOperation({
       type: 'edition',
       entity: edition,
       works,
       title,
-      subtitle,
+      subtitle: claims['wdt:P1680'] && claims['wdt:P1680'][0],
       lang,
-      image,
+      image: edition.image && edition.image.url,
       authors,
       series
     })
@@ -29,16 +28,15 @@ module.exports = {
 
   work: (work, authors, series) => {
     const { originalLang: lang } = work
-    const title = getBestLangValue(lang, null, work.labels).value
-    const image = work.claims['wdt:P18'] != null ? work.claims['wdt:P18'][0] : undefined
+    const { claims } = work
     const works = [ work ]
     return buildOperation({
       type: 'work',
       entity: work,
       works,
-      title,
+      title: getBestLangValue(lang, null, work.labels).value,
       lang,
-      image,
+      image: claims['wdt:P18'] && claims['wdt:P18'][0],
       authors,
       series
     })
@@ -60,8 +58,8 @@ const buildOperation = params => {
   const authorsNames = getNames(lang, authors)
   const seriesNames = getNames(lang, series)
 
-  if (authorsNames != null) { snapshot['entity:authors'] = authorsNames }
-  if (seriesNames != null) {
+  if (authorsNames) snapshot['entity:authors'] = authorsNames
+  if (seriesNames) {
     snapshot['entity:series'] = seriesNames
     setOrdinal(snapshot, works)
   }
@@ -84,7 +82,8 @@ const buildOperation = params => {
 const setOrdinal = (snapshot, works) => {
   if (works.length === 1) {
     const work = works[0]
-    const ordinal = work.claims['wdt:P1545'] != null ? work.claims['wdt:P1545'][0] : undefined
+    const { claims } = work
+    const ordinal = claims['wdt:P1545'] && claims['wdt:P1545'][0]
     if (ordinal != null) snapshot['entity:ordinal'] = ordinal
   } else {
     const series = aggregateClaims(works, 'wdt:P179')

@@ -6,9 +6,10 @@ const groups_ = require('./lib/groups')
 const { Track } = __.require('lib', 'track')
 
 module.exports = (req, res) => {
-  let { name, searchable, description, position } = req.body
+  const { name, description, position } = req.body
   if (name == null) return error_.bundleMissingBody(req, res, 'name')
 
+  let { searchable } = req.body
   if (searchable == null) { searchable = true }
 
   return groups_.create({

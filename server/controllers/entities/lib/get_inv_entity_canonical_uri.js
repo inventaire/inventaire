@@ -5,7 +5,6 @@
 // to which alias URIs redirect
 // Ex: /entity/inv:#{invId} redirects to /entity/isbn:#{isbn}
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const { normalizeIsbn } = __.require('lib', 'isbn/isbn')
 
@@ -25,7 +24,8 @@ module.exports = (entity, options) => {
 
   // Case when the entity document is a proper entity document
   // but has a more broadly recognized URI available, currently only an ISBN
-  const isbn = _.get(entity, 'claims.wdt:P212.0')
+  const { claims } = entity
+  const isbn = claims['wdt:P212'] && claims['wdt:P212'][0]
 
   // Those URIs are aliases but, when available, always use the canonical id,
   // that is, in the only current, the ISBN

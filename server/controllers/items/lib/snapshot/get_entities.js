@@ -8,7 +8,7 @@ const { aggregateClaims } = require('./helpers')
 
 const getRelativeEntities = relationProperty => entity => {
   const uris = entity.claims[relationProperty]
-  if ((uris != null ? uris.length : undefined) <= 0) return Promise.resolve([])
+  if (!(uris && uris.length > 0)) return Promise.resolve([])
   return getEntitiesByUris({ uris })
   .then(res => _.values(res.entities))
 }
@@ -17,18 +17,22 @@ const getEditionWorks = getRelativeEntities('wdt:P629')
 const getWorkAuthors = getRelativeEntities('wdt:P50')
 const getWorkSeries = getRelativeEntities('wdt:P179')
 
-const getWorkAuthorsAndSeries = work => Promise.all([
-  getWorkAuthors(work),
-  getWorkSeries(work)
-])
+const getWorkAuthorsAndSeries = work => {
+  return Promise.all([
+    getWorkAuthors(work),
+    getWorkSeries(work)
+  ])
+}
 
-const getEditionGraphFromEdition = edition => getEditionWorks(edition)
-.then(works => {
-  assert_.array(works)
-  return getWorksAuthorsAndSeries(works)
-  // Tailor output to be spreaded on buildSnapshot.edition
-  .spread((authors, series) => [ edition, works, authors, series ])
-})
+const getEditionGraphFromEdition = edition => {
+  return getEditionWorks(edition)
+  .then(works => {
+    assert_.array(works)
+    return getWorksAuthorsAndSeries(works)
+    // Tailor output to be spreaded on buildSnapshot.edition
+    .spread((authors, series) => [ edition, works, authors, series ])
+  })
+}
 
 const getWorksAuthorsAndSeries = works => {
   const mergedWorks = { claims: mergeWorksClaims(works) }
@@ -42,11 +46,15 @@ const mergeWorksClaims = works => ({
   'wdt:P179': aggregateClaims(works, 'wdt:P179')
 })
 
-const getEditionGraphEntities = uri => getEntityByUri({ uri })
-.then(getEditionGraphFromEdition)
+const getEditionGraphEntities = uri => {
+  return getEntityByUri({ uri })
+  .then(getEditionGraphFromEdition)
+}
 
-const getWorkGraphFromWork = (lang, work) => getWorkAuthorsAndSeries(work)
-.spread((authors, series) => [ lang, work, authors, series ])
+const getWorkGraphFromWork = (lang, work) => {
+  return getWorkAuthorsAndSeries(work)
+  .spread((authors, series) => [ lang, work, authors, series ])
+}
 
 module.exports = {
   getWorkAuthorsAndSeries,

@@ -7,9 +7,11 @@ let items_
 const lateRequire = () => { items_ = require('./items') }
 setTimeout(lateRequire, 0)
 
-const AfterFn = (viewName, modelFnName) => (fromUri, toUri) => items_[viewName](fromUri)
-.map(Item[modelFnName].bind(null, fromUri, toUri))
-.then(items_.db.bulk)
+const AfterFn = (viewName, modelFnName) => (fromUri, toUri) => {
+  return items_[viewName](fromUri)
+  .map(Item[modelFnName].bind(null, fromUri, toUri))
+  .then(items_.db.bulk)
+}
 
 module.exports = {
   afterMerge: AfterFn('byEntity', 'updateEntity'),

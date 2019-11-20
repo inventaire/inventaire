@@ -5,8 +5,10 @@ const { Promise } = __.require('lib', 'promises')
 module.exports = req => {
   const form = new IncomingForm()
 
-  return new Promise((resolve, reject) => form.parse(req, (err, fields, files) => {
-    if (err != null) reject(err)
-    else resolve({ fields, files })
-  }))
+  return new Promise((resolve, reject) => {
+    return form.parse(req, (err, fields, files) => {
+      if (err) reject(err)
+      else resolve({ fields, files })
+    })
+  })
 }

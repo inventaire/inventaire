@@ -5,12 +5,13 @@ const User = __.require('models', 'user')
 
 const ownerSafeData = user => {
   const safeUserDoc = _.pick(user, User.attributes.ownerSafe)
-  safeUserDoc.oauth = (user.oauth != null) ? Object.keys(user.oauth) : []
+  safeUserDoc.oauth = user.oauth ? Object.keys(user.oauth) : []
   return safeUserDoc
 }
 
 module.exports = {
   ownerSafeData,
+
   // Adapts the result to the requester authorization level
   omitPrivateData: (reqUserId, networkIds, extraAttribute) => {
     const attributes = getAttributes(extraAttribute)

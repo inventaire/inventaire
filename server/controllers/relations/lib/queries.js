@@ -17,7 +17,7 @@ const putStatus = (userId, otherId, status) => {
 const updateStatus = (docId, status, doc) => {
   // if doc doesnt exist, cot creates one: { _id: doc._id }
   // thus the need to test doc.status instead
-  if ((doc != null ? doc.status : undefined) != null) {
+  if (doc && doc.status) {
     doc.status = status
   } else {
     doc = Relation.create(docId, status)
@@ -33,7 +33,7 @@ const queries = {
     return get(userId, otherId)
     .catch(couch_.ignoreNotFound)
     .then(doc => {
-      if ((doc != null ? doc.status : undefined) != null) {
+      if (doc && doc.status) {
         return userRelativeRequest(userId, otherId, doc.status)
       } else {
         return 'none'
@@ -46,12 +46,7 @@ const queries = {
   },
 
   putRequestedStatus: (userId, otherId) => {
-    let status
-    if (userId < otherId) {
-      status = 'a-requested'
-    } else {
-      status = 'b-requested'
-    }
+    const status = userId < otherId ? 'a-requested' : 'b-requested'
     return putStatus(userId, otherId, status)
   },
 

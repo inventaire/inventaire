@@ -38,17 +38,16 @@ module.exports = (req, res) => {
 }
 
 const getNetworkIds = reqUserId => {
-  if (reqUserId != null) {
-    return relations_.getUserFriendsAndCoGroupsMembers(reqUserId)
-  } else {
-    return []
-  }
+  if (reqUserId) return relations_.getUserFriendsAndCoGroupsMembers(reqUserId)
+  else return []
 }
 
-const filterAuthorizedItems = reqUserId => (items, networkIds) => _.compact(items)
-.map(filterByAuthorization(reqUserId, networkIds))
-// Keep non-nullified items
-.filter(_.identity)
+const filterAuthorizedItems = reqUserId => (items, networkIds) => {
+  return _.compact(items)
+  .map(filterByAuthorization(reqUserId, networkIds))
+  // Keep non-nullified items
+  .filter(_.identity)
+}
 
 const filterByAuthorization = (reqUserId, networkIds) => item => {
   const { owner: ownerId, listing } = item

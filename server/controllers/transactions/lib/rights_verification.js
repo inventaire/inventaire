@@ -4,17 +4,19 @@ const error_ = __.require('lib', 'error/error')
 const Transaction = __.require('models', 'transaction')
 
 module.exports = transactions_ => {
-  const verifyNoExistingTransaction = (requester, item) => transactions_.byUserAndItem(requester, item._id)
-  .then(transactionsDocs => {
-    const activeTransactionsDocs = transactionsDocs.filter(Transaction.isActive)
+  const verifyNoExistingTransaction = (requester, item) => {
+    return transactions_.byUserAndItem(requester, item._id)
+    .then(transactionsDocs => {
+      const activeTransactionsDocs = transactionsDocs.filter(Transaction.isActive)
 
-    if (activeTransactionsDocs.length > 0) {
-      const message = 'user already made a request on this item'
-      throw error_.new(message, 403, requester, item, activeTransactionsDocs[0])
-    } else {
-      return item
-    }
-  })
+      if (activeTransactionsDocs.length > 0) {
+        const message = 'user already made a request on this item'
+        throw error_.new(message, 403, requester, item, activeTransactionsDocs[0])
+      } else {
+        return item
+      }
+    })
+  }
 
   return {
     verifyRightToRequest: (requester, item) => {
@@ -32,7 +34,7 @@ module.exports = transactions_ => {
 
     verifyRightToInteract: (userId, transaction) => {
       const { owner, requester } = transaction
-      if ((userId === owner) || (userId === requester)) {
+      if (userId === owner || userId === requester) {
         return transaction
       } else {
         throw error_.new('wrong user', 403, userId, transaction)

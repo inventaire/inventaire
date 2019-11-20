@@ -7,8 +7,9 @@ const sanitize = __.require('lib', 'sanitize/sanitize')
 const radio = __.require('lib', 'radio')
 const { Track } = __.require('lib', 'track')
 
-const getSanitization =
-  { transaction: {} }
+const getSanitization = {
+  transaction: {}
+}
 
 const postSanitization = {
   transaction: {},
@@ -17,14 +18,14 @@ const postSanitization = {
 
 module.exports = {
   get: (req, res, next) => {
-    return sanitize(req, res, getSanitization)
+    sanitize(req, res, getSanitization)
     .then(params => comments_.byTransactionId(params.transactionId))
     .then(responses_.Wrap(res, 'messages'))
     .catch(error_.Handler(req, res))
   },
 
   post: (req, res, next) => {
-    return sanitize(req, res, postSanitization)
+    sanitize(req, res, postSanitization)
     .then(params => {
       const { transactionId, message, reqUserId } = params
       return transactions_.byId(transactionId)

@@ -9,9 +9,11 @@ module.exports = results => {
   .then(sortResultsByPopularity(results))
 }
 
-const sortResultsByPopularity = results => popularityByUri => results
-.map(setGlobalScore(popularityByUri))
-.sort((a, b) => b.globalScore - a.globalScore)
+const sortResultsByPopularity = results => popularityByUri => {
+  return results
+  .map(setGlobalScore(popularityByUri))
+  .sort((a, b) => b.globalScore - a.globalScore)
+}
 
 const setGlobalScore = popularityByUri => result => {
   const popularity = (result.uri != null) ? popularityByUri[result.uri] : 0

@@ -11,25 +11,27 @@ const { publicURL } = CONFIG.mediaStorage.swift
 const absoluteUrl = (container, filename) => `${publicURL}/${container}/${filename}`
 const relativeUrl = (container, filename) => `/img/${container}/${filename}`
 
-const getParams = (container, filename, body, type = 'application/octet-stream') => getToken()
-.then(token => ({
-  url: absoluteUrl(container, filename),
+const getParams = (container, filename, body, type = 'application/octet-stream') => {
+  return getToken()
+  .then(token => ({
+    url: absoluteUrl(container, filename),
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': type,
+      'X-Auth-Token': token
+    },
+    body
+  }))
+}
 
-  headers: {
-    Accept: 'application/json',
-    'Content-Type': type,
-    'X-Auth-Token': token
-  },
-
-  body
-}))
-
-const action = verb => (container, filename, body, type) => getParams(container, filename, body, type)
-.then(_.Log('params'))
-.then(breq[verb])
-.then(res => res.body || { ok: true })
-.then(_.Log(`${verb} ${filename} body`))
-.catch(_.ErrorRethrow(`${verb} ${filename}`))
+const action = verb => (container, filename, body, type) => {
+  return getParams(container, filename, body, type)
+  .then(_.Log('params'))
+  .then(breq[verb])
+  .then(res => res.body || { ok: true })
+  .then(_.Log(`${verb} ${filename} body`))
+  .catch(_.ErrorRethrow(`${verb} ${filename}`))
+}
 
 module.exports = {
   get: action('get'),

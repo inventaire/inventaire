@@ -8,11 +8,13 @@ const groups_ = __.require('controllers', 'groups/lib/groups')
 const { Promise } = __.require('lib', 'promises')
 
 module.exports = db => {
-  const getAllUserRelations = (userId, includeDocs = false) => db.view('relations', 'byStatus', {
-    startkey: [ userId, minKey ],
-    endkey: [ userId, maxKey ],
-    include_docs: includeDocs
-  })
+  const getAllUserRelations = (userId, includeDocs = false) => {
+    return db.view('relations', 'byStatus', {
+      startkey: [ userId, minKey ],
+      endkey: [ userId, maxKey ],
+      include_docs: includeDocs
+    })
+  }
 
   const lists = {
     getUserRelations: userId => {

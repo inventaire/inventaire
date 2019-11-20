@@ -24,7 +24,7 @@ const error_ = __.require('lib', 'error/error')
 
 module.exports = {
   addToItem: item => {
-    if (item.snapshot != null) return Promise.resolve(item)
+    if (item.snapshot) return Promise.resolve(item)
 
     return getSnapshot(item.entity)
     .then(snapshot => {
@@ -41,21 +41,25 @@ module.exports = {
   batch: ops => db.batch(_.forceArray(ops))
 }
 
-const getSnapshot = (uri, preventLoop) => db.get(uri)
-.then(snapshot => {
-  if (snapshot != null) return snapshot
+const getSnapshot = (uri, preventLoop) => {
+  return db.get(uri)
+  .then(snapshot => {
+    if (snapshot != null) return snapshot
 
-  if (preventLoop === true) {
-    // Known case: addToItem was called for an item which entity is a serie
-    // thus, the related works and editions were refreshed but as series aren't
-    // supposed to be associated to items, no snapshot was created for the serie itself
-    const err = error_.new("couldn't refresh item snapshot", 500, { uri })
-    _.error(err, 'getSnapshot err')
-    return {}
-  }
+    if (preventLoop === true) {
+      // Known case: addToItem was called for an item which entity is a serie
+      // thus, the related works and editions were refreshed but as series aren't
+      // supposed to be associated to items, no snapshot was created for the serie itself
+      const err = error_.new("couldn't refresh item snapshot", 500, { uri })
+      _.error(err, 'getSnapshot err')
+      return {}
+    }
 
-  return refreshAndGet(uri)
-})
+    return refreshAndGet(uri)
+  })
+}
 
-const refreshAndGet = uri => refreshSnapshot.fromUri(uri)
-.then(() => getSnapshot(uri, true))
+const refreshAndGet = uri => {
+  return refreshSnapshot.fromUri(uri)
+  .then(() => getSnapshot(uri, true))
+}

@@ -9,7 +9,7 @@ module.exports = {
   getDocData: updatedDoc => {
     let { uri, type } = updatedDoc
     // Case when a formatted entity doc is passed
-    if (uri != null) return [ uri, type ]
+    if (uri) return [ uri, type ]
 
     // Case when a raw entity doc is passed,
     // which can only be an inv entity doc
@@ -46,4 +46,7 @@ module.exports = {
   }
 }
 
-const getName = lang => entity => getBestLangValue(lang, entity.originalLang, entity.labels).value
+const getName = lang => entity => {
+  const { originalLang, labels } = entity
+  return getBestLangValue(lang, originalLang, labels).value
+}

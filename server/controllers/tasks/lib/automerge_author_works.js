@@ -6,16 +6,20 @@ const getEntitiesList = __.require('controllers', 'entities/lib/get_entities_lis
 const { getEntityNormalizedTerms } = __.require('controllers', 'entities/lib/terms_normalization')
 const { _id: reconcilerUserId } = __.require('couch', 'hard_coded_documents').users.reconciler
 
-module.exports = authorUri => getAuthorWorksByDomain(authorUri)
-.then(findMergeableWorks)
-.then(automergeWorks(authorUri))
+module.exports = authorUri => {
+  return getAuthorWorksByDomain(authorUri)
+  .then(findMergeableWorks)
+  .then(automergeWorks(authorUri))
+}
 
-const getAuthorWorksByDomain = authorUri => getAuthorWorks({ uri: authorUri })
-.get('works')
-.then(works => {
-  const uris = _.map(works, _.property('uri'))
-  return getEntitiesList(uris)
-})
+const getAuthorWorksByDomain = authorUri => {
+  return getAuthorWorks({ uri: authorUri })
+  .get('works')
+  .then(works => {
+    const uris = _.map(works, _.property('uri'))
+    return getEntitiesList(uris)
+  })
+}
 
 const findMergeableWorks = works => {
   let { wd: wdWorks, inv: invWorks } = works

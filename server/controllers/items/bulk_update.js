@@ -13,7 +13,7 @@ const sanitization = {
 module.exports = (req, res, next) => {
   const reqUserId = req.user._id
 
-  return sanitize(req, res, sanitization)
+  sanitize(req, res, sanitization)
   .then(params => {
     const { ids, attribute, value } = params
     return items_.bulkUpdate(reqUserId, ids, attribute, value)

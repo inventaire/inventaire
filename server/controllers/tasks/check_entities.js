@@ -15,7 +15,8 @@ module.exports = (req, res) => {
   .then(params => {
     const { uris } = params
     return Promise.all(uris.map(checkEntity))
-  }).then(_.flatten)
+  })
+  .then(_.flatten)
   .then(responses_.Wrap(res, 'tasks'))
   .catch(error_.Handler(req, res))
 }

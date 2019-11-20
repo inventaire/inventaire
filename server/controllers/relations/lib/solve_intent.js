@@ -8,47 +8,37 @@ module.exports = actions => {
     requestFriend: (userId, otherId, status) => {
       // useful for development
       if (godMode) return actions.forceFriendship(userId, otherId)
-      switch (status) {
-      case 'none':
-        return actions.makeRequest(userId, otherId)
-      case 'otherRequested':
-        return actions.simultaneousRequest(userId, otherId)
-      default: return doNothing(status, 'requestFriend', userId, otherId)
-      }
+      if (status === 'none') return actions.makeRequest(userId, otherId)
+      else if (status === 'otherRequested') return actions.simultaneousRequest(userId, otherId)
+      else doNothing(status, 'requestFriend', userId, otherId)
     },
 
     cancelFriendRequest: (userId, otherId, status) => {
-      switch (status) {
-      case 'userRequested':
-        return actions.removeRelation(userId, otherId)
-      default: return doNothing(status, 'cancelFriendRequest', userId, otherId)
-      }
+      if (status === 'userRequested') return actions.removeRelation(userId, otherId)
+      else doNothing(status, 'cancelFriendRequest', userId, otherId)
     },
 
     removeFriendship: (userId, otherId, status) => {
-      switch (status) {
-      case 'friends': case 'userRequested': case 'otherRequested':
+      if (status === 'friends' || status === 'userRequested' || status === 'otherRequested') {
         return actions.removeRelation(userId, otherId)
-      default: return doNothing(status, 'removeFriendship', userId, otherId)
+      } else {
+        doNothing(status, 'removeFriendship', userId, otherId)
       }
     },
 
     acceptRequest: (userId, otherId, status) => {
-      switch (status) {
-      case 'otherRequested':
+      if (status === 'otherRequested') {
         return actions.acceptRequest(userId, otherId)
-      case 'none':
+      } else if (status === 'none') {
         return _.warn(`${userId} request to ${otherId} accepted after being cancelled`)
-      default: return doNothing(status, 'acceptRequest', userId, otherId)
+      } else {
+        doNothing(status, 'acceptRequest', userId, otherId)
       }
     },
 
     discardRequest: (userId, otherId, status) => {
-      switch (status) {
-      case 'otherRequested':
-        return actions.removeRelation(userId, otherId)
-      default: return doNothing(status, 'discardRequest', userId, otherId)
-      }
+      if (status === 'otherRequested') return actions.removeRelation(userId, otherId)
+      else doNothing(status, 'discardRequest', userId, otherId)
     }
   }
 
@@ -57,8 +47,7 @@ module.exports = actions => {
 
 const doNothing = (status, method, userId, otherId) => {
   _.warn(`Status mismatch: got status '${status}' \
-at ${method} for relation ${userId}, ${otherId}. \
-(it happens but it shouldn't be to often). \
-Here, doing nothing is the best.`
-  )
+  at ${method} for relation ${userId}, ${otherId}. \
+  (it happens but it shouldn't be to often). \
+  Here, doing nothing is the best.`)
 }

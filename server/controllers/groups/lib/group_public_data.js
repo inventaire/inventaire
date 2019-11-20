@@ -4,8 +4,7 @@ const error_ = __.require('lib', 'error/error')
 const assert_ = __.require('utils', 'assert_types')
 
 // Working around the circular dependency
-let groups_
-let user_
+let groups_, user_
 const lateRequire = () => {
   groups_ = require('./groups')
   user_ = __.require('controllers', 'user/lib/user')

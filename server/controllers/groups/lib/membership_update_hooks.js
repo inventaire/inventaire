@@ -5,7 +5,11 @@ const radio = __.require('lib', 'radio')
 const couch_ = __.require('lib', 'couch')
 
 module.exports = db => {
-  const deleteGroupIfEmpty = (groupId, userId) => db.get(groupId)
+  radio.on('group:leave', deleteGroupIfEmpty(db))
+}
+
+const deleteGroupIfEmpty = db => (groupId, userId) => {
+  return db.get(groupId)
   .then(group => {
     // An admin can't leave a group if there are still members
     // so, if there are no admins, there should be no members too
@@ -16,6 +20,4 @@ module.exports = db => {
     }
   })
   .catch(_.Error(`group deletion err: ${groupId}`))
-
-  return radio.on('group:leave', deleteGroupIfEmpty)
 }

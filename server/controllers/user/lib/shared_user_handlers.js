@@ -20,11 +20,8 @@ const handlers = module.exports = {
     return handlers.byEmail(db, email)
     .then(couch_.firstDoc)
     .then(user => {
-      if (user != null) {
-        return user
-      } else {
-        throw error_.notFound(email)
-      }
+      if (user) return user
+      else throw error_.notFound(email)
     })
   }
 }

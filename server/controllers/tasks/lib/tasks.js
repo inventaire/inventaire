@@ -80,7 +80,7 @@ const buildKey = state => uri => [ uri, state ]
 
 const completeWithEmptyArrays = (tasksByUris, uris) => {
   for (const uri of uris) {
-    if (tasksByUris[uri] == null) { tasksByUris[uri] = [] }
+    if (tasksByUris[uri] == null) tasksByUris[uri] = []
   }
   return tasksByUris
 }

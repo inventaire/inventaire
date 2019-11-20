@@ -1,6 +1,5 @@
 // Send an email to invite someone to connect to the requester as friends
 // If a group id is passed, invite to join the group instead (group admins only)
-
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
@@ -17,14 +16,12 @@ module.exports = (req, res) => {
   let { emails, message, group: groupId } = body
   const { _id: reqUserId } = req.user
 
-  if (message != null) {
-    if (_.isString(message)) {
-      if (message.length === 0) { message = null }
-    } else {
+  if (message) {
+    if (!_.isString(message)) {
       return error_.bundleInvalid(req, res, 'message', message)
     }
   } else {
-    // Convert undefined message to null to make following type checks easier
+    // Convert undefined or empty string message to null to make following type checks easier
     message = null
   }
 
@@ -70,7 +67,7 @@ const validateGroup = (groupId, reqUserId) => {
   })
 }
 
-// this is totally arbitrary but sending too many invites at a time
+// This is totally arbitrary but sending too many invites at a time
 // will probably end up being reported as spam
 const limit = 50
 const applyLimit = emails => {

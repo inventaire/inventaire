@@ -16,7 +16,7 @@ module.exports = (req, res) => {
 
   _.warn(req.user, 'deleting user')
 
-  return user_.softDeleteById(reqUserId)
+  user_.softDeleteById(reqUserId)
   .then(cleanEverything.bind(null, reqUserId))
   // triggering track before logging out
   // to get access to req.user before it's cleared
@@ -30,12 +30,14 @@ module.exports = (req, res) => {
 // commentaries => deleted (the user will expect it to clean her online presence )
 // transactions => kept: those are private and remain useful for the other user
 
-const cleanEverything = reqUserId => promises_.all([
-  relations_.deleteUserRelations(reqUserId),
-  deleteUserItems(reqUserId),
-  groups_.leaveAllGroups(reqUserId),
-  notifs_.deleteAllByUserId(reqUserId)
-])
+const cleanEverything = reqUserId => {
+  return promises_.all([
+    relations_.deleteUserRelations(reqUserId),
+    deleteUserItems(reqUserId),
+    groups_.leaveAllGroups(reqUserId),
+    notifs_.deleteAllByUserId(reqUserId)
+  ])
+}
 
 const logout = req => {
   _.warn(req.session, 'session before logout')

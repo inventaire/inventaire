@@ -19,7 +19,7 @@ const sanitization = {
 
 module.exports = {
   get: (req, res) => {
-    return sanitize(req, res, sanitization)
+    sanitize(req, res, sanitization)
     .then(params => {
       const { types, search, lang, limit, reqUserId } = params
       // Extend the search to the next 10 results, so that the popularity boost

@@ -35,11 +35,8 @@ module.exports = (db, user_) => {
   token_.confirmEmailValidity = (email, token) => user_.findOneByEmail(email)
   .then(updateIfValidToken.bind(null, token))
   .catch(err => {
-    if (err.notFound) {
-      throw noEmailValidationFound(token, email)
-    } else {
-      throw err
-    }
+    if (err.notFound) throw noEmailValidationFound(token, email)
+    else throw err
   })
 
   const updateIfValidToken = (token, user) => {
@@ -54,19 +51,23 @@ module.exports = (db, user_) => {
 
   const noEmailValidationFound = (...context) => error_.new('no email validation token found', 401, context)
 
-  token_.sendResetPasswordEmail = user => getTokenData(tokenLength)
-  .then(tokenData => {
-    const [ token, tokenHash ] = Array.from(tokenData)
-    radio.emit('reset:password:email', user, token)
-    wrappedUpdate(user._id, 'token', tokenHash)
-    return user
-  })
+  token_.sendResetPasswordEmail = user => {
+    return getTokenData(tokenLength)
+    .then(tokenData => {
+      const [ token, tokenHash ] = Array.from(tokenData)
+      radio.emit('reset:password:email', user, token)
+      wrappedUpdate(user._id, 'token', tokenHash)
+      return user
+    })
+  }
 
-  token_.openPasswordUpdateWindow = user => db.update(user._id, doc => {
-    doc.token = null
-    doc.resetPassword = Date.now()
-    return doc
-  })
+  token_.openPasswordUpdateWindow = user => {
+    return db.update(user._id, doc => {
+      doc.token = null
+      doc.resetPassword = Date.now()
+      return doc
+    })
+  }
 
   return token_
 }

@@ -7,8 +7,8 @@ const request = require('request')
 const oneMB = Math.pow(1024, 2)
 
 module.exports = (req, res, url, dimensions) => {
-  let [ width, height ] = Array.from((dimensions != null ? dimensions.split('x') : undefined) || [ maxSize, maxSize ]);
-  [ width, height ] = Array.from(images_.applyLimits(width, height))
+  let [ width, height ] = dimensions ? dimensions.split('x') : [ maxSize, maxSize ];
+  [ width, height ] = images_.applyLimits(width, height)
 
   const reqStream = request(url)
 
@@ -18,10 +18,11 @@ module.exports = (req, res, url, dimensions) => {
 }
 
 const onResponse = (reqStream, url, width, height, req, res) => response => {
-  let errMessage
-  let { statusCode, statusMessage } = response
+  const { statusMessage } = response
+  let { statusCode } = response
   const { 'content-type': contentType, 'content-length': contentLength } = response.headers
 
+  let errMessage
   if (statusCode >= 400) {
     errMessage = `Remote response: ${statusCode} ${statusMessage}`
   } else if (!validImageContentType.test(contentType)) {
@@ -30,7 +31,7 @@ const onResponse = (reqStream, url, width, height, req, res) => response => {
     errMessage = `image is too large: ${contentLength}`
   }
 
-  if (errMessage != null) {
+  if (errMessage) {
     // Keep the internal service host private
     const context = url.replace(/(\d{1,3}\.){3}(\d{1,3}):\d{4}/, 'internal-host')
     statusCode = statusCode === 404 ? 404 : 400

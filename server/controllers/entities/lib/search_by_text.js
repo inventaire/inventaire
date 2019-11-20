@@ -43,7 +43,8 @@ const replaceEditionsByTheirWork = refresh => entities => {
   for (const uri in entities) {
     const entity = entities[uri]
     if (entity.type === 'edition') {
-      const workUri = _.get(entity.claims, 'wdt:P629.0')
+      const { claims } = entity
+      const workUri = claims['wdt:P629'] && claims['wdt:P629'][0]
       if (workUri) {
         // Ensure that the edition work is in the results
         if (entities[workUri] == null) missingWorkEntities.push(workUri)

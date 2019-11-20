@@ -12,7 +12,7 @@ module.exports = (req, res) => {
   if (isBot(userAgent)) return _.ok(res)
 
   onlineUsers({
-    userId: (req.user != null ? req.user._id : undefined),
+    userId: req.user && req.user._id,
     // For production, when behind a Nginx proxy
     ip: headers['x-forwarded-for'],
     userAgent: headers['user-agent'],

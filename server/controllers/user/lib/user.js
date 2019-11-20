@@ -39,8 +39,8 @@ const user_ = {
     return user_.byUsername(username)
     .then(couch_.firstDoc)
     .then(user => {
-      // ignoring case as expected does the database
-      if ((user != null ? user.username.toLowerCase() : undefined) === username.toLowerCase()) {
+      // Ignoring case as does the byUsername db view
+      if (user && user.username.toLowerCase() === username.toLowerCase()) {
         return user
       } else {
         throw error_.notFound({ username })
@@ -61,11 +61,8 @@ const user_ = {
     return user_.getUsersAuthorizedData(user_.byUsername(username), reqUserId)
     .then(usersDocs => {
       const userDoc = usersDocs[0]
-      if (userDoc != null) {
-        return userDoc
-      } else {
-        throw error_.notFound({ username })
-      }
+      if (userDoc) return userDoc
+      else throw error_.notFound({ username })
     })
   },
 
@@ -74,11 +71,8 @@ const user_ = {
     return user_.getUsersAuthorizedData(user_.byIds([ id ]), reqUserId)
     .then(users => {
       const user = users[0]
-      if (user != null) {
-        return user
-      } else {
-        throw error_.notFound({ userId: id })
-      }
+      if (user) return user
+      else throw error_.notFound({ userId: id })
     })
   },
 
@@ -98,14 +92,14 @@ const user_ = {
     .map(omitPrivateData(reqUserId, networkIds, extraAttribute)))
   },
 
-  getUsersIndexByIds: reqUserId => {
-    return ids => user_.getUsersByIds(ids, reqUserId)
-  .then(_.KeyBy('_id'))
+  getUsersIndexByIds: reqUserId => ids => {
+    return user_.getUsersByIds(ids, reqUserId)
+    .then(_.KeyBy('_id'))
   },
 
-  getUsersIndexByUsernames: reqUserId => {
-    return usernames => user_.getUsersAuthorizedData(user_.byUsernames(usernames), reqUserId)
-  .then(users => users.reduce(indexByLowerCasedUsername, {}))
+  getUsersIndexByUsernames: reqUserId => usernames => {
+    return user_.getUsersAuthorizedData(user_.byUsernames(usernames), reqUserId)
+    .then(users => users.reduce(indexByLowerCasedUsername, {}))
   },
 
   incrementUndeliveredMailCounter: email => {
@@ -113,7 +107,7 @@ const user_ = {
     .then(doc => {
       const { _id } = doc
       return db.update(_id, doc => {
-        if (!doc.undeliveredEmail) { doc.undeliveredEmail = 0 }
+        if (doc.undeliveredEmail == null) doc.undeliveredEmail = 0
         doc.undeliveredEmail += 1
         return doc
       })
@@ -140,20 +134,22 @@ const user_ = {
   }
 }
 
-const findNearby = (latLng, meterRange, iterations = 0, strict = false) => geo.search(latLng, meterRange)
-.then(res => {
-  // Try to get the 10 closest (11 minus the main user)
-  // If strict, don't augment the range, just return what was found;
-  // else double the range
-  // But stop after 10 iterations to avoid creating an infinit loop
-  // if there are no users geolocated
-  if ((res.length > 11) || strict || (iterations > 10)) {
-    return res
-  } else {
-    iterations += 1
-    return findNearby(latLng, meterRange * 2, iterations)
-  }
-})
+const findNearby = (latLng, meterRange, iterations = 0, strict = false) => {
+  return geo.search(latLng, meterRange)
+  .then(res => {
+    // Try to get the 10 closest (11 minus the main user)
+    // If strict, don't augment the range, just return what was found;
+    // else double the range
+    // But stop after 10 iterations to avoid creating an infinit loop
+    // if there are no users geolocated
+    if ((res.length > 11) || strict || (iterations > 10)) {
+      return res
+    } else {
+      iterations += 1
+      return findNearby(latLng, meterRange * 2, iterations)
+    }
+  })
+}
 
 const indexByLowerCasedUsername = (users, user) => {
   const lowercasedUsername = user.username.toLowerCase()

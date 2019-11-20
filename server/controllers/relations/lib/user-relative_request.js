@@ -1,18 +1,6 @@
 module.exports = (userId, otherId, status) => {
-  switch (status) {
-  case 'friends': return 'friends'
-  case 'a-requested':
-    if (userId < otherId) {
-      return 'userRequested'
-    } else {
-      return 'otherRequested'
-    }
-  case 'b-requested':
-    if (userId < otherId) {
-      return 'otherRequested'
-    } else {
-      return 'userRequested'
-    }
-  default: return 'none'
-  }
+  if (status === 'friends') return 'friends'
+  else if (status === 'a-requested') return userId < otherId ? 'userRequested' : 'otherRequested'
+  else if (status === 'b-requested') return userId < otherId ? 'otherRequested' : 'userRequested'
+  else return 'none'
 }

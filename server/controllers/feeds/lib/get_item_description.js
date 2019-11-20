@@ -4,11 +4,11 @@ const templateHelpers = __.require('lib', 'emails/handlebars_helpers')
 const transacColors = __.require('lib', 'emails/activity_summary/transactions_colors')
 
 module.exports = (item, user, lang) => {
-  let imageHtml
   const { transaction, snapshot, details } = item
   const image = snapshot['entity:image']
   const title = snapshot['entity:title']
 
+  let imageHtml
   if (_.isNonEmptyString(image)) {
     const imageSrc = templateHelpers.imgSrc(image, 300)
     imageHtml = `<img src='${imageSrc}' alt='${title} cover'>`

@@ -17,11 +17,8 @@ module.exports = {
       if (!adminsIds.includes(userId)) return true
       const mainUserIsTheOnlyAdmin = admins.length === 1
       const thereAreOtherMembers = members.length > 0
-      if (mainUserIsTheOnlyAdmin && thereAreOtherMembers) {
-        return false
-      } else {
-        return true
-      }
+      if (mainUserIsTheOnlyAdmin && thereAreOtherMembers) return false
+      else return true
     })
   },
 

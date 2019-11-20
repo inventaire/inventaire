@@ -21,7 +21,7 @@ const sanitization = {
 
 module.exports = (req, res) => {
   const { _id: reqUserId } = req.user
-  return sanitize(req, res, sanitization)
+  sanitize(req, res, sanitization)
   .then(params => user_.nearby(reqUserId, params.range, params.strictRange)
   .then(getItemsByUsers.bind(null, params))).then(responses_.Send(res))
   .catch(error_.Handler(req, res))

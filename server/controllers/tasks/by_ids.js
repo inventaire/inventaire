@@ -4,8 +4,9 @@ const error_ = __.require('lib', 'error/error')
 const tasks_ = require('./lib/tasks')
 const sanitize = __.require('lib', 'sanitize/sanitize')
 
-const sanitization =
-  { ids: {} }
+const sanitization = {
+  ids: {}
+}
 
 module.exports = (req, res) => {
   sanitize(req, res, sanitization)

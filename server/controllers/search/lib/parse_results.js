@@ -3,7 +3,7 @@ const __ = CONFIG.universalPath
 const getEntityType = __.require('controllers', 'entities/lib/get_entity_type')
 
 module.exports = types => res => {
-  if ((res.hits != null ? res.hits.hits : undefined) == null) return []
+  if (!(res.hits && res.hits.hits)) return []
 
   return res.hits.hits
   .map(fixEntityType)

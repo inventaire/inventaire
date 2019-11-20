@@ -1,6 +1,5 @@
 // Identity: v2
 // Swift: v1
-
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
@@ -27,7 +26,7 @@ const postParams = {
 }
 
 module.exports = () => {
-  if ((lastToken != null) && !tokenExpired()) return promises_.resolve(lastToken)
+  if (lastToken && !tokenExpired()) return promises_.resolve(lastToken)
 
   return breq.post(postParams)
   .get('body')

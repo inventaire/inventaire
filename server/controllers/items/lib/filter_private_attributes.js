@@ -7,13 +7,9 @@ const omitPrivateAttributes = item => _.omit(item, privateAttrs)
 
 module.exports = {
   omitPrivateAttributes,
-  filterPrivateAttributes: reqUserId => {
-    return item => {
-      if (item.owner === reqUserId) {
-        return item
-      } else {
-        return omitPrivateAttributes(item)
-      }
-    }
+
+  filterPrivateAttributes: reqUserId => item => {
+    if (item.owner === reqUserId) return item
+    else return omitPrivateAttributes(item)
   }
 }

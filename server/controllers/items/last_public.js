@@ -19,9 +19,9 @@ const sanitization = {
 }
 
 module.exports = (req, res) => {
-  const reqUserId = req.user != null ? req.user._id : undefined
+  const reqUserId = req.user && req.user._id
 
-  return sanitize(req, res, sanitization)
+  sanitize(req, res, sanitization)
   .then(params => {
     const { limit, offset, assertImage } = params
     return items_.publicByDate(limit, offset, assertImage, reqUserId)
