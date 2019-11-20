@@ -178,8 +178,7 @@ user_.create = require('./create')(db, token_, availability_)
 user_.byPosition = __.require('lib', 'by_position')(db, 'users')
 
 const deleteUser = require('./delete')(db, user_)
-const reqParsers = require('./req_parsers')
 const relationsStatus = require('./relations_status')
 const summary_ = require('./summary')(db)
 
-module.exports = Object.assign(user_, token_, relationsStatus, reqParsers, deleteUser, summary_)
+module.exports = Object.assign(user_, token_, relationsStatus, deleteUser, summary_)
