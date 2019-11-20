@@ -56,9 +56,9 @@ const requestOptions = (image, thumbwidth) => ({
 const extractData = res => {
   const { file, licenses, error } = res.response
   return {
-    url: _.get(file, '0.urls.0.thumbnail.0')
-    license: getString(licenses, '0.license.0.name')
-    author: getString(file, '0.author')
+    url: _.get(file, '0.urls.0.thumbnail.0'),
+    license: getString(licenses, '0.license.0.name'),
+    author: getString(file, '0.author'),
     error: error && error[0]
   }
 }
@@ -102,10 +102,7 @@ const removeMarkups = text => {
   }
 
   text = text.replace(textInMarkups, '$1')
-  if (text === '') {
-  } else {
-    return text
-  }
+  if (text !== '') return text
 }
 
 const fallback = file => err => {

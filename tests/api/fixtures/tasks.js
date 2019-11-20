@@ -19,12 +19,13 @@ module.exports = {
   createSomeTasks: humanLabel => {
     if (promises[humanLabel] != null) return promises[humanLabel]
 
-    promises[humanLabel] = Promise.all([
-        createHuman({ labels: { en: humanLabel } }),
-        createHuman({ labels: { en: humanLabel } })
-      ])
-      .then(humans => checkEntities(_.map(humans, 'uri'))
-      .then(tasks => ({ tasks, humans }))
+    const human = { labels: { en: humanLabel } }
+
+    promises[humanLabel] = Promise.all([ createHuman(human), createHuman(human) ])
+      .then(humans => {
+        return checkEntities(_.map(humans, 'uri'))
+        .then(tasks => ({ tasks, humans }))
+      })
 
     return promises[humanLabel]
   }

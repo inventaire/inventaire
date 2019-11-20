@@ -95,14 +95,13 @@ Item.changeOwner = (transacDoc, item) => {
 
   _.log(item.history, 'updated history')
 
-  return _.extend(item, {
+  return Object.assign(item, {
     owner: requester,
     // default values
     transaction: 'inventorying',
     listing: 'private',
     updated: Date.now()
   })
-
 }
 
 Item.allowTransaction = item => attributes.allowTransaction.includes(item.transaction)

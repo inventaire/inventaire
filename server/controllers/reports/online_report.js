@@ -10,6 +10,7 @@ const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const onlineUsers = require('./lib/online_users')
 const responses_ = __.require('lib', 'responses')
+const headers_ = __.require('lib', 'headers')
 
 module.exports = (req, res) => {
   const { headers } = req
@@ -23,7 +24,7 @@ module.exports = (req, res) => {
     // For production, when behind a Nginx proxy
     ip: headers['x-forwarded-for'],
     userAgent: headers['user-agent'],
-    lang: headers['accept-language'] && headers['accept-language'].split(',')[0]
+    lang: headers_.getLang(headers)
   })
 
   return responses_.ok(res)

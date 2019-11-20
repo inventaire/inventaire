@@ -32,12 +32,14 @@ module.exports = {
 
 // Delete and repost with new time to wait
 // as long as updates are arriving fast (i.e. in a 30 minutes timespan)
-const addToWaitingList = (domain, id) => waitingEmails.sub.createKeyStream({
+const addToWaitingList = (domain, id) => {
+  return waitingEmails.sub.createKeyStream({
     gt: `${domain}:${id}:0`,
     lt: `${domain}:${id}::`
   })
   .on('data', waitingEmails.del)
   .on('end', createNewWaiter.bind(null, domain, id))
+}
 
 const createNewWaiter = (domain, id) => {
   const key = `${domain}:${id}:${Date.now()}`

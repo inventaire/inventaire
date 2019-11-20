@@ -45,7 +45,7 @@ module.exports = seed => {
 
   if (isbnData == null) return error_.reject('invalid isbn', 400, seed)
 
-  _.extend(seed, isbnData)
+  Object.assign(seed, isbnData)
 
   const { isbn13 } = seed
 

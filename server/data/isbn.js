@@ -41,7 +41,7 @@ module.exports = (req, res) => {
   .then(resp => {
     const seed = resp[0] || {}
     delete seed.isbn
-    _.extend(data, seed)
+    Object.assign(data, seed)
     return res.json(data)
   })
   .catch(error_.Handler(req, res))

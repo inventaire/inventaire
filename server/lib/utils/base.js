@@ -12,7 +12,7 @@
  */
 const _ = require('lodash')
 
-const base = module.exports = {
+module.exports = {
   combinations: (array1, array2) => {
     const results = []
     array1.forEach(keys1 => array2.forEach(keys2 => results.push([ keys1, keys2 ])))
@@ -41,24 +41,18 @@ const base = module.exports = {
 
   stringToFloat: str => {
     if (typeof str !== 'string') throw new Error(`expected a string: ${str}`)
-    if (!/^[-?\d\.]+$/.test(str)) throw new Error(`invalid integer string: ${str}`)
+    if (!/^[-?\d.]+$/.test(str)) throw new Error(`invalid integer string: ${str}`)
     return parseFloat(str)
   },
 
   isArrayLike: obj => _.isArray(obj) || _.isArguments(obj),
 
   // Remove any superfluous spaces
-  superTrim: str => {
-    return str
-    .replace(/^\s+/, ' ')
-    .replace(/\s+$/, ' ')
-    .replace(/\s+/g, ' ')
-    .trim()
-  },
+  superTrim: str => str.replace(/\s+/g, ' ').trim(),
 
   flattenIndexes: indexesArray => {
     indexesArray.unshift({})
-    return _.extend.apply(_, indexesArray)
+    return Object.assign.apply(_, indexesArray)
   },
 
   KeyBy: attribute => array => _.keyBy(array, attribute),
@@ -159,14 +153,11 @@ const base = module.exports = {
     return type
   },
 
-  // helpers to simplify polymorphisms
-  forceArray (keys) {
-    if (((keys == null)) || (keys === '')) return []
-    if (_.isArray(keys)) {
-      return keys
-    } else {
-      return [ keys ]
-    }
+  // Helpers to simplify polymorphisms
+  forceArray: keys => {
+    if (keys == null || keys === '') return []
+    if (_.isArray(keys)) return keys
+    else return [ keys ]
   },
 
   // Iterates on an object, with the passed function: fn(key, value)
@@ -185,7 +176,7 @@ const aggregateMappedKeysValues = (obj, fn) => (newObj, key) => {
     throw new Error(errMessage)
   }
 
-  const [ newKey, newValue ] = Array.from(newKeyValue)
+  const [ newKey, newValue ] = newKeyValue
 
   if (newKey == null) throw new Error(`missing new key (old key: ${key})`)
   if (newValue == null) throw new Error(`missing new value (old value: ${value})`)
@@ -194,7 +185,7 @@ const aggregateMappedKeysValues = (obj, fn) => (newObj, key) => {
   return newObj
 }
 
-const encodeCharacter = c => `%${c.charCodeAt(0).toString(16)}`
+const encodeCharacter = character => `%${character.charCodeAt(0).toString(16)}`
 
 const removeUndefined = obj => {
   const newObj = {}
@@ -206,8 +197,8 @@ const removeUndefined = obj => {
 }
 
 const dropSpecialCharacters = str => str
-.replace(/\s+/g, ' ')
-.replace(/(\?|\:)/g, '')
+  .replace(/\s+/g, ' ')
+  .replace(/(\?|:)/g, '')
 
 // Only escape values that are problematic in a query string:
 // for the moment, only '?'

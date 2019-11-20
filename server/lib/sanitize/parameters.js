@@ -133,12 +133,9 @@ const whitelistedStrings = {
 
 const generics = {
   boolean: {
-    format (value, name, config) {
-      if (_.isString(value)) {
-        return _.parseBooleanString(value, config.default)
-      } else {
-        return value
-      }
+    format: (value, name, config) => {
+      if (_.isString(value)) return _.parseBooleanString(value, config.default)
+      else return value
     },
     validate: value => _.typeOf(value) === 'boolean'
   },
@@ -171,13 +168,12 @@ module.exports = {
     default: 'en',
     validate: _.isLang
   },
-  limit: _.extend({}, positiveInteger, {
+  limit: Object.assign({}, positiveInteger, {
     min: 1,
     default: 100
-  })
-,
+  }),
   message: nonEmptyString,
-  offset: _.extend({}, positiveInteger, { default: 0 }),
+  offset: Object.assign({}, positiveInteger, { default: 0 }),
   options: whitelistedStrings,
   password: {
     secret: true,
@@ -186,11 +182,10 @@ module.exports = {
   prefix: whitelistedString,
   property: { validate: _.isPropertyUri },
   refresh: generics.boolean,
-  range: _.extend({}, positiveInteger, {
+  range: Object.assign({}, positiveInteger, {
     default: 50,
     max: 500
-  })
-,
+  }),
   search: nonEmptyString,
   state: whitelistedString,
   title: nonEmptyString,

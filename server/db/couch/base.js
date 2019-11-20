@@ -14,5 +14,5 @@ module.exports = (dbBaseName, designDocName) => {
   const db = getDbApi(dbName, designDocName)
   const bundles = require('./bundles')(db, _)
 
-  return _.extend(db, bundles)
+  return Object.assign(db, bundles)
 }

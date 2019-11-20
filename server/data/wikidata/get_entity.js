@@ -34,7 +34,7 @@ const requester = ids => {
 
 // Limiting arguments to strictly 1
 const getReq = url => requests_.get(url)
-const mergeResults = results => _.extend.apply(_, results.map(_.property('entities')))
+const mergeResults = results => Object.assign.apply(_, results.map(_.property('entities')))
 
 // Expose a single requester
 // Taking a Wikidata Id

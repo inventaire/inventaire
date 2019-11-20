@@ -101,5 +101,5 @@ module.exports = error_ => {
     }
   }
 
-  return _.extend(newFunctions, bundles, rejects)
+  return Object.assign(newFunctions, bundles, rejects)
 }

@@ -38,7 +38,6 @@ module.exports = {
         height
       })
 
-
     // Assumes this is a Wikimedia Commons filename
     } else if (path[0] !== '/') {
       const file = _.fixedEncodeURIComponent(path)

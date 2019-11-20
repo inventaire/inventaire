@@ -9,20 +9,20 @@
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-let queriesCommons
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const user_ = __.require('controllers', 'user/lib/user')
 const snapshot_ = require('./snapshot/snapshot')
 
-const filters =
+const filters = {
   // Prevent showing private items in group context to avoid giving the false
   // impresssion that those are visible by other members of the group
-  { group (item) { return item.listing !== 'private' } }
+  group: item => item.listing !== 'private'
+}
 
 const validFilters = Object.keys(filters)
 
-module.exports = (queriesCommons = {
+const queriesCommons = module.exports = {
   validFilters,
 
   addAssociatedData: page => {
@@ -78,6 +78,6 @@ module.exports = (queriesCommons = {
       }
     }
   }
-})
+}
 
 const byCreationDate = (a, b) => b.created - a.created

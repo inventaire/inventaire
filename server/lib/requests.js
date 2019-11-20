@@ -50,7 +50,7 @@ const mergeOptions = (url, options = {}) => {
 
   // If the url was in the options
   // the url object will be overriden
-  return _.extend({ url }, baseOptions, options)
+  return Object.assign({ url }, baseOptions, options)
 }
 
 const startTimer = (verb, url) => {

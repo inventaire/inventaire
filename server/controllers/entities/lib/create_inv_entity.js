@@ -12,7 +12,7 @@ const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const entities_ = require('./entities')
 const validateEntity = require('./validate_entity')
-const { prefixifyInv } = require('./prefix'))
+const { prefixifyInv } = require('./prefix')
 
 module.exports = params => {
   const { labels, claims, userId, batchId } = params

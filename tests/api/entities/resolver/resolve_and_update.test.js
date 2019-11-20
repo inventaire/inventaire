@@ -19,7 +19,6 @@ const resolveAndUpdate = entries => {
     entries,
     update: true
   })
-
 }
 
 describe('entities:resolver:update-resolved', () => {

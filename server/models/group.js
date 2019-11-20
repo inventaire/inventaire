@@ -89,7 +89,7 @@ const membershipActions = {
 }
 
 Group.membershipActionsList = Object.keys(membershipActions)
-_.extend(Group, membershipActions)
+Object.assign(Group, membershipActions)
 
 // create user's membership object that will be moved between categories
 const createMembership = (userId, invitorId) => ({

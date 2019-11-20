@@ -2,8 +2,6 @@
 // Sanity-check the conversion and remove this comment.
 let routes
 const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
 const endpoint = require('./endpoint')
 const glob = require('./glob')
 
@@ -48,7 +46,7 @@ if (CONFIG.mediaStorage.mode === 'local') {
 
 // setting CONFIG-based routes before the globs
 // so that they wont be overpassed by it
-_.extend(routes, {
+Object.assign(routes, {
   api: {
     get: glob.redirectToApiDoc
   },

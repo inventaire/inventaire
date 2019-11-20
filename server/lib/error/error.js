@@ -8,7 +8,6 @@
  */
 let error_, errorHandler
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
 const assert_ = __.require('utils', 'assert_types')
 const formatError = require('./format_error')
 
@@ -54,4 +53,4 @@ error_.catchNotFound = err => {
   }
 }
 
-_.extend(error_, require('./pre_filled')(error_))
+Object.assign(error_, require('./pre_filled')(error_))

@@ -54,7 +54,7 @@ module.exports = {
 
     // Guess the lang from the query string or from the request headers
     // that might be passed by the feeds aggregator
-    const lang = req.query.lang || headers_.getReqLang(req)
+    const lang = req.query.lang || headers_.getLang(req.headers)
 
     return feedDataPromise
     .then(generateFeedFromFeedData(lang))

@@ -26,7 +26,7 @@ const actions = {
   simultaneousRequest: () => spies.simultaneousRequest(),
   makeRequest: () => spies.makeRequest(),
   removeRelation: () => spies.removeRelation(),
-  forceFriendship () { return spies.forceFriendship() }
+  forceFriendship: () => spies.forceFriendship()
 }
 
 const totalSpiesCount = () => {

@@ -31,7 +31,6 @@ const transactions_ = {
       endkey: [ userId, maxKey ],
       include_docs: true
     })
-
   },
 
   byUserAndItem: (userId, itemId) => {
@@ -125,4 +124,4 @@ const activeCount = transacs => transacs.filter(Transaction.isActive).length
 
 const rightsVerification = require('./rights_verification')(transactions_)
 
-module.exports = _.extend(transactions_, rightsVerification, counts)
+module.exports = Object.assign(transactions_, rightsVerification, counts)

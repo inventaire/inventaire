@@ -92,7 +92,7 @@ const API = module.exports = {
   },
 
   createItemFromEntityUri: (uri, data = {}) => {
-    return authReq('post', '/api/items', _.extend({}, data, { entity: uri }))
+    return authReq('post', '/api/items', Object.assign({}, data, { entity: uri }))
   },
 
   ensureEditionExists: (uri, workData, editionData) => {

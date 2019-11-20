@@ -68,5 +68,5 @@ const replaceEditionsByTheirWork = refresh => entities => {
   _.log(missingWorkEntities, 'missingWorkEntities from editions')
 
   return getEntitiesByUris({ uris: missingWorkEntities, refresh })
-  .then(results => _.extend(entities, results.entities))
+  .then(results => Object.assign(entities, results.entities))
 }

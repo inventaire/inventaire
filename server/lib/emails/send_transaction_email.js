@@ -38,28 +38,23 @@ const emailIsRequired = transaction => {
   }
 }
 
-  if (err.message === 'email_not_required') {
-  } else {
-    return _.error(err, 'send_transaction_email err')
-  }
+const fetchData = transaction => {
+  return promises_.all([
+    user_.byId(transaction.owner),
+    user_.byId(transaction.requester),
+    items_.byId(transaction.item).then(snapshot_.addToItem),
+    comments_.byTransactionId(transaction._id)
+  ])
+  .spread((owner, requester, item, messages) => {
+    item.title = item.snapshot['entity:title']
+    const image = item.snapshot['entity:image'] || (transaction.snapshot.entity != null ? transaction.snapshot.entity.image : undefined)
+    // Overriding transaction document ids by the ids' docs (owner, requester, etc.)
+    // for the email ViewModel
+    return Object.assign(transaction, { owner, requester, item, messages, image })
+  })
+  .then(buildTimeline)
+  .then(aliasUsers)
 }
-
-const fetchData = transaction => promises_.all([
-  user_.byId(transaction.owner),
-  user_.byId(transaction.requester),
-  items_.byId(transaction.item).then(snapshot_.addToItem),
-  comments_.byTransactionId(transaction._id)
-])
-.spread((owner, requester, item, messages) => {
-  item.title = item.snapshot['entity:title']
-  const image = item.snapshot['entity:image'] || (transaction.snapshot.entity != null ? transaction.snapshot.entity.image : undefined)
-  // Overriding transaction document ids by the ids' docs (owner, requester, etc.)
-  // for the email ViewModel
-  return _.extend(transaction, { owner, requester, item, messages, image })
-})
-.then(buildTimeline)
-.then(aliasUsers)
-// .then completeActionsData
 
 const sendTailoredEmail = transaction => {
   const emailType = findEmailType(transaction)
@@ -167,17 +162,3 @@ const findMainUser = transaction => {
 const ownerIsActor = action => states[action.action].actor === 'owner'
 const OwnerIsSender = transaction => message => message.user === transaction.owner
 const ownerIsMessager = (owner, message) => message.user === owner._id
-
-const completeActionsData = transaction => {
-  const { timeline, other, mainUser } = transaction
-  transaction.timeline = timeline.map(ev => {
-    if (ev.action != null) {
-      // need to be copyied on action to be accessible
-      // from inside handlebasr {{#each}} loop
-      ev.lang = mainUser.language
-      ev.other = other
-    }
-    return ev
-  })
-  return transaction
-}

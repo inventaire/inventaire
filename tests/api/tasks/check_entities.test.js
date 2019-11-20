@@ -25,7 +25,6 @@ describe('tasks:check-entities', () => {
     .catch(err => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal('unsupported type: work')
-      err.message
       done()
     }))
     .catch(undesiredErr(done))

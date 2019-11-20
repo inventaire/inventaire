@@ -132,5 +132,5 @@ module.exports = _ => {
   customLoggers.ErrorRethrow = loggers_.partialLogger(errorRethrow)
 
   // overriding inv-loggers 'error' and 'warn'
-  return _.extend({}, loggers_, customLoggers)
+  return Object.assign({}, loggers_, customLoggers)
 }

@@ -26,10 +26,8 @@ module.exports = {
     if (typeof text !== 'string') return false
     const cleanedText = normalizeIsbn(text)
     if (isNormalizedIsbn(cleanedText)) {
-      switch (cleanedText.length) {
-      case 10: return 10; break
-      case 13: return 13; break
-      }
+      if (cleanedText.length === 10) return 10
+      if (cleanedText.length === 13) return 13
     }
     return false
   },

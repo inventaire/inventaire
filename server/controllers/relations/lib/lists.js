@@ -21,7 +21,6 @@ module.exports = db => {
     include_docs: includeDocs
   })
 
-
   const lists = {
     getUserRelations: userId => {
       return getAllUserRelations(userId)

@@ -83,7 +83,6 @@ const callbacks = {
       group: groupId,
       user: actorAdminId
     })
-
   },
 
   groupUpdate: data => {
@@ -100,7 +99,7 @@ const callbacks = {
         previousValue,
         newValue
       })
-)
+      )
     }
   },
 

@@ -71,8 +71,7 @@ describe('sanitize', () => {
     it('should accept optional parameters', done => {
       const req = { query: {} }
       const res = {}
-      const configs =
-        { ids: { optional: true } }
+      const configs = { ids: { optional: true } }
       sanitize(req, res, configs)
       .then(input => {
         Object.keys(input).length.should.equal(0)
@@ -91,7 +90,7 @@ describe('sanitize', () => {
         err.message.should.equal('invalid lang: 1212515')
         done()
       })
-.catch(done)
+      .catch(done)
     })
   })
 
@@ -299,23 +298,20 @@ describe('sanitize', () => {
     })
   })
 
-  describe('objects', () => it('should stringify invalid values', done => {
-    const req = { query: { foo: [ 123 ] } }
+  describe('objects', () => {
+    it('should stringify invalid values', done => {
+      const req = { query: { foo: [ 123 ] } }
+      const configs = { foo: { generic: 'object' } }
 
-    const configs = {
-      foo: {
-        generic: 'object'
-      }
-    }
-
-    sanitize(req, {}, configs)
-    .then(undesiredRes(done))
-    .catch(err => {
-      err.message.should.equal('invalid foo: [123]')
-      done()
+      sanitize(req, {}, configs)
+      .then(undesiredRes(done))
+      .catch(err => {
+        err.message.should.equal('invalid foo: [123]')
+        done()
+      })
+      .catch(done)
     })
-    .catch(done)
-  }))
+  })
 
   describe('uris', () => {
     it('should reject invalid type', done => {
@@ -365,17 +361,19 @@ describe('sanitize', () => {
     })
   })
 
-  describe('uri', () => it('should reject invalid type', done => {
-    const req = { query: { uri: 1251251 } }
-    const configs = { uri: {} }
-    sanitize(req, {}, configs)
-    .then(undesiredRes(done))
-    .catch(err => {
-      err.message.should.startWith('invalid uri')
-      done()
+  describe('uri', () => {
+    it('should reject invalid type', done => {
+      const req = { query: { uri: 1251251 } }
+      const configs = { uri: {} }
+      sanitize(req, {}, configs)
+      .then(undesiredRes(done))
+      .catch(err => {
+        err.message.should.startWith('invalid uri')
+        done()
+      })
+      .catch(done)
     })
-    .catch(done)
-  }))
+  })
 
   describe('ids', () => {
     it('should reject invalid type', done => {

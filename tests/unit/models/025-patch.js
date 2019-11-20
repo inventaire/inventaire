@@ -5,7 +5,6 @@
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-let validDocId
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
@@ -14,7 +13,8 @@ const jiff = require('jiff')
 
 const Patch = __.require('models', 'patch')
 
-const userId = (validDocId = '12345678900987654321123456789012')
+const validDocId = '12345678900987654321123456789012'
+const userId = validDocId
 const rev = '1-d121066d145ea067b0c6638ebd050536'
 const currentDoc = {
   _id: validDocId,
@@ -73,7 +73,7 @@ describe('patch', () => {
     })
 
     it('should throw if passed an updated doc without id', done => {
-      const invalidDoc = _.extend({}, updatedDoc, { _id: 'invalid id' });
+      const invalidDoc = Object.assign({}, updatedDoc, { _id: 'invalid id' });
       ((() => Patch.create({ userId, currentDoc, updatedDoc: invalidDoc })))
       .should.throw()
       done()

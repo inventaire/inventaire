@@ -59,7 +59,7 @@ const onResponse = (reqStream, url, width, height, req, res) => response => {
 // Accepting image/*
 // Accepting application/octet-stream (known case: media storages 'dumb' content type)
 // Ignore charset instructions (known case: image/jpeg;charset=UTF-8)
-const validImageContentType = /^(image\/[\w\+]+|application\/octet-stream)/
+const validImageContentType = /^(image\/[+\w]+|application\/octet-stream)/
 
 const resizeFromStream = (reqStream, width, height, req, res) => {
   let alreadySent = false

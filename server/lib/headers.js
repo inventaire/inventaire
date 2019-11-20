@@ -5,5 +5,9 @@
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-module.exports =
-  { getReqLang (req) { return req.headers['accept-language'] != null ? req.headers['accept-language'].split(/\W/)[0] : undefined } }
+module.exports = {
+  getLang: headers => {
+    const acceptLanguage = headers['accept-language']
+    if (acceptLanguage) return acceptLanguage.split(/\W/)[0]
+  }
+}

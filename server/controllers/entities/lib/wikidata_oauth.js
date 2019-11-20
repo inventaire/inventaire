@@ -7,7 +7,6 @@
  */
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const { wikidataOAuth } = CONFIG
 
@@ -19,5 +18,5 @@ module.exports = {
     }
   },
 
-  getFullCredentials: user => _.extend({}, wikidataOAuth, user.oauth.wikidata)
+  getFullCredentials: user => Object.assign({}, wikidataOAuth, user.oauth.wikidata)
 }

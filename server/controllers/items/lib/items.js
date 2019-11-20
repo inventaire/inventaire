@@ -11,7 +11,6 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const Item = __.require('models', 'item')
-const privateAttrs = Item.attributes.private
 const listingsPossibilities = Item.attributes.constrained.listing.possibilities
 const error_ = __.require('lib', 'error/error')
 const assert_ = __.require('utils', 'assert_types')
@@ -42,7 +41,6 @@ module.exports = (items_ = {
       endkey: [ ownerId, maxKey, maxKey ],
       include_docs: true
     })
-
   },
 
   byEntity: entityUri => {
@@ -117,7 +115,8 @@ module.exports = (items_ = {
   },
 
   setBusyness: (id, busy) => {
-    assert_.types([ 'string', 'boolean' ], arguments)
+    assert_.string(id)
+    assert_.boolean(busy)
     return db.update(id, BasicUpdater('busy', busy))
   },
 
@@ -167,8 +166,6 @@ const listingByEntities = (listing, uris, reqUserId) => {
 }
 
 const entityUriKeys = entityUri => listingsPossibilities.map(listing => [ entityUri, listing ])
-
-const safeItem = item => _.omit(item, privateAttrs)
 
 const FilterWithImage = assertImage => items => Promise.all(items.map(snapshot_.addToItem))
 .then(items => {

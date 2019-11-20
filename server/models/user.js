@@ -85,7 +85,7 @@ User.upgradeInvited = (invitedDoc, username, creationStrategy, language, passwor
   const { email } = invitedDoc
   return User.create(username, email, creationStrategy, language, password)
   // Will override type but keep inviters and inviting groups
-  .then(userDoc => _.extend(invitedDoc, userDoc))
+  .then(userDoc => Object.assign(invitedDoc, userDoc))
 }
 
 const withHashedPassword = user => {
@@ -151,6 +151,6 @@ User.updateItemsCounts = itemsCounts => user => {
   assert_.object(itemsCounts.private)
   assert_.object(itemsCounts.network)
   assert_.object(itemsCounts.public)
-  _.extend(user.snapshot, itemsCounts)
+  Object.assign(user.snapshot, itemsCounts)
   return user
 }

@@ -187,7 +187,7 @@ const transactionEmail = (transaction, role, label) => {
     to: transaction[role].email,
     subject: i18n(lang, `${label}_title`, titleContext),
     template: 'transaction_update',
-    context: _.extend(transaction, {
+    context: Object.assign(transaction, {
       host,
       link: `${host}/transactions/${transaction._id}`,
       title: transaction.item.title,

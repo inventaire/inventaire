@@ -39,7 +39,6 @@ module.exports = (groups_ = {
       include_docs: true,
       limit
     })
-
   },
 
   // including invitations
@@ -90,7 +89,7 @@ const addSlug = group => getSlug(group.name, group._id)
   return group
 })
 
-_.extend(groups_, membershipActions, usersLists, counts, leaveGroups, {
+Object.assign(groups_, membershipActions, usersLists, counts, leaveGroups, {
   updateSettings,
   getSlug,
   addSlug,

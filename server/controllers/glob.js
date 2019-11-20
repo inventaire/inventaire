@@ -52,7 +52,6 @@ module.exports = {
       verb: req.method,
       url: req._parsedUrl.href
     })
-
   }
 }
 

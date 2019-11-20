@@ -29,16 +29,21 @@ module.exports = title => {
     else throw error_.notFound(title)
   })
   .then(url => ({
-      url,
-      credits: {
-        text: 'English Wikipedia',
-        url: `https://en.wikipedia.org/wiki/${title}`
-      }
-    })
+    url,
+    credits: {
+      text: 'English Wikipedia',
+      url: `https://en.wikipedia.org/wiki/${title}`
+    }
+  })
   )
 }
 
 // using the thumb fully built URL instead of build the URL
 // from the filename md5 hash, making it less hazardous
-const parseThumbUrl = url => // removing the last part and the thumb name
-  url.split('/').slice(0, -1).join('/').replace('/thumb', '')
+const parseThumbUrl = url => url
+  // Removing the last part
+  .split('/')
+  .slice(0, -1)
+  .join('/')
+  // and the thumb name
+  .replace('/thumb', '')

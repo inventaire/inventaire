@@ -8,7 +8,6 @@
  */
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
 const couch_ = __.require('lib', 'couch')
 const userRelativeRequest = require('./user-relative_request')
 const db = __.require('couch', 'base')('users', 'relations')
@@ -78,4 +77,4 @@ const counts = {
   }
 }
 
-module.exports = _.extend({}, queries, lists, counts)
+module.exports = Object.assign({}, queries, lists, counts)

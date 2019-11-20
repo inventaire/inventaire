@@ -7,7 +7,6 @@
  */
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
 require('should')
 const { Promise } = __.require('lib', 'promises')
 const { getUser, getUserB, authReq } = __.require('apiTests', 'utils/utils')
@@ -30,7 +29,7 @@ module.exports = {
       message: 'yo'
     })
     .then(res => {
-      _.extend(res, { userA, userB, userBItem })
+      Object.assign(res, { userA, userB, userBItem })
       return res
     })))
   },
@@ -41,7 +40,6 @@ module.exports = {
       transaction: transaction._id,
       message: 'yo'
     })
-
   }
 }
 

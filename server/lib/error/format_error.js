@@ -39,11 +39,11 @@ const getErrorEmittingLines = err => err.stack.split('\n')
 .map(getErrorEmittingLine)
 
 const getErrorEmittingLine = line => line != null ? line.trim()
-.replace(/^\s*at\s+/, '')
-// delete parenthesis around the file path
-.replace(/(\(|\))/g, '')
-// delete machine specific path
-.replace(/[a-z_\/]+server/, ': server')
-.replace(/[a-z_\/]+node_modules/, ': node_modules')
-// identify anonymous functions
-.replace(/^:/, '(anonymous):') : undefined
+  .replace(/^\s*at\s+/, '')
+  // delete parenthesis around the file path
+  .replace(/(\(|\))/g, '')
+  // delete machine specific path
+  .replace(/[a-z_/]+server/, ': server')
+  .replace(/[a-z_/]+node_modules/, ': node_modules')
+  // identify anonymous functions
+  .replace(/^:/, '(anonymous):') : undefined

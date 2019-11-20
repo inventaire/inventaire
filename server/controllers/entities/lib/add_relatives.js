@@ -31,7 +31,7 @@ module.exports = (relatives, refresh) => {
       // We only need to extend entities, as those additional URIs
       // should already be the canonical URIs (no redirection needed)
       // and all URIs should resolve to an existing entity
-      _.extend(results.entities, additionalResults.entities)
+      Object.assign(results.entities, additionalResults.entities)
       return results
     })
   }

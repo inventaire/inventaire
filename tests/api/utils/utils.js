@@ -7,10 +7,6 @@
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-let API
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
 require('should')
 const { createUser, createAdminUser, getRefreshedUser } = require('../fixtures/users')
 const { request, customAuthReq } = require('./request')
@@ -24,7 +20,7 @@ const getUserGetter = (key, admin = false, customData) => () => {
   return getRefreshedUser(userPromises[key])
 }
 
-module.exports = (API = {
+const API = module.exports = {
   nonAuthReq: request,
   customAuthReq,
   authReq: (...args) => customAuthReq(API.getUser(), ...Array.from(args)),
@@ -39,6 +35,6 @@ module.exports = (API = {
   getUserC: getUserGetter('c'),
   getAdminUser: getUserGetter('admin', true),
   getUserGetter
-})
+}
 
-_.extend(API, require('../../unit/utils'))
+Object.assign(API, require('../../unit/utils'))

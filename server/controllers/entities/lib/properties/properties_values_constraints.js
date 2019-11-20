@@ -1,9 +1,3 @@
-// TODO: This file was created by bulk-decaffeinate.
-// Sanity-check the conversion and remove this comment.
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-
 // Each property configuration object is made of the following attributes:
 
 // datatype: {String}
@@ -26,7 +20,7 @@ const bases = require('./properties_config_bases')
 const builders = require('./properties_config_builders')
 
 // Make sure to not mutate the base, while letting the last word to the extension
-const extend = (base, extension) => _.extend({}, base, extension)
+const extend = (base, extension) => Object.assign({}, base, extension)
 
 // Keep in sync with ./properties_per_type
 module.exports = {
@@ -91,7 +85,7 @@ module.exports = {
   // translator
   'wdt:P655': bases.humanEntity,
   // Google Books ID
-  'wdt:P675': builders.externalId(/^[\w\-]{12}$/),
+  'wdt:P675': builders.externalId(/^[\w-]{12}$/),
   // influenced by
   'wdt:P737': bases.entity,
   // narrative set in
@@ -147,9 +141,9 @@ module.exports = {
   // Instagram username
   'wdt:P2003': builders.externalId(/^(\w(?:(?:\w|(?:\\.(?!\\.))){0,28}(?:\w))?)$/),
   // Facebook profile id
-  'wdt:P2013': builders.externalId(/^(\d+|[\w\.]+)$/),
+  'wdt:P2013': builders.externalId(/^(\d+|[.\w]+)$/),
   // YouTube channel ID
-  'wdt:P2397': builders.externalId(/^UC[\w\-]{21}[AQgw]$/),
+  'wdt:P2397': builders.externalId(/^UC[\w-]{21}[AQgw]$/),
   // number of volumes
   'wdt:P2635': bases.positiveInteger,
   // author of foreword
@@ -169,7 +163,7 @@ module.exports = {
   // Babelio work ID
   'wdt:P3631': builders.externalId(/^\d+$/),
   // Mastodon address
-  'wdt:P4033': builders.externalId(/^\w+@[a-z0-9\.\-]+[a-z0-9]+$/),
+  'wdt:P4033': builders.externalId(/^\w+@[a-z0-9.-]+[a-z0-9]+$/),
   // Theses.fr person ID
   'wdt:P4285': builders.externalId(/^\d+$/),
   // MyAnimeList people ID
@@ -183,5 +177,5 @@ module.exports = {
   // NooSFere book ID
   'wdt:P5571': builders.externalId(/^[1-9]\d*$/),
   // Librarything author ID
-  'wdt:P7400': builders.externalId(/^[^\s\/]+$/)
+  'wdt:P7400': builders.externalId(/^[^\s/]+$/)
 }

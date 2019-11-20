@@ -15,6 +15,7 @@ const breq = require('bluereq')
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const chalk = require('chalk')
+const { range } = require('lodash')
 const { green, red, blue } = chalk
 
 // equivalent to curl -k
@@ -23,10 +24,10 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
 const IP = /^[0-9.]{7,15}$/
 let { from, ip, suffix, protocol, port, localPort, continuous, persist } = CONFIG.replication
-if (!protocol) { protocol = 'https' }
-if (!port) { port = 6984 }
-if (!localPort) { localPort = 6984 }
-if (continuous == null) { continuous = true }
+if (!protocol) protocol = 'https'
+if (!port) port = 6984
+if (!localPort) localPort = 6984
+if (continuous == null) continuous = true
 
 const persistFromArgv = process.argv.slice(2)[0] === 'persist'
 
@@ -50,10 +51,10 @@ if ((username == null) || (password == null)) {
 
 let { username: remoteUsername, password: remotePassword } = CONFIG.replication
 // If no replication credentials where passed, assume those are the same as the local ones
-if (!remoteUsername) { remoteUsername = username }
-if (!remotePassword) { remotePassword = password }
+remoteUsername = remoteUsername || username
+remotePassword = remotePassword || password
 
-let pw = _.range(3, password.length + 1)
+let pw = range(3, password.length + 1)
   .map(() => '•')
   .join('')
 pw = password.slice(0, 3) + pw
@@ -85,12 +86,7 @@ dbsNames.forEach(dbName => {
     console.log(res.body)
     return breq.post(localReplicate(dbName), repDoc)
     .then(res => {
-      let color
-      if (res.body.ok != null) {
-        color = 'green'
-      } else {
-        color = 'red'
-      }
+      const color = res.body.ok != null ? 'green' : 'red'
       console.log(chalk[color](`${dbName} replication response: `))
       return console.log(res.body)
     })

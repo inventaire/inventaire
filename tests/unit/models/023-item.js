@@ -25,7 +25,7 @@ const validItem = {
   lang: 'fr'
 }
 
-const extendItem = data => _.extend({}, validItem, data)
+const extendItem = data => Object.assign({}, validItem, data)
 
 describe('item model', () => {
   describe('create', () => {

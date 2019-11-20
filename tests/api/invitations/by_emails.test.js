@@ -131,9 +131,9 @@ describe('invitations:by-emails', () => {
           group: group._id
         }))
         .then(res => {
-        res.emails[0].should.equal('a@foo.org')
-        done()
-      })
+          res.emails[0].should.equal('a@foo.org')
+          done()
+        })
       .catch(undesiredErr(done))
     })
 
@@ -145,10 +145,10 @@ describe('invitations:by-emails', () => {
           group: group._id
         }))
         .catch(err => {
-        err.statusCode.should.equal(403)
-        err.body.status_verbose.should.equal("user isn't a group member")
-        done()
-      })
+          err.statusCode.should.equal(403)
+          err.body.status_verbose.should.equal("user isn't a group member")
+          done()
+        })
       .catch(undesiredErr(done))
     })
 
@@ -160,7 +160,6 @@ describe('invitations:by-emails', () => {
           emails: email,
           group: group._id
         })
-
 
         return invite()
         .then(() => signup(email))

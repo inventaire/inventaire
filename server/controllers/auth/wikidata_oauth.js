@@ -11,6 +11,7 @@ const __ = CONFIG.universalPath
 const requests_ = __.require('lib', 'requests')
 const error_ = __.require('lib', 'error/error')
 const root = CONFIG.fullPublicHost()
+// eslint-disable-next-line camelcase
 const { consumer_key, consumer_secret } = CONFIG.wikidataOAuth
 const qs = require('querystring')
 const user_ = __.require('controllers', 'user/lib/user')

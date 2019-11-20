@@ -25,9 +25,7 @@ module.exports = (feedOptions, users, items, lang) => {
   if (image) {
     image = templateHelpers.imgSrc(image, 300)
   } else {
-    ({
-      image
-    } = feedConfig)
+    image = feedConfig.image
   }
 
   const feed = new Rss({
