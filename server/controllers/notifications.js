@@ -24,9 +24,12 @@ const updateStatus = (req, res) => {
   return promises_.all(times.map(notifs_.updateReadStatus.bind(null, reqUserId)))
   .then(() => {
     _.success([ reqUserId, times ], 'notifs marked as read')
-    return responses_.ok(res)
+    responses_.ok(res)
   })
   .catch(error_.Handler(req, res))
 }
 
-module.exports = { get, post: updateStatus }
+module.exports = {
+  get,
+  post: updateStatus
+}

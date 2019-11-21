@@ -33,11 +33,13 @@ app.use(require('./middlewares/error_handler'))
 
 app.disable('x-powered-by')
 
-module.exports = () => new Promise((resolve, reject) => app.listen(port, host, err => {
-  if (err) {
-    reject(err)
-  } else {
-    _.info(`${name} server is listening on port ${port}...`)
-    resolve(app)
-  }
-}))
+module.exports = () => new Promise((resolve, reject) => {
+  app.listen(port, host, err => {
+    if (err) {
+      reject(err)
+    } else {
+      _.info(`${name} server is listening on port ${port}...`)
+      resolve(app)
+    }
+  })
+})

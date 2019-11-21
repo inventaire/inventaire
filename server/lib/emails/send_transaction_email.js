@@ -1,7 +1,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-
 const user_ = __.require('controllers', 'user/lib/user')
 const transactions_ = __.require('controllers', 'transactions/lib/transactions')
 const items_ = __.require('controllers', 'items/lib/items')
@@ -9,19 +8,20 @@ const snapshot_ = __.require('controllers', 'items/lib/snapshot/snapshot')
 const promises_ = __.require('lib', 'promises')
 const comments_ = __.require('controllers', 'comments/lib/comments')
 const { states } = __.require('models', 'attributes/transaction')
-
 const email_ = require('./email')
 
-module.exports = transactionId => transactions_.byId(transactionId)
-.then(emailIsRequired)
-.then(fetchData)
-.then(sendTailoredEmail)
-// catched in the final promise chain: in send_debounced_email transactionUpdate
-// after all the actions to skip are passed
+module.exports = transactionId => {
+  return transactions_.byId(transactionId)
+  .then(emailIsRequired)
+  .then(fetchData)
+  .then(sendTailoredEmail)
+  // Catched in the final promise chain: in send_debounced_email transactionUpdate
+  // after all the actions to skip are passed
+}
 
 const emailIsRequired = transaction => {
   const role = findUserToNotify(transaction)
-  if (role != null) {
+  if (role) {
     // progressively building the email ViewModel
     transaction.role = role
     return transaction
@@ -39,7 +39,7 @@ const fetchData = transaction => {
   ])
   .spread((owner, requester, item, messages) => {
     item.title = item.snapshot['entity:title']
-    const image = item.snapshot['entity:image'] || (transaction.snapshot.entity != null ? transaction.snapshot.entity.image : undefined)
+    const image = item.snapshot['entity:image'] || (transaction.snapshot.entity && transaction.snapshot.entity.image)
     // Overriding transaction document ids by the ids' docs (owner, requester, etc.)
     // for the email ViewModel
     return Object.assign(transaction, { owner, requester, item, messages, image })
@@ -69,11 +69,8 @@ const newTransaction = transaction => {
   const ownerActed = _.some(transaction.actions, ownerIsActor)
   if (ownerActed) return false
   const ownerSentMessage = _.some(transaction.messages, OwnerIsSender(transaction))
-  if (ownerSentMessage) {
-    return false
-  } else {
-    return true
-  }
+  if (ownerSentMessage) return false
+  else return true
 }
 
 const findEmailType = transaction => {

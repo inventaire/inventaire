@@ -9,5 +9,4 @@ module.exports = (search, limit = '25', format = 'json') => _.buildPath(base, {
   format,
   srsearch: search,
   origin: '*'
-}
-)
+})

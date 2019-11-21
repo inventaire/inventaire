@@ -7,13 +7,15 @@ const waitingEmails = require('./waiting_emails')
 const sendDebouncedEmail = require('./send_debounced_email')
 
 module.exports = () => {
-  if (!disabled) return setInterval(crawl, crawlPeriod)
+  if (!disabled) setInterval(crawl, crawlPeriod)
 }
 
 // key structure: sendEmailFunctionName:id:time
 
-const crawl = () => waitingEmails.sub.createReadStream()
-.on('data', onData)
+const crawl = () => {
+  return waitingEmails.sub.createReadStream()
+  .on('data', onData)
+}
 
 const onData = data => {
   const { key } = data

@@ -1,12 +1,15 @@
 const CONFIG = require('config')
 const pass = require('./pass')
 
+let cacheControl
 // Applies to both API and static files requests
 if (CONFIG.noCache) {
-  exports.cacheControl = (req, res, next) => {
+  cacheControl = (req, res, next) => {
     res.header('Cache-Control', 'no-cache, no-store, must-revalidate')
     return next()
   }
 } else {
-  exports.cacheControl = pass
+  cacheControl = pass
 }
+
+module.exports = { cacheControl }

@@ -13,7 +13,10 @@ const width = 2000
 
 module.exports = file => {
   const key = `commons:${file}:${width}`
-  return cache_.get({ key, fn: getThumbData.bind(null, file) })
+  return cache_.get({
+    key,
+    fn: getThumbData.bind(null, file)
+  })
 }
 
 const getThumbData = file => {
@@ -34,7 +37,6 @@ const commonsApiEndpoint = 'http://tools.wmflabs.org/magnus-toolserver/commonsap
 
 const requestOptions = (image, thumbwidth) => ({
   url: _.buildPath(commonsApiEndpoint, { image, thumbwidth }),
-
   headers: {
     'Content-Type': 'application/xml',
     // the commonsapi requires a User-Agent
@@ -58,9 +60,8 @@ const getString = (obj, path) => {
 }
 
 const formatData = (file, parsedData) => {
-  let text
-  let { url, error, author, license } = parsedData
-  author = removeMarkups(author)
+  const { url, error, license } = parsedData
+  const author = removeMarkups(parsedData.author)
 
   if (url == null) {
     const errMessage = error || 'url not found'
@@ -69,7 +70,8 @@ const formatData = (file, parsedData) => {
     throw err
   }
 
-  if ((author != null) && (license != null)) {
+  let text
+  if (author && license) {
     text = `${author} - ${license}`
   } else {
     text = author || license || 'Wikimedia Commons'

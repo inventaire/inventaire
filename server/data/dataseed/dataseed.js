@@ -35,6 +35,4 @@ module.exports = {
   }
 }
 
-const emptySeed = isbn => ({
-  isbn
-})
+const emptySeed = isbn => ({ isbn })

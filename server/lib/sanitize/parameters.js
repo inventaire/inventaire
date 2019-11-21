@@ -28,21 +28,19 @@ const couchUuid = {
 
 const positiveInteger = {
   format: parseNumberString,
-  validate: num => _.isNumber(num) && /^\d+$/.test(num.toString())
+  validate: num => Number.isInteger(num) && num >= 0
 }
 
 const nonEmptyString = {
   validate: (value, name, config) => {
-    let details, message
     if (!_.isString(value)) {
-      message = `invalid ${name}`
-      details = `expected string, got ${_.typeOf(value)}`
+      const details = `expected string, got ${_.typeOf(value)}`
       throw error_.new(`invalid ${name}: ${details}`, 400, { value })
     }
 
-    if (config.length && (value.length !== config.length)) {
-      message = `invalid ${name} length`
-      details = `expected ${config.length}, got ${value.length}`
+    if (config.length && value.length !== config.length) {
+      const message = `invalid ${name} length`
+      const details = `expected ${config.length}, got ${value.length}`
       throw error_.new(`${message}: ${details}`, 400, { value })
     }
 
@@ -51,9 +49,8 @@ const nonEmptyString = {
 }
 
 const arrayOfAKind = validation => (values, kind) => {
-  let details
   if (!_.isArray(values)) {
-    details = `expected array, got ${_.typeOf(values)}`
+    const details = `expected array, got ${_.typeOf(values)}`
     throw error_.new(`invalid ${kind}: ${details}`, 400, { values })
   }
 
@@ -65,7 +62,7 @@ const arrayOfAKind = validation => (values, kind) => {
     if (!validation(value)) {
       // approximative way to get singular of a word
       const singularKind = kind.replace(/s$/, '')
-      details = `expected ${singularKind}, got ${value} (${_.typeOf(values)})`
+      const details = `expected ${singularKind}, got ${value} (${_.typeOf(values)})`
       throw error_.new(`invalid ${singularKind}: ${details}`, 400, { values })
     }
   }
@@ -74,13 +71,10 @@ const arrayOfAKind = validation => (values, kind) => {
 }
 
 const arrayOrPipedStrings = value => {
-  if (_.isString(value)) { value = value.split('|') }
-  if (_.isArray(value)) {
-    return _.uniq(value)
+  if (_.isString(value)) value = value.split('|')
+  if (_.isArray(value)) return _.uniq(value)
   // Let the 'validate' function reject non-arrayfied values
-  } else {
-    return value
-  }
+  else return value
 }
 
 const entityUris = {
@@ -139,7 +133,7 @@ const generics = {
       if (!_.isCollection(values)) return false
       const { limit } = config
       const { length } = values
-      if ((limit != null) && (length > limit)) {
+      if (limit != null && length > limit) {
         throw error_.new('limit length exceeded', 400, { limit, length })
       }
       return true

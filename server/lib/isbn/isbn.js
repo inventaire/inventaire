@@ -3,11 +3,13 @@ const parse = require('./parse')
 const wdLang = require('wikidata-lang')
 
 // Removing any non-alpha numeric characters, especially '-' and spaces
-const normalizeIsbn = text => text
-// Remove hypens
-.replace(/\W/g, '')
-// Make sure any 'x' is an X
-.toUpperCase()
+const normalizeIsbn = text => {
+  return text
+  // Remove hypens
+  .replace(/\W/g, '')
+  // Make sure any 'x' is an X
+  .toUpperCase()
+}
 
 const isNormalizedIsbn = text => /^(97(8|9))?\d{9}(\d|X)$/.test(text)
 
@@ -23,7 +25,7 @@ module.exports = {
     }
     return false
   },
-  isValidIsbn: isbn => (isbnParser(isbn) != null),
+  isValidIsbn: isbn => isbnParser(isbn) != null,
   toIsbn13: (isbn, hyphenate) => {
     const data = parse(isbn)
     if (data == null) return

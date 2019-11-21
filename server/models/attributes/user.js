@@ -1,6 +1,6 @@
 const attributes = module.exports = {}
 
-// attributes that can be send to the owner
+// Attributes that can be send to the owner
 attributes.ownerSafe = [
   '_id',
   '_rev',
@@ -37,13 +37,13 @@ attributes.public = [
   'snapshot'
 ]
 
-// attributes that need availability check before update
+// Attributes that need availability check before update
 attributes.concurrencial = [
   'username',
   'email'
 ]
 
-// attributes that can be changed with a simple validity check
+// Attributes that can be changed with a simple validity check
 attributes.updatable = [
   'picture',
   'language',
@@ -53,14 +53,14 @@ attributes.updatable = [
   'summaryPeriodicity'
 ]
 
-// attributes that are kept after a user deleted her account
+// Attributes that are kept after a user deleted her account
 attributes.critical = [
   '_id',
   '_rev',
   'username'
 ]
 
-// attributes to keep in documents where a stakeholder might loose
+// Attributes to keep in documents where a stakeholder might loose
 // access to those data
 // ex: in a transaction, when the user was deleted
 // The _id is already recorded by a transaction

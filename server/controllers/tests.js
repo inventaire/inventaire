@@ -8,11 +8,11 @@ module.exports = {
 
     // useful to see text/plain bodys
     if (isPlainText(req)) {
-      return rawBody(req, res, next)
+      rawBody(req, res, next)
     } else {
       // _.log req.query, 'query'
       // _.log req.body, 'body'
-      return res.json({ ok: true, method: req.method, body: req.body })
+      res.json({ ok: true, method: req.method, body: req.body })
     }
   }
 }

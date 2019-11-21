@@ -47,9 +47,9 @@ module.exports = (req, res) => {
   .then(getEntitiesImages)
   .then(images => {
     if (redirect) {
-      return redirectToRawImage(res, uris[0], images, width, height)
+      redirectToRawImage(res, uris[0], images, width, height)
     } else {
-      return res.json({ images })
+      res.json({ images })
     }
   })
   .catch(error_.Handler(req, res))

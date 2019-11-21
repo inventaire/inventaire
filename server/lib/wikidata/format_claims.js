@@ -11,7 +11,8 @@ const options = {
 }
 
 module.exports = (claims, wdId) => {
-  assert_.types([ 'object', 'string' ], [ claims, wdId ])
+  assert_.object(claims)
+  assert_.string(wdId)
   const whitelistedClaims = _.pick(claims, whitelistedProperties)
   return wdk.simplifyClaims(whitelistedClaims, options)
 }

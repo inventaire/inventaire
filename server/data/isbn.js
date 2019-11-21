@@ -7,7 +7,7 @@ const dataseed = __.require('data', 'dataseed/dataseed')
 // An endpoint to get basic facts from an ISBN
 // Returns a merge of isbn2 and dataseed data
 module.exports = (req, res) => {
-  let { isbn, refresh } = req.query
+  const { isbn } = req.query
 
   if (!_.isNonEmptyString(isbn)) {
     return error_.bundleMissingQuery(req, res, 'isbn')
@@ -24,14 +24,14 @@ module.exports = (req, res) => {
   delete data.source
   data.query = isbn
 
-  refresh = _.parseBooleanString(refresh)
+  const refresh = _.parseBooleanString(req.query.refresh)
 
   return dataseed.getByIsbns(data.isbn13, refresh)
   .then(resp => {
     const seed = resp[0] || {}
     delete seed.isbn
     Object.assign(data, seed)
-    return res.json(data)
+    res.json(data)
   })
   .catch(error_.Handler(req, res))
 }

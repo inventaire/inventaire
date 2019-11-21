@@ -14,7 +14,7 @@ module.exports = title => {
     const { pages } = res.query
     const page = _.values(pages)[0]
     const source = _.get(page, 'thumbnail.source')
-    if (source != null) return parseThumbUrl(source)
+    if (source) return parseThumbUrl(source)
     else throw error_.notFound(title)
   })
   .then(url => ({
@@ -29,10 +29,12 @@ module.exports = title => {
 
 // using the thumb fully built URL instead of build the URL
 // from the filename md5 hash, making it less hazardous
-const parseThumbUrl = url => url
+const parseThumbUrl = url => {
+  return url
   // Removing the last part
   .split('/')
   .slice(0, -1)
   .join('/')
   // and the thumb name
   .replace('/thumb', '')
+}

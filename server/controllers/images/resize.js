@@ -17,7 +17,8 @@ module.exports = {
     // can be useful in development
     if (offline) {
       const message = 'you are in offline mode: no img delivered'
-      return responses_.okWarning(res, 'connection', message)
+      responses_.okWarning(res, 'connection', message)
+      return
     }
 
     // Used to redirect to production server when working with the prod databases

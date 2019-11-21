@@ -48,7 +48,7 @@ const helpers = module.exports = {
 
   dateI18n: (lang, epochTime, format) => {
     // set default while neutralizeing handlebars object
-    if (!_.isString(format)) { format = 'LLL' }
+    if (!_.isString(format)) format = 'LLL'
     lang = solveLang(lang)
     moment.locale(lang)
     return moment(epochTime).format(format)

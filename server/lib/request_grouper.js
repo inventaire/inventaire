@@ -21,7 +21,7 @@ module.exports = params => {
   const getGroupedRequestPromise = () => {
     // If no timeout was set, it's the first request so it triggers the timeout
     // Every next request within this time will be grouped in the same grouped request
-    if (!timeout) { timeout = setTimeout(doGroupedRequest, delay) }
+    if (!timeout) timeout = setTimeout(doGroupedRequest, delay)
     return groupedPromise.promise
   }
 

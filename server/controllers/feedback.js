@@ -9,11 +9,11 @@ module.exports = {
     const { user } = req
     const { subject, message, uris, context, unknownUser } = req.body
 
-    if ((subject == null) && (message == null)) {
+    if (subject == null && message == null) {
       return error_.bundle(req, res, 'message is empty', 400)
     }
 
-    if (uris != null) {
+    if (uris) {
       for (const uri of uris) {
         if (!_.isEntityUri(uri)) {
           return error_.bundle(req, res, 'invalid entity uri', 400, { uri })
@@ -30,7 +30,7 @@ module.exports = {
       _.info(subject, 'not re-sending automatic report')
     }
 
-    return responses_.ok(res, 201)
+    responses_.ok(res, 201)
   }
 }
 

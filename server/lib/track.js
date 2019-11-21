@@ -11,13 +11,14 @@ const track = (req, actionArray) => {
   if (!enabled) return
 
   const { _id: userId, language } = req.user
-  let { referer: url, 'user-agent': ua, 'accept-language': al } = req.headers
-  const [ category, action, name, value ] = Array.from(actionArray)
+  const { 'user-agent': ua, 'accept-language': al } = req.headers
+  let { referer: url } = req.headers
+  const [ category, action, name, value ] = actionArray
 
   // a url is required so we use a placeholder if not provided in parameter
-  if (!url) { url = placeholderUrl }
+  if (!url) url = placeholderUrl
   // allow to pass a relative path to let this module turn it into the expected full url
-  if (url[0] === '/') { url = `${host}${url}` }
+  if (url[0] === '/') url = `${host}${url}`
 
   const data = {
     idsite,

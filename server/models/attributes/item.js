@@ -21,22 +21,22 @@ attributes.validAtCreation = [
   'lang'
 ]
 
-// not updatable by the user
+// Not updatable by the user
 attributes.notUpdatable = [
   '_id',
   '_rev',
   'lang',
   'created',
 
-  // updated when user updatable attributes are updated
+  // Updated when user updatable attributes are updated
   'updated',
 
-  // updated as side effects of transactions
+  // Updated as side effects of transactions
   'busy',
   'owner',
   'history',
 
-  // updated as side effects of entity redirections
+  // Updated as side effects of entity redirections
   'previousEntity'
 
 ]
@@ -48,7 +48,7 @@ attributes.private = [
   'listing'
 ]
 
-// attribute to reset on owner change
+// Attribute to reset on owner change
 attributes.reset = attributes.private.concat([
   'details',
   'busy'
@@ -71,7 +71,7 @@ attributes.constrained = {
   }
 }
 
-// attributes to keep in documents where a stakeholder might loose
+// Attributes to keep in documents where a stakeholder might loose
 // access to those data
 // ex: in a transaction, when the item isn't visible to the previous owner anymore
 // Attributes such as _id and transaction are already recorded by a transaction

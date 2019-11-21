@@ -34,14 +34,12 @@ const onePictureOnly = arg => {
 }
 
 const getImgDimension = (dimension, defaultValue) => {
-  if (_.isNumber(dimension)) {
-    return dimension
-  } else {
-    return defaultValue
-  }
+  if (_.isNumber(dimension)) return dimension
+  else return defaultValue
 }
 
-const isDataUrl = str => /^data:image/.test(str)
+const dataUrlPattern = /^data:image/
+const isDataUrl = str => dataUrlPattern.test(str)
 
 const bestImageWidth = width => {
   // under 500, it's useful to keep the freedom to get exactly 64 or 128px etc

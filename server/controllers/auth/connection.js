@@ -49,5 +49,5 @@ const loggedIn = (req, res) => result => {
   // Use case: inventaire-wiki (jingo) login
   // https://github.com/inventaire/jingo/blob/635f5417b7ca5a99bad60b32c1758ccecd0e3afa/lib/auth/local-strategy.js#L26
   if (req.query['include-user-data']) data.user = ownerSafeData(req.user)
-  return res.json(data)
+  res.json(data)
 }

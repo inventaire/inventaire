@@ -15,7 +15,7 @@ module.exports = (req, res, next) => {
   return getImageByUrl(url)
   .then(data => {
     data.converted = true
-    return responses_.send(res, data)
+    responses_.send(res, data)
   })
   .catch(error_.Handler(req, res))
 }

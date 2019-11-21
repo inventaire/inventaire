@@ -4,11 +4,12 @@ const error_ = __.require('lib', 'error/error')
 const sanitize = __.require('lib', 'sanitize/sanitize')
 const responses_ = __.require('lib', 'responses')
 
-const sanitization =
-  { range: {} }
+const sanitization = {
+  range: {}
+}
 
 module.exports = (req, res) => {
-  const reqUserId = req.user != null ? req.user._id : undefined
+  const reqUserId = req.user && req.user._id
   sanitize(req, res, sanitization)
   .then(params => user_.nearby(reqUserId, params.range))
   .then(usersIds => user_.getUsersByIds(usersIds, reqUserId))

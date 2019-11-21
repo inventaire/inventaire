@@ -117,22 +117,22 @@ const Entity = module.exports = {
   updateClaim: (doc, property, oldVal, newVal) => {
     const context = { doc, property, oldVal, newVal }
     Entity.preventRedirectionEdit(doc, 'updateClaim')
-    if ((oldVal == null) && (newVal == null)) {
+    if (oldVal == null && newVal == null) {
       throw error_.new('missing old or new value', 400, context)
     }
 
-    if (_.isString(oldVal)) { oldVal = _.superTrim(oldVal) }
-    if (_.isString(newVal)) { newVal = _.superTrim(newVal) }
+    if (_.isString(oldVal)) oldVal = _.superTrim(oldVal)
+    if (_.isString(newVal)) newVal = _.superTrim(newVal)
 
     let propArray = _.get(doc, `claims.${property}`)
     _.info(`${property} propArray: ${propArray} /oldVal: ${oldVal} /newVal: ${newVal}`)
 
-    if ((propArray != null) && (newVal != null) && propArray.includes(newVal)) {
+    if (propArray && newVal != null && propArray.includes(newVal)) {
       throw error_.new('claim property new value already exist', 400, [ propArray, newVal ])
     }
 
     if (oldVal != null) {
-      if ((propArray == null) || !propArray.includes(oldVal)) {
+      if (propArray == null || !propArray.includes(oldVal)) {
         throw error_.new('claim property value not found', 400, context)
       }
 
@@ -154,7 +154,7 @@ const Entity = module.exports = {
       }
     } else {
       // if the old value is null, it plays the role of a createClaim
-      if (!doc.claims[property]) { doc.claims[property] = [] }
+      if (!doc.claims[property]) doc.claims[property] = []
       doc.claims[property].push(newVal)
     }
 
@@ -167,14 +167,13 @@ const Entity = module.exports = {
   // two existing document: redirecting from an entity to another entity,
   // only the 'to' doc will survive
   mergeDocs: (fromEntityDoc, toEntityDoc) => {
-    let value
     Entity.preventRedirectionEdit(fromEntityDoc, 'mergeDocs (from)')
     Entity.preventRedirectionEdit(toEntityDoc, 'mergeDocs (to)')
 
     let dataTransfered = false
 
     for (const lang in fromEntityDoc.labels) {
-      value = fromEntityDoc.labels[lang]
+      const value = fromEntityDoc.labels[lang]
       if (toEntityDoc.labels[lang] == null) {
         toEntityDoc.labels[lang] = value
         dataTransfered = true
@@ -184,7 +183,7 @@ const Entity = module.exports = {
     for (const property in fromEntityDoc.claims) {
       const values = fromEntityDoc.claims[property]
       if (toEntityDoc.claims[property] == null) { toEntityDoc.claims[property] = [] }
-      for (value of values) {
+      for (const value of values) {
         if (!toEntityDoc.claims[property].includes(value)) {
           if (toEntityDoc.claims[property].length > 0) {
             if (properties[property].uniqueValue) {
@@ -203,7 +202,7 @@ const Entity = module.exports = {
       }
     }
 
-    if (dataTransfered) { toEntityDoc.updated = Date.now() }
+    if (dataTransfered) toEntityDoc.updated = Date.now()
 
     return toEntityDoc
   },
@@ -211,7 +210,7 @@ const Entity = module.exports = {
   turnIntoRedirection: (fromEntityDoc, toUri, removedPlaceholdersIds) => {
     const [ prefix, id ] = toUri.split(':')
 
-    if ((prefix === 'inv') && (id === fromEntityDoc._id)) {
+    if (prefix === 'inv' && id === fromEntityDoc._id) {
       throw error_.new('circular redirection', 500, { fromEntityDoc, toUri, removedPlaceholdersIds })
     }
 
@@ -228,7 +227,7 @@ const Entity = module.exports = {
   },
 
   removePlaceholder: entityDoc => {
-    if (entityDoc.redirect != null) {
+    if (entityDoc.redirect) {
       const message = "can't turn a redirection into a removed placeholder"
       throw error_.new(message, 400, entityDoc)
     }
@@ -259,12 +258,11 @@ const updateInferredProperties = (doc, property, oldVal, newVal) => {
   const addingOrUpdatingValue = (newVal != null)
 
   for (const inferredProperty in propInferences) {
-    let inferredValue
     const convertor = propInferences[inferredProperty]
     let inferredPropertyArray = doc.claims[inferredProperty] || []
 
     if (addingOrUpdatingValue) {
-      inferredValue = convertor(newVal)
+      const inferredValue = convertor(newVal)
       // Known case of missing infered value:
       // ISBN-13 with a 979 prefix will not have an ISBN-10
       if (inferredValue != null) {
@@ -284,7 +282,7 @@ const updateInferredProperties = (doc, property, oldVal, newVal) => {
       //   value: "claim value",
       //   inferredFrom: 'claim id'
       // }
-      inferredValue = convertor(oldVal)
+      const inferredValue = convertor(oldVal)
       if (inferredPropertyArray.includes(inferredValue)) {
         inferredPropertyArray = _.without(inferredPropertyArray, inferredValue)
         _.log(inferredValue, `removed inferred ${inferredProperty} from ${property}`)

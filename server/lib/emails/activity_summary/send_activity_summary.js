@@ -1,4 +1,3 @@
-let updateUser
 const CONFIG = require('config')
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
@@ -8,7 +7,8 @@ const buildEmail = require('./build_email')
 const promises_ = __.require('lib', 'promises')
 const { disableUserUpdate } = CONFIG.activitySummary
 
-// it can be convenient in development to disable user update
+let updateUser
+// It can be convenient in development to disable user update
 // to keep generate the same email from a given test user
 if (disableUserUpdate) {
   updateUser = userId => _.warn(userId, 'disabledUserUpdate')

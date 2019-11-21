@@ -8,7 +8,7 @@ const loginAttempts = require('./login_attempts')
 const { Strategy: LocalStrategy } = require('passport-local')
 const { tokenDaysToLive } = CONFIG
 
-// reusing LocalStrategy but substituing username/password by email/token
+// Reusing LocalStrategy but substituing username/password by email/token
 const options = {
   usernameField: 'email',
   passwordField: 'token',
@@ -17,7 +17,7 @@ const options = {
 
 const verify = (req, email, token, done) => {
   if (loginAttempts.tooMany(email)) {
-    return done(null, false, { message: 'too_many_attempts' })
+    done(null, false, { message: 'too_many_attempts' })
   }
 
   return user_.findOneByEmail(email)
@@ -27,28 +27,28 @@ const verify = (req, email, token, done) => {
 }
 
 const returnIfValid = (done, token, email, user) => {
-  // need to check user existance to avoid
+  // Need to check user existance to avoid
   // to call invalidEmailOrToken a second time
   // in case findOneByemail returned an error
-  if (user != null) {
-    return verifyToken(user, token)
-    .then(valid => {
-      if (valid) {
-        console.log('valid', valid)
-        return user_.openPasswordUpdateWindow(user)
-        .then(_.Log('clearToken res'))
-        .then(() => done(null, user))
-      } else {
-        return invalidEmailOrToken(done, email, 'validity test')
-      }
-    })
-    .catch(invalidEmailOrToken.bind(null, done, email, 'verifyToken'))
-  }
+  if (!user) return
+
+  return verifyToken(user, token)
+  .then(valid => {
+    if (valid) {
+      console.log('valid', valid)
+      return user_.openPasswordUpdateWindow(user)
+      .then(_.Log('clearToken res'))
+      .then(() => done(null, user))
+    } else {
+      return invalidEmailOrToken(done, email, 'validity test')
+    }
+  })
+  .catch(invalidEmailOrToken.bind(null, done, email, 'verifyToken'))
 }
 
 const invalidEmailOrToken = (done, email, label, err) => {
   loginAttempts.recordFail(email, label)
-  return done(null, false, { message: 'invalid_username_or_token' })
+  done(null, false, { message: 'invalid_username_or_token' })
 }
 
 const verifyToken = (user, token) => {
@@ -58,7 +58,7 @@ const verifyToken = (user, token) => {
 
 const finalError = (done, err) => {
   _.error(err, 'TokenStrategy verify err')
-  return done(err)
+  done(err)
 }
 
 module.exports = new LocalStrategy(options, verify)

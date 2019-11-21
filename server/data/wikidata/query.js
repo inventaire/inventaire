@@ -11,7 +11,7 @@ module.exports = (req, res) => {
     return error_.bundleMissingQuery('query')
   }
 
-  return runQuery(req.query)
+  runQuery(req.query)
   .then(responses_.Wrap(res, 'entities'))
   .catch(error_.Handler(req, res))
 }

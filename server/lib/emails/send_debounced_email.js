@@ -1,7 +1,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-
 const transporter_ = require('./transporter')
 const sendTransactionEmail = require('./send_transaction_email')
 const helpers_ = require('./helpers')

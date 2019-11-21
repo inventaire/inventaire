@@ -13,7 +13,7 @@ exports.passwords = {
   verify: (hash, password, tokenDaysToLive) => {
     if (hash == null) return error_.reject('missing hash', 400)
 
-    if ((tokenDaysToLive != null) && pw.expired(hash, tokenDaysToLive)) {
+    if (tokenDaysToLive != null && pw.expired(hash, tokenDaysToLive)) {
       return error_.reject('token expired', 401)
     }
 
@@ -23,9 +23,11 @@ exports.passwords = {
   }
 }
 
-const hash = (algo, input) => crypto.createHash(algo)
-.update(input)
-.digest('hex')
+const hash = (algo, input) => {
+  return crypto.createHash(algo)
+  .update(input)
+  .digest('hex')
+}
 
 exports.sha1 = hash.bind(null, 'sha1')
 exports.md5 = hash.bind(null, 'md5')

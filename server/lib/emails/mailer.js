@@ -6,17 +6,18 @@ const { initDelay, disabled } = CONFIG.mailer
 
 module.exports = () => {
   initMailer()
-  return initActivitySummary()
+  initActivitySummary()
 }
 
 const initMailer = () => {
-  if (disabled) return _.warn('mailer disabled')
-
-  _.info('mailer enabled')
-
-  // loading mailer dependencies slightly later
-  // due to its lower priority at startup
-  return delayedInit(initMailerEventListeners, initDelay)
+  if (disabled) {
+    _.warn('mailer disabled')
+  } else {
+    _.info('mailer enabled')
+    // Loading mailer dependencies slightly later
+    // due to its lower priority at startup
+    delayedInit(initMailerEventListeners, initDelay)
+  }
 }
 
 const initMailerEventListeners = () => {
@@ -43,15 +44,15 @@ const initMailerEventListeners = () => {
   radio.on('transaction:request', debounceEmails.transactionUpdate)
   radio.on('transaction:update', debounceEmails.transactionUpdate)
   radio.on('transaction:message', debounceEmails.transactionUpdate)
-  return _.info('mailer events listeners ready!')
+  _.info('mailer events listeners ready!')
 }
 
 const initActivitySummary = () => {
   if (CONFIG.activitySummary.disabled) {
-    return _.warn('activity summary disabled')
+    _.warn('activity summary disabled')
+  } else {
+    _.info('activity summary enabled')
+    const activitySummary = require('./activity_summary/activity_summary')
+    delayedInit(activitySummary, initDelay)
   }
-
-  _.info('activity summary enabled')
-  const activitySummary = require('./activity_summary/activity_summary')
-  return delayedInit(activitySummary, initDelay)
 }

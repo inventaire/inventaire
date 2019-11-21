@@ -14,13 +14,13 @@ const verify = (req, username, password, done) => {
   const language = findLanguage(req)
   return user_.create(username, email, 'local', language, password)
   .then(user => {
-    if (user != null) {
+    if (user) {
       done(null, user)
       req.user = user
-      return track(req, [ 'auth', 'signup', 'local' ])
+      track(req, [ 'auth', 'signup', 'local' ])
     } else {
       // case when user_.byId fails, rather unprobable
-      return done(new Error("couldn't get user"))
+      done(new Error("couldn't get user"))
     }
   })
   .catch(done)

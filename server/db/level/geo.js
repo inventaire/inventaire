@@ -11,7 +11,6 @@ module.exports = dbName => {
   const API = promises_.promisify(db, [ 'get', 'getByKey', 'put', 'del' ])
   API.reset = Reset(sub)
   API.search = Search(db)
-
   return API
 }
 

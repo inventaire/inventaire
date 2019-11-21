@@ -9,11 +9,11 @@ module.exports = controllers => {
     // or as a body parameter for more flexibility
     const action = req.query.action || req.body.action
 
-    if ((action == null) && (actions.default == null)) {
+    if (action == null && actions.default == null) {
       return error_.bundleMissingQuery(req, res, 'action')
     }
 
-    const actionData = (action != null) ? actions[action] : actions.default
+    const actionData = action ? actions[action] : actions.default
     if (actionData == null) {
       return error_.unknownAction(req, res)
     }
@@ -31,30 +31,29 @@ module.exports = controllers => {
 }
 
 const getActions = controllers => {
-  let controller, key
   validateObject(controllers, [ 'public', 'authentified', 'admin' ], 'object')
 
   const { authentified, public: publik, admin } = controllers
 
   const actions = {}
 
-  if (publik != null) {
-    for (key in publik) {
-      controller = publik[key]
+  if (publik) {
+    for (const key in publik) {
+      const controller = publik[key]
       actions[key] = { controller, authentified: false, admin: false }
     }
   }
 
-  if (authentified != null) {
-    for (key in authentified) {
-      controller = authentified[key]
+  if (authentified) {
+    for (const key in authentified) {
+      const controller = authentified[key]
       actions[key] = { controller, authentified: true, admin: false }
     }
   }
 
-  if (admin != null) {
-    for (key in admin) {
-      controller = admin[key]
+  if (admin) {
+    for (const key in admin) {
+      const controller = admin[key]
       actions[key] = { controller, authentified: true, admin: true }
     }
   }

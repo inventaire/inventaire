@@ -5,8 +5,7 @@ const fs = require('fs')
 
 const stat = Promise.promisify(fs.stat)
 
-const getContentLength = src => stat(src)
-.get('size')
+const getContentLength = src => stat(src).get('size')
 
 module.exports = {
   readFile: Promise.promisify(fs.readFile),

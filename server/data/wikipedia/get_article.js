@@ -10,21 +10,27 @@ module.exports = params => {
   const { lang, title, introOnly } = params
   const keyBase = introOnly ? 'wpextract' : 'wparticle'
   const key = `${keyBase}:${lang}:${title}`
-  return cache_.get({ key, fn: getArticle.bind(null, lang, title, introOnly), timespan: 3 * oneMonth })
+  return cache_.get({
+    key,
+    fn: getArticle.bind(null, lang, title, introOnly),
+    timespan: 3 * oneMonth
+  })
 }
 
-const getArticle = (lang, title, introOnly) => requests_.get(apiQuery(lang, title, introOnly))
-.then(function (res) {
-  const { pages } = res.query
-  if (pages == null) {
-    throw error_.new('invalid extract response', 500, arguments, res.query)
-  }
+const getArticle = (lang, title, introOnly) => {
+  return requests_.get(apiQuery(lang, title, introOnly))
+  .then(res => {
+    const { pages } = res.query
+    if (pages == null) {
+      throw error_.new('invalid extract response', 500, { lang, title }, res.query)
+    }
 
-  return {
-    extract: getCleanExtract(_.values(pages)),
-    url: `https://${lang}.wikipedia.org/wiki/${title}`
-  }
-})
+    return {
+      extract: getCleanExtract(_.values(pages)),
+      url: `https://${lang}.wikipedia.org/wiki/${title}`
+    }
+  })
+}
 
 const apiQuery = (lang, title, introOnly) => {
   title = qs.escape(title)
@@ -43,7 +49,7 @@ const apiQuery = (lang, title, introOnly) => {
 
   // Set exintro only if introOnly is true as any value
   // will be interpreted as true
-  if (introOnly) { queryObj.exintro = true }
+  if (introOnly) queryObj.exintro = true
 
   return _.buildPath(`https://${lang}.wikipedia.org/w/api.php`, queryObj)
 }

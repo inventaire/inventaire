@@ -12,9 +12,9 @@ const buildSearcher = params => {
   const url = `${elasticHost}/${index}/_search`
 
   return (query, type, limit) => {
-    let customUrl
     assert_.string(query)
 
+    let customUrl
     if (_.isNonEmptyString(type)) {
       customUrl = url.replace('_search', `${type}/_search`)
     } else {

@@ -11,14 +11,14 @@ const validations = module.exports = {
   username,
   email,
   password: BoundedString(8, 128),
-  // accepting second level languages (like es-AR) but only using first level yet
-  language: lang => /^\w{2}(-\w{2})?$/.test(lang),
+  // Accepting second level languages (like es-AR), but only using first level yet
+  language: _.isLang,
   picture: userImg,
   creationStrategy: creationStrategy => creationStrategies.includes(creationStrategy),
   bio: BoundedString(0, 1000),
   settings: boolean,
   position,
-  summaryPeriodicity: days => Number.isInteger(days) && (days >= 1)
+  summaryPeriodicity: days => Number.isInteger(days) && days >= 1
 }
 
 const deepAttributes = {

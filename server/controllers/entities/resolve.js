@@ -42,8 +42,8 @@ module.exports = (req, res) => {
     return sequentialResolve(entries, params, errors)
     .then(resolvedEntries => {
       const data = { entries: resolvedEntries }
-      if (!strict) { data.errors = errors.map(formatError) }
-      return responses_.send(res, data)
+      if (!strict) data.errors = errors.map(formatError)
+      responses_.send(res, data)
     })
   })
   .catch(error_.Handler(req, res))

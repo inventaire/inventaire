@@ -2,7 +2,6 @@ const userDoc = (username, idLastCharacters) => ({
   _id: `00000000000000000000000000000${idLastCharacters}`,
   username,
   special: true,
-
   // Data required to avoid crashing users logic
   snapshot: {}
 })

@@ -2,13 +2,14 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = require('lodash')
-const regex_ = __.require('lib', 'regex')
 const wdk = require('wikidata-sdk')
+const regex_ = __.require('lib', 'regex')
+const { PositiveInteger: PositiveIntegerPattern } = regex_
 
 const bindedTest = regexName => regex_[regexName].test.bind(regex_[regexName])
 
 const isCouchUuid = regex_.CouchUuid.test.bind(regex_.CouchUuid)
-const isNonEmptyString = str => _.isString(str) && (str.length > 0)
+const isNonEmptyString = str => typeof str === 'string' && str.length > 0
 
 const tests = module.exports = {
   isUrl: bindedTest('Url'),
@@ -20,16 +21,18 @@ const tests = module.exports = {
   isInvEntityId: isCouchUuid,
   isInvEntityUri: uri => {
     if (!isNonEmptyString(uri)) return false
-    const [ prefix, id ] = Array.from(uri != null ? uri.split(':') : undefined)
+    const [ prefix, id ] = uri && uri.split(':')
     return (prefix === 'inv') && isCouchUuid(id)
   },
   isWdEntityUri: uri => {
-    if (!_.isNonEmptyString(uri)) return false
-    const [ prefix, id ] = Array.from(uri != null ? uri.split(':') : undefined)
+    if (!isNonEmptyString(uri)) return false
+    const [ prefix, id ] = uri && uri.split(':')
     return (prefix === 'wd') && wdk.isItemId(id)
   },
   isEmail: bindedTest('Email'),
+  isCouchUuid,
   isUserId: isCouchUuid,
+  isTransactionId: isCouchUuid,
   isGroupId: isCouchUuid,
   isItemId: isCouchUuid,
   isUsername: bindedTest('Username'),
@@ -59,7 +62,7 @@ const tests = module.exports = {
   isNonEmptyString,
   isNonEmptyArray: array => _.isArray(array) && (array.length > 0),
   isNonEmptyPlainObject: obj => _.isPlainObject(obj) && (Object.keys(obj).length > 0),
-  isPositiveIntegerString: str => _.isString(str) && /^\d+$/.test(str),
+  isPositiveIntegerString: str => _.isString(str) && PositiveIntegerPattern.test(str),
   isExtendedUrl: str => tests.isUrl(str) || tests.isLocalImg(str),
   isCollection: array => (_.typeOf(array) === 'array') && _.every(array, _.isPlainObject)
 }

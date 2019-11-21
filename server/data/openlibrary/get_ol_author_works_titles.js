@@ -11,7 +11,11 @@ const headers = { accept: '*/*' }
 
 module.exports = olId => {
   const key = `ol:author-works-titles:${olId}`
-  return cache_.get({ key, fn: getAuthorWorksTitles.bind(null, olId), timespan: 3 * oneMonth })
+  return cache_.get({
+    key,
+    fn: getAuthorWorksTitles.bind(null, olId),
+    timespan: 3 * oneMonth
+  })
 }
 
 const getAuthorWorksTitles = olId => {

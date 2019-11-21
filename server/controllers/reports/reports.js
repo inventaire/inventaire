@@ -13,7 +13,7 @@ const cspReport = (req, res) => {
 
   const err = buildError('csp report', 'csp', errData, req)
   _.error(err, 'csp report', false)
-  return responses_.ok(res)
+  responses_.ok(res)
 }
 
 const errorReport = (req, res) => {
@@ -27,7 +27,7 @@ const errorReport = (req, res) => {
 
   const err = buildError(message, 'client error report', errData, req)
   _.error(err, 'client error report')
-  return responses_.ok(res)
+  responses_.ok(res)
 }
 
 const buildError = (message, labels, errData, req) => {

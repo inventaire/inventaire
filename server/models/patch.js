@@ -14,8 +14,8 @@ module.exports = {
     assert_.object(updatedDoc)
     validations.pass('couchUuid', updatedDoc._id)
 
-    if (context != null) { assert_.object(context) }
-    if (batchId != null) { assert_.number(batchId) }
+    if (context != null) assert_.object(context)
+    if (batchId != null) assert_.number(batchId)
 
     if (currentDoc === updatedDoc) {
       throw error_.new('invalid update: same document objects', 500, { currentDoc, updatedDoc })
@@ -52,8 +52,8 @@ module.exports = {
     //   in the patched entity, and from which claims that had it as value are being redirected
     // - `{ revertPatch: mergePatchId }` where mergePatchId is the patch where the merge
     //    being reverted was done
-    if (context != null) { patch.context = context }
-    if (batchId != null) { patch.batch = batchId }
+    if (context != null) patch.context = context
+    if (batchId != null) patch.batch = batchId
 
     return patch
   },

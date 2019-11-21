@@ -17,7 +17,7 @@ module.exports = (req, res) => {
   })
   .then(data => {
     const { url, extract } = data
-    return responses_.send(res, { url, extract })
+    responses_.send(res, { url, extract })
   })
   .catch(error_.Handler(req, res))
 }

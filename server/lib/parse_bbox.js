@@ -18,19 +18,19 @@ const parseLatLng = query => {
     return error_.rejectInvalid('bbox', bbox)
   }
 
-  let [ minLng, minLat, maxLng, maxLat ] = Array.from(bbox)
+  let [ minLng, minLat, maxLng, maxLat ] = bbox
   _.log(bbox, 'minLng, minLat, maxLng, maxLat')
 
-  if ((minLng >= maxLng) || (minLat >= maxLat)) {
+  if (minLng >= maxLng || minLat >= maxLat) {
     return error_.rejectInvalid('bbox coordinates', bbox)
   }
 
   // not throwing an error when a coordinate is over its limit
   // but replacing it by the limit to make following calculations lighter
-  if (minLng < -180) { minLng = -180 }
-  if (maxLng > 180) { maxLng = 180 }
-  if (minLat < -90) { minLat = -90 }
-  if (maxLng > 90) { maxLng = 90 }
+  if (minLng < -180) minLng = -180
+  if (maxLng > 180) maxLng = 180
+  if (minLat < -90) minLat = -90
+  if (maxLng > 90) maxLng = 90
 
   return [ minLng, minLat, maxLng, maxLat ]
 }

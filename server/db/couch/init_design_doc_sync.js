@@ -15,7 +15,7 @@ const designDocFolder = __.path('couchdb', 'design_docs')
 module.exports = () => {
   if (!CONFIG.db.enableDesignDocSync) return
   // Wait for the end of the server initalization
-  return setTimeout(init, 2000)
+  setTimeout(init, 2000)
 }
 
 const init = () => {
@@ -30,7 +30,7 @@ const init = () => {
 }
 
 const isDesignDoc = designDocsNames => doc => {
-  const [ prefix, designDocsName ] = Array.from(doc._id.split('/'))
+  const [ prefix, designDocsName ] = doc._id.split('/')
   if (prefix !== '_design') return false
   // Design docs that aren't in the list aren't persisted:
   // this allows to have draft design docs in CouchDB that aren't worth

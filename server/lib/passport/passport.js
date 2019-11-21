@@ -7,14 +7,16 @@ const assert_ = __.require('utils', 'assert_types')
 const passport = require('passport')
 
 passport.serializeUser((user, done) => {
-  let id
-  assert_.types([ 'object', 'function' ], [ user, done ])
-  _.success((id = user._id), 'serializeUser')
-  return done(null, id)
+  assert_.object(user)
+  assert_.function(done)
+  const { _id: id } = user
+  _.success(id, 'serializeUser')
+  done(null, id)
 })
 
 passport.deserializeUser((id, done) => {
-  assert_.types([ 'string', 'function' ], [ id, done ])
+  assert_.string(id)
+  assert_.function(done)
   return user_.byId(id)
   .then(user => done(null, user))
   .catch(err => {
@@ -24,7 +26,7 @@ passport.deserializeUser((id, done) => {
     }
 
     _.error(err, 'deserializeUser err')
-    return done(err)
+    done(err)
   })
 })
 

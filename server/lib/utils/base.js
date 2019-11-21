@@ -1,9 +1,21 @@
+const __ = require('config').universalPath
 const _ = require('lodash')
+const multipleSpacesPattern = /\s+/g
+const extraEncodedCharacters = /[!'()*]/g
+const {
+  Integer: integerPattern,
+  PositiveInteger: PositiveIntegerPattern,
+  Float: floatPattern
+} = __.require('lib', 'regex')
 
 module.exports = {
   combinations: (array1, array2) => {
     const results = []
-    array1.forEach(keys1 => array2.forEach(keys2 => results.push([ keys1, keys2 ])))
+    array1.forEach(keys1 => {
+      array2.forEach(keys2 => {
+        results.push([ keys1, keys2 ])
+      })
+    })
     return results
   },
 
@@ -17,26 +29,26 @@ module.exports = {
     if (typeof str !== 'string') throw new Error(`expected a string: ${str}`)
     // testing the validity of the string is needed
     // to avoid getting NaN from parseInt
-    if (!/^-?\d+$/.test(str)) throw new Error(`invalid integer string: ${str}`)
+    if (!integerPattern.test(str)) throw new Error(`invalid integer string: ${str}`)
     return parseInt(str)
   },
 
   parsePositiveInteger: str => {
     // /!\ Difference with parseInt: not throwing
-    if ((typeof str !== 'string') || !/^\d+$/.test(str)) return
+    if ((typeof str !== 'string') || !PositiveIntegerPattern.test(str)) return
     return parseInt(str)
   },
 
   stringToFloat: str => {
     if (typeof str !== 'string') throw new Error(`expected a string: ${str}`)
-    if (!/^[-?\d.]+$/.test(str)) throw new Error(`invalid integer string: ${str}`)
+    if (!floatPattern.test(str)) throw new Error(`invalid float string: ${str}`)
     return parseFloat(str)
   },
 
   isArrayLike: obj => _.isArray(obj) || _.isArguments(obj),
 
   // Remove any superfluous spaces
-  superTrim: str => str.replace(/\s+/g, ' ').trim(),
+  superTrim: str => str.replace(multipleSpacesPattern, ' ').trim(),
 
   flattenIndexes: indexesArray => {
     indexesArray.unshift({})
@@ -55,7 +67,7 @@ module.exports = {
 
   // adapted from http://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
   hashCode: string => {
-    let [ hash, i, len ] = Array.from([ 0, 0, string.length ])
+    let [ hash, i, len ] = [ 0, 0, string.length ]
     if (len === 0) return hash
 
     while (i < len) {
@@ -69,7 +81,7 @@ module.exports = {
 
   buildPath: (pathname, queryObj, escape) => {
     queryObj = removeUndefined(queryObj)
-    if ((queryObj == null) || _.isEmpty(queryObj)) return pathname
+    if (queryObj == null || _.isEmpty(queryObj)) return pathname
 
     let queryString = ''
 
@@ -107,7 +119,7 @@ module.exports = {
   // encodeURIComponent ignores !, ', (, ), and *
   // cf https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent#Description
   fixedEncodeURIComponent: str => {
-    return encodeURIComponent(str).replace(/[!'()*]/g, encodeCharacter)
+    return encodeURIComponent(str).replace(extraEncodedCharacters, encodeCharacter)
   },
 
   pickOne: obj => {
@@ -121,11 +133,8 @@ module.exports = {
   },
 
   simpleDay: date => {
-    if (date != null) {
-      return new (Date(date).toISOString().split('T')[0])()
-    } else {
-      return new (Date().toISOString().split('T')[0])()
-    }
+    const dateObj = date != null ? new Date(date) : new Date()
+    return dateObj.toISOString().split('T')[0]
   },
 
   typeOf: obj => {
@@ -179,18 +188,22 @@ const removeUndefined = obj => {
   const newObj = {}
   for (const key in obj) {
     const value = obj[key]
-    if (value != null) { newObj[key] = value }
+    if (value != null) newObj[key] = value
   }
   return newObj
 }
 
-const dropSpecialCharacters = str => str
-  .replace(/\s+/g, ' ')
-  .replace(/(\?|:)/g, '')
+const specialCharactersPattern = /(\?|:)/g
+const dropSpecialCharacters = str => {
+  return str
+  .replace(multipleSpacesPattern, ' ')
+  .replace(specialCharactersPattern, '')
+}
 
 // Only escape values that are problematic in a query string:
 // for the moment, only '?'
-const escapeQueryStringValue = str => str.replace(/\?/g, '%3F')
+const questionMarks = /\?/g
+const escapeQueryStringValue = str => str.replace(questionMarks, '%3F')
 
 const aggregateCollections = (index, name) => {
   index[name] = []

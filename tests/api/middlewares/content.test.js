@@ -60,7 +60,7 @@ const makeRequest = (contentType, done) => {
 
   return request(params, (err, res) => {
     if (err) {
-      return done(err)
+      done(err)
     } else {
       res.statusCode.should.equal(200)
       JSON.parse(res.body).body.bla.should.equal(123)

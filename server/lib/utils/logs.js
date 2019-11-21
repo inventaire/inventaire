@@ -88,7 +88,7 @@ module.exports = _ => {
         }
       }
 
-      return setInterval(counter.bind(this), 5000)
+      setInterval(counter.bind(this), 5000)
     },
 
     startTimer: key => {
@@ -98,18 +98,14 @@ module.exports = _ => {
     },
 
     // To be used in promise chains
-    StartTimer: key => {
-      return data => {
-        customLoggers.startTimer(key)
-        return data
-      }
+    StartTimer: key => data => {
+      customLoggers.startTimer(key)
+      return data
     },
 
-    EndTimer: key => {
-      return data => {
-        console.timeEnd(chalk.magenta(key))
-        return data
-      }
+    EndTimer: key => data => {
+      console.timeEnd(chalk.magenta(key))
+      return data
     }
   }
 
@@ -118,6 +114,7 @@ module.exports = _ => {
     customLoggers.error(err, label)
     throw err
   }
+
   // Overriding inv-loggers partial loggers with the above customized loggers
   customLoggers.Warn = loggers_.partialLogger(customLoggers.warn)
   customLoggers.Error = loggers_.partialLogger(customLoggers.error)

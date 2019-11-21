@@ -18,11 +18,11 @@ const baseDoc = email => ({
 const addInviter = (inviterId, groupId, doc) => {
   // The doc shouldn't be updated if the inviter already did invited
   // but in the undesired case it happens, keep the first timestamp
-  if (!doc.inviters[inviterId]) { doc.inviters[inviterId] = Date.now() }
-  if (groupId != null) {
+  if (!doc.inviters[inviterId]) doc.inviters[inviterId] = Date.now()
+  if (groupId) {
     // doc.inviters and doc.invitersGroups are kept on the user document
     // by User.upgradeInvited, thus the heavy but explicit 'invitersGroups' name
-    if (!doc.invitersGroups) { doc.invitersGroups = {} }
+    if (!doc.invitersGroups) doc.invitersGroups = {}
     doc.invitersGroups[groupId] = inviterId
   }
   return doc
@@ -49,8 +49,8 @@ const canBeInvited = (inviterId, groupId) => doc => {
   }
 
   // Admins of a group can send only one invitation to a given email
-  if (groupId != null) {
-    const alreadyInvitedInGroup = ((doc.groups != null ? doc.groups[groupId] : undefined) != null)
+  if (groupId) {
+    const alreadyInvitedInGroup = doc.groups && doc.groups[groupId] != null
     if (alreadyInvitedInGroup) {
       const context = [ inviterId, groupId, doc ]
       _.warn(context, 'alreadyInvitedInGroup: invitation aborted')

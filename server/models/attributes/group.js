@@ -1,5 +1,5 @@
 module.exports = {
-  // attributes that can be changed by an admin with a simple validity check
+  // Attributes that can be changed by an admin with a simple validity check
   updatable: [
     'name',
     'picture',

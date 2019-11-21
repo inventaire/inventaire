@@ -8,7 +8,7 @@ const User = __.require('models', 'user')
 
 module.exports = (req, res) => {
   const { ids } = req.query
-  const reqUserId = req.user != null ? req.user._id : undefined
+  const reqUserId = req.user && req.user._id
 
   return promises_.try(parseAndValidateIds.bind(null, ids))
   .then(user_.getUsersIndexByIds(reqUserId))
@@ -20,7 +20,7 @@ const parseAndValidateIds = ids => {
   if (!_.isNonEmptyString(ids)) throw error_.newMissingQuery('ids')
 
   ids = ids.split('|')
-  if (((ids != null ? ids.length : undefined) > 0) && validUsersIds(ids)) {
+  if (ids && ids.length > 0 && validUsersIds(ids)) {
     return ids
   } else {
     throw error_.newInvalid('ids', ids)

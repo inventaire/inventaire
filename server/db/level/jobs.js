@@ -10,12 +10,13 @@ module.exports = {
   initQueue: (jobName, worker, maxConcurrency) => {
     const db = levelBase.rawSubDb(`job:${jobName}`)
 
-    if (typeof (CONFIG.jobs[jobName] != null ? CONFIG.jobs[jobName].run : undefined) !== 'boolean') {
+    const run = CONFIG.jobs[jobName] && CONFIG.jobs[jobName].run
+    if (typeof run !== 'boolean') {
       throw new Error(`unknown job: ${jobName}`)
     }
 
     // Push & run jobs to queue if this job is enabled in config
-    if (CONFIG.serverMode && CONFIG.jobs[jobName].run) {
+    if (CONFIG.serverMode && run) {
       const JobQueueServerAndClient = require('level-jobs')
       _.info(`${jobName} job in server & client mode`)
       const depromisifiedWorker = workerDepromisifier(worker)
@@ -39,6 +40,8 @@ const promisify = API => {
   return API
 }
 
-const workerDepromisifier = workerFn => (jobId, payload, cb) => workerFn(jobId, payload)
-.then(() => cb())
-.catch(cb)
+const workerDepromisifier = workerFn => (jobId, payload, cb) => {
+  return workerFn(jobId, payload)
+  .then(() => cb())
+  .catch(cb)
+}

@@ -6,7 +6,7 @@ const responses_ = __.require('lib', 'responses')
 
 module.exports = (req, res) => {
   const { query } = req
-  const reqUserId = req.user != null ? req.user._id : undefined
+  const reqUserId = req.user && req.user._id
   return parseBbox(query)
   .then(bbox => user_.getUsersAuthorizedData(user_.byPosition(bbox), reqUserId))
   .then(responses_.Wrap(res, 'users'))

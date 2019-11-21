@@ -56,7 +56,7 @@ const makeRequest = url => {
     .timeout(30000)
     .finally(() => {
       ongoing -= 1
-      return logStats()
+      logStats()
     })
   }
 
@@ -64,5 +64,7 @@ const makeRequest = url => {
 }
 
 const logStats = () => {
-  if (waiting > 0) return _.info({ waiting, ongoing }, 'wikidata sparql requests queue stats')
+  if (waiting > 0) {
+    _.info({ waiting, ongoing }, 'wikidata sparql requests queue stats')
+  }
 }

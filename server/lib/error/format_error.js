@@ -25,12 +25,17 @@ module.exports = (err, filter, context) => {
   return err
 }
 
-const getErrorEmittingLines = err => err.stack.split('\n')
-.filter(line => !line.match(/lib\/error/))
-.slice(0, 5)
-.map(getErrorEmittingLine)
+const getErrorEmittingLines = err => {
+  return err.stack.split('\n')
+  .filter(line => !line.match(/lib\/error/))
+  .slice(0, 5)
+  .map(getErrorEmittingLine)
+}
 
-const getErrorEmittingLine = line => line != null ? line.trim()
+const getErrorEmittingLine = line => {
+  if (!line) return
+  return line
+  .trim()
   .replace(/^\s*at\s+/, '')
   // delete parenthesis around the file path
   .replace(/(\(|\))/g, '')
@@ -38,4 +43,5 @@ const getErrorEmittingLine = line => line != null ? line.trim()
   .replace(/[a-z_/]+server/, ': server')
   .replace(/[a-z_/]+node_modules/, ': node_modules')
   // identify anonymous functions
-  .replace(/^:/, '(anonymous):') : undefined
+  .replace(/^:/, '(anonymous):')
+}

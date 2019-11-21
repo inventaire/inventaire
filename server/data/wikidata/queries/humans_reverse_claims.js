@@ -2,8 +2,7 @@ module.exports = {
   parameters: [ 'pid', 'qid' ],
   query: params => {
     const { pid, qid } = params
-    return `\
-SELECT DISTINCT ?item WHERE {
+    return `SELECT DISTINCT ?item WHERE {
   ?item wdt:${pid} wd:${qid} .
   ?item wdt:P31 wd:Q5 .
 
@@ -20,7 +19,6 @@ SELECT DISTINCT ?item WHERE {
   # manga
   UNION { ?work wdt:P31 wd:Q8274 . }
 }
-LIMIT 1000\
-`
+LIMIT 1000`
   }
 }

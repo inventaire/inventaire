@@ -12,7 +12,8 @@ module.exports = {
   },
 
   jsonWrite: (path, data) => {
-    assert_.types([ 'string', 'object' ], [ path, data ])
+    assert_.string(path)
+    assert_.object(data)
     const json = stringify(data)
     return fs.writeFileSync(path, json)
   }

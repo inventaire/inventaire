@@ -11,7 +11,8 @@ module.exports = claims => {
   const originalLangUri = someLangPropertyClaims[0]
   if (originalLangUri != null) {
     const wdId = unprefixify(originalLangUri)
-    return (wdLang.byWdId[wdId] != null ? wdLang.byWdId[wdId].code : undefined)
+    const wdLangData = wdLang.byWdId[wdId]
+    if (wdLangData) return wdLangData.code
   }
 }
 

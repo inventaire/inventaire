@@ -3,6 +3,7 @@
 
 const fs = require('fs')
 const mailcomposer = require('mailcomposer')
+const noop = () => {}
 
 const callbackPromise = (resolve, reject) => {
   return (...args) => {
@@ -12,18 +13,18 @@ const callbackPromise = (resolve, reject) => {
   }
 }
 
-module.exports = (data, callback) => {
+module.exports = function (data, callback) {
   let promise
 
-  if (!callback && (typeof Promise === 'function')) {
+  if (!callback) {
     promise = new Promise((resolve, reject) => {
       callback = callbackPromise(resolve, reject)
     })
   }
 
-  if (!data) { data = {} }
-  if (!data.headers) { data.headers = {} }
-  if (!callback) { callback = () => {} }
+  data = data || {}
+  data.headers = data.headers || {}
+  callback = callback || noop
 
   // apply defaults
   // Object.keys @_defaults
@@ -75,14 +76,14 @@ module.exports = (data, callback) => {
       const previewFilename = data.previewFilename || 'index.html'
       const previewFilePath = `${previewDir}/${previewFilename}`
       const previewDataPath = `${previewDir}/data.json`
-      if (!fs.existsSync(previewDir)) { fs.mkdirSync(previewDir) }
+      if (!fs.existsSync(previewDir)) fs.mkdirSync(previewDir)
 
       console.log('email not sent, updated email preview:', previewFilePath)
       const json = JSON.stringify(mail.data, null, 4)
       let { html } = mail.data
       html = `<p style='text-align:center'><a href='/data.json'>data</a></p>${html}`
       fs.writeFile(previewFilePath, html)
-      return fs.writeFile(previewDataPath, json, callback)
+      fs.writeFile(previewDataPath, json, callback)
     })
   })
   // else

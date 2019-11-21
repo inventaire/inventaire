@@ -4,9 +4,9 @@
 // see controllers/transactions/update_state.js
 const states = {
   requested: {
-    // current action actor
+    // Current action actor
     actor: 'requester',
-    // next actions (the actor(s) may differ from the current one)
+    // Next actions (the actor(s) may differ from the current one)
     next: [ 'accepted', 'declined', 'cancelled' ]
   },
   accepted: {
@@ -34,7 +34,7 @@ const states = {
 const statesList = Object.keys(states)
 
 const basicNextActions = {
-  // current state:
+  // Current state:
   requested: {
     // key: main user role in this transaction
     // value: possible actions

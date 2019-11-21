@@ -38,10 +38,9 @@ module.exports = (req, res, err, status) => {
 }
 
 const emptyContext = context => {
-  if ((context == null)) return true
-  switch (_.typeOf(context)) {
-  case 'array': case 'string': return context.length === 0
-  case 'object': return _.objLength(context) === 0
-  default: return true
-  }
+  if (context == null) return true
+  const type = _.typeOf(context)
+  if (type === 'array' || type === 'string') return context.length === 0
+  else if (type === 'object') return _.objLength(context) === 0
+  else return true
 }

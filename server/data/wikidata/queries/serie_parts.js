@@ -3,8 +3,7 @@ module.exports = {
   query: params => {
     const { qid: serieQid } = params
 
-    return `\
-SELECT ?part ?date ?ordinal (COUNT(?subpart) AS ?subparts) ?superpart WHERE {
+    return `SELECT ?part ?date ?ordinal (COUNT(?subpart) AS ?subparts) ?superpart WHERE {
   ?part p:P179|p:P361 ?serie_statement .
   ?serie_statement ps:P179|ps:P361 wd:${serieQid} .
 
@@ -36,7 +35,6 @@ SELECT ?part ?date ?ordinal (COUNT(?subpart) AS ?subparts) ?superpart WHERE {
   }
 
 }
-GROUP BY ?part ?date ?ordinal ?superpart\
-`
+GROUP BY ?part ?date ?ordinal ?superpart`
   }
 }

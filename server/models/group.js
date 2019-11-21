@@ -37,6 +37,7 @@ Group.create = options => {
 Group.findInvitation = (userId, group, wanted) => findMembership(userId, group, 'invited', wanted)
 
 const inviteSection = CONFIG.godMode ? 'members' : 'invited'
+
 const membershipActions = {
   invite: (invitorId, invitedId, group) => {
     // Using Group.findInvitation as a validator throwing

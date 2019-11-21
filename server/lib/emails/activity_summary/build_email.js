@@ -85,11 +85,11 @@ const spreadEmailData = user => results => {
 
   const news = newsData(user)
 
-  if ((news.display === false) && (countTotal === 0)) {
+  if (news.display === false && countTotal === 0) {
     throw promises_.skip('empty activity summary', user._id)
   }
 
-  // attach the lang to make accessible for the last_books partial
+  // Attach the lang to make accessible for the last_books partial
   lastFriendsBooks.lang = lang
   lastNearbyPublicBooks.lang = lang
 
@@ -129,10 +129,7 @@ const counter = (count, path) => ({
 const newsData = user => {
   const { lastNews } = user
   if (lastNews !== newsKey) {
-    return {
-      display: true,
-      key: newsKey
-    }
+    return { display: true, key: newsKey }
   } else {
     return { display: false }
   }

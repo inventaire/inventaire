@@ -18,5 +18,11 @@ const getPopularity = refresh => uri => {
   const key = `popularity:${uri}`
   const fn = getPopularityByUri.bind(null, uri)
 
-  return cache_.get({ key, fn, refresh, dryAndCache: true, dryFallbackValue: 0 })
+  return cache_.get({
+    key,
+    fn,
+    refresh,
+    dryAndCache: true,
+    dryFallbackValue: 0
+  })
 }

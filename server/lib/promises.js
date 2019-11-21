@@ -29,28 +29,26 @@ module.exports = {
     throw err
   },
 
-  catchSkip: label => {
-    return err => {
-      if (err.skip) return _.log(err.context, `${label} skipped: ${err.reason}`)
-      else throw err
-    }
+  catchSkip: label => err => {
+    if (err.skip) return _.log(err.context, `${label} skipped: ${err.reason}`)
+    else throw err
   },
 
   // a proxy to Bluebird Promisify that keeps the names
-  promisify: (mod, keys) => {
+  promisify: (modul, keys) => {
     // Allow to pass an array of the desired keys
     // or let keys undefined to get all the keys
-    if (!_.isArray(keys)) keys = Object.keys(mod)
+    if (!_.isArray(keys)) keys = Object.keys(modul)
     const API = {}
-    for (const k of keys) {
-      API[k] = Promise.promisify(mod[k])
+    for (const key of keys) {
+      API[key] = Promise.promisify(modul[key])
     }
     return API
   },
 
-  // source: http://bluebirdjs.com/docs/api/deferred-migration.html
+  // Source: http://bluebirdjs.com/docs/api/deferred-migration.html
   defer: () => {
-    // Initialize in the defer function scope
+    // Initialized in the defer function scope
     let resolveFn, rejectFn
 
     const promise = new Promise((resolve, reject) => {

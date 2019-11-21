@@ -7,7 +7,7 @@ const error_ = __.require('lib', 'error/error')
 
 const DBPathBase = __.path('leveldb')
 const { suffix } = CONFIG.db
-const DBPath = (suffix != null) ? `${DBPathBase}-${suffix}` : DBPathBase
+const DBPath = suffix ? `${DBPathBase}-${suffix}` : DBPathBase
 
 const sublevel = require('level-sublevel')
 if (CONFIG.leveldbMemoryBackend) {
@@ -55,8 +55,10 @@ const Reset = sub => () => new Promise((resolve, reject) => {
   }))
 })
 
-const Inspect = sub => () => streamPromise(sub.createReadStream())
-.then(_.Log('sub dump'))
+const Inspect = sub => () => {
+  return streamPromise(sub.createReadStream())
+  .then(_.Log('sub dump'))
+}
 
 const streamPromise = stream => new Promise((resolve, reject) => {
   const results = []

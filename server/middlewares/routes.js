@@ -3,9 +3,9 @@ module.exports = {
     const parts = req._parsedUrl.pathname.split('/')
     if (parts[3] === 'public') {
       const rewroteUrl = req.url.replace('/public', '')
-      return res.redirect(rewroteUrl)
+      res.redirect(rewroteUrl)
     } else {
-      return next()
+      next()
     }
   },
 

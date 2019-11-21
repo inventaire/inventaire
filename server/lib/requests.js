@@ -46,11 +46,12 @@ const mergeOptions = (url, options = {}) => {
   return Object.assign({ url }, baseOptions, options)
 }
 
+const basicAuthPattern = /\/\/\w+:[^@:]+@/
 const startTimer = (verb, url) => {
   // url could be an object
   url = JSON.stringify(url)
     // Prevent logging Basic Auth credentials
-    .replace(/\/\/\w+:[^@:]+@/, '//')
+    .replace(basicAuthPattern, '//')
 
   return _.startTimer(`${verb.toUpperCase()} ${url} [r${++requestId}]`)
 }

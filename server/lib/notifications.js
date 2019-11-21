@@ -7,7 +7,7 @@ const assert_ = __.require('utils', 'assert_types')
 
 const db = __.require('couch', 'base')('notifications')
 
-const notifs_ = {
+const notifs_ = module.exports = {
   byUserId: userId => {
     assert_.string(userId)
     return db.viewCustom('byUserAndTime', {
@@ -18,7 +18,7 @@ const notifs_ = {
     .catch(_.ErrorRethrow('byUserId'))
   },
 
-  // make notifications accessible by the subjects they involve:
+  // Make notifications accessible by the subjects they involve:
   // user, group, item etc
   bySubject: subjectId => {
     return db.viewByKey('bySubject', subjectId)
@@ -58,7 +58,7 @@ const notifs_ = {
   }
 }
 
-// alias
+// Alias
 notifs_.deleteAllByUserId = notifs_.deleteAllBySubjectId
 
 const getUnreadCount = notifs => notifs.filter(isUnread).length
@@ -67,8 +67,9 @@ const isUnread = notif => notif.status === 'unread'
 const callbacks = {
   acceptedRequest: (userToNotify, newFriend) => {
     assert_.strings([ userToNotify, newFriend ])
-    return notifs_.add(userToNotify, 'friendAcceptedRequest',
-      { user: newFriend })
+    return notifs_.add(userToNotify, 'friendAcceptedRequest', {
+      user: newFriend
+    })
   },
 
   userMadeAdmin: (groupId, actorAdminId, newAdminId) => {
@@ -85,14 +86,15 @@ const callbacks = {
       // creates a lot of similar documents:
       // could be refactored to use a single document
       // including a read status per-user: { user: id, read: boolean }
-      return usersToNotify.map(userToNotify => notifs_.add(userToNotify, 'groupUpdate', {
-        group: groupId,
-        user: actorId,
-        attribute,
-        previousValue,
-        newValue
+      return usersToNotify.map(userToNotify => {
+        return notifs_.add(userToNotify, 'groupUpdate', {
+          group: groupId,
+          user: actorId,
+          attribute,
+          previousValue,
+          newValue
+        })
       })
-      )
     }
   },
 
@@ -112,5 +114,3 @@ radio.on('group:makeAdmin', callbacks.userMadeAdmin)
 radio.on('group:update', callbacks.groupUpdate)
 
 radio.on('resource:destroyed', callbacks.deleteNotifications)
-
-module.exports = notifs_

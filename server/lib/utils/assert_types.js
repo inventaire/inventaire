@@ -38,7 +38,7 @@ const assertTypes = (types, args) => {
 // Or even 'numbers...|strings...' to be translated as several 'number|string'
 // => types = ['number', 'number', ... (args.length times)]
 const parseTypes = (types, args) => {
-  if ((typeof types !== 'string') || (types.match('s...') == null)) return types
+  if (typeof types !== 'string' || types.match('s...') == null) return types
   const multiTypes = types.split('s...').join('')
   return _.times(args.length, () => multiTypes)
 }

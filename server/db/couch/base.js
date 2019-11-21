@@ -7,7 +7,7 @@ const getDbApi = require('./cot_base')
 // assumes it is the same as the dbBaseName
 module.exports = (dbBaseName, designDocName) => {
   const dbName = CONFIG.db.name(dbBaseName)
-  if (!designDocName) { designDocName = dbBaseName }
+  if (!designDocName) designDocName = dbBaseName
 
   const db = getDbApi(dbName, designDocName)
   const bundles = require('./bundles')(db, _)

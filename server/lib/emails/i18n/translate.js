@@ -3,11 +3,8 @@ module.exports = (lang, polyglot) => {
 
   return (key, ctx) => {
     const val = polyglot.t(key, ctx)
-    if (modifier != null) {
-      return modifier(polyglot, key, val, ctx)
-    } else {
-      return val
-    }
+    if (modifier) return modifier(polyglot, key, val, ctx)
+    else return val
   }
 }
 
@@ -18,10 +15,10 @@ const modifiers = {
   // make _.i18n('user_comment', { username: 'adamsberg' })
   // return "Commentaire d'adamsberg" instead of "Commentaire de adamsberg"
   fr: (polyglot, key, val, data) => {
-    if ((data != null) && isShortkey(key)) {
+    if (data && isShortkey(key)) {
       const k = polyglot.phrases[key]
       const { username } = data
-      if (username != null) {
+      if (username) {
         const firstLetter = username[0].toLowerCase()
         if (vowels.includes(firstLetter)) {
           if (/(d|qu)e\s(<strong>)?%{username}/.test(k)) {

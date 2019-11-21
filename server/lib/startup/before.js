@@ -12,7 +12,11 @@ module.exports = () => {
   _.logErrorsCount()
   _.log(`pid: ${process.pid}`)
   _.log(`env: ${CONFIG.env}`)
-  return _.log(`host: ${CONFIG.fullHost()}`)
+  _.log(`host: ${CONFIG.fullHost()}`)
 }
 
-const initUncaughtExceptionCatcher = () => process.on('uncaughtException', err => console.error(red('uncaughtException'), err))
+const initUncaughtExceptionCatcher = () => {
+  process.on('uncaughtException', err => {
+    console.error(red('uncaughtException'), err)
+  })
+}

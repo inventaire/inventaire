@@ -38,10 +38,7 @@ error_.notFound = context => {
 }
 
 error_.catchNotFound = err => {
-  if (err != null ? err.notFound : undefined) {
-  } else {
-    throw err
-  }
+  if (!(err && err.notFound)) throw err
 }
 
 Object.assign(error_, require('./pre_filled')(error_))

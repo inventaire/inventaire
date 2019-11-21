@@ -8,7 +8,7 @@ const User = __.require('models', 'user')
 
 module.exports = (req, res) => {
   const { usernames } = req.query
-  const reqUserId = req.user != null ? req.user._id : undefined
+  const reqUserId = req.user && req.user._id
 
   return promises_.try(parseAndValidateUsernames.bind(null, usernames))
   .then(user_.getUsersIndexByUsernames(reqUserId))
@@ -23,7 +23,7 @@ const parseAndValidateUsernames = usernames => {
 
   usernames = usernames.split('|')
 
-  if (((usernames != null ? usernames.length : undefined) > 0) && validUsersUsernames(usernames)) {
+  if (usernames && usernames.length > 0 && validUsersUsernames(usernames)) {
     return usernames
   } else {
     throw error_.newInvalid('usernames', usernames)

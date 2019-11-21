@@ -24,11 +24,11 @@ const filterOutIrrelevantTypes = result => {
     const entity = result.entities[uri]
     const { type } = entity
     const notTypeFound = (type == null)
-    if (notTypeFound) { _.warn(`not relevant type found, filtered out: ${uri}`) }
+    if (notTypeFound) _.warn(`not relevant type found, filtered out: ${uri}`)
     // /!\ At this point, entities given the type meta will look something like
     // { id: 'Q9232060', uri: 'wd:Q9232060', type: 'meta' }
     // Thus, you can't assume that entity.labels? or entity.claims? is true
-    if (notTypeFound || (type === 'meta')) { delete result.entities[uri] }
+    if (notTypeFound || type === 'meta') delete result.entities[uri]
   }
 
   return result

@@ -1,6 +1,5 @@
 // A module to listen for changes in a CouchDB database, and dispatch the change
 // event to all the subscribed followers
-
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
@@ -10,13 +9,13 @@ const follow = require('follow')
 const meta = __.require('lib', 'meta')
 const breq = require('bluereq')
 const dbHost = CONFIG.db.fullHost()
-let { reset: resetFollow, freeze: freezeFollow, delay: delayFollow } = CONFIG.db.follow
+const { reset: resetFollow, delay: delayFollow } = CONFIG.db.follow
 
 // Never follow in non-server mode.
 // This behaviors allows, in API tests environement, to have the tests server
 // following, while scripts being called directly by tests don't compete
 // with the server
-freezeFollow = freezeFollow || !CONFIG.serverMode
+const freezeFollow = CONFIG.db.follow.freezeFollow || !CONFIG.serverMode
 
 // filter and an onChange functions register, indexed per dbBaseNames
 const followers = {}
@@ -26,7 +25,7 @@ module.exports = params => {
   assert_.string(dbBaseName)
   assert_.function(filter)
   assert_.function(onChange)
-  if (reset != null) { assert_.function(reset) }
+  if (reset != null) assert_.function(reset)
 
   const dbName = CONFIG.db.name(dbBaseName)
 
@@ -35,7 +34,7 @@ module.exports = params => {
     return
   }
 
-  if (followers[dbName] != null) {
+  if (followers[dbName]) {
     // Add this follower to the exist db follower register
     return followers[dbName].push(params)
   } else {
@@ -56,7 +55,7 @@ module.exports = params => {
 }
 
 const initFollow = (dbName, reset) => (lastSeq = 0) => {
-  if (resetFollow) { lastSeq = 0 }
+  if (resetFollow) lastSeq = 0
   assert_.number(lastSeq)
 
   const setLastSeq = SetLastSeq(dbName)
@@ -79,7 +78,7 @@ const initFollow = (dbName, reset) => (lastSeq = 0) => {
 }
 
 const resetIfNeeded = (dbName, lastSeq, reset) => {
-  if ((lastSeq === 0) && (reset != null)) {
+  if (lastSeq === 0 && reset != null) {
     return reset()
   } else {
     return promises_.resolve()
@@ -113,8 +112,10 @@ const SetLastSeq = dbName => {
   // Creating a closure on dbName to underline that
   // this function shouldn't be shared between databases
   // as it could miss updates due to the debouncer
-  const setLastSeq = seq => meta.put(key, seq)
-  .catch(_.Error(`${dbName} setLastSeq err`))
+  const setLastSeq = seq => {
+    return meta.put(key, seq)
+    .catch(_.Error(`${dbName} setLastSeq err`))
+  }
   // setLastSeq might be triggered many times if a log of changes arrive at once
   // no need to write to the database at each times, just the last
   return _.debounce(setLastSeq, 1000)
@@ -122,6 +123,8 @@ const SetLastSeq = dbName => {
 
 const buildKey = dbName => `${dbName}-last-seq`
 
-const getDbLastSeq = dbUrl => breq.get(`${dbUrl}/_changes?limit=0&descending=true`)
-.get('body')
-.get('last_seq')
+const getDbLastSeq = dbUrl => {
+  return breq.get(`${dbUrl}/_changes?limit=0&descending=true`)
+  .get('body')
+  .get('last_seq')
+}

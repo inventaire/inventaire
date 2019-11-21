@@ -29,7 +29,7 @@ module.exports = {
     users = _.keyBy(users, '_id')
     return items.map(item => {
       const user = users[item.owner]
-      if (user != null) {
+      if (user) {
         item.href = `${host}/items/${item._id}`
         item.user = _.pick(user, requiredUserData)
         if ((user.position != null) && (position != null)) {

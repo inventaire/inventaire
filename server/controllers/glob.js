@@ -23,7 +23,7 @@ module.exports = {
   jsonRedirection: (req, res) => {
     const { pathname } = req._parsedUrl
     let [ domain, id ] = Array.from(pathname.split('/').slice(1))
-    id = id != null ? id.replace(/\.json$/, '') : undefined
+    id = id && id.replace(/\.json$/, '')
     const redirectionFn = redirections[domain]
 
     if (redirectionFn == null) {
@@ -57,5 +57,5 @@ const redirections = {
     }
   },
   items: id => `/api/items?action=by-ids&ids=${id}`
+  // transactions: id =>
 }
-// transactions: (id)->

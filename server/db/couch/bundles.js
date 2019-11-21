@@ -25,7 +25,7 @@ module.exports = (db, _) => {
 }
 
 const updateIdAndRev = (doc, couchRes) => {
-  if (!doc._id) { doc._id = couchRes.id }
+  if (!doc._id) doc._id = couchRes.id
   doc._rev = couchRes.rev
   return doc
 }

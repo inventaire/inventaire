@@ -6,7 +6,7 @@ const { buildSearcher } = __.require('lib', 'elasticsearch')
 
 module.exports = (req, res) => {
   const { query } = req
-  const search = query.search != null ? query.search.trim() : undefined
+  const search = query.search && query.search.trim()
 
   if (!_.isNonEmptyString(search)) {
     return error_.bundleInvalid(req, res, 'search', search)

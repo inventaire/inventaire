@@ -24,7 +24,7 @@ User._create = (username, email, creationStrategy, language, password) => {
   validations.pass('creationStrategy', creationStrategy)
 
   // it's ok to have an undefined language
-  if ((language != null) && !validations.language(language)) {
+  if (language && !validations.language(language)) {
     throw error_.newInvalid('language', language)
   }
 
@@ -52,8 +52,7 @@ User._create = (username, email, creationStrategy, language, password) => {
     }
   }
 
-  switch (creationStrategy) {
-  case 'local':
+  if (creationStrategy === 'local') {
     user.validEmail = false
     if (!validations.password(password)) {
       // Do NOT pass the password as context, as it would be logged
@@ -61,16 +60,17 @@ User._create = (username, email, creationStrategy, language, password) => {
       throw error_.new('invalid password', 400)
     }
     user.password = password
-    break
-  default:
+  } else {
     throw error_.new('unknown strategy', 400)
   }
 
   return user
 }
 
-User.create = (...args) => promises_.try(() => User._create.apply(null, args))
-.then(withHashedPassword)
+User.create = (...args) => {
+  return promises_.try(() => User._create.apply(null, args))
+  .then(withHashedPassword)
+}
 
 User.upgradeInvited = (invitedDoc, username, creationStrategy, language, password) => {
   const { email } = invitedDoc

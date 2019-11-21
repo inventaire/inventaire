@@ -9,7 +9,11 @@ const timespan = 3 * oneMonth
 
 module.exports = (name, endpoint, getQuery) => id => {
   const key = `${name}:author-works-titles:${id}`
-  return cache_.get({ key, fn: fetch.bind(null, endpoint, getQuery(id), id), timespan })
+  return cache_.get({
+    key,
+    fn: fetch.bind(null, endpoint, getQuery(id), id),
+    timespan
+  })
   .timeout(20000)
   .catch(err => {
     _.error(err, `${name} error fetching ${id}`)
@@ -26,7 +30,7 @@ const fetch = (endpoint, query) => {
   return requests_.get({ url, headers })
   .then(res => res.results.bindings
   .map(result => ({
-    title: (result.title != null ? result.title.value : undefined),
-    url: (result.work != null ? result.work.value : undefined)
+    title: result.title && result.title.value,
+    url: result.work && result.work.value
   })))
 }

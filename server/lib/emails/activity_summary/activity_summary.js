@@ -13,6 +13,8 @@ module.exports = () => {
   return setInterval(sendOneUserSummary, emailsInterval)
 }
 
-const sendOneUserSummary = () => user_.findOneWaitingForSummary()
-.then(sendActivitySummary)
-.catch(_.Error('waitingForSummary err'))
+const sendOneUserSummary = () => {
+  return user_.findOneWaitingForSummary()
+  .then(sendActivitySummary)
+  .catch(_.Error('waitingForSummary err'))
+}

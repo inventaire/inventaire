@@ -21,15 +21,17 @@ for (const dbName in dbsList) {
 
 const designDocFolder = __.path('couchdb', 'design_docs')
 
-module.exports = () => couchInit(dbBaseUrl, formattedList, designDocFolder)
-.tap(initHardCodedDocuments)
-.tap(initDesignDocSync)
-.catch(err => {
-  if (err.message !== 'CouchDB name or password is incorrect') throw err
+module.exports = () => {
+  return couchInit(dbBaseUrl, formattedList, designDocFolder)
+  .tap(initHardCodedDocuments)
+  .tap(initDesignDocSync)
+  .catch(err => {
+    if (err.message !== 'CouchDB name or password is incorrect') throw err
 
-  const context = _.pick(CONFIG.db, 'protocol', 'host', 'port', 'username', 'password')
-  // Avoid logging the password in plain text
-  context.password = _.obfuscate(context.password)
-  console.error(err.message, context)
-  return process.exit(1)
-})
+    const context = _.pick(CONFIG.db, 'protocol', 'host', 'port', 'username', 'password')
+    // Avoid logging the password in plain text
+    context.password = _.obfuscate(context.password)
+    console.error(err.message, context)
+    return process.exit(1)
+  })
+}

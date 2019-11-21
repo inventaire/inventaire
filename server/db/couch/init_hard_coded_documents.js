@@ -37,10 +37,7 @@ const updateDoc = (db, doc) => {
   })
   .catch(err => {
     // If the doc is missing, create it
-    if (err.statusCode === 404) {
-      return db.put(doc)
-    } else {
-      throw err
-    }
+    if (err.statusCode === 404) return db.put(doc)
+    else throw err
   })
 }

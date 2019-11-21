@@ -8,7 +8,6 @@ const parameters = require('./parameters')
 const { generics } = parameters
 
 module.exports = (req, res, configs) => Promise.try(() => {
-  let name
   assert_.object(req.query)
 
   const place = getPlace(req.method)
@@ -20,16 +19,16 @@ module.exports = (req, res, configs) => Promise.try(() => {
     throw error_.new(`${place} should be an object, got ${type}`, 400)
   }
 
-  for (name in input) {
+  for (const name in input) {
     removeUnexpectedParameter(input, name, configs, res)
   }
 
-  for (name in configs) {
+  for (const name in configs) {
     const config = configs[name]
     sanitizeParameter(input, name, config, place, res)
   }
 
-  if ((req.user != null ? req.user._id : undefined) != null) { input.reqUserId = req.user._id }
+  if (req.user) input.reqUserId = req.user._ids
 
   return input
 })
@@ -39,7 +38,7 @@ const sanitizeParameter = (input, name, config, place, res) => {
   const parameter = generic ? generics[generic] : parameters[name]
 
   if (parameter == null) {
-    if (generic != null) {
+    if (generic) {
       throw error_.new('invalid generic name', 500, { generic })
     } else {
       addWarning(res, `unexpected config parameter: ${name}`)
@@ -83,7 +82,7 @@ const removeUnexpectedParameter = (input, name, configs, res) => {
 }
 
 const format = (input, name, formatFn, config) => {
-  if (formatFn != null) input[name] = formatFn(input[name], name, config)
+  if (formatFn) input[name] = formatFn(input[name], name, config)
 }
 
 const applyDefaultValue = (input, name, config, parameter) => {
@@ -101,9 +100,9 @@ const obfuscateSecret = (parameter, err) => {
 const enforceBoundaries = (input, name, config, parameter, res) => {
   const min = config.min || parameter.min
   const max = config.max || parameter.max
-  if ((min != null) && (input[name] < min)) {
+  if (min != null && input[name] < min) {
     enforceBoundary(input, name, min, res, 'under')
-  } else if ((max != null) && (input[name] > max)) {
+  } else if (max != null && input[name] > max) {
     enforceBoundary(input, name, max, res, 'over')
   }
 }

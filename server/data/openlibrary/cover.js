@@ -7,15 +7,17 @@ const checkCoverExistance = require('./check_cover_existance')
 
 const { coverByOlId } = require('./api')
 
+const keyByType = {
+  human: 'a',
+  work: 'b',
+  edition: 'b'
+}
+
 module.exports = (openLibraryId, entityType) => {
-  let type
   if (!openLibraryId) return Promise.resolve(null)
 
-  switch (entityType) {
-  case 'human': type = 'a'; break
-  case 'work': case 'edition': type = 'b'; break
-  default: return Promise.resolve(null)
-  }
+  const type = keyByType[entityType]
+  if (!type) return Promise.resolve(null)
 
   const url = coverByOlId(openLibraryId, type)
 
@@ -23,11 +25,7 @@ module.exports = (openLibraryId, entityType) => {
   .then(_.Log('open library url found'))
   .then(url => ({
     url,
-
-    credits: {
-      text: 'OpenLibrary',
-      url
-    }
+    credits: { text: 'OpenLibrary', url }
   }))
   .catch(_.ErrorRethrow('get openlibrary cover err'))
 }

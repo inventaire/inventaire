@@ -4,7 +4,7 @@ const error_ = __.require('lib', 'error/error')
 
 module.exports = params => {
   let { updateFn, maxAttempts } = params
-  if (!maxAttempts) { maxAttempts = 10 }
+  if (!maxAttempts) maxAttempts = 10
   return (...args) => {
     const run = attemptsCount => {
       if (attemptsCount > maxAttempts) {

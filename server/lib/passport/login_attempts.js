@@ -13,11 +13,12 @@ module.exports = {
   _fails: () => fails,
   _flushFails: flushFails,
   recordFail: (username, label) => {
-    if (!fails[username]) { fails[username] = 0 }
+    if (!fails[username]) fails[username] = 0
     return ++fails[username]
   },
 
   tooMany: username => {
-    return (fails[username] != null) && (fails[username] >= attemptsLimit)
+    const userFails = fails[username]
+    return userFails != null && userFails >= attemptsLimit
   }
 }

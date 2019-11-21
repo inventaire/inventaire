@@ -10,7 +10,11 @@ module.exports = query => {
   const { search, refresh } = query
   assert_.string(search)
   const key = `wd:search:${search}`
-  return cache_.get({ key, fn: searchEntities.bind(null, search), refresh })
+  return cache_.get({
+    key,
+    fn: searchEntities.bind(null, search),
+    refresh
+  })
 }
 
 const searchEntities = search => {

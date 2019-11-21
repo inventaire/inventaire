@@ -19,7 +19,7 @@ module.exports = (req, res) => {
     lang: headers_.getLang(headers)
   })
 
-  return responses_.ok(res)
+  responses_.ok(res)
 }
 
 // In production, bots should be routed to use prerender

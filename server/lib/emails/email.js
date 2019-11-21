@@ -62,8 +62,8 @@ module.exports = {
     user2.href = `${host}/inventory/${user2.username}`
 
     let { bio } = user2
-    if (bio == null) { bio = '' }
-    if (bio.length > 200) { bio = `${bio.slice(0, 201)}...` }
+    if (bio == null) bio = ''
+    if (bio.length > 200) bio = `${bio.slice(0, 200)}...`
     user2.bio = bio
 
     if ((user1.position != null) && (user2.position != null)) {
@@ -103,10 +103,10 @@ module.exports = {
 
   feedback: (subject, message, user, unknownUser, uris, context) => {
     // no email settings to check here ;)
-    const username = (user != null ? user.username : undefined) || 'anonymous'
+    const username = (user && user.username) || 'anonymous'
     return {
       to: defaultFrom,
-      replyTo: (user != null ? user.email : undefined),
+      replyTo: user && user.email,
       subject: `[feedback][${username}] ${subject}`,
       template: 'feedback',
       context: { subject, message, user, unknownUser, uris, host, context }
@@ -199,4 +199,10 @@ const validateOptions = options => {
   return [ user1, user2 ]
 }
 
-const buildTokenUrl = (action, email, token) => _.buildPath(`${host}/api/token`, { action, email: qs.escape(email), token })
+const buildTokenUrl = (action, email, token) => {
+  return _.buildPath(`${host}/api/token`, {
+    action,
+    email: qs.escape(email),
+    token
+  })
+}

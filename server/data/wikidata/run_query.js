@@ -4,20 +4,21 @@ const cache_ = __.require('lib', 'cache')
 const error_ = __.require('lib', 'error/error')
 const wdk = require('wikidata-sdk')
 const makeSparqlRequest = require('./make_sparql_request')
-
 const queries = require('./queries/queries')
 const possibleQueries = Object.keys(queries)
+const dashesPattern = /-/g
 
 // Params:
 // - query: the name of the query to use from './queries/queries'
 // - refresh
 // - custom parameters: see the query file
 module.exports = params => {
-  let k, value
-  let { query: queryName, refresh, dry } = params
+  const { refresh, dry } = params
+  let { queryName } = params
 
   // Converting from kebab case to snake case
-  params.query = (queryName = queryName.replace(/-/g, '_'))
+  queryName = params.query = queryName.replace(dashesPattern, '_')
+
   if (!possibleQueries.includes(queryName)) {
     return error_.reject('unknown query', 400, params)
   }
@@ -26,8 +27,8 @@ module.exports = params => {
 
   // Every type of query should specify which parameters it needs
   // with keys matching parametersTests keys
-  for (k of parameters) {
-    value = params[k]
+  for (const k of parameters) {
+    const value = params[k]
     if ((parametersTests[k] != null) && !parametersTests[k](value)) {
       return error_.rejectInvalid(k, params)
     }
@@ -35,10 +36,10 @@ module.exports = params => {
 
   // Building the cache key
   let key = `wdQuery:${queryName}`
-  for (k of parameters) {
-    value = params[k]
+  for (const k of parameters) {
+    let value = params[k]
     // Known case: resolve_external_ids expects an array of [ property, value ] pairs
-    if (!_.isString(value)) { value = JSON.stringify(value) }
+    if (!_.isString(value)) value = JSON.stringify(value)
     key += `:${value}`
   }
 

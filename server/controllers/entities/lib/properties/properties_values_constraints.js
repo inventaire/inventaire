@@ -22,6 +22,13 @@ const builders = require('./properties_config_builders')
 // Make sure to not mutate the base, while letting the last word to the extension
 const extend = (base, extension) => Object.assign({}, base, extension)
 
+const __ = require('config').universalPath
+
+const {
+  PositiveInteger: positiveIntegerPattern,
+  StrictlyPositiveInteger: strictlyPositiveIntegerPattern
+} = __.require('lib', 'regex')
+
 // Keep in sync with ./properties_per_type
 module.exports = {
   // image
@@ -111,7 +118,7 @@ module.exports = {
   // BN (Argentine) editions
   'wdt:P1143': builders.externalId(/^\d{9}$/),
   // LIBRIS editions
-  'wdt:P1182': builders.externalId(/^[1-9]\d*$/),
+  'wdt:P1182': builders.externalId(strictlyPositiveIntegerPattern),
   // ISFDB title ID
   'wdt:P1274': builders.externalId(/^[1-9]\d{0,6}$/),
   // DNB editions
@@ -135,7 +142,7 @@ module.exports = {
   // Anime News Network company ID
   'wdt:P1983': builders.externalId(/^[1-9]\d{0,4}$/),
   // Anime News Network manga ID
-  'wdt:P1984': builders.externalId(/^[1-9]\d*$/),
+  'wdt:P1984': builders.externalId(strictlyPositiveIntegerPattern),
   // Twitter account
   'wdt:P2002': builders.externalId(/^\w{1,15}$/),
   // Instagram username
@@ -151,31 +158,31 @@ module.exports = {
   // author of afterword
   'wdt:P2680': bases.humanEntity,
   // GoodReads author ID
-  'wdt:P2963': builders.externalId(/^[1-9]\d*$/),
+  'wdt:P2963': builders.externalId(strictlyPositiveIntegerPattern),
   // GoodReads book ID
-  'wdt:P2969': builders.externalId(/^[1-9]\d*$/),
+  'wdt:P2969': builders.externalId(strictlyPositiveIntegerPattern),
   // ISBN publisher prefix
   'wdt:P3035': builders.externalId(/^97(8|9)-\d{1,5}-\d{2,7}$/),
   // Czech National Bibliography book ID
   'wdt:P3184': builders.externalId(/^cnb[0-9]{9}$/),
   // Babelio author ID
-  'wdt:P3630': builders.externalId(/^\d+$/),
+  'wdt:P3630': builders.externalId(positiveIntegerPattern),
   // Babelio work ID
-  'wdt:P3631': builders.externalId(/^\d+$/),
+  'wdt:P3631': builders.externalId(positiveIntegerPattern),
   // Mastodon address
   'wdt:P4033': builders.externalId(/^\w+@[a-z0-9.-]+[a-z0-9]+$/),
   // Theses.fr person ID
-  'wdt:P4285': builders.externalId(/^\d+$/),
+  'wdt:P4285': builders.externalId(positiveIntegerPattern),
   // MyAnimeList people ID
-  'wdt:P4084': builders.externalId(/^\d+$/),
+  'wdt:P4084': builders.externalId(positiveIntegerPattern),
   // MyAnimeList manga ID
-  'wdt:P4087': builders.externalId(/^\d+$/),
+  'wdt:P4087': builders.externalId(positiveIntegerPattern),
   // BNB person ID
   'wdt:P5361': builders.externalId(/^[^ ?.=]{2,80}$/),
   // OCLC work ID
-  'wdt:P5331': builders.externalId(/^[1-9]\d*$/),
+  'wdt:P5331': builders.externalId(strictlyPositiveIntegerPattern),
   // NooSFere book ID
-  'wdt:P5571': builders.externalId(/^[1-9]\d*$/),
+  'wdt:P5571': builders.externalId(strictlyPositiveIntegerPattern),
   // Librarything author ID
   'wdt:P7400': builders.externalId(/^[^\s/]+$/)
 }
