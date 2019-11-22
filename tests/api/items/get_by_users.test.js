@@ -8,11 +8,13 @@ const { createItem } = require('../fixtures/items')
 describe('items:get-by-users', () => {
   it('should get an item by id', done => {
     createItem(getUser())
-    .then(item => authReq('get', `/api/items?action=by-users&users=${item.owner}`)
-    .then(res => {
-      res.items[0]._id.should.equal(item._id)
-      done()
-    }))
+    .then(item => {
+      return authReq('get', `/api/items?action=by-users&users=${item.owner}`)
+      .then(res => {
+        res.items[0]._id.should.equal(item._id)
+        done()
+      })
+    })
     .catch(undesiredErr(done))
   })
 

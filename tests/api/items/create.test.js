@@ -86,24 +86,30 @@ describe('items:create', () => {
         'wdt:P1476': [ title ]
       }
     })
-    .then(() => authReq('post', '/api/items', { entity: 'isbn:9782253138938' })
-    .then(item => {
-      item.snapshot.should.be.an.Object()
-      item.snapshot['entity:title'].should.equal(title)
-      done()
-    }))
+    .then(() => {
+      return authReq('post', '/api/items', { entity: 'isbn:9782253138938' })
+      .then(item => {
+        item.snapshot.should.be.an.Object()
+        item.snapshot['entity:title'].should.equal(title)
+        done()
+      })
+    })
     .catch(undesiredErr(done))
   })
 
   it('should deduce the author from a work entity', done => {
     createHuman()
-    .then(author => createWorkWithAuthor(author)
-    .then(workEntity => authReq('post', '/api/items', { entity: workEntity.uri, lang: 'en' })
-    .then(item => {
-      item.snapshot.should.be.an.Object()
-      item.snapshot['entity:authors'].should.equal(author.labels.en)
-      done()
-    })))
+    .then(author => {
+      return createWorkWithAuthor(author)
+      .then(workEntity => {
+        return authReq('post', '/api/items', { entity: workEntity.uri, lang: 'en' })
+        .then(item => {
+          item.snapshot.should.be.an.Object()
+          item.snapshot['entity:authors'].should.equal(author.labels.en)
+          done()
+        })
+      })
+    })
     .catch(undesiredErr(done))
   })
 
@@ -116,19 +122,21 @@ describe('items:create', () => {
         'wdt:P1476': [ 'The Road to Character' ]
       }
     })
-    .then(edition => Promise.all([
-      getEntitiesByUris(edition.uri, 'wdt:P629|wdt:P50').get('entities'),
-      authReq('post', '/api/items', { entity: 'isbn:9780812993257' })
-    ])
-    .spread((entities, item) => {
-      edition = entities[edition.uri]
-      const work = entities[edition.claims['wdt:P629'][0]]
-      const author = entities[work.claims['wdt:P50'][0]]
-      const authorLabel = _.values(author.labels)[0]
-      item.snapshot.should.be.an.Object()
-      item.snapshot['entity:authors'].should.equal(authorLabel)
-      done()
-    }))
+    .then(edition => {
+      return Promise.all([
+        getEntitiesByUris(edition.uri, 'wdt:P629|wdt:P50').get('entities'),
+        authReq('post', '/api/items', { entity: 'isbn:9780812993257' })
+      ])
+      .spread((entities, item) => {
+        edition = entities[edition.uri]
+        const work = entities[edition.claims['wdt:P629'][0]]
+        const author = entities[work.claims['wdt:P50'][0]]
+        const authorLabel = _.values(author.labels)[0]
+        item.snapshot.should.be.an.Object()
+        item.snapshot['entity:authors'].should.equal(authorLabel)
+        done()
+      })
+    })
     .catch(undesiredErr(done))
   })
 

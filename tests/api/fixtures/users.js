@@ -11,11 +11,13 @@ const randomString = __.require('lib', './utils/random_string')
 
 const connect = (endpoint, userData) => rawRequest('post', { url: endpoint, body: userData })
 const signup = userData => connect(`${authEndpoint}?action=signup`, userData)
-const login = userData => connect(`${authEndpoint}?action=login`, userData)
-.catch(err => {
-  if (err.statusCode !== 401) throw err
-  return signup(userData)
-})
+const login = userData => {
+  return connect(`${authEndpoint}?action=login`, userData)
+  .catch(err => {
+    if (err.statusCode !== 401) throw err
+    return signup(userData)
+  })
+}
 
 const API = module.exports = {
   signup: email => {
@@ -36,7 +38,7 @@ const API = module.exports = {
 
     // Try to login first if the username is given, as a user with this username
     // might still exist if the database wasn't reset since the last test session
-    const authPromise = (username != null) ? login(userData) : signup(userData)
+    const authPromise = username ? login(userData) : signup(userData)
 
     return authPromise
     .then(parseCookie)

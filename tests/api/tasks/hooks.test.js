@@ -87,24 +87,26 @@ describe('tasks:hooks', () => {
         createHuman({ labels: { en: 'Fred Vargas' } }),
         createHuman({ labels: { en: 'Fred Vargas' } })
       ])
-      .spread((humanA, humanB) => Promise.all([
-        createWorkWithAuthor(humanA),
-        createWorkWithAuthor(humanB),
-        checkEntities(humanA.uri),
-        checkEntities(humanB.uri)
-      ])
-      .delay(100)
-      .spread((workA, workB, tasksA, tasksB) => {
-        tasksA.length.should.be.aboveOrEqual(1)
-        tasksB.length.should.be.aboveOrEqual(1)
-        return merge(workA.uri, workB.uri)
+      .spread((humanA, humanB) => {
+        return Promise.all([
+          createWorkWithAuthor(humanA),
+          createWorkWithAuthor(humanB),
+          checkEntities(humanA.uri),
+          checkEntities(humanB.uri)
+        ])
         .delay(100)
-        .then(() => getByIds(tasksA[0]._id))
-        .then(remainingTasks => {
-          remainingTasks[0].state.should.equal('merged')
-          done()
+        .spread((workA, workB, tasksA, tasksB) => {
+          tasksA.length.should.be.aboveOrEqual(1)
+          tasksB.length.should.be.aboveOrEqual(1)
+          return merge(workA.uri, workB.uri)
+          .delay(100)
+          .then(() => getByIds(tasksA[0]._id))
+          .then(remainingTasks => {
+            remainingTasks[0].state.should.equal('merged')
+            done()
+          })
         })
-      }))
+      })
       .catch(done)
     })
   })

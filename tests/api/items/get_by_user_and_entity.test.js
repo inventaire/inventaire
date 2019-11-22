@@ -12,16 +12,18 @@ const endpoint = '/api/items?action=by-user-and-entity'
 describe('items:get-by-user-and-entity', () => {
   it('should get an item by its owner id and entity uri', done => {
     createItem(getUser())
-    .then(item => authReq('get', `${endpoint}&user=${item.owner}&uri=${item.entity}`)
-    .then(res => {
-      const itemsIds = _.map(res.items, '_id')
-      itemsIds.includes(item._id).should.be.true()
-      for (const resItem of res.items) {
-        resItem.entity.should.equal(item.entity)
-        resItem.owner.should.equal(item.owner)
-      }
-      done()
-    }))
+    .then(item => {
+      return authReq('get', `${endpoint}&user=${item.owner}&uri=${item.entity}`)
+      .then(res => {
+        const itemsIds = _.map(res.items, '_id')
+        itemsIds.includes(item._id).should.be.true()
+        for (const resItem of res.items) {
+          resItem.entity.should.equal(item.entity)
+          resItem.owner.should.equal(item.owner)
+        }
+        done()
+      })
+    })
     .catch(undesiredErr(done))
   })
 
@@ -47,13 +49,15 @@ describe('items:get-by-user-and-entity', () => {
     .then(itemA => {
       const uri = itemA.entity
       return createItem(getUser(), { entity: uri })
-      .then(itemB => authReq('get', `${endpoint}&user=${itemA.owner}&uri=${uri}`)
-      .then(res => {
-        const itemsIds = [ itemA._id, itemB._id ]
-        const resItemsIds = _.map(res.items, '_id')
-        resItemsIds.should.containDeep(itemsIds)
-        done()
-      }))
+      .then(itemB => {
+        return authReq('get', `${endpoint}&user=${itemA.owner}&uri=${uri}`)
+        .then(res => {
+          const itemsIds = [ itemA._id, itemB._id ]
+          const resItemsIds = _.map(res.items, '_id')
+          resItemsIds.should.containDeep(itemsIds)
+          done()
+        })
+      })
     })
     .catch(undesiredErr(done))
   })

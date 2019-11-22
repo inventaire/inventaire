@@ -143,9 +143,7 @@ describe('sanitize', () => {
     it('should clone default values', done => {
       const req = { query: {} }
       const res = {}
-
       const obj = {}
-
       const configs = {
         foo: {
           generic: 'object',

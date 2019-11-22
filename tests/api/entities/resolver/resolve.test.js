@@ -221,17 +221,19 @@ describe('entities:resolve:external-id', () => {
     createWork()
     .tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsId))
     .delay(10)
-    .then(work => resolve({
-      edition: { isbn: generateIsbn13() },
-      works: [ { claims: { 'wdt:P2969': [ goodReadsId ] } } ]
+    .then(work => {
+      return resolve({
+        edition: { isbn: generateIsbn13() },
+        works: [ { claims: { 'wdt:P2969': [ goodReadsId ] } } ]
+      })
+      .get('entries')
+      .then(entries => {
+        entries[0].works.should.be.an.Array()
+        entries[0].works[0].should.be.an.Object()
+        entries[0].works[0].uri.should.equal(work.uri)
+        done()
+      })
     })
-    .get('entries')
-    .then(entries => {
-      entries[0].works.should.be.an.Array()
-      entries[0].works[0].should.be.an.Object()
-      entries[0].works[0].uri.should.equal(work.uri)
-      done()
-    }))
     .catch(done)
   })
 
@@ -261,17 +263,19 @@ describe('entities:resolve:external-id', () => {
     .delay(10)
     .tap(author => addClaim(author.uri, 'wdt:P2963', goodReadsId))
     .delay(10)
-    .then(author => resolve({
-      edition: { isbn: generateIsbn13() },
-      authors: [ { claims: { 'wdt:P2963': [ goodReadsId ] } } ]
+    .then(author => {
+      return resolve({
+        edition: { isbn: generateIsbn13() },
+        authors: [ { claims: { 'wdt:P2963': [ goodReadsId ] } } ]
+      })
+      .get('entries')
+      .then(entries => {
+        entries[0].authors.should.be.an.Array()
+        entries[0].authors[0].should.be.an.Object()
+        entries[0].authors[0].uri.should.equal(author.uri)
+        done()
+      })
     })
-    .get('entries')
-    .then(entries => {
-      entries[0].authors.should.be.an.Array()
-      entries[0].authors[0].should.be.an.Object()
-      entries[0].authors[0].uri.should.equal(author.uri)
-      done()
-    }))
     .catch(done)
   })
 })
@@ -285,20 +289,24 @@ describe('entities:resolve:in-context', () => {
     .delay(10)
     .tap(author => addClaim(author.uri, 'wdt:P2963', goodReadsId))
     .delay(10)
-    .then(author => Promise.all([
-      createWorkWithAuthor(author, missingWorkLabel),
-      createWorkWithAuthor(author, otherWorkLabel)
-    ])
-    .spread((work, otherWork) => resolve({
-      edition: { isbn: generateIsbn13() },
-      works: [ { labels: { en: missingWorkLabel } } ],
-      authors: [ { claims: { 'wdt:P2963': [ goodReadsId ] } } ]
+    .then(author => {
+      return Promise.all([
+        createWorkWithAuthor(author, missingWorkLabel),
+        createWorkWithAuthor(author, otherWorkLabel)
+      ])
+      .spread((work, otherWork) => {
+        return resolve({
+          edition: { isbn: generateIsbn13() },
+          works: [ { labels: { en: missingWorkLabel } } ],
+          authors: [ { claims: { 'wdt:P2963': [ goodReadsId ] } } ]
+        })
+        .get('entries')
+        .then(entries => {
+          should(entries[0].works[0].uri).be.ok()
+          done()
+        })
+      })
     })
-    .get('entries')
-    .then(entries => {
-      should(entries[0].works[0].uri).be.ok()
-      done()
-    })))
     .catch(done)
   })
 
@@ -326,23 +334,25 @@ describe('entities:resolve:in-context', () => {
     .delay(10)
     .tap(author => addClaim(author.uri, 'wdt:P2963', goodReadsId))
     .delay(10)
-    .then(author => Promise.all([
-      createWorkWithAuthor(author, workLabel),
-      createWorkWithAuthor(author, workLabel)
-    ])
-    .spread((work, otherWork) => {
-      const entry = {
-        edition: { isbn: generateIsbn13() },
-        works: [ { labels: { en: workLabel } } ],
-        authors: [ { claims: { 'wdt:P2963': [ goodReadsId ] } } ]
-      }
-      return resolve(entry)
-      .get('entries')
-      .then(entries => {
-        should(entries[0].works[0].uri).not.be.ok()
-        done()
+    .then(author => {
+      return Promise.all([
+        createWorkWithAuthor(author, workLabel),
+        createWorkWithAuthor(author, workLabel)
+      ])
+      .spread((work, otherWork) => {
+        const entry = {
+          edition: { isbn: generateIsbn13() },
+          works: [ { labels: { en: workLabel } } ],
+          authors: [ { claims: { 'wdt:P2963': [ goodReadsId ] } } ]
+        }
+        return resolve(entry)
+        .get('entries')
+        .then(entries => {
+          should(entries[0].works[0].uri).not.be.ok()
+          done()
+        })
       })
-    }))
+    })
     .catch(done)
   })
 
@@ -351,55 +361,61 @@ describe('entities:resolve:in-context', () => {
     const workLabel = randomLabel()
     createHuman()
     .delay(10)
-    .then(author => createWorkWithAuthor(author, workLabel)
-    .tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsId))
-    .then(work => {
-      const entry = {
-        edition: { isbn: generateIsbn13() },
-        works: [ { claims: { 'wdt:P2969': [ goodReadsId ] } } ],
-        authors: [ { labels: author.labels } ]
-      }
-      return resolve(entry)
-      .get('entries')
-      .then(entries => {
-        should(entries[0].works[0].uri).be.ok()
-        should(entries[0].authors[0].uri).be.ok()
-        done()
+    .then(author => {
+      return createWorkWithAuthor(author, workLabel)
+      .tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsId))
+      .then(work => {
+        const entry = {
+          edition: { isbn: generateIsbn13() },
+          works: [ { claims: { 'wdt:P2969': [ goodReadsId ] } } ],
+          authors: [ { labels: author.labels } ]
+        }
+        return resolve(entry)
+        .get('entries')
+        .then(entries => {
+          should(entries[0].works[0].uri).be.ok()
+          should(entries[0].authors[0].uri).be.ok()
+          done()
+        })
       })
-    }))
+    })
     .catch(done)
   })
 
   it('should resolve work from resolve edition', done => {
     const isbn = generateIsbn13()
     ensureEditionExists(`isbn:${isbn}`)
-    .then(edition => getByUri(edition.claims['wdt:P629'][0])
-    .then(work => {
-      const { labels } = work
-      return resolve({
-        edition: { isbn },
-        works: [ { labels } ]
+    .then(edition => {
+      return getByUri(edition.claims['wdt:P629'][0])
+      .then(work => {
+        const { labels } = work
+        return resolve({
+          edition: { isbn },
+          works: [ { labels } ]
+        })
+        .then(res => {
+          res.entries[0].works[0].uri.should.equal(work.uri)
+          done()
+        })
       })
-      .then(res => {
-        res.entries[0].works[0].uri.should.equal(work.uri)
-        done()
-      })
-    }))
+    })
     .catch(done)
   })
 
   it('should ignore unresolved work from resolve edition', done => {
     const isbn = generateIsbn13()
     ensureEditionExists(`isbn:${isbn}`)
-    .then(edition => resolve({
-      edition: { isbn },
-      works: [ { labels: { en: randomLabel() } } ]
+    .then(edition => {
+      return resolve({
+        edition: { isbn },
+        works: [ { labels: { en: randomLabel() } } ]
+      })
+      .then(res => {
+        const entry = res.entries[0]
+        entry.works[0].resolved.should.be.false()
+        done()
+      })
     })
-    .then(res => {
-      const entry = res.entries[0]
-      entry.works[0].resolved.should.be.false()
-      done()
-    }))
     .catch(done)
   })
 })
@@ -413,12 +429,14 @@ describe('entities:resolve:on-labels', () => {
       const authorLabel = author.labels.en
       return createWorkWithAuthor(author, workLabel)
       .delay(elasticsearchUpdateDelay)
-      .then(work => resolve(basicEntry(seedLabel, authorLabel))
-      .get('entries')
-      .then(entries => {
-        should(entries[0].works[0].uri).not.be.ok()
-        done()
-      }))
+      .then(work => {
+        return resolve(basicEntry(seedLabel, authorLabel))
+        .get('entries')
+        .then(entries => {
+          should(entries[0].works[0].uri).not.be.ok()
+          done()
+        })
+      })
     })
     .catch(done)
   })
@@ -430,13 +448,15 @@ describe('entities:resolve:on-labels', () => {
       const authorLabel = author.labels.en
       return createWorkWithAuthor(author, workLabel)
       .delay(elasticsearchUpdateDelay)
-      .then(work => resolve(basicEntry(workLabel, authorLabel))
-      .get('entries')
-      .then(entries => {
-        entries[0].works[0].uri.should.equal(work.uri)
-        entries[0].authors[0].uri.should.equal(author.uri)
-        done()
-      }))
+      .then(work => {
+        return resolve(basicEntry(workLabel, authorLabel))
+        .get('entries')
+        .then(entries => {
+          entries[0].works[0].uri.should.equal(work.uri)
+          entries[0].authors[0].uri.should.equal(author.uri)
+          done()
+        })
+      })
     })
     .catch(done)
   })
@@ -449,35 +469,41 @@ describe('entities:resolve:on-labels', () => {
       const authorLabel = author.labels.en
       return createWorkWithAuthor(author, workLabel)
       .delay(elasticsearchUpdateDelay)
-      .then(work => resolve(basicEntry(seedLabel, authorLabel))
-      .get('entries')
-      .then(entries => {
-        entries[0].works[0].uri.should.equal(work.uri)
-        entries[0].authors[0].uri.should.equal(author.uri)
-        done()
-      }))
+      .then(work => {
+        return resolve(basicEntry(seedLabel, authorLabel))
+        .get('entries')
+        .then(entries => {
+          entries[0].works[0].uri.should.equal(work.uri)
+          entries[0].authors[0].uri.should.equal(author.uri)
+          done()
+        })
+      })
     })
     .catch(done)
   })
 
   it('should not resolve when several works exist', done => {
     createHuman()
-    .then(author => createHuman({ labels: author.labels })
-    .then(sameLabelAuthor => {
-      const workLabel = randomLabel()
-      return Promise.all([
-        createWorkWithAuthor(author, workLabel),
-        createWorkWithAuthor(sameLabelAuthor, workLabel)
-      ])
-      .delay(elasticsearchUpdateDelay)
-      .then(works => resolve(basicEntry(workLabel, author.labels.en))
-      .get('entries')
-      .then(entries => {
-        should(entries[0].works[0].uri).not.be.ok()
-        should(entries[0].authors[0].uri).not.be.ok()
-        done()
-      }))
-    }))
+    .then(author => {
+      return createHuman({ labels: author.labels })
+      .then(sameLabelAuthor => {
+        const workLabel = randomLabel()
+        return Promise.all([
+          createWorkWithAuthor(author, workLabel),
+          createWorkWithAuthor(sameLabelAuthor, workLabel)
+        ])
+        .delay(elasticsearchUpdateDelay)
+        .then(works => {
+          return resolve(basicEntry(workLabel, author.labels.en))
+          .get('entries')
+          .then(entries => {
+            should(entries[0].works[0].uri).not.be.ok()
+            should(entries[0].authors[0].uri).not.be.ok()
+            done()
+          })
+        })
+      })
+    })
     .catch(done)
   })
 })

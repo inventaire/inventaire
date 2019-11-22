@@ -47,35 +47,35 @@ const authorDoc = {
 describe('patch', () => {
   describe('create', () => {
     it('should throw if passed an invalid user id', done => {
-      ((() => Patch.create({ userId: 'invalid user id', currentDoc, updatedDoc })))
+      (() => Patch.create({ userId: 'invalid user id', currentDoc, updatedDoc }))
       .should.throw()
       done()
     })
 
     it('should throw if passed identical objects', done => {
-      ((() => Patch.create({ userId, currentDoc, updatedDoc: currentDoc })))
+      (() => Patch.create({ userId, currentDoc, updatedDoc: currentDoc }))
       .should.throw()
       done()
     })
 
     it('should throw if there are no changes', done => {
       const docClone = _.cloneDeep(currentDoc);
-      ((() => Patch.create({ userId, currentDoc, updatedDoc: docClone })))
+      (() => Patch.create({ userId, currentDoc, updatedDoc: docClone }))
       .should.throw()
       done()
     })
 
     it('should throw if passed an updated doc without id', done => {
       const invalidDoc = Object.assign({}, updatedDoc, { _id: 'invalid id' });
-      ((() => Patch.create({ userId, currentDoc, updatedDoc: invalidDoc })))
+      (() => Patch.create({ userId, currentDoc, updatedDoc: invalidDoc }))
       .should.throw()
       done()
     })
 
     it('should throw if passed an invalid doc object', done => {
-      ((() => Patch.create({ userId, currentDoc: 'not an object', updatedDoc })))
+      (() => Patch.create({ userId, currentDoc: 'not an object', updatedDoc }))
       .should.throw();
-      ((() => Patch.create({ userId, currentDoc, updatedDoc: 'not an object' })))
+      (() => Patch.create({ userId, currentDoc, updatedDoc: 'not an object' }))
       .should.throw()
       done()
     })

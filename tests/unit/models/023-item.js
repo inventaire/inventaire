@@ -30,17 +30,19 @@ describe('item model', () => {
 
     it('should throw when passed invalid attributes', done => {
       const item = extendItem({ authors: 'Joanne K. Rowling' });
-      ((() => create(item))).should.throw()
+      (() => create(item)).should.throw()
       const item2 = extendItem({ updated: Date.now() });
-      ((() => create(item2))).should.throw()
+      (() => create(item2)).should.throw()
       done()
     })
 
-    describe('id', () => it('should return an object without id', done => {
-      const item = create(validItem)
-      should(item._id).not.be.ok()
-      done()
-    }))
+    describe('id', () => {
+      it('should return an object without id', done => {
+        const item = create(validItem)
+        should(item._id).not.be.ok()
+        done()
+      })
+    })
 
     describe('entity', () => {
       it('should return an object with a entity', done => {
@@ -50,7 +52,7 @@ describe('item model', () => {
       })
 
       it('should throw on missing entity', done => {
-        ((() => create(extendItem({ entity: null })))).should.throw()
+        (() => create(extendItem({ entity: null }))).should.throw()
         done()
       })
     })
@@ -109,32 +111,34 @@ describe('item model', () => {
       })
     })
 
-    describe('created', () => it('should return an object with a created time', done => {
-      const item = create(validItem)
-      _.expired(item.created, 100).should.be.false()
-      done()
-    }))
+    describe('created', () => {
+      it('should return an object with a created time', done => {
+        const item = create(validItem)
+        _.expired(item.created, 100).should.be.false()
+        done()
+      })
+    })
   })
 
   describe('update', () => {
     it('should not throw when updated with a valid attribute', done => {
       const doc = create(validItem)
       const updateAttributesData = { listing: 'private' };
-      ((() => update(updateAttributesData, doc))).should.not.throw()
+      (() => update(updateAttributesData, doc)).should.not.throw()
       done()
     })
 
     it('should throw when updated with an invalid attribute', done => {
       const doc = create(validItem)
       const updateAttributesData = { foo: '123' };
-      ((() => update(updateAttributesData, doc))).should.throw('invalid attribute: foo')
+      (() => update(updateAttributesData, doc)).should.throw('invalid attribute: foo')
       done()
     })
 
     it('should throw when updated with an invalid attribute value', done => {
       const doc = create(validItem)
       const updateAttributesData = { listing: 'chocolat' };
-      ((() => update(updateAttributesData, doc))).should.throw()
+      (() => update(updateAttributesData, doc)).should.throw()
       done()
     })
   })

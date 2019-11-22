@@ -34,11 +34,13 @@ describe('entities:get:by-uris', () => {
 
   it('should accept inventaire uri', done => {
     workWithAuthorPromise
-    .then(work => getByUris(work.uri)
-    .then(res => {
-      res.entities[work.uri].should.be.an.Object()
-      done()
-    }))
+    .then(work => {
+      return getByUris(work.uri)
+      .then(res => {
+        res.entities[work.uri].should.be.an.Object()
+        done()
+      })
+    })
     .catch(undesiredErr(done))
   })
 
@@ -54,17 +56,21 @@ describe('entities:get:by-uris', () => {
 
   it('should return redirected uris', done => {
     Promise.all([ createHuman(), createHuman() ])
-    .spread((humanA, humanB) => merge(humanA.uri, humanB.uri)
-    .then(() => getByUris(humanA.uri))
-    .then(res => {
-      Object.keys(res.entities).length.should.equal(1)
-      res.entities[humanB.uri].should.be.an.Object()
-      res.entities[humanB.uri].uri.should.equal(humanB.uri)
-      res.redirects[humanA.uri].should.equal(humanB.uri)
-      should(res.notFound).not.be.ok()
-      done()
-    }))
-    .catch(undesiredErr(done))
+    .spread((humanA, humanB) => {
+      return merge(humanA.uri, humanB.uri)
+      .then(() => {
+        return getByUris(humanA.uri)
+        .then(res => {
+          Object.keys(res.entities).length.should.equal(1)
+          res.entities[humanB.uri].should.be.an.Object()
+          res.entities[humanB.uri].uri.should.equal(humanB.uri)
+          res.redirects[humanA.uri].should.equal(humanB.uri)
+          should(res.notFound).not.be.ok()
+          done()
+        })
+      })
+      .catch(undesiredErr(done))
+    })
   })
 
   it('should accept wikidata uri', done => {
@@ -125,25 +131,27 @@ describe('entities:get:by-uris', () => {
     it('should be able to include the works, authors, and series of an edition', done => {
       createEditionWithWorkAuthorAndSerie()
       .get('uri')
-      .then(editionUri => getByUris(editionUri, 'wdt:P50|wdt:P179|wdt:P629')
-      .then(res => {
-        const edition = res.entities[editionUri]
-        edition.should.be.an.Object()
+      .then(editionUri => {
+        return getByUris(editionUri, 'wdt:P50|wdt:P179|wdt:P629')
+        .then(res => {
+          const edition = res.entities[editionUri]
+          edition.should.be.an.Object()
 
-        const workUri = edition.claims['wdt:P629'][0]
-        const work = res.entities[workUri]
-        work.should.be.an.Object()
+          const workUri = edition.claims['wdt:P629'][0]
+          const work = res.entities[workUri]
+          work.should.be.an.Object()
 
-        const authorUri = work.claims['wdt:P50'][0]
-        const author = res.entities[authorUri]
-        author.should.be.an.Object()
+          const authorUri = work.claims['wdt:P50'][0]
+          const author = res.entities[authorUri]
+          author.should.be.an.Object()
 
-        const serieUri = work.claims['wdt:P179'][0]
-        const serie = res.entities[serieUri]
-        serie.should.be.an.Object()
+          const serieUri = work.claims['wdt:P179'][0]
+          const serie = res.entities[serieUri]
+          serie.should.be.an.Object()
 
-        done()
-      }))
+          done()
+        })
+      })
       .catch(undesiredErr(done))
     })
   })

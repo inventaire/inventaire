@@ -32,11 +32,13 @@ describe('tasks:byScore', () => {
   it('should take an offset parameter', done => {
     createSomeTasks('Gilbert Simondon')
     .then(getByScore)
-    .then(tasksA => getByScore({ offset: 1 })
-    .then(tasksB => {
-      tasksA[1].should.deepEqual(tasksB[0])
-      done()
-    }))
+    .then(tasksA => {
+      return getByScore({ offset: 1 })
+      .then(tasksB => {
+        tasksA[1].should.deepEqual(tasksB[0])
+        done()
+      })
+    })
     .catch(undesiredErr(done))
   })
 
@@ -45,19 +47,21 @@ describe('tasks:byScore', () => {
     const workLabel = 'Solaris' // too short label to be automerged
     createSomeTasks('Gilbert Simondon')
     .then(() => createHuman({ labels: { en: humanLabel } }))
-    .then(human => createWorkWithAuthor(human, workLabel)
-    .then(work => checkEntities(human.uri))
-    .then(() => getByScore())
-    .then(tasks => {
-      tasks.forEach((task, i) => {
-        const previousTask = tasks[i - 1]
-        if (previousTask == null) return
-        const prevOccurrencesCount = previousTask.externalSourcesOccurrences.length
-        const occurrencesCount = task.externalSourcesOccurrences.length
-        return prevOccurrencesCount.should.be.aboveOrEqual(occurrencesCount)
+    .then(human => {
+      return createWorkWithAuthor(human, workLabel)
+      .then(work => checkEntities(human.uri))
+      .then(() => getByScore())
+      .then(tasks => {
+        tasks.forEach((task, i) => {
+          const previousTask = tasks[i - 1]
+          if (previousTask == null) return
+          const prevOccurrencesCount = previousTask.externalSourcesOccurrences.length
+          const occurrencesCount = task.externalSourcesOccurrences.length
+          return prevOccurrencesCount.should.be.aboveOrEqual(occurrencesCount)
+        })
+        done()
       })
-      done()
-    }))
+    })
     .catch(undesiredErr(done))
   })
 })
@@ -112,14 +116,16 @@ describe('tasks:bySuggestionUris', () => {
   it('should return an array of tasks', done => {
     const uri = 'wd:Q1345582'
     createSomeTasks('Gilbert Simondon')
-    .then(res => getBySuggestionUris(uri)
-    .then(tasks => {
-      tasks.should.be.an.Object()
-      Object.keys(tasks).length.should.equal(1)
-      tasks[uri].should.be.an.Array()
-      tasks[uri][0].should.be.an.Object()
-      done()
-    }))
+    .then(res => {
+      return getBySuggestionUris(uri)
+      .then(tasks => {
+        tasks.should.be.an.Object()
+        Object.keys(tasks).length.should.equal(1)
+        tasks[uri].should.be.an.Array()
+        tasks[uri][0].should.be.an.Object()
+        done()
+      })
+    })
     .catch(undesiredErr(done))
   })
 

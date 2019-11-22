@@ -27,13 +27,13 @@ describe('user model', () => {
   describe('creation strategy', () => {
     it('should throw on missing strategy', done => {
       const args = replaceParam(2, null);
-      ((() => _create(args))).should.throw()
+      (() => _create(args)).should.throw()
       done()
     })
 
     it('should throw on invalid strategy', done => {
       const args = replaceParam(2, 'flower!');
-      ((() => _create(args))).should.throw()
+      (() => _create(args)).should.throw()
       done()
     })
   })
@@ -48,19 +48,19 @@ describe('user model', () => {
     describe('username validation', () => {
       it('should throw on empty username', done => {
         const args = replaceParam(0, '');
-        ((() => _create(args))).should.throw()
+        (() => _create(args)).should.throw()
         done()
       })
 
       it('should throw on username with space', done => {
         const args = replaceParam(0, 'with space');
-        ((() => _create(args))).should.throw()
+        (() => _create(args)).should.throw()
         done()
       })
 
       it('should throw on username with special characters', done => {
         const args = replaceParam(0, 'with$special%characters');
-        ((() => _create(args))).should.throw()
+        (() => _create(args)).should.throw()
         done()
       })
     })
@@ -68,13 +68,13 @@ describe('user model', () => {
     describe('email validation', () => {
       it('should throw on invalid email', done => {
         const args = replaceParam(1, 'notanemail');
-        ((() => _create(args))).should.throw()
+        (() => _create(args)).should.throw()
         done()
       })
 
       it('should throw on missing domain', done => {
         const args = replaceParam(1, 'morelike@anemailbutno');
-        ((() => _create(args))).should.throw()
+        (() => _create(args)).should.throw()
         done()
       })
     })
@@ -82,13 +82,13 @@ describe('user model', () => {
     describe('language validation', () => {
       it('should throw on invalid language', done => {
         const args = replaceParam(3, 'badlang');
-        ((() => _create(args))).should.throw()
+        (() => _create(args)).should.throw()
         done()
       })
 
       it('should not throw on missing language', done => {
         const args = replaceParam(3, undefined);
-        ((() => _create(args))).should.not.throw()
+        (() => _create(args)).should.not.throw()
         done()
       })
     })
@@ -96,14 +96,14 @@ describe('user model', () => {
     describe('password validation', () => {
       it('should throw on passwords too short', done => {
         const args = replaceParam(4, 'shortpw');
-        ((() => _create(args))).should.throw()
+        (() => _create(args)).should.throw()
         done()
       })
 
       it('should throw on passwords too long', done => {
         const tooLongPassword = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ].join('hellohellohello')
         const args = replaceParam(4, tooLongPassword);
-        ((() => _create(args))).should.throw()
+        (() => _create(args)).should.throw()
         done()
       })
     })

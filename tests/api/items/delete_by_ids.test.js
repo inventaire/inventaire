@@ -63,16 +63,22 @@ describe('items:delete-by-ids', () => {
     createItem()
     // Delay to let the time to the item counter to be updated
     .delay(debounceDelay)
-    .then(item => getUser()
-    .then(userBefore => deleteByIds(item._id)
-    // Delay to request the user after its items count was updated
-    .delay(debounceDelay)
-    .then(res => getUser()
-    .then(userAfter => {
-      const countChange = CountChange(userBefore.snapshot, userAfter.snapshot)
-      countChange('public').should.equal(-1)
-      done()
-    }))))
+    .then(item => {
+      return getUser()
+      .then(userBefore => {
+        return deleteByIds(item._id)
+        // Delay to request the user after its items count was updated
+        .delay(debounceDelay)
+        .then(res => {
+          return getUser()
+          .then(userAfter => {
+            const countChange = CountChange(userBefore.snapshot, userAfter.snapshot)
+            countChange('public').should.equal(-1)
+            done()
+          })
+        })
+      })
+    })
     .catch(done)
   })
 

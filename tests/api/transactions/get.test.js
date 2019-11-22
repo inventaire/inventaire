@@ -5,17 +5,19 @@ require('should')
 const { authReq, undesiredErr } = __.require('apiTests', 'utils/utils')
 const { createTransaction } = require('../fixtures/transactions')
 
-describe('transactions:get', () => it('should get user transactions', done => {
-  createTransaction()
-  .then(res1 => {
-    const { transaction } = res1
-    return authReq('get', '/api/transactions')
-    .then(res2 => {
-      res2.transactions.should.be.an.Array()
-      const transactionsIds = _.map(res2.transactions, '_id')
-      transactionsIds.should.containEql(transaction._id)
-      done()
+describe('transactions:get', () => {
+  it('should get user transactions', done => {
+    createTransaction()
+    .then(res1 => {
+      const { transaction } = res1
+      return authReq('get', '/api/transactions')
+      .then(res2 => {
+        res2.transactions.should.be.an.Array()
+        const transactionsIds = _.map(res2.transactions, '_id')
+        transactionsIds.should.containEql(transaction._id)
+        done()
+      })
     })
+    .catch(undesiredErr(done))
   })
-  .catch(undesiredErr(done))
-}))
+})

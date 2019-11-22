@@ -21,14 +21,16 @@ describe('automerge_author_works: only from inv works to wd works', () => {
       createWorkWithAuthor({ uri: authorUri }, workLabel),
       createWorkWithAuthor({ uri: authorUri }, workLabel)
     ])
-    .spread((work1, work2) => automergeAuthorWorks(authorUri)
-    .delay(300)
-    .then(() => getByUris([ work1.uri, work2.uri ]))
-    .then(res => {
-      res.redirects[work1.uri].should.equal(workWdUri)
-      res.redirects[work2.uri].should.equal(workWdUri)
-      done()
-    }))
+    .spread((work1, work2) => {
+      return automergeAuthorWorks(authorUri)
+      .delay(300)
+      .then(() => getByUris([ work1.uri, work2.uri ]))
+      .then(res => {
+        res.redirects[work1.uri].should.equal(workWdUri)
+        res.redirects[work2.uri].should.equal(workWdUri)
+        done()
+      })
+    })
     .catch(undesiredErr(done))
   })
 
@@ -37,17 +39,21 @@ describe('automerge_author_works: only from inv works to wd works', () => {
     const workLabel = 'Timeline' // wd:Q732060
     const workWdUri = 'wd:Q732060'
     createHuman({ labels: { en: humanLabel } })
-    .then(human => createWorkWithAuthor({ uri: human.uri }, workLabel)
-    .then(work => checkEntities(human.uri)
-    .then(_.Log('tasks'))
-    .then(tasks => {
-      tasks.length.should.equal(0)
-      return getByUris(work.uri)
-      .then(res => {
-        res.redirects[work.uri].should.equal(workWdUri)
-        done()
+    .then(human => {
+      return createWorkWithAuthor({ uri: human.uri }, workLabel)
+      .then(work => {
+        return checkEntities(human.uri)
+        .then(_.Log('tasks'))
+        .then(tasks => {
+          tasks.length.should.equal(0)
+          return getByUris(work.uri)
+          .then(res => {
+            res.redirects[work.uri].should.equal(workWdUri)
+            done()
+          })
+        })
       })
-    })))
+    })
     .catch(undesiredErr(done))
   })
 
@@ -58,13 +64,15 @@ describe('automerge_author_works: only from inv works to wd works', () => {
     const workLabel = 'Voice of the Fire'
 
     createWorkWithAuthor({ uri: authorUri }, `${workLabel} Vol. 1`)
-    .then(invWork => automergeAuthorWorks(authorUri)
-    .delay(300)
-    .then(() => getByUris(invWork.uri))
-    .then(res => {
-      res.entities[invWork.uri].should.be.ok()
-      done()
-    }))
+    .then(invWork => {
+      return automergeAuthorWorks(authorUri)
+      .delay(300)
+      .then(() => getByUris(invWork.uri))
+      .then(res => {
+        res.entities[invWork.uri].should.be.ok()
+        done()
+      })
+    })
     .catch(undesiredErr(done))
   })
 
@@ -77,13 +85,15 @@ describe('automerge_author_works: only from inv works to wd works', () => {
     createWorkWithAuthor({ uri: authorUri }, workLabel)
     .tap(invWork => addSerie(invWork))
     .delay(300)
-    .then(invWork => automergeAuthorWorks(authorUri)
-    .delay(300)
-    .then(() => getByUris(invWork.uri))
-    .then(res => {
-      res.entities[invWork.uri].should.be.ok()
-      done()
-    }))
+    .then(invWork => {
+      return automergeAuthorWorks(authorUri)
+      .delay(300)
+      .then(() => getByUris(invWork.uri))
+      .then(res => {
+        res.entities[invWork.uri].should.be.ok()
+        done()
+      })
+    })
     .catch(undesiredErr(done))
   })
 })

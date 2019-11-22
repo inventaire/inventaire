@@ -13,19 +13,21 @@ describe('entities:revert-merge', () => {
       createWork(),
       createWork()
     ])
-    .spread((workA, workB) => merge(workA.uri, workB.uri)
-    .then(() => getByUris(workA.uri))
-    .then(res => {
-      res.redirects[workA.uri].should.equal(workB.uri)
-      res.entities[workB.uri].should.be.ok()
-      return revertMerge(workA.uri)
+    .spread((workA, workB) => {
+      return merge(workA.uri, workB.uri)
+      .then(() => getByUris(workA.uri))
+      .then(res => {
+        res.redirects[workA.uri].should.equal(workB.uri)
+        res.entities[workB.uri].should.be.ok()
+        return revertMerge(workA.uri)
+      })
+      .then(() => getByUris(workA.uri))
+      .then(res => {
+        should(res.redirects[workA.uri]).not.be.ok()
+        res.entities[workA.uri].should.be.ok()
+        done()
+      })
     })
-    .then(() => getByUris(workA.uri))
-    .then(res => {
-      should(res.redirects[workA.uri]).not.be.ok()
-      res.entities[workA.uri].should.be.ok()
-      done()
-    }))
     .catch(undesiredErr(done))
   })
 
@@ -35,20 +37,22 @@ describe('entities:revert-merge', () => {
       createWork(),
       createHuman()
     ])
-    .spread((workA, workB, author) => addClaim(workA.uri, 'wdt:P50', author.uri)
-    .then(() => merge(workA.uri, workB.uri))
-    .then(() => getByUris(workB.uri))
-    .then(res => {
-      const authorsUris = res.entities[workB.uri].claims['wdt:P50']
-      authorsUris.should.deepEqual([ author.uri ])
-      return revertMerge(workA.uri)
+    .spread((workA, workB, author) => {
+      return addClaim(workA.uri, 'wdt:P50', author.uri)
+      .then(() => merge(workA.uri, workB.uri))
+      .then(() => getByUris(workB.uri))
+      .then(res => {
+        const authorsUris = res.entities[workB.uri].claims['wdt:P50']
+        authorsUris.should.deepEqual([ author.uri ])
+        return revertMerge(workA.uri)
+      })
+      .then(() => getByUris(workB.uri))
+      .then(res => {
+        const authorsUris = res.entities[workB.uri].claims['wdt:P50']
+        should(authorsUris).not.be.ok()
+        done()
+      })
     })
-    .then(() => getByUris(workB.uri))
-    .then(res => {
-      const authorsUris = res.entities[workB.uri].claims['wdt:P50']
-      should(authorsUris).not.be.ok()
-      done()
-    }))
     .catch(undesiredErr(done))
   })
 
@@ -58,17 +62,19 @@ describe('entities:revert-merge', () => {
       createWork({ labels: { zh: label } }),
       createWork()
     ])
-    .spread((workA, workB) => merge(workA.uri, workB.uri)
-    .then(() => getByUris(workB.uri))
-    .then(res => {
-      res.entities[workB.uri].labels.zh.should.equal(label)
-      return revertMerge(workA.uri)
+    .spread((workA, workB) => {
+      return merge(workA.uri, workB.uri)
+      .then(() => getByUris(workB.uri))
+      .then(res => {
+        res.entities[workB.uri].labels.zh.should.equal(label)
+        return revertMerge(workA.uri)
+      })
+      .then(() => getByUris(workB.uri))
+      .then(res => {
+        should(res.entities[workB.uri].labels.zh).not.be.ok()
+        done()
+      })
     })
-    .then(() => getByUris(workB.uri))
-    .then(res => {
-      should(res.entities[workB.uri].labels.zh).not.be.ok()
-      done()
-    }))
     .catch(undesiredErr(done))
   })
 
@@ -79,22 +85,24 @@ describe('entities:revert-merge', () => {
       createHuman(),
       createHuman()
     ])
-    .spread((workA, workB, authorA, authorB) => addClaim(workA.uri, 'wdt:P50', authorA.uri)
-    .then(() => merge(workA.uri, workB.uri))
-    .then(() => getByUris(workB.uri))
-    // Make another edit between the merge and the revert-merge
-    .tap(() => addClaim(workB.uri, 'wdt:P50', authorB.uri))
-    .then(res => {
-      const authorsUris = res.entities[workB.uri].claims['wdt:P50']
-      authorsUris.should.deepEqual([ authorA.uri ])
-      return revertMerge(workA.uri)
+    .spread((workA, workB, authorA, authorB) => {
+      return addClaim(workA.uri, 'wdt:P50', authorA.uri)
+      .then(() => merge(workA.uri, workB.uri))
+      .then(() => getByUris(workB.uri))
+      // Make another edit between the merge and the revert-merge
+      .tap(() => addClaim(workB.uri, 'wdt:P50', authorB.uri))
+      .then(res => {
+        const authorsUris = res.entities[workB.uri].claims['wdt:P50']
+        authorsUris.should.deepEqual([ authorA.uri ])
+        return revertMerge(workA.uri)
+      })
+      .then(() => getByUris(workB.uri))
+      .then(res => {
+        const authorsUris = res.entities[workB.uri].claims['wdt:P50']
+        authorsUris.should.deepEqual([ authorB.uri ])
+        done()
+      })
     })
-    .then(() => getByUris(workB.uri))
-    .then(res => {
-      const authorsUris = res.entities[workB.uri].claims['wdt:P50']
-      authorsUris.should.deepEqual([ authorB.uri ])
-      done()
-    }))
     .catch(undesiredErr(done))
   })
 
@@ -105,19 +113,21 @@ describe('entities:revert-merge', () => {
       createWork({ labels: { zh: labelA } }),
       createWork()
     ])
-    .spread((workA, workB) => merge(workA.uri, workB.uri)
-    .then(() => getByUris(workB.uri))
-    // Make another edit between the merge and the revert-merge
-    .tap(() => updateLabel(workB.uri, 'nl', labelB))
-    .then(res => {
-      res.entities[workB.uri].labels.zh.should.equal(labelA)
-      return revertMerge(workA.uri)
+    .spread((workA, workB) => {
+      return merge(workA.uri, workB.uri)
+      .then(() => getByUris(workB.uri))
+      // Make another edit between the merge and the revert-merge
+      .tap(() => updateLabel(workB.uri, 'nl', labelB))
+      .then(res => {
+        res.entities[workB.uri].labels.zh.should.equal(labelA)
+        return revertMerge(workA.uri)
+      })
+      .then(() => getByUris(workB.uri))
+      .then(res => {
+        should(res.entities[workB.uri].labels.zh).not.be.ok()
+        done()
+      })
     })
-    .then(() => getByUris(workB.uri))
-    .then(res => {
-      should(res.entities[workB.uri].labels.zh).not.be.ok()
-      done()
-    }))
     .catch(undesiredErr(done))
   })
 
@@ -127,15 +137,17 @@ describe('entities:revert-merge', () => {
       createHuman(),
       createWork()
     ])
-    .spread((humanA, humanB, work) => addClaim(work.uri, 'wdt:P50', humanA.uri)
-    .then(() => merge(humanA.uri, humanB.uri))
-    .then(() => revertMerge(humanA.uri))
-    .then(() => getByUris(work.uri))
-    .then(res => {
-      const authorsUris = res.entities[work.uri].claims['wdt:P50']
-      authorsUris.should.deepEqual([ humanA.uri ])
-      done()
-    }))
+    .spread((humanA, humanB, work) => {
+      return addClaim(work.uri, 'wdt:P50', humanA.uri)
+      .then(() => merge(humanA.uri, humanB.uri))
+      .then(() => revertMerge(humanA.uri))
+      .then(() => getByUris(work.uri))
+      .then(res => {
+        const authorsUris = res.entities[work.uri].claims['wdt:P50']
+        authorsUris.should.deepEqual([ humanA.uri ])
+        done()
+      })
+    })
     .catch(undesiredErr(done))
   })
 

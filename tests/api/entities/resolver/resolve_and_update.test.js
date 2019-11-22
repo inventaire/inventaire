@@ -32,18 +32,20 @@ describe('entities:resolver:update-resolved', () => {
     createWork()
     .tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsId))
     .tap(work => addClaim(work.uri, 'wdt:P50', authorUri2))
-    .then(work => resolveAndUpdate(entry)
-    .get('entries')
-    .then(entries => {
-      const entityUri = entries[0].works[0].uri
-      return getByUris(entityUri)
-      .get('entities')
-      .then(entities => {
-        const workAuthorsUris = _.values(entities)[0].claims['wdt:P50']
-        workAuthorsUris.should.not.containEql(authorUri)
-        done()
+    .then(work => {
+      return resolveAndUpdate(entry)
+      .get('entries')
+      .then(entries => {
+        const entityUri = entries[0].works[0].uri
+        return getByUris(entityUri)
+        .get('entities')
+        .then(entities => {
+          const workAuthorsUris = _.values(entities)[0].claims['wdt:P50']
+          workAuthorsUris.should.not.containEql(authorUri)
+          done()
+        })
       })
-    }))
+    })
     .catch(done)
   })
 
@@ -56,21 +58,23 @@ describe('entities:resolver:update-resolved', () => {
       createWork().tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsIdA)),
       createWork().tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsIdB))
     ])
-    .spread((workA, workB) => resolveAndUpdate([ entryA, entryB ])
-    .get('entries')
-    .then(entries => {
-      const workAUri = entries[0].works[0].uri
-      const workBUri = entries[1].works[0].uri
-      return getByUris([ workAUri, workBUri ])
-      .get('entities')
-      .then(entities => {
-        workA = entities[workAUri]
-        workB = entities[workBUri]
-        workA.claims['wdt:P50'][0].should.equal(entryA.works[0].claims['wdt:P50'][0])
-        workB.claims['wdt:P50'][0].should.equal(entryB.works[0].claims['wdt:P50'][0])
-        done()
+    .spread((workA, workB) => {
+      return resolveAndUpdate([ entryA, entryB ])
+      .get('entries')
+      .then(entries => {
+        const workAUri = entries[0].works[0].uri
+        const workBUri = entries[1].works[0].uri
+        return getByUris([ workAUri, workBUri ])
+        .get('entities')
+        .then(entities => {
+          workA = entities[workAUri]
+          workB = entities[workBUri]
+          workA.claims['wdt:P50'][0].should.equal(entryA.works[0].claims['wdt:P50'][0])
+          workB.claims['wdt:P50'][0].should.equal(entryB.works[0].claims['wdt:P50'][0])
+          done()
+        })
       })
-    }))
+    })
     .catch(done)
   })
 
@@ -89,20 +93,22 @@ describe('entities:resolver:update-resolved', () => {
     }
     createHuman()
     .tap(human => addClaim(human.uri, 'wdt:P2963', goodReadsId))
-    .then(human => resolveAndUpdate(entry)
-    .get('entries')
-    .then(entries => {
-      const authorUri = entries[0].authors[0].uri
-      authorUri.should.equal(human.uri)
-      return getByUris(authorUri)
-      .get('entities')
-      .then(entities => {
-        const updatedAuthor = entities[authorUri]
-        const authorWebsiteClaimValues = updatedAuthor.claims['wdt:P856']
-        authorWebsiteClaimValues.should.containEql(officialWebsite)
-        done()
+    .then(human => {
+      return resolveAndUpdate(entry)
+      .get('entries')
+      .then(entries => {
+        const authorUri = entries[0].authors[0].uri
+        authorUri.should.equal(human.uri)
+        return getByUris(authorUri)
+        .get('entities')
+        .then(entities => {
+          const updatedAuthor = entities[authorUri]
+          const authorWebsiteClaimValues = updatedAuthor.claims['wdt:P856']
+          authorWebsiteClaimValues.should.containEql(officialWebsite)
+          done()
+        })
       })
-    }))
+    })
     .catch(done)
   })
 
@@ -129,14 +135,16 @@ describe('entities:resolver:update-resolved', () => {
       return resolveAndUpdate(entry)
       .get('entries')
       .delay(10)
-      .then(entries => getByUris(editionUri)
-      .get('entities')
-      .then(entities => {
-        edition = entities[editionUri]
-        const numberOfPagesClaimsValues = edition.claims['wdt:P1104']
-        numberOfPagesClaimsValues.should.containEql(numberOfPages)
-        done()
-      }))
+      .then(entries => {
+        return getByUris(editionUri)
+        .get('entities')
+        .then(entities => {
+          edition = entities[editionUri]
+          const numberOfPagesClaimsValues = edition.claims['wdt:P1104']
+          numberOfPagesClaimsValues.should.containEql(numberOfPages)
+          done()
+        })
+      })
     })
     .catch(done)
   })
@@ -151,21 +159,25 @@ describe('entities:resolver:update-resolved', () => {
       createWork().tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsIdA)),
       createWork().tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsIdB))
     ])
-    .spread((workA, workB) => resolveAndUpdate([ entryA, entryB ])
-    .then(() => Promise.all([
-      getHistory(workA.uri),
-      getHistory(workB.uri)
-    ])
-    .spread((workAPatches, workBPatches) => {
-      const lastWorkAPatch = workAPatches.slice(-1)[0]
-      const lastWorkBPatch = workBPatches.slice(-1)[0]
-      lastWorkBPatch.batch.should.equal(lastWorkAPatch.batch)
-      const { batch: batchId } = lastWorkAPatch
-      batchId.should.be.a.Number()
-      batchId.should.above(startTime)
-      batchId.should.below(Date.now())
-      done()
-    })))
+    .spread((workA, workB) => {
+      return resolveAndUpdate([ entryA, entryB ])
+      .then(() => {
+        return Promise.all([
+          getHistory(workA.uri),
+          getHistory(workB.uri)
+        ])
+        .spread((workAPatches, workBPatches) => {
+          const lastWorkAPatch = workAPatches.slice(-1)[0]
+          const lastWorkBPatch = workBPatches.slice(-1)[0]
+          lastWorkBPatch.batch.should.equal(lastWorkAPatch.batch)
+          const { batch: batchId } = lastWorkAPatch
+          batchId.should.be.a.Number()
+          batchId.should.above(startTime)
+          batchId.should.below(Date.now())
+          done()
+        })
+      })
+    })
     .catch(undesiredErr(done))
   })
 })

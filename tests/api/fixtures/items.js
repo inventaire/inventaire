@@ -27,7 +27,7 @@ const transactions = [ 'giving', 'lending', 'selling', 'inventorying' ]
 const API = module.exports = {
   createItems: (userPromise, itemsData = []) => {
     if (!userPromise) { userPromise = getUser() }
-    const entity = (itemsData[0] != null) ? itemsData[0].entity : undefined
+    const entity = itemsData[0] && itemsData[0].entity
     const entityUriPromise = entity ? Promise.resolve(entity) : getEditionUri()
 
     return entityUriPromise
@@ -54,14 +54,14 @@ const API = module.exports = {
 }
 
 const randomizedItem = itemData => {
-  if (!itemData.listing) { itemData.listing = _.sample(listings) }
-  if (!itemData.transaction) { itemData.transaction = _.sample(transactions) }
+  itemData.listing = itemData.listing || _.sample(listings)
+  itemData.transaction = itemData.transaction || _.sample(transactions)
   itemData.details = faker.hacker.phrase()
   itemData.notes = faker.lorem.paragraph()
   return itemData
 }
 
 const addDefaultEntity = entityUri => item => {
-  if (!item.entity) { item.entity = entityUri }
+  if (!item.entity) item.entity = entityUri
   return item
 }

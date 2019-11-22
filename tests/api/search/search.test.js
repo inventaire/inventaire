@@ -59,13 +59,15 @@ describe('search:global', () => {
     createHuman({ labels: { fr: label } })
     // Let the time for Elastic Search indexation
     .delay(4000)
-    .then(entity => search('humans', label)
-    .then(results => {
-      results.should.be.an.Array()
-      results.forEach(result => result.type.should.equal('humans'))
-      _.map(results, 'id').includes(entity._id).should.be.true()
-      done()
-    }))
+    .then(entity => {
+      return search('humans', label)
+      .then(results => {
+        results.should.be.an.Array()
+        results.forEach(result => result.type.should.equal('humans'))
+        _.map(results, 'id').includes(entity._id).should.be.true()
+        done()
+      })
+    })
     .catch(undesiredErr(done))
   })
 
@@ -74,13 +76,15 @@ describe('search:global', () => {
     createWork({ labels: { fr: label } })
     // Let the time for Elastic Search indexation
     .delay(4000)
-    .then(entity => search('works', label)
-    .then(results => {
-      results.should.be.an.Array()
-      results.forEach(result => result.type.should.equal('works'))
-      _.map(results, 'id').includes(entity._id).should.be.true()
-      done()
-    }))
+    .then(entity => {
+      return search('works', label)
+      .then(results => {
+        results.should.be.an.Array()
+        results.forEach(result => result.type.should.equal('works'))
+        _.map(results, 'id').includes(entity._id).should.be.true()
+        done()
+      })
+    })
     .catch(undesiredErr(done))
   })
 
@@ -100,13 +104,15 @@ describe('search:global', () => {
     createSerie({ labels: { fr: label } })
     // Let the time for Elastic Search indexation
     .delay(1000)
-    .then(entity => search('series', label)
-    .then(results => {
-      results.should.be.an.Array()
-      results.forEach(result => result.type.should.equal('series'))
-      _.map(results, 'id').includes(entity._id).should.be.true()
-      done()
-    }))
+    .then(entity => {
+      return search('series', label)
+      .then(results => {
+        results.should.be.an.Array()
+        results.forEach(result => result.type.should.equal('series'))
+        _.map(results, 'id').includes(entity._id).should.be.true()
+        done()
+      })
+    })
     .catch(undesiredErr(done))
   })
 
@@ -124,13 +130,15 @@ describe('search:global', () => {
   it('should return a user', done => {
     getUser()
     .delay(1000)
-    .then(user => search('users', user.username)
-    .then(results => {
-      results.should.be.an.Array()
-      results.forEach(result => result.type.should.equal('users'))
-      _.map(results, 'id').includes(user._id).should.be.true()
-      done()
-    }))
+    .then(user => {
+      return search('users', user.username)
+      .then(results => {
+        results.should.be.an.Array()
+        results.forEach(result => result.type.should.equal('users'))
+        _.map(results, 'id').includes(user._id).should.be.true()
+        done()
+      })
+    })
     .catch(undesiredErr(done))
   })
 
@@ -138,13 +146,15 @@ describe('search:global', () => {
     const name = `group ${faker.lorem.word}`
     authReq('post', '/api/groups?action=create', { name })
     .delay(1000)
-    .then(group => search('groups', name)
-    .then(results => {
-      results.should.be.an.Array()
-      results.forEach(result => result.type.should.equal('groups'))
-      _.map(results, 'id').includes(group._id).should.be.true()
-      done()
-    }))
+    .then(group => {
+      return search('groups', name)
+      .then(results => {
+        results.should.be.an.Array()
+        results.forEach(result => result.type.should.equal('groups'))
+        _.map(results, 'id').includes(group._id).should.be.true()
+        done()
+      })
+    })
     .catch(undesiredErr(done))
   })
 
@@ -152,18 +162,20 @@ describe('search:global', () => {
     const name = `group ${faker.lorem.word}`
     authReq('post', '/api/groups?action=create', { name, searchable: false })
     .delay(1000)
-    .then(group => search('groups', name)
-    .then(results => {
-      _.map(results, 'id').includes(group._id).should.be.false()
-      // The same request but authentified with a group member account
-      // should find the group
-      return authReq('get', `/api/search?search=${name}&types=groups&lang=fr`)
-      .then(res => {
-        ({ results } = res)
-        _.map(results, 'id').includes(group._id).should.be.true()
-        done()
+    .then(group => {
+      return search('groups', name)
+      .then(results => {
+        _.map(results, 'id').includes(group._id).should.be.false()
+        // The same request but authentified with a group member account
+        // should find the group
+        return authReq('get', `/api/search?search=${name}&types=groups&lang=fr`)
+        .then(res => {
+          ({ results } = res)
+          _.map(results, 'id').includes(group._id).should.be.true()
+          done()
+        })
       })
-    }))
+    })
     .catch(undesiredErr(done))
   })
 
@@ -171,23 +183,25 @@ describe('search:global', () => {
     const fullMatchLabel = randomString(15)
     const partialMatchLabel = `${fullMatchLabel} a`
     createWork({ labels: { fr: partialMatchLabel } })
-    .then(work => Promise.all([
-      createEditionFromWorks(work),
-      createWork({ labels: { fr: fullMatchLabel } })
-    ])
-    // trigger a popularity refresh to avoid getting the default score on
-    // the search hereafter
-    .then(() => getRefreshedPopularityByUris(work.uri))
-    .delay(1000)
-    .then(() => {
-      const workWithEditionUri = work.uri
-      return search('works', fullMatchLabel)
-      .then(results => {
-        const firstResultUri = results[0].uri
-        firstResultUri.should.equal(workWithEditionUri)
-        done()
+    .then(work => {
+      return Promise.all([
+        createEditionFromWorks(work),
+        createWork({ labels: { fr: fullMatchLabel } })
+      ])
+      // trigger a popularity refresh to avoid getting the default score on
+      // the search hereafter
+      .then(() => getRefreshedPopularityByUris(work.uri))
+      .delay(1000)
+      .then(() => {
+        const workWithEditionUri = work.uri
+        return search('works', fullMatchLabel)
+        .then(results => {
+          const firstResultUri = results[0].uri
+          firstResultUri.should.equal(workWithEditionUri)
+          done()
+        })
       })
-    }))
+    })
     .catch(undesiredErr(done))
   })
 
@@ -204,14 +218,16 @@ describe('search:global', () => {
       // the search hereafter
       .then(works => getRefreshedPopularityByUris(_.map(works, 'uri')))
       .delay(2000)
-      .then(() => search('works', workLabel)
-      .then(results => {
-        const firstEntityResult = results[0]
-        const popularity = workEditionsCreation.length
-        const boostLimit = firstEntityResult.lexicalScore * popularity
-        firstEntityResult.globalScore.should.be.below(boostLimit)
-        done()
-      }))
+      .then(() => {
+        return search('works', workLabel)
+        .then(results => {
+          const firstEntityResult = results[0]
+          const popularity = workEditionsCreation.length
+          const boostLimit = firstEntityResult.lexicalScore * popularity
+          firstEntityResult.globalScore.should.be.below(boostLimit)
+          done()
+        })
+      })
     })
     .catch(undesiredErr(done))
   })

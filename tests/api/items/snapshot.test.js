@@ -13,37 +13,45 @@ const { createWork, createHuman, addAuthor, addSerie, createEdition, createEditi
 describe('items:snapshot', () => {
   it("should snapshot the item's work series names", done => {
     createWork()
-    .then(workEntity => addSerie(workEntity)
-    .delay(100)
-    .then(serieEntity => authReq('post', '/api/items', { entity: workEntity.uri, lang: 'en' })
-    .then(item => {
-      const title = _.values(serieEntity.labels)[0]
-      item.snapshot['entity:series'].should.equal(title)
-      done()
-    })))
+    .then(workEntity => {
+      return addSerie(workEntity)
+      .delay(100)
+      .then(serieEntity => {
+        return authReq('post', '/api/items', { entity: workEntity.uri, lang: 'en' })
+        .then(item => {
+          const title = _.values(serieEntity.labels)[0]
+          item.snapshot['entity:series'].should.equal(title)
+          done()
+        })
+      })
+    })
     .catch(undesiredErr(done))
   })
 
   it("should snapshot the item's work series ordinal", done => {
     createWork()
-    .then(workEntity => Promise.all([
-      authReq('post', '/api/items', { entity: workEntity.uri, lang: 'en' }),
-      addSerie(workEntity)
-    ])
-    .delay(100)
-    .spread((item, serieEntity) => updateClaim(workEntity.uri, 'wdt:P1545', null, '5')
-    .delay(100)
-    .then(() => getItem(item))
-    .then(item => {
-      item.snapshot['entity:ordinal'].should.equal('5')
-      return updateClaim(workEntity.uri, 'wdt:P1545', '5', '6')
+    .then(workEntity => {
+      return Promise.all([
+        authReq('post', '/api/items', { entity: workEntity.uri, lang: 'en' }),
+        addSerie(workEntity)
+      ])
       .delay(100)
-      .then(() => getItem(item))
-      .then(item => {
-        item.snapshot['entity:ordinal'].should.equal('6')
-        done()
+      .spread((item, serieEntity) => {
+        return updateClaim(workEntity.uri, 'wdt:P1545', null, '5')
+        .delay(100)
+        .then(() => getItem(item))
+        .then(item => {
+          item.snapshot['entity:ordinal'].should.equal('5')
+          return updateClaim(workEntity.uri, 'wdt:P1545', '5', '6')
+          .delay(100)
+          .then(() => getItem(item))
+          .then(item => {
+            item.snapshot['entity:ordinal'].should.equal('6')
+            done()
+          })
+        })
       })
-    })))
+    })
     .catch(undesiredErr(done))
   })
 
@@ -52,23 +60,29 @@ describe('items:snapshot', () => {
       createWork(),
       createWork()
     ])
-    .spread((workA, workB) => Promise.all([
-      addAuthor(workA),
-      addAuthor(workB)
-    ])
-    .then(authors => Promise.all([
-      addSerie(workA),
-      addSerie(workB)
-    ])
-    .then(series => createEditionFromWorks(workA, workB)
-    .then(edition => authReq('post', '/api/items', { entity: edition.uri }))
-    .then(item => {
-      const authorsNames = authors.map(author => author.labels.en).join(', ')
-      const seriesNames = series.map(serie => serie.labels.en).join(', ')
-      item.snapshot['entity:authors'].should.equal(authorsNames)
-      item.snapshot['entity:series'].should.equal(seriesNames)
-      done()
-    }))))
+    .spread((workA, workB) => {
+      return Promise.all([
+        addAuthor(workA),
+        addAuthor(workB)
+      ])
+      .then(authors => {
+        return Promise.all([
+          addSerie(workA),
+          addSerie(workB)
+        ])
+        .then(series => {
+          return createEditionFromWorks(workA, workB)
+          .then(edition => authReq('post', '/api/items', { entity: edition.uri }))
+          .then(item => {
+            const authorsNames = authors.map(author => author.labels.en).join(', ')
+            const seriesNames = series.map(serie => serie.labels.en).join(', ')
+            item.snapshot['entity:authors'].should.equal(authorsNames)
+            item.snapshot['entity:series'].should.equal(seriesNames)
+            done()
+          })
+        })
+      })
+    })
     .catch(undesiredErr(done))
   })
 
@@ -101,17 +115,19 @@ describe('items:snapshot', () => {
 
   it('should snapshot the image of an edition after a work-related refresh', done => {
     createEdition()
-    .then(edition => authReq('post', '/api/items', { entity: edition.uri })
-    .then(item => {
-      item.snapshot['entity:image'].should.equal(edition.image.url)
-      const workUri = edition.claims['wdt:P629'][0]
-      return updateClaim(workUri, 'wdt:P50', null, 'wd:Q535')
-      .then(() => getItem(item))
+    .then(edition => {
+      return authReq('post', '/api/items', { entity: edition.uri })
+      .then(item => {
+        item.snapshot['entity:image'].should.equal(edition.image.url)
+        const workUri = edition.claims['wdt:P629'][0]
+        return updateClaim(workUri, 'wdt:P50', null, 'wd:Q535')
+        .then(() => getItem(item))
+      })
+      .then(item => {
+        item.snapshot['entity:image'].should.equal(edition.image.url)
+        done()
+      })
     })
-    .then(item => {
-      item.snapshot['entity:image'].should.equal(edition.image.url)
-      done()
-    }))
     .catch(done)
   })
 
@@ -160,25 +176,29 @@ describe('items:snapshot', () => {
 
     it('should be updated when its local serie entity title changes', done => {
       createWork()
-      .then(workEntity => authReq('post', '/api/items', { entity: workEntity.uri, lang: 'en' })
-      .delay(200)
-      .then(item => addSerie(workEntity)
-      .delay(200)
-      .then(serieEntity => {
-        const title = _.values(serieEntity.labels)[0]
-        return getItem(item)
-        .then(updatedItem => {
-          updatedItem.snapshot['entity:series'].should.equal(title)
-          const updatedTitle = `${title}-updated`
-          return updateLabel(serieEntity._id, 'en', updatedTitle)
+      .then(workEntity => {
+        return authReq('post', '/api/items', { entity: workEntity.uri, lang: 'en' })
+        .delay(200)
+        .then(item => {
+          return addSerie(workEntity)
           .delay(200)
-          .then(() => getItem(item))
-          .then(reupdatedItem => {
-            reupdatedItem.snapshot['entity:series'].should.equal(updatedTitle)
-            done()
+          .then(serieEntity => {
+            const title = _.values(serieEntity.labels)[0]
+            return getItem(item)
+            .then(updatedItem => {
+              updatedItem.snapshot['entity:series'].should.equal(title)
+              const updatedTitle = `${title}-updated`
+              return updateLabel(serieEntity._id, 'en', updatedTitle)
+              .delay(200)
+              .then(() => getItem(item))
+              .then(reupdatedItem => {
+                reupdatedItem.snapshot['entity:series'].should.equal(updatedTitle)
+                done()
+              })
+            })
           })
         })
-      })))
+      })
       .catch(undesiredErr(done))
     })
 
@@ -216,18 +236,20 @@ describe('items:snapshot', () => {
 
     it('should be updated when its local author entity title changes (work entity)', done => {
       createWorkWithAuthor()
-      .then(workEntity => authReq('post', '/api/items', { entity: workEntity.uri, lang: 'en' })
-      .then(item => {
-        const updateAuthorName = humanName()
-        const uri = workEntity.claims['wdt:P50'][0]
-        return updateLabel(uri, 'en', updateAuthorName)
-        .delay(100)
-        .then(() => getItem(item))
+      .then(workEntity => {
+        return authReq('post', '/api/items', { entity: workEntity.uri, lang: 'en' })
         .then(item => {
-          item.snapshot['entity:authors'].should.equal(updateAuthorName)
-          done()
+          const updateAuthorName = humanName()
+          const uri = workEntity.claims['wdt:P50'][0]
+          return updateLabel(uri, 'en', updateAuthorName)
+          .delay(100)
+          .then(() => getItem(item))
+          .then(item => {
+            item.snapshot['entity:authors'].should.equal(updateAuthorName)
+            done()
+          })
         })
-      }))
+      })
       .catch(undesiredErr(done))
     })
 
@@ -237,14 +259,16 @@ describe('items:snapshot', () => {
         createWork(),
         createWork()
       ])
-      .spread((userId, workEntityA, workEntityB) => authReq('post', '/api/items', { entity: workEntityA.uri, lang: 'en' })
-      .tap(() => merge(workEntityA.uri, workEntityB.uri))
-      .then(getItem)
-      .then(updatedItem => {
-        const updatedTitle = workEntityB.labels.en
-        updatedItem.snapshot['entity:title'].should.equal(updatedTitle)
-        done()
-      }))
+      .spread((userId, workEntityA, workEntityB) => {
+        return authReq('post', '/api/items', { entity: workEntityA.uri, lang: 'en' })
+        .tap(() => merge(workEntityA.uri, workEntityB.uri))
+        .then(getItem)
+        .then(updatedItem => {
+          const updatedTitle = workEntityB.labels.en
+          updatedItem.snapshot['entity:title'].should.equal(updatedTitle)
+          done()
+        })
+      })
       .catch(undesiredErr(done))
     })
 
@@ -254,20 +278,26 @@ describe('items:snapshot', () => {
         createWork(),
         createWork()
       ])
-      .spread((userId, workEntityA, workEntityB) => createEditionFromWorks(workEntityA)
-      .then(editionEntity => Promise.all([
-        authReq('post', '/api/items', { entity: editionEntity.uri }),
-        addAuthor(workEntityB)
-      ])
-      .delay(200)
-      .tap(() => merge(workEntityA.uri, workEntityB.uri))
-      .delay(200)
-      .spread((item, addedAuthor) => getItem(item)
-      .then(updatedItem => {
-        const authorName = _.values(addedAuthor.labels)[0]
-        updatedItem.snapshot['entity:authors'].should.equal(authorName)
-        done()
-      }))))
+      .spread((userId, workEntityA, workEntityB) => {
+        return createEditionFromWorks(workEntityA)
+        .then(editionEntity => {
+          return Promise.all([
+            authReq('post', '/api/items', { entity: editionEntity.uri }),
+            addAuthor(workEntityB)
+          ])
+          .delay(200)
+          .tap(() => merge(workEntityA.uri, workEntityB.uri))
+          .delay(200)
+          .spread((item, addedAuthor) => {
+            return getItem(item)
+            .then(updatedItem => {
+              const authorName = _.values(addedAuthor.labels)[0]
+              updatedItem.snapshot['entity:authors'].should.equal(authorName)
+              done()
+            })
+          })
+        })
+      })
       .catch(undesiredErr(done))
     })
 
@@ -277,17 +307,19 @@ describe('items:snapshot', () => {
         createHuman(),
         createHuman()
       ])
-      .spread((userId, authorEntityA, authorEntityB) => createWorkWithAuthor(authorEntityA)
-      .then(workEntity => authReq('post', '/api/items', { entity: workEntity.uri, lang: 'en' }))
-      .delay(200)
-      .tap(() => merge(authorEntityA.uri, authorEntityB.uri))
-      .delay(200)
-      .then(getItem)
-      .then(updatedItem => {
-        const updatedAuthors = authorEntityB.labels.en
-        updatedItem.snapshot['entity:authors'].should.equal(updatedAuthors)
-        done()
-      }))
+      .spread((userId, authorEntityA, authorEntityB) => {
+        return createWorkWithAuthor(authorEntityA)
+        .then(workEntity => authReq('post', '/api/items', { entity: workEntity.uri, lang: 'en' }))
+        .delay(200)
+        .tap(() => merge(authorEntityA.uri, authorEntityB.uri))
+        .delay(200)
+        .then(getItem)
+        .then(updatedItem => {
+          const updatedAuthors = authorEntityB.labels.en
+          updatedItem.snapshot['entity:authors'].should.equal(updatedAuthors)
+          done()
+        })
+      })
       .catch(undesiredErr(done))
     })
 
@@ -297,24 +329,26 @@ describe('items:snapshot', () => {
         createHuman(),
         createHuman()
       ])
-      .spread((userId, authorEntityA, authorEntityB) => createWorkWithAuthor(authorEntityA)
-      .then(workEntity => authReq('post', '/api/items', { entity: workEntity.uri, lang: 'en' }))
-      .delay(200)
-      .tap(() => merge(authorEntityA.uri, authorEntityB.uri))
-      .delay(200)
-      .then(getItem)
-      .then(updatedItem => {
-        const updatedAuthors = authorEntityB.labels.en
-        updatedItem.snapshot['entity:authors'].should.equal(updatedAuthors)
-        return revertMerge(authorEntityA.uri)
+      .spread((userId, authorEntityA, authorEntityB) => {
+        return createWorkWithAuthor(authorEntityA)
+        .then(workEntity => authReq('post', '/api/items', { entity: workEntity.uri, lang: 'en' }))
         .delay(200)
-        .then(() => getItem(updatedItem))
-        .then(reupdatedItem => {
-          const oldAuthors = authorEntityA.labels.en
-          reupdatedItem.snapshot['entity:authors'].should.equal(oldAuthors)
-          done()
+        .tap(() => merge(authorEntityA.uri, authorEntityB.uri))
+        .delay(200)
+        .then(getItem)
+        .then(updatedItem => {
+          const updatedAuthors = authorEntityB.labels.en
+          updatedItem.snapshot['entity:authors'].should.equal(updatedAuthors)
+          return revertMerge(authorEntityA.uri)
+          .delay(200)
+          .then(() => getItem(updatedItem))
+          .then(reupdatedItem => {
+            const oldAuthors = authorEntityA.labels.en
+            reupdatedItem.snapshot['entity:authors'].should.equal(oldAuthors)
+            done()
+          })
         })
-      }))
+      })
       .catch(undesiredErr(done))
     })
 
@@ -323,21 +357,25 @@ describe('items:snapshot', () => {
         getUserId(),
         createWork()
       ])
-      .spread((userId, workEntityA) => Promise.all([
-        createEditionFromWorks(workEntityA),
-        authReq('post', '/api/items', { entity: workEntityA.uri, lang: 'en' })
-      ])
-      .delay(100)
-      .spread((editionEntity, item) => getItem(item)
-      .then(item => {
-        item.entity = editionEntity.uri
-        return authReq('put', '/api/items', item)
+      .spread((userId, workEntityA) => {
+        return Promise.all([
+          createEditionFromWorks(workEntityA),
+          authReq('post', '/api/items', { entity: workEntityA.uri, lang: 'en' })
+        ])
+        .delay(100)
+        .spread((editionEntity, item) => {
+          return getItem(item)
+          .then(item => {
+            item.entity = editionEntity.uri
+            return authReq('put', '/api/items', item)
+          })
+          .then(updatedItem => {
+            const editionTitle = editionEntity.claims['wdt:P1476'][0]
+            updatedItem.snapshot['entity:title'].should.equal(editionTitle)
+            done()
+          })
+        })
       })
-      .then(updatedItem => {
-        const editionTitle = editionEntity.claims['wdt:P1476'][0]
-        updatedItem.snapshot['entity:title'].should.equal(editionTitle)
-        done()
-      })))
       .catch(undesiredErr(done))
     })
 
@@ -347,34 +385,46 @@ describe('items:snapshot', () => {
         getUserId(),
         createWork()
       ])
-      .spread((userId, workEntity) => createEditionFromWorks(workEntity)
-      .then(editionEntity => authReq('post', '/api/items', { entity: editionEntity.uri })
-      .tap(() => merge(workEntity.uri, 'wd:Q3209796'))
-      .delay(1000)
-      .then(item => getItem(item)
-      .then(updatedItem => {
-        updatedItem.snapshot['entity:authors'].should.equal('Alain Damasio')
-        done()
-      }))))
+      .spread((userId, workEntity) => {
+        return createEditionFromWorks(workEntity)
+        .then(editionEntity => {
+          return authReq('post', '/api/items', { entity: editionEntity.uri })
+          .tap(() => merge(workEntity.uri, 'wd:Q3209796'))
+          .delay(1000)
+          .then(item => {
+            return getItem(item)
+            .then(updatedItem => {
+              updatedItem.snapshot['entity:authors'].should.equal('Alain Damasio')
+              done()
+            })
+          })
+        })
+      })
       .catch(undesiredErr(done))
     })
 
     it('should be updated when its remote author entity changes', done => {
       // Simulating a change on the Wikidata author by merging an inv author into it
       createWork()
-      .then(work => Promise.all([
-        createEdition({ work }),
-        addAuthor(work)
-      ])
-      .spread((edition, author) => authReq('post', '/api/items', { entity: edition.uri })
-      .delay(200)
-      .tap(() => merge(author.uri, 'wd:Q2829704'))
-      .delay(200)
-      .then(item => getItem(item)
-      .then(updatedItem => {
-        updatedItem.snapshot['entity:authors'].should.equal('Alain Damasio')
-        done()
-      }))))
+      .then(work => {
+        return Promise.all([
+          createEdition({ work }),
+          addAuthor(work)
+        ])
+        .spread((edition, author) => {
+          return authReq('post', '/api/items', { entity: edition.uri })
+          .delay(200)
+          .tap(() => merge(author.uri, 'wd:Q2829704'))
+          .delay(200)
+          .then(item => {
+            return getItem(item)
+            .then(updatedItem => {
+              updatedItem.snapshot['entity:authors'].should.equal('Alain Damasio')
+              done()
+            })
+          })
+        })
+      })
       .catch(undesiredErr(done))
     })
   })

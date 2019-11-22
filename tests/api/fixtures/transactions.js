@@ -13,18 +13,22 @@ module.exports = {
     return createItem(getUserB(), { listing: 'public', transaction: 'giving' })
     .tap(addAuthorToItemEditionWork)
     .then(getRefreshedItem)
-    .then(userBItem => Promise.all([
-      getUser(),
-      getUserB()
-    ])
-    .spread((userA, userB) => authReq('post', '/api/transactions?action=request', {
-      item: userBItem._id,
-      message: 'yo'
+    .then(userBItem => {
+      return Promise.all([
+        getUser(),
+        getUserB()
+      ])
+      .spread((userA, userB) => {
+        return authReq('post', '/api/transactions?action=request', {
+          item: userBItem._id,
+          message: 'yo'
+        })
+        .then(res => {
+          Object.assign(res, { userA, userB, userBItem })
+          return res
+        })
+      })
     })
-    .then(res => {
-      Object.assign(res, { userA, userB, userBItem })
-      return res
-    })))
   },
 
   addMessage: transaction => {
@@ -36,8 +40,11 @@ module.exports = {
   }
 }
 
-const addAuthorToItemEditionWork = item => getEntityByUri(item.entity)
-.then(edition => {
-  const workUri = edition.claims['wdt:P629'][0]
-  return addAuthor(workUri)
-}).delay(1000)
+const addAuthorToItemEditionWork = item => {
+  return getEntityByUri(item.entity)
+  .then(edition => {
+    const workUri = edition.claims['wdt:P629'][0]
+    return addAuthor(workUri)
+  })
+  .delay(1000)
+}

@@ -111,51 +111,63 @@ describe('cache', () => {
       .catch(done)
     })
 
-    describe('timespan', () => it('should refuse old value when passed a 0 timespan', done => {
-      const key = 'doden'
-      cache_.get({ key, fn: workingFn.bind(null, 'Vem är du?'), timespan: 0 })
-      .delay(10)
-      .then(res1 => {
-        // returns an error: should return old value
-        return cache_.get({ key, fn: failingFn.bind(null, 'Vem är du?'), timespan: 0 })
-        .then(res2 => {
-          res1.should.be.ok()
-          should(res2).not.be.ok()
-          done()
+    describe('timespan', () => {
+      it('should refuse old value when passed a 0 timespan', done => {
+        const key = 'doden'
+        cache_.get({ key, fn: workingFn.bind(null, 'Vem är du?'), timespan: 0 })
+        .delay(10)
+        .then(res1 => {
+          // returns an error: should return old value
+          return cache_.get({ key, fn: failingFn.bind(null, 'Vem är du?'), timespan: 0 })
+          .then(res2 => {
+            res1.should.be.ok()
+            should(res2).not.be.ok()
+            done()
+          })
         })
+        .catch(done)
       })
-      .catch(done)
-    }))
+    })
 
     it('should also accept an expiration timespan', done => {
       const key = 'samekey'
       cache_.get({ key, fn: workingFn.bind(null, 'bla') })
-      .then(res1 => cache_.get({ key, fn: workingFn.bind(null, 'different arg'), timespan: 10000 })
-      .delay(100)
-      .then(res2 => cache_.get({ key, fn: workingFn.bind(null, 'different arg'), timespan: 0 })
-      .delay(100)
-      .then(res3 => {
-        res1.should.equal(res2)
-        res2.should.not.equal(res3)
-        done()
-      })))
+      .then(res1 => {
+        return cache_.get({ key, fn: workingFn.bind(null, 'different arg'), timespan: 10000 })
+        .delay(100)
+        .then(res2 => {
+          return cache_.get({ key, fn: workingFn.bind(null, 'different arg'), timespan: 0 })
+          .delay(100)
+          .then(res3 => {
+            res1.should.equal(res2)
+            res2.should.not.equal(res3)
+            done()
+          })
+        })
+      })
       .catch(done)
     })
 
-    describe('refresh', () => it('should accept a refresh parameter', done => {
-      const key = 'samekey'
-      const fn = workingFn.bind(null, 'foo')
-      cache_.get({ key, fn, timespan: 10000 })
-      .delay(100)
-      .then(res1 => cache_.get({ key, fn })
-      .then(res2 => cache_.get({ key, fn, refresh: true })
-      .then(res3 => {
-        res1.should.equal(res2)
-        res1.should.not.equal(res3)
-        done()
-      })))
-      .catch(done)
-    }))
+    describe('refresh', () => {
+      it('should accept a refresh parameter', done => {
+        const key = 'samekey'
+        const fn = workingFn.bind(null, 'foo')
+        cache_.get({ key, fn, timespan: 10000 })
+        .delay(100)
+        .then(res1 => {
+          return cache_.get({ key, fn })
+          .then(res2 => {
+            return cache_.get({ key, fn, refresh: true })
+            .then(res3 => {
+              res1.should.equal(res2)
+              res1.should.not.equal(res3)
+              done()
+            })
+          })
+        })
+        .catch(done)
+      })
+    })
 
     describe('dry', () => {
       it('should get a cached value with a dry parameter', done => {

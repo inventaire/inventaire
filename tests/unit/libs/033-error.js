@@ -45,12 +45,14 @@ describe('error_', () => {
     })
   })
 
-  describe('ErrorHandler', () => it('should return a function', done => {
-    error_.handler.should.be.a.Function()
-    error_.Handler.should.be.a.Function()
-    error_.Handler('yo').should.be.a.Function()
-    done()
-  }))
+  describe('ErrorHandler', () => {
+    it('should return a function', done => {
+      error_.handler.should.be.a.Function()
+      error_.Handler.should.be.a.Function()
+      error_.Handler('yo').should.be.a.Function()
+      done()
+    })
+  })
 
   describe('reject', () => {
     it('should return a rejecting promise from a string', done => {

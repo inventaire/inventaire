@@ -11,7 +11,6 @@ const someImageHash = '00015893d54f5112b99b41b0dfd851f381798047'
 
 const defaultEditionData = () => ({
   labels: {},
-
   claims: {
     'wdt:P31': [ 'wd:Q3331189' ],
     'wdt:P1476': [ API.randomLabel() ]
@@ -42,20 +41,23 @@ const API = module.exports = {
     if (!label) { label = API.randomLabel() }
 
     return humanPromise
-    .then(human => authReq('post', '/api/entities?action=create', {
-      labels: { en: label },
-      claims: {
-        'wdt:P31': [ 'wd:Q571' ],
-        'wdt:P50': [ human.uri ]
-      }
-    }))
+    .then(human => {
+      return authReq('post', '/api/entities?action=create', {
+        labels: { en: label },
+        claims: {
+          'wdt:P31': [ 'wd:Q571' ],
+          'wdt:P50': [ human.uri ]
+        }
+      })
+    })
   },
 
   createEdition: (params = {}) => {
-    let { work, works, lang } = params
-    if (!lang) { lang = 'en' }
-    if ((work != null) && (works == null)) { works = [ work ] }
-    const worksPromise = (works != null) ? Promise.resolve(works) : API.createWork()
+    const { work } = params
+    let { works } = params
+    const lang = params.lang || 'en'
+    if (work != null && works == null) works = [ work ]
+    const worksPromise = works ? Promise.resolve(works) : API.createWork()
 
     return worksPromise
     .then(works => {
@@ -99,7 +101,7 @@ const API = module.exports = {
     return getByUris(uri)
     .get('entities')
     .then(entities => {
-      if (entities[uri] != null) return entities[uri]
+      if (entities[uri]) return entities[uri]
       if (!workData) {
         workData = {
           labels: { fr: API.randomLabel() },

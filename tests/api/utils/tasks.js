@@ -31,8 +31,8 @@ const utils = module.exports = {
   getByScore: (options = {}) => {
     let url = `${endpoint}by-score`
     const { limit, offset } = options
-    if (limit != null) { url += `&limit=${limit}` }
-    if (offset != null) { url += `&offset=${offset}` }
+    if (limit != null) url += `&limit=${limit}`
+    if (offset != null) url += `&offset=${offset}`
     return nonAuthReq('get', url)
     .get('tasks')
   },

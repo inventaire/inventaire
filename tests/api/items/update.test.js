@@ -38,26 +38,28 @@ describe('items:update', () => {
     authReq('post', '/api/items', newItemBase())
     // Delay to let the time to the item counter to be updated
     .delay(debounceDelay)
-    .then(item => getUser()
-    .then(userBefore => {
-      let newListing
-      item.listing.should.equal('private')
-      item.listing = (newListing = 'public')
-      return authReq('put', '/api/items', item)
-      // Delay to request the user after its items count was updated
-      .delay(debounceDelay)
-      .then(updatedItem => {
-        updatedItem.listing.should.equal(newListing)
-        return getUser()
-        .then(userAfter => {
-          const countChange = CountChange(userBefore.snapshot, userAfter.snapshot)
-          countChange('private').should.equal(-1)
-          countChange('network').should.equal(0)
-          countChange('public').should.equal(1)
-          done()
+    .then(item => {
+      return getUser()
+      .then(userBefore => {
+        let newListing
+        item.listing.should.equal('private')
+        item.listing = (newListing = 'public')
+        return authReq('put', '/api/items', item)
+        // Delay to request the user after its items count was updated
+        .delay(debounceDelay)
+        .then(updatedItem => {
+          updatedItem.listing.should.equal(newListing)
+          return getUser()
+          .then(userAfter => {
+            const countChange = CountChange(userBefore.snapshot, userAfter.snapshot)
+            countChange('private').should.equal(-1)
+            countChange('network').should.equal(0)
+            countChange('public').should.equal(1)
+            done()
+          })
         })
       })
-    }))
+    })
     .catch(undesiredErr(done))
   })
 })

@@ -11,7 +11,7 @@ const publicItemsPerUser = 10
 
 const API = module.exports = {
   populate: () => {
-    if (populatePromise != null) return populatePromise
+    if (populatePromise) return populatePromise
     populatePromise = Promise.all(_.times(usersCount, API.createUserWithItems))
     return populatePromise
   },

@@ -11,16 +11,20 @@ describe('tasks:automerge', () => {
     const WdUri = 'wd:Q205739'
     const workLabel = 'Voice of the Fire' // wd:Q3825051
     createHuman({ labels: { en: humanLabel } })
-    .then(human => createWorkWithAuthor(human, workLabel)
-    .then(() => checkEntities(human.uri))
-    .then(tasks => tasks.length.should.equal(0))
-    .then(() => getByUris(human.uri)
-    .get('entities')
-    .then(entities => {
-      // entity should have merged, thus URI is now a a WD uri
-      entities[WdUri].should.be.ok()
-      done()
-    })))
+    .then(human => {
+      return createWorkWithAuthor(human, workLabel)
+      .then(() => checkEntities(human.uri))
+      .then(tasks => tasks.length.should.equal(0))
+      .then(() => {
+        return getByUris(human.uri)
+        .get('entities')
+        .then(entities => {
+          // entity should have merged, thus URI is now a a WD uri
+          entities[WdUri].should.be.ok()
+          done()
+        })
+      })
+    })
     .catch(undesiredErr(done))
   })
 
@@ -29,17 +33,21 @@ describe('tasks:automerge', () => {
     const wikidataUri = 'wd:Q2829704'
     const workLabel = randomLabel()
     createHuman({ labels: { en: humanLabel } })
-    .then(human => Promise.all([
-      createWorkWithAuthor({ uri: wikidataUri }, workLabel),
-      createWorkWithAuthor(human, workLabel)
-    ])
-    .then(() => checkEntities(human.uri))
-    .then(() => getByUris(human.uri)
-    .get('entities')
-    .then(entities => {
-      entities[wikidataUri].should.be.ok()
-      done()
-    })))
+    .then(human => {
+      return Promise.all([
+        createWorkWithAuthor({ uri: wikidataUri }, workLabel),
+        createWorkWithAuthor(human, workLabel)
+      ])
+      .then(() => checkEntities(human.uri))
+      .then(() => {
+        return getByUris(human.uri)
+        .get('entities')
+        .then(entities => {
+          entities[wikidataUri].should.be.ok()
+          done()
+        })
+      })
+    })
     .catch(undesiredErr(done))
   })
 
@@ -47,14 +55,16 @@ describe('tasks:automerge', () => {
     const humanLabel = 'Frédéric Lordon'
     const workLabel = humanLabel
     createHuman({ labels: { en: humanLabel } })
-    .then(human => createWorkWithAuthor(human, workLabel)
-    .then(() => checkEntities(human.uri))
-    .then(tasks => {
-      tasks.length.should.aboveOrEqual(1)
-      const firstOccurenceMatch = tasks[0].externalSourcesOccurrences[0].matchedTitles[0]
-      firstOccurenceMatch.should.equal(humanLabel)
-      done()
-    }))
+    .then(human => {
+      return createWorkWithAuthor(human, workLabel)
+      .then(() => checkEntities(human.uri))
+      .then(tasks => {
+        tasks.length.should.aboveOrEqual(1)
+        const firstOccurenceMatch = tasks[0].externalSourcesOccurrences[0].matchedTitles[0]
+        firstOccurenceMatch.should.equal(humanLabel)
+        done()
+      })
+    })
     .catch(undesiredErr(done))
   })
 })

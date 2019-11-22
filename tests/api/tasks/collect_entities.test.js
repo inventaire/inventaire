@@ -11,18 +11,20 @@ const { undesiredErr } = __.require('apiTests', 'utils/utils')
 // - running after a database reset
 // - having a populated ElasticSearch wikidata index
 // Disabled to avoid crashing tests when those depdendencies aren't met
-describe('tasks:collect-entities', () => xit('should create new tasks', done => {
-  Promise.all([
-    createHuman({ labels: { en: 'Stanislas Lem' } }),
-    createHuman({ labels: { en: 'Stanislas Lem' } })
-  ])
-  .then(humans => {
-    const uris = _.map(humans, 'uri')
-    return collectEntities()
-    .delay(5000)
-    .then(() => Promise.all(uris.map(getBySuspectUri)))
-    .map(tasks => tasks.length.should.aboveOrEqual(1))
-    .then(() => done())
+describe('tasks:collect-entities', () => {
+  xit('should create new tasks', done => {
+    Promise.all([
+      createHuman({ labels: { en: 'Stanislas Lem' } }),
+      createHuman({ labels: { en: 'Stanislas Lem' } })
+    ])
+    .then(humans => {
+      const uris = _.map(humans, 'uri')
+      return collectEntities()
+      .delay(5000)
+      .then(() => Promise.all(uris.map(getBySuspectUri)))
+      .map(tasks => tasks.length.should.aboveOrEqual(1))
+      .then(() => done())
+    })
+    .catch(undesiredErr(done))
   })
-  .catch(undesiredErr(done))
-}))
+})

@@ -22,25 +22,29 @@ describe('entities:update-claims', () => {
 
   it('should reject an update with an inappropriate property datatype', done => {
     createWork()
-    .then(work => addClaim(work.uri, 'wdt:P50', 124)
-    .then(undesiredRes(done))
-    .catch(err => {
-      err.body.status_verbose.should.equal('invalid value type: expected string, got number')
-      err.statusCode.should.equal(400)
-      done()
-    }))
+    .then(work => {
+      return addClaim(work.uri, 'wdt:P50', 124)
+      .then(undesiredRes(done))
+      .catch(err => {
+        err.body.status_verbose.should.equal('invalid value type: expected string, got number')
+        err.statusCode.should.equal(400)
+        done()
+      })
+    })
     .catch(undesiredErr(done))
   })
 
   it('should reject an update with an invalid property value', done => {
     createEdition()
-    .then(edition => addClaim(edition.uri, 'wdt:P123', 'not an entity uri')
-    .then(undesiredRes(done))
-    .catch(err => {
-      err.body.status_verbose.should.equal('invalid property value')
-      err.statusCode.should.equal(400)
-      done()
-    }))
+    .then(edition => {
+      return addClaim(edition.uri, 'wdt:P123', 'not an entity uri')
+      .then(undesiredRes(done))
+      .catch(err => {
+        err.body.status_verbose.should.equal('invalid property value')
+        err.statusCode.should.equal(400)
+        done()
+      })
+    })
     .catch(undesiredErr(done))
   })
 
@@ -120,41 +124,49 @@ describe('entities:update-claims', () => {
 
   it('should accept a non-duplicated concurrent value', done => {
     createHuman()
-    .then(human => addClaim(human._id, 'wdt:P648', someOpenLibraryId())
-    .then(res => {
-      should(res.ok).be.true()
-      done()
-    }))
+    .then(human => {
+      return addClaim(human._id, 'wdt:P648', someOpenLibraryId())
+      .then(res => {
+        should(res.ok).be.true()
+        done()
+      })
+    })
     .catch(undesiredErr(done))
   })
 
   it('should reject invalid value for type-specific value formats', done => {
     createHuman()
-    .then(human => updateClaim(human.uri, 'wdt:P648', null, someOpenLibraryId('work'))
-    .then(undesiredRes(done))
-    .catch(err => {
-      err.statusCode.should.equal(400)
-      err.body.status_verbose.should.equal('invalid property value for entity type human')
-      done()
-    }))
+    .then(human => {
+      return updateClaim(human.uri, 'wdt:P648', null, someOpenLibraryId('work'))
+      .then(undesiredRes(done))
+      .catch(err => {
+        err.statusCode.should.equal(400)
+        err.body.status_verbose.should.equal('invalid property value for entity type human')
+        done()
+      })
+    })
     .catch(undesiredErr(done))
   })
 
   it('should reject an update with a duplicated concurrent value', done => {
     const id = someOpenLibraryId()
     createHuman()
-    .then(human => addClaim(human.uri, 'wdt:P648', id)
-    .then(res => {
-      should(res.ok).be.true()
-      return createHuman()
-    }))
-    .then(human2 => addClaim(human2.uri, 'wdt:P648', id)
-    .then(undesiredRes(done))
-    .catch(err => {
-      err.statusCode.should.equal(400)
-      err.body.status_verbose.should.equal('this property value is already used')
-      done()
-    }))
+    .then(human => {
+      return addClaim(human.uri, 'wdt:P648', id)
+      .then(res => {
+        should(res.ok).be.true()
+        return createHuman()
+      })
+    })
+    .then(human2 => {
+      return addClaim(human2.uri, 'wdt:P648', id)
+      .then(undesiredRes(done))
+      .catch(err => {
+        err.statusCode.should.equal(400)
+        err.body.status_verbose.should.equal('this property value is already used')
+        done()
+      })
+    })
     .catch(undesiredErr(done))
   })
 })

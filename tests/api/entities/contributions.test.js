@@ -80,31 +80,39 @@ describe('entities:get:contributions', () => {
         getWorkId(res1.patches[0]._id).should.equal(workB._id)
         return create2WorksAndGetUser()
         .delay(1000)
-        .spread((workC, workD) => adminReq('get', `/api/entities?action=contributions&user=${_id}&limit=3`)
-        .then(res2 => {
-          getWorkId(res2.patches[0]._id).should.equal(workD._id)
-          getWorkId(res2.patches[1]._id).should.equal(workC._id)
-          getWorkId(res2.patches[2]._id).should.equal(workB._id)
-          res2.continue.should.equal(3)
-          res2.total.should.equal(res1.total + 2)
-          return adminReq('get', `/api/entities?action=contributions&user=${_id}&offset=3`)
-          .then(res3 => {
-            getWorkId(res3.patches[0]._id).should.equal(workA._id)
-            done()
+        .spread((workC, workD) => {
+          return adminReq('get', `/api/entities?action=contributions&user=${_id}&limit=3`)
+          .then(res2 => {
+            getWorkId(res2.patches[0]._id).should.equal(workD._id)
+            getWorkId(res2.patches[1]._id).should.equal(workC._id)
+            getWorkId(res2.patches[2]._id).should.equal(workB._id)
+            res2.continue.should.equal(3)
+            res2.total.should.equal(res1.total + 2)
+            return adminReq('get', `/api/entities?action=contributions&user=${_id}&offset=3`)
+            .then(res3 => {
+              getWorkId(res3.patches[0]._id).should.equal(workA._id)
+              done()
+            })
           })
-        }))
+        })
       })
     })
     .catch(undesiredErr(done))
   })
 })
 
-const create2WorksAndGetUser = () => createWork()
-.delay(10)
-.then(workA => createWork()
-.delay(10)
-.then(workB => getUser()
-.then(user => [ workA, workB, user ])))
+const create2WorksAndGetUser = () => {
+  return createWork()
+  .delay(10)
+  .then(workA => {
+    return createWork()
+    .delay(10)
+    .then(workB => {
+      return getUser()
+      .then(user => [ workA, workB, user ])
+    })
+  })
+}
 
 const getWorkId = id => id.split(':')[0]
 const getPatchEntityId = patch => patch._id.split(':')[0]

@@ -163,14 +163,16 @@ describe('entities:create', () => {
         'wdt:P1476': [ randomLabel() ]
       }
     })
-    .then(editionEntity => authReq('post', '/api/entities?action=create', {
-      claims: {
-        'wdt:P31': [ 'wd:Q3331189' ],
-        'wdt:P212': [ '978-2-315-00611-3' ],
-        'wdt:P1476': [ randomLabel() ],
-        'wdt:P629': editionEntity.claims['wdt:P629']
-      }
-    }))
+    .then(editionEntity => {
+      return authReq('post', '/api/entities?action=create', {
+        claims: {
+          'wdt:P31': [ 'wd:Q3331189' ],
+          'wdt:P212': [ '978-2-315-00611-3' ],
+          'wdt:P1476': [ randomLabel() ],
+          'wdt:P629': editionEntity.claims['wdt:P629']
+        }
+      })
+    })
     .catch(err => {
       err.body.status_verbose.should.equal('this property value is already used')
       err.statusCode.should.equal(400)

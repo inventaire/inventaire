@@ -8,11 +8,13 @@ const { createItem, createItems } = require('../fixtures/items')
 describe('items:get-by-ids', () => {
   it('should get an item by id', done => {
     createItem(getUser())
-    .then(item => authReq('get', `/api/items?action=by-ids&ids=${item._id}`)
-    .then(res => {
-      res.items[0]._id.should.equal(item._id)
-      done()
-    }))
+    .then(item => {
+      return authReq('get', `/api/items?action=by-ids&ids=${item._id}`)
+      .then(res => {
+        res.items[0]._id.should.equal(item._id)
+        done()
+      })
+    })
     .catch(undesiredErr(done))
   })
 
@@ -34,12 +36,14 @@ describe('items:get-by-ids', () => {
 
   it('should include users if requested', done => {
     createItem(getUser())
-    .then(item => authReq('get', `/api/items?action=by-ids&ids=${item._id}&include-users=true`)
-    .then(res => {
-      res.items[0]._id.should.equal(item._id)
-      res.users[0]._id.should.equal(item.owner)
-      done()
-    }))
+    .then(item => {
+      return authReq('get', `/api/items?action=by-ids&ids=${item._id}&include-users=true`)
+      .then(res => {
+        res.items[0]._id.should.equal(item._id)
+        res.users[0]._id.should.equal(item.owner)
+        done()
+      })
+    })
     .catch(undesiredErr(done))
   })
 })

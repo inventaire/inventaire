@@ -26,27 +26,27 @@ const editionDoc = () => {
   return doc
 }
 
-const nonTrimedString = `\
-
+const nonTrimedString = `
       foo
 bar
-\
-`
+ `
 
 describe('entity model', () => {
-  describe('create', () => it('should return an object with type entity and a claims object', done => {
-    const now = Date.now()
-    const entityDoc = Entity.create()
-    entityDoc.should.be.an.Object()
-    entityDoc.type.should.equal('entity')
-    entityDoc.labels.should.be.an.Object()
-    entityDoc.claims.should.be.an.Object()
-    entityDoc.created.should.be.a.Number()
-    entityDoc.created.should.be.aboveOrEqual(now)
-    entityDoc.created.should.be.below(now + 10)
-    entityDoc.updated.should.be.ok()
-    done()
-  }))
+  describe('create', () => {
+    it('should return an object with type entity and a claims object', done => {
+      const now = Date.now()
+      const entityDoc = Entity.create()
+      entityDoc.should.be.an.Object()
+      entityDoc.type.should.equal('entity')
+      entityDoc.labels.should.be.an.Object()
+      entityDoc.claims.should.be.an.Object()
+      entityDoc.created.should.be.a.Number()
+      entityDoc.created.should.be.aboveOrEqual(now)
+      entityDoc.created.should.be.below(now + 10)
+      entityDoc.updated.should.be.ok()
+      done()
+    })
+  })
 
   describe('create claim', () => {
     it('should add a claim value', done => {
@@ -416,9 +416,9 @@ describe('entity model', () => {
       it('should refuse to merge redirections', done => {
         const redirection = { redirect: 'wd:Q1' }
         const entity = workDoc();
-        ((() => Entity.mergeDocs(redirection, entity)))
+        (() => Entity.mergeDocs(redirection, entity))
         .should.throw('mergeDocs (from) failed: the entity is a redirection');
-        ((() => Entity.mergeDocs(entity, redirection)))
+        (() => Entity.mergeDocs(entity, redirection))
         .should.throw('mergeDocs (to) failed: the entity is a redirection')
         done()
       })

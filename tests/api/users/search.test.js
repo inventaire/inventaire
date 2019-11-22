@@ -40,23 +40,27 @@ describe('users:search', () => {
     const userPromise = createUser({ username: 'testuser' })
     userPromise
     .delay(1000)
-    .then(user => customAuthReq(userPromise, 'get', '/api/users?action=search&search=testusr')
-    .then(res => {
-      usersIds(res).includes(user._id).should.be.true()
-      done()
-    }))
+    .then(user => {
+      return customAuthReq(userPromise, 'get', '/api/users?action=search&search=testusr')
+      .then(res => {
+        usersIds(res).includes(user._id).should.be.true()
+        done()
+      })
+    })
     .catch(undesiredErr(done))
   })
 
   it('should not return snapshot data', done => {
     getUserB()
     .delay(1000)
-    .then(user => authReq('get', `/api/users?action=search&search=${user.username}`)
-    .then(res => {
-      usersIds(res).includes(user._id).should.be.true()
-      should(res.users[0].snapshot).not.be.ok()
-      done()
-    }))
+    .then(user => {
+      return authReq('get', `/api/users?action=search&search=${user.username}`)
+      .then(res => {
+        usersIds(res).includes(user._id).should.be.true()
+        should(res.users[0].snapshot).not.be.ok()
+        done()
+      })
+    })
     .catch(undesiredErr(done))
   })
 
@@ -67,11 +71,13 @@ describe('users:search', () => {
     })
     .then(getUser)
     .delay(1000)
-    .then(user => nonAuthReq('get', `/api/users?action=search&search=${user.bio}`)
-    .then(res => {
-      usersIds(res).includes(user._id).should.be.true()
-      done()
-    }))
+    .then(user => {
+      return nonAuthReq('get', `/api/users?action=search&search=${user.bio}`)
+      .then(res => {
+        usersIds(res).includes(user._id).should.be.true()
+        done()
+      })
+    })
     .catch(undesiredErr(done))
   })
 })

@@ -12,24 +12,28 @@ describe('items:nearby', () => {
   it('should get items nearby', done => {
     createItem(geolocatedUser1Promise)
     .delay(500)
-    .then(item => customAuthReq(geolocatedUser2Promise, 'get', endpoint)
-    .then(res => {
-      const itemsIds = _.map(res.items, '_id')
-      itemsIds.includes(item._id).should.be.true()
-      done()
-    }))
+    .then(item => {
+      return customAuthReq(geolocatedUser2Promise, 'get', endpoint)
+      .then(res => {
+        const itemsIds = _.map(res.items, '_id')
+        itemsIds.includes(item._id).should.be.true()
+        done()
+      })
+    })
     .catch(undesiredErr(done))
   })
 
   it('should accept a range', done => {
     createItem(geolocatedUser1Promise)
     .delay(500)
-    .then(item => customAuthReq(geolocatedUser2Promise, 'get', `${endpoint}&range=1&strict-range=true`)
-    .then(res => {
-      const itemsIds = _.map(res.items, '_id')
-      itemsIds.includes(item._id).should.be.false()
-      done()
-    }))
+    .then(item => {
+      return customAuthReq(geolocatedUser2Promise, 'get', `${endpoint}&range=1&strict-range=true`)
+      .then(res => {
+        const itemsIds = _.map(res.items, '_id')
+        itemsIds.includes(item._id).should.be.false()
+        done()
+      })
+    })
     .catch(undesiredErr(done))
   })
 })

@@ -3,17 +3,21 @@ const _ = __.require('builders', 'utils')
 require('should')
 
 describe('utils', () => {
-  describe('env', () => it('should have loggers, boolean validations, and misc utils', done => {
-    _.Log.should.be.a.Function()
-    _.isLocalImg.should.be.a.Function()
-    _.hashCode.should.be.a.Function()
-    done()
-  }))
+  describe('env', () => {
+    it('should have loggers, boolean validations, and misc utils', done => {
+      _.Log.should.be.a.Function()
+      _.isLocalImg.should.be.a.Function()
+      _.hashCode.should.be.a.Function()
+      done()
+    })
+  })
 
-  describe('hashCode', () => it('should return a hash', done => {
-    _.hashCode('whatever').should.be.a.Number()
-    done()
-  }))
+  describe('hashCode', () => {
+    it('should return a hash', done => {
+      _.hashCode('whatever').should.be.a.Number()
+      done()
+    })
+  })
 
   describe('flattenIndexes', () => {
     it('should return the collection of indexes merged into one', done => {
@@ -72,17 +76,19 @@ describe('utils', () => {
     })
   })
 
-  describe('typeOf', () => it('should return the right type', done => {
-    _.typeOf('hello').should.equal('string')
-    _.typeOf([ 'hello' ]).should.equal('array')
-    _.typeOf({ hel: 'lo' }).should.equal('object')
-    _.typeOf(83110).should.equal('number')
-    _.typeOf(null).should.equal('null')
-    _.typeOf().should.equal('undefined')
-    _.typeOf(false).should.equal('boolean')
-    _.typeOf(Number('boudu')).should.equal('NaN')
-    done()
-  }))
+  describe('typeOf', () => {
+    it('should return the right type', done => {
+      _.typeOf('hello').should.equal('string')
+      _.typeOf([ 'hello' ]).should.equal('array')
+      _.typeOf({ hel: 'lo' }).should.equal('object')
+      _.typeOf(83110).should.equal('number')
+      _.typeOf(null).should.equal('null')
+      _.typeOf().should.equal('undefined')
+      _.typeOf(false).should.equal('boolean')
+      _.typeOf(Number('boudu')).should.equal('NaN')
+      done()
+    })
+  })
 
   describe('forceArray', done => {
     it('should return an array for an array', done => {

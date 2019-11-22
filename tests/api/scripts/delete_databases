@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 databases=$(node -e "console.log Object.keys(require('./server/db/couch/list.js')).join(' ')")
 dbHost=$(node -e "console.log require('config').db.fullHost()")
 elasticHost=$(node -e "console.log require('config').elasticsearch.host")

@@ -75,12 +75,14 @@ describe('invitations:by-emails', () => {
       invite()
       .then(() => signup(email))
       .then(() => authReq('get', '/api/relations'))
-      .then(relations => invite()
-      .then(res => {
-        res.users[0].email.should.equal(email);
-        (relations.userRequested.includes(res.users[0]._id)).should.be.true()
-        done()
-      }))
+      .then(relations => {
+        return invite()
+        .then(res => {
+          res.users[0].email.should.equal(email);
+          (relations.userRequested.includes(res.users[0]._id)).should.be.true()
+          done()
+        })
+      })
       .catch(undesiredErr(done))
     })
   })
@@ -102,24 +104,28 @@ describe('invitations:by-emails', () => {
 
     it('should accept valid group ids', done => {
       groupPromise
-      .then(group => authReq('post', '/api/invitations?action=by-emails', {
-        emails: 'a@foo.org',
-        group: group._id
+      .then(group => {
+        return authReq('post', '/api/invitations?action=by-emails', {
+          emails: 'a@foo.org',
+          group: group._id
+        })
+        .then(res => {
+          res.emails[0].should.equal('a@foo.org')
+          done()
+        })
       })
-      .then(res => {
-        res.emails[0].should.equal('a@foo.org')
-        done()
-      }))
       .catch(undesiredErr(done))
     })
 
     it('should accept non-user admin requests to invite to a group', done => {
       groupPromise
       // User B is a member (see ../fixtures/groups.js)
-      .then(group => authReqB('post', '/api/invitations?action=by-emails', {
-        emails: 'a@foo.org',
-        group: group._id
-      }))
+      .then(group => {
+        return authReqB('post', '/api/invitations?action=by-emails', {
+          emails: 'a@foo.org',
+          group: group._id
+        })
+      })
       .then(res => {
         res.emails[0].should.equal('a@foo.org')
         done()

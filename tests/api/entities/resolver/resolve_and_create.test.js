@@ -75,16 +75,18 @@ describe('entities:resolve:create-unresolved', () => {
   it('should ignore unresolved work from resolve edition', done => {
     const isbn = generateIsbn13()
     ensureEditionExists(`isbn:${isbn}`)
-    .then(edition => resolveAndCreate({
-      edition: { isbn },
-      works: [ { labels: { en: randomLabel() } } ]
+    .then(edition => {
+      return resolveAndCreate({
+        edition: { isbn },
+        works: [ { labels: { en: randomLabel() } } ]
+      })
+      .then(res => {
+        const entry = res.entries[0]
+        entry.works[0].resolved.should.be.false()
+        entry.works[0].created.should.be.false()
+        done()
+      })
     })
-    .then(res => {
-      const entry = res.entries[0]
-      entry.works[0].resolved.should.be.false()
-      entry.works[0].created.should.be.false()
-      done()
-    }))
     .catch(done)
   })
 

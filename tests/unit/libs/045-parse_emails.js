@@ -50,9 +50,9 @@ describe('parse emails', () => {
   })
 
   it('should reject invalid emails', done => {
-    ((() => parseEmails(';;;;;'))).should.throw();
-    ((() => parseEmails(';a;b;z;da;@azd'))).should.throw();
-    ((() => parseEmails(';a;b;z;da;bla@azd.fr'))).should.throw()
+    (() => parseEmails(';;;;;')).should.throw();
+    (() => parseEmails(';a;b;z;da;@azd')).should.throw();
+    (() => parseEmails(';a;b;z;da;bla@azd.fr')).should.throw()
     done()
   })
 })

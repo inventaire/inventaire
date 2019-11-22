@@ -8,11 +8,13 @@ const { createItem, createEditionAndItem } = require('../fixtures/items')
 describe('items:get-by-entities', () => {
   it('should get an item by its entity uri', done => {
     createItem(getUser())
-    .then(item => authReq('get', `/api/items?action=by-entities&uris=${item.entity}`)
-    .then(res => {
-      res.items[0].entity.should.equal(item.entity)
-      done()
-    }))
+    .then(item => {
+      return authReq('get', `/api/items?action=by-entities&uris=${item.entity}`)
+      .then(res => {
+        res.items[0].entity.should.equal(item.entity)
+        done()
+      })
+    })
     .catch(undesiredErr(done))
   })
 

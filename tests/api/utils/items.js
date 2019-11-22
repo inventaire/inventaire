@@ -5,7 +5,7 @@ const { authReq } = require('./utils')
 
 const utils = module.exports = {
   getByIds: ids => {
-    if (_.isArray(ids)) { ids = ids.join('|') }
+    if (_.isArray(ids)) ids = ids.join('|')
     return authReq('get', `/api/items?action=by-ids&ids=${ids}`)
   },
 

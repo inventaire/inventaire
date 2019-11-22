@@ -19,13 +19,15 @@ describe('entities:editions:create', () => {
 
   it('should reject an edition entity without a title', done => {
     workEntityPromise
-    .then(workEntity => authReq('post', '/api/entities?action=create', {
-      labels: {},
-      claims: {
-        'wdt:P31': [ 'wd:Q3331189' ],
-        'wdt:P629': [ workEntity.uri ]
-      }
-    }))
+    .then(workEntity => {
+      return authReq('post', '/api/entities?action=create', {
+        labels: {},
+        claims: {
+          'wdt:P31': [ 'wd:Q3331189' ],
+          'wdt:P629': [ workEntity.uri ]
+        }
+      })
+    })
     .catch(err => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal('an edition should have a title (wdt:P1476)')
@@ -36,14 +38,16 @@ describe('entities:editions:create', () => {
 
   it('should reject an edition with a label', done => {
     workEntityPromise
-    .then(workEntity => authReq('post', '/api/entities?action=create', {
-      labels: { fr: randomLabel() },
-      claims: {
-        'wdt:P31': [ 'wd:Q3331189' ],
-        'wdt:P629': [ workEntity.uri ],
-        'wdt:P1476': [ randomLabel() ]
-      }
-    }))
+    .then(workEntity => {
+      return authReq('post', '/api/entities?action=create', {
+        labels: { fr: randomLabel() },
+        claims: {
+          'wdt:P31': [ 'wd:Q3331189' ],
+          'wdt:P629': [ workEntity.uri ],
+          'wdt:P1476': [ randomLabel() ]
+        }
+      })
+    })
     .catch(err => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal("editions can't have labels")

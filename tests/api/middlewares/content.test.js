@@ -4,49 +4,51 @@ require('should')
 const request = require('request')
 const host = CONFIG.fullHost()
 
-describe('content', () => describe('body-parser', () => {
-  it('should accept JSON with application/json content-type', done => makeRequest('application/json', done))
+describe('content', () => {
+  describe('body-parser', () => {
+    it('should accept JSON with application/json content-type', done => makeRequest('application/json', done))
 
-  it('should accept JSON with application/application/csp-report content-type', done => makeRequest('application/csp-report', done))
+    it('should accept JSON with application/application/csp-report content-type', done => makeRequest('application/csp-report', done))
 
-  it('should accept JSON with application/x-www-form-urlencoded content-type', done => makeRequest('application/x-www-form-urlencoded', done))
+    it('should accept JSON with application/x-www-form-urlencoded content-type', done => makeRequest('application/x-www-form-urlencoded', done))
 
-  it('should reject url encoded bodies', done => {
-    const params = {
-      method: 'POST',
-      url: `${host}/api/tests`,
-      headers: {
-        'content-type': 'application/x-www-form-urlencoded'
-      },
-      body: 'bla=123'
-    }
+    it('should reject url encoded bodies', done => {
+      const params = {
+        method: 'POST',
+        url: `${host}/api/tests`,
+        headers: {
+          'content-type': 'application/x-www-form-urlencoded'
+        },
+        body: 'bla=123'
+      }
 
-    return request(params, (err, res) => {
-      if (err) return console.error(err)
-      res.statusCode.should.equal(400)
-      JSON.parse(res.body).status_verbose.should.equal('invalid JSON body')
-      done()
+      return request(params, (err, res) => {
+        if (err) return console.error(err)
+        res.statusCode.should.equal(400)
+        JSON.parse(res.body).status_verbose.should.equal('invalid JSON body')
+        done()
+      })
+    })
+
+    it('should make an exception for /api/submit', done => {
+      const params = {
+        method: 'POST',
+        url: `${host}/api/submit?redirect=foo`,
+        headers: {
+          'content-type': 'application/x-www-form-urlencoded'
+        },
+        body: 'bla=123'
+      }
+
+      return request(params, (err, res) => {
+        if (err) return console.error(err)
+        res.statusCode.should.equal(302)
+        res.headers.location.should.equal('/foo')
+        done()
+      })
     })
   })
-
-  it('should make an exception for /api/submit', done => {
-    const params = {
-      method: 'POST',
-      url: `${host}/api/submit?redirect=foo`,
-      headers: {
-        'content-type': 'application/x-www-form-urlencoded'
-      },
-      body: 'bla=123'
-    }
-
-    return request(params, (err, res) => {
-      if (err) return console.error(err)
-      res.statusCode.should.equal(302)
-      res.headers.location.should.equal('/foo')
-      done()
-    })
-  })
-}))
+})
 
 const makeRequest = (contentType, done) => {
   const params = {

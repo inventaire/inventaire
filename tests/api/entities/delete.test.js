@@ -133,21 +133,25 @@ describe('entities:delete:by-uris', () => {
 
   it('should remove deleted entities from items snapshot', done => {
     createHuman()
-    .then(author => createWorkWithAuthor(author)
-    .then(work => authReq('post', '/api/items', { entity: work.uri, lang: 'en' })
-    .then(item => {
-      item.snapshot['entity:title'].should.equal(work.labels.en)
-      item.snapshot['entity:authors'].should.equal(author.labels.en)
-      return deleteByUris(author.uri)
-      .delay(100)
-      .then(() => getItemsByIds(item._id))
-      .then(res => {
-        const updatedItem = res.items[0]
-        updatedItem.snapshot['entity:title'].should.equal(work.labels.en)
-        should(updatedItem.snapshot['entity:authors']).not.be.ok()
-        done()
+    .then(author => {
+      return createWorkWithAuthor(author)
+      .then(work => {
+        return authReq('post', '/api/items', { entity: work.uri, lang: 'en' })
+        .then(item => {
+          item.snapshot['entity:title'].should.equal(work.labels.en)
+          item.snapshot['entity:authors'].should.equal(author.labels.en)
+          return deleteByUris(author.uri)
+          .delay(100)
+          .then(() => getItemsByIds(item._id))
+          .then(res => {
+            const updatedItem = res.items[0]
+            updatedItem.snapshot['entity:title'].should.equal(work.labels.en)
+            should(updatedItem.snapshot['entity:authors']).not.be.ok()
+            done()
+          })
+        })
       })
-    })))
+    })
     .catch(undesiredErr(done))
   })
 
@@ -168,26 +172,30 @@ describe('entities:delete:by-uris', () => {
 
   it('should not deleted entities that are the entity of an item', done => {
     createWork()
-    .then(work => authReq('post', '/api/items', { entity: work.uri, lang: 'en' })
-    .then(() => deleteByUris(work.uri))
-    .then(undesiredRes(done))
-    .catch(err => {
-      err.body.status_verbose.should.equal("entities that are used by an item can't be removed")
-      err.statusCode.should.equal(400)
-      done()
-    }))
+    .then(work => {
+      return authReq('post', '/api/items', { entity: work.uri, lang: 'en' })
+      .then(() => deleteByUris(work.uri))
+      .then(undesiredRes(done))
+      .catch(err => {
+        err.body.status_verbose.should.equal("entities that are used by an item can't be removed")
+        err.statusCode.should.equal(400)
+        done()
+      })
+    })
     .catch(undesiredErr(done))
   })
 
   it('should not remove editions with an ISBN and an item', done => {
     const uri = 'isbn:9791020906427'
     ensureEditionExists(uri)
-    .then(edition => authReq('post', '/api/items', { entity: uri, lang: 'en' })
-    .then(() => {
-      // Using the inv URI, as the isbn one would be rejected
-      const invUri = `inv:${edition._id}`
-      return deleteByUris(invUri)
-    }))
+    .then(edition => {
+      return authReq('post', '/api/items', { entity: uri, lang: 'en' })
+      .then(() => {
+        // Using the inv URI, as the isbn one would be rejected
+        const invUri = `inv:${edition._id}`
+        return deleteByUris(invUri)
+      })
+    })
     .then(undesiredRes(done))
     .catch(err => {
       err.body.status_verbose.should.equal("entities that are used by an item can't be removed")

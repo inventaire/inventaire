@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 # In case they were running
 ./tests/api/scripts/kill_tests_server
