@@ -39,7 +39,7 @@ const request = (method, endpoint, body, cookie) => {
 }
 
 const customAuthReq = (userPromise, method, endpoint, body) => {
-  userPromise
+  return userPromise
   // Gets a user doc to which tests/api/fixtures/users added a cookie attribute
   .then(user => request(method, endpoint, body, user.cookie))
 }

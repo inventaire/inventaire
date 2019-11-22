@@ -37,7 +37,7 @@ const onResponse = (reqStream, url, width, height, req, res) => response => {
     statusCode = statusCode === 404 ? 404 : 400
     const err = error_.new(errMessage, statusCode, context)
     err.privateContext = url
-    return this.emit('error', err)
+    reqStream.emit('error', err)
   } else {
     res.header('Content-Type', 'image/jpeg')
     res.header('Cache-Control', 'immutable')

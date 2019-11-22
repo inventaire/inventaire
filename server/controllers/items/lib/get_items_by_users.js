@@ -8,7 +8,7 @@ const getByAccessLevel = require('./get_by_access_level')
 module.exports = (page, usersIds) => {
   // Allow to pass users ids either through the page object
   // or as an additional argument
-  if (!usersIds) { usersIds = page.users }
+  if (!usersIds) usersIds = page.users
   const { reqUserId } = page
 
   return getRelations(reqUserId, usersIds)

@@ -24,7 +24,6 @@ passport.deserializeUser((id, done) => {
       err = error_.new("Couldn't deserialize cookies: user not found", 400, id)
       err.name = 'SessionError'
     }
-
     _.error(err, 'deserializeUser err')
     done(err)
   })

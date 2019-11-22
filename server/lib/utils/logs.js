@@ -1,10 +1,11 @@
 const CONFIG = require('config')
 const { offline } = CONFIG
-let errorCounter = 0
 const loggers_ = require('inv-loggers')
 const chalk = require('chalk')
 const { grey, red } = chalk
 const openIssue = require('./open_issue')
+
+let errorCounter = 0
 
 // Log full objects
 require('util').inspect.defaultOptions.depth = 20
@@ -81,14 +82,12 @@ module.exports = _ => {
     logErrorsCount: () => {
       let prev = 0
       const counter = () => {
-        const errs = this.errorCount()
-        if (errs !== prev) {
-          prev = errs
-          return console.log(red('errors: ') + errs)
+        if (errorCounter !== prev) {
+          prev = errorCounter
+          return console.log(red('errors: ') + errorCounter)
         }
       }
-
-      setInterval(counter.bind(this), 5000)
+      setInterval(counter, 5000)
     },
 
     startTimer: key => {

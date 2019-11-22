@@ -28,7 +28,7 @@ module.exports = (req, res, configs) => Promise.try(() => {
     sanitizeParameter(input, name, config, place, res)
   }
 
-  if (req.user) input.reqUserId = req.user._ids
+  if (req.user) input.reqUserId = req.user._id
 
   return input
 })
