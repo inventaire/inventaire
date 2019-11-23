@@ -47,12 +47,16 @@ const getSnapshotsByType = {
 
   work: uri => {
     return getEntityByUri({ uri })
-    .then(work => getWorkAuthorsAndSeries(work)
-    .spread((authors, series) => Promise.all([
-      getWorkSnapshot(uri, work, authors, series),
-      getEditionsSnapshots(uri, [ work ], authors, series)
-    ])
-    .then(_.flatten)))
+    .then(work => {
+      return getWorkAuthorsAndSeries(work)
+      .spread((authors, series) => {
+        return Promise.all([
+          getWorkSnapshot(uri, work, authors, series),
+          getEditionsSnapshots(uri, [ work ], authors, series)
+        ])
+        .then(_.flatten)
+      })
+    })
   },
 
   human: multiWorkRefresh('wdt:P50'),
@@ -63,7 +67,7 @@ const refreshTypes = Object.keys(getSnapshotsByType)
 
 const getWorkSnapshot = (uri, work, authors, series) => {
   assert_.string(uri)
-  assert_.array(work)
+  assert_.object(work)
   assert_.array(authors)
   assert_.array(series)
   return buildSnapshot.work(work, authors, series)

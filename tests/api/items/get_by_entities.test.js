@@ -25,7 +25,6 @@ describe('items:get-by-entities', () => {
     ])
     .then(items => {
       const uris = _.uniq(_.map(items, 'entity'))
-      _.log(uris, 'uris')
       return authReq('get', `/api/items?action=by-entities&uris=${uris.join('|')}`)
       .then(res => {
         const resUserIds = _.uniq(_.map(res.items, 'entity'))

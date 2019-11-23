@@ -9,7 +9,7 @@ setTimeout(lateRequire, 0)
 const assertType = (type, obj) => {
   const trueType = typeOf(obj)
   if (type.split('|').includes(trueType)) return obj
-  else throw error_.new(`TypeError: expected ${type}, got ${obj} (${trueType})`, 500, { type, obj })
+  else throw error_.new(`TypeError: expected ${type}, got ${stringify(obj)} (${trueType})`, 500, { type, obj })
 }
 
 const assertTypes = (types, args) => {
@@ -31,6 +31,14 @@ const assertTypes = (types, args) => {
   }
 
   return args.map((arg, i) => assertType(types[i], arg))
+}
+
+const stringify = value => {
+  if (typeof value !== 'object') return value
+
+  const json = JSON.stringify(value)
+  if (json.length > 150) return `${json.slice(0, 150)}...`
+  else return json
 }
 
 // Accepts a common type for all the args as a string
