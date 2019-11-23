@@ -14,7 +14,7 @@ const dashesPattern = /-/g
 // - custom parameters: see the query file
 module.exports = params => {
   const { refresh, dry } = params
-  let { queryName } = params
+  let { query: queryName } = params
 
   // Converting from kebab case to snake case
   queryName = params.query = queryName.replace(dashesPattern, '_')

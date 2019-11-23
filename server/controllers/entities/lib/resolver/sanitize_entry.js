@@ -98,7 +98,7 @@ const getIsbn = edition => {
 
 const createWorkSeedFromEdition = edition => {
   const { claims } = edition
-  const titleClaim = claims['wdt:P1476'] && claims['wdt:P1476'][0]
+  const titleClaim = claims && claims['wdt:P1476'] && claims['wdt:P1476'][0]
   if (titleClaim == null) return
   const title = claims['wdt:P1476'][0]
   const langClaim = claims['wdt:P407'] && claims['wdt:P407'][0]
