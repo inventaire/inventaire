@@ -40,6 +40,17 @@ const formatError = err => {
 
   err.body.error.root_cause = err.body.error.root_cause[0]
   err.body = err.body.error
+
+  // If ElasticSearch answers with a 404,
+  // it's the expected ElasticSearch index is missing
+  if (err.statusCode === 404) {
+    err.statusCode = 500
+    if (err.body.root_cause) {
+      err.message += `: ${err.body.root_cause.reason}`
+      err.context = err.body.root_cause
+    }
+  }
+
   throw err
 }
 
