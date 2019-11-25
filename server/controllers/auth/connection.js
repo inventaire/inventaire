@@ -31,8 +31,15 @@ module.exports = {
   },
 
   login: (req, res) => {
-    const next = loggedIn(req, res)
-    return passport_.authenticate.localLogin(req, res, next)
+    const sanitization = {
+      username: {},
+      password: {}
+    }
+    sanitize(req, res, sanitization)
+    .then(params => {
+      const next = loggedIn(req, res)
+      return passport_.authenticate.localLogin(req, res, next)
+    })
   },
 
   logoutRedirect,
