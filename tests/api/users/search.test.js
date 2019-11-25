@@ -37,7 +37,7 @@ describe('users:search', () => {
   it('should find a user even with a typo', done => {
     // Using a user with a non-random username to make the typo not to hard
     // to recover for ElasticSearch
-    const userPromise = createUser({ username: 'testuser' })
+    const userPromise = createUser()
     userPromise
     .delay(1000)
     .then(user => {
