@@ -13,7 +13,7 @@ module.exports = (req, res, next) => {
   const { 'current-password': currentPassword, 'new-password': newPassword } = body
   const { resetPassword } = user
   if (!User.validations.password(newPassword)) {
-    return error_.bundleInvalid(req, res, 'new-password', newPassword)
+    return error_.bundleInvalid(req, res, 'new-password', user)
   }
 
   let test
