@@ -9,7 +9,7 @@ const { createUser, createUsername } = require('../fixtures/users')
 describe('auth:login', () => {
   it('should login a user', done => {
     const username = createUsername()
-    const password = '12345678' // as difined in "fixtures/users"
+    const password = '12345678' // as defined in "fixtures/users"
     createUser({ username })
     .delay(10)
     .then(user => {

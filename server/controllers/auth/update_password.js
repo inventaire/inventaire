@@ -12,7 +12,6 @@ module.exports = (req, res, next) => {
   const { user, body } = req
   const { 'current-password': currentPassword, 'new-password': newPassword } = body
   const { resetPassword } = user
-
   if (!User.validations.password(newPassword)) {
     return error_.bundleInvalid(req, res, 'new-password', newPassword)
   }
@@ -24,7 +23,12 @@ module.exports = (req, res, next) => {
     if (!User.validations.password(currentPassword)) {
       return error_.bundleInvalid(req, res, 'current-password', currentPassword)
     }
-    test = verifyCurrentPassword(user, currentPassword).then(filterInvalid)
+    test = verifyCurrentPassword(user, currentPassword)
+    .then(isValid => {
+      if (!isValid) {
+        throw error_.newInvalid('current-password', user.email)
+      }
+    })
 
   // token-based password reset, with expiration date
   } else if (resetPassword != null) {
@@ -51,10 +55,6 @@ const updatePassword = (user, newPassword) => {
 }
 
 const verifyCurrentPassword = (user, currentPassword) => pw_.verify(user.password, currentPassword)
-
-const filterInvalid = isValid => {
-  if (!isValid) throw error_.newInvalid('new-password')
-}
 
 const updateUserPassword = (userId, user, newHash) => {
   const updateFn = User.updatePassword.bind(null, user, newHash)
