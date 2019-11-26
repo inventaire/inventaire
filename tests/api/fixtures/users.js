@@ -71,7 +71,9 @@ const API = module.exports = {
     // Add a random string to prevent creating several users with the same username
     // and be rejected because of it
     return faker.fake('{{name.firstName}}').replace(/\W/, '') + randomString(2)
-  }
+  },
+
+  createUserEmail: () => { return faker.internet.email() }
 }
 
 const parseCookie = res => res.headers['set-cookie'].join(';')
