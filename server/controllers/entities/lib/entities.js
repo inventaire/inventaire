@@ -93,21 +93,6 @@ const entities_ = module.exports = {
     .then(() => entities_.putUpdate({ userId, currentDoc, updatedDoc, batchId }))
   },
 
-  getLastChangedEntitiesUris: (since, limit) => {
-    return db.changes({
-      filter: 'entities/entities:only',
-      limit,
-      since,
-      include_docs: true,
-      descending: true
-    })
-    // TODO: return URIs in no-redirect mode so that redirections appear in entity changes
-    .then(res => ({
-      uris: res.results.map(parseCanonicalUri),
-      lastSeq: res.last_seq
-    }))
-  },
-
   putUpdate: params => {
     const { userId, currentDoc, updatedDoc } = params
     assert_.types([ 'string', 'object', 'object' ], [ userId, currentDoc, updatedDoc ])
@@ -122,8 +107,6 @@ const entities_ = module.exports = {
 
   getUrlFromEntityImageHash: getUrlFromImageHash.bind(null, 'entities')
 }
-
-const parseCanonicalUri = result => getInvEntityCanonicalUri(result.doc)
 
 const triggerUpdateEvent = (currentDoc, updatedDoc) => {
   // Use currentDoc claims if the update removed the claims object

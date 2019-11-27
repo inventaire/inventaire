@@ -2,7 +2,7 @@ const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const responses_ = __.require('lib', 'responses')
 const error_ = __.require('lib', 'error/error')
-const entities_ = require('./lib/entities')
+const getLastChangedEntitiesUris = require('./lib/get_last_changed_entities_uris')
 const defaultLimit = 100
 
 module.exports = (req, res) => {
@@ -16,7 +16,7 @@ module.exports = (req, res) => {
     }
   }
 
-  return entities_.getLastChangedEntitiesUris(since, defaultLimit)
+  return getLastChangedEntitiesUris(since, defaultLimit)
   .then(responses_.Send(res))
   .catch(error_.Handler(req, res))
 }

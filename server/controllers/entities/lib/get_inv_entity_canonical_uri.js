@@ -6,14 +6,13 @@
 // Ex: /entity/inv:#{invId} redirects to /entity/isbn:#{isbn}
 const __ = require('config').universalPath
 const error_ = __.require('lib', 'error/error')
-const { normalizeIsbn } = __.require('lib', 'isbn/isbn')
+const getInvUriFromDoc = require('./get_inv_uri_from_doc')
+const { prefixifyInv } = require('./prefix')
 
 module.exports = (entity, options) => {
   const { _id: invId, redirect } = entity
-
   if (invId == null) throw error_.new('missing id', 500, entity)
-
-  const invUri = `inv:${invId}`
+  const invUri = prefixifyInv(invId)
 
   // Case when the entity document is simply a redirection to another entity
   // signaled via the 'redirect' attribute on the entity document
@@ -21,16 +20,7 @@ module.exports = (entity, options) => {
     const redirectsObj = { from: invUri, to: redirect }
     return formatResult(redirect, redirectsObj, options)
   }
-
-  // Case when the entity document is a proper entity document
-  // but has a more broadly recognized URI available, currently only an ISBN
-  const { claims } = entity
-  const isbn = claims['wdt:P212'] && claims['wdt:P212'][0]
-
-  // Those URIs are aliases but, when available, always use the canonical id,
-  // that is, in the only current, the ISBN
-  // By internal convention, ISBN URIs are without hyphen
-  const uri = isbn ? `isbn:${normalizeIsbn(isbn)}` : invUri
+  const uri = getInvUriFromDoc(entity)
 
   let redirectsObj
   if (uri !== invUri) {
