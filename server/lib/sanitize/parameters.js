@@ -147,6 +147,7 @@ module.exports = {
   email: { validate: validations.common.email },
   filter: whitelistedString,
   generics,
+  id: couchUuid,
   ids: couchUuids,
   isbn,
   item: couchUuid,
