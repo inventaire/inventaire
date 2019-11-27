@@ -4,7 +4,7 @@ require('should')
 const { nonAuthReq, undesiredRes } = require('../utils/utils')
 const endpoint = '/api/data?action=isbn'
 const randomString = __.require('lib', 'utils/random_string')
-const { generateIsbn13} = require('../fixtures/entities')
+const { generateIsbn13 } = require('../fixtures/entities')
 
 describe('data:isbn', () => {
   it('should reject requests without isbn', done => {
@@ -38,4 +38,3 @@ describe('data:isbn', () => {
     .catch(done)
   })
 })
-

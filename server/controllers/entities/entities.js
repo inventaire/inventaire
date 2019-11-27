@@ -1,6 +1,5 @@
 const __ = require('config').universalPath
 const ActionsControllers = __.require('lib', 'actions_controllers')
-const customQuery = require('./custom_query')
 
 module.exports = {
   get: ActionsControllers({
@@ -8,8 +7,8 @@ module.exports = {
       'by-uris': require('./by_uris'),
       changes: require('./changes'),
       'reverse-claims': require('./reverse_claims'),
-      'author-works': customQuery,
-      'serie-parts': customQuery,
+      'author-works': require('./author_works'),
+      'serie-parts': require('./serie_parts'),
       history: require('./history'),
       images: require('./images'),
       popularity: require('./popularity')
