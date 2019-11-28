@@ -1,15 +1,14 @@
 require('should')
 const { createHuman } = require('../fixtures/entities')
-const { update, checkEntities } = require('../utils/tasks')
+const { update } = require('../utils/tasks')
+const { createTask } = require('../fixtures/tasks')
 
-// Tests dependency: having a populated ElasticSearch wikidata index
 describe('tasks:update', () => {
   it('should update a task', done => {
-    createHuman({ labels: { en: 'Fred Vargas' } })
-    .then(human => checkEntities(human.uri))
-    .then(tasks => {
-      const task = tasks[0]
-      return update(task._id, 'state', 'dismissed')
+    createHuman()
+    .then(suspect => {
+      createTask({ suspectUri: suspect.uri })
+      .then(task => update(task.id, 'state', 'dismissed'))
       .then(updatedTask => {
         updatedTask[0].ok.should.be.true()
         done()

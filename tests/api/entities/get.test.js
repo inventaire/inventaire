@@ -35,7 +35,7 @@ describe('entities:get:by-uris', () => {
   it('should accept inventaire uri', done => {
     workWithAuthorPromise
     .then(work => {
-      return getByUris(work.uri)
+      getByUris(work.uri)
       .then(res => {
         res.entities[work.uri].should.be.an.Object()
         done()
@@ -57,9 +57,9 @@ describe('entities:get:by-uris', () => {
   it('should return redirected uris', done => {
     Promise.all([ createHuman(), createHuman() ])
     .spread((humanA, humanB) => {
-      return merge(humanA.uri, humanB.uri)
+      merge(humanA.uri, humanB.uri)
       .then(() => {
-        return getByUris(humanA.uri)
+        getByUris(humanA.uri)
         .then(res => {
           Object.keys(res.entities).length.should.equal(1)
           res.entities[humanB.uri].should.be.an.Object()
@@ -103,7 +103,7 @@ describe('entities:get:by-uris', () => {
       .then(work => {
         const { uri: workUri } = work
         const authorUri = work.claims['wdt:P50'][0]
-        return getByUris(workUri, 'wdt:P50')
+        getByUris(workUri, 'wdt:P50')
         .then(res => {
           res.entities[workUri].should.be.an.Object()
           res.entities[authorUri].should.be.an.Object()
@@ -117,7 +117,7 @@ describe('entities:get:by-uris', () => {
       workWithAuthorPromise
       .then(work => {
         const { uri: workUri } = work
-        return getByUris(workUri, 'wdt:P31')
+        getByUris(workUri, 'wdt:P31')
         .then(undesiredRes(done))
         .catch(err => {
           err.statusCode.should.equal(400)
@@ -132,7 +132,7 @@ describe('entities:get:by-uris', () => {
       createEditionWithWorkAuthorAndSerie()
       .get('uri')
       .then(editionUri => {
-        return getByUris(editionUri, 'wdt:P50|wdt:P179|wdt:P629')
+        getByUris(editionUri, 'wdt:P50|wdt:P179|wdt:P629')
         .then(res => {
           const edition = res.entities[editionUri]
           edition.should.be.an.Object()

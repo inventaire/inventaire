@@ -14,7 +14,7 @@ describe('tasks:check-entities', () => {
     // or at least are the entrypoint for duplicate checks
     createWork()
     .then(work => {
-      return checkEntities(work.uri)
+      checkEntities(work.uri)
       .then(undesiredRes(done))
       .catch(err => {
         err.statusCode.should.equal(400)
@@ -28,7 +28,7 @@ describe('tasks:check-entities', () => {
   it('should create tasks for the requested URIs', done => {
     createHuman({ labels: { en: 'Fred Vargas' } })
     .then(human => {
-      return checkEntities(human.uri)
+      checkEntities(human.uri)
       .then(tasks => {
         tasks.should.be.an.Array()
         const task = tasks[0]
@@ -40,14 +40,14 @@ describe('tasks:check-entities', () => {
         task.externalSourcesOccurrences.should.be.an.Array()
         done()
       })
+      .catch(undesiredErr(done))
     })
-    .catch(undesiredErr(done))
   })
 
   it('should not re-create existing tasks', done => {
     createHuman({ labels: { en: 'Fred Vargas' } })
     .then(human => {
-      return checkEntities(human.uri)
+      checkEntities(human.uri)
       .then(() => checkEntities(human.uri))
       .then(() => getBySuspectUri(human.uri))
       .then(tasks => {
@@ -67,11 +67,11 @@ describe('tasks:automerge', () => {
     const workLabel = 'Voice of the Fire' // wd:Q3825051
     createHuman({ labels: { en: authorLabel } })
     .then(human => {
-      return createWorkWithAuthor(human, workLabel)
+      createWorkWithAuthor(human, workLabel)
       .then(() => checkEntities(human.uri))
       .then(tasks => tasks.length.should.equal(0))
       .then(() => {
-        return getByUris(human.uri)
+        getByUris(human.uri)
         .get('entities')
         .then(entities => {
           // entity should have merged, thus URI is now a a WD uri
@@ -89,13 +89,13 @@ describe('tasks:automerge', () => {
     const workLabel = randomLabel()
     createHuman({ labels: { en: authorLabel } })
     .then(human => {
-      return Promise.all([
+      Promise.all([
         createWorkWithAuthor({ uri: wikidataUri }, workLabel),
         createWorkWithAuthor(human, workLabel)
       ])
       .then(() => checkEntities(human.uri))
       .then(() => {
-        return getByUris(human.uri)
+        getByUris(human.uri)
         .get('entities')
         .then(entities => {
           entities[wikidataUri].should.be.ok()
@@ -111,7 +111,7 @@ describe('tasks:automerge', () => {
     const workLabel = authorLabel
     createHuman({ labels: { en: authorLabel } })
     .then(human => {
-      return createWorkWithAuthor(human, workLabel)
+      createWorkWithAuthor(human, workLabel)
       .then(() => checkEntities(human.uri))
       .then(tasks => {
         tasks.length.should.aboveOrEqual(1)

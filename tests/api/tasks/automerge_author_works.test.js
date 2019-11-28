@@ -22,7 +22,7 @@ describe('automerge_author_works: only from inv works to wd works', () => {
       createWorkWithAuthor({ uri: authorUri }, workLabel)
     ])
     .spread((work1, work2) => {
-      return automergeAuthorWorks(authorUri)
+      automergeAuthorWorks(authorUri)
       .delay(300)
       .then(() => getByUris([ work1.uri, work2.uri ]))
       .then(res => {
@@ -40,13 +40,13 @@ describe('automerge_author_works: only from inv works to wd works', () => {
     const workWdUri = 'wd:Q732060'
     createHuman({ labels: { en: humanLabel } })
     .then(human => {
-      return createWorkWithAuthor({ uri: human.uri }, workLabel)
+      createWorkWithAuthor({ uri: human.uri }, workLabel)
       .then(work => {
-        return checkEntities(human.uri)
+        checkEntities(human.uri)
         .then(_.Log('tasks'))
         .then(tasks => {
           tasks.length.should.equal(0)
-          return getByUris(work.uri)
+          getByUris(work.uri)
           .then(res => {
             res.redirects[work.uri].should.equal(workWdUri)
             done()
@@ -65,7 +65,7 @@ describe('automerge_author_works: only from inv works to wd works', () => {
 
     createWorkWithAuthor({ uri: authorUri }, `${workLabel} Vol. 1`)
     .then(invWork => {
-      return automergeAuthorWorks(authorUri)
+      automergeAuthorWorks(authorUri)
       .delay(300)
       .then(() => getByUris(invWork.uri))
       .then(res => {
@@ -86,7 +86,7 @@ describe('automerge_author_works: only from inv works to wd works', () => {
     .tap(invWork => addSerie(invWork))
     .delay(300)
     .then(invWork => {
-      return automergeAuthorWorks(authorUri)
+      automergeAuthorWorks(authorUri)
       .delay(300)
       .then(() => getByUris(invWork.uri))
       .then(res => {
