@@ -41,7 +41,7 @@ describe('tasks:check-entities', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should not re-create existing tasks', done => {

@@ -5,6 +5,7 @@ const { Promise } = __.require('lib', 'promises')
 const { merge } = require('../utils/entities')
 const { createHuman, createWorkWithAuthor } = require('../fixtures/entities')
 const { deleteByUris: deleteEntityByUris } = require('../utils/entities')
+const { createTask } = require('../fixtures/tasks')
 const { getByIds, getBySuspectUri, update, checkEntities } = require('../utils/tasks')
 
 // Tests dependency: having a populated ElasticSearch wikidata index
@@ -30,20 +31,25 @@ describe('tasks:hooks', () => {
     })
 
     it('should update task state to merged', done => {
-      createHuman({ labels: { en: 'Fred Vargas' } })
-      .then(human => checkEntities(human.uri))
-      .then(tasks => {
-        const task = tasks[0]
-        return merge(task.suspectUri, task.suggestionUri)
-        .delay(100)
-        .then(() => getByIds(task._id))
-        .then(tasks => {
-          const updatedTask = tasks[0]
-          updatedTask.state.should.equal('merged')
-          done()
+      Promise.all([ createHuman(), createHuman() ])
+      .spread((suspect, suggestion) => {
+        const taskParams = {
+          suspectUri: suspect.uri,
+          suggestionUri: suggestion.uri
+        }
+        createTask(taskParams)
+        .then(task => {
+          merge(suspect.uri, suggestion.uri)
+          .delay(100)
+          .then(() => getByIds(task.id))
+          .then(tasks => {
+            const updatedTask = tasks[0]
+            updatedTask.state.should.equal('merged')
+            done()
+          })
         })
+        .catch(done)
       })
-      .catch(done)
     })
 
     it('should update relationScore of tasks with same suspect', done => {
@@ -69,36 +75,41 @@ describe('tasks:hooks', () => {
 
   describe('entity removed', () => {
     it('should update tasks to merged state when the entity is deleted', done => {
-      createHuman({ labels: { en: 'Fred Vargas' } })
-      .then(human => checkEntities(human.uri)
-      .then(tasks => {
-        tasks.length.should.be.aboveOrEqual(1)
-        return deleteEntityByUris(human.uri)
-      })
-      .then(() => getBySuspectUri(human.uri))).then(tasks => {
-        tasks.length.should.equal(0)
-        done()
+      createHuman()
+      .then(suspect => {
+        createTask({ suspectUri: suspect.uri })
+        .then(task => deleteEntityByUris(suspect.uri))
+        .then(() => getBySuspectUri(suspect.uri))
+        .then(tasks => {
+          tasks.length.should.equal(0)
+          done()
+        })
       })
       .catch(done)
     })
 
     it('should update tasks to merged state when an entity is deleted as a removed placeholder', done => {
-      Promise.all([
-        createHuman({ labels: { en: 'Fred Vargas' } }),
-        createHuman({ labels: { en: 'Fred Vargas' } })
-      ])
+      Promise.all([ createHuman(), createHuman() ])
       .spread((humanA, humanB) => {
-        return Promise.all([
+        const taskAParams = {
+          suspectUri: humanA.uri,
+          suggestionUri: humanB.uri
+        }
+        const taskBParams = {
+          suspectUri: humanA.uri,
+          suggestionUri: humanB.uri
+        }
+        Promise.all([
           createWorkWithAuthor(humanA),
           createWorkWithAuthor(humanB),
-          checkEntities(humanA.uri),
-          checkEntities(humanB.uri)
+          createTask(taskAParams),
+          createTask(taskBParams)
         ])
         .delay(100)
         .spread((workA, workB, tasksA, tasksB) => {
           tasksA.length.should.be.aboveOrEqual(1)
           tasksB.length.should.be.aboveOrEqual(1)
-          return merge(workA.uri, workB.uri)
+          merge(workA.uri, workB.uri)
           .delay(100)
           .then(() => getByIds(tasksA[0]._id))
           .then(remainingTasks => {
