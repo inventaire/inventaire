@@ -4,7 +4,7 @@ const ActionsControllers = __.require('lib', 'actions_controllers')
 module.exports = {
   get: ActionsControllers({
     public: {
-      'by-uris': require('./by_uris'),
+      'by-uris': require('./by_uris_get'),
       changes: require('./changes'),
       'reverse-claims': require('./reverse_claims'),
       'author-works': require('./author_works'),
@@ -22,7 +22,7 @@ module.exports = {
 
   post: ActionsControllers({
     public: {
-      'by-uris': require('./by_uris')
+      'by-uris': require('./by_uris_get')
     },
     authentified: {
       create: require('./create'),
@@ -30,7 +30,7 @@ module.exports = {
       resolve: require('./resolve')
     },
     admin: {
-      'delete-by-uris': require('./delete_by_uris')
+      'delete-by-uris': require('./by_uris_delete')
     }
   }),
 

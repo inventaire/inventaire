@@ -1,5 +1,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
+const _ = __.require('builders', 'utils')
 const should = require('should')
 const { Promise } = __.require('lib', 'promises')
 const { authReq, undesiredRes, undesiredErr } = require('../utils/utils')
@@ -7,7 +8,7 @@ const { getByUris, deleteByUris } = require('../utils/entities')
 const { getByIds: getItemsByIds } = require('../utils/items')
 const { createHuman, createWork, createWorkWithAuthor, createEdition, ensureEditionExists, generateIsbn13 } = require('../fixtures/entities')
 
-describe('entities:delete:by-uris', () => {
+describe('entities:delete-by-uris', () => {
   it('should require admin rights', done => {
     createHuman()
     .then(entity => authReq('post', '/api/entities?action=delete-by-uris', { uris: [ entity.uri ] }))
@@ -54,9 +55,9 @@ describe('entities:delete:by-uris', () => {
       deleteByUris(uris)
       .then(() => getByUris(uris))
       .then(res => {
-        for (let entity = 0; entity < res.entities.length; entity++) {
-          entity._meta_type.should.equal('removed:placeholder')
-        }
+        const entities = _.values(res.entities)
+        entities[0]._meta_type.should.equal('removed:placeholder')
+        entities[0]._meta_type.should.equal('removed:placeholder')
         done()
       })
     })
