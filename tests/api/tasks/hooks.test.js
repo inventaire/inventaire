@@ -3,7 +3,7 @@ const __ = CONFIG.universalPath
 require('should')
 const { Promise } = __.require('lib', 'promises')
 const { merge } = require('../utils/entities')
-const { createHuman, createWorkWithAuthor } = require('../fixtures/entities')
+const { createHuman } = require('../fixtures/entities')
 const { deleteByUris: deleteEntityByUris } = require('../utils/entities')
 const { createTask } = require('../fixtures/tasks')
 const { getByIds, getBySuspectUri, update, checkEntities } = require('../utils/tasks')
@@ -83,39 +83,6 @@ describe('tasks:hooks', () => {
         .then(tasks => {
           tasks.length.should.equal(0)
           done()
-        })
-      })
-      .catch(done)
-    })
-
-    it('should update tasks to merged state when an entity is deleted as a removed placeholder', done => {
-      Promise.all([ createHuman(), createHuman() ])
-      .spread((humanA, humanB) => {
-        const taskAParams = {
-          suspectUri: humanA.uri,
-          suggestionUri: humanB.uri
-        }
-        const taskBParams = {
-          suspectUri: humanA.uri,
-          suggestionUri: humanB.uri
-        }
-        Promise.all([
-          createWorkWithAuthor(humanA),
-          createWorkWithAuthor(humanB),
-          createTask(taskAParams),
-          createTask(taskBParams)
-        ])
-        .delay(100)
-        .spread((workA, workB, tasksA, tasksB) => {
-          tasksA.length.should.be.aboveOrEqual(1)
-          tasksB.length.should.be.aboveOrEqual(1)
-          merge(workA.uri, workB.uri)
-          .delay(100)
-          .then(() => getByIds(tasksA[0]._id))
-          .then(remainingTasks => {
-            remainingTasks[0].state.should.equal('merged')
-            done()
-          })
         })
       })
       .catch(done)
