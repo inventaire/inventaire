@@ -72,6 +72,22 @@ describe('entities:update-labels', () => {
     .catch(undesiredErr(done))
   })
 
+  it('should trim a label', done => {
+    const trimValue = randomString(15)
+    const trimValueLength = trimValue.length
+    const value = `${trimValue}     `
+    humanPromise
+    .then(human => {
+      updateLabel(human._id, 'fr', value)
+      .then(() => getByUri(human.uri))
+      .then(updatedHuman => {
+        updatedHuman.labels.fr.length.should.equal(trimValueLength)
+        done()
+      })
+    })
+    .catch(undesiredErr(done))
+  })
+
   it('should reject an update with an invalid lang', done => {
     const value = randomString(15)
     humanPromise
