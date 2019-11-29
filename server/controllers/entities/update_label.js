@@ -2,39 +2,38 @@ const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
+const sanitize = __.require('lib', 'sanitize/sanitize')
+const { unprefixify } = require('./lib/prefix')
+
+const sanitization = {
+  uri: { optional: true },
+  id: { optional: true },
+  lang: {},
+  value: {}
+}
 
 module.exports = (req, res) => {
-  let { uri, id, value } = req.body
-  const { lang } = req.body
+  sanitize(req, res, sanitization)
+  .then(params => {
+    let { uri, id, value, lang } = params
+    const prefix = getPrefix(uri, id)
+    const updater = updaters[prefix]
 
-  _.log(req.body, 'update label body')
+    if (uri) { id = unprefixify(uri) }
 
-  if (_.isInvEntityId(id) && (uri == null)) uri = `inv:${id}`
-
-  if (uri == null) return error_.bundleMissingBody(req, res, 'uri')
-  if (lang == null) return error_.bundleMissingBody(req, res, 'lang')
-  if (value == null) return error_.bundleMissingBody(req, res, 'value')
-
-  let prefix
-  [ prefix, id ] = uri.split(':')
-  const updater = updaters[prefix]
-  if (updater == null) {
-    return error_.bundle(req, res, `unsupported uri prefix: ${prefix}`, 400, uri)
-  }
-
-  if (!_.isLang(lang)) {
-    return error_.bundleInvalid(req, res, 'lang', lang)
-  }
-
-  value = _.isString(value) ? value.trim() : value
-
-  if (!_.isNonEmptyString(value)) {
-    return error_.bundleInvalid(req, res, 'value', value)
-  }
-
-  return updater(req.user, id, lang, value)
-  .then(responses_.Ok(res))
+    if (updater == null) {
+      return error_.bundle(req, res, `unsupported uri prefix: ${prefix}`, 400, uri)
+    }
+    value = _.isString(value) ? value.trim() : value
+    return updater(req.user, id, lang, value)
+    .then(responses_.Ok(res))
+  })
   .catch(error_.Handler(req, res))
+}
+
+const getPrefix = (uri, id) => {
+  if (uri) return uri.split(':')[0]
+  if (id) return 'inv'
 }
 
 const updaters = {
