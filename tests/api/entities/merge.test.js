@@ -2,13 +2,66 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
 const { Promise } = __.require('lib', 'promises')
-const { undesiredErr, undesiredRes } = require('../utils/utils')
+const { authReq, adminReq, undesiredErr, undesiredRes } = require('../utils/utils')
 const randomString = __.require('lib', './utils/random_string')
 const { getByUris, merge, getHistory, addClaim } = require('../utils/entities')
 const { getByIds: getItemsByIds } = require('../utils/items')
 const { createWork, createHuman, createEdition, ensureEditionExists, createItemFromEntityUri, createWorkWithAuthor } = require('../fixtures/entities')
 
 describe('entities:merge', () => {
+  it('should require admin rights', done => {
+    authReq('put', '/api/entities?action=merge')
+    .then(undesiredRes(done))
+    .catch(err => {
+      err.statusCode.should.equal(403)
+      done()
+    })
+  })
+
+  it('should reject without from uri', done => {
+    adminReq('put', '/api/entities?action=merge')
+    .then(undesiredRes(done))
+    .catch(err => {
+      err.body.status_verbose.should.equal('missing parameter in body: from')
+      err.statusCode.should.equal(400)
+      done()
+    })
+    .catch(undesiredErr(done))
+  })
+
+  it('should reject without to uri', done => {
+    adminReq('put', '/api/entities?action=merge', { from: 'inv:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' })
+    .then(undesiredRes(done))
+    .catch(err => {
+      err.body.status_verbose.should.equal('missing parameter in body: to')
+      err.statusCode.should.equal(400)
+      done()
+    })
+    .catch(undesiredErr(done))
+  })
+
+  it('should reject invalid uris', done => {
+    adminReq('put', '/api/entities?action=merge', { from: 'fromUri', to: 'toUri' })
+    .then(undesiredRes(done))
+    .catch(err => {
+      err.body.status_verbose.should.startWith('invalid from:')
+      err.statusCode.should.equal(400)
+      done()
+    })
+    .catch(undesiredErr(done))
+  })
+
+  it('should reject invalid from prefix', done => {
+    adminReq('put', '/api/entities?action=merge', { from: 'wd:Q42', to: 'inv:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' })
+    .then(undesiredRes(done))
+    .catch(err => {
+      err.body.status_verbose.should.startWith("invalid 'from' uri domain: wd. Accepted domains: inv,isbn")
+      err.statusCode.should.equal(400)
+      done()
+    })
+    .catch(undesiredErr(done))
+  })
+
   it('should merge two entities with an inv URI', done => {
     Promise.all([
       createWork(),
@@ -41,12 +94,12 @@ describe('entities:merge', () => {
             getByUris(editionA.uri),
             getItemsByIds(item._id)
           ])
-        })
-        .spread((entitiesRes, itemsRes) => {
-          entitiesRes.redirects[editionA.uri].should.equal(editionB.uri)
-          entitiesRes.entities[editionB.uri].should.be.ok()
-          itemsRes.items[0].entity.should.equal(editionB.uri)
-          done()
+          .spread((entitiesRes, itemsRes) => {
+            entitiesRes.redirects[editionA.uri].should.equal(editionB.uri)
+            entitiesRes.entities[editionB.uri].should.be.ok()
+            itemsRes.items[0].entity.should.equal(editionB.uri)
+            done()
+          })
         })
       })
     })
@@ -67,15 +120,15 @@ describe('entities:merge', () => {
             getByUris(editionB.uri),
             getItemsByIds(item._id)
           ])
-        })
-        .spread((entitiesRes, itemsRes) => {
-          const { entities, redirects } = entitiesRes
-          const updatedEditionB = entities[redirects[editionB.uri]]
-          updatedEditionB.claims['wdt:P212']
-          .should.deepEqual(editionA.claims['wdt:P212'])
-          const isbnUri = editionA.uri
-          itemsRes.items[0].entity.should.equal(isbnUri)
-          done()
+          .spread((entitiesRes, itemsRes) => {
+            const { entities, redirects } = entitiesRes
+            const updatedEditionB = entities[redirects[editionB.uri]]
+            updatedEditionB.claims['wdt:P212']
+            .should.deepEqual(editionA.claims['wdt:P212'])
+            const isbnUri = editionA.uri
+            itemsRes.items[0].entity.should.equal(isbnUri)
+            done()
+          })
         })
       })
     })
@@ -166,7 +219,7 @@ describe('entities:merge', () => {
       .then(() => getByUris(work.uri))
       .then(res => {
         const authorsUris = res.entities[work.uri].claims['wdt:P50']
-        return authorsUris.should.deepEqual([ humanB.uri ])
+        authorsUris.should.deepEqual([ humanB.uri ])
       })
       .then(() => getHistory(work._id))
       .then(patches => {

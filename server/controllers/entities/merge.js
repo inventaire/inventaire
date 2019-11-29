@@ -5,6 +5,12 @@ const responses_ = __.require('lib', 'responses')
 const getEntitiesByUris = require('./lib/get_entities_by_uris')
 const mergeEntities = require('./lib/merge_entities')
 const radio = __.require('lib', 'radio')
+const sanitize = __.require('lib', 'sanitize/sanitize')
+
+const sanitization = {
+  from: {},
+  to: {}
+}
 
 // Assumptions:
 // - ISBN are already desambiguated and should thus never need merge
@@ -14,46 +20,31 @@ const radio = __.require('lib', 'radio')
 //   what matters the most is the redirection. Or more fine, reconciling strategy can be developed later
 
 // Only inv entities can be merged yet
-const validFromPrefix = [ 'inv', 'isbn' ]
+const validFromUriPrefix = [ 'inv', 'isbn' ]
 
 module.exports = (req, res) => {
-  const { body } = req
-  const { from: fromUri, to: toUri } = body
-  const { _id: reqUserId } = req.user
+  sanitize(req, res, sanitization)
+  .then(params => {
+    const { from: fromUri, to: toUri, reqUserId } = params
+    const [ fromPrefix ] = fromUri.split(':')
 
-  if (fromUri == null) return error_.bundleMissingBody(req, res, 'from')
-  if (!toUri) return error_.bundleMissingBody(req, res, 'to')
+    if (!validFromUriPrefix.includes(fromPrefix)) {
+      // 'to' prefix doesn't need validation as it can be anything
+      const message = `invalid 'from' uri domain: ${fromPrefix}. Accepted domains: ${validFromUriPrefix}`
+      return error_.bundle(req, res, message, 400, params)
+    }
 
-  // Not using _.isEntityUri, letting the logic hereafter check specific prefixes
-  if (!_.isNonEmptyString(fromUri)) {
-    return error_.bundleInvalid(req, res, 'from', fromUri)
-  }
+    _.log({ merge: params, user: reqUserId }, 'entity merge request')
 
-  if (!_.isNonEmptyString(toUri)) {
-    return error_.bundleInvalid(req, res, 'to', toUri)
-  }
-
-  const [ fromPrefix ] = fromUri.split(':')
-  const [ toPrefix ] = toUri.split(':')
-
-  if (!validFromPrefix.includes(fromPrefix)) {
-    const message = `invalid 'from' uri domain: ${fromPrefix}. Accepted domains: ${validFromPrefix}`
-    return error_.bundle(req, res, message, 400, body)
-  }
-
-  // 'to' prefix doesn't need validation as it can be anything
-
-  _.log({ merge: body, user: reqUserId }, 'entity merge request')
-
-  // Let getEntitiesByUris test for the whole URI validity
-  return getEntitiesByUris({ uris: [ fromUri, toUri ], refresh: true })
-  .then(merge(reqUserId, toPrefix, fromUri, toUri))
-  .tap(() => radio.emit('entity:merge', fromUri, toUri))
-  .then(responses_.Ok(res))
+    return getEntitiesByUris({ uris: [ fromUri, toUri ], refresh: true })
+    .then(merge(reqUserId, fromUri, toUri))
+    .tap(() => radio.emit('entity:merge', fromUri, toUri))
+    .then(responses_.Ok(res))
+  })
   .catch(error_.Handler(req, res))
 }
 
-const merge = (reqUserId, toPrefix, fromUri, toUri) => res => {
+const merge = (reqUserId, fromUri, toUri) => res => {
   const { entities, redirects } = res
   const fromEntity = entities[fromUri] || entities[redirects[fromUri]]
   if (fromEntity == null) throw notFound('from', fromUri)

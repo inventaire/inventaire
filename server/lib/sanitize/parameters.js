@@ -77,6 +77,10 @@ const arrayOrPipedStrings = value => {
   else return value
 }
 
+const entityUri = {
+  validate: validations.common.entityUri
+}
+
 const entityUris = {
   format: arrayOrPipedStrings,
   validate: arrayOfAKind(validations.common.entityUri)
@@ -146,6 +150,7 @@ module.exports = {
   attribute: nonEmptyString,
   email: { validate: validations.common.email },
   filter: whitelistedString,
+  from: entityUri,
   generics,
   id: couchUuid,
   ids: couchUuids,
@@ -180,7 +185,8 @@ module.exports = {
   transaction: couchUuid,
   type: whitelistedString,
   types: whitelistedStrings,
-  uri: { validate: validations.common.entityUri },
+  to: entityUri,
+  uri: entityUri,
   uris: entityUris,
   user: couchUuid,
   users: couchUuids,
