@@ -1,7 +1,9 @@
+const __ = require('config').universalPath
 const should = require('should')
 const { adminReq, getUser, undesiredErr, undesiredRes } = require('../utils/utils')
 const { createWork } = require('../fixtures/entities')
 const endpoint = '/api/entities?action=contributions'
+const { Promise } = __.require('lib', 'promises')
 
 describe('entities:contributions', () => {
   it('should reject without user id', done => {
@@ -74,18 +76,21 @@ describe('entities:contributions', () => {
     worksAndUserPromise
     .spread((workA, workB, user) => {
       const { _id } = user
-      adminReq('get', `${endpoint}&user=${_id}&limit=1&offset=1`)
+      adminReq('get', `${endpoint}&user=${_id}`)
       .then(res => {
-        const { patches } = res
-        patches.length.should.equal(1)
-        workA._id.should.equal(patches[0]._id.split(':')[0])
-        done()
+        const patchesCount = res.patches.length
+        const offset = 1
+        adminReq('get', `${endpoint}&user=${_id}&offset=${offset}`)
+        .then(res2 => {
+          (patchesCount - offset).should.equal(res2.patches.length)
+          done()
+        })
       })
     })
     .catch(undesiredErr(done))
   })
 
-  it('should return total and continue data', done => {
+  it('should return total data', done => {
     worksAndUserPromise
     .spread((workA, workB, user) => {
       const { _id } = user
@@ -93,24 +98,41 @@ describe('entities:contributions', () => {
       .then(res1 => {
         res1.total.should.be.a.Number()
         should(res1.total >= 2).be.true()
+        done()
+      })
+      .catch(undesiredErr(done))
+    })
+  })
+
+  it('should return continue data', done => {
+    worksAndUserPromise
+    .spread((workA, workB, user) => {
+      const { _id } = user
+      adminReq('get', `${endpoint}&user=${_id}&limit=1`)
+      .then(res1 => {
         res1.continue.should.be.a.Number()
         res1.continue.should.equal(1)
-        getWorkId(res1.patches[0]._id).should.equal(workB._id)
-        create2WorksAndGetUser()
-        .delay(1000)
-        .spread((workC, workD) => {
-          adminReq('get', `${endpoint}&user=${_id}&limit=3`)
+        done()
+      })
+      .catch(undesiredErr(done))
+    })
+  })
+
+  it('should return increment contributions', done => {
+    Promise.all([ createWork(), getUser() ])
+    .spread((work, user) => {
+      const { _id } = user
+      adminReq('get', `${endpoint}&user=${_id}`)
+      .then(res1 => {
+        should(res1.total >= 1).be.true()
+        createWork()
+        .delay(10)
+        .then(workB => {
+          adminReq('get', `${endpoint}&user=${_id}`)
           .then(res2 => {
-            getWorkId(res2.patches[0]._id).should.equal(workD._id)
-            getWorkId(res2.patches[1]._id).should.equal(workC._id)
-            getWorkId(res2.patches[2]._id).should.equal(workB._id)
-            res2.continue.should.equal(3)
-            res2.total.should.equal(res1.total + 2)
-            adminReq('get', `${endpoint}&user=${_id}&offset=3`)
-            .then(res3 => {
-              getWorkId(res3.patches[0]._id).should.equal(workA._id)
-              done()
-            })
+            getWorkId(res2.patches[0]._id).should.equal(workB._id)
+            getWorkId(res2.patches[1]._id).should.equal(work._id)
+            done()
           })
         })
       })
@@ -120,15 +142,11 @@ describe('entities:contributions', () => {
 })
 
 const create2WorksAndGetUser = () => {
-  return createWork()
+  return Promise.all([ createWork(), createWork() ])
   .delay(10)
-  .then(workA => {
-    return createWork()
-    .delay(10)
-    .then(workB => {
-      return getUser()
-      .then(user => [ workA, workB, user ])
-    })
+  .spread((workA, workB) => {
+    return getUser()
+    .then(user => [ workA, workB, user ])
   })
 }
 
