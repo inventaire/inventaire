@@ -39,8 +39,7 @@ describe('entities:contributions', () => {
   })
 
   it('should return a list of patches ordered by timestamp', done => {
-    create2WorksAndGetUser()
-    .delay(1000)
+    worksAndUserPromise
     .spread((workA, workB, user) => {
       const { _id } = user
       adminReq('get', `${endpoint}&user=${_id}`)
@@ -57,8 +56,7 @@ describe('entities:contributions', () => {
   })
 
   it('should take a limit parameter', done => {
-    create2WorksAndGetUser()
-    .delay(1000)
+    worksAndUserPromise
     .spread((workA, workB, user) => {
       const { _id } = user
       adminReq('get', `${endpoint}&user=${_id}&limit=1`)
@@ -73,8 +71,7 @@ describe('entities:contributions', () => {
   })
 
   it('should take an offset parameter', done => {
-    create2WorksAndGetUser()
-    .delay(1000)
+    worksAndUserPromise
     .spread((workA, workB, user) => {
       const { _id } = user
       adminReq('get', `${endpoint}&user=${_id}&limit=1&offset=1`)
@@ -89,8 +86,7 @@ describe('entities:contributions', () => {
   })
 
   it('should return total and continue data', done => {
-    create2WorksAndGetUser()
-    .delay(1000)
+    worksAndUserPromise
     .spread((workA, workB, user) => {
       const { _id } = user
       adminReq('get', `${endpoint}&user=${_id}&limit=1`)
@@ -135,6 +131,8 @@ const create2WorksAndGetUser = () => {
     })
   })
 }
+
+const worksAndUserPromise = create2WorksAndGetUser().delay(1000)
 
 const getWorkId = id => id.split(':')[0]
 const getPatchEntityId = patch => patch._id.split(':')[0]
