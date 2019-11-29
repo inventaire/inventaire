@@ -1,5 +1,4 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
 const sanitize = __.require('lib', 'sanitize/sanitize')
@@ -24,7 +23,6 @@ module.exports = (req, res) => {
     if (updater == null) {
       return error_.bundle(req, res, `unsupported uri prefix: ${prefix}`, 400, uri)
     }
-    value = _.isString(value) ? value.trim() : value
     return updater(req.user, id, lang, value)
     .then(responses_.Ok(res))
   })
