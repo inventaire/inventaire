@@ -7,6 +7,70 @@ const { createWork, createEdition, createHuman, someOpenLibraryId } = require('.
 const { getByUri, addClaim, updateClaim, removeClaim, merge } = require('../utils/entities')
 
 describe('entities:update-claims', () => {
+  it('should reject without uri', done => {
+    updateClaim()
+    .then(undesiredRes(done))
+    .catch(err => {
+      err.body.status_verbose.should.equal('missing parameter in body: uri')
+      err.statusCode.should.equal(400)
+      done()
+    })
+    .catch(undesiredErr(done))
+  })
+
+  it('should reject without property', done => {
+    const uri = 'inv:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+    updateClaim(uri)
+    .then(undesiredRes(done))
+    .catch(err => {
+      err.body.status_verbose.should.equal('missing parameter in body: property')
+      err.statusCode.should.equal(400)
+      done()
+    })
+    .catch(undesiredErr(done))
+  })
+
+  it('should reject without old-value or new-value', done => {
+    const uri = 'inv:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+    const property = 'wdt:P1104'
+    updateClaim(uri, property)
+    .then(undesiredRes(done))
+    .catch(err => {
+      err.body.status_verbose.should.equal('missing parameter in body: old-value or new-value')
+      err.statusCode.should.equal(400)
+      done()
+    })
+    .catch(undesiredErr(done))
+  })
+
+  it('should reject invalid uri prefix', done => {
+    const uri = 'invalidprefix:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+    const property = 'wdt:P1104'
+    const oldValue = '1312'
+    updateClaim(uri, property, oldValue)
+    .then(undesiredRes(done))
+    .catch(err => {
+      err.body.status_verbose.should.startWith('unsupported uri prefix')
+      err.statusCode.should.equal(400)
+      done()
+    })
+    .catch(undesiredErr(done))
+  })
+
+  it('should reject unfound entity', done => {
+    const uri = 'inv:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+    const property = 'wdt:P1104'
+    const oldValue = '1312'
+    updateClaim(uri, property, oldValue)
+    .then(undesiredRes(done))
+    .catch(err => {
+      err.body.status_verbose.should.equal('entity not found')
+      err.statusCode.should.equal(400)
+      done()
+    })
+    .catch(undesiredErr(done))
+  })
+
   it('should reject an update with an inappropriate property', done => {
     createWork()
     // A work entity should not have pages count
@@ -108,10 +172,10 @@ describe('entities:update-claims', () => {
     const authorsUris = [ 'wd:Q192214', 'wd:Q206685' ]
     createWork()
     .then(work => {
-      return Promise.all(authorsUris.map(uri => addClaim(work.uri, 'wdt:P50', uri)))
+      Promise.all(authorsUris.map(uri => addClaim(work.uri, 'wdt:P50', uri)))
       .then(responses => {
         responses.forEach(res => should(res.ok).be.true())
-        return getByUri(work.uri)
+        getByUri(work.uri)
         .then(updatedWork => {
           const addedAuthorsUris = updatedWork.claims['wdt:P50']
           authorsUris.forEach(uri => should(addedAuthorsUris.includes(uri)).be.true())
@@ -125,7 +189,7 @@ describe('entities:update-claims', () => {
   it('should accept a non-duplicated concurrent value', done => {
     createHuman()
     .then(human => {
-      return addClaim(human._id, 'wdt:P648', someOpenLibraryId())
+      addClaim(human._id, 'wdt:P648', someOpenLibraryId())
       .then(res => {
         should(res.ok).be.true()
         done()
