@@ -3,18 +3,37 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const should = require('should')
 const { Promise } = __.require('lib', 'promises')
-const { authReq, undesiredRes, undesiredErr } = require('../utils/utils')
+const { adminReq, authReq, undesiredRes, undesiredErr } = require('../utils/utils')
 const { getByUris, deleteByUris } = require('../utils/entities')
 const { getByIds: getItemsByIds } = require('../utils/items')
 const { createHuman, createWork, createWorkWithAuthor, createEdition, ensureEditionExists, generateIsbn13 } = require('../fixtures/entities')
 
 describe('entities:delete-by-uris', () => {
   it('should require admin rights', done => {
-    createHuman()
-    .then(entity => authReq('post', '/api/entities?action=delete-by-uris', { uris: [ entity.uri ] }))
+    authReq('post', '/api/entities?action=delete-by-uris')
     .then(undesiredRes(done))
     .catch(err => {
       err.statusCode.should.equal(403)
+      done()
+    })
+  })
+
+  it('should reject without uris', done => {
+    adminReq('post', '/api/entities?action=delete-by-uris')
+    .then(undesiredRes(done))
+    .catch(err => {
+      err.body.status_verbose.should.equal('missing parameter in body: uris')
+      err.statusCode.should.equal(400)
+      done()
+    })
+  })
+
+  it('should reject empty array as uris', done => {
+    deleteByUris()
+    .then(undesiredRes(done))
+    .catch(err => {
+      err.body.status_verbose.should.equal("uris array can't be empty")
+      err.statusCode.should.equal(400)
       done()
     })
   })
@@ -64,7 +83,7 @@ describe('entities:delete-by-uris', () => {
     .catch(undesiredErr(done))
   })
 
-  it('should delete the claims where this entity is the value', done => {
+  it('should delete claims where the entity is the value', done => {
     createWorkWithAuthor()
     .then(work => {
       const authorUri = work.claims['wdt:P50'][0]
@@ -80,9 +99,12 @@ describe('entities:delete-by-uris', () => {
   })
 
   // Entities with more than one claim should be turned into redirections
-  it('should refuse to delete entities that are values in more than one claim', done => {
+  it('should reject when values are in more than one claim', done => {
     createHuman()
-    .then(author => Promise.all([ createWorkWithAuthor(author), createWorkWithAuthor(author) ]))
+    .then(author => Promise.all([
+      createWorkWithAuthor(author),
+      createWorkWithAuthor(author)
+    ]))
     .spread((workA, workB) => {
       const authorUri = workA.claims['wdt:P50'][0]
       deleteByUris(authorUri)
