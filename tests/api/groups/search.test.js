@@ -5,15 +5,17 @@ require('should')
 const faker = require('faker')
 const { authReq, nonAuthReq, undesiredErr } = require('../utils/utils')
 const { groupName } = require('../fixtures/groups')
+const createEndpoint = '/api/groups?action=create'
+const endpoint = '/api/groups?action=search'
 
 describe('groups:search', () => {
   it('should find a group by its name', done => {
     const name = groupName()
-    authReq('post', '/api/groups?action=create', { name })
+    authReq('post', createEndpoint, { name })
     .delay(1000)
     .then(creationRes => {
       const groupId = creationRes._id
-      return nonAuthReq('get', `/api/groups?action=search&search=${name}`)
+      return nonAuthReq('get', `${endpoint}&search=${name}`)
       .then(searchRes => {
         groupsIds(searchRes).includes(groupId).should.be.true()
         done()
@@ -25,11 +27,11 @@ describe('groups:search', () => {
   it('should find a group by its description', done => {
     const name = groupName()
     const description = faker.lorem.paragraph()
-    authReq('post', '/api/groups?action=create', { name, description })
+    authReq('post', createEndpoint, { name, description })
     .delay(1000)
     .then(creationRes => {
       const groupId = creationRes._id
-      return nonAuthReq('get', `/api/groups?action=search&search=${description}`)
+      return nonAuthReq('get', `${endpoint}&search=${description}`)
       .then(searchRes => {
         groupsIds(searchRes).includes(groupId).should.be.true()
         done()
@@ -40,13 +42,13 @@ describe('groups:search', () => {
 
   it('should not find a group when not searchable', done => {
     const name = groupName()
-    authReq('post', '/api/groups?action=create', { name, searchable: false })
+    authReq('post', createEndpoint, { name, searchable: false })
     .delay(1000)
     .then(creationRes => {
       const groupId = creationRes._id
-      return nonAuthReq('get', `/api/groups?action=search&search=${name}`)
+      return nonAuthReq('get', `${endpoint}&search=${name}`)
       .then(searchRes => {
-        groupsIds(searchRes).includes(groupId).should.be.true()
+        groupsIds(searchRes).includes(groupId).should.be.false()
         done()
       })
     })
