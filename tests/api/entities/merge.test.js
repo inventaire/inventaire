@@ -52,10 +52,23 @@ describe('entities:merge', () => {
   })
 
   it('should reject invalid from prefix', done => {
-    adminReq('put', '/api/entities?action=merge', { from: 'wd:Q42', to: 'inv:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' })
+    const fakeUri = 'inv:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+    adminReq('put', '/api/entities?action=merge', { from: 'wd:Q42', to: fakeUri })
     .then(undesiredRes(done))
     .catch(err => {
       err.body.status_verbose.should.startWith("invalid 'from' uri domain: wd. Accepted domains: inv,isbn")
+      err.statusCode.should.equal(400)
+      done()
+    })
+    .catch(undesiredErr(done))
+  })
+
+  it('should return uris not found', done => {
+    const fakeUri = 'inv:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+    adminReq('put', '/api/entities?action=merge', { from: fakeUri, to: 'wd:Q42' })
+    .then(undesiredRes(done))
+    .catch(err => {
+      err.body.status_verbose.should.equal("'from' entity not found")
       err.statusCode.should.equal(400)
       done()
     })
