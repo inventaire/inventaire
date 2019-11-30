@@ -1,6 +1,5 @@
-// An endpoint to take advantage of data we are given thourgh data imports
+// An endpoint to take advantage of data we are given through data imports
 // instead of relying on dataseed
-
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
@@ -10,7 +9,7 @@ const responses_ = __.require('lib', 'responses')
 const sanitize = __.require('lib', 'sanitize/sanitize')
 error_ = __.require('lib', 'error/error')
 const entities_ = require('./lib/entities')
-const scaffoldEditionEntityFromSeed = require('./lib/scaffold_entity_from_seed/edition')
+const scaffoldFromSeed = require('./lib/scaffold_entity_from_seed/edition')
 const { enabled: dataseedEnabled } = CONFIG.dataseed
 const dataseed = __.require('data', 'dataseed/dataseed')
 const formatEditionEntity = require('./lib/format_edition_entity')
@@ -30,18 +29,15 @@ module.exports = (req, res) => {
     seed.authors = authors.filter(_.isNonEmptyString)
 
     return entities_.byIsbn(isbn)
-    .then(entityDoc => {
-      if (entityDoc) {
-        return entityDoc
-      } else {
-        return addImage(seed)
-        .then(scaffoldEditionEntityFromSeed)
-      }
-    })
+    .then(findOrCreateEntity(seed))
     .then(formatEditionEntity)
     .then(responses_.Send(res))
   })
   .catch(error_.Handler(req, res))
+}
+
+const findOrCreateEntity = seed => entityDoc => {
+  return entityDoc || addImage(seed).then(scaffoldFromSeed)
 }
 
 const addImage = seed => {
