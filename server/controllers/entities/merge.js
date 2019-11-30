@@ -36,7 +36,9 @@ module.exports = (req, res) => {
 
     _.log({ merge: params, user: reqUserId }, 'entity merge request')
 
-    return getEntitiesByUris({ uris: [ fromUri, toUri ], refresh: true })
+    return getMergeEntities(fromUri, toUri)
+    .tap(filterEntities(fromUri, toUri))
+    .tap(filterByType)
     .then(merge(reqUserId, fromUri, toUri))
     .tap(() => radio.emit('entity:merge', fromUri, toUri))
     .then(responses_.Ok(res))
@@ -44,25 +46,42 @@ module.exports = (req, res) => {
   .catch(error_.Handler(req, res))
 }
 
-const merge = (reqUserId, fromUri, toUri) => res => {
-  const { entities, redirects } = res
-  const fromEntity = entities[fromUri] || entities[redirects[fromUri]]
-  if (fromEntity == null) throw notFound('from', fromUri)
+const getMergeEntities = (fromUri, toUri) => {
+  return getEntitiesByUris({ uris: [ fromUri, toUri ], refresh: true })
+  .then(res => {
+    const { entities, redirects } = res
+    const fromEntity = getMergeEntity(entities, redirects, fromUri)
+    const toEntity = getMergeEntity(entities, redirects, toUri)
+    return { fromEntity, toEntity }
+  })
+}
 
-  const toEntity = entities[toUri] || entities[redirects[toUri]]
-  if (toEntity == null) throw notFound('to', toUri)
+const getMergeEntity = (entities, redirects, uri) => {
+  return entities[uri] || entities[redirects[uri]]
+}
 
-  if (fromEntity.uri !== fromUri) {
-    throw error_.new("'from' entity is already a redirection", 400, { fromUri, toUri })
-  }
-
-  if (toEntity.uri !== toUri) {
-    throw error_.new("'to' entity is already a redirection", 400, { fromUri, toUri })
-  }
-
+const filterEntities = (fromUri, toUri) => entities => {
+  const { fromEntity, toEntity } = entities
+  filterEntity(fromEntity, fromUri, 'from')
+  filterEntity(toEntity, toUri, 'to')
   if (fromEntity.uri === toEntity.uri) {
     throw error_.new("can't merge an entity into itself", 400, { fromUri, toUri })
   }
+}
+
+const filterEntity = (entity, originalUri, label) => {
+  if (entity == null) {
+    throw error_.new(`'${label}' entity not found`, 400, originalUri)
+  }
+  if (entity.uri !== originalUri) {
+    throw error_.new(`'${label}' entity is already a redirection`, 400, { entity, originalUri })
+  }
+}
+
+const filterByType = entities => {
+  const { fromEntity, toEntity } = entities
+  const { uri: fromUri } = fromEntity
+  const { uri: toUri } = toEntity
 
   if (fromEntity.type !== toEntity.type) {
     // Exception: authors can be organizations and collectives of all kinds
@@ -83,6 +102,10 @@ const merge = (reqUserId, fromUri, toUri) => res => {
       throw error_.new("can't merge editions with different ISBNs", 400, fromUri, toUri)
     }
   }
+}
+
+const merge = (reqUserId, fromUri, toUri) => entities => {
+  const { fromEntity, toEntity } = entities
 
   fromUri = replaceIsbnUriByInvUri(fromUri, fromEntity._id)
   toUri = replaceIsbnUriByInvUri(toUri, toEntity._id)
@@ -96,5 +119,3 @@ const replaceIsbnUriByInvUri = (uri, invId) => {
   if (prefix === 'isbn') return `inv:${invId}`
   return uri
 }
-
-const notFound = (label, context) => error_.new(`'${label}' entity not found`, 400, context)
