@@ -42,28 +42,28 @@ const findOrCreateEntity = seed => entityDoc => {
 
 const addImage = seed => {
   if (!dataseedEnabled) return promises_.resolve(seed)
-
   // Try to find an image from the seed ISBN
   return dataseed.getImageByIsbn(seed.isbn)
   .then(res => {
-    if (res.url) {
-      seed.image = res.url
-      return seed
+    const { url } = res
+    if (url) {
+      seed.image = url
     } else {
-      const { image } = seed
-      if (image == null) return seed
-
-      // Else, if an image was provided in the seed, try to use it
-      return dataseed.getImageByUrl(seed.image)
-      .then(res2 => {
-        if (res.url) seed.image = res2.url
-        else delete seed.image
-        return seed
-      })
+      // if an image was provided in the seed, try to use it
+      if (seed.image) assignSeedImage(seed, url)
     }
+    return seed
   })
   .catch(err => {
     _.error(err, 'add image err')
     return seed
+  })
+}
+
+const assignSeedImage = (seed, url) => {
+  dataseed.getImageByUrl(seed.image)
+  .then(res => {
+    if (url) seed.image = res.url
+    else delete seed.image
   })
 }
