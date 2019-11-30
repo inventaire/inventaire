@@ -20,7 +20,7 @@ const membershipAction = (reqFn, action, groupId, userId) => {
   return reqFn('put', endpointBase, { action, group: groupId, user: userId })
 }
 
-const groupName = () => `${faker.lorem.word()} group`
+const groupName = () => `${faker.lorem.words(3)} group`
 
 // Resolves to a group with userA as admin and userB as member
 const groupPromise = createGroup(groupName())
