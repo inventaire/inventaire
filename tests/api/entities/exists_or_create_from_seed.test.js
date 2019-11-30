@@ -1,10 +1,11 @@
 require('should')
 const { authReq, undesiredErr } = require('../utils/utils')
 const { generateIsbn13, randomLabel } = require('../fixtures/entities')
+const endpoint = '/api/entities?action=exists-or-create-from-seed'
 
 describe('entities:exists-or-create-from-seed', () => {
-  it('should reject if params isbn is missing', done => {
-    authReq('post', '/api/entities?action=exists-or-create-from-seed')
+  it('should reject without isbn', done => {
+    authReq('post', endpoint)
     .catch(err => {
       err.body.status_verbose.should.startWith('missing parameter')
       done()
@@ -12,18 +13,29 @@ describe('entities:exists-or-create-from-seed', () => {
     .catch(undesiredErr(done))
   })
 
-  it('should reject if params title is missing', done => {
-    authReq('post', '/api/entities?action=exists-or-create-from-seed',
-      { isbn: generateIsbn13() })
+  it('should reject without title', done => {
+    authReq('post', endpoint, { isbn: generateIsbn13() })
     .catch(err => {
       err.body.status_verbose.should.startWith('missing parameter')
+      done()
+    })
+    .catch(undesiredErr(done))
+  })
+
+  it('should reject if isbn is invalid', done => {
+    authReq('post', endpoint, {
+      isbn: '000000',
+      title: randomLabel()
+    })
+    .catch(err => {
+      err.body.status_verbose.should.startWith('invalid isbn')
       done()
     })
     .catch(undesiredErr(done))
   })
 
   it('should reject if authors is not a string', done => {
-    authReq('post', '/api/entities?action=exists-or-create-from-seed', {
+    authReq('post', endpoint, {
       isbn: generateIsbn13(),
       title: randomLabel(),
       authors: 1
@@ -35,20 +47,8 @@ describe('entities:exists-or-create-from-seed', () => {
     .catch(undesiredErr(done))
   })
 
-  it('should reject if isbn is invalid', done => {
-    authReq('post', '/api/entities?action=exists-or-create-from-seed', {
-      isbn: '000000',
-      title: randomLabel()
-    })
-    .catch(err => {
-      err.body.status_verbose.should.startWith('invalid isbn')
-      done()
-    })
-    .catch(undesiredErr(done))
-  })
-
-  it('should accept if params authors is missing', done => {
-    authReq('post', '/api/entities?action=exists-or-create-from-seed', {
+  it('should create an edition', done => {
+    authReq('post', endpoint, {
       isbn: generateIsbn13(),
       title: randomLabel()
     })
@@ -60,7 +60,7 @@ describe('entities:exists-or-create-from-seed', () => {
   })
 
   it('should create an edition and a work from seed', done => {
-    authReq('post', '/api/entities?action=exists-or-create-from-seed', {
+    authReq('post', endpoint, {
       isbn: generateIsbn13(),
       title: randomLabel(),
       authors: [ randomLabel() ]
@@ -68,7 +68,7 @@ describe('entities:exists-or-create-from-seed', () => {
     .then(res => {
       res._id.should.be.a.String()
       const workUri = res.claims['wdt:P629'][0]
-      return authReq('get', `/api/entities?action=by-uris&uris=${workUri}`)
+      authReq('get', `/api/entities?action=by-uris&uris=${workUri}`)
       .get('entities')
       .then(entities => {
         entities[workUri].should.be.an.Object()
