@@ -2,12 +2,43 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const should = require('should')
 const { Promise } = __.require('lib', 'promises')
-const { undesiredErr } = require('../utils/utils')
+const { authReq, undesiredErr, undesiredRes } = require('../utils/utils')
 const randomString = __.require('lib', './utils/random_string')
 const { getByUris, merge, revertMerge, updateLabel, addClaim } = require('../utils/entities')
 const { createWork, createHuman, createWorkWithAuthor } = require('../fixtures/entities')
 
 describe('entities:revert-merge', () => {
+  it('should require admin rights', done => {
+    authReq('put', '/api/entities?action=revert-merge')
+    .then(undesiredRes(done))
+    .catch(err => {
+      err.statusCode.should.equal(403)
+      done()
+    })
+  })
+
+  it('should reject without from uri', done => {
+    revertMerge()
+    .then(undesiredRes(done))
+    .catch(err => {
+      err.body.status_verbose.should.equal('missing parameter in body: from')
+      err.statusCode.should.equal(400)
+      done()
+    })
+    .catch(undesiredErr(done))
+  })
+
+  it('should reject invalid prefix', done => {
+    revertMerge('wd:Q42')
+    .then(undesiredRes(done))
+    .catch(err => {
+      err.body.status_verbose.should.equal("invalid 'from' uri domain: wd. Accepted domains: inv")
+      err.statusCode.should.equal(400)
+      done()
+    })
+    .catch(undesiredErr(done))
+  })
+
   it('should revert merge two entities with an inv URI', done => {
     Promise.all([
       createWork(),
