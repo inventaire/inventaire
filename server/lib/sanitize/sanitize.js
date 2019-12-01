@@ -10,7 +10,7 @@ const { generics } = parameters
 module.exports = (req, res, configs) => Promise.try(() => {
   assert_.object(req.query)
 
-  const place = getPlace(req.method)
+  const place = getPlace(req.method, configs)
   const input = _.cloneDeep(req[place])
   delete input.action
 
@@ -69,9 +69,13 @@ const sanitizeParameter = (input, name, config, place, res) => {
   renameParameter(input, name, parameter.rename)
 }
 
-const getPlace = method => {
-  if ((method === 'POST') || (method === 'PUT')) return 'body'
-  else return 'query'
+const getPlace = (method, configs) => {
+  let place = 'query'
+  if (method === 'POST' || method === 'PUT') {
+    if (!configs.nonJsonBody) place = 'body'
+    delete configs.nonJsonBody
+  }
+  return place
 }
 
 const removeUnexpectedParameter = (input, name, configs, res) => {

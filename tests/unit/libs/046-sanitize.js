@@ -60,6 +60,30 @@ describe('sanitize', () => {
     .catch(done)
   })
 
+  it('should by default look for parameters in the body in POST and PUT requests', done => {
+    const req = { method: 'POST', body: { lang: 'es' }, query: {} }
+    const res = {}
+    const configs = { lang: {} }
+    sanitize(req, res, configs)
+    .then(input => {
+      input.lang.should.equal('es')
+      done()
+    })
+    .catch(done)
+  })
+
+  it('may optionally look for parameters in the query in POST and PUT requests', done => {
+    const req = { method: 'POST', query: { lang: 'es' } }
+    const res = {}
+    const configs = { lang: {}, nonJsonBody: true }
+    sanitize(req, res, configs)
+    .then(input => {
+      input.lang.should.equal('es')
+      done()
+    })
+    .catch(done)
+  })
+
   describe('optional parameters', () => {
     it('should accept optional parameters', done => {
       const req = { query: {} }
