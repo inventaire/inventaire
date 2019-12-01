@@ -1,12 +1,12 @@
 require('should')
 const { authReq, undesiredRes, undesiredErr } = require('../utils/utils')
-
 const imageUrl = encodeURIComponent('https://raw.githubusercontent.com/inventaire/inventaire-client/master/app/assets/icon/32.png')
 const dataUrlStart = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYA'
+const endpoint = '/api/images?action=data-url'
 
 describe('images:data-url', () => {
-  it('should reject a request without URL', done => {
-    authReq('get', '/api/images?action=data-url')
+  it('should reject without URL', done => {
+    authReq('get', endpoint)
     .then(undesiredRes(done))
     .catch(err => {
       err.statusCode.should.equal(400)
@@ -16,8 +16,8 @@ describe('images:data-url', () => {
     .catch(undesiredErr(done))
   })
 
-  it('should reject a request with an invalid URL', done => {
-    authReq('get', '/api/images?action=data-url&url=bla')
+  it('should reject with an invalid URL', done => {
+    authReq('get', '${endpoint}&url=bla')
     .then(undesiredRes(done))
     .catch(err => {
       err.statusCode.should.equal(400)
@@ -27,9 +27,9 @@ describe('images:data-url', () => {
     .catch(undesiredErr(done))
   })
 
-  it('should reject a request with an invalid content type', done => {
+  it('should reject with an invalid content type', done => {
     const invalidContentTypeUrl = encodeURIComponent('http://maxlath.eu/data.json')
-    authReq('get', `/api/images?action=data-url&url=${invalidContentTypeUrl}`)
+    authReq('get', `${endpoint}&url=${invalidContentTypeUrl}`)
     .then(undesiredRes(done))
     .catch(err => {
       err.statusCode.should.equal(400)
@@ -38,8 +38,9 @@ describe('images:data-url', () => {
     })
     .catch(undesiredErr(done))
   })
+
   it('should return a data-url', done => {
-    authReq('get', `/api/images?action=data-url&url=${imageUrl}`)
+    authReq('get', `${endpoint}&url=${imageUrl}`)
     .then(res => {
       res['data-url'].should.be.a.String()
       res['data-url'].should.startWith(dataUrlStart)
