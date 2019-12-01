@@ -3,12 +3,22 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
 const faker = require('faker')
-const { authReq, nonAuthReq, undesiredErr } = require('../utils/utils')
+const { authReq, nonAuthReq, undesiredErr, undesiredRes } = require('../utils/utils')
 const { groupName } = require('../fixtures/groups')
 const createEndpoint = '/api/groups?action=create'
 const endpoint = '/api/groups?action=search'
 
 describe('groups:search', () => {
+  it('should reject without search', done => {
+    authReq('get', endpoint)
+    .then(undesiredRes(done))
+    .catch(err => {
+      err.body.status_verbose.should.equal('missing parameter in query: search')
+      done()
+    })
+    .catch(done)
+  })
+
   it('should find a group by its name', done => {
     const name = groupName()
     authReq('post', createEndpoint, { name })
