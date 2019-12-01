@@ -1,25 +1,18 @@
-// Get an image data-url from a URL
-
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
 const breq = require('bluereq')
-const host = CONFIG.fullPublicHost()
+const sanitize = __.require('lib', 'sanitize/sanitize')
 
+// Get an image data-url from a URL
 module.exports = (req, res, next) => {
-  let { url } = req.query
-
-  if (url == null) return error_.bundleMissingQuery(req, res, 'url')
-
-  url = decodeURIComponent(url)
-  if (url[0] === '/') url = `${host}${url}`
-
-  if (!_.isUrl(url)) return error_.bundleInvalid(req, res, 'url', url)
-
-  return getImageDataUrl(url)
-  .then(responses_.Wrap(res, 'data-url'))
+  sanitize(req, res, { url: {} })
+  .then(params => {
+    const { url } = params
+    return getImageDataUrl(url)
+    .then(responses_.Wrap(res, 'data-url'))
+  })
   .catch(error_.Handler(req, res))
 }
 
@@ -31,7 +24,7 @@ const getImageDataUrl = url => {
     const contentType = res.headers['content-type']
 
     if (contentType.split('/')[0] !== 'image') {
-      throw error_.new('invalid content type', 400, url, contentType)
+      throw error_.new('invalid content type', 400, { url, contentType })
     }
 
     const buffer = Buffer.from(res.body).toString('base64')

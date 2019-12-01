@@ -1,3 +1,4 @@
+const CONFIG = require('config')
 require('should')
 const { authReq, undesiredRes, undesiredErr } = require('../utils/utils')
 const imageUrl = encodeURIComponent('https://raw.githubusercontent.com/inventaire/inventaire-client/master/app/assets/icon/32.png')
@@ -17,7 +18,7 @@ describe('images:data-url', () => {
   })
 
   it('should reject with an invalid URL', done => {
-    authReq('get', '${endpoint}&url=bla')
+    authReq('get', `${endpoint}&url=bla`)
     .then(undesiredRes(done))
     .catch(err => {
       err.statusCode.should.equal(400)
@@ -44,6 +45,17 @@ describe('images:data-url', () => {
     .then(res => {
       res['data-url'].should.be.a.String()
       res['data-url'].should.startWith(dataUrlStart)
+      done()
+    })
+    .catch(undesiredErr(done))
+  })
+
+  it('should format to add host to a local url', done => {
+    const imageUrl = '/some/invalid/local/url'
+    authReq('get', `${endpoint}&url=${encodeURIComponent(imageUrl)}`)
+    .then(undesiredRes(done))
+    .catch(err => {
+      err.body.context.url.should.equal(`${CONFIG.fullPublicHost()}${imageUrl}`)
       done()
     })
     .catch(undesiredErr(done))
