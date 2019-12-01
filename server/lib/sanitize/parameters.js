@@ -1,5 +1,7 @@
-const __ = require('config').universalPath
+const CONFIG = require('config')
+const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
+const host = CONFIG.fullPublicHost()
 const error_ = __.require('lib', 'error/error')
 const isbn_ = __.require('lib', 'isbn/isbn')
 
@@ -101,6 +103,15 @@ const isbn = {
   validate: isbn_.isValidIsbn
 }
 
+const imgUrl = {
+  format: (value, name, config) => {
+    let decodedUrl = decodeURIComponent(value)
+    if (decodedUrl[0] === '/') decodedUrl = `${host}${decodedUrl}`
+    return decodedUrl
+  },
+  validate: validations.common.imgUrl
+}
+
 const whitelistedString = {
   validate: (value, name, config) => {
     if (!config.whitelist.includes(value)) {
@@ -189,6 +200,7 @@ module.exports = {
   to: entityUri,
   uri: entityUri,
   uris: entityUris,
+  url: imgUrl,
   user: couchUuid,
   users: couchUuids,
   username: { validate: validations.common.username },
