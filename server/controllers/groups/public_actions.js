@@ -5,46 +5,38 @@ const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
 const groups_ = require('./lib/groups')
 const parseBbox = __.require('lib', 'parse_bbox')
-const { buildSearcher } = __.require('lib', 'elasticsearch')
+const searchByText = require('./lib/search_by_text')
+const sanitize = __.require('lib', 'sanitize/sanitize')
 
 module.exports = {
   byId: (req, res) => {
-    const { id } = req.query
-    const reqUserId = req.user && req.user._id
-
-    if (!_.isGroupId(id)) {
-      return error_.bundleInvalid(req, res, 'id', id)
-    }
-
-    return groups_.getGroupData('byId', [ id ], reqUserId)
-    .then(responses_.Send(res))
+    sanitize(req, res, { id: {} })
+    .then(params => {
+      const { id, reqUserId } = params
+      return groups_.getGroupData('byId', [ id ], reqUserId)
+      .then(responses_.Send(res))
+    })
     .catch(error_.Handler(req, res))
   },
 
   bySlug: (req, res) => {
-    const { slug } = req.query
-    const reqUserId = req.user && req.user._id
-
-    if (!_.isNonEmptyString(slug)) {
-      return error_.bundleMissingQuery(req, res, 'slug')
-    }
-
-    return groups_.getGroupData('bySlug', [ slug ], reqUserId)
-    .then(responses_.Send(res))
+    sanitize(req, res, { slug: {} })
+    .then(params => {
+      const { slug, reqUserId } = params
+      return groups_.getGroupData('bySlug', [ slug ], reqUserId)
+      .then(responses_.Send(res))
+    })
     .catch(error_.Handler(req, res))
   },
 
   searchByText: (req, res) => {
-    const { query } = req
-    const search = query.search && query.search.trim()
-
-    if (!_.isNonEmptyString(search)) {
-      return error_.bundleInvalid(req, res, 'search', search)
-    }
-
-    return searchByText(search)
-    .filter(searchable)
-    .then(responses_.Wrap(res, 'groups'))
+    sanitize(req, res, { search: {} })
+    .then(params => {
+      const { search } = params
+      return searchByText(search)
+      .filter(searchable)
+      .then(responses_.Wrap(res, 'groups'))
+    })
     .catch(error_.Handler(req, res))
   },
 
@@ -79,21 +71,5 @@ module.exports = {
     .catch(error_.Handler(req, res))
   }
 }
-
-const searchByText = buildSearcher({
-  dbBaseName: 'groups',
-  queryBodyBuilder: search => {
-    const should = [
-      // Name
-      { match: { name: { query: search, boost: 5 } } },
-      { match_phrase_prefix: { name: { query: search, boost: 4 } } },
-      { fuzzy: { name: search } },
-      // Description
-      { match: { description: search } }
-    ]
-
-    return { query: { bool: { should } } }
-  }
-})
 
 const searchable = _.property('searchable')

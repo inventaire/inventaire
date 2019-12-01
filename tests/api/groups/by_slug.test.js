@@ -4,14 +4,11 @@ const endpoint = '/api/groups?action=by-slug'
 
 describe('groups:by-slug', () => {
   it('should reject without slug', done => {
-    groupPromise
-    .then(group => {
-      nonAuthReq('get', endpoint)
-      .then(undesiredRes(done))
-      .catch(err => {
-        err.body.status_verbose.should.equal('missing parameter in query: slug')
-        done()
-      })
+    nonAuthReq('get', endpoint)
+    .then(undesiredRes(done))
+    .catch(err => {
+      err.body.status_verbose.should.equal('missing parameter in query: slug')
+      done()
     })
     .catch(done)
   })

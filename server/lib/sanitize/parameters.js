@@ -179,6 +179,7 @@ module.exports = {
     max: 500
   }),
   search: nonEmptyString,
+  slug: nonEmptyString,
   state: whitelistedString,
   title: nonEmptyString,
   token: nonEmptyString,

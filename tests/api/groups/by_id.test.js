@@ -4,14 +4,11 @@ const endpoint = '/api/groups?action=by-id'
 
 describe('groups:by-id', () => {
   it('should reject without id', done => {
-    groupPromise
-    .then(group => {
-      nonAuthReq('get', endpoint)
-      .then(undesiredRes(done))
-      .catch(err => {
-        err.body.status_verbose.should.equal('missing parameter in query: id')
-        done()
-      })
+    nonAuthReq('get', endpoint)
+    .then(undesiredRes(done))
+    .catch(err => {
+      err.body.status_verbose.should.equal('missing parameter in query: id')
+      done()
     })
     .catch(done)
   })
