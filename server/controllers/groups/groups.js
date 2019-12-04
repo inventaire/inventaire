@@ -34,7 +34,7 @@ module.exports = {
   put: ActionsControllers({
     authentified: {
       invite: require('./invite'),
-      accept: require('./update'),
+      accept: require('./accept'),
       decline: require('./update'),
       request: require('./update'),
       'cancel-request': require('./update'),
