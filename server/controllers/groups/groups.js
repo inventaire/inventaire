@@ -35,8 +35,7 @@ module.exports = {
     authentified: {
       invite: require('./invite'),
       accept: require('./accept'),
-      decline: require('./update'),
-      request: require('./update'),
+      request: require('./request'),
       'cancel-request': require('./update'),
       'accept-request': require('./update'),
       'refuse-request': require('./update'),

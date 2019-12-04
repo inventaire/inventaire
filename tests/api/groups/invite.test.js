@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 require('should')
 const { authReq, authReqB, undesiredErr, undesiredRes } = require('../utils/utils')
 const { groupPromise, createGroup, groupName, getGroup } = require('../fixtures/groups')
