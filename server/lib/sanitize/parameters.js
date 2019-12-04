@@ -163,6 +163,7 @@ module.exports = {
   filter: whitelistedString,
   from: entityUri,
   generics,
+  group: couchUuid,
   id: couchUuid,
   ids: couchUuids,
   isbn,
