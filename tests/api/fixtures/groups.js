@@ -31,4 +31,4 @@ const groupPromise = createGroup(groupName())
     .then(() => getGroup(group._id))
   })
 
-module.exports = { endpointBase, groupPromise, getGroup, groupName }
+module.exports = { endpointBase, groupPromise, getGroup, groupName, createGroup }

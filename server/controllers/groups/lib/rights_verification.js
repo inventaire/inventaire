@@ -1,10 +1,8 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const groups_ = require('./groups')
 const promises_ = __.require('lib', 'promises')
-const { possibleActions } = require('./actions_lists')
 
 const verifyJoinRequestHandlingRights = (reqUserId, groupId, requesterId) => {
   return promises_.all([
@@ -17,16 +15,6 @@ const verifyJoinRequestHandlingRights = (reqUserId, groupId, requesterId) => {
     }
     if (!requesterInRequested) {
       throw error_.new('request not found', 401, requesterId, groupId)
-    }
-  })
-}
-
-const verifyRightsToInvite = (reqUserId, groupId, invitedUserId) => {
-  return groups_.userInGroup(reqUserId, groupId)
-  .then(invitorInGroup => {
-    if (!invitorInGroup) {
-      const context = { reqUserId, groupId, invitedUserId }
-      throw error_.new("invitor isn't in group", 403, context)
     }
   })
 }
@@ -71,8 +59,7 @@ const verifyUserRightToLeave = (reqUserId, groupId) => {
   })
 }
 
-const verificators = module.exports = {
-  invite: verifyRightsToInvite,
+module.exports = {
   // /!\ groups_.userInvited returns a group doc, not a boolean
   accept: groups_.userInvited,
   decline: groups_.userInvited,
@@ -100,11 +87,4 @@ const verificators = module.exports = {
   makeAdmin: verifyAdminRights,
   kick: verifyAdminRightsWithoutAdminsConflict,
   leave: verifyUserRightToLeave
-}
-
-// just checking that everything looks right
-const verificatorsList = Object.keys(verificators)
-const diff = _.difference(possibleActions, verificatorsList)
-if (diff.length > 0) {
-  throw new Error("groups actions and verificators don't match")
 }

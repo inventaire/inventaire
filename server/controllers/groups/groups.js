@@ -31,5 +31,19 @@ module.exports = {
     }
   }),
 
-  put: require('./update')
+  put: ActionsControllers({
+    authentified: {
+      invite: require('./invite'),
+      accept: require('./update'),
+      decline: require('./update'),
+      request: require('./update'),
+      'cancel-request': require('./update'),
+      'accept-request': require('./update'),
+      'refuse-request': require('./update'),
+      'make-admin': require('./update'),
+      kick: require('./update'),
+      leave: require('./update'),
+      'update-settings': require('./update')
+    }
+  })
 }

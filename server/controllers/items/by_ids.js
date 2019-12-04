@@ -58,7 +58,7 @@ const filterByAuthorization = (reqUserId, networkIds) => item => {
     // Filter-out private item for network users
     if (listing !== 'private') return omitPrivateAttributes(item)
   } else {
-    // Filter-out all non-public items for non-network users
+    // Filter-out non-public items for non-network users
     if (listing === 'public') return omitPrivateAttributes(item)
   }
 }
