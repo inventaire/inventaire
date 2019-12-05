@@ -6,6 +6,7 @@ const publicActions = require('./public_actions')
 const { allUserGroups } = require('./lib/groups')
 const ActionsControllers = __.require('lib', 'actions_controllers')
 const membersActions = require('./members_actions')
+const requestActions = require('./request_actions')
 
 module.exports = {
   get: ActionsControllers({
@@ -38,9 +39,9 @@ module.exports = {
       accept: membersActions('accept'),
       decline: membersActions('decline'),
       request: require('./request'),
-      'cancel-request': require('./update'),
-      'accept-request': require('./update'),
-      'refuse-request': require('./update'),
+      'cancel-request': require('./cancel_request'),
+      'accept-request': requestActions('accept'),
+      'refuse-request': requestActions('refuse'),
       'make-admin': require('./update'),
       kick: require('./update'),
       leave: require('./update'),
