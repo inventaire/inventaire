@@ -43,8 +43,8 @@ module.exports = {
       'accept-request': requestActions('accept'),
       'refuse-request': requestActions('refuse'),
       'make-admin': require('./make_admin'),
-      kick: require('./update'),
-      leave: require('./update'),
+      kick: require('./kick'),
+      leave: require('./leave'),
       'update-settings': require('./update')
     }
   })
