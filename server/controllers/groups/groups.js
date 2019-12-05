@@ -42,7 +42,7 @@ module.exports = {
       'cancel-request': require('./cancel_request'),
       'accept-request': requestActions('accept'),
       'refuse-request': requestActions('refuse'),
-      'make-admin': require('./update'),
+      'make-admin': require('./make_admin'),
       kick: require('./update'),
       leave: require('./update'),
       'update-settings': require('./update')
