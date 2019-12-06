@@ -6,7 +6,6 @@ const publicActions = require('./public_actions')
 const { allUserGroups } = require('./lib/groups')
 const ActionsControllers = __.require('lib', 'actions_controllers')
 const membersActions = require('./members_actions')
-const requestActions = require('./request_actions')
 
 module.exports = {
   get: ActionsControllers({
@@ -35,17 +34,17 @@ module.exports = {
 
   put: ActionsControllers({
     authentified: {
-      invite: require('./invite'),
+      invite: membersActions('invite'),
       accept: membersActions('accept'),
       decline: membersActions('decline'),
-      request: require('./request'),
-      'cancel-request': require('./cancel_request'),
-      'accept-request': requestActions('accept'),
-      'refuse-request': requestActions('refuse'),
-      'make-admin': require('./make_admin'),
-      kick: require('./kick'),
-      leave: require('./leave'),
-      'update-settings': require('./update')
+      request: membersActions('request'),
+      'cancel-request': membersActions('cancel_request'),
+      'accept-request': membersActions('accept_request'),
+      'refuse-request': membersActions('refuse_request'),
+      'make-admin': membersActions('make_admin'),
+      kick: membersActions('kick'),
+      leave: membersActions('leave'),
+      'update-settings': require('./update_settings')
     }
   })
 }
