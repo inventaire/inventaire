@@ -1,12 +1,23 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
-const { nonAuthReq, authReq, undesiredErr } = require('../utils/utils')
+const { nonAuthReq, authReq, undesiredErr, undesiredRes } = require('../utils/utils')
 const { groupPromise } = require('../fixtures/groups')
 const slugify = __.require('controllers', 'groups/lib/slugify')
 const endpoint = '/api/groups?action=update-settings'
 
 describe('groups:update-settings', () => {
+  it('should reject without a group', done => {
+    authReq('put', endpoint, {})
+    .then(undesiredRes(done))
+    .catch(err => {
+      err.body.status_verbose.should.equal('missing parameter in body: group')
+      err.statusCode.should.equal(400)
+      done()
+    })
+    .catch(undesiredErr(done))
+  })
+
   it('should update the group slug when updating the name', done => {
     groupPromise
     .then(group => {
