@@ -7,8 +7,13 @@ const membershipValidations = require('./lib/membership_validations')
 const { Track } = __.require('lib', 'track')
 const error_ = __.require('lib', 'error/error')
 
+const sanitization = {
+  group: {},
+  user: { optional: true }
+}
+
 module.exports = action => (req, res) => {
-  sanitize(req, res, { group: {}, user: { optional: true } })
+  sanitize(req, res, sanitization)
   .then(params => {
     // don't convert undefined action to an empty string
     // it makes debugging confusing
