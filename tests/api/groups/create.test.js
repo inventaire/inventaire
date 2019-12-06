@@ -30,6 +30,38 @@ describe('groups:create', () => {
     .catch(undesiredErr(done))
   })
 
+  it('should accept an optional searcheable parameter', done => {
+    const name = groupName()
+    authReq('post', endpoint, { name, searchable: false })
+    .catch(undesiredErr(done))
+    .then(res => {
+      res.searchable.should.be.false()
+      done()
+    })
+  })
+
+  it('should reject invalid position', done => {
+    const name = groupName()
+    authReq('post', endpoint, { name, position: [ 1 ] })
+    .then(undesiredRes(done))
+    .catch(err => {
+      err.body.status_verbose.should.startWith('invalid position')
+      done()
+    })
+    .catch(done)
+  })
+
+  it('should accept an optional position parameter', done => {
+    const name = groupName()
+    const position = [ 1, 1 ]
+    authReq('post', endpoint, { name, position })
+    .then(res => {
+      res.position.should.deepEqual(position)
+      done()
+    })
+    .catch(undesiredErr(done))
+  })
+
   it('should reject a group with an empty name or generated slug', done => {
     const name = '??'
     authReq('post', endpoint, { name })

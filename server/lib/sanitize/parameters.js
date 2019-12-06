@@ -98,6 +98,10 @@ const arrayOfStrings = {
   validate: arrayOfAKind(_.isString)
 }
 
+const arrayOfNumbers = {
+  validate: arrayOfAKind(_.isNumber)
+}
+
 const isbn = {
   format: isbn_.normalizeIsbn,
   validate: isbn_.isValidIsbn
@@ -160,6 +164,7 @@ module.exports = {
   authors: arrayOfStrings,
   attribute: nonEmptyString,
   email: { validate: validations.common.email },
+  description: nonEmptyString,
   filter: whitelistedString,
   from: entityUri,
   generics,
@@ -177,12 +182,14 @@ module.exports = {
     default: 100
   }),
   message: nonEmptyString,
+  name: nonEmptyString,
   offset: Object.assign({}, positiveInteger, { default: 0 }),
   options: whitelistedStrings,
   password: {
     secret: true,
     validate: validations.user.password
   },
+  position: arrayOfNumbers,
   prefix: whitelistedString,
   property: { validate: _.isPropertyUri },
   refresh: generics.boolean,
