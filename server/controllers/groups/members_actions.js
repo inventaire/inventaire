@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const sanitize = __.require('lib', 'sanitize/sanitize')
-const membershipActions = require('./lib/membership_actions')
+const modelAction = require('./lib/model_action')
 const membershipValidations = require('./lib/membership_validations')
 const { Track } = __.require('lib', 'track')
 const error_ = __.require('lib', 'error/error')
@@ -18,7 +18,7 @@ module.exports = action => (req, res) => {
     _.log(params, `${action} group`)
 
     return membershipValidations[action](reqUserId, groupId, userId)
-    .then(membershipActions[action].bind(null, params, reqUserId))
+    .then(modelAction(action).bind(null, params, reqUserId))
     .then(addUpdateData(res))
     .then(Track(req, [ 'groups', action ]))
   })

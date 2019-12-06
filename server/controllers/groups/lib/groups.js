@@ -68,7 +68,6 @@ const groups_ = module.exports = {
 
 groups_.byPosition = __.require('lib', 'by_position')(db, 'groups')
 
-const membershipActions = require('./membership_actions')
 const usersLists = require('./users_lists')
 const updateSettings = require('./update_settings')
 const counts = require('./counts')
@@ -83,7 +82,7 @@ const addSlug = group => {
   })
 }
 
-Object.assign(groups_, membershipActions, usersLists, counts, leaveGroups, {
+Object.assign(groups_, usersLists, counts, leaveGroups, {
   updateSettings,
   getSlug,
   addSlug,

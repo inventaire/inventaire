@@ -3,7 +3,7 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const sanitize = __.require('lib', 'sanitize/sanitize')
 const groups_ = require('./lib/groups')
-const membershipActions = require('./lib/membership_actions')
+const modelAction = require('./lib/model_action')
 const { Track } = __.require('lib', 'track')
 const error_ = __.require('lib', 'error/error')
 const promises_ = __.require('lib', 'promises')
@@ -15,7 +15,7 @@ module.exports = (req, res) => {
     _.log(params, 'leave group')
 
     return validateRightToLeave(reqUserId, groupId)
-    .then(membershipActions.leave.bind(null, params, reqUserId))
+    .then(modelAction('leave').bind(null, params, reqUserId))
     .then(addUpdateData(res))
     .then(Track(req, [ 'groups', 'leave' ]))
   })
