@@ -8,7 +8,7 @@ const { Promise } = __.require('lib', 'promises')
 
 describe('groups:update:decline', () => {
   it('should reject without group', done => {
-    authReq('put', `${endpoint}`, { user: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' })
+    authReq('put', endpoint, { user: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' })
     .catch(err => {
       err.body.status_verbose.should.equal('missing parameter in body: group')
       err.statusCode.should.equal(400)
@@ -19,7 +19,7 @@ describe('groups:update:decline', () => {
   it('should reject non invited users', done => {
     Promise.all([ groupPromise, getUserC() ])
     .spread((group, nonInvitedUser) => {
-      authReq('put', `${endpoint}`, { user: nonInvitedUser._id, group: group._id })
+      authReq('put', endpoint, { user: nonInvitedUser._id, group: group._id })
       .then(undesiredRes(done))
       .catch(err => {
         err.body.status_verbose.should.startWith('membership not found')
@@ -36,8 +36,7 @@ describe('groups:update:decline', () => {
       const { _id: invitedUserId } = invitedUser
       authReq('put', '/api/groups?action=invite', { user: invitedUserId, group: group._id })
       .then(() => {
-        group.members.length.should.equal(1)
-        authReqB('put', `${endpoint}`, { user: invitedUserId, group: group._id })
+        authReqB('put', endpoint, { user: invitedUserId, group: group._id })
         .catch(err => {
           err.body.status_verbose.should.startWith('membership not found')
           err.statusCode.should.equal(403)
@@ -56,17 +55,17 @@ describe('groups:update:decline', () => {
       .then(() => {
         getGroup(group._id)
         .then(group => {
-        })
-        authReqC('put', `${endpoint}`, { user: invitedUserId, group: group._id })
-        .then(res => {
-          getGroup(group._id)
-          .then(group => {
-            group.requested.length.should.equal(0)
-            group.declined.length.should.equal(1)
-            done()
+          const declinerCount = group.declined.length
+          authReqC('put', endpoint, { user: invitedUserId, group: group._id })
+          .then(() => {
+            getGroup(group._id)
+            .then(group => {
+              group.declined.length.should.equal(declinerCount + 1)
+              done()
+            })
           })
+          .catch(undesiredErr(done))
         })
-        .catch(undesiredErr(done))
       })
     })
   })

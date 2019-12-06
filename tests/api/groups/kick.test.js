@@ -1,14 +1,16 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
-const { authReq, customAuthReq, getUserGetter, undesiredErr, undesiredRes, getUserB, getUserC } = require('../utils/utils')
-const { groupPromise, getGroup } = require('../fixtures/groups')
+const { authReq, getUserGetter, undesiredErr, undesiredRes } = require('../utils/utils')
+const { groupPromise, getGroup, addMember } = require('../fixtures/groups')
 const endpoint = '/api/groups?action=kick'
 const { Promise } = __.require('lib', 'promises')
+const { humanName } = require('../fixtures/entities')
+const userPromise = getUserGetter(humanName(), false)()
 
 describe('groups:update:kick', () => {
   it('should reject without group', done => {
-    authReq('put', `${endpoint}`, { user: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' })
+    authReq('put', endpoint, { user: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' })
     .catch(err => {
       err.body.status_verbose.should.equal('missing parameter in body: group')
       err.statusCode.should.equal(400)
@@ -17,9 +19,9 @@ describe('groups:update:kick', () => {
   })
 
   it('should reject non member users', done => {
-    Promise.all([ groupPromise, getUserC() ])
+    Promise.all([ groupPromise, userPromise ])
     .spread((group, nonInvitedUser) => {
-      authReq('put', `${endpoint}`, { user: nonInvitedUser._id, group: group._id })
+      authReq('put', endpoint, { user: nonInvitedUser._id, group: group._id })
       .then(undesiredRes(done))
       .catch(err => {
         err.body.status_verbose.should.startWith('membership not found')
@@ -31,15 +33,15 @@ describe('groups:update:kick', () => {
   })
 
   it('should kick a member', done => {
-    Promise.all([ groupPromise, getUserB() ])
+    addMember(groupPromise, userPromise)
     .spread((group, member) => {
-      const { _id: memberId } = member
-      group.members.length.should.equal(1)
-      authReq('put', `${endpoint}`, { user: memberId, group: group._id })
-      .then(res => {
+      const membersCount = group.members.length
+      authReq('put', endpoint, { user: member._id, group: group._id })
+      .delay(100)
+      .then(() => {
         getGroup(group._id)
         .then(group => {
-          group.members.length.should.equal(0)
+          group.members.length.should.equal(membersCount - 1)
           done()
         })
       })
@@ -48,26 +50,19 @@ describe('groups:update:kick', () => {
   })
 
   it('should reject kicking an admin', done => {
-    const memberPromise = getUserGetter('foo', false)()
-    Promise.all([ groupPromise, memberPromise ])
+    addMember(groupPromise, userPromise)
     .spread((group, member) => {
       const { _id: memberId } = member
-      customAuthReq(memberPromise, 'put', '/api/groups?action=request', { group: group._id })
+      authReq('put', '/api/groups?action=make-admin', { user: memberId, group: group._id })
       .then(() => {
-        authReq('put', '/api/groups?action=accept-request', { user: memberId, group: group._id })
-        .then(() => {
-          authReq('put', '/api/groups?action=make-admin', { user: memberId, group: group._id })
-          .then(() => {
-            authReq('put', `${endpoint}`, { user: memberId, group: group._id })
-            .catch(err => {
-              err.body.status_verbose.should.startWith('target user is also a group admin')
-              err.statusCode.should.equal(403)
-              done()
-            })
-          })
+        authReq('put', endpoint, { user: memberId, group: group._id })
+        .catch(err => {
+          err.body.status_verbose.should.startWith('target user is also a group admin')
+          err.statusCode.should.equal(403)
+          done()
         })
       })
-      .catch(undesiredErr(done))
     })
+    .catch(undesiredErr(done))
   })
 })
