@@ -7,17 +7,7 @@
 module.exports = {
   post: (req, res) => {
     const { redirect } = req.query
-    const { referer } = req.headers
-    const route = solveRoute(redirect, referer)
+    const route = redirect ? `/${redirect}` : '/'
     res.redirect(route)
   }
-}
-
-// Possible redirection parameters by priority
-// - a redirect parameter in the query string
-// - the referer found in headers
-// - the root
-const solveRoute = (redirect, referer) => {
-  if (redirect) return `/${redirect}`
-  else return referer || '/'
 }
