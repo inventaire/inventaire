@@ -27,6 +27,22 @@ describe('items:get-by-user-and-entity', () => {
     .catch(undesiredErr(done))
   })
 
+  it('should not get items of not requested entity uris', done => {
+    Promise.all([
+      createEditionAndItem(getUser()),
+      createEditionAndItem(getUser())
+    ])
+    .spread(userItem => {
+      const { owner, entity: uri } = userItem
+      return authReq('get', `${endpoint}&user=${owner}&uri=${uri}`)
+      .then(res => {
+        res.items.length.should.equal(1)
+        done()
+      })
+    })
+    .catch(undesiredErr(done))
+  })
+
   it('should get items by their owner id', done => {
     Promise.all([
       createEditionAndItem(getUser()),
