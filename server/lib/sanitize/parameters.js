@@ -88,6 +88,11 @@ const entityUris = {
   validate: arrayOfAKind(validations.common.entityUri)
 }
 
+const usernames = {
+  format: arrayOrPipedStrings,
+  validate: arrayOfAKind(validations.common.username)
+}
+
 const couchUuids = {
   format: arrayOrPipedStrings,
   validate: arrayOfAKind(validations.common.couchUuid)
@@ -212,6 +217,7 @@ module.exports = {
   user: couchUuid,
   users: couchUuids,
   username: { validate: validations.common.username },
+  usernames,
   relatives: whitelistedStrings,
   value: nonEmptyString
 }

@@ -97,7 +97,7 @@ const user_ = {
     .then(_.KeyBy('_id'))
   },
 
-  getUsersIndexByUsernames: reqUserId => usernames => {
+  getUsersIndexByUsernames: (reqUserId, usernames) => {
     return user_.getUsersAuthorizedData(user_.byUsernames(usernames), reqUserId)
     .then(users => users.reduce(indexByLowerCasedUsername, {}))
   },
