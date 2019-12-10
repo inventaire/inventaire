@@ -92,8 +92,8 @@ const user_ = {
     .map(omitPrivateData(reqUserId, networkIds, extraAttribute)))
   },
 
-  getUsersIndexByIds: reqUserId => ids => {
-    return user_.getUsersByIds(ids, reqUserId)
+  getUsersIndexByIds: ids => {
+    return user_.getUsersByIds(ids)
     .then(_.KeyBy('_id'))
   },
 
