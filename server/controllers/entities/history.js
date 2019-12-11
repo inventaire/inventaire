@@ -5,8 +5,12 @@ const responses_ = __.require('lib', 'responses')
 const patches_ = require('./lib/patches')
 const sanitize = __.require('lib', 'sanitize/sanitize')
 
+const sanitization = {
+  id: {}
+}
+
 module.exports = (req, res) => {
-  sanitize(req, res, { id: {} })
+  sanitize(req, res, sanitization)
   .then(params => {
     const { id } = params
     return patches_.getSnapshots(id)

@@ -8,8 +8,12 @@ const { Track } = __.require('lib', 'track')
 const error_ = __.require('lib', 'error/error')
 const promises_ = __.require('lib', 'promises')
 
+const sanitization = {
+  group: {}
+}
+
 module.exports = (req, res) => {
-  sanitize(req, res, { group: {} })
+  sanitize(req, res, sanitization)
   .then(params => {
     const { group: groupId, reqUserId } = params
     _.log(params, 'leave group')
