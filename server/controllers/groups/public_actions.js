@@ -41,7 +41,7 @@ module.exports = {
   },
 
   searchByPositon: (req, res) => {
-    return parseBbox(req.query)
+    parseBbox(req.query)
     // Can't be chained directy as .filter makes problems when parseBbox throws:
     // "parseBbox(...).then(...).then(...).catch(...).filter is not a function"
     .then(bbox => groups_.byPosition(bbox))
@@ -51,7 +51,7 @@ module.exports = {
   },
 
   lastGroups: (req, res) => {
-    return groups_.byCreation()
+    groups_.byCreation()
     .filter(searchable)
     .then(responses_.Wrap(res, 'groups'))
     .catch(error_.Handler(req, res))
@@ -66,7 +66,7 @@ module.exports = {
       return error_.bundleInvalid(req, res, 'group', groupId)
     }
 
-    return groups_.getSlug(name, groupId)
+    groups_.getSlug(name, groupId)
     .then(responses_.Wrap(res, 'slug'))
     .catch(error_.Handler(req, res))
   }

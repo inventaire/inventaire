@@ -25,8 +25,8 @@ const isPlainText = req => req.headers['content-type'] === 'text/plain'
 const rawBody = (req, res, next) => {
   let body = ''
   req.on('data', chunk => { body += chunk })
-  return req.on('end', () => {
+  req.on('end', () => {
     _.log(body, 'body')
-    return res.send(body)
+    res.send(body)
   })
 }

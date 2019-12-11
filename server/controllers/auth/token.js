@@ -24,7 +24,7 @@ const confirmEmailValidity = (req, res) => {
 
 const redirectValidEmail = (res, bool, resp) => {
   if (!bool) _.error(resp, 'email validation failed')
-  return res.redirect(`/?validEmail=${bool}`)
+  res.redirect(`/?validEmail=${bool}`)
 }
 
 // reset password =
@@ -40,7 +40,7 @@ const allowPasswordReset = (req, res) => {
 
 const Redirect = res => () => {
   setLoggedInCookie(res)
-  return res.redirect('/login/reset-password')
+  res.redirect('/login/reset-password')
 }
 
 module.exports = {

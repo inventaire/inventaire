@@ -6,7 +6,7 @@ let cacheControl
 if (CONFIG.noCache) {
   cacheControl = (req, res, next) => {
     res.header('Cache-Control', 'no-cache, no-store, must-revalidate')
-    return next()
+    next()
   }
 } else {
   cacheControl = pass

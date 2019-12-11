@@ -11,13 +11,13 @@ module.exports = (req, res, next) => {
     if (skip(req, res)) return
     const line = format(req, res)
     if (line == null) return
-    return process.stdout.write(`${line}\n`)
+    process.stdout.write(`${line}\n`)
   }
 
   res.on('finish', logRequest)
   res.on('close', logRequest)
 
-  return next()
+  next()
 }
 
 const skip = (req, res) => {

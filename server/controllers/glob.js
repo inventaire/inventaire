@@ -8,15 +8,15 @@ module.exports = {
     const { pathname } = req._parsedUrl
     const domain = pathname.split('/')[1]
     if (domain === 'api') {
-      return error_.bundle(req, res, `GET ${pathname}: api route not found`, 404)
+      error_.bundle(req, res, `GET ${pathname}: api route not found`, 404)
     } else if (domain === 'public') {
-      return error_.bundle(req, res, `GET ${pathname}: asset not found`, 404)
+      error_.bundle(req, res, `GET ${pathname}: asset not found`, 404)
     } else if (imageHeader(req)) {
       const err = `GET ${pathname}: wrong content-type: ${req.headers.accept}`
-      return error_.bundle(req, res, err, 404)
+      error_.bundle(req, res, err, 404)
     } else {
       // the routing will be done on the client side
-      return res.sendFile('./index.html', { root: publicFolder })
+      res.sendFile('./index.html', { root: publicFolder })
     }
   },
 
@@ -27,16 +27,16 @@ module.exports = {
     const redirectionFn = redirections[domain]
 
     if (redirectionFn == null) {
-      return error_.bundleInvalid(req, res, 'domain', domain)
+      error_.bundleInvalid(req, res, 'domain', domain)
+    } else {
+      res.redirect(redirectionFn(id))
     }
-
-    return res.redirect(redirectionFn(id))
   },
 
   redirectToApiDoc: (req, res) => res.redirect('https://api.inventaire.io'),
 
   api: (req, res) => {
-    return error_.bundle(req, res, 'wrong API route or http verb', 400, {
+    error_.bundle(req, res, 'wrong API route or http verb', 400, {
       verb: req.method,
       url: req._parsedUrl.href
     })

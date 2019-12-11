@@ -25,15 +25,15 @@ module.exports = (req, res) => {
   const step1 = verifier != null || reqToken != null
 
   if (step1) {
-    return getStep1Token(redirect)
+    getStep1Token(redirect)
     .then(step1Res => {
       const { oauth_token_secret: reqTokenSecret } = qs.parse(step1Res)
       reqTokenSecrets[reqUserId] = reqTokenSecret
-      return res.redirect(`${step2Url}?${step1Res}`)
+      res.redirect(`${step2Url}?${step1Res}`)
     })
     .catch(error_.Handler(req, res))
   } else {
-    return getStep3(reqUserId, verifier, reqToken)
+    getStep3(reqUserId, verifier, reqToken)
     .then(saveUserTokens(reqUserId))
     .then(() => res.redirect(`${root}${redirect}`))
     .catch(error_.Handler(req, res))
@@ -63,7 +63,9 @@ const getStep3 = (reqUserId, verifier, oauthToken) => {
       verifier
     }
   })
-  .finally(() => delete reqTokenSecrets[reqUserId])
+  .finally(() => {
+    delete reqTokenSecrets[reqUserId]
+  })
 }
 
 const saveUserTokens = reqUserId => step3Res => {

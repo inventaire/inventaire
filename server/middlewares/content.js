@@ -58,7 +58,7 @@ module.exports = {
 
     if (debug) _.log(req.body, `${method}:${url} body`)
 
-    return next()
+    next()
   }
 }
 
