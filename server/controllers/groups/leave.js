@@ -20,9 +20,9 @@ module.exports = (req, res) => {
 
     return validateRightToLeave(reqUserId, groupId)
     .then(modelAction('leave').bind(null, params, reqUserId))
-    .then(addUpdateData(res))
-    .then(Track(req, [ 'groups', 'leave' ]))
   })
+  .then(addUpdateData(res))
+  .then(Track(req, [ 'groups', 'leave' ]))
   .catch(error_.Handler(req, res))
 }
 

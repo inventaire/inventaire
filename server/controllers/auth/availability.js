@@ -20,7 +20,6 @@ module.exports = {
       // Checks for validity, availability, reserved words
       return user_.availability.username(username)
       .then(() => res.json({ username, status: 'available' }))
-      .catch(error_.Handler(req, res))
     })
     .catch(error_.Handler(req, res))
   },
@@ -32,7 +31,6 @@ module.exports = {
       // Checks for validity, availability
       return user_.availability.email(email)
       .then(() => res.json({ email, status: 'available' }))
-      .catch(error_.Handler(req, res))
     })
     .catch(error_.Handler(req, res))
   }

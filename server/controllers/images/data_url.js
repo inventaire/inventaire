@@ -15,8 +15,8 @@ module.exports = (req, res) => {
   .then(params => {
     const { url } = params
     return getImageDataUrl(url)
-    .then(responses_.Wrap(res, 'data-url'))
   })
+  .then(responses_.Wrap(res, 'data-url'))
   .catch(error_.Handler(req, res))
 }
 

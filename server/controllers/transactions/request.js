@@ -30,9 +30,12 @@ module.exports = (req, res, nex) => {
       .spread(transactions_.create.bind(null, itemDoc))
     })
     .get('id')
-    .then(id => transactions_.addMessage(reqUserId, message, id)
-    .then(() => transactions_.byId(id))).then(responses_.Wrap(res, 'transaction'))
+    .then(id => {
+      return transactions_.addMessage(reqUserId, message, id)
+      .then(() => transactions_.byId(id))
+    })
   })
+  .then(responses_.Wrap(res, 'transaction'))
   .then(Track(req, [ 'transaction', 'request' ]))
   .catch(error_.Handler(req, res))
 }

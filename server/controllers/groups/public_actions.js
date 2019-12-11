@@ -14,8 +14,8 @@ module.exports = {
     .then(params => {
       const { id, reqUserId } = params
       return groups_.getGroupData('byId', [ id ], reqUserId)
-      .then(responses_.Send(res))
     })
+    .then(responses_.Send(res))
     .catch(error_.Handler(req, res))
   },
 
@@ -35,8 +35,8 @@ module.exports = {
       const { search } = params
       return searchByText(search)
       .filter(searchable)
-      .then(responses_.Wrap(res, 'groups'))
     })
+    .then(responses_.Wrap(res, 'groups'))
     .catch(error_.Handler(req, res))
   },
 
