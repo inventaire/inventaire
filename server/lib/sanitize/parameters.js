@@ -180,6 +180,7 @@ module.exports = {
   ids: couchUuids,
   isbn,
   item: couchUuid,
+  items: couchUuids,
   lang: {
     default: 'en',
     validate: _.isLang

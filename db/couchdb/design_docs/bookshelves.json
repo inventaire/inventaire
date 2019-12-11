@@ -2,7 +2,7 @@
   "_id": "_design/bookshelves",
   "language": "coffeescript",
   "views": {
-    "byId": {
+    "byIds": {
       "map": "(doc)->\n  if doc.type is 'bookshelf'\n    emit doc._id, null"
     }
   }
