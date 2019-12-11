@@ -14,5 +14,6 @@ module.exports = {
   entities: [ 'entities', 'entities_deduplicate' ],
   patches: [ 'patches' ],
   notifications: [ 'notifications' ],
-  tasks: [ 'tasks' ]
+  tasks: [ 'tasks' ],
+  bookshelves: [ 'bookshelves' ]
 }

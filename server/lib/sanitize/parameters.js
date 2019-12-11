@@ -188,6 +188,7 @@ module.exports = {
     min: 1,
     default: 100
   }),
+  listing: whitelistedString,
   message: nonEmptyString,
   name: nonEmptyString,
   offset: Object.assign({}, positiveInteger, { default: 0 }),
