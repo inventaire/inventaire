@@ -11,7 +11,7 @@ const shortKeyPattern = /\w+_\w+/
 
 // if this route is enabled by CONFIG
 // allows the client to notify the server of i18n keys without a value
-const i18nMissingKeys = (req, res, next) => {
+const i18nMissingKeys = (req, res) => {
   let { missingKeys } = req.body
 
   if (missingKeys == null) {

@@ -13,7 +13,7 @@ const containersList = Object.keys(__.require('controllers', 'images/lib/contain
 // /img/#{container}/#{w}x#{h}/(#{hash}|#{external url hashCode?href=escaped url})"
 
 module.exports = {
-  get: (req, res, next) => {
+  get: (req, res) => {
     // can be useful in development
     if (offline) {
       const message = 'you are in offline mode: no img delivered'

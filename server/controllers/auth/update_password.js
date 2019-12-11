@@ -8,7 +8,7 @@ const User = __.require('models', 'user')
 const pw_ = __.require('lib', 'crypto').passwords
 const { oneHour } = __.require('lib', 'times')
 
-module.exports = (req, res, next) => {
+module.exports = (req, res) => {
   const { user, body } = req
   const { 'current-password': currentPassword, 'new-password': newPassword } = body
   const { resetPassword } = user

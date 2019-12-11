@@ -6,7 +6,7 @@ const responses_ = __.require('lib', 'responses')
 const error_ = __.require('lib', 'error/error')
 const containers = require('./lib/containers')
 
-module.exports = (req, res, next) => {
+module.exports = (req, res) => {
   const { container } = req.query
 
   if ((container == null) || (containers[container] == null)) {

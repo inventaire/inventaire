@@ -5,7 +5,7 @@ const promises_ = __.require('lib', 'promises')
 const responses_ = __.require('lib', 'responses')
 const error_ = __.require('lib', 'error/error')
 
-module.exports = (req, res, next) => {
+module.exports = (req, res) => {
   const { user } = req
   if (user == null) {
     return error_.bundle(req, res, 'user not found', 500)

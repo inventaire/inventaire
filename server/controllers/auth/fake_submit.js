@@ -5,7 +5,7 @@
 // server/middlewares/content.js fakeSubmitException can be applied
 // to the strict minimum
 module.exports = {
-  post: (req, res, next) => {
+  post: (req, res) => {
     const { redirect } = req.query
     const { referer } = req.headers
     const route = solveRoute(redirect, referer)

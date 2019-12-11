@@ -10,7 +10,7 @@ const sanitization = {
   value: {}
 }
 
-module.exports = (req, res, next) => {
+module.exports = (req, res) => {
   const reqUserId = req.user._id
 
   sanitize(req, res, sanitization)

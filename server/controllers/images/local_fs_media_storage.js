@@ -13,7 +13,7 @@ const storageFolder = localStorage.folder()
 // expect the pictures' files to be in #{storageFolder}
 
 module.exports = {
-  get: (req, res, next) => {
+  get: (req, res) => {
     const { pathname } = req._parsedUrl
     const [ container, filename ] = pathname.split('/').slice(2)
     const [ hash, extension, ...others ] = filename.split('.')

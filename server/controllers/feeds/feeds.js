@@ -8,7 +8,7 @@ const groupFeedData = require('./lib/group_feed_data')
 const generateFeedFromFeedData = require('./lib/generate_feed_from_feed_data')
 
 module.exports = {
-  get: (req, res, next) => {
+  get: (req, res) => {
     const { query } = req
     const { user: userId, group: groupId, requester, token } = query
 
