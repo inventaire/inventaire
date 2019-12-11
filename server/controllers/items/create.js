@@ -6,7 +6,7 @@ const error_ = __.require('lib', 'error/error')
 const { Track } = __.require('lib', 'track')
 const { Promise } = __.require('lib', 'promises')
 
-module.exports = (req, res, next) => {
+module.exports = (req, res) => {
   let { body: items } = req
 
   const singleItemMode = _.isPlainObject(items)

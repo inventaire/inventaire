@@ -20,7 +20,7 @@ const sanitization = {
   }
 }
 
-module.exports = (req, res, next) => {
+module.exports = (req, res) => {
   sanitize(req, res, sanitization)
   .then(params => {
     const { uris, refresh, relatives } = params

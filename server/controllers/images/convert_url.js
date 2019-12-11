@@ -5,7 +5,7 @@ const error_ = __.require('lib', 'error/error')
 const { getImageByUrl } = __.require('data', 'dataseed/dataseed')
 const { enabled: dataseedEnabled } = CONFIG.dataseed
 
-module.exports = (req, res, next) => {
+module.exports = (req, res) => {
   const { url } = req.body
 
   // If dataseed is disabled, we simply return the same url,

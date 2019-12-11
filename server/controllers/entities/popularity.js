@@ -12,7 +12,7 @@ const sanitization = {
 // TODO: when passing a refresh flag, return the old popularity value
 // instead of the default value, as getEntitiesPopularity would do
 // for Wikidata entities
-module.exports = (req, res, next) => {
+module.exports = (req, res) => {
   sanitize(req, res, sanitization)
   .then(params => {
     const { uris, refresh } = params

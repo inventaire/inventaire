@@ -9,7 +9,7 @@ const responses_ = __.require('lib', 'responses')
 const { basicUpdater } = __.require('lib', 'doc_updates')
 const { Track } = __.require('lib', 'track')
 
-module.exports = (req, res, next) => {
+module.exports = (req, res) => {
   if (req.user == null) return error_.unauthorizedApiAccess(req, res)
   const { user, body } = req
   const { attribute, value } = body

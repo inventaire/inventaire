@@ -6,7 +6,7 @@ const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
 const { Track } = __.require('lib', 'track')
 
-module.exports = (req, res, next) => {
+module.exports = (req, res) => {
   if (req.user == null) return error_.unauthorizedApiAccess(req, res)
   const { body: item } = req
   const { _id, entity } = item

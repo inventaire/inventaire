@@ -12,7 +12,7 @@ const sanitization = {
   password: {}
 }
 
-const logoutRedirect = (redirect, req, res, next) => {
+const logoutRedirect = (redirect, req, res) => {
   res.clearCookie('loggedIn')
   req.logout()
   return res.redirect(redirect)

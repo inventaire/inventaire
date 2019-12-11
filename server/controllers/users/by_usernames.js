@@ -4,7 +4,7 @@ const responses_ = __.require('lib', 'responses')
 const user_ = __.require('controllers', 'user/lib/user')
 const sanitize = __.require('lib', 'sanitize/sanitize')
 
-module.exports = (req, res, next) => {
+module.exports = (req, res) => {
   sanitize(req, res, { usernames: {} })
   .then(params => {
     const { usernames, reqUserId } = params

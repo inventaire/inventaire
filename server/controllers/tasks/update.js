@@ -5,7 +5,7 @@ const { Track } = __.require('lib', 'track')
 const tasks_ = __.require('controllers', 'tasks/lib/tasks')
 const updateRelationScore = require('./lib/relation_score')
 
-module.exports = (req, res, next) => {
+module.exports = (req, res) => {
   const { id, attribute, value } = req.body
   _.log(id, 'update task')
 

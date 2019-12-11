@@ -17,14 +17,14 @@ const postSanitization = {
 }
 
 module.exports = {
-  get: (req, res, next) => {
+  get: (req, res) => {
     sanitize(req, res, getSanitization)
     .then(params => comments_.byTransactionId(params.transactionId))
     .then(responses_.Wrap(res, 'messages'))
     .catch(error_.Handler(req, res))
   },
 
-  post: (req, res, next) => {
+  post: (req, res) => {
     sanitize(req, res, postSanitization)
     .then(params => {
       const { transactionId, message, reqUserId } = params

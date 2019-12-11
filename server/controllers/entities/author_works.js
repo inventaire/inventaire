@@ -9,7 +9,7 @@ const sanitization = {
   refresh: { optional: true }
 }
 
-module.exports = (req, res, next) => {
+module.exports = (req, res) => {
   sanitize(req, res, sanitization)
   .then(params => {
     const { uri, refresh } = params

@@ -5,7 +5,7 @@ const responses_ = __.require('lib', 'responses')
 const radio = __.require('lib', 'radio')
 
 module.exports = {
-  post: (req, res, next) => {
+  post: (req, res) => {
     const { user } = req
     const { subject, message, uris, context, unknownUser } = req.body
 

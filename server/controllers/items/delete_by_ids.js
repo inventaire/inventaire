@@ -10,7 +10,7 @@ const sanitization = {
   ids: {}
 }
 
-module.exports = (req, res, next) => {
+module.exports = (req, res) => {
   sanitize(req, res, sanitization)
   .then(deleteByIds)
   .then(responses_.Ok(res))
