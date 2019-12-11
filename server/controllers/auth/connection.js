@@ -6,9 +6,14 @@ const passport_ = __.require('lib', 'passport/passport')
 const setLoggedInCookie = require('./lib/set_logged_in_cookie')
 const { ownerSafeData } = __.require('controllers', 'user/lib/authorized_user_data_pickers')
 
-const sanitization = {
+const signupSanitization = {
   username: {},
   email: {},
+  password: {}
+}
+
+const loginSanitization = {
+  username: {},
   password: {}
 }
 
@@ -21,7 +26,7 @@ const logoutRedirect = (redirect, req, res) => {
 module.exports = {
   // TODO: rate limit to 10 signup per IP per 10 minutes
   signup: (req, res) => {
-    sanitize(req, res, sanitization)
+    sanitize(req, res, signupSanitization)
     .then(params => {
       const next = loggedIn(req, res)
       passport_.authenticate.localSignup(req, res, next)
@@ -32,11 +37,7 @@ module.exports = {
   },
 
   login: (req, res) => {
-    const sanitization = {
-      username: {},
-      password: {}
-    }
-    sanitize(req, res, sanitization)
+    sanitize(req, res, loginSanitization)
     .then(params => {
       const next = loggedIn(req, res)
       passport_.authenticate.localLogin(req, res, next)

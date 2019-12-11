@@ -5,9 +5,13 @@ const responses_ = __.require('lib', 'responses')
 const breq = require('bluereq')
 const sanitize = __.require('lib', 'sanitize/sanitize')
 
+const sanitization = {
+  url: {}
+}
+
 // Get an image data-url from a URL
 module.exports = (req, res) => {
-  sanitize(req, res, { url: {} })
+  sanitize(req, res, sanitization)
   .then(params => {
     const { url } = params
     return getImageDataUrl(url)
