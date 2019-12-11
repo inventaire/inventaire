@@ -169,6 +169,7 @@ module.exports = {
   id: couchUuid,
   ids: couchUuids,
   item: couchUuid,
+  items: couchUuids,
   lang: {
     default: 'en',
     validate: _.isLang
