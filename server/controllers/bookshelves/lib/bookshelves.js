@@ -1,7 +1,6 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
 const Bookshelf = __.require('models', 'bookshelf')
-
+const promises_ = __.require('lib', 'promises')
 const db = __.require('couch', 'base')('bookshelves')
 const itemDb = __.require('couch', 'base')('items')
 
@@ -10,24 +9,21 @@ const bookshelves_ = module.exports = {
     const bookshelf = Bookshelf.create(params)
     return db.postAndReturn(bookshelf)
   },
-
-  byIds: ids => {
-    return db.fetch(ids)
-    .then(bookshelves => {
-      return bookshelves_.addItems(bookshelves)
-    })
-    .then(_.KeyBy('_id'))
-  },
-
-  addItems: bookshelves => {
-    const ids = bookshelves.map(_.property('_id'))
-    return itemDb.viewByKeys('byBookshelves', ids)
-    .then(items => {
-      return bookshelves.map(bookshelf => {
-        // TODO: stop faking it
-        bookshelf.items = []
-        return bookshelf
-      })
-    })
+  byIds: db.fetch,
+  byIdsWithItems: ids => {
+    return promises_.all([ bookshelves_.byIds(ids), fetchItems(ids) ])
+    .spread(assignItemsToBookshelves)
   }
+}
+
+const fetchItems = bookshelvesIds => {
+  return itemDb.viewByKeys('byBookshelves', bookshelvesIds)
+}
+
+const assignItemsToBookshelves = (bookshelves, items) => {
+  return bookshelves.map(bookshelf => {
+    // TODO: stop faking it
+    bookshelf.items = []
+    return bookshelf
+  })
 }

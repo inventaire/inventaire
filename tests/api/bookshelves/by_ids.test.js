@@ -18,10 +18,15 @@ describe('bookshelves:by-ids', () => {
     }
   })
 
-  it('should get bookshelves', async () => {
+  it('should get bookshelves without items by default', async () => {
     const bookshelf = await createBookshelf()
     const res = await authReq('get', `${endpoint}&ids=${bookshelf._id}`)
     res.bookshelves.should.be.ok()
+  })
+
+  it('should get bookshelves items when passing with-items params', async () => {
+    const bookshelf = await createBookshelf()
+    const res = await authReq('get', `${endpoint}&ids=${bookshelf._id}&with-items=true`)
     _.values(res.bookshelves)[0].items.should.be.an.Array()
   })
 })
