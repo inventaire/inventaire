@@ -1,0 +1,9 @@
+{
+  "_id": "_design/bookshelves",
+  "language": "coffeescript",
+  "views": {
+    "byId": {
+      "map": "(doc)->\n  if doc.type is 'bookshelf'\n    emit doc._id, null"
+    }
+  }
+}
