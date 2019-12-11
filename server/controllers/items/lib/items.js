@@ -34,6 +34,8 @@ const items_ = module.exports = {
 
   byPreviousEntity: entityUri => db.viewByKey('byPreviousEntity', entityUri),
 
+  byBookshelves: ids => db.viewByKeys('byBookshelves', ids),
+
   // all items from an entity that require a specific authorization
   authorizedByEntities: (uris, reqUserId) => {
     return listingByEntities('network', uris, reqUserId)
@@ -135,6 +137,16 @@ const items_ = module.exports = {
       item.authors = authors
       if (image != null) { item.pictures = [ image ] }
       return item
+    })
+  },
+
+  addBookshelves: (ids, bookshelvesIds, userId) => {
+    return items_.byIds(ids)
+    .then(items => {
+      return Promise.all(items.map(item => {
+        item.bookshelves = _.union(item.bookshelves, bookshelvesIds)
+        return items_.update(userId, item)
+      }))
     })
   }
 }
