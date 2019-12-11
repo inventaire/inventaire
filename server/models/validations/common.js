@@ -20,6 +20,7 @@ const validations = module.exports = {
     else return _.isUserImg(image)
   },
   boolean: _.isBoolean,
+  bookshelves: _.isArray,
   position: latLng => {
     // Allow a user or a group to delete their position by passing a null value
     if (latLng === null) return true

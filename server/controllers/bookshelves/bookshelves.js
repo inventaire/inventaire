@@ -9,7 +9,8 @@ module.exports = {
   }),
   post: ActionsControllers({
     authentified: {
-      create: require('./create')
+      create: require('./create'),
+      'add-items': require('./add_items')
     }
   })
 }
