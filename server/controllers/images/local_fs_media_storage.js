@@ -28,10 +28,10 @@ module.exports = {
 
     const filepath = `${storageFolder}/${container}/${filename}`
 
-    return res.sendFile(filepath, options, err => {
+    res.sendFile(filepath, options, err => {
       if (err != null) {
         _.error(err, `failed to send ${filepath}`)
-        return res.status(err.statusCode).json(err)
+        res.status(err.statusCode).json(err)
       }
     })
   }

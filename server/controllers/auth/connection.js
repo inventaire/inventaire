@@ -15,7 +15,7 @@ const sanitization = {
 const logoutRedirect = (redirect, req, res) => {
   res.clearCookie('loggedIn')
   req.logout()
-  return res.redirect(redirect)
+  res.redirect(redirect)
 }
 
 module.exports = {
@@ -24,9 +24,10 @@ module.exports = {
     sanitize(req, res, sanitization)
     .then(params => {
       const next = loggedIn(req, res)
-      // TODO: rewrite passport response to use responses_.send
-      return passport_.authenticate.localSignup(req, res, next)
+      passport_.authenticate.localSignup(req, res, next)
     })
+    // Only handling sanitization rejected errors,
+    // passport_.authenticate, deals with its own errors
     .catch(error_.Handler(req, res))
   },
 
@@ -38,8 +39,11 @@ module.exports = {
     sanitize(req, res, sanitization)
     .then(params => {
       const next = loggedIn(req, res)
-      return passport_.authenticate.localLogin(req, res, next)
+      passport_.authenticate.localLogin(req, res, next)
     })
+    // Only handling sanitization rejected errors,
+    // passport_.authenticate, deals with its own errors
+    .catch(error_.Handler(req, res))
   },
 
   logoutRedirect,

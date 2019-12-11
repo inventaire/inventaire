@@ -7,7 +7,8 @@ module.exports = (req, res, err, status) => {
   // only accepts Error instances
   if (!(err instanceof Error)) {
     _.error(err, 'bad error object')
-    return res.status(500).send(err)
+    res.status(500).send(err)
+    return
   }
 
   // if a status code was attached to the error, use it

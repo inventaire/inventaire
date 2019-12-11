@@ -15,7 +15,7 @@ const enableCorsOnPublicApiRoutes = (req, res, next) => {
     res.header('Access-Control-Allow-Credentials', 'true')
   }
 
-  return next()
+  next()
 }
 
 const altHost = CONFIG.host !== invHost ? invHost : ''

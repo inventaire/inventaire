@@ -22,9 +22,12 @@ module.exports = {
   },
 
   basicAuth: (req, res, next) => {
-    if (req.headers.authorization == null) return next()
-    // TODO: handle response to avoid text/plain 401 response
-    // to keep the API consistent on Content-Type
-    return passport_.authenticate.basic(req, res, next)
+    if (req.headers.authorization == null) {
+      next()
+    } else {
+      // TODO: handle response to avoid text/plain 401 response
+      // to keep the API consistent on Content-Type
+      passport_.authenticate.basic(req, res, next)
+    }
   }
 }

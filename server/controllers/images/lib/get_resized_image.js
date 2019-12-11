@@ -72,18 +72,18 @@ const resizeFromStream = (reqStream, width, height, req, res) => {
     let receivedData = false
     stdout.on('data', data => {
       receivedData = true
-      return res.write(data)
+      res.write(data)
     })
 
-    return stdout.on('close', data => {
+    stdout.on('close', data => {
       // Addresses the case when the response was already sent by an error handler
       if (alreadySent) return
       if (receivedData) {
-        return res.end()
+        res.end()
       // usually solved by `sudo apt-get install graphicsmagick`
       } else {
         const message = 'empty graphicsmagick response: make sure graphicsmagick is installed'
-        return error_.bundle(req, res, message, 500)
+        error_.bundle(req, res, message, 500)
       }
     })
   })

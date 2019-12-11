@@ -9,7 +9,7 @@ module.exports = {
     const { redirect } = req.query
     const { referer } = req.headers
     const route = solveRoute(redirect, referer)
-    return res.redirect(route)
+    res.redirect(route)
   }
 }
 
