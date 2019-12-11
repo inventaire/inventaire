@@ -12,8 +12,11 @@ module.exports = (db, token_, availability_) => {
     .then(() => availability_.username(username))
     .then(invitations_.findOneByEmail.bind(null, email))
     .then(_.Log('invitedDoc'))
-    .then(invitedDoc => User.upgradeInvited(invitedDoc, username, creationStrategy, language, password)
-    .then(db.putAndReturn)).catch(err => {
+    .then(invitedDoc => {
+      return User.upgradeInvited(invitedDoc, username, creationStrategy, language, password)
+      .then(db.putAndReturn)
+    })
+    .catch(err => {
       if (err.notFound) {
         return User.create(username, email, creationStrategy, language, password)
         .then(db.postAndReturn)
@@ -24,21 +27,23 @@ module.exports = (db, token_, availability_) => {
     .then(postCreation)
   }
 
-  const postCreation = user => promises_.all([
-    // can be parallelized without risk of conflict as
-    // convertInvitations doesnt edit the user document
-    // but we do need both to be over to be sure that the user will
-    // see the friends requests (converted from invitations)
-    invitations_.convertInvitations(user),
-    token_.sendValidationEmail(user)
-  ])
-  // return the user updated with the validation token
-  .spread((invitationRes, updatedUser) => {
-    // don't log the user doc to avoid having password hash in logs
-    // but still return the doc
-    _.success(updatedUser.username, 'user successfully created')
-    return updatedUser
-  })
+  const postCreation = user => {
+    return promises_.all([
+      // can be parallelized without risk of conflict as
+      // convertInvitations doesnt edit the user document
+      // but we do need both to be over to be sure that the user will
+      // see the friends requests (converted from invitations)
+      invitations_.convertInvitations(user),
+      token_.sendValidationEmail(user)
+    ])
+    // return the user updated with the validation token
+    .spread((invitationRes, updatedUser) => {
+      // don't log the user doc to avoid having password hash in logs
+      // but still return the doc
+      _.success(updatedUser.username, 'user successfully created')
+      return updatedUser
+    })
+  }
 
   return create
 }

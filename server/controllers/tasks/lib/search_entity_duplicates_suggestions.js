@@ -8,9 +8,12 @@ module.exports = (entity, existingTasks) => {
   if (!_.isNonEmptyString(name)) return
 
   return search(name, 'humans')
-  .then(searchResult => searchResult
-  .filter(result => result._score > 4)
-  .map(formatResult)).catch(_.ErrorRethrow(`${name} search err`))
+  .then(searchResult => {
+    return searchResult
+    .filter(result => result._score > 4)
+    .map(formatResult)
+  })
+  .catch(_.ErrorRethrow(`${name} search err`))
 }
 
 const formatResult = result => ({

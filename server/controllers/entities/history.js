@@ -14,7 +14,7 @@ module.exports = (req, res) => {
   .then(params => {
     const { id } = params
     return patches_.getSnapshots(id)
-    .then(responses_.Wrap(res, 'patches'))
   })
+  .then(responses_.Wrap(res, 'patches'))
   .catch(error_.Handler(req, res))
 }

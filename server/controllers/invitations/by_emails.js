@@ -25,14 +25,17 @@ module.exports = (req, res) => {
     message = null
   }
 
-  return promises_.all([
+  promises_.all([
     parseAndValidateEmails(emails, user.email),
     validateGroup(groupId, reqUserId)
   ])
-  .spread((parsedEmails, group) => sendInvitationAndReturnData({ user, message, group, parsedEmails, reqUserId })
-  .then(_.Log('invitationByEmails data'))
-  .then(responses_.Send(res))
-  .then(Track(req, [ 'invitation', 'email', null, parsedEmails.length ]))).catch(error_.Handler(req, res))
+  .spread((parsedEmails, group) => {
+    return sendInvitationAndReturnData({ user, message, group, parsedEmails, reqUserId })
+    .then(_.Log('invitationByEmails data'))
+    .then(responses_.Send(res))
+    .then(Track(req, [ 'invitation', 'email', null, parsedEmails.length ]))
+  })
+  .catch(error_.Handler(req, res))
 }
 
 const parseAndValidateEmails = (emails, userEmail) => promises_.try(() => {

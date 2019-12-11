@@ -31,7 +31,8 @@ module.exports = params => {
   return promises_.all(promises)
   .then(_.flatten)
   .then(results => getPopularityScores(results)
-  .then(spreadByType(worksByTypes, results))).catch(_.ErrorRethrow('get author works err'))
+  .then(spreadByType(worksByTypes, results)))
+  .catch(_.ErrorRethrow('get author works err'))
 }
 
 // # WD

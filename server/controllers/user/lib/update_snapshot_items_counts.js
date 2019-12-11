@@ -11,7 +11,8 @@ setTimeout(lateRequire, 0)
 
 module.exports = userId => {
   return getItemsCounts(userId)
-  .then(itemsCounts => user_.db.update(userId, User.updateItemsCounts(itemsCounts))).then(() => _.info(`${userId} items counts updated`))
+  .then(itemsCounts => user_.db.update(userId, User.updateItemsCounts(itemsCounts)))
+  .then(() => _.info(`${userId} items counts updated`))
   .catch(_.Error('user updateSnapshotItemsCounts err'))
 }
 
