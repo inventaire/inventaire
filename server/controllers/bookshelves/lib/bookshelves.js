@@ -16,15 +16,16 @@ const bookshelves_ = module.exports = {
     .spread(assignItemsToBookshelves(ids))
   },
   addItems: (ids, itemsIds, userId) => {
-    return addItems(itemsIds, ids, userId)
+    return bookshelves_.byIds(ids)
+    .then(addItems(itemsIds, userId))
     .then(() => {
       return bookshelves_.byIdsWithItems(ids)
     })
   }
 }
 
-const addItems = (itemsIds, bookshelvesIds, userId) => {
-  return items_.addBookshelves(itemsIds, bookshelvesIds, userId)
+const addItems = (itemsIds, userId) => bookshelves => {
+  return items_.addBookshelves(itemsIds, bookshelves, userId)
 }
 
 const fetchItems = bookshelvesIds => {

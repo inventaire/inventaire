@@ -140,9 +140,11 @@ const items_ = module.exports = {
     })
   },
 
-  addBookshelves: (ids, bookshelvesIds, userId) => {
+  addBookshelves: (ids, bookshelves, userId) => {
     return items_.byIds(ids)
+    .tap(validateOwnership(bookshelves))
     .then(items => {
+      const bookshelvesIds = bookshelves.map(_.property('_id'))
       return Promise.all(items.map(item => {
         item.bookshelves = _.union(item.bookshelves, bookshelvesIds)
         return items_.update(userId, item)
@@ -154,6 +156,15 @@ const items_ = module.exports = {
 const formatItems = reqUserId => async items => {
   items = await Promise.all(items.map(snapshot_.addToItem))
   return items.map(filterPrivateAttributes(reqUserId))
+}
+
+const validateOwnership = bookshelves => items => {
+  const bookshelvesOwners = bookshelves.map(_.property('owner'))
+  const itemsOwners = items.map(_.property('owner'))
+  const sameOwnership = _.isEqual(_.uniq(bookshelvesOwners), _.uniq(itemsOwners))
+  if (!sameOwnership) {
+    throw error_.new('cannot add items to a different owner bookshelf', 400, { items, bookshelves })
+  }
 }
 
 const listingByEntities = async (listing, uris, reqUserId) => {
