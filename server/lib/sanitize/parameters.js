@@ -194,6 +194,7 @@ module.exports = {
   name: nonEmptyString,
   offset: Object.assign({}, positiveInteger, { default: 0 }),
   options: whitelistedStrings,
+  owners: couchUuids,
   password: {
     secret: true,
     validate: validations.user.password
