@@ -17,7 +17,7 @@ module.exports = {
       name,
       description,
       listing,
-      owners: [ reqUserId ],
+      owner: reqUserId,
       created: Date.now()
     }
   }
