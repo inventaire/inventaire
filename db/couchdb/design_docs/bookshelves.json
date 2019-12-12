@@ -3,7 +3,10 @@
   "language": "coffeescript",
   "views": {
     "byIds": {
-      "map": "(doc)->\n  if doc.type is 'bookshelf'\n    emit doc._id, null"
+      "map": "(doc)->emit doc._id, null"
+    },
+    "byOwners": {
+      "map": "(doc)->emit doc.owner, null"
     }
   }
 }

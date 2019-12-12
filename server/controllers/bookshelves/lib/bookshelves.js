@@ -1,4 +1,6 @@
 const __ = require('config').universalPath
+const _ = __.require('builders', 'utils')
+
 const Bookshelf = __.require('models', 'bookshelf')
 const promises_ = __.require('lib', 'promises')
 const items_ = __.require('controllers', 'items/lib/items')
@@ -14,6 +16,16 @@ const bookshelves_ = module.exports = {
   byIdsWithItems: ids => {
     return promises_.all([ bookshelves_.byIds(ids), fetchItems(ids) ])
     .spread(assignItemsToBookshelves(ids))
+  },
+  byOwners: ownersIds => {
+    return db.viewByKeys('byOwners', ownersIds)
+  },
+  byOwnersWithItems: ownersIds => {
+    return bookshelves_.byOwners(ownersIds)
+    .then(bookshelves => {
+      const ids = _.values(bookshelves).map(_.property('_id'))
+      return bookshelves_.byIdsWithItems(ids)
+    })
   },
   addItems: (ids, itemsIds, userId) => {
     return bookshelves_.byIds(ids)

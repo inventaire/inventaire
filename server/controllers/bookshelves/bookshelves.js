@@ -4,7 +4,8 @@ const ActionsControllers = __.require('lib', 'actions_controllers')
 module.exports = {
   get: ActionsControllers({
     authentified: {
-      'by-ids': require('./by_ids')
+      'by-ids': require('./by_ids'),
+      'by-owners': require('./by_owners')
     }
   }),
   post: ActionsControllers({

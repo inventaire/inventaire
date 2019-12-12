@@ -183,6 +183,7 @@ module.exports = {
   name: nonEmptyString,
   offset: Object.assign({}, positiveInteger, { default: 0 }),
   options: allowlistedStrings,
+  owners: couchUuids,
   password: {
     secret: true,
     validate: validations.user.password

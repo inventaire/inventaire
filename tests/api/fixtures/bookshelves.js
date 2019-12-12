@@ -1,21 +1,23 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const faker = require('faker')
-const { authReq } = require('../utils/utils')
+const { authReq, customAuthReq, getUser } = require('../utils/utils')
 const { createItem } = require('../fixtures/items')
 
 const fixtures = module.exports = {
   bookshelfName: () => { return `${faker.lorem.words(3)} bookshelf` },
   bookshelfDescription: () => faker.lorem.paragraph(),
-  createBookshelf: () => {
-    const description = fixtures.bookshelfDescription()
-    const name = fixtures.bookshelfName()
-    return Promise.resolve(
-      authReq('post', '/api/bookshelves?action=create', {
-        description,
-        listing: 'public',
-        name
-      })
+
+  createBookshelf: (userPromise, bookshelfData = {}) => {
+    if (!userPromise) { userPromise = getUser() }
+    if (!bookshelfData.listing) { bookshelfData.listing = 'public' }
+    if (!bookshelfData.description) {
+      bookshelfData.description = fixtures.bookshelfDescription()
+    }
+    if (!bookshelfData.name) {
+      bookshelfData.name = fixtures.bookshelfName()
+    }
+    return Promise.resolve(customAuthReq(userPromise, 'post', '/api/bookshelves?action=create', bookshelfData)
     )
   },
   createBookshelfWithItem: async itemPromise => {
