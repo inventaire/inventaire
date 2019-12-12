@@ -16,13 +16,9 @@ const sanitization = {
 module.exports = (req, res, next) => {
   sanitize(req, res, sanitization)
   .then(params => {
-    const { ids } = params
-    if (params['with-items']) {
-      const bookshelvesPromise = bookshelves_.byIdsWithItems(ids)
-    } else {
-      const bookshelvesPromise = bookshelves_.byIds(ids)
-    }
-    bookshelvesPromise
+    const { ids, withItems } = params
+    const byIdsFnName = withItems === true ? 'byIdsWithItems' : 'byIds'
+    return bookshelves_[byIdsFnName](ids)
     .then(_.KeyBy('_id'))
     .then(responses_.Wrap(res, 'bookshelves'))
   })
