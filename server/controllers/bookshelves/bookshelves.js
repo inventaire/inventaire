@@ -10,7 +10,8 @@ module.exports = {
   post: ActionsControllers({
     authentified: {
       create: require('./create'),
-      'add-items': require('./add_items')
+      'add-items': require('./add_items'),
+      'remove-items': require('./remove_items')
     }
   })
 }
