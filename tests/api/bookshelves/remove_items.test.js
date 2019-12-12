@@ -2,13 +2,14 @@ const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const { getUserB, shouldNotGetHere, rethrowShouldNotGetHereErrors } = __.require('apiTests', 'utils/utils')
 const { authReq, authReqB } = require('../utils/utils')
-const { createBookshelf } = require('../fixtures/bookshelves')
+const { createBookshelfWithItem } = require('../fixtures/bookshelves')
 const { createItem } = require('../fixtures/items')
 
-const endpoint = '/api/bookshelves?action=add-items'
-const bookshelfPromise = createBookshelf()
+const endpoint = '/api/bookshelves?action=remove-items'
+const itemPromise = createItem
+const bookshelfWithItemPromise = createBookshelfWithItem(itemPromise)
 
-describe('bookshelves:add-items', () => {
+describe('bookshelves:remove-items', () => {
   it('should reject without bookshelf id', async () => {
     try {
       const res = await authReq('post', endpoint)
@@ -21,7 +22,7 @@ describe('bookshelves:add-items', () => {
   })
 
   it('should reject without items', async () => {
-    const bookshelf = await bookshelfPromise
+    const bookshelf = await bookshelfWithItemPromise
     try {
       const res = await authReq('post', endpoint, {
         id: bookshelf._id
@@ -34,22 +35,20 @@ describe('bookshelves:add-items', () => {
     }
   })
 
-  it('should add items', async () => {
-    const bookshelf = await bookshelfPromise
-    const item = await createItem()
+  it('should remove items', async () => {
+    const bookshelf = await bookshelfWithItemPromise
+    const item = bookshelf.items[0]
     const res = await authReq('post', endpoint, {
       id: bookshelf._id,
       items: [ item._id ]
     })
     res.bookshelves.should.be.ok()
-    const firstBookshelf = _.values(res.bookshelves)[0]
-    firstBookshelf.items.should.be.an.Array()
-    firstBookshelf.items[0]._id.should.be.ok()
+    _.values(res.bookshelves)[0].items.length.should.equal(0)
   })
 
-  it('should reject adding different owner items', async () => {
+  it('should reject removing different owner items', async () => {
     try {
-      const bookshelf = await bookshelfPromise
+      const bookshelf = await bookshelfWithItemPromise
       const item = await createItem(getUserB())
       const res = await authReq('post', endpoint, {
         id: bookshelf._id,
@@ -63,7 +62,7 @@ describe('bookshelves:add-items', () => {
     }
   })
 
-  it('should reject adding items to a different owner bookshelf', async () => {
+  it('should reject removing items of a different owner bookshelf', async () => {
     try {
       const bookshelf = await Promise.resolve(
         authReqB('post', '/api/bookshelves?action=create', {

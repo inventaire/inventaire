@@ -17,15 +17,18 @@ const bookshelves_ = module.exports = {
   },
   addItems: (ids, itemsIds, userId) => {
     return bookshelves_.byIds(ids)
-    .then(addItems(itemsIds, userId))
+    .then(items_.addBookshelves(itemsIds, userId))
+    .then(() => {
+      return bookshelves_.byIdsWithItems(ids)
+    })
+  },
+  removeItems: (ids, itemsIds, userId) => {
+    return bookshelves_.byIds(ids)
+    .then(items_.removeBookshelves(itemsIds, userId))
     .then(() => {
       return bookshelves_.byIdsWithItems(ids)
     })
   }
-}
-
-const addItems = (itemsIds, userId) => bookshelves => {
-  return items_.addBookshelves(itemsIds, bookshelves, userId)
 }
 
 const fetchItems = bookshelvesIds => {
