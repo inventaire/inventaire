@@ -15,7 +15,21 @@ const storageFolder = localStorage.folder()
 module.exports = {
   get: (req, res) => {
     const { pathname } = req._parsedUrl
+
+    if (!pathname) {
+      return error_.bundle(req, res, 'invalid pathname', 400, { url: req._parsedUrl })
+    }
+
     const [ container, filename ] = pathname.split('/').slice(2)
+
+    if (!container) {
+      return error_.bundle(req, res, 'invalid container', 400, { pathname, container, filename })
+    }
+
+    if (!filename) {
+      return error_.bundle(req, res, 'invalid filename', 400, { pathname, container, filename })
+    }
+
     const [ hash, extension, ...others ] = filename.split('.')
 
     if (others.length > 0) {
