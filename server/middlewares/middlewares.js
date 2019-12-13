@@ -1,4 +1,3 @@
-const routes = require('./routes')
 const auth = require('./auth')
 const security = require('./security')
 const statics = require('./statics')
@@ -12,7 +11,6 @@ module.exports = {
     // in the middleware are logged
     logger,
 
-    routes.legacyApiRedirect,
     content.fakeSubmitException,
     content.jsonBodyParser,
     statics.favicon,
