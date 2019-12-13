@@ -74,7 +74,6 @@
     "level-party": "^4.0.0",
     "leven": "^2.1.0",
     "lodash": "^4.17.15",
-    "method-override": "^2.3.10",
     "moment": "^2.21.0",
     "node-polyglot": "^1.0.0",
     "nodemailer": "git+https://github.com/inventaire/Nodemailer.git",

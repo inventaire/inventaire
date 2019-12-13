@@ -13,7 +13,6 @@ module.exports = {
     logger,
 
     routes.legacyApiRedirect,
-    routes.methodOverride,
     content.fakeSubmitException,
     content.jsonBodyParser,
     statics.favicon,
