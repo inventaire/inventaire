@@ -12,11 +12,6 @@ const signupSanitization = {
   password: {}
 }
 
-const loginSanitization = {
-  username: {},
-  password: {}
-}
-
 const logoutRedirect = (redirect, req, res) => {
   res.clearCookie('loggedIn')
   req.logout()
@@ -26,8 +21,9 @@ const logoutRedirect = (redirect, req, res) => {
 module.exports = {
   // TODO: rate limit to 10 signup per IP per 10 minutes
   signup: (req, res) => {
+    // `sanitize` is only used as pre-validation here
     sanitize(req, res, signupSanitization)
-    .then(params => {
+    .then(() => {
       const next = loggedIn(req, res)
       passport_.authenticate.localSignup(req, res, next)
     })
@@ -37,14 +33,10 @@ module.exports = {
   },
 
   login: (req, res) => {
-    sanitize(req, res, loginSanitization)
-    .then(params => {
-      const next = loggedIn(req, res)
-      passport_.authenticate.localLogin(req, res, next)
-    })
-    // Only handling sanitization rejected errors,
-    // passport_.authenticate, deals with its own errors
-    .catch(error_.Handler(req, res))
+    // Not using sanitize as an email can be passed in place of a username,
+    // but still by using the key 'username', and would thus be rejected at sanitization
+    const next = loggedIn(req, res)
+    passport_.authenticate.localLogin(req, res, next)
   },
 
   logoutRedirect,

@@ -7,17 +7,28 @@ const randomString = __.require('lib', './utils/random_string')
 const { createUser, createUsername } = require('../fixtures/users')
 
 describe('auth:login', () => {
-  it('should login a user', done => {
+  it('should login a user with a username and a password', done => {
     const username = createUsername()
     const password = '12345678' // as defined in "fixtures/users"
     createUser({ username })
     .delay(10)
     .then(user => {
-      nonAuthReq('post', endpoint, {
-        username,
-        email: user.email,
-        password
+      nonAuthReq('post', endpoint, { username, password })
+      .then(res => {
+        res.ok.should.be.true()
+        done()
       })
+      .catch(done)
+    })
+  })
+
+  it('should login a user with a email and a password', done => {
+    const username = createUsername()
+    const password = '12345678' // as defined in "fixtures/users"
+    createUser({ username })
+    .delay(10)
+    .then(user => {
+      nonAuthReq('post', endpoint, { username: user.email, password })
       .then(res => {
         res.ok.should.be.true()
         done()
