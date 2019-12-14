@@ -1,5 +1,5 @@
 require('should')
-const { authReq, undesiredErr } = require('../utils/utils')
+const { authReq } = require('../utils/utils')
 const { generateIsbn13, randomLabel } = require('../fixtures/entities')
 const endpoint = '/api/entities?action=exists-or-create-from-seed'
 
@@ -10,7 +10,7 @@ describe('entities:exists-or-create-from-seed', () => {
       err.body.status_verbose.should.startWith('missing parameter')
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject without title', done => {
@@ -19,7 +19,7 @@ describe('entities:exists-or-create-from-seed', () => {
       err.body.status_verbose.should.startWith('missing parameter')
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject if isbn is invalid', done => {
@@ -31,7 +31,7 @@ describe('entities:exists-or-create-from-seed', () => {
       err.body.status_verbose.should.startWith('invalid isbn')
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject if authors is not a string', done => {
@@ -44,7 +44,7 @@ describe('entities:exists-or-create-from-seed', () => {
       err.body.status_verbose.should.startWith('invalid authors')
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should create an edition', done => {
@@ -56,7 +56,7 @@ describe('entities:exists-or-create-from-seed', () => {
       res._id.should.be.a.String()
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should create an edition and a work from seed', done => {
@@ -75,6 +75,6 @@ describe('entities:exists-or-create-from-seed', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })

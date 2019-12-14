@@ -1,5 +1,5 @@
 require('should')
-const { nonAuthReq, undesiredErr, undesiredRes } = require('../utils/utils')
+const { nonAuthReq, undesiredRes } = require('../utils/utils')
 const { createWorkWithAuthor, createHuman } = require('../fixtures/entities')
 const workWithAuthorPromise = createWorkWithAuthor()
 const endpoint = '/api/entities?action=author-works'
@@ -40,6 +40,6 @@ describe('entities:author-works', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })

@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
-const { authReq, authReqB, authReqC, undesiredErr, undesiredRes } = require('../utils/utils')
+const { authReq, authReqB, authReqC, undesiredRes } = require('../utils/utils')
 const { groupPromise, getGroup } = require('../fixtures/groups')
 const { signup } = require('../fixtures/users')
 const randomString = __.require('lib', './utils/random_string')
@@ -19,7 +19,7 @@ describe('invitations:by-emails', () => {
         res.emails[0].should.equal('a@foo.org')
         done()
       })
-      .catch(undesiredErr(done))
+      .catch(done)
     })
 
     it('should accept several emails as a string', done => {
@@ -30,7 +30,7 @@ describe('invitations:by-emails', () => {
         res.emails[1].should.equal('b@foo.org')
         done()
       })
-      .catch(undesiredErr(done))
+      .catch(done)
     })
 
     it('should accept several emails as an array', done => {
@@ -41,7 +41,7 @@ describe('invitations:by-emails', () => {
         res.emails[1].should.equal('b@foo.org')
         done()
       })
-      .catch(undesiredErr(done))
+      .catch(done)
     })
 
     it('should reject missing emails', done => {
@@ -64,7 +64,7 @@ describe('invitations:by-emails', () => {
         err.body.status_verbose.should.match(/invalid message:/)
         done()
       })
-      .catch(undesiredErr(done))
+      .catch(done)
     })
 
     it('should trigger an friend request on signup', done => {
@@ -83,7 +83,7 @@ describe('invitations:by-emails', () => {
           done()
         })
       })
-      .catch(undesiredErr(done))
+      .catch(done)
     })
   })
 
@@ -99,7 +99,7 @@ describe('invitations:by-emails', () => {
         err.body.status_verbose.should.equal('invalid group id: abc')
         done()
       })
-      .catch(undesiredErr(done))
+      .catch(done)
     })
 
     it('should accept valid group ids', done => {
@@ -114,7 +114,7 @@ describe('invitations:by-emails', () => {
           done()
         })
       })
-      .catch(undesiredErr(done))
+      .catch(done)
     })
 
     it('should accept non-user admin requests to invite to a group', done => {
@@ -130,7 +130,7 @@ describe('invitations:by-emails', () => {
         res.emails[0].should.equal('a@foo.org')
         done()
       })
-      .catch(undesiredErr(done))
+      .catch(done)
     })
 
     it('should reject non-member requests to invite to a group', done => {
@@ -147,7 +147,7 @@ describe('invitations:by-emails', () => {
           done()
         })
       })
-      .catch(undesiredErr(done))
+      .catch(done)
     })
 
     it('should trigger an invite on signup', done => {
@@ -175,7 +175,7 @@ describe('invitations:by-emails', () => {
           })
         })
       })
-      .catch(undesiredErr(done))
+      .catch(done)
     })
   })
 })

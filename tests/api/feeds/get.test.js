@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const { Promise } = __.require('lib', 'promises')
 require('should')
-const { nonAuthReq, getUser, undesiredErr } = require('../utils/utils')
+const { nonAuthReq, getUser } = require('../utils/utils')
 const { createItem } = require('../fixtures/items')
 
 describe('feeds:get', () => {
@@ -16,7 +16,7 @@ describe('feeds:get', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should return a user RSS feed when the user has an item', done => {
@@ -35,7 +35,7 @@ describe('feeds:get', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should not return private items when not authorized', done => {
@@ -58,7 +58,7 @@ describe('feeds:get', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should return private items when authorized', done => {
@@ -81,6 +81,6 @@ describe('feeds:get', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })

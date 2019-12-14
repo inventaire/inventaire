@@ -1,5 +1,5 @@
 require('should')
-const { authReq, authReqB, authReqC, undesiredErr } = require('../utils/utils')
+const { authReq, authReqB, authReqC } = require('../utils/utils')
 const { groupPromise, getGroup, createGroup, groupName } = require('../fixtures/groups')
 const endpoint = '/api/groups?action=request'
 
@@ -22,7 +22,7 @@ describe('groups:update:request', () => {
       err.statusCode.should.equal(403)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should add user to requesters list', done => {
@@ -36,6 +36,6 @@ describe('groups:update:request', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })

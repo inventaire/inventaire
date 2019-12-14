@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
-const { authReq, authReqB, undesiredErr, undesiredRes, getUserGetter } = require('../utils/utils')
+const { authReq, authReqB, undesiredRes, getUserGetter } = require('../utils/utils')
 const { groupPromise, getGroup, addMember } = require('../fixtures/groups')
 const endpoint = '/api/groups?action=make-admin'
 const { humanName } = require('../fixtures/entities')
@@ -29,7 +29,7 @@ describe('groups:update:make-admin', () => {
       err.statusCode.should.equal(403)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject request by non admin', done => {
@@ -45,7 +45,7 @@ describe('groups:update:make-admin', () => {
       err.statusCode.should.equal(403)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should add an admin', done => {
@@ -63,6 +63,6 @@ describe('groups:update:make-admin', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })

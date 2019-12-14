@@ -3,7 +3,7 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const should = require('should')
 const { Promise } = __.require('lib', 'promises')
-const { authReq, undesiredRes, undesiredErr } = __.require('apiTests', 'utils/utils')
+const { authReq, undesiredRes } = __.require('apiTests', 'utils/utils')
 const elasticsearchUpdateDelay = CONFIG.entitiesSearchEngine.elasticsearchUpdateDelay || 1000
 const { createWork, createHuman, someGoodReadsId, someOpenLibraryId, createWorkWithAuthor, generateIsbn13 } = __.require('apiTests', 'fixtures/entities')
 const { addClaim, getByUri } = __.require('apiTests', 'utils/entities')
@@ -24,7 +24,7 @@ describe('entities:resolve', () => {
       err.body.status_verbose.should.startWith('invalid isbn')
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should resolve an edition entry from an ISBN', done => {

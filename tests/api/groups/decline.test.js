@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
-const { authReq, authReqB, authReqC, undesiredErr, undesiredRes, getUserC } = require('../utils/utils')
+const { authReq, authReqB, authReqC, undesiredRes, getUserC } = require('../utils/utils')
 const { groupPromise, getGroup } = require('../fixtures/groups')
 const endpoint = '/api/groups?action=decline'
 const { Promise } = __.require('lib', 'promises')
@@ -27,7 +27,7 @@ describe('groups:update:decline', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject invite declined by another user', done => {
@@ -44,7 +44,7 @@ describe('groups:update:decline', () => {
         })
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should remove member from invited', done => {
@@ -63,6 +63,6 @@ describe('groups:update:decline', () => {
         })
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })

@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
-const { getUser, authReq, undesiredErr } = __.require('apiTests', 'utils/utils')
+const { getUser, authReq } = __.require('apiTests', 'utils/utils')
 const { createItem, createEditionAndItem } = require('../fixtures/items')
 const { createUser } = require('../fixtures/users')
 const { Promise } = __.require('lib', 'promises')
@@ -24,7 +24,7 @@ describe('items:get-by-user-and-entity', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should not get items of not requested entity uris', done => {
@@ -40,7 +40,7 @@ describe('items:get-by-user-and-entity', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should get items by their owner id', done => {
@@ -57,7 +57,7 @@ describe('items:get-by-user-and-entity', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should get items by their entity uri', done => {
@@ -75,6 +75,6 @@ describe('items:get-by-user-and-entity', () => {
         })
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })

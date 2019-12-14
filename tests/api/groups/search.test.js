@@ -3,7 +3,7 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
 const faker = require('faker')
-const { authReq, nonAuthReq, undesiredErr, undesiredRes } = require('../utils/utils')
+const { authReq, nonAuthReq, undesiredRes } = require('../utils/utils')
 const { groupName } = require('../fixtures/groups')
 const createEndpoint = '/api/groups?action=create'
 const endpoint = '/api/groups?action=search'
@@ -31,7 +31,7 @@ describe('groups:search', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should find a group by its description', done => {
@@ -47,7 +47,7 @@ describe('groups:search', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should not find a group when not searchable', done => {
@@ -62,7 +62,7 @@ describe('groups:search', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })
 

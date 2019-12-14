@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
-const { nonAuthReq, undesiredErr } = __.require('apiTests', 'utils/utils')
+const { nonAuthReq } = __.require('apiTests', 'utils/utils')
 const { populate } = require('../fixtures/populate')
 const lastPublicUrl = '/api/items?action=last-public'
 
@@ -17,7 +17,7 @@ describe('items:last-public', () => {
       res.items.length.should.equal(limit)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should fetch 15 last-public items', done => {
@@ -30,6 +30,6 @@ describe('items:last-public', () => {
       res.items.length.should.equal(15)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })

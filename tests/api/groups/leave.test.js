@@ -1,5 +1,5 @@
 require('should')
-const { authReq, authReqC, undesiredErr, customAuthReq } = require('../utils/utils')
+const { authReq, authReqC, customAuthReq } = require('../utils/utils')
 const { getGroup, groupAndMemberPromise } = require('../fixtures/groups')
 const endpoint = '/api/groups?action=leave'
 
@@ -25,7 +25,7 @@ describe('groups:update:leave', () => {
       err.statusCode.should.equal(403)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject last admin to leave', done => {
@@ -37,7 +37,7 @@ describe('groups:update:leave', () => {
       err.statusCode.should.equal(403)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should leave group', done => {
@@ -52,6 +52,6 @@ describe('groups:update:leave', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })

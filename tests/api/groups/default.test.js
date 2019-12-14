@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const should = require('should')
-const { authReq, nonAuthReq, undesiredErr, undesiredRes } = require('../utils/utils')
+const { authReq, nonAuthReq, undesiredRes } = require('../utils/utils')
 const { groupPromise } = require('../fixtures/groups')
 const endpoint = '/api/groups'
 
@@ -17,7 +17,7 @@ describe('groups:get:default', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should get all user groups', done => {
@@ -32,6 +32,6 @@ describe('groups:get:default', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })

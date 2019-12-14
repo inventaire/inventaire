@@ -3,7 +3,7 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const should = require('should')
 const { Promise } = __.require('lib', 'promises')
-const { adminReq, authReq, undesiredRes, undesiredErr } = require('../utils/utils')
+const { adminReq, authReq, undesiredRes } = require('../utils/utils')
 const { getByUris, deleteByUris } = require('../utils/entities')
 const { getByIds: getItemsByIds } = require('../utils/items')
 const { createHuman, createWork, createWorkWithAuthor, createEdition, ensureEditionExists, generateIsbn13 } = require('../fixtures/entities')
@@ -46,7 +46,7 @@ describe('entities:delete-by-uris', () => {
       err.statusCode.should.equal(400)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should turn entity into removed:placeholder', done => {
@@ -61,7 +61,7 @@ describe('entities:delete-by-uris', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should remove several entities', done => {
@@ -80,7 +80,7 @@ describe('entities:delete-by-uris', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should delete claims where the entity is the value', done => {
@@ -95,7 +95,7 @@ describe('entities:delete-by-uris', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   // Entities with more than one claim should be turned into redirections
@@ -114,7 +114,7 @@ describe('entities:delete-by-uris', () => {
         err.statusCode.should.equal(400)
         done()
       })
-      .catch(undesiredErr(done))
+      .catch(done)
     })
   })
 
@@ -125,7 +125,7 @@ describe('entities:delete-by-uris', () => {
       deleteByUris(invUri)
     })
     .then(() => done())
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should remove edition entities with an ISBN', done => {
@@ -136,7 +136,7 @@ describe('entities:delete-by-uris', () => {
       deleteByUris(invUri)
     })
     .then(() => done())
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should refuse to delete a work that is depend on by an edition', done => {
@@ -151,7 +151,7 @@ describe('entities:delete-by-uris', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should remove deleted entities from items snapshot', done => {
@@ -175,7 +175,7 @@ describe('entities:delete-by-uris', () => {
         })
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should ignore entities that where already turned into removed:placeholder', done => {
@@ -190,7 +190,7 @@ describe('entities:delete-by-uris', () => {
         .then(() => done())
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should not deleted entities that are the entity of an item', done => {
@@ -205,7 +205,7 @@ describe('entities:delete-by-uris', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should not remove editions with an ISBN and an item', done => {
@@ -225,6 +225,6 @@ describe('entities:delete-by-uris', () => {
         })
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })

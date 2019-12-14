@@ -2,7 +2,6 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
 const promises_ = __.require('lib', 'promises')
-const { undesiredErr } = require('../utils/utils')
 const { getByUris, updateClaim } = require('../utils/entities')
 const { createWork, createEditionFromWorks } = require('../fixtures/entities')
 
@@ -26,7 +25,7 @@ describe('entities:update-claims-hooks', () => {
         })
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should not update a work label if editions disagree on the title', done => {
@@ -51,6 +50,6 @@ describe('entities:update-claims-hooks', () => {
         })
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })

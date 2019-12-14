@@ -1,5 +1,5 @@
 require('should')
-const { authReq, undesiredRes, undesiredErr } = require('../utils/utils')
+const { authReq, undesiredRes } = require('../utils/utils')
 const { ensureEditionExists, humanName, randomLabel, someOpenLibraryId } = require('../fixtures/entities')
 const endpoint = '/api/entities?action=create'
 
@@ -12,7 +12,7 @@ describe('entities:create', () => {
       err.statusCode.should.equal(400)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject invalid claims', done => {
@@ -23,7 +23,7 @@ describe('entities:create', () => {
       err.statusCode.should.equal(400)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject without wdt:P31 value claims', done => {
@@ -34,7 +34,7 @@ describe('entities:create', () => {
       err.statusCode.should.equal(400)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject without valid wdt:P31 value', done => {
@@ -45,7 +45,7 @@ describe('entities:create', () => {
       err.body.status_verbose.should.equal("wdt:P31 value isn't a known valid value")
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject without a label (unless specific types)', done => {
@@ -56,7 +56,7 @@ describe('entities:create', () => {
       err.body.status_verbose.should.equal('invalid labels')
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should create a work entity', done => {
@@ -73,7 +73,7 @@ describe('entities:create', () => {
       res.labels.should.be.an.Object()
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should create claim with a type specific validation', done => {
@@ -88,7 +88,7 @@ describe('entities:create', () => {
       res._id.should.be.a.String()
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject multiple values for a property that take one', done => {
@@ -101,7 +101,7 @@ describe('entities:create', () => {
       err.body.status_verbose.match(/expects a unique value/).should.be.ok()
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject invalid labels datatype', done => {
@@ -114,7 +114,7 @@ describe('entities:create', () => {
       err.statusCode.should.equal(400)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject invalid claims datatype', done => {
@@ -127,7 +127,7 @@ describe('entities:create', () => {
       err.statusCode.should.equal(400)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject invalid claim property values', done => {
@@ -143,7 +143,7 @@ describe('entities:create', () => {
       err.statusCode.should.equal(400)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject invalid prefix properties', done => {
@@ -159,7 +159,7 @@ describe('entities:create', () => {
       err.statusCode.should.equal(400)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject invalid claim property value', done => {
@@ -175,7 +175,7 @@ describe('entities:create', () => {
       err.statusCode.should.equal(400)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject when concurrent property value is already taken', done => {
@@ -196,7 +196,7 @@ describe('entities:create', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject creation with incorrect properties', done => {
@@ -213,7 +213,7 @@ describe('entities:create', () => {
       err.statusCode.should.equal(400)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject invalid prefixes', done => {
@@ -228,7 +228,7 @@ describe('entities:create', () => {
       err.statusCode.should.equal(400)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should create wikidata entities', done => {
@@ -248,7 +248,7 @@ describe('entities:create', () => {
       err.statusCode.should.equal(400)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })
 

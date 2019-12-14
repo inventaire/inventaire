@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
-const { authReq, authReqC, undesiredErr, undesiredRes, customAuthReq, getUserGetter } = require('../utils/utils')
+const { authReq, authReqC, undesiredRes, customAuthReq, getUserGetter } = require('../utils/utils')
 const { createGroup, groupName, getGroup } = require('../fixtures/groups')
 const endpoint = '/api/groups?action=refuse-request'
 const { Promise } = __.require('lib', 'promises')
@@ -16,7 +16,7 @@ describe('groups:update:refuse-request', () => {
       err.statusCode.should.equal(400)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should remove user from requested list', done => {
@@ -38,7 +38,7 @@ describe('groups:update:refuse-request', () => {
       group.requested.length.should.equal(0)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('reject if not admin user', done => {
@@ -51,6 +51,6 @@ describe('groups:update:refuse-request', () => {
       err.statusCode.should.equal(403)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })

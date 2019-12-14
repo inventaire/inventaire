@@ -1,6 +1,6 @@
 const CONFIG = require('config')
 require('should')
-const { authReq, undesiredRes, undesiredErr } = require('../utils/utils')
+const { authReq, undesiredRes } = require('../utils/utils')
 const imageUrl = encodeURIComponent('https://raw.githubusercontent.com/inventaire/inventaire-client/master/app/assets/icon/32.png')
 const dataUrlStart = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYA'
 const endpoint = '/api/images?action=data-url'
@@ -14,7 +14,7 @@ describe('images:data-url', () => {
       err.body.status_verbose.should.equal('missing parameter in query: url')
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject with an invalid URL', done => {
@@ -25,7 +25,7 @@ describe('images:data-url', () => {
       err.body.status_verbose.should.equal('invalid url: bla')
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject with an invalid content type', done => {
@@ -37,7 +37,7 @@ describe('images:data-url', () => {
       err.body.status_verbose.should.equal('invalid content type')
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should return a data-url', done => {
@@ -47,7 +47,7 @@ describe('images:data-url', () => {
       res['data-url'].should.startWith(dataUrlStart)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should format to add host to a local url', done => {
@@ -58,6 +58,6 @@ describe('images:data-url', () => {
       err.body.context.url.should.equal(`${CONFIG.fullPublicHost()}${imageUrl}`)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })

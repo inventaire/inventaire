@@ -1,5 +1,5 @@
 require('should')
-const { authReq, authReqB, undesiredErr, undesiredRes } = require('../utils/utils')
+const { authReq, authReqB, undesiredRes } = require('../utils/utils')
 const { groupPromise, createGroup, groupName, getGroup } = require('../fixtures/groups')
 const endpoint = '/api/groups?action=invite'
 
@@ -12,7 +12,7 @@ describe('groups:update:invite', () => {
       err.statusCode.should.equal(400)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should add an invited when invitor is admin', done => {
@@ -26,7 +26,7 @@ describe('groups:update:invite', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should add an invited when invitor is member', done => {
@@ -41,7 +41,7 @@ describe('groups:update:invite', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('reject if invitor is not group member', done => {
@@ -54,6 +54,6 @@ describe('groups:update:invite', () => {
       err.statusCode.should.equal(403)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })

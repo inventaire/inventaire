@@ -1,4 +1,4 @@
-const { nonAuthReq, undesiredErr, undesiredRes } = require('../utils/utils')
+const { nonAuthReq, undesiredRes } = require('../utils/utils')
 const { groupPromise } = require('../fixtures/groups')
 const endpoint = '/api/groups?action=by-slug'
 
@@ -24,6 +24,6 @@ describe('groups:by-slug', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })

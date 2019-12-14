@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
-const { authReq, authReqB, undesiredErr, undesiredRes, getUserC, getUserGetter, customAuthReq } = require('../utils/utils')
+const { authReq, authReqB, undesiredRes, getUserC, getUserGetter, customAuthReq } = require('../utils/utils')
 const { groupPromise, getGroup } = require('../fixtures/groups')
 const endpoint = '/api/groups?action=accept'
 const { Promise } = __.require('lib', 'promises')
@@ -29,7 +29,7 @@ describe('groups:update:accept', () => {
       err.statusCode.should.equal(403)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject invite accepted by another user', done => {
@@ -47,7 +47,7 @@ describe('groups:update:accept', () => {
       err.statusCode.should.equal(403)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should add a member when user is accepting an invite', done => {
@@ -68,6 +68,6 @@ describe('groups:update:accept', () => {
         })
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })

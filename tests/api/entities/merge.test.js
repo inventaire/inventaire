@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
 const { Promise } = __.require('lib', 'promises')
-const { authReq, adminReq, undesiredErr, undesiredRes } = require('../utils/utils')
+const { authReq, adminReq, undesiredRes } = require('../utils/utils')
 const randomString = __.require('lib', './utils/random_string')
 const { getByUris, merge, getHistory, addClaim } = require('../utils/entities')
 const { getByIds: getItemsByIds } = require('../utils/items')
@@ -26,7 +26,7 @@ describe('entities:merge', () => {
       err.statusCode.should.equal(400)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject without to uri', done => {
@@ -37,7 +37,7 @@ describe('entities:merge', () => {
       err.statusCode.should.equal(400)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject invalid uris', done => {
@@ -48,7 +48,7 @@ describe('entities:merge', () => {
       err.statusCode.should.equal(400)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject invalid from prefix', done => {
@@ -60,7 +60,7 @@ describe('entities:merge', () => {
       err.statusCode.should.equal(400)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should return uris not found', done => {
@@ -72,7 +72,7 @@ describe('entities:merge', () => {
       err.statusCode.should.equal(400)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should merge two entities with an inv URI', done => {
@@ -89,7 +89,7 @@ describe('entities:merge', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should merge entities with inv and isbn URIs', done => {
@@ -116,7 +116,7 @@ describe('entities:merge', () => {
         })
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should merge an entity with an ISBN', done => {
@@ -145,7 +145,7 @@ describe('entities:merge', () => {
         })
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject merge with different ISBNs', done => {
@@ -165,7 +165,7 @@ describe('entities:merge', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should transfer claims', done => {
@@ -183,7 +183,7 @@ describe('entities:merge', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should transfer labels', done => {
@@ -200,7 +200,7 @@ describe('entities:merge', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should keep track of the patch context', done => {
@@ -217,7 +217,7 @@ describe('entities:merge', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should redirect claims', done => {
@@ -244,7 +244,7 @@ describe('entities:merge', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject a merge from a redirection', done => {
@@ -263,7 +263,7 @@ describe('entities:merge', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject a merge to a redirection', done => {
@@ -282,7 +282,7 @@ describe('entities:merge', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject a circular merge', done => {
@@ -297,7 +297,7 @@ describe('entities:merge', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should remove isolated human "placeholders" entities on works merge', done => {

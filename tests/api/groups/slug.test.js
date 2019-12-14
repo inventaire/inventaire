@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
-const { nonAuthReq, undesiredErr } = require('../utils/utils')
+const { nonAuthReq } = require('../utils/utils')
 const slugify = __.require('controllers', 'groups/lib/slugify')
 const endpoint = '/api/groups?action=slug'
 
@@ -23,6 +23,6 @@ describe('groups:get:slug', () => {
       res.slug.should.equal(slugify(name))
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })

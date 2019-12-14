@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
 const { Promise } = __.require('lib', 'promises')
-const { undesiredErr, undesiredRes } = require('../utils/utils')
+const { undesiredRes } = require('../utils/utils')
 const { addClaim, getRefreshedPopularityByUri } = require('../utils/entities')
 const { createEdition, createWork, createItemFromEntityUri, createSerie, createHuman } = require('../fixtures/entities')
 
@@ -16,7 +16,7 @@ describe('entities:popularity', () => {
         err.body.status_verbose.should.startWith('invalid ')
         done()
       })
-      .catch(undesiredErr(done))
+      .catch(done)
     })
 
     it('should default to 0', done => {

@@ -3,7 +3,7 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
 const { checkEntities, getBySuspectUri } = require('../utils/tasks')
-const { undesiredErr, undesiredRes } = __.require('apiTests', 'utils/utils')
+const { undesiredRes } = __.require('apiTests', 'utils/utils')
 const { getByUris } = require('../utils/entities')
 const { createHuman, createWorkWithAuthor, createWork, randomLabel } = require('../fixtures/entities')
 
@@ -22,7 +22,7 @@ describe('tasks:check-entities', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should create tasks for the requested URIs', done => {
@@ -56,7 +56,7 @@ describe('tasks:check-entities', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })
 
@@ -80,7 +80,7 @@ describe('tasks:automerge', () => {
         })
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should automerge if suspect and suggestion workLabel are similar', done => {
@@ -103,7 +103,7 @@ describe('tasks:automerge', () => {
         })
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should not automerge if author name is in work title', done => {
@@ -120,6 +120,6 @@ describe('tasks:automerge', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })

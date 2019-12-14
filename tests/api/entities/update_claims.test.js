@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const should = require('should')
 const { Promise } = __.require('lib', 'promises')
-const { undesiredRes, undesiredErr } = require('../utils/utils')
+const { undesiredRes } = require('../utils/utils')
 const { createWork, createEdition, createHuman, someOpenLibraryId } = require('../fixtures/entities')
 const { getByUri, addClaim, updateClaim, removeClaim, merge } = require('../utils/entities')
 
@@ -15,7 +15,7 @@ describe('entities:update-claims', () => {
       err.statusCode.should.equal(400)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject without property', done => {
@@ -27,7 +27,7 @@ describe('entities:update-claims', () => {
       err.statusCode.should.equal(400)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject without old-value or new-value', done => {
@@ -40,7 +40,7 @@ describe('entities:update-claims', () => {
       err.statusCode.should.equal(400)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject invalid uri prefix', done => {
@@ -54,7 +54,7 @@ describe('entities:update-claims', () => {
       err.statusCode.should.equal(400)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject unfound entity', done => {
@@ -68,7 +68,7 @@ describe('entities:update-claims', () => {
       err.statusCode.should.equal(400)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject an update with an inappropriate property', done => {
@@ -81,7 +81,7 @@ describe('entities:update-claims', () => {
       err.statusCode.should.equal(400)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject an update with an inappropriate property datatype', done => {
@@ -95,7 +95,7 @@ describe('entities:update-claims', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject an update with an invalid property value', done => {
@@ -109,7 +109,7 @@ describe('entities:update-claims', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject an update removing a critical claim', done => {
@@ -125,7 +125,7 @@ describe('entities:update-claims', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject an update on an unexisting claim (property with no claim)', done => {
@@ -137,7 +137,7 @@ describe('entities:update-claims', () => {
       err.body.status_verbose.should.equal('claim property value not found')
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject an update on an unexisting claim (property with claims)', done => {
@@ -150,7 +150,7 @@ describe('entities:update-claims', () => {
       err.body.status_verbose.should.equal('claim property value not found')
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject an update on an obsolete entity', done => {
@@ -165,7 +165,7 @@ describe('entities:update-claims', () => {
       err.body.status_verbose.should.equal('this entity is obsolete')
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should accept rapid updates on the same entity', done => {
@@ -183,7 +183,7 @@ describe('entities:update-claims', () => {
         })
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should accept a non-duplicated concurrent value', done => {
@@ -195,7 +195,7 @@ describe('entities:update-claims', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject invalid value for type-specific value formats', done => {
@@ -209,7 +209,7 @@ describe('entities:update-claims', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject an update with a duplicated concurrent value', done => {
@@ -231,6 +231,6 @@ describe('entities:update-claims', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })

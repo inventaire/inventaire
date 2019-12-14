@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
-const { authReq, undesiredErr } = __.require('apiTests', 'utils/utils')
+const { authReq } = __.require('apiTests', 'utils/utils')
 
 describe('notifications:get', () => {
   it('should get user notifications', done => {
@@ -10,6 +10,6 @@ describe('notifications:get', () => {
       res.notifications.should.be.an.Array()
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })

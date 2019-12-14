@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
-const { getUser, getUserB, authReq, undesiredErr, undesiredRes } = __.require('apiTests', 'utils/utils')
+const { getUser, getUserB, authReq, undesiredRes } = __.require('apiTests', 'utils/utils')
 const { createItem } = require('../fixtures/items')
 
 describe('items:get-by-users', () => {
@@ -15,7 +15,7 @@ describe('items:get-by-users', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should get items by ids', done => {
@@ -36,7 +36,7 @@ describe('items:get-by-users', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it("should get items by ids with a filter set to 'group'", done => {
@@ -57,7 +57,7 @@ describe('items:get-by-users', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it("should reject invalid filters'", done => {
@@ -72,6 +72,6 @@ describe('items:get-by-users', () => {
       err.body.status_verbose.should.startWith('invalid filter')
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })

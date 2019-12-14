@@ -1,5 +1,4 @@
 require('should')
-const { undesiredErr } = require('../utils/utils')
 const { checkEntities } = require('../utils/tasks')
 const { getByUris } = require('../utils/entities')
 const { createHuman, createWorkWithAuthor, randomLabel } = require('../fixtures/entities')
@@ -25,7 +24,7 @@ describe('tasks:automerge', () => {
         })
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should automerge if suspect and suggestion inv works labels match', done => {
@@ -48,7 +47,7 @@ describe('tasks:automerge', () => {
         })
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should not automerge if author name is in work title', done => {
@@ -65,6 +64,6 @@ describe('tasks:automerge', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })
