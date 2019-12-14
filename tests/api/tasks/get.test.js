@@ -8,15 +8,15 @@ describe('tasks:byScore', () => {
   it('should returns 10 or less tasks to deduplicates, by default', done => {
     createHuman()
     .then(suspect => {
-      createTask({ suspectUri: suspect.uri })
+      return createTask({ suspectUri: suspect.uri })
       .then(getByScore)
       .then(tasks => {
         tasks.length.should.be.belowOrEqual(10)
         tasks.length.should.be.aboveOrEqual(1)
         done()
       })
-      .catch(done)
     })
+    .catch(done)
   })
 
   it('should returns a limited array of tasks to deduplicate', done => {
@@ -28,21 +28,19 @@ describe('tasks:byScore', () => {
         tasks.length.should.equal(1)
         done()
       })
-      .catch(done)
     })
+    .catch(done)
   })
 
   it('should take an offset parameter', done => {
     createHuman()
-    .then(suspect => {
-      createTask({ suspectUri: suspect.uri })
-      .then(getByScore)
-      .then(tasksA => {
-        getByScore({ offset: 1 })
-        .then(tasksB => {
-          tasksA[1].should.deepEqual(tasksB[0])
-          done()
-        })
+    .then(suspect => createTask({ suspectUri: suspect.uri }))
+    .then(getByScore)
+    .then(tasksA => {
+      getByScore({ offset: 1 })
+      .then(tasksB => {
+        tasksA[1].should.deepEqual(tasksB[0])
+        done()
       })
     })
     .catch(done)
@@ -53,11 +51,11 @@ describe('tasks:bySuspectUris', () => {
   it('should return an array of tasks', done => {
     createHuman()
     .then(suspect => {
-      createTask({ suspectUri: suspect.uri })
+      return createTask({ suspectUri: suspect.uri })
       .then(getByScore)
       .then(tasksA => {
         const { uri } = suspect
-        getBySuspectUris(uri)
+        return getBySuspectUris(uri)
         .then(tasks => {
           tasks.should.be.an.Object()
           Object.keys(tasks).length.should.equal(1)
@@ -74,9 +72,9 @@ describe('tasks:bySuspectUris', () => {
     createHuman()
     .then(suspect => {
       const { uri } = suspect
-      createTask({ uri })
+      return createTask({ uri })
       .then(task => {
-        update(task.id, 'state', 'dismissed')
+        return update(task.id, 'state', 'dismissed')
         .then(() => getBySuspectUris(uri))
         .then(tasks => {
           tasks[uri].length.should.equal(0)
@@ -106,9 +104,9 @@ describe('tasks:bySuggestionUris', () => {
     createHuman()
     .then(suggestion => {
       const { uri } = suggestion
-      createTask({ suggestionUri: uri })
+      return createTask({ suggestionUri: uri })
       .then(() => {
-        getBySuggestionUris(uri)
+        return getBySuggestionUris(uri)
         .then(tasks => {
           tasks.should.be.an.Object()
           Object.keys(tasks).length.should.equal(1)

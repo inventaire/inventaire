@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
-const { customAuthReq, undesiredRes, getUserGetter } = require('../utils/utils')
+const { customAuthReq, getUserGetter } = require('../utils/utils')
 const endpoint = '/api/auth?action=email-confirmation'
 const { createUserEmail } = require('../fixtures/users')
 const { BasicUpdater } = __.require('lib', 'doc_updates')
@@ -14,39 +14,37 @@ describe('auth:email-confirmation', () => {
     userPromise
     .then(user => {
       user.validEmail.should.be.false()
-      customAuthReq(userPromise, 'post', endpoint, { email })
-      .then(res => {
-        res.ok.should.be.true()
-        done()
-      })
+      return customAuthReq(userPromise, 'post', endpoint, { email })
     })
-    .catch(undesiredRes(done))
+    .then(res => {
+      res.ok.should.be.true()
+      done()
+    })
+    .catch(done)
   })
 
   it('should reject if email is already valid ', done => {
     const email = createUserEmail()
     const userPromise = getUserGetter(email, false)()
     createCustomUser(userPromise, 'validEmail', true)
-    .then(() => {
-      customAuthReq(userPromise, 'post', endpoint, { email })
-      .catch(err => {
-        err.body.status_verbose.should.equal('email was already validated')
-        done()
-      })
+    .then(() => customAuthReq(userPromise, 'post', endpoint, { email }))
+    .catch(err => {
+      err.body.status_verbose.should.equal('email was already validated')
+      done()
     })
+    .catch(done)
   })
 
   it('should reject if creation strategy is not local ', done => {
     const email = createUserEmail()
     const userPromise = getUserGetter(email, false)()
     createCustomUser(userPromise, 'creationStrategy', 'notLocal')
-    .then(() => {
-      customAuthReq(userPromise, 'post', endpoint, { email })
-      .catch(err => {
-        err.body.status_verbose.should.equal('wrong authentification creationStrategy')
-        done()
-      })
+    .then(() => customAuthReq(userPromise, 'post', endpoint, { email }))
+    .catch(err => {
+      err.body.status_verbose.should.equal('wrong authentification creationStrategy')
+      done()
     })
+    .catch(done)
   })
 })
 
