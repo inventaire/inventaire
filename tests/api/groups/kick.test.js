@@ -21,13 +21,13 @@ describe('groups:update:kick', () => {
   it('should reject non member users', done => {
     Promise.all([ groupPromise, userPromise ])
     .spread((group, nonInvitedUser) => {
-      authReq('put', endpoint, { user: nonInvitedUser._id, group: group._id })
-      .then(undesiredRes(done))
-      .catch(err => {
-        err.body.status_verbose.should.startWith('membership not found')
-        err.statusCode.should.equal(403)
-        done()
-      })
+      return authReq('put', endpoint, { user: nonInvitedUser._id, group: group._id })
+    })
+    .then(undesiredRes(done))
+    .catch(err => {
+      err.body.status_verbose.should.startWith('membership not found')
+      err.statusCode.should.equal(403)
+      done()
     })
     .catch(undesiredErr(done))
   })
@@ -36,32 +36,30 @@ describe('groups:update:kick', () => {
     addMember(groupPromise, userPromise)
     .spread((group, member) => {
       const membersCount = group.members.length
-      authReq('put', endpoint, { user: member._id, group: group._id })
+      return authReq('put', endpoint, { user: member._id, group: group._id })
       .delay(100)
-      .then(() => {
-        getGroup(group._id)
-        .then(group => {
-          group.members.length.should.equal(membersCount - 1)
-          done()
-        })
+      .then(() => getGroup(group._id))
+      .then(updatedGroup => {
+        updatedGroup.members.length.should.equal(membersCount - 1)
+        done()
       })
-      .catch(undesiredErr(done))
     })
+    .catch(undesiredErr(done))
   })
 
   it('should reject kicking an admin', done => {
     addMember(groupPromise, userPromise)
     .spread((group, member) => {
       const { _id: memberId } = member
-      authReq('put', '/api/groups?action=make-admin', { user: memberId, group: group._id })
+      return authReq('put', '/api/groups?action=make-admin', { user: memberId, group: group._id })
       .then(() => {
-        authReq('put', endpoint, { user: memberId, group: group._id })
-        .catch(err => {
-          err.body.status_verbose.should.startWith('target user is also a group admin')
-          err.statusCode.should.equal(403)
-          done()
-        })
+        return authReq('put', endpoint, { user: memberId, group: group._id })
       })
+    })
+    .catch(err => {
+      err.body.status_verbose.should.startWith('target user is also a group admin')
+      err.statusCode.should.equal(403)
+      done()
     })
     .catch(undesiredErr(done))
   })

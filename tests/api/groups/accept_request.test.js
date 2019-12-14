@@ -26,31 +26,27 @@ describe('groups:update:accept-request', () => {
     Promise.all([ groupPromise, requesterPromise ])
     .spread((group, requester) => {
       const { _id: requesterId } = requester
-      customAuthReq(requesterPromise, 'put', '/api/groups?action=request', { group: group._id })
-      .then(() => {
-        authReq('put', endpoint, { user: requesterId, group: group._id })
-        .then(() => {
-          getGroup(group._id)
-          .then(group => {
-            group.members.map(_.property('user')).should.containEql(requesterId)
-            done()
-          })
-        })
-        .catch(undesiredErr(done))
+      return customAuthReq(requesterPromise, 'put', '/api/groups?action=request', { group: group._id })
+      .then(() => authReq('put', endpoint, { user: requesterId, group: group._id }))
+      .then(() => getGroup(group._id))
+      .then(updatedGroup => {
+        updatedGroup.members.map(_.property('user')).should.containEql(requesterId)
+        done()
       })
     })
+    .catch(undesiredErr(done))
   })
 
   it('reject if not admin user', done => {
     createGroup(groupName())
     .then(group => {
-      authReqC('put', endpoint, { user: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', group: group._id })
-      .catch(err => {
-        err.body.status_verbose.should.equal('user is not admin')
-        err.statusCode.should.equal(403)
-        done()
-      })
-      .catch(undesiredErr(done))
+      return authReqC('put', endpoint, { user: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', group: group._id })
     })
+    .catch(err => {
+      err.body.status_verbose.should.equal('user is not admin')
+      err.statusCode.should.equal(403)
+      done()
+    })
+    .catch(undesiredErr(done))
   })
 })

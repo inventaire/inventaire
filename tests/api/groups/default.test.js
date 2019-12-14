@@ -4,7 +4,7 @@ const _ = __.require('builders', 'utils')
 const should = require('should')
 const { authReq, nonAuthReq, undesiredErr, undesiredRes } = require('../utils/utils')
 const { groupPromise } = require('../fixtures/groups')
-const endpoint = '/api/groups?action'
+const endpoint = '/api/groups'
 
 describe('groups:get:default', () => {
   it('should reject unauthentified user', done => {
@@ -23,15 +23,15 @@ describe('groups:get:default', () => {
   it('should get all user groups', done => {
     groupPromise
     .then(group => {
-      authReq('get', endpoint)
+      return authReq('get', endpoint)
       .get('groups')
-      .then(res => {
-        res.should.be.an.Array()
-        const groupsIds = _.map(res, '_id')
+      .then(groups => {
+        groups.should.be.an.Array()
+        const groupsIds = _.map(groups, '_id')
         should(groupsIds.includes(group._id)).be.true()
         done()
       })
-      .catch(undesiredErr(done))
     })
+    .catch(undesiredErr(done))
   })
 })
