@@ -6,11 +6,8 @@ const { updatable } = attributes
 const promises_ = __.require('lib', 'promises')
 const error_ = __.require('lib', 'error/error')
 const radio = __.require('lib', 'radio')
-
-// Working around the circular dependency
-let groups_
-const lateRequire = () => { groups_ = require('./groups') }
-setTimeout(lateRequire, 0)
+const db = __.require('couch', 'base')('groups')
+const { add: addSlug } = require('./slug')
 
 module.exports = (data, userId) => {
   const { group: groupId, attribute, value } = data
@@ -23,26 +20,38 @@ module.exports = (data, userId) => {
     throw error_.newInvalid(attribute, value)
   }
 
-  return groups_.db.get(groupId)
+  return db.get(groupId)
   .then(groupDoc => {
     const notifData = getNotificationData(groupId, userId, groupDoc, attribute, value)
 
     groupDoc[attribute] = value
 
     return applyEditHooks(attribute, groupDoc)
-    .spread((updatedDoc, hooksUpdates) => groups_.db.put(updatedDoc)
-    .then(() => {
-      radio.emit('group:update', notifData)
-      return { update: hooksUpdates }
-    }))
+    .then(({ updatedDoc, hooksUpdates }) => {
+      return db.put(updatedDoc)
+      .then(() => {
+        radio.emit('group:update', notifData)
+        hooksUpdates[attribute] = value
+        return { update: hooksUpdates }
+      })
+    })
   })
 }
 
 const applyEditHooks = (attribute, groupDoc) => {
-  if (attribute !== 'name') return promises_.resolve([ groupDoc, {} ])
+  if (attribute === 'name') {
+    return updateSlug(groupDoc)
+  } else {
+    return promises_.resolve({ updatedDoc: groupDoc, hooksUpdates: {} })
+  }
+}
 
-  return groups_.addSlug(groupDoc)
-  .then(updatedDoc => [ updatedDoc, _.pick(updatedDoc, 'slug') ])
+const updateSlug = groupDoc => {
+  return addSlug(groupDoc)
+  .then(updatedDoc => ({
+    updatedDoc,
+    hooksUpdates: _.pick(updatedDoc, 'slug')
+  }))
 }
 
 const getNotificationData = (groupId, userId, groupDoc, attribute, value) => ({

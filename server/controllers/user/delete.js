@@ -6,7 +6,7 @@ const promises_ = __.require('lib', 'promises')
 const user_ = __.require('controllers', 'user/lib/user')
 const relations_ = __.require('controllers', 'relations/lib/queries')
 const deleteUserItems = __.require('controllers', 'items/lib/delete_user_items')
-const groups_ = __.require('controllers', 'groups/lib/groups')
+const { leaveAllGroups } = __.require('controllers', 'groups/lib/leave_groups')
 const notifs_ = __.require('lib', 'notifications')
 const { Track } = __.require('lib', 'track')
 
@@ -21,7 +21,7 @@ module.exports = (req, res) => {
   // triggering track before logging out
   // to get access to req.user before it's cleared
   .tap(Track(req, [ 'user', 'delete' ]))
-  .then(logout.bind(null, req))
+  .then(req.logout.bind(req))
   .then(responses_.Ok(res))
   .catch(error_.Handler(req, res))
 }
@@ -34,12 +34,7 @@ const cleanEverything = reqUserId => {
   return promises_.all([
     relations_.deleteUserRelations(reqUserId),
     deleteUserItems(reqUserId),
-    groups_.leaveAllGroups(reqUserId),
+    leaveAllGroups(reqUserId),
     notifs_.deleteAllByUserId(reqUserId)
   ])
-}
-
-const logout = req => {
-  _.warn(req.session, 'session before logout')
-  return req.logout()
 }

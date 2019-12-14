@@ -1,11 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-
-// Working around the circular dependency
-let groups_
-const lateRequire = () => { groups_ = require('./groups') }
-setTimeout(lateRequire, 0)
+const groups_ = require('./groups')
 
 module.exports = {
   pendingGroupInvitationsCount: userId => {

@@ -2,8 +2,8 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const sanitize = __.require('lib', 'sanitize/sanitize')
-const groups_ = require('./lib/groups')
 const membershipValidations = require('./lib/membership_validations')
+const updateSettings = require('./lib/update_settings')
 const { Track } = __.require('lib', 'track')
 const error_ = __.require('lib', 'error/error')
 
@@ -23,7 +23,7 @@ module.exports = (req, res) => {
     _.log(params, 'update group settings')
 
     return membershipValidations.updateSettings(reqUserId, groupId)
-    .then(groups_.updateSettings.bind(null, params, reqUserId))
+    .then(() => updateSettings(params, reqUserId))
     .then(addUpdateData(res))
     .then(Track(req, [ 'groups', 'update settings' ]))
   })

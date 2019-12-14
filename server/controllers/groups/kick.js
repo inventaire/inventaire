@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const sanitize = __.require('lib', 'sanitize/sanitize')
-const groups_ = require('./lib/groups')
+const lists_ = require('./lib/users_lists')
 const modelAction = require('./lib/model_action')
 const { Track } = __.require('lib', 'track')
 const error_ = __.require('lib', 'error/error')
@@ -35,8 +35,8 @@ const addUpdateData = res => (data = {}) => {
 
 const validateAdminRightsWithoutAdminsConflict = (reqUserId, groupId, targetId) => {
   return promises_.all([
-    groups_.userInAdmins(reqUserId, groupId),
-    groups_.userInAdmins(targetId, groupId)
+    lists_.userInAdmins(reqUserId, groupId),
+    lists_.userInAdmins(targetId, groupId)
   ])
   .spread((userIsAdmin, targetIsAdmin) => {
     if (!userIsAdmin) {
