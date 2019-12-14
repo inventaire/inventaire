@@ -55,7 +55,7 @@ const noColor = 0
 
 const responseTime = (req, res) => {
   if (res._header == null || req._startAt == null) return ''
-  const [ seconds, nanoseconds ] = Array.from(process.hrtime(req._startAt))
+  const [ seconds, nanoseconds ] = process.hrtime(req._startAt)
   const ms = (seconds * 1000) + (nanoseconds / 1000000)
   return ms.toFixed(3)
 }

@@ -18,6 +18,6 @@ module.exports = memoize(dbName => {
 const Search = db => (latLng, kmRange) => {
   assert_.array(latLng)
   assert_.number(kmRange)
-  const [ lat, lon ] = Array.from(latLng)
+  const [ lat, lon ] = latLng
   return streamPromise(db.search({ lat, lon }, kmRange * 1000))
 }

@@ -61,7 +61,7 @@ const formatStringValue = str => {
 const formatPositiveInteger = number => `"+${number}"^^xsd:decimal`
 const formatDate = simpleDay => {
   const sign = simpleDay[0] === '-' ? '-' : ''
-  let [ year, month, day ] = Array.from(simpleDay.replace(/^-/, '').split('-'))
+  let [ year, month, day ] = simpleDay.replace(/^-/, '').split('-')
   year = _.padStart(year, 4, '0')
   if (!month) { month = '01' }
   if (!day) { day = '01' }

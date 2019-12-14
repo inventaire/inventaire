@@ -15,7 +15,7 @@ module.exports = {
 
     // Converting image hashes to a full URL
     if (_.isLocalImg(path) || _.isAssetImg(path)) {
-      const [ container, filename ] = Array.from(path.split('/').slice(2))
+      const [ container, filename ] = path.split('/').slice(2)
       return `${root}/img/${container}/${width}x${height}/${filename}`
     } else if (/^http/.test(path)) {
       const key = _.hashCode(path)

@@ -28,7 +28,7 @@ module.exports = (ids, params) => {
 const Format = params => entity => {
   if (entity.redirect != null) return getRedirectedEntity(entity, params)
 
-  const [ uri, redirects ] = Array.from(getInvEntityCanonicalUri(entity, { includeRedirection: true }))
+  const [ uri, redirects ] = getInvEntityCanonicalUri(entity, { includeRedirection: true })
   entity.uri = uri
   if (redirects != null) { entity.redirects = redirects }
 
@@ -50,7 +50,7 @@ const getRedirectedEntity = (entity, params) => {
 const aggregateFoundIds = (foundIds, entity) => {
   const { _id, redirects } = entity
   // Won't be true if the entity redirected to a Wikidata entity
-  if (_id != null) { foundIds.push(_id) }
-  if (redirects != null) { foundIds.push(unprefixify(redirects.from)) }
+  if (_id != null) foundIds.push(_id)
+  if (redirects != null) foundIds.push(unprefixify(redirects.from))
   return foundIds
 }

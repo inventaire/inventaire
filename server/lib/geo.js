@@ -19,8 +19,8 @@ module.exports = {
 // Distance between LatLng
 // adapted from Leaflet distanceTo
 const distanceBetween = (latLngA, latLngB) => {
-  const [ latA, lngA ] = Array.from(latLngA)
-  const [ latB, lngB ] = Array.from(latLngB)
+  const [ latA, lngA ] = latLngA
+  const [ latB, lngB ] = latLngB
   const dLat = (latB - latA) * d2r
   const dLon = (lngB - lngA) * d2r
   const lat1 = lngA * d2r
