@@ -8,6 +8,7 @@ const transactions_ = require('./lib/transactions')
 const user_ = __.require('controllers', 'user/lib/user')
 const sanitize = __.require('lib', 'sanitize/sanitize')
 const { Track } = __.require('lib', 'track')
+const { verifyRightToRequest } = require('./lib/rights_verification')
 
 const sanitization = {
   item: {},
@@ -22,7 +23,7 @@ module.exports = (req, res, nex) => {
     _.log([ item, message ], 'item request')
 
     return items_.byId(item)
-    .then(transactions_.verifyRightToRequest.bind(null, reqUserId))
+    .then(verifyRightToRequest.bind(null, reqUserId))
     .then(snapshot_.addToItem)
     .then(itemDoc => {
       const { owner: ownerId } = itemDoc

@@ -3,6 +3,7 @@ const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
 const comments_ = __.require('controllers', 'comments/lib/comments')
 const transactions_ = require('./lib/transactions')
+const { verifyRightToInteract } = require('./lib/rights_verification')
 const sanitize = __.require('lib', 'sanitize/sanitize')
 const radio = __.require('lib', 'radio')
 const { Track } = __.require('lib', 'track')
@@ -30,7 +31,7 @@ module.exports = {
       const { transactionId, message, reqUserId } = params
       return transactions_.byId(transactionId)
       .then(transaction => {
-        transactions_.verifyRightToInteract(reqUserId, transaction)
+        verifyRightToInteract(reqUserId, transaction)
         return comments_.addTransactionComment(reqUserId, message, transactionId)
         .then(() => transactions_.updateReadForNewMessage(reqUserId, transaction))
         .then(() => radio.emit('transaction:message', transaction))

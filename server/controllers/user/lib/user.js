@@ -1,4 +1,3 @@
-let availability_
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
@@ -157,7 +156,7 @@ const indexByLowerCasedUsername = (users, user) => {
   return users
 }
 
-const token_ = require('./token')(db, user_)
+const token_ = require('./token')
 
 user_.updateEmail = (user, email) => {
   user = User.updateEmail(user, email)
@@ -169,12 +168,12 @@ user_.updateEmail = (user, email) => {
 
 user_.setOauthTokens = (userId, provider, data) => db.update(userId, User.setOauthTokens(provider, data))
 
-user_.availability = (availability_ = require('./availability')(user_))
-user_.create = require('./create')(db, token_, availability_)
+user_.availability = require('./availability')
+user_.create = require('./create')
 user_.byPosition = __.require('lib', 'by_position')(db, 'users')
 
-const deleteUser = require('./delete')(db, user_)
+const deleteUser = require('./delete')
 const relationsStatus = require('./relations_status')
-const summary_ = require('./summary')(db)
+const summary_ = require('./summary')
 
 module.exports = Object.assign(user_, token_, relationsStatus, deleteUser, summary_)

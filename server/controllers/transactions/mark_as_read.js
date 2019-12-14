@@ -1,11 +1,11 @@
-// mark the whole transaction as read
+// Mark the whole transaction as read
 
 const __ = require('config').universalPath
 const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
-const validations = __.require('models', 'validations/common')
 const transactions_ = require('./lib/transactions')
 const sanitize = __.require('lib', 'sanitize/sanitize')
+const { verifyRightToInteract } = require('./lib/rights_verification')
 
 const sanitization = {
   id: {}
@@ -14,12 +14,9 @@ const sanitization = {
 module.exports = (req, res) => {
   sanitize(req, res, sanitization)
   .then(params => {
-    const { id } = params
-    validations.pass('transactionId', id)
-    const reqUserId = req.user._id
-
+    const { id, reqUserId } = params
     return transactions_.byId(id)
-    .then(transactions_.verifyRightToInteract.bind(null, reqUserId))
+    .then(verifyRightToInteract.bind(null, reqUserId))
     .then(transactions_.markAsRead.bind(null, reqUserId))
     .then(responses_.Ok(res))
   })

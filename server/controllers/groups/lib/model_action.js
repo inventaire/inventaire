@@ -7,7 +7,6 @@ const db = __.require('couch', 'base')('groups')
 
 module.exports = action => {
   const actionFn = membershipUpdate(db, action)
-  initMembershipUpdateHooks(db)
   return actionFn
 }
 
@@ -16,3 +15,5 @@ const membershipUpdate = (db, action) => (data, userId) => {
   return db.update(groupId, Group[action].bind(null, userId, secondaryUserId))
   .then(() => radio.emit(`group:${action}`, groupId, userId, secondaryUserId))
 }
+
+initMembershipUpdateHooks()

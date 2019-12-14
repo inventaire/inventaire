@@ -55,7 +55,7 @@ const queries = {
   }
 }
 
-const lists = require('./lists')(db)
+const lists = require('./lists')
 
 const counts = {
   pendingFriendsRequestsCount: userId => {
