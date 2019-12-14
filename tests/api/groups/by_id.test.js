@@ -16,7 +16,7 @@ describe('groups:by-id', () => {
   it('should get a group by id', done => {
     groupPromise
     .then(group => {
-      nonAuthReq('get', `${endpoint}&id=${group._id}`)
+      return nonAuthReq('get', `${endpoint}&id=${group._id}`)
       .then(res => {
         res.group._id.should.equal(group._id)
         res.group.name.should.equal(group.name)

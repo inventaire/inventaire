@@ -34,39 +34,35 @@ describe('groups:update:decline', () => {
     Promise.all([ groupPromise, getUserC() ])
     .spread((group, invitedUser) => {
       const { _id: invitedUserId } = invitedUser
-      authReq('put', '/api/groups?action=invite', { user: invitedUserId, group: group._id })
+      return authReq('put', '/api/groups?action=invite', { user: invitedUserId, group: group._id })
       .then(() => {
-        authReqB('put', endpoint, { user: invitedUserId, group: group._id })
+        return authReqB('put', endpoint, { user: invitedUserId, group: group._id })
         .catch(err => {
           err.body.status_verbose.should.startWith('membership not found')
           err.statusCode.should.equal(403)
           done()
         })
-        .catch(undesiredErr(done))
       })
     })
+    .catch(undesiredErr(done))
   })
 
   it('should remove member from invited', done => {
     Promise.all([ groupPromise, getUserC() ])
     .spread((group, invitedUser) => {
       const { _id: invitedUserId } = invitedUser
-      authReq('put', '/api/groups?action=invite', { user: invitedUserId, group: group._id })
-      .then(() => {
-        getGroup(group._id)
-        .then(group => {
-          const declinerCount = group.declined.length
-          authReqC('put', endpoint, { user: invitedUserId, group: group._id })
-          .then(() => {
-            getGroup(group._id)
-            .then(group => {
-              group.declined.length.should.equal(declinerCount + 1)
-              done()
-            })
-          })
-          .catch(undesiredErr(done))
+      return authReq('put', '/api/groups?action=invite', { user: invitedUserId, group: group._id })
+      .then(() => getGroup(group._id))
+      .then(group => {
+        const declinerCount = group.declined.length
+        return authReqC('put', endpoint, { user: invitedUserId, group: group._id })
+        .then(() => getGroup(group._id))
+        .then(updatedGroup => {
+          updatedGroup.declined.length.should.equal(declinerCount + 1)
+          done()
         })
       })
     })
+    .catch(undesiredErr(done))
   })
 })

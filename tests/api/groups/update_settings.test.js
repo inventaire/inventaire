@@ -31,11 +31,10 @@ describe('groups:update-settings', () => {
       .delay(50)
       .then(updateRes => {
         updateRes.ok.should.be.true()
-        nonAuthReq('get', `/api/groups?action=by-id&id=${groupId}`)
-        .then(getRes => {
-          ({ group } = getRes)
-          group.name.should.equal(updatedName)
-          group.slug.should.equal(slugify(updatedName))
+        return nonAuthReq('get', `/api/groups?action=by-id&id=${groupId}`)
+        .then(({ group: updatedGroup }) => {
+          updatedGroup.name.should.equal(updatedName)
+          updatedGroup.slug.should.equal(slugify(updatedName))
           done()
         })
       })
@@ -48,7 +47,7 @@ describe('groups:update-settings', () => {
     .then(group => {
       const groupId = group._id
       const updatedName = `${group.name}-updated-again`
-      authReq('put', endpoint, {
+      return authReq('put', endpoint, {
         group: groupId,
         attribute: 'name',
         value: updatedName
@@ -68,7 +67,7 @@ describe('groups:update-settings', () => {
     groupPromise
     .then(group => {
       const groupId = group._id
-      authReq('put', endpoint, {
+      return authReq('put', endpoint, {
         group: groupId,
         attribute: 'description',
         value: updatedDescription
@@ -77,13 +76,12 @@ describe('groups:update-settings', () => {
       .then(updateRes => {
         updateRes.ok.should.be.true()
         Object.keys(updateRes.update).length.should.equal(0)
-        nonAuthReq('get', `/api/groups?action=by-id&id=${groupId}`)
-        .then(getRes => {
-          ({ group } = getRes)
-          group.description.should.equal(updatedDescription)
-          done()
-        })
+        return nonAuthReq('get', `/api/groups?action=by-id&id=${groupId}`)
       })
+    })
+    .then(({ group }) => {
+      group.description.should.equal(updatedDescription)
+      done()
     })
     .catch(undesiredErr(done))
   })

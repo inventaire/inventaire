@@ -11,34 +11,31 @@ describe('groups:update:request', () => {
       err.statusCode.should.equal(400)
       done()
     })
+    .catch(done)
   })
 
   it('should reject request from already member users', done => {
     groupPromise
-    .then(group => {
-      authReqB('put', endpoint, { group: group._id })
-      .catch(err => {
-        err.body.status_verbose.should.startWith('user is already in group')
-        err.statusCode.should.equal(403)
-        done()
-      })
-      .catch(undesiredErr(done))
+    .then(group => authReqB('put', endpoint, { group: group._id }))
+    .catch(err => {
+      err.body.status_verbose.should.startWith('user is already in group')
+      err.statusCode.should.equal(403)
+      done()
     })
+    .catch(undesiredErr(done))
   })
 
   it('should add user to requesters list', done => {
     createGroup(groupName())
     .then(group => {
       const requestCount = group.invited.length
-      authReqC('put', endpoint, { group: group._id })
-      .then(res => {
-        getGroup(group._id)
-        .then(group => {
-          group.requested.length.should.equal(requestCount + 1)
-          done()
-        })
-        .catch(undesiredErr(done))
+      return authReqC('put', endpoint, { group: group._id })
+      .then(() => getGroup(group._id))
+      .then(group => {
+        group.requested.length.should.equal(requestCount + 1)
+        done()
       })
     })
+    .catch(undesiredErr(done))
   })
 })

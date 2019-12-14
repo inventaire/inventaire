@@ -15,18 +15,19 @@ describe('groups:update:make-admin', () => {
       err.statusCode.should.equal(400)
       done()
     })
+    .catch(done)
   })
 
   it('should reject non member users', done => {
     groupPromise
     .then(group => {
-      authReq('put', endpoint, { user: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', group: group._id })
-      .then(undesiredRes(done))
-      .catch(err => {
-        err.body.status_verbose.should.startWith('membership not found')
-        err.statusCode.should.equal(403)
-        done()
-      })
+      return authReq('put', endpoint, { user: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', group: group._id })
+    })
+    .then(undesiredRes(done))
+    .catch(err => {
+      err.body.status_verbose.should.startWith('membership not found')
+      err.statusCode.should.equal(403)
+      done()
     })
     .catch(undesiredErr(done))
   })
@@ -37,14 +38,14 @@ describe('groups:update:make-admin', () => {
     addMember(groupPromise, memberPromise)
     .spread((group, member) => {
       const { _id: memberId } = member
-      authReqB('put', endpoint, { user: memberId, group: group._id })
-      .catch(err => {
-        err.body.status_verbose.should.startWith('user is not a group admin')
-        err.statusCode.should.equal(403)
-        done()
-      })
-      .catch(undesiredErr(done))
+      return authReqB('put', endpoint, { user: memberId, group: group._id })
     })
+    .catch(err => {
+      err.body.status_verbose.should.startWith('user is not a group admin')
+      err.statusCode.should.equal(403)
+      done()
+    })
+    .catch(undesiredErr(done))
   })
 
   it('should add an admin', done => {
@@ -54,16 +55,14 @@ describe('groups:update:make-admin', () => {
     .spread((group, member) => {
       const { _id: memberId } = member
       const adminsCount = group.admins.length
-      authReq('put', endpoint, { user: memberId, group: group._id })
-      .then(() => {
-        getGroup(group._id)
-        .then(group => {
-          group.admins.length.should.equal(adminsCount + 1)
-          group.admins.map(_.property('user')).should.containEql(memberId)
-          done()
-        })
+      return authReq('put', endpoint, { user: memberId, group: group._id })
+      .then(() => getGroup(group._id))
+      .then(group => {
+        group.admins.length.should.equal(adminsCount + 1)
+        group.admins.map(_.property('user')).should.containEql(memberId)
+        done()
       })
-      .catch(undesiredErr(done))
     })
+    .catch(undesiredErr(done))
   })
 })

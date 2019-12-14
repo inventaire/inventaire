@@ -19,16 +19,14 @@ describe('groups:update:invite', () => {
     createGroup(groupName())
     .then(group => {
       const invitedCount = group.invited.length
-      authReq('put', endpoint, { user: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', group: group._id })
-      .then(() => {
-        getGroup(group._id)
-        .then(group => {
-          group.invited.length.should.equal(invitedCount + 1)
-          done()
-        })
+      return authReq('put', endpoint, { user: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', group: group._id })
+      .then(() => getGroup(group._id))
+      .then(updatedGroup => {
+        updatedGroup.invited.length.should.equal(invitedCount + 1)
+        done()
       })
-      .catch(undesiredErr(done))
     })
+    .catch(undesiredErr(done))
   })
 
   it('should add an invited when invitor is member', done => {
@@ -36,28 +34,26 @@ describe('groups:update:invite', () => {
     groupPromise
     .then(group => {
       const invitedCount = group.invited.length
-      authReqB('put', endpoint, { user: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', group: group._id })
-      .then(() => {
-        getGroup(group._id)
-        .then(group => {
-          group.invited.length.should.equal(invitedCount + 1)
-          done()
-        })
+      return authReqB('put', endpoint, { user: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', group: group._id })
+      .then(() => getGroup(group._id))
+      .then(updatedGroup => {
+        updatedGroup.invited.length.should.equal(invitedCount + 1)
+        done()
       })
-      .catch(undesiredErr(done))
     })
+    .catch(undesiredErr(done))
   })
 
   it('reject if invitor is not group member', done => {
     createGroup(groupName())
     .then(group => {
-      authReqB('put', endpoint, { user: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', group: group._id })
-      .catch(err => {
-        err.body.status_verbose.should.equal("invitor isn't in group")
-        err.statusCode.should.equal(403)
-        done()
-      })
-      .catch(undesiredErr(done))
+      return authReqB('put', endpoint, { user: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', group: group._id })
     })
+    .catch(err => {
+      err.body.status_verbose.should.equal("invitor isn't in group")
+      err.statusCode.should.equal(403)
+      done()
+    })
+    .catch(undesiredErr(done))
   })
 })
