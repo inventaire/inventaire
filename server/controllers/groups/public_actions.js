@@ -4,16 +4,18 @@ const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
 const groups_ = require('./lib/groups')
+const getGroupPublicData = require('./lib/group_public_data')
 const parseBbox = __.require('lib', 'parse_bbox')
 const searchByText = require('./lib/search_by_text')
 const sanitize = __.require('lib', 'sanitize/sanitize')
+const { get: getSlug } = require('./lib/slug')
 
 module.exports = {
   byId: (req, res) => {
     sanitize(req, res, { id: {} })
     .then(params => {
       const { id, reqUserId } = params
-      return groups_.getGroupData('byId', [ id ], reqUserId)
+      return getGroupPublicData('byId', [ id ], reqUserId)
     })
     .then(responses_.Send(res))
     .catch(error_.Handler(req, res))
@@ -23,7 +25,7 @@ module.exports = {
     sanitize(req, res, { slug: {} })
     .then(params => {
       const { slug, reqUserId } = params
-      return groups_.getGroupData('bySlug', [ slug ], reqUserId)
+      return getGroupPublicData('bySlug', [ slug ], reqUserId)
       .then(responses_.Send(res))
     })
     .catch(error_.Handler(req, res))
@@ -66,7 +68,7 @@ module.exports = {
       return error_.bundleInvalid(req, res, 'group', groupId)
     }
 
-    groups_.getSlug(name, groupId)
+    getSlug(name, groupId)
     .then(responses_.Wrap(res, 'slug'))
     .catch(error_.Handler(req, res))
   }

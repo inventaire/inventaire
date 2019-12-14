@@ -1,13 +1,13 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const promises_ = __.require('lib', 'promises')
+const { Promise } = __.require('lib', 'promises')
 const Group = __.require('models', 'group')
-
 const db = __.require('couch', 'base')('groups')
+const lists_ = require('./users_lists')
+const { add: addSlug } = require('./slug')
 
 const groups_ = module.exports = {
-  db,
   // using a view to avoid returning users or relations
   byId: db.viewFindOneByKey.bind(db, 'byId'),
   bySlug: db.viewFindOneByKey.bind(db, 'bySlug'),
@@ -35,7 +35,7 @@ const groups_ = module.exports = {
 
   // including invitations
   allUserGroups: userId => {
-    return promises_.all([
+    return Promise.all([
       groups_.byUser(userId),
       groups_.byInvitedUser(userId)
     ])
@@ -43,7 +43,7 @@ const groups_ = module.exports = {
   },
 
   create: options => {
-    return promises_.try(() => Group.create(options))
+    return Promise.try(() => Group.create(options))
     .then(addSlug)
     .then(db.postAndReturn)
     .then(_.Log('group created'))
@@ -51,7 +51,7 @@ const groups_ = module.exports = {
 
   findUserGroupsCoMembers: userId => {
     return groups_.byUser(userId)
-    .then(groups_.allGroupsMembers)
+    .then(lists_.allGroupsMembers)
     // Deduplicate and remove the user own id from the list
     .then(usersIds => _.uniq(_.without(usersIds, userId)))
   },
@@ -67,24 +67,3 @@ const groups_ = module.exports = {
 }
 
 groups_.byPosition = __.require('lib', 'by_position')(db, 'groups')
-
-const usersLists = require('./users_lists')
-const updateSettings = require('./update_settings')
-const counts = require('./counts')
-const leaveGroups = require('./leave_groups')
-const getSlug = require('./get_slug')
-
-const addSlug = group => {
-  return getSlug(group.name, group._id)
-  .then(slug => {
-    group.slug = slug
-    return group
-  })
-}
-
-Object.assign(groups_, usersLists, counts, leaveGroups, {
-  updateSettings,
-  getSlug,
-  addSlug,
-  getGroupData: require('./group_public_data')
-})

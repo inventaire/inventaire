@@ -11,7 +11,7 @@ const { newsKey, didYouKnowKeyCount } = CONFIG.activitySummary
 const defaultPeriodicity = 20
 
 const relations_ = __.require('controllers', 'relations/lib/queries')
-const groups_ = __.require('controllers', 'groups/lib/groups')
+const groupsCounts = __.require('controllers', 'groups/lib/counts')
 const notifs_ = __.require('lib', 'notifications')
 const transactions_ = __.require('controllers', 'transactions/lib/transactions')
 
@@ -32,8 +32,8 @@ const getEmailData = user => {
     // pending friends requests
     friendsRequests: relations_.pendingFriendsRequestsCount(userId),
     // pending group invitation
-    groupInvitations: groups_.pendingGroupInvitationsCount(userId),
-    groupRequests: groups_.pendingGroupRequestsCount(userId),
+    groupInvitations: groupsCounts.pendingGroupInvitationsCount(userId),
+    groupRequests: groupsCounts.pendingGroupRequestsCount(userId),
     // unread notifications
     unreadNotifications: notifs_.unreadCount(userId),
     // waiting transaction

@@ -9,7 +9,19 @@ groups_ = null
 const lateRequire = () => { groups_ = require('./groups') }
 setTimeout(lateRequire, 0)
 
-module.exports = (name, groupId) => trySlugCandidate(slugify(name), groupId)
+const getSlug = (name, groupId) => trySlugCandidate(slugify(name), groupId)
+
+module.exports = {
+  get: getSlug,
+
+  add: group => {
+    return getSlug(group.name, group._id)
+    .then(slug => {
+      group.slug = slug
+      return group
+    })
+  }
+}
 
 const trySlugCandidate = (slug, groupId) => {
   return groups_.bySlug(slug)

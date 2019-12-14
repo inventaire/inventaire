@@ -2,7 +2,8 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const sanitize = __.require('lib', 'sanitize/sanitize')
-const groups_ = require('./lib/groups')
+const lists_ = require('./lib/users_lists')
+const leave_ = require('./lib/leave_groups')
 const modelAction = require('./lib/model_action')
 const { Track } = __.require('lib', 'track')
 const error_ = __.require('lib', 'error/error')
@@ -34,8 +35,8 @@ const addUpdateData = res => (data = {}) => {
 
 const validateRightToLeave = (reqUserId, groupId) => {
   return promises_.all([
-    groups_.userInGroup(reqUserId, groupId),
-    groups_.userCanLeave(reqUserId, groupId)
+    lists_.userInGroup(reqUserId, groupId),
+    leave_.userCanLeave(reqUserId, groupId)
   ])
   .spread((userInGroup, userCanLeave) => {
     if (!userInGroup) {
