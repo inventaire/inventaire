@@ -8,13 +8,10 @@ const comments_ = __.require('controllers', 'comments/lib/comments')
 const { BasicUpdater } = __.require('lib', 'doc_updates')
 const { minKey, maxKey } = __.require('lib', 'couch')
 const assert_ = __.require('utils', 'assert_types')
-
 const radio = __.require('lib', 'radio')
-
 const db = __.require('couch', 'base')('transactions')
 
-const transactions_ = {
-  db,
+const transactions_ = module.exports = {
   byId: db.get,
   byUser: userId => {
     return db.viewCustom('byUserAndItem', {
@@ -68,6 +65,11 @@ const transactions_ = {
     } else {
       return db.update(transaction._id, BasicUpdater('read', updatedReadStates))
     }
+  },
+
+  activeTransactions: userId => {
+    return transactions_.byUser(userId)
+    .then(activeCount)
   }
 }
 
@@ -103,15 +105,4 @@ const userRole = (userId, transaction) => {
   else throw error_.new('no role found', 500, { userId, transaction })
 }
 
-const counts = {
-  activeTransactions: userId => {
-    return transactions_.byUser(userId)
-    .then(activeCount)
-  }
-}
-
-const activeCount = transacs => transacs.filter(Transaction.isActive).length
-
-const rightsVerification = require('./rights_verification')(transactions_)
-
-module.exports = Object.assign(transactions_, rightsVerification, counts)
+const activeCount = transactions => transactions.filter(Transaction.isActive).length

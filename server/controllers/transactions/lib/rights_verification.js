@@ -3,60 +3,63 @@ const interactions_ = __.require('lib', 'interactions')
 const error_ = __.require('lib', 'error/error')
 const Transaction = __.require('models', 'transaction')
 
-module.exports = transactions_ => {
-  const verifyNoExistingTransaction = (requester, item) => {
-    return transactions_.byUserAndItem(requester, item._id)
-    .then(transactionsDocs => {
-      const activeTransactionsDocs = transactionsDocs.filter(Transaction.isActive)
+// Working around circular dependencies
+let transactions_
+const lateRequire = () => { transactions_ = require('./transactions') }
+setTimeout(lateRequire, 0)
 
-      if (activeTransactionsDocs.length > 0) {
-        const message = 'user already made a request on this item'
-        throw error_.new(message, 403, requester, item, activeTransactionsDocs[0])
-      } else {
-        return item
-      }
-    })
-  }
+const verifyNoExistingTransaction = (requester, item) => {
+  return transactions_.byUserAndItem(requester, item._id)
+  .then(transactionsDocs => {
+    const activeTransactionsDocs = transactionsDocs.filter(Transaction.isActive)
 
-  return {
-    verifyRightToRequest: (requester, item) => {
-      if (item.busy) {
-        throw error_.new('this item is busy', 403, item)
-      }
+    if (activeTransactionsDocs.length > 0) {
+      const message = 'user already made a request on this item'
+      throw error_.new(message, 403, requester, item, activeTransactionsDocs[0])
+    } else {
+      return item
+    }
+  })
+}
 
-      // the owner of the item isnt allowed to request it
-      const ownerAllowed = false
-      // will throw sync if the test isn't passed
-      interactions_.verifyRightToInteract(requester, item, ownerAllowed)
-      // will be a rejected promise if the test isn't passed
-      return verifyNoExistingTransaction(requester, item)
-    },
+module.exports = {
+  verifyRightToRequest: (requester, item) => {
+    if (item.busy) {
+      throw error_.new('this item is busy', 403, item)
+    }
 
-    verifyRightToInteract: (userId, transaction) => {
-      const { owner, requester } = transaction
-      if (userId === owner || userId === requester) {
-        return transaction
-      } else {
-        throw error_.new('wrong user', 403, userId, transaction)
-      }
-    },
+    // the owner of the item isnt allowed to request it
+    const ownerAllowed = false
+    // will throw sync if the test isn't passed
+    interactions_.verifyRightToInteract(requester, item, ownerAllowed)
+    // will be a rejected promise if the test isn't passed
+    return verifyNoExistingTransaction(requester, item)
+  },
 
-    verifyIsOwner: (userId, transaction) => {
-      const { owner } = transaction
-      if (userId === owner) {
-        return transaction
-      } else {
-        throw error_.new('wrong user', 403, userId, transaction)
-      }
-    },
+  verifyRightToInteract: (userId, transaction) => {
+    const { owner, requester } = transaction
+    if (userId === owner || userId === requester) {
+      return transaction
+    } else {
+      throw error_.new('wrong user', 403, userId, transaction)
+    }
+  },
 
-    verifyIsRequester: (userId, transaction) => {
-      const { requester } = transaction
-      if (userId === requester) {
-        return transaction
-      } else {
-        throw error_.new('wrong user', 403, userId, transaction)
-      }
+  verifyIsOwner: (userId, transaction) => {
+    const { owner } = transaction
+    if (userId === owner) {
+      return transaction
+    } else {
+      throw error_.new('wrong user', 403, userId, transaction)
+    }
+  },
+
+  verifyIsRequester: (userId, transaction) => {
+    const { requester } = transaction
+    if (userId === requester) {
+      return transaction
+    } else {
+      throw error_.new('wrong user', 403, userId, transaction)
     }
   }
 }

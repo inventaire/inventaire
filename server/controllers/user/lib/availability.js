@@ -6,7 +6,12 @@ const User = __.require('models', 'user')
 const isReservedWord = require('./is_reserved_word')
 const error_ = __.require('lib', 'error/error')
 
-module.exports = user_ => ({
+// Working around circular dependencies
+let user_
+const lateRequire = () => { user_ = require('./user') }
+setTimeout(lateRequire, 0)
+
+module.exports = {
   username: (username, currentUsername) => {
     // If a currentUsername is provided
     // return true if the new username is the same but with a different case
@@ -37,7 +42,7 @@ module.exports = user_ => ({
     return user_.byEmail(email)
     .then(checkAvailability.bind(null, email, 'email'))
   }
-})
+}
 
 const checkAvailability = (value, label, docs) => {
   if (docs.length !== 0) {

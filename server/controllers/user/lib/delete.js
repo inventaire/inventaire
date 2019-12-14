@@ -3,23 +3,24 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const couch_ = __.require('lib', 'couch')
 const User = __.require('models', 'user')
+const db = __.require('couch', 'base')('users')
 
-module.exports = (db, user_) => {
-  const deleteUser = user => db.del(user._id, user._rev)
+// Working around circular dependencies
+let user_
+const lateRequire = () => { user_ = require('./user') }
+setTimeout(lateRequire, 0)
 
-  const softDeleteById = userId => db.update(userId, User.softDelete)
+const deleteUser = user => db.del(user._id, user._rev)
 
-  // only used by tests so far
-  const deleteByUsername = username => {
+module.exports = {
+  softDeleteById: userId => db.update(userId, User.softDelete),
+
+  // Only used by tests so far
+  deleteByUsername: username => {
     _.info(username, 'deleteUserbyUsername')
     return user_.byUsername(username)
     .then(couch_.firstDoc)
     .then(deleteUser)
     .catch(_.Error('deleteUserbyUsername err'))
-  }
-
-  return {
-    softDeleteById,
-    deleteByUsername
   }
 }

@@ -3,12 +3,13 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const radio = __.require('lib', 'radio')
 const couch_ = __.require('lib', 'couch')
+const db = __.require('couch', 'base')('groups')
 
-module.exports = db => {
-  radio.on('group:leave', deleteGroupIfEmpty(db))
+module.exports = () => {
+  radio.on('group:leave', deleteGroupIfEmpty)
 }
 
-const deleteGroupIfEmpty = db => (groupId, userId) => {
+const deleteGroupIfEmpty = (groupId, userId) => {
   return db.get(groupId)
   .then(group => {
     // An admin can't leave a group if there are still members

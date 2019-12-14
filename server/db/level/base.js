@@ -4,6 +4,7 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const { Promise } = __.require('lib', 'promises')
 const error_ = __.require('lib', 'error/error')
+const memoize = __.require('lib', 'utils/memoize')
 
 const DBPathBase = __.path('leveldb')
 const { suffix } = CONFIG.db
@@ -21,13 +22,13 @@ if (CONFIG.leveldbMemoryBackend) {
   DB = sublevel(level(DBPath, config))
 }
 
-const rawSubDb = (dbName, valueEncoding) => {
+const rawSubDb = memoize((dbName, valueEncoding) => {
   _.success(`${dbName} opened`)
   return DB.sublevel(dbName, { valueEncoding })
-}
+})
 
 // Promisified and with a few additional functions
-const simpleSubDb = dbName => {
+const simpleSubDb = memoize(dbName => {
   const sub = Promise.promisifyAll(rawSubDb(dbName, 'json'))
 
   return {
@@ -43,7 +44,7 @@ const simpleSubDb = dbName => {
     reset: Reset(sub),
     sub
   }
-}
+})
 
 const Reset = sub => () => new Promise((resolve, reject) => {
   const ops = []
