@@ -60,16 +60,16 @@ describe('auth:username-availability', () => {
     createUser({ username })
     .delay(10)
     .then(user => {
-      nonAuthReq('post', endpoint, {
+      return nonAuthReq('post', endpoint, {
         username,
         email: `bla${username}@foo.bar`,
         password: randomString(8)
       })
-      .catch(err => {
-        err.body.status_verbose.should.equal('an account is already in the process of being created with this username')
-        done()
-      })
     })
-    .catch(undesiredRes(done))
+    .catch(err => {
+      err.body.status_verbose.should.equal('an account is already in the process of being created with this username')
+      done()
+    })
+    .catch(done)
   })
 })

@@ -20,13 +20,13 @@ describe('auth:username-availability', () => {
     createUser({ username })
     .delay(10)
     .then(user => {
-      nonAuthReq('get', `${usernameEndpoint}&username=${username}`)
-      .catch(err => {
-        err.body.status_verbose.should.equal('this username is already used')
-        done()
-      })
+      return nonAuthReq('get', `${usernameEndpoint}&username=${username}`)
     })
-    .catch(undesiredRes(done))
+    .catch(err => {
+      err.body.status_verbose.should.equal('this username is already used')
+      done()
+    })
+    .catch(done)
   })
 
   it('should reject an account with reverved words as username', done => {
@@ -35,7 +35,7 @@ describe('auth:username-availability', () => {
       err.body.status_verbose.should.equal("reserved words can't be usernames")
       done()
     })
-    .catch(undesiredRes(done))
+    .catch(done)
   })
 })
 
@@ -53,13 +53,11 @@ describe('auth:email-availability', () => {
   it('should reject an account with already created email', done => {
     createUser()
     .delay(10)
-    .then(user => {
-      nonAuthReq('get', `${emailEndpoint}&email=${user.email}`)
-      .catch(err => {
-        err.body.status_verbose.should.equal('this email is already used')
-        done()
-      })
+    .then(user => nonAuthReq('get', `${emailEndpoint}&email=${user.email}`))
+    .catch(err => {
+      err.body.status_verbose.should.equal('this email is already used')
+      done()
     })
-    .catch(undesiredRes(done))
+    .catch(done)
   })
 })

@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const host = CONFIG.fullHost()
 require('should')
-const { undesiredRes, getUserGetter } = require('../utils/utils')
+const { getUserGetter } = require('../utils/utils')
 const { rawRequest } = require('../utils/request')
 const { createUserEmail } = require('../fixtures/users')
 const { BasicUpdater } = __.require('lib', 'doc_updates')
@@ -51,7 +51,7 @@ describe('token:validation-email', () => {
         done()
       })
     })
-    .catch(undesiredRes(done))
+    .catch(done)
   })
 
   it('should reject if account is already validated', done => {
@@ -73,7 +73,7 @@ describe('token:validation-email', () => {
         done()
       })
     })
-    .catch(undesiredRes(done))
+    .catch(done)
   })
 
   it('should reject if invalid token', done => {
@@ -91,6 +91,6 @@ describe('token:validation-email', () => {
         done()
       })
     })
-    .catch(undesiredRes(done))
+    .catch(done)
   })
 })

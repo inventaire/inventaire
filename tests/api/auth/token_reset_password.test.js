@@ -54,5 +54,6 @@ describe('token:reset-password', () => {
       res.headers.location.should.equal('/login/forgot-password?resetPasswordFail=true')
       done()
     })
+    .catch(done)
   })
 })

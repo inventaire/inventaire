@@ -46,28 +46,28 @@ describe('items:get-by-ids', () => {
   })
 
   it('should include public items of other users', async () => {
-    const itemAPromise = await createItem(userPromise, { listing: 'public' })
-    const res = await authReq('get', `${endpoint}&ids=${itemAPromise._id}`)
-    res.items.map(_.property('_id')).should.containEql(itemAPromise._id)
+    const item = await createItem(userPromise, { listing: 'public' })
+    const res = await authReq('get', `${endpoint}&ids=${item._id}`)
+    res.items.map(_.property('_id')).should.containEql(item._id)
   })
 
   it('should not include private items of other users', async () => {
-    const itemAPromise = await createItem(userPromise, { listing: 'private' })
-    const res = await authReq('get', `${endpoint}&ids=${itemAPromise._id}`)
-    res.items.map(_.property('_id')).should.not.containEql(itemAPromise._id)
+    const item = await createItem(userPromise, { listing: 'private' })
+    const res = await authReq('get', `${endpoint}&ids=${item._id}`)
+    res.items.map(_.property('_id')).should.not.containEql(item._id)
   })
 
   it('should include group items of other group users', async () => {
     await addMember(groupPromise, userPromise)
-    const itemAPromise = await createItem(userPromise, { listing: 'network' })
-    const res = await authReq('get', `${endpoint}&ids=${itemAPromise._id}`)
-    res.items.map(_.property('_id')).should.containEql(itemAPromise._id)
+    const item = await createItem(userPromise, { listing: 'network' })
+    const res = await authReq('get', `${endpoint}&ids=${item._id}`)
+    res.items.map(_.property('_id')).should.containEql(item._id)
   })
 
   it('should not include group items of other group users', async () => {
     const userPromise = getUserGetter(humanName())()
-    const itemAPromise = await createItem(userPromise, { listing: 'network' })
-    const res = await authReq('get', `${endpoint}&ids=${itemAPromise._id}`)
-    res.items.map(_.property('_id')).should.not.containEql(itemAPromise._id)
+    const item = await createItem(userPromise, { listing: 'network' })
+    const res = await authReq('get', `${endpoint}&ids=${item._id}`)
+    res.items.map(_.property('_id')).should.not.containEql(item._id)
   })
 })
