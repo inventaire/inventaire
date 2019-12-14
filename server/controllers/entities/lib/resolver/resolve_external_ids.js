@@ -37,8 +37,7 @@ const invQuery = externalIds => {
   .then(_.flatten)
 }
 
-const invByClaim = pair => {
-  const [ prop, value ] = Array.from(pair)
+const invByClaim = ([ prop, value ]) => {
   return entities_.byClaim(prop, value, true, true)
   .map(getInvEntityCanonicalUri)
 }

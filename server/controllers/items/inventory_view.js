@@ -72,7 +72,7 @@ const aggregateEditionsWorksUris = (data, edition) => {
   const worksUris = edition.claims['wdt:P629']
   if (worksUris != null) {
     data.editionWorkMap[edition.uri] = worksUris
-    data.editionsWorksUris.push(...Array.from(worksUris || []))
+    data.editionsWorksUris.push(...worksUris)
   } else {
     _.warn(edition, 'edition without work')
   }

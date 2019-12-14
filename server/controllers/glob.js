@@ -22,7 +22,7 @@ module.exports = {
 
   jsonRedirection: (req, res) => {
     const { pathname } = req._parsedUrl
-    let [ domain, id ] = Array.from(pathname.split('/').slice(1))
+    let [ domain, id ] = pathname.split('/').slice(1)
     id = id && id.replace(/\.json$/, '')
     const redirectionFn = redirections[domain]
 

@@ -40,7 +40,7 @@ module.exports = {
   },
 
   friendAcceptedRequest: options => {
-    const [ user1, user2 ] = Array.from(validateOptions(options))
+    const [ user1, user2 ] = validateOptions(options)
     const lang = _.shortLang(user1.language)
 
     checkUserNotificationsSettings(user1, 'friend_accepted_request')

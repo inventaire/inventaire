@@ -30,7 +30,7 @@ const updatePosition = change => {
   if (deleted) {
     return db.del(id)
   } else {
-    const [ lat, lon ] = Array.from(position)
+    const [ lat, lon ] = position
     // Most of the user doc change wont imply a position change
     // so it should make sense to get the doc to check the need to write
     return db.getByKey(id)

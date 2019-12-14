@@ -9,7 +9,7 @@ const isbn_ = __.require('lib', 'isbn/isbn')
 const { prefixifyIsbn } = __.require('controllers', 'entities/lib/prefix')
 
 module.exports = (rawIsbns, params) => {
-  const [ isbns, redirections ] = Array.from(getRedirections(rawIsbns))
+  const [ isbns, redirections ] = getRedirections(rawIsbns)
   const { refresh } = params
   // search entities by isbn locally
   return entities_.byIsbns(isbns)

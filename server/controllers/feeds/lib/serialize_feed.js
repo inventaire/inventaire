@@ -54,7 +54,7 @@ const serializeItem = (usersIndex, lang) => item => {
   }
 
   if (_.isArray(user.position)) {
-    const [ lat, long ] = Array.from(user.position)
+    const [ lat, long ] = user.position
     data.lat = lat
     data.long = long
   }

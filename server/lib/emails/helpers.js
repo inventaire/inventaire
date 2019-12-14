@@ -9,7 +9,7 @@ const groups_ = __.require('controllers', 'groups/lib/groups')
 const getUsersByIds = (user1Id, user2Id) => {
   return user_.byIds([ user1Id, user2Id ])
   .then(usersData => {
-    const [ user1, user2 ] = Array.from(parseUsersData(user1Id, user2Id, usersData))
+    const [ user1, user2 ] = parseUsersData(user1Id, user2Id, usersData)
     return { user1, user2 }
   })
   .catch(_.Error('getUsersByIds err'))

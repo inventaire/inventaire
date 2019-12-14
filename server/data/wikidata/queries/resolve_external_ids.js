@@ -18,7 +18,4 @@ const buildBody = externalIds => {
   return `{ ${unions} }`
 }
 
-const buildTriple = pair => {
-  const [ prop, value ] = Array.from(pair)
-  return `?work ${prop} '${value}'`
-}
+const buildTriple = ([ prop, value ]) => `?work ${prop} '${value}'`
