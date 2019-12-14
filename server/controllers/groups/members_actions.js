@@ -15,10 +15,6 @@ const sanitization = {
 module.exports = action => (req, res) => {
   sanitize(req, res, sanitization)
   .then(params => {
-    // don't convert undefined action to an empty string
-    // it makes debugging confusing
-    if (action != null) { action = _.camelCase(action) }
-
     const { group: groupId, user: userId, reqUserId } = params
     _.log(params, `${action} group`)
 
