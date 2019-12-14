@@ -3,7 +3,7 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
 const { Promise } = __.require('lib', 'promises')
-const { authReq, getUser, undesiredErr } = require('../utils/utils')
+const { authReq, getUser } = require('../utils/utils')
 const { ensureEditionExists, createEdition, createWorkWithAuthor, createHuman } = require('../fixtures/entities')
 const { createItem } = require('../fixtures/items')
 const { createUser, getRefreshedUser } = require('../fixtures/users')
@@ -30,7 +30,7 @@ describe('items:create', () => {
       .delay(10)
       .then(() => done())
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should create items in bulk', done => {
@@ -57,7 +57,7 @@ describe('items:create', () => {
       .delay(10)
       .then(() => done())
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should increment the user items counter', done => {
@@ -73,7 +73,7 @@ describe('items:create', () => {
       user.snapshot.private['items:count'].should.equal(0)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should deduce the title from an edition entity', done => {
@@ -94,7 +94,7 @@ describe('items:create', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should deduce the author from a work entity', done => {
@@ -110,7 +110,7 @@ describe('items:create', () => {
         })
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should deduce the author from an edition entity', done => {
@@ -137,7 +137,7 @@ describe('items:create', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject an item created with an unknown entity', done => {
@@ -147,7 +147,7 @@ describe('items:create', () => {
       err.body.status_verbose.should.equal('entity not found')
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject an item created with a non-whitelisted entity type', done => {
@@ -157,7 +157,7 @@ describe('items:create', () => {
       err.body.status_verbose.should.equal('invalid entity type')
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should use the original language label for an item created from a work without specifying in which lang the title is', done => {
@@ -168,7 +168,7 @@ describe('items:create', () => {
       item.snapshot['entity:lang'].should.equal('de')
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject an item created with an invalid URI', done => {
@@ -178,7 +178,7 @@ describe('items:create', () => {
       err.body.status_verbose.should.equal('invalid uri id: 9782800051922 (uri: isbn:9782800051922)')
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   // Should not create edition conflicts on the user document
@@ -197,6 +197,6 @@ describe('items:create', () => {
       user.snapshot.private['items:count'].should.equal(1)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })

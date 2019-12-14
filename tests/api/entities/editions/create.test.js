@@ -1,5 +1,5 @@
 require('should')
-const { authReq, undesiredErr, undesiredRes } = require('../../utils/utils')
+const { authReq, undesiredRes } = require('../../utils/utils')
 const { createWork, createSerie, randomLabel } = require('../../fixtures/entities')
 const workEntityPromise = createWork()
 
@@ -14,7 +14,7 @@ describe('entities:editions:create', () => {
       err.body.status_verbose.should.equal('an edition should have an associated work (wdt:P629)')
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject an edition entity without a title', done => {
@@ -33,7 +33,7 @@ describe('entities:editions:create', () => {
       err.body.status_verbose.should.equal('an edition should have a title (wdt:P1476)')
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject an edition with a label', done => {
@@ -53,14 +53,14 @@ describe('entities:editions:create', () => {
       err.body.status_verbose.should.equal("editions can't have labels")
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should accept an edition without a labels object', done => {
     workEntityPromise
     .then(workEntity => createEdition(workEntity.uri))
     .then(() => done())
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should not be able to create an edition entity with a non-work entity', done => {
@@ -72,7 +72,7 @@ describe('entities:editions:create', () => {
       err.body.status_verbose.should.equal('invalid claim entity type: serie')
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })
 

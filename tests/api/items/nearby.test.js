@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
-const { getUserGetter, customAuthReq, undesiredErr } = __.require('apiTests', 'utils/utils')
+const { getUserGetter, customAuthReq } = __.require('apiTests', 'utils/utils')
 const { createItem } = require('../fixtures/items')
 const geolocatedUser1Promise = getUserGetter('geo1', false, { position: [ 1, 1 ] })().delay(1000)
 const geolocatedUser2Promise = getUserGetter('geo2', false, { position: [ 2, 2 ] })().delay(1000)
@@ -20,7 +20,7 @@ describe('items:nearby', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should accept a range', done => {
@@ -34,6 +34,6 @@ describe('items:nearby', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })

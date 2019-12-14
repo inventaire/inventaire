@@ -3,7 +3,7 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
 const { Promise } = __.require('lib', 'promises')
-const { authReq, undesiredErr } = __.require('apiTests', 'utils/utils')
+const { authReq } = __.require('apiTests', 'utils/utils')
 const { getByUris, addClaim, getHistory } = __.require('apiTests', 'utils/entities')
 const { createWork, createHuman, ensureEditionExists, someGoodReadsId, randomLabel, generateIsbn13 } = __.require('apiTests', 'fixtures/entities')
 const resolveAndUpdate = entries => {
@@ -178,7 +178,7 @@ describe('entities:resolver:update-resolved', () => {
         })
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })
 

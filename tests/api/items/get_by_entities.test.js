@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
-const { getUser, authReq, undesiredErr } = __.require('apiTests', 'utils/utils')
+const { getUser, authReq } = __.require('apiTests', 'utils/utils')
 const { createItem, createEditionAndItem } = require('../fixtures/items')
 
 describe('items:get-by-entities', () => {
@@ -15,7 +15,7 @@ describe('items:get-by-entities', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should get items by entities uris', done => {
@@ -32,6 +32,6 @@ describe('items:get-by-entities', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })

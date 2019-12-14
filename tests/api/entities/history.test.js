@@ -1,5 +1,5 @@
 require('should')
-const { nonAuthReq, undesiredErr, undesiredRes } = require('../utils/utils')
+const { nonAuthReq, undesiredRes } = require('../utils/utils')
 const { createHuman } = require('../fixtures/entities')
 const endpoint = '/api/entities?action=history'
 
@@ -20,7 +20,7 @@ describe('entities:history', () => {
       err.body.error_name.should.equal('invalid_id')
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should return entity patches', done => {
@@ -32,6 +32,6 @@ describe('entities:history', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })

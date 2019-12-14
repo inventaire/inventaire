@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const should = require('should')
-const { nonAuthReq, authReq, customAuthReq, getUser, getUserB, undesiredErr } = require('../utils/utils')
+const { nonAuthReq, authReq, customAuthReq, getUser, getUserB } = require('../utils/utils')
 const { createUser } = require('../fixtures/users')
 
 describe('users:search', () => {
@@ -17,7 +17,7 @@ describe('users:search', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should find a user even with just a prefix', done => {
@@ -31,7 +31,7 @@ describe('users:search', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should find a user even with a typo', done => {
@@ -47,7 +47,7 @@ describe('users:search', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should not return snapshot data', done => {
@@ -61,7 +61,7 @@ describe('users:search', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should find a user by its bio', done => {
@@ -78,7 +78,7 @@ describe('users:search', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })
 

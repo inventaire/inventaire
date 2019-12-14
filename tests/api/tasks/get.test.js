@@ -1,7 +1,4 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 require('should')
-const { undesiredErr } = __.require('apiTests', 'utils/utils')
 const { createHuman } = require('../fixtures/entities')
 const { getByScore, getBySuspectUris, getBySuggestionUris, update } = require('../utils/tasks')
 const { createTask } = require('../fixtures/tasks')
@@ -18,7 +15,7 @@ describe('tasks:byScore', () => {
         tasks.length.should.be.aboveOrEqual(1)
         done()
       })
-      .catch(undesiredErr(done))
+      .catch(done)
     })
   })
 
@@ -31,7 +28,7 @@ describe('tasks:byScore', () => {
         tasks.length.should.equal(1)
         done()
       })
-      .catch(undesiredErr(done))
+      .catch(done)
     })
   })
 
@@ -48,7 +45,7 @@ describe('tasks:byScore', () => {
         })
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })
 
@@ -70,7 +67,7 @@ describe('tasks:bySuspectUris', () => {
         })
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should not return archived tasks', done => {
@@ -87,7 +84,7 @@ describe('tasks:bySuspectUris', () => {
         })
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should return an array of tasks even when no tasks is found', done => {
@@ -100,7 +97,7 @@ describe('tasks:bySuspectUris', () => {
       tasks[fakeUri].length.should.equal(0)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })
 
@@ -121,7 +118,7 @@ describe('tasks:bySuggestionUris', () => {
         })
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should return an array of tasks even when no tasks is found', done => {
@@ -134,6 +131,6 @@ describe('tasks:bySuggestionUris', () => {
       tasks[uri].length.should.equal(0)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })

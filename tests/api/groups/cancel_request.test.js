@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
-const { authReq, authReqC, undesiredErr, getUserGetter, customAuthReq } = require('../utils/utils')
+const { authReq, authReqC, getUserGetter, customAuthReq } = require('../utils/utils')
 const { groupPromise, getGroup } = require('../fixtures/groups')
 const endpoint = '/api/groups?action=cancel-request'
 const { Promise } = __.require('lib', 'promises')
@@ -15,7 +15,7 @@ describe('groups:update:cancel-request', () => {
       err.statusCode.should.equal(400)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject when no request exists for user', done => {
@@ -26,7 +26,7 @@ describe('groups:update:cancel-request', () => {
       err.statusCode.should.equal(403)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should cancel a request', done => {
@@ -45,6 +45,6 @@ describe('groups:update:cancel-request', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })

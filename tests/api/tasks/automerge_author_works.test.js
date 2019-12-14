@@ -5,7 +5,6 @@ const { Promise } = __.require('lib', 'promises')
 require('should')
 
 const automergeAuthorWorks = __.require('controllers', 'tasks/lib/automerge_author_works')
-const { undesiredErr } = require('../utils/utils')
 const { checkEntities } = require('../utils/tasks')
 const { getByUris } = require('../utils/entities')
 const { createHuman, createWorkWithAuthor, addSerie } = require('../fixtures/entities')
@@ -31,7 +30,7 @@ describe('automerge_author_works: only from inv works to wd works', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should automerge if suspect and suggestion wd and inv short works labels match', done => {
@@ -54,7 +53,7 @@ describe('automerge_author_works: only from inv works to wd works', () => {
         })
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should not automerge if authors works do not match', done => {
@@ -73,7 +72,7 @@ describe('automerge_author_works: only from inv works to wd works', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should not automerge work if suggestion is a serie or part of a serie', done => {
@@ -94,6 +93,6 @@ describe('automerge_author_works: only from inv works to wd works', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })

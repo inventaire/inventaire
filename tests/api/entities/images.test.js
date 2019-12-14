@@ -1,6 +1,6 @@
 const CONFIG = require('config')
 require('should')
-const { nonAuthReq, undesiredRes, undesiredErr } = require('../utils/utils')
+const { nonAuthReq, undesiredRes } = require('../utils/utils')
 const { rawRequest } = require('../utils/request')
 const host = CONFIG.fullHost()
 
@@ -13,7 +13,7 @@ describe('entities:images', () => {
       res.images['wd:Q535'][0].should.be.a.String()
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject redirect requests with multiple URIs', done => {
@@ -32,6 +32,6 @@ describe('entities:images', () => {
       res.headers['content-type'].should.equal('image/jpeg')
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })

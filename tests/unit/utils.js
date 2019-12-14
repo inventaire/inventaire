@@ -8,11 +8,6 @@ module.exports = {
     warn(util.inspect(res, false, null), 'undesired positive res')
   },
 
-  undesiredErr: done => err => {
-    done(err)
-    warn(err.body || err, 'undesired err body')
-  },
-
   shouldNotGetHere: res => {
     const err = new Error('function was expected not to be called')
     err.name = 'ShouldNotGetHere'

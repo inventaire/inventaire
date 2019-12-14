@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
-const { authReq, getUserGetter, undesiredErr, undesiredRes } = require('../utils/utils')
+const { authReq, getUserGetter, undesiredRes } = require('../utils/utils')
 const { groupPromise, getGroup, addMember } = require('../fixtures/groups')
 const endpoint = '/api/groups?action=kick'
 const { Promise } = __.require('lib', 'promises')
@@ -29,7 +29,7 @@ describe('groups:update:kick', () => {
       err.statusCode.should.equal(403)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should kick a member', done => {
@@ -44,7 +44,7 @@ describe('groups:update:kick', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject kicking an admin', done => {
@@ -61,6 +61,6 @@ describe('groups:update:kick', () => {
       err.statusCode.should.equal(403)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })

@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
-const { nonAuthReq, authReq, undesiredErr, undesiredRes } = require('../utils/utils')
+const { nonAuthReq, authReq, undesiredRes } = require('../utils/utils')
 const { groupPromise } = require('../fixtures/groups')
 const slugify = __.require('controllers', 'groups/lib/slugify')
 const endpoint = '/api/groups?action=update-settings'
@@ -15,7 +15,7 @@ describe('groups:update-settings', () => {
       err.statusCode.should.equal(400)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should update the group slug when updating the name', done => {
@@ -39,7 +39,7 @@ describe('groups:update-settings', () => {
         })
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should request a group slug update when updating the name', done => {
@@ -59,7 +59,7 @@ describe('groups:update-settings', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should update description', done => {
@@ -83,6 +83,6 @@ describe('groups:update-settings', () => {
       group.description.should.equal(updatedDescription)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })

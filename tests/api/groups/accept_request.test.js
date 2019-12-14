@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
-const { authReq, authReqC, undesiredErr, undesiredRes, getUserGetter, customAuthReq } = require('../utils/utils')
+const { authReq, authReqC, undesiredRes, getUserGetter, customAuthReq } = require('../utils/utils')
 const { groupPromise, createGroup, groupName, getGroup } = require('../fixtures/groups')
 const endpoint = '/api/groups?action=accept-request'
 const { Promise } = __.require('lib', 'promises')
@@ -17,7 +17,7 @@ describe('groups:update:accept-request', () => {
       err.statusCode.should.equal(400)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should move requested user to members', done => {
@@ -34,7 +34,7 @@ describe('groups:update:accept-request', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('reject if not admin user', done => {
@@ -47,6 +47,6 @@ describe('groups:update:accept-request', () => {
       err.statusCode.should.equal(403)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })

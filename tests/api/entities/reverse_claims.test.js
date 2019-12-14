@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
-const { nonAuthReq, undesiredErr, undesiredRes } = require('../utils/utils')
+const { nonAuthReq, undesiredRes } = require('../utils/utils')
 
 const buildUrl = (property, value) => {
   return _.buildPath('/api/entities', { action: 'reverse-claims', property, value })
@@ -16,7 +16,7 @@ describe('entities:reverse-claims', () => {
       err.body.status_verbose.should.equal('blacklisted property')
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should accept whitelisted entity value properties', done => {
@@ -25,7 +25,7 @@ describe('entities:reverse-claims', () => {
       res.uris.should.be.an.Array()
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should accept whitelisted string value properties', done => {
@@ -34,6 +34,6 @@ describe('entities:reverse-claims', () => {
       res.uris.should.be.an.Array()
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })

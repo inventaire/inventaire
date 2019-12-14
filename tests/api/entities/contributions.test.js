@@ -1,6 +1,6 @@
 const __ = require('config').universalPath
 const should = require('should')
-const { adminReq, getUser, undesiredErr, undesiredRes } = require('../utils/utils')
+const { adminReq, getUser, undesiredRes } = require('../utils/utils')
 const { createWork } = require('../fixtures/entities')
 const endpoint = '/api/entities?action=contributions'
 const { Promise } = __.require('lib', 'promises')
@@ -37,7 +37,7 @@ describe('entities:contributions', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should return a list of patches ordered by timestamp', done => {
@@ -54,7 +54,7 @@ describe('entities:contributions', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should take a limit parameter', done => {
@@ -69,7 +69,7 @@ describe('entities:contributions', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should take an offset parameter', done => {
@@ -87,7 +87,7 @@ describe('entities:contributions', () => {
         })
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should return total data', done => {
@@ -100,7 +100,7 @@ describe('entities:contributions', () => {
         should(res1.total >= 2).be.true()
         done()
       })
-      .catch(undesiredErr(done))
+      .catch(done)
     })
   })
 
@@ -114,7 +114,7 @@ describe('entities:contributions', () => {
         res1.continue.should.equal(1)
         done()
       })
-      .catch(undesiredErr(done))
+      .catch(done)
     })
   })
 
@@ -137,7 +137,7 @@ describe('entities:contributions', () => {
         })
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })
 

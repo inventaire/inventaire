@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const should = require('should')
 const { Promise } = __.require('lib', 'promises')
-const { undesiredErr, undesiredRes } = require('../utils/utils')
+const { undesiredRes } = require('../utils/utils')
 const { ensureEditionExists, createWorkWithAuthor, createEditionWithWorkAuthorAndSerie, createHuman } = require('../fixtures/entities')
 const { getByUris, merge } = require('../utils/entities')
 const workWithAuthorPromise = createWorkWithAuthor()
@@ -17,7 +17,7 @@ describe('entities:get:by-uris', () => {
       err.body.status_verbose.should.startWith('invalid uri')
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject uri with wrong prefix', done => {
@@ -29,7 +29,7 @@ describe('entities:get:by-uris', () => {
       err.body.status_verbose.should.startWith('invalid uri')
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should accept inventaire uri', done => {
@@ -41,7 +41,7 @@ describe('entities:get:by-uris', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should return uris not found', done => {
@@ -51,7 +51,7 @@ describe('entities:get:by-uris', () => {
       res.notFound.should.deepEqual([ fakeUri ])
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should return redirected uris', done => {
@@ -69,7 +69,7 @@ describe('entities:get:by-uris', () => {
           done()
         })
       })
-      .catch(undesiredErr(done))
+      .catch(done)
     })
   })
 
@@ -82,7 +82,7 @@ describe('entities:get:by-uris', () => {
       entity.uri.should.equal(validWdUri)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should accept strict ISBN 13 syntax', done => {
@@ -94,7 +94,7 @@ describe('entities:get:by-uris', () => {
       entity.uri.should.equal(isbn13Uri)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   describe('relatives', () => {
@@ -110,7 +110,7 @@ describe('entities:get:by-uris', () => {
           done()
         })
       })
-      .catch(undesiredErr(done))
+      .catch(done)
     })
 
     it("should reject a non-whitelisted 'relatives' parameter", done => {
@@ -125,7 +125,7 @@ describe('entities:get:by-uris', () => {
           done()
         })
       })
-      .catch(undesiredErr(done))
+      .catch(done)
     })
 
     it('should be able to include the works, authors, and series of an edition', done => {
@@ -152,7 +152,7 @@ describe('entities:get:by-uris', () => {
           done()
         })
       })
-      .catch(undesiredErr(done))
+      .catch(done)
     })
   })
 })

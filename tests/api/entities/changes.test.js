@@ -1,6 +1,6 @@
 const __ = require('config').universalPath
 require('should')
-const { nonAuthReq, undesiredErr } = require('../utils/utils')
+const { nonAuthReq } = require('../utils/utils')
 const endpoint = '/api/entities?action=changes'
 const { merge } = require('../utils/entities')
 const { createHuman } = require('../fixtures/entities')
@@ -14,7 +14,7 @@ describe('entities:changes', () => {
       res.lastSeq.should.be.an.Number()
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should take a since parameter', done => {
@@ -24,7 +24,7 @@ describe('entities:changes', () => {
       res.lastSeq.should.be.an.Number()
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should throw when passed an invalid since parameter', done => {
@@ -33,7 +33,7 @@ describe('entities:changes', () => {
       err.body.error_name.should.equal('invalid_since')
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should return redirected entities', done => {
@@ -49,6 +49,6 @@ describe('entities:changes', () => {
         })
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })

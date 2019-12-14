@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
-const { authReq, authReqC, undesiredErr } = __.require('apiTests', 'utils/utils')
+const { authReq, authReqC } = __.require('apiTests', 'utils/utils')
 const { createTransaction } = require('../fixtures/transactions')
 const transactionPromise = createTransaction()
 
@@ -19,7 +19,7 @@ describe('transactions:get', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should not get other users transactions', done => {
@@ -33,6 +33,6 @@ describe('transactions:get', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })

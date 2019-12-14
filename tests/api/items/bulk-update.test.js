@@ -1,5 +1,5 @@
 require('should')
-const { authReq, authReqB, undesiredErr } = require('../utils/utils')
+const { authReq, authReqB } = require('../utils/utils')
 const { newItemBase } = require('./helpers')
 
 describe('items:bulk-update', () => {
@@ -24,7 +24,7 @@ describe('items:bulk-update', () => {
         })
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should not update an item from another owner', done => {
@@ -42,6 +42,6 @@ describe('items:bulk-update', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })

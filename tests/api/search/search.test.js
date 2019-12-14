@@ -4,7 +4,7 @@ const _ = __.require('builders', 'utils')
 require('should')
 const faker = require('faker')
 const { Promise } = __.require('lib', 'promises')
-const { nonAuthReq, authReq, undesiredRes, undesiredErr, getUser } = require('../utils/utils')
+const { nonAuthReq, authReq, undesiredRes, getUser } = require('../utils/utils')
 const randomString = __.require('lib', './utils/random_string')
 const { createWork, createHuman, createSerie, randomLabel, createEditionFromWorks } = require('../fixtures/entities')
 const { getRefreshedPopularityByUris } = require('../utils/entities')
@@ -18,7 +18,7 @@ describe('search:global', () => {
       err.body.status_verbose.should.equal('missing parameter in query: search')
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject search without types', done => {
@@ -29,7 +29,7 @@ describe('search:global', () => {
       err.body.status_verbose.should.equal('missing parameter in query: types')
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject invalid types', done => {
@@ -40,7 +40,7 @@ describe('search:global', () => {
       err.body.status_verbose.should.startWith('invalid types: da')
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should return a wikidata human', done => {
@@ -51,7 +51,7 @@ describe('search:global', () => {
       _.map(results, 'id').includes('Q184226').should.be.true()
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should return a local human', done => {
@@ -68,7 +68,7 @@ describe('search:global', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should return a local work', done => {
@@ -85,7 +85,7 @@ describe('search:global', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should return a wikidata work', done => {
@@ -96,7 +96,7 @@ describe('search:global', () => {
       _.map(results, 'id').includes('Q180736').should.be.true()
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should return a local serie', done => {
@@ -113,7 +113,7 @@ describe('search:global', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should return a wikidata serie', done => {
@@ -124,7 +124,7 @@ describe('search:global', () => {
       _.map(results, 'id').includes('Q8337').should.be.true()
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should return a user', done => {
@@ -139,7 +139,7 @@ describe('search:global', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should return a group', done => {
@@ -155,7 +155,7 @@ describe('search:global', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should not return a private group unless requester is a member', done => {
@@ -176,7 +176,7 @@ describe('search:global', () => {
         })
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should sort entities by global score', done => {
@@ -202,7 +202,7 @@ describe('search:global', () => {
         })
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should return a global score boosted by a logarithmic popularity', done => {
@@ -229,7 +229,7 @@ describe('search:global', () => {
         })
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })
 

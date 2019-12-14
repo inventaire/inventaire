@@ -1,6 +1,6 @@
 const CONFIG = require('config')
 const should = require('should')
-const { authReq, getUser, undesiredErr } = require('../utils/utils')
+const { authReq, getUser } = require('../utils/utils')
 const { newItemBase, CountChange } = require('./helpers')
 const debounceDelay = CONFIG.itemsCountDebounceTime + 100
 
@@ -18,7 +18,7 @@ describe('items:update', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should not be able to update non updatable attributes', done => {
@@ -31,7 +31,7 @@ describe('items:update', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should trigger an update of the users items counters', done => {
@@ -60,6 +60,6 @@ describe('items:update', () => {
         })
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })

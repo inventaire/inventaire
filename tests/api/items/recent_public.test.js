@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
-const { nonAuthReq, undesiredRes, undesiredErr } = __.require('apiTests', 'utils/utils')
+const { nonAuthReq, undesiredRes } = __.require('apiTests', 'utils/utils')
 const { populate } = require('../fixtures/populate')
 const recentPublicUrl = '/api/items?action=recent-public'
 
@@ -13,7 +13,7 @@ describe('items:recent-public', () => {
     .then(res => res.items.length.should.equal(15))
     .delay(10)
     .then(() => done())
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should fetch items from different owners', done => {
@@ -22,7 +22,7 @@ describe('items:recent-public', () => {
     .then(res => res.users.length.should.be.above(1))
     .delay(10)
     .then(() => done())
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should take a limit parameter', done => {
@@ -31,7 +31,7 @@ describe('items:recent-public', () => {
     .then(res => res.items.length.should.equal(3))
     .delay(10)
     .then(() => done())
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should take a lang parameter', done => {
@@ -40,7 +40,7 @@ describe('items:recent-public', () => {
     .then(res => _.some(res.items, itemLangIs('en')).should.be.true())
     .delay(10)
     .then(() => done())
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should return some of the most recent items', done => {
@@ -49,7 +49,7 @@ describe('items:recent-public', () => {
     .then(res => _.some(res.items, createdLately).should.be.true())
     .delay(10)
     .then(() => done())
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject invalid limit', done => {
@@ -59,7 +59,7 @@ describe('items:recent-public', () => {
       err.body.status_verbose.should.equal('invalid limit: bla')
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject invalid lang', done => {
@@ -69,7 +69,7 @@ describe('items:recent-public', () => {
       err.body.status_verbose.should.equal('invalid lang: bla')
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })
 

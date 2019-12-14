@@ -3,7 +3,7 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
 const { Promise } = __.require('lib', 'promises')
-const { authReq, getUserId, undesiredErr } = require('../utils/utils')
+const { authReq, getUserId } = require('../utils/utils')
 const { getById: getItem } = require('../utils/items')
 let { getByUris, merge, revertMerge, updateLabel, updateClaim } = require('../utils/entities')
 const { ensureEditionExists } = require('../fixtures/entities')
@@ -25,7 +25,7 @@ describe('items:snapshot', () => {
         })
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it("should snapshot the item's work series ordinal", done => {
@@ -52,7 +52,7 @@ describe('items:snapshot', () => {
         })
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should snapshot data from all the works of a composite edition', done => {
@@ -83,7 +83,7 @@ describe('items:snapshot', () => {
         })
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should snapshot the image of an edition', done => {
@@ -151,7 +151,7 @@ describe('items:snapshot', () => {
           })
         })
       })
-      .catch(undesiredErr(done))
+      .catch(done)
     })
 
     it('should be updated when its local work entity title changes', done => {
@@ -171,7 +171,7 @@ describe('items:snapshot', () => {
           })
         })
       })
-      .catch(undesiredErr(done))
+      .catch(done)
     })
 
     it('should be updated when its local serie entity title changes', done => {
@@ -199,7 +199,7 @@ describe('items:snapshot', () => {
           })
         })
       })
-      .catch(undesiredErr(done))
+      .catch(done)
     })
 
     it('should be updated when its local author entity title changes (edition entity)', done => {
@@ -231,7 +231,7 @@ describe('items:snapshot', () => {
           })
         })
       })
-      .catch(undesiredErr(done))
+      .catch(done)
     })
 
     it('should be updated when its local author entity title changes (work entity)', done => {
@@ -250,7 +250,7 @@ describe('items:snapshot', () => {
           })
         })
       })
-      .catch(undesiredErr(done))
+      .catch(done)
     })
 
     it('should be updated when its local work entity is merged (work entity)', done => {
@@ -269,7 +269,7 @@ describe('items:snapshot', () => {
           done()
         })
       })
-      .catch(undesiredErr(done))
+      .catch(done)
     })
 
     it('should be updated when its local work entity is merged (edition entity)', done => {
@@ -298,7 +298,7 @@ describe('items:snapshot', () => {
           })
         })
       })
-      .catch(undesiredErr(done))
+      .catch(done)
     })
 
     it('should be updated when its local author entity is merged', done => {
@@ -320,7 +320,7 @@ describe('items:snapshot', () => {
           done()
         })
       })
-      .catch(undesiredErr(done))
+      .catch(done)
     })
 
     it('should be updated when its local author entity is merged and reverted', done => {
@@ -349,7 +349,7 @@ describe('items:snapshot', () => {
           })
         })
       })
-      .catch(undesiredErr(done))
+      .catch(done)
     })
 
     it('should be updated when its entity changes', done => {
@@ -376,7 +376,7 @@ describe('items:snapshot', () => {
           })
         })
       })
-      .catch(undesiredErr(done))
+      .catch(done)
     })
 
     it('should be updated when its remote work entity changes', done => {
@@ -400,7 +400,7 @@ describe('items:snapshot', () => {
           })
         })
       })
-      .catch(undesiredErr(done))
+      .catch(done)
     })
 
     it('should be updated when its remote author entity changes', done => {
@@ -425,7 +425,7 @@ describe('items:snapshot', () => {
           })
         })
       })
-      .catch(undesiredErr(done))
+      .catch(done)
     })
   })
 })

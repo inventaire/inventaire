@@ -5,7 +5,6 @@ require('should')
 const { Promise } = __.require('lib', 'promises')
 const { createHuman } = require('../fixtures/entities')
 const { getBySuspectUri, collectEntities } = require('../utils/tasks')
-const { undesiredErr } = __.require('apiTests', 'utils/utils')
 
 // Tests dependency:
 // - running after a database reset
@@ -25,6 +24,6 @@ describe('tasks:collect-entities', () => {
       .map(tasks => tasks.length.should.aboveOrEqual(1))
       .then(() => done())
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })

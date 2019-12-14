@@ -1,5 +1,5 @@
 require('should')
-const { undesiredRes, undesiredErr } = require('../../utils/utils')
+const { undesiredRes } = require('../../utils/utils')
 const { updateLabel } = require('../../utils/entities')
 const { createEdition, randomLabel } = require('../../fixtures/entities')
 
@@ -15,6 +15,6 @@ describe('entities:editions:update-labels', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })

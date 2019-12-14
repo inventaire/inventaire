@@ -1,5 +1,5 @@
 require('should')
-const { authReq, undesiredErr, undesiredRes } = require('../utils/utils')
+const { authReq, undesiredRes } = require('../utils/utils')
 const endpoint = '/api/entities?action=move-to-wikidata'
 const { createWork } = require('../fixtures/entities')
 
@@ -23,7 +23,7 @@ describe('entities:move-to-wikidata', () => {
       err.statusCode.should.equal(400)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject without oauth tokens', done => {
@@ -37,7 +37,7 @@ describe('entities:move-to-wikidata', () => {
         err.statusCode.should.equal(400)
         done()
       })
-    .catch(undesiredErr(done))
+    .catch(done)
     })
   })
 })

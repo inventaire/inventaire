@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const should = require('should')
-const { authReq, undesiredErr, undesiredRes } = __.require('apiTests', 'utils/utils')
+const { authReq, undesiredRes } = __.require('apiTests', 'utils/utils')
 const { getByUris, getHistory } = __.require('apiTests', 'utils/entities')
 const { randomLabel, humanName, generateIsbn13, someGoodReadsId, ensureEditionExists } = __.require('apiTests', 'fixtures/entities')
 
@@ -30,7 +30,7 @@ describe('entities:resolve:create-unresolved', () => {
       should(result.authors[0].uri).be.ok()
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should resolve and not create an existing edition', done => {
@@ -69,7 +69,7 @@ describe('entities:resolve:create-unresolved', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should ignore unresolved work from resolve edition', done => {
@@ -109,7 +109,7 @@ describe('entities:resolve:create-unresolved', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should add optional claims to created works', done => {
@@ -131,7 +131,7 @@ describe('entities:resolve:create-unresolved', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should add optional claims to created authors', done => {
@@ -154,7 +154,7 @@ describe('entities:resolve:create-unresolved', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should add a batch timestamp to patches', done => {
@@ -177,7 +177,7 @@ describe('entities:resolve:create-unresolved', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should add created authors to created works', done => {
@@ -199,7 +199,7 @@ describe('entities:resolve:create-unresolved', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should create a work entity from the edition seed', done => {
@@ -219,7 +219,7 @@ describe('entities:resolve:create-unresolved', () => {
       work.labels[dutchLangCode].should.equal(title)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should not create works without labels', done => {

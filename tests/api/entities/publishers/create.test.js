@@ -1,7 +1,6 @@
 require('should')
 const { createEdition, createPublisher } = require('../../fixtures/entities')
 const { updateClaim } = require('../../utils/entities')
-const { undesiredErr } = require('../../utils/utils')
 
 describe('entities:publishers:create', () => {
   it('should create a local publisher entity', done => {
@@ -10,7 +9,7 @@ describe('entities:publishers:create', () => {
       publisherDoc.type.should.equal('publisher')
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should update an edition claim with a local publisher entity', done => {
@@ -26,6 +25,6 @@ describe('entities:publishers:create', () => {
         .then(res => done())
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })

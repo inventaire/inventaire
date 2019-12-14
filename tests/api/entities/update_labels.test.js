@@ -1,6 +1,6 @@
 const __ = require('config').universalPath
 const should = require('should')
-const { authReq, undesiredRes, undesiredErr } = require('../utils/utils')
+const { authReq, undesiredRes } = require('../utils/utils')
 const { createHuman } = require('../fixtures/entities')
 const { getByUri, updateLabel } = require('../utils/entities')
 const randomString = __.require('lib', 'utils/random_string')
@@ -18,7 +18,7 @@ describe('entities:update-labels', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should update without lang parameter, english as default', done => {
@@ -36,7 +36,7 @@ describe('entities:update-labels', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should accept an entity id instead of uri', done => {
@@ -55,7 +55,7 @@ describe('entities:update-labels', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should update a label', done => {
@@ -69,7 +69,7 @@ describe('entities:update-labels', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should trim a label', done => {
@@ -85,7 +85,7 @@ describe('entities:update-labels', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject an update with an invalid lang', done => {
@@ -98,7 +98,7 @@ describe('entities:update-labels', () => {
         err.body.status_verbose.should.startWith('invalid lang')
         done()
       })
-      .catch(undesiredErr(done))
+      .catch(done)
   })
 
   it('should reject an update with an invalid value', done => {
@@ -110,7 +110,7 @@ describe('entities:update-labels', () => {
         err.body.status_verbose.should.startWith('invalid value')
         done()
       })
-      .catch(undesiredErr(done))
+      .catch(done)
   })
 
   it('should reject an up-to-date value', done => {
@@ -118,7 +118,7 @@ describe('entities:update-labels', () => {
     humanPromise
     .then(human => {
       updateLabel(human._id, 'en', value)
-      .catch(undesiredErr(done))
+      .catch(done)
       .then(() => updateLabel(human._id, 'en', value))
       .then(undesiredRes(done))
       .catch(err => {
@@ -127,7 +127,7 @@ describe('entities:update-labels', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should accept rapid updates on the same entity', done => {
@@ -146,6 +146,6 @@ describe('entities:update-labels', () => {
         })
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 })

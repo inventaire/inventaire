@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const should = require('should')
 const { Promise } = __.require('lib', 'promises')
-const { authReq, undesiredErr, undesiredRes } = require('../utils/utils')
+const { authReq, undesiredRes } = require('../utils/utils')
 const randomString = __.require('lib', './utils/random_string')
 const { getByUris, merge, revertMerge, updateLabel, addClaim } = require('../utils/entities')
 const { createWork, createHuman, createWorkWithAuthor } = require('../fixtures/entities')
@@ -25,7 +25,7 @@ describe('entities:revert-merge', () => {
       err.statusCode.should.equal(400)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should reject invalid prefix', done => {
@@ -36,7 +36,7 @@ describe('entities:revert-merge', () => {
       err.statusCode.should.equal(400)
       done()
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should revert merge two entities with an inv URI', done => {
@@ -59,7 +59,7 @@ describe('entities:revert-merge', () => {
         })
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should revert claims transfer', done => {
@@ -84,7 +84,7 @@ describe('entities:revert-merge', () => {
         })
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should revert labels transfer', done => {
@@ -106,7 +106,7 @@ describe('entities:revert-merge', () => {
         })
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should revert claim transfers, even when several patches away', done => {
@@ -134,7 +134,7 @@ describe('entities:revert-merge', () => {
         })
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should revert labels transfer', done => {
@@ -159,7 +159,7 @@ describe('entities:revert-merge', () => {
         })
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should revert redirected claims', done => {
@@ -179,7 +179,7 @@ describe('entities:revert-merge', () => {
         done()
       })
     })
-    .catch(undesiredErr(done))
+    .catch(done)
   })
 
   it('should restore removed human placeholders', done => {
