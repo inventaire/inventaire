@@ -22,7 +22,7 @@ module.exports = (req, res) => {
     const { name, description, position } = params
     let { searchable } = params
 
-    if (searchable == null) { searchable = true }
+    if (searchable == null) searchable = true
 
     return groups_.create({
       name,
@@ -31,8 +31,8 @@ module.exports = (req, res) => {
       position: position || null,
       creatorId: req.user._id
     })
-    .then(responses_.Send(res))
-    .then(Track(req, [ 'groups', 'create' ]))
   })
+  .then(responses_.Send(res))
+  .then(Track(req, [ 'groups', 'create' ]))
   .catch(error_.Handler(req, res))
 }

@@ -13,6 +13,7 @@ const getGroup = groupId => {
 }
 
 const createGroup = name => {
+  name = name || groupName()
   return authReq('post', `${endpointBase}?action=create`, {
     name,
     position: [ 1, 1 ],
@@ -39,7 +40,7 @@ const addMember = (groupPromise, memberPromise) => {
 }
 
 const createAndAddMember = memberPromise => {
-  return createGroup(groupName())
+  return createGroup()
   .then(group => {
     return customAuthReq(memberPromise, 'put', '/api/groups?action=request', { group: group._id })
     .then(() => {

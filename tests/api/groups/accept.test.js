@@ -3,7 +3,7 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
 const { authReq, authReqB, undesiredRes, getUserC, getUserGetter, customAuthReq } = require('../utils/utils')
-const { groupPromise, getGroup } = require('../fixtures/groups')
+const { groupPromise, createGroup, getGroup } = require('../fixtures/groups')
 const endpoint = '/api/groups?action=accept'
 const { Promise } = __.require('lib', 'promises')
 const { humanName } = require('../fixtures/entities')
@@ -50,24 +50,19 @@ describe('groups:update:accept', () => {
     .catch(done)
   })
 
-  it('should add a member when user is accepting an invite', done => {
-    const userPromise = getUserGetter(humanName(), false)()
-
-    Promise.all([ groupPromise, userPromise ])
-    .spread((group, user) => {
-      const { _id: userId } = user
-      return authReq('put', '/api/groups?action=invite', { user: userId, group: group._id })
-      .then(() => {
-        const memberCount = group.members.length
-        return customAuthReq(userPromise, 'put', endpoint, { user: userId, group: group._id })
-        .then(() => getGroup(group._id))
-        .then(updatedGroup => {
-          updatedGroup.members.length.should.equal(memberCount + 1)
-          updatedGroup.members.map(_.property('user')).should.containEql(userId)
-          done()
-        })
-      })
-    })
-    .catch(done)
+  it('should add a member when user is accepting an invite', async () => {
+    // Re-creating a group instead of using groupPromise,
+    // to be isolated from other tests
+    const group = await createGroup()
+    const user = await getUserGetter(humanName(), false)()
+    const { _id: userId } = user
+    const { _id: groupId } = group
+    const memberCount = group.members.length
+    await authReq('put', '/api/groups?action=invite', { user: userId, group: groupId })
+    await customAuthReq(user, 'put', endpoint, { user: userId, group: groupId })
+    const updatedGroup = await getGroup(group._id)
+    updatedGroup.members.length.should.equal(memberCount + 1)
+    const membersIds = _.map(updatedGroup.members, 'user')
+    membersIds.should.containEql(userId)
   })
 })

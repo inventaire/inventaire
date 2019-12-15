@@ -39,6 +39,9 @@ const request = (method, endpoint, body, cookie) => {
 }
 
 const customAuthReq = (userPromise, method, endpoint, body) => {
+  // Also accept already resolved user docs with their cookie
+  if (userPromise._id && userPromise.cookie) userPromise = Promise.resolve(userPromise)
+
   return userPromise
   // Gets a user doc to which tests/api/fixtures/users added a cookie attribute
   .then(user => request(method, endpoint, body, user.cookie))

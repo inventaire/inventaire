@@ -7,7 +7,7 @@ const { findOneByEmail, byEmails } = __.require('controllers', 'user/lib/shared_
 const Invited = __.require('models', 'invited')
 const promises_ = __.require('lib', 'promises')
 const { makeRequest } = __.require('controllers', 'relations/lib/actions')
-const { invite: groupInvite } = __.require('controllers', 'groups/lib/groups')
+const groupAction = __.require('controllers', 'groups/lib/model_action')
 
 const invitations_ = module.exports = {
   findOneByEmail: findOneByEmail.bind(null, db),
@@ -72,7 +72,7 @@ const convertGroupsInvitations = (invitersGroups, newUserId) => {
   return Object.keys(invitersGroups)
   .map(groupId => {
     const inviterId = invitersGroups[groupId]
-    return groupInvite({ group: groupId, user: newUserId }, inviterId)
+    return groupAction('invite', { reqUserId: inviterId, group: groupId, user: newUserId })
     .catch(_.Error(`group invitation convertion err: ${inviterId}/${newUserId}`))
   })
 }

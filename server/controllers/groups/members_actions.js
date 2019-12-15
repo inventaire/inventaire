@@ -6,6 +6,7 @@ const modelAction = require('./lib/model_action')
 const membershipValidations = require('./lib/membership_validations')
 const { Track } = __.require('lib', 'track')
 const error_ = __.require('lib', 'error/error')
+const responses_ = __.require('lib', 'responses')
 
 const sanitization = {
   group: {},
@@ -19,15 +20,9 @@ module.exports = action => (req, res) => {
     _.log(params, `${action} group`)
 
     return membershipValidations[action](reqUserId, groupId, userId)
-    .then(modelAction(action).bind(null, params, reqUserId))
-    .then(addUpdateData(res))
-    .then(Track(req, [ 'groups', action ]))
+    .then(() => modelAction(action, params))
   })
+  .then(responses_.Ok(res))
+  .then(Track(req, [ 'groups', action ]))
   .catch(error_.Handler(req, res))
-}
-
-// Allow to pass an update object, with key/values to be updated on the model
-// as the results of update hooks
-const addUpdateData = res => (data = {}) => {
-  res.json({ ok: true, update: data.update })
 }

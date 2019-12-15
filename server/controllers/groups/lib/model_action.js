@@ -5,15 +5,13 @@ const radio = __.require('lib', 'radio')
 const initMembershipUpdateHooks = require('./membership_update_hooks')
 const db = __.require('couch', 'base')('groups')
 
-module.exports = action => {
-  const actionFn = membershipUpdate(db, action)
-  return actionFn
-}
-
-const membershipUpdate = (db, action) => (data, userId) => {
-  const { group: groupId, user: secondaryUserId } = data
-  return db.update(groupId, Group[action].bind(null, userId, secondaryUserId))
-  .then(() => radio.emit(`group:${action}`, groupId, userId, secondaryUserId))
+module.exports = (action, params) => {
+  const { reqUserId, group: groupId, user: secondaryUserId } = params
+  const docUpdateFn = Group[action].bind(null, reqUserId, secondaryUserId)
+  return db.update(groupId, docUpdateFn)
+  .then(() => {
+    radio.emit(`group:${action}`, groupId, reqUserId, secondaryUserId)
+  })
 }
 
 initMembershipUpdateHooks()
