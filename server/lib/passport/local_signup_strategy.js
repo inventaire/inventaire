@@ -1,9 +1,9 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const user_ = __.require('controllers', 'user/lib/user')
 const { track } = __.require('lib', 'track')
 const User = __.require('models', 'user')
 const headers_ = __.require('lib', 'headers')
+const createUser = __.require('controllers', 'user/lib/create')
 
 const { Strategy: LocalStrategy } = require('passport-local')
 
@@ -12,7 +12,7 @@ const options = { passReqToCallback: true }
 const verify = (req, username, password, done) => {
   const { email } = req.body
   const language = findLanguage(req)
-  return user_.create(username, email, 'local', language, password)
+  return createUser(username, email, 'local', language, password)
   .then(user => {
     if (user) {
       done(null, user)

@@ -2,6 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const Group = __.require('models', 'group')
+const db = __.require('couch', 'base')('groups')
 
 // Working around the circular dependency
 let groups_
@@ -26,7 +27,7 @@ module.exports = {
     // TODO: check if userCanLeave
     return groups_.byUser(userId)
     .map(removeUser.bind(null, userId))
-    .then(groups_.db.bulk)
+    .then(db.bulk)
   }
 }
 

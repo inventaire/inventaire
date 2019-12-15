@@ -5,11 +5,7 @@ const promises_ = __.require('lib', 'promises')
 const User = __.require('models', 'user')
 const isReservedWord = require('./is_reserved_word')
 const error_ = __.require('lib', 'error/error')
-
-// Working around circular dependencies
-let user_
-const lateRequire = () => { user_ = require('./user') }
-setTimeout(lateRequire, 0)
+const user_ = require('./user')
 
 module.exports = {
   username: (username, currentUsername) => {

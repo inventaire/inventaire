@@ -1,5 +1,6 @@
 const __ = require('config').universalPath
 const user_ = __.require('controllers', 'user/lib/user')
+const { areFriendsOrGroupCoMembers } = __.require('controllers', 'user/lib/relations_status')
 const promises_ = __.require('lib', 'promises')
 
 module.exports = (userId, authentifiedUserPromise) => {
@@ -30,7 +31,7 @@ const getAccessLevel = (userId, authentifiedUserPromise) => {
 
     if (requesterId === userId) return 'private'
 
-    return user_.areFriendsOrGroupCoMembers(userId, requester._id)
+    return areFriendsOrGroupCoMembers(userId, requester._id)
     .then(bool => bool ? 'network' : 'public')
   })
 }

@@ -4,18 +4,16 @@ const _ = __.require('builders', 'utils')
 const promises_ = __.require('lib', 'promises')
 const error_ = __.require('lib', 'error/error')
 const assert_ = __.require('utils', 'assert_types')
-
 const couch_ = __.require('lib', 'couch')
 const User = __.require('models', 'user')
 const { byEmail, byEmails, findOneByEmail } = require('./shared_user_handlers')
 const { omitPrivateData } = require('./authorized_user_data_pickers')
 const { BasicUpdater } = __.require('lib', 'doc_updates')
-
 const db = __.require('couch', 'base')('users')
 const geo = require('./geo/geo')()
+const { getNetworkIds } = __.require('controllers', 'user/lib/relations_status')
 
-const user_ = {
-  db,
+const user_ = module.exports = {
   byId: db.get,
   byIds: db.fetch,
   byEmail: byEmail.bind(null, db),
@@ -84,7 +82,7 @@ const user_ = {
   getUsersAuthorizedData: (usersDocsPromise, reqUserId, extraAttribute) => {
     return promises_.all([
       usersDocsPromise,
-      user_.getNetworkIds(reqUserId)
+      getNetworkIds(reqUserId)
     ])
     .spread((usersDocs, networkIds) => _.compact(usersDocs)
     .filter(user => user.type !== 'deletedUser')
@@ -115,6 +113,10 @@ const user_ = {
 
   makeUserAdmin: userId => db.update(userId, BasicUpdater('admin', true)),
 
+  setOauthTokens: (userId, provider, data) => {
+    return db.update(userId, User.setOauthTokens(provider, data))
+  },
+
   nearby: (userId, meterRange, strict) => {
     return user_.byId(userId)
     .then(user => {
@@ -130,7 +132,9 @@ const user_ = {
       })
     })
     .catch(_.ErrorRethrow('nearby err'))
-  }
+  },
+
+  byPosition: __.require('lib', 'by_position')(db, 'users')
 }
 
 const findNearby = (latLng, meterRange, iterations = 0, strict = false) => {
@@ -155,25 +159,3 @@ const indexByLowerCasedUsername = (users, user) => {
   users[lowercasedUsername] = user
   return users
 }
-
-const token_ = require('./token')
-
-user_.updateEmail = (user, email) => {
-  user = User.updateEmail(user, email)
-  return db.put(user)
-  // sendValidationEmail doesn't need to access the last _rev
-  // so it's ok to pass the user as it was before the database was updated
-  .then(() => token_.sendValidationEmail(user))
-}
-
-user_.setOauthTokens = (userId, provider, data) => db.update(userId, User.setOauthTokens(provider, data))
-
-user_.availability = require('./availability')
-user_.create = require('./create')
-user_.byPosition = __.require('lib', 'by_position')(db, 'users')
-
-const deleteUser = require('./delete')
-const relationsStatus = require('./relations_status')
-const summary_ = require('./summary')
-
-module.exports = Object.assign(user_, token_, relationsStatus, deleteUser, summary_)

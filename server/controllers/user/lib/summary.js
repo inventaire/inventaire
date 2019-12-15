@@ -16,8 +16,6 @@ const waitingForSummary = limit => {
 }
 
 module.exports = {
-  waitingForSummary,
-
   findOneWaitingForSummary: () => {
     return waitingForSummary(1)
     .then(couch_.firstDoc)

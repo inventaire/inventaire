@@ -1,7 +1,7 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const items_ = __.require('controllers', 'items/lib/items')
-const relations_ = __.require('controllers', 'relations/lib/queries')
+const { getNetworkIds } = __.require('controllers', 'user/lib/relations_status')
 const responses_ = __.require('lib', 'responses')
 const error_ = __.require('lib', 'error/error')
 const promises_ = __.require('lib', 'promises')
@@ -35,11 +35,6 @@ module.exports = (req, res) => {
   })
   .then(responses_.Send(res))
   .catch(error_.Handler(req, res))
-}
-
-const getNetworkIds = reqUserId => {
-  if (reqUserId) return relations_.getUserFriendsAndCoGroupsMembers(reqUserId)
-  else return []
 }
 
 const filterAuthorizedItems = reqUserId => (items, networkIds) => {

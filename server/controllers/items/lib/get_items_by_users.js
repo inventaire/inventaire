@@ -1,9 +1,9 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
-const user_ = __.require('controllers', 'user/lib/user')
 const promises_ = __.require('lib', 'promises')
 const { addAssociatedData, Paginate } = require('./queries_commons')
 const getByAccessLevel = require('./get_by_access_level')
+const { getRelationsStatuses } = __.require('controllers', 'user/lib/relations_status')
 
 module.exports = (page, usersIds) => {
   // Allow to pass users ids either through the page object
@@ -29,7 +29,7 @@ const getRelations = (reqUserId, usersIds) => {
 
   if (usersIds.length === 0) return promises_.resolve(relations)
 
-  return user_.getRelationsStatuses(reqUserId, usersIds)
+  return getRelationsStatuses(reqUserId, usersIds)
   .spread((friends, coGroupMembers, publik) => {
     relations.network = friends.concat(coGroupMembers)
     relations.public = publik

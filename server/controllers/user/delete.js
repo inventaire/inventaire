@@ -3,12 +3,12 @@ const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
 const promises_ = __.require('lib', 'promises')
-const user_ = __.require('controllers', 'user/lib/user')
 const relations_ = __.require('controllers', 'relations/lib/queries')
 const deleteUserItems = __.require('controllers', 'items/lib/delete_user_items')
 const groups_ = __.require('controllers', 'groups/lib/groups')
 const notifs_ = __.require('lib', 'notifications')
 const { Track } = __.require('lib', 'track')
+const { softDeleteById } = __.require('controllers', 'user/lib/delete')
 
 module.exports = (req, res) => {
   if (req.user == null) return error_.unauthorizedApiAccess(req, res)
@@ -16,7 +16,7 @@ module.exports = (req, res) => {
 
   _.warn(req.user, 'deleting user')
 
-  user_.softDeleteById(reqUserId)
+  softDeleteById(reqUserId)
   .then(cleanEverything.bind(null, reqUserId))
   // triggering track before logging out
   // to get access to req.user before it's cleared

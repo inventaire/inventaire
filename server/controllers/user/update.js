@@ -1,9 +1,10 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
-
 const { attributes, validations } = __.require('models', 'user')
 const { updatable, concurrencial, acceptNullValue } = attributes
-const user_ = __.require('controllers', 'user/lib/user')
+const updateEmail = __.require('controllers', 'user/lib/update_email')
+const db = __.require('couch', 'base')('users')
+const availability_ = __.require('controllers', 'user/lib/availability')
 const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
 const { basicUpdater } = __.require('lib', 'doc_updates')
@@ -52,7 +53,7 @@ module.exports = (req, res) => {
 
   if (concurrencial.includes(attribute)) {
     // checks for validity and availability (+ reserve words for username)
-    return user_.availability[attribute](value, currentValue)
+    return availability_[attribute](value, currentValue)
     .then(() => updateAttribute(user, attribute, value))
     .then(responses_.Ok(res))
     .then(Track(req, [ 'user', 'update' ]))
@@ -64,8 +65,8 @@ module.exports = (req, res) => {
 
 const updateAttribute = (user, attribute, value) => {
   if (attribute === 'email') {
-    return user_.updateEmail(user, value)
+    return updateEmail(user, value)
   } else {
-    return user_.db.update(user._id, basicUpdater.bind(null, attribute, value))
+    return db.update(user._id, basicUpdater.bind(null, attribute, value))
   }
 }

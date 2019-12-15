@@ -3,15 +3,11 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const items_ = __.require('controllers', 'items/lib/items')
 const User = __.require('models', 'user')
-
-// Working around the circular dependency
-let user_
-const lateRequire = () => { user_ = __.require('controllers', 'user/lib/user') }
-setTimeout(lateRequire, 0)
+const db = __.require('couch', 'base')('users')
 
 module.exports = userId => {
   return getItemsCounts(userId)
-  .then(itemsCounts => user_.db.update(userId, User.updateItemsCounts(itemsCounts)))
+  .then(itemsCounts => db.update(userId, User.updateItemsCounts(itemsCounts)))
   .then(() => _.info(`${userId} items counts updated`))
   .catch(_.Error('user updateSnapshotItemsCounts err'))
 }

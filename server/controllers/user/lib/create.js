@@ -6,14 +6,8 @@ const preventMultiAccountsCreation = require('./prevent_multi_accounts_creation'
 const invitations_ = __.require('controllers', 'invitations/lib/invitations')
 const User = __.require('models', 'user')
 const db = __.require('couch', 'base')('users')
-
-// Working around circular dependencies
-let token_, availability_
-const lateRequire = () => {
-  token_ = require('./token')
-  availability_ = require('./availability')
-}
-setTimeout(lateRequire, 0)
+const token_ = require('./token')
+const availability_ = require('./availability')
 
 module.exports = (username, email, creationStrategy, language, password) => {
   return promises_.try(preventMultiAccountsCreation.bind(null, username))

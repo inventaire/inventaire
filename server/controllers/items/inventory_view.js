@@ -4,19 +4,21 @@ const promises_ = __.require('lib', 'promises')
 const responses_ = __.require('lib', 'responses')
 const error_ = __.require('lib', 'error/error')
 const items_ = require('./lib/items')
-const user_ = __.require('controllers', 'user/lib/user')
+const { getNetworkIds } = __.require('controllers', 'user/lib/relations_status')
 const getEntitiesByUris = __.require('controllers', 'entities/lib/get_entities_by_uris')
 const getByAccessLevel = require('./lib/get_by_access_level')
 
 module.exports = (req, res) => {
   const { _id: reqUserId } = req.user
 
-  // get all network items
-  return user_.getNetworkIds(reqUserId)
-  .then(ids => promises_.all([
-    items_.byOwner(reqUserId),
-    getByAccessLevel.network(ids, reqUserId)
-  ]))
+  // Get all network items
+  return getNetworkIds(reqUserId)
+  .then(ids => {
+    return promises_.all([
+      items_.byOwner(reqUserId),
+      getByAccessLevel.network(ids, reqUserId)
+    ])
+  })
   .then(_.flatten)
   .then(items => {
     const uris = _.uniq(items.map(_.property('entity')))
