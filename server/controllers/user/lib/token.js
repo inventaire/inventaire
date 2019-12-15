@@ -8,14 +8,10 @@ const { tokenDaysToLive } = CONFIG
 const { WrappedUpdater } = __.require('lib', 'doc_updates')
 const randomString = __.require('lib', 'utils/random_string')
 const testToken = pw_.verify
+const user_ = require('./user')
 const db = __.require('couch', 'base')('users')
 const wrappedUpdate = WrappedUpdater(db)
 const tokenLength = 32
-
-// Working around circular dependencies
-let user_
-const lateRequire = () => { user_ = require('./user') }
-setTimeout(lateRequire, 0)
 
 module.exports = {
   tokenLength,

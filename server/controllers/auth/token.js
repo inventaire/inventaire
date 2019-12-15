@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const ActionsControllers = __.require('lib', 'actions_controllers')
-const user_ = __.require('controllers', 'user/lib/user')
+const token_ = __.require('controllers', 'user/lib/token')
 const sanitize = __.require('lib', 'sanitize/sanitize')
 const error_ = __.require('lib', 'error/error')
 const passport_ = __.require('lib', 'passport/passport')
@@ -11,13 +11,13 @@ const setLoggedInCookie = require('./lib/set_logged_in_cookie')
 const sanitization = {
   email: {},
   token: {
-    length: user_.tokenLength
+    length: token_.tokenLength
   }
 }
 
 const confirmEmailValidity = (req, res) => {
   sanitize(req, res, sanitization)
-  .then(params => user_.confirmEmailValidity(params.email, params.token))
+  .then(params => token_.confirmEmailValidity(params.email, params.token))
   .then(redirectValidEmail.bind(null, res, true))
   .catch(redirectValidEmail.bind(null, res, false))
 }

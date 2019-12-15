@@ -1,6 +1,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const user_ = __.require('controllers', 'user/lib/user')
+const token_ = __.require('controllers', 'user/lib/token')
 const promises_ = __.require('lib', 'promises')
 const responses_ = __.require('lib', 'responses')
 const error_ = __.require('lib', 'error/error')
@@ -26,5 +26,5 @@ const sendEmailValidation = user => {
     throw error_.new('email was already validated', 400)
   }
 
-  return user_.sendValidationEmail(user)
+  return token_.sendValidationEmail(user)
 }

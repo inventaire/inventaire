@@ -4,11 +4,7 @@ const _ = __.require('builders', 'utils')
 const couch_ = __.require('lib', 'couch')
 const User = __.require('models', 'user')
 const db = __.require('couch', 'base')('users')
-
-// Working around circular dependencies
-let user_
-const lateRequire = () => { user_ = require('./user') }
-setTimeout(lateRequire, 0)
+const user_ = require('./user')
 
 const deleteUser = user => db.del(user._id, user._rev)
 

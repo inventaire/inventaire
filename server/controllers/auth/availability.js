@@ -1,8 +1,8 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const error_ = __.require('lib', 'error/error')
-const user_ = __.require('controllers', 'user/lib/user')
 const sanitize = __.require('lib', 'sanitize/sanitize')
+const availability_ = __.require('controllers', 'user/lib/availability')
 
 const usernameAvailabilitySanitization = {
   username: {}
@@ -18,7 +18,7 @@ module.exports = {
     .then(params => {
       const { username } = params
       // Checks for validity, availability, reserved words
-      return user_.availability.username(username)
+      return availability_.username(username)
       .then(() => res.json({ username, status: 'available' }))
     })
     .catch(error_.Handler(req, res))
@@ -29,7 +29,7 @@ module.exports = {
     .then(params => {
       const { email } = params
       // Checks for validity, availability
-      return user_.availability.email(email)
+      return availability_.email(email)
       .then(() => res.json({ email, status: 'available' }))
     })
     .catch(error_.Handler(req, res))

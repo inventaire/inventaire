@@ -1,6 +1,7 @@
 const __ = require('config').universalPath
 const items_ = __.require('controllers', 'items/lib/items')
 const user_ = __.require('controllers', 'user/lib/user')
+const { areFriendsOrGroupCoMembers } = __.require('controllers', 'user/lib/relations_status')
 const promises_ = __.require('lib', 'promises')
 const responses_ = __.require('lib', 'responses')
 const error_ = __.require('lib', 'error/error')
@@ -27,11 +28,10 @@ module.exports = (req, res) => {
 const getItemsFromUser = (reqUserId, uri) => user => {
   const { _id: ownerId } = user
   return getAuthorizationLevel(reqUserId, ownerId)
-  .then(listingKey => items_.byOwnersAndEntitiesAndListings([ ownerId ], [ uri ], listingKey, reqUserId)
-  .then(items => ({
-    users: [ user ],
-    items
-  })))
+  .then(listingKey => {
+    return items_.byOwnersAndEntitiesAndListings([ ownerId ], [ uri ], listingKey, reqUserId)
+    .then(items => ({ users: [ user ], items }))
+  })
 }
 
 const getAuthorizationLevel = (reqUserId, ownerId) => {
@@ -39,6 +39,6 @@ const getAuthorizationLevel = (reqUserId, ownerId) => {
 
   if (reqUserId === ownerId) return promises_.resolve('user')
 
-  return user_.areFriendsOrGroupCoMembers(reqUserId, ownerId)
-  .then(bool => { if (bool) { return 'network' } else { return 'public' } })
+  return areFriendsOrGroupCoMembers(reqUserId, ownerId)
+  .then(bool => bool === true ? 'network' : 'public')
 }

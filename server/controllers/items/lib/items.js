@@ -3,7 +3,6 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const Item = __.require('models', 'item')
 const listingsPossibilities = Item.attributes.constrained.listing.possibilities
-const error_ = __.require('lib', 'error/error')
 const assert_ = __.require('utils', 'assert_types')
 const { BasicUpdater } = __.require('lib', 'doc_updates')
 const promises_ = __.require('lib', 'promises')
@@ -12,18 +11,12 @@ const { filterPrivateAttributes } = require('./filter_private_attributes')
 const { maxKey } = __.require('lib', 'couch')
 const listingsLists = require('./listings_lists')
 const snapshot_ = require('./snapshot/snapshot')
-const getEntityByUri = __.require('controllers', 'entities/lib/get_entity_by_uri')
 const getByAccessLevel = require('./get_by_access_level')
-
-// Working around the circular dependency
-let user_
-const lateRequire = () => { user_ = __.require('controllers', 'user/lib/user') }
-setTimeout(lateRequire, 0)
-
+const user_ = __.require('controllers', 'user/lib/user')
 const db = __.require('couch', 'base')('items')
+const validateEntityType = require('./validate_entity_type')
 
 const items_ = module.exports = {
-  db,
   byId: db.get,
   byIds: db.fetch,
   byOwner: ownerId => {
@@ -167,18 +160,3 @@ const filterWithImage = assertImage => items => {
 }
 
 const itemWithImage = item => item.snapshot['entity:image']
-
-const validateEntityType = item => getEntityByUri({ uri: item.entity })
-.then(entity => {
-  if (entity == null) throw error_.new('entity not found', 400, { item })
-
-  const { type } = entity
-
-  if (!whitelistedEntityTypes.includes(type)) {
-    throw error_.new('invalid entity type', 400, { item, type })
-  }
-
-  return item
-})
-
-const whitelistedEntityTypes = [ 'edition', 'work' ]

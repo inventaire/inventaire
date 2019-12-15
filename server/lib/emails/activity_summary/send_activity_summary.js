@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
-const user_ = __.require('controllers', 'user/lib/user')
+const { justReceivedActivitySummary } = __.require('controllers', 'user/lib/summary')
 const transporter_ = require('../transporter')
 const buildEmail = require('./build_email')
 const promises_ = __.require('lib', 'promises')
@@ -13,7 +13,7 @@ let updateUser
 if (disableUserUpdate) {
   updateUser = userId => _.warn(userId, 'disabledUserUpdate')
 } else {
-  updateUser = user_.justReceivedActivitySummary
+  updateUser = justReceivedActivitySummary
 }
 
 module.exports = user => {

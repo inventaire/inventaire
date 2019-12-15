@@ -2,6 +2,7 @@ const CONFIG = require('config')
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const user_ = __.require('controllers', 'user/lib/user')
+const { openPasswordUpdateWindow } = __.require('controllers', 'user/lib/token')
 const pw_ = __.require('lib', 'crypto').passwords
 const error_ = __.require('lib', 'error/error')
 const loginAttempts = require('./login_attempts')
@@ -36,7 +37,7 @@ const returnIfValid = (done, token, email, user) => {
   .then(valid => {
     if (valid) {
       console.log('valid', valid)
-      return user_.openPasswordUpdateWindow(user)
+      return openPasswordUpdateWindow(user)
       .then(_.Log('clearToken res'))
       .then(() => done(null, user))
     } else {

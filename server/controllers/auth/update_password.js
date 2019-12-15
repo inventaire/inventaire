@@ -2,7 +2,7 @@ const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
-const user_ = __.require('controllers', 'user/lib/user')
+const db = __.require('couch', 'base')('users')
 const promises_ = __.require('lib', 'promises')
 const User = __.require('models', 'user')
 const pw_ = __.require('lib', 'crypto').passwords
@@ -58,7 +58,7 @@ const verifyCurrentPassword = (user, currentPassword) => pw_.verify(user.passwor
 
 const updateUserPassword = (userId, user, newHash) => {
   const updateFn = User.updatePassword.bind(null, user, newHash)
-  return user_.db.update(userId, updateFn)
+  return db.update(userId, updateFn)
 }
 
 const testOpenResetPasswordWindow = resetPassword => {

@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
-const user_ = __.require('controllers', 'user/lib/user')
+const { findOneWaitingForSummary } = __.require('controllers', 'user/lib/summary')
 const sendActivitySummary = require('./send_activity_summary')
 
 const { oneHour } = __.require('lib', 'times')
@@ -14,7 +14,7 @@ module.exports = () => {
 }
 
 const sendOneUserSummary = () => {
-  return user_.findOneWaitingForSummary()
+  return findOneWaitingForSummary()
   .then(sendActivitySummary)
   .catch(_.Error('waitingForSummary err'))
 }
