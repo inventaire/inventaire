@@ -16,7 +16,6 @@ const { getUrlFromImageHash } = __.require('lib', 'images')
 const { validateProperty } = require('./properties/validations')
 
 const entities_ = module.exports = {
-  db,
   byId: db.get,
 
   byIds: ids => {

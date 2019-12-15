@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const tasks_ = require('./lib/tasks')
-const entities_ = __.require('controllers', 'entities/lib/entities')
+const db = __.require('couch', 'base')('entities')
 const promises_ = __.require('lib', 'promises')
 const responses_ = __.require('lib', 'responses')
 const { prefixifyInv } = __.require('controllers', 'entities/lib/prefix')
@@ -42,7 +42,7 @@ const addEntitiesToQueueSequentially = refresh => {
 
 const getNextInvHumanUrisBatch = pagination => {
   const { offset } = pagination
-  return entities_.db.view('entities', 'byClaim', {
+  return db.view('entities', 'byClaim', {
     key: [ 'wdt:P31', 'wd:Q5' ],
     limit: batchLength,
     skip: offset

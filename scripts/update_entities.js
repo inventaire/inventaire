@@ -16,8 +16,8 @@ const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const assert_ = __.require('utils', 'assert_types')
-const entities_ = __.require('controllers', 'entities/lib/entities')
-const patches_ = __.require('controllers', 'entities/lib/patches')
+const entitiesDb = __.require('couch', 'base')('entities')
+const patchesDb = __.require('couch', 'base')('patches')
 const docDiff = __.require('couchdb', 'doc_diffs')
 const Patch = __.require('models', 'patch')
 const userId = __.require('couch', 'hard_coded_documents').users.updater._id
@@ -53,12 +53,12 @@ const updateSequentially = () => {
   })
 }
 
-const postEntitiesBulk = updatesData => entities_.db.bulk(_.map(updatesData, 'updatedDoc'))
+const postEntitiesBulk = updatesData => entitiesDb.bulk(_.map(updatesData, 'updatedDoc'))
 
 const postPatchesBulk = updatesData => entityBulkRes => {
   const entityResById = _.keyBy(entityBulkRes, 'id')
   const patches = updatesData.map(buildPatches(entityResById))
-  return patches_.db.bulk(patches)
+  return patchesDb.bulk(patches)
 }
 
 const buildPatches = entityResById => updateData => {

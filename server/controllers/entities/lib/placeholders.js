@@ -10,6 +10,7 @@ const _ = __.require('builders', 'utils')
 const entities_ = require('./entities')
 const Entity = __.require('models', 'entity')
 const radio = __.require('lib', 'radio')
+const db = __.require('couch', 'base')('entities')
 
 const PlaceholderHandler = actionName => {
   const modelFnName = `${actionName}Placeholder`
@@ -17,7 +18,7 @@ const PlaceholderHandler = actionName => {
     _.warn(entityId, `${modelFnName} entity`)
     // Using db.get anticipates a possible future where db.byId filters-out
     // non type='entity' docs, thus making type='removed:placeholder' not accessible
-    return entities_.db.get(entityId)
+    return db.get(entityId)
     .then(currentDoc => {
       let updatedDoc
       try {
