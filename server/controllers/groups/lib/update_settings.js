@@ -31,8 +31,7 @@ module.exports = (data, userId) => {
       return db.put(updatedDoc)
       .then(() => {
         radio.emit('group:update', notifData)
-        hooksUpdates[attribute] = value
-        return { update: hooksUpdates }
+        return { hooksUpdates }
       })
     })
   })

@@ -109,10 +109,10 @@ describe('invitations:by-emails', () => {
           emails: 'a@foo.org',
           group: group._id
         })
-        .then(res => {
-          res.emails[0].should.equal('a@foo.org')
-          done()
-        })
+      })
+      .then(res => {
+        res.emails[0].should.equal('a@foo.org')
+        done()
       })
       .catch(done)
     })

@@ -1,6 +1,6 @@
 require('should')
 const { authReq, authReqB, authReqC } = require('../utils/utils')
-const { groupPromise, getGroup, createGroup, groupName } = require('../fixtures/groups')
+const { groupPromise, getGroup, createGroup } = require('../fixtures/groups')
 const endpoint = '/api/groups?action=request'
 
 describe('groups:update:request', () => {
@@ -26,7 +26,7 @@ describe('groups:update:request', () => {
   })
 
   it('should add user to requesters list', done => {
-    createGroup(groupName())
+    createGroup()
     .then(group => {
       const requestCount = group.invited.length
       return authReqC('put', endpoint, { group: group._id })

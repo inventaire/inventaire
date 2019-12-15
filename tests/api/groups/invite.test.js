@@ -1,6 +1,6 @@
 require('should')
 const { authReq, authReqB, undesiredRes } = require('../utils/utils')
-const { groupPromise, createGroup, groupName, getGroup } = require('../fixtures/groups')
+const { groupPromise, createGroup, getGroup } = require('../fixtures/groups')
 const endpoint = '/api/groups?action=invite'
 
 describe('groups:update:invite', () => {
@@ -16,7 +16,7 @@ describe('groups:update:invite', () => {
   })
 
   it('should add an invited when invitor is admin', done => {
-    createGroup(groupName())
+    createGroup()
     .then(group => {
       const invitedCount = group.invited.length
       return authReq('put', endpoint, { user: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', group: group._id })
@@ -45,7 +45,7 @@ describe('groups:update:invite', () => {
   })
 
   it('reject if invitor is not group member', done => {
-    createGroup(groupName())
+    createGroup()
     .then(group => {
       return authReqB('put', endpoint, { user: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', group: group._id })
     })

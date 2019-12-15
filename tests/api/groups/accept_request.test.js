@@ -3,7 +3,7 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
 const { authReq, authReqC, undesiredRes, getUserGetter, customAuthReq } = require('../utils/utils')
-const { groupPromise, createGroup, groupName, getGroup } = require('../fixtures/groups')
+const { groupPromise, createGroup, getGroup } = require('../fixtures/groups')
 const endpoint = '/api/groups?action=accept-request'
 const { Promise } = __.require('lib', 'promises')
 const { humanName } = require('../fixtures/entities')
@@ -38,7 +38,7 @@ describe('groups:update:accept-request', () => {
   })
 
   it('reject if not admin user', done => {
-    createGroup(groupName())
+    createGroup()
     .then(group => {
       return authReqC('put', endpoint, { user: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', group: group._id })
     })

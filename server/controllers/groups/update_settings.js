@@ -16,22 +16,20 @@ const sanitization = {
 module.exports = (req, res) => {
   sanitize(req, res, sanitization)
   .then(params => {
-    // don't convert undefined action to an empty string
-    // it makes debugging confusing
-
     const { group: groupId, reqUserId } = params
     _.log(params, 'update group settings')
 
     return membershipValidations.updateSettings(reqUserId, groupId)
     .then(() => updateSettings(params, reqUserId))
-    .then(addUpdateData(res))
-    .then(Track(req, [ 'groups', 'update settings' ]))
   })
+  .then(respondWithUpdatedData(res))
+  .then(Track(req, [ 'groups', 'updateSettings' ]))
   .catch(error_.Handler(req, res))
 }
 
-// Allow to pass an update object, with key/values to be updated on the model
+// Allow to pass an update object, with key/values to be updated on the client-side model
 // as the results of update hooks
-const addUpdateData = res => (data = {}) => {
-  res.json({ ok: true, update: data.update })
+// Only current case: the slug might be updated after an update of the group name
+const respondWithUpdatedData = res => ({ hooksUpdates }) => {
+  res.json({ ok: true, update: hooksUpdates })
 }

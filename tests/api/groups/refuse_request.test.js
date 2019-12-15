@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
 const { authReq, authReqC, undesiredRes, customAuthReq, getUserGetter } = require('../utils/utils')
-const { createGroup, groupName, getGroup } = require('../fixtures/groups')
+const { createGroup, getGroup } = require('../fixtures/groups')
 const endpoint = '/api/groups?action=refuse-request'
 const { Promise } = __.require('lib', 'promises')
 const { humanName } = require('../fixtures/entities')
@@ -23,7 +23,7 @@ describe('groups:update:refuse-request', () => {
     const memberPromise = getUserGetter(humanName(), false)()
 
     Promise.all([
-      createGroup(groupName()),
+      createGroup(),
       memberPromise
     ])
     .spread((group, requester) => {
@@ -42,7 +42,7 @@ describe('groups:update:refuse-request', () => {
   })
 
   it('reject if not admin user', done => {
-    createGroup(groupName())
+    createGroup()
     .then(group => {
       return authReqC('put', endpoint, { user: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', group: group._id })
     })

@@ -90,8 +90,8 @@ const validateCancelRequest = (reqUserId, groupId) => {
 }
 
 module.exports = {
-  // /!\ groups_.userInvited returns a group doc, not a boolean
   invite: validateInvite,
+  // /!\ groups_.userInvited returns a group doc, not a boolean
   accept: groups_.userInvited,
   decline: groups_.userInvited,
   request: validateRequest,
