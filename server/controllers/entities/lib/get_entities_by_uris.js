@@ -18,32 +18,43 @@ const prefixes = Object.keys(getters)
 module.exports = params => {
   const { uris, list } = params
   assert_.array(uris)
-  const domains = {}
-
-  // validate per URI to be able to return a precise error message
-  for (const uri of uris) {
-    let errMessage
-    const [ prefix, id ] = uri.split(':')
-
-    if (!prefixes.includes(prefix)) {
-      errMessage = `invalid uri prefix: ${prefix} (uri: ${uri})`
-      return error_.reject(errMessage, 400, uri)
-    }
-
-    if (!validators[prefix](id)) {
-      errMessage = `invalid uri id: ${id} (uri: ${uri})`
-      return error_.reject(errMessage, 400, uri)
-    }
-
-    if (!domains[prefix]) { domains[prefix] = [] }
-    domains[prefix].push(id)
-  }
-
+  const domains = validateAndGetDomains(uris)
   const mergeResponses = list ? formatList : formatRichResults
 
   return getDomainsPromises(domains, params)
   .then(mergeResponses)
   .catch(_.ErrorRethrow(`getEntitiesByUris err: ${uris.join('|')}`))
+}
+
+const validateAndGetDomains = uris => {
+  // validate per URI to be able to return a precise error message
+  const domains = {}
+  uris.forEach(validateAndGetDomainFromUri(domains))
+  return domains
+}
+
+const validateAndGetDomainFromUri = domains => uri => {
+  const [ prefix, id ] = uri.split(':')
+
+  validatePrefix(prefix, uri)
+  validateId(prefix, id, uri)
+
+  if (!domains[prefix]) { domains[prefix] = [] }
+  domains[prefix].push(id)
+}
+
+const validateId = (prefix, id, uri) => {
+  if (!validators[prefix](id)) {
+    const errMessage = `invalid uri id: ${id} (uri: ${uri})`
+    return error_.reject(errMessage, 400, uri)
+  }
+}
+
+const validatePrefix = (prefix, uri) => {
+  if (!prefixes.includes(prefix)) {
+    const errMessage = `invalid uri prefix: ${prefix} (uri: ${uri})`
+    return error_.reject(errMessage, 400, uri)
+  }
 }
 
 const getDomainsPromises = (domains, params) => {
@@ -68,32 +79,31 @@ const formatRichResults = results => {
     redirects: {},
     notFound: []
   }
+  buildResponse(response, results)
+  response.entities = _.keyBy(response.entities, 'uri')
+  if (response.notFound.length === 0) delete response.notFound
+  return response
+}
 
+const buildResponse = (response, results) => {
   for (const result of results) {
     assert_.array(result.entities)
-    for (const entity of result.entities) {
-      if (entity.redirects) {
-        const { from, to } = entity.redirects
-        assert_.strings([ from, to ])
-        response.redirects[from] = to
-        delete entity.redirects
-      }
-    }
-
+    result.entities.forEach(deleteRedirects(response))
     // Concat all entities
     response.entities = response.entities.concat(result.entities)
-
     // Concat the list of not found URIs
     if (result.notFound) {
       response.notFound = response.notFound.concat(result.notFound)
     }
   }
-
-  response.entities = _.keyBy(response.entities, 'uri')
-
-  if (response.notFound.length === 0) delete response.notFound
-
-  return response
+}
+const deleteRedirects = response => entity => {
+  if (entity.redirects) {
+    const { from, to } = entity.redirects
+    assert_.strings([ from, to ])
+    response.redirects[from] = to
+    delete entity.redirects
+  }
 }
 
 const validators = {

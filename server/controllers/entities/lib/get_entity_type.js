@@ -6,19 +6,15 @@ const { types } = __.require('lib', 'wikidata/aliases')
 // If no type is found, try with the wdt:P279 (subclass of) claims array
 // (used for Wikidata entities only, as all inv entities have a known P31)
 module.exports = (wdtP31Array, wdtP279Array) => {
-  if (wdtP31Array == null) return
+  const type = getType(wdtP31Array) || getType(wdtP279Array)
+  if (type) { return type }
+}
 
-  for (const value of wdtP31Array) {
+const getType = wdtArray => {
+  if (wdtArray == null) return
+
+  for (const value of wdtArray) {
     const type = types[value]
-    // return as soon as we get a type
-    if (type) return type
-  }
-
-  if (wdtP279Array == null) return
-
-  for (const value of wdtP279Array) {
-    const type = types[value]
-    // return as soon as we get a type
     if (type) return type
   }
 }
