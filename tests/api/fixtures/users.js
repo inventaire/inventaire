@@ -11,7 +11,7 @@ const randomString = __.require('lib', './utils/random_string')
 
 const connect = (endpoint, userData) => rawRequest('post', { url: endpoint, body: userData })
 const signup = userData => connect(`${authEndpoint}?action=signup`, userData)
-const login = userData => {
+const loginOrSignup = userData => {
   return connect(`${authEndpoint}?action=login`, userData)
   .catch(err => {
     if (err.statusCode !== 401) throw err
@@ -36,11 +36,7 @@ const API = module.exports = {
       email: `${username}@adomain.org`
     }
 
-    // Try to login first if the username is given, as a user with this username
-    // might still exist if the database wasn't reset since the last test session
-    const authPromise = username ? login(userData) : signup(userData)
-
-    return authPromise
+    return loginOrSignup(userData)
     .then(parseCookie)
     .then(API.getUserWithCookie)
     .tap(setCustomData(customData))
@@ -73,7 +69,7 @@ const API = module.exports = {
     return faker.fake('{{name.firstName}}').replace(/\W/, '') + randomString(2)
   },
 
-  createUserEmail: () => { return faker.internet.email() }
+  createUserEmail: () => faker.internet.email()
 }
 
 const parseCookie = res => res.headers['set-cookie'].join(';')
@@ -93,6 +89,8 @@ const setCustomData = customData => user => {
   return sequentialUpdate
 }
 
-const setUserAttribute = (user, attribute, value) => request('put', '/api/user', { attribute, value }, user.cookie)
+const setUserAttribute = (user, attribute, value) => {
+  return request('put', '/api/user', { attribute, value }, user.cookie)
+}
 
 const refreshUser = user => API.getUserWithCookie(user.cookie)
