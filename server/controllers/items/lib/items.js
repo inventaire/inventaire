@@ -144,7 +144,7 @@ const items_ = module.exports = {
     return updateBookshelves(_.union, ids, bookshelves, userId)
   },
 
-  removeBookshelves: (ids, userId) => bookshelves => {
+  deleteBookshelves: (ids, userId) => bookshelves => {
     return updateBookshelves(_.difference, ids, bookshelves, userId)
   }
 }

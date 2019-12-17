@@ -11,14 +11,18 @@ const sanitization = {
   items: {}
 }
 
-module.exports = (req, res, next) => {
+module.exports = action => (req, res, next) => {
   sanitize(req, res, sanitization)
   .then(params => {
     const { id, items, reqUserId } = params
-    return bookshelves_.deleteItemsBookshelves([ id ], items, reqUserId)
+    // don't convert undefined action to an empty string
+    // it makes debugging confusing
+    if (action != null) { action = _.camelCase(action) }
+
+    return bookshelves_[action]([ id ], items, reqUserId)
     .then(_.KeyBy('_id'))
     .then(responses_.Wrap(res, 'bookshelves'))
-    .then(Track(req, [ 'bookshelf', 'add items' ]))
+    .then(Track(req, [ 'bookshelf', 'delete items' ]))
   })
   .catch(error_.Handler(req, res))
 }

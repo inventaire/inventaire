@@ -5,11 +5,11 @@ const { authReq, authReqB } = require('../utils/utils')
 const { createBookshelfWithItem } = require('../fixtures/bookshelves')
 const { createItem } = require('../fixtures/items')
 
-const endpoint = '/api/bookshelves?action=remove-items'
+const endpoint = '/api/bookshelves?action=delete-items'
 const itemPromise = createItem
 const bookshelfWithItemPromise = createBookshelfWithItem(itemPromise)
 
-describe('bookshelves:remove-items', () => {
+describe('bookshelves:delete-items', () => {
   it('should reject without bookshelf id', async () => {
     try {
       const res = await authReq('post', endpoint)
@@ -35,7 +35,7 @@ describe('bookshelves:remove-items', () => {
     }
   })
 
-  it('should remove items', async () => {
+  it('should delete items', async () => {
     const bookshelf = await bookshelfWithItemPromise
     const item = bookshelf.items[0]
     const res = await authReq('post', endpoint, {
