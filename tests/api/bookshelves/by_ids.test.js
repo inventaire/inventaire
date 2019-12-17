@@ -7,7 +7,7 @@ const { createBookshelf } = require('../fixtures/bookshelves')
 const endpoint = '/api/bookshelves?action=by-ids'
 
 describe('bookshelves:by-ids', () => {
-  it('should reject without id', async () => {
+  it('should reject without ids', async () => {
     try {
       const res = await authReq('get', endpoint)
       shouldNotGetHere(res)
