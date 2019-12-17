@@ -19,7 +19,7 @@ describe('entities:serie-parts', () => {
     workWithSeriePromise
     .then(work => {
       const serieUri = work.claims['wdt:P179'][0]
-      nonAuthReq('get', `${endpoint}&uri=${serieUri}`)
+      return nonAuthReq('get', `${endpoint}&uri=${serieUri}`)
       .then(res => {
         res.parts.should.be.an.Array()
         res.parts[0].should.be.an.Object()

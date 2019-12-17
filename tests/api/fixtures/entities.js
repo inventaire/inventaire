@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const { authReq } = require('../utils/utils')
+const { customAuthReq, authReq, getUser } = require('../utils/utils')
 const { Promise } = __.require('lib', 'promises')
 const isbn_ = __.require('lib', 'isbn/isbn')
 const wdLang = require('wikidata-lang')
@@ -20,7 +20,8 @@ const defaultEditionData = () => ({
 const createEntity = P31 => (params = {}) => {
   const defaultLabel = P31 === 'wd:Q5' ? humanName() : API.randomLabel(4)
   const labels = params.labels || { en: defaultLabel }
-  return authReq('post', '/api/entities?action=create', {
+  const user = params.user || getUser()
+  return customAuthReq(user, 'post', '/api/entities?action=create', {
     labels,
     claims: { 'wdt:P31': [ P31 ] }
   })

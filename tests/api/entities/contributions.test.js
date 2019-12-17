@@ -1,9 +1,9 @@
 const __ = require('config').universalPath
 const should = require('should')
-const { adminReq, getUser, undesiredRes } = require('../utils/utils')
+const { adminReq, getUser, getReservedUser, undesiredRes } = require('../utils/utils')
 const { createWork } = require('../fixtures/entities')
 const endpoint = '/api/entities?action=contributions'
-const { Promise } = __.require('lib', 'promises')
+const { Promise, wait } = __.require('lib', 'promises')
 
 describe('entities:contributions', () => {
   it('should reject without user id', done => {
@@ -31,7 +31,7 @@ describe('entities:contributions', () => {
     getUser()
     .then(user => {
       const { _id } = user
-      adminReq('get', `${endpoint}&user=${_id}`)
+      return adminReq('get', `${endpoint}&user=${_id}`)
       .then(res => {
         res.patches.should.be.an.Array()
         done()
@@ -42,9 +42,9 @@ describe('entities:contributions', () => {
 
   it('should return a list of patches ordered by timestamp', done => {
     worksAndUserPromise
-    .spread((workA, workB, user) => {
+    .then(([ workA, workB, user ]) => {
       const { _id } = user
-      adminReq('get', `${endpoint}&user=${_id}`)
+      return adminReq('get', `${endpoint}&user=${_id}`)
       .then(res => {
         const { patches } = res
         const patchesIds = patches.map(getPatchEntityId);
@@ -59,9 +59,9 @@ describe('entities:contributions', () => {
 
   it('should take a limit parameter', done => {
     worksAndUserPromise
-    .spread((workA, workB, user) => {
+    .then(([ workA, workB, user ]) => {
       const { _id } = user
-      adminReq('get', `${endpoint}&user=${_id}&limit=1`)
+      return adminReq('get', `${endpoint}&user=${_id}&limit=1`)
       .then(res => {
         const { patches } = res
         patches.length.should.equal(1)
@@ -74,13 +74,13 @@ describe('entities:contributions', () => {
 
   it('should take an offset parameter', done => {
     worksAndUserPromise
-    .spread((workA, workB, user) => {
+    .then(([ workA, workB, user ]) => {
       const { _id } = user
-      adminReq('get', `${endpoint}&user=${_id}`)
+      return adminReq('get', `${endpoint}&user=${_id}`)
       .then(res => {
         const patchesCount = res.patches.length
         const offset = 1
-        adminReq('get', `${endpoint}&user=${_id}&offset=${offset}`)
+        return adminReq('get', `${endpoint}&user=${_id}&offset=${offset}`)
         .then(res2 => {
           (patchesCount - offset).should.equal(res2.patches.length)
           done()
@@ -92,9 +92,9 @@ describe('entities:contributions', () => {
 
   it('should return total data', done => {
     worksAndUserPromise
-    .spread((workA, workB, user) => {
+    .then(([ workA, workB, user ]) => {
       const { _id } = user
-      adminReq('get', `${endpoint}&user=${_id}&limit=1`)
+      return adminReq('get', `${endpoint}&user=${_id}&limit=1`)
       .then(res1 => {
         res1.total.should.be.a.Number()
         should(res1.total >= 2).be.true()
@@ -106,9 +106,9 @@ describe('entities:contributions', () => {
 
   it('should return continue data', done => {
     worksAndUserPromise
-    .spread((workA, workB, user) => {
+    .then(([ workA, workB, user ]) => {
       const { _id } = user
-      adminReq('get', `${endpoint}&user=${_id}&limit=1`)
+      return adminReq('get', `${endpoint}&user=${_id}&limit=1`)
       .then(res1 => {
         res1.continue.should.be.a.Number()
         res1.continue.should.equal(1)
@@ -120,15 +120,15 @@ describe('entities:contributions', () => {
 
   it('should return increment contributions', done => {
     Promise.all([ createWork(), getUser() ])
-    .spread((work, user) => {
+    .then(([ work, user ]) => {
       const { _id } = user
-      adminReq('get', `${endpoint}&user=${_id}`)
+      return adminReq('get', `${endpoint}&user=${_id}`)
       .then(res1 => {
         should(res1.total >= 1).be.true()
-        createWork()
+        return createWork()
         .delay(10)
         .then(workB => {
-          adminReq('get', `${endpoint}&user=${_id}`)
+          return adminReq('get', `${endpoint}&user=${_id}`)
           .then(res2 => {
             getWorkId(res2.patches[0]._id).should.equal(workB._id)
             getWorkId(res2.patches[1]._id).should.equal(work._id)
@@ -141,16 +141,18 @@ describe('entities:contributions', () => {
   })
 })
 
-const create2WorksAndGetUser = () => {
-  return Promise.all([ createWork(), createWork() ])
-  .delay(10)
-  .spread((workA, workB) => {
-    return getUser()
-    .then(user => [ workA, workB, user ])
-  })
+const create2WorksAndGetUser = async () => {
+  // Use a reserved user to avoiding having contributions messed-up by tests
+  // in other test files
+  const user = await getReservedUser()
+  const workA = await createWork({ user })
+  // Do not parallelize so that we can assume that workB creation is the last patch
+  const workB = await createWork({ user })
+  await wait(1000)
+  return [ workA, workB, user ]
 }
 
-const worksAndUserPromise = create2WorksAndGetUser().delay(1000)
+const worksAndUserPromise = create2WorksAndGetUser()
 
 const getWorkId = id => id.split(':')[0]
 const getPatchEntityId = patch => patch._id.split(':')[0]

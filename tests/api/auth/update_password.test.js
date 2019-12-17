@@ -12,7 +12,7 @@ describe('auth:update-password', () => {
   it('should reject short new password', done => {
     getUser()
     .then(user => {
-      authReq('post', endpoint, {
+      return authReq('post', endpoint, {
         email: user.email,
         'new-password': randomString(7)
       })
@@ -40,15 +40,15 @@ describe('auth:update-password', () => {
   it('should reject if current password is incorrect', done => {
     createUser()
     .then(user => {
-      authReq('post', endpoint, {
+      return authReq('post', endpoint, {
         email: user.email,
         'current-password': randomString(20),
         'new-password': randomString(20)
       })
-      .catch(err => {
-        err.body.status_verbose.should.startWith('invalid current-password')
-        done()
-      })
+    })
+    .catch(err => {
+      err.body.status_verbose.should.startWith('invalid current-password')
+      done()
     })
     .catch(done)
   })
@@ -58,14 +58,14 @@ describe('auth:update-password', () => {
     const userPromise = getUserGetter(email, false)()
     updateCustomUser(userPromise, 'resetPassword', 'invalid')
     .then(() => {
-      customAuthReq(userPromise, 'post', endpoint, {
+      return customAuthReq(userPromise, 'post', endpoint, {
         email,
         'new-password': randomString(20)
       })
-      .catch(err => {
-        err.body.status_verbose.should.equal('invalid resetPassword timestamp')
-        done()
-      })
+    })
+    .catch(err => {
+      err.body.status_verbose.should.equal('invalid resetPassword timestamp')
+      done()
     })
     .catch(done)
   })
@@ -75,14 +75,14 @@ describe('auth:update-password', () => {
     const userPromise = getUserGetter(email, false)()
     updateCustomUser(userPromise, 'resetPassword', 1000)
     .then(() => {
-      customAuthReq(userPromise, 'post', endpoint, {
+      return customAuthReq(userPromise, 'post', endpoint, {
         email,
         'new-password': randomString(20)
       })
-      .catch(err => {
-        err.body.status_verbose.should.equal('reset password timespan experied')
-        done()
-      })
+    })
+    .catch(err => {
+      err.body.status_verbose.should.equal('reset password timespan experied')
+      done()
     })
     .catch(done)
   })
@@ -93,14 +93,14 @@ describe('auth:update-password', () => {
     const recentTime = Date.now() - 1000
     updateCustomUser(userPromise, 'resetPassword', recentTime)
     .then(() => {
-      customAuthReq(userPromise, 'post', endpoint, {
+      return customAuthReq(userPromise, 'post', endpoint, {
         email,
         'new-password': randomString(20)
       })
-      .then(res => {
-        res.ok.should.be.true()
-        done()
-      })
+    })
+    .then(res => {
+      res.ok.should.be.true()
+      done()
     })
     .catch(done)
   })

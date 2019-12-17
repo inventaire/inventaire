@@ -63,7 +63,7 @@ const groupAndMemberPromise = () => {
 const groupName = () => `${faker.lorem.words(3)} group`
 
 // Resolves to a group with userA as admin and userB as member
-const groupPromise = createGroup(groupName())
+const groupPromise = createGroup()
   .then(group => {
     return membershipAction(authReqB, 'request', group._id)
     .then(() => getUserB())

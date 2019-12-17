@@ -189,12 +189,12 @@ describe('entities:create', () => {
     ensureEditionExists('isbn:9782315006113', null, editionClaims)
     .then(editionEntity => {
       editionClaims.claims['wdt:P629'] = editionEntity.claims['wdt:P629']
-      authReq('post', endpoint, editionClaims)
-      .catch(err => {
-        err.body.status_verbose.should.equal('this property value is already used')
-        err.statusCode.should.equal(400)
-        done()
-      })
+      return authReq('post', endpoint, editionClaims)
+    })
+    .catch(err => {
+      err.body.status_verbose.should.equal('this property value is already used')
+      err.statusCode.should.equal(400)
+      done()
     })
     .catch(done)
   })

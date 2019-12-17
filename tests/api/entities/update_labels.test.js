@@ -10,7 +10,7 @@ describe('entities:update-labels', () => {
   it('should reject without value', done => {
     humanPromise
     .then(human => {
-      updateLabel(human._id, 'fr', null)
+      return updateLabel(human._id, 'fr', null)
       .then(undesiredRes(done))
       .catch(err => {
         err.body.status_verbose.should.equal('missing parameter in body: value')
@@ -29,12 +29,12 @@ describe('entities:update-labels', () => {
         uri: human.uri,
         value
       }
-      authReq('put', '/api/entities?action=update-label', body)
+      return authReq('put', '/api/entities?action=update-label', body)
       .then(() => getByUri(human.uri))
-      .then(updatedHuman => {
-        updatedHuman.labels.en.should.equal(value)
-        done()
-      })
+    })
+    .then(updatedHuman => {
+      updatedHuman.labels.en.should.equal(value)
+      done()
     })
     .catch(done)
   })
@@ -48,12 +48,12 @@ describe('entities:update-labels', () => {
         lang: 'fr',
         value
       }
-      authReq('put', '/api/entities?action=update-label', body)
+      return authReq('put', '/api/entities?action=update-label', body)
       .then(() => getByUri(human.uri))
-      .then(updatedHuman => {
-        updatedHuman.labels.fr.should.equal(value)
-        done()
-      })
+    })
+    .then(updatedHuman => {
+      updatedHuman.labels.fr.should.equal(value)
+      done()
     })
     .catch(done)
   })
@@ -62,12 +62,12 @@ describe('entities:update-labels', () => {
     const value = randomString(15)
     humanPromise
     .then(human => {
-      updateLabel(human._id, 'fr', value)
+      return updateLabel(human._id, 'fr', value)
       .then(() => getByUri(human.uri))
-      .then(updatedHuman => {
-        updatedHuman.labels.fr.should.equal(value)
-        done()
-      })
+    })
+    .then(updatedHuman => {
+      updatedHuman.labels.fr.should.equal(value)
+      done()
     })
     .catch(done)
   })
@@ -78,7 +78,7 @@ describe('entities:update-labels', () => {
     const value = `${trimValue}     `
     humanPromise
     .then(human => {
-      updateLabel(human._id, 'fr', value)
+      return updateLabel(human._id, 'fr', value)
       .then(() => getByUri(human.uri))
       .then(updatedHuman => {
         updatedHuman.labels.fr.length.should.equal(trimValueLength)
@@ -92,40 +92,39 @@ describe('entities:update-labels', () => {
     const value = randomString(15)
     humanPromise
     .then(human => updateLabel(human._id, 'zz', value))
-      .then(undesiredRes(done))
-      .catch(err => {
-        err.statusCode.should.equal(400)
-        err.body.status_verbose.should.startWith('invalid lang')
-        done()
-      })
-      .catch(done)
+    .then(undesiredRes(done))
+    .catch(err => {
+      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.startWith('invalid lang')
+      done()
+    })
+    .catch(done)
   })
 
   it('should reject an update with an invalid value', done => {
     humanPromise
     .then(human => updateLabel(human._id, 'en', 123))
-      .then(undesiredRes(done))
-      .catch(err => {
-        err.statusCode.should.equal(400)
-        err.body.status_verbose.should.startWith('invalid value')
-        done()
-      })
-      .catch(done)
+    .then(undesiredRes(done))
+    .catch(err => {
+      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.startWith('invalid value')
+      done()
+    })
+    .catch(done)
   })
 
   it('should reject an up-to-date value', done => {
     const value = randomString(15)
     humanPromise
     .then(human => {
-      updateLabel(human._id, 'en', value)
-      .catch(done)
+      return updateLabel(human._id, 'en', value)
       .then(() => updateLabel(human._id, 'en', value))
-      .then(undesiredRes(done))
-      .catch(err => {
-        err.statusCode.should.equal(400)
-        err.body.status_verbose.should.startWith('already up-to-date')
-        done()
-      })
+    })
+    .then(undesiredRes(done))
+    .catch(err => {
+      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.startWith('already up-to-date')
+      done()
     })
     .catch(done)
   })
@@ -136,10 +135,10 @@ describe('entities:update-labels', () => {
     humanPromise
     .then(human => {
       const { _id: humanId } = human
-      Promise.all(langs.map(lang => updateLabel(humanId, lang, name)))
+      return Promise.all(langs.map(lang => updateLabel(humanId, lang, name)))
       .then(responses => {
         responses.forEach(res => should(res.ok).be.true())
-        getByUri(human.uri)
+        return getByUri(human.uri)
         .then(updatedHuman => {
           langs.forEach(lang => updatedHuman.labels[lang].should.equal(name))
           done()

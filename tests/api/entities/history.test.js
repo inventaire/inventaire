@@ -26,7 +26,7 @@ describe('entities:history', () => {
   it('should return entity patches', done => {
     createHuman()
     .then(human => {
-      nonAuthReq('get', `${endpoint}&id=${human._id}`)
+      return nonAuthReq('get', `${endpoint}&id=${human._id}`)
       .then(res => {
         res.patches[0].snapshot.labels.should.deepEqual(human.labels)
         done()

@@ -19,13 +19,13 @@ describe('groups:update:decline', () => {
   it('should reject non invited users', done => {
     Promise.all([ groupPromise, getUserC() ])
     .spread((group, nonInvitedUser) => {
-      authReq('put', endpoint, { user: nonInvitedUser._id, group: group._id })
-      .then(undesiredRes(done))
-      .catch(err => {
-        err.body.status_verbose.should.startWith('membership not found')
-        err.statusCode.should.equal(403)
-        done()
-      })
+      return authReq('put', endpoint, { user: nonInvitedUser._id, group: group._id })
+    })
+    .then(undesiredRes(done))
+    .catch(err => {
+      err.body.status_verbose.should.startWith('membership not found')
+      err.statusCode.should.equal(403)
+      done()
     })
     .catch(done)
   })
@@ -35,14 +35,12 @@ describe('groups:update:decline', () => {
     .spread((group, invitedUser) => {
       const { _id: invitedUserId } = invitedUser
       return authReq('put', '/api/groups?action=invite', { user: invitedUserId, group: group._id })
-      .then(() => {
-        return authReqB('put', endpoint, { user: invitedUserId, group: group._id })
-        .catch(err => {
-          err.body.status_verbose.should.startWith('membership not found')
-          err.statusCode.should.equal(403)
-          done()
-        })
-      })
+      .then(() => authReqB('put', endpoint, { user: invitedUserId, group: group._id }))
+    })
+    .catch(err => {
+      err.body.status_verbose.should.startWith('membership not found')
+      err.statusCode.should.equal(403)
+      done()
     })
     .catch(done)
   })

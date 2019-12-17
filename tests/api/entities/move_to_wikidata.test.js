@@ -29,15 +29,13 @@ describe('entities:move-to-wikidata', () => {
   it('should reject without oauth tokens', done => {
     // as test environment should not have any tokens
     createWork()
-    .then(work => {
-      authReq('put', endpoint, { uri: work.uri })
-      .then(undesiredRes(done))
-      .catch(err => {
-        err.body.status_verbose.should.equal('missing wikidata oauth tokens')
-        err.statusCode.should.equal(400)
-        done()
-      })
-    .catch(done)
+    .then(work => authReq('put', endpoint, { uri: work.uri }))
+    .then(undesiredRes(done))
+    .catch(err => {
+      err.body.status_verbose.should.equal('missing wikidata oauth tokens')
+      err.statusCode.should.equal(400)
+      done()
     })
+  .catch(done)
   })
 })

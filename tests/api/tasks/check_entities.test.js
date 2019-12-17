@@ -50,11 +50,11 @@ describe('tasks:check-entities', () => {
       return checkEntities(human.uri)
       .then(() => checkEntities(human.uri))
       .then(() => getBySuspectUri(human.uri))
-      .then(tasks => {
-        const uniqSuggestiontUris = _.uniq(_.map(tasks, 'suggestionUri'))
-        tasks.length.should.equal(uniqSuggestiontUris.length)
-        done()
-      })
+    })
+    .then(tasks => {
+      const uniqSuggestiontUris = _.uniq(_.map(tasks, 'suggestionUri'))
+      tasks.length.should.equal(uniqSuggestiontUris.length)
+      done()
     })
     .catch(done)
   })
@@ -70,14 +70,11 @@ describe('tasks:automerge', () => {
       return createWorkWithAuthor(human, workLabel)
       .then(() => checkEntities(human.uri))
       .then(tasks => tasks.length.should.equal(0))
-      .then(() => {
-        return getByUris(human.uri)
-        .get('entities')
-        .then(entities => {
-          // entity should have merged, thus URI is now a a WD uri
-          entities[authorWdUri].should.be.ok()
-          done()
-        })
+      .then(() => getByUris(human.uri))
+      .then(({ entities }) => {
+        // entity should have merged, thus URI is now a a WD uri
+        entities[authorWdUri].should.be.ok()
+        done()
       })
     })
     .catch(done)
@@ -94,14 +91,11 @@ describe('tasks:automerge', () => {
         createWorkWithAuthor(human, workLabel)
       ])
       .then(() => checkEntities(human.uri))
-      .then(() => {
-        return getByUris(human.uri)
-        .get('entities')
-        .then(entities => {
-          entities[wikidataUri].should.be.ok()
-          done()
-        })
-      })
+      .then(() => getByUris(human.uri))
+    })
+    .then(({ entities }) => {
+      entities[wikidataUri].should.be.ok()
+      done()
     })
     .catch(done)
   })
@@ -113,12 +107,12 @@ describe('tasks:automerge', () => {
     .then(human => {
       return createWorkWithAuthor(human, workLabel)
       .then(() => checkEntities(human.uri))
-      .then(tasks => {
-        tasks.length.should.aboveOrEqual(1)
-        const firstOccurenceMatch = tasks[0].externalSourcesOccurrences[0].matchedTitles[0]
-        firstOccurenceMatch.should.equal(authorLabel)
-        done()
-      })
+    })
+    .then(tasks => {
+      tasks.length.should.aboveOrEqual(1)
+      const firstOccurenceMatch = tasks[0].externalSourcesOccurrences[0].matchedTitles[0]
+      firstOccurenceMatch.should.equal(authorLabel)
+      done()
     })
     .catch(done)
   })

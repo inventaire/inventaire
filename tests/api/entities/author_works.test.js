@@ -17,14 +17,12 @@ describe('entities:author-works', () => {
 
   it('should return empty lists if no work on author', done => {
     createHuman()
-    .then(author => {
-      nonAuthReq('get', `${endpoint}&uri=${author.uri}`)
-      .then(res => {
-        res.series.should.be.an.Array()
-        res.works.should.be.an.Array()
-        res.articles.should.be.an.Array()
-        done()
-      })
+    .then(author => nonAuthReq('get', `${endpoint}&uri=${author.uri}`))
+    .then(res => {
+      res.series.should.be.an.Array()
+      res.works.should.be.an.Array()
+      res.articles.should.be.an.Array()
+      done()
     })
     .catch(done)
   })
@@ -33,7 +31,7 @@ describe('entities:author-works', () => {
     workWithAuthorPromise
     .then(work => {
       const authorUri = work.claims['wdt:P50'][0]
-      nonAuthReq('get', `${endpoint}&uri=${authorUri}`)
+      return nonAuthReq('get', `${endpoint}&uri=${authorUri}`)
       .then(res => {
         res.works[0].should.be.an.Object()
         res.works[0].uri.should.equal(`inv:${work._id}`)

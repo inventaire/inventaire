@@ -35,7 +35,6 @@ const request = (method, endpoint, body, cookie) => {
 
   return waitForTestServer
   .then(() => breq[method](data).get('body'))
-  // .catch _.ErrorRethrow("#{method} #{endpoint} #{JSON.stringify(body)} err")
 }
 
 const customAuthReq = (userPromise, method, endpoint, body) => {

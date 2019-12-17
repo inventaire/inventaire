@@ -1,5 +1,5 @@
 const { nonAuthReq, undesiredRes } = require('../utils/utils')
-const { groupPromise } = require('../fixtures/groups')
+const { createGroup } = require('../fixtures/groups')
 const endpoint = '/api/groups?action=by-id'
 
 describe('groups:by-id', () => {
@@ -14,7 +14,7 @@ describe('groups:by-id', () => {
   })
 
   it('should get a group by id', done => {
-    groupPromise
+    createGroup()
     .then(group => {
       return nonAuthReq('get', `${endpoint}&id=${group._id}`)
       .then(res => {

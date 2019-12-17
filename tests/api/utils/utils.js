@@ -1,6 +1,8 @@
-require('should')
+const __ = require('config').universalPath
 const { createUser, createAdminUser, getRefreshedUser } = require('../fixtures/users')
 const { request, customAuthReq } = require('./request')
+const randomString = __.require('lib', 'utils/random_string')
+require('should')
 
 const userPromises = {}
 const getUserGetter = (key, admin = false, customData) => () => {
@@ -25,7 +27,9 @@ const API = module.exports = {
   getUserB: getUserGetter('b'),
   getUserC: getUserGetter('c'),
   getAdminUser: getUserGetter('admin', true),
-  getUserGetter
+  getUserGetter,
+  // To be used when you need a user not used by any other tests
+  getReservedUser: () => getUserGetter(randomString(8))()
 }
 
 Object.assign(API, require('../../unit/utils'))

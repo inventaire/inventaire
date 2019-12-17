@@ -1,6 +1,6 @@
 require('should')
-const { authReq, authReqB, undesiredRes } = require('../utils/utils')
-const { groupPromise, createGroup, getGroup } = require('../fixtures/groups')
+const { authReq, authReqB, getUserB, undesiredRes } = require('../utils/utils')
+const { createGroup, getGroup, addMember } = require('../fixtures/groups')
 const endpoint = '/api/groups?action=invite'
 
 describe('groups:update:invite', () => {
@@ -29,19 +29,13 @@ describe('groups:update:invite', () => {
     .catch(done)
   })
 
-  it('should add an invited when invitor is member', done => {
-    // Resolves to a group with userA as admin and userB as member
-    groupPromise
-    .then(group => {
-      const invitedCount = group.invited.length
-      return authReqB('put', endpoint, { user: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', group: group._id })
-      .then(() => getGroup(group._id))
-      .then(updatedGroup => {
-        updatedGroup.invited.length.should.equal(invitedCount + 1)
-        done()
-      })
-    })
-    .catch(done)
+  it('should add an invited when invitor is member', async () => {
+    const group = await createGroup()
+    const userB = await getUserB()
+    await addMember(group, userB)
+    await authReqB('put', endpoint, { user: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', group: group._id })
+    const updatedGroup = await getGroup(group._id)
+    updatedGroup.invited.length.should.equal(1)
   })
 
   it('reject if invitor is not group member', done => {

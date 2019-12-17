@@ -23,7 +23,7 @@ describe('transactions:update-state', () => {
     transaction.read.should.deepEqual({ requester: true, owner: false })
     await authReqB('put', endpoint, { id: transaction._id })
     const { transactions } = await authReq('get', '/api/transactions')
-    const updatedTransation = transactions[0]
+    const updatedTransation = transactions.find(doc => doc._id === transaction._id)
     updatedTransation.read.should.deepEqual({ requester: true, owner: true })
   })
 

@@ -26,7 +26,7 @@ const transactions = [ 'giving', 'lending', 'selling', 'inventorying' ]
 
 const API = module.exports = {
   createItems: (userPromise, itemsData = []) => {
-    if (!userPromise) { userPromise = getUser() }
+    if (!userPromise) userPromise = getUser()
     const entity = itemsData[0] && itemsData[0].entity
     const entityUriPromise = entity ? Promise.resolve(entity) : getEditionUri()
 

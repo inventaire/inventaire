@@ -119,11 +119,11 @@ describe('entities:update-claims', () => {
       // An edition entity should always have at least one wdt:P629 claim
       return removeClaim(edition.uri, 'wdt:P629', oldValue)
       .then(undesiredRes(done))
-      .catch(err => {
-        err.body.status_verbose.should.equal('this property should at least have one value')
-        err.statusCode.should.equal(400)
-        done()
-      })
+    })
+    .catch(err => {
+      err.body.status_verbose.should.equal('this property should at least have one value')
+      err.statusCode.should.equal(400)
+      done()
     })
     .catch(done)
   })
@@ -172,28 +172,26 @@ describe('entities:update-claims', () => {
     const authorsUris = [ 'wd:Q192214', 'wd:Q206685' ]
     createWork()
     .then(work => {
-      Promise.all(authorsUris.map(uri => addClaim(work.uri, 'wdt:P50', uri)))
+      return Promise.all(authorsUris.map(uri => addClaim(work.uri, 'wdt:P50', uri)))
       .then(responses => {
         responses.forEach(res => should(res.ok).be.true())
-        getByUri(work.uri)
-        .then(updatedWork => {
-          const addedAuthorsUris = updatedWork.claims['wdt:P50']
-          authorsUris.forEach(uri => should(addedAuthorsUris.includes(uri)).be.true())
-          done()
-        })
+        return getByUri(work.uri)
       })
+    })
+    .then(updatedWork => {
+      const addedAuthorsUris = updatedWork.claims['wdt:P50']
+      authorsUris.forEach(uri => should(addedAuthorsUris.includes(uri)).be.true())
+      done()
     })
     .catch(done)
   })
 
   it('should accept a non-duplicated concurrent value', done => {
     createHuman()
-    .then(human => {
-      addClaim(human._id, 'wdt:P648', someOpenLibraryId())
-      .then(res => {
-        should(res.ok).be.true()
-        done()
-      })
+    .then(human => addClaim(human._id, 'wdt:P648', someOpenLibraryId()))
+    .then(res => {
+      should(res.ok).be.true()
+      done()
     })
     .catch(done)
   })
@@ -202,12 +200,12 @@ describe('entities:update-claims', () => {
     createHuman()
     .then(human => {
       return updateClaim(human.uri, 'wdt:P648', null, someOpenLibraryId('work'))
-      .then(undesiredRes(done))
-      .catch(err => {
-        err.statusCode.should.equal(400)
-        err.body.status_verbose.should.equal('invalid property value for entity type human')
-        done()
-      })
+    })
+    .then(undesiredRes(done))
+    .catch(err => {
+      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.equal('invalid property value for entity type human')
+      done()
     })
     .catch(done)
   })
@@ -222,14 +220,12 @@ describe('entities:update-claims', () => {
         return createHuman()
       })
     })
-    .then(human2 => {
-      return addClaim(human2.uri, 'wdt:P648', id)
-      .then(undesiredRes(done))
-      .catch(err => {
-        err.statusCode.should.equal(400)
-        err.body.status_verbose.should.equal('this property value is already used')
-        done()
-      })
+    .then(human2 => addClaim(human2.uri, 'wdt:P648', id))
+    .then(undesiredRes(done))
+    .catch(err => {
+      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.equal('this property value is already used')
+      done()
     })
     .catch(done)
   })

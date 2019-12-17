@@ -23,7 +23,7 @@ describe('groups:update-settings', () => {
     .then(group => {
       const groupId = group._id
       const updatedName = `${group.name}-updated`
-      authReq('put', endpoint, {
+      return authReq('put', endpoint, {
         group: groupId,
         attribute: 'name',
         value: updatedName

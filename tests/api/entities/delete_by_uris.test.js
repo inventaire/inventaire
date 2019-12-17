@@ -53,7 +53,7 @@ describe('entities:delete-by-uris', () => {
     createHuman()
     .then(entity => {
       const { uri } = entity
-      deleteByUris(uri)
+      return deleteByUris(uri)
       .then(() => getByUris(uri))
       .then(res => {
         entity = res.entities[uri]
@@ -71,7 +71,7 @@ describe('entities:delete-by-uris', () => {
     ])
     .spread((entityA, entityB) => {
       const uris = [ entityA.uri, entityB.uri ]
-      deleteByUris(uris)
+      return deleteByUris(uris)
       .then(() => getByUris(uris))
       .then(res => {
         const entities = _.values(res.entities)
@@ -87,7 +87,7 @@ describe('entities:delete-by-uris', () => {
     createWorkWithAuthor()
     .then(work => {
       const authorUri = work.claims['wdt:P50'][0]
-      deleteByUris(authorUri)
+      return deleteByUris(authorUri)
       .then(() => getByUris(work.uri))
       .then(res => {
         const updatedWork = res.entities[work.uri]
@@ -107,22 +107,22 @@ describe('entities:delete-by-uris', () => {
     ]))
     .spread((workA, workB) => {
       const authorUri = workA.claims['wdt:P50'][0]
-      deleteByUris(authorUri)
-      .then(undesiredRes(done))
-      .catch(err => {
-        err.body.status_verbose.should.equal('this entity has too many claims to be removed')
-        err.statusCode.should.equal(400)
-        done()
-      })
-      .catch(done)
+      return deleteByUris(authorUri)
     })
+    .then(undesiredRes(done))
+    .catch(err => {
+      err.body.status_verbose.should.equal('this entity has too many claims to be removed')
+      err.statusCode.should.equal(400)
+      done()
+    })
+    .catch(done)
   })
 
   it('should remove edition entities without an ISBN', done => {
     createEdition()
     .then(edition => {
       const invUri = `inv:${edition._id}`
-      deleteByUris(invUri)
+      return deleteByUris(invUri)
     })
     .then(() => done())
     .catch(done)
@@ -133,7 +133,7 @@ describe('entities:delete-by-uris', () => {
     .then(edition => {
       // Using the inv URI, as the isbn one would be rejected
       const invUri = `inv:${edition._id}`
-      deleteByUris(invUri)
+      return deleteByUris(invUri)
     })
     .then(() => done())
     .catch(done)
@@ -143,13 +143,13 @@ describe('entities:delete-by-uris', () => {
     createEdition()
     .then(edition => {
       const workUri = edition.claims['wdt:P629'][0]
-      deleteByUris(workUri)
-      .then(undesiredRes(done))
-      .catch(err => {
-        err.body.status_verbose.should.equal('this entity is used in a critical claim')
-        err.statusCode.should.equal(400)
-        done()
-      })
+      return deleteByUris(workUri)
+    })
+    .then(undesiredRes(done))
+    .catch(err => {
+      err.body.status_verbose.should.equal('this entity is used in a critical claim')
+      err.statusCode.should.equal(400)
+      done()
     })
     .catch(done)
   })
@@ -157,21 +157,21 @@ describe('entities:delete-by-uris', () => {
   it('should remove deleted entities from items snapshot', done => {
     createHuman()
     .then(author => {
-      createWorkWithAuthor(author)
+      return createWorkWithAuthor(author)
       .then(work => {
-        authReq('post', '/api/items', { entity: work.uri, lang: 'en' })
+        return authReq('post', '/api/items', { entity: work.uri, lang: 'en' })
         .then(item => {
           item.snapshot['entity:title'].should.equal(work.labels.en)
           item.snapshot['entity:authors'].should.equal(author.labels.en)
-          deleteByUris(author.uri)
+          return deleteByUris(author.uri)
           .delay(100)
           .then(() => getItemsByIds(item._id))
-          .then(res => {
-            const updatedItem = res.items[0]
-            updatedItem.snapshot['entity:title'].should.equal(work.labels.en)
-            should(updatedItem.snapshot['entity:authors']).not.be.ok()
-            done()
-          })
+        })
+        .then(res => {
+          const updatedItem = res.items[0]
+          updatedItem.snapshot['entity:title'].should.equal(work.labels.en)
+          should(updatedItem.snapshot['entity:authors']).not.be.ok()
+          done()
         })
       })
     })
@@ -182,28 +182,28 @@ describe('entities:delete-by-uris', () => {
     createHuman()
     .then(entity => {
       const { uri } = entity
-      deleteByUris(uri)
+      return deleteByUris(uri)
       .then(() => getByUris(uri))
       .then(res => {
         should(res.entities[uri]._meta_type).equal('removed:placeholder')
-        deleteByUris(uri)
-        .then(() => done())
+        return deleteByUris(uri)
       })
     })
+    .then(() => done())
     .catch(done)
   })
 
   it('should not deleted entities that are the entity of an item', done => {
     createWork()
     .then(work => {
-      authReq('post', '/api/items', { entity: work.uri, lang: 'en' })
+      return authReq('post', '/api/items', { entity: work.uri, lang: 'en' })
       .then(() => deleteByUris(work.uri))
-      .then(undesiredRes(done))
-      .catch(err => {
-        err.body.status_verbose.should.equal("entities that are used by an item can't be removed")
-        err.statusCode.should.equal(400)
-        done()
-      })
+    })
+    .then(undesiredRes(done))
+    .catch(err => {
+      err.body.status_verbose.should.equal("entities that are used by an item can't be removed")
+      err.statusCode.should.equal(400)
+      done()
     })
     .catch(done)
   })
@@ -212,18 +212,18 @@ describe('entities:delete-by-uris', () => {
     const uri = 'isbn:9791020906427'
     ensureEditionExists(uri)
     .then(edition => {
-      authReq('post', '/api/items', { entity: uri, lang: 'en' })
+      return authReq('post', '/api/items', { entity: uri, lang: 'en' })
       .then(() => {
         // Using the inv URI, as the isbn one would be rejected
         const invUri = `inv:${edition._id}`
-        deleteByUris(invUri)
+        return deleteByUris(invUri)
         .then(undesiredRes(done))
-        .catch(err => {
-          err.body.status_verbose.should.equal("entities that are used by an item can't be removed")
-          err.statusCode.should.equal(400)
-          done()
-        })
       })
+    })
+    .catch(err => {
+      err.body.status_verbose.should.equal("entities that are used by an item can't be removed")
+      err.statusCode.should.equal(400)
+      done()
     })
     .catch(done)
   })
