@@ -15,7 +15,7 @@ module.exports = (req, res, next) => {
   sanitize(req, res, sanitization)
   .then(params => {
     const { id, items, reqUserId } = params
-    return bookshelves_.removeItems([ id ], items, reqUserId)
+    return bookshelves_.deleteItemsBookshelves([ id ], items, reqUserId)
     .then(_.KeyBy('_id'))
     .then(responses_.Wrap(res, 'bookshelves'))
     .then(Track(req, [ 'bookshelf', 'add items' ]))

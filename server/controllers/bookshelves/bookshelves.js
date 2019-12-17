@@ -12,6 +12,7 @@ module.exports = {
     authentified: {
       create: require('./create'),
       'add-items': require('./add_items'),
+      delete: require('./delete_by_ids'),
       'remove-items': require('./remove_items')
     }
   })
