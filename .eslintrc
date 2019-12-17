@@ -18,6 +18,7 @@
     "prefer-arrow"
   ],
   "rules": {
+    "complexity": [ "warn", 4 ],
     "array-bracket-spacing": [ "error", "always" ],
     "arrow-parens": [ "error", "as-needed" ],
     "eqeqeq": [ "error", "smart" ],
