@@ -67,7 +67,7 @@ describe('invitations:by-emails', () => {
       .catch(done)
     })
 
-    it('should trigger an friend request on signup', done => {
+    it('should trigger a friend request on signup', done => {
       const email = randomEmail()
 
       const invite = () => authReq('post', '/api/invitations?action=by-emails', { emails: email })

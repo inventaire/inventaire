@@ -34,12 +34,17 @@ const bookshelves_ = module.exports = {
       return bookshelves_.byIdsWithItems(ids)
     })
   },
-  removeItems: (ids, itemsIds, userId) => {
+  bulkDelete: db.bulkDelete,
+  deleteItemsBookshelves: (ids, itemsIds, userId) => {
     return bookshelves_.byIds(ids)
     .then(items_.removeBookshelves(itemsIds, userId))
     .then(() => {
       return bookshelves_.byIdsWithItems(ids)
     })
+  },
+  deleteBookshelvesItems: bookshelves => {
+    const items = _.flatten(bookshelves.map(_.property('items')))
+    return items_.bulkDelete(items)
   }
 }
 

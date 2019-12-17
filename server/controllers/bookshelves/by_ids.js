@@ -19,6 +19,7 @@ module.exports = (req, res, next) => {
     const { ids, withItems } = params
     const byIdsFnName = withItems === true ? 'byIdsWithItems' : 'byIds'
     return bookshelves_[byIdsFnName](ids)
+    .then(_.compact)
     .then(_.KeyBy('_id'))
     .then(responses_.Wrap(res, 'bookshelves'))
   })
