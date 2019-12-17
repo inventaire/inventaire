@@ -15,7 +15,7 @@ const couch_ = module.exports = {
   },
 
   ignoreNotFound: err => {
-    if (!(err && err.error === 'not_found')) throw err
+    if (!(err && err.statusCode === 404)) throw err
   },
 
   // See "The three ways to remove a document from CouchDB" http://n.exts.ch/2012/11/baleting
