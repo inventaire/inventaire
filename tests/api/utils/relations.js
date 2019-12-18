@@ -1,4 +1,4 @@
-const { customAuthReq } = require('./utils')
+const { customAuthReq, getUser, getReservedUser } = require('./utils')
 const endpoint = '/api/relations'
 
 const getRelations = user => customAuthReq(user, 'get', endpoint)
@@ -19,6 +19,14 @@ const getRelationStatus = async (reqUser, otherUser) => {
 }
 
 module.exports = {
+  getUsersWithoutRelation: () => {
+    return Promise.all([
+      getUser(),
+      getReservedUser()
+    ])
+    .then(([ userA, userB ]) => ({ userA, userB }))
+  },
+
   action: (action, reqUser, otherUser) => {
     return customAuthReq(reqUser, 'post', endpoint, {
       action,
