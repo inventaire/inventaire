@@ -1,25 +1,21 @@
 const __ = require('config').universalPath
-const { getUserRelations, getNetworkIds } = __.require('controllers', 'user/lib/relations_status')
-const responses_ = __.require('lib', 'responses')
-const error_ = __.require('lib', 'error/error')
-const { Promise } = __.require('lib', 'promises')
+const ActionsControllers = __.require('lib', 'actions_controllers')
+const relationsActions = require('./actions')
 
 module.exports = {
-  get: (req, res) => {
-    if (req.user == null) return error_.unauthorizedApiAccess(req, res)
+  get: ActionsControllers({
+    authentified: {
+      default: require('./get')
+    }
+  }),
 
-    return Promise.all([
-      getUserRelations(req.user._id),
-      getNetworkIds(req.user._id)
-    ])
-    .spread((relations, networkIds) => {
-      delete relations.none
-      relations.network = networkIds
-      return relations
-    })
-    .then(responses_.Send(res))
-    .catch(error_.Handler(req, res))
-  },
-
-  post: require('./post')
+  post: ActionsControllers({
+    authentified: {
+      request: relationsActions('request'),
+      cancel: relationsActions('cancel'),
+      accept: relationsActions('accept'),
+      discard: relationsActions('discard'),
+      unfriend: relationsActions('unfriend')
+    }
+  })
 }

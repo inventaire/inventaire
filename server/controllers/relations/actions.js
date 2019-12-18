@@ -5,23 +5,20 @@ const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
 const promises_ = __.require('lib', 'promises')
 const { Track } = __.require('lib', 'track')
+const sanitize = __.require('lib', 'sanitize/sanitize')
 
-module.exports = (req, res) => {
-  if (req.user == null) return error_.unauthorizedApiAccess(req, res)
+const sanitization = {
+  user: {}
+}
 
-  const { user, action } = req.body
+module.exports = action => (req, res) => {
+  sanitize(req, res, sanitization)
+  .then(params => {
+    const { reqUserId, user: userId } = params
 
-  if (!_.isString(action) || !possibleActions.includes(action)) {
-    return error_.bundle(req, res, 'bad actions parameter', 400, req.body)
-  }
-  if (!_.isUserId(user)) {
-    return error_.bundle(req, res, 'bad user parameter', 400, req.body)
-  }
-
-  const reqUserId = req.user._id
-
-  return promises_.try(() => solveNewRelation(action, user, reqUserId))
-  .then(_.success.bind(null, user, `${action}: OK!`))
+    return promises_.try(() => solveNewRelation(action, userId, reqUserId))
+    .then(_.success.bind(null, userId, `${action}: OK!`))
+  })
   .then(responses_.Ok(res))
   .then(Track(req, [ 'relation', action ]))
   .catch(error_.Handler(req, res))
@@ -43,5 +40,3 @@ const actions = {
   discard: 'discardRequest',
   unfriend: 'removeFriendship'
 }
-
-const possibleActions = Object.keys(actions)
