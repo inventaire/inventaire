@@ -1,5 +1,4 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
 const responses_ = __.require('lib', 'responses')
 const error_ = __.require('lib', 'error/error')
 const { Track } = __.require('lib', 'track')
@@ -8,18 +7,20 @@ const sanitize = __.require('lib', 'sanitize/sanitize')
 
 const sanitization = {
   id: {},
-  items: {}
+  description: { optional: true },
+  listing: {
+    whitelist: [ 'public', 'private', 'network' ],
+    optional: true
+  },
+  name: { optional: true }
 }
 
-module.exports = action => (req, res, next) => {
+module.exports = (req, res, next) => {
   sanitize(req, res, sanitization)
   .then(params => {
-    const { id, items, reqUserId } = params
-
-    return bookshelves_[action]([ id ], items, reqUserId)
-    .then(_.KeyBy('_id'))
-    .then(responses_.Wrap(res, 'bookshelves'))
-    .then(Track(req, [ 'bookshelf', 'delete items' ]))
+    return bookshelves_.updateAttributes(params)
+    .then(responses_.Send(res))
+    .then(Track(req, [ 'bookshelf', 'update' ]))
   })
   .catch(error_.Handler(req, res))
 }
