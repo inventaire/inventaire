@@ -27,6 +27,12 @@ const bookshelves_ = module.exports = {
       return bookshelves_.byIdsWithItems(ids)
     })
   },
+  updateAttributes: params => {
+    const { id: oldBookshelfId } = params
+    return db.get(oldBookshelfId)
+    .then(Bookshelf.updateAttributes(params))
+    .then(db.putAndReturn)
+  },
   addItems: (ids, itemsIds, userId) => {
     return bookshelves_.byIds(ids)
     .then(items_.addBookshelves(itemsIds, userId))
