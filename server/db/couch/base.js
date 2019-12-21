@@ -5,11 +5,11 @@ const getDbApi = require('./cot_base')
 const memoize = __.require('lib', 'utils/memoize')
 const list = require('./list')
 
-// If no designDocName is provided,
-// assumes it is the same as the dbBaseName
 module.exports = (dbBaseName, designDocName) => {
   const dbName = CONFIG.db.name(dbBaseName)
-  if (!designDocName) designDocName = dbBaseName
+  // If no designDocName is provided,
+  // assumes it is the same as the dbBaseName
+  designDocName = designDocName || dbBaseName
   return getHandler(dbBaseName, dbName, designDocName)
 }
 
