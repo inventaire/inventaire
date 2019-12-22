@@ -6,6 +6,8 @@ module.exports = {
   ?item wdt:${pid} wd:${qid} .
   # book
   { ?item wdt:P31 wd:Q571 . }
+  # written work
+  UNION { ?item wdt:P31 wd:Q47461344 . }
   # literary work
   UNION { ?item wdt:P31 wd:Q7725634 . }
   # comic book album

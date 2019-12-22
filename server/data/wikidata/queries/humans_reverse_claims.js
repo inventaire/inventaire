@@ -10,6 +10,8 @@ module.exports = {
   ?work wdt:P50 ?item .
   # book
   { ?work wdt:P31 wd:Q571 . }
+  # written work
+  UNION { ?item wdt:P31 wd:Q47461344 . }
   # literary work
   UNION { ?work wdt:P31 wd:Q7725634 . }
   # comic book album
