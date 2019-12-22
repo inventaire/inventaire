@@ -1,0 +1,4 @@
+# Run `export DEBUG=eslint:file-enumerator ; npm run lint`
+# to get the list of checked files, and thus find those that should be ignored
+
+# So far, none needs to be ignored as ./scripts/lint whitelist is already quite specific

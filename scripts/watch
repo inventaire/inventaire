@@ -6,6 +6,7 @@ server_port=$(node -p "require('config').port")
 supervisor_pid_file="./run/${server_port}-supervisor"
 
 supervisor \
-  --watch server,server.coffee,config,db/couchdb \
+  --watch server,config,db/couchdb \
   --save-pid  $supervisor_pid_file \
-  --extensions coffee,json,hbs server.coffee
+  --extensions js,json,hbs \
+  server/server.js

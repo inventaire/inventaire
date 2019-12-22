@@ -20,7 +20,6 @@ This repository tracks the server-side developments, while the (heavy) [client-s
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-
 - [Installation](#installation)
   - [Dependencies to install manually:](#dependencies-to-install-manually)
   - [Project development environment installation](#project-development-environment-installation)
@@ -78,7 +77,7 @@ nvm install 8
 git clone https://github.com/inventaire/inventaire.git
 cd inventaire
 npm install
-# If you haven't done it previously, set an admin on CouchDB and update ./config/local.coffee accordingly
+# If you haven't done it previously, set an admin on CouchDB and update ./config/local.js accordingly
 curl -XPUT http://localhost:5984/_config/admins/yourcouchdbusername -d '"'yourcouchdbpassword'"'
 ```
 You are all set! You can now start the server (in watch mode so that it reboots on file changes)
@@ -92,7 +91,7 @@ npm run watch
 ```
 
 ### Installation tips
-* To use executable that are used by the project (such as `coffee`, `mocha`,`couch2elastic4sync`), you can either find them in `./node_modules/.bin` or install them globally with npm: `npm install -g coffee-script mocha brunch bower supervisor` etc.
+* To use executable that are used by the project (such as `mocha`,`couch2elastic4sync`), you can either find them in `./node_modules/.bin` or install them globally with npm: `npm install -g mocha brunch bower supervisor` etc.
 * If your computer has many CPU cores, you can make Brunch compile even faster by setting an environment variable: `BRUNCH_JOBS=4`
 
 ### Repositories and Branches

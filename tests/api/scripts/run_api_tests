@@ -4,18 +4,18 @@ export NODE_ENV=tests
 export NODE_APP_INSTANCE=tests-alt
 timeout=20000
 
-# Warn if the file doesn't contain ".test.coffee"
+# Warn if the file doesn't contain ".test.js"
 check_filename(){
-  echo "$1" | grep ".test.coffee" > /dev/null || {
-    echo -e "\e[0;33mWARNING: test file misses .test.coffee in filename: $1\e[0m"
+  echo "$1" | grep ".test.js" > /dev/null || {
+    echo -e "\e[0;33mWARNING: test file misses .test.js in filename: $1\e[0m"
   }
 }
 
 # If no test file is passed as argument, run all tests
 if [ -z "$1" ]
 then
-  find tests/api -type f -name *.test.coffee | \
-    xargs mocha --exit --timeout $timeout --require coffee-script/register
+  find tests/api -type f -name *.test.js | \
+    xargs mocha --exit --timeout $timeout
 else
   files=''
   for arg in $@
@@ -26,9 +26,9 @@ else
       files="$files $arg"
     else
       # Add the directory test files to the list
-      files="$files $arg/*.test.coffee"
+      files="$files $arg/*.test.js"
     fi
   done
   echo "files: $files"
-  mocha --exit --timeout $timeout --require coffee-script/register $files
+  mocha --exit --timeout $timeout $files
 fi
