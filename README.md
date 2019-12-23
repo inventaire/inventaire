@@ -107,9 +107,12 @@ the repo tracking strings used in the client and emails in all the supported lan
 - [**master**](http://github.com/inventaire/inventaire-i18n/tree/master): tracking translations fetched from the [translation tool](http://translate.inventaire.io) and build scripts
 - [**dist**](http://github.com/inventaire/inventaire-i18n/tree/dist): same as master but with pre-built files
 
-#### [deploy](http://github.com/inventaire/deploy)
+#### [deploy](http://github.com/inventaire/inventaire-deploy)
 tracking installation scripts and documentation to run inventaire in production
 - [**master**](http://github.com/inventaire/inventaire-deploy/tree/master): the main implementation targeting Ubuntu 16.04. Additional branches can be started to document installation on other environments
+
+#### [docker](https://github.com/inventaire/docker-inventaire)
+- [**master**](http://github.com/inventaire/docker-inventaire/tree/master): tracking docker installation files for development and testing use
 
 ## Inventaire stack map
 [![stack](https://raw.githubusercontent.com/inventaire/stack/master/snapshots/stack-from-server.png)](https://inventaire.github.io/stack/)
@@ -142,7 +145,7 @@ see [Administration](./docs/administration.md)
 **Ideas for experimentations:**
 
 - port to custom desktop clients using [node-webkit](https://github.com/nwjs/nw.js) or alike
-- port to an app for personal cloud platforms: [Cozy](http://cozy.io), [OwnCloud](https://owncloud.org/)...
+- port to an app for personal cloud platforms: [Cozy](http://cozy.io), [NextCloud](https://nextcloud.org/)...
 - server-less/P2P inventory sharing using WebRTC DataChannel / [WebTorrent](https://github.com/feross/webtorrent) / [IPFS](http://ipfs.io/) / [Ethereum](https://www.ethereum.org/) / [OpenBazaar](https://www.openbazaar.org) / [Scuttlebot](https://scuttlebot.io) / you name it
 - any other IndieWeb / [Unhosted](https://unhosted.org/) crazyness? :)
 
