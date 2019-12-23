@@ -25,5 +25,9 @@ module.exports = fn => {
 
 const addUndefinedArguments = (args, fnLength) => {
   const missingArgs = fnLength - args.length
-  return args.concat(new Array(missingArgs))
+  // Due Function.length counting arguments before the first argument
+  // with a defautl value, functions with default values called with those default
+  // arguments defined will have more arguments than their length, thus missingArgs < 0
+  if (missingArgs <= 0) return args
+  else return args.concat(new Array(missingArgs))
 }
