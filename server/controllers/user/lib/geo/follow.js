@@ -8,26 +8,19 @@ const db = __.require('level', 'geo')('geo')
 module.exports = () => {
   return follow({
     dbBaseName: 'users',
-    filter: isUserWithPosition,
+    filter: isUser,
     onChange: updatePosition,
     reset
   })
 }
 
-// TODO: check that this doesn't miss to update users that just deleted their position
-// and thus need to be unindexed
-const isUserWithPosition = doc => {
-  if (doc.type === 'user') {
-    if (doc.position != null) return true
-  }
-  return false
-}
+const isUser = doc => doc.type === 'user'
 
 const updatePosition = change => {
   const { id, deleted, doc } = change
   const { position } = doc
 
-  if (deleted) {
+  if (deleted || position == null) {
     return db.del(id)
   } else {
     const [ lat, lon ] = position
