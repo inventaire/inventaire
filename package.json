@@ -69,10 +69,9 @@
     "isbn-groups": "^1.0.1",
     "isbn2": "^0.1.7",
     "jiff": "^0.7.3",
-    "level-geospatial": "0.0.5",
+    "level-geospatial": "git+https://github.com/maxlath/level-geospatial.git#5001a8f",
     "level-jobs": "^2.1.0",
-    "level-party": "^3.0.4",
-    "level-sublevel": "^6.6.5",
+    "level-party": "^4.0.0",
     "leven": "^2.1.0",
     "method-override": "^2.3.10",
     "moment": "^2.21.0",
@@ -87,6 +86,7 @@
     "rss": "^1.2.2",
     "serve-favicon": "^2.4.5",
     "split": "^1.0.1",
+    "subleveldown": "^4.1.4",
     "through": "^2.3.8",
     "turtle-validator": "^1.0.2",
     "wikidata-edit": "^2.3.0",
@@ -108,7 +108,7 @@
     "eslint-plugin-standard": "^4.0.1",
     "faker": "^4.1.0",
     "git-hooks": "^1.0.2",
-    "level-test": "^5.0.0",
+    "level-test": "^8.0.0",
     "live-server": "^1.2.1",
     "lodash": "^4.17.15",
     "mailcomposer": "^2.1.0",
@@ -119,6 +119,6 @@
     "wikidata-filter": "^2.3.1"
   },
   "engines": {
-    "node": ">= 6.4"
+    "node": ">= 8"
   }
 }

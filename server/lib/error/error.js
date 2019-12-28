@@ -38,6 +38,7 @@ error_.notFound = context => {
 }
 
 error_.catchNotFound = err => {
+  // notFound flag is set by: levelup, error_.notFound
   if (!(err && err.notFound)) throw err
 }
 

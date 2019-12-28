@@ -1,14 +1,14 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const levelBase = require('./base')
+const getSubDb = require('./get_sub_db')
 const { Promise } = __.require('lib', 'promises')
 
 module.exports = {
   // always return an object with 'push' and 'pushBatch' function
   // taking a payload and returning a promise
   initQueue: (jobName, worker, maxConcurrency) => {
-    const db = levelBase.rawSubDb(`job:${jobName}`)
+    const db = getSubDb(`job:${jobName}`, 'utf8')
 
     const run = CONFIG.jobs[jobName] && CONFIG.jobs[jobName].run
     if (typeof run !== 'boolean') {

@@ -17,8 +17,8 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const { Promise } = __.require('lib', 'promises')
-const levelBase = __.require('level', 'base')
-const db = levelBase.simpleSubDb('snapshot')
+const db = __.require('level', 'get_sub_db')('snapshot')
+const { formatBatchOps } = __.require('level', 'utils')
 const refreshSnapshot = require('./refresh_snapshot')
 const error_ = __.require('lib', 'error/error')
 
@@ -38,11 +38,12 @@ module.exports = {
     })
   },
 
-  batch: ops => db.batch(_.forceArray(ops))
+  batch: ops => db.batch(formatBatchOps(ops))
 }
 
 const getSnapshot = (uri, preventLoop) => {
   return db.get(uri)
+  .catch(error_.catchNotFound)
   .then(snapshot => {
     if (snapshot != null) return snapshot
 
