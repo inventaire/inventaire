@@ -6,7 +6,7 @@ const { reset, streamPromise, formatBatchOps } = __.require('level', 'utils')
 describe('level utils', () => {
   describe('streamPromise', () => {
     it('should convert a stream in promise', async () => {
-      const db = getSubDb('test:streamPromise')
+      const db = getSubDb('test:streamPromise', 'json')
       await db.batch([
         { type: 'put', key: 'a', value: 'b' },
         { type: 'put', key: 'c', value: 'd' }
@@ -22,7 +22,7 @@ describe('level utils', () => {
 
   describe('reset', () => {
     it('should reset a db', async () => {
-      const db = getSubDb('test:reset')
+      const db = getSubDb('test:reset', 'utf8')
       await db.put('a', 123)
       await reset(db)
       const results = await streamPromise(db.createReadStream())

@@ -3,7 +3,7 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const assert_ = __.require('utils', 'assert_types')
-const db = __.require('level', 'get_sub_db')('cache')
+const db = __.require('level', 'get_sub_db')('cache', 'json')
 const { offline } = CONFIG
 const { oneDay, oneMonth } = __.require('lib', 'times')
 

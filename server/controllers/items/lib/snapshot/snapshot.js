@@ -17,7 +17,7 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const { Promise } = __.require('lib', 'promises')
-const db = __.require('level', 'get_sub_db')('snapshot')
+const db = __.require('level', 'get_sub_db')('snapshot', 'json')
 const { formatBatchOps } = __.require('level', 'utils')
 const refreshSnapshot = require('./refresh_snapshot')
 const error_ = __.require('lib', 'error/error')

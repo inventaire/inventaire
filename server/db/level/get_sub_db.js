@@ -2,6 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const memoize = __.require('lib', 'utils/memoize')
+const assert_ = __.require('utils', 'assert_types')
 // Make sure to set the global Promise object to Bluebird
 // before calling level libs, so that db functions return Bluebird promises
 global.Promise = __.require('lib', 'promises').Promise
@@ -24,8 +25,10 @@ if (CONFIG.leveldbMemoryBackend) {
   globalDb = level(dbFolderPath, config)
 }
 
+// Available encodings: https://github.com/Level/codec#builtin-encodings
 module.exports = memoize((dbName, valueEncoding) => {
-  valueEncoding = valueEncoding || 'json'
+  assert_.string(dbName)
+  assert_.string(valueEncoding)
   _.success(`${dbName} opened`)
   return sub(globalDb, dbName, { valueEncoding })
 })

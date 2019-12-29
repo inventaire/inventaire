@@ -3,7 +3,7 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const { crawlPeriod, debounceDelay, disabled } = CONFIG.debouncedEmail
 
-const db = __.require('level', 'get_sub_db')('waiting')
+const db = __.require('level', 'get_sub_db')('waiting', 'utf8')
 
 const sendDebouncedEmail = require('./send_debounced_email')
 
