@@ -95,7 +95,7 @@
     "xml2js": "^0.4.13"
   },
   "devDependencies": {
-    "couch2elastic4sync": "^7.0.0",
+    "couch2elastic4sync": "git+https://github.com/inventaire/couch2elastic4sync.git#74b2819",
     "couchdb-backup": "^1.0.0",
     "diff": "^2.2.1",
     "doctoc": "^1.2.0",
