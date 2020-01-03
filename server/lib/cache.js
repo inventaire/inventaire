@@ -3,8 +3,7 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const assert_ = __.require('utils', 'assert_types')
-const levelBase = __.require('level', 'base')
-const db = levelBase.simpleSubDb('cache')
+const db = __.require('level', 'get_sub_db')('cache', 'json')
 const { offline } = CONFIG
 const { oneDay, oneMonth } = __.require('lib', 'times')
 
@@ -67,6 +66,7 @@ module.exports = {
 
 const checkCache = (key, timespan) => {
   return db.get(key)
+  .catch(error_.catchNotFound)
   .then(res => {
     // Returning nothing will trigger a new request
     if (res == null) return

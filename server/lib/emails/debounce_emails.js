@@ -1,10 +1,11 @@
-// Add emails to the waiting list to let server/lib/emails/debounced_emails_crawler
+// Add emails to the waiting list to let ./debounced_emails_crawler
 // find and send them
 
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const waitingEmails = require('./waiting_emails')
+const db = __.require('level', 'get_sub_db')('waiting', 'utf8')
+const { emptyValue } = __.require('level', 'utils')
 
 module.exports = {
   transactionUpdate: transaction => {
@@ -26,15 +27,16 @@ module.exports = {
 // Delete and repost with new time to wait
 // as long as updates are arriving fast (i.e. in a 30 minutes timespan)
 const addToWaitingList = (domain, id) => {
-  return waitingEmails.sub.createKeyStream({
+  return db.createKeyStream({
     gt: `${domain}:${id}:0`,
     lt: `${domain}:${id}::`
   })
-  .on('data', waitingEmails.del)
+  // TODO: refactor to delete in batch
+  .on('data', db.del)
   .on('end', createNewWaiter.bind(null, domain, id))
 }
 
 const createNewWaiter = (domain, id) => {
   const key = `${domain}:${id}:${Date.now()}`
-  return waitingEmails.put(key, {})
+  return db.put(key, emptyValue)
 }

@@ -1,23 +1,23 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const assert_ = __.require('utils', 'assert_types')
-const { rawSubDb, Reset, streamPromise } = require('./base')
-const geo = require('level-geospatial')
-const promises_ = __.require('lib', 'promises')
+const getSubDb = __.require('level', 'get_sub_db')
+const { streamPromise } = require('./utils')
+const levelGeospatial = require('level-geospatial')
 const memoize = __.require('lib', 'utils/memoize')
 
 module.exports = memoize(dbName => {
-  const sub = rawSubDb(dbName)
-  const db = geo(sub)
-  const API = promises_.promisify(db, [ 'get', 'getByKey', 'put', 'del' ])
-  API.reset = Reset(sub)
-  API.search = Search(db)
-  return API
+  const sub = getSubDb(dbName, 'utf8')
+  const geo = levelGeospatial(sub)
+  geo.searchStream = geo.search
+  geo.search = Search(geo)
+  geo.sub = sub
+  return geo
 })
 
-const Search = db => (latLng, kmRange) => {
+const Search = geo => (latLng, kmRange) => {
   assert_.array(latLng)
   assert_.number(kmRange)
   const [ lat, lon ] = latLng
-  return streamPromise(db.search({ lat, lon }, kmRange * 1000))
+  return streamPromise(geo.searchStream({ lat, lon }, kmRange * 1000))
 }

@@ -68,4 +68,19 @@ describe('memoize', () => {
     callCount.should.equal(1)
     done()
   })
+
+  it('should tolerate functions with default values', done => {
+    let callCount = 0
+    const fn = (a, b = 123) => {
+      callCount++
+      return { foo: a + b }
+    }
+    const memoizedFn = memoize(fn)
+    const objA = memoizedFn(12)
+    const objB = memoizedFn(12, 123)
+    objA.foo.should.equal(objB.foo)
+    objA.should.not.equal(objB)
+    callCount.should.equal(2)
+    done()
+  })
 })
