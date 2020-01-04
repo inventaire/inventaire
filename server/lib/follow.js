@@ -7,7 +7,7 @@ const promises_ = __.require('lib', 'promises')
 const assert_ = __.require('utils', 'assert_types')
 const error_ = __.require('lib', 'error/error')
 const follow = require('follow')
-const metaDb = __.require('level', 'get_sub_db')('meta')
+const metaDb = __.require('level', 'get_sub_db')('meta', 'utf8')
 const breq = require('bluereq')
 const dbHost = CONFIG.db.fullHost()
 const { reset: resetFollow, delay: delayFollow } = CONFIG.db.follow
@@ -45,6 +45,7 @@ module.exports = params => {
     // Then start follow this database
     return metaDb.get(buildKey(dbName))
     .catch(error_.catchNotFound)
+    .then(lastSeq => lastSeq != null ? parseInt(lastSeq) : 0)
     // after a bit, to let other followers the time to register, and CouchDB
     // the time to initialize, while letting other initialization functions
     // with a higher priority level some time to run.
@@ -115,7 +116,7 @@ const SetLastSeq = dbName => {
   // this function shouldn't be shared between databases
   // as it could miss updates due to the debouncer
   const setLastSeq = seq => {
-    return metaDb.put(key, seq)
+    return metaDb.put(key, seq.toString())
     .catch(_.Error(`${dbName} setLastSeq err`))
   }
   // setLastSeq might be triggered many times if a log of changes arrive at once
