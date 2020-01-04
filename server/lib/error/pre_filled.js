@@ -1,8 +1,8 @@
 // Pre-formatted error handlers to make error responses consistent
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
+const { pick } = require('lodash')
+const { typeOf } = require('../utils/base')
 const promises_ = __.require('lib', 'promises')
-const assert_ = __.require('utils', 'assert_types')
 
 module.exports = error_ => {
   const newFunctions = {
@@ -22,8 +22,7 @@ module.exports = error_ => {
 
     // A standardized way to return a 400 invalid parameter
     newInvalid: (parameter, value) => {
-      assert_.string(parameter)
-      const type = _.typeOf(value)
+      const type = typeOf(value)
       const context = { parameter, value, type }
       const valueStr = typeof value === 'object' ? JSON.stringify(value) : value
       const err = error_.new(`invalid ${parameter}: ${valueStr}`, 400, context)
@@ -86,7 +85,7 @@ module.exports = error_ => {
     // A standardized way to return a 400 unknown action
     unknownAction: (req, res, context) => {
       if (context == null) {
-        context = _.pick(req, [ 'method', 'query', 'body' ])
+        context = pick(req, [ 'method', 'query', 'body' ])
         context.url = req.originalUrl
       }
       return error_.bundle(req, res, 'unknown action', 400, context)

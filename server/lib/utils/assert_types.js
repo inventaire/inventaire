@@ -1,10 +1,6 @@
 const _ = require('lodash')
 const { typeOf } = require('./base')
-
-// Working around the circular dependency
-let error_
-const lateRequire = () => { error_ = require('../error/error') }
-setTimeout(lateRequire, 0)
+const error_ = require('../error/error')
 
 const assertType = (type, obj) => {
   const trueType = typeOf(obj)

@@ -1,5 +1,3 @@
-const __ = require('config').universalPath
-const assert_ = __.require('utils', 'assert_types')
 const formatError = require('./format_error')
 
 const error_ = module.exports = {}
@@ -8,16 +6,12 @@ const error_ = module.exports = {}
 // so that it can be catched and parsed in a standardized way
 // at the end of a promise chain, typically by a .catch error_.Handler(req, res)
 error_.new = (message, filter, ...context) => {
-  assert_.types([ 'string', 'string|number' ], [ message, filter ])
   const err = new Error(message)
   return formatError(err, filter, context)
 }
 
 // Completing an existing error object
-error_.complete = (err, filter, ...context) => {
-  assert_.types([ 'object', 'string|number' ], [ err, filter ])
-  return formatError(err, filter, context)
-}
+error_.complete = (err, filter, ...context) => formatError(err, filter, context)
 
 // Compelete and rethrow: to be used in a promise chain
 error_.Complete = (...args) => err => {

@@ -1,22 +1,21 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
+// Using minimal dependencies to avoid circular dependencies
+// as this is depended on by lib/error which is called very early
+const { isNumber, isPlainObject, flatten } = require('lodash')
 
 // Global conventions:
 // - all error objects should have a statusCode (mimicking HTTP status codes)
 //   this is already the case for errors rejected by bluereq and blue-cot
 
-module.exports = (err, filter, context) => {
-  context = _.forceArray(context)
+module.exports = (err, filter, ...context) => {
   // numbers filters are used as HTTP codes
   // while string will be taken as a type
-  const attribute = _.isNumber(filter) ? 'statusCode' : 'type'
+  const attribute = isNumber(filter) ? 'statusCode' : 'type'
   err[attribute] = filter
 
-  // Prevent having an array in an array as context
-  // or an array with a single object
-  // This allows to return an object as context, with possibly data
-  // the client can depend on
-  if ((context.length === 1) && (_.isArray(context[0]) || _.isPlainObject(context[0]))) {
+  // context arguments prefered format is a single object (possibly with data
+  // the client can depend on) but there are still exceptions
+  context = flatten(context)
+  if (context.length === 1 && isPlainObject(context[0])) {
     context = context[0]
   }
 
