@@ -12,6 +12,11 @@ const breq = require('bluereq')
 const dbHost = CONFIG.db.fullHost()
 const { reset: resetFollow, delay: delayFollow } = CONFIG.db.follow
 
+// Working around the circular dependency
+let waitForCouchInit
+const lateRequire = () => { waitForCouchInit = __.require('couch', 'init') }
+setTimeout(lateRequire, 0)
+
 // Never follow in non-server mode.
 // This behaviors allows, in API tests environement, to have the tests server
 // following, while scripts being called directly by tests don't compete
@@ -64,7 +69,8 @@ const initFollow = (dbName, reset) => (lastSeq = 0) => {
   const setLastSeq = SetLastSeq(dbName)
   const dbUrl = `${dbHost}/${dbName}`
 
-  return getDbLastSeq(dbUrl)
+  return waitForCouchInit()
+  .then(() => getDbLastSeq(dbUrl))
   .then(dbLastSeq => {
     // Reset lastSeq if the dbLastSeq is behind
     // as this probably means the database was deleted and re-created

@@ -10,13 +10,13 @@ const _ = __.require('builders', 'utils')
 __.require('lib', 'startup/before')()
 
 // Starting to make CouchDB initialization checks
-const couchInit = __.require('couch', 'init')()
+const waitForCouchInit = __.require('couch', 'init')
 // Meanwhile, start setting up the server.
 // Startup time is mostly due to the time needed to require
 // all files from controllers, middlewares, libs, etc
 const initExpress = require('./init_express')
 
-couchInit
+waitForCouchInit()
 .then(_.Log('couch init'))
 .then(initExpress)
 .tap(() => console.timeEnd('startup'))
