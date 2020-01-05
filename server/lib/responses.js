@@ -1,5 +1,9 @@
 const __ = require('config').universalPath
-const assert_ = __.require('utils', 'assert_types')
+
+// Working around the circular dependency
+let assert_
+const lateRequire = () => { assert_ = __.require('utils', 'assert_types') }
+setTimeout(lateRequire, 0)
 
 const responses_ = module.exports = {
   // returns a function triggering a standard confirmation response
