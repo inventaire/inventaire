@@ -21,7 +21,7 @@ for (const dbName in dbsList) {
 
 const designDocFolder = __.path('couchdb', 'design_docs')
 
-module.exports = () => {
+const init = () => {
   return couchInit(dbBaseUrl, formattedList, designDocFolder)
   .tap(initHardCodedDocuments)
   .tap(initDesignDocSync)
@@ -34,4 +34,12 @@ module.exports = () => {
     console.error(err.message, context)
     return process.exit(1)
   })
+}
+
+let waitForCouchInit
+
+module.exports = () => {
+  // Return the same promises to all consumers
+  waitForCouchInit = waitForCouchInit || init()
+  return waitForCouchInit
 }
