@@ -1,6 +1,8 @@
 const _ = require('lodash')
 
 const normalizeTerm = term => {
+  if (!term) return
+
   return term
   .toLowerCase()
 
