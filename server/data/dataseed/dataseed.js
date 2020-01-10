@@ -10,6 +10,10 @@ const _ = __.require('builders', 'utils')
 const promises_ = __.require('lib', 'promises')
 const requests_ = __.require('lib', 'requests')
 const isbn_ = __.require('lib', 'isbn/isbn')
+const reqOptions = {
+  // Accept self-signed certificates
+  rejectUnauthorized: false
+}
 
 const { enabled, host } = CONFIG.dataseed
 
@@ -18,20 +22,22 @@ module.exports = {
     isbns = _.forceArray(isbns)
     if (!enabled) return promises_.resolve(isbns.map(emptySeed))
     isbns = isbns.join('|')
-    return requests_.get(_.buildPath(`${host}/books`, { isbns, refresh }))
+    const url = _.buildPath(`${host}/books`, { isbns, refresh })
+    return requests_.get(url, reqOptions)
   },
 
   // Provides simply an image in a prompt maner
   getImageByIsbn: isbn => {
     isbn = isbn_.toIsbn13(isbn)
     if (!isbn) return promises_.reject(new Error('invalid isbn'))
-    return requests_.get(_.buildPath(`${host}/images`, { isbn }))
+    const url = _.buildPath(`${host}/images`, { isbn })
+    return requests_.get(url, reqOptions)
   },
 
   // Converts the url to an image hash
-  getImageByUrl: url => {
-    url = encodeURIComponent(url)
-    return requests_.get(_.buildPath(`${host}/images`, { url }))
+  getImageByUrl: imageUrl => {
+    const url = _.buildPath(`${host}/images`, { url: encodeURIComponent(imageUrl) })
+    return requests_.get(url, reqOptions)
   }
 }
 
