@@ -38,16 +38,13 @@ const config = module.exports = {
   // CouchDB settings
   db: {
     protocol: 'http',
-    host: 'localhost',
+    hostname: 'localhost',
     port: 5984,
     fullHost: function () {
-      return `${this.protocol}://${this.username}:${this.password}@${this.host}:${this.port}`
+      return `${this.protocol}://${this.username}:${this.password}@${this.hostname}:${this.port}`
     },
     username: 'yourcouchdbusername',
     password: 'yourcouchdbpassword',
-    auth: function () {
-      return `${this.username}:${this.password}`
-    },
     suffix: null,
     name: function (dbBaseName) {
       if (this.suffix != null) return `${dbBaseName}-${this.suffix}`

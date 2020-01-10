@@ -44,8 +44,7 @@
     "url": "https://github.com/inventaire/inventaire"
   },
   "dependencies": {
-    "blue-cot": "^3.6.1",
-    "bluebird": "^3.4.0",
+    "blue-cot": "^4.0.5",
     "bluereq": "^2.1.10",
     "body-parser": "^1.18.2",
     "chalk": "^1.1.3",
