@@ -1,13 +1,13 @@
 {{>banner}}
 {{>title_top}}
-  <h2>{{i18n lang 'group_email_invitation_subject' data}}</h2>
+  <h2>{{i18n lang 'group_email_invitation_subject' this}}</h2>
 {{>title_bottom}}
 {{>paragraph_top}}
   {{{i18n lang 'email_invitation_intro'}}}
   <br />
   <br />
   {{#if message}}
-    {{{I18n lang 'email_invitation_message' data}}}
+    {{{I18n lang 'email_invitation_message' this}}}
     <p style="background-color: #EEEEEE; width: 90%; padding: 1em;">
       {{message}}
     </p>
@@ -15,11 +15,11 @@
 {{>paragraph_bottom}}
 
 {{>button_top}}
-  <a href="{{host}}/signup" target="_blank" >{{i18n lang 'group_email_invitation_button' data}}</a>
+  <a href="{{host}}/signup" target="_blank" >{{i18n lang 'group_email_invitation_button' this}}</a>
 {{>button_bottom}}
 
 {{>paragraph_top}}
-  {{{i18n lang 'group_invitation_inventory' data}}}
+  {{{i18n lang 'group_invitation_inventory' this}}}
   <br />
   <br />
   {{{i18n lang 'email_invitation_learn_more'}}}

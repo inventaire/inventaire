@@ -136,17 +136,17 @@ module.exports = {
 
   GroupInvitation: (inviter, group, message) => {
     // No email settings to check here neither (idem FriendInvitation)
-    const { language } = inviter
+    const { username, language } = inviter
     const lang = _.shortLang(language)
-
-    group.pathname = `${host}/groups/${group.slug}`
+    const { name: groupName, slug } = group
+    const pathname = `${host}/groups/${slug}`
     // Object required to pass as i18n strings context
     return emailAddress => ({
       to: emailAddress,
       replyTo: inviter.email,
-      subject: i18n(lang, 'group_email_invitation_subject'),
+      subject: i18n(lang, 'group_email_invitation_subject', { username, groupName }),
       template: 'group_email_invitation',
-      context: { message, lang, host }
+      context: { message, lang, host, username, groupName, pathname }
     })
   },
 
