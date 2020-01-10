@@ -82,8 +82,10 @@ module.exports = function (data, callback) {
       const json = JSON.stringify(mail.data, null, 4)
       let { html } = mail.data
       html = `<p style='text-align:center'><a href='/data.json'>data</a></p>${html}`
-      fs.writeFile(previewFilePath, html)
-      fs.writeFile(previewDataPath, json, callback)
+      fs.writeFile(previewFilePath, html, (err, res) => {
+        if (err) callback(err)
+        else fs.writeFile(previewDataPath, json, callback)
+      })
     })
   })
   // else
