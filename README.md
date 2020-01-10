@@ -20,6 +20,7 @@ This repository tracks the server-side developments, while the (heavy) [client-s
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
+
 - [Installation](#installation)
   - [Dependencies to install manually:](#dependencies-to-install-manually)
   - [Project development environment installation](#project-development-environment-installation)
@@ -27,11 +28,14 @@ This repository tracks the server-side developments, while the (heavy) [client-s
   - [Repositories and Branches](#repositories-and-branches)
     - [server](#server)
     - [client](#client)
+    - [i18n](#i18n)
     - [deploy](#deploy)
+    - [docker](#docker)
 - [Inventaire stack map](#inventaire-stack-map)
 - [Concepts map](#concepts-map)
 - [Contribute](#contribute)
 - [API](#api)
+- [Administration](#administration)
 - [Day-dreaming on future evolutions](#day-dreaming-on-future-evolutions)
 - [License](#license)
 
