@@ -34,7 +34,7 @@
     "test-api-quick": "./tests/api/scripts/test_api_quick",
     "test-watch": "./scripts/test --watch --extensions js",
     "update-i18n": "./scripts/update_i18n",
-    "update-toc": "doctoc README.md",
+    "update-toc": "./scripts/update_toc",
     "watch": "./scripts/watch"
   },
   "license": "AGPL-3.0",
@@ -98,7 +98,6 @@
     "couch2elastic4sync": "git+https://github.com/inventaire/couch2elastic4sync.git#74b2819",
     "couchdb-backup": "^1.0.0",
     "diff": "^2.2.1",
-    "doctoc": "^1.2.0",
     "eslint": "^6.6.0",
     "eslint-config-standard": "^14.1.0",
     "eslint-plugin-import": "^2.18.2",
