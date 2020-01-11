@@ -18,7 +18,7 @@ module.exports = {
     ?part wdt:P31 wd:Q3331189
     # but recover parts that are also instances of work
     FILTER NOT EXISTS {
-      VALUES (?work_type) { (wd:Q571) (wd:Q47461344) (wd:Q2831984) (wd:Q1760610) (wd:Q8274) (wd:Q1760610) (wd:Q8274) } .
+      VALUES (?work_type) { (wd:Q571) (wd:Q47461344) (wd:Q7725634) (wd:Q2831984) (wd:Q1004) (wd:Q1760610) (wd:Q8274) } .
       ?part wdt:P31 ?work_type .
     }
   }
