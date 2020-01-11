@@ -2,6 +2,14 @@ module.exports = {
   parameters: [ 'qid' ],
   query: params => {
     const { qid: authorQid } = params
+
+    // P50    author
+    // P58    screenwriter
+    // P110   illustrator
+    // P6338  colorist
+
+    // Filter-out instances of edition (Q3331189)
+
     return `SELECT ?work ?type ?date ?serie WHERE {
   ?work wdt:P50|wdt:P58|wdt:P110|wdt:P6338 wd:${authorQid} .
   ?work wdt:P31 ?type .
