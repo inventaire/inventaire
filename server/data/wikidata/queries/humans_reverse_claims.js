@@ -8,18 +8,8 @@ module.exports = {
 
   # Keep only humans that are known for at least one work
   ?work wdt:P50 ?item .
-  # book
-  { ?work wdt:P31 wd:Q571 . }
-  # written work
-  UNION { ?item wdt:P31 wd:Q47461344 . }
-  # literary work
-  UNION { ?work wdt:P31 wd:Q7725634 . }
-  # comic book album
-  UNION { ?work wdt:P31 wd:Q2831984 . }
-  # comic book
-  UNION { ?work wdt:P31 wd:Q1004 . }
-  # manga
-  UNION { ?work wdt:P31 wd:Q8274 . }
+  ?work wdt:P31 ?work_type .
+  VALUES (?work_type) { (wd:Q571) (wd:Q47461344) (wd:Q7725634) (wd:Q2831984) (wd:Q1004) (wd:Q1760610) (wd:Q8274) } .
 }
 LIMIT 1000`
   }
