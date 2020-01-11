@@ -13,18 +13,27 @@ const Group = __.require('models', 'group')
 const sanitization = {
   search: {},
   lang: {},
-  types: { allowlist: possibleTypes },
-  limit: { default: 10, max: 100 }
+  types: {
+    allowlist: possibleTypes
+  },
+  limit: {
+    default: 10,
+    max: 100
+  },
+  filter: {
+    optional: true,
+    allowlist: [ 'inv', 'wd' ]
+  }
 }
 
 module.exports = {
   get: (req, res) => {
     sanitize(req, res, sanitization)
     .then(params => {
-      const { types, search, lang, limit, reqUserId } = params
+      const { types, search, lang, limit, filter: index, reqUserId } = params
       // Extend the search to the next 10 results, so that the popularity boost
       // can save some good results a bit further down the limit
-      return typeSearch(types, search, limit + 10)
+      return typeSearch(types, search, limit + 10, index)
       .then(parseResults(types))
       .then(results => {
         return results

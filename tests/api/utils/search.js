@@ -8,10 +8,12 @@ const { rawRequest } = require('./request')
 const endpoint = '/api/search'
 
 module.exports = {
-  search: async (types, input, lang = 'en') => {
+  search: async (types, input, filter) => {
     if (_.isArray(types)) types = types.join('|')
     input = encodeURIComponent(input)
-    const { results } = await nonAuthReq('get', `${endpoint}?types=${types}&lang=${lang}&search=${input}`)
+    let url = `${endpoint}?types=${types}&lang=en&search=${input}`
+    if (filter) url += `&filter=${filter}`
+    const { results } = await nonAuthReq('get', url)
     return results
   },
 

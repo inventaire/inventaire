@@ -4,9 +4,10 @@ const _ = __.require('builders', 'utils')
 require('should')
 const faker = require('faker')
 const { wait } = __.require('lib', 'promises')
-const { nonAuthReq, authReq, getUser, shouldNotBeCalled } = require('../utils/utils')
+const { nonAuthReq, authReq, getUser, undesiredRes, shouldNotBeCalled } = require('../utils/utils')
 const { elasticsearchUpdateDelay } = CONFIG.entitiesSearchEngine
 const { search } = require('../utils/search')
+const { createHuman } = require('../fixtures/entities')
 
 describe('search:global', () => {
   describe('parameters', () => {
@@ -71,6 +72,29 @@ describe('search:global', () => {
       // The same request but authentified with a group member account should find the group
       const { results: refreshedResults } = await authReq('get', `/api/search?search=${name}&types=groups&lang=en`)
       _.map(refreshedResults, 'id').includes(group._id).should.be.true()
+    })
+  })
+
+  describe('filter', () => {
+    it('should reject an invalid filter', done => {
+      search('humans', 'yo', 'foo')
+      .then(undesiredRes(done))
+      .catch(err => {
+        err.statusCode.should.equal(400)
+        err.body.status_verbose.should.startWith('invalid filter: foo')
+        done()
+      })
+      .catch(done)
+    })
+
+    it('should accept a filter parameter', async () => {
+      const author = await createHuman({ labels: { fr: 'Gilles Deleuze' } })
+      await wait(2000)
+      const results = await search('humans', 'Gilles Deleuze', 'inv')
+      results.should.be.an.Array()
+      const ids = _.map(results, 'id')
+      ids.should.containEql(author._id)
+      ids.should.not.containEql('Q184226')
     })
   })
 })
