@@ -109,23 +109,3 @@ describe('user model', () => {
     })
   })
 })
-
-// Valid test but takes too much time due to the hash
-// Can be let comment-out when not working on this part of the code
-
-// it 'should return a hashed password', (done)->
-//   args = validUser()
-//   clearPassword = args[4]
-
-//   _.info 'takes more time due to the volontarly slow hash function'
-//   @timeout 5000
-
-//   create validUser()
-//   .then (user)->
-//     user.password.should.be.a.String()
-//     _.log clearPassword, 'input'
-//     _.log user.password, 'output'
-//     user.password.should.not.equal clearPassword
-//     user.password.length.should.be.above 200
-//     done()
-//   .catch (err)-> console.log 'err', err
