@@ -17,7 +17,7 @@ module.exports = () => {
     // to prevent blocking memory undefinitely
     delete debouncedUpdaters[userId]
     return updateSnapshotItemsCounts(userId)
-    .catch(_.Error('user updateSnapshotItemsCounts err'))
+    .catch(_.Error('user itemsCountsUpdater err'))
   }
 
   radio.on('user:inventory:update', userId => {

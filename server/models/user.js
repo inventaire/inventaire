@@ -138,6 +138,9 @@ User.setOauthTokens = (provider, data) => user => {
 }
 
 User.updateItemsCounts = itemsCounts => user => {
+  // This function is used by db.update and should thus always return a user doc
+  // even if unmodified
+  if (user.type === 'deletedUser') return user
   assert_.object(itemsCounts.private)
   assert_.object(itemsCounts.network)
   assert_.object(itemsCounts.public)
