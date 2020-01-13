@@ -1,8 +1,12 @@
+const __ = require('config').universalPath
+const _ = __.require('builders', 'utils')
 const should = require('should')
-const { getReservedUser, customAuthReq } = require('../utils/utils')
+const { wait } = __.require('lib', 'promises')
+const { getReservedUser, customAuthReq, authReq } = require('../utils/utils')
 const { getRefreshedUser } = require('../fixtures/users')
 const { createItem } = require('../fixtures/items')
 const { getById: getItemById } = require('../utils/items')
+const { getUsersNearPosition, getRandomPosition } = require('../utils/users')
 const deleteUser = user => customAuthReq(user, 'delete', '/api/user')
 
 describe('user:delete', () => {
@@ -30,5 +34,17 @@ describe('user:delete', () => {
     deleteRes.ok.should.be.true()
     const updatedItem = await getItemById(item)
     should(updatedItem).not.be.ok()
+  })
+
+  it('should remove the user from the geo index', async () => {
+    const position = getRandomPosition()
+    const user = await getReservedUser({ position })
+    await wait(100)
+    const users = await getUsersNearPosition(authReq, position)
+    _.map(users, '_id').should.containEql(user._id)
+    await deleteUser(user)
+    await wait(100)
+    const refreshedUsers = await getUsersNearPosition(authReq, position)
+    _.map(refreshedUsers, '_id').should.not.containEql(user._id)
   })
 })

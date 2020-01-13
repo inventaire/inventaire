@@ -1,7 +1,8 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const should = require('should')
-const { customAuthReq, authReq, getReservedUser } = require('../utils/utils')
+const { authReq, authReqB, getUser, customAuthReq, getReservedUser } = require('../utils/utils')
+const { getUsersNearPosition } = require('../utils/users')
 const { getRefreshedUser } = require('../fixtures/users')
 const endpoint = '/api/user'
 const randomString = __.require('lib', 'utils/random_string')
@@ -45,21 +46,13 @@ describe('user:update', () => {
     })
 
     it('should update the position index', async () => {
-      const user = await getReservedUser()
-      await customAuthReq(user, 'put', endpoint, { attribute, value })
-      const foundUsersIds = await getUserIdsByPosition(value)
-      foundUsersIds.should.containEql(user._id)
-      await customAuthReq(user, 'put', endpoint, { attribute, value: null })
-      const foundUsersIdsAfterDeletedPosition = await getUserIdsByPosition(value)
-      foundUsersIdsAfterDeletedPosition.should.not.containEql(user._id)
+      await authReq('put', endpoint, { attribute, value })
+      const user = await getUser()
+      const foundUsers = await getUsersNearPosition(authReqB, value)
+      _.map(foundUsers, '_id').should.containEql(user._id)
+      await authReq('put', endpoint, { attribute, value: null })
+      const foundUsersAfterDeletedPosition = await getUsersNearPosition(authReqB, value)
+      _.map(foundUsersAfterDeletedPosition, '_id').should.not.containEql(user._id)
     })
   })
 })
-
-const getUserIdsByPosition = async position => {
-  const [ lat, lng ] = position
-  const bbox = [ lng - 0.1, lat - 0.1, lng + 0.1, lat + 0.1 ]
-  const url = `/api/users?action=search-by-position&bbox=${JSON.stringify(bbox)}`
-  const { users } = await authReq('get', url)
-  return _.map(users, '_id')
-}

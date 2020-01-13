@@ -29,7 +29,7 @@ const API = module.exports = {
   getAdminUser: getUserGetter('admin', true),
   getUserGetter,
   // To be used when you need a user not used by any other tests
-  getReservedUser: () => getUserGetter(randomString(8))()
+  getReservedUser: customData => getUserGetter(randomString(8), false, customData)()
 }
 
 Object.assign(API, require('../../unit/utils'))
