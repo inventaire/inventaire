@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const { authReq, authReqB, getUserB, customAuthReq, getUserGetter } = require('../utils/utils')
 const assert_ = __.require('utils', 'assert_types')
+const { authReq, authReqB, getUser, getUserB, customAuthReq, getUserGetter } = require('../utils/utils')
 const faker = require('faker')
 const endpointBase = '/api/groups'
 const endpointAction = `${endpointBase}?action`
@@ -14,47 +14,34 @@ const getGroup = groupId => {
   .get('group')
 }
 
-const createGroup = name => {
-  name = name || groupName()
-  return authReq('post', `${endpointBase}?action=create`, {
+const createGroup = (params = {}) => {
+  const name = params.name || groupName()
+  const user = params.user || getUser()
+  return customAuthReq(user, 'post', `${endpointBase}?action=create`, {
     name,
     position: [ 1, 1 ],
     searchable: true
   })
 }
 
-const membershipAction = (reqFn, action, groupId, userId) => {
-  return reqFn('put', endpointBase, { action, group: groupId, user: userId })
+const membershipAction = (actor, action, groupId, userId) => {
+  return customAuthReq(actor, 'put', endpointBase, { action, group: groupId, user: userId })
 }
 
-const addMember = (groupPromise, memberPromise) => {
-  return Promise.all([ groupPromise, memberPromise ])
-  .spread((group, member) => {
-    const { _id: memberId } = member
-    return customAuthReq(memberPromise, 'put', '/api/groups?action=request', { group: group._id })
-    .then(() => {
-      return membershipAction(authReq, 'accept-request', group._id, memberId)
-      .then(() => {
-        return Promise.all([ getGroup(group._id), memberPromise ])
-      })
-    })
-  })
+const addMember = async (groupPromise, memberPromise) => {
+  const [ group, member ] = await Promise.all([ groupPromise, memberPromise ])
+  const { _id: memberId } = member
+  await membershipAction(member, 'request', group._id, memberId)
+  await membershipAction(getUser(), 'accept-request', group._id, memberId)
+  const refreshedGroup = await getGroup(group._id)
+  return [ refreshedGroup, member ]
 }
 
-const createAndAddMember = memberPromise => {
-  return createGroup()
-  .then(group => {
-    return customAuthReq(memberPromise, 'put', '/api/groups?action=request', { group: group._id })
-    .then(() => {
-      return Promise.resolve(memberPromise)
-      .then(member => {
-        return membershipAction(authReq, 'accept-request', group._id, member._id)
-        .then(() => {
-          return getGroup(group._id)
-        })
-      })
-    })
-  })
+const createAndAddMember = async memberPromise => {
+  const member = await Promise.resolve(memberPromise)
+  const group = await createGroup()
+  const [ refreshedGroup ] = await addMember(group, member)
+  return refreshedGroup
 }
 
 const groupAndMemberPromise = () => {
@@ -67,9 +54,9 @@ const groupName = () => `${faker.lorem.words(3)} group`
 // Resolves to a group with userA as admin and userB as member
 const groupPromise = createGroup()
   .then(group => {
-    return membershipAction(authReqB, 'request', group._id)
+    return membershipAction(getUserB(), 'request', group._id)
     .then(() => getUserB())
-    .then(userB => membershipAction(authReq, 'accept-request', group._id, userB._id))
+    .then(userB => membershipAction(getUser(), 'accept-request', group._id, userB._id))
     .then(() => getGroup(group._id))
   })
 

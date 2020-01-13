@@ -8,6 +8,7 @@ const { createItem } = require('../fixtures/items')
 const { getById: getItemById } = require('../utils/items')
 const { getUsersNearPosition, getRandomPosition } = require('../utils/users')
 const deleteUser = user => customAuthReq(user, 'delete', '/api/user')
+const { createGroup, getGroup, addMember } = require('../fixtures/groups')
 
 describe('user:delete', () => {
   it('should delete the user', async () => {
@@ -46,5 +47,19 @@ describe('user:delete', () => {
     await wait(100)
     const refreshedUsers = await getUsersNearPosition(authReq, position)
     _.map(refreshedUsers, '_id').should.not.containEql(user._id)
+  })
+
+  describe('groups', () => {
+    it('should remove the user when member', async () => {
+      const user = await getReservedUser()
+      const group = await createGroup()
+      const [ refreshedGroup ] = await addMember(group, user)
+      _.map(refreshedGroup.members, 'user').should.containEql(user._id)
+      await wait(500)
+      await deleteUser(user)
+      await wait(500)
+      const rerefreshedGroup = await getGroup(group._id)
+      _.map(rerefreshedGroup.members, 'user').should.not.containEql(user._id)
+    })
   })
 })

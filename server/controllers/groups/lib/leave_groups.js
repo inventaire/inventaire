@@ -37,7 +37,7 @@ const removeUser = (userId, groupDoc) => {
   }
 
   for (const list of Group.attributes.usersLists) {
-    groupDoc[list] = _.without(groupDoc[list], userId)
+    groupDoc[list] = groupDoc[list].filter(memberData => memberData.user !== userId)
   }
 
   return groupDoc
