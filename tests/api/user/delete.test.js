@@ -1,11 +1,14 @@
 const should = require('should')
 const { getReservedUser, customAuthReq } = require('../utils/utils')
 const { getRefreshedUser } = require('../fixtures/users')
+const { createItem } = require('../fixtures/items')
+const { getById: getItemById } = require('../utils/items')
+const deleteUser = user => customAuthReq(user, 'delete', '/api/user')
 
 describe('user:delete', () => {
   it('should delete the user', async () => {
     const user = await getReservedUser()
-    const res = await customAuthReq(user, 'delete', '/api/user')
+    const res = await deleteUser(user)
     res.ok.should.be.true()
     const deletedUser = await getRefreshedUser(user)
     deletedUser._id.should.equal(user._id)
@@ -18,5 +21,14 @@ describe('user:delete', () => {
     should(deletedUser.readToken).not.be.ok()
     should(deletedUser.picture).not.be.ok()
     should(deletedUser.snapshot).not.be.ok()
+  })
+
+  it('should delete the user items', async () => {
+    const user = await getReservedUser()
+    const item = await createItem(user, { listing: 'public' })
+    const deleteRes = await deleteUser(user)
+    deleteRes.ok.should.be.true()
+    const updatedItem = await getItemById(item)
+    should(updatedItem).not.be.ok()
   })
 })
