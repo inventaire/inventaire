@@ -25,8 +25,15 @@ const action = (action, reqUser, otherUser) => {
   })
 }
 
-module.exports = {
+module.exports = _relations = {
   action,
+  getUsersWithoutRelation: () => {
+    return Promise.all([
+      getUser(),
+      getReservedUser()
+    ])
+    .then(([ userA, userB ]) => ({ userA, userB }))
+  },
 
   makeFriends: (userA, userB) => {
     return action('request', userA, userB)
@@ -37,5 +44,12 @@ module.exports = {
   assertRelation: async (userA, userB, relationStatus) => {
     const relationAfterRequest = await getRelationStatus(userA, userB)
     relationAfterRequest.should.equal(relationStatus)
+  },
+
+  setFriendship: async (userAPromise, userBPromise) => {
+    const userA = await userAPromise
+    const userB = await userBPromise
+    await _relations.action('request', userA, userB)
+    await _relations.action('accept', userB, userA)
   }
 }
