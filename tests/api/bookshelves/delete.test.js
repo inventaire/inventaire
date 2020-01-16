@@ -59,7 +59,7 @@ describe('bookshelves:delete', () => {
 
     it('should delete bookshelf and items', async () => {
       const bookshelf = await bookshelfWithItemsPromise
-      const itemId = bookshelf.items[0]._id
+      const itemId = bookshelf.items[0]
       const { _id: bookshelfId } = bookshelf
       const res = await authReq('post', endpoint, { ids: bookshelfId, 'with-items': true })
       res.ok.should.be.true()

@@ -3,7 +3,8 @@ const _ = __.require('builders', 'utils')
 const { shouldNotGetHere, rethrowShouldNotGetHereErrors } = __.require('apiTests', 'utils/utils')
 const { customAuthReq, authReq, getUser, getUserB } = require('../utils/utils')
 const { createBookshelf } = require('../fixtures/bookshelves')
-const { createUser, setFriendship } = require('../fixtures/users')
+const { setFriendship } = require('../utils/relations')
+const { createUser } = require('../fixtures/users')
 const { Promise } = __.require('lib', 'promises')
 
 const endpoint = '/api/bookshelves?action=by-owners'

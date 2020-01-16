@@ -2,6 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const promises_ = __.require('lib', 'promises')
+const error_ = __.require('lib', 'error/error')
 const Item = __.require('models', 'item')
 const listingsPossibilities = Item.attributes.constrained.listing.possibilities
 const assert_ = __.require('utils', 'assert_types')

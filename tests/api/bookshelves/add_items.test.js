@@ -44,7 +44,8 @@ describe('bookshelves:add-items', () => {
     res.bookshelves.should.be.ok()
     const firstBookshelf = _.values(res.bookshelves)[0]
     firstBookshelf.items.should.be.an.Array()
-    firstBookshelf.items[0]._id.should.be.ok()
+    firstBookshelf.items.length.should.be.above(0)
+    firstBookshelf.items[0].should.equal.item
   })
 
   it('should reject adding different owner items', async () => {

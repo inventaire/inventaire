@@ -35,12 +35,12 @@ describe('bookshelves:delete-items', () => {
     }
   })
 
-  it('should delete items', async () => {
+  it('should delete item from bookshelf', async () => {
     const bookshelf = await bookshelfWithItemPromise
-    const item = bookshelf.items[0]
+    const itemId = bookshelf.items[0]
     const res = await authReq('post', endpoint, {
       id: bookshelf._id,
-      items: [ item._id ]
+      items: [ itemId ]
     })
     res.bookshelves.should.be.ok()
     _.values(res.bookshelves)[0].items.length.should.equal(0)

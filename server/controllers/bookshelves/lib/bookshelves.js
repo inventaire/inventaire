@@ -15,7 +15,7 @@ const bookshelves_ = module.exports = {
   byIds: db.fetch,
   byIdsWithItems: ids => {
     return promises_.all([ bookshelves_.byIds(ids), fetchItems(ids) ])
-    .spread(assignItemsToBookshelves(ids))
+    .spread(assignItemsToBookshelves)
   },
   byOwners: ownersIds => {
     return db.viewByKeys('byOwners', ownersIds)
@@ -49,8 +49,10 @@ const bookshelves_ = module.exports = {
     })
   },
   deleteBookshelvesItems: bookshelves => {
-    const items = _.flatten(bookshelves.map(_.property('items')))
-    return items_.bulkDelete(items)
+    const itemsIds = _.uniq(_.flatten(bookshelves.map(_.property('items'))))
+    return items_.byIds(itemsIds)
+    .then(_.compact)
+    .then(items_.bulkDelete)
   }
 }
 
@@ -58,14 +60,17 @@ const fetchItems = bookshelvesIds => {
   return itemDb.viewByKeys('byBookshelves', bookshelvesIds)
 }
 
-const assignItemsToBookshelves = bookshelvesIds => (bookshelves, items) => {
-  return bookshelves.map(bookshelf => {
-    const bookshelfId = bookshelf._id
-    const bookshelfItems = items.filter(item => {
-      return item.bookshelves.includes(bookshelfId)
-    })
-    if (!bookshelf.items) { bookshelf.items = [] }
-    bookshelf.items = bookshelf.items.concat(bookshelfItems)
-    return bookshelf
+const assignItemsToBookshelves = (bookshelves, items) => {
+  return bookshelves.map(assignItemsToBookshelf(items))
+}
+
+const assignItemsToBookshelf = items => bookshelf => {
+  const bookshelfId = bookshelf._id
+  const itemsIdsContainingBookshelves = items.filter(item => {
+    return item.bookshelves && item.bookshelves.includes(bookshelfId)
   })
+  .map(_.property('_id'))
+  if (!bookshelf.items) { bookshelf.items = [] }
+  bookshelf.items = _.uniq(bookshelf.items.concat(itemsIdsContainingBookshelves))
+  return bookshelf
 }
