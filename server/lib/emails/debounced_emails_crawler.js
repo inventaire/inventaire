@@ -25,6 +25,7 @@ const onData = data => {
   // if the last event happened more than debounceDelay ago
   if (_.expired(time, debounceDelay)) {
     return sendDebouncedEmail[domain](id)
-    .then(db.del.bind(null, key))
+    .then(db.del.bind(db, key))
+    .catch(_.Error(`sendDebouncedEmail (${domain}) and cleanup err`))
   }
 }
