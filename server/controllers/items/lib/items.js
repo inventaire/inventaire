@@ -35,7 +35,7 @@ const items_ = module.exports = {
 
   byPreviousEntity: entityUri => db.viewByKey('byPreviousEntity', entityUri),
 
-  byBookshelves: ids => db.viewByKeys('byBookshelves', ids),
+  byShelves: ids => db.viewByKeys('byShelves', ids),
 
   // all items from an entity that require a specific authorization
   authorizedByEntities: (uris, reqUserId) => {
@@ -141,12 +141,12 @@ const items_ = module.exports = {
     })
   },
 
-  addBookshelves: (ids, userId) => bookshelves => {
-    return updateBookshelves(_.union, ids, bookshelves, userId)
+  addShelves: (ids, userId) => shelves => {
+    return updateShelves(_.union, ids, shelves, userId)
   },
 
-  deleteBookshelves: (ids, userId) => bookshelves => {
-    return updateBookshelves(_.difference, ids, bookshelves, userId)
+  deleteShelves: (ids, userId) => shelves => {
+    return updateShelves(_.difference, ids, shelves, userId)
   }
 }
 
@@ -155,24 +155,24 @@ const formatItems = reqUserId => async items => {
   return items.map(filterPrivateAttributes(reqUserId))
 }
 
-const updateBookshelves = (actionFn, ids, bookshelves, userId) => {
+const updateShelves = (actionFn, ids, shelves, userId) => {
   return items_.byIds(ids)
-  .tap(validateOwnership(bookshelves))
+  .tap(validateOwnership(shelves))
   .then(items => {
-    const bookshelvesIds = bookshelves.map(_.property('_id'))
+    const shelvesIds = shelves.map(_.property('_id'))
     return Promise.all(items.map(item => {
-      item.bookshelves = actionFn(item.bookshelves, bookshelvesIds)
+      item.shelves = actionFn(item.shelves, shelvesIds)
       return items_.update(userId, item)
     }))
   })
 }
 
-const validateOwnership = bookshelves => items => {
-  const bookshelvesOwners = bookshelves.map(_.property('owner'))
+const validateOwnership = shelves => items => {
+  const shelvesOwners = shelves.map(_.property('owner'))
   const itemsOwners = items.map(_.property('owner'))
-  const sameOwnership = _.isEqual(_.uniq(bookshelvesOwners), _.uniq(itemsOwners))
+  const sameOwnership = _.isEqual(_.uniq(shelvesOwners), _.uniq(itemsOwners))
   if (!sameOwnership) {
-    throw error_.new('wrong owner', 400, { items, bookshelves })
+    throw error_.new('wrong owner', 400, { items, shelves })
   }
 }
 

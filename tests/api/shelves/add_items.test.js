@@ -2,14 +2,14 @@ const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const { getUserB, shouldNotGetHere, rethrowShouldNotGetHereErrors } = __.require('apiTests', 'utils/utils')
 const { authReq, authReqB } = require('../utils/utils')
-const { createBookshelf } = require('../fixtures/bookshelves')
+const { createShelf } = require('../fixtures/shelves')
 const { createItem } = require('../fixtures/items')
 
-const endpoint = '/api/bookshelves?action=add-items'
-const bookshelfPromise = createBookshelf()
+const endpoint = '/api/shelves?action=add-items'
+const shelfPromise = createShelf()
 
-describe('bookshelves:add-items', () => {
-  it('should reject without bookshelf id', async () => {
+describe('shelves:add-items', () => {
+  it('should reject without shelf id', async () => {
     try {
       const res = await authReq('post', endpoint)
       shouldNotGetHere(res)
@@ -21,10 +21,10 @@ describe('bookshelves:add-items', () => {
   })
 
   it('should reject without items', async () => {
-    const bookshelf = await bookshelfPromise
+    const shelf = await shelfPromise
     try {
       const res = await authReq('post', endpoint, {
-        id: bookshelf._id
+        id: shelf._id
       })
       shouldNotGetHere(res)
     } catch (err) {
@@ -35,25 +35,25 @@ describe('bookshelves:add-items', () => {
   })
 
   it('should add items', async () => {
-    const bookshelf = await bookshelfPromise
+    const shelf = await shelfPromise
     const item = await createItem()
     const res = await authReq('post', endpoint, {
-      id: bookshelf._id,
+      id: shelf._id,
       items: [ item._id ]
     })
-    res.bookshelves.should.be.ok()
-    const firstBookshelf = _.values(res.bookshelves)[0]
-    firstBookshelf.items.should.be.an.Array()
-    firstBookshelf.items.length.should.be.above(0)
-    firstBookshelf.items[0].should.equal.item
+    res.shelves.should.be.ok()
+    const firstShelf = _.values(res.shelves)[0]
+    firstShelf.items.should.be.an.Array()
+    firstShelf.items.length.should.be.above(0)
+    firstShelf.items[0].should.equal.item
   })
 
   it('should reject adding different owner items', async () => {
     try {
-      const bookshelf = await bookshelfPromise
+      const shelf = await shelfPromise
       const item = await createItem(getUserB())
       const res = await authReq('post', endpoint, {
-        id: bookshelf._id,
+        id: shelf._id,
         items: [ item._id ]
       })
       shouldNotGetHere(res)
@@ -64,18 +64,18 @@ describe('bookshelves:add-items', () => {
     }
   })
 
-  it('should reject adding items to a different owner bookshelf', async () => {
+  it('should reject adding items to a different owner shelf', async () => {
     try {
-      const bookshelf = await Promise.resolve(
-        authReqB('post', '/api/bookshelves?action=create', {
+      const shelf = await Promise.resolve(
+        authReqB('post', '/api/shelves?action=create', {
           description: 'wesh',
           listing: 'public',
-          name: 'yolo bookshelf'
+          name: 'yolo shelf'
         })
       )
       const item = await createItem()
       const res = await authReq('post', endpoint, {
-        id: bookshelf._id,
+        id: shelf._id,
         items: [ item._id ]
       })
       shouldNotGetHere(res)

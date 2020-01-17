@@ -8,8 +8,8 @@
     "byListing": {
       "map": "(doc)->\n  if doc.listing?\n    emit [doc.owner,doc.listing], null"
     },
-    "byBookshelves": {
-      "map": "(doc)->\n  if doc.bookshelves?\n    for bookshelf in doc.bookshelves\n      emit bookshelf, null"
+    "byShelves": {
+      "map": "(doc)->\n  if doc.shelves?\n    for shelf in doc.shelves\n      emit shelf, null"
     },
     "publicByDate": {
       "map": "(doc)->\n  if doc.listing is 'public'\n    emit doc.created, null"

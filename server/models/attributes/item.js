@@ -6,7 +6,7 @@ attributes.updatable = [
   'listing',
   'details',
   'notes',
-  'bookshelves',
+  'shelves',
   // Use case: change from a work entity to an edition entity
   'entity'
 ]

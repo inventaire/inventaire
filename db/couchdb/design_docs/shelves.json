@@ -1,5 +1,5 @@
 {
-  "_id": "_design/bookshelves",
+  "_id": "_design/shelves",
   "language": "coffeescript",
   "views": {
     "byIds": {

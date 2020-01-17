@@ -1,5 +1,6 @@
 module.exports = [
   'description',
   'listing',
-  'name'
+  'name',
+  'owner'
 ]
