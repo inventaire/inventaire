@@ -1,13 +1,13 @@
 const __ = require('config').universalPath
 const { shouldNotGetHere, rethrowShouldNotGetHereErrors } = __.require('apiTests', 'utils/utils')
 const { authReq, authReqB } = require('../utils/utils')
-const { createBookshelf, bookshelfName, bookshelfDescription } = require('../fixtures/bookshelves')
+const { createShelf, shelfName, shelfDescription } = require('../fixtures/shelves')
 
-const endpoint = '/api/bookshelves?action=update'
-const bookshelfPromise = createBookshelf()
+const endpoint = '/api/shelves?action=update'
+const shelfPromise = createShelf()
 
-describe('bookshelves:update', () => {
-  it('should reject without bookshelf id', async () => {
+describe('shelves:update', () => {
+  it('should reject without shelf id', async () => {
     try {
       const res = await authReq('post', endpoint)
       shouldNotGetHere(res)
@@ -19,10 +19,10 @@ describe('bookshelves:update', () => {
   })
 
   it('should reject without attributes', async () => {
-    const bookshelf = await bookshelfPromise
+    const shelf = await shelfPromise
     try {
       const res = await authReq('post', endpoint, {
-        id: bookshelf._id,
+        id: shelf._id,
         foo: 'bar'
       })
       shouldNotGetHere(res)
@@ -34,12 +34,12 @@ describe('bookshelves:update', () => {
   })
 
   it('should update attributes', async () => {
-    const name = bookshelfName()
-    const description = bookshelfDescription()
+    const name = shelfName()
+    const description = shelfDescription()
     const listing = 'network'
-    const bookshelf = await bookshelfPromise
+    const shelf = await shelfPromise
     const res = await authReq('post', endpoint, {
-      id: bookshelf._id,
+      id: shelf._id,
       name,
       description,
       listing
@@ -51,9 +51,9 @@ describe('bookshelves:update', () => {
 
   it('should reject updating if different owner', async () => {
     try {
-      const bookshelf = await bookshelfPromise
+      const shelf = await shelfPromise
       const res = await authReqB('post', endpoint, {
-        id: bookshelf._id,
+        id: shelf._id,
         name: 'foo'
       })
       shouldNotGetHere(res)

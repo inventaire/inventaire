@@ -2,15 +2,15 @@ const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const { getUserB, shouldNotGetHere, rethrowShouldNotGetHereErrors } = __.require('apiTests', 'utils/utils')
 const { authReq, authReqB } = require('../utils/utils')
-const { createBookshelfWithItem } = require('../fixtures/bookshelves')
+const { createShelfWithItem } = require('../fixtures/shelves')
 const { createItem } = require('../fixtures/items')
 
-const endpoint = '/api/bookshelves?action=delete-items'
+const endpoint = '/api/shelves?action=delete-items'
 const itemPromise = createItem
-const bookshelfWithItemPromise = createBookshelfWithItem(itemPromise)
+const shelfWithItemPromise = createShelfWithItem(itemPromise)
 
-describe('bookshelves:delete-items', () => {
-  it('should reject without bookshelf id', async () => {
+describe('shelves:delete-items', () => {
+  it('should reject without shelf id', async () => {
     try {
       const res = await authReq('post', endpoint)
       shouldNotGetHere(res)
@@ -22,10 +22,10 @@ describe('bookshelves:delete-items', () => {
   })
 
   it('should reject without items', async () => {
-    const bookshelf = await bookshelfWithItemPromise
+    const shelf = await shelfWithItemPromise
     try {
       const res = await authReq('post', endpoint, {
-        id: bookshelf._id
+        id: shelf._id
       })
       shouldNotGetHere(res)
     } catch (err) {
@@ -35,23 +35,23 @@ describe('bookshelves:delete-items', () => {
     }
   })
 
-  it('should delete item from bookshelf', async () => {
-    const bookshelf = await bookshelfWithItemPromise
-    const itemId = bookshelf.items[0]
+  it('should delete item from shelf', async () => {
+    const shelf = await shelfWithItemPromise
+    const itemId = shelf.items[0]
     const res = await authReq('post', endpoint, {
-      id: bookshelf._id,
+      id: shelf._id,
       items: [ itemId ]
     })
-    res.bookshelves.should.be.ok()
-    _.values(res.bookshelves)[0].items.length.should.equal(0)
+    res.shelves.should.be.ok()
+    _.values(res.shelves)[0].items.length.should.equal(0)
   })
 
   it('should reject removing different owner items', async () => {
     try {
-      const bookshelf = await bookshelfWithItemPromise
+      const shelf = await shelfWithItemPromise
       const item = await createItem(getUserB())
       const res = await authReq('post', endpoint, {
-        id: bookshelf._id,
+        id: shelf._id,
         items: [ item._id ]
       })
       shouldNotGetHere(res)
@@ -62,18 +62,18 @@ describe('bookshelves:delete-items', () => {
     }
   })
 
-  it('should reject removing items of a different owner bookshelf', async () => {
+  it('should reject removing items of a different owner shelf', async () => {
     try {
-      const bookshelf = await Promise.resolve(
-        authReqB('post', '/api/bookshelves?action=create', {
+      const shelf = await Promise.resolve(
+        authReqB('post', '/api/shelves?action=create', {
           description: 'wesh',
           listing: 'public',
-          name: 'yolo bookshelf'
+          name: 'yolo shelf'
         })
       )
       const item = await createItem()
       const res = await authReq('post', endpoint, {
-        id: bookshelf._id,
+        id: shelf._id,
         items: [ item._id ]
       })
       shouldNotGetHere(res)

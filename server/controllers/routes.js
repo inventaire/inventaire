@@ -9,7 +9,6 @@ const glob = require('./glob')
 
 const routes = module.exports = {
   'api/auth': endpoint('./auth/auth'),
-  'api/bookshelves': endpoint('./bookshelves/bookshelves'),
   'api/config': endpoint('./config'),
   'api/data': endpoint('./data'),
   'api/entities': endpoint('./entities/entities'),
@@ -23,6 +22,7 @@ const routes = module.exports = {
   'api/relations': endpoint('./relations/relations'),
   'api/reports': endpoint('./reports/reports'),
   'api/search': endpoint('./search/search'),
+  'api/shelves': endpoint('./shelves/shelves'),
   'api/submit': require('./auth/fake_submit'),
   'api/tasks': endpoint('./tasks/tasks'),
   'api/tests*': endpoint('./tests'),

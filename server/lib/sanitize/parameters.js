@@ -211,6 +211,7 @@ module.exports = {
     max: 500
   }),
   search: nonEmptyString,
+  shelf: couchUuid,
   slug: nonEmptyString,
   state: whitelistedString,
   title: nonEmptyString,

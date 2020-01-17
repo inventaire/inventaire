@@ -1,4 +1,4 @@
-const { pass, BoundedString } = require('./common')
+const { pass, BoundedString, userId } = require('./common')
 
 module.exports = {
   pass,
@@ -6,5 +6,6 @@ module.exports = {
   listing: listing => {
     return [ 'private', 'network', 'public' ].includes(listing)
   },
+  owner: userId,
   name: BoundedString(0, 128)
 }

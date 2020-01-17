@@ -1,10 +1,10 @@
 const __ = require('config').universalPath
 const { shouldNotGetHere, rethrowShouldNotGetHereErrors } = __.require('apiTests', 'utils/utils')
 const { authReq } = require('../utils/utils')
-const { bookshelfDescription, bookshelfName } = require('../fixtures/bookshelves')
-const endpoint = '/api/bookshelves?action=create'
+const { shelfDescription, shelfName } = require('../fixtures/shelves')
+const endpoint = '/api/shelves?action=create'
 
-describe('bookshelves:create', () => {
+describe('shelves:create', () => {
   it('should reject without id', async () => {
     try {
       const res = await authReq('post', endpoint)
@@ -18,7 +18,7 @@ describe('bookshelves:create', () => {
 
   it('should reject without listing', async () => {
     try {
-      const description = bookshelfDescription()
+      const description = shelfDescription()
       const res = await authReq('post', endpoint, { description })
       shouldNotGetHere(res)
     } catch (err) {
@@ -30,7 +30,7 @@ describe('bookshelves:create', () => {
 
   it('should reject without name', async () => {
     try {
-      const description = bookshelfDescription()
+      const description = shelfDescription()
       const res = await authReq('post', endpoint, {
         description,
         listing: 'public'
@@ -43,9 +43,9 @@ describe('bookshelves:create', () => {
     }
   })
 
-  it('should create bookshelf', async () => {
-    const description = bookshelfDescription()
-    const name = bookshelfName()
+  it('should create shelf', async () => {
+    const description = shelfDescription()
+    const name = shelfName()
     const res = await authReq('post', endpoint, {
       description,
       listing: 'public',

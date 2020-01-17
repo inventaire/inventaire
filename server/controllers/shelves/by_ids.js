@@ -2,7 +2,7 @@ const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const responses_ = __.require('lib', 'responses')
 const error_ = __.require('lib', 'error/error')
-const bookshelves_ = __.require('controllers', 'bookshelves/lib/bookshelves')
+const shelves_ = __.require('controllers', 'shelves/lib/shelves')
 const sanitize = __.require('lib', 'sanitize/sanitize')
 
 const sanitization = {
@@ -18,10 +18,10 @@ module.exports = (req, res, next) => {
   .then(params => {
     const { ids, withItems } = params
     const byIdsFnName = withItems === true ? 'byIdsWithItems' : 'byIds'
-    return bookshelves_[byIdsFnName](ids)
+    return shelves_[byIdsFnName](ids)
     .then(_.compact)
     .then(_.KeyBy('_id'))
-    .then(responses_.Wrap(res, 'bookshelves'))
+    .then(responses_.Wrap(res, 'shelves'))
   })
   .catch(error_.Handler(req, res))
 }
