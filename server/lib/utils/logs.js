@@ -59,10 +59,12 @@ module.exports = _ => {
     },
 
     warn: (err, label) => {
-      // Errors that have a status code of 404 don't need to be logged
-      // as they will be logged by the request logger middleware (morgan)
-      // and logging the error object is of no help, everything is in the URL
-      if (err._hasBeenLogged || (err.statusCode === 404)) return
+      if (err._hasBeenLogged) return
+      const url = err.context && err.context.url
+      // Local 404 errors don't need to be logged, as they will be logged
+      // by the request logger middleware and logging the error object is of no help,
+      // everything is in the URL
+      if (err.statusCode === 404 && url && url[0] === '/') return
       if (err instanceof Error) {
         // shorten the stack trace
         err.stack = err.stack.split('\n').slice(0, 3).join('\n')
