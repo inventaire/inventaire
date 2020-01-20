@@ -137,7 +137,9 @@ const config = module.exports = {
     swift: {
       username: 'customizedInLocalConfig',
       password: 'customizedInLocalConfig',
-      authUrl: 'https://openstackEndpointToCustomize/v2.0',
+      // Auth URL Without the version section, which is hard coded
+      // by server/controllers/images/lib/get_swift_token.js
+      authUrl: 'https://openstackEndpointToCustomize',
       publicURL: 'https://swiftPublicURL/',
       tenantName: '12345678',
       region: 'SBG-1',

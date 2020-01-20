@@ -49,10 +49,12 @@ module.exports = {
       const { headers, url } = params
       headers['Content-Length'] = contentLength
       headers['Content-Type'] = 'application/octet-stream'
-      return new Promise((resolve, reject) => fs_.createReadStream(path)
-      .pipe(request({ method: 'PUT', url, headers }))
-      .on('error', reject)
-      .on('end', resolve.bind(null, relativeUrl(container, filename))))
+      return new Promise((resolve, reject) => {
+        fs_.createReadStream(path)
+        .pipe(request({ method: 'PUT', url, headers }))
+        .on('error', reject)
+        .on('end', resolve.bind(null, relativeUrl(container, filename)))
+      })
     })
   }
 }

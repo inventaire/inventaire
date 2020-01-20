@@ -1,9 +1,10 @@
-// Identity: v2
-// Swift: v1
+// Identity: v3
+// Swift: v2
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const promises_ = __.require('lib', 'promises')
+const error_ = __.require('lib', 'error/error')
 const breq = require('bluereq')
 const { tenMinutes } = __.require('lib', 'times')
 
@@ -12,15 +13,30 @@ let lastTokenExpirationTime = 0
 // let a 10 minutes margin before token expiration
 const tokenExpired = () => Date.now() > (lastTokenExpirationTime - tenMinutes)
 
-const { username, password, authUrl, tenantName, region, publicURL } = CONFIG.mediaStorage.swift
+const { username, password, authUrl, tenantName } = CONFIG.mediaStorage.swift
 
+// source: https://docs.openstack.org/keystone/pike/contributor/http-api.html#i-have-a-non-python-client
 const postParams = {
-  url: `${authUrl}/tokens`,
+  url: `${authUrl}/v3/auth/tokens`,
   headers: { 'Content-Type': 'application/json' },
   body: {
     auth: {
-      passwordCredentials: { username, password },
-      tenantName
+      identity: {
+        methods: [ 'password' ],
+        password: {
+          user: {
+            domain: { id: 'default' },
+            name: username,
+            password
+          }
+        }
+      },
+      scope: {
+        project: {
+          domain: { id: 'default' },
+          name: tenantName
+        }
+      }
     }
   }
 }
@@ -29,24 +45,25 @@ module.exports = () => {
   if (lastToken && !tokenExpired()) return promises_.resolve(lastToken)
 
   return breq.post(postParams)
-  .get('body')
   .then(parseIdentificationRes)
-  .catch(_.ErrorRethrow('getToken'))
+  .catch(err => {
+    err.serviceStatusCode = err.statusCode
+    // Override status code to fit the status that should be return to users
+    err.statusCode = 500
+    _.error(err, 'getToken')
+    throw err
+  })
 }
 
-const parseIdentificationRes = res => {
-  const { token, serviceCatalog } = res.access
-  verifyEndpoint(serviceCatalog)
-  const { expires, id } = token
-  lastToken = id
-  lastTokenExpirationTime = new Date(expires).getTime()
-  return id
-}
+const parseIdentificationRes = ({ body, headers }) => {
+  const newToken = headers['x-subject-token']
+  console.log('newToken', newToken)
+  if (!newToken) throw error_.new('swift token not found', 500, { headers })
 
-const verifyEndpoint = serviceCatalog => {
-  const swiftData = _.find(serviceCatalog, { name: 'swift' })
-  const endpoint = _.find(swiftData.endpoints, { region })
-  if (endpoint.publicURL !== publicURL) {
-    throw new Error("config publicURL and returned publicURL don't match")
-  }
+  const expirationTime = body.token.expires_at && (new Date(body.token.expires_at)).getTime()
+  if (!expirationTime) throw error_.new('swift expiration time not found', 500, { body, headers })
+
+  lastToken = newToken
+  lastTokenExpirationTime = expirationTime
+  return lastToken
 }
