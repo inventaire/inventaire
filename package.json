@@ -61,7 +61,6 @@
     "express-session": "^1.15.6",
     "follow": "^1.1.0",
     "formidable": "^1.0.17",
-    "gitlab-logging": "git+https://github.com/inventaire/node-gitlab-logging.git#master",
     "gm": "^1.23.1",
     "graceful-fs": "^4.1.2",
     "gravatar": "^1.4.0",

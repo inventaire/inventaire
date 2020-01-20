@@ -3,7 +3,6 @@ const { offline } = CONFIG
 const loggers_ = require('inv-loggers')
 const chalk = require('chalk')
 const { grey, red } = chalk
-const openIssue = require('./open_issue')
 
 let errorCounter = 0
 
@@ -54,7 +53,6 @@ module.exports = _ => {
       }
 
       if (!err.labels) { err.labels = 'server' }
-      openIssue(err)
 
       err._hasBeenLogged = true
       errorCounter++
