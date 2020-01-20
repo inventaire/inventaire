@@ -36,7 +36,7 @@ module.exports = {
   redirectToApiDoc: (req, res) => res.redirect('https://api.inventaire.io'),
 
   api: (req, res) => {
-    error_.bundle(req, res, 'wrong API route or http verb', 400, {
+    error_.bundle(req, res, 'wrong API route or http verb', 404, {
       verb: req.method,
       url: req._parsedUrl.href
     })
