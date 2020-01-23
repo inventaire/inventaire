@@ -7,6 +7,7 @@ const groups_ = __.require('controllers', 'groups/lib/groups')
 module.exports = {
   byUser: (userId, reqUserId) => {
     if (userId === reqUserId) return getByAccessLevel.private(userId)
+    if (!reqUserId) return getByAccessLevel.public(userId)
 
     return areFriendsOrGroupCoMembers(userId, reqUserId)
     .then(usersAreFriendsOrGroupCoMembers => {
@@ -18,7 +19,7 @@ module.exports = {
   byGroup: (groupId, reqUserId) => {
     return groups_.getGroupMembersIds(groupId)
     .then(allGroupMembers => {
-      if (allGroupMembers.includes(reqUserId)) return getByAccessLevel.network(allGroupMembers)
+      if (reqUserId && allGroupMembers.includes(reqUserId)) return getByAccessLevel.network(allGroupMembers)
       else return getByAccessLevel.public(allGroupMembers)
     })
   }

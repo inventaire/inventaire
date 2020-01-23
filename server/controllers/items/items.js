@@ -8,12 +8,12 @@ module.exports = {
       'by-users': require('./by_users'),
       'by-entities': require('./by_entities'),
       'by-user-and-entity': require('./by_user_and_entity'),
+      'inventory-view': require('./inventory_view'),
       'recent-public': require('./recent_public'),
       'last-public': require('./last_public')
     },
     authentified: {
-      nearby: require('./nearby'),
-      'inventory-view': require('./inventory_view')
+      nearby: require('./nearby')
     }
   }),
 
