@@ -8,6 +8,7 @@ const gravatar = __.require('lib', 'gravatar')
 const error_ = __.require('lib', 'error/error')
 const randomString = __.require('lib', 'utils/random_string')
 const generateReadToken = randomString.bind(null, 32)
+const { truncateDecimals } = __.require('lib', 'geo')
 
 const User = module.exports = {}
 
@@ -144,4 +145,8 @@ User.updateItemsCounts = itemsCounts => user => {
   assert_.object(itemsCounts.public)
   Object.assign(user.snapshot, itemsCounts)
   return user
+}
+
+User.formatters = {
+  position: latLng => latLng != null ? latLng.map(truncateDecimals) : null
 }

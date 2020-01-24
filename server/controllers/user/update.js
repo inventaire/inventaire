@@ -1,6 +1,6 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
-const { attributes, validations } = __.require('models', 'user')
+const { attributes, validations, formatters } = __.require('models', 'user')
 const { updatable, concurrencial, acceptNullValue } = attributes
 const updateEmail = __.require('controllers', 'user/lib/update_email')
 const db = __.require('couch', 'base')('users')
@@ -12,13 +12,14 @@ const { Track } = __.require('lib', 'track')
 
 module.exports = (req, res) => {
   const { user, body } = req
-  const { attribute, value } = body
+  const { attribute } = body
+  let { value } = body
 
   if (!_.isNonEmptyString(attribute)) {
     return error_.bundleMissingBody(req, res, 'attribute')
   }
 
-  if ((!acceptNullValue.includes(attribute)) && ((value == null))) {
+  if (value == null && !acceptNullValue.includes(attribute)) {
     return error_.bundleMissingBody(req, res, 'value')
   }
 
@@ -38,6 +39,8 @@ module.exports = (req, res) => {
       return error_.bundleInvalid(req, res, 'attribute', attribute)
     }
   }
+
+  if (formatters[attribute]) value = formatters[attribute](value)
 
   if (updatable.includes(rootAttribute)) {
     if (!_.get(validations, rootAttribute)(value)) {

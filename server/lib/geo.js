@@ -13,7 +13,11 @@ module.exports = {
     } else {
       return Math.trunc(meters / 100) / 10
     }
-  }
+  },
+
+  // Coordinates are in decimal degrees
+  // There is no need to keep more than 4 decimals, cf https://xkcd.com/2170/
+  truncateDecimals: degree => Math.round(degree * 10000) / 10000
 }
 
 // Distance between LatLng
