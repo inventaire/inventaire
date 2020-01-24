@@ -224,8 +224,18 @@ module.exports = {
   usernames,
   relatives: whitelistedStrings,
   value: {
-    // Endpoints accepting a 'value' have to do their own validation
+    // Endpoints accepting a 'value' can specify a type
+    // or have to do their own validation
     // as a value can be anything, including null
-    validate: () => true
+    validate: (value, name, config) => {
+      const { type: expectedType } = config
+      if (expectedType) {
+        const valueType = _.typeOf(value)
+        if (valueType !== expectedType) {
+          throw error_.new(`invalid value type: ${valueType} (expected ${expectedType})`, 400, { value })
+        }
+      }
+      return true
+    }
   }
 }

@@ -6,7 +6,7 @@ const sanitize = __.require('lib', 'sanitize/sanitize')
 
 const sanitization = {
   property: {},
-  value: {},
+  value: { type: 'string' },
   refresh: {
     optional: true
   },
