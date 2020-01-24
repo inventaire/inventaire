@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const { attributes, validations } = __.require('models', 'group')
+const { attributes, validations, formatters } = __.require('models', 'group')
 const { updatable } = attributes
 const promises_ = __.require('lib', 'promises')
 const error_ = __.require('lib', 'error/error')
@@ -10,7 +10,8 @@ const db = __.require('couch', 'base')('groups')
 const { add: addSlug } = require('./slug')
 
 module.exports = (data, userId) => {
-  const { group: groupId, attribute, value } = data
+  const { group: groupId, attribute } = data
+  let { value } = data
 
   if (!updatable.includes(attribute)) {
     throw error_.new(`${attribute} can't be updated`, 400, data)
@@ -19,6 +20,8 @@ module.exports = (data, userId) => {
   if (!validations[attribute](value)) {
     throw error_.newInvalid(attribute, value)
   }
+
+  if (formatters[attribute]) value = formatters[attribute](value)
 
   return db.get(groupId)
   .then(groupDoc => {

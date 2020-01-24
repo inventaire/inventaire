@@ -223,5 +223,9 @@ module.exports = {
   username: { validate: validations.common.username },
   usernames,
   relatives: whitelistedStrings,
-  value: nonEmptyString
+  value: {
+    // Endpoints accepting a 'value' have to do their own validation
+    // as a value can be anything, including null
+    validate: () => true
+  }
 }
