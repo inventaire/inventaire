@@ -4,6 +4,7 @@ const _ = __.require('builders', 'utils')
 const host = CONFIG.fullPublicHost()
 const error_ = __.require('lib', 'error/error')
 const isbn_ = __.require('lib', 'isbn/isbn')
+const { truncateLatLng } = __.require('lib', 'geo')
 
 // Parameters attributes:
 // - format (optional)
@@ -194,7 +195,10 @@ module.exports = {
     secret: true,
     validate: validations.user.password
   },
-  position: arrayOfNumbers,
+  position: {
+    format: truncateLatLng,
+    validate: arrayOfNumbers.validate
+  },
   prefix: whitelistedString,
   property: { validate: _.isPropertyUri },
   refresh: generics.boolean,
