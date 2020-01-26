@@ -25,19 +25,19 @@ module.exports = (req, res, next) => {
     owners = _.forceArray(owners)
     const byOwnersFnName = withItems === true ? 'byOwnersWithItems' : 'byOwners'
     return promises_.all([ shelves_[byOwnersFnName](owners), getNetworkIds(reqUserId) ])
-    .spread(filterAuthorisedShelves)
+    .spread(filterAuthorisedShelves(reqUserId))
     .then(_.KeyBy('_id'))
     .then(responses_.Wrap(res, 'shelves'))
   })
   .catch(error_.Handler(req, res))
 }
 
-const filterAuthorisedShelves = (shelves, networkIds) => {
-  return shelves.filter(isAuthorised(networkIds))
+const filterAuthorisedShelves = reqUserId => (shelves, networkIds) => {
+  return shelves.filter(isAuthorised(networkIds, reqUserId))
 }
 
-const isAuthorised = networkIds => shelf => {
-  if (shelf.listing === 'private') { return false }
+const isAuthorised = (networkIds, reqUserId) => shelf => {
+  if (shelf.listing === 'private' && shelf.owner === reqUserId) { return true }
   if (shelf.listing === 'public') { return true }
   if (shelf.listing === 'network' && networkIds.includes(shelf.owner)) { return true }
 }
