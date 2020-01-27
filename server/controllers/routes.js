@@ -53,6 +53,9 @@ Object.assign(routes, {
   '*.json': {
     get: glob.jsonRedirection
   },
+  '*.rss': {
+    get: glob.rssRedirection
+  },
   '*': {
     get: glob.get
   }
