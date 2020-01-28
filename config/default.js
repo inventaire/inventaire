@@ -67,18 +67,44 @@ const config = module.exports = {
     enableDesignDocSync: false,
     backupFolder: '/path/to/backup/folder'
   },
+
   leveldbMemoryBackend: false,
+
   elasticsearch: {
     host: 'http://localhost:9200'
   },
+
+  // See server/controllers/entities/lib/update_search_engine.js
+  // and https://github.com/inventaire/entities-search-engine
+  entitiesSearchEngine: {
+    updateEnabled: false,
+    host: 'http://localhost:3213',
+    delay: 10000,
+    // Set the path to the local repository to allow API tests to start it
+    // if it isn't already online
+    localPath: '/path/to/repo'
+  },
+
+  couch2elastic4sync: {
+    activated: true
+  },
+
+  // See server/data/dataseed/dataseed.js
+  dataseed: {
+    enabled: false,
+    host: 'http://localhost:9898'
+  },
+
   serveStaticFiles: true,
   noCache: false,
   staticMaxAge: 30 * 24 * 60 * 60 * 1000,
   cookieMaxAge: 10 * 365 * 24 * 3600 * 1000,
+
   bluebird: {
     warnings: false,
     longStackTraces: true
   },
+
   // Make friends requests and groups invits be automatically accepted
   // can be useful for development
   godMode: false,
@@ -123,15 +149,23 @@ const config = module.exports = {
     disabled: false
   },
 
-  // By default, media are saved locally instead of using a remove
-  // object storage service such as Swift
   mediaStorage: {
     images: {
+      // In pixels
       maxSize: 1600,
       // 5MB
       maxWeight: 5 * Math.pow(1024, 2)
     },
+    // By default, media are saved locally instead of using a remote
+    // object storage service such as Swift
     mode: 'local',
+    local: {
+      folder: () => config.universalPath.path('root', 'storage'),
+      route: 'local',
+      internalEndpoint: function () {
+        return `${config.fullHost()}/${this.route}/`
+      }
+    },
     // Swift parameters are required only when mediaStorage mode is set to 'swift'
     swift: {
       username: 'customizedInLocalConfig',
@@ -145,13 +179,6 @@ const config = module.exports = {
       internalEndpoint: function () {
         return `${this.publicURL}/`
       }
-    },
-    local: {
-      folder: () => config.universalPath.path('root', 'storage'),
-      route: 'local',
-      internalEndpoint: function () {
-        return `${config.fullHost()}/${this.route}/`
-      }
     }
   },
 
@@ -162,14 +189,11 @@ const config = module.exports = {
     idsite: 1,
     rec: 1
   },
-  // see server/data/dataseed/search.js
-  dataseed: {
-    enabled: false,
-    host: 'http://localhost:9898'
-  },
+
   searchTimeout: 10000,
 
   // Config passed to the client
+  // See server/controllers/config.js
   client: {
     piwik: 'https://your.piwik.instance'
   },
@@ -181,26 +205,12 @@ const config = module.exports = {
 
   deduplicateRequests: true,
 
-  // See https://github.com/inventaire/entities-search-engine
-  entitiesSearchEngine: {
-    updateEnabled: false,
-    host: 'http://localhost:3213',
-    delay: 10000,
-    // Set the path to the local repository to allow API tests to start it
-    // if it isn't already online
-    localPath: '/path/to/repo'
-  },
-
   // Doc: https://www.mediawiki.org/wiki/OAuth/For_Developers
   // Request tokens at
   // https://meta.wikimedia.org/wiki/Special:OAuthConsumerRegistration/propose
   wikidataOAuth: {
     consumer_key: 'your-consumer-key',
     consumer_secret: 'your-consumer-secret'
-  },
-
-  couch2elastic4sync: {
-    activated: true
   },
 
   itemsCountDebounceTime: 5000,
