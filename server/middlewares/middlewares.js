@@ -2,14 +2,14 @@ const auth = require('./auth')
 const security = require('./security')
 const statics = require('./statics')
 const cache = require('./cache')
-const logger = require('./logger')
+const requestsLogger = require('./requests_logger')
 const content = require('./content')
 
 module.exports = {
   common: [
-    // Place the logger first so that even requests that generate an error
+    // Place the request logger first so that even requests that generate an error
     // in the middleware are logged
-    logger,
+    requestsLogger,
 
     content.fakeSubmitException,
     content.jsonBodyParser,

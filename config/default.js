@@ -83,8 +83,7 @@ const config = module.exports = {
   // can be useful for development
   godMode: false,
   hashPasswords: true,
-  // see server/controllers/tests.js
-  morgan: {
+  requestsLogger: {
     mutedDomains: [],
     mutedPath: [
       '/api/reports?action=online'
