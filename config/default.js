@@ -192,12 +192,6 @@ const config = module.exports = {
 
   searchTimeout: 10000,
 
-  // Config passed to the client
-  // See server/controllers/config.js
-  client: {
-    piwik: 'https://your.piwik.instance'
-  },
-
   feed: {
     limitLength: 50,
     image: 'https://inventaire.io/public/icon/120.png'
