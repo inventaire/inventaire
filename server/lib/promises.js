@@ -1,6 +1,10 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+
+// Working around the circular dependency
+let _
+const lateRequire = () => { _ = __.require('builders', 'utils') }
+setTimeout(lateRequire, 0)
 
 // Here should be the only direct require of bluebird
 // so that every other dependency to it passed through this file
