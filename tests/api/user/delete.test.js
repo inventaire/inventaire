@@ -40,11 +40,13 @@ describe('user:delete', () => {
   it('should remove the user from the geo index', async () => {
     const position = getRandomPosition()
     const user = await getReservedUser({ position })
-    await wait(100)
+    // Using long pauses as the position indexation sometimes fails
+    // to update before the request by position
+    await wait(1000)
     const users = await getUsersNearPosition(authReq, position)
     _.map(users, '_id').should.containEql(user._id)
     await deleteUser(user)
-    await wait(100)
+    await wait(1000)
     const refreshedUsers = await getUsersNearPosition(authReq, position)
     _.map(refreshedUsers, '_id').should.not.containEql(user._id)
   })
