@@ -16,6 +16,7 @@ Group.create = options => {
   validations.pass('description', description)
   validations.pass('searchable', searchable)
   validations.pass('position', position)
+  validations.pass('creatorId', creatorId)
 
   const creator = createMembership(creatorId, null)
 
@@ -96,9 +97,9 @@ const createMembership = (userId, invitorId) => ({
 const moveMembership = (userId, group, previousCategory, newCategory) => {
   const membership = findMembership(userId, group, previousCategory, true)
   group[previousCategory] = _.without(group[previousCategory], membership)
-  // let the possibility to just destroy the membership
+  // Let the possibility to just destroy the membership
   // by letting newCategory undefined
-  if (newCategory != null) { group[newCategory].push(membership) }
+  if (newCategory != null) group[newCategory].push(membership)
   return group
 }
 

@@ -1,0 +1,137 @@
+require('should')
+const CONFIG = require('config')
+const __ = CONFIG.universalPath
+const { shouldNotGetHere, rethrowShouldNotGetHereErrors } = require('../utils')
+const someUserId = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+const someOtherUserId = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab'
+
+const Group = __.require('models', 'group')
+
+const createSomeGroup = () => {
+  return Group.create({
+    name: 'a',
+    description: '',
+    searchable: false,
+    position: null,
+    creatorId: someUserId
+  })
+}
+
+describe('group model', () => {
+  describe('create', () => {
+    it('should reject without creatorId', () => {
+      try {
+        const doc = Group.create({ name: 'a', description: '', searchable: false, position: null })
+        shouldNotGetHere(doc)
+      } catch (err) {
+        rethrowShouldNotGetHereErrors(err)
+        err.message.should.equal('invalid creatorId: undefined')
+      }
+    })
+
+    it('should generate a group document', () => {
+      const group = createSomeGroup()
+      group.admins.should.be.an.Array()
+      group.admins[0].user.should.equal(someUserId)
+      group.members.should.deepEqual([])
+      group.invited.should.deepEqual([])
+      group.declined.should.deepEqual([])
+      group.requested.should.deepEqual([])
+    })
+  })
+
+  describe('invite', () => {
+    it('should invite a user', () => {
+      const group = createSomeGroup()
+      Group.invite(someUserId, someOtherUserId, group)
+      group.invited[0].user.should.equal(someOtherUserId)
+    })
+  })
+
+  describe('accept', () => {
+    it('should accept an invitation', () => {
+      const group = createSomeGroup()
+      Group.invite(someUserId, someOtherUserId, group)
+      Group.accept(someOtherUserId, null, group)
+      group.invited.length.should.equal(0)
+      group.members[0].user.should.equal(someOtherUserId)
+    })
+  })
+
+  describe('decline', () => {
+    it('should decline an invitation', () => {
+      const group = createSomeGroup()
+      Group.invite(someUserId, someOtherUserId, group)
+      Group.decline(someOtherUserId, null, group)
+      group.invited.length.should.equal(0)
+      group.declined[0].user.should.equal(someOtherUserId)
+    })
+  })
+
+  describe('request', () => {
+    it('should add a request to join', () => {
+      const group = createSomeGroup()
+      Group.request(someOtherUserId, null, group)
+      group.requested[0].user.should.equal(someOtherUserId)
+    })
+  })
+
+  describe('cancelRequest', () => {
+    it('should cancel a request to join', () => {
+      const group = createSomeGroup()
+      Group.request(someOtherUserId, null, group)
+      Group.cancelRequest(someOtherUserId, null, group)
+      group.requested.length.should.equal(0)
+    })
+  })
+
+  describe('acceptRequest', () => {
+    it('should accept a request to join', () => {
+      const group = createSomeGroup()
+      Group.request(someOtherUserId, null, group)
+      Group.acceptRequest(someUserId, someOtherUserId, group)
+      group.requested.length.should.equal(0)
+      group.members[0].user.should.equal(someOtherUserId)
+    })
+  })
+
+  describe('refuseRequest', () => {
+    it('should refuse a request to join', () => {
+      const group = createSomeGroup()
+      Group.request(someOtherUserId, null, group)
+      Group.refuseRequest(someUserId, someOtherUserId, group)
+      group.requested.length.should.equal(0)
+    })
+  })
+
+  describe('makeAdmin', () => {
+    it('should make a user admin', () => {
+      const group = createSomeGroup()
+      Group.invite(someUserId, someOtherUserId, group)
+      Group.accept(someOtherUserId, null, group)
+      Group.makeAdmin(someUserId, someOtherUserId, group)
+      group.members.length.should.equal(0)
+      group.admins[1].user.should.equal(someOtherUserId)
+    })
+  })
+
+  describe('kick', () => {
+    it('should kick a user from group', () => {
+      const group = createSomeGroup()
+      Group.invite(someUserId, someOtherUserId, group)
+      Group.accept(someOtherUserId, null, group)
+      Group.kick(someUserId, someOtherUserId, group)
+      group.members.length.should.equal(0)
+    })
+  })
+
+  describe('leave', () => {
+    it('should leave a group', () => {
+      const group = createSomeGroup()
+      Group.invite(someUserId, someOtherUserId, group)
+      Group.accept(someOtherUserId, null, group)
+      Group.leave(someOtherUserId, null, group)
+      group.members.length.should.equal(0)
+    })
+  })
+})

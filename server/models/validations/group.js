@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const slugify = __.require('controllers', 'groups/lib/slugify')
-const { pass, boundedString, BoundedString, localImg, boolean, position } = require('./common')
+const { pass, boundedString, BoundedString, localImg, boolean, position, userId } = require('./common')
 
 module.exports = {
   pass,
@@ -16,5 +16,6 @@ module.exports = {
   picture: localImg,
   description: BoundedString(0, 5000),
   searchable: boolean,
-  position
+  position,
+  creatorId: userId
 }
