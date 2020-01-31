@@ -20,7 +20,7 @@ describe('groups:update:invite', () => {
     .then(group => {
       const invitedCount = group.invited.length
       return authReq('put', endpoint, { user: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', group: group._id })
-      .then(() => getGroup(group._id))
+      .then(() => getGroup(group))
       .then(updatedGroup => {
         updatedGroup.invited.length.should.equal(invitedCount + 1)
         done()
@@ -34,7 +34,7 @@ describe('groups:update:invite', () => {
     const userB = await getUserB()
     await addMember(group, userB)
     await authReqB('put', endpoint, { user: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', group: group._id })
-    const updatedGroup = await getGroup(group._id)
+    const updatedGroup = await getGroup(group)
     updatedGroup.invited.length.should.equal(1)
   })
 

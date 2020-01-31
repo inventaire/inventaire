@@ -30,7 +30,7 @@ describe('groups:update:request', () => {
     .then(group => {
       const requestCount = group.invited.length
       return authReqC('put', endpoint, { group: group._id })
-      .then(() => getGroup(group._id))
+      .then(() => getGroup(group))
       .then(group => {
         group.requested.length.should.equal(requestCount + 1)
         done()

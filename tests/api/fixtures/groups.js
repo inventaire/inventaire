@@ -8,10 +8,10 @@ const endpointAction = `${endpointBase}?action`
 const { Promise } = __.require('lib', 'promises')
 const { humanName } = require('../fixtures/entities')
 
-const getGroup = groupId => {
-  assert_.string(groupId)
-  return authReq('get', `${endpointAction}=by-id&id=${groupId}`)
-  .get('group')
+const getGroup = async group => {
+  group = await Promise.resolve(group)
+  const { group: refreshedGroup } = await authReq('get', `${endpointAction}=by-id&id=${group._id}`)
+  return refreshedGroup
 }
 
 const createGroup = (params = {}) => {
@@ -24,23 +24,32 @@ const createGroup = (params = {}) => {
   })
 }
 
-const membershipAction = (actor, action, groupId, userId) => {
-  return customAuthReq(actor, 'put', endpointBase, { action, group: groupId, user: userId })
+const membershipAction = async (actor, action, group, user) => {
+  group = await Promise.resolve(group)
+  user = await Promise.resolve(user)
+  const data = { action, group: group._id }
+  if (user) data.user = user._id
+  return customAuthReq(actor, 'put', endpointBase, data)
 }
 
-const addMember = async (groupPromise, memberPromise) => {
-  const [ group, member ] = await Promise.all([ groupPromise, memberPromise ])
-  const { _id: memberId } = member
-  await membershipAction(member, 'request', group._id, memberId)
-  await membershipAction(getUser(), 'accept-request', group._id, memberId)
-  const refreshedGroup = await getGroup(group._id)
+const addMember = async (group, member) => {
+  member = await Promise.resolve(member)
+  await membershipAction(member, 'request', group, member)
+  await membershipAction(getUser(), 'accept-request', group, member)
+  const refreshedGroup = await getGroup(group)
   return [ refreshedGroup, member ]
 }
 
-const createAndAddMember = async memberPromise => {
-  const member = await Promise.resolve(memberPromise)
+const addAdmin = async (group, member) => {
+  await addMember(group, member)
+  await membershipAction(getUser(), 'make-admin', group, member)
+  const refreshedGroup = await getGroup(group)
+  return [ refreshedGroup, member ]
+}
+
+const createAndAddMember = async user => {
   const group = await createGroup()
-  const [ refreshedGroup ] = await addMember(group, member)
+  const [ refreshedGroup ] = await addMember(group, user)
   return refreshedGroup
 }
 
@@ -54,10 +63,10 @@ const groupName = () => `${faker.lorem.words(3)} group`
 // Resolves to a group with userA as admin and userB as member
 const groupPromise = createGroup()
   .then(group => {
-    return membershipAction(getUserB(), 'request', group._id)
+    return membershipAction(getUserB(), 'request', group)
     .then(() => getUserB())
-    .then(userB => membershipAction(getUser(), 'accept-request', group._id, userB._id))
-    .then(() => getGroup(group._id))
+    .then(userB => membershipAction(getUser(), 'accept-request', group, userB))
+    .then(() => getGroup(group))
   })
 
-module.exports = { endpointBase, groupPromise, getGroup, groupName, createGroup, addMember, groupAndMemberPromise }
+module.exports = { endpointBase, groupPromise, getGroup, groupName, createGroup, addMember, addAdmin, groupAndMemberPromise }

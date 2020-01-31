@@ -60,7 +60,7 @@ describe('groups:update:accept', () => {
     const memberCount = group.members.length
     await authReq('put', '/api/groups?action=invite', { user: userId, group: groupId })
     await customAuthReq(user, 'put', endpoint, { user: userId, group: groupId })
-    const updatedGroup = await getGroup(group._id)
+    const updatedGroup = await getGroup(group)
     updatedGroup.members.length.should.equal(memberCount + 1)
     const membersIds = _.map(updatedGroup.members, 'user')
     membersIds.should.containEql(userId)

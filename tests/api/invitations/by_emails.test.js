@@ -161,7 +161,7 @@ describe('invitations:by-emails', () => {
 
         return invite()
         .then(() => signup(email))
-        .then(() => getGroup(group._id))
+        .then(() => getGroup(group))
         .then(updatedGroup => {
           const prevInvitedCount = group.invited.length
           const invitedCount = updatedGroup.invited.length

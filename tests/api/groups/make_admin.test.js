@@ -56,7 +56,7 @@ describe('groups:update:make-admin', () => {
       const { _id: memberId } = member
       const adminsCount = group.admins.length
       return authReq('put', endpoint, { user: memberId, group: group._id })
-      .then(() => getGroup(group._id))
+      .then(() => getGroup(group))
       .then(group => {
         group.admins.length.should.equal(adminsCount + 1)
         group.admins.map(_.property('user')).should.containEql(memberId)

@@ -31,7 +31,7 @@ describe('groups:update:refuse-request', () => {
       return customAuthReq(memberPromise, 'put', '/api/groups?action=request', { group: group._id })
       .then(() => {
         return authReq('put', endpoint, { user: requesterId, group: group._id })
-        .then(() => getGroup(group._id))
+        .then(() => getGroup(group))
       })
     })
     .then(group => {

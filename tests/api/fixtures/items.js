@@ -9,7 +9,10 @@ const faker = require('faker')
 
 const urisPromises = {}
 const getEditionUriPromise = lang => {
-  if (!urisPromises[lang]) { urisPromises[lang] = createEdition({ lang }).get('uri') }
+  if (!urisPromises[lang]) {
+    urisPromises[lang] = createEdition({ lang })
+      .then(({ uri }) => uri)
+  }
   return urisPromises[lang]
 }
 
@@ -29,7 +32,6 @@ const API = module.exports = {
     user = user || getUser()
     const entity = itemsData[0] && itemsData[0].entity
     const entityUriPromise = entity ? Promise.resolve(entity) : getEditionUri()
-
     return entityUriPromise
     .then(entityUri => {
       const items = itemsData.map(addDefaultEntity(entityUri))
@@ -38,9 +40,9 @@ const API = module.exports = {
   },
 
   createItem: (user, itemData = {}) => {
-    if (!itemData.listing) { itemData.listing = 'public' }
+    if (!itemData.listing) itemData.listing = 'public'
     return API.createItems(user, [ itemData ])
-    .get('0')
+    .then(([ item ]) => item)
   },
 
   createEditionAndItem: (user, itemData = {}) => {

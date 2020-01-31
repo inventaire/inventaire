@@ -30,7 +30,7 @@ describe('groups:update:leave', () => {
 
   it('should reject last admin to leave', done => {
     groupPromise
-    .then(group => getGroup(group._id))
+    .then(group => getGroup(group))
     .then(group => authReq('put', endpoint, { group: group._id }))
     .catch(err => {
       err.body.status_verbose.should.startWith("the last group admin can't leave before naming another admin")
@@ -46,7 +46,7 @@ describe('groups:update:leave', () => {
     .then(group => {
       const memberCount = group.members.length
       return customAuthReq(memberPromise, 'put', endpoint, { group: group._id })
-      .then(() => getGroup(group._id))
+      .then(() => getGroup(group))
       .then(updatedGroup => {
         updatedGroup.members.length.should.equal(memberCount - 1)
         done()

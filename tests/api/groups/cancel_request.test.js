@@ -34,12 +34,12 @@ describe('groups:update:cancel-request', () => {
     Promise.all([ groupPromise, requesterPromise ])
     .spread((group, requester) => {
       return customAuthReq(requesterPromise, 'put', '/api/groups?action=request', { group: group._id })
-      .then(() => getGroup(group._id))
+      .then(() => getGroup(group))
     })
     .then(group => {
       const requesterCount = group.requested.length
       return customAuthReq(requesterPromise, 'put', endpoint, { group: group._id })
-      .then(() => getGroup(group._id))
+      .then(() => getGroup(group))
       .then(updatedGroup => {
         updatedGroup.requested.length.should.equal(requesterCount - 1)
         done()

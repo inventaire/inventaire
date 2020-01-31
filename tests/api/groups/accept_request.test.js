@@ -28,7 +28,7 @@ describe('groups:update:accept-request', () => {
       const { _id: requesterId } = requester
       return customAuthReq(requesterPromise, 'put', '/api/groups?action=request', { group: group._id })
       .then(() => authReq('put', endpoint, { user: requesterId, group: group._id }))
-      .then(() => getGroup(group._id))
+      .then(() => getGroup(group))
       .then(updatedGroup => {
         updatedGroup.members.map(_.property('user')).should.containEql(requesterId)
         done()
