@@ -17,8 +17,9 @@ const fixtures = module.exports = {
     if (!shelfData.name) {
       shelfData.name = fixtures.shelfName()
     }
-    return Promise.resolve(customAuthReq(userPromise, 'post', '/api/shelves?action=create', shelfData)
-    )
+    const endpoint = '/api/shelves?action=create'
+    const req = customAuthReq(userPromise, 'post', endpoint, shelfData).get('shelf')
+    return Promise.resolve(req)
   },
   createShelfWithItem: async itemPromise => {
     const item = await resolveOrCreateItem(itemPromise)

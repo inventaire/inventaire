@@ -19,7 +19,7 @@ module.exports = (req, res, next) => {
   sanitize(req, res, sanitization)
   .then(params => {
     return shelves_.updateAttributes(params)
-    .then(responses_.Send(res))
+    .then(responses_.Wrap(res, 'shelf'))
     .then(Track(req, [ 'shelf', 'update' ]))
   })
   .catch(error_.Handler(req, res))

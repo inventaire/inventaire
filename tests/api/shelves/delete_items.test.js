@@ -1,8 +1,8 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const { getUserB, shouldNotGetHere, rethrowShouldNotGetHereErrors } = __.require('apiTests', 'utils/utils')
-const { authReq, authReqB } = require('../utils/utils')
-const { createShelfWithItem } = require('../fixtures/shelves')
+const { authReq } = require('../utils/utils')
+const { createShelf, createShelfWithItem } = require('../fixtures/shelves')
 const { createItem } = require('../fixtures/items')
 
 const endpoint = '/api/shelves?action=delete-items'
@@ -64,13 +64,7 @@ describe('shelves:delete-items', () => {
 
   it('should reject removing items of a different owner shelf', async () => {
     try {
-      const shelf = await Promise.resolve(
-        authReqB('post', '/api/shelves?action=create', {
-          description: 'wesh',
-          listing: 'public',
-          name: 'yolo shelf'
-        })
-      )
+      const shelf = await createShelf(getUserB(), { listing: 'public' })
       const item = await createItem()
       const res = await authReq('post', endpoint, {
         id: shelf._id,

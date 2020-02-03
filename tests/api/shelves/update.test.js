@@ -38,12 +38,13 @@ describe('shelves:update', () => {
     const description = shelfDescription()
     const listing = 'network'
     const shelf = await shelfPromise
-    const res = await authReq('post', endpoint, {
+    const params = {
       id: shelf._id,
       name,
       description,
       listing
-    })
+    }
+    const res = await authReq('post', endpoint, params).get('shelf')
     res.name.should.equal(name)
     res.description.should.equal(description)
     res.listing.should.equal(listing)
