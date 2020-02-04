@@ -96,4 +96,16 @@ describe('groups:update-settings', () => {
     const { group } = await nonAuthReq('get', `/api/groups?action=by-id&id=${groupId}`)
     group.position.should.deepEqual([ 0.1235, 0.1235 ])
   })
+
+  it('should update searchable parameter', async () => {
+    const { _id: groupId, searchable } = await groupPromise
+    searchable.should.be.true()
+    await authReq('put', endpoint, {
+      group: groupId,
+      attribute: 'searchable',
+      value: false
+    })
+    const { group } = await nonAuthReq('get', `/api/groups?action=by-id&id=${groupId}`)
+    group.searchable.should.be.false()
+  })
 })
