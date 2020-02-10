@@ -10,7 +10,8 @@ const getAuthorizedItems = require('./lib/get_authorized_items')
 
 const sanitization = {
   user: { optional: true },
-  group: { optional: true }
+  group: { optional: true },
+  shelf: { optional: true }
 }
 
 module.exports = (req, res) => {
@@ -26,15 +27,16 @@ module.exports = (req, res) => {
 }
 
 const validateUserOrGroup = params => {
-  if (!(params.user || params.group)) {
-    throw error_.newMissingQuery('user|group', 400, params)
+  if (!(params.user || params.group || params.shelf)) {
+    throw error_.newMissingQuery('user|group|shelf', 400, params)
   }
   return params
 }
 
 const getItems = params => {
-  const { user, group, reqUserId } = params
+  const { user, group, shelf, reqUserId } = params
   if (user) return getAuthorizedItems.byUser(user, reqUserId)
+  if (shelf) return getAuthorizedItems.byShelf(shelf, reqUserId)
   else return getAuthorizedItems.byGroup(group, reqUserId)
 }
 
