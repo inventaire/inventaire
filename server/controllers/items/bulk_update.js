@@ -7,7 +7,7 @@ const responses_ = __.require('lib', 'responses')
 const sanitization = {
   ids: {},
   attribute: {},
-  value: {}
+  value: { type: 'string' }
 }
 
 module.exports = (req, res) => {

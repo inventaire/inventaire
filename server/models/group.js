@@ -2,6 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
+const { truncateLatLng } = __.require('lib', 'geo')
 
 const Group = module.exports = {}
 
@@ -141,3 +142,7 @@ Group.categories = {
 }
 
 Group.attributes = require('./attributes/group')
+
+Group.formatters = {
+  position: truncateLatLng
+}

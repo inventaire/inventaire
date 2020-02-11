@@ -8,21 +8,23 @@ const sanitization = {
   uri: { optional: true },
   id: { optional: true },
   lang: {},
-  value: {}
+  value: { type: 'string' }
 }
 
 module.exports = (req, res) => {
   sanitize(req, res, sanitization)
   .then(params => {
     let { uri, id, value, lang } = params
+
     const prefix = getPrefix(uri, id)
     const updater = updaters[prefix]
 
-    if (uri) { id = unprefixify(uri) }
+    if (uri) id = unprefixify(uri)
 
     if (updater == null) {
       return error_.bundle(req, res, `unsupported uri prefix: ${prefix}`, 400, uri)
     }
+
     return updater(req.user, id, lang, value)
     .then(responses_.Ok(res))
   })

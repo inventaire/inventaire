@@ -4,6 +4,7 @@ const _ = __.require('builders', 'utils')
 const host = CONFIG.fullPublicHost()
 const error_ = __.require('lib', 'error/error')
 const isbn_ = __.require('lib', 'isbn/isbn')
+const { truncateLatLng } = __.require('lib', 'geo')
 
 // Parameters attributes:
 // - format (optional)
@@ -194,7 +195,10 @@ module.exports = {
     secret: true,
     validate: validations.user.password
   },
-  position: arrayOfNumbers,
+  position: {
+    format: truncateLatLng,
+    validate: arrayOfNumbers.validate
+  },
   prefix: whitelistedString,
   property: { validate: _.isPropertyUri },
   refresh: generics.boolean,
@@ -219,5 +223,19 @@ module.exports = {
   username: { validate: validations.common.username },
   usernames,
   relatives: whitelistedStrings,
-  value: nonEmptyString
+  value: {
+    // Endpoints accepting a 'value' can specify a type
+    // or have to do their own validation
+    // as a value can be anything, including null
+    validate: (value, name, config) => {
+      const { type: expectedType } = config
+      if (expectedType) {
+        const valueType = _.typeOf(value)
+        if (valueType !== expectedType) {
+          throw error_.new(`invalid value type: ${valueType} (expected ${expectedType})`, 400, { value })
+        }
+      }
+      return true
+    }
+  }
 }

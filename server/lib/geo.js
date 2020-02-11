@@ -13,7 +13,9 @@ module.exports = {
     } else {
       return Math.trunc(meters / 100) / 10
     }
-  }
+  },
+
+  truncateLatLng: latLng => latLng != null ? latLng.map(truncateDecimals) : null
 }
 
 // Distance between LatLng
@@ -37,3 +39,7 @@ const distanceBetween = (latLngA, latLngB) => {
 const R = 6378137
 // DEG_TO_RAD
 const d2r = Math.PI / 180
+
+// Coordinates are in decimal degrees
+// There is no need to keep more than 5 decimals, cf https://xkcd.com/2170/
+const truncateDecimals = degree => Math.round(degree * 100000) / 100000
