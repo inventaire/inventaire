@@ -41,5 +41,5 @@ const R = 6378137
 const d2r = Math.PI / 180
 
 // Coordinates are in decimal degrees
-// There is no need to keep more than 4 decimals, cf https://xkcd.com/2170/
-const truncateDecimals = degree => Math.round(degree * 10000) / 10000
+// There is no need to keep more than 5 decimals, cf https://xkcd.com/2170/
+const truncateDecimals = degree => Math.round(degree * 100000) / 100000
