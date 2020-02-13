@@ -9,5 +9,5 @@ module.exports = (search, size) => {
     { prefix: { _all: _.last(search.split(' ')) } }
   ]
 
-  return { query: { bool: { should } }, size, min_score: 0.5 }
+  return { query: { bool: { should } }, size, min_score: 0.1 }
 }
