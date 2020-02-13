@@ -31,10 +31,5 @@ module.exports = {
     security.enableCorsOnPublicApiRoutes
   ],
   production: [],
-  dev: [
-    // Those headers only make sense when serving index.html
-    // which is done by Nginx in production
-    // (see https://github.com/inventaire/inventaire-deploy)
-    security.addSecurityHeaders
-  ]
+  dev: []
 }
