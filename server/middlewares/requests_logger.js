@@ -23,10 +23,10 @@ module.exports = (req, res, next) => {
 const skip = (req, res) => {
   // /!\ resources behind the /public endpoint will have their pathname
   // with /public removed: /public/css/app.css will have a pathname=/css/app.css
-  // Take the pathname on (req._parsedOriginalUrl or req._parsedUrl) instead
-  // to work around it, if the need arise
+  // In that case, req._parsedOriginalUrl would be defined to the original /public/css/app.css,
+  // but it's also fine to just set 'css' or 'js' as muted domains instead
   const { path, pathname } = req._parsedUrl
-  const domain = pathname.split('/')[2]
+  const domain = pathname.split('/')[1]
   return mutedDomains.includes(domain) || mutedPath.includes(path)
 }
 
