@@ -12,9 +12,7 @@ module.exports = {
     public: {
       'by-id': publicActions.byId,
       'by-slug': publicActions.bySlug,
-      search: publicActions.searchByText,
       'search-by-position': publicActions.searchByPositon,
-      last: publicActions.lastGroups,
       slug: publicActions.slug
     },
     authentified: {

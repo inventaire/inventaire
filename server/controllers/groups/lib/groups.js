@@ -62,10 +62,6 @@ const groups_ = module.exports = {
     .then(_.partial(Group.findInvitation, userId, _, true))
   },
 
-  byCreation: (limit = 10) => {
-    return db.viewCustom('byCreation', { limit, descending: true, include_docs: true })
-  },
-
   getGroupMembersIds: groupId => {
     return groups_.byId(groupId)
     .then(group => {
