@@ -1,6 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const { authReq, authReqB, getUserB, customAuthReq, getUserGetter } = require('../utils/utils')
+const assert_ = __.require('utils', 'assert_types')
 const faker = require('faker')
 const endpointBase = '/api/groups'
 const endpointAction = `${endpointBase}?action`
@@ -8,6 +9,7 @@ const { Promise } = __.require('lib', 'promises')
 const { humanName } = require('../fixtures/entities')
 
 const getGroup = groupId => {
+  assert_.string(groupId)
   return authReq('get', `${endpointAction}=by-id&id=${groupId}`)
   .get('group')
 }

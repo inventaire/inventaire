@@ -2,6 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const { Promise } = __.require('lib', 'promises')
+const error_ = __.require('lib', 'error/error')
 const Group = __.require('models', 'group')
 const db = __.require('couch', 'base')('groups')
 const lists_ = require('./users_lists')
@@ -61,8 +62,12 @@ const groups_ = module.exports = {
     .then(_.partial(Group.findInvitation, userId, _, true))
   },
 
-  byCreation: (limit = 10) => {
-    return db.viewCustom('byCreation', { limit, descending: true, include_docs: true })
+  getGroupMembersIds: groupId => {
+    return groups_.byId(groupId)
+    .then(group => {
+      if (group == null) throw error_.notFound({ group: groupId })
+      return Group.getAllMembers(group)
+    })
   }
 }
 

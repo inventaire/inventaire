@@ -1,32 +1,49 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
 require('should')
-const { getUser, authReq } = __.require('apiTests', 'utils/utils')
-const { createEditionAndItem } = require('../fixtures/items')
-
+const { nonAuthReq, undesiredRes } = __.require('apiTests', 'utils/utils')
 const endpoint = '/api/items?action=inventory-view'
+const { groupPromise } = require('../fixtures/groups')
+const { createUserWithItems } = require('../fixtures/populate')
 
 describe('items:inventory-view', async () => {
-  it('should get a works tree, work items map and items by date', async () => {
-    const res = await authReq('get', endpoint)
+  it('should reject requests without a user or a group', done => {
+    nonAuthReq('get', endpoint)
+    .then(undesiredRes(done))
+    .catch(err => {
+      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.equal('missing parameter in query: user or group')
+      done()
+    })
+    .catch(done)
+  })
+
+  it('should return a user inventory-view', async () => {
+    const { _id: userId } = await createUserWithItems()
+    const res = await nonAuthReq('get', `${endpoint}&user=${userId}`)
     res.worksTree.should.be.an.Object()
+    res.worksTree.author.should.be.an.Object()
+    res.worksTree.genre.should.be.an.Object()
+    res.worksTree.subject.should.be.an.Object()
     res.worksTree.owner.should.be.an.Object()
     res.workUriItemsMap.should.be.an.Object()
     res.itemsByDate.should.be.an.Array()
   })
 
-  it('should get corresponding works and items', async () => {
-    const user = await getUser()
-    const item = await createEditionAndItem()
-    const { worksTree, workUriItemsMap, itemsByDate } = await authReq('get', endpoint)
-    worksTree['wdt:P50'].should.be.an.Object()
-    worksTree['wdt:P50'].unknown.should.be.an.Array()
-    const ownerObject = worksTree.owner[user._id]
-    const itemsIds = _.flatten(Object.values(ownerObject))
-    itemsIds.should.containEql(item._id)
-    const worksObject = _.flatten(_.values(workUriItemsMap))
-    worksObject.should.containEql(item._id)
-    itemsByDate.should.containEql(item._id)
+  it('should return a group inventory-view', done => {
+    groupPromise
+    .get('_id')
+    .then(groupId => nonAuthReq('get', `${endpoint}&group=${groupId}`))
+    .then(res => {
+      res.worksTree.should.be.an.Object()
+      res.worksTree.author.should.be.an.Object()
+      res.worksTree.genre.should.be.an.Object()
+      res.worksTree.subject.should.be.an.Object()
+      res.worksTree.owner.should.be.an.Object()
+      res.workUriItemsMap.should.be.an.Object()
+      res.itemsByDate.should.be.an.Array()
+      done()
+    })
+    .catch(done)
   })
 })

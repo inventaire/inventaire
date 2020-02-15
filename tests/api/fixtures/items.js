@@ -25,31 +25,31 @@ const listings = [ 'private', 'network', 'public' ]
 const transactions = [ 'giving', 'lending', 'selling', 'inventorying' ]
 
 const API = module.exports = {
-  createItems: (userPromise, itemsData = []) => {
-    if (!userPromise) userPromise = getUser()
+  createItems: (user, itemsData = []) => {
+    user = user || getUser()
     const entity = itemsData[0] && itemsData[0].entity
     const entityUriPromise = entity ? Promise.resolve(entity) : getEditionUri()
 
     return entityUriPromise
     .then(entityUri => {
       const items = itemsData.map(addDefaultEntity(entityUri))
-      return customAuthReq(userPromise, 'post', '/api/items', items)
+      return customAuthReq(user, 'post', '/api/items', items)
     })
   },
 
-  createItem: (userPromise, itemData = {}) => {
+  createItem: (user, itemData = {}) => {
     if (!itemData.listing) { itemData.listing = 'public' }
-    return API.createItems(userPromise, [ itemData ])
+    return API.createItems(user, [ itemData ])
     .get('0')
   },
 
-  createEditionAndItem: (userPromise, itemData = {}) => {
+  createEditionAndItem: (user, itemData = {}) => {
     return createEdition()
-    .then(edition => API.createItem(userPromise, { entity: `inv:${edition._id}` }))
+    .then(edition => API.createItem(user, { entity: `inv:${edition._id}` }))
   },
 
-  createRandomizedItems: (userPromise, itemsData) => {
-    return API.createItems(userPromise, itemsData.map(randomizedItem))
+  createRandomizedItems: (user, itemsData) => {
+    return API.createItems(user, itemsData.map(randomizedItem))
   }
 }
 
