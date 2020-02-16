@@ -1,7 +1,7 @@
 const __ = require('config').universalPath
-const { createUser, createAdminUser, getRefreshedUser } = require('../fixtures/users')
 const { request, customAuthReq } = require('./request')
 const randomString = __.require('lib', 'utils/random_string')
+const { createUser, createAdminUser, getRefreshedUser } = require('../fixtures/users')
 require('should')
 
 const userPromises = {}

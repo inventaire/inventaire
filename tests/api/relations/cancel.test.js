@@ -1,5 +1,6 @@
 require('should')
-const { getUsersWithoutRelation, assertRelation, action } = require('../utils/relations')
+const { assertRelation, action } = require('../utils/relations')
+const { getUsersWithoutRelation } = require('../fixtures/users')
 
 describe('relations:cancel', () => {
   it('should cancel a friend request', async () => {

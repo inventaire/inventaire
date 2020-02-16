@@ -89,8 +89,8 @@ const user_ = module.exports = {
     .map(omitPrivateData(reqUserId, networkIds, extraAttribute)))
   },
 
-  getUsersIndexByIds: ids => {
-    return user_.getUsersByIds(ids)
+  getUsersIndexByIds: (ids, reqUserId) => {
+    return user_.getUsersByIds(ids, reqUserId)
     .then(_.KeyBy('_id'))
   },
 

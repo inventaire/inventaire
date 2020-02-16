@@ -7,7 +7,16 @@ const authEndpoint = `${host}/api/auth`
 const faker = require('faker')
 const { makeUserAdmin } = __.require('controllers', 'user/lib/user')
 const { request, rawRequest } = require('../utils/request')
+const { makeFriends } = require('../utils/relations')
 const randomString = __.require('lib', './utils/random_string')
+let twoFriendsPromise
+
+// Working around the circular dependency
+let getUser, getReservedUser
+const lateRequire = () => {
+  ({ getUser, getReservedUser } = require('../utils/utils'))
+}
+setTimeout(lateRequire, 0)
 
 const connect = (endpoint, userData) => rawRequest('post', { url: endpoint, body: userData })
 const signup = userData => connect(`${authEndpoint}?action=signup`, userData)
@@ -72,7 +81,31 @@ const API = module.exports = {
     return faker.fake('{{name.firstName}}').replace(/\W/, '') + randomString(2)
   },
 
-  createUserEmail: () => faker.internet.email()
+  createUserEmail: () => faker.internet.email(),
+
+  getUsersWithoutRelation: () => {
+    return Promise.all([
+      getUser(),
+      getReservedUser()
+    ])
+    .then(([ userA, userB ]) => ({ userA, userB }))
+  },
+
+  getTwoFriends: () => {
+    twoFriendsPromise = twoFriendsPromise || getTwoFriends()
+    return twoFriendsPromise
+  }
+}
+
+const getTwoFriends = () => {
+  return Promise.all([
+    getUser(),
+    getReservedUser()
+  ])
+  .then(([ userA, userB ]) => {
+    return makeFriends(userA, userB)
+    .then(() => [ userA, userB ])
+  })
 }
 
 const parseCookie = res => res.headers['set-cookie'].join(';')

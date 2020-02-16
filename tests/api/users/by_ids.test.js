@@ -2,7 +2,8 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const { shouldNotGetHere, rethrowShouldNotGetHereErrors } = __.require('apiTests', 'utils/utils')
-const { nonAuthReq, getUser, getUserB } = require('../utils/utils')
+const { nonAuthReq, authReq, customAuthReq, getUser, getUserB } = require('../utils/utils')
+const { getTwoFriends } = require('../fixtures/users')
 
 const endpoint = '/api/users?action=by-ids'
 
@@ -18,13 +19,34 @@ describe('users:by-ids', () => {
     }
   })
 
-  it('should get a user', async () => {
+  it('should get a user public data', async () => {
     const user = await getUser()
     const userId = user._id
     const res = await nonAuthReq('get', `${endpoint}&ids=${userId}`)
     res.users.should.be.an.Object()
     res.users[userId].should.be.an.Object()
     res.users[userId]._id.should.equal(userId)
+    res.users[userId].snapshot.public.should.be.an.Object()
+  })
+
+  it('should get semi-private data if user is in network', async () => {
+    const [ userA, userB ] = await getTwoFriends()
+    const userAId = userA._id
+    const { users } = await customAuthReq(userB, 'get', `${endpoint}&ids=${userAId}`)
+    users[userAId].should.be.an.Object()
+    users[userAId]._id.should.equal(userAId)
+    users[userAId].snapshot.public.should.be.an.Object()
+    users[userAId].snapshot.network.should.be.an.Object()
+  })
+
+  it('should get private data if requested user is requester', async () => {
+    const user = await getUser()
+    const userId = user._id
+    const { users } = await authReq('get', `${endpoint}&ids=${userId}`)
+    users[userId].should.be.an.Object()
+    users[userId].snapshot.public.should.be.an.Object()
+    users[userId].snapshot.network.should.be.an.Object()
+    users[userId].snapshot.private.should.be.an.Object()
   })
 
   it('should get several users', async () => {

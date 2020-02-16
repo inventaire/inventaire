@@ -12,8 +12,7 @@ module.exports = (req, res) => {
   sanitize(req, res, sanitization)
   .then(params => {
     const { ids, reqUserId } = params
-    if (reqUserId) ids.push(reqUserId)
-    return user_.getUsersIndexByIds(ids)
+    return user_.getUsersIndexByIds(ids, reqUserId)
   })
   .then(responses_.Wrap(res, 'users'))
   .catch(error_.Handler(req, res))

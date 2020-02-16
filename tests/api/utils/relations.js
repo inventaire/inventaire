@@ -1,4 +1,4 @@
-const { customAuthReq, getUser, getReservedUser } = require('./utils')
+const { customAuthReq } = require('./utils')
 const endpoint = '/api/relations'
 
 const getRelations = user => customAuthReq(user, 'get', endpoint)
@@ -18,20 +18,20 @@ const getRelationStatus = async (reqUser, otherUser) => {
   return 'none'
 }
 
-module.exports = {
-  getUsersWithoutRelation: () => {
-    return Promise.all([
-      getUser(),
-      getReservedUser()
-    ])
-    .then(([ userA, userB ]) => ({ userA, userB }))
-  },
+const action = (action, reqUser, otherUser) => {
+  return customAuthReq(reqUser, 'post', endpoint, {
+    action,
+    user: otherUser._id
+  })
+}
 
-  action: (action, reqUser, otherUser) => {
-    return customAuthReq(reqUser, 'post', endpoint, {
-      action,
-      user: otherUser._id
-    })
+module.exports = {
+  action,
+
+  makeFriends: (userA, userB) => {
+    return action('request', userA, userB)
+    .then(() => action('accept', userB, userA))
+    .then(() => [ userA, userB ])
   },
 
   assertRelation: async (userA, userB, relationStatus) => {

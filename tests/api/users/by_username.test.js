@@ -2,9 +2,10 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const should = require('should')
-const { nonAuthReq, getUser, getUserB, shouldNotGetHere, rethrowShouldNotGetHereErrors } = __.require('apiTests', 'utils/utils')
+const { nonAuthReq, authReq, customAuthReq, getUser, getUserB, shouldNotGetHere, rethrowShouldNotGetHereErrors } = __.require('apiTests', 'utils/utils')
 const { createUser } = require('../fixtures/users')
 const randomString = __.require('lib', './utils/random_string')
+const { getTwoFriends } = require('../fixtures/users')
 
 const endpoint = '/api/users?action=by-usernames'
 
