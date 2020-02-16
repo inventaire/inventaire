@@ -30,6 +30,29 @@ describe('users:by-usernames', () => {
     const { users } = res
     should(users[username]).not.be.ok()
     users[lowerCasedUsername].username.should.equal(username)
+    users[lowerCasedUsername].snapshot.public.should.be.an.Object()
+  })
+
+  it('should get semi-private data if user is in network', async () => {
+    const [ userA, userB ] = await getTwoFriends()
+    const { username } = userA
+    const lowerCasedUsername = username.toLowerCase()
+    const { users } = await customAuthReq(userB, 'get', `${endpoint}&usernames=${username}`)
+    users[lowerCasedUsername].should.be.an.Object()
+    users[lowerCasedUsername].username.toLowerCase().should.equal(lowerCasedUsername)
+    users[lowerCasedUsername].snapshot.public.should.be.an.Object()
+    users[lowerCasedUsername].snapshot.network.should.be.an.Object()
+  })
+
+  it('should get private data if requested user is requester', async () => {
+    const user = await getUser()
+    const { username } = user
+    const lowerCasedUsername = username.toLowerCase()
+    const { users } = await authReq('get', `${endpoint}&usernames=${username}`)
+    users[lowerCasedUsername].should.be.an.Object()
+    users[lowerCasedUsername].snapshot.public.should.be.an.Object()
+    users[lowerCasedUsername].snapshot.network.should.be.an.Object()
+    users[lowerCasedUsername].snapshot.private.should.be.an.Object()
   })
 
   it('should get several users', async () => {
