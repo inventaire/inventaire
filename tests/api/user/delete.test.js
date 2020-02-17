@@ -2,7 +2,7 @@ const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const should = require('should')
 const { wait } = __.require('lib', 'promises')
-const { getReservedUser, customAuthReq, authReq } = require('../utils/utils')
+const { getReservedUser, customAuthReq, authReq, shouldNotGetHere, rethrowShouldNotGetHereErrors } = require('../utils/utils')
 const { getRefreshedUser } = require('../fixtures/users')
 const { createItem } = require('../fixtures/items')
 const { getById: getItemById } = require('../utils/items')
@@ -64,7 +64,7 @@ describe('user:delete', () => {
       _.map(rerefreshedGroup.members, 'user').should.not.containEql(user._id)
     })
 
-    it('should remove the user when admin', async () => {
+    it('should remove the user when admin, but not delete the group', async () => {
       const user = await getReservedUser()
       const group = await createGroup()
       const [ refreshedGroup ] = await addAdmin(group, user)
@@ -74,6 +74,22 @@ describe('user:delete', () => {
       await wait(100)
       const rerefreshedGroup = await getGroup(group)
       _.map(rerefreshedGroup.admins, 'user').should.not.containEql(user._id)
+    })
+
+    it('should delete the group when the user was the last member', async () => {
+      const user = await getReservedUser()
+      const group = await createGroup({ user })
+      _.map(group.admins, 'user').should.containEql(user._id)
+      await wait(100)
+      await deleteUser(user)
+      await wait(100)
+      try {
+        const res = await getGroup(group)
+        shouldNotGetHere(res)
+      } catch (err) {
+        rethrowShouldNotGetHereErrors(err)
+        err.statusCode.should.equal(404)
+      }
     })
   })
 })

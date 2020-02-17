@@ -95,6 +95,8 @@ Group.deleteUser = (group, userId) => {
     group.admins = membersBySeniority.slice(0, 3)
     group.members = membersBySeniority.slice(3)
   }
+
+  return group
 }
 
 const byTimestamp = (a, b) => a.timestamp - b.timestamp
