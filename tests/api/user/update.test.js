@@ -31,7 +31,7 @@ describe('user:update', () => {
       const user = await getReservedUser()
       await customAuthReq(user, 'put', endpoint, { attribute, value: [ 10.123456, 10.123456 ] })
       const updatedUser = await getRefreshedUser(user)
-      updatedUser[attribute].should.deepEqual([ 10.1235, 10.1235 ])
+      updatedUser[attribute].should.deepEqual([ 10.12346, 10.12346 ])
     })
 
     it('should allow to delete the position by passing null', async () => {
