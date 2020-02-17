@@ -4,6 +4,8 @@ const __ = CONFIG.universalPath
 const { shouldNotGetHere, rethrowShouldNotGetHereErrors } = require('../utils')
 const someUserId = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
 const someOtherUserId = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab'
+const someOtherUserId2 = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaac'
+const { wait } = __.require('lib', 'promises')
 
 const Group = __.require('models', 'group')
 
@@ -131,6 +133,55 @@ describe('group model', () => {
       Group.invite(someUserId, someOtherUserId, group)
       Group.accept(someOtherUserId, null, group)
       Group.leave(someOtherUserId, null, group)
+      group.members.length.should.equal(0)
+    })
+  })
+
+  describe('delete user', () => {
+    it('should delete a member', () => {
+      const group = createSomeGroup()
+      Group.invite(someUserId, someOtherUserId, group)
+      Group.accept(someOtherUserId, null, group)
+      Group.deleteUser(group, someOtherUserId)
+      group.members.length.should.equal(0)
+    })
+
+    it('should delete an invited user', () => {
+      const group = createSomeGroup()
+      Group.invite(someUserId, someOtherUserId, group)
+      Group.deleteUser(group, someOtherUserId)
+      group.invited.length.should.equal(0)
+    })
+
+    it('should delete a requesting user', () => {
+      const group = createSomeGroup()
+      Group.request(someOtherUserId, null, group)
+      Group.deleteUser(group, someOtherUserId)
+      group.requested.length.should.equal(0)
+    })
+
+    it('should delete an admin when there are other admins', () => {
+      const group = createSomeGroup()
+      Group.invite(someUserId, someOtherUserId, group)
+      Group.accept(someOtherUserId, null, group)
+      Group.makeAdmin(someUserId, someOtherUserId, group)
+      Group.deleteUser(group, someOtherUserId)
+      group.admins.length.should.equal(1)
+      group.admins[0].user.should.equal(someUserId)
+    })
+
+    it('should delete an admin and pass admin role when there are other members', async () => {
+      const group = createSomeGroup()
+      Group.invite(someUserId, someOtherUserId, group)
+      Group.accept(someOtherUserId, null, group)
+      // Wait so that the second user is added with a different timestamp
+      await wait(10)
+      Group.invite(someUserId, someOtherUserId2, group)
+      Group.accept(someOtherUserId2, null, group)
+      Group.deleteUser(group, someUserId)
+      group.admins.length.should.equal(2)
+      group.admins[0].user.should.equal(someOtherUserId)
+      group.admins[1].user.should.equal(someOtherUserId2)
       group.members.length.should.equal(0)
     })
   })
