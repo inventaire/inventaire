@@ -1,34 +1,25 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
-const { Promise } = __.require('lib', 'promises')
-const { getUser, getUserB, authReq } = __.require('apiTests', 'utils/utils')
+const { getUser, getUserB, authReq, customAuthReq } = __.require('apiTests', 'utils/utils')
 const { createItem } = require('./items')
 const { addAuthor } = require('./entities')
 const { getByUri: getEntityByUri } = require('../utils/entities')
 const { getById: getRefreshedItem } = require('../utils/items')
 
 module.exports = {
-  createTransaction: () => {
-    return createItem(getUserB(), { listing: 'public', transaction: 'giving' })
-    .tap(addAuthorToItemEditionWork)
-    .then(getRefreshedItem)
-    .then(userBItem => {
-      return Promise.all([
-        getUser(),
-        getUserB()
-      ])
-      .spread((userA, userB) => {
-        return authReq('post', '/api/transactions?action=request', {
-          item: userBItem._id,
-          message: 'yo'
-        })
-        .then(res => {
-          Object.assign(res, { userA, userB, userBItem })
-          return res
-        })
-      })
+  createTransaction: async (userA, userB) => {
+    userA = userA || await getUser()
+    userB = userB || await getUserB()
+    const item = await createItem(userB, { listing: 'public', transaction: 'giving' })
+    await addAuthorToItemEditionWork(item)
+    const refreshedItem = await getRefreshedItem(item)
+    const res = await customAuthReq(userA, 'post', '/api/transactions?action=request', {
+      item: item._id,
+      message: 'yo'
     })
+    Object.assign(res, { userA, userB, userBItem: refreshedItem })
+    return res
   },
 
   addMessage: transaction => {

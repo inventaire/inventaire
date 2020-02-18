@@ -2,13 +2,15 @@ const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const should = require('should')
 const { wait } = __.require('lib', 'promises')
-const { getReservedUser, customAuthReq, authReq, shouldNotGetHere, rethrowShouldNotGetHereErrors } = require('../utils/utils')
+const { getReservedUser, customAuthReq, getUser, shouldNotGetHere, rethrowShouldNotGetHereErrors } = require('../utils/utils')
 const { getRefreshedUser } = require('../fixtures/users')
 const { createItem } = require('../fixtures/items')
 const { getById: getItemById } = require('../utils/items')
 const { getUsersNearPosition, getRandomPosition } = require('../utils/users')
 const deleteUser = user => customAuthReq(user, 'delete', '/api/user')
 const { createGroup, getGroup, addMember, addAdmin } = require('../fixtures/groups')
+const { createTransaction } = require('../fixtures/transactions')
+const { getTransaction, updateTransaction } = require('../utils/transactions')
 
 describe('user:delete', () => {
   it('should delete the user', async () => {
@@ -57,9 +59,7 @@ describe('user:delete', () => {
       const group = await createGroup()
       const [ refreshedGroup ] = await addMember(group, user)
       _.map(refreshedGroup.members, 'user').should.containEql(user._id)
-      await wait(100)
       await deleteUser(user)
-      await wait(100)
       const rerefreshedGroup = await getGroup(group)
       _.map(rerefreshedGroup.members, 'user').should.not.containEql(user._id)
     })
@@ -69,9 +69,7 @@ describe('user:delete', () => {
       const group = await createGroup()
       const [ refreshedGroup ] = await addAdmin(group, user)
       _.map(refreshedGroup.admins, 'user').should.containEql(user._id)
-      await wait(100)
       await deleteUser(user)
-      await wait(100)
       const rerefreshedGroup = await getGroup(group)
       _.map(rerefreshedGroup.admins, 'user').should.not.containEql(user._id)
     })
@@ -80,9 +78,7 @@ describe('user:delete', () => {
       const user = await getReservedUser()
       const group = await createGroup({ user })
       _.map(group.admins, 'user').should.containEql(user._id)
-      await wait(100)
       await deleteUser(user)
-      await wait(100)
       try {
         const res = await getGroup(group)
         shouldNotGetHere(res)
@@ -90,6 +86,30 @@ describe('user:delete', () => {
         rethrowShouldNotGetHereErrors(err)
         err.statusCode.should.equal(404)
       }
+    })
+  })
+
+  describe('transactions', () => {
+    it('should cancel active transactions', async () => {
+      const user = await getReservedUser()
+      const { transaction } = await createTransaction(user, getUser())
+      transaction.state.should.equal('requested')
+      await deleteUser(user)
+      const updatedTransaction = await getTransaction(user, transaction._id)
+      updatedTransaction.state.should.equal('cancelled')
+    })
+
+    it('should not affect already terminated transactions', async () => {
+      const user = await getReservedUser()
+      const { transaction } = await createTransaction(user, getUser())
+      transaction.state.should.equal('requested')
+      await updateTransaction(getUser(), transaction._id, 'declined')
+      const updatedTransaction = await getTransaction(user, transaction._id)
+      updatedTransaction.state.should.equal('declined')
+      await deleteUser(user)
+      const reupdatedTransaction = await getTransaction(user, transaction._id)
+      reupdatedTransaction.state.should.equal('declined')
+      reupdatedTransaction._rev.should.equal(updatedTransaction._rev)
     })
   })
 })

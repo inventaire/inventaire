@@ -67,9 +67,15 @@ const transactions_ = module.exports = {
     }
   },
 
-  activeTransactions: userId => {
+  activeTransactionsCount: userId => {
     return transactions_.byUser(userId)
     .then(activeCount)
+  },
+
+  cancelAllActiveTransactions: userId => {
+    return transactions_.byUser(userId)
+    .filter(Transaction.isActive)
+    .map(activeTransaction => transactions_.updateState('cancelled', userId, activeTransaction))
   }
 }
 
