@@ -4,6 +4,7 @@ const _ = __.require('builders', 'utils')
 const { Promise } = __.require('lib', 'promises')
 const host = CONFIG.fullPublicHost()
 const breq = require('bluereq')
+const assert_ = __.require('utils', 'assert_types')
 
 const testServerAvailability = () => {
   return breq.get(`${host}/api/tests`)
@@ -21,11 +22,14 @@ const testServerAvailability = () => {
 const waitForTestServer = testServerAvailability()
 
 const rawRequest = (method, breqParams) => {
+  assert_.string(method)
   return waitForTestServer
   .then(() => breq[method](breqParams))
 }
 
 const request = (method, endpoint, body, cookie) => {
+  assert_.string(method)
+  assert_.string(endpoint)
   const data = {
     url: host + endpoint,
     headers: { cookie }
@@ -38,6 +42,9 @@ const request = (method, endpoint, body, cookie) => {
 }
 
 const customAuthReq = (userPromise, method, endpoint, body) => {
+  assert_.object(userPromise)
+  assert_.string(method)
+  assert_.string(endpoint)
   // Also accept already resolved user docs with their cookie
   if (userPromise._id && userPromise.cookie) userPromise = Promise.resolve(userPromise)
 
