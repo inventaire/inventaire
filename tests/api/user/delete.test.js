@@ -11,6 +11,7 @@ const deleteUser = user => customAuthReq(user, 'delete', '/api/user')
 const { createGroup, getGroup, addMember, addAdmin } = require('../fixtures/groups')
 const { createTransaction } = require('../fixtures/transactions')
 const { getTransaction, updateTransaction } = require('../utils/transactions')
+const { search } = require('../utils/search')
 
 describe('user:delete', () => {
   it('should delete the user', async () => {
@@ -30,13 +31,17 @@ describe('user:delete', () => {
     should(deletedUser.snapshot).not.be.ok()
   })
 
-  it('should delete the user items', async () => {
+  it('should remove the user from search results', async () => {
     const user = await getReservedUser()
-    const item = await createItem(user, { listing: 'public' })
-    const deleteRes = await deleteUser(user)
-    deleteRes.ok.should.be.true()
-    const updatedItem = await getItemById(item)
-    should(updatedItem).not.be.ok()
+    await wait(1000)
+    const results = await search({ types: 'users', input: user.username })
+    const foundUser = results.find(result => result.id === user._id)
+    should(foundUser).be.ok()
+    await deleteUser(user)
+    await wait(5000)
+    const results2 = await search({ types: 'users', input: user.username })
+    const foundUser2 = results2.find(result => result.id === user._id)
+    should(foundUser2).not.be.ok()
   })
 
   it('should remove the user from the geo index', async () => {
@@ -51,6 +56,17 @@ describe('user:delete', () => {
     await wait(1000)
     const refreshedUsers = await getUsersNearPosition(position)
     _.map(refreshedUsers, '_id').should.not.containEql(user._id)
+  })
+
+  describe('items', () => {
+    it('should delete the user items', async () => {
+      const user = await getReservedUser()
+      const item = await createItem(user, { listing: 'public' })
+      const deleteRes = await deleteUser(user)
+      deleteRes.ok.should.be.true()
+      const updatedItem = await getItemById(item)
+      should(updatedItem).not.be.ok()
+    })
   })
 
   describe('groups', () => {
