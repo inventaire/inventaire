@@ -1,7 +1,7 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const should = require('should')
-const { authReq, authReqB, getUser, customAuthReq, getReservedUser } = require('../utils/utils')
+const { authReq, getUser, getUserB, customAuthReq, getReservedUser } = require('../utils/utils')
 const { getUsersNearPosition } = require('../utils/users')
 const { getRefreshedUser } = require('../fixtures/users')
 const endpoint = '/api/user'
@@ -48,10 +48,11 @@ describe('user:update', () => {
     it('should update the position index', async () => {
       await authReq('put', endpoint, { attribute, value })
       const user = await getUser()
-      const foundUsers = await getUsersNearPosition(authReqB, value)
+      const userB = await getUserB()
+      const foundUsers = await getUsersNearPosition(value, userB)
       _.map(foundUsers, '_id').should.containEql(user._id)
       await authReq('put', endpoint, { attribute, value: null })
-      const foundUsersAfterDeletedPosition = await getUsersNearPosition(authReqB, value)
+      const foundUsersAfterDeletedPosition = await getUsersNearPosition(value, userB)
       _.map(foundUsersAfterDeletedPosition, '_id').should.not.containEql(user._id)
     })
   })

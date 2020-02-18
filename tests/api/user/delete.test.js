@@ -45,11 +45,11 @@ describe('user:delete', () => {
     // Using long pauses as the position indexation sometimes fails
     // to update before the request by position
     await wait(1000)
-    const users = await getUsersNearPosition(authReq, position)
+    const users = await getUsersNearPosition(position)
     _.map(users, '_id').should.containEql(user._id)
     await deleteUser(user)
     await wait(1000)
-    const refreshedUsers = await getUsersNearPosition(authReq, position)
+    const refreshedUsers = await getUsersNearPosition(position)
     _.map(refreshedUsers, '_id').should.not.containEql(user._id)
   })
 
