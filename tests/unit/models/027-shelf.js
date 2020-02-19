@@ -2,6 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const Shelf = __.require('models', 'shelf')
+require('should')
 
 const someUserId = '1234567890a1234567890b1234567890'
 const create = Shelf.create.bind(null)
@@ -36,6 +37,13 @@ describe('shelf model', () => {
       const invalidShelf = _.cloneDeep(validShelf)
       delete invalidShelf.owner
       const creator = () => Shelf.create(invalidShelf)
+      creator.should.throw()
+      done()
+    })
+
+    it('should throw when passed an invalid attributes', done => {
+      const shelf = extendShelf({ authors: 'Abel Paz' })
+      const creator = () => Shelf.create(shelf)
       creator.should.throw()
       done()
     })

@@ -13,7 +13,9 @@ module.exports = {
     const newShelf = {}
     Object.keys(params).filter(key => {
       const attribute = params[key]
-      if (!(attributes.includes(key))) return false
+      if (!(attributes.includes(key))) {
+        throw error_.new(`invalid attribute: ${attribute}`, 400, { params })
+      }
       validations.pass(key, attribute)
       newShelf[key] = attribute
     })
