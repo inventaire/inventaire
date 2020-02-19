@@ -57,5 +57,19 @@ describe('shelf model', () => {
         done()
       })
     })
+
+    describe('listing', () => {
+      it('should use a default listing value', done => {
+        const shelf = create(extendShelf({ listing: null }))
+        shelf.listing.should.equal('private')
+        done()
+      })
+
+      it('should override a bad listing with default value', done => {
+        const shelf = create(extendShelf({ listing: 'evillist' }))
+        shelf.listing.should.equal('private')
+        done()
+      })
+    })
   })
 })
