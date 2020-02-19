@@ -5,10 +5,12 @@ const validations = require('./validations/shelf')
 const attributes = require('./attributes/shelf')
 const error_ = __.require('lib', 'error/error')
 
-const Shelf = module.exports = {
+module.exports = {
   create: params => {
     assert_.object(params)
-    let newShelf = {}
+    assert_.string(params.owner)
+
+    const newShelf = {}
     Object.keys(params).filter(key => {
       const attribute = params[key]
       if (!(attributes.includes(key))) return false
