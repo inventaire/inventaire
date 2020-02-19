@@ -33,9 +33,9 @@ module.exports = (item, user, lang) => {
     </a>
   </td>
   <td>
-    <a href="${item.href}" title="${title}" style="color: white; text-decoration: none; background-color: ${transacColor}; text-align: center; padding: 16px; height: 64px;" >${transacLabel}</a>
+    <a href="${item.href}" title="${title}" style="color: white; text-decoration: none; background-color: ${transacColor}; text-align: center; padding: 16px; display: block;" >${transacLabel}</a>
   </td>
 </tr></table>
 ${detailsHtml}
-<small>item:${item._id} - ${item.entity}<small>`
+<small>item:${item._id} - ${item.entity}</small>`
 }

@@ -1,5 +1,4 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const publicFolder = __.path('client', 'public')
 
@@ -20,19 +19,6 @@ module.exports = {
     }
   },
 
-  jsonRedirection: (req, res) => {
-    const { pathname } = req._parsedUrl
-    let [ domain, id ] = pathname.split('/').slice(1)
-    id = id && id.replace(/\.json$/, '')
-    const redirectionFn = redirections[domain]
-
-    if (redirectionFn == null) {
-      error_.bundleInvalid(req, res, 'domain', domain)
-    } else {
-      res.redirect(redirectionFn(id))
-    }
-  },
-
   redirectToApiDoc: (req, res) => res.redirect('https://api.inventaire.io'),
 
   api: (req, res) => {
@@ -44,18 +30,3 @@ module.exports = {
 }
 
 const imageHeader = req => /^image/.test(req.headers.accept)
-
-const redirections = {
-  entity: uri => `/api/entities?action=by-uris&uris=${uri}`,
-  inventory: username => `/api/users?action=by-usernames&usernames=${username}`,
-  users: id => `/api/users?action=by-ids&ids=${id}`,
-  groups: id => {
-    if (_.isGroupId(id)) {
-      return `/api/groups?action=by-id&id=${id}`
-    } else {
-      return `/api/groups?action=by-slug&slug=${id}`
-    }
-  },
-  items: id => `/api/items?action=by-ids&ids=${id}`
-  // transactions: id =>
-}

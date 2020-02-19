@@ -1,5 +1,6 @@
 const CONFIG = require('config')
 const endpoint = require('./endpoint')
+const extensionsRedirections = require('./extensions_redirections')
 const glob = require('./glob')
 
 // Routes structure:
@@ -51,10 +52,12 @@ Object.assign(routes, {
     all: glob.api
   },
   '*.json': {
-    get: glob.jsonRedirection
+    get: extensionsRedirections.json
+  },
+  '*.rss': {
+    get: extensionsRedirections.rss
   },
   '*': {
     get: glob.get
   }
-}
-)
+})
