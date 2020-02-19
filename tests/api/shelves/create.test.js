@@ -5,17 +5,6 @@ const { shelfDescription, shelfName } = require('../fixtures/shelves')
 const endpoint = '/api/shelves?action=create'
 
 describe('shelves:create', () => {
-  it('should reject without id', async () => {
-    try {
-      const res = await authReq('post', endpoint)
-      shouldNotGetHere(res)
-    } catch (err) {
-      rethrowShouldNotGetHereErrors(err)
-      err.body.status_verbose.should.equal('missing parameter in body: description')
-      err.statusCode.should.equal(400)
-    }
-  })
-
   it('should reject without listing', async () => {
     try {
       const description = shelfDescription()
