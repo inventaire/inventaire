@@ -1,4 +1,4 @@
-# Administration
+# Instance administration
 Tips and scripts to administrate an instance
 
 ## Users
