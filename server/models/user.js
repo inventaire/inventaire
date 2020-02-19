@@ -4,7 +4,6 @@ const _ = __.require('builders', 'utils')
 const pw_ = __.require('lib', 'crypto').passwords
 const promises_ = __.require('lib', 'promises')
 const assert_ = __.require('utils', 'assert_types')
-const gravatar = __.require('lib', 'gravatar')
 const error_ = __.require('lib', 'error/error')
 const randomString = __.require('lib', 'utils/random_string')
 const generateReadToken = randomString.bind(null, 32)
@@ -36,7 +35,6 @@ User._create = (username, email, creationStrategy, language, password) => {
     created: Date.now(),
     creationStrategy,
     language,
-    picture: gravatar(email),
     settings: { notifications: {} },
     // A token that, when combined with the right user id,
     // gives access to all the resources the user can read
