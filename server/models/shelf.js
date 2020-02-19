@@ -9,6 +9,7 @@ module.exports = {
   create: params => {
     assert_.object(params)
     assert_.string(params.owner)
+    assert_.string(params.name)
 
     const newShelf = {}
     Object.keys(params).filter(key => {

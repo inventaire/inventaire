@@ -33,19 +33,29 @@ describe('shelf model', () => {
       done()
     })
 
-    it('should throw without an owner', done => {
-      const invalidShelf = _.cloneDeep(validShelf)
-      delete invalidShelf.owner
-      const creator = () => Shelf.create(invalidShelf)
-      creator.should.throw()
-      done()
-    })
-
     it('should throw when passed an invalid attributes', done => {
       const shelf = extendShelf({ authors: 'Abel Paz' })
       const creator = () => Shelf.create(shelf)
       creator.should.throw()
       done()
+    })
+
+    describe('mandatory attributes', () => {
+      it('should throw on missing name', done => {
+        const invalidShelf = _.cloneDeep(validShelf)
+        delete invalidShelf.owner
+        const creator = () => Shelf.create(invalidShelf)
+        creator.should.throw()
+        done()
+      })
+
+      it('should throw on missing name', done => {
+        const invalidShelf = _.cloneDeep(validShelf)
+        delete invalidShelf.name
+        const creator = () => Shelf.create(invalidShelf)
+        creator.should.throw()
+        done()
+      })
     })
   })
 })
