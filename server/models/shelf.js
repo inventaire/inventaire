@@ -26,20 +26,25 @@ module.exports = {
     return _.assign({ created: Date.now() }, newShelf)
   },
 
-  updateAttributes: params => oldShelf => {
+  updateAttributes: (userId, params) => oldShelf => {
     assert_.object(oldShelf)
+    assert_.object(params)
 
-    if (oldShelf.owner !== params.reqUserId) {
+    if (oldShelf.owner !== userId) {
       throw error_.new('wrong owner', 400, oldShelf.owner)
     }
 
-    const newShelf = _.clone(oldShelf)
-    const newAttributes = _.pick(params, attributes)
-
+    for (const attr of _.keys(params)) {
+      if (!(attributes.updatable.includes(attr))) {
+        throw error_.new(`invalid attribute: ${attr}`, 400, oldShelf)
+      }
+    }
+    const newAttributes = _.pick(params, attributes.updatable)
     if (_.isEmpty(newAttributes)) {
       throw error_.new('nothing to update', 400, params)
     }
 
+    const newShelf = _.clone(oldShelf)
     for (const attr of _.keys(newAttributes)) {
       const newVal = newAttributes[attr]
       validations.pass(attr, newVal)
