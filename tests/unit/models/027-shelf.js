@@ -6,6 +6,7 @@ require('should')
 
 const someUserId = '1234567890a1234567890b1234567890'
 const create = Shelf.create.bind(null)
+const update = Shelf.updateAttributes.bind(null)
 
 const faker = require('faker')
 const fakeName = faker.random.words(4)
@@ -70,6 +71,48 @@ describe('shelf model', () => {
         shelf.listing.should.equal('private')
         done()
       })
+    })
+
+    describe('owner', () => {
+      it('should return an object with an owner', done => {
+        const shelf = create(validShelf)
+        shelf.owner.should.equal(someUserId)
+        done()
+      })
+    })
+
+    describe('created', () => {
+      it('should return an object with a created time', done => {
+        const shelf = create(validShelf)
+        _.expired(shelf.created, 100).should.be.false()
+        done()
+      })
+    })
+  })
+
+  describe('update', () => {
+    it('should update when passing a valid attribute', done => {
+      const shelf = create(validShelf)
+      const updateAttributesData = { listing: 'public' }
+      const res = update(someUserId, updateAttributesData)(shelf)
+      res.listing.should.equal('public')
+      done()
+    })
+
+    it('should throw when passing an invalid attribute', done => {
+      const doc = create(validShelf)
+      const updateAttributesData = { foo: '123' }
+      const updater = () => update(someUserId, updateAttributesData)(doc)
+      updater.should.throw('invalid attribute: foo')
+      done()
+    })
+
+    it('should throw when passing an invalid attribute value', done => {
+      const doc = create(validShelf)
+      const updateAttributesData = { listing: 'kikken' }
+      const updater = () => update(someUserId, updateAttributesData)(doc)
+      updater.should.throw('invalid listing: kikken')
+      done()
     })
   })
 })

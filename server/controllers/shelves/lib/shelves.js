@@ -6,6 +6,7 @@ const promises_ = __.require('lib', 'promises')
 const items_ = __.require('controllers', 'items/lib/items')
 const db = __.require('couch', 'base')('shelves')
 const itemDb = __.require('couch', 'base')('items')
+const error_ = __.require('lib', 'error/error')
 
 const shelves_ = module.exports = {
   create: params => {
@@ -29,10 +30,12 @@ const shelves_ = module.exports = {
       return shelves_.byIdsWithItems(ids)
     })
   },
-  updateAttributes: params => {
-    const { id: oldShelfId } = params
+  updateAttributes: (params, oldShelfId) => {
+    const { reqUserId } = params
+    const newAttributes = _.pick(params, [ 'name', 'description', 'listing' ])
     return db.get(oldShelfId)
-    .then(Shelf.updateAttributes(params))
+    .tap(validateOwnership(reqUserId))
+    .then(Shelf.updateAttributes(reqUserId, newAttributes))
     .then(db.putAndReturn)
   },
   addItems: (ids, itemsIds, userId) => {
@@ -55,6 +58,12 @@ const shelves_ = module.exports = {
     return items_.byIds(itemsIds)
     .then(_.compact)
     .then(items_.bulkDelete)
+  }
+}
+
+const validateOwnership = reqUserId => shelf => {
+  if (shelf.owner !== reqUserId) {
+    throw error_.new('wrong owner', 400, shelf.owner)
   }
 }
 

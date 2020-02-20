@@ -6,7 +6,7 @@ const shelves_ = __.require('controllers', 'shelves/lib/shelves')
 const sanitize = __.require('lib', 'sanitize/sanitize')
 
 const sanitization = {
-  id: {},
+  shelf: {},
   description: { optional: true },
   listing: {
     whitelist: [ 'public', 'private', 'network' ],
@@ -18,7 +18,8 @@ const sanitization = {
 module.exports = (req, res, next) => {
   sanitize(req, res, sanitization)
   .then(params => {
-    return shelves_.updateAttributes(params)
+    const { shelfId } = params
+    return shelves_.updateAttributes(params, shelfId)
     .then(responses_.Wrap(res, 'shelf'))
     .then(Track(req, [ 'shelf', 'update' ]))
   })

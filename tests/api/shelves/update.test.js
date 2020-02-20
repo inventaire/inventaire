@@ -1,30 +1,31 @@
 const __ = require('config').universalPath
 const { shouldNotGetHere, rethrowShouldNotGetHereErrors } = __.require('apiTests', 'utils/utils')
-const { authReq, authReqB } = require('../utils/utils')
+const { authReq, authReqB, getUser } = require('../utils/utils')
 const { createShelf, shelfName, shelfDescription } = require('../fixtures/shelves')
 
 const endpoint = '/api/shelves?action=update'
-const shelfPromise = createShelf()
+const shelfPromise = createShelf(getUser())
 
 describe('shelves:update', () => {
-  it('should reject without shelf id', async () => {
+  it('should reject without shelf shelf', async () => {
     try {
       const res = await authReq('post', endpoint)
       shouldNotGetHere(res)
     } catch (err) {
       rethrowShouldNotGetHereErrors(err)
-      err.body.status_verbose.should.equal('missing parameter in body: id')
+      err.body.status_verbose.should.equal('missing parameter in body: shelf')
       err.statusCode.should.equal(400)
     }
   })
 
-  it('should reject without attributes', async () => {
+  it('should reject not updatable attributes', async () => {
     const shelf = await shelfPromise
     try {
-      const res = await authReq('post', endpoint, {
-        id: shelf._id,
+      const params = {
+        shelf: shelf._id,
         foo: 'bar'
-      })
+      }
+      const res = await authReq('post', endpoint, params)
       shouldNotGetHere(res)
     } catch (err) {
       rethrowShouldNotGetHereErrors(err)
@@ -39,7 +40,7 @@ describe('shelves:update', () => {
     const listing = 'network'
     const shelf = await shelfPromise
     const params = {
-      id: shelf._id,
+      shelf: shelf._id,
       name,
       description,
       listing
@@ -54,7 +55,7 @@ describe('shelves:update', () => {
     try {
       const shelf = await shelfPromise
       const res = await authReqB('post', endpoint, {
-        id: shelf._id,
+        shelf: shelf._id,
         name: 'foo'
       })
       shouldNotGetHere(res)
