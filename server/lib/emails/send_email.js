@@ -4,15 +4,18 @@ const _ = __.require('builders', 'utils')
 const helpers_ = require('./helpers')
 const transporter_ = require('./transporter')
 const email_ = require('./email')
+const user_ = __.require('controllers', 'user/lib/user')
 
 module.exports = {
   validationEmail: (userData, token) => {
+    userData = user_.serializeData(userData)
     const email = email_.validationEmail(userData, token)
     return transporter_.sendMail(email)
     .catch(_.Error('validationEmail'))
   },
 
   resetPassword: (userData, token) => {
+    userData = user_.serializeData(userData)
     const email = email_.resetPassword(userData, token)
     return transporter_.sendMail(email)
     .catch(_.Error('resetPassword'))
@@ -48,13 +51,15 @@ module.exports = {
     .catch(_.Error('feedback'))
   },
 
-  friendInvitations: (user, emailAddresses, message) => {
-    const emailFactory = email_.FriendInvitation(user, message)
+  friendInvitations: (userData, emailAddresses, message) => {
+    userData = user_.serializeData(userData)
+    const emailFactory = email_.FriendInvitation(userData, message)
     return sendSequentially(emailAddresses, emailFactory, 'friendInvitations')
   },
 
-  groupInvitations: (user, group, emailAddresses, message) => {
-    const emailFactory = email_.GroupInvitation(user, group, message)
+  groupInvitations: (userData, group, emailAddresses, message) => {
+    userData = user_.serializeData(userData)
+    const emailFactory = email_.GroupInvitation(userData, group, message)
     return sendSequentially(emailAddresses, emailFactory, 'groupInvitations')
   }
 }

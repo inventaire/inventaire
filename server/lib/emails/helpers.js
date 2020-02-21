@@ -20,7 +20,7 @@ const parseUsersData = (user1Id, user2Id, usersData) => {
   const user1 = usersData[user1Id]
   const user2 = usersData[user2Id]
   assert_.objects([ user1, user2 ])
-  return [ user1, user2 ]
+  return [ user1, user2 ].map(user_.serializeData)
 }
 
 const getGroupAndUsersData = (groupId, actingUserId, userToNotifyId) => {
@@ -29,7 +29,13 @@ const getGroupAndUsersData = (groupId, actingUserId, userToNotifyId) => {
     user_.byId(actingUserId),
     user_.byId(userToNotifyId)
   ])
-  .spread((group, actingUser, userToNotify) => ({ group, actingUser, userToNotify }))
+  .spread((group, actingUser, userToNotify) => {
+    return {
+      group,
+      actingUser: user_.serializeData(actingUser),
+      userToNotify: user_.serializeData(userToNotify)
+    }
+  })
 }
 
 const catchDisabledEmails = err => {

@@ -5,9 +5,12 @@ const { feed: feedConfig } = CONFIG
 const snapshot_ = __.require('controllers', 'items/lib/snapshot/snapshot')
 const serializeFeed = require('./serialize_feed')
 const getItemsByAccessLevel = __.require('controllers', 'items/lib/get_by_access_level')
+const user_ = __.require('controllers', 'user/lib/user')
 
 module.exports = lang => feedData => {
-  const { users, accessLevel, feedOptions } = feedData
+  const { accessLevel, feedOptions } = feedData
+  let { users } = feedData
+  users = users.map(user_.serializeData)
   const usersIds = users.map(_.property('_id'))
   return getLastItemsFromUsersIds(usersIds, accessLevel)
   .then(items => serializeFeed(feedOptions, users, items, lang))
