@@ -1,7 +1,7 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const { addAssociatedData, Paginate } = require('./queries_commons')
-const getByAccessLevel = require('./get_by_access_level')
+const getByAuthorizationLevel = require('./get_by_authorization_level')
 const { getRelationsStatuses } = __.require('controllers', 'user/lib/relations_status')
 
 module.exports = (page, usersIds) => {
@@ -41,15 +41,15 @@ const fetchRelationsItems = reqUserId => relations => {
   const { user, network, public: publik } = relations
 
   if (user) {
-    itemsPromises.push(getByAccessLevel.private(user, reqUserId))
+    itemsPromises.push(getByAuthorizationLevel.private(user, reqUserId))
   }
 
   if (network) {
-    itemsPromises.push(getByAccessLevel.network(network, reqUserId))
+    itemsPromises.push(getByAuthorizationLevel.network(network, reqUserId))
   }
 
   if (publik) {
-    itemsPromises.push(getByAccessLevel.public(publik, reqUserId))
+    itemsPromises.push(getByAuthorizationLevel.public(publik, reqUserId))
   }
 
   return Promise.all(itemsPromises).then(_.flatten)

@@ -11,7 +11,7 @@ const { filterPrivateAttributes } = require('./filter_private_attributes')
 const { maxKey } = __.require('lib', 'couch')
 const listingsLists = require('./listings_lists')
 const snapshot_ = require('./snapshot/snapshot')
-const getByAccessLevel = require('./get_by_access_level')
+const getByAuthorizationLevel = require('./get_by_authorization_level')
 const user_ = __.require('controllers', 'user/lib/user')
 const db = __.require('couch', 'base')('items')
 const validateEntityType = require('./validate_entity_type')
@@ -121,7 +121,7 @@ const items_ = module.exports = {
       if (usersIds.length <= 0) return [ [], [] ]
       return Promise.all([
         user_.getUsersByIds(usersIds, reqUserId),
-        getByAccessLevel.public(usersIds)
+        getByAuthorizationLevel.public(usersIds)
       ])
     }
   },

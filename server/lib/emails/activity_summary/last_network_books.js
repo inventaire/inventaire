@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const items_ = __.require('controllers', 'items/lib/items')
-const getItemsByAccessLevel = __.require('controllers', 'items/lib/get_by_access_level')
+const getItemsByAuthorizationLevel = __.require('controllers', 'items/lib/get_by_authorization_level')
 const relations_ = __.require('controllers', 'relations/lib/queries')
 const promises_ = __.require('lib', 'promises')
 const user_ = __.require('controllers', 'user/lib/user')
@@ -12,7 +12,7 @@ module.exports = (userId, lang, limitDate = 0) => {
   // Get network ids
   return relations_.getUserFriendsAndCoGroupsMembers(userId)
   // Get last network items available for a transaction
-  .then(getItemsByAccessLevel.network)
+  .then(getItemsByAuthorizationLevel.network)
   .then(promises_.map(items_.serializeData))
   .then(getLastItems.bind(null, limitDate))
   .then(extractHighlightedItems(lang))
