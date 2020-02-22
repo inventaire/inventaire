@@ -2,11 +2,9 @@ const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const responses_ = __.require('lib', 'responses')
 const error_ = __.require('lib', 'error/error')
-const getEntitiesByUris = __.require('controllers', 'entities/lib/get_entities_by_uris')
-const replaceEditionsByTheirWork = require('./lib/view/replace_editions_by_their_work')
-const bundleViewData = require('./lib/view/bundle_view_data')
 const sanitize = __.require('lib', 'sanitize/sanitize')
-const getAuthorizedItems = require('./lib/get_authorized_items')
+const getAuthorizationLevel = require('./lib/get_authorization_level')
+const getInventoryView = require('./lib/view/get_inventory_view')
 
 const sanitization = {
   user: { optional: true },
@@ -16,11 +14,9 @@ const sanitization = {
 module.exports = (req, res) => {
   sanitize(req, res, sanitization)
   .then(validateUserOrGroup)
-  .then(getItems)
-  .then(items => {
-    return getItemsEntitiesData(items)
-    .then(bundleViewData(items))
-  })
+  .then(getInventoryViewsParams)
+  .then(getInventoryViews)
+  .then(mergeInventoryViews)
   .then(responses_.Send(res))
   .catch(error_.Handler(req, res))
 }
@@ -32,15 +28,22 @@ const validateUserOrGroup = params => {
   return params
 }
 
-const getItems = params => {
+const getInventoryViewsParams = params => {
   const { user, group, reqUserId } = params
-  if (user) return getAuthorizedItems.byUser(user, reqUserId)
-  else return getAuthorizedItems.byGroup(group, reqUserId)
+  if (user) return getAuthorizationLevel.byUser(user, reqUserId)
+  else return getAuthorizationLevel.byGroup(group, reqUserId)
 }
 
-const getItemsEntitiesData = items => {
-  const uris = _.uniq(_.map(items, 'entity'))
-  return getEntitiesByUris({ uris })
-  .then(({ entities }) => entities)
-  .then(replaceEditionsByTheirWork)
+const getInventoryViews = ({ authorizationLevel, usersIds }) => {
+  return Promise.all(usersIds.map(userId => getInventoryView(userId, authorizationLevel)))
+}
+
+const mergeInventoryViews = inventoryViews => {
+  if (inventoryViews.length === 1) return inventoryViews[0]
+  return _.mergeWith(...inventoryViews, concatArraysCustomizer)
+}
+
+// Source: https://lodash.com/docs/4.17.15#mergeWith example
+const concatArraysCustomizer = (objValue, srcValue) => {
+  if (_.isArray(objValue)) return objValue.concat(srcValue)
 }
