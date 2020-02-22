@@ -77,11 +77,11 @@ const checkCache = (key, timespan) => {
     if (_.isEmpty(body)) {
       // Prevent re-requesting if it was already retried lately
       if (isFreshEnough(timestamp, 2 * oneDay)) {
-        // _.info key, 'empty cache value: retried lately'
+        // _.info(key, 'empty cache value: retried lately')
         return res
       }
       // Otherwise, trigger a new request by returning nothing
-      // _.info key, 'empty cache value: retrying'
+      // _.info(key, 'empty cache value: retrying')
     } else {
       return res
     }
@@ -90,17 +90,17 @@ const checkCache = (key, timespan) => {
 
 const requestOnlyIfNeeded = (key, fn, dry, dryAndCache, dryFallbackValue, refuseOldValue) => cached => {
   if (cached != null) {
-    // _.info "from cache: #{key}"
+    // _.info(`from cache: ${key}`)
     return cached.body
   }
 
   if (dry) {
-    // _.info "empty cache on dry get: #{key}"
+    // _.info(`empty cache on dry get: ${key}`)
     return dryFallbackValue
   }
 
   if (dryAndCache) {
-    // _.info "returning and populating cache: #{key}"
+    // _.info(`returning and populating cache: ${key}`)
     populate(key, fn, refuseOldValue)
     .catch(_.Error(`dryAndCache: ${key}`))
     return dryFallbackValue
@@ -112,7 +112,7 @@ const requestOnlyIfNeeded = (key, fn, dry, dryAndCache, dryFallbackValue, refuse
 const populate = (key, fn, refuseOldValue) => {
   return fn()
   .then(res => {
-    // _.info "from remote data source: #{key}"
+    // _.info(`from remote data source: ${key}`)
     putResponseInCache(key, res)
     return res
   })
@@ -127,7 +127,7 @@ const populate = (key, fn, refuseOldValue) => {
 }
 
 const putResponseInCache = (key, res) => {
-  // _.info "caching #{key}"
+  // _.info(`caching ${key}`)
   return db.put(key, {
     body: res,
     timestamp: new Date().getTime()
