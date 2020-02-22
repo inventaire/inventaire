@@ -30,20 +30,15 @@ describe('items:inventory-view', () => {
     res.itemsByDate.should.be.an.Array()
   })
 
-  it('should return a group inventory-view', done => {
-    groupPromise
-    .then(({ _id }) => _id)
-    .then(groupId => nonAuthReq('get', `${endpoint}&group=${groupId}`))
-    .then(res => {
-      res.worksTree.should.be.an.Object()
-      res.worksTree.author.should.be.an.Object()
-      res.worksTree.genre.should.be.an.Object()
-      res.worksTree.subject.should.be.an.Object()
-      res.worksTree.owner.should.be.an.Object()
-      res.workUriItemsMap.should.be.an.Object()
-      res.itemsByDate.should.be.an.Array()
-      done()
-    })
-    .catch(done)
+  it('should return a group inventory-view', async () => {
+    const { _id: groupId } = await groupPromise
+    const res = await nonAuthReq('get', `${endpoint}&group=${groupId}`)
+    res.worksTree.should.be.an.Object()
+    res.worksTree.author.should.be.an.Object()
+    res.worksTree.genre.should.be.an.Object()
+    res.worksTree.subject.should.be.an.Object()
+    res.worksTree.owner.should.be.an.Object()
+    res.workUriItemsMap.should.be.an.Object()
+    res.itemsByDate.should.be.an.Array()
   })
 })
