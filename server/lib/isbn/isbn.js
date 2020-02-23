@@ -1,4 +1,4 @@
-const { parse: isbnParser } = require('isbn2').ISBN
+const { parse: isbnParser } = require('isbn3')
 const parse = require('./parse')
 const wdLang = require('wikidata-lang')
 

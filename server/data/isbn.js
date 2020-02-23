@@ -5,7 +5,7 @@ const error_ = __.require('lib', 'error/error')
 const dataseed = __.require('data', 'dataseed/dataseed')
 
 // An endpoint to get basic facts from an ISBN
-// Returns a merge of isbn2 and dataseed data
+// Returns a merge of isbn3 and dataseed data
 module.exports = (req, res) => {
   const { isbn } = req.query
 
