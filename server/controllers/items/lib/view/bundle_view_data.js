@@ -1,15 +1,13 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
 const buildInvertedClaimTree = require('./build_inverted_claim_tree')
 
 module.exports = items => entitiesData => {
   const { works, editionWorkMap } = entitiesData
   const worksTree = buildInvertedClaimTree(works)
   const workUriItemsMap = items.reduce(buildWorkUriItemsMap(editionWorkMap), {})
-  const itemsByDate = getItemsIdsByDate(items)
+  const timestampedItemsIds = items.map(getTimestampItemId)
   const worksByOwner = items.reduce(aggregateOwnersWorks(editionWorkMap), {})
   worksTree.owner = worksByOwner
-  return { worksTree, workUriItemsMap, itemsByDate }
+  return { worksTree, workUriItemsMap, timestampedItemsIds }
 }
 
 const buildWorkUriItemsMap = editionWorkMap => (workUriItemsMap, item) => {
@@ -33,11 +31,4 @@ const aggregateOwnersWorks = editionWorkMap => (index, item) => {
   return index
 }
 
-const getItemsIdsByDate = items => {
-  return items
-  .sort(sortByCreationDate)
-  .map(getId)
-}
-
-const getId = _.property('_id')
-const sortByCreationDate = (a, b) => b.created - a.created
+const getTimestampItemId = ({ _id, created }) => [ _id, created ]

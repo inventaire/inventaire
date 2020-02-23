@@ -17,6 +17,7 @@ module.exports = (req, res) => {
   .then(getInventoryViewsParams)
   .then(getInventoryViews)
   .then(mergeInventoryViews)
+  .then(generateItemsByDateList)
   .then(responses_.Send(res))
   .catch(error_.Handler(req, res))
 }
@@ -47,3 +48,19 @@ const mergeInventoryViews = inventoryViews => {
 const concatArraysCustomizer = (objValue, srcValue) => {
   if (_.isArray(objValue)) return objValue.concat(srcValue)
 }
+
+const generateItemsByDateList = inventoryView => {
+  inventoryView.itemsByDate = getItemsByDate(inventoryView.timestampedItemsIds)
+  delete inventoryView.timestampedItemsIds
+  return inventoryView
+}
+
+const getItemsByDate = timestampedItemsIds => {
+  return timestampedItemsIds
+  .sort(sortByTimestamp)
+  .map(getId)
+}
+
+// timestampedItemsIds is an array of [ item._id, item.created ] arrays
+const sortByTimestamp = (a, b) => a[1] - b[1]
+const getId = ([ id ]) => id
