@@ -5,6 +5,7 @@ const { nonAuthReq, undesiredRes, getReservedUser } = __.require('apiTests', 'ut
 const endpoint = '/api/items?action=inventory-view'
 const { groupPromise, createGroup, addMember } = require('../fixtures/groups')
 const { createItem } = require('../fixtures/items')
+const { createEdition } = require('../fixtures/entities')
 const { createUserWithItems } = require('../fixtures/populate')
 
 describe('items:inventory-view', () => {
@@ -56,6 +57,22 @@ describe('items:inventory-view', () => {
       should(itemA2Created > itemB1Created).be.true()
       const { itemsByDate } = await nonAuthReq('get', `${endpoint}&group=${group._id}`)
       itemsByDate.should.deepEqual([ itemA1Id, itemB1Id, itemA2Id ])
+    })
+
+    it('should return deduplicated worksTree subarrays', async () => {
+      const memberA = await getReservedUser()
+      const memberB = await getReservedUser()
+      const group = await createGroup({ user: memberA })
+      await addMember({ group, admin: memberA, user: memberB })
+      const edition = await createEdition()
+      const workUri = edition.claims['wdt:P629'][0]
+      await createItem(memberA, { entity: edition.uri })
+      await createItem(memberB, { entity: edition.uri })
+      const { worksTree } = await nonAuthReq('get', `${endpoint}&group=${group._id}`)
+      const { author, genre, subject } = worksTree
+      author.unknown.should.deepEqual([ workUri ])
+      genre.unknown.should.deepEqual([ workUri ])
+      subject.unknown.should.deepEqual([ workUri ])
     })
   })
 })

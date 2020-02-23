@@ -42,7 +42,9 @@ const getInventoryViews = ({ authorizationLevel, usersIds }) => {
 
 const mergeInventoryViews = inventoryViews => {
   if (inventoryViews.length === 1) return inventoryViews[0]
-  return _.mergeWith(...inventoryViews, concatArraysCustomizer)
+  const mergedInventoryViews = _.mergeWith(...inventoryViews, concatArraysCustomizer)
+  deduplicateWorksTree(mergedInventoryViews.worksTree)
+  return mergedInventoryViews
 }
 
 // Source: https://lodash.com/docs/4.17.15#mergeWith example
@@ -54,4 +56,12 @@ const generateItemsByDateList = inventoryView => {
   inventoryView.itemsByDate = getItemsByDate(inventoryView.timestampedItemsIds)
   delete inventoryView.timestampedItemsIds
   return inventoryView
+}
+
+const deduplicateWorksTree = worksTree => {
+  for (const section in worksTree) {
+    for (const key in worksTree[section]) {
+      worksTree[section][key] = _.uniq(worksTree[section][key])
+    }
+  }
 }
