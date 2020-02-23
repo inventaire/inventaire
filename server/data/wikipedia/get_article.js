@@ -59,7 +59,11 @@ const getCleanExtract = pages => {
   const extract = pages && pages[0] && pages[0].extract
   if (extract) {
     return extract
+    // Commas between references aren't removed, thus the presence of aggregated commas
     .replace(/,,/g, ',')
     .replace(/,\./g, '.')
+    // Some empty parenthesis need to be removed
+    // ex: https://fr.wikipedia.org/wiki/France
+    .replace(/\(\)/g, '')
   }
 }
