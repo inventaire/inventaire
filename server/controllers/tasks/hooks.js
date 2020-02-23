@@ -4,11 +4,11 @@ const tasks_ = __.require('controllers', 'tasks/lib/tasks')
 const radio = __.require('lib', 'radio')
 const checkEntity = require('./lib/check_entity')
 
-// TODO:
-// - revert archiveObsoleteEntityUriTasks on revert-merge
 module.exports = () => {
   radio.on('entity:merge', archiveObsoleteEntityUriTasks)
   radio.on('entity:remove', archiveObsoleteEntityUriTasks)
+  radio.on('entity:revert:merge', revertArchive)
+  radio.on('entity:recover', revertArchive)
   radio.on('wikidata:entity:redirect', deleteBySuggestionUriAndRecheckSuspects)
 }
 
@@ -31,4 +31,12 @@ const archiveTasks = tasks => {
   if (tasks.length === 0) return
   const ids = _.map(tasks, '_id')
   return tasks_.update({ ids, attribute: 'state', newValue: 'merged' })
+}
+
+const revertArchive = uri => {
+  return tasks_.bySuspectUriAndState(uri, 'merged')
+  .then(tasks => {
+    const ids = _.map(tasks, '_id')
+    return tasks_.update({ ids, attribute: 'state', newValue: undefined })
+  })
 }

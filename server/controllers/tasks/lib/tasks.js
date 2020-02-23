@@ -39,8 +39,12 @@ const tasks_ = module.exports = {
     })
   },
 
-  bySuspectUri: suspectUri => {
-    return db.viewByKey('bySuspectUriAndState', [ suspectUri, null ])
+  bySuspectUri: (suspectUri, options) => {
+    return tasks_.bySuspectUris([ suspectUri ], options)
+  },
+
+  bySuspectUriAndState: (suspectUri, state) => {
+    return db.viewByKey('bySuspectUriAndState', [ suspectUri, state ])
   },
 
   bySuggestionUri: suggestionUri => {
