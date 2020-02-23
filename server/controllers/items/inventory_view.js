@@ -5,6 +5,7 @@ const error_ = __.require('lib', 'error/error')
 const sanitize = __.require('lib', 'sanitize/sanitize')
 const getAuthorizationLevel = require('./lib/get_authorization_level')
 const getInventoryView = require('./lib/view/get_inventory_view')
+const { getItemsByDate } = require('./lib/view/items_by_date')
 
 const sanitization = {
   user: { optional: true },
@@ -54,13 +55,3 @@ const generateItemsByDateList = inventoryView => {
   delete inventoryView.timestampedItemsIds
   return inventoryView
 }
-
-const getItemsByDate = timestampedItemsIds => {
-  return timestampedItemsIds
-  .sort(sortByTimestamp)
-  .map(getId)
-}
-
-// timestampedItemsIds is an array of [ item._id, item.created ] arrays
-const sortByTimestamp = (a, b) => a[1] - b[1]
-const getId = ([ id ]) => id
