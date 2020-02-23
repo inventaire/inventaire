@@ -32,7 +32,7 @@ describe('groups:update:invite', () => {
   it('should add an invited when invitor is member', async () => {
     const group = await createGroup()
     const userB = await getUserB()
-    await addMember(group, userB)
+    await addMember({ group, user: userB })
     await authReqB('put', endpoint, { user: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', group: group._id })
     const updatedGroup = await getGroup(group)
     updatedGroup.invited.length.should.equal(1)

@@ -72,7 +72,7 @@ describe('user:delete', () => {
     it('should remove the user when member', async () => {
       const user = await getReservedUser()
       const group = await createGroup()
-      const [ refreshedGroup ] = await addMember(group, user)
+      const [ refreshedGroup ] = await addMember({ group, user })
       _.map(refreshedGroup.members, 'user').should.containEql(user._id)
       await deleteUser(user)
       const rerefreshedGroup = await getGroup(group)

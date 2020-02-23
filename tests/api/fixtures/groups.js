@@ -1,3 +1,6 @@
+const CONFIG = require('config')
+const __ = CONFIG.universalPath
+const assert_ = __.require('utils', 'assert_types')
 const { authReq, getUser, getUserB, customAuthReq, getUserGetter } = require('../utils/utils')
 const faker = require('faker')
 const endpointBase = '/api/groups'
@@ -28,16 +31,22 @@ const membershipAction = async (actor, action, group, user) => {
   return customAuthReq(actor, 'put', endpointBase, data)
 }
 
-const addMember = async (group, member) => {
-  member = await Promise.resolve(member)
-  await membershipAction(member, 'request', group, member)
-  await membershipAction(getUser(), 'accept-request', group, member)
+const addMember = async ({ group, admin, user }) => {
+  group = await Promise.resolve(group)
+  admin = admin || getUser()
+  admin = await Promise.resolve(admin)
+  user = await Promise.resolve(user)
+  assert_.object(group)
+  assert_.object(admin)
+  assert_.object(user)
+  await membershipAction(user, 'request', group, user)
+  await membershipAction(admin, 'accept-request', group, user)
   const refreshedGroup = await getGroup(group)
-  return [ refreshedGroup, member ]
+  return [ refreshedGroup, user ]
 }
 
 const addAdmin = async (group, member) => {
-  await addMember(group, member)
+  await addMember({ group, member })
   await membershipAction(getUser(), 'make-admin', group, member)
   const refreshedGroup = await getGroup(group)
   return [ refreshedGroup, member ]
@@ -45,7 +54,7 @@ const addAdmin = async (group, member) => {
 
 const createAndAddMember = async user => {
   const group = await createGroup()
-  const [ refreshedGroup ] = await addMember(group, user)
+  const [ refreshedGroup ] = await addMember({ group, user })
   return refreshedGroup
 }
 
