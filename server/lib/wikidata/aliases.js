@@ -60,7 +60,8 @@ const typesAliases = module.exports = {
     'wd:Q2352616', // catalogue
     'wd:Q780605', // exhibition catalogue
     'wd:Q5185279', // poem
-    'wd:Q37484' // epic poem
+    'wd:Q37484', // epic poem
+    'wd:Q10901350' // anime and manga
   ],
   editions: [
     'wd:Q3331189', // edition
