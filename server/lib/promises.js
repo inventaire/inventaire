@@ -13,6 +13,8 @@ setTimeout(lateRequire, 0)
 const Promise = require('bluebird')
 Promise.config(CONFIG.bluebird)
 
+const wait = ms => new Promise(resolve => setTimeout(resolve, ms))
+
 module.exports = {
   Promise,
   resolve: Promise.resolve,
@@ -79,5 +81,10 @@ module.exports = {
   // cf http://stackoverflow.com/q/40683818/3324977
   resolved: Promise.resolve(),
 
-  wait: ms => Promise.resolve().delay(ms)
+  wait,
+
+  Wait: ms => async res => {
+    await wait(ms)
+    return res
+  }
 }

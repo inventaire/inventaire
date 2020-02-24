@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const { Promise } = __.require('lib', 'promises')
+const { Promise, Wait } = __.require('lib', 'promises')
 const host = CONFIG.fullPublicHost()
 const breq = require('bluereq')
 const assert_ = __.require('utils', 'assert_types')
@@ -14,7 +14,7 @@ const testServerAvailability = () => {
     if ((err.code !== 'ECONNREFUSED') && (err.name !== 'TimeoutError')) throw err
     _.log('waiting for tests server', null, 'grey')
     return Promise.resolve()
-    .delay(500)
+    .then(Wait(500))
     .then(testServerAvailability)
   })
 }

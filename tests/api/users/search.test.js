@@ -4,11 +4,12 @@ const _ = __.require('builders', 'utils')
 const should = require('should')
 const { nonAuthReq, authReq, customAuthReq, getUser, getUserB } = require('../utils/utils')
 const { createUser } = require('../fixtures/users')
+const { Wait } = __.require('lib', 'promises')
 
 describe('users:search', () => {
   it('should find a user', done => {
     getUser()
-    .delay(1000)
+    .then(Wait(1000))
     .then(user => {
       const { username } = user
       return nonAuthReq('get', `/api/users?action=search&search=${username}`)
@@ -22,7 +23,7 @@ describe('users:search', () => {
 
   it('should find a user even with just a prefix', done => {
     getUser()
-    .delay(1000)
+    .then(Wait(1000))
     .then(user => {
       const prefix = user.username.slice(0, 5)
       return nonAuthReq('get', `/api/users?action=search&search=${prefix}`)
@@ -39,7 +40,7 @@ describe('users:search', () => {
     // to recover for ElasticSearch
     const userPromise = createUser({ username: 'testuser' })
     userPromise
-    .delay(1000)
+    .then(Wait(1000))
     .then(user => {
       return customAuthReq(userPromise, 'get', '/api/users?action=search&search=testusr')
       .then(res => {
@@ -52,7 +53,7 @@ describe('users:search', () => {
 
   it('should not return snapshot data', done => {
     getUserB()
-    .delay(1000)
+    .then(Wait(1000))
     .then(user => {
       return authReq('get', `/api/users?action=search&search=${user.username}`)
       .then(res => {
@@ -70,7 +71,7 @@ describe('users:search', () => {
       if (err.body.status_verbose !== 'already up-to-date') throw err
     })
     .then(getUser)
-    .delay(1000)
+    .then(Wait(1000))
     .then(user => {
       return nonAuthReq('get', `/api/users?action=search&search=${user.bio}`)
       .then(res => {

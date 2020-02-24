@@ -1,6 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
+const { Wait } = __.require('lib', 'promises')
 const helpers_ = require('./helpers')
 const transporter_ = require('./transporter')
 const email_ = require('./email')
@@ -77,7 +78,7 @@ const sendSequentially = (emailAddresses, emailFactory, label) => {
     return transporter_.sendMail(email)
     .catch(_.Error(`${label} (address: ${nextAddress} err)`))
     // Wait to lower risk to trigger any API quota issue from the email service
-    .delay(500)
+    .then(Wait(500))
     // In any case, send the next
     .then(sendNext)
   }

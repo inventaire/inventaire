@@ -1,5 +1,5 @@
 const __ = require('config').universalPath
-const promises_ = __.require('lib', 'promises')
+const { Wait } = __.require('lib', 'promises')
 const error_ = __.require('lib', 'error/error')
 
 module.exports = params => {
@@ -30,7 +30,7 @@ module.exports = params => {
 const runAfterDelay = (run, attemptsCount, err) => {
   const delay = (attemptsCount * 100) + Math.trunc(Math.random() * 100)
 
-  return promises_.resolve()
-  .delay(delay)
+  return Promise.resolve()
+  .then(Wait(delay))
   .then(() => run(attemptsCount))
 }

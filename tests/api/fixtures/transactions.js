@@ -2,6 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
 const { getUser, getUserB, authReq, customAuthReq } = __.require('apiTests', 'utils/utils')
+const { Wait } = __.require('lib', 'promises')
 const { createItem } = require('./items')
 const { addAuthor } = require('./entities')
 const { getByUri: getEntityByUri } = require('../utils/entities')
@@ -37,5 +38,5 @@ const addAuthorToItemEditionWork = item => {
     const workUri = edition.claims['wdt:P629'][0]
     return addAuthor(workUri)
   })
-  .delay(1000)
+  .then(Wait(1000))
 }

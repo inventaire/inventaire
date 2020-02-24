@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
-const { Promise } = __.require('lib', 'promises')
+const { Wait } = __.require('lib', 'promises')
 const { authReq } = __.require('apiTests', 'utils/utils')
 const { getByUris, addClaim, getHistory } = __.require('apiTests', 'utils/entities')
 const { createWork, createHuman, ensureEditionExists, someGoodReadsId, randomLabel, generateIsbn13 } = __.require('apiTests', 'fixtures/entities')
@@ -134,7 +134,7 @@ describe('entities:resolver:update-resolved', () => {
       }
       return resolveAndUpdate(entry)
       .get('entries')
-      .delay(10)
+      .then(Wait(10))
       .then(entries => {
         return getByUris(editionUri)
         .get('entities')

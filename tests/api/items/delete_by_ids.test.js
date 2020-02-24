@@ -1,6 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
+const { Wait } = __.require('lib', 'promises')
 require('should')
 const { authReq, authReqB, getUser, undesiredRes } = require('../utils/utils')
 const { CountChange } = require('./helpers')
@@ -62,13 +63,13 @@ describe('items:delete-by-ids', () => {
   it('should trigger an update of the users items counters', done => {
     createItem()
     // Delay to let the time to the item counter to be updated
-    .delay(debounceDelay)
+    .then(Wait(debounceDelay))
     .then(item => {
       return getUser()
       .then(userBefore => {
         return deleteByIds(item._id)
         // Delay to request the user after its items count was updated
-        .delay(debounceDelay)
+        .then(Wait(debounceDelay))
         .then(res => {
           return getUser()
           .then(userAfter => {

@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const should = require('should')
-const { Promise } = __.require('lib', 'promises')
+const { Wait } = __.require('lib', 'promises')
 const { adminReq, authReq, undesiredRes } = require('../utils/utils')
 const { getByUris, deleteByUris } = require('../utils/entities')
 const { getByIds: getItemsByIds } = require('../utils/items')
@@ -165,7 +165,7 @@ describe('entities:delete-by-uris', () => {
           item.snapshot['entity:title'].should.equal(work.labels.en)
           item.snapshot['entity:authors'].should.equal(author.labels.en)
           return deleteByUris(author.uri)
-          .delay(100)
+          .then(Wait(100))
           .then(() => getItemsByIds(item._id))
         })
         .then(res => {

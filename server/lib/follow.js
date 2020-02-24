@@ -3,7 +3,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const promises_ = __.require('lib', 'promises')
+const { Wait } = __.require('lib', 'promises')
 const assert_ = __.require('utils', 'assert_types')
 const error_ = __.require('lib', 'error/error')
 const follow = require('follow')
@@ -56,7 +56,7 @@ module.exports = params => {
     // with a higher priority level some time to run.
     // It won't miss any changes as CouchDB will send everything that happened since
     // the last saved sequence number
-    .delay(delayFollow)
+    .then(Wait(delayFollow))
     .then(initFollow(dbName, reset))
     .catch(_.ErrorRethrow('init follow err'))
   }
@@ -87,11 +87,8 @@ const initFollow = (dbName, reset) => (lastSeq = 0) => {
 }
 
 const resetIfNeeded = (dbName, lastSeq, reset) => {
-  if (lastSeq === 0 && reset != null) {
-    return reset()
-  } else {
-    return promises_.resolve()
-  }
+  if (lastSeq === 0 && reset != null) return reset()
+  else return Promise.resolve()
 }
 
 const startFollowingDb = params => {

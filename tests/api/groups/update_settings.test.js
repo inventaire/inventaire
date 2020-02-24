@@ -2,6 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
 const { nonAuthReq, authReq, undesiredRes } = require('../utils/utils')
+const { Wait } = __.require('lib', 'promises')
 const { groupPromise } = require('../fixtures/groups')
 const slugify = __.require('controllers', 'groups/lib/slugify')
 const endpoint = '/api/groups?action=update-settings'
@@ -28,7 +29,7 @@ describe('groups:update-settings', () => {
         attribute: 'name',
         value: updatedName
       })
-      .delay(50)
+      .then(Wait(50))
       .then(updateRes => {
         updateRes.ok.should.be.true()
         return nonAuthReq('get', `/api/groups?action=by-id&id=${groupId}`)
@@ -52,7 +53,7 @@ describe('groups:update-settings', () => {
         attribute: 'name',
         value: updatedName
       })
-      .delay(50)
+      .then(Wait(50))
       .then(updateRes => {
         updateRes.ok.should.be.true()
         updateRes.update.slug.should.equal(slugify(updatedName))
@@ -72,7 +73,7 @@ describe('groups:update-settings', () => {
         attribute: 'description',
         value: updatedDescription
       })
-      .delay(50)
+      .then(Wait(50))
       .then(updateRes => {
         updateRes.ok.should.be.true()
         Object.keys(updateRes.update).length.should.equal(0)

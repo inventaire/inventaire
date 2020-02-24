@@ -1,8 +1,8 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
+const { Wait } = __.require('lib', 'promises')
 const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
-const promises_ = __.require('lib', 'promises')
 const refreshSnapshot = require('./lib/snapshot/refresh_snapshot')
 
 module.exports = (req, res) => {
@@ -32,7 +32,7 @@ const refreshSequentially = uris => {
 
     return refreshSnapshot.fromUri(nextUri)
     // Space refreshes to lower stress on production resources
-    .delay(100)
+    .then(Wait(100))
     .then(refreshNext)
   }
 

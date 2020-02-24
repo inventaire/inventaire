@@ -2,6 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
 const { customAuthReq, getUserGetter } = require('../utils/utils')
+const { Wait } = __.require('lib', 'promises')
 const endpoint = '/api/auth?action=email-confirmation'
 const { createUserEmail } = require('../fixtures/users')
 const { BasicUpdater } = __.require('lib', 'doc_updates')
@@ -54,5 +55,5 @@ const createCustomUser = (userPromise, userAttribute, value) => {
     db.update(user._id, BasicUpdater(userAttribute, value))
     return user
   })
-  .delay(100)
+  .then(Wait(100))
 }

@@ -4,6 +4,7 @@ const host = CONFIG.fullHost()
 require('should')
 const { getUserGetter } = require('../utils/utils')
 const { rawRequest } = require('../utils/request')
+const { Wait } = __.require('lib', 'promises')
 const { createUserEmail } = require('../fixtures/users')
 const { BasicUpdater } = __.require('lib', 'doc_updates')
 const db = __.require('couch', 'base')('users')
@@ -62,7 +63,7 @@ describe('token:validation-email', () => {
     .then(user => {
       db.update(user._id, BasicUpdater('validEmail', true))
     })
-    .delay(100)
+    .then(Wait(100))
     .then(() => {
       rawRequest('get', {
         url: `${host}${endpoint}&email=${email}&token=${token}`,

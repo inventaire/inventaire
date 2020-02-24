@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const should = require('should')
-const { Promise } = __.require('lib', 'promises')
+const { Wait } = __.require('lib', 'promises')
 const { authReq, undesiredRes } = __.require('apiTests', 'utils/utils')
 const elasticsearchUpdateDelay = CONFIG.entitiesSearchEngine.elasticsearchUpdateDelay || 1000
 const { createWork, createHuman, someGoodReadsId, someOpenLibraryId, createWorkWithAuthor, generateIsbn13 } = __.require('apiTests', 'fixtures/entities')
@@ -220,7 +220,7 @@ describe('entities:resolve:external-id', () => {
     const goodReadsId = someGoodReadsId()
     createWork()
     .tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsId))
-    .delay(10)
+    .then(Wait(10))
     .then(work => {
       return resolve({
         edition: { isbn: generateIsbn13() },
@@ -260,9 +260,9 @@ describe('entities:resolve:external-id', () => {
   it('should resolve inventaire author from external ids claim', done => {
     const goodReadsId = someGoodReadsId()
     createHuman()
-    .delay(10)
+    .then(Wait(10))
     .tap(author => addClaim(author.uri, 'wdt:P2963', goodReadsId))
-    .delay(10)
+    .then(Wait(10))
     .then(author => {
       return resolve({
         edition: { isbn: generateIsbn13() },
@@ -286,9 +286,9 @@ describe('entities:resolve:in-context', () => {
     const missingWorkLabel = randomLabel()
     const otherWorkLabel = randomLabel()
     createHuman()
-    .delay(10)
+    .then(Wait(10))
     .tap(author => addClaim(author.uri, 'wdt:P2963', goodReadsId))
-    .delay(10)
+    .then(Wait(10))
     .then(author => {
       return Promise.all([
         createWorkWithAuthor(author, missingWorkLabel),
@@ -331,9 +331,9 @@ describe('entities:resolve:in-context', () => {
     const goodReadsId = someGoodReadsId()
     const workLabel = randomLabel()
     createHuman()
-    .delay(10)
+    .then(Wait(10))
     .tap(author => addClaim(author.uri, 'wdt:P2963', goodReadsId))
-    .delay(10)
+    .then(Wait(10))
     .then(author => {
       return Promise.all([
         createWorkWithAuthor(author, workLabel),
@@ -360,7 +360,7 @@ describe('entities:resolve:in-context', () => {
     const goodReadsId = someGoodReadsId()
     const workLabel = randomLabel()
     createHuman()
-    .delay(10)
+    .then(Wait(10))
     .then(author => {
       return createWorkWithAuthor(author, workLabel)
       .tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsId))
@@ -428,7 +428,7 @@ describe('entities:resolve:on-labels', () => {
       const seedLabel = randomLabel()
       const authorLabel = author.labels.en
       return createWorkWithAuthor(author, workLabel)
-      .delay(elasticsearchUpdateDelay)
+      .then(Wait(elasticsearchUpdateDelay))
       .then(work => {
         return resolve(basicEntry(seedLabel, authorLabel))
         .get('entries')
@@ -447,7 +447,7 @@ describe('entities:resolve:on-labels', () => {
       const workLabel = randomLabel()
       const authorLabel = author.labels.en
       return createWorkWithAuthor(author, workLabel)
-      .delay(elasticsearchUpdateDelay)
+      .then(Wait(elasticsearchUpdateDelay))
       .then(work => {
         return resolve(basicEntry(workLabel, authorLabel))
         .get('entries')
@@ -468,7 +468,7 @@ describe('entities:resolve:on-labels', () => {
       const seedLabel = workLabel.toUpperCase()
       const authorLabel = author.labels.en
       return createWorkWithAuthor(author, workLabel)
-      .delay(elasticsearchUpdateDelay)
+      .then(Wait(elasticsearchUpdateDelay))
       .then(work => {
         return resolve(basicEntry(seedLabel, authorLabel))
         .get('entries')
@@ -492,7 +492,7 @@ describe('entities:resolve:on-labels', () => {
           createWorkWithAuthor(author, workLabel),
           createWorkWithAuthor(sameLabelAuthor, workLabel)
         ])
-        .delay(elasticsearchUpdateDelay)
+        .then(Wait(elasticsearchUpdateDelay))
         .then(works => {
           return resolve(basicEntry(workLabel, author.labels.en))
           .get('entries')

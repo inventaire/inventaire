@@ -1,6 +1,6 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
-const Promise = require('bluebird')
+const { Promise, Wait } = __.require('lib', 'promises')
 
 module.exports = params => ids => {
   ids = _.compact(ids)
@@ -33,7 +33,7 @@ const nextBatchUpdater = (db, ids, docUpdater) => {
       if (docsToUpdate.length === 0) return
       return db.bulk(docsToUpdate)
       // Let CouchDB breath
-      .delay(interBulkDelay)
+      .then(Wait(interBulkDelay))
     })
     .then(updateNextBatch)
   }

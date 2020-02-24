@@ -1,5 +1,6 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
+const { Wait } = __.require('lib', 'promises')
 const entities_ = require('./entities')
 const updateInvClaim = require('./update_inv_claim')
 const placeholders_ = require('./placeholders')
@@ -21,7 +22,7 @@ module.exports = (user, uris) => {
 
     return tolerantRemove(reqUserId, id)
     .then(() => deleteUriValueClaims(user, uri))
-    .delay(100)
+    .then(Wait(100))
     .then(removeNext)
   }
 
@@ -57,7 +58,7 @@ const removeClaimsSequentially = (user, uri) => claimsData => {
     if (claimData == null) return
     _.warn(claimData, `removing claims with value: ${uri}`)
     return removeClaim(user, uri, claimData)
-    .delay(100)
+    .then(Wait(100))
     .then(removeNextClaim)
   }
 

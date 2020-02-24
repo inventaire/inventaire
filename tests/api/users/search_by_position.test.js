@@ -1,9 +1,12 @@
+const CONFIG = require('config')
+const __ = CONFIG.universalPath
+const { Wait } = __.require('lib', 'promises')
 const should = require('should')
 const { nonAuthReq, customAuthReq, getUser } = require('../utils/utils')
 const { createUser } = require('../fixtures/users')
 const { makeFriends } = require('../utils/relations')
 const qs = require('querystring')
-const someUserWithPosition = createUser({ position: [ 1, 1 ] }).delay(100)
+const someUserWithPosition = createUser({ position: [ 1, 1 ] }).then(Wait(100))
 const bbox = qs.escape(JSON.stringify([ 0, 0, 2, 2 ]))
 
 describe('users:search-by-position', () => {

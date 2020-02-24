@@ -1,6 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
+const { Wait } = __.require('lib', 'promises')
 
 if (CONFIG.env !== 'tests') {
   throw new Error(`invalid env: ${CONFIG.env}`)
@@ -115,7 +116,7 @@ describe('cache', () => {
       it('should refuse old value when passed a 0 timespan', done => {
         const key = 'doden'
         cache_.get({ key, fn: workingFn.bind(null, 'Vem är du?'), timespan: 0 })
-        .delay(10)
+        .then(Wait(10))
         .then(res1 => {
           // returns an error: should return old value
           return cache_.get({ key, fn: failingFn.bind(null, 'Vem är du?'), timespan: 0 })
@@ -134,10 +135,10 @@ describe('cache', () => {
       cache_.get({ key, fn: workingFn.bind(null, 'bla') })
       .then(res1 => {
         return cache_.get({ key, fn: workingFn.bind(null, 'different arg'), timespan: 10000 })
-        .delay(100)
+        .then(Wait(100))
         .then(res2 => {
           return cache_.get({ key, fn: workingFn.bind(null, 'different arg'), timespan: 0 })
-          .delay(100)
+          .then(Wait(100))
           .then(res3 => {
             res1.should.equal(res2)
             res2.should.not.equal(res3)
@@ -153,7 +154,7 @@ describe('cache', () => {
         const key = 'samekey'
         const fn = workingFn.bind(null, 'foo')
         cache_.get({ key, fn, timespan: 10000 })
-        .delay(100)
+        .then(Wait(100))
         .then(res1 => {
           return cache_.get({ key, fn })
           .then(res2 => {
@@ -174,7 +175,7 @@ describe('cache', () => {
         const key = randomString(4)
         const fn = workingFn.bind(null, 'foo')
         cache_.get({ key, fn })
-        .delay(100)
+        .then(Wait(100))
         .then(res1 => cache_.get({ key, dry: true })
         .then(res2 => {
           res1.should.equal(res2)
@@ -208,7 +209,7 @@ describe('cache', () => {
         const key = randomString(4)
         const fn = workingFn.bind(null, 'foo')
         cache_.get({ key, fn, dryAndCache: true })
-        .delay(10)
+        .then(Wait(10))
         .then(res1 => {
           should(res1).not.be.ok()
           cache_.get({ key, dry: true })
@@ -222,7 +223,7 @@ describe('cache', () => {
         const key = randomString(4)
         const fn = workingFn.bind(null, 'foo')
         cache_.get({ key, fn, refresh: true, dryAndCache: true })
-        .delay(10)
+        .then(Wait(10))
         .then(res1 => {
           should(res1).be.ok()
           done()

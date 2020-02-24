@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
-const { Promise } = __.require('lib', 'promises')
+const { Promise, Wait } = __.require('lib', 'promises')
 const { createHuman } = require('../fixtures/entities')
 const { getBySuspectUri, collectEntities } = require('../utils/tasks')
 
@@ -19,7 +19,7 @@ describe('tasks:collect-entities', () => {
     .then(humans => {
       const uris = _.map(humans, 'uri')
       return collectEntities()
-      .delay(5000)
+      .then(Wait(5000))
       .then(() => Promise.all(uris.map(getBySuspectUri)))
       .map(tasks => tasks.length.should.aboveOrEqual(1))
       .then(() => done())

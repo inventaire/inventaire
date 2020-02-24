@@ -3,7 +3,7 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
 const faker = require('faker')
-const { Promise } = __.require('lib', 'promises')
+const { Promise, Wait } = __.require('lib', 'promises')
 const { nonAuthReq, authReq, undesiredRes, getUser } = require('../utils/utils')
 const randomString = __.require('lib', './utils/random_string')
 const { createWork, createHuman, createSerie, randomLabel, createEditionFromWorks } = require('../fixtures/entities')
@@ -58,7 +58,7 @@ describe('search:global', () => {
     const label = randomString(5)
     createHuman({ labels: { fr: label } })
     // Let the time for Elastic Search indexation
-    .delay(4000)
+    .then(Wait(4000))
     .then(entity => {
       return search('humans', label)
       .then(results => {
@@ -75,7 +75,7 @@ describe('search:global', () => {
     const label = randomString(5)
     createWork({ labels: { fr: label } })
     // Let the time for Elastic Search indexation
-    .delay(4000)
+    .then(Wait(4000))
     .then(entity => {
       return search('works', label)
       .then(results => {
@@ -103,7 +103,7 @@ describe('search:global', () => {
     const label = randomLabel()
     createSerie({ labels: { fr: label } })
     // Let the time for Elastic Search indexation
-    .delay(1000)
+    .then(Wait(1000))
     .then(entity => {
       return search('series', label)
       .then(results => {
@@ -129,7 +129,7 @@ describe('search:global', () => {
 
   it('should return a user', done => {
     getUser()
-    .delay(1000)
+    .then(Wait(1000))
     .then(user => {
       return search('users', user.username)
       .then(results => {
@@ -145,7 +145,7 @@ describe('search:global', () => {
   it('should return a group', done => {
     const name = `group ${faker.lorem.word}`
     authReq('post', '/api/groups?action=create', { name })
-    .delay(1000)
+    .then(Wait(1000))
     .then(group => {
       return search('groups', name)
       .then(results => {
@@ -161,7 +161,7 @@ describe('search:global', () => {
   it('should not return a private group unless requester is a member', done => {
     const name = `group ${faker.lorem.word}`
     authReq('post', '/api/groups?action=create', { name, searchable: false })
-    .delay(1000)
+    .then(Wait(1000))
     .then(group => {
       return search('groups', name)
       .then(results => {
@@ -191,7 +191,7 @@ describe('search:global', () => {
       // trigger a popularity refresh to avoid getting the default score on
       // the search hereafter
       .then(() => getRefreshedPopularityByUris(work.uri))
-      .delay(1000)
+      .then(Wait(1000))
       .then(() => {
         const workWithEditionUri = work.uri
         return search('works', fullMatchLabel)
@@ -217,7 +217,7 @@ describe('search:global', () => {
       // trigger a popularity refresh to avoid getting the default score on
       // the search hereafter
       .then(works => getRefreshedPopularityByUris(_.map(works, 'uri')))
-      .delay(2000)
+      .then(Wait(2000))
       .then(() => {
         return search('works', workLabel)
         .then(results => {

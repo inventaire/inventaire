@@ -3,7 +3,7 @@ const should = require('should')
 const { adminReq, getUser, getReservedUser, undesiredRes } = require('../utils/utils')
 const { createWork } = require('../fixtures/entities')
 const endpoint = '/api/entities?action=contributions'
-const { Promise, wait } = __.require('lib', 'promises')
+const { wait, Wait } = __.require('lib', 'promises')
 
 describe('entities:contributions', () => {
   it('should reject without user id', done => {
@@ -126,7 +126,7 @@ describe('entities:contributions', () => {
       .then(res1 => {
         should(res1.total >= 1).be.true()
         return createWork()
-        .delay(10)
+        .then(Wait(10))
         .then(workB => {
           return adminReq('get', `${endpoint}&user=${_id}`)
           .then(res2 => {

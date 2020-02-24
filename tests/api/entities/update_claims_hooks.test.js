@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
-const promises_ = __.require('lib', 'promises')
+const { Wait } = __.require('lib', 'promises')
 const { getByUris, updateClaim } = require('../utils/entities')
 const { createWork, createEditionFromWorks } = require('../fixtures/entities')
 
@@ -14,7 +14,7 @@ describe('entities:update-claims-hooks', () => {
         const value = edition.claims['wdt:P1476'][0]
         const updatedValue = `${value}updated`
         return updateClaim(edition.uri, 'wdt:P1476', value, updatedValue)
-        .delay(100)
+        .then(Wait(100))
         .then(() => {
           return getByUris(work.uri)
           .then(res => {
@@ -31,7 +31,7 @@ describe('entities:update-claims-hooks', () => {
   it('should not update a work label if editions disagree on the title', done => {
     createWork()
     .then(work => {
-      return promises_.all([
+      return Promise.all([
         createEditionFromWorks(work),
         createEditionFromWorks(work)
       ])
@@ -39,7 +39,7 @@ describe('entities:update-claims-hooks', () => {
         const valueA = editionA.claims['wdt:P1476'][0]
         const updatedValueA = `${valueA}updated`
         return updateClaim(editionA.uri, 'wdt:P1476', valueA, updatedValueA)
-        .delay(100)
+        .then(Wait(100))
         .then(() => {
           return getByUris(work.uri)
           .then(res => {

@@ -3,7 +3,7 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const tasks_ = require('./lib/tasks')
 const db = __.require('couch', 'base')('entities')
-const promises_ = __.require('lib', 'promises')
+const { Wait } = __.require('lib', 'promises')
 const responses_ = __.require('lib', 'responses')
 const { prefixifyInv } = __.require('controllers', 'entities/lib/prefix')
 const jobs_ = __.require('level', 'jobs')
@@ -53,7 +53,7 @@ const getNextInvHumanUrisBatch = pagination => {
 
 const getFilteredUris = (uris, refresh) => {
   if (refresh) {
-    return promises_.resolve(uris)
+    return Promise.resolve(uris)
   } else {
     return filterNotAlreadySuspectEntities(uris)
   }
@@ -63,7 +63,7 @@ const getUris = res => _.map(res.rows, 'id').map(prefixifyInv)
 
 const deduplicateWorker = (jobId, uri) => {
   return checkEntity(uri)
-  .delay(interval)
+  .then(Wait(interval))
   .catch(err => {
     if (err.statusCode === 400) {
     } else {
