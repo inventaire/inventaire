@@ -2,10 +2,9 @@ const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const user_ = __.require('controllers', 'user/lib/user')
 const groups_ = __.require('controllers', 'groups/lib/groups')
-const promises_ = __.require('lib', 'promises')
 
 module.exports = (groupId, authentifiedUserPromise) => {
-  return promises_.all([
+  return Promise.all([
     groups_.byId(groupId),
     authentifiedUserPromise
   ])

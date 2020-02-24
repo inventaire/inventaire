@@ -3,7 +3,6 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const { attributes, validations, formatters } = __.require('models', 'group')
 const { updatable } = attributes
-const promises_ = __.require('lib', 'promises')
 const error_ = __.require('lib', 'error/error')
 const radio = __.require('lib', 'radio')
 const db = __.require('couch', 'base')('groups')
@@ -44,7 +43,7 @@ const applyEditHooks = (attribute, groupDoc) => {
   if (attribute === 'name') {
     return updateSlug(groupDoc)
   } else {
-    return promises_.resolve({ updatedDoc: groupDoc, hooksUpdates: {} })
+    return Promise.resolve({ updatedDoc: groupDoc, hooksUpdates: {} })
   }
 }
 

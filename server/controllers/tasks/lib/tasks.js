@@ -14,7 +14,7 @@ const tasks_ = module.exports = {
 
   update: options => {
     const { ids, attribute, newValue } = options
-    if (ids.length === 0) return promises_.resolve([])
+    if (ids.length === 0) return Promise.resolve([])
 
     return tasks_.byIds(ids)
     .map(task => Task.update(task, attribute, newValue))

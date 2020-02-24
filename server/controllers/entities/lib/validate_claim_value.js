@@ -47,7 +47,7 @@ const validateClaimValue = params => {
   const { concurrency, restrictedType } = prop
 
   // Resolve only if all async tests pass
-  return promises_.all([
+  return Promise.all([
     verifyClaimConcurrency(concurrency, property, formattedValue),
     verifyClaimEntityType(restrictedType, formattedValue)
   ])

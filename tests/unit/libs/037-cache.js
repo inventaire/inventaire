@@ -10,14 +10,12 @@ if (CONFIG.env !== 'tests') {
 const should = require('should')
 const sinon = require('sinon')
 
-const promises_ = __.require('lib', 'promises')
-
 const cache_ = __.require('lib', 'cache')
 const randomString = __.require('lib', './utils/random_string')
 
-const hashKey = key => promises_.resolve(_.hashCode(key))
+const hashKey = key => Promise.resolve(_.hashCode(key))
 const workingFn = key => hashKey(key + randomString(8))
-const failingFn = key => promises_.reject('Jag är Döden')
+const failingFn = () => Promise.reject(new Error('Jag är Döden'))
 
 describe('cache', () => {
   describe('get', () => {
@@ -77,7 +75,7 @@ describe('cache', () => {
       cache_.get({ key, fn: workingFn.bind(null, 'Vem är du?'), timespan: 0 })
       .then(res1 => {
         // returns an error: should return old value
-        return cache_.get({ key, fn: failingFn.bind(null, 'Vem är du?'), timespan: 1 })
+        return cache_.get({ key, fn: failingFn, timespan: 1 })
         .then(res2 => {
           // the error shouldnt have overriden the value
           return cache_.get({ key, fn: workingFn.bind(null, 'Vem är du?'), timespan: 5000 })
@@ -95,7 +93,7 @@ describe('cache', () => {
       const spy = sinon.spy()
       const empty = key => {
         spy()
-        return promises_.resolve(_.noop(key))
+        return Promise.resolve(_.noop(key))
       }
 
       const key = 'gogogo'
@@ -119,7 +117,7 @@ describe('cache', () => {
         .then(Wait(10))
         .then(res1 => {
           // returns an error: should return old value
-          return cache_.get({ key, fn: failingFn.bind(null, 'Vem är du?'), timespan: 0 })
+          return cache_.get({ key, fn: failingFn, timespan: 0 })
           .then(res2 => {
             res1.should.be.ok()
             should(res2).not.be.ok()

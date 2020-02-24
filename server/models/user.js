@@ -83,7 +83,7 @@ const withHashedPassword = user => {
   if (password != null) {
     return pw_.hash(password).then(replacePassword.bind(null, user))
   } else {
-    return promises_.resolve(user)
+    return Promise.resolve(user)
   }
 }
 

@@ -1,8 +1,6 @@
 // Pre-formatted error handlers to make error responses consistent
-const __ = require('config').universalPath
 const { pick } = require('lodash')
 const { typeOf } = require('../utils/base')
-const promises_ = __.require('lib', 'promises')
 
 module.exports = error_ => {
   const newFunctions = {
@@ -48,7 +46,7 @@ module.exports = error_ => {
     }
 
     const err = error_[currentNewFnName].apply(null, args)
-    return promises_.reject(err)
+    return Promise.reject(err)
   }
 
   const rejects = {

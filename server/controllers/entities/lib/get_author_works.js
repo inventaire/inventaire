@@ -1,6 +1,5 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
-const promises_ = __.require('lib', 'promises')
 const entities_ = require('./entities')
 const runWdQuery = __.require('data', 'wikidata/run_query')
 const { prefixifyWd } = __.require('controllers', 'entities/lib/prefix')
@@ -28,7 +27,7 @@ module.exports = params => {
 
   promises.push(getInvAuthorWorks(uri, worksByTypes))
 
-  return promises_.all(promises)
+  return Promise.all(promises)
   .then(_.flatten)
   .then(results => getPopularityScores(results)
   .then(spreadByType(worksByTypes, results)))

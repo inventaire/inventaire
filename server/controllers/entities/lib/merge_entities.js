@@ -2,7 +2,6 @@ const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const assert_ = __.require('utils', 'assert_types')
-const promises_ = __.require('lib', 'promises')
 const entities_ = require('./entities')
 const Entity = __.require('models', 'entity')
 const placeholders_ = require('./placeholders')
@@ -58,7 +57,7 @@ const mergeEntities = (userId, fromId, toId) => {
     if (_.isEqual(toEntityDoc, toEntityDocBeforeMerge)) {
       // if the toEntityDoc after data transfer hasn't changed
       // don't run entities_.putUpdate as it will throw an 'empty patch' error
-      transfer = promises_.resolved
+      transfer = Promise.resolve()
     } else {
       transfer = entities_.putUpdate({
         userId,
@@ -107,7 +106,7 @@ const removeObsoletePlaceholderEntities = (userId, entityDocBeforeRedirection) =
   const entityUrisToCheck = getEntityUrisToCheck(entityDocBeforeRedirection.claims)
   _.log(entityUrisToCheck, 'entityUrisToCheck')
   const fromId = entityDocBeforeRedirection._id
-  return promises_.all(entityUrisToCheck.map(deleteIfIsolated(userId, fromId)))
+  return Promise.all(entityUrisToCheck.map(deleteIfIsolated(userId, fromId)))
   // Returning removed docs ids
   .then(_.compact)
 }

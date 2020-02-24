@@ -25,7 +25,7 @@ module.exports = (req, res) => {
     message = null
   }
 
-  promises_.all([
+  Promise.all([
     parseAndValidateEmails(emails, user.email),
     validateGroup(groupId, reqUserId)
   ])
@@ -47,7 +47,7 @@ const parseAndValidateEmails = (emails, userEmail) => promises_.try(() => {
 })
 
 const validateGroup = (groupId, reqUserId) => {
-  if (groupId == null) return promises_.resolve(null)
+  if (groupId == null) return Promise.resolve(null)
 
   if (!_.isGroupId(groupId)) {
     return error_.rejectInvalid('group id', groupId)

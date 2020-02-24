@@ -1,7 +1,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const promises_ = __.require('lib', 'promises')
 const User = __.require('models', 'user')
 const isReservedWord = require('./is_reserved_word')
 const error_ = __.require('lib', 'error/error')
@@ -14,7 +13,7 @@ module.exports = {
     // (used for username update)
     if (currentUsername) {
       if (username.toLowerCase() === currentUsername.toLowerCase()) {
-        return promises_.resolved
+        return Promise.resolve()
       }
     }
 

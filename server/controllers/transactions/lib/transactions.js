@@ -3,7 +3,6 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const Transaction = __.require('models', 'transaction')
 const error_ = __.require('lib', 'error/error')
-const promises_ = __.require('lib', 'promises')
 const comments_ = __.require('controllers', 'comments/lib/comments')
 const { BasicUpdater } = __.require('lib', 'doc_updates')
 const { minKey, maxKey } = __.require('lib', 'couch')
@@ -61,7 +60,7 @@ const transactions_ = module.exports = {
     const updatedReadStates = updateReadStates(userId, transaction)
     // spares a db write if updatedReadStates is already the current read state object
     if (_.sameObjects(updatedReadStates, transaction.read)) {
-      return promises_.resolved
+      return Promise.resolve()
     } else {
       return db.update(transaction._id, BasicUpdater('read', updatedReadStates))
     }

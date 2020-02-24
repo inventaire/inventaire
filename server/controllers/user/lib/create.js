@@ -30,7 +30,7 @@ module.exports = (username, email, creationStrategy, language, password) => {
 }
 
 const postCreation = user => {
-  return promises_.all([
+  return Promise.all([
     // can be parallelized without risk of conflict as
     // convertInvitations doesnt edit the user document
     // but we do need both to be over to be sure that the user will

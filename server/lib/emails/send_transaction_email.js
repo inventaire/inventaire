@@ -31,7 +31,7 @@ const emailIsRequired = transaction => {
 }
 
 const fetchData = transaction => {
-  return promises_.all([
+  return Promise.all([
     user_.byId(transaction.owner),
     user_.byId(transaction.requester),
     items_.byId(transaction.item).then(snapshot_.addToItem),

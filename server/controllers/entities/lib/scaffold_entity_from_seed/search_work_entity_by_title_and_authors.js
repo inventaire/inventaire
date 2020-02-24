@@ -1,7 +1,5 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
-const promises_ = __.require('lib', 'promises')
-
 const searchByText = require('../search_by_text')
 const getBestLangValue = __.require('lib', 'get_best_lang_value')
 const getEntitiesByUris = require('../get_entities_by_uris')
@@ -18,7 +16,7 @@ module.exports = seed => {
   const validAuthors = _.isArray(authors) && _.every(authors, _.isNonEmptyString)
   if (!_.isNonEmptyString(title) || !validAuthors) {
     _.warn(seed, 'unsufficient seed data to search a pre-existing work entity')
-    return promises_.resolve()
+    return Promise.resolve()
   }
 
   const cachedWorkPromise = workEntitiesCache.get(seed)

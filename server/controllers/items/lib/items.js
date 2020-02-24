@@ -5,7 +5,6 @@ const Item = __.require('models', 'item')
 const listingsPossibilities = Item.attributes.constrained.listing.possibilities
 const assert_ = __.require('utils', 'assert_types')
 const { BasicUpdater } = __.require('lib', 'doc_updates')
-const promises_ = __.require('lib', 'promises')
 const radio = __.require('lib', 'radio')
 const { filterPrivateAttributes } = require('./filter_private_attributes')
 const { maxKey } = __.require('lib', 'couch')
@@ -72,7 +71,7 @@ const items_ = module.exports = {
 
   create: (userId, items) => {
     assert_.array(items)
-    return promises_.all(items.map(validateEntityType))
+    return Promise.all(items.map(validateEntityType))
     .map(item => Item.create(userId, item))
     .then(db.bulk)
     .then(res => {
@@ -122,7 +121,7 @@ const items_ = module.exports = {
     return usersIds => {
       _.log(usersIds, 'usersIds')
       if (usersIds.length <= 0) return [ [], [] ]
-      return promises_.all([
+      return Promise.all([
         user_.getUsersByIds(usersIds, reqUserId),
         getByAccessLevel.public(usersIds)
       ])

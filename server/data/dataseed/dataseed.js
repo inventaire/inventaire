@@ -7,7 +7,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const promises_ = __.require('lib', 'promises')
 const requests_ = __.require('lib', 'requests')
 const isbn_ = __.require('lib', 'isbn/isbn')
 const reqOptions = {
@@ -20,7 +19,7 @@ const { enabled, host } = CONFIG.dataseed
 module.exports = {
   getByIsbns: (isbns, refresh) => {
     isbns = _.forceArray(isbns)
-    if (!enabled) return promises_.resolve(isbns.map(emptySeed))
+    if (!enabled) return Promise.resolve(isbns.map(emptySeed))
     isbns = isbns.join('|')
     const url = _.buildPath(`${host}/books`, { isbns, refresh })
     return requests_.get(url, reqOptions)
@@ -29,7 +28,7 @@ module.exports = {
   // Provides simply an image in a prompt maner
   getImageByIsbn: isbn => {
     isbn = isbn_.toIsbn13(isbn)
-    if (!isbn) return promises_.reject(new Error('invalid isbn'))
+    if (!isbn) return Promise.reject(new Error('invalid isbn'))
     const url = _.buildPath(`${host}/images`, { isbn })
     return requests_.get(url, reqOptions)
   },

@@ -1,7 +1,6 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const assert_ = __.require('utils', 'assert_types')
-const promises_ = __.require('lib', 'promises')
 const invitations_ = require('./invitations')
 const Invited = __.require('models', 'invited')
 const radio = __.require('lib', 'radio')
@@ -26,7 +25,7 @@ module.exports = (user, group, emails, message) => {
     const unknownEmails = extractUnknownEmails(emails, existingInvitedUsers)
     _.log(unknownEmails, 'unknown emails')
 
-    return promises_.all([
+    return Promise.all([
       // Create an invitation doc for unknown emails
       invitations_.createUnknownInvited(userId, groupId, unknownEmails),
       // Add the invitation to the existing doc for known emails

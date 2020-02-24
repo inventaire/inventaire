@@ -1,7 +1,6 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const entities_ = require('./entities')
-const promises_ = __.require('lib', 'promises')
 const dataseed = __.require('data', 'dataseed/dataseed')
 const scaffoldEditionEntityFromSeed = require('./scaffold_entity_from_seed/edition')
 const formatEditionEntity = require('./format_edition_entity')
@@ -56,7 +55,7 @@ const getMissingEditionEntitiesFromSeeds = (isbns, refresh) => {
       }
     }
 
-    return promises_.all(validSeeds.map(scaffoldEditionEntityFromSeed))
+    return Promise.all(validSeeds.map(scaffoldEditionEntityFromSeed))
     .map(formatEditionEntity)
     .then(newEntities => [ newEntities, insufficientData ])
   })

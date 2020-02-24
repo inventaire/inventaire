@@ -17,10 +17,7 @@ const wait = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 module.exports = {
   Promise,
-  resolve: Promise.resolve,
-  reject: Promise.reject,
   try: Promise.try,
-  all: Promise.all,
   props: Promise.props,
 
   // skip throws in a standard way to be catched later
@@ -73,13 +70,6 @@ module.exports = {
       promise
     }
   },
-
-  // Used has a way to create only one resolved promise to start promise chains.
-  // Unfortunatly, this object can't be froozen as it would be incompatible with
-  // bluebird cancellable promises.
-  // This may register as a premature micro-optimization
-  // cf http://stackoverflow.com/q/40683818/3324977
-  resolved: Promise.resolve(),
 
   wait,
 

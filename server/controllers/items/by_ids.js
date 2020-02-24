@@ -4,7 +4,6 @@ const items_ = __.require('controllers', 'items/lib/items')
 const { getNetworkIds } = __.require('controllers', 'user/lib/relations_status')
 const responses_ = __.require('lib', 'responses')
 const error_ = __.require('lib', 'error/error')
-const promises_ = __.require('lib', 'promises')
 const sanitize = __.require('lib', 'sanitize/sanitize')
 const { addAssociatedData, Paginate } = require('./lib/queries_commons')
 const { omitPrivateAttributes } = require('./lib/filter_private_attributes')
@@ -23,7 +22,7 @@ module.exports = (req, res) => {
   sanitize(req, res, sanitization)
   .then(params => {
     const { ids, reqUserId } = params
-    return promises_.all([
+    return Promise.all([
       items_.byIds(ids),
       getNetworkIds(reqUserId)
     ])

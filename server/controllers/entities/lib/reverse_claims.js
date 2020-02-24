@@ -3,7 +3,6 @@ const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const assert_ = __.require('utils', 'assert_types')
 const wdk = require('wikidata-sdk')
-const promises_ = __.require('lib', 'promises')
 const requests_ = __.require('lib', 'requests')
 const entities_ = require('./entities')
 const { prefixifyWd, unprefixify } = __.require('controllers', 'entities/lib/prefix')
@@ -43,7 +42,7 @@ module.exports = params => {
 
   promises.push(invReverseClaims(property, value))
 
-  return promises_.all(promises)
+  return Promise.all(promises)
   .then(_.flatten)
   .then(_.compact)
   .then(uris => {

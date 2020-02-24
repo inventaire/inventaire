@@ -15,7 +15,7 @@ module.exports = {
   byEntityId: entityId => db.viewByKeys('byEntityId', [ entityId ]),
   byEntityIds: entityIds => db.viewByKeys('byEntityId', entityIds),
   byUserId: (userId, limit, offset) => {
-    return promises_.all([
+    return Promise.all([
       db.view(designDocName, 'byUserId', {
         startkey: [ userId, maxKey ],
         endkey: [ userId ],

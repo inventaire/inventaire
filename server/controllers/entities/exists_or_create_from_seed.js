@@ -4,7 +4,6 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 let error_ = __.require('lib', 'error/error')
-const promises_ = __.require('lib', 'promises')
 const responses_ = __.require('lib', 'responses')
 const sanitize = __.require('lib', 'sanitize/sanitize')
 error_ = __.require('lib', 'error/error')
@@ -41,7 +40,7 @@ const findOrCreateEntity = seed => entityDoc => {
 }
 
 const addImage = seed => {
-  if (!dataseedEnabled) return promises_.resolve(seed)
+  if (!dataseedEnabled) return Promise.resolve(seed)
   // Try to find an image from the seed ISBN
   return dataseed.getImageByIsbn(seed.isbn)
   .then(res => {

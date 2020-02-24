@@ -5,7 +5,6 @@ const assert_ = __.require('utils', 'assert_types')
 const db = __.require('couch', 'base')('users', 'invited')
 const { findOneByEmail, byEmails } = __.require('controllers', 'user/lib/shared_user_handlers')
 const Invited = __.require('models', 'invited')
-const promises_ = __.require('lib', 'promises')
 const { makeRequest } = __.require('controllers', 'relations/lib/actions')
 const groupAction = __.require('controllers', 'groups/lib/model_action')
 
@@ -36,7 +35,7 @@ const invitations_ = module.exports = {
     const { _id: userId, inviters } = userDoc
     let { invitersGroups } = userDoc
 
-    if (inviters == null && invitersGroups == null) return promises_.resolved
+    if (inviters == null && invitersGroups == null) return Promise.resolve()
 
     invitersGroups = invitersGroups || {}
     const groupInvitersIds = _.values(invitersGroups)
@@ -48,7 +47,7 @@ const invitations_ = module.exports = {
     const friendsPromises = convertFriendInvitations(invitersIds, userId)
     const groupsPromises = convertGroupsInvitations(invitersGroups, userId)
 
-    return promises_.all(friendsPromises.concat(groupsPromises))
+    return Promise.all(friendsPromises.concat(groupsPromises))
   },
 
   stopEmails: email => {

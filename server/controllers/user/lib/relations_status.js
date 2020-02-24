@@ -3,7 +3,6 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const groups_ = __.require('controllers', 'groups/lib/groups')
 const relations_ = __.require('controllers', 'relations/lib/queries')
-const promises_ = __.require('lib', 'promises')
 const assert_ = __.require('utils', 'assert_types')
 
 module.exports = {
@@ -14,7 +13,7 @@ module.exports = {
   },
 
   getRelationsStatuses: (userId, usersIds) => {
-    if (userId == null) return promises_.resolve([ [], [], usersIds ])
+    if (userId == null) return Promise.resolve([ [], [], usersIds ])
 
     return getFriendsAndGroupCoMembers(userId)
     .then(spreadRelations(usersIds))
@@ -34,7 +33,7 @@ module.exports = {
   },
 
   getNetworkIds: userId => {
-    if (userId == null) return promises_.resolve([])
+    if (userId == null) return Promise.resolve([])
     return getFriendsAndGroupCoMembers(userId)
     .then(_.flatten)
   }
@@ -58,7 +57,6 @@ const spreadRelations = usersIds => ([ friendsIds, coGroupMembersIds ]) => {
   return [ friends, coGroupMembers, publik ]
 }
 
-// result is to be .then (friendsIds, coGroupMembersIds)->
 const getFriendsAndGroupCoMembers = userId => Promise.all([
   relations_.getUserFriends(userId),
   groups_.findUserGroupsCoMembers(userId)

@@ -1,6 +1,5 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
-const promises_ = __.require('lib', 'promises')
 const entities_ = require('./entities')
 const Entity = __.require('models', 'entity')
 
@@ -31,7 +30,7 @@ const redirectEntitiesClaims = (results, userId, fromUri, toUri) => entities => 
     return entities_.putUpdate({ userId, currentDoc, updatedDoc, context })
   })
 
-  return promises_.all(updatesPromises)
+  return Promise.all(updatesPromises)
 }
 
 const applyRedirections = (entitiesIndex, fromUri, toUri) => result => {

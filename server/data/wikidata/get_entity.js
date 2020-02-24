@@ -3,7 +3,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const promises_ = __.require('lib', 'promises')
 const requests_ = __.require('lib', 'requests')
 const requestGrouper = __.require('lib', 'request_grouper')
 const { getEntities, getManyEntities } = require('wikidata-sdk')
@@ -16,7 +15,7 @@ const requester = ids => {
     // of the whole Victor Hugo bibliographie)
     const urls = getManyEntities(ids)
     _.log(urls, 'get many wikidata entities')
-    return promises_.all(urls.map(getReq))
+    return Promise.all(urls.map(getReq))
     .then(mergeResults)
   } else {
     const url = getEntities(ids)

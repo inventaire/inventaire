@@ -1,6 +1,5 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
-const promises_ = __.require('lib', 'promises')
 const error_ = __.require('lib', 'error/error')
 let entities_ = require('./entities')
 const patches_ = require('./patches')
@@ -47,17 +46,17 @@ const findVersionBeforeRedirect = patches => {
 const isntRedirection = version => version.redirect == null
 
 const recoverPlaceholders = (userId, removedPlaceholdersIds) => {
-  if ((removedPlaceholdersIds != null ? removedPlaceholdersIds.length : undefined) <= 0) return promises_.resolved
+  if ((removedPlaceholdersIds != null ? removedPlaceholdersIds.length : undefined) <= 0) return Promise.resolve()
 
   const recoverFn = placeholders_.recover.bind(null, userId)
-  return promises_.all(removedPlaceholdersIds.map(recoverFn))
+  return Promise.all(removedPlaceholdersIds.map(recoverFn))
 }
 
 const revertMergePatch = (userId, fromUri, toUri) => {
   const [ prefix, toId ] = toUri.split(':')
   if (prefix !== 'inv') return
 
-  return promises_.all([
+  return Promise.all([
     entities_.byId(toId),
     patches_.byEntityId(toId)
   ])
