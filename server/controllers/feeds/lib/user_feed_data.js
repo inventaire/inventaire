@@ -8,7 +8,7 @@ module.exports = (userId, authentifiedUserPromise) => {
     user_.byId(userId),
     getAccessLevel(userId, authentifiedUserPromise)
   ])
-  .spread((user, getAccessLevel) => ({
+  .then(([ user, getAccessLevel ]) => ({
     users: [ user ],
     accessLevel: getAccessLevel,
 

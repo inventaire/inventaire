@@ -294,7 +294,7 @@ describe('entities:resolve:in-context', () => {
         createWorkWithAuthor(author, missingWorkLabel),
         createWorkWithAuthor(author, otherWorkLabel)
       ])
-      .spread((work, otherWork) => {
+      .then(([ work, otherWork ]) => {
         return resolve({
           edition: { isbn: generateIsbn13() },
           works: [ { labels: { en: missingWorkLabel } } ],
@@ -339,7 +339,7 @@ describe('entities:resolve:in-context', () => {
         createWorkWithAuthor(author, workLabel),
         createWorkWithAuthor(author, workLabel)
       ])
-      .spread((work, otherWork) => {
+      .then(([ work, otherWork ]) => {
         const entry = {
           edition: { isbn: generateIsbn13() },
           works: [ { labels: { en: workLabel } } ],

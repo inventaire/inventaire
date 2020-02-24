@@ -29,7 +29,7 @@ const getGroupAndUsersData = (groupId, actingUserId, userToNotifyId) => {
     user_.byId(actingUserId),
     user_.byId(userToNotifyId)
   ])
-  .spread((group, actingUser, userToNotify) => {
+  .then(([ group, actingUser, userToNotify ]) => {
     return {
       group,
       actingUser: user_.serializeData(actingUser),

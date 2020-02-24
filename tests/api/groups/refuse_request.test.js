@@ -26,7 +26,7 @@ describe('groups:update:refuse-request', () => {
       createGroup(),
       memberPromise
     ])
-    .spread((group, requester) => {
+    .then(([ group, requester ]) => {
       const { _id: requesterId } = requester
       return customAuthReq(memberPromise, 'put', '/api/groups?action=request', { group: group._id })
       .then(() => {

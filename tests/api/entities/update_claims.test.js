@@ -158,7 +158,7 @@ describe('entities:update-claims', () => {
       createWork(),
       createWork()
     ])
-    .spread((workA, workB) => merge(workA.uri, workB.uri)
+    .then(([ workA, workB ]) => merge(workA.uri, workB.uri)
     .then(() => addClaim(workA.uri, 'wdt:P50', 'wd:Q535'))).then(undesiredRes(done))
     .catch(err => {
       err.statusCode.should.equal(400)

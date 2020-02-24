@@ -58,7 +58,7 @@ describe('entities:resolver:update-resolved', () => {
       createWork().tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsIdA)),
       createWork().tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsIdB))
     ])
-    .spread((workA, workB) => {
+    .then(([ workA, workB ]) => {
       return resolveAndUpdate([ entryA, entryB ])
       .get('entries')
       .then(entries => {
@@ -159,14 +159,14 @@ describe('entities:resolver:update-resolved', () => {
       createWork().tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsIdA)),
       createWork().tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsIdB))
     ])
-    .spread((workA, workB) => {
+    .then(([ workA, workB ]) => {
       return resolveAndUpdate([ entryA, entryB ])
       .then(() => {
         return Promise.all([
           getHistory(workA.uri),
           getHistory(workB.uri)
         ])
-        .spread((workAPatches, workBPatches) => {
+        .then(([ workAPatches, workBPatches ]) => {
           const lastWorkAPatch = workAPatches.slice(-1)[0]
           const lastWorkBPatch = workBPatches.slice(-1)[0]
           lastWorkBPatch.batch.should.equal(lastWorkAPatch.batch)

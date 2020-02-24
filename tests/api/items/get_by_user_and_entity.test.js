@@ -32,7 +32,7 @@ describe('items:get-by-user-and-entity', () => {
       createEditionAndItem(getUser()),
       createEditionAndItem(getUser())
     ])
-    .spread(userItem => {
+    .then(([ userItem ]) => {
       const { owner, entity: uri } = userItem
       return authReq('get', `${endpoint}&user=${owner}&uri=${uri}`)
       .then(res => {
@@ -48,7 +48,7 @@ describe('items:get-by-user-and-entity', () => {
       createEditionAndItem(getUser()),
       createEditionAndItem(createUser())
     ])
-    .spread(userItem => {
+    .then(([ userItem ]) => {
       const { owner, entity: uri } = userItem
       return authReq('get', `${endpoint}&user=${owner}&uri=${uri}`)
       .then(res => {

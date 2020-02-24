@@ -38,7 +38,7 @@ describe('entities:changes', () => {
 
   it('should return redirected entities', done => {
     Promise.all([ createHuman(), createHuman() ])
-    .spread((humanA, humanB) => {
+    .then(([ humanA, humanB ]) => {
       return merge(humanA.uri, humanB.uri)
       .then(() => nonAuthReq('get', endpoint))
       .then(res => {

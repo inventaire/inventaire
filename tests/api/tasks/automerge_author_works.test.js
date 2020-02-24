@@ -20,7 +20,7 @@ describe('automerge_author_works: only from inv works to wd works', () => {
       createWorkWithAuthor({ uri: authorUri }, workLabel),
       createWorkWithAuthor({ uri: authorUri }, workLabel)
     ])
-    .spread((work1, work2) => {
+    .then(([ work1, work2 ]) => {
       return automergeAuthorWorks(authorUri)
       .delay(300)
       .then(() => getByUris([ work1.uri, work2.uri ]))

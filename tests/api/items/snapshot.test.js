@@ -36,7 +36,7 @@ describe('items:snapshot', () => {
         addSerie(workEntity)
       ])
       .delay(100)
-      .spread((item, serieEntity) => {
+      .then(([ item, serieEntity ]) => {
         return updateClaim(workEntity.uri, 'wdt:P1545', null, '5')
         .delay(100)
         .then(() => getItem(item))
@@ -60,7 +60,7 @@ describe('items:snapshot', () => {
       createWork(),
       createWork()
     ])
-    .spread((workA, workB) => {
+    .then(([ workA, workB ]) => {
       return Promise.all([
         addAuthor(workA),
         addAuthor(workB)
@@ -259,7 +259,7 @@ describe('items:snapshot', () => {
         createWork(),
         createWork()
       ])
-      .spread((userId, workEntityA, workEntityB) => {
+      .then(([ userId, workEntityA, workEntityB ]) => {
         return authReq('post', '/api/items', { entity: workEntityA.uri, lang: 'en' })
         .tap(() => merge(workEntityA.uri, workEntityB.uri))
         .then(getItem)
@@ -278,7 +278,7 @@ describe('items:snapshot', () => {
         createWork(),
         createWork()
       ])
-      .spread((userId, workEntityA, workEntityB) => {
+      .then(([ userId, workEntityA, workEntityB ]) => {
         return createEditionFromWorks(workEntityA)
         .then(editionEntity => {
           return Promise.all([
@@ -288,7 +288,7 @@ describe('items:snapshot', () => {
           .delay(200)
           .tap(() => merge(workEntityA.uri, workEntityB.uri))
           .delay(200)
-          .spread((item, addedAuthor) => {
+          .then(([ item, addedAuthor ]) => {
             return getItem(item)
             .then(updatedItem => {
               const authorName = _.values(addedAuthor.labels)[0]
@@ -307,7 +307,7 @@ describe('items:snapshot', () => {
         createHuman(),
         createHuman()
       ])
-      .spread((userId, authorEntityA, authorEntityB) => {
+      .then(([ userId, authorEntityA, authorEntityB ]) => {
         return createWorkWithAuthor(authorEntityA)
         .then(workEntity => authReq('post', '/api/items', { entity: workEntity.uri, lang: 'en' }))
         .delay(200)
@@ -329,7 +329,7 @@ describe('items:snapshot', () => {
         createHuman(),
         createHuman()
       ])
-      .spread((userId, authorEntityA, authorEntityB) => {
+      .then(([ userId, authorEntityA, authorEntityB ]) => {
         return createWorkWithAuthor(authorEntityA)
         .then(workEntity => authReq('post', '/api/items', { entity: workEntity.uri, lang: 'en' }))
         .delay(200)
@@ -357,13 +357,13 @@ describe('items:snapshot', () => {
         getUserId(),
         createWork()
       ])
-      .spread((userId, workEntityA) => {
+      .then(([ userId, workEntityA ]) => {
         return Promise.all([
           createEditionFromWorks(workEntityA),
           authReq('post', '/api/items', { entity: workEntityA.uri, lang: 'en' })
         ])
         .delay(100)
-        .spread((editionEntity, item) => {
+        .then(([ editionEntity, item ]) => {
           return getItem(item)
           .then(item => {
             item.entity = editionEntity.uri
@@ -385,7 +385,7 @@ describe('items:snapshot', () => {
         getUserId(),
         createWork()
       ])
-      .spread((userId, workEntity) => {
+      .then(([ userId, workEntity ]) => {
         return createEditionFromWorks(workEntity)
         .then(editionEntity => {
           return authReq('post', '/api/items', { entity: editionEntity.uri })
@@ -411,7 +411,7 @@ describe('items:snapshot', () => {
           createEdition({ work }),
           addAuthor(work)
         ])
-        .spread((edition, author) => {
+        .then(([ edition, author ]) => {
           return authReq('post', '/api/items', { entity: edition.uri })
           .delay(200)
           .tap(() => merge(author.uri, 'wd:Q2829704'))

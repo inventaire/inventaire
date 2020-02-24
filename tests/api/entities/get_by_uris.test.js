@@ -56,7 +56,7 @@ describe('entities:get:by-uris', () => {
 
   it('should return redirected uris', done => {
     Promise.all([ createHuman(), createHuman() ])
-    .spread((humanA, humanB) => {
+    .then(([ humanA, humanB ]) => {
       return merge(humanA.uri, humanB.uri)
       .then(() => {
         return getByUris(humanA.uri)

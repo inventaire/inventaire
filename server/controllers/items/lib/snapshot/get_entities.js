@@ -30,7 +30,7 @@ const getEditionGraphFromEdition = edition => {
     assert_.array(works)
     return getWorksAuthorsAndSeries(works)
     // Tailor output to be spreaded on buildSnapshot.edition
-    .spread((authors, series) => [ edition, works, authors, series ])
+    .then(([ authors, series ]) => [ edition, works, authors, series ])
   })
 }
 
@@ -53,7 +53,7 @@ const getEditionGraphEntities = uri => {
 
 const getWorkGraphFromWork = (lang, work) => {
   return getWorkAuthorsAndSeries(work)
-  .spread((authors, series) => [ lang, work, authors, series ])
+  .then(([ authors, series ]) => [ lang, work, authors, series ])
 }
 
 module.exports = {

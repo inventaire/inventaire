@@ -61,7 +61,7 @@ const revertMergePatch = (userId, fromUri, toUri) => {
     entities_.byId(toId),
     patches_.byEntityId(toId)
   ])
-  .spread((currentDoc, patches) => {
+  .then(([ currentDoc, patches ]) => {
     const mergePatch = patches.find(patch => {
       return patch.context && patch.context.mergeFrom === fromUri
     })

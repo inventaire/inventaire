@@ -30,7 +30,7 @@ const getEntitiesItems = page => {
     getNetworkItems(reqUserId, uris),
     items_.publicByEntities(uris)
   ])
-  .spread((userItems, networkItems, publicItems) => {
+  .then(([ userItems, networkItems, publicItems ]) => {
     // Only add user and network keys for the authorized endpoint
     if (reqUserId != null) {
       const dedupPublicItems = deduplicateItems(userItems, networkItems, publicItems)

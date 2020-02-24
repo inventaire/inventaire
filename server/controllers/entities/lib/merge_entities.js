@@ -37,7 +37,7 @@ const mergeEntities = (userId, fromId, toId) => {
 
   // Fetching non-formmatted docs
   return entities_.byIds([ fromId, toId ])
-  .spread((fromEntityDoc, toEntityDoc) => {
+  .then(([ fromEntityDoc, toEntityDoc ]) => {
     // At this point if the entities are not found, that's the server's fault,
     // thus the 500 statusCode
     let transfer

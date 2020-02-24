@@ -17,7 +17,7 @@ module.exports = {
     if (userId == null) return promises_.resolve([ [], [], usersIds ])
 
     return getFriendsAndGroupCoMembers(userId)
-    .spread(spreadRelations(usersIds))
+    .then(spreadRelations(usersIds))
   },
 
   // // Not used at the moment
@@ -30,7 +30,7 @@ module.exports = {
   areFriendsOrGroupCoMembers: (userId, otherId) => {
     assert_.strings([ userId, otherId ])
     return getFriendsAndGroupCoMembers(userId)
-    .spread((friendsIds, coGroupMembersIds) => friendsIds.includes(otherId) || coGroupMembersIds.includes(otherId))
+    .then(([ friendsIds, coGroupMembersIds ]) => friendsIds.includes(otherId) || coGroupMembersIds.includes(otherId))
   },
 
   getNetworkIds: userId => {
@@ -40,7 +40,7 @@ module.exports = {
   }
 }
 
-const spreadRelations = usersIds => (friendsIds, coGroupMembersIds) => {
+const spreadRelations = usersIds => ([ friendsIds, coGroupMembersIds ]) => {
   const friends = []
   const coGroupMembers = []
   const publik = []
@@ -58,8 +58,8 @@ const spreadRelations = usersIds => (friendsIds, coGroupMembersIds) => {
   return [ friends, coGroupMembers, publik ]
 }
 
-// result is to be .spread (friendsIds, coGroupMembersIds)->
-const getFriendsAndGroupCoMembers = userId => promises_.all([
+// result is to be .then (friendsIds, coGroupMembersIds)->
+const getFriendsAndGroupCoMembers = userId => Promise.all([
   relations_.getUserFriends(userId),
   groups_.findUserGroupsCoMembers(userId)
 ])

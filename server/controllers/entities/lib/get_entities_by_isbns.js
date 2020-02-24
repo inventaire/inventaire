@@ -26,7 +26,7 @@ module.exports = (rawIsbns, params) => {
 
     // then look for missing isbns on dataseed
     return getMissingEditionEntitiesFromSeeds(missingIsbns, refresh)
-    .spread((newEntities, notFound) => {
+    .then(([ newEntities, notFound ]) => {
       const results = { entities: entities.concat(newEntities) }
 
       if (notFound.length > 0) {

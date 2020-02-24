@@ -36,7 +36,7 @@ describe('groups:update:make-admin', () => {
     const memberPromise = getUserGetter(humanName(), false)()
 
     addMember(groupPromise, memberPromise)
-    .spread((group, member) => {
+    .then(([ group, member ]) => {
       const { _id: memberId } = member
       return authReqB('put', endpoint, { user: memberId, group: group._id })
     })
@@ -52,7 +52,7 @@ describe('groups:update:make-admin', () => {
     const memberPromise = getUserGetter(humanName(), false)()
 
     addMember(groupPromise, memberPromise)
-    .spread((group, member) => {
+    .then(([ group, member ]) => {
       const { _id: memberId } = member
       const adminsCount = group.admins.length
       return authReq('put', endpoint, { user: memberId, group: group._id })

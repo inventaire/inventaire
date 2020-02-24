@@ -42,14 +42,14 @@ const getSnapshotsByType = {
     // Get all the entities docs required to build the snapshot
     return getEditionGraphEntities(uri)
     // Build common updated snapshot
-    .spread(getEditionSnapshot)
+    .then(getEditionSnapshot)
   },
 
   work: uri => {
     return getEntityByUri({ uri })
     .then(work => {
       return getWorkAuthorsAndSeries(work)
-      .spread((authors, series) => {
+      .then(([ authors, series ]) => {
         return Promise.all([
           getWorkSnapshot(uri, work, authors, series),
           getEditionsSnapshots(uri, [ work ], authors, series)
@@ -82,10 +82,10 @@ const getEditionsSnapshots = (uri, works, authors, series) => {
   return entities_.urisByClaim('wdt:P629', uri)
   .then(uris => getEntitiesByUris({ uris }))
   .then(res => _.values(res.entities))
-  .map(edition => getEditionSnapshot(edition, works, authors, series))
+  .map(edition => getEditionSnapshot([ edition, works, authors, series ]))
 }
 
-const getEditionSnapshot = (edition, works, authors, series) => {
+const getEditionSnapshot = ([ edition, works, authors, series ]) => {
   assert_.object(edition)
   assert_.array(works)
   assert_.array(authors)

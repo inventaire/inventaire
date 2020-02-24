@@ -9,7 +9,7 @@ module.exports = (groupId, authentifiedUserPromise) => {
     groups_.byId(groupId),
     authentifiedUserPromise
   ])
-  .spread((group, authentifiedUser) => {
+  .then(([ group, authentifiedUser ]) => {
     const membersIds = getGroupMembersIds(group)
     const requestedId = authentifiedUser != null ? authentifiedUser._id : undefined
     return user_.byIds(membersIds)

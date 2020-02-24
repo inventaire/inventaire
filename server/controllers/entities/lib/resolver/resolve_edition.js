@@ -15,7 +15,7 @@ module.exports = entry => {
     resolveByIsbn(isbn),
     resolveExternalIds(claims, resolveOnWikidata)
   ])
-  .spread(pickUriFromResolversResponses)
+  .then(pickUriFromResolversResponses)
   .then(uri => {
     if (uri != null) { entry.edition.uri = uri }
     return entry
@@ -31,7 +31,7 @@ const resolveByIsbn = isbn => {
   })
 }
 
-const pickUriFromResolversResponses = (uriFoundByIsbn, urisFoundByExternalIds) => {
+const pickUriFromResolversResponses = ([ uriFoundByIsbn, urisFoundByExternalIds ]) => {
   // TODO: handle possible conflict between uriFoundByIsbn and urisFoundByExternalIds
   if (uriFoundByIsbn) return uriFoundByIsbn
   if (urisFoundByExternalIds && urisFoundByExternalIds.length === 1) {

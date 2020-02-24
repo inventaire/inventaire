@@ -35,7 +35,7 @@ describe('entities:update-claims-hooks', () => {
         createEditionFromWorks(work),
         createEditionFromWorks(work)
       ])
-      .spread((editionA, editionB) => {
+      .then(([ editionA, editionB ]) => {
         const valueA = editionA.claims['wdt:P1476'][0]
         const updatedValueA = `${valueA}updated`
         return updateClaim(editionA.uri, 'wdt:P1476', valueA, updatedValueA)

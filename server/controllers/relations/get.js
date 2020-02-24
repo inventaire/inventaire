@@ -15,7 +15,7 @@ module.exports = (req, res) => {
       getNetworkIds(req.user._id)
     ])
   })
-  .spread((relations, networkIds) => {
+  .then(([ relations, networkIds ]) => {
     delete relations.none
     relations.network = networkIds
     return relations

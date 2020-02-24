@@ -29,7 +29,7 @@ module.exports = {
       // so we need to query it separately
       getUserTotalContributions(userId)
     ])
-    .spread((res, total) => {
+    .then(([ res, total ]) => {
       const data = {
         patches: _.map(res.rows, 'doc'),
         total

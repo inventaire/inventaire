@@ -18,7 +18,7 @@ describe('items:create', () => {
       getUser(),
       editionUriPromise
     ])
-    .spread((user, editionUri) => {
+    .then(([ user, editionUri ]) => {
       const userId = user._id
       return authReq('post', '/api/items', { entity: editionUri })
       .then(item => {
@@ -38,7 +38,7 @@ describe('items:create', () => {
       getUser(),
       editionUriPromise
     ])
-    .spread((user, editionUri) => {
+    .then(([ user, editionUri ]) => {
       const userId = user._id
       return authReq('post', '/api/items', [
         { entity: editionUri, listing: 'network', transaction: 'giving' },
@@ -127,7 +127,7 @@ describe('items:create', () => {
         getEntitiesByUris(edition.uri, 'wdt:P629|wdt:P50').get('entities'),
         authReq('post', '/api/items', { entity: 'isbn:9780812993257' })
       ])
-      .spread((entities, item) => {
+      .then(([ entities, item ]) => {
         edition = entities[edition.uri]
         const work = entities[edition.claims['wdt:P629'][0]]
         const author = entities[work.claims['wdt:P50'][0]]

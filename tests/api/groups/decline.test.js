@@ -18,7 +18,7 @@ describe('groups:update:decline', () => {
 
   it('should reject non invited users', done => {
     Promise.all([ groupPromise, getUserC() ])
-    .spread((group, nonInvitedUser) => {
+    .then(([ group, nonInvitedUser ]) => {
       return authReq('put', endpoint, { user: nonInvitedUser._id, group: group._id })
     })
     .then(undesiredRes(done))
@@ -32,7 +32,7 @@ describe('groups:update:decline', () => {
 
   it('should reject invite declined by another user', done => {
     Promise.all([ groupPromise, getUserC() ])
-    .spread((group, invitedUser) => {
+    .then(([ group, invitedUser ]) => {
       const { _id: invitedUserId } = invitedUser
       return authReq('put', '/api/groups?action=invite', { user: invitedUserId, group: group._id })
       .then(() => authReqB('put', endpoint, { user: invitedUserId, group: group._id }))
@@ -47,7 +47,7 @@ describe('groups:update:decline', () => {
 
   it('should remove member from invited', done => {
     Promise.all([ groupPromise, getUserC() ])
-    .spread((group, invitedUser) => {
+    .then(([ group, invitedUser ]) => {
       const { _id: invitedUserId } = invitedUser
       return authReq('put', '/api/groups?action=invite', { user: invitedUserId, group: group._id })
       .then(() => getGroup(group))

@@ -37,7 +37,7 @@ const fetchData = transaction => {
     items_.byId(transaction.item).then(snapshot_.addToItem),
     comments_.byTransactionId(transaction._id)
   ])
-  .spread((owner, requester, item, messages) => {
+  .then(([ owner, requester, item, messages ]) => {
     item.title = item.snapshot['entity:title']
     const image = item.snapshot['entity:image'] || (transaction.snapshot.entity && transaction.snapshot.entity.image)
     // Overriding transaction document ids by the ids' docs (owner, requester, etc.)

@@ -24,7 +24,7 @@ describe('groups:update:accept-request', () => {
     const requesterPromise = getUserGetter(humanName(), false)()
 
     Promise.all([ groupPromise, requesterPromise ])
-    .spread((group, requester) => {
+    .then(([ group, requester ]) => {
       const { _id: requesterId } = requester
       return customAuthReq(requesterPromise, 'put', '/api/groups?action=request', { group: group._id })
       .then(() => authReq('put', endpoint, { user: requesterId, group: group._id }))

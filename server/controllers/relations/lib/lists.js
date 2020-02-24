@@ -39,6 +39,6 @@ const lists = module.exports = {
       lists.getUserFriends(userId),
       groups_.findUserGroupsCoMembers(userId)
     ])
-    .spread((friends, coMembers) => _.uniq(friends.concat(coMembers)))
+    .then(([ friends, coMembers ]) => _.uniq(friends.concat(coMembers)))
   }
 }

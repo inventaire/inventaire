@@ -9,10 +9,10 @@ module.exports = (user, limitDate = 0) => {
   if (position == null) return formatData([], 'nearby', lang, [])
 
   return items_.nearby(userId, 20, true)
-  .spread(formatItems(limitDate, position, lang))
+  .then(formatItems(limitDate, position, lang))
 }
 
-const formatItems = (limitDate, position, lang) => (users, items) => {
+const formatItems = (limitDate, position, lang) => ([ users, items ]) => {
   items = items.map(items_.serializeData)
   let lastItems = getLastItems(limitDate, items)
   const highlighted = getHighlightedItems(lastItems, 10)

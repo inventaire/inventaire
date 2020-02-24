@@ -33,7 +33,7 @@ describe('tasks:hooks', () => {
 
     it('should update task state to merged', done => {
       Promise.all([ createHuman(), createHuman() ])
-      .spread((suspect, suggestion) => {
+      .then(([ suspect, suggestion ]) => {
         const taskParams = {
           suspectUri: suspect.uri,
           suggestionUri: suggestion.uri

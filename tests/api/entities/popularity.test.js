@@ -73,7 +73,7 @@ describe('entities:popularity', () => {
       // 1: item
       // 1: edition
       // 1: work
-      .spread(serie => scoreShouldEqual(serie.uri, 3, done))
+      .then(([ serie ]) => scoreShouldEqual(serie.uri, 3, done))
       .catch(done)
     })
   })
@@ -85,7 +85,7 @@ describe('entities:popularity', () => {
       // 1: edition
       // 1: work
       // 1: serie
-      .spread(human => scoreShouldEqual(human.uri, 4, done))
+      .then(([ human ]) => scoreShouldEqual(human.uri, 4, done))
       .catch(done)
     })
   })
@@ -107,18 +107,18 @@ const createSerieWithAWorkWithAnEditionWithAnItem = () => {
     createWork(),
     createSerie()
   ])
-  .spread((work, serie) => Promise.all([
+  .then(([ work, serie ]) => Promise.all([
     createEdition({ work }),
     addClaim(work.uri, 'wdt:P179', serie.uri)
   ])
-  .spread(edition => createItemFromEntityUri(edition.uri, { lang: 'en' })
+  .then(([ edition ]) => createItemFromEntityUri(edition.uri, { lang: 'en' })
   .then(item => [ serie, work, edition, item ])))
 }
 
 const createHumanWithAWorkWithAnEditionWithAnItem = () => {
   return createHuman()
   .then(human => createSerieWithAWorkWithAnEditionWithAnItem()
-  .spread((serie, work, edition, item) => Promise.all([
+  .then(([ serie, work, edition, item ]) => Promise.all([
     addClaim(work.uri, 'wdt:P50', human.uri),
     addClaim(serie.uri, 'wdt:P50', human.uri)
   ])

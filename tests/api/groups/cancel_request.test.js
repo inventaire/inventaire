@@ -32,7 +32,7 @@ describe('groups:update:cancel-request', () => {
   it('should cancel a request', done => {
     const requesterPromise = getUserGetter(humanName(), false)()
     Promise.all([ groupPromise, requesterPromise ])
-    .spread((group, requester) => {
+    .then(([ group, requester ]) => {
       return customAuthReq(requesterPromise, 'put', '/api/groups?action=request', { group: group._id })
       .then(() => getGroup(group))
     })

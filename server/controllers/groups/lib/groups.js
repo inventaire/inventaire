@@ -40,7 +40,7 @@ const groups_ = module.exports = {
       groups_.byUser(userId),
       groups_.byInvitedUser(userId)
     ])
-    .spread(_.union.bind(_))
+    .then(groups => _.union(...groups))
   },
 
   create: options => {

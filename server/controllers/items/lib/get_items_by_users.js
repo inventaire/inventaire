@@ -30,7 +30,7 @@ const getRelations = (reqUserId, usersIds) => {
   if (usersIds.length === 0) return promises_.resolve(relations)
 
   return getRelationsStatuses(reqUserId, usersIds)
-  .spread((friends, coGroupMembers, publik) => {
+  .then(([ friends, coGroupMembers, publik ]) => {
     relations.network = friends.concat(coGroupMembers)
     relations.public = publik
     return relations

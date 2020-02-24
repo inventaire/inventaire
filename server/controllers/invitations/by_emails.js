@@ -29,7 +29,7 @@ module.exports = (req, res) => {
     parseAndValidateEmails(emails, user.email),
     validateGroup(groupId, reqUserId)
   ])
-  .spread((parsedEmails, group) => {
+  .then(([ parsedEmails, group ]) => {
     return sendInvitationAndReturnData({ user, message, group, parsedEmails, reqUserId })
     .then(_.Log('invitationByEmails data'))
     .then(responses_.Send(res))

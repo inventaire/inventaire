@@ -17,7 +17,7 @@ module.exports = suspectWorksData => suggestion => {
     getOccurrencesFromExternalSources(uri, labels, langs),
     getOccurrencesFromEntities(uri, labels)
   ])
-  .spread((externalOccurrences, entitiesOccurrences) => {
+  .then(([ externalOccurrences, entitiesOccurrences ]) => {
     suggestion.occurrences = externalOccurrences.concat(entitiesOccurrences)
     return suggestion
   })

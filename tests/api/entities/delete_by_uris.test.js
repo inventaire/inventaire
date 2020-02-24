@@ -69,7 +69,7 @@ describe('entities:delete-by-uris', () => {
       createHuman(),
       createWork()
     ])
-    .spread((entityA, entityB) => {
+    .then(([ entityA, entityB ]) => {
       const uris = [ entityA.uri, entityB.uri ]
       return deleteByUris(uris)
       .then(() => getByUris(uris))
@@ -105,7 +105,7 @@ describe('entities:delete-by-uris', () => {
       createWorkWithAuthor(author),
       createWorkWithAuthor(author)
     ]))
-    .spread((workA, workB) => {
+    .then(([ workA, workB ]) => {
       const authorUri = workA.claims['wdt:P50'][0]
       return deleteByUris(authorUri)
     })

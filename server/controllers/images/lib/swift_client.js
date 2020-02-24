@@ -45,7 +45,7 @@ module.exports = {
       getParams(container, filename),
       fs_.getContentLength(path)
     ])
-    .spread((params, contentLength) => {
+    .then(([ params, contentLength ]) => {
       const { headers, url } = params
       headers['Content-Length'] = contentLength
       headers['Content-Type'] = 'application/octet-stream'

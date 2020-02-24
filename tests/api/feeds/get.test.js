@@ -27,7 +27,7 @@ describe('feeds:get', () => {
       userPromise,
       itemPromise
     ])
-    .spread((user, item) => {
+    .then(([ user, item ]) => {
       const userId = user._id
       return nonAuthReq('get', `/api/feeds?user=${userId}`)
       .then(res => {
@@ -48,7 +48,7 @@ describe('feeds:get', () => {
       itemAPromise,
       itemBPromise
     ])
-    .spread((user, itemA, itemB) => {
+    .then(([ user, itemA, itemB ]) => {
       const userId = user._id
       return nonAuthReq('get', `/api/feeds?user=${userId}`)
       .then(res => {
@@ -71,7 +71,7 @@ describe('feeds:get', () => {
       itemAPromise,
       itemBPromise
     ])
-    .spread((user, itemA, itemB) => {
+    .then(([ user, itemA, itemB ]) => {
       const { _id: userId, readToken: token } = user
       return nonAuthReq('get', `/api/feeds?user=${userId}&requester=${userId}&token=${token}`)
       .then(res => {

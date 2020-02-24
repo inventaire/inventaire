@@ -85,7 +85,7 @@ const user_ = module.exports = {
       usersDocsPromise,
       getNetworkIds(reqUserId)
     ])
-    .spread((usersDocs, networkIds) => _.compact(usersDocs)
+    .then(([ usersDocs, networkIds ]) => _.compact(usersDocs)
     .filter(user => user.type !== 'deletedUser')
     .map(omitPrivateData(reqUserId, networkIds, extraAttribute)))
   },

@@ -11,7 +11,7 @@ const validateRequestDecision = (reqUserId, groupId, requesterId) => {
     lists_.userInAdmins(reqUserId, groupId),
     lists_.userInRequested(requesterId, groupId)
   ])
-  .spread((userInAdmins, requesterInRequested) => {
+  .then(([ userInAdmins, requesterInRequested ]) => {
     if (!userInAdmins) {
       throw error_.new('user is not admin', 403, reqUserId, groupId)
     }
@@ -45,7 +45,7 @@ const validateAdminWithoutAdminsConflict = (reqUserId, groupId, targetId) => {
     lists_.userInAdmins(reqUserId, groupId),
     lists_.userInAdmins(targetId, groupId)
   ])
-  .spread((userIsAdmin, targetIsAdmin) => {
+  .then(([ userIsAdmin, targetIsAdmin ]) => {
     if (!userIsAdmin) {
       throw error_.new('user is not a group admin', 403, reqUserId, groupId)
     }
@@ -60,7 +60,7 @@ const validateLeaving = (reqUserId, groupId) => {
     lists_.userInGroup(reqUserId, groupId),
     leave_.userCanLeave(reqUserId, groupId)
   ])
-  .spread((userInGroup, userCanLeave) => {
+  .then(([ userInGroup, userCanLeave ]) => {
     if (!userInGroup) {
       throw error_.new('user is not in the group', 403, reqUserId, groupId)
     }
