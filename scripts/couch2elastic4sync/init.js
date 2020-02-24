@@ -5,7 +5,7 @@ const _ = __.require('builders', 'utils')
 const elasticSearchHost = CONFIG.elasticsearch.host
 const couchdbHost = CONFIG.db.fullHost()
 const folder = __.path('scripts', 'couch2elastic4sync')
-const { writeFile } = __.require('lib', 'fs')
+const { writeFile } = require('fs').promises
 const { syncDataList, indexesList } = __.require('db', 'elasticsearch/list')
 const createIndex = require('./create_index')
 

@@ -4,10 +4,10 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const split = require('split')
 const through = require('through')
-const fs = require('fs')
+const { readFileSync } = require('fs')
 const serializeEntityInTurtle = require('./lib/serialize_entity_in_turtle')
 
-const headers = fs.readFileSync(`${__dirname}/headers.ttl`).toString()
+const headers = readFileSync(`${__dirname}/headers.ttl`).toString()
 // Prefix the dump by the headers
 console.log(headers)
 
