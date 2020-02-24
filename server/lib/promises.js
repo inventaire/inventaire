@@ -18,7 +18,26 @@ const wait = ms => new Promise(resolve => setTimeout(resolve, ms))
 module.exports = {
   Promise,
   try: Promise.try,
-  props: Promise.props,
+
+  props: obj => {
+    const keys = []
+    const values = []
+    for (const key in obj) {
+      const value = obj[key]
+      keys.push(key)
+      values.push(value)
+    }
+
+    return Promise.all(values)
+    .then(res => {
+      const resultObj = {}
+      res.forEach((valRes, index) => {
+        const key = keys[index]
+        resultObj[key] = valRes
+      })
+      return resultObj
+    })
+  },
 
   // skip throws in a standard way to be catched later
   // by catchSkip and not be treated as an error.

@@ -1,6 +1,6 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
-const { Promise } = __.require('lib', 'promises')
+const promises_ = __.require('lib', 'promises')
 const getThumbData = __.require('data', 'commons/thumb')
 const getEnwikiImage = __.require('data', 'wikipedia/image')
 const getOpenLibraryCover = __.require('data', 'openlibrary/cover')
@@ -24,7 +24,7 @@ const findAnImage = entity => {
 }
 
 const pickBestPic = (entity, commonsFilename, enwikiTitle, openLibraryId) => {
-  return Promise.props({
+  return promises_.props({
     wm: getSourcePromise(getThumbData, commonsFilename),
     wp: getSourcePromise(getEnwikiImage, enwikiTitle),
     ol: getSourcePromise(getOpenLibraryCover, openLibraryId, entity.type)

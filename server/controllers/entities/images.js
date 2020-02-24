@@ -9,7 +9,7 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
-const { Promise } = __.require('lib', 'promises')
+const promises_ = __.require('lib', 'promises')
 const getEntitiesByUris = require('./lib/get_entities_by_uris')
 const specialEntityImagesGetter = require('./lib/special_entity_images_getter')
 const getEntityImagesFromClaims = require('./lib/get_entity_images_from_claims')
@@ -56,7 +56,7 @@ module.exports = (req, res) => {
 }
 
 const getEntitiesImages = entities => {
-  return Promise.props(Object.keys(entities).reduce(getEntityImages(entities), {}))
+  return promises_.props(Object.keys(entities).reduce(getEntityImages(entities), {}))
 }
 
 const getEntityImages = entities => (promises, id) => {
