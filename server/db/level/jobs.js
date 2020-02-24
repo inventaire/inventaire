@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const getSubDb = require('./get_sub_db')
-const { Promise } = __.require('lib', 'promises')
+const { promisify } = require('util')
 
 module.exports = {
   // always return an object with 'push' and 'pushBatch' function
@@ -20,7 +20,7 @@ module.exports = {
       const JobQueueServerAndClient = require('level-jobs')
       _.info(`${jobName} job in server & client mode`)
       const depromisifiedWorker = workerDepromisifier(worker)
-      return promisify(JobQueueServerAndClient(db, depromisifiedWorker, maxConcurrency))
+      return promisifyApi(JobQueueServerAndClient(db, depromisifiedWorker, maxConcurrency))
 
     // Otherwise, only push jobs to the queue, let another process run the jobs
     // See https://github.com/pgte/level-jobs#client-isolated-api
@@ -29,14 +29,15 @@ module.exports = {
     } else {
       const JobsQueueClient = require('level-jobs/client')
       _.warn(`${jobName} job in client mode only`)
-      return promisify(JobsQueueClient(db))
+      return promisifyApi(JobsQueueClient(db))
     }
   }
 }
 
-const promisify = API => {
-  API.push = Promise.promisify(API.push, { context: API })
-  API.pushBatch = Promise.promisify(API.pushBatch, { context: API })
+const promisifyApi = API => {
+  // Binding context, see https://nodejs.org/api/util.html#util_util_promisify_original
+  API.push = promisify(API.push).bind(API)
+  API.pushBatch = promisify(API.pushBatch).bind(API)
   return API
 }
 

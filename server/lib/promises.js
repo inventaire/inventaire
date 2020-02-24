@@ -37,18 +37,6 @@ module.exports = {
     else throw err
   },
 
-  // a proxy to Bluebird Promisify that keeps the names
-  promisify: (modul, keys) => {
-    // Allow to pass an array of the desired keys
-    // or let keys undefined to get all the keys
-    if (!_.isArray(keys)) keys = Object.keys(modul)
-    const API = {}
-    for (const key of keys) {
-      API[key] = Promise.promisify(modul[key])
-    }
-    return API
-  },
-
   // Source: http://bluebirdjs.com/docs/api/deferred-migration.html
   defer: () => {
     // Initialized in the defer function scope
