@@ -129,8 +129,7 @@ const items_ = module.exports = {
     }
   },
 
-  // Data manipulation done on client-side view models (item.serializeData),
-  // but useful to have server-side for emails view models
+  // Data serializa emails and rss feeds templates
   serializeData: item => {
     return snapshot_.addToItem(item)
     .then(item => {

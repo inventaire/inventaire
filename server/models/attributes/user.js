@@ -71,7 +71,8 @@ attributes.snapshot = [
 ]
 
 attributes.acceptNullValue = [
-  'position'
+  'position',
+  'picture'
 ]
 
 attributes.creationStrategies = [ 'local' ]

@@ -14,12 +14,16 @@ const validations = module.exports = {
   entityUri: _.isEntityUri,
   lang: _.isLang,
   localImg: _.isLocalImg,
-  userImg: _.isUserImg,
+  userImg: image => {
+    // Allow a user to delete their picture by passing a null value
+    if (image === null) return true
+    else return _.isUserImg(image)
+  },
   boolean: _.isBoolean,
   position: latLng => {
-    // allow the user or group to delete its position by passing a null value
+    // Allow a user or a group to delete their position by passing a null value
     if (latLng === null) return true
-    return _.isArray(latLng) && (latLng.length === 2) && _.every(latLng, _.isNumber)
+    else return _.isArray(latLng) && (latLng.length === 2) && _.every(latLng, _.isNumber)
   }
 }
 
