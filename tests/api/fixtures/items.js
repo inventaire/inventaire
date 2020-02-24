@@ -10,8 +10,7 @@ const faker = require('faker')
 const urisPromises = {}
 const getEditionUriPromise = lang => {
   if (!urisPromises[lang]) {
-    urisPromises[lang] = createEdition({ lang })
-      .then(({ uri }) => uri)
+    urisPromises[lang] = createEdition({ lang }).then(({ uri }) => uri)
   }
   return urisPromises[lang]
 }

@@ -100,7 +100,7 @@ const API = module.exports = {
 
   ensureEditionExists: (uri, workData, editionData) => {
     return getByUris(uri)
-    .get('entities')
+    .then(({ entities }) => entities)
     .then(entities => {
       if (entities[uri]) return entities[uri]
       if (!workData) {

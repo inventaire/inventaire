@@ -38,7 +38,7 @@ const request = (method, endpoint, body, cookie) => {
   if (body != null) data.body = body
 
   return waitForTestServer
-  .then(() => breq[method](data).get('body'))
+  .then(() => breq[method](data).then(({ body }) => body))
 }
 
 const customAuthReq = (userPromise, method, endpoint, body) => {

@@ -20,7 +20,7 @@ const requester = ids => {
   } else {
     const url = getEntities(ids)
     return getReq(url)
-    .get('entities')
+    .then(({ entities }) => entities)
   }
 }
 

@@ -236,5 +236,5 @@ describe('search:global', () => {
 const search = (types, search) => {
   search = encodeURIComponent(search)
   return nonAuthReq('get', `/api/search?search=${search}&types=${types}&lang=fr&limit=50`)
-  .get('results')
+  .then(({ results }) => results)
 }

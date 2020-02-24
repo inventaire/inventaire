@@ -77,7 +77,7 @@ const formatWdEntity = result => {
 // # INV
 const getInvAuthorWorks = (uri, worksByTypes) => {
   return entities_.byClaim('wdt:P50', uri, true)
-  .get('rows')
+  .then(({ rows }) => rows)
   .map(formatInvEntity)
   .filter(_.identity)
 }

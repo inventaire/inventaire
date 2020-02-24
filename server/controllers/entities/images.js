@@ -43,7 +43,7 @@ module.exports = (req, res) => {
   }
 
   return getEntitiesByUris({ uris, refresh })
-  .get('entities')
+  .then(({ entities }) => entities)
   .then(getEntitiesImages)
   .then(images => {
     if (redirect) {
@@ -84,7 +84,8 @@ const redirectToRawImage = (res, uri, images, width, height) => {
 const replaceWikimediaFilename = image => {
   // Wikimedia file name neither start by 'http' or '/'
   if (!/^(http|\/)/.test(image)) {
-    return getThumbData(image).get('url')
+    return getThumbData(image)
+    .then(({ url }) => url)
   } else {
     return Promise.resolve(image)
   }

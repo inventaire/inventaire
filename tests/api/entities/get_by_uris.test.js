@@ -130,7 +130,7 @@ describe('entities:get:by-uris', () => {
 
     it('should be able to include the works, authors, and series of an edition', done => {
       createEditionWithWorkAuthorAndSerie()
-      .get('uri')
+      .then(({ uri }) => uri)
       .then(editionUri => {
         return getByUris(editionUri, 'wdt:P50|wdt:P179|wdt:P629')
         .then(res => {

@@ -57,7 +57,7 @@ module.exports = {
 
   getGlobalActivity: () => {
     return db.view(designDocName, 'byUserId', { group_level: 1 })
-    .get('rows')
+    .then(({ rows }) => rows)
     .map(formatRow)
     .then(sortAndFilterContributions)
     // Return only the first hundred results
@@ -75,7 +75,7 @@ module.exports = {
       startkey: [ startDay ],
       endkey: [ today, maxKey ]
     })
-    .get('rows')
+    .then(({ rows }) => rows)
     .then(rows => convertToArray(rows.reduce(aggregatePeriodContributions, {})))
     .then(activity => ({
       activity,

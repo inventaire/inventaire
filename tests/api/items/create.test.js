@@ -10,7 +10,7 @@ const { createUser, getRefreshedUser } = require('../fixtures/users')
 const { getByUris: getEntitiesByUris } = require('../utils/entities')
 const debounceDelay = CONFIG.itemsCountDebounceTime + 100
 
-const editionUriPromise = createEdition().get('uri')
+const editionUriPromise = createEdition().then(({ uri }) => uri)
 
 describe('items:create', () => {
   it('should create an item', done => {
@@ -124,7 +124,7 @@ describe('items:create', () => {
     })
     .then(edition => {
       return Promise.all([
-        getEntitiesByUris(edition.uri, 'wdt:P629|wdt:P50').get('entities'),
+        getEntitiesByUris(edition.uri, 'wdt:P629|wdt:P50').then(({ entities }) => entities),
         authReq('post', '/api/items', { entity: 'isbn:9780812993257' })
       ])
       .then(([ entities, item ]) => {

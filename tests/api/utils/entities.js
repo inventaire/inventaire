@@ -34,7 +34,7 @@ const entitiesUtils = module.exports = {
   getHistory: entityId => {
     entityId = entityId.replace('inv:', '')
     return nonAuthReq('get', `/api/entities?action=history&id=${entityId}`)
-    .get('patches')
+    .then(({ patches }) => patches)
   },
 
   updateLabel: (uri, lang, value) => {

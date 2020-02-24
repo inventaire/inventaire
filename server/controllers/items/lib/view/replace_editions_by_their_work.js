@@ -10,7 +10,7 @@ module.exports = entities => {
   // Do no refetch works already fetched
   editionsWorksUris = _.uniq(_.difference(editionsWorksUris, worksUris))
   return getEntitiesByUris({ uris: editionsWorksUris })
-  .get('entities')
+  .then(({ entities }) => entities)
   .then(editionsWorksEntities => {
     return {
       works: works.concat(_.values(editionsWorksEntities)),

@@ -131,6 +131,5 @@ const buildKey = dbName => `${dbName}-last-seq`
 
 const getDbLastSeq = dbUrl => {
   return breq.get(`${dbUrl}/_changes?limit=0&descending=true`)
-  .get('body')
-  .get('last_seq')
+  .then(({ body }) => body.last_seq)
 }

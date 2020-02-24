@@ -41,6 +41,6 @@ const getItems = params => {
 const getItemsEntitiesData = items => {
   const uris = _.uniq(_.map(items, 'entity'))
   return getEntitiesByUris({ uris })
-  .get('entities')
+  .then(({ entities }) => entities)
   .then(replaceEditionsByTheirWork)
 }

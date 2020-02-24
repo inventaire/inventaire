@@ -34,11 +34,11 @@ describe('entities:resolver:update-resolved', () => {
     .tap(work => addClaim(work.uri, 'wdt:P50', authorUri2))
     .then(work => {
       return resolveAndUpdate(entry)
-      .get('entries')
+      .then(({ entries }) => entries)
       .then(entries => {
         const entityUri = entries[0].works[0].uri
         return getByUris(entityUri)
-        .get('entities')
+        .then(({ entities }) => entities)
         .then(entities => {
           const workAuthorsUris = _.values(entities)[0].claims['wdt:P50']
           workAuthorsUris.should.not.containEql(authorUri)
@@ -60,12 +60,12 @@ describe('entities:resolver:update-resolved', () => {
     ])
     .then(([ workA, workB ]) => {
       return resolveAndUpdate([ entryA, entryB ])
-      .get('entries')
+      .then(({ entries }) => entries)
       .then(entries => {
         const workAUri = entries[0].works[0].uri
         const workBUri = entries[1].works[0].uri
         return getByUris([ workAUri, workBUri ])
-        .get('entities')
+        .then(({ entities }) => entities)
         .then(entities => {
           workA = entities[workAUri]
           workB = entities[workBUri]
@@ -95,12 +95,12 @@ describe('entities:resolver:update-resolved', () => {
     .tap(human => addClaim(human.uri, 'wdt:P2963', goodReadsId))
     .then(human => {
       return resolveAndUpdate(entry)
-      .get('entries')
+      .then(({ entries }) => entries)
       .then(entries => {
         const authorUri = entries[0].authors[0].uri
         authorUri.should.equal(human.uri)
         return getByUris(authorUri)
-        .get('entities')
+        .then(({ entities }) => entities)
         .then(entities => {
           const updatedAuthor = entities[authorUri]
           const authorWebsiteClaimValues = updatedAuthor.claims['wdt:P856']
@@ -133,11 +133,11 @@ describe('entities:resolver:update-resolved', () => {
         }
       }
       return resolveAndUpdate(entry)
-      .get('entries')
+      .then(({ entries }) => entries)
       .then(Wait(10))
       .then(entries => {
         return getByUris(editionUri)
-        .get('entities')
+        .then(({ entities }) => entities)
         .then(entities => {
           edition = entities[editionUri]
           const numberOfPagesClaimsValues = edition.claims['wdt:P1104']

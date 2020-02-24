@@ -69,7 +69,7 @@ describe('entities:exists-or-create-from-seed', () => {
       res._id.should.be.a.String()
       const workUri = res.claims['wdt:P629'][0]
       authReq('get', `/api/entities?action=by-uris&uris=${workUri}`)
-      .get('entities')
+      .then(({ entities }) => entities)
       .then(entities => {
         entities[workUri].should.be.an.Object()
         done()

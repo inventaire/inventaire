@@ -37,7 +37,7 @@ const getWdSerieParts = (qid, refresh, dry) => {
 // as we use only wdt:P179 internally
 const getInvSerieParts = uri => {
   return entities_.byClaim('wdt:P179', uri, true)
-  .get('rows')
+  .then(({ rows }) => rows)
   .map(parseRow)
 }
 

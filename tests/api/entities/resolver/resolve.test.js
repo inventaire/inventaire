@@ -33,7 +33,7 @@ describe('entities:resolve', () => {
     const entry = { edition: editionSeed }
     ensureEditionExists(`isbn:${isbn13}`)
     .then(() => resolve(entry))
-    .get('entries')
+    .then(({ entries }) => entries)
     .then(entries => {
       entries[0].should.be.an.Object()
       entries[0].edition.uri.should.equal(`isbn:${isbn13}`)
@@ -51,7 +51,7 @@ describe('entities:resolve', () => {
       const editionSeed = { claims: { 'wdt:P648': [ openLibraryId ] } }
       const entry = { edition: editionSeed }
       return resolve(entry)
-      .get('entries')
+      .then(({ entries }) => entries)
       .then(entries => {
         entries[0].edition.uri.should.equal(edition.uri)
         done()
@@ -67,7 +67,7 @@ describe('entities:resolve', () => {
     const entry = { edition: editionSeed }
     ensureEditionExists(`isbn:${isbn13}`)
     .then(() => resolve(entry))
-    .get('entries')
+    .then(({ entries }) => entries)
     .then(entries => {
       entries[0].should.be.an.Object()
       entries[0].edition.uri.should.equal(`isbn:${isbn13}`)
@@ -86,7 +86,7 @@ describe('entities:resolve', () => {
       ensureEditionExists(`isbn:${isbn13B}`)
     ])
     .then(() => resolve([ entryA, entryB ]))
-    .get('entries')
+    .then(({ entries }) => entries)
     .then(entries => {
       entries[0].should.be.an.Object()
       entries[0].edition.uri.should.equal(`isbn:${isbn13A}`)
@@ -206,7 +206,7 @@ describe('entities:resolve:external-id', () => {
       }
       ]
     })
-    .get('entries')
+    .then(({ entries }) => entries)
     .then(entries => {
       entries[0].works.should.be.an.Array()
       entries[0].works[0].should.be.an.Object()
@@ -226,7 +226,7 @@ describe('entities:resolve:external-id', () => {
         edition: { isbn: generateIsbn13() },
         works: [ { claims: { 'wdt:P2969': [ goodReadsId ] } } ]
       })
-      .get('entries')
+      .then(({ entries }) => entries)
       .then(entries => {
         entries[0].works.should.be.an.Array()
         entries[0].works[0].should.be.an.Object()
@@ -247,7 +247,7 @@ describe('entities:resolve:external-id', () => {
       }
       ]
     })
-    .get('entries')
+    .then(({ entries }) => entries)
     .then(entries => {
       entries[0].authors.should.be.an.Array()
       entries[0].authors[0].should.be.an.Object()
@@ -268,7 +268,7 @@ describe('entities:resolve:external-id', () => {
         edition: { isbn: generateIsbn13() },
         authors: [ { claims: { 'wdt:P2963': [ goodReadsId ] } } ]
       })
-      .get('entries')
+      .then(({ entries }) => entries)
       .then(entries => {
         entries[0].authors.should.be.an.Array()
         entries[0].authors[0].should.be.an.Object()
@@ -300,7 +300,7 @@ describe('entities:resolve:in-context', () => {
           works: [ { labels: { en: missingWorkLabel } } ],
           authors: [ { claims: { 'wdt:P2963': [ goodReadsId ] } } ]
         })
-        .get('entries')
+        .then(({ entries }) => entries)
         .then(entries => {
           should(entries[0].works[0].uri).be.ok()
           done()
@@ -318,7 +318,7 @@ describe('entities:resolve:in-context', () => {
         edition: { isbn: generateIsbn13() },
         works: [ { labels, claims } ]
       })
-      .get('entries')
+      .then(({ entries }) => entries)
       .then(entries => {
         should(entries[0].works[0].uri).be.ok()
         done()
@@ -346,7 +346,7 @@ describe('entities:resolve:in-context', () => {
           authors: [ { claims: { 'wdt:P2963': [ goodReadsId ] } } ]
         }
         return resolve(entry)
-        .get('entries')
+        .then(({ entries }) => entries)
         .then(entries => {
           should(entries[0].works[0].uri).not.be.ok()
           done()
@@ -371,7 +371,7 @@ describe('entities:resolve:in-context', () => {
           authors: [ { labels: author.labels } ]
         }
         return resolve(entry)
-        .get('entries')
+        .then(({ entries }) => entries)
         .then(entries => {
           should(entries[0].works[0].uri).be.ok()
           should(entries[0].authors[0].uri).be.ok()
@@ -431,7 +431,7 @@ describe('entities:resolve:on-labels', () => {
       .then(Wait(elasticsearchUpdateDelay))
       .then(work => {
         return resolve(basicEntry(seedLabel, authorLabel))
-        .get('entries')
+        .then(({ entries }) => entries)
         .then(entries => {
           should(entries[0].works[0].uri).not.be.ok()
           done()
@@ -450,7 +450,7 @@ describe('entities:resolve:on-labels', () => {
       .then(Wait(elasticsearchUpdateDelay))
       .then(work => {
         return resolve(basicEntry(workLabel, authorLabel))
-        .get('entries')
+        .then(({ entries }) => entries)
         .then(entries => {
           entries[0].works[0].uri.should.equal(work.uri)
           entries[0].authors[0].uri.should.equal(author.uri)
@@ -471,7 +471,7 @@ describe('entities:resolve:on-labels', () => {
       .then(Wait(elasticsearchUpdateDelay))
       .then(work => {
         return resolve(basicEntry(seedLabel, authorLabel))
-        .get('entries')
+        .then(({ entries }) => entries)
         .then(entries => {
           entries[0].works[0].uri.should.equal(work.uri)
           entries[0].authors[0].uri.should.equal(author.uri)
@@ -495,7 +495,7 @@ describe('entities:resolve:on-labels', () => {
         .then(Wait(elasticsearchUpdateDelay))
         .then(works => {
           return resolve(basicEntry(workLabel, author.labels.en))
-          .get('entries')
+          .then(({ entries }) => entries)
           .then(entries => {
             should(entries[0].works[0].uri).not.be.ok()
             should(entries[0].authors[0].uri).not.be.ok()

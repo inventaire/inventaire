@@ -30,7 +30,7 @@ module.exports = (req, res, nex) => {
       return user_.byIds([ ownerId, reqUserId ])
       .then(([ ownerDoc, requesterDoc ]) => transactions_.create(itemDoc, ownerDoc, requesterDoc))
     })
-    .get('id')
+    .then(({ id }) => id)
     .then(id => {
       return transactions_.addMessage(reqUserId, message, id)
       .then(() => transactions_.byId(id))

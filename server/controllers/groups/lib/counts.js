@@ -6,7 +6,7 @@ const groups_ = require('./groups')
 module.exports = {
   pendingGroupInvitationsCount: userId => {
     return groups_.byInvitedUser(userId)
-    .get('length')
+    .then(({ length }) => length)
   },
 
   pendingGroupRequestsCount: userId => {

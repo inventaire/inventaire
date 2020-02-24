@@ -11,7 +11,7 @@ module.exports = authorUris => {
 
 const getWorksFromAuthorsUri = authorUri => {
   return getAuthorWorks({ uri: authorUri })
-  .get('works')
+  .then(({ works }) => works)
   .map(_.property('uri'))
   // get full-fledged entity, as getAuthorWorks returns an entity without labels
   .then(getEntitiesList)
