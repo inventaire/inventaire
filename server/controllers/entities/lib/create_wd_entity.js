@@ -11,9 +11,7 @@ const properties = require('./properties/properties_values_constraints')
 const { prefixifyWd, unprefixify } = require('./prefix')
 const whitelistedEntityTypes = [ 'work', 'serie', 'human', 'publisher' ]
 
-module.exports = params => Promise.try(() => createWdEntity(params))
-
-const createWdEntity = params => {
+module.exports = async params => {
   const { labels, claims, user, isAlreadyValidated } = params
   wdOauth.validate(user)
   const oauth = wdOauth.getFullCredentials(user)

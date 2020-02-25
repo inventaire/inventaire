@@ -4,7 +4,6 @@ const designDocName = 'patches'
 const db = __.require('couch', 'base')('patches', designDocName)
 const Patch = __.require('models', 'patch')
 const Entity = __.require('models', 'entity')
-const promises_ = __.require('lib', 'promises')
 const assert_ = __.require('utils', 'assert_types')
 const { maxKey } = __.require('lib', 'couch')
 const { oneDay } = __.require('lib', 'times')
@@ -42,9 +41,9 @@ module.exports = {
 
   byRedirectUri: db.viewByKey.bind(null, 'byRedirectUri'),
 
-  create: params => {
-    return promises_.try(() => Patch.create(params))
-    .then(db.postAndReturn)
+  create: async params => {
+    const patch = Patch.create(params)
+    return db.postAndReturn(patch)
   },
 
   getSnapshots: entityId => {

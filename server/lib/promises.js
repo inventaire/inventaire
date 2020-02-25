@@ -17,7 +17,6 @@ const wait = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 module.exports = {
   Promise,
-  try: Promise.try,
 
   props: obj => {
     const keys = []

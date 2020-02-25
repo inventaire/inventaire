@@ -7,31 +7,29 @@ const error_ = __.require('lib', 'error/error')
 const user_ = require('./user')
 
 module.exports = {
-  username: (username, currentUsername) => {
+  username: async (username, currentUsername) => {
     // If a currentUsername is provided
     // return true if the new username is the same but with a different case
     // (used for username update)
     if (currentUsername) {
-      if (username.toLowerCase() === currentUsername.toLowerCase()) {
-        return Promise.resolve()
-      }
+      if (username.toLowerCase() === currentUsername.toLowerCase()) return
     }
 
     if (!User.validations.username(username)) {
-      return error_.rejectInvalid('username', username)
+      throw error_.newInvalid('username', username)
     }
 
     if (isReservedWord(username)) {
-      return error_.reject("reserved words can't be usernames", 400, username)
+      throw error_.new("reserved words can't be usernames", 400, username)
     }
 
     return user_.byUsername(username)
     .then(checkAvailability.bind(null, username, 'username'))
   },
 
-  email: email => {
+  email: async email => {
     if (!User.validations.email(email)) {
-      return error_.rejectInvalid('email', email)
+      throw error_.newInvalid('email', email)
     }
 
     return user_.byEmail(email)

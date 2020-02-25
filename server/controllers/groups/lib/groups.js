@@ -44,7 +44,8 @@ const groups_ = module.exports = {
   },
 
   create: options => {
-    return Promise.try(() => Group.create(options))
+    return Promise.resolve()
+    .then(() => Group.create(options))
     .then(addSlug)
     .then(db.postAndReturn)
     .then(_.Log('group created'))

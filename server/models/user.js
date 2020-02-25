@@ -2,7 +2,6 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const pw_ = __.require('lib', 'crypto').passwords
-const promises_ = __.require('lib', 'promises')
 const assert_ = __.require('utils', 'assert_types')
 const error_ = __.require('lib', 'error/error')
 const randomString = __.require('lib', 'utils/random_string')
@@ -66,9 +65,9 @@ User._create = (username, email, creationStrategy, language, password) => {
   return user
 }
 
-User.create = (...args) => {
-  return promises_.try(() => User._create.apply(null, args))
-  .then(withHashedPassword)
+User.create = async (...args) => {
+  const user = User._create.apply(null, args)
+  return withHashedPassword(user)
 }
 
 User.upgradeInvited = (invitedDoc, username, creationStrategy, language, password) => {
@@ -78,17 +77,12 @@ User.upgradeInvited = (invitedDoc, username, creationStrategy, language, passwor
   .then(userDoc => Object.assign(invitedDoc, userDoc))
 }
 
-const withHashedPassword = user => {
+const withHashedPassword = async user => {
   const { password } = user
   if (password != null) {
-    return pw_.hash(password).then(replacePassword.bind(null, user))
-  } else {
-    return Promise.resolve(user)
+    const hash = await pw_.hash(password)
+    user.password = hash
   }
-}
-
-const replacePassword = (user, hash) => {
-  user.password = hash
   return user
 }
 

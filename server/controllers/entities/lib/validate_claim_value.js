@@ -1,6 +1,5 @@
 const __ = require('config').universalPath
 const error_ = __.require('lib', 'error/error')
-const promises_ = __.require('lib', 'promises')
 
 // Working around circular dependencies
 let getEntityByUri, entities_
@@ -13,10 +12,7 @@ setTimeout(lateRequire, 0)
 const properties = require('./properties/properties_values_constraints')
 const validateClaimValueSync = require('./validate_claim_value_sync')
 
-// Always return a promise
-module.exports = params => promises_.try(() => validateClaimValue(params))
-
-const validateClaimValue = params => {
+module.exports = async params => {
   const { type, currentClaims, property, oldVal, newVal, letEmptyValuePass, userIsAdmin } = params
   // letEmptyValuePass to let it be interpreted as a claim deletion
   if (letEmptyValuePass && newVal == null) return null

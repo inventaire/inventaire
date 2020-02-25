@@ -3,7 +3,6 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
-const promises_ = __.require('lib', 'promises')
 const responses_ = __.require('lib', 'responses')
 const parseEmails = require('./lib/parse_emails')
 const sendInvitationAndReturnData = require('./lib/send_invitation_and_return_data')
@@ -38,13 +37,13 @@ module.exports = (req, res) => {
   .catch(error_.Handler(req, res))
 }
 
-const parseAndValidateEmails = (emails, userEmail) => promises_.try(() => {
+const parseAndValidateEmails = async (emails, userEmail) => {
   const parsedEmails = parseEmails(emails)
   // Removing the requesting user email if for some reason
   // it ended up in the list
   const filteredEmails = _.without(parsedEmails, userEmail.toLowerCase())
   return applyLimit(filteredEmails)
-})
+}
 
 const validateGroup = (groupId, reqUserId) => {
   if (groupId == null) return Promise.resolve(null)

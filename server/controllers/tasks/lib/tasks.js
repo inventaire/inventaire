@@ -1,15 +1,14 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const promises_ = __.require('lib', 'promises')
 const Task = __.require('models', 'task')
 
 const db = __.require('couch', 'base')('tasks')
 
 const tasks_ = module.exports = {
-  createInBulk: tasksDocs => {
-    return promises_.try(() => tasksDocs.map(Task.create))
-    .then(db.bulk)
+  createInBulk: async tasksDocs => {
+    const tasks = tasksDocs.map(Task.create)
+    return db.bulk(tasks)
   },
 
   update: options => {

@@ -3,17 +3,16 @@ const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const assert_ = __.require('utils', 'assert_types')
 const { Lang } = __.require('lib', 'regex')
-const promises_ = __.require('lib', 'promises')
 const getEntityType = require('./get_entity_type')
 const validateClaims = require('./validate_claims')
 const typesWithoutLabels = require('./types_without_labels')
 
 module.exports = entity => {
-  return promises_.try(() => validate(entity))
+  return validate(entity)
   .catch(addErrorContext(entity))
 }
 
-const validate = entity => {
+const validate = async entity => {
   const { labels, claims } = entity
   assert_.object(labels)
   assert_.object(claims)

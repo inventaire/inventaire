@@ -2,16 +2,13 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
-const { Promise } = __.require('lib', 'promises')
 const getWdEntity = __.require('data', 'wikidata/get_entity')
 const wdk = require('wikidata-sdk')
 const wdEdit = require('wikidata-edit')
 const wdOauth = require('./wikidata_oauth')
 const properties = require('./properties/properties_values_constraints')
 
-module.exports = (...args) => Promise.try(() => updateWdClaim(...args))
-
-const updateWdClaim = (user, id, property, oldVal, newVal) => {
+module.exports = async (user, id, property, oldVal, newVal) => {
   wdOauth.validate(user)
 
   if ((properties[property].datatype === 'entity') && _.isInvEntityUri(newVal)) {

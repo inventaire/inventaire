@@ -1,13 +1,12 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
-const { Promise } = __.require('lib', 'promises')
 const error_ = __.require('lib', 'error/error')
 const assert_ = __.require('utils', 'assert_types')
 const responses_ = __.require('lib', 'responses')
 const parameters = require('./parameters')
 const { generics } = parameters
 
-module.exports = (req, res, configs) => Promise.try(() => {
+module.exports = async (req, res, configs) => {
   assert_.object(req.query)
 
   const place = getPlace(req.method, configs)
@@ -31,7 +30,7 @@ module.exports = (req, res, configs) => Promise.try(() => {
   if (req.user) input.reqUserId = req.user._id
 
   return input
-})
+}
 
 const sanitizeParameter = (input, name, config, place, res) => {
   const { generic } = config

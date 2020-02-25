@@ -3,10 +3,9 @@ const __ = CONFIG.universalPath
 require('should')
 const { authReq, authReqC, shouldNotGetHere, rethrowShouldNotGetHereErrors } = __.require('apiTests', 'utils/utils')
 const { createTransaction, addMessage } = require('../fixtures/transactions')
-const { Promise } = __.require('lib', 'promises')
 
 const endpoint = '/api/transactions?action=message'
-const transactionPromise = Promise.try(createTransaction)
+const transactionPromise = createTransaction()
 
 describe('transactions:post:message', () => {
   it('should create a transaction', async () => {

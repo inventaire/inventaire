@@ -2,7 +2,6 @@ const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const assert_ = __.require('utils', 'assert_types')
 const db = __.require('couch', 'base')('entities')
-const promises_ = __.require('lib', 'promises')
 const Entity = __.require('models', 'entity')
 const patches_ = require('./patches')
 const isbn_ = __.require('lib', 'isbn/isbn')
@@ -37,17 +36,16 @@ const entities_ = module.exports = {
     .then(couch_.firstDoc)
   },
 
-  byClaim: (property, value, includeDocs = false, parseDoc = false) => {
-    return promises_.try(() => validateProperty(property))
-    .then(() => {
-      const query = db.view('entities', 'byClaim', {
-        key: [ property, value ],
-        include_docs: includeDocs
-      })
+  byClaim: async (property, value, includeDocs = false, parseDoc = false) => {
+    validateProperty(property)
 
-      if (parseDoc) return query.then(couch_.mapDoc)
-      else return query
+    const res = await db.view('entities', 'byClaim', {
+      key: [ property, value ],
+      include_docs: includeDocs
     })
+
+    if (parseDoc) return couch_.mapDoc(res)
+    else return res
   },
 
   urisByClaim: (property, value) => {
@@ -75,14 +73,12 @@ const entities_ = module.exports = {
     return db.postAndReturn(Entity.create())
   },
 
-  edit: params => {
+  edit: async params => {
     const { userId, updatedLabels, updatedClaims, currentDoc, batchId } = params
     let updatedDoc = _.cloneDeep(currentDoc)
-    return promises_.try(() => {
-      updatedDoc = Entity.setLabels(updatedDoc, updatedLabels)
-      return Entity.addClaims(updatedDoc, updatedClaims)
-    })
-    .then(updatedDoc => entities_.putUpdate({ userId, currentDoc, updatedDoc, batchId }))
+    updatedDoc = Entity.setLabels(updatedDoc, updatedLabels)
+    updatedDoc = Entity.addClaims(updatedDoc, updatedClaims)
+    return entities_.putUpdate({ userId, currentDoc, updatedDoc, batchId })
   },
 
   addClaims: (userId, newClaims, currentDoc, batchId) => {

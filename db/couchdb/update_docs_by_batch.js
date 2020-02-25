@@ -49,7 +49,8 @@ const updateDoc = params => {
     // updateFunction can return a promise, so we need to convert sync functions
     // to promises too, to keep it consistent
     // Use a clone of the doc to keep the doc itself unmutated
-    Promise.try(() => updateFunction(_.cloneDeep(doc)))
+    Promise.resolve()
+    .then(() => updateFunction(_.cloneDeep(doc)))
     .then(updatedDoc => {
       if (objDiff(doc, updatedDoc)) {
         docDiff(doc, updatedDoc, preview)
