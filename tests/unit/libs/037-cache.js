@@ -13,9 +13,9 @@ const sinon = require('sinon')
 const cache_ = __.require('lib', 'cache')
 const randomString = __.require('lib', './utils/random_string')
 
-const hashKey = key => Promise.resolve(_.hashCode(key))
+const hashKey = async key => _.hashCode(key)
 const workingFn = key => hashKey(key + randomString(8))
-const failingFn = () => Promise.reject(new Error('Jag är Döden'))
+const failingFn = async () => { throw new Error('Jag är Döden') }
 
 describe('cache', () => {
   describe('get', () => {

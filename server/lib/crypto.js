@@ -5,19 +5,19 @@ const error_ = __.require('lib', 'error/error')
 const crypto = require('crypto')
 
 exports.passwords = {
-  hash: password => {
-    if (password == null) return error_.reject('missing password', 400)
+  hash: async password => {
+    if (password == null) throw error_.new('missing password', 400)
     return pw.hash(password)
   },
 
-  verify: (hash, password, tokenDaysToLive) => {
-    if (hash == null) return error_.reject('missing hash', 400)
+  verify: async (hash, password, tokenDaysToLive) => {
+    if (hash == null) throw error_.new('missing hash', 400)
 
     if (tokenDaysToLive != null && pw.expired(hash, tokenDaysToLive)) {
-      return error_.reject('token expired', 401)
+      throw error_.new('token expired', 401)
     }
 
-    if (password == null) return error_.reject('missing password', 400)
+    if (password == null) throw error_.new('missing password', 400)
 
     return pw.verify(hash, password)
   }

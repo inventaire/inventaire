@@ -26,12 +26,12 @@ const localOnlyProperties = [
   'wdt:P123'
 ]
 
-module.exports = params => {
+module.exports = async params => {
   const { property, value, refresh, sort, dry } = params
   assert_.strings([ property, value ])
 
   if (blacklistedProperties.includes(property)) {
-    return error_.reject('blacklisted property', 400, { property })
+    throw error_.new('blacklisted property', 400, { property })
   }
 
   const promises = []

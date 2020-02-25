@@ -45,11 +45,11 @@ const parseAndValidateEmails = async (emails, userEmail) => {
   return applyLimit(filteredEmails)
 }
 
-const validateGroup = (groupId, reqUserId) => {
+const validateGroup = async (groupId, reqUserId) => {
   if (groupId == null) return Promise.resolve(null)
 
   if (!_.isGroupId(groupId)) {
-    return error_.rejectInvalid('group id', groupId)
+    throw error_.newInvalid('group id', groupId)
   }
 
   return groups_.byId(groupId)

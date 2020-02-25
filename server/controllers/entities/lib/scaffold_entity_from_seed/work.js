@@ -25,17 +25,17 @@ setTimeout(lateRequire, 0)
 // seed attributes:
 // MUST have: title
 
-module.exports = seed => {
+module.exports = async seed => {
   let { title, authors } = seed
 
   if (!_.isNonEmptyString(title)) {
-    return error_.reject('missing title', 400, title)
+    throw error_.new('missing title', 400, title)
   }
 
   title = title.trim()
 
   if (!_.isArray(authors)) {
-    return error_.reject('missing authors', 400, authors)
+    throw error_.new('missing authors', 400, authors)
   }
 
   authors = authors.map(_.trim)

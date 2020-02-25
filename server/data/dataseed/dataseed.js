@@ -26,9 +26,9 @@ module.exports = {
   },
 
   // Provides simply an image in a prompt maner
-  getImageByIsbn: isbn => {
+  getImageByIsbn: async isbn => {
     isbn = isbn_.toIsbn13(isbn)
-    if (!isbn) return Promise.reject(new Error('invalid isbn'))
+    if (!isbn) throw new Error('invalid isbn')
     const url = _.buildPath(`${host}/images`, { isbn })
     return requests_.get(url, reqOptions)
   },

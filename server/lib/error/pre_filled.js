@@ -33,28 +33,6 @@ module.exports = error_ => {
   newFunctions.newMissingQuery = newFunctions.newMissing.bind(null, 'query')
   newFunctions.newMissingBody = newFunctions.newMissing.bind(null, 'body')
 
-  // Same as error_.new but returns a promise
-  // also accepts Error instances
-  const Reject = newFnName => (...args) => {
-    let currentNewFnName
-    if ((newFnName === 'new') && args[0] instanceof Error) {
-      // Do NOT assign 'complete' to newFnName
-      // as it would have effects on all following reject calls
-      currentNewFnName = 'complete'
-    } else {
-      currentNewFnName = newFnName
-    }
-
-    const err = error_[currentNewFnName].apply(null, args)
-    return Promise.reject(err)
-  }
-
-  const rejects = {
-    reject: Reject('new'),
-    rejectMissingQuery: Reject('newMissingQuery'),
-    rejectInvalid: Reject('newInvalid')
-  }
-
   // Allow to use the standard error_.new interface
   // while out or at the end of a promise chain
   // DO NOT use inside a promise chain as error_.handler
@@ -90,5 +68,5 @@ module.exports = error_ => {
     }
   }
 
-  return Object.assign(newFunctions, bundles, rejects)
+  return Object.assign(newFunctions, bundles)
 }

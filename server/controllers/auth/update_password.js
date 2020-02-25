@@ -60,10 +60,8 @@ const updateUserPassword = (userId, user, newHash) => {
   return db.update(userId, updateFn)
 }
 
-const testOpenResetPasswordWindow = resetPassword => {
+const testOpenResetPasswordWindow = async resetPassword => {
   if (_.expired(resetPassword, oneHour)) {
-    return error_.reject('reset password timespan experied', 400)
-  } else {
-    return Promise.resolve()
+    throw error_.new('reset password timespan experied', 400)
   }
 }

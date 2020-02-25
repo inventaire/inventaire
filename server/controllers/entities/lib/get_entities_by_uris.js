@@ -14,7 +14,7 @@ const getters = {
 
 const prefixes = Object.keys(getters)
 
-module.exports = params => {
+module.exports = async params => {
   const { uris, list } = params
   assert_.array(uris)
   const domains = {}
@@ -26,12 +26,12 @@ module.exports = params => {
 
     if (!prefixes.includes(prefix)) {
       errMessage = `invalid uri prefix: ${prefix} (uri: ${uri})`
-      return error_.reject(errMessage, 400, uri)
+      throw error_.new(errMessage, 400, uri)
     }
 
     if (!validators[prefix](id)) {
       errMessage = `invalid uri id: ${id} (uri: ${uri})`
-      return error_.reject(errMessage, 400, uri)
+      throw error_.new(errMessage, 400, uri)
     }
 
     if (!domains[prefix]) { domains[prefix] = [] }

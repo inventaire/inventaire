@@ -9,9 +9,9 @@ error_ = __.require('lib', 'error/error')
 const updateRelationScore = require('./relation_score')
 const supportedTypes = [ 'human' ]
 
-module.exports = uri => {
+module.exports = async uri => {
   if (uri.split(':')[0] !== 'inv') {
-    return error_.reject('invalid uri domain', 400, { uri })
+    throw error_.new('invalid uri domain', 400, { uri })
   }
 
   return getEntityByUri({ uri })
