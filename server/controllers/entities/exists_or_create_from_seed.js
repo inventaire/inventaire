@@ -39,30 +39,24 @@ const findOrCreateEntity = seed => entityDoc => {
   return entityDoc || addImage(seed).then(scaffoldFromSeed)
 }
 
-const addImage = seed => {
-  if (!dataseedEnabled) return Promise.resolve(seed)
-  // Try to find an image from the seed ISBN
-  return dataseed.getImageByIsbn(seed.isbn)
-  .then(res => {
-    const { url } = res
-    if (url) {
-      seed.image = url
-    } else {
-      // if an image was provided in the seed, try to use it
-      if (seed.image) assignSeedImage(seed, url)
-    }
-    return seed
-  })
-  .catch(err => {
+const addImage = async seed => {
+  if (!dataseedEnabled) return seed
+
+  try {
+    seed.image = await findImageFromSeed(seed)
+  } catch (err) {
     _.error(err, 'add image err')
-    return seed
-  })
+  }
+
+  return seed
 }
 
-const assignSeedImage = (seed, url) => {
-  dataseed.getImageByUrl(seed.image)
-  .then(res => {
-    if (url) seed.image = res.url
-    else delete seed.image
-  })
+const findImageFromSeed = async seed => {
+  // Try to find an image from the seed ISBN
+  const { url: isbnImageUrl } = await dataseed.getImageByIsbn(seed.isbn)
+  if (isbnImageUrl) return isbnImageUrl
+
+  // Else, if an image was provided in the seed, try to use it
+  const { url: seedImageUrl } = await dataseed.getImageByUrl(seed.image)
+  if (seedImageUrl) return seedImageUrl
 }
