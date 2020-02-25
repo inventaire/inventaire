@@ -22,9 +22,9 @@ module.exports = params => {
   .catch(_.ErrorRethrow('get serie parts err'))
 }
 
-const getWdSerieParts = (qid, refresh, dry) => {
-  return runWdQuery({ query: 'serie-parts', qid, refresh, dry })
-  .map(result => ({
+const getWdSerieParts = async (qid, refresh, dry) => {
+  const results = await runWdQuery({ query: 'serie-parts', qid, refresh, dry })
+  return results.map(result => ({
     uri: prefixifyWd(result.part),
     date: getSimpleDayDate(result.date),
     ordinal: result.ordinal,
@@ -35,10 +35,9 @@ const getWdSerieParts = (qid, refresh, dry) => {
 
 // Querying only for 'serie' (wdt:P179) and not 'part of' (wdt:P361)
 // as we use only wdt:P179 internally
-const getInvSerieParts = uri => {
-  return entities_.byClaim('wdt:P179', uri, true)
-  .then(({ rows }) => rows)
-  .map(parseRow)
+const getInvSerieParts = async uri => {
+  const { rows } = await entities_.byClaim('wdt:P179', uri, true)
+  return rows.map(parseRow)
 }
 
 const parseRow = row => {

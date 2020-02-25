@@ -68,10 +68,12 @@ const transactions_ = module.exports = {
     .then(activeCount)
   },
 
-  cancelAllActiveTransactions: userId => {
-    return transactions_.byUser(userId)
-    .filter(Transaction.isActive)
-    .map(activeTransaction => transactions_.updateState('cancelled', userId, activeTransaction))
+  cancelAllActiveTransactions: async userId => {
+    const transactions = await transactions_.byUser(userId)
+    const activeTransactions = transactions.filter(Transaction.isActive)
+    return Promise.all(activeTransactions.map(transaction => {
+      return transactions_.updateState('cancelled', userId, transaction)
+    }))
   }
 }
 

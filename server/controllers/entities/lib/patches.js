@@ -54,13 +54,12 @@ module.exports = {
     })
   },
 
-  getGlobalActivity: () => {
-    return db.view(designDocName, 'byUserId', { group_level: 1 })
-    .then(({ rows }) => rows)
-    .map(formatRow)
-    .then(sortAndFilterContributions)
+  getGlobalActivity: async () => {
+    let { rows } = await db.view(designDocName, 'byUserId', { group_level: 1 })
+    rows = rows.map(formatRow)
+    return sortAndFilterContributions(rows)
     // Return only the first hundred results
-    .then(rows => rows.slice(0, 100))
+    .slice(0, 100)
   },
 
   getActivityFromLastDay: days => {

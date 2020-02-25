@@ -1,6 +1,7 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
+const promises_ = __.require('lib', 'promises')
 let entities_ = require('./entities')
 const patches_ = require('./patches')
 const placeholders_ = require('./placeholders')
@@ -32,7 +33,7 @@ module.exports = async (userId, fromId) => {
 }
 
 const findVersionBeforeRedirect = patches => {
-  const versions = patches.map(_.property('snapshot'))
+  const versions = _.map(patches, 'snapshot')
   const lastVersion = _.last(versions)
   if (lastVersion.redirect == null) {
     throw error_.new("last version isn't a redirection", 400, lastVersion)
@@ -81,7 +82,7 @@ const revertMergePatch = (userId, fromUri, toUri) => {
 
 const revertClaimsRedirections = (userId, fromUri, toUri) => {
   return patches_.byRedirectUri(fromUri)
-  .map(revertClaimsRedirectionFromPatch(userId))
+  .then(promises_.map(revertClaimsRedirectionFromPatch(userId)))
 }
 
 const revertClaimsRedirectionFromPatch = userId => patch => {

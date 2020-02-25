@@ -18,13 +18,14 @@ module.exports = olId => {
   })
 }
 
-const getAuthorWorksTitles = olId => {
+const getAuthorWorksTitles = async olId => {
   _.info(olId, 'olId')
   const url = `${base}?author=${olId}`
-  return requests_.get({ url, headers })
-  .then(res => res.docs
-  .map(result => ({
-    title: result.title_suggest,
-    url: endpoint + result.key
-  })))
+  const { docs } = await requests_.get({ url, headers })
+  return docs.map(parseResult)
 }
+
+const parseResult = result => ({
+  title: result.title_suggest,
+  url: endpoint + result.key
+})

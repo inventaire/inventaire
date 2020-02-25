@@ -36,9 +36,9 @@ const entityIsntUsedMuch = uri => {
   })
 }
 
-const entitiesItemsChecks = uris => {
-  return getAllUris(uris)
-  .map(entityIsntUsedByAnyItem)
+const entitiesItemsChecks = async uris => {
+  const allUris = await getAllUris(uris)
+  return Promise.all(allUris.map(entityIsntUsedByAnyItem))
 }
 
 const getAllUris = uris => {

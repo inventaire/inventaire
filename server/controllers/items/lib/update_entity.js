@@ -8,10 +8,10 @@ let items_
 const lateRequire = () => { items_ = require('./items') }
 setTimeout(lateRequire, 0)
 
-const AfterFn = (viewName, modelFnName) => (fromUri, toUri) => {
-  return items_[viewName](fromUri)
-  .map(Item[modelFnName].bind(null, fromUri, toUri))
-  .then(db.bulk)
+const AfterFn = (viewName, modelFnName) => async (fromUri, toUri) => {
+  const items = await items_[viewName](fromUri)
+  const updatedItems = items.map(Item[modelFnName].bind(null, fromUri, toUri))
+  return db.bulk(updatedItems)
 }
 
 module.exports = {

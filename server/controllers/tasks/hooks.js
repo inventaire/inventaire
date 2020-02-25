@@ -1,6 +1,7 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
-const { tap } = __.require('lib', 'promises')
+const promises_ = __.require('lib', 'promises')
+const { tap } = promises_
 const tasks_ = __.require('controllers', 'tasks/lib/tasks')
 const radio = __.require('lib', 'radio')
 const checkEntity = require('./lib/check_entity')
@@ -25,7 +26,7 @@ const deleteBySuggestionUriAndRecheckSuspects = (previousSuggestionUri, newSugge
   // are updated once every doc is in place.
   // No need to do anything with the newSuggestionUri as checkEntity should find it
   // if it is relevant
-  .map(task => checkEntity(task.suspectUri))
+  .then(promises_.map(task => checkEntity(task.suspectUri)))
 }
 
 const archiveTasks = tasks => {

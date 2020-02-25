@@ -48,9 +48,9 @@ const entities_ = module.exports = {
     else return res
   },
 
-  urisByClaim: (property, value) => {
-    return entities_.byClaim(property, value, true, true)
-    .map(getInvEntityCanonicalUri)
+  urisByClaim: async (property, value) => {
+    const entities = await entities_.byClaim(property, value, true, true)
+    return entities.map(getInvEntityCanonicalUri)
   },
 
   byClaimsValue: (value, count) => {

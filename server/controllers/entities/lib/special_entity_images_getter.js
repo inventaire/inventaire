@@ -15,13 +15,13 @@ module.exports = {
   },
 
   // Idem
-  serie: entity => {
+  serie: async entity => {
     const { uri } = entity
     const images = { claims: getEntityImagesFromClaims(entity) }
-    return getSerieParts({ uri })
-    .then(res => _.map(res.parts, 'uri'))
-    .map(getOneWorkImagePerLang)
-    .reduce(aggregateWorkImages, images)
+    const { parts } = await getSerieParts({ uri })
+    const worksUris = _.map(parts, 'uri')
+    const worksImages = await Promise.all(worksUris.map(getOneWorkImagePerLang))
+    return worksImages.reduce(aggregateWorkImages, images)
   }
 }
 

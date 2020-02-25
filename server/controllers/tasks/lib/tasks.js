@@ -1,6 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
+const promises_ = __.require('lib', 'promises')
 const Task = __.require('models', 'task')
 
 const db = __.require('couch', 'base')('tasks')
@@ -16,7 +17,7 @@ const tasks_ = module.exports = {
     if (ids.length === 0) return []
 
     return tasks_.byIds(ids)
-    .map(task => Task.update(task, attribute, newValue))
+    .then(promises_.map(task => Task.update(task, attribute, newValue)))
     .then(db.bulk)
   },
 

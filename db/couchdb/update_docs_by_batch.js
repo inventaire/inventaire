@@ -1,6 +1,7 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
-const { Wait } = __.require('lib', 'promises')
+const promises_ = __.require('lib', 'promises')
+const { Wait } = promises_
 
 module.exports = params => ids => {
   ids = _.compact(ids)
@@ -26,7 +27,7 @@ const nextBatchUpdater = (db, ids, docUpdater) => {
     const interBulkDelay = isLastBatch ? 0 : 5000
 
     return db.fetch(nextIdsBatch)
-    .map(docUpdater)
+    .then(promises_.map(docUpdater))
     // Remove docs that don't need an update
     .filter(_.identity)
     .then(docsToUpdate => {

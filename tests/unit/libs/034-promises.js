@@ -1,6 +1,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const { props, tap, wait } = __.require('lib', 'promises')
+const { props, tap, wait, map } = __.require('lib', 'promises')
 const { undesiredRes } = require('../utils')
 
 const should = require('should')
@@ -80,6 +80,28 @@ describe('promises utils', () => {
       .then(() => {
         const end = Date.now()
         should(end - start >= 100).be.true()
+        done()
+      })
+      .catch(done)
+    })
+  })
+
+  describe('map', () => {
+    it('should map over the passed result', done => {
+      Promise.all([ 123, 456 ])
+      .then(map(num => num * 2))
+      .then(res => {
+        res.should.deepEqual([ 246, 912 ])
+        done()
+      })
+      .catch(done)
+    })
+
+    it('should wait for async values', done => {
+      Promise.all([ 123, 456 ])
+      .then(map(async num => num * 2))
+      .then(res => {
+        res.should.deepEqual([ 246, 912 ])
         done()
       })
       .catch(done)

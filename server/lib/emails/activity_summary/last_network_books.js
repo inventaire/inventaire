@@ -4,6 +4,7 @@ const _ = __.require('builders', 'utils')
 const items_ = __.require('controllers', 'items/lib/items')
 const getItemsByAccessLevel = __.require('controllers', 'items/lib/get_by_access_level')
 const relations_ = __.require('controllers', 'relations/lib/queries')
+const promises_ = __.require('lib', 'promises')
 const user_ = __.require('controllers', 'user/lib/user')
 const { getLastItems, formatData, embedUsersData, getHighlightedItems } = require('./last_books_helpers')
 
@@ -12,7 +13,7 @@ module.exports = (userId, lang, limitDate = 0) => {
   return relations_.getUserFriendsAndCoGroupsMembers(userId)
   // Get last network items available for a transaction
   .then(getItemsByAccessLevel.network)
-  .map(items_.serializeData)
+  .then(promises_.map(items_.serializeData))
   .then(getLastItems.bind(null, limitDate))
   .then(extractHighlightedItems(lang))
   .catch(_.ErrorRethrow('last network items'))

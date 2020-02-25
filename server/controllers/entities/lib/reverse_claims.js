@@ -63,12 +63,12 @@ const requestWikidataReverseClaims = (property, value, refresh, dry) => {
   }
 }
 
-const wikidataReverseClaims = (property, value, refresh, dry) => {
+const wikidataReverseClaims = async (property, value, refresh, dry) => {
   const type = typeTailoredQuery[property]
   if (type != null) {
     const pid = property.split(':')[1]
-    return runWdQuery({ query: `${type}_reverse_claims`, pid, qid: value, refresh, dry })
-    .map(prefixifyWd)
+    const results = await runWdQuery({ query: `${type}_reverse_claims`, pid, qid: value, refresh, dry })
+    return results.map(prefixifyWd)
   } else {
     return generalWikidataReverseClaims(property, value, refresh, dry)
   }
@@ -80,27 +80,24 @@ const generalWikidataReverseClaims = (property, value, refresh, dry) => {
   return cache_.get({ key, fn, refresh, dry, dryFallbackValue: [] })
 }
 
-const _wikidataReverseClaims = (property, value) => {
+const _wikidataReverseClaims = async (property, value) => {
   const caseInsensitive = caseInsensitiveProperties.includes(property)
   const wdProp = unprefixify(property)
   _.log([ property, value ], 'reverse claim')
-  return requests_.get(wdk.getReverseClaims(wdProp, value, { caseInsensitive }))
-  .then(wdk.simplifySparqlResults)
-  .map(prefixifyWd)
+  const results = await requests_.get(wdk.getReverseClaims(wdProp, value, { caseInsensitive }))
+  return wdk.simplifySparqlResults(results).map(prefixifyWd)
 }
 
-const invReverseClaims = (property, value) => {
-  return entities_.byClaim(property, value, true, true)
-  .map(getInvEntityCanonicalUri)
-  .catch(err => {
+const invReverseClaims = async (property, value) => {
+  try {
+    const entities = await entities_.byClaim(property, value, true, true)
+    return entities.map(getInvEntityCanonicalUri)
+  } catch (err) {
     // Allow to request reverse claims for properties that aren't yet
     // whitelisted to be added to inv properties: simply ignore inv entities
-    if (err.message === "property isn't whitelisted") {
-      return []
-    } else {
-      throw err
-    }
-  })
+    if (err.message === "property isn't whitelisted") return []
+    else throw err
+  }
 }
 
 // Customize queries to tailor for specific types of results

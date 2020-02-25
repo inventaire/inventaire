@@ -39,26 +39,24 @@ module.exports = (rawIsbns, params) => {
 
 const getIsbn13h = entity => entity.claims['wdt:P212'][0]
 
-const getMissingEditionEntitiesFromSeeds = (isbns, refresh) => {
-  return dataseed.getByIsbns(isbns, refresh)
-  .then(seeds => {
-    const insufficientData = []
-    const validSeeds = []
-    // TODO: Filter out more aggressively bad quality seeds
-    // - titles with punctuations
-    // - authors with punctuations or single word
-    for (const seed of seeds) {
-      if (_.isNonEmptyString(seed.title)) {
-        validSeeds.push(seed)
-      } else {
-        insufficientData.push(seed)
-      }
+const getMissingEditionEntitiesFromSeeds = async (isbns, refresh) => {
+  const seeds = await dataseed.getByIsbns(isbns, refresh)
+  const insufficientData = []
+  const validSeeds = []
+  // TODO: Filter out more aggressively bad quality seeds
+  // - titles with punctuations
+  // - authors with punctuations or single word
+  for (const seed of seeds) {
+    if (_.isNonEmptyString(seed.title)) {
+      validSeeds.push(seed)
+    } else {
+      insufficientData.push(seed)
     }
+  }
 
-    return Promise.all(validSeeds.map(scaffoldEditionEntityFromSeed))
-    .map(formatEditionEntity)
-    .then(newEntities => [ newEntities, insufficientData ])
-  })
+  const editionEntitiesScaffold = await Promise.all(validSeeds.map(scaffoldEditionEntityFromSeed))
+  const newEntities = editionEntitiesScaffold.map(formatEditionEntity)
+  return [ newEntities, insufficientData ]
 }
 
 const getRedirections = isbns => {

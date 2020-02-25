@@ -29,6 +29,8 @@ module.exports = {
     return res
   },
 
+  map: fn => array => Promise.all(array.map(fn)),
+
   // Source: http://bluebirdjs.com/docs/api/deferred-migration.html
   defer: () => {
     // Initialized in the defer function scope

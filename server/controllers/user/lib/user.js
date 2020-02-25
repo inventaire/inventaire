@@ -79,14 +79,15 @@ const user_ = module.exports = {
     return user_.getUsersAuthorizedData(user_.byIds(ids), reqUserId)
   },
 
-  getUsersAuthorizedData: (usersDocsPromise, reqUserId, extraAttribute) => {
-    return Promise.all([
+  getUsersAuthorizedData: async (usersDocsPromise, reqUserId, extraAttribute) => {
+    const [ usersDocs, networkIds ] = await Promise.all([
       usersDocsPromise,
       getNetworkIds(reqUserId)
     ])
-    .then(([ usersDocs, networkIds ]) => _.compact(usersDocs)
-    .filter(user => user.type !== 'deletedUser')
-    .map(omitPrivateData(reqUserId, networkIds, extraAttribute)))
+
+    return usersDocs
+    .filter(user => user && user.type !== 'deletedUser')
+    .map(omitPrivateData(reqUserId, networkIds, extraAttribute))
   },
 
   getUsersIndexByIds: (ids, reqUserId) => {

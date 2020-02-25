@@ -34,13 +34,13 @@ const searchUrisByAuthorTerms = terms => {
 
 const types = [ 'humans' ]
 
-const searchUrisByAuthorLabel = term => {
-  return typeSearch(types, term)
-  .then(parseResults(types))
+const searchUrisByAuthorLabel = async term => {
+  const hits = await typeSearch(types, term).then(parseResults(types))
   // Exact match on normalized author terms
+  return hits
   .filter(hit => getEntityNormalizedTerms(hit._source).includes(term))
   .map(hit => hit._source.uri)
-  .then(_.compact)
+  .filter(_.identity)
 }
 
 const resolveWorksAndAuthor = (works, author) => authorsUris => {

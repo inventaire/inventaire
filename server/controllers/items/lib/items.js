@@ -1,6 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
+const promises_ = __.require('lib', 'promises')
 const Item = __.require('models', 'item')
 const listingsPossibilities = Item.attributes.constrained.listing.possibilities
 const assert_ = __.require('utils', 'assert_types')
@@ -50,8 +51,7 @@ const items_ = module.exports = {
       include_docs: true
     })
     .then(filterWithImage(assertImage))
-    .map(snapshot_.addToItem)
-    .map(filterPrivateAttributes(reqUserId))
+    .then(formatItems(reqUserId))
   },
 
   byOwnersAndEntitiesAndListings: (ownersIds, uris, listingsKey, reqUserId) => {
@@ -65,20 +65,17 @@ const items_ = module.exports = {
     }
 
     return db.viewByKeys('byOwnerAndEntityAndListing', keys)
-    .map(snapshot_.addToItem)
-    .map(filterPrivateAttributes(reqUserId))
+    .then(formatItems(reqUserId))
   },
 
-  create: (userId, items) => {
+  create: async (userId, items) => {
     assert_.array(items)
-    return Promise.all(items.map(validateEntityType))
-    .map(item => Item.create(userId, item))
-    .then(db.bulk)
-    .then(res => {
-      const itemsIds = _.map(res, 'id')
-      return db.fetch(itemsIds)
-      .then(tapEmit('user:inventory:update', userId))
-    })
+    await Promise.all(items.map(validateEntityType))
+    items = items.map(item => Item.create(userId, item))
+    const res = await db.bulk(items)
+    const itemsIds = _.map(res, 'id')
+    return db.fetch(itemsIds)
+    .then(tapEmit('user:inventory:update', userId))
   },
 
   update: (userId, itemUpdateData) => {
@@ -92,7 +89,7 @@ const items_ = module.exports = {
     const itemUpdateData = {}
     itemUpdateData[attribute] = newValue
     return items_.byIds(ids)
-    .map(currentItem => Item.update(userId, itemUpdateData, currentItem))
+    .then(promises_.map(currentItem => Item.update(userId, itemUpdateData, currentItem)))
     .then(db.bulk)
     .then(tapEmit('user:inventory:update', userId))
   },
@@ -141,10 +138,15 @@ const items_ = module.exports = {
   }
 }
 
-const listingByEntities = (listing, uris, reqUserId) => {
+const formatItems = reqUserId => async items => {
+  items = await Promise.all(items.map(snapshot_.addToItem))
+  return items.map(filterPrivateAttributes(reqUserId))
+}
+
+const listingByEntities = async (listing, uris, reqUserId) => {
   const keys = uris.map(uri => [ uri, listing ])
-  return db.viewByKeys('byEntity', keys)
-  .map(filterPrivateAttributes(reqUserId))
+  const items = await db.viewByKeys('byEntity', keys)
+  return items.map(filterPrivateAttributes(reqUserId))
 }
 
 const entityUriKeys = entityUri => listingsPossibilities.map(listing => [ entityUri, listing ])

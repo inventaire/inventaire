@@ -22,15 +22,14 @@ module.exports = query => {
   .catch(_.ErrorRethrow('search by text err'))
 }
 
-const searchInvByText = (query, key) => {
+const searchInvByText = async (query, key) => {
   const { search } = query
-
-  return searchInvEntities(search)
+  const results = await searchInvEntities(search)
   // It's ok to use the inv URI even if its not the canonical URI
   // (wd and isbn URI are prefered) as getEntitiesByUris will
   // take care of finding the right URI downward
-  .map(getInvEntityUri)
-  .then(uris => getEntitiesByUris({ uris }))
+  const uris = results.map(getInvEntityUri)
+  return getEntitiesByUris({ uris })
   .catch(error_.notFound)
 }
 

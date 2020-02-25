@@ -26,9 +26,9 @@ module.exports = async (claims, resolveOnWikidata = true) => {
   .then(_.flatten)
 }
 
-const wdQuery = externalIds => {
-  return runWdQuery({ query: 'resolve-external-ids', externalIds })
-  .map(prefixifyWd)
+const wdQuery = async externalIds => {
+  const results = await runWdQuery({ query: 'resolve-external-ids', externalIds })
+  return results.map(prefixifyWd)
 }
 
 const invQuery = externalIds => {
@@ -36,7 +36,7 @@ const invQuery = externalIds => {
   .then(_.flatten)
 }
 
-const invByClaim = ([ prop, value ]) => {
-  return entities_.byClaim(prop, value, true, true)
-  .map(getInvEntityCanonicalUri)
+const invByClaim = async ([ prop, value ]) => {
+  const entities = await entities_.byClaim(prop, value, true, true)
+  return entities.map(getInvEntityCanonicalUri)
 }
