@@ -1,10 +1,4 @@
 const CONFIG = require('config')
-const __ = CONFIG.universalPath
-
-// Working around the circular dependency
-let _
-const lateRequire = () => { _ = __.require('builders', 'utils') }
-setTimeout(lateRequire, 0)
 
 // Here should be the only direct require of bluebird
 // so that every other dependency to it passed through this file
@@ -36,23 +30,6 @@ module.exports = {
       })
       return resultObj
     })
-  },
-
-  // skip throws in a standard way to be catched later
-  // by catchSkip and not be treated as an error.
-  // It can be used to pass over steps of a promise chain
-  // made unnecessary for some reason
-  skip: (reason, context) => {
-    const err = new Error('skip')
-    err.skip = true
-    err.reason = reason
-    err.context = context
-    throw err
-  },
-
-  catchSkip: label => err => {
-    if (err.skip) return _.log(err.context, `${label} skipped: ${err.reason}`)
-    else throw err
   },
 
   // Source: http://bluebirdjs.com/docs/api/deferred-migration.html
