@@ -35,7 +35,13 @@ const searchInvByText = (query, key) => {
   .catch(error_.notFound)
 }
 
-const mergeResults = results => _.flattenIndexes(_.compact(results).map(_.property('entities')))
+const mergeResults = results => {
+  return _(results)
+  .compact()
+  .map('entities')
+  .merge()
+  .value()
+}
 
 const replaceEditionsByTheirWork = refresh => entities => {
   let missingWorkEntities = []

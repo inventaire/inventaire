@@ -50,11 +50,6 @@ module.exports = {
   // Remove any superfluous spaces
   superTrim: str => str.replace(multipleSpacesPattern, ' ').trim(),
 
-  flattenIndexes: indexesArray => {
-    indexesArray.unshift({})
-    return Object.assign.apply(_, indexesArray)
-  },
-
   KeyBy: attribute => array => _.keyBy(array, attribute),
 
   initCollectionsIndex: names => names.reduce(aggregateCollections, {}),

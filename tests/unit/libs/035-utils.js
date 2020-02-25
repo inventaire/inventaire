@@ -19,35 +19,6 @@ describe('utils', () => {
     })
   })
 
-  describe('flattenIndexes', () => {
-    it('should return the collection of indexes merged into one', done => {
-      _.flattenIndexes.should.be.a.Function()
-      const indexes = [ { a: 1 }, { b: 2 }, { c: 3 }, { a: 4, d: 5 } ]
-      const result = _.flattenIndexes(indexes)
-      result.should.be.an.Object()
-      result.a.should.equal(4)
-      result.b.should.equal(2)
-      result.c.should.equal(3)
-      result.d.should.equal(5)
-      Object.keys(result).length.should.equal(4)
-      done()
-    })
-
-    it('should return a new index without modifiy the passed indexes', done => {
-      const indexA = { a: 1 }
-      const indexB = { b: 2 }
-      const indexC = { c: 3 }
-      const indexD = { a: 4, d: 5 }
-      const indexes = [ indexA, indexB, indexC, indexD ]
-      const result = _.flattenIndexes(indexes)
-      result.should.not.equal(indexA)
-      result.should.not.equal(indexB)
-      result.should.not.equal(indexC)
-      result.should.not.equal(indexD)
-      done()
-    })
-  })
-
   describe('buildPath', () => {
     it('should return a string with parameters', done => {
       const path = _.buildPath('/api', { action: 'man' })
