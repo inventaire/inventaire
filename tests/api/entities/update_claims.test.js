@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const should = require('should')
-const { Promise, tap } = __.require('lib', 'promises')
+const { tap } = __.require('lib', 'promises')
 const { undesiredRes } = require('../utils/utils')
 const { createWork, createEdition, createHuman, someOpenLibraryId } = require('../fixtures/entities')
 const { getByUri, addClaim, updateClaim, removeClaim, merge } = require('../utils/entities')

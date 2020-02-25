@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
-const { Promise, tap } = __.require('lib', 'promises')
+const { tap } = __.require('lib', 'promises')
 const host = CONFIG.fullHost()
 const authEndpoint = `${host}/api/auth`
 const faker = require('faker')

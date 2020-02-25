@@ -1,7 +1,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const { Promise } = __.require('lib', 'promises')
 const error_ = __.require('lib', 'error/error')
 const Group = __.require('models', 'group')
 const db = __.require('couch', 'base')('groups')

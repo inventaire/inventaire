@@ -5,7 +5,6 @@ const breq = require('bluereq')
 const { createReadStream } = require('fs')
 const { getContentLength } = __.require('lib', 'fs')
 const request = require('request')
-const { Promise } = __.require('lib', 'promises')
 const getToken = require('./get_swift_token')
 const { publicURL } = CONFIG.mediaStorage.swift
 

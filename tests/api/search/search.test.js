@@ -3,7 +3,7 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
 const faker = require('faker')
-const { Promise, Wait } = __.require('lib', 'promises')
+const { Wait } = __.require('lib', 'promises')
 const { nonAuthReq, authReq, undesiredRes, getUser } = require('../utils/utils')
 const randomString = __.require('lib', './utils/random_string')
 const { createWork, createHuman, createSerie, randomLabel, createEditionFromWorks } = require('../fixtures/entities')

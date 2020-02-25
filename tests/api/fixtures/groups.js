@@ -5,7 +5,6 @@ const { authReq, authReqB, getUser, getUserB, customAuthReq, getUserGetter } = r
 const faker = require('faker')
 const endpointBase = '/api/groups'
 const endpointAction = `${endpointBase}?action`
-const { Promise } = __.require('lib', 'promises')
 const { humanName } = require('../fixtures/entities')
 
 const getGroup = async group => {

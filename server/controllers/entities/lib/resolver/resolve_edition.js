@@ -1,6 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const { Promise } = __.require('lib', 'promises')
 const entities_ = require('../entities')
 const getInvEntityCanonicalUri = require('../get_inv_entity_canonical_uri')
 const resolveExternalIds = require('./resolve_external_ids')

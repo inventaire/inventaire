@@ -1,6 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const { Promise } = __.require('lib', 'promises')
 const { createEdition, createWork, createAuthor } = require('./create_entity_from_seed')
 
 module.exports = (userId, batchId) => entry => {

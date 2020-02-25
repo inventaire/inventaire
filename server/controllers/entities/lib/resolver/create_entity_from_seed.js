@@ -1,7 +1,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const { Promise } = __.require('lib', 'promises')
 const properties = require('../properties/properties_values_constraints')
 const createInvEntity = require('../create_inv_entity')
 const isbn_ = __.require('lib', 'isbn/isbn')

@@ -14,10 +14,6 @@ module.exports = {
   },
   noCache: true,
   staticMaxAge: 0,
-  bluebird: {
-    warnings: false,
-    longStackTraces: false
-  },
   logMissingI18nKeys: false,
   mailer: {
     disabled: false,

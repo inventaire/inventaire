@@ -1,7 +1,6 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
-const { Promise } = __.require('lib', 'promises')
 const entities_ = require('./entities')
 const items_ = __.require('controllers', 'items/lib/items')
 const getEntitiesByUris = require('./get_entities_by_uris')

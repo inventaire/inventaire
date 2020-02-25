@@ -1,10 +1,7 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 require('should')
 const { authReq, authReqC, undesiredRes, customAuthReq, getUserGetter } = require('../utils/utils')
 const { createGroup, getGroup } = require('../fixtures/groups')
 const endpoint = '/api/groups?action=refuse-request'
-const { Promise } = __.require('lib', 'promises')
 const { humanName } = require('../fixtures/entities')
 
 describe('groups:update:refuse-request', () => {

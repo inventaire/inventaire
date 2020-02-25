@@ -5,7 +5,6 @@ require('should')
 const { getUser, authReq } = __.require('apiTests', 'utils/utils')
 const { createItem, createEditionAndItem } = require('../fixtures/items')
 const { createUser } = require('../fixtures/users')
-const { Promise } = __.require('lib', 'promises')
 
 const endpoint = '/api/items?action=by-user-and-entity'
 

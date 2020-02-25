@@ -1,7 +1,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const { Promise } = __.require('lib', 'promises')
 const properties = require('../properties/properties_values_constraints')
 const { prefixifyWd } = __.require('controllers', 'entities/lib/prefix')
 const entities_ = __.require('controllers', 'entities/lib/entities')

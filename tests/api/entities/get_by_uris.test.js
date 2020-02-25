@@ -1,7 +1,4 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const should = require('should')
-const { Promise } = __.require('lib', 'promises')
 const { undesiredRes } = require('../utils/utils')
 const { ensureEditionExists, createWorkWithAuthor, createEditionWithWorkAuthorAndSerie, createHuman } = require('../fixtures/entities')
 const { getByUris, merge } = require('../utils/entities')

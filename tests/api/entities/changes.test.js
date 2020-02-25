@@ -1,10 +1,8 @@
-const __ = require('config').universalPath
 require('should')
 const { nonAuthReq } = require('../utils/utils')
 const endpoint = '/api/entities?action=changes'
 const { merge } = require('../utils/entities')
 const { createHuman } = require('../fixtures/entities')
-const { Promise } = __.require('lib', 'promises')
 
 describe('entities:changes', () => {
   it('should return an array of changes', done => {

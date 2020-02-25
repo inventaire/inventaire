@@ -1,7 +1,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const { Promise } = __.require('lib', 'promises')
 const getWorksFromAuthorsUris = require('./get_works_from_authors_uris')
 const typeSearch = __.require('controllers', 'search/lib/type_search')
 const parseResults = __.require('controllers', 'search/lib/parse_results')

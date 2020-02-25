@@ -1,6 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const { Promise } = __.require('lib', 'promises')
 const { someTermsMatch, resolveSeed } = require('./helpers')
 const getEntitiesList = require('../get_entities_list')
 const getEntityByUri = require('../get_entity_by_uri')

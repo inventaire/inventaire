@@ -1,6 +1,5 @@
 const __ = require('config').universalPath
 const { forceArray } = __.require('builders', 'utils')
-const { Promise } = __.require('lib', 'promises')
 
 const streamPromise = stream => new Promise((resolve, reject) => {
   const results = []

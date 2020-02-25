@@ -1,10 +1,7 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 require('should')
 const { authReq, authReqB, authReqC, undesiredRes, getUserC } = require('../utils/utils')
 const { groupPromise, getGroup } = require('../fixtures/groups')
 const endpoint = '/api/groups?action=decline'
-const { Promise } = __.require('lib', 'promises')
 
 describe('groups:update:decline', () => {
   it('should reject without group', done => {

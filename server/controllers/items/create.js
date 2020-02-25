@@ -4,7 +4,6 @@ const items_ = __.require('controllers', 'items/lib/items')
 const snapshot_ = require('./lib/snapshot/snapshot')
 const error_ = __.require('lib', 'error/error')
 const { Track } = __.require('lib', 'track')
-const { Promise } = __.require('lib', 'promises')
 
 module.exports = (req, res) => {
   let { body: items } = req

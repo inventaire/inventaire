@@ -1,6 +1,5 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
-const { Promise } = __.require('lib', 'promises')
 const searchEntityDuplicatesSuggestions = require('./search_entity_duplicates_suggestions')
 const addOccurrencesToSuggestion = require('./add_occurrences_to_suggestion')
 const getAuthorWorksData = require('./get_author_works_data')

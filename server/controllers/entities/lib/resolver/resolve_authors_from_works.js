@@ -1,6 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const { Promise } = __.require('lib', 'promises')
 const getAuthorsFromWorksUris = require('./get_authors_from_works_uris')
 const { getAlreadyResolvedUris, someTermsMatch, resolveSeed } = require('./helpers')
 const { getEntityNormalizedTerms } = require('../terms_normalization')

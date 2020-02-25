@@ -1,7 +1,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const { Promise } = __.require('lib', 'promises')
 const { createHuman } = require('./entities')
 const { checkEntities } = require('../utils/tasks')
 const { createInBulk } = __.require('controllers', 'tasks/lib/tasks')

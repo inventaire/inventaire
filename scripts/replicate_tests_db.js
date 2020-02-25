@@ -2,7 +2,6 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const breq = require('bluereq')
-const { Promise } = __.require('lib', 'promises')
 const error_ = __.require('lib', 'error/error')
 
 const dbHost = require('config').db.fullHost()

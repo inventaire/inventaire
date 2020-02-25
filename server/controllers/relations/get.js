@@ -2,7 +2,6 @@ const __ = require('config').universalPath
 const { getUserRelations, getNetworkIds } = __.require('controllers', 'user/lib/relations_status')
 const responses_ = __.require('lib', 'responses')
 const error_ = __.require('lib', 'error/error')
-const { Promise } = __.require('lib', 'promises')
 const sanitize = __.require('lib', 'sanitize/sanitize')
 
 const sanitization = {}

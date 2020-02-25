@@ -5,7 +5,6 @@ require('should')
 const { authReq, authReqB, undesiredRes, getUserC, getUserGetter, customAuthReq } = require('../utils/utils')
 const { groupPromise, createGroup, getGroup } = require('../fixtures/groups')
 const endpoint = '/api/groups?action=accept'
-const { Promise } = __.require('lib', 'promises')
 const { humanName } = require('../fixtures/entities')
 
 describe('groups:update:accept', () => {

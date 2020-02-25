@@ -1,7 +1,4 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 require('should')
-const { Promise } = __.require('lib', 'promises')
 const { undesiredRes } = require('../utils/utils')
 const { addClaim, getRefreshedPopularityByUri } = require('../utils/entities')
 const { createEdition, createWork, createItemFromEntityUri, createSerie, createHuman } = require('../fixtures/entities')

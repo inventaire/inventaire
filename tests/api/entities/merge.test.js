@@ -1,7 +1,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
-const { Promise } = __.require('lib', 'promises')
 const { authReq, adminReq, undesiredRes } = require('../utils/utils')
 const randomString = __.require('lib', './utils/random_string')
 const { getByUris, merge, getHistory, addClaim } = require('../utils/entities')

@@ -2,7 +2,6 @@
 // could actually be turned into a generalist 'image-check' service
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
-const { Promise } = __.require('lib', 'promises')
 const checkCoverExistance = require('./check_cover_existance')
 
 const { coverByOlId } = require('./api')

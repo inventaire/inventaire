@@ -1,6 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const { Promise } = __.require('lib', 'promises')
 require('should')
 const { nonAuthReq, getUser } = require('../utils/utils')
 const { createItem } = require('../fixtures/items')

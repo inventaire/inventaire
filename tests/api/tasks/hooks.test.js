@@ -1,8 +1,8 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const should = require('should')
-const { Promise, Wait } = __.require('lib', 'promises')
 const { merge, revertMerge } = require('../utils/entities')
+const { Wait } = __.require('lib', 'promises')
 const { createHuman } = require('../fixtures/entities')
 const { deleteByUris: deleteEntityByUris } = require('../utils/entities')
 const { createTask } = require('../fixtures/tasks')

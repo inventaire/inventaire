@@ -1,12 +1,3 @@
-const CONFIG = require('config')
-
-// Here should be the only direct require of bluebird
-// so that every other dependency to it passed through this file
-// and get the associated configuration
-// Exception: cases when this policy would produce dependecy loops
-const Promise = require('bluebird')
-Promise.config(CONFIG.bluebird)
-
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 module.exports = {

@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
-const { Promise, Wait } = __.require('lib', 'promises')
+const { Wait } = __.require('lib', 'promises')
 const { authReq, getUser } = require('../utils/utils')
 const { ensureEditionExists, createEdition, createWorkWithAuthor, createHuman } = require('../fixtures/entities')
 const { createItem } = require('../fixtures/items')

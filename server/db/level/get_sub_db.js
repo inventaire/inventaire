@@ -3,9 +3,6 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const memoize = __.require('lib', 'utils/memoize')
 const assert_ = __.require('utils', 'assert_types')
-// Make sure to set the global Promise object to Bluebird
-// before calling level libs, so that db functions return Bluebird promises
-global.Promise = __.require('lib', 'promises').Promise
 
 const dbFolderPathBase = __.path('leveldb')
 const { suffix } = CONFIG.db

@@ -3,7 +3,6 @@ const _ = __.require('builders', 'utils')
 const assert_ = __.require('utils', 'assert_types')
 const getEntityByUri = __.require('controllers', 'entities/lib/get_entity_by_uri')
 const getEntitiesByUris = __.require('controllers', 'entities/lib/get_entities_by_uris')
-const { Promise } = __.require('lib', 'promises')
 const { aggregateClaims } = require('./helpers')
 
 const getRelativeEntities = relationProperty => entity => {

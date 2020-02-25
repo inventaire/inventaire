@@ -1,10 +1,7 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 require('should')
 const { authReq, authReqC, getUserGetter, customAuthReq } = require('../utils/utils')
 const { groupPromise, getGroup } = require('../fixtures/groups')
 const endpoint = '/api/groups?action=cancel-request'
-const { Promise } = __.require('lib', 'promises')
 const { humanName } = require('../fixtures/entities')
 
 describe('groups:update:cancel-request', () => {

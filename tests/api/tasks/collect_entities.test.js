@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
-const { Promise, Wait } = __.require('lib', 'promises')
+const { Wait } = __.require('lib', 'promises')
 const { createHuman } = require('../fixtures/entities')
 const { getBySuspectUri, collectEntities } = require('../utils/tasks')
 
