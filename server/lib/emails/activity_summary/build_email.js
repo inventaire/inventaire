@@ -85,9 +85,8 @@ const spreadEmailData = user => results => {
 
   const news = newsData(user)
 
-  if (news.display === false && countTotal === 0) {
-    throw promises_.skip('empty activity summary', user._id)
-  }
+  // Prevent sending an empty activity summary
+  if (news.display === false && countTotal === 0) return
 
   // Attach the lang to make accessible for the last_books partial
   lastFriendsBooks.lang = lang
