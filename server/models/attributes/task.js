@@ -1,7 +1,7 @@
 module.exports = {
   type: [ 'deduplicate' ],
 
-  state: [ 'merged', 'dismissed' ],
+  state: [ undefined, 'merged', 'dismissed' ],
 
   relationScore: []
 }

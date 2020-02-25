@@ -23,7 +23,7 @@ module.exports = () => {
   radio.on('entity:update:label', refreshSnapshot.fromDoc)
   radio.on('entity:update:claim', refreshSnapshot.fromDoc)
   radio.on('entity:merge', updateSnapshotOnEntityMerge)
-  return radio.on('entity:revert:merge', refreshSnapshot.fromUri)
+  radio.on('entity:revert:merge', refreshSnapshot.fromUri)
 }
 
 // Using the toUri as its the URI the items are using now

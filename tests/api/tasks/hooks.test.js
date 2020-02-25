@@ -1,12 +1,13 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-require('should')
+const should = require('should')
 const { Promise } = __.require('lib', 'promises')
-const { merge } = require('../utils/entities')
+const { merge, revertMerge } = require('../utils/entities')
 const { createHuman } = require('../fixtures/entities')
 const { deleteByUris: deleteEntityByUris } = require('../utils/entities')
 const { createTask } = require('../fixtures/tasks')
 const { getByIds, getBySuspectUri, update, checkEntities } = require('../utils/tasks')
+const { wait } = __.require('lib', 'promises')
 
 // Tests dependency: having a populated ElasticSearch wikidata index
 describe('tasks:hooks', () => {
@@ -70,6 +71,22 @@ describe('tasks:hooks', () => {
         })
       })
       .catch(done)
+    })
+  })
+
+  describe('entity merge revert', () => {
+    it('should revert task state', async () => {
+      const { uri } = await createHuman({ labels: { en: 'Fred Vargas' } })
+      const [ task ] = await checkEntities(uri)
+      await merge(task.suspectUri, task.suggestionUri)
+      await wait(500)
+      const [ refreshedTask ] = await getByIds(task._id)
+      refreshedTask.state.should.equal('merged')
+      await revertMerge(refreshedTask.suspectUri)
+      await wait(100)
+      const [ rerefreshedTask ] = await getByIds(task._id)
+      console.log({ rerefreshedTask })
+      should(rerefreshedTask.state).not.be.ok()
     })
   })
 

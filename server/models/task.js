@@ -27,7 +27,8 @@ module.exports = {
   update: (task, attribute, value) => {
     assert_.object(task)
     assert_.string(attribute)
-    assert_.type('string|number', value)
+    // Accept an undefined state value as that's the default state
+    if (value || attribute !== 'state') assert_.type('string|number', value)
 
     validations.pass('attribute', attribute)
     validations.pass(attribute, value)

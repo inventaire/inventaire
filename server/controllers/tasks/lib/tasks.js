@@ -10,7 +10,6 @@ const tasks_ = module.exports = {
   createInBulk: tasksDocs => {
     return promises_.try(() => tasksDocs.map(Task.create))
     .then(db.bulk)
-    .then(_.Log('tasks created'))
   },
 
   update: options => {
@@ -20,7 +19,6 @@ const tasks_ = module.exports = {
     return tasks_.byIds(ids)
     .map(task => Task.update(task, attribute, newValue))
     .then(db.bulk)
-    .then(_.Log('tasks updated'))
   },
 
   bulkDelete: db.bulkDelete,
@@ -39,8 +37,12 @@ const tasks_ = module.exports = {
     })
   },
 
-  bySuspectUri: suspectUri => {
-    return db.viewByKey('bySuspectUriAndState', [ suspectUri, null ])
+  bySuspectUri: (suspectUri, options) => {
+    return tasks_.bySuspectUris([ suspectUri ], options)
+  },
+
+  bySuspectUriAndState: (suspectUri, state) => {
+    return db.viewByKey('bySuspectUriAndState', [ suspectUri, state ])
   },
 
   bySuggestionUri: suggestionUri => {
