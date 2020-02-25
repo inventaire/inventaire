@@ -65,14 +65,13 @@ const API = module.exports = {
     })
   },
 
-  getRefreshedUser: userPromise => {
+  getRefreshedUser: async userPromise => {
     // Also accept already resolved user docs with their cookie
     if (userPromise._id && userPromise.cookie) userPromise = Promise.resolve(userPromise)
-
-    return userPromise
+    const user = await userPromise
     // Get the up-to-date user doc while keeping the cookie
     // set by tests/api/fixtures/users
-    .then(user => API.getUserWithCookie(user.cookie))
+    return API.getUserWithCookie(user.cookie)
   },
 
   createUsername: () => {

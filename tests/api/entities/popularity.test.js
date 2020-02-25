@@ -88,36 +88,32 @@ describe('entities:popularity', () => {
   })
 })
 
-const scoreShouldEqual = (uri, value, done) => {
-  return getRefreshedPopularityByUri(uri)
-  .then(score => {
-    score.should.equal(value)
-    if (typeof done === 'function') {
-      done()
-    }
-    return score
-  })
+const scoreShouldEqual = async (uri, value, done) => {
+  const score = await getRefreshedPopularityByUri(uri)
+  score.should.equal(value)
+  if (typeof done === 'function') done()
+  return score
 }
 
-const createSerieWithAWorkWithAnEditionWithAnItem = () => {
-  return Promise.all([
+const createSerieWithAWorkWithAnEditionWithAnItem = async () => {
+  const [ work, serie ] = await Promise.all([
     createWork(),
     createSerie()
   ])
-  .then(([ work, serie ]) => Promise.all([
+  const [ edition ] = await Promise.all([
     createEdition({ work }),
     addClaim(work.uri, 'wdt:P179', serie.uri)
   ])
-  .then(([ edition ]) => createItemFromEntityUri(edition.uri, { lang: 'en' })
-  .then(item => [ serie, work, edition, item ])))
+  const item = await createItemFromEntityUri(edition.uri, { lang: 'en' })
+  return [ serie, work, edition, item ]
 }
 
-const createHumanWithAWorkWithAnEditionWithAnItem = () => {
-  return createHuman()
-  .then(human => createSerieWithAWorkWithAnEditionWithAnItem()
-  .then(([ serie, work, edition, item ]) => Promise.all([
+const createHumanWithAWorkWithAnEditionWithAnItem = async () => {
+  const human = await createHuman()
+  const [ serie, work, edition, item ] = await createSerieWithAWorkWithAnEditionWithAnItem()
+  await Promise.all([
     addClaim(work.uri, 'wdt:P50', human.uri),
     addClaim(serie.uri, 'wdt:P50', human.uri)
   ])
-  .then(() => [ human, serie, work, edition, item ])))
+  return [ human, serie, work, edition, item ]
 }

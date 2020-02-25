@@ -1,20 +1,20 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const { Promise, Wait } = __.require('lib', 'promises')
+const { wait } = __.require('lib', 'promises')
 const host = CONFIG.fullPublicHost()
 const breq = require('bluereq')
 const assert_ = __.require('utils', 'assert_types')
 
 const testServerAvailability = () => {
   return breq.get(`${host}/api/tests`)
-  .then(res => _.success('tests server is ready'))
+  .then(() => _.success('tests server is ready'))
   .timeout(1000)
   .catch(err => {
     if ((err.code !== 'ECONNREFUSED') && (err.name !== 'TimeoutError')) throw err
     _.log('waiting for tests server', null, 'grey')
-    return Promise.resolve()
-    .then(Wait(500))
+
+    return wait(500)
     .then(testServerAvailability)
   })
 }
@@ -41,16 +41,15 @@ const request = (method, endpoint, body, cookie) => {
   .then(() => breq[method](data).then(({ body }) => body))
 }
 
-const customAuthReq = (userPromise, method, endpoint, body) => {
+const customAuthReq = async (userPromise, method, endpoint, body) => {
   assert_.object(userPromise)
   assert_.string(method)
   assert_.string(endpoint)
   // Also accept already resolved user docs with their cookie
   if (userPromise._id && userPromise.cookie) userPromise = Promise.resolve(userPromise)
-
-  return userPromise
+  const user = await userPromise
   // Gets a user doc to which tests/api/fixtures/users added a cookie attribute
-  .then(user => request(method, endpoint, body, user.cookie))
+  return request(method, endpoint, body, user.cookie)
 }
 
 module.exports = { request, rawRequest, customAuthReq }

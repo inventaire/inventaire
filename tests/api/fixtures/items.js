@@ -26,26 +26,24 @@ const listings = [ 'private', 'network', 'public' ]
 const transactions = [ 'giving', 'lending', 'selling', 'inventorying' ]
 
 const API = module.exports = {
-  createItems: (user, itemsData = []) => {
+  createItems: async (user, itemsData = []) => {
     user = user || getUser()
     const entity = itemsData[0] && itemsData[0].entity
     const entityUriPromise = entity ? Promise.resolve(entity) : getEditionUri()
-    return entityUriPromise
-    .then(entityUri => {
-      const items = itemsData.map(addDefaultEntity(entityUri))
-      return customAuthReq(user, 'post', '/api/items', items)
-    })
+    const entityUri = await entityUriPromise
+    const items = itemsData.map(addDefaultEntity(entityUri))
+    return customAuthReq(user, 'post', '/api/items', items)
   },
 
-  createItem: (user, itemData = {}) => {
-    if (!itemData.listing) itemData.listing = 'public'
-    return API.createItems(user, [ itemData ])
-    .then(([ item ]) => item)
+  createItem: async (user, itemData = {}) => {
+    itemData.listing = itemData.listing || 'public'
+    const [ item ] = await API.createItems(user, [ itemData ])
+    return item
   },
 
-  createEditionAndItem: (user, itemData = {}) => {
-    return createEdition()
-    .then(edition => API.createItem(user, { entity: `inv:${edition._id}` }))
+  createEditionAndItem: async (user, itemData = {}) => {
+    const { uri } = await createEdition()
+    return API.createItem(user, { entity: uri })
   },
 
   createRandomizedItems: (user, itemsData) => {

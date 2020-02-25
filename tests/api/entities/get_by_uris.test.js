@@ -51,23 +51,15 @@ describe('entities:get:by-uris', () => {
     .catch(done)
   })
 
-  it('should return redirected uris', done => {
-    Promise.all([ createHuman(), createHuman() ])
-    .then(([ humanA, humanB ]) => {
-      return merge(humanA.uri, humanB.uri)
-      .then(() => {
-        return getByUris(humanA.uri)
-        .then(res => {
-          Object.keys(res.entities).length.should.equal(1)
-          res.entities[humanB.uri].should.be.an.Object()
-          res.entities[humanB.uri].uri.should.equal(humanB.uri)
-          res.redirects[humanA.uri].should.equal(humanB.uri)
-          should(res.notFound).not.be.ok()
-          done()
-        })
-      })
-      .catch(done)
-    })
+  it('should return redirected uris', async () => {
+    const [ humanA, humanB ] = await Promise.all([ createHuman(), createHuman() ])
+    await merge(humanA.uri, humanB.uri)
+    const { entities, notFound, redirects } = await getByUris(humanA.uri)
+    Object.keys(entities).length.should.equal(1)
+    entities[humanB.uri].should.be.an.Object()
+    entities[humanB.uri].uri.should.equal(humanB.uri)
+    redirects[humanA.uri].should.equal(humanB.uri)
+    should(notFound).not.be.ok()
   })
 
   it('should accept wikidata uri', done => {
