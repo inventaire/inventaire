@@ -1,6 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
+const { tap } = __.require('lib', 'promises')
 const tasks_ = require('./lib/tasks')
 const db = __.require('couch', 'base')('entities')
 const { Wait } = __.require('lib', 'promises')
@@ -47,7 +48,7 @@ const getNextInvHumanUrisBatch = pagination => {
     limit: batchLength,
     skip: offset
   })
-  .tap(() => { pagination.offset += batchLength })
+  .then(tap(() => { pagination.offset += batchLength }))
   .then(getUris)
 }
 

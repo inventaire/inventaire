@@ -5,7 +5,7 @@ const Item = __.require('models', 'item')
 const listingsPossibilities = Item.attributes.constrained.listing.possibilities
 const assert_ = __.require('utils', 'assert_types')
 const { BasicUpdater } = __.require('lib', 'doc_updates')
-const radio = __.require('lib', 'radio')
+const { tapEmit } = __.require('lib', 'radio')
 const { filterPrivateAttributes } = require('./filter_private_attributes')
 const { maxKey } = __.require('lib', 'couch')
 const listingsLists = require('./listings_lists')
@@ -77,7 +77,7 @@ const items_ = module.exports = {
     .then(res => {
       const itemsIds = _.map(res, 'id')
       return db.fetch(itemsIds)
-      .tap(() => radio.emit('user:inventory:update', userId))
+      .then(tapEmit('user:inventory:update', userId))
     })
   },
 
@@ -85,7 +85,7 @@ const items_ = module.exports = {
     return db.get(itemUpdateData._id)
     .then(currentItem => Item.update(userId, itemUpdateData, currentItem))
     .then(db.putAndReturn)
-    .tap(() => radio.emit('user:inventory:update', userId))
+    .then(tapEmit('user:inventory:update', userId))
   },
 
   bulkUpdate: (userId, ids, attribute, newValue) => {
@@ -94,7 +94,7 @@ const items_ = module.exports = {
     return items_.byIds(ids)
     .map(currentItem => Item.update(userId, itemUpdateData, currentItem))
     .then(db.bulk)
-    .tap(() => radio.emit('user:inventory:update', userId))
+    .then(tapEmit('user:inventory:update', userId))
   },
 
   setBusyness: (id, busy) => {

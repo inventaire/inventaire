@@ -88,16 +88,15 @@ const entities_ = module.exports = {
     .then(() => entities_.putUpdate({ userId, currentDoc, updatedDoc, batchId }))
   },
 
-  putUpdate: params => {
+  putUpdate: async params => {
     const { userId, currentDoc, updatedDoc } = params
     assert_.types([ 'string', 'object', 'object' ], [ userId, currentDoc, updatedDoc ])
     // It is to the consumers responsability to check if there is an update:
     // empty patches at this stage will throw 500 errors
-    return db.putAndReturn(updatedDoc)
-    .tap(() => {
-      triggerUpdateEvent(currentDoc, updatedDoc)
-      return patches_.create(params)
-    })
+    const docAfterUpdate = await db.putAndReturn(updatedDoc)
+    triggerUpdateEvent(currentDoc, docAfterUpdate)
+    await patches_.create(params)
+    return docAfterUpdate
   },
 
   getUrlFromEntityImageHash: getUrlFromImageHash.bind(null, 'entities')
@@ -108,5 +107,5 @@ const triggerUpdateEvent = (currentDoc, updatedDoc) => {
   // Known case: when an entity is turned into a redirection
   const claims = updatedDoc.claims || currentDoc.claims
   const type = getEntityType(claims['wdt:P31'])
-  return radio.emit('inv:entity:update', updatedDoc._id, type)
+  radio.emit('inv:entity:update', updatedDoc._id, type)
 }

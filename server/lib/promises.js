@@ -32,6 +32,12 @@ module.exports = {
     })
   },
 
+  tap: fn => async res => {
+    const tapRes = fn(res)
+    if (tapRes instanceof Promise) await tapRes
+    return res
+  },
+
   // Source: http://bluebirdjs.com/docs/api/deferred-migration.html
   defer: () => {
     // Initialized in the defer function scope

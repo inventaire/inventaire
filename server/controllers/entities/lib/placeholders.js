@@ -9,7 +9,7 @@ const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const entities_ = require('./entities')
 const Entity = __.require('models', 'entity')
-const radio = __.require('lib', 'radio')
+const { tapEmit } = __.require('lib', 'radio')
 const db = __.require('couch', 'base')('entities')
 
 const PlaceholderHandler = actionName => {
@@ -37,7 +37,7 @@ const PlaceholderHandler = actionName => {
       return entities_.putUpdate({ userId, currentDoc, updatedDoc })
       .then(() => currentDoc._id)
     })
-    .tap(() => radio.emit(`entity:${actionName}`, `inv:${entityId}`))
+    .then(tapEmit(`entity:${actionName}`, `inv:${entityId}`))
   }
 }
 

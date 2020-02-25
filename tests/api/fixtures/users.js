@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
-const { Promise } = __.require('lib', 'promises')
+const { Promise, tap } = __.require('lib', 'promises')
 const host = CONFIG.fullHost()
 const authEndpoint = `${host}/api/auth`
 const faker = require('faker')
@@ -48,13 +48,13 @@ const API = module.exports = {
     return loginOrSignup(userData)
     .then(parseCookie)
     .then(API.getUserWithCookie)
-    .tap(setCustomData(customData))
+    .then(tap(setCustomData(customData)))
     .then(refreshUser)
   },
 
   createAdminUser: data => {
     return API.createUser(data)
-    .tap(user => makeUserAdmin(user._id))
+    .then(tap(user => makeUserAdmin(user._id)))
   },
 
   getUserWithCookie: cookie => {

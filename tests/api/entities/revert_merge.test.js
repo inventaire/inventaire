@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const should = require('should')
-const { Promise } = __.require('lib', 'promises')
+const { Promise, tap } = __.require('lib', 'promises')
 const { authReq, undesiredRes } = require('../utils/utils')
 const randomString = __.require('lib', './utils/random_string')
 const { getByUris, merge, revertMerge, updateLabel, addClaim } = require('../utils/entities')
@@ -121,7 +121,7 @@ describe('entities:revert-merge', () => {
       .then(() => merge(workA.uri, workB.uri))
       .then(() => getByUris(workB.uri))
       // Make another edit between the merge and the revert-merge
-      .tap(() => addClaim(workB.uri, 'wdt:P50', authorB.uri))
+      .then(tap(() => addClaim(workB.uri, 'wdt:P50', authorB.uri)))
       .then(res => {
         const authorsUris = res.entities[workB.uri].claims['wdt:P50']
         authorsUris.should.deepEqual([ authorA.uri ])
@@ -148,7 +148,7 @@ describe('entities:revert-merge', () => {
       return merge(workA.uri, workB.uri)
       .then(() => getByUris(workB.uri))
       // Make another edit between the merge and the revert-merge
-      .tap(() => updateLabel(workB.uri, 'nl', labelB))
+      .then(tap(() => updateLabel(workB.uri, 'nl', labelB)))
       .then(res => {
         res.entities[workB.uri].labels.zh.should.equal(labelA)
         return revertMerge(workA.uri)

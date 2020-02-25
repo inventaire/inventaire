@@ -21,6 +21,6 @@ module.exports = (req, res) => {
   .then(res.json.bind(res))
   .then(() => tasks_.byId(id))
   .then(task => updateRelationScore(task.suspectUri))
-  .tap(Track(req, [ 'task', 'update' ]))
+  .then(Track(req, [ 'task', 'update' ]))
   .catch(error_.Handler(req, res))
 }

@@ -8,26 +8,27 @@ const updateItemEntity = __.require('controllers', 'items/lib/update_entity')
 entities_ = require('./entities')
 const Patch = __.require('models', 'patch')
 
-module.exports = (userId, fromId) => {
-  return patches_.getSnapshots(fromId)
-  .then(findVersionBeforeRedirect)
-  .then(targetVersion => entities_.byId(fromId)
-  .then(currentVersion => {
-    const toUri = currentVersion.redirect
-    const fromUri = `inv:${fromId}`
-    targetVersion._id = currentVersion._id
-    targetVersion._rev = currentVersion._rev
+module.exports = async (userId, fromId) => {
+  const patches = await patches_.getSnapshots(fromId)
+  const targetVersion = await findVersionBeforeRedirect(patches)
+  const currentVersion = await entities_.byId(fromId)
+  const toUri = currentVersion.redirect
+  const fromUri = `inv:${fromId}`
+  targetVersion._id = currentVersion._id
+  targetVersion._rev = currentVersion._rev
 
-    return entities_.putUpdate({
-      userId,
-      currentDoc: currentVersion,
-      updatedDoc: targetVersion
-    })
-    .tap(() => updateItemEntity.afterRevert(fromUri, toUri))
-    .tap(() => recoverPlaceholders(userId, currentVersion.removedPlaceholdersIds))
-    .tap(() => revertMergePatch(userId, fromUri, toUri))
-    .tap(() => revertClaimsRedirections(userId, fromUri, toUri))
-  }))
+  const updateRes = entities_.putUpdate({
+    userId,
+    currentDoc: currentVersion,
+    updatedDoc: targetVersion
+  })
+
+  await updateItemEntity.afterRevert(fromUri, toUri)
+  await recoverPlaceholders(userId, currentVersion.removedPlaceholdersIds)
+  await revertMergePatch(userId, fromUri, toUri)
+  await revertClaimsRedirections(userId, fromUri, toUri)
+
+  return updateRes
 }
 
 const findVersionBeforeRedirect = patches => {

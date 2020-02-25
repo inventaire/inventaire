@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const { customAuthReq, authReq, getUser } = require('../utils/utils')
-const { Promise } = __.require('lib', 'promises')
+const { Promise, tap } = __.require('lib', 'promises')
 const isbn_ = __.require('lib', 'isbn/isbn')
 const wdLang = require('wikidata-lang')
 const { getByUri, getByUris, addClaim } = require('../utils/entities')
@@ -84,7 +84,7 @@ const API = module.exports = {
 
   createWorkWithAuthorAndSerie: () => {
     return API.createWorkWithAuthor()
-    .tap(API.addSerie)
+    .then(tap(API.addSerie))
     // Get a refreshed version of the work
     .then(work => getByUri(work.uri))
   },
@@ -152,7 +152,7 @@ const API = module.exports = {
 const addEntityClaim = (createFnName, property) => subjectEntity => {
   const subjectUri = _.isString(subjectEntity) ? subjectEntity : subjectEntity.uri
   return API[createFnName]()
-  .tap(entity => addClaim(subjectUri, property, entity.uri))
+  .then(tap(entity => addClaim(subjectUri, property, entity.uri)))
 }
 
 API.addAuthor = addEntityClaim('createHuman', 'wdt:P50')

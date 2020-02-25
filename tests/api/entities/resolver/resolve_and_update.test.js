@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
-const { Wait } = __.require('lib', 'promises')
+const { Wait, tap } = __.require('lib', 'promises')
 const { authReq } = __.require('apiTests', 'utils/utils')
 const { getByUris, addClaim, getHistory } = __.require('apiTests', 'utils/entities')
 const { createWork, createHuman, ensureEditionExists, someGoodReadsId, randomLabel, generateIsbn13 } = __.require('apiTests', 'fixtures/entities')
@@ -30,8 +30,8 @@ describe('entities:resolver:update-resolved', () => {
       ]
     }
     createWork()
-    .tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsId))
-    .tap(work => addClaim(work.uri, 'wdt:P50', authorUri2))
+    .then(tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsId)))
+    .then(tap(work => addClaim(work.uri, 'wdt:P50', authorUri2)))
     .then(work => {
       return resolveAndUpdate(entry)
       .then(({ entries }) => entries)
@@ -55,8 +55,8 @@ describe('entities:resolver:update-resolved', () => {
     const goodReadsIdA = entryA.works[0].claims['wdt:P2969'][0]
     const goodReadsIdB = entryB.works[0].claims['wdt:P2969'][0]
     Promise.all([
-      createWork().tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsIdA)),
-      createWork().tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsIdB))
+      createWork().then(tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsIdA))),
+      createWork().then(tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsIdB)))
     ])
     .then(([ workA, workB ]) => {
       return resolveAndUpdate([ entryA, entryB ])
@@ -92,7 +92,7 @@ describe('entities:resolver:update-resolved', () => {
       ]
     }
     createHuman()
-    .tap(human => addClaim(human.uri, 'wdt:P2963', goodReadsId))
+    .then(tap(human => addClaim(human.uri, 'wdt:P2963', goodReadsId)))
     .then(human => {
       return resolveAndUpdate(entry)
       .then(({ entries }) => entries)
@@ -156,8 +156,8 @@ describe('entities:resolver:update-resolved', () => {
     const goodReadsIdA = entryA.works[0].claims['wdt:P2969'][0]
     const goodReadsIdB = entryB.works[0].claims['wdt:P2969'][0]
     Promise.all([
-      createWork().tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsIdA)),
-      createWork().tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsIdB))
+      createWork().then(tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsIdA))),
+      createWork().then(tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsIdB)))
     ])
     .then(([ workA, workB ]) => {
       return resolveAndUpdate([ entryA, entryB ])

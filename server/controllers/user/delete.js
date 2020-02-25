@@ -19,7 +19,7 @@ module.exports = (req, res) => {
   .then(cleanupEverything.bind(null, reqUserId))
   // triggering track before logging out
   // to get access to req.user before it's cleared
-  .tap(Track(req, [ 'user', 'delete' ]))
+  .then(Track(req, [ 'user', 'delete' ]))
   .then(req.logout.bind(req))
   .then(responses_.Ok(res))
   .catch(error_.Handler(req, res))

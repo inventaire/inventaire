@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const { Promise, Wait } = __.require('lib', 'promises')
+const { Promise, Wait, tap } = __.require('lib', 'promises')
 require('should')
 
 const automergeAuthorWorks = __.require('controllers', 'tasks/lib/automerge_author_works')
@@ -82,7 +82,7 @@ describe('automerge_author_works: only from inv works to wd works', () => {
     const workLabel = 'Voice of the Fire'
 
     createWorkWithAuthor({ uri: authorUri }, workLabel)
-    .tap(invWork => addSerie(invWork))
+    .then(tap(invWork => addSerie(invWork)))
     .then(Wait(300))
     .then(invWork => {
       return automergeAuthorWorks(authorUri)

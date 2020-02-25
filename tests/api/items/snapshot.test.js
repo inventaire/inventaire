@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
-const { Promise, Wait } = __.require('lib', 'promises')
+const { Promise, Wait, tap } = __.require('lib', 'promises')
 const { authReq, getUserId } = require('../utils/utils')
 const { getById: getItem } = require('../utils/items')
 let { getByUris, merge, revertMerge, updateLabel, updateClaim } = require('../utils/entities')
@@ -261,7 +261,7 @@ describe('items:snapshot', () => {
       ])
       .then(([ userId, workEntityA, workEntityB ]) => {
         return authReq('post', '/api/items', { entity: workEntityA.uri, lang: 'en' })
-        .tap(() => merge(workEntityA.uri, workEntityB.uri))
+        .then(tap(() => merge(workEntityA.uri, workEntityB.uri)))
         .then(getItem)
         .then(updatedItem => {
           const updatedTitle = workEntityB.labels.en
@@ -286,7 +286,7 @@ describe('items:snapshot', () => {
             addAuthor(workEntityB)
           ])
           .then(Wait(200))
-          .tap(() => merge(workEntityA.uri, workEntityB.uri))
+          .then(tap(() => merge(workEntityA.uri, workEntityB.uri)))
           .then(Wait(200))
           .then(([ item, addedAuthor ]) => {
             return getItem(item)
@@ -311,7 +311,7 @@ describe('items:snapshot', () => {
         return createWorkWithAuthor(authorEntityA)
         .then(workEntity => authReq('post', '/api/items', { entity: workEntity.uri, lang: 'en' }))
         .then(Wait(200))
-        .tap(() => merge(authorEntityA.uri, authorEntityB.uri))
+        .then(tap(() => merge(authorEntityA.uri, authorEntityB.uri)))
         .then(Wait(200))
         .then(getItem)
         .then(updatedItem => {
@@ -333,7 +333,7 @@ describe('items:snapshot', () => {
         return createWorkWithAuthor(authorEntityA)
         .then(workEntity => authReq('post', '/api/items', { entity: workEntity.uri, lang: 'en' }))
         .then(Wait(200))
-        .tap(() => merge(authorEntityA.uri, authorEntityB.uri))
+        .then(tap(() => merge(authorEntityA.uri, authorEntityB.uri)))
         .then(Wait(200))
         .then(getItem)
         .then(updatedItem => {
@@ -389,7 +389,7 @@ describe('items:snapshot', () => {
         return createEditionFromWorks(workEntity)
         .then(editionEntity => {
           return authReq('post', '/api/items', { entity: editionEntity.uri })
-          .tap(() => merge(workEntity.uri, 'wd:Q3209796'))
+          .then(tap(() => merge(workEntity.uri, 'wd:Q3209796')))
           .then(Wait(1000))
           .then(item => {
             return getItem(item)
@@ -414,7 +414,7 @@ describe('items:snapshot', () => {
         .then(([ edition, author ]) => {
           return authReq('post', '/api/items', { entity: edition.uri })
           .then(Wait(200))
-          .tap(() => merge(author.uri, 'wd:Q2829704'))
+          .then(tap(() => merge(author.uri, 'wd:Q2829704')))
           .then(Wait(200))
           .then(item => {
             return getItem(item)

@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const should = require('should')
-const { Promise } = __.require('lib', 'promises')
+const { Promise, tap } = __.require('lib', 'promises')
 const { undesiredRes } = require('../utils/utils')
 const { createWork, createEdition, createHuman, someOpenLibraryId } = require('../fixtures/entities')
 const { getByUri, addClaim, updateClaim, removeClaim, merge } = require('../utils/entities')
@@ -142,7 +142,7 @@ describe('entities:update-claims', () => {
 
   it('should reject an update on an unexisting claim (property with claims)', done => {
     createEdition()
-    .tap(edition => addClaim(edition.uri, 'wdt:P655', 'wd:Q535'))
+    .then(tap(edition => addClaim(edition.uri, 'wdt:P655', 'wd:Q535')))
     .then(edition => updateClaim(edition.uri, 'wdt:P655', 'wd:Q23', 'wd:Q42'))
     .then(undesiredRes(done))
     .catch(err => {

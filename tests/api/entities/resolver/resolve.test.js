@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const should = require('should')
-const { Wait } = __.require('lib', 'promises')
+const { Wait, tap } = __.require('lib', 'promises')
 const { authReq, undesiredRes } = __.require('apiTests', 'utils/utils')
 const elasticsearchUpdateDelay = CONFIG.entitiesSearchEngine.elasticsearchUpdateDelay || 1000
 const { createWork, createHuman, someGoodReadsId, someOpenLibraryId, createWorkWithAuthor, generateIsbn13 } = __.require('apiTests', 'fixtures/entities')
@@ -46,7 +46,7 @@ describe('entities:resolve', () => {
     const openLibraryId = someOpenLibraryId('edition')
     const isbn13 = generateIsbn13()
     ensureEditionExists(`isbn:${isbn13}`)
-    .tap(edition => addClaim(`inv:${edition._id}`, 'wdt:P648', openLibraryId))
+    .then(tap(edition => addClaim(`inv:${edition._id}`, 'wdt:P648', openLibraryId)))
     .then(edition => {
       const editionSeed = { claims: { 'wdt:P648': [ openLibraryId ] } }
       const entry = { edition: editionSeed }
@@ -219,7 +219,7 @@ describe('entities:resolve:external-id', () => {
   it('should resolve inventaire work from external ids claim', done => {
     const goodReadsId = someGoodReadsId()
     createWork()
-    .tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsId))
+    .then(tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsId)))
     .then(Wait(10))
     .then(work => {
       return resolve({
@@ -261,7 +261,7 @@ describe('entities:resolve:external-id', () => {
     const goodReadsId = someGoodReadsId()
     createHuman()
     .then(Wait(10))
-    .tap(author => addClaim(author.uri, 'wdt:P2963', goodReadsId))
+    .then(tap(author => addClaim(author.uri, 'wdt:P2963', goodReadsId)))
     .then(Wait(10))
     .then(author => {
       return resolve({
@@ -287,7 +287,7 @@ describe('entities:resolve:in-context', () => {
     const otherWorkLabel = randomLabel()
     createHuman()
     .then(Wait(10))
-    .tap(author => addClaim(author.uri, 'wdt:P2963', goodReadsId))
+    .then(tap(author => addClaim(author.uri, 'wdt:P2963', goodReadsId)))
     .then(Wait(10))
     .then(author => {
       return Promise.all([
@@ -332,7 +332,7 @@ describe('entities:resolve:in-context', () => {
     const workLabel = randomLabel()
     createHuman()
     .then(Wait(10))
-    .tap(author => addClaim(author.uri, 'wdt:P2963', goodReadsId))
+    .then(tap(author => addClaim(author.uri, 'wdt:P2963', goodReadsId)))
     .then(Wait(10))
     .then(author => {
       return Promise.all([
@@ -363,7 +363,7 @@ describe('entities:resolve:in-context', () => {
     .then(Wait(10))
     .then(author => {
       return createWorkWithAuthor(author, workLabel)
-      .tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsId))
+      .then(tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsId)))
       .then(work => {
         const entry = {
           edition: { isbn: generateIsbn13() },

@@ -1,9 +1,9 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const { props } = __.require('lib', 'promises')
+const { props, tap, wait } = __.require('lib', 'promises')
 const { undesiredRes } = require('../utils')
 
-require('should')
+const should = require('should')
 
 describe('promises utils', () => {
   describe('props', () => {
@@ -45,6 +45,41 @@ describe('promises utils', () => {
       .then(res => {
         res.a.should.equal(1)
         res.b.should.equal(2)
+        done()
+      })
+      .catch(done)
+    })
+  })
+
+  describe('tap', () => {
+    it('should return the previous result', done => {
+      Promise.resolve(123)
+      .then(tap(() => 456))
+      .then(res => {
+        res.should.equal(123)
+        done()
+      })
+      .catch(done)
+    })
+
+    it('should give access to the previous result', done => {
+      Promise.resolve(123)
+      .then(tap(res => {
+        res.should.equal(123)
+        done()
+      }))
+      .catch(done)
+    })
+
+    it('should wait for asynchronous functions', done => {
+      const start = Date.now()
+      Promise.resolve(123)
+      .then(tap(async res => {
+        await wait(100)
+      }))
+      .then(() => {
+        const end = Date.now()
+        should(end - start >= 100).be.true()
         done()
       })
       .catch(done)

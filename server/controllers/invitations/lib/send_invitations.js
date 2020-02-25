@@ -43,9 +43,9 @@ module.exports = (user, group, emails, message) => {
 
 const triggerInvitation = (user, group, emails, message) => {
   if (group) {
-    return radio.emit('send:group:email:invitations', user, group, emails, message)
+    radio.emit('send:group:email:invitations', user, group, emails, message)
   } else {
-    return radio.emit('send:email:invitations', user, emails, message)
+    radio.emit('send:email:invitations', user, emails, message)
   }
 }
 

@@ -37,6 +37,6 @@ module.exports = (req, res) => {
     }
   })
   .then(data => res.status(201).json(data))
-  .tap(Track(req, [ 'item', 'creation', null, items.length ]))
+  .then(Track(req, [ 'item', 'creation', null, items.length ]))
   .catch(error_.Handler(req, res))
 }

@@ -2,10 +2,8 @@ const CONFIG = require('config')
 const host = CONFIG.fullHost()
 require('should')
 const { rawRequest } = require('../utils/request')
-const { createHuman } = require('../fixtures/entities')
 const { createUser } = require('../fixtures/users')
 const { groupPromise } = require('../fixtures/groups')
-const { createItem } = require('../fixtures/items')
 const someUserPromise = createUser()
 
 describe('rss redirections', () => {
