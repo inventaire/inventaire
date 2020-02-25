@@ -39,11 +39,11 @@ module.exports = (data, userId) => {
   })
 }
 
-const applyEditHooks = (attribute, groupDoc) => {
+const applyEditHooks = async (attribute, groupDoc) => {
   if (attribute === 'name') {
     return updateSlug(groupDoc)
   } else {
-    return Promise.resolve({ updatedDoc: groupDoc, hooksUpdates: {} })
+    return { updatedDoc: groupDoc, hooksUpdates: {} }
   }
 }
 

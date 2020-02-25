@@ -51,19 +51,16 @@ const transactions_ = module.exports = {
 
   markAsRead: (userId, transaction) => {
     const role = userRole(userId, transaction)
-    // not handling cases when both user are connected:
+    // Not handling cases when both user are connected:
     // should be clarified once sockets/server events will be implemented
     return db.update(transaction._id, BasicUpdater(`read.${role}`, true))
   },
 
-  updateReadForNewMessage: (userId, transaction) => {
+  updateReadForNewMessage: async (userId, transaction) => {
     const updatedReadStates = updateReadStates(userId, transaction)
-    // spares a db write if updatedReadStates is already the current read state object
-    if (_.sameObjects(updatedReadStates, transaction.read)) {
-      return Promise.resolve()
-    } else {
-      return db.update(transaction._id, BasicUpdater('read', updatedReadStates))
-    }
+    // Spares a db write if updatedReadStates is already the current read state object
+    if (_.sameObjects(updatedReadStates, transaction.read)) return
+    return db.update(transaction._id, BasicUpdater('read', updatedReadStates))
   },
 
   activeTransactionsCount: userId => {

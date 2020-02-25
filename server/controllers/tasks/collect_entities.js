@@ -52,12 +52,9 @@ const getNextInvHumanUrisBatch = pagination => {
   .then(getUris)
 }
 
-const getFilteredUris = (uris, refresh) => {
-  if (refresh) {
-    return Promise.resolve(uris)
-  } else {
-    return filterNotAlreadySuspectEntities(uris)
-  }
+const getFilteredUris = async (uris, refresh) => {
+  if (refresh) return uris
+  else return filterNotAlreadySuspectEntities(uris)
 }
 
 const getUris = res => _.map(res.rows, 'id').map(prefixifyInv)
@@ -66,11 +63,11 @@ const deduplicateWorker = (jobId, uri) => {
   return checkEntity(uri)
   .then(Wait(interval))
   .catch(err => {
-    if (err.statusCode === 400) {
-    } else {
-      _.error(err, 'deduplicateWorker err')
-      throw err
-    }
+    // Prevent crashing the queue for non-critical errors
+    // Example of 400 error: the entity has already been redirected
+    if (err.statusCode === 400) return
+    _.error(err, 'deduplicateWorker err')
+    throw err
   })
 }
 

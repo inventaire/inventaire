@@ -8,7 +8,7 @@ const { matchTitle, matchAuthor } = require('./work_entity_search_utils')
 
 // Search an existing work by title and authors from a seed
 // to avoid creating duplicates if a corresponding work already exists
-module.exports = seed => {
+module.exports = async seed => {
   const { title, authors, groupLang } = seed
   // Unless a lang is explicitly passed, deduce it from the the ISBN groupLang
   const lang = seed.lang || groupLang
@@ -16,7 +16,7 @@ module.exports = seed => {
   const validAuthors = _.isArray(authors) && _.every(authors, _.isNonEmptyString)
   if (!_.isNonEmptyString(title) || !validAuthors) {
     _.warn(seed, 'unsufficient seed data to search a pre-existing work entity')
-    return Promise.resolve()
+    return
   }
 
   const cachedWorkPromise = workEntitiesCache.get(seed)

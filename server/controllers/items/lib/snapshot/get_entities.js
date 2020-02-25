@@ -5,9 +5,9 @@ const getEntityByUri = __.require('controllers', 'entities/lib/get_entity_by_uri
 const getEntitiesByUris = __.require('controllers', 'entities/lib/get_entities_by_uris')
 const { aggregateClaims } = require('./helpers')
 
-const getRelativeEntities = relationProperty => entity => {
+const getRelativeEntities = relationProperty => async entity => {
   const uris = entity.claims[relationProperty]
-  if (!(uris && uris.length > 0)) return Promise.resolve([])
+  if (uris == null || uris.length === 0) return []
   return getEntitiesByUris({ uris })
   .then(res => _.values(res.entities))
 }

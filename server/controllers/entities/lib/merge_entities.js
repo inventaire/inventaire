@@ -31,48 +31,43 @@ module.exports = (userId, fromUri, toUri) => {
   }
 }
 
-const mergeEntities = (userId, fromId, toId) => {
+const mergeEntities = async (userId, fromId, toId) => {
   assert_.strings([ userId, fromId, toId ])
 
   // Fetching non-formmatted docs
-  return entities_.byIds([ fromId, toId ])
-  .then(([ fromEntityDoc, toEntityDoc ]) => {
-    // At this point if the entities are not found, that's the server's fault,
-    // thus the 500 statusCode
-    let transfer
-    if (fromEntityDoc._id !== fromId) {
-      throw error_.new("'from' entity doc not found", 500)
-    }
+  const [ fromEntityDoc, toEntityDoc ] = await entities_.byIds([ fromId, toId ])
+  // At this point if the entities are not found, that's the server's fault,
+  // thus the 500 statusCode
+  if (fromEntityDoc._id !== fromId) {
+    throw error_.new("'from' entity doc not found", 500)
+  }
 
-    if (toEntityDoc._id !== toId) {
-      throw error_.new("'to' entity doc not found", 500)
-    }
+  if (toEntityDoc._id !== toId) {
+    throw error_.new("'to' entity doc not found", 500)
+  }
 
-    const previousToUri = getInvEntityCanonicalUri(toEntityDoc)
+  const previousToUri = getInvEntityCanonicalUri(toEntityDoc)
 
-    // Transfer all data from the 'fromEntity' to the 'toEntity'
-    // if any difference can be found
-    const toEntityDocBeforeMerge = _.cloneDeep(toEntityDoc)
-    toEntityDoc = Entity.mergeDocs(fromEntityDoc, toEntityDoc)
-    if (_.isEqual(toEntityDoc, toEntityDocBeforeMerge)) {
-      // if the toEntityDoc after data transfer hasn't changed
-      // don't run entities_.putUpdate as it will throw an 'empty patch' error
-      transfer = Promise.resolve()
-    } else {
-      transfer = entities_.putUpdate({
-        userId,
-        currentDoc: toEntityDocBeforeMerge,
-        updatedDoc: toEntityDoc,
-        context: { mergeFrom: `inv:${fromId}` }
-      })
-    }
+  // Transfer all data from the 'fromEntity' to the 'toEntity'
+  // if any difference can be found
+  const toEntityDocBeforeMerge = _.cloneDeep(toEntityDoc)
+  const toEntityDocAfterMerge = Entity.mergeDocs(fromEntityDoc, toEntityDoc)
 
-    // Refresh the URI in case an ISBN was transfered and the URI changed
-    const newToUri = getInvEntityCanonicalUri(toEntityDoc)
+  // If the doc hasn't changed, don't run entities_.putUpdate
+  // as it will throw an 'empty patch' error
+  if (!_.isEqual(toEntityDocBeforeMerge, toEntityDocAfterMerge)) {
+    await entities_.putUpdate({
+      userId,
+      currentDoc: toEntityDocBeforeMerge,
+      updatedDoc: toEntityDocAfterMerge,
+      context: { mergeFrom: `inv:${fromId}` }
+    })
+  }
 
-    return transfer
-    .then(() => turnIntoRedirection(userId, fromId, newToUri, previousToUri))
-  })
+  // Refresh the URI in case an ISBN was transfered and the URI changed
+  const newToUri = getInvEntityCanonicalUri(toEntityDocAfterMerge)
+
+  return turnIntoRedirection(userId, fromId, newToUri, previousToUri)
 }
 
 const turnIntoRedirection = (userId, fromId, toUri, previousToUri) => {

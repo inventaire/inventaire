@@ -6,8 +6,8 @@ const error_ = __.require('lib', 'error/error')
 const cache_ = __.require('lib', 'cache')
 const getPopularityByUri = require('./get_popularity_by_uri')
 
-module.exports = (uris, refresh) => {
-  if (uris.length === 0) return Promise.resolve({})
+module.exports = async (uris, refresh) => {
+  if (uris.length === 0) return {}
   const urisPopularity = _.indexAppliedValue(uris, getPopularity(refresh))
   return promises_.props(urisPopularity)
 }

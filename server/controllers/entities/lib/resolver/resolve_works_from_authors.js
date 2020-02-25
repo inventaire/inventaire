@@ -6,10 +6,10 @@ const { getAlreadyResolvedUris, someTermsMatch, resolveSeed } = require('./helpe
 const { getEntityNormalizedTerms } = require('../terms_normalization')
 const getAuthorsUris = require('../get_authors_uris')
 
-module.exports = (works, authors) => {
+module.exports = async (works, authors) => {
   const worksAuthorsUris = _.compact(_.flatten(works.map(getAuthorsUris)))
   const authorsUris = _.uniq(getAlreadyResolvedUris(authors).concat(worksAuthorsUris))
-  if (authorsUris.length === 0) return Promise.resolve(works)
+  if (authorsUris.length === 0) return works
   return Promise.all(works.map(resolveWork(authorsUris)))
 }
 

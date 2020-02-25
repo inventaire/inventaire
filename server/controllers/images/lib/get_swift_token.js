@@ -40,8 +40,8 @@ const postParams = {
   }
 }
 
-module.exports = () => {
-  if (lastToken && !tokenExpired()) return Promise.resolve(lastToken)
+module.exports = async () => {
+  if (lastToken && !tokenExpired()) return lastToken
 
   return breq.post(postParams)
   .then(parseIdentificationRes)

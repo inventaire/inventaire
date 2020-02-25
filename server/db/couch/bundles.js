@@ -9,9 +9,9 @@ module.exports = (db, _) => {
     .then(updateIdAndRev.bind(null, doc))
   }
 
-  const bulkDelete = docs => {
+  const bulkDelete = async docs => {
     assert_.objects(docs)
-    if (docs.length === 0) return Promise.resolve([])
+    if (docs.length === 0) return []
     _.warn(docs, 'bulkDelete')
     return db.bulk(couch_.setDocsDeletedTrue(docs))
   }

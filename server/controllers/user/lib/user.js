@@ -73,9 +73,9 @@ const user_ = module.exports = {
     })
   },
 
-  getUsersByIds: (ids, reqUserId) => {
+  getUsersByIds: async (ids, reqUserId) => {
     assert_.array(ids)
-    if (ids.length === 0) return Promise.resolve([])
+    if (ids.length === 0) return []
     return user_.getUsersAuthorizedData(user_.byIds(ids), reqUserId)
   },
 

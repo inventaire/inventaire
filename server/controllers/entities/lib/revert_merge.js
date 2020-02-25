@@ -46,8 +46,8 @@ const findVersionBeforeRedirect = patches => {
 
 const isntRedirection = version => version.redirect == null
 
-const recoverPlaceholders = (userId, removedPlaceholdersIds) => {
-  if ((removedPlaceholdersIds != null ? removedPlaceholdersIds.length : undefined) <= 0) return Promise.resolve()
+const recoverPlaceholders = async (userId, removedPlaceholdersIds) => {
+  if (removedPlaceholdersIds == null || removedPlaceholdersIds.length === 0) return
 
   const recoverFn = placeholders_.recover.bind(null, userId)
   return Promise.all(removedPlaceholdersIds.map(recoverFn))

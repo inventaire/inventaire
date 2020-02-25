@@ -11,9 +11,9 @@ const tasks_ = module.exports = {
     return db.bulk(tasks)
   },
 
-  update: options => {
+  update: async options => {
     const { ids, attribute, newValue } = options
-    if (ids.length === 0) return Promise.resolve([])
+    if (ids.length === 0) return []
 
     return tasks_.byIds(ids)
     .map(task => Task.update(task, attribute, newValue))

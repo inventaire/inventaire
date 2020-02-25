@@ -36,9 +36,8 @@ module.exports = async params => {
   })
 }
 
-const validate = (entity, isAlreadyValidated) => {
-  if (isAlreadyValidated) return Promise.resolve()
-  else return validateEntity(entity)
+const validate = async (entity, isAlreadyValidated) => {
+  if (!isAlreadyValidated) return validateEntity(entity)
 }
 
 const validateWikidataCompliance = entity => {

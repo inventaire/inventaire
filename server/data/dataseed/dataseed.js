@@ -17,9 +17,9 @@ const reqOptions = {
 const { enabled, host } = CONFIG.dataseed
 
 module.exports = {
-  getByIsbns: (isbns, refresh) => {
+  getByIsbns: async (isbns, refresh) => {
     isbns = _.forceArray(isbns)
-    if (!enabled) return Promise.resolve(isbns.map(emptySeed))
+    if (!enabled) return isbns.map(emptySeed)
     isbns = isbns.join('|')
     const url = _.buildPath(`${host}/books`, { isbns, refresh })
     return requests_.get(url, reqOptions)

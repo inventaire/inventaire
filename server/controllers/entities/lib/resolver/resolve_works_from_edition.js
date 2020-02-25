@@ -3,8 +3,8 @@ const getEntitiesList = require('../get_entities_list')
 const getEntityByUri = require('../get_entity_by_uri')
 const { getEntityNormalizedTerms } = require('../terms_normalization')
 
-module.exports = (worksSeeds, editionSeed) => {
-  if (editionSeed.uri == null) return Promise.resolve(worksSeeds)
+module.exports = async (worksSeeds, editionSeed) => {
+  if (editionSeed.uri == null) return worksSeeds
 
   return getEntityByUri({ uri: editionSeed.uri })
   .then(editionEntity => {

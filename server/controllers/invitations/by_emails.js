@@ -46,7 +46,7 @@ const parseAndValidateEmails = async (emails, userEmail) => {
 }
 
 const validateGroup = async (groupId, reqUserId) => {
-  if (groupId == null) return Promise.resolve(null)
+  if (groupId == null) return null
 
   if (!_.isGroupId(groupId)) {
     throw error_.newInvalid('group id', groupId)

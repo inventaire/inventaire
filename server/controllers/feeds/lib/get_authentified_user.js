@@ -2,8 +2,8 @@ const __ = require('config').universalPath
 const error_ = __.require('lib', 'error/error')
 const user_ = __.require('controllers', 'user/lib/user')
 
-module.exports = (requester, readToken) => {
-  if (requester == null) return Promise.resolve(null)
+module.exports = async (requester, readToken) => {
+  if (requester == null) return null
 
   return user_.byId(requester)
   .catch(formatNotFound(requester))

@@ -7,7 +7,7 @@ const entities_ = __.require('controllers', 'entities/lib/entities')
 const runWdQuery = __.require('data', 'wikidata/run_query')
 const getInvEntityCanonicalUri = require('../get_inv_entity_canonical_uri')
 
-module.exports = (claims, resolveOnWikidata = true) => {
+module.exports = async (claims, resolveOnWikidata = true) => {
   const externalIds = []
 
   for (const prop in claims) {
@@ -17,7 +17,7 @@ module.exports = (claims, resolveOnWikidata = true) => {
     }
   }
 
-  if (externalIds.length === 0) return Promise.resolve()
+  if (externalIds.length === 0) return
 
   const requests = [ invQuery(externalIds) ]
   if (resolveOnWikidata) { requests.push(wdQuery(externalIds)) }

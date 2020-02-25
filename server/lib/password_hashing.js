@@ -10,10 +10,10 @@ if (hashPasswords) {
   // in the database: the good old way! \o/
   module.exports = {
     // Disabling hashing by returning a promise that resolves to the input password
-    hash: password => Promise.resolve(password),
+    hash: async password => password,
     // Thus verifying the password is simply comparing the input password
     // with the password set in the database
-    verify: (hash, password) => Promise.resolve(hash === password),
+    verify: async (hash, password) => hash === password,
     // In this mode, tokens never expire
     expired: () => false
   }

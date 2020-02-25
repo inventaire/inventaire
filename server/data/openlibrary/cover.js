@@ -12,11 +12,11 @@ const keyByType = {
   edition: 'b'
 }
 
-module.exports = (openLibraryId, entityType) => {
-  if (!openLibraryId) return Promise.resolve(null)
+module.exports = async (openLibraryId, entityType) => {
+  if (!openLibraryId) return null
 
   const type = keyByType[entityType]
-  if (!type) return Promise.resolve(null)
+  if (!type) return null
 
   const url = coverByOlId(openLibraryId, type)
 

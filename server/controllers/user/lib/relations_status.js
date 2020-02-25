@@ -12,8 +12,8 @@ module.exports = {
     return relations_.getUserRelations(userId)
   },
 
-  getRelationsStatuses: (userId, usersIds) => {
-    if (userId == null) return Promise.resolve([ [], [], usersIds ])
+  getRelationsStatuses: async (userId, usersIds) => {
+    if (userId == null) return [ [], [], usersIds ]
 
     return getFriendsAndGroupCoMembers(userId)
     .then(spreadRelations(usersIds))
@@ -32,8 +32,8 @@ module.exports = {
     .then(([ friendsIds, coGroupMembersIds ]) => friendsIds.includes(otherId) || coGroupMembersIds.includes(otherId))
   },
 
-  getNetworkIds: userId => {
-    if (userId == null) return Promise.resolve([])
+  getNetworkIds: async userId => {
+    if (userId == null) return []
     return getFriendsAndGroupCoMembers(userId)
     .then(_.flatten)
   }

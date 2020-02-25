@@ -16,9 +16,9 @@ module.exports = (page, usersIds) => {
   .then(addAssociatedData)
 }
 
-const getRelations = (reqUserId, usersIds) => {
+const getRelations = async (reqUserId, usersIds) => {
   // All users are considered public users when the request isn't authentified
-  if (reqUserId == null) return Promise.resolve({ public: usersIds })
+  if (reqUserId == null) return { public: usersIds }
 
   const relations = {}
   if (usersIds.includes(reqUserId)) {
@@ -26,7 +26,7 @@ const getRelations = (reqUserId, usersIds) => {
     usersIds = _.without(usersIds, reqUserId)
   }
 
-  if (usersIds.length === 0) return Promise.resolve(relations)
+  if (usersIds.length === 0) return relations
 
   return getRelationsStatuses(reqUserId, usersIds)
   .then(([ friends, coGroupMembers, publik ]) => {

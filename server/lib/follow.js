@@ -86,9 +86,8 @@ const initFollow = (dbName, reset) => (lastSeq = 0) => {
   })
 }
 
-const resetIfNeeded = (dbName, lastSeq, reset) => {
+const resetIfNeeded = async (dbName, lastSeq, reset) => {
   if (lastSeq === 0 && reset != null) return reset()
-  else return Promise.resolve()
 }
 
 const startFollowingDb = params => {

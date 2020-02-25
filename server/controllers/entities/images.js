@@ -81,12 +81,8 @@ const redirectToRawImage = (res, uri, images, width, height) => {
   .then(res.redirect.bind(res))
 }
 
-const replaceWikimediaFilename = image => {
+const replaceWikimediaFilename = async image => {
   // Wikimedia file name neither start by 'http' or '/'
-  if (!/^(http|\/)/.test(image)) {
-    return getThumbData(image)
-    .then(({ url }) => url)
-  } else {
-    return Promise.resolve(image)
-  }
+  if (image.startsWith('http') || image[0] === '/') return image
+  else return getThumbData(image).then(({ url }) => url)
 }

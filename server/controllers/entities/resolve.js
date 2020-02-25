@@ -63,8 +63,8 @@ const sanitizeEntryAndDispatch = (sanitizedEntries, errors, strict) => entry => 
   }
 }
 
-const sequentialResolve = (entries, params, errors) => {
-  if (entries.length === 0) return Promise.resolve([])
+const sequentialResolve = async (entries, params, errors) => {
+  if (entries.length === 0) return []
 
   const { create, update, strict } = params
   const updateResolvedEntry = buildActionFn(update, UpdateResolvedEntry, params)

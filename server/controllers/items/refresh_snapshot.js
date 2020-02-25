@@ -18,10 +18,10 @@ module.exports = (req, res) => {
 }
 
 const refreshSequentially = uris => {
-  const refreshNext = () => {
+  const refreshNext = async () => {
     const nextUri = uris.pop()
 
-    if (nextUri == null) return Promise.resolve()
+    if (nextUri == null) return
 
     if (!_.isEntityUri(nextUri)) {
       _.warn(nextUri, 'invalid entity URI: not refreshing')

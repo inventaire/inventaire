@@ -31,11 +31,11 @@ const invitations_ = module.exports = {
     .catch(_.ErrorRethrow('addInviter'))
   },
 
-  convertInvitations: userDoc => {
+  convertInvitations: async userDoc => {
     const { _id: userId, inviters } = userDoc
     let { invitersGroups } = userDoc
 
-    if (inviters == null && invitersGroups == null) return Promise.resolve()
+    if (inviters == null && invitersGroups == null) return
 
     invitersGroups = invitersGroups || {}
     const groupInvitersIds = _.values(invitersGroups)

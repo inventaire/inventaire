@@ -22,8 +22,8 @@ const refreshSnapshot = require('./refresh_snapshot')
 const error_ = __.require('lib', 'error/error')
 
 module.exports = {
-  addToItem: item => {
-    if (item.snapshot) return Promise.resolve(item)
+  addToItem: async item => {
+    if (item.snapshot) return item
 
     return getSnapshot(item.entity)
     .then(snapshot => {
@@ -32,7 +32,7 @@ module.exports = {
     })
     .catch(err => {
       _.error(err, 'snapshot_.addToItem error')
-      if (!item.snapshot) { item.snapshot = {} }
+      item.snapshot = item.snapshot || {}
       return item
     })
   },

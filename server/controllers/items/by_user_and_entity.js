@@ -33,10 +33,9 @@ const getItemsFromUser = (reqUserId, uri) => user => {
   })
 }
 
-const getAuthorizationLevel = (reqUserId, ownerId) => {
-  if (reqUserId == null) return Promise.resolve('public')
-
-  if (reqUserId === ownerId) return Promise.resolve('user')
+const getAuthorizationLevel = async (reqUserId, ownerId) => {
+  if (reqUserId == null) return 'public'
+  if (reqUserId === ownerId) return 'user'
 
   return areFriendsOrGroupCoMembers(reqUserId, ownerId)
   .then(bool => bool === true ? 'network' : 'public')
