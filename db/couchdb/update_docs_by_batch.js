@@ -29,7 +29,7 @@ const nextBatchUpdater = (db, ids, docUpdater) => {
     return db.fetch(nextIdsBatch)
     .then(promises_.map(docUpdater))
     // Remove docs that don't need an update
-    .filter(_.identity)
+    .then(docs => docs.filter(_.identity))
     .then(docsToUpdate => {
       if (docsToUpdate.length === 0) return
       return db.bulk(docsToUpdate)

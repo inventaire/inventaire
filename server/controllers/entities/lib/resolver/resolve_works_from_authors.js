@@ -17,6 +17,6 @@ const resolveWork = authorsUris => work => {
   if (work.uri != null) return work
   const workSeedTerms = getEntityNormalizedTerms(work)
   return Promise.all(getWorksFromAuthorsLabels(authorsUris))
-  .filter(someTermsMatch(workSeedTerms))
+  .then(works => works.filter(someTermsMatch(workSeedTerms)))
   .then(resolveSeed(work))
 }

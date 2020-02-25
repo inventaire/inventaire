@@ -30,7 +30,7 @@ module.exports = params => {
     params.updateFunction = updateFunction
 
     return docsIdsPromise
-    .filter(isntDesignDoc)
+    .then(docIds => docIds.filter(isntDesignDoc))
     .then(updateDocsByBatch(params))
   }
 

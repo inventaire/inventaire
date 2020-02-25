@@ -2,14 +2,10 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const getBestLangValue = __.require('lib', 'get_best_lang_value')
 
-module.exports = lang => results => {
-  if (!lang) return results
-
-  return results
-  .map(result => {
-    const { _type, _source } = result
-    return formatters[_type](result, _source, lang)
-  })
+module.exports = lang => result => {
+  if (!lang) return result
+  const { _type, _source } = result
+  return formatters[_type](result, _source, lang)
 }
 
 const entityFormatter = (result, _source, lang) => ({

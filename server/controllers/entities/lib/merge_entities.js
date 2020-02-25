@@ -121,14 +121,12 @@ const propertiesToCheckForPlaceholderDeletion = [
   'wdt:P50'
 ]
 
-const deleteIfIsolated = (userId, fromId) => entityUri => {
+const deleteIfIsolated = (userId, fromId) => async entityUri => {
   const [ prefix, entityId ] = entityUri.split(':')
   // Ignore wd or isbn entities
   if (prefix !== 'inv') return
 
-  return entities_.byClaimsValue(entityUri)
-  .filter(result => result.entity !== fromId)
-  .then(results => {
-    if (results.length === 0) return placeholders_.remove(userId, entityId)
-  })
+  let results = await entities_.byClaimsValue(entityUri)
+  results = results.filter(result => result.entity !== fromId)
+  if (results.length === 0) return placeholders_.remove(userId, entityId)
 }

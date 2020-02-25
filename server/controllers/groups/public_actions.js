@@ -35,7 +35,7 @@ module.exports = {
     // Can't be chained directy as .filter makes problems when parseBbox throws:
     // "parseBbox(...).then(...).then(...).catch(...).filter is not a function"
     .then(bbox => groups_.byPosition(bbox))
-    .filter(searchable)
+    .then(groups => groups.filter(searchable))
     .then(responses_.Wrap(res, 'groups'))
     .catch(error_.Handler(req, res))
   },

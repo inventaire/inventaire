@@ -13,13 +13,13 @@ const groups_ = module.exports = {
   bySlug: db.viewFindOneByKey.bind(db, 'bySlug'),
   byUser: db.viewByKey.bind(db, 'byUser'),
   byInvitedUser: db.viewByKey.bind(db, 'byInvitedUser'),
-  byAdmin: userId => {
+  byAdmin: async userId => {
     // could be simplified by making the byUser view
     // emit an arrey key with the role as second parameter
     // but it would make groups_.byUser more complex
     // (i.e. use a range instead of a simple key)
-    return db.viewByKey('byUser', userId)
-    .filter(Group.userIsAdmin.bind(null, userId))
+    const groups = await db.viewByKey('byUser', userId)
+    return groups.filter(group => Group.userIsAdmin(userId, group))
   },
 
   // /!\ the 'byName' view does return groups with 'searchable' set to false
