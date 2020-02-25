@@ -1,8 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-
-require('should')
+const should = require('should')
 
 const User = __.require('models', 'user')
 
@@ -108,24 +107,42 @@ describe('user model', () => {
       })
     })
   })
+
+  describe('delete', () => {
+    it('should delete user attributes not needed by the user souvenir', () => {
+      const user = _create(validUser())
+      user._id = user._rev = 'foo'
+      const userSouvenir = User.softDelete(user)
+      userSouvenir.should.deepEqual({
+        _id: user._id,
+        _rev: user._rev,
+        username: user.username,
+        type: 'deletedUser'
+      })
+    })
+  })
+
+  describe('updateItemsCounts', () => {
+    const counts = {
+      private: { 'items:count': 1 },
+      network: { 'items:count': 2 },
+      public: { 'items:count': 3 }
+    }
+
+    it('should update items counts', () => {
+      const user = _create(validUser())
+      const updatedUser = User.updateItemsCounts(counts)(user)
+      updatedUser.snapshot.should.deepEqual(counts)
+    })
+
+    // This especially needs to be tested as it might happen that a debounced event
+    // make User.updateItemsCounts be called after a user was deleted
+    it('should not throw if the user was deleted', () => {
+      const user = _create(validUser())
+      const userSouvenir = User.softDelete(user)
+      const updatedUser = User.updateItemsCounts(counts)(userSouvenir)
+      updatedUser.should.equal(userSouvenir)
+      should(updatedUser.snapshot).not.be.ok()
+    })
+  })
 })
-
-// Valid test but takes too much time due to the hash
-// Can be let comment-out when not working on this part of the code
-
-// it 'should return a hashed password', (done)->
-//   args = validUser()
-//   clearPassword = args[4]
-
-//   _.info 'takes more time due to the volontarly slow hash function'
-//   @timeout 5000
-
-//   create validUser()
-//   .then (user)->
-//     user.password.should.be.a.String()
-//     _.log clearPassword, 'input'
-//     _.log user.password, 'output'
-//     user.password.should.not.equal clearPassword
-//     user.password.length.should.be.above 200
-//     done()
-//   .catch (err)-> console.log 'err', err

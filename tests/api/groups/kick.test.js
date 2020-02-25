@@ -38,7 +38,7 @@ describe('groups:update:kick', () => {
       const membersCount = group.members.length
       return authReq('put', endpoint, { user: member._id, group: group._id })
       .delay(100)
-      .then(() => getGroup(group._id))
+      .then(() => getGroup(group))
       .then(updatedGroup => {
         updatedGroup.members.length.should.equal(membersCount - 1)
         done()

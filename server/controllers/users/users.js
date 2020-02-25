@@ -10,6 +10,7 @@ module.exports = {
       'search-by-position': require('./search_by_position')
     },
     authentified: {
+      // TODO: maybe, merge this endpoint with search-by-position
       nearby: require('./nearby')
     }
   })

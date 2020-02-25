@@ -50,11 +50,11 @@ describe('groups:update:decline', () => {
     .spread((group, invitedUser) => {
       const { _id: invitedUserId } = invitedUser
       return authReq('put', '/api/groups?action=invite', { user: invitedUserId, group: group._id })
-      .then(() => getGroup(group._id))
+      .then(() => getGroup(group))
       .then(group => {
         const declinerCount = group.declined.length
         return authReqC('put', endpoint, { user: invitedUserId, group: group._id })
-        .then(() => getGroup(group._id))
+        .then(() => getGroup(group))
         .then(updatedGroup => {
           updatedGroup.declined.length.should.equal(declinerCount + 1)
           done()

@@ -8,6 +8,7 @@ const assert_ = __.require('utils', 'assert_types')
 const Group = module.exports = {}
 
 const validations = Group.validations = require('./validations/group')
+const attributes = Group.attributes = require('./attributes/group')
 
 Group.create = options => {
   _.log(options, 'group create')
@@ -16,6 +17,7 @@ Group.create = options => {
   validations.pass('description', description)
   validations.pass('searchable', searchable)
   validations.pass('position', position)
+  validations.pass('creatorId', creatorId)
 
   const creator = createMembership(creatorId, null)
 
@@ -82,6 +84,27 @@ const membershipActions = {
   }
 }
 
+Group.deleteUser = (group, userId) => {
+  for (const list of attributes.usersLists) {
+    group[list] = withoutUser(group[list], userId)
+  }
+
+  // If there are no more admins, promote the 3 most senior members
+  if (group.admins.length === 0) {
+    const membersBySeniority = group.members.sort(byTimestamp)
+    group.admins = membersBySeniority.slice(0, 3)
+    group.members = membersBySeniority.slice(3)
+  }
+
+  return group
+}
+
+const byTimestamp = (a, b) => a.timestamp - b.timestamp
+
+const withoutUser = (memberships, userId) => {
+  return memberships.filter(memberData => memberData.user !== userId)
+}
+
 Group.membershipActionsList = Object.keys(membershipActions)
 Object.assign(Group, membershipActions)
 
@@ -96,21 +119,20 @@ const createMembership = (userId, invitorId) => ({
 const moveMembership = (userId, group, previousCategory, newCategory) => {
   const membership = findMembership(userId, group, previousCategory, true)
   group[previousCategory] = _.without(group[previousCategory], membership)
-  // let the possibility to just destroy the membership
+  // Let the possibility to just destroy the membership
   // by letting newCategory undefined
-  if (newCategory != null) { group[newCategory].push(membership) }
+  if (newCategory != null) group[newCategory].push(membership)
   return group
 }
 
 const findMembership = (userId, group, previousCategory, wanted) => {
-  let context
   const membership = _.find(group[previousCategory], { user: userId })
   if (wanted) {
     // expect to find a membership
     if (membership != null) {
       return membership
     } else {
-      context = { userId }
+      const context = { userId }
       context[previousCategory] = group[previousCategory]
       throw error_.new('membership not found', 403, context)
     }
@@ -119,10 +141,8 @@ const findMembership = (userId, group, previousCategory, wanted) => {
     if (membership != null) {
       // return a 200 to avoid to show an error on client-side
       // while the membership does exist
-      context = { groupId: group._id, userId }
+      const context = { groupId: group._id, userId }
       throw error_.new('membership already exist', 200, context)
-    } else {
-
     }
   }
 }
@@ -148,8 +168,6 @@ Group.getAllMembers = group => {
   const membersIds = _.map(group.members, 'user')
   return adminsIds.concat(membersIds)
 }
-
-Group.attributes = require('./attributes/group')
 
 Group.formatters = {
   position: truncateLatLng

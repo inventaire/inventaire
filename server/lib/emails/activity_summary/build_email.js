@@ -37,7 +37,7 @@ const getEmailData = user => {
     // unread notifications
     unreadNotifications: notifs_.unreadCount(userId),
     // waiting transaction
-    activeTransactions: transactions_.activeTransactions(userId),
+    activeTransactions: transactions_.activeTransactionsCount(userId),
     // new books in your network: preview + count for others 'X more...'
     lastFriendsBooks: getLastNetworkBooks(userId, lang, lastSummary),
     // new books nearby

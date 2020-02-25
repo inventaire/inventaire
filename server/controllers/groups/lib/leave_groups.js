@@ -24,21 +24,13 @@ module.exports = {
   },
 
   leaveAllGroups: userId => {
-    // TODO: check if userCanLeave
     return groups_.byUser(userId)
-    .map(removeUser.bind(null, userId))
-    .then(db.bulk)
+    .map(group => removeUser(group, userId))
   }
 }
 
-const removeUser = (userId, groupDoc) => {
-  if (groupDoc.admins.includes(userId)) {
-    _.warn({ userId, groupDoc }, "removing a user from a group she's admin of")
-  }
-
-  for (const list of Group.attributes.usersLists) {
-    groupDoc[list] = _.without(groupDoc[list], userId)
-  }
-
-  return groupDoc
+const removeUser = (group, userId) => {
+  const updatedGroup = Group.deleteUser(group, userId)
+  if (updatedGroup.admins.length === 0) return db.delete(group._id, group._rev)
+  else return db.put(updatedGroup)
 }
