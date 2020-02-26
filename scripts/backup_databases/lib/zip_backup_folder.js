@@ -1,3 +1,6 @@
+const CONFIG = require('config')
+const __ = CONFIG.universalPath
+const _ = __.require('builders', 'utils')
 const execa = require('execa')
 const { backupGeneralFolder, backupFolder, day } = require('./get_backup_folder_data')()
 
@@ -11,7 +14,8 @@ module.exports = () => {
     // Input path from the changed directory
     day
   ])
-  .then(() => deleteFolder(backupFolder))
+  .then(() => deleteFolder())
+  .then(() => _.log(`backup archived in ${backupGeneralFolder}`))
 }
 
-const deleteFolder = backupFolder => execa('rm', [ '-rf', backupFolder ])
+const deleteFolder = () => execa('rm', [ '-rf', backupFolder ])

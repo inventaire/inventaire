@@ -5,6 +5,7 @@
   "main": "server/server.js",
   "scripts": {
     "add-new-active-lang": "./scripts/add_new_active_lang",
+    "backup-databases": "./scripts/backup_databases/backup_databases.js",
     "couch2elastic4sync:init": "./scripts/couch2elastic4sync/init.js",
     "couch2elastic4sync:load": "./scripts/couch2elastic4sync/load.js",
     "couch2elastic4sync:reset": "./scripts/couch2elastic4sync/reset.js",

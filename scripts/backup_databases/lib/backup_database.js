@@ -3,7 +3,7 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const execa = require('execa')
 const { backupFolder } = require('./get_backup_folder_data')()
-const { username, password, host, port } = CONFIG.db
+const { username, password, hostname: host, port } = CONFIG.db
 
 module.exports = dbName => {
   const args = buildArgsArray(backupFolder, dbName)
@@ -11,7 +11,7 @@ module.exports = dbName => {
   return execa('couchdb-backup', args)
   .then(res => {
     _.log(res.stdout, `${dbName} stdout`)
-    return _.warn(res.stderr, `${dbName} stderr`)
+    _.warn(res.stderr, `${dbName} stderr`)
   })
 }
 
