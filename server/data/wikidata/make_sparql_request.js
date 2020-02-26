@@ -53,7 +53,7 @@ const makeRequest = url => {
     return requests_.get(url, requestOptions)
     .then(wdk.simplifySparqlResults)
     // Don't let a query block the queue more than 30 seconds
-    .timeout(30000)
+    // .timeout(30000)
     .finally(() => {
       ongoing -= 1
       logStats()

@@ -14,7 +14,7 @@ module.exports = (name, endpoint, getQuery) => id => {
     fn: fetch.bind(null, endpoint, getQuery(id), id),
     timespan
   })
-  .timeout(20000)
+  // .timeout(20000)
   .catch(err => {
     _.error(err, `${name} error fetching ${id}`)
     return []

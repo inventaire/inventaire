@@ -9,7 +9,7 @@ const assert_ = __.require('utils', 'assert_types')
 const testServerAvailability = () => {
   return breq.get(`${host}/api/tests`)
   .then(() => _.success('tests server is ready'))
-  .timeout(1000)
+  // .timeout(1000)
   .catch(err => {
     if ((err.code !== 'ECONNREFUSED') && (err.name !== 'TimeoutError')) throw err
     _.log('waiting for tests server', null, 'grey')

@@ -41,7 +41,7 @@ const getSourcePromise = (fn, ...args) => {
   if (args[0] == null) return null
 
   return fn.apply(null, args)
-  .timeout(5000)
+  // .timeout(5000)
   // Prevent to throw all the sources
   // eslint-disable-next-line handle-callback-err
   .catch(err => { })
