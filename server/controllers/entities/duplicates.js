@@ -16,12 +16,12 @@ module.exports = (req, res) => {
   .catch(error_.Handler(req, res))
 }
 
-const getHomonymes = () => {
-  return db.view(designDocName, 'findHumansHomonymes', { group_level: 1 })
-  .then(res => res.rows
+const getHomonymes = async () => {
+  const { rows } = await db.view(designDocName, 'findHumansHomonymes', { group_level: 1 })
+  return rows
   // Filtering-out keys that are only ponctuation or a single letter
   // TODO: delete those erronous entities
   .filter(row => (row.value > 1) && /\w{1}\w+/.test(row.key))
   .sort((a, b) => b.value - a.value)
-  .slice(0, 100))
+  .slice(0, 100)
 }
