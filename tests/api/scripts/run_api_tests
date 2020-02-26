@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
 export NODE_ENV=tests
+# This environment variable is set for consistency with ./start_tests_server
+# but not actually having any known effet on tests files run by mocha hereafter
 export NODE_APP_INSTANCE=tests-alt
 timeout=20000
 
