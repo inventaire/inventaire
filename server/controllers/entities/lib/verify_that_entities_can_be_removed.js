@@ -50,11 +50,9 @@ const getAllUris = uris => {
   })
 }
 
-const entityIsntUsedByAnyItem = uri => {
-  return items_.byEntity(uri)
-  .then(items => {
-    if (items.length > 0) {
-      throw error_.new("entities that are used by an item can't be removed", 400, uri)
-    }
-  })
+const entityIsntUsedByAnyItem = async uri => {
+  const items = await items_.byEntity(uri)
+  if (items.length > 0) {
+    throw error_.new("entities that are used by an item can't be removed", 400, uri)
+  }
 }
