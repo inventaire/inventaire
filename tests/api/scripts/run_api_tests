@@ -4,7 +4,9 @@ export NODE_ENV=tests
 # This environment variable is set for consistency with ./start_tests_server
 # but not actually having any known effet on tests files run by mocha hereafter
 export NODE_APP_INSTANCE=tests-alt
-timeout=20000
+# Allow to customize tests timeout in config files, which can be convenient
+# when tests are supposed to fail fast but don't
+timeout=$(node -p 'require("config").mocha.timeout')
 
 # Warn if the file doesn't contain ".test.js"
 check_filename(){

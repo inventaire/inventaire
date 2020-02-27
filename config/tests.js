@@ -11,6 +11,11 @@ module.exports = {
   fullHost: function () {
     return `${this.protocol}://${this.host}:${this.port}`
   },
+  mocha: {
+    // Fit to match the needs of the slowest API,
+    // but can most of the time be overriden in ./local.js config with a lower value
+    timeout: 20000
+  },
   db: {
     suffix: 'tests',
     // debug: true
