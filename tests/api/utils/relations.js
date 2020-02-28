@@ -1,4 +1,4 @@
-const { customAuthReq } = require('./utils')
+const { customAuthReq } = require('./request')
 const endpoint = '/api/relations'
 
 const getRelations = user => customAuthReq(user, 'get', endpoint)
