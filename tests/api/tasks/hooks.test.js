@@ -85,7 +85,6 @@ describe('tasks:hooks', () => {
       await revertMerge(refreshedTask.suspectUri)
       await wait(100)
       const [ rerefreshedTask ] = await getByIds(task._id)
-      console.log({ rerefreshedTask })
       should(rerefreshedTask.state).not.be.ok()
     })
   })

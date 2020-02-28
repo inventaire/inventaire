@@ -50,8 +50,7 @@ const resolveWorksAndAuthor = (works, author) => authorsUris => {
 const getWorkAndResolve = (authorSeed, authorsUris) => work => {
   if (work == null || work.uri != null) return
   const workTerms = getEntityNormalizedTerms(work)
-  return Promise.all(getWorksFromAuthorsUris(authorsUris))
-  .then(_.flatten)
+  return getWorksFromAuthorsUris(authorsUris)
   .then(resolveWorkAndAuthor(authorsUris, authorSeed, work, workTerms))
 }
 

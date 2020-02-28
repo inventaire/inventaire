@@ -16,7 +16,7 @@ module.exports = async (works, authors) => {
 const resolveWork = authorsUris => work => {
   if (work.uri != null) return work
   const workSeedTerms = getEntityNormalizedTerms(work)
-  return Promise.all(getWorksFromAuthorsLabels(authorsUris))
+  return getWorksFromAuthorsLabels(authorsUris)
   .then(works => works.filter(someTermsMatch(workSeedTerms)))
   .then(resolveSeed(work))
 }

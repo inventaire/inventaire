@@ -9,8 +9,7 @@ const { randomLabel, humanName, generateIsbn13, someGoodReadsId, ensureEditionEx
 const resolveAndCreate = entry => authReq('post', '/api/entities?action=resolve', {
   entries: [ entry ],
   create: true
-}
-)
+})
 
 describe('entities:resolve:create-unresolved', () => {
   it('should create unresolved edition, work and author (the trinity)', done => {
