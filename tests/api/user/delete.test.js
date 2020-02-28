@@ -38,7 +38,7 @@ describe('user:delete', () => {
     const foundUser = results.find(result => result.id === user._id)
     should(foundUser).be.ok()
     await deleteUser(user)
-    await wait(5000)
+    await wait(1000)
     const results2 = await search({ types: 'users', input: user.username })
     const foundUser2 = results2.find(result => result.id === user._id)
     should(foundUser2).not.be.ok()
