@@ -66,7 +66,7 @@ describe('groups:create', () => {
     const name = groupName()
     const position = [ 1.123456789, 1.123456789 ]
     const res = await authReq('post', endpoint, { name, position })
-    res.position.should.deepEqual([ 1.1235, 1.1235 ])
+    res.position.should.deepEqual([ 1.12346, 1.12346 ])
   })
 
   it('should reject a group with an empty name or generated slug', done => {

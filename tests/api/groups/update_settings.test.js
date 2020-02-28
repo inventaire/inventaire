@@ -94,7 +94,7 @@ describe('groups:update-settings', () => {
       value: [ 0.123456789, 0.123456789 ]
     })
     const { group } = await nonAuthReq('get', `/api/groups?action=by-id&id=${groupId}`)
-    group.position.should.deepEqual([ 0.1235, 0.1235 ])
+    group.position.should.deepEqual([ 0.12346, 0.12346 ])
   })
 
   it('should update searchable parameter', async () => {
