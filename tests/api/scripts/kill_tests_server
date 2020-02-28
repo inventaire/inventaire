@@ -11,3 +11,6 @@ then
 else
   echo "no test server to kill"
 fi
+
+# Cleanup
+rm -f ./run/3009-supervisor
