@@ -30,7 +30,7 @@ else
       files="$files $arg"
     else
       # Add the directory test files to the list
-      files="$files $arg/*.test.js"
+      files="$files $(find $arg -type f -name *.test.js)"
     fi
   done
   echo "files: $files"
