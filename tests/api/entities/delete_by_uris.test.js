@@ -160,6 +160,7 @@ describe('entities:delete-by-uris', () => {
       return createWorkWithAuthor(author)
       .then(work => {
         return authReq('post', '/api/items', { entity: work.uri, lang: 'en' })
+        .then(Wait(1000))
         .then(item => {
           item.snapshot['entity:title'].should.equal(work.labels.en)
           item.snapshot['entity:authors'].should.equal(author.labels.en)
