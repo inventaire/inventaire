@@ -5,7 +5,8 @@ const ActionsControllers = __.require('lib', 'actions_controllers')
 module.exports = {
   get: ActionsControllers({
     authentified: {
-      'data-url': require('./data_url')
+      'data-url': require('./data_url'),
+      gravatar: require('./gravatar')
     }
   }),
 
