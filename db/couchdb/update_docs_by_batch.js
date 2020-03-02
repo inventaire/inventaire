@@ -1,6 +1,7 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
-const Promise = require('bluebird')
+const promises_ = __.require('lib', 'promises')
+const { Wait } = promises_
 
 module.exports = params => ids => {
   ids = _.compact(ids)
@@ -26,14 +27,14 @@ const nextBatchUpdater = (db, ids, docUpdater) => {
     const interBulkDelay = isLastBatch ? 0 : 5000
 
     return db.fetch(nextIdsBatch)
-    .map(docUpdater)
+    .then(promises_.map(docUpdater))
     // Remove docs that don't need an update
-    .filter(_.identity)
+    .then(docs => docs.filter(_.identity))
     .then(docsToUpdate => {
       if (docsToUpdate.length === 0) return
       return db.bulk(docsToUpdate)
       // Let CouchDB breath
-      .delay(interBulkDelay)
+      .then(Wait(interBulkDelay))
     })
     .then(updateNextBatch)
   }
@@ -45,19 +46,15 @@ const updateDoc = params => {
   const { updateFunction, log, showDiff, preview } = params
   const docDiff = showDiff ? require('./doc_diffs') : _.noop
 
-  return doc => {
-    // updateFunction can return a promise, so we need to convert sync functions
-    // to promises too, to keep it consistent
+  return async doc => {
     // Use a clone of the doc to keep the doc itself unmutated
-    Promise.try(() => updateFunction(_.cloneDeep(doc)))
-    .then(updatedDoc => {
-      if (objDiff(doc, updatedDoc)) {
-        docDiff(doc, updatedDoc, preview)
-        if (!preview) return updatedDoc
-      } else {
-        log(doc._id, 'no changes')
-      }
-    })
+    const updatedDoc = await updateFunction(_.cloneDeep(doc))
+    if (objDiff(doc, updatedDoc)) {
+      docDiff(doc, updatedDoc, preview)
+      if (!preview) return updatedDoc
+    } else {
+      log(doc._id, 'no changes')
+    }
   }
 }
 

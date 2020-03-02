@@ -3,7 +3,6 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const groups_ = __.require('controllers', 'groups/lib/groups')
 const relations_ = __.require('controllers', 'relations/lib/queries')
-const promises_ = __.require('lib', 'promises')
 const assert_ = __.require('utils', 'assert_types')
 
 module.exports = {
@@ -13,11 +12,11 @@ module.exports = {
     return relations_.getUserRelations(userId)
   },
 
-  getRelationsStatuses: (userId, usersIds) => {
-    if (userId == null) return promises_.resolve([ [], [], usersIds ])
+  getRelationsStatuses: async (userId, usersIds) => {
+    if (userId == null) return [ [], [], usersIds ]
 
     return getFriendsAndGroupCoMembers(userId)
-    .spread(spreadRelations(usersIds))
+    .then(spreadRelations(usersIds))
   },
 
   // // Not used at the moment
@@ -30,17 +29,17 @@ module.exports = {
   areFriendsOrGroupCoMembers: (userId, otherId) => {
     assert_.strings([ userId, otherId ])
     return getFriendsAndGroupCoMembers(userId)
-    .spread((friendsIds, coGroupMembersIds) => friendsIds.includes(otherId) || coGroupMembersIds.includes(otherId))
+    .then(([ friendsIds, coGroupMembersIds ]) => friendsIds.includes(otherId) || coGroupMembersIds.includes(otherId))
   },
 
-  getNetworkIds: userId => {
-    if (userId == null) return promises_.resolve([])
+  getNetworkIds: async userId => {
+    if (userId == null) return []
     return getFriendsAndGroupCoMembers(userId)
     .then(_.flatten)
   }
 }
 
-const spreadRelations = usersIds => (friendsIds, coGroupMembersIds) => {
+const spreadRelations = usersIds => ([ friendsIds, coGroupMembersIds ]) => {
   const friends = []
   const coGroupMembers = []
   const publik = []
@@ -58,8 +57,7 @@ const spreadRelations = usersIds => (friendsIds, coGroupMembersIds) => {
   return [ friends, coGroupMembers, publik ]
 }
 
-// result is to be .spread (friendsIds, coGroupMembersIds)->
-const getFriendsAndGroupCoMembers = userId => promises_.all([
+const getFriendsAndGroupCoMembers = userId => Promise.all([
   relations_.getUserFriends(userId),
   groups_.findUserGroupsCoMembers(userId)
 ])

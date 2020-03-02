@@ -1,20 +1,18 @@
-const Promise = require('bluebird')
-const fs = Promise.promisifyAll(require('graceful-fs'))
-const parse = JSON.parse.bind(JSON)
+const { readFile, writeFile } = require('fs').promises
 const stringify = data => JSON.stringify(data, null, 4)
 const assert_ = require('./assert_types')
 
 module.exports = {
-  jsonReadAsync: path => {
+  readJsonFile: path => {
     assert_.string(path)
-    return fs.readFileAsync(path, 'utf-8')
-    .then(parse)
+    return readFile(path, 'utf-8')
+    .then(JSON.parse)
   },
 
-  jsonWrite: (path, data) => {
+  writeJsonFile: (path, data) => {
     assert_.string(path)
-    assert_.object(data)
+    assert_.type('object|array', data)
     const json = stringify(data)
-    return fs.writeFileSync(path, json)
+    return writeFile(path, json)
   }
 }

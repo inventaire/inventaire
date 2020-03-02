@@ -1,7 +1,4 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 require('should')
-const { Promise } = __.require('lib', 'promises')
 const { undesiredRes } = require('../utils/utils')
 const { addClaim, getRefreshedPopularityByUri } = require('../utils/entities')
 const { createEdition, createWork, createItemFromEntityUri, createSerie, createHuman } = require('../fixtures/entities')
@@ -73,7 +70,7 @@ describe('entities:popularity', () => {
       // 1: item
       // 1: edition
       // 1: work
-      .spread(serie => scoreShouldEqual(serie.uri, 3, done))
+      .then(([ serie ]) => scoreShouldEqual(serie.uri, 3, done))
       .catch(done)
     })
   })
@@ -85,42 +82,38 @@ describe('entities:popularity', () => {
       // 1: edition
       // 1: work
       // 1: serie
-      .spread(human => scoreShouldEqual(human.uri, 4, done))
+      .then(([ human ]) => scoreShouldEqual(human.uri, 4, done))
       .catch(done)
     })
   })
 })
 
-const scoreShouldEqual = (uri, value, done) => {
-  return getRefreshedPopularityByUri(uri)
-  .then(score => {
-    score.should.equal(value)
-    if (typeof done === 'function') {
-      done()
-    }
-    return score
-  })
+const scoreShouldEqual = async (uri, value, done) => {
+  const score = await getRefreshedPopularityByUri(uri)
+  score.should.equal(value)
+  if (typeof done === 'function') done()
+  return score
 }
 
-const createSerieWithAWorkWithAnEditionWithAnItem = () => {
-  return Promise.all([
+const createSerieWithAWorkWithAnEditionWithAnItem = async () => {
+  const [ work, serie ] = await Promise.all([
     createWork(),
     createSerie()
   ])
-  .spread((work, serie) => Promise.all([
+  const [ edition ] = await Promise.all([
     createEdition({ work }),
     addClaim(work.uri, 'wdt:P179', serie.uri)
   ])
-  .spread(edition => createItemFromEntityUri(edition.uri, { lang: 'en' })
-  .then(item => [ serie, work, edition, item ])))
+  const item = await createItemFromEntityUri(edition.uri, { lang: 'en' })
+  return [ serie, work, edition, item ]
 }
 
-const createHumanWithAWorkWithAnEditionWithAnItem = () => {
-  return createHuman()
-  .then(human => createSerieWithAWorkWithAnEditionWithAnItem()
-  .spread((serie, work, edition, item) => Promise.all([
+const createHumanWithAWorkWithAnEditionWithAnItem = async () => {
+  const human = await createHuman()
+  const [ serie, work, edition, item ] = await createSerieWithAWorkWithAnEditionWithAnItem()
+  await Promise.all([
     addClaim(work.uri, 'wdt:P50', human.uri),
     addClaim(serie.uri, 'wdt:P50', human.uri)
   ])
-  .then(() => [ human, serie, work, edition, item ])))
+  return [ human, serie, work, edition, item ]
 }

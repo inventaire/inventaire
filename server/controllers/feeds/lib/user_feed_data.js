@@ -1,14 +1,13 @@
 const __ = require('config').universalPath
 const user_ = __.require('controllers', 'user/lib/user')
 const { areFriendsOrGroupCoMembers } = __.require('controllers', 'user/lib/relations_status')
-const promises_ = __.require('lib', 'promises')
 
 module.exports = (userId, authentifiedUserPromise) => {
-  return promises_.all([
+  return Promise.all([
     user_.byId(userId),
     getAccessLevel(userId, authentifiedUserPromise)
   ])
-  .spread((user, getAccessLevel) => ({
+  .then(([ user, getAccessLevel ]) => ({
     users: [ user ],
     accessLevel: getAccessLevel,
 

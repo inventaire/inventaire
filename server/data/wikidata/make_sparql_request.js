@@ -19,11 +19,11 @@ const maxConcurrency = 4
 let waiting = 0
 let ongoing = 0
 
-module.exports = sparql => {
+module.exports = async sparql => {
   const url = wdk.sparqlQuery(sparql)
 
   if (waiting > 50) {
-    return error_.reject('too many requests in queue', 500, { sparql })
+    throw error_.new('too many requests in queue', 500, { sparql })
   }
 
   const persistentRequest = () => makeRequest(url)
@@ -53,7 +53,7 @@ const makeRequest = url => {
     return requests_.get(url, requestOptions)
     .then(wdk.simplifySparqlResults)
     // Don't let a query block the queue more than 30 seconds
-    .timeout(30000)
+    // .timeout(30000)
     .finally(() => {
       ongoing -= 1
       logStats()

@@ -2,7 +2,6 @@ const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const assert_ = __.require('utils', 'assert_types')
-const promises_ = __.require('lib', 'promises')
 const wdk = require('wikidata-sdk')
 const { isValidIsbn } = __.require('lib', 'isbn/isbn')
 
@@ -15,7 +14,7 @@ const getters = {
 
 const prefixes = Object.keys(getters)
 
-module.exports = params => {
+module.exports = async params => {
   const { uris, list } = params
   assert_.array(uris)
   const domains = {}
@@ -27,12 +26,12 @@ module.exports = params => {
 
     if (!prefixes.includes(prefix)) {
       errMessage = `invalid uri prefix: ${prefix} (uri: ${uri})`
-      return error_.reject(errMessage, 400, uri)
+      throw error_.new(errMessage, 400, uri)
     }
 
     if (!validators[prefix](id)) {
       errMessage = `invalid uri id: ${id} (uri: ${uri})`
-      return error_.reject(errMessage, 400, uri)
+      throw error_.new(errMessage, 400, uri)
     }
 
     if (!domains[prefix]) { domains[prefix] = [] }
@@ -54,7 +53,7 @@ const getDomainsPromises = (domains, params) => {
     promises.push(getters[prefix](uris, params))
   }
 
-  return promises_.all(promises)
+  return Promise.all(promises)
 }
 
 const formatList = results => _.flatten(_.map(results, 'entities'))

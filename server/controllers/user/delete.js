@@ -2,7 +2,6 @@ const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
-const { Promise } = __.require('lib', 'promises')
 const relations_ = __.require('controllers', 'relations/lib/queries')
 const deleteUserItems = __.require('controllers', 'items/lib/delete_user_items')
 const { leaveAllGroups } = __.require('controllers', 'groups/lib/leave_groups')
@@ -20,7 +19,7 @@ module.exports = (req, res) => {
   .then(cleanupEverything.bind(null, reqUserId))
   // triggering track before logging out
   // to get access to req.user before it's cleared
-  .tap(Track(req, [ 'user', 'delete' ]))
+  .then(Track(req, [ 'user', 'delete' ]))
   .then(req.logout.bind(req))
   .then(responses_.Ok(res))
   .catch(error_.Handler(req, res))

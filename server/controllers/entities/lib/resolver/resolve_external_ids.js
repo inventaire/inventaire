@@ -1,14 +1,13 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const { Promise } = __.require('lib', 'promises')
 const properties = require('../properties/properties_values_constraints')
 const { prefixifyWd } = __.require('controllers', 'entities/lib/prefix')
 const entities_ = __.require('controllers', 'entities/lib/entities')
 const runWdQuery = __.require('data', 'wikidata/run_query')
 const getInvEntityCanonicalUri = require('../get_inv_entity_canonical_uri')
 
-module.exports = (claims, resolveOnWikidata = true) => {
+module.exports = async (claims, resolveOnWikidata = true) => {
   const externalIds = []
 
   for (const prop in claims) {
@@ -18,7 +17,7 @@ module.exports = (claims, resolveOnWikidata = true) => {
     }
   }
 
-  if (externalIds.length === 0) return Promise.resolve()
+  if (externalIds.length === 0) return
 
   const requests = [ invQuery(externalIds) ]
   if (resolveOnWikidata) { requests.push(wdQuery(externalIds)) }
@@ -27,9 +26,9 @@ module.exports = (claims, resolveOnWikidata = true) => {
   .then(_.flatten)
 }
 
-const wdQuery = externalIds => {
-  return runWdQuery({ query: 'resolve-external-ids', externalIds })
-  .map(prefixifyWd)
+const wdQuery = async externalIds => {
+  const results = await runWdQuery({ query: 'resolve-external-ids', externalIds })
+  return results.map(prefixifyWd)
 }
 
 const invQuery = externalIds => {
@@ -37,7 +36,7 @@ const invQuery = externalIds => {
   .then(_.flatten)
 }
 
-const invByClaim = ([ prop, value ]) => {
-  return entities_.byClaim(prop, value, true, true)
-  .map(getInvEntityCanonicalUri)
+const invByClaim = async ([ prop, value ]) => {
+  const entities = await entities_.byClaim(prop, value, true, true)
+  return entities.map(getInvEntityCanonicalUri)
 }

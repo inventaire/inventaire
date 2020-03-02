@@ -2,7 +2,6 @@ const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const assert_ = __.require('utils', 'assert_types')
 const db = __.require('couch', 'base')('entities')
-const promises_ = __.require('lib', 'promises')
 const Entity = __.require('models', 'entity')
 const patches_ = require('./patches')
 const isbn_ = __.require('lib', 'isbn/isbn')
@@ -37,22 +36,21 @@ const entities_ = module.exports = {
     .then(couch_.firstDoc)
   },
 
-  byClaim: (property, value, includeDocs = false, parseDoc = false) => {
-    return promises_.try(() => validateProperty(property))
-    .then(() => {
-      const query = db.view('entities', 'byClaim', {
-        key: [ property, value ],
-        include_docs: includeDocs
-      })
+  byClaim: async (property, value, includeDocs = false, parseDoc = false) => {
+    validateProperty(property)
 
-      if (parseDoc) return query.then(couch_.mapDoc)
-      else return query
+    const res = await db.view('entities', 'byClaim', {
+      key: [ property, value ],
+      include_docs: includeDocs
     })
+
+    if (parseDoc) return couch_.mapDoc(res)
+    else return res
   },
 
-  urisByClaim: (property, value) => {
-    return entities_.byClaim(property, value, true, true)
-    .map(getInvEntityCanonicalUri)
+  urisByClaim: async (property, value) => {
+    const entities = await entities_.byClaim(property, value, true, true)
+    return entities.map(getInvEntityCanonicalUri)
   },
 
   byClaimsValue: (value, count) => {
@@ -75,14 +73,12 @@ const entities_ = module.exports = {
     return db.postAndReturn(Entity.create())
   },
 
-  edit: params => {
+  edit: async params => {
     const { userId, updatedLabels, updatedClaims, currentDoc, batchId } = params
     let updatedDoc = _.cloneDeep(currentDoc)
-    return promises_.try(() => {
-      updatedDoc = Entity.setLabels(updatedDoc, updatedLabels)
-      return Entity.addClaims(updatedDoc, updatedClaims)
-    })
-    .then(updatedDoc => entities_.putUpdate({ userId, currentDoc, updatedDoc, batchId }))
+    updatedDoc = Entity.setLabels(updatedDoc, updatedLabels)
+    updatedDoc = Entity.addClaims(updatedDoc, updatedClaims)
+    return entities_.putUpdate({ userId, currentDoc, updatedDoc, batchId })
   },
 
   addClaims: (userId, newClaims, currentDoc, batchId) => {
@@ -92,16 +88,15 @@ const entities_ = module.exports = {
     .then(() => entities_.putUpdate({ userId, currentDoc, updatedDoc, batchId }))
   },
 
-  putUpdate: params => {
+  putUpdate: async params => {
     const { userId, currentDoc, updatedDoc } = params
     assert_.types([ 'string', 'object', 'object' ], [ userId, currentDoc, updatedDoc ])
     // It is to the consumers responsability to check if there is an update:
     // empty patches at this stage will throw 500 errors
-    return db.putAndReturn(updatedDoc)
-    .tap(() => {
-      triggerUpdateEvent(currentDoc, updatedDoc)
-      return patches_.create(params)
-    })
+    const docAfterUpdate = await db.putAndReturn(updatedDoc)
+    triggerUpdateEvent(currentDoc, docAfterUpdate)
+    await patches_.create(params)
+    return docAfterUpdate
   },
 
   getUrlFromEntityImageHash: getUrlFromImageHash.bind(null, 'entities')
@@ -112,5 +107,5 @@ const triggerUpdateEvent = (currentDoc, updatedDoc) => {
   // Known case: when an entity is turned into a redirection
   const claims = updatedDoc.claims || currentDoc.claims
   const type = getEntityType(claims['wdt:P31'])
-  return radio.emit('inv:entity:update', updatedDoc._id, type)
+  radio.emit('inv:entity:update', updatedDoc._id, type)
 }

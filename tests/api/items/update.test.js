@@ -1,4 +1,6 @@
 const CONFIG = require('config')
+const __ = CONFIG.universalPath
+const { Wait } = __.require('lib', 'promises')
 const should = require('should')
 const { authReq, getUser } = require('../utils/utils')
 const { newItemBase, CountChange } = require('./helpers')
@@ -37,7 +39,7 @@ describe('items:update', () => {
   it('should trigger an update of the users items counters', done => {
     authReq('post', '/api/items', newItemBase())
     // Delay to let the time to the item counter to be updated
-    .delay(debounceDelay)
+    .then(Wait(debounceDelay))
     .then(item => {
       return getUser()
       .then(userBefore => {
@@ -46,7 +48,7 @@ describe('items:update', () => {
         item.listing = (newListing = 'public')
         return authReq('put', '/api/items', item)
         // Delay to request the user after its items count was updated
-        .delay(debounceDelay)
+        .then(Wait(debounceDelay))
         .then(updatedItem => {
           updatedItem.listing.should.equal(newListing)
           return getUser()

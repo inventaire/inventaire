@@ -13,7 +13,6 @@ const { simplify } = wdk
 const getEntityType = require('./get_entity_type')
 const { prefixifyWd } = __.require('controllers', 'entities/lib/prefix')
 const cache_ = __.require('lib', 'cache')
-const promises_ = __.require('lib', 'promises')
 const getWdEntity = __.require('data', 'wikidata/get_entity')
 const addImageData = require('./add_image_data')
 const radio = __.require('lib', 'radio')
@@ -21,7 +20,7 @@ const propagateRedirection = require('./propagate_redirection')
 const { _id: hookUserId } = __.require('couch', 'hard_coded_documents').users.hook
 
 module.exports = (ids, params) => {
-  return promises_.all(ids.map(getCachedEnrichedEntity(params)))
+  return Promise.all(ids.map(getCachedEnrichedEntity(params)))
   .then(entities => {
     if (params.dry) { entities = _.compact(entities) }
     return { entities }

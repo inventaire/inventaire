@@ -5,6 +5,7 @@ const parseForm = require('./lib/parse_form')
 const responses_ = __.require('lib', 'responses')
 const error_ = __.require('lib', 'error/error')
 const containers = require('./lib/containers')
+const promises_ = __.require('lib', 'promises')
 
 module.exports = (req, res) => {
   const { container } = req.query
@@ -21,7 +22,7 @@ module.exports = (req, res) => {
     if (container === 'users') { files.forEach(validateFile) }
     return files
   })
-  .map(putImage)
+  .then(promises_.map(putImage))
   .then(indexCollection)
   .then(_.Log('upload post res'))
   .then(responses_.Send(res))

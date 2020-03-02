@@ -3,6 +3,7 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const Group = __.require('models', 'group')
 const db = __.require('couch', 'base')('groups')
+const promises_ = __.require('lib', 'promises')
 
 // Working around the circular dependency
 let groups_
@@ -25,7 +26,7 @@ module.exports = {
 
   leaveAllGroups: userId => {
     return groups_.byUser(userId)
-    .map(group => removeUser(group, userId))
+    .then(promises_.map(group => removeUser(group, userId)))
   }
 }
 

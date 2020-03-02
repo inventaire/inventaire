@@ -9,8 +9,7 @@ const { randomLabel, humanName, generateIsbn13, someGoodReadsId, ensureEditionEx
 const resolveAndCreate = entry => authReq('post', '/api/entities?action=resolve', {
   entries: [ entry ],
   create: true
-}
-)
+})
 
 describe('entities:resolve:create-unresolved', () => {
   it('should create unresolved edition, work and author (the trinity)', done => {
@@ -19,7 +18,7 @@ describe('entities:resolve:create-unresolved', () => {
       works: [ { labels: { en: randomLabel() } } ],
       authors: [ { labels: { en: humanName() } } ]
     })
-    .get('entries')
+    .then(({ entries }) => entries)
     .then(entries => {
       const result = entries[0]
       result.edition.created.should.be.true()
@@ -37,7 +36,7 @@ describe('entities:resolve:create-unresolved', () => {
     const rawIsbn = generateIsbn13()
     ensureEditionExists(`isbn:${rawIsbn}`)
     .then(() => resolveAndCreate({ edition: { isbn: rawIsbn } }))
-    .get('entries')
+    .then(({ entries }) => entries)
     .then(entries => {
       entries[0].should.be.an.Object()
       entries[0].edition.uri.should.equal(`isbn:${rawIsbn}`)
@@ -52,14 +51,14 @@ describe('entities:resolve:create-unresolved', () => {
       edition: { isbn: generateIsbn13(), claims: { 'wdt:P1476': editionLabel } },
       works: [ { labels: { en: randomLabel() } } ]
     })
-    .get('entries')
+    .then(({ entries }) => entries)
     .then(entries => {
       const result = entries[0]
       should(result.edition.uri).be.ok()
       const { edition } = result
 
       return getByUris(edition.uri)
-      .get('entities')
+      .then(({ entities }) => entities)
       .then(entities => {
         const editionClaims = _.values(entities)[0].claims
         const newEditionTitle = editionClaims['wdt:P1476'][0]
@@ -96,13 +95,13 @@ describe('entities:resolve:create-unresolved', () => {
       edition: { isbn: generateIsbn13(), claims: { 'wdt:P407': [ frenchLang ] } },
       works: [ { labels: { en: randomLabel() } } ]
     })
-    .get('entries')
+    .then(({ entries }) => entries)
     .then(entries => {
       const result = entries[0]
       should(result.edition.uri).be.ok()
       const { edition } = result
       return getByUris(edition.uri)
-      .get('entities')
+      .then(({ entities }) => entities)
       .then(entities => {
         const newWorkClaimValue = _.values(entities)[0].claims['wdt:P407'][0]
         newWorkClaimValue.should.equal(frenchLang)
@@ -118,13 +117,13 @@ describe('entities:resolve:create-unresolved', () => {
       edition: { isbn: generateIsbn13() },
       works: [ { claims: { 'wdt:P2969': [ goodReadsId ] }, labels: { en: randomLabel() } } ]
     })
-    .get('entries')
+    .then(({ entries }) => entries)
     .then(entries => {
       const result = entries[0]
       should(result.edition.uri).be.ok()
       const { works } = result
       return getByUris(works.map(_.property('uri')))
-      .get('entities')
+      .then(({ entities }) => entities)
       .then(entities => {
         const newWorkClaimValue = _.values(entities)[0].claims['wdt:P2969'][0]
         newWorkClaimValue.should.equal(goodReadsId)
@@ -141,13 +140,13 @@ describe('entities:resolve:create-unresolved', () => {
       works: [ { labels: { en: randomLabel() } } ],
       authors: [ { claims: { 'wdt:P2963': [ goodReadsId ] }, labels: { en: humanName() } } ]
     })
-    .get('entries')
+    .then(({ entries }) => entries)
     .then(entries => {
       const result = entries[0]
       should(result.edition.uri).be.ok()
       const { authors } = result
       return getByUris(authors.map(_.property('uri')))
-      .get('entities')
+      .then(({ entities }) => entities)
       .then(entities => {
         const newWorkClaimValue = _.values(entities)[0].claims['wdt:P2963'][0]
         newWorkClaimValue.should.equal(goodReadsId)
@@ -164,7 +163,7 @@ describe('entities:resolve:create-unresolved', () => {
       works: [ { claims: { 'wdt:P2969': [ someGoodReadsId() ] }, labels: { en: humanName() } } ]
     }
     resolveAndCreate(entry)
-    .get('entries')
+    .then(({ entries }) => entries)
     .then(entries => {
       const result = entries[0]
       const { uri: editionUri } = result.edition
@@ -186,12 +185,12 @@ describe('entities:resolve:create-unresolved', () => {
       works: [ { labels: { en: randomLabel() } } ],
       authors: [ { labels: { en: humanName() } } ]
     })
-    .get('entries')
+    .then(({ entries }) => entries)
     .then(entries => {
       const result = entries[0]
       const workUri = result.works[0].uri
       return getByUris(workUri)
-      .get('entities')
+      .then(({ entities }) => entities)
       .then(entities => {
         const work = entities[workUri]
         const workAuthors = work.claims['wdt:P50']
@@ -213,7 +212,7 @@ describe('entities:resolve:create-unresolved', () => {
         claims: { 'wdt:P1476': [ title ], 'wdt:P407': [ dutchLangUri ] }
       }
     })
-    .get('entries')
+    .then(({ entries }) => entries)
     .then(entries => {
       const work = entries[0].works[0]
       work.labels[dutchLangCode].should.equal(title)

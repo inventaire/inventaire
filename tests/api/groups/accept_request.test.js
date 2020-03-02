@@ -5,7 +5,6 @@ require('should')
 const { authReq, authReqC, undesiredRes, getUserGetter, customAuthReq } = require('../utils/utils')
 const { groupPromise, createGroup, getGroup } = require('../fixtures/groups')
 const endpoint = '/api/groups?action=accept-request'
-const { Promise } = __.require('lib', 'promises')
 const { humanName } = require('../fixtures/entities')
 
 describe('groups:update:accept-request', () => {
@@ -24,7 +23,7 @@ describe('groups:update:accept-request', () => {
     const requesterPromise = getUserGetter(humanName(), false)()
 
     Promise.all([ groupPromise, requesterPromise ])
-    .spread((group, requester) => {
+    .then(([ group, requester ]) => {
       const { _id: requesterId } = requester
       return customAuthReq(requesterPromise, 'put', '/api/groups?action=request', { group: group._id })
       .then(() => authReq('put', endpoint, { user: requesterId, group: group._id }))

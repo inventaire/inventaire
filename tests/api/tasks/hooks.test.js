@@ -1,8 +1,8 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const should = require('should')
-const { Promise } = __.require('lib', 'promises')
 const { merge, revertMerge } = require('../utils/entities')
+const { Wait } = __.require('lib', 'promises')
 const { createHuman } = require('../fixtures/entities')
 const { deleteByUris: deleteEntityByUris } = require('../utils/entities')
 const { createTask } = require('../fixtures/tasks')
@@ -20,7 +20,7 @@ describe('tasks:hooks', () => {
         const task = tasks[0]
         const anotherTask = tasks[1]
         return merge(task.suspectUri, task.suggestionUri)
-        .delay(100)
+        .then(Wait(100))
         .then(() => getByIds(anotherTask._id))
         .then(tasks => {
           const updatedTask = tasks[0]
@@ -33,7 +33,7 @@ describe('tasks:hooks', () => {
 
     it('should update task state to merged', done => {
       Promise.all([ createHuman(), createHuman() ])
-      .spread((suspect, suggestion) => {
+      .then(([ suspect, suggestion ]) => {
         const taskParams = {
           suspectUri: suspect.uri,
           suggestionUri: suggestion.uri
@@ -41,7 +41,7 @@ describe('tasks:hooks', () => {
         createTask(taskParams)
         .then(task => {
           merge(suspect.uri, suggestion.uri)
-          .delay(100)
+          .then(Wait(100))
           .then(() => getByIds(task.id))
           .then(tasks => {
             const updatedTask = tasks[0]
@@ -62,7 +62,7 @@ describe('tasks:hooks', () => {
         const otherTask = tasks[1]
         const { relationScore: taskRelationScore } = taskToUpdate
         return update(taskToUpdate._id, 'state', 'dismissed')
-        .delay(100)
+        .then(Wait(100))
         .then(() => getByIds(otherTask._id))
         .then(tasks => {
           const updatedTask = tasks[0]
@@ -85,7 +85,6 @@ describe('tasks:hooks', () => {
       await revertMerge(refreshedTask.suspectUri)
       await wait(100)
       const [ rerefreshedTask ] = await getByIds(task._id)
-      console.log({ rerefreshedTask })
       should(rerefreshedTask.state).not.be.ok()
     })
   })

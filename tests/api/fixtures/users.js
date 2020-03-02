@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
-const { Promise } = __.require('lib', 'promises')
+const { tap } = __.require('lib', 'promises')
 const host = CONFIG.fullHost()
 const authEndpoint = `${host}/api/auth`
 const faker = require('faker')
@@ -48,13 +48,13 @@ const API = module.exports = {
     return loginOrSignup(userData)
     .then(parseCookie)
     .then(API.getUserWithCookie)
-    .tap(setCustomData(customData))
+    .then(tap(setCustomData(customData)))
     .then(refreshUser)
   },
 
   createAdminUser: data => {
     return API.createUser(data)
-    .tap(user => makeUserAdmin(user._id))
+    .then(tap(user => makeUserAdmin(user._id)))
   },
 
   getUserWithCookie: cookie => {
@@ -65,14 +65,13 @@ const API = module.exports = {
     })
   },
 
-  getRefreshedUser: userPromise => {
+  getRefreshedUser: async userPromise => {
     // Also accept already resolved user docs with their cookie
     if (userPromise._id && userPromise.cookie) userPromise = Promise.resolve(userPromise)
-
-    return userPromise
+    const user = await userPromise
     // Get the up-to-date user doc while keeping the cookie
     // set by tests/api/fixtures/users
-    .then(user => API.getUserWithCookie(user.cookie))
+    return API.getUserWithCookie(user.cookie)
   },
 
   createUsername: () => {

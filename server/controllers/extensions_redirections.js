@@ -56,7 +56,7 @@ const redirections = {
     users: id => `/api/feeds?user=${id}`,
     inventory: username => {
       return user_.findOneByUsername(username)
-      .get('_id')
+      .then(({ _id }) => _id)
       .then(userId => `/api/feeds?user=${userId}`)
     },
     groups: id => {

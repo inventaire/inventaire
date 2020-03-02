@@ -1,7 +1,5 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
-const Promise = require('bluebird')
-Promise.longStackTraces()
 const fs = require('fs')
 const updateDocsByBatch = require('./update_docs_by_batch')
 
@@ -32,7 +30,7 @@ module.exports = params => {
     params.updateFunction = updateFunction
 
     return docsIdsPromise
-    .filter(isntDesignDoc)
+    .then(docIds => docIds.filter(isntDesignDoc))
     .then(updateDocsByBatch(params))
   }
 

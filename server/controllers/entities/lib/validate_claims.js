@@ -1,7 +1,6 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
-const promises_ = __.require('lib', 'promises')
 const validateClaim = require('./validate_claim')
 const getEntityType = require('./get_entity_type')
 const validateClaimProperty = require('./validate_claim_property')
@@ -22,7 +21,7 @@ module.exports = params => {
   const typeTestFn = perTypeClaimsTests[type] || _.noop
   typeTestFn(newClaims, creating)
 
-  return promises_.all(_.flatten(validatePropertiesClaims(params)))
+  return Promise.all(_.flatten(validatePropertiesClaims(params)))
 }
 
 const validatePropertiesClaims = params => {

@@ -10,7 +10,7 @@ const req = verb => (url, options) => {
   const key = startTimer(verb, url)
 
   return breq[verb](mergeOptions(url, options))
-  .get('body')
+  .then(({ body }) => body)
   .finally(_.EndTimer(key))
 }
 

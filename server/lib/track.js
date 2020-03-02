@@ -45,5 +45,9 @@ const track = (req, actionArray) => {
 
 module.exports = {
   track,
-  Track: (...args) => () => track.apply(null, args)
+  Track: (...args) => res => {
+    // Do not wait for the track action
+    track(...args)
+    return res
+  }
 }

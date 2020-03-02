@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const should = require('should')
-const { Promise } = __.require('lib', 'promises')
+const { Wait, tap } = __.require('lib', 'promises')
 const { authReq, undesiredRes } = __.require('apiTests', 'utils/utils')
 const elasticsearchUpdateDelay = CONFIG.entitiesSearchEngine.elasticsearchUpdateDelay || 1000
 const { createWork, createHuman, someGoodReadsId, someOpenLibraryId, createWorkWithAuthor, generateIsbn13 } = __.require('apiTests', 'fixtures/entities')
@@ -33,7 +33,7 @@ describe('entities:resolve', () => {
     const entry = { edition: editionSeed }
     ensureEditionExists(`isbn:${isbn13}`)
     .then(() => resolve(entry))
-    .get('entries')
+    .then(({ entries }) => entries)
     .then(entries => {
       entries[0].should.be.an.Object()
       entries[0].edition.uri.should.equal(`isbn:${isbn13}`)
@@ -46,12 +46,12 @@ describe('entities:resolve', () => {
     const openLibraryId = someOpenLibraryId('edition')
     const isbn13 = generateIsbn13()
     ensureEditionExists(`isbn:${isbn13}`)
-    .tap(edition => addClaim(`inv:${edition._id}`, 'wdt:P648', openLibraryId))
+    .then(tap(edition => addClaim(`inv:${edition._id}`, 'wdt:P648', openLibraryId)))
     .then(edition => {
       const editionSeed = { claims: { 'wdt:P648': [ openLibraryId ] } }
       const entry = { edition: editionSeed }
       return resolve(entry)
-      .get('entries')
+      .then(({ entries }) => entries)
       .then(entries => {
         entries[0].edition.uri.should.equal(edition.uri)
         done()
@@ -67,7 +67,7 @@ describe('entities:resolve', () => {
     const entry = { edition: editionSeed }
     ensureEditionExists(`isbn:${isbn13}`)
     .then(() => resolve(entry))
-    .get('entries')
+    .then(({ entries }) => entries)
     .then(entries => {
       entries[0].should.be.an.Object()
       entries[0].edition.uri.should.equal(`isbn:${isbn13}`)
@@ -86,7 +86,7 @@ describe('entities:resolve', () => {
       ensureEditionExists(`isbn:${isbn13B}`)
     ])
     .then(() => resolve([ entryA, entryB ]))
-    .get('entries')
+    .then(({ entries }) => entries)
     .then(entries => {
       entries[0].should.be.an.Object()
       entries[0].edition.uri.should.equal(`isbn:${isbn13A}`)
@@ -206,7 +206,7 @@ describe('entities:resolve:external-id', () => {
       }
       ]
     })
-    .get('entries')
+    .then(({ entries }) => entries)
     .then(entries => {
       entries[0].works.should.be.an.Array()
       entries[0].works[0].should.be.an.Object()
@@ -219,14 +219,14 @@ describe('entities:resolve:external-id', () => {
   it('should resolve inventaire work from external ids claim', done => {
     const goodReadsId = someGoodReadsId()
     createWork()
-    .tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsId))
-    .delay(10)
+    .then(tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsId)))
+    .then(Wait(10))
     .then(work => {
       return resolve({
         edition: { isbn: generateIsbn13() },
         works: [ { claims: { 'wdt:P2969': [ goodReadsId ] } } ]
       })
-      .get('entries')
+      .then(({ entries }) => entries)
       .then(entries => {
         entries[0].works.should.be.an.Array()
         entries[0].works[0].should.be.an.Object()
@@ -247,7 +247,7 @@ describe('entities:resolve:external-id', () => {
       }
       ]
     })
-    .get('entries')
+    .then(({ entries }) => entries)
     .then(entries => {
       entries[0].authors.should.be.an.Array()
       entries[0].authors[0].should.be.an.Object()
@@ -260,15 +260,15 @@ describe('entities:resolve:external-id', () => {
   it('should resolve inventaire author from external ids claim', done => {
     const goodReadsId = someGoodReadsId()
     createHuman()
-    .delay(10)
-    .tap(author => addClaim(author.uri, 'wdt:P2963', goodReadsId))
-    .delay(10)
+    .then(Wait(10))
+    .then(tap(author => addClaim(author.uri, 'wdt:P2963', goodReadsId)))
+    .then(Wait(10))
     .then(author => {
       return resolve({
         edition: { isbn: generateIsbn13() },
         authors: [ { claims: { 'wdt:P2963': [ goodReadsId ] } } ]
       })
-      .get('entries')
+      .then(({ entries }) => entries)
       .then(entries => {
         entries[0].authors.should.be.an.Array()
         entries[0].authors[0].should.be.an.Object()
@@ -286,21 +286,21 @@ describe('entities:resolve:in-context', () => {
     const missingWorkLabel = randomLabel()
     const otherWorkLabel = randomLabel()
     createHuman()
-    .delay(10)
-    .tap(author => addClaim(author.uri, 'wdt:P2963', goodReadsId))
-    .delay(10)
+    .then(Wait(10))
+    .then(tap(author => addClaim(author.uri, 'wdt:P2963', goodReadsId)))
+    .then(Wait(10))
     .then(author => {
       return Promise.all([
         createWorkWithAuthor(author, missingWorkLabel),
         createWorkWithAuthor(author, otherWorkLabel)
       ])
-      .spread((work, otherWork) => {
+      .then(([ work, otherWork ]) => {
         return resolve({
           edition: { isbn: generateIsbn13() },
           works: [ { labels: { en: missingWorkLabel } } ],
           authors: [ { claims: { 'wdt:P2963': [ goodReadsId ] } } ]
         })
-        .get('entries')
+        .then(({ entries }) => entries)
         .then(entries => {
           should(entries[0].works[0].uri).be.ok()
           done()
@@ -318,7 +318,7 @@ describe('entities:resolve:in-context', () => {
         edition: { isbn: generateIsbn13() },
         works: [ { labels, claims } ]
       })
-      .get('entries')
+      .then(({ entries }) => entries)
       .then(entries => {
         should(entries[0].works[0].uri).be.ok()
         done()
@@ -331,22 +331,22 @@ describe('entities:resolve:in-context', () => {
     const goodReadsId = someGoodReadsId()
     const workLabel = randomLabel()
     createHuman()
-    .delay(10)
-    .tap(author => addClaim(author.uri, 'wdt:P2963', goodReadsId))
-    .delay(10)
+    .then(Wait(10))
+    .then(tap(author => addClaim(author.uri, 'wdt:P2963', goodReadsId)))
+    .then(Wait(10))
     .then(author => {
       return Promise.all([
         createWorkWithAuthor(author, workLabel),
         createWorkWithAuthor(author, workLabel)
       ])
-      .spread((work, otherWork) => {
+      .then(([ work, otherWork ]) => {
         const entry = {
           edition: { isbn: generateIsbn13() },
           works: [ { labels: { en: workLabel } } ],
           authors: [ { claims: { 'wdt:P2963': [ goodReadsId ] } } ]
         }
         return resolve(entry)
-        .get('entries')
+        .then(({ entries }) => entries)
         .then(entries => {
           should(entries[0].works[0].uri).not.be.ok()
           done()
@@ -360,10 +360,10 @@ describe('entities:resolve:in-context', () => {
     const goodReadsId = someGoodReadsId()
     const workLabel = randomLabel()
     createHuman()
-    .delay(10)
+    .then(Wait(10))
     .then(author => {
       return createWorkWithAuthor(author, workLabel)
-      .tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsId))
+      .then(tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsId)))
       .then(work => {
         const entry = {
           edition: { isbn: generateIsbn13() },
@@ -371,7 +371,7 @@ describe('entities:resolve:in-context', () => {
           authors: [ { labels: author.labels } ]
         }
         return resolve(entry)
-        .get('entries')
+        .then(({ entries }) => entries)
         .then(entries => {
           should(entries[0].works[0].uri).be.ok()
           should(entries[0].authors[0].uri).be.ok()
@@ -428,10 +428,10 @@ describe('entities:resolve:on-labels', () => {
       const seedLabel = randomLabel()
       const authorLabel = author.labels.en
       return createWorkWithAuthor(author, workLabel)
-      .delay(elasticsearchUpdateDelay)
+      .then(Wait(elasticsearchUpdateDelay))
       .then(work => {
         return resolve(basicEntry(seedLabel, authorLabel))
-        .get('entries')
+        .then(({ entries }) => entries)
         .then(entries => {
           should(entries[0].works[0].uri).not.be.ok()
           done()
@@ -447,10 +447,10 @@ describe('entities:resolve:on-labels', () => {
       const workLabel = randomLabel()
       const authorLabel = author.labels.en
       return createWorkWithAuthor(author, workLabel)
-      .delay(elasticsearchUpdateDelay)
+      .then(Wait(elasticsearchUpdateDelay))
       .then(work => {
         return resolve(basicEntry(workLabel, authorLabel))
-        .get('entries')
+        .then(({ entries }) => entries)
         .then(entries => {
           entries[0].works[0].uri.should.equal(work.uri)
           entries[0].authors[0].uri.should.equal(author.uri)
@@ -468,10 +468,10 @@ describe('entities:resolve:on-labels', () => {
       const seedLabel = workLabel.toUpperCase()
       const authorLabel = author.labels.en
       return createWorkWithAuthor(author, workLabel)
-      .delay(elasticsearchUpdateDelay)
+      .then(Wait(elasticsearchUpdateDelay))
       .then(work => {
         return resolve(basicEntry(seedLabel, authorLabel))
-        .get('entries')
+        .then(({ entries }) => entries)
         .then(entries => {
           entries[0].works[0].uri.should.equal(work.uri)
           entries[0].authors[0].uri.should.equal(author.uri)
@@ -492,10 +492,10 @@ describe('entities:resolve:on-labels', () => {
           createWorkWithAuthor(author, workLabel),
           createWorkWithAuthor(sameLabelAuthor, workLabel)
         ])
-        .delay(elasticsearchUpdateDelay)
+        .then(Wait(elasticsearchUpdateDelay))
         .then(works => {
           return resolve(basicEntry(workLabel, author.labels.en))
-          .get('entries')
+          .then(({ entries }) => entries)
           .then(entries => {
             should(entries[0].works[0].uri).not.be.ok()
             should(entries[0].authors[0].uri).not.be.ok()

@@ -1,6 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 let error_ = __.require('lib', 'error/error')
+const { tap } = __.require('lib', 'promises')
 const getEntityByUri = __.require('controllers', 'entities/lib/get_entity_by_uri')
 const tasks_ = require('./tasks')
 const getNewTasks = require('./get_new_tasks')
@@ -8,9 +9,9 @@ error_ = __.require('lib', 'error/error')
 const updateRelationScore = require('./relation_score')
 const supportedTypes = [ 'human' ]
 
-module.exports = uri => {
+module.exports = async uri => {
   if (uri.split(':')[0] !== 'inv') {
-    return error_.reject('invalid uri domain', 400, { uri })
+    throw error_.new('invalid uri domain', 400, { uri })
   }
 
   return getEntityByUri({ uri })
@@ -28,7 +29,7 @@ module.exports = uri => {
     return getExistingTasks(uri)
     .then(getNewTasks(entity))
     .then(tasks_.createInBulk)
-    .tap(() => updateRelationScore(uri))
+    .then(tap(() => updateRelationScore(uri)))
   })
 }
 

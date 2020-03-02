@@ -4,7 +4,6 @@ const items_ = __.require('controllers', 'items/lib/items')
 const snapshot_ = require('./lib/snapshot/snapshot')
 const error_ = __.require('lib', 'error/error')
 const { Track } = __.require('lib', 'track')
-const { Promise } = __.require('lib', 'promises')
 
 module.exports = (req, res) => {
   let { body: items } = req
@@ -37,6 +36,6 @@ module.exports = (req, res) => {
     }
   })
   .then(data => res.status(201).json(data))
-  .tap(Track(req, [ 'item', 'creation', null, items.length ]))
+  .then(Track(req, [ 'item', 'creation', null, items.length ]))
   .catch(error_.Handler(req, res))
 }

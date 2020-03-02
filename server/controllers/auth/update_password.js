@@ -3,7 +3,6 @@ const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
 const db = __.require('couch', 'base')('users')
-const promises_ = __.require('lib', 'promises')
 const User = __.require('models', 'user')
 const pw_ = __.require('lib', 'crypto').passwords
 const { oneHour } = __.require('lib', 'times')
@@ -61,10 +60,8 @@ const updateUserPassword = (userId, user, newHash) => {
   return db.update(userId, updateFn)
 }
 
-const testOpenResetPasswordWindow = resetPassword => {
+const testOpenResetPasswordWindow = async resetPassword => {
   if (_.expired(resetPassword, oneHour)) {
-    return error_.reject('reset password timespan experied', 400)
-  } else {
-    return promises_.resolved
+    throw error_.new('reset password timespan experied', 400)
   }
 }

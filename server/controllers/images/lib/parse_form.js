@@ -1,14 +1,9 @@
-const __ = require('config').universalPath
 const { IncomingForm } = require('formidable')
-const { Promise } = __.require('lib', 'promises')
 
-module.exports = req => {
+module.exports = req => new Promise((resolve, reject) => {
   const form = new IncomingForm()
-
-  return new Promise((resolve, reject) => {
-    return form.parse(req, (err, fields, files) => {
-      if (err) reject(err)
-      else resolve({ fields, files })
-    })
+  return form.parse(req, (err, fields, files) => {
+    if (err) reject(err)
+    else resolve({ fields, files })
   })
-}
+})

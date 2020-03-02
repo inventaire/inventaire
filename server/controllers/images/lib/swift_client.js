@@ -2,9 +2,9 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const breq = require('bluereq')
-const fs_ = __.require('lib', 'fs')
+const { createReadStream } = require('fs')
+const { getContentLength } = __.require('lib', 'fs')
 const request = require('request')
-const { Promise } = __.require('lib', 'promises')
 const getToken = require('./get_swift_token')
 const { publicURL } = CONFIG.mediaStorage.swift
 
@@ -43,14 +43,14 @@ module.exports = {
   putImage: (container, path, filename) => {
     return Promise.all([
       getParams(container, filename),
-      fs_.getContentLength(path)
+      getContentLength(path)
     ])
-    .spread((params, contentLength) => {
+    .then(([ params, contentLength ]) => {
       const { headers, url } = params
       headers['Content-Length'] = contentLength
       headers['Content-Type'] = 'application/octet-stream'
       return new Promise((resolve, reject) => {
-        fs_.createReadStream(path)
+        createReadStream(path)
         .pipe(request({ method: 'PUT', url, headers }))
         .on('error', reject)
         .on('end', resolve.bind(null, relativeUrl(container, filename)))

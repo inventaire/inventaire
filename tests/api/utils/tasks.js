@@ -8,24 +8,24 @@ const utils = module.exports = {
   getByIds: ids => {
     ids = _.forceArray(ids).join('|')
     return nonAuthReq('get', `${endpoint}by-ids&ids=${ids}`)
-    .get('tasks')
+    .then(({ tasks }) => tasks)
   },
 
   getBySuspectUris: uris => {
     uris = _.forceArray(uris).join('|')
     return nonAuthReq('get', `${endpoint}by-suspect-uris&uris=${uris}`)
-    .get('tasks')
+    .then(({ tasks }) => tasks)
   },
 
   getBySuspectUri: uri => {
     return utils.getBySuspectUris(uri)
-    .get(uri)
+    .then(obj => obj[uri])
   },
 
   getBySuggestionUris: uris => {
     uris = _.forceArray(uris).join('|')
     return nonAuthReq('get', `${endpoint}by-suggestion-uris&uris=${uris}`)
-    .get('tasks')
+    .then(({ tasks }) => tasks)
   },
 
   getByScore: (options = {}) => {
@@ -34,7 +34,7 @@ const utils = module.exports = {
     if (limit != null) url += `&limit=${limit}`
     if (offset != null) url += `&offset=${offset}`
     return nonAuthReq('get', url)
-    .get('tasks')
+    .then(({ tasks }) => tasks)
   },
 
   update: (id, attribute, value) => {

@@ -32,7 +32,7 @@ describe('items:inventory-view', async () => {
 
   it('should return a group inventory-view', done => {
     groupPromise
-    .get('_id')
+    .then(({ _id }) => _id)
     .then(groupId => nonAuthReq('get', `${endpoint}&group=${groupId}`))
     .then(res => {
       res.worksTree.should.be.an.Object()

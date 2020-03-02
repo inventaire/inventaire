@@ -7,7 +7,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const fs_ = __.require('lib', 'fs')
+const { readFile, writeFile } = require('fs').promises
 const follow = __.require('lib', 'follow')
 const dbsList = require('./list')
 const designDocFolder = __.path('couchdb', 'design_docs')
@@ -46,10 +46,10 @@ const syncDesignDocFile = change => {
 
   const updatedDesignDoc = formatDesignDoc(doc)
 
-  return fs_.readFile(designDocPath, { encoding: 'utf-8' })
+  return readFile(designDocPath, { encoding: 'utf-8' })
   .then(file => {
     if (updatedDesignDoc === file) return
-    return fs_.writeFile(designDocPath, updatedDesignDoc)
+    return writeFile(designDocPath, updatedDesignDoc)
     .then(() => _.success(`${designDocName} design doc updated`))
   })
   .catch(_.Error(`${designDocName} design doc update err`))

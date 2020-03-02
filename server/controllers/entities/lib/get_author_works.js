@@ -1,6 +1,5 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
-const promises_ = __.require('lib', 'promises')
 const entities_ = require('./entities')
 const runWdQuery = __.require('data', 'wikidata/run_query')
 const { prefixifyWd } = __.require('controllers', 'entities/lib/prefix')
@@ -28,7 +27,7 @@ module.exports = params => {
 
   promises.push(getInvAuthorWorks(uri, worksByTypes))
 
-  return promises_.all(promises)
+  return Promise.all(promises)
   .then(_.flatten)
   .then(results => getPopularityScores(results)
   .then(spreadByType(worksByTypes, results)))
@@ -36,31 +35,16 @@ module.exports = params => {
 }
 
 // # WD
-const getWdAuthorWorks = (qid, worksByTypes, params) => {
+const getWdAuthorWorks = async (qid, worksByTypes, params) => {
   const { refresh, dry } = params
-  return runWdQuery({ query: 'author-works', qid, refresh, dry })
-  .map(formatWdEntity)
-  .filter(_.identity)
-  .then(results => {
-    // Known case of duplicate: when an entity has two P31 values that both
-    // resolve to the same whitelisted type
-    // ex: Q23701761 → P31 → Q571/Q17518461
-    // Deduplicate after formatting so that if an entity has one valid P31
-    // and an invalid one, it still gets one
-    const uris = []
-    return results.filter(deduplicate(uris))
-  })
-}
-
-const deduplicate = uris => result => {
-  const { uri } = result
-  if (uris.includes(uri)) {
-    _.warn(uri, `duplicated id: ${uri}`)
-    return false
-  } else {
-    uris.push(uri)
-    return true
-  }
+  let results = await runWdQuery({ query: 'author-works', qid, refresh, dry })
+  results = results.map(formatWdEntity).filter(_.identity)
+  // Known case of duplicate: when an entity has two P31 values that both
+  // resolve to the same whitelisted type
+  // ex: Q23701761 → P31 → Q571/Q17518461
+  // Deduplicate after formatting so that if an entity has one valid P31
+  // and an invalid one, it still gets one
+  return _.uniqBy(results, 'uri')
 }
 
 const formatWdEntity = result => {
@@ -76,11 +60,9 @@ const formatWdEntity = result => {
 }
 
 // # INV
-const getInvAuthorWorks = (uri, worksByTypes) => {
-  return entities_.byClaim('wdt:P50', uri, true)
-  .get('rows')
-  .map(formatInvEntity)
-  .filter(_.identity)
+const getInvAuthorWorks = async (uri, worksByTypes) => {
+  const { rows } = await entities_.byClaim('wdt:P50', uri, true)
+  return rows.map(formatInvEntity).filter(_.identity)
 }
 
 const formatInvEntity = row => {

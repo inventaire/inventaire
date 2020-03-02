@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const { Promise } = __.require('lib', 'promises')
+const { Promise, Wait, tap } = __.require('lib', 'promises')
 require('should')
 
 const automergeAuthorWorks = __.require('controllers', 'tasks/lib/automerge_author_works')
@@ -20,9 +20,9 @@ describe('automerge_author_works: only from inv works to wd works', () => {
       createWorkWithAuthor({ uri: authorUri }, workLabel),
       createWorkWithAuthor({ uri: authorUri }, workLabel)
     ])
-    .spread((work1, work2) => {
+    .then(([ work1, work2 ]) => {
       return automergeAuthorWorks(authorUri)
-      .delay(300)
+      .then(Wait(300))
       .then(() => getByUris([ work1.uri, work2.uri ]))
       .then(res => {
         res.redirects[work1.uri].should.equal(workWdUri)
@@ -65,7 +65,7 @@ describe('automerge_author_works: only from inv works to wd works', () => {
     createWorkWithAuthor({ uri: authorUri }, `${workLabel} Vol. 1`)
     .then(invWork => {
       return automergeAuthorWorks(authorUri)
-      .delay(300)
+      .then(Wait(300))
       .then(() => getByUris(invWork.uri))
       .then(res => {
         res.entities[invWork.uri].should.be.ok()
@@ -82,11 +82,11 @@ describe('automerge_author_works: only from inv works to wd works', () => {
     const workLabel = 'Voice of the Fire'
 
     createWorkWithAuthor({ uri: authorUri }, workLabel)
-    .tap(invWork => addSerie(invWork))
-    .delay(300)
+    .then(tap(invWork => addSerie(invWork)))
+    .then(Wait(300))
     .then(invWork => {
       return automergeAuthorWorks(authorUri)
-      .delay(300)
+      .then(Wait(300))
       .then(() => getByUris(invWork.uri))
       .then(res => {
         res.entities[invWork.uri].should.be.ok()

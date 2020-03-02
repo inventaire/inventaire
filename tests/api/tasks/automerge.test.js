@@ -16,7 +16,7 @@ describe('tasks:automerge', () => {
       .then(tasks => tasks.length.should.equal(0))
       .then(() => {
         return getByUris(human.uri)
-        .get('entities')
+        .then(({ entities }) => entities)
         .then(entities => {
           // entity should have merged, thus URI is now a a WD uri
           entities[WdUri].should.be.ok()
@@ -40,7 +40,7 @@ describe('tasks:automerge', () => {
       .then(() => checkEntities(human.uri))
       .then(() => {
         return getByUris(human.uri)
-        .get('entities')
+        .then(({ entities }) => entities)
         .then(entities => {
           entities[wikidataUri].should.be.ok()
           done()

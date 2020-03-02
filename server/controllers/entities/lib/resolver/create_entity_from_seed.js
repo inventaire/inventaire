@@ -1,7 +1,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const { Promise } = __.require('lib', 'promises')
 const properties = require('../properties/properties_values_constraints')
 const createInvEntity = require('../create_inv_entity')
 const isbn_ = __.require('lib', 'isbn/isbn')
@@ -23,8 +22,9 @@ const createWork = (userId, batchId, authors) => work => {
   return createEntityFromSeed({ type: 'work', seed: work, claims, userId, batchId })
 }
 
-const createEdition = (edition, works, userId, batchId) => {
-  if (edition.uri != null) return Promise.resolve()
+const createEdition = async (edition, works, userId, batchId) => {
+  if (edition.uri != null) return
+
   const { isbn } = edition
   const worksUris = _.compact(_.map(works, 'uri'))
   const claims = {}
@@ -37,7 +37,8 @@ const createEdition = (edition, works, userId, batchId) => {
     addClaimIfValid(claims, 'wdt:P212', [ hyphenatedIsbn ])
   }
 
-  if ((edition.claims['wdt:P1476'] != null ? edition.claims['wdt:P1476'].length : undefined) !== 1) {
+  const titleClaims = edition.claims['wdt:P1476']
+  if (titleClaims == null || titleClaims.length !== 1) {
     const title = buildBestEditionTitle(edition, works)
     edition.claims['wdt:P1476'] = [ title ]
   }

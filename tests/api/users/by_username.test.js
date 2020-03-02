@@ -6,6 +6,7 @@ const { nonAuthReq, authReq, customAuthReq, getUser, getUserB, shouldNotGetHere,
 const { createUser } = require('../fixtures/users')
 const randomString = __.require('lib', './utils/random_string')
 const { getTwoFriends } = require('../fixtures/users')
+const { Wait } = __.require('lib', 'promises')
 
 const endpoint = '/api/users?action=by-usernames'
 
@@ -24,7 +25,7 @@ describe('users:by-usernames', () => {
   it('should get a user with a non lowercase username', async () => {
     let username = `notAllLowerCase${randomString(4)}`
     const lowerCasedUsername = username.toLowerCase()
-    const user = await createUser({ username }).delay(10)
+    const user = await createUser({ username }).then(Wait(10))
     username = user.username
     const res = await nonAuthReq('get', `${endpoint}&usernames=${username}`)
     const { users } = res

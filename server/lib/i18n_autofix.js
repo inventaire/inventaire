@@ -1,5 +1,6 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
+const { readJsonFile, writeJsonFile } = __.require('utils', 'json')
 
 module.exports = {
   appendToFullKeys: keys => appendToI18nKeys(full, keys, true),
@@ -13,7 +14,7 @@ module.exports = {
 
 // Don't use 'require' as it will be cached until next start
 const appendToI18nKeys = (path, newKeys, fullValue) => {
-  return _.jsonReadAsync(path)
+  return readJsonFile(path)
   .then(keys => {
     const lengthBefore = _.objLength(keys)
     for (const key of newKeys) {
@@ -26,10 +27,10 @@ const appendToI18nKeys = (path, newKeys, fullValue) => {
     }
 
     if (_.objLength(keys) > lengthBefore) {
-      _.jsonWrite(path, keys)
-      return _.success(`i18n:updating ${path}`)
+      return writeJsonFile(path, keys)
+      .then(() => _.success(`i18n:updated ${path}`))
     } else {
-      return _.info(`i18n:not:updating ${path}: no new key`)
+      _.info(`i18n:not:updating ${path}: no new key`)
     }
   })
   .catch(_.Error('appendToI18nKeys err'))

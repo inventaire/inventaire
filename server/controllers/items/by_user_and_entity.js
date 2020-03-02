@@ -2,7 +2,6 @@ const __ = require('config').universalPath
 const items_ = __.require('controllers', 'items/lib/items')
 const user_ = __.require('controllers', 'user/lib/user')
 const { areFriendsOrGroupCoMembers } = __.require('controllers', 'user/lib/relations_status')
-const promises_ = __.require('lib', 'promises')
 const responses_ = __.require('lib', 'responses')
 const error_ = __.require('lib', 'error/error')
 const sanitize = __.require('lib', 'sanitize/sanitize')
@@ -34,10 +33,9 @@ const getItemsFromUser = (reqUserId, uri) => user => {
   })
 }
 
-const getAuthorizationLevel = (reqUserId, ownerId) => {
-  if (reqUserId == null) return promises_.resolve('public')
-
-  if (reqUserId === ownerId) return promises_.resolve('user')
+const getAuthorizationLevel = async (reqUserId, ownerId) => {
+  if (reqUserId == null) return 'public'
+  if (reqUserId === ownerId) return 'user'
 
   return areFriendsOrGroupCoMembers(reqUserId, ownerId)
   .then(bool => bool === true ? 'network' : 'public')

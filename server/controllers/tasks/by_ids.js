@@ -10,7 +10,7 @@ const sanitization = {
 
 module.exports = (req, res) => {
   sanitize(req, res, sanitization)
-  .get('ids')
+  .then(({ ids }) => ids)
   .then(tasks_.byIds)
   .then(responses_.Wrap(res, 'tasks'))
   .catch(error_.Handler(req, res))

@@ -1,5 +1,8 @@
+const CONFIG = require('config')
+const __ = CONFIG.universalPath
 require('should')
 const { nonAuthReq, undesiredRes } = require('../utils/utils')
+const { Wait } = __.require('lib', 'promises')
 const usernameEndpoint = '/api/auth?action=username-availability'
 const emailEndpoint = '/api/auth?action=email-availability'
 const { createUser, createUsername } = require('../fixtures/users')
@@ -18,7 +21,7 @@ describe('auth:username-availability', () => {
   it('should reject an account with already created username', done => {
     const username = createUsername()
     createUser({ username })
-    .delay(10)
+    .then(Wait(10))
     .then(user => {
       return nonAuthReq('get', `${usernameEndpoint}&username=${username}`)
     })
@@ -52,7 +55,7 @@ describe('auth:email-availability', () => {
 
   it('should reject an account with already created email', done => {
     createUser()
-    .delay(10)
+    .then(Wait(10))
     .then(user => nonAuthReq('get', `${emailEndpoint}&email=${user.email}`))
     .catch(err => {
       err.body.status_verbose.should.equal('this email is already used')

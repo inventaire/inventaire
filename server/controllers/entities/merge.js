@@ -1,10 +1,11 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
+const { tap } = __.require('lib', 'promises')
 const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
 const getEntitiesByUris = require('./lib/get_entities_by_uris')
 const mergeEntities = require('./lib/merge_entities')
-const radio = __.require('lib', 'radio')
+const { tapEmit } = __.require('lib', 'radio')
 const sanitize = __.require('lib', 'sanitize/sanitize')
 
 const sanitization = {
@@ -37,10 +38,10 @@ module.exports = (req, res) => {
     _.log({ merge: params, user: reqUserId }, 'entity merge request')
 
     return getMergeEntities(fromUri, toUri)
-    .tap(filterEntities(fromUri, toUri))
-    .tap(filterByType)
+    .then(tap(filterEntities(fromUri, toUri)))
+    .then(tap(filterByType))
     .then(merge(reqUserId, fromUri, toUri))
-    .tap(() => radio.emit('entity:merge', fromUri, toUri))
+    .then(tapEmit('entity:merge', fromUri, toUri))
     .then(responses_.Ok(res))
   })
   .catch(error_.Handler(req, res))

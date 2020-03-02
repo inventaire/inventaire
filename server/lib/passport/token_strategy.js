@@ -52,8 +52,8 @@ const invalidEmailOrToken = (done, email, label, err) => {
   done(null, false, { message: 'invalid_username_or_token' })
 }
 
-const verifyToken = (user, token) => {
-  if (user.token == null) return error_.reject('no token found', 401)
+const verifyToken = async (user, token) => {
+  if (user.token == null) throw error_.new('no token found', 401)
   return pw_.verify(user.token, token, tokenDaysToLive)
 }
 

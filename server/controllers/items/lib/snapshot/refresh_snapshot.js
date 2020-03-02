@@ -1,5 +1,6 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
+const promises_ = __.require('lib', 'promises')
 const assert_ = __.require('utils', 'assert_types')
 const entities_ = __.require('controllers', 'entities/lib/entities')
 const getEntityByUri = __.require('controllers', 'entities/lib/get_entity_by_uri')
@@ -31,10 +32,10 @@ const fromUri = changedEntityUri => {
 
 module.exports = { fromDoc, fromUri }
 
-const multiWorkRefresh = relationProperty => uri => {
-  return entities_.urisByClaim(relationProperty, uri)
-  .map(getSnapshotsByType.work)
-  .then(_.flatten)
+const multiWorkRefresh = relationProperty => async uri => {
+  const uris = await entities_.urisByClaim(relationProperty, uri)
+  const snapshots = await Promise.all(uris.map(getSnapshotsByType.work))
+  return _.flatten(snapshots)
 }
 
 const getSnapshotsByType = {
@@ -42,14 +43,14 @@ const getSnapshotsByType = {
     // Get all the entities docs required to build the snapshot
     return getEditionGraphEntities(uri)
     // Build common updated snapshot
-    .spread(getEditionSnapshot)
+    .then(getEditionSnapshot)
   },
 
   work: uri => {
     return getEntityByUri({ uri })
     .then(work => {
       return getWorkAuthorsAndSeries(work)
-      .spread((authors, series) => {
+      .then(([ authors, series ]) => {
         return Promise.all([
           getWorkSnapshot(uri, work, authors, series),
           getEditionsSnapshots(uri, [ work ], authors, series)
@@ -73,7 +74,7 @@ const getWorkSnapshot = (uri, work, authors, series) => {
   return buildSnapshot.work(work, authors, series)
 }
 
-const getEditionsSnapshots = (uri, works, authors, series) => {
+const getEditionsSnapshots = async (uri, works, authors, series) => {
   assert_.string(uri)
   assert_.array(works)
   assert_.array(authors)
@@ -82,10 +83,10 @@ const getEditionsSnapshots = (uri, works, authors, series) => {
   return entities_.urisByClaim('wdt:P629', uri)
   .then(uris => getEntitiesByUris({ uris }))
   .then(res => _.values(res.entities))
-  .map(edition => getEditionSnapshot(edition, works, authors, series))
+  .then(promises_.map(edition => getEditionSnapshot([ edition, works, authors, series ])))
 }
 
-const getEditionSnapshot = (edition, works, authors, series) => {
+const getEditionSnapshot = ([ edition, works, authors, series ]) => {
   assert_.object(edition)
   assert_.array(works)
   assert_.array(authors)

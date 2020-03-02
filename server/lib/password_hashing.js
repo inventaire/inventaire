@@ -1,7 +1,4 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const { Promise } = __.require('lib', 'promises')
-const { hashPasswords } = CONFIG
+const { hashPasswords } = require('config')
 
 if (hashPasswords) {
   module.exports = require('credential')()
@@ -13,10 +10,10 @@ if (hashPasswords) {
   // in the database: the good old way! \o/
   module.exports = {
     // Disabling hashing by returning a promise that resolves to the input password
-    hash: Promise.resolve,
+    hash: async password => password,
     // Thus verifying the password is simply comparing the input password
     // with the password set in the database
-    verify: (hash, password) => Promise.resolve(hash === password),
+    verify: async (hash, password) => hash === password,
     // In this mode, tokens never expire
     expired: () => false
   }

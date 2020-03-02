@@ -4,16 +4,13 @@ const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const wdEdit = require('wikidata-edit')
 const wdOauth = require('./wikidata_oauth')
-const { Promise } = __.require('lib', 'promises')
 const validateEntity = require('./validate_entity')
 const getEntityType = require('./get_entity_type')
 const properties = require('./properties/properties_values_constraints')
 const { prefixifyWd, unprefixify } = require('./prefix')
 const whitelistedEntityTypes = [ 'work', 'serie', 'human', 'publisher' ]
 
-module.exports = params => Promise.try(() => createWdEntity(params))
-
-const createWdEntity = params => {
+module.exports = async params => {
   const { labels, claims, user, isAlreadyValidated } = params
   wdOauth.validate(user)
   const oauth = wdOauth.getFullCredentials(user)
@@ -39,9 +36,8 @@ const createWdEntity = params => {
   })
 }
 
-const validate = (entity, isAlreadyValidated) => {
-  if (isAlreadyValidated) return Promise.resolve()
-  else return validateEntity(entity)
+const validate = async (entity, isAlreadyValidated) => {
+  if (!isAlreadyValidated) return validateEntity(entity)
 }
 
 const validateWikidataCompliance = entity => {

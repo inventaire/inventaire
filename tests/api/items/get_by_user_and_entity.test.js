@@ -5,7 +5,6 @@ require('should')
 const { getUser, authReq } = __.require('apiTests', 'utils/utils')
 const { createItem, createEditionAndItem } = require('../fixtures/items')
 const { createUser } = require('../fixtures/users')
-const { Promise } = __.require('lib', 'promises')
 
 const endpoint = '/api/items?action=by-user-and-entity'
 
@@ -32,7 +31,7 @@ describe('items:get-by-user-and-entity', () => {
       createEditionAndItem(getUser()),
       createEditionAndItem(getUser())
     ])
-    .spread(userItem => {
+    .then(([ userItem ]) => {
       const { owner, entity: uri } = userItem
       return authReq('get', `${endpoint}&user=${owner}&uri=${uri}`)
       .then(res => {
@@ -48,7 +47,7 @@ describe('items:get-by-user-and-entity', () => {
       createEditionAndItem(getUser()),
       createEditionAndItem(createUser())
     ])
-    .spread(userItem => {
+    .then(([ userItem ]) => {
       const { owner, entity: uri } = userItem
       return authReq('get', `${endpoint}&user=${owner}&uri=${uri}`)
       .then(res => {

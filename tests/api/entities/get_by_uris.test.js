@@ -1,7 +1,4 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const should = require('should')
-const { Promise } = __.require('lib', 'promises')
 const { undesiredRes } = require('../utils/utils')
 const { ensureEditionExists, createWorkWithAuthor, createEditionWithWorkAuthorAndSerie, createHuman } = require('../fixtures/entities')
 const { getByUris, merge } = require('../utils/entities')
@@ -54,23 +51,15 @@ describe('entities:get:by-uris', () => {
     .catch(done)
   })
 
-  it('should return redirected uris', done => {
-    Promise.all([ createHuman(), createHuman() ])
-    .spread((humanA, humanB) => {
-      return merge(humanA.uri, humanB.uri)
-      .then(() => {
-        return getByUris(humanA.uri)
-        .then(res => {
-          Object.keys(res.entities).length.should.equal(1)
-          res.entities[humanB.uri].should.be.an.Object()
-          res.entities[humanB.uri].uri.should.equal(humanB.uri)
-          res.redirects[humanA.uri].should.equal(humanB.uri)
-          should(res.notFound).not.be.ok()
-          done()
-        })
-      })
-      .catch(done)
-    })
+  it('should return redirected uris', async () => {
+    const [ humanA, humanB ] = await Promise.all([ createHuman(), createHuman() ])
+    await merge(humanA.uri, humanB.uri)
+    const { entities, notFound, redirects } = await getByUris(humanA.uri)
+    Object.keys(entities).length.should.equal(1)
+    entities[humanB.uri].should.be.an.Object()
+    entities[humanB.uri].uri.should.equal(humanB.uri)
+    redirects[humanA.uri].should.equal(humanB.uri)
+    should(notFound).not.be.ok()
   })
 
   it('should accept wikidata uri', done => {
@@ -130,7 +119,7 @@ describe('entities:get:by-uris', () => {
 
     it('should be able to include the works, authors, and series of an edition', done => {
       createEditionWithWorkAuthorAndSerie()
-      .get('uri')
+      .then(({ uri }) => uri)
       .then(editionUri => {
         return getByUris(editionUri, 'wdt:P50|wdt:P179|wdt:P629')
         .then(res => {

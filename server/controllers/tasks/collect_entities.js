@@ -1,9 +1,10 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
+const { tap } = __.require('lib', 'promises')
 const tasks_ = require('./lib/tasks')
 const db = __.require('couch', 'base')('entities')
-const promises_ = __.require('lib', 'promises')
+const { Wait } = __.require('lib', 'promises')
 const responses_ = __.require('lib', 'responses')
 const { prefixifyInv } = __.require('controllers', 'entities/lib/prefix')
 const jobs_ = __.require('level', 'jobs')
@@ -47,29 +48,26 @@ const getNextInvHumanUrisBatch = pagination => {
     limit: batchLength,
     skip: offset
   })
-  .tap(() => { pagination.offset += batchLength })
+  .then(tap(() => { pagination.offset += batchLength }))
   .then(getUris)
 }
 
-const getFilteredUris = (uris, refresh) => {
-  if (refresh) {
-    return promises_.resolve(uris)
-  } else {
-    return filterNotAlreadySuspectEntities(uris)
-  }
+const getFilteredUris = async (uris, refresh) => {
+  if (refresh) return uris
+  else return filterNotAlreadySuspectEntities(uris)
 }
 
 const getUris = res => _.map(res.rows, 'id').map(prefixifyInv)
 
 const deduplicateWorker = (jobId, uri) => {
   return checkEntity(uri)
-  .delay(interval)
+  .then(Wait(interval))
   .catch(err => {
-    if (err.statusCode === 400) {
-    } else {
-      _.error(err, 'deduplicateWorker err')
-      throw err
-    }
+    // Prevent crashing the queue for non-critical errors
+    // Example of 400 error: the entity has already been redirected
+    if (err.statusCode === 400) return
+    _.error(err, 'deduplicateWorker err')
+    throw err
   })
 }
 

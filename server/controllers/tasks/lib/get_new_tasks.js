@@ -1,6 +1,5 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
-const { Promise } = __.require('lib', 'promises')
 const searchEntityDuplicatesSuggestions = require('./search_entity_duplicates_suggestions')
 const addOccurrencesToSuggestion = require('./add_occurrences_to_suggestion')
 const getAuthorWorksData = require('./get_author_works_data')
@@ -12,7 +11,7 @@ module.exports = entity => existingTasks => {
     searchEntityDuplicatesSuggestions(entity, existingTasks),
     getAuthorWorksData(entity._id)
   ])
-  .spread((newSuggestions, suspectWorksData) => {
+  .then(([ newSuggestions, suspectWorksData ]) => {
     if (newSuggestions.length <= 0) return []
     const { labels: worksLabels } = suspectWorksData
     return Promise.all(newSuggestions.map(addOccurrencesToSuggestion(suspectWorksData)))

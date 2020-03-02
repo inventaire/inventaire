@@ -12,7 +12,7 @@ const dashesPattern = /-/g
 // - query: the name of the query to use from './queries/queries'
 // - refresh
 // - custom parameters: see the query file
-module.exports = params => {
+module.exports = async params => {
   const { refresh, dry } = params
   let { query: queryName } = params
 
@@ -20,7 +20,7 @@ module.exports = params => {
   queryName = params.query = queryName.replace(dashesPattern, '_')
 
   if (!possibleQueries.includes(queryName)) {
-    return error_.reject('unknown query', 400, params)
+    throw error_.new('unknown query', 400, params)
   }
 
   const { parameters } = queries[queryName]
@@ -30,7 +30,7 @@ module.exports = params => {
   for (const k of parameters) {
     const value = params[k]
     if ((parametersTests[k] != null) && !parametersTests[k](value)) {
-      return error_.rejectInvalid(k, params)
+      throw error_.newInvalid(k, params)
     }
   }
 

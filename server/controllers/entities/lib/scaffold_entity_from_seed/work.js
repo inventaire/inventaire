@@ -7,7 +7,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const promises_ = __.require('lib', 'promises')
 const error_ = __.require('lib', 'error/error')
 const createInvEntity = require('../create_inv_entity')
 // It is simpler to use a consistent, recognizable mocked user id
@@ -26,17 +25,17 @@ setTimeout(lateRequire, 0)
 // seed attributes:
 // MUST have: title
 
-module.exports = seed => {
+module.exports = async seed => {
   let { title, authors } = seed
 
   if (!_.isNonEmptyString(title)) {
-    return error_.reject('missing title', 400, title)
+    throw error_.new('missing title', 400, title)
   }
 
   title = title.trim()
 
   if (!_.isArray(authors)) {
-    return error_.reject('missing authors', 400, authors)
+    throw error_.new('missing authors', 400, authors)
   }
 
   authors = authors.map(_.trim)
@@ -49,7 +48,7 @@ module.exports = seed => {
     let workPromise
     if (workEntity) {
       _.log(seed, `scaffolding from existing work entity: ${workEntity.uri}`)
-      workPromise = promises_.resolve(workEntity)
+      workPromise = Promise.resolve(workEntity)
       workEntitiesCache.set(seed, workPromise)
       return workEntity
     }
@@ -65,7 +64,7 @@ module.exports = seed => {
 }
 
 const findAuthorsFromWorksTitleOrCreate = (title, authorsNames, lang) => {
-  return promises_.all(authorsNames.map(findAuthorFromWorkTitleOrCreate(title, lang)))
+  return Promise.all(authorsNames.map(findAuthorFromWorkTitleOrCreate(title, lang)))
 }
 
 // Returns a URI in any case, either from an existing entity or a newly created one

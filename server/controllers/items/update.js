@@ -32,6 +32,6 @@ module.exports = (req, res) => {
   return items_.update(reqUserId, item)
   .then(snapshot_.addToItem)
   .then(responses_.Send(res))
-  .tap(Track(req, [ 'item', 'update' ]))
+  .then(Track(req, [ 'item', 'update' ]))
   .catch(error_.Handler(req, res))
 }

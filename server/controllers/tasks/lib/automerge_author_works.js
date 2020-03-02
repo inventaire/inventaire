@@ -14,7 +14,7 @@ module.exports = authorUri => {
 
 const getAuthorWorksByDomain = authorUri => {
   return getAuthorWorks({ uri: authorUri })
-  .get('works')
+  .then(({ works }) => works)
   .then(works => {
     const uris = _.map(works, _.property('uri'))
     return getEntitiesList(uris)

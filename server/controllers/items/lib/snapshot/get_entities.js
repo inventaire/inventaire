@@ -3,12 +3,11 @@ const _ = __.require('builders', 'utils')
 const assert_ = __.require('utils', 'assert_types')
 const getEntityByUri = __.require('controllers', 'entities/lib/get_entity_by_uri')
 const getEntitiesByUris = __.require('controllers', 'entities/lib/get_entities_by_uris')
-const { Promise } = __.require('lib', 'promises')
 const { aggregateClaims } = require('./helpers')
 
-const getRelativeEntities = relationProperty => entity => {
+const getRelativeEntities = relationProperty => async entity => {
   const uris = entity.claims[relationProperty]
-  if (!(uris && uris.length > 0)) return Promise.resolve([])
+  if (uris == null || uris.length === 0) return []
   return getEntitiesByUris({ uris })
   .then(res => _.values(res.entities))
 }
@@ -30,7 +29,7 @@ const getEditionGraphFromEdition = edition => {
     assert_.array(works)
     return getWorksAuthorsAndSeries(works)
     // Tailor output to be spreaded on buildSnapshot.edition
-    .spread((authors, series) => [ edition, works, authors, series ])
+    .then(([ authors, series ]) => [ edition, works, authors, series ])
   })
 }
 
@@ -53,7 +52,7 @@ const getEditionGraphEntities = uri => {
 
 const getWorkGraphFromWork = (lang, work) => {
   return getWorkAuthorsAndSeries(work)
-  .spread((authors, series) => [ lang, work, authors, series ])
+  .then(([ authors, series ]) => [ lang, work, authors, series ])
 }
 
 module.exports = {

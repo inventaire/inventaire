@@ -2,7 +2,6 @@ let sendMail
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const { Promise } = __.require('lib', 'promises')
 
 const nodemailer = require('nodemailer')
 const hbs = require('nodemailer-express-handlebars')
@@ -37,9 +36,8 @@ if (preview) {
 transporter.use('compile', hbs(options))
 
 module.exports = {
-  sendMail: email => {
-    // Make sure to return a bluebird promise
-    return Promise.resolve(transporter.sendMail(email))
+  sendMail: async email => {
+    return transporter.sendMail(email)
     .then(_.Success('email sent'))
     .catch(err => {
       _.error(err, 'email error')

@@ -3,7 +3,7 @@ const _ = __.require('builders', 'utils')
 const responses_ = __.require('lib', 'responses')
 const error_ = __.require('lib', 'error/error')
 const revertMerge = require('./lib/revert_merge')
-const radio = __.require('lib', 'radio')
+const { tapEmit } = __.require('lib', 'radio')
 const sanitize = __.require('lib', 'sanitize/sanitize')
 
 const sanitization = {
@@ -22,7 +22,7 @@ module.exports = (req, res) => {
     }
 
     return revertMerge(reqUserId, fromId)
-    .tap(() => radio.emit('entity:revert:merge', fromUri))
+    .then(tapEmit('entity:revert:merge', fromUri))
     .then(responses_.Send(res))
   })
   .catch(error_.Handler(req, res))

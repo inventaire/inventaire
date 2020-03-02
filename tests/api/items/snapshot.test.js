@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
-const { Promise } = __.require('lib', 'promises')
+const { Promise, Wait, tap } = __.require('lib', 'promises')
 const { authReq, getUserId } = require('../utils/utils')
 const { getById: getItem } = require('../utils/items')
 let { getByUris, merge, revertMerge, updateLabel, updateClaim } = require('../utils/entities')
@@ -15,7 +15,7 @@ describe('items:snapshot', () => {
     createWork()
     .then(workEntity => {
       return addSerie(workEntity)
-      .delay(100)
+      .then(Wait(100))
       .then(serieEntity => {
         return authReq('post', '/api/items', { entity: workEntity.uri, lang: 'en' })
         .then(item => {
@@ -35,15 +35,15 @@ describe('items:snapshot', () => {
         authReq('post', '/api/items', { entity: workEntity.uri, lang: 'en' }),
         addSerie(workEntity)
       ])
-      .delay(100)
-      .spread((item, serieEntity) => {
+      .then(Wait(100))
+      .then(([ item, serieEntity ]) => {
         return updateClaim(workEntity.uri, 'wdt:P1545', null, '5')
-        .delay(100)
+        .then(Wait(100))
         .then(() => getItem(item))
         .then(item => {
           item.snapshot['entity:ordinal'].should.equal('5')
           return updateClaim(workEntity.uri, 'wdt:P1545', '5', '6')
-          .delay(100)
+          .then(Wait(100))
           .then(() => getItem(item))
           .then(item => {
             item.snapshot['entity:ordinal'].should.equal('6')
@@ -60,7 +60,7 @@ describe('items:snapshot', () => {
       createWork(),
       createWork()
     ])
-    .spread((workA, workB) => {
+    .then(([ workA, workB ]) => {
       return Promise.all([
         addAuthor(workA),
         addAuthor(workB)
@@ -143,7 +143,7 @@ describe('items:snapshot', () => {
           const updatedTitle = `${currentTitle.split('$$')[0]}$$${new Date().toISOString()}`
 
           return updateClaim(entityId, 'wdt:P1476', currentTitle, updatedTitle)
-          .delay(100)
+          .then(Wait(100))
           .then(() => getItem(item))
           .then(updatedItem => {
             updatedItem.snapshot['entity:title'].should.equal(updatedTitle)
@@ -163,7 +163,7 @@ describe('items:snapshot', () => {
           const currentTitle = item.snapshot['entity:title']
           const updatedTitle = `${currentTitle} ${new Date().toISOString()}`
           return updateLabel(entityId, 'en', updatedTitle)
-          .delay(100)
+          .then(Wait(100))
           .then(() => getItem(item))
           .then(updatedItem => {
             updatedItem.snapshot['entity:title'].should.equal(updatedTitle)
@@ -178,10 +178,10 @@ describe('items:snapshot', () => {
       createWork()
       .then(workEntity => {
         return authReq('post', '/api/items', { entity: workEntity.uri, lang: 'en' })
-        .delay(200)
+        .then(Wait(200))
         .then(item => {
           return addSerie(workEntity)
-          .delay(200)
+          .then(Wait(200))
           .then(serieEntity => {
             const title = _.values(serieEntity.labels)[0]
             return getItem(item)
@@ -189,7 +189,7 @@ describe('items:snapshot', () => {
               updatedItem.snapshot['entity:series'].should.equal(title)
               const updatedTitle = `${title}-updated`
               return updateLabel(serieEntity._id, 'en', updatedTitle)
-              .delay(200)
+              .then(Wait(200))
               .then(() => getItem(item))
               .then(reupdatedItem => {
                 reupdatedItem.snapshot['entity:series'].should.equal(updatedTitle)
@@ -219,11 +219,11 @@ describe('items:snapshot', () => {
         const workEntity = _.values(res.entities)[0]
         const trueAuthorUri = workEntity.claims['wdt:P50'][0]
         return authReq('post', '/api/items', { entity: 'isbn:9788389920935' })
-        .delay(200)
+        .then(Wait(200))
         .then(item => {
           const updateAuthorName = humanName()
           return updateLabel(trueAuthorUri, 'en', updateAuthorName)
-          .delay(200)
+          .then(Wait(200))
           .then(() => getItem(item))
           .then(updatedItem => {
             updatedItem.snapshot['entity:authors'].should.equal(updateAuthorName)
@@ -242,7 +242,7 @@ describe('items:snapshot', () => {
           const updateAuthorName = humanName()
           const uri = workEntity.claims['wdt:P50'][0]
           return updateLabel(uri, 'en', updateAuthorName)
-          .delay(100)
+          .then(Wait(100))
           .then(() => getItem(item))
           .then(item => {
             item.snapshot['entity:authors'].should.equal(updateAuthorName)
@@ -259,9 +259,9 @@ describe('items:snapshot', () => {
         createWork(),
         createWork()
       ])
-      .spread((userId, workEntityA, workEntityB) => {
+      .then(([ userId, workEntityA, workEntityB ]) => {
         return authReq('post', '/api/items', { entity: workEntityA.uri, lang: 'en' })
-        .tap(() => merge(workEntityA.uri, workEntityB.uri))
+        .then(tap(() => merge(workEntityA.uri, workEntityB.uri)))
         .then(getItem)
         .then(updatedItem => {
           const updatedTitle = workEntityB.labels.en
@@ -278,17 +278,17 @@ describe('items:snapshot', () => {
         createWork(),
         createWork()
       ])
-      .spread((userId, workEntityA, workEntityB) => {
+      .then(([ userId, workEntityA, workEntityB ]) => {
         return createEditionFromWorks(workEntityA)
         .then(editionEntity => {
           return Promise.all([
             authReq('post', '/api/items', { entity: editionEntity.uri }),
             addAuthor(workEntityB)
           ])
-          .delay(200)
-          .tap(() => merge(workEntityA.uri, workEntityB.uri))
-          .delay(200)
-          .spread((item, addedAuthor) => {
+          .then(Wait(200))
+          .then(tap(() => merge(workEntityA.uri, workEntityB.uri)))
+          .then(Wait(200))
+          .then(([ item, addedAuthor ]) => {
             return getItem(item)
             .then(updatedItem => {
               const authorName = _.values(addedAuthor.labels)[0]
@@ -307,12 +307,12 @@ describe('items:snapshot', () => {
         createHuman(),
         createHuman()
       ])
-      .spread((userId, authorEntityA, authorEntityB) => {
+      .then(([ userId, authorEntityA, authorEntityB ]) => {
         return createWorkWithAuthor(authorEntityA)
         .then(workEntity => authReq('post', '/api/items', { entity: workEntity.uri, lang: 'en' }))
-        .delay(200)
-        .tap(() => merge(authorEntityA.uri, authorEntityB.uri))
-        .delay(200)
+        .then(Wait(200))
+        .then(tap(() => merge(authorEntityA.uri, authorEntityB.uri)))
+        .then(Wait(200))
         .then(getItem)
         .then(updatedItem => {
           const updatedAuthors = authorEntityB.labels.en
@@ -329,18 +329,18 @@ describe('items:snapshot', () => {
         createHuman(),
         createHuman()
       ])
-      .spread((userId, authorEntityA, authorEntityB) => {
+      .then(([ userId, authorEntityA, authorEntityB ]) => {
         return createWorkWithAuthor(authorEntityA)
         .then(workEntity => authReq('post', '/api/items', { entity: workEntity.uri, lang: 'en' }))
-        .delay(200)
-        .tap(() => merge(authorEntityA.uri, authorEntityB.uri))
-        .delay(200)
+        .then(Wait(200))
+        .then(tap(() => merge(authorEntityA.uri, authorEntityB.uri)))
+        .then(Wait(200))
         .then(getItem)
         .then(updatedItem => {
           const updatedAuthors = authorEntityB.labels.en
           updatedItem.snapshot['entity:authors'].should.equal(updatedAuthors)
           return revertMerge(authorEntityA.uri)
-          .delay(200)
+          .then(Wait(200))
           .then(() => getItem(updatedItem))
           .then(reupdatedItem => {
             const oldAuthors = authorEntityA.labels.en
@@ -357,13 +357,13 @@ describe('items:snapshot', () => {
         getUserId(),
         createWork()
       ])
-      .spread((userId, workEntityA) => {
+      .then(([ userId, workEntityA ]) => {
         return Promise.all([
           createEditionFromWorks(workEntityA),
           authReq('post', '/api/items', { entity: workEntityA.uri, lang: 'en' })
         ])
-        .delay(100)
-        .spread((editionEntity, item) => {
+        .then(Wait(100))
+        .then(([ editionEntity, item ]) => {
           return getItem(item)
           .then(item => {
             item.entity = editionEntity.uri
@@ -385,12 +385,12 @@ describe('items:snapshot', () => {
         getUserId(),
         createWork()
       ])
-      .spread((userId, workEntity) => {
+      .then(([ userId, workEntity ]) => {
         return createEditionFromWorks(workEntity)
         .then(editionEntity => {
           return authReq('post', '/api/items', { entity: editionEntity.uri })
-          .tap(() => merge(workEntity.uri, 'wd:Q3209796'))
-          .delay(1000)
+          .then(tap(() => merge(workEntity.uri, 'wd:Q3209796')))
+          .then(Wait(1000))
           .then(item => {
             return getItem(item)
             .then(updatedItem => {
@@ -411,11 +411,11 @@ describe('items:snapshot', () => {
           createEdition({ work }),
           addAuthor(work)
         ])
-        .spread((edition, author) => {
+        .then(([ edition, author ]) => {
           return authReq('post', '/api/items', { entity: edition.uri })
-          .delay(200)
-          .tap(() => merge(author.uri, 'wd:Q2829704'))
-          .delay(200)
+          .then(Wait(200))
+          .then(tap(() => merge(author.uri, 'wd:Q2829704')))
+          .then(Wait(200))
           .then(item => {
             return getItem(item)
             .then(updatedItem => {

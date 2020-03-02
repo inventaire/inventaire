@@ -2,6 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
 const { nonAuthReq, undesiredRes } = require('../utils/utils')
+const { Wait } = __.require('lib', 'promises')
 const endpoint = '/api/auth?action=signup'
 const randomString = __.require('lib', './utils/random_string')
 const { createUser, createUsername } = require('../fixtures/users')
@@ -58,7 +59,7 @@ describe('auth:username-availability', () => {
   it('should reject an account with already created username', done => {
     const username = createUsername()
     createUser({ username })
-    .delay(10)
+    .then(Wait(10))
     .then(user => {
       return nonAuthReq('post', endpoint, {
         username,

@@ -1,10 +1,8 @@
-const __ = require('config').universalPath
 require('should')
 const { nonAuthReq } = require('../utils/utils')
 const endpoint = '/api/entities?action=changes'
 const { merge } = require('../utils/entities')
 const { createHuman } = require('../fixtures/entities')
-const { Promise } = __.require('lib', 'promises')
 
 describe('entities:changes', () => {
   it('should return an array of changes', done => {
@@ -38,7 +36,7 @@ describe('entities:changes', () => {
 
   it('should return redirected entities', done => {
     Promise.all([ createHuman(), createHuman() ])
-    .spread((humanA, humanB) => {
+    .then(([ humanA, humanB ]) => {
       return merge(humanA.uri, humanB.uri)
       .then(() => nonAuthReq('get', endpoint))
       .then(res => {

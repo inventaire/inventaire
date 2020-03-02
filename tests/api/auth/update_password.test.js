@@ -3,6 +3,7 @@ const __ = CONFIG.universalPath
 require('should')
 const { authReq, customAuthReq, getUser, getUserGetter } = require('../utils/utils')
 const randomString = __.require('lib', 'utils/random_string')
+const { Wait } = __.require('lib', 'promises')
 const endpoint = '/api/auth?action=update-password'
 const { createUser, createUserEmail } = require('../fixtures/users')
 const { BasicUpdater } = __.require('lib', 'doc_updates')
@@ -111,5 +112,5 @@ const updateCustomUser = (userPromise, userAttribute, value) => {
   .then(user => {
     db.update(user._id, BasicUpdater(userAttribute, value))
   })
-  .delay(100)
+  .then(Wait(100))
 }

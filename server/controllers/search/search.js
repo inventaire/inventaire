@@ -3,7 +3,7 @@ const __ = CONFIG.universalPath
 const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
 const parseResults = require('./lib/parse_results')
-const normalizeResults = require('./lib/normalize_results')
+const normalizeResult = require('./lib/normalize_result')
 const boostByPopularity = require('./lib/boost_by_popularity')
 const { possibleTypes } = require('./lib/types')
 const typeSearch = require('./lib/type_search')
@@ -26,8 +26,11 @@ module.exports = {
       // can save some good results a bit further down the limit
       return typeSearch(types, search, limit + 10)
       .then(parseResults(types))
-      .filter(isSearchable(reqUserId))
-      .then(normalizeResults(lang))
+      .then(results => {
+        return results
+        .filter(isSearchable(reqUserId))
+        .map(normalizeResult(lang))
+      })
       .then(boostByPopularity)
       .then(results => results.slice(0, limit))
     })

@@ -25,17 +25,17 @@ const scaffoldWorkEntityFromSeed = require('./work')
 // Every isbn needs to have its edition entity and an associated author entity,
 // thus we create the expected entities whatsoever
 
-module.exports = seed => {
+module.exports = async seed => {
   const { isbn } = seed
   if (!_.isNonEmptyString(isbn)) {
-    return error_.reject('missing isbn', 400, seed)
+    throw error_.new('missing isbn', 400, seed)
   }
 
   _.log(seed, 'edition seed')
 
   const isbnData = parseIsbn(seed.isbn)
 
-  if (isbnData == null) return error_.reject('invalid isbn', 400, seed)
+  if (isbnData == null) throw error_.new('invalid isbn', 400, seed)
 
   Object.assign(seed, isbnData)
 

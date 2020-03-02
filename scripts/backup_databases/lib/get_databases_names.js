@@ -3,9 +3,9 @@ const __ = CONFIG.universalPath
 const requests_ = __.require('lib', 'requests')
 const allDbsUrl = `${CONFIG.db.fullHost()}/_all_dbs`
 
-module.exports = suffix => {
-  return requests_.get(allDbsUrl)
-  .filter(isMatchingDatabase(suffix))
+module.exports = async suffix => {
+  const dbNames = await requests_.get(allDbsUrl)
+  return dbNames.filter(isMatchingDatabase(suffix))
 }
 
 const isMatchingDatabase = suffix => {

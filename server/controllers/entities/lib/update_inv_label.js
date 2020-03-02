@@ -6,10 +6,10 @@ const radio = __.require('lib', 'radio')
 const retryOnConflict = __.require('lib', 'retry_on_conflict')
 const updateLabel = require('./update_label')
 
-const updateInvLabel = (user, id, lang, value) => {
+const updateInvLabel = async (user, id, lang, value) => {
   const { _id: reqUserId } = user
 
-  if (!_.isInvEntityId(id)) return error_.rejectInvalid('id', id)
+  if (!_.isInvEntityId(id)) throw error_.newInvalid('id', id)
 
   return entities_.byId(id)
   .then(updateLabel.bind(null, lang, value, reqUserId))

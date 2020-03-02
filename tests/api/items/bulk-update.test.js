@@ -17,7 +17,7 @@ describe('items:bulk-update', () => {
       .then(res => {
         res.ok.should.be.true()
         return authReq('get', `/api/items?action=by-ids&ids=${ids.join('|')}`)
-        .get('items')
+        .then(({ items }) => items)
         .then(updatedItems => {
           updatedItems[0].transaction.should.equal(newTransaction)
           done()

@@ -19,7 +19,5 @@ module.exports = item => {
     if (!whitelistedEntityTypes.includes(type)) {
       throw error_.new('invalid entity type', 400, { item, type })
     }
-
-    return item
   })
 }

@@ -1,7 +1,6 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const entities_ = require('./entities')
-const promises_ = __.require('lib', 'promises')
 const dataseed = __.require('data', 'dataseed/dataseed')
 const scaffoldEditionEntityFromSeed = require('./scaffold_entity_from_seed/edition')
 const formatEditionEntity = require('./format_edition_entity')
@@ -26,7 +25,7 @@ module.exports = (rawIsbns, params) => {
 
     // then look for missing isbns on dataseed
     return getMissingEditionEntitiesFromSeeds(missingIsbns, refresh)
-    .spread((newEntities, notFound) => {
+    .then(([ newEntities, notFound ]) => {
       const results = { entities: entities.concat(newEntities) }
 
       if (notFound.length > 0) {
@@ -40,26 +39,24 @@ module.exports = (rawIsbns, params) => {
 
 const getIsbn13h = entity => entity.claims['wdt:P212'][0]
 
-const getMissingEditionEntitiesFromSeeds = (isbns, refresh) => {
-  return dataseed.getByIsbns(isbns, refresh)
-  .then(seeds => {
-    const insufficientData = []
-    const validSeeds = []
-    // TODO: Filter out more aggressively bad quality seeds
-    // - titles with punctuations
-    // - authors with punctuations or single word
-    for (const seed of seeds) {
-      if (_.isNonEmptyString(seed.title)) {
-        validSeeds.push(seed)
-      } else {
-        insufficientData.push(seed)
-      }
+const getMissingEditionEntitiesFromSeeds = async (isbns, refresh) => {
+  const seeds = await dataseed.getByIsbns(isbns, refresh)
+  const insufficientData = []
+  const validSeeds = []
+  // TODO: Filter out more aggressively bad quality seeds
+  // - titles with punctuations
+  // - authors with punctuations or single word
+  for (const seed of seeds) {
+    if (_.isNonEmptyString(seed.title)) {
+      validSeeds.push(seed)
+    } else {
+      insufficientData.push(seed)
     }
+  }
 
-    return promises_.all(validSeeds.map(scaffoldEditionEntityFromSeed))
-    .map(formatEditionEntity)
-    .then(newEntities => [ newEntities, insufficientData ])
-  })
+  const editionEntitiesScaffold = await Promise.all(validSeeds.map(scaffoldEditionEntityFromSeed))
+  const newEntities = editionEntitiesScaffold.map(formatEditionEntity)
+  return [ newEntities, insufficientData ]
 }
 
 const getRedirections = isbns => {

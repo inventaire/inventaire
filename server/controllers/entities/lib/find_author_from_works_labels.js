@@ -7,14 +7,15 @@ const _ = __.require('builders', 'utils')
 const typeSearch = __.require('controllers', 'search/lib/type_search')
 const { prefixifyWd } = __.require('controllers', 'entities/lib/prefix')
 const getOccurrencesFromExternalSources = require('./get_occurrences_from_external_sources')
+const promises_ = __.require('lib', 'promises')
 
 // Returns a URI if an single author was identified
 // returns undefined otherwise
-module.exports = (authorStr, worksLabels, worksLabelsLangs) => {
+module.exports = async (authorStr, worksLabels, worksLabelsLangs) => {
   return searchHumans(authorStr)
-  .then(getWdAuthorUris)
-  .map(getAuthorOccurrenceData(worksLabels, worksLabelsLangs))
-  .filter(_.property('hasOccurrence'))
+  .then(parseWdUris)
+  .then(promises_.map(getAuthorOccurrenceData(worksLabels, worksLabelsLangs)))
+  .then(authorsData => authorsData.filter(_.property('hasOccurrence')))
   .then(authorsData => {
     if (authorsData.length === 0) {
     } else if (authorsData.length === 1) {
@@ -30,7 +31,7 @@ module.exports = (authorStr, worksLabels, worksLabelsLangs) => {
 
 const searchHumans = typeSearch.bind(null, [ 'humans' ])
 
-const getWdAuthorUris = res => {
+const parseWdUris = res => {
   return res.hits.hits
   .filter(hit => (hit._index === 'wikidata') && (hit._score > 1))
   .map(hit => prefixifyWd(hit._id))

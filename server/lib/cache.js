@@ -15,7 +15,7 @@ module.exports = {
   // - dry: return what's in cache or nothing: if the cache is empty, do not call the function
   // - dryFallbackValue: the value to return when no cached value can be found, to keep responses
   //   type consistent
-  get: params => {
+  get: async params => {
     const { key, fn, refresh, dryFallbackValue } = params
     let { timespan, dry, dryAndCache } = params
 
@@ -35,7 +35,7 @@ module.exports = {
         assert_.number(timespan)
       }
     } catch (err) {
-      return error_.reject(err, 500)
+      throw error_.new(err, 500)
     }
 
     // Try to avoid cache miss when making a dry get
@@ -57,9 +57,9 @@ module.exports = {
     })
   },
 
-  put: (key, value) => {
-    if (!_.isNonEmptyString(key)) return error_.reject('invalid key', 500)
-    if (value == null) return error_.reject('missing value', 500)
+  put: async (key, value) => {
+    if (!_.isNonEmptyString(key)) throw error_.new('invalid key', 500)
+    if (value == null) throw error_.new('missing value', 500)
     return putResponseInCache(key, value)
   }
 }

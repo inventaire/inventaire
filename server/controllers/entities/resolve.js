@@ -1,7 +1,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const { Promise } = __.require('lib', 'promises')
 const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
 const sanitize = __.require('lib', 'sanitize/sanitize')
@@ -64,8 +63,8 @@ const sanitizeEntryAndDispatch = (sanitizedEntries, errors, strict) => entry => 
   }
 }
 
-const sequentialResolve = (entries, params, errors) => {
-  if (entries.length === 0) return Promise.resolve([])
+const sequentialResolve = async (entries, params, errors) => {
+  if (entries.length === 0) return []
 
   const { create, update, strict } = params
   const updateResolvedEntry = buildActionFn(update, UpdateResolvedEntry, params)

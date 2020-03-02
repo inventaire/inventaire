@@ -7,17 +7,17 @@ const Task = __.require('models', 'task')
 const db = __.require('couch', 'base')('tasks')
 
 const tasks_ = module.exports = {
-  createInBulk: tasksDocs => {
-    return promises_.try(() => tasksDocs.map(Task.create))
-    .then(db.bulk)
+  createInBulk: async tasksDocs => {
+    const tasks = tasksDocs.map(Task.create)
+    return db.bulk(tasks)
   },
 
-  update: options => {
+  update: async options => {
     const { ids, attribute, newValue } = options
-    if (ids.length === 0) return promises_.resolve([])
+    if (ids.length === 0) return []
 
     return tasks_.byIds(ids)
-    .map(task => Task.update(task, attribute, newValue))
+    .then(promises_.map(task => Task.update(task, attribute, newValue)))
     .then(db.bulk)
   },
 

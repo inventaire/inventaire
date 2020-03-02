@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const should = require('should')
-const { Promise } = __.require('lib', 'promises')
+const { tap } = __.require('lib', 'promises')
 const { authReq, undesiredRes } = require('../utils/utils')
 const randomString = __.require('lib', './utils/random_string')
 const { getByUris, merge, revertMerge, updateLabel, addClaim } = require('../utils/entities')
@@ -44,7 +44,7 @@ describe('entities:revert-merge', () => {
       createWork(),
       createWork()
     ])
-    .spread((workA, workB) => {
+    .then(([ workA, workB ]) => {
       merge(workA.uri, workB.uri)
       .then(() => getByUris(workA.uri))
       .then(res => {
@@ -68,7 +68,7 @@ describe('entities:revert-merge', () => {
       createWork(),
       createHuman()
     ])
-    .spread((workA, workB, author) => {
+    .then(([ workA, workB, author ]) => {
       return addClaim(workA.uri, 'wdt:P50', author.uri)
       .then(() => merge(workA.uri, workB.uri))
       .then(() => getByUris(workB.uri))
@@ -93,7 +93,7 @@ describe('entities:revert-merge', () => {
       createWork({ labels: { zh: label } }),
       createWork()
     ])
-    .spread((workA, workB) => {
+    .then(([ workA, workB ]) => {
       return merge(workA.uri, workB.uri)
       .then(() => getByUris(workB.uri))
       .then(res => {
@@ -116,12 +116,12 @@ describe('entities:revert-merge', () => {
       createHuman(),
       createHuman()
     ])
-    .spread((workA, workB, authorA, authorB) => {
+    .then(([ workA, workB, authorA, authorB ]) => {
       return addClaim(workA.uri, 'wdt:P50', authorA.uri)
       .then(() => merge(workA.uri, workB.uri))
       .then(() => getByUris(workB.uri))
       // Make another edit between the merge and the revert-merge
-      .tap(() => addClaim(workB.uri, 'wdt:P50', authorB.uri))
+      .then(tap(() => addClaim(workB.uri, 'wdt:P50', authorB.uri)))
       .then(res => {
         const authorsUris = res.entities[workB.uri].claims['wdt:P50']
         authorsUris.should.deepEqual([ authorA.uri ])
@@ -144,11 +144,11 @@ describe('entities:revert-merge', () => {
       createWork({ labels: { zh: labelA } }),
       createWork()
     ])
-    .spread((workA, workB) => {
+    .then(([ workA, workB ]) => {
       return merge(workA.uri, workB.uri)
       .then(() => getByUris(workB.uri))
       // Make another edit between the merge and the revert-merge
-      .tap(() => updateLabel(workB.uri, 'nl', labelB))
+      .then(tap(() => updateLabel(workB.uri, 'nl', labelB)))
       .then(res => {
         res.entities[workB.uri].labels.zh.should.equal(labelA)
         return revertMerge(workA.uri)
@@ -168,7 +168,7 @@ describe('entities:revert-merge', () => {
       createHuman(),
       createWork()
     ])
-    .spread((humanA, humanB, work) => {
+    .then(([ humanA, humanB, work ]) => {
       return addClaim(work.uri, 'wdt:P50', humanA.uri)
       .then(() => merge(humanA.uri, humanB.uri))
       .then(() => revertMerge(humanA.uri))
@@ -187,7 +187,7 @@ describe('entities:revert-merge', () => {
       createWorkWithAuthor(),
       createWorkWithAuthor()
     ])
-    .spread((workA, workB) => {
+    .then(([ workA, workB ]) => {
       const humanAUri = workA.claims['wdt:P50'][0]
       return merge(workA.uri, workB.uri)
       .then(() => revertMerge(workA.uri))

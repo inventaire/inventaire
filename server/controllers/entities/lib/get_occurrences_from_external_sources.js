@@ -1,7 +1,6 @@
 // A module to look for works labels occurrences in an author's external databases reference.
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
-const promises_ = __.require('lib', 'promises')
 const assert_ = __.require('utils', 'assert_types')
 const getWikipediaArticle = __.require('data', 'wikipedia/get_article')
 const getBnfAuthorWorksTitles = __.require('data', 'bnf/get_bnf_author_works_titles')
@@ -13,6 +12,7 @@ const getNdlAuthorWorksTitle = __.require('data', 'ndl/get_ndl_author_works_titl
 const getOlAuthorWorksTitles = __.require('data', 'openlibrary/get_ol_author_works_titles')
 const getEntityByUri = require('./get_entity_by_uri')
 const { normalizeTerm } = require('./terms_normalization')
+const promises_ = __.require('lib', 'promises')
 
 // - worksLabels: labels from works of an author suspected
 //   to be the same as the wdAuthorUri author
@@ -29,7 +29,7 @@ module.exports = (wdAuthorUri, worksLabels, worksLabelsLangs) => {
     // Known case: entities tagged as 'missing' or 'meta'
     if (authorEntity.sitelinks == null) return []
 
-    return promises_.all([
+    return Promise.all([
       getWikipediaOccurrences(authorEntity, worksLabels, worksLabelsLangs),
       getBnfOccurrences(authorEntity, worksLabels),
       getOpenLibraryOccurrences(authorEntity, worksLabels),
@@ -49,8 +49,8 @@ module.exports = (wdAuthorUri, worksLabels, worksLabelsLangs) => {
 }
 
 const getWikipediaOccurrences = (authorEntity, worksLabels, worksLabelsLangs) => {
-  return promises_.all(getMostRelevantWikipediaArticles(authorEntity, worksLabelsLangs))
-  .map(createOccurrencesFromUnstructuredArticle(worksLabels))
+  return Promise.all(getMostRelevantWikipediaArticles(authorEntity, worksLabelsLangs))
+  .then(promises_.map(createOccurrencesFromUnstructuredArticle(worksLabels)))
 }
 
 const getMostRelevantWikipediaArticles = (authorEntity, worksLabelsLangs) => {
@@ -70,9 +70,9 @@ const getAndCreateOccurrencesFromIds = (prop, getWorkTitlesFn) => (authorEntity,
   // but if there are several, check every available ids
   const ids = authorEntity.claims[prop]
   if (ids == null) return
-  return promises_.all(ids.map(getWorkTitlesFn))
+  return Promise.all(ids.map(getWorkTitlesFn))
   .then(_.flatten)
-  .map(createOccurrencesFromExactTitles(worksLabels))
+  .then(promises_.map(createOccurrencesFromExactTitles(worksLabels)))
 }
 
 const getBnfOccurrences = getAndCreateOccurrencesFromIds('wdt:P268', getBnfAuthorWorksTitles)

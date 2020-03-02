@@ -15,17 +15,15 @@ setTimeout(lateRequire, 0)
 
 // Hypothesis: there is no need to look for Wikidata data here
 // as inv entities with an associated Wikidata entity use the Wikidata uri
-module.exports = (ids, params) => {
-  return entities_.byIds(ids)
-  .map(Format(params))
-  .then(entities => {
-    const found = entities.reduce(aggregateFoundIds, [])
-    const notFound = _.difference(ids, found).map(prefixifyInv)
-    return { entities, notFound }
-  })
+module.exports = async (ids, params) => {
+  let entities = await entities_.byIds(ids)
+  entities = await Promise.all(entities.map(Format(params)))
+  const found = entities.reduce(aggregateFoundIds, [])
+  const notFound = _.difference(ids, found).map(prefixifyInv)
+  return { entities, notFound }
 }
 
-const Format = params => entity => {
+const Format = params => async entity => {
   if (entity.redirect != null) return getRedirectedEntity(entity, params)
 
   const [ uri, redirects ] = getInvEntityCanonicalUri(entity, { includeRedirection: true })

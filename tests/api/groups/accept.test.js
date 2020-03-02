@@ -5,7 +5,6 @@ require('should')
 const { authReq, authReqB, undesiredRes, getUserC, getUserGetter, customAuthReq } = require('../utils/utils')
 const { groupPromise, createGroup, getGroup } = require('../fixtures/groups')
 const endpoint = '/api/groups?action=accept'
-const { Promise } = __.require('lib', 'promises')
 const { humanName } = require('../fixtures/entities')
 
 describe('groups:update:accept', () => {
@@ -20,7 +19,7 @@ describe('groups:update:accept', () => {
 
   it('should reject non invited users', done => {
     Promise.all([ groupPromise, getUserC() ])
-    .spread((group, user) => {
+    .then(([ group, user ]) => {
       return authReq('put', endpoint, { user: user._id, group: group._id })
     })
     .then(undesiredRes(done))
@@ -34,7 +33,7 @@ describe('groups:update:accept', () => {
 
   it('should reject invite accepted by another user', done => {
     Promise.all([ groupPromise, getUserC() ])
-    .spread((group, user) => {
+    .then(([ group, user ]) => {
       const { _id: userId } = user
       return authReq('put', '/api/groups?action=invite', { user: userId, group: group._id })
       .then(() => {

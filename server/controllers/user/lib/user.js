@@ -1,7 +1,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const promises_ = __.require('lib', 'promises')
 const error_ = __.require('lib', 'error/error')
 const assert_ = __.require('utils', 'assert_types')
 const couch_ = __.require('lib', 'couch')
@@ -74,20 +73,21 @@ const user_ = module.exports = {
     })
   },
 
-  getUsersByIds: (ids, reqUserId) => {
+  getUsersByIds: async (ids, reqUserId) => {
     assert_.array(ids)
-    if (ids.length === 0) return promises_.resolve([])
+    if (ids.length === 0) return []
     return user_.getUsersAuthorizedData(user_.byIds(ids), reqUserId)
   },
 
-  getUsersAuthorizedData: (usersDocsPromise, reqUserId, extraAttribute) => {
-    return promises_.all([
+  getUsersAuthorizedData: async (usersDocsPromise, reqUserId, extraAttribute) => {
+    const [ usersDocs, networkIds ] = await Promise.all([
       usersDocsPromise,
       getNetworkIds(reqUserId)
     ])
-    .spread((usersDocs, networkIds) => _.compact(usersDocs)
-    .filter(user => user.type !== 'deletedUser')
-    .map(omitPrivateData(reqUserId, networkIds, extraAttribute)))
+
+    return usersDocs
+    .filter(user => user && user.type !== 'deletedUser')
+    .map(omitPrivateData(reqUserId, networkIds, extraAttribute))
   },
 
   getUsersIndexByIds: (ids, reqUserId) => {

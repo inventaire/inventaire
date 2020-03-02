@@ -5,7 +5,6 @@ const couch_ = __.require('lib', 'couch')
 const { minKey, maxKey } = couch_
 const parseRelations = require('./parse_relations')
 const groups_ = __.require('controllers', 'groups/lib/groups')
-const { Promise } = __.require('lib', 'promises')
 const db = __.require('couch', 'base')('users', 'relations')
 
 const getAllUserRelations = (userId, includeDocs = false) => {
@@ -39,6 +38,6 @@ const lists = module.exports = {
       lists.getUserFriends(userId),
       groups_.findUserGroupsCoMembers(userId)
     ])
-    .spread((friends, coMembers) => _.uniq(friends.concat(coMembers)))
+    .then(([ friends, coMembers ]) => _.uniq(friends.concat(coMembers)))
   }
 }

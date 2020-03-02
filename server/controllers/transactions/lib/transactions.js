@@ -3,7 +3,6 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const Transaction = __.require('models', 'transaction')
 const error_ = __.require('lib', 'error/error')
-const promises_ = __.require('lib', 'promises')
 const comments_ = __.require('controllers', 'comments/lib/comments')
 const { BasicUpdater } = __.require('lib', 'doc_updates')
 const { minKey, maxKey } = __.require('lib', 'couch')
@@ -52,19 +51,16 @@ const transactions_ = module.exports = {
 
   markAsRead: (userId, transaction) => {
     const role = userRole(userId, transaction)
-    // not handling cases when both user are connected:
+    // Not handling cases when both user are connected:
     // should be clarified once sockets/server events will be implemented
     return db.update(transaction._id, BasicUpdater(`read.${role}`, true))
   },
 
-  updateReadForNewMessage: (userId, transaction) => {
+  updateReadForNewMessage: async (userId, transaction) => {
     const updatedReadStates = updateReadStates(userId, transaction)
-    // spares a db write if updatedReadStates is already the current read state object
-    if (_.sameObjects(updatedReadStates, transaction.read)) {
-      return promises_.resolved
-    } else {
-      return db.update(transaction._id, BasicUpdater('read', updatedReadStates))
-    }
+    // Spares a db write if updatedReadStates is already the current read state object
+    if (_.sameObjects(updatedReadStates, transaction.read)) return
+    return db.update(transaction._id, BasicUpdater('read', updatedReadStates))
   },
 
   activeTransactionsCount: userId => {
@@ -72,10 +68,12 @@ const transactions_ = module.exports = {
     .then(activeCount)
   },
 
-  cancelAllActiveTransactions: userId => {
-    return transactions_.byUser(userId)
-    .filter(Transaction.isActive)
-    .map(activeTransaction => transactions_.updateState('cancelled', userId, activeTransaction))
+  cancelAllActiveTransactions: async userId => {
+    const transactions = await transactions_.byUser(userId)
+    const activeTransactions = transactions.filter(Transaction.isActive)
+    return Promise.all(activeTransactions.map(transaction => {
+      return transactions_.updateState('cancelled', userId, transaction)
+    }))
   }
 }
 

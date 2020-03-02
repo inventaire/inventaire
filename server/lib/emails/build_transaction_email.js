@@ -5,50 +5,40 @@ const user_ = __.require('controllers', 'user/lib/user')
 const transactions_ = __.require('controllers', 'transactions/lib/transactions')
 const items_ = __.require('controllers', 'items/lib/items')
 const snapshot_ = __.require('controllers', 'items/lib/snapshot/snapshot')
-const promises_ = __.require('lib', 'promises')
 const comments_ = __.require('controllers', 'comments/lib/comments')
 const { states } = __.require('models', 'attributes/transaction')
 const email_ = require('./email')
 
-module.exports = transactionId => {
-  return transactions_.byId(transactionId)
-  .then(emailIsRequired)
-  .then(fetchData)
-  .then(sendTailoredEmail)
-  // Catched in the final promise chain: in send_debounced_email transactionUpdate
-  // after all the actions to skip are passed
-}
-
-const emailIsRequired = transaction => {
+module.exports = async transactionId => {
+  const transaction = await transactions_.byId(transactionId)
   const role = findUserToNotify(transaction)
-  if (role) {
-    // progressively building the email ViewModel
-    transaction.role = role
-    return transaction
-  } else {
-    throw promises_.skip("sending an email isn't required", transaction)
-  }
+  // If no role needs to be notified, no email needs to be sent
+  if (!role) return
+  // Progressively building the email ViewModel
+  transaction.role = role
+  await addAssociatedData(transaction)
+  return buildTailoredEmail(transaction)
 }
 
-const fetchData = transaction => {
-  return promises_.all([
+const addAssociatedData = transaction => {
+  return Promise.all([
     user_.byId(transaction.owner),
     user_.byId(transaction.requester),
     items_.byId(transaction.item).then(snapshot_.addToItem),
     comments_.byTransactionId(transaction._id)
   ])
-  .spread((owner, requester, item, messages) => {
+  .then(([ owner, requester, item, messages ]) => {
     item.title = item.snapshot['entity:title']
     const image = item.snapshot['entity:image'] || (transaction.snapshot.entity && transaction.snapshot.entity.image)
     // Overriding transaction document ids by the ids' docs (owner, requester, etc.)
     // for the email ViewModel
-    return Object.assign(transaction, { owner, requester, item, messages, image })
+    Object.assign(transaction, { owner, requester, item, messages, image })
   })
   .then(buildTimeline)
   .then(aliasUsers)
 }
 
-const sendTailoredEmail = transaction => {
+const buildTailoredEmail = transaction => {
   const emailType = findEmailType(transaction)
   return email_.transactions[emailType](transaction)
 }

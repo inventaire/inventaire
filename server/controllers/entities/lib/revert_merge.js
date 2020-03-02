@@ -1,7 +1,7 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
-const promises_ = __.require('lib', 'promises')
 const error_ = __.require('lib', 'error/error')
+const promises_ = __.require('lib', 'promises')
 let entities_ = require('./entities')
 const patches_ = require('./patches')
 const placeholders_ = require('./placeholders')
@@ -9,30 +9,31 @@ const updateItemEntity = __.require('controllers', 'items/lib/update_entity')
 entities_ = require('./entities')
 const Patch = __.require('models', 'patch')
 
-module.exports = (userId, fromId) => {
-  return patches_.getSnapshots(fromId)
-  .then(findVersionBeforeRedirect)
-  .then(targetVersion => entities_.byId(fromId)
-  .then(currentVersion => {
-    const toUri = currentVersion.redirect
-    const fromUri = `inv:${fromId}`
-    targetVersion._id = currentVersion._id
-    targetVersion._rev = currentVersion._rev
+module.exports = async (userId, fromId) => {
+  const patches = await patches_.getSnapshots(fromId)
+  const targetVersion = await findVersionBeforeRedirect(patches)
+  const currentVersion = await entities_.byId(fromId)
+  const toUri = currentVersion.redirect
+  const fromUri = `inv:${fromId}`
+  targetVersion._id = currentVersion._id
+  targetVersion._rev = currentVersion._rev
 
-    return entities_.putUpdate({
-      userId,
-      currentDoc: currentVersion,
-      updatedDoc: targetVersion
-    })
-    .tap(() => updateItemEntity.afterRevert(fromUri, toUri))
-    .tap(() => recoverPlaceholders(userId, currentVersion.removedPlaceholdersIds))
-    .tap(() => revertMergePatch(userId, fromUri, toUri))
-    .tap(() => revertClaimsRedirections(userId, fromUri, toUri))
-  }))
+  const updateRes = entities_.putUpdate({
+    userId,
+    currentDoc: currentVersion,
+    updatedDoc: targetVersion
+  })
+
+  await updateItemEntity.afterRevert(fromUri, toUri)
+  await recoverPlaceholders(userId, currentVersion.removedPlaceholdersIds)
+  await revertMergePatch(userId, fromUri, toUri)
+  await revertClaimsRedirections(userId, fromUri, toUri)
+
+  return updateRes
 }
 
 const findVersionBeforeRedirect = patches => {
-  const versions = patches.map(_.property('snapshot'))
+  const versions = _.map(patches, 'snapshot')
   const lastVersion = _.last(versions)
   if (lastVersion.redirect == null) {
     throw error_.new("last version isn't a redirection", 400, lastVersion)
@@ -46,22 +47,22 @@ const findVersionBeforeRedirect = patches => {
 
 const isntRedirection = version => version.redirect == null
 
-const recoverPlaceholders = (userId, removedPlaceholdersIds) => {
-  if ((removedPlaceholdersIds != null ? removedPlaceholdersIds.length : undefined) <= 0) return promises_.resolved
+const recoverPlaceholders = async (userId, removedPlaceholdersIds) => {
+  if (removedPlaceholdersIds == null || removedPlaceholdersIds.length === 0) return
 
   const recoverFn = placeholders_.recover.bind(null, userId)
-  return promises_.all(removedPlaceholdersIds.map(recoverFn))
+  return Promise.all(removedPlaceholdersIds.map(recoverFn))
 }
 
 const revertMergePatch = (userId, fromUri, toUri) => {
   const [ prefix, toId ] = toUri.split(':')
   if (prefix !== 'inv') return
 
-  return promises_.all([
+  return Promise.all([
     entities_.byId(toId),
     patches_.byEntityId(toId)
   ])
-  .spread((currentDoc, patches) => {
+  .then(([ currentDoc, patches ]) => {
     const mergePatch = patches.find(patch => {
       return patch.context && patch.context.mergeFrom === fromUri
     })
@@ -81,7 +82,7 @@ const revertMergePatch = (userId, fromUri, toUri) => {
 
 const revertClaimsRedirections = (userId, fromUri, toUri) => {
   return patches_.byRedirectUri(fromUri)
-  .map(revertClaimsRedirectionFromPatch(userId))
+  .then(promises_.map(revertClaimsRedirectionFromPatch(userId)))
 }
 
 const revertClaimsRedirectionFromPatch = userId => patch => {

@@ -1,7 +1,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const { Promise } = __.require('lib', 'promises')
 const getWorksFromAuthorsUris = require('./get_works_from_authors_uris')
 const typeSearch = __.require('controllers', 'search/lib/type_search')
 const parseResults = __.require('controllers', 'search/lib/parse_results')
@@ -35,13 +34,13 @@ const searchUrisByAuthorTerms = terms => {
 
 const types = [ 'humans' ]
 
-const searchUrisByAuthorLabel = term => {
-  return typeSearch(types, term)
-  .then(parseResults(types))
+const searchUrisByAuthorLabel = async term => {
+  const hits = await typeSearch(types, term).then(parseResults(types))
   // Exact match on normalized author terms
+  return hits
   .filter(hit => getEntityNormalizedTerms(hit._source).includes(term))
   .map(hit => hit._source.uri)
-  .then(_.compact)
+  .filter(_.identity)
 }
 
 const resolveWorksAndAuthor = (works, author) => authorsUris => {
@@ -51,8 +50,7 @@ const resolveWorksAndAuthor = (works, author) => authorsUris => {
 const getWorkAndResolve = (authorSeed, authorsUris) => work => {
   if (work == null || work.uri != null) return
   const workTerms = getEntityNormalizedTerms(work)
-  return Promise.all(getWorksFromAuthorsUris(authorsUris))
-  .then(_.flatten)
+  return getWorksFromAuthorsUris(authorsUris)
   .then(resolveWorkAndAuthor(authorsUris, authorSeed, work, workTerms))
 }
 

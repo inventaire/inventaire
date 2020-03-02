@@ -4,7 +4,6 @@ const designDocName = 'patches'
 const db = __.require('couch', 'base')('patches', designDocName)
 const Patch = __.require('models', 'patch')
 const Entity = __.require('models', 'entity')
-const promises_ = __.require('lib', 'promises')
 const assert_ = __.require('utils', 'assert_types')
 const { maxKey } = __.require('lib', 'couch')
 const { oneDay } = __.require('lib', 'times')
@@ -15,7 +14,7 @@ module.exports = {
   byEntityId: entityId => db.viewByKeys('byEntityId', [ entityId ]),
   byEntityIds: entityIds => db.viewByKeys('byEntityId', entityIds),
   byUserId: (userId, limit, offset) => {
-    return promises_.all([
+    return Promise.all([
       db.view(designDocName, 'byUserId', {
         startkey: [ userId, maxKey ],
         endkey: [ userId ],
@@ -29,7 +28,7 @@ module.exports = {
       // so we need to query it separately
       getUserTotalContributions(userId)
     ])
-    .spread((res, total) => {
+    .then(([ res, total ]) => {
       const data = {
         patches: _.map(res.rows, 'doc'),
         total
@@ -42,9 +41,9 @@ module.exports = {
 
   byRedirectUri: db.viewByKey.bind(null, 'byRedirectUri'),
 
-  create: params => {
-    return promises_.try(() => Patch.create(params))
-    .then(db.postAndReturn)
+  create: async params => {
+    const patch = Patch.create(params)
+    return db.postAndReturn(patch)
   },
 
   getSnapshots: entityId => {
@@ -55,13 +54,12 @@ module.exports = {
     })
   },
 
-  getGlobalActivity: () => {
-    return db.view(designDocName, 'byUserId', { group_level: 1 })
-    .get('rows')
-    .map(formatRow)
-    .then(sortAndFilterContributions)
+  getGlobalActivity: async () => {
+    let { rows } = await db.view(designDocName, 'byUserId', { group_level: 1 })
+    rows = rows.map(formatRow)
+    return sortAndFilterContributions(rows)
     // Return only the first hundred results
-    .then(rows => rows.slice(0, 100))
+    .slice(0, 100)
   },
 
   getActivityFromLastDay: days => {
@@ -75,7 +73,7 @@ module.exports = {
       startkey: [ startDay ],
       endkey: [ today, maxKey ]
     })
-    .get('rows')
+    .then(({ rows }) => rows)
     .then(rows => convertToArray(rows.reduce(aggregatePeriodContributions, {})))
     .then(activity => ({
       activity,

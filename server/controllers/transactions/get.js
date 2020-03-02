@@ -8,7 +8,7 @@ const sanitization = {}
 
 module.exports = (req, res) => {
   sanitize(req, res, sanitization)
-  .get('reqUserId')
+  .then(({ reqUserId }) => reqUserId)
   .then(transactions_.byUser)
   .then(responses_.Wrap(res, 'transactions'))
   .catch(error_.Handler(req, res))

@@ -28,9 +28,9 @@ module.exports = (req, res, nex) => {
     .then(itemDoc => {
       const { owner: ownerId } = itemDoc
       return user_.byIds([ ownerId, reqUserId ])
-      .spread(transactions_.create.bind(null, itemDoc))
+      .then(([ ownerDoc, requesterDoc ]) => transactions_.create(itemDoc, ownerDoc, requesterDoc))
     })
-    .get('id')
+    .then(({ id }) => id)
     .then(id => {
       return transactions_.addMessage(reqUserId, message, id)
       .then(() => transactions_.byId(id))

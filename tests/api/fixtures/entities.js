@@ -2,7 +2,6 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const { customAuthReq, authReq, getUser } = require('../utils/utils')
-const { Promise } = __.require('lib', 'promises')
 const isbn_ = __.require('lib', 'isbn/isbn')
 const wdLang = require('wikidata-lang')
 const { getByUri, getByUris, addClaim } = require('../utils/entities')
@@ -37,43 +36,38 @@ const API = module.exports = {
   createPublisher: createEntity('wd:Q2085381'),
   randomLabel: (length = 5) => randomWords(length),
   humanName,
-  createWorkWithAuthor: (human, label) => {
+  createWorkWithAuthor: async (human, label) => {
+    label = label || API.randomLabel()
     const humanPromise = human ? Promise.resolve(human) : API.createHuman()
-    if (!label) { label = API.randomLabel() }
 
-    return humanPromise
-    .then(human => {
-      return authReq('post', '/api/entities?action=create', {
-        labels: { en: label },
-        claims: {
-          'wdt:P31': [ 'wd:Q571' ],
-          'wdt:P50': [ human.uri ]
-        }
-      })
+    human = await humanPromise
+    return authReq('post', '/api/entities?action=create', {
+      labels: { en: label },
+      claims: {
+        'wdt:P31': [ 'wd:Q571' ],
+        'wdt:P50': [ human.uri ]
+      }
     })
   },
 
-  createEdition: (params = {}) => {
+  createEdition: async (params = {}) => {
     const { work } = params
     let { works } = params
     const lang = params.lang || 'en'
     if (work != null && works == null) works = [ work ]
     const worksPromise = works ? Promise.resolve(works) : API.createWork()
-
-    return worksPromise
-    .then(works => {
-      works = _.forceArray(works)
-      const worksUris = _.map(works, 'uri')
-      return authReq('post', '/api/entities?action=create', {
-        claims: {
-          'wdt:P31': [ 'wd:Q3331189' ],
-          'wdt:P629': worksUris,
-          'wdt:P1476': [ _.values(works[0].labels)[0] ],
-          'wdt:P1680': [ randomWords() ],
-          'wdt:P407': [ `wd:${wdLang.byCode[lang].wd}` ],
-          'invp:P2': [ someImageHash ]
-        }
-      })
+    works = await worksPromise
+    works = _.forceArray(works)
+    const worksUris = _.map(works, 'uri')
+    return authReq('post', '/api/entities?action=create', {
+      claims: {
+        'wdt:P31': [ 'wd:Q3331189' ],
+        'wdt:P629': worksUris,
+        'wdt:P1476': [ _.values(works[0].labels)[0] ],
+        'wdt:P1680': [ randomWords() ],
+        'wdt:P407': [ `wd:${wdLang.byCode[lang].wd}` ],
+        'invp:P2': [ someImageHash ]
+      }
     })
   },
 
@@ -82,51 +76,50 @@ const API = module.exports = {
     return API.createEdition(params)
   },
 
-  createWorkWithAuthorAndSerie: () => {
-    return API.createWorkWithAuthor()
-    .tap(API.addSerie)
+  createWorkWithAuthorAndSerie: async () => {
+    const work = await API.createWorkWithAuthor()
+    await API.addSerie(work)
     // Get a refreshed version of the work
-    .then(work => getByUri(work.uri))
+    return getByUri(work.uri)
   },
 
-  createEditionWithWorkAuthorAndSerie: () => {
-    return API.createWorkWithAuthorAndSerie()
-    .then(work => API.createEdition({ work }))
+  createEditionWithWorkAuthorAndSerie: async () => {
+    const work = await API.createWorkWithAuthorAndSerie()
+    return API.createEdition({ work })
   },
 
   createItemFromEntityUri: (uri, data = {}) => {
     return authReq('post', '/api/items', Object.assign({}, data, { entity: uri }))
   },
 
-  ensureEditionExists: (uri, workData, editionData) => {
-    return getByUris(uri)
-    .get('entities')
-    .then(entities => {
-      if (entities[uri]) return entities[uri]
-      if (!workData) {
-        workData = {
-          labels: { fr: API.randomLabel() },
-          claims: { 'wdt:P31': [ 'wd:Q571' ] }
-        }
+  ensureEditionExists: async (uri, workData, editionData) => {
+    const { entities } = await getByUris(uri)
+    if (entities[uri]) return entities[uri]
+
+    if (!workData) {
+      workData = {
+        labels: { fr: API.randomLabel() },
+        claims: { 'wdt:P31': [ 'wd:Q571' ] }
       }
-      return authReq('post', '/api/entities?action=create', {
-        labels: { de: humanName() },
-        claims: { 'wdt:P31': [ 'wd:Q5' ] }
-      })
-      .then(authorEntity => {
-        workData.claims['wdt:P50'] = [ authorEntity.uri ]
-        return authReq('post', '/api/entities?action=create', workData)
-      })
-      .then(workEntity => {
-        if (!editionData) { editionData = defaultEditionData() }
-        const id = uri.split(':')[1]
-        if (isbn_.isValidIsbn(id)) {
-          editionData.claims['wdt:P212'] = [ isbn_.toIsbn13h(id) ]
-        }
-        editionData.claims['wdt:P629'] = [ workEntity.uri ]
-        return authReq('post', '/api/entities?action=create', editionData)
-      })
+    }
+
+    const authorEntity = await authReq('post', '/api/entities?action=create', {
+      labels: { de: humanName() },
+      claims: { 'wdt:P31': [ 'wd:Q5' ] }
     })
+
+    workData.claims['wdt:P50'] = [ authorEntity.uri ]
+    const workEntity = await authReq('post', '/api/entities?action=create', workData)
+
+    editionData = editionData || defaultEditionData()
+
+    const id = uri.split(':')[1]
+    if (isbn_.isValidIsbn(id)) {
+      editionData.claims['wdt:P212'] = [ isbn_.toIsbn13h(id) ]
+    }
+
+    editionData.claims['wdt:P629'] = [ workEntity.uri ]
+    return authReq('post', '/api/entities?action=create', editionData)
   },
 
   someImageHash,
@@ -149,10 +142,11 @@ const API = module.exports = {
   }
 }
 
-const addEntityClaim = (createFnName, property) => subjectEntity => {
+const addEntityClaim = (createFnName, property) => async subjectEntity => {
   const subjectUri = _.isString(subjectEntity) ? subjectEntity : subjectEntity.uri
-  return API[createFnName]()
-  .tap(entity => addClaim(subjectUri, property, entity.uri))
+  const entity = await API[createFnName]()
+  await addClaim(subjectUri, property, entity.uri)
+  return entity
 }
 
 API.addAuthor = addEntityClaim('createHuman', 'wdt:P50')

@@ -1,9 +1,6 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const { Promise } = __.require('lib', 'promises')
 const { createEdition, createWork, createAuthor } = require('./create_entity_from_seed')
 
-module.exports = (userId, batchId) => entry => {
+module.exports = (userId, batchId) => async entry => {
   const { edition, works, authors } = entry
 
   // If the edition has been resolved but not its associated works
@@ -11,7 +8,7 @@ module.exports = (userId, batchId) => entry => {
   if (edition.resolved) {
     works.forEach(addNotCreatedFlag)
     authors.forEach(addNotCreatedFlag)
-    return Promise.resolve(entry)
+    return entry
   }
 
   // Create authors before works, so that the created entities uris

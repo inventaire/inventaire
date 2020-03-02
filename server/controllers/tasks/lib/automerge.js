@@ -1,5 +1,6 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
+const { Wait } = __.require('lib', 'promises')
 const mergeEntities = __.require('controllers', 'entities/lib/merge_entities')
 const { _id: reconcilerUserId } = __.require('couch', 'hard_coded_documents').users.reconciler
 const automergeAuthorWorks = require('./automerge_author_works')
@@ -17,7 +18,7 @@ module.exports = (suspectUri, suggestion) => {
   return mergeEntities(reconcilerUserId, suspectUri, suggestionUri)
   // Give the time to CouchDB to update its views so that the works
   // of the merged author are correctly found
-  .delay(100)
+  .then(Wait(100))
   .then(() => automergeAuthorWorks(suggestionUri))
   .then(() => []) // merged suspect
 }

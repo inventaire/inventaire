@@ -1,7 +1,6 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
-const { Promise } = __.require('lib', 'promises')
 const entities_ = require('./entities')
 const items_ = __.require('controllers', 'items/lib/items')
 const getEntitiesByUris = require('./get_entities_by_uris')
@@ -37,9 +36,9 @@ const entityIsntUsedMuch = uri => {
   })
 }
 
-const entitiesItemsChecks = uris => {
-  return getAllUris(uris)
-  .map(entityIsntUsedByAnyItem)
+const entitiesItemsChecks = async uris => {
+  const allUris = await getAllUris(uris)
+  return Promise.all(allUris.map(entityIsntUsedByAnyItem))
 }
 
 const getAllUris = uris => {
@@ -51,11 +50,9 @@ const getAllUris = uris => {
   })
 }
 
-const entityIsntUsedByAnyItem = uri => {
-  return items_.byEntity(uri)
-  .then(items => {
-    if (items.length > 0) {
-      throw error_.new("entities that are used by an item can't be removed", 400, uri)
-    }
-  })
+const entityIsntUsedByAnyItem = async uri => {
+  const items = await items_.byEntity(uri)
+  if (items.length > 0) {
+    throw error_.new("entities that are used by an item can't be removed", 400, uri)
+  }
 }

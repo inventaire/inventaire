@@ -9,10 +9,9 @@ module.exports = authorUris => {
   .then(_.flatten)
 }
 
-const getWorksFromAuthorsUri = authorUri => {
-  return getAuthorWorks({ uri: authorUri })
-  .get('works')
-  .map(_.property('uri'))
-  // get full-fledged entity, as getAuthorWorks returns an entity without labels
-  .then(getEntitiesList)
+const getWorksFromAuthorsUri = async authorUri => {
+  const { works } = await getAuthorWorks({ uri: authorUri })
+  const uris = _.map(works, 'uri')
+  // Get full-fledged entity, as getAuthorWorks returns an entity without labels
+  return getEntitiesList(uris)
 }

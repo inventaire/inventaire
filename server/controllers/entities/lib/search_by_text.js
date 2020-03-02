@@ -4,7 +4,6 @@ const _ = __.require('builders', 'utils')
 const searchWikidataByText = __.require('data', 'wikidata/search_by_text')
 const searchInvEntities = require('./search_inv_entities')
 const getEntitiesByUris = require('./get_entities_by_uris')
-const promises_ = __.require('lib', 'promises')
 const error_ = __.require('lib', 'error/error')
 const assert_ = __.require('utils', 'assert_types')
 const { getInvEntityUri } = __.require('controllers', 'entities/lib/prefix')
@@ -13,7 +12,7 @@ module.exports = query => {
   assert_.object(query)
   const { refresh } = query
 
-  return promises_.all([
+  return Promise.all([
     searchWikidataByText(query),
     searchInvByText(query)
   ])
@@ -23,15 +22,14 @@ module.exports = query => {
   .catch(_.ErrorRethrow('search by text err'))
 }
 
-const searchInvByText = (query, key) => {
+const searchInvByText = async (query, key) => {
   const { search } = query
-
-  return searchInvEntities(search)
+  const results = await searchInvEntities(search)
   // It's ok to use the inv URI even if its not the canonical URI
   // (wd and isbn URI are prefered) as getEntitiesByUris will
   // take care of finding the right URI downward
-  .map(getInvEntityUri)
-  .then(uris => getEntitiesByUris({ uris }))
+  const uris = results.map(getInvEntityUri)
+  return getEntitiesByUris({ uris })
   .catch(error_.notFound)
 }
 

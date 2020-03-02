@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
-const { Promise } = __.require('lib', 'promises')
+const { Wait, tap } = __.require('lib', 'promises')
 const { authReq } = __.require('apiTests', 'utils/utils')
 const { getByUris, addClaim, getHistory } = __.require('apiTests', 'utils/entities')
 const { createWork, createHuman, ensureEditionExists, someGoodReadsId, randomLabel, generateIsbn13 } = __.require('apiTests', 'fixtures/entities')
@@ -30,15 +30,15 @@ describe('entities:resolver:update-resolved', () => {
       ]
     }
     createWork()
-    .tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsId))
-    .tap(work => addClaim(work.uri, 'wdt:P50', authorUri2))
+    .then(tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsId)))
+    .then(tap(work => addClaim(work.uri, 'wdt:P50', authorUri2)))
     .then(work => {
       return resolveAndUpdate(entry)
-      .get('entries')
+      .then(({ entries }) => entries)
       .then(entries => {
         const entityUri = entries[0].works[0].uri
         return getByUris(entityUri)
-        .get('entities')
+        .then(({ entities }) => entities)
         .then(entities => {
           const workAuthorsUris = _.values(entities)[0].claims['wdt:P50']
           workAuthorsUris.should.not.containEql(authorUri)
@@ -55,17 +55,17 @@ describe('entities:resolver:update-resolved', () => {
     const goodReadsIdA = entryA.works[0].claims['wdt:P2969'][0]
     const goodReadsIdB = entryB.works[0].claims['wdt:P2969'][0]
     Promise.all([
-      createWork().tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsIdA)),
-      createWork().tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsIdB))
+      createWork().then(tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsIdA))),
+      createWork().then(tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsIdB)))
     ])
-    .spread((workA, workB) => {
+    .then(([ workA, workB ]) => {
       return resolveAndUpdate([ entryA, entryB ])
-      .get('entries')
+      .then(({ entries }) => entries)
       .then(entries => {
         const workAUri = entries[0].works[0].uri
         const workBUri = entries[1].works[0].uri
         return getByUris([ workAUri, workBUri ])
-        .get('entities')
+        .then(({ entities }) => entities)
         .then(entities => {
           workA = entities[workAUri]
           workB = entities[workBUri]
@@ -92,15 +92,15 @@ describe('entities:resolver:update-resolved', () => {
       ]
     }
     createHuman()
-    .tap(human => addClaim(human.uri, 'wdt:P2963', goodReadsId))
+    .then(tap(human => addClaim(human.uri, 'wdt:P2963', goodReadsId)))
     .then(human => {
       return resolveAndUpdate(entry)
-      .get('entries')
+      .then(({ entries }) => entries)
       .then(entries => {
         const authorUri = entries[0].authors[0].uri
         authorUri.should.equal(human.uri)
         return getByUris(authorUri)
-        .get('entities')
+        .then(({ entities }) => entities)
         .then(entities => {
           const updatedAuthor = entities[authorUri]
           const authorWebsiteClaimValues = updatedAuthor.claims['wdt:P856']
@@ -133,11 +133,11 @@ describe('entities:resolver:update-resolved', () => {
         }
       }
       return resolveAndUpdate(entry)
-      .get('entries')
-      .delay(10)
+      .then(({ entries }) => entries)
+      .then(Wait(10))
       .then(entries => {
         return getByUris(editionUri)
-        .get('entities')
+        .then(({ entities }) => entities)
         .then(entities => {
           edition = entities[editionUri]
           const numberOfPagesClaimsValues = edition.claims['wdt:P1104']
@@ -156,17 +156,17 @@ describe('entities:resolver:update-resolved', () => {
     const goodReadsIdA = entryA.works[0].claims['wdt:P2969'][0]
     const goodReadsIdB = entryB.works[0].claims['wdt:P2969'][0]
     Promise.all([
-      createWork().tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsIdA)),
-      createWork().tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsIdB))
+      createWork().then(tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsIdA))),
+      createWork().then(tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsIdB)))
     ])
-    .spread((workA, workB) => {
+    .then(([ workA, workB ]) => {
       return resolveAndUpdate([ entryA, entryB ])
       .then(() => {
         return Promise.all([
           getHistory(workA.uri),
           getHistory(workB.uri)
         ])
-        .spread((workAPatches, workBPatches) => {
+        .then(([ workAPatches, workBPatches ]) => {
           const lastWorkAPatch = workAPatches.slice(-1)[0]
           const lastWorkBPatch = workBPatches.slice(-1)[0]
           lastWorkBPatch.batch.should.equal(lastWorkAPatch.batch)

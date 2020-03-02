@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
-const { Promise } = __.require('lib', 'promises')
+const { Wait } = __.require('lib', 'promises')
 const { authReq, getUser } = require('../utils/utils')
 const { ensureEditionExists, createEdition, createWorkWithAuthor, createHuman } = require('../fixtures/entities')
 const { createItem } = require('../fixtures/items')
@@ -10,7 +10,7 @@ const { createUser, getRefreshedUser } = require('../fixtures/users')
 const { getByUris: getEntitiesByUris } = require('../utils/entities')
 const debounceDelay = CONFIG.itemsCountDebounceTime + 100
 
-const editionUriPromise = createEdition().get('uri')
+const editionUriPromise = createEdition().then(({ uri }) => uri)
 
 describe('items:create', () => {
   it('should create an item', done => {
@@ -18,7 +18,7 @@ describe('items:create', () => {
       getUser(),
       editionUriPromise
     ])
-    .spread((user, editionUri) => {
+    .then(([ user, editionUri ]) => {
       const userId = user._id
       return authReq('post', '/api/items', { entity: editionUri })
       .then(item => {
@@ -27,7 +27,7 @@ describe('items:create', () => {
         item.transaction.should.equal('inventorying')
         return item.owner.should.equal(userId)
       })
-      .delay(10)
+      .then(Wait(10))
       .then(() => done())
     })
     .catch(done)
@@ -38,7 +38,7 @@ describe('items:create', () => {
       getUser(),
       editionUriPromise
     ])
-    .spread((user, editionUri) => {
+    .then(([ user, editionUri ]) => {
       const userId = user._id
       return authReq('post', '/api/items', [
         { entity: editionUri, listing: 'network', transaction: 'giving' },
@@ -54,7 +54,7 @@ describe('items:create', () => {
         items[1].transaction.should.equal('lending')
         return items[1].owner.should.equal(userId)
       })
-      .delay(10)
+      .then(Wait(10))
       .then(() => done())
     })
     .catch(done)
@@ -64,7 +64,7 @@ describe('items:create', () => {
     const userPromise = createUser()
     const timestamp = Date.now()
     createItem(userPromise, { listing: 'public' })
-    .delay(debounceDelay)
+    .then(Wait(debounceDelay))
     .then(() => getRefreshedUser(userPromise))
     .then(user => {
       user.snapshot.public['items:count'].should.equal(1)
@@ -124,10 +124,10 @@ describe('items:create', () => {
     })
     .then(edition => {
       return Promise.all([
-        getEntitiesByUris(edition.uri, 'wdt:P629|wdt:P50').get('entities'),
+        getEntitiesByUris(edition.uri, 'wdt:P629|wdt:P50').then(({ entities }) => entities),
         authReq('post', '/api/items', { entity: 'isbn:9780812993257' })
       ])
-      .spread((entities, item) => {
+      .then(([ entities, item ]) => {
         edition = entities[edition.uri]
         const work = entities[edition.claims['wdt:P629'][0]]
         const author = entities[work.claims['wdt:P50'][0]]
@@ -189,7 +189,7 @@ describe('items:create', () => {
       createItem(userPromise, { listing: 'network' }),
       createItem(userPromise, { listing: 'private' })
     ])
-    .delay(debounceDelay)
+    .then(Wait(debounceDelay))
     .then(() => getRefreshedUser(userPromise))
     .then(user => {
       user.snapshot.public['items:count'].should.equal(1)

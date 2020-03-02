@@ -1,6 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const { Promise } = __.require('lib', 'promises')
 const entities_ = require('../entities')
 const getInvEntityCanonicalUri = require('../get_inv_entity_canonical_uri')
 const resolveExternalIds = require('./resolve_external_ids')
@@ -15,7 +12,7 @@ module.exports = entry => {
     resolveByIsbn(isbn),
     resolveExternalIds(claims, resolveOnWikidata)
   ])
-  .spread(pickUriFromResolversResponses)
+  .then(pickUriFromResolversResponses)
   .then(uri => {
     if (uri != null) { entry.edition.uri = uri }
     return entry
@@ -31,7 +28,7 @@ const resolveByIsbn = isbn => {
   })
 }
 
-const pickUriFromResolversResponses = (uriFoundByIsbn, urisFoundByExternalIds) => {
+const pickUriFromResolversResponses = ([ uriFoundByIsbn, urisFoundByExternalIds ]) => {
   // TODO: handle possible conflict between uriFoundByIsbn and urisFoundByExternalIds
   if (uriFoundByIsbn) return uriFoundByIsbn
   if (urisFoundByExternalIds && urisFoundByExternalIds.length === 1) {

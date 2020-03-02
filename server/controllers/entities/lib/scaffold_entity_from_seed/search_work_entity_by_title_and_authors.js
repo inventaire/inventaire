@@ -1,7 +1,5 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
-const promises_ = __.require('lib', 'promises')
-
 const searchByText = require('../search_by_text')
 const getBestLangValue = __.require('lib', 'get_best_lang_value')
 const getEntitiesByUris = require('../get_entities_by_uris')
@@ -10,7 +8,7 @@ const { matchTitle, matchAuthor } = require('./work_entity_search_utils')
 
 // Search an existing work by title and authors from a seed
 // to avoid creating duplicates if a corresponding work already exists
-module.exports = seed => {
+module.exports = async seed => {
   const { title, authors, groupLang } = seed
   // Unless a lang is explicitly passed, deduce it from the the ISBN groupLang
   const lang = seed.lang || groupLang
@@ -18,24 +16,26 @@ module.exports = seed => {
   const validAuthors = _.isArray(authors) && _.every(authors, _.isNonEmptyString)
   if (!_.isNonEmptyString(title) || !validAuthors) {
     _.warn(seed, 'unsufficient seed data to search a pre-existing work entity')
-    return promises_.resolve()
+    return
   }
 
   const cachedWorkPromise = workEntitiesCache.get(seed)
   if (cachedWorkPromise != null) return cachedWorkPromise
 
-  return searchByText({ search: title, lang })
-  .filter(isWork)
-  // Make a first filter from the results we got
-  .filter(matchTitle(title, lang))
+  let entities = await searchByText({ search: title, lang })
+
+  entities = entities
+    .filter(isWork)
+    // Make a first filter from the results we got
+    .filter(matchTitle(title, lang))
+
   // Fetch the data we miss to check author match
-  .map(addAuthorsStrings(lang))
   // Filter the remaining results on authors
-  .filter(matchAuthor(authors, lang))
-  .then(matches => {
-    if (matches.length > 1) _.warn(matches, 'possible duplicates')
-    return matches[0]
-  })
+  await Promise.all(entities.map(addAuthorsStrings(lang)))
+
+  const matches = entities.filter(matchAuthor(authors, lang))
+  if (matches.length > 1) _.warn(matches, 'possible duplicates')
+  return matches[0]
 }
 
 const isWork = entity => entity.type === 'work'

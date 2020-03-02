@@ -3,7 +3,6 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
-const promises_ = __.require('lib', 'promises')
 const responses_ = __.require('lib', 'responses')
 const parseEmails = require('./lib/parse_emails')
 const sendInvitationAndReturnData = require('./lib/send_invitation_and_return_data')
@@ -25,11 +24,11 @@ module.exports = (req, res) => {
     message = null
   }
 
-  promises_.all([
+  Promise.all([
     parseAndValidateEmails(emails, user.email),
     validateGroup(groupId, reqUserId)
   ])
-  .spread((parsedEmails, group) => {
+  .then(([ parsedEmails, group ]) => {
     return sendInvitationAndReturnData({ user, message, group, parsedEmails, reqUserId })
     .then(_.Log('invitationByEmails data'))
     .then(responses_.Send(res))
@@ -38,19 +37,19 @@ module.exports = (req, res) => {
   .catch(error_.Handler(req, res))
 }
 
-const parseAndValidateEmails = (emails, userEmail) => promises_.try(() => {
+const parseAndValidateEmails = async (emails, userEmail) => {
   const parsedEmails = parseEmails(emails)
   // Removing the requesting user email if for some reason
   // it ended up in the list
   const filteredEmails = _.without(parsedEmails, userEmail.toLowerCase())
   return applyLimit(filteredEmails)
-})
+}
 
-const validateGroup = (groupId, reqUserId) => {
-  if (groupId == null) return promises_.resolve(null)
+const validateGroup = async (groupId, reqUserId) => {
+  if (groupId == null) return null
 
   if (!_.isGroupId(groupId)) {
-    return error_.rejectInvalid('group id', groupId)
+    throw error_.newInvalid('group id', groupId)
   }
 
   return groups_.byId(groupId)

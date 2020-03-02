@@ -14,23 +14,24 @@ module.exports = (name, endpoint, getQuery) => id => {
     fn: fetch.bind(null, endpoint, getQuery(id), id),
     timespan
   })
-  .timeout(20000)
+  // .timeout(20000)
   .catch(err => {
     _.error(err, `${name} error fetching ${id}`)
     return []
   })
 }
 
-const fetch = (endpoint, query) => {
+const fetch = async (endpoint, query) => {
   const escapedQuery = qs.escape(query)
   const base = `${endpoint}?query=`
   const headers = { accept: 'application/sparql-results+json' }
   const url = base + escapedQuery
 
-  return requests_.get({ url, headers })
-  .then(res => res.results.bindings
-  .map(result => ({
-    title: result.title && result.title.value,
-    url: result.work && result.work.value
-  })))
+  const { results } = await requests_.get({ url, headers })
+  return results.bindings.map(parseResult)
 }
+
+const parseResult = result => ({
+  title: result.title && result.title.value,
+  url: result.work && result.work.value
+})

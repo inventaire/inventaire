@@ -1,10 +1,7 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 require('should')
 const { authReq, authReqC, getUserGetter, customAuthReq } = require('../utils/utils')
 const { groupPromise, getGroup } = require('../fixtures/groups')
 const endpoint = '/api/groups?action=cancel-request'
-const { Promise } = __.require('lib', 'promises')
 const { humanName } = require('../fixtures/entities')
 
 describe('groups:update:cancel-request', () => {
@@ -32,7 +29,7 @@ describe('groups:update:cancel-request', () => {
   it('should cancel a request', done => {
     const requesterPromise = getUserGetter(humanName(), false)()
     Promise.all([ groupPromise, requesterPromise ])
-    .spread((group, requester) => {
+    .then(([ group, requester ]) => {
       return customAuthReq(requesterPromise, 'put', '/api/groups?action=request', { group: group._id })
       .then(() => getGroup(group))
     })

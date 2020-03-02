@@ -31,11 +31,11 @@ module.exports = uri => {
   .then(addBonusPoints(uri))
 }
 
-const getItemsCount = uri => {
-  return items_.byEntity(uri)
-  .map(_.property('owner'))
+const getItemsCount = async uri => {
+  const items = await items_.byEntity(uri)
+  const owners = _.map(items, 'owner')
   // Count the owners so that no more than one item per user is counted
-  .then(owners => _.uniq(owners).length)
+  return _.uniq(owners).length
 }
 
 // Limit request to local entities as Wikidata editions entities are currently ignored

@@ -10,9 +10,9 @@ const { Promise } = promises_
 
 const requestGrouper = __.require('lib', 'request_grouper')
 
-const MockRequester = (spy = _.noop) => ids => {
+const MockRequester = (spy = _.noop) => async ids => {
   spy()
-  return Promise.resolve(mockRequesterSync(ids))
+  return mockRequesterSync(ids)
 }
 
 const mockRequesterSync = ids => {

@@ -3,7 +3,6 @@ const _ = __.require('builders', 'utils')
 const items_ = __.require('controllers', 'items/lib/items')
 const relations_ = __.require('controllers', 'relations/lib/queries')
 const error_ = __.require('lib', 'error/error')
-const promises_ = __.require('lib', 'promises')
 const sanitize = __.require('lib', 'sanitize/sanitize')
 const responses_ = __.require('lib', 'responses')
 const { addAssociatedData, Paginate } = require('./lib/queries_commons')
@@ -25,12 +24,12 @@ module.exports = (req, res) => {
 const getEntitiesItems = page => {
   const { uris, reqUserId } = page
 
-  return promises_.all([
+  return Promise.all([
     getUserItems(reqUserId, uris),
     getNetworkItems(reqUserId, uris),
     items_.publicByEntities(uris)
   ])
-  .spread((userItems, networkItems, publicItems) => {
+  .then(([ userItems, networkItems, publicItems ]) => {
     // Only add user and network keys for the authorized endpoint
     if (reqUserId != null) {
       const dedupPublicItems = deduplicateItems(userItems, networkItems, publicItems)

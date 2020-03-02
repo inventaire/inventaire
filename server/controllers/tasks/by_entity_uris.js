@@ -10,7 +10,7 @@ const sanitization = {
 
 const byEntityUris = fnName => (req, res) => {
   sanitize(req, res, sanitization)
-  .get('uris')
+  .then(({ uris }) => uris)
   .then(uris => tasks_[fnName](uris, { index: true }))
   .then(responses_.Wrap(res, 'tasks'))
   .catch(error_.Handler(req, res))

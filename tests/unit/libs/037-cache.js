@@ -1,6 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
+const { Wait } = __.require('lib', 'promises')
 
 if (CONFIG.env !== 'tests') {
   throw new Error(`invalid env: ${CONFIG.env}`)
@@ -9,14 +10,12 @@ if (CONFIG.env !== 'tests') {
 const should = require('should')
 const sinon = require('sinon')
 
-const promises_ = __.require('lib', 'promises')
-
 const cache_ = __.require('lib', 'cache')
 const randomString = __.require('lib', './utils/random_string')
 
-const hashKey = key => promises_.resolve(_.hashCode(key))
+const hashKey = async key => _.hashCode(key)
 const workingFn = key => hashKey(key + randomString(8))
-const failingFn = key => promises_.reject('Jag är Döden')
+const failingFn = async () => { throw new Error('Jag är Döden') }
 
 describe('cache', () => {
   describe('get', () => {
@@ -76,7 +75,7 @@ describe('cache', () => {
       cache_.get({ key, fn: workingFn.bind(null, 'Vem är du?'), timespan: 0 })
       .then(res1 => {
         // returns an error: should return old value
-        return cache_.get({ key, fn: failingFn.bind(null, 'Vem är du?'), timespan: 1 })
+        return cache_.get({ key, fn: failingFn, timespan: 1 })
         .then(res2 => {
           // the error shouldnt have overriden the value
           return cache_.get({ key, fn: workingFn.bind(null, 'Vem är du?'), timespan: 5000 })
@@ -94,7 +93,7 @@ describe('cache', () => {
       const spy = sinon.spy()
       const empty = key => {
         spy()
-        return promises_.resolve(_.noop(key))
+        return Promise.resolve(_.noop(key))
       }
 
       const key = 'gogogo'
@@ -115,10 +114,10 @@ describe('cache', () => {
       it('should refuse old value when passed a 0 timespan', done => {
         const key = 'doden'
         cache_.get({ key, fn: workingFn.bind(null, 'Vem är du?'), timespan: 0 })
-        .delay(10)
+        .then(Wait(10))
         .then(res1 => {
           // returns an error: should return old value
-          return cache_.get({ key, fn: failingFn.bind(null, 'Vem är du?'), timespan: 0 })
+          return cache_.get({ key, fn: failingFn, timespan: 0 })
           .then(res2 => {
             res1.should.be.ok()
             should(res2).not.be.ok()
@@ -134,10 +133,10 @@ describe('cache', () => {
       cache_.get({ key, fn: workingFn.bind(null, 'bla') })
       .then(res1 => {
         return cache_.get({ key, fn: workingFn.bind(null, 'different arg'), timespan: 10000 })
-        .delay(100)
+        .then(Wait(100))
         .then(res2 => {
           return cache_.get({ key, fn: workingFn.bind(null, 'different arg'), timespan: 0 })
-          .delay(100)
+          .then(Wait(100))
           .then(res3 => {
             res1.should.equal(res2)
             res2.should.not.equal(res3)
@@ -153,7 +152,7 @@ describe('cache', () => {
         const key = 'samekey'
         const fn = workingFn.bind(null, 'foo')
         cache_.get({ key, fn, timespan: 10000 })
-        .delay(100)
+        .then(Wait(100))
         .then(res1 => {
           return cache_.get({ key, fn })
           .then(res2 => {
@@ -174,7 +173,7 @@ describe('cache', () => {
         const key = randomString(4)
         const fn = workingFn.bind(null, 'foo')
         cache_.get({ key, fn })
-        .delay(100)
+        .then(Wait(100))
         .then(res1 => cache_.get({ key, dry: true })
         .then(res2 => {
           res1.should.equal(res2)
@@ -208,7 +207,7 @@ describe('cache', () => {
         const key = randomString(4)
         const fn = workingFn.bind(null, 'foo')
         cache_.get({ key, fn, dryAndCache: true })
-        .delay(10)
+        .then(Wait(10))
         .then(res1 => {
           should(res1).not.be.ok()
           cache_.get({ key, dry: true })
@@ -222,7 +221,7 @@ describe('cache', () => {
         const key = randomString(4)
         const fn = workingFn.bind(null, 'foo')
         cache_.get({ key, fn, refresh: true, dryAndCache: true })
-        .delay(10)
+        .then(Wait(10))
         .then(res1 => {
           should(res1).be.ok()
           done()

@@ -4,7 +4,7 @@ require('should')
 const { authReq, getUserGetter, undesiredRes } = require('../utils/utils')
 const { groupPromise, getGroup, addMember } = require('../fixtures/groups')
 const endpoint = '/api/groups?action=kick'
-const { Promise } = __.require('lib', 'promises')
+const { Wait } = __.require('lib', 'promises')
 const { humanName } = require('../fixtures/entities')
 const userPromise = getUserGetter(humanName(), false)()
 
@@ -20,7 +20,7 @@ describe('groups:update:kick', () => {
 
   it('should reject non member users', done => {
     Promise.all([ groupPromise, userPromise ])
-    .spread((group, nonInvitedUser) => {
+    .then(([ group, nonInvitedUser ]) => {
       return authReq('put', endpoint, { user: nonInvitedUser._id, group: group._id })
     })
     .then(undesiredRes(done))
@@ -34,10 +34,10 @@ describe('groups:update:kick', () => {
 
   it('should kick a member', done => {
     addMember(groupPromise, userPromise)
-    .spread((group, member) => {
+    .then(([ group, member ]) => {
       const membersCount = group.members.length
       return authReq('put', endpoint, { user: member._id, group: group._id })
-      .delay(100)
+      .then(Wait(100))
       .then(() => getGroup(group))
       .then(updatedGroup => {
         updatedGroup.members.length.should.equal(membersCount - 1)
@@ -49,7 +49,7 @@ describe('groups:update:kick', () => {
 
   it('should reject kicking an admin', done => {
     addMember(groupPromise, userPromise)
-    .spread((group, member) => {
+    .then(([ group, member ]) => {
       const { _id: memberId } = member
       return authReq('put', '/api/groups?action=make-admin', { user: memberId, group: group._id })
       .then(() => {

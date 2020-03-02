@@ -1,9 +1,8 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const gm = require('gm')
-const { Promise } = __.require('lib', 'promises')
 const crypto_ = __.require('lib', 'crypto')
-const { readFile } = __.require('lib', 'fs')
+const { readFile } = require('fs').promises
 const { maxSize } = CONFIG.mediaStorage.images
 
 // gm accepts either a path string or a stream

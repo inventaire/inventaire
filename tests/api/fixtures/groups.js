@@ -1,11 +1,7 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const assert_ = __.require('utils', 'assert_types')
-const { authReq, authReqB, getUser, getUserB, customAuthReq, getUserGetter } = require('../utils/utils')
+const { authReq, getUser, getUserB, customAuthReq, getUserGetter } = require('../utils/utils')
 const faker = require('faker')
 const endpointBase = '/api/groups'
 const endpointAction = `${endpointBase}?action`
-const { Promise } = __.require('lib', 'promises')
 const { humanName } = require('../fixtures/entities')
 
 const getGroup = async group => {
