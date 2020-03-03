@@ -4,6 +4,7 @@ const shelves_ = __.require('controllers', 'shelves/lib/shelves')
 const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
 const sanitize = __.require('lib', 'sanitize/sanitize')
+const { tap } = __.require('lib', 'promises')
 
 const sanitization = {
   ids: {},
@@ -24,10 +25,14 @@ const deleteByIds = params => {
   const { ids, reqUserId, withItems } = params
   return shelves_.byIdsWithItems(ids)
   .then(_.compact)
-  .tap(validateDeletion(withItems))
-  .tap(validateOwnership(reqUserId))
-  .tap(shelves => { if (withItems) { shelves_.deleteShelvesItems(shelves) } })
+  .then(tap(validateDeletion(withItems)))
+  .then(tap(validateOwnership(reqUserId)))
+  .then(tap(deleteShelfItems(withItems)))
   .then(shelves_.bulkDelete)
+}
+
+const deleteShelfItems = withItems => shelves => {
+  if (withItems) { shelves_.deleteShelvesItems(shelves) }
 }
 
 const validateOwnership = reqUserId => shelves => {
@@ -42,7 +47,7 @@ const validateDeletion = withItems => shelves => {
   if (withItems) { return }
   for (const shelf of shelves) {
     if (shelf.items.length > 0) {
-      throw error_.new('shelf cannot be deleted. Delete items first or pass a with items parameter', 403, { shelf })
+      throw error_.new('shelf cannot be deleted. Delete items first or pass a with-items parameter', 403, { shelf })
     }
   }
 }

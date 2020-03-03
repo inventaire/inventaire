@@ -7,6 +7,7 @@ const Item = __.require('models', 'item')
 const listingsPossibilities = Item.attributes.constrained.listing.possibilities
 const assert_ = __.require('utils', 'assert_types')
 const { BasicUpdater } = __.require('lib', 'doc_updates')
+const { tap } = __.require('lib', 'promises')
 const { tapEmit, emit } = __.require('lib', 'radio')
 const { filterPrivateAttributes } = require('./filter_private_attributes')
 const { maxKey } = __.require('lib', 'couch')
@@ -157,7 +158,7 @@ const formatItems = reqUserId => async items => {
 
 const updateShelves = (actionFn, ids, shelves, userId) => {
   return items_.byIds(ids)
-  .tap(validateOwnership(shelves))
+  .then(tap(validateOwnership(shelves)))
   .then(items => {
     const shelvesIds = shelves.map(_.property('_id'))
     return Promise.all(items.map(item => {

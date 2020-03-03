@@ -45,7 +45,7 @@ describe('shelves:update', () => {
       description,
       listing
     }
-    const res = await authReq('post', endpoint, params).get('shelf')
+    const res = await authReq('post', endpoint, params).then(({ shelf }) => shelf)
     res.name.should.equal(name)
     res.description.should.equal(description)
     res.listing.should.equal(listing)
