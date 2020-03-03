@@ -2,7 +2,6 @@ const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const responses_ = __.require('lib', 'responses')
 const error_ = __.require('lib', 'error/error')
-const promises_ = __.require('lib', 'promises')
 const shelves_ = __.require('controllers', 'shelves/lib/shelves')
 const relations_ = __.require('controllers', 'relations/lib/queries')
 const sanitize = __.require('lib', 'sanitize/sanitize')
@@ -24,15 +23,15 @@ module.exports = (req, res, next) => {
     let { owners } = params
     owners = _.forceArray(owners)
     const byOwnersFnName = withItems === true ? 'byOwnersWithItems' : 'byOwners'
-    return promises_.all([ shelves_[byOwnersFnName](owners), getNetworkIds(reqUserId) ])
-    .spread(filterAuthorisedShelves(reqUserId))
+    return Promise.all([ shelves_[byOwnersFnName](owners), getNetworkIds(reqUserId) ])
+    .then(filterAuthorisedShelves(reqUserId))
     .then(_.KeyBy('_id'))
     .then(responses_.Wrap(res, 'shelves'))
   })
   .catch(error_.Handler(req, res))
 }
 
-const filterAuthorisedShelves = reqUserId => (shelves, networkIds) => {
+const filterAuthorisedShelves = reqUserId => ([ shelves, networkIds ]) => {
   return shelves.filter(isAuthorised(networkIds, reqUserId))
 }
 

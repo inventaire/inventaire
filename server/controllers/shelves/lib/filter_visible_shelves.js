@@ -1,4 +1,4 @@
-module.exports = reqUserId => (shelves, userFriendsIds) => {
+module.exports = reqUserId => ([ shelves, userFriendsIds ]) => {
   return shelves.filter(isVisibleBy(userFriendsIds, reqUserId))
 }
 

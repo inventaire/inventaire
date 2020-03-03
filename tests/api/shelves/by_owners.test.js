@@ -5,7 +5,6 @@ const { customAuthReq, authReq, getUser, getUserB } = require('../utils/utils')
 const { createShelf } = require('../fixtures/shelves')
 const { setFriendship } = require('../utils/relations')
 const { createUser } = require('../fixtures/users')
-const { Promise } = __.require('lib', 'promises')
 
 const endpoint = '/api/shelves?action=by-owners'
 
@@ -52,7 +51,6 @@ describe('shelves:by-owners', () => {
       await setFriendship(friendAPromise, friendBPromise)
 
       const shelf = await createShelf(friendBPromise, { listing: 'private' })
-      await Promise.resolve().delay(300)
       const { _id: friendBId } = await friendBPromise
       const res = await authReq('get', `${endpoint}&owners=${friendBId}`)
       const resIds = _.keys(res.shelves)
@@ -63,7 +61,6 @@ describe('shelves:by-owners', () => {
   describe('listing:network', () => {
     it('should not return non friends network shelves', async () => {
       const shelf = await createShelf(getUserB(), { listing: 'network' })
-      await Promise.resolve().delay(300)
       const { _id: userBId } = await getUserB()
       const res = await authReq('get', `${endpoint}&owners=${userBId}`)
       const resIds = _.keys(res.shelves)
@@ -76,7 +73,6 @@ describe('shelves:by-owners', () => {
       await setFriendship(friendAPromise, friendBPromise)
 
       const shelf = await createShelf(friendBPromise, { listing: 'network' })
-      await Promise.resolve().delay(300)
       const { _id: friendBId } = await friendBPromise
       const res = await customAuthReq(friendAPromise, 'get', `${endpoint}&owners=${friendBId}`)
       const resIds = _.keys(res.shelves)

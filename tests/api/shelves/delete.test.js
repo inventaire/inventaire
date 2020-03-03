@@ -3,7 +3,6 @@ const _ = __.require('builders', 'utils')
 const { shouldNotGetHere, rethrowShouldNotGetHereErrors } = __.require('apiTests', 'utils/utils')
 const { authReq, authReqB } = require('../utils/utils')
 const { createShelf, createShelfWithItem } = require('../fixtures/shelves')
-const { Promise } = __.require('lib', 'promises')
 
 const endpoint = '/api/shelves?action=delete'
 const shelfPromise = createShelf()
@@ -38,8 +37,8 @@ describe('shelves:delete', () => {
     const { _id: shelfId } = shelf
     const res = await authReq('post', endpoint, { ids: shelfId })
     res.ok.should.be.true()
-    await Promise.resolve().delay(300)
     const getShelfRes = await authReq('get', `/api/shelves?action=by-ids&ids=${shelfId}`)
+
     _.values(getShelfRes.shelves).length.should.equal(0)
   })
 
@@ -63,7 +62,6 @@ describe('shelves:delete', () => {
       const { _id: shelfId } = shelf
       const res = await authReq('post', endpoint, { ids: shelfId, 'with-items': true })
       res.ok.should.be.true()
-      await Promise.resolve().delay(300)
       const getItemsRes = await authReq('get', `/api/items?action=by-ids&ids=${itemId}`)
       _.values(getItemsRes.items).length.should.equal(0)
     })

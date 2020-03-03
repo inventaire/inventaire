@@ -1,7 +1,8 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const faker = require('faker')
-const { authReq, customAuthReq, getUser } = require('../utils/utils')
+const { customAuthReq } = require('../utils/request')
+const { authReq, getUser } = require('../utils/utils')
 const { createItem } = require('../fixtures/items')
 
 const fixtures = module.exports = {
@@ -18,7 +19,7 @@ const fixtures = module.exports = {
       shelfData.name = fixtures.shelfName()
     }
     const endpoint = '/api/shelves?action=create'
-    const req = customAuthReq(userPromise, 'post', endpoint, shelfData).get('shelf')
+    const req = customAuthReq(userPromise, 'post', endpoint, shelfData).then(({ shelf }) => shelf)
     return Promise.resolve(req)
   },
   createShelfWithItem: async itemPromise => {
