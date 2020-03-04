@@ -25,21 +25,13 @@ const deleteByIds = async params => {
   const shelvesRes = await shelves_.byIdsWithItems(ids)
   const shelves = _.compact(shelvesRes)
   validateDeletion(withItems, shelves)
-  validateOwnership(reqUserId, shelves)
+  shelves_.validateOwnership(reqUserId)(shelves)
   deleteShelfItems(withItems, shelves)
   shelves_.bulkDelete(shelves)
 }
 
 const deleteShelfItems = (withItems, shelves) => {
   if (withItems) { shelves_.deleteShelvesItems(shelves) }
-}
-
-const validateOwnership = (reqUserId, shelves) => {
-  for (const shelf of shelves) {
-    if (shelf.owner !== reqUserId) {
-      throw error_.new("user isn't shelf owner", 403, { reqUserId, shelfId: shelf._id })
-    }
-  }
 }
 
 const validateDeletion = (withItems, shelves) => {

@@ -30,11 +30,11 @@ const shelves_ = module.exports = {
       return shelves_.byIdsWithItems(ids)
     })
   },
-  updateAttributes: (params, oldShelfId) => {
+  updateAttributes: (params, shelfId) => {
     const { reqUserId } = params
     const newAttributes = _.pick(params, [ 'name', 'description', 'listing' ])
-    return db.get(oldShelfId)
-    .then(tap(() => validateOwnership(reqUserId)))
+    return db.get(shelfId)
+    .then(tap(() => shelves_.validateOwnership(reqUserId)))
     .then(Shelf.updateAttributes(reqUserId, newAttributes))
     .then(db.putAndReturn)
   },
@@ -58,12 +58,14 @@ const shelves_ = module.exports = {
     return items_.byIds(itemsIds)
     .then(_.compact)
     .then(items_.bulkDelete)
-  }
-}
-
-const validateOwnership = reqUserId => shelf => {
-  if (shelf.owner !== reqUserId) {
-    throw error_.new('wrong owner', 400, shelf.owner)
+  },
+  validateOwnership: userId => shelves => {
+    _.forceArray(shelves)
+    for (const shelf of shelves) {
+      if (shelf.owner !== userId) {
+        throw error_.new("user isn't shelf owner", 403, { userId, shelfId: shelf._id })
+      }
+    }
   }
 }
 
