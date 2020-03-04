@@ -3,7 +3,7 @@ const _ = __.require('builders', 'utils')
 const { shouldNotGetHere, rethrowShouldNotGetHereErrors } = __.require('apiTests', 'utils/utils')
 const { customAuthReq, authReq, getUser, getUserB } = require('../utils/utils')
 const { createShelf } = require('../fixtures/shelves')
-const { setFriendship } = require('../utils/relations')
+const { makeFriends } = require('../utils/relations')
 const { createUser } = require('../fixtures/users')
 
 const endpoint = '/api/shelves?action=by-owners'
@@ -46,12 +46,12 @@ describe('shelves:by-owners', () => {
     })
 
     it('should not return friends private shelves', async () => {
-      const friendAPromise = createUser()
-      const friendBPromise = createUser()
-      await setFriendship(friendAPromise, friendBPromise)
+      const friendA = await createUser()
+      const friendB = await createUser()
+      await makeFriends(friendA, friendB)
 
-      const shelf = await createShelf(friendBPromise, { listing: 'private' })
-      const { _id: friendBId } = await friendBPromise
+      const shelf = await createShelf(friendB, { listing: 'private' })
+      const { _id: friendBId } = await friendB
       const res = await authReq('get', `${endpoint}&owners=${friendBId}`)
       const resIds = _.keys(res.shelves)
       resIds.should.not.containEql(shelf._id)
@@ -68,13 +68,13 @@ describe('shelves:by-owners', () => {
     })
 
     it('should return friends network shelves', async () => {
-      const friendAPromise = createUser()
-      const friendBPromise = createUser()
-      await setFriendship(friendAPromise, friendBPromise)
+      const friendA = await createUser()
+      const friendB = await createUser()
+      await makeFriends(friendA, friendB)
 
-      const shelf = await createShelf(friendBPromise, { listing: 'network' })
-      const { _id: friendBId } = await friendBPromise
-      const res = await customAuthReq(friendAPromise, 'get', `${endpoint}&owners=${friendBId}`)
+      const shelf = await createShelf(friendB, { listing: 'network' })
+      const { _id: friendBId } = await friendB
+      const res = await customAuthReq(friendA, 'get', `${endpoint}&owners=${friendBId}`)
       const resIds = _.keys(res.shelves)
       resIds.should.containEql(shelf._id)
     })

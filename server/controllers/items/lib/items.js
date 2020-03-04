@@ -160,7 +160,7 @@ const updateShelves = (actionFn, ids, shelves, userId) => {
   return items_.byIds(ids)
   .then(tap(validateOwnership(shelves)))
   .then(items => {
-    const shelvesIds = shelves.map(_.property('_id'))
+    const shelvesIds = _.map(shelves, '_id')
     return Promise.all(items.map(item => {
       item.shelves = actionFn(item.shelves, shelvesIds)
       return items_.update(userId, item)

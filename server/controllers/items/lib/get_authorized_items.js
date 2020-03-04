@@ -30,7 +30,6 @@ module.exports = {
   byShelf: (shelfId, reqUserId) => {
     return Promise.all([ shelves_.byIdsWithItems([ shelfId ]), getNetworkIds(reqUserId) ])
     .then(filterVisibleShelves(reqUserId))
-    .then(shelf => { return shelf[0].items })
-    .then(itemsIds => { return items_.byIds(itemsIds) })
+    .then(([ shelf ]) => items_.byIds(shelf.items))
   }
 }

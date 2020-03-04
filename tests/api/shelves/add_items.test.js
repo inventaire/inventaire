@@ -1,5 +1,4 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
 const { getUserB, shouldNotGetHere, rethrowShouldNotGetHereErrors } = __.require('apiTests', 'utils/utils')
 const { authReq } = require('../utils/utils')
 const { createShelf } = require('../fixtures/shelves')
@@ -43,7 +42,7 @@ describe('shelves:add-items', () => {
       items: id // should be tolerant to single id
     })
     res.shelves.should.be.ok()
-    const firstShelf = _.values(res.shelves)[0]
+    const firstShelf = res.shelves[shelf._id]
     firstShelf.items.should.be.an.Array()
     firstShelf.items.length.should.be.above(0)
     firstShelf.items[0].should.equal(id)
@@ -54,22 +53,6 @@ describe('shelves:add-items', () => {
     try {
       const shelf = await shelfPromise
       const item = await createItem(getUserB())
-      const res = await authReq('post', endpoint, {
-        id: shelf._id,
-        items: [ item._id ]
-      })
-      shouldNotGetHere(res)
-    } catch (err) {
-      rethrowShouldNotGetHereErrors(err)
-      err.body.status_verbose.should.startWith('wrong owner')
-      err.statusCode.should.equal(400)
-    }
-  })
-
-  it('should reject adding items to a different owner shelf', async () => {
-    try {
-      const shelf = await createShelf(getUserB(), { listing: 'public' })
-      const item = await createItem()
       const res = await authReq('post', endpoint, {
         id: shelf._id,
         items: [ item._id ]

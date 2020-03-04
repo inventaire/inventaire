@@ -42,7 +42,7 @@ describe('shelf model', () => {
     })
 
     describe('mandatory attributes', () => {
-      it('should throw on missing name', done => {
+      it('should throw on missing owner', done => {
         const invalidShelf = _.cloneDeep(validShelf)
         delete invalidShelf.owner
         const creator = () => Shelf.create(invalidShelf)
