@@ -5,11 +5,11 @@ const { authReq } = require('../utils/utils')
 const { createShelf, createShelfWithItem } = require('../fixtures/shelves')
 const { createItem } = require('../fixtures/items')
 
-const endpoint = '/api/shelves?action=delete-items'
+const endpoint = '/api/shelves?action=remove-items'
 const itemPromise = createItem
 const shelfWithItemPromise = createShelfWithItem(itemPromise)
 
-describe('shelves:delete-items', () => {
+describe('shelves:remove-items', () => {
   it('should reject without shelf id', async () => {
     try {
       const res = await authReq('post', endpoint)

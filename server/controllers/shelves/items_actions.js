@@ -11,7 +11,7 @@ const sanitization = {
   items: {}
 }
 
-module.exports = action => (req, res, next) => {
+const itemsActions = action => (req, res, next) => {
   sanitize(req, res, sanitization)
   .then(params => {
     const { id, items, reqUserId } = params
@@ -21,4 +21,9 @@ module.exports = action => (req, res, next) => {
     .then(Track(req, [ 'shelf', action ]))
   })
   .catch(error_.Handler(req, res))
+}
+
+module.exports = {
+  addItems: itemsActions('addItems'),
+  removeItems: itemsActions('removeItems')
 }

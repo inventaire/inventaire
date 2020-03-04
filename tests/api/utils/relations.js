@@ -1,5 +1,6 @@
 const { customAuthReq } = require('./request')
 const endpoint = '/api/relations'
+const { getUser, getReservedUser } = require('./utils')
 
 const getRelations = user => customAuthReq(user, 'get', endpoint)
 
@@ -25,7 +26,7 @@ const action = (action, reqUser, otherUser) => {
   })
 }
 
-module.exports = _relations = {
+module.exports = {
   action,
   getUsersWithoutRelation: () => {
     return Promise.all([
@@ -44,12 +45,5 @@ module.exports = _relations = {
   assertRelation: async (userA, userB, relationStatus) => {
     const relationAfterRequest = await getRelationStatus(userA, userB)
     relationAfterRequest.should.equal(relationStatus)
-  },
-
-  setFriendship: async (userAPromise, userBPromise) => {
-    const userA = await userAPromise
-    const userB = await userBPromise
-    await _relations.action('request', userA, userB)
-    await _relations.action('accept', userB, userA)
   }
 }

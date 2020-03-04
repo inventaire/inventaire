@@ -9,7 +9,7 @@ const error_ = __.require('lib', 'error/error')
 const { tap } = __.require('lib', 'promises')
 
 const shelves_ = module.exports = {
-  create: params => {
+  create: async params => {
     const { description, listing, name, reqUserId } = params
     const newShelf = { owner: reqUserId, description, listing, name }
     const shelf = Shelf.create(newShelf)
@@ -46,7 +46,7 @@ const shelves_ = module.exports = {
     })
   },
   bulkDelete: db.bulkDelete,
-  deleteItems: (ids, itemsIds, userId) => {
+  removeItems: (ids, itemsIds, userId) => {
     return shelves_.byIds(ids)
     .then(items_.deleteShelves(itemsIds, userId))
     .then(() => {
@@ -77,11 +77,13 @@ const assignItemsToShelves = ([ shelves, items ]) => {
 
 const assignItemsToShelf = items => shelf => {
   const shelfId = shelf._id
-  const itemsIdsContainingShelves = items.filter(item => {
-    return item.shelves && item.shelves.includes(shelfId)
-  })
+  const shelfItemsIds = items.filter(isInShelf(shelfId))
   .map(_.property('_id'))
   if (!shelf.items) { shelf.items = [] }
-  shelf.items = _.uniq(shelf.items.concat(itemsIdsContainingShelves))
+  shelf.items = _.uniq(shelf.items.concat(shelfItemsIds))
   return shelf
+}
+
+const isInShelf = shelfId => item => {
+  return item.shelves && item.shelves.includes(shelfId)
 }

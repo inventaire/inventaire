@@ -1,6 +1,7 @@
 const __ = require('config').universalPath
 const ActionsControllers = __.require('lib', 'actions_controllers')
-const itemsActions = require('./items_actions')
+const { addItems, removeItems } = require('./items_actions')
+
 module.exports = {
   get: ActionsControllers({
     authentified: {
@@ -12,8 +13,8 @@ module.exports = {
     authentified: {
       create: require('./create'),
       update: require('./update'),
-      'add-items': itemsActions('addItems'),
-      'delete-items': itemsActions('deleteItems'),
+      'add-items': addItems,
+      'remove-items': removeItems,
       delete: require('./delete_by_ids')
     }
   })

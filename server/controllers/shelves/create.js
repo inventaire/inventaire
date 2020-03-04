@@ -16,10 +16,8 @@ const sanitization = {
 
 module.exports = (req, res, next) => {
   sanitize(req, res, sanitization)
-  .then(params => {
-    return shelves_.create(params)
-    .then(responses_.Wrap(res, 'shelf'))
-    .then(Track(req, [ 'shelf', 'creation' ]))
-  })
+  .then(shelves_.create)
+  .then(responses_.Wrap(res, 'shelf'))
+  .then(Track(req, [ 'shelf', 'creation' ]))
   .catch(error_.Handler(req, res))
 }
