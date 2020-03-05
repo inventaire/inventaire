@@ -71,8 +71,8 @@ describe('item model', () => {
       })
 
       it('should override a bad listing with default value', done => {
-        const item = create(extendItem({ listing: 'evillist' }))
-        item.listing.should.equal('private')
+        const item = () => create(extendItem({ listing: 'notalist' }))
+        item.should.throw()
         done()
       })
     })

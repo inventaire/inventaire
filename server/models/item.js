@@ -18,7 +18,7 @@ Item.create = (userId, item) => {
   item = _.omit(item, [ '_id', 'owner', 'created' ])
   const passedAttributes = Object.keys(item)
 
-  item.listing = solveConstraint(item, 'listing')
+  if (!item.listing) { item.listing = 'private' }
   item.transaction = solveConstraint(item, 'transaction')
 
   for (const attr of passedAttributes) {
