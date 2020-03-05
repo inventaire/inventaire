@@ -1,5 +1,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
+const couch_ = __.require('lib', 'couch')
 const userRelativeRequest = require('./user-relative_request')
 const db = __.require('couch', 'base')('users', 'relations')
 
@@ -30,7 +31,7 @@ const queries = {
   putStatus,
   getStatus: (userId, otherId) => {
     return get(userId, otherId)
-    .catch(() => {})
+    .catch(couch_.ignoreNotFound)
     .then(doc => {
       if (doc && doc.status) {
         return userRelativeRequest(userId, otherId, doc.status)
