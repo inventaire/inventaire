@@ -4,19 +4,17 @@ const assert_ = __.require('utils', 'assert_types')
 const validations = require('./validations/shelf')
 const attributes = require('./attributes/shelf')
 const error_ = __.require('lib', 'error/error')
-const { solveConstraint } = require('./helpers')(attributes)
 
 module.exports = {
   create: shelf => {
     assert_.object(shelf)
     assert_.string(shelf.owner)
     assert_.string(shelf.name)
-    shelf.listing = solveConstraint(shelf, 'listing')
-
+    if (!shelf.listing) { shelf.listing = 'private' }
     const newShelf = {}
     Object.keys(shelf).filter(key => {
       const attribute = shelf[key]
-      if (!(attributes.updatable.includes(key))) {
+      if (!attributes.updatable.includes(key)) {
         throw error_.new(`invalid attribute: ${attribute}`, 400, { shelf })
       }
       validations.pass(key, attribute)

@@ -67,8 +67,8 @@ describe('shelf model', () => {
       })
 
       it('should override a bad listing with default value', done => {
-        const shelf = create(extendShelf({ listing: 'evillist' }))
-        shelf.listing.should.equal('private')
+        const shelf = () => create(extendShelf({ listing: 'notalist' }))
+        shelf.should.throw()
         done()
       })
     })
