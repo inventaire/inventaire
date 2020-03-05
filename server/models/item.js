@@ -8,7 +8,6 @@ const Item = module.exports = {}
 
 const validations = Item.validations = require('./validations/item')
 const attributes = Item.attributes = require('./attributes/item')
-const { solveConstraint } = require('./helpers')(attributes)
 
 Item.create = (userId, item) => {
   assert_.types([ 'string', 'object' ], [ userId, item ])
@@ -127,4 +126,13 @@ Item.revertEntity = (fromUri, toUri, item) => {
   item.previousEntity.shift()
 
   return item
+}
+
+const solveConstraint = (model, attribute) => {
+  const { possibilities, defaultValue } = attributes.constrained[attribute]
+  if (possibilities.includes(model[attribute])) {
+    return model[attribute]
+  } else {
+    return defaultValue
+  }
 }
