@@ -40,19 +40,21 @@ const shelves_ = module.exports = {
   },
   addItems: (ids, itemsIds, userId) => {
     return shelves_.byIds(ids)
+    .then(tap(shelves_.validateOwnership(userId)))
     .then(items_.addShelves(itemsIds, userId))
     .then(() => {
       return shelves_.byIdsWithItems(ids)
     })
   },
-  bulkDelete: db.bulkDelete,
   removeItems: (ids, itemsIds, userId) => {
     return shelves_.byIds(ids)
+    .then(tap(shelves_.validateOwnership(userId)))
     .then(items_.deleteShelves(itemsIds, userId))
     .then(() => {
       return shelves_.byIdsWithItems(ids)
     })
   },
+  bulkDelete: db.bulkDelete,
   deleteShelvesItems: shelves => {
     const itemsIds = _.uniq(_.flatten(shelves.map(_.property('items'))))
     return items_.byIds(itemsIds)

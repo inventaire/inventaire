@@ -2,12 +2,10 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const promises_ = __.require('lib', 'promises')
-const error_ = __.require('lib', 'error/error')
 const Item = __.require('models', 'item')
 const listingsPossibilities = Item.attributes.constrained.listing.possibilities
 const assert_ = __.require('utils', 'assert_types')
 const { BasicUpdater } = __.require('lib', 'doc_updates')
-const { tap } = __.require('lib', 'promises')
 const { tapEmit, emit } = __.require('lib', 'radio')
 const { filterPrivateAttributes } = require('./filter_private_attributes')
 const { maxKey } = __.require('lib', 'couch')
@@ -156,25 +154,13 @@ const formatItems = reqUserId => async items => {
   return items.map(filterPrivateAttributes(reqUserId))
 }
 
-const updateShelves = (actionFn, ids, shelves, userId) => {
-  return items_.byIds(ids)
-  .then(tap(validateOwnership(shelves)))
-  .then(items => {
-    const shelvesIds = _.map(shelves, '_id')
-    return Promise.all(items.map(item => {
-      item.shelves = actionFn(item.shelves, shelvesIds)
-      return items_.update(userId, item)
-    }))
-  })
-}
-
-const validateOwnership = shelves => items => {
-  const shelvesOwners = shelves.map(_.property('owner'))
-  const itemsOwners = items.map(_.property('owner'))
-  const sameOwnership = _.isEqual(_.uniq(shelvesOwners), _.uniq(itemsOwners))
-  if (!sameOwnership) {
-    throw error_.new('wrong owner', 400, { items, shelves })
-  }
+const updateShelves = async (actionFn, ids, shelves, userId) => {
+  const items = await items_.byIds(ids)
+  const shelvesIds = _.map(shelves, '_id')
+  return Promise.all(items.map(item => {
+    item.shelves = actionFn(item.shelves, shelvesIds)
+    return items_.update(userId, item)
+  }))
 }
 
 const listingByEntities = async (listing, uris, reqUserId) => {
