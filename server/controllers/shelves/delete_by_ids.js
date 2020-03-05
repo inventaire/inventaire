@@ -31,7 +31,7 @@ const deleteByIds = async params => {
 }
 
 const deleteShelfItems = (withItems, shelves) => {
-  if (withItems) { shelves_.deleteShelvesItems(shelves) }
+  if (withItems) { return shelves_.deleteShelvesItems(shelves) }
 }
 
 const validateDeletion = (withItems, shelves) => {
