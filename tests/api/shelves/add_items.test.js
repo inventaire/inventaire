@@ -48,9 +48,7 @@ describe('shelves:add-items', () => {
     firstShelf.items[0].should.equal(id)
   })
 
-  // waiting until refactor shelf update validations
-  xit('should reject adding different owner items', async () => {
-    // TODO: allowing groups and friends items to a shelf
+  it('should reject adding different owner items', async () => {
     try {
       const shelf = await shelfPromise
       const item = await createItem(getUserB())

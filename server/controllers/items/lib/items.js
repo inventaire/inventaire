@@ -14,6 +14,7 @@ const snapshot_ = require('./snapshot/snapshot')
 const getByAccessLevel = require('./get_by_access_level')
 const user_ = __.require('controllers', 'user/lib/user')
 const db = __.require('couch', 'base')('items')
+const error_ = __.require('lib', 'error/error')
 const validateEntityType = require('./validate_entity_type')
 
 const items_ = module.exports = {
@@ -146,10 +147,20 @@ const items_ = module.exports = {
       deleteShelves: _.difference
     }
     const items = await items_.byIds(itemsIds)
+    await validateOwnership(userId, items)
     return Promise.all(items.map(item => {
       item.shelves = actionFunctions[action](item.shelves, shelvesIds)
       return items_.update(userId, item)
     }))
+  }
+}
+
+const validateOwnership = (userId, items) => {
+  _.forceArray(items)
+  for (const item of items) {
+    if (item.owner !== userId) {
+      throw error_.new('wrong owner', 400, { userId, itemId: item._id })
+    }
   }
 }
 
