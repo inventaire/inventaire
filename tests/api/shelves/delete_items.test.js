@@ -74,7 +74,7 @@ describe('shelves:remove-items', () => {
     } catch (err) {
       rethrowShouldNotGetHereErrors(err)
       err.body.status_verbose.should.startWith('wrong owner')
-      err.statusCode.should.equal(400)
+      err.statusCode.should.equal(403)
     }
   })
 })

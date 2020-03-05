@@ -27,7 +27,7 @@ describe('shelves:delete', () => {
       shouldNotGetHere(res)
     } catch (err) {
       rethrowShouldNotGetHereErrors(err)
-      err.body.status_verbose.should.equal("user isn't shelf owner")
+      err.body.status_verbose.should.equal('wrong owner')
       err.statusCode.should.equal(403)
     }
   })
