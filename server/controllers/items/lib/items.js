@@ -140,27 +140,22 @@ const items_ = module.exports = {
     })
   },
 
-  addShelves: (ids, userId) => shelves => {
-    return updateShelves(_.union, ids, shelves, userId)
-  },
-
-  deleteShelves: (ids, userId) => shelves => {
-    return updateShelves(_.difference, ids, shelves, userId)
+  updateShelves: async (action, shelvesIds, userId, itemsIds) => {
+    const actionFunctions = {
+      addShelves: _.union,
+      deleteShelves: _.difference
+    }
+    const items = await items_.byIds(itemsIds)
+    return Promise.all(items.map(item => {
+      item.shelves = actionFunctions[action](item.shelves, shelvesIds)
+      return items_.update(userId, item)
+    }))
   }
 }
 
 const formatItems = reqUserId => async items => {
   items = await Promise.all(items.map(snapshot_.addToItem))
   return items.map(filterPrivateAttributes(reqUserId))
-}
-
-const updateShelves = async (actionFn, ids, shelves, userId) => {
-  const items = await items_.byIds(ids)
-  const shelvesIds = _.map(shelves, '_id')
-  return Promise.all(items.map(item => {
-    item.shelves = actionFn(item.shelves, shelvesIds)
-    return items_.update(userId, item)
-  }))
 }
 
 const listingByEntities = async (listing, uris, reqUserId) => {

@@ -39,20 +39,10 @@ const shelves_ = module.exports = {
     .then(db.putAndReturn)
   },
   addItems: (ids, itemsIds, userId) => {
-    return shelves_.byIds(ids)
-    .then(tap(shelves_.validateOwnership(userId)))
-    .then(items_.addShelves(itemsIds, userId))
-    .then(() => {
-      return shelves_.byIdsWithItems(ids)
-    })
+    return updateShelvesItems('addShelves', ids, userId, itemsIds)
   },
   removeItems: (ids, itemsIds, userId) => {
-    return shelves_.byIds(ids)
-    .then(tap(shelves_.validateOwnership(userId)))
-    .then(items_.deleteShelves(itemsIds, userId))
-    .then(() => {
-      return shelves_.byIdsWithItems(ids)
-    })
+    return updateShelvesItems('deleteShelves', ids, userId, itemsIds)
   },
   bulkDelete: db.bulkDelete,
   deleteShelvesItems: shelves => {
@@ -65,10 +55,17 @@ const shelves_ = module.exports = {
     _.forceArray(shelves)
     for (const shelf of shelves) {
       if (shelf.owner !== userId) {
-        throw error_.new("user isn't shelf owner", 403, { userId, shelfId: shelf._id })
+        throw error_.new('wrong owner', 400, { userId, shelfId: shelf._id })
       }
     }
   }
+}
+
+const updateShelvesItems = async (action, shelvesIds, userId, itemsIds) => {
+  const shelves = await shelves_.byIds(shelvesIds)
+  await shelves_.validateOwnership(userId)(shelves)
+  await items_.updateShelves(action, shelvesIds, userId, itemsIds)
+  return shelves_.byIdsWithItems(shelvesIds)
 }
 
 const fetchItems = shelvesIds => {
