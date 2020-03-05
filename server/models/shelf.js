@@ -31,7 +31,7 @@ module.exports = {
     assert_.object(params)
 
     if (oldShelf.owner !== userId) {
-      throw error_.new('wrong owner', 400, oldShelf.owner)
+      throw error_.new('wrong owner', 403, oldShelf.owner)
     }
 
     for (const attr of _.keys(params)) {

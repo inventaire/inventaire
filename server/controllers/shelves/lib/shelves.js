@@ -55,7 +55,7 @@ const shelves_ = module.exports = {
     _.forceArray(shelves)
     for (const shelf of shelves) {
       if (shelf.owner !== userId) {
-        throw error_.new('wrong owner', 400, { userId, shelfId: shelf._id })
+        throw error_.new('wrong owner', 403, { userId, shelfId: shelf._id })
       }
     }
   }
