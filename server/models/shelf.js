@@ -12,7 +12,7 @@ module.exports = {
     assert_.string(shelf.name)
     if (!shelf.listing) { shelf.listing = 'private' }
     const newShelf = {}
-    Object.keys(shelf).filter(key => {
+    Object.keys(shelf).forEach(key => {
       const attribute = shelf[key]
       if (!attributes.updatable.includes(key)) {
         throw error_.new(`invalid attribute: ${attribute}`, 400, { shelf })

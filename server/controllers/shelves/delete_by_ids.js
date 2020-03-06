@@ -25,9 +25,9 @@ const deleteByIds = async params => {
   const shelvesRes = await shelves_.byIdsWithItems(ids)
   const shelves = _.compact(shelvesRes)
   validateDeletion(withItems, shelves)
-  shelves_.validateOwnership(reqUserId)(shelves)
-  deleteShelfItems(withItems, shelves)
-  shelves_.bulkDelete(shelves)
+  shelves_.validateOwnership(reqUserId, shelves)
+  await deleteShelfItems(withItems, shelves)
+  return shelves_.bulkDelete(shelves)
 }
 
 const deleteShelfItems = (withItems, shelves) => {

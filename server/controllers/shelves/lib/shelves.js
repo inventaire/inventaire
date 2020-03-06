@@ -51,8 +51,8 @@ const shelves_ = module.exports = {
     .then(_.compact)
     .then(items_.bulkDelete)
   },
-  validateOwnership: userId => shelves => {
-    _.forceArray(shelves)
+  validateOwnership: (userId, shelves) => {
+    shelves = _.forceArray(shelves)
     for (const shelf of shelves) {
       if (shelf.owner !== userId) {
         throw error_.new('wrong owner', 403, { userId, shelfId: shelf._id })
@@ -63,7 +63,7 @@ const shelves_ = module.exports = {
 
 const updateShelvesItems = async (action, shelvesIds, userId, itemsIds) => {
   const shelves = await shelves_.byIds(shelvesIds)
-  await shelves_.validateOwnership(userId)(shelves)
+  shelves_.validateOwnership(userId, shelves)
   await items_.updateShelves(action, shelvesIds, userId, itemsIds)
   return shelves_.byIdsWithItems(shelvesIds)
 }
@@ -78,8 +78,7 @@ const assignItemsToShelves = ([ shelves, items ]) => {
 
 const assignItemsToShelf = items => shelf => {
   const shelfId = shelf._id
-  const shelfItemsIds = items.filter(isInShelf(shelfId))
-  .map(_.property('_id'))
+  const shelfItemsIds = items.filter(isInShelf(shelfId)).map(_.property('_id'))
   if (!shelf.items) { shelf.items = [] }
   shelf.items = _.uniq(shelf.items.concat(shelfItemsIds))
   return shelf
