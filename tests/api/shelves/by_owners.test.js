@@ -20,13 +20,6 @@ describe('shelves:by-owners', () => {
         err.statusCode.should.equal(400)
       }
     })
-
-    it('should return shelves items when passing with-items params', async () => {
-      await createShelf()
-      const user = await getUser()
-      const res = await authReq('get', `${endpoint}&owners=${user._id}&with-items=true`)
-      _.values(res.shelves)[0].items.should.be.an.Array()
-    })
   })
 
   describe('listing:private', () => {

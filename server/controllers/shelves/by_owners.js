@@ -9,21 +9,16 @@ const sanitize = __.require('lib', 'sanitize/sanitize')
 const sanitization = {
   owners: {},
   limit: { optional: true },
-  offset: { optional: true },
-  'with-items': {
-    optional: true,
-    generic: 'boolean'
-  }
+  offset: { optional: true }
 }
 
 module.exports = (req, res, next) => {
   sanitize(req, res, sanitization)
   .then(params => {
-    const { withItems, reqUserId } = params
+    const { reqUserId } = params
     let { owners } = params
     owners = _.forceArray(owners)
-    const byOwnersFnName = withItems === true ? 'byOwnersWithItems' : 'byOwners'
-    return Promise.all([ shelves_[byOwnersFnName](owners), getNetworkIds(reqUserId) ])
+    return Promise.all([ shelves_.byOwners(owners), getNetworkIds(reqUserId) ])
     .then(filterAuthorisedShelves(reqUserId))
     .then(_.KeyBy('_id'))
     .then(responses_.Wrap(res, 'shelves'))
