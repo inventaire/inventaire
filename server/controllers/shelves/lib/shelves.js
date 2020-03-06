@@ -23,13 +23,6 @@ const shelves_ = module.exports = {
   byOwners: ownersIds => {
     return db.viewByKeys('byOwners', ownersIds)
   },
-  byOwnersWithItems: ownersIds => {
-    return shelves_.byOwners(ownersIds)
-    .then(shelves => {
-      const ids = _.values(shelves).map(_.property('_id'))
-      return shelves_.byIdsWithItems(ids)
-    })
-  },
   updateAttributes: (params, shelfId) => {
     const { reqUserId } = params
     const newAttributes = _.pick(params, [ 'name', 'description', 'listing' ])
