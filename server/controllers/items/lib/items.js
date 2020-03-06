@@ -142,12 +142,8 @@ const items_ = module.exports = {
   },
 
   updateShelves: async (action, shelvesIds, userId, itemsIds) => {
-    const actionFunctions = {
-      addShelves: _.union,
-      deleteShelves: _.difference
-    }
     const items = await items_.byIds(itemsIds)
-    await validateOwnership(userId, items)
+    validateOwnership(userId, items)
     return Promise.all(items.map(item => {
       item.shelves = actionFunctions[action](item.shelves, shelvesIds)
       return items_.update(userId, item)
@@ -156,7 +152,7 @@ const items_ = module.exports = {
 }
 
 const validateOwnership = (userId, items) => {
-  _.forceArray(items)
+  items = _.forceArray(items)
   for (const item of items) {
     if (item.owner !== userId) {
       throw error_.new('wrong owner', 400, { userId, itemId: item._id })
@@ -186,3 +182,8 @@ const filterWithImage = assertImage => items => {
 }
 
 const itemWithImage = item => item.snapshot['entity:image']
+
+const actionFunctions = {
+  addShelves: _.union,
+  deleteShelves: _.difference
+}
