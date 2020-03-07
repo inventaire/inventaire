@@ -38,15 +38,16 @@ module.exports = {
       }
     }
     const newAttributes = _.pick(params, attributes.updatable)
-    if (_.isEmpty(newAttributes)) {
-      throw error_.new('nothing to update', 400, params)
-    }
 
     const newShelf = _.clone(oldShelf)
     for (const attr of _.keys(newAttributes)) {
       const newVal = newAttributes[attr]
       validations.pass(attr, newVal)
       newShelf[attr] = newVal
+    }
+
+    if (_.isEqual(newShelf, oldShelf)) {
+      throw error_.new('nothing to update', 400, params)
     }
 
     const now = Date.now()
