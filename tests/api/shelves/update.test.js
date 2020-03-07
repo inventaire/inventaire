@@ -65,4 +65,19 @@ describe('shelves:update', () => {
       err.statusCode.should.equal(403)
     }
   })
+
+  it('should throw when no new attribute to update', async () => {
+    try {
+      const shelf = await createShelf(getUser())
+      const res = await authReq('post', endpoint, {
+        shelf: shelf._id,
+        name: shelf.name
+      })
+      shouldNotGetHere(res)
+    } catch (err) {
+      rethrowShouldNotGetHereErrors(err)
+      err.body.status_verbose.should.startWith('nothing to update')
+      err.statusCode.should.equal(400)
+    }
+  })
 })
