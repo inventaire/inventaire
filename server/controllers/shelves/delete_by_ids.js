@@ -31,11 +31,11 @@ const deleteByIds = async params => {
 }
 
 const deleteShelfItems = (withItems, shelves) => {
-  if (withItems) { return shelves_.deleteShelvesItems(shelves) }
+  if (withItems) return shelves_.deleteShelvesItems(shelves)
 }
 
 const validateDeletion = (withItems, shelves) => {
-  if (withItems) { return }
+  if (withItems) return
   for (const shelf of shelves) {
     if (shelf.items.length > 0) {
       throw error_.new('shelf cannot be deleted. Delete items first or pass a with-items parameter', 403, { shelf })

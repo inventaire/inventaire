@@ -6,7 +6,7 @@ const { authReq, getUser } = require('../utils/utils')
 const { createItem } = require('../fixtures/items')
 
 const fixtures = module.exports = {
-  shelfName: () => { return `${faker.lorem.words(3)} shelf` },
+  shelfName: () => `${faker.lorem.words(3)} shelf`,
   shelfDescription: () => faker.lorem.paragraph(),
 
   createShelf: (userPromise, shelfData = {}) => {
