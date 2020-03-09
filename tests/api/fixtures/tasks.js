@@ -24,7 +24,7 @@ module.exports = {
   createTask: params => {
     const taskDoc = createTaskDoc(params)
     return createTasks([ taskDoc ])
-    .then(tasks => { return tasks[0] })
+    .then(tasks => tasks[0])
   }
 }
 

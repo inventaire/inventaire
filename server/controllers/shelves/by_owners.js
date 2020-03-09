@@ -31,12 +31,14 @@ const filterAuthorisedShelves = reqUserId => ([ shelves, networkIds ]) => {
 }
 
 const isAuthorised = (networkIds, reqUserId) => shelf => {
-  if (shelf.listing === 'private' && shelf.owner === reqUserId) { return true }
-  if (shelf.listing === 'public') { return true }
-  if (shelf.listing === 'network' && networkIds.includes(shelf.owner)) { return true }
+  if (shelf.listing === 'private' && shelf.owner === reqUserId) return true
+  if (shelf.listing === 'public') return true
+  if (shelf.listing === 'network' && networkIds.includes(shelf.owner)) return true
 }
 const getNetworkIds = reqUserId => {
   if (reqUserId) {
     return relations_.getUserFriendsAndCoGroupsMembers(reqUserId)
-  } else return []
+  } else {
+    return []
+  }
 }
