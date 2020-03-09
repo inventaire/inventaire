@@ -144,10 +144,11 @@ const items_ = module.exports = {
   updateShelves: async (action, shelvesIds, userId, itemsIds) => {
     const items = await items_.byIds(itemsIds)
     validateOwnership(userId, items)
-    return Promise.all(items.map(item => {
+    const updatedItems = items.map(item => {
       item.shelves = actionFunctions[action](item.shelves, shelvesIds)
-      return items_.update(userId, item)
-    }))
+      return item
+    })
+    return db.bulk(updatedItems)
   }
 }
 
