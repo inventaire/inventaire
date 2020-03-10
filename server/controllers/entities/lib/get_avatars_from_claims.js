@@ -30,8 +30,8 @@ const getAvatarsFromClaims = claims => platformsProperties.reduce(aggregateAvata
 
 module.exports = {
   getAvatarsDataFromClaims: getAvatarsFromClaims,
-  getAvatarsUrlsFromClaims: async claims => {
-    const avatarsData = await getAvatarsFromClaims(claims)
+  getAvatarsUrlsFromClaims: claims => {
+    const avatarsData = getAvatarsFromClaims(claims)
     return _.map(avatarsData, 'url')
   }
 }
