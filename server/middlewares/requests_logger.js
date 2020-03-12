@@ -5,17 +5,12 @@ const { mutedDomains, mutedPath } = CONFIG.requestsLogger
 module.exports = (req, res, next) => {
   req._startAt = process.hrtime()
 
-  const logRequest = () => {
-    res.removeListener('finish', logRequest)
-    res.removeListener('close', logRequest)
+  res.on('close', () => {
     if (skip(req, res)) return
     const line = format(req, res)
     if (line == null) return
     process.stdout.write(`${line}\n`)
-  }
-
-  res.on('finish', logRequest)
-  res.on('close', logRequest)
+  })
 
   next()
 }
@@ -32,10 +27,17 @@ const skip = (req, res) => {
 
 const format = (req, res) => {
   const { method, originalUrl: url, user } = req
-  const { statusCode: status } = res
+  const { statusCode: status, finished } = res
 
   const color = statusCategoryColor[status.toString()[0]] || noColor
-  const base = `\x1b[90m${method} ${url} \x1b[${color}m${status} \x1b[90m${responseTime(req, res)}ms`
+
+  // res.finished is set to true once the 'finished' event was fired
+  // See https://nodejs.org/api/http.html#http_event_finish
+  // Interruption typically happen when the client closes the request,
+  // for instance when tests timeout
+  const interrupted = finished ? '' : ' \x1b[33mCLOSED BEFORE FINISHING'
+
+  const base = `\x1b[90m${method} ${url} \x1b[${color}m${status}${interrupted} \x1b[90m${responseTime(req, res)}`
 
   if (user) {
     return `${base} - u:${user._id}\x1b[0m`
@@ -54,8 +56,8 @@ const statusCategoryColor = {
 const noColor = 0
 
 const responseTime = (req, res) => {
-  if (res._header == null || req._startAt == null) return ''
+  if (req._startAt == null) return ''
   const [ seconds, nanoseconds ] = process.hrtime(req._startAt)
   const ms = (seconds * 1000) + (nanoseconds / 1000000)
-  return ms.toFixed(3)
+  return `${ms.toFixed(3)}ms`
 }
