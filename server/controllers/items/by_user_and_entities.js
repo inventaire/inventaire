@@ -8,7 +8,7 @@ const sanitize = __.require('lib', 'sanitize/sanitize')
 
 const sanitization = {
   user: {},
-  uri: {},
+  uris: {},
   limit: { optional: true },
   offset: { optional: true }
 }
@@ -16,19 +16,19 @@ const sanitization = {
 module.exports = (req, res) => {
   sanitize(req, res, sanitization)
   .then(params => {
-    const { userId, uri, reqUserId } = params
+    const { userId, uris, reqUserId } = params
     return user_.getUserById(userId, reqUserId)
-    .then(getItemsFromUser(reqUserId, uri))
+    .then(getItemsFromUser(reqUserId, uris))
   })
   .then(responses_.Send(res))
   .catch(error_.Handler(req, res))
 }
 
-const getItemsFromUser = (reqUserId, uri) => user => {
+const getItemsFromUser = (reqUserId, uris) => user => {
   const { _id: ownerId } = user
   return getAuthorizationLevel(reqUserId, ownerId)
   .then(listingKey => {
-    return items_.byOwnersAndEntitiesAndListings([ ownerId ], [ uri ], listingKey, reqUserId)
+    return items_.byOwnersAndEntitiesAndListings([ ownerId ], uris, listingKey, reqUserId)
     .then(items => ({ users: [ user ], items }))
   })
 }
