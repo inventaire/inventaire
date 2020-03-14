@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-require('should')
+const should = require('should')
 const { getUser, authReq } = __.require('apiTests', 'utils/utils')
 const { createItem, createEditionAndItem } = require('../fixtures/items')
 
@@ -48,5 +48,18 @@ describe('items:get-by-user-and-entities', () => {
     const { owner } = items[0]
     const res = await authReq('get', `${endpoint}&user=${owner}&uris=${uris.join('|')}`)
     res.items.length.should.equal(2)
+  })
+
+  it('should not include users by default', async () => {
+    const item = await createItem(getUser())
+    const { users } = await authReq('get', `${endpoint}&user=${item.owner}&uris=${item.entity}`)
+    should(users).not.be.ok()
+  })
+
+  it('should include users if requested', async () => {
+    const item = await createItem(getUser())
+    const { users } = await authReq('get', `${endpoint}&user=${item.owner}&uris=${item.entity}&include-users=true`)
+    users.should.be.an.Array()
+    users[0]._id.should.equal(item.owner)
   })
 })
