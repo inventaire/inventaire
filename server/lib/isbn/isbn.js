@@ -37,6 +37,7 @@ module.exports = {
   toIsbn10h: isbn => parse(isbn).isbn10h,
 
   guessLangFromIsbn: isbn => {
+    if (!isbn) return
     const isbnData = parse(isbn)
     if (isbnData == null) return
     const langUri = isbnData.groupLangUri
