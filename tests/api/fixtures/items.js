@@ -43,7 +43,8 @@ const API = module.exports = {
 
   createEditionAndItem: async (user, itemData = {}) => {
     const { uri } = await createEdition()
-    return API.createItem(user, { entity: uri })
+    itemData.entity = uri
+    return API.createItem(user, itemData)
   },
 
   createRandomizedItems: (user, itemsData) => {

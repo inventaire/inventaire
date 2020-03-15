@@ -7,7 +7,7 @@ module.exports = {
       'by-ids': require('./by_ids'),
       'by-users': require('./by_users'),
       'by-entities': require('./by_entities'),
-      'by-user-and-entity': require('./by_user_and_entity'),
+      'by-user-and-entities': require('./by_user_and_entities'),
       'inventory-view': require('./inventory_view'),
       'recent-public': require('./recent_public'),
       'last-public': require('./last_public')
