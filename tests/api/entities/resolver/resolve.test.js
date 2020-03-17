@@ -5,7 +5,7 @@ const should = require('should')
 const { Wait, tap } = __.require('lib', 'promises')
 const { authReq, undesiredRes } = __.require('apiTests', 'utils/utils')
 const elasticsearchUpdateDelay = CONFIG.entitiesSearchEngine.elasticsearchUpdateDelay || 1000
-const { createWork, createHuman, someGoodReadsId, someOpenLibraryId, createWorkWithAuthor, generateIsbn13 } = __.require('apiTests', 'fixtures/entities')
+const { createWork, createHuman, someGoodReadsId, someLibraryThingsWorkId, someOpenLibraryId, createWorkWithAuthor, generateIsbn13 } = __.require('apiTests', 'fixtures/entities')
 const { addClaim, getByUri } = __.require('apiTests', 'utils/entities')
 const { ensureEditionExists, randomLabel } = __.require('apiTests', 'fixtures/entities')
 const { toIsbn13h } = __.require('lib', 'isbn/isbn')
@@ -217,14 +217,14 @@ describe('entities:resolve:external-id', () => {
   })
 
   it('should resolve inventaire work from external ids claim', done => {
-    const goodReadsId = someGoodReadsId()
+    const libraryThingsWorkId = someLibraryThingsWorkId()
     createWork()
-    .then(tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsId)))
+    .then(tap(work => addClaim(work.uri, 'wdt:P1085', libraryThingsWorkId)))
     .then(Wait(10))
     .then(work => {
       return resolve({
         edition: { isbn: generateIsbn13() },
-        works: [ { claims: { 'wdt:P2969': [ goodReadsId ] } } ]
+        works: [ { claims: { 'wdt:P1085': [ libraryThingsWorkId ] } } ]
       })
       .then(({ entries }) => entries)
       .then(entries => {
@@ -357,17 +357,17 @@ describe('entities:resolve:in-context', () => {
   })
 
   it('should resolve author from inv author with same label, and an inv work with external id', done => {
-    const goodReadsId = someGoodReadsId()
+    const libraryThingsWorkId = someLibraryThingsWorkId()
     const workLabel = randomLabel()
     createHuman()
     .then(Wait(10))
     .then(author => {
       return createWorkWithAuthor(author, workLabel)
-      .then(tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsId)))
+      .then(tap(work => addClaim(work.uri, 'wdt:P1085', libraryThingsWorkId)))
       .then(work => {
         const entry = {
           edition: { isbn: generateIsbn13() },
-          works: [ { claims: { 'wdt:P2969': [ goodReadsId ] } } ],
+          works: [ { claims: { 'wdt:P1085': [ libraryThingsWorkId ] } } ],
           authors: [ { labels: author.labels } ]
         }
         return resolve(entry)

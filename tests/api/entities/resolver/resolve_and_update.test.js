@@ -5,7 +5,7 @@ require('should')
 const { Wait, tap } = __.require('lib', 'promises')
 const { authReq } = __.require('apiTests', 'utils/utils')
 const { getByUris, addClaim, getHistory } = __.require('apiTests', 'utils/entities')
-const { createWork, createHuman, ensureEditionExists, someGoodReadsId, randomLabel, generateIsbn13 } = __.require('apiTests', 'fixtures/entities')
+const { createWork, createHuman, ensureEditionExists, someGoodReadsId, someLibraryThingsWorkId, randomLabel, generateIsbn13 } = __.require('apiTests', 'fixtures/entities')
 const resolveAndUpdate = entries => {
   entries = _.forceArray(entries)
   return authReq('post', '/api/entities?action=resolve', {
@@ -16,21 +16,21 @@ const resolveAndUpdate = entries => {
 
 describe('entities:resolver:update-resolved', () => {
   it('should not update entity claim values if property exists', done => {
-    const goodReadsId = someGoodReadsId()
+    const libraryThingsWorkId = someLibraryThingsWorkId()
     const authorUri = 'wd:Q35802'
     const authorUri2 = 'wd:Q184226'
     const entry = {
       edition: { isbn: generateIsbn13() },
       works: [ {
         claims: {
-          'wdt:P2969': [ goodReadsId ],
+          'wdt:P1085': [ libraryThingsWorkId ],
           'wdt:P50': [ authorUri ]
         }
       }
       ]
     }
     createWork()
-    .then(tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsId)))
+    .then(tap(work => addClaim(work.uri, 'wdt:P1085', libraryThingsWorkId)))
     .then(tap(work => addClaim(work.uri, 'wdt:P50', authorUri2)))
     .then(work => {
       return resolveAndUpdate(entry)
@@ -52,11 +52,11 @@ describe('entities:resolver:update-resolved', () => {
   it('should update entities claims values if property does not exist', done => {
     const entryA = someEntryWithAGoodReadsWorkId()
     const entryB = someEntryWithAGoodReadsWorkId()
-    const goodReadsIdA = entryA.works[0].claims['wdt:P2969'][0]
-    const goodReadsIdB = entryB.works[0].claims['wdt:P2969'][0]
+    const libraryThingsWorkIdA = entryA.works[0].claims['wdt:P1085'][0]
+    const libraryThingsWorkIdB = entryB.works[0].claims['wdt:P1085'][0]
     Promise.all([
-      createWork().then(tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsIdA))),
-      createWork().then(tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsIdB)))
+      createWork().then(tap(work => addClaim(work.uri, 'wdt:P1085', libraryThingsWorkIdA))),
+      createWork().then(tap(work => addClaim(work.uri, 'wdt:P1085', libraryThingsWorkIdB)))
     ])
     .then(([ workA, workB ]) => {
       return resolveAndUpdate([ entryA, entryB ])
@@ -153,11 +153,11 @@ describe('entities:resolver:update-resolved', () => {
     const startTime = Date.now()
     const entryA = someEntryWithAGoodReadsWorkId()
     const entryB = someEntryWithAGoodReadsWorkId()
-    const goodReadsIdA = entryA.works[0].claims['wdt:P2969'][0]
-    const goodReadsIdB = entryB.works[0].claims['wdt:P2969'][0]
+    const libraryThingsWorkIdA = entryA.works[0].claims['wdt:P1085'][0]
+    const libraryThingsWorkIdB = entryB.works[0].claims['wdt:P1085'][0]
     Promise.all([
-      createWork().then(tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsIdA))),
-      createWork().then(tap(work => addClaim(work.uri, 'wdt:P2969', goodReadsIdB)))
+      createWork().then(tap(work => addClaim(work.uri, 'wdt:P1085', libraryThingsWorkIdA))),
+      createWork().then(tap(work => addClaim(work.uri, 'wdt:P1085', libraryThingsWorkIdB)))
     ])
     .then(([ workA, workB ]) => {
       return resolveAndUpdate([ entryA, entryB ])
@@ -187,7 +187,7 @@ const someEntryWithAGoodReadsWorkId = () => ({
 
   works: [ {
     claims: {
-      'wdt:P2969': [ someGoodReadsId() ],
+      'wdt:P1085': [ someLibraryThingsWorkId() ],
       'wdt:P50': [ 'wd:Q35802' ]
     }
   }

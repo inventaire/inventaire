@@ -135,6 +135,8 @@ const API = module.exports = {
     return `100000000${numbers}`
   },
 
+  someLibraryThingsWorkId: () => Math.random().toString().slice(2, 10),
+
   generateIsbn13: () => {
     const isbn = `9780${_.join(_.sampleSize(_.split('0123456789', ''), 9), '')}`
     if (isbn_.isValidIsbn(isbn)) return isbn

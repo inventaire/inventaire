@@ -4,7 +4,7 @@ const _ = __.require('builders', 'utils')
 const should = require('should')
 const { authReq, undesiredRes } = __.require('apiTests', 'utils/utils')
 const { getByUris, getHistory } = __.require('apiTests', 'utils/entities')
-const { randomLabel, humanName, generateIsbn13, someGoodReadsId, ensureEditionExists } = __.require('apiTests', 'fixtures/entities')
+const { randomLabel, humanName, generateIsbn13, someGoodReadsId, someLibraryThingsWorkId, ensureEditionExists } = __.require('apiTests', 'fixtures/entities')
 
 const resolveAndCreate = entry => authReq('post', '/api/entities?action=resolve', {
   entries: [ entry ],
@@ -112,10 +112,10 @@ describe('entities:resolve:create-unresolved', () => {
   })
 
   it('should add optional claims to created works', done => {
-    const goodReadsId = someGoodReadsId()
+    const libraryThingsWorkId = someLibraryThingsWorkId()
     resolveAndCreate({
       edition: { isbn: generateIsbn13() },
-      works: [ { claims: { 'wdt:P2969': [ goodReadsId ] }, labels: { en: randomLabel() } } ]
+      works: [ { claims: { 'wdt:P1085': [ libraryThingsWorkId ] }, labels: { en: randomLabel() } } ]
     })
     .then(({ entries }) => entries)
     .then(entries => {
@@ -125,8 +125,8 @@ describe('entities:resolve:create-unresolved', () => {
       return getByUris(works.map(_.property('uri')))
       .then(({ entities }) => entities)
       .then(entities => {
-        const newWorkClaimValue = _.values(entities)[0].claims['wdt:P2969'][0]
-        newWorkClaimValue.should.equal(goodReadsId)
+        const newWorkClaimValue = _.values(entities)[0].claims['wdt:P1085'][0]
+        newWorkClaimValue.should.equal(libraryThingsWorkId)
         done()
       })
     })
@@ -160,7 +160,7 @@ describe('entities:resolve:create-unresolved', () => {
     const startTime = Date.now()
     const entry = {
       edition: { isbn: generateIsbn13() },
-      works: [ { claims: { 'wdt:P2969': [ someGoodReadsId() ] }, labels: { en: humanName() } } ]
+      works: [ { claims: { 'wdt:P1085': [ someLibraryThingsWorkId() ] }, labels: { en: humanName() } } ]
     }
     resolveAndCreate(entry)
     .then(({ entries }) => entries)

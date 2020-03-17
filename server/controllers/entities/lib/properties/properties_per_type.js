@@ -25,7 +25,6 @@ const workAndSerie = all.concat([
   'wdt:P1545', // series ordinal
   'wdt:P1844', // HathiTrust ID
   'wdt:P1984', // Anime News Network manga ID
-  'wdt:P2969', // GoodReads book ID
   'wdt:P3184', // Czech National Bibliography book ID
   'wdt:P3631', // Babelio work ID
   'wdt:P4087', // MyAnimeList manga ID
@@ -55,6 +54,7 @@ module.exports = {
     'wdt:P2635', // number of volumes
     'wdt:P2679', // author of foreword
     'wdt:P2680', // author of afterword
+    'wdt:P2969', // GoodReads book ID
     'wdt:P3184', // Czech National Bibliography book ID
     'wdt:P5571', // NooSFere book ID
     'invp:P2' // cover image hash
