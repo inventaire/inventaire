@@ -9,8 +9,12 @@ const { suffix } = CONFIG.db
 const dbFolderPath = suffix ? `${dbFolderPathBase}-${suffix}` : dbFolderPathBase
 
 const sub = require('subleveldown')
-const levelOptions = {
-  // maxOpenFiles is a leveldown option (see https://github.com/Level/leveldown#options)
+
+// See https://github.com/Level/leveldown#options
+const leveldownOptions = {
+  // Increase in-memory LRU cache to 128MB
+  cacheSize: 128 * 1024 ** 2,
+
   // Default is 1024, which causes 'WriteError: "Too many open files"' errors in production
   // Setting it to Infinity lets the operating system fully manage the process limit.
   // The operating system limit of opened files per process should itself be increased
@@ -30,7 +34,7 @@ if (CONFIG.leveldbMemoryBackend) {
 } else {
   const level = require('level-party')
   _.info(dbFolderPath, 'leveldb path')
-  globalDb = level(dbFolderPath, levelOptions)
+  globalDb = level(dbFolderPath, leveldownOptions)
 }
 
 // Available encodings: https://github.com/Level/codec#builtin-encodings
