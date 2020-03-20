@@ -102,7 +102,7 @@ const requestOnlyIfNeeded = (key, fn, dry, dryAndCache, dryFallbackValue, refuse
   if (dryAndCache) {
     // _.info(`returning and populating cache: ${key}`)
     populate(key, fn, refuseOldValue)
-    .catch(_.Error(`dryAndCache: ${key}`))
+    .catch(_.Error(`dryAndCache err: ${key}`))
     return dryFallbackValue
   }
 
@@ -113,7 +113,17 @@ const populate = (key, fn, refuseOldValue) => {
   return fn()
   .then(res => {
     // _.info(`from remote data source: ${key}`)
+
     putResponseInCache(key, res)
+    // Failing to put the response in cache should not crash the process
+    // as it is not critical: operations will continue without cache
+    // everything will just be slower
+    // Known case of WriteError: when "Too many open files"
+    // Solutions:
+    //   - restart process
+    //   - increase leveldown `maxOpenFiles` option (see https://github.com/Level/leveldown#options)
+    .catch(_.Error(`cache populate err: ${key}`))
+
     return res
   })
   .catch(err => {
