@@ -26,6 +26,7 @@
     "populate-fixtures": "./scripts/populate_fixtures",
     "postinstall": "./scripts/postinstall",
     "preview-email": "./scripts/preview_email",
+    "prune-cache": "./scripts/prune_cache",
     "replicate-tests-db": "./scripts/replicate_tests_db.js",
     "reset-cache": "rm -rf db/leveldb && mkdir db/leveldb",
     "start": "node server/server.js",

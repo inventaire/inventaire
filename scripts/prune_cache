@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+
+# A script to remove cached key/values older than x month
+
+# Expects the name of the database as unique argument
+db_name=$1
+
+# Otherwise, if there is only 1 db, use that one
+if [[ "$db_name" == "" ]] ; then
+  dbs_names=$(ls -1 ./db | grep leveldb)
+  local_dbs_count=$(echo "$dbs_names"| wc -l)
+  if [[ "$local_dbs_count" == "1" ]] ; then
+    db_name=$dbs_names
+  else
+    echo "Which database should be pruned?"
+    echo '--'
+    ls ./db -1 | grep leveldb
+    exit 1
+  fi
+fi
+
+db_path=$(realpath "./db/$db_name")
+
+ls "$db_path" > /dev/null 2>&1 || { echo 'database not found' && exit 1 ; }
+
+echo "db_name: $db_name"
+echo "db_path: $db_path"
+
+# the default cache age being 1 month, so defaulting to 1.5
+months=${2:-1.5}
+echo "months: $months"
+
+min_timestamp=$(node -p 'Date.now() - '$months'*30*24*60*60*1000' 2> /dev/null)
+[[ "$min_timestamp" == "" ]] && { echo "invalid months parameter: $months" && exit 1 ; }
+
+echo "min_timestamp: $min_timestamp"
+
+echo '--'
+echo "Database size before pruning cache"
+du -sh "$db_path"
+echo '--'
+
+lev "$db_path" --all --gt '!cache' --lt '!cachz' > ./cache_dump.tmp
+
+cache_entries_count=$(wc -l ./cache_dump.tmp | awk '{print $1}')
+echo "$cache_entries_count cache entries"
+
+
+# Some improbable unicode character
+separator='↭'
+
+cat ./cache_dump.tmp |
+  sed -E 's/\{"key":"(.*)","value.*timestamp\\":(.*)}"}/\2'$separator'\1/' | # Use regex group capture to get the timestamp and the key
+  awk -F "[$separator]" '{ if ($1 < '$min_timestamp') {print $2} }' > ./keys_to_delete.tmp # if the timestamp pre-dates the min_timestamp, pass the key down (taking care of preserving keys containing spaces)
+
+outdated_cache_entries=$(wc -l ./keys_to_delete.tmp | awk '{print $1}')
+echo "$outdated_cache_entries cache entries will be deleted"
+
+cat ./keys_to_delete.tmp | sed 's/^/{"key":"/' | sed 's/$/","type":"del"}/' > ./lev_delete_ops.tmp
+lev "$db_path" --batch < ./lev_delete_ops.tmp
+
+rm ./cache_dump.tmp ./keys_to_delete.tmp ./lev_delete_ops.tmp
+
+echo '--'
+echo "Database size after pruning cache"
+du -sh "$db_path"
