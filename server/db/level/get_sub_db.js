@@ -9,6 +9,18 @@ const { suffix } = CONFIG.db
 const dbFolderPath = suffix ? `${dbFolderPathBase}-${suffix}` : dbFolderPathBase
 
 const sub = require('subleveldown')
+const levelOptions = {
+  // maxOpenFiles is a leveldown option (see https://github.com/Level/leveldown#options)
+  // Default is 1024, which causes 'WriteError: "Too many open files"' errors in production
+  // Setting it to Infinity lets the operating system fully manage the process limit.
+  // The operating system limit of opened files per process should itself be increased
+  // as it might also have a low defaults:
+  //
+  //  echo '* soft nofile 65536\n* hard nofile 65536\n' | sudo tee -a /etc/security/limits.conf
+  //
+  // (see https://singztechmusings.wordpress.com/2011/07/11/ulimit-how-to-permanently-set-kernel-limits-in-linux/)
+  maxOpenFiles: Infinity
+}
 
 let globalDb
 if (CONFIG.leveldbMemoryBackend) {
@@ -17,9 +29,8 @@ if (CONFIG.leveldbMemoryBackend) {
   globalDb = level()
 } else {
   const level = require('level-party')
-  const config = {}
   _.info(dbFolderPath, 'leveldb path')
-  globalDb = level(dbFolderPath, config)
+  globalDb = level(dbFolderPath, levelOptions)
 }
 
 // Available encodings: https://github.com/Level/codec#builtin-encodings
