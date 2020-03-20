@@ -4,7 +4,7 @@ const error_ = __.require('lib', 'error/error')
 const images_ = __.require('lib', 'images')
 const { maxSize } = CONFIG.mediaStorage.images
 const request = require('request')
-const oneMB = Math.pow(1024, 2)
+const oneMB = 1024 ** 2
 
 module.exports = (req, res, url, dimensions) => {
   let [ width, height ] = dimensions ? dimensions.split('x') : [ maxSize, maxSize ];
