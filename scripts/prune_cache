@@ -40,16 +40,10 @@ echo "Database size before pruning cache"
 du -sh "$db_path"
 echo '--'
 
-lev "$db_path" --all --gt '!cache' --lt '!cachz' > ./cache_dump.tmp
-
-cache_entries_count=$(wc -l ./cache_dump.tmp | awk '{print $1}')
-echo "$cache_entries_count cache entries"
-
-
 # Some improbable unicode character
 separator='↭'
 
-cat ./cache_dump.tmp |
+lev "$db_path" --all --gt '!cache' --lt '!cachz' | # not using an intermediary file, as it would take around 3 times the disk space of the database as compressed by leveldb
   sed -E 's/\{"key":"(.*)","value.*timestamp\\":(.*)}"}/\2'$separator'\1/' | # Use regex group capture to get the timestamp and the key
   awk -F "[$separator]" '{ if ($1 < '$min_timestamp') {print $2} }' > ./keys_to_delete.tmp # if the timestamp pre-dates the min_timestamp, pass the key down (taking care of preserving keys containing spaces)
 
