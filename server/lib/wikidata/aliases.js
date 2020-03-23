@@ -77,7 +77,9 @@ const typesAliases = module.exports = {
     'wd:Q1792379', // art genre
     'wd:Q4894405', // journalism genre
     'wd:Q5151404', // comedic genre
-    'wd:Q21114848' // magazine genre
+    'wd:Q21114848', // magazine genre
+    'wd:Q20087698', // comics genre
+    'wd:Q28468127' // target audience for manga
   ],
   publishers: [
     // publisher
