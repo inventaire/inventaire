@@ -44,6 +44,10 @@ const sanitization = {
     generic: 'boolean',
     optional: true
   },
+  enrich: {
+    generic: 'boolean',
+    optional: true
+  },
   strict: {
     generic: 'boolean',
     optional: true,
