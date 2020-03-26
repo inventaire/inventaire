@@ -112,12 +112,8 @@ const sequentialResolve = async (entries, params, errors) => {
 }
 
 const buildActionFn = (flag, ActionFn, params) => {
-  const { reqUserId, batchId } = params
-  if (flag) {
-    return ActionFn(reqUserId, batchId)
-  } else {
-    return _.identity
-  }
+  if (flag) return ActionFn(params)
+  else return _.identity
 }
 
 const handleError = (strict, errors, err, entry) => {
