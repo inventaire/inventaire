@@ -71,6 +71,8 @@ const createEntityFromSeed = params => {
   .then(addCreatedUriToSeed(seed))
 }
 
+// Difference between seedClaims and entityClaims:
+// seedClaims come from the request input, and might not be valid
 const buildClaims = (seedClaims, entityClaims, type) => {
   for (const property in seedClaims) {
     const values = seedClaims[property]
@@ -79,10 +81,14 @@ const buildClaims = (seedClaims, entityClaims, type) => {
   return entityClaims
 }
 
-const addCreatedUriToSeed = entryEntity => createdEntity => {
+const addCreatedUriToSeed = seed => createdEntity => {
   if (createdEntity._id == null) return
-  entryEntity.uri = `inv:${createdEntity._id}`
-  entryEntity.created = true
+  seed.uri = `inv:${createdEntity._id}`
+  seed.created = true
+  // Do not just merge objects, as the created flag
+  // would be overriden by the created timestamp
+  seed.labels = createdEntity.labels
+  seed.claims = createdEntity.claims
 }
 
 const buildBestEditionTitle = (edition, works) => {
