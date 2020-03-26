@@ -3,7 +3,6 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const host = CONFIG.fullPublicHost()
 const error_ = __.require('lib', 'error/error')
-const isbn_ = __.require('lib', 'isbn/isbn')
 const { truncateLatLng } = __.require('lib', 'geo')
 
 // Parameters attributes:
@@ -99,18 +98,8 @@ const couchUuids = {
   validate: arrayOfAKind(validations.common.couchUuid)
 }
 
-const arrayOfStrings = {
-  format: arrayOrPipedStrings,
-  validate: arrayOfAKind(_.isString)
-}
-
 const arrayOfNumbers = {
   validate: arrayOfAKind(_.isNumber)
-}
-
-const isbn = {
-  format: isbn_.normalizeIsbn,
-  validate: isbn_.isValidIsbn
 }
 
 const imgUrl = {
@@ -167,7 +156,6 @@ const generics = {
 }
 
 module.exports = {
-  authors: arrayOfStrings,
   attribute: nonEmptyString,
   email: { validate: validations.common.email },
   description: nonEmptyString,
@@ -178,7 +166,6 @@ module.exports = {
   group: couchUuid,
   id: couchUuid,
   ids: couchUuids,
-  isbn,
   item: couchUuid,
   lang: {
     default: 'en',
