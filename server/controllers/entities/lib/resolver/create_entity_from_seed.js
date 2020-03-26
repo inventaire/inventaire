@@ -86,17 +86,19 @@ const addCreatedUriToSeed = entryEntity => createdEntity => {
 }
 
 const buildBestEditionTitle = (edition, works) => {
-  // return in priority values of wdt:P1476, which shall have only one element
-  if (edition.claims['wdt:P1476']) {
-    return edition.claims['wdt:P1476'][0]
-  } else {
-    // return best guess, hyphenate works labels
-    return _(works)
-    .map(work => _.uniq(_.values(work.labels)))
-    .flatten()
-    .uniq()
-    .join(' - ')
-  }
+  const editionTitleClaims = edition.claims['wdt:P1476']
+  if (editionTitleClaims) return editionTitleClaims[0]
+  else return guessEditionTitleFromWorksLabels(works)
+}
+
+// TODO: give priority to work label in the edition lang
+// if this one is known
+const guessEditionTitleFromWorksLabels = works => {
+  return _(works)
+  .map(work => Object.values(work.labels))
+  .flatten()
+  .uniq()
+  .join(' - ')
 }
 
 module.exports = { createAuthor, createWork, createEdition }
