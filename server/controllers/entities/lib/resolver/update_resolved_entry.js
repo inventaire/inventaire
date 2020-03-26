@@ -3,18 +3,18 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const entities_ = require('../entities')
 
-module.exports = (userId, batchId) => entry => {
+module.exports = ({ reqUserId, batchId }) => entry => {
   const { edition, works, authors } = entry
 
   const allResolvedSeeds = [ edition ].concat(works, authors).filter(hasUri)
 
-  return Promise.all(allResolvedSeeds.map(updateEntityFromSeed(userId, batchId)))
+  return Promise.all(allResolvedSeeds.map(updateEntityFromSeed(reqUserId, batchId)))
   .then(() => entry)
 }
 
 const hasUri = seed => seed.uri != null
 
-const updateEntityFromSeed = (userId, batchId) => seed => {
+const updateEntityFromSeed = (reqUserId, batchId) => seed => {
   const { uri, claims: seedClaims } = seed
   if (!uri) return
 
@@ -23,7 +23,7 @@ const updateEntityFromSeed = (userId, batchId) => seed => {
   if (prefix === 'wd') return
 
   return getEntity(prefix, entityId)
-  .then(addMissingClaims(seedClaims, userId, batchId))
+  .then(addMissingClaims(seedClaims, reqUserId, batchId))
 }
 
 const getEntity = (prefix, entityId) => {
@@ -34,10 +34,10 @@ const getEntity = (prefix, entityId) => {
   }
 }
 
-const addMissingClaims = (seedClaims, userId, batchId) => entity => {
+const addMissingClaims = (seedClaims, reqUserId, batchId) => entity => {
   // Do not update if property already exists
   // Known cases: avoid updating authors who are actually edition translators
   const newClaims = _.omit(seedClaims, Object.keys(entity.claims))
   if (_.isEmpty(newClaims)) return
-  return entities_.addClaims(userId, newClaims, entity, batchId)
+  return entities_.addClaims(reqUserId, newClaims, entity, batchId)
 }
