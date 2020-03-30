@@ -3,8 +3,8 @@ const _ = __.require('builders', 'utils')
 
 const Shelf = __.require('models', 'shelf')
 const items_ = __.require('controllers', 'items/lib/items')
+const getAuthorizedItems = __.require('controllers', 'items/lib/get_authorized_items')
 const db = __.require('couch', 'base')('shelves')
-const itemDb = __.require('couch', 'base')('items')
 const error_ = __.require('lib', 'error/error')
 const { tap } = __.require('lib', 'promises')
 
@@ -15,10 +15,15 @@ const shelves_ = module.exports = {
     const shelf = Shelf.create(newShelf)
     return db.postAndReturn(shelf)
   },
+  byId: db.get,
   byIds: db.fetch,
-  byIdsWithItems: ids => {
-    return Promise.all([ shelves_.byIds(ids), fetchItems(ids) ])
-    .then(assignItemsToShelves)
+  byIdsWithItems: async (ids, reqUserId) => {
+    const shelves = await shelves_.byIds(ids)
+    const shelvesCount = _.compact(shelves).length
+    if (shelvesCount === 0) { return [] }
+    if (shelvesCount === 1) { return byShelfWithItems(shelves[0], reqUserId) }
+    const items = await getAuthorizedItems.byShelves(shelves, reqUserId)
+    assignItemsToShelves(shelves, items)
   },
   byOwners: ownersIds => {
     return db.viewByKeys('byOwners', ownersIds)
@@ -58,25 +63,22 @@ const updateShelvesItems = async (action, shelvesIds, userId, itemsIds) => {
   const shelves = await shelves_.byIds(shelvesIds)
   shelves_.validateOwnership(userId, shelves)
   await items_.updateShelves(action, shelvesIds, userId, itemsIds)
-  return shelves_.byIdsWithItems(shelvesIds)
+  return shelves_.byIdsWithItems(shelvesIds, userId)
 }
 
-const fetchItems = shelvesIds => {
-  return itemDb.viewByKeys('byShelves', shelvesIds)
-}
-
-const assignItemsToShelves = ([ shelves, items ]) => {
+const assignItemsToShelves = (shelves, items) => {
   return shelves.map(assignItemsToShelf(items))
 }
 
 const assignItemsToShelf = items => shelf => {
-  const shelfId = shelf._id
-  const shelfItemsIds = items.filter(isInShelf(shelfId)).map(_.property('_id'))
   if (!shelf.items) { shelf.items = [] }
-  shelf.items = _.uniq(shelf.items.concat(shelfItemsIds))
-  return shelf
+  const itemsIds = items.map(_.property('_id'))
+  const missingItems = _.difference(itemsIds, shelf.items)
+  shelf.items = shelf.items.concat(missingItems)
 }
 
-const isInShelf = shelfId => item => {
-  return item.shelves && item.shelves.includes(shelfId)
+const byShelfWithItems = async (shelf, reqUserId) => {
+  const items = await getAuthorizedItems.byShelf(shelf, reqUserId)
+  assignItemsToShelf(items)(shelf)
+  return [ shelf ]
 }

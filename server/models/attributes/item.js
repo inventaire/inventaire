@@ -18,6 +18,7 @@ attributes.validAtCreation = [
   'listing',
   'details',
   'notes',
+  'shelves',
   // Legacy
   'lang'
 ]
