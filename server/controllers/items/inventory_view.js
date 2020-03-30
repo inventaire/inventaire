@@ -7,6 +7,7 @@ const replaceEditionsByTheirWork = require('./lib/view/replace_editions_by_their
 const bundleViewData = require('./lib/view/bundle_view_data')
 const sanitize = __.require('lib', 'sanitize/sanitize')
 const getAuthorizedItems = require('./lib/get_authorized_items')
+const shelves_ = __.require('controllers', 'shelves/lib/shelves')
 
 const sanitization = {
   user: { optional: true },
@@ -33,10 +34,13 @@ const validateUserOrGroup = params => {
   return params
 }
 
-const getItems = params => {
+const getItems = async params => {
   const { user, group, shelf, reqUserId } = params
   if (user) return getAuthorizedItems.byUser(user, reqUserId)
-  if (shelf) return getAuthorizedItems.byShelf(shelf, reqUserId)
+  if (shelf) {
+    const shelfDoc = await shelves_.byId(shelf)
+    return getAuthorizedItems.byShelf(shelfDoc, reqUserId)
+  }
   else return getAuthorizedItems.byGroup(group, reqUserId)
 }
 

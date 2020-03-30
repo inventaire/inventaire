@@ -16,9 +16,9 @@ const sanitization = {
 module.exports = (req, res, next) => {
   sanitize(req, res, sanitization)
   .then(params => {
-    const { ids, withItems } = params
+    const { ids, withItems, reqUserId } = params
     const byIdsFnName = withItems === true ? 'byIdsWithItems' : 'byIds'
-    return shelves_[byIdsFnName](ids)
+    return shelves_[byIdsFnName](ids, reqUserId)
     .then(_.compact)
     .then(_.KeyBy('_id'))
     .then(responses_.Wrap(res, 'shelves'))

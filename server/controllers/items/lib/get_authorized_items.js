@@ -1,11 +1,11 @@
 const __ = require('config').universalPath
+const _ = __.require('builders', 'utils')
+
 const getByAccessLevel = require('./get_by_access_level')
 const { areFriendsOrGroupCoMembers } = __.require('controllers', 'user/lib/relations_status')
-const { getNetworkIds } = __.require('controllers', 'user/lib/relations_status')
-const filterVisibleShelves = __.require('controllers', 'shelves/lib/filter_visible_shelves')
 const items_ = __.require('controllers', 'items/lib/items')
 const groups_ = __.require('controllers', 'groups/lib/groups')
-const shelves_ = __.require('controllers', 'shelves/lib/shelves')
+const buildKeysFromShelf = __.require('controllers', 'items/lib/build_keys_from_shelf')
 
 // Return what the reqUserId user is allowed to see
 module.exports = {
@@ -27,9 +27,14 @@ module.exports = {
     })
   },
 
-  byShelf: (shelfId, reqUserId) => {
-    return Promise.all([ shelves_.byIdsWithItems([ shelfId ]), getNetworkIds(reqUserId) ])
-    .then(filterVisibleShelves(reqUserId))
-    .then(([ shelf ]) => items_.byIds(shelf.items))
+  byShelves: async (shelves, reqUserId) => {
+    return Promise.all(shelves.map(buildKeysFromShelf(reqUserId)))
+    .then(_.flatten)
+    .then(keys => { return items_.byShelvesAndListing(keys, reqUserId) })
+  },
+
+  byShelf: async (shelf, reqUserId) => {
+    return buildKeysFromShelf(reqUserId)(shelf)
+    .then(keys => { return items_.byShelvesAndListing(keys, reqUserId) })
   }
 }

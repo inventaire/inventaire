@@ -35,7 +35,10 @@ const items_ = module.exports = {
 
   byPreviousEntity: entityUri => db.viewByKey('byPreviousEntity', entityUri),
 
-  byShelves: ids => db.viewByKeys('byShelves', ids),
+  byShelvesAndListing: (keys, reqUserId) => {
+    return db.viewByKeys('byShelvesAndListing', keys)
+    .then(formatItems(reqUserId))
+  },
 
   // all items from an entity that require a specific authorization
   authorizedByEntities: (uris, reqUserId) => {

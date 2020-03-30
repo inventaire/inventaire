@@ -22,7 +22,7 @@ module.exports = (req, res, next) => {
 
 const deleteByIds = async params => {
   const { ids, reqUserId, withItems } = params
-  const shelvesRes = await shelves_.byIdsWithItems(ids)
+  const shelvesRes = await shelves_.byIdsWithItems(ids, reqUserId)
   const shelves = _.compact(shelvesRes)
   validateDeletion(withItems, shelves)
   shelves_.validateOwnership(reqUserId, shelves)
