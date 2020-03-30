@@ -33,6 +33,7 @@ const addAssociatedData = transaction => {
     // Overriding transaction document ids by the ids' docs (owner, requester, etc.)
     // for the email ViewModel
     Object.assign(transaction, { owner, requester, item, messages, image })
+    return transaction
   })
   .then(buildTimeline)
   .then(aliasUsers)
