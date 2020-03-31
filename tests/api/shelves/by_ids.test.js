@@ -27,7 +27,7 @@ describe('shelves:by-ids', () => {
     res.shelves.should.be.ok()
   })
 
-  xit('should not return non friends network shelves', async () => {
+  it('should not return non friends network shelves', async () => {
     const shelf = await createShelf(null, { listing: 'private' })
     const res = await authReqB('get', `${endpoint}&ids=${shelf._id}`)
     const resIds = _.keys(res.shelves)
