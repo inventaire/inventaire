@@ -74,6 +74,7 @@
     "leven": "^2.1.0",
     "lodash": "^4.17.15",
     "moment": "^2.21.0",
+    "mv": "^2.1.1",
     "node-polyglot": "^1.0.0",
     "nodemailer": "git+https://github.com/inventaire/Nodemailer.git",
     "nodemailer-express-handlebars": "^2.0.0",
