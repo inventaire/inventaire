@@ -96,6 +96,7 @@ module.exports = [
   'P4087', // MyAnimeList manga ID
   'P5331', // OCLC work ID
   'P5361', // BNB person ID
+  'P5491', // BD Gest' author ID
   'P6338', // colorist
   'P7400' // LibraryThing author ID
 ]

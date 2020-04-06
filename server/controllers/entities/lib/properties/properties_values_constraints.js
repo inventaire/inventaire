@@ -179,6 +179,8 @@ module.exports = {
   'wdt:P4087': builders.externalId(positiveIntegerPattern),
   // BNB person ID
   'wdt:P5361': builders.externalId(/^[^ ?.=]{2,80}$/),
+  // BD Gest' author ID
+  'wdt:P5491': builders.externalId(strictlyPositiveIntegerPattern),
   // OCLC work ID
   'wdt:P5331': builders.externalId(strictlyPositiveIntegerPattern),
   // NooSFere book ID

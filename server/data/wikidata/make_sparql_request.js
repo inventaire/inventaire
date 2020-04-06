@@ -22,7 +22,7 @@ let ongoing = 0
 module.exports = async sparql => {
   const url = wdk.sparqlQuery(sparql)
 
-  if (waiting > 50) {
+  if (waiting > 500) {
     throw error_.new('too many requests in queue', 500, { sparql })
   }
 

@@ -94,6 +94,7 @@ module.exports = {
     'wdt:P4084', // MyAnimeList people ID
     'wdt:P4285', // Theses.fr person ID
     'wdt:P5361', // BNB person ID
+    'wdt:P5491', // BD Gest' author ID
     'wdt:P7400' // LibraryThing author ID
   ]),
 
