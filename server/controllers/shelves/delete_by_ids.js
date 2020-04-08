@@ -16,7 +16,7 @@ const sanitization = {
 module.exports = (req, res, next) => {
   sanitize(req, res, sanitization)
   .then(deleteByIds)
-  .then(responses_.Ok(res))
+  .then(responses_.Send(res))
   .catch(error_.Handler(req, res))
 }
 
@@ -26,12 +26,13 @@ const deleteByIds = async params => {
   const shelves = _.compact(shelvesRes)
   validateDeletion(withItems, shelves)
   shelves_.validateOwnership(reqUserId, shelves)
-  await deleteShelfItems(withItems, shelves)
-  return shelves_.bulkDelete(shelves)
-}
-
-const deleteShelfItems = (withItems, shelves) => {
-  if (withItems) return shelves_.deleteShelvesItems(shelves)
+  const res = { shelves }
+  if (withItems) {
+    const deletedItems = await shelves_.deleteShelvesItems(shelves)
+    res.items = deletedItems
+  }
+  await shelves_.bulkDelete(shelves)
+  return res
 }
 
 const validateDeletion = (withItems, shelves) => {
