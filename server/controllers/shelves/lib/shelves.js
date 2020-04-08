@@ -47,7 +47,7 @@ const shelves_ = module.exports = {
     const itemsIds = _.uniq(_.flatten(shelves.map(_.property('items'))))
     return items_.byIds(itemsIds)
     .then(_.compact)
-    .then(items_.bulkDelete)
+    .tap(items_.bulkDelete)
   },
   validateOwnership: (userId, shelves) => {
     shelves = _.forceArray(shelves)
