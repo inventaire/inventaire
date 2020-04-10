@@ -1,150 +1,105 @@
 const __ = require('config').universalPath
 const should = require('should')
-const { authReq, undesiredRes } = require('../utils/utils')
+const { authReq, shouldNotGetHere, rethrowShouldNotGetHereErrors } = require('../utils/utils')
+
 const { createHuman } = require('../fixtures/entities')
 const { getByUri, updateLabel } = require('../utils/entities')
 const randomString = __.require('lib', 'utils/random_string')
 const humanPromise = createHuman()
 
 describe('entities:update-labels', () => {
-  it('should reject without value', done => {
-    humanPromise
-    .then(human => {
-      return updateLabel(human._id, 'fr', null)
-      .then(undesiredRes(done))
-      .catch(err => {
-        err.body.status_verbose.should.equal('missing parameter in body: value')
-        err.statusCode.should.equal(400)
-        done()
-      })
-    })
-    .catch(done)
+  it('should reject without value', async () => {
+    const { _id } = await humanPromise
+    try {
+      const res = await updateLabel(_id, 'fr', null)
+      shouldNotGetHere(res)
+    } catch (err) {
+      rethrowShouldNotGetHereErrors(err)
+      err.body.status_verbose.should.equal('missing parameter in body: value')
+      err.statusCode.should.equal(400)
+    }
   })
 
-  it('should update without lang parameter, english as default', done => {
+  it('should update without lang parameter, english as default', async () => {
+    const { uri } = await humanPromise
     const value = randomString(15)
-    humanPromise
-    .then(human => {
-      const body = {
-        uri: human.uri,
-        value
-      }
-      return authReq('put', '/api/entities?action=update-label', body)
-      .then(() => getByUri(human.uri))
-    })
-    .then(updatedHuman => {
-      updatedHuman.labels.en.should.equal(value)
-      done()
-    })
-    .catch(done)
+    await authReq('put', '/api/entities?action=update-label', { uri, value })
+    const updatedHuman = await getByUri(uri)
+    updatedHuman.labels.en.should.equal(value)
   })
 
-  it('should accept an entity id instead of uri', done => {
+  it('should accept an entity id instead of uri', async () => {
+    const { _id: id, uri } = await humanPromise
     const value = randomString(15)
-    humanPromise
-    .then(human => {
-      const body = {
-        id: human._id,
-        lang: 'fr',
-        value
-      }
-      return authReq('put', '/api/entities?action=update-label', body)
-      .then(() => getByUri(human.uri))
-    })
-    .then(updatedHuman => {
-      updatedHuman.labels.fr.should.equal(value)
-      done()
-    })
-    .catch(done)
+    await authReq('put', '/api/entities?action=update-label', { id, lang: 'fr', value })
+    const updatedHuman = await getByUri(uri)
+    updatedHuman.labels.fr.should.equal(value)
   })
 
-  it('should update a label', done => {
+  it('should update a label', async () => {
+    const { _id, uri } = await humanPromise
     const value = randomString(15)
-    humanPromise
-    .then(human => {
-      return updateLabel(human._id, 'fr', value)
-      .then(() => getByUri(human.uri))
-    })
-    .then(updatedHuman => {
-      updatedHuman.labels.fr.should.equal(value)
-      done()
-    })
-    .catch(done)
+    await updateLabel(_id, 'fr', value)
+    const updatedHuman = await getByUri(uri)
+    updatedHuman.labels.fr.should.equal(value)
   })
 
-  it('should trim a label', done => {
+  it('should trim a label', async () => {
     const trimValue = randomString(15)
     const trimValueLength = trimValue.length
     const value = `${trimValue}     `
-    humanPromise
-    .then(human => {
-      return updateLabel(human._id, 'fr', value)
-      .then(() => getByUri(human.uri))
-      .then(updatedHuman => {
-        updatedHuman.labels.fr.length.should.equal(trimValueLength)
-        done()
-      })
-    })
-    .catch(done)
+    const { _id, uri } = await humanPromise
+    await updateLabel(_id, 'fr', value)
+    const updatedHuman = await getByUri(uri)
+    updatedHuman.labels.fr.length.should.equal(trimValueLength)
   })
 
-  it('should reject an update with an invalid lang', done => {
+  it('should reject an update with an invalid lang', async () => {
     const value = randomString(15)
-    humanPromise
-    .then(human => updateLabel(human._id, 'zz', value))
-    .then(undesiredRes(done))
-    .catch(err => {
+    const { _id } = await humanPromise
+    try {
+      const res = await updateLabel(_id, 'zz', value)
+      shouldNotGetHere(res)
+    } catch (err) {
+      rethrowShouldNotGetHereErrors(err)
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.startWith('invalid lang')
-      done()
-    })
-    .catch(done)
+    }
   })
 
-  it('should reject an update with an invalid value', done => {
-    humanPromise
-    .then(human => updateLabel(human._id, 'en', 123))
-    .then(undesiredRes(done))
-    .catch(err => {
+  it('should reject an update with an invalid value', async () => {
+    const { _id } = await humanPromise
+    try {
+      const res = await updateLabel(_id, 'en', 123)
+      shouldNotGetHere(res)
+    } catch (err) {
+      rethrowShouldNotGetHereErrors(err)
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.startWith('invalid value')
-      done()
-    })
-    .catch(done)
+    }
   })
 
-  it('should reject an up-to-date value', done => {
+  it('should reject an up-to-date value', async () => {
     const value = randomString(15)
-    humanPromise
-    .then(human => {
-      return updateLabel(human._id, 'en', value)
-      .then(() => updateLabel(human._id, 'en', value))
-    })
-    .then(undesiredRes(done))
-    .catch(err => {
+    const { _id } = await humanPromise
+    await updateLabel(_id, 'en', value)
+    try {
+      const res = await updateLabel(_id, 'en', value)
+      shouldNotGetHere(res)
+    } catch (err) {
+      rethrowShouldNotGetHereErrors(err)
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.startWith('already up-to-date')
-      done()
-    })
-    .catch(done)
+    }
   })
 
-  it('should accept rapid updates on the same entity', done => {
+  it('should accept rapid updates on the same entity', async () => {
     const name = 'Georges'
     const langs = [ 'en', 'fr' ]
-    humanPromise
-    .then(human => {
-      const { _id: humanId } = human
-      return Promise.all(langs.map(lang => updateLabel(humanId, lang, name)))
-      .then(responses => {
-        responses.forEach(res => should(res.ok).be.true())
-        return getByUri(human.uri)
-        .then(updatedHuman => {
-          langs.forEach(lang => updatedHuman.labels[lang].should.equal(name))
-          done()
-        })
-      })
-    })
-    .catch(done)
+    const { _id, uri } = await humanPromise
+    const responses = await Promise.all(langs.map(lang => updateLabel(_id, lang, name)))
+    responses.forEach(res => should(res.ok).be.true())
+    const updatedHuman = await getByUri(uri)
+    langs.forEach(lang => updatedHuman.labels[lang].should.equal(name))
   })
 })
