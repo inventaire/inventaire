@@ -4,10 +4,6 @@
   "views": {
     "byStatus": {
       "map": "(doc)->\n  if doc.type is 'relation'\n    [a, b] = doc._id.split ':'\n    switch doc.status\n      when 'friends'\n        emit [a,'friends'], b\n        emit [b,'friends'], a\n      when 'a-requested'\n        emit [a,'userRequested'], b\n        emit [b,'otherRequested'], a\n      when 'b-requested'\n        emit [b,'userRequested'], a\n        emit [a,'otherRequested'], b"
-    },
-    "friendsCount": {
-      "map": "(doc)->\n  if doc.type is 'relation'\n    [a, b] = doc._id.split ':'\n    switch doc.status\n      when 'friends'\n        emit a, null\n        emit b, null\n",
-      "reduce": "_count"
     }
   }
 }
