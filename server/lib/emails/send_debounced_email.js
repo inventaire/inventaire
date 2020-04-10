@@ -1,17 +1,18 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
 const transporter_ = require('./transporter')
 const buildTransactionEmail = require('./build_transaction_email')
-const helpers_ = require('./helpers')
+const { catchDisabledEmails } = require('./helpers')
 
 module.exports = {
   transactionUpdate: async transactionId => {
-    const email = await buildTransactionEmail(transactionId)
+    let email
+    try {
+      email = await buildTransactionEmail(transactionId)
+    } catch (err) {
+      catchDisabledEmails(err)
+    }
+
     if (!email) return
 
-    transporter_.sendMail(email)
-    .catch(helpers_.catchDisabledEmails)
-    .catch(_.Error('transactionUpdate'))
+    return transporter_.sendMail(email)
   }
 }
