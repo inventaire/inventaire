@@ -21,8 +21,10 @@ module.exports = (req, res) => {
 
     if (uri) id = unprefixify(uri)
 
+    if (value === '') throw error_.new('invalid value', 400, params)
+
     if (updater == null) {
-      return error_.bundle(req, res, `unsupported uri prefix: ${prefix}`, 400, uri)
+      throw error_.new(`unsupported uri prefix: ${prefix}`, 400, params)
     }
 
     return updater(req.user, id, lang, value)

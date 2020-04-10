@@ -79,6 +79,18 @@ describe('entities:update-labels', () => {
     }
   })
 
+  it('should reject an update with an empty string', async () => {
+    const { _id } = await humanPromise
+    try {
+      const res = await updateLabel(_id, 'en', '')
+      shouldNotGetHere(res)
+    } catch (err) {
+      rethrowShouldNotGetHereErrors(err)
+      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.startWith('invalid value')
+    }
+  })
+
   it('should reject an up-to-date value', async () => {
     const value = randomString(15)
     const { _id } = await humanPromise
