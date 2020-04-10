@@ -28,6 +28,8 @@ const addAssociatedData = transaction => {
     comments_.byTransactionId(transaction._id)
   ])
   .then(([ owner, requester, item, messages ]) => {
+    owner = user_.serializeData(owner)
+    requester = user_.serializeData(requester)
     item.title = item.snapshot['entity:title']
     const image = item.snapshot['entity:image'] || (transaction.snapshot.entity && transaction.snapshot.entity.image)
     // Overriding transaction document ids by the ids' docs (owner, requester, etc.)
