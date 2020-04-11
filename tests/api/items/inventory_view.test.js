@@ -6,7 +6,7 @@ const endpoint = '/api/items?action=inventory-view'
 const { groupPromise } = require('../fixtures/groups')
 const { createUserWithItems } = require('../fixtures/populate')
 
-describe('items:inventory-view', async () => {
+describe('items:inventory-view', () => {
   it('should reject requests without a user or a group', done => {
     nonAuthReq('get', endpoint)
     .then(undesiredRes(done))
