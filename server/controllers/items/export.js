@@ -43,6 +43,8 @@ const header = [
   'Series Labels',
   'Genres URIs',
   'Genres Labels',
+  'Subjects URIs',
+  'Subjects Labels',
   'Publisher URIs',
   'Publisher Label'
 ].join(',')

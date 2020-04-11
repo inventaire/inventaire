@@ -30,22 +30,23 @@ module.exports = async item => {
   item.authorsUris = _.deepCompact(works.map(getWorkAuthorsUris))
   item.seriesUris = _.deepCompact(works.map(getWorkSeriesUris))
   item.genresUris = _.deepCompact(works.map(getWorkGenresUris))
+  item.subjectsUris = _.deepCompact(works.map(getWorkSubjetsUris))
 
-  const [ authors, series, genres ] = await Promise.all([
+  const [ authors, series, genres, subjects ] = await Promise.all([
     getEntitiesList(item.authorsUris),
     getEntitiesList(item.seriesUris),
-    getEntitiesList(item.genresUris)
+    getEntitiesList(item.genresUris),
+    getEntitiesList(item.subjectsUris)
   ])
 
   item.authors = authors
   item.series = series
   item.genres = genres
+  item.subjects = subjects
 
   return item
 }
 
-const getWorkSeriesUris = work => work.claims['wdt:P179']
-const getWorkGenresUris = work => work.claims['wdt:P136']
 const getWorkAuthorsUris = work => _.flatten(_.values(_.pick(work.claims, authorProperties)))
 const authorProperties = [
   'wdt:P50',
@@ -53,3 +54,6 @@ const authorProperties = [
   'wdt:P110',
   'wdt:P6338'
 ]
+const getWorkSeriesUris = work => work.claims['wdt:P179']
+const getWorkGenresUris = work => work.claims['wdt:P136']
+const getWorkSubjetsUris = work => work.claims['wdt:P921']

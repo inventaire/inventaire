@@ -8,6 +8,7 @@ const { getByUri, addClaim, parseLabel } = require('../utils/entities')
 
 const endpoint = '/api/items?action=export&format=csv'
 const genresUris = [ 'wd:Q131539', 'wd:Q192782' ]
+const subjectUri = 'wd:Q18120925'
 
 describe('items:export', () => {
   describe('csv', () => {
@@ -20,6 +21,7 @@ describe('items:export', () => {
       const work = await getByUri(workUri)
       const workLabel = parseLabel(work)
       const serieUri = work.claims['wdt:P179'][0]
+      await addClaim(work.uri, 'wdt:P921', subjectUri)
       // Do not add in parallel so that they are added in that order
       await addClaim(work.uri, 'wdt:P136', genresUris[0])
       await addClaim(work.uri, 'wdt:P136', genresUris[1])
@@ -66,10 +68,13 @@ describe('items:export', () => {
       itemRowParts[14].should.equal(`"${genresUris[0]}`)
       itemRowParts[15].should.equal(`${genresUris[1]}"`)
       // Genres Labels
+      // Subjects URIs
+      itemRowParts[18].should.equal(subjectUri)
+      // Subjects Labels
       // Publisher URIs
-      itemRowParts[18].should.equal(publisher.uri)
+      itemRowParts[20].should.equal(publisher.uri)
       // Publisher Label
-      itemRowParts[19].should.equal(publisherLabel)
+      itemRowParts[21].should.equal(publisherLabel)
     })
   })
 })
