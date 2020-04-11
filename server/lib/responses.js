@@ -35,6 +35,8 @@ const responses_ = module.exports = {
     res.json(data)
   },
 
+  SendText: res => text => res.send(text),
+
   // Stringify static JSON only once
   sendStaticJson: (res, staticJson) => {
     res.set('content-type', 'application/json').send(staticJson)

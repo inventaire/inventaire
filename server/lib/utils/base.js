@@ -156,6 +156,14 @@ module.exports = {
   // Expected returned value: [ newKey, newValue ]
   mapKeysValues: (obj, fn) => {
     return Object.keys(obj).reduce(aggregateMappedKeysValues(obj, fn), {})
+  },
+
+  deepCompact: arrays => {
+    return _(arrays)
+    .flatten()
+    .uniq()
+    .compact()
+    .value()
   }
 }
 
