@@ -1,5 +1,4 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
 const onlineUsers = require('./lib/online_users')
 const responses_ = __.require('lib', 'responses')
 const headers_ = __.require('lib', 'headers')
@@ -9,7 +8,7 @@ module.exports = (req, res) => {
   const { 'user-agent': userAgent } = headers
 
   // Excluding bots from online counts
-  if (isBot(userAgent)) return _.ok(res)
+  if (isBot(userAgent)) return responses_.ok(res)
 
   onlineUsers({
     userId: req.user && req.user._id,
