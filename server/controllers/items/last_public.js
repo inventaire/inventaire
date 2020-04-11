@@ -19,13 +19,11 @@ const sanitization = {
 }
 
 module.exports = (req, res) => {
-  const reqUserId = req.user && req.user._id
-
   sanitize(req, res, sanitization)
   .then(params => {
-    const { limit, offset, assertImage } = params
+    const { limit, offset, assertImage, reqUserId } = params
     return items_.publicByDate(limit, offset, assertImage, reqUserId)
+    .then(bundleOwnersToItems.bind(null, res, reqUserId))
   })
-  .then(bundleOwnersToItems.bind(null, res, reqUserId))
   .catch(error_.Handler(req, res))
 }
