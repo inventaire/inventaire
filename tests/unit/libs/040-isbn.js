@@ -5,7 +5,7 @@ require('should')
 const isbn_ = __.require('lib', 'isbn/isbn')
 
 describe('isbn', () => {
-  // Test only what was added on top of the isbn2 module
+  // Test only what was added on top of the isbn3 module
   describe('parse', () => {
     it('should return a ISBN data object', done => {
       const data = isbn_.parse('9788420646657')
