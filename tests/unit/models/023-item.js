@@ -70,9 +70,9 @@ describe('item model', () => {
         done()
       })
 
-      it('should override a bad listing with default value', done => {
-        const item = () => create(extendItem({ listing: 'notalist' }))
-        item.should.throw()
+      it('should throw on invalid listing value', done => {
+        const createItem = () => create(extendItem({ listing: 'notalist' }))
+        createItem.should.throw()
         done()
       })
     })
