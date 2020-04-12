@@ -25,6 +25,7 @@ module.exports = lang => item => {
 
   const createdTime = new Date(created).toISOString()
 
+  // Array order coupled with server/controllers/items/export.js header
   return [
     _id,
     uri,
