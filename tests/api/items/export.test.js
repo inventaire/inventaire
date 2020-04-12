@@ -33,7 +33,8 @@ describe('items:export', () => {
       const authorLabel = parseLabel(author)
       const item = await createItem(user, { entity: edition.uri, details, notes })
       const res = await customAuthReq(user, 'get', endpoint)
-      const { data } = parse(res, { header: true })
+      const { data, errors } = parse(res, { header: true })
+      errors.length.should.equal(0)
       const itemRow = data[0]
       itemRow['Item ID'].should.equal(item._id)
       itemRow['Edition URI'].should.equal(item.entity)
