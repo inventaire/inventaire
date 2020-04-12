@@ -36,18 +36,18 @@ const header = [
   'PublicationDate',
   'Cover',
   'Works URIs',
-  'Works Labels',
+  'Works labels',
   'Works Series ordinals',
   'Authors URIs',
-  'Authors Labels',
+  'Authors labels',
   'Series URIs',
-  'Series Labels',
+  'Series labels',
   'Genres URIs',
-  'Genres Labels',
+  'Genres labels',
   'Subjects URIs',
-  'Subjects Labels',
+  'Subjects labels',
   'Publisher URIs',
-  'Publisher Label'
+  'Publisher label'
 ].join(',')
 
 const formatCsv = lang => items => {
