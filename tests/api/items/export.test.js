@@ -41,40 +41,42 @@ describe('items:export', () => {
       itemRowParts[0].should.equal(item._id)
       // Edition URI
       itemRowParts[1].should.equal(item.entity)
-      // ISBN
+      // ISBN-13
       itemRowParts[2].should.equal('')
+      // ISBN-10
+      itemRowParts[3].should.equal('')
       // Title
-      itemRowParts[3].should.equal(edition.claims['wdt:P1476'][0])
+      itemRowParts[4].should.equal(edition.claims['wdt:P1476'][0])
       // Subtitle
-      itemRowParts[4].should.equal(edition.claims['wdt:P1680'][0])
+      itemRowParts[5].should.equal(edition.claims['wdt:P1680'][0])
       // PublicationDate
-      itemRowParts[5].should.equal('')
-      // Cover
       itemRowParts[6].should.equal('')
+      // Cover
+      itemRowParts[7].should.equal('')
       // Works URIs
-      itemRowParts[7].should.equal(workUri)
+      itemRowParts[8].should.equal(workUri)
       // Works Labels
-      itemRowParts[8].should.equal(workLabel)
+      itemRowParts[9].should.equal(workLabel)
       // Works Series ordinals
-      itemRowParts[9].should.equal('')
+      itemRowParts[10].should.equal('')
       // Authors URIs
-      itemRowParts[10].should.equal(authorUri)
+      itemRowParts[11].should.equal(authorUri)
       // Authors Labels
-      itemRowParts[11].should.equal(authorLabel)
+      itemRowParts[12].should.equal(authorLabel)
       // Series URIs
-      itemRowParts[12].should.equal(serieUri)
+      itemRowParts[14].should.equal(serieUri)
       // Series Labels
       // Genres URIs
-      itemRowParts[14].should.equal(`"${genresUris[0]}`)
-      itemRowParts[15].should.equal(`${genresUris[1]}"`)
+      itemRowParts[15].should.equal(`"${genresUris[0]}`)
+      itemRowParts[18].should.equal(`${genresUris[1]}"`)
       // Genres Labels
       // Subjects URIs
-      itemRowParts[18].should.equal(subjectUri)
+      itemRowParts[20].should.equal(subjectUri)
       // Subjects Labels
       // Publisher URIs
-      itemRowParts[20].should.equal(publisher.uri)
+      itemRowParts[21].should.equal(publisher.uri)
       // Publisher Label
-      itemRowParts[21].should.equal(publisherLabel)
+      itemRowParts[22].should.equal(publisherLabel)
     })
   })
 })

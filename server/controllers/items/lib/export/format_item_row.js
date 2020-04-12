@@ -7,7 +7,7 @@ const host = CONFIG.fullPublicHost()
 module.exports = lang => item => {
   const { _id, entity: uri, edition, works, authors, series, genres, subjects, publisher } = item
 
-  const isbn = getIsbn(edition)
+  const { isbn13h, isbn10h } = getIsbn(edition)
   const title = getTitle(edition, works)
   const subtitle = getFirstValue(edition, 'wdt:P1680')
   const publicationDate = getFirstValue(edition, 'wdt:P577')
@@ -26,7 +26,8 @@ module.exports = lang => item => {
   return [
     _id,
     uri,
-    isbn,
+    isbn13h,
+    isbn10h,
     title,
     subtitle,
     publicationDate,
@@ -58,9 +59,12 @@ const formatField = text => {
 const getWorkSeriesOrdinals = work => work.claims['wdt:P1545']
 
 const getIsbn = edition => {
-  if (!edition) return
+  if (!edition) return {}
   const { claims } = edition
-  if (claims['wdt:P212']) return claims['wdt:P212'][0]
+  let isbn13h, isbn10h
+  if (claims['wdt:P212']) isbn13h = claims['wdt:P212'][0]
+  if (claims['wdt:P957']) isbn10h = claims['wdt:P957'][0]
+  return { isbn13h, isbn10h }
 }
 
 const getTitle = (edition, works) => {

@@ -29,7 +29,8 @@ module.exports = (req, res) => {
 const header = [
   'Item ID',
   'Edition URI',
-  'ISBN',
+  'ISBN-13',
+  'ISBN-10',
   'Title',
   'Subtitle',
   'PublicationDate',
