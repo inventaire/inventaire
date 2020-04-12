@@ -5,6 +5,7 @@ const { customAuthReq, getReservedUser } = __.require('apiTests', 'utils/utils')
 const { createItem } = require('../fixtures/items')
 const { createEditionWithWorkAuthorAndSerie, addPublisher } = require('../fixtures/entities')
 const { getByUri, addClaim, parseLabel } = require('../utils/entities')
+const { parse } = require('papaparse')
 
 const endpoint = '/api/items?action=export&format=csv'
 const genresUris = [ 'wd:Q131539', 'wd:Q192782' ]
@@ -30,53 +31,29 @@ describe('items:export', () => {
       const authorLabel = parseLabel(author)
       const item = await createItem(user, { entity: edition.uri })
       const res = await customAuthReq(user, 'get', endpoint)
-      const [ header, itemRow ] = res.split('\n')
-      const headerParts = header.split(',')
-      headerParts[0].should.equal('Item ID')
-      const itemRowParts = itemRow.split(',')
-
-      // itemRowParts.forEach((part, i) => console.log(i, part))
-
-      // Item ID
-      itemRowParts[0].should.equal(item._id)
-      // Edition URI
-      itemRowParts[1].should.equal(item.entity)
-      // ISBN-13
-      itemRowParts[2].should.equal('')
-      // ISBN-10
-      itemRowParts[3].should.equal('')
-      // Title
-      itemRowParts[4].should.equal(edition.claims['wdt:P1476'][0])
-      // Subtitle
-      itemRowParts[5].should.equal(edition.claims['wdt:P1680'][0])
-      // PublicationDate
-      itemRowParts[6].should.equal('')
-      // Cover
-      itemRowParts[7].should.equal('')
-      // Works URIs
-      itemRowParts[8].should.equal(workUri)
-      // Works Labels
-      itemRowParts[9].should.equal(workLabel)
-      // Works Series ordinals
-      itemRowParts[10].should.equal('')
-      // Authors URIs
-      itemRowParts[11].should.equal(authorUri)
-      // Authors Labels
-      itemRowParts[12].should.equal(authorLabel)
-      // Series URIs
-      itemRowParts[14].should.equal(serieUri)
-      // Series Labels
-      // Genres URIs
-      itemRowParts[15].should.equal(`"${genresUris[0]}`)
-      itemRowParts[18].should.equal(`${genresUris[1]}"`)
-      // Genres Labels
-      // Subjects URIs
-      itemRowParts[20].should.equal(subjectUri)
-      // Subjects Labels
-      // Publisher URIs
-      itemRowParts[21].should.equal(publisher.uri)
-      // Publisher Label
-      itemRowParts[22].should.equal(publisherLabel)
+      const { data } = parse(res, { header: true })
+      const itemRow = data[0]
+      itemRow['Item ID'].should.equal(item._id)
+      itemRow['Edition URI'].should.equal(item.entity)
+      itemRow['ISBN-13'].should.equal('')
+      itemRow['ISBN-10'].should.equal('')
+      itemRow.Title.should.equal(edition.claims['wdt:P1476'][0])
+      itemRow.Subtitle.should.equal(edition.claims['wdt:P1680'][0])
+      itemRow.PublicationDate.should.equal('')
+      itemRow.Cover.should.equal('')
+      itemRow['Works URIs'].should.equal(workUri)
+      itemRow['Works Labels'].should.equal(workLabel)
+      itemRow['Works Series ordinals'].should.equal('')
+      itemRow['Authors URIs'].should.equal(authorUri)
+      itemRow['Authors Labels'].should.equal(authorLabel)
+      itemRow['Series URIs'].should.equal(serieUri)
+      itemRow['Series Labels'].should.be.a.String()
+      itemRow['Genres URIs'].should.equal(genresUris.join(','))
+      itemRow['Genres Labels'].should.be.a.String()
+      itemRow['Subjects URIs'].should.equal(subjectUri)
+      itemRow['Subjects Labels'].should.be.a.String()
+      itemRow['Publisher URIs'].should.equal(publisher.uri)
+      itemRow['Publisher Label'].should.equal(publisherLabel)
     })
   })
 })
