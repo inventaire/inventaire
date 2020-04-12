@@ -34,7 +34,7 @@ describe('items:export', () => {
       const item = await createItem(user, { entity: edition.uri, details, notes })
       const res = await customAuthReq(user, 'get', endpoint)
       const { data, errors } = parse(res, { header: true })
-      errors.length.should.equal(0)
+      errors.should.deepEqual([])
       const itemRow = data[0]
       itemRow['Item ID'].should.equal(item._id)
       itemRow['Edition URI'].should.equal(item.entity)
@@ -59,6 +59,7 @@ describe('items:export', () => {
       itemRow['Publisher label'].should.equal(publisherLabel)
       itemRow['Item details'].should.equal(details)
       itemRow['Item notes'].should.equal(notes)
+      itemRow['Item created'].should.equal(new Date(item.created).toISOString())
     })
   })
 })
