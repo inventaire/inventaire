@@ -8,6 +8,8 @@ const Item = module.exports = {}
 
 const validations = Item.validations = require('./validations/item')
 const attributes = Item.attributes = require('./attributes/item')
+const { defaultValue: defaultListing } = attributes.constrained.listing
+const { defaultValue: defaultTransaction } = attributes.constrained.transaction
 
 Item.create = (userId, item) => {
   assert_.types([ 'string', 'object' ], [ userId, item ])
@@ -17,8 +19,8 @@ Item.create = (userId, item) => {
   item = _.omit(item, [ '_id', 'owner', 'created' ])
   const passedAttributes = Object.keys(item)
 
-  if (!item.listing) { item.listing = 'private' }
-  item.transaction = solveConstraint(item, 'transaction')
+  item.listing = item.listing || defaultListing
+  item.transaction = item.transaction || defaultTransaction
 
   for (const attr of passedAttributes) {
     if (!attributes.validAtCreation.includes(attr)) {
@@ -126,13 +128,4 @@ Item.revertEntity = (fromUri, toUri, item) => {
   item.previousEntity.shift()
 
   return item
-}
-
-const solveConstraint = (model, attribute) => {
-  const { possibilities, defaultValue } = attributes.constrained[attribute]
-  if (possibilities.includes(model[attribute])) {
-    return model[attribute]
-  } else {
-    return defaultValue
-  }
 }

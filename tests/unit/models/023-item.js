@@ -72,7 +72,7 @@ describe('item model', () => {
 
       it('should throw on invalid listing value', done => {
         const createItem = () => create(extendItem({ listing: 'notalist' }))
-        createItem.should.throw()
+        createItem.should.throw('invalid listing: notalist')
         done()
       })
     })
@@ -90,9 +90,9 @@ describe('item model', () => {
         done()
       })
 
-      it('should override a bad transaction with default value', done => {
-        const item = create(extendItem({ transaction: 'eviltransac' }))
-        item.transaction.should.equal('inventorying')
+      it('should throw on invalid transaction value', done => {
+        const createItem = () => create(extendItem({ transaction: 'eviltransac' }))
+        createItem.should.throw('invalid transaction: eviltransac')
         done()
       })
     })
