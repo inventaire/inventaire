@@ -53,7 +53,7 @@ module.exports = lang => item => {
 const formatField = text => {
   if (!text) return ''
   if (_.isArray(text)) text = text.join(',')
-  text = text.replace(/"/, '')
+  text = text.replace(/"/g, '""')
   if (text.match(/,/)) text = `"${text}"`
   return text
 }

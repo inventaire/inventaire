@@ -10,7 +10,7 @@ const { parse } = require('papaparse')
 const endpoint = '/api/items?action=export&format=csv'
 const genresUris = [ 'wd:Q131539', 'wd:Q192782' ]
 const subjectUri = 'wd:Q18120925'
-const details = 'my details'
+const details = 'my details: \'Lorem?!#$ ipsum\' dolor; sit amet, consectetur "adipisicing" elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. (See also https://en.wikipedia.org/wiki/Lorem_ipsum).'
 const notes = 'some private notes'
 
 describe('items:export', () => {
