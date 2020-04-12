@@ -10,6 +10,8 @@ const { parse } = require('papaparse')
 const endpoint = '/api/items?action=export&format=csv'
 const genresUris = [ 'wd:Q131539', 'wd:Q192782' ]
 const subjectUri = 'wd:Q18120925'
+const details = 'my details'
+const notes = 'some private notes'
 
 describe('items:export', () => {
   describe('csv', () => {
@@ -29,7 +31,7 @@ describe('items:export', () => {
       const authorUri = work.claims['wdt:P50'][0]
       const author = await getByUri(authorUri)
       const authorLabel = parseLabel(author)
-      const item = await createItem(user, { entity: edition.uri })
+      const item = await createItem(user, { entity: edition.uri, details, notes })
       const res = await customAuthReq(user, 'get', endpoint)
       const { data } = parse(res, { header: true })
       const itemRow = data[0]
@@ -54,6 +56,8 @@ describe('items:export', () => {
       itemRow['Subjects labels'].should.be.a.String()
       itemRow['Publisher URIs'].should.equal(publisher.uri)
       itemRow['Publisher label'].should.equal(publisherLabel)
+      itemRow['Item details'].should.equal(details)
+      itemRow['Item notes'].should.equal(notes)
     })
   })
 })

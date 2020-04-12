@@ -47,7 +47,9 @@ const header = [
   'Subjects URIs',
   'Subjects labels',
   'Publisher URIs',
-  'Publisher label'
+  'Publisher label',
+  'Item details',
+  'Item notes'
 ].join(',')
 
 const formatCsv = lang => items => {

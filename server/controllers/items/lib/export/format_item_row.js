@@ -5,7 +5,9 @@ const { getNames } = require('../snapshot/helpers')
 const host = CONFIG.fullPublicHost()
 
 module.exports = lang => item => {
-  const { _id, entity: uri, edition, works, authors, series, genres, subjects, publisher } = item
+  const { _id, entity: uri, details, notes } = item
+  const { edition, works, authors, series, genres, subjects, publisher } = item
+  const { worksUris, authorsUris, seriesUris, genresUris, subjectsUris, publisherUri } = item
 
   const { isbn13h, isbn10h } = getIsbn(edition)
   const title = getTitle(edition, works)
@@ -20,8 +22,6 @@ module.exports = lang => item => {
   const publisherName = publisher && getNames(lang, [ publisher ])
   const genresNames = getNames(lang, genres)
   const subjectsNames = getNames(lang, subjects)
-
-  const { worksUris, authorsUris, seriesUris, genresUris, subjectsUris, publisherUri } = item
 
   return [
     _id,
@@ -44,7 +44,9 @@ module.exports = lang => item => {
     subjectsUris,
     subjectsNames,
     publisherUri,
-    publisherName
+    publisherName,
+    details,
+    notes
   ].map(formatField).join(',')
 }
 
