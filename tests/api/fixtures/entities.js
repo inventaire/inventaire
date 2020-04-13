@@ -6,7 +6,7 @@ const isbn_ = __.require('lib', 'isbn/isbn')
 const wdLang = require('wikidata-lang')
 const { getByUri, getByUris, addClaim } = require('../utils/entities')
 const faker = require('faker')
-const someImageHash = '00015893d54f5112b99b41b0dfd851f381798047'
+const someImageHash = 'aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd'
 
 const defaultEditionData = () => ({
   labels: {},

@@ -83,7 +83,7 @@ const getTitle = (edition, works) => {
 
 const getCoverUrl = edition => {
   const coverPath = getFirstValue(edition, 'invp:P2')
-  if (coverPath) return `${host}${coverPath}`
+  if (coverPath) return `${host}/img/entities/${coverPath}`
 }
 
 const getFirstValue = (entity, property) => {

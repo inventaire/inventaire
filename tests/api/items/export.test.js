@@ -1,5 +1,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
+const host = CONFIG.fullPublicHost()
 require('should')
 const { customAuthReq, getReservedUser } = __.require('apiTests', 'utils/utils')
 const { createItem } = require('../fixtures/items')
@@ -43,7 +44,7 @@ describe('items:export', () => {
       itemRow.Title.should.equal(edition.claims['wdt:P1476'][0])
       itemRow.Subtitle.should.equal(edition.claims['wdt:P1680'][0])
       itemRow.PublicationDate.should.equal('')
-      itemRow.Cover.should.equal('')
+      itemRow.Cover.should.equal(`${host}/img/entities/aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd`)
       itemRow['Works URIs'].should.equal(workUri)
       itemRow['Works labels'].should.equal(workLabel)
       itemRow['Works Series ordinals'].should.equal('')
