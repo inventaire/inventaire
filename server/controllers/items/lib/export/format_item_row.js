@@ -70,25 +70,23 @@ const getWorkSeriesOrdinals = work => work.claims['wdt:P1545']
 
 const getIsbn = edition => {
   if (!edition) return {}
-  const { claims } = edition
-  let isbn13h, isbn10h
-  if (claims['wdt:P212']) isbn13h = claims['wdt:P212'][0]
-  if (claims['wdt:P957']) isbn10h = claims['wdt:P957'][0]
-  return { isbn13h, isbn10h }
+  return {
+    isbn13h: getFirstValue(edition, 'wdt:P212'),
+    isbn10h: getFirstValue(edition, 'wdt:P957')
+  }
 }
 
 const getTitle = (edition, works) => {
-  if (edition) return edition.claims['wdt:P1476'][0]
+  if (edition) return getFirstValue(edition, 'wdt:P1476')
   else return getNames(works)
 }
 
 const getCoverUrl = edition => {
-  const coverClaims = edition['invp:P2']
-  if (coverClaims && coverClaims[0]) return `${host}${coverClaims[0]}`
+  const coverPath = getFirstValue(edition, 'invp:P2')
+  if (coverPath) return `${host}${coverPath}`
 }
 
 const getFirstValue = (entity, property) => {
-  if (entity.claims[property] != null) {
-    return entity.claims[property][0]
-  }
+  const propertyClaims = entity.claims[property]
+  if (propertyClaims != null) return propertyClaims[0]
 }
