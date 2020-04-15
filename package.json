@@ -111,8 +111,7 @@
     "mocha": "^5.2.0",
     "should": "^11.1.1",
     "sinon": "^1.17.1",
-    "supervisor": "^0.10.0",
-    "wikidata-filter": "^2.3.1"
+    "supervisor": "^0.10.0"
   },
   "engines": {
     "node": ">= 8"
