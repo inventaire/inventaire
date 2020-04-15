@@ -106,7 +106,6 @@
     "faker": "^4.1.0",
     "git-hooks": "^1.0.2",
     "level-test": "^8.0.0",
-    "live-server": "^1.2.1",
     "mailcomposer": "^2.1.0",
     "mocha": "^5.2.0",
     "should": "^11.1.1",
