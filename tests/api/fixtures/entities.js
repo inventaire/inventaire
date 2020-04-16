@@ -154,6 +154,7 @@ const addEntityClaim = (createFnName, property) => async subjectEntity => {
 API.addAuthor = addEntityClaim('createHuman', 'wdt:P50')
 API.addSerie = addEntityClaim('createSerie', 'wdt:P179')
 API.addPublisher = addEntityClaim('createPublisher', 'wdt:P123')
+API.addTranslator = addEntityClaim('createHuman', 'wdt:P655')
 
 const openLibraryTypeLetters = {
   edition: 'M',

@@ -16,6 +16,10 @@ module.exports = async item => {
     if (item.publisherUri) {
       item.publisher = await getEntityByUri({ uri: item.publisherUri })
     }
+    item.translatorsUris = entity.claims['wdt:P655']
+    if (item.translatorsUris) {
+      item.translators = await getEntitiesList(item.translatorsUris)
+    }
     item.worksUris = entity.claims['wdt:P629']
     works = await getEntitiesList(item.worksUris)
   } else if (entity.type === 'work') {

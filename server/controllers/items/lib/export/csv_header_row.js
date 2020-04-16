@@ -12,6 +12,8 @@ module.exports = [
   'Works Series ordinals',
   'Authors URIs',
   'Authors labels',
+  'Translators labels',
+  'Translators URIs',
   'Series URIs',
   'Series labels',
   'Genres URIs',

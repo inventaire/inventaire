@@ -6,8 +6,8 @@ const host = CONFIG.fullPublicHost()
 
 module.exports = lang => item => {
   const { _id, entity: uri, details, notes, created } = item
-  const { edition, works, authors, series, genres, subjects, publisher } = item
-  const { worksUris, authorsUris, seriesUris, genresUris, subjectsUris, publisherUri } = item
+  const { edition, works, authors, translators, series, genres, subjects, publisher } = item
+  const { worksUris, authorsUris, seriesUris, genresUris, subjectsUris, publisherUri, translatorsUris } = item
 
   const { isbn13h, isbn10h } = getIsbn(edition)
   const title = getTitle(edition, works)
@@ -20,6 +20,7 @@ module.exports = lang => item => {
   const authorsNames = getNames(lang, authors)
   const seriesNames = getNames(lang, series)
   const publisherName = publisher && getNames(lang, [ publisher ])
+  const translatorsNames = translators && getNames(lang, translators)
   const genresNames = getNames(lang, genres)
   const subjectsNames = getNames(lang, subjects)
 
@@ -40,6 +41,8 @@ module.exports = lang => item => {
     seriesOrdinales,
     authorsUris,
     authorsNames,
+    translatorsNames,
+    translatorsUris,
     seriesUris,
     seriesNames,
     genresUris,
