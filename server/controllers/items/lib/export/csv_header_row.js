@@ -5,7 +5,7 @@ module.exports = [
   'ISBN-10',
   'Title',
   'Subtitle',
-  'PublicationDate',
+  'Publication Date',
   'Cover',
   'Number of pages',
   'Works URIs',

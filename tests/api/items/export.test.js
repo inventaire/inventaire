@@ -46,7 +46,7 @@ describe('items:export', () => {
       itemRow['ISBN-10'].should.equal('')
       itemRow.Title.should.equal(edition.claims['wdt:P1476'][0])
       itemRow.Subtitle.should.equal(edition.claims['wdt:P1680'][0])
-      itemRow.PublicationDate.should.equal('')
+      itemRow['Publication Date'].should.equal('')
       itemRow.Cover.should.equal(`${host}/img/entities/aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd`)
       itemRow['Number of pages'].should.equal('10')
       itemRow['Translators labels'].should.equal(translatorLabel)

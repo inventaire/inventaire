@@ -31,10 +31,10 @@ module.exports = async item => {
   }
 
   item.works = works
-  item.authorsUris = _.deepCompact(works.map(getWorkAuthorsUris))
-  item.seriesUris = _.deepCompact(works.map(getWorkSeriesUris))
-  item.genresUris = _.deepCompact(works.map(getWorkGenresUris))
-  item.subjectsUris = _.deepCompact(works.map(getWorkSubjetsUris))
+  item.authorsUris = aggregateWorks(works, getWorkAuthorsUris)
+  item.seriesUris = aggregateWorks(works, getWorkSeriesUris)
+  item.genresUris = aggregateWorks(works, getWorkGenresUris)
+  item.subjectsUris = aggregateWorks(works, getWorkSubjetsUris)
 
   const [ authors, series, genres, subjects ] = await Promise.all([
     getEntitiesList(item.authorsUris),
@@ -49,6 +49,10 @@ module.exports = async item => {
   item.subjects = subjects
 
   return item
+}
+
+const aggregateWorks = (works, getWorkEntitiesUris) => {
+  return _.deepCompact(works.map(getWorkEntitiesUris))
 }
 
 const getWorkAuthorsUris = work => _.flatten(_.values(_.pick(work.claims, authorProperties)))
