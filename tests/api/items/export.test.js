@@ -23,6 +23,7 @@ describe('items:export', () => {
       const publisherLabel = parseLabel(publisher)
       const translator = await addTranslator(edition)
       const translatorLabel = parseLabel(translator)
+      await addClaim(edition.uri, 'wdt:P1104', 10)
       const workUri = edition.claims['wdt:P629'][0]
       const work = await getByUri(workUri)
       const workLabel = parseLabel(work)
@@ -47,6 +48,7 @@ describe('items:export', () => {
       itemRow.Subtitle.should.equal(edition.claims['wdt:P1680'][0])
       itemRow.PublicationDate.should.equal('')
       itemRow.Cover.should.equal(`${host}/img/entities/aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd`)
+      itemRow['Number of pages'].should.equal('10')
       itemRow['Translators labels'].should.equal(translatorLabel)
       itemRow['Translators URIs'].should.equal(translator.uri)
       itemRow['Works URIs'].should.equal(workUri)

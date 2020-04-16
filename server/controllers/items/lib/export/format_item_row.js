@@ -21,6 +21,8 @@ module.exports = lang => item => {
   const seriesNames = getNames(lang, series)
   const publisherName = publisher && getNames(lang, [ publisher ])
   const translatorsNames = translators && getNames(lang, translators)
+  const pagesCountNum = getFirstValue(edition, 'wdt:P1104')
+  const pagesCount = pagesCountNum && pagesCountNum.toString()
   const genresNames = getNames(lang, genres)
   const subjectsNames = getNames(lang, subjects)
 
@@ -36,6 +38,7 @@ module.exports = lang => item => {
     subtitle,
     publicationDate,
     cover,
+    pagesCount,
     worksUris,
     worksNames,
     seriesOrdinales,

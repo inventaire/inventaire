@@ -7,6 +7,7 @@ module.exports = [
   'Subtitle',
   'PublicationDate',
   'Cover',
+  'Number of pages',
   'Works URIs',
   'Works labels',
   'Works Series ordinals',
