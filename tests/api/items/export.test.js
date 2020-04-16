@@ -29,6 +29,7 @@ describe('items:export', () => {
       const workLabel = parseLabel(work)
       const serieUri = work.claims['wdt:P179'][0]
       await addClaim(work.uri, 'wdt:P921', subjectUri)
+      await addClaim(work.uri, 'wdt:P364', edition.claims['wdt:P407'][0])
       // Do not add in parallel so that they are added in that order
       await addClaim(work.uri, 'wdt:P136', genresUris[0])
       await addClaim(work.uri, 'wdt:P136', genresUris[1])
@@ -49,6 +50,8 @@ describe('items:export', () => {
       itemRow['Publication Date'].should.equal('')
       itemRow.Cover.should.equal(`${host}/img/entities/aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd`)
       itemRow['Number of pages'].should.equal('10')
+      itemRow['Edition Lang'].should.equal('English')
+      itemRow['Original Lang'].should.equal('English')
       itemRow['Translators labels'].should.equal(translatorLabel)
       itemRow['Translators URIs'].should.equal(translator.uri)
       itemRow['Works URIs'].should.equal(workUri)

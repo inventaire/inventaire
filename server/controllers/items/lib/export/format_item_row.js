@@ -6,7 +6,7 @@ const host = CONFIG.fullPublicHost()
 
 module.exports = lang => item => {
   const { _id, entity: uri, details, notes, created } = item
-  const { edition, works, authors, translators, series, genres, subjects, publisher } = item
+  const { edition, works, authors, translators, series, genres, subjects, publisher, editionLang, originalLangs } = item
   const { worksUris, authorsUris, seriesUris, genresUris, subjectsUris, publisherUri, translatorsUris } = item
 
   const { isbn13h, isbn10h } = getIsbn(edition)
@@ -21,6 +21,8 @@ module.exports = lang => item => {
   const seriesNames = getNames(lang, series)
   const publisherName = publisher && getNames(lang, [ publisher ])
   const translatorsNames = translators && getNames(lang, translators)
+  const editionLangLabel = editionLang && (editionLang.labels[lang] || editionLang.labels.en)
+  const originalLangsLabel = getNames(lang, originalLangs)
   const pagesCountNum = getFirstValue(edition, 'wdt:P1104')
   const pagesCount = pagesCountNum && pagesCountNum.toString()
   const genresNames = getNames(lang, genres)
@@ -39,8 +41,10 @@ module.exports = lang => item => {
     publicationDate,
     cover,
     pagesCount,
+    editionLangLabel,
     worksUris,
     worksNames,
+    originalLangsLabel,
     seriesOrdinales,
     authorsUris,
     authorsNames,
