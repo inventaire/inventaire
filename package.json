@@ -66,7 +66,7 @@
     "inv-loggers": "^3.3.8",
     "inv-utils": "^2.0.4",
     "isbn-groups": "^2.0.1",
-    "isbn3": "^1.0.9",
+    "isbn3": "^1.1.0",
     "jiff": "^0.7.3",
     "level-geospatial": "git+https://github.com/maxlath/level-geospatial.git#5001a8f",
     "level-jobs": "^2.1.0",

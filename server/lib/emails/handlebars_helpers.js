@@ -24,9 +24,10 @@ module.exports = Object.assign({}, i18n, {
     if (path == null) return ''
 
     return appApi.img(path, width, height)
-  }
-}
-)
+  },
+
+  stringify: obj => typeof obj === 'object' ? JSON.stringify(obj, null, 2) : obj
+})
 
 const onePictureOnly = arg => {
   if (_.isArray(arg)) return arg[0]

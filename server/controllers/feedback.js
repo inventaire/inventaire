@@ -3,25 +3,31 @@ const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
 const radio = __.require('lib', 'radio')
+const { audit: auditIsbn } = require('isbn3')
 
 module.exports = {
   post: (req, res) => {
-    const { user } = req
-    const { subject, message, uris, context, unknownUser } = req.body
+    const { user, body } = req
+    const { subject, message, uris, unknownUser } = body
+    let { context } = body
 
     if (subject == null && message == null) {
       return error_.bundle(req, res, 'message is empty', 400)
     }
+
+    if (!_.isPlainObject(context)) context = { sentContext: context }
 
     if (uris) {
       for (const uri of uris) {
         if (!_.isEntityUri(uri)) {
           return error_.bundle(req, res, 'invalid entity uri', 400, { uri })
         }
+        const [ prefix, id ] = uri.split(':')
+        if (prefix === 'isbn') context[uri] = auditIsbn(id)
       }
     }
 
-    const automaticReport = (uris != null)
+    const automaticReport = uris != null
 
     if (!automaticReport || isNewAutomaticReport(subject)) {
       _.log({ subject, message, uris, unknownUser, context }, 'sending feedback')

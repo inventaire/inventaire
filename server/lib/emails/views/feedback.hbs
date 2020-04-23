@@ -23,6 +23,6 @@
   {{/if}}
   <hr>
   {{#each context}}
-    {{#if this}}<pre style="font-size: 14px;">{{@key}}: {{this}}</pre><br>{{/if}}
+    {{#if this}}<pre style="font-size: 14px;">{{@key}}: {{stringify this}}</pre><br>{{/if}}
   {{/each}}
 {{>paragraph_bottom}}
