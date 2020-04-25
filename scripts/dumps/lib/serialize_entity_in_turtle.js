@@ -5,7 +5,9 @@ const properties = __.require('controllers', 'entities/lib/properties/properties
 const { yellow } = require('chalk')
 
 module.exports = entity => {
-  const { _id, _rev } = entity
+  const { _id, _rev, type, redirect } = entity
+
+  if (type !== 'entity' || redirect != null) return ''
 
   let text = `inv:${_id} a wikibase:Item ;`
 
