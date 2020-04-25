@@ -16,7 +16,6 @@ module.exports = entity => {
     const value = entity.labels[lang]
     const formattedLabel = formatStringValue(value)
     text += `\n  rdfs:label ${formattedLabel}@${lang} ;`
-    text += `\n  skos:prefLabel ${formattedLabel}@${lang} ;`
   }
 
   let statementsCount = 0
