@@ -5,11 +5,17 @@ const properties = __.require('controllers', 'entities/lib/properties/properties
 const { yellow } = require('chalk')
 
 module.exports = entity => {
-  const { _id, _rev, type, redirect } = entity
+  const { _id, _rev, created, updated, type, redirect } = entity
 
   if (type !== 'entity' || redirect != null) return ''
 
   let text = `inv:${_id} a wikibase:Item ;`
+
+  const dateCreated = new Date(created).toISOString()
+  text += `\n  schema:dateCreated "${dateCreated}"^^xsd:dateTime ;`
+
+  const dateModified = new Date(updated).toISOString()
+  text += `\n  schema:dateModified "${dateModified}"^^xsd:dateTime ;`
 
   const version = parseInt(_rev.split('-'))
   text += `\n  schema:version ${version} ;`
