@@ -29,8 +29,7 @@
     "object-shorthand": [ "error", "properties" ],
     "prefer-arrow/prefer-arrow-functions": [ "error" ],
     "prefer-arrow-callback": [ "error" ],
-    "prefer-const": [ "error" ],
-    "prefer-template": [ "error" ]
+    "prefer-const": [ "error" ]
   },
   "globals": {
     // Mocha globals

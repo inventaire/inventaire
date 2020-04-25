@@ -9,19 +9,14 @@ const serializeEntityInTurtle = require('./lib/serialize_entity_in_turtle')
 
 const headers = readFileSync(`${__dirname}/headers.ttl`).toString()
 // Prefix the dump by the headers
-console.log(headers)
+process.stdout.write(headers + '\n')
 
 const parse = line => {
-  try {
-    // Omit the last empty line
-    if (!_.isNonEmptyString(line)) { return }
-    const json = JSON.parse(line.replace(/,$/, ''))
-    // Output on process.stdin
-    return console.log(serializeEntityInTurtle(json))
-  } catch (err) {
-    console.error('error line', line)
-    return console.error('error', err)
-  }
+  // Omit the last empty line
+  if (!_.isNonEmptyString(line)) return
+  const json = JSON.parse(line.replace(/,$/, ''))
+  // Output on process.stdin
+  process.stdout.write(serializeEntityInTurtle(json) + '\n')
 }
 
 process.stdin
