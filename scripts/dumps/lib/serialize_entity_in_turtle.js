@@ -34,13 +34,17 @@ module.exports = entity => {
   for (const property in entity.claims) {
     statementsCount += 1
     const propClaims = entity.claims[property]
-    const { datatype } = properties[property]
-    const formatter = datatypePropClaimsFormatter[datatype]
-    if (formatter != null) {
-      const formattedPropClaims = formatter(propClaims)
-      text += formatPropClaims(property, formattedPropClaims)
+    if (properties[property] != null) {
+      const { datatype } = properties[property]
+      const formatter = datatypePropClaimsFormatter[datatype]
+      if (formatter != null) {
+        const formattedPropClaims = formatter(propClaims)
+        text += formatPropClaims(property, formattedPropClaims)
+      } else {
+        console.warn(yellow('missing formatter'), datatype)
+      }
     } else {
-      console.warn(yellow('missing formatter'), datatype)
+      console.warn(yellow('unknown property'), { property, type, _id })
     }
   }
 
