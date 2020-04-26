@@ -5,28 +5,55 @@ const properties = __.require('controllers', 'entities/lib/properties/properties
 const { yellow } = require('chalk')
 
 module.exports = entity => {
-  const { _id } = entity
+  const { _id, _rev, created, updated, type, redirect } = entity
+
+  if (type !== 'entity' || redirect != null) return ''
 
   let text = `inv:${_id} a wikibase:Item ;`
+
+  const dateCreated = new Date(created).toISOString()
+  text += `\n  schema:dateCreated "${dateCreated}"^^xsd:dateTime ;`
+
+  const dateModified = new Date(updated).toISOString()
+  text += `\n  schema:dateModified "${dateModified}"^^xsd:dateTime ;`
+
+  // Using the _rev to deduce the version might give a version number
+  // higher than the real number of patches, but that's better than nothing
+
+  const version = parseInt(_rev.split('-'))
+  text += `\n  schema:version ${version} ;`
 
   for (const lang in entity.labels) {
     const value = entity.labels[lang]
     const formattedLabel = formatStringValue(value)
     text += `\n  rdfs:label ${formattedLabel}@${lang} ;`
-    text += `\n  skos:prefLabel ${formattedLabel}@${lang} ;`
   }
 
+  let statementsCount = 0
+
   for (const property in entity.claims) {
+    statementsCount += 1
     const propClaims = entity.claims[property]
-    const { datatype } = properties[property]
-    const formatter = datatypePropClaimsFormatter[datatype]
-    if (formatter != null) {
-      const formattedPropClaims = formatter(propClaims)
-      text += formatPropClaims(property, formattedPropClaims)
+    if (properties[property] != null) {
+      const { datatype } = properties[property]
+      const formatter = datatypePropClaimsFormatter[datatype]
+      if (formatter != null) {
+        const formattedPropClaims = formatter(propClaims)
+        text += formatPropClaims(property, formattedPropClaims)
+      } else {
+        console.warn(yellow('missing formatter'), datatype)
+      }
     } else {
-      console.warn(yellow('missing formatter'), datatype)
+      console.warn(yellow('unknown property'), { property, type, _id })
     }
   }
+
+  text += `\n  wikibase:statements ${statementsCount} ;`
+
+  const labelsCount = Object.keys(entity.labels).length
+  // This property isn't actually used by Wikidata
+  // but builds on the idea of 'wikibase:statements'
+  text += `\n  wikibase:labels ${labelsCount} ;`
 
   // Replace the last ';' by a '.' and add a line break
   // to have one line between each entity

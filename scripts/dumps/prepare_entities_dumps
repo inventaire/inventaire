@@ -2,7 +2,8 @@
 
 set -eu
 
-folder=$(node -p "require('config').universalPath.path('dumps')")
+source ./scripts/dumps/lib/utils.sh
+
 db_param(){
   node -p "require('config').db.$1"
 }
@@ -13,10 +14,7 @@ port=$(db_param port)
 username=$(db_param username)
 password=$(db_param password)
 db_name='entities-prod'
-today=$(date +'20%y-%m-%d')
-today_folder="${folder}/${today}"
 root_cwd="$(pwd)"
-mkdir -p "$today_folder"
 
 cd "$folder"
 rm -f ./latest
@@ -78,16 +76,22 @@ cat "${today_folder}/${filtered_dump_filename}" | ./scripts/dumps/convert_ndjson
 cat "${today_folder}/${filtered_dump_filename_with_seeds}" | ./scripts/dumps/convert_ndjson_dump_to_ttl.js > "${today_folder}/${turtle_with_seeds_filepath}"
 
 validate_ttl(){
-  echo "validating ttl: $1"
-  ttl $1
+  file_path_hash=$(echo $1 | md5sum | awk '{printf $1}')
+  log_file="/tmp/ttl_validation_logs_${file_path_hash}"
+  # TurtleValidator ttl always exits with 0, thus the need to parse its logs
+  # to exit with an error code if an error was detected
+  # see https://github.com/IDLabResearch/TurtleValidator/issues/7
+  ttl $1 | tee $log_file
+  cat $log_file | grep '{ Error' > /dev/null && exit 1
 }
-validate_ttl "${today_folder}/${turtle_filename}"
-validate_ttl "${today_folder}/${turtle_with_seeds_filepath}"
+
+validate_ttl "${today_folder}/${turtle_filename}" && echo 'validated'
+validate_ttl "${today_folder}/${turtle_with_seeds_filepath}" && echo 'validated'
 
 cd "$today_folder"
 rm "$output_file"
 
 echo "compressing results"
-pigz -9f *json *ttl
+gzip -9f *json *ttl
 
 echo "done"

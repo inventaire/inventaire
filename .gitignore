@@ -18,6 +18,8 @@ exports
 db/couchdb/migration_docs
 notes
 run
-dumps
+dumps/bnf
+dumps/inv
+dumps/wd
 storage
 inventaire-i18n
