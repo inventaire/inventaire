@@ -9,6 +9,8 @@ const resolve = require('./lib/resolver/resolve')
 const UpdateResolvedEntry = require('./lib/resolver/update_resolved_entry')
 const CreateUnresolvedEntry = require('./lib/resolver/create_unresolved_entry')
 const { oneHour } = __.require('lib', 'times')
+const properties = require('./lib/properties/properties_values_constraints')
+const whitelistedProperties = Object.keys(properties)
 
 const sanitization = {
   entries: {
@@ -20,6 +22,10 @@ const sanitization = {
   },
   update: {
     generic: 'boolean',
+    optional: true
+  },
+  forceUpdateProps: {
+    whitelist: whitelistedProperties,
     optional: true
   },
   strict: {
@@ -90,9 +96,8 @@ const sequentialResolve = async (entries, params, errors) => {
 }
 
 const buildActionFn = (flag, ActionFn, params) => {
-  const { reqUserId, batchId } = params
   if (flag) {
-    return ActionFn(reqUserId, batchId)
+    return ActionFn(params)
   } else {
     return _.identity
   }
