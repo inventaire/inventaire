@@ -24,13 +24,13 @@ const addAssociatedData = transaction => {
   return Promise.all([
     user_.byId(transaction.owner),
     user_.byId(transaction.requester),
-    items_.byId(transaction.item).then(snapshot_.addToItem),
+    items_.byId(transaction.item).then(snapshot_.addToItem).catch(catchDeleteItems),
     comments_.byTransactionId(transaction._id)
   ])
   .then(([ owner, requester, item, messages ]) => {
     owner = user_.serializeData(owner)
     requester = user_.serializeData(requester)
-    item.title = item.snapshot['entity:title']
+    item.title = item.snapshot['entity:title'] || transaction.snapshot.entity.title
     const image = item.snapshot['entity:image'] || (transaction.snapshot.entity && transaction.snapshot.entity.image)
     // Overriding transaction document ids by the ids' docs (owner, requester, etc.)
     // for the email ViewModel
@@ -144,3 +144,8 @@ const findMainUser = transaction => {
 const ownerIsActor = action => states[action.action].actor === 'owner'
 const OwnerIsSender = transaction => message => message.user === transaction.owner
 const ownerIsMessager = (owner, message) => message.user === owner._id
+
+const catchDeleteItems = err => {
+  if (err.statusCode === 404) return { snapshot: {} }
+  else throw err
+}
