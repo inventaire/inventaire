@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
+
 # Generate a pre-filtered dump of humans in Wikidata to ease development setup
 # cf https://github.com/inventaire/inventaire-deploy/blob/d280055/install_entities_search_engine#L24-L28
+
+which wikidata-filter > /dev/null || {
+  echo "requires to have https://www.npmjs.com/package/wikidata-filter installed, either globally or just in this repo"
+  echo "(it is not installed as a dev dependency as the use made of it it's not worth the subdependencies maintainance)"
+  exit 1
+}
 
 curl -s https://dumps.wikimedia.org/wikidatawiki/entities/latest-all.json.gz |
   gzip -d |

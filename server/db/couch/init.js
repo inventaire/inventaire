@@ -29,7 +29,7 @@ const init = () => {
   .catch(err => {
     if (err.message !== 'CouchDB name or password is incorrect') throw err
 
-    const context = _.pick(CONFIG.db, 'protocol', 'host', 'port', 'username', 'password')
+    const context = _.pick(CONFIG.db, 'protocol', 'hostname', 'port', 'username', 'password')
     // Avoid logging the password in plain text
     context.password = _.obfuscate(context.password)
     console.error(err.message, context)
