@@ -12,6 +12,7 @@
     "db-actions:increment-user-undelivered-emails-count": "./scripts/db_actions/increment_user_undelivered_emails_count.js",
     "db-actions:make-user-admin": "./scripts/db_actions/make_user_admin.js",
     "db-actions:stop-emails-to-address": "./scripts/db_actions/stop_emails_to_address.js",
+    "db-actions:delete-user": "./scripts/db_actions/delete_user.js",
     "create-dumps": "./scripts/dumps/prepare_dumps",
     "debug": "DEBUG=express:* node server/server.js",
     "delete-api-test-databases": "./tests/api/scripts/delete_databases",
