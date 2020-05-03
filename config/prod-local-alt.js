@@ -27,5 +27,8 @@ module.exports = {
     'inv:deduplicate': {
       run: true
     }
+  },
+  dataseed: {
+    enabled: false
   }
 }
