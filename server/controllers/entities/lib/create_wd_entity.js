@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
-const wdEdit = require('wikidata-edit')
+const wdEdit = __.require('lib', 'wikidata/edit')
 const wdOauth = require('./wikidata_oauth')
 const validateEntity = require('./validate_entity')
 const getEntityType = require('./get_entity_type')
@@ -13,7 +13,7 @@ const whitelistedEntityTypes = [ 'work', 'serie', 'human', 'publisher' ]
 module.exports = async params => {
   const { labels, claims, user, isAlreadyValidated } = params
   wdOauth.validate(user)
-  const oauth = wdOauth.getFullCredentials(user)
+  const credentials = wdOauth.getOauthCredentials(user)
 
   const entity = { labels, claims }
 
@@ -24,7 +24,7 @@ module.exports = async params => {
     validateWikidataCompliance(entity)
     return format(entity)
   })
-  .then(wdEdit({ oauth }, 'entity/create'))
+  .then(entity => wdEdit.entity.create(entity, { credentials }))
   .then(res => {
     const { entity: createdEntity } = res
     if (createdEntity == null) {

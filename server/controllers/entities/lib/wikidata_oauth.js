@@ -11,5 +11,7 @@ module.exports = {
     }
   },
 
-  getFullCredentials: user => Object.assign({}, wikidataOAuth, user.oauth.wikidata)
+  getOauthCredentials: user => ({
+    oauth: Object.assign({}, wikidataOAuth, user.oauth.wikidata)
+  })
 }

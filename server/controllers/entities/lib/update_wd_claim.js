@@ -4,19 +4,19 @@ const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const getWdEntity = __.require('data', 'wikidata/get_entity')
 const wdk = require('wikidata-sdk')
-const wdEdit = require('wikidata-edit')
+const wdEdit = __.require('lib', 'wikidata/edit')
 const wdOauth = require('./wikidata_oauth')
 const properties = require('./properties/properties_values_constraints')
 
-module.exports = async (user, id, property, oldVal, newVal) => {
+module.exports = async (user, id, property, oldValue, newValue) => {
   wdOauth.validate(user)
 
-  if ((properties[property].datatype === 'entity') && _.isInvEntityUri(newVal)) {
+  if ((properties[property].datatype === 'entity') && _.isInvEntityUri(newValue)) {
     throw error_.new("wikidata entities can't link to inventaire entities", 400)
   }
 
-  oldVal = dropPrefix(oldVal)
-  newVal = dropPrefix(newVal)
+  oldValue = dropPrefix(oldValue)
+  newValue = dropPrefix(newValue)
 
   const [ propertyPrefix, propertyId ] = property.split(':')
 
@@ -24,40 +24,27 @@ module.exports = async (user, id, property, oldVal, newVal) => {
     throw error_.newInvalid('property', propertyPrefix)
   }
 
-  const oauth = wdOauth.getFullCredentials(user)
+  const credentials = wdOauth.getOauthCredentials(user)
 
-  if (newVal) {
-    if (oldVal) {
-      return updateClaim(oauth, id, propertyId, oldVal, newVal)
+  if (newValue) {
+    if (oldValue) {
+      return wdEdit.claim.update({ id, property: propertyId, oldValue, newValue }, { credentials })
     } else {
-      return addClaim(oauth, id, propertyId, newVal)
+      return wdEdit.claim.create({ id, property: propertyId, value: newValue }, { credentials })
     }
   } else {
-    return removeClaim(oauth, id, propertyId, oldVal)
+    const guid = await getClaimGuid(id, propertyId, oldValue)
+    return wdEdit.claim.remove({ guid }, { credentials })
   }
 }
 
-const addClaim = (oauth, id, propertyId, newVal) => wdEdit({ oauth }, 'claim/add')(id, propertyId, newVal)
-
-const removeClaim = (oauth, id, propertyId, oldVal) => {
-  return getClaimGuid(id, propertyId, oldVal)
-  .then(guid => wdEdit({ oauth }, 'claim/remove')(guid))
-}
-
-const updateClaim = (oauth, id, propertyId, oldVal, newVal) => {
-  return removeClaim(oauth, id, propertyId, oldVal)
-  .then(() => addClaim(oauth, id, propertyId, newVal))
-}
-
-const getClaimGuid = (id, propertyId, oldVal) => {
-  return getWdEntity([ id ])
-  .then(entity => {
-    const propClaims = entity.claims[propertyId]
-    const simplifyPropClaims = wdk.simplify.propertyClaims(propClaims)
-    const oldValIndex = simplifyPropClaims.indexOf(oldVal)
-    const targetClaim = propClaims[oldValIndex]
-    return targetClaim.id
-  })
+const getClaimGuid = async (id, propertyId, oldVal) => {
+  const entity = await getWdEntity([ id ])
+  const propClaims = entity.claims[propertyId]
+  const simplifyPropClaims = wdk.simplify.propertyClaims(propClaims)
+  const oldValIndex = simplifyPropClaims.indexOf(oldVal)
+  const targetClaim = propClaims[oldValIndex]
+  return targetClaim.id
 }
 
 const dropPrefix = value => {

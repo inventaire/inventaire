@@ -61,5 +61,6 @@ module.exports = {
   post: req('post'),
   put: req('put'),
   delete: req('delete'),
-  head
+  head,
+  userAgent
 }
