@@ -22,7 +22,7 @@ module.exports = (req, res) => {
   const { _id: reqUserId } = req.user
   const { oauth_verifier: verifier, oauth_token: reqToken, redirect } = req.query
 
-  const step1 = verifier != null || reqToken != null
+  const step1 = !(verifier || reqToken)
 
   if (step1) {
     getStep1Token(redirect)
