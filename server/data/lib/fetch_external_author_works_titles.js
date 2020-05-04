@@ -27,7 +27,7 @@ const fetch = async (endpoint, query) => {
   const headers = { accept: 'application/sparql-results+json' }
   const url = base + escapedQuery
 
-  const { results } = await requests_.get({ url, headers })
+  const { results } = await requests_.get(url, { headers })
   return results.bindings.map(parseResult)
 }
 

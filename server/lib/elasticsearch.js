@@ -23,7 +23,7 @@ const buildSearcher = params => {
 
     const body = queryBodyBuilder(query, limit)
 
-    return requests_.post({ url: customUrl, body })
+    return requests_.post(customUrl, { body })
     .then(parseResponse)
     .catch(formatError)
     .catch(_.ErrorRethrow(`${index} ${type} search err`))

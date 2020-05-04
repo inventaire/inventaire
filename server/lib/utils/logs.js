@@ -88,23 +88,6 @@ module.exports = _ => {
         }
       }
       setInterval(counter, 5000)
-    },
-
-    startTimer: key => {
-      console.time(chalk.magenta(key))
-      // Make sure to return the non-formated key
-      return key
-    },
-
-    // To be used in promise chains
-    StartTimer: key => data => {
-      customLoggers.startTimer(key)
-      return data
-    },
-
-    EndTimer: key => data => {
-      console.timeEnd(chalk.magenta(key))
-      return data
     }
   }
 

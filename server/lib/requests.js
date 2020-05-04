@@ -1,59 +1,115 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const breq = require('bluereq')
+const assert_ = __.require('utils', 'assert_types')
+const fetch = require('node-fetch')
+const { magenta } = require('chalk')
 const { repository } = __.require('root', 'package.json')
 const userAgent = `${CONFIG.name} (${repository.url})`
+const { Agent: HttpAgent } = require('http')
+const { Agent: HttpsAgent } = require('https')
+const httpAgent = new HttpAgent({ keepAlive: true })
+const httpsAgent = new HttpsAgent({ keepAlive: true })
+// Using a custom agent to set keepAlive=true
+// https://nodejs.org/api/http.html#http_class_http_agent
+// https://github.com/bitinn/node-fetch#custom-agent
+const getAgent = ({ protocol }) => protocol === 'http:' ? httpAgent : httpsAgent
+
 let requestId = 0
 
-const req = verb => (url, options) => {
-  const key = startTimer(verb, url)
+const req = method => async (url, options = {}) => {
+  assert_.string(url)
+  assert_.object(options)
 
-  return breq[verb](mergeOptions(url, options))
-  .then(({ body }) => body)
-  .finally(_.EndTimer(key))
+  completeOptions(method, options)
+
+  const reqTimerKey = startReqTimer(method, url, options)
+  const res = await fetch(url, options)
+  endReqTimer(reqTimerKey)
+
+  const { status: statusCode } = res
+
+  // Always parse as text, even if JSON, as in case of an error in the JSON response
+  // (such as HTML being retunred instead of JSON), it allows to include the actual response
+  // in the error message
+  // It shouldn't have any performance cost, as that's what node-fetch does in the background anyway
+  const responseText = await res.text()
+
+  let body
+  if (options.headers.accept === 'application/json') {
+    try {
+      body = JSON.parse(responseText)
+    } catch (err) {
+      err.context = { url, options, statusCode, responseText }
+      throw err
+    }
+  } else {
+    body = responseText
+  }
+
+  if (statusCode >= 400) throw requestError(res, method, url, body)
+  else return body
 }
 
-const head = (url, options) => {
-  const key = startTimer('head', url)
-
-  return breq.head(mergeOptions(url, options))
-  .then(res => _.pick(res, [ 'statusCode', 'headers' ]))
-  .finally(_.EndTimer(key))
-}
-
-const baseOptions = {
-  headers: {
-    // Default to JSON
-    accept: 'application/json',
-    // A user agent is required by Wikimedia services
-    // (reject with a 403 error otherwise)
-    'user-agent': userAgent
+// Same but doesn't parse response
+const head = async (url, options = {}) => {
+  completeOptions('head', options)
+  const reqTimerKey = startReqTimer('head', url, options)
+  const { status, headers } = await fetch(url, options)
+  endReqTimer(reqTimerKey)
+  return {
+    statusCode: status,
+    headers: formatHeaders(headers.raw())
   }
 }
 
-// merge options to fit the 'request' lib interface
-// which is wrapped by bluereq
-const mergeOptions = (url, options = {}) => {
-  // accept to get the url in the options
-  if (_.isObject(url)) {
-    options = url
-    url = null
+const formatHeaders = headers => {
+  const flattenedHeaders = {}
+  Object.keys(headers).forEach(key => {
+    flattenedHeaders[key] = headers[key].join(';')
+  })
+  return flattenedHeaders
+}
+
+const completeOptions = (method, options) => {
+  options.method = method
+  options.headers = options.headers || {}
+  options.headers.accept = options.headers.accept || 'application/json'
+  // A user agent is required by Wikimedia services
+  // (reject with a 403 error otherwise)
+  options.headers['user-agent'] = userAgent
+
+  if (options.body && typeof options.body !== 'string') {
+    options.body = JSON.stringify(options.body)
+    options.headers['content-type'] = 'application/json'
   }
 
-  // If the url was in the options
-  // the url object will be overriden
-  return Object.assign({ url }, baseOptions, options)
+  options.timeout = options.timeout || 60 * 1000
+  options.compress = true
+  options.agent = getAgent
 }
 
 const basicAuthPattern = /\/\/\w+:[^@:]+@/
-const startTimer = (verb, url) => {
-  // url could be an object
-  url = JSON.stringify(url)
-    // Prevent logging Basic Auth credentials
-    .replace(basicAuthPattern, '//')
+const startReqTimer = (method, url, options) => {
+  // Prevent logging Basic Auth credentials
+  url = url.replace(basicAuthPattern, '//')
 
-  return _.startTimer(`${verb.toUpperCase()} ${url} [r${++requestId}]`)
+  let body = ' '
+  if (options && options.body) body += options.body
+
+  const reqTimerKey = magenta(`${method.toUpperCase()} ${url}${body} [r${++requestId}]`)
+  console.time(reqTimerKey)
+  return reqTimerKey
+}
+
+const endReqTimer = console.timeEnd
+
+const requestError = async (res, method, url, body) => {
+  const err = new Error('request error')
+  let resBody = await res.text()
+  if (resBody[0] === '{') resBody = JSON.parse(resBody)
+  err.statusCode = res.status
+  err.context = { method, url, reqBody: body, resBody }
+  return err
 }
 
 module.exports = {
