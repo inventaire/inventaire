@@ -39,8 +39,9 @@ module.exports = {
   authenticate: {
     localLogin: passport.authenticate('local-login'),
     localSignup: passport.authenticate('local-signup'),
-    resetPassword: passport.authenticate('token',
-      { failureRedirect: '/login/forgot-password?resetPasswordFail=true' }),
+    resetPassword: passport.authenticate('token', {
+      failureRedirect: '/login/forgot-password?resetPasswordFail=true'
+    }),
     basic: passport.authenticate('basic', { session: false })
   }
 }
