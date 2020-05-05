@@ -126,7 +126,9 @@ User.updatePassword = (user, newHash) => {
 User.setOauthTokens = (provider, data) => user => {
   assert_.string(provider)
   assert_.object(data)
-  if (!user.oauth) { user.oauth = {} }
+  assert_.string(data.token)
+  assert_.string(data.token_secret)
+  user.oauth = user.oauth || {}
   user.oauth[provider] = data
   return user
 }
