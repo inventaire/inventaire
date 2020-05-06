@@ -84,7 +84,8 @@ const _wikidataReverseClaims = async (property, value) => {
   const caseInsensitive = caseInsensitiveProperties.includes(property)
   const wdProp = unprefixify(property)
   _.log([ property, value ], 'reverse claim')
-  const results = await requests_.get(wdk.getReverseClaims(wdProp, value, { caseInsensitive }))
+  const url = wdk.getReverseClaims(wdProp, value, { caseInsensitive })
+  const results = await requests_.get(url)
   return wdk.simplifySparqlResults(results).map(prefixifyWd)
 }
 
