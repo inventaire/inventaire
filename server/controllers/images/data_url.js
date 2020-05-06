@@ -2,8 +2,8 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
-const breq = require('bluereq')
 const sanitize = __.require('lib', 'sanitize/sanitize')
+const fetch = require('node-fetch')
 
 const sanitization = {
   url: {}
@@ -22,16 +22,15 @@ module.exports = (req, res) => {
 
 // Set encoding as null to get the response as a buffer
 // see https://stackoverflow.com/a/17133012/3324977
-const getImageDataUrl = url => {
-  return breq.get({ url, encoding: null })
-  .then(res => {
-    const contentType = res.headers['content-type']
+const getImageDataUrl = async url => {
+  const res = await fetch(url)
+  const contentType = res.headers.get('content-type')
 
-    if (contentType.split('/')[0] !== 'image') {
-      throw error_.new('invalid content type', 400, { url, contentType })
-    }
+  if (contentType.split('/')[0] !== 'image') {
+    throw error_.new('invalid content type', 400, { url, contentType })
+  }
 
-    const buffer = Buffer.from(res.body).toString('base64')
-    return `data:${contentType};base64,${buffer}`
-  })
+  const body = await res.buffer()
+  const buffer = body.toString('base64')
+  return `data:${contentType};base64,${buffer}`
 }
