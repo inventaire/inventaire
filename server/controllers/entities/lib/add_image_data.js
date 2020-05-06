@@ -25,7 +25,7 @@ const findAnImage = entity => {
 
 const pickBestPic = (entity, commonsFilename, enwikiTitle, openLibraryId) => {
   return promises_.props({
-    wm: getSourcePromise(getThumbData, commonsFilename),
+    wm: getThumbData(commonsFilename),
     wp: getSourcePromise(getEnwikiImage, enwikiTitle),
     ol: getSourcePromise(getOpenLibraryCover, openLibraryId, entity.type)
   })
