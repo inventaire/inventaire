@@ -17,19 +17,18 @@ module.exports = params => {
   })
 }
 
-const getArticle = (lang, title, introOnly) => {
-  return requests_.get(apiQuery(lang, title, introOnly))
-  .then(res => {
-    const { pages } = res.query
-    if (pages == null) {
-      throw error_.new('invalid extract response', 500, { lang, title }, res.query)
-    }
+const getArticle = async (lang, title, introOnly) => {
+  const url = apiQuery(lang, title, introOnly)
+  const { query } = await requests_.get(url)
+  const { pages } = query
+  if (pages == null) {
+    throw error_.new('invalid extract response', 500, { lang, title }, query)
+  }
 
-    return {
-      extract: getCleanExtract(_.values(pages)),
-      url: `https://${lang}.wikipedia.org/wiki/${title}`
-    }
-  })
+  return {
+    extract: getCleanExtract(_.values(pages)),
+    url: `https://${lang}.wikipedia.org/wiki/${title}`
+  }
 }
 
 const apiQuery = (lang, title, introOnly) => {
