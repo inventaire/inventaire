@@ -8,7 +8,7 @@ const assert_ = __.require('utils', 'assert_types')
 const error_ = __.require('lib', 'error/error')
 const follow = require('cloudant-follow')
 const metaDb = __.require('level', 'get_sub_db')('meta', 'utf8')
-const breq = require('bluereq')
+const requests_ = __.require('lib', 'requests')
 const dbHost = CONFIG.db.fullHost()
 const { reset: resetFollow, delay: delayFollow } = CONFIG.db.follow
 
@@ -128,7 +128,7 @@ const SetLastSeq = dbName => {
 
 const buildKey = dbName => `${dbName}-last-seq`
 
-const getDbLastSeq = dbUrl => {
-  return breq.get(`${dbUrl}/_changes?limit=0&descending=true`)
-  .then(({ body }) => body.last_seq)
+const getDbLastSeq = async dbUrl => {
+  const { last_seq: lastSeq } = await requests_.get(`${dbUrl}/_changes?limit=0&descending=true`)
+  return lastSeq
 }

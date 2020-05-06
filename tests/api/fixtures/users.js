@@ -18,7 +18,7 @@ const lateRequire = () => {
 }
 setTimeout(lateRequire, 0)
 
-const connect = (endpoint, userData) => rawRequest('post', { url: endpoint, body: userData })
+const connect = (endpoint, userData) => rawRequest('post', endpoint, { body: userData })
 const signup = userData => connect(`${authEndpoint}?action=signup`, userData)
 const loginOrSignup = userData => {
   return connect(`${authEndpoint}?action=login`, userData)
@@ -107,7 +107,7 @@ const getTwoFriends = () => {
   })
 }
 
-const parseCookie = res => res.headers['set-cookie'].join(';')
+const parseCookie = res => res.headers['set-cookie']
 
 const setCustomData = customData => user => {
   delete customData.username

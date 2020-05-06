@@ -12,8 +12,7 @@ describe('auth:logout', () => {
     .then(user => {
       const { 'express:sess': sessionCookie, 'express:sess.sig': signatureCookie } = parseSessionCookies(user.cookie)
       parseEncodedJson(sessionCookie).should.equal(`{"passport":{"user":"${user._id}"}}`)
-      return rawRequest('post', {
-        url: endpoint,
+      return rawRequest('post', endpoint, {
         headers: {
           cookie: user.cookie
         }
@@ -25,10 +24,9 @@ describe('auth:logout', () => {
         } = getSessionCookies(res.headers['set-cookie'])
         parseEncodedJson(sessionCookieAfterLogout).should.equal('{"passport":{}}')
         signatureCookieAfterLogout.should.not.equal(signatureCookie)
-        return rawRequest('get', {
-          url: authentifiedEndpoint,
+        return rawRequest('get', authentifiedEndpoint, {
           headers: {
-            cookie: res.headers['set-cookie'].join(';')
+            cookie: res.headers['set-cookie']
           }
         })
       })

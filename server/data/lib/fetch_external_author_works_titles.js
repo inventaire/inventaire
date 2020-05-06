@@ -11,17 +11,16 @@ module.exports = (name, endpoint, getQuery) => id => {
   const key = `${name}:author-works-titles:${id}`
   return cache_.get({
     key,
-    fn: fetch.bind(null, endpoint, getQuery(id), id),
+    fn: makeRequest.bind(null, endpoint, getQuery(id), id),
     timespan
   })
-  // .timeout(20000)
   .catch(err => {
     _.error(err, `${name} error fetching ${id}`)
     return []
   })
 }
 
-const fetch = async (endpoint, query) => {
+const makeRequest = async (endpoint, query) => {
   const escapedQuery = qs.escape(query)
   const base = `${endpoint}?query=`
   const headers = { accept: 'application/sparql-results+json' }

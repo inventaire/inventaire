@@ -4,8 +4,8 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
-const breq = require('bluereq')
 const { tenMinutes } = __.require('lib', 'times')
+const requests_ = __.require('lib', 'requests')
 
 let lastToken
 let lastTokenExpirationTime = 0
@@ -15,26 +15,24 @@ const tokenExpired = () => Date.now() > (lastTokenExpirationTime - tenMinutes)
 const { username, password, authUrl, tenantName } = CONFIG.mediaStorage.swift
 
 // source: https://docs.openstack.org/keystone/pike/contributor/http-api.html#i-have-a-non-python-client
-const postParams = {
-  url: `${authUrl}/v3/auth/tokens`,
-  headers: { 'Content-Type': 'application/json' },
-  body: {
-    auth: {
-      identity: {
-        methods: [ 'password' ],
-        password: {
-          user: {
-            domain: { id: 'default' },
-            name: username,
-            password
-          }
-        }
-      },
-      scope: {
-        project: {
+const url = `${authUrl}/v3/auth/tokens`
+const reqHeaders = { 'content-type': 'application/json' }
+const body = {
+  auth: {
+    identity: {
+      methods: [ 'password' ],
+      password: {
+        user: {
           domain: { id: 'default' },
-          name: tenantName
+          name: username,
+          password
         }
+      }
+    },
+    scope: {
+      project: {
+        domain: { id: 'default' },
+        name: tenantName
       }
     }
   }
@@ -43,7 +41,7 @@ const postParams = {
 module.exports = async () => {
   if (lastToken && !tokenExpired()) return lastToken
 
-  return breq.post(postParams)
+  return requests_.post(url, { body, headers: reqHeaders, returnBodyOnly: false })
   .then(parseIdentificationRes)
   .catch(err => {
     err.serviceStatusCode = err.statusCode

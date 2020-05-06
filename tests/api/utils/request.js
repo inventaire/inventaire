@@ -3,13 +3,12 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const { wait } = __.require('lib', 'promises')
 const host = CONFIG.fullPublicHost()
-const breq = require('bluereq')
+const requests_ = __.require('lib', 'requests')
 const assert_ = __.require('utils', 'assert_types')
 
 const testServerAvailability = () => {
-  return breq.get(`${host}/api/tests`)
+  return requests_.get(`${host}/api/tests`, { timeout: 1000 })
   .then(() => _.success('tests server is ready'))
-  // .timeout(1000)
   .catch(err => {
     if ((err.code !== 'ECONNREFUSED') && (err.name !== 'TimeoutError')) throw err
     _.log('waiting for tests server', null, 'grey')
@@ -21,24 +20,25 @@ const testServerAvailability = () => {
 
 const waitForTestServer = testServerAvailability()
 
-const rawRequest = (method, breqParams) => {
+const rawRequest = async (method, url, requestParams) => {
   assert_.string(method)
-  return waitForTestServer
-  .then(() => breq[method](breqParams))
+  await waitForTestServer
+  requestParams.returnBodyOnly = false
+  return requests_[method](url, requestParams)
 }
 
-const request = (method, endpoint, body, cookie) => {
+const request = async (method, endpoint, body, cookie) => {
   assert_.string(method)
   assert_.string(endpoint)
+  const url = host + endpoint
   const data = {
-    url: host + endpoint,
     headers: { cookie }
   }
 
   if (body != null) data.body = body
 
-  return waitForTestServer
-  .then(() => breq[method](data).then(({ body }) => body))
+  await waitForTestServer
+  return requests_[method](url, data)
 }
 
 const customAuthReq = async (userPromise, method, endpoint, body) => {

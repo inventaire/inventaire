@@ -13,9 +13,8 @@ const randomString = __.require('lib', 'utils/random_string')
 
 describe('token:validation-email', () => {
   it('should reject requests without email', done => {
-    rawRequest('get', {
-      url: host + endpoint,
-      followRedirect: false
+    rawRequest('get', host + endpoint, {
+      redirect: 'manual'
     })
     .then(res => {
       res.headers.location.should.equal('/?validEmail=false')
@@ -26,9 +25,8 @@ describe('token:validation-email', () => {
 
   it('should reject requests without token', done => {
     const email = createUserEmail()
-    rawRequest('get', {
-      url: `${host}${endpoint}&email=${email}`,
-      followRedirect: false
+    rawRequest('get', `${host}${endpoint}&email=${email}`, {
+      redirect: 'manual'
     })
     .then(res => {
       res.headers.location.should.equal('/?validEmail=false')
@@ -43,9 +41,8 @@ describe('token:validation-email', () => {
     const userPromise = getUserGetter(email, false)()
     userPromise
     .then(() => {
-      rawRequest('get', {
-        url: `${host}${endpoint}&email=${email}&token=${token}`,
-        followRedirect: false
+      rawRequest('get', `${host}${endpoint}&email=${email}&token=${token}`, {
+        redirect: 'manual'
       })
       .then(res => {
         res.headers.location.should.equal('/?validEmail=false')
@@ -65,9 +62,8 @@ describe('token:validation-email', () => {
     })
     .then(Wait(100))
     .then(() => {
-      rawRequest('get', {
-        url: `${host}${endpoint}&email=${email}&token=${token}`,
-        followRedirect: false
+      rawRequest('get', `${host}${endpoint}&email=${email}&token=${token}`, {
+        redirect: 'manual'
       })
       .then(res => {
         res.headers.location.should.equal('/?validEmail=false')
@@ -77,21 +73,14 @@ describe('token:validation-email', () => {
     .catch(done)
   })
 
-  it('should reject if invalid token', done => {
+  it('should reject if invalid token', async () => {
     const email = createUserEmail()
     const token = randomString(32)
     const userPromise = getUserGetter(email, false)()
-    userPromise
-    .then(() => {
-      rawRequest('get', {
-        url: `${host}${endpoint}&email=${email}&token=${token}`,
-        followRedirect: false
-      })
-      .then(res => {
-        res.headers.location.should.equal('/?validEmail=false')
-        done()
-      })
+    await userPromise
+    const { headers } = await rawRequest('get', `${host}${endpoint}&email=${email}&token=${token}`, {
+      redirect: 'manual'
     })
-    .catch(done)
+    headers.location.should.equal('/?validEmail=false')
   })
 })

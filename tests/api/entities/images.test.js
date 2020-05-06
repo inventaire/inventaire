@@ -25,13 +25,9 @@ describe('entities:images', () => {
     })
   })
 
-  it('should redirect to the image if requested in options', done => {
+  it('should redirect to the image if requested in options', async () => {
     const url = `${host}/api/entities?action=images&uris=wd:Q535&redirect=true&width=32`
-    rawRequest('get', { url })
-    .then(res => {
-      res.headers['content-type'].should.equal('image/jpeg')
-      done()
-    })
-    .catch(done)
+    const { headers } = await rawRequest('get', url)
+    headers['content-type'].should.equal('image/jpeg')
   })
 })

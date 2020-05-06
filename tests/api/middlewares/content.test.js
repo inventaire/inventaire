@@ -1,72 +1,59 @@
 const CONFIG = require('config')
 require('should')
-// Using the request lib to have total control on the generated request content type
-const request = require('request')
+const fetch = require('node-fetch')
 const host = CONFIG.fullHost()
 
 describe('content', () => {
   describe('body-parser', () => {
-    it('should accept JSON with application/json content-type', done => makeRequest('application/json', done))
-
-    it('should accept JSON with application/application/csp-report content-type', done => makeRequest('application/csp-report', done))
-
-    it('should accept JSON with application/x-www-form-urlencoded content-type', done => makeRequest('application/x-www-form-urlencoded', done))
-
-    it('should reject url encoded bodies', done => {
-      const params = {
-        method: 'POST',
-        url: `${host}/api/tests`,
-        headers: {
-          'content-type': 'application/x-www-form-urlencoded'
-        },
-        body: 'bla=123'
-      }
-
-      return request(params, (err, res) => {
-        if (err) return console.error(err)
-        res.statusCode.should.equal(400)
-        JSON.parse(res.body).status_verbose.should.equal('invalid JSON body')
-        done()
-      })
+    it('should accept JSON with application/json content-type', async () => {
+      await makeRequest('application/json')
     })
 
-    it('should make an exception for /api/submit', done => {
-      const params = {
+    it('should accept JSON with application/application/csp-report content-type', async () => {
+      await makeRequest('application/csp-report')
+    })
+
+    it('should accept JSON with application/x-www-form-urlencoded content-type', async () => {
+      await makeRequest('application/x-www-form-urlencoded')
+    })
+
+    it('should reject url encoded bodies', async () => {
+      const res = await fetch(`${host}/api/tests`, {
         method: 'POST',
-        url: `${host}/api/submit?redirect=foo`,
+        body: 'bla=123',
         headers: {
           'content-type': 'application/x-www-form-urlencoded'
-        },
-        body: 'bla=123'
-      }
-
-      return request(params, (err, res) => {
-        if (err) return console.error(err)
-        res.statusCode.should.equal(302)
-        res.headers.location.should.equal('/foo')
-        done()
+        }
       })
+      res.status.should.equal(400)
+      const body = await res.json()
+      body.status_verbose.should.equal('invalid JSON body')
+    })
+
+    it('should make an exception for /api/submit', async () => {
+      const res = await fetch(`${host}/api/submit?redirect=foo`, {
+        method: 'POST',
+        body: 'bla=123',
+        redirect: 'manual',
+        headers: {
+          'content-type': 'application/x-www-form-urlencoded'
+        }
+      })
+      res.headers.get('location').should.equal(`${host}/foo`)
+      res.status.should.equal(302)
     })
   })
 })
 
-const makeRequest = (contentType, done) => {
-  const params = {
+const makeRequest = async contentType => {
+  const res = await fetch(`${host}/api/tests`, {
     method: 'POST',
-    url: `${host}/api/tests`,
+    body: JSON.stringify({ bla: 123 }),
     headers: {
       'content-type': contentType
-    },
-    body: JSON.stringify({ bla: 123 })
-  }
-
-  return request(params, (err, res) => {
-    if (err) {
-      done(err)
-    } else {
-      res.statusCode.should.equal(200)
-      JSON.parse(res.body).body.bla.should.equal(123)
-      done()
     }
   })
+  res.status.should.equal(200)
+  const body = await res.json()
+  body.body.bla.should.equal(123)
 }

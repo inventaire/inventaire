@@ -4,7 +4,7 @@ const { isNumber, isPlainObject, flatten, compact } = require('lodash')
 
 // Global conventions:
 // - all error objects should have a statusCode (mimicking HTTP status codes)
-//   this is already the case for errors rejected by bluereq and blue-cot
+//   this is already the case for errors rejected by the lib blue-cot and server/lib/requests
 
 module.exports = (err, filter, ...context) => {
   // numbers filters are used as HTTP codes

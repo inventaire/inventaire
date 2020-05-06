@@ -20,6 +20,9 @@ const req = method => async (url, options = {}) => {
   assert_.string(url)
   assert_.object(options)
 
+  const { returnBodyOnly = true } = options
+  delete options.returnBodyOnly
+
   completeOptions(method, options)
 
   const reqTimerKey = startReqTimer(method, url, options)
@@ -47,7 +50,13 @@ const req = method => async (url, options = {}) => {
   }
 
   if (statusCode >= 400) throw requestError(res, method, url, body)
-  else return body
+
+  if (returnBodyOnly) {
+    return body
+  } else {
+    const headers = formatHeaders(res.headers.raw())
+    return { statusCode, headers, body }
+  }
 }
 
 // Same but doesn't parse response
