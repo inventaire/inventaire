@@ -5,26 +5,23 @@ const wpBase = 'https://en.wikipedia.org/w/api.php'
 const apiBase = `${wpBase}?action=query&prop=pageimages&format=json&titles=`
 const error_ = __.require('lib', 'error/error')
 
-module.exports = title => {
+module.exports = async title => {
   title = _.fixedEncodeURIComponent(title)
   const url = `${apiBase}${title}`
 
-  return requests_.get(url)
-  .then(res => {
-    const { pages } = res.query
-    const page = _.values(pages)[0]
-    const source = _.get(page, 'thumbnail.source')
-    if (source) return parseThumbUrl(source)
-    else throw error_.notFound(title)
-  })
-  .then(url => ({
-    url,
+  const { query } = await requests_.get(url)
+  const { pages } = query
+  const page = _.values(pages)[0]
+  const source = _.get(page, 'thumbnail.source')
+  if (!source) throw error_.notFound(title)
+
+  return {
+    url: parseThumbUrl(source),
     credits: {
       text: 'English Wikipedia',
       url: `https://en.wikipedia.org/wiki/${title}`
     }
-  })
-  )
+  }
 }
 
 // using the thumb fully built URL instead of build the URL

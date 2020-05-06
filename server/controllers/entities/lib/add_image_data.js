@@ -7,12 +7,10 @@ const getOpenLibraryCover = __.require('data', 'openlibrary/cover')
 const { getAvatarsDataFromClaims } = require('./get_avatars_from_claims')
 const getCommonsFilenamesFromClaims = require('./get_commons_filenames_from_claims')
 
-module.exports = entity => {
-  return findAnImage(entity)
-  .then(data => {
-    entity.image = data
-    return entity
-  })
+module.exports = async entity => {
+  const data = await findAnImage(entity)
+  entity.image = data
+  return entity
 }
 
 const findAnImage = entity => {

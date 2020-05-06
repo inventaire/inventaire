@@ -19,12 +19,15 @@ module.exports = async (openLibraryId, entityType) => {
   if (!type) return null
 
   const url = coverByOlId(openLibraryId, type)
+  const credits = { text: 'OpenLibrary', url }
 
-  return checkCoverExistance(url)
-  .then(_.Log('open library url found'))
-  .then(url => ({
-    url,
-    credits: { text: 'OpenLibrary', url }
-  }))
-  .catch(_.ErrorRethrow('get openlibrary cover err'))
+  try {
+    await checkCoverExistance(url, 'image/jpeg')
+    _.log(url, 'open library url found')
+    return { url, credits }
+  } catch (err) {
+    if (err.statusCode === 404) return {}
+    _.error(err, 'get openlibrary cover err')
+    throw err
+  }
 }
