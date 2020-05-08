@@ -2,6 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const assert_ = __.require('utils', 'assert_types')
 const fetch = require('node-fetch')
+const error_ = __.require('lib', 'error/error')
 const { magenta } = require('chalk')
 const { repository } = __.require('root', 'package.json')
 const userAgent = `${CONFIG.name} (${repository.url})`
@@ -20,7 +21,7 @@ const req = method => async (url, options = {}) => {
   assert_.string(url)
   assert_.object(options)
 
-  const { returnBodyOnly = true } = options
+  const { returnBodyOnly = true, body: reqBody } = options
   delete options.returnBodyOnly
 
   completeOptions(method, options)
@@ -38,7 +39,7 @@ const req = method => async (url, options = {}) => {
   const responseText = await res.text()
 
   let body
-  if (options.headers.accept === 'application/json') {
+  if (options.headers.accept === 'application/json' && responseText[0] === '{') {
     try {
       body = JSON.parse(responseText)
     } catch (err) {
@@ -49,7 +50,11 @@ const req = method => async (url, options = {}) => {
     body = responseText
   }
 
-  if (statusCode >= 400) throw requestError(res, method, url, body)
+  if (statusCode >= 400) {
+    const err = error_.new('request error', statusCode, { method, url, reqBody })
+    err.body = body
+    throw err
+  }
 
   if (returnBodyOnly) {
     return body
@@ -111,15 +116,6 @@ const startReqTimer = (method, url, options) => {
 }
 
 const endReqTimer = console.timeEnd
-
-const requestError = async (res, method, url, body) => {
-  const err = new Error('request error')
-  let resBody = await res.text()
-  if (resBody[0] === '{') resBody = JSON.parse(resBody)
-  err.statusCode = res.status
-  err.context = { method, url, reqBody: body, resBody }
-  return err
-}
 
 module.exports = {
   get: req('get'),
