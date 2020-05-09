@@ -32,7 +32,7 @@ const addToWaitingList = (domain, id) => {
     lt: `${domain}:${id}::`
   })
   // TODO: refactor to delete in batch
-  .on('data', db.del)
+  .on('data', db.del.bind(db))
   .on('end', createNewWaiter.bind(null, domain, id))
 }
 
