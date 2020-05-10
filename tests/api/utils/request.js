@@ -20,11 +20,14 @@ const testServerAvailability = async () => {
 
 const waitForTestServer = testServerAvailability()
 
-const rawRequest = async (method, url, requestParams) => {
+const rawRequest = async (method, url, reqParams = {}) => {
   assert_.string(method)
   await waitForTestServer
-  requestParams.returnBodyOnly = false
-  return requests_[method](url, requestParams)
+  reqParams.returnBodyOnly = false
+  reqParams.redirect = 'manual'
+  reqParams.parseJson = false
+  if (url[0] === '/') url = `${host}${url}`
+  return requests_[method](url, reqParams)
 }
 
 const request = async (method, endpoint, body, cookie) => {
@@ -36,9 +39,15 @@ const request = async (method, endpoint, body, cookie) => {
   }
 
   if (body != null) data.body = body
-
   await waitForTestServer
-  return requests_[method](url, data)
+  try {
+    return requests_[method](url, data)
+  } catch (err) {
+    if (err.message === 'request error' && err.body && err.body.status_verbose) {
+      err.message = `${err.message}: ${err.body.status_verbose}`
+    }
+    throw err
+  }
 }
 
 const customAuthReq = async (userPromise, method, endpoint, body) => {

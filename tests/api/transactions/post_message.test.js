@@ -16,10 +16,10 @@ describe('transactions:post:message', () => {
 
   it('should reject without transaction', async () => {
     try {
-      const res2 = await authReq('post', endpoint, {
+      const res = await authReq('post', endpoint, {
         action: 'message'
       })
-      shouldNotGetHere(res2)
+      shouldNotGetHere(res)
     } catch (err) {
       rethrowShouldNotGetHereErrors(err)
       err.body.status_verbose.should.equal('missing parameter in body: transaction')

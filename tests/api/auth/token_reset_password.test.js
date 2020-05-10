@@ -46,9 +46,7 @@ describe('token:reset-password', () => {
   it('should reject random token', async () => {
     const email = createUserEmail()
     const token = randomString(32)
-    const { headers } = rawRequest('get', `${host}${endpoint}&email=${email}&token=${token}`, {
-      redirect: 'manual'
-    })
-    headers.location.should.equal('/login/forgot-password?resetPasswordFail=true')
+    const { headers } = rawRequest('get', `${endpoint}&email=${email}&token=${token}`)
+    headers.location.should.equal(`${host}/login/forgot-password?resetPasswordFail=true`)
   })
 })

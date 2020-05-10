@@ -1,83 +1,60 @@
 require('should')
-const { nonAuthReq, getUser } = require('../utils/utils')
+const { getUser } = require('../utils/utils')
+const { rawRequest } = require('../utils/request')
 const { createItem } = require('../fixtures/items')
 
 describe('feeds:get', () => {
-  it('should return a user RSS feed', done => {
-    getUser()
-    .then(user => {
-      const userId = user._id
-      return nonAuthReq('get', `/api/feeds?user=${userId}`)
-      .then(res => {
-        res.startsWith('<?xml').should.be.true()
-        done()
-      })
-    })
-    .catch(done)
+  it('should return a user RSS feed', async () => {
+    const user = await getUser()
+    const userId = user._id
+    const { body } = await rawRequest('get', `/api/feeds?user=${userId}`)
+    body.startsWith('<?xml').should.be.true()
   })
 
-  it('should return a user RSS feed when the user has an item', done => {
+  it('should return a user RSS feed when the user has an item', async () => {
     const userPromise = getUser()
     const itemPromise = createItem(userPromise)
 
-    Promise.all([
+    const [ user, item ] = await Promise.all([
       userPromise,
       itemPromise
     ])
-    .then(([ user, item ]) => {
-      const userId = user._id
-      return nonAuthReq('get', `/api/feeds?user=${userId}`)
-      .then(res => {
-        res.includes(item._id).should.be.true()
-        done()
-      })
-    })
-    .catch(done)
+    const userId = user._id
+    const { body } = await rawRequest('get', `/api/feeds?user=${userId}`)
+    body.includes(item._id).should.be.true()
   })
 
-  it('should not return private items when not authorized', done => {
+  it('should not return private items when not authorized', async () => {
     const userPromise = getUser()
     const itemAPromise = createItem(userPromise, { listing: 'private' })
     const itemBPromise = createItem(userPromise, { listing: 'network' })
 
-    Promise.all([
+    const [ user, itemA, itemB ] = await Promise.all([
       userPromise,
       itemAPromise,
       itemBPromise
     ])
-    .then(([ user, itemA, itemB ]) => {
-      const userId = user._id
-      return nonAuthReq('get', `/api/feeds?user=${userId}`)
-      .then(res => {
-        res.startsWith('<?xml').should.be.true()
-        res.includes(itemA._id).should.be.false()
-        res.includes(itemB._id).should.be.false()
-        done()
-      })
-    })
-    .catch(done)
+    const userId = user._id
+    const { body } = await rawRequest('get', `/api/feeds?user=${userId}`)
+    body.startsWith('<?xml').should.be.true()
+    body.includes(itemA._id).should.be.false()
+    body.includes(itemB._id).should.be.false()
   })
 
-  it('should return private items when authorized', done => {
+  it('should return private items when authorized', async () => {
     const userPromise = getUser()
     const itemAPromise = createItem(userPromise, { listing: 'private' })
     const itemBPromise = createItem(userPromise, { listing: 'network' })
 
-    Promise.all([
+    const [ user, itemA, itemB ] = await Promise.all([
       userPromise,
       itemAPromise,
       itemBPromise
     ])
-    .then(([ user, itemA, itemB ]) => {
-      const { _id: userId, readToken: token } = user
-      return nonAuthReq('get', `/api/feeds?user=${userId}&requester=${userId}&token=${token}`)
-      .then(res => {
-        res.startsWith('<?xml').should.be.true()
-        res.includes(itemA._id).should.be.true()
-        res.includes(itemB._id).should.be.true()
-        done()
-      })
-    })
-    .catch(done)
+    const { _id: userId, readToken: token } = user
+    const { body } = await rawRequest('get', `/api/feeds?user=${userId}&requester=${userId}&token=${token}`)
+    body.startsWith('<?xml').should.be.true()
+    body.includes(itemA._id).should.be.true()
+    body.includes(itemB._id).should.be.true()
   })
 })
