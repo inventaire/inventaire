@@ -68,7 +68,7 @@ const getStep1Token = redirect => {
     }
   }
   const headers = getOauthHeaders(reqData)
-  return requests_.post(step1Url, { headers })
+  return requests_.post(step1Url, { headers, parseJson: false })
 }
 
 const getStep3 = (reqUserId, verifier, reqToken) => {
@@ -80,7 +80,7 @@ const getStep3 = (reqUserId, verifier, reqToken) => {
     }
   }
   const headers = getOauthHeaders(reqData, { key: reqToken, secret: reqTokenSecret })
-  return requests_.post(step3Url, { headers })
+  return requests_.post(step3Url, { headers, parseJson: false })
   .finally(() => {
     delete reqTokenSecrets[reqUserId]
   })
@@ -89,10 +89,7 @@ const getStep3 = (reqUserId, verifier, reqToken) => {
 const getOauthHeaders = (reqData, tokenData) => {
   reqData.method = 'POST'
   const signature = oauth.authorize(reqData, tokenData)
-  const headers = oauth.toHeader(signature)
-  // Prevent the response to be parsed as JSON
-  headers.accept = 'text/plain'
-  return headers
+  return oauth.toHeader(signature)
 }
 
 const saveUserTokens = reqUserId => step3Res => {
