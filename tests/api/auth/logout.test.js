@@ -46,14 +46,15 @@ const parseSessionCookies = cookies => {
 }
 
 const getSessionCookies = cookiesArray => {
-  return cookiesArray
+  if (typeof cookiesArray === 'string') cookiesArray = cookiesArray.split(';')
+  const cookies = {}
+  cookiesArray
   .filter(cookie => cookie && cookie.startsWith('express:sess'))
-  .map(cookie => cookie.trim().split(';')[0])
-  .reduce((index, cookie) => {
-    const [ key, value ] = cookie.split('=')
-    index[key] = value
-    return index
-  }, {})
+  .forEach(cookie => {
+    const [ key, value ] = cookie.trim().split(';')[0].split('=')
+    cookies[key] = value
+  })
+  return cookies
 }
 
 const parseEncodedJson = base64Str => Buffer.from(base64Str, 'base64').toString()

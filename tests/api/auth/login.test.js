@@ -41,8 +41,8 @@ describe('auth:login', () => {
     .then(Wait(10))
     .then(user => nonAuthReq('post', endpoint, { username, password }))
     .catch(err => {
-      err.statusMessage.should.equal('Unauthorized')
-      // TODO serve better handdled error
+      err.statusCode.should.equal(401)
+      // TODO serve better handled errors
       // err.body.status_verbose.should.equal('unauthorized user')
       done()
     })

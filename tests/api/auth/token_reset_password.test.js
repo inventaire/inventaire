@@ -1,6 +1,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const host = CONFIG.fullHost()
+const host = CONFIG.fullPublicHost()
 require('should')
 const { nonAuthReq, undesiredRes } = require('../utils/utils')
 const { rawRequest } = require('../utils/request')
@@ -46,7 +46,7 @@ describe('token:reset-password', () => {
   it('should reject random token', async () => {
     const email = createUserEmail()
     const token = randomString(32)
-    const { headers } = rawRequest('get', `${endpoint}&email=${email}&token=${token}`)
+    const { headers } = await rawRequest('get', `${endpoint}&email=${email}&token=${token}`)
     headers.location.should.equal(`${host}/login/forgot-password?resetPasswordFail=true`)
   })
 })

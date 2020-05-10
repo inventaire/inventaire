@@ -10,7 +10,7 @@ const endpoint = '/api/users?action=by-ids'
 describe('users:by-ids', () => {
   it('should reject without id', async () => {
     try {
-      const res = await nonAuthReq('get', endpoint, {})
+      const res = await nonAuthReq('get', endpoint)
       shouldNotGetHere(res)
     } catch (err) {
       rethrowShouldNotGetHereErrors(err)
