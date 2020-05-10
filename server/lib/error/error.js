@@ -36,4 +36,8 @@ error_.catchNotFound = err => {
   if (!(err && err.notFound)) throw err
 }
 
+error_.addContextToStack = err => {
+  if (err.context) err.stack += `\n[Context] ${JSON.stringify(err.context)}`
+}
+
 Object.assign(error_, require('./pre_filled')(error_))

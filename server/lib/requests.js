@@ -3,6 +3,7 @@ const __ = CONFIG.universalPath
 const assert_ = __.require('utils', 'assert_types')
 const fetch = require('node-fetch')
 const error_ = __.require('lib', 'error/error')
+const { addContextToStack } = error_
 const { magenta } = require('chalk')
 const { repository } = __.require('root', 'package.json')
 const userAgent = `${CONFIG.name} (${repository.url})`
@@ -21,8 +22,10 @@ const req = method => async (url, options = {}) => {
   assert_.string(url)
   assert_.object(options)
 
-  const { returnBodyOnly = true, body: reqBody } = options
+  const { returnBodyOnly = true, parseJson = true, body: reqBody } = options
+  // Removing options that don't concern node-fetch
   delete options.returnBodyOnly
+  delete options.parseJson
 
   completeOptions(method, options)
 
@@ -39,20 +42,27 @@ const req = method => async (url, options = {}) => {
   const responseText = await res.text()
 
   let body
-  if (options.headers.accept === 'application/json' && responseText[0] === '{') {
+  if (parseJson) {
     try {
       body = JSON.parse(responseText)
     } catch (err) {
-      err.context = { url, options, statusCode, responseText }
-      throw err
+      // Some web services return errors with a different content-type
+      // Known case: CouchDB returns errors as plain text by default
+      // Let the error be raised as a request error instead of a JSON.parse error
+      if (statusCode < 400) {
+        err.context = { url, options, statusCode, responseText }
+        addContextToStack(err)
+        throw err
+      }
     }
   } else {
     body = responseText
   }
 
   if (statusCode >= 400) {
-    const err = error_.new('request error', statusCode, { method, url, reqBody })
+    const err = error_.new('request error', statusCode, { method, url, reqBody, statusCode, resBody: body })
     err.body = body
+    addContextToStack(err)
     throw err
   }
 
