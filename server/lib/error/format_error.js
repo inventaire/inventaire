@@ -1,6 +1,6 @@
 // Using minimal dependencies to avoid circular dependencies
 // as this is depended on by lib/error which is called very early
-const { isNumber, isPlainObject, flatten } = require('lodash')
+const { isNumber, isPlainObject, flatten, compact } = require('lodash')
 
 // Global conventions:
 // - all error objects should have a statusCode (mimicking HTTP status codes)
@@ -14,7 +14,7 @@ module.exports = (err, filter, ...context) => {
 
   // context arguments prefered format is a single object (possibly with data
   // the client can depend on) but there are still exceptions
-  context = flatten(context)
+  context = compact(flatten(context))
   if (context.length === 1 && isPlainObject(context[0])) {
     context = context[0]
   }
