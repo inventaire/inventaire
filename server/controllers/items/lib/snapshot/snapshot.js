@@ -20,6 +20,7 @@ const db = __.require('level', 'get_sub_db')('snapshot', 'json')
 const { formatBatchOps } = __.require('level', 'utils')
 const refreshSnapshot = require('./refresh_snapshot')
 const error_ = __.require('lib', 'error/error')
+const pTimeout = require('p-timeout')
 
 module.exports = {
   addToItem: async item => {
@@ -41,8 +42,15 @@ module.exports = {
 }
 
 const getSnapshot = (uri, preventLoop) => {
-  return db.get(uri)
-  .catch(error_.catchNotFound)
+  // Setting a timeout as it happened in the past that leveldb would hang without responding.
+  // This problem might have been fixed by updating leveldb dependencies,
+  // but in case this happens again, this timeout would save a good hour of debugging
+  // To be removed once this bug is long gone
+  return pTimeout(db.get(uri), 50000)
+  .catch(err => {
+    if (err.name === 'TimeoutError') _.error(err, `getSnapshot db.get(${uri}) TimeoutError`)
+    if (!(err.notFound || err.name === 'TimeoutError')) throw err
+  })
   .then(snapshot => {
     if (snapshot != null) return snapshot
 
