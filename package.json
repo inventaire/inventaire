@@ -96,7 +96,6 @@
   },
   "devDependencies": {
     "couchdb-backup": "^1.0.0",
-    "diff": "^2.2.1",
     "eslint": "^6.6.0",
     "eslint-config-standard": "^14.1.0",
     "eslint-plugin-import": "^2.18.2",
