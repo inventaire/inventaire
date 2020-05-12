@@ -30,7 +30,7 @@ const buildItemsRowsSequentially = (responseText, lang) => items => {
   const formatItemRow = FormatItemRow(lang)
 
   const sendNextBatch = async () => {
-    if (items.length === 0) return responseText
+    if (items.length === 0) return responseText.trim()
 
     // Using batches of 10 items to reduce stress on entities APIs
     const nextBatch = items.splice(0, 10)
