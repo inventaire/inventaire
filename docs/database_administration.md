@@ -76,5 +76,5 @@ cat updated_documents.ndjson | couchdb-bulk "$db_host/users" > update.success 2>
 
 # Check for conflicts
 ```sh
-cat responses | grep conflict
+grep conflict update.errors
 ```
