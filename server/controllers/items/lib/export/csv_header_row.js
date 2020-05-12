@@ -27,5 +27,7 @@ module.exports = [
   'Publisher label',
   'Item details',
   'Item notes',
+  'Item visibility',
+  'Item transaction',
   'Item created'
 ].join(',')

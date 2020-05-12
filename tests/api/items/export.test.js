@@ -40,6 +40,8 @@ describe('items:export', () => {
       itemRow['Item details'].should.equal(details)
       itemRow['Item notes'].should.equal(notes)
       itemRow['Item created'].should.equal(new Date(item.created).toISOString())
+      itemRow['Item visibility'].should.equal('public')
+      itemRow['Item transaction'].should.equal('inventorying')
     })
 
     it('should return a csv export of the requesting user', async () => {
