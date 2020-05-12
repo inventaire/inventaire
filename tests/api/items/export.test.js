@@ -39,6 +39,7 @@ describe('items:export', () => {
       const item = await createItem(user, { entity: edition.uri, details, notes })
       const res = await customAuthReq(user, 'get', endpoint)
       const { data, errors } = parse(res, { header: true })
+      // Checking that we generate standard CSV as validated by the papaparse lib
       errors.should.deepEqual([])
       const itemRow = data[0]
       itemRow['Item ID'].should.equal(item._id)
