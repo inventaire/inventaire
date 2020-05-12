@@ -1,5 +1,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
+const _ = __.require('builders', 'utils')
 const host = CONFIG.fullPublicHost()
 require('should')
 const { customAuthReq, getReservedUser } = __.require('apiTests', 'utils/utils')
@@ -11,16 +12,37 @@ const { parse } = require('papaparse')
 const endpoint = '/api/items?action=export&format=csv'
 const genresUris = [ 'wd:Q131539', 'wd:Q192782' ]
 const subjectUri = 'wd:Q18120925'
-const details = 'my details: \'Lorem?!#$ ipsum\' dolor; sit amet, consectetur "adipisicing" elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. (See also https://en.wikipedia.org/wiki/Lorem_ipsum).'
-const notes = 'some private notes'
 const generateUrl = path => `${host}${path}`
 const generateEntityUrl = uri => generateUrl(`/entity/${uri}`)
 const generateEntitiesUrls = uris => uris.map(generateEntityUrl).join(',')
+const user = Promise.resolve(getReservedUser())
+
+const reqAndParse = async itemId => {
+  const res = await customAuthReq(user, 'get', endpoint)
+  const { data, errors } = parse(res, { header: true })
+  // Checking that we generate standard CSV as validated by the papaparse lib
+  errors.should.deepEqual([])
+  return data.find(row => {
+    const dataItemId = _.last(row['Item URL'].split('/'))
+    return dataItemId === itemId
+  })
+}
 
 describe('items:export', () => {
   describe('csv', () => {
+    it('should return items data', async () => {
+      const details = 'my details: \'Lorem?!#$ ipsum\' dolor; sit amet, consectetur "adipisicing" elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. (See also https://en.wikipedia.org/wiki/Lorem_ipsum).'
+      const notes = 'some private notes'
+      const item = await createItem(user, { details, notes })
+
+      const itemRow = await reqAndParse(item._id)
+      itemRow['Item URL'].should.equal(generateUrl(`/items/${item._id}`))
+      itemRow['Item details'].should.equal(details)
+      itemRow['Item notes'].should.equal(notes)
+      itemRow['Item created'].should.equal(new Date(item.created).toISOString())
+    })
+
     it('should return a csv export of the requesting user', async () => {
-      const user = await getReservedUser()
       const edition = await createEditionWithWorkAuthorAndSerie()
       const publisher = await addPublisher(edition)
       const publisherLabel = parseLabel(publisher)
@@ -39,13 +61,9 @@ describe('items:export', () => {
       const authorUri = work.claims['wdt:P50'][0]
       const author = await getByUri(authorUri)
       const authorLabel = parseLabel(author)
-      const item = await createItem(user, { entity: edition.uri, details, notes })
-      const res = await customAuthReq(user, 'get', endpoint)
-      const { data, errors } = parse(res, { header: true })
-      // Checking that we generate standard CSV as validated by the papaparse lib
-      errors.should.deepEqual([])
-      const itemRow = data[0]
-      itemRow['Item URL'].should.equal(generateUrl(`/items/${item._id}`))
+      const item = await createItem(user, { entity: edition.uri })
+
+      const itemRow = await reqAndParse(item._id)
       itemRow['Edition URL'].should.equal(generateEntityUrl(item.entity))
       itemRow['ISBN-13'].should.equal('')
       itemRow['ISBN-10'].should.equal('')
@@ -71,9 +89,6 @@ describe('items:export', () => {
       itemRow['Subjects labels'].should.be.a.String()
       itemRow['Publisher URLs'].should.equal(generateEntityUrl(publisher.uri))
       itemRow['Publisher label'].should.equal(publisherLabel)
-      itemRow['Item details'].should.equal(details)
-      itemRow['Item notes'].should.equal(notes)
-      itemRow['Item created'].should.equal(new Date(item.created).toISOString())
     })
   })
 })
