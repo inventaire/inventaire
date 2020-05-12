@@ -19,3 +19,13 @@ Allows to take actions (typically, stop sending emails) when an email address ha
 ```sh
 npm run db-actions:increment-user-undelivered-emails-count <email address>
 ```
+
+### Delete user account
+Delete a user account in the same way a user could do, namely by also cleaning up other databases:
+* delete user items
+* delete notifications
+* leave groups
+* cancel ongoing transactions
+```sh
+npm run db-actions:delete-user <user id>
+```
