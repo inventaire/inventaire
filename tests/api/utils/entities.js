@@ -15,6 +15,8 @@ const entitiesUtils = module.exports = {
     .then(res => res.entities[uri])
   },
 
+  parseLabel: entity => Object.values(entity.labels)[0],
+
   deleteByUris: uris => {
     uris = _.forceArray(uris)
     return adminReq('post', '/api/entities?action=delete-by-uris', { uris })

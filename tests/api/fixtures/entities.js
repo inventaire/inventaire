@@ -6,7 +6,7 @@ const isbn_ = __.require('lib', 'isbn/isbn')
 const wdLang = require('wikidata-lang')
 const { getByUri, getByUris, addClaim } = require('../utils/entities')
 const faker = require('faker')
-const someImageHash = '00015893d54f5112b99b41b0dfd851f381798047'
+const someImageHash = 'aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd'
 
 const defaultEditionData = () => ({
   labels: {},
@@ -153,6 +153,8 @@ const addEntityClaim = (createFnName, property) => async subjectEntity => {
 
 API.addAuthor = addEntityClaim('createHuman', 'wdt:P50')
 API.addSerie = addEntityClaim('createSerie', 'wdt:P179')
+API.addPublisher = addEntityClaim('createPublisher', 'wdt:P123')
+API.addTranslator = addEntityClaim('createHuman', 'wdt:P655')
 
 const openLibraryTypeLetters = {
   edition: 'M',

@@ -172,6 +172,7 @@ module.exports = {
   email: { validate: validations.common.email },
   description: nonEmptyString,
   filter: whitelistedString,
+  format: whitelistedStrings,
   from: entityUri,
   generics,
   group: couchUuid,

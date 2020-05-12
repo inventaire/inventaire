@@ -13,7 +13,8 @@ module.exports = {
       'last-public': require('./last_public')
     },
     authentified: {
-      nearby: require('./nearby')
+      nearby: require('./nearby'),
+      export: require('./export')
     }
   }),
 

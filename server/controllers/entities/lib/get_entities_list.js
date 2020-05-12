@@ -4,6 +4,6 @@ const getEntitiesByUris = require('./get_entities_by_uris')
 // ex: getSomeUris.then(getEntitiesList)
 
 module.exports = async uris => {
-  if (uris == null) return []
+  if (uris == null || uris.length === 0) return []
   return getEntitiesByUris({ uris, list: true })
 }
