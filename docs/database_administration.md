@@ -30,12 +30,12 @@ curl "$db_host/users/_design/users/_view/byUsername" | jq '.rows[] | .doc' -c > 
 curl "$db_host/users/_design/users/_view/byUsername?include_docs=true" -d '{"keys":["foo","bar"]}' | jq '.rows[] | .doc' -c > documents.ndjson
 ```
 
-For more complex keys, curl alone can get painful, as CouchDB expects a valid JSON object. It could then be easier to use a tool such as [`couch-view-by-keys`](https://github.com/maxlath/couch-view-by-keys):
+For more complex keys, curl alone can get painful, as CouchDB expects a valid JSON object. It could then be easier to use a tool such as [`couchdb-view-by-keys`](https://github.com/maxlath/couchdb-view-by-keys) `>= v4`:
 ```sh
-# The same query as above with couch-view-by-keys. Notice that include_docs=true is the default now, and that we directly get NDJSON
-couch-view-by-keys "$db_host/users/_design/users/_view/byUsername" 'foo' 'bar' | jq '.doc' -c > documents.ndjson
+# The same query as above with couchdb-view-by-keys. Notice that include_docs=true is the default now, and that we directly get NDJSON
+couchdb-view-by-keys --docs "$db_host/users/_design/users/_view/byUsername" 'foo' 'bar' > documents.ndjson
 # This really shines when your keys get more complex: hereafter, we get all documents with the claims
-couch-view-by-keys "$db_host/entities/_design/entities/_view/byClaim" '["wdt:P31", "wd:Q5"]' | jq '.doc' -c > documents.ndjson
+couchdb-view-by-keys --docs "$db_host/entities/_design/entities/_view/byClaim" '["wdt:P31", "wd:Q5"]' > documents.ndjson
 ```
 
 ### 2 - apply transformation
