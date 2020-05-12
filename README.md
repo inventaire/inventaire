@@ -134,7 +134,11 @@ the app has a few core concepts:
 ![entities map](https://raw.githubusercontent.com/inventaire/entities-map/master/screenshots/entities-map-2.png)
 
 ## Contribute
-see [wiki](https://github.com/inventaire/inventaire/wiki) to get started, especially the [new contributors](https://github.com/inventaire/inventaire/wiki#new-contributors) section
+For code-related contributions, see the [repo wiki](https://github.com/inventaire/inventaire/wiki) to get started, especially the [new contributors](https://github.com/inventaire/inventaire/wiki#new-contributors) section.
+For a more general introduction to contribution, see [*How to contribute* on wiki.inventaire.io](https://wiki.inventaire.io/wiki/How-to-contribute).
+
+## Documentation
+see [docs](https://github.com/inventaire/inventaire/tree/master/docs/)
 
 ## API
 see wiki: [API](https://github.com/inventaire/inventaire/wiki/API)
