@@ -97,6 +97,7 @@ const getCoverUrl = edition => {
 }
 
 const getFirstValue = (entity, property) => {
+  if (!entity) return
   const propertyClaims = entity.claims[property]
   if (propertyClaims != null) return propertyClaims[0]
 }
