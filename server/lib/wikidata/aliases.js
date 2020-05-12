@@ -9,7 +9,6 @@ const typesAliases = module.exports = {
     'wd:Q19913602', // house name
     'wd:Q61002' // pseudonym
   ],
-
   series: [
     'wd:Q277759', // book series
     'wd:Q14406742', // comic book series
@@ -85,40 +84,32 @@ const typesAliases = module.exports = {
     'wd:Q13136' // reference work
   ],
   publishers: [
-    // publisher
-    'wd:Q2085381',
-    // book publishing company
-    'wd:Q1320047',
-    // comics publishing company
-    'wd:Q1114515',
-    // bandes dessinées publishing company
-    'wd:Q3279251'
+    'wd:Q2085381', // publisher
+    'wd:Q1320047', // book publishing company
+    'wd:Q1114515', // comics publishing company
+    'wd:Q3279251', // bandes dessinées publishing company
+    'wd:Q149985', // self-publishing company
+    'wd:Q1568650', // self-publishing (author == publisher)
+    'wd:Q19720188', // small publisher
+    'wd:Q19720190', // medium size publisher
+    'wd:Q19720191', // large publisher
+    'wd:Q45400320' // open access publisher
   ],
   // Types required to update the entity search engine
   // see server/controllers/entities/lib/update_search_engine
   collections: [
-    // editorial collection
-    'wd:Q20655472',
-    // monographic series
-    'wd:Q1700470'
+    'wd:Q20655472', // editorial collection
+    'wd:Q1700470' // monographic series
   ],
   movements: [
-    // cultural movement
-    'wd:Q2198855',
-    // literary movement
-    'wd:Q3326717',
-    // art movement
-    'wd:Q968159',
-    // literary group
-    'wd:Q23834194',
-    // philosophy
-    'wd:Q5891',
-    // social movement
-    'wd:Q49773',
-    // political movement
-    'wd:Q2738074'
+    'wd:Q2198855', // cultural movement
+    'wd:Q3326717', // literary movement
+    'wd:Q968159', // art movement
+    'wd:Q23834194', // literary group
+    'wd:Q5891', // philosophy
+    'wd:Q49773', // social movement
+    'wd:Q2738074' // political movement
   ],
-
   // Types to ignore (Category pages, homonymie, etc.)
   meta: [
     'wd:Q4167836', // Wikimedia category
