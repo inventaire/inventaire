@@ -26,16 +26,14 @@ module.exports = {
   addToItem: async item => {
     if (item.snapshot) return item
 
-    return getSnapshot(item.entity)
-    .then(snapshot => {
-      item.snapshot = snapshot
-      return item
-    })
-    .catch(err => {
+    try {
+      item.snapshot = await getSnapshot(item.entity)
+    } catch (err) {
       _.error(err, 'snapshot_.addToItem error')
       item.snapshot = item.snapshot || {}
-      return item
-    })
+    }
+
+    return item
   },
 
   batch: ops => db.batch(formatBatchOps(ops))
