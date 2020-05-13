@@ -97,15 +97,16 @@ describe('items:export', () => {
       const publisherLabel = parseLabel(publisher)
       const translator = await addTranslator(edition)
       const translatorLabel = parseLabel(translator)
-      addClaim(edition.uri, 'wdt:P1104', 10)
+      await addClaim(edition.uri, 'wdt:P1104', 10)
       const workUri = edition.claims['wdt:P629'][0]
       const work = await getByUri(workUri)
       const authorUri = work.claims['wdt:P50'][0]
       const serieUri = work.claims['wdt:P179'][0]
-      await addClaim(work.uri, 'wdt:P921', subjectUri)
-      // Do not add in parallel so that they are added in that order
-      await addClaim(work.uri, 'wdt:P136', genresUris[0])
-      await addClaim(work.uri, 'wdt:P136', genresUris[1])
+      await Promise.all([
+        addClaim(work.uri, 'wdt:P921', subjectUri),
+        addClaim(work.uri, 'wdt:P136', genresUris[0]),
+        addClaim(work.uri, 'wdt:P136', genresUris[1])
+      ])
       const item = await createItem(userPromise, { entity: edition.uri })
 
       const itemRow = await reqAndParse(item._id)
