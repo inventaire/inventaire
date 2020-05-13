@@ -17,10 +17,10 @@ const sanitization = {
 module.exports = (req, res) => {
   sanitize(req, res, sanitization)
   .then(({ reqUserId }) => {
-    const { lang } = req.user
+    const { language } = req.user
     const responseText = csvHeaderRow + '\n'
     return items_.byOwner(reqUserId)
-    .then(buildItemsRowsSequentially(responseText, lang))
+    .then(buildItemsRowsSequentially(responseText, language))
   })
   .then(responses_.SendText(res))
   .catch(error_.Handler(req, res))

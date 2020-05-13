@@ -5,7 +5,7 @@ const { getNames } = require('../snapshot/helpers')
 const host = CONFIG.fullPublicHost()
 
 module.exports = lang => item => {
-  const { _id, entity: uri, details, notes, created } = item
+  const { _id, entity: uri, details, notes, created, listing, transaction } = item
   const { edition, works, authors, translators, series, genres, subjects, publisher, editionLang, originalLangs } = item
   const { worksUris, authorsUris, seriesUris, genresUris, subjectsUris, publisherUri, translatorsUris } = item
 
@@ -32,8 +32,10 @@ module.exports = lang => item => {
 
   // Array order coupled with server/controllers/items/export.js header
   return [
-    _id,
-    uri,
+    generateUrl(`/items/${_id}`),
+    // NB: the item.entity might actually be a work for legacy reasons
+    // but that should be a minor occurrence
+    generateEntityUrl(uri),
     isbn13h,
     isbn10h,
     title,
@@ -42,24 +44,26 @@ module.exports = lang => item => {
     cover,
     pagesCount,
     editionLangLabel,
-    worksUris,
+    generateEntitiesUrls(worksUris),
     worksNames,
     originalLangsLabel,
     seriesOrdinales,
-    authorsUris,
+    generateEntitiesUrls(authorsUris),
     authorsNames,
     translatorsNames,
-    translatorsUris,
-    seriesUris,
+    generateEntitiesUrls(translatorsUris),
+    generateEntitiesUrls(seriesUris),
     seriesNames,
-    genresUris,
+    generateEntitiesUrls(genresUris),
     genresNames,
-    subjectsUris,
+    generateEntitiesUrls(subjectsUris),
     subjectsNames,
-    publisherUri,
+    generateEntityUrl(publisherUri),
     publisherName,
     details,
     notes,
+    listing,
+    transaction,
     createdTime
   ].map(formatField).join(',')
 }
@@ -93,11 +97,23 @@ const getTitle = (edition, works) => {
 
 const getCoverUrl = edition => {
   const coverPath = getFirstValue(edition, 'invp:P2')
-  if (coverPath) return `${host}/img/entities/${coverPath}`
+  if (coverPath) return generateUrl(`/img/entities/${coverPath}`)
 }
 
 const getFirstValue = (entity, property) => {
   if (!entity) return
   const propertyClaims = entity.claims[property]
   if (propertyClaims != null) return propertyClaims[0]
+}
+
+const generateUrl = path => {
+  if (path != null) return `${host}${path}`
+}
+
+const generateEntityUrl = uri => {
+  if (uri != null) return generateUrl(`/entity/${uri}`)
+}
+
+const generateEntitiesUrls = uris => {
+  if (uris && uris.length > 0) return uris.map(generateEntityUrl).join(',')
 }

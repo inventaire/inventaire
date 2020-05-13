@@ -42,7 +42,8 @@ const API = module.exports = {
     const userData = {
       username,
       password: '12345678',
-      email: `${username}@adomain.org`
+      email: `${username}@adomain.org`,
+      language: customData.language || 'en'
     }
 
     const cookie = await loginOrSignup(userData).then(parseCookie)
