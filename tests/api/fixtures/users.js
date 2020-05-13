@@ -65,10 +65,9 @@ const API = module.exports = {
     return user
   },
 
-  getRefreshedUser: async userPromise => {
-    // Also accept already resolved user docs with their cookie
-    if (userPromise._id && userPromise.cookie) userPromise = forcePromise(userPromise)
-    const user = await userPromise
+  getRefreshedUser: async user => {
+    // Allow to pass either a user doc or a user promise
+    user = await user
     // Get the up-to-date user doc while keeping the cookie
     // set by tests/api/fixtures/users
     return API.getUserWithCookie(user.cookie)
@@ -94,11 +93,6 @@ const API = module.exports = {
     twoFriendsPromise = twoFriendsPromise || getTwoFriends()
     return twoFriendsPromise
   }
-}
-
-const forcePromise = promise => {
-  if (promise instanceof Promise) return promise
-  else return Promise.resolve(promise)
 }
 
 const getTwoFriends = async () => {

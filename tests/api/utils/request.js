@@ -50,13 +50,11 @@ const request = async (method, endpoint, body, cookie) => {
   }
 }
 
-const customAuthReq = async (userPromise, method, endpoint, body) => {
-  assert_.object(userPromise)
+const customAuthReq = async (user, method, endpoint, body) => {
+  assert_.object(user)
   assert_.string(method)
   assert_.string(endpoint)
-  // Also accept already resolved user docs with their cookie
-  if (userPromise._id && userPromise.cookie) userPromise = Promise.resolve(userPromise)
-  const user = await userPromise
+  user = await user
   // Gets a user doc to which tests/api/fixtures/users added a cookie attribute
   return request(method, endpoint, body, user.cookie)
 }
