@@ -3,7 +3,8 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const host = CONFIG.fullPublicHost()
 require('should')
-const { customAuthReq, getReservedUser } = __.require('apiTests', 'utils/utils')
+const { rawCustomAuthReq } = __.require('apiTests', 'utils/request')
+const { getReservedUser } = __.require('apiTests', 'utils/utils')
 const { createItem } = require('../fixtures/items')
 const { createEdition, createWork, createEditionFromWorks, createEditionWithWorkAuthorAndSerie, addPublisher, addTranslator, someImageHash } = require('../fixtures/entities')
 const { createUser } = require('../fixtures/users')
@@ -18,8 +19,8 @@ const userPromise = getReservedUser()
 
 const reqAndParse = async (itemId, user) => {
   if (!user) { user = userPromise }
-  const res = await customAuthReq(user, 'get', endpoint)
-  const { data, errors } = parse(res, { header: true })
+  const { body } = await rawCustomAuthReq(user, 'get', endpoint)
+  const { data, errors } = parse(body, { header: true })
   // Checking that we generate standard CSV as validated by the papaparse lib
   errors.should.deepEqual([])
   return data.find(row => {
