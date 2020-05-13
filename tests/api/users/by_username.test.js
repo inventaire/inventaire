@@ -13,7 +13,7 @@ const endpoint = '/api/users?action=by-usernames'
 describe('users:by-usernames', () => {
   it('should reject without id', async () => {
     try {
-      const res = await nonAuthReq('get', endpoint, {})
+      const res = await nonAuthReq('get', endpoint)
       shouldNotGetHere(res)
     } catch (err) {
       rethrowShouldNotGetHereErrors(err)

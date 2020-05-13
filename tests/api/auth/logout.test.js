@@ -12,8 +12,7 @@ describe('auth:logout', () => {
     .then(user => {
       const { 'express:sess': sessionCookie, 'express:sess.sig': signatureCookie } = parseSessionCookies(user.cookie)
       parseEncodedJson(sessionCookie).should.equal(`{"passport":{"user":"${user._id}"}}`)
-      return rawRequest('post', {
-        url: endpoint,
+      return rawRequest('post', endpoint, {
         headers: {
           cookie: user.cookie
         }
@@ -25,10 +24,9 @@ describe('auth:logout', () => {
         } = getSessionCookies(res.headers['set-cookie'])
         parseEncodedJson(sessionCookieAfterLogout).should.equal('{"passport":{}}')
         signatureCookieAfterLogout.should.not.equal(signatureCookie)
-        return rawRequest('get', {
-          url: authentifiedEndpoint,
+        return rawRequest('get', authentifiedEndpoint, {
           headers: {
-            cookie: res.headers['set-cookie'].join(';')
+            cookie: res.headers['set-cookie']
           }
         })
       })
@@ -48,14 +46,15 @@ const parseSessionCookies = cookies => {
 }
 
 const getSessionCookies = cookiesArray => {
-  return cookiesArray
+  if (typeof cookiesArray === 'string') cookiesArray = cookiesArray.split(';')
+  const cookies = {}
+  cookiesArray
   .filter(cookie => cookie && cookie.startsWith('express:sess'))
-  .map(cookie => cookie.trim().split(';')[0])
-  .reduce((index, cookie) => {
-    const [ key, value ] = cookie.split('=')
-    index[key] = value
-    return index
-  }, {})
+  .forEach(cookie => {
+    const [ key, value ] = cookie.trim().split(';')[0].split('=')
+    cookies[key] = value
+  })
+  return cookies
 }
 
 const parseEncodedJson = base64Str => Buffer.from(base64Str, 'base64').toString()

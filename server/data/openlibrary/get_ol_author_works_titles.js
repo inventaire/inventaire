@@ -21,7 +21,7 @@ module.exports = olId => {
 const getAuthorWorksTitles = async olId => {
   _.info(olId, 'olId')
   const url = `${base}?author=${olId}`
-  const { docs } = await requests_.get({ url, headers })
+  const { docs } = await requests_.get(url, { headers })
   return docs.map(parseResult)
 }
 

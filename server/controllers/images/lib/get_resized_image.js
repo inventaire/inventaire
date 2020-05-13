@@ -3,28 +3,22 @@ const __ = CONFIG.universalPath
 const error_ = __.require('lib', 'error/error')
 const images_ = __.require('lib', 'images')
 const { maxSize } = CONFIG.mediaStorage.images
-const request = require('request')
+const fetch = require('node-fetch')
 const oneMB = 1024 ** 2
 
-module.exports = (req, res, url, dimensions) => {
+module.exports = async (req, res, url, dimensions) => {
   let [ width, height ] = dimensions ? dimensions.split('x') : [ maxSize, maxSize ];
   [ width, height ] = images_.applyLimits(width, height)
 
-  const reqStream = request(url)
+  const response = await fetch(url)
 
-  return reqStream
-  .on('response', onResponse(reqStream, url, width, height, req, res))
-  .on('error', error_.Handler(req, res))
-}
-
-const onResponse = (reqStream, url, width, height, req, res) => response => {
-  const { statusMessage } = response
-  let { statusCode } = response
-  const { 'content-type': contentType, 'content-length': contentLength } = response.headers
+  const { statusText } = response
+  let { status: statusCode } = response
+  const { 'content-type': contentType, 'content-length': contentLength } = response.headers.raw()
 
   let errMessage
   if (statusCode >= 400) {
-    errMessage = `Remote response: ${statusCode} ${statusMessage}`
+    errMessage = `Remote response: ${statusCode} ${statusText}`
   } else if (!validImageContentType.test(contentType)) {
     errMessage = `invalid image content-type: ${contentType}`
   } else if (contentLength > (10 * oneMB)) {
@@ -37,11 +31,11 @@ const onResponse = (reqStream, url, width, height, req, res) => response => {
     statusCode = statusCode === 404 ? 404 : 400
     const err = error_.new(errMessage, statusCode, context)
     err.privateContext = url
-    reqStream.emit('error', err)
+    throw err
   } else {
     res.header('Content-Type', 'image/jpeg')
     res.header('Cache-Control', 'immutable')
-    return resizeFromStream(reqStream, width, height, req, res)
+    return resizeFromStream(response.body, width, height, req, res)
   }
 }
 
@@ -50,7 +44,7 @@ const onResponse = (reqStream, url, width, height, req, res) => response => {
 // Ignore charset instructions (known case: image/jpeg;charset=UTF-8)
 const validImageContentType = /^(image\/[+\w]+|application\/octet-stream)/
 
-const resizeFromStream = (reqStream, width, height, req, res) => {
+const resizeFromStream = (imageStream, width, height, req, res) => {
   let alreadySent = false
 
   const handleBufferError = buf => {
@@ -59,7 +53,7 @@ const resizeFromStream = (reqStream, width, height, req, res) => {
     alreadySent = true
   }
 
-  return images_.shrinkAndFormatStream(reqStream, width, height)
+  return images_.shrinkAndFormatStream(imageStream, width, height)
   .stream((err, stdout, stderr) => {
     if (err != null) return error_.handler(req, res, err)
     stdout.on('error', handleBufferError)

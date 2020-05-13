@@ -1,11 +1,14 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
+const assert_ = __.require('utils', 'assert_types')
 const { nonAuthReq, authReq, adminReq } = require('./utils')
 
 const entitiesUtils = module.exports = {
   getByUris: (uris, relatives) => {
-    if (_.isArray(uris)) { uris = uris.join('|') }
+    uris = _.forceArray(uris)
+    assert_.strings(uris)
+    uris = uris.join('|')
     const url = _.buildPath('/api/entities', { action: 'by-uris', uris, relatives })
     return nonAuthReq('get', url)
   },
@@ -19,16 +22,20 @@ const entitiesUtils = module.exports = {
 
   deleteByUris: uris => {
     uris = _.forceArray(uris)
+    assert_.strings(uris)
     return adminReq('post', '/api/entities?action=delete-by-uris', { uris })
   },
 
   merge: (fromUri, toUri) => {
+    assert_.string(fromUri)
+    assert_.string(toUri)
     fromUri = normalizeUri(fromUri)
     toUri = normalizeUri(toUri)
     return adminReq('put', '/api/entities?action=merge', { from: fromUri, to: toUri })
   },
 
   revertMerge: fromUri => {
+    assert_.string(fromUri)
     fromUri = normalizeUri(fromUri)
     return adminReq('put', '/api/entities?action=revert-merge', { from: fromUri })
   },

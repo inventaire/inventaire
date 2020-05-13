@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
 const { getUser, getUserB, authReq, customAuthReq } = __.require('apiTests', 'utils/utils')
-const { Wait } = __.require('lib', 'promises')
+const { wait } = __.require('lib', 'promises')
 const { createItem } = require('./items')
 const { addAuthor } = require('./entities')
 const { getByUri: getEntityByUri } = require('../utils/entities')
@@ -32,11 +32,9 @@ module.exports = {
   }
 }
 
-const addAuthorToItemEditionWork = item => {
-  return getEntityByUri(item.entity)
-  .then(edition => {
-    const workUri = edition.claims['wdt:P629'][0]
-    return addAuthor(workUri)
-  })
-  .then(Wait(1000))
+const addAuthorToItemEditionWork = async item => {
+  const edition = await getEntityByUri(item.entity)
+  const workUri = edition.claims['wdt:P629'][0]
+  await addAuthor(workUri)
+  await wait(1000)
 }

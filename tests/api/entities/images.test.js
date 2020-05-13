@@ -2,7 +2,9 @@ const CONFIG = require('config')
 require('should')
 const { nonAuthReq, undesiredRes } = require('../utils/utils')
 const { rawRequest } = require('../utils/request')
-const host = CONFIG.fullHost()
+const host = CONFIG.fullPublicHost()
+const qs = require('querystring')
+const encodedCommonsUrlChunk = qs.escape('https://commons.wikimedia.org/wiki/Special:FilePath/')
 
 describe('entities:images', () => {
   it('should return an array of images associated with the passed uri', done => {
@@ -25,13 +27,11 @@ describe('entities:images', () => {
     })
   })
 
-  it('should redirect to the image if requested in options', done => {
-    const url = `${host}/api/entities?action=images&uris=wd:Q535&redirect=true&width=32`
-    rawRequest('get', { url })
-    .then(res => {
-      res.headers['content-type'].should.equal('image/jpeg')
-      done()
-    })
-    .catch(done)
+  it('should redirect to the image if requested in options', async () => {
+    const url = '/api/entities?action=images&uris=wd:Q535&redirect=true&width=32'
+    const { statusCode, headers } = await rawRequest('get', url)
+    statusCode.should.equal(302)
+    headers.location.should.startWith(`${host}/img/remote/32x1600/`)
+    headers.location.should.containEql(`href=${encodedCommonsUrlChunk}`)
   })
 })

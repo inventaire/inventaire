@@ -4,14 +4,14 @@ const _ = __.require('builders', 'utils')
 
 module.exports = {
   all: (req, res, next) => {
-    // _.log req.headers, 'headers'
+    // _.log(req.headers, 'headers')
 
     // useful to see text/plain bodys
     if (isPlainText(req)) {
       rawBody(req, res, next)
     } else {
-      // _.log req.query, 'query'
-      // _.log req.body, 'body'
+      // _.log(req.query, 'query')
+      // _.log(req.body, 'body')
       res.json({ ok: true, method: req.method, body: req.body })
     }
   }
@@ -19,7 +19,7 @@ module.exports = {
 
 const isPlainText = req => req.headers['content-type'] === 'text/plain'
 
-// overpassing the bodyParser middleware
+// Overpassing the bodyParser middleware
 // as it handles json only
 // cf http://stackoverflow.com/questions/22143105/node-js-express-express-json-and-express-urlencoded-with-form-submit
 const rawBody = (req, res, next) => {

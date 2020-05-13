@@ -5,13 +5,6 @@ const requests_ = __.require('lib', 'requests')
 const { wait } = __.require('lib', 'promises')
 const error_ = __.require('lib', 'error/error')
 const wdk = require('wikidata-sdk')
-const requestOptions = {
-  headers: {
-    // Required to avoid getting a 403
-    // See https://meta.wikimedia.org/wiki/User-Agent_policy
-    'user-agent': CONFIG.name
-  }
-}
 
 // Wikidata Query Service limits to 5 concurrent requests per IP
 // see https://www.mediawiki.org/wiki/Wikidata_Query_Service/User_Manual#Query_limits
@@ -50,10 +43,9 @@ const makeRequest = url => {
 
     waiting -= 1
     ongoing += 1
-    return requests_.get(url, requestOptions)
-    .then(wdk.simplifySparqlResults)
     // Don't let a query block the queue more than 30 seconds
-    // .timeout(30000)
+    return requests_.get(url, { timeout: 30000 })
+    .then(wdk.simplifySparqlResults)
     .finally(() => {
       ongoing -= 1
       logStats()

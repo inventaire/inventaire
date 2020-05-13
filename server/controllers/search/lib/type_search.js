@@ -19,6 +19,6 @@ module.exports = (types, search, limit = 20) => {
 
   const body = queryBodyBuilder(search, limit)
 
-  return requests_.post({ url, body })
+  return requests_.post(url, { body })
   .catch(formatError)
 }

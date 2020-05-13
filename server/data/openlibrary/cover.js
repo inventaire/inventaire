@@ -1,9 +1,7 @@
 // a service to know if a cover is available
 // could actually be turned into a generalist 'image-check' service
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const checkCoverExistance = require('./check_cover_existance')
-
+const requests_ = __.require('lib', 'requests')
 const { coverByOlId } = require('./api')
 
 const keyByType = {
@@ -19,12 +17,17 @@ module.exports = async (openLibraryId, entityType) => {
   if (!type) return null
 
   const url = coverByOlId(openLibraryId, type)
+  const credits = { text: 'OpenLibrary', url }
 
-  return checkCoverExistance(url)
-  .then(_.Log('open library url found'))
-  .then(url => ({
-    url,
-    credits: { text: 'OpenLibrary', url }
-  }))
-  .catch(_.ErrorRethrow('get openlibrary cover err'))
+  const coverExists = await checkCoverExistance(url)
+  if (coverExists) return { url, credits }
+  else return {}
+}
+
+const checkCoverExistance = async (url, expectedContentType) => {
+  // The default=false flag triggers a 404 response if the cover is missing
+  // instead of a 200 response with a single-pixel image
+  // See https://openlibrary.org/dev/docs/api/covers
+  const { statusCode } = await requests_.head(`${url}?default=false`)
+  return statusCode === 200
 }

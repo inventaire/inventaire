@@ -1,10 +1,10 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const host = CONFIG.fullHost()
+const host = CONFIG.fullPublicHost()
 require('should')
 const { getUserGetter } = require('../utils/utils')
 const { rawRequest } = require('../utils/request')
-const { Wait } = __.require('lib', 'promises')
+const { wait } = __.require('lib', 'promises')
 const { createUserEmail } = require('../fixtures/users')
 const { BasicUpdater } = __.require('lib', 'doc_updates')
 const db = __.require('couch', 'base')('users')
@@ -12,86 +12,41 @@ const endpoint = '/api/token?action=validation-email'
 const randomString = __.require('lib', 'utils/random_string')
 
 describe('token:validation-email', () => {
-  it('should reject requests without email', done => {
-    rawRequest('get', {
-      url: host + endpoint,
-      followRedirect: false
-    })
-    .then(res => {
-      res.headers.location.should.equal('/?validEmail=false')
-      done()
-    })
-    .catch(done)
+  it('should reject requests without email', async () => {
+    const { headers } = await rawRequest('get', host + endpoint)
+    headers.location.should.equal(`${host}/?validEmail=false`)
   })
 
-  it('should reject requests without token', done => {
+  it('should reject requests without token', async () => {
     const email = createUserEmail()
-    rawRequest('get', {
-      url: `${host}${endpoint}&email=${email}`,
-      followRedirect: false
-    })
-    .then(res => {
-      res.headers.location.should.equal('/?validEmail=false')
-      done()
-    })
-    .catch(done)
+    const { headers } = await rawRequest('get', `${host}${endpoint}&email=${email}`)
+    headers.location.should.equal(`${host}/?validEmail=false`)
   })
 
-  it('should reject if token is too short', done => {
+  it('should reject if token is too short', async () => {
     const email = createUserEmail()
     const token = randomString(31)
-    const userPromise = getUserGetter(email, false)()
-    userPromise
-    .then(() => {
-      rawRequest('get', {
-        url: `${host}${endpoint}&email=${email}&token=${token}`,
-        followRedirect: false
-      })
-      .then(res => {
-        res.headers.location.should.equal('/?validEmail=false')
-        done()
-      })
-    })
-    .catch(done)
+    await getUserGetter(email, false)()
+    const { headers } = await rawRequest('get', `${host}${endpoint}&email=${email}&token=${token}`)
+    headers.location.should.equal(`${host}/?validEmail=false`)
   })
 
-  it('should reject if account is already validated', done => {
+  it('should reject if account is already validated', async () => {
+    const email = createUserEmail()
+    const token = randomString(32)
+    const user = await getUserGetter(email, false)()
+    await db.update(user._id, BasicUpdater('validEmail', true))
+    await wait(100)
+    const { headers } = await rawRequest('get', `${host}${endpoint}&email=${email}&token=${token}`)
+    headers.location.should.equal(`${host}/?validEmail=false`)
+  })
+
+  it('should reject if invalid token', async () => {
     const email = createUserEmail()
     const token = randomString(32)
     const userPromise = getUserGetter(email, false)()
-    userPromise
-    .then(user => {
-      db.update(user._id, BasicUpdater('validEmail', true))
-    })
-    .then(Wait(100))
-    .then(() => {
-      rawRequest('get', {
-        url: `${host}${endpoint}&email=${email}&token=${token}`,
-        followRedirect: false
-      })
-      .then(res => {
-        res.headers.location.should.equal('/?validEmail=false')
-        done()
-      })
-    })
-    .catch(done)
-  })
-
-  it('should reject if invalid token', done => {
-    const email = createUserEmail()
-    const token = randomString(32)
-    const userPromise = getUserGetter(email, false)()
-    userPromise
-    .then(() => {
-      rawRequest('get', {
-        url: `${host}${endpoint}&email=${email}&token=${token}`,
-        followRedirect: false
-      })
-      .then(res => {
-        res.headers.location.should.equal('/?validEmail=false')
-        done()
-      })
-    })
-    .catch(done)
+    await userPromise
+    const { headers } = await rawRequest('get', `${host}${endpoint}&email=${email}&token=${token}`)
+    headers.location.should.equal(`${host}/?validEmail=false`)
   })
 })

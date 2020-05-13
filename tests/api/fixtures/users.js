@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
-const { tap } = __.require('lib', 'promises')
+const assert_ = __.require('utils', 'assert_types')
 const host = CONFIG.fullHost()
 const authEndpoint = `${host}/api/auth`
 const faker = require('faker')
@@ -18,7 +18,7 @@ const lateRequire = () => {
 }
 setTimeout(lateRequire, 0)
 
-const connect = (endpoint, userData) => rawRequest('post', { url: endpoint, body: userData })
+const connect = (endpoint, userData) => rawRequest('post', endpoint, { body: userData })
 const signup = userData => connect(`${authEndpoint}?action=signup`, userData)
 const loginOrSignup = userData => {
   return connect(`${authEndpoint}?action=login`, userData)
@@ -37,7 +37,7 @@ const API = module.exports = {
     })
   },
 
-  createUser: (customData = {}) => {
+  createUser: async (customData = {}) => {
     const username = customData.username || API.createUsername()
     const userData = {
       username,
@@ -45,30 +45,29 @@ const API = module.exports = {
       email: `${username}@adomain.org`
     }
 
-    return loginOrSignup(userData)
-    .then(parseCookie)
-    .then(API.getUserWithCookie)
-    .then(tap(setCustomData(customData)))
-    .then(refreshUser)
+    const cookie = await loginOrSignup(userData).then(parseCookie)
+    assert_.string(cookie)
+    const user = await API.getUserWithCookie(cookie)
+    await setCustomData(user, customData)
+    return refreshUser(cookie)
   },
 
-  createAdminUser: data => {
-    return API.createUser(data)
-    .then(tap(user => makeUserAdmin(user._id)))
+  createAdminUser: async data => {
+    const user = await API.createUser(data)
+    await makeUserAdmin(user._id)
+    return user
   },
 
-  getUserWithCookie: cookie => {
-    return request('get', '/api/user', null, cookie)
-    .then(user => {
-      user.cookie = cookie
-      return user
-    })
+  getUserWithCookie: async cookie => {
+    const user = await request('get', '/api/user', null, cookie)
+    user.cookie = cookie
+    assert_.string(user.cookie)
+    return user
   },
 
-  getRefreshedUser: async userPromise => {
-    // Also accept already resolved user docs with their cookie
-    if (userPromise._id && userPromise.cookie) userPromise = Promise.resolve(userPromise)
-    const user = await userPromise
+  getRefreshedUser: async user => {
+    // Allow to pass either a user doc or a user promise
+    user = await user
     // Get the up-to-date user doc while keeping the cookie
     // set by tests/api/fixtures/users
     return API.getUserWithCookie(user.cookie)
@@ -82,12 +81,12 @@ const API = module.exports = {
 
   createUserEmail: () => faker.internet.email(),
 
-  getUsersWithoutRelation: () => {
-    return Promise.all([
+  getUsersWithoutRelation: async () => {
+    const [ userA, userB ] = await Promise.all([
       getUser(),
       getReservedUser()
     ])
-    .then(([ userA, userB ]) => ({ userA, userB }))
+    return { userA, userB }
   },
 
   getTwoFriends: () => {
@@ -96,20 +95,18 @@ const API = module.exports = {
   }
 }
 
-const getTwoFriends = () => {
-  return Promise.all([
+const getTwoFriends = async () => {
+  const [ userA, userB ] = await Promise.all([
     getUser(),
     getReservedUser()
   ])
-  .then(([ userA, userB ]) => {
-    return makeFriends(userA, userB)
-    .then(() => [ userA, userB ])
-  })
+  await makeFriends(userA, userB)
+  return [ userA, userB ]
 }
 
-const parseCookie = res => res.headers['set-cookie'].join(';')
+const parseCookie = res => res.headers['set-cookie']
 
-const setCustomData = customData => user => {
+const setCustomData = (user, customData) => {
   delete customData.username
 
   // Make updates sequentially to avoid update conflicts
@@ -128,4 +125,4 @@ const setUserAttribute = (user, attribute, value) => {
   return request('put', '/api/user', { attribute, value }, user.cookie)
 }
 
-const refreshUser = user => API.getUserWithCookie(user.cookie)
+const refreshUser = API.getUserWithCookie

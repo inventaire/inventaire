@@ -28,7 +28,7 @@ module.exports = () => {
   const requestUpdate = () => {
     let body
     [ body, urisPerType ] = [ urisPerType, {} ]
-    return requests_.post({ url: host, body })
+    return requests_.post(host, { body })
     .catch(err => {
       if (err.message.match('ECONNREFUSED')) {
         return _.warn('entities search engine updater is offline')
