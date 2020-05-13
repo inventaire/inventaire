@@ -5,7 +5,7 @@ const host = CONFIG.fullPublicHost()
 require('should')
 const { customAuthReq, getReservedUser } = __.require('apiTests', 'utils/utils')
 const { createItem } = require('../fixtures/items')
-const { createEditionWithWorkAuthorAndSerie, addPublisher, addTranslator } = require('../fixtures/entities')
+const { createEditionWithWorkAuthorAndSerie, addPublisher, addTranslator, someImageHash } = require('../fixtures/entities')
 const { getByUri, addClaim, parseLabel } = require('../utils/entities')
 const { parse } = require('papaparse')
 
@@ -14,7 +14,7 @@ const genresUris = [ 'wd:Q131539', 'wd:Q192782' ]
 const subjectUri = 'wd:Q18120925'
 const generateUrl = path => `${host}${path}`
 const generateEntityUrl = uri => generateUrl(`/entity/${uri}`)
-const generateEntitiesUrls = uris => uris.map(generateEntityUrl).join(',')
+const generateEntitiesUrls = uris => uris.map(generateEntityUrl)
 const user = Promise.resolve(getReservedUser())
 
 const reqAndParse = async itemId => {
@@ -44,22 +44,11 @@ describe('items:export', () => {
       itemRow['Item transaction'].should.equal('inventorying')
     })
 
-    it('should return a csv export of the requesting user', async () => {
+    it('should return required edition, works and authors data', async () => {
       const edition = await createEditionWithWorkAuthorAndSerie()
-      const publisher = await addPublisher(edition)
-      const publisherLabel = parseLabel(publisher)
-      const translator = await addTranslator(edition)
-      const translatorLabel = parseLabel(translator)
-      await addClaim(edition.uri, 'wdt:P1104', 10)
       const workUri = edition.claims['wdt:P629'][0]
       const work = await getByUri(workUri)
       const workLabel = parseLabel(work)
-      const serieUri = work.claims['wdt:P179'][0]
-      await addClaim(work.uri, 'wdt:P921', subjectUri)
-      await addClaim(work.uri, 'wdt:P364', edition.claims['wdt:P407'][0])
-      // Do not add in parallel so that they are added in that order
-      await addClaim(work.uri, 'wdt:P136', genresUris[0])
-      await addClaim(work.uri, 'wdt:P136', genresUris[1])
       const authorUri = work.claims['wdt:P50'][0]
       const author = await getByUri(authorUri)
       const authorLabel = parseLabel(author)
@@ -70,22 +59,42 @@ describe('items:export', () => {
       itemRow['ISBN-13'].should.equal('')
       itemRow['ISBN-10'].should.equal('')
       itemRow.Title.should.equal(edition.claims['wdt:P1476'][0])
+      itemRow['Works URLs'].should.equal(generateEntityUrl(workUri))
+      itemRow['Works labels'].should.equal(workLabel)
+      itemRow['Authors URLs'].should.equal(generateEntityUrl(authorUri))
+      itemRow['Authors labels'].should.equal(authorLabel)
+    })
+
+    it('should return a csv export of the requesting user', async () => {
+      const edition = await createEditionWithWorkAuthorAndSerie()
+      const publisher = await addPublisher(edition)
+      const publisherLabel = parseLabel(publisher)
+      const translator = await addTranslator(edition)
+      const translatorLabel = parseLabel(translator)
+      addClaim(edition.uri, 'wdt:P1104', 10)
+      const workUri = edition.claims['wdt:P629'][0]
+      const work = await getByUri(workUri)
+      const serieUri = work.claims['wdt:P179'][0]
+      await addClaim(work.uri, 'wdt:P921', subjectUri)
+      await addClaim(work.uri, 'wdt:P364', edition.claims['wdt:P407'][0])
+      // Do not add in parallel so that they are added in that order
+      await addClaim(work.uri, 'wdt:P136', genresUris[0])
+      await addClaim(work.uri, 'wdt:P136', genresUris[1])
+      const item = await createItem(user, { entity: edition.uri })
+
+      const itemRow = await reqAndParse(item._id)
       itemRow.Subtitle.should.equal(edition.claims['wdt:P1680'][0])
+      itemRow.Cover.should.equal(`${host}/img/entities/${someImageHash}`)
       itemRow['Publication Date'].should.equal('')
-      itemRow.Cover.should.equal(generateUrl('/img/entities/aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd'))
       itemRow['Number of pages'].should.equal('10')
       itemRow['Edition Lang'].should.equal('English')
       itemRow['Original Lang'].should.equal('English')
       itemRow['Translators labels'].should.equal(translatorLabel)
       itemRow['Translators URLs'].should.equal(generateEntityUrl(translator.uri))
-      itemRow['Works URLs'].should.equal(generateEntityUrl(workUri))
-      itemRow['Works labels'].should.equal(workLabel)
       itemRow['Works Series ordinals'].should.equal('')
-      itemRow['Authors URLs'].should.equal(generateEntityUrl(authorUri))
-      itemRow['Authors labels'].should.equal(authorLabel)
       itemRow['Series URLs'].should.equal(generateEntityUrl(serieUri))
       itemRow['Series labels'].should.be.a.String()
-      itemRow['Genres URLs'].should.equal(generateEntitiesUrls(genresUris))
+      itemRow['Genres URLs'].split(',').sort().should.deepEqual((generateEntitiesUrls(genresUris)))
       itemRow['Genres labels'].should.be.a.String()
       itemRow['Subjects URLs'].should.equal(generateEntityUrl(subjectUri))
       itemRow['Subjects labels'].should.be.a.String()
