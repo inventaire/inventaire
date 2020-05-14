@@ -63,7 +63,7 @@ describe('items:export', () => {
       const edition = await createEdition({ lang: 'fr' })
       const workUri = edition.claims['wdt:P629'][0]
       const work = await getByUri(workUri)
-      await addClaim(work.uri, 'wdt:P364', edition.claims['wdt:P407'][0])
+      await addClaim(work.uri, 'wdt:P407', edition.claims['wdt:P407'][0])
 
       const item = await createItem(user, { entity: edition.uri })
 

@@ -65,8 +65,6 @@ module.exports = {
   'wdt:P268': builders.externalId(/^\d{8}[0-9bcdfghjkmnpqrstvwxz]$/),
   // SUDOC authorities ID
   'wdt:P269': builders.externalId(/^\d{8}[\dX]$/),
-  // original language of work
-  'wdt:P364': bases.entity,
   // language of work
   'wdt:P407': bases.entity,
   // ORCID ID

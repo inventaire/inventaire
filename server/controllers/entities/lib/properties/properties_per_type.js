@@ -14,7 +14,7 @@ const workAndSerie = all.concat([
   'wdt:P179', // series
   'wdt:P214', // VIAF ID
   'wdt:P269', // SUDOC authorities ID
-  'wdt:P364', // original language of work
+  'wdt:P407', // language
   'wdt:P577', // publication date
   'wdt:P648', // Open Library ID
   'wdt:P856', // official website

@@ -72,4 +72,4 @@ const authorProperties = [
 const getWorkSeriesUris = work => work.claims['wdt:P179']
 const getWorkGenresUris = work => work.claims['wdt:P136']
 const getWorkSubjetsUris = work => work.claims['wdt:P921']
-const getWorkOriginalLangsUris = work => work.claims['wdt:P364']
+const getWorkOriginalLangsUris = work => work.claims['wdt:P407']
