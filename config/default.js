@@ -31,10 +31,6 @@ const config = module.exports = {
   // Debug mode:
   // - log requests body
   debug: false,
-  // Use to prefix images path to a custom domain, typically used to point to
-  // prod server images URLs when working in development with prod databases
-  // cf config/prod-dbs.js
-  imageRedirection: false,
   // CouchDB settings
   db: {
     protocol: 'http',
