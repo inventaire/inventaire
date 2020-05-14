@@ -22,7 +22,6 @@ module.exports = {
     }
   },
   leveldbMemoryBackend: true,
-  godMode: false,
   // Disable password hashing to make tests run faster
   hashPasswords: false,
   piwik: {

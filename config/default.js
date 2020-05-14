@@ -93,9 +93,6 @@ const config = module.exports = {
   staticMaxAge: 30 * 24 * 60 * 60 * 1000,
   cookieMaxAge: 10 * 365 * 24 * 3600 * 1000,
 
-  // Make friends requests and groups invits be automatically accepted
-  // can be useful for development
-  godMode: false,
   hashPasswords: true,
   requestsLogger: {
     // Use to mute certain requests if it gets too noisy or you want to focus on a certain domain

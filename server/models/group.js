@@ -40,14 +40,12 @@ Group.create = options => {
 
 Group.findInvitation = (userId, group, wanted) => findMembership(userId, group, 'invited', wanted)
 
-const inviteSection = CONFIG.godMode ? 'members' : 'invited'
-
 const membershipActions = {
   invite: (invitorId, invitedId, group) => {
     // Using Group.findInvitation as a validator throwing
     // if the document isn't in the desired state
     Group.findInvitation(invitedId, group, false)
-    group[inviteSection].push(createMembership(invitedId, invitorId))
+    group.invited.push(createMembership(invitedId, invitorId))
     return group
   },
 
