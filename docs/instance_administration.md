@@ -1,6 +1,18 @@
 # Instance administration
 Tips and scripts to administrate an instance
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+
+- [Users](#users)
+  - [Make user admin](#make-user-admin)
+  - [Prevent sending further emails to an email address](#prevent-sending-further-emails-to-an-email-address)
+  - [Increment user undelivered emails count](#increment-user-undelivered-emails-count)
+  - [Delete user account](#delete-user-account)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Users
 ### Make user admin
 An admin user as additional right, such as merging or deleting entities via the API
