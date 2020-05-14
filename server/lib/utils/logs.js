@@ -1,5 +1,5 @@
 const CONFIG = require('config')
-const { offline } = CONFIG
+const { offline, verbose } = CONFIG
 const loggers_ = require('inv-loggers')
 const chalk = require('chalk')
 const { grey, red } = chalk
@@ -18,7 +18,7 @@ const BaseLogger = (color, operation) => (obj, label) => {
 }
 
 module.exports = _ => {
-  if (CONFIG.verbosity === 0) { loggers_.log = _.identity }
+  if (!verbose) loggers_.log = _.identity
 
   const stringify = BaseLogger('yellow', JSON.stringify)
 

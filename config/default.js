@@ -13,7 +13,7 @@ const config = module.exports = {
   // Only http is supported: in production, TLS is delegated to Nginx
   // see http://github.com/inventaire/inventaire-deploy
   // protocol: 'http'
-  verbosity: 1,
+  verbose: true,
   protocol: 'http',
   port: 3006,
   // Override in ./local.js when working offline to prevent trying to fetch remote resources (like images) when possible

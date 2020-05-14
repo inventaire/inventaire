@@ -1,6 +1,6 @@
 module.exports = {
   env: 'production',
-  verbosity: 2,
+  verbose: true,
   publicHost: 'OVERRIDE',
   publicProtocol: 'https',
   fullPublicHost () { return `${this.publicProtocol}://${this.publicHost}` },

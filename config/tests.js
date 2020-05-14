@@ -7,7 +7,7 @@ module.exports = {
   name: 'inventaire',
   host: 'localhost',
   port: 3009,
-  verbosity: 0,
+  verbose: false,
   fullHost: function () {
     return `${this.protocol}://${this.host}:${this.port}`
   },
