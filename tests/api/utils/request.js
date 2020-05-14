@@ -41,7 +41,7 @@ const request = async (method, endpoint, body, cookie) => {
   if (body != null) data.body = body
   await waitForTestServer
   try {
-    return requests_[method](url, data)
+    return await requests_[method](url, data)
   } catch (err) {
     if (err.message === 'request error' && err.body && err.body.status_verbose) {
       err.message = `${err.message}: ${err.body.status_verbose}`
