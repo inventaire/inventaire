@@ -31,6 +31,7 @@ const config = module.exports = {
   // Debug mode:
   // - log requests body
   debug: false,
+  logOutgoingRequests: true,
   // CouchDB settings
   db: {
     protocol: 'http',
