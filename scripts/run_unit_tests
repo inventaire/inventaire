@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
-options=$1
+files=$1
 export NODE_ENV=tests-unit
-mocha --exit tests/unit/models/* tests/unit/libs/* tests/unit/controllers/* $options
+if [ "$files" != "" ] ; then
+  mocha --exit "$files"
+else
+  mocha --exit tests/unit/models/* tests/unit/libs/* tests/unit/controllers/*
+fi
