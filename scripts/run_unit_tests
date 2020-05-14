@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 options=$1
-export NODE_ENV=tests
+export NODE_ENV=tests-unit
 mocha --exit tests/unit/models/* tests/unit/libs/* tests/unit/controllers/* $options

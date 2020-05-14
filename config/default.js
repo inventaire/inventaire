@@ -1,7 +1,7 @@
-// This config file contains the default values for a development environment.
+// This config file contains the default values for all environments.
 // Override by creating per-environment files following the same structure
 // in this same folder
-// See the config module doc: https://npmjs.com/package/config
+// See the config module doc: https://github.com/lorenwest/node-config/wiki/Configuration-Files
 
 const contactAddress = 'hello@inventaire.io'
 

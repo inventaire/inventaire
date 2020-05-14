@@ -1,5 +1,6 @@
-// Custom config for API tests
-// Use NODE_APP_INSTANCE=tests-alt to override local config with local-tests config
+// Custom config for the API tests server
+// This config file will be used if: NODE_ENV=tests-api NODE_APP_INSTANCE=server
+// Override locally in ./local-tests-api-server.js
 
 module.exports = {
   dataseed: {
