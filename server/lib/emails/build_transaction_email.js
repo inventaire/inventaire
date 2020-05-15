@@ -30,8 +30,14 @@ const addAssociatedData = transaction => {
   .then(([ owner, requester, item, messages ]) => {
     owner = user_.serializeData(owner)
     requester = user_.serializeData(requester)
-    item.title = item.snapshot['entity:title'] || transaction.snapshot.entity.title
-    const image = item.snapshot['entity:image'] || (transaction.snapshot.entity && transaction.snapshot.entity.image)
+    let image
+    if (item.snapshot) {
+      item.title = item.snapshot['entity:title']
+      image = item.snapshot['entity:image']
+    } else {
+      item.title = transaction.snapshot.entity.title
+      image = transaction.snapshot.entity && transaction.snapshot.entity.image
+    }
     // Overriding transaction document ids by the ids' docs (owner, requester, etc.)
     // for the email ViewModel
     Object.assign(transaction, { owner, requester, item, messages, image })
