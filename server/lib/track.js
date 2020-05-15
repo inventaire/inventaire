@@ -36,7 +36,7 @@ const track = (req, actionArray) => {
     lang: language || _.fixedEncodeURIComponent(al)
   }
 
-  requests_.get(_.buildPath(endpoint, data))
+  requests_.get(_.buildPath(endpoint, data), { parseJson: false })
   .catch(_.Error('track error'))
 
   // do not return the promise as a failing track request should make the rest
