@@ -17,6 +17,16 @@ describe('groups:create', () => {
     .catch(done)
   })
 
+  it('should reject with an empty name', done => {
+    authReq('post', endpoint, { name: '' })
+    .then(undesiredRes(done))
+    .catch(err => {
+      err.body.status_verbose.should.equal('invalid name: ')
+      done()
+    })
+    .catch(done)
+  })
+
   it('should create a group', done => {
     const name = groupName()
     authReq('post', endpoint, { name })
