@@ -9,12 +9,10 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const requests_ = __.require('lib', 'requests')
 const isbn_ = __.require('lib', 'isbn/isbn')
-const reqOptions = {
-  // Accept self-signed certificates
-  rejectUnauthorized: false
-}
 
 const { enabled, host } = CONFIG.dataseed
+const reqOptions = {}
+if (host.startsWith('https')) reqOptions.selfSigned = true
 
 module.exports = {
   getByIsbns: async (isbns, refresh) => {

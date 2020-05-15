@@ -7,10 +7,16 @@ const { addContextToStack } = error_
 const { magenta } = require('chalk')
 const { repository } = __.require('root', 'package.json')
 const userAgent = `${CONFIG.name} (${repository.url})`
+
 const { Agent: HttpAgent } = require('http')
 const { Agent: HttpsAgent } = require('https')
 const httpAgent = new HttpAgent({ keepAlive: true })
 const httpsAgent = new HttpsAgent({ keepAlive: true })
+const selfSignedHttpsAgent = new HttpsAgent({
+  keepAlive: true,
+  // Accept self-signed certificates
+  rejectUnauthorized: false
+})
 // Using a custom agent to set keepAlive=true
 // https://nodejs.org/api/http.html#http_class_http_agent
 // https://github.com/bitinn/node-fetch#custom-agent
@@ -109,7 +115,11 @@ const completeOptions = (method, options) => {
 
   options.timeout = options.timeout || 60 * 1000
   options.compress = true
-  options.agent = getAgent
+  if (options.selfSigned) {
+    options.agent = selfSignedHttpsAgent
+  } else {
+    options.agent = getAgent
+  }
 }
 
 const basicAuthPattern = /\/\/\w+:[^@:]+@/
