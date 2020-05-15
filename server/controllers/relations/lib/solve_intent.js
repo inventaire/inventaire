@@ -1,13 +1,10 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const { godMode } = CONFIG
 const _ = __.require('builders', 'utils')
 
 module.exports = actions => {
   const API = {
     requestFriend: (userId, otherId, status) => {
-      // useful for development
-      if (godMode) return actions.forceFriendship(userId, otherId)
       if (status === 'none') return actions.makeRequest(userId, otherId)
       else if (status === 'otherRequested') return actions.simultaneousRequest(userId, otherId)
       else doNothing(status, 'requestFriend', userId, otherId)

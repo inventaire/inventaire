@@ -31,7 +31,7 @@
     "reset-cache": "rm -rf db/leveldb && mkdir db/leveldb",
     "start": "node server/server.js",
     "start-tests-server": "./tests/api/scripts/start_tests_server",
-    "test": "./scripts/test",
+    "test": "./scripts/run_unit_tests",
     "test-api": "./tests/api/scripts/test_api",
     "test-api-quick": "./tests/api/scripts/test_api_quick",
     "test-watch": "./scripts/test --watch --extensions js",

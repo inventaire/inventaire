@@ -6,7 +6,7 @@ const { mode } = CONFIG.mediaStorage
 const mediaStorageEndpoint = CONFIG.mediaStorage[mode].internalEndpoint()
 const responses_ = __.require('lib', 'responses')
 const getResizedImage = require('./lib/get_resized_image')
-const { offline, imageRedirection } = CONFIG
+const { offline } = CONFIG
 const containersList = Object.keys(__.require('controllers', 'images/lib/containers'))
 
 // resized images urls looks like
@@ -18,14 +18,6 @@ module.exports = {
     if (offline) {
       const message = 'you are in offline mode: no img delivered'
       responses_.okWarning(res, 'connection', message)
-      return
-    }
-
-    // Used to redirect to production server when working with the prod databases
-    // in development
-    if (imageRedirection) {
-      const { originalUrl } = req
-      res.redirect(imageRedirection + originalUrl)
       return
     }
 

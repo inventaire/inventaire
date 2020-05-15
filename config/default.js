@@ -1,7 +1,7 @@
-// This config file contains the default values for a development environment.
+// This config file contains the default values for all environments.
 // Override by creating per-environment files following the same structure
 // in this same folder
-// See the config module doc: https://npmjs.com/package/config
+// See the config module doc: https://github.com/lorenwest/node-config/wiki/Configuration-Files
 
 const contactAddress = 'hello@inventaire.io'
 
@@ -13,7 +13,7 @@ const config = module.exports = {
   // Only http is supported: in production, TLS is delegated to Nginx
   // see http://github.com/inventaire/inventaire-deploy
   // protocol: 'http'
-  verbosity: 1,
+  verbose: true,
   protocol: 'http',
   port: 3006,
   // Override in ./local.js when working offline to prevent trying to fetch remote resources (like images) when possible
@@ -31,10 +31,7 @@ const config = module.exports = {
   // Debug mode:
   // - log requests body
   debug: false,
-  // Use to prefix images path to a custom domain, typically used to point to
-  // prod server images URLs when working in development with prod databases
-  // cf config/prod-dbs.js
-  imageRedirection: false,
+  logOutgoingRequests: true,
   // CouchDB settings
   db: {
     protocol: 'http',
@@ -97,9 +94,6 @@ const config = module.exports = {
   staticMaxAge: 30 * 24 * 60 * 60 * 1000,
   cookieMaxAge: 10 * 365 * 24 * 3600 * 1000,
 
-  // Make friends requests and groups invits be automatically accepted
-  // can be useful for development
-  godMode: false,
   hashPasswords: true,
   requestsLogger: {
     // Use to mute certain requests if it gets too noisy or you want to focus on a certain domain

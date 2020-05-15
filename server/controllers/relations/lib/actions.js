@@ -26,10 +26,5 @@ module.exports = {
     }))
   },
 
-  removeRelation: queries_.putNoneStatus,
-
-  // Used by godMode
-  forceFriendship: (userId, otherId) => {
-    return queries_.putFriendStatus(userId, otherId)
-  }
+  removeRelation: queries_.putNoneStatus
 }

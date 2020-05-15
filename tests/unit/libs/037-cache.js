@@ -3,9 +3,7 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const { Wait } = __.require('lib', 'promises')
 
-if (CONFIG.env !== 'tests') {
-  throw new Error(`invalid env: ${CONFIG.env}`)
-}
+if (CONFIG.env !== 'tests-unit') throw new Error(`invalid env: ${CONFIG.env}`)
 
 const should = require('should')
 const sinon = require('sinon')

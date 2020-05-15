@@ -1,5 +1,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
+const { logOutgoingRequests } = CONFIG
 const assert_ = __.require('utils', 'assert_types')
 const fetch = require('node-fetch')
 const error_ = __.require('lib', 'error/error')
@@ -35,9 +36,10 @@ const req = method => async (url, options = {}) => {
 
   completeOptions(method, options)
 
-  const reqTimerKey = startReqTimer(method, url, options)
+  let reqTimerKey
+  if (logOutgoingRequests) reqTimerKey = startReqTimer(method, url, options)
   const res = await fetch(url, options)
-  endReqTimer(reqTimerKey)
+  if (logOutgoingRequests) endReqTimer(reqTimerKey)
 
   const { status: statusCode } = res
 

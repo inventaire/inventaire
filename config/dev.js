@@ -1,5 +1,6 @@
-// Use by setting NODE_ENV=dev
-// Will be overriden by local.js
+// Custom config for the development server
+// This config file will be used if: NODE_ENV=dev
+// Override locally in ./local-dev.js
 
 module.exports = {
   env: 'dev',
