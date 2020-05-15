@@ -4,6 +4,7 @@ const attributes = module.exports = {}
 attributes.ownerSafe = [
   '_id',
   '_rev',
+  'type',
   'username',
   'created',
   'email',

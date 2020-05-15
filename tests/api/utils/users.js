@@ -11,7 +11,9 @@ module.exports = {
     const url = `/api/users?action=search-by-position&bbox=${JSON.stringify(bbox)}`
     const { users } = await customAuthReq(user, 'get', url)
     return users
-  }
+  },
+
+  deleteUser: user => customAuthReq(user, 'delete', '/api/user')
 }
 
 const getBboxFromPosition = ([ lat, lng ]) => {

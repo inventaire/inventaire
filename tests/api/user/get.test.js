@@ -1,5 +1,6 @@
 require('should')
-const { authReq } = require('../utils/utils')
+const { authReq, customAuthReq, getReservedUser } = require('../utils/utils')
+const { deleteUser } = require('../utils/users')
 const endpoint = '/api/user'
 
 describe('user:get', () => {
@@ -8,6 +9,7 @@ describe('user:get', () => {
     userPrivateData._id.should.be.a.String()
     userPrivateData._rev.should.be.a.String()
     userPrivateData.username.should.be.a.String()
+    userPrivateData.type.should.equal('user')
     userPrivateData.created.should.be.a.Number()
     userPrivateData.email.should.be.a.String()
     userPrivateData.validEmail.should.be.a.Boolean()
@@ -19,5 +21,13 @@ describe('user:get', () => {
     snapshot.network.should.be.an.Object()
     snapshot.public.should.be.an.Object()
     userPrivateData.oauth.should.be.an.Array()
+  })
+
+  it('should get delete user flag', async () => {
+    const user = await getReservedUser()
+    await deleteUser(user)
+    const deletedUserData = await customAuthReq(user, 'get', endpoint)
+    deletedUserData._id.should.equal(user._id)
+    deletedUserData.type.should.equal('deletedUser')
   })
 })
