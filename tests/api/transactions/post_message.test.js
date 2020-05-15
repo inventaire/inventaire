@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
-const { authReq, authReqC, shouldNotGetHere, rethrowShouldNotGetHereErrors } = __.require('apiTests', 'utils/utils')
+const { authReq, authReqC, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = __.require('apiTests', 'utils/utils')
 const { createTransaction, addMessage } = require('../fixtures/transactions')
 
 const endpoint = '/api/transactions?action=message'
@@ -16,12 +16,10 @@ describe('transactions:post:message', () => {
 
   it('should reject without transaction', async () => {
     try {
-      const res = await authReq('post', endpoint, {
-        action: 'message'
-      })
-      shouldNotGetHere(res)
+      await authReq('post', endpoint, { action: 'message' })
+      .then(shouldNotBeCalled)
     } catch (err) {
-      rethrowShouldNotGetHereErrors(err)
+      rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.equal('missing parameter in body: transaction')
     }
   })
@@ -30,13 +28,13 @@ describe('transactions:post:message', () => {
     try {
       const res1 = await transactionPromise
       const { transaction } = res1
-      const res2 = await authReq('post', endpoint, {
+      await authReq('post', endpoint, {
         action: 'message',
         transaction: transaction._id
       })
-      shouldNotGetHere(res2)
+      .then(shouldNotBeCalled)
     } catch (err) {
-      rethrowShouldNotGetHereErrors(err)
+      rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.equal('missing parameter in body: message')
     }
   })
@@ -50,9 +48,9 @@ describe('transactions:post:message', () => {
         transaction: transaction._id,
         message: ''
       })
-      shouldNotGetHere(res2)
+      shouldNotBeCalled(res2)
     } catch (err) {
-      rethrowShouldNotGetHereErrors(err)
+      rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.startWith('invalid message')
     }
   })
@@ -66,9 +64,9 @@ describe('transactions:post:message', () => {
         transaction: transaction._id,
         message: 1
       })
-      shouldNotGetHere(res2)
+      shouldNotBeCalled(res2)
     } catch (err) {
-      rethrowShouldNotGetHereErrors(err)
+      rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.startWith('invalid message')
     }
   })
@@ -82,9 +80,9 @@ describe('transactions:post:message', () => {
         transaction: transaction._id,
         message: 'yo'
       })
-      shouldNotGetHere(res2)
+      shouldNotBeCalled(res2)
     } catch (err) {
-      rethrowShouldNotGetHereErrors(err)
+      rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.equal('wrong user')
     }
   })
