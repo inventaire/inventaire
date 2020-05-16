@@ -1,5 +1,5 @@
 const __ = require('config').universalPath
-const { shouldNotGetHere, rethrowShouldNotGetHereErrors } = __.require('apiTests', 'utils/utils')
+const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = __.require('apiTests', 'utils/utils')
 const { authReq } = require('../utils/utils')
 const { shelfDescription, shelfName } = require('../fixtures/shelves')
 const endpoint = '/api/shelves?action=create'
@@ -9,9 +9,9 @@ describe('shelves:create', () => {
     try {
       const description = shelfDescription()
       const res = await authReq('post', endpoint, { description })
-      shouldNotGetHere(res)
+      shouldNotBeCalled(res)
     } catch (err) {
-      rethrowShouldNotGetHereErrors(err)
+      rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.equal('missing parameter in body: listing')
       err.statusCode.should.equal(400)
     }
@@ -24,9 +24,9 @@ describe('shelves:create', () => {
         description,
         listing: 'public'
       })
-      shouldNotGetHere(res)
+      shouldNotBeCalled(res)
     } catch (err) {
-      rethrowShouldNotGetHereErrors(err)
+      rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.equal('missing parameter in body: name')
       err.statusCode.should.equal(400)
     }

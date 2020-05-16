@@ -1,6 +1,6 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
-const { shouldNotGetHere, rethrowShouldNotGetHereErrors } = __.require('apiTests', 'utils/utils')
+const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = __.require('apiTests', 'utils/utils')
 const { customAuthReq, authReq, getUser, getUserB } = require('../utils/utils')
 const { createShelf } = require('../fixtures/shelves')
 const { makeFriends } = require('../utils/relations')
@@ -13,9 +13,9 @@ describe('shelves:by-owners', () => {
     it('should reject without owners', async () => {
       try {
         const res = await authReq('get', endpoint)
-        shouldNotGetHere(res)
+        shouldNotBeCalled(res)
       } catch (err) {
-        rethrowShouldNotGetHereErrors(err)
+        rethrowShouldNotBeCalledErrors(err)
         err.body.status_verbose.should.equal('missing parameter in query: owners')
         err.statusCode.should.equal(400)
       }
