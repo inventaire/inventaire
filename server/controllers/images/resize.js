@@ -53,7 +53,7 @@ module.exports = {
       return error_.bundle(req, res, 'invalid image path', 400, rest)
     }
 
-    return getResizedImage(req, res, url, dimensions)
+    getResizedImage(req, res, url, dimensions)
   }
 }
 

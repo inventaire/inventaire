@@ -10,7 +10,12 @@ module.exports = async (req, res, url, dimensions) => {
   let [ width, height ] = dimensions ? dimensions.split('x') : [ maxSize, maxSize ];
   [ width, height ] = images_.applyLimits(width, height)
 
-  const response = await fetch(url)
+  let response
+  try {
+    response = await fetch(url)
+  } catch (err) {
+    return error_.handler(req, res, err, 500)
+  }
 
   const { statusText } = response
   let { status: statusCode } = response
@@ -31,7 +36,7 @@ module.exports = async (req, res, url, dimensions) => {
     statusCode = statusCode === 404 ? 404 : 400
     const err = error_.new(errMessage, statusCode, context)
     err.privateContext = url
-    throw err
+    error_.handler(req, res, err, statusCode)
   } else {
     res.header('Content-Type', 'image/jpeg')
     res.header('Cache-Control', 'immutable')
