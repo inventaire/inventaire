@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const should = require('should')
-const { shouldNotGetHere, rethrowShouldNotGetHereErrors } = __.require('apiTests', 'utils/utils')
+const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = __.require('apiTests', 'utils/utils')
 const { createTransaction, addMessage } = require('../fixtures/transactions')
 const { authReq } = __.require('apiTests', 'utils/utils')
 
@@ -10,10 +10,9 @@ const endpoint = '/api/transactions?action=get-messages'
 describe('transactions:get:messages', () => {
   it('should reject without id', async () => {
     try {
-      const res = await authReq('get', endpoint)
-      shouldNotGetHere(res)
+      await authReq('get', endpoint).then(shouldNotBeCalled)
     } catch (err) {
-      rethrowShouldNotGetHereErrors(err)
+      rethrowShouldNotBeCalledErrors(err)
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal('missing parameter in query: transaction')
     }

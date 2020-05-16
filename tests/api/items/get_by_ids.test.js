@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
-const { getUser, authReq, shouldNotGetHere, rethrowShouldNotGetHereErrors, getUserGetter } = __.require('apiTests', 'utils/utils')
+const { getUser, authReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors, getUserGetter } = __.require('apiTests', 'utils/utils')
 const { groupPromise, addMember } = require('../fixtures/groups')
 const { createItem, createItems } = require('../fixtures/items')
 const { humanName } = require('../fixtures/entities')
@@ -13,10 +13,9 @@ const userPromise = getUserGetter(humanName())()
 describe('items:get-by-ids', () => {
   it('should reject without id', async () => {
     try {
-      const res = await authReq('get', endpoint)
-      shouldNotGetHere(res)
+      await authReq('get', endpoint).then(shouldNotBeCalled)
     } catch (err) {
-      rethrowShouldNotGetHereErrors(err)
+      rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.equal('missing parameter in query: ids')
       err.statusCode.should.equal(400)
     }

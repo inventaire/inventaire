@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const { shouldNotGetHere, rethrowShouldNotGetHereErrors } = __.require('apiTests', 'utils/utils')
+const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = __.require('apiTests', 'utils/utils')
 const { nonAuthReq, authReq, customAuthReq, getUser, getUserB } = require('../utils/utils')
 const { getTwoFriends } = require('../fixtures/users')
 
@@ -10,10 +10,9 @@ const endpoint = '/api/users?action=by-ids'
 describe('users:by-ids', () => {
   it('should reject without id', async () => {
     try {
-      const res = await nonAuthReq('get', endpoint)
-      shouldNotGetHere(res)
+      await nonAuthReq('get', endpoint).then(shouldNotBeCalled)
     } catch (err) {
-      rethrowShouldNotGetHereErrors(err)
+      rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.equal('missing parameter in query: ids')
       err.statusCode.should.equal(400)
     }

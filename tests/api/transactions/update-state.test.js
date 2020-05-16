@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
-const { authReqB, authReqC, shouldNotGetHere, rethrowShouldNotGetHereErrors } = __.require('apiTests', 'utils/utils')
+const { authReqB, authReqC, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = __.require('apiTests', 'utils/utils')
 const { createTransaction } = require('../fixtures/transactions')
 
 const endpoint = '/api/transactions?action=update-state'
@@ -25,9 +25,9 @@ describe('transactions:update-state', () => {
         transaction: transaction._id,
         state: 'random state'
       })
-      shouldNotGetHere(updateRes)
+      shouldNotBeCalled(updateRes)
     } catch (err) {
-      rethrowShouldNotGetHereErrors(err)
+      rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.startWith('invalid state')
     }
   })
@@ -40,9 +40,9 @@ describe('transactions:update-state', () => {
         transaction: transaction._id,
         state: 'accepted'
       })
-      shouldNotGetHere(updateRes)
+      shouldNotBeCalled(updateRes)
     } catch (err) {
-      rethrowShouldNotGetHereErrors(err)
+      rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.equal('wrong user')
     }
   })

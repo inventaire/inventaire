@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const should = require('should')
-const { nonAuthReq, authReq, customAuthReq, getUser, getUserB, shouldNotGetHere, rethrowShouldNotGetHereErrors } = __.require('apiTests', 'utils/utils')
+const { nonAuthReq, authReq, customAuthReq, getUser, getUserB, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = __.require('apiTests', 'utils/utils')
 const { createUser } = require('../fixtures/users')
 const randomString = __.require('lib', './utils/random_string')
 const { getTwoFriends } = require('../fixtures/users')
@@ -13,10 +13,9 @@ const endpoint = '/api/users?action=by-usernames'
 describe('users:by-usernames', () => {
   it('should reject without id', async () => {
     try {
-      const res = await nonAuthReq('get', endpoint)
-      shouldNotGetHere(res)
+      await nonAuthReq('get', endpoint).then(shouldNotBeCalled)
     } catch (err) {
-      rethrowShouldNotGetHereErrors(err)
+      rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.equal('missing parameter in query: usernames')
       err.statusCode.should.equal(400)
     }

@@ -1,6 +1,6 @@
 const __ = require('config').universalPath
 const should = require('should')
-const { authReq, shouldNotGetHere, rethrowShouldNotGetHereErrors } = require('../utils/utils')
+const { authReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
 
 const { createHuman } = require('../fixtures/entities')
 const { getByUri, updateLabel } = require('../utils/entities')
@@ -11,10 +11,9 @@ describe('entities:update-labels', () => {
   it('should reject without value', async () => {
     const { _id } = await humanPromise
     try {
-      const res = await updateLabel(_id, 'fr', null)
-      shouldNotGetHere(res)
+      await updateLabel(_id, 'fr', null).then(shouldNotBeCalled)
     } catch (err) {
-      rethrowShouldNotGetHereErrors(err)
+      rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.equal('missing parameter in body: value')
       err.statusCode.should.equal(400)
     }
@@ -58,10 +57,9 @@ describe('entities:update-labels', () => {
     const value = randomString(15)
     const { _id } = await humanPromise
     try {
-      const res = await updateLabel(_id, 'zz', value)
-      shouldNotGetHere(res)
+      await updateLabel(_id, 'zz', value).then(shouldNotBeCalled)
     } catch (err) {
-      rethrowShouldNotGetHereErrors(err)
+      rethrowShouldNotBeCalledErrors(err)
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.startWith('invalid lang')
     }
@@ -70,10 +68,9 @@ describe('entities:update-labels', () => {
   it('should reject an update with an invalid value', async () => {
     const { _id } = await humanPromise
     try {
-      const res = await updateLabel(_id, 'en', 123)
-      shouldNotGetHere(res)
+      await updateLabel(_id, 'en', 123).then(shouldNotBeCalled)
     } catch (err) {
-      rethrowShouldNotGetHereErrors(err)
+      rethrowShouldNotBeCalledErrors(err)
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.startWith('invalid value')
     }
@@ -82,10 +79,9 @@ describe('entities:update-labels', () => {
   it('should reject an update with an empty string', async () => {
     const { _id } = await humanPromise
     try {
-      const res = await updateLabel(_id, 'en', '')
-      shouldNotGetHere(res)
+      await updateLabel(_id, 'en', '').then(shouldNotBeCalled)
     } catch (err) {
-      rethrowShouldNotGetHereErrors(err)
+      rethrowShouldNotBeCalledErrors(err)
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.startWith('invalid value')
     }
@@ -96,10 +92,9 @@ describe('entities:update-labels', () => {
     const { _id } = await humanPromise
     await updateLabel(_id, 'en', value)
     try {
-      const res = await updateLabel(_id, 'en', value)
-      shouldNotGetHere(res)
+      await updateLabel(_id, 'en', value).then(shouldNotBeCalled)
     } catch (err) {
-      rethrowShouldNotGetHereErrors(err)
+      rethrowShouldNotBeCalledErrors(err)
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.startWith('already up-to-date')
     }

@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
-const { authReq, authReqB, getUser, shouldNotGetHere, rethrowShouldNotGetHereErrors } = __.require('apiTests', 'utils/utils')
+const { authReq, authReqB, getUser, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = __.require('apiTests', 'utils/utils')
 const { createTransaction } = require('../fixtures/transactions')
 const { createItem } = require('../fixtures/items')
 const endpoint = '/api/transactions?action=request'
@@ -9,10 +9,9 @@ const endpoint = '/api/transactions?action=request'
 describe('transactions:request', () => {
   it('should reject without id', async () => {
     try {
-      const res = await authReq('post', endpoint, {})
-      shouldNotGetHere(res)
+      await authReq('post', endpoint, {}).then(shouldNotBeCalled)
     } catch (err) {
-      rethrowShouldNotGetHereErrors(err)
+      rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.equal('missing parameter in body: item')
       err.statusCode.should.equal(400)
     }
@@ -21,10 +20,9 @@ describe('transactions:request', () => {
   it('should reject without message', async () => {
     try {
       const item = await createItem()
-      const res = await authReq('post', endpoint, { item: item._id })
-      shouldNotGetHere(res)
+      await authReq('post', endpoint, { item: item._id }).then(shouldNotBeCalled)
     } catch (err) {
-      rethrowShouldNotGetHereErrors(err)
+      rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.equal('missing parameter in body: message')
       err.statusCode.should.equal(400)
     }
@@ -33,13 +31,13 @@ describe('transactions:request', () => {
   it('should not request your own items', async () => {
     try {
       const item = await createItem()
-      const res = await authReq('post', endpoint, {
+      await authReq('post', endpoint, {
         item: item._id,
         message: 'yo'
       })
-      shouldNotGetHere(res)
+      .then(shouldNotBeCalled)
     } catch (err) {
-      rethrowShouldNotGetHereErrors(err)
+      rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.equal('not allowed with this item')
     }
   })
@@ -47,13 +45,13 @@ describe('transactions:request', () => {
   it('should not request inventorying items', async () => {
     try {
       const item = await createItem()
-      const res = await authReqB('post', endpoint, {
+      await authReqB('post', endpoint, {
         item: item._id,
         message: 'yo'
       })
-      shouldNotGetHere(res)
+      .then(shouldNotBeCalled)
     } catch (err) {
-      rethrowShouldNotGetHereErrors(err)
+      rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.equal("this item can't be requested")
     }
   })

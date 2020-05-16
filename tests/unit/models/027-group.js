@@ -1,7 +1,7 @@
 require('should')
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const { shouldNotGetHere, rethrowShouldNotGetHereErrors } = require('../utils')
+const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils')
 const someUserId = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
 const someOtherUserId = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab'
 const someOtherUserId2 = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaac'
@@ -24,9 +24,9 @@ describe('group model', () => {
     it('should reject without creatorId', () => {
       try {
         const doc = Group.create({ name: 'a', description: '', searchable: false, position: null })
-        shouldNotGetHere(doc)
+        shouldNotBeCalled(doc)
       } catch (err) {
-        rethrowShouldNotGetHereErrors(err)
+        rethrowShouldNotBeCalledErrors(err)
         err.message.should.equal('invalid creatorId: undefined')
       }
     })

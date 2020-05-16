@@ -2,7 +2,7 @@ const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const should = require('should')
 const { wait } = __.require('lib', 'promises')
-const { getReservedUser, getUser, shouldNotGetHere, rethrowShouldNotGetHereErrors } = require('../utils/utils')
+const { getReservedUser, getUser, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
 const { getRefreshedUser } = require('../fixtures/users')
 const { createItem } = require('../fixtures/items')
 const { getById: getItemById } = require('../utils/items')
@@ -95,10 +95,9 @@ describe('user:delete', () => {
       _.map(group.admins, 'user').should.containEql(user._id)
       await deleteUser(user)
       try {
-        const res = await getGroup(group)
-        shouldNotGetHere(res)
+        await getGroup(group).then(shouldNotBeCalled)
       } catch (err) {
-        rethrowShouldNotGetHereErrors(err)
+        rethrowShouldNotBeCalledErrors(err)
         err.statusCode.should.equal(404)
       }
     })
