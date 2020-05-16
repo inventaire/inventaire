@@ -7,7 +7,7 @@ const endpoint = '/api/shelves?action=update'
 const shelfPromise = createShelf(getUser())
 
 describe('shelves:update', () => {
-  it('should reject without shelf shelf', async () => {
+  it('should reject without shelf id', async () => {
     try {
       const res = await authReq('post', endpoint)
       shouldNotBeCalled(res)
@@ -18,7 +18,7 @@ describe('shelves:update', () => {
     }
   })
 
-  it('should reject not updatable attributes', async () => {
+  it('should filter out non updatable attributes', async () => {
     const shelf = await shelfPromise
     try {
       const params = {
@@ -30,6 +30,22 @@ describe('shelves:update', () => {
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.equal('nothing to update')
+      err.statusCode.should.equal(400)
+    }
+  })
+
+  it('should reject an empty name', async () => {
+    const shelf = await shelfPromise
+    try {
+      const params = {
+        shelf: shelf._id,
+        name: ''
+      }
+      const res = await authReq('post', endpoint, params)
+      shouldNotBeCalled(res)
+    } catch (err) {
+      rethrowShouldNotBeCalledErrors(err)
+      err.body.status_verbose.should.equal('invalid name: name cannot be empty')
       err.statusCode.should.equal(400)
     }
   })

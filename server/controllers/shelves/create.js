@@ -6,11 +6,11 @@ const shelves_ = __.require('controllers', 'shelves/lib/shelves')
 const sanitize = __.require('lib', 'sanitize/sanitize')
 
 const sanitization = {
-  description: {},
+  name: {},
+  description: { optional: true },
   listing: {
     whitelist: [ 'public', 'private', 'network' ]
   },
-  name: {},
   items: { optional: true }
 }
 

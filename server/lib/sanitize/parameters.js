@@ -41,6 +41,11 @@ const nonEmptyString = {
       throw error_.new(`invalid ${name}: ${details}`, 400, { value })
     }
 
+    if (value.length < 1) {
+      const details = `${name} cannot be empty`
+      throw error_.new(`invalid ${name}: ${details}`, 400, { value })
+    }
+
     if (config.length && value.length !== config.length) {
       const message = `invalid ${name} length`
       const details = `expected ${config.length}, got ${value.length}`
@@ -51,22 +56,22 @@ const nonEmptyString = {
   }
 }
 
-const arrayOfAKind = validation => (values, kind) => {
+const arrayOfAType = validation => (values, type) => {
   if (!_.isArray(values)) {
     const details = `expected array, got ${_.typeOf(values)}`
-    throw error_.new(`invalid ${kind}: ${details}`, 400, { values })
+    throw error_.new(`invalid ${type}: ${details}`, 400, { values })
   }
 
   if (values.length === 0) {
-    throw error_.new(`${kind} array can't be empty`, 400)
+    throw error_.new(`${type} array can't be empty`, 400)
   }
 
   for (const value of values) {
     if (!validation(value)) {
       // approximative way to get singular of a word
-      const singularKind = kind.replace(/s$/, '')
-      const details = `expected ${singularKind}, got ${value} (${_.typeOf(values)})`
-      throw error_.new(`invalid ${singularKind}: ${details}`, 400, { values })
+      const singularType = type.replace(/s$/, '')
+      const details = `expected ${singularType}, got ${value} (${_.typeOf(values)})`
+      throw error_.new(`invalid ${singularType}: ${details}`, 400, { values })
     }
   }
 
@@ -86,26 +91,26 @@ const entityUri = {
 
 const entityUris = {
   format: arrayOrPipedStrings,
-  validate: arrayOfAKind(validations.common.entityUri)
+  validate: arrayOfAType(validations.common.entityUri)
 }
 
 const usernames = {
   format: arrayOrPipedStrings,
-  validate: arrayOfAKind(validations.common.username)
+  validate: arrayOfAType(validations.common.username)
 }
 
 const couchUuids = {
   format: arrayOrPipedStrings,
-  validate: arrayOfAKind(validations.common.couchUuid)
+  validate: arrayOfAType(validations.common.couchUuid)
 }
 
 const arrayOfStrings = {
   format: arrayOrPipedStrings,
-  validate: arrayOfAKind(_.isString)
+  validate: arrayOfAType(_.isString)
 }
 
 const arrayOfNumbers = {
-  validate: arrayOfAKind(_.isNumber)
+  validate: arrayOfAType(_.isNumber)
 }
 
 const isbn = {
