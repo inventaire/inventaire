@@ -1,6 +1,6 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
-const { getUserB, shouldNotGetHere, rethrowShouldNotGetHereErrors } = __.require('apiTests', 'utils/utils')
+const { getUserB, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = __.require('apiTests', 'utils/utils')
 const { authReq } = require('../utils/utils')
 const { createShelf, createShelfWithItem } = require('../fixtures/shelves')
 const { createItem } = require('../fixtures/items')
@@ -13,9 +13,9 @@ describe('shelves:remove-items', () => {
   it('should reject without shelf id', async () => {
     try {
       const res = await authReq('post', endpoint)
-      shouldNotGetHere(res)
+      shouldNotBeCalled(res)
     } catch (err) {
-      rethrowShouldNotGetHereErrors(err)
+      rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.equal('missing parameter in body: id')
       err.statusCode.should.equal(400)
     }
@@ -27,9 +27,9 @@ describe('shelves:remove-items', () => {
       const res = await authReq('post', endpoint, {
         id: shelf._id
       })
-      shouldNotGetHere(res)
+      shouldNotBeCalled(res)
     } catch (err) {
-      rethrowShouldNotGetHereErrors(err)
+      rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.equal('missing parameter in body: items')
       err.statusCode.should.equal(400)
     }
@@ -54,9 +54,9 @@ describe('shelves:remove-items', () => {
         id: shelf._id,
         items: [ item._id ]
       })
-      shouldNotGetHere(res)
+      shouldNotBeCalled(res)
     } catch (err) {
-      rethrowShouldNotGetHereErrors(err)
+      rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.startWith('wrong owner')
       err.statusCode.should.equal(400)
     }
@@ -70,9 +70,9 @@ describe('shelves:remove-items', () => {
         id: shelf._id,
         items: [ item._id ]
       })
-      shouldNotGetHere(res)
+      shouldNotBeCalled(res)
     } catch (err) {
-      rethrowShouldNotGetHereErrors(err)
+      rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.startWith('wrong owner')
       err.statusCode.should.equal(403)
     }

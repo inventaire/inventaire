@@ -1,6 +1,6 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
-const { shouldNotGetHere, rethrowShouldNotGetHereErrors } = __.require('apiTests', 'utils/utils')
+const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = __.require('apiTests', 'utils/utils')
 const { authReq, authReqB } = require('../utils/utils')
 const { createShelf, createShelfWithItem } = require('../fixtures/shelves')
 
@@ -12,9 +12,9 @@ describe('shelves:delete', () => {
   it('should reject without shelf id', async () => {
     try {
       const res = await authReq('post', endpoint)
-      shouldNotGetHere(res)
+      shouldNotBeCalled(res)
     } catch (err) {
-      rethrowShouldNotGetHereErrors(err)
+      rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.equal('missing parameter in body: ids')
       err.statusCode.should.equal(400)
     }
@@ -24,9 +24,9 @@ describe('shelves:delete', () => {
     try {
       const shelf = await shelfPromise
       const res = await authReqB('post', endpoint, { ids: shelf._id })
-      shouldNotGetHere(res)
+      shouldNotBeCalled(res)
     } catch (err) {
-      rethrowShouldNotGetHereErrors(err)
+      rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.equal('wrong owner')
       err.statusCode.should.equal(403)
     }
@@ -48,9 +48,9 @@ describe('shelves:delete', () => {
         const shelf = await shelfWithItemsPromise
         const { _id: shelfId } = shelf
         const res = await authReq('post', endpoint, { ids: shelfId })
-        shouldNotGetHere(res)
+        shouldNotBeCalled(res)
       } catch (err) {
-        rethrowShouldNotGetHereErrors(err)
+        rethrowShouldNotBeCalledErrors(err)
         err.body.status_verbose.should.startWith('shelf cannot be deleted')
         err.statusCode.should.equal(403)
       }

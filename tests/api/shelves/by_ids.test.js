@@ -1,6 +1,6 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
-const { shouldNotGetHere, rethrowShouldNotGetHereErrors } = __.require('apiTests', 'utils/utils')
+const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = __.require('apiTests', 'utils/utils')
 const { authReq, authReqB, getUser, customAuthReq } = require('../utils/utils')
 const { createUser } = require('../fixtures/users')
 const { createShelf } = require('../fixtures/shelves')
@@ -13,9 +13,9 @@ describe('shelves:by-ids', () => {
   it('should reject without ids', async () => {
     try {
       const res = await authReq('get', endpoint)
-      shouldNotGetHere(res)
+      shouldNotBeCalled(res)
     } catch (err) {
-      rethrowShouldNotGetHereErrors(err)
+      rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.equal('missing parameter in query: ids')
       err.statusCode.should.equal(400)
     }
