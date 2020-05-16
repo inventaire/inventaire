@@ -4,7 +4,6 @@ const promises_ = __.require('lib', 'promises')
 const getThumbData = __.require('data', 'commons/thumb')
 const getEnwikiImage = __.require('data', 'wikipedia/image')
 const getOpenLibraryCover = __.require('data', 'openlibrary/cover')
-const { getAvatarsDataFromClaims } = require('./get_avatars_from_claims')
 const getCommonsFilenamesFromClaims = require('./get_commons_filenames_from_claims')
 
 module.exports = async entity => {
@@ -31,7 +30,7 @@ const pickBestPic = (entity, commonsFilename, enwikiTitle, openLibraryId) => {
     const order = getPicSourceOrder(entity)
     const orderedResults = _.pick(results, order)
     const bestPicData = _.compact(_.values(orderedResults))[0]
-    return bestPicData || getAvatarsDataFromClaims(entity.claims)[0]
+    return bestPicData
   })
 }
 
