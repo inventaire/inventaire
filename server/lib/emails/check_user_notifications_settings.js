@@ -3,6 +3,9 @@ const error_ = __.require('lib', 'error/error')
 
 module.exports = (user, notificationLabel) => {
   const { _id, settings, undeliveredEmail } = user
+
+  if (!settings) throw error_.new('invalid user doc', user)
+
   if (undeliveredEmail > 1) {
     throw emailDisabled({ user: _id, reason: 'too many undelivered emails' })
   }
