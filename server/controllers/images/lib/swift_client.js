@@ -50,7 +50,7 @@ module.exports = {
     headers['content-length'] = contentLength
     headers['content-type'] = 'application/octet-stream'
     const stream = createReadStream(path)
-    const res = await requests_.put(url, { headers, body: stream })
+    const res = await requests_.put(url, { headers, bodyStream: stream, parseJson: false })
     _.log(res, 'swift putImage')
     return relativeUrl(container, filename)
   }

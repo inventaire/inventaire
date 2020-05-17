@@ -113,6 +113,9 @@ const completeOptions = (method, options) => {
   if (options.body && typeof options.body !== 'string') {
     options.body = JSON.stringify(options.body)
     options.headers['content-type'] = 'application/json'
+  } else if (options.bodyStream) {
+    // Pass stream bodies as a 'bodyStream' option to avoid having it JSON.stringified
+    options.body = options.bodyStream
   }
 
   options.timeout = options.timeout || 60 * 1000
@@ -130,7 +133,8 @@ const startReqTimer = (method, url, options) => {
   url = url.replace(basicAuthPattern, '//')
 
   let body = ' '
-  if (options && options.body) body += options.body
+  if (options.bodyStream) body += '[stream]'
+  else if (options && options.body) body += options.body
 
   const reqTimerKey = magenta(`${method.toUpperCase()} ${url}${body} [r${++requestId}]`)
   console.time(reqTimerKey)

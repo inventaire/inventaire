@@ -54,7 +54,6 @@ module.exports = async () => {
 
 const parseIdentificationRes = ({ body, headers }) => {
   const newToken = headers['x-subject-token']
-  console.log('newToken', newToken)
   if (!newToken) throw error_.new('swift token not found', 500, { headers })
 
   const expirationTime = body.token.expires_at && (new Date(body.token.expires_at)).getTime()
