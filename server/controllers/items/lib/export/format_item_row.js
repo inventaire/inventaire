@@ -71,12 +71,16 @@ module.exports = lang => item => {
 const formatField = text => {
   if (!text) return ''
   if (_.isArray(text)) text = text.join(',')
-  // Escaping double quotes
-  // See https://stackoverflow.com/a/17808731/3324977
-  text = text.replace(/"/g, '""')
-  // Quoting text that contains a comma to prevent it
-  // to be interpreted as a field separator
-  if (text.includes(',')) text = `"${text}"`
+  if (text.includes('"')) {
+    // Escaping double quotes
+    // See https://tools.ietf.org/html/rfc4180#section-2
+    text = text.replace(/"/g, '""')
+    text = `"${text}"`
+  } else if (text.includes(',')) {
+    // Quoting text that contains a comma to prevent it
+    // to be interpreted as a field separator
+    text = `"${text}"`
+  }
   return text
 }
 

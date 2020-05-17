@@ -127,5 +127,14 @@ describe('items:export', () => {
       itemRow['Publisher URLs'].should.equal(generateEntityUrl(publisher.uri))
       itemRow['Publisher label'].should.equal(publisherLabel)
     })
+
+    it('should escape double quotes', async () => {
+      const user = createUser({ language: 'fr' })
+      const title = '"foo" : bar, buzz'
+      const edition = await createEdition({ title })
+      const item = await createItem(user, { entity: edition.uri })
+      const itemRow = await reqAndParse(item._id, user)
+      itemRow.Title.should.equal(title)
+    })
   })
 })
