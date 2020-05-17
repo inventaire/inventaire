@@ -20,6 +20,7 @@ const db = __.require('level', 'get_sub_db')('snapshot', 'json')
 const { formatBatchOps } = __.require('level', 'utils')
 const refreshSnapshot = require('./refresh_snapshot')
 const error_ = __.require('lib', 'error/error')
+const assert_ = __.require('utils', 'assert_types')
 const pTimeout = require('p-timeout')
 
 module.exports = {
@@ -27,6 +28,7 @@ module.exports = {
     if (item.snapshot) return item
 
     try {
+      assert_.string(item.entity)
       item.snapshot = await getSnapshot(item.entity)
     } catch (err) {
       _.error(err, 'snapshot_.addToItem error')
