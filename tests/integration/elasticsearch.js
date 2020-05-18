@@ -13,7 +13,7 @@ describe('elastic query of an author name within indexes of wikidata humans', ()
       lessGoodId: 'Q214986' // => label: 'Heinrich Marx'
     }
 
-    search(authorInWdDescriptions.query, 'humans')
+    search(authorInWdDescriptions.query, { type: 'humans' })
     .then(results => {
       const ids = _.map(results, '_id')
       ids.includes(authorInWdDescriptions.goodId).should.be.true()
