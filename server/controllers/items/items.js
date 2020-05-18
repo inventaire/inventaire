@@ -10,7 +10,8 @@ module.exports = {
       'by-user-and-entities': require('./by_user_and_entities'),
       'inventory-view': require('./inventory_view'),
       'recent-public': require('./recent_public'),
-      'last-public': require('./last_public')
+      'last-public': require('./last_public'),
+      search: require('./search')
     },
     authentified: {
       nearby: require('./nearby'),
