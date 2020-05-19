@@ -9,14 +9,14 @@ module.exports = {
       'reverse-claims': require('./reverse_claims'),
       'author-works': require('./author_works'),
       'serie-parts': require('./serie_parts'),
-      history: require('./history'),
       images: require('./images'),
       popularity: require('./popularity')
     },
     admin: {
+      activity: require('./activity'),
       contributions: require('./contributions'),
       duplicates: require('./duplicates'),
-      activity: require('./activity')
+      history: require('./history')
     }
   }),
 
