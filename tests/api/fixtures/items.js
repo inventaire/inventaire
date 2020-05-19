@@ -11,6 +11,11 @@ const getEditionUri = async (lang = 'en') => {
   return uri
 }
 
+const createItemWithEntities = createEntityFn => async (user, itemData = {}) => {
+  const { uri } = await createEntityFn()
+  itemData.entity = uri
+  return API.createItem(user, itemData)
+}
 const API = module.exports = {
   createItems: async (user, itemsData = []) => {
     user = user || getUser()
@@ -26,30 +31,13 @@ const API = module.exports = {
     return item
   },
 
-  createItemWithReservedWork: async user => {
-    const { uri: entity } = await createEdition()
-    return API.createItem(user, { entity })
-  },
-
-  createItemWithAuthor: async user => {
-    const { uri: entity } = await createEditionWithWorkAndAuthor()
-    return API.createItem(user, { entity })
-  },
-
-  createItemWithAuthorAndSerie: async user => {
-    const { uri: entity } = await createEditionWithWorkAuthorAndSerie()
-    return API.createItem(user, { entity })
-  },
-
-  createEditionAndItem: async (user, itemData = {}) => {
-    const { uri } = await createEdition()
-    itemData.entity = uri
-    return API.createItem(user, itemData)
-  },
-
   createRandomizedItems: (user, itemsData) => {
     return API.createItems(user, itemsData.map(fillItemWithRandomData))
-  }
+  },
+
+  createItemWithEditionAndWork: createItemWithEntities(createEdition),
+  createItemWithAuthor: createItemWithEntities(createEditionWithWorkAndAuthor),
+  createItemWithAuthorAndSerie: createItemWithEntities(createEditionWithWorkAuthorAndSerie)
 }
 
 const transactions = [ 'giving', 'lending', 'selling', 'inventorying' ]
