@@ -3,7 +3,7 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const { customAuthReq } = require('../utils/request')
 const { getUser } = require('../utils/utils')
-const { createEdition } = require('./entities')
+const { createEdition, createEditionWithWorkAndAuthor, createEditionWithWorkAuthorAndSerie } = require('./entities')
 const faker = require('faker')
 
 const urisPromises = {}
@@ -15,7 +15,7 @@ const getEditionUriPromise = lang => {
 }
 
 let count = 0
-const getEditionUri = () => {
+const getSharedEditionUri = () => {
   // Get 4/5 'en' editions, 1/5 'de' editions
   const lang = (count % 4) === 0 ? 'de' : 'en'
   count += 1
@@ -29,7 +29,7 @@ const API = module.exports = {
   createItems: async (user, itemsData = []) => {
     user = user || getUser()
     const entity = itemsData[0] && itemsData[0].entity
-    const entityUriPromise = entity ? Promise.resolve(entity) : getEditionUri()
+    const entityUriPromise = entity ? Promise.resolve(entity) : getSharedEditionUri()
     const entityUri = await entityUriPromise
     const items = itemsData.map(addDefaultEntity(entityUri))
     return customAuthReq(user, 'post', '/api/items', items)
@@ -39,6 +39,21 @@ const API = module.exports = {
     itemData.listing = itemData.listing || 'public'
     const [ item ] = await API.createItems(user, [ itemData ])
     return item
+  },
+
+  createItemWithReservedWork: async user => {
+    const { uri: entity } = await createEdition()
+    return API.createItem(user, { entity })
+  },
+
+  createItemWithAuthor: async user => {
+    const { uri: entity } = await createEditionWithWorkAndAuthor()
+    return API.createItem(user, { entity })
+  },
+
+  createItemWithAuthorAndSerie: async user => {
+    const { uri: entity } = await createEditionWithWorkAuthorAndSerie()
+    return API.createItem(user, { entity })
   },
 
   createEditionAndItem: async (user, itemData = {}) => {
