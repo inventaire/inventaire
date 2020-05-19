@@ -3,7 +3,7 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const { customAuthReq } = require('../utils/request')
 const { getUser } = require('../utils/utils')
-const { createEdition } = require('./entities')
+const { createEdition, createEditionWithWorkAndAuthor, createEditionWithWorkAuthorAndSerie } = require('./entities')
 const faker = require('faker')
 
 const getEditionUri = async (lang = 'en') => {
@@ -24,6 +24,21 @@ const API = module.exports = {
     await addDefaultEntity(itemData)
     const [ item ] = await customAuthReq(user, 'post', '/api/items', [ itemData ])
     return item
+  },
+
+  createItemWithReservedWork: async user => {
+    const { uri: entity } = await createEdition()
+    return API.createItem(user, { entity })
+  },
+
+  createItemWithAuthor: async user => {
+    const { uri: entity } = await createEditionWithWorkAndAuthor()
+    return API.createItem(user, { entity })
+  },
+
+  createItemWithAuthorAndSerie: async user => {
+    const { uri: entity } = await createEditionWithWorkAuthorAndSerie()
+    return API.createItem(user, { entity })
   },
 
   createEditionAndItem: async (user, itemData = {}) => {

@@ -5,14 +5,21 @@ const { buildSearcher } = __.require('lib', 'elasticsearch')
 module.exports = buildSearcher({
   dbBaseName: 'items',
   queryBodyBuilder: (search, params) => {
-    const { userId, limit = 20 } = params
+    const { userId, limit = 10 } = params
 
     const must = [
-      { match: { owner: userId } }
+      { term: { owner: userId } }
     ]
 
-    const should = []
+    const should = [
+      { match: { 'snapshot.entity:title': search } },
+      { match: { 'snapshot.entity:subtitle': search } },
+      { match: { 'snapshot.entity:authors': search } },
+      { match: { 'snapshot.entity:series': search } }
+    ]
 
-    return { size: limit, query: { bool: { must, should } } }
+    const query = { bool: { must, should } }
+
+    return { query, size: limit, min_score: 0.2 }
   }
 })
