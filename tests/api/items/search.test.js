@@ -1,8 +1,10 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
+const _ = __.require('builders', 'utils')
 require('should')
-const { getUser, customAuthReq } = require('../utils/utils')
-const { createItemWithEditionAndWork, createItemWithAuthor, createItemWithAuthorAndSerie } = require('../fixtures/items')
+const { getUser, getReservedUser, customAuthReq } = require('../utils/utils')
+const { getTwoFriends } = require('../fixtures/users')
+const { createItem, createItemWithEditionAndWork, createItemWithAuthor, createItemWithAuthorAndSerie } = require('../fixtures/items')
 const endpoint = '/api/items?action=search'
 const { wait } = __.require('lib', 'promises')
 const { shouldNotBeCalled } = require('../utils/utils')
@@ -106,5 +108,32 @@ describe('items:search', () => {
     const input = `${firstNWords(authors, 1)} ${firstNWords(title, 2)}`
     const { items } = await search(user, user._id, input)
     items[0]._id.should.equal(item._id)
+  })
+
+  it('should find only allowed items for a network user', async () => {
+    const [ userA, userB ] = await getTwoFriends()
+    const privateItem = await createItemWithEditionAndWork(userA, { listing: 'private' })
+    const networkItem = await createItem(userA, { entity: privateItem.entity, listing: 'network' })
+    await wait(1000)
+    const { 'entity:title': title } = privateItem.snapshot
+    const { items } = await search(userB, userA._id, title)
+    const itemsIds = _.map(items, '_id')
+    itemsIds.should.not.containEql(privateItem._id)
+    itemsIds.should.containEql(networkItem._id)
+  })
+
+  it('should find only allowed items for a public user', async () => {
+    const userA = await getUser()
+    const userB = await getReservedUser()
+    const privateItem = await createItemWithEditionAndWork(userA, { listing: 'network' })
+    const networkItem = await createItem(userA, { entity: privateItem.entity, listing: 'network' })
+    const publicItem = await createItem(userA, { entity: privateItem.entity, listing: 'public' })
+    await wait(1000)
+    const { 'entity:title': title } = privateItem.snapshot
+    const { items } = await search(userB, userA._id, title)
+    const itemsIds = _.map(items, '_id')
+    itemsIds.should.not.containEql(privateItem._id)
+    itemsIds.should.not.containEql(networkItem._id)
+    itemsIds.should.containEql(publicItem._id)
   })
 })
