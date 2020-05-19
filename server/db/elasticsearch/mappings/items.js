@@ -3,17 +3,19 @@ const { string, keyword, date } = require('./mappings_datatypes')
 module.exports = {
   item: {
     properties: {
-      owner: keyword,
       _rev: keyword,
-      created: date,
+      owner: keyword,
       entity: keyword,
       listing: keyword,
+      transaction: keyword,
+      created: date,
       snapshot: {
         properties: {
           'entity:title': string,
           'entity:subtitle': string,
           'entity:authors': string,
-          'entity:series': string
+          'entity:series': string,
+          'entity:lang': keyword
         }
       }
     }
