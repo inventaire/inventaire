@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
 const { getUser, customAuthReq } = require('../utils/utils')
-const { createItemWithReservedWork, createItemWithAuthor, createItemWithAuthorAndSerie } = require('../fixtures/items')
+const { createItemWithEditionAndWork, createItemWithAuthor, createItemWithAuthorAndSerie } = require('../fixtures/items')
 const endpoint = '/api/items?action=search'
 const { wait } = __.require('lib', 'promises')
 const { shouldNotBeCalled } = require('../utils/utils')
@@ -39,10 +39,10 @@ describe('items:search', () => {
   it('should find a user item by title', async () => {
     const user = await getUser()
     const [ item ] = await Promise.all([
-      createItemWithReservedWork(user),
+      createItemWithEditionAndWork(user),
       // Create more items to check that we are not just getting all user items
-      createItemWithReservedWork(user),
-      createItemWithReservedWork(user)
+      createItemWithEditionAndWork(user),
+      createItemWithEditionAndWork(user)
     ])
     await wait(1000)
     const { 'entity:title': title } = item.snapshot
@@ -54,10 +54,10 @@ describe('items:search', () => {
   it('should find a user item by subtitle', async () => {
     const user = await getUser()
     const [ item ] = await Promise.all([
-      createItemWithReservedWork(user),
+      createItemWithEditionAndWork(user),
       // Create more items to check that we are not just getting all user items
-      createItemWithReservedWork(user),
-      createItemWithReservedWork(user)
+      createItemWithEditionAndWork(user),
+      createItemWithEditionAndWork(user)
     ])
     await wait(1000)
     const { 'entity:subtitle': subtitle } = item.snapshot

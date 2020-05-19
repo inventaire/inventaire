@@ -3,7 +3,7 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
 const { getUser, authReq } = __.require('apiTests', 'utils/utils')
-const { createItem, createEditionAndItem } = require('../fixtures/items')
+const { createItem, createItemWithEditionAndWork } = require('../fixtures/items')
 
 describe('items:get-by-entities', () => {
   it('should get an item by its entity uri', done => {
@@ -20,8 +20,8 @@ describe('items:get-by-entities', () => {
 
   it('should get items by entities uris', done => {
     Promise.all([
-      createEditionAndItem(getUser()),
-      createEditionAndItem(getUser())
+      createItemWithEditionAndWork(getUser()),
+      createItemWithEditionAndWork(getUser())
     ])
     .then(items => {
       const uris = _.uniq(_.map(items, 'entity'))
