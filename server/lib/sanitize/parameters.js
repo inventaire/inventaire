@@ -168,6 +168,7 @@ const generics = {
 
 module.exports = {
   authors: arrayOfStrings,
+  asP31value: nonEmptyString,
   attribute: nonEmptyString,
   email: { validate: validations.common.email },
   description: nonEmptyString,
