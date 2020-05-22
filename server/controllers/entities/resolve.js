@@ -10,6 +10,28 @@ const UpdateResolvedEntry = require('./lib/resolver/update_resolved_entry')
 const CreateUnresolvedEntry = require('./lib/resolver/create_unresolved_entry')
 const { oneHour } = __.require('lib', 'times')
 
+// Entry example:
+// {
+//   edition: {
+//     claims: {
+//       'wdt:P212': '978-3-7795-0208-1',
+//       'wdt:P1680': 'Fragmente einer anarchistischen Anthropologie',
+//       'wdt:P648': 'OL26350019M'
+//     }
+//   },
+//   works: [
+//     {
+//       labels: { en: 'Frei von Herrschaft' },
+//       claims: { 'wdt:P50': [ 'wd:Q1174579' ] }
+//     }
+//   ],
+//   authors: [
+//     {
+//       labels: { en: 'David Graeber' }
+//     }
+//   ]
+// }
+
 const sanitization = {
   entries: {
     generic: 'collection'
