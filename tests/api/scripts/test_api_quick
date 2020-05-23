@@ -7,7 +7,11 @@
 # server libs/controllers as possible).
 # Known case: deleting an entity isn't possible from the API
 
-if [[ -f ./run/3009-supervisor ]] ;
+# Env variables required to get the right port
+export NODE_ENV=tests-api NODE_APP_INSTANCE=server
+server_port=$(node -p "require('config').port")
+
+if [[ -f "./run/${server_port}-supervisor" ]] ;
 then
   echo -e "\e[0;32mtests server is running\e[0;30m"
 else

@@ -1,16 +1,19 @@
 #!/usr/bin/env bash
 
-if [[ -f ./run/3009-supervisor ]] ;
+# Env variables required to get the right port
+export NODE_ENV=tests-api NODE_APP_INSTANCE=server
+server_port=$(node -p "require('config').port")
+supervisor_pid_path="./run/${server_port}-supervisor"
+
+if [[ -f "$supervisor_pid_path" ]] ;
 then
-  supervisor_pid=$(cat ./run/3009-supervisor)
+  supervisor_pid=$(cat "$supervisor_pid_path")
 fi
 
 if [[ "$supervisor_pid" != '' ]] ;
 then
+  # Send a SIGTERM to supervisor, which should then unlink $supervisor_pid_path
   kill $supervisor_pid
 else
   echo "no test server to kill"
 fi
-
-# Cleanup
-rm -f ./run/3009-supervisor
