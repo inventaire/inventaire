@@ -100,6 +100,21 @@ describe('entities:resolver:update-resolved', () => {
     numberOfPagesClaimsValues.should.containEql(numberOfPages)
   })
 
+  it('should add an image claim from an image url', async () => {
+    const { uri: editionUri, isbn } = await createEditionWithIsbn()
+    const entry = {
+      edition: {
+        isbn,
+        image: 'https://covers.openlibrary.org/w/id/263997-M.jpg'
+      }
+    }
+    await resolveAndUpdate(entry)
+    await wait(10)
+    const { entities } = await getByUris(editionUri)
+    const { claims: updatedClaims } = entities[editionUri]
+    updatedClaims['invp:P2'][0].should.be.ok()
+  })
+
   it('should add a batch timestamp to patches', async () => {
     const startTime = Date.now()
     const entryA = someEntryWithAGoodReadsWorkId()
