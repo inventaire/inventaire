@@ -99,6 +99,7 @@ describe('entities:resolver:update-resolved', () => {
     const entry = {
       edition: {
         isbn,
+        image: 'https://covers.openlibrary.org/w/id/263997-M.jpg',
         claims: { 'wdt:P1104': numberOfPages }
       }
     }
@@ -106,8 +107,8 @@ describe('entities:resolver:update-resolved', () => {
     await wait(10)
     const { entities } = await getByUris(editionUri)
     const updatedEdition = entities[editionUri]
-    const numberOfPagesClaimsValues = updatedEdition.claims['wdt:P1104']
-    numberOfPagesClaimsValues.should.containEql(numberOfPages)
+    updatedEdition.claims['wdt:P1104'][0].should.equal(numberOfPages)
+    updatedEdition.claims['invp:P2'][0].should.be.ok()
   })
 
   it('should add a batch timestamp to patches', async () => {
