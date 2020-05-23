@@ -3,18 +3,18 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const entities_ = require('../entities')
 
-module.exports = ({ reqUserId, batchId }) => entry => {
+module.exports = ({ reqUserId, batchId }) => async entry => {
   const { edition, works, authors } = entry
 
   const allResolvedSeeds = [ edition ].concat(works, authors).filter(hasUri)
 
-  return Promise.all(allResolvedSeeds.map(updateEntityFromSeed(reqUserId, batchId)))
-  .then(() => entry)
+  await Promise.all(allResolvedSeeds.map(updateEntityFromSeed(reqUserId, batchId)))
+  return entry
 }
 
 const hasUri = seed => seed.uri != null
 
-const updateEntityFromSeed = (reqUserId, batchId) => seed => {
+const updateEntityFromSeed = (reqUserId, batchId) => async seed => {
   const { uri, claims: seedClaims } = seed
   if (!uri) return
 
@@ -22,8 +22,8 @@ const updateEntityFromSeed = (reqUserId, batchId) => seed => {
   // Do not try to update Wikidata for the moment
   if (prefix === 'wd') return
 
-  return getEntity(prefix, entityId)
-  .then(addMissingClaims(seedClaims, reqUserId, batchId))
+  const entity = await getEntity(prefix, entityId)
+  await addMissingClaims(entity, seedClaims, reqUserId, batchId)
 }
 
 const getEntity = (prefix, entityId) => {
@@ -34,7 +34,7 @@ const getEntity = (prefix, entityId) => {
   }
 }
 
-const addMissingClaims = (seedClaims, reqUserId, batchId) => entity => {
+const addMissingClaims = (entity, seedClaims, reqUserId, batchId) => {
   // Do not update if property already exists
   // Known cases: avoid updating authors who are actually edition translators
   const newClaims = _.omit(seedClaims, Object.keys(entity.claims))

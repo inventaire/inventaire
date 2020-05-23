@@ -13,11 +13,11 @@ module.exports = ({ reqUserId, batchId, enrich }) => async entry => {
 
   // Create authors before works, so that the created entities uris
   // can be set on the entry, and used in works claims
-  return createAuthors(entry, reqUserId, batchId)
+  await createAuthors(entry, reqUserId, batchId)
   // Idem for works being created before the edition
-  .then(() => createWorks(entry, reqUserId, batchId))
-  .then(() => createEdition(edition, works, reqUserId, batchId, enrich))
-  .then(() => entry)
+  await createWorks(entry, reqUserId, batchId)
+  await createEdition(edition, works, reqUserId, batchId, enrich)
+  return entry
 }
 
 const createAuthors = (entry, reqUserId, batchId) => {
