@@ -2,11 +2,13 @@
 // This config file will be used if: NODE_ENV=tests-api
 // Override locally in ./local-tests-api.js
 
+const port = 3009
+
 module.exports = {
   env: 'tests-api',
   protocol: 'http',
   host: 'localhost',
-  port: 3009,
+  port,
   verbose: false,
   fullHost: function () {
     return `${this.protocol}://${this.host}:${this.port}`
@@ -21,6 +23,13 @@ module.exports = {
       delay: 1000
     }
   },
+
+  mediaStorage: {
+    local: {
+      internalEndpoint: () => `http://localhost:${port}/local/`
+    }
+  },
+
   leveldbMemoryBackend: true,
   // Disable password hashing to make tests run faster
   hashPasswords: false,

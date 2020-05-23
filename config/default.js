@@ -3,6 +3,7 @@
 // in this same folder
 // See the config module doc: https://github.com/lorenwest/node-config/wiki/Configuration-Files
 
+const port = 3006
 const contactAddress = 'hello@inventaire.io'
 
 const config = module.exports = {
@@ -15,7 +16,7 @@ const config = module.exports = {
   // protocol: 'http'
   verbose: true,
   protocol: 'http',
-  port: 3006,
+  port,
   // Override in ./local.js when working offline to prevent trying to fetch remote resources (like images) when possible
   offline: false,
   fullHost: function () {
@@ -149,10 +150,7 @@ const config = module.exports = {
     mode: 'local',
     local: {
       folder: () => config.universalPath.path('root', 'storage'),
-      route: 'local',
-      internalEndpoint: function () {
-        return `${config.fullHost()}/${this.route}/`
-      }
+      internalEndpoint: () => `http://localhost:${port}/local/`
     },
     // Swift parameters are required only when mediaStorage mode is set to 'swift'
     swift: {
