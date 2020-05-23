@@ -7,18 +7,13 @@ const resolveWorksFromAuthors = require('./resolve_works_from_authors')
 
 // Resolve a work(or author) seed when the author(or work) seed is already resolved
 
-module.exports = entry => {
+module.exports = async entry => {
   const { authors, works, edition } = entry
 
   if (!_.some(works)) return entry
 
-  return resolveWorksFromEdition(works, edition)
-  .then(works => {
-    entry.works = works
-    return resolveAuthorsFromWorks(authors, works)
-    .then(authors => { entry.authors = authors })
-    .then(() => resolveWorksFromAuthors(works, authors))
-  })
-  .then(works => { entry.works = works })
-  .then(() => entry)
+  await resolveWorksFromEdition(works, edition)
+  await resolveAuthorsFromWorks(authors, works)
+  await resolveWorksFromAuthors(works, authors)
+  return entry
 }

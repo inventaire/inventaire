@@ -19,13 +19,11 @@ module.exports = entry => {
   })
 }
 
-const resolveByIsbn = isbn => {
+const resolveByIsbn = async isbn => {
   if (isbn == null) return
   // Resolve directly on the database to avoid making undersired requests to dataseed
-  return entities_.byIsbn(isbn)
-  .then(edition => {
-    if (edition != null) return getInvEntityCanonicalUri(edition)
-  })
+  const edition = await entities_.byIsbn(isbn)
+  if (edition != null) return getInvEntityCanonicalUri(edition)
 }
 
 const pickUriFromResolversResponses = ([ uriFoundByIsbn, urisFoundByExternalIds ]) => {
