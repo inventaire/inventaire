@@ -364,6 +364,21 @@ describe('entities:resolve:on-labels', () => {
     should(entries[0].works[0].uri).not.be.ok()
     should(entries[0].authors[0].uri).not.be.ok()
   })
+
+  it.only('should return authors suggestions with their matching works', async () => {
+    const author = await createHuman()
+    const workLabel = randomLabel()
+    await Promise.all([
+      createWorkWithAuthor(author, workLabel),
+      createWorkWithAuthor(author, workLabel)
+    ])
+    await wait(elasticsearchUpdateDelay)
+    const { entries } = await resolve(basicEntry(workLabel, author.labels.en))
+    should(entries[0].authors[0].uri).not.be.ok()
+    const suggestions = entries[0].authors[0].suggestions
+    should(suggestions).be.ok()
+    should(suggestions).be.ok()
+  })
 })
 
 const basicEntry = (workLabel, authorLabel) => ({

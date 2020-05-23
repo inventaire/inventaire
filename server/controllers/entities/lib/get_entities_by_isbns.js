@@ -40,7 +40,8 @@ module.exports = (rawIsbns, params) => {
 const getIsbn13h = entity => entity.claims['wdt:P212'][0]
 
 const getMissingEditionEntitiesFromSeeds = async (isbns, refresh) => {
-  const seeds = await dataseed.getByIsbns(isbns, refresh)
+  // const seeds = await dataseed.getByIsbns(isbns, refresh)
+  const seeds = []
   const insufficientData = []
   const validSeeds = []
   // TODO: Filter out more aggressively bad quality seeds

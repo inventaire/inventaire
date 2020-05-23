@@ -91,6 +91,8 @@ const spreadByType = (worksByTypes, rows) => scores => {
     worksByTypes[type].push(row)
   }
 
+  console.log('worksByTypes', worksByTypes.works)
+
   return sortTypesByScore(worksByTypes)
 }
 

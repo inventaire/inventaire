@@ -44,6 +44,7 @@ const searchUrisByAuthorLabel = async term => {
 }
 
 const resolveWorksAndAuthor = (works, author) => authorsUris => {
+  author.suggestions = authorsUris
   return Promise.all(works.map(getWorkAndResolve(author, authorsUris)))
 }
 
@@ -55,6 +56,7 @@ const getWorkAndResolve = (authorSeed, authorsUris) => work => {
 }
 
 const resolveWorkAndAuthor = (authorsUris, authorSeed, workSeed, workTerms) => searchedWorks => {
+  console.log('searchedWorks', searchedWorks)
   // Several searchedWorks could match authors homonyms/duplicates
   if (searchedWorks.length !== 1) return
   const searchedWork = searchedWorks[0]
