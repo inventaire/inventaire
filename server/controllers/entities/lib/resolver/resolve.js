@@ -8,8 +8,8 @@ const resolveOnTerms = require('./resolve_on_terms')
 
 module.exports = entry => {
   return resolveEdition(entry)
-  .then(resolveAuthors)
-  .then(resolveWorks)
+  .then(resolveAuthorsByExternalIds)
+  .then(resolveWorksByExternalIds)
   .then(resolveInContext)
   .then(resolveOnTerms)
   .then(entry => {
@@ -29,8 +29,8 @@ const resolveSectionSeedsByExternalIds = section => entry => {
   .then(() => entry)
 }
 
-const resolveAuthors = resolveSectionSeedsByExternalIds('authors')
-const resolveWorks = resolveSectionSeedsByExternalIds('works')
+const resolveAuthorsByExternalIds = resolveSectionSeedsByExternalIds('authors')
+const resolveWorksByExternalIds = resolveSectionSeedsByExternalIds('works')
 
 const addResolvedFlag = seed => {
   seed.resolved = (seed.uri != null)
