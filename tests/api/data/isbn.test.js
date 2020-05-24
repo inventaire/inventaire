@@ -1,5 +1,4 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
+const __ = require('config').universalPath
 require('should')
 const { nonAuthReq, undesiredRes } = require('../utils/utils')
 const endpoint = '/api/data?action=isbn'
