@@ -14,7 +14,7 @@ module.exports = {
     // see server/controllers/entities/lib/update_claims_hooks
     hook: userDoc('hook', '001'),
     reconciler: userDoc('reconciler', '002'),
-    // used by scripts/update_entities_schema
+    // used by scripts/update_entities.js
     updater: userDoc('updater', '003')
   }
 }
