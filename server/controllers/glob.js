@@ -12,7 +12,7 @@ module.exports = {
       error_.bundle(req, res, `GET ${pathname}: asset not found`, 404)
     } else if (imageHeader(req)) {
       const err = `GET ${pathname}: wrong content-type: ${req.headers.accept}`
-      error_.bundle(req, res, err, 404)
+      error_.bundle(req, res, err, 400)
     } else {
       // the routing will be done on the client side
       res.sendFile('./index.html', { root: publicFolder })
