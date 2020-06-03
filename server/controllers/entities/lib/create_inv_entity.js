@@ -9,10 +9,12 @@ module.exports = async params => {
   _.log(params, 'inv entity creation')
 
   await validateEntity({ labels, claims })
-  const currentDoc = await entities_.createBlank()
+
+  const blankEntityDoc = await entities_.createBlank()
+
   const entity = await entities_.edit({
     userId,
-    currentDoc,
+    currentDoc: blankEntityDoc,
     updatedLabels: labels,
     updatedClaims: claims,
     batchId

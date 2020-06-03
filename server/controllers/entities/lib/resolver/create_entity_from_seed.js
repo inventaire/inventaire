@@ -69,35 +69,28 @@ const addClaimIfValid = (claims, property, values, type) => {
   }
 }
 
-const createEntityFromSeed = params => {
-  const { type, seed, claims, userId, batchId } = params
-  return createInvEntity({
+const createEntityFromSeed = async ({ type, seed, claims, userId, batchId }) => {
+  const entity = await createInvEntity({
     labels: seed.labels,
-    claims: buildClaims(seed.claims, claims, type),
+    claims: addSeedClaims(claims, seed.claims, type),
     userId,
     batchId
   })
-  .then(addCreatedUriToSeed(seed))
-}
 
-// Difference between seedClaims and entityClaims:
-// seedClaims come from the request input, and might not be valid
-const buildClaims = (seedClaims, entityClaims, type) => {
-  for (const property in seedClaims) {
-    const values = seedClaims[property]
-    addClaimIfValid(entityClaims, property, values, type)
-  }
-  return entityClaims
-}
-
-const addCreatedUriToSeed = seed => createdEntity => {
-  if (createdEntity._id == null) return
-  seed.uri = `inv:${createdEntity._id}`
+  seed.uri = entity.uri
   seed.created = true
   // Do not just merge objects, as the created flag
   // would be overriden by the created timestamp
-  seed.labels = createdEntity.labels
-  seed.claims = createdEntity.claims
+  seed.labels = entity.labels
+  seed.claims = entity.claims
+}
+
+const addSeedClaims = (claims, seedClaims, type) => {
+  for (const property in seedClaims) {
+    const values = seedClaims[property]
+    addClaimIfValid(claims, property, values, type)
+  }
+  return claims
 }
 
 const buildBestEditionTitle = (edition, works) => {
