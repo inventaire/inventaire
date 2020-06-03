@@ -355,6 +355,49 @@ describe('entities:resolve:on-labels', () => {
     should(entries[0].works[0].uri).not.be.ok()
     should(entries[0].authors[0].uri).not.be.ok()
   })
+
+  it('should reject an invalid image URL', async () => {
+    const editionSeed = {
+      isbn: generateIsbn13(),
+      image: 'not a valid URL'
+    }
+    const entry = { edition: editionSeed }
+    try {
+      await resolve(entry).then(shouldNotBeCalled)
+    } catch (err) {
+      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.equal('invalid image url')
+    }
+  })
+
+  it('should reject an image on a work', async () => {
+    const work = { image: 'https://covers.openlibrary.org/w/id/263997-M.jpg' }
+    const entry = {
+      edition: { isbn: generateIsbn13() },
+      works: [ work ]
+    }
+    try {
+      await resolve(entry).then(shouldNotBeCalled)
+    } catch (err) {
+      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.equal("work can't have an image")
+    }
+  })
+
+  it('should reject an invalid image', async () => {
+    const validUrlButNotAnImage = `${CONFIG.fullHost()}/api/tests`
+    const editionSeed = {
+      isbn: generateIsbn13(),
+      image: validUrlButNotAnImage
+    }
+    const entry = { edition: editionSeed }
+    try {
+      await resolve(entry).then(shouldNotBeCalled)
+    } catch (err) {
+      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.equal('invalid image url')
+    }
+  })
 })
 
 const basicEntry = (workLabel, authorLabel) => ({

@@ -3,7 +3,7 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
 const { wait } = __.require('lib', 'promises')
-const { authReq } = __.require('apiTests', 'utils/utils')
+const { authReq, shouldNotBeCalled } = __.require('apiTests', 'utils/utils')
 const { getByUris, addClaim, getHistory } = __.require('apiTests', 'utils/entities')
 const { createWork, createHuman, createEditionWithIsbn, someGoodReadsId, someLibraryThingsWorkId, generateIsbn13 } = __.require('apiTests', 'fixtures/entities')
 const resolveAndUpdate = entries => {
@@ -100,7 +100,7 @@ describe('entities:resolver:update-resolved', () => {
     numberOfPagesClaimsValues.should.containEql(numberOfPages)
   })
 
-  it('should add an image claim from an image url', async () => {
+  it('should add an image claim from an image url to the updated edition', async () => {
     const { uri: editionUri, isbn } = await createEditionWithIsbn()
     const entry = {
       edition: {
@@ -113,6 +113,34 @@ describe('entities:resolver:update-resolved', () => {
     const { entities } = await getByUris(editionUri)
     const { claims: updatedClaims } = entities[editionUri]
     updatedClaims['invp:P2'][0].should.be.ok()
+  })
+
+  it('should refuse to add an invalid image', async () => {
+    const validUrlButNotAnImage = `${CONFIG.fullHost()}/api/tests`
+    const isbn = generateIsbn13()
+    const editionUri = `isbn:${isbn}`
+    const title = randomLabel()
+    await ensureEditionExists(editionUri, null, {
+      labels: {},
+      claims: {
+        'wdt:P31': [ 'wd:Q3331189' ],
+        'wdt:P1476': [ title ]
+      }
+    })
+    const entry = {
+      edition: {
+        isbn,
+        image: validUrlButNotAnImage
+      }
+    }
+    try {
+      await resolveAndUpdate(entry).then(shouldNotBeCalled)
+    } catch (err) {
+      err.statusCode.should.equal(400)
+      // Having a more specific error would be nice,
+      // but that's better than nothing
+      err.body.status_verbose.should.equal('request error')
+    }
   })
 
   it('should add a batch timestamp to patches', async () => {
