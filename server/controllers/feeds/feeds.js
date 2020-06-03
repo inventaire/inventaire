@@ -50,7 +50,10 @@ module.exports = {
 
     return feedDataPromise
     .then(generateFeedFromFeedData(lang))
-    .then(res.send.bind(res))
+    .then(xml => {
+      res.set('content-type', 'application/rss+xml')
+      res.send(xml)
+    })
     .catch(error_.Handler(req, res))
   }
 }
