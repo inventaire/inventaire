@@ -5,7 +5,7 @@ require('should')
 const { wait } = __.require('lib', 'promises')
 const { authReq, shouldNotBeCalled } = __.require('apiTests', 'utils/utils')
 const { getByUris, addClaim, getHistory } = __.require('apiTests', 'utils/entities')
-const { createWork, createHuman, createEditionWithIsbn, someGoodReadsId, someLibraryThingsWorkId, generateIsbn13 } = __.require('apiTests', 'fixtures/entities')
+const { createWork, createHuman, createEditionWithIsbn, someGoodReadsId, someLibraryThingsWorkId, generateIsbn13, createEdition, generateIsbn13h } = __.require('apiTests', 'fixtures/entities')
 const resolveAndUpdate = entries => {
   entries = _.forceArray(entries)
   return authReq('post', '/api/entities?action=resolve', {
@@ -117,16 +117,7 @@ describe('entities:resolver:update-resolved', () => {
 
   it('should refuse to add an invalid image', async () => {
     const validUrlButNotAnImage = `${CONFIG.fullHost()}/api/tests`
-    const isbn = generateIsbn13()
-    const editionUri = `isbn:${isbn}`
-    const title = randomLabel()
-    await ensureEditionExists(editionUri, null, {
-      labels: {},
-      claims: {
-        'wdt:P31': [ 'wd:Q3331189' ],
-        'wdt:P1476': [ title ]
-      }
-    })
+    const { isbn } = await createEditionWithIsbn()
     const entry = {
       edition: {
         isbn,
@@ -141,6 +132,28 @@ describe('entities:resolver:update-resolved', () => {
       // but that's better than nothing
       err.body.status_verbose.should.equal('request error')
     }
+  })
+
+  it('should not override an existing image', async () => {
+    const isbn13h = generateIsbn13h()
+    const edition = await createEdition({
+      claims: {
+        'wdt:P212': [ isbn13h ]
+      }
+    })
+    const originalImageHash = edition.claims['invp:P2'][0]
+    originalImageHash.should.be.ok()
+    const entry = {
+      edition: {
+        isbn: isbn13h,
+        image: 'https://covers.openlibrary.org/w/id/263997-M.jpg'
+      }
+    }
+    await resolveAndUpdate(entry)
+    await wait(10)
+    const { entities } = await getByUris(edition.uri)
+    const { claims: updatedClaims } = entities[edition.uri]
+    updatedClaims['invp:P2'][0].should.equal(originalImageHash)
   })
 
   it('should add a batch timestamp to patches', async () => {
