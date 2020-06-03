@@ -4,7 +4,7 @@ const _ = __.require('builders', 'utils')
 const properties = require('../properties/properties_values_constraints')
 const createInvEntity = require('../create_inv_entity')
 const isbn_ = __.require('lib', 'isbn/isbn')
-const dataseed = __.require('data', 'dataseed/dataseed')
+const { getImageByUrl, getImageByIsbn } = __.require('data', 'dataseed/dataseed')
 
 const createAuthor = (userId, batchId) => author => {
   if (author.uri != null) return author
@@ -26,7 +26,7 @@ const createWork = (userId, batchId, authors) => work => {
 const createEdition = async (edition, works, userId, batchId, enrich) => {
   if (edition.uri != null) return
 
-  const { isbn } = edition
+  const { isbn, image: imageUrl } = edition
   const worksUris = _.compact(_.map(works, 'uri'))
   const claims = {}
 
@@ -47,8 +47,11 @@ const createEdition = async (edition, works, userId, batchId, enrich) => {
   // garantee that an edition shall not have label
   edition.labels = {}
 
-  if (enrich === true) {
-    const { url: imageHash } = await dataseed.getImageByIsbn(isbn)
+  if (imageUrl) {
+    const { url: imageHash } = await getImageByUrl(imageUrl)
+    if (imageHash) claims['invp:P2'] = [ imageHash ]
+  } else if (enrich === true) {
+    const { url: imageHash } = await getImageByIsbn(isbn)
     if (imageHash) claims['invp:P2'] = [ imageHash ]
   }
 

@@ -77,6 +77,19 @@ describe('entities:resolve:create-unresolved', () => {
     newWorkClaimValue.should.equal(frenchLang)
   })
 
+  it('should add an image claim from an image url to created edition', async () => {
+    const { entries } = await resolveAndCreate({
+      edition: {
+        isbn: generateIsbn13(),
+        image: 'https://covers.openlibrary.org/w/id/263997-M.jpg'
+      },
+      works: [ { labels: { en: randomLabel() } } ]
+    })
+    const result = entries[0]
+    result.edition.created.should.be.true()
+    result.edition.claims['invp:P2'][0].should.be.ok()
+  })
+
   it('should add optional claims to created works', async () => {
     const libraryThingsWorkId = someLibraryThingsWorkId()
     const { entries } = await resolveAndCreate({
