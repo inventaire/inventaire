@@ -43,11 +43,11 @@ const shelves_ = module.exports = {
     return updateShelvesItems('deleteShelves', ids, userId, itemsIds)
   },
   bulkDelete: db.bulkDelete,
-  deleteShelvesItems: shelves => {
+  deleteShelvesItems: async shelves => {
     const itemsIds = _.uniq(_.flatten(shelves.map(_.property('items'))))
-    return items_.byIds(itemsIds)
-    .then(_.compact)
-    .tap(items_.bulkDelete)
+    const docs = await items_.byIds(itemsIds).then(_.compact)
+    await items_.bulkDelete(docs)
+    return docs
   },
   validateOwnership: (userId, shelves) => {
     shelves = _.forceArray(shelves)
