@@ -9,8 +9,7 @@ const shelfPromise = createShelf(getUser())
 describe('shelves:update', () => {
   it('should reject without shelf id', async () => {
     try {
-      const res = await authReq('post', endpoint)
-      shouldNotBeCalled(res)
+      await authReq('post', endpoint).then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.equal('missing parameter in body: shelf')
@@ -25,8 +24,7 @@ describe('shelves:update', () => {
         shelf: shelf._id,
         foo: 'bar'
       }
-      const res = await authReq('post', endpoint, params)
-      shouldNotBeCalled(res)
+      await authReq('post', endpoint, params).then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.equal('nothing to update')
@@ -41,8 +39,7 @@ describe('shelves:update', () => {
         shelf: shelf._id,
         name: ''
       }
-      const res = await authReq('post', endpoint, params)
-      shouldNotBeCalled(res)
+      await authReq('post', endpoint, params).then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.equal('invalid name: name cannot be empty')
@@ -74,8 +71,7 @@ describe('shelves:update', () => {
         shelf: shelf._id,
         name: 'foo'
       }
-      const res = await authReqB('post', endpoint, params)
-      shouldNotBeCalled(res)
+      await authReqB('post', endpoint, params).then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.startWith('wrong owner')
@@ -90,8 +86,7 @@ describe('shelves:update', () => {
         shelf: shelf._id,
         name: shelf.name
       }
-      const res = await authReq('post', endpoint, params)
-      shouldNotBeCalled(res)
+      await authReq('post', endpoint, params).then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.startWith('nothing to update')

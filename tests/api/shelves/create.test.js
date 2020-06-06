@@ -7,8 +7,7 @@ const endpoint = '/api/shelves?action=create'
 describe('shelves:create', () => {
   it('should reject without name', async () => {
     try {
-      const res = await authReq('post', endpoint)
-      shouldNotBeCalled(res)
+      await authReq('post', endpoint).then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.equal('missing parameter in body: name')
@@ -20,8 +19,7 @@ describe('shelves:create', () => {
     try {
       const name = shelfName()
       const params = { name }
-      const res = await authReq('post', endpoint, params)
-      shouldNotBeCalled(res)
+      await authReq('post', endpoint, params).then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.equal('missing parameter in body: listing')
@@ -32,8 +30,7 @@ describe('shelves:create', () => {
   it('should reject an empty name', async () => {
     try {
       const params = { name: '' }
-      const res = await authReq('post', endpoint, params)
-      shouldNotBeCalled(res)
+      await authReq('post', endpoint, params).then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.equal('invalid name: name cannot be empty')

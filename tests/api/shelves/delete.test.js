@@ -11,8 +11,7 @@ const shelfWithItemsPromise = createShelfWithItem()
 describe('shelves:delete', () => {
   it('should reject without shelf id', async () => {
     try {
-      const res = await authReq('post', endpoint)
-      shouldNotBeCalled(res)
+      await authReq('post', endpoint).then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.equal('missing parameter in body: ids')
@@ -23,8 +22,7 @@ describe('shelves:delete', () => {
   it('should reject deleting different owner shelf', async () => {
     try {
       const shelf = await shelfPromise
-      const res = await authReqB('post', endpoint, { ids: shelf._id })
-      shouldNotBeCalled(res)
+      await authReqB('post', endpoint, { ids: shelf._id }).then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.equal('wrong owner')
@@ -47,8 +45,7 @@ describe('shelves:delete', () => {
       try {
         const shelf = await shelfWithItemsPromise
         const { _id: shelfId } = shelf
-        const res = await authReq('post', endpoint, { ids: shelfId })
-        shouldNotBeCalled(res)
+        await authReq('post', endpoint, { ids: shelfId }).then(shouldNotBeCalled)
       } catch (err) {
         rethrowShouldNotBeCalledErrors(err)
         err.body.status_verbose.should.startWith('shelf cannot be deleted')
