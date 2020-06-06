@@ -12,8 +12,7 @@ const endpoint = '/api/shelves?action=by-ids'
 describe('shelves:by-ids', () => {
   it('should reject without ids', async () => {
     try {
-      const res = await authReq('get', endpoint)
-      shouldNotBeCalled(res)
+      await authReq('get', endpoint).then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.equal('missing parameter in query: ids')

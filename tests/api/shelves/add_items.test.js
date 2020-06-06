@@ -10,8 +10,7 @@ const shelfPromise = createShelf()
 describe('shelves:add-items', () => {
   it('should reject without shelf id', async () => {
     try {
-      const res = await authReq('post', endpoint)
-      shouldNotBeCalled(res)
+      await authReq('post', endpoint).then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.equal('missing parameter in body: id')
@@ -22,10 +21,10 @@ describe('shelves:add-items', () => {
   it('should reject without items', async () => {
     const shelf = await shelfPromise
     try {
-      const res = await authReq('post', endpoint, {
+      await authReq('post', endpoint, {
         id: shelf._id
       })
-      shouldNotBeCalled(res)
+      .then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.equal('missing parameter in body: items')
@@ -52,11 +51,11 @@ describe('shelves:add-items', () => {
     try {
       const shelf = await shelfPromise
       const item = await createItem(getUserB())
-      const res = await authReq('post', endpoint, {
+      await authReq('post', endpoint, {
         id: shelf._id,
         items: [ item._id ]
       })
-      shouldNotBeCalled(res)
+      .then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.startWith('wrong owner')
