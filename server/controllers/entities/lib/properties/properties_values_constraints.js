@@ -40,7 +40,7 @@ module.exports = {
   // founded by
   'wdt:P112': bases.humanEntity,
   // publisher
-  'wdt:P123': bases.uniqueEntity,
+  'wdt:P123': bases.entity,
   // owned by
   'wdt:P127': bases.entity,
   // movement
