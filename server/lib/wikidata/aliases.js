@@ -62,7 +62,8 @@ const typesAliases = module.exports = {
     'wd:Q37484', // epic poem
     'wd:Q10901350', // anime and manga
     'wd:Q20540385', // non-fiction book
-    'wd:Q36279' // biography
+    'wd:Q36279', // biography
+    'wd:Q234460' // text
   ],
   editions: [
     'wd:Q3331189', // edition
