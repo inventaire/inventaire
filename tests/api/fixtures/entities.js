@@ -30,6 +30,7 @@ const humanName = () => faker.fake('{{name.firstName}} {{name.lastName}}')
 const randomWords = length => faker.random.words(length)
 
 const API = module.exports = {
+  createEntity,
   createHuman: createEntity('wd:Q5'),
   createWork: createEntity('wd:Q571'),
   createSerie: createEntity('wd:Q277759'),

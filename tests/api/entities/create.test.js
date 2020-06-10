@@ -1,5 +1,6 @@
 require('should')
-const { authReq, undesiredRes } = require('../utils/utils')
+const { authReq, undesiredRes, shouldNotBeCalled } = require('../utils/utils')
+
 const { ensureEditionExists, humanName, randomLabel, someOpenLibraryId } = require('../fixtures/entities')
 const endpoint = '/api/entities?action=create'
 
@@ -26,26 +27,33 @@ describe('entities:create', () => {
     .catch(done)
   })
 
-  it('should reject without wdt:P31 value claims', done => {
-    authReq('post', endpoint, { claims: { 'wdt:P50': [ 'wd:Q535' ] } })
-    .then(undesiredRes(done))
-    .catch(err => {
-      err.body.status_verbose.should.equal("wdt:P31 array can't be empty")
+  it('should reject entities of unknown entity types', async () => {
+    try {
+      await authReq('post', '/api/entities?action=create', {
+        labels: {},
+        claims: { 'wdt:P31': [ 'wd:Q1' ] }
+      })
+      .then(shouldNotBeCalled)
+    } catch (err) {
       err.statusCode.should.equal(400)
-      done()
-    })
-    .catch(done)
+      err.body.status_verbose.should.equal("wdt:P31 value isn't a known value")
+    }
   })
 
-  it('should reject without valid wdt:P31 value', done => {
-    authReq('post', endpoint, {
-      claims: { 'wdt:P31': [ 'wd:Q535' ] }
-    })
-    .catch(err => {
-      err.body.status_verbose.should.equal("wdt:P31 value isn't a known valid value")
-      done()
-    })
-    .catch(done)
+  it('should reject entities of non-whitelisted entity types', async () => {
+    try {
+      await authReq('post', '/api/entities?action=create', {
+        labels: {
+          en: randomLabel()
+        },
+        // Is in server/lib/wikidata/aliases.js, but gives a type 'movement'
+        claims: { 'wdt:P31': [ 'wd:Q2198855' ] }
+      })
+      .then(shouldNotBeCalled)
+    } catch (err) {
+      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.equal("wdt:P31 value isn't a whitelisted value")
+    }
   })
 
   it('should reject without a label (unless specific types)', done => {

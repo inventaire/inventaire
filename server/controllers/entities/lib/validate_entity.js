@@ -6,6 +6,8 @@ const { Lang } = __.require('lib', 'regex')
 const getEntityType = require('./get_entity_type')
 const validateClaims = require('./validate_claims')
 const typesWithoutLabels = require('./types_without_labels')
+const propertiesPerType = __.require('controllers', 'entities/lib/properties/properties_per_type')
+const whitelistedTypes = Object.keys(propertiesPerType)
 
 module.exports = entity => {
   return validate(entity)
@@ -37,7 +39,11 @@ const getValueType = claims => {
 
 const validateValueType = (type, wdtP31) => {
   if (type == null) {
-    throw error_.new("wdt:P31 value isn't a known valid value", 400, wdtP31)
+    throw error_.new("wdt:P31 value isn't a known value", 400, wdtP31)
+  }
+
+  if (!whitelistedTypes.includes(type)) {
+    throw error_.new("wdt:P31 value isn't a whitelisted value", 400, wdtP31)
   }
 }
 
