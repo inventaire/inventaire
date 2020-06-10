@@ -26,7 +26,7 @@ const editionDoc = () => {
   return doc
 }
 
-const nonTrimedString = `
+const nonTrimmedString = `
       foo
 bar
  `
@@ -163,7 +163,7 @@ describe('entity model', () => {
     })
 
     it('should trim values', done => {
-      const updatedDoc = Entity.updateClaim(editionDoc(), 'wd:P1476', null, nonTrimedString)
+      const updatedDoc = Entity.updateClaim(editionDoc(), 'wd:P1476', null, nonTrimmedString)
       updatedDoc.claims['wd:P1476'][0].should.equal('foo bar')
       done()
     })
@@ -297,7 +297,7 @@ describe('entity model', () => {
 
       it('should trim labels', done => {
         const entityDoc = workDoc()
-        Entity.setLabel(entityDoc, 'fr', nonTrimedString)
+        Entity.setLabel(entityDoc, 'fr', nonTrimmedString)
         entityDoc.labels.fr.should.equal('foo bar')
         done()
       })
