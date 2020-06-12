@@ -51,6 +51,8 @@ module.exports = {
   'wdt:P144': bases.workEntity,
   // serie
   'wdt:P179': bases.serieEntity,
+  // collection
+  'wdt:P195': bases.collectionEntity,
   // ISBN 13
   'wdt:P212': builders.isbnProperty(13),
   // ISNI

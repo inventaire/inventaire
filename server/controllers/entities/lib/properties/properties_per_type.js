@@ -34,6 +34,7 @@ const workAndSerie = all.concat([
 module.exports = {
   edition: all.concat([
     'wdt:P123', // publisher
+    'wdt:P195', // collection
     'wdt:P212', // ISBN-13
     'wdt:P214', // VIAF ID
     'wdt:P407', // language
@@ -106,5 +107,12 @@ module.exports = {
     'wdt:P856', // official website
     'wdt:P1983', // Anime News Network company ID
     'wdt:P3035' // ISBN publisher prefix
+  ]),
+
+  collection: all.concat([
+    'wdt:P123', // publisher
+    'wdt:P98', // editor
+    'wdt:P1476', // title
+    'wdt:P1680' // subtitle
   ])
 }

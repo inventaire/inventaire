@@ -24,6 +24,7 @@ module.exports = {
   workEntity: restrictedEntityType('work'),
   serieEntity: restrictedEntityType('serie'),
   humanEntity: restrictedEntityType('human'),
+  collectionEntity: restrictedEntityType('collection'),
   uniqueEntity: Object.assign({}, entity, { uniqueValue: true }),
 
   uniqueString,

@@ -26,6 +26,7 @@ const API = module.exports = {
   createWork: createEntity('wd:Q47461344'),
   createSerie: createEntity('wd:Q277759'),
   createPublisher: createEntity('wd:Q2085381'),
+  createCollection: createEntity('wd:Q20655472'),
   randomLabel: (length = 5) => randomWords(length),
   humanName,
   createWorkWithAuthor: async (human, label) => {
