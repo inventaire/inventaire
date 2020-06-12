@@ -15,7 +15,7 @@ check_filename(){
 if [ -z "$1" ]
 then
   find tests/api -type f -name *.test.js | \
-    xargs mocha --exit --timeout $timeout
+    xargs mocha --exit --grep "$MOCHA_GREP" --timeout $timeout
 else
   files=''
   for arg in $@
@@ -30,5 +30,5 @@ else
     fi
   done
   echo "files: $files"
-  mocha --exit --timeout $timeout $files
+  mocha --exit --grep "$MOCHA_GREP" --timeout $timeout $files
 fi
