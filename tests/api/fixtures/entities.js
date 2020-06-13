@@ -58,7 +58,9 @@ const API = module.exports = {
       'wdt:P1476': [ title ],
       'wdt:P1680': [ randomWords() ],
       'wdt:P407': [ `wd:${wdLang.byCode[lang].wd}` ],
-      'invp:P2': [ someImageHash ]
+      'wdt:P123': [ 'wd:Q1799264' ],
+      'wdt:P577': [ '2020' ],
+      'invp:P2': [ someImageHash ],
     }, claims)
     return authReq('post', '/api/entities?action=create', { claims: editionClaims })
   },

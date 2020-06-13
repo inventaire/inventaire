@@ -53,9 +53,14 @@ const validatePropertyClaims = params => property => {
 const perTypeClaimsTests = {
   edition: (newClaims, creating) => {
     if (!creating) return
-    const entityLabel = 'an edition'
+    let entityLabel = 'an edition'
     assertPropertyHasValue(newClaims, 'wdt:P629', entityLabel, 'an associated work')
     assertPropertyHasValue(newClaims, 'wdt:P1476', entityLabel, 'a title')
+    if (newClaims['wdt:P212'] == null) {
+      entityLabel = 'an edition without ISBN'
+      assertPropertyHasValue(newClaims, 'wdt:P123', entityLabel, 'a publisher')
+      assertPropertyHasValue(newClaims, 'wdt:P577', entityLabel, 'a publication date')
+    }
   }
 }
 
