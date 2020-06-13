@@ -138,6 +138,7 @@ module.exports = {
     if (type === 'object') {
       if (_.isNull(obj)) return 'null'
       if (_.isArray(obj)) return 'array'
+      if (obj instanceof Promise) return 'promise'
     }
     if (type === 'number') {
       if (_.isNaN(obj)) return 'NaN'

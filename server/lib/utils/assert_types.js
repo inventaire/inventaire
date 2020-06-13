@@ -57,6 +57,7 @@ module.exports = {
   array: assertType.bind(null, 'array'),
   object: assertType.bind(null, 'object'),
   function: assertType.bind(null, 'function'),
+  promise: assertType.bind(null, 'promise'),
 
   strings: assertTypes.bind(null, 'strings...'),
   numbers: assertTypes.bind(null, 'numbers...'),

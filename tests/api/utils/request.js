@@ -51,7 +51,7 @@ const request = async (method, endpoint, body, cookie) => {
 }
 
 const customAuthReq = async (user, method, endpoint, body) => {
-  assert_.object(user)
+  assert_.type('object|promise', user)
   assert_.string(method)
   assert_.string(endpoint)
   user = await user
@@ -60,7 +60,7 @@ const customAuthReq = async (user, method, endpoint, body) => {
 }
 
 const rawCustomAuthReq = async (user, method, endpoint, body) => {
-  assert_.object(user)
+  assert_.type('object|promise', user)
   assert_.string(method)
   assert_.string(endpoint)
   user = await user
