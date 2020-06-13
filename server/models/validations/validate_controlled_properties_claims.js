@@ -29,6 +29,12 @@ const validateControlledPropertiesClaimsPerType = {
       assertPropertyHasValue(claims, 'wdt:P123', entityLabel, 'a publisher')
       assertPropertyHasValue(claims, 'wdt:P577', entityLabel, 'a publication date')
     }
+  },
+
+  collection: claims => {
+    const entityLabel = 'a collection'
+    assertPropertyHasValue(claims, 'wdt:P123', entityLabel, 'a publisher')
+    assertPropertyHasValue(claims, 'wdt:P1476', entityLabel, 'a title')
   }
 }
 

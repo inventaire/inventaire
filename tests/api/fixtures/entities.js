@@ -8,10 +8,10 @@ const { getByUri, addClaim } = require('../utils/entities')
 const faker = require('faker')
 const someImageHash = 'aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd'
 
-const createEntity = P31 => (params = {}) => {
+const createEntity = (P31, defaultClaims) => (params = {}) => {
   const defaultLabel = P31 === 'wd:Q5' ? humanName() : API.randomLabel(4)
   const labels = params.labels || { en: defaultLabel }
-  const claims = params.claims || {}
+  const claims = params.claims || defaultClaims || {}
   claims['wdt:P31'] = [ P31 ]
   const user = params.user || getUser()
   return customAuthReq(user, 'post', '/api/entities?action=create', { labels, claims })
@@ -26,7 +26,10 @@ const API = module.exports = {
   createWork: createEntity('wd:Q47461344'),
   createSerie: createEntity('wd:Q277759'),
   createPublisher: createEntity('wd:Q2085381'),
-  createCollection: createEntity('wd:Q20655472'),
+  createCollection: createEntity('wd:Q20655472', {
+    'wdt:P123': [ 'wd:Q1799264' ],
+    'wdt:P1476': [ randomWords(4) ]
+  }),
   randomLabel: (length = 5) => randomWords(length),
   humanName,
   createWorkWithAuthor: async (human, label) => {
