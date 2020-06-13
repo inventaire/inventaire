@@ -4,7 +4,7 @@ const _ = __.require('builders', 'utils')
 const should = require('should')
 const { authReq, undesiredRes } = __.require('apiTests', 'utils/utils')
 const { getByUris, getHistory } = __.require('apiTests', 'utils/entities')
-const { randomLabel, humanName, generateIsbn13, someGoodReadsId, someLibraryThingsWorkId, ensureEditionExists } = __.require('apiTests', 'fixtures/entities')
+const { randomLabel, humanName, generateIsbn13, someGoodReadsId, someLibraryThingsWorkId, createEditionWithIsbn } = __.require('apiTests', 'fixtures/entities')
 
 const resolveAndCreate = entry => authReq('post', '/api/entities?action=resolve', {
   entries: [ entry ],
@@ -32,17 +32,11 @@ describe('entities:resolve:create-unresolved', () => {
     .catch(done)
   })
 
-  it('should resolve and not create an existing edition', done => {
-    const rawIsbn = generateIsbn13()
-    ensureEditionExists(`isbn:${rawIsbn}`)
-    .then(() => resolveAndCreate({ edition: { isbn: rawIsbn } }))
-    .then(({ entries }) => entries)
-    .then(entries => {
-      entries[0].should.be.an.Object()
-      entries[0].edition.uri.should.equal(`isbn:${rawIsbn}`)
-      done()
-    })
-    .catch(done)
+  it('should resolve and not create an existing edition', async () => {
+    const { uri, isbn } = await createEditionWithIsbn()
+    const { entries } = await resolveAndCreate({ edition: { isbn } })
+    entries[0].should.be.an.Object()
+    entries[0].edition.uri.should.equal(uri)
   })
 
   it('should create edition with title and isbn', done => {
@@ -71,22 +65,15 @@ describe('entities:resolve:create-unresolved', () => {
     .catch(done)
   })
 
-  it('should ignore unresolved work from resolve edition', done => {
-    const isbn = generateIsbn13()
-    ensureEditionExists(`isbn:${isbn}`)
-    .then(edition => {
-      return resolveAndCreate({
-        edition: { isbn },
-        works: [ { labels: { en: randomLabel() } } ]
-      })
-      .then(res => {
-        const entry = res.entries[0]
-        entry.works[0].resolved.should.be.false()
-        entry.works[0].created.should.be.false()
-        done()
-      })
+  it('should ignore unresolved work from resolve edition', async () => {
+    const { isbn } = await createEditionWithIsbn()
+    const { entries } = await resolveAndCreate({
+      edition: { isbn },
+      works: [ { labels: { en: randomLabel() } } ]
     })
-    .catch(done)
+    const entry = entries[0]
+    entry.works[0].resolved.should.be.false()
+    entry.works[0].created.should.be.false()
   })
 
   it('should add optional claims to created edition', done => {

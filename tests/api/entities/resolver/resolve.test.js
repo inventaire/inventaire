@@ -7,8 +7,7 @@ const { authReq, undesiredRes } = __.require('apiTests', 'utils/utils')
 const elasticsearchUpdateDelay = CONFIG.entitiesSearchEngine.elasticsearchUpdateDelay || 1000
 const { createWork, createHuman, someGoodReadsId, someLibraryThingsWorkId, someOpenLibraryId, createWorkWithAuthor, generateIsbn13 } = __.require('apiTests', 'fixtures/entities')
 const { addClaim, getByUri } = __.require('apiTests', 'utils/entities')
-const { ensureEditionExists, randomLabel } = __.require('apiTests', 'fixtures/entities')
-const { toIsbn13h } = __.require('lib', 'isbn/isbn')
+const { createEditionWithIsbn, randomLabel } = __.require('apiTests', 'fixtures/entities')
 
 const resolve = entries => {
   entries = _.forceArray(entries)
@@ -27,74 +26,47 @@ describe('entities:resolve', () => {
     .catch(done)
   })
 
-  it('should resolve an edition entry from an ISBN', done => {
-    const isbn13 = generateIsbn13()
-    const editionSeed = { isbn: isbn13 }
-    const entry = { edition: editionSeed }
-    ensureEditionExists(`isbn:${isbn13}`)
-    .then(() => resolve(entry))
-    .then(({ entries }) => entries)
-    .then(entries => {
-      entries[0].should.be.an.Object()
-      entries[0].edition.uri.should.equal(`isbn:${isbn13}`)
-      done()
-    })
-    .catch(done)
+  it('should resolve an edition entry from an ISBN', async () => {
+    const { uri, isbn } = await createEditionWithIsbn()
+    const entry = { edition: { isbn } }
+    const { entries } = await resolve(entry)
+    entries[0].should.be.an.Object()
+    entries[0].edition.uri.should.equal(uri)
   })
 
-  it('should resolve an edition from a known edition external id', done => {
+  it('should resolve an edition from a known edition external id', async () => {
     const openLibraryId = someOpenLibraryId('edition')
-    const isbn13 = generateIsbn13()
-    ensureEditionExists(`isbn:${isbn13}`)
-    .then(tap(edition => addClaim(`inv:${edition._id}`, 'wdt:P648', openLibraryId)))
-    .then(edition => {
-      const editionSeed = { claims: { 'wdt:P648': [ openLibraryId ] } }
-      const entry = { edition: editionSeed }
-      return resolve(entry)
-      .then(({ entries }) => entries)
-      .then(entries => {
-        entries[0].edition.uri.should.equal(edition.uri)
-        done()
-      })
-    })
-    .catch(done)
+    const { invUri, uri } = await createEditionWithIsbn()
+    await addClaim(invUri, 'wdt:P648', openLibraryId)
+    const editionSeed = { claims: { 'wdt:P648': [ openLibraryId ] } }
+    const entry = { edition: editionSeed }
+    const { entries } = await resolve(entry)
+    entries[0].edition.uri.should.equal(uri)
   })
 
-  it('should resolve an edition entry from an ISBN set in the claims', done => {
-    const isbn13 = generateIsbn13()
-    const isbn13h = toIsbn13h(isbn13)
+  it('should resolve an edition entry from an ISBN set in the claims', async () => {
+    const { isbn, isbn13h } = await createEditionWithIsbn()
     const editionSeed = { claims: { 'wdt:P212': isbn13h } }
     const entry = { edition: editionSeed }
-    ensureEditionExists(`isbn:${isbn13}`)
-    .then(() => resolve(entry))
-    .then(({ entries }) => entries)
-    .then(entries => {
-      entries[0].should.be.an.Object()
-      entries[0].edition.uri.should.equal(`isbn:${isbn13}`)
-      done()
-    })
-    .catch(done)
+    const { entries } = await resolve(entry)
+    entries[0].should.be.an.Object()
+    entries[0].edition.uri.should.equal(`isbn:${isbn}`)
   })
 
-  it('should resolve multiple entries', done => {
-    const isbn13A = generateIsbn13()
-    const isbn13B = generateIsbn13()
-    const entryA = { edition: { isbn: isbn13A } }
-    const entryB = { edition: { isbn: isbn13B } }
-    Promise.all([
-      ensureEditionExists(`isbn:${isbn13A}`),
-      ensureEditionExists(`isbn:${isbn13B}`)
+  it('should resolve multiple entries', async () => {
+    const [ editionA, editionB ] = await Promise.all([
+      createEditionWithIsbn(),
+      createEditionWithIsbn()
     ])
-    .then(() => resolve([ entryA, entryB ]))
-    .then(({ entries }) => entries)
-    .then(entries => {
-      entries[0].should.be.an.Object()
-      entries[0].edition.uri.should.equal(`isbn:${isbn13A}`)
-      entries[1].should.be.an.Object()
-      entries[1].edition.uri.should.equal(`isbn:${isbn13B}`)
-      done()
-    })
-    .catch(done)
+    const { isbn: isbnA } = editionA
+    const { isbn: isbnB } = editionB
+    const entryA = { edition: { isbn: isbnA } }
+    const entryB = { edition: { isbn: isbnB } }
+    const { entries } = await resolve([ entryA, entryB ])
+    entries[0].should.be.an.Object()
+    entries[0].edition.uri.should.equal(`isbn:${isbnA}`)
+    entries[1].should.be.an.Object()
+    entries[1].edition.uri.should.equal(`isbn:${isbnB}`)
   })
 
   it('should reject if key "edition" is missing', done => {
@@ -382,41 +354,24 @@ describe('entities:resolve:in-context', () => {
     .catch(done)
   })
 
-  it('should resolve work from resolve edition', done => {
-    const isbn = generateIsbn13()
-    ensureEditionExists(`isbn:${isbn}`)
-    .then(edition => {
-      return getByUri(edition.claims['wdt:P629'][0])
-      .then(work => {
-        const { labels } = work
-        return resolve({
-          edition: { isbn },
-          works: [ { labels } ]
-        })
-        .then(res => {
-          res.entries[0].works[0].uri.should.equal(work.uri)
-          done()
-        })
-      })
+  it('should resolve work from resolve edition', async () => {
+    const { isbn, claims } = await createEditionWithIsbn()
+    const { uri: workUri, labels } = await getByUri(claims['wdt:P629'][0])
+    const { entries } = await resolve({
+      edition: { isbn },
+      works: [ { labels } ]
     })
-    .catch(done)
+    entries[0].works[0].uri.should.equal(workUri)
   })
 
-  it('should ignore unresolved work from resolve edition', done => {
-    const isbn = generateIsbn13()
-    ensureEditionExists(`isbn:${isbn}`)
-    .then(edition => {
-      return resolve({
-        edition: { isbn },
-        works: [ { labels: { en: randomLabel() } } ]
-      })
-      .then(res => {
-        const entry = res.entries[0]
-        entry.works[0].resolved.should.be.false()
-        done()
-      })
+  it('should ignore unresolved work from resolve edition', async () => {
+    const { isbn } = await createEditionWithIsbn()
+    const { entries } = await resolve({
+      edition: { isbn },
+      works: [ { labels: { en: randomLabel() } } ]
     })
-    .catch(done)
+    const entry = entries[0]
+    entry.works[0].resolved.should.be.false()
   })
 })
 

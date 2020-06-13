@@ -163,8 +163,8 @@ describe('entity model', () => {
     })
 
     it('should trim values', done => {
-      const updatedDoc = Entity.updateClaim(editionDoc(), 'wd:P1476', null, nonTrimmedString)
-      updatedDoc.claims['wd:P1476'][0].should.equal('foo bar')
+      const updatedDoc = Entity.updateClaim(editionDoc(), 'wdt:P1476', null, nonTrimmedString)
+      updatedDoc.claims['wdt:P1476'][0].should.equal('foo bar')
       done()
     })
 

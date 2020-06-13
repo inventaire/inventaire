@@ -4,26 +4,17 @@ const _ = __.require('builders', 'utils')
 const { customAuthReq, authReq, getUser } = require('../utils/utils')
 const isbn_ = __.require('lib', 'isbn/isbn')
 const wdLang = require('wikidata-lang')
-const { getByUri, getByUris, addClaim } = require('../utils/entities')
+const { getByUri, addClaim } = require('../utils/entities')
 const faker = require('faker')
 const someImageHash = 'aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd'
-
-const defaultEditionData = () => ({
-  labels: {},
-  claims: {
-    'wdt:P31': [ 'wd:Q3331189' ],
-    'wdt:P1476': [ API.randomLabel() ]
-  }
-})
 
 const createEntity = P31 => (params = {}) => {
   const defaultLabel = P31 === 'wd:Q5' ? humanName() : API.randomLabel(4)
   const labels = params.labels || { en: defaultLabel }
+  const claims = params.claims || {}
+  claims['wdt:P31'] = [ P31 ]
   const user = params.user || getUser()
-  return customAuthReq(user, 'post', '/api/entities?action=create', {
-    labels,
-    claims: { 'wdt:P31': [ P31 ] }
-  })
+  return customAuthReq(user, 'post', '/api/entities?action=create', { labels, claims })
 }
 
 const humanName = () => faker.fake('{{name.firstName}} {{name.lastName}}')
@@ -73,6 +64,23 @@ const API = module.exports = {
     })
   },
 
+  createEditionWithIsbn: async () => {
+    const work = await API.createWork()
+    const isbn13h = API.generateIsbn13h()
+    const edition = await authReq('post', '/api/entities?action=create', {
+      claims: {
+        'wdt:P31': [ 'wd:Q3331189' ],
+        'wdt:P629': [ work.uri ],
+        'wdt:P212': [ isbn13h ],
+        'wdt:P1476': [ API.randomLabel() ]
+      }
+    })
+    edition.isbn = edition.uri.split(':')[1]
+    edition.invUri = `inv:${edition._id}`
+    edition.isbn13h = isbn13h
+    return edition
+  },
+
   createEditionFromWorks: (...works) => {
     const params = { works }
     return API.createEdition(params)
@@ -85,6 +93,11 @@ const API = module.exports = {
     return getByUri(work.uri)
   },
 
+  createEditionWithWorkAndAuthor: async () => {
+    const work = await API.createWorkWithAuthor()
+    return API.createEdition({ work })
+  },
+
   createEditionWithWorkAuthorAndSerie: async () => {
     const work = await API.createWorkWithAuthorAndSerie()
     return API.createEdition({ work })
@@ -92,36 +105,6 @@ const API = module.exports = {
 
   createItemFromEntityUri: (uri, data = {}) => {
     return authReq('post', '/api/items', Object.assign({}, data, { entity: uri }))
-  },
-
-  ensureEditionExists: async (uri, workData, editionData) => {
-    const { entities } = await getByUris(uri)
-    if (entities[uri]) return entities[uri]
-
-    if (!workData) {
-      workData = {
-        labels: { fr: API.randomLabel() },
-        claims: { 'wdt:P31': [ 'wd:Q571' ] }
-      }
-    }
-
-    const authorEntity = await authReq('post', '/api/entities?action=create', {
-      labels: { de: humanName() },
-      claims: { 'wdt:P31': [ 'wd:Q5' ] }
-    })
-
-    workData.claims['wdt:P50'] = [ authorEntity.uri ]
-    const workEntity = await authReq('post', '/api/entities?action=create', workData)
-
-    editionData = editionData || defaultEditionData()
-
-    const id = uri.split(':')[1]
-    if (isbn_.isValidIsbn(id)) {
-      editionData.claims['wdt:P212'] = [ isbn_.toIsbn13h(id) ]
-    }
-
-    editionData.claims['wdt:P629'] = [ workEntity.uri ]
-    return authReq('post', '/api/entities?action=create', editionData)
   },
 
   someImageHash,

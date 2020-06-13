@@ -2,10 +2,10 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
-const { Wait, tap } = __.require('lib', 'promises')
+const { wait, tap } = __.require('lib', 'promises')
 const { authReq } = __.require('apiTests', 'utils/utils')
 const { getByUris, addClaim, getHistory } = __.require('apiTests', 'utils/entities')
-const { createWork, createHuman, ensureEditionExists, someGoodReadsId, someLibraryThingsWorkId, randomLabel, generateIsbn13 } = __.require('apiTests', 'fixtures/entities')
+const { createWork, createHuman, createEditionWithIsbn, someGoodReadsId, someLibraryThingsWorkId, generateIsbn13 } = __.require('apiTests', 'fixtures/entities')
 const resolveAndUpdate = entries => {
   entries = _.forceArray(entries)
   return authReq('post', '/api/entities?action=resolve', {
@@ -112,41 +112,21 @@ describe('entities:resolver:update-resolved', () => {
     .catch(done)
   })
 
-  it('should update edition claims', done => {
+  it('should update edition claims', async () => {
     const numberOfPages = 3
-    const isbn = generateIsbn13()
-    const editionUri = `isbn:${isbn}`
-    const title = randomLabel()
-
-    ensureEditionExists(editionUri, null, {
-      labels: {},
-      claims: {
-        'wdt:P31': [ 'wd:Q3331189' ],
-        'wdt:P1476': [ title ]
+    const { uri, isbn } = await createEditionWithIsbn()
+    const entry = {
+      edition: {
+        isbn,
+        claims: { 'wdt:P1104': numberOfPages }
       }
-    })
-    .then(edition => {
-      const entry = {
-        edition: {
-          isbn,
-          claims: { 'wdt:P1104': numberOfPages }
-        }
-      }
-      return resolveAndUpdate(entry)
-      .then(({ entries }) => entries)
-      .then(Wait(10))
-      .then(entries => {
-        return getByUris(editionUri)
-        .then(({ entities }) => entities)
-        .then(entities => {
-          edition = entities[editionUri]
-          const numberOfPagesClaimsValues = edition.claims['wdt:P1104']
-          numberOfPagesClaimsValues.should.containEql(numberOfPages)
-          done()
-        })
-      })
-    })
-    .catch(done)
+    }
+    await resolveAndUpdate(entry)
+    await wait(10)
+    const { entities } = await getByUris(uri)
+    const updatedEdition = entities[uri]
+    const numberOfPagesClaimsValues = updatedEdition.claims['wdt:P1104']
+    numberOfPagesClaimsValues.should.containEql(numberOfPages)
   })
 
   it('should add a batch timestamp to patches', done => {

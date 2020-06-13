@@ -2,9 +2,9 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
-const { Wait } = __.require('lib', 'promises')
+const { Wait, wait } = __.require('lib', 'promises')
 const { authReq, getUser } = require('../utils/utils')
-const { ensureEditionExists, createEdition, createWorkWithAuthor, createHuman } = require('../fixtures/entities')
+const { createEditionWithIsbn, createEdition, createWorkWithAuthor, createHuman, createEditionWithWorkAndAuthor } = require('../fixtures/entities')
 const { createItem } = require('../fixtures/items')
 const { createUser, getRefreshedUser } = require('../fixtures/users')
 const { getByUris: getEntitiesByUris } = require('../utils/entities')
@@ -76,25 +76,13 @@ describe('items:create', () => {
     .catch(done)
   })
 
-  it('should deduce the title from an edition entity', done => {
-    const title = 'Un mariage à Lyon'
-    ensureEditionExists('isbn:9782253138938', null, {
-      labels: {},
-      claims: {
-        'wdt:P31': [ 'wd:Q3331189' ],
-        'wdt:P212': [ '978-2-253-13893-8' ],
-        'wdt:P1476': [ title ]
-      }
-    })
-    .then(() => {
-      return authReq('post', '/api/items', { entity: 'isbn:9782253138938' })
-      .then(item => {
-        item.snapshot.should.be.an.Object()
-        item.snapshot['entity:title'].should.equal(title)
-        done()
-      })
-    })
-    .catch(done)
+  it('should deduce the title from an edition entity', async () => {
+    const edition = await createEditionWithIsbn()
+    const title = edition.claims['wdt:P1476'][0]
+    title.should.be.a.String()
+    const item = await authReq('post', '/api/items', { entity: edition.uri })
+    item.snapshot.should.be.an.Object()
+    item.snapshot['entity:title'].should.equal(title)
   })
 
   it('should deduce the author from a work entity', done => {
@@ -113,31 +101,17 @@ describe('items:create', () => {
     .catch(done)
   })
 
-  it('should deduce the author from an edition entity', done => {
-    ensureEditionExists('isbn:9780812993257', null, {
-      labels: {},
-      claims: {
-        'wdt:P31': [ 'wd:Q3331189' ],
-        'wdt:P212': [ '978-0-8129-9325-7' ],
-        'wdt:P1476': [ 'The Road to Character' ]
-      }
-    })
-    .then(edition => {
-      return Promise.all([
-        getEntitiesByUris(edition.uri, 'wdt:P629|wdt:P50').then(({ entities }) => entities),
-        authReq('post', '/api/items', { entity: 'isbn:9780812993257' })
-      ])
-      .then(([ entities, item ]) => {
-        edition = entities[edition.uri]
-        const work = entities[edition.claims['wdt:P629'][0]]
-        const author = entities[work.claims['wdt:P50'][0]]
-        const authorLabel = _.values(author.labels)[0]
-        item.snapshot.should.be.an.Object()
-        item.snapshot['entity:authors'].should.equal(authorLabel)
-        done()
-      })
-    })
-    .catch(done)
+  it('should deduce the author from an edition entity', async () => {
+    const { uri: editionUri } = await createEditionWithWorkAndAuthor()
+    await wait(1000)
+    const { entities } = await getEntitiesByUris(editionUri, 'wdt:P629|wdt:P50')
+    const item = await authReq('post', '/api/items', { entity: editionUri })
+    const edition = entities[editionUri]
+    const work = entities[edition.claims['wdt:P629'][0]]
+    const author = entities[work.claims['wdt:P50'][0]]
+    const authorLabel = _.values(author.labels)[0]
+    item.snapshot.should.be.an.Object()
+    item.snapshot['entity:authors'].should.equal(authorLabel)
   })
 
   it('should reject an item created with an unknown entity', done => {

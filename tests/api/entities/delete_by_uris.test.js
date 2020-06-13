@@ -3,10 +3,10 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const should = require('should')
 const { Wait } = __.require('lib', 'promises')
-const { adminReq, authReq, undesiredRes } = require('../utils/utils')
+const { adminReq, authReq, undesiredRes, shouldNotBeCalled } = require('../utils/utils')
 const { getByUris, deleteByUris } = require('../utils/entities')
 const { getByIds: getItemsByIds } = require('../utils/items')
-const { createHuman, createWork, createWorkWithAuthor, createEdition, ensureEditionExists, generateIsbn13 } = require('../fixtures/entities')
+const { createHuman, createWork, createWorkWithAuthor, createEdition, createEditionWithIsbn } = require('../fixtures/entities')
 
 describe('entities:delete-by-uris', () => {
   it('should require admin rights', done => {
@@ -128,15 +128,9 @@ describe('entities:delete-by-uris', () => {
     .catch(done)
   })
 
-  it('should remove edition entities with an ISBN', done => {
-    ensureEditionExists(`isbn:${generateIsbn13()}`)
-    .then(edition => {
-      // Using the inv URI, as the isbn one would be rejected
-      const invUri = `inv:${edition._id}`
-      return deleteByUris(invUri)
-    })
-    .then(() => done())
-    .catch(done)
+  it('should remove edition entities with an ISBN', async () => {
+    const { invUri } = await createEditionWithIsbn()
+    await deleteByUris(invUri)
   })
 
   it('should refuse to delete a work that is depend on by an edition', done => {
@@ -209,23 +203,15 @@ describe('entities:delete-by-uris', () => {
     .catch(done)
   })
 
-  it('should not remove editions with an ISBN and an item', done => {
-    const uri = 'isbn:9791020906427'
-    ensureEditionExists(uri)
-    .then(edition => {
-      return authReq('post', '/api/items', { entity: uri, lang: 'en' })
-      .then(() => {
-        // Using the inv URI, as the isbn one would be rejected
-        const invUri = `inv:${edition._id}`
-        return deleteByUris(invUri)
-        .then(undesiredRes(done))
-      })
-    })
-    .catch(err => {
+  it('should not remove editions with an ISBN and an item', async () => {
+    const { invUri, uri } = await createEditionWithIsbn()
+    await authReq('post', '/api/items', { entity: uri, lang: 'en' })
+    try {
+      // Using the inv URI, as the isbn one would be rejected
+      await deleteByUris(invUri).then(shouldNotBeCalled)
+    } catch (err) {
       err.body.status_verbose.should.equal("entities that are used by an item can't be removed")
       err.statusCode.should.equal(400)
-      done()
-    })
-    .catch(done)
+    }
   })
 })

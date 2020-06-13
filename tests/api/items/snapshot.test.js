@@ -2,11 +2,11 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
-const { Promise, Wait, tap } = __.require('lib', 'promises')
+const { Promise, Wait, wait, tap } = __.require('lib', 'promises')
 const { authReq, getUserId } = require('../utils/utils')
 const { getById: getItem } = require('../utils/items')
 let { getByUris, merge, revertMerge, updateLabel, updateClaim } = require('../utils/entities')
-const { ensureEditionExists } = require('../fixtures/entities')
+const { createEditionWithWorkAndAuthor } = require('../fixtures/entities')
 const { createWork, createHuman, addAuthor, addSerie, createEdition, createEditionFromWorks, createWorkWithAuthor, humanName, someImageHash } = require('../fixtures/entities');
 ({ updateClaim } = require('../utils/entities'))
 
@@ -202,36 +202,19 @@ describe('items:snapshot', () => {
       .catch(done)
     })
 
-    it('should be updated when its local author entity title changes (edition entity)', done => {
-      ensureEditionExists('isbn:9788389920935', null, {
-        labels: {},
-        claims: {
-          'wdt:P31': [ 'wd:Q3331189' ],
-          'wdt:P212': [ '978-83-89920-93-5' ],
-          'wdt:P1476': [ 'some title' ]
-        }
-      })
-      .then(editionDoc => {
-        const workUri = editionDoc.claims['wdt:P629'][0]
-        return getByUris(workUri)
-      })
-      .then(res => {
-        const workEntity = _.values(res.entities)[0]
-        const trueAuthorUri = workEntity.claims['wdt:P50'][0]
-        return authReq('post', '/api/items', { entity: 'isbn:9788389920935' })
-        .then(Wait(200))
-        .then(item => {
-          const updateAuthorName = humanName()
-          return updateLabel(trueAuthorUri, 'en', updateAuthorName)
-          .then(Wait(200))
-          .then(() => getItem(item))
-          .then(updatedItem => {
-            updatedItem.snapshot['entity:authors'].should.equal(updateAuthorName)
-            done()
-          })
-        })
-      })
-      .catch(done)
+    it('should be updated when its local author entity title changes (edition entity)', async () => {
+      const edition = await createEditionWithWorkAndAuthor()
+      const workUri = edition.claims['wdt:P629'][0]
+      const { entities } = await getByUris(workUri)
+      const workEntity = _.values(entities)[0]
+      const authorUri = workEntity.claims['wdt:P50'][0]
+      const item = await authReq('post', '/api/items', { entity: edition.uri })
+      await wait(200)
+      const updateAuthorName = humanName()
+      await updateLabel(authorUri, 'en', updateAuthorName)
+      await wait(200)
+      const updatedItem = await getItem(item)
+      updatedItem.snapshot['entity:authors'].should.equal(updateAuthorName)
     })
 
     it('should be updated when its local author entity title changes (work entity)', done => {

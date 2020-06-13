@@ -1,7 +1,6 @@
 require('should')
 const { authReq, undesiredRes, shouldNotBeCalled } = require('../utils/utils')
-
-const { ensureEditionExists, humanName, randomLabel, someOpenLibraryId } = require('../fixtures/entities')
+const { createEditionWithIsbn, humanName, randomLabel, someOpenLibraryId } = require('../fixtures/entities')
 const endpoint = '/api/entities?action=create'
 
 describe('entities:create', () => {
@@ -60,6 +59,7 @@ describe('entities:create', () => {
     authReq('post', endpoint, {
       claims: { 'wdt:P31': [ 'wd:Q571' ] }
     })
+    .then(undesiredRes(done))
     .catch(err => {
       err.body.status_verbose.should.equal('invalid labels')
       done()
@@ -104,6 +104,7 @@ describe('entities:create', () => {
       labels: { fr: humanName() },
       claims: { 'wdt:P31': [ 'wd:Q571', 'wd:Q572' ] }
     })
+    .then(undesiredRes(done))
     .catch(err => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.match(/expects a unique value/).should.be.ok()
@@ -117,6 +118,7 @@ describe('entities:create', () => {
       labels: [],
       claims: {}
     })
+    .then(undesiredRes(done))
     .catch(err => {
       err.body.status_verbose.should.startWith('invalid labels')
       err.statusCode.should.equal(400)
@@ -130,6 +132,7 @@ describe('entities:create', () => {
       labels: {},
       claims: []
     })
+    .then(undesiredRes(done))
     .catch(err => {
       err.body.status_verbose.should.startWith('invalid claims')
       err.statusCode.should.equal(400)
@@ -146,6 +149,7 @@ describe('entities:create', () => {
         'wdt:P50': 'wd:Q535'
       }
     })
+    .then(undesiredRes(done))
     .catch(err => {
       err.body.status_verbose.should.equal('invalid property values')
       err.statusCode.should.equal(400)
@@ -162,6 +166,7 @@ describe('entities:create', () => {
         'wd:P50': [ 'wd:Q535' ]
       }
     })
+    .then(undesiredRes(done))
     .catch(err => {
       err.body.status_verbose.should.equal('invalid property')
       err.statusCode.should.equal(400)
@@ -178,6 +183,7 @@ describe('entities:create', () => {
         'wdt:P50': [ 'wd####Q535' ]
       }
     })
+    .then(undesiredRes(done))
     .catch(err => {
       err.body.status_verbose.should.equal('invalid property value')
       err.statusCode.should.equal(400)
@@ -186,25 +192,21 @@ describe('entities:create', () => {
     .catch(done)
   })
 
-  it('should reject when concurrent property value is already taken', done => {
-    const editionClaims = {
-      claims: {
-        'wdt:P31': [ 'wd:Q3331189' ],
-        'wdt:P212': [ '978-2-315-00611-3' ],
-        'wdt:P1476': [ randomLabel() ]
-      }
-    }
-    ensureEditionExists('isbn:9782315006113', null, editionClaims)
-    .then(editionEntity => {
-      editionClaims.claims['wdt:P629'] = editionEntity.claims['wdt:P629']
-      return authReq('post', endpoint, editionClaims)
-    })
-    .catch(err => {
+  it('should reject when concurrent property value is already taken', async () => {
+    const edition = await createEditionWithIsbn()
+    try {
+      await authReq('post', endpoint, {
+        claims: {
+          'wdt:P31': [ 'wd:Q3331189' ],
+          'wdt:P212': edition.claims['wdt:P212'],
+          'wdt:P1476': [ randomLabel() ]
+        }
+      })
+      .then(shouldNotBeCalled)
+    } catch (err) {
       err.body.status_verbose.should.equal('this property value is already used')
       err.statusCode.should.equal(400)
-      done()
-    })
-    .catch(done)
+    }
   })
 
   it('should reject creation with incorrect properties', done => {

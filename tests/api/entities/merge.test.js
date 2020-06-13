@@ -1,11 +1,11 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
-const { authReq, adminReq, undesiredRes } = require('../utils/utils')
+const { authReq, adminReq, undesiredRes, shouldNotBeCalled } = require('../utils/utils')
 const randomString = __.require('lib', './utils/random_string')
 const { getByUris, merge, getHistory, addClaim } = require('../utils/entities')
 const { getByIds: getItemsByIds } = require('../utils/items')
-const { createWork, createHuman, createEdition, ensureEditionExists, createItemFromEntityUri, createWorkWithAuthor } = require('../fixtures/entities')
+const { createWork, createHuman, createEdition, createEditionWithIsbn, createItemFromEntityUri, createWorkWithAuthor } = require('../fixtures/entities')
 
 describe('entities:merge', () => {
   it('should require admin rights', done => {
@@ -91,80 +91,53 @@ describe('entities:merge', () => {
     .catch(done)
   })
 
-  it('should merge entities with inv and isbn URIs', done => {
-    Promise.all([
+  it('should merge entities with inv and isbn URIs', async () => {
+    const [ editionA, editionB ] = await Promise.all([
       createEdition(),
-      ensureEditionExists('isbn:9782298063264')
+      createEditionWithIsbn()
     ])
-    .then(([ editionA, editionB ]) => {
-      return createItemFromEntityUri(editionA.uri)
-      .then(item => {
-        item.entity.should.equal(editionA.uri)
-        return merge(editionA.uri, editionB.uri)
-        .then(() => {
-          return Promise.all([
-            getByUris(editionA.uri),
-            getItemsByIds(item._id)
-          ])
-          .then(([ entitiesRes, itemsRes ]) => {
-            entitiesRes.redirects[editionA.uri].should.equal(editionB.uri)
-            entitiesRes.entities[editionB.uri].should.be.ok()
-            itemsRes.items[0].entity.should.equal(editionB.uri)
-            done()
-          })
-        })
-      })
-    })
-    .catch(done)
+    const item = await createItemFromEntityUri(editionA.uri)
+    item.entity.should.equal(editionA.uri)
+    await merge(editionA.uri, editionB.uri)
+    const [ entitiesRes, itemsRes ] = await Promise.all([
+      getByUris(editionA.uri),
+      getItemsByIds(item._id)
+    ])
+    entitiesRes.redirects[editionA.uri].should.equal(editionB.uri)
+    entitiesRes.entities[editionB.uri].should.be.ok()
+    itemsRes.items[0].entity.should.equal(editionB.uri)
   })
 
-  it('should merge an entity with an ISBN', done => {
-    Promise.all([
-      ensureEditionExists('isbn:9782298063264'),
+  it('should merge an entity with an ISBN', async () => {
+    const [ editionA, editionB ] = await Promise.all([
+      createEditionWithIsbn(),
       createEdition()
     ])
-    .then(([ editionA, editionB ]) => {
-      return createItemFromEntityUri(editionB.uri)
-      .then(item => {
-        return merge(editionA.uri, editionB.uri)
-        .then(() => {
-          return Promise.all([
-            getByUris(editionB.uri),
-            getItemsByIds(item._id)
-          ])
-          .then(([ entitiesRes, itemsRes ]) => {
-            const { entities, redirects } = entitiesRes
-            const updatedEditionB = entities[redirects[editionB.uri]]
-            updatedEditionB.claims['wdt:P212']
-            .should.deepEqual(editionA.claims['wdt:P212'])
-            const isbnUri = editionA.uri
-            itemsRes.items[0].entity.should.equal(isbnUri)
-            done()
-          })
-        })
-      })
-    })
-    .catch(done)
+    const item = await createItemFromEntityUri(editionB.uri)
+    await merge(editionA.uri, editionB.uri)
+    const [ entitiesRes, itemsRes ] = await Promise.all([
+      getByUris(editionB.uri),
+      getItemsByIds(item._id)
+    ])
+    const { entities, redirects } = entitiesRes
+    const updatedEditionB = entities[redirects[editionB.uri]]
+    updatedEditionB.claims['wdt:P212']
+    .should.deepEqual(editionA.claims['wdt:P212'])
+    const isbnUri = editionA.uri
+    itemsRes.items[0].entity.should.equal(isbnUri)
   })
 
-  it('should reject merge with different ISBNs', done => {
-    Promise.all([
-      ensureEditionExists('isbn:9782298063264'),
-      ensureEditionExists('isbn:9782211225915')
+  it('should reject merge with different ISBNs', async () => {
+    const [ editionA, editionB ] = await Promise.all([
+      createEditionWithIsbn(),
+      createEditionWithIsbn()
     ])
-    .then(([ editionA, editionB ]) => {
-      return merge('isbn:9782298063264', 'isbn:9782211225915')
-      .then(undesiredRes(done))
-      .catch(err => {
-        // That's not a very specific error report, but it does the job
-        // of blocking a merge from an edition with an ISBN
-        err.body.status_verbose
-        .should.equal("can't merge editions with different ISBNs")
-        err.statusCode.should.equal(400)
-        done()
-      })
-    })
-    .catch(done)
+    try {
+      await merge(editionA.uri, editionB.uri).then(shouldNotBeCalled)
+    } catch (err) {
+      err.body.status_verbose.should.equal("can't merge editions with different ISBNs")
+      err.statusCode.should.equal(400)
+    }
   })
 
   it('should transfer claims', done => {

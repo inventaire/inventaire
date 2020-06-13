@@ -1,6 +1,6 @@
 const should = require('should')
 const { undesiredRes } = require('../utils/utils')
-const { ensureEditionExists, createWorkWithAuthor, createEditionWithWorkAuthorAndSerie, createHuman } = require('../fixtures/entities')
+const { createEditionWithIsbn, createWorkWithAuthor, createEditionWithWorkAuthorAndSerie, createHuman } = require('../fixtures/entities')
 const { getByUris, merge } = require('../utils/entities')
 const workWithAuthorPromise = createWorkWithAuthor()
 
@@ -62,28 +62,19 @@ describe('entities:get:by-uris', () => {
     should(notFound).not.be.ok()
   })
 
-  it('should accept wikidata uri', done => {
+  it('should accept wikidata uri', async () => {
     const validWdUri = 'wd:Q2300248'
-    ensureEditionExists(validWdUri)
-    .then(() => getByUris(validWdUri))
-    .then(res => {
-      const entity = res.entities[validWdUri]
-      entity.uri.should.equal(validWdUri)
-      done()
-    })
-    .catch(done)
+    const { entities } = await getByUris(validWdUri)
+    const entity = entities[validWdUri]
+    entity.uri.should.equal(validWdUri)
   })
 
-  it('should accept strict ISBN 13 syntax', done => {
-    const isbn13Uri = 'isbn:9782845652217'
-    ensureEditionExists(isbn13Uri)
-    .then(() => getByUris(isbn13Uri))
-    .then(res => {
-      const entity = res.entities[isbn13Uri]
-      entity.uri.should.equal(isbn13Uri)
-      done()
-    })
-    .catch(done)
+  it('should accept strict ISBN 13 syntax', async () => {
+    const { uri } = await createEditionWithIsbn()
+    uri.should.match(/isbn:\d{13}/)
+    const { entities } = await getByUris(uri)
+    const entity = entities[uri]
+    entity.uri.should.equal(uri)
   })
 
   describe('relatives', () => {
