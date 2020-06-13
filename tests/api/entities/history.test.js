@@ -1,11 +1,11 @@
 require('should')
-const { nonAuthReq, undesiredRes } = require('../utils/utils')
+const { adminReq, undesiredRes } = require('../utils/utils')
 const { createHuman } = require('../fixtures/entities')
 const endpoint = '/api/entities?action=history'
 
 describe('entities:history', () => {
   it('should reject without uri', done => {
-    nonAuthReq('get', endpoint)
+    adminReq('get', endpoint)
     .then(undesiredRes(done))
     .catch(err => {
       err.body.status_verbose.should.equal('missing parameter in query: id')
@@ -15,7 +15,7 @@ describe('entities:history', () => {
   })
 
   it('should throw when passed an invalid id', done => {
-    nonAuthReq('get', `${endpoint}&id=foo`)
+    adminReq('get', `${endpoint}&id=foo`)
     .catch(err => {
       err.body.error_name.should.equal('invalid_id')
       done()
@@ -26,7 +26,7 @@ describe('entities:history', () => {
   it('should return entity patches', done => {
     createHuman()
     .then(human => {
-      return nonAuthReq('get', `${endpoint}&id=${human._id}`)
+      return adminReq('get', `${endpoint}&id=${human._id}`)
       .then(res => {
         res.patches[0].snapshot.labels.should.deepEqual(human.labels)
         done()
