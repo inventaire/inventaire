@@ -7,7 +7,7 @@ const radio = __.require('lib', 'radio')
 const retryOnConflict = __.require('lib', 'retry_on_conflict')
 const Entity = __.require('models', 'entity')
 const getEntityType = require('./get_entity_type')
-const validateClaim = require('./validate_claim')
+const validateAndFormatClaim = require('./validate_and_format_claim')
 const validateClaimProperty = require('./validate_claim_property')
 const inferredClaimUpdates = require('./inferred_claim_updates')
 
@@ -37,15 +37,12 @@ const updateInvClaim = (user, id, property, oldVal, newVal) => {
   })
 }
 
-const updateClaim = params => {
+const updateClaim = async params => {
   const { property, oldVal, userId, currentDoc } = params
-  const updatedDoc = _.cloneDeep(currentDoc)
-  params.currentClaims = currentDoc.claims
   params.letEmptyValuePass = true
-
-  return validateClaim(params)
-  .then(Entity.updateClaim.bind(null, updatedDoc, property, oldVal))
-  .then(updatedDoc => entities_.putUpdate({ userId, currentDoc, updatedDoc }))
+  const formattedNewVal = await validateAndFormatClaim(params)
+  const updatedDoc = Entity.updateClaim(_.cloneDeep(currentDoc), property, oldVal, formattedNewVal)
+  return entities_.putUpdate({ userId, currentDoc, updatedDoc })
 }
 
 module.exports = retryOnConflict({ updateFn: updateInvClaim })

@@ -30,6 +30,7 @@ const assert_ = __.require('utils', 'assert_types')
 const validLangs = Object.keys(require('wikidata-lang').byCode)
 
 const properties = __.require('controllers', 'entities/lib/properties/properties_values_constraints')
+const validateControlledPropertiesClaims = require('./validations/validate_controlled_properties_claims')
 const inferences = __.require('controllers', 'entities/lib/inferences')
 
 const Entity = module.exports = {
@@ -87,16 +88,6 @@ const Entity = module.exports = {
 
     for (const property in claims) {
       const array = claims[property]
-      const prop = properties[property]
-      // claims will be validated one by one later but some collective checks are needed
-
-      if (prop.uniqueValue) {
-        if (array.length > 1) {
-          const message = `${property} expects a unique value, got ${array}`
-          throw error_.new(message, 400, { doc, claims })
-        }
-      }
-
       for (const value of array) {
         doc = Entity.createClaim(doc, property, value)
       }
@@ -143,13 +134,6 @@ const Entity = module.exports = {
         // if the new value is null, it plays the role of a removeClaim
         propArray = _.without(propArray, oldVal)
 
-        // Some properties are required.
-        // Ex: wdt:P629 and wdt:P1476 are required on editions, so the last claim
-        // can't be removed without adding a new value
-        if ((propArray.length === 0) && properties[property].critical) {
-          throw error_.new('this property should at least have one value', 400, context)
-        }
-
         setPossiblyEmptyPropertyArray(doc, property, propArray)
       }
     } else {
@@ -161,6 +145,14 @@ const Entity = module.exports = {
     doc.updated = Date.now()
 
     return updateInferredProperties(doc, property, oldVal, newVal)
+  },
+
+  // Validation on full doc
+  validateBeforeSave: doc => {
+    // Do not validate redirections, removed placeholder, etc
+    if (doc.claims != null) {
+      validateControlledPropertiesClaims(doc.claims)
+    }
   },
 
   // 'from' and 'to' refer to the redirection process which rely on merging
@@ -203,6 +195,8 @@ const Entity = module.exports = {
     }
 
     if (dataTransfered) toEntityDoc.updated = Date.now()
+
+    validateControlledPropertiesClaims(toEntityDoc.claims)
 
     return toEntityDoc
   },
