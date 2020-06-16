@@ -63,5 +63,5 @@ module.exports = () => {
   // which isn't that straight forward, so refreshing on every cache miss instead,
   // that is, for every new entity + when cache expired + when a data refresh is requested
   radio.on('wikidata:entity:cache:miss', (wdId, type) => add(`wd:${wdId}`, type))
-  return radio.on('wikidata:entity:redirect', (fromUri, toUri) => add(fromUri))
+  radio.on('wikidata:entity:redirect', (fromUri, toUri) => add(fromUri))
 }
