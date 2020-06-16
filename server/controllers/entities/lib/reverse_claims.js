@@ -22,8 +22,11 @@ const denylistedProperties = [
 ]
 
 const localOnlyProperties = [
+  // Avoid getting editions from Wikidata
+  // as those are quarantined https://github.com/inventaire/inventaire/issues/182
   'wdt:P629',
-  'wdt:P123'
+  'wdt:P123',
+  'wdt:P195'
 ]
 
 module.exports = async params => {
