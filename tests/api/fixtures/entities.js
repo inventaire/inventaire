@@ -8,9 +8,13 @@ const { getByUri, addClaim } = require('../utils/entities')
 const faker = require('faker')
 const someImageHash = 'aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd'
 
-const createEntity = (P31, defaultClaims) => (params = {}) => {
+const createEntity = (P31, options = {}) => (params = {}) => {
+  const { canHaveLabels = true, defaultClaims } = options
   const defaultLabel = P31 === 'wd:Q5' ? humanName() : API.randomLabel(4)
-  const labels = params.labels || { en: defaultLabel }
+  let labels
+  if (canHaveLabels) {
+    labels = params.labels || { en: defaultLabel }
+  }
   const claims = params.claims || defaultClaims || {}
   claims['wdt:P31'] = [ P31 ]
   const user = params.user || getUser()
@@ -27,8 +31,11 @@ const API = module.exports = {
   createSerie: createEntity('wd:Q277759'),
   createPublisher: createEntity('wd:Q2085381'),
   createCollection: createEntity('wd:Q20655472', {
-    'wdt:P123': [ 'wd:Q1799264' ],
-    'wdt:P1476': [ randomWords(4) ]
+    canHaveLabels: false,
+    defaultClaims: {
+      'wdt:P123': [ 'wd:Q1799264' ],
+      'wdt:P1476': [ randomWords(4) ]
+    }
   }),
   randomLabel: (length = 5) => randomWords(length),
   humanName,
@@ -48,7 +55,9 @@ const API = module.exports = {
 
   createEdition: async (params = {}) => {
     const { work } = params
-    let { works, title, claims } = params
+    let { works, title, claims, publisher, publicationDate } = params
+    publisher = publisher || 'wd:Q1799264'
+    publicationDate = publicationDate || '2020'
     const lang = params.lang || 'en'
     if (work != null && works == null) works = [ work ]
     const worksPromise = works ? Promise.resolve(works) : API.createWork()
@@ -62,24 +71,25 @@ const API = module.exports = {
       'wdt:P1476': [ title ],
       'wdt:P1680': [ randomWords() ],
       'wdt:P407': [ `wd:${wdLang.byCode[lang].wd}` ],
-      'wdt:P123': [ 'wd:Q1799264' ],
-      'wdt:P577': [ '2020' ],
+      'wdt:P123': [ publisher ],
+      'wdt:P577': [ publicationDate ],
       'invp:P2': [ someImageHash ],
     }, claims)
     return authReq('post', '/api/entities?action=create', { claims: editionClaims })
   },
 
-  createEditionWithIsbn: async () => {
+  createEditionWithIsbn: async (params = {}) => {
+    const { publisher } = params
     const work = await API.createWork()
     const isbn13h = API.generateIsbn13h()
-    const edition = await authReq('post', '/api/entities?action=create', {
-      claims: {
-        'wdt:P31': [ 'wd:Q3331189' ],
-        'wdt:P629': [ work.uri ],
-        'wdt:P212': [ isbn13h ],
-        'wdt:P1476': [ API.randomLabel() ]
-      }
-    })
+    const claims = {
+      'wdt:P31': [ 'wd:Q3331189' ],
+      'wdt:P629': [ work.uri ],
+      'wdt:P212': [ isbn13h ],
+      'wdt:P1476': [ API.randomLabel() ]
+    }
+    if (publisher) claims['wdt:P123'] = [ publisher ]
+    const edition = await authReq('post', '/api/entities?action=create', { claims })
     edition.isbn = edition.uri.split(':')[1]
     edition.invUri = `inv:${edition._id}`
     edition.isbn13h = isbn13h
