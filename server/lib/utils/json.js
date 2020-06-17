@@ -1,5 +1,5 @@
 const { readFile, writeFile } = require('fs').promises
-const stringify = data => JSON.stringify(data, null, 4)
+const stringify = data => JSON.stringify(data, null, 2)
 const assert_ = require('./assert_types')
 
 module.exports = {
