@@ -91,8 +91,8 @@ const config = module.exports = {
   },
 
   serveStaticFiles: true,
-  noCache: false,
-  staticMaxAge: 30 * 24 * 60 * 60 * 1000,
+  noCache: true,
+  staticMaxAge: 0,
   cookieMaxAge: 10 * 365 * 24 * 3600 * 1000,
 
   hashPasswords: true,

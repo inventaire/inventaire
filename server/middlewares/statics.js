@@ -13,7 +13,15 @@ const enableCors = (req, res, next) => {
 if (CONFIG.serveStaticFiles) {
   const express = require('express')
   const publicPath = __.path('client', 'public')
-  const staticMiddleware = express.static(publicPath, { maxAge: CONFIG.staticMaxAge, fallthrough: false })
+  const options = { maxAge: CONFIG.staticMaxAge, fallthrough: false }
+  if (CONFIG.noCache) {
+    options.setHeaders = res => {
+      res.set('Cache-Control', 'no-cache, no-store, must-revalidate')
+    }
+    options.maxAge = 0
+    options.etag = false
+  }
+  const staticMiddleware = express.static(publicPath, options)
   // the 2 arguments array will be apply'ied to app.use by server/init_express
   const mountStaticFiles = [ '/public', staticMiddleware ]
 
