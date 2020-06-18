@@ -15,8 +15,9 @@ const createEntity = (P31, options = {}) => (params = {}) => {
   if (canHaveLabels) {
     labels = params.labels || { en: defaultLabel }
   }
-  const claims = params.claims || defaultClaims || {}
+  let claims = params.claims || {}
   claims['wdt:P31'] = [ P31 ]
+  if (defaultClaims) claims = Object.assign({}, defaultClaims, claims)
   const user = params.user || getUser()
   return customAuthReq(user, 'post', '/api/entities?action=create', { labels, claims })
 }

@@ -15,7 +15,18 @@ describe('entities:publisher-publications', () => {
     .catch(done)
   })
 
-  it('should get an publisher publications', async () => {
+  it('should get an inventaire publisher collection', async () => {
+    const { uri: publisherUri } = await createPublisher()
+    const collection = await createCollection({
+      claims: {
+        'wdt:P123': [ publisherUri ]
+      }
+    })
+    const { collections } = await nonAuthReq('get', `${endpoint}&uri=${publisherUri}`)
+    collections.should.deepEqual([ { uri: collection.uri } ])
+  })
+
+  it('should get a publisher publications', async () => {
     const { uri: publisherUri } = await createPublisher()
     const [ editionA, editionB, collection ] = await Promise.all([
       createEdition({ publisher: publisherUri }),
@@ -53,5 +64,11 @@ describe('entities:publisher-publications', () => {
       { uri: editionC.uri },
       { uri: editionD.uri }
     ])
+  })
+
+  it('should get wikidata publisher collections', async () => {
+    const { collections, editions } = await nonAuthReq('get', `${endpoint}&uri=wd:Q2823584`)
+    editions.should.deepEqual([])
+    collections.should.containEql({ uri: 'wd:Q63217733' })
   })
 })

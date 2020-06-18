@@ -1,7 +1,22 @@
+const __ = require('config').universalPath
+const runWdQuery = __.require('data', 'wikidata/run_query')
 const entities_ = require('./entities')
 const getInvEntityCanonicalUri = require('./get_inv_entity_canonical_uri')
+const { prefixifyWd } = __.require('controllers', 'entities/lib/prefix')
 
-module.exports = async ({ uri }) => {
+module.exports = async ({ uri, refresh, dry }) => {
+  const [ wdCollections, invPublications ] = await Promise.all([
+    getWdPublisherCollections(uri, refresh, dry),
+    getInvPublisherCollections(uri)
+  ])
+
+  return {
+    collections: wdCollections.concat(invPublications.collections),
+    editions: invPublications.editions
+  }
+}
+
+const getInvPublisherCollections = async uri => {
   const docs = await entities_.byClaim('wdt:P123', uri, true, true)
   const collections = []
   const editions = []
@@ -33,4 +48,11 @@ const getPublicationDate = doc => {
   // as the edition can't have been published much later than its associated entity was created
   // (much more probably, was published before)
   else return doc.created
+}
+
+const getWdPublisherCollections = async (uri, refresh, dry) => {
+  const [ prefix, qid ] = uri.split(':')
+  if (prefix !== 'wd') return []
+  const ids = await runWdQuery({ query: 'publisher-collections', qid, refresh, dry })
+  return ids.map(id => ({ uri: prefixifyWd(id) }))
 }

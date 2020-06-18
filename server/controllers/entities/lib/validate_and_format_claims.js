@@ -31,7 +31,12 @@ const validatePropertyClaims = (claims, type) => async property => {
   let values = claims[property]
 
   if (!_.isArray(values)) {
-    throw error_.new('invalid property values', 400, { property, values })
+    throw error_.new('invalid property value array', 400, {
+      property,
+      values,
+      type: _.typeOf(values),
+      expectedType: 'array'
+    })
   }
 
   values = _.uniq(values)
