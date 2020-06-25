@@ -16,7 +16,7 @@ const shelves_ = module.exports = {
     return db.postAndReturn(shelf)
   },
   byId: db.get,
-  byIds: db.fetch,
+  byIds: db.byIds,
   byIdsWithItems: async (ids, reqUserId) => {
     const shelves = await shelves_.byIds(ids)
     const shelvesCount = _.compact(shelves).length
