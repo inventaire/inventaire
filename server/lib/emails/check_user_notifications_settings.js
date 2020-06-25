@@ -2,7 +2,9 @@ const __ = require('config').universalPath
 const error_ = __.require('lib', 'error/error')
 
 module.exports = (user, notificationLabel) => {
-  const { _id, settings, undeliveredEmail } = user
+  const { _id, type, settings, undeliveredEmail } = user
+
+  if (type === 'deletedUser') throw emailDisabled({ user: _id, reason: 'deleted user' })
 
   if (!settings) throw error_.new('invalid user doc', user)
 
