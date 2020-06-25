@@ -32,6 +32,7 @@ const deleteByIds = async params => {
     res.items = deletedItems
   }
   await shelves_.bulkDelete(shelves)
+  res.ok = true
   return res
 }
 
