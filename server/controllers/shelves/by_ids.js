@@ -17,14 +17,18 @@ const sanitization = {
 
 module.exports = (req, res, next) => {
   sanitize(req, res, sanitization)
-  .then(params => {
-    const { ids, withItems, reqUserId } = params
-    const byIdsFnName = withItems === true ? 'byIdsWithItems' : 'byIds'
-    return Promise.all([ shelves_[byIdsFnName](ids, reqUserId), getNetworkIds(reqUserId) ])
-    .then(filterVisibleShelves(reqUserId))
-    .then(_.compact)
-    .then(_.KeyBy('_id'))
-    .then(responses_.Wrap(res, 'shelves'))
-  })
+  .then(getShelvesByIds)
+  .then(responses_.Wrap(res, 'shelves'))
   .catch(error_.Handler(req, res))
+}
+
+const getShelvesByIds = async ({ ids, withItems, reqUserId }) => {
+  const byIdsFnName = withItems === true ? 'byIdsWithItems' : 'byIds'
+  return Promise.all([
+    shelves_[byIdsFnName](ids, reqUserId),
+    getNetworkIds(reqUserId)
+  ])
+  .then(filterVisibleShelves(reqUserId))
+  .then(_.compact)
+  .then(_.KeyBy('_id'))
 }
