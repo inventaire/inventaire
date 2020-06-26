@@ -126,7 +126,9 @@ const API = module.exports = {
     const isbn = `9780${_.join(_.sampleSize(_.split('0123456789', ''), 9), '')}`
     if (isbn_.isValidIsbn(isbn)) return isbn
     return API.generateIsbn13()
-  }
+  },
+
+  generateIsbn13h: () => isbn_.toIsbn13h(API.generateIsbn13())
 }
 
 const addEntityClaim = (createFnName, property) => async subjectEntity => {
