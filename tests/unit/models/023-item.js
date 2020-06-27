@@ -13,9 +13,7 @@ const update = Item.update.bind(null, someUserId)
 const validItem = {
   entity: 'wd:Q35160',
   listing: 'public',
-  transaction: 'giving',
-  pictures: [ 'https://pictu.re/yoplaboom' ],
-  lang: 'fr'
+  transaction: 'giving'
 }
 
 const extendItem = data => Object.assign({}, validItem, data)
