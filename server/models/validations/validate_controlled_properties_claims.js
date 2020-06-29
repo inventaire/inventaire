@@ -21,14 +21,9 @@ module.exports = (claims, checkedProperties) => {
 
 const validateControlledPropertiesClaimsPerType = {
   edition: claims => {
-    let entityLabel = 'an edition'
+    const entityLabel = 'an edition'
     assertPropertyHasValue(claims, 'wdt:P629', entityLabel, 'an associated work')
     assertPropertyHasValue(claims, 'wdt:P1476', entityLabel, 'a title')
-    if (claims['wdt:P212'] == null) {
-      entityLabel = 'an edition without ISBN'
-      assertPropertyHasValue(claims, 'wdt:P123', entityLabel, 'a publisher')
-      assertPropertyHasValue(claims, 'wdt:P577', entityLabel, 'a publication date')
-    }
   },
 
   collection: claims => {

@@ -141,22 +141,6 @@ describe('entities:update-claims', () => {
     .catch(done)
   })
 
-  it('should reject an update removing a conditional critical claim', done => {
-    createEdition()
-    .then(edition => {
-      const oldValue = edition.claims['wdt:P123'][0]
-      // An edition entity without ISBN should always have at least one wdt:P123 claim
-      return removeClaim(edition.uri, 'wdt:P123', oldValue)
-    })
-    .then(undesiredRes(done))
-    .catch(err => {
-      err.body.status_verbose.should.equal('an edition without ISBN should have a publisher (wdt:P123)')
-      err.statusCode.should.equal(400)
-      done()
-    })
-    .catch(done)
-  })
-
   it('should reject an update on an unexisting claim (property with no claim)', done => {
     createEdition()
     .then(edition => updateClaim(edition.uri, 'wdt:P655', 'wd:Q23', 'wd:Q42'))
