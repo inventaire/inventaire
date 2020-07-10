@@ -3,6 +3,7 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
 const { getUser, getReservedUser, customAuthReq } = require('../utils/utils')
+const { getIndexedDoc } = require('../utils/search')
 const { getTwoFriends } = require('../fixtures/users')
 const { createItem, createItemWithEditionAndWork, createItemWithAuthor, createItemWithAuthorAndSerie } = require('../fixtures/items')
 const endpoint = '/api/items?action=search'
@@ -16,6 +17,19 @@ const search = (reqUser, userId, search) => {
   if (search) url += `&search=${encodeURIComponent(search)}`
   return customAuthReq(reqUser, 'get', url)
 }
+
+describe('items:search:indexation', () => {
+  it.only('should index items with snapshot data', async () => {
+    const user = await getUser()
+    const item = await createItemWithEditionAndWork(user)
+    await wait(1000)
+    const res = await getIndexedDoc({ indexBase: 'items', id: item._id })
+    res._id.should.equal(item._id)
+    res._type.should.equal('item')
+    res._source.owner.should.equal(user._id)
+    res._source.snapshot['entity:title'].should.be.a.String()
+  })
+})
 
 describe('items:search', () => {
   it('should reject if no user id is set', async () => {
