@@ -8,6 +8,7 @@ const responses_ = __.require('lib', 'responses')
 const getResizedImage = require('./lib/get_resized_image')
 const { offline } = CONFIG
 const containersList = Object.keys(__.require('controllers', 'images/lib/containers'))
+const { URL } = require('url')
 
 // resized images urls looks like
 // /img/#{container}/#{w}x#{h}/(#{hash}|#{external url hashCode?href=escaped url})"
@@ -42,6 +43,12 @@ module.exports = {
         return error_.bundle(req, res, 'invalid href query', 400, url)
       }
 
+      const { hostname } = new URL(url)
+
+      if (blacklistedRemoteHosts.includes(hostname)) {
+        return error_.bundle(req, res, 'blacklisted domain', 400, url)
+      }
+
       const urlCode = _.hashCode(url).toString()
       // The hashcode can be used by Nginx for caching, while the url is passed
       // as query argument in case it isnt in cache.
@@ -62,3 +69,8 @@ const parseReq = req => {
   pathname = pathname.replace('/img/', '')
   return pathname.split('/')
 }
+
+const blacklistedRemoteHosts = [
+  // Returns ENOTFOUND errors
+  'avatars.io'
+]
