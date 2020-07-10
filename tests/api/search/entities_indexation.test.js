@@ -6,13 +6,13 @@ const { createHuman } = require('../fixtures/entities')
 const { deleteByUris, merge } = require('../utils/entities')
 const { elasticsearchUpdateDelay } = CONFIG.entitiesSearchEngine
 const entitiesIndex = CONFIG.db.name('entities')
-const { checkIndexation } = require('../utils/search')
+const { getIndexedDoc } = require('../utils/search')
 
 describe('entities:indexation', () => {
   it('should index a new local entity', async () => {
     const { _id } = await createHuman()
     await wait(elasticsearchUpdateDelay)
-    const result = await checkIndexation(entitiesIndex, 'humans', _id)
+    const result = await getIndexedDoc(entitiesIndex, 'humans', _id)
     result.found.should.be.true()
     result._source.id.should.equal(_id)
   })
@@ -24,7 +24,7 @@ describe('entities:desindexation', () => {
     await wait(elasticsearchUpdateDelay)
     await deleteByUris(uri)
     await wait(elasticsearchUpdateDelay)
-    const result = await checkIndexation(entitiesIndex, 'humans', _id)
+    const result = await getIndexedDoc(entitiesIndex, 'humans', _id)
     result.found.should.be.false()
     should(result._source).not.be.ok()
   })
@@ -35,7 +35,7 @@ describe('entities:desindexation', () => {
     await wait(elasticsearchUpdateDelay)
     await merge(uri, otherUri)
     await wait(elasticsearchUpdateDelay)
-    const result = await checkIndexation(entitiesIndex, 'humans', _id)
+    const result = await getIndexedDoc(entitiesIndex, 'humans', _id)
     result.found.should.be.false()
     should(result._source).not.be.ok()
   })
