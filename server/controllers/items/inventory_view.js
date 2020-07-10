@@ -40,8 +40,9 @@ const getItems = async params => {
   if (shelf) {
     const shelfDoc = await shelves_.byId(shelf)
     return getAuthorizedItems.byShelf(shelfDoc, reqUserId)
+  } else {
+    return getAuthorizedItems.byGroup(group, reqUserId)
   }
-  else return getAuthorizedItems.byGroup(group, reqUserId)
 }
 
 const getItemsEntitiesData = items => {
