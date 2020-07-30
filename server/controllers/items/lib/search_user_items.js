@@ -20,7 +20,8 @@ module.exports = buildSearcher({
       { match: { 'snapshot.entity:title': search } },
       { match: { 'snapshot.entity:subtitle': search } },
       { match: { 'snapshot.entity:authors': search } },
-      { match: { 'snapshot.entity:series': search } }
+      { match: { 'snapshot.entity:series': search } },
+      { match: { details: search } }
     ]
 
     const query = { bool: { must, must_not: mustNot, should } }
