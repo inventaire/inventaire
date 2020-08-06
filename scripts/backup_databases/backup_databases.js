@@ -1,4 +1,8 @@
 #!/usr/bin/env node
+
+// Usage:
+//   npm run backup-databases prod
+
 const [ suffix ] = process.argv.slice(2)
 
 const CONFIG = require('config')
