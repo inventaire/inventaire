@@ -98,13 +98,6 @@ describe('user model', () => {
         (() => _create(args)).should.throw()
         done()
       })
-
-      it('should throw on passwords too long', done => {
-        const tooLongPassword = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ].join('hellohellohello')
-        const args = replaceParam(4, tooLongPassword);
-        (() => _create(args)).should.throw()
-        done()
-      })
     })
   })
 

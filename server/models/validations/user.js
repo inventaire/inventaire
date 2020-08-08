@@ -10,7 +10,7 @@ const validations = module.exports = {
   userId,
   username,
   email,
-  password: BoundedString(8, 128),
+  password: BoundedString(8, 5000),
   // Accepting second level languages (like es-AR), but only using first level yet
   language: _.isLang,
   picture: userImg,
