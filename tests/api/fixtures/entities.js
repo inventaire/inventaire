@@ -23,7 +23,7 @@ const randomWords = length => faker.random.words(length)
 const API = module.exports = {
   createEntity,
   createHuman: createEntity('wd:Q5'),
-  createWork: createEntity('wd:Q571'),
+  createWork: createEntity('wd:Q47461344'),
   createSerie: createEntity('wd:Q277759'),
   createPublisher: createEntity('wd:Q2085381'),
   randomLabel: (length = 5) => randomWords(length),
@@ -36,7 +36,7 @@ const API = module.exports = {
     return authReq('post', '/api/entities?action=create', {
       labels: { en: label },
       claims: {
-        'wdt:P31': [ 'wd:Q571' ],
+        'wdt:P31': [ 'wd:Q47461344' ],
         'wdt:P50': [ human.uri ]
       }
     })

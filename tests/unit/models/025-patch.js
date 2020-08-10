@@ -16,7 +16,7 @@ const currentDoc = {
     fr: 'yo'
   },
   claims: {
-    P31: [ 'Q571' ],
+    P31: [ 'Q47461344' ],
     P50: [ 'Q535' ]
   },
   notTrackedAttr: 123
@@ -29,7 +29,7 @@ const updatedDoc = {
     en: 'da'
   },
   claims: {
-    P31: [ 'Q571' ],
+    P31: [ 'Q47461344' ],
     P50: [ 'Q535', 'Q2001' ],
     P135: [ 'Q53121' ]
   },
@@ -41,7 +41,7 @@ const authorDoc = {
   _rev: '4-760b982ea416be33c6938774db2cfaeb',
   type: 'entity',
   labels: { en: 'GBKaRq' },
-  claims: { 'wdt:P31': [ 'wd:Q571' ] }
+  claims: { 'wdt:P31': [ 'wd:Q47461344' ] }
 }
 
 describe('patch', () => {
