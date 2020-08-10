@@ -22,10 +22,10 @@ module.exports = params => {
 
   // If the prefix is 'inv' or 'isbn', no need to check Wikidata
   if (prefix === 'wd') {
-    promises.push(getWdAuthorWorks(id, worksByTypes, params))
+    promises.push(getWdAuthorWorks(id, params))
   }
 
-  promises.push(getInvAuthorWorks(uri, worksByTypes))
+  promises.push(getInvAuthorWorks(uri))
 
   return Promise.all(promises)
   .then(_.flatten)
@@ -35,7 +35,7 @@ module.exports = params => {
 }
 
 // # WD
-const getWdAuthorWorks = async (qid, worksByTypes, params) => {
+const getWdAuthorWorks = async (qid, params) => {
   const { refresh, dry } = params
   let results = await runWdQuery({ query: 'author-works', qid, refresh, dry })
   results = results.map(formatWdEntity).filter(_.identity)
@@ -60,7 +60,7 @@ const formatWdEntity = result => {
 }
 
 // # INV
-const getInvAuthorWorks = async (uri, worksByTypes) => {
+const getInvAuthorWorks = async uri => {
   const { rows } = await entities_.byClaim('wdt:P50', uri, true)
   return rows.map(formatInvEntity).filter(_.identity)
 }
