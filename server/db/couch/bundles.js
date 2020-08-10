@@ -17,6 +17,11 @@ module.exports = (db, _) => {
   }
 
   return {
+    byIds: async ids => {
+      ids = _.forceArray(ids)
+      const { docs } = await db.fetch(ids)
+      return docs
+    },
     postAndReturn: actionAndReturn.bind(null, 'post'),
     putAndReturn: actionAndReturn.bind(null, 'put'),
     bulkDelete

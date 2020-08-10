@@ -17,11 +17,7 @@ const { validateProperty } = require('./properties/validations')
 const entities_ = module.exports = {
   byId: db.get,
 
-  byIds: ids => {
-    ids = _.forceArray(ids)
-    return db.fetch(ids)
-    .then(_.compact)
-  },
+  byIds: db.byIds,
 
   byIsbns: isbns => {
     const keys = isbns

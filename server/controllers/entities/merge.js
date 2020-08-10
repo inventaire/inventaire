@@ -47,14 +47,11 @@ module.exports = (req, res) => {
   .catch(error_.Handler(req, res))
 }
 
-const getMergeEntities = (fromUri, toUri) => {
-  return getEntitiesByUris({ uris: [ fromUri, toUri ], refresh: true })
-  .then(res => {
-    const { entities, redirects } = res
-    const fromEntity = getMergeEntity(entities, redirects, fromUri)
-    const toEntity = getMergeEntity(entities, redirects, toUri)
-    return { fromEntity, toEntity }
-  })
+const getMergeEntities = async (fromUri, toUri) => {
+  const { entities, redirects } = await getEntitiesByUris({ uris: [ fromUri, toUri ], refresh: true })
+  const fromEntity = getMergeEntity(entities, redirects, fromUri)
+  const toEntity = getMergeEntity(entities, redirects, toUri)
+  return { fromEntity, toEntity }
 }
 
 const getMergeEntity = (entities, redirects, uri) => {

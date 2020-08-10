@@ -15,7 +15,7 @@ const { defaultAvatar } = __.require('lib', 'assets')
 
 const user_ = module.exports = {
   byId: db.get,
-  byIds: db.fetch,
+  byIds: db.byIds,
   byEmail: byEmail.bind(null, db),
   byEmails: byEmails.bind(null, db),
   findOneByEmail: findOneByEmail.bind(null, db),

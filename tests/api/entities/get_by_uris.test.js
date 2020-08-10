@@ -41,14 +41,10 @@ describe('entities:get:by-uris', () => {
     .catch(done)
   })
 
-  it('should return uris not found', done => {
+  it('should return uris not found', async () => {
     const fakeUri = 'inv:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
-    getByUris(fakeUri)
-    .then(res => {
-      res.notFound.should.deepEqual([ fakeUri ])
-      done()
-    })
-    .catch(done)
+    const { notFound } = await getByUris(fakeUri)
+    notFound.should.deepEqual([ fakeUri ])
   })
 
   it('should return redirected uris', async () => {

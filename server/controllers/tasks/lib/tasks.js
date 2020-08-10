@@ -25,7 +25,7 @@ const tasks_ = module.exports = {
 
   byId: db.get,
 
-  byIds: db.fetch,
+  byIds: db.byIds,
 
   byScore: options => {
     const { limit, offset } = options

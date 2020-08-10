@@ -6,7 +6,7 @@ const Item = __.require('models', 'item')
 const listingsPossibilities = Item.attributes.constrained.listing.possibilities
 const assert_ = __.require('utils', 'assert_types')
 const { BasicUpdater } = __.require('lib', 'doc_updates')
-const { tapEmit } = __.require('lib', 'radio')
+const { tapEmit, emit } = __.require('lib', 'radio')
 const { filterPrivateAttributes } = require('./filter_private_attributes')
 const { maxKey } = __.require('lib', 'couch')
 const listingsLists = require('./listings_lists')
@@ -18,7 +18,7 @@ const validateEntityType = require('./validate_entity_type')
 
 const items_ = module.exports = {
   byId: db.get,
-  byIds: db.fetch,
+  byIds: db.byIds,
   byOwner: ownerId => {
     return db.viewCustom('byOwnerAndEntityAndListing', {
       startkey: [ ownerId ],
@@ -74,8 +74,9 @@ const items_ = module.exports = {
     items = items.map(item => Item.create(userId, item))
     const res = await db.bulk(items)
     const itemsIds = _.map(res, 'id')
-    return db.fetch(itemsIds)
-    .then(tapEmit('user:inventory:update', userId))
+    const { docs } = await db.fetch(itemsIds)
+    emit('user:inventory:update', userId)
+    return docs
   },
 
   update: (userId, itemUpdateData) => {
