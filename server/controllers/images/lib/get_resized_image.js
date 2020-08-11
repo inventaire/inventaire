@@ -2,9 +2,15 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const error_ = __.require('lib', 'error/error')
 const images_ = __.require('lib', 'images')
+const { userAgent } = __.require('lib', 'requests')
 const { maxSize } = CONFIG.mediaStorage.images
 const fetch = require('node-fetch')
 const oneMB = 1024 ** 2
+const reqOptions = {
+  headers: {
+    'user-agent': userAgent
+  }
+}
 
 module.exports = async (req, res, url, dimensions) => {
   let [ width, height ] = dimensions ? dimensions.split('x') : [ maxSize, maxSize ];
@@ -12,7 +18,7 @@ module.exports = async (req, res, url, dimensions) => {
 
   let response
   try {
-    response = await fetch(url)
+    response = await fetch(url, reqOptions)
   } catch (err) {
     return error_.handler(req, res, err, 500)
   }
