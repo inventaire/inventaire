@@ -30,35 +30,27 @@ describe('shelves:delete', () => {
     }
   })
 
-  it('should delete shelf', async () => {
-    const shelf = await shelfPromise
+  it('should delete shelf but not the items', async () => {
+    const shelf = await shelfWithItemsPromise
+    const itemId = shelf.items[0]
     const { _id: shelfId } = shelf
     const res = await authReq('post', endpoint, { ids: shelfId })
-    res.ok.should.be.true()
-    const getShelfRes = await authReq('get', `/api/shelves?action=by-ids&ids=${shelfId}`)
+    res.shelves.should.be.an.Array()
 
+    const getShelfRes = await authReq('get', `/api/shelves?action=by-ids&ids=${shelfId}`)
     _.values(getShelfRes.shelves).length.should.equal(0)
+
+    const getItemsRes = await authReq('get', `/api/items?action=by-ids&ids=${itemId}`)
+    _.values(getItemsRes.items).length.should.not.equal(0)
   })
 
   describe('with-items', () => {
-    it('should reject deleting shelf', async () => {
-      try {
-        const shelf = await shelfWithItemsPromise
-        const { _id: shelfId } = shelf
-        await authReq('post', endpoint, { ids: shelfId }).then(shouldNotBeCalled)
-      } catch (err) {
-        rethrowShouldNotBeCalledErrors(err)
-        err.body.status_verbose.should.startWith('shelf cannot be deleted')
-        err.statusCode.should.equal(403)
-      }
-    })
-
     it('should delete shelf and items', async () => {
-      const shelf = await shelfWithItemsPromise
+      const shelf = await createShelfWithItem()
       const itemId = shelf.items[0]
       const { _id: shelfId } = shelf
       const res = await authReq('post', endpoint, { ids: shelfId, 'with-items': true })
-      res.ok.should.be.true()
+      res.items.should.be.an.Array()
       const getItemsRes = await authReq('get', `/api/items?action=by-ids&ids=${itemId}`)
       _.values(getItemsRes.items).length.should.equal(0)
     })

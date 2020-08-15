@@ -24,7 +24,6 @@ const deleteByIds = async params => {
   const { ids, reqUserId, withItems } = params
   const shelvesRes = await shelves_.byIdsWithItems(ids, reqUserId)
   const shelves = _.compact(shelvesRes)
-  validateDeletion(withItems, shelves)
   shelves_.validateOwnership(reqUserId, shelves)
   const res = { shelves }
   if (withItems) {
@@ -34,13 +33,4 @@ const deleteByIds = async params => {
   await shelves_.bulkDelete(shelves)
   res.ok = true
   return res
-}
-
-const validateDeletion = (withItems, shelves) => {
-  if (withItems) return
-  for (const shelf of shelves) {
-    if (shelf.items.length > 0) {
-      throw error_.new('shelf cannot be deleted. Delete items first or pass a with-items parameter', 403, { shelf })
-    }
-  }
 }

@@ -20,6 +20,11 @@ describe('shelves:by-ids', () => {
     }
   })
 
+  it('should be empty when the id does not exist', async () => {
+    const res = await authReq('get', `${endpoint}&ids=00000000000000000000000000000000`)
+    res.shelves.should.deepEqual({})
+  })
+
   it('should get shelves', async () => {
     const shelf = await createShelf()
     const res = await authReq('get', `${endpoint}&ids=${shelf._id}`)
