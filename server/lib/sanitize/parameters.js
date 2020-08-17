@@ -174,6 +174,7 @@ module.exports = {
   filter: whitelistedString,
   format: whitelistedStrings,
   from: entityUri,
+  forceUpdateProps: whitelistedStrings,
   generics,
   group: couchUuid,
   id: couchUuid,
@@ -203,6 +204,7 @@ module.exports = {
   prefix: whitelistedString,
   property: { validate: _.isPropertyUri },
   refresh: generics.boolean,
+  relatives: whitelistedStrings,
   range: Object.assign({}, positiveInteger, {
     default: 50,
     max: 500
@@ -223,7 +225,6 @@ module.exports = {
   users: couchUuids,
   username: { validate: validations.common.username },
   usernames,
-  relatives: whitelistedStrings,
   value: {
     // Endpoints accepting a 'value' can specify a type
     // or have to do their own validation

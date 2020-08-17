@@ -15,7 +15,7 @@ const resolveAndUpdate = entries => {
 }
 
 describe('entities:resolver:update-resolved', () => {
-  it('should not update entity claim values if property exists', done => {
+  it('should not update entity claim values if claim exists', done => {
     const libraryThingsWorkId = someLibraryThingsWorkId()
     const authorUri = 'wd:Q35802'
     const authorUri2 = 'wd:Q184226'
@@ -41,6 +41,7 @@ describe('entities:resolver:update-resolved', () => {
         .then(({ entities }) => entities)
         .then(entities => {
           const workAuthorsUris = _.values(entities)[0].claims['wdt:P50']
+          workAuthorsUris.should.containEql(authorUri2)
           workAuthorsUris.should.not.containEql(authorUri)
           done()
         })
@@ -49,7 +50,7 @@ describe('entities:resolver:update-resolved', () => {
     .catch(done)
   })
 
-  it('should update entities claims values if property does not exist', done => {
+  it('should update entities claims values if claim does not exist', done => {
     const entryA = someEntryWithAGoodReadsWorkId()
     const entryB = someEntryWithAGoodReadsWorkId()
     const libraryThingsWorkIdA = entryA.works[0].claims['wdt:P1085'][0]
