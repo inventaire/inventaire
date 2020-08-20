@@ -94,7 +94,7 @@ const createWorkEntity = (title, lang, authorsUris) => {
   const labels = {}
   if (_.isNonEmptyString(title)) labels[lang] = title
   const claims = {
-    'wdt:P31': [ 'wd:Q571' ],
+    'wdt:P31': [ 'wd:Q47461344' ],
     'wdt:P50': authorsUris
   }
 

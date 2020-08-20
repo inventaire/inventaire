@@ -57,7 +57,7 @@ describe('entities:create', () => {
 
   it('should reject without a label (unless specific types)', done => {
     authReq('post', endpoint, {
-      claims: { 'wdt:P31': [ 'wd:Q571' ] }
+      claims: { 'wdt:P31': [ 'wd:Q47461344' ] }
     })
     .then(undesiredRes(done))
     .catch(err => {
@@ -70,13 +70,13 @@ describe('entities:create', () => {
   it('should create a work entity', done => {
     authReq('post', endpoint, {
       labels: { fr: humanName() },
-      claims: { 'wdt:P31': [ 'wd:Q571' ] }
+      claims: { 'wdt:P31': [ 'wd:Q47461344' ] }
     })
     .then(res => {
       res._id.should.be.a.String()
       res._rev.should.be.a.String()
       res.type.should.equal('work')
-      res.claims.should.deepEqual({ 'wdt:P31': [ 'wd:Q571' ] })
+      res.claims.should.deepEqual({ 'wdt:P31': [ 'wd:Q47461344' ] })
       res.uri.should.be.a.String()
       res.labels.should.be.an.Object()
       done()
@@ -88,7 +88,7 @@ describe('entities:create', () => {
     authReq('post', endpoint, {
       labels: { fr: humanName() },
       claims: {
-        'wdt:P31': [ 'wd:Q571' ],
+        'wdt:P31': [ 'wd:Q47461344' ],
         'wdt:P648': [ someOpenLibraryId('work') ]
       }
     })
@@ -102,7 +102,7 @@ describe('entities:create', () => {
   it('should reject multiple values for a property that take one', done => {
     authReq('post', endpoint, {
       labels: { fr: humanName() },
-      claims: { 'wdt:P31': [ 'wd:Q571', 'wd:Q572' ] }
+      claims: { 'wdt:P31': [ 'wd:Q47461344', 'wd:Q572' ] }
     })
     .then(undesiredRes(done))
     .catch(err => {
@@ -145,7 +145,7 @@ describe('entities:create', () => {
     authReq('post', endpoint, {
       labels: { fr: humanName() },
       claims: {
-        'wdt:P31': [ 'wd:Q571' ],
+        'wdt:P31': [ 'wd:Q47461344' ],
         'wdt:P50': 'wd:Q535'
       }
     })
@@ -162,7 +162,7 @@ describe('entities:create', () => {
     authReq('post', endpoint, {
       labels: { fr: humanName() },
       claims: {
-        'wdt:P31': [ 'wd:Q571' ],
+        'wdt:P31': [ 'wd:Q47461344' ],
         'wd:P50': [ 'wd:Q535' ]
       }
     })
@@ -179,7 +179,7 @@ describe('entities:create', () => {
     authReq('post', endpoint, {
       labels: { fr: humanName() },
       claims: {
-        'wdt:P31': [ 'wd:Q571' ],
+        'wdt:P31': [ 'wd:Q47461344' ],
         'wdt:P50': [ 'wd####Q535' ]
       }
     })
@@ -198,8 +198,10 @@ describe('entities:create', () => {
       await authReq('post', endpoint, {
         claims: {
           'wdt:P31': [ 'wd:Q3331189' ],
-          'wdt:P212': edition.claims['wdt:P212'],
-          'wdt:P1476': [ randomLabel() ]
+          'wdt:P1476': [ randomLabel() ],
+          'wdt:P629': edition.claims['wdt:P629'],
+          // The concurrent property
+          'wdt:P212': edition.claims['wdt:P212']
         }
       })
       .then(shouldNotBeCalled)
@@ -213,7 +215,7 @@ describe('entities:create', () => {
     authReq('post', endpoint, {
       labels: { fr: randomLabel() },
       claims: {
-        'wdt:P31': [ 'wd:Q571' ], // work
+        'wdt:P31': [ 'wd:Q47461344' ], // work
         'wdt:P1104': [ 124 ] // edition pages counts
       }
     })
@@ -246,7 +248,7 @@ describe('entities:create', () => {
       prefix: 'wd',
       labels: { fr: humanName() },
       claims: {
-        'wdt:P31': [ 'wd:Q571' ],
+        'wdt:P31': [ 'wd:Q47461344' ],
         'wdt:P648': [ someOpenLibraryId('work') ]
       }
     })

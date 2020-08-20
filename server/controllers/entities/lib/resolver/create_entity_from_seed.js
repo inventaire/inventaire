@@ -17,7 +17,7 @@ const createWork = (userId, batchId, authors) => work => {
   if (work.uri != null) return work
   const authorsUris = _.compact(_.map(authors, 'uri'))
   const claims = {}
-  addClaimIfValid(claims, 'wdt:P31', [ 'wd:Q571' ])
+  addClaimIfValid(claims, 'wdt:P31', [ 'wd:Q47461344' ])
   addClaimIfValid(claims, 'wdt:P50', authorsUris)
   return createEntityFromSeed({ type: 'work', seed: work, claims, userId, batchId })
 }

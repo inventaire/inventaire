@@ -9,7 +9,7 @@ const workDoc = () => {
   const doc = Entity.create()
   doc._id = '12345678900987654321123456789012'
   doc._rev = '5-12345678900987654321123456789012'
-  doc.claims['wdt:P31'] = [ 'wd:Q571' ]
+  doc.claims['wdt:P31'] = [ 'wd:Q47461344' ]
   doc.claims['wdt:P50'] = [ 'wd:Q535', 'wd:Q1541' ]
   doc.created = Date.now()
   doc.updated = Date.now()
