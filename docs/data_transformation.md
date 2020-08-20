@@ -96,10 +96,10 @@ Cons:
 - In the (very unlikely) case there is some text value (an label or a string property) that matches `wdt:P364`, you're modifying data that should not have been modified.
 
 ## 3 - Post back in bulk
-Those updated documents can be uploaded back to CouchDB with a tool such as [`couchdb-bulk`](https://github.com/jo/couchdb-bulk)
+Those updated documents can be uploaded back to CouchDB with a tool such as [`couchdb-bulk2`](https://github.com/maxlath/couchdb-bulk2)
 
 ```sh
-cat updated_documents.ndjson | couchdb-bulk "$db_host/users" > update.success 2> update.errors
+cat updated_documents.ndjson | couchdb-bulk2 "$db_host/users" > update.success 2> update.errors
 ```
 
 ## 4 - Check for conflicts
