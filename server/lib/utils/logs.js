@@ -9,11 +9,13 @@ let errorCounter = 0
 // Log full objects
 require('util').inspect.defaultOptions.depth = 20
 
+const print = str => process.stdout.write(str + '\n')
+
 const BaseLogger = (color, operation) => (obj, label) => {
   // fully display deep objects
-  console.log(grey('****') + chalk[color](`${label}`) + grey('****'))
-  console.log(operation(obj))
-  console.log(grey('----------'))
+  print(grey('****') + chalk[color](`${label}`) + grey('****'))
+  print(operation(obj))
+  print(grey('----------'))
   return obj
 }
 
