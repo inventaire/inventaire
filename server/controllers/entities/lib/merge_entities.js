@@ -22,7 +22,7 @@ module.exports = ({ userId, fromUri, toUri }) => {
 
   if (toPrefix === 'wd') {
     // no merge to do for Wikidata entities, simply creating a redirection
-    return turnIntoRedirection(userId, fromId, toUri)
+    return turnIntoRedirection({ userId, fromId, toUri })
   } else {
     // TODO: invert fromId and toId if the merged entity is more popular
     // to reduce the amount of documents that need to be updated
@@ -64,7 +64,7 @@ const mergeInvEntities = async (userId, fromId, toId) => {
   }
 
   // Refresh the URI in case an ISBN was transfered and the URI changed
-  const newToUri = getInvEntityCanonicalUri(toEntityDocAfterMerge)
+  const toUri = getInvEntityCanonicalUri(toEntityDocAfterMerge)
 
-  return turnIntoRedirection(userId, fromId, newToUri, previousToUri)
+  return turnIntoRedirection({ userId, fromId, toUri, previousToUri })
 }
