@@ -24,79 +24,68 @@ const replaceParam = (index, value, baseArgGen = validUser) => {
 
 describe('user model', () => {
   describe('creation strategy', () => {
-    it('should throw on missing strategy', done => {
+    it('should throw on missing strategy', () => {
       const args = replaceParam(2, null);
       (() => _create(args)).should.throw()
-      done()
     })
 
-    it('should throw on invalid strategy', done => {
+    it('should throw on invalid strategy', () => {
       const args = replaceParam(2, 'flower!');
       (() => _create(args)).should.throw()
-      done()
     })
   })
 
   describe('local signup', () => {
-    it('should return a user on valid args', done => {
+    it('should return a user on valid args', () => {
       const user = create(validUser())
       user.should.be.an.Object()
-      done()
     })
 
     describe('username validation', () => {
-      it('should throw on empty username', done => {
+      it('should throw on empty username', () => {
         const args = replaceParam(0, '');
         (() => _create(args)).should.throw()
-        done()
       })
 
-      it('should throw on username with space', done => {
+      it('should throw on username with space', () => {
         const args = replaceParam(0, 'with space');
         (() => _create(args)).should.throw()
-        done()
       })
 
-      it('should throw on username with special characters', done => {
+      it('should throw on username with special characters', () => {
         const args = replaceParam(0, 'with$special%characters');
         (() => _create(args)).should.throw()
-        done()
       })
     })
 
     describe('email validation', () => {
-      it('should throw on invalid email', done => {
+      it('should throw on invalid email', () => {
         const args = replaceParam(1, 'notanemail');
         (() => _create(args)).should.throw()
-        done()
       })
 
-      it('should throw on missing domain', done => {
+      it('should throw on missing domain', () => {
         const args = replaceParam(1, 'morelike@anemailbutno');
         (() => _create(args)).should.throw()
-        done()
       })
     })
 
     describe('language validation', () => {
-      it('should throw on invalid language', done => {
+      it('should throw on invalid language', () => {
         const args = replaceParam(3, 'badlang');
         (() => _create(args)).should.throw()
-        done()
       })
 
-      it('should not throw on missing language', done => {
+      it('should not throw on missing language', () => {
         const args = replaceParam(3, undefined);
         (() => _create(args)).should.not.throw()
-        done()
       })
     })
 
     describe('password validation', () => {
-      it('should throw on passwords too short', done => {
+      it('should throw on passwords too short', () => {
         const args = replaceParam(4, 'shortpw');
         (() => _create(args)).should.throw()
-        done()
       })
     })
   })

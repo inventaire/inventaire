@@ -5,27 +5,23 @@ require('should')
 const validateObject = __.require('lib', 'validate_object')
 
 describe('validate object', () => {
-  it('should throw when passed an object with an invalid key', done => {
+  it('should throw when passed an object with an invalid key', () => {
     const validKeys = [ 'b' ];
     (() => validateObject({ a: 1 }, validKeys)).should.throw()
-    done()
   })
 
-  it('should not throw when passed an object with a valid key', done => {
+  it('should not throw when passed an object with a valid key', () => {
     const validKeys = [ 'b' ];
     (() => validateObject({ b: 1 }, validKeys)).should.not.throw()
-    done()
   })
 
-  it('should throw when passed an object with an invalid value', done => {
+  it('should throw when passed an object with an invalid value', () => {
     const validKeys = [ 'b' ];
     (() => validateObject({ b: 1 }, validKeys, 'string')).should.throw()
-    done()
   })
 
-  it('should not throw when passed an object with a valid value', done => {
+  it('should not throw when passed an object with a valid value', () => {
     const validKeys = [ 'b' ];
     (() => validateObject({ b: 1 }, validKeys, 'number')).should.not.throw()
-    done()
   })
 })

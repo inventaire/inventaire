@@ -11,17 +11,13 @@ describe('promises utils', () => {
       props.should.be.a.Function()
     })
 
-    it('should return the resolved promise in an object', done => {
-      props({
+    it('should return the resolved promise in an object', async () => {
+      const { a, b } = await props({
         a: 123,
         b: Promise.resolve(456)
       })
-      .then(res => {
-        res.a.should.equal(123)
-        res.b.should.equal(456)
-        done()
-      })
-      .catch(done)
+      a.should.equal(123)
+      b.should.equal(456)
     })
 
     it('should return a rejected promise if one of the promises fail', done => {
@@ -37,17 +33,10 @@ describe('promises utils', () => {
       .catch(done)
     })
 
-    return it('should return direct values in an object', done => {
-      props({
-        a: 1,
-        b: 2
-      })
-      .then(res => {
-        res.a.should.equal(1)
-        res.b.should.equal(2)
-        done()
-      })
-      .catch(done)
+    it('should return direct values in an object', async () => {
+      const { a, b } = await props({ a: 1, b: 2 })
+      a.should.equal(1)
+      b.should.equal(2)
     })
   })
 
@@ -74,7 +63,7 @@ describe('promises utils', () => {
     it('should wait for asynchronous functions', done => {
       const start = Date.now()
       Promise.resolve(123)
-      .then(tap(async res => {
+      .then(tap(async () => {
         await wait(100)
       }))
       .then(() => {

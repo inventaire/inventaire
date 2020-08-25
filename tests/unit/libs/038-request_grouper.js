@@ -28,14 +28,13 @@ const mockRequesterSync = ids => {
 const mockRequesterSingleSync = id => `yep:${id}`
 
 describe('Request Grouper', () => {
-  it('should return a function', done => {
+  it('should return a function', () => {
     const singleRequest = requestGrouper({
       delay: 10,
       requester: MockRequester()
     })
 
     singleRequest.should.be.a.Function()
-    done()
   })
 
   it('should return a function that returns a promise', done => {
@@ -45,25 +44,24 @@ describe('Request Grouper', () => {
     })
 
     singleRequest('input1')
-    .then(done())
+    .then(() => done())
+    .catch(done)
   })
 
-  it('should return a function that returns just the input value', done => {
+  it('should return a function that returns just the input value', async () => {
     const spy = sinon.spy()
     const fn = requestGrouper({
       delay: 10,
       requester: MockRequester(spy)
     })
 
-    Promise.all([
+    await Promise.all([
       fn('input1').then(res => res.should.equal(mockRequesterSingleSync('input1'))),
       fn('input2').then(res => res.should.equal(mockRequesterSingleSync('input2'))),
       fn('input3').then(res => res.should.equal(mockRequesterSingleSync('input3')))
     ])
-    .then(() => {
-      spy.callCount.should.equal(1)
-      done()
-    })
+
+    spy.callCount.should.equal(1)
   })
 
   it('should throttle, not debounce: not waiting for inputs after the delay', done => {
@@ -76,12 +74,14 @@ describe('Request Grouper', () => {
     fn('input1').then(res => res.should.equal(mockRequesterSingleSync('input1')))
     fn('input2').then(res => res.should.equal(mockRequesterSingleSync('input2')))
 
-    const late = () => fn('input3')
-    .then(res => {
-      res.should.equal(mockRequesterSingleSync('input3'))
-      spy.callCount.should.equal(2)
-      done()
-    })
+    const late = () => {
+      fn('input3')
+      .then(res => {
+        res.should.equal(mockRequesterSingleSync('input3'))
+        spy.callCount.should.equal(2)
+        done()
+      })
+    }
 
     setTimeout(late, 11)
   })

@@ -5,12 +5,11 @@ require('should')
 const memoize = __.require('lib', 'utils/memoize')
 
 describe('memoize', () => {
-  it('should be a function', done => {
+  it('should be a function', () => {
     memoize.should.be.a.Function()
-    done()
   })
 
-  it('should cache values per key', done => {
+  it('should cache values per key', () => {
     let callCount = 0
     const fn = key => {
       callCount++
@@ -21,10 +20,9 @@ describe('memoize', () => {
     const objB = memoizedFn('foo')
     objA.should.equal(objB)
     callCount.should.equal(1)
-    done()
   })
 
-  it('should not mix values', done => {
+  it('should not mix values', () => {
     let callCount = 0
     const fn = key => {
       callCount++
@@ -35,10 +33,9 @@ describe('memoize', () => {
     const objB = memoizedFn('bar')
     objA.should.not.equal(objB)
     callCount.should.equal(2)
-    done()
   })
 
-  it('should accept multiple keys', done => {
+  it('should accept multiple keys', () => {
     let callCount = 0
     const fn = (a, b) => {
       callCount++
@@ -51,10 +48,9 @@ describe('memoize', () => {
     objA.should.not.equal(objB)
     objB.should.equal(objC)
     callCount.should.equal(2)
-    done()
   })
 
-  it('should tolerate undefined keys', done => {
+  it('should tolerate undefined keys', () => {
     let callCount = 0
     const fn = (a, b) => {
       callCount++
@@ -66,10 +62,9 @@ describe('memoize', () => {
     const objB = memoizedFn('foo')
     objA.should.equal(objB)
     callCount.should.equal(1)
-    done()
   })
 
-  it('should tolerate functions with default values', done => {
+  it('should tolerate functions with default values', () => {
     let callCount = 0
     const fn = (a, b = 123) => {
       callCount++
@@ -81,6 +76,5 @@ describe('memoize', () => {
     objA.foo.should.equal(objB.foo)
     objA.should.not.equal(objB)
     callCount.should.equal(2)
-    done()
   })
 })
