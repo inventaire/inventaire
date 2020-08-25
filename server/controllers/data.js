@@ -5,7 +5,8 @@ module.exports = {
   get: ActionsControllers({
     public: {
       'wp-extract': __.require('data', 'wikipedia/extract'),
-      isbn: __.require('data', 'isbn')
+      isbn: __.require('data', 'isbn'),
+      aliases: __.require('data', 'aliases')
     }
   })
 }
