@@ -36,6 +36,6 @@ describe('entities:move-to-wikidata', () => {
       err.statusCode.should.equal(400)
       done()
     })
-  .catch(done)
+    .catch(done)
   })
 })
