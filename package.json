@@ -31,7 +31,7 @@
     "test": "./scripts/run_unit_tests",
     "test-api": "./tests/api/scripts/test_api",
     "test-api-quick": "./tests/api/scripts/test_api_quick",
-    "test-integration": "./scripts/run_integration_tests",
+    "test-integration": "./scripts/test_integration",
     "update-i18n": "./scripts/update_i18n",
     "update-toc": "./scripts/update_toc",
     "watch": "./scripts/watch"
@@ -66,6 +66,7 @@
     "level-geospatial": "git+https://github.com/maxlath/level-geospatial.git#5001a8f",
     "level-jobs": "^2.1.0",
     "level-party": "^4.0.0",
+    "level-ttl": "^3.1.1",
     "leven": "^2.1.0",
     "lodash": "^4.17.15",
     "moment": "^2.21.0",

@@ -202,8 +202,8 @@ const config = module.exports = {
     }
   },
 
-  outgoingRequests: {
-    baseBanTime: 60 * 60 * 1000,
-    banTimeIncreaseFactor: 4
+  entitiesRelationsTemporaryCache: {
+    checkFrequency: 10 * 60 * 1000,
+    ttl: 4 * 60 * 60 * 1000
   }
 }

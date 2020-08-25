@@ -31,6 +31,7 @@ module.exports = {
   },
 
   leveldbMemoryBackend: true,
+
   // Disable password hashing to make tests run faster
   hashPasswords: false,
   piwik: {
