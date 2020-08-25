@@ -6,40 +6,35 @@ const Entity = __.require('models', 'entity')
 const placeholders_ = require('./placeholders')
 const propagateRedirection = require('./propagate_redirection')
 
-module.exports = (userId, fromId, toUri, previousToUri) => {
+module.exports = async (userId, fromId, toUri, previousToUri) => {
   assert_.strings([ userId, fromId, toUri ])
   if (previousToUri != null) { assert_.string(previousToUri) }
 
   const fromUri = `inv:${fromId}`
 
-  return entities_.byId(fromId)
-  .then(currentFromDoc => {
-    Entity.preventRedirectionEdit(currentFromDoc, 'turnIntoRedirection')
-    // If an author has no more links to it, remove it
-    return removeObsoletePlaceholderEntities(userId, currentFromDoc)
-    .then(removedIds => {
-      const updatedFromDoc = Entity.turnIntoRedirection(currentFromDoc, toUri, removedIds)
-      return entities_.putUpdate({
-        userId,
-        currentDoc: currentFromDoc,
-        updatedDoc: updatedFromDoc
-      })
-    })
+  const currentFromDoc = await entities_.byId(fromId)
+  Entity.preventRedirectionEdit(currentFromDoc, 'turnIntoRedirection')
+  // If an author has no more links to it, remove it
+  const removedIds = await removeObsoletePlaceholderEntities(userId, currentFromDoc)
+  const updatedFromDoc = Entity.turnIntoRedirection(currentFromDoc, toUri, removedIds)
+  await entities_.putUpdate({
+    userId,
+    currentDoc: currentFromDoc,
+    updatedDoc: updatedFromDoc
   })
-  .then(propagateRedirection.bind(null, userId, fromUri, toUri, previousToUri))
+  return propagateRedirection(userId, fromUri, toUri, previousToUri)
 }
 
 // Removing the entities that were needed only by the entity about to be turned
 // into a redirection: this entity now don't have anymore reason to be and is quite
 // probably a duplicate of an existing entity referenced by the redirection
 // destination entity.
-const removeObsoletePlaceholderEntities = (userId, entityDocBeforeRedirection) => {
+const removeObsoletePlaceholderEntities = async (userId, entityDocBeforeRedirection) => {
   const entityUrisToCheck = getEntityUrisToCheck(entityDocBeforeRedirection.claims)
   _.log(entityUrisToCheck, 'entityUrisToCheck')
   const fromId = entityDocBeforeRedirection._id
-  return Promise.all(entityUrisToCheck.map(deleteIfIsolated(userId, fromId)))
-  // Returning removed docs ids
-  .then(_.compact)
+  const removedIds = await Promise.all(entityUrisToCheck.map(deleteIfIsolated(userId, fromId)))
+  return _.compact(removedIds)
 }
 
 const getEntityUrisToCheck = claims => {
