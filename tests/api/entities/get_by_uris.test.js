@@ -1,6 +1,6 @@
 const should = require('should')
 const { undesiredRes } = require('../utils/utils')
-const { createEditionWithIsbn, createWorkWithAuthor, createEditionWithWorkAuthorAndSerie, createHuman } = require('../fixtures/entities')
+const { createEditionWithIsbn, createWorkWithAuthor, createEditionWithWorkAuthorAndSerie, createHuman, someFakeUri } = require('../fixtures/entities')
 const { getByUris, merge } = require('../utils/entities')
 const workWithAuthorPromise = createWorkWithAuthor()
 
@@ -42,9 +42,8 @@ describe('entities:get:by-uris', () => {
   })
 
   it('should return uris not found', async () => {
-    const fakeUri = 'inv:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
-    const { notFound } = await getByUris(fakeUri)
-    notFound.should.deepEqual([ fakeUri ])
+    const { notFound } = await getByUris(someFakeUri)
+    notFound.should.deepEqual([ someFakeUri ])
   })
 
   it('should return redirected uris', async () => {

@@ -3,7 +3,7 @@ const __ = CONFIG.universalPath
 const should = require('should')
 const { tap } = __.require('lib', 'promises')
 const { undesiredRes } = require('../utils/utils')
-const { createWork, createEdition, createHuman, someOpenLibraryId } = require('../fixtures/entities')
+const { createWork, createEdition, createHuman, someOpenLibraryId, someFakeUri } = require('../fixtures/entities')
 const { getByUri, addClaim, updateClaim, removeClaim, merge } = require('../utils/entities')
 
 describe('entities:update-claims', () => {
@@ -19,8 +19,7 @@ describe('entities:update-claims', () => {
   })
 
   it('should reject without property', done => {
-    const uri = 'inv:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
-    updateClaim(uri)
+    updateClaim(someFakeUri)
     .then(undesiredRes(done))
     .catch(err => {
       err.body.status_verbose.should.equal('missing parameter in body: property')
@@ -31,9 +30,8 @@ describe('entities:update-claims', () => {
   })
 
   it('should reject without old-value or new-value', done => {
-    const uri = 'inv:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
     const property = 'wdt:P1104'
-    updateClaim(uri, property)
+    updateClaim(someFakeUri, property)
     .then(undesiredRes(done))
     .catch(err => {
       err.body.status_verbose.should.equal('missing parameter in body: old-value or new-value')
@@ -58,10 +56,9 @@ describe('entities:update-claims', () => {
   })
 
   it('should reject unfound entity', done => {
-    const uri = 'inv:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
     const property = 'wdt:P1104'
     const oldValue = '1312'
-    updateClaim(uri, property, oldValue)
+    updateClaim(someFakeUri, property, oldValue)
     .then(undesiredRes(done))
     .catch(err => {
       err.body.status_verbose.should.equal('entity not found')

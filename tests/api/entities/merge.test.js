@@ -5,7 +5,7 @@ const { authReq, dataadminReq, undesiredRes, shouldNotBeCalled } = require('../u
 const randomString = __.require('lib', './utils/random_string')
 const { getByUris, merge, getHistory, addClaim } = require('../utils/entities')
 const { getByIds: getItemsByIds } = require('../utils/items')
-const { createWork, createHuman, createEdition, createEditionWithIsbn, createItemFromEntityUri, createWorkWithAuthor } = require('../fixtures/entities')
+const { createWork, createHuman, createEdition, createEditionWithIsbn, createItemFromEntityUri, createWorkWithAuthor, someFakeUri } = require('../fixtures/entities')
 
 describe('entities:merge', () => {
   it('should require dataadmin rights', async () => {
@@ -26,7 +26,7 @@ describe('entities:merge', () => {
   })
 
   it('should reject without to uri', async () => {
-    await dataadminReq('put', '/api/entities?action=merge', { from: 'inv:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' })
+    await dataadminReq('put', '/api/entities?action=merge', { from: someFakeUri })
     .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal('missing parameter in body: to')
@@ -44,8 +44,7 @@ describe('entities:merge', () => {
   })
 
   it('should reject invalid from prefix', async () => {
-    const fakeUri = 'inv:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
-    await dataadminReq('put', '/api/entities?action=merge', { from: 'wd:Q42', to: fakeUri })
+    await dataadminReq('put', '/api/entities?action=merge', { from: 'wd:Q42', to: someFakeUri })
     .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.startWith("invalid 'from' uri domain: wd. Accepted domains: inv,isbn")
@@ -54,8 +53,7 @@ describe('entities:merge', () => {
   })
 
   it('should return uris not found', async () => {
-    const fakeUri = 'inv:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
-    await dataadminReq('put', '/api/entities?action=merge', { from: fakeUri, to: 'wd:Q42' })
+    await dataadminReq('put', '/api/entities?action=merge', { from: someFakeUri, to: 'wd:Q42' })
     .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal("'from' entity not found")

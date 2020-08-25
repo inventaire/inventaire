@@ -123,6 +123,8 @@ const API = module.exports = {
     return authReq('post', '/api/items', Object.assign({}, data, { entity: uri }))
   },
 
+  someFakeUri: 'inv:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+
   someImageHash,
 
   someOpenLibraryId: (type = 'human') => {

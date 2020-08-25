@@ -1,5 +1,5 @@
 require('should')
-const { createHuman } = require('../fixtures/entities')
+const { createHuman, someFakeUri } = require('../fixtures/entities')
 const { getByScore, getBySuspectUris, getBySuggestionUris, update } = require('../utils/tasks')
 const { createTask } = require('../fixtures/tasks')
 
@@ -86,13 +86,12 @@ describe('tasks:bySuspectUris', () => {
   })
 
   it('should return an array of tasks even when no tasks is found', done => {
-    const fakeUri = 'inv:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
-    getBySuspectUris(fakeUri)
+    getBySuspectUris(someFakeUri)
     .then(tasks => {
       tasks.should.be.an.Object()
       Object.keys(tasks).length.should.equal(1)
-      tasks[fakeUri].should.be.an.Array()
-      tasks[fakeUri].length.should.equal(0)
+      tasks[someFakeUri].should.be.an.Array()
+      tasks[someFakeUri].length.should.equal(0)
       done()
     })
     .catch(done)
