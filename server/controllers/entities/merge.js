@@ -108,7 +108,7 @@ const merge = (reqUserId, fromUri, toUri) => entities => {
   fromUri = replaceIsbnUriByInvUri(fromUri, fromEntity._id)
   toUri = replaceIsbnUriByInvUri(toUri, toEntity._id)
 
-  return mergeEntities(reqUserId, fromUri, toUri)
+  return mergeEntities({ userId: reqUserId, fromUri, toUri })
 }
 
 const replaceIsbnUriByInvUri = (uri, invId) => {

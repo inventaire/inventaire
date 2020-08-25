@@ -7,7 +7,7 @@ const Entity = __.require('models', 'entity')
 const turnIntoRedirection = require('./turn_into_redirection')
 const getInvEntityCanonicalUri = require('./get_inv_entity_canonical_uri')
 
-module.exports = (userId, fromUri, toUri) => {
+module.exports = ({ userId, fromUri, toUri }) => {
   let [ fromPrefix, fromId ] = fromUri.split(':')
   let [ toPrefix, toId ] = toUri.split(':')
 
@@ -26,11 +26,11 @@ module.exports = (userId, fromUri, toUri) => {
   } else {
     // TODO: invert fromId and toId if the merged entity is more popular
     // to reduce the amount of documents that need to be updated
-    return mergeEntities(userId, fromId, toId)
+    return mergeInvEntities(userId, fromId, toId)
   }
 }
 
-const mergeEntities = async (userId, fromId, toId) => {
+const mergeInvEntities = async (userId, fromId, toId) => {
   assert_.strings([ userId, fromId, toId ])
 
   // Fetching non-formmatted docs

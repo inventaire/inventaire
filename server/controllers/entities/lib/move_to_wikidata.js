@@ -15,7 +15,7 @@ module.exports = async (user, invEntityUri) => {
   const { labels, claims } = entity
   const { uri: wdEntityUri } = await createWdEntity({ labels, claims, user, isAlreadyValidated: true })
 
-  await mergeEntities(reqUserId, invEntityUri, wdEntityUri)
+  await mergeEntities({ userId: reqUserId, fromUri: invEntityUri, toUri: wdEntityUri })
 
   return { uri: wdEntityUri }
 }

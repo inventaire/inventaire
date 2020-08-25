@@ -15,7 +15,7 @@ module.exports = (suspectUri, suggestion) => {
 
   _.log({ suspectUri, suggestionUri }, 'automerging')
 
-  return mergeEntities(reconcilerUserId, suspectUri, suggestionUri)
+  return mergeEntities({ userId: reconcilerUserId, fromUri: suspectUri, toUri: suggestionUri })
   // Give the time to CouchDB to update its views so that the works
   // of the merged author are correctly found
   .then(Wait(100))
