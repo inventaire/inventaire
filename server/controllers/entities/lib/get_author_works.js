@@ -1,12 +1,12 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const entities_ = require('./entities')
-const getEntitiesList = require('./get_entities_list')
+const { firstClaim } = entities_
 const runWdQuery = __.require('data', 'wikidata/run_query')
 const { prefixifyWd } = __.require('controllers', 'entities/lib/prefix')
 const { getSimpleDayDate, sortByScore } = require('./queries_utils')
 const { getTypePluralName, getTypePluralNameByTypeUri } = __.require('lib', 'wikidata/aliases')
-const entitiesRelationsTemporaryCache = require('./entities_relations_temporary_cache')
+const { getCachedRelations } = require('./temporarily_cache_relations')
 
 // Working around the circular dependency
 let getEntitiesPopularity
@@ -29,7 +29,7 @@ module.exports = params => {
 
   promises.push(getInvAuthorWorks(uri))
 
-  promises.push(getTemporarilyCachedRelations(uri))
+  promises.push(getCachedRelations(uri, 'wdt:P50', formatEntity))
 
   return Promise.all(promises)
   .then(_.flatten)
@@ -108,19 +108,9 @@ const sortTypesByScore = worksByTypes => {
   return worksByTypes
 }
 
-const getTemporarilyCachedRelations = async uri => {
-  const uris = await entitiesRelationsTemporaryCache.get('wdt:P50', uri)
-  const entities = await getEntitiesList(uris)
-  return entities.map(formatEntity)
-}
-
 const formatEntity = entity => ({
   uri: entity.uri,
   date: firstClaim(entity, 'wdt:P577'),
   serie: firstClaim(entity, 'wdt:P179'),
   type: getTypePluralName(entity.type)
 })
-
-const firstClaim = (entity, property) => {
-  if (entity.claims[property] != null) return entity.claims[property][0]
-}

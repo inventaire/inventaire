@@ -1,9 +1,11 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const entities_ = require('./entities')
+const { firstClaim } = entities_
 const runWdQuery = __.require('data', 'wikidata/run_query')
 const { prefixifyWd } = __.require('controllers', 'entities/lib/prefix')
 const { getSimpleDayDate, sortByOrdinalOrDate } = require('./queries_utils')
+const { getCachedRelations } = require('./temporarily_cache_relations')
 
 module.exports = params => {
   const { uri, refresh, dry } = params
@@ -14,6 +16,8 @@ module.exports = params => {
   if (prefix === 'wd') promises.push(getWdSerieParts(id, refresh, dry))
 
   promises.push(getInvSerieParts(uri))
+
+  promises.push(getCachedRelations(uri, 'wdt:P179', formatEntity))
 
   return Promise.all(promises)
   .then((...results) => ({
@@ -45,4 +49,10 @@ const format = ({ _id, claims }) => ({
   date: claims['wdt:P577'] && claims['wdt:P577'][0],
   ordinal: claims['wdt:P1545'] && claims['wdt:P1545'][0],
   subparts: 0
+})
+
+const formatEntity = entity => ({
+  uri: entity.uri,
+  date: firstClaim(entity, 'wdt:P577'),
+  ordinal: firstClaim(entity, 'wdt:P1545')
 })
