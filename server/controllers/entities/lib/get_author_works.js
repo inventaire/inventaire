@@ -1,10 +1,12 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const entities_ = require('./entities')
+const getEntitiesList = require('./get_entities_list')
 const runWdQuery = __.require('data', 'wikidata/run_query')
 const { prefixifyWd } = __.require('controllers', 'entities/lib/prefix')
 const { getSimpleDayDate, sortByScore } = require('./queries_utils')
-const { getTypePluralNameByTypeUri } = __.require('lib', 'wikidata/aliases')
+const { getTypePluralName, getTypePluralNameByTypeUri } = __.require('lib', 'wikidata/aliases')
+const entitiesRelationsTemporaryCache = require('./entities_relations_temporary_cache')
 
 // Working around the circular dependency
 let getEntitiesPopularity
@@ -26,6 +28,8 @@ module.exports = params => {
   }
 
   promises.push(getInvAuthorWorks(uri))
+
+  promises.push(getTemporarilyCachedRelations(uri))
 
   return Promise.all(promises)
   .then(_.flatten)
@@ -71,8 +75,8 @@ const formatInvEntity = row => {
   if (!allowlistedTypesNames.includes(typeName)) return
   return {
     uri: `inv:${row.id}`,
-    date: (row.doc.claims['wdt:P577'] != null ? row.doc.claims['wdt:P577'][0] : undefined),
-    serie: (row.doc.claims['wdt:P179'] != null ? row.doc.claims['wdt:P179'][0] : undefined),
+    date: firstClaim(row.doc, 'wdt:P577'),
+    serie: firstClaim(row.doc, 'wdt:P179'),
     type: typeName
   }
 }
@@ -102,4 +106,21 @@ const sortTypesByScore = worksByTypes => {
     worksByTypes[name] = results.sort(sortByScore)
   }
   return worksByTypes
+}
+
+const getTemporarilyCachedRelations = async uri => {
+  const uris = await entitiesRelationsTemporaryCache.get('wdt:P50', uri)
+  const entities = await getEntitiesList(uris)
+  return entities.map(formatEntity)
+}
+
+const formatEntity = entity => ({
+  uri: entity.uri,
+  date: firstClaim(entity, 'wdt:P577'),
+  serie: firstClaim(entity, 'wdt:P179'),
+  type: getTypePluralName(entity.type)
+})
+
+const firstClaim = (entity, property) => {
+  if (entity.claims[property] != null) return entity.claims[property][0]
 }

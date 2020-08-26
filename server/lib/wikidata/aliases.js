@@ -1,3 +1,6 @@
+const __ = require('config').universalPath
+const error_ = __.require('lib', 'error/error')
+
 // TODO: replace this list by a SPARQL generated list
 // that can be refreshed from time to time
 const typesAliases = module.exports = {
@@ -133,6 +136,12 @@ for (let type in typesAliases) {
 
 const typesNames = Object.keys(typesAliases)
 
+const getTypePluralName = singularType => {
+  const pluralizedType = singularType + 's'
+  if (!typesAliases[pluralizedType]) throw error_.new('invalid type', { singularType })
+  return pluralizedType
+}
+
 const getTypePluralNameByTypeUri = uri => types[uri] ? `${types[uri]}s` : null
 
-module.exports = { types, typesNames, getTypePluralNameByTypeUri }
+module.exports = { types, typesNames, getTypePluralName, getTypePluralNameByTypeUri }

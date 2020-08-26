@@ -1,5 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
+const _ = __.require('builders', 'utils')
+const error_ = __.require('lib', 'error/error')
 const { promisify } = require('util')
 const levelTtl = require('level-ttl')
 const { checkFrequency, ttl } = CONFIG.entitiesRelationsTemporaryCache
@@ -15,9 +17,9 @@ module.exports = {
     return keys.map(getSubject)
   },
 
-  set: async (subject, property, object) => put(`${property}-${object}-${subject}`, ''),
+  set: async (subject, property, object) => put(buildKey(subject, property, object), ''),
 
-  del: async (subject, property, object) => del(`${property}-${object}-${subject}`)
+  del: async (subject, property, object) => del(buildKey(subject, property, object))
 }
 
 const getKeyRange = (property, object) => {
@@ -35,3 +37,10 @@ const getKeyRange = (property, object) => {
 }
 
 const getSubject = key => key.split('-')[2]
+
+const buildKey = (subject, property, object) => {
+  if (!_.isInvEntityUri(subject)) throw error_.new('invalid subject', { subject })
+  if (!_.isPropertyUri(property)) throw error_.new('invalid property', { property })
+  if (!_.isEntityUri(object)) throw error_.new('invalid object', { object })
+  return `${property}-${object}-${subject}`
+}
