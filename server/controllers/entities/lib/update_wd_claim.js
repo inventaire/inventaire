@@ -7,6 +7,9 @@ const wdk = require('wikidata-sdk')
 const wdEdit = __.require('lib', 'wikidata/edit')
 const wdOauth = require('./wikidata_oauth')
 const properties = require('./properties/properties_values_constraints')
+const entitiesRelationsTemporaryCache = require('./entities_relations_temporary_cache')
+const { cachedRelationProperties } = require('./temporarily_cache_relations')
+const { dropPrefix, prefixifyWd } = require('./prefix')
 
 module.exports = async (user, id, property, oldValue, newValue) => {
   wdOauth.validate(user)
@@ -26,16 +29,26 @@ module.exports = async (user, id, property, oldValue, newValue) => {
 
   const credentials = wdOauth.getOauthCredentials(user)
 
+  let res
+
   if (newValue) {
     if (oldValue) {
-      return wdEdit.claim.update({ id, property: propertyId, oldValue, newValue }, { credentials })
+      res = await wdEdit.claim.update({ id, property: propertyId, oldValue, newValue }, { credentials })
     } else {
-      return wdEdit.claim.create({ id, property: propertyId, value: newValue }, { credentials })
+      res = await wdEdit.claim.create({ id, property: propertyId, value: newValue }, { credentials })
     }
   } else {
     const guid = await getClaimGuid(id, propertyId, oldValue)
-    return wdEdit.claim.remove({ guid }, { credentials })
+    res = await wdEdit.claim.remove({ guid }, { credentials })
   }
+
+  if (cachedRelationProperties.includes(property)) {
+    const uri = prefixifyWd(id)
+    if (newValue != null) await entitiesRelationsTemporaryCache.set(uri, property, newValue)
+    if (oldValue != null) await entitiesRelationsTemporaryCache.del(uri, property, oldValue)
+  }
+
+  return res
 }
 
 const getClaimGuid = async (id, propertyId, oldVal) => {
@@ -45,12 +58,4 @@ const getClaimGuid = async (id, propertyId, oldVal) => {
   const oldValIndex = simplifyPropClaims.indexOf(oldVal)
   const targetClaim = propClaims[oldValIndex]
   return targetClaim.id
-}
-
-const dropPrefix = value => {
-  if (_.isEntityUri(value)) {
-    return value.replace('wd:', '')
-  } else {
-    return value
-  }
 }

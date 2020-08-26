@@ -2,7 +2,7 @@ const entities_ = require('./entities')
 const { unprefixify } = require('./prefix')
 const getEntitiesList = require('./get_entities_list')
 const entitiesRelationsTemporaryCache = require('./entities_relations_temporary_cache')
-const relationProperties = [
+const cachedRelationProperties = [
   'wdt:P50',
   'wdt:P179'
 ]
@@ -13,7 +13,7 @@ const cacheEntityRelations = async invEntityUri => {
   const { claims } = await entities_.byId(id)
   const promises = []
 
-  for (const property of relationProperties) {
+  for (const property of cachedRelationProperties) {
     if (claims[property]) {
       for (const value of claims[property]) {
         const promise = entitiesRelationsTemporaryCache.set(invEntityUri, property, value)
@@ -31,4 +31,4 @@ const getCachedRelations = async (uri, property, formatEntity) => {
   return entities.map(formatEntity)
 }
 
-module.exports = { cacheEntityRelations, getCachedRelations }
+module.exports = { cacheEntityRelations, getCachedRelations, cachedRelationProperties }
