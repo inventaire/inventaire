@@ -1,7 +1,7 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const entities_ = require('./entities')
-const { firstClaim } = entities_
+const { firstClaim, uniqByUri } = entities_
 const runWdQuery = __.require('data', 'wikidata/run_query')
 const { prefixifyWd } = __.require('controllers', 'entities/lib/prefix')
 const { getSimpleDayDate, sortByOrdinalOrDate } = require('./queries_utils')
@@ -20,8 +20,11 @@ module.exports = params => {
   promises.push(getCachedRelations(uri, 'wdt:P179', formatEntity))
 
   return Promise.all(promises)
-  .then((...results) => ({
-    parts: _.flatten(...results).sort(sortByOrdinalOrDate)
+  .then(_.flatten)
+  // There might be duplicates, mostly due to temporarily cached relations
+  .then(uniqByUri)
+  .then(results => ({
+    parts: results.sort(sortByOrdinalOrDate)
   }))
   .catch(_.ErrorRethrow('get serie parts err'))
 }

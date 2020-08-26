@@ -23,7 +23,9 @@ describe('temporarily cache relations', () => {
     // Give some extra time to CouchDB to update its view
     await wait(500)
     const { works } = await nonAuthReq('get', `/api/entities?action=author-works&uri=${authorUri}`)
-    const foundWork = works.find(work => work.uri === someUnrelatedWorkUri)
+    const matchingWorks = works.filter(work => work.uri === someUnrelatedWorkUri)
+    matchingWorks.length.should.equal(1)
+    const foundWork = matchingWorks[0]
     const newWork = await getByUri(someUnrelatedWorkUri)
     foundWork.date.should.equal(newWork.claims['wdt:P577'][0])
     foundWork.serie.should.equal(newWork.claims['wdt:P179'][0])
@@ -41,7 +43,9 @@ describe('temporarily cache relations', () => {
     // Give some extra time to CouchDB to update its view
     await wait(500)
     const { parts } = await nonAuthReq('get', `/api/entities?action=serie-parts&uri=${serieUri}`)
-    const foundWork = parts.find(work => work.uri === someUnrelatedWorkUri)
+    const matchingWorks = parts.filter(work => work.uri === someUnrelatedWorkUri)
+    matchingWorks.length.should.equal(1)
+    const foundWork = matchingWorks[0]
     const newWork = await getByUri(someUnrelatedWorkUri)
     foundWork.date.should.equal(newWork.claims['wdt:P577'][0])
     // It's is likely that, due to the preference for P1545 as qualifiers on Wikidata,

@@ -1,7 +1,7 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const entities_ = require('./entities')
-const { firstClaim } = entities_
+const { firstClaim, uniqByUri } = entities_
 const runWdQuery = __.require('data', 'wikidata/run_query')
 const { prefixifyWd } = __.require('controllers', 'entities/lib/prefix')
 const { getSimpleDayDate, sortByScore } = require('./queries_utils')
@@ -33,6 +33,8 @@ module.exports = params => {
 
   return Promise.all(promises)
   .then(_.flatten)
+  // There might be duplicates, mostly due to temporarily cached relations
+  .then(uniqByUri)
   .then(results => getPopularityScores(results)
   .then(spreadByType(worksByTypes, results)))
   .catch(_.ErrorRethrow('get author works err'))
