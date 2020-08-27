@@ -77,7 +77,8 @@ describe('entities:resolve:create-unresolved', () => {
     newWorkClaimValue.should.equal(frenchLang)
   })
 
-  it('should add an image claim from an image url to created edition', async () => {
+  // Requires a running dataseed service and CONFIG.dataseed.enabled=true
+  xit('should add an image claim from an image url to created edition', async () => {
     const { entries } = await resolveAndCreate({
       edition: {
         isbn: generateIsbn13(),

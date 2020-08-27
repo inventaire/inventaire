@@ -383,21 +383,6 @@ describe('entities:resolve:on-labels', () => {
       err.body.status_verbose.should.equal("work can't have an image")
     }
   })
-
-  it('should reject an invalid image', async () => {
-    const validUrlButNotAnImage = `${CONFIG.fullHost()}/api/tests`
-    const editionSeed = {
-      isbn: generateIsbn13(),
-      image: validUrlButNotAnImage
-    }
-    const entry = { edition: editionSeed }
-    try {
-      await resolve(entry).then(shouldNotBeCalled)
-    } catch (err) {
-      err.statusCode.should.equal(400)
-      err.body.status_verbose.should.equal('invalid image url')
-    }
-  })
 })
 
 const basicEntry = (workLabel, authorLabel) => ({

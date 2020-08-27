@@ -100,7 +100,8 @@ describe('entities:resolver:update-resolved', () => {
     numberOfPagesClaimsValues.should.containEql(numberOfPages)
   })
 
-  it('should add an image claim from an image url to the updated edition', async () => {
+  // Requires a running dataseed service and CONFIG.dataseed.enabled=true
+  xit('should add an image claim from an image url to the updated edition', async () => {
     const { uri: editionUri, isbn } = await createEditionWithIsbn()
     const entry = {
       edition: {
@@ -115,7 +116,8 @@ describe('entities:resolver:update-resolved', () => {
     updatedClaims['invp:P2'][0].should.be.ok()
   })
 
-  it('should refuse to add an invalid image', async () => {
+  // Requires a running dataseed service and CONFIG.dataseed.enabled=true
+  xit('should refuse to add an invalid image', async () => {
     const validUrlButNotAnImage = `${CONFIG.fullHost()}/api/tests`
     const { isbn } = await createEditionWithIsbn()
     const entry = {

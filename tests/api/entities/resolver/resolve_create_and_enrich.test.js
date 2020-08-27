@@ -7,7 +7,7 @@ const { deleteByUris } = __.require('apiTests', 'utils/entities')
 // Those tests should be activated and run alone from an empty database (with `npm run api-tests`)
 // after having started a dataseed service and set CONFIG.dataseed.enabled = true
 describe('entities:resolve:create-and-enrich', () => {
-  it('should be off by default', async () => {
+  xit('should be off by default', async () => {
     // An image is expected to be found by dataseed for this isbn
     const isbn = '9782070368228'
     const edition = await resolveCreateAndEnrichEdition({
@@ -21,7 +21,7 @@ describe('entities:resolve:create-and-enrich', () => {
     await deleteByUris(edition.uri)
   })
 
-  it('should create an edition with an image', async () => {
+  xit('should create an edition with an image', async () => {
     // An image is expected to be found by dataseed for this isbn
     const isbn = '9782070375165'
     const edition = await resolveCreateAndEnrichEdition({
