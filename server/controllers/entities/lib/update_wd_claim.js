@@ -9,17 +9,19 @@ const wdOauth = require('./wikidata_oauth')
 const properties = require('./properties/properties_values_constraints')
 const entitiesRelationsTemporaryCache = require('./entities_relations_temporary_cache')
 const { cachedRelationProperties } = require('./temporarily_cache_relations')
-const { dropPrefix, prefixifyWd } = require('./prefix')
+const { unprefixify, prefixifyWd } = require('./prefix')
 
 module.exports = async (user, id, property, oldValue, newValue) => {
   wdOauth.validate(user)
 
-  if ((properties[property].datatype === 'entity') && _.isInvEntityUri(newValue)) {
-    throw error_.new("wikidata entities can't link to inventaire entities", 400)
-  }
+  if ((properties[property].datatype === 'entity')) {
+    if (_.isInvEntityUri(newValue)) {
+      throw error_.new("wikidata entities can't link to inventaire entities", 400)
+    }
 
-  oldValue = dropPrefix(oldValue)
-  newValue = dropPrefix(newValue)
+    oldValue = unprefixify(oldValue)
+    newValue = unprefixify(newValue)
+  }
 
   const [ propertyPrefix, propertyId ] = property.split(':')
 
