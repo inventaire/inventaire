@@ -82,6 +82,16 @@ const sanitizeSeed = (seed, type) => {
     throw error_.new('invalid claims', 400, { seed })
   }
 
+  if (seed.image != null) {
+    if (type === 'edition') {
+      if (!_.isUrl(seed.image)) {
+        throw error_.new('invalid image url', 400, { seed })
+      }
+    } else {
+      throw error_.new(`${type} can't have an image`, 400, { seed })
+    }
+  }
+
   return Object.keys(claims).forEach(prop => {
     validateProperty(prop)
     claims[prop] = _.forceArray(claims[prop])

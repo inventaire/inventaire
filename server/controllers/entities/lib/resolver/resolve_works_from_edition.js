@@ -6,13 +6,11 @@ const { getEntityNormalizedTerms } = require('../terms_normalization')
 module.exports = async (worksSeeds, editionSeed) => {
   if (editionSeed.uri == null) return worksSeeds
 
-  return getEntityByUri({ uri: editionSeed.uri })
-  .then(editionEntity => {
-    if (editionEntity == null) return worksSeeds
-    const worksUris = editionEntity.claims['wdt:P629']
-    return getEntitiesList(worksUris)
-    .then(worksEntities => worksSeeds.map(resolveWork(worksEntities)))
-  })
+  const editionEntity = await getEntityByUri({ uri: editionSeed.uri })
+  if (editionEntity == null) return worksSeeds
+  const worksUris = editionEntity.claims['wdt:P629']
+  const worksEntities = await getEntitiesList(worksUris)
+  return worksSeeds.map(resolveWork(worksEntities))
 }
 
 const resolveWork = worksEntities => workSeed => {

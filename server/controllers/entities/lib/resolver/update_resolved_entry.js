@@ -2,28 +2,29 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const entities_ = require('../entities')
+const { getImageByUrl } = __.require('data', 'dataseed/dataseed')
 
-module.exports = (userId, batchId) => entry => {
+module.exports = ({ reqUserId, batchId }) => async entry => {
   const { edition, works, authors } = entry
 
   const allResolvedSeeds = [ edition ].concat(works, authors).filter(hasUri)
 
-  return Promise.all(allResolvedSeeds.map(updateEntityFromSeed(userId, batchId)))
-  .then(() => entry)
+  await Promise.all(allResolvedSeeds.map(updateEntityFromSeed(reqUserId, batchId)))
+  return entry
 }
 
 const hasUri = seed => seed.uri != null
 
-const updateEntityFromSeed = (userId, batchId) => seed => {
-  const { uri, claims: seedClaims } = seed
+const updateEntityFromSeed = (reqUserId, batchId) => async seed => {
+  const { uri, claims: seedClaims, image: imageUrl } = seed
   if (!uri) return
 
   const [ prefix, entityId ] = uri.split(':')
   // Do not try to update Wikidata for the moment
   if (prefix === 'wd') return
 
-  return getEntity(prefix, entityId)
-  .then(addMissingClaims(seedClaims, userId, batchId))
+  const entity = await getEntity(prefix, entityId)
+  await addMissingClaims(entity, seedClaims, imageUrl, reqUserId, batchId)
 }
 
 const getEntity = (prefix, entityId) => {
@@ -34,10 +35,19 @@ const getEntity = (prefix, entityId) => {
   }
 }
 
-const addMissingClaims = (seedClaims, userId, batchId) => entity => {
+const addMissingClaims = async (entity, seedClaims, imageUrl, reqUserId, batchId) => {
   // Do not update if property already exists
   // Known cases: avoid updating authors who are actually edition translators
   const newClaims = _.omit(seedClaims, Object.keys(entity.claims))
+  await addImageClaim(entity, imageUrl, newClaims)
   if (_.isEmpty(newClaims)) return
-  return entities_.addClaims(userId, newClaims, entity, batchId)
+  return entities_.addClaims(reqUserId, newClaims, entity, batchId)
+}
+
+const addImageClaim = async (entity, imageUrl, newClaims) => {
+  if (!imageUrl) return
+  const imageClaims = entity.claims['invp:P2']
+  if (imageClaims) return
+  const { url: imageHash } = await getImageByUrl(imageUrl)
+  newClaims['invp:P2'] = [ imageHash ]
 }

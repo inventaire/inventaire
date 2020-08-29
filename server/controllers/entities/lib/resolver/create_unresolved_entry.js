@@ -1,6 +1,6 @@
 const { createEdition, createWork, createAuthor } = require('./create_entity_from_seed')
 
-module.exports = (userId, batchId) => async entry => {
+module.exports = ({ reqUserId, batchId, enrich }) => async entry => {
   const { edition, works, authors } = entry
 
   // If the edition has been resolved but not its associated works
@@ -13,21 +13,21 @@ module.exports = (userId, batchId) => async entry => {
 
   // Create authors before works, so that the created entities uris
   // can be set on the entry, and used in works claims
-  return createAuthors(entry, userId, batchId)
+  await createAuthors(entry, reqUserId, batchId)
   // Idem for works being created before the edition
-  .then(() => createWorks(entry, userId, batchId))
-  .then(() => createEdition(edition, works, userId, batchId))
-  .then(() => entry)
+  await createWorks(entry, reqUserId, batchId)
+  await createEdition(edition, works, reqUserId, batchId, enrich)
+  return entry
 }
 
-const createAuthors = (entry, userId, batchId) => {
+const createAuthors = (entry, reqUserId, batchId) => {
   const { authors } = entry
-  return Promise.all(authors.map(createAuthor(userId, batchId)))
+  return Promise.all(authors.map(createAuthor(reqUserId, batchId)))
 }
 
-const createWorks = (entry, userId, batchId) => {
+const createWorks = (entry, reqUserId, batchId) => {
   const { works, authors } = entry
-  return Promise.all(works.map(createWork(userId, batchId, authors)))
+  return Promise.all(works.map(createWork(reqUserId, batchId, authors)))
 }
 
 const addNotCreatedFlag = seed => {

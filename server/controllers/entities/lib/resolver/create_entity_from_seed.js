@@ -4,6 +4,7 @@ const _ = __.require('builders', 'utils')
 const properties = require('../properties/properties_values_constraints')
 const createInvEntity = require('../create_inv_entity')
 const isbn_ = __.require('lib', 'isbn/isbn')
+const { getImageByUrl, getImageByIsbn } = __.require('data', 'dataseed/dataseed')
 
 const createAuthor = (userId, batchId) => author => {
   if (author.uri != null) return author
@@ -22,10 +23,10 @@ const createWork = (userId, batchId, authors) => work => {
   return createEntityFromSeed({ type: 'work', seed: work, claims, userId, batchId })
 }
 
-const createEdition = async (edition, works, userId, batchId) => {
+const createEdition = async (edition, works, userId, batchId, enrich) => {
   if (edition.uri != null) return
 
-  const { isbn } = edition
+  const { isbn, image: imageUrl } = edition
   const worksUris = _.compact(_.map(works, 'uri'))
   const claims = {}
 
@@ -46,6 +47,14 @@ const createEdition = async (edition, works, userId, batchId) => {
   // garantee that an edition shall not have label
   edition.labels = {}
 
+  if (imageUrl) {
+    const { url: imageHash } = await getImageByUrl(imageUrl)
+    if (imageHash) claims['invp:P2'] = [ imageHash ]
+  } else if (enrich === true) {
+    const { url: imageHash } = await getImageByIsbn(isbn)
+    if (imageHash) claims['invp:P2'] = [ imageHash ]
+  }
+
   return createEntityFromSeed({ type: 'edition', seed: edition, claims, userId, batchId })
 }
 
@@ -60,43 +69,44 @@ const addClaimIfValid = (claims, property, values, type) => {
   }
 }
 
-const createEntityFromSeed = params => {
-  const { type, seed, claims, userId, batchId } = params
-  return createInvEntity({
+const createEntityFromSeed = async ({ type, seed, claims, userId, batchId }) => {
+  const entity = await createInvEntity({
     labels: seed.labels,
-    claims: buildClaims(seed.claims, claims, type),
+    claims: addSeedClaims(claims, seed.claims, type),
     userId,
     batchId
   })
-  .then(addCreatedUriToSeed(seed))
+
+  seed.uri = entity.uri
+  seed.created = true
+  // Do not just merge objects, as the created flag
+  // would be overriden by the created timestamp
+  seed.labels = entity.labels
+  seed.claims = entity.claims
 }
 
-const buildClaims = (seedClaims, entityClaims, type) => {
+const addSeedClaims = (claims, seedClaims, type) => {
   for (const property in seedClaims) {
     const values = seedClaims[property]
-    addClaimIfValid(entityClaims, property, values, type)
+    addClaimIfValid(claims, property, values, type)
   }
-  return entityClaims
-}
-
-const addCreatedUriToSeed = entryEntity => createdEntity => {
-  if (createdEntity._id == null) return
-  entryEntity.uri = `inv:${createdEntity._id}`
-  entryEntity.created = true
+  return claims
 }
 
 const buildBestEditionTitle = (edition, works) => {
-  // return in priority values of wdt:P1476, which shall have only one element
-  if (edition.claims['wdt:P1476']) {
-    return edition.claims['wdt:P1476'][0]
-  } else {
-    // return best guess, hyphenate works labels
-    return _(works)
-    .map(work => _.uniq(_.values(work.labels)))
-    .flatten()
-    .uniq()
-    .join(' - ')
-  }
+  const editionTitleClaims = edition.claims['wdt:P1476']
+  if (editionTitleClaims) return editionTitleClaims[0]
+  else return guessEditionTitleFromWorksLabels(works)
+}
+
+// TODO: give priority to work label in the edition lang
+// if this one is known
+const guessEditionTitleFromWorksLabels = works => {
+  return _(works)
+  .map(work => Object.values(work.labels))
+  .flatten()
+  .uniq()
+  .join(' - ')
 }
 
 module.exports = { createAuthor, createWork, createEdition }

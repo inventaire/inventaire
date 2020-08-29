@@ -11,16 +11,16 @@ const getAuthorsUris = require('../get_authors_uris')
 // - if seeds terms match entities terms
 // - if no other entities are in the search result (only one entity found)
 
-module.exports = entry => {
+module.exports = async entry => {
   const { authors, works } = entry
   if ((authors.length === 0) || (works.length === 0)) return entry
 
-  return Promise.all(authors.map(searchAuthorAndResolve(works)))
-  .then(() => entry)
+  await Promise.all(authors.map(searchAuthorAndResolve(works)))
+  return entry
 }
 
 const searchAuthorAndResolve = works => author => {
-  if ((author == null) || (author.uri != null)) return
+  if (author == null || author.uri != null) return
   const authorTerms = getEntityNormalizedTerms(author)
   return searchUrisByAuthorTerms(authorTerms)
   .then(resolveWorksAndAuthor(works, author))
