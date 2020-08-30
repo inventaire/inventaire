@@ -20,13 +20,15 @@ const responses_ = module.exports = {
     responses_.send(res, { ok: true })
   },
 
-  // FROM: .then (users)-> res.json { users }
-  // TO: .then _.Wrap(res, 'users')
-  Wrap: (res, key) => data => {
+  wrap: (res, key, data) => {
     const obj = {}
     obj[key] = data
     responses_.send(res, obj)
   },
+
+  // FROM: .then (users)-> res.json { users }
+  // TO: .then _.Wrap(res, 'users')
+  Wrap: (res, key) => data => responses_.wrap(res, key, data),
 
   send: (res, data) => {
     assert_.object(res)
