@@ -4,7 +4,7 @@ const responses_ = __.require('lib', 'responses')
 const error_ = __.require('lib', 'error/error')
 const sanitize = __.require('lib', 'sanitize/sanitize')
 const getAuthorizationLevel = require('./lib/get_authorization_level')
-const getInventoryView = require('./lib/view/get_inventory_view')
+const { getInventoryViews } = require('./lib/view/inventory_view')
 const { getItemsByDate } = require('./lib/view/items_by_date')
 
 const sanitization = {
@@ -34,10 +34,6 @@ const getInventoryViewsParams = params => {
   const { user, group, reqUserId } = params
   if (user) return getAuthorizationLevel.byUser(user, reqUserId)
   else return getAuthorizationLevel.byGroup(group, reqUserId)
-}
-
-const getInventoryViews = ({ authorizationLevel, usersIds }) => {
-  return Promise.all(usersIds.map(userId => getInventoryView(userId, authorizationLevel)))
 }
 
 const mergeInventoryViews = inventoryViews => {

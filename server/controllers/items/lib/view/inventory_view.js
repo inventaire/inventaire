@@ -6,14 +6,23 @@ const bundleViewData = require('./bundle_view_data')
 const replaceEditionsByTheirWork = require('./replace_editions_by_their_work')
 const getEntitiesByUris = __.require('controllers', 'entities/lib/get_entities_by_uris')
 
-module.exports = (userId, authorizationLevel) => {
+const inventoryView_ = module.exports = {
+  getInventoryViews: ({ usersIds, authorizationLevel, refresh }) => {
+    return Promise.all(usersIds.map(userId => {
+      return getInventoryView({ userId, authorizationLevel, refresh })
+    }))
+  }
+}
+
+const getInventoryView = ({ userId, authorizationLevel, refresh }) => {
   return cache_.get({
     key: `invview:${userId}:${authorizationLevel}`,
-    fn: getInventoryView.bind(null, userId, authorizationLevel)
+    fn: getInventoryViewFn.bind(null, userId, authorizationLevel),
+    refresh
   })
 }
 
-const getInventoryView = (userId, authorizationLevel) => {
+const getInventoryViewFn = (userId, authorizationLevel) => {
   return getByAuthorizationLevel[authorizationLevel](userId)
   .then(items => {
     return getItemsEntitiesData(items)
@@ -24,6 +33,6 @@ const getInventoryView = (userId, authorizationLevel) => {
 const getItemsEntitiesData = items => {
   const uris = _.uniq(_.map(items, 'entity'))
   return getEntitiesByUris({ uris })
-  .get('entities')
+  .then(({ entities }) => entities)
   .then(replaceEditionsByTheirWork)
 }
