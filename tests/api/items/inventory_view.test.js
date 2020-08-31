@@ -8,6 +8,9 @@ const { groupPromise, createGroup, addMember } = require('../fixtures/groups')
 const { createEdition } = require('../fixtures/entities')
 const { createUserWithItems } = require('../fixtures/populate')
 const { createItem } = require('../fixtures/items')
+const { createUser } = require('../fixtures/users')
+const { newItemBase } = require('../items/helpers')
+const { addClaim } = require('../utils/entities')
 const editionUriPromise = createEdition().then(({ uri }) => uri)
 const userPromise = createUserWithItems()
 
@@ -43,6 +46,21 @@ describe('items:inventory-view', () => {
       await wait(100)
       const { itemsByDate: ownerViewFreshItems } = await customAuthReq(userPromise, 'get', `${endpoint}&user=${userId}`)
       ownerViewFreshItems.length.should.equal(oldItemsByDate.length + 1)
+    })
+
+    it('should refresh on private to public item update', async () => {
+      const userPromise = createUser()
+      const { _id: userId } = await userPromise
+      const item = await customAuthReq(userPromise, 'post', '/api/items', newItemBase())
+      const { itemsByDate: privateItemsByDate } = await customAuthReq(userPromise, 'get', `${endpoint}&user=${userId}`)
+      const { itemsByDate: publicItemsByDate } = await nonAuthReq('get', `${endpoint}&user=${userId}`)
+      publicItemsByDate.length.should.equal(privateItemsByDate.length - 1)
+      item.listing = 'public'
+
+      await customAuthReq(userPromise, 'put', '/api/items', item)
+      await wait(100)
+      const { itemsByDate: publicItemsByDate2 } = await nonAuthReq('get', `${endpoint}&user=${userId}`)
+      publicItemsByDate2.length.should.equal(privateItemsByDate.length)
     })
   })
 

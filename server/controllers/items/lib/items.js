@@ -81,11 +81,16 @@ const items_ = module.exports = {
     return docs
   },
 
-  update: (userId, itemUpdateData) => {
-    return db.get(itemUpdateData._id)
-    .then(currentItem => Item.update(userId, itemUpdateData, currentItem))
-    .then(db.putAndReturn)
-    .then(tapEmit('user:inventory:update', userId))
+  update: async (userId, itemUpdateData) => {
+    const currentItem = await db.get(itemUpdateData._id)
+    const item = await Item.update(userId, itemUpdateData, currentItem)
+    const itemDoc = await db.putAndReturn(item)
+    refreshInventoryViews({
+      usersIds: [ userId ],
+      items: [ itemDoc ]
+    })
+    emit('user:inventory:update', userId)
+    return itemDoc
   },
 
   bulkUpdate: (userId, ids, attribute, newValue) => {
