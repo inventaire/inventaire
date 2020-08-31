@@ -33,6 +33,7 @@ describe('items:inventory-view', () => {
       const editionUri = await editionUriPromise
 
       await customAuthReq(userPromise, 'post', '/api/items', { entity: editionUri, listing: 'public' })
+      await wait(100)
       const { itemsByDate: refreshedItemsByDate } = await nonAuthReq('get', `${endpoint}&user=${userId}`)
       refreshedItemsByDate.length.should.equal(oldItemsByDate.length + 1)
     })
@@ -61,6 +62,16 @@ describe('items:inventory-view', () => {
       await wait(100)
       const { itemsByDate: publicItemsByDate2 } = await nonAuthReq('get', `${endpoint}&user=${userId}`)
       publicItemsByDate2.length.should.equal(privateItemsByDate.length)
+    })
+
+    it('should refresh on item deletion', async () => {
+      const { _id: userId } = await userPromise
+      const editionUri = await editionUriPromise
+      const { _id: itemId } = await customAuthReq(userPromise, 'post', '/api/items', { entity: editionUri, listing: 'public' })
+      await customAuthReq(userPromise, 'post', '/api/items?action=delete-by-ids', { ids: [ itemId ] })
+      await wait(200)
+      const { itemsByDate: refreshedItemsByDate } = await nonAuthReq('get', `${endpoint}&user=${userId}`)
+      refreshedItemsByDate.should.not.containEql(itemId)
     })
   })
 
