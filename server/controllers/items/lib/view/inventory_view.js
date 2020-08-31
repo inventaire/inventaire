@@ -7,6 +7,18 @@ const replaceEditionsByTheirWork = require('./replace_editions_by_their_work')
 const getEntitiesByUris = __.require('controllers', 'entities/lib/get_entities_by_uris')
 
 const inventoryView_ = module.exports = {
+  refreshInventoryViews: ({ usersIds, items }) => {
+    // refresh caches assuming usersIds are items owner, beware if not
+    const listings = _.map(items, _.property('listing'))
+    const authorizationLevels = _.uniq(listings)
+    return Promise.all(authorizationLevels.map(authorizationLevel => {
+      return inventoryView_.getInventoryViews({
+        usersIds,
+        authorizationLevel,
+        refresh: true
+      })
+    }))
+  },
   getInventoryViews: ({ usersIds, authorizationLevel, refresh }) => {
     return Promise.all(usersIds.map(userId => {
       return getInventoryView({ userId, authorizationLevel, refresh })

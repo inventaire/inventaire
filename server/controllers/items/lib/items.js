@@ -15,6 +15,7 @@ const getByAuthorizationLevel = require('./get_by_authorization_level')
 const user_ = __.require('controllers', 'user/lib/user')
 const db = __.require('couch', 'base')('items')
 const validateEntityType = require('./validate_entity_type')
+const { refreshInventoryViews } = require('./view/inventory_view')
 
 const items_ = module.exports = {
   byId: db.get,
@@ -75,6 +76,7 @@ const items_ = module.exports = {
     const res = await db.bulk(items)
     const itemsIds = _.map(res, 'id')
     const { docs } = await db.fetch(itemsIds)
+    refreshInventoryViews({ usersIds: [ userId ], items })
     emit('user:inventory:update', userId)
     return docs
   },

@@ -1,12 +1,15 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const should = require('should')
-const { nonAuthReq, undesiredRes, getReservedUser } = __.require('apiTests', 'utils/utils')
+const { wait } = __.require('lib', 'promises')
+const { customAuthReq, nonAuthReq, undesiredRes, getReservedUser } = __.require('apiTests', 'utils/utils')
 const endpoint = '/api/items?action=inventory-view'
 const { groupPromise, createGroup, addMember } = require('../fixtures/groups')
-const { createItem } = require('../fixtures/items')
 const { createEdition } = require('../fixtures/entities')
 const { createUserWithItems } = require('../fixtures/populate')
+const { createItem } = require('../fixtures/items')
+const editionUriPromise = createEdition().then(({ uri }) => uri)
+const userPromise = createUserWithItems()
 
 describe('items:inventory-view', () => {
   it('should reject requests without a user or a group', done => {
@@ -18,6 +21,29 @@ describe('items:inventory-view', () => {
       done()
     })
     .catch(done)
+  })
+
+  describe('cache update', () => {
+    it('should refresh on item creation', async () => {
+      const { _id: userId } = await userPromise
+      const { itemsByDate: oldItemsByDate } = await nonAuthReq('get', `${endpoint}&user=${userId}`)
+      const editionUri = await editionUriPromise
+
+      await customAuthReq(userPromise, 'post', '/api/items', { entity: editionUri, listing: 'public' })
+      const { itemsByDate: refreshedItemsByDate } = await nonAuthReq('get', `${endpoint}&user=${userId}`)
+      refreshedItemsByDate.length.should.equal(oldItemsByDate.length + 1)
+    })
+
+    it('should refresh on private item creation', async () => {
+      const { _id: userId } = await userPromise
+      const { itemsByDate: oldItemsByDate } = await nonAuthReq('get', `${endpoint}&user=${userId}`)
+      const editionUri = await editionUriPromise
+
+      await customAuthReq(userPromise, 'post', '/api/items', { entity: editionUri, listing: 'private' })
+      await wait(100)
+      const { itemsByDate: ownerViewFreshItems } = await customAuthReq(userPromise, 'get', `${endpoint}&user=${userId}`)
+      ownerViewFreshItems.length.should.equal(oldItemsByDate.length + 1)
+    })
   })
 
   describe('user', () => {
