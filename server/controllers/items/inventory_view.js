@@ -9,7 +9,11 @@ const { getItemsByDate } = require('./lib/view/items_by_date')
 
 const sanitization = {
   user: { optional: true },
-  group: { optional: true }
+  group: { optional: true },
+  dry: {
+    optional: true,
+    generic: 'boolean'
+  }
 }
 
 module.exports = (req, res) => {
@@ -24,16 +28,16 @@ module.exports = (req, res) => {
 }
 
 const validateUserOrGroup = params => {
-  if (!(params.user || params.group)) {
-    throw error_.newMissingQuery('user|group', 400, params)
-  }
+   if (!(params.user || params.group)) {
+     throw error_.newMissingQuery('user|group', 400, params)
+   }
   return params
 }
 
 const getInventoryViewsParams = params => {
-  const { user, group, reqUserId } = params
-  if (user) return getAuthorizationLevel.byUser(user, reqUserId)
-  else return getAuthorizationLevel.byGroup(group, reqUserId)
+  const { user, group, reqUserId, dry } = params
+  if (user) return getAuthorizationLevel.byUser(user, reqUserId, dry)
+  else return getAuthorizationLevel.byGroup(group, reqUserId, dry)
 }
 
 const mergeInventoryViews = inventoryViews => {

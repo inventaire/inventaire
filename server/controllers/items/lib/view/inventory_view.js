@@ -19,18 +19,19 @@ const inventoryView_ = module.exports = {
       })
     }))
   },
-  getInventoryViews: ({ usersIds, authorizationLevel, refresh }) => {
+  getInventoryViews: ({ usersIds, authorizationLevel, refresh, dry }) => {
     return Promise.all(usersIds.map(userId => {
-      return getInventoryView({ userId, authorizationLevel, refresh })
+      return getInventoryView({ userId, authorizationLevel, refresh, dry })
     }))
   }
 }
 
-const getInventoryView = ({ userId, authorizationLevel, refresh }) => {
+const getInventoryView = ({ userId, authorizationLevel, refresh, dry }) => {
   return cache_.get({
     key: `invview:${userId}:${authorizationLevel}`,
     fn: getInventoryViewFn.bind(null, userId, authorizationLevel),
-    refresh
+    refresh,
+    dry
   })
 }
 

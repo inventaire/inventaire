@@ -9,7 +9,6 @@ const { createEdition } = require('../fixtures/entities')
 const { createUserWithItems } = require('../fixtures/populate')
 const { createItem } = require('../fixtures/items')
 const { createUser } = require('../fixtures/users')
-const { newItemBase } = require('../items/helpers')
 const { addClaim } = require('../utils/entities')
 const editionUriPromise = createEdition().then(({ uri }) => uri)
 const userPromise = createUserWithItems()
@@ -27,6 +26,8 @@ describe('items:inventory-view', () => {
   })
 
   describe('cache update', () => {
+    const dryReq = `${endpoint}&dry=true`
+
     it('should refresh on item creation', async () => {
       const { _id: userId } = await userPromise
       const { itemsByDate: oldItemsByDate } = await nonAuthReq('get', `${endpoint}&user=${userId}`)
@@ -34,7 +35,7 @@ describe('items:inventory-view', () => {
 
       await customAuthReq(userPromise, 'post', '/api/items', { entity: editionUri, listing: 'public' })
       await wait(100)
-      const { itemsByDate: refreshedItemsByDate } = await nonAuthReq('get', `${endpoint}&user=${userId}`)
+      const { itemsByDate: refreshedItemsByDate } = await nonAuthReq('get', `${dryReq}&user=${userId}`)
       refreshedItemsByDate.length.should.equal(oldItemsByDate.length + 1)
     })
 
@@ -45,14 +46,14 @@ describe('items:inventory-view', () => {
 
       await customAuthReq(userPromise, 'post', '/api/items', { entity: editionUri, listing: 'private' })
       await wait(100)
-      const { itemsByDate: ownerViewFreshItems } = await customAuthReq(userPromise, 'get', `${endpoint}&user=${userId}`)
+      const { itemsByDate: ownerViewFreshItems } = await customAuthReq(userPromise, 'get', `${dryReq}&user=${userId}`)
       ownerViewFreshItems.length.should.equal(oldItemsByDate.length + 1)
     })
 
     it('should refresh on private to public item update', async () => {
       const userPromise = createUser()
       const { _id: userId } = await userPromise
-      const item = await customAuthReq(userPromise, 'post', '/api/items', newItemBase())
+      const item = await createItem(userPromise, { listing: 'private' })
       const { itemsByDate: privateItemsByDate } = await customAuthReq(userPromise, 'get', `${endpoint}&user=${userId}`)
       const { itemsByDate: publicItemsByDate } = await nonAuthReq('get', `${endpoint}&user=${userId}`)
       publicItemsByDate.length.should.equal(privateItemsByDate.length - 1)
@@ -60,17 +61,16 @@ describe('items:inventory-view', () => {
 
       await customAuthReq(userPromise, 'put', '/api/items', item)
       await wait(100)
-      const { itemsByDate: publicItemsByDate2 } = await nonAuthReq('get', `${endpoint}&user=${userId}`)
+      const { itemsByDate: publicItemsByDate2 } = await nonAuthReq('get', `${dryReq}&user=${userId}`)
       publicItemsByDate2.length.should.equal(privateItemsByDate.length)
     })
 
     it('should refresh on item deletion', async () => {
       const { _id: userId } = await userPromise
       const editionUri = await editionUriPromise
-      const { _id: itemId } = await customAuthReq(userPromise, 'post', '/api/items', { entity: editionUri, listing: 'public' })
+      const { _id: itemId } = await createItem(userPromise, { entity: editionUri, listing: 'public' })
       await customAuthReq(userPromise, 'post', '/api/items?action=delete-by-ids', { ids: [ itemId ] })
-      await wait(200)
-      const { itemsByDate: refreshedItemsByDate } = await nonAuthReq('get', `${endpoint}&user=${userId}`)
+      const { itemsByDate: refreshedItemsByDate } = await nonAuthReq('get', `${dryReq}&user=${userId}`)
       refreshedItemsByDate.should.not.containEql(itemId)
     })
   })
