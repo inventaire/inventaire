@@ -28,6 +28,11 @@ const items_ = module.exports = {
     })
   },
 
+  byEditions: editionsUris => {
+    return Promise.all(editionsUris.map(items_.byEntity))
+    .then(_.flatten)
+  },
+
   byEntity: entityUri => {
     assert_.string(entityUri)
     return db.viewByKeys('byEntity', entityUriKeys(entityUri))

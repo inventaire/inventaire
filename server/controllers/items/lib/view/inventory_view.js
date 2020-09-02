@@ -11,19 +11,17 @@ const inventoryView_ = module.exports = {
     // refresh caches assuming usersIds are items owner, beware if not
     const listings = _.map(items, _.property('listing'))
     const authorizationLevels = _.uniq(listings)
-    return Promise.all(authorizationLevels.map(authorizationLevel => {
-      return inventoryView_.getInventoryViews({
-        usersIds,
-        authorizationLevel,
-        refresh: true
-      })
-    }))
+    return Promise.all(authorizationLevels.map(refreshByAuthorizationLevel(usersIds)))
   },
   getInventoryViews: ({ usersIds, authorizationLevel, refresh, dry }) => {
     return Promise.all(usersIds.map(userId => {
       return getInventoryView({ userId, authorizationLevel, refresh, dry })
     }))
   }
+}
+
+const refreshByAuthorizationLevel = usersIds => authorizationLevel => {
+  return inventoryView_.getInventoryViews({ usersIds, authorizationLevel, refresh: true })
 }
 
 const getInventoryView = ({ userId, authorizationLevel, refresh, dry }) => {

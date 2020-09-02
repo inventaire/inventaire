@@ -73,6 +73,19 @@ describe('items:inventory-view', () => {
       const { itemsByDate: refreshedItemsByDate } = await nonAuthReq('get', `${dryReq}&user=${userId}`)
       refreshedItemsByDate.should.not.containEql(itemId)
     })
+
+    it('should refresh on updating work claims', async () => {
+      const { _id: userId } = await userPromise
+      const edition = await createEdition()
+      const workUri = await edition.claims['wdt:P629'][0]
+      await customAuthReq(userPromise, 'post', '/api/items', { entity: edition.uri, listing: 'public' })
+      const res = await nonAuthReq('get', `${endpoint}&user=${userId}`)
+      should(res.worksTree.subject['wd:Q35760']).not.be.ok()
+      await addClaim(workUri, 'wdt:P921', 'wd:Q35760')
+      await wait(200)
+      const res2 = await nonAuthReq('get', `${dryReq}&user=${userId}`)
+      res2.worksTree.subject['wd:Q35760'].should.be.an.Array()
+    })
   })
 
   describe('user', () => {
