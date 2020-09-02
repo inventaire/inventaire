@@ -9,7 +9,7 @@ describe('entities:changes', () => {
     publicReq('get', endpoint)
     .then(res => {
       res.uris.should.be.an.Array()
-      res.lastSeq.should.be.an.Number()
+      parseInt(res.lastSeq.split('-')[0]).should.be.an.Number()
       done()
     })
     .catch(done)
@@ -19,7 +19,7 @@ describe('entities:changes', () => {
     publicReq('get', `${endpoint}&since=2`)
     .then(res => {
       res.uris.should.be.an.Array()
-      res.lastSeq.should.be.an.Number()
+      parseInt(res.lastSeq.split('-')[0]).should.be.an.Number()
       done()
     })
     .catch(done)

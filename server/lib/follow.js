@@ -50,7 +50,6 @@ module.exports = params => {
     // Then start follow this database
     return metaDb.get(buildKey(dbName))
     .catch(error_.catchNotFound)
-    .then(lastSeq => lastSeq != null ? parseInt(lastSeq) : 0)
     // after a bit, to let other followers the time to register, and CouchDB
     // the time to initialize, while letting other initialization functions
     // with a higher priority level some time to run.
@@ -62,9 +61,8 @@ module.exports = params => {
   }
 }
 
-const initFollow = (dbName, reset) => (lastSeq = 0) => {
-  if (resetFollow) lastSeq = 0
-  assert_.number(lastSeq)
+const initFollow = (dbName, reset) => lastSeq => {
+  if (resetFollow) lastSeq = null
 
   const setLastSeq = SetLastSeq(dbName)
   const dbUrl = `${dbHost}/${dbName}`
@@ -75,19 +73,24 @@ const initFollow = (dbName, reset) => (lastSeq = 0) => {
     // Reset lastSeq if the dbLastSeq is behind
     // as this probably means the database was deleted and re-created
     // and the leveldb-backed meta db kept the last_seq value of the previous db
-    if (lastSeq > dbLastSeq) {
+    if (getSeqPrefix(lastSeq) > getSeqPrefix(dbLastSeq)) {
       _.log({ lastSeq, dbLastSeq }, `${dbName} saved last_seq ahead of db: reseting`, 'yellow')
-      lastSeq = 0
+      lastSeq = null
       setLastSeq(lastSeq)
     }
 
-    return resetIfNeeded(dbName, lastSeq, reset)
+    return resetIfNeeded(lastSeq, reset)
     .then(() => startFollowingDb({ dbName, dbUrl, lastSeq, setLastSeq }))
   })
 }
 
-const resetIfNeeded = async (dbName, lastSeq, reset) => {
-  if (lastSeq === 0 && reset != null) return reset()
+// CouchDB documentation states that applications "should treat seq ids as opaque values"
+// https://docs.couchdb.org/en/stable/whatsnew/2.0.html
+// but it seems that seq prefixes remain incremental integers
+const getSeqPrefix = seq => seq ? parseInt(seq.split('-')[0]) : 0
+
+const resetIfNeeded = async (lastSeq, reset) => {
+  if (reset != null && lastSeq == null) return reset()
 }
 
 const startFollowingDb = params => {
@@ -98,7 +101,7 @@ const startFollowingDb = params => {
     db: dbUrl,
     include_docs: true,
     feed: 'continuous',
-    since: lastSeq
+    since: lastSeq || 0
   }
 
   return follow(config, (err, change) => {
@@ -117,9 +120,13 @@ const SetLastSeq = dbName => {
   // Creating a closure on dbName to underline that
   // this function shouldn't be shared between databases
   // as it could miss updates due to the debouncer
-  const setLastSeq = seq => {
-    return metaDb.put(key, seq.toString())
-    .catch(_.Error(`${dbName} setLastSeq err`))
+  const setLastSeq = async seq => {
+    try {
+      if (seq != null) metaDb.put(key, seq)
+      else metaDb.del(key)
+    } catch (err) {
+      _.error(err, `${dbName} setLastSeq err (seq: ${seq})`)
+    }
   }
   // setLastSeq might be triggered many times if a log of changes arrive at once
   // no need to write to the database at each times, just the last

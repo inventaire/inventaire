@@ -72,7 +72,7 @@ const API = module.exports = {
   createUsername: () => {
     // Add a random string to prevent creating several users with the same username
     // and be rejected because of it
-    return faker.fake('{{name.firstName}}').replace(/\W/, '') + randomString(2)
+    return faker.fake('{{name.firstName}}').replace(/\W/, '') + randomString(4)
   },
 
   createUserEmail: () => faker.internet.email(),
