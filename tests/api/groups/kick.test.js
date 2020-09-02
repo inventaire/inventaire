@@ -33,7 +33,7 @@ describe('groups:update:kick', () => {
   })
 
   it('should kick a member', done => {
-    addMember(groupPromise, userPromise)
+    addMember({ group: groupPromise, user: userPromise })
     .then(([ group, member ]) => {
       const membersCount = group.members.length
       return authReq('put', endpoint, { user: member._id, group: group._id })
@@ -48,7 +48,7 @@ describe('groups:update:kick', () => {
   })
 
   it('should reject kicking an admin', done => {
-    addMember(groupPromise, userPromise)
+    addMember({ group: groupPromise, user: userPromise })
     .then(([ group, member ]) => {
       const { _id: memberId } = member
       return authReq('put', '/api/groups?action=make-admin', { user: memberId, group: group._id })

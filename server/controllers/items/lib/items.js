@@ -11,10 +11,11 @@ const { filterPrivateAttributes } = require('./filter_private_attributes')
 const { maxKey } = __.require('lib', 'couch')
 const listingsLists = require('./listings_lists')
 const snapshot_ = require('./snapshot/snapshot')
-const getByAccessLevel = require('./get_by_access_level')
+const getByAuthorizationLevel = require('./get_by_authorization_level')
 const user_ = __.require('controllers', 'user/lib/user')
 const db = __.require('couch', 'base')('items')
 const validateEntityType = require('./validate_entity_type')
+const { refreshInventoryViews } = require('./view/inventory_view')
 
 const items_ = module.exports = {
   byId: db.get,
@@ -25,6 +26,11 @@ const items_ = module.exports = {
       endkey: [ ownerId, maxKey, maxKey ],
       include_docs: true
     })
+  },
+
+  byEditions: editionsUris => {
+    return Promise.all(editionsUris.map(items_.byEntity))
+    .then(_.flatten)
   },
 
   byEntity: entityUri => {
@@ -75,15 +81,21 @@ const items_ = module.exports = {
     const res = await db.bulk(items)
     const itemsIds = _.map(res, 'id')
     const { docs } = await db.fetch(itemsIds)
+    refreshInventoryViews({ usersIds: [ userId ], items })
     emit('user:inventory:update', userId)
     return docs
   },
 
-  update: (userId, itemUpdateData) => {
-    return db.get(itemUpdateData._id)
-    .then(currentItem => Item.update(userId, itemUpdateData, currentItem))
-    .then(db.putAndReturn)
-    .then(tapEmit('user:inventory:update', userId))
+  update: async (userId, itemUpdateData) => {
+    const currentItem = await db.get(itemUpdateData._id)
+    const item = await Item.update(userId, itemUpdateData, currentItem)
+    const itemDoc = await db.putAndReturn(item)
+    refreshInventoryViews({
+      usersIds: [ userId ],
+      items: [ itemDoc ]
+    })
+    emit('user:inventory:update', userId)
+    return itemDoc
   },
 
   bulkUpdate: (userId, ids, attribute, newValue) => {
@@ -121,7 +133,7 @@ const items_ = module.exports = {
       if (usersIds.length <= 0) return [ [], [] ]
       return Promise.all([
         user_.getUsersByIds(usersIds, reqUserId),
-        getByAccessLevel.public(usersIds)
+        getByAuthorizationLevel.public(usersIds)
       ])
     }
   },

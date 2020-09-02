@@ -1,10 +1,13 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-require('should')
-const { nonAuthReq, undesiredRes } = __.require('apiTests', 'utils/utils')
-const endpoint = '/api/items?action=inventory-view'
-const { groupPromise } = require('../fixtures/groups')
+const should = require('should')
+const { nonAuthReq, undesiredRes, getReservedUser } = __.require('apiTests', 'utils/utils')
+const { groupPromise, createGroup, addMember } = require('../fixtures/groups')
+const { createEdition } = require('../fixtures/entities')
 const { createUserWithItems } = require('../fixtures/populate')
+const { createItem } = require('../fixtures/items')
+
+const endpoint = '/api/items?action=inventory-view'
 
 describe('items:inventory-view', () => {
   it('should reject requests without a user or a group', done => {
@@ -18,32 +21,59 @@ describe('items:inventory-view', () => {
     .catch(done)
   })
 
-  it('should return a user inventory-view', async () => {
-    const { _id: userId } = await createUserWithItems()
-    const res = await nonAuthReq('get', `${endpoint}&user=${userId}`)
-    res.worksTree.should.be.an.Object()
-    res.worksTree.author.should.be.an.Object()
-    res.worksTree.genre.should.be.an.Object()
-    res.worksTree.subject.should.be.an.Object()
-    res.worksTree.owner.should.be.an.Object()
-    res.workUriItemsMap.should.be.an.Object()
-    res.itemsByDate.should.be.an.Array()
+  describe('user', () => {
+    it('should return a user inventory-view', async () => {
+      const { _id: userId } = await createUserWithItems()
+      const { worksTree, workUriItemsMap, itemsByDate } = await nonAuthReq('get', `${endpoint}&user=${userId}`)
+      worksTree.should.be.an.Object()
+      worksTree.author.should.be.an.Object()
+      worksTree.genre.should.be.an.Object()
+      worksTree.subject.should.be.an.Object()
+      workUriItemsMap.should.be.an.Object()
+      itemsByDate.should.be.an.Array()
+    })
   })
 
-  it('should return a group inventory-view', done => {
-    groupPromise
-    .then(({ _id }) => _id)
-    .then(groupId => nonAuthReq('get', `${endpoint}&group=${groupId}`))
-    .then(res => {
-      res.worksTree.should.be.an.Object()
-      res.worksTree.author.should.be.an.Object()
-      res.worksTree.genre.should.be.an.Object()
-      res.worksTree.subject.should.be.an.Object()
-      res.worksTree.owner.should.be.an.Object()
-      res.workUriItemsMap.should.be.an.Object()
-      res.itemsByDate.should.be.an.Array()
-      done()
+  describe('group', () => {
+    it('should return a group inventory-view', async () => {
+      const { _id: groupId } = await groupPromise
+      const { worksTree, workUriItemsMap, itemsByDate } = await nonAuthReq('get', `${endpoint}&group=${groupId}`)
+      worksTree.should.be.an.Object()
+      worksTree.author.should.be.an.Object()
+      worksTree.genre.should.be.an.Object()
+      worksTree.subject.should.be.an.Object()
+      workUriItemsMap.should.be.an.Object()
+      itemsByDate.should.be.an.Array()
     })
-    .catch(done)
+
+    it('should return itemsByDate sorted by date', async () => {
+      const memberA = await getReservedUser()
+      const memberB = await getReservedUser()
+      const group = await createGroup({ user: memberA })
+      await addMember({ group, admin: memberA, user: memberB })
+      const { _id: itemA1Id, created: itemA1Created } = await createItem(memberA)
+      const { _id: itemB1Id, created: itemB1Created } = await createItem(memberB)
+      const { _id: itemA2Id, created: itemA2Created } = await createItem(memberA)
+      should(itemB1Created > itemA1Created).be.true()
+      should(itemA2Created > itemB1Created).be.true()
+      const { itemsByDate } = await nonAuthReq('get', `${endpoint}&group=${group._id}`)
+      itemsByDate.should.deepEqual([ itemA1Id, itemB1Id, itemA2Id ])
+    })
+
+    it('should return deduplicated worksTree subarrays', async () => {
+      const memberA = await getReservedUser()
+      const memberB = await getReservedUser()
+      const group = await createGroup({ user: memberA })
+      await addMember({ group, admin: memberA, user: memberB })
+      const edition = await createEdition()
+      const workUri = edition.claims['wdt:P629'][0]
+      await createItem(memberA, { entity: edition.uri })
+      await createItem(memberB, { entity: edition.uri })
+      const { worksTree } = await nonAuthReq('get', `${endpoint}&group=${group._id}`)
+      const { author, genre, subject } = worksTree
+      author.unknown.should.deepEqual([ workUri ])
+      genre.unknown.should.deepEqual([ workUri ])
+      subject.unknown.should.deepEqual([ workUri ])
+    })
   })
 })

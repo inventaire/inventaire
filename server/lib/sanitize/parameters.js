@@ -211,6 +211,8 @@ module.exports = {
   username: { validate: validations.common.username },
   usernames,
   relatives: whitelistedStrings,
+  'old-value': nonEmptyString,
+  'new-value': nonEmptyString,
   value: {
     // Endpoints accepting a 'value' can specify a type
     // or have to do their own validation

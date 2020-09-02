@@ -1,39 +1,30 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
+const updateClaim = require('./lib/update_claim')
+const sanitize = __.require('lib', 'sanitize/sanitize')
 
-module.exports = (req, res) => {
-  let prefix
-  let { id, uri, property, 'old-value': oldVal, 'new-value': newVal } = req.body
-  _.log(req.body, 'update claim input')
-  if (_.isInvEntityId(id) && (uri == null)) { uri = `inv:${id}` }
-
-  if (uri == null) return error_.bundleMissingBody(req, res, 'uri')
-  if (property == null) return error_.bundleMissingBody(req, res, 'property')
-  if ((oldVal == null) && (newVal == null)) {
-    return error_.bundleMissingBody(req, res, 'old-value|new-value')
-  }
-
-  // An empty string is interpreted as a null value
-  oldVal = parseEmptyValue(oldVal)
-  newVal = parseEmptyValue(newVal);
-
-  [ prefix, id ] = uri.split(':')
-  const updater = updaters[prefix]
-  if (updater == null) {
-    return error_.bundle(req, res, `unsupported uri prefix: ${prefix}`, 400, uri)
-  }
-
-  return updater(req.user, id, property, oldVal, newVal)
-  .then(responses_.Ok(res))
-  .catch(error_.Handler(req, res))
+const sanitization = {
+  uri: {},
+  id: { optional: true },
+  'new-value': { optional: true },
+  'old-value': { optional: true },
+  property: { type: 'string' }
 }
 
-const parseEmptyValue = value => value === '' ? null : value
+module.exports = (req, res) => {
+  sanitize(req, res, sanitization)
+  .then(params => {
+    let { uri, id, property, 'old-value': oldVal, 'new-value': newVal } = params
+    const noValues = !oldVal && !newVal
+    if (noValues) {
+      const message = 'missing parameter in body: old-value or new-value'
+      return error_.bundle(req, res, message, 400, params)
+    }
+    if (id && (uri == null)) { uri = `inv:${id}` }
 
-const updaters = {
-  // TODO: accept ISBN URIs
-  inv: require('./lib/update_inv_claim'),
-  wd: require('./lib/update_wd_claim')
+    return updateClaim(req.user, uri, property, oldVal, newVal)
+    .then(responses_.Ok(res))
+  })
+  .catch(error_.Handler(req, res))
 }

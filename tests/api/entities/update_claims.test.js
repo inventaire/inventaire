@@ -2,13 +2,14 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const should = require('should')
 const { tap } = __.require('lib', 'promises')
-const { undesiredRes } = require('../utils/utils')
+const { undesiredRes, authReq } = require('../utils/utils')
 const { createWork, createEdition, createHuman, someOpenLibraryId } = require('../fixtures/entities')
 const { getByUri, addClaim, updateClaim, removeClaim, merge } = require('../utils/entities')
 
 describe('entities:update-claims', () => {
   it('should reject without uri', done => {
-    updateClaim()
+    const property = 'wdt:P1104'
+    authReq('put', '/api/entities?action=update-claim', { property })
     .then(undesiredRes(done))
     .catch(err => {
       err.body.status_verbose.should.equal('missing parameter in body: uri')
@@ -43,20 +44,6 @@ describe('entities:update-claims', () => {
     .catch(done)
   })
 
-  it('should reject invalid uri prefix', done => {
-    const uri = 'invalidprefix:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
-    const property = 'wdt:P1104'
-    const oldValue = '1312'
-    updateClaim(uri, property, oldValue)
-    .then(undesiredRes(done))
-    .catch(err => {
-      err.body.status_verbose.should.startWith('unsupported uri prefix')
-      err.statusCode.should.equal(400)
-      done()
-    })
-    .catch(done)
-  })
-
   it('should reject unfound entity', done => {
     const uri = 'inv:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
     const property = 'wdt:P1104'
@@ -71,26 +58,13 @@ describe('entities:update-claims', () => {
     .catch(done)
   })
 
-  it('should reject an update with an inappropriate property', done => {
-    createWork()
-    // A work entity should not have pages count
-    .then(work => addClaim(work.uri, 'wdt:P1104', 124))
-    .then(undesiredRes(done))
-    .catch(err => {
-      err.body.status_verbose.should.equal("works can't have a property wdt:P1104")
-      err.statusCode.should.equal(400)
-      done()
-    })
-    .catch(done)
-  })
-
   it('should reject an update with an inappropriate property datatype', done => {
     createWork()
     .then(work => {
       return addClaim(work.uri, 'wdt:P50', 124)
       .then(undesiredRes(done))
       .catch(err => {
-        err.body.status_verbose.should.equal('invalid value type: expected string, got number')
+        err.body.status_verbose.should.equal('invalid new-value: expected string, got number')
         err.statusCode.should.equal(400)
         done()
       })
