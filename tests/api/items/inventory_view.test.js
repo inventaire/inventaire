@@ -80,11 +80,25 @@ describe('items:inventory-view', () => {
       const workUri = await edition.claims['wdt:P629'][0]
       await customAuthReq(userPromise, 'post', '/api/items', { entity: edition.uri, listing: 'public' })
       const res = await nonAuthReq('get', `${endpoint}&user=${userId}`)
-      should(res.worksTree.subject['wd:Q35760']).not.be.ok()
-      await addClaim(workUri, 'wdt:P921', 'wd:Q35760')
+      const subjectValue = 'wd:Q35760'
+      should(res.worksTree.subject[subjectValue]).not.be.ok()
+      await addClaim(workUri, 'wdt:P921', subjectValue)
       await wait(200)
       const res2 = await nonAuthReq('get', `${dryReq}&user=${userId}`)
-      res2.worksTree.subject['wd:Q35760'].should.be.an.Array()
+      res2.worksTree.subject[subjectValue].should.be.an.Array()
+    })
+
+    it('should refresh on updating edition claims', async () => {
+      const { _id: userId } = await userPromise
+      const edition = await createEdition()
+      await customAuthReq(userPromise, 'post', '/api/items', { entity: edition.uri, listing: 'public' })
+      const res = await nonAuthReq('get', `${endpoint}&user=${userId}`)
+      const workValue = 'wd:Q6911'
+      should(res.worksTree.subject[workValue]).not.be.ok()
+      await addClaim(edition.uri, 'wdt:P629', workValue)
+      await wait(200)
+      const res2 = await nonAuthReq('get', `${dryReq}&user=${userId}`)
+      res2.worksTree.subject.unknown.should.containEql(workValue)
     })
   })
 

@@ -4,17 +4,26 @@ const entities_ = __.require('controllers', 'entities/lib/entities')
 const getEntityByUri = __.require('controllers', 'entities/lib/get_entity_by_uri')
 const { prefixifyInv } = __.require('controllers', 'entities/lib/prefix')
 const items_ = __.require('controllers', 'items/lib/items')
-const propsAffectingInventoryView = [ 'wdt:P921', 'wdt:P136', 'wdt:P50' ]
+const propsAffectingInventoryView = {
+  edition: [ 'wdt:P629' ],
+  work: [ 'wdt:P921', 'wdt:P136', 'wdt:P50' ]
+}
 const { refreshInventoryViews } = require('./inventory_view')
 
 module.exports = async (property, uri) => {
   const entity = await getEntityByUri({ uri })
-  if (!_.includes(propsAffectingInventoryView, property)) return
-  if (entity.type === 'work') {
-    const editionsUris = await getEditionsUris(uri)
-    return items_.byEditions(editionsUris)
-    .then(refreshOwnersInventoryViews)
+  let editionsUris = []
+  if (entity.type === 'edition') {
+    if (!_.includes(propsAffectingInventoryView.edition, property)) return
+    editionsUris = [ entity.uri ]
   }
+  if (entity.type === 'work') {
+    if (!_.includes(propsAffectingInventoryView.work, property)) return
+    editionsUris = await getEditionsUris(uri)
+  }
+  if (_.isEmpty(editionsUris)) return
+  return items_.byEditions(editionsUris)
+  .then(refreshOwnersInventoryViews)
 }
 
 const refreshOwnersInventoryViews = items => {
