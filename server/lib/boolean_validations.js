@@ -37,6 +37,7 @@ const tests = module.exports = {
   isItemId: isCouchUuid,
   isUsername: bindedTest('Username'),
   isEntityUri: bindedTest('EntityUri'),
+  isPatchId: bindedTest('PatchId'),
   isExtendedEntityUri: uri => {
     const [ prefix, id ] = uri.split(':')
     // Accept alias URIs.
