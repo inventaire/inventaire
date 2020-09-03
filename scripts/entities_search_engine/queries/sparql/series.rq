@@ -1,0 +1,4 @@
+SELECT DISTINCT ?series WHERE {
+  # instance of book series or its subclasses (includes comic book series)
+  ?series wdt:P31/wdt:P279* wd:Q277759 .
+}

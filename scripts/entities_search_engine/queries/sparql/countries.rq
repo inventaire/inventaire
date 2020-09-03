@@ -1,0 +1,5 @@
+SELECT DISTINCT ?countries WHERE {
+  ?countries wdt:P31 wd:Q3624078 .
+  FILTER NOT EXISTS { ?countries wdt:P576 ?endTime . }
+  FILTER NOT EXISTS { ?countries wdt:P31 wd:Q3024240 . }
+}
