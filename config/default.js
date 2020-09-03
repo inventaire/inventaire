@@ -77,7 +77,23 @@ const config = module.exports = {
     delay: 10000,
     // Set the path to the local repository to allow API tests to start it
     // if it isn't already online
-    localPath: '/path/to/repo'
+    localPath: '/path/to/repo',
+
+    indexes: {
+      wikidata: 'wikidata',
+      // Match CouchDB database names
+      inventaire: 'entities'
+    },
+    types: [
+      'works',
+      'humans',
+      'genres',
+      'movements',
+      'publishers',
+      'series',
+      'collections',
+      'countries'
+    ]
   },
 
   couch2elastic4sync: {
