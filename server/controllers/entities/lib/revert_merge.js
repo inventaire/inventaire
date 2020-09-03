@@ -1,13 +1,11 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
-const promises_ = __.require('lib', 'promises')
-let entities_ = require('./entities')
+const entities_ = require('./entities')
 const patches_ = require('./patches')
 const placeholders_ = require('./placeholders')
 const updateItemEntity = __.require('controllers', 'items/lib/update_entity')
-entities_ = require('./entities')
-const Patch = __.require('models', 'patch')
+const { revertFromPatchDoc } = require('./revert_edit')
 
 module.exports = async (userId, fromId) => {
   const patches = await patches_.getSnapshots(fromId)
@@ -27,7 +25,7 @@ module.exports = async (userId, fromId) => {
   await updateItemEntity.afterRevert(fromUri, toUri)
   await recoverPlaceholders(userId, currentVersion.removedPlaceholdersIds)
   await revertMergePatch(userId, fromUri, toUri)
-  await revertClaimsRedirections(userId, fromUri, toUri)
+  await revertClaimsRedirections(userId, fromUri)
 
   return updateRes
 }
@@ -54,43 +52,27 @@ const recoverPlaceholders = async (userId, removedPlaceholdersIds) => {
   return Promise.all(removedPlaceholdersIds.map(recoverFn))
 }
 
-const revertMergePatch = (userId, fromUri, toUri) => {
+const revertMergePatch = async (userId, fromUri, toUri) => {
   const [ prefix, toId ] = toUri.split(':')
   if (prefix !== 'inv') return
 
-  return Promise.all([
-    entities_.byId(toId),
-    patches_.byEntityId(toId)
-  ])
-  .then(([ currentDoc, patches ]) => {
-    const mergePatch = patches.find(patch => {
-      return patch.context && patch.context.mergeFrom === fromUri
-    })
+  const patches = await patches_.byEntityId(toId)
 
-    if (mergePatch == null) {
-      // This happens when the merged entity didn't bring any label or claim
-      // value that the merge target hadn't already
-      _.warn({ fromUri, toUri }, 'no merge patch found')
-      return
-    }
-
-    const updatedDoc = Patch.revert(currentDoc, mergePatch)
-    const context = { revertPatch: mergePatch._id }
-    return entities_.putUpdate({ userId, currentDoc, updatedDoc, context })
+  const mergePatch = patches.find(patch => {
+    return patch.context && patch.context.mergeFrom === fromUri
   })
+
+  if (mergePatch == null) {
+    // This happens when the merged entity didn't bring any label or claim
+    // value that the merge target hadn't already
+    _.warn({ fromUri, toUri }, 'no merge patch found')
+    return
+  }
+
+  return revertFromPatchDoc(mergePatch, userId)
 }
 
-const revertClaimsRedirections = (userId, fromUri, toUri) => {
-  return patches_.byRedirectUri(fromUri)
-  .then(promises_.map(revertClaimsRedirectionFromPatch(userId)))
-}
-
-const revertClaimsRedirectionFromPatch = userId => patch => {
-  const entityId = patch._id.split(':')[0]
-  return entities_.byId(entityId)
-  .then(currentDoc => {
-    const updatedDoc = Patch.revert(currentDoc, patch)
-    const context = { revertPatch: patch._id }
-    return entities_.putUpdate({ userId, currentDoc, updatedDoc, context })
-  })
+const revertClaimsRedirections = async (userId, fromUri) => {
+  const patches = await patches_.byRedirectUri(fromUri)
+  return Promise.all(patches.map(patch => revertFromPatchDoc(patch, userId)))
 }

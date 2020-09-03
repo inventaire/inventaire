@@ -70,6 +70,11 @@ const entitiesUtils = module.exports = {
   getRefreshedPopularityByUri: uri => {
     return entitiesUtils.getRefreshedPopularityByUris(uri)
     .then(res => res.scores[uri])
+  },
+
+  revertEdit: patchId => {
+    assert_.string(patchId)
+    return adminReq('put', '/api/entities?action=revert-edit', { patch: patchId })
   }
 }
 
