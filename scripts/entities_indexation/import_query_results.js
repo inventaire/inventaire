@@ -8,7 +8,7 @@ const wdk = require('wikidata-sdk')
 
 const types = require('./lib/types_parser')(resultsFolder, 'json')
 const callOneByOne = require('./lib/call_one_by_one')
-const fetchAndPutEntitiesFromUris = __.require('controllers', 'entities/lib/search_engine/fetch_and_put_entities_from_uris')
+const fetchAndPutEntitiesFromUris = __.require('controllers', 'entities/lib/indexation/fetch_and_put_entities_from_uris')
 
 const importEntities = type => {
   // Beware of the path leading dot: require works from __dirname
