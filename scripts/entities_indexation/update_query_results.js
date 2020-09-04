@@ -6,7 +6,8 @@ const _ = __.require('builders', 'utils')
 const { exec } = require('child_process')
 const callOneByOne = require('./lib/call_one_by_one')
 const wdCommand = './node_modules/.bin/wd'
-const sparqlFolder = './queries/sparql'
+const sparqlFolder = './scripts/entities_indexation/queries/sparql'
+const resultsFolder = './scripts/entities_indexation/queries/results'
 const types = require('./lib/types_parser')(sparqlFolder, 'rq')
 const fs = require('fs')
 
@@ -25,7 +26,7 @@ const archive = type => {
   }
 }
 
-const update = type => `${wdCommand} sparql ${sparqlFolder}/${type}.rq --json > ./queries/results/${type}.json`
+const update = type => `${wdCommand} sparql ${sparqlFolder}/${type}.rq --json > ${resultsFolder}/${type}.json`
 
 const makeQuery = type => new Promise((resolve, reject) => {
   const updateCmd = `${update(type)}`
