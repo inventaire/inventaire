@@ -1,8 +1,5 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const { get } = __.require('lib', 'requests')
-const invHost = CONFIG.fullHost()
 const { getEntityUri, getEntityId } = require('./helpers')
+const getEntitiesImages = require('../get_entities_images')
 
 // Assumes that entities in a batch are all from the same domain
 const batchLengthPerDomain = {
@@ -26,29 +23,29 @@ module.exports = async entities => {
   const domain = uris[0].split(':')[0]
   const batchLength = batchLengthPerDomain[domain]
 
-  const addImageToNextEntityBatch = () => {
+  const addImageToNextEntityBatch = async () => {
     const urisBatch = uris.splice(0, batchLength)
 
     // When there is no more URIs,
     // return the updated entities as final results
     if (urisBatch.length === 0) return entities
 
-    return get(`${invHost}/api/entities?action=images&uris=${urisBatch.join('|')}`)
-    .then(({ images }) => {
-      for (const uri in images) {
-        // Working around the difference between Wikidata that returns entities
-        // indexed by Wikidata id and Inventaire that index by URIs
-        const entityImages = images[uri]
-        const id = uri.split(':')[1]
-        const entity = entities[id] || entities[uri]
+    const images = await getEntitiesImages(urisBatch)
 
-        // Case where we can't find the entity: it was redirected in the meantime
-        if (entity != null) {
-          entity.images = entityImages
-        }
+    for (const uri in images) {
+      // Working around the difference between Wikidata that returns entities
+      // indexed by Wikidata id and Inventaire that index by URIs
+      const entityImages = images[uri]
+      const id = uri.split(':')[1]
+      const entity = entities[id] || entities[uri]
+
+      // Case where we can't find the entity: it was redirected in the meantime
+      if (entity != null) {
+        entity.images = entityImages
       }
-    })
-    .then(addImageToNextEntityBatch)
+    }
+
+    return addImageToNextEntityBatch()
   }
 
   return addImageToNextEntityBatch()
