@@ -40,8 +40,8 @@ const bulk = module.exports = {
       }
     })
 
-    const loggerName = getLoggerName(globalStatus)
-    _[loggerName](globalStatus, label)
+    const color = getLoggerColor(globalStatus)
+    _.log(globalStatus, label, color)
   },
 
   postBatch: batch => {
@@ -52,12 +52,12 @@ const bulk = module.exports = {
   }
 }
 
-const getLoggerName = globalStatus => {
+const getLoggerColor = globalStatus => {
   const totalSuccesses = aggregateAttribute(globalStatus, 'success')
   const totalErrors = aggregateAttribute(globalStatus, 'errors')
-  if (totalSuccesses > 0 && totalErrors > 0) return 'warn'
-  if (totalSuccesses > 0) return 'success'
-  return 'error'
+  if (totalSuccesses > 0 && totalErrors > 0) return 'yellow'
+  if (totalSuccesses > 0) return 'green'
+  return 'red'
 }
 
 const aggregateAttribute = (globalStatus, attribute) => {
