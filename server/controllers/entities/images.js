@@ -9,10 +9,7 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
-const promises_ = __.require('lib', 'promises')
-const getEntitiesByUris = require('./lib/get_entities_by_uris')
-const specialEntityImagesGetter = require('./lib/special_entity_images_getter')
-const getEntityImagesFromClaims = require('./lib/get_entity_images_from_claims')
+const getEntitiesImages = require('./lib/get_entities_images')
 const { img: imgUrlBuilder } = __.require('lib', 'emails/app_api')
 const getThumbData = __.require('data', 'commons/thumb')
 
@@ -42,9 +39,7 @@ module.exports = (req, res) => {
     }
   }
 
-  return getEntitiesByUris({ uris, refresh })
-  .then(({ entities }) => entities)
-  .then(getEntitiesImages)
+  return getEntitiesImages(uris, refresh)
   .then(images => {
     if (redirect) {
       redirectToRawImage(res, uris[0], images, width, height)
@@ -53,19 +48,6 @@ module.exports = (req, res) => {
     }
   })
   .catch(error_.Handler(req, res))
-}
-
-const getEntitiesImages = entities => {
-  return promises_.props(Object.keys(entities).reduce(getEntityImages(entities), {}))
-}
-
-const getEntityImages = entities => (promises, id) => {
-  const entity = entities[id]
-  // All entities type that don't have a specialEntityImagesGetter will
-  // simply return their first wdt:P18 claim value, if any
-  const getter = specialEntityImagesGetter[entity.type] || getEntityImagesFromClaims
-  promises[id] = getter(entity)
-  return promises
 }
 
 const redirectToRawImage = (res, uri, images, width, height) => {
