@@ -92,6 +92,6 @@ cd "$today_folder"
 rm "$output_file"
 
 echo "compressing results"
-gzip -9f *json *ttl
+pbzip2 -9f *json *ttl
 
 echo "done"
