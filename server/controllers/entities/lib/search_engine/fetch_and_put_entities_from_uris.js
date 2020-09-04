@@ -10,8 +10,8 @@ const unindex = require('./unindex')
 const { get } = __.require('lib', 'requests')
 const invHost = CONFIG.fullHost()
 const { wait } = __.require('lib', 'promises')
-const { wikidata: wdIndex, inventaire: invIndex } = CONFIG.entitiesSearchEngine.indexes
-const whitelist = CONFIG.entitiesSearchEngine.types
+const { indexes, indexedEntitiesTypes } = __.require('controllers', 'search/lib/indexes')
+const { wikidata: wdIndex, entities: invIndex } = indexes
 
 module.exports = (type, uris) => {
   _.info(uris, `${type} uris`)
@@ -20,7 +20,7 @@ module.exports = (type, uris) => {
 
   const promises = []
 
-  if (whitelist.includes(type)) {
+  if (indexedEntitiesTypes.includes(type)) {
     if (wdIds.length > 0) {
       // generate urls for batches of 50 entities
       const wdUrls = wdk.getManyEntities({ ids: wdIds, props })

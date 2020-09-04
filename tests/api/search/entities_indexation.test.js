@@ -5,8 +5,8 @@ const { wait } = __.require('lib', 'promises')
 const { createHuman } = require('../fixtures/entities')
 const { deleteByUris, merge } = require('../utils/entities')
 const { elasticsearchUpdateDelay } = CONFIG.entitiesSearchEngine
-const entitiesIndex = CONFIG.db.name('entities')
 const { getIndexedDoc } = require('../utils/search')
+const { entities: entitiesIndex } = __.require('controllers', 'search/lib/indexes').indexes
 
 describe('entities:indexation', () => {
   it('should index a new local entity', async () => {
