@@ -3,7 +3,7 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const bulk = require('./bulk')
 const buildLine = bulk.buildLine.bind(null, 'index')
-const { wikidata: wdIndex, inventaire: invIndex } = CONFIG.entitiesSearchEngine.indexes
+const { wikidata: wdIndex, entities: invIndex } = __.require('controllers', 'search/lib/indexes').indexes
 const { getEntityDomain } = require('./helpers')
 
 const indexPerDomain = {
