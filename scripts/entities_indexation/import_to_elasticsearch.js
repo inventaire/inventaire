@@ -5,9 +5,10 @@ const _ = __.require('builders', 'utils')
 
 const type = process.argv.slice(2)[0]
 const split = require('split')
+const { indexedEntitiesTypes } = __.require('controllers', 'search/lib/indexes')
 
-if ((type == null) || !/^\w+$/.test(type)) {
-  throw new Error(`invalid type: ${type}`)
+if (type == null || !indexedEntitiesTypes.includes(type)) {
+  throw new Error(`invalid type: ${type}\nValid types: ${indexedEntitiesTypes.join(', ')}`)
 }
 
 const { removeTrailingComma, isJsonLine, logCount } = __.require('controllers', 'entities/lib/indexation/helpers')
