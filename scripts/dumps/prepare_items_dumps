@@ -25,4 +25,4 @@ curl -s "${dbHost}/items-prod/_design/items/_view/byEntity" |
 validate_ttl $items_dump
 
 cd "$today_folder"
-gzip -9f *ttl
+pbzip2 -9f *ttl
