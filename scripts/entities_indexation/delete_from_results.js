@@ -9,7 +9,7 @@ const [ index, type, resultPath ] = process.argv.slice(2)
 const path = require('path')
 const ids = require(path.resolve(resultPath))
 const { wait } = __.require('lib', 'promises')
-const unindex = __.require('controllers', 'entities/lib/search_engine/unindex')
+const unindex = __.require('controllers', 'entities/lib/indexation/unindex')
 
 _.info(ids.length, 'ids total')
 
