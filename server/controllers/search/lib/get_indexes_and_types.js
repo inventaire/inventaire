@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const { typesData } = require('./types')
+const { typesData } = require('./indexes')
 
 module.exports = typesList => {
   const data = { indexes: [], types: [] }

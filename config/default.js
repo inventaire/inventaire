@@ -71,22 +71,7 @@ const config = module.exports = {
 
   // See server/controllers/entities/lib/update_search_engine.js
   entitiesSearchEngine: {
-    delay: 10000,
-    indexes: {
-      wikidata: 'wikidata',
-      // Match CouchDB database names
-      inventaire: 'entities'
-    },
-    types: [
-      'works',
-      'humans',
-      'genres',
-      'movements',
-      'publishers',
-      'series',
-      'collections',
-      'countries'
-    ]
+    delay: 10000
   },
 
   couch2elastic4sync: {
