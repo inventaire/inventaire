@@ -14,8 +14,8 @@ describe('slugify', () => {
     slugify('bla&mémùémd ùdém^&²Mdù é:azdza').should.be.a.String()
   })
 
-  it('should replace URL reserved characters', () => {
-    slugify("L:a;:? M[!Y]$'@,\"|N=.E - é<(h)>o").should.equal('la-myn-e-ého')
+  it.only('should replace URL reserved characters', () => {
+    slugify("L:a;:? M[!Y]$'@,\"|N=.E - é<(}{h)>o").should.equal('la-myn-e-ého')
   })
 
   it('should preserve non-ASCII characters', () => {

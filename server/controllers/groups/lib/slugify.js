@@ -3,7 +3,7 @@ module.exports = str => {
   .trim()
   .toLowerCase()
   // Remove reserved characters
-  .replace(/[/?!'"@,;=$<>&:#()|[\]]+/g, '')
+  .replace(/[/?!'"@,;=$<>&:#()|[\]{}]+/g, '')
   // Replace spaces and points with -
   .replace(/(\s+|\.)/g, '-')
   // Replace multiple - with a single -
