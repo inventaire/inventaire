@@ -118,6 +118,10 @@ const typesAliases = module.exports = {
   ]
 }
 
+const depreciatedAliases = [
+  'wd:Q571' // book
+]
+
 const types = {}
 
 for (let type in typesAliases) {
@@ -151,5 +155,6 @@ module.exports = {
   getPluralType,
   getPluralTypeByTypeUri,
   getSingularType,
-  getSingularTypes
+  getSingularTypes,
+  depreciatedAliases,
 }

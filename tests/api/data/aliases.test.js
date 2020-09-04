@@ -38,4 +38,14 @@ describe('data:aliases', () => {
     })
     .catch(done)
   })
+
+  it('should not return depreciated aliases', done => {
+    const depreciatedWorkAlias = 'wd:Q571'
+    nonAuthReq('get', `${endpoint}&type=works`)
+    .then(res => {
+      res.should.not.containEql(depreciatedWorkAlias)
+      done()
+    })
+    .catch(done)
+  })
 })
