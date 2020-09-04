@@ -7,40 +7,40 @@
 // from which to pick the best illustration for live search results
 
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
+const sanitize = __.require('lib', 'sanitize/sanitize')
 const error_ = __.require('lib', 'error/error')
 const getEntitiesImages = require('./lib/get_entities_images')
 const { img: imgUrlBuilder } = __.require('lib', 'emails/app_api')
 const getThumbData = __.require('data', 'commons/thumb')
 
+const sanitization = {
+  uris: {},
+  refresh: { optional: true },
+  redirect: {
+    generic: 'boolean',
+    optional: true
+  },
+  width: {
+    generic: 'positiveInteger',
+    optional: true
+  },
+  height: {
+    generic: 'positiveInteger',
+    optional: true
+  }
+}
+
 module.exports = (req, res) => {
-  let { uris, refresh, redirect, width, height } = req.query
-
-  if (!_.isNonEmptyString(uris)) {
-    return error_.bundleMissingQuery(req, res, 'uris')
-  }
-
-  uris = uris.split('|')
-  refresh = _.parseBooleanString(refresh)
-  redirect = _.parseBooleanString(redirect)
-
-  if (redirect) {
-    if (uris.length !== 1) {
-      const message = 'only one URI is allowed in redirect mode'
-      return error_.bundle(req, res, message, 400, req.query)
+  sanitize(req, res, sanitization)
+  .then(async ({ uris, refresh, redirect, width, height }) => {
+    if (redirect) {
+      if (uris.length !== 1) {
+        throw error_.new('only one URI is allowed in redirect mode', 400, req.query)
+      }
     }
 
-    if ((width != null) && !_.isPositiveIntegerString(width)) {
-      return error_.bundleInvalid(req, res, 'width', width)
-    }
+    const images = await getEntitiesImages(uris, refresh)
 
-    if ((height != null) && !_.isPositiveIntegerString(height)) {
-      return error_.bundleInvalid(req, res, 'height', height)
-    }
-  }
-
-  return getEntitiesImages(uris, refresh)
-  .then(images => {
     if (redirect) {
       redirectToRawImage(res, uris[0], images, width, height)
     } else {
@@ -50,7 +50,7 @@ module.exports = (req, res) => {
   .catch(error_.Handler(req, res))
 }
 
-const redirectToRawImage = (res, uri, images, width, height) => {
+const redirectToRawImage = async (res, uri, images, width, height) => {
   const image = images[uri] && images[uri][0]
   if (image == null) {
     const err = error_.notFound({ uri })
@@ -58,9 +58,9 @@ const redirectToRawImage = (res, uri, images, width, height) => {
     throw err
   }
 
-  return replaceWikimediaFilename(image)
-  .then(finalUrl => imgUrlBuilder(finalUrl, width, height))
-  .then(res.redirect.bind(res))
+  const url = await replaceWikimediaFilename(image)
+
+  res.redirect(imgUrlBuilder(url, width, height))
 }
 
 const replaceWikimediaFilename = async image => {

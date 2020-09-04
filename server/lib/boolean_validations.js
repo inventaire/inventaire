@@ -64,6 +64,7 @@ const tests = module.exports = {
   isNonEmptyArray: array => _.isArray(array) && (array.length > 0),
   isNonEmptyPlainObject: obj => _.isPlainObject(obj) && (Object.keys(obj).length > 0),
   isPositiveIntegerString: str => _.isString(str) && PositiveIntegerPattern.test(str),
+  isStrictlyPositiveInteger: num => Number.isInteger(num) && num > 0,
   isExtendedUrl: str => tests.isUrl(str) || tests.isLocalImg(str),
   isCollection: array => (_.typeOf(array) === 'array') && _.every(array, _.isPlainObject)
 }
