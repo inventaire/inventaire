@@ -24,8 +24,8 @@ mkdir -p ./db/couchdb/backups
 # Expected by scripts/test_api
 mkdir -p run
 touch run/3006 run/3009
-# Expected by scripts/entities_search_engine
-mkdir -p scripts/entities_search_engine/queries/sparql scripts/entities_search_engine/queries/results
+# Expected by scripts/entities_indexation
+mkdir -p scripts/entities_indexation/queries/sparql scripts/entities_indexation/queries/results
 
 # Synchronize CouchDB and ElasticSearch databases
 {

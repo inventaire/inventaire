@@ -10,11 +10,11 @@ if ((type == null) || !/^\w+$/.test(type)) {
   throw new Error(`invalid type: ${type}`)
 }
 
-const { removeTrailingComma, isJsonLine, logCount } = __.require('controllers', 'entities/lib/search_engine/helpers')
-const formatEntities = __.require('controllers', 'entities/lib/search_engine/format_entities')(type)
-const bulkPost = __.require('controllers', 'entities/lib/search_engine/bulk_post_to_elasticsearch')
+const { removeTrailingComma, isJsonLine, logCount } = __.require('controllers', 'entities/lib/indexation/helpers')
+const formatEntities = __.require('controllers', 'entities/lib/indexation/format_entities')(type)
+const bulkPost = __.require('controllers', 'entities/lib/indexation/bulk_post_to_elasticsearch')
 
-const haveSpecialImagesGetter = __.require('controllers', 'entities/lib/search_engine/have_special_images_getter')
+const haveSpecialImagesGetter = __.require('controllers', 'entities/lib/indexation/have_special_images_getter')
 const batchLength = haveSpecialImagesGetter.includes(type) ? 100 : 1000
 
 const lineStream = process.stdin.pipe(split())
