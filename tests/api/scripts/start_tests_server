@@ -3,13 +3,5 @@
 # Use NODE_APP_INSTANCE=tests-alt to override local config with local-tests-alt
 export NODE_ENV=tests-api NODE_APP_INSTANCE=server FORCE_COLOR=true
 
-test_host=$(node -p "require('config').fullHost()")
-entities_search_engine_host=$(node -p "require('config').entitiesSearchEngine.host")
-
-curl -s "$entities_search_engine_host" > /dev/null && echo "entities search engine found" || \
-  # Using curly brackets to group those commands without starting a subshell from which exiting would be useless
-  # cf https://ss64.com/bash/syntax-brackets.html
-  { ./tests/api/scripts/start_entities_search_engine && sleep 5 ; }
-
 # Start a test server in the background
 npm run watch > logs/test-server.log 2>&1 &
