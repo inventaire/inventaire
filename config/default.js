@@ -74,15 +74,8 @@ const config = module.exports = {
   },
 
   // See server/controllers/entities/lib/update_search_engine.js
-  // and https://github.com/inventaire/entities-search-engine
   entitiesSearchEngine: {
-    updateEnabled: false,
-    host: 'http://localhost:3213',
     delay: 10000,
-    // Set the path to the local repository to allow API tests to start it
-    // if it isn't already online
-    localPath: '/path/to/repo',
-
     indexes: {
       wikidata: 'wikidata',
       // Match CouchDB database names
