@@ -98,7 +98,11 @@ const entities_ = module.exports = {
     return docAfterUpdate
   },
 
-  getUrlFromEntityImageHash: getUrlFromImageHash.bind(null, 'entities')
+  getUrlFromEntityImageHash: getUrlFromImageHash.bind(null, 'entities'),
+
+  firstClaim: (entity, property) => {
+    if (entity.claims[property] != null) return entity.claims[property][0]
+  }
 }
 
 const triggerUpdateEvent = (currentDoc, updatedDoc) => {
