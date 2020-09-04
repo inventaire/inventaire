@@ -1,5 +1,6 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
+const responses_ = __.require('lib', 'responses')
 const error_ = __.require('lib', 'error/error')
 const { typesAliases, typesNames, depreciatedAliases } = __.require('lib', 'wikidata/aliases')
 const sanitize = __.require('lib', 'sanitize/sanitize')
@@ -15,8 +16,8 @@ module.exports = (req, res) => {
   .then(params => {
     const { type } = params
     const allAliases = typesAliases[type]
-    const activeAliases = _.difference(allAliases, depreciatedAliases)
-    return res.json(activeAliases)
+    return _.difference(allAliases, depreciatedAliases)
   })
+  .then(responses_.Wrap(res, 'entity-type-aliases'))
   .catch(error_.Handler(req, res))
 }

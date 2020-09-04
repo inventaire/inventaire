@@ -2,7 +2,7 @@ const __ = require('config').universalPath
 require('should')
 const { nonAuthReq } = require('../utils/utils')
 const { types } = __.require('lib', 'wikidata/aliases')
-const endpoint = '/api/data?action=aliases'
+const endpoint = '/api/data?action=entity-type-aliases'
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = __.require('apiTests', 'utils/utils')
 
 describe('data:aliases', () => {
@@ -32,7 +32,7 @@ describe('data:aliases', () => {
   it('should return aliases information', done => {
     nonAuthReq('get', `${endpoint}&type=works`)
     .then(res => {
-      const firstAlias = res[0]
+      const firstAlias = res['entity-type-aliases'][0]
       Object.keys(types).should.containEql(firstAlias)
       done()
     })
@@ -43,7 +43,9 @@ describe('data:aliases', () => {
     const depreciatedWorkAlias = 'wd:Q571'
     nonAuthReq('get', `${endpoint}&type=works`)
     .then(res => {
-      res.should.not.containEql(depreciatedWorkAlias)
+      const { 'entity-type-aliases': aliases } = res
+      aliases.should.be.an.Array()
+      aliases.should.not.containEql(depreciatedWorkAlias)
       done()
     })
     .catch(done)
