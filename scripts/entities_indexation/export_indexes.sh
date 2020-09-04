@@ -18,7 +18,7 @@ export_index_base(){
   index=$1
   type=$2
   name="${index}_${type}"
-  output="${dump_folder}/${name}.json.gz"
+  output="${dump_folder}/${name}.json.bz2"
 
   echo -e "\e[0;30mexporting ${name}\e[0m"
 
@@ -26,7 +26,7 @@ export_index_base(){
     --input="${es_host}/${index}" \
     --output='$' \
     --type="$type" \
-    | pigz --best > "$output"
+    | pbzip2 -c > "$output"
 
   echo -e "\e[0;32mdone exporting ${name}\e[0m"
 }
