@@ -164,6 +164,13 @@ const generics = {
       }
       return true
     }
+  },
+  positiveInteger: {
+    format: value => {
+      if (_.isPositiveIntegerString) return parseInt(value)
+      else return value
+    },
+    validate: _.isStrictlyPositiveInteger
   }
 }
 
