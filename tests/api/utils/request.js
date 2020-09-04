@@ -22,6 +22,7 @@ const waitForTestServer = testServerAvailability()
 
 const rawRequest = async (method, url, reqParams = {}) => {
   assert_.string(method)
+  assert_.string(url)
   await waitForTestServer
   reqParams.returnBodyOnly = false
   reqParams.redirect = 'manual'
