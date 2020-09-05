@@ -7,7 +7,7 @@ const sanitize = __.require('lib', 'sanitize/sanitize')
 
 const sanitization = {
   type: {
-    whitelist: typesNames
+    allowlist: typesNames
   }
 }
 
