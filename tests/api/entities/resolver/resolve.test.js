@@ -152,7 +152,7 @@ describe('entities:resolve', () => {
       await resolve({ edition: seed }).then(shouldNotBeCalled)
     } catch (err) {
       err.statusCode.should.equal(400)
-      err.body.status_verbose.should.equal("property isn't whitelisted")
+      err.body.status_verbose.should.equal("property isn't allowlisted")
     }
   })
 })

@@ -124,7 +124,7 @@ describe('items:create', () => {
     .catch(done)
   })
 
-  it('should reject an item created with a non-whitelisted entity type', done => {
+  it('should reject an item created with a non-allowlisted entity type', done => {
     authReq('post', '/api/items', { entity: 'wd:Q1', lang: 'fr' })
     .catch(err => {
       err.statusCode.should.equal(400)
