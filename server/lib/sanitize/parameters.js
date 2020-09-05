@@ -111,21 +111,21 @@ const imgUrl = {
   validate: validations.common.imgUrl
 }
 
-const whitelistedString = {
+const allowlistedString = {
   validate: (value, name, config) => {
-    if (!config.whitelist.includes(value)) {
-      const details = `possible values: ${config.whitelist.join(', ')}`
+    if (!config.allowlist.includes(value)) {
+      const details = `possible values: ${config.allowlist.join(', ')}`
       throw error_.new(`invalid ${name}: ${value} (${details})`, 400, { value })
     }
     return true
   }
 }
 
-const whitelistedStrings = {
+const allowlistedStrings = {
   format: arrayOrPipedStrings,
   validate: (values, name, config) => {
     for (const value of values) {
-      whitelistedString.validate(value, name, config)
+      allowlistedString.validate(value, name, config)
     }
     return true
   }
@@ -159,8 +159,8 @@ module.exports = {
   attribute: nonEmptyString,
   email: { validate: validations.common.email },
   description: nonEmptyString,
-  filter: whitelistedString,
-  format: whitelistedStrings,
+  filter: allowlistedString,
+  format: allowlistedStrings,
   from: entityUri,
   generics,
   group: couchUuid,
@@ -178,7 +178,7 @@ module.exports = {
   message: nonEmptyString,
   name: nonEmptyString,
   offset: Object.assign({}, positiveInteger, { default: 0 }),
-  options: whitelistedStrings,
+  options: allowlistedStrings,
   password: {
     secret: true,
     validate: validations.user.password
@@ -187,7 +187,7 @@ module.exports = {
     format: truncateLatLng,
     validate: arrayOfNumbers.validate
   },
-  prefix: whitelistedString,
+  prefix: allowlistedString,
   property: { validate: _.isPropertyUri },
   refresh: generics.boolean,
   range: Object.assign({}, positiveInteger, {
@@ -196,12 +196,12 @@ module.exports = {
   }),
   search: nonEmptyString,
   slug: nonEmptyString,
-  state: whitelistedString,
+  state: allowlistedString,
   title: nonEmptyString,
   token: nonEmptyString,
   transaction: couchUuid,
-  type: whitelistedString,
-  types: whitelistedStrings,
+  type: allowlistedString,
+  types: allowlistedStrings,
   to: entityUri,
   uri: entityUri,
   uris: entityUris,
@@ -210,7 +210,7 @@ module.exports = {
   users: couchUuids,
   username: { validate: validations.common.username },
   usernames,
-  relatives: whitelistedStrings,
+  relatives: allowlistedStrings,
   value: {
     // Endpoints accepting a 'value' can specify a type
     // or have to do their own validation

@@ -89,7 +89,7 @@ describe('entities:get:by-uris', () => {
       .catch(done)
     })
 
-    it("should reject a non-whitelisted 'relatives' parameter", done => {
+    it("should reject a non-allowlisted 'relatives' parameter", done => {
       workWithAuthorPromise
       .then(work => {
         const { uri: workUri } = work

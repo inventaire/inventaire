@@ -419,10 +419,10 @@ describe('sanitize', () => {
   })
 
   describe('relatives', () => {
-    it('should reject non whitelisted relatives', done => {
+    it('should reject non allowlisted relatives', done => {
       const req = { query: { relatives: [ 'bar', 'foo' ] } }
       const res = {}
-      const configs = { relatives: { whitelist: [ 'bar' ] } }
+      const configs = { relatives: { allowlist: [ 'bar' ] } }
       sanitize(req, res, configs)
       .catch(err => {
         err.message.should.startWith('invalid relative')
@@ -431,10 +431,10 @@ describe('sanitize', () => {
       .catch(done)
     })
 
-    it('should return relatives if whitelisted', async () => {
+    it('should return relatives if allowlisted', async () => {
       const req = { query: { relatives: [ 'bar', 'foo' ] } }
       const res = {}
-      const configs = { relatives: { whitelist: [ 'foo', 'bar' ] } }
+      const configs = { relatives: { allowlist: [ 'foo', 'bar' ] } }
       const { relatives } = await sanitize(req, res, configs)
       relatives.should.deepEqual([ 'bar', 'foo' ])
     })

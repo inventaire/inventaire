@@ -8,7 +8,7 @@ const validateEntity = require('./validate_entity')
 const getEntityType = require('./get_entity_type')
 const properties = require('./properties/properties_values_constraints')
 const { prefixifyWd, unprefixify } = require('./prefix')
-const whitelistedEntityTypes = [ 'work', 'serie', 'human', 'publisher' ]
+const allowlistedEntityTypes = [ 'work', 'serie', 'human', 'publisher' ]
 
 module.exports = async params => {
   const { labels, claims, user, isAlreadyValidated } = params
@@ -45,7 +45,7 @@ const validateWikidataCompliance = entity => {
   if (claims == null) throw error_.new('invalid entity', 400, entity)
 
   const entityType = getEntityType(claims['wdt:P31'])
-  if (!whitelistedEntityTypes.includes(entityType)) {
+  if (!allowlistedEntityTypes.includes(entityType)) {
     throw error_.new('invalid entity type', 400, { entityType, entity })
   }
 

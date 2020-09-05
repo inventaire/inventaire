@@ -22,7 +22,7 @@ module.exports = {
     // is that relying on the general 'restrictApiAccess' middleware
     // would have implyied creating a general token authentification strategy,
     // but with a lower authorization level (only read operations), and for
-    // a limitied amount of whitelisted routes.
+    // a limitied amount of allowlisted routes.
     // It is way easier to simply have this ad-hoc token authentification strategy
     // that we know opens only the limited rights we wish it to open.
     const authentifiedUserPromise = getAuthentifiedUser(requester, token)

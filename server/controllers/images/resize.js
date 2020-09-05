@@ -45,8 +45,8 @@ module.exports = {
 
       const { hostname } = new URL(url)
 
-      if (blacklistedRemoteHosts.includes(hostname)) {
-        return error_.bundle(req, res, 'blacklisted domain', 400, url)
+      if (denylistedRemoteHosts.includes(hostname)) {
+        return error_.bundle(req, res, 'denylisted domain', 400, url)
       }
 
       const urlCode = _.hashCode(url).toString()
@@ -70,7 +70,7 @@ const parseReq = req => {
   return pathname.split('/')
 }
 
-const blacklistedRemoteHosts = [
+const denylistedRemoteHosts = [
   // Returns ENOTFOUND errors
   'avatars.io'
 ]

@@ -9,7 +9,7 @@ const { createHuman, createWorkWithAuthor, createWork, randomLabel } = require('
 
 // Tests dependency: having a populated ElasticSearch wikidata index
 describe('tasks:check-entities', () => {
-  it('should refuse to check entities of non-whitelisted types', done => {
+  it('should refuse to check entities of non-allowlisted types', done => {
     // Currently, only humans can be checked for duplicates,
     // or at least are the entrypoint for duplicate checks
     createWork()

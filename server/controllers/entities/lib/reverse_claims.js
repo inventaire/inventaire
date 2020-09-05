@@ -15,7 +15,7 @@ const caseInsensitiveProperties = [
   'wdt:P2002'
 ]
 
-const blacklistedProperties = [
+const denylistedProperties = [
   // Too many results, can't be sorted
   'wdt:P31',
   'wdt:P407'
@@ -30,8 +30,8 @@ module.exports = async params => {
   const { property, value, refresh, sort, dry } = params
   assert_.strings([ property, value ])
 
-  if (blacklistedProperties.includes(property)) {
-    throw error_.new('blacklisted property', 400, { property })
+  if (denylistedProperties.includes(property)) {
+    throw error_.new('denylisted property', 400, { property })
   }
 
   const promises = []
@@ -95,8 +95,8 @@ const invReverseClaims = async (property, value) => {
     return entities.map(getInvEntityCanonicalUri)
   } catch (err) {
     // Allow to request reverse claims for properties that aren't yet
-    // whitelisted to be added to inv properties: simply ignore inv entities
-    if (err.message === "property isn't whitelisted") return []
+    // allowlisted to be added to inv properties: simply ignore inv entities
+    if (err.message === "property isn't allowlisted") return []
     else throw err
   }
 }

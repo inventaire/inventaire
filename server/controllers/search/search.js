@@ -13,7 +13,7 @@ const Group = __.require('models', 'group')
 const sanitization = {
   search: {},
   lang: {},
-  types: { whitelist: possibleTypes },
+  types: { allowlist: possibleTypes },
   limit: { default: 10, max: 100 }
 }
 

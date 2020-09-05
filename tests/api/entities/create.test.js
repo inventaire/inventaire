@@ -39,7 +39,7 @@ describe('entities:create', () => {
     }
   })
 
-  it('should reject entities of non-whitelisted entity types', async () => {
+  it('should reject entities of non-allowlisted entity types', async () => {
     try {
       await authReq('post', '/api/entities?action=create', {
         labels: {
@@ -51,7 +51,7 @@ describe('entities:create', () => {
       .then(shouldNotBeCalled)
     } catch (err) {
       err.statusCode.should.equal(400)
-      err.body.status_verbose.should.equal("wdt:P31 value isn't a whitelisted value")
+      err.body.status_verbose.should.equal("wdt:P31 value isn't a allowlisted value")
     }
   })
 
