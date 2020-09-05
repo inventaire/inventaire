@@ -10,7 +10,7 @@ const sanitization = {
   limit: { optional: true },
   offset: { optional: true },
   filter: {
-    whitelist: validFilters,
+    allowlist: validFilters,
     optional: true
   },
   'include-users': {

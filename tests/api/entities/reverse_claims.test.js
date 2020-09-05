@@ -13,13 +13,13 @@ describe('entities:reverse-claims', () => {
     nonAuthReq('get', buildUrl('wdt:P31', 'wd:Q571'))
     .then(undesiredRes(done))
     .catch(err => {
-      err.body.status_verbose.should.equal('blacklisted property')
+      err.body.status_verbose.should.equal('denylisted property')
       done()
     })
     .catch(done)
   })
 
-  it('should accept whitelisted entity value properties', done => {
+  it('should accept allowlisted entity value properties', done => {
     nonAuthReq('get', buildUrl('wdt:P921', 'wd:Q456'))
     .then(res => {
       res.uris.should.be.an.Array()
@@ -28,7 +28,7 @@ describe('entities:reverse-claims', () => {
     .catch(done)
   })
 
-  it('should accept whitelisted string value properties', done => {
+  it('should accept allowlisted string value properties', done => {
     nonAuthReq('get', buildUrl('wdt:P3035', '978-2-505'))
     .then(res => {
       res.uris.should.be.an.Array()

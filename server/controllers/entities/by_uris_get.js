@@ -15,7 +15,7 @@ const sanitization = {
   uris: {},
   refresh: { optional: true },
   relatives: {
-    whitelist: validRelativesProperties,
+    allowlist: validRelativesProperties,
     optional: true
   }
 }

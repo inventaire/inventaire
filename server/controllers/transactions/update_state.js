@@ -10,7 +10,7 @@ const { Track } = __.require('lib', 'track')
 const sanitization = {
   transaction: {},
   state: {
-    whitelist: statesList
+    allowlist: statesList
   }
 }
 

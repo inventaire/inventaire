@@ -1,6 +1,6 @@
 const __ = require('config').universalPath
 const error_ = __.require('lib', 'error/error')
-const whitelistedEntityTypes = [ 'edition', 'work' ]
+const allowlistedEntityTypes = [ 'edition', 'work' ]
 
 // Working around the circular dependency
 let getEntityByUri
@@ -16,7 +16,7 @@ module.exports = item => {
 
     const { type } = entity
 
-    if (!whitelistedEntityTypes.includes(type)) {
+    if (!allowlistedEntityTypes.includes(type)) {
       throw error_.new('invalid entity type', 400, { item, type })
     }
   })

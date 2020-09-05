@@ -11,14 +11,14 @@ let getEntitiesPopularity
 const lateRequire = () => { getEntitiesPopularity = require('./get_entities_popularity') }
 setTimeout(lateRequire, 0)
 
-const whitelistedTypesNames = [ 'series', 'works', 'articles' ]
+const allowlistedTypesNames = [ 'series', 'works', 'articles' ]
 
 module.exports = params => {
   const { uri } = params
   const [ prefix, id ] = uri.split(':')
   const promises = []
 
-  const worksByTypes = _.initCollectionsIndex(whitelistedTypesNames)
+  const worksByTypes = _.initCollectionsIndex(allowlistedTypesNames)
 
   // If the prefix is 'inv' or 'isbn', no need to check Wikidata
   if (prefix === 'wd') {
@@ -40,7 +40,7 @@ const getWdAuthorWorks = async (qid, params) => {
   let results = await runWdQuery({ query: 'author-works', qid, refresh, dry })
   results = results.map(formatWdEntity).filter(_.identity)
   // Known case of duplicate: when an entity has two P31 values that both
-  // resolve to the same whitelisted type
+  // resolve to the same allowlisted type
   // ex: Q23701761 → P31 → Q571/Q17518461
   // Deduplicate after formatting so that if an entity has one valid P31
   // and an invalid one, it still gets one
@@ -52,7 +52,7 @@ const formatWdEntity = result => {
   const typeUri = `wd:${typeWdId}`
   const typeName = getTypePluralNameByTypeUri(typeUri)
 
-  if (!whitelistedTypesNames.includes(typeName)) return
+  if (!allowlistedTypesNames.includes(typeName)) return
 
   date = getSimpleDayDate(date)
   serie = prefixifyWd(serie)
@@ -68,7 +68,7 @@ const getInvAuthorWorks = async uri => {
 const formatInvEntity = row => {
   const typeUri = row.value
   const typeName = getTypePluralNameByTypeUri(typeUri)
-  if (!whitelistedTypesNames.includes(typeName)) return
+  if (!allowlistedTypesNames.includes(typeName)) return
   return {
     uri: `inv:${row.id}`,
     date: (row.doc.claims['wdt:P577'] != null ? row.doc.claims['wdt:P577'][0] : undefined),

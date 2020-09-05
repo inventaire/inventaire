@@ -14,7 +14,7 @@ const sanitization = {
     generic: 'object'
   },
   prefix: {
-    whitelist: [ 'inv', 'wd' ],
+    allowlist: [ 'inv', 'wd' ],
     default: 'inv'
   }
 }

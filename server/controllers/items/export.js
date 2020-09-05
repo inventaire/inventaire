@@ -10,7 +10,7 @@ const responses_ = __.require('lib', 'responses')
 
 const sanitization = {
   format: {
-    whitelist: [ 'csv' ]
+    allowlist: [ 'csv' ]
   }
 }
 
