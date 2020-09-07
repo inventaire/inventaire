@@ -23,9 +23,11 @@ const parseNumberString = value => {
   else return parsedValue
 }
 
+const renameId = name => `${name}Id`
+
 const couchUuid = {
   validate: validations.common.couchUuid,
-  rename: name => `${name}Id`
+  rename: renameId
 }
 
 const positiveInteger = {
@@ -182,6 +184,10 @@ module.exports = {
   password: {
     secret: true,
     validate: validations.user.password
+  },
+  patch: {
+    validate: _.isPatchId,
+    rename: renameId
   },
   position: {
     format: truncateLatLng,

@@ -24,7 +24,8 @@ const validations = module.exports = {
     // Allow a user or a group to delete their position by passing a null value
     if (latLng === null) return true
     else return _.isArray(latLng) && (latLng.length === 2) && _.every(latLng, _.isNumber)
-  }
+  },
+  patchId: _.isPatchId
 }
 
 validations.boundedString = (str, minLength, maxLength) => {
