@@ -139,8 +139,8 @@ describe('user model', () => {
     it('should add a new role', () => {
       const user = _create(validUser())
       User.addRole('admin')(user)
-      User.addRole('data-admin')(user)
-      user.roles.should.deepEqual([ 'admin', 'data-admin' ])
+      User.addRole('dataadmin')(user)
+      user.roles.should.deepEqual([ 'admin', 'dataadmin' ])
     })
 
     it('should not add a duplicated role', () => {
@@ -159,8 +159,8 @@ describe('user model', () => {
     it('should remove role', () => {
       const user = _create(validUser())
       User.addRole('admin')(user)
-      User.addRole('data-admin')(user)
-      User.removeRole('data-admin')(user)
+      User.addRole('dataadmin')(user)
+      User.removeRole('dataadmin')(user)
       user.roles.should.deepEqual([ 'admin' ])
     })
 

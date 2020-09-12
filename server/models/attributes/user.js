@@ -99,4 +99,4 @@ attributes.notificationsSettings = [
   'update_on_item_you_requested'
 ]
 
-attributes.roles = [ 'admin', 'data-admin' ]
+attributes.roles = [ 'admin', 'dataadmin' ]

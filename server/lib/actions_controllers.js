@@ -22,6 +22,10 @@ module.exports = controllers => {
       return error_.unauthorizedApiAccess(req, res)
     }
 
+    if (actionData.dataadmin && !(req.user.roles && req.user.roles.includes('dataadmin'))) {
+      return error_.unauthorizedAdminApiAccess(req, res)
+    }
+
     if (actionData.admin && !(req.user.roles && req.user.roles.includes('admin'))) {
       return error_.unauthorizedAdminApiAccess(req, res)
     }
@@ -31,30 +35,37 @@ module.exports = controllers => {
 }
 
 const getActions = controllers => {
-  validateObject(controllers, [ 'public', 'authentified', 'admin' ], 'object')
+  validateObject(controllers, [ 'public', 'authentified', 'admin', 'dataadmin' ], 'object')
 
-  const { authentified, public: publik, admin } = controllers
+  const { authentified, public: publik, admin, dataadmin } = controllers
 
   const actions = {}
 
   if (publik) {
     for (const key in publik) {
       const controller = publik[key]
-      actions[key] = { controller, authentified: false, admin: false }
+      actions[key] = { controller, authentified: false, admin: false, dataadmin: false }
     }
   }
 
   if (authentified) {
     for (const key in authentified) {
       const controller = authentified[key]
-      actions[key] = { controller, authentified: true, admin: false }
+      actions[key] = { controller, authentified: true, admin: false, dataadmin: false }
     }
   }
 
   if (admin) {
     for (const key in admin) {
       const controller = admin[key]
-      actions[key] = { controller, authentified: true, admin: true }
+      actions[key] = { controller, authentified: true, admin: true, dataadmin: false }
+    }
+  }
+
+  if (dataadmin) {
+    for (const key in admin) {
+      const controller = admin[key]
+      actions[key] = { controller, authentified: true, admin: false, dataadmin: true }
     }
   }
 

@@ -102,19 +102,12 @@ const getTwoFriends = async () => {
 
 const parseCookie = res => res.headers['set-cookie']
 
-const setCustomData = (user, customData) => {
+const setCustomData = async (user, customData) => {
   delete customData.username
-
-  // Make updates sequentially to avoid update conflicts
-  let sequentialUpdate = Promise.resolve()
-
   for (const attribute in customData) {
     const value = customData[attribute]
-    sequentialUpdate = sequentialUpdate
-      .then(() => setUserAttribute(user, attribute, value))
+    await setUserAttribute(user, attribute, value)
   }
-
-  return sequentialUpdate
 }
 
 const setUserAttribute = (user, attribute, value) => {

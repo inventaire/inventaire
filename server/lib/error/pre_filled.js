@@ -58,6 +58,10 @@ module.exports = error_ => {
       return error_.bundle(req, res, 'unauthorized admin api access', 403, context)
     },
 
+    unauthorizedDataadminApiAccess: (req, res, context) => {
+      return error_.bundle(req, res, 'unauthorized admin api access', 403, context)
+    },
+
     // A standardized way to return a 400 unknown action
     unknownAction: (req, res, context) => {
       if (context == null) {

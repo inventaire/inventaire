@@ -19,6 +19,7 @@ const API = module.exports = {
   authReqB: (...args) => customAuthReq(API.getUserB(), ...args),
   authReqC: (...args) => customAuthReq(API.getUserC(), ...args),
   adminReq: (...args) => customAuthReq(API.getAdminUser(), ...args),
+  dataadminReq: (...args) => customAuthReq(API.getDataadminUser(), ...args),
 
   // Create users only if needed by the current test suite
   getUser: getUserGetter('a'),
@@ -26,6 +27,7 @@ const API = module.exports = {
   getUserB: getUserGetter('b'),
   getUserC: getUserGetter('c'),
   getAdminUser: getUserGetter('admin', 'admin'),
+  getDataadminUser: getUserGetter('dataadmin', 'dataadmin'),
   getUserGetter,
   // To be used when you need a user not used by any other tests
   getReservedUser: customData => getUserGetter(randomString(8), null, customData)()

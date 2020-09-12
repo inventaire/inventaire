@@ -1,5 +1,7 @@
 require('should')
-const { nonAuthReq, authReq, adminReq, getUserB, getAdminUser, rethrowShouldNotBeCalledErrors, shouldNotBeCalled } = require('../utils/utils')
+const { nonAuthReq, authReq, adminReq, dataadminReq, getUserB, getAdminUser, getDataadminUser, rethrowShouldNotBeCalledErrors, shouldNotBeCalled } = require('../utils/utils')
+const { createWork } = require('../fixtures/entities')
+
 
 describe('roles:public', () => {
   it('should not access an unauthorized endpoint', async () => {
@@ -40,7 +42,7 @@ describe('roles:authentified', () => {
 })
 
 describe('roles:admin', () => {
-  it('should return a user doc with roles key', async () => {
+  it('should return a user with admin role', async () => {
     const adminUser = await getAdminUser()
     adminUser.roles.should.deepEqual([ 'admin' ])
   })
@@ -50,5 +52,30 @@ describe('roles:admin', () => {
     const endpoint = `/api/entities?action=contributions&user=${user._id}`
     const res = await adminReq('get', endpoint)
     res.should.be.ok()
+  })
+})
+
+describe('roles:dataadmin', () => {
+  it('should return a user with dataadmin role', async () => {
+    const dataadminUser = await getDataadminUser()
+    dataadminUser.roles.should.deepEqual([ 'dataadmin' ])
+  })
+
+  it('should refuse access to private resources from another user', async () => {
+    try {
+      const user = await getUserB()
+      const endpoint = `/api/entities?action=contributions&user=${user._id}`
+      await dataadminReq('get', endpoint).then(shouldNotBeCalled)
+    } catch (err) {
+      rethrowShouldNotBeCalledErrors(err)
+      err.body.status_verbose.should.equal('unauthorized admin api access')
+      err.statusCode.should.equal(403)
+    }
+  })
+
+  it('should merge entities', async () => {
+    const [ fromEntity, toEntity ] = await Promise.all([ createWork(), createWork() ])
+    const res = await dataadminReq('put', '/api/entities?action=merge', { from: fromEntity.uri, to: toEntity.uri })
+    res.ok.should.be.true()
   })
 })

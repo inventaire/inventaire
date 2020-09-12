@@ -20,7 +20,7 @@ npm run db-actions:update-user-role <user id> <action> <role>
 ```
 
 Possible actions: `add`, `remove`
-Possible roles: `admin`, `data-admin`
+Possible roles: `admin`, `dataadmin`
 
 ### Prevent sending further emails to an email address
 People invited by Inventaire users might not want those emails, to prevent sending further emails to a given address, run:
