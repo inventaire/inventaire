@@ -20,7 +20,7 @@ describe('groups:update:accept-request', () => {
   })
 
   it('should move requested user to members', done => {
-    const requesterPromise = getUserGetter(humanName(), false)()
+    const requesterPromise = getUserGetter(humanName())()
 
     Promise.all([ groupPromise, requesterPromise ])
     .then(([ group, requester ]) => {

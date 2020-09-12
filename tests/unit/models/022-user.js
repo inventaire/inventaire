@@ -132,41 +132,41 @@ describe('user model', () => {
     it('should add a first role', () => {
       const user = _create(validUser())
       should(user.roles).not.be.ok()
-      const userWithRole = User.addRole(user, 'admin')
-      userWithRole.roles.should.deepEqual([ 'admin' ])
+      User.addRole('admin')(user)
+      user.roles.should.deepEqual([ 'admin' ])
     })
 
     it('should add a new role', () => {
       const user = _create(validUser())
-      User.addRole(user, 'admin')
-      const userWithRole = User.addRole(user, 'data-admin')
-      userWithRole.roles.should.deepEqual([ 'admin', 'data-admin' ])
+      User.addRole('admin')(user)
+      User.addRole('data-admin')(user)
+      user.roles.should.deepEqual([ 'admin', 'data-admin' ])
     })
 
     it('should not add a duplicated role', () => {
       const user = _create(validUser())
-      User.addRole(user, 'admin');
-      (() => User.addRole(user, 'admin')).should.throw()
+      User.addRole('admin')(user);
+      (() => User.addRole('admin')(user)).should.throw()
     })
 
     it('should reject an invalid role', () => {
       const user = _create(validUser());
-      (() => User.addRole(user, 'foo')).should.throw()
+      (() => User.addRole('foo')(user)).should.throw()
     })
   })
 
   describe('removeRole', () => {
     it('should remove role', () => {
       const user = _create(validUser())
-      User.addRole(user, 'admin')
-      User.addRole(user, 'data-admin')
-      const userWithRole = User.removeRole(user, 'data-admin')
-      userWithRole.roles.should.deepEqual([ 'admin' ])
+      User.addRole('admin')(user)
+      User.addRole('data-admin')(user)
+      User.removeRole('data-admin')(user)
+      user.roles.should.deepEqual([ 'admin' ])
     })
 
     it('should reject an invalid role', () => {
       const user = _create(validUser());
-      (() => User.addRole(user, 'foo')).should.throw()
+      (() => User.addRole('foo')(user)).should.throw()
     })
   })
 })

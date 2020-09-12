@@ -50,7 +50,7 @@ const createAndAddMember = async user => {
 }
 
 const groupAndMemberPromise = () => {
-  const memberPromise = getUserGetter(humanName(), false)()
+  const memberPromise = getUserGetter(humanName())()
   return [ createAndAddMember(memberPromise), memberPromise ]
 }
 

@@ -5,7 +5,7 @@ const assert_ = __.require('utils', 'assert_types')
 const host = CONFIG.fullHost()
 const authEndpoint = `${host}/api/auth`
 const faker = require('faker')
-const { makeUserAdmin } = __.require('controllers', 'user/lib/user')
+const { addRole } = __.require('controllers', 'user/lib/user')
 const { request, rawRequest } = require('../utils/request')
 const { makeFriends } = require('../utils/relations')
 const randomString = __.require('lib', './utils/random_string')
@@ -37,7 +37,7 @@ const API = module.exports = {
     })
   },
 
-  createUser: async (customData = {}) => {
+  createUser: async (customData = {}, role) => {
     const username = customData.username || API.createUsername()
     const userData = {
       username,
@@ -50,13 +50,8 @@ const API = module.exports = {
     assert_.string(cookie)
     const user = await API.getUserWithCookie(cookie)
     await setCustomData(user, customData)
+    if (role) await addRole(user._id, role)
     return refreshUser(cookie)
-  },
-
-  createAdminUser: async data => {
-    const user = await API.createUser(data)
-    await makeUserAdmin(user._id)
-    return API.getRefreshedUser(user)
   },
 
   getUserWithCookie: async cookie => {

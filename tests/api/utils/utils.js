@@ -1,14 +1,13 @@
 const __ = require('config').universalPath
 const { request, customAuthReq } = require('./request')
 const randomString = __.require('lib', 'utils/random_string')
-const { createUser, createAdminUser, getRefreshedUser } = require('../fixtures/users')
+const { createUser, getRefreshedUser } = require('../fixtures/users')
 require('should')
 
 const userPromises = {}
-const getUserGetter = (key, admin = false, customData) => () => {
+const getUserGetter = (key, role, customData) => () => {
   if (userPromises[key] == null) {
-    const createFn = admin ? createAdminUser : createUser
-    userPromises[key] = createFn(customData)
+    userPromises[key] = createUser(customData, role)
   }
   return getRefreshedUser(userPromises[key])
 }
@@ -26,10 +25,10 @@ const API = module.exports = {
   getUserId: () => API.getUser().then(({ _id }) => _id),
   getUserB: getUserGetter('b'),
   getUserC: getUserGetter('c'),
-  getAdminUser: getUserGetter('admin', true),
+  getAdminUser: getUserGetter('admin', 'admin'),
   getUserGetter,
   // To be used when you need a user not used by any other tests
-  getReservedUser: customData => getUserGetter(randomString(8), false, customData)()
+  getReservedUser: customData => getUserGetter(randomString(8), null, customData)()
 }
 
 Object.assign(API, require('../../unit/utils'))

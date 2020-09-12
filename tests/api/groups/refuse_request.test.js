@@ -17,7 +17,7 @@ describe('groups:update:refuse-request', () => {
   })
 
   it('should remove user from requested list', done => {
-    const memberPromise = getUserGetter(humanName(), false)()
+    const memberPromise = getUserGetter(humanName())()
 
     Promise.all([
       createGroup(),

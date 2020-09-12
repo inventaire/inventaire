@@ -4,8 +4,8 @@ const _ = __.require('builders', 'utils')
 require('should')
 const { getUserGetter, customAuthReq } = __.require('apiTests', 'utils/utils')
 const { Wait } = __.require('lib', 'promises')
-const geolocatedUser1Promise = getUserGetter('geo1', false, { position: [ 1, 1 ] })().then(Wait(2000))
-const geolocatedUser2Promise = getUserGetter('geo2', false, { position: [ 40, 40 ] })().then(Wait(2000))
+const geolocatedUser1Promise = getUserGetter('geo1', null, { position: [ 1, 1 ] })().then(Wait(2000))
+const geolocatedUser2Promise = getUserGetter('geo2', null, { position: [ 40, 40 ] })().then(Wait(2000))
 const endpoint = '/api/users?action=nearby'
 
 describe('users:nearby', () => {
