@@ -132,6 +132,15 @@ User.updateItemsCounts = itemsCounts => user => {
   return user
 }
 
+User.addRole = (user, role) => {
+  if (!User.attributes.roles.includes(role)) {
+    throw error_.new('unknown role', 500)
+  }
+  user.roles = user.roles || []
+  user.roles.push(role)
+  return user
+}
+
 User.formatters = {
   position: truncateLatLng
 }

@@ -127,4 +127,25 @@ describe('user model', () => {
       should(updatedUser.snapshot).not.be.ok()
     })
   })
+
+  describe('addRole', () => {
+    it('should add a first role', () => {
+      const user = _create(validUser())
+      should(user.roles).not.be.ok()
+      const userWithRole = User.addRole(user, 'admin')
+      userWithRole.roles.should.deepEqual([ 'admin' ])
+    })
+
+    it('should add a new role', () => {
+      const user = _create(validUser())
+      User.addRole(user, 'admin')
+      const userWithRole = User.addRole(user, 'data-admin')
+      userWithRole.roles.should.deepEqual([ 'admin', 'data-admin' ])
+    })
+
+    it('should reject an invalid role', () => {
+      const user = _create(validUser());
+      (() => User.addRole(user, 'foo')).should.throw()
+    })
+  })
 })
