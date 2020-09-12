@@ -143,6 +143,27 @@ describe('user model', () => {
       userWithRole.roles.should.deepEqual([ 'admin', 'data-admin' ])
     })
 
+    it('should not add a duplicated role', () => {
+      const user = _create(validUser())
+      User.addRole(user, 'admin');
+      (() => User.addRole(user, 'admin')).should.throw()
+    })
+
+    it('should reject an invalid role', () => {
+      const user = _create(validUser());
+      (() => User.addRole(user, 'foo')).should.throw()
+    })
+  })
+
+  describe('removeRole', () => {
+    it('should remove role', () => {
+      const user = _create(validUser())
+      User.addRole(user, 'admin')
+      User.addRole(user, 'data-admin')
+      const userWithRole = User.removeRole(user, 'data-admin')
+      userWithRole.roles.should.deepEqual([ 'admin' ])
+    })
+
     it('should reject an invalid role', () => {
       const user = _create(validUser());
       (() => User.addRole(user, 'foo')).should.throw()

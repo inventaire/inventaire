@@ -134,10 +134,22 @@ User.updateItemsCounts = itemsCounts => user => {
 
 User.addRole = (user, role) => {
   if (!User.attributes.roles.includes(role)) {
-    throw error_.new('unknown role', 500)
+    throw error_.new('unknown role', 400)
   }
   user.roles = user.roles || []
+  if (user.roles.includes(role)) {
+    throw error_.new('user already has role', 400)
+  }
   user.roles.push(role)
+  return user
+}
+
+User.removeRole = (user, role) => {
+  if (!User.attributes.roles.includes(role)) {
+    throw error_.new('unknown role', 400)
+  }
+  user.roles = user.roles || []
+  user.roles = _.without(user.roles, role)
   return user
 }
 
