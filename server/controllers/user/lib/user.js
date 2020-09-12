@@ -112,7 +112,7 @@ const user_ = module.exports = {
     })
   },
 
-  makeUserAdmin: userId => db.update(userId, BasicUpdater('admin', true)),
+  makeUserAdmin: userId => db.update(userId, BasicUpdater('roles', [ 'admin' ])),
 
   setOauthTokens: (userId, provider, data) => {
     return db.update(userId, User.setOauthTokens(provider, data))

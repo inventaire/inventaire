@@ -56,7 +56,7 @@ const API = module.exports = {
   createAdminUser: async data => {
     const user = await API.createUser(data)
     await makeUserAdmin(user._id)
-    return user
+    return API.getRefreshedUser(user)
   },
 
   getUserWithCookie: async cookie => {

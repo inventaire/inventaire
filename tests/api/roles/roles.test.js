@@ -42,7 +42,7 @@ describe('roles:authentified', () => {
 describe('roles:admin', () => {
   it('should return a user doc with roles key', async () => {
     const adminUser = await getAdminUser()
-    adminUser.admin.should.be.true()
+    adminUser.roles.should.deepEqual([ 'admin' ])
   })
 
   it('should access private resources from another user', async () => {

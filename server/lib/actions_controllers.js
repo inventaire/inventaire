@@ -22,7 +22,7 @@ module.exports = controllers => {
       return error_.unauthorizedApiAccess(req, res)
     }
 
-    if (actionData.admin && !req.user.admin) {
+    if (actionData.admin && !(req.user.roles && req.user.roles.includes('admin'))) {
       return error_.unauthorizedAdminApiAccess(req, res)
     }
 
