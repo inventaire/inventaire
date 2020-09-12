@@ -6,7 +6,7 @@ Tips and scripts to administrate an instance
 
 
 - [Users](#users)
-  - [Make user admin](#make-user-admin)
+  - [Update user role](#update-user-role)
   - [Prevent sending further emails to an email address](#prevent-sending-further-emails-to-an-email-address)
   - [Increment user undelivered emails count](#increment-user-undelivered-emails-count)
   - [Delete user account](#delete-user-account)
@@ -14,11 +14,13 @@ Tips and scripts to administrate an instance
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## Users
-### Make user admin
-An admin user as additional right, such as merging or deleting entities via the API
+### Update user role
 ```sh
-npm run db-actions:make-user-admin <user id>
+npm run db-actions:update-user-role <user id> <action> <role>
 ```
+
+Possible actions: `add`, `remove`
+Possible roles: `admin`, `data-admin`
 
 ### Prevent sending further emails to an email address
 People invited by Inventaire users might not want those emails, to prevent sending further emails to a given address, run:
