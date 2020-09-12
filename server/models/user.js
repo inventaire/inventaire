@@ -95,19 +95,7 @@ User.softDelete = userDoc => {
 }
 
 User.updateEmail = (doc, email) => {
-  doc = archivePreviousEmail(doc)
   doc.email = email
-  return doc
-}
-
-const archivePreviousEmail = doc => {
-  // Don't save the previous email if it had not been validated
-  if (doc.validEmail) {
-    if (!doc.previousEmails) { doc.previousEmails = [] }
-    doc.previousEmails.push(doc.email)
-    doc.previousEmails = _.uniq(doc.previousEmails)
-    doc.validEmail = false
-  }
   return doc
 }
 
