@@ -53,6 +53,12 @@ describe('roles:admin', () => {
     const res = await adminReq('get', endpoint)
     res.should.be.ok()
   })
+
+  it('should merge entities', async () => {
+    const [ fromEntity, toEntity ] = await Promise.all([ createWork(), createWork() ])
+    const res = await adminReq('put', '/api/entities?action=merge', { from: fromEntity.uri, to: toEntity.uri })
+    res.ok.should.be.true()
+  })
 })
 
 describe('roles:dataadmin', () => {
