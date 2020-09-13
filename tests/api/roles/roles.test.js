@@ -2,7 +2,6 @@ require('should')
 const { nonAuthReq, authReq, adminReq, dataadminReq, getUserB, getAdminUser, getDataadminUser, rethrowShouldNotBeCalledErrors, shouldNotBeCalled } = require('../utils/utils')
 const { createWork } = require('../fixtures/entities')
 
-
 describe('roles:public', () => {
   it('should not access an unauthorized endpoint', async () => {
     try {
@@ -29,7 +28,7 @@ describe('roles:authentified', () => {
       await authReq('get', endpoint).then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
-      err.body.status_verbose.should.equal('unauthorized admin api access')
+      err.body.status_verbose.should.equal('unauthorized api access')
       err.statusCode.should.equal(403)
     }
   })
@@ -74,7 +73,7 @@ describe('roles:dataadmin', () => {
       await dataadminReq('get', endpoint).then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
-      err.body.status_verbose.should.equal('unauthorized admin api access')
+      err.body.status_verbose.should.equal('unauthorized api access')
       err.statusCode.should.equal(403)
     }
   })

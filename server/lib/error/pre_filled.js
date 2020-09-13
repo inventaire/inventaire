@@ -51,15 +51,8 @@ module.exports = error_ => {
     bundleInvalid: Bundle('newInvalid'),
 
     unauthorizedApiAccess: (req, res, context) => {
-      return error_.bundle(req, res, 'unauthorized api access', 401, context)
-    },
-
-    unauthorizedAdminApiAccess: (req, res, context) => {
-      return error_.bundle(req, res, 'unauthorized admin api access', 403, context)
-    },
-
-    unauthorizedDataadminApiAccess: (req, res, context) => {
-      return error_.bundle(req, res, 'unauthorized admin api access', 403, context)
+      const statusCode = req.user ? 403 : 401
+      return error_.bundle(req, res, 'unauthorized api access', statusCode, context)
     },
 
     // A standardized way to return a 400 unknown action

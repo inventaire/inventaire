@@ -43,7 +43,6 @@ module.exports = {
       merge: require('./merge')
     },
     admin: {
-      merge: require('./merge'),
       'revert-edit': require('./revert_edit'),
       'revert-merge': require('./revert_merge')
     }

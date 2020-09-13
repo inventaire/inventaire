@@ -1,4 +1,5 @@
 const __ = require('config').universalPath
+const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const validateObject = __.require('lib', 'validate_object')
 
@@ -18,46 +19,39 @@ module.exports = controllers => {
       return error_.unknownAction(req, res)
     }
 
-    if (actionData.access.includes('authentified') && (req.user == null)) {
-      return error_.unauthorizedApiAccess(req, res)
+    // user.roles doesn't contain 'public' and 'authentified', but those are needed to resolve access levels
+    let roles = [ 'public' ]
+    if (req.user) {
+      roles.push('authentified')
+      if (req.user.roles) roles = roles.concat(req.user.roles)
     }
 
-    if (isAccessible(req.user, actionData, 'dataadmin')) {
-      return error_.unauthorizedDataadminApiAccess(req, res)
-    }
-
-    if (isAccessible(req.user, actionData, 'admin')) {
-      return error_.unauthorizedAdminApiAccess(req, res)
-    }
-
-    actionData.controller(req, res)
+    if (_.someMatch(roles, actionData.access)) actionData.controller(req, res)
+    else error_.unauthorizedApiAccess(req, res, { roles, requiredAccessLevel: actionData.access })
   }
 }
 
-const dontHaveRole = (user, role) => { return !(hasRole(user, role)) }
-
-const isAccessible = (user, actionData, role) => {
-  return actionData.access.includes(role) && dontHaveRole(user, role)
+const rolesByAccess = {
+  public: [ 'public', 'authentified', 'admin', 'dataadmin' ],
+  authentified: [ 'authentified', 'admin', 'dataadmin' ],
+  dataadmin: [ 'admin', 'dataadmin' ],
+  admin: [ 'admin' ]
 }
 
-const hasRole = (user, role) => { return user.roles && user.roles.includes(role) }
+const accessLevels = Object.keys(rolesByAccess)
 
 const getActions = controllers => {
-  validateObject(controllers, [ 'public', 'authentified', 'admin', 'dataadmin' ], 'object')
-
-  const rolesByAccess = {
-    public: [ ],
-    authentified: [ 'authentified' ],
-    dataadmin: [ 'authentified', 'dataadmin' ],
-    admin: [ 'authentified', 'admin' ]
-  }
+  validateObject(controllers, accessLevels, 'object')
 
   const controllerKeys = Object.keys(controllers)
   const actions = {}
 
   controllerKeys.forEach(access => {
     for (const action in controllers[access]) {
-      actions[action] = { controller: controllers[access][action], access: rolesByAccess[access] }
+      actions[action] = {
+        controller: controllers[access][action],
+        access: rolesByAccess[access]
+      }
     }
   })
 
