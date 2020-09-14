@@ -54,5 +54,18 @@ describe('requests', () => {
         err.type.should.equal('request-timeout')
       }
     })
+
+    it('should keep timeout data for the whole host', async () => {
+      const { origin } = await startTimeoutServer()
+      await requests_.get(`${origin}/a`, { timeout: 100 }).catch(err => err.type.should.equal('request-timeout'))
+      await requests_.get(`${origin}/b`, { timeout: 100 }).catch(err => err.message.should.equal('temporary ban'))
+      await wait(baseBanTime + 100)
+      try {
+        await requests_.get(`${origin}/c`, { timeout: 100 }).then(shouldNotBeCalled)
+      } catch (err) {
+        rethrowShouldNotBeCalledErrors(err)
+        err.type.should.equal('request-timeout')
+      }
+    })
   })
 })
