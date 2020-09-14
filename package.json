@@ -22,7 +22,7 @@
     "lint": "./scripts/lint",
     "lint-fix": "./scripts/lint_fix",
     "lint-staged": "./scripts/lint_staged",
-    "populate-fixtures": "./scripts/populate_fixtures",
+    "populate-users-fixtures": "./scripts/populate_users_fixtures.js",
     "postinstall": "./scripts/postinstall",
     "preview-email": "./scripts/preview_email",
     "replicate-tests-db": "./scripts/replicate_tests_db.js",

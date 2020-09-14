@@ -15,8 +15,8 @@ const API = module.exports = {
     return populatePromise
   },
 
-  createUserWithItems: async () => {
-    const user = await createUser()
+  createUserWithItems: async username => {
+    const user = await createUser(username)
     const itemsData = _.times(publicItemsPerUser, () => ({ listing: 'public' }))
     await createRandomizedItems(user, itemsData)
     return user
