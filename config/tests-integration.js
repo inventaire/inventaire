@@ -3,5 +3,9 @@ module.exports = {
     suffix: 'tests'
   },
 
-  leveldbMemoryBackend: false
+  leveldbMemoryBackend: false,
+
+  outgoingRequests: {
+    baseBanTime: 500
+  }
 }
