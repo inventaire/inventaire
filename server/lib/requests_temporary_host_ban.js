@@ -9,7 +9,7 @@ const checkHostBan = host => {
   const hostTimeoutData = timeoutData[host]
   if (hostTimeoutData != null) {
     if (Date.now() < hostTimeoutData.expire) {
-      throw error_.new('temporary ban', 500, { host, hostTimeoutData })
+      throw error_.new('temporary ban', 500, { host, timeoutData: hostTimeoutData })
     }
   }
 }
