@@ -5,6 +5,7 @@ const _ = __.require('builders', 'utils')
 const { createUserWithItems } = require('../tests/api/fixtures/populate')
 const [ username ] = process.argv.slice(2)
 const { makeFriends } = require('../tests/api/utils/relations')
+const { createGroup, addMember, addAdmin } = require('../tests/api/fixtures/groups')
 const user_ = __.require('controllers', 'user/lib/user')
 
 if (username) {
@@ -24,8 +25,21 @@ createUserWithItems({ username })
     addFriendsToUser(userCreated),
     addFriendsToUser(userCreated)
   ])
-  .then(() => {
-    return userCreated
+  .then(([ friend1, friend2 ]) => {
+    return createGroup(userCreated)
+    .then(group => {
+      return Promise.all([
+        addAdmin(group, userCreated),
+        addMember(group, friend1),
+        addMember(group, friend2)
+      ])
+      .then(() => {
+        console.log(`Group "${group.name}" has been created`)
+        console.log(`  Admin: ${userCreated.username}`)
+        console.log(`  Members: ${friend1.username}, ${friend2.username}`)
+        return userCreated
+      })
+    })
   })
 })
 .then(userCreated => {
@@ -38,7 +52,8 @@ createUserWithItems({ username })
 .catch(_.Error('users fixture err'))
 
 const addFriendsToUser = async user => {
-  const userCreated = await createUserWithItems()
-  await makeFriends(user, userCreated)
-  console.log(`${user.username} is now friend with ${userCreated.username}`)
+  const friend = await createUserWithItems()
+  await makeFriends(user, friend)
+  console.log(`${user.username} is now friend with ${friend.username}`)
+  return friend
 }
