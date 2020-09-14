@@ -31,7 +31,7 @@
     "test": "./scripts/run_unit_tests",
     "test-api": "./tests/api/scripts/test_api",
     "test-api-quick": "./tests/api/scripts/test_api_quick",
-    "test-watch": "./scripts/test --watch --extensions js",
+    "test-integration": "./scripts/test_integration",
     "update-i18n": "./scripts/update_i18n",
     "update-toc": "./scripts/update_toc",
     "watch": "./scripts/watch"
