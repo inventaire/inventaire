@@ -2,6 +2,7 @@ const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const validateObject = __.require('lib', 'validate_object')
+const { rolesByAccess } = require('./get_user_access_levels')
 
 module.exports = controllers => {
   const actions = getActions(controllers)
@@ -29,13 +30,6 @@ module.exports = controllers => {
     if (_.someMatch(roles, actionData.access)) actionData.controller(req, res)
     else error_.unauthorizedApiAccess(req, res, { roles, requiredAccessLevel: actionData.access })
   }
-}
-
-const rolesByAccess = {
-  public: [ 'public', 'authentified', 'admin', 'dataadmin' ],
-  authentified: [ 'authentified', 'admin', 'dataadmin' ],
-  dataadmin: [ 'admin', 'dataadmin' ],
-  admin: [ 'admin' ]
 }
 
 const accessLevels = Object.keys(rolesByAccess)
