@@ -7,6 +7,8 @@ const requests_ = __.require('lib', 'requests')
 const assert_ = __.require('utils', 'assert_types')
 
 const testServerAvailability = async () => {
+  if (!CONFIG.waitForServer) return
+
   try {
     await requests_.get(`${host}/api/tests`, { timeout: 1000 })
     _.success('tests server is ready')
