@@ -8,48 +8,39 @@ const { makeFriends } = require('../tests/api/utils/relations')
 const { createGroup, addMember, addAdmin } = require('../tests/api/fixtures/groups')
 const user_ = __.require('controllers', 'user/lib/user')
 
-if (username) {
-  user_.findOneByUsername(username)
-  .then(({ _id }) => {
-    if (_id) {
-      console.log(`Username already exists at ${_id}`)
-      return process.exit(0)
-    }
-  })
+const run = async () => {
+  try {
+    const { _id } = await user_.findOneByUsername(username)
+    console.log(`Username ${username} already exists at ${_id}`)
+    return process.exit(0)
+  } catch (err) {
+    createUserAndGroupAndGFriends(username)
+  }
 }
 
-createUserWithItems({ username })
-.then(userCreated => {
-  _.success(`New user ${userCreated.username} with id ${userCreated._id}`)
-  return Promise.all([
-    addFriendsToUser(userCreated),
-    addFriendsToUser(userCreated)
+const createUserAndGroupAndGFriends = async username => {
+  const user = await createUserWithItems({ username })
+  _.success(`New user ${user.username} with id ${user._id}`)
+  const [ friend1, friend2 ] = await Promise.all([
+    addFriendsToUser(user),
+    addFriendsToUser(user)
   ])
-  .then(([ friend1, friend2 ]) => {
-    return createGroup(userCreated)
-    .then(group => {
-      return Promise.all([
-        addAdmin(group, userCreated),
-        addMember(group, friend1),
-        addMember(group, friend2)
-      ])
-      .then(() => {
-        console.log(`Group "${group.name}" has been created`)
-        console.log(`  Admin: ${userCreated.username}`)
-        console.log(`  Members: ${friend1.username}, ${friend2.username}`)
-        return userCreated
-      })
-    })
-  })
-})
-.then(userCreated => {
+
+  const group = await createGroup(user)
+  await Promise.all([
+    addAdmin(group, user),
+    addMember(group, friend1),
+    addMember(group, friend2)
+  ])
+  console.log(`Group "${group.name}" has been created`)
+  console.log(`  Admin: ${user.username}`)
+  console.log(`  Members: ${friend1.username}, ${friend2.username}`)
+
   _.info(`You can now login with :
-  - Username : ${userCreated.username}
-  - Password : 12345678`
-  ) // as defined in "fixtures/users"
+  - Username : ${user.username}
+  - Password : 12345678`) // Password as defined in "fixtures/users"
   return process.exit(0)
-})
-.catch(_.Error('users fixture err'))
+}
 
 const addFriendsToUser = async user => {
   const friend = await createUserWithItems()
@@ -57,3 +48,5 @@ const addFriendsToUser = async user => {
   console.log(`${user.username} is now friend with ${friend.username}`)
   return friend
 }
+
+run()
