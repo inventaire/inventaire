@@ -1,6 +1,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-require('should')
+const should = require('should')
 const express = require('express')
 const requests_ = __.require('lib', 'requests')
 const { wait } = __.require('lib', 'promises')
@@ -39,6 +39,9 @@ describe('requests', () => {
         rethrowShouldNotBeCalledErrors(err)
         err.message.should.equal('temporary ban')
         err.context.host.should.equal(host)
+        const { banTime, expire } = err.context.timeoutData
+        banTime.should.equal(baseBanTime)
+        should(expire > Date.now() && expire < Date.now() + baseBanTime).be.true()
       }
     })
 
@@ -65,6 +68,25 @@ describe('requests', () => {
       } catch (err) {
         rethrowShouldNotBeCalledErrors(err)
         err.type.should.equal('request-timeout')
+      }
+    })
+
+    it('should increase ban time on next failure', async () => {
+      const { origin } = await startTimeoutServer()
+      await requests_.get(origin, { timeout: 100 }).catch(err => err.type.should.equal('request-timeout'))
+      await requests_.get(origin, { timeout: 100 }).catch(err => err.message.should.equal('temporary ban'))
+      await wait(baseBanTime + 100)
+      const beforeReban = Date.now()
+      await requests_.get(origin, { timeout: 100 }).catch(err => err.type.should.equal('request-timeout'))
+      try {
+        await requests_.get(origin, { timeout: 100 }).then(shouldNotBeCalled)
+      } catch (err) {
+        rethrowShouldNotBeCalledErrors(err)
+        err.message.should.equal('temporary ban')
+        const { banTime, expire } = err.context.timeoutData
+        banTime.should.equal(baseBanTime * 4)
+        const execTimeMargin = 1000
+        should(expire > beforeReban && expire < beforeReban + baseBanTime * 4 + execTimeMargin).be.true()
       }
     })
   })
