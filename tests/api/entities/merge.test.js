@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
-const { authReq, adminReq, undesiredRes, shouldNotBeCalled } = require('../utils/utils')
+const { authReq, dataadminReq, undesiredRes, shouldNotBeCalled } = require('../utils/utils')
 const randomString = __.require('lib', './utils/random_string')
 const { getByUris, merge, getHistory, addClaim } = require('../utils/entities')
 const { getByIds: getItemsByIds } = require('../utils/items')
@@ -17,7 +17,7 @@ describe('entities:merge', () => {
   })
 
   it('should reject without from uri', async () => {
-    await adminReq('put', '/api/entities?action=merge')
+    await dataadminReq('put', '/api/entities?action=merge')
     .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal('missing parameter in body: from')
@@ -26,7 +26,7 @@ describe('entities:merge', () => {
   })
 
   it('should reject without to uri', async () => {
-    await adminReq('put', '/api/entities?action=merge', { from: 'inv:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' })
+    await dataadminReq('put', '/api/entities?action=merge', { from: 'inv:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' })
     .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal('missing parameter in body: to')
@@ -35,7 +35,7 @@ describe('entities:merge', () => {
   })
 
   it('should reject invalid uris', async () => {
-    await adminReq('put', '/api/entities?action=merge', { from: 'fromUri', to: 'toUri' })
+    await dataadminReq('put', '/api/entities?action=merge', { from: 'fromUri', to: 'toUri' })
     .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.startWith('invalid from:')
@@ -45,7 +45,7 @@ describe('entities:merge', () => {
 
   it('should reject invalid from prefix', async () => {
     const fakeUri = 'inv:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
-    await adminReq('put', '/api/entities?action=merge', { from: 'wd:Q42', to: fakeUri })
+    await dataadminReq('put', '/api/entities?action=merge', { from: 'wd:Q42', to: fakeUri })
     .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.startWith("invalid 'from' uri domain: wd. Accepted domains: inv,isbn")
@@ -55,7 +55,7 @@ describe('entities:merge', () => {
 
   it('should return uris not found', async () => {
     const fakeUri = 'inv:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
-    await adminReq('put', '/api/entities?action=merge', { from: fakeUri, to: 'wd:Q42' })
+    await dataadminReq('put', '/api/entities?action=merge', { from: fakeUri, to: 'wd:Q42' })
     .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal("'from' entity not found")

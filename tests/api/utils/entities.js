@@ -31,7 +31,7 @@ const entitiesUtils = module.exports = {
     assert_.string(toUri)
     fromUri = normalizeUri(fromUri)
     toUri = normalizeUri(toUri)
-    return adminReq('put', '/api/entities?action=merge', { from: fromUri, to: toUri })
+    return dataadminReq('put', '/api/entities?action=merge', { from: fromUri, to: toUri })
   },
 
   revertMerge: fromUri => {
