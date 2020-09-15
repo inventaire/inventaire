@@ -3,20 +3,14 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const should = require('should')
 const { wait } = __.require('lib', 'promises')
-const { adminReq, authReq, shouldNotBeCalled } = require('../utils/utils')
+const { authReq, shouldNotBeCalled } = require('../utils/utils')
 const { getByUris, deleteByUris } = require('../utils/entities')
 const { getByIds: getItemsByIds } = require('../utils/items')
 const { createHuman, createWork, createWorkWithAuthor, createEdition, createEditionWithIsbn } = require('../fixtures/entities')
 
-describe('entities:delete-by-uris', () => {
-  it('should require admin rights', async () => {
-    await authReq('post', '/api/entities?action=delete-by-uris')
-    .then(shouldNotBeCalled)
-    .catch(err => err.statusCode.should.equal(403))
-  })
-
+describe('entities:delete', () => {
   it('should reject without uris', async () => {
-    await adminReq('post', '/api/entities?action=delete-by-uris')
+    await authReq('post', '/api/entities?action=delete')
     .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal('missing parameter in body: uris')

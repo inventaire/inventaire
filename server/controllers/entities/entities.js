@@ -28,10 +28,8 @@ module.exports = {
     },
     authentified: {
       create: require('./create'),
-      resolve: require('./resolve')
-    },
-    admin: {
-      'delete-by-uris': require('./by_uris_delete')
+      resolve: require('./resolve'),
+      delete: require('./delete')
     }
   }),
 

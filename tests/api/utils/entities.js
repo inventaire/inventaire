@@ -23,7 +23,7 @@ const entitiesUtils = module.exports = {
   deleteByUris: uris => {
     uris = _.forceArray(uris)
     assert_.strings(uris)
-    return adminReq('post', '/api/entities?action=delete-by-uris', { uris })
+    return authReq('post', '/api/entities?action=delete', { uris })
   },
 
   merge: (fromUri, toUri) => {
