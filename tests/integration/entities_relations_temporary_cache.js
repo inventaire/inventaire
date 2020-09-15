@@ -34,12 +34,12 @@ describe('entities relations temporary cache', () => {
     }
   })
 
-  it('should reject missing object', async () => {
+  it('should reject missing value', async () => {
     try {
       await set(someFakeUri, property, null)
       shouldNotBeCalled()
     } catch (err) {
-      err.message.should.equal('invalid object')
+      err.message.should.equal('invalid value')
     }
   })
 

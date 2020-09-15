@@ -15,8 +15,8 @@ const cacheEntityRelations = async invEntityUri => {
 
   for (const property of cachedRelationProperties) {
     if (claims[property]) {
-      for (const value of claims[property]) {
-        const promise = entitiesRelationsTemporaryCache.set(invEntityUri, property, value)
+      for (const valueUri of claims[property]) {
+        const promise = entitiesRelationsTemporaryCache.set(invEntityUri, property, valueUri)
         promises.push(promise)
       }
     }
@@ -25,8 +25,8 @@ const cacheEntityRelations = async invEntityUri => {
   return Promise.all(promises)
 }
 
-const getCachedRelations = async (uri, property, formatEntity) => {
-  const uris = await entitiesRelationsTemporaryCache.get(property, uri)
+const getCachedRelations = async (valueUri, property, formatEntity) => {
+  const uris = await entitiesRelationsTemporaryCache.get(property, valueUri)
   const entities = await getEntitiesList(uris)
   return entities.map(formatEntity)
 }

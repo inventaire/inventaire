@@ -12,14 +12,14 @@ const put = promisify(ttlDb.put).bind(ttlDb)
 const del = promisify(ttlDb.del).bind(ttlDb)
 
 module.exports = {
-  get: async (property, object) => {
-    const keys = await getKeyRange(property, object)
+  get: async (property, valueUri) => {
+    const keys = await getKeyRange(property, valueUri)
     return keys.map(getSubject)
   },
 
-  set: async (subject, property, object) => put(buildKey(subject, property, object), ''),
+  set: async (subjectUri, property, valueUri) => put(buildKey(subjectUri, property, valueUri), ''),
 
-  del: async (subject, property, object) => del(buildKey(subject, property, object))
+  del: async (subjectUri, property, valueUri) => del(buildKey(subjectUri, property, valueUri))
 }
 
 const getKeyRange = (property, object) => {
@@ -38,9 +38,9 @@ const getKeyRange = (property, object) => {
 
 const getSubject = key => key.split('-')[2]
 
-const buildKey = (subject, property, object) => {
-  if (!_.isInvEntityUri(subject)) throw error_.new('invalid subject', { subject })
+const buildKey = (subjectUri, property, valueUri) => {
+  if (!_.isInvEntityUri(subjectUri)) throw error_.new('invalid subject', { subjectUri })
   if (!_.isPropertyUri(property)) throw error_.new('invalid property', { property })
-  if (!_.isEntityUri(object)) throw error_.new('invalid object', { object })
-  return `${property}-${object}-${subject}`
+  if (!_.isEntityUri(valueUri)) throw error_.new('invalid value', { valueUri })
+  return `${property}-${valueUri}-${subjectUri}`
 }
