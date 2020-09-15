@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const assert_ = __.require('utils', 'assert_types')
-const { nonAuthReq, authReq, adminReq } = require('./utils')
+const { nonAuthReq, authReq, dataadminReq, adminReq } = require('./utils')
 
 const entitiesUtils = module.exports = {
   getByUris: (uris, relatives) => {
@@ -37,7 +37,7 @@ const entitiesUtils = module.exports = {
   revertMerge: fromUri => {
     assert_.string(fromUri)
     fromUri = normalizeUri(fromUri)
-    return adminReq('put', '/api/entities?action=revert-merge', { from: fromUri })
+    return dataadminReq('put', '/api/entities?action=revert-merge', { from: fromUri })
   },
 
   getHistory: entityId => {

@@ -43,9 +43,7 @@ module.exports = {
       'move-to-wikidata': require('./move_to_wikidata')
     },
     dataadmin: {
-      merge: require('./merge')
-    },
-    admin: {
+      merge: require('./merge'),
       'revert-merge': require('./revert_merge')
     }
   })

@@ -2,13 +2,13 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const should = require('should')
 const { tap } = __.require('lib', 'promises')
-const { authReq, undesiredRes, adminReq } = require('../utils/utils')
+const { authReq, undesiredRes, dataadminReq } = require('../utils/utils')
 const randomString = __.require('lib', './utils/random_string')
 const { getByUris, merge, revertMerge, updateLabel, addClaim } = require('../utils/entities')
 const { createWork, createHuman, createWorkWithAuthor } = require('../fixtures/entities')
 
 describe('entities:revert-merge', () => {
-  it('should require admin rights', done => {
+  it('should require data admin rights', done => {
     authReq('put', '/api/entities?action=revert-merge')
     .then(undesiredRes(done))
     .catch(err => {
@@ -19,7 +19,7 @@ describe('entities:revert-merge', () => {
 
   it('should reject without "from" uri', done => {
     // Not using utils/entities `revertMerge` function to avoid getting an error from `assert_.string(fromUri)`
-    adminReq('put', '/api/entities?action=revert-merge', {})
+    dataadminReq('put', '/api/entities?action=revert-merge', {})
     .then(undesiredRes(done))
     .catch(err => {
       err.body.status_verbose.should.equal('missing parameter in body: from')
