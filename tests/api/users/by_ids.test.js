@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = __.require('apiTests', 'utils/utils')
-const { nonAuthReq, authReq, customAuthReq, getUser, getUserB } = require('../utils/utils')
+const { publicReq, authReq, customAuthReq, getUser, getUserB } = require('../utils/utils')
 const { getTwoFriends } = require('../fixtures/users')
 
 const endpoint = '/api/users?action=by-ids'
@@ -10,7 +10,7 @@ const endpoint = '/api/users?action=by-ids'
 describe('users:by-ids', () => {
   it('should reject without id', async () => {
     try {
-      await nonAuthReq('get', endpoint).then(shouldNotBeCalled)
+      await publicReq('get', endpoint).then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.equal('missing parameter in query: ids')
@@ -21,7 +21,7 @@ describe('users:by-ids', () => {
   it('should get a user public data', async () => {
     const user = await getUser()
     const userId = user._id
-    const res = await nonAuthReq('get', `${endpoint}&ids=${userId}`)
+    const res = await publicReq('get', `${endpoint}&ids=${userId}`)
     res.users.should.be.an.Object()
     res.users[userId].should.be.an.Object()
     res.users[userId]._id.should.equal(userId)
@@ -51,7 +51,7 @@ describe('users:by-ids', () => {
   it('should get several users', async () => {
     const users = await Promise.all([ getUser(), getUserB() ])
     const ids = users.map(_.property('_id'))
-    const res = await nonAuthReq('get', `${endpoint}&ids=${ids.join('|')}`)
+    const res = await publicReq('get', `${endpoint}&ids=${ids.join('|')}`)
     _.keys(res.users).should.deepEqual(ids)
   })
 })

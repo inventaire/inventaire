@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
-const { nonAuthReq, undesiredRes } = require('../utils/utils')
+const { publicReq, undesiredRes } = require('../utils/utils')
 
 const buildUrl = (property, value) => {
   return _.buildPath('/api/entities', { action: 'reverse-claims', property, value })
@@ -10,7 +10,7 @@ const buildUrl = (property, value) => {
 
 describe('entities:reverse-claims', () => {
   it('should reject wdt:P31 requests', done => {
-    nonAuthReq('get', buildUrl('wdt:P31', 'wd:Q571'))
+    publicReq('get', buildUrl('wdt:P31', 'wd:Q571'))
     .then(undesiredRes(done))
     .catch(err => {
       err.body.status_verbose.should.equal('denylisted property')
@@ -20,7 +20,7 @@ describe('entities:reverse-claims', () => {
   })
 
   it('should accept allowlisted entity value properties', done => {
-    nonAuthReq('get', buildUrl('wdt:P921', 'wd:Q456'))
+    publicReq('get', buildUrl('wdt:P921', 'wd:Q456'))
     .then(res => {
       res.uris.should.be.an.Array()
       done()
@@ -29,7 +29,7 @@ describe('entities:reverse-claims', () => {
   })
 
   it('should accept allowlisted string value properties', done => {
-    nonAuthReq('get', buildUrl('wdt:P3035', '978-2-505'))
+    publicReq('get', buildUrl('wdt:P3035', '978-2-505'))
     .then(res => {
       res.uris.should.be.an.Array()
       done()

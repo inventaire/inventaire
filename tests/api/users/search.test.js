@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const should = require('should')
-const { nonAuthReq, authReq, customAuthReq, getUser, getUserB } = require('../utils/utils')
+const { publicReq, authReq, customAuthReq, getUser, getUserB } = require('../utils/utils')
 const { createUser } = require('../fixtures/users')
 const { Wait } = __.require('lib', 'promises')
 
@@ -12,7 +12,7 @@ describe('users:search', () => {
     .then(Wait(1000))
     .then(user => {
       const { username } = user
-      return nonAuthReq('get', `/api/users?action=search&search=${username}`)
+      return publicReq('get', `/api/users?action=search&search=${username}`)
       .then(res => {
         usersIds(res).includes(user._id).should.be.true()
         done()
@@ -26,7 +26,7 @@ describe('users:search', () => {
     .then(Wait(1000))
     .then(user => {
       const prefix = user.username.slice(0, 5)
-      return nonAuthReq('get', `/api/users?action=search&search=${prefix}`)
+      return publicReq('get', `/api/users?action=search&search=${prefix}`)
       .then(res => {
         usersIds(res).includes(user._id).should.be.true()
         done()
@@ -73,7 +73,7 @@ describe('users:search', () => {
     .then(getUser)
     .then(Wait(1000))
     .then(user => {
-      return nonAuthReq('get', `/api/users?action=search&search=${user.bio}`)
+      return publicReq('get', `/api/users?action=search&search=${user.bio}`)
       .then(res => {
         usersIds(res).includes(user._id).should.be.true()
         done()

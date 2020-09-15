@@ -1,10 +1,10 @@
-const { nonAuthReq, undesiredRes } = require('../utils/utils')
+const { publicReq, undesiredRes } = require('../utils/utils')
 const { createGroup } = require('../fixtures/groups')
 const endpoint = '/api/groups?action=by-id'
 
 describe('groups:by-id', () => {
   it('should reject without id', done => {
-    nonAuthReq('get', endpoint)
+    publicReq('get', endpoint)
     .then(undesiredRes(done))
     .catch(err => {
       err.body.status_verbose.should.equal('missing parameter in query: id')
@@ -16,7 +16,7 @@ describe('groups:by-id', () => {
   it('should get a group by id', done => {
     createGroup()
     .then(group => {
-      return nonAuthReq('get', `${endpoint}&id=${group._id}`)
+      return publicReq('get', `${endpoint}&id=${group._id}`)
       .then(res => {
         res.group._id.should.equal(group._id)
         res.group.name.should.equal(group.name)

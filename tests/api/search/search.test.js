@@ -4,7 +4,7 @@ const _ = __.require('builders', 'utils')
 require('should')
 const faker = require('faker')
 const { wait } = __.require('lib', 'promises')
-const { nonAuthReq, authReq, getUser, shouldNotBeCalled } = require('../utils/utils')
+const { publicReq, authReq, getUser, shouldNotBeCalled } = require('../utils/utils')
 const { elasticsearchUpdateDelay } = CONFIG.entitiesSearchEngine
 const { search } = require('../utils/search')
 
@@ -12,7 +12,7 @@ describe('search:global', () => {
   describe('parameters', () => {
     it('should reject empty searches', async () => {
       try {
-        await nonAuthReq('get', '/api/search?lang=en&types=works').then(shouldNotBeCalled)
+        await publicReq('get', '/api/search?lang=en&types=works').then(shouldNotBeCalled)
       } catch (err) {
         err.statusCode.should.equal(400)
         err.body.status_verbose.should.equal('missing parameter in query: search')
@@ -23,7 +23,7 @@ describe('search:global', () => {
   describe('types', () => {
     it('should reject search without types', async () => {
       try {
-        await nonAuthReq('get', '/api/search?search=yo&lang=en').then(shouldNotBeCalled)
+        await publicReq('get', '/api/search?search=yo&lang=en').then(shouldNotBeCalled)
       } catch (err) {
         err.statusCode.should.equal(400)
         err.body.status_verbose.should.equal('missing parameter in query: types')

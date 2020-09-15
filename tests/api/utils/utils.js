@@ -13,7 +13,7 @@ const getUserGetter = (key, role, customData) => () => {
 }
 
 const API = module.exports = {
-  nonAuthReq: request,
+  publicReq: request,
   customAuthReq,
   authReq: (...args) => customAuthReq(API.getUser(), ...args),
   authReqB: (...args) => customAuthReq(API.getUserB(), ...args),

@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
-const { nonAuthReq } = __.require('apiTests', 'utils/utils')
+const { publicReq } = __.require('apiTests', 'utils/utils')
 const { populate } = require('../fixtures/populate')
 const lastPublicUrl = '/api/items?action=last-public'
 
@@ -12,7 +12,7 @@ describe('items:last-public', () => {
       usersCount: 1,
       publicItemsPerUser: limit + 1
     })
-    .then(() => nonAuthReq('get', `${lastPublicUrl}&limit=${limit}`))
+    .then(() => publicReq('get', `${lastPublicUrl}&limit=${limit}`))
     .then(res => {
       res.items.length.should.equal(limit)
       done()
@@ -25,7 +25,7 @@ describe('items:last-public', () => {
       usersCount: 1,
       publicItemsPerUser: 16
     })
-    .then(() => nonAuthReq('get', lastPublicUrl))
+    .then(() => publicReq('get', lastPublicUrl))
     .then(res => {
       res.items.length.should.equal(15)
       done()

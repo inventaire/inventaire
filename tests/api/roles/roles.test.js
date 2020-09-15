@@ -1,12 +1,12 @@
 require('should')
-const { nonAuthReq, authReq, adminReq, dataadminReq, getUserB, getAdminUser, getDataadminUser, rethrowShouldNotBeCalledErrors, shouldNotBeCalled } = require('../utils/utils')
+const { publicReq, authReq, adminReq, dataadminReq, getUserB, getAdminUser, getDataadminUser, rethrowShouldNotBeCalledErrors, shouldNotBeCalled } = require('../utils/utils')
 const { createWork } = require('../fixtures/entities')
 
 describe('roles:public', () => {
   it('should not access an unauthorized endpoint', async () => {
     try {
       const endpoint = '/api/entities?action=create'
-      await nonAuthReq('post', endpoint).then(shouldNotBeCalled)
+      await publicReq('post', endpoint).then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.equal('unauthorized api access')
@@ -16,7 +16,7 @@ describe('roles:public', () => {
 
   it('should access public page', async () => {
     const endpoint = '/api/entities?action=changes'
-    const res = await nonAuthReq('get', endpoint)
+    const res = await publicReq('get', endpoint)
     res.should.be.ok()
   })
 })

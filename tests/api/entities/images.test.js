@@ -1,6 +1,6 @@
 const CONFIG = require('config')
 require('should')
-const { nonAuthReq, undesiredRes } = require('../utils/utils')
+const { publicReq, undesiredRes } = require('../utils/utils')
 const { rawRequest } = require('../utils/request')
 const host = CONFIG.fullPublicHost()
 const qs = require('querystring')
@@ -8,7 +8,7 @@ const encodedCommonsUrlChunk = qs.escape('https://commons.wikimedia.org/wiki/Spe
 
 describe('entities:images', () => {
   it('should return an array of images associated with the passed uri', done => {
-    nonAuthReq('get', '/api/entities?action=images&uris=wd:Q535')
+    publicReq('get', '/api/entities?action=images&uris=wd:Q535')
     .then(res => {
       res.images.should.be.an.Object()
       res.images['wd:Q535'].should.be.an.Array()
@@ -19,7 +19,7 @@ describe('entities:images', () => {
   })
 
   it('should reject redirect requests with multiple URIs', done => {
-    nonAuthReq('get', '/api/entities?action=images&uris=wd:Q535|wd:Q42&redirect=true')
+    publicReq('get', '/api/entities?action=images&uris=wd:Q535|wd:Q42&redirect=true')
     .then(undesiredRes(done))
     .catch(err => {
       err.statusCode.should.equal(400)
