@@ -2,55 +2,48 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const should = require('should')
-const { Wait } = __.require('lib', 'promises')
-const { adminReq, authReq, undesiredRes, shouldNotBeCalled } = require('../utils/utils')
+const { wait } = __.require('lib', 'promises')
+const { adminReq, authReq, shouldNotBeCalled } = require('../utils/utils')
 const { getByUris, deleteByUris } = require('../utils/entities')
 const { getByIds: getItemsByIds } = require('../utils/items')
 const { createHuman, createWork, createWorkWithAuthor, createEdition, createEditionWithIsbn } = require('../fixtures/entities')
 
 describe('entities:delete-by-uris', () => {
-  it('should require admin rights', done => {
-    authReq('post', '/api/entities?action=delete-by-uris')
-    .then(undesiredRes(done))
-    .catch(err => {
-      err.statusCode.should.equal(403)
-      done()
-    })
+  it('should require admin rights', async () => {
+    await authReq('post', '/api/entities?action=delete-by-uris')
+    .then(shouldNotBeCalled)
+    .catch(err => err.statusCode.should.equal(403))
   })
 
-  it('should reject without uris', done => {
-    adminReq('post', '/api/entities?action=delete-by-uris')
-    .then(undesiredRes(done))
+  it('should reject without uris', async () => {
+    await adminReq('post', '/api/entities?action=delete-by-uris')
+    .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal('missing parameter in body: uris')
       err.statusCode.should.equal(400)
-      done()
     })
   })
 
-  it('should reject empty array as uris', done => {
-    deleteByUris()
-    .then(undesiredRes(done))
+  it('should reject empty array as uris', async () => {
+    await deleteByUris()
+    .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal("uris array can't be empty")
       err.statusCode.should.equal(400)
-      done()
     })
   })
 
-  it('should reject non-inv URIs', done => {
-    deleteByUris('wd:Q535')
-    .then(undesiredRes(done))
+  it('should reject non-inv URIs', async () => {
+    await deleteByUris('wd:Q535')
+    .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal('invalid uri: wd:Q535')
       err.statusCode.should.equal(400)
-      done()
     })
-    .catch(done)
   })
 
-  it('should turn entity into removed:placeholder', done => {
-    createHuman()
+  it('should turn entity into removed:placeholder', async () => {
+    await createHuman()
     .then(entity => {
       const { uri } = entity
       return deleteByUris(uri)
@@ -58,74 +51,52 @@ describe('entities:delete-by-uris', () => {
       .then(res => {
         entity = res.entities[uri]
         entity._meta_type.should.equal('removed:placeholder')
-        done()
       })
     })
-    .catch(done)
   })
 
-  it('should remove several entities', done => {
-    Promise.all([
+  it('should remove several entities', async () => {
+    const [ entityA, entityB ] = await Promise.all([
       createHuman(),
       createWork()
     ])
-    .then(([ entityA, entityB ]) => {
-      const uris = [ entityA.uri, entityB.uri ]
-      return deleteByUris(uris)
-      .then(() => getByUris(uris))
-      .then(res => {
-        const entities = _.values(res.entities)
-        entities[0]._meta_type.should.equal('removed:placeholder')
-        entities[0]._meta_type.should.equal('removed:placeholder')
-        done()
-      })
-    })
-    .catch(done)
+    const uris = [ entityA.uri, entityB.uri ]
+    await deleteByUris(uris)
+    let { entities } = await getByUris(uris)
+    entities = _.values(entities)
+    entities[0]._meta_type.should.equal('removed:placeholder')
+    entities[0]._meta_type.should.equal('removed:placeholder')
   })
 
-  it('should delete claims where the entity is the value', done => {
-    createWorkWithAuthor()
-    .then(work => {
-      const authorUri = work.claims['wdt:P50'][0]
-      return deleteByUris(authorUri)
-      .then(() => getByUris(work.uri))
-      .then(res => {
-        const updatedWork = res.entities[work.uri]
-        should(updatedWork.claims['wdt:P50']).not.be.ok()
-        done()
-      })
-    })
-    .catch(done)
+  it('should delete claims where the entity is the value', async () => {
+    const work = await createWorkWithAuthor()
+    const authorUri = work.claims['wdt:P50'][0]
+    await deleteByUris(authorUri)
+    const { entities } = await getByUris(work.uri)
+    const updatedWork = entities[work.uri]
+    should(updatedWork.claims['wdt:P50']).not.be.ok()
   })
 
   // Entities with more than one claim should be turned into redirections
-  it('should reject when values are in more than one claim', done => {
-    createHuman()
-    .then(author => Promise.all([
+  it('should reject when values are in more than one claim', async () => {
+    const author = await createHuman()
+    const [ workA ] = await Promise.all([
       createWorkWithAuthor(author),
       createWorkWithAuthor(author)
-    ]))
-    .then(([ workA, workB ]) => {
-      const authorUri = workA.claims['wdt:P50'][0]
-      return deleteByUris(authorUri)
-    })
-    .then(undesiredRes(done))
+    ])
+    const authorUri = workA.claims['wdt:P50'][0]
+    await deleteByUris(authorUri)
+    .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal('this entity has too many claims to be removed')
       err.statusCode.should.equal(400)
-      done()
     })
-    .catch(done)
   })
 
-  it('should remove edition entities without an ISBN', done => {
-    createEdition()
-    .then(edition => {
-      const invUri = `inv:${edition._id}`
-      return deleteByUris(invUri)
-    })
-    .then(() => done())
-    .catch(done)
+  it('should remove edition entities without an ISBN', async () => {
+    const edition = await createEdition()
+    const invUri = `inv:${edition._id}`
+    await deleteByUris(invUri)
   })
 
   it('should remove edition entities with an ISBN', async () => {
@@ -133,85 +104,60 @@ describe('entities:delete-by-uris', () => {
     await deleteByUris(invUri)
   })
 
-  it('should refuse to delete a work that is depend on by an edition', done => {
-    createEdition()
-    .then(edition => {
-      const workUri = edition.claims['wdt:P629'][0]
-      return deleteByUris(workUri)
-    })
-    .then(undesiredRes(done))
+  it('should refuse to delete a work that is depend on by an edition', async () => {
+    const edition = await createEdition()
+    const workUri = edition.claims['wdt:P629'][0]
+    await deleteByUris(workUri)
+    .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal('this entity is used in a critical claim')
       err.statusCode.should.equal(400)
-      done()
     })
-    .catch(done)
   })
 
-  it('should remove deleted entities from items snapshot', done => {
-    createHuman()
-    .then(author => {
-      return createWorkWithAuthor(author)
-      .then(work => {
-        return authReq('post', '/api/items', { entity: work.uri, lang: 'en' })
-        .then(Wait(1000))
-        .then(item => {
-          item.snapshot['entity:title'].should.equal(work.labels.en)
-          item.snapshot['entity:authors'].should.equal(author.labels.en)
-          return deleteByUris(author.uri)
-          .then(Wait(100))
-          .then(() => getItemsByIds(item._id))
-        })
-        .then(res => {
-          const updatedItem = res.items[0]
-          updatedItem.snapshot['entity:title'].should.equal(work.labels.en)
-          should(updatedItem.snapshot['entity:authors']).not.be.ok()
-          done()
-        })
-      })
-    })
-    .catch(done)
+  it('should remove deleted entities from items snapshot', async () => {
+    const author = await createHuman()
+    const work = await createWorkWithAuthor(author)
+    const item = await authReq('post', '/api/items', { entity: work.uri, lang: 'en' })
+    await wait(1000)
+    item.snapshot['entity:title'].should.equal(work.labels.en)
+    item.snapshot['entity:authors'].should.equal(author.labels.en)
+    await deleteByUris(author.uri)
+    await wait(100)
+    const { items } = await getItemsByIds(item._id)
+    const updatedItem = items[0]
+    updatedItem.snapshot['entity:title'].should.equal(work.labels.en)
+    should(updatedItem.snapshot['entity:authors']).not.be.ok()
   })
 
-  it('should ignore entities that where already turned into removed:placeholder', done => {
-    createHuman()
-    .then(entity => {
-      const { uri } = entity
-      return deleteByUris(uri)
-      .then(() => getByUris(uri))
-      .then(res => {
-        should(res.entities[uri]._meta_type).equal('removed:placeholder')
-        return deleteByUris(uri)
-      })
-    })
-    .then(() => done())
-    .catch(done)
+  it('should ignore entities that where already turned into removed:placeholder', async () => {
+    const { uri } = await createHuman()
+    await deleteByUris(uri)
+    const { entities } = await getByUris(uri)
+    should(entities[uri]._meta_type).equal('removed:placeholder')
+    await deleteByUris(uri)
   })
 
-  it('should not deleted entities that are the entity of an item', done => {
-    createWork()
-    .then(work => {
-      return authReq('post', '/api/items', { entity: work.uri, lang: 'en' })
-      .then(() => deleteByUris(work.uri))
-    })
-    .then(undesiredRes(done))
+  it('should not deleted entities that are the entity of an item', async () => {
+    const work = await createWork()
+    await authReq('post', '/api/items', { entity: work.uri, lang: 'en' })
+    await deleteByUris(work.uri)
+    .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal("entities that are used by an item can't be removed")
       err.statusCode.should.equal(400)
-      done()
     })
-    .catch(done)
   })
 
   it('should not remove editions with an ISBN and an item', async () => {
     const { invUri, uri } = await createEditionWithIsbn()
     await authReq('post', '/api/items', { entity: uri, lang: 'en' })
-    try {
-      // Using the inv URI, as the isbn one would be rejected
-      await deleteByUris(invUri).then(shouldNotBeCalled)
-    } catch (err) {
+    // Using the inv URI, as the isbn one would be rejected
+    await deleteByUris(invUri)
+    .then(shouldNotBeCalled)
+    .catch(err => {
       err.body.status_verbose.should.equal("entities that are used by an item can't be removed")
       err.statusCode.should.equal(400)
-    }
+    })
   })
 })
