@@ -2,6 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const { logOutgoingRequests } = CONFIG
 const assert_ = __.require('utils', 'assert_types')
+const { wait } = __.require('lib', 'promises')
 const fetch = require('node-fetch')
 const error_ = __.require('lib', 'error/error')
 const { addContextToStack } = error_
@@ -37,8 +38,14 @@ const req = method => async (url, options = {}) => {
   try {
     res = await fetch(url, options)
   } catch (err) {
-    if (err.type === 'request-timeout') declareTimeout(host)
-    throw err
+    if (err.code === 'ECONNRESET') {
+      // Retry after a short delay when socket hang up
+      await wait(100)
+      res = await fetch(url, options)
+    } else {
+      if (err.type === 'request-timeout') declareTimeout(host)
+      throw err
+    }
   }
 
   if (logOutgoingRequests) endReqTimer(reqTimerKey)
