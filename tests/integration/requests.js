@@ -5,7 +5,7 @@ const express = require('express')
 const requests_ = __.require('lib', 'requests')
 const { wait } = __.require('lib', 'promises')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = __.require('apiTests', 'utils/utils')
-const { baseBanTime } = require('config').outgoingRequests
+const { baseBanTime, banTimeIncreaseFactor } = require('config').outgoingRequests
 let port = 38463
 
 const startTimeoutServer = () => new Promise(resolve => {
@@ -84,9 +84,10 @@ describe('requests', () => {
         rethrowShouldNotBeCalledErrors(err)
         err.message.should.equal('temporary ban')
         const { banTime, expire } = err.context.timeoutData
-        banTime.should.equal(baseBanTime * 4)
+        banTime.should.equal(baseBanTime * banTimeIncreaseFactor)
         const execTimeMargin = 1000
-        should(expire > beforeReban && expire < beforeReban + baseBanTime * 4 + execTimeMargin).be.true()
+        should(expire > beforeReban).be.true()
+        should(expire < (beforeReban + baseBanTime * banTimeIncreaseFactor + execTimeMargin)).be.true()
       }
     })
   })
