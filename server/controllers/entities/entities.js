@@ -39,13 +39,13 @@ module.exports = {
     authentified: {
       'update-claim': require('./update_claim'),
       'update-label': require('./update_label'),
+      'revert-edit': require('./revert_edit'),
       'move-to-wikidata': require('./move_to_wikidata')
     },
     dataadmin: {
       merge: require('./merge')
     },
     admin: {
-      'revert-edit': require('./revert_edit'),
       'revert-merge': require('./revert_merge')
     }
   })

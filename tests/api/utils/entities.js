@@ -74,7 +74,7 @@ const entitiesUtils = module.exports = {
 
   revertEdit: patchId => {
     assert_.string(patchId)
-    return adminReq('put', '/api/entities?action=revert-edit', { patch: patchId })
+    return authReq('put', '/api/entities?action=revert-edit', { patch: patchId })
   }
 }
 
