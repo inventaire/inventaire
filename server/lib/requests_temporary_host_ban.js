@@ -5,12 +5,10 @@ const { baseBanTime, banTimeIncreaseFactor } = CONFIG.outgoingRequests
 
 const timeoutData = {}
 
-const checkHostBan = host => {
+const throwIfTemporarilyBanned = host => {
   const hostTimeoutData = timeoutData[host]
-  if (hostTimeoutData != null) {
-    if (Date.now() < hostTimeoutData.expire) {
-      throw error_.new('temporary ban', 500, { host, timeoutData: hostTimeoutData })
-    }
+  if (hostTimeoutData != null && Date.now() < hostTimeoutData.expire) {
+    throw error_.new('temporary ban', 500, { host, timeoutData: hostTimeoutData })
   }
 }
 
@@ -29,4 +27,4 @@ const declareTimeout = (host, err) => {
   hostTimeoutData.expire = Date.now() + hostTimeoutData.banTime
 }
 
-module.exports = { checkHostBan, declareTimeout }
+module.exports = { throwIfTemporarilyBanned, declareTimeout }
