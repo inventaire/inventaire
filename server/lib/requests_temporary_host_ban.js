@@ -14,9 +14,7 @@ const throwIfTemporarilyBanned = host => {
 
 const resetBanData = host => delete timeoutData[host]
 
-const declareTimeout = (host, err) => {
-  if (err.type !== 'request-timeout') return
-
+const declareTimeout = host => {
   let hostTimeoutData = timeoutData[host]
 
   if (hostTimeoutData) {

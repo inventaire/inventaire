@@ -37,7 +37,7 @@ const req = method => async (url, options = {}) => {
   try {
     res = await fetch(url, options)
   } catch (err) {
-    declareTimeout(host, err)
+    if (err.type === 'request-timeout') declareTimeout(host)
     throw err
   }
 
