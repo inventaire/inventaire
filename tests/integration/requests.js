@@ -13,13 +13,15 @@ const startTimeoutServer = () => new Promise(resolve => {
   const app = express()
   const host = `localhost:${port}`
   const origin = `http://${host}`
+  app.get('/no-timeout', (req, res) => res.json({ ok: true }))
   // Always timeout
   app.get('/*', () => {})
   app.listen(port, () => resolve({ port, host, origin }))
 })
 
 describe('requests', () => {
-  describe('timeout', async () => {
+  describe('timeout', function () {
+    this.timeout(5 * 1000)
     it('should timeout after the specified time', async () => {
       const { origin } = await startTimeoutServer()
       try {
@@ -41,7 +43,8 @@ describe('requests', () => {
         err.context.host.should.equal(host)
         const { banTime, expire } = err.context.timeoutData
         banTime.should.equal(baseBanTime)
-        should(expire > Date.now() && expire < Date.now() + baseBanTime).be.true()
+        should(expire > Date.now()).be.true()
+        should(expire < Date.now() + baseBanTime).be.true()
       }
     })
 
@@ -88,6 +91,28 @@ describe('requests', () => {
         const execTimeMargin = 1000
         should(expire > beforeReban).be.true()
         should(expire < (beforeReban + baseBanTime * banTimeIncreaseFactor + execTimeMargin)).be.true()
+      }
+    })
+
+    it('should reset ban time after a successful request', async () => {
+      const { origin } = await startTimeoutServer()
+      await requests_.get(origin, { timeout: 100 }).catch(err => err.type.should.equal('request-timeout'))
+      await wait(baseBanTime + 100)
+      await requests_.get(origin, { timeout: 100 }).catch(err => err.type.should.equal('request-timeout'))
+      await wait(baseBanTime * banTimeIncreaseFactor + 100)
+      await requests_.get(`${origin}/no-timeout`, { timeout: 100 })
+      const beforeReban = Date.now()
+      await requests_.get(origin, { timeout: 100 }).catch(err => err.type.should.equal('request-timeout'))
+      try {
+        await requests_.get(origin, { timeout: 100 }).then(shouldNotBeCalled)
+      } catch (err) {
+        rethrowShouldNotBeCalledErrors(err)
+        err.message.should.equal('temporary ban')
+        const { banTime, expire } = err.context.timeoutData
+        banTime.should.equal(baseBanTime)
+        const execTimeMargin = 1000
+        should(expire > Date.now()).be.true()
+        should(expire < (beforeReban + baseBanTime + execTimeMargin)).be.true()
       }
     })
   })

@@ -12,6 +12,8 @@ const throwIfTemporarilyBanned = host => {
   }
 }
 
+const resetBanData = host => delete timeoutData[host]
+
 const declareTimeout = (host, err) => {
   if (err.type !== 'request-timeout') return
 
@@ -27,4 +29,4 @@ const declareTimeout = (host, err) => {
   hostTimeoutData.expire = Date.now() + hostTimeoutData.banTime
 }
 
-module.exports = { throwIfTemporarilyBanned, declareTimeout }
+module.exports = { throwIfTemporarilyBanned, resetBanData, declareTimeout }
