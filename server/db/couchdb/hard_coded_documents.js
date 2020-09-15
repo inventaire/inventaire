@@ -15,6 +15,7 @@ module.exports = {
     hook: userDoc('hook', '001'),
     reconciler: userDoc('reconciler', '002'),
     // used by scripts/update_entities.js
-    updater: userDoc('updater', '003')
+    updater: userDoc('updater', '003'),
+    anonymized: userDoc('anonymized', '004')
   }
 }

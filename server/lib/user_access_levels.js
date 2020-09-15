@@ -1,9 +1,5 @@
 const _ = require('lodash')
 
-const getUserAccessLevels = ({ roles: userRoles = [] }) => {
-  return _.uniq(_.flatten(userRoles.map(role => accessByRoles[role])))
-}
-
 const rolesByAccess = {
   public: [ 'public', 'authentified', 'dataadmin', 'admin' ],
   authentified: [ 'authentified', 'dataadmin', 'admin' ],
@@ -21,4 +17,14 @@ for (const access in rolesByAccess) {
   }
 }
 
-module.exports = { rolesByAccess, getUserAccessLevels }
+const getUserAccessLevels = user => {
+  if (!user) return []
+  const { roles: userRoles } = user
+  if (!userRoles || userRoles.length === 0) return []
+  if (userRoles.length === 1) return accessByRoles[userRoles[0]]
+  return _.uniq(_.flatten(userRoles.map(role => accessByRoles[role])))
+}
+
+const hasAdminAccess = user => getUserAccessLevels(user).includes('admin')
+
+module.exports = { rolesByAccess, getUserAccessLevels, hasAdminAccess }

@@ -1,6 +1,6 @@
 const _ = require('builders/utils')
 const User = require('models/user')
-const { getUserAccessLevels } = require('lib/get_user_access_levels')
+const { getUserAccessLevels } = require('lib/user_access_levels')
 
 const ownerSafeData = user => {
   const safeUserDoc = _.pick(user, User.attributes.ownerSafe)
