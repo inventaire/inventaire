@@ -12,10 +12,12 @@ module.exports = {
       images: require('./images'),
       popularity: require('./popularity')
     },
+    dataadmin: {
+      duplicates: require('./duplicates')
+    },
     admin: {
       activity: require('./activity'),
       contributions: require('./contributions'),
-      duplicates: require('./duplicates'),
       history: require('./history')
     }
   }),
