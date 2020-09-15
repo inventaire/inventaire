@@ -203,6 +203,7 @@ const config = module.exports = {
   },
 
   outgoingRequests: {
-    baseBanTime: 60 * 60 * 1000
+    baseBanTime: 60 * 60 * 1000,
+    banTimeIncreaseFactor: 4
   }
 }

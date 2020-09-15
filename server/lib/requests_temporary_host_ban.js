@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const error_ = __.require('lib', 'error/error')
-const { baseBanTime } = CONFIG.outgoingRequests
+const { baseBanTime, banTimeIncreaseFactor } = CONFIG.outgoingRequests
 
 const timeoutData = {}
 
@@ -21,7 +21,7 @@ const declareTimeout = (host, err) => {
 
   if (hostTimeoutData) {
     // This host persists to timeout: renew and increase ban time
-    hostTimeoutData.banTime *= 4
+    hostTimeoutData.banTime *= banTimeIncreaseFactor
   } else {
     hostTimeoutData = timeoutData[host] = { banTime: baseBanTime }
   }
