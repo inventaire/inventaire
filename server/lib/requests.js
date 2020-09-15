@@ -9,7 +9,7 @@ const { magenta } = require('chalk')
 const { repository } = __.require('root', 'package.json')
 const userAgent = `${CONFIG.name} (${repository.url})`
 const { getAgent, selfSignedHttpsAgent } = require('./requests_agent')
-const { throwIfTemporarilyBanned, declareTimeout } = require('./requests_temporary_host_ban')
+const { throwIfTemporarilyBanned, resetBanData, declareTimeout } = require('./requests_temporary_host_ban')
 const { URL } = require('url')
 // Setting the default timeout low
 const defaultTimeout = 10 * 1000
@@ -75,6 +75,8 @@ const req = method => async (url, options = {}) => {
     addContextToStack(err)
     throw err
   }
+
+  resetBanData(host)
 
   if (returnBodyOnly) {
     return body
