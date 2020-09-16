@@ -200,5 +200,10 @@ const config = module.exports = {
       run: true,
       interval: 3000
     }
+  },
+
+  outgoingRequests: {
+    baseBanTime: 60 * 60 * 1000,
+    banTimeIncreaseFactor: 4
   }
 }
