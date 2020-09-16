@@ -3,6 +3,7 @@
 export NODE_ENV=tests-api NODE_APP_INSTANCE=mocha
 
 timeout=$(node -p 'require("config").mocha.timeout')
+growl=$(node -p 'require("config").mocha.growl && "--growl"')
 
 # Warn if the file doesn't contain ".test.js"
 check_filename(){
@@ -15,7 +16,7 @@ check_filename(){
 if [ -z "$1" ]
 then
   find tests/api -type f -name *.test.js | \
-    xargs mocha --exit --grep "$MOCHA_GREP" --timeout $timeout
+    xargs mocha --exit --grep "$MOCHA_GREP" --timeout $timeout $growl
 else
   files=''
   for arg in $@
@@ -30,5 +31,5 @@ else
     fi
   done
   echo "files: $files"
-  mocha --exit --grep "$MOCHA_GREP" --timeout $timeout $files
+  mocha --exit --grep "$MOCHA_GREP" --timeout $timeout $growl $files
 fi
