@@ -1,7 +1,7 @@
 const _ = require('builders/utils')
 
 const { pass, userId, username, email, userImg, boolean, position, BoundedString } = require('./common')
-const { creationStrategies, notificationsSettings } = require('../attributes/user')
+const { creationStrategies, settings } = require('../attributes/user')
 
 const validations = module.exports = {
   pass,
@@ -20,13 +20,14 @@ const validations = module.exports = {
 }
 
 const deepAttributes = {
-  settings: {
-    notifications: {}
-  }
+  settings: {}
 }
 
-for (const setting of notificationsSettings) {
-  deepAttributes.settings.notifications[setting] = true
+for (const settingCategory in settings) {
+  deepAttributes.settings[settingCategory] = {}
+  for (const settingName of settings[settingCategory]) {
+    deepAttributes.settings[settingCategory][settingName] = true
+  }
 }
 
 validations.deepAttributesExistance = attribute => _.get(deepAttributes, attribute) != null

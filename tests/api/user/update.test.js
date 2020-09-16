@@ -101,9 +101,17 @@ describe('user:update', () => {
   })
 
   describe('settings', () => {
-    it('should allow to update a setting', async () => {
+    it('should update a setting', async () => {
       const user = await getReservedUser()
       const attribute = 'settings.notifications.global'
+      await customAuthReq(user, 'put', endpoint, { attribute, value: false })
+      const updatedUser = await getRefreshedUser(user)
+      _.get(updatedUser, attribute).should.be.false()
+    })
+
+    it('should update anonymize setting', async () => {
+      const user = await getReservedUser()
+      const attribute = 'settings.contributions.anonymize'
       await customAuthReq(user, 'put', endpoint, { attribute, value: false })
       const updatedUser = await getRefreshedUser(user)
       _.get(updatedUser, attribute).should.be.false()
