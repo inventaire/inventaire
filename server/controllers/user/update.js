@@ -22,16 +22,18 @@ const controller = async (params, req) => {
   return { ok: true }
 }
 
+// This function update the document and should thus
+// rather be in the User model, but async checks make it a bit hard
 const update = async (user, attribute, value) => {
   if (value == null && !acceptNullValue.includes(attribute)) {
     throw error_.newMissingBody('value')
   }
 
-  // doesnt change anything for normal attribute
+  // Doesn't change anything for normal attribute
   // returns the root object for deep attributes such as settings
   const rootAttribute = attribute.split('.')[0]
 
-  // support deep objects
+  // Support deep objects
   const currentValue = _.get(user, attribute)
 
   if (value === currentValue) {
@@ -59,13 +61,12 @@ const update = async (user, attribute, value) => {
   }
 
   if (concurrencial.includes(attribute)) {
-    // checks for validity and availability (+ reserve words for username)
+    // Checks for validity and availability (+ reserve words for username)
     await availability_[attribute](value, currentValue)
-    await updateAttribute(user, attribute, value)
-    return
+    return updateAttribute(user, attribute, value)
   }
 
-  throw error_.new(`forbidden update: ${attribute} - ${value}`, 403)
+  throw error_.new('forbidden update', 403, { attribute, value })
 }
 
 const updateAttribute = (user, attribute, value) => {
