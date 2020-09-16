@@ -126,7 +126,6 @@ describe('entities:delete', () => {
     const author = await createHuman()
     const work = await createWorkWithAuthor(author)
     const item = await authReq('post', '/api/items', { entity: work.uri, lang: 'en' })
-    await wait(1000)
     item.snapshot['entity:title'].should.equal(work.labels.en)
     item.snapshot['entity:authors'].should.equal(author.labels.en)
     await deleteByUris(author.uri)
