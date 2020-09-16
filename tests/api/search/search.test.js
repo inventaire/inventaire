@@ -53,7 +53,7 @@ describe('search:global', () => {
 
   describe('group', () => {
     it('should return a group', async () => {
-      const name = `group ${faker.lorem.word}`
+      const name = `group ${faker.lorem.word()}`
       const group = await authReq('post', '/api/groups?action=create', { name })
       await wait(elasticsearchUpdateDelay)
       const results = await search('groups', name)
@@ -63,7 +63,7 @@ describe('search:global', () => {
     })
 
     it('should not return a private group unless requester is a member', async () => {
-      const name = `group ${faker.lorem.word}`
+      const name = `group ${faker.lorem.word()}`
       const group = await authReq('post', '/api/groups?action=create', { name, searchable: false })
       await wait(elasticsearchUpdateDelay)
       const results = await search('groups', name)
