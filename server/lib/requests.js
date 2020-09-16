@@ -12,8 +12,7 @@ const userAgent = `${CONFIG.name} (${repository.url})`
 const { getAgent, selfSignedHttpsAgent } = require('./requests_agent')
 const { throwIfTemporarilyBanned, resetBanData, declareTimeout } = require('./requests_temporary_host_ban')
 const { URL } = require('url')
-// Setting the default timeout low
-const defaultTimeout = 10 * 1000
+const defaultTimeout = 30 * 1000
 
 let requestId = 0
 
