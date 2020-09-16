@@ -2,10 +2,13 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const User = __.require('models', 'user')
+const { getUserAccessLevels } = __.require('lib', 'get_user_access_levels')
 
 const ownerSafeData = user => {
   const safeUserDoc = _.pick(user, User.attributes.ownerSafe)
   safeUserDoc.oauth = user.oauth ? Object.keys(user.oauth) : []
+  safeUserDoc.roles = safeUserDoc.roles || []
+  safeUserDoc.accessLevels = getUserAccessLevels(user)
   return safeUserDoc
 }
 
