@@ -6,38 +6,23 @@ const { getUser } = require('../utils/utils')
 const { createEdition } = require('./entities')
 const faker = require('faker')
 
-const urisPromises = {}
-const getEditionUriPromise = lang => {
-  if (!urisPromises[lang]) {
-    urisPromises[lang] = createEdition({ lang }).then(({ uri }) => uri)
-  }
-  return urisPromises[lang]
+const getEditionUri = async (lang = 'en') => {
+  const { uri } = await createEdition({ lang })
+  return uri
 }
-
-let count = 0
-const getEditionUri = () => {
-  // Get 4/5 'en' editions, 1/5 'de' editions
-  const lang = (count % 4) === 0 ? 'de' : 'en'
-  count += 1
-  return getEditionUriPromise(lang)
-}
-
-const listings = [ 'private', 'network', 'public' ]
-const transactions = [ 'giving', 'lending', 'selling', 'inventorying' ]
 
 const API = module.exports = {
   createItems: async (user, itemsData = []) => {
     user = user || getUser()
-    const entity = itemsData[0] && itemsData[0].entity
-    const entityUriPromise = entity ? Promise.resolve(entity) : getEditionUri()
-    const entityUri = await entityUriPromise
-    const items = itemsData.map(addDefaultEntity(entityUri))
+    const items = await Promise.all(itemsData.map(addDefaultEntity))
     return customAuthReq(user, 'post', '/api/items', items)
   },
 
   createItem: async (user, itemData = {}) => {
+    user = user || getUser()
     itemData.listing = itemData.listing || 'public'
-    const [ item ] = await API.createItems(user, [ itemData ])
+    await addDefaultEntity(itemData)
+    const [ item ] = await customAuthReq(user, 'post', '/api/items', [ itemData ])
     return item
   },
 
@@ -48,11 +33,14 @@ const API = module.exports = {
   },
 
   createRandomizedItems: (user, itemsData) => {
-    return API.createItems(user, itemsData.map(randomizedItem))
+    return API.createItems(user, itemsData.map(fillItemWithRandomData))
   }
 }
 
-const randomizedItem = itemData => {
+const transactions = [ 'giving', 'lending', 'selling', 'inventorying' ]
+const listings = [ 'private', 'network', 'public' ]
+
+const fillItemWithRandomData = (itemData = {}) => {
   itemData.listing = itemData.listing || _.sample(listings)
   itemData.transaction = itemData.transaction || _.sample(transactions)
   itemData.details = faker.hacker.phrase()
@@ -60,7 +48,11 @@ const randomizedItem = itemData => {
   return itemData
 }
 
-const addDefaultEntity = entityUri => item => {
-  if (!item.entity) item.entity = entityUri
-  return item
+const addDefaultEntity = async itemData => {
+  if (!itemData.entity) {
+    const entity = itemData[0] && itemData[0].entity
+    const entityUri = await (entity || getEditionUri())
+    itemData.entity = entityUri
+  }
+  return itemData
 }

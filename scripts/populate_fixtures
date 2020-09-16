@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-./scripts/replicate_tests_db.js
-./scripts/populate_users_fixtures.js
