@@ -83,7 +83,7 @@ describe('entities:delete', () => {
     await deleteByUris(authorUri)
     .then(shouldNotBeCalled)
     .catch(err => {
-      err.statusCode.should.equal(400)
+      err.statusCode.should.equal(403)
       err.body.status_verbose.should.equal('this entity is used has value in too many claims to be removed')
       const { uri, claims } = err.body.context
       uri.should.equal(author.uri)
@@ -114,7 +114,7 @@ describe('entities:delete', () => {
     await deleteByUris(workUri)
     .then(shouldNotBeCalled)
     .catch(err => {
-      err.statusCode.should.equal(400)
+      err.statusCode.should.equal(403)
       err.body.status_verbose.should.equal('this entity is used in a critical claim')
       const { uri, claim } = err.body.context
       uri.should.equal(workUri)
@@ -152,7 +152,7 @@ describe('entities:delete', () => {
     .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal("entities that are used by an item can't be removed")
-      err.statusCode.should.equal(400)
+      err.statusCode.should.equal(403)
     })
   })
 
@@ -164,7 +164,7 @@ describe('entities:delete', () => {
     .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal("entities that are used by an item can't be removed")
-      err.statusCode.should.equal(400)
+      err.statusCode.should.equal(403)
     })
   })
 })
