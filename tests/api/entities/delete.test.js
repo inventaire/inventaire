@@ -74,16 +74,25 @@ describe('entities:delete', () => {
   // Entities with more than one claim should be turned into redirections
   it('should reject when values are in more than one claim', async () => {
     const author = await createHuman()
-    const [ workA ] = await Promise.all([
+    const [ workA, workB ] = await Promise.all([
       createWorkWithAuthor(author),
       createWorkWithAuthor(author)
     ])
-    const authorUri = workA.claims['wdt:P50'][0]
+    const property = 'wdt:P50'
+    const authorUri = workA.claims[property][0]
     await deleteByUris(authorUri)
     .then(shouldNotBeCalled)
     .catch(err => {
-      err.body.status_verbose.should.equal('this entity has too many claims to be removed')
       err.statusCode.should.equal(400)
+      err.body.status_verbose.should.equal('this entity is used has value in too many claims to be removed')
+      const { uri, claims } = err.body.context
+      uri.should.equal(author.uri)
+      const claimA = claims.find(claim => claim.entity === workA.uri)
+      const claimB = claims.find(claim => claim.entity === workB.uri)
+      claimA.should.be.an.Object()
+      claimA.property.should.equal(property)
+      claimB.should.be.an.Object()
+      claimB.property.should.equal(property)
     })
   })
 
@@ -100,12 +109,16 @@ describe('entities:delete', () => {
 
   it('should refuse to delete a work that is depend on by an edition', async () => {
     const edition = await createEdition()
-    const workUri = edition.claims['wdt:P629'][0]
+    const property = 'wdt:P629'
+    const workUri = edition.claims[property][0]
     await deleteByUris(workUri)
     .then(shouldNotBeCalled)
     .catch(err => {
-      err.body.status_verbose.should.equal('this entity is used in a critical claim')
       err.statusCode.should.equal(400)
+      err.body.status_verbose.should.equal('this entity is used in a critical claim')
+      const { uri, claim } = err.body.context
+      uri.should.equal(workUri)
+      claim.should.deepEqual({ entity: edition.uri, property })
     })
   })
 
