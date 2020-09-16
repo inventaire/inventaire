@@ -3,7 +3,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const { createUserWithItems } = require('../tests/api/fixtures/populate')
-const { makeUserAdmin } = __.require('controllers', 'user/lib/user')
+const { addRole } = __.require('controllers', 'user/lib/user')
 const { makeFriends } = require('../tests/api/utils/relations')
 const { createGroup, addMember, addAdmin } = require('../tests/api/fixtures/groups')
 const user_ = __.require('controllers', 'user/lib/user')
@@ -23,7 +23,7 @@ const run = async () => {
 const createUserAndGroupAndGFriends = async username => {
   const user = await createUserWithItems({ username })
   _.info(`${user.username} is a new user`)
-  makeUserAdmin(user._id)
+  addRole(user._id, 'admin')
   _.info(`${user.username} has now an 'admin' role`)
 
   const [ friend1, friend2 ] = await Promise.all([
@@ -33,11 +33,9 @@ const createUserAndGroupAndGFriends = async username => {
   _.info(`${user.username} is now friend with ${friend1.username} and ${friend2.username}`)
 
   const group = await createGroup(user)
-  await Promise.all([
-    addAdmin(group, user),
-    addMember(group, friend1),
-    addMember(group, friend2)
-  ])
+  await addAdmin(group, user)
+  await addMember(group, friend1)
+  await addMember(group, friend2)
   _.info(`${user.username} is now an group admin of group: "${group.name}"`)
   console.log(`Login available :
   Username : ${user.username}
