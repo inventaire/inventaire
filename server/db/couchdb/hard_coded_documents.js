@@ -3,7 +3,12 @@ const userDoc = (username, idLastCharacters) => ({
   username,
   special: true,
   // Data required to avoid crashing users logic
-  snapshot: {}
+  snapshot: {},
+  settings: {
+    contributions: {
+      anonymize: false
+    }
+  },
 })
 
 module.exports = {
