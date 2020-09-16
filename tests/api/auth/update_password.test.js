@@ -56,7 +56,7 @@ describe('auth:update-password', () => {
 
   it('should reject if reset password timestamp is invalid', done => {
     const email = createUserEmail()
-    const userPromise = getUserGetter(email, false)()
+    const userPromise = getUserGetter(email)()
     updateCustomUser(userPromise, 'resetPassword', 'invalid')
     .then(() => {
       return customAuthReq(userPromise, 'post', endpoint, {
@@ -73,7 +73,7 @@ describe('auth:update-password', () => {
 
   it('should reject if reset password timestamp is too old', done => {
     const email = createUserEmail()
-    const userPromise = getUserGetter(email, false)()
+    const userPromise = getUserGetter(email)()
     updateCustomUser(userPromise, 'resetPassword', 1000)
     .then(() => {
       return customAuthReq(userPromise, 'post', endpoint, {
@@ -90,7 +90,7 @@ describe('auth:update-password', () => {
 
   it('should reset password timestamp is recent', done => {
     const email = createUserEmail()
-    const userPromise = getUserGetter(email, false)()
+    const userPromise = getUserGetter(email)()
     const recentTime = Date.now() - 1000
     updateCustomUser(userPromise, 'resetPassword', recentTime)
     .then(() => {

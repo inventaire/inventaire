@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
-const { nonAuthReq, undesiredRes } = require('../utils/utils')
+const { publicReq, undesiredRes } = require('../utils/utils')
 const { Wait } = __.require('lib', 'promises')
 const usernameEndpoint = '/api/auth?action=username-availability'
 const emailEndpoint = '/api/auth?action=email-availability'
@@ -9,7 +9,7 @@ const { createUser, createUsername } = require('../fixtures/users')
 
 describe('auth:username-availability', () => {
   it('should reject requests without username', done => {
-    nonAuthReq('get', usernameEndpoint)
+    publicReq('get', usernameEndpoint)
     .then(undesiredRes(done))
     .catch(err => {
       err.body.status_verbose.should.equal('missing parameter in query: username')
@@ -23,7 +23,7 @@ describe('auth:username-availability', () => {
     createUser({ username })
     .then(Wait(10))
     .then(user => {
-      return nonAuthReq('get', `${usernameEndpoint}&username=${username}`)
+      return publicReq('get', `${usernameEndpoint}&username=${username}`)
     })
     .catch(err => {
       err.body.status_verbose.should.equal('this username is already used')
@@ -33,7 +33,7 @@ describe('auth:username-availability', () => {
   })
 
   it('should reject an account with reverved words as username', done => {
-    nonAuthReq('get', `${usernameEndpoint}&username=wikidata`)
+    publicReq('get', `${usernameEndpoint}&username=wikidata`)
     .catch(err => {
       err.body.status_verbose.should.equal("reserved words can't be usernames")
       done()
@@ -44,7 +44,7 @@ describe('auth:username-availability', () => {
 
 describe('auth:email-availability', () => {
   it('should reject requests without email', done => {
-    nonAuthReq('get', emailEndpoint)
+    publicReq('get', emailEndpoint)
     .then(undesiredRes(done))
     .catch(err => {
       err.body.status_verbose.should.equal('missing parameter in query: email')
@@ -56,7 +56,7 @@ describe('auth:email-availability', () => {
   it('should reject an account with already created email', done => {
     createUser()
     .then(Wait(10))
-    .then(user => nonAuthReq('get', `${emailEndpoint}&email=${user.email}`))
+    .then(user => publicReq('get', `${emailEndpoint}&email=${user.email}`))
     .catch(err => {
       err.body.status_verbose.should.equal('this email is already used')
       done()

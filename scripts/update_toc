@@ -5,4 +5,4 @@ which doctoc > /dev/null || {
   exit 1
 }
 
-doctoc README.md
+doctoc README.md docs/*.md

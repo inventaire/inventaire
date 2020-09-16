@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const assert_ = __.require('utils', 'assert_types')
-const { nonAuthReq, authReq, adminReq } = require('./utils')
+const { publicReq, authReq, dataadminReq, adminReq } = require('./utils')
 
 const entitiesUtils = module.exports = {
   getByUris: (uris, relatives) => {
@@ -10,7 +10,7 @@ const entitiesUtils = module.exports = {
     assert_.strings(uris)
     uris = uris.join('|')
     const url = _.buildPath('/api/entities', { action: 'by-uris', uris, relatives })
-    return nonAuthReq('get', url)
+    return publicReq('get', url)
   },
 
   getByUri: uri => {
@@ -23,7 +23,7 @@ const entitiesUtils = module.exports = {
   deleteByUris: uris => {
     uris = _.forceArray(uris)
     assert_.strings(uris)
-    return adminReq('post', '/api/entities?action=delete-by-uris', { uris })
+    return authReq('post', '/api/entities?action=delete', { uris })
   },
 
   merge: (fromUri, toUri) => {
@@ -31,13 +31,13 @@ const entitiesUtils = module.exports = {
     assert_.string(toUri)
     fromUri = normalizeUri(fromUri)
     toUri = normalizeUri(toUri)
-    return adminReq('put', '/api/entities?action=merge', { from: fromUri, to: toUri })
+    return dataadminReq('put', '/api/entities?action=merge', { from: fromUri, to: toUri })
   },
 
   revertMerge: fromUri => {
     assert_.string(fromUri)
     fromUri = normalizeUri(fromUri)
-    return adminReq('put', '/api/entities?action=revert-merge', { from: fromUri })
+    return dataadminReq('put', '/api/entities?action=revert-merge', { from: fromUri })
   },
 
   getHistory: entityId => {
@@ -64,7 +64,7 @@ const entitiesUtils = module.exports = {
 
   getRefreshedPopularityByUris: uris => {
     if (_.isArray(uris)) { uris = uris.join('|') }
-    return nonAuthReq('get', `/api/entities?action=popularity&uris=${uris}&refresh=true`)
+    return publicReq('get', `/api/entities?action=popularity&uris=${uris}&refresh=true`)
   },
 
   getRefreshedPopularityByUri: uri => {
@@ -74,7 +74,7 @@ const entitiesUtils = module.exports = {
 
   revertEdit: patchId => {
     assert_.string(patchId)
-    return adminReq('put', '/api/entities?action=revert-edit', { patch: patchId })
+    return authReq('put', '/api/entities?action=revert-edit', { patch: patchId })
   }
 }
 

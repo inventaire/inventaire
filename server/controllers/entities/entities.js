@@ -12,10 +12,12 @@ module.exports = {
       images: require('./images'),
       popularity: require('./popularity')
     },
+    dataadmin: {
+      duplicates: require('./duplicates')
+    },
     admin: {
       activity: require('./activity'),
       contributions: require('./contributions'),
-      duplicates: require('./duplicates'),
       history: require('./history')
     }
   }),
@@ -26,10 +28,8 @@ module.exports = {
     },
     authentified: {
       create: require('./create'),
-      resolve: require('./resolve')
-    },
-    admin: {
-      'delete-by-uris': require('./by_uris_delete')
+      resolve: require('./resolve'),
+      delete: require('./delete')
     }
   }),
 
@@ -37,11 +37,11 @@ module.exports = {
     authentified: {
       'update-claim': require('./update_claim'),
       'update-label': require('./update_label'),
+      'revert-edit': require('./revert_edit'),
       'move-to-wikidata': require('./move_to_wikidata')
     },
-    admin: {
+    dataadmin: {
       merge: require('./merge'),
-      'revert-edit': require('./revert_edit'),
       'revert-merge': require('./revert_merge')
     }
   })

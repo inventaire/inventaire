@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
-const { nonAuthReq, authReq, undesiredRes } = require('../utils/utils')
+const { publicReq, authReq, undesiredRes } = require('../utils/utils')
 const { Wait } = __.require('lib', 'promises')
 const { groupPromise } = require('../fixtures/groups')
 const slugify = __.require('controllers', 'groups/lib/slugify')
@@ -32,7 +32,7 @@ describe('groups:update-settings', () => {
       .then(Wait(50))
       .then(updateRes => {
         updateRes.ok.should.be.true()
-        return nonAuthReq('get', `/api/groups?action=by-id&id=${groupId}`)
+        return publicReq('get', `/api/groups?action=by-id&id=${groupId}`)
         .then(({ group: updatedGroup }) => {
           updatedGroup.name.should.equal(updatedName)
           updatedGroup.slug.should.equal(slugify(updatedName))
@@ -77,7 +77,7 @@ describe('groups:update-settings', () => {
       .then(updateRes => {
         updateRes.ok.should.be.true()
         Object.keys(updateRes.update).length.should.equal(0)
-        return nonAuthReq('get', `/api/groups?action=by-id&id=${groupId}`)
+        return publicReq('get', `/api/groups?action=by-id&id=${groupId}`)
       })
     })
     .then(({ group }) => {
@@ -94,7 +94,7 @@ describe('groups:update-settings', () => {
       attribute: 'position',
       value: [ 0.123456789, 0.123456789 ]
     })
-    const { group } = await nonAuthReq('get', `/api/groups?action=by-id&id=${groupId}`)
+    const { group } = await publicReq('get', `/api/groups?action=by-id&id=${groupId}`)
     group.position.should.deepEqual([ 0.12346, 0.12346 ])
   })
 
@@ -106,7 +106,7 @@ describe('groups:update-settings', () => {
       attribute: 'searchable',
       value: false
     })
-    const { group } = await nonAuthReq('get', `/api/groups?action=by-id&id=${groupId}`)
+    const { group } = await publicReq('get', `/api/groups?action=by-id&id=${groupId}`)
     group.searchable.should.be.false()
   })
 })

@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
-const { nonAuthReq, undesiredRes } = require('../utils/utils')
+const { publicReq, undesiredRes } = require('../utils/utils')
 const { Wait } = __.require('lib', 'promises')
 const endpoint = '/api/auth?action=signup'
 const randomString = __.require('lib', './utils/random_string')
@@ -9,7 +9,7 @@ const { createUser, createUsername } = require('../fixtures/users')
 
 describe('auth:signup', () => {
   it('should reject requests without username', done => {
-    nonAuthReq('post', endpoint, {})
+    publicReq('post', endpoint, {})
     .then(undesiredRes(done))
     .catch(err => {
       err.body.status_verbose.should.equal('missing parameter in body: username')
@@ -19,7 +19,7 @@ describe('auth:signup', () => {
   })
 
   it('should reject requests without email', done => {
-    nonAuthReq('post', endpoint, { username: randomString(4) })
+    publicReq('post', endpoint, { username: randomString(4) })
     .then(undesiredRes(done))
     .catch(err => {
       err.body.status_verbose.should.equal('missing parameter in body: email')
@@ -29,7 +29,7 @@ describe('auth:signup', () => {
   })
 
   it('should reject requests without password', done => {
-    nonAuthReq('post', endpoint, {
+    publicReq('post', endpoint, {
       username: randomString(4),
       email: `bla${randomString(4)}@foo.bar`
     })
@@ -42,7 +42,7 @@ describe('auth:signup', () => {
   })
 
   it('should create a user', done => {
-    nonAuthReq('post', endpoint, {
+    publicReq('post', endpoint, {
       username: randomString(4),
       email: `bla${randomString(4)}@foo.bar`,
       password: randomString(8)
@@ -61,7 +61,7 @@ describe('auth:username-availability', () => {
     createUser({ username })
     .then(Wait(10))
     .then(user => {
-      return nonAuthReq('post', endpoint, {
+      return publicReq('post', endpoint, {
         username,
         email: `bla${username}@foo.bar`,
         password: randomString(8)

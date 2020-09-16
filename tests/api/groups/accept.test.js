@@ -53,7 +53,7 @@ describe('groups:update:accept', () => {
     // Re-creating a group instead of using groupPromise,
     // to be isolated from other tests
     const group = await createGroup()
-    const user = await getUserGetter(humanName(), false)()
+    const user = await getUserGetter(humanName())()
     const { _id: userId } = user
     const { _id: groupId } = group
     const memberCount = group.members.length

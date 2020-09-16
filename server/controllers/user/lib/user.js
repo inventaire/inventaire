@@ -7,7 +7,6 @@ const couch_ = __.require('lib', 'couch')
 const User = __.require('models', 'user')
 const { byEmail, byEmails, findOneByEmail } = require('./shared_user_handlers')
 const { omitPrivateData } = require('./authorized_user_data_pickers')
-const { BasicUpdater } = __.require('lib', 'doc_updates')
 const db = __.require('couch', 'base')('users')
 const geo = require('./geo/geo')()
 const { getNetworkIds } = __.require('controllers', 'user/lib/relations_status')
@@ -112,7 +111,9 @@ const user_ = module.exports = {
     })
   },
 
-  makeUserAdmin: userId => db.update(userId, BasicUpdater('admin', true)),
+  addRole: (userId, role) => db.update(userId, User.addRole(role)),
+
+  removeRole: (userId, role) => db.update(userId, User.removeRole(role)),
 
   setOauthTokens: (userId, provider, data) => {
     return db.update(userId, User.setOauthTokens(provider, data))

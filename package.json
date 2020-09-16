@@ -9,7 +9,7 @@
     "couch2elastic4sync:load": "./scripts/couch2elastic4sync/load.js",
     "couch2elastic4sync:reset": "./scripts/couch2elastic4sync/reset.js",
     "db-actions:increment-user-undelivered-emails-count": "./scripts/db_actions/increment_user_undelivered_emails_count.js",
-    "db-actions:make-user-admin": "./scripts/db_actions/make_user_admin.js",
+    "db-actions:update-user-role": "./scripts/db_actions/update_user_role.js",
     "db-actions:stop-emails-to-address": "./scripts/db_actions/stop_emails_to_address.js",
     "db-actions:delete-user": "./scripts/db_actions/delete_user.js",
     "create-dumps": "./scripts/dumps/prepare_dumps",
@@ -42,7 +42,7 @@
     "url": "https://github.com/inventaire/inventaire"
   },
   "dependencies": {
-    "blue-cot": "^5.0.0",
+    "blue-cot": "^5.0.1",
     "body-parser": "^1.18.2",
     "chalk": "^1.1.3",
     "cloudant-follow": "^0.18.2",

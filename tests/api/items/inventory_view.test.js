@@ -1,14 +1,14 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
-const { nonAuthReq, undesiredRes } = __.require('apiTests', 'utils/utils')
+const { publicReq, undesiredRes } = __.require('apiTests', 'utils/utils')
 const endpoint = '/api/items?action=inventory-view'
 const { groupPromise } = require('../fixtures/groups')
 const { createUserWithItems } = require('../fixtures/populate')
 
 describe('items:inventory-view', () => {
   it('should reject requests without a user or a group', done => {
-    nonAuthReq('get', endpoint)
+    publicReq('get', endpoint)
     .then(undesiredRes(done))
     .catch(err => {
       err.statusCode.should.equal(400)
@@ -20,7 +20,7 @@ describe('items:inventory-view', () => {
 
   it('should return a user inventory-view', async () => {
     const { _id: userId } = await createUserWithItems()
-    const res = await nonAuthReq('get', `${endpoint}&user=${userId}`)
+    const res = await publicReq('get', `${endpoint}&user=${userId}`)
     res.worksTree.should.be.an.Object()
     res.worksTree.author.should.be.an.Object()
     res.worksTree.genre.should.be.an.Object()
@@ -33,7 +33,7 @@ describe('items:inventory-view', () => {
   it('should return a group inventory-view', done => {
     groupPromise
     .then(({ _id }) => _id)
-    .then(groupId => nonAuthReq('get', `${endpoint}&group=${groupId}`))
+    .then(groupId => publicReq('get', `${endpoint}&group=${groupId}`))
     .then(res => {
       res.worksTree.should.be.an.Object()
       res.worksTree.author.should.be.an.Object()

@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const { nonAuthReq } = require('../utils/utils')
+const { publicReq } = require('../utils/utils')
 const { host: elasticHost } = CONFIG.elasticsearch
 const { rawRequest } = require('./request')
 
@@ -11,7 +11,7 @@ module.exports = {
   search: async (types, input, lang = 'en') => {
     if (_.isArray(types)) types = types.join('|')
     input = encodeURIComponent(input)
-    const { results } = await nonAuthReq('get', `${endpoint}?types=${types}&lang=${lang}&search=${input}`)
+    const { results } = await publicReq('get', `${endpoint}?types=${types}&lang=${lang}&search=${input}`)
     return results
   },
 

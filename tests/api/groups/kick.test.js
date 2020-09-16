@@ -6,7 +6,7 @@ const { groupPromise, getGroup, addMember } = require('../fixtures/groups')
 const endpoint = '/api/groups?action=kick'
 const { Wait } = __.require('lib', 'promises')
 const { humanName } = require('../fixtures/entities')
-const userPromise = getUserGetter(humanName(), false)()
+const userPromise = getUserGetter(humanName())()
 
 describe('groups:update:kick', () => {
   it('should reject without group', done => {

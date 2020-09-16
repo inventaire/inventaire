@@ -1,5 +1,5 @@
-require('should')
-const { authReq, customAuthReq, getReservedUser } = require('../utils/utils')
+const should = require('should')
+const { dataadminReq, adminReq, authReq, customAuthReq, getReservedUser } = require('../utils/utils')
 const { deleteUser } = require('../utils/users')
 const endpoint = '/api/user'
 
@@ -29,5 +29,23 @@ describe('user:get', () => {
     const deletedUserData = await customAuthReq(user, 'get', endpoint)
     deletedUserData._id.should.equal(user._id)
     deletedUserData.type.should.equal('deletedUser')
+  })
+
+  it('should get access levels', async () => {
+    const userData = await authReq('get', endpoint)
+    should(userData.roles).not.be.ok()
+    userData.accessLevels.should.deepEqual([])
+  })
+
+  it('should get admin access levels', async () => {
+    const userData = await adminReq('get', endpoint)
+    const adminAccessLevels = [ 'public', 'authentified', 'dataadmin', 'admin' ]
+    userData.accessLevels.should.deepEqual(adminAccessLevels)
+  })
+
+  it('should get dataadmin access levels', async () => {
+    const userData = await dataadminReq('get', endpoint)
+    const dataadminAccessLevels = [ 'public', 'authentified', 'dataadmin' ]
+    userData.accessLevels.should.deepEqual(dataadminAccessLevels)
   })
 })

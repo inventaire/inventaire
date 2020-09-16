@@ -2,14 +2,14 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const should = require('should')
-const { authReq, nonAuthReq, undesiredRes } = require('../utils/utils')
+const { authReq, publicReq, undesiredRes } = require('../utils/utils')
 const { groupPromise } = require('../fixtures/groups')
 const endpoint = '/api/groups'
 
 describe('groups:get:default', () => {
   it('should reject unauthentified user', done => {
     groupPromise
-    .then(group => nonAuthReq('get', endpoint))
+    .then(group => publicReq('get', endpoint))
     .then(undesiredRes(done))
     .catch(err => {
       err.body.status_verbose.should.equal('unauthorized api access')

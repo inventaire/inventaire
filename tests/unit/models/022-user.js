@@ -127,4 +127,46 @@ describe('user model', () => {
       should(updatedUser.snapshot).not.be.ok()
     })
   })
+
+  describe('addRole', () => {
+    it('should add a first role', () => {
+      const user = _create(validUser())
+      should(user.roles).not.be.ok()
+      User.addRole('admin')(user)
+      user.roles.should.deepEqual([ 'admin' ])
+    })
+
+    it('should add a new role', () => {
+      const user = _create(validUser())
+      User.addRole('admin')(user)
+      User.addRole('dataadmin')(user)
+      user.roles.should.deepEqual([ 'admin', 'dataadmin' ])
+    })
+
+    it('should not add a duplicated role', () => {
+      const user = _create(validUser())
+      User.addRole('admin')(user);
+      (() => User.addRole('admin')(user)).should.throw()
+    })
+
+    it('should reject an invalid role', () => {
+      const user = _create(validUser());
+      (() => User.addRole('foo')(user)).should.throw()
+    })
+  })
+
+  describe('removeRole', () => {
+    it('should remove role', () => {
+      const user = _create(validUser())
+      User.addRole('admin')(user)
+      User.addRole('dataadmin')(user)
+      User.removeRole('dataadmin')(user)
+      user.roles.should.deepEqual([ 'admin' ])
+    })
+
+    it('should reject an invalid role', () => {
+      const user = _create(validUser());
+      (() => User.addRole('foo')(user)).should.throw()
+    })
+  })
 })

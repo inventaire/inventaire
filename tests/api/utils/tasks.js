@@ -1,19 +1,19 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const { nonAuthReq, adminReq } = require('./utils')
+const { publicReq, adminReq } = require('./utils')
 const endpoint = '/api/tasks?action='
 
 const utils = module.exports = {
   getByIds: ids => {
     ids = _.forceArray(ids).join('|')
-    return nonAuthReq('get', `${endpoint}by-ids&ids=${ids}`)
+    return publicReq('get', `${endpoint}by-ids&ids=${ids}`)
     .then(({ tasks }) => tasks)
   },
 
   getBySuspectUris: uris => {
     uris = _.forceArray(uris).join('|')
-    return nonAuthReq('get', `${endpoint}by-suspect-uris&uris=${uris}`)
+    return publicReq('get', `${endpoint}by-suspect-uris&uris=${uris}`)
     .then(({ tasks }) => tasks)
   },
 
@@ -24,7 +24,7 @@ const utils = module.exports = {
 
   getBySuggestionUris: uris => {
     uris = _.forceArray(uris).join('|')
-    return nonAuthReq('get', `${endpoint}by-suggestion-uris&uris=${uris}`)
+    return publicReq('get', `${endpoint}by-suggestion-uris&uris=${uris}`)
     .then(({ tasks }) => tasks)
   },
 
@@ -33,7 +33,7 @@ const utils = module.exports = {
     const { limit, offset } = options
     if (limit != null) url += `&limit=${limit}`
     if (offset != null) url += `&offset=${offset}`
-    return nonAuthReq('get', url)
+    return publicReq('get', url)
     .then(({ tasks }) => tasks)
   },
 

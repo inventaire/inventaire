@@ -34,6 +34,7 @@ This repository tracks the server-side developments, while the (heavy) [client-s
 - [Inventaire stack map](#inventaire-stack-map)
 - [Concepts map](#concepts-map)
 - [Contribute](#contribute)
+- [Documentation](#documentation)
 - [API](#api)
 - [Administration](#administration)
 - [Day-dreaming on future evolutions](#day-dreaming-on-future-evolutions)

@@ -11,7 +11,7 @@ const db = __.require('couch', 'base')('users')
 describe('auth:email-confirmation', () => {
   it('should send a confirmation if email is not validated ', done => {
     const email = createUserEmail()
-    const userPromise = getUserGetter(email, false)()
+    const userPromise = getUserGetter(email)()
     userPromise
     .then(user => {
       user.validEmail.should.be.false()
@@ -26,7 +26,7 @@ describe('auth:email-confirmation', () => {
 
   it('should reject if email is already valid ', done => {
     const email = createUserEmail()
-    const userPromise = getUserGetter(email, false)()
+    const userPromise = getUserGetter(email)()
     createCustomUser(userPromise, 'validEmail', true)
     .then(() => customAuthReq(userPromise, 'post', endpoint, { email }))
     .catch(err => {
@@ -38,7 +38,7 @@ describe('auth:email-confirmation', () => {
 
   it('should reject if creation strategy is not local ', done => {
     const email = createUserEmail()
-    const userPromise = getUserGetter(email, false)()
+    const userPromise = getUserGetter(email)()
     createCustomUser(userPromise, 'creationStrategy', 'notLocal')
     .then(() => customAuthReq(userPromise, 'post', endpoint, { email }))
     .catch(err => {

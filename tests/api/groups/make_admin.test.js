@@ -33,7 +33,7 @@ describe('groups:update:make-admin', () => {
   })
 
   it('should reject request by non admin', done => {
-    const memberPromise = getUserGetter(humanName(), false)()
+    const memberPromise = getUserGetter(humanName())()
 
     addMember(groupPromise, memberPromise)
     .then(([ group, member ]) => {
@@ -49,7 +49,7 @@ describe('groups:update:make-admin', () => {
   })
 
   it('should add an admin', done => {
-    const memberPromise = getUserGetter(humanName(), false)()
+    const memberPromise = getUserGetter(humanName())()
 
     addMember(groupPromise, memberPromise)
     .then(([ group, member ]) => {

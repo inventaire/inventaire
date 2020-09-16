@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const should = require('should')
-const { getUser, authReq, customAuthReq, nonAuthReq } = __.require('apiTests', 'utils/utils')
+const { getUser, authReq, customAuthReq, publicReq } = __.require('apiTests', 'utils/utils')
 const { createItem, createEditionAndItem } = require('../fixtures/items')
 const { getTwoFriends } = require('../fixtures/users')
 
@@ -56,7 +56,7 @@ describe('items:get-by-user-and-entities', () => {
   describe('with access rights', () => {
     it('should get a public item', async () => {
       const item = await createEditionAndItem(getUser())
-      const { items } = await nonAuthReq('get', `${endpoint}&user=${item.owner}&uris=${item.entity}`)
+      const { items } = await publicReq('get', `${endpoint}&user=${item.owner}&uris=${item.entity}`)
       const foundItem = items[0]
       foundItem._id.should.equal(item._id)
       foundItem.entity.should.equal(item.entity)
@@ -86,7 +86,7 @@ describe('items:get-by-user-and-entities', () => {
   describe('without access rights', () => {
     it('should not get a network item', async () => {
       const item = await createEditionAndItem(getUser(), { listing: 'network' })
-      const { items } = await nonAuthReq('get', `${endpoint}&user=${item.owner}&uris=${item.entity}`)
+      const { items } = await publicReq('get', `${endpoint}&user=${item.owner}&uris=${item.entity}`)
       items.length.should.equal(0)
     })
 

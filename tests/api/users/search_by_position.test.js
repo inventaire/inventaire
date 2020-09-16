@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const { Wait } = __.require('lib', 'promises')
 const should = require('should')
-const { nonAuthReq, customAuthReq, getUser } = require('../utils/utils')
+const { publicReq, customAuthReq, getUser } = require('../utils/utils')
 const { createUser } = require('../fixtures/users')
 const { makeFriends } = require('../utils/relations')
 const qs = require('querystring')
@@ -12,7 +12,7 @@ const bbox = qs.escape(JSON.stringify([ 0, 0, 2, 2 ]))
 describe('users:search-by-position', () => {
   it('should get users by position', async () => {
     const user = await someUserWithPosition
-    const { users } = await nonAuthReq('get', `/api/users?action=search-by-position&bbox=${bbox}`)
+    const { users } = await publicReq('get', `/api/users?action=search-by-position&bbox=${bbox}`)
     users.should.be.an.Array()
     const foundUser = users.find(userDoc => userDoc._id === user._id)
     should(foundUser).be.ok()

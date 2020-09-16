@@ -17,8 +17,8 @@ attributes.ownerSafe = [
   'settings',
   'position',
   'summaryPeriodicity',
-  'admin',
   'readToken',
+  'roles',
   'snapshot'
 ]
 
@@ -31,6 +31,7 @@ attributes.public = [
   'position',
   'special',
   'created',
+  'roles',
   // Non-authorized data should still be deleted
   // snapshot.private
   // snapshot.network (unless requested by someone of the user network)
@@ -97,3 +98,5 @@ attributes.notificationsSettings = [
   'update_on_your_item',
   'update_on_item_you_requested'
 ]
+
+attributes.roles = [ 'admin', 'dataadmin' ]

@@ -1,6 +1,8 @@
 const __ = require('config').universalPath
+const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const validateObject = __.require('lib', 'validate_object')
+const { rolesByAccess } = require('./get_user_access_levels')
 
 module.exports = controllers => {
   const actions = getActions(controllers)
@@ -18,45 +20,34 @@ module.exports = controllers => {
       return error_.unknownAction(req, res)
     }
 
-    if (actionData.authentified && (req.user == null)) {
-      return error_.unauthorizedApiAccess(req, res)
+    // user.roles doesn't contain 'public' and 'authentified', but those are needed to resolve access levels
+    let roles = [ 'public' ]
+    if (req.user) {
+      roles.push('authentified')
+      if (req.user.roles) roles = roles.concat(req.user.roles)
     }
 
-    if (actionData.admin && !req.user.admin) {
-      return error_.unauthorizedAdminApiAccess(req, res)
-    }
-
-    actionData.controller(req, res)
+    if (_.someMatch(roles, actionData.access)) actionData.controller(req, res)
+    else error_.unauthorizedApiAccess(req, res, { roles, requiredAccessLevel: actionData.access })
   }
 }
 
+const accessLevels = Object.keys(rolesByAccess)
+
 const getActions = controllers => {
-  validateObject(controllers, [ 'public', 'authentified', 'admin' ], 'object')
+  validateObject(controllers, accessLevels, 'object')
 
-  const { authentified, public: publik, admin } = controllers
-
+  const controllerKeys = Object.keys(controllers)
   const actions = {}
 
-  if (publik) {
-    for (const key in publik) {
-      const controller = publik[key]
-      actions[key] = { controller, authentified: false, admin: false }
+  controllerKeys.forEach(access => {
+    for (const action in controllers[access]) {
+      actions[action] = {
+        controller: controllers[access][action],
+        access: rolesByAccess[access]
+      }
     }
-  }
-
-  if (authentified) {
-    for (const key in authentified) {
-      const controller = authentified[key]
-      actions[key] = { controller, authentified: true, admin: false }
-    }
-  }
-
-  if (admin) {
-    for (const key in admin) {
-      const controller = admin[key]
-      actions[key] = { controller, authentified: true, admin: true }
-    }
-  }
+  })
 
   return actions
 }

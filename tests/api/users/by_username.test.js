@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const should = require('should')
-const { nonAuthReq, authReq, customAuthReq, getUser, getUserB, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = __.require('apiTests', 'utils/utils')
+const { publicReq, authReq, customAuthReq, getUser, getUserB, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = __.require('apiTests', 'utils/utils')
 const { createUser } = require('../fixtures/users')
 const randomString = __.require('lib', './utils/random_string')
 const { getTwoFriends } = require('../fixtures/users')
@@ -13,7 +13,7 @@ const endpoint = '/api/users?action=by-usernames'
 describe('users:by-usernames', () => {
   it('should reject without id', async () => {
     try {
-      await nonAuthReq('get', endpoint).then(shouldNotBeCalled)
+      await publicReq('get', endpoint).then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.equal('missing parameter in query: usernames')
@@ -26,7 +26,7 @@ describe('users:by-usernames', () => {
     const lowerCasedUsername = username.toLowerCase()
     const user = await createUser({ username }).then(Wait(10))
     username = user.username
-    const res = await nonAuthReq('get', `${endpoint}&usernames=${username}`)
+    const res = await publicReq('get', `${endpoint}&usernames=${username}`)
     const { users } = res
     should(users[username]).not.be.ok()
     users[lowerCasedUsername].username.should.equal(username)
@@ -58,7 +58,7 @@ describe('users:by-usernames', () => {
   it('should get several users', async () => {
     const users = await Promise.all([ getUser(), getUserB() ])
     const usernames = users.map(_.property('username'))
-    const res = await nonAuthReq('get', `${endpoint}&usernames=${usernames.join('|')}`)
+    const res = await publicReq('get', `${endpoint}&usernames=${usernames.join('|')}`)
     const lowercasedUsernames = usernames.map(_.toLowerCase)
     _.keys(res.users).should.deepEqual(lowercasedUsernames)
   })
