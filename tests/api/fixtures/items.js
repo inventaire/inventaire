@@ -51,8 +51,7 @@ const fillItemWithRandomData = (itemData = {}) => {
 const addDefaultEntity = async itemData => {
   if (!itemData.entity) {
     const entity = itemData[0] && itemData[0].entity
-    const entityUriPromise = entity ? Promise.resolve(entity) : getEditionUri()
-    const entityUri = await entityUriPromise
+    const entityUri = await (entity || getEditionUri())
     itemData.entity = entityUri
   }
   return itemData

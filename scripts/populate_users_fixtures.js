@@ -23,7 +23,7 @@ const run = async () => {
 const createUserAndGroupAndGFriends = async username => {
   const user = await createUserWithItems({ username })
   _.info(`${user.username} is a new user`)
-  addRole(user._id, 'admin')
+  await addRole(user._id, 'admin')
   _.info(`${user.username} has now an 'admin' role`)
 
   const [ friend1, friend2 ] = await Promise.all([
