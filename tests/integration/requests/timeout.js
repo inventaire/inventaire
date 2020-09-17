@@ -6,7 +6,8 @@ const requests_ = __.require('lib', 'requests')
 const { wait } = __.require('lib', 'promises')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = __.require('apiTests', 'utils/utils')
 const { baseBanTime, banTimeIncreaseFactor } = require('config').outgoingRequests
-let port = 38463
+// Avoid reusing ports from the previous test session, as timeouts data might be restored
+let port = 1024 + parseInt(Date.now().toString().slice(-4))
 
 const startTimeoutServer = () => new Promise(resolve => {
   port++
