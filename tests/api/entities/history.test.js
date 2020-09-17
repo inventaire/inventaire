@@ -1,6 +1,7 @@
 require('should')
 const { adminReq, dataadminReq, publicReq, authReq, shouldNotBeCalled } = require('../utils/utils')
 const { createHuman } = require('../fixtures/entities')
+const { getDeanonymizedUser, customAuthReq } = require('../utils/utils')
 const endpoint = '/api/entities?action=history'
 const { _id: anonymizedId } = require('db/couchdb/hard_coded_documents').users.anonymized
 
@@ -57,5 +58,20 @@ describe('entities:history', () => {
     const patch = patches[0]
     patch.user.should.be.a.String()
     patch.user.should.equal(anonymizedId)
+  })
+
+  it('should not anonymize patches from users that disabled anonymization', async () => {
+    const [ user, human ] = await Promise.all([
+      getDeanonymizedUser(),
+      createHuman()
+    ])
+    await customAuthReq(user, 'put', '/api/entities?action=update-label', {
+      uri: human.uri,
+      lang: 'es',
+      value: 'foo'
+    })
+    const { patches } = await publicReq('get', `${endpoint}&id=${human._id}`)
+    patches[0].user.should.equal(anonymizedId)
+    patches[1].user.should.equal(user._id)
   })
 })
