@@ -12,5 +12,8 @@ module.exports = {
   },
   db: {
     enableDesignDocSync: true
+  },
+  piwik: {
+    enabled: false
   }
 }
