@@ -24,7 +24,7 @@ db.get(dbKey)
 const throwIfTemporarilyBanned = host => {
   const hostTimeoutData = timeoutData[host]
   if (hostTimeoutData != null && Date.now() < hostTimeoutData.expire) {
-    throw error_.new('temporary ban', 500, { host, timeoutData: hostTimeoutData })
+    throw error_.new(`temporary ban: ${host}`, 500, { host, timeoutData: hostTimeoutData })
   }
 }
 

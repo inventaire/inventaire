@@ -20,7 +20,12 @@ module.exports = {
     if (!enabled) return isbns.map(emptySeed)
     isbns = isbns.join('|')
     const url = _.buildPath(`${host}/books`, { isbns, refresh })
-    return requests_.get(url, reqOptions)
+    try {
+      return await requests_.get(url, reqOptions)
+    } catch (err) {
+      _.error(err, 'dataseed getByIsbns err')
+      return []
+    }
   },
 
   // Provides simply an image in a prompt maner
