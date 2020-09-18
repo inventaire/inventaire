@@ -10,7 +10,6 @@ module.exports = {
     assert_.object(shelf)
     assert_.string(shelf.owner)
     assert_.string(shelf.name)
-    if (!shelf.listing) { shelf.listing = 'private' }
     const newShelf = {}
     Object.keys(shelf).forEach(key => {
       const attribute = shelf[key]

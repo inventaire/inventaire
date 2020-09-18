@@ -9,9 +9,7 @@ const error_ = __.require('lib', 'error/error')
 const { tap } = __.require('lib', 'promises')
 
 const shelves_ = module.exports = {
-  create: async params => {
-    const { description, listing, name, reqUserId } = params
-    const newShelf = { owner: reqUserId, description, listing, name }
+  create: async newShelf => {
     const shelf = Shelf.create(newShelf)
     return db.postAndReturn(shelf)
   },

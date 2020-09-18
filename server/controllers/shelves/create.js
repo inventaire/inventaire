@@ -16,8 +16,19 @@ const sanitization = {
 
 module.exports = (req, res, next) => {
   sanitize(req, res, sanitization)
-  .then(shelves_.create)
+  .then(formatNewShelf)
   .then(responses_.Wrap(res, 'shelf'))
   .then(Track(req, [ 'shelf', 'creation' ]))
   .catch(error_.Handler(req, res))
+}
+
+const formatNewShelf = params => {
+  const { description, listing, name, reqUserId: owner } = params
+  const newShelf = {
+    description: description || '',
+    name,
+    listing: listing || 'private',
+    owner
+  }
+  shelves_.create(newShelf)
 }

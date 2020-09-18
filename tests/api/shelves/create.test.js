@@ -1,7 +1,7 @@
 const __ = require('config').universalPath
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = __.require('apiTests', 'utils/utils')
 const { authReq } = require('../utils/utils')
-const { shelfDescription, shelfName } = require('../fixtures/shelves')
+const { shelfName } = require('../fixtures/shelves')
 const endpoint = '/api/shelves?action=create'
 
 describe('shelves:create', () => {
@@ -39,11 +39,9 @@ describe('shelves:create', () => {
   })
 
   it('should create shelf', async () => {
-    const description = shelfDescription()
     const name = shelfName()
     const params = {
       name,
-      description,
       listing: 'public'
     }
     const res = await authReq('post', endpoint, params)
