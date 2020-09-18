@@ -9,7 +9,7 @@ const fixtures = module.exports = {
   shelfName: () => `${faker.lorem.words(3)} shelf`,
   shelfDescription: () => faker.lorem.paragraph(),
 
-  createShelf: (userPromise, shelfData = {}) => {
+  createShelf: async (userPromise, shelfData = {}) => {
     if (!userPromise) { userPromise = getUser() }
     if (!shelfData.listing) { shelfData.listing = 'public' }
     if (!shelfData.description) {
@@ -19,13 +19,17 @@ const fixtures = module.exports = {
       shelfData.name = fixtures.shelfName()
     }
     const endpoint = '/api/shelves?action=create'
-    return customAuthReq(userPromise, 'post', endpoint, shelfData)
-    .then(({ shelf }) => shelf)
+    await customAuthReq(userPromise, 'post', endpoint, shelfData)
+
+    const ownerEndpoint = '/api/shelves?action=by-owners'
+    const user = await Promise.resolve(userPromise)
+    const { shelves } = await customAuthReq(userPromise, 'get', `${ownerEndpoint}&owners=${user._id}`)
+    return Object.values(shelves).find(shelf => shelf.name === shelfData.name)
   },
-  createShelfWithItem: async itemPromise => {
+  createShelfWithItem: async (itemPromise, shelfData = {}) => {
     const item = await resolveOrCreateItem(itemPromise)
     const itemId = item._id
-    const shelf = await fixtures.createShelf()
+    const shelf = await fixtures.createShelf(null, shelfData)
     const shelvesWithItem = await authReq('post', '/api/shelves?action=add-items', {
       id: shelf._id,
       items: [ itemId ]

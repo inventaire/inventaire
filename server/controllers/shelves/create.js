@@ -30,5 +30,5 @@ const formatNewShelf = params => {
     listing: listing || 'private',
     owner
   }
-  shelves_.create(newShelf)
+  return shelves_.create(newShelf)
 }
