@@ -19,9 +19,8 @@ const shelves_ = module.exports = {
     const shelves = await shelves_.byIds(ids)
     const shelvesCount = _.compact(shelves).length
     if (shelvesCount === 0) { return [] }
-    if (shelvesCount === 1) { return byShelfWithItems(shelves[0], reqUserId) }
     const items = await getAuthorizedItems.byShelves(shelves, reqUserId)
-    assignItemsToShelves(shelves, items)
+    return assignItemsToShelves(shelves, items)
   },
   byOwners: ownersIds => {
     return db.viewByKeys('byOwners', ownersIds)
@@ -73,10 +72,5 @@ const assignItemsToShelf = items => shelf => {
   const itemsIds = items.map(_.property('_id'))
   const missingItems = _.difference(itemsIds, shelf.items)
   shelf.items = shelf.items.concat(missingItems)
-}
-
-const byShelfWithItems = async (shelf, reqUserId) => {
-  const items = await getAuthorizedItems.byShelf(shelf, reqUserId)
-  assignItemsToShelf(items)(shelf)
-  return [ shelf ]
+  return shelf
 }

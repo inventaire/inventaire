@@ -104,6 +104,7 @@ describe('shelves:by-ids', () => {
         const resShelf = _.values(res.shelves)[0]
         resShelf.items.should.not.containEql(item._id)
       })
+
       it('should not get private items', async () => {
         const item = await createItem(getUser(), { listing: 'private' })
         const shelf = await createShelf()
