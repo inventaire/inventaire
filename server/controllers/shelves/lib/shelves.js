@@ -6,7 +6,6 @@ const items_ = __.require('controllers', 'items/lib/items')
 const getAuthorizedItems = __.require('controllers', 'items/lib/get_authorized_items')
 const db = __.require('couch', 'base')('shelves')
 const error_ = __.require('lib', 'error/error')
-const { tap } = __.require('lib', 'promises')
 
 const shelves_ = module.exports = {
   create: async newShelf => {
@@ -18,20 +17,19 @@ const shelves_ = module.exports = {
   byIdsWithItems: async (ids, reqUserId) => {
     const shelves = await shelves_.byIds(ids)
     const shelvesCount = _.compact(shelves).length
-    if (shelvesCount === 0) { return [] }
+    if (shelvesCount === 0) return []
     const items = await getAuthorizedItems.byShelves(shelves, reqUserId)
     return assignItemsToShelves(shelves, items)
   },
   byOwners: ownersIds => {
     return db.viewByKeys('byOwners', ownersIds)
   },
-  updateAttributes: (params, shelfId) => {
+  updateAttributes: async (params, shelfId) => {
     const { reqUserId } = params
     const newAttributes = _.pick(params, [ 'name', 'description', 'listing' ])
-    return db.get(shelfId)
-    .then(tap(() => shelves_.validateOwnership(reqUserId)))
-    .then(Shelf.updateAttributes(reqUserId, newAttributes))
-    .then(db.putAndReturn)
+    const shelf = await db.get(shelfId)
+    const updatedShelf = Shelf.updateAttributes(shelf, newAttributes, reqUserId)
+    return db.putAndReturn(updatedShelf)
   },
   addItems: (ids, itemsIds, userId) => {
     return updateShelvesItems('addShelves', ids, userId, itemsIds)

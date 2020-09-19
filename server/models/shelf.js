@@ -11,6 +11,8 @@ module.exports = {
     assert_.string(shelf.owner)
     assert_.string(shelf.name)
 
+    shelf.listing = shelf.listing || 'private'
+
     const newShelf = {}
     Object.keys(shelf).forEach(key => {
       const attribute = shelf[key]
@@ -26,30 +28,29 @@ module.exports = {
     return newShelf
   },
 
-  updateAttributes: (userId, params) => oldShelf => {
+  updateAttributes: (oldShelf, newAttributes, userId) => {
     assert_.object(oldShelf)
-    assert_.object(params)
+    assert_.object(newAttributes)
 
     if (oldShelf.owner !== userId) {
       throw error_.new('wrong owner', 403, oldShelf.owner)
     }
 
-    for (const attr of _.keys(params)) {
+    for (const attr of Object.keys(newAttributes)) {
       if (!(attributes.updatable.includes(attr))) {
         throw error_.new(`invalid attribute: ${attr}`, 400, oldShelf)
       }
     }
-    const newAttributes = _.pick(params, attributes.updatable)
 
     const newShelf = _.clone(oldShelf)
-    for (const attr of _.keys(newAttributes)) {
+    for (const attr of Object.keys(newAttributes)) {
       const newVal = newAttributes[attr]
       validations.pass(attr, newVal)
       newShelf[attr] = newVal
     }
 
     if (_.isEqual(newShelf, oldShelf)) {
-      throw error_.new('nothing to update', 400, params)
+      throw error_.new('nothing to update', 400, newAttributes)
     }
 
     newShelf.updated = Date.now()

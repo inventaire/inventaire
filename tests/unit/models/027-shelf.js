@@ -5,8 +5,7 @@ const Shelf = __.require('models', 'shelf')
 require('should')
 
 const someUserId = '1234567890a1234567890b1234567890'
-const create = Shelf.create.bind(null)
-const update = Shelf.updateAttributes.bind(null)
+const { create, updateAttributes: update } = Shelf
 
 const faker = require('faker')
 const fakeName = faker.random.words(4)
@@ -94,7 +93,7 @@ describe('shelf model', () => {
     it('should update when passing a valid attribute', done => {
       const shelf = create(validShelf)
       const updateAttributesData = { listing: 'public' }
-      const res = update(someUserId, updateAttributesData)(shelf)
+      const res = update(shelf, updateAttributesData, someUserId)
       res.listing.should.equal('public')
       done()
     })
@@ -102,7 +101,7 @@ describe('shelf model', () => {
     it('should throw when passing an invalid attribute', done => {
       const doc = create(validShelf)
       const updateAttributesData = { foo: '123' }
-      const updater = () => update(someUserId, updateAttributesData)(doc)
+      const updater = () => update(doc, updateAttributesData, someUserId)
       updater.should.throw('invalid attribute: foo')
       done()
     })
@@ -110,7 +109,7 @@ describe('shelf model', () => {
     it('should throw when passing an invalid attribute value', done => {
       const doc = create(validShelf)
       const updateAttributesData = { listing: 'kikken' }
-      const updater = () => update(someUserId, updateAttributesData)(doc)
+      const updater = () => update(doc, updateAttributesData, someUserId)
       updater.should.throw('invalid listing: kikken')
       done()
     })
