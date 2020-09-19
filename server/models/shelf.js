@@ -10,6 +10,7 @@ module.exports = {
     assert_.object(shelf)
     assert_.string(shelf.owner)
     assert_.string(shelf.name)
+
     const newShelf = {}
     Object.keys(shelf).forEach(key => {
       const attribute = shelf[key]
@@ -20,7 +21,9 @@ module.exports = {
       newShelf[key] = attribute
     })
 
-    return _.assign({ created: Date.now() }, newShelf)
+    newShelf.created = Date.now()
+
+    return newShelf
   },
 
   updateAttributes: (userId, params) => oldShelf => {
@@ -49,8 +52,7 @@ module.exports = {
       throw error_.new('nothing to update', 400, params)
     }
 
-    const now = Date.now()
-    newShelf.updated = now
+    newShelf.updated = Date.now()
     return newShelf
   }
 }
