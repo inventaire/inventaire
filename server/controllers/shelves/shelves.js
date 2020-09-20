@@ -4,7 +4,7 @@ const { addItems, removeItems } = require('./items_actions')
 
 module.exports = {
   get: ActionsControllers({
-    authentified: {
+    public: {
       'by-ids': require('./by_ids'),
       'by-owners': require('./by_owners')
     }

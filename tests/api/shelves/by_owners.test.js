@@ -1,7 +1,7 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = __.require('apiTests', 'utils/utils')
-const { customAuthReq, authReq, getUser, getUserB } = require('../utils/utils')
+const { nonAuthReq, customAuthReq, authReq, getUser, getUserB } = require('../utils/utils')
 const { createShelf } = require('../fixtures/shelves')
 const { makeFriends } = require('../utils/relations')
 const { createUser } = require('../fixtures/users')
@@ -19,6 +19,13 @@ describe('shelves:by-owners', () => {
         err.body.status_verbose.should.equal('missing parameter in query: owners')
         err.statusCode.should.equal(400)
       }
+    })
+
+    it('should get a public shelf', async () => {
+      const shelf = await createShelf()
+      shelf.listing.should.equal('public')
+      const res = await nonAuthReq('get', `${endpoint}&owners=${shelf.owner}`)
+      res.shelves.should.be.ok()
     })
   })
 
