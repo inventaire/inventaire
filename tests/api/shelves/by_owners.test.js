@@ -60,9 +60,11 @@ describe('shelves:by-owners', () => {
 
   describe('listing:network', () => {
     it('should not return non friends network shelves', async () => {
-      const shelf = await createShelf(getUserB(), { listing: 'network' })
-      const { _id: userBId } = await getUserB()
-      const res = await authReq('get', `${endpoint}&owners=${userBId}`)
+      const friendA = await createUser()
+      const friendB = await createUser()
+      const shelf = await createShelf(friendB, { listing: 'network' })
+      const { _id: friendBId } = await friendB
+      const res = await customAuthReq(friendA, 'get', `${endpoint}&owners=${friendBId}`)
       const resIds = _.keys(res.shelves)
       resIds.should.not.containEql(shelf._id)
     })

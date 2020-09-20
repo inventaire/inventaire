@@ -20,7 +20,7 @@ describe('groups:create', () => {
       await authReq('post', endpoint, { name: '' }).then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
-      err.body.status_verbose.should.equal('invalid name: ')
+      err.body.status_verbose.should.startWith('invalid name: ')
     }
   })
 

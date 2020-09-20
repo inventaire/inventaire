@@ -1,5 +1,5 @@
 require('should')
-const { authReq, undesiredRes, shouldNotBeCalled } = require('../utils/utils')
+const { authReq, undesiredRes, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
 const { createEditionWithIsbn, humanName, randomLabel, someOpenLibraryId } = require('../fixtures/entities')
 const endpoint = '/api/entities?action=create'
 
@@ -50,6 +50,7 @@ describe('entities:create', () => {
       })
       .then(shouldNotBeCalled)
     } catch (err) {
+      rethrowShouldNotBeCalledErrors(err)
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal("wdt:P31 value isn't a allowlisted value")
     }
