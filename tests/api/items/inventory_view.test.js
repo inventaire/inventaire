@@ -50,7 +50,7 @@ describe('items:inventory-view', () => {
 
   it('should return a shelf inventory-view', async () => {
     const shelf = await createShelf()
-    const res = await nonAuthReq('get', `${endpoint}&shelf=${shelf._id}`)
+    const res = await publicReq('get', `${endpoint}&shelf=${shelf._id}`)
     res.worksTree.should.be.an.Object()
     res.worksTree.author.should.be.an.Object()
     res.worksTree.genre.should.be.an.Object()

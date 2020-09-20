@@ -1,7 +1,7 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = __.require('apiTests', 'utils/utils')
-const { nonAuthReq, customAuthReq, authReq, getUser, getUserB } = require('../utils/utils')
+const { publicReq, customAuthReq, authReq, getUser, getUserB } = require('../utils/utils')
 const { createShelf } = require('../fixtures/shelves')
 const { makeFriends } = require('../utils/relations')
 const { createUser } = require('../fixtures/users')
@@ -24,7 +24,7 @@ describe('shelves:by-owners', () => {
     it('should get a public shelf', async () => {
       const shelf = await createShelf()
       shelf.listing.should.equal('public')
-      const res = await nonAuthReq('get', `${endpoint}&owners=${shelf.owner}`)
+      const res = await publicReq('get', `${endpoint}&owners=${shelf.owner}`)
       res.shelves.should.be.ok()
     })
   })
