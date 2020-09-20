@@ -10,6 +10,8 @@ const endpoint = '/api/items?action=search'
 const { wait } = __.require('lib', 'promises')
 const { shouldNotBeCalled } = require('../utils/utils')
 const firstNWords = (str, num) => str.split(' ').slice(0, num).join(' ')
+const { elasticsearchUpdateDelay } = CONFIG.entitiesSearchEngine
+const itemsIndex = CONFIG.db.name('items')
 
 const search = (reqUser, userId, search) => {
   let url = endpoint
@@ -22,8 +24,9 @@ describe('items:search:indexation', () => {
   it('should index items with snapshot data', async () => {
     const user = await getUser()
     const item = await createItemWithEditionAndWork(user)
-    await wait(1000)
-    const res = await getIndexedDoc({ indexBase: 'items', id: item._id })
+    await wait(elasticsearchUpdateDelay)
+    const res = await getIndexedDoc(itemsIndex, 'item', item._id)
+    res.found.should.be.true()
     res._id.should.equal(item._id)
     res._type.should.equal('item')
     res._source.owner.should.equal(user._id)

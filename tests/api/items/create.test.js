@@ -10,7 +10,7 @@ const { createUser, getRefreshedUser } = require('../fixtures/users')
 const { createShelf } = require('../fixtures/shelves')
 const { getByUris: getEntitiesByUris } = require('../utils/entities')
 const debounceDelay = CONFIG.itemsCountDebounceTime + 100
-const { shouldNotGetHere, rethrowShouldNotBeCalledErrors } = __.require('apiTests', 'utils/utils')
+const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = __.require('apiTests', 'utils/utils')
 
 const editionUriPromise = createEdition().then(({ uri }) => uri)
 
@@ -191,7 +191,7 @@ describe('items:create', () => {
         entity: editionUri,
         shelves: [ 'not a shelf id' ]
       })
-      shouldNotGetHere(item)
+      shouldNotBeCalled(item)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
       err.statusCode.should.equal(400)
