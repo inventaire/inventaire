@@ -59,7 +59,7 @@
     "express-session": "^1.15.6",
     "formidable": "^1.0.17",
     "gm": "^1.23.1",
-    "inv-loggers": "^3.3.13",
+    "inv-loggers": "^3.3.14",
     "isbn-groups": "^2.0.1",
     "isbn3": "^1.1.0",
     "jiff": "^0.7.3",
