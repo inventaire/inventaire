@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
 const sanitize = __.require('lib', 'sanitize/sanitize')
-const { undesiredRes } = require('../utils')
+const { undesiredRes, shouldNotBeCalled } = require('../utils')
 
 describe('sanitize', () => {
   it('should be a function', () => {
@@ -437,6 +437,27 @@ describe('sanitize', () => {
       const configs = { relatives: { allowlist: [ 'foo', 'bar' ] } }
       const { relatives } = await sanitize(req, res, configs)
       relatives.should.deepEqual([ 'bar', 'foo' ])
+    })
+  })
+
+  describe('nonEmptyString parameters', () => {
+    it('should trim value', async () => {
+      const req = { query: { name: ' f oo ' } }
+      const res = {}
+      const configs = { name: {} }
+      const { name } = await sanitize(req, res, configs)
+      name.should.deepEqual('f oo')
+    })
+
+    it('should throw on empty value', async () => {
+      const req = { query: {} }
+      const res = {}
+      const configs = { name: {} }
+      await sanitize(req, res, configs)
+      .then(shouldNotBeCalled)
+      .catch(err => {
+        err.message.should.equal('missing parameter in query: name')
+      })
     })
   })
 })

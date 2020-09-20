@@ -25,8 +25,8 @@ module.exports = (req, res, next) => {
 const formatNewShelf = params => {
   const { description, listing, name, reqUserId: owner } = params
   const newShelf = {
-    description: description || '',
     name,
+    description: description || '',
     listing: listing || 'private',
     owner
   }
