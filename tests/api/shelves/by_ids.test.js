@@ -54,8 +54,10 @@ describe('shelves:by-ids', () => {
   })
 
   it('should not return network shelves', async () => {
-    const shelf = await createShelf(null, { listing: 'network' })
-    const res = await authReqB('get', `${endpoint}&ids=${shelf._id}`)
+    const userA = await createUser()
+    const userB = await createUser()
+    const shelf = await createShelf(userB, { listing: 'network' })
+    const res = await customAuthReq(userA, 'get', `${endpoint}&ids=${shelf._id}`)
     const resIds = _.keys(res.shelves)
     resIds.should.not.containEql(shelf._id)
   })
@@ -98,10 +100,12 @@ describe('shelves:by-ids', () => {
       })
 
       it('should not get network items', async () => {
-        const item = await createItem(getUser(), { listing: 'network' })
-        const shelf = await createShelf()
-        await addItem(shelf._id, item._id)
-        const res = await authReqB('get', `${endpoint}&ids=${shelf._id}&with-items=true`)
+        const userA = await createUser()
+        const userB = await createUser()
+        const item = await createItem(userA, { listing: 'network' })
+        const shelf = await createShelf(userA)
+        await addItem(shelf._id, item._id, userA)
+        const res = await customAuthReq(userB, 'get', `${endpoint}&ids=${shelf._id}&with-items=true`)
         const resShelf = _.values(res.shelves)[0]
         resShelf.items.should.not.containEql(item._id)
       })
