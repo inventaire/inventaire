@@ -14,6 +14,7 @@ const snapshot_ = require('./snapshot/snapshot')
 const getByAccessLevel = require('./get_by_access_level')
 const user_ = __.require('controllers', 'user/lib/user')
 const db = __.require('couch', 'base')('items')
+const error_ = __.require('lib', 'error/error')
 const validateEntityType = require('./validate_entity_type')
 
 const items_ = module.exports = {
@@ -33,6 +34,11 @@ const items_ = module.exports = {
   },
 
   byPreviousEntity: entityUri => db.viewByKey('byPreviousEntity', entityUri),
+
+  byShelvesAndListing: (keys, reqUserId) => {
+    return db.viewByKeys('byShelvesAndListing', keys)
+    .then(formatItems(reqUserId))
+  },
 
   // all items from an entity that require a specific authorization
   authorizedByEntities: (uris, reqUserId) => {
@@ -136,6 +142,25 @@ const items_ = module.exports = {
       if (image != null) { item.pictures = [ image ] }
       return item
     })
+  },
+
+  updateShelves: async (action, shelvesIds, userId, itemsIds) => {
+    const items = await items_.byIds(itemsIds)
+    validateOwnership(userId, items)
+    const updatedItems = items.map(item => {
+      item.shelves = actionFunctions[action](item.shelves, shelvesIds)
+      return item
+    })
+    return db.bulk(updatedItems)
+  }
+}
+
+const validateOwnership = (userId, items) => {
+  items = _.forceArray(items)
+  for (const item of items) {
+    if (item.owner !== userId) {
+      throw error_.new('wrong owner', 400, { userId, itemId: item._id })
+    }
   }
 }
 
@@ -161,3 +186,8 @@ const filterWithImage = assertImage => items => {
 }
 
 const itemWithImage = item => item.snapshot['entity:image']
+
+const actionFunctions = {
+  addShelves: _.union,
+  deleteShelves: _.difference
+}

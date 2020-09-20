@@ -1,15 +1,18 @@
 const __ = require('config').universalPath
 const user_ = __.require('controllers', 'user/lib/user')
-const { areFriendsOrGroupCoMembers } = __.require('controllers', 'user/lib/relations_status')
+const getInventoryAccessLevel = __.require('controllers', 'items/lib/get_inventory_access_level')
 
-module.exports = (userId, authentifiedUserPromise) => {
-  return Promise.all([
+module.exports = async (userId, authentifiedUserPromise) => {
+  const reqUserId = await getReqUserId(authentifiedUserPromise)
+
+  const [ user, accessLevel ] = await Promise.all([
     user_.byId(userId),
-    getAccessLevel(userId, authentifiedUserPromise)
+    getInventoryAccessLevel(userId, reqUserId)
   ])
-  .then(([ user, getAccessLevel ]) => ({
+
+  return {
     users: [ user ],
-    accessLevel: getAccessLevel,
+    accessLevel,
 
     feedOptions: {
       title: user.username,
@@ -18,19 +21,10 @@ module.exports = (userId, authentifiedUserPromise) => {
       queryString: `user=${user._id}`,
       pathname: `inventory/${user._id}`
     }
-  }))
+  }
 }
 
-const getAccessLevel = (userId, authentifiedUserPromise) => {
-  return authentifiedUserPromise
-  .then(requester => {
-    if (requester == null) return 'public'
-
-    const requesterId = requester._id
-
-    if (requesterId === userId) return 'private'
-
-    return areFriendsOrGroupCoMembers(userId, requester._id)
-    .then(bool => bool ? 'network' : 'public')
-  })
+const getReqUserId = async authentifiedUserPromise => {
+  const reqUser = await authentifiedUserPromise
+  if (reqUser) return reqUser._id
 }

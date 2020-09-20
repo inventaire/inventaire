@@ -3,7 +3,7 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const { customAuthReq } = require('../utils/request')
 const { getUser } = require('../utils/utils')
-const { createEdition } = require('./entities')
+const { createEdition, createEditionWithWorkAndAuthor, createEditionWithWorkAuthorAndSerie } = require('./entities')
 const faker = require('faker')
 
 const getEditionUri = async (lang = 'en') => {
@@ -11,6 +11,11 @@ const getEditionUri = async (lang = 'en') => {
   return uri
 }
 
+const createItemWithEntities = createEntityFn => async (user, itemData = {}) => {
+  const { uri } = await createEntityFn()
+  itemData.entity = uri
+  return API.createItem(user, itemData)
+}
 const API = module.exports = {
   createItems: async (user, itemsData = []) => {
     user = user || getUser()
@@ -26,15 +31,13 @@ const API = module.exports = {
     return item
   },
 
-  createEditionAndItem: async (user, itemData = {}) => {
-    const { uri } = await createEdition()
-    itemData.entity = uri
-    return API.createItem(user, itemData)
-  },
-
   createRandomizedItems: (user, itemsData) => {
     return API.createItems(user, itemsData.map(fillItemWithRandomData))
-  }
+  },
+
+  createItemWithEditionAndWork: createItemWithEntities(createEdition),
+  createItemWithAuthor: createItemWithEntities(createEditionWithWorkAndAuthor),
+  createItemWithAuthorAndSerie: createItemWithEntities(createEditionWithWorkAuthorAndSerie)
 }
 
 const transactions = [ 'giving', 'lending', 'selling', 'inventorying' ]

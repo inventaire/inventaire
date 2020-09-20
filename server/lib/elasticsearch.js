@@ -11,8 +11,9 @@ const buildSearcher = params => {
 
   const url = `${elasticHost}/${index}/_search`
 
-  return (query, type, limit) => {
+  return (query, params = {}) => {
     assert_.string(query)
+    const { type } = params
 
     let customUrl
     if (_.isNonEmptyString(type)) {
@@ -21,7 +22,7 @@ const buildSearcher = params => {
       customUrl = url
     }
 
-    const body = queryBodyBuilder(query, limit)
+    const body = queryBodyBuilder(query, params)
 
     return requests_.post(customUrl, { body })
     .then(parseResponse)

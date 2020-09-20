@@ -6,6 +6,7 @@ attributes.updatable = [
   'listing',
   'details',
   'notes',
+  'shelves',
   // Use case: change from a work entity to an edition entity
   'entity'
 ]
@@ -17,6 +18,7 @@ attributes.validAtCreation = [
   'listing',
   'details',
   'notes',
+  'shelves',
   // Legacy
   'lang'
 ]

@@ -4,7 +4,7 @@ const db = __.require('level', 'geo')('geo')
 
 module.exports = () => {
   // Start following for changes
-  require('./follow')()
+  if (CONFIG.serverMode) require('./follow')()
 
   return {
     search: (latLng, kmRange) => db.search(latLng, kmRange)

@@ -4,6 +4,7 @@ require('should')
 const { publicReq, undesiredRes } = __.require('apiTests', 'utils/utils')
 const endpoint = '/api/items?action=inventory-view'
 const { groupPromise } = require('../fixtures/groups')
+const { createShelf } = require('../fixtures/shelves')
 const { createUserWithItems } = require('../fixtures/populate')
 
 describe('items:inventory-view', () => {
@@ -12,7 +13,7 @@ describe('items:inventory-view', () => {
     .then(undesiredRes(done))
     .catch(err => {
       err.statusCode.should.equal(400)
-      err.body.status_verbose.should.equal('missing parameter in query: user or group')
+      err.body.status_verbose.should.equal('missing parameter in query: user or group or shelf')
       done()
     })
     .catch(done)
@@ -45,5 +46,17 @@ describe('items:inventory-view', () => {
       done()
     })
     .catch(done)
+  })
+
+  it('should return a shelf inventory-view', async () => {
+    const shelf = await createShelf()
+    const res = await publicReq('get', `${endpoint}&shelf=${shelf._id}`)
+    res.worksTree.should.be.an.Object()
+    res.worksTree.author.should.be.an.Object()
+    res.worksTree.genre.should.be.an.Object()
+    res.worksTree.subject.should.be.an.Object()
+    res.worksTree.owner.should.be.an.Object()
+    res.workUriItemsMap.should.be.an.Object()
+    res.itemsByDate.should.be.an.Array()
   })
 })

@@ -48,7 +48,8 @@ const redirections = {
         return `/api/groups?action=by-slug&slug=${id}`
       }
     },
-    items: id => `/api/items?action=by-ids&ids=${id}`
+    items: id => `/api/items?action=by-ids&ids=${id}`,
+    shelves: id => `/api/shelves?action=by-ids&ids=${id}`
     // transactions: id =>
   },
 

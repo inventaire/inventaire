@@ -7,7 +7,7 @@ module.exports = (entity, existingTasks) => {
   const name = _.values(entity.labels)[0]
   if (!_.isNonEmptyString(name)) return
 
-  return search(name, 'humans')
+  return search(name, { type: 'humans' })
   .then(searchResult => {
     return searchResult
     .filter(result => result._score > 4)

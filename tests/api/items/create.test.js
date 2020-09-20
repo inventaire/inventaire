@@ -7,8 +7,10 @@ const { authReq, getUser } = require('../utils/utils')
 const { createEditionWithIsbn, createEdition, createWorkWithAuthor, createHuman, createEditionWithWorkAndAuthor } = require('../fixtures/entities')
 const { createItem } = require('../fixtures/items')
 const { createUser, getRefreshedUser } = require('../fixtures/users')
+const { createShelf } = require('../fixtures/shelves')
 const { getByUris: getEntitiesByUris } = require('../utils/entities')
 const debounceDelay = CONFIG.itemsCountDebounceTime + 100
+const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = __.require('apiTests', 'utils/utils')
 
 const editionUriPromise = createEdition().then(({ uri }) => uri)
 
@@ -27,7 +29,6 @@ describe('items:create', () => {
         item.transaction.should.equal('inventorying')
         return item.owner.should.equal(userId)
       })
-      .then(Wait(10))
       .then(() => done())
     })
     .catch(done)
@@ -54,7 +55,6 @@ describe('items:create', () => {
         items[1].transaction.should.equal('lending')
         return items[1].owner.should.equal(userId)
       })
-      .then(Wait(10))
       .then(() => done())
     })
     .catch(done)
@@ -172,5 +172,30 @@ describe('items:create', () => {
       done()
     })
     .catch(done)
+  })
+
+  it('should create an item with a shelf', async () => {
+    const editionUri = await editionUriPromise
+    const shelf = await createShelf()
+    const item = await authReq('post', '/api/items', {
+      entity: editionUri,
+      shelves: [ shelf._id ]
+    })
+    item.shelves.should.deepEqual([ shelf._id ])
+  })
+
+  it('should reject item with an invalid shelf', async () => {
+    const editionUri = await editionUriPromise
+    try {
+      const item = await authReq('post', '/api/items', {
+        entity: editionUri,
+        shelves: [ 'not a shelf id' ]
+      })
+      shouldNotBeCalled(item)
+    } catch (err) {
+      rethrowShouldNotBeCalledErrors(err)
+      err.statusCode.should.equal(400)
+      err.body.error_name.should.equal('invalid_shelves')
+    }
   })
 })

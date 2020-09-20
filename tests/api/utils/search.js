@@ -4,6 +4,7 @@ const _ = __.require('builders', 'utils')
 const { publicReq } = require('../utils/utils')
 const { host: elasticHost } = CONFIG.elasticsearch
 const { rawRequest } = require('./request')
+const assert_ = __.require('utils', 'assert_types')
 
 const endpoint = '/api/search'
 
@@ -15,9 +16,12 @@ module.exports = {
     return results
   },
 
-  checkIndexation: async (index, type, id) => {
+  getIndexedDoc: async (index, type, id) => {
+    assert_.string(index)
+    assert_.string(id)
+    const url = `${elasticHost}/${index}/${type}/${id}`
     try {
-      const { body } = await rawRequest('get', `${elasticHost}/${index}/${type}/${id}`)
+      const { body } = await rawRequest('get', url)
       return JSON.parse(body)
     } catch (err) {
       if (err.statusCode === 404) {
