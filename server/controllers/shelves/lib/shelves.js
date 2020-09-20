@@ -24,8 +24,8 @@ const shelves_ = module.exports = {
   byOwners: ownersIds => {
     return db.viewByKeys('byOwners', ownersIds)
   },
-  updateAttributes: async (params, shelfId) => {
-    const { reqUserId } = params
+  updateAttributes: async params => {
+    const { shelfId, reqUserId } = params
     const newAttributes = _.pick(params, [ 'name', 'description', 'listing' ])
     const shelf = await db.get(shelfId)
     const updatedShelf = Shelf.updateAttributes(shelf, newAttributes, reqUserId)
@@ -61,12 +61,10 @@ const updateShelvesItems = async (action, shelvesIds, userId, itemsIds) => {
   return shelves_.byIdsWithItems(shelvesIds, userId)
 }
 
-const assignItemsToShelves = (shelves, items) => {
-  return shelves.map(assignItemsToShelf(items))
-}
+const assignItemsToShelves = (shelves, items) => shelves.map(assignItemsToShelf(items))
 
 const assignItemsToShelf = items => shelf => {
-  if (!shelf.items) { shelf.items = [] }
+  shelf.items = shelf.items || []
   const itemsIds = items.map(_.property('_id'))
   const missingItems = _.difference(itemsIds, shelf.items)
   shelf.items = shelf.items.concat(missingItems)

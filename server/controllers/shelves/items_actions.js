@@ -13,13 +13,12 @@ const sanitization = {
 
 const itemsActions = action => (req, res, next) => {
   sanitize(req, res, sanitization)
-  .then(params => {
-    const { id, items, reqUserId } = params
+  .then(({ id, items, reqUserId }) => {
     return shelves_[action]([ id ], items, reqUserId)
-    .then(_.KeyBy('_id'))
-    .then(responses_.Wrap(res, 'shelves'))
-    .then(Track(req, [ 'shelf', action ]))
   })
+  .then(_.KeyBy('_id'))
+  .then(responses_.Wrap(res, 'shelves'))
+  .then(Track(req, [ 'shelf', action ]))
   .catch(error_.Handler(req, res))
 }
 
