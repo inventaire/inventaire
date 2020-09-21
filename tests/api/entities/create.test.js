@@ -152,7 +152,7 @@ describe('entities:create', () => {
     })
     .then(undesiredRes(done))
     .catch(err => {
-      err.body.status_verbose.should.equal('invalid property values')
+      err.body.status_verbose.should.equal('invalid property value array')
       err.statusCode.should.equal(400)
       done()
     })
