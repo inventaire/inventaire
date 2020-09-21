@@ -76,7 +76,7 @@ const items_ = module.exports = {
 
   create: async (userId, items) => {
     assert_.array(items)
-    await Promise.all(items.map(validateEntityType))
+    await Promise.all(items.map(validateEntityType(userId)))
     items = items.map(item => Item.create(userId, item))
     const res = await db.bulk(items)
     const itemsIds = _.map(res, 'id')

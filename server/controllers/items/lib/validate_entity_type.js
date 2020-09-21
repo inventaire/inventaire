@@ -1,6 +1,8 @@
 const __ = require('config').universalPath
+const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const allowlistedEntityTypes = [ 'edition', 'work' ]
+const shelves_ = __.require('controllers', 'shelves/lib/shelves')
 
 // Working around the circular dependency
 let getEntityByUri
@@ -9,15 +11,32 @@ const lateRequire = () => {
 }
 setTimeout(lateRequire, 0)
 
-module.exports = item => {
-  return getEntityByUri({ uri: item.entity })
-  .then(entity => {
-    if (entity == null) throw error_.new('entity not found', 400, { item })
+module.exports = userId => async item => {
+  const [ entity, shelves ] = await Promise.all([
+    getEntityByUri({ uri: item.entity }),
+    shelves_.byIds(item.shelves)
+  ])
+  validateShelvesOwnership(userId, shelves, item)
+  validateEntityType(userId, entity, item)
+}
 
-    const { type } = entity
+const validateShelvesOwnership = (userId, shelves, item) => {
+  if (_.isNonEmptyArray(shelves)) {
+    const shelvesOwners = shelves.map(_.property('owner'))
+    const allShelvesBelongToUser = _.uniq(shelvesOwners)[0] === userId
 
-    if (!allowlistedEntityTypes.includes(type)) {
-      throw error_.new('invalid entity type', 400, { item, type })
+    if (!allShelvesBelongToUser) {
+      throw error_.new('invalid owner', 400, { userId, item })
     }
-  })
+  }
+}
+
+const validateEntityType = (userId, entity, item) => {
+  if (entity == null) throw error_.new('entity not found', 400, { item })
+
+  const { type } = entity
+
+  if (!allowlistedEntityTypes.includes(type)) {
+    throw error_.new('invalid entity type', 400, { item, type })
+  }
 }

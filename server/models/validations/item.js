@@ -21,7 +21,6 @@ module.exports = {
   },
   details: _.isString,
   notes: _.isString,
-
   snapshotValidations: {
     'entity:title': BoundedString(1, 500),
     'entity:image': _.isExtendedUrl,

@@ -3,7 +3,7 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
 const { Wait, wait } = __.require('lib', 'promises')
-const { authReq, getUser } = require('../utils/utils')
+const { authReq, getUser, getUserB } = require('../utils/utils')
 const { createEditionWithIsbn, createEdition, createWorkWithAuthor, createHuman, createEditionWithWorkAndAuthor } = require('../fixtures/entities')
 const { createItem } = require('../fixtures/items')
 const { createUser, getRefreshedUser } = require('../fixtures/users')
@@ -201,6 +201,22 @@ describe('items:create', () => {
         rethrowShouldNotBeCalledErrors(err)
         err.statusCode.should.equal(400)
         err.body.error_name.should.equal('invalid_shelves')
+      }
+    })
+
+    it('should reject item with a shelf from another owner', async () => {
+      const shelf = await createShelf(getUserB())
+      const editionUri = await editionUriPromise
+      try {
+        const item = await authReq('post', '/api/items', {
+          entity: editionUri,
+          shelves: [ shelf._id ]
+        })
+        shouldNotBeCalled(item)
+      } catch (err) {
+        rethrowShouldNotBeCalledErrors(err)
+        err.statusCode.should.equal(400)
+        err.body.status_verbose.should.equal('invalid owner')
       }
     })
   })
