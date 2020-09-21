@@ -2,9 +2,11 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const { Wait } = __.require('lib', 'promises')
 const should = require('should')
-const { authReq, getUser } = require('../utils/utils')
+const { authReq, getUser, getUserB } = require('../utils/utils')
 const { newItemBase, CountChange } = require('./helpers')
+const { createShelf } = require('../fixtures/shelves')
 const debounceDelay = CONFIG.itemsCountDebounceTime + 100
+const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = __.require('apiTests', 'utils/utils')
 
 describe('items:update', () => {
   it('should update an item', done => {
@@ -63,5 +65,19 @@ describe('items:update', () => {
       })
     })
     .catch(done)
+  })
+
+  it('should reject item with a shelf from another owner', async () => {
+    const item = await authReq('post', '/api/items', newItemBase())
+    const shelf = await createShelf(getUserB())
+    item.shelves = [ shelf._id ]
+    try {
+      const newItem = await authReq('put', '/api/items', item)
+      shouldNotBeCalled(newItem)
+    } catch (err) {
+      rethrowShouldNotBeCalledErrors(err)
+      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.equal('invalid owner')
+    }
   })
 })

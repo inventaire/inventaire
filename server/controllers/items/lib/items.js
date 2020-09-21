@@ -86,7 +86,8 @@ const items_ = module.exports = {
   },
 
   update: (userId, itemUpdateData) => {
-    return db.get(itemUpdateData._id)
+    return Promise.resolve(validateEntityAndShelves(userId)(itemUpdateData))
+    .then(() => { return db.get(itemUpdateData._id) })
     .then(currentItem => Item.update(userId, itemUpdateData, currentItem))
     .then(db.putAndReturn)
     .then(tapEmit('user:inventory:update', userId))
