@@ -15,7 +15,7 @@ const getByAccessLevel = require('./get_by_access_level')
 const user_ = __.require('controllers', 'user/lib/user')
 const db = __.require('couch', 'base')('items')
 const error_ = __.require('lib', 'error/error')
-const validateEntityType = require('./validate_entity_type')
+const validateEntityAndShelves = require('./validate_entity_and_shelves')
 
 const items_ = module.exports = {
   byId: db.get,
@@ -76,7 +76,7 @@ const items_ = module.exports = {
 
   create: async (userId, items) => {
     assert_.array(items)
-    await Promise.all(items.map(validateEntityType(userId)))
+    await Promise.all(items.map(validateEntityAndShelves(userId)))
     items = items.map(item => Item.create(userId, item))
     const res = await db.bulk(items)
     const itemsIds = _.map(res, 'id')

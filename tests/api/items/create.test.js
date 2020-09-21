@@ -189,21 +189,6 @@ describe('items:create', () => {
       item.shelves.should.deepEqual([ shelf._id ])
     })
 
-    it('should reject item with an invalid shelf', async () => {
-      const editionUri = await editionUriPromise
-      try {
-        const item = await authReq('post', '/api/items', {
-          entity: editionUri,
-          shelves: [ 'not a shelf id' ]
-        })
-        shouldNotBeCalled(item)
-      } catch (err) {
-        rethrowShouldNotBeCalledErrors(err)
-        err.statusCode.should.equal(400)
-        err.body.error_name.should.equal('invalid_shelves')
-      }
-    })
-
     it('should reject item with a shelf from another owner', async () => {
       const shelf = await createShelf(getUserB())
       const editionUri = await editionUriPromise
