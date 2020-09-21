@@ -2,13 +2,39 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const { Wait } = __.require('lib', 'promises')
 const should = require('should')
-const { authReq, getUser, getUserB } = require('../utils/utils')
+const { authReq, authReqB, getUser, getUserB } = require('../utils/utils')
 const { newItemBase, CountChange } = require('./helpers')
 const { createShelf } = require('../fixtures/shelves')
 const debounceDelay = CONFIG.itemsCountDebounceTime + 100
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = __.require('apiTests', 'utils/utils')
 
 describe('items:update', () => {
+  it('should reject invalid item id', async () => {
+    const item = await authReq('post', '/api/items', newItemBase())
+    item._id = 'invalidid'
+    try {
+      const newItem = await authReq('put', '/api/items', item)
+      shouldNotBeCalled(newItem)
+    } catch (err) {
+      rethrowShouldNotBeCalledErrors(err)
+      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.startWith('invalid _id')
+    }
+  })
+
+  it('should reject invalid entity', async () => {
+    const item = await authReq('post', '/api/items', newItemBase())
+    item.entity = 'inv:aliduri'
+    try {
+      const newItem = await authReq('put', '/api/items', item)
+      shouldNotBeCalled(newItem)
+    } catch (err) {
+      rethrowShouldNotBeCalledErrors(err)
+      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.startWith('invalid entity')
+    }
+  })
+
   it('should update an item', done => {
     authReq('post', '/api/items', newItemBase())
     .then(item => {
@@ -65,6 +91,19 @@ describe('items:update', () => {
       })
     })
     .catch(done)
+  })
+
+  it('should reject item from another owner', async () => {
+    const item = await authReqB('post', '/api/items', newItemBase())
+    item.listing = 'public'
+    try {
+      const newItem = await authReq('put', '/api/items', item)
+      shouldNotBeCalled(newItem)
+    } catch (err) {
+      rethrowShouldNotBeCalledErrors(err)
+      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.startWith('user isnt item.owner')
+    }
   })
 
   it('should reject item with a shelf from another owner', async () => {
