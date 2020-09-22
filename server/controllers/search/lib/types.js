@@ -18,9 +18,9 @@ const typesData = {
   humans: localAndRemoteEntity('humans'),
   series: localAndRemoteEntity('series'),
   publishers: localAndRemoteEntity('publishers'),
+  collections: localAndRemoteEntity('collections'),
   genres: remoteOnlyEntity('genres'),
   movements: remoteOnlyEntity('movements'),
-  collections: remoteOnlyEntity('collections'),
   users: localDatabase('users', 'user'),
   groups: localDatabase('groups', 'group')
 }

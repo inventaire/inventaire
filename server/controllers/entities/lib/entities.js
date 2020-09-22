@@ -6,7 +6,7 @@ const Entity = __.require('models', 'entity')
 const patches_ = require('./patches')
 const isbn_ = __.require('lib', 'isbn/isbn')
 const couch_ = __.require('lib', 'couch')
-const validateClaims = require('./validate_claims')
+const validateAndFormatClaims = require('./validate_and_format_claims')
 const getInvEntityCanonicalUri = require('./get_inv_entity_canonical_uri')
 const getEntityType = require('./get_entity_type')
 const radio = __.require('lib', 'radio')
@@ -77,16 +77,19 @@ const entities_ = module.exports = {
     return entities_.putUpdate({ userId, currentDoc, updatedDoc, batchId })
   },
 
-  addClaims: (userId, newClaims, currentDoc, batchId) => {
-    const updatedDoc = _.cloneDeep(currentDoc)
-    return validateClaims({ newClaims, currentClaims: currentDoc.claims })
-    .then(() => Entity.addClaims(updatedDoc, newClaims))
-    .then(() => entities_.putUpdate({ userId, currentDoc, updatedDoc, batchId }))
+  addClaims: async (userId, newClaims, currentDoc, batchId) => {
+    const type = getEntityType(currentDoc.claims['wdt:P31'])
+    newClaims = await validateAndFormatClaims(newClaims, type)
+    const updatedDoc = Entity.addClaims(_.cloneDeep(currentDoc), newClaims)
+    return entities_.putUpdate({ userId, currentDoc, updatedDoc, batchId })
   },
 
   putUpdate: async params => {
     const { userId, currentDoc, updatedDoc } = params
     assert_.types([ 'string', 'object', 'object' ], [ userId, currentDoc, updatedDoc ])
+
+    Entity.validateBeforeSave(updatedDoc)
+
     // It is to the consumers responsability to check if there is an update:
     // empty patches at this stage will throw 500 errors
     const docAfterUpdate = await db.putAndReturn(updatedDoc)

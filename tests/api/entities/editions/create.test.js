@@ -1,6 +1,6 @@
 require('should')
 const { authReq, undesiredRes } = require('../../utils/utils')
-const { createWork, createSerie, randomLabel } = require('../../fixtures/entities')
+const { createWork, createSerie, randomLabel, generateIsbn13h } = require('../../fixtures/entities')
 const workEntityPromise = createWork()
 
 describe('entities:editions:create', () => {
@@ -9,6 +9,7 @@ describe('entities:editions:create', () => {
       labels: {},
       claims: { 'wdt:P31': [ 'wd:Q3331189' ] }
     })
+    .then(undesiredRes(done))
     .catch(err => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal('an edition should have an associated work (wdt:P629)')
@@ -28,6 +29,7 @@ describe('entities:editions:create', () => {
         }
       })
     })
+    .then(undesiredRes(done))
     .catch(err => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal('an edition should have a title (wdt:P1476)')
@@ -48,6 +50,7 @@ describe('entities:editions:create', () => {
         }
       })
     })
+    .then(undesiredRes(done))
     .catch(err => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal("editions can't have labels")
@@ -80,6 +83,7 @@ const createEdition = uri => authReq('post', '/api/entities?action=create', {
   claims: {
     'wdt:P31': [ 'wd:Q3331189' ],
     'wdt:P629': [ uri ],
-    'wdt:P1476': [ randomLabel() ]
+    'wdt:P1476': [ randomLabel() ],
+    'wdt:P212': [ generateIsbn13h() ]
   }
 })

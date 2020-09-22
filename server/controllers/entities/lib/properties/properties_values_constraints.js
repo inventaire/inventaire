@@ -51,6 +51,8 @@ module.exports = {
   'wdt:P144': bases.workEntity,
   // serie
   'wdt:P179': bases.serieEntity,
+  // collection
+  'wdt:P195': bases.collectionEntity,
   // ISBN 13
   'wdt:P212': builders.isbnProperty(13),
   // ISNI
@@ -80,7 +82,7 @@ module.exports = {
   // publication date
   'wdt:P577': bases.uniqueSimpleDay,
   // edition of
-  'wdt:P629': extend(bases.workEntity, { critical: true }),
+  'wdt:P629': bases.workEntity,
   // Open Library id
   'wdt:P648': builders.typedExternalId({
     edition: /^OL[1-9]\d{0,7}M$/,
@@ -124,7 +126,7 @@ module.exports = {
   // languages of expression
   'wdt:P1412': bases.entity,
   // title
-  'wdt:P1476': extend(bases.uniqueString, { critical: true }),
+  'wdt:P1476': bases.uniqueString,
   // series ordinal
   'wdt:P1545': bases.ordinal,
   // subtitle

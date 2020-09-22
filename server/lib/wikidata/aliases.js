@@ -100,7 +100,8 @@ const typesAliases = module.exports = {
   // see server/controllers/entities/lib/update_search_engine
   collections: [
     'wd:Q20655472', // editorial collection
-    'wd:Q1700470' // monographic series
+    'wd:Q1700470', // monographic series
+    'wd:Q2668072' // collection
   ],
   movements: [
     'wd:Q2198855', // cultural movement

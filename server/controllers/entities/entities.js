@@ -1,5 +1,6 @@
 const __ = require('config').universalPath
 const ActionsControllers = __.require('lib', 'actions_controllers')
+const { authorWorks, serieParts, publisherPublications } = require('./get_entity_relatives')
 
 module.exports = {
   get: ActionsControllers({
@@ -7,8 +8,9 @@ module.exports = {
       'by-uris': require('./by_uris_get'),
       changes: require('./changes'),
       'reverse-claims': require('./reverse_claims'),
-      'author-works': require('./author_works'),
-      'serie-parts': require('./serie_parts'),
+      'author-works': authorWorks,
+      'serie-parts': serieParts,
+      'publisher-publications': publisherPublications,
       images: require('./images'),
       popularity: require('./popularity')
     },

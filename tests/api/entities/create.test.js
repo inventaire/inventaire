@@ -108,7 +108,7 @@ describe('entities:create', () => {
     .then(undesiredRes(done))
     .catch(err => {
       err.statusCode.should.equal(400)
-      err.body.status_verbose.match(/expects a unique value/).should.be.ok()
+      err.body.status_verbose.should.equal('this property accepts only one value')
       done()
     })
     .catch(done)
@@ -152,7 +152,7 @@ describe('entities:create', () => {
     })
     .then(undesiredRes(done))
     .catch(err => {
-      err.body.status_verbose.should.equal('invalid property values')
+      err.body.status_verbose.should.equal('invalid property value array')
       err.statusCode.should.equal(400)
       done()
     })

@@ -36,16 +36,13 @@ const getWdSerieParts = async (qid, refresh, dry) => {
 // Querying only for 'serie' (wdt:P179) and not 'part of' (wdt:P361)
 // as we use only wdt:P179 internally
 const getInvSerieParts = async uri => {
-  const { rows } = await entities_.byClaim('wdt:P179', uri, true)
-  return rows.map(parseRow)
+  const docs = await entities_.byClaim('wdt:P179', uri, true, true)
+  return docs.map(format)
 }
 
-const parseRow = row => {
-  const { claims } = row.doc
-  return {
-    uri: `inv:${row.id}`,
-    date: claims['wdt:P577'] && claims['wdt:P577'][0],
-    ordinal: claims['wdt:P1545'] && claims['wdt:P1545'][0],
-    subparts: 0
-  }
-}
+const format = ({ _id, claims }) => ({
+  uri: `inv:${_id}`,
+  date: claims['wdt:P577'] && claims['wdt:P577'][0],
+  ordinal: claims['wdt:P1545'] && claims['wdt:P1545'][0],
+  subparts: 0
+})

@@ -215,12 +215,6 @@ describe('entity model', () => {
         should(entityDoc.claims['wdt:P407']).not.be.ok()
       })
 
-      it('should throw if a critical property got zero claims', () => {
-        const doc = editionDoc()
-        const updater = () => Entity.updateClaim(doc, 'wdt:P629', 'wd:Q53592', null)
-        updater.should.throw('this property should at least have one value')
-      })
-
       it('should update the timestamp', done => {
         const now = Date.now()
         const entityDoc = workDoc()

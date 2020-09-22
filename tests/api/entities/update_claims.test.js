@@ -98,6 +98,19 @@ describe('entities:update-claims', () => {
     .catch(done)
   })
 
+  it('should reject adding an extra value to a property that accepts only one value', done => {
+    createEdition()
+    // An edition entity should have only one date of publication
+    .then(edition => addClaim(edition.uri, 'wdt:P577', '2010'))
+    .then(undesiredRes(done))
+    .catch(err => {
+      err.body.status_verbose.should.equal('this property accepts only one value')
+      err.statusCode.should.equal(400)
+      done()
+    })
+    .catch(done)
+  })
+
   it('should reject an update with an invalid property value', done => {
     createEdition()
     .then(edition => {
@@ -118,10 +131,10 @@ describe('entities:update-claims', () => {
       const oldValue = edition.claims['wdt:P629'][0]
       // An edition entity should always have at least one wdt:P629 claim
       return removeClaim(edition.uri, 'wdt:P629', oldValue)
-      .then(undesiredRes(done))
     })
+    .then(undesiredRes(done))
     .catch(err => {
-      err.body.status_verbose.should.equal('this property should at least have one value')
+      err.body.status_verbose.should.equal('an edition should have an associated work (wdt:P629)')
       err.statusCode.should.equal(400)
       done()
     })

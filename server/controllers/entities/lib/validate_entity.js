@@ -4,8 +4,8 @@ const error_ = __.require('lib', 'error/error')
 const assert_ = __.require('utils', 'assert_types')
 const { Lang } = __.require('lib', 'regex')
 const getEntityType = require('./get_entity_type')
-const validateClaims = require('./validate_claims')
-const typesWithoutLabels = require('./types_without_labels')
+const validateAndFormatClaims = require('./validate_and_format_claims')
+const typeWithoutLabels = require('./type_without_labels')
 const propertiesPerType = __.require('controllers', 'entities/lib/properties/properties_per_type')
 const allowlistedTypes = Object.keys(propertiesPerType)
 
@@ -22,11 +22,7 @@ const validate = async entity => {
   const type = getValueType(claims)
   validateValueType(type, claims['wdt:P31'])
   validateLabels(labels, type)
-  return validateClaims({
-    newClaims: claims,
-    currentClaims: {},
-    creating: true
-  })
+  return validateAndFormatClaims(claims)
 }
 
 const getValueType = claims => {
@@ -48,7 +44,7 @@ const validateValueType = (type, wdtP31) => {
 }
 
 const validateLabels = (labels, type) => {
-  if (typesWithoutLabels.includes(type)) {
+  if (typeWithoutLabels[type]) {
     if (_.isNonEmptyPlainObject(labels)) {
       throw error_.new(`${type}s can't have labels`, 400, { type, labels })
     }

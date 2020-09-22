@@ -13,7 +13,7 @@ const properties = require('./properties/properties_values_constraints')
 const validateClaimValueSync = require('./validate_claim_value_sync')
 
 module.exports = async params => {
-  const { type, currentClaims, property, oldVal, newVal, letEmptyValuePass, userIsAdmin } = params
+  const { type, property, oldVal, newVal, letEmptyValuePass, userIsAdmin } = params
   // letEmptyValuePass to let it be interpreted as a claim deletion
   if (letEmptyValuePass && newVal == null) return null
 
@@ -29,31 +29,23 @@ module.exports = async params => {
 
   validateClaimValueSync(property, newVal, type)
 
-  // If the property expects a uniqueValue and that there is already a value defined
-  // any action other than editing the current value should be rejected
-  if (prop.uniqueValue) {
-    const propArray = currentClaims[property]
-    if (propArray && propArray.length > 0 && oldVal !== propArray[0]) {
-      throw error_.new('this property accepts only one value', 400, params)
-    }
-  }
-
   const formattedValue = prop.format != null ? prop.format(newVal) : newVal
 
   const { concurrency, restrictedType } = prop
 
-  // Resolve only if all async tests pass
-  return Promise.all([
+  await Promise.all([
     verifyClaimConcurrency(concurrency, property, formattedValue),
     verifyClaimEntityType(restrictedType, formattedValue)
   ])
-  .then(() => formattedValue)
+
+  return formattedValue
 }
 
 // For properties that don't tolerate having several entities
 // sharing the same value
 const verifyClaimConcurrency = (concurrency, property, value) => {
   if (!concurrency) return
+
   return entities_.byClaim(property, value)
   .then(res => {
     if (res.rows.length > 0) {
