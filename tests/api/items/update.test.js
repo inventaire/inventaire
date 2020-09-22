@@ -102,7 +102,7 @@ describe('items:update', () => {
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
       err.statusCode.should.equal(400)
-      err.body.status_verbose.should.startWith('user isnt item.owner')
+      err.body.status_verbose.should.startWith('user isnt item owner')
     }
   })
 

@@ -38,7 +38,7 @@ describe('items:bulk-update', () => {
       })
       .catch(err => {
         err.statusCode.should.equal(400)
-        err.body.status_verbose.should.startWith('user isnt item.owner')
+        err.body.status_verbose.should.startWith('user isnt item owner')
         done()
       })
     })
