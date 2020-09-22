@@ -4,7 +4,7 @@
 const all = [
   'wdt:P31', // instance of
   'wdt:P243', // OCLC control number
-  'wdt:P268' // BNF ID
+  'wdt:P268', // BNF ID
 ]
 
 const workAndSerie = all.concat([
@@ -28,7 +28,7 @@ const workAndSerie = all.concat([
   'wdt:P3184', // Czech National Bibliography book ID
   'wdt:P3631', // Babelio work ID
   'wdt:P4087', // MyAnimeList manga ID
-  'wdt:P5331' // OCLC work ID
+  'wdt:P5331', // OCLC work ID
 ])
 
 module.exports = {
@@ -58,7 +58,7 @@ module.exports = {
     'wdt:P2969', // GoodReads book ID
     'wdt:P3184', // Czech National Bibliography book ID
     'wdt:P5571', // NooSFere book ID
-    'invp:P2' // cover image hash
+    'invp:P2', // cover image hash
   ]),
 
   work: workAndSerie,
@@ -96,7 +96,7 @@ module.exports = {
     'wdt:P4285', // Theses.fr person ID
     'wdt:P5361', // BNB person ID
     'wdt:P5491', // BD Gest' author ID
-    'wdt:P7400' // LibraryThing author ID
+    'wdt:P7400', // LibraryThing author ID
   ]),
 
   publisher: all.concat([
@@ -106,13 +106,14 @@ module.exports = {
     'wdt:P576', // dissolution
     'wdt:P856', // official website
     'wdt:P1983', // Anime News Network company ID
-    'wdt:P3035' // ISBN publisher prefix
+    'wdt:P3035', // ISBN publisher prefix
   ]),
 
   collection: all.concat([
     'wdt:P123', // publisher
     'wdt:P98', // editor
     'wdt:P1476', // title
-    'wdt:P1680' // subtitle
+    'wdt:P1680', // subtitle
+    'wdt:P921', // main subject
   ])
 }
