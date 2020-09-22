@@ -30,7 +30,7 @@ const assert_ = __.require('utils', 'assert_types')
 const validLangs = Object.keys(require('wikidata-lang').byCode)
 
 const properties = __.require('controllers', 'entities/lib/properties/properties_values_constraints')
-const validateControlledPropertiesClaims = require('./validations/validate_controlled_properties_claims')
+const validateRequiredPropertiesValues = require('./validations/validate_required_properties_values')
 const inferences = __.require('controllers', 'entities/lib/inferences')
 
 const Entity = module.exports = {
@@ -151,7 +151,7 @@ const Entity = module.exports = {
   validateBeforeSave: doc => {
     // Do not validate redirections, removed placeholder, etc
     if (doc.claims != null) {
-      validateControlledPropertiesClaims(doc.claims)
+      validateRequiredPropertiesValues(doc.claims)
     }
   },
 
@@ -196,7 +196,7 @@ const Entity = module.exports = {
 
     if (dataTransfered) toEntityDoc.updated = Date.now()
 
-    validateControlledPropertiesClaims(toEntityDoc.claims)
+    validateRequiredPropertiesValues(toEntityDoc.claims)
 
     return toEntityDoc
   },
