@@ -2,12 +2,12 @@ const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const allowlistedEntityTypes = [ 'edition', 'work' ]
-const shelves_ = __.require('controllers', 'shelves/lib/shelves')
 
 // Working around the circular dependency
-let getEntityByUri
+let getEntityByUri, shelves_
 const lateRequire = () => {
   getEntityByUri = __.require('controllers', 'entities/lib/get_entity_by_uri')
+  shelves_ = __.require('controllers', 'shelves/lib/shelves')
 }
 setTimeout(lateRequire, 0)
 
