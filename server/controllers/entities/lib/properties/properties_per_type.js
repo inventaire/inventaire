@@ -114,5 +114,6 @@ module.exports = {
     'wdt:P1476', // title
     'wdt:P1680', // subtitle
     'wdt:P921', // main subject
+    'wdt:P856', // official website
   ])
 }
