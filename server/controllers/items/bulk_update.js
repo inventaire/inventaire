@@ -11,13 +11,8 @@ const sanitization = {
 }
 
 module.exports = (req, res) => {
-  const reqUserId = req.user._id
-
   sanitize(req, res, sanitization)
-  .then(params => {
-    const { ids, attribute, value } = params
-    return items_.bulkUpdate(reqUserId, ids, attribute, value)
-    .then(responses_.Ok(res))
-  })
+  .then(items_.bulkUpdate)
+  .then(responses_.Ok(res))
   .catch(error_.Handler(req, res))
 }

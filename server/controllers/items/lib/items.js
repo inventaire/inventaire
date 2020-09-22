@@ -93,13 +93,13 @@ const items_ = module.exports = {
     .then(tapEmit('user:inventory:update', userId))
   },
 
-  bulkUpdate: (userId, ids, attribute, newValue) => {
+  bulkUpdate: ({ reqUserId, ids, attribute, newValue }) => {
     const itemUpdateData = {}
     itemUpdateData[attribute] = newValue
     return items_.byIds(ids)
-    .then(promises_.map(currentItem => Item.update(userId, itemUpdateData, currentItem)))
+    .then(promises_.map(currentItem => Item.update(reqUserId, itemUpdateData, currentItem)))
     .then(db.bulk)
-    .then(tapEmit('user:inventory:update', userId))
+    .then(tapEmit('user:inventory:update', reqUserId))
   },
 
   setBusyness: (id, busy) => {
