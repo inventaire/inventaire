@@ -106,6 +106,19 @@ describe('items:update', () => {
     }
   })
 
+  it('should reject item with an invalid shelf', async () => {
+    const item = await authReq('post', '/api/items', newItemBase())
+    item.shelves = [ 'not a shelf id' ]
+    try {
+      const newItem = await authReq('put', '/api/items', item)
+      shouldNotBeCalled(newItem)
+    } catch (err) {
+      rethrowShouldNotBeCalledErrors(err)
+      err.statusCode.should.equal(400)
+      err.body.error_name.should.equal('invalid_shelves')
+    }
+  })
+
   it('should reject item with a shelf from another owner', async () => {
     const item = await authReq('post', '/api/items', newItemBase())
     const shelf = await createShelf(getUserB())
