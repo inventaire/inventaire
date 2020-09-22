@@ -111,7 +111,6 @@ module.exports = {
 
   collection: all.concat([
     'wdt:P123', // publisher
-    'wdt:P98', // editor
     'wdt:P1476', // title
     'wdt:P1680', // subtitle
     'wdt:P921', // main subject

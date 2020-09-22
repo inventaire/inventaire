@@ -37,8 +37,6 @@ module.exports = {
   'wdt:P31': extend(bases.uniqueEntity, { adminUpdateOnly: true }),
   // author
   'wdt:P50': extend(bases.humanEntity, { hasPlaceholders: true }),
-  // editor
-  'wdt:P98': bases.humanEntity,
   // founded by
   'wdt:P112': bases.humanEntity,
   // publisher
