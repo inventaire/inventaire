@@ -17,7 +17,7 @@ module.exports = userId => async item => {
     shelves_.byIds(item.shelves)
   ])
   validateShelvesOwnership(userId, shelves, item)
-  validateEntityType(userId, entity, item)
+  validateEntityType(entity, item)
 }
 
 const validateShelvesOwnership = (userId, shelves, item) => {
@@ -31,7 +31,7 @@ const validateShelvesOwnership = (userId, shelves, item) => {
   }
 }
 
-const validateEntityType = (userId, entity, item) => {
+const validateEntityType = (entity, item) => {
   if (entity == null) throw error_.new('entity not found', 400, { item })
 
   const { type } = entity
