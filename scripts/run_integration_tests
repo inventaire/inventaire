@@ -4,7 +4,7 @@ export NODE_ENV=tests-integration
 # If no test file is passed as argument, run all tests
 if [ -z "$1" ]
 then
-  mocha --exit ./tests/integration/*
+  mocha --exit $MOCHA_OPTIONS ./tests/integration/*
 else
-  mocha --exit "$@"
+  mocha --exit $MOCHA_OPTIONS "$@"
 fi

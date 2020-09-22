@@ -2,7 +2,7 @@
 files=$1
 export NODE_ENV=tests-unit
 if [ "$files" != "" ] ; then
-  mocha --exit "$files"
+  mocha --exit $MOCHA_OPTIONS "$files"
 else
-  mocha --exit tests/unit/models/* tests/unit/libs/* tests/unit/controllers/*
+  mocha --exit $MOCHA_OPTIONS tests/unit/models/* tests/unit/libs/* tests/unit/controllers/*
 fi
