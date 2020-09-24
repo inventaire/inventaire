@@ -5,7 +5,7 @@ const _ = __.require('builders', 'utils')
 const requests_ = __.require('lib', 'requests')
 const { host } = CONFIG.elasticsearch
 const { indexesList } = __.require('db', 'elasticsearch/list')
-const createIndex = require('./create_index')
+const createIndex = __.require('db', 'elasticsearch/create_index')
 
 const reset = dbName => {
   const url = `${host}/${dbName}`

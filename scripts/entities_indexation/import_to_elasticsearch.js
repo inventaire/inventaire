@@ -2,7 +2,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const createIndex = __.require('scripts', 'couch2elastic4sync/create_index')
+const createIndex = __.require('db', 'elasticsearch/create_index')
 
 const type = process.argv.slice(2)[0]
 const split = require('split')
