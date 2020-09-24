@@ -5,8 +5,8 @@ const { post } = __.require('lib', 'requests')
 const { host: elasticHost } = CONFIG.elasticsearch
 
 const bulk = module.exports = {
-  buildLine: (action, index, type, id) => {
-    return `{"${action}":{"_index":"${index}","_type":"${type}","_id":"${id}"}}`
+  buildLine: (action, index, id) => {
+    return `{"${action}":{"_index":"${index}","_id":"${id}"}}`
   },
 
   joinLines: lines => {
