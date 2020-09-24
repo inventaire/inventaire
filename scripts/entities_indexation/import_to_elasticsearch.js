@@ -2,6 +2,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
+const createIndex = __.require('scripts', 'couch2elastic4sync/create_index')
 
 const type = process.argv.slice(2)[0]
 const split = require('split')
@@ -62,6 +63,9 @@ const done = () => {
   return formatAndPutBatch(entitiesBatch)
   .then(() => _.success('done!'))
 }
+
+// ensure wikidata index exists or create it with mapping
+createIndex('wikidata')
 
 lineStream
 .on('data', onLine)

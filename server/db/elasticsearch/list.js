@@ -18,7 +18,9 @@ const syncDataList = [
 const indexesList = syncDataList.map(_.property('dbName'))
 
 const mappingsList = {
-  items: require('./mappings/items')
+  items: require('./mappings/items'),
+  wikidata: require('./mappings/wikidata')
+  // entities: require('./mappings/entities')
 }
 
 module.exports = { syncDataList, indexesList, mappingsList }
