@@ -18,6 +18,7 @@
     "entities-indexation:update-and-import-all": "npm run entities-indexation:update-query-results all && npm run entities-indexation:import-query-results all",
     "entities-indexation:delete-from-results": "./scripts/entities_indexation/delete_from_results.js",
     "entities-indexation:export-indexes": "./scripts/entities_indexation/export_indexes.sh",
+    "entities-indexation:dump-wikidata-subset": "./scripts/entities_indexation/dump_wikidata_subset.sh",
     "debug": "DEBUG=express:* node server/server.js",
     "delete-api-test-databases": "./tests/api/scripts/delete_databases",
     "inspect": "node --inspect --inspect-brk server/server.js",
