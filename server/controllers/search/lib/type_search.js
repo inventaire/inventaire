@@ -15,7 +15,7 @@ module.exports = (types, search, limit = 20) => {
 
   ({ indexes, types } = getIndexesAndTypes(types))
 
-  const url = `${elasticHost}/${indexes.join(',')}/${types.join(',')}/_search`
+  const url = `${elasticHost}/${indexes.join(',')}/_search`
 
   const body = queryBodyBuilder(search, limit)
 

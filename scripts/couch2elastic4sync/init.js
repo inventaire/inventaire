@@ -14,7 +14,7 @@ const writeConfigFile = syncData => {
 
   const data = {
     database: `${couchdbHost}/${dbName}`,
-    elasticsearch: `${elasticSearchHost}/${dbName}/${type}`,
+    elasticsearch: `${elasticSearchHost}/${dbName}`,
     mapper: `${folder}/mappers/${type}.js`
   }
 
