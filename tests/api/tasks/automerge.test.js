@@ -3,7 +3,7 @@ const { checkEntities } = require('../utils/tasks')
 const { getByUris } = require('../utils/entities')
 const { createHuman, createWorkWithAuthor, randomLabel } = require('../fixtures/entities')
 
-// Tests dependency: having a populated ElasticSearch wikidata index
+// Tests dependency: having a populated Elasticsearch wikidata index
 describe('tasks:automerge', () => {
   it('should automerge if author has homonyms but only one has occurrences', done => {
     const humanLabel = 'Alan Moore' // homonyms wd:Q205739, wd:Q1748845
