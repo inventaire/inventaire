@@ -25,7 +25,7 @@ module.exports = async (type, entities) => {
 // see: https://www.elastic.co/guide/en/elasticsearch/guide/current/bulk.html
 const appendEntity = (type, batch) => entity => {
   const domain = getEntityDomain(entity)
-  // TODO: add type to entity
+  entity.type = type
   // Guessing the index that late allows to not assume the index from the source
   // as Wikidata entities might be coming from the Inventaire API
   // Known case: Inventaire entities redirecting to Wikidata entities
