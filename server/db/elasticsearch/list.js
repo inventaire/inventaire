@@ -9,8 +9,6 @@ const indexesData = [
   { indexBaseName: 'items', sync: true },
   { indexBaseName: 'entities', sync: true },
   { indexBaseName: 'wikidata', index: 'wikidata', sync: false }
-  // No 'entities' entry as it is fully handled by the entities search engine
-  // See server/controllers/entities/lib/update_search_engine.js
 ]
 .map(data => {
   data.index = data.index || CONFIG.db.name(data.indexBaseName)

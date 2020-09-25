@@ -8,6 +8,7 @@ const formatters = require('./formatters/formatters')
 const deindex = require('./deindex')
 
 module.exports = (indexBaseName, index) => {
+  index = index || indexBaseName
   const format = formatters[indexBaseName]
   const shouldBeDeindexed = deindex[indexBaseName]
   return async doc => {
