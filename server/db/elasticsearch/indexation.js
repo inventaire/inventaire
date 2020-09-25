@@ -4,30 +4,19 @@ const _ = __.require('builders', 'utils')
 const requests_ = __.require('lib', 'requests')
 const { host: elasticHost } = CONFIG.elasticsearch
 const { logRes } = __.require('controllers', 'entities/lib/indexation/bulk')
+const formatters = require('./formatters/formatters')
+const deindex = require('./deindex')
 
-const formatters = {
-  items: require('./formatters/item'),
-  groups: _.identity,
-  users: require('./formatters/user'),
-  entities: _.identity,
-}
-
-const shouldBeDeindexed = (indexBaseName, doc) => {
-  if (indexBaseName === 'users') {
-    return doc.type === 'deletedUser'
-  } else if (indexBaseName === 'entities') {
-    return doc.type === 'removed:placeholder' || doc.redirect != null
-  } else {
-    return doc._deleted === true
-  }
-}
-
-module.exports = async (indexBaseName, index, doc) => {
-  if (shouldBeDeindexed(indexBaseName, doc)) {
-    addToNextBatch('delete', index, doc)
-  } else {
-    const formattedDoc = await formatters[indexBaseName](doc)
-    addToNextBatch('index', index, formattedDoc)
+module.exports = (indexBaseName, index) => {
+  const format = formatters[indexBaseName]
+  const shouldBeDeindexed = deindex[indexBaseName]
+  return async doc => {
+    if (shouldBeDeindexed(doc)) {
+      addToNextBatch('delete', index, doc)
+    } else {
+      const formattedDoc = await format(doc)
+      addToNextBatch('index', index, formattedDoc)
+    }
   }
 }
 
