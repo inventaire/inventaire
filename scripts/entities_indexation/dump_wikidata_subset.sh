@@ -1,5 +1,8 @@
 #!/usr/bin/env sh
 
+# Run as a npm script to get access to dependencies executables
+# in node_modules/.bin, without relying on a relative path
+
 curl -s https://dumps.wikimedia.org/wikidatawiki/entities/latest-all.json.bz2 | \
   # Decompress
   pbzip2 -cd | \
