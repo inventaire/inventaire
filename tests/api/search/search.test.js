@@ -5,7 +5,7 @@ require('should')
 const faker = require('faker')
 const { wait } = __.require('lib', 'promises')
 const { publicReq, authReq, getUser, shouldNotBeCalled } = require('../utils/utils')
-const { elasticsearchUpdateDelay } = CONFIG.entitiesSearchEngine
+const { updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
 const { search } = require('../utils/search')
 
 describe('search:global', () => {

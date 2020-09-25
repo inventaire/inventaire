@@ -44,11 +44,5 @@ module.exports = {
     disabled: true
   },
 
-  entitiesSearchEngine: {
-    // Go fast to avoid having to wait in tests
-    delay: 10,
-    elasticsearchUpdateDelay: 3000
-  },
-
   itemsCountDebounceTime: 500
 }
