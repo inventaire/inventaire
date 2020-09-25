@@ -5,4 +5,5 @@ module.exports = {
   groups: identity,
   users: require('./user'),
   entities: identity,
+  wikidata: identity,
 }

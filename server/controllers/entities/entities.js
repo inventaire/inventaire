@@ -47,5 +47,3 @@ module.exports = {
     }
   })
 }
-
-require('./lib/update_search_engine')()

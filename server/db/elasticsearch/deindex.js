@@ -5,4 +5,5 @@ module.exports = {
   groups: hasCouchDbDeletedFlag,
   users: doc => doc.type === 'deletedUser',
   entities: doc => doc.type === 'removed:placeholder' || doc.redirect != null,
+  wikidata: doc => doc.missing != null || doc.type === 'missing' || doc.redirect != null,
 }
