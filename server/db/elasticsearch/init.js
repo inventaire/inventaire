@@ -19,7 +19,6 @@ const ensureIndexesExist = () => {
 }
 
 const ensureIndexExists = index => {
-  _.info(index, 'ensuring elasticsearch index exists')
   const indexUrl = `${elasticHost}/${index}`
   return get(indexUrl)
   .then(() => { _.info(`${indexUrl} already exists`) })

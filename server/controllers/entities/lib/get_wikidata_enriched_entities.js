@@ -19,6 +19,13 @@ const radio = __.require('lib', 'radio')
 const propagateRedirection = require('./propagate_redirection')
 const { _id: hookUserId } = __.require('couch', 'hard_coded_documents').users.hook
 
+// Working around the circular dependency
+let reindex
+const lateRequire = () => {
+  reindex = __.require('elasticsearch', 'indexation')('wikidata')
+}
+setTimeout(lateRequire, 0)
+
 module.exports = (ids, params) => {
   return Promise.all(ids.map(getCachedEnrichedEntity(params)))
   .then(entities => {
@@ -34,17 +41,16 @@ const getCachedEnrichedEntity = params => wdId => {
   return cache_.get({ key, fn, refresh, dry })
 }
 
-const getEnrichedEntity = wdId => {
-  return getWdEntity(wdId)
-  .then(format)
+const getEnrichedEntity = async wdId => {
+  const entity = await getWdEntity(wdId).then(format)
+  const indexationCopy = _.cloneDeep(entity)
+  indexationCopy._id = wdId
+  reindex(indexationCopy)
+  return entity
 }
 
 const format = entity => {
-  if (entity.missing != null) {
-    // Make sure the entity is unindexed
-    radio.emit('wikidata:entity:cache:miss', entity.id)
-    return formatEmpty('missing', entity)
-  }
+  if (entity.missing != null) return formatEmpty('missing', entity)
 
   const { P31, P279 } = entity.claims
   if (P31 || P279) {
@@ -107,6 +113,7 @@ const formatAndPropagateRedirection = entity => {
     // if the redirected entity is used in Inventaire claims, redirect claims
     // to their new entity
     propagateRedirection(hookUserId, entity.redirects.from, entity.redirects.to)
+    reindex({ _id: entity.redirects.from, redirect: true })
     radio.emit('wikidata:entity:redirect', entity.redirects.from, entity.redirects.to)
   }
 }
