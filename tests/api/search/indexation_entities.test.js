@@ -9,7 +9,7 @@ const { getIndexedDoc } = require('../utils/search')
 const { entities: entitiesIndex } = __.require('controllers', 'search/lib/indexes').indexes
 
 describe('indexation:entities', () => {
-  it.only('should index a new local entity', async () => {
+  it('should index a new local entity', async () => {
     const { _id } = await createHuman()
     await wait(elasticsearchUpdateDelay)
     const result = await getIndexedDoc(entitiesIndex, _id)

@@ -1,8 +1,9 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-require('should')
+const should = require('should')
 const { wait } = __.require('lib', 'promises')
-const { createGroup } = require('../fixtures/groups')
+const { getUser } = require('../utils/utils')
+const { createGroup, membershipAction } = require('../fixtures/groups')
 const { elasticsearchUpdateDelay } = CONFIG.entitiesSearchEngine
 const { getIndexedDoc } = require('../utils/search')
 const { index } = __.require('elasticsearch', 'list').indexes.groups
@@ -19,5 +20,14 @@ describe('indexation:groups', () => {
 })
 
 describe('desindexation:groups', () => {
-  xit('should unindex a deleted group', async () => {})
+  it('should unindex a deleted group', async () => {
+    const groupCreator = await getUser()
+    const group = await createGroup()
+    await wait(elasticsearchUpdateDelay)
+    await membershipAction(groupCreator, 'leave', group)
+    await wait(elasticsearchUpdateDelay)
+    const result = await getIndexedDoc(index, group._id)
+    result.found.should.be.false()
+    should(result._source).not.be.ok()
+  })
 })

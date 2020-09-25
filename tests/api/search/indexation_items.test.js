@@ -1,8 +1,9 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-require('should')
+const should = require('should')
 const { wait } = __.require('lib', 'promises')
 const { createItem } = require('../fixtures/items')
+const { deleteByIds } = require('../utils/items')
 const { elasticsearchUpdateDelay } = CONFIG.entitiesSearchEngine
 const { getIndexedDoc } = require('../utils/search')
 const { index } = __.require('elasticsearch', 'list').indexes.items
@@ -21,5 +22,13 @@ describe('indexation:items', () => {
 })
 
 describe('desindexation:items', () => {
-  xit('should unindex a deleted user', async () => {})
+  it('should unindex a deleted user', async () => {
+    const item = await createItem()
+    await wait(elasticsearchUpdateDelay)
+    await deleteByIds(item._id)
+    await wait(elasticsearchUpdateDelay)
+    const result = await getIndexedDoc(index, item._id)
+    result.found.should.be.false()
+    should(result._source).not.be.ok()
+  })
 })
