@@ -33,6 +33,7 @@ module.exports = {
     db: '/server/db',
     couch: '/server/db/couch',
     level: '/server/db/level',
+    elasticsearch: '/server/db/elasticsearch',
     builders: '/server/builders',
     controllers: '/server/controllers',
     leveldb: '/db/leveldb',

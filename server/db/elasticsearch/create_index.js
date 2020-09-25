@@ -5,10 +5,10 @@ const requests_ = __.require('lib', 'requests')
 const { host } = CONFIG.elasticsearch
 const { mappingsList } = __.require('db', 'elasticsearch/list')
 
-module.exports = async dbName => {
-  const url = `${host}/${dbName}`
-  const dbBaseName = dbName.split('-')[0]
-  const indexMappings = mappingsList[dbBaseName]
+module.exports = async index => {
+  const url = `${host}/${index}`
+  const indexBaseName = index.split('-')[0]
+  const indexMappings = mappingsList[indexBaseName]
   let body
   if (indexMappings) body = { mappings: indexMappings }
   try {

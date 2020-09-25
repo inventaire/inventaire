@@ -17,7 +17,7 @@ const bulk = module.exports = {
     return lines.join('\n') + '\n'
   },
 
-  logRes: label => async ({ items }) => {
+  logRes: label => ({ items }) => {
     const globalStatus = {}
 
     items.forEach(item => {
