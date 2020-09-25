@@ -5,16 +5,21 @@ const assert_ = __.require('utils', 'assert_types')
 const { publicReq, authReq, dataadminReq, adminReq } = require('./utils')
 
 const entitiesUtils = module.exports = {
-  getByUris: (uris, relatives) => {
+  getByUris: (uris, relatives, refresh) => {
     uris = _.forceArray(uris)
     assert_.strings(uris)
     uris = uris.join('|')
-    const url = _.buildPath('/api/entities', { action: 'by-uris', uris, relatives })
+    const url = _.buildPath('/api/entities', {
+      action: 'by-uris',
+      uris,
+      relatives,
+      refresh
+    })
     return publicReq('get', url)
   },
 
-  getByUri: uri => {
-    return entitiesUtils.getByUris(uri)
+  getByUri: (uri, refresh) => {
+    return entitiesUtils.getByUris(uri, null, refresh)
     .then(res => res.entities[uri])
   },
 

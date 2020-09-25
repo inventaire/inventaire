@@ -30,5 +30,21 @@ module.exports = {
         throw err
       }
     }
+  },
+
+  deindex: async (index, id) => {
+    assert_.string(index)
+    assert_.string(id)
+    const url = `${elasticHost}/${index}/_doc/${id}`
+    try {
+      await rawRequest('delete', url)
+      _.success(url, 'deindexed')
+    } catch (err) {
+      if (err.statusCode === 404) {
+        _.warn(url, 'doc not found: no deindexation required')
+      } else {
+        throw err
+      }
+    }
   }
 }
