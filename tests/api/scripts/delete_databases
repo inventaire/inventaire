@@ -16,7 +16,7 @@ done
 echo "\ndeleting ${leveldbPath}... " &&
 rm -rf ${leveldbPath}
 
-echo "\nreseting couch2elastic4sync... " &&
-export NODE_ENV=tests-api; npm run couch2elastic4sync:init &&
-  npm run couch2elastic4sync:reset &&
-  npm run couch2elastic4sync:load
+# echo "\nreseting couch2elastic4sync... " &&
+# export NODE_ENV=tests-api; npm run couch2elastic4sync:init &&
+#   npm run couch2elastic4sync:reset &&
+#   npm run couch2elastic4sync:load
