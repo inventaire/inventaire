@@ -50,7 +50,7 @@ This repository tracks the server-side developments, while the (heavy) [client-s
 - [git](https://git-scm.com/), [curl](http://curl.haxx.se) (used in some installation scripts), [graphicsmagick](www.graphicsmagick.org/README.html) (used to resize images), [inotify-tools](https://github.com/rvoicilas/inotify-tools) (used in API tests scripts)
 - [NodeJS](http://nodejs.org/) (>=6, recommended 12.2), [NVM](https://github.com/creationix/nvm) (allows great version update flexibility)
 - a [CouchDB](http://couchdb.apache.org/) (>=1.6, recommended 1.7) instance (on port 5984 for default config)
-- an [Elasticsearch](https://www.elastic.co/fr/products/elasticsearch) (>=2.4) instance (on port 9200 for default config)
+- an [Elasticsearch](https://www.elastic.co/fr/products/elasticsearch) (>=7.9) instance (on port 9200 for default config)
 
 To install those on Ubuntu that could give something like:
 ```sh
