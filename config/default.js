@@ -70,16 +70,8 @@ const config = module.exports = {
   leveldbMemoryBackend: false,
 
   elasticsearch: {
-    host: 'http://localhost:9200'
-  },
-
-  // See server/controllers/entities/lib/update_search_engine.js
-  entitiesSearchEngine: {
-    delay: 10000
-  },
-
-  couch2elastic4sync: {
-    activated: true
+    host: 'http://localhost:9200',
+    updateDelay: 1000
   },
 
   // See server/data/dataseed/dataseed.js

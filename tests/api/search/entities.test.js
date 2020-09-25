@@ -6,7 +6,7 @@ const { wait } = __.require('lib', 'promises')
 const randomString = __.require('lib', './utils/random_string')
 const { createWork, createHuman, createSerie, randomLabel, createEditionFromWorks } = require('../fixtures/entities')
 const { getRefreshedPopularityByUris } = require('../utils/entities')
-const { elasticsearchUpdateDelay } = CONFIG.entitiesSearchEngine
+const { updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
 const { search } = require('../utils/search')
 
 describe('search:entities', () => {

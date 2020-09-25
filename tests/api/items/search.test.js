@@ -10,7 +10,7 @@ const endpoint = '/api/items?action=search'
 const { wait } = __.require('lib', 'promises')
 const { shouldNotBeCalled } = require('../utils/utils')
 const firstNWords = (str, num) => str.split(' ').slice(0, num).join(' ')
-const { elasticsearchUpdateDelay } = CONFIG.entitiesSearchEngine
+const { updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
 const itemsIndex = CONFIG.db.name('items')
 
 const search = (reqUser, userId, search) => {

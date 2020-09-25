@@ -4,7 +4,7 @@ const should = require('should')
 const { wait } = __.require('lib', 'promises')
 const { createUser } = require('../fixtures/users')
 const { deleteUser } = require('../utils/users')
-const { elasticsearchUpdateDelay } = CONFIG.entitiesSearchEngine
+const { updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
 const { getIndexedDoc } = require('../utils/search')
 const { index } = __.require('elasticsearch', 'list').indexes.users
 
