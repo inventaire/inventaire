@@ -21,7 +21,7 @@ describe('indexation:items', () => {
   })
 })
 
-describe('desindexation:items', () => {
+describe('deindexation:items', () => {
   it('should unindex a deleted user', async () => {
     const item = await createItem()
     await wait(elasticsearchUpdateDelay)

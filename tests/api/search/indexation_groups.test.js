@@ -19,7 +19,7 @@ describe('indexation:groups', () => {
   })
 })
 
-describe('desindexation:groups', () => {
+describe('deindexation:groups', () => {
   it('should unindex a deleted group', async () => {
     const groupCreator = await getUser()
     const group = await createGroup()
