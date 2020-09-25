@@ -1,4 +1,4 @@
-const { string, keyword, date } = require('./mappings_datatypes')
+const { text, keyword, date } = require('./mappings_datatypes')
 
 module.exports = {
   properties: {
@@ -10,10 +10,10 @@ module.exports = {
     created: date,
     snapshot: {
       properties: {
-        'entity:title': string,
-        'entity:subtitle': string,
-        'entity:authors': string,
-        'entity:series': string,
+        'entity:title': text,
+        'entity:subtitle': text,
+        'entity:authors': text,
+        'entity:series': text,
         'entity:lang': keyword
       }
     }
