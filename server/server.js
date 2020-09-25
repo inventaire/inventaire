@@ -11,13 +11,16 @@ __.require('lib', 'startup/before')()
 
 // Starting to make CouchDB initialization checks
 const waitForCouchInit = __.require('couch', 'init')
+const waitForElasticsearchInit = __.require('elasticsearch', 'init')
 // Meanwhile, start setting up the server.
 // Startup time is mostly due to the time needed to require
 // all files from controllers, middlewares, libs, etc
 const initExpress = require('./init_express')
 
-waitForCouchInit()
-.then(_.Log('couch init'))
+Promise.all([
+  waitForCouchInit().then(_.Log('couch init')),
+  waitForElasticsearchInit()
+])
 .then(initExpress)
 .then(() => console.timeEnd('startup'))
 .then(__.require('lib', 'startup/after'))
