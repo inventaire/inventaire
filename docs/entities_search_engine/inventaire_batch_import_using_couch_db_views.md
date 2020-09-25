@@ -4,7 +4,7 @@ Using [`couch-view-by-keys`](https://github.com/maxlath/couchdb-view-by-keys) `>
 
 ```sh
 COUCHDB_AUTH_HOST=http://username:password@localhost:5984
-# Using the same name for the CouchDB database and the ElasticSearch index
+# Using the same name for the CouchDB database and the Elasticsearch index
 ENTITIES_DB_NAME=entities-prod
 DB="$COUCHDB_AUTH_HOST/$ENTITIES_DB_NAME"
 

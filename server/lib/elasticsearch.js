@@ -35,15 +35,15 @@ const parseResponse = res => res.hits.hits.map(parseHit)
 
 // Reshape the error object to be fully displayed when logged by _.warn
 const formatError = err => {
-  // Directly rethrow errors that aren't from ElasticSearch
+  // Directly rethrow errors that aren't from Elasticsearch
   // like ECONNREFUSED errors
   if (err.body == null) throw err
 
   err.body.error.root_cause = err.body.error.root_cause[0]
   err.body = err.body.error
 
-  // If ElasticSearch answers with a 404,
-  // it's the expected ElasticSearch index is missing
+  // If Elasticsearch answers with a 404,
+  // it's the expected Elasticsearch index is missing
   if (err.statusCode === 404) {
     err.statusCode = 500
     if (err.body.root_cause) {

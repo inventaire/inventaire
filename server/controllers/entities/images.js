@@ -3,7 +3,7 @@
 // Ex: requesting images for a work, this endpoint would return images URLs
 // from the work editions
 
-// Primary use case: feed ElasticSearch documents with an 'images' object
+// Primary use case: feed Elasticsearch documents with an 'images' object
 // from which to pick the best illustration for live search results
 
 const __ = require('config').universalPath

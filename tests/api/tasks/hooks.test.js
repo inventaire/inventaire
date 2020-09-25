@@ -9,7 +9,7 @@ const { createTask } = require('../fixtures/tasks')
 const { getByIds, getBySuspectUri, update, checkEntities } = require('../utils/tasks')
 const { wait } = __.require('lib', 'promises')
 
-// Tests dependency: having a populated ElasticSearch wikidata index
+// Tests dependency: having a populated Elasticsearch wikidata index
 describe('tasks:hooks', () => {
   describe('entity merge', () => {
     it('should update same suspect tasks to merged state', done => {

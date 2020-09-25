@@ -3,7 +3,7 @@ const { createHuman } = require('../fixtures/entities')
 const { getByScore, getBySuspectUris, getBySuggestionUris, update } = require('../utils/tasks')
 const { createTask } = require('../fixtures/tasks')
 
-// Tests dependency: having a populated ElasticSearch wikidata index
+// Tests dependency: having a populated Elasticsearch wikidata index
 describe('tasks:byScore', () => {
   it('should returns 10 or less tasks to deduplicates, by default', done => {
     createHuman()

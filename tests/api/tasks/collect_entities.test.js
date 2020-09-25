@@ -8,7 +8,7 @@ const { getBySuspectUri, collectEntities } = require('../utils/tasks')
 
 // Tests dependency:
 // - running after a database reset
-// - having a populated ElasticSearch wikidata index
+// - having a populated Elasticsearch wikidata index
 // Disabled to avoid crashing tests when those depdendencies aren't met
 describe('tasks:collect-entities', () => {
   xit('should create new tasks', async () => {
