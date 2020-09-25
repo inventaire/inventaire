@@ -16,10 +16,10 @@ module.exports = {
     return results
   },
 
-  getIndexedDoc: async (index, type, id) => {
+  getIndexedDoc: async (index, id) => {
     assert_.string(index)
     assert_.string(id)
-    const url = `${elasticHost}/${index}/${type}/${id}`
+    const url = `${elasticHost}/${index}/_doc/${id}`
     try {
       const { body } = await rawRequest('get', url)
       return JSON.parse(body)
