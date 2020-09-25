@@ -30,6 +30,12 @@ const init = () => {
 }
 
 const isDesignDoc = designDocsNames => doc => {
+  // The doc passed by follow is shared with other followers,
+  // so when the indexation deletes the doc._id, it impacts the code here.
+  // Giving each followers a copy would be unnecessarily expensive
+  // given the current uses.
+  if (doc._id == null) return
+
   const [ prefix, designDocsName ] = doc._id.split('/')
   if (prefix !== '_design') return false
   // Design docs that aren't in the list aren't persisted:
