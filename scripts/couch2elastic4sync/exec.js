@@ -1,4 +1,4 @@
-// Keep the desired CouchDB databases in sync with their ElasticSearch counterparts
+// Keep the desired CouchDB databases in sync with their Elasticsearch counterparts
 // Set the databases to sync in CONFIG.elasticsearch.sync
 
 const CONFIG = require('config')

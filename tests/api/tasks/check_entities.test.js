@@ -7,7 +7,7 @@ const { undesiredRes } = __.require('apiTests', 'utils/utils')
 const { getByUris } = require('../utils/entities')
 const { createHuman, createWorkWithAuthor, createWork, randomLabel } = require('../fixtures/entities')
 
-// Tests dependency: having a populated ElasticSearch wikidata index
+// Tests dependency: having a populated Elasticsearch wikidata index
 describe('tasks:check-entities', () => {
   it('should refuse to check entities of non-allowlisted types', done => {
     // Currently, only humans can be checked for duplicates,
