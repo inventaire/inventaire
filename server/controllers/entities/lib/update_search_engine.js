@@ -32,7 +32,6 @@ module.exports = () => {
     return lazyRequestUpdate()
   }
 
-  radio.on('inv:entity:update', (invId, type) => add(`inv:${invId}`, type))
   // Ideally, we should update Wikidata entities on every changes
   // but that would require to follow a change feed of Wikidata entities,
   // which isn't that straight forward, so refreshing on every cache miss instead,

@@ -12,11 +12,21 @@ const formatters = {
   entities: _.identity,
 }
 
-module.exports = async (indexBaseName, index, doc) => {
-  const formattedDoc = await formatters[indexBaseName](doc)
-  if (formattedDoc._deleted) {
-    addToNextBatch('delete', index, formattedDoc)
+const shouldBeDeindexed = (indexBaseName, doc) => {
+  if (indexBaseName === 'users') {
+    return doc.type === 'deletedUser'
+  } else if (indexBaseName === 'entities') {
+    return doc.type === 'removed:placeholder' || doc.redirect != null
   } else {
+    return doc._deleted === true
+  }
+}
+
+module.exports = async (indexBaseName, index, doc) => {
+  if (shouldBeDeindexed(indexBaseName, doc)) {
+    addToNextBatch('delete', index, doc)
+  } else {
+    const formattedDoc = await formatters[indexBaseName](doc)
     addToNextBatch('index', index, formattedDoc)
   }
 }
