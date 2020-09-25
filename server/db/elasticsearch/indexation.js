@@ -7,7 +7,7 @@ const { logRes } = __.require('controllers', 'entities/lib/indexation/bulk')
 
 const formatters = {
   items: require('./formatters/item'),
-  groups: require('./formatters/group'),
+  groups: _.identity,
   users: require('./formatters/user'),
   entities: _.identity,
 }
