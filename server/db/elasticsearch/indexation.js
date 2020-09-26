@@ -1,7 +1,14 @@
+const CONFIG = require('config')
+const __ = CONFIG.universalPath
+const _ = __.require('builders', 'utils')
 const formatters = require('./formatters/formatters')
 const filters = require('./filters')
 const deindex = require('./deindex')
-const { addToNextBatch } = require('./bulk')
+const { addToBatch, postBatch } = require('./bulk')
+const { updateDelay } = CONFIG.elasticsearch
+const bulkThrottleDelay = updateDelay / 2
+
+let batch = []
 
 module.exports = ({ indexBaseName, index, startFromEmptyIndex = false }) => {
   index = index || indexBaseName
@@ -12,10 +19,19 @@ module.exports = ({ indexBaseName, index, startFromEmptyIndex = false }) => {
     if (!filter(doc)) return
     if (shouldBeDeindexed(doc)) {
       // There is nothing to deindex when starting from an empty index
-      if (!startFromEmptyIndex) addToNextBatch('delete', index, doc)
+      if (!startFromEmptyIndex) addToBatch(batch, 'delete', index, doc)
     } else {
       const formattedDoc = await format(doc)
-      addToNextBatch('index', index, formattedDoc)
+      addToBatch(batch, 'index', index, formattedDoc)
     }
+    if (batch.length >= 1000) postAndReset(batch)
+    else lazyPostAndReset()
   }
 }
+
+const postAndReset = () => {
+  postBatch(batch)
+  batch = []
+}
+
+const lazyPostAndReset = _.throttle(postAndReset, bulkThrottleDelay, { leading: false })
