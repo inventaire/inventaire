@@ -15,6 +15,7 @@ describe('indexation:entities', () => {
     const result = await getIndexedDoc(entitiesIndex, _id)
     result.found.should.be.true()
     result._source.labels.should.be.an.Object()
+    result._source.type.should.equal('human')
   })
 })
 
