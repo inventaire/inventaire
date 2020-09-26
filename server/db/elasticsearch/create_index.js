@@ -3,12 +3,12 @@ const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const requests_ = __.require('lib', 'requests')
 const { host } = CONFIG.elasticsearch
-const { mappingsList } = __.require('db', 'elasticsearch/list')
+const mappings = __.require('db', 'elasticsearch/mappings/mappings')
 
 module.exports = async index => {
   const url = `${host}/${index}`
   const indexBaseName = index.split('-')[0]
-  const indexMappings = mappingsList[indexBaseName]
+  const indexMappings = mappings[indexBaseName]
   let body
   if (indexMappings) body = { mappings: indexMappings }
   try {
