@@ -38,18 +38,18 @@ module.exports = entity => {
 
   // Inventaire entities are already simplified
   if (needSimplification) {
-    const simplifiedLabels = simplify.labels(entity.labels)
-    const simplifiedDescriptions = simplify.descriptions(entity.descriptions)
-    const simplifiedAliases = simplify.aliases(entity.aliases)
-
-    entity.flattenedLabels = flattenTerms(simplifiedLabels)
-    entity.flattenedDescriptions = flattenTerms(simplifiedDescriptions)
-    entity.flattenedAliases = flattenTerms(simplifiedAliases)
-
-    entity.labels = removeUnusedLangs(simplifiedLabels)
-    entity.descriptions = removeUnusedLangs(simplifiedDescriptions)
-    entity.aliases = removeUnusedLangs(simplifiedDescriptions)
+    entity.labels = simplify.labels(entity.labels)
+    entity.descriptions = simplify.descriptions(entity.descriptions)
+    entity.aliases = simplify.aliases(entity.aliases)
   }
+
+  entity.flattenedLabels = flattenTerms(entity.labels)
+  entity.flattenedDescriptions = flattenTerms(entity.descriptions)
+  entity.flattenedAliases = flattenTerms(entity.aliases)
+
+  entity.labels = removeUnusedLangs(entity.labels)
+  entity.descriptions = removeUnusedLangs(entity.descriptions)
+  entity.aliases = removeUnusedLangs(entity.aliases)
 
   if (Object.keys(entity.labels).length === 0) setTermsFromClaims(entity)
 
