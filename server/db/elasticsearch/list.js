@@ -16,17 +16,10 @@ const indexesData = [
 })
 
 const indexes = _.keyBy(indexesData, 'indexBaseName')
-
 const indexesList = _.map(indexesData, 'index')
-
-const mappingsList = {
-  items: require('./mappings/items'),
-  // wikidata: require('./mappings/wikidata')
-  entities: require('./mappings/wikidata')
-}
 
 const syncIndexesList = indexesData
   .filter(indexData => indexData.sync)
   .map(_.property('indexBaseName'))
 
-module.exports = { indexes, indexesList, mappingsList, syncIndexesList }
+module.exports = { indexes, indexesList, syncIndexesList }
