@@ -34,6 +34,7 @@ module.exports = entity => {
     if (entity.image != null) {
       entity.images.claims.push(entity.image.url)
     }
+    // TODO: recover images from special_entity_images_getter
   }
 
   // If passed an already formatted entity
