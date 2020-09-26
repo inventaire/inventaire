@@ -24,4 +24,5 @@ dumps/wd
 storage
 inventaire-i18n
 config/.sessions_keys
-scripts/entities_search_engine/queries/results/
+scripts/entities_indexation/queries/results/
+*.ndjson
