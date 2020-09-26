@@ -1,23 +1,9 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const { post } = __.require('lib', 'requests')
-const { host: elasticHost } = CONFIG.elasticsearch
 
-const bulk = module.exports = {
-  buildLine: (action, index, id) => {
-    return `{"${action}":{"_index":"${index}","_id":"${id}"}}`
-  },
-
-  joinLines: lines => {
-    if (!(lines instanceof Array && lines.length > 0)) {
-      throw new Error('invalid lines')
-    }
-    // It is required to end by a newline break
-    return lines.join('\n') + '\n'
-  },
-
-  logRes: label => ({ items }) => {
+module.exports = {
+  logBulkRes: label => ({ items }) => {
     const globalStatus = {}
 
     items.forEach(item => {
@@ -42,13 +28,6 @@ const bulk = module.exports = {
 
     const color = getLoggerColor(globalStatus)
     _.log(globalStatus, label, color)
-  },
-
-  postBatch: batch => {
-    return post(`${elasticHost}/_bulk`, {
-      headers: { 'Content-Type': 'application/json' },
-      body: bulk.joinLines(batch)
-    })
   }
 }
 

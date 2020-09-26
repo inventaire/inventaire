@@ -3,9 +3,9 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const requests_ = __.require('lib', 'requests')
 const { host: elasticHost } = CONFIG.elasticsearch
-const { logRes } = __.require('controllers', 'entities/lib/indexation/bulk')
 const formatters = require('./formatters/formatters')
 const deindex = require('./deindex')
+const { logBulkRes } = require('./helpers')
 
 module.exports = (indexBaseName, index) => {
   index = index || indexBaseName
@@ -41,6 +41,6 @@ const postBatch = () => {
     headers: { 'content-type': 'application/json' },
     body
   })
-  .then(logRes('bulk post res'))
+  .then(logBulkRes('bulk post res'))
   .catch(_.Error('bulk post err'))
 }
