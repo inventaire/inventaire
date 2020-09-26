@@ -78,17 +78,8 @@ const flattenTerms = terms => {
   return _.uniq(Object.values(terms)).join(' ')
 }
 
-const i18nTranslatedLangs = 'ar bn ca cs da de el eo es fr hu id it ja nb nl pa pl pt ro ru sk sv tr uk'.split(' ')
+const activeI18nLangs = 'ar bn ca cs da de el en eo es fr hu id it ja nb nl pa pl pt ro ru sk sv tr uk'.split(' ')
 
-const removeUnusedLangs = terms => {
-  // Reject terms langs not used by inventaire-i18n, as entity object indexation shall be less than 1000 keys long
-  // See: https://discuss.elastic.co/t/limit-of-total-fields-1000-in-index-has-been-exceeded-particular-jsons/222627
-  const termsLangKeys = Object.keys(terms)
-  const newTerms = {}
-  i18nTranslatedLangs.forEach(lang => {
-    if (termsLangKeys.includes(lang)) {
-      newTerms[lang] = terms[lang]
-    }
-  })
-  return newTerms
-}
+// Reject terms langs not used by inventaire-i18n, as entity object indexation shall be less than 1000 keys long
+// See: https://discuss.elastic.co/t/limit-of-total-fields-1000-in-index-has-been-exceeded-particular-jsons/222627
+const removeUnusedLangs = terms => _.pick(terms, activeI18nLangs)
