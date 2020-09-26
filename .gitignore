@@ -23,5 +23,5 @@ dumps/inv
 dumps/wd
 storage
 inventaire-i18n
-scripts/entities_indexation/queries/results/
+scripts/indexation/entities/queries/results/
 *.ndjson
