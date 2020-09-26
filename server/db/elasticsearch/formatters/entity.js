@@ -5,10 +5,13 @@ const { simplify } = wdk
 const { getEntityId } = require('./entity_helpers')
 const getEntityImagesFromClaims = __.require('controllers', 'entities/lib/get_entity_images_from_claims')
 const { firstClaim } = __.require('controllers', 'entities/lib/entities')
+const getEntityType = __.require('controllers', 'entities/lib/get_entity_type')
 
 module.exports = entity => {
   entity._id = getEntityId(entity)
   delete entity.id
+
+  entity.type = getType(entity)
 
   let needsSimplification = false
   const isWikidataEntity = wdk.isItemId(entity._id)
@@ -56,14 +59,26 @@ module.exports = entity => {
 
   if (Object.keys(entity.labels).length === 0) setTermsFromClaims(entity)
 
-  // Saving space by not indexing claims
-  delete entity.claims
-  // Deleting if it wasn't already omitted to be consistent
-  delete entity.type
+  if (!entity.type) {
+  }
 
+  // Those don't need to be indexed
+  delete entity.claims
   delete entity.sitelinks
 
   return entity
+}
+
+const getType = entity => {
+  if (entity.type && entity.type !== 'entity') return entity.type
+
+  let wdtP31
+  if (entity.claims.P31) {
+    wdtP31 = simplify.propertyClaims(entity.claims.P31, { entityPrefix: 'wd' })
+  } else {
+    wdtP31 = entity.claims['wdt:P31']
+  }
+  return getEntityType(wdtP31)
 }
 
 const setTermsFromClaims = entity => {

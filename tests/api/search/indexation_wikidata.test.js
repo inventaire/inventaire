@@ -16,6 +16,7 @@ describe('indexation:wikidata', () => {
     await wait(elasticsearchUpdateDelay)
     const result = await getIndexedDoc(wikidataIndex, id)
     result.found.should.be.true()
+    result._source.type.should.equal('work')
   })
 
   // it('should deindex a wikidata entity when deleted', async () => {})
