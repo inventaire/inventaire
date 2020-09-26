@@ -20,7 +20,7 @@
     "indexation:entities:update-and-import-all": "npm run indexation:entities:update-query-results all && npm run indexation:entities:import-query-results all",
     "indexation:entities:delete-from-results": "./scripts/indexation/entities/delete_from_results.js",
     "indexation:entities:export-indexes": "./scripts/indexation/entities/export_indexes.sh",
-    "indexation:entities:dump-wikidata-subset": "./scripts/indexation/entities/dump_wikidata_subset.sh",
+    "indexation:entities:load-humans-in-wikidata-dump": "./scripts/indexation/entities/load_humans_in_wikidata_dump.sh",
     "inspect": "node --inspect --inspect-brk server/server.js",
     "install-client": "./scripts/install_client",
     "install-i18n": "./scripts/install_i18n",
