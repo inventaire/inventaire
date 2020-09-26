@@ -2,9 +2,9 @@ const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const wdk = require('wikidata-sdk')
 const { simplify } = wdk
-const { getEntityId } = require('./helpers')
-const getEntityImagesFromClaims = require('../get_entity_images_from_claims')
-const { firstClaim } = require('../entities')
+const { getEntityId } = require('./entity_helpers')
+const getEntityImagesFromClaims = __.require('controllers', 'entities/lib/get_entity_images_from_claims')
+const { firstClaim } = __.require('controllers', 'entities/lib/entities')
 
 module.exports = entity => {
   entity.id = getEntityId(entity)
