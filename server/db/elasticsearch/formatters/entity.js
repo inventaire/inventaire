@@ -9,24 +9,23 @@ const { firstClaim } = __.require('controllers', 'entities/lib/entities')
 module.exports = entity => {
   entity.id = getEntityId(entity)
 
-  let needSimplification = false
+  let needsSimplification = false
+  const isWikidataEntity = wdk.isItemId(entity._id)
 
-  if (wdk.isItemId(entity.id)) {
+  if (isWikidataEntity) {
     // Only Wikidata entities imported from a dump need to be simplified
     // Wikidata entities with a URI come from the Inventaire API, and are thus already simplified
-    needSimplification = entity.uri == null
-    entity.uri = 'wd:' + entity.id
+    needsSimplification = entity.uri == null
+    entity.uri = 'wd:' + entity._id
   } else {
-    entity.uri = 'inv:' + entity.id
-    // Deleting inv entities CouchDB documents ids
-    delete entity._id
+    entity.uri = 'inv:' + entity._id
   }
 
   // Take images from claims if no images object was set by add_entities_images,
   // that is, for every entity types but works and series
   if (!entity.images) {
     entity.images = {
-      claims: getEntityImagesFromClaims(entity, needSimplification)
+      claims: getEntityImagesFromClaims(entity, needsSimplification)
     }
     if (entity.image != null) {
       entity.images.claims.push(entity.image.url)
@@ -36,23 +35,21 @@ module.exports = entity => {
   // If passed an already formatted entity
   delete entity.image
 
-  // Inventaire entities are already simplified
-  if (needSimplification) {
+  if (needsSimplification) {
     entity.labels = simplify.labels(entity.labels)
     entity.descriptions = simplify.descriptions(entity.descriptions)
     entity.aliases = simplify.aliases(entity.aliases)
   }
 
-  entity.flattenedLabels = flattenTerms(entity.labels)
-  entity.labels = removeUnusedLangs(entity.labels)
-
-  if (entity.descriptions) {
+  if (isWikidataEntity) {
+    entity.flattenedLabels = flattenTerms(entity.labels)
     entity.flattenedDescriptions = flattenTerms(entity.descriptions)
-    entity.descriptions = removeUnusedLangs(entity.descriptions)
+    entity.flattenedAliases = flattenTerms(entity.aliases)
   }
 
-  if (entity.aliases) {
-    entity.flattenedAliases = flattenTerms(entity.aliases)
+  entity.labels = removeUnusedLangs(entity.labels)
+  if (isWikidataEntity) {
+    entity.descriptions = removeUnusedLangs(entity.descriptions)
     entity.aliases = removeUnusedLangs(entity.aliases)
   }
 

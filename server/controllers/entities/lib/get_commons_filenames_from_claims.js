@@ -13,8 +13,8 @@ const imageClaims = [
 
 const nonPrefixedImageClaims = imageClaims.map(unprefixify)
 
-module.exports = (claims, needSimplification = false) => {
-  if (needSimplification) {
+module.exports = (claims, needsSimplification = false) => {
+  if (needsSimplification) {
     const images = flatten(values(pick(claims, nonPrefixedImageClaims)))
     return images.map(simplify.claim)
   } else {
