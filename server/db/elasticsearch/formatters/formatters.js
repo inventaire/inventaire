@@ -1,9 +1,9 @@
 const { identity } = require('lodash')
 
 module.exports = {
-  items: require('./item'),
+  entities: require('./entity'),
   groups: identity,
+  items: require('./item'),
   users: require('./user'),
-  entities: identity,
-  wikidata: identity,
+  wikidata: require('./entity'),
 }
