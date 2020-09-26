@@ -2,7 +2,7 @@
 
 ```sh
 # the wikidata claim that entities have to match to be in the subset
-./scripts/indexation/entities/load_humans_in_wikidata_dump.sh
+npm run indexation:entities:load-humans-in-wikidata-dump
 # time for a coffee!
 ```
 What happens here:

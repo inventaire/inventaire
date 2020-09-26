@@ -1,9 +1,8 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-// const error_ = __.require('lib', 'error/error')
 const follow = __.require('lib', 'follow')
-const indexation = require('./indexation')
 const filters = require('./filters')
+const indexation = require('./indexation')
 
 module.exports = indexBaseName => {
   const index = CONFIG.db.name(indexBaseName)
