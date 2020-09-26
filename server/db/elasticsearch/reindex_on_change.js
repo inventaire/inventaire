@@ -14,6 +14,6 @@ module.exports = indexBaseName => {
 }
 
 const reindex = (indexBaseName, index) => {
-  const indexFn = indexation(indexBaseName, index)
+  const indexFn = indexation({ indexBaseName, index })
   return ({ doc }) => indexFn(doc)
 }

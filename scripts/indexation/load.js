@@ -16,7 +16,11 @@ if (!indexesList.includes(indexBaseName)) {
 
 const { index: indexName } = indexes[indexBaseName]
 
-const indexFn = indexation(indexBaseName, indexName)
+const indexFn = indexation({
+  indexBaseName,
+  indexName,
+  startFromEmptyIndex: true
+})
 
 const indexLineDoc = line => {
   if (line === '') return
