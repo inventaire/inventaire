@@ -3,7 +3,8 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 
 module.exports = {
-  logBulkRes: label => ({ items }) => {
+  logBulkRes: (res, label) => {
+    const { items } = res
     const globalStatus = {}
 
     items.forEach(item => {
