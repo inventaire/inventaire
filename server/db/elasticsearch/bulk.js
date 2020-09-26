@@ -6,6 +6,7 @@ const { host: elasticHost, updateDelay } = CONFIG.elasticsearch
 const { logBulkRes } = require('./helpers')
 const bulkThrottleDelay = updateDelay / 2
 const assert_ = __.require('utils', 'assert_types')
+const headers = { 'content-type': 'application/json' }
 
 let batch = []
 const addToNextBatch = (action, index, doc) => {
@@ -27,7 +28,7 @@ const postBatch = async () => {
   batch = []
   try {
     const res = await requests_.post(`${elasticHost}/_doc/_bulk`, {
-      headers: { 'content-type': 'application/json' },
+      headers,
       body
     })
     logBulkRes(res, 'bulk post res')
