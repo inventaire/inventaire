@@ -38,11 +38,16 @@ const post = async () => {
   batch = []
 }
 
+let received = 0
+let indexed = 0
+
 const addLine = async line => {
+  received++
   const doc = parseLine(line)
   if (doc == null || !filter(doc) || shouldBeDeindexed(doc)) return
   const formattedDoc = await format(doc)
   addToBatch(batch, 'index', index, formattedDoc)
+  indexed++
   if (batch.length >= 4000) await post()
 }
 
@@ -59,3 +64,7 @@ process.stdin
   _.success(`${indexBaseName} indexation:load done`)
 })
 .on('error', _.Error(`${indexBaseName} indexation:load err`))
+
+setInterval(() => {
+  _.info({ received, indexed }, 'indexation:load status')
+}, 5000)
