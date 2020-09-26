@@ -3,6 +3,7 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const db = __.require('level', 'get_sub_db')('timeouts', 'json')
+const { serverMode } = CONFIG
 const { baseBanTime, banTimeIncreaseFactor } = CONFIG.outgoingRequests
 // Using port to keep instances data separated
 // to avoid overriding data between instances
@@ -11,15 +12,17 @@ const dbKey = CONFIG.port
 
 let timeoutData = {}
 
-db.get(dbKey)
-.then(data => {
-  timeoutData = data
-  if (Object.keys(timeoutData).length > 0) _.success(timeoutData, 'timeouts data restored')
-})
-.catch(err => {
-  if (err.name === 'NotFoundError') return _.warn('no timeouts data found')
-  else _.error(err, 'timeouts init err')
-})
+const restoreTimeoutsData = () => {
+  db.get(dbKey)
+  .then(data => {
+    timeoutData = data
+    if (Object.keys(timeoutData).length > 0) _.success(timeoutData, 'timeouts data restored')
+  })
+  .catch(err => {
+    if (err.name === 'NotFoundError') return _.warn('no timeouts data found')
+    else _.error(err, 'timeouts init err')
+  })
+}
 
 const throwIfTemporarilyBanned = host => {
   const hostTimeoutData = timeoutData[host]
@@ -56,6 +59,8 @@ const backup = () => {
   .catch(_.Error('timeouts data backup err'))
 }
 
-const lazyBackup = _.debounce(backup, 10 * 1000)
+const lazyBackup = serverMode ? _.debounce(backup, 10 * 1000) : _.noop
+
+if (serverMode) restoreTimeoutsData()
 
 module.exports = { throwIfTemporarilyBanned, resetBanData, declareTimeout }
