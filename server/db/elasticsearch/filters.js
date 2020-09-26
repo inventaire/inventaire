@@ -1,4 +1,5 @@
 const isntDesignDoc = doc => !doc._id.startsWith('_design/')
+const { identity } = require('lodash')
 
 module.exports = {
   // Do not filter-out doc.type=deletedUser so that deleted users can be unindexed
@@ -8,4 +9,5 @@ module.exports = {
   groups: doc => doc.type === 'group',
   items: isntDesignDoc,
   entities: isntDesignDoc,
+  wikidata: identity,
 }
