@@ -144,7 +144,11 @@ const startReqTimer = (method, url, options) => {
 
   let body = ' '
   if (options.bodyStream) body += '[stream]'
-  else if (options && options.body) body += options.body
+  else if (options && options.body) {
+    const { length } = options.body
+    if (length < 500) body += options.body
+    else body += `${options.body.slice(0, 100)} [${length} total characters...]`
+  }
 
   const reqTimerKey = magenta(`${method.toUpperCase()} ${url}${body} [r${++requestId}]`)
   console.time(reqTimerKey)
