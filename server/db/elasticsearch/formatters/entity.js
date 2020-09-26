@@ -26,9 +26,15 @@ module.exports = entity => {
   // that is, for every entity types but works and series
   if (!entity.images) {
     entity.images = {
-      claims: getEntityImagesFromClaims(entity.claims, needSimplification)
+      claims: getEntityImagesFromClaims(entity, needSimplification)
+    }
+    if (entity.image != null) {
+      entity.images.claims.push(entity.image.url)
     }
   }
+
+  // If passed an already formatted entity
+  delete entity.image
 
   // Inventaire entities are already simplified
   if (needSimplification) {
