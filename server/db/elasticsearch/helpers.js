@@ -15,8 +15,12 @@ module.exports = {
         }
         if (opRes.status >= 400) {
           if (opRes.status === 404) {
-            // Known case: happens when an unindexation is requested before the indexation was done
-            _.warn(opRes._id, `${label} not found`)
+            if (operation === 'delete') {
+              // Known case: happens when an deindexation is requested before the indexation was done
+              _.warn(opRes._id, "can't deindex: doc not found")
+            } else {
+              _.warn(opRes._id, `${label} not found`)
+            }
           } else {
             _.warn(item, `${label} failed`)
           }
