@@ -7,7 +7,8 @@ const getEntityImagesFromClaims = __.require('controllers', 'entities/lib/get_en
 const { firstClaim } = __.require('controllers', 'entities/lib/entities')
 
 module.exports = entity => {
-  entity.id = getEntityId(entity)
+  entity._id = getEntityId(entity)
+  delete entity.id
 
   let needsSimplification = false
   const isWikidataEntity = wdk.isItemId(entity._id)
