@@ -58,6 +58,8 @@ module.exports = entity => {
   // Deleting if it wasn't already omitted to be consistent
   delete entity.type
 
+  delete entity.sitelinks
+
   return entity
 }
 
