@@ -44,12 +44,17 @@ module.exports = entity => {
   }
 
   entity.flattenedLabels = flattenTerms(entity.labels)
-  entity.flattenedDescriptions = flattenTerms(entity.descriptions)
-  entity.flattenedAliases = flattenTerms(entity.aliases)
-
   entity.labels = removeUnusedLangs(entity.labels)
-  entity.descriptions = removeUnusedLangs(entity.descriptions)
-  entity.aliases = removeUnusedLangs(entity.aliases)
+
+  if (entity.descriptions) {
+    entity.flattenedDescriptions = flattenTerms(entity.descriptions)
+    entity.descriptions = removeUnusedLangs(entity.descriptions)
+  }
+
+  if (entity.aliases) {
+    entity.flattenedAliases = flattenTerms(entity.aliases)
+    entity.aliases = removeUnusedLangs(entity.aliases)
+  }
 
   if (Object.keys(entity.labels).length === 0) setTermsFromClaims(entity)
 
