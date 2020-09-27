@@ -10,10 +10,8 @@ module.exports = async index => {
   const url = `${host}/${index}`
   const indexBaseName = index.split('-')[0]
   const indexMappings = mappings[indexBaseName]
-  let body
-  if (indexMappings) body = { mappings: indexMappings }
-
-  body.settings = settings
+  const body = { settings }
+  if (indexMappings) body.mappings = indexMappings
   try {
     const res = await requests_.put(url, { body })
     _.success(res, `elasticsearch index created: ${url}`)
