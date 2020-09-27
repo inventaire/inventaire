@@ -51,27 +51,32 @@ const addLine = async line => {
   if (batch.length >= 4000) await post()
 }
 
-// Ensure index creation to load mappings and settings
-createIndex(index)
-
-process.stdin
-.pipe(split())
-.on('data', async function (line) {
-  this.pause()
-  await addLine(line)
-  this.resume()
-})
-.on('close', async () => {
-  _.info(`${indexBaseName} indexation:load stdin closed`)
-  await post()
-  _.success(`${indexBaseName} indexation:load done`)
-  lastStatusLog()
-})
-.on('error', _.Error(`${indexBaseName} indexation:load err`))
-
 const logStatusPeriodically = () => _.info({ received, indexed }, 'indexation:load status')
 const statusLogInterval = setInterval(logStatusPeriodically, 5000)
 const lastStatusLog = () => {
   clearInterval(statusLogInterval)
   logStatusPeriodically()
 }
+
+const loadFromStdin = () => {
+  process.stdin
+  .pipe(split())
+  .on('data', async function (line) {
+    this.pause()
+    await addLine(line)
+    this.resume()
+  })
+  .on('close', async () => {
+    _.info(`${indexBaseName} indexation:load stdin closed`)
+    await post()
+    _.success(`${indexBaseName} indexation:load done`)
+    lastStatusLog()
+  })
+  .on('error', _.Error(`${indexBaseName} indexation:load err`))
+}
+
+// Ensure index creation to load mappings and settings
+createIndex(index)
+// before starting to load
+.then(loadFromStdin)
+.catch(console.error)
