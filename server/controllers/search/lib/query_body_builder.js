@@ -18,10 +18,16 @@ module.exports = params => {
 
 const singularType = types => types.map(type => type.replace(/s$/, ''))
 
-const matchType = types => types.map(type => ({ match: { type } }))
+const matchType = types => {
+  return types.map(type => (
+    { match: { type } }
+  ))
+}
 
 const matchSearch = (search, userLang) => {
   return [
+    // strict (operator 'and'):
+    // match on all words in search, so descriptions are allowed
     {
       multi_match: {
         query: search,
@@ -30,29 +36,25 @@ const matchSearch = (search, userLang) => {
           `labels.${userLang}^4`,
           'labels.*^4',
           'aliases.*^2',
-          'descriptions.*^2'
+          'descriptions.*',
         ],
       }
     },
+    // loose match some words in search
+    // descriptions are disabled to avoid noise
     {
       multi_match: {
         query: search,
         fields: [
-          `labels.${userLang}^2`,
-          'labels.*^2',
-          'aliases.*',
+          `labels.${userLang}^4`,
+          'labels.*^4',
+          'aliases.*^2',
+          'descriptions.*',
+          'flattenedLabels', // text type
+          'flattenedAliases', // text type
+          'flattenedDescriptions' // text type
         ]
       }
     },
-    {
-      multi_match: {
-        query: search,
-        fields: [
-          'flattenedLabels',
-          'flattenedAliases',
-          'flattenedDescriptions'
-        ]
-      }
-    }
   ]
 }
