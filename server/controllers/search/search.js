@@ -40,13 +40,14 @@ module.exports = {
 }
 
 const isSearchable = reqUserId => result => {
-  if (result._type === 'users') {
-    return result._source.deleted !== true
-  } else if (result._type === 'groups') {
-    if (result._source.searchable) return true
+  const source = result._source
+  if (source.type === 'user') {
+    return source.deleted !== true
+  } else if (source.type === 'group') {
+    if (source.searchable) return true
     if (reqUserId == null) return false
     // Only members should be allowed to find non-searchable groups in search
-    return Group.userIsMember(reqUserId, result._source)
+    return Group.userIsMember(reqUserId, source)
   } else {
     return true
   }

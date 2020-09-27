@@ -8,6 +8,7 @@ const assert_ = __.require('utils', 'assert_types')
 const headers = { 'content-type': 'application/x-ndjson' }
 
 const addToBatch = (batch, action, index, doc) => {
+  if (!doc) return _.warn('ignore empty doc')
   const { _id } = doc
   assert_.string(_id)
   // Prevent triggering the error
