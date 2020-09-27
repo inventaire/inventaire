@@ -24,7 +24,7 @@ const shouldBeDeindexed = deindex[indexBaseName]
 const filter = filters[indexBaseName]
 
 const parseLine = line => {
-  if (line === '') return
+  if (line == null || line === '') return
   try {
     return JSON.parse(line)
   } catch (err) {
@@ -58,17 +58,19 @@ const lastStatusLog = () => {
   logStatusPeriodically()
 }
 
+const stopLoading = logErrorAndExit.bind(null, 'loadFromStdin')
+
 const loadFromStdin = () => {
   process.stdin
   .pipe(split())
   .on('data', async function (line) {
     this.pause()
-    await addLine(line)
+    await addLine(line).catch(stopLoading)
     this.resume()
   })
   .on('close', async () => {
     _.info(`${indexBaseName} indexation:load stdin closed`)
-    await post()
+    await post().catch(stopLoading)
     _.success(`${indexBaseName} indexation:load done`)
     lastStatusLog()
   })
