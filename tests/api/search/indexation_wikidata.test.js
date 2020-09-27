@@ -39,6 +39,17 @@ describe('indexation:wikidata', () => {
     result.found.should.be.false()
   })
 
+  it('should index the popularity', async () => {
+    const id = 'Q94973707'
+    const uri = `wd:${id}`
+    await deindex(wikidataIndex, id)
+    await getByUri(uri, true)
+    await wait(elasticsearchUpdateDelay)
+    const result = await getIndexedDoc(wikidataIndex, id)
+    result.found.should.be.true()
+    result._source.popularity.should.a.Number()
+  })
+
   // it('should deindex a wikidata entity when deleted', async () => {})
   // it('should deindex a wikidata entity when redirected', async () => {})
 })
