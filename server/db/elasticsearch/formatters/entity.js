@@ -7,8 +7,9 @@ const getEntityImagesFromClaims = __.require('controllers', 'entities/lib/get_en
 const { firstClaim } = __.require('controllers', 'entities/lib/entities')
 const getEntityType = __.require('controllers', 'entities/lib/get_entity_type')
 const { indexedEntitiesTypes } = __.require('controllers', 'search/lib/indexes')
+const specialEntityImagesGetter = __.require('controllers', 'entities/lib/special_entity_images_getter')
 
-module.exports = entity => {
+module.exports = async entity => {
   entity._id = getEntityId(entity)
   delete entity.id
 
@@ -31,13 +32,13 @@ module.exports = entity => {
   // Take images from claims if no images object was set by add_entities_images,
   // that is, for every entity types but works and series
   if (!entity.images) {
-    entity.images = {
-      claims: getEntityImagesFromClaims(entity, needsSimplification)
+    if (specialEntityImagesGetter[entity.type]) {
+      entity.images = await specialEntityImagesGetter[entity.type](entity)
+    } else {
+      entity.images = {
+        claims: getEntityImagesFromClaims(entity, needsSimplification)
+      }
     }
-    if (entity.image != null) {
-      entity.images.claims.push(entity.image.url)
-    }
-    // TODO: recover images from special_entity_images_getter
   }
 
   // If passed an already formatted entity

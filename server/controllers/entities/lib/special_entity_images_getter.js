@@ -8,10 +8,10 @@ const getEntityImagesFromClaims = require('./get_entity_images_from_claims')
 module.exports = {
   // Works images (wdt:P18) in Wikidata aren't satisfying, as not making use
   // of the right to fair-use, thus the need to fetch editions covers instead
-  work: (entity, limitPerLang) => {
+  work: (entity, limitPerLang = 1) => {
     const { uri } = entity
     const images = { claims: getEntityImagesFromClaims(entity) }
-    return getWorkEditions(uri, images, limitPerLang)
+    return getWorkImagesFromEditions(uri, images, limitPerLang)
   },
 
   // Idem
@@ -25,7 +25,7 @@ module.exports = {
   }
 }
 
-const getWorkEditions = (workUri, images, limitPerLang) => {
+const getWorkImagesFromEditions = (workUri, images, limitPerLang) => {
   return entities_.byClaim('wdt:P629', workUri, true, true)
   .then(addEditionsImages(images, limitPerLang))
 }
@@ -41,7 +41,9 @@ const addEditionsImages = (images, limitPerLang = 3) => editions => {
   return images
 }
 
-const getOneWorkImagePerLang = workUri => getWorkEditions(workUri, {}, 1)
+const getOneWorkImagePerLang = workUri => {
+  return getWorkImagesFromEditions(workUri, {}, 1)
+}
 
 const aggregateWorkImages = (images, workImages) => {
   for (const key in workImages) {
