@@ -42,12 +42,15 @@ let received = 0
 let indexed = 0
 
 const addLine = async line => {
-  received++
   const doc = parseLine(line)
-  if (doc == null || !filter(doc) || shouldBeDeindexed(doc)) return
+  if (doc == null) return
+  received++
+  if (!filter(doc) || shouldBeDeindexed(doc)) return
   const formattedDoc = await format(doc)
-  if (formattedDoc) addToBatch(batch, 'index', index, formattedDoc)
-  indexed++
+  if (formattedDoc) {
+    addToBatch(batch, 'index', index, formattedDoc)
+    indexed++
+  }
   if (batch.length >= 4000) await post()
 }
 
