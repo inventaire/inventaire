@@ -60,9 +60,6 @@ module.exports = entity => {
 
   if (Object.keys(entity.labels).length === 0) setTermsFromClaims(entity)
 
-  if (!entity.type) {
-  }
-
   // Those don't need to be indexed
   delete entity.claims
   delete entity.sitelinks
