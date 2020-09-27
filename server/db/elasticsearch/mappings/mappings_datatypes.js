@@ -2,6 +2,7 @@
 
 module.exports = {
   text: { type: 'text' },
+  nested: { type: 'nested' },
   keyword: { type: 'keyword' },
   date: { type: 'date' },
   flattened: { type: 'flattened' }

@@ -10,7 +10,7 @@ const formatters = __.require('db', 'elasticsearch/formatters/formatters')
 const filters = __.require('db', 'elasticsearch/filters')
 const deindex = __.require('db', 'elasticsearch/deindex')
 const { addToBatch, postBatch } = __.require('db', 'elasticsearch/bulk')
-
+const createIndex = __.require('db', 'elasticsearch/create_index')
 const [ indexBaseName ] = process.argv.slice(2)
 
 if (!indexesList.includes(indexBaseName)) {
@@ -50,6 +50,9 @@ const addLine = async line => {
   indexed++
   if (batch.length >= 4000) await post()
 }
+
+// Ensure index creation to load mappings and settings
+createIndex(index)
 
 process.stdin
 .pipe(split())

@@ -3,9 +3,10 @@ const { text, keyword, date, nested } = require('./mappings_datatypes')
 module.exports = {
   properties: {
     type: keyword,
-    labels: nested,
-    aliases: nested,
-    descriptions: nested,
+    id: {
+      type: 'keyword',
+      index: false
+    },
     flattenedLabels: text,
     flattenedAliases: text,
     flattenedDescriptions: text,
