@@ -2,6 +2,7 @@
 
 module.exports = {
   text: { type: 'text' },
+  integer: { type: 'integer' },
   nested: { type: 'nested' },
   keyword: { type: 'keyword' },
   date: { type: 'date' },

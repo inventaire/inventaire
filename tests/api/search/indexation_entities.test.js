@@ -50,6 +50,16 @@ describe('indexation:entities', () => {
     const result = await getIndexedDoc(entitiesIndex, serieId)
     result._source.images[lang][0].should.equal(editionImageHash)
   })
+
+  it('should index the entity popularity', async () => {
+    const { _id } = await createHuman()
+    await wait(elasticsearchUpdateDelay)
+    const result = await getIndexedDoc(entitiesIndex, _id)
+    result.found.should.be.true()
+    result._source.labels.should.be.an.Object()
+    result._source.type.should.equal('human')
+    result._source.popularity.should.a.Number()
+  })
 })
 
 describe('deindexation:entities', () => {
