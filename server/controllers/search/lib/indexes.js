@@ -37,14 +37,14 @@ const typesData = {
 
 const possibleTypes = Object.keys(typesData)
 
-const indexedEntitiesTypes = [
-  'works',
-  'humans',
-  'genres',
-  'movements',
-  'publishers',
-  'series',
-  'collections'
-]
+const indexedEntitiesTypes = new Set([
+  'work',
+  'human',
+  'genre',
+  'movement',
+  'publisher',
+  'serie',
+  'collection',
+])
 
 module.exports = { indexes, typesData, possibleTypes, indexedEntitiesTypes }

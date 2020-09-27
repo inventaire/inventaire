@@ -22,7 +22,7 @@ const { _id: hookUserId } = __.require('couch', 'hard_coded_documents').users.ho
 // Working around the circular dependency
 let reindex
 const lateRequire = () => {
-  reindex = __.require('elasticsearch', 'indexation')('wikidata')
+  reindex = __.require('elasticsearch', 'indexation')({ indexBaseName: 'wikidata' })
 }
 setTimeout(lateRequire, 0)
 
