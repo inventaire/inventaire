@@ -1,4 +1,4 @@
-const { text, keyword, date, nested } = require('./mappings_datatypes')
+const { text, integer, keyword, date, nested } = require('./mappings_datatypes')
 
 module.exports = {
   properties: {
@@ -14,5 +14,6 @@ module.exports = {
     images: nested,
     created: date,
     updated: date,
+    popularity: integer,
   }
 }
