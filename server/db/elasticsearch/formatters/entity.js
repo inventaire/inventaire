@@ -6,12 +6,15 @@ const { getEntityId } = require('./entity_helpers')
 const getEntityImagesFromClaims = __.require('controllers', 'entities/lib/get_entity_images_from_claims')
 const { firstClaim } = __.require('controllers', 'entities/lib/entities')
 const getEntityType = __.require('controllers', 'entities/lib/get_entity_type')
+const { indexedEntitiesTypes } = __.require('controllers', 'search/lib/indexes')
 
 module.exports = entity => {
   entity._id = getEntityId(entity)
   delete entity.id
 
   entity.type = getType(entity)
+
+  if (!indexedEntitiesTypes.has(entity.type)) return
 
   let needsSimplification = false
   const isWikidataEntity = wdk.isItemId(entity._id)
