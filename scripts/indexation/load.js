@@ -65,9 +65,13 @@ process.stdin
   _.info(`${indexBaseName} indexation:load stdin closed`)
   await post()
   _.success(`${indexBaseName} indexation:load done`)
+  lastStatusLog()
 })
 .on('error', _.Error(`${indexBaseName} indexation:load err`))
 
-setInterval(() => {
-  _.info({ received, indexed }, 'indexation:load status')
-}, 5000)
+const logStatusPeriodically = () => _.info({ received, indexed }, 'indexation:load status')
+const statusLogInterval = setInterval(logStatusPeriodically, 5000)
+const lastStatusLog = () => {
+  clearInterval(statusLogInterval)
+  logStatusPeriodically()
+}
