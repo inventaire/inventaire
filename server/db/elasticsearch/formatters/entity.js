@@ -8,16 +8,16 @@ const { firstClaim } = __.require('controllers', 'entities/lib/entities')
 const getEntityType = __.require('controllers', 'entities/lib/get_entity_type')
 const { indexedEntitiesTypes } = __.require('controllers', 'search/lib/indexes')
 const specialEntityImagesGetter = __.require('controllers', 'entities/lib/special_entity_images_getter')
-const getPopularityByUri = __.require('controllers', 'entities/lib/get_popularity_by_uri')
 
 module.exports = async entity => {
   entity._id = getEntityId(entity)
   delete entity.id
 
-  entity.type = getType(entity)
+  const { claims, type } = entity
+
+  entity.type = dropPlural(getType({ claims, type }))
 
   if (!indexedEntitiesTypes.has(entity.type)) return
-
   let needsSimplification = false
   const isWikidataEntity = wdk.isItemId(entity._id)
 
@@ -68,22 +68,25 @@ module.exports = async entity => {
   // Those don't need to be indexed
   delete entity.claims
   delete entity.sitelinks
-
-  entity.popularity = await getPopularityByUri(entity.uri)
-
   return entity
 }
 
-const getType = entity => {
-  if (entity.type && entity.type !== 'entity' && entity.type !== 'item') return entity.type
+const getType = ({ claims, type }) => {
+  if (type && type !== 'entity') return type
 
   let wdtP31
-  if (entity.claims.P31) {
-    wdtP31 = simplify.propertyClaims(entity.claims.P31, { entityPrefix: 'wd' })
+  if (claims.P31) {
+    wdtP31 = simplify.propertyClaims(claims.P31, { entityPrefix: 'wd' })
   } else {
-    wdtP31 = entity.claims['wdt:P31']
+    wdtP31 = claims['wdt:P31']
   }
   return getEntityType(wdtP31)
+}
+
+const dropPlural = type => {
+  if (type) {
+    return type.replace(/s$/, '')
+  }
 }
 
 const setTermsFromClaims = entity => {
