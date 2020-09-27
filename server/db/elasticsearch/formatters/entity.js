@@ -75,7 +75,7 @@ module.exports = async entity => {
 }
 
 const getType = entity => {
-  if (entity.type && entity.type !== 'entity') return entity.type
+  if (entity.type && entity.type !== 'entity' && entity.type !== 'item') return entity.type
 
   let wdtP31
   if (entity.claims.P31) {
