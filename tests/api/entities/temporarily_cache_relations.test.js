@@ -10,8 +10,16 @@ const { wait } = __.require('lib', 'promises')
 // so the following tests try to reproduce conditions as close as possible to the real use-cases
 const { cacheEntityRelations } = __.require('controllers', 'entities/lib/temporarily_cache_relations')
 
+const assertLeveldbDiskBackend = () => {
+  if (CONFIG.leveldbMemoryBackend) {
+    throw new Error(`this test requires ${CONFIG.env} config to have CONFIG.leveldbMemoryBackend=false`)
+  }
+}
+
 describe('temporarily cache relations', () => {
-  it('should preserve an author relation', async () => {
+  // Test dependency: CONFIG.leveldbMemoryBackend=false
+  xit('should preserve an author relation', async () => {
+    assertLeveldbDiskBackend()
     const someAuthorUri = 'wd:Q1345582'
     const someUnrelatedWorkUri = 'wd:Q176470'
     const workWithAuthor = await createWorkWithAuthor({ uri: someAuthorUri })
@@ -31,7 +39,9 @@ describe('temporarily cache relations', () => {
     foundWork.serie.should.equal(newWork.claims['wdt:P179'][0])
   })
 
-  it('should preserve a serie relation', async () => {
+  // Test dependency: CONFIG.leveldbMemoryBackend=false
+  xit('should preserve a serie relation', async () => {
+    assertLeveldbDiskBackend()
     const someSerieUri = 'wd:Q3656893'
     const someUnrelatedWorkUri = 'wd:Q187655'
     const workWithSerie = await createWorkWithSerie({ uri: someSerieUri })
