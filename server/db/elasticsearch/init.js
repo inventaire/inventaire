@@ -8,9 +8,10 @@ const { indexesList, syncIndexesList } = __.require('db', 'elasticsearch/list')
 const createIndex = require('./create_index')
 const reindexOnChange = require('./reindex_on_change')
 
-const init = async () => {
+module.exports = async () => {
   await waitForElastic()
   await ensureIndexesExist()
+  startCouchElasticSync()
 }
 
 const ensureIndexesExist = () => {
@@ -41,10 +42,6 @@ const waitForElastic = async () => {
   }
 }
 
-module.exports = {
-  init,
-  initAndStartSync: async () => {
-    await init()
-    syncIndexesList.forEach(reindexOnChange)
-  }
+const startCouchElasticSync = () => {
+  syncIndexesList.forEach(reindexOnChange)
 }
