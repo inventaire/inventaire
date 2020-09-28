@@ -11,7 +11,7 @@ const bulkThrottleDelay = updateDelay / 2
 
 let batch = []
 
-module.exports = ({ indexBaseName, index, startFromEmptyIndex = false }) => {
+module.exports = ({ indexBaseName, index }) => {
   assert_.string(indexBaseName)
 
   index = index || indexBaseName
@@ -27,7 +27,7 @@ module.exports = ({ indexBaseName, index, startFromEmptyIndex = false }) => {
     if (!filter(doc)) return
     if (shouldBeDeindexed(doc)) {
       // There is nothing to deindex when starting from an empty index
-      if (!startFromEmptyIndex) addToBatch(batch, 'delete', index, doc)
+      addToBatch(batch, 'delete', index, doc)
     } else {
       // Allow the format function to return undefined,
       // to be used as a filter for cases that couldn't be filtered-out

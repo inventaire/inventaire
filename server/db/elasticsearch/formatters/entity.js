@@ -8,6 +8,7 @@ const { firstClaim } = __.require('controllers', 'entities/lib/entities')
 const getEntityType = __.require('controllers', 'entities/lib/get_entity_type')
 const { indexedEntitiesTypes } = __.require('controllers', 'search/lib/indexes')
 const specialEntityImagesGetter = __.require('controllers', 'entities/lib/special_entity_images_getter')
+const getPopularityByUri = __.require('controllers', 'entities/lib/get_popularity_by_uri')
 
 module.exports = async entity => {
   entity._id = getEntityId(entity)
@@ -68,6 +69,9 @@ module.exports = async entity => {
   // Those don't need to be indexed
   delete entity.claims
   delete entity.sitelinks
+
+  entity.popularity = await getPopularityByUri(entity.uri)
+
   return entity
 }
 
