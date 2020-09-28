@@ -24,7 +24,7 @@ module.exports = {
       const { types, search, lang, limit, reqUserId } = params
       // Extend the search to the next 10 results, so that the popularity boost
       // can save some good results a bit further down the limit
-      return typeSearch(lang, types, search, limit + 10)
+      return typeSearch({ lang, types, search, limit: limit + 10 })
       .then(parseResults(types))
       .then(results => {
         return results
