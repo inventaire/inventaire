@@ -3,5 +3,12 @@
 # Use NODE_APP_INSTANCE=tests-alt to override local config with local-tests-alt
 export NODE_ENV=tests-api NODE_APP_INSTANCE=server FORCE_COLOR=true
 
-# Start a test server in the background
-npm run watch > logs/test-server.log 2>&1 &
+test_server_host=$(node -p "require('config').fullHost()")
+
+# Allow to let another process, such as a debugger, manage the test server
+curl -s "$test_server_host" > /dev/null && {
+  echo "a server is already running on port 3009" | tee logs/test-server.log
+} || {
+  # Start a test server in the background
+  npm run watch > logs/test-server.log 2>&1 &
+}
