@@ -1,8 +1,10 @@
+const CONFIG = require('config')
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const should = require('should')
 const { wait } = __.require('lib', 'promises')
 const { getReservedUser, getUser, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
+const { updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
 const { getRefreshedUser } = require('../fixtures/users')
 const { createItem } = require('../fixtures/items')
 const { getById: getItemById } = require('../utils/items')
@@ -32,12 +34,12 @@ describe('user:delete', () => {
 
   it('should remove the user from search results', async () => {
     const user = await getReservedUser()
-    await wait(1000)
+    await wait(elasticsearchUpdateDelay)
     const results = await search('users', user.username)
     const foundUser = results.find(result => result.id === user._id)
     should(foundUser).be.ok()
     await deleteUser(user)
-    await wait(1000)
+    await wait(elasticsearchUpdateDelay)
     const results2 = await search('users', user.username)
     const foundUser2 = results2.find(result => result.id === user._id)
     should(foundUser2).not.be.ok()
@@ -48,11 +50,11 @@ describe('user:delete', () => {
     const user = await getReservedUser({ position })
     // Using long pauses as the position indexation sometimes fails
     // to update before the request by position
-    await wait(1000)
+    await wait(elasticsearchUpdateDelay)
     const users = await getUsersNearPosition(position)
     _.map(users, '_id').should.containEql(user._id)
     await deleteUser(user)
-    await wait(1000)
+    await wait(elasticsearchUpdateDelay)
     const refreshedUsers = await getUsersNearPosition(position)
     _.map(refreshedUsers, '_id').should.not.containEql(user._id)
   })
