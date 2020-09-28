@@ -3,7 +3,7 @@ const __ = CONFIG.universalPath
 require('should')
 const { createWorkWithAuthor, createWorkWithSerie } = require('../fixtures/entities')
 const { getByUri, merge } = require('../utils/entities')
-const { nonAuthReq } = require('../utils/utils')
+const { publicReq } = require('../utils/utils')
 const { wait } = __.require('lib', 'promises')
 
 // We are calling directly cacheEntityRelations, as the cases that use it would require to edit Wikidata,
@@ -22,7 +22,7 @@ describe('temporarily cache relations', () => {
     await merge(uri, someUnrelatedWorkUri)
     // Give some extra time to CouchDB to update its view
     await wait(500)
-    const { works } = await nonAuthReq('get', `/api/entities?action=author-works&uri=${authorUri}`)
+    const { works } = await publicReq('get', `/api/entities?action=author-works&uri=${authorUri}`)
     const matchingWorks = works.filter(work => work.uri === someUnrelatedWorkUri)
     matchingWorks.length.should.equal(1)
     const foundWork = matchingWorks[0]
@@ -42,7 +42,7 @@ describe('temporarily cache relations', () => {
     await merge(uri, someUnrelatedWorkUri)
     // Give some extra time to CouchDB to update its view
     await wait(500)
-    const { parts } = await nonAuthReq('get', `/api/entities?action=serie-parts&uri=${serieUri}`)
+    const { parts } = await publicReq('get', `/api/entities?action=serie-parts&uri=${serieUri}`)
     const matchingWorks = parts.filter(work => work.uri === someUnrelatedWorkUri)
     matchingWorks.length.should.equal(1)
     const foundWork = matchingWorks[0]

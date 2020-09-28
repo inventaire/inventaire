@@ -33,6 +33,9 @@ const config = module.exports = {
   // - log requests body
   debug: false,
   logOutgoingRequests: true,
+  outgoingRequests: {
+    baseBanTime: 500
+  },
   // CouchDB settings
   db: {
     protocol: 'http',
