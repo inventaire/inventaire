@@ -29,7 +29,7 @@ module.exports = async (authorStr, worksLabels, worksLabelsLangs) => {
   })
 }
 
-const searchHumans = typeSearch.bind(null, [ 'humans' ])
+const searchHumans = typeSearch.bind(null, { types: [ 'humans' ] })
 
 const parseWdUris = res => {
   return res.hits.hits

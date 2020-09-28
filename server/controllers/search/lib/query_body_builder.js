@@ -24,6 +24,16 @@ const matchType = types => {
   ))
 }
 
+const defaultFields = userLang => {
+  const fields = [
+    'labels.*^4',
+    'aliases.*^2',
+    'descriptions.*'
+  ]
+  if (userLang) fields.push(`labels.${userLang}^4`)
+  return fields
+}
+
 const matchSearch = (search, userLang) => {
   return [
     // strict (operator 'and'):
@@ -32,27 +42,18 @@ const matchSearch = (search, userLang) => {
       multi_match: {
         query: search,
         operator: 'and',
-        fields: [
-          `labels.${userLang}^4`,
-          'labels.*^4',
-          'aliases.*^2',
-          'descriptions.*',
-        ],
+        fields: defaultFields(userLang),
       }
     },
     // loose match some words in search
-    // descriptions are disabled to avoid noise
     {
       multi_match: {
         query: search,
         fields: [
-          `labels.${userLang}^4`,
-          'labels.*^4',
-          'aliases.*^2',
-          'descriptions.*',
           'flattenedLabels', // text type
           'flattenedAliases', // text type
-          'flattenedDescriptions' // text type
+          'flattenedDescriptions', // text type
+          ...defaultFields(userLang)
         ]
       }
     },

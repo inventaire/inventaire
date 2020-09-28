@@ -8,7 +8,7 @@ const getIndexesAndTypes = require('./get_indexes_and_types')
 const queryBodyBuilder = require('./query_body_builder')
 
 // types should be a subset of ./types possibleTypes
-module.exports = (lang, types, search, limit = 20) => {
+module.exports = ({ lang, types, search, limit = 20 }) => {
   let indexes
   assert_.array(types)
   assert_.string(search);
