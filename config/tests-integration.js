@@ -7,5 +7,10 @@ module.exports = {
 
   outgoingRequests: {
     baseBanTime: 500
+  },
+
+  entitiesRelationsTemporaryCache: {
+    checkFrequency: 1000,
+    ttl: 3 * 1000
   }
 }

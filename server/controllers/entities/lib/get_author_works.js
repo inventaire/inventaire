@@ -1,10 +1,12 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const entities_ = require('./entities')
+const { firstClaim, uniqByUri } = entities_
 const runWdQuery = __.require('data', 'wikidata/run_query')
 const { prefixifyWd } = __.require('controllers', 'entities/lib/prefix')
 const { getSimpleDayDate, sortByScore } = require('./queries_utils')
-const { getTypePluralNameByTypeUri } = __.require('lib', 'wikidata/aliases')
+const { getTypePluralName, getTypePluralNameByTypeUri } = __.require('lib', 'wikidata/aliases')
+const { getCachedRelations } = require('./temporarily_cache_relations')
 
 // Working around the circular dependency
 let getEntitiesPopularity
@@ -27,8 +29,12 @@ module.exports = params => {
 
   promises.push(getInvAuthorWorks(uri))
 
+  promises.push(getCachedRelations(uri, 'wdt:P50', formatEntity))
+
   return Promise.all(promises)
   .then(_.flatten)
+  // There might be duplicates, mostly due to temporarily cached relations
+  .then(uniqByUri)
   .then(results => getPopularityScores(results)
   .then(spreadByType(worksByTypes, results)))
   .catch(_.ErrorRethrow('get author works err'))
@@ -71,8 +77,8 @@ const formatInvEntity = row => {
   if (!allowlistedTypesNames.includes(typeName)) return
   return {
     uri: `inv:${row.id}`,
-    date: (row.doc.claims['wdt:P577'] != null ? row.doc.claims['wdt:P577'][0] : undefined),
-    serie: (row.doc.claims['wdt:P179'] != null ? row.doc.claims['wdt:P179'][0] : undefined),
+    date: firstClaim(row.doc, 'wdt:P577'),
+    serie: firstClaim(row.doc, 'wdt:P179'),
     type: typeName
   }
 }
@@ -103,3 +109,10 @@ const sortTypesByScore = worksByTypes => {
   }
   return worksByTypes
 }
+
+const formatEntity = entity => ({
+  uri: entity.uri,
+  date: firstClaim(entity, 'wdt:P577'),
+  serie: firstClaim(entity, 'wdt:P179'),
+  type: getTypePluralName(entity.type)
+})

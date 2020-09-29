@@ -40,19 +40,6 @@ const API = module.exports = {
   }),
   randomLabel: (length = 5) => randomWords(length),
   humanName,
-  createWorkWithAuthor: async (human, label) => {
-    label = label || API.randomLabel()
-    const humanPromise = human ? Promise.resolve(human) : API.createHuman()
-
-    human = await humanPromise
-    return authReq('post', '/api/entities?action=create', {
-      labels: { en: label },
-      claims: {
-        'wdt:P31': [ 'wd:Q47461344' ],
-        'wdt:P50': [ human.uri ]
-      }
-    })
-  },
 
   createEdition: async (params = {}) => {
     const { work } = params
@@ -102,6 +89,27 @@ const API = module.exports = {
     return API.createEdition(params)
   },
 
+  createWorkWithAuthor: async (human, label) => {
+    label = label || API.randomLabel()
+    const humanPromise = human ? Promise.resolve(human) : API.createHuman()
+
+    human = await humanPromise
+    return authReq('post', '/api/entities?action=create', {
+      labels: { en: label },
+      claims: {
+        'wdt:P31': [ 'wd:Q47461344' ],
+        'wdt:P50': [ human.uri ]
+      }
+    })
+  },
+
+  createWorkWithSerie: async serie => {
+    const work = await API.createWork()
+    await API.addSerie(work, serie)
+    // Get a refreshed version of the work
+    return getByUri(work.uri)
+  },
+
   createWorkWithAuthorAndSerie: async () => {
     const work = await API.createWorkWithAuthor()
     await API.addSerie(work)
@@ -122,6 +130,8 @@ const API = module.exports = {
   createItemFromEntityUri: (uri, data = {}) => {
     return authReq('post', '/api/items', Object.assign({}, data, { entity: uri }))
   },
+
+  someFakeUri: 'inv:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
 
   someImageHash,
 
@@ -147,10 +157,17 @@ const API = module.exports = {
   generateIsbn13h: () => isbn_.toIsbn13h(API.generateIsbn13())
 }
 
-const addEntityClaim = (createFnName, property) => async subjectEntity => {
+const addEntityClaim = (createFnName, property) => async (subjectEntity, objectEntity) => {
   const subjectUri = _.isString(subjectEntity) ? subjectEntity : subjectEntity.uri
-  const entity = await API[createFnName]()
-  await addClaim(subjectUri, property, entity.uri)
+  let objectUri, entity
+  if (objectEntity) {
+    objectUri = _.isString(objectEntity) ? objectEntity : objectEntity.uri
+    entity = getByUri(objectUri)
+  } else {
+    entity = await API[createFnName]()
+    objectUri = entity.uri
+  }
+  await addClaim(subjectUri, property, objectUri)
   return entity
 }
 

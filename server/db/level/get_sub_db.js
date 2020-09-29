@@ -32,7 +32,7 @@ const leveldownOptions = {
 
 let globalDb
 if (CONFIG.leveldbMemoryBackend) {
-  _.info('leveldb in memory')
+  _.warn('leveldb in memory')
   const level = require('level-test')()
   globalDb = level()
 } else {

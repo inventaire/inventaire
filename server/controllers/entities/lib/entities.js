@@ -98,8 +98,16 @@ const entities_ = module.exports = {
     return docAfterUpdate
   },
 
-  getUrlFromEntityImageHash: getUrlFromImageHash.bind(null, 'entities')
+  getUrlFromEntityImageHash: getUrlFromImageHash.bind(null, 'entities'),
+
+  firstClaim: (entity, property) => {
+    if (entity.claims[property] != null) return entity.claims[property][0]
+  },
+
+  uniqByUri: entities => _.uniqBy(entities, getUri)
 }
+
+const getUri = entity => entity.uri
 
 const triggerUpdateEvent = (currentDoc, updatedDoc) => {
   // Use currentDoc claims if the update removed the claims object

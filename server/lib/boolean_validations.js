@@ -38,13 +38,13 @@ const tests = module.exports = {
   isUsername: bindedTest('Username'),
   isEntityUri: bindedTest('EntityUri'),
   isPatchId: bindedTest('PatchId'),
+  isPropertyUri: bindedTest('PropertyUri'),
   isExtendedEntityUri: uri => {
     const [ prefix, id ] = uri.split(':')
     // Accept alias URIs.
     // Ex: twitter:Bouletcorp -> wd:Q1524522
     return isNonEmptyString(prefix) && isNonEmptyString(id)
   },
-  isPropertyUri: bindedTest('PropertyUri'),
   isSimpleDay: str => {
     let isValidDate = false
     try {
