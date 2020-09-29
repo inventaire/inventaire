@@ -1,11 +1,15 @@
+const __ = require('config').universalPath
+const _ = __.require('builders', 'utils')
+
 module.exports = params => {
   const { lang: userLang, search, limit: size } = params
   let { types } = params
+
   types = singularType(types)
   // must match at least one of the types
   const must = [
     { bool: { should: matchType(types) } },
-    { bool: { should: matchSearch(search, userLang) } }
+    { bool: { should: matchSearchPerTypes(types, search, userLang) } }
   ]
   return {
     query: {
@@ -24,7 +28,7 @@ const matchType = types => {
   ))
 }
 
-const defaultFields = userLang => {
+const defaultEntitiesFields = userLang => {
   const fields = [
     'labels.*^4',
     'aliases.*^2',
@@ -34,7 +38,30 @@ const defaultFields = userLang => {
   return fields
 }
 
-const matchSearch = (search, userLang) => {
+const flattenedTermsFields = userLang => {
+  return [
+    'flattenedLabels', // text type
+    'flattenedAliases', // text type
+    'flattenedDescriptions', // text type
+    ...defaultEntitiesFields(userLang)
+  ]
+}
+
+const matchSearchPerTypes = (types, search, userLang) => {
+  if (_.includes(types, 'user')) {
+    return [
+      {
+        multi_match: {
+          query: search,
+          fields: [
+            'name',
+            'bio'
+          ],
+        }
+      },
+    ]
+  }
+
   return [
     // strict (operator 'and'):
     // match on all words in search, so descriptions are allowed
@@ -42,19 +69,14 @@ const matchSearch = (search, userLang) => {
       multi_match: {
         query: search,
         operator: 'and',
-        fields: defaultFields(userLang),
+        fields: defaultEntitiesFields(userLang),
       }
     },
     // loose match some words in search
     {
       multi_match: {
         query: search,
-        fields: [
-          'flattenedLabels', // text type
-          'flattenedAliases', // text type
-          'flattenedDescriptions', // text type
-          ...defaultFields(userLang)
-        ]
+        fields: flattenedTermsFields(userLang)
       }
     },
   ]
