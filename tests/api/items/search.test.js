@@ -25,10 +25,10 @@ describe('items:search:indexation', () => {
     const user = await getUser()
     const item = await createItemWithEditionAndWork(user)
     await wait(elasticsearchUpdateDelay)
-    const res = await getIndexedDoc(itemsIndex, 'item', item._id)
+    const res = await getIndexedDoc(itemsIndex, item._id)
+
     res.found.should.be.true()
     res._id.should.equal(item._id)
-    res._type.should.equal('item')
     res._source.owner.should.equal(user._id)
     res._source.snapshot['entity:title'].should.be.a.String()
   })
@@ -63,7 +63,7 @@ describe('items:search', () => {
       createItemWithEditionAndWork(user),
       createItemWithEditionAndWork(user)
     ])
-    await wait(1000)
+    await wait(elasticsearchUpdateDelay)
     const { 'entity:title': title } = item.snapshot
     const { items } = await search(user, user._id, title)
     // There might be other results, but the searched item should come first
@@ -78,7 +78,7 @@ describe('items:search', () => {
       createItemWithEditionAndWork(user),
       createItemWithEditionAndWork(user)
     ])
-    await wait(1000)
+    await wait(elasticsearchUpdateDelay)
     const { 'entity:subtitle': subtitle } = item.snapshot
     const { items } = await search(user, user._id, subtitle)
     items[0]._id.should.equal(item._id)
@@ -92,7 +92,7 @@ describe('items:search', () => {
       createItemWithAuthor(user),
       createItemWithAuthor(user)
     ])
-    await wait(1000)
+    await wait(elasticsearchUpdateDelay)
     const { 'entity:authors': authors } = item.snapshot
     const { items } = await search(user, user._id, authors)
     items[0]._id.should.equal(item._id)
@@ -106,7 +106,7 @@ describe('items:search', () => {
       createItemWithAuthorAndSerie(user),
       createItemWithAuthorAndSerie(user)
     ])
-    await wait(1000)
+    await wait(elasticsearchUpdateDelay)
     const { 'entity:series': series } = item.snapshot
     const { items } = await search(user, user._id, series)
     items[0]._id.should.equal(item._id)
@@ -120,7 +120,7 @@ describe('items:search', () => {
       createItemWithAuthorAndSerie(user),
       createItemWithAuthorAndSerie(user)
     ])
-    await wait(1000)
+    await wait(elasticsearchUpdateDelay)
     const { 'entity:title': title, 'entity:authors': authors } = item.snapshot
     const input = `${firstNWords(authors, 1)} ${firstNWords(title, 2)}`
     const { items } = await search(user, user._id, input)
@@ -131,7 +131,7 @@ describe('items:search', () => {
     const [ userA, userB ] = await getTwoFriends()
     const privateItem = await createItemWithEditionAndWork(userA, { listing: 'private' })
     const networkItem = await createItem(userA, { entity: privateItem.entity, listing: 'network' })
-    await wait(1000)
+    await wait(elasticsearchUpdateDelay)
     const { 'entity:title': title } = privateItem.snapshot
     const { items } = await search(userB, userA._id, title)
     const itemsIds = _.map(items, '_id')
@@ -145,7 +145,7 @@ describe('items:search', () => {
     const privateItem = await createItemWithEditionAndWork(userA, { listing: 'network' })
     const networkItem = await createItem(userA, { entity: privateItem.entity, listing: 'network' })
     const publicItem = await createItem(userA, { entity: privateItem.entity, listing: 'public' })
-    await wait(1000)
+    await wait(elasticsearchUpdateDelay)
     const { 'entity:title': title } = privateItem.snapshot
     const { items } = await search(userB, userA._id, title)
     const itemsIds = _.map(items, '_id')

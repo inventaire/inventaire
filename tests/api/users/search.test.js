@@ -32,7 +32,7 @@ describe('users:search', () => {
     const userPromise = createUser({ username })
     await wait(elasticsearchUpdateDelay)
     const res = await customAuthReq(userPromise, 'get', '/api/users?action=search&search=testusr')
-    // should find any user with the same name, to pass as test-quick
+    // should find any user with the same name (to pass as test-quick)
     // not necessarly the one created for this test
     _.map(res.users, 'username').includes(username).should.be.true()
   })
