@@ -12,12 +12,12 @@ const sanitization = {
 
 module.exports = (req, res) => {
   sanitize(req, res, sanitization)
-  .then(search)
+  .then(itemsSearch)
   .then(responses_.Wrap(res, 'items'))
   .catch(error_.Handler(req, res))
 }
 
-const search = async ({ reqUserId, userId, search }) => {
+const itemsSearch = async ({ reqUserId, userId, search }) => {
   const accessLevel = await getInventoryAccessLevel(userId, reqUserId)
   return searchUserItems(search, { userId, accessLevel })
 }
