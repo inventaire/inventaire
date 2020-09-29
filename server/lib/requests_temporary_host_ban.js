@@ -37,6 +37,9 @@ const declareTimeout = host => {
   let hostTimeoutData = timeoutData[host]
 
   if (hostTimeoutData) {
+    // Prevent several simulateous requests to all multiply the ban time
+    // while the service might actually only have been down for a short while
+    if (Date.now() < hostTimeoutData.expire) return
     // This host persists to timeout: renew and increase ban time
     hostTimeoutData.banTime *= banTimeIncreaseFactor
   } else {

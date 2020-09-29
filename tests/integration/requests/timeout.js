@@ -115,4 +115,16 @@ describe('requests:timeout', function () {
       should(expire < (beforeReban + baseBanTime + execTimeMargin)).be.true()
     }
   })
+
+  it('should count simultaneous requests failures as only one', async () => {
+    const { origin } = await startTimeoutServer()
+    await Promise.all([
+      requests_.get(origin, { timeout: 100 }).catch(err => err.type.should.equal('request-timeout')),
+      requests_.get(origin, { timeout: 100 }).catch(err => err.type.should.equal('request-timeout'))
+    ])
+    await requests_.get(`${origin}/b`, { timeout: 100 }).catch(err => {
+      const { banTime } = err.context.timeoutData
+      banTime.should.equal(baseBanTime)
+    })
+  })
 })
