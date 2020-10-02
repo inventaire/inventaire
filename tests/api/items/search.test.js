@@ -3,15 +3,12 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
 const { getUser, getReservedUser, customAuthReq } = require('../utils/utils')
-const { getIndexedDoc } = require('../utils/search')
 const { getTwoFriends } = require('../fixtures/users')
 const { createItem, createItemWithEditionAndWork, createItemWithAuthor, createItemWithAuthorAndSerie } = require('../fixtures/items')
-const endpoint = '/api/items?action=search'
 const { wait } = __.require('lib', 'promises')
 const { shouldNotBeCalled } = require('../utils/utils')
 const firstNWords = (str, num) => str.split(' ').slice(0, num).join(' ')
 const { updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
-const itemsIndex = CONFIG.db.name('items')
 
 const search = (reqUser, userId, search) => {
   let url = endpoint
@@ -20,19 +17,7 @@ const search = (reqUser, userId, search) => {
   return customAuthReq(reqUser, 'get', url)
 }
 
-describe('items:search:indexation', () => {
-  it('should index items with snapshot data', async () => {
-    const user = await getUser()
-    const item = await createItemWithEditionAndWork(user)
-    await wait(elasticsearchUpdateDelay)
-    const res = await getIndexedDoc(itemsIndex, item._id)
-
-    res.found.should.be.true()
-    res._id.should.equal(item._id)
-    res._source.owner.should.equal(user._id)
-    res._source.snapshot['entity:title'].should.be.a.String()
-  })
-})
+const endpoint = '/api/items?action=search'
 
 describe('items:search', () => {
   it('should reject if no user id is set', async () => {

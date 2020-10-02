@@ -9,7 +9,7 @@ const { getIndexedDoc } = require('../utils/search')
 const { index } = __.require('elasticsearch', 'list').indexes.groups
 
 describe('indexation:groups', () => {
-  it('should index a new local entity', async () => {
+  it('should index a new group', async () => {
     const { _id, name } = await createGroup()
     await wait(elasticsearchUpdateDelay)
     const result = await getIndexedDoc(index, _id)
