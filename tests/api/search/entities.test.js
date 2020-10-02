@@ -3,13 +3,30 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
 const { wait } = __.require('lib', 'promises')
-const randomString = __.require('lib', './utils/random_string')
-const { createWork, createHuman, createSerie, randomLabel, createEditionFromWorks } = require('../fixtures/entities')
-const { getRefreshedPopularityByUris } = require('../utils/entities')
+const { createWork, createHuman, createSerie, createCollection, createPublisher } = require('../fixtures/entities')
+const { getByUris } = require('../utils/entities')
 const { updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
 const { search } = require('../utils/search')
 
 describe('search:entities', () => {
+  let human; let work; let serie; let collection; let publisher = {}
+
+  before(async () => {
+    // ensure wikidata uris are indexed
+    const wikidataUris = [ 'wd:Q184226', 'wd:Q180736', 'wd:Q8337', 'wd:Q225946', 'wd:Q3409094' ]
+    await getByUris(wikidataUris, null, false)
+
+    // create and index all entities
+    human = await createHuman()
+    work = await createWork()
+    serie = await createSerie()
+    publisher = await createPublisher()
+    collection = await createCollection()
+
+    // only then wait for the loong elasticsearchUpdateDelay()
+    await wait(elasticsearchUpdateDelay)
+  })
+
   describe('humans', () => {
     it('should return a wikidata human', async () => {
       const results = await search('humans', 'Gilles Deleuze')
@@ -19,25 +36,21 @@ describe('search:entities', () => {
     })
 
     it('should return a local human', async () => {
-      const label = randomString(5)
-      const entity = await createHuman({ labels: { en: label } })
-      await wait(elasticsearchUpdateDelay)
-      const results = await search('humans', label)
+      const humanLabel = human.labels.en
+      const results = await search('humans', humanLabel)
       results.should.be.an.Array()
       results.forEach(result => result.type.should.equal('humans'))
-      _.map(results, 'id').includes(entity._id).should.be.true()
+      _.map(results, 'id').includes(human._id).should.be.true()
     })
   })
 
   describe('works', () => {
     it('should return a local work', async () => {
-      const label = randomString(5)
-      const entity = await createWork({ labels: { en: label } })
-      await wait(elasticsearchUpdateDelay)
-      const results = await search('works', label)
+      const workLabel = work.labels.en
+      const results = await search('works', workLabel)
       results.should.be.an.Array()
       results.forEach(result => result.type.should.equal('works'))
-      _.map(results, 'id').includes(entity._id).should.be.true()
+      _.map(results, 'id').includes(work._id).should.be.true()
     })
 
     it('should return a wikidata work', async () => {
@@ -50,13 +63,11 @@ describe('search:entities', () => {
 
   describe('series', () => {
     it('should return a local serie', async () => {
-      const label = randomLabel()
-      const entity = await createSerie({ labels: { en: label } })
-      await wait(elasticsearchUpdateDelay)
-      const results = await search('series', label)
+      const serieLabel = serie.labels.en
+      const results = await search('series', serieLabel)
       results.should.be.an.Array()
       results.forEach(result => result.type.should.equal('series'))
-      _.map(results, 'id').includes(entity._id).should.be.true()
+      _.map(results, 'id').includes(serie._id).should.be.true()
     })
 
     it('should return a wikidata serie', async () => {
@@ -67,40 +78,38 @@ describe('search:entities', () => {
     })
   })
 
-  describe('score', () => {
-    it('should sort entities by global score', async () => {
-      const fullMatchLabel = randomString(15)
-      const partialMatchLabel = `${fullMatchLabel} a`
-      const work = await createWork({ labels: { en: partialMatchLabel } })
-      await Promise.all([
-        createEditionFromWorks(work),
-        createWork({ labels: { en: fullMatchLabel } })
-      ])
-      // Trigger a popularity refresh to avoid getting the default score on the search hereafter
-      await getRefreshedPopularityByUris(work.uri)
-      await wait(elasticsearchUpdateDelay)
-      const workWithEditionUri = work.uri
-      const results = await search('works', fullMatchLabel)
-      const firstResultUri = results[0].uri
-      firstResultUri.should.equal(workWithEditionUri)
+  describe('collections', () => {
+    it('should return a local collection', async () => {
+      const collectionLabel = collection.claims['wdt:P1476'][0]
+      const results = await search('collections', collectionLabel)
+      results.should.be.an.Array()
+      results.forEach(result => result.type.should.equal('collections'))
+
+      _.map(results, 'id').includes(collection._id).should.be.true()
     })
 
-    it('should return a global score boosted by a logarithmic popularity', async () => {
-      const workLabel = randomLabel()
-      const work = await createWork({ labels: { en: workLabel } })
-      const editions = await Promise.all([
-        createEditionFromWorks(work),
-        createEditionFromWorks(work)
-      ])
-      // trigger a popularity refresh to avoid getting the default score on
-      // the search hereafter
-      await getRefreshedPopularityByUris(_.map(editions, 'uri'))
-      await wait(elasticsearchUpdateDelay)
-      const results = await search('works', workLabel)
-      const firstEntityResult = results[0]
-      const popularity = editions.length
-      const boostLimit = firstEntityResult.lexicalScore * popularity
-      firstEntityResult.globalScore.should.be.below(boostLimit)
+    it('should return a wikidata collection', async () => {
+      const results = await search('collections', 'Présence du futur')
+      results.should.be.an.Array()
+      results.forEach(result => result.type.should.equal('collections'))
+      _.map(results, 'id').includes('Q3409094').should.be.true()
+    })
+  })
+
+  describe('publishers', () => {
+    it('should return a local publisher', async () => {
+      const publisherLabel = publisher.labels.en
+      const results = await search('publishers', publisherLabel)
+      results.should.be.an.Array()
+      results.forEach(result => result.type.should.equal('publishers'))
+      _.map(results, 'id').includes(publisher._id).should.be.true()
+    })
+
+    it('should return a wikidata publisher', async () => {
+      const results = await search('publishers', 'Les liens qui libèrent')
+      results.should.be.an.Array()
+      results.forEach(result => result.type.should.equal('publishers'))
+      _.map(results, 'id').includes('Q3236382').should.be.true()
     })
   })
 })
