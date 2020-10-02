@@ -9,7 +9,7 @@ const { getIndexedDoc } = require('../utils/search')
 const { index } = __.require('elasticsearch', 'list').indexes.items
 
 describe('indexation:items', () => {
-  it('should index a new local entity', async () => {
+  it('should index a new item', async () => {
     const { _id, entity, owner, snapshot } = await createItem()
     await wait(elasticsearchUpdateDelay)
     const result = await getIndexedDoc(index, _id)

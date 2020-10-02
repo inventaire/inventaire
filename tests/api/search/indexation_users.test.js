@@ -9,7 +9,7 @@ const { getIndexedDoc } = require('../utils/search')
 const { index } = __.require('elasticsearch', 'list').indexes.users
 
 describe('indexation:users', () => {
-  it('should index a new local entity', async () => {
+  it('should index a new user', async () => {
     const { _id, username } = await createUser()
     await wait(elasticsearchUpdateDelay)
     const result = await getIndexedDoc(index, _id)
