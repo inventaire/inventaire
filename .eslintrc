@@ -45,6 +45,7 @@
     "xit": "readonly",
     "describe": "readonly",
     "xdescribe": "readonly",
-    "beforeEach": "readonly"
+    "beforeEach": "readonly",
+    "before": "readonly"
   }
 }
