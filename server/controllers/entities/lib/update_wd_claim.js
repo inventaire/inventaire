@@ -19,8 +19,8 @@ module.exports = async (user, id, property, oldValue, newValue) => {
       throw error_.new("wikidata entities can't link to inventaire entities", 400)
     }
 
-    oldValue = unprefixify(oldValue)
-    newValue = unprefixify(newValue)
+    if (oldValue) oldValue = unprefixify(oldValue)
+    if (newValue) newValue = unprefixify(newValue)
   }
 
   const [ propertyPrefix, propertyId ] = property.split(':')
