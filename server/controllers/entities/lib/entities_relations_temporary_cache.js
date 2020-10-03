@@ -39,7 +39,7 @@ const getKeyRange = (property, object) => {
 const getSubject = key => key.split('-')[2]
 
 const buildKey = (subjectUri, property, valueUri) => {
-  if (!_.isInvEntityUri(subjectUri)) throw error_.new('invalid subject', { subjectUri })
+  if (!_.isEntityUri(subjectUri)) throw error_.new('invalid subject', { subjectUri })
   if (!_.isPropertyUri(property)) throw error_.new('invalid property', { property })
   if (!_.isEntityUri(valueUri)) throw error_.new('invalid value', { valueUri })
   return `${property}-${valueUri}-${subjectUri}`
