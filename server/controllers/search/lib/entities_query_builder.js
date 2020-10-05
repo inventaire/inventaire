@@ -5,18 +5,31 @@ module.exports = params => {
 
   return {
     query: {
-      bool: {
-        must: [
-          // at least one type should match
-          // this is basically an 'or' operator
-          { bool: { should: matchType(types) } },
-
-          // Because most of the work has been done at index time (indexing terms by ngrams)
-          // all this query needs to do is to look up search terms which is way more efficient than the match_phrase_prefix approach
-          // See https://www.elastic.co/guide/en/elasticsearch/guide/current/_index_time_search_as_you_type.html
-          { bool: { should: matchEntities(search, userLang) } }
+      function_score: {
+        query: {
+          bool: {
+            must: [
+              // at least one type should match
+              // this is basically an 'or' operator
+              { bool: { should: matchType(types) } },
+              // Because most of the work has been done at index time (indexing terms by ngrams)
+              // all this query needs to do is to look up search terms which is way more efficient than the match_phrase_prefix approach
+              // See https://www.elastic.co/guide/en/elasticsearch/guide/current/_index_time_search_as_you_type.html
+              { bool: { should: matchEntities(search, userLang) } }
+            ]
+          }
+        },
+        functions: [
+          {
+            // See: https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-function-score-query.html#function-field-value-factor
+            field_value_factor: {
+              field: 'popularity',
+              // Inspired by https://www.elastic.co/guide/en/elasticsearch/guide/current/boosting-by-popularity.html
+              modifier: 'ln1p'
+            },
+          }
         ]
-      }
+      },
     },
     size,
     min_score: 1
@@ -53,7 +66,7 @@ const matchEntities = (search, userLang) => {
 
 const defaultEntitiesFields = userLang => {
   const fields = [
-    'labels.*^4',
+    'labels.*^2',
     'aliases.*^2',
     'descriptions.*'
   ]
