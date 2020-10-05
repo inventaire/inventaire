@@ -10,7 +10,10 @@ module.exports = params => {
           // at least one type should match
           // this is basically an 'or' operator
           { bool: { should: matchType(types) } },
-          // it must also have at least one match on the search query
+
+          // Because most of the work has been done at index time (indexing terms by ngrams)
+          // all this query needs to do is to look up search terms which is way more efficient than the match_phrase_prefix approach
+          // See https://www.elastic.co/guide/en/elasticsearch/guide/current/_index_time_search_as_you_type.html
           { bool: { should: matchEntities(search, userLang) } }
         ]
       }

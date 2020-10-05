@@ -3,6 +3,7 @@ const _ = __.require('builders', 'utils')
 const wdk = require('wikidata-sdk')
 const { simplify } = wdk
 const { getEntityId } = require('./entity_helpers')
+const { activeI18nLangs } = require('../helpers')
 const getEntityImagesFromClaims = __.require('controllers', 'entities/lib/get_entity_images_from_claims')
 const { firstClaim } = __.require('controllers', 'entities/lib/entities')
 const getEntityType = __.require('controllers', 'entities/lib/get_entity_type')
@@ -109,8 +110,6 @@ const setTermsFromClaims = entity => {
 const flattenTerms = terms => {
   return _.uniq(Object.values(terms)).join(' ')
 }
-
-const activeI18nLangs = 'ar bn ca cs da de el en eo es fr hu id it ja nb nl pa pl pt ro ru sk sv tr uk'.split(' ')
 
 // Reject terms langs not used by inventaire-i18n, as entity object indexation shall be less than 1000 keys long
 // See: https://discuss.elastic.co/t/limit-of-total-fields-1000-in-index-has-been-exceeded-particular-jsons/222627
