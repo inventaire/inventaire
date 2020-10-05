@@ -3,6 +3,7 @@ const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
 const { buildSearcher } = __.require('lib', 'elasticsearch')
+const queryBuilder = __.require('controllers', 'search/lib/social_query_builder')
 
 module.exports = (req, res) => {
   const { query } = req
@@ -19,16 +20,5 @@ module.exports = (req, res) => {
 
 const searchByText = buildSearcher({
   dbBaseName: 'users',
-  queryBodyBuilder: search => {
-    const should = [
-      // Username
-      { match: { username: { query: search, boost: 5 } } },
-      { match_phrase_prefix: { username: { query: search, boost: 4 } } },
-      { fuzzy: { username: search } },
-      // Bio
-      { match: { bio: search } }
-    ]
-
-    return { query: { bool: { should } } }
-  }
+  queryBodyBuilder: queryBuilder
 })

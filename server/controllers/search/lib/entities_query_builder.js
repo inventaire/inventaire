@@ -1,6 +1,3 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-
 module.exports = params => {
   const { lang: userLang, search, limit: size } = params
   let { types } = params
@@ -10,9 +7,11 @@ module.exports = params => {
     query: {
       bool: {
         must: [
-        // must match at least one of the types
+          // at least one type should match
+          // this is basically an 'or' operator
           { bool: { should: matchType(types) } },
-          { bool: { should: matchSearchPerTypes(types, search, userLang) } }
+          // it must also have at least one match on the search query
+          { bool: { should: matchEntities(search, userLang) } }
         ]
       }
     },
@@ -29,32 +28,9 @@ const matchType = types => {
   ))
 }
 
-const matchSearchPerTypes = (types, search, userLang) => {
-  const isSocialQuery = _.includes(types, 'user') || _.includes(types, 'group')
-
-  if (isSocialQuery) return matchSocial(search)
-  return matchEntities(search, userLang)
-}
-
-const matchSocial = search => {
-  return [
-    {
-      multi_match: {
-        query: search,
-        fields: [
-          'name^2',
-          'bio',
-          'description'
-        ],
-      }
-    },
-  ]
-}
-
 const matchEntities = (search, userLang) => {
   return [
-    // strict (operator 'and'):
-    // match on all words in search, so descriptions are allowed
+    // strict (operator 'and') match on all words
     {
       multi_match: {
         query: search,
@@ -62,7 +38,7 @@ const matchEntities = (search, userLang) => {
         fields: defaultEntitiesFields(userLang),
       }
     },
-    // loose match some words in search
+    // match on some words
     {
       multi_match: {
         query: search,

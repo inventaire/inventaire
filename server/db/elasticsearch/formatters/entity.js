@@ -53,6 +53,8 @@ module.exports = async entity => {
   }
 
   if (isWikidataEntity) {
+    // flattened terms are a single string to index every possible languages on a wikidata entity
+    // and to avoid having more than 1000 keys in an entity, which is forbidded by elasticsearch
     entity.flattenedLabels = flattenTerms(entity.labels)
     entity.flattenedDescriptions = flattenTerms(entity.descriptions)
     entity.flattenedAliases = flattenTerms(entity.aliases)
