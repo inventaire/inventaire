@@ -2,11 +2,8 @@ const { text, integer, keyword, date, nested } = require('./mappings_datatypes')
 
 module.exports = {
   properties: {
+    // "labels: nested" is already done by elasticsearch
     type: keyword,
-    id: {
-      type: 'keyword',
-      index: false
-    },
     flattenedLabels: text,
     flattenedAliases: text,
     flattenedDescriptions: text,

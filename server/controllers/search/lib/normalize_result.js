@@ -5,7 +5,6 @@ const getBestLangValue = __.require('lib', 'get_best_lang_value')
 module.exports = lang => result => {
   if (!lang) return result
   const { _source } = result
-  // TODO: cleanup inconsistencies : client needs plural type on entities
   _source.type = _source.type.concat('s')
   const { type } = _source
   return formatters[type](result, _source, lang)
