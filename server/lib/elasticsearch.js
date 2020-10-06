@@ -6,7 +6,7 @@ const assert_ = __.require('utils', 'assert_types')
 const { host: elasticHost } = CONFIG.elasticsearch
 
 const buildSearcher = params => {
-  let { index, dbBaseName, queryBodyBuilder } = params
+  let { index, dbBaseName, queryBuilder } = params
   if (!index) { index = CONFIG.db.name(dbBaseName) }
 
   const url = `${elasticHost}/${index}/_search`
@@ -22,7 +22,7 @@ const buildSearcher = params => {
       customUrl = url
     }
 
-    const body = queryBodyBuilder(query, params)
+    const body = queryBuilder(query, params)
 
     return requests_.post(customUrl, { body })
     .then(parseResponse)

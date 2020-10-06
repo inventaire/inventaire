@@ -4,7 +4,7 @@ const { buildSearcher } = __.require('lib', 'elasticsearch')
 
 const index = 'wikidata'
 
-const queryBodyBuilder = title => ({
+const queryBuilder = title => ({
   query: {
     bool: {
       should: [
@@ -32,4 +32,4 @@ const queryBodyBuilder = title => ({
   }
 })
 
-module.exports = buildSearcher({ index, queryBodyBuilder })
+module.exports = buildSearcher({ index, queryBuilder })

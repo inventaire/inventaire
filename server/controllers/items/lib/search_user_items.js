@@ -5,7 +5,7 @@ const assert_ = __.require('utils', 'assert_types')
 
 module.exports = buildSearcher({
   dbBaseName: 'items',
-  queryBodyBuilder: (search, params) => {
+  queryBuilder: (search, params) => {
     const { userId, limit = 10, accessLevel } = params
 
     assert_.string(accessLevel)
