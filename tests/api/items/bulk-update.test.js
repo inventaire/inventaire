@@ -1,47 +1,55 @@
+const __ = require('config').universalPath
 require('should')
 const { authReq, authReqB } = require('../utils/utils')
 const { newItemBase } = require('./helpers')
+const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = __.require('apiTests', 'utils/utils')
 
 describe('items:bulk-update', () => {
-  it('should update an item details', done => {
-    authReq('post', '/api/items', newItemBase())
-    .then(item => {
-      const newTransaction = 'lending'
-      item.transaction.should.not.equal(newTransaction)
-      const ids = [ item._id ]
-      return authReq('put', '/api/items?action=bulk-update', {
-        ids,
-        attribute: 'transaction',
-        value: newTransaction
-      })
-      .then(res => {
-        res.ok.should.be.true()
-        return authReq('get', `/api/items?action=by-ids&ids=${ids.join('|')}`)
-        .then(({ items }) => items)
-        .then(updatedItems => {
-          updatedItems[0].transaction.should.equal(newTransaction)
-          done()
-        })
-      })
+  it('should update items details', async () => {
+    const item = await authReq('post', '/api/items', newItemBase())
+    const newTransaction = 'lending'
+    item.transaction.should.not.equal(newTransaction)
+    const ids = [ item._id ]
+    const res = await authReq('put', '/api/items?action=bulk-update', {
+      ids,
+      attribute: 'transaction',
+      value: newTransaction
     })
-    .catch(done)
+    res.ok.should.be.true()
+    const { items: updatedItems } = await authReq('get', `/api/items?action=by-ids&ids=${ids.join('|')}`)
+    updatedItems[0].transaction.should.equal(newTransaction)
   })
 
-  it('should not update an item from another owner', done => {
-    authReq('post', '/api/items', newItemBase())
-    .then(item => {
-      const ids = [ item._id ]
-      return authReqB('put', '/api/items?action=bulk-update', {
+  it('should not update items from another owner', async () => {
+    const item = await authReq('post', '/api/items', newItemBase())
+    const ids = [ item._id ]
+    try {
+      await authReqB('put', '/api/items?action=bulk-update', {
         ids,
         attribute: 'transaction',
         value: 'lending'
       })
-      .catch(err => {
-        err.statusCode.should.equal(400)
-        err.body.status_verbose.should.startWith('user isnt item owner')
-        done()
+    } catch (err) {
+      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.startWith('user is not item owner')
+    }
+  })
+
+  it('should not update shelves attribute', async () => {
+    // as there is no way to know what to do with the value
+    const item = await authReq('post', '/api/items', newItemBase())
+    const ids = [ item._id ]
+    try {
+      const updatedItems = await authReq('put', '/api/items?action=bulk-update', {
+        ids,
+        attribute: 'shelves',
+        value: 'whatever'
       })
-    })
-    .catch(done)
+      shouldNotBeCalled(updatedItems)
+    } catch (err) {
+      rethrowShouldNotBeCalledErrors(err)
+      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.startWith('invalid attribute')
+    }
   })
 })
