@@ -2,6 +2,7 @@
 // See package.json scripts: lint*
 // Rules documentation: https://eslint.org/docs/rules/
 {
+  "root": true,
   "env": {
       "browser": false,
       "commonjs": true,
