@@ -46,8 +46,14 @@ module.exports = async (user, id, property, oldValue, newValue) => {
 
   if (cachedRelationProperties.includes(property)) {
     const uri = prefixifyWd(id)
-    if (newValue != null) await entitiesRelationsTemporaryCache.set(uri, property, prefixifyWd(newValue))
-    if (oldValue != null) await entitiesRelationsTemporaryCache.del(uri, property, prefixifyWd(oldValue))
+    if (newValue != null) {
+      entitiesRelationsTemporaryCache.set(uri, property, prefixifyWd(newValue))
+      .catch(_.Error('entitiesRelationsTemporaryCache.set err'))
+    }
+    if (oldValue != null) {
+      entitiesRelationsTemporaryCache.del(uri, property, prefixifyWd(oldValue))
+      .catch(_.Error('entitiesRelationsTemporaryCache.del err'))
+    }
   }
 
   return res
