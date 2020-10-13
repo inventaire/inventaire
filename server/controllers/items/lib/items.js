@@ -15,7 +15,7 @@ const getByAccessLevel = require('./get_by_access_level')
 const user_ = __.require('controllers', 'user/lib/user')
 const db = __.require('couch', 'base')('items')
 const error_ = __.require('lib', 'error/error')
-const validateEntityType = require('./validate_entity_type')
+const validateEntityAndShelves = require('./validate_entity_and_shelves')
 
 const items_ = module.exports = {
   byId: db.get,
@@ -76,7 +76,7 @@ const items_ = module.exports = {
 
   create: async (userId, items) => {
     assert_.array(items)
-    await Promise.all(items.map(validateEntityType))
+    await Promise.all(items.map(validateEntityAndShelves(userId)))
     items = items.map(item => Item.create(userId, item))
     const res = await db.bulk(items)
     const itemsIds = _.map(res, 'id')
@@ -86,19 +86,20 @@ const items_ = module.exports = {
   },
 
   update: (userId, itemUpdateData) => {
-    return db.get(itemUpdateData._id)
+    return Promise.resolve(validateEntityAndShelves(userId)(itemUpdateData))
+    .then(() => { return db.get(itemUpdateData._id) })
     .then(currentItem => Item.update(userId, itemUpdateData, currentItem))
     .then(db.putAndReturn)
     .then(tapEmit('user:inventory:update', userId))
   },
 
-  bulkUpdate: (userId, ids, attribute, newValue) => {
+  bulkUpdate: ({ reqUserId, ids, attribute, value }) => {
     const itemUpdateData = {}
-    itemUpdateData[attribute] = newValue
+    itemUpdateData[attribute] = value
     return items_.byIds(ids)
-    .then(promises_.map(currentItem => Item.update(userId, itemUpdateData, currentItem)))
+    .then(promises_.map(currentItem => Item.update(reqUserId, itemUpdateData, currentItem)))
     .then(db.bulk)
-    .then(tapEmit('user:inventory:update', userId))
+    .then(tapEmit('user:inventory:update', reqUserId))
   },
 
   setBusyness: (id, busy) => {

@@ -43,7 +43,7 @@ Item.update = (userId, newAttributes, oldItem) => {
   assert_.object(oldItem)
 
   if (oldItem.owner !== userId) {
-    throw error_.new(`user isnt item.owner: ${userId}`, 400, oldItem.owner)
+    throw error_.new('user is not item owner', 400, { userId, ownerId: oldItem.owner })
   }
 
   const newItem = _.clone(oldItem)

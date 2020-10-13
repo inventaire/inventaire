@@ -6,7 +6,7 @@ require('should')
 const { rawCustomAuthReq } = __.require('apiTests', 'utils/request')
 const { getReservedUser } = __.require('apiTests', 'utils/utils')
 const { createItem } = require('../fixtures/items')
-const { createEdition, createWork, createEditionFromWorks, createEditionWithWorkAuthorAndSerie, addPublisher, addTranslator, someImageHash } = require('../fixtures/entities')
+const { createEdition, createWork, createEditionFromWorks, createEditionWithWorkAuthorAndSerie, addTranslator, someImageHash } = require('../fixtures/entities')
 const { createUser } = require('../fixtures/users')
 const { getByUri, addClaim, parseLabel, updateLabel } = require('../utils/entities')
 const { parse } = require('papaparse')
@@ -93,14 +93,12 @@ describe('items:export', () => {
       const genresUris = [ 'wd:Q131539', 'wd:Q192782' ]
       const subjectUri = 'wd:Q18120925'
       const edition = await createEditionWithWorkAuthorAndSerie()
-      const publisher = await addPublisher(edition)
-      const publisherLabel = parseLabel(publisher)
       const translator = await addTranslator(edition)
       const translatorLabel = parseLabel(translator)
       await addClaim(edition.uri, 'wdt:P1104', 10)
-      const publicationDate = '2020-06'
-      await addClaim(edition.uri, 'wdt:P577', publicationDate)
       const workUri = edition.claims['wdt:P629'][0]
+      const publisherUri = edition.claims['wdt:P123'][0]
+      const publicationDate = edition.claims['wdt:P577'][0]
       const work = await getByUri(workUri)
       const authorUri = work.claims['wdt:P50'][0]
       const serieUri = work.claims['wdt:P179'][0]
@@ -126,8 +124,8 @@ describe('items:export', () => {
       itemRow['Genres labels'].should.be.a.String()
       itemRow['Subjects URLs'].should.equal(generateEntityUrl(subjectUri))
       itemRow['Subjects labels'].should.be.a.String()
-      itemRow['Publisher URLs'].should.equal(generateEntityUrl(publisher.uri))
-      itemRow['Publisher label'].should.equal(publisherLabel)
+      itemRow['Publisher URLs'].should.equal(generateEntityUrl(publisherUri))
+      itemRow['Publisher label'].should.be.a.String()
     })
 
     it('should escape double quotes', async () => {
