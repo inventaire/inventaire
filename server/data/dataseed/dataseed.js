@@ -30,7 +30,7 @@ module.exports = {
 
   // Provides simply an image in a prompt maner
   getImageByIsbn: async isbn => {
-    if (!enabled) return {}
+    if (!enabled || isbn == null) return {}
     isbn = isbn_.toIsbn13(isbn)
     if (!isbn) throw new Error('invalid isbn')
     const url = _.buildPath(`${host}/images`, { isbn })

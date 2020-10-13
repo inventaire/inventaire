@@ -50,7 +50,7 @@ const createEdition = async (edition, works, userId, batchId, enrich) => {
   if (imageUrl) {
     const { url: imageHash } = await getImageByUrl(imageUrl)
     if (imageHash) claims['invp:P2'] = [ imageHash ]
-  } else if (enrich === true) {
+  } else if (enrich === true && isbn != null) {
     const { url: imageHash } = await getImageByIsbn(isbn)
     if (imageHash) claims['invp:P2'] = [ imageHash ]
   }

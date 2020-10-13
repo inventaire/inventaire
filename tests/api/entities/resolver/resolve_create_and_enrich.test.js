@@ -34,6 +34,22 @@ describe('entities:resolve:create-and-enrich', () => {
     // it has to create the edition again
     await deleteByUris(edition.uri)
   })
+
+  it('should not crash if no isbn is set', async () => {
+    const edition = await resolveCreateAndEnrichEdition({
+      edition: {
+        claims: {
+          'wdt:P1476': [ 'The Phantom Castle' ],
+          // This is a valid entry, as it as an external id
+          'wdt:P2969': [ '32687007' ]
+        }
+      }
+    }, true)
+
+    // Delete the created edition so that the next time this test runs,
+    // it has to create the edition again
+    await deleteByUris(edition.uri)
+  })
 })
 
 const resolveCreateAndEnrichEdition = async (entry, enrich) => {
@@ -55,7 +71,7 @@ const parseCreatedEdition = ({ entries }) => {
   // If it was resolved, we aren't testing the enriched path
   // If the test fails because of this, re-run from empty databases
   if (edition.resolved) {
-    throw new Error(`the edition was resolved, meaning that we aren't testing the enrich path
+    throw new Error(`the edition was resolved to ${edition.uri}, meaning that we aren't testing the enrich path
       re-running the test with empty databases should fix this`)
   }
   edition.resolved.should.be.false()
