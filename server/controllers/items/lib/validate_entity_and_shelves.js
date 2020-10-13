@@ -11,7 +11,7 @@ const lateRequire = () => {
 }
 setTimeout(lateRequire, 0)
 
-module.exports = userId => async item => {
+module.exports = async (userId, item) => {
   const [ entity, shelves ] = await Promise.all([
     getEntityByUri({ uri: item.entity }),
     shelves_.byIds(item.shelves)

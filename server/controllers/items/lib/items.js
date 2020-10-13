@@ -1,12 +1,11 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const promises_ = __.require('lib', 'promises')
 const Item = __.require('models', 'item')
 const listingsPossibilities = Item.attributes.constrained.listing.possibilities
 const assert_ = __.require('utils', 'assert_types')
 const { BasicUpdater } = __.require('lib', 'doc_updates')
-const { tapEmit, emit } = __.require('lib', 'radio')
+const { emit } = __.require('lib', 'radio')
 const { filterPrivateAttributes } = require('./filter_private_attributes')
 const { maxKey } = __.require('lib', 'couch')
 const listingsLists = require('./listings_lists')
@@ -76,7 +75,7 @@ const items_ = module.exports = {
 
   create: async (userId, items) => {
     assert_.array(items)
-    await Promise.all(items.map(validateEntityAndShelves(userId)))
+    await Promise.all(items.map(validateEntityAndShelves.bind(null, userId)))
     items = items.map(item => Item.create(userId, item))
     const res = await db.bulk(items)
     const itemsIds = _.map(res, 'id')
@@ -85,21 +84,22 @@ const items_ = module.exports = {
     return docs
   },
 
-  update: (userId, itemUpdateData) => {
-    return Promise.resolve(validateEntityAndShelves(userId)(itemUpdateData))
-    .then(() => { return db.get(itemUpdateData._id) })
-    .then(currentItem => Item.update(userId, itemUpdateData, currentItem))
-    .then(db.putAndReturn)
-    .then(tapEmit('user:inventory:update', userId))
+  update: async (userId, itemUpdateData) => {
+    await validateEntityAndShelves(userId, itemUpdateData)
+    const currentItem = await db.get(itemUpdateData._id)
+    let updatedItem = Item.update(userId, itemUpdateData, currentItem)
+    updatedItem = await db.putAndReturn(updatedItem)
+    emit('user:inventory:update', userId)
+    return updatedItem
   },
 
-  bulkUpdate: ({ reqUserId, ids, attribute, value }) => {
-    const itemUpdateData = {}
-    itemUpdateData[attribute] = value
-    return items_.byIds(ids)
-    .then(promises_.map(currentItem => Item.update(reqUserId, itemUpdateData, currentItem)))
-    .then(db.bulk)
-    .then(tapEmit('user:inventory:update', reqUserId))
+  bulkUpdate: async ({ reqUserId, ids, attribute, value }) => {
+    const itemUpdateData = { [attribute]: value }
+    const currentItems = await items_.byIds(ids)
+    let updatedItems = currentItems.map(currentItem => Item.update(reqUserId, itemUpdateData, currentItem))
+    updatedItems = await db.bulk(updatedItems)
+    emit('user:inventory:update', reqUserId)
+    return updatedItems
   },
 
   setBusyness: (id, busy) => {
@@ -117,20 +117,9 @@ const items_ = module.exports = {
 
   bulkDelete: db.bulkDelete,
 
-  nearby: (reqUserId, range = 50, strict = false) => {
-    return user_.nearby(reqUserId, range, strict)
-    .then(items_.getUsersAndItemsPublicData(reqUserId))
-  },
-
-  getUsersAndItemsPublicData: reqUserId => {
-    return usersIds => {
-      _.log(usersIds, 'usersIds')
-      if (usersIds.length <= 0) return [ [], [] ]
-      return Promise.all([
-        user_.getUsersByIds(usersIds, reqUserId),
-        getByAccessLevel.public(usersIds)
-      ])
-    }
+  nearby: async (reqUserId, range = 50, strict = false) => {
+    const usersIds = await user_.nearby(reqUserId, range, strict)
+    return getUsersAndItemsPublicData(usersIds, reqUserId)
   },
 
   // Data serializa emails and rss feeds templates
@@ -154,6 +143,14 @@ const items_ = module.exports = {
     })
     return db.bulk(updatedItems)
   }
+}
+
+const getUsersAndItemsPublicData = (usersIds, reqUserId) => {
+  if (usersIds.length <= 0) return [ [], [] ]
+  return Promise.all([
+    user_.getUsersByIds(usersIds, reqUserId),
+    getByAccessLevel.public(usersIds)
+  ])
 }
 
 const validateOwnership = (userId, items) => {

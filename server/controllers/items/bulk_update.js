@@ -14,19 +14,15 @@ const sanitization = {
 module.exports = (req, res) => {
   sanitize(req, res, sanitization)
   .then(tap(validateAttributes))
-  .then(params => {
-    const { reqUserId, ids, attribute, value } = params
-    return items_.bulkUpdate({ reqUserId, ids, attribute, value })
-    .then(responses_.Ok(res))
-  })
+  .then(items_.bulkUpdate)
+  .then(responses_.Ok(res))
   .catch(error_.Handler(req, res))
 }
 
-const validateAttributes = params => {
+const validateAttributes = ({ attribute }) => {
   // bulk update cannot update collections values of some attributes
   // as there is no way to know what to do with the values (ie. add it, remove it)
   // Known attributes : shelves
-  const { attribute } = params
   if (attribute === 'shelves') {
     let errorMessage = 'invalid attribute'
     errorMessage += ': use /api/shelves?action=add-items or /api/shelves?action=remove-items instead'
