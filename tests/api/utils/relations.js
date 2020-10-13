@@ -1,6 +1,12 @@
 const { customAuthReq } = require('./request')
 const endpoint = '/api/relations'
-const { getUser, getReservedUser } = require('./utils')
+
+// Working around the circular dependency
+let getUser, getReservedUser
+const lateRequire = () => {
+  ({ getUser, getReservedUser } = require('./utils'))
+}
+setTimeout(lateRequire, 0)
 
 const getRelations = user => customAuthReq(user, 'get', endpoint)
 
