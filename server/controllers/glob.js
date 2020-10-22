@@ -1,6 +1,6 @@
 const __ = require('config').universalPath
 const error_ = __.require('lib', 'error/error')
-const publicFolder = __.path('client', 'public')
+const publicFolder = __.path('client', 'public/dist')
 
 module.exports = {
   get: (req, res) => {
