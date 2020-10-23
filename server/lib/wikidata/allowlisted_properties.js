@@ -86,6 +86,7 @@ module.exports = [
   'P2860', // cite
   'P2963', // GoodReads author ID
   'P2969', // GoodReads book ID
+  'P3035', // ISBN publisher prefix
   'P3630', // Babelio author ID
   'P3631', // Babelio work ID
   'P4033', // Mastodon address
