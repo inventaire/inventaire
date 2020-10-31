@@ -1,5 +1,5 @@
 module.exports = {
-  entities: require('./wikidata'),
+  entities: require('./entities'),
   items: require('./items'),
-  wikidata: require('./wikidata'),
+  wikidata: require('./entities'),
 }
