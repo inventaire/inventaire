@@ -4,12 +4,8 @@ require('should')
 const { authReq } = __.require('apiTests', 'utils/utils')
 
 describe('notifications:get', () => {
-  it('should get user notifications', done => {
-    authReq('get', '/api/notifications')
-    .then(res => {
-      res.notifications.should.be.an.Array()
-      done()
-    })
-    .catch(done)
+  it('should get user notifications', async () => {
+    const { notifications } = await authReq('get', '/api/notifications')
+    notifications.should.be.an.Array()
   })
 })
