@@ -9,7 +9,7 @@ const { updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
 const { search } = require('../utils/search')
 
 describe('search:entities', () => {
-  let human; let work; let serie; let collection; let publisher = {}
+  let human, work, serie, collection, publisher = {}
 
   before(async () => {
     // ensure wikidata uris are indexed
