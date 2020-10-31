@@ -10,14 +10,10 @@ const fixtures = module.exports = {
   shelfDescription: () => faker.lorem.paragraph(),
 
   createShelf: async (userPromise, shelfData = {}) => {
-    if (!userPromise) { userPromise = getUser() }
-    if (!shelfData.listing) { shelfData.listing = 'public' }
-    if (!shelfData.description) {
-      shelfData.description = fixtures.shelfDescription()
-    }
-    if (!shelfData.name) {
-      shelfData.name = fixtures.shelfName()
-    }
+    userPromise = userPromise || getUser()
+    shelfData.name = shelfData.name || fixtures.shelfName()
+    shelfData.listing = shelfData.listing || 'public'
+    shelfData.description = shelfData.description || fixtures.shelfDescription()
     const endpoint = '/api/shelves?action=create'
     await customAuthReq(userPromise, 'post', endpoint, shelfData)
 

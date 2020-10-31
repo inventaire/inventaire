@@ -4,7 +4,7 @@ const { authReq, authReqB, getUser } = require('../utils/utils')
 const { createShelf, shelfName, shelfDescription } = require('../fixtures/shelves')
 
 const endpoint = '/api/shelves?action=update'
-const shelfPromise = createShelf(getUser())
+const shelfPromise = createShelf()
 
 describe('shelves:update', () => {
   it('should reject without shelf id', async () => {
@@ -52,16 +52,15 @@ describe('shelves:update', () => {
     const description = shelfDescription()
     const listing = 'network'
     const shelf = await shelfPromise
-    const params = {
+    const { shelf: updatedShelf } = await authReq('post', endpoint, {
       shelf: shelf._id,
       name,
       description,
       listing
-    }
-    const res = await authReq('post', endpoint, params).then(({ shelf }) => shelf)
-    res.name.should.equal(name)
-    res.description.should.equal(description)
-    res.listing.should.equal(listing)
+    })
+    updatedShelf.name.should.equal(name)
+    updatedShelf.description.should.equal(description)
+    updatedShelf.listing.should.equal(listing)
   })
 
   it('should reject updating if different owner', async () => {
@@ -92,5 +91,14 @@ describe('shelves:update', () => {
       err.body.status_verbose.should.startWith('nothing to update')
       err.statusCode.should.equal(400)
     }
+  })
+
+  it('should be able to remove a shelf description', async () => {
+    const shelf = await createShelf()
+    const { shelf: updatedShelf } = await authReq('post', endpoint, {
+      shelf: shelf._id,
+      description: null,
+    })
+    updatedShelf.description.should.equal('')
   })
 })

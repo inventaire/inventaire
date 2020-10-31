@@ -11,16 +11,14 @@ module.exports = {
     assert_.string(shelf.owner)
     assert_.string(shelf.name)
 
-    shelf.listing = shelf.listing || 'private'
-
     const newShelf = {}
     Object.keys(shelf).forEach(key => {
-      const attribute = shelf[key]
+      const value = shelf[key] || defaultValues[key]
       if (!attributes.updatable.includes(key)) {
-        throw error_.new(`invalid attribute: ${attribute}`, 400, { shelf })
+        throw error_.new(`invalid attribute: ${value}`, 400, { shelf })
       }
-      validations.pass(key, attribute)
-      newShelf[key] = attribute
+      validations.pass(key, value)
+      newShelf[key] = value
     })
 
     newShelf.created = Date.now()
@@ -42,18 +40,23 @@ module.exports = {
       }
     }
 
-    const newShelf = _.clone(oldShelf)
+    const updatedShelf = _.clone(oldShelf)
     for (const attr of Object.keys(newAttributes)) {
-      const newVal = newAttributes[attr]
+      const newVal = newAttributes[attr] || defaultValues[attr]
       validations.pass(attr, newVal)
-      newShelf[attr] = newVal
+      updatedShelf[attr] = newVal
     }
 
-    if (_.isEqual(newShelf, oldShelf)) {
+    if (_.isEqual(updatedShelf, oldShelf)) {
       throw error_.new('nothing to update', 400, newAttributes)
     }
 
-    newShelf.updated = Date.now()
-    return newShelf
+    updatedShelf.updated = Date.now()
+    return updatedShelf
   }
+}
+
+const defaultValues = {
+  description: '',
+  listing: 'private'
 }

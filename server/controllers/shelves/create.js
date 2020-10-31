@@ -23,12 +23,11 @@ module.exports = (req, res, next) => {
 }
 
 const formatNewShelf = params => {
-  const { description, listing, name, reqUserId: owner } = params
-  const newShelf = {
+  const { name, description, listing, reqUserId: owner } = params
+  return shelves_.create({
     name,
-    description: description || '',
-    listing: listing || 'private',
-    owner
-  }
-  return shelves_.create(newShelf)
+    description,
+    listing,
+    owner,
+  })
 }
