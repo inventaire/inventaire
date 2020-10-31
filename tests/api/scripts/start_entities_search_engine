@@ -2,7 +2,8 @@
 search_engine_path=$(node -p "require('config').entitiesSearchEngine.localPath")
 cwd=$(pwd)
 
-{
+# Do not try to start the entities-search-engine server if updates are disabled
+node -p "require('config').entitiesSearchEngine.updateEnabled || process.exit(1)" && {
   cd "$search_engine_path"
   # This value should match entities-search-engine config files
   export NODE_ENV=tests
