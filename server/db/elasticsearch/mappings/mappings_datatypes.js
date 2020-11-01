@@ -2,17 +2,20 @@ const { activeI18nLangs } = require('../helpers')
 
 // See https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-types.html
 
+const langProperty = {
+  type: 'text',
+  analyzer: 'autocomplete',
+  // adding a 'search_analyzer' key to use a different analyzer at search time,
+  // See: https://www.elastic.co/guide/en/elasticsearch/reference/current/search-analyzer.html
+  search_analyzer: 'simple'
+}
+
 const langProperties = () => {
   const properties = {}
   activeI18nLangs.forEach(lang => {
-    properties[lang] = {
-      type: 'text',
-      analyzer: 'autocomplete',
-      // adding a 'search_analyzer' key to use a different analyzer at search time,
-      // See: https://www.elastic.co/guide/en/elasticsearch/reference/current/search-analyzer.html
-      search_analyzer: 'simple'
-    }
+    properties[lang] = langProperty
   })
+  properties.fromclaims = langProperty
   return properties
 }
 
