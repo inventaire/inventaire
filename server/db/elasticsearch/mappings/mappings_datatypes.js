@@ -10,7 +10,7 @@ const langProperty = {
   search_analyzer: 'simple'
 }
 
-const langProperties = () => {
+const getTermsProperties = () => {
   const properties = {}
   activeI18nLangs.forEach(lang => {
     properties[lang] = langProperty
@@ -26,5 +26,5 @@ module.exports = {
   keyword: { type: 'keyword' },
   date: { type: 'date' },
   flattened: { type: 'flattened' },
-  langProperties: { properties: langProperties() }
+  terms: { properties: getTermsProperties() }
 }
