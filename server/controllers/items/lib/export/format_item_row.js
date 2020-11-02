@@ -5,7 +5,7 @@ const { getNames } = require('../snapshot/helpers')
 const host = CONFIG.fullPublicHost()
 
 module.exports = lang => item => {
-  const { _id, entity: uri, details, notes, created, listing, transaction } = item
+  const { _id, entity: uri, details, notes, shelfNames, created, listing, transaction } = item
   const { edition, works, authors, translators, series, genres, subjects, publisher, editionLang, originalLangs } = item
   const { worksUris, authorsUris, seriesUris, genresUris, subjectsUris, publisherUri, translatorsUris } = item
 
@@ -62,6 +62,7 @@ module.exports = lang => item => {
     publisherName,
     details,
     notes,
+    shelfNames,
     listing,
     transaction,
     createdTime
