@@ -4,7 +4,7 @@ const _ = __.require('builders', 'utils')
 const promises_ = __.require('lib', 'promises')
 const error_ = __.require('lib', 'error/error')
 const cache_ = __.require('lib', 'cache')
-const getPopularityByUri = require('./get_popularity_by_uri')
+const buildPopularityByUri = require('./build_popularity_by_uri')
 
 module.exports = async (uris, refresh, dry) => {
   if (uris.length === 0) return {}
@@ -17,7 +17,7 @@ const getPopularity = (refresh, dry) => uri => {
 
   const params = {}
   params.key = `popularity:${uri}`
-  params.fn = getPopularityByUri.bind(null, uri)
+  params.fn = buildPopularityByUri.bind(null, uri)
   params.refresh = refresh || false
   if (dry) {
     params.dry = true
