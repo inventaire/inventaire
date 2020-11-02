@@ -9,7 +9,7 @@ const { firstClaim } = __.require('controllers', 'entities/lib/entities')
 const getEntityType = __.require('controllers', 'entities/lib/get_entity_type')
 const { indexedEntitiesTypes } = __.require('controllers', 'search/lib/indexes')
 const specialEntityImagesGetter = __.require('controllers', 'entities/lib/special_entity_images_getter')
-const getEntitiesPopularity = __.require('controllers', 'entities/lib/get_entities_popularity')
+const getEntitiesPopularityCache = __.require('controllers', 'entities/lib/get_entities_popularity_cache')
 
 module.exports = async entity => {
   entity._id = getEntityId(entity)
@@ -76,7 +76,7 @@ module.exports = async entity => {
   // do not refresh to avoid spamming wikidata
   const refresh = false
   const dry = true
-  const result = await getEntitiesPopularity([ entity.uri ], refresh, dry)
+  const result = await getEntitiesPopularityCache([ entity.uri ], refresh, dry)
   entity.popularity = result[entity.uri]
 
   return entity

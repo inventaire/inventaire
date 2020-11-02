@@ -5,12 +5,12 @@ const getSerieParts = require('./get_serie_parts')
 const getAuthorWorks = require('./get_author_works')
 
 // Working around circular dependencies
-let items_, getEntityByUri, reverseClaims, getEntitiesPopularity
+let items_, getEntityByUri, reverseClaims, getEntitiesPopularityCache
 const lateRequire = () => {
   items_ = __.require('controllers', 'items/lib/items')
   getEntityByUri = require('./get_entity_by_uri')
   reverseClaims = require('./reverse_claims')
-  getEntitiesPopularity = require('./get_entities_popularity')
+  getEntitiesPopularityCache = require('./get_entities_popularity_cache')
 }
 setTimeout(lateRequire, 0)
 
@@ -74,7 +74,7 @@ const getAuthorWorksScores = uri => {
 const getUri = _.property('uri')
 
 const getEntitiesPopularityTotal = uris => {
-  return getEntitiesPopularity(uris, true)
+  return getEntitiesPopularityCache(uris, true)
   .then(_.values)
   // Total = sum of all popularities + number of subentities
   .then(results => _.sum(results) + results.length)

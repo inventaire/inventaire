@@ -9,8 +9,8 @@ const { getTypePluralName, getTypePluralNameByTypeUri } = __.require('lib', 'wik
 const { getCachedRelations } = require('./temporarily_cache_relations')
 
 // Working around the circular dependency
-let getEntitiesPopularity
-const lateRequire = () => { getEntitiesPopularity = require('./get_entities_popularity') }
+let getEntitiesPopularityCache
+const lateRequire = () => { getEntitiesPopularityCache = require('./get_entities_popularity_cache') }
 setTimeout(lateRequire, 0)
 
 const allowlistedTypesNames = [ 'series', 'works', 'articles' ]
@@ -86,7 +86,7 @@ const formatInvEntity = row => {
 // # COMMONS
 const getPopularityScores = results => {
   const uris = _.map(results, 'uri')
-  return getEntitiesPopularity(uris)
+  return getEntitiesPopularityCache(uris)
 }
 
 const spreadByType = (worksByTypes, rows) => scores => {
