@@ -3,9 +3,10 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const host = CONFIG.fullPublicHost()
 require('should')
-const { rawCustomAuthReq } = __.require('apiTests', 'utils/request')
+const { customAuthReq, rawCustomAuthReq } = __.require('apiTests', 'utils/request')
 const { getReservedUser } = __.require('apiTests', 'utils/utils')
 const { createItem } = require('../fixtures/items')
+const { createShelf } = require('../fixtures/shelves')
 const { createEdition, createWork, createEditionFromWorks, createEditionWithWorkAuthorAndSerie, addTranslator, someImageHash } = require('../fixtures/entities')
 const { createUser } = require('../fixtures/users')
 const { getByUri, addClaim, parseLabel, updateLabel } = require('../utils/entities')
@@ -34,12 +35,19 @@ describe('items:export', () => {
     it('should return items data', async () => {
       const details = 'my details: \'Lorem?!#$ ipsum\' dolor; sit amet, consectetur "adipisicing" elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. (See also https://en.wikipedia.org/wiki/Lorem_ipsum).'
       const notes = 'some private notes'
+      const name = 'some shelf'
       const item = await createItem(userPromise, { details, notes })
+      const shelf = await createShelf(userPromise, { name })
+      await customAuthReq(userPromise, 'post', '/api/shelves?action=add-items', {
+        id: shelf._id,
+        items: [ item._id ]
+      })
 
       const itemRow = await reqAndParse(item._id)
       itemRow['Item URL'].should.equal(generateUrl(`/items/${item._id}`))
       itemRow['Item details'].should.equal(details)
       itemRow['Item notes'].should.equal(notes)
+      itemRow.Shelves.should.equal(name)
       itemRow['Item created'].should.equal(new Date(item.created).toISOString())
       itemRow['Item visibility'].should.equal('public')
       itemRow['Item transaction'].should.equal('inventorying')

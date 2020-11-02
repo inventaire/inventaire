@@ -27,6 +27,7 @@ module.exports = [
   'Publisher label',
   'Item details',
   'Item notes',
+  'Shelves',
   'Item visibility',
   'Item transaction',
   'Item created'
