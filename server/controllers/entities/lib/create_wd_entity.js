@@ -8,7 +8,7 @@ const validateEntity = require('./validate_entity')
 const getEntityType = require('./get_entity_type')
 const properties = require('./properties/properties_values_constraints')
 const { prefixifyWd, unprefixify } = require('./prefix')
-const allowlistedEntityTypes = [ 'work', 'serie', 'human', 'publisher' ]
+const allowlistedEntityTypes = [ 'work', 'serie', 'human', 'publisher', 'collection' ]
 
 module.exports = async params => {
   const { labels, claims, user, isAlreadyValidated } = params
