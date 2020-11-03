@@ -1,4 +1,6 @@
 module.exports = {
+  env: 'tests-integration',
+
   db: {
     suffix: 'tests'
   },
