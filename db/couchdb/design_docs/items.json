@@ -25,6 +25,9 @@
     },
     "byShelvesAndListing": {
       "map": "(doc)->\n  if doc.shelves?\n    for shelf in doc.shelves\n      emit [shelf, doc.listing], null"
+    },
+    "byListingWithoutShelf": {
+      "map": "(doc)->\n  if ! doc.shelves?\n    emit [doc.owner,doc.listing], null"
     }
   }
 }

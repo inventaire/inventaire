@@ -2,6 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
 const { publicReq, undesiredRes } = __.require('apiTests', 'utils/utils')
+const { customAuthReq } = __.require('apiTests', 'utils/request')
 const endpoint = '/api/items?action=inventory-view'
 const { groupPromise } = require('../fixtures/groups')
 const { createShelf } = require('../fixtures/shelves')
@@ -29,6 +30,22 @@ describe('items:inventory-view', () => {
     res.worksTree.owner.should.be.an.Object()
     res.workUriItemsMap.should.be.an.Object()
     res.itemsByDate.should.be.an.Array()
+  })
+
+  it('should return an inventory-view for user items without shelf', async () => {
+    const user = await createUserWithItems()
+    const shelf = await createShelf(user)
+    let res = await publicReq('get', `${endpoint}&user=${user._id}&noShelf=true`)
+
+    const itemsCount = res.itemsByDate.length
+
+    await customAuthReq(user, 'post', '/api/shelves?action=add-items', {
+      id: shelf._id,
+      items: res.itemsByDate.slice(0, itemsCount - 1)
+    })
+
+    res = await publicReq('get', `${endpoint}&user=${user._id}&noShelf=true`)
+    res.itemsByDate.length.should.be.equal(1)
   })
 
   it('should return a group inventory-view', done => {

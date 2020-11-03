@@ -12,7 +12,8 @@ const shelves_ = __.require('controllers', 'shelves/lib/shelves')
 const sanitization = {
   user: { optional: true },
   group: { optional: true },
-  shelf: { optional: true }
+  shelf: { optional: true },
+  noShelf: { optional: true, generic: 'boolean' }
 }
 
 module.exports = (req, res) => {
@@ -35,8 +36,11 @@ const validateUserOrGroup = params => {
 }
 
 const getItems = async params => {
-  const { user, group, shelf, reqUserId } = params
-  if (user) return getAuthorizedItems.byUser(user, reqUserId)
+  const { user, group, shelf, reqUserId, noShelf } = params
+  if (user) {
+    if (noShelf) return getAuthorizedItems.byUserWithoutShelf(user, reqUserId)
+    else return getAuthorizedItems.byUser(user, reqUserId)
+  }
   if (shelf) {
     const shelfDoc = await shelves_.byId(shelf)
     return getAuthorizedItems.byShelf(shelfDoc, reqUserId)
