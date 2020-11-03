@@ -62,7 +62,7 @@ describe('items:export', () => {
       itemRow['Edition URL'].should.equal(generateEntityUrl(item.entity))
       itemRow['Edition ISBN-13'].should.equal('')
       itemRow['Edition ISBN-10'].should.equal('')
-      itemRow.Title.should.equal(edition.claims['wdt:P1476'][0])
+      itemRow['Edition title'].should.equal(edition.claims['wdt:P1476'][0])
       itemRow['Works URLs'].should.equal(generateEntityUrl(work.uri))
     })
 
@@ -76,8 +76,8 @@ describe('items:export', () => {
       const item = await createItem(user, { entity: edition.uri })
 
       const itemRow = await reqAndParse(item._id, user)
-      itemRow['Edition Lang'].should.equal('français')
-      itemRow['Original Lang'].should.equal('français')
+      itemRow['Edition language'].should.equal('français')
+      itemRow['Original language'].should.equal('français')
     })
 
     it('should return entities labels by user language or fallback to english', async () => {
@@ -118,10 +118,10 @@ describe('items:export', () => {
       const item = await createItem(userPromise, { entity: edition.uri })
 
       const itemRow = await reqAndParse(item._id)
-      itemRow.Subtitle.should.equal(edition.claims['wdt:P1680'][0])
-      itemRow.Cover.should.equal(`${host}/img/entities/${someImageHash}`)
-      itemRow['Publication Date'].should.equal(publicationDate)
-      itemRow['Number of pages'].should.equal('10')
+      itemRow['Edition subtitle'].should.equal(edition.claims['wdt:P1680'][0])
+      itemRow['Edition cover'].should.equal(`${host}/img/entities/${someImageHash}`)
+      itemRow['Edition publication date'].should.equal(publicationDate)
+      itemRow['Edition number of pages'].should.equal('10')
       itemRow['Translators labels'].should.equal(translatorLabel)
       itemRow['Translators URLs'].should.equal(generateEntityUrl(translator.uri))
       itemRow['Authors URLs'].should.equal(generateEntityUrl(authorUri))
@@ -142,7 +142,7 @@ describe('items:export', () => {
       const edition = await createEdition({ title })
       const item = await createItem(user, { entity: edition.uri })
       const itemRow = await reqAndParse(item._id, user)
-      itemRow.Title.should.equal(title)
+      itemRow['Edition title'].should.equal(title)
     })
   })
 })
