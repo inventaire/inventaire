@@ -25,7 +25,8 @@ module.exports = params => {
             field_value_factor: {
               field: 'popularity',
               // Inspired by https://www.elastic.co/guide/en/elasticsearch/guide/current/boosting-by-popularity.html
-              modifier: 'ln1p'
+              modifier: 'ln2p',
+              missing: '1'
             },
           }
         ]
