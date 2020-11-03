@@ -60,8 +60,8 @@ describe('items:export', () => {
 
       const itemRow = await reqAndParse(item._id)
       itemRow['Edition URL'].should.equal(generateEntityUrl(item.entity))
-      itemRow['ISBN-13'].should.equal('')
-      itemRow['ISBN-10'].should.equal('')
+      itemRow['Edition ISBN-13'].should.equal('')
+      itemRow['Edition ISBN-10'].should.equal('')
       itemRow.Title.should.equal(edition.claims['wdt:P1476'][0])
       itemRow['Works URLs'].should.equal(generateEntityUrl(work.uri))
     })

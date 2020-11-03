@@ -33,6 +33,12 @@ module.exports = lang => item => {
   // Array order coupled with server/controllers/items/export.js header
   return [
     generateUrl(`/items/${_id}`),
+    details,
+    notes,
+    listing,
+    transaction,
+    createdTime,
+    shelfNames,
     // NB: the item.entity might actually be a work for legacy reasons
     // but that should be a minor occurrence
     generateEntityUrl(uri),
@@ -60,12 +66,6 @@ module.exports = lang => item => {
     subjectsNames,
     generateEntityUrl(publisherUri),
     publisherName,
-    details,
-    notes,
-    shelfNames,
-    listing,
-    transaction,
-    createdTime
   ].map(formatField).join(',')
 }
 

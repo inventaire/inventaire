@@ -1,8 +1,14 @@
 module.exports = [
   'Item URL',
+  'Item details',
+  'Item notes',
+  'Item visibility',
+  'Item transaction',
+  'Item created',
+  'Shelves',
   'Edition URL',
-  'ISBN-13',
-  'ISBN-10',
+  'Edition ISBN-13',
+  'Edition ISBN-10',
   'Title',
   'Subtitle',
   'Publication Date',
@@ -25,10 +31,4 @@ module.exports = [
   'Subjects labels',
   'Publisher URLs',
   'Publisher label',
-  'Item details',
-  'Item notes',
-  'Shelves',
-  'Item visibility',
-  'Item transaction',
-  'Item created'
 ].join(',')
