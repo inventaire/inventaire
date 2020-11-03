@@ -10,8 +10,8 @@ const sanitization = {
   offset: { optional: true },
 }
 
-const Paginate = page => notifications => {
-  let { limit, offset } = page
+const paginate = params => notifications => {
+  let { limit, offset } = params
   const total = notifications.length
   if (offset == null) offset = 0
   const last = offset + limit
@@ -26,9 +26,9 @@ const Paginate = page => notifications => {
   }
 }
 
-const getNotifications = page => {
-  return notifs_.byUserId(page.reqUserId)
-  .then(Paginate(page))
+const getNotifications = params => {
+  return notifs_.byUserId(params.reqUserId)
+  .then(paginate(params))
 }
 
 const get = (req, res) => {
