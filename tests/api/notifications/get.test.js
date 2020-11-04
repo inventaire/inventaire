@@ -12,9 +12,9 @@ describe('notifications:get', () => {
 
     const { notifications, total } = await authReq('get', '/api/notifications')
     notifications.should.be.an.Array()
-    total.should.be.equal(1)
+    total.should.be.aboveOrEqual(1)
 
-    const notif = notifications[0]
+    const notif = notifications.pop()
     notif.user.should.be.equal(user._id)
     notif.type.should.be.equal('friendAcceptedRequest')
     notif.status.should.be.equal('unread')
