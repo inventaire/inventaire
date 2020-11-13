@@ -3,15 +3,16 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const should = require('should')
 const jiff = require('jiff')
-
+const randomString = __.require('lib', 'utils/random_string')
+const Entity = __.require('models', 'entity')
 const Patch = __.require('models', 'patch')
 
 const validDocId = '12345678900987654321123456789012'
 const userId = validDocId
-const rev = '1-d121066d145ea067b0c6638ebd050536'
+const someRev = '1-d121066d145ea067b0c6638ebd050536'
 const currentDoc = {
   _id: validDocId,
-  _rev: rev,
+  _rev: someRev,
   labels: {
     fr: 'yo'
   },
@@ -24,7 +25,7 @@ const currentDoc = {
 
 const updatedDoc = {
   _id: validDocId,
-  _rev: rev,
+  _rev: someRev,
   labels: {
     en: 'da'
   },
@@ -270,4 +271,55 @@ describe('patch', () => {
       revertedDoc.claims['wdt:P50'].should.deepEqual([ 'wd:Q535' ])
     })
   })
+
+  describe('addSnapshots', () => {
+    it('should return an array of snapshots', () => {
+      const base = Entity.create()
+      const { patch, newVersion } = generateSomePatch(base)
+      const patches = [ patch ]
+      should(patch.snapshot).not.be.ok()
+      Patch.addSnapshots(base, patches)
+      patch.snapshot.should.be.an.Object()
+      patch.snapshot.claims.should.deepEqual({})
+      patch.snapshot.labels.en.should.equal(newVersion.labels.en)
+    })
+
+    it('should recover from disordered patches', () => {
+      const base = Entity.create()
+
+      let patches = []
+      let i = 0
+      let previousVersion = base
+      while (i++ < 20) {
+        const { patch, newVersion } = generateSomePatch(previousVersion)
+        previousVersion = newVersion
+        patches.push(patch)
+      }
+
+      patches = _.shuffle(patches)
+
+      Patch.addSnapshots(base, patches)
+
+      for (const patch of patches) {
+        patch.snapshot.should.be.an.Object()
+      }
+    })
+  })
 })
+
+const generateSomePatch = previousVersion => {
+  const newVersion = _.cloneDeep(previousVersion)
+  newVersion._id = validDocId
+  newVersion._rev = incrementRev(previousVersion._rev)
+  if (newVersion.labels.en) delete newVersion.labels.en
+  else newVersion.labels = { en: randomString(6) }
+  const patch = Patch.create({ userId, currentDoc: previousVersion, updatedDoc: newVersion })
+  return { patch, newVersion }
+}
+
+const incrementRev = rev => {
+  if (!rev) return someRev
+  const [ numId, hash ] = rev.split('-')
+  const incrementedNumId = parseInt(numId) + 1
+  return `${incrementedNumId}-${hash}`
+}

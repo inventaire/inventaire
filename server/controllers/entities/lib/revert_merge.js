@@ -8,7 +8,7 @@ const updateItemEntity = __.require('controllers', 'items/lib/update_entity')
 const { revertFromPatchDoc } = require('./revert_edit')
 
 module.exports = async (userId, fromId) => {
-  const patches = await patches_.getSnapshots(fromId)
+  const patches = await patches_.getWithSnapshots(fromId)
   const targetVersion = await findVersionBeforeRedirect(patches)
   const currentVersion = await entities_.byId(fromId)
   const toUri = currentVersion.redirect

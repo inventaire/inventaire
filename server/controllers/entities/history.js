@@ -13,7 +13,7 @@ module.exports = (req, res) => {
   sanitize(req, res, sanitization)
   .then(params => {
     const { id } = params
-    return patches_.getSnapshots(id)
+    return patches_.getWithSnapshots(id)
   })
   .then(responses_.Wrap(res, 'patches'))
   .catch(error_.Handler(req, res))
