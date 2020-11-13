@@ -3,6 +3,7 @@ const __ = CONFIG.universalPath
 const should = require('should')
 const randomString = __.require('lib', './utils/random_string')
 const { getByUri, updateLabel, revertEdit, getHistory, addClaim } = require('../utils/entities')
+const { shouldNotBeCalled } = require('../utils/utils')
 const { createWork } = require('../fixtures/entities')
 
 describe('entities:revert-edit', () => {
@@ -25,6 +26,17 @@ describe('entities:revert-edit', () => {
     res.should.be.ok()
     const work = await getByUri(uri)
     should(work.claims['wdt:P50']).not.be.ok()
+  })
+
+  it('should reject reverts that would make P31 empty', async () => {
+    const { uri } = await createWork()
+    const lastPatchId = await getLastPatchId(uri)
+    await revertEdit(lastPatchId)
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.deepEqual("wdt:P31 array can't be empty")
+    })
   })
 })
 
