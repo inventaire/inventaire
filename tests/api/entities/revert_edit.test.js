@@ -4,7 +4,7 @@ const should = require('should')
 const randomString = __.require('lib', './utils/random_string')
 const { getByUri, updateLabel, revertEdit, getHistory, addClaim } = require('../utils/entities')
 const { shouldNotBeCalled } = require('../utils/utils')
-const { createWork } = require('../fixtures/entities')
+const { createWork, createEditionWithIsbn } = require('../fixtures/entities')
 
 describe('entities:revert-edit', () => {
   it('should revert a label update', async () => {
@@ -37,6 +37,18 @@ describe('entities:revert-edit', () => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.deepEqual("wdt:P31 array can't be empty")
     })
+  })
+
+  it('should be able to revert when having a unique value claim', async () => {
+    // Sets wdt:P212, which should be a unique value
+    const { uri, _id } = await createEditionWithIsbn()
+    const invUri = `inv:${_id}`
+    await addClaim(invUri, 'wdt:P2635', 123)
+    const lastPatchId = await getLastPatchId(invUri)
+    const res = await revertEdit(lastPatchId)
+    res.should.be.ok()
+    const work = await getByUri(uri)
+    should(work.claims['wdt:P2635']).not.be.ok()
   })
 })
 

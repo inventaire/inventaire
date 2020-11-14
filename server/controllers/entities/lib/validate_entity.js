@@ -9,20 +9,21 @@ const typeWithoutLabels = require('./type_without_labels')
 const propertiesPerType = __.require('controllers', 'entities/lib/properties/properties_per_type')
 const allowlistedTypes = Object.keys(propertiesPerType)
 
+// Can be used to validate both entities being created or existing entities
 module.exports = entity => {
   return validate(entity)
   .catch(addErrorContext(entity))
 }
 
 const validate = async entity => {
-  const { labels, claims } = entity
+  const { _id, labels, claims } = entity
   assert_.object(labels)
   assert_.object(claims)
 
   const type = getValueType(claims)
   validateValueType(type, claims['wdt:P31'])
   validateLabels(labels, type)
-  return validateAndFormatClaims(claims)
+  return validateAndFormatClaims({ claims, _id })
 }
 
 const getValueType = claims => {

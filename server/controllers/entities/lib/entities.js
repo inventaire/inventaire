@@ -79,7 +79,7 @@ const entities_ = module.exports = {
 
   addClaims: async (userId, newClaims, currentDoc, batchId) => {
     const type = getEntityType(currentDoc.claims['wdt:P31'])
-    newClaims = await validateAndFormatClaims(newClaims, type)
+    newClaims = await validateAndFormatClaims({ claims: newClaims, type })
     const updatedDoc = Entity.addClaims(_.cloneDeep(currentDoc), newClaims)
     return entities_.putUpdate({ userId, currentDoc, updatedDoc, batchId })
   },

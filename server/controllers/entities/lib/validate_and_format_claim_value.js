@@ -13,7 +13,7 @@ const properties = require('./properties/properties_values_constraints')
 const validateClaimValueSync = require('./validate_claim_value_sync')
 
 module.exports = async params => {
-  const { type, property, oldVal, newVal, letEmptyValuePass, userIsAdmin } = params
+  const { type, property, oldVal, newVal, letEmptyValuePass, userIsAdmin, _id } = params
   // letEmptyValuePass to let it be interpreted as a claim deletion
   if (letEmptyValuePass && newVal == null) return null
 
@@ -34,7 +34,7 @@ module.exports = async params => {
   const { concurrency, restrictedType } = prop
 
   await Promise.all([
-    verifyClaimConcurrency(concurrency, property, formattedValue),
+    verifyClaimConcurrency(concurrency, property, formattedValue, _id),
     verifyClaimEntityType(restrictedType, formattedValue)
   ])
 
@@ -43,21 +43,24 @@ module.exports = async params => {
 
 // For properties that don't tolerate having several entities
 // sharing the same value
-const verifyClaimConcurrency = (concurrency, property, value) => {
+const verifyClaimConcurrency = async (concurrency, property, value, _id) => {
   if (!concurrency) return
 
-  return entities_.byClaim(property, value)
-  .then(res => {
-    if (res.rows.length > 0) {
-      // /!\ The client relies on this exact message
-      // client/app/modules/entities/lib/creation_partials.js
-      const message = 'this property value is already used'
-      const entity = `inv:${res.rows[0].id}`
-      // /!\ The client relies on the entity being passed in the context
-      throw error_.new(message, 400, { entity, property, value })
-    }
-  })
+  let { rows } = await entities_.byClaim(property, value)
+
+  rows = rows.filter(isntCurrentlyValidatedEntity(_id))
+
+  if (rows.length > 0) {
+    // /!\ The client relies on this exact message
+    // client/app/modules/entities/lib/creation_partials.js
+    const message = 'this property value is already used'
+    const entity = `inv:${rows[0].id}`
+    // /!\ The client relies on the entity being passed in the context
+    throw error_.new(message, 400, { entity, property, value })
+  }
 }
+
+const isntCurrentlyValidatedEntity = _id => row => row.id !== _id
 
 // For claims that have an entity URI as value
 // check that the target entity is of the expected type

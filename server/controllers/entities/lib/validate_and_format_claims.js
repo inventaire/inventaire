@@ -6,7 +6,7 @@ const validateAndFormatClaim = require('./validate_and_format_claim')
 const getEntityType = require('./get_entity_type')
 const validateClaimProperty = require('./validate_claim_property')
 
-module.exports = async (claims, type) => {
+module.exports = async ({ claims, type, _id }) => {
   const wdtP31 = claims['wdt:P31']
   type = wdtP31 ? getEntityType(wdtP31) : type
   assert_.string(type)
@@ -15,18 +15,18 @@ module.exports = async (claims, type) => {
     throw error_.new('invalid claims', 400, { claims })
   }
 
-  await Promise.all(validatePropertiesClaims(claims, type))
+  await Promise.all(validatePropertiesClaims(claims, type, _id))
 
   // Returning validated and formatted claims on the mutated object
   return claims
 }
 
-const validatePropertiesClaims = (claims, type) => {
+const validatePropertiesClaims = (claims, type, _id) => {
   const properties = Object.keys(claims)
-  return properties.map(validatePropertyClaims(claims, type))
+  return properties.map(validatePropertyClaims(claims, type, _id))
 }
 
-const validatePropertyClaims = (claims, type) => async property => {
+const validatePropertyClaims = (claims, type, _id) => async property => {
   validateClaimProperty(type, property)
   let values = claims[property]
 
@@ -46,6 +46,7 @@ const validatePropertyClaims = (claims, type) => async property => {
     property,
     oldVal: null,
     newVal,
-    letEmptyValuePass: false
+    letEmptyValuePass: false,
+    _id,
   })))
 }
