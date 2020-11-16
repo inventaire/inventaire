@@ -12,7 +12,7 @@ const attributes = Group.attributes = require('./attributes/group')
 
 Group.create = options => {
   _.log(options, 'group create')
-  const { name, description, searchable, position, creatorId } = options
+  const { name, description, searchable, position, creatorId, open } = options
   validations.pass('name', name)
   validations.pass('description', description)
   validations.pass('searchable', searchable)
@@ -32,6 +32,7 @@ Group.create = options => {
     declined: [],
     requested: [],
     position,
+    open,
     creator: creatorId,
     // using the same timestamp for clarity
     created: creator.timestamp

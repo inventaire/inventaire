@@ -17,5 +17,6 @@ module.exports = {
   description: BoundedString(0, 5000),
   searchable: boolean,
   position,
+  open: boolean,
   creatorId: userId
 }
