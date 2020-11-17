@@ -10,7 +10,6 @@ module.exports = {
   fullPublicHost: function () {
     return `${this.publicProtocol}://${this.publicHost}`
   },
-  secret: 'OVERRIDE',
   // Let Nginx serve the static files
   // https://github.com/inventaire/inventaire-deploy/blob/master/nginx/inventaire.original.nginx
   serveStaticFiles: false,

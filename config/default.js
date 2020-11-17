@@ -28,8 +28,9 @@ const config = module.exports = {
     return `${this.publicProtocol}://${this.publicHost}:${this.port}`
   },
   invHost: 'https://inventaire.io',
-  // Changing this value invalidates all sessions, forcing everyone to re-login
-  secret: 'yoursecrethere',
+  // To allow fallback between servers, they need to share the same session keys:
+  // one should have autoRotateKeys=true and the others autoRotateKeys=false
+  autoRotateKeys: true,
   // Force to renew cookies at least every 6 months
   cookieMaxAge: 180 * 24 * 3600 * 1000,
   // Debug mode:
