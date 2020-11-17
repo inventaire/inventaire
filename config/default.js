@@ -28,7 +28,10 @@ const config = module.exports = {
     return `${this.publicProtocol}://${this.publicHost}:${this.port}`
   },
   invHost: 'https://inventaire.io',
+  // Changing this value invalidates all sessions, forcing everyone to re-login
   secret: 'yoursecrethere',
+  // Force to renew cookies at least every 6 months
+  cookieMaxAge: 180 * 24 * 3600 * 1000,
   // Debug mode:
   // - log requests body
   debug: false,
@@ -93,7 +96,6 @@ const config = module.exports = {
   serveStaticFiles: true,
   noCache: true,
   staticMaxAge: 0,
-  cookieMaxAge: 10 * 365 * 24 * 3600 * 1000,
 
   hashPasswords: true,
   requestsLogger: {
