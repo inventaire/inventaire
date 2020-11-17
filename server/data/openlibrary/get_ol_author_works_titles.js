@@ -3,7 +3,7 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const requests_ = __.require('lib', 'requests')
 const cache_ = __.require('lib', 'cache')
-const { oneMonth } = __.require('lib', 'times')
+const { oneMonth } = __.require('lib', 'time')
 
 const endpoint = 'https://openlibrary.org'
 const base = `${endpoint}/search.json`

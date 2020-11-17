@@ -1,6 +1,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const { expired } = __.require('lib', 'time')
 
 const should = require('should')
 
@@ -99,7 +99,7 @@ describe('item model', () => {
     describe('created', () => {
       it('should return an object with a created time', () => {
         const item = create(validItem)
-        _.expired(item.created, 100).should.be.false()
+        expired(item.created, 100).should.be.false()
       })
     })
   })

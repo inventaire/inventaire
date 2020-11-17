@@ -5,6 +5,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
+const { expired } = __.require('lib', 'time')
 
 let lockedUsernames = []
 const errMessage = 'an account is already in the process of being created with this username'
@@ -31,7 +32,7 @@ const lock = username => {
 const removeExpiredLocks = () => {
   lockedUsernames = lockedUsernames
     // Only keep accounts that started to be created less than 5 secondes ago
-    .filter(data => !_.expired(data.timestamp, 5000))
+    .filter(data => !expired(data.timestamp, 5000))
 }
 
 setInterval(removeExpiredLocks, 10 * 1000)

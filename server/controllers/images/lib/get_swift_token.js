@@ -4,7 +4,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
-const { tenMinutes } = __.require('lib', 'times')
+const { tenMinutes } = __.require('lib', 'time')
 const requests_ = __.require('lib', 'requests')
 
 let lastToken

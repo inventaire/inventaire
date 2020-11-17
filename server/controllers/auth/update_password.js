@@ -5,7 +5,7 @@ const responses_ = __.require('lib', 'responses')
 const db = __.require('couch', 'base')('users')
 const User = __.require('models', 'user')
 const pw_ = __.require('lib', 'crypto').passwords
-const { oneHour } = __.require('lib', 'times')
+const { oneHour, expired } = __.require('lib', 'time')
 
 module.exports = (req, res) => {
   const { user, body } = req
@@ -61,7 +61,7 @@ const updateUserPassword = (userId, user, newHash) => {
 }
 
 const testOpenResetPasswordWindow = async resetPassword => {
-  if (_.expired(resetPassword, oneHour)) {
+  if (expired(resetPassword, oneHour)) {
     throw error_.new('reset password timespan experied', 400)
   }
 }

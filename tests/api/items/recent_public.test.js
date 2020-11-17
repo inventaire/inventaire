@@ -5,6 +5,7 @@ require('should')
 const { publicReq, undesiredRes } = __.require('apiTests', 'utils/utils')
 const { Wait } = __.require('lib', 'promises')
 const { populate } = require('../fixtures/populate')
+const { expired } = __.require('lib', 'time')
 const recentPublicUrl = '/api/items?action=recent-public'
 
 describe('items:recent-public', () => {
@@ -75,4 +76,4 @@ describe('items:recent-public', () => {
 })
 
 const itemLangIs = lang => item => item.snapshot['entity:lang'] === lang
-const createdLately = item => !_.expired(item.created, 120000)
+const createdLately = item => !expired(item.created, 120000)

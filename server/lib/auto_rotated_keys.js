@@ -2,11 +2,10 @@ const { cookieMaxAge, autoRotateKeys: leadingServer } = require('config')
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const { getRandomBytesBuffer } = __.require('lib', 'crypto')
-const { oneDay } = __.require('lib', 'times')
+const { oneDay, expired } = __.require('lib', 'time')
 const { readFileSync } = require('fs')
 const { invert } = require('lodash')
 const { writeFile } = require('fs').promises
-const { expired } = _
 // If a session is started at the end-of-life of a key
 // that session should be allowed to live for cookieMaxAge time
 const keysHalfTtl = cookieMaxAge
