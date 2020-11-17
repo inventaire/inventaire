@@ -1,4 +1,4 @@
-const { name, secret, cookieMaxAge, protocol } = require('config')
+const { name, cookieMaxAge, protocol } = require('config')
 const __ = require('config').universalPath
 const { expired } = __.require('builders', 'utils')
 
@@ -8,6 +8,7 @@ const passport_ = __.require('lib', 'passport/passport')
 const cookieParser = require('cookie-parser')
 const cookieSession = require('cookie-session')
 const Keygrip = require('keygrip')
+const autoRotatedKeys = __.require('lib', 'auto_rotated_keys')
 
 // See https://github.com/expressjs/cookie-session/#cookie-options
 const cookieSessionParams = {
@@ -15,7 +16,7 @@ const cookieSessionParams = {
   maxAge: cookieMaxAge,
 
   // For a list of available algorithms, run `openssl list -digest-algorithms`
-  keys: new Keygrip([ secret ], 'sha256', 'base64'),
+  keys: new Keygrip(autoRotatedKeys, 'sha256', 'base64'),
 
   // See https://developer.mozilla.org/docs/Web/HTTP/Headers/Set-Cookie/SameSite
   // and https://web.dev/samesite-cookies-explained/
