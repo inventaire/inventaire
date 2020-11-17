@@ -1,5 +1,6 @@
 const { name, secret, cookieMaxAge, protocol } = require('config')
 const __ = require('config').universalPath
+const { expired } = __.require('builders', 'utils')
 
 const passport = require('passport')
 const passport_ = __.require('lib', 'passport/passport')
@@ -28,6 +29,18 @@ const cookieSessionParams = {
 module.exports = {
   cookieParser: cookieParser(),
   session: cookieSession(cookieSessionParams),
+
+  enforceSessionMaxAge: (req, res, next) => {
+    // As all data on req.session, this timestamp is readable by anyone having access to the request cookies.
+    // We can only trust it because of the signature cookie, which ensures that it has not been tampered with
+    if (req.session.timestamp) {
+      // If the cookie timestamp is older that the maxAge, finish the session
+      if (expired(req.session.timestamp, cookieMaxAge)) req.session = null
+    } else {
+      req.session.timestamp = Date.now()
+    }
+    next()
+  },
 
   passport: {
     initialize: passport.initialize(),
