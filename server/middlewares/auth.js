@@ -1,21 +1,34 @@
-const { secret, cookieMaxAge } = require('config')
+const { name, secret, cookieMaxAge, protocol } = require('config')
 const __ = require('config').universalPath
 
 const passport = require('passport')
 const passport_ = __.require('lib', 'passport/passport')
 
 const cookieParser = require('cookie-parser')
-const session = require('cookie-session')
-const sessionParams = {
+const cookieSession = require('cookie-session')
+const Keygrip = require('keygrip')
+
+// See https://github.com/expressjs/cookie-session/#cookie-options
+const cookieSessionParams = {
+  name,
   maxAge: cookieMaxAge,
-  secret,
-  // see https://github.com/expressjs/session#resave
-  resave: false
+
+  // For a list of available algorithms, run `openssl list -digest-algorithms`
+  keys: new Keygrip([ secret ], 'sha256', 'base64'),
+
+  // See https://developer.mozilla.org/docs/Web/HTTP/Headers/Set-Cookie/SameSite
+  // and https://web.dev/samesite-cookies-explained/
+  sameSite: 'strict',
+
+  // Expliciting the default values
+  secure: protocol === 'https',
+  httpOnly: true,
 }
 
 module.exports = {
   cookieParser: cookieParser(),
-  session: session(sessionParams),
+  session: cookieSession(cookieSessionParams),
+
   passport: {
     initialize: passport.initialize(),
     session: passport.session({ pauseStream: true })
