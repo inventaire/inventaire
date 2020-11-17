@@ -18,6 +18,7 @@ Group.create = options => {
   validations.pass('searchable', searchable)
   validations.pass('position', position)
   validations.pass('creatorId', creatorId)
+  validations.pass('open', open)
 
   const creator = createMembership(creatorId, null)
 
