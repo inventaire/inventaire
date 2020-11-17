@@ -1,8 +1,19 @@
-const { cookieMaxAge, autoRotateKeys: leadingServer } = require('config')
-const __ = require('config').universalPath
+// This module recovers keys in config/.sessions_keys, and creates and keeps updated
+// an array of keys that will be passed to auth middlewares to sign cookies
+
+// There are presently no automated tests for this behavior, but manual tests can be run
+// by deleting config/.sessions_keys and/or setting cookieMaxAge to a lower value in your config/local.js
+// The default dev server can be started with CONFIG.autoRotateKeys=true and
+// the API tests server with CONFIG.autoRotateKeys=false
+// just make sure that both use the same CONFIG.cookieMaxAge value to avoid outdated keys errors
+
+const CONFIG = require('config')
+const { cookieMaxAge, autoRotateKeys: leadingServer } = CONFIG
+const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const { getRandomBytesBuffer } = __.require('lib', 'crypto')
-const { oneDay, expired } = __.require('lib', 'time')
+const { oneDay, msToHumanTime, msToHumanAge } = __.require('lib', 'time')
+const error_ = __.require('lib', 'error/error')
 const { readFileSync } = require('fs')
 const { invert } = require('lodash')
 const { writeFile } = require('fs').promises
@@ -13,7 +24,7 @@ const keysFilePath = __.path('root', 'config/.sessions_keys')
 const keys = []
 const data = {}
 
-const getKeysFromFile = () => {
+const getKeysFromFileSync = () => {
   return readFileSync(keysFilePath)
   .toString()
   .split('\n')
@@ -26,23 +37,32 @@ const getKeysFromFile = () => {
 
 // Use sync operations to make sure we recovered existing keys before the server starts
 const recoverKeysFromFile = () => {
-  _.info('recover keys from file')
   try {
-    getKeysFromFile().forEach(recoverKey)
+    getKeysFromFileSync().forEach(recoverKey)
+    _.info(getKeysStatus(), 'recovered keys')
   } catch (err) {
     if (err.code !== 'ENOENT') throw err
   }
 }
 
+const getKeysStatus = () => {
+  return Object.keys(data).map(timestampStr => {
+    const timestamp = parseInt(timestampStr)
+    return {
+      created: new Date(timestamp).toISOString(),
+      age: msToHumanAge(timestamp),
+      expireIn: msToHumanTime(timestamp + (2 * keysHalfTtl) - Date.now())
+    }
+  })
+}
+
 const updateKeysFromFile = () => {
   _.info('update keys from file')
   try {
-    getKeysFromFile().forEach(updateKey)
+    getKeysFromFileSync().forEach(updateKey)
     cleanupKeysInMemory()
   } catch (err) {
-    // Retry in a few seconds, in the hope that the leading server started by then
-    // and created that file
-    if (err.code === 'ENOENT') setTimeout(updateKeysFromFile, 1000)
+    if (err.code === 'ENOENT') throw missingKeysError()
     else throw err
   }
 }
@@ -65,19 +85,21 @@ const generateNewKey = () => {
   keys.unshift(newKey)
   data[Date.now()] = newKey
   cleanupKeysInMemory()
-  persistKeysToDisk()
+  saveKeysToDisk()
+  const nextCheck = Math.min(oneDay, keysHalfTtl + 100)
+  setTimeout(checkState, nextCheck)
 }
 
 const cleanupKeysInMemory = () => {
-  const timestampByKey = invert(data)
-  keys.sort((keyA, keyB) => timestampByKey[keyB] - timestampByKey[keyA])
+  keys.sort(newestFirstFromKeys)
   // Keep maximum 2 keys at the same time
   // The more keys, the worst performance gets for worst-cases
   // See https://github.com/crypto-utils/keygrip#api
   if (keys.length > 2) keys.splice(2, 10)
 }
 
-const persistKeysToDisk = () => {
+const saveKeysToDisk = () => {
+  _.info('saving keys')
   const file = Object.keys(data)
     .sort(newestFirst)
     .slice(0, 2)
@@ -85,32 +107,60 @@ const persistKeysToDisk = () => {
     .join('\n')
 
   writeFile(keysFilePath, file)
-  .then(() => _.info('updated keys persisted'))
-  .catch(_.Error('failed to persist keys'))
+  .then(() => _.info('updated keys saved'))
+  .catch(_.Error('failed to save keys'))
 }
 
 const newestFirst = (a, b) => b - a
+const newestFirstFromKeys = (keyA, keyB) => {
+  const timestampByKey = invert(data)
+  return timestampByKey[keyB] - timestampByKey[keyA]
+}
 
 const checkState = () => {
   const role = leadingServer ? 'leading' : 'following'
-  _.info(`checking keys state as ${role} instance`)
   if (leadingServer) {
-    const newestKeyTimestampStr = Object.keys(data).sort(newestFirst)[0]
-    if (newestKeyTimestampStr) {
-      const newestKeyTimestamp = parseInt(newestKeyTimestampStr)
-      // Issue a new key once we reach the newest key half-life
-      if (expired(newestKeyTimestamp, keysHalfTtl)) generateNewKey()
-      else _.info(`next key update in ${newestKeyTimestamp + keysHalfTtl - Date.now()}ms`)
+    _.info(`Checking keys state as ${role} instance`)
+    const timeUntilEndOfNewestKeyHalfLife = getTimeUntilEndOfNewestKeyHalfLife()
+    if (timeUntilEndOfNewestKeyHalfLife != null) {
+      if (timeUntilEndOfNewestKeyHalfLife < 0) {
+        generateNewKey()
+      } else {
+        _.info(`${keys.length} keys alive - next key update in ${msToHumanTime(timeUntilEndOfNewestKeyHalfLife)}`)
+        // The timeout needs to fit in a 32-bit signed integer to not trigger a TimeoutOverflowWarning
+        // thus the 10 days cap
+        const nextCheck = Math.min(oneDay * 10, timeUntilEndOfNewestKeyHalfLife + 100)
+        setTimeout(checkState, nextCheck)
+      }
     } else {
       generateNewKey()
     }
   } else {
+    _.warn(`Checking keys state as ${role} instance:\nexpects another instance to do the key auto-rotation`)
     updateKeysFromFile()
+    // When not the leading server, check at least every day
+    // as keys might have been invalidated
+    const timeUntilEndOfNewestKeyHalfLife = getTimeUntilEndOfNewestKeyHalfLife()
+    if (timeUntilEndOfNewestKeyHalfLife == null) throw missingKeysError()
+    if (timeUntilEndOfNewestKeyHalfLife < 0) throw outdatedKeysError()
+    const nextCheck = Math.min(oneDay, timeUntilEndOfNewestKeyHalfLife + 5000)
+    setTimeout(checkState, nextCheck)
   }
 }
 
-const checkPeriodicity = Math.min(oneDay, keysHalfTtl / 2)
-setInterval(checkState, checkPeriodicity)
+const getTimeUntilEndOfNewestKeyHalfLife = () => {
+  const newestKeyTimestampStr = Object.keys(data).sort(newestFirst)[0]
+  if (!newestKeyTimestampStr) return
+  const newestKeyTimestamp = parseInt(newestKeyTimestampStr)
+  const halfLifeTime = newestKeyTimestamp + keysHalfTtl
+  return halfLifeTime - Date.now() + 100
+}
+
+const fixMessage = `Start a leading server (with CONFIG.autoRotateKeys=true) to fix.
+Also make sure to use the same CONFIG.cookieMaxAge value`
+
+const missingKeysError = () => error_.new(`no key found: ${fixMessage}`, 500)
+const outdatedKeysError = () => error_.new(`found outdated keys: ${fixMessage}`, 500, { keysStatus: getKeysStatus() })
 
 recoverKeysFromFile()
 checkState()

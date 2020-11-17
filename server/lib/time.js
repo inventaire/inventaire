@@ -1,6 +1,15 @@
-const oneMinute = 60 * 1000
+const oneSecond = 1000
+const oneMinute = 60 * oneSecond
 const oneHour = 60 * oneMinute
 const oneDay = 24 * oneHour
+
+const msToHumanTime = ms => {
+  const seconds = Math.trunc((ms / oneSecond) % 60)
+  const minutes = Math.trunc((ms / oneMinute) % 60)
+  const hours = Math.trunc((ms / oneHour) % 24)
+  const days = Math.trunc(ms / oneDay)
+  return `${days}d ${hours}h ${minutes}m ${seconds}s`
+}
 
 module.exports = {
   oneMinute,
@@ -12,11 +21,7 @@ module.exports = {
 
   expired: (timestamp, ttl) => (Date.now() - timestamp) > ttl,
 
-  msToHumanTime: ms => {
-    const seconds = Math.floor((ms / 1000) % 60)
-    const minutes = Math.floor((ms / oneMinute) % 60)
-    const hours = Math.floor((ms / oneHour) % 24)
-    const days = Math.floor(ms / oneDay)
-    return `${days}d ${hours}h ${minutes}m ${seconds}s`
-  }
+  msToHumanTime,
+
+  msToHumanAge: ms => msToHumanTime(Date.now() - ms)
 }
