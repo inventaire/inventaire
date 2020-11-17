@@ -31,6 +31,8 @@ module.exports = {
   cookieParser: cookieParser(),
   session: cookieSession(cookieSessionParams),
 
+  // Keys rotation doesn't remove the need to enforce sessions max age as session cookies issued
+  // at the beginning of a key life-time wouldn't be invalidated before that key's end-of-life, which is 2*cookieMaxAge
   enforceSessionMaxAge: (req, res, next) => {
     // As all data on req.session, this timestamp is readable by anyone having access to the request cookies.
     // We can only trust it because of the signature cookie, which ensures that it has not been tampered with
