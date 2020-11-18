@@ -15,7 +15,8 @@ const createSomeGroup = () => {
     description: '',
     searchable: false,
     position: null,
-    creatorId: someUserId
+    creatorId: someUserId,
+    open: false
   })
 }
 
@@ -39,6 +40,18 @@ describe('group model', () => {
       group.invited.should.deepEqual([])
       group.declined.should.deepEqual([])
       group.requested.should.deepEqual([])
+    })
+
+    it('should create an open group', () => {
+      const doc = Group.create({
+        name: 'a',
+        creatorId: someUserId,
+        description: '',
+        searchable: false,
+        position: null,
+        open: true
+      })
+      doc.open.should.be.true()
     })
   })
 
