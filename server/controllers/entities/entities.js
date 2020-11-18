@@ -6,7 +6,6 @@ module.exports = {
   get: ActionsControllers({
     public: {
       'by-uris': require('./by_uris_get'),
-      changes: require('./changes'),
       'reverse-claims': require('./reverse_claims'),
       'author-works': authorWorks,
       'serie-parts': serieParts,

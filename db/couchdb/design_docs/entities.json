@@ -8,9 +8,5 @@
     "byClaimValue": {
       "map": "(doc)->\n  if doc.type is 'entity'\n    for property, statements of doc.claims\n      for value in statements\n        emit value, property"
     }
-  },
-  "filters": {
-    "entities:only": "(doc)-> doc.type is 'entity'",
-    "patches:only": "(doc)-> doc.type is 'patch'"
   }
 }
