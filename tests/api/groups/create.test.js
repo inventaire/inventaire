@@ -72,7 +72,7 @@ describe('groups:create', () => {
     }
   })
 
-  it('should should create an open group', async () => {
+  it('should create an open group', async () => {
     const name = groupName()
     const open = true
     const res = await authReq('post', endpoint, { name, open })
