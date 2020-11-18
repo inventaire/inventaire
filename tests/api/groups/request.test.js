@@ -36,4 +36,22 @@ describe('groups:update:request', () => {
     const resGroup = await getGroup(group)
     resGroup.requested.length.should.equal(requestCount + 1)
   })
+
+  describe('when group is open', () => {
+    it('should directly add user to members', async () => {
+      const group = await createGroup()
+      await authReq('put', '/api/groups?action=update-settings', {
+        group: group._id,
+        attribute: 'open',
+        value: true
+      })
+      const membersCount = group.members.length
+      const requestedCount = group.requested.length
+      const userPromise = createUser()
+      await customAuthReq(userPromise, 'put', endpoint, { group: group._id })
+      const resGroup = await getGroup(group)
+      resGroup.members.length.should.equal(membersCount + 1)
+      resGroup.requested.length.should.equal(requestedCount)
+    })
+  })
 })

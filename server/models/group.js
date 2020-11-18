@@ -60,7 +60,11 @@ const membershipActions = {
     return moveMembership(userId, group, 'invited', 'declined')
   },
   request: (userId, placeholder, group) => {
-    group.requested.push(createMembership(userId, null))
+    if (group.open) {
+      group.members.push(createMembership(userId, null))
+    } else {
+      group.requested.push(createMembership(userId, null))
+    }
     return group
   },
   cancelRequest: (userId, placeholder, group) => {
