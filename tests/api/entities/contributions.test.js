@@ -1,19 +1,19 @@
 const __ = require('config').universalPath
 const should = require('should')
-const { adminReq, getUser, getReservedUser, undesiredRes } = require('../utils/utils')
+const { adminReq, getUser, getReservedUser } = require('../utils/utils')
 const { createWork } = require('../fixtures/entities')
 const endpoint = '/api/entities?action=contributions'
 const { wait, Wait } = __.require('lib', 'promises')
 
 describe('entities:contributions', () => {
-  it('should reject without user id', done => {
-    adminReq('get', endpoint)
-    .then(undesiredRes(done))
-    .catch(err => {
-      err.body.status_verbose.should.equal('missing parameter in query: user')
-      done()
-    })
-    .catch(done)
+  it('should return contributions from all users by default', async () => {
+    const user = await getUser()
+    const { _id } = await createWork({ user })
+    const { patches } = await adminReq('get', `${endpoint}&limit=5`)
+    patches.should.be.an.Array()
+    const lastPatch = patches[0]
+    lastPatch._id.split(':')[0].should.equal(_id)
+    lastPatch.user.should.equal(user._id)
   })
 
   it('should return an empty list of patch when user does not exist', done => {
@@ -41,7 +41,7 @@ describe('entities:contributions', () => {
   })
 
   it('should return a list of patches ordered by timestamp', done => {
-    worksAndUserPromise
+    get2WorksAndUser()
     .then(([ workA, workB, user ]) => {
       const { _id } = user
       return adminReq('get', `${endpoint}&user=${_id}`)
@@ -58,7 +58,7 @@ describe('entities:contributions', () => {
   })
 
   it('should take a limit parameter', done => {
-    worksAndUserPromise
+    get2WorksAndUser()
     .then(([ workA, workB, user ]) => {
       const { _id } = user
       return adminReq('get', `${endpoint}&user=${_id}&limit=1`)
@@ -141,6 +141,12 @@ describe('entities:contributions', () => {
   })
 })
 
+let worksAndUserPromise
+const get2WorksAndUser = () => {
+  worksAndUserPromise = worksAndUserPromise || create2WorksAndGetUser()
+  return worksAndUserPromise
+}
+
 const create2WorksAndGetUser = async () => {
   // Use a reserved user to avoiding having contributions messed-up by tests
   // in other test files
@@ -151,8 +157,6 @@ const create2WorksAndGetUser = async () => {
   await wait(1000)
   return [ workA, workB, user ]
 }
-
-const worksAndUserPromise = create2WorksAndGetUser()
 
 const getWorkId = id => id.split(':')[0]
 const getPatchEntityId = patch => patch._id.split(':')[0]

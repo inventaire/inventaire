@@ -6,7 +6,7 @@ const responses_ = __.require('lib', 'responses')
 const patches_ = require('./lib/patches')
 
 const sanitization = {
-  user: {},
+  user: { optional: true },
   limit: { default: 100, max: 10000 },
   offset: { default: 0 }
 }
@@ -15,7 +15,11 @@ module.exports = (req, res) => {
   sanitize(req, res, sanitization)
   .then(params => {
     const { user: userId, limit, offset } = params
-    return patches_.byUserId(userId, limit, offset)
+    if (userId != null) {
+      return patches_.byUserId(userId, limit, offset)
+    } else {
+      return patches_.byDate(limit, offset)
+    }
   })
   .then(responses_.Send(res))
   .catch(error_.Handler(req, res))
