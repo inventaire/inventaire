@@ -35,7 +35,7 @@ describe('items:inventory-view', () => {
   it('should return an inventory-view for user items without shelf', async () => {
     const user = await createUserWithItems()
     const shelf = await createShelf(user)
-    let res = await publicReq('get', `${endpoint}&user=${user._id}&noShelf=true`)
+    let res = await publicReq('get', `${endpoint}&user=${user._id}&no-shelf=true`)
 
     const itemsCount = res.itemsByDate.length
 
@@ -44,7 +44,7 @@ describe('items:inventory-view', () => {
       items: res.itemsByDate.slice(0, itemsCount - 1)
     })
 
-    res = await publicReq('get', `${endpoint}&user=${user._id}&noShelf=true`)
+    res = await publicReq('get', `${endpoint}&user=${user._id}&no-shelf=true`)
     res.itemsByDate.length.should.be.equal(1)
   })
 
