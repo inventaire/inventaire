@@ -3,7 +3,7 @@ const __ = CONFIG.universalPath
 require('should')
 const { publicReq, authReq, undesiredRes } = require('../utils/utils')
 const { Wait } = __.require('lib', 'promises')
-const { groupPromise } = require('../fixtures/groups')
+const { groupPromise, createGroup } = require('../fixtures/groups')
 const slugify = __.require('controllers', 'groups/lib/slugify')
 const endpoint = '/api/groups?action=update-settings'
 
@@ -108,5 +108,17 @@ describe('groups:update-settings', () => {
     })
     const { group } = await publicReq('get', `/api/groups?action=by-id&id=${groupId}`)
     group.searchable.should.be.false()
+  })
+
+  it('should update open parameter', async () => {
+    const newGroup = await createGroup()
+    const { _id: groupId } = newGroup
+    await authReq('put', endpoint, {
+      group: groupId,
+      attribute: 'open',
+      value: true
+    })
+    const { group } = await publicReq('get', `/api/groups?action=by-id&id=${groupId}`)
+    group.open.should.be.true()
   })
 })

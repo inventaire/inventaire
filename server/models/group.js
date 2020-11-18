@@ -12,12 +12,13 @@ const attributes = Group.attributes = require('./attributes/group')
 
 Group.create = options => {
   _.log(options, 'group create')
-  const { name, description, searchable, position, creatorId } = options
+  const { name, description, searchable, position, creatorId, open } = options
   validations.pass('name', name)
   validations.pass('description', description)
   validations.pass('searchable', searchable)
   validations.pass('position', position)
   validations.pass('creatorId', creatorId)
+  validations.pass('open', open)
 
   const creator = createMembership(creatorId, null)
 
@@ -32,6 +33,7 @@ Group.create = options => {
     declined: [],
     requested: [],
     position,
+    open,
     creator: creatorId,
     // using the same timestamp for clarity
     created: creator.timestamp
@@ -58,7 +60,11 @@ const membershipActions = {
     return moveMembership(userId, group, 'invited', 'declined')
   },
   request: (userId, placeholder, group) => {
-    group.requested.push(createMembership(userId, null))
+    if (group.open) {
+      group.members.push(createMembership(userId, null))
+    } else {
+      group.requested.push(createMembership(userId, null))
+    }
     return group
   },
   cancelRequest: (userId, placeholder, group) => {

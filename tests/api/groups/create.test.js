@@ -71,4 +71,11 @@ describe('groups:create', () => {
       err.body.error_name.should.equal('invalid_name')
     }
   })
+
+  it('should create an open group', async () => {
+    const name = groupName()
+    const open = true
+    const res = await authReq('post', endpoint, { name, open })
+    res.open.should.be.true()
+  })
 })

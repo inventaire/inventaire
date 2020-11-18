@@ -13,13 +13,17 @@ const sanitization = {
   searchable: {
     optional: true,
     generic: 'boolean'
+  },
+  open: {
+    optional: true,
+    generic: 'boolean'
   }
 }
 
 module.exports = (req, res) => {
   sanitize(req, res, sanitization)
   .then(params => {
-    const { name, description, position } = params
+    const { name, description, position, open } = params
     let { searchable } = params
 
     if (searchable == null) searchable = true
@@ -29,7 +33,8 @@ module.exports = (req, res) => {
       description: description || '',
       searchable,
       position: position || null,
-      creatorId: req.user._id
+      creatorId: req.user._id,
+      open: open || false
     })
   })
   .then(responses_.Send(res))

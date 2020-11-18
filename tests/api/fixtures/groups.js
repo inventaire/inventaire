@@ -16,7 +16,8 @@ const createGroup = (params = {}) => {
   return customAuthReq(user, 'post', `${endpointBase}?action=create`, {
     name,
     position: [ 1, 1 ],
-    searchable: true
+    searchable: true,
+    open: false
   })
 }
 

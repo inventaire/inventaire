@@ -5,7 +5,8 @@ module.exports = {
     'picture',
     'description',
     'searchable',
-    'position'
+    'position',
+    'open'
   ],
 
   usersLists: [
