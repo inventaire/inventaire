@@ -13,10 +13,8 @@ server_port=$(node -p "require('config').port")
 
 if [[ -f "./run/${server_port}-supervisor" ]] ;
 then
-  echo -e "\e[0;32mtests server is running\e[0;30m"
+  echo -e "\e[0;32mtests server is running: see logs in ./logs/test-server.log\e[0;30m"
 else
-  echo -e "\e[0;34mstarting test server\e[0;30m"
-  # If the server wasn't started before, start it
   ./tests/api/scripts/start_tests_server
 fi
 

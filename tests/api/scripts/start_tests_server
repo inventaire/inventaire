@@ -11,5 +11,5 @@ curl -s "$entities_search_engine_host" > /dev/null && echo "entities search engi
   # cf https://ss64.com/bash/syntax-brackets.html
   { ./tests/api/scripts/start_entities_search_engine && sleep 5 ; }
 
-# Start a test server in the background
+echo -e "\e[0;34mStarting test server in the background: see logs in ./logs/test-server.log\e[0;30m"
 npm run watch > logs/test-server.log 2>&1 &
