@@ -1,5 +1,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
+const _ = __.require('builders', 'utils')
 require('should')
 const { publicReq, undesiredRes } = __.require('apiTests', 'utils/utils')
 const { customAuthReq } = __.require('apiTests', 'utils/request')
@@ -33,7 +34,7 @@ describe('items:inventory-view', () => {
   })
 
   it('should return an inventory-view for user items without shelf', async () => {
-    const user = await createUserWithItems()
+    const user = await createUserWithItems({}, _.times(2, () => Object.new({ listing: 'public' })))
     const shelf = await createShelf(user)
     let res = await publicReq('get', `${endpoint}&user=${user._id}&without-shelf=true`)
 
