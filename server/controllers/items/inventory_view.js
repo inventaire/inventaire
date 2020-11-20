@@ -13,7 +13,7 @@ const sanitization = {
   user: { optional: true },
   group: { optional: true },
   shelf: { optional: true },
-  'no-shelf': { optional: true, generic: 'boolean' }
+  'without-shelf': { optional: true, generic: 'boolean' }
 }
 
 module.exports = (req, res) => {
@@ -36,10 +36,9 @@ const validateUserOrGroup = params => {
 }
 
 const getItems = async params => {
-  const { user, group, shelf, reqUserId, 'no-shelf': noShelf } = params
+  const { user, group, shelf, reqUserId, 'without-shelf': withoutShelf } = params
   if (user) {
-    if (noShelf) return getAuthorizedItems.byUserWithoutShelf(user, reqUserId)
-    else return getAuthorizedItems.byUser(user, reqUserId)
+    return getAuthorizedItems.byUser(user, reqUserId, { withoutShelf })
   }
   if (shelf) {
     const shelfDoc = await shelves_.byId(shelf)

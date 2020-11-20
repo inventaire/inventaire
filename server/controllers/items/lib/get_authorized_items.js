@@ -1,7 +1,6 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const getByAccessLevel = require('./get_by_access_level')
-const getByAccessLevelWithoutShelf = require('./get_by_access_level_without_shelf.js')
 const items_ = __.require('controllers', 'items/lib/items')
 const groups_ = __.require('controllers', 'groups/lib/groups')
 const buildKeysFromShelf = __.require('controllers', 'items/lib/build_keys_from_shelf')
@@ -9,14 +8,9 @@ const getInventoryAccessLevel = require('./get_inventory_access_level')
 
 // Return what the reqUserId user is allowed to see
 module.exports = {
-  byUser: async (userId, reqUserId) => {
+  byUser: async (userId, reqUserId, opts = {}) => {
     const accessLevel = await getInventoryAccessLevel(userId, reqUserId)
-    return getByAccessLevel[accessLevel](userId)
-  },
-
-  byUserWithoutShelf: async (userId, reqUserId) => {
-    const accessLevel = await getInventoryAccessLevel(userId, reqUserId)
-    return getByAccessLevelWithoutShelf[accessLevel](userId)
+    return getByAccessLevel[accessLevel](userId, reqUserId, opts)
   },
 
   byGroup: async (groupId, reqUserId) => {
