@@ -30,7 +30,7 @@ module.exports = {
     }
   },
 
-  leveldbMemoryBackend: true,
+  leveldbMemoryBackend: false,
 
   // Disable password hashing to make tests run faster
   hashPasswords: false,

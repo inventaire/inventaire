@@ -1,14 +1,15 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
+const _ = require('lodash')
 require('should')
 const { createWorkWithAuthor, createWorkWithSerie } = require('../fixtures/entities')
-const { getByUri, merge } = require('../utils/entities')
+const { merge } = require('../utils/entities')
 const { publicReq } = require('../utils/utils')
 const { wait } = __.require('lib', 'promises')
 
 // We are calling directly cacheEntityRelations, as the cases that use it would require to edit Wikidata,
 // so the following tests try to reproduce conditions as close as possible to the real use-cases
-const { cacheEntityRelations } = __.require('controllers', 'entities/lib/temporarily_cache_relations')
+const { cacheEntityRelations, getCachedRelations } = __.require('controllers', 'entities/lib/temporarily_cache_relations')
 
 const assertLeveldbDiskBackend = () => {
   if (CONFIG.leveldbMemoryBackend) {
@@ -16,31 +17,28 @@ const assertLeveldbDiskBackend = () => {
   }
 }
 
+// Due to this feature being primarily used to keep data after edits on Wikidata,
+// and due to the revalidation on primary data, it's quite hard to test from the API itself.
 describe('temporarily cache relations', () => {
-  // Test dependency: CONFIG.leveldbMemoryBackend=false
-  xit('should preserve an author relation', async () => {
+  it('should add author relation to cache', async () => {
     assertLeveldbDiskBackend()
     const someAuthorUri = 'wd:Q1345582'
-    const someUnrelatedWorkUri = 'wd:Q176470'
-    const workWithAuthor = await createWorkWithAuthor({ uri: someAuthorUri })
-    const { uri } = workWithAuthor
-    const authorUri = workWithAuthor.claims['wdt:P50'][0]
+    const { uri } = await createWorkWithAuthor({ uri: someAuthorUri })
     await cacheEntityRelations(uri)
-    // Merge with a work entity that doesn't have wdt:P50=wd:Q1345582
-    await merge(uri, someUnrelatedWorkUri)
-    // Give some extra time to CouchDB to update its view
-    await wait(500)
-    const { works } = await publicReq('get', `/api/entities?action=author-works&uri=${authorUri}`)
-    const matchingWorks = works.filter(work => work.uri === someUnrelatedWorkUri)
-    matchingWorks.length.should.equal(1)
-    const foundWork = matchingWorks[0]
-    const newWork = await getByUri(someUnrelatedWorkUri)
-    foundWork.date.should.equal(newWork.claims['wdt:P577'][0])
-    foundWork.serie.should.equal(newWork.claims['wdt:P179'][0])
+    const cachedRelationsEntity = await getCachedRelations(someAuthorUri, 'wdt:P50', _.identity)
+    _.map(cachedRelationsEntity, 'uri').should.containEql(uri)
   })
 
-  // Test dependency: CONFIG.leveldbMemoryBackend=false
-  xit('should preserve a serie relation', async () => {
+  it('should add serie relation to cache', async () => {
+    assertLeveldbDiskBackend()
+    const someSerieUri = 'wd:Q3656893'
+    const { uri } = await createWorkWithSerie({ uri: someSerieUri })
+    await cacheEntityRelations(uri)
+    const cachedRelationsEntity = await getCachedRelations(someSerieUri, 'wdt:P179', _.identity)
+    _.map(cachedRelationsEntity, 'uri').should.containEql(uri)
+  })
+
+  it('should check the primary data', async () => {
     assertLeveldbDiskBackend()
     const someSerieUri = 'wd:Q3656893'
     const someUnrelatedWorkUri = 'wd:Q187655'
@@ -54,14 +52,8 @@ describe('temporarily cache relations', () => {
     await wait(500)
     const { parts } = await publicReq('get', `/api/entities?action=serie-parts&uri=${serieUri}`)
     const matchingWorks = parts.filter(work => work.uri === someUnrelatedWorkUri)
-    matchingWorks.length.should.equal(1)
-    const foundWork = matchingWorks[0]
-    const newWork = await getByUri(someUnrelatedWorkUri)
-    foundWork.date.should.equal(newWork.claims['wdt:P577'][0])
-    // It's is likely that, due to the preference for P1545 as qualifiers on Wikidata,
-    // this assertion will fail at some point in the future, thus the 'if'
-    if (newWork.claims['wdt:P1545'][0]) {
-      foundWork.ordinal.should.equal(newWork.claims['wdt:P1545'][0])
-    }
+    // No matchingWorks should be found as the real entity, which is the primary data,
+    // doesn't have the corresponding claim
+    matchingWorks.length.should.equal(0)
   })
 })
