@@ -7,7 +7,7 @@ const patches_ = require('./lib/patches')
 
 const sanitization = {
   user: { optional: true },
-  limit: { default: 100, max: 10000 },
+  limit: { default: 100, max: 1000 },
   offset: { default: 0 }
 }
 
