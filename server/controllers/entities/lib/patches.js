@@ -13,8 +13,8 @@ module.exports = {
   byId: db.get,
   byEntityId: entityId => db.viewByKeys('byEntityId', [ entityId ]),
   byEntityIds: entityIds => db.viewByKeys('byEntityId', entityIds),
-  byUserId: (userId, limit, offset) => {
-    return Promise.all([
+  byUserId: async (userId, limit, offset) => {
+    const [ viewRes, total ] = await Promise.all([
       db.view(designDocName, 'byUserId', {
         startkey: [ userId, maxKey ],
         endkey: [ userId ],
@@ -28,15 +28,18 @@ module.exports = {
       // so we need to query it separately
       getUserTotalContributions(userId)
     ])
-    .then(([ res, total ]) => {
-      const data = {
-        patches: _.map(res.rows, 'doc'),
-        total
-      }
-      const rangeEnd = offset + limit
-      if (rangeEnd < total) data.continue = rangeEnd
-      return data
+
+    return formatPatchesPage({ viewRes, total, limit, offset })
+  },
+
+  byDate: async (limit, offset) => {
+    const viewRes = await db.view(designDocName, 'byDate', {
+      limit,
+      skip: offset,
+      descending: true,
+      include_docs: true
     })
+    return formatPatchesPage({ viewRes, limit, offset })
   },
 
   byRedirectUri: db.viewByKey.bind(null, 'byRedirectUri'),
@@ -129,4 +132,15 @@ const getUserTotalContributions = userId => {
     const userRow = res.rows[0]
     return userRow ? userRow.value : 0
   })
+}
+
+const formatPatchesPage = ({ viewRes, total, limit, offset }) => {
+  if (total == null) total = viewRes.total_rows
+  const data = {
+    patches: _.map(viewRes.rows, 'doc'),
+    total
+  }
+  const rangeEnd = offset + limit
+  if (rangeEnd < total) data.continue = rangeEnd
+  return data
 }
