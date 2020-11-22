@@ -35,7 +35,7 @@ const getCachedRelations = async (valueUri, property, formatEntity) => {
 }
 
 const relationIsConfirmedByPrimaryData = (property, valueUri) => entity => {
-  return entity.claims[property].includes(valueUri)
+  return entity.claims[property] != null && entity.claims[property].includes(valueUri)
 }
 
 module.exports = { cacheEntityRelations, getCachedRelations, cachedRelationProperties }
