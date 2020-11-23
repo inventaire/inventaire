@@ -58,5 +58,5 @@ const syncDesignDocFile = change => {
 const formatDesignDoc = doc => {
   // Design docs are persisted without their _rev
   doc = _.omit(doc, '_rev')
-  return JSON.stringify(doc, null, 2)
+  return JSON.stringify(doc, null, 2) + '\n'
 }
