@@ -8,9 +8,9 @@ const getInventoryAccessLevel = require('./get_inventory_access_level')
 
 // Return what the reqUserId user is allowed to see
 module.exports = {
-  byUser: async (userId, reqUserId, opts = {}) => {
+  byUser: async (userId, reqUserId, options = {}) => {
     const accessLevel = await getInventoryAccessLevel(userId, reqUserId)
-    return getByAccessLevel[accessLevel](userId, reqUserId, opts)
+    return getByAccessLevel[accessLevel](userId, reqUserId, options)
   },
 
   byGroup: async (groupId, reqUserId) => {

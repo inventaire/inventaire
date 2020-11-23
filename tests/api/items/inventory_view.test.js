@@ -1,6 +1,5 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
 require('should')
 const { publicReq, undesiredRes } = __.require('apiTests', 'utils/utils')
 const { customAuthReq } = __.require('apiTests', 'utils/request')
@@ -34,20 +33,19 @@ describe('items:inventory-view', () => {
   })
 
   it('should return an inventory-view for user items without shelf', async () => {
-    const user = await createUserWithItems({}, _.times(2, () => ({ listing: 'public' })))
+    const user = await createUserWithItems()
     const shelf = await createShelf(user)
-    let res = await publicReq('get', `${endpoint}&user=${user._id}&without-shelf=true`)
-
-    const itemsCount = res.itemsByDate.length
-
+    const { itemsByDate } = await customAuthReq(user, 'get', `${endpoint}&user=${user._id}&without-shelf=true`)
+    const itemsCount = itemsByDate.length
+    const allButOneItemsIds = itemsByDate.slice(0, itemsCount - 1)
+    const itemIdRemainingWithoutShelf = itemsByDate.slice(-1)[0]
     await customAuthReq(user, 'post', '/api/shelves?action=add-items', {
       id: shelf._id,
-      items: res.itemsByDate.slice(0, itemsCount - 1)
+      items: allButOneItemsIds
     })
-
-    res = await publicReq('get', `${endpoint}&user=${user._id}&without-shelf=true`)
-
-    res.itemsByDate.length.should.be.equal(1)
+    const { itemsByDate: updatedItemsByDate } = await customAuthReq(user, 'get', `${endpoint}&user=${user._id}&without-shelf=true`)
+    updatedItemsByDate.length.should.be.equal(1)
+    updatedItemsByDate[0].should.equal(itemIdRemainingWithoutShelf)
   })
 
   it('should return a group inventory-view', done => {
