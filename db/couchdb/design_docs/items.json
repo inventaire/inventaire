@@ -6,7 +6,10 @@
       "map": "(doc)->\n  emit doc.created, [doc._id, doc.title]"
     },
     "byListing": {
-      "map": "(doc)->\n  if doc.listing?\n    emit [doc.owner,doc.listing], null"
+      "map": "(doc)->\n  if doc.listing?\n    emit [doc.owner, doc.listing], null"
+    },
+    "byListingWithoutShelf": {
+      "map": "(doc)->\n  if (not doc.shelves?) or doc.shelves.length is 0\n    emit [doc.owner, doc.listing], null"
     },
     "publicByDate": {
       "map": "(doc)->\n  if doc.listing is 'public'\n    emit doc.created, null"
