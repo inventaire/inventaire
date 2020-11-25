@@ -141,6 +141,10 @@ For a more general introduction to contribution, see [*How to contribute* on wik
 ## Documentation
 see [docs](https://github.com/inventaire/inventaire/tree/master/docs/)
 
+## Wiki
+see [wiki.inventaire.io](http://wiki.inventaire.io)
+You may want to directly go to the [technical wiki page](https://wiki.inventaire.io/wiki/Technic)
+
 ## API
 see wiki: [API](https://github.com/inventaire/inventaire/wiki/API)
 
