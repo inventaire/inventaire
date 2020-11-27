@@ -12,7 +12,7 @@ const autoRotatedKeys = __.require('lib', 'auto_rotated_keys')
 
 // See https://github.com/expressjs/cookie-session/#cookie-options
 const cookieSessionParams = {
-  name,
+  name: `${name}:session`,
   maxAge: cookieMaxAge,
 
   // For a list of available algorithms, run `openssl list -digest-algorithms`

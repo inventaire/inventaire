@@ -5,13 +5,16 @@ const { getUser, undesiredRes } = require('../utils/utils')
 const { rawRequest } = require('../utils/request')
 const endpoint = `${host}/api/auth?action=logout`
 const authentifiedEndpoint = `${host}/api/user`
+const sessionCookieName = `${CONFIG.name}:session`
+const sessionSignatureCookieName = `${sessionCookieName}.sig`
 
 describe('auth:logout', () => {
   it('should logout and unable to access an authentified endpoint', done => {
     getUser()
     .then(user => {
-      const { 'express:sess': sessionCookie, 'express:sess.sig': signatureCookie } = parseSessionCookies(user.cookie)
-      parseEncodedJson(sessionCookie).should.equal(`{"passport":{"user":"${user._id}"}}`)
+      const { [sessionCookieName]: sessionCookie, [sessionSignatureCookieName]: signatureCookie } = getSessionCookies(user.cookie)
+      parseEncodedJson(sessionCookie).passport.user.should.equal(user._id)
+      parseEncodedJson(sessionCookie).timestamp.should.be.a.Number()
       return rawRequest('post', endpoint, {
         headers: {
           cookie: user.cookie
@@ -19,10 +22,10 @@ describe('auth:logout', () => {
       })
       .then(res => {
         const {
-          'express:sess': sessionCookieAfterLogout,
-          'express:sess.sig': signatureCookieAfterLogout
+          [sessionCookieName]: sessionCookieAfterLogout,
+          [sessionSignatureCookieName]: signatureCookieAfterLogout
         } = getSessionCookies(res.headers['set-cookie'])
-        parseEncodedJson(sessionCookieAfterLogout).should.equal('{"passport":{}}')
+        parseEncodedJson(sessionCookieAfterLogout).passport.should.deepEqual({})
         signatureCookieAfterLogout.should.not.equal(signatureCookie)
         return rawRequest('get', authentifiedEndpoint, {
           headers: {
@@ -40,21 +43,16 @@ describe('auth:logout', () => {
   })
 })
 
-const parseSessionCookies = cookies => {
-  const cookiesArray = cookies.split(/GMT;?( httponly;)?/)
-  return getSessionCookies(cookiesArray)
+const sessionCookiePattern = new RegExp(`${sessionCookieName}=([\\w/=+]+)`)
+const sessionSignatureCookiePattern = new RegExp(`${sessionCookieName}\\.sig=([\\w/=+]+)`)
+
+const getSessionCookies = cookieStr => {
+  const sessionCookieMatch = cookieStr.match(sessionCookiePattern)
+  const sessionSignatureCookieMatch = cookieStr.match(sessionSignatureCookiePattern)
+  return {
+    [sessionCookieName]: sessionCookieMatch[1],
+    [sessionSignatureCookieName]: sessionSignatureCookieMatch[1],
+  }
 }
 
-const getSessionCookies = cookiesArray => {
-  if (typeof cookiesArray === 'string') cookiesArray = cookiesArray.split(';')
-  const cookies = {}
-  cookiesArray
-  .filter(cookie => cookie && cookie.startsWith('express:sess'))
-  .forEach(cookie => {
-    const [ key, value ] = cookie.trim().split(';')[0].split('=')
-    cookies[key] = value
-  })
-  return cookies
-}
-
-const parseEncodedJson = base64Str => Buffer.from(base64Str, 'base64').toString()
+const parseEncodedJson = base64Str => JSON.parse(Buffer.from(base64Str, 'base64').toString())
