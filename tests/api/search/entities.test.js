@@ -13,7 +13,7 @@ describe('search:entities', () => {
 
   before(async () => {
     // ensure wikidata uris are indexed
-    const wikidataUris = [ 'wd:Q184226', 'wd:Q180736', 'wd:Q8337', 'wd:Q225946', 'wd:Q3409094' ]
+    const wikidataUris = [ 'wd:Q184226', 'wd:Q180736', 'wd:Q8337', 'wd:Q225946', 'wd:Q3409094', 'wd:Q3236382' ]
     await getByUris(wikidataUris, null, false)
 
     // create and index all entities
