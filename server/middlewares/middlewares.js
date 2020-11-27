@@ -22,6 +22,7 @@ module.exports = {
 
     auth.cookieParser,
     auth.session,
+    auth.enforceSessionMaxAge,
     auth.passport.initialize,
     auth.passport.session,
     auth.basicAuth,

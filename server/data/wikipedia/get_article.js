@@ -4,7 +4,7 @@ const requests_ = __.require('lib', 'requests')
 const error_ = __.require('lib', 'error/error')
 const qs = require('querystring')
 const cache_ = __.require('lib', 'cache')
-const { oneMonth } = __.require('lib', 'times')
+const { oneMonth } = __.require('lib', 'time')
 
 module.exports = params => {
   const { lang, title, introOnly } = params

@@ -7,7 +7,7 @@ const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const { defer } = __.require('lib', 'promises')
 const { normalizeTerm } = require('../terms_normalization')
-const { oneMinute } = __.require('lib', 'times')
+const { oneMinute } = __.require('lib', 'time')
 
 const cache = {}
 

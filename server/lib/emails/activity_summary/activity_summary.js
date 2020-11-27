@@ -4,7 +4,7 @@ const _ = __.require('builders', 'utils')
 const { findOneWaitingForSummary } = __.require('controllers', 'user/lib/summary')
 const sendActivitySummary = require('./send_activity_summary')
 
-const { oneHour } = __.require('lib', 'times')
+const { oneHour } = __.require('lib', 'time')
 const { maxEmailsPerHour } = CONFIG.activitySummary
 const emailsInterval = oneHour / maxEmailsPerHour
 

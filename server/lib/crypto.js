@@ -31,3 +31,5 @@ const createHexHash = algo => input => {
 
 exports.sha1 = createHexHash('sha1')
 exports.md5 = createHexHash('md5')
+
+exports.getRandomBytesBuffer = length => crypto.randomBytes(length)

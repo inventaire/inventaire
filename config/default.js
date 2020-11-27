@@ -28,7 +28,11 @@ const config = module.exports = {
     return `${this.publicProtocol}://${this.publicHost}:${this.port}`
   },
   invHost: 'https://inventaire.io',
-  secret: 'yoursecrethere',
+  // To allow fallback between servers, they need to share the same session keys:
+  // one should have autoRotateKeys=true and the others autoRotateKeys=false
+  autoRotateKeys: true,
+  // Force to renew cookies at least every 6 months
+  cookieMaxAge: 180 * 24 * 3600 * 1000,
   // Debug mode:
   // - log requests body
   debug: false,
@@ -93,7 +97,6 @@ const config = module.exports = {
   serveStaticFiles: true,
   noCache: true,
   staticMaxAge: 0,
-  cookieMaxAge: 10 * 365 * 24 * 3600 * 1000,
 
   hashPasswords: true,
   requestsLogger: {

@@ -1,5 +1,5 @@
 const __ = require('config').universalPath
-const { oneMinute } = __.require('lib', 'times')
+const { oneMinute } = __.require('lib', 'time')
 
 const attemptsLimit = 10
 const periodMinutes = 5

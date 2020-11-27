@@ -5,7 +5,7 @@ const error_ = __.require('lib', 'error/error')
 const assert_ = __.require('utils', 'assert_types')
 const db = __.require('level', 'get_sub_db')('cache', 'json')
 const { offline } = CONFIG
-const { oneDay, oneMonth } = __.require('lib', 'times')
+const { oneDay, oneMonth, expired } = __.require('lib', 'time')
 
 module.exports = {
   // - key: the cache key
@@ -144,7 +144,7 @@ const putResponseInCache = (key, res) => {
   })
 }
 
-const isFreshEnough = (timestamp, timespan) => !_.expired(timestamp, timespan)
+const isFreshEnough = (timestamp, timespan) => !expired(timestamp, timespan)
 
 const returnOldValue = (key, err) => {
   return checkCache(key, Infinity)

@@ -8,7 +8,7 @@ const sanitizeEntry = require('./lib/resolver/sanitize_entry')
 const resolve = require('./lib/resolver/resolve')
 const UpdateResolvedEntry = require('./lib/resolver/update_resolved_entry')
 const CreateUnresolvedEntry = require('./lib/resolver/create_unresolved_entry')
-const { oneHour } = __.require('lib', 'times')
+const { oneHour } = __.require('lib', 'time')
 
 // Entry example:
 // {

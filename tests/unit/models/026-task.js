@@ -1,8 +1,8 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
 require('should')
 const Task = __.require('models', 'task')
+const { expired } = __.require('lib', 'time')
 
 const validDoc = () => ({
   type: 'deduplicate',
@@ -26,7 +26,7 @@ describe('task model', () => {
       const taskDoc = Task.create(validDoc())
       taskDoc.suspectUri.should.equal(validDoc().suspectUri)
       taskDoc.suggestionUri.should.equal(validDoc().suggestionUri)
-      _.expired(taskDoc.created, 100).should.be.false()
+      expired(taskDoc.created, 100).should.be.false()
     })
 
     it('should throw if no suspect', () => {

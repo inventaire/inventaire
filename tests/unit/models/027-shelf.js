@@ -1,6 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
+const { expired } = __.require('lib', 'time')
 const Shelf = __.require('models', 'shelf')
 require('should')
 
@@ -83,7 +84,7 @@ describe('shelf model', () => {
     describe('created', () => {
       it('should return an object with a created time', done => {
         const shelf = create(validShelf)
-        _.expired(shelf.created, 100).should.be.false()
+        expired(shelf.created, 100).should.be.false()
         done()
       })
     })

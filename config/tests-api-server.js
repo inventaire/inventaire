@@ -3,6 +3,7 @@
 // Override locally in ./local-tests-api-server.js
 
 module.exports = {
+  autoRotateKeys: false,
   dataseed: {
     enabled: false
   },
