@@ -1,7 +1,7 @@
 require('should')
 const CONFIG = require('config')
 const host = CONFIG.fullHost()
-const { getUser, undesiredRes } = require('../utils/utils')
+const { getUser, shouldNotBeCalled } = require('../utils/utils')
 const { rawRequest } = require('../utils/request')
 const endpoint = `${host}/api/auth?action=logout`
 const authentifiedEndpoint = `${host}/api/user`
@@ -9,37 +9,31 @@ const sessionCookieName = `${CONFIG.name}:session`
 const sessionSignatureCookieName = `${sessionCookieName}.sig`
 
 describe('auth:logout', () => {
-  it('should logout and unable to access an authentified endpoint', done => {
-    getUser()
-    .then(user => {
-      const { [sessionCookieName]: sessionCookie, [sessionSignatureCookieName]: signatureCookie } = getSessionCookies(user.cookie)
-      parseEncodedJson(sessionCookie).passport.user.should.equal(user._id)
-      parseEncodedJson(sessionCookie).timestamp.should.be.a.Number()
-      return rawRequest('post', endpoint, {
-        headers: {
-          cookie: user.cookie
-        }
-      })
-      .then(res => {
-        const {
-          [sessionCookieName]: sessionCookieAfterLogout,
-          [sessionSignatureCookieName]: signatureCookieAfterLogout
-        } = getSessionCookies(res.headers['set-cookie'])
-        parseEncodedJson(sessionCookieAfterLogout).passport.should.deepEqual({})
-        signatureCookieAfterLogout.should.not.equal(signatureCookie)
-        return rawRequest('get', authentifiedEndpoint, {
-          headers: {
-            cookie: res.headers['set-cookie']
-          }
-        })
-      })
+  it('should logout and unable to access an authentified endpoint', async () => {
+    const user = await getUser()
+    const { [sessionCookieName]: sessionCookie, [sessionSignatureCookieName]: signatureCookie } = getSessionCookies(user.cookie)
+    parseEncodedJson(sessionCookie).passport.user.should.equal(user._id)
+    parseEncodedJson(sessionCookie).timestamp.should.be.a.Number()
+    const { headers } = await rawRequest('post', endpoint, {
+      headers: {
+        cookie: user.cookie
+      }
     })
-    .then(undesiredRes(done))
+    const {
+      [sessionCookieName]: sessionCookieAfterLogout,
+      [sessionSignatureCookieName]: signatureCookieAfterLogout
+    } = getSessionCookies(headers['set-cookie'])
+    parseEncodedJson(sessionCookieAfterLogout).passport.should.deepEqual({})
+    signatureCookieAfterLogout.should.not.equal(signatureCookie)
+    await rawRequest('get', authentifiedEndpoint, {
+      headers: {
+        cookie: headers['set-cookie']
+      }
+    })
+    .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(401)
-      done()
     })
-    .catch(done)
   })
 })
 
