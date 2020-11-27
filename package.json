@@ -49,7 +49,6 @@
     "config": "^1.16.0",
     "cookie-parser": "^1.4.0",
     "cookie-session": "^1.3.2",
-    "cookie-signature": "^1.0.6",
     "couch-init2": "^3.0.0",
     "couch2elastic4sync": "git+https://github.com/inventaire/couch2elastic4sync.git#a225efb",
     "credential": "^2.0.0",
