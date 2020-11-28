@@ -75,14 +75,24 @@ const initFollow = async (dbName, reset, lastSeq) => {
   await waitForCouchInit()
   const dbLastSeq = await getDbLastSeq(dbUrl)
 
+  // If there is a legitimate large gap, use a dedicated script based on CouchDB current state
+  // rather than attempt to follow from the beginning.
+  // Typical case: when starting the server with a large entities database and an empty Elasticsearch,
+  // the recommended process is to load entities in Elasticsearch by using scripts/indexation/load.js
+  if (dbLastSeq > lastSeq + 10000) {
+    _.log({ lastSeq, dbLastSeq }, `${dbName} saved last_seq is too far beyond: ignoring`, 'yellow')
+    lastSeq = dbLastSeq
+  }
+
   // Reset lastSeq if the dbLastSeq is behind
   // as this probably means the database was deleted and re-created
   // and the leveldb-backed meta db kept the last_seq value of the previous db
   if (lastSeq > dbLastSeq) {
     _.log({ lastSeq, dbLastSeq }, `${dbName} saved last_seq ahead of db: reseting`, 'yellow')
     lastSeq = 0
-    setLastSeq(lastSeq)
   }
+
+  setLastSeq(lastSeq)
 
   await resetIfNeeded(lastSeq, reset)
   return startFollowingDb({ dbName, dbUrl, lastSeq, setLastSeq })
