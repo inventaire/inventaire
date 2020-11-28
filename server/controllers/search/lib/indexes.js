@@ -1,15 +1,25 @@
 const CONFIG = require('config')
 
+const indexes = {
+  wikidata: 'wikidata',
+  // Match CouchDB database names
+  entities: CONFIG.db.name('entities'),
+  users: CONFIG.db.name('users'),
+  groups: CONFIG.db.name('groups')
+}
+
 const localAndRemoteEntity = type => ({
-  indexes: [ 'wikidata', CONFIG.db.name('entities') ],
+  indexes: Object.values(indexes),
   type
 })
+
 const remoteOnlyEntity = type => ({
-  indexes: [ 'wikidata' ],
+  indexes: [ indexes.wikidata ],
   type
 })
+
 const localDatabase = (dbBaseName, type) => ({
-  indexes: [ CONFIG.db.name(dbBaseName) ],
+  indexes: [ indexes[dbBaseName] ],
   type
 })
 
@@ -27,4 +37,14 @@ const typesData = {
 
 const possibleTypes = Object.keys(typesData)
 
-module.exports = { typesData, possibleTypes }
+const indexedEntitiesTypes = [
+  'works',
+  'humans',
+  'genres',
+  'movements',
+  'publishers',
+  'series',
+  'collections'
+]
+
+module.exports = { indexes, typesData, possibleTypes, indexedEntitiesTypes }

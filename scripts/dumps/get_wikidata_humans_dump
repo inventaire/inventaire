@@ -3,15 +3,14 @@
 # Generate a pre-filtered dump of humans in Wikidata to ease development setup
 # cf https://github.com/inventaire/inventaire-deploy/blob/d280055/install_entities_search_engine#L24-L28
 
-which wikidata-filter > /dev/null || {
-  echo "requires to have https://www.npmjs.com/package/wikidata-filter installed, either globally or just in this repo"
-  echo "(it is not installed as a dev dependency as the use made of it is not worth the subdependencies maintainance)"
-  exit 1
-}
+curl -s https://dumps.wikimedia.org/wikidatawiki/entities/latest-all.json.bz2 | \
+  pbzip2 -cd | \
+  # Prefilter to keep only entities that refer to Q5 in some way
+  grep '"Q5"' | \
+  head -n 100 | \
+  # Keep only entities having the claim P31:Q5
+  # Omit the attributes type, claims, sitelinks, keeping only info, labels, aliases and descriptions.
+  wikibase-dump-filter --claim P31:Q5 --omit type,sitelinks | \
+  gzip -c9 > humans.ndjson.bz2
 
-curl -s https://dumps.wikimedia.org/wikidatawiki/entities/latest-all.json.gz |
-  gzip -d |
-  wikidata-filter --claim P31:Q5 --omit type,sitelinks |
-  gzip -c9 > humans.ndjson.gz
-
-chmod 664 humans.ndjson.gz
+chmod 664 humans.ndjson.bz2

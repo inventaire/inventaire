@@ -1,0 +1,14 @@
+SELECT DISTINCT ?movement WHERE {
+  {
+    # entities that are instances of a cultural movement
+    ?movement wdt:P31/wdt:P279* wd:Q2198855 .
+  } UNION {
+    # entities used as movement
+    ?book wdt:P31/wdt:P279* wd:Q571 .
+    ?book wdt:P135 ?movement .
+  }
+  MINUS {
+    # minus entities that are instances of a Wikimedia disambiguation page
+    ?movement wdt:P31 wd:Q4167410 .
+  }
+}

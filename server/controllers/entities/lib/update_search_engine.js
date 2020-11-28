@@ -1,41 +1,16 @@
-// Keep our entitiesSearchEngine instance updated by requesting it
-// to update its data everytime an entity with a type is requested here:
-// Every cache miss triggers an update request, meaning that 'refresh' request
-// are also propagated to the search engine \o/
-// see https://github.com/inventaire/entities-search-engine
-
-// Other advantage of requesting update from here:
-// - we already have the logic to determine the entity's type
-// - it allows to keep the access to the search engine update endpoint restricted:
-//   the endpoint can trust the input entity type to be true without having to
-//   check it itself
-
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const requests_ = __.require('lib', 'requests')
-const { offline } = CONFIG
-const { updateEnabled, host, delay } = CONFIG.entitiesSearchEngine
+const { delay } = CONFIG.entitiesSearchEngine
 const radio = __.require('lib', 'radio')
+const updateFromUrisPerType = __.require('controllers', 'entities/lib/indexation/update_from_uris_per_type')
 
 module.exports = () => {
-  if (!updateEnabled || offline) return
-
-  _.info('initializing entitiesSearchEngine update')
-
   let urisPerType = {}
 
   const requestUpdate = () => {
-    let body
-    [ body, urisPerType ] = [ urisPerType, {} ]
-    return requests_.post(host, { body })
-    .catch(err => {
-      if (err.message.match('ECONNREFUSED')) {
-        return _.warn('entities search engine updater is offline')
-      } else {
-        return _.error(err, 'entities search engine update err')
-      }
-    })
+    updateFromUrisPerType(urisPerType).catch(_.Error('entities search engine update err'))
+    urisPerType = {}
   }
 
   // Send a batch every #{delay} milliseconds max
