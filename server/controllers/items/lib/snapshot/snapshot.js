@@ -31,6 +31,8 @@ module.exports = {
       assert_.string(item.entity)
       item.snapshot = await getSnapshot(item.entity)
     } catch (err) {
+      err.context = err.context || {}
+      err.context.item = item
       _.error(err, 'snapshot_.addToItem error')
       item.snapshot = item.snapshot || {}
     }
