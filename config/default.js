@@ -48,12 +48,15 @@ const config = module.exports = {
     protocol: 'http',
     hostname: 'localhost',
     port: 5984,
-    fullHost: function () {
-      return `${this.protocol}://${this.username}:${this.password}@${this.hostname}:${this.port}`
-    },
     username: 'yourcouchdbusername',
     password: 'yourcouchdbpassword',
     suffix: null,
+    fullHost: function () {
+      return `${this.protocol}://${this.username}:${this.password}@${this.hostname}:${this.port}`
+    },
+    databaseUrl: function (dbBaseName) {
+      return `${this.protocol}://${this.hostname}:${this.port}/${this.name(dbBaseName)}`
+    },
     name: function (dbBaseName) {
       if (this.suffix != null) return `${dbBaseName}-${this.suffix}`
       else return dbBaseName
