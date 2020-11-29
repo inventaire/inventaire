@@ -24,6 +24,11 @@ module.exports = {
     }
   },
 
+  outgoingRequests: {
+    log: true,
+    bodyLogLimit: 2000
+  },
+
   mediaStorage: {
     local: {
       internalEndpoint: () => `http://localhost:${port}/local/`

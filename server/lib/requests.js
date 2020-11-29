@@ -1,6 +1,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const { logOutgoingRequests } = CONFIG
+const { log: logOutgoingRequests, bodyLogLimit } = CONFIG.outgoingRequests
 const assert_ = __.require('utils', 'assert_types')
 const { wait } = __.require('lib', 'promises')
 const fetch = require('node-fetch')
@@ -146,8 +146,8 @@ const startReqTimer = (method, url, options) => {
   if (options.bodyStream) body += '[stream]'
   else if (options && options.body) {
     const { length } = options.body
-    if (length < 500) body += options.body
-    else body += `${options.body.slice(0, 100)} [${length} total characters...]`
+    if (length < bodyLogLimit) body += options.body
+    else body += `${options.body.slice(0, bodyLogLimit)} [${length} total characters...]`
   }
 
   const reqTimerKey = magenta(`${method.toUpperCase()} ${url}${body} [r${++requestId}]`)
