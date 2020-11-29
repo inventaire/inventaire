@@ -17,6 +17,9 @@ module.exports = async (entity, options = {}) => {
   entity._id = getEntityId(entity)
   delete entity.id
 
+  // Entities from Wikidata dump still have a type='item' set
+  if (entity.type === 'item') delete entity.type
+
   const { claims, type } = entity
 
   entity.type = dropPlural(getType({ claims, type }))

@@ -30,7 +30,7 @@ const typesAliases = module.exports = {
     'wd:Q53843792', // literary dylogy
     'wd:Q2005755', // novel sequence
     'wd:Q21190961', // fumetti series
-    'wd:Q54294944' // webcomic series
+    'wd:Q213369' // webcomic
   ],
   works: [
     'wd:Q571', // book
@@ -45,11 +45,11 @@ const typesAliases = module.exports = {
     'wd:Q25379', // theatre play
     'wd:Q7725634', // literary work
     'wd:Q17518870', // group of literary works
-    'wd:Q12308638', // poetry anthology
+    'wd:Q12106333', // poetry collection
     'wd:Q1279564', // short story collection
     'wd:Q386724', // work
     'wd:Q49084', // short story / conte
-    'wd:Q20730955', // tale
+    'wd:Q17991521', // tale
     'wd:Q699', // fairy tale
     'wd:Q34620', // Greek tragedy
     'wd:Q8274', // manga
@@ -91,7 +91,6 @@ const typesAliases = module.exports = {
     'wd:Q2085381', // publisher
     'wd:Q1320047', // book publishing company
     'wd:Q1114515', // comics publishing company
-    'wd:Q3279251', // bandes dessinées publishing company
     'wd:Q149985', // self-publishing company
     'wd:Q1568650', // self-publishing (author == publisher)
     'wd:Q19720188', // small publisher

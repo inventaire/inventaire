@@ -30,3 +30,8 @@ npm run indexation:load-from-couchdb groups
 ```sh
 npm run indexation:load-from-couchdb entities
 ```
+
+### Wikidata entities
+```sh
+npm run indexation:wikidata:load-from-dump
+```
