@@ -4,9 +4,9 @@ const _ = __.require('builders', 'utils')
 const should = require('should')
 const { wait } = __.require('lib', 'promises')
 const { authReq, shouldNotBeCalled } = __.require('apiTests', 'utils/utils')
-const { updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
 const { createWork, createHuman, someGoodReadsId, someLibraryThingsWorkId, someOpenLibraryId, createWorkWithAuthor, generateIsbn13 } = __.require('apiTests', 'fixtures/entities')
 const { addClaim, getByUri } = __.require('apiTests', 'utils/entities')
+const { waitForIndexation } = __.require('apiTests', 'utils/search')
 const { createEditionWithIsbn, randomLabel } = __.require('apiTests', 'fixtures/entities')
 
 const resolve = entries => {
@@ -313,8 +313,8 @@ describe('entities:resolve:on-labels', () => {
     const workLabel = randomLabel()
     const seedLabel = randomLabel()
     const authorLabel = author.labels.en
-    await createWorkWithAuthor(author, workLabel)
-    await wait(elasticsearchUpdateDelay)
+    const work = await createWorkWithAuthor(author, workLabel)
+    await waitForIndexation('entities', work._id)
     const { entries } = await resolve(basicEntry(seedLabel, authorLabel))
     should(entries[0].works[0].uri).not.be.ok()
   })
@@ -324,7 +324,7 @@ describe('entities:resolve:on-labels', () => {
     const workLabel = randomLabel()
     const authorLabel = author.labels.en
     const work = await createWorkWithAuthor(author, workLabel)
-    await wait(elasticsearchUpdateDelay)
+    await waitForIndexation('entities', work._id)
     const { entries } = await resolve(basicEntry(workLabel, authorLabel))
     entries[0].works[0].uri.should.equal(work.uri)
     entries[0].authors[0].uri.should.equal(author.uri)
@@ -336,7 +336,7 @@ describe('entities:resolve:on-labels', () => {
     const seedLabel = workLabel.toUpperCase()
     const authorLabel = author.labels.en
     const work = await createWorkWithAuthor(author, workLabel)
-    await wait(elasticsearchUpdateDelay)
+    await waitForIndexation('entities', work._id)
     const { entries } = await resolve(basicEntry(seedLabel, authorLabel))
     entries[0].works[0].uri.should.equal(work.uri)
     entries[0].authors[0].uri.should.equal(author.uri)
@@ -346,11 +346,14 @@ describe('entities:resolve:on-labels', () => {
     const author = await createHuman()
     const sameLabelAuthor = await createHuman({ labels: author.labels })
     const workLabel = randomLabel()
-    await Promise.all([
+    const [ workA, workB ] = await Promise.all([
       createWorkWithAuthor(author, workLabel),
       createWorkWithAuthor(sameLabelAuthor, workLabel)
     ])
-    await wait(elasticsearchUpdateDelay)
+    await Promise.all([
+      waitForIndexation('entities', workA._id),
+      waitForIndexation('entities', workB._id),
+    ])
     const { entries } = await resolve(basicEntry(workLabel, author.labels.en))
     should(entries[0].works[0].uri).not.be.ok()
     should(entries[0].authors[0].uri).not.be.ok()

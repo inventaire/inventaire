@@ -3,10 +3,8 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
 const faker = require('faker')
-const { wait } = __.require('lib', 'promises')
 const { publicReq, authReq, getUser, shouldNotBeCalled } = require('../utils/utils')
-const { updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
-const { search } = require('../utils/search')
+const { search, waitForIndexation } = require('../utils/search')
 
 describe('search:global', () => {
   describe('parameters', () => {
@@ -43,7 +41,7 @@ describe('search:global', () => {
   describe('user', () => {
     it('should return a user', async () => {
       const user = await getUser()
-      await wait(elasticsearchUpdateDelay)
+      await waitForIndexation('users', user._id)
       const results = await search('users', user.username)
       results.should.be.an.Array()
       results.forEach(result => result.type.should.equal('users'))
@@ -55,7 +53,7 @@ describe('search:global', () => {
     it('should return a group', async () => {
       const name = `group ${faker.lorem.word()}`
       const group = await authReq('post', '/api/groups?action=create', { name })
-      await wait(elasticsearchUpdateDelay)
+      await waitForIndexation('groups', group._id)
       const results = await search('groups', name)
       results.should.be.an.Array()
       results.forEach(result => result.type.should.equal('groups'))
@@ -65,7 +63,7 @@ describe('search:global', () => {
     it('should not return a private group unless requester is a member', async () => {
       const name = `group ${faker.lorem.word()}`
       const group = await authReq('post', '/api/groups?action=create', { name, searchable: false })
-      await wait(elasticsearchUpdateDelay)
+      await waitForIndexation('groups', group._id)
       const results = await search('groups', name)
       _.map(results, 'id').includes(group._id).should.be.false()
       // The same request but authentified with a group member account should find the group

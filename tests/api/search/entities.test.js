@@ -2,29 +2,34 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
-const { wait } = __.require('lib', 'promises')
 const { createWork, createHuman, createSerie, createCollection, createPublisher } = require('../fixtures/entities')
 const { getByUris } = require('../utils/entities')
-const { updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
-const { search } = require('../utils/search')
+const { search, waitForIndexation } = require('../utils/search')
+const wikidataUris = [ 'wd:Q184226', 'wd:Q180736', 'wd:Q8337', 'wd:Q225946', 'wd:Q3409094', 'wd:Q3236382' ]
 
 describe('search:entities', () => {
-  let human, work, serie, collection, publisher = {}
+  let human, work, serie, collection, publisher
 
   before(async () => {
-    // ensure wikidata uris are indexed
-    const wikidataUris = [ 'wd:Q184226', 'wd:Q180736', 'wd:Q8337', 'wd:Q225946', 'wd:Q3409094', 'wd:Q3236382' ]
-    await getByUris(wikidataUris, null, false)
+    [ human, work, serie, publisher, collection ] = await Promise.all([
+      // create and index all entities
+      createHuman(),
+      createWork(),
+      createSerie(),
+      createPublisher(),
+      createCollection(),
+      // Ensure wikidata uris are indexed
+      getByUris(wikidataUris, null, false),
+    ])
 
-    // create and index all entities
-    human = await createHuman()
-    work = await createWork()
-    serie = await createSerie()
-    publisher = await createPublisher()
-    collection = await createCollection()
-
-    // only then wait for the loong elasticsearchUpdateDelay()
-    await wait(elasticsearchUpdateDelay)
+    await Promise.all([
+      waitForIndexation('entities', human._id),
+      waitForIndexation('entities', work._id),
+      waitForIndexation('entities', serie._id),
+      waitForIndexation('entities', publisher._id),
+      waitForIndexation('entities', collection._id),
+      ...wikidataUris.map(uri => waitForIndexation('wikidata', uri.split(':')[1]))
+    ])
   })
 
   describe('humans', () => {
