@@ -6,7 +6,7 @@ const getAuthorWorksData = require('./get_author_works_data')
 const automerge = require('./automerge')
 const { getEntityNormalizedTerms } = __.require('controllers', 'entities/lib/terms_normalization')
 
-module.exports = entity => existingTasks => {
+module.exports = (entity, existingTasks) => {
   const { uri: suspectUri } = entity
   return Promise.all([
     searchEntityDuplicatesSuggestions(entity, existingTasks),

@@ -1,7 +1,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 let error_ = __.require('lib', 'error/error')
-const { tap } = __.require('lib', 'promises')
 const getEntityByUri = __.require('controllers', 'entities/lib/get_entity_by_uri')
 const tasks_ = require('./tasks')
 const getNewTasks = require('./get_new_tasks')
@@ -14,23 +13,21 @@ module.exports = async uri => {
     throw error_.new('invalid uri domain', 400, { uri })
   }
 
-  return getEntityByUri({ uri })
-  .then(entity => {
-    if (entity == null) throw error_.notFound({ uri })
+  const entity = await getEntityByUri({ uri })
+  if (entity == null) throw error_.notFound({ uri })
 
-    if (entity.uri.split(':')[0] === 'wd') {
-      throw error_.new('entity is already a redirection', 400, { uri })
-    }
+  if (entity.uri.split(':')[0] === 'wd') {
+    throw error_.new('entity is already a redirection', 400, { uri })
+  }
 
-    if (!supportedTypes.includes(entity.type)) {
-      throw error_.new(`unsupported type: ${entity.type}`, 400, { uri, supportedTypes })
-    }
+  if (!supportedTypes.includes(entity.type)) {
+    throw error_.new(`unsupported type: ${entity.type}`, 400, { uri, supportedTypes })
+  }
 
-    return getExistingTasks(uri)
-    .then(getNewTasks(entity))
-    .then(tasks_.createInBulk)
-    .then(tap(() => updateRelationScore(uri)))
-  })
+  const existingTasks = await getExistingTasks(uri)
+  const newTasksObjects = await getNewTasks(entity, existingTasks)
+  await tasks_.createInBulk(newTasksObjects)
+  await updateRelationScore(uri)
 }
 
 const getExistingTasks = uri => tasks_.bySuspectUris([ uri ])
