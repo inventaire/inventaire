@@ -4,7 +4,7 @@ const should = require('should')
 const { merge, revertMerge } = require('../utils/entities')
 const { Wait } = __.require('lib', 'promises')
 const { createHuman } = require('../fixtures/entities')
-const { deleteByUris: deleteEntityByUris } = require('../utils/entities')
+const { deleteByUris: deleteEntityByUris, findOrIndexEntities } = require('../utils/entities')
 const { createTask } = require('../fixtures/tasks')
 const { getByIds, getBySuspectUri, update, checkEntities } = require('../utils/tasks')
 const { wait } = __.require('lib', 'promises')
@@ -12,6 +12,10 @@ const { wait } = __.require('lib', 'promises')
 // Tests dependency: having a populated Elasticsearch wikidata index
 describe('tasks:hooks', () => {
   describe('entity merge', () => {
+    before(async () => {
+      const wikidataUris = [ 'wd:Q4719295', 'wd:Q75267465', 'wd:Q24204983', 'wd:Q4719295', 'wd:Q228024', 'wd:Q237087', 'wd:Q5535971' ]
+      await findOrIndexEntities(wikidataUris)
+    })
     it('should update same suspect tasks to merged state', done => {
       // Alexander Kennedy is expected to have several merge suggestions
       createHuman({ labels: { en: 'Alexander Kennedy' } })

@@ -4,11 +4,15 @@ const _ = __.require('builders', 'utils')
 require('should')
 const { checkEntities, getBySuspectUri } = require('../utils/tasks')
 const { undesiredRes } = __.require('apiTests', 'utils/utils')
-const { getByUris } = require('../utils/entities')
+const { findOrIndexEntities } = require('../utils/entities')
 const { createHuman, createWork } = require('../fixtures/entities')
 
 // Tests dependency: having a populated Elasticsearch wikidata index
 describe('tasks:check-entities', () => {
+  before(async () => {
+    const wikidataUris = [ 'wd:Q237087' ]
+    await findOrIndexEntities(wikidataUris)
+  })
   it('should refuse to check entities of non-allowlisted types', done => {
     // Currently, only humans can be checked for duplicates,
     // or at least are the entrypoint for duplicate checks

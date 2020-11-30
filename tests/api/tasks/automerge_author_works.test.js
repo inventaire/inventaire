@@ -6,13 +6,18 @@ require('should')
 
 const automergeAuthorWorks = __.require('controllers', 'tasks/lib/automerge_author_works')
 const { checkEntities } = require('../utils/tasks')
-const { getByUris } = require('../utils/entities')
+const { getByUris, findOrIndexEntities } = require('../utils/entities')
 const { createHuman, createWorkWithAuthor, addSerie } = require('../fixtures/entities')
 
 describe('automerge_author_works: only from inv works to wd works', () => {
+  before(async () => {
+    // Tests dependency: having a populated ElasticSearch wikidata index
+    const wikidataUris = [ 'wd:Q205739', 'wd:Q1748845', 'wd:Q172140' ]
+    await findOrIndexEntities(wikidataUris)
+  })
+
   it('should automerge inv works to a wd work', done => {
-    // Alan Moore uri
-    const authorUri = 'wd:Q205739'
+    const authorUri = 'wd:Q205739' // Alan Moore uri
     const workLabel = 'Voice of the Fire'
     const workWdUri = 'wd:Q3825051' // 'Voice of the Fire' uri
 
