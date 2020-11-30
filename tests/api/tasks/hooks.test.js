@@ -9,16 +9,20 @@ const { createTask } = require('../fixtures/tasks')
 const { getByIds, getBySuspectUri, update, checkEntities } = require('../utils/tasks')
 const { wait } = __.require('lib', 'promises')
 
-// Tests dependency: having a populated Elasticsearch wikidata index
 describe('tasks:hooks', () => {
   describe('entity merge', () => {
     before(async () => {
-      const wikidataUris = [ 'wd:Q4719295', 'wd:Q75267465', 'wd:Q24204983', 'wd:Q4719295', 'wd:Q228024', 'wd:Q237087', 'wd:Q5535971' ]
+      // Tests dependency: having a populated ElasticSearch wikidata index
+      const wikidataUris = [
+        'wd:Q535', 'wd:Q54551995', // some Victor Hugos
+        'wd:Q3182477', 'wd:Q228024', // some John Smiths
+        'wd:Q237087' // Fred Vargas
+      ]
       await findOrIndexEntities(wikidataUris)
     })
     it('should update same suspect tasks to merged state', done => {
       // Alexander Kennedy is expected to have several merge suggestions
-      createHuman({ labels: { en: 'Alexander Kennedy' } })
+      createHuman({ labels: { en: 'Victor Hugo' } })
       .then(human => checkEntities(human.uri))
       .then(tasks => {
         const task = tasks[0]
