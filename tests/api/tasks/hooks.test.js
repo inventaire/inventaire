@@ -20,9 +20,8 @@ describe('tasks:hooks', () => {
       ]
       await findOrIndexEntities(wikidataUris)
     })
-    it('should update same suspect tasks to merged state', done => {
-      // Alexander Kennedy is expected to have several merge suggestions
-      createHuman({ labels: { en: 'Victor Hugo' } })
+    it('should update same suspect tasks to merged state ', done => {
+      createHuman({ labels: { en: 'Victor Hugo' } }) // having several merge suggestions
       .then(human => checkEntities(human.uri))
       .then(tasks => {
         const task = tasks[0]
