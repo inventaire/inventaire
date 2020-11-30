@@ -26,21 +26,8 @@ module.exports = async uri => {
 
   const existingTasks = await getExistingTasks(uri)
   const newSuggestions = await getNewTasks(entity, existingTasks)
-  await createTasks(uri, 'deduplicate', newSuggestions)
+  await tasks_.create(uri, 'deduplicate', newSuggestions)
   await updateRelationScore(uri)
-}
-
-const createTasks = async (suspectUri, type, suggestions) => {
-  const newTasksObjects = suggestions.map(suggestion => {
-    const { _score, uri: suggestionUri, occurrences } = suggestion
-
-    const newTask = { type, suspectUri, suggestionUri }
-
-    if (_score) { newTask.lexicalScore = _score }
-    if (occurrences) { newTask.externalSourcesOccurrences = occurrences }
-    return newTask
-  })
-  return tasks_.createInBulk(newTasksObjects)
 }
 
 const getExistingTasks = uri => tasks_.bySuspectUris([ uri ])
