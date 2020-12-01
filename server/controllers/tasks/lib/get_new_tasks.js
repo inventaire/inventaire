@@ -40,7 +40,7 @@ const filterNewTasks = existingTasks => suggestions => {
 const authorNameInWorkTitles = (authorTerms, workLabels) => {
   for (const authorLabel of authorTerms) {
     for (const workLabel of workLabels) {
-      if (workLabel.match(authorLabel)) return true
+      return workLabel.match(authorLabel)
     }
   }
   return false
