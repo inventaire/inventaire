@@ -3,7 +3,7 @@ const wait = ms => new Promise(resolve => setTimeout(resolve, ms))
 module.exports = {
   Promise,
 
-  props: obj => {
+  props: async obj => {
     const keys = []
     const values = []
     for (const key in obj) {
@@ -12,15 +12,13 @@ module.exports = {
       values.push(value)
     }
 
-    return Promise.all(values)
-    .then(res => {
-      const resultObj = {}
-      res.forEach((valRes, index) => {
-        const key = keys[index]
-        resultObj[key] = valRes
-      })
-      return resultObj
+    const res = await Promise.all(values)
+    const resultObj = {}
+    res.forEach((valRes, index) => {
+      const key = keys[index]
+      resultObj[key] = valRes
     })
+    return resultObj
   },
 
   tap: fn => async res => {
