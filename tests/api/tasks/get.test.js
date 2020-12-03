@@ -6,23 +6,20 @@ const { createTask } = require('../fixtures/tasks')
 // Tests dependency: having a populated Elasticsearch wikidata index
 describe('tasks:byScore', () => {
   it('should return 10 or less tasks by default', async () => {
-    const suspect = await createHuman()
-    await createTask({ suspectUri: suspect.uri })
+    await createTask()
     const tasks = await getByScore()
     tasks.length.should.be.belowOrEqual(10)
     tasks.length.should.be.aboveOrEqual(1)
   })
 
   it('should return a limited array of tasks', async () => {
-    const suspect = await createHuman()
-    await createTask({ suspectUri: suspect.uri })
+    await createTask()
     const tasks = await getByScore({ limit: 1 })
     tasks.length.should.equal(1)
   })
 
   it('should take an offset parameter', async () => {
-    const suspect = await createHuman()
-    await createTask({ suspectUri: suspect.uri })
+    await createTask()
     const tasksA = await getByScore()
     const tasksB = await getByScore({ offset: 1 })
     tasksA[1].should.deepEqual(tasksB[0])
@@ -30,11 +27,19 @@ describe('tasks:byScore', () => {
 })
 
 describe('tasks:byType', () => {
+  const type = 'userReport'
+
   it('should return tasks with a specific type', async () => {
-    const type = 'userReport'
     await createTask({ type })
-    const tasks = await getByType(type)
+    const tasks = await getByType({ type })
     tasks[0].type.should.equal(type)
+  })
+
+  it('should return old task before newer ones', async () => {
+    await createTask({ type })
+    await createTask({ type })
+    const tasks = await getByType({ type })
+    tasks[0].created.should.below(tasks[1].created)
   })
 })
 

@@ -28,7 +28,7 @@ module.exports = {
   }
 }
 
-const createTaskDoc = async params => {
+const createTaskDoc = async (params = {}) => {
   let human = {}
   if (!params.suspectUri) { human = await createHuman() }
   return {

@@ -37,7 +37,8 @@ const utils = module.exports = {
     .then(({ tasks }) => tasks)
   },
 
-  getByType: type => {
+  getByType: (options = {}) => {
+    const { type } = options
     const url = `${endpoint}by-type&type=${type}`
     return publicReq('get', url)
     .then(({ tasks }) => tasks)
