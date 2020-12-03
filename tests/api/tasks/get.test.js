@@ -1,11 +1,11 @@
 require('should')
 const { createHuman, someFakeUri } = require('../fixtures/entities')
-const { getByScore, getBySuspectUris, getBySuggestionUris, update } = require('../utils/tasks')
+const { getByScore, getBySuspectUris, getBySuggestionUris, getByType, update } = require('../utils/tasks')
 const { createTask } = require('../fixtures/tasks')
 
 // Tests dependency: having a populated Elasticsearch wikidata index
 describe('tasks:byScore', () => {
-  it('should returns 10 or less tasks to deduplicates, by default', async () => {
+  it('should return 10 or less tasks by default', async () => {
     const suspect = await createHuman()
     await createTask({ suspectUri: suspect.uri })
     const tasks = await getByScore()
@@ -13,7 +13,7 @@ describe('tasks:byScore', () => {
     tasks.length.should.be.aboveOrEqual(1)
   })
 
-  it('should returns a limited array of tasks to deduplicate', async () => {
+  it('should return a limited array of tasks', async () => {
     const suspect = await createHuman()
     await createTask({ suspectUri: suspect.uri })
     const tasks = await getByScore({ limit: 1 })
@@ -26,6 +26,15 @@ describe('tasks:byScore', () => {
     const tasksA = await getByScore()
     const tasksB = await getByScore({ offset: 1 })
     tasksA[1].should.deepEqual(tasksB[0])
+  })
+})
+
+describe('tasks:byType', () => {
+  it('should return tasks with a specific type', async () => {
+    const type = 'userReport'
+    await createTask({ type })
+    const tasks = await getByType(type)
+    tasks[0].type.should.equal(type)
   })
 })
 

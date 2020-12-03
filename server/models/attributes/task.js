@@ -1,5 +1,5 @@
 module.exports = {
-  type: [ 'deduplicate' ],
+  type: [ 'deduplicate', 'feedback' ],
 
   state: [ undefined, 'merged', 'dismissed' ],
 

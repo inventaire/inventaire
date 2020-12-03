@@ -51,6 +51,11 @@ const tasks_ = module.exports = {
     })
   },
 
+  byType: options => {
+    const { type } = options
+    return db.viewByKey('byType', type)
+  },
+
   bySuspectUri: (suspectUri, options) => {
     return tasks_.bySuspectUris([ suspectUri ], options)
   },

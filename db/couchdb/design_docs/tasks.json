@@ -10,6 +10,9 @@
     },
     "byScore": {
       "map": "(doc)->\n  unless doc.state\n    occurrencesCount = doc.externalSourcesOccurrences.length\n    emit [occurrencesCount, doc.relationScore, doc.lexicalScore], null"
+    },
+    "byType": {
+      "map": "(doc)->\n  unless doc.state\n    emit doc.type, null"
     }
   }
 }

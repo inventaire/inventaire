@@ -37,6 +37,12 @@ const utils = module.exports = {
     .then(({ tasks }) => tasks)
   },
 
+  getByType: type => {
+    const url = `${endpoint}by-type&type=${type}`
+    return publicReq('get', url)
+    .then(({ tasks }) => tasks)
+  },
+
   update: (id, attribute, value) => {
     return adminReq('put', `${endpoint}update`, { id, attribute, value })
   },
