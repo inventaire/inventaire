@@ -12,7 +12,7 @@ const cspReport = (req, res) => {
   }
 
   const err = buildError('csp report', 'csp', errData, req)
-  _.error(err, 'csp report', false)
+  _.error(err, 'csp report')
   responses_.ok(res)
 }
 
@@ -37,8 +37,6 @@ const buildError = (message, labels, errData, req) => {
   // Do not add an emitter stack on client reports as it makes it be confused
   // with the client error stack itself
   delete err.emitter
-  // Labels to be used by gitlab-logging
-  err.labels = labels
   err.stack = getErrStack(errData)
   err.referer = req.headers.referer
   err['user-agent'] = req.headers['user-agent']

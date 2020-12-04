@@ -46,15 +46,7 @@ module.exports = _ => {
         return
       }
 
-      loggers_.log(_.omit(err, 'stack'), label, 'red')
-      if (logStack) {
-        // Make the stack more readable
-        err.stack = err.stack.split('\n')
-        // Log the stack appart to make it be displayed with line breaks
-        console.log(err.stack)
-      }
-
-      if (!err.labels) { err.labels = 'server' }
+      loggers_.log(err, label, 'red')
 
       err._hasBeenLogged = true
       errorCounter++
