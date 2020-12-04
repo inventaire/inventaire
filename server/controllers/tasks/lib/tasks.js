@@ -52,8 +52,14 @@ const tasks_ = module.exports = {
   },
 
   byType: options => {
-    const { type } = options
-    return db.viewByKey('byType', type)
+    const { type, limit, offset } = options
+    return db.viewCustom('byType', {
+      startkey: type,
+      endkey: type,
+      limit,
+      skip: offset,
+      include_docs: true
+    })
   },
 
   bySuspectUri: (suspectUri, options) => {

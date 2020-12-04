@@ -38,8 +38,10 @@ const utils = module.exports = {
   },
 
   getByType: (options = {}) => {
-    const { type } = options
-    const url = `${endpoint}by-type&type=${type}`
+    const { type, limit, offset } = options
+    let url = `${endpoint}by-type&type=${type}`
+    if (limit != null) url += `&limit=${limit}`
+    if (offset != null) url += `&offset=${offset}`
     return publicReq('get', url)
     .then(({ tasks }) => tasks)
   },

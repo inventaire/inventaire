@@ -7,6 +7,12 @@ const sanitize = __.require('lib', 'sanitize/sanitize')
 const sanitization = {
   type: {
     allowlist: [ 'deduplicate', 'feedback' ]
+  },
+  limit: {
+    default: 10
+  },
+  offset: {
+    default: 0
   }
 }
 

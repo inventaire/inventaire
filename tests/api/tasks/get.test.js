@@ -35,6 +35,19 @@ describe('tasks:byType', () => {
     tasks[0].type.should.equal(type)
   })
 
+  it('should return a limited array of tasks', async () => {
+    await createTask({ type })
+    const tasks = await getByType({ type, limit: 1 })
+    tasks.length.should.equal(1)
+  })
+
+  it('should take an offset parameter', async () => {
+    await createTask({ type })
+    const tasksA = await getByType({ type })
+    const tasksB = await getByType({ type, offset: 1 })
+    tasksA[1].should.deepEqual(tasksB[0])
+  })
+
   it('should return old task before newer ones', async () => {
     await createTask({ type })
     await createTask({ type })
