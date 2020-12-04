@@ -36,6 +36,7 @@ const parseLine = line => {
 let received = 0
 let queued = 0
 let indexed = 0
+let dropped = 0
 let batch = []
 
 const post = async () => {
@@ -55,11 +56,13 @@ const addLine = async line => {
   if (formattedDoc) {
     addToBatch(batch, 'index', index, formattedDoc)
     queued++
+  } else {
+    dropped++
   }
   if (batch.length >= 4000) await post()
 }
 
-const logStatusPeriodically = () => _.info({ received, queued, indexed }, 'indexation:load status')
+const logStatusPeriodically = () => _.info({ received, queued, indexed, dropped }, 'indexation:load status')
 const statusLogInterval = setInterval(logStatusPeriodically, 5000)
 const lastStatusLog = () => {
   clearInterval(statusLogInterval)
