@@ -1,7 +1,10 @@
+const __ = require('config').universalPath
+const { getSingularTypes } = __.require('lib', 'wikidata/aliases')
+
 module.exports = params => {
   const { lang: userLang, search, limit: size } = params
   let { types } = params
-  types = singularTypes(types)
+  types = getSingularTypes(types)
 
   return {
     query: {
@@ -36,8 +39,6 @@ module.exports = params => {
     min_score: 1
   }
 }
-
-const singularTypes = types => types.map(type => type.replace(/s$/, ''))
 
 const matchType = types => {
   return types.map(type => (

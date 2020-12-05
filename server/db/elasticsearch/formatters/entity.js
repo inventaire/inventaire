@@ -10,6 +10,7 @@ const getEntityType = __.require('controllers', 'entities/lib/get_entity_type')
 const { indexedEntitiesTypes } = __.require('controllers', 'search/lib/indexes')
 const specialEntityImagesGetter = __.require('controllers', 'entities/lib/special_entity_images_getter')
 const getEntitiesPopularityCache = __.require('controllers', 'entities/lib/get_entities_popularity_cache')
+const indexedEntitiesTypesSet = new Set(getSingularTypes(indexedEntitiesTypes))
 
 module.exports = async entity => {
   entity._id = getEntityId(entity)
@@ -19,7 +20,12 @@ module.exports = async entity => {
 
   entity.type = dropPlural(getType({ claims, type }))
 
-  if (!indexedEntitiesTypes.has(entity.type)) return
+  // Do not index entities for which no type was found, as they wouldn't be accepted as values
+  // for the corresponding type. To include an entity that was illegitimately rejected,
+  // fix either server/lib/wikidata/aliases.js or server/controllers/entities/lib/get_entity_type.js
+  // See https://github.com/inventaire/inventaire/pull/294
+  if (!indexedEntitiesTypesSet.has(entity.type)) return
+
   let needsSimplification = false
   const isWikidataEntity = wdk.isItemId(entity._id)
 
