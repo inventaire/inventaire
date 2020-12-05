@@ -46,7 +46,13 @@ module.exports = async (entity, options = {}) => {
   // that is, for every entity types but works and series
   if (!entity.images) {
     if (specialEntityImagesGetter[entity.type]) {
-      entity.images = await specialEntityImagesGetter[entity.type](entity)
+      try {
+        entity.images = await specialEntityImagesGetter[entity.type](entity)
+      } catch (err) {
+        // Known case: when Wikidata Query Service times out
+        _.warn(err, `failed to get image for ${entity.uri}: fallback to no image`)
+        entity.images = {}
+      }
     } else {
       entity.images = {
         claims: getEntityImagesFromClaims(entity, needsSimplification)
