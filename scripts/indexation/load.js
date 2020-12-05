@@ -11,6 +11,7 @@ const filters = __.require('db', 'elasticsearch/filters')
 const deindex = __.require('db', 'elasticsearch/deindex')
 const { addToBatch, postBatch } = __.require('db', 'elasticsearch/bulk')
 const createIndex = __.require('db', 'elasticsearch/create_index')
+const { wait } = __.require('lib', 'promises')
 const [ indexBaseName ] = process.argv.slice(2)
 
 if (!indexesList.includes(indexBaseName)) {
@@ -38,9 +39,10 @@ let indexed = 0
 let batch = []
 
 const post = async () => {
-  await postBatch(batch)
-  indexed += queued
+  const batchReadyToPost = batch
   batch = []
+  await postBatch(batchReadyToPost)
+  indexed += queued
   queued = 0
 }
 
@@ -66,16 +68,20 @@ const lastStatusLog = () => {
 
 const stopLoading = logErrorAndExit.bind(null, 'loadFromStdin')
 
+let ongoing = 0
 const loadFromStdin = () => {
   process.stdin
   .pipe(split())
   .on('data', async function (line) {
-    this.pause()
+    ongoing++
+    if (ongoing >= 3) this.pause()
     await addLine(line).catch(stopLoading)
-    this.resume()
+    if (ongoing < 3 && this.paused) this.resume()
+    ongoing--
   })
   .on('close', async () => {
     _.info(`${indexBaseName} indexation:load stdin closed`)
+    await waitForAllOngoingLines()
     await post().catch(stopLoading)
     _.success(`${indexBaseName} indexation:load done`)
     lastStatusLog()
@@ -83,8 +89,15 @@ const loadFromStdin = () => {
   .on('error', _.Error(`${indexBaseName} indexation:load err`))
 }
 
+const waitForAllOngoingLines = async () => {
+  if (ongoing === 0) return
+  _.warn(`waiting for ${ongoing} lines`)
+  await wait(1000)
+  return waitForAllOngoingLines()
+}
+
 // Ensure index creation to load mappings and settings
 createIndex(index)
 // before starting to load
 .then(loadFromStdin)
-.catch(console.error)
+.catch(err => logErrorAndExit('indexation/load.js crashed', err))
