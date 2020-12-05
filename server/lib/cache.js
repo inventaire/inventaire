@@ -117,9 +117,10 @@ const populate = (key, fn, refuseOldValue) => {
   })
   .catch(err => {
     if (refuseOldValue) {
-      _.warn(err, `${key} request err (returning nothing)`)
+      _.error(err, `${key} request err while refusing old value: rethrow`)
+      throw err
     } else {
-      _.warn(err, `${key} request err (returning old value)`)
+      _.warn(err, `${key} request err: returning old value`)
       return returnOldValue(key, err)
     }
   })

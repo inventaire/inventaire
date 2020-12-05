@@ -2,6 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const { wait } = __.require('lib', 'promises')
+const { shouldNotBeCalled } = require('../utils')
 if (CONFIG.env !== 'tests-unit') throw new Error(`invalid env: ${CONFIG.env}`)
 
 const should = require('should')
@@ -12,7 +13,11 @@ const randomString = __.require('lib', './utils/random_string')
 
 const hashKey = async key => _.hashCode(key)
 const workingFn = key => hashKey(key + randomString(8))
-const failingFn = async () => { throw new Error('Jag är Döden') }
+const failingFn = async () => {
+  const err = new Error('Jag är Döden')
+  err.type = 'that_failing_fn_error'
+  throw err
+}
 
 describe('cache', () => {
   describe('get', () => {
@@ -79,11 +84,13 @@ describe('cache', () => {
       it('should refuse old value when passed a 0 timespan', async () => {
         const key = randomString(8)
         const res1 = await cache_.get({ key, fn: workingFn.bind(null, 'Vem är du?'), timespan: 0 })
-        await wait(10)
-        // returns an error: should return old value
-        const res2 = await cache_.get({ key, fn: failingFn, timespan: 0 })
         res1.should.be.ok()
-        should(res2).not.be.ok()
+        await wait(10)
+        await cache_.get({ key, fn: failingFn, timespan: 0 })
+        .then(shouldNotBeCalled)
+        .catch(err => {
+          err.type.should.equal('that_failing_fn_error')
+        })
       })
     })
 
