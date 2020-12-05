@@ -27,12 +27,10 @@ module.exports = _ => {
   const customLoggers = {
     stringify,
 
-    error: (err, label, logStack = true) => {
+    error: (err, label) => {
       if (!(err instanceof Error)) {
         throw new Error('invalid error object')
       }
-
-      if (err._hasBeenLogged) return
 
       // If the error is of a lower lever than 500, make it a warning, not an error
       if ((err.statusCode != null) && (err.statusCode < 500)) {
@@ -48,12 +46,10 @@ module.exports = _ => {
 
       loggers_.log(err, label, 'red')
 
-      err._hasBeenLogged = true
       errorCounter++
     },
 
     warn: (err, label) => {
-      if (err._hasBeenLogged) return
       const url = err.context && err.context.url
       // Local 404 errors don't need to be logged, as they will be logged
       // by the request logger middleware and logging the error object is of no help,
@@ -65,7 +61,6 @@ module.exports = _ => {
       }
 
       loggers_.warn(err, label)
-      err._hasBeenLogged = true
     },
 
     errorCount: () => errorCounter,
