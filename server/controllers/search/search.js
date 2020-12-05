@@ -4,7 +4,7 @@ const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
 const parseResults = require('./lib/parse_results')
 const normalizeResult = require('./lib/normalize_result')
-const { possibleTypes } = require('./lib/indexes')
+const { indexedTypes } = require('./lib/indexes')
 const typeSearch = require('./lib/type_search')
 const sanitize = __.require('lib', 'sanitize/sanitize')
 const Group = __.require('models', 'group')
@@ -12,7 +12,7 @@ const Group = __.require('models', 'group')
 const sanitization = {
   search: {},
   lang: {},
-  types: { allowlist: possibleTypes },
+  types: { allowlist: indexedTypes },
   limit: { default: 10, max: 100 }
 }
 

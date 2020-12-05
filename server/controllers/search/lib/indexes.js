@@ -8,43 +8,28 @@ const indexes = {
   groups: CONFIG.db.name('groups')
 }
 
-const localAndRemoteEntity = type => ({
-  indexes: Object.values(indexes),
-  type
-})
+const localAndRemoteEntitiesTypes = [
+  'works',
+  'humans',
+  'genres',
+  'movements',
+  'publishers',
+  'series',
+  'collections',
+]
 
-const remoteOnlyEntity = type => ({
-  indexes: [ indexes.wikidata ],
-  type
-})
+const remoteOnlyEntitiesTypes = [
+  'genres',
+  'movements',
+]
 
-const localDatabase = (dbBaseName, type) => ({
-  indexes: [ indexes[dbBaseName] ],
-  type
-})
+const socialTypes = [
+  'users',
+  'groups',
+]
 
-const typesData = {
-  works: localAndRemoteEntity('works'),
-  humans: localAndRemoteEntity('humans'),
-  series: localAndRemoteEntity('series'),
-  publishers: localAndRemoteEntity('publishers'),
-  collections: localAndRemoteEntity('collections'),
-  genres: remoteOnlyEntity('genres'),
-  movements: remoteOnlyEntity('movements'),
-  users: localDatabase('users', 'user'),
-  groups: localDatabase('groups', 'group')
-}
+const indexedEntitiesTypes = localAndRemoteEntitiesTypes.concat(remoteOnlyEntitiesTypes)
 
-const possibleTypes = Object.keys(typesData)
+const indexedTypes = indexedEntitiesTypes.concat(socialTypes)
 
-const indexedEntitiesTypes = new Set([
-  'work',
-  'human',
-  'genre',
-  'movement',
-  'publisher',
-  'serie',
-  'collection',
-])
-
-module.exports = { indexes, typesData, possibleTypes, indexedEntitiesTypes }
+module.exports = { indexes, indexedTypes, indexedEntitiesTypes, localAndRemoteEntitiesTypes }

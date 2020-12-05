@@ -11,13 +11,18 @@ const getGroup = async group => {
 }
 
 const createGroup = (params = {}) => {
-  const name = params.name || groupName()
-  const user = params.user || getUser()
+  const {
+    user = getUser(),
+    name = groupName(),
+    position = [ 1, 1 ],
+    searchable = true,
+    open = false
+  } = params
   return customAuthReq(user, 'post', `${endpointBase}?action=create`, {
     name,
-    position: [ 1, 1 ],
-    searchable: true,
-    open: false
+    position,
+    searchable,
+    open,
   })
 }
 

@@ -9,6 +9,7 @@ const { firstClaim } = __.require('controllers', 'entities/lib/entities')
 const getEntityType = __.require('controllers', 'entities/lib/get_entity_type')
 const { indexedEntitiesTypes } = __.require('controllers', 'search/lib/indexes')
 const specialEntityImagesGetter = __.require('controllers', 'entities/lib/special_entity_images_getter')
+const { getSingularTypes } = __.require('lib', 'wikidata/aliases')
 const getEntitiesPopularityCache = __.require('controllers', 'entities/lib/get_entities_popularity_cache')
 const indexedEntitiesTypesSet = new Set(getSingularTypes(indexedEntitiesTypes))
 
