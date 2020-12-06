@@ -9,7 +9,7 @@ db_param(){
 }
 
 # Getting the database parameters to get ready for couchdb-dump
-host=$(db_param host)
+hostname=$(db_param hostname)
 port=$(db_param port)
 username=$(db_param username)
 password=$(db_param password)
@@ -26,7 +26,7 @@ output_file="${today_folder}/${raw_db_json_filename}"
 # Dumping the database only if the file doesn't already exist,
 # which means that this file should be deleted to start a new dump version
 [ -f "$output_file" ] && echo "$raw_db_json_filename already exist" || {
-  couchdb-backup -b -H "$host" -P "$port" -u "$username" -p "$password" -d "$db_name" -f "$output_file"
+  couchdb-backup -b -H "$hostname" -P "$port" -u "$username" -p "$password" -d "$db_name" -f "$output_file"
 }
 
 filtered_dump_filename="entities.ndjson"
