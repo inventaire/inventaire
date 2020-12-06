@@ -55,16 +55,6 @@ cat "${filtered_dump_filename_with_seeds}" |
   # Filter-out entities that are just unedited data seeds
   grep -v '_rev":"2-' > "$filtered_dump_filename"
 
-# JSON dump
-ndjson_to_json(){
-  { echo '[' && head -n -1 "$1" | sed 's/$/,/' && tail -n 1 "$1" && echo ']' ;  } > "$2"
-}
-json_filename="entities.json"
-json_with_seeds_filename="entities_with_seeds.json"
-echo "converting to json: $json_filename $json_with_seeds_filename"
-ndjson_to_json "$filtered_dump_filename" "${json_filename}"
-ndjson_to_json "$filtered_dump_filename_with_seeds" "${json_with_seeds_filename}"
-
 # TTL dump
 # We need to return to the root directory so that convert_ndjson_dump_to_ttl.js
 # can find the CONFIG
