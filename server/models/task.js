@@ -11,17 +11,28 @@ module.exports = {
 
     validations.pass('type', type)
     validations.pass('suspectUri', suspectUri)
-    validations.pass('lexicalScore', lexicalScore)
-    validations.pass('externalSourcesOccurrences', externalSourcesOccurrences)
 
-    return {
+    const task = {
       type,
       suspectUri,
       suggestionUri,
-      lexicalScore: _.round(lexicalScore, 2),
-      externalSourcesOccurrences,
       created: Date.now()
     }
+
+    if (lexicalScore) {
+      validations.pass('lexicalScore', lexicalScore)
+      _.extend(task, {
+        lexicalScore: _.round(lexicalScore, 2)
+      })
+    }
+
+    if (externalSourcesOccurrences) {
+      validations.pass('externalSourcesOccurrences', externalSourcesOccurrences)
+      _.extend(task, {
+        externalSourcesOccurrences
+      })
+    }
+    return task
   },
 
   update: (task, attribute, value) => {

@@ -16,12 +16,12 @@ module.exports = async uri => {
   const entity = await getEntityByUri({ uri })
   if (entity == null) throw error_.notFound({ uri })
 
-  if (entity.uri.split(':')[0] === 'wd') {
+  if (uri.split(':')[0] === 'wd') {
     throw error_.new('entity is already a redirection', 400, { uri })
   }
-
-  if (!supportedTypes.includes(entity.type)) {
-    throw error_.new(`unsupported type: ${entity.type}`, 400, { uri, supportedTypes })
+  const { type } = entity
+  if (!supportedTypes.includes(type)) {
+    throw error_.new(`unsupported type: ${type}`, 400, { uri, supportedTypes })
   }
 
   const existingTasks = await getExistingTasks(uri)

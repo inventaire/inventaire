@@ -52,22 +52,6 @@ describe('task model', () => {
       }
       taskDoc.should.throw()
     })
-
-    it('should throw if no lexicalScore', () => {
-      const invalidDoc = validDoc()
-      delete invalidDoc.lexicalScore
-      const taskDoc = () => Task.create(invalidDoc)
-      try { taskDoc() } catch (err) { err.message.should.startWith('invalid lexicalScore') }
-      taskDoc.should.throw()
-    })
-
-    it('should throw if no externalSourcesOccurrences', () => {
-      const invalidDoc = validDoc()
-      delete invalidDoc.externalSourcesOccurrences
-      const taskDoc = () => Task.create(invalidDoc)
-      try { taskDoc() } catch (err) { err.message.should.startWith('invalid externalSourcesOccurrences') }
-      taskDoc.should.throw()
-    })
   })
 
   describe('update', () => {
