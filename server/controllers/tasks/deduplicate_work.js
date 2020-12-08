@@ -14,8 +14,8 @@ const sanitization = {
 module.exports = (req, res) => {
   sanitize(req, res, sanitization)
   .then(params => {
-    const { uri, isbn } = params
-    return deduplicateWork(uri, isbn)
+    const { uri, isbn, reqUserId } = params
+    return deduplicateWork(uri, isbn, reqUserId)
   })
   .then(_.flatten)
   .then(responses_.Wrap(res, 'tasks'))

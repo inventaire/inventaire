@@ -25,7 +25,7 @@ const filterOrMergeSuggestions = (suspect, workLabels) => suggestions => {
   const suspectTerms = getEntityNormalizedTerms(suspect)
   // Do not automerge if author name is in work title
   // as it confuses occurences found on Wikipedia pages
-  if (authorNameInWorkTitles(suspectTerms, workLabels)) return suggestions
+  if (haveExactMatch(suspectTerms, workLabels)) return suggestions
   const sourcedSuggestions = filterSourced(suggestions)
   if (sourcedSuggestions.length === 0) return suggestions
   if (sourcedSuggestions.length > 1) return sourcedSuggestions
@@ -37,10 +37,13 @@ const filterNewTasks = existingTasks => suggestions => {
   return suggestions.filter(suggestion => !existingTasksUris.includes(suggestion.uri))
 }
 
-const authorNameInWorkTitles = (authorTerms, workLabels) => {
-  for (const authorLabel of authorTerms) {
-    for (const workLabel of workLabels) {
-      return workLabel.match(authorLabel)
+// TODO: find a place to DRY haveExactMatch occurence in deduplicate_work.js
+const haveExactMatch = (labels1, labels2) => {
+  for (let label1 of labels1) {
+    label1 = label1.toLowerCase()
+    for (let label2 of labels2) {
+      label2 = label2.toLowerCase()
+      return label2.match(label1)
     }
   }
   return false
