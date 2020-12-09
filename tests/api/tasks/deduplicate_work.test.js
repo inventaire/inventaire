@@ -1,15 +1,16 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
+const _ = __.require('builders', 'utils')
 require('should')
 const { createWork, generateIsbn13h, createEditionWithIsbn, createHuman } = require('../fixtures/entities')
 const { getByUris, getByUri } = require('../utils/entities')
 const { adminReq, rethrowShouldNotBeCalledErrors } = __.require('apiTests', 'utils/utils')
-const { getBySuspectUris } = require('../utils/tasks')
+const { getBySuspectUri } = require('../utils/tasks')
 const { wait } = __.require('lib', 'promises')
 const endpoint = '/api/tasks?action='
 
 describe('tasks:deduplicate:work', () => {
-  it('should reject to without uris', async () => {
+  it('should reject to without a uri', async () => {
     try {
       await adminReq('post', `${endpoint}deduplicate-work`)
     } catch (err) {
@@ -51,8 +52,8 @@ describe('tasks:deduplicate:work', () => {
     const isbn = edition.isbn
     const res = await adminReq('post', `${endpoint}deduplicate-work`, { uri, isbn })
     res.tasks[0].ok.should.equal(true)
-    const suspectUriTasksRes = await getBySuspectUris(uri)
-    const newTask = Object.values(suspectUriTasksRes)[0][0]
+    const suspectUriTasksRes = await getBySuspectUri(uri)
+    const newTask = Object.values(suspectUriTasksRes)[0]
     newTask.suggestionUri.should.equal(editionWorkUri)
   })
 
@@ -72,5 +73,20 @@ describe('tasks:deduplicate:work', () => {
     const res = await getByUris(workUri)
     // work should have merged into editionWork
     res.entities[editionWorkUri].should.be.ok()
+  })
+
+  it('should not re-create existing tasks', async () => {
+    const work = await createWork()
+    const uri = work.uri
+    const edition = await createEditionWithIsbn()
+    const isbn = edition.isbn
+
+    await adminReq('post', `${endpoint}deduplicate-work`, { uri, isbn })
+    await wait(100)
+    await adminReq('post', `${endpoint}deduplicate-work`, { uri, isbn })
+    await wait(100)
+    const tasks = await getBySuspectUri(uri)
+    const uniqSuggestiontUris = _.uniq(_.map(tasks, 'suggestionUri'))
+    tasks.length.should.equal(uniqSuggestiontUris.length)
   })
 })

@@ -1,5 +1,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
+const _ = __.require('builders', 'utils')
 let error_ = __.require('lib', 'error/error')
 const getEntityByUri = __.require('controllers', 'entities/lib/get_entity_by_uri')
 const getEntitiesByUris = __.require('controllers', 'entities/lib/get_entities_by_uris')
@@ -23,7 +24,12 @@ module.exports = async (workUri, isbn, userId) => {
   const editionWorksRes = await getEntitiesByUris({ uris: editionWorksUris })
   const editionWorks = Object.values(editionWorksRes.entities)
   const suggestions = await getSuggestionsOrAutomerge(work, editionWorks, userId)
-  return tasks_.create(workUri, 'feedback', suggestions)
+
+  if (_.isEmpty(suggestions)) { return }
+  const existingTasks = await getExistingTasks(workUri)
+  const newSuggestions = await filterNewTasks(existingTasks, suggestions)
+
+  return tasks_.create(workUri, 'feedback', newSuggestions)
 }
 
 const getSuggestionsOrAutomerge = async (work, editionWorks, userId) => {
@@ -36,6 +42,13 @@ const getSuggestionsOrAutomerge = async (work, editionWorks, userId) => {
     }
   }
   return editionWorks
+}
+
+const getExistingTasks = uri => tasks_.bySuspectUris([ uri ])
+
+const filterNewTasks = (existingTasks, suggestions) => {
+  const existingTasksUris = _.map(existingTasks, 'suggestionUri')
+  return suggestions.filter(suggestion => !existingTasksUris.includes(suggestion.uri))
 }
 
 // TODO: find a place to DRY haveExactMatch occurence in get_new_tasks.js
