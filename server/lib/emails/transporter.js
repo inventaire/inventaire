@@ -37,10 +37,11 @@ transporter.use('compile', hbs(options))
 
 module.exports = {
   sendMail: async email => {
+    const { template, subject } = email
     return transporter.sendMail(email)
-    .then(_.Success('email sent'))
+    .then(_.Success(`email sent (template="${template}" subject="${subject}")`))
     .catch(err => {
-      _.error(err, 'email error')
+      _.error(err, `email error (template="${template}" subject="${subject}")`)
       return _.warn(email, 'associated email')
     })
   }
