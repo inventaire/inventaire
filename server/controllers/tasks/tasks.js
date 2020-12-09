@@ -14,10 +14,12 @@ module.exports = {
   }),
 
   post: ActionsControllers({
+    authentified: {
+      'deduplicate-work': require('./deduplicate_work')
+    },
     admin: {
       'collect-entities': require('./collect_entities'),
-      'check-entities': require('./check_entities'),
-      'deduplicate-work': require('./deduplicate_work')
+      'check-entities': require('./check_entities')
     }
   }),
 
