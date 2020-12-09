@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const { pass, entityUri } = require('./common')
+const { pass, entityUri, userId } = require('./common')
 
 const attributes = require('../attributes/task')
 
@@ -15,5 +15,6 @@ module.exports = {
   suspectUri: entityUri,
   lexicalScore: _.isNumber,
   relationScore: _.isNumber,
-  externalSourcesOccurrences: _.isArray
+  externalSourcesOccurrences: _.isArray,
+  userId
 }

@@ -4,7 +4,7 @@ const _ = __.require('builders', 'utils')
 require('should')
 const { createWork, generateIsbn13h, createEditionWithIsbn, createHuman } = require('../fixtures/entities')
 const { getByUris, getByUri } = require('../utils/entities')
-const { adminReq, rethrowShouldNotBeCalledErrors } = __.require('apiTests', 'utils/utils')
+const { adminReq, rethrowShouldNotBeCalledErrors, getAdminUser } = __.require('apiTests', 'utils/utils')
 const { getBySuspectUri } = require('../utils/tasks')
 const { wait } = __.require('lib', 'promises')
 const endpoint = '/api/tasks?action='
@@ -55,6 +55,8 @@ describe('tasks:deduplicate:work', () => {
     const suspectUriTasksRes = await getBySuspectUri(uri)
     const newTask = Object.values(suspectUriTasksRes)[0]
     newTask.suggestionUri.should.equal(editionWorkUri)
+    const user = await getAdminUser()
+    newTask.userId.should.equal(user._id)
   })
 
   it('should automerge if labels exact match', async () => {
