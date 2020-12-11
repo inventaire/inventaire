@@ -28,7 +28,7 @@ module.exports = async (workUri, isbn, userId) => {
   if (_.isEmpty(suggestions)) { return }
   const existingTasks = await getExistingTasks(workUri)
   let newSuggestions = await filterNewTasks(existingTasks, suggestions)
-  newSuggestions = _.map(newSuggestions, addUserIdToSuggestion(userId))
+  newSuggestions = _.map(newSuggestions, addToSuggestion(userId, isbn))
   return tasks_.create(workUri, 'feedback', newSuggestions)
 }
 
@@ -63,7 +63,8 @@ const haveExactMatch = (labels1, labels2) => {
   return false
 }
 
-const addUserIdToSuggestion = userId => suggestion => {
+const addToSuggestion = (userId, isbn) => suggestion => {
   suggestion.userId = userId
+  suggestion.clue = isbn
   return suggestion
 }

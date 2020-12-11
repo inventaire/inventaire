@@ -57,6 +57,7 @@ describe('tasks:deduplicate:work', () => {
     newTask.suggestionUri.should.equal(editionWorkUri)
     const user = await getAdminUser()
     newTask.userId.should.equal(user._id)
+    newTask.clue.should.equal(isbn)
   })
 
   it('should automerge if labels exact match', async () => {

@@ -7,7 +7,7 @@ const validations = require('./validations/task')
 module.exports = {
   create: newTask => {
     assert_.object(newTask)
-    const { type, suspectUri, suggestionUri, externalSourcesOccurrences, userId } = newTask
+    const { type, suspectUri, suggestionUri, externalSourcesOccurrences, userId, clue } = newTask
     let { lexicalScore } = newTask
 
     validations.pass('type', type)
@@ -25,6 +25,7 @@ module.exports = {
     validateAndAssign(task, 'lexicalScore', lexicalScore)
     validateAndAssign(task, 'externalSourcesOccurrences', externalSourcesOccurrences)
     validateAndAssign(task, 'userId', userId)
+    validateAndAssign(task, 'clue', clue)
     return task
   },
 
