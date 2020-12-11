@@ -5,7 +5,7 @@ const error_ = __.require('lib', 'error/error')
 const assert_ = __.require('utils', 'assert_types')
 const db = __.require('level', 'get_sub_db')('cache', 'json')
 const { offline } = CONFIG
-const { oneDay, oneMonth, expired } = __.require('lib', 'time')
+const { oneMonth, expired } = __.require('lib', 'time')
 
 module.exports = {
   // - key: the cache key
@@ -70,21 +70,10 @@ const checkCache = (key, timespan) => {
   .then(res => {
     // Returning nothing will trigger a new request
     if (res == null) return
-    const { body, timestamp } = res
+    const { timestamp } = res
     // Reject outdated cached values
     if (!isFreshEnough(timestamp, timespan)) return
-    // In case there was nothing in cache
-    if (_.isEmpty(body)) {
-      // Prevent re-requesting if it was already retried lately
-      if (isFreshEnough(timestamp, 2 * oneDay)) {
-        // _.info(key, 'empty cache value: retried lately')
-        return res
-      }
-      // Otherwise, trigger a new request by returning nothing
-      // _.info(key, 'empty cache value: retrying')
-    } else {
-      return res
-    }
+    return res
   })
 }
 
