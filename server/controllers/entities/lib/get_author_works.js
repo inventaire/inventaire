@@ -9,8 +9,10 @@ const { getPluralType, getPluralTypeByTypeUri } = __.require('lib', 'wikidata/al
 const { getCachedRelations } = require('./temporarily_cache_relations')
 
 // Working around the circular dependency
-let getEntitiesPopularityCache
-const lateRequire = () => { getEntitiesPopularityCache = require('./get_entities_popularity_cache') }
+let getEntitiesPopularities
+const lateRequire = () => {
+  ({ getEntitiesPopularities } = require('./popularity'))
+}
 setTimeout(lateRequire, 0)
 
 const allowlistedTypesNames = [ 'series', 'works', 'articles' ]
@@ -86,7 +88,7 @@ const formatInvEntity = row => {
 // # COMMONS
 const getPopularityScores = results => {
   const uris = _.map(results, 'uri')
-  return getEntitiesPopularityCache({ uris })
+  return getEntitiesPopularities({ uris })
 }
 
 const spreadByType = (worksByTypes, rows) => scores => {

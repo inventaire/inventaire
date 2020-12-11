@@ -54,10 +54,6 @@ module.exports = {
 
   initCollectionsIndex: names => names.reduce(aggregateCollections, {}),
 
-  indexAppliedValue: (array, fn) => {
-    return array.reduce(aggragateFnApplication(fn), {})
-  },
-
   obfuscate: str => str.replace(/.{1}/g, '*'),
 
   // adapted from http://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
@@ -211,10 +207,5 @@ const escapeQueryStringValue = str => str.replace(questionMarks, '%3F')
 
 const aggregateCollections = (index, name) => {
   index[name] = []
-  return index
-}
-
-const aggragateFnApplication = fn => (index, value) => {
-  index[value] = fn(value)
   return index
 }

@@ -46,7 +46,7 @@ const addLine = async line => {
   if (doc == null) return
   received++
   if (!filter(doc) || shouldBeDeindexed(doc)) return
-  const formattedDoc = await format(doc)
+  const formattedDoc = await format(doc, { quick: true })
   if (formattedDoc) {
     addToBatch(batch, 'index', index, formattedDoc)
     indexed++

@@ -10,10 +10,10 @@ const getEntityType = __.require('controllers', 'entities/lib/get_entity_type')
 const { indexedEntitiesTypes } = __.require('controllers', 'search/lib/indexes')
 const specialEntityImagesGetter = __.require('controllers', 'entities/lib/special_entity_images_getter')
 const { getSingularTypes } = __.require('lib', 'wikidata/aliases')
-const getEntitiesPopularityCache = __.require('controllers', 'entities/lib/get_entities_popularity_cache')
+const { getEntityPopularity } = __.require('controllers', 'entities/lib/popularity')
 const indexedEntitiesTypesSet = new Set(getSingularTypes(indexedEntitiesTypes))
 
-module.exports = async entity => {
+module.exports = async (entity, options = {}) => {
   entity._id = getEntityId(entity)
   delete entity.id
 
@@ -80,13 +80,16 @@ module.exports = async entity => {
   delete entity.claims
   delete entity.sitelinks
 
-  const result = await getEntitiesPopularityCache({
-    uris: [ entity.uri ],
-    // Only use cached values; do not populate to avoid spamming wikidata during indexation
-    dry: true
+  entity.popularity = await getEntityPopularity({
+    uri: entity.uri,
+    // Only use already cached values in quick mode, instead of the default dryAndCache,
+    // as that would mean spamming Wikidata when reindexing all entities,
+    // and would result in that process being extremely slow, and possibibly crash
+    // as we aren't even waiting for the dryAndCache response to continue.
+    // But, do not set dry=true when reindexing the rest of the time, as that would
+    // in most cases mean never populating the popularity
+    dry: options.quick
   })
-
-  entity.popularity = result[entity.uri]
 
   return entity
 }
