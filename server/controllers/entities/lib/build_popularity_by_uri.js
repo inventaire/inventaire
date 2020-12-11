@@ -74,7 +74,7 @@ const getAuthorWorksScores = uri => {
 const getUri = _.property('uri')
 
 const getEntitiesPopularityTotal = uris => {
-  return getEntitiesPopularityCache(uris, true)
+  return getEntitiesPopularityCache({ uris, refresh: true })
   .then(_.values)
   // Total = sum of all popularities + number of subentities
   .then(results => _.sum(results) + results.length)

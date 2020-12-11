@@ -86,7 +86,7 @@ const formatInvEntity = row => {
 // # COMMONS
 const getPopularityScores = results => {
   const uris = _.map(results, 'uri')
-  return getEntitiesPopularityCache(uris)
+  return getEntitiesPopularityCache({ uris })
 }
 
 const spreadByType = (worksByTypes, rows) => scores => {

@@ -14,10 +14,7 @@ const sanitization = {
 // for Wikidata entities
 module.exports = (req, res) => {
   sanitize(req, res, sanitization)
-  .then(params => {
-    const { uris, refresh } = params
-    return getEntitiesPopularityCache(uris, refresh)
-  })
+  .then(getEntitiesPopularityCache)
   .then(responses_.Wrap(res, 'scores'))
   .catch(error_.Handler(req, res))
 }

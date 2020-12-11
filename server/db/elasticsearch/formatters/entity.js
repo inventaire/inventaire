@@ -80,10 +80,12 @@ module.exports = async entity => {
   delete entity.claims
   delete entity.sitelinks
 
-  // do not refresh to avoid spamming wikidata
-  const refresh = false
-  const dry = true
-  const result = await getEntitiesPopularityCache([ entity.uri ], refresh, dry)
+  const result = await getEntitiesPopularityCache({
+    uris: [ entity.uri ],
+    // Only use cached values; do not populate to avoid spamming wikidata during indexation
+    dry: true
+  })
+
   entity.popularity = result[entity.uri]
 
   return entity

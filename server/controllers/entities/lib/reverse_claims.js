@@ -51,7 +51,7 @@ module.exports = async params => {
   .then(uris => {
     if (!sort) return uris
 
-    return getEntitiesPopularityCache(uris)
+    return getEntitiesPopularityCache({ uris })
     .then(scores => uris.sort(sortByScore(scores)))
   })
 }
