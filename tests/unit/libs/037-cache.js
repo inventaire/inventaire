@@ -29,48 +29,45 @@ describe('cache', () => {
 
     it('should compute ones and cache for the nexts', async () => {
       const spy = sinon.spy()
-      const key = '007'
-      const hash = _.hashCode(key)
-      const spiedHash = key => {
+      const keyA = randomString(8)
+      const keyB = randomString(8)
+      const someFn = key => key + key
+      const spiedFn = async key => {
         spy()
-        return hashKey(key)
+        return someFn(key)
       }
 
-      const fn = spiedHash.bind(null, key)
-      const res1 = await cache_.get({ key, fn })
-      res1.should.equal(hash)
-      const res2 = await cache_.get({ key, fn: spiedHash.bind(null, key) })
-      res2.should.equal(hash)
-      const res3 = await cache_.get({ key, fn: spiedHash.bind(null, key) })
-      res3.should.equal(hash)
-      // MOUAHAHA YOU WONT SEE ME (◣_◢)
-      const res4 = await cache_.get({ key: '006', fn: spiedHash.bind(null, '006') })
-      res4.should.equal(_.hashCode('006'))
-      const res5 = await cache_.get({ key, fn: spiedHash.bind(null, key) })
-      res5.should.equal(hash)
-      // DHO [>.<]
+      spy.callCount.should.equal(0)
+      const res1 = await cache_.get({ key: keyA, fn: spiedFn.bind(null, keyA) })
+      res1.should.equal(someFn(keyA))
+      spy.callCount.should.equal(1)
+      const res2 = await cache_.get({ key: keyA, fn: spiedFn.bind(null, keyA) })
+      res2.should.equal(someFn(keyA))
+      spy.callCount.should.equal(1)
+      const res3 = await cache_.get({ key: keyB, fn: spiedFn.bind(null, keyB) })
+      res3.should.equal(someFn(keyB))
+      spy.callCount.should.equal(2)
+      const res4 = await cache_.get({ key: keyA, fn: spiedFn.bind(null, keyA) })
+      res4.should.equal(someFn(keyA))
       spy.callCount.should.equal(2)
     })
 
     it('should return the outdated version if the new version returns an error', async () => {
-      const key = 'doden'
-      const res1 = await cache_.get({ key, fn: workingFn.bind(null, 'Vem är du?'), timespan: 0 })
+      const key = randomString(8)
+      const res1 = await cache_.get({ key, fn: workingFn.bind(null, 'foo'), timespan: 0 })
       // returns an error: should return old value
       const res2 = await cache_.get({ key, fn: failingFn, timespan: 1 })
       // the error shouldnt have overriden the value
-      const res3 = await cache_.get({ key, fn: workingFn.bind(null, 'Vem är du?'), timespan: 5000 })
+      const res3 = await cache_.get({ key, fn: workingFn.bind(null, 'foo'), timespan: 5000 })
       res1.should.equal(res2)
       res1.should.equal(res3)
     })
 
     it('should cache non-error empty results', async () => {
       const spy = sinon.spy()
-      const empty = key => {
-        spy()
-        return Promise.resolve(_.noop(key))
-      }
+      const empty = async () => { spy() }
 
-      const key = 'gogogo'
+      const key = randomString(8)
       const res1 = await cache_.get({ key, fn: empty })
       should(res1).not.be.ok()
       const res2 = await cache_.get({ key, fn: empty })
@@ -80,7 +77,7 @@ describe('cache', () => {
 
     describe('timespan', () => {
       it('should refuse old value when passed a 0 timespan', async () => {
-        const key = 'doden'
+        const key = randomString(8)
         const res1 = await cache_.get({ key, fn: workingFn.bind(null, 'Vem är du?'), timespan: 0 })
         await wait(10)
         // returns an error: should return old value
@@ -91,7 +88,7 @@ describe('cache', () => {
     })
 
     it('should also accept an expiration timespan', async () => {
-      const key = 'samekey'
+      const key = randomString(8)
       const res1 = await cache_.get({ key, fn: workingFn.bind(null, 'bla') })
       const res2 = await cache_.get({ key, fn: workingFn.bind(null, 'different arg'), timespan: 10000 })
       await wait(100)
@@ -103,7 +100,7 @@ describe('cache', () => {
 
     describe('refresh', () => {
       it('should accept a refresh parameter', async () => {
-        const key = 'samekey'
+        const key = randomString(8)
         const fn = workingFn.bind(null, 'foo')
         const res1 = await cache_.get({ key, fn, timespan: 10000 })
         await wait(100)
@@ -116,7 +113,7 @@ describe('cache', () => {
 
     describe('dry', () => {
       it('should get a cached value with a dry parameter', async () => {
-        const key = randomString(4)
+        const key = randomString(8)
         const fn = workingFn.bind(null, 'foo')
         const res1 = await cache_.get({ key, fn })
         await wait(100)
@@ -125,20 +122,20 @@ describe('cache', () => {
       })
 
       it('should return empty when no value was cached', async () => {
-        const key = randomString(4)
+        const key = randomString(8)
         const res = await cache_.get({ key, dry: true })
         should(res).not.be.ok()
       })
 
       it('should return the fallback value when specified', async () => {
-        const key = randomString(4)
+        const key = randomString(8)
         const dryFallbackValue = 123
         const res = await cache_.get({ key, dry: true, dryFallbackValue })
         res.should.equal(dryFallbackValue)
       })
 
       it('should populate the cache when requested', async () => {
-        const key = randomString(4)
+        const key = randomString(8)
         const fn = workingFn.bind(null, 'foo')
         const res1 = await cache_.get({ key, fn, dryAndCache: true })
         should(res1).not.be.ok()
@@ -148,7 +145,7 @@ describe('cache', () => {
       })
 
       it('should be overriden by refresh', async () => {
-        const key = randomString(4)
+        const key = randomString(8)
         const fn = workingFn.bind(null, 'foo')
         const res1 = await cache_.get({ key, fn, refresh: true, dryAndCache: true })
         await wait(10)
