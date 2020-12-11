@@ -5,7 +5,7 @@ const requests_ = __.require('lib', 'requests')
 const error_ = __.require('lib', 'error/error')
 const assert_ = __.require('utils', 'assert_types')
 const { host: elasticHost } = CONFIG.elasticsearch
-const { formatError } = __.require('lib', 'elasticsearch')
+const { getHits, formatError } = __.require('lib', 'elasticsearch')
 const { indexes, indexedEntitiesTypes, localAndRemoteEntitiesTypes } = require('./indexes')
 const entitiesQueryBuilder = require('./entities_query_builder')
 const socialQueryBuilder = require('./social_query_builder')
@@ -37,5 +37,6 @@ module.exports = async ({ lang, types, search, limit = 20 }) => {
   const url = `${elasticHost}/${queryIndexes.join(',')}/_search`
 
   return requests_.post(url, { body })
+  .then(getHits)
   .catch(formatError)
 }

@@ -2,7 +2,6 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
-const parseResults = require('./lib/parse_results')
 const normalizeResult = require('./lib/normalize_result')
 const { indexedTypes } = require('./lib/indexes')
 const typeSearch = require('./lib/type_search')
@@ -22,7 +21,6 @@ module.exports = {
     .then(params => {
       const { types, search, lang, limit, reqUserId } = params
       return typeSearch({ lang, types, search, limit })
-      .then(parseResults(types))
       .then(results => {
         return results
         .filter(isSearchable(reqUserId))

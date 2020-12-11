@@ -31,8 +31,8 @@ module.exports = async (authorStr, worksLabels, worksLabelsLangs) => {
 
 const searchHumans = authorStr => typeSearch({ search: authorStr, types: [ 'humans' ] })
 
-const parseWdUris = res => {
-  return res.hits.hits
+const parseWdUris = hits => {
+  return hits
   .filter(hit => (hit._index === 'wikidata') && (hit._score > 1))
   .map(hit => prefixifyWd(hit._id))
 }

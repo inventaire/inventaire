@@ -3,7 +3,6 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const getWorksFromAuthorsUris = require('./get_works_from_authors_uris')
 const typeSearch = __.require('controllers', 'search/lib/type_search')
-const parseResults = __.require('controllers', 'search/lib/parse_results')
 const { getEntityNormalizedTerms } = require('../terms_normalization')
 const getAuthorsUris = require('../get_authors_uris')
 
@@ -35,9 +34,9 @@ const searchUrisByAuthorTerms = terms => {
 const types = [ 'humans' ]
 
 const searchUrisByAuthorLabel = async term => {
-  const hits = await typeSearch({ types, search: term }).then(parseResults(types))
-  // Exact match on normalized author terms
+  const hits = await typeSearch({ types, search: term })
   return hits
+  // Exact match on normalized author terms
   .filter(hit => getEntityNormalizedTerms(hit._source).includes(term))
   .map(hit => hit._source.uri)
   .filter(_.identity)

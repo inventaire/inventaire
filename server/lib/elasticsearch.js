@@ -31,6 +31,8 @@ const buildSearcher = params => {
   }
 }
 
+const getHits = res => res.hits.hits
+
 const parseResponse = res => res.hits.hits.map(parseHit)
 
 // Reshape the error object to be fully displayed when logged by _.warn
@@ -62,4 +64,4 @@ const parseHit = hit => {
   return data
 }
 
-module.exports = { buildSearcher, parseResponse, formatError }
+module.exports = { buildSearcher, getHits, parseResponse, formatError }
