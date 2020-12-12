@@ -7,27 +7,19 @@ const { host: elasticHost } = CONFIG.elasticsearch
 
 const buildSearcher = params => {
   let { index, dbBaseName, queryBuilder } = params
-  if (!index) { index = CONFIG.db.name(dbBaseName) }
+  if (!index) index = CONFIG.db.name(dbBaseName)
 
   const url = `${elasticHost}/${index}/_search`
 
   return (query, params = {}) => {
     assert_.string(query)
-    const { type } = params
-
-    let customUrl
-    if (_.isNonEmptyString(type)) {
-      customUrl = url.replace('_search', `${type}/_search`)
-    } else {
-      customUrl = url
-    }
 
     const body = queryBuilder(query, params)
 
-    return requests_.post(customUrl, { body })
+    return requests_.post(url, { body })
     .then(parseResponse)
     .catch(formatError)
-    .catch(_.ErrorRethrow(`${index} ${type} search err`))
+    .catch(_.ErrorRethrow(`${index} search err`))
   }
 }
 

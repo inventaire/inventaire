@@ -10,5 +10,8 @@ module.exports = async entity => {
 
   return results
   .filter(result => result._score > 4)
-  .map(result => result._source)
+  .map(result => ({
+    _score: result._score,
+    uri: result._source.uri,
+  }))
 }
