@@ -6,13 +6,16 @@ const error_ = __.require('lib', 'error/error')
 const assert_ = __.require('utils', 'assert_types')
 const { host: elasticHost } = CONFIG.elasticsearch
 const { getHits, formatError } = __.require('lib', 'elasticsearch')
-const { indexes, indexedEntitiesTypes, localAndRemoteEntitiesTypes } = require('./indexes')
+const { indexes, indexedTypes, indexedEntitiesTypes, localAndRemoteEntitiesTypes } = require('./indexes')
+const indexedTypesSet = new Set(indexedTypes)
 const entitiesQueryBuilder = require('./entities_query_builder')
 const socialQueryBuilder = require('./social_query_builder')
 
-// types should be a subset of ./types indexedTypes
 module.exports = async ({ lang, types, search, limit = 20 }) => {
   assert_.array(types)
+  for (const type of types) {
+    if (!indexedTypesSet.has(type)) throw error_.new('invalid type', 500, { type, types })
+  }
   assert_.string(search)
 
   const hasSocialTypes = types.includes('users') || types.includes('groups')
