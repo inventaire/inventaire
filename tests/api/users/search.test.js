@@ -3,7 +3,7 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const should = require('should')
 const faker = require('faker')
-const { publicReq, authReq, customAuthReq, getUser, getUserB } = require('../utils/utils')
+const { publicReq, customAuthReq, getUser, getUserB, getReservedUser } = require('../utils/utils')
 const { createUser } = require('../fixtures/users')
 const { waitForIndexation } = require('../utils/search')
 
@@ -45,10 +45,10 @@ describe('users:search', () => {
   })
 
   it('should find a user by its bio', async () => {
-    await authReq('put', '/api/user', { attribute: 'bio', value: faker.lorem.words(5) })
-    const user = await getUser()
+    const bio = faker.lorem.words(5)
+    const user = await getReservedUser({ bio })
     await waitForIndexation('users', user._id)
-    const res = await publicReq('get', `/api/users?action=search&search=${user.bio}`)
+    const res = await publicReq('get', `/api/users?action=search&search=${encodeURIComponent(bio)}`)
     usersIds(res).includes(user._id).should.be.true()
   })
 })
