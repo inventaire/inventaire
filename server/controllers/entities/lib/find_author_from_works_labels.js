@@ -5,7 +5,6 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const typeSearch = __.require('controllers', 'search/lib/type_search')
-const { prefixifyWd } = __.require('controllers', 'entities/lib/prefix')
 const getOccurrencesFromExternalSources = require('./get_occurrences_from_external_sources')
 const promises_ = __.require('lib', 'promises')
 
@@ -33,8 +32,8 @@ const searchHumans = authorStr => typeSearch({ search: authorStr, types: [ 'huma
 
 const parseWdUris = hits => {
   return hits
-  .filter(hit => (hit._index === 'wikidata') && (hit._score > 1))
-  .map(hit => prefixifyWd(hit._id))
+  .filter(hit => hit._index === 'wikidata' && hit._score > 1)
+  .map(hit => hit.uri)
 }
 
 const getAuthorOccurrenceData = (worksLabels, worksLabelsLangs) => wdAuthorUri => {
