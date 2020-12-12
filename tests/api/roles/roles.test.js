@@ -15,8 +15,7 @@ describe('roles:public', () => {
   })
 
   it('should access public page', async () => {
-    const endpoint = '/api/entities?action=changes'
-    const res = await publicReq('get', endpoint)
+    const res = await publicReq('get', '/api/config')
     res.should.be.ok()
   })
 })
