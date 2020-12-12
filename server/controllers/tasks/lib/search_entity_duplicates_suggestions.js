@@ -1,22 +1,14 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
-const search = __.require('controllers', 'search/lib/get_wd_authors')
-const { prefixifyWd } = __.require('controllers', 'entities/lib/prefix')
+const typeSearch = __.require('controllers', 'search/lib/type_search')
 
-module.exports = (entity, existingTasks) => {
+module.exports = async entity => {
   const name = _.values(entity.labels)[0]
-  if (!_.isNonEmptyString(name)) return
+  if (!_.isNonEmptyString(name)) return []
 
-  return search(name, { type: 'humans' })
-  .then(searchResult => {
-    return searchResult
-    .filter(result => result._score > 4)
-    .map(formatResult)
-  })
-  .catch(_.ErrorRethrow(`${name} search err`))
+  const results = await typeSearch({ search: name, types: [ 'humans' ], filter: 'wd' })
+
+  return results
+  .filter(result => result._score > 4)
+  .map(result => result._source)
 }
-
-const formatResult = result => ({
-  _score: result._score,
-  uri: prefixifyWd(result.id)
-})

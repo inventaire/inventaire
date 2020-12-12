@@ -8,7 +8,8 @@ const indexes = {
   groups: CONFIG.db.name('groups')
 }
 
-const localAndRemoteEntitiesTypes = [
+const indexedEntitiesTypes = [
+  // inventaire and wikidata entities
   'works',
   'humans',
   'genres',
@@ -16,9 +17,8 @@ const localAndRemoteEntitiesTypes = [
   'publishers',
   'series',
   'collections',
-]
 
-const remoteOnlyEntitiesTypes = [
+  // wikidata entities only
   'genres',
   'movements',
 ]
@@ -28,8 +28,6 @@ const socialTypes = [
   'groups',
 ]
 
-const indexedEntitiesTypes = localAndRemoteEntitiesTypes.concat(remoteOnlyEntitiesTypes)
-
 const indexedTypes = indexedEntitiesTypes.concat(socialTypes)
 
-module.exports = { indexes, indexedTypes, indexedEntitiesTypes, localAndRemoteEntitiesTypes }
+module.exports = { indexes, indexedTypes, indexedEntitiesTypes }

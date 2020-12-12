@@ -6,12 +6,12 @@ const error_ = __.require('lib', 'error/error')
 const assert_ = __.require('utils', 'assert_types')
 const { host: elasticHost } = CONFIG.elasticsearch
 const { getHits, formatError } = __.require('lib', 'elasticsearch')
-const { indexes, indexedTypes, indexedEntitiesTypes, localAndRemoteEntitiesTypes } = require('./indexes')
+const { indexes, indexedTypes, indexedEntitiesTypes } = require('./indexes')
 const indexedTypesSet = new Set(indexedTypes)
 const entitiesQueryBuilder = require('./entities_query_builder')
 const socialQueryBuilder = require('./social_query_builder')
 
-module.exports = async ({ lang, types, search, limit = 20 }) => {
+module.exports = async ({ lang, types, search, limit = 20, filter }) => {
   assert_.array(types)
   for (const type of types) {
     if (!indexedTypesSet.has(type)) throw error_.new('invalid type', 500, { type, types })
@@ -32,8 +32,8 @@ module.exports = async ({ lang, types, search, limit = 20 }) => {
     queryIndexes = types.map(type => indexes[type])
     body = socialQueryBuilder(search)
   } else {
-    queryIndexes = [ indexes.wikidata ]
-    if (localAndRemoteEntitiesTypes) queryIndexes.push(indexes.entities)
+    queryIndexes = entitiesIndexesPerFilter[filter]
+    if (queryIndexes == null) throw error_.new('invalid filter', 500, { filter })
     body = entitiesQueryBuilder({ lang, types, search, limit })
   }
 
@@ -42,4 +42,10 @@ module.exports = async ({ lang, types, search, limit = 20 }) => {
   return requests_.post(url, { body })
   .then(getHits)
   .catch(formatError)
+}
+
+const entitiesIndexesPerFilter = {
+  wd: [ indexes.wikidata ],
+  inv: [ indexes.entities ],
+  [undefined]: [ indexes.wikidata, indexes.entities ],
 }
