@@ -22,9 +22,4 @@ const prefixifyIsbn = isbn => prefixify(isbn_.normalizeIsbn(isbn), 'isbn')
 
 const unprefixify = uri => uri.split(':')[1]
 
-const getInvEntityUri = entity => {
-  const { _id } = entity
-  if (_id != null) return `inv:${_id}`
-}
-
-module.exports = { prefixify, Prefixify, unprefixify, prefixifyWd, prefixifyInv, prefixifyIsbn, getInvEntityUri }
+module.exports = { prefixify, Prefixify, unprefixify, prefixifyWd, prefixifyInv, prefixifyIsbn }
