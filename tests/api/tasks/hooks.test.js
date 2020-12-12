@@ -52,7 +52,9 @@ describe('tasks:hooks', () => {
         .catch(done)
       })
     })
+  })
 
+  describe('task update', () => {
     it('should update relationScore of tasks with same suspect', done => {
       // John Smith is expected to have several merge suggestions
       createHuman({ labels: { en: 'John Smith' } })

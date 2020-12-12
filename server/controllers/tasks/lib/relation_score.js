@@ -19,7 +19,7 @@ module.exports = suspectUri => {
 
 const calculateRelationScore = list => {
   const score = 1 / list.length
-  return _.round(score, 2)
+  return _.round(score, 6)
 }
 
 const relationScoreIsntUpToDate = relationScore => task => task.relationScore !== relationScore
