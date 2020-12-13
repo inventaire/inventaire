@@ -56,7 +56,7 @@ describe('tasks:deduplicate:work', () => {
     const newTask = Object.values(suspectUriTasksRes)[0]
     newTask.suggestionUri.should.equal(editionWorkUri)
     const user = await getAdminUser()
-    newTask.userId.should.equal(user._id)
+    newTask.reporter.should.equal(user._id)
     newTask.clue.should.equal(isbn)
   })
 

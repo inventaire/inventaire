@@ -16,6 +16,6 @@ module.exports = {
   lexicalScore: _.isNumber,
   relationScore: _.isNumber,
   externalSourcesOccurrences: _.isArray,
-  userId,
+  reporter: userId,
   clue: BoundedString(0, 500)
 }

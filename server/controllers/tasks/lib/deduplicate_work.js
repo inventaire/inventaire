@@ -64,7 +64,7 @@ const haveExactMatch = (labels1, labels2) => {
 }
 
 const addToSuggestion = (userId, isbn) => suggestion => {
-  suggestion.userId = userId
+  suggestion.reporter = userId
   suggestion.clue = isbn
   return suggestion
 }
