@@ -3,7 +3,7 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
-const deduplicateWork = require('./lib/deduplicate_work')
+const deduplicateWork = require('./lib/deduplicate_works')
 const sanitize = __.require('lib', 'sanitize/sanitize')
 
 const sanitization = {

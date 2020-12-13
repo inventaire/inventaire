@@ -29,7 +29,7 @@ module.exports = async (workUri, isbn, userId) => {
   const existingTasks = await getExistingTasks(workUri)
   let newSuggestions = await filterNewTasks(existingTasks, suggestions)
   newSuggestions = _.map(newSuggestions, addToSuggestion(userId, isbn))
-  return tasks_.create(workUri, 'feedback', newSuggestions)
+  return tasks_.create(workUri, 'deduplicate', newSuggestions)
 }
 
 const getSuggestionsOrAutomerge = async (work, editionWorks, userId) => {

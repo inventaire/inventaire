@@ -1,5 +1,5 @@
 module.exports = {
-  type: [ 'deduplicate', 'feedback' ],
+  type: [ 'deduplicate' ],
 
   entitiesType: [ 'works', 'humans' ],
 

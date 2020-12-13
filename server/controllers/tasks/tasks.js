@@ -15,7 +15,7 @@ module.exports = {
 
   post: ActionsControllers({
     authentified: {
-      'deduplicate-work': require('./deduplicate_work')
+      'deduplicate-works': require('./deduplicate_works')
     },
     admin: {
       'collect-entities': require('./collect_entities'),
