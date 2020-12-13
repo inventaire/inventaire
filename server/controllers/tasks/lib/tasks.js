@@ -10,13 +10,14 @@ const tasks_ = module.exports = {
   create: async (suspectUri, type, suggestions) => {
     // suggestions may only be an array of objects with a 'uri' key
     const newTasksObjects = suggestions.map(suggestion => {
-      const { _score, uri: suggestionUri, occurrences, reporter, clue } = suggestion
+      const { entitiesType, _score, uri: suggestionUri, occurrences, reporter, clue } = suggestion
 
       const newTask = { type, suspectUri, suggestionUri }
 
       if (_score) { newTask.lexicalScore = _score }
       if (occurrences) { newTask.externalSourcesOccurrences = occurrences }
       if (reporter) { newTask.reporter = reporter }
+      if (entitiesType) { newTask.entitiesType = entitiesType }
       if (clue) { newTask.clue = clue }
       return newTask
     })
