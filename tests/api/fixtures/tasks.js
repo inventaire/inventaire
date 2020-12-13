@@ -33,7 +33,7 @@ const createTaskDoc = async (params = {}) => {
   if (!params.suspectUri) { human = await createHuman() }
   return {
     type: params.type || 'deduplicate',
-    entitiesType: params.entitiesType || 'authors',
+    entitiesType: params.entitiesType || 'humans',
     suspectUri: params.suspectUri || human.uri,
     suggestionUri: params.suggestionUri || 'wd:Q205739',
     lexicalScore: 12.01775,
