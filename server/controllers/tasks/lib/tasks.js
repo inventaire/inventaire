@@ -14,11 +14,11 @@ const tasks_ = module.exports = {
 
       const newTask = { type, suspectUri, suggestionUri }
 
-      if (_score) { newTask.lexicalScore = _score }
-      if (occurrences) { newTask.externalSourcesOccurrences = occurrences }
-      if (reporter) { newTask.reporter = reporter }
-      if (entitiesType) { newTask.entitiesType = entitiesType }
-      if (clue) { newTask.clue = clue }
+      assignKeyIfExists(newTask, 'entitiesType', entitiesType)
+      assignKeyIfExists(newTask, 'lexicalScore', _score)
+      assignKeyIfExists(newTask, 'reporter', reporter)
+      assignKeyIfExists(newTask, 'externalSourcesOccurrences', occurrences)
+      assignKeyIfExists(newTask, 'clue', clue)
       return newTask
     })
     return tasks_.createInBulk(newTasksObjects)
@@ -113,4 +113,8 @@ const completeWithEmptyArrays = (tasksByUris, uris) => {
     if (tasksByUris[uri] == null) tasksByUris[uri] = []
   }
   return tasksByUris
+}
+
+const assignKeyIfExists = (newTask, name, value) => {
+  if (value) { newTask[name] = value }
 }
