@@ -54,9 +54,9 @@ const tasks_ = module.exports = {
     })
   },
 
-  byType: options => {
+  byEntitiesType: options => {
     const { type, limit, offset } = options
-    return db.viewCustom('byType', {
+    return db.viewCustom('byEntitiesType', {
       startkey: type,
       endkey: type,
       limit,

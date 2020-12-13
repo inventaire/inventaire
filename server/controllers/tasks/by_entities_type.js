@@ -6,7 +6,7 @@ const sanitize = __.require('lib', 'sanitize/sanitize')
 
 const sanitization = {
   type: {
-    allowlist: [ 'deduplicate', 'feedback' ]
+    allowlist: [ 'works' ]
   },
   limit: {
     default: 10
@@ -18,7 +18,7 @@ const sanitization = {
 
 module.exports = (req, res) => {
   sanitize(req, res, sanitization)
-  .then(tasks_.byType)
+  .then(tasks_.byEntitiesType)
   .then(responses_.Wrap(res, 'tasks'))
   .catch(error_.Handler(req, res))
 }

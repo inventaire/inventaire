@@ -37,9 +37,9 @@ const utils = module.exports = {
     .then(({ tasks }) => tasks)
   },
 
-  getByType: (options = {}) => {
+  getByEntitiesType: (options = {}) => {
     const { type, limit, offset } = options
-    let url = `${endpoint}by-type&type=${type}`
+    let url = `${endpoint}by-entities-type&type=${type}`
     if (limit != null) url += `&limit=${limit}`
     if (offset != null) url += `&offset=${offset}`
     return publicReq('get', url)

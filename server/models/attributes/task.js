@@ -1,7 +1,7 @@
 module.exports = {
   type: [ 'deduplicate', 'feedback' ],
 
-  entitiesType: [ 'works' ],
+  entitiesType: [ 'works', 'authors' ],
 
   state: [ undefined, 'merged', 'dismissed' ],
 

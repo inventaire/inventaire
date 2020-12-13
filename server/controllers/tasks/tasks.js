@@ -7,7 +7,7 @@ module.exports = {
     public: {
       'by-ids': require('./by_ids'),
       'by-score': require('./by_score'),
-      'by-type': require('./by_type'),
+      'by-entities-type': require('./by_entities_type'),
       'by-suspect-uris': bySuspectUris,
       'by-suggestion-uris': bySuggestionUris
     }

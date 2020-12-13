@@ -1,6 +1,6 @@
 require('should')
 const { createHuman, someFakeUri } = require('../fixtures/entities')
-const { getByScore, getBySuspectUris, getBySuggestionUris, getByType, update } = require('../utils/tasks')
+const { getByScore, getBySuspectUris, getBySuggestionUris, getByEntitiesType, update } = require('../utils/tasks')
 const { createTask } = require('../fixtures/tasks')
 
 // Tests dependency: having a populated Elasticsearch wikidata index
@@ -26,32 +26,32 @@ describe('tasks:byScore', () => {
   })
 })
 
-describe('tasks:byType', () => {
-  const type = 'userReport'
+describe('tasks:byEntitiesType', () => {
+  const entitiesType = 'works'
 
-  it('should return tasks with a specific type', async () => {
-    await createTask({ type })
-    const tasks = await getByType({ type })
-    tasks[0].type.should.equal(type)
+  it('should return tasks with a specific entitiesType', async () => {
+    await createTask({ entitiesType })
+    const tasks = await getByEntitiesType({ type: entitiesType })
+    tasks[0].entitiesType.should.equal(entitiesType)
   })
 
   it('should return a limited array of tasks', async () => {
-    await createTask({ type })
-    const tasks = await getByType({ type, limit: 1 })
+    await createTask({ entitiesType })
+    const tasks = await getByEntitiesType({ type: entitiesType, limit: 1 })
     tasks.length.should.equal(1)
   })
 
   it('should take an offset parameter', async () => {
-    await createTask({ type })
-    const tasksA = await getByType({ type })
-    const tasksB = await getByType({ type, offset: 1 })
+    await createTask({ entitiesType })
+    const tasksA = await getByEntitiesType({ type: entitiesType })
+    const tasksB = await getByEntitiesType({ type: entitiesType, offset: 1 })
     tasksA[1].should.deepEqual(tasksB[0])
   })
 
   it('should return old task before newer ones', async () => {
-    await createTask({ type })
-    await createTask({ type })
-    const tasks = await getByType({ type })
+    await createTask({ entitiesType })
+    await createTask({ entitiesType })
+    const tasks = await getByEntitiesType({ type: entitiesType })
     tasks[0].created.should.below(tasks[1].created)
   })
 })
