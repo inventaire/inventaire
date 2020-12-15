@@ -12,15 +12,19 @@ const sanitization = {
   search: {},
   lang: {},
   types: { allowlist: indexedTypes },
-  limit: { default: 10, max: 100 }
+  limit: { default: 10, max: 100 },
+  filter: {
+    allowlist: [ 'wd', 'inv' ],
+    optional: true
+  },
 }
 
 module.exports = {
   get: (req, res) => {
     sanitize(req, res, sanitization)
     .then(params => {
-      const { types, search, lang, limit, reqUserId } = params
-      return typeSearch({ lang, types, search, limit })
+      const { types, search, lang, limit, filter, reqUserId } = params
+      return typeSearch({ lang, types, search, limit, filter })
       .then(results => {
         return results
         .filter(isSearchable(reqUserId))
