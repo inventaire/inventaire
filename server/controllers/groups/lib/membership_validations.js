@@ -39,6 +39,15 @@ const validateAdmin = (userId, groupId) => {
   })
 }
 
+const validateMembership = (userId, groupId) => {
+  return lists_.isMember(userId, groupId)
+  .then(bool => {
+    if (!bool) {
+      throw error_.new('user is not a group member', 403, userId, groupId)
+    }
+  })
+}
+
 const validateAdminWithoutAdminsConflict = (userId, groupId, targetId) => {
   return Promise.all([
     lists_.isAdmin(userId, groupId),
@@ -99,6 +108,7 @@ module.exports = {
   refuseRequest: validateRequestDecision,
   updateSettings: validateAdmin,
   makeAdmin: validateAdmin,
+  isMember: validateMembership,
   kick: validateAdminWithoutAdminsConflict,
   leave: validateLeaving
 }
