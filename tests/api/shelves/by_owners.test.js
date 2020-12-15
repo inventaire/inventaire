@@ -5,10 +5,11 @@ const { publicReq, customAuthReq, authReq, getUser, getUserB } = require('../uti
 const { createShelf } = require('../fixtures/shelves')
 const { makeFriends } = require('../utils/relations')
 const { createUser } = require('../fixtures/users')
+const { createGroup } = require('../fixtures/groups')
 
 const endpoint = '/api/shelves?action=by-owners'
 
-describe('shelves:by-owners', () => {
+describe('shelves:user:by-owners', () => {
   describe('listing:public', () => {
     it('should reject without owners', async () => {
       try {
@@ -80,5 +81,18 @@ describe('shelves:by-owners', () => {
       const resIds = _.keys(res.shelves)
       resIds.should.containEql(shelf._id)
     })
+  })
+})
+
+describe('shelves:group:by-owners', () => {
+  it('should get a shelf by group owner', async () => {
+    const user = await getUser()
+    const group = await createGroup({ user })
+    const shelf = await createShelf(user, {
+      group: group._id,
+      listing: 'private'
+    })
+    const res = await authReq('get', `${endpoint}&owners=${shelf.owner}`)
+    res.shelves.should.be.ok()
   })
 })
