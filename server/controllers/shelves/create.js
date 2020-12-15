@@ -4,6 +4,7 @@ const error_ = __.require('lib', 'error/error')
 const { Track } = __.require('lib', 'track')
 const shelves_ = __.require('controllers', 'shelves/lib/shelves')
 const sanitize = __.require('lib', 'sanitize/sanitize')
+const { updateSettings: validateGroupAdmin } = __.require('controllers', 'groups/lib/membership_validations')
 
 const sanitization = {
   name: {},
@@ -11,7 +12,8 @@ const sanitization = {
   listing: {
     allowlist: [ 'public', 'private', 'network' ]
   },
-  items: { optional: true }
+  items: { optional: true },
+  group: { optional: true }
 }
 
 module.exports = (req, res, next) => {
@@ -22,8 +24,13 @@ module.exports = (req, res, next) => {
   .catch(error_.Handler(req, res))
 }
 
-const formatNewShelf = params => {
-  const { name, description, listing, reqUserId: owner } = params
+const formatNewShelf = async params => {
+  const { name, description, listing, reqUserId, group } = params
+  let owner = reqUserId
+  if (group) {
+    await validateGroupAdmin(reqUserId, group)
+    owner = group
+  }
   return shelves_.create({
     name,
     description,
