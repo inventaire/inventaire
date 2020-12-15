@@ -2,7 +2,7 @@ const __ = require('config').universalPath
 const { getSingularTypes } = __.require('lib', 'wikidata/aliases')
 
 module.exports = params => {
-  const { lang: userLang, search, limit: size } = params
+  const { lang: userLang, search, limit: size, minScore = 1 } = params
   let { types } = params
   types = getSingularTypes(types)
 
@@ -36,7 +36,7 @@ module.exports = params => {
       },
     },
     size,
-    min_score: 1
+    min_score: minScore
   }
 }
 

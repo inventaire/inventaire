@@ -6,12 +6,17 @@ module.exports = async entity => {
   const name = _.values(entity.labels)[0]
   if (!_.isNonEmptyString(name)) return []
 
-  const results = await typeSearch({ search: name, types: [ 'humans' ], filter: 'wd' })
+  const results = await typeSearch({
+    search: name,
+    types: [ 'humans' ],
+    filter: 'wd',
+    minScore: 4
+  })
 
-  return results
-  .filter(result => result._score > 4)
-  .map(result => ({
-    _score: result._score,
-    uri: result._source.uri,
-  }))
+  return results.map(formatResult)
 }
+
+const formatResult = result => ({
+  _score: result._score,
+  uri: result._source.uri,
+})

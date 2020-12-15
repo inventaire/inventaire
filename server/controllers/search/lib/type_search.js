@@ -11,7 +11,7 @@ const indexedTypesSet = new Set(indexedTypes)
 const entitiesQueryBuilder = require('./entities_query_builder')
 const socialQueryBuilder = require('./social_query_builder')
 
-module.exports = async ({ lang, types, search, limit = 20, filter }) => {
+module.exports = async ({ lang, types, search, limit = 20, filter, minScore }) => {
   assert_.array(types)
   for (const type of types) {
     if (!indexedTypesSet.has(type)) throw error_.new('invalid type', 500, { type, types })
@@ -30,11 +30,11 @@ module.exports = async ({ lang, types, search, limit = 20, filter }) => {
   let body, queryIndexes
   if (hasSocialTypes) {
     queryIndexes = types.map(type => indexes[type])
-    body = socialQueryBuilder(search)
+    body = socialQueryBuilder({ search, limit, minScore })
   } else {
     queryIndexes = entitiesIndexesPerFilter[filter]
     if (queryIndexes == null) throw error_.new('invalid filter', 500, { filter })
-    body = entitiesQueryBuilder({ lang, types, search, limit })
+    body = entitiesQueryBuilder({ lang, types, search, limit, minScore })
   }
 
   const url = `${elasticHost}/${queryIndexes.join(',')}/_search`
