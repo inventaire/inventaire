@@ -10,7 +10,6 @@ const { getUsersNearPosition, getRandomPosition, deleteUser } = require('../util
 const { createGroup, getGroup, addMember, addAdmin } = require('../fixtures/groups')
 const { createTransaction } = require('../fixtures/transactions')
 const { getTransaction, updateTransaction } = require('../utils/transactions')
-const { search } = require('../utils/search')
 
 describe('user:delete', () => {
   it('should delete the user', async () => {
@@ -28,19 +27,6 @@ describe('user:delete', () => {
     should(deletedUser.readToken).not.be.ok()
     should(deletedUser.picture).not.be.ok()
     should(deletedUser.snapshot).not.be.ok()
-  })
-
-  it('should remove the user from search results', async () => {
-    const user = await getReservedUser()
-    await wait(1000)
-    const results = await search('users', user.username)
-    const foundUser = results.find(result => result.id === user._id)
-    should(foundUser).be.ok()
-    await deleteUser(user)
-    await wait(1000)
-    const results2 = await search('users', user.username)
-    const foundUser2 = results2.find(result => result.id === user._id)
-    should(foundUser2).not.be.ok()
   })
 
   it('should remove the user from the geo index', async () => {

@@ -10,6 +10,4 @@ module.exports = {
     // but can most of the time be overriden in ./local.js config with a lower value
     timeout: 20000,
   },
-
-  logOutgoingRequests: true
 }

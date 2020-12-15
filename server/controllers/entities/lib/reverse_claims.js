@@ -9,7 +9,7 @@ const { prefixifyWd, unprefixify } = __.require('controllers', 'entities/lib/pre
 const cache_ = __.require('lib', 'cache')
 const getInvEntityCanonicalUri = require('./get_inv_entity_canonical_uri')
 const runWdQuery = __.require('data', 'wikidata/run_query')
-const getEntitiesPopularity = require('./get_entities_popularity')
+const { getEntitiesPopularities } = require('./popularity')
 
 const caseInsensitiveProperties = [
   'wdt:P2002'
@@ -51,7 +51,7 @@ module.exports = async params => {
   .then(uris => {
     if (!sort) return uris
 
-    return getEntitiesPopularity(uris)
+    return getEntitiesPopularities({ uris })
     .then(scores => uris.sort(sortByScore(scores)))
   })
 }

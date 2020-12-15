@@ -5,7 +5,6 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const typeSearch = __.require('controllers', 'search/lib/type_search')
-const { prefixifyWd } = __.require('controllers', 'entities/lib/prefix')
 const getOccurrencesFromExternalSources = require('./get_occurrences_from_external_sources')
 const promises_ = __.require('lib', 'promises')
 
@@ -29,12 +28,12 @@ module.exports = async (authorStr, worksLabels, worksLabelsLangs) => {
   })
 }
 
-const searchHumans = typeSearch.bind(null, [ 'humans' ])
+const searchHumans = authorStr => typeSearch({ search: authorStr, types: [ 'humans' ] })
 
-const parseWdUris = res => {
-  return res.hits.hits
-  .filter(hit => (hit._index === 'wikidata') && (hit._score > 1))
-  .map(hit => prefixifyWd(hit._id))
+const parseWdUris = hits => {
+  return hits
+  .filter(hit => hit._index === 'wikidata' && hit._score > 1)
+  .map(hit => hit.uri)
 }
 
 const getAuthorOccurrenceData = (worksLabels, worksLabelsLangs) => wdAuthorUri => {

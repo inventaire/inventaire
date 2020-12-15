@@ -5,12 +5,14 @@ const { firstClaim, uniqByUri } = entities_
 const runWdQuery = __.require('data', 'wikidata/run_query')
 const { prefixifyWd } = __.require('controllers', 'entities/lib/prefix')
 const { getSimpleDayDate, sortByScore } = require('./queries_utils')
-const { getTypePluralName, getTypePluralNameByTypeUri } = __.require('lib', 'wikidata/aliases')
+const { getPluralType, getPluralTypeByTypeUri } = __.require('lib', 'wikidata/aliases')
 const { getCachedRelations } = require('./temporarily_cache_relations')
 
 // Working around the circular dependency
-let getEntitiesPopularity
-const lateRequire = () => { getEntitiesPopularity = require('./get_entities_popularity') }
+let getEntitiesPopularities
+const lateRequire = () => {
+  ({ getEntitiesPopularities } = require('./popularity'))
+}
 setTimeout(lateRequire, 0)
 
 const allowlistedTypesNames = [ 'series', 'works', 'articles' ]
@@ -56,7 +58,7 @@ const getWdAuthorWorks = async (qid, params) => {
 const formatWdEntity = result => {
   let { work: wdId, type: typeWdId, date, serie } = result
   const typeUri = `wd:${typeWdId}`
-  const typeName = getTypePluralNameByTypeUri(typeUri)
+  const typeName = getPluralTypeByTypeUri(typeUri)
 
   if (!allowlistedTypesNames.includes(typeName)) return
 
@@ -73,7 +75,7 @@ const getInvAuthorWorks = async uri => {
 
 const formatInvEntity = row => {
   const typeUri = row.value
-  const typeName = getTypePluralNameByTypeUri(typeUri)
+  const typeName = getPluralTypeByTypeUri(typeUri)
   if (!allowlistedTypesNames.includes(typeName)) return
   return {
     uri: `inv:${row.id}`,
@@ -86,7 +88,7 @@ const formatInvEntity = row => {
 // # COMMONS
 const getPopularityScores = results => {
   const uris = _.map(results, 'uri')
-  return getEntitiesPopularity(uris)
+  return getEntitiesPopularities({ uris })
 }
 
 const spreadByType = (worksByTypes, rows) => scores => {
@@ -114,5 +116,5 @@ const formatEntity = entity => ({
   uri: entity.uri,
   date: firstClaim(entity, 'wdt:P577'),
   serie: firstClaim(entity, 'wdt:P179'),
-  type: getTypePluralName(entity.type)
+  type: getPluralType(entity.type)
 })

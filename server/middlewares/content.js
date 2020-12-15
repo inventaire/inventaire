@@ -1,6 +1,6 @@
 const CONFIG = require('config')
 const { deduplicateRequests } = CONFIG
-const { debug } = CONFIG
+const { logBody: logIncomingRequestsBody } = CONFIG.incomingRequests
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
@@ -56,7 +56,7 @@ module.exports = {
 
     temporaryLock(key, data)
 
-    if (debug) _.log(req.body, `${method}:${url} body`)
+    if (logIncomingRequestsBody) _.log(req.body, `${method}:${url} body`)
 
     next()
   }

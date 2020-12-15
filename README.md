@@ -50,7 +50,7 @@ This repository tracks the server-side developments, while the (heavy) [client-s
 - [git](https://git-scm.com/), [curl](http://curl.haxx.se) (used in some installation scripts), [graphicsmagick](www.graphicsmagick.org/README.html) (used to resize images), [inotify-tools](https://github.com/rvoicilas/inotify-tools) (used in API tests scripts)
 - [NodeJS](http://nodejs.org/) (>=6, recommended 12.2), [NVM](https://github.com/creationix/nvm) (allows great version update flexibility)
 - a [CouchDB](http://couchdb.apache.org/) (>=1.6, recommended 1.7) instance (on port 5984 for default config)
-- an [ElasticSearch](https://www.elastic.co/fr/products/elasticsearch) (>=2.4) instance (on port 9200 for default config)
+- an [Elasticsearch](https://www.elastic.co/fr/products/elasticsearch) (>=7.9) instance (on port 9200 for default config)
 
 To install those on Ubuntu that could give something like:
 ```sh
@@ -58,9 +58,9 @@ sudo add-apt-repository ppa:couchdb/stable -y
 sudo apt-get update
 sudo apt-get install git curl wget graphicsmagick couchdb inotify-tools
 
-# Install ElasticSearch and its main dependency: Java
+# Install Elasticsearch and its main dependency: Java
 # You might want to make sure that no previous version of Java is installed first as it might trigger version issues:
-# ElasticSearch requires Java 8/Oracle JDK version 1.8. See https://www.elastic.co/guide/en/elasticsearch/reference/current/_installation.html
+# Elasticsearch requires Java 8/Oracle JDK version 1.8. See https://www.elastic.co/guide/en/elasticsearch/reference/current/_installation.html
 # (yes, piping a script to bash is a bad security habit, just as is executing anything on your machine coming from the wild and internet without checking what it does, but we trust this source. For the sake of good practices, you may want to read the script first though ;) )
 curl https://raw.githubusercontent.com/inventaire/inventaire-deploy/d8c8bee46c241ceca0ddf3d9c319d84bfb0734d9/install_elasticsearch | bash
 

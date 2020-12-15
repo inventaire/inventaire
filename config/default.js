@@ -33,10 +33,16 @@ const config = module.exports = {
   autoRotateKeys: true,
   // Force to renew cookies at least every 6 months
   cookieMaxAge: 180 * 24 * 3600 * 1000,
-  // Debug mode:
-  // - log requests body
-  debug: false,
-  logOutgoingRequests: true,
+  incomingRequests: {
+    logBody: false
+  },
+
+  outgoingRequests: {
+    log: true,
+    bodyLogLimit: 500,
+    baseBanTime: 5000,
+    banTimeIncreaseFactor: 4
+  },
   // CouchDB settings
   db: {
     protocol: 'http',
@@ -70,16 +76,8 @@ const config = module.exports = {
   leveldbMemoryBackend: false,
 
   elasticsearch: {
-    host: 'http://localhost:9200'
-  },
-
-  // See server/controllers/entities/lib/update_search_engine.js
-  entitiesSearchEngine: {
-    delay: 10000
-  },
-
-  couch2elastic4sync: {
-    activated: true
+    host: 'http://localhost:9200',
+    updateDelay: 1000
   },
 
   // See server/data/dataseed/dataseed.js
@@ -197,11 +195,6 @@ const config = module.exports = {
       run: true,
       interval: 3000
     }
-  },
-
-  outgoingRequests: {
-    baseBanTime: 5000,
-    banTimeIncreaseFactor: 4
   },
 
   entitiesRelationsTemporaryCache: {

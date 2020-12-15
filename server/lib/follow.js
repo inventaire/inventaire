@@ -3,7 +3,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const { Wait } = __.require('lib', 'promises')
+const { wait } = __.require('lib', 'promises')
 const assert_ = __.require('utils', 'assert_types')
 const error_ = __.require('lib', 'error/error')
 const follow = require('cloudant-follow')
@@ -26,7 +26,7 @@ const freezeFollow = CONFIG.db.follow.freezeFollow || !CONFIG.serverMode
 // filter and an onChange functions register, indexed per dbBaseNames
 const followers = {}
 
-module.exports = params => {
+module.exports = async params => {
   const { dbBaseName, filter, onChange, reset } = params
   assert_.string(dbBaseName)
   assert_.function(filter)
@@ -47,46 +47,58 @@ module.exports = params => {
     // Create a db follower register, and add it this follower
     followers[dbName] = [ params ]
 
+    const lastSeq = await getLastSeq(dbName)
     // Then start follow this database
-    return metaDb.get(buildKey(dbName))
-    .catch(error_.catchNotFound)
-    .then(lastSeq => lastSeq != null ? parseInt(lastSeq) : 0)
     // after a bit, to let other followers the time to register, and CouchDB
     // the time to initialize, while letting other initialization functions
     // with a higher priority level some time to run.
     // It won't miss any changes as CouchDB will send everything that happened since
     // the last saved sequence number
-    .then(Wait(delayFollow))
-    .then(initFollow(dbName, reset))
-    .catch(_.ErrorRethrow('init follow err'))
+    await wait(delayFollow)
+    await initFollow(dbName, reset, lastSeq)
   }
 }
 
-const initFollow = (dbName, reset) => (lastSeq = 0) => {
-  if (resetFollow) lastSeq = 0
+const getLastSeq = async dbName => {
+  if (resetFollow) return 0
+  const key = buildKey(dbName)
+  const lastSeq = await metaDb.get(key).catch(error_.catchNotFound)
+  return lastSeq != null ? parseInt(lastSeq) : 0
+}
+
+const initFollow = async (dbName, reset, lastSeq) => {
   assert_.number(lastSeq)
 
   const setLastSeq = SetLastSeq(dbName)
   const dbUrl = `${dbHost}/${dbName}`
 
-  return waitForCouchInit()
-  .then(() => getDbLastSeq(dbUrl))
-  .then(dbLastSeq => {
-    // Reset lastSeq if the dbLastSeq is behind
-    // as this probably means the database was deleted and re-created
-    // and the leveldb-backed meta db kept the last_seq value of the previous db
-    if (lastSeq > dbLastSeq) {
-      _.log({ lastSeq, dbLastSeq }, `${dbName} saved last_seq ahead of db: reseting`, 'yellow')
-      lastSeq = 0
-      setLastSeq(lastSeq)
-    }
+  await waitForCouchInit()
+  const dbLastSeq = await getDbLastSeq(dbUrl)
 
-    return resetIfNeeded(dbName, lastSeq, reset)
-    .then(() => startFollowingDb({ dbName, dbUrl, lastSeq, setLastSeq }))
-  })
+  // If there is a legitimate large gap, use a dedicated script based on CouchDB current state
+  // rather than attempt to follow from the beginning.
+  // Typical case: when starting the server with a large entities database and an empty Elasticsearch,
+  // the recommended process is to load entities in Elasticsearch by using scripts/indexation/load.js
+  if (dbLastSeq > lastSeq + 10000) {
+    _.log({ lastSeq, dbLastSeq }, `${dbName} saved last_seq is too far beyond: ignoring`, 'yellow')
+    lastSeq = dbLastSeq
+  }
+
+  // Reset lastSeq if the dbLastSeq is behind
+  // as this probably means the database was deleted and re-created
+  // and the leveldb-backed meta db kept the last_seq value of the previous db
+  if (lastSeq > dbLastSeq) {
+    _.log({ lastSeq, dbLastSeq }, `${dbName} saved last_seq ahead of db: reseting`, 'yellow')
+    lastSeq = 0
+  }
+
+  setLastSeq(lastSeq)
+
+  await resetIfNeeded(lastSeq, reset)
+  return startFollowingDb({ dbName, dbUrl, lastSeq, setLastSeq })
 }
 
-const resetIfNeeded = async (dbName, lastSeq, reset) => {
+const resetIfNeeded = async (lastSeq, reset) => {
   if (lastSeq === 0 && reset != null) return reset()
 }
 

@@ -7,9 +7,6 @@ module.exports = {
   dataseed: {
     enabled: true
   },
-  entitiesSearchEngine: {
-    delay: 5000
-  },
   db: {
     enableDesignDocSync: true
   },

@@ -12,5 +12,15 @@ const utils = module.exports = {
   getById: item => {
     return utils.getByIds(item._id)
     .then(res => res.items[0])
+  },
+
+  deleteByIds: ids => {
+    ids = _.forceArray(ids)
+    return authReq('post', '/api/items?action=delete-by-ids', { ids })
+  },
+
+  update: (ids, attribute, value) => {
+    ids = _.forceArray(ids)
+    return authReq('put', '/api/items?action=bulk-update', { ids, attribute, value })
   }
 }

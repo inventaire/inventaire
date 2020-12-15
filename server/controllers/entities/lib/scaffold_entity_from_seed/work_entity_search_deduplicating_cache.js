@@ -68,5 +68,5 @@ const clean = () => {
   return _.info(Object.keys(cache), 'work entity deduplicating cache after cleaning')
 }
 
-// This cache should span long enough to let the time to CouchDB and ElasticSearch to be aware of the new entity work
+// This cache should span long enough to let the time to CouchDB and Elasticsearch to be aware of the new entity work
 const cleanAfterBatch = _.debounce(clean, 5000)

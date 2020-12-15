@@ -3,15 +3,11 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
 const { getUser, getReservedUser, customAuthReq } = require('../utils/utils')
-const { getIndexedDoc } = require('../utils/search')
+const { waitForIndexation } = require('../utils/search')
 const { getTwoFriends } = require('../fixtures/users')
 const { createItem, createItemWithEditionAndWork, createItemWithAuthor, createItemWithAuthorAndSerie } = require('../fixtures/items')
-const endpoint = '/api/items?action=search'
-const { wait } = __.require('lib', 'promises')
 const { shouldNotBeCalled } = require('../utils/utils')
 const firstNWords = (str, num) => str.split(' ').slice(0, num).join(' ')
-const { elasticsearchUpdateDelay } = CONFIG.entitiesSearchEngine
-const itemsIndex = CONFIG.db.name('items')
 
 const search = (reqUser, userId, search) => {
   let url = endpoint
@@ -20,19 +16,7 @@ const search = (reqUser, userId, search) => {
   return customAuthReq(reqUser, 'get', url)
 }
 
-describe('items:search:indexation', () => {
-  it('should index items with snapshot data', async () => {
-    const user = await getUser()
-    const item = await createItemWithEditionAndWork(user)
-    await wait(elasticsearchUpdateDelay)
-    const res = await getIndexedDoc(itemsIndex, 'item', item._id)
-    res.found.should.be.true()
-    res._id.should.equal(item._id)
-    res._type.should.equal('item')
-    res._source.owner.should.equal(user._id)
-    res._source.snapshot['entity:title'].should.be.a.String()
-  })
-})
+const endpoint = '/api/items?action=search'
 
 describe('items:search', () => {
   it('should reject if no user id is set', async () => {
@@ -63,7 +47,7 @@ describe('items:search', () => {
       createItemWithEditionAndWork(user),
       createItemWithEditionAndWork(user)
     ])
-    await wait(1000)
+    await waitForIndexation('items', item._id)
     const { 'entity:title': title } = item.snapshot
     const { items } = await search(user, user._id, title)
     // There might be other results, but the searched item should come first
@@ -78,7 +62,7 @@ describe('items:search', () => {
       createItemWithEditionAndWork(user),
       createItemWithEditionAndWork(user)
     ])
-    await wait(1000)
+    await waitForIndexation('items', item._id)
     const { 'entity:subtitle': subtitle } = item.snapshot
     const { items } = await search(user, user._id, subtitle)
     items[0]._id.should.equal(item._id)
@@ -92,7 +76,7 @@ describe('items:search', () => {
       createItemWithAuthor(user),
       createItemWithAuthor(user)
     ])
-    await wait(1000)
+    await waitForIndexation('items', item._id)
     const { 'entity:authors': authors } = item.snapshot
     const { items } = await search(user, user._id, authors)
     items[0]._id.should.equal(item._id)
@@ -106,7 +90,7 @@ describe('items:search', () => {
       createItemWithAuthorAndSerie(user),
       createItemWithAuthorAndSerie(user)
     ])
-    await wait(1000)
+    await waitForIndexation('items', item._id)
     const { 'entity:series': series } = item.snapshot
     const { items } = await search(user, user._id, series)
     items[0]._id.should.equal(item._id)
@@ -120,7 +104,7 @@ describe('items:search', () => {
       createItemWithAuthorAndSerie(user),
       createItemWithAuthorAndSerie(user)
     ])
-    await wait(1000)
+    await waitForIndexation('items', item._id)
     const { 'entity:title': title, 'entity:authors': authors } = item.snapshot
     const input = `${firstNWords(authors, 1)} ${firstNWords(title, 2)}`
     const { items } = await search(user, user._id, input)
@@ -131,7 +115,10 @@ describe('items:search', () => {
     const [ userA, userB ] = await getTwoFriends()
     const privateItem = await createItemWithEditionAndWork(userA, { listing: 'private' })
     const networkItem = await createItem(userA, { entity: privateItem.entity, listing: 'network' })
-    await wait(1000)
+    await Promise.all([
+      waitForIndexation('items', privateItem._id),
+      waitForIndexation('items', networkItem._id),
+    ])
     const { 'entity:title': title } = privateItem.snapshot
     const { items } = await search(userB, userA._id, title)
     const itemsIds = _.map(items, '_id')
@@ -145,7 +132,11 @@ describe('items:search', () => {
     const privateItem = await createItemWithEditionAndWork(userA, { listing: 'network' })
     const networkItem = await createItem(userA, { entity: privateItem.entity, listing: 'network' })
     const publicItem = await createItem(userA, { entity: privateItem.entity, listing: 'public' })
-    await wait(1000)
+    await Promise.all([
+      waitForIndexation('items', privateItem._id),
+      waitForIndexation('items', networkItem._id),
+      waitForIndexation('items', publicItem._id),
+    ])
     const { 'entity:title': title } = privateItem.snapshot
     const { items } = await search(userB, userA._id, title)
     const itemsIds = _.map(items, '_id')

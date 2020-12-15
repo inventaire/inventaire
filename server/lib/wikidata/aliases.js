@@ -136,12 +136,24 @@ for (let type in typesAliases) {
 
 const typesNames = Object.keys(typesAliases)
 
-const getTypePluralName = singularType => {
+const getPluralType = singularType => {
   const pluralizedType = singularType + 's'
   if (!typesAliases[pluralizedType]) throw error_.new('invalid type', { singularType })
   return pluralizedType
 }
 
-const getTypePluralNameByTypeUri = uri => types[uri] ? `${types[uri]}s` : null
+const getPluralTypeByTypeUri = uri => types[uri] ? `${types[uri]}s` : null
 
-module.exports = { types, typesNames, getTypePluralName, getTypePluralNameByTypeUri }
+const getSingularType = type => type.replace(/s$/, '')
+
+const getSingularTypes = types => types.map(getSingularType)
+
+module.exports = {
+  types,
+  typesAliases,
+  typesNames,
+  getPluralType,
+  getPluralTypeByTypeUri,
+  getSingularType,
+  getSingularTypes
+}

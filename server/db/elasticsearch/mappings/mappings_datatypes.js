@@ -1,14 +1,30 @@
-// See https://www.elastic.co/guide/en/elasticsearch/reference/2.4/mapping-types.html
+const { activeI18nLangs } = require('../helpers')
+
+// See https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-types.html
+
+const langProperty = {
+  type: 'text',
+  analyzer: 'autocomplete',
+  // adding a 'search_analyzer' key to use a different analyzer at search time,
+  // See: https://www.elastic.co/guide/en/elasticsearch/reference/current/search-analyzer.html
+  search_analyzer: 'simple'
+}
+
+const getTermsProperties = () => {
+  const properties = {}
+  activeI18nLangs.forEach(lang => {
+    properties[lang] = langProperty
+  })
+  properties.fromclaims = langProperty
+  return properties
+}
 
 module.exports = {
-  string: { type: 'string' },
-  // Will simply be type=keyword in later ES versions
-  // See https://www.elastic.co/guide/en/elasticsearch/reference/7.7/keyword.html
-  keyword: {
-    type: 'string',
-    index: 'not_analyzed'
-  },
-  date: {
-    type: 'date'
-  }
+  text: { type: 'text' },
+  integer: { type: 'integer' },
+  nested: { type: 'nested' },
+  keyword: { type: 'keyword' },
+  date: { type: 'date' },
+  flattened: { type: 'flattened' },
+  terms: { properties: getTermsProperties() }
 }

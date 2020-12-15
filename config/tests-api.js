@@ -24,6 +24,11 @@ module.exports = {
     }
   },
 
+  outgoingRequests: {
+    log: true,
+    bodyLogLimit: 2000
+  },
+
   mediaStorage: {
     local: {
       internalEndpoint: () => `http://localhost:${port}/local/`
@@ -43,12 +48,6 @@ module.exports = {
   deduplicateRequests: false,
   mailer: {
     disabled: true
-  },
-
-  entitiesSearchEngine: {
-    // Go fast to avoid having to wait in tests
-    delay: 10,
-    elasticsearchUpdateDelay: 3000
   },
 
   itemsCountDebounceTime: 500

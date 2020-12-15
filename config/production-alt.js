@@ -23,9 +23,6 @@ module.exports = {
     // fails to be sent, it could be recovered
     disabled: true
   },
-  couch2elastic4sync: {
-    activated: true
-  },
   jobs: {
     'inv:deduplicate': {
       run: true

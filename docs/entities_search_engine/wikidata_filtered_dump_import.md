@@ -2,11 +2,7 @@
 
 ```sh
 # the wikidata claim that entities have to match to be in the subset
-claim=P31:Q5
-# the type that will be passed to ElasticSearch 'wikidata' index
-datatype=humans
-
-./bin/dump_wikidata_subset $claim $datatype
+npm run indexation:entities:load-humans-in-wikidata-dump
 # time for a coffee!
 ```
 What happens here:
@@ -21,11 +17,11 @@ What happens here:
 The same as the above but saving the Wikdiata dump to disk to avoid downloading 13GB multiple times when one time would be enough. This time, you do need the 13GB disk space, plus the space that will take your subsets in ElasticSearch
 ```sh
 alias wdfilter=./node_modules/.bin/wikibase-dump-filter
-alias import_to_elastic=./scripts/entities_indexation/import_to_elasticsearch.js
+alias load=./scripts/indexation/load.js
 
 curl -s https://dumps.wikimedia.org/wikidatawiki/entities/latest-all.json.bz2 > wikidata-dump.json.bz2
 
-cat wikidata-dump.json.bz2 | pbzip2 -cd | grep '"Q5"' | wdfilter --claim P31:Q5 --omit type,sitelinks | import_to_elastic humans
+cat wikidata-dump.json.bz2 | pbzip2 -cd | grep '"Q5"' | wdfilter --claim P31:Q5 --omit type,sitelinks | load wikidata
 # => will be available at http://localhost:9200/wikidata/humans
 ```
 
@@ -33,5 +29,5 @@ cat wikidata-dump.json.bz2 | pbzip2 -cd | grep '"Q5"' | wdfilter --claim P31:Q5 
 If importing a dump fails at some point, rather than re-starting from 0, you can use the grep to restart from the latest known line.
 Example:
 ```sh
-cat wikidata-dump.json.bz2 | pbzip2 -cd | grep '"Q27999075"' --after-context 1000000000000 --color=never | grep '"Q5"' | ./node_modules/.bin/wikibase-dump-filter --claim P31:Q5 --omit type,sitelinks | ./scripts/entities_indexation/import_to_elasticsearch.js humans
+cat wikidata-dump.json.bz2 | pbzip2 -cd | grep '"Q27999075"' --after-context 1000000000000 --color=never | grep '"Q5"' | ./node_modules/.bin/wikibase-dump-filter --claim P31:Q5 --omit type,sitelinks | ./scripts/indexation/load.js wikidata
 ```

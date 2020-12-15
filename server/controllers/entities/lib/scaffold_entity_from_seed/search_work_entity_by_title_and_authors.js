@@ -1,6 +1,6 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
-const searchByText = require('../search_by_text')
+const typeSearch = __.require('controllers', 'search/lib/type_search')
 const getBestLangValue = __.require('lib', 'get_best_lang_value')
 const getEntitiesByUris = require('../get_entities_by_uris')
 const workEntitiesCache = require('./work_entity_search_deduplicating_cache')
@@ -22,11 +22,11 @@ module.exports = async seed => {
   const cachedWorkPromise = workEntitiesCache.get(seed)
   if (cachedWorkPromise != null) return cachedWorkPromise
 
-  let entities = await searchByText({ search: title, lang })
+  const results = await typeSearch({ search: title, types: [ 'works' ], lang })
+  const uris = results.map(result => result._source.uri)
+  let entities = await getEntitiesByUris({ uris, list: true })
 
   entities = entities
-    .filter(isWork)
-    // Make a first filter from the results we got
     .filter(matchTitle(title, lang))
 
   // Fetch the data we miss to check author match
@@ -37,8 +37,6 @@ module.exports = async seed => {
   if (matches.length > 1) _.warn(matches, 'possible duplicates')
   return matches[0]
 }
-
-const isWork = entity => entity.type === 'work'
 
 const addAuthorsStrings = lang => result => {
   const authorsUris = result.claims['wdt:P50']
