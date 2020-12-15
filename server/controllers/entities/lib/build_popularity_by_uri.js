@@ -91,6 +91,6 @@ const popularityGettersByType = {
 // Wikidata entities get a bonus as being on Wikidata is already kind of a proof of a certain
 // level of popularity
 const addBonusPoints = uri => score => {
-  if (_.isWdEntityUri(uri)) return score + 5
+  if (_.isWdEntityUri(uri)) return score + 2
   else return score
 }
