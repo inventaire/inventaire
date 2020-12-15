@@ -10,26 +10,26 @@ const lateRequire = () => { groups_ = require('./groups') }
 setTimeout(lateRequire, 0)
 
 const lists_ = module.exports = {
-  userInGroup: (userId, groupId) => {
+  isMember: (userId, groupId) => {
     return groups_.byId(groupId)
     .then(lists_.allGroupMembers)
     .then(userIdInUsers(userId))
   },
 
-  userInGroupOrOut: (userId, groupId) => {
+  isInGroup: (userId, groupId) => {
     return groups_.byId(groupId)
     // includes 'invited', 'requested'
     .then(lists_.allGroupUsers)
     .then(userIdInUsers(userId))
   },
 
-  userInRequested: (userId, groupId) => {
+  isInRequested: (userId, groupId) => {
     return groups_.byId(groupId)
     .then(lists_.allRequested)
     .then(userIdInUsers(userId))
   },
 
-  userInAdmins: (userId, groupId) => {
+  isAdmin: (userId, groupId) => {
     return groups_.byId(groupId)
     .then(lists_.allAdmins)
     .then(userIdInUsers(userId))

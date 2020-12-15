@@ -11,7 +11,7 @@ const lateRequire = () => { groups_ = require('./groups') }
 setTimeout(lateRequire, 0)
 
 module.exports = {
-  userCanLeave: (userId, groupId) => {
+  canLeave: (userId, groupId) => {
     return groups_.byId(groupId)
     .then(group => {
       const { admins, members } = group

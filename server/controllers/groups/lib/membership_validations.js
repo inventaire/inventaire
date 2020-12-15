@@ -7,11 +7,11 @@ const leave_ = require('./leave_groups')
 
 const validateRequestDecision = (reqUserId, groupId, requesterId) => {
   return Promise.all([
-    lists_.userInAdmins(reqUserId, groupId),
-    lists_.userInRequested(requesterId, groupId)
+    lists_.isAdmin(reqUserId, groupId),
+    lists_.isInRequested(requesterId, groupId)
   ])
-  .then(([ userInAdmins, requesterInRequested ]) => {
-    if (!userInAdmins) {
+  .then(([ isAdmin, requesterInRequested ]) => {
+    if (!isAdmin) {
       throw error_.new('user is not admin', 403, reqUserId, groupId)
     }
     if (!requesterInRequested) {
@@ -21,7 +21,7 @@ const validateRequestDecision = (reqUserId, groupId, requesterId) => {
 }
 
 const validateInvite = (reqUserId, groupId, invitedUserId) => {
-  return lists_.userInGroup(reqUserId, groupId)
+  return lists_.isMember(reqUserId, groupId)
   .then(invitorInGroup => {
     if (!invitorInGroup) {
       const context = { reqUserId, groupId, invitedUserId }
@@ -31,7 +31,7 @@ const validateInvite = (reqUserId, groupId, invitedUserId) => {
 }
 
 const validateAdmin = (reqUserId, groupId) => {
-  return lists_.userInAdmins(reqUserId, groupId)
+  return lists_.isAdmin(reqUserId, groupId)
   .then(bool => {
     if (!bool) {
       throw error_.new('user is not a group admin', 403, reqUserId, groupId)
@@ -41,8 +41,8 @@ const validateAdmin = (reqUserId, groupId) => {
 
 const validateAdminWithoutAdminsConflict = (reqUserId, groupId, targetId) => {
   return Promise.all([
-    lists_.userInAdmins(reqUserId, groupId),
-    lists_.userInAdmins(targetId, groupId)
+    lists_.isAdmin(reqUserId, groupId),
+    lists_.isAdmin(targetId, groupId)
   ])
   .then(([ userIsAdmin, targetIsAdmin ]) => {
     if (!userIsAdmin) {
@@ -56,14 +56,14 @@ const validateAdminWithoutAdminsConflict = (reqUserId, groupId, targetId) => {
 
 const validateLeaving = (reqUserId, groupId) => {
   return Promise.all([
-    lists_.userInGroup(reqUserId, groupId),
-    leave_.userCanLeave(reqUserId, groupId)
+    lists_.isMember(reqUserId, groupId),
+    leave_.canLeave(reqUserId, groupId)
   ])
-  .then(([ userInGroup, userCanLeave ]) => {
-    if (!userInGroup) {
+  .then(([ isMember, canLeave ]) => {
+    if (!isMember) {
       throw error_.new('user is not in the group', 403, reqUserId, groupId)
     }
-    if (!userCanLeave) {
+    if (!canLeave) {
       const message = "the last group admin can't leave before naming another admin"
       throw error_.new(message, 403, reqUserId, groupId)
     }
@@ -71,7 +71,7 @@ const validateLeaving = (reqUserId, groupId) => {
 }
 
 const validateRequest = (reqUserId, groupId) => {
-  return lists_.userInGroupOrOut(reqUserId, groupId)
+  return lists_.isInGroup(reqUserId, groupId)
   .then(bool => {
     if (bool) {
       throw error_.new('user is already in group', 403, reqUserId, groupId)
@@ -80,7 +80,7 @@ const validateRequest = (reqUserId, groupId) => {
 }
 
 const validateCancelRequest = (reqUserId, groupId) => {
-  return lists_.userInRequested(reqUserId, groupId)
+  return lists_.isInRequested(reqUserId, groupId)
   .then(bool => {
     if (!bool) {
       throw error_.new('request not found', 403, reqUserId, groupId)
