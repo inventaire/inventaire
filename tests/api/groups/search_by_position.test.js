@@ -3,7 +3,7 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const should = require('should')
 const { publicReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = __.require('apiTests', 'utils/utils')
-const { groupPromise } = require('../fixtures/groups')
+const { createGroup } = require('../fixtures/groups')
 const qs = require('querystring')
 const endpoint = '/api/groups?action=search-by-position'
 
@@ -19,9 +19,9 @@ describe('groups:search-by-position', () => {
   })
 
   it('should get groups by position', async () => {
-    const group = await groupPromise
-    const bbox = qs.escape(JSON.stringify([ 0, 0, 2, 2 ]))
-    const res = publicReq('get', `${endpoint}&bbox=${bbox}`)
+    const group = await createGroup({ position: [ 10, 10 ] })
+    const bbox = qs.escape(JSON.stringify([ 9, 9, 11, 11 ]))
+    const res = await publicReq('get', `${endpoint}&bbox=${bbox}`)
     res.groups.should.be.an.Array()
     const groupsIds = _.map(res.groups, '_id')
     should(groupsIds.includes(group._id)).be.true()
