@@ -6,7 +6,7 @@ require('should')
 const { authReq, authReqB, getUser, undesiredRes } = require('../utils/utils')
 const { CountChange } = require('./helpers')
 const { createItem } = require('../fixtures/items')
-const debounceDelay = CONFIG.itemsCountDebounceTime + 100
+const debounceDelay = CONFIG.itemsCountDebounceTime + 500
 
 const deleteByIds = (ids, authReqFn) => {
   if (!authReqFn) { authReqFn = authReq }
