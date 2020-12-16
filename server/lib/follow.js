@@ -60,14 +60,13 @@ module.exports = async params => {
 }
 
 const getLastSeq = async dbName => {
-  if (resetFollow) return 0
+  if (resetFollow) return
   const key = buildKey(dbName)
-  const lastSeq = await metaDb.get(key).catch(error_.catchNotFound)
-  return lastSeq != null ? parseInt(lastSeq) : 0
+  return metaDb.get(key).catch(error_.catchNotFound)
 }
 
 const initFollow = async (dbName, reset, lastSeq) => {
-  assert_.number(lastSeq)
+  if (lastSeq != null) assert_.string(lastSeq)
 
   const setLastSeq = SetLastSeq(dbName)
   const dbUrl = `${dbHost}/${dbName}`
@@ -79,7 +78,7 @@ const initFollow = async (dbName, reset, lastSeq) => {
   // rather than attempt to follow from the beginning.
   // Typical case: when starting the server with a large entities database and an empty Elasticsearch,
   // the recommended process is to load entities in Elasticsearch by using scripts/indexation/load.js
-  if (dbLastSeq > lastSeq + 10000) {
+  if (getSeqPrefixNumber(dbLastSeq) > getSeqPrefixNumber(lastSeq) + 10000) {
     _.log({ lastSeq, dbLastSeq }, `${dbName} saved last_seq is too far beyond: ignoring`, 'yellow')
     lastSeq = dbLastSeq
   }
@@ -87,9 +86,9 @@ const initFollow = async (dbName, reset, lastSeq) => {
   // Reset lastSeq if the dbLastSeq is behind
   // as this probably means the database was deleted and re-created
   // and the leveldb-backed meta db kept the last_seq value of the previous db
-  if (lastSeq > dbLastSeq) {
+  if (getSeqPrefixNumber(lastSeq) > getSeqPrefixNumber(dbLastSeq)) {
     _.log({ lastSeq, dbLastSeq }, `${dbName} saved last_seq ahead of db: reseting`, 'yellow')
-    lastSeq = 0
+    lastSeq = null
   }
 
   setLastSeq(lastSeq)
@@ -98,8 +97,13 @@ const initFollow = async (dbName, reset, lastSeq) => {
   return startFollowingDb({ dbName, dbUrl, lastSeq, setLastSeq })
 }
 
+// CouchDB documentation states that applications "should treat seq ids as opaque values"
+// https://docs.couchdb.org/en/stable/whatsnew/2.0.html
+// but it seems that seq prefixes remain incremental integers
+const getSeqPrefixNumber = seq => seq ? parseInt(seq.split('-')[0]) : 0
+
 const resetIfNeeded = async (lastSeq, reset) => {
-  if (lastSeq === 0 && reset != null) return reset()
+  if (reset != null && lastSeq == null) return reset()
 }
 
 const startFollowingDb = params => {
@@ -110,7 +114,7 @@ const startFollowingDb = params => {
     db: dbUrl,
     include_docs: true,
     feed: 'continuous',
-    since: lastSeq
+    since: lastSeq || 0
   }
 
   return follow(config, (err, change) => {
@@ -129,9 +133,13 @@ const SetLastSeq = dbName => {
   // Creating a closure on dbName to underline that
   // this function shouldn't be shared between databases
   // as it could miss updates due to the debouncer
-  const setLastSeq = seq => {
-    return metaDb.put(key, seq.toString())
-    .catch(_.Error(`${dbName} setLastSeq err`))
+  const setLastSeq = async seq => {
+    try {
+      if (seq != null) await metaDb.put(key, seq)
+      else await metaDb.del(key)
+    } catch (err) {
+      _.error(err, `${dbName} setLastSeq err (seq: ${seq})`)
+    }
   }
   // setLastSeq might be triggered many times if a log of changes arrive at once
   // no need to write to the database at each times, just the last

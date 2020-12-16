@@ -47,4 +47,5 @@ const update = (id, lat, lon) => db.put({ lat, lon }, id, emptyValue)
 const reset = () => {
   _.log('reseting users geo index', null, 'yellow')
   return level_.reset(db.sub)
+  .catch(_.ErrorRethrow('users geo index reset err'))
 }
