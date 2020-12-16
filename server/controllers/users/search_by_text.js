@@ -20,5 +20,5 @@ module.exports = (req, res) => {
 
 const searchByText = buildSearcher({
   dbBaseName: 'users',
-  queryBuilder
+  queryBuilder: search => queryBuilder({ search })
 })
