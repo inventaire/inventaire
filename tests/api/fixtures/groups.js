@@ -5,33 +5,37 @@ const endpointAction = `${endpointBase}?action`
 const { humanName } = require('../fixtures/entities')
 
 const getGroup = async group => {
-  group = await Promise.resolve(group)
+  group = await group
   const { group: refreshedGroup } = await authReq('get', `${endpointAction}=by-id&id=${group._id}`)
   return refreshedGroup
 }
 
 const createGroup = (params = {}) => {
-  const name = params.name || groupName()
-  const user = params.user || getUser()
-  const position = params.position || [ 1, 1 ]
+  const {
+    name = groupName(),
+    user = getUser(),
+    position = [ 1, 1 ],
+    searchable = true,
+    open = false,
+  } = params
   return customAuthReq(user, 'post', `${endpointBase}?action=create`, {
     name,
     position,
-    searchable: true,
-    open: false
+    searchable,
+    open,
   })
 }
 
 const membershipAction = async (actor, action, group, user) => {
-  group = await Promise.resolve(group)
-  user = await Promise.resolve(user)
+  group = await group
+  user = await user
   const data = { action, group: group._id }
   if (user) data.user = user._id
   return customAuthReq(actor, 'put', endpointBase, data)
 }
 
 const addMember = async (group, member) => {
-  member = await Promise.resolve(member)
+  member = await member
   await membershipAction(member, 'request', group, member)
   await membershipAction(getUser(), 'accept-request', group, member)
   const refreshedGroup = await getGroup(group)
@@ -60,11 +64,9 @@ const groupName = () => `${faker.lorem.words(3)} group`
 
 // Resolves to a group with userA as admin and userB as member
 const groupPromise = createGroup()
-  .then(group => {
-    return membershipAction(getUserB(), 'request', group)
-    .then(() => getUserB())
-    .then(userB => membershipAction(getUser(), 'accept-request', group, userB))
-    .then(() => getGroup(group))
+  .then(async group => {
+    const [ refreshedGroup ] = await addMember(group, getUserB())
+    return refreshedGroup
   })
 
 module.exports = {
