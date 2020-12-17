@@ -28,13 +28,9 @@ module.exports = async (authorStr, worksLabels, worksLabelsLangs) => {
   })
 }
 
-const searchHumans = authorStr => typeSearch({ search: authorStr, types: [ 'humans' ] })
+const searchHumans = authorStr => typeSearch({ search: authorStr, types: [ 'humans' ], filter: 'wd', minScore: 1 })
 
-const parseWdUris = hits => {
-  return hits
-  .filter(hit => hit._index === 'wikidata' && hit._score > 1)
-  .map(hit => hit.uri)
-}
+const parseWdUris = hits => hits.map(hit => hit._source.uri)
 
 const getAuthorOccurrenceData = (worksLabels, worksLabelsLangs) => wdAuthorUri => {
   return getOccurrencesFromExternalSources(wdAuthorUri, worksLabels, worksLabelsLangs)
