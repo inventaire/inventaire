@@ -94,7 +94,16 @@ const entities_ = module.exports = {
     // empty patches at this stage will throw 500 errors
     const docAfterUpdate = await db.putAndReturn(updatedDoc)
     triggerUpdateEvent(currentDoc, docAfterUpdate)
-    await patches_.create(params)
+
+    try {
+      await patches_.create(params)
+    } catch (err) {
+      err.type = 'patch_creation_failed'
+      err.context = err.context || {}
+      err.context.data = { currentDoc, updatedDoc }
+      throw err
+    }
+
     return docAfterUpdate
   },
 

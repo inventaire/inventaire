@@ -15,7 +15,8 @@ module.exports = params => {
 
       return updateFn.apply(null, args)
       .catch(err => {
-        if (err.statusCode === 409) {
+        // Retry only if the conflict comes from then entity
+        if (err.statusCode === 409 && err.type !== 'patch_creation_failed') {
           return runAfterDelay(run, attemptsCount, err)
         } else {
           throw err
