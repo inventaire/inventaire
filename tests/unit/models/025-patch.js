@@ -20,7 +20,8 @@ const currentDoc = {
     P31: [ 'Q47461344' ],
     P50: [ 'Q535' ]
   },
-  notTrackedAttr: 123
+  notTrackedAttr: 123,
+  version: 4
 }
 
 const updatedDoc = {
@@ -34,7 +35,8 @@ const updatedDoc = {
     P50: [ 'Q535', 'Q2001' ],
     P135: [ 'Q53121' ]
   },
-  notTrackedAttr: 456
+  notTrackedAttr: 456,
+  version: 5
 }
 
 const authorDoc = {
@@ -90,8 +92,8 @@ describe('patch', () => {
     it('should return with a timestamp', () => {
       const now = _.now()
       const patch = Patch.create({ userId, currentDoc, updatedDoc })
-      patch.timestamp.should.be.a.Number();
-      (patch.timestamp >= now).should.be.true()
+      patch.timestamp.should.be.a.Number()
+      should(patch.timestamp >= now).be.true()
     })
 
     it('should return with a patch object', () => {
@@ -115,12 +117,9 @@ describe('patch', () => {
       updateFromPatch.notTrackedAttr.should.not.equal(updatedDoc.notTrackedAttr)
     })
 
-    it('should return with an _id built from the document id and the version', () => {
+    it('should return with an id based on the updated doc version number', () => {
       const patch = Patch.create({ userId, currentDoc, updatedDoc })
-      const docId = updatedDoc._id
-      const version = updatedDoc._rev.split('-')[0]
-      patch._id.split(':')[0].should.equal(docId)
-      patch._id.split(':')[1].should.equal(version)
+      patch._id.should.equal(`${updatedDoc._id}:${updatedDoc.version}`)
     })
 
     it('should accept an arbitrary context object', () => {
@@ -310,16 +309,9 @@ describe('patch', () => {
 const generateSomePatch = previousVersion => {
   const newVersion = _.cloneDeep(previousVersion)
   newVersion._id = validDocId
-  newVersion._rev = incrementRev(previousVersion._rev)
+  newVersion.version++
   if (newVersion.labels.en) delete newVersion.labels.en
   else newVersion.labels = { en: randomString(6) }
   const patch = Patch.create({ userId, currentDoc: previousVersion, updatedDoc: newVersion })
   return { patch, newVersion }
-}
-
-const incrementRev = rev => {
-  if (!rev) return someRev
-  const [ numId, hash ] = rev.split('-')
-  const incrementedNumId = parseInt(numId) + 1
-  return `${incrementedNumId}-${hash}`
 }

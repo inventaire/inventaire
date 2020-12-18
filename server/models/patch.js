@@ -21,25 +21,21 @@ module.exports = {
       throw error_.new('invalid update: same document objects', 500, { currentDoc, updatedDoc })
     }
 
+    const now = Date.now()
+
     // Use the updated doc _id as the the current doc
     // will miss an _id at creation.
-    const docId = updatedDoc._id
+    let { _id: entityId, version: entityVersion } = updatedDoc
 
-    // Take advantage of _rev to get a growing id identifying the order of patches
-    // The first patch will have a version number of 2, as the empty template doc
-    // would be version 1 but has no dedicated patch (its always the same template)
-    // /!\ DO NOT expect to have exactly one patch per revision!
-    // The entity document id being the entity URI base, actions might be taken
-    // to recover a mistakenly deleted entity document: two actions that would not
-    // produce patches and that have for consequence that the next patch docRevId
-    // will be the last patch docRevID + 3
-    const docRevId = parseInt(updatedDoc._rev.split('-')[0])
+    // If for some reason the entity document is malformed and lacks a version number,
+    // fallback on using the timestamp, rather than crashing
+    entityVersion = entityVersion || now
 
     const patch = {
-      _id: `${docId}:${docRevId}`,
+      _id: `${entityId}:${entityVersion}`,
       type: 'patch',
       user: userId,
-      timestamp: Date.now(),
+      timestamp: now,
       patch: getDiff(currentDoc, updatedDoc)
     }
 
