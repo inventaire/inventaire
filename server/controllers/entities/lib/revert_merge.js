@@ -15,8 +15,9 @@ module.exports = async (userId, fromId) => {
   const fromUri = `inv:${fromId}`
   targetVersion._id = currentVersion._id
   targetVersion._rev = currentVersion._rev
+  targetVersion.version = currentVersion.version
 
-  const updateRes = entities_.putUpdate({
+  const updateRes = await entities_.putUpdate({
     userId,
     currentDoc: currentVersion,
     updatedDoc: targetVersion

@@ -88,7 +88,7 @@ const entities_ = module.exports = {
     const { userId, currentDoc, updatedDoc } = params
     assert_.types([ 'string', 'object', 'object' ], [ userId, currentDoc, updatedDoc ])
 
-    Entity.validateBeforeSave(updatedDoc)
+    Entity.beforeSave(updatedDoc)
 
     // It is to the consumers responsability to check if there is an update:
     // empty patches at this stage will throw 500 errors

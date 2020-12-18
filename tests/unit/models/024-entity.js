@@ -43,7 +43,6 @@ describe('entity model', () => {
       entityDoc.created.should.be.a.Number()
       entityDoc.created.should.be.aboveOrEqual(now)
       entityDoc.created.should.be.below(now + 10)
-      entityDoc.updated.should.be.ok()
     })
   })
 
@@ -51,14 +50,6 @@ describe('entity model', () => {
     it('should add a claim value', () => {
       const doc = Entity.createClaim(workDoc(), 'wdt:P50', 'wd:Q42')
       _.last(doc.claims['wdt:P50']).should.equal('wd:Q42')
-    })
-
-    it('should update the timestamp', () => {
-      const now = Date.now()
-      const entityDoc = Entity.createClaim(workDoc(), 'wdt:P50', 'wd:Q42')
-      entityDoc.updated.should.be.a.Number()
-      entityDoc.updated.should.be.aboveOrEqual(now)
-      entityDoc.updated.should.be.below(now + 10)
     })
 
     it('should return a doc with the new value for an existing property', () => {
@@ -92,19 +83,6 @@ describe('entity model', () => {
       it('should not throw if not passed an old value', () => {
         const updater = () => Entity.updateClaim(workDoc(), 'wdt:P50', null, 'wd:Q42')
         updater.should.not.throw()
-      })
-
-      it('should update the timestamp', done => {
-        const now = Date.now()
-        const entityDoc = workDoc()
-        const update = () => {
-          const updatedDoc = Entity.updateClaim(entityDoc, 'wdt:P135', null, 'wd:Q53121')
-          updatedDoc.updated.should.be.a.Number()
-          updatedDoc.updated.should.be.above(now)
-          updatedDoc.updated.should.be.below(now + 10)
-          done()
-        }
-        setTimeout(update, 5)
       })
 
       it('should return a doc with the new value for an existing property', () => {
@@ -172,22 +150,6 @@ describe('entity model', () => {
         const updater = () => Entity.updateClaim(entityDoc, 'wdt:P50', 'wd:Q535', 'wd:Q1541')
         updater.should.throw()
       })
-
-      it('should update the timestamp', done => {
-        const now = Date.now()
-        const entityDoc = workDoc()
-        entityDoc.claims['wdt:P50'][0].should.equal('wd:Q535')
-        const update = () => {
-          const updatedDoc = Entity.updateClaim(entityDoc, 'wdt:P50', 'wd:Q535', 'wd:Q42')
-          updatedDoc.claims['wdt:P50'][0].should.equal('wd:Q42')
-          updatedDoc.updated.should.be.a.Number()
-          updatedDoc.updated.should.be.above(now)
-          updatedDoc.updated.should.be.below(now + 10)
-          done()
-        }
-
-        setTimeout(update, 5)
-      })
     })
 
     describe('delete claim', () => {
@@ -213,23 +175,6 @@ describe('entity model', () => {
         entityDoc = Entity.updateClaim(entityDoc, 'wdt:P212', '978-2-7073-0152-9', null)
         should(entityDoc.claims['wdt:P957']).not.be.ok()
         should(entityDoc.claims['wdt:P407']).not.be.ok()
-      })
-
-      it('should update the timestamp', done => {
-        const now = Date.now()
-        const entityDoc = workDoc()
-        entityDoc.updated.should.be.a.Number()
-        entityDoc.updated.should.be.aboveOrEqual(now)
-        entityDoc.updated.should.be.below(now + 10)
-        const update = () => {
-          const updatedDoc = Entity.updateClaim(entityDoc, 'wdt:P50', 'wd:Q535', null)
-          updatedDoc.updated.should.be.a.Number()
-          updatedDoc.updated.should.be.above(now)
-          updatedDoc.updated.should.be.below(now + 10)
-          done()
-        }
-
-        setTimeout(update, 5)
       })
     })
 
@@ -270,20 +215,6 @@ describe('entity model', () => {
         const entityDoc = workDoc()
         Entity.setLabel(entityDoc, 'fr', nonTrimmedString)
         entityDoc.labels.fr.should.equal('foo bar')
-      })
-
-      it('should update the timestamp', done => {
-        const entityDoc = workDoc()
-        const initialTimestamp = entityDoc.updated
-        entityDoc.updated.should.be.a.Number()
-        const update = () => {
-          const updatedDoc = Entity.setLabel(entityDoc, 'fr', 'hello')
-          updatedDoc.updated.should.be.a.Number()
-          updatedDoc.updated.should.be.above(initialTimestamp)
-          updatedDoc.updated.should.be.below(initialTimestamp + 10)
-          done()
-        }
-        setTimeout(update, 5)
       })
     })
 
@@ -339,35 +270,6 @@ describe('entity model', () => {
         entityB.claims['wdt:P921'].should.deepEqual([ 'wd:Q3' ])
       })
 
-      it('should update the timestamp', done => {
-        const entityA = workDoc()
-        const entityB = workDoc()
-        Entity.createClaim(entityA, 'wdt:P921', 'wd:Q3')
-        const now = Date.now()
-        const update = () => {
-          Entity.mergeDocs(entityA, entityB)
-          entityB.updated.should.be.a.Number()
-          entityB.updated.should.be.above(now)
-          entityB.updated.should.be.below(now + 10)
-          done()
-        }
-        setTimeout(update, 5)
-      })
-
-      it('should not update the timestamp if no data was transfered', done => {
-        const entityA = workDoc()
-        const entityB = workDoc()
-        Entity.createClaim(entityA, 'wdt:P921', 'wd:Q3')
-        Entity.createClaim(entityB, 'wdt:P921', 'wd:Q3')
-        const initialTimestamp = entityB.updated
-        const update = () => {
-          Entity.mergeDocs(entityA, entityB)
-          entityB.updated.should.equal(initialTimestamp)
-          done()
-        }
-        setTimeout(update, 5)
-      })
-
       it('should keep the target claim in case of claim uniqueness restrictions', () => {
         const entityA = workDoc()
         const entityB = workDoc()
@@ -398,7 +300,6 @@ describe('entity model', () => {
         should(redirection.claims).not.be.ok()
         should(redirection.labels).not.be.ok()
         redirection.created.should.equal(fromEntityDoc.created)
-        redirection.updated.should.be.ok()
       })
 
       it('should be a different object', () => {
@@ -406,23 +307,6 @@ describe('entity model', () => {
         const toUri = 'wd:Q3209796'
         const redirection = Entity.turnIntoRedirection(fromEntityDoc, toUri)
         should(redirection === fromEntityDoc).not.be.true()
-      })
-
-      it('should update the timestamp', done => {
-        const fromEntityDoc = workDoc()
-        const toUri = 'wd:Q3209796'
-        const redirect = () => {
-          const redirection = Entity.turnIntoRedirection(fromEntityDoc, toUri)
-          redirection.should.be.an.Object()
-          redirection._id.should.equal(fromEntityDoc._id)
-          redirection._rev.should.equal(fromEntityDoc._rev)
-          redirection._rev.should.equal(fromEntityDoc._rev)
-          redirection.redirect.should.equal(toUri)
-          redirection.updated.should.be.above(fromEntityDoc.updated)
-          done()
-        }
-
-        setTimeout(redirect, 5)
       })
     })
 
@@ -440,16 +324,29 @@ describe('entity model', () => {
         const removedPlaceholder = Entity.removePlaceholder(entity)
         should(removedPlaceholder === entity).not.be.true()
       })
+    })
+  })
 
-      it('should update the timestamp', done => {
-        const entity = workDoc()
-        const remove = () => {
-          const removedPlaceholder = Entity.removePlaceholder(entity)
-          removedPlaceholder.updated.should.be.above(entity.updated)
-          done()
-        }
-        setTimeout(remove, 5)
-      })
+  describe('beforeSave', () => {
+    it('should validate that no critical claim is missing', () => {
+      const entityDoc = workDoc()
+      delete entityDoc.claims['wdt:P31']
+      Entity.beforeSave.bind(null, entityDoc).should.throw()
+    })
+
+    it('should update the timestamp', () => {
+      const entityDoc = workDoc()
+      entityDoc.updated -= 1000
+      const timestampBefore = entityDoc.updated
+      Entity.beforeSave(entityDoc)
+      entityDoc.updated.should.be.above(timestampBefore)
+    })
+
+    it('should increment the version number', () => {
+      const entityDoc = workDoc()
+      const { version: versionBefore } = entityDoc
+      Entity.beforeSave(entityDoc)
+      entityDoc.version.should.equal(versionBefore + 1)
     })
   })
 })

@@ -19,6 +19,7 @@ const assert_ = __.require('utils', 'assert_types')
 const entitiesDb = __.require('couch', 'base')('entities')
 const patchesDb = __.require('couch', 'base')('patches')
 const docDiff = __.require('couchdb', 'doc_diffs')
+const Entity = __.require('models', 'entity')
 const Patch = __.require('models', 'patch')
 const userId = __.require('couch', 'hard_coded_documents').users.updater._id
 
@@ -43,6 +44,7 @@ const updateSequentially = () => {
     const updatesData = rows.map(row => {
       const { doc: currentDoc } = row
       const updatedDoc = updateFn(_.cloneDeep(currentDoc))
+      Entity.beforeSave(updatedDoc)
       if (!silent) { docDiff(currentDoc, updatedDoc, preview) }
       return { currentDoc, updatedDoc }
     })
