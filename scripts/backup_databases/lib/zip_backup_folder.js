@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const execa = require('execa')
-const { backupGeneralFolder, backupFolder, day } = require('./get_backup_folder_data')()
+const { backupGeneralFolder, backupFolder, day } = require('./get_backup_folder_data')
 
 module.exports = () => {
   return execa('tar', [

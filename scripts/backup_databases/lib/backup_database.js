@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const execa = require('execa')
-const { backupFolder } = require('./get_backup_folder_data')()
+const { backupFolder } = require('./get_backup_folder_data')
 const { username, password, hostname: host, port } = CONFIG.db
 
 module.exports = dbName => {

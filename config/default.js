@@ -70,7 +70,7 @@ const config = module.exports = {
     debug: false,
     // Keep the design doc files in sync with CouchDB design docs
     enableDesignDocSync: false,
-    backupFolder: '/path/to/backup/folder'
+    backupFolder: 'backups/couchdb'
   },
 
   leveldbMemoryBackend: false,
