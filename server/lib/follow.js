@@ -21,7 +21,7 @@ setTimeout(lateRequire, 0)
 // This behaviors allows, in API tests environement, to have the tests server
 // following, while scripts being called directly by tests don't compete
 // with the server
-const freezeFollow = CONFIG.db.follow.freezeFollow || !CONFIG.serverMode
+const freezeFollow = CONFIG.db.follow.freeze || !CONFIG.serverMode
 
 // filter and an onChange functions register, indexed per dbBaseNames
 const followers = {}
