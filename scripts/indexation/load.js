@@ -2,7 +2,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const { indexesList, indexes } = __.require('db', 'elasticsearch/list')
+const { indexes } = __.require('db', 'elasticsearch/list')
 const { logErrorAndExit } = require('../scripts_utils')
 const split = require('split')
 const { red } = require('chalk')
@@ -13,9 +13,10 @@ const { addToBatch, postBatch } = __.require('db', 'elasticsearch/bulk')
 const createIndex = __.require('db', 'elasticsearch/create_index')
 const { wait } = __.require('lib', 'promises')
 const [ indexBaseName ] = process.argv.slice(2)
+const indexBaseNames = Object.keys(indexes)
 
-if (!indexesList.includes(indexBaseName)) {
-  logErrorAndExit(`invalid index base name: ${indexBaseName} (valid indexes: ${indexesList.join(', ')})`)
+if (!indexBaseNames.includes(indexBaseName)) {
+  logErrorAndExit(`invalid index base name: ${indexBaseName} (valid indexes: ${indexBaseNames.join(', ')})`)
 }
 
 const { index } = indexes[indexBaseName]
