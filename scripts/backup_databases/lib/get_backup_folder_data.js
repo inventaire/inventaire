@@ -1,11 +1,11 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const backupGeneralFolder = CONFIG.db.backupFolder
 const fs = require('fs')
 const path = require('path')
 const day = _.simpleDay()
-const backupFolder = path.resolve(process.cwd(), `${backupGeneralFolder}/${day}`)
+const backupGeneralFolder = path.resolve(process.cwd(), CONFIG.db.backupFolder)
+const backupFolder = path.resolve(backupGeneralFolder, `./${day}`)
 
 try {
   fs.mkdirSync(backupFolder, { recursive: true })
