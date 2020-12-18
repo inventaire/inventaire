@@ -1,11 +1,11 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const execa = require('execa')
+const { shellExec } = __.require('scripts', 'scripts_utils')
 const { backupGeneralFolder, backupFolder, day } = require('./get_backup_folder_data')
 
-module.exports = () => {
-  return execa('tar', [
+module.exports = async () => {
+  await shellExec('tar', [
     '-zcf',
     // Output
     `${backupFolder}.tar.gz`,
@@ -14,8 +14,8 @@ module.exports = () => {
     // Input path from the changed directory
     day
   ])
-  .then(() => deleteFolder())
-  .then(() => _.log(`backup archived in ${backupGeneralFolder}`))
+  await deleteFolder()
+  _.log(`backup archived in ${backupGeneralFolder}`)
 }
 
-const deleteFolder = () => execa('rm', [ '-rf', backupFolder ])
+const deleteFolder = () => shellExec('rm', [ '-rf', backupFolder ])

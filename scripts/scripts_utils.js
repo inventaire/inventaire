@@ -1,6 +1,8 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const { red } = require('chalk')
+const { promisify } = require('util')
+const exec = promisify(require('child_process').exec)
 
 module.exports = {
   logErrorAndExit: (label, err) => {
@@ -14,6 +16,15 @@ module.exports = {
     makeSureLogsAreWrittenBeforeExit()
     _.success(res, label)
     process.exit(0)
+  },
+
+  shellExec: async (cmd, args) => {
+    if (args.length > 0) cmd = `${cmd} ${args.join(' ')}`
+    const { stdout, stderr } = await exec(cmd)
+    return {
+      stdout: stdout.trim(),
+      stderr: stderr.trim()
+    }
   }
 }
 

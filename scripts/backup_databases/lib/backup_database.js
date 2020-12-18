@@ -1,18 +1,16 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const execa = require('execa')
+const { shellExec } = __.require('scripts', 'scripts_utils')
 const { backupFolder } = require('./get_backup_folder_data')
 const { username, password, hostname: host, port } = CONFIG.db
 
-module.exports = dbName => {
+module.exports = async dbName => {
   const args = buildArgsArray(backupFolder, dbName)
 
-  return execa('couchdb-backup', args)
-  .then(res => {
-    _.log(res.stdout, `${dbName} stdout`)
-    _.warn(res.stderr, `${dbName} stderr`)
-  })
+  const { stdout, stderr } = await shellExec('couchdb-backup', args)
+  _.log(stdout, `${dbName} stdout`)
+  _.warn(stderr, `${dbName} stderr`)
 }
 
 // Depends on 'couchdb-backup' (from https://github.com/danielebailo/couchdb-dump)
