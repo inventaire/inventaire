@@ -47,13 +47,13 @@ cat "$raw_db_json_filename" |
   # Filter-out redirections
   grep -v "redirect" |
   # Filter-out entities empty canvas (entity creation process failure)
-  grep -v '_rev":"1-' |
+  grep -v '"version":1' |
   drop_comma > "${filtered_dump_filename_with_seeds}"
 
 echo "filtering $raw_db_json_filename without seeds into $filtered_dump_filename"
 cat "${filtered_dump_filename_with_seeds}" |
-  # Filter-out entities that are just unedited data seeds
-  grep -v '_rev":"2-' > "$filtered_dump_filename"
+  # Filter-out entities that are likely to be unedited data seeds
+  grep -v '"version":2' > "$filtered_dump_filename"
 
 # TTL dump
 # We need to return to the root directory so that convert_ndjson_dump_to_ttl.js

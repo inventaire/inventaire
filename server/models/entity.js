@@ -40,7 +40,7 @@ const Entity = module.exports = {
       labels: {},
       claims: {},
       created: Date.now(),
-      updated: Date.now()
+      version: 1,
     }
   },
 
@@ -62,8 +62,6 @@ const Entity = module.exports = {
     }
 
     doc.labels[lang] = value
-
-    doc.updated = Date.now()
 
     return doc
   },
@@ -94,8 +92,6 @@ const Entity = module.exports = {
     }
 
     delete doc._allClaimsProps
-
-    doc.updated = Date.now()
 
     return doc
   },
@@ -142,17 +138,17 @@ const Entity = module.exports = {
       doc.claims[property].push(newVal)
     }
 
-    doc.updated = Date.now()
-
     return updateInferredProperties(doc, property, oldVal, newVal)
   },
 
-  // Validation on full doc
-  validateBeforeSave: doc => {
+  beforeSave: doc => {
     // Do not validate redirections, removed placeholder, etc
     if (doc.claims != null) {
       validateRequiredPropertiesValues(doc.claims)
     }
+    doc.updated = Date.now()
+    doc.version++
+    return doc
   },
 
   // 'from' and 'to' refer to the redirection process which rely on merging
@@ -162,13 +158,10 @@ const Entity = module.exports = {
     Entity.preventRedirectionEdit(fromEntityDoc, 'mergeDocs (from)')
     Entity.preventRedirectionEdit(toEntityDoc, 'mergeDocs (to)')
 
-    let dataTransfered = false
-
     for (const lang in fromEntityDoc.labels) {
       const value = fromEntityDoc.labels[lang]
       if (toEntityDoc.labels[lang] == null) {
         toEntityDoc.labels[lang] = value
-        dataTransfered = true
       }
     }
 
@@ -184,19 +177,13 @@ const Entity = module.exports = {
               _.warn(value, `${property} values may be placeholders: ignoring merged entity value`)
             } else {
               toEntityDoc.claims[property].push(value)
-              dataTransfered = true
             }
           } else {
             toEntityDoc.claims[property].push(value)
-            dataTransfered = true
           }
         }
       }
     }
-
-    if (dataTransfered) toEntityDoc.updated = Date.now()
-
-    validateRequiredPropertiesValues(toEntityDoc.claims)
 
     return toEntityDoc
   },
@@ -213,7 +200,6 @@ const Entity = module.exports = {
     redirection.redirect = toUri
     delete redirection.labels
     delete redirection.claims
-    redirection.updated = Date.now()
     // the list of placeholders entities to recover if the merge as to be reverted
     redirection.removedPlaceholdersIds = removedPlaceholdersIds
 
@@ -228,7 +214,6 @@ const Entity = module.exports = {
 
     const removedDoc = _.cloneDeep(entityDoc)
     removedDoc.type = 'removed:placeholder'
-    removedDoc.updated = Date.now()
     return removedDoc
   },
 

@@ -77,6 +77,7 @@ describe('entities:create', () => {
       res._id.should.be.a.String()
       res._rev.should.be.a.String()
       res.type.should.equal('work')
+      res.version.should.equal(2)
       res.claims.should.deepEqual({ 'wdt:P31': [ 'wd:Q47461344' ] })
       res.uri.should.be.a.String()
       res.labels.should.be.an.Object()

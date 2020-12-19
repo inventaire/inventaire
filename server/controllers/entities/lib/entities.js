@@ -88,13 +88,22 @@ const entities_ = module.exports = {
     const { userId, currentDoc, updatedDoc } = params
     assert_.types([ 'string', 'object', 'object' ], [ userId, currentDoc, updatedDoc ])
 
-    Entity.validateBeforeSave(updatedDoc)
+    Entity.beforeSave(updatedDoc)
 
     // It is to the consumers responsability to check if there is an update:
     // empty patches at this stage will throw 500 errors
     const docAfterUpdate = await db.putAndReturn(updatedDoc)
     triggerUpdateEvent(currentDoc, docAfterUpdate)
-    await patches_.create(params)
+
+    try {
+      await patches_.create(params)
+    } catch (err) {
+      err.type = 'patch_creation_failed'
+      err.context = err.context || {}
+      err.context.data = { currentDoc, updatedDoc }
+      throw err
+    }
+
     return docAfterUpdate
   },
 
