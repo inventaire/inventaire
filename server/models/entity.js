@@ -147,7 +147,7 @@ const Entity = module.exports = {
       validateRequiredPropertiesValues(doc.claims)
     }
     doc.updated = Date.now()
-    doc.version++
+    if (doc.version != null) doc.version++
     return doc
   },
 
