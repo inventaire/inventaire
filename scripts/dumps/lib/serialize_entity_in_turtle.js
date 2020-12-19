@@ -5,7 +5,7 @@ const properties = __.require('controllers', 'entities/lib/properties/properties
 const { yellow } = require('chalk')
 
 module.exports = entity => {
-  const { _id, _rev, created, updated, type, redirect } = entity
+  const { _id, version, created, updated, type, redirect } = entity
 
   if (type !== 'entity' || redirect != null) return ''
 
@@ -17,10 +17,6 @@ module.exports = entity => {
   const dateModified = new Date(updated).toISOString()
   text += `\n  schema:dateModified "${dateModified}"^^xsd:dateTime ;`
 
-  // Using the _rev to deduce the version might give a version number
-  // higher than the real number of patches, but that's better than nothing
-
-  const version = parseInt(_rev.split('-'))
   text += `\n  schema:version ${version} ;`
 
   for (const lang in entity.labels) {
