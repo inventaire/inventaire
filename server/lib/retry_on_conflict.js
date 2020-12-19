@@ -12,13 +12,13 @@ module.exports = params => {
         throw error_.new('maximum attempt reached', 400, { updateFn, maxAttempts, args })
       }
 
-      attemptsCount += 1
-
       if (attemptsCount > 1) {
         // Avoid logging user document
         const contextArgs = args.filter(arg => arg != null && arg.type !== 'user')
         _.warn({ updateFn, contextArgs }, 'retrying after conflict')
       }
+
+      attemptsCount += 1
 
       return updateFn.apply(null, args)
       .catch(err => {
