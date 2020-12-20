@@ -87,7 +87,7 @@
     "subleveldown": "^5.0.0",
     "through": "^2.3.8",
     "turtle-validator": "^1.0.2",
-    "wikibase-edit": "^4.2.6",
+    "wikibase-edit": "^4.11.7",
     "wikidata-lang": "^2.0.10",
     "wikidata-sdk": "^5.9.0"
   },
