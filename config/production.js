@@ -15,7 +15,8 @@ module.exports = {
   serveStaticFiles: false,
   db: {
     username: 'OVERRIDE',
-    password: 'OVERRIDE'
+    password: 'OVERRIDE',
+    suffix: 'prod',
   },
   noCache: true,
   staticMaxAge: 0,
