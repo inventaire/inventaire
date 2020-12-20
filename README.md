@@ -20,7 +20,7 @@ This repository tracks the server-side developments, while the (heavy) [client-s
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Installation](#installation)
-  - [Dependencies to install manually:](#dependencies-to-install-manually)
+  - [Dependencies to install manually](#dependencies-to-install-manually)
   - [Project development environment installation](#project-development-environment-installation)
   - [Installation tips](#installation-tips)
   - [Repositories and Branches](#repositories-and-branches)
@@ -33,9 +33,9 @@ This repository tracks the server-side developments, while the (heavy) [client-s
 - [Concepts map](#concepts-map)
 - [Contribute](#contribute)
 - [Documentation](#documentation)
+- [Wiki](#wiki)
 - [API](#api)
 - [Administration](#administration)
-- [Day-dreaming on future evolutions](#day-dreaming-on-future-evolutions)
 - [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -147,21 +147,6 @@ see wiki: [API](https://wiki.inventaire.io/wiki/Technic#About_the_API)
 
 ## Administration
 see [Administration](./docs/administration.md)
-
-## Day-dreaming on future evolutions
-
-[Inventaire.io](https://inventaire.io) is a hub for open-knowledge-based peers inventory data. This prototype uses a centralized database to make the early development easier, while being as easy as possible to 'install' and use: well, it's just a "classic" social network. Meanwhile, this repository is public as there is no reason it should always stay centralized: this is a research work in progress, if you can think of a better/more decentralized way for peers to keep their inventory data and share it with others, you are very welcome to join the effort or experiment on your own with what you can find here. The hard point being sharing data between this centralized website and other inventory implementations. Works on a standard data model and an API would be a priority as soon as meaningful.
-
-**Ideas for experimentations:**
-
-- port to custom desktop clients using [node-webkit](https://github.com/nwjs/nw.js) or alike
-- port to an app for personal cloud platforms: [Cozy](http://cozy.io), [NextCloud](https://nextcloud.org/)...
-- server-less/P2P inventory sharing using WebRTC DataChannel / [WebTorrent](https://github.com/feross/webtorrent) / [IPFS](http://ipfs.io/) / [Ethereum](https://www.ethereum.org/) / [OpenBazaar](https://www.openbazaar.org) / [Scuttlebot](https://scuttlebot.io) / you name it
-- any other IndieWeb / [Unhosted](https://unhosted.org/) crazyness? :)
-
-**Already experiementing**
-- the [API](http://github.com/inventaire/inventaire/wiki/API) should allow a first level of decentralization: having personal clients allowing to manage an inventory out of inventaire.io but that could publish on inventaire.io what belongs there, public and semi public items, while keeping private items private.
-*see [Labs settings](https://inventaire.io/settings/labs)*
 
 ## License
 [AGPL](LICENSE)
