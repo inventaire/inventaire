@@ -6,8 +6,7 @@ Libre collaborative resource mapper powered by open-knowledge<br>
 [![Code Climate](https://codeclimate.com/github/inventaire/inventaire/badges/gpa.svg)](https://codeclimate.com/github/inventaire/inventaire)<br>
 <br>
 [![chat](https://img.shields.io/badge/chat-%23inventaire-ffd402.svg)](https://riot.im/app/#/room/#freenode_#inventaire:matrix.org)
-[![general wiki](https://img.shields.io/badge/wiki-general-319cc2.svg)](https://wiki.inventaire.io)
-[![technical wiki](https://img.shields.io/badge/wiki-technical-222222.svg)](http://github.com/inventaire/inventaire/wiki/)
+[![wiki](https://img.shields.io/badge/wiki-general-319cc2.svg)](https://wiki.inventaire.io)
 [![roadmap](https://img.shields.io/badge/roadmap-contributive-4eba76.svg)](http://roadmap.inventaire.io)
 
 [![inventory-graph](https://user-images.githubusercontent.com/1596934/35507755-1a159b62-04ee-11e8-8391-5808223caa51.png)](https://inventaire.io)
@@ -19,7 +18,6 @@ This repository tracks the server-side developments, while the (heavy) [client-s
 ## Summary
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
 
 - [Installation](#installation)
   - [Dependencies to install manually:](#dependencies-to-install-manually)
@@ -46,13 +44,13 @@ This repository tracks the server-side developments, while the (heavy) [client-s
 
 *This is the installation documentation for a developement environment. For production setup, see*: [inventaire-deploy](https://github.com/inventaire/inventaire-deploy)
 
-### Dependencies to install manually:
+### Dependencies to install manually
 - [git](https://git-scm.com/), [curl](http://curl.haxx.se) (used in some installation scripts), [graphicsmagick](www.graphicsmagick.org/README.html) (used to resize images), [inotify-tools](https://github.com/rvoicilas/inotify-tools) (used in API tests scripts)
-- [NodeJS](http://nodejs.org/) (>=6, recommended 12.2), [NVM](https://github.com/creationix/nvm) (allows great version update flexibility)
-- a [CouchDB](http://couchdb.apache.org/) (>=1.6, recommended 1.7) instance (on port 5984 for default config)
-- an [Elasticsearch](https://www.elastic.co/fr/products/elasticsearch) (>=7.9) instance (on port 9200 for default config)
+- [NodeJS](http://nodejs.org/) (>=8, recommended 14.15), [NVM](https://github.com/creationix/nvm) (allows great version update flexibility)
+- a [CouchDB](http://couchdb.apache.org/) (>=3.1) instance (on port 5984 for default config)
+- an [Elasticsearch](https://www.elastic.co/fr/products/elasticsearch) (>=7.10) instance (on port 9200 for default config)
 
-To install those on Ubuntu that could give something like:
+Install those on Ubuntu 20.04 would look something like:
 ```sh
 sudo add-apt-repository ppa:couchdb/stable -y
 sudo apt-get update
@@ -74,7 +72,7 @@ exit
 # Check that the nvm command can be found
 # If you get a 'command not found' error, check NVM documentation https://github.com/creationix/nvm#installation
 nvm
-nvm install 8
+nvm install 14
 ```
 
 ### Project development environment installation
