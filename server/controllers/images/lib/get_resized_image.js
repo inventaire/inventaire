@@ -1,5 +1,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
+const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const images_ = __.require('lib', 'images')
 const { userAgent } = __.require('lib', 'requests')
@@ -57,11 +58,16 @@ const validImageContentType = /^(image\/[+\w]+|application\/octet-stream)/
 
 const resizeFromStream = (imageStream, width, height, req, res) => {
   let alreadySent = false
+  let transmittedData = false
 
   const handleBufferError = buf => {
     const err = new Error(buf.toString())
-    error_.handler(req, res, err)
-    alreadySent = true
+    if (transmittedData) {
+      _.error(err, 'image error after some data was already sent')
+    } else {
+      error_.handler(req, res, err)
+      alreadySent = true
+    }
   }
 
   return images_.shrinkAndFormatStream(imageStream, width, height)
@@ -74,16 +80,15 @@ const resizeFromStream = (imageStream, width, height, req, res) => {
     // isn't installed, so instead of doing `stdout.pipe(res)`, we check
     // if data was actually passed before determining if it is a success
     // or an error
-    let receivedData = false
     stdout.on('data', data => {
-      receivedData = true
       res.write(data)
+      transmittedData = true
     })
 
-    stdout.on('close', data => {
+    stdout.on('close', () => {
       // Addresses the case when the response was already sent by an error handler
       if (alreadySent) return
-      if (receivedData) {
+      if (transmittedData) {
         res.end()
       // usually solved by `sudo apt-get install graphicsmagick`
       } else {
