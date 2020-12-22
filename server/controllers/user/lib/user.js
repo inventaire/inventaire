@@ -94,9 +94,13 @@ const user_ = module.exports = {
     .then(_.KeyBy('_id'))
   },
 
-  getUsersIndexByUsernames: (reqUserId, usernames) => {
-    return user_.getUsersAuthorizedData(user_.byUsernames(usernames), reqUserId)
-    .then(users => users.reduce(indexByLowerCasedUsername, {}))
+  getUsersIndexByUsernames: async (reqUserId, usernames) => {
+    const users = await user_.getUsersAuthorizedData(user_.byUsernames(usernames), reqUserId)
+    const usersByLowercasedUsername = {}
+    for (const user of users) {
+      usersByLowercasedUsername[user.username.toLowerCase()] = user
+    }
+    return usersByLowercasedUsername
   },
 
   incrementUndeliveredMailCounter: email => {
@@ -160,10 +164,4 @@ const findNearby = (latLng, meterRange, iterations = 0, strict = false) => {
       return findNearby(latLng, meterRange * 2, iterations)
     }
   })
-}
-
-const indexByLowerCasedUsername = (users, user) => {
-  const lowercasedUsername = user.username.toLowerCase()
-  users[lowercasedUsername] = user
-  return users
 }
