@@ -1,14 +1,19 @@
 const __ = require('config').universalPath
-const parseBbox = __.require('lib', 'parse_bbox')
 const user_ = __.require('controllers', 'user/lib/user')
 const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
+const sanitize = __.require('lib', 'sanitize/sanitize')
+
+const sanitization = {
+  bbox: {},
+}
 
 module.exports = (req, res) => {
-  const { query } = req
-  const reqUserId = req.user && req.user._id
-  return parseBbox(query)
-  .then(bbox => user_.getUsersAuthorizedData(user_.byPosition(bbox), reqUserId))
+  sanitize(req, res, sanitization)
+  .then(async ({ bbox, reqUserId }) => {
+    const users = await user_.byPosition(bbox)
+    return user_.getUsersAuthorizedData(users, reqUserId)
+  })
   .then(responses_.Wrap(res, 'users'))
   .catch(error_.Handler(req, res))
 }

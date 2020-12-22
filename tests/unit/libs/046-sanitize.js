@@ -460,4 +460,43 @@ describe('sanitize', () => {
       })
     })
   })
+
+  describe('bbox', () => {
+    it('should reject an incomplete bbox', async () => {
+      const req = { query: { bbox: '[0, 0, 1]' } }
+      const configs = { bbox: {} }
+      await sanitize(req, {}, configs)
+      .then(shouldNotBeCalled)
+      .catch(err => {
+        err.message.should.startWith('invalid bbox')
+      })
+    })
+
+    it('should reject bbox with a higher minLng than maxLng', async () => {
+      const req = { query: { bbox: '[0, 2, 1, 1]' } }
+      const configs = { bbox: {} }
+      await sanitize(req, {}, configs)
+      .then(shouldNotBeCalled)
+      .catch(err => {
+        err.message.should.startWith('invalid bbox')
+      })
+    })
+
+    it('should reject bbox with a higher minLat than maxLat', async () => {
+      const req = { query: { bbox: '[2, 0, 1, 1]' } }
+      const configs = { bbox: {} }
+      await sanitize(req, {}, configs)
+      .then(shouldNotBeCalled)
+      .catch(err => {
+        err.message.should.startWith('invalid bbox')
+      })
+    })
+
+    it('should parse a valid bbox', async () => {
+      const req = { query: { bbox: '[0, 0, 1, 1]' } }
+      const configs = { bbox: {} }
+      const { bbox } = await sanitize(req, {}, configs)
+      bbox.should.deepEqual([ 0, 0, 1, 1 ])
+    })
+  })
 })
