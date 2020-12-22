@@ -97,8 +97,6 @@ const typesAliases = module.exports = {
     'wd:Q19720191', // large publisher
     'wd:Q45400320' // open access publisher
   ],
-  // Types required to update the entity search engine
-  // see server/controllers/entities/lib/update_search_engine
   collections: [
     'wd:Q20655472', // editorial collection
     'wd:Q1700470', // monographic series
