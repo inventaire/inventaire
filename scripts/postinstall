@@ -23,10 +23,13 @@ touch run/3006 run/3009
   # Create a local config file
   emptyConfigFile="
   # Override settings from ./default.js in this file
-  module.exports =
-    db:
-      username: 'yourcouchdbusername'
-      password: 'yourcouchdbpassword'
+  module.exports = {
+    db: {
+      username: 'yourcouchdbusername',
+      password: 'yourcouchdbpassword',
+      port: 5984,
+    }
+  }
   "
   echo "$emptyConfigFile" >> ./config/local.js
 } || echo './config/local.js file already exist: skipping creation'

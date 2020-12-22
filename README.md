@@ -45,57 +45,51 @@ This repository tracks the server-side developments, while the (heavy) [client-s
 *This is the installation documentation for a developement environment. For production setup, see*: [inventaire-deploy](https://github.com/inventaire/inventaire-deploy)
 
 ### Dependencies to install manually
-- [git](https://git-scm.com/), [curl](http://curl.haxx.se) (used in some installation scripts), [graphicsmagick](www.graphicsmagick.org/README.html) (used to resize images), [inotify-tools](https://github.com/rvoicilas/inotify-tools) (used in API tests scripts)
-- [NodeJS](http://nodejs.org/) (>=8, recommended 14.15), [NVM](https://github.com/creationix/nvm) (allows great version update flexibility)
+- [git](https://git-scm.com/), [curl](http://curl.haxx.se) (used in some installation scripts), [graphicsmagick](www.graphicsmagick.org/README.html) (used to resize images), [inotify-tools](https://github.com/rvoicilas/inotify-tools) (used in API tests scripts):
+- [NodeJS](http://nodejs.org/) (>=8, using the latest LTS is recommended), [NVM](https://github.com/creationix/nvm) (allows greater version update flexibility)
 - a [CouchDB](http://couchdb.apache.org/) (>=3.1) instance (on port 5984 for default config)
 - an [Elasticsearch](https://www.elastic.co/fr/products/elasticsearch) (>=7.10) instance (on port 9200 for default config)
 
-Install those on Ubuntu 20.04 would look something like:
+To install all this those dependneices on Ubuntu 20.04:
+
+For packages available in Ubuntu default repositories:
 ```sh
-sudo add-apt-repository ppa:couchdb/stable -y
 sudo apt-get update
-sudo apt-get install git curl wget graphicsmagick couchdb inotify-tools
-
-# Install Elasticsearch and its main dependency: Java
-# You might want to make sure that no previous version of Java is installed first as it might trigger version issues:
-# Elasticsearch requires Java 8/Oracle JDK version 1.8. See https://www.elastic.co/guide/en/elasticsearch/reference/current/_installation.html
-# (yes, piping a script to bash is a bad security habit, just as is executing anything on your machine coming from the wild and internet without checking what it does, but we trust this source. For the sake of good practices, you may want to read the script first though ;) )
-curl https://raw.githubusercontent.com/inventaire/inventaire-deploy/d8c8bee46c241ceca0ddf3d9c319d84bfb0734d9/install_elasticsearch | bash
-
-# Installing NodeJs and NPM using NVM, the Node Version Manager https://github.com/creationix/nvm
-# (see above text on piping a script)
-curl https://raw.githubusercontent.com/creationix/nvm/v0.32.1/install.sh | bash
-exit
+sudo apt-get install git curl wget graphicsmagick inotify-tools
 ```
-(reopen terminal)
-```sh
-# Check that the nvm command can be found
-# If you get a 'command not found' error, check NVM documentation https://github.com/creationix/nvm#installation
-nvm
-nvm install 14
-```
+For packages that need a more elaborated installation, see their own documentation:
+* [Install NodeJS latest LTS via NVM](https://github.com/nvm-sh/nvm#installing-and-updating)
+* [Install CouchDB](https://docs.couchdb.org/en/stable/install/unix.html)
+* [Install ElasticSearch](https://www.elastic.co/guide/en/elasticsearch/reference/7.10/deb.html)
 
 ### Project development environment installation
 ```sh
 git clone https://github.com/inventaire/inventaire.git
 cd inventaire
 npm install
-# If you haven't done it previously, set an admin on CouchDB and update ./config/local.js accordingly
-curl -XPUT http://localhost:5984/_config/admins/yourcouchdbusername -d '"'yourcouchdbpassword'"'
 ```
-You are all set! You can now start the server (in watch mode so that it reboots on file changes)
+
+This should have installed:
+- the server (this git repository) in the current directory
+- the client ([inventaire-client](https://github.com/inventaire/inventaire-client)) in the `client` directory
+- i18n strings ([inventaire-i18n](https://github.com/inventaire/inventaire-i18n)) in the `inventaire-i18n` directory
+
+This should also have created a `./config/local.js` file, in which you can override all present in `./config/default.js`: make sure to set `db` `username` and `password` to your CouchDB username and password.
+
+And now you should be all set! You can now start the server (on port `3006` by default)
 ```sh
+# Starting the server in watch mode so that it reboots on file changes
 npm run watch
 ```
-If you want to work on the client code, you also need to start Brunch in another terminal
+If you want to work on the [client](https://github.com/inventaire/inventaire-client), you need to start the webpack watcher and dev server (on port `3005` by default)
 ```sh
-cd client
+# In another terminal
+cd inventaire/client
 npm run watch
 ```
 
 ### Installation tips
-* To use executable that are used by the project (such as `mocha`,`couch2elastic4sync`), you can either find them in `./node_modules/.bin` or install them globally with npm: `npm install -g mocha brunch bower supervisor` etc.
-* If your computer has many CPU cores, you can make Brunch compile even faster by setting an environment variable: `BRUNCH_JOBS=4`
+* To use executable that are used by the project (such as `mocha`), you can either find them in `./node_modules/.bin` or install them globally with npm: `npm install -g mocha supervisor lev2` etc.
 
 ### Repositories and Branches
 
