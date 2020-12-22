@@ -27,6 +27,7 @@ module.exports = {
   boolean: { type: 'boolean' },
   date: { type: 'date' },
   flattened: { type: 'flattened' },
+  geoPoint: { type: 'geo_point' },
   integer: { type: 'integer' },
   keyword: { type: 'keyword' },
   nested: { type: 'nested' },

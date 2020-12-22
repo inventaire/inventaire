@@ -1,5 +1,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
+const _ = __.require('builders', 'utils')
 require('should')
 const assert_ = __.require('utils', 'assert_types')
 const host = CONFIG.fullHost()
@@ -88,6 +89,15 @@ const API = module.exports = {
   getTwoFriends: () => {
     twoFriendsPromise = twoFriendsPromise || getTwoFriends()
     return twoFriendsPromise
+  },
+
+  getRandomPosition: () => {
+    return [
+      // Latitude
+      randomCoordinate(-90, 90),
+      // Longitude
+      randomCoordinate(-180, 180),
+    ]
   }
 }
 
@@ -115,3 +125,5 @@ const setUserAttribute = (user, attribute, value) => {
 }
 
 const refreshUser = API.getUserWithCookie
+
+const randomCoordinate = (min, max) => _.round(_.random(min, max, true), 4)

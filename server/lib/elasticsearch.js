@@ -7,13 +7,13 @@ const error_ = __.require('lib', 'error/error')
 const { host: elasticHost } = CONFIG.elasticsearch
 
 const buildSearcher = params => {
-  let { index, dbBaseName, queryBuilder } = params
+  let { index, dbBaseName, queryBuilder, inputType = 'string' } = params
   if (!index) index = CONFIG.db.name(dbBaseName)
 
   const url = `${elasticHost}/${index}/_search`
 
   return (query, params = {}) => {
-    assert_.string(query)
+    assert_[inputType](query)
 
     const body = queryBuilder(query, params)
 

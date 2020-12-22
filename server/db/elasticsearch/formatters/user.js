@@ -7,5 +7,9 @@ const publicAttributesStrict = without(publicAttributes, 'snapshot')
 module.exports = doc => {
   const publicUserDoc = pick(doc, publicAttributesStrict)
   publicUserDoc.type = 'user'
+  if (publicUserDoc.position != null) {
+    const [ lat, lon ] = publicUserDoc.position
+    publicUserDoc.position = { lat, lon }
+  }
   return publicUserDoc
 }

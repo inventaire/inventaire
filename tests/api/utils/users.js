@@ -1,10 +1,6 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
 const { customAuthReq, getUser } = require('./utils')
 
 module.exports = {
-  getRandomPosition: () => [ _.random(-180, 180), _.random(-180, 180) ],
-
   getUsersNearPosition: async (position, user) => {
     user = user || await getUser()
     const bbox = getBboxFromPosition(position)

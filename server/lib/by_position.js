@@ -1,26 +1,38 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const couch_ = __.require('lib', 'couch')
-const assert_ = __.require('utils', 'assert_types')
+const { buildSearcher } = __.require('lib', 'elasticsearch')
 
-module.exports = (db, designDoc) => bbox => {
-  assert_.numbers(bbox)
-  const keys = getGeoSquareKeys(bbox)
+module.exports = (db, dbBaseName) => {
+  const searchByPosition = buildSearcher({
+    dbBaseName,
+    queryBuilder,
+    inputType: 'numbers'
+  })
 
-  return db.viewKeys(designDoc, 'byGeoSquare', keys, { include_docs: true })
-  .then(couch_.mapDoc)
+  return async bbox => {
+    const hits = await searchByPosition(bbox)
+    const ids = _.map(hits, '_id')
+    return db.byIds(ids)
+  }
 }
 
-const getGeoSquareKeys = bbox => {
-  // Using the same bbox order as Leaflet bounds.toBBoxString function.
-  // Use Math.floor and not Math.trunc as they have different behaviors
-  // on negative numbers: Math.floor(-2.512) => -3 /// Math.trunc(-2.512) => -2
-  const [ minLng, minLat, maxLng, maxLat ] = bbox.map(Math.floor)
-
-  const latRange = _.range(minLat, maxLat + 1)
-  const lngRange = _.range(minLng, maxLng + 1)
-
-  // Keep keys format in sync with Couchdb byGeoSquare views
-  return _.combinations(latRange, lngRange)
+// See https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-geo-bounding-box-query.html
+const queryBuilder = ([ minLng, minLat, maxLng, maxLat ]) => {
+  const topLeft = { lat: maxLat, lon: minLng }
+  const bottomRight = { lat: minLat, lon: maxLng }
+  return {
+    query: {
+      bool: {
+        filter: {
+          geo_bounding_box: {
+            position: {
+              top_left: topLeft,
+              bottom_right: bottomRight
+            }
+          }
+        }
+      }
+    }
+  }
 }

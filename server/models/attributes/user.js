@@ -25,7 +25,6 @@ attributes.ownerSafe = [
 attributes.public = [
   '_id',
   'username',
-  'created',
   'picture',
   'bio',
   'position',

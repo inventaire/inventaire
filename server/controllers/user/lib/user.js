@@ -11,6 +11,7 @@ const db = __.require('couch', 'base')('users')
 const geo = require('./geo/geo')()
 const { getNetworkIds } = __.require('controllers', 'user/lib/relations_status')
 const { defaultAvatar } = __.require('lib', 'assets')
+const searchUsersByPosition = __.require('lib', 'by_position')(db, 'users')
 
 const user_ = module.exports = {
   byId: db.get,
@@ -140,7 +141,7 @@ const user_ = module.exports = {
     .catch(_.ErrorRethrow('nearby err'))
   },
 
-  byPosition: __.require('lib', 'by_position')(db, 'users'),
+  byPosition: searchUsersByPosition,
 
   // View model serialization for emails and rss feeds templates
   serializeData: user => {

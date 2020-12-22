@@ -13,9 +13,6 @@
     },
     "nextSummary": {
       "map": "(doc)->\n  unless doc.type is 'user' then return\n  if doc.settings.notifications.global is false then return\n  if doc.settings.notifications['inventories_activity_summary'] is false then return\n  if doc.undeliveredEmail > 1 then return\n\n  lastSummary = doc.lastSummary or doc.created\n  summaryPeriodicity = doc.summaryPeriodicity or 20\n  nextSummary = lastSummary + summaryPeriodicity*24*3600*1000\n  emit nextSummary, null"
-    },
-    "byGeoSquare": {
-      "map": "(doc)->\n  if doc.type is 'user' and doc.position?\n    [lat, lng] = doc.position\n    lat = Math.floor lat\n    lng = Math.floor lng\n    emit [lat,lng], null"
     }
   }
 }
