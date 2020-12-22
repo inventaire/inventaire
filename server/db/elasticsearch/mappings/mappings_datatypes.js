@@ -24,11 +24,12 @@ const getTermsProperties = () => {
 }
 
 module.exports = {
-  text: { type: 'text' },
-  integer: { type: 'integer' },
-  nested: { type: 'nested' },
-  keyword: { type: 'keyword' },
+  boolean: { type: 'boolean' },
   date: { type: 'date' },
   flattened: { type: 'flattened' },
-  terms: { properties: getTermsProperties() }
+  integer: { type: 'integer' },
+  keyword: { type: 'keyword' },
+  nested: { type: 'nested' },
+  terms: { properties: getTermsProperties() },
+  text: { type: 'text' },
 }
