@@ -28,8 +28,9 @@ module.exports = async query => {
   // but replacing it by the limit to make following calculations lighter
   if (minLng < -180) minLng = -180
   if (maxLng > 180) maxLng = 180
+
   if (minLat < -90) minLat = -90
-  if (maxLng > 90) maxLng = 90
+  if (maxLat > 90) maxLat = 90
 
   return [ minLng, minLat, maxLng, maxLat ]
 }
