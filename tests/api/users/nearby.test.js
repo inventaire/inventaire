@@ -9,29 +9,17 @@ const geolocatedUser2Promise = getUserGetter('geo2', null, { position: [ 40, 40 
 const endpoint = '/api/users?action=nearby'
 
 describe('users:nearby', () => {
-  it('should get users nearby', done => {
-    geolocatedUser1Promise
-    .then(user1 => {
-      return customAuthReq(geolocatedUser2Promise, 'get', endpoint)
-      .then(res => {
-        const usersIds = _.map(res.users, '_id')
-        usersIds.includes(user1._id).should.be.true()
-        done()
-      })
-    })
-    .catch(done)
+  it('should get users nearby', async () => {
+    const user1 = await geolocatedUser1Promise
+    const { users } = await customAuthReq(geolocatedUser2Promise, 'get', endpoint)
+    const usersIds = _.map(users, '_id')
+    usersIds.includes(user1._id).should.be.true()
   })
 
-  it('should accept a range', done => {
-    geolocatedUser1Promise
-    .then(user1 => {
-      return customAuthReq(geolocatedUser2Promise, 'get', `${endpoint}&range=1`)
-      .then(res => {
-        const usersIds = _.map(res.users, '_id')
-        usersIds.includes(user1._id).should.be.false()
-        done()
-      })
-    })
-    .catch(done)
+  it('should accept a range', async () => {
+    const user1 = await geolocatedUser1Promise
+    const { users } = await customAuthReq(geolocatedUser2Promise, 'get', `${endpoint}&range=1`)
+    const usersIds = _.map(users, '_id')
+    usersIds.includes(user1._id).should.be.false()
   })
 })
