@@ -65,7 +65,6 @@
     "isbn3": "^1.1.0",
     "jiff": "^0.7.3",
     "keygrip": "^1.1.0",
-    "level-geospatial": "git+https://github.com/maxlath/level-geospatial.git#5001a8f",
     "level-jobs": "^2.1.0",
     "level-party": "^4.0.0",
     "leven": "^2.1.0",

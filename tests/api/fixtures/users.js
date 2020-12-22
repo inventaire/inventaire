@@ -126,4 +126,10 @@ const setUserAttribute = (user, attribute, value) => {
 
 const refreshUser = API.getUserWithCookie
 
-const randomCoordinate = (min, max) => _.round(_.random(min, max, true), 4)
+const randomCoordinate = (min, max) => {
+  // Let some margin so that no invalid coordinates can be generated
+  // from adding/removing less than 5 from any random coordinate composant
+  min = min + 5
+  max = max - 5
+  return _.round(_.random(min, max, true), 4)
+}

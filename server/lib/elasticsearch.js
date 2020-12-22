@@ -2,20 +2,17 @@ const CONFIG = require('config')
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const requests_ = __.require('lib', 'requests')
-const assert_ = __.require('utils', 'assert_types')
 const error_ = __.require('lib', 'error/error')
 const { host: elasticHost } = CONFIG.elasticsearch
 
 const buildSearcher = params => {
-  let { index, dbBaseName, queryBuilder, inputType = 'string' } = params
+  let { index, dbBaseName, queryBuilder } = params
   if (!index) index = CONFIG.db.name(dbBaseName)
 
   const url = `${elasticHost}/${index}/_search`
 
-  return (query, params = {}) => {
-    assert_[inputType](query)
-
-    const body = queryBuilder(query, params)
+  return params => {
+    const body = queryBuilder(params)
 
     return requests_.post(url, { body })
     .then(parseResponse)

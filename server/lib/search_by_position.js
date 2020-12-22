@@ -2,15 +2,16 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const { buildSearcher } = __.require('lib', 'elasticsearch')
+const assert_ = __.require('utils', 'assert_types')
 
 module.exports = (db, dbBaseName) => {
   const searchByPosition = buildSearcher({
     dbBaseName,
-    queryBuilder,
-    inputType: 'numbers'
+    queryBuilder
   })
 
   return async bbox => {
+    assert_.numbers(bbox)
     const hits = await searchByPosition(bbox)
     const ids = _.map(hits, '_id')
     return db.byIds(ids)
@@ -33,6 +34,7 @@ const queryBuilder = ([ minLng, minLat, maxLng, maxLat ]) => {
           }
         }
       }
-    }
+    },
+    size: 500
   }
 }

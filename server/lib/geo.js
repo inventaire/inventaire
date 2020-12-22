@@ -2,27 +2,14 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const assert_ = __.require('utils', 'assert_types')
 
-module.exports = {
-  kmBetween: (latLngA, latLngB) => {
-    assert_.arrays([ latLngA, latLngB ])
-    const meters = distanceBetween(latLngA, latLngB)
-    // 1km precision above 10km
-    if (meters > 10000) {
-      return Math.trunc(meters / 1000)
-    // 100m precision under
-    } else {
-      return Math.trunc(meters / 100) / 10
-    }
-  },
-
-  truncateLatLng: latLng => latLng != null ? latLng.map(truncateDecimals) : null
-}
-
 // Distance between LatLng
 // adapted from Leaflet distanceTo
 const distanceBetween = (latLngA, latLngB) => {
   const [ latA, lngA ] = latLngA
   const [ latB, lngB ] = latLngB
+
+  if (latA === latB && lngA === lngB) return 0
+
   const dLat = (latB - latA) * d2r
   const dLon = (lngB - lngA) * d2r
   const lat1 = lngA * d2r
@@ -39,6 +26,24 @@ const distanceBetween = (latLngA, latLngB) => {
 const R = 6378137
 // DEG_TO_RAD
 const d2r = Math.PI / 180
+
+module.exports = {
+  distanceBetween,
+
+  kmBetween: (latLngA, latLngB) => {
+    assert_.arrays([ latLngA, latLngB ])
+    const meters = distanceBetween(latLngA, latLngB)
+    // 1km precision above 10km
+    if (meters > 10000) {
+      return Math.trunc(meters / 1000)
+    // 100m precision under
+    } else {
+      return Math.trunc(meters / 100) / 10
+    }
+  },
+
+  truncateLatLng: latLng => latLng != null ? latLng.map(truncateDecimals) : null
+}
 
 // Coordinates are in decimal degrees
 // There is no need to keep more than 5 decimals, cf https://xkcd.com/2170/
