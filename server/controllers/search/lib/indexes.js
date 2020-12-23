@@ -13,7 +13,6 @@ const indexedEntitiesTypes = [
   'works',
   'humans',
   'genres',
-  'movements',
   'publishers',
   'series',
   'collections',
