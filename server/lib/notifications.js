@@ -108,7 +108,12 @@ const callbacks = {
   }
 }
 
-const groupAttributeWithNotification = [ 'name', 'description' ]
+const groupAttributeWithNotification = [
+  'name',
+  'description',
+  'searchable',
+  'open',
+]
 
 radio.on('notify:friend:request:accepted', callbacks.acceptedRequest)
 radio.on('group:makeAdmin', callbacks.userMadeAdmin)
