@@ -11,9 +11,10 @@ const notifs_ = module.exports = {
   byUserId: userId => {
     assert_.string(userId)
     return db.viewCustom('byUserAndTime', {
-      startkey: [ userId, minKey ],
-      endkey: [ userId, maxKey ],
-      include_docs: true
+      startkey: [ userId, maxKey ],
+      endkey: [ userId, minKey ],
+      include_docs: true,
+      descending: true,
     })
     .catch(_.ErrorRethrow('byUserId'))
   },
