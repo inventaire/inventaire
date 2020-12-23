@@ -1,90 +1,66 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
-const { publicReq, authReq, undesiredRes } = require('../utils/utils')
-const { Wait } = __.require('lib', 'promises')
+const { publicReq, authReq, shouldNotBeCalled } = require('../utils/utils')
+const { wait } = __.require('lib', 'promises')
 const { groupPromise, createGroup } = require('../fixtures/groups')
 const slugify = __.require('controllers', 'groups/lib/slugify')
 const endpoint = '/api/groups?action=update-settings'
 
 describe('groups:update-settings', () => {
-  it('should reject without a group', done => {
-    authReq('put', endpoint, {})
-    .then(undesiredRes(done))
+  it('should reject without a group', async () => {
+    await authReq('put', endpoint, {})
+    .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal('missing parameter in body: group')
       err.statusCode.should.equal(400)
-      done()
     })
-    .catch(done)
   })
 
-  it('should update the group slug when updating the name', done => {
-    groupPromise
-    .then(group => {
-      const groupId = group._id
-      const updatedName = `${group.name}-updated`
-      return authReq('put', endpoint, {
-        group: groupId,
-        attribute: 'name',
-        value: updatedName
-      })
-      .then(Wait(50))
-      .then(updateRes => {
-        updateRes.ok.should.be.true()
-        return publicReq('get', `/api/groups?action=by-id&id=${groupId}`)
-        .then(({ group: updatedGroup }) => {
-          updatedGroup.name.should.equal(updatedName)
-          updatedGroup.slug.should.equal(slugify(updatedName))
-          done()
-        })
-      })
+  it('should update the group slug when updating the name', async () => {
+    const group = await groupPromise
+    const groupId = group._id
+    const updatedName = `${group.name}-updated`
+    const updateRes = await authReq('put', endpoint, {
+      group: groupId,
+      attribute: 'name',
+      value: updatedName
     })
-    .catch(done)
+    await wait(50)
+    updateRes.ok.should.be.true()
+    const { group: updatedGroup } = await publicReq('get', `/api/groups?action=by-id&id=${groupId}`)
+    updatedGroup.name.should.equal(updatedName)
+    updatedGroup.slug.should.equal(slugify(updatedName))
   })
 
-  it('should request a group slug update when updating the name', done => {
-    groupPromise
-    .then(group => {
-      const groupId = group._id
-      const updatedName = `${group.name}-updated-again`
-      return authReq('put', endpoint, {
-        group: groupId,
-        attribute: 'name',
-        value: updatedName
-      })
-      .then(Wait(50))
-      .then(updateRes => {
-        updateRes.ok.should.be.true()
-        updateRes.update.slug.should.equal(slugify(updatedName))
-        done()
-      })
+  it('should request a group slug update when updating the name', async () => {
+    const group = await groupPromise
+    const groupId = group._id
+    const updatedName = `${group.name}-updated-again`
+    const updateRes = await authReq('put', endpoint, {
+      group: groupId,
+      attribute: 'name',
+      value: updatedName
     })
-    .catch(done)
+    await wait(50)
+    updateRes.ok.should.be.true()
+    updateRes.update.slug.should.equal(slugify(updatedName))
   })
 
-  it('should update description', done => {
+  it('should update description', async () => {
     const updatedDescription = 'Lorem ipsum dolor sit amet'
-    groupPromise
-    .then(group => {
-      const groupId = group._id
-      return authReq('put', endpoint, {
-        group: groupId,
-        attribute: 'description',
-        value: updatedDescription
-      })
-      .then(Wait(50))
-      .then(updateRes => {
-        updateRes.ok.should.be.true()
-        Object.keys(updateRes.update).length.should.equal(0)
-        return publicReq('get', `/api/groups?action=by-id&id=${groupId}`)
-      })
+    const group = await groupPromise
+    const groupId = group._id
+    const updateRes = await authReq('put', endpoint, {
+      group: groupId,
+      attribute: 'description',
+      value: updatedDescription
     })
-    .then(({ group }) => {
-      group.description.should.equal(updatedDescription)
-      done()
-    })
-    .catch(done)
+    await wait(50)
+    updateRes.ok.should.be.true()
+    Object.keys(updateRes.update).length.should.equal(0)
+    const { group: updatedGroup } = await publicReq('get', `/api/groups?action=by-id&id=${groupId}`)
+    updatedGroup.description.should.equal(updatedDescription)
   })
 
   it('should update position', async () => {
