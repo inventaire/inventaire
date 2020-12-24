@@ -1,5 +1,5 @@
 const should = require('should')
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
+const { authReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
 
 const { createEditionWithIsbn, createWorkWithAuthor, createEditionWithWorkAuthorAndSerie, createHuman, someFakeUri, generateIsbn13 } = require('../fixtures/entities')
 const { getByUris, merge } = require('../utils/entities')
@@ -118,11 +118,9 @@ describe('entities:get:by-isbns', () => {
     res.entities[uri].should.be.an.Object()
   })
 
-  it('should return an isbns array of not found editions ', async () => {
-    const randomIsbn = generateIsbn13()
-    const uri = `isbn:${randomIsbn}`
-    const res = await getByUris(uri)
-    const { notFound } = res
-    notFound[0].should.equal(uri)
+  it('should return editions isbn in notFound array when autocreation if false', async () => {
+    const uri = `isbn:${generateIsbn13()}`
+    const res = await authReq('get', `/api/entities?action=by-uris&uris=${uri}&autocreate=false`)
+    res.notFound[0].should.equal(uri)
   })
 })

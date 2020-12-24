@@ -9,7 +9,7 @@ const { prefixifyIsbn } = __.require('controllers', 'entities/lib/prefix')
 
 module.exports = async (rawIsbns, params) => {
   const [ isbns, redirections ] = getRedirections(rawIsbns)
-  const { refresh } = params
+  const { refresh, autocreate } = params
   // search entities by isbn locally
   let entities = await entities_.byIsbns(isbns)
   const foundIsbns = entities.map(getIsbn13h)
@@ -21,21 +21,21 @@ module.exports = async (rawIsbns, params) => {
     const results = { entities }
     return addRedirections(results, redirections)
   }
+  const results = { entities }
 
-  // then look for missing isbns on dataseed
-  const [ newEntities, notFound ] = await getMissingEditionEntitiesFromSeeds(missingIsbns, refresh)
+  if (autocreate) {
+    const [ newEntities, notFound ] = await getMissingEditionEntitiesFromSeeds(missingIsbns, refresh)
 
-  const results = { entities: entities.concat(newEntities) }
-
-  if (notFound.length > 0) {
-    results.notFound = _.map(notFound, 'isbn').map(prefixifyIsbn)
-  }
-  // if dataseed results are empty, populate notFound with missing uris
-  if (!(_.isNonEmptyArray(newEntities)) && (!(_.isNonEmptyArray(notFound)))) {
+    results.entities = entities.concat(newEntities)
+    if (notFound.length > 0) {
+      results.notFound = _.map(notFound, 'isbn').map(prefixifyIsbn)
+    }
+  } else {
     results.notFound = missingIsbns.map(isbn => {
       return prefixifyIsbn(isbn.replace(/\W/g, ''))
     })
   }
+
   return addRedirections(results, redirections)
 }
 
@@ -43,7 +43,6 @@ const getIsbn13h = entity => entity.claims['wdt:P212'][0]
 
 const getMissingEditionEntitiesFromSeeds = async (isbns, refresh) => {
   const seeds = await dataseed.getByIsbns(isbns, refresh)
-
   const insufficientData = []
   const validSeeds = []
   // TODO: Filter out more aggressively bad quality seeds
