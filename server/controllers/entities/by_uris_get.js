@@ -14,6 +14,10 @@ const validRelativesProperties = [
 const sanitization = {
   uris: {},
   refresh: { optional: true },
+  autocreate: {
+    generic: 'boolean',
+    optional: true
+  },
   relatives: {
     allowlist: validRelativesProperties,
     optional: true
@@ -23,8 +27,8 @@ const sanitization = {
 module.exports = (req, res) => {
   sanitize(req, res, sanitization)
   .then(params => {
-    const { uris, refresh, relatives } = params
-    return getEntitiesByUris({ uris, refresh })
+    const { uris, refresh, relatives, autocreate } = params
+    return getEntitiesByUris({ uris, refresh, autocreate })
     .then(addRelatives(relatives, refresh))
   })
   .then(responses_.Send(res))
