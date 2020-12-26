@@ -5,8 +5,7 @@ const assert_ = __.require('utils', 'assert_types')
 const { publicReq, authReq, dataadminReq, adminReq } = require('./utils')
 const { getIndexedDoc } = require('../utils/search')
 const { unprefixify } = __.require('controllers', 'entities/lib/prefix')
-const { wait } = __.require('lib', 'promises')
-const { elasticsearchUpdateDelay } = CONFIG.entitiesSearchEngine
+const { waitForIndexation } = __.require('apiTests', 'utils/search')
 
 const entitiesUtils = module.exports = {
   getByUris: (uris, relatives, refresh) => {
@@ -36,7 +35,7 @@ const entitiesUtils = module.exports = {
     if (_.isNonEmptyArray(entitiesNotFoundUris)) {
       // index entities into elasticsearch by getting the uris
       await entitiesUtils.getByUris(entitiesNotFoundUris)
-      await wait(elasticsearchUpdateDelay)
+      await Promise.all(ids.map(id => waitForIndexation('wikidata', id)))
     }
   },
 

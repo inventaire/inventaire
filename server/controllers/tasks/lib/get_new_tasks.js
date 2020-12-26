@@ -23,7 +23,7 @@ module.exports = (entity, existingTasks) => {
 const filterOrMergeSuggestions = (suspect, workLabels) => suggestions => {
   const suspectTerms = getEntityNormalizedTerms(suspect)
   // Do not automerge if author name is in work title
-  // as it confuses occurences found wikipedia pages
+  // as it confuses occurences found on Wikipedia pages
   if (authorNameInWorkTitles(suspectTerms, workLabels)) return suggestions
   const sourcedSuggestions = findSourced(suggestions)
   if (sourcedSuggestions.length === 0) return suggestions
