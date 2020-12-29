@@ -5,4 +5,7 @@ which doctoc > /dev/null || {
   exit 1
 }
 
-doctoc README.md docs/*.md
+doctoc README.md
+
+# Prevent adding a summmary to document files that don't need one
+grep 'START doctoc' -r docs --files-with-matches | xargs doctoc

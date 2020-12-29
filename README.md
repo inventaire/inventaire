@@ -19,6 +19,7 @@ This repository tracks the server-side developments, while the (heavy) [client-s
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
+
 - [Installation](#installation)
   - [Dependencies to install manually](#dependencies-to-install-manually)
   - [Project development environment installation](#project-development-environment-installation)
@@ -29,7 +30,7 @@ This repository tracks the server-side developments, while the (heavy) [client-s
     - [i18n](#i18n)
     - [deploy](#deploy)
     - [docker](#docker)
-- [Inventaire stack map](#inventaire-stack-map)
+- [Stack Map](#stack-map)
 - [Concepts map](#concepts-map)
 - [Contribute](#contribute)
 - [Documentation](#documentation)
@@ -111,8 +112,8 @@ tracking installation scripts and documentation to run inventaire in production
 #### [docker](https://github.com/inventaire/docker-inventaire)
 - [**master**](http://github.com/inventaire/docker-inventaire/tree/master): tracking docker installation files for development and testing use
 
-## Inventaire stack map
-[![stack](https://raw.githubusercontent.com/inventaire/stack/master/snapshots/stack-from-server.png)](https://inventaire.github.io/stack/)
+## Stack Map
+This repo correspond to the the "Server" section in the [stack map](https://inventaire.github.io/stack/)
 
 ## Concepts map
 the app has a few core concepts:
