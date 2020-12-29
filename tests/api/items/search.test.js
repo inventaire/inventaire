@@ -9,14 +9,14 @@ const { createItem, createItemWithEditionAndWork, createItemWithAuthor, createIt
 const { shouldNotBeCalled } = require('../utils/utils')
 const firstNWords = (str, num) => str.split(' ').slice(0, num).join(' ')
 
+const endpoint = '/api/items?action=search'
+
 const search = (reqUser, userId, search) => {
   let url = endpoint
   if (userId) url += `&user=${userId}`
   if (search) url += `&search=${encodeURIComponent(search)}`
   return customAuthReq(reqUser, 'get', url)
 }
-
-const endpoint = '/api/items?action=search'
 
 describe('items:search', () => {
   it('should reject if no user id is set', async () => {

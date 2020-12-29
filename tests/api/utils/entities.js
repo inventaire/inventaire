@@ -3,6 +3,9 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const assert_ = __.require('utils', 'assert_types')
 const { publicReq, authReq, dataadminReq, adminReq } = require('./utils')
+const { getIndexedDoc } = require('../utils/search')
+const { unprefixify } = __.require('controllers', 'entities/lib/prefix')
+const { waitForIndexation } = __.require('apiTests', 'utils/search')
 
 const entitiesUtils = module.exports = {
   getByUris: (uris, relatives, refresh) => {
@@ -22,6 +25,21 @@ const entitiesUtils = module.exports = {
     return entitiesUtils.getByUris(uri, null, refresh)
     .then(res => res.entities[uri])
   },
+
+  findOrIndexEntities: async (uris, index = 'wikidata') => {
+    const ids = _.map(uris, unprefixify)
+    const results = await Promise.all(ids.map(entitiesUtils.getElasticEntity(index)))
+    const entitiesFound = _.filter(results, _.property('found'))
+    const entitiesFoundUris = entitiesFound.map(_.property('_source.uri'))
+    const entitiesNotFoundUris = _.difference(uris, entitiesFoundUris)
+    if (_.isNonEmptyArray(entitiesNotFoundUris)) {
+      // index entities into elasticsearch by getting the uris
+      await entitiesUtils.getByUris(entitiesNotFoundUris)
+      await Promise.all(ids.map(id => waitForIndexation('wikidata', id)))
+    }
+  },
+
+  getElasticEntity: index => id => getIndexedDoc(index, 'humans', id),
 
   parseLabel: entity => Object.values(entity.labels)[0],
 

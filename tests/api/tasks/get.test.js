@@ -5,129 +5,78 @@ const { createTask } = require('../fixtures/tasks')
 
 // Tests dependency: having a populated Elasticsearch wikidata index
 describe('tasks:byScore', () => {
-  it('should returns 10 or less tasks to deduplicates, by default', done => {
-    createHuman()
-    .then(suspect => {
-      return createTask({ suspectUri: suspect.uri })
-      .then(getByScore)
-      .then(tasks => {
-        tasks.length.should.be.belowOrEqual(10)
-        tasks.length.should.be.aboveOrEqual(1)
-        done()
-      })
-    })
-    .catch(done)
+  it('should returns 10 or less tasks to deduplicates, by default', async () => {
+    const suspect = await createHuman()
+    await createTask({ suspectUri: suspect.uri })
+    const tasks = await getByScore()
+    tasks.length.should.be.belowOrEqual(10)
+    tasks.length.should.be.aboveOrEqual(1)
   })
 
-  it('should returns a limited array of tasks to deduplicate', done => {
-    createHuman()
-    .then(suspect => {
-      createTask({ suspectUri: suspect.uri })
-      .then(() => getByScore({ limit: 1 }))
-      .then(tasks => {
-        tasks.length.should.equal(1)
-        done()
-      })
-    })
-    .catch(done)
+  it('should returns a limited array of tasks to deduplicate', async () => {
+    const suspect = await createHuman()
+    await createTask({ suspectUri: suspect.uri })
+    const tasks = await getByScore({ limit: 1 })
+    tasks.length.should.equal(1)
   })
 
-  it('should take an offset parameter', done => {
-    createHuman()
-    .then(suspect => createTask({ suspectUri: suspect.uri }))
-    .then(getByScore)
-    .then(tasksA => {
-      getByScore({ offset: 1 })
-      .then(tasksB => {
-        tasksA[1].should.deepEqual(tasksB[0])
-        done()
-      })
-    })
-    .catch(done)
+  it('should take an offset parameter', async () => {
+    const suspect = await createHuman()
+    await createTask({ suspectUri: suspect.uri })
+    const tasksA = await getByScore()
+    const tasksB = await getByScore({ offset: 1 })
+    tasksA[1].should.deepEqual(tasksB[0])
   })
 })
 
 describe('tasks:bySuspectUris', () => {
-  it('should return an array of tasks', done => {
-    createHuman()
-    .then(suspect => {
-      return createTask({ suspectUri: suspect.uri })
-      .then(getByScore)
-      .then(tasksA => {
-        const { uri } = suspect
-        return getBySuspectUris(uri)
-        .then(tasks => {
-          tasks.should.be.an.Object()
-          Object.keys(tasks).length.should.equal(1)
-          tasks[uri].should.be.an.Array()
-          tasks[uri][0].should.be.an.Object()
-          done()
-        })
-      })
-    })
-    .catch(done)
+  it('should return an array of tasks', async () => {
+    const suspect = await createHuman()
+    await createTask({ suspectUri: suspect.uri })
+    const { uri } = suspect
+    const tasks = await getBySuspectUris(uri)
+    tasks.should.be.an.Object()
+    Object.keys(tasks).length.should.equal(1)
+    tasks[uri].should.be.an.Array()
+    tasks[uri][0].should.be.an.Object()
   })
 
-  it('should not return archived tasks', done => {
-    createHuman()
-    .then(suspect => {
-      const { uri } = suspect
-      return createTask({ uri })
-      .then(task => {
-        return update(task.id, 'state', 'dismissed')
-        .then(() => getBySuspectUris(uri))
-        .then(tasks => {
-          tasks[uri].length.should.equal(0)
-          done()
-        })
-      })
-    })
-    .catch(done)
+  it('should not return archived tasks', async () => {
+    const suspect = await createHuman()
+    const { uri } = suspect
+    const task = await createTask({ uri })
+    await update(task.id, 'state', 'dismissed')
+    const tasks = await getBySuspectUris(uri)
+    tasks[uri].length.should.equal(0)
   })
 
-  it('should return an array of tasks even when no tasks is found', done => {
-    getBySuspectUris(someFakeUri)
-    .then(tasks => {
+  it('should return an array of tasks even when no tasks is found', async () => {
+    const tasks = await getBySuspectUris(someFakeUri)
+    tasks.should.be.an.Object()
+    Object.keys(tasks).length.should.equal(1)
+    tasks[someFakeUri].should.be.an.Array()
+    tasks[someFakeUri].length.should.equal(0)
+  })
+
+  describe('tasks:bySuggestionUris', () => {
+    it('should return tasks', async () => {
+      const suggestion = await createHuman()
+      const { uri } = suggestion
+      await createTask({ suggestionUri: uri })
+      const tasks = await getBySuggestionUris(uri)
       tasks.should.be.an.Object()
       Object.keys(tasks).length.should.equal(1)
-      tasks[someFakeUri].should.be.an.Array()
-      tasks[someFakeUri].length.should.equal(0)
-      done()
+      tasks[uri].should.be.an.Array()
+      tasks[uri][0].should.be.an.Object()
     })
-    .catch(done)
-  })
-})
 
-describe('tasks:bySuggestionUris', () => {
-  it('should return an tasks', done => {
-    createHuman()
-    .then(suggestion => {
-      const { uri } = suggestion
-      return createTask({ suggestionUri: uri })
-      .then(() => {
-        return getBySuggestionUris(uri)
-        .then(tasks => {
-          tasks.should.be.an.Object()
-          Object.keys(tasks).length.should.equal(1)
-          tasks[uri].should.be.an.Array()
-          tasks[uri][0].should.be.an.Object()
-          done()
-        })
-      })
-    })
-    .catch(done)
-  })
-
-  it('should return an array of tasks even when no tasks is found', done => {
-    const uri = 'wd:Q32193244'
-    getBySuggestionUris(uri)
-    .then(tasks => {
+    it('should return an array of tasks even when no tasks is found', async () => {
+      const uri = 'wd:Q32193244'
+      const tasks = await getBySuggestionUris(uri)
       tasks.should.be.an.Object()
       Object.keys(tasks).length.should.equal(1)
       tasks[uri].should.be.an.Array()
       tasks[uri].length.should.equal(0)
-      done()
     })
-    .catch(done)
   })
 })

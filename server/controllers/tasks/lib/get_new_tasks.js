@@ -1,12 +1,13 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
-const searchEntityDuplicatesSuggestions = require('./search_entity_duplicates_suggestions')
-const addOccurrencesToSuggestion = require('./add_occurrences_to_suggestion')
-const getAuthorWorksData = require('./get_author_works_data')
-const evaluateSuggestions = require('./evaluate_suggestions')
+const automerge = require('./automerge')
+const typeSearch = __.require('controllers', 'search/lib/type_search')
+const entities_ = __.require('controllers', 'entities/lib/entities')
+const getOccurrencesFromEntities = __.require('controllers', 'entities/lib/get_occurrences_from_entities')
+const getOccurrencesFromExternalSources = __.require('controllers', 'entities/lib/get_occurrences_from_external_sources')
+const { getEntityNormalizedTerms } = __.require('controllers', 'entities/lib/terms_normalization')
 
-module.exports = entity => existingTasks => {
-  const { uri: suspectUri } = entity
+module.exports = (entity, existingTasks) => {
   return Promise.all([
     searchEntityDuplicatesSuggestions(entity, existingTasks),
     getAuthorWorksData(entity._id)
@@ -15,21 +16,91 @@ module.exports = entity => existingTasks => {
     if (newSuggestions.length <= 0) return []
     const { labels: worksLabels } = suspectWorksData
     return Promise.all(newSuggestions.map(addOccurrencesToSuggestion(suspectWorksData)))
-    .then(evaluateSuggestions(entity, worksLabels))
-    .then(filterOutExistingTasks(existingTasks))
-    .then(buildTaskObjects(suspectUri))
+    .then(filterOrMergeSuggestions(entity, worksLabels))
+    .then(filterNewTasks(existingTasks))
   })
 }
 
-const buildTaskObjects = suspectUri => suggestions => suggestions.map(suggestion => ({
-  type: 'deduplicate',
-  suspectUri,
-  suggestionUri: suggestion.uri,
-  lexicalScore: suggestion._score,
-  externalSourcesOccurrences: suggestion.occurrences
-}))
+const filterOrMergeSuggestions = (suspect, workLabels) => suggestions => {
+  const suspectTerms = getEntityNormalizedTerms(suspect)
+  // Do not automerge if author name is in work title
+  // as it confuses occurences found on Wikipedia pages
+  if (authorNameInWorkTitles(suspectTerms, workLabels)) return suggestions
+  const sourcedSuggestions = filterSourced(suggestions)
+  if (sourcedSuggestions.length === 0) return suggestions
+  if (sourcedSuggestions.length > 1) return sourcedSuggestions
+  return automerge(suspect.uri, sourcedSuggestions[0])
+}
 
-const filterOutExistingTasks = existingTasks => suggestions => {
+const filterNewTasks = existingTasks => suggestions => {
   const existingTasksUris = _.map(existingTasks, 'suggestionUri')
   return suggestions.filter(suggestion => !existingTasksUris.includes(suggestion.uri))
 }
+
+const authorNameInWorkTitles = (authorTerms, workLabels) => {
+  for (const authorLabel of authorTerms) {
+    for (const workLabel of workLabels) {
+      if (workLabel.match(authorLabel)) return true
+    }
+  }
+  return false
+}
+
+const filterSourced = suggestions => suggestions.filter(sug => sug.occurrences.length > 0)
+
+const addOccurrencesToSuggestion = suspectWorksData => async suggestion => {
+  if (suggestion == null) return []
+  const { labels, langs } = suspectWorksData
+  const { uri } = suggestion
+
+  if (labels.length === 0) {
+    suggestion.occurrences = []
+    return suggestion
+  }
+
+  return Promise.all([
+    getOccurrencesFromExternalSources(uri, labels, langs),
+    getOccurrencesFromEntities(uri, labels)
+  ])
+  .then(([ externalOccurrences, entitiesOccurrences ]) => {
+    suggestion.occurrences = externalOccurrences.concat(entitiesOccurrences)
+    return suggestion
+  })
+}
+
+const getAuthorWorksData = authorId => {
+  return entities_.byClaim('wdt:P50', `inv:${authorId}`, true, true)
+  .then(works => {
+    // works = [
+    //   { labels: { fr: 'Matiere et Memoire'} },
+    //   { labels: { en: 'foo' } }
+    // ]
+    const labels = _.uniq(_.flatten(works.map(getEntityNormalizedTerms)))
+    const langs = _.uniq(_.flatten(works.map(getLangs)))
+    return { authorId, labels, langs }
+  })
+}
+
+const getLangs = work => Object.keys(work.labels)
+
+// Arbitrarily set, can be changed to better fit the changes in results scores
+const lowestSuggestionMatchScore = 4
+
+const searchEntityDuplicatesSuggestions = async entity => {
+  const name = _.values(entity.labels)[0]
+  if (!_.isNonEmptyString(name)) return []
+
+  const results = await typeSearch({
+    search: name,
+    types: [ 'humans' ],
+    filter: 'wd',
+    minScore: lowestSuggestionMatchScore
+  })
+
+  return results.map(formatResult)
+}
+
+const formatResult = result => ({
+  _score: result._score,
+  uri: result._source.uri,
+})

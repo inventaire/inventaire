@@ -46,7 +46,5 @@ const utils = module.exports = {
     return adminReq('post', `${endpoint}check-entities`, { uris })
     .then(() => utils.getBySuspectUris(uris))
     .then(tasksBySuspectUris => _.flatten(_.values(tasksBySuspectUris)))
-  },
-
-  collectEntities: () => adminReq('post', `${endpoint}collect-entities`)
+  }
 }

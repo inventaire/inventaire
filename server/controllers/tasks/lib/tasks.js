@@ -7,6 +7,20 @@ const Task = __.require('models', 'task')
 const db = __.require('couch', 'base')('tasks')
 
 const tasks_ = module.exports = {
+  create: async (suspectUri, type, suggestions) => {
+    // suggestions may only be an array of objects with a 'uri' key
+    const newTasksObjects = suggestions.map(suggestion => {
+      const { _score, uri: suggestionUri, occurrences } = suggestion
+
+      const newTask = { type, suspectUri, suggestionUri }
+
+      if (_score) { newTask.lexicalScore = _score }
+      if (occurrences) { newTask.externalSourcesOccurrences = occurrences }
+      return newTask
+    })
+    return tasks_.createInBulk(newTasksObjects)
+  },
+
   createInBulk: async tasksDocs => {
     const tasks = tasksDocs.map(Task.create)
     return db.bulk(tasks)

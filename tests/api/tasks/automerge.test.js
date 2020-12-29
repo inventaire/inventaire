@@ -1,14 +1,18 @@
 require('should')
 const { checkEntities } = require('../utils/tasks')
-const { getByUris } = require('../utils/entities')
+const { getByUris, findOrIndexEntities } = require('../utils/entities')
 const { createHuman, createWorkWithAuthor, randomLabel } = require('../fixtures/entities')
 
-// Tests dependency: having a populated Elasticsearch wikidata index
 describe('tasks:automerge', () => {
+  before(async () => {
+    // Tests dependency: having a populated ElasticSearch wikidata index
+    const wikidataUris = [ 'wd:Q205739', 'wd:Q1748845', 'wd:Q2829704', 'wd:Q2300248' ]
+    await findOrIndexEntities(wikidataUris)
+  })
   it('should automerge if author has homonyms but only one has occurrences', done => {
     const humanLabel = 'Alan Moore' // homonyms wd:Q205739, wd:Q1748845
     const WdUri = 'wd:Q205739'
-    const workLabel = 'Voice of the Fire' // wd:Q3825051
+    const workLabel = 'Voice of the Fire' // wd:Q3825051, Alan Moore's work
     createHuman({ labels: { en: humanLabel } })
     .then(human => {
       return createWorkWithAuthor(human, workLabel)
@@ -18,7 +22,7 @@ describe('tasks:automerge', () => {
         return getByUris(human.uri)
         .then(({ entities }) => entities)
         .then(entities => {
-          // entity should have merged, thus URI is now a a WD uri
+          // entity should have merged, thus URI is now a WD uri
           entities[WdUri].should.be.ok()
           done()
         })

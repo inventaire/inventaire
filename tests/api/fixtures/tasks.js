@@ -21,22 +21,22 @@ module.exports = {
     return promises[humanLabel]
   },
 
-  createTask: params => {
-    const taskDoc = createTaskDoc(params)
+  createTask: async params => {
+    const taskDoc = await createTaskDoc(params)
     return createTasks([ taskDoc ])
     .then(tasks => tasks[0])
   }
 }
 
-const createTaskDoc = params => {
-  const suggestionUri = params.suggestionUri || 'wd:Q205739'
-  const suspectUri = params.suspectUri || 'inv:00000000000000000000000000000000'
-
+const createTaskDoc = async params => {
+  let human = {}
+  if (!params.suspectUri) { human = await createHuman() }
   return {
     type: 'deduplicate',
-    suspectUri,
-    suggestionUri,
+    suspectUri: params.suspectUri || human.uri,
+    suggestionUri: params.suggestionUri || 'wd:Q205739',
     lexicalScore: 12.01775,
+    relationScore: 0.1,
     externalSourcesOccurrences: []
   }
 }
