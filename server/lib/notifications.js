@@ -32,6 +32,12 @@ const notifications_ = module.exports = {
     return db.post(doc)
   },
 
+  addBulk: bulk => {
+    assert_.array(bulk)
+    const docs = bulk.map(Notification.create)
+    return db.bulk(docs)
+  },
+
   updateReadStatus: (userId, time) => {
     time = Number(time)
     return db.viewFindOneByKey('byUserAndTime', [ userId, time ])
@@ -80,16 +86,20 @@ const callbacks = {
       // creates a lot of similar documents:
       // could be refactored to use a single document
       // including a read status per-user: { user: id, read: boolean }
-      const notificationsCreationPromises = usersToNotify.map(userToNotify => {
-        return notifications_.add(userToNotify, 'groupUpdate', {
-          group: groupId,
-          user: actorId,
-          attribute,
-          previousValue,
-          newValue
-        })
+      const bulk = usersToNotify.map(userToNotify => {
+        return {
+          userId: userToNotify,
+          type: 'groupUpdate',
+          data: {
+            group: groupId,
+            user: actorId,
+            attribute,
+            previousValue,
+            newValue
+          }
+        }
       })
-      return Promise.all(notificationsCreationPromises)
+      return notifications_.addBulk(bulk)
     }
   },
 
