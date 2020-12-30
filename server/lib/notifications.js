@@ -4,6 +4,7 @@ const radio = __.require('lib', 'radio')
 const { BasicUpdater } = __.require('lib', 'doc_updates')
 const { minKey, maxKey } = __.require('lib', 'couch')
 const assert_ = __.require('utils', 'assert_types')
+const Notification = __.require('models', 'notification')
 
 const db = __.require('couch', 'base')('notifications')
 
@@ -27,16 +28,8 @@ const notifications_ = module.exports = {
   },
 
   add: (userId, type, data) => {
-    assert_.string(userId)
-    assert_.string(type)
-    assert_.object(data)
-    return db.post({
-      user: userId,
-      type,
-      data,
-      status: 'unread',
-      time: Date.now()
-    })
+    const doc = Notification.create({ userId, type, data })
+    return db.post(doc)
   },
 
   updateReadStatus: (userId, time) => {

@@ -44,12 +44,21 @@ validations.valid = function (attribute, value, option) {
   // if no test are set at this attribute for this context
   // default to common validations
   if (test == null) test = validations[attribute]
+  if (test == null) throw error_.new('missing validation function', 500, { attribute, context: this })
   return test(value, option)
+}
+
+validations.passFromFunction = (attribute, value, testFn) => {
+  if (!testFn(value)) throwValidationError(attribute, value)
 }
 
 validations.pass = function (attribute, value, option) {
   if (!validations.valid.call(this, attribute, value, option)) {
-    if (_.isObject(value)) value = JSON.stringify(value)
-    throw error_.newInvalid(attribute, value)
+    throwValidationError(attribute, value)
   }
+}
+
+const throwValidationError = (attribute, value) => {
+  if (_.isObject(value)) value = JSON.stringify(value)
+  throw error_.newInvalid(attribute, value)
 }
