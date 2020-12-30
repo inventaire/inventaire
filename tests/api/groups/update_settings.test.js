@@ -101,8 +101,8 @@ describe('groups:update-settings', () => {
         attribute: 'name',
         value: updatedName
       })
-      const notifications = await getNotifications({ user: member, type: 'groupUpdate' })
-      const notification = notifications.find(isAttributeNotification(groupId, 'name'))
+      const notifications = await getNotifications({ user: member, type: 'groupUpdate', subject: groupId })
+      const notification = notifications.find(isAttributeNotification('name'))
       notification.data.attribute.should.equal('name')
       notification.data.previousValue.should.equal(name)
       notification.data.newValue.should.equal(updatedName)
@@ -117,8 +117,8 @@ describe('groups:update-settings', () => {
         attribute: 'description',
         value: updatedDescription
       })
-      const notifications = await getNotifications({ user: member, type: 'groupUpdate' })
-      const notification = notifications.find(isAttributeNotification(groupId, 'description'))
+      const notifications = await getNotifications({ user: member, type: 'groupUpdate', subject: groupId })
+      const notification = notifications.find(isAttributeNotification('description'))
       notification.data.attribute.should.equal('description')
       notification.data.previousValue.should.equal(description)
       notification.data.newValue.should.equal(updatedDescription)
@@ -132,8 +132,8 @@ describe('groups:update-settings', () => {
         attribute: 'searchable',
         value: true
       })
-      const notifications = await getNotifications({ user: member, type: 'groupUpdate' })
-      const notification = notifications.find(isAttributeNotification(groupId, 'searchable'))
+      const notifications = await getNotifications({ user: member, type: 'groupUpdate', subject: groupId })
+      const notification = notifications.find(isAttributeNotification('searchable'))
       notification.data.attribute.should.equal('searchable')
       notification.data.previousValue.should.equal(false)
       notification.data.newValue.should.equal(true)
@@ -147,8 +147,8 @@ describe('groups:update-settings', () => {
         attribute: 'open',
         value: true
       })
-      const notifications = await getNotifications({ user: member, type: 'groupUpdate' })
-      const notification = notifications.find(isAttributeNotification(groupId, 'open'))
+      const notifications = await getNotifications({ user: member, type: 'groupUpdate', subject: groupId })
+      const notification = notifications.find(isAttributeNotification('open'))
       notification.data.attribute.should.equal('open')
       notification.data.previousValue.should.equal(false)
       notification.data.newValue.should.equal(true)
@@ -156,6 +156,4 @@ describe('groups:update-settings', () => {
   })
 })
 
-const isAttributeNotification = (groupId, attribute) => ({ data }) => {
-  return data.group === groupId && data.attribute === attribute
-}
+const isAttributeNotification = attribute => ({ data }) => data.attribute === attribute
