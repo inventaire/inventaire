@@ -3,7 +3,6 @@ const __ = CONFIG.universalPath
 require('should')
 const { publicReq, authReq, shouldNotBeCalled } = require('../utils/utils')
 const { getNotifications } = require('../utils/notifications')
-const { wait } = __.require('lib', 'promises')
 const { groupPromise, createGroup, createGroupWithAMember } = require('../fixtures/groups')
 const slugify = __.require('controllers', 'groups/lib/slugify')
 const endpoint = '/api/groups?action=update-settings'
@@ -102,8 +101,6 @@ describe('groups:update-settings', () => {
         attribute: 'name',
         value: updatedName
       })
-      // The response doesn't wait for notifications to be sent, so we have to wait a bit
-      await wait(1000)
       const notifications = await getNotifications({ user: member, type: 'groupUpdate' })
       const notification = notifications.find(isAttributeNotification(groupId, 'name'))
       notification.data.attribute.should.equal('name')
@@ -120,8 +117,6 @@ describe('groups:update-settings', () => {
         attribute: 'description',
         value: updatedDescription
       })
-      // The response doesn't wait for notifications to be sent, so we have to wait a bit
-      await wait(1000)
       const notifications = await getNotifications({ user: member, type: 'groupUpdate' })
       const notification = notifications.find(isAttributeNotification(groupId, 'description'))
       notification.data.attribute.should.equal('description')
@@ -137,8 +132,6 @@ describe('groups:update-settings', () => {
         attribute: 'searchable',
         value: true
       })
-      // The response doesn't wait for notifications to be sent, so we have to wait a bit
-      await wait(1000)
       const notifications = await getNotifications({ user: member, type: 'groupUpdate' })
       const notification = notifications.find(isAttributeNotification(groupId, 'searchable'))
       notification.data.attribute.should.equal('searchable')
@@ -154,8 +147,6 @@ describe('groups:update-settings', () => {
         attribute: 'open',
         value: true
       })
-      // The response doesn't wait for notifications to be sent, so we have to wait a bit
-      await wait(1000)
       const notifications = await getNotifications({ user: member, type: 'groupUpdate' })
       const notification = notifications.find(isAttributeNotification(groupId, 'open'))
       notification.data.attribute.should.equal('open')

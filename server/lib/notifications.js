@@ -80,14 +80,14 @@ const callbacks = {
     })
   },
 
-  groupUpdate: data => {
+  groupUpdate: async data => {
     const { attribute } = data
     if (groupAttributeWithNotification.includes(attribute)) {
       const { usersToNotify, groupId, actorId, previousValue, newValue } = data
       // creates a lot of similar documents:
       // could be refactored to use a single document
       // including a read status per-user: { user: id, read: boolean }
-      return usersToNotify.map(userToNotify => {
+      const notificationsCreationPromises = usersToNotify.map(userToNotify => {
         return notifications_.add(userToNotify, 'groupUpdate', {
           group: groupId,
           user: actorId,
@@ -96,6 +96,7 @@ const callbacks = {
           newValue
         })
       })
+      return Promise.all(notificationsCreationPromises)
     }
   },
 
