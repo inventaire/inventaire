@@ -27,8 +27,8 @@ const notifications_ = module.exports = {
     .catch(_.ErrorRethrow('bySubject'))
   },
 
-  add: (userId, type, data) => {
-    const doc = Notification.create({ userId, type, data })
+  add: (user, type, data) => {
+    const doc = Notification.create({ user, type, data })
     return db.post(doc)
   },
 
@@ -88,7 +88,7 @@ const callbacks = {
       // including a read status per-user: { user: id, read: boolean }
       const bulk = usersToNotify.map(userToNotify => {
         return {
-          userId: userToNotify,
+          user: userToNotify,
           type: 'groupUpdate',
           data: {
             group: groupId,

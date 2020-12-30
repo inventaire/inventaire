@@ -23,7 +23,7 @@ describe('notification model', () => {
 
     it('should reject notification with an invalid user id', () => {
       Notification.create.bind(null, {
-        userId: 'foo',
+        user: 'foo',
         type: 'groupUpdate',
         data: someGroupUpdateData()
       })
@@ -32,7 +32,7 @@ describe('notification model', () => {
 
     it('should reject notification without a type', () => {
       Notification.create.bind(null, {
-        userId: someUserId,
+        user: someUserId,
         data: someGroupUpdateData()
       })
       .should.throw(/invalid type/)
@@ -40,7 +40,7 @@ describe('notification model', () => {
 
     it('should reject notification with an invalid type', () => {
       Notification.create.bind(null, {
-        userId: someUserId,
+        user: someUserId,
         type: 'foo',
         data: someGroupUpdateData()
       })
@@ -49,7 +49,7 @@ describe('notification model', () => {
 
     it('should reject notification without a data object', () => {
       Notification.create.bind(null, {
-        userId: someUserId,
+        user: someUserId,
         type: 'groupUpdate',
       })
       .should.throw(/invalid data/)
@@ -57,7 +57,7 @@ describe('notification model', () => {
 
     it('should return a notification object', () => {
       const notificationDoc = Notification.create({
-        userId: someUserId,
+        user: someUserId,
         type: 'groupUpdate',
         data: someGroupUpdateData()
       })

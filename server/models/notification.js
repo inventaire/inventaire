@@ -1,13 +1,13 @@
 const validations = require('./validations/notification')
 
 module.exports = {
-  create: ({ userId, type, data }) => {
-    validations.pass('userId', userId)
+  create: ({ user, type, data }) => {
+    validations.pass('userId', user)
     validations.pass('type', type)
     validations.pass('data', data, { type })
 
     const doc = {
-      user: userId,
+      user,
       type,
       data,
       status: 'unread',
