@@ -8,7 +8,7 @@ const radio = __.require('lib', 'radio')
 const db = __.require('couch', 'base')('groups')
 const { add: addSlug } = require('./slug')
 
-module.exports = (data, userId) => {
+module.exports = async (data, userId) => {
   const { group: groupId, attribute } = data
   let { value } = data
 
@@ -22,21 +22,18 @@ module.exports = (data, userId) => {
 
   if (formatters[attribute]) value = formatters[attribute](value)
 
-  return db.get(groupId)
-  .then(groupDoc => {
-    const notifData = getNotificationData(groupId, userId, groupDoc, attribute, value)
+  const groupDoc = await db.get(groupId)
+  const notifData = getNotificationData(groupId, userId, groupDoc, attribute, value)
 
-    groupDoc[attribute] = value
+  groupDoc[attribute] = value
 
-    return applyEditHooks(attribute, groupDoc)
-    .then(({ updatedDoc, hooksUpdates }) => {
-      return db.put(updatedDoc)
-      .then(() => {
-        radio.emit('group:update', notifData)
-        return { hooksUpdates }
-      })
-    })
-  })
+  const { updatedDoc, hooksUpdates } = await applyEditHooks(attribute, groupDoc)
+
+  await db.put(updatedDoc)
+
+  radio.emit('group:update', notifData)
+
+  return { hooksUpdates }
 }
 
 const applyEditHooks = async (attribute, groupDoc) => {
@@ -47,12 +44,12 @@ const applyEditHooks = async (attribute, groupDoc) => {
   }
 }
 
-const updateSlug = groupDoc => {
-  return addSlug(groupDoc)
-  .then(updatedDoc => ({
+const updateSlug = async groupDoc => {
+  const updatedDoc = await addSlug(groupDoc)
+  return {
     updatedDoc,
     hooksUpdates: _.pick(updatedDoc, 'slug')
-  }))
+  }
 }
 
 const getNotificationData = (groupId, userId, groupDoc, attribute, value) => ({
