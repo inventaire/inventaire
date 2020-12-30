@@ -12,7 +12,7 @@ const defaultPeriodicity = 20
 
 const relations_ = __.require('controllers', 'relations/lib/queries')
 const groupsCounts = __.require('controllers', 'groups/lib/counts')
-const notifs_ = __.require('lib', 'notifications')
+const notifications_ = __.require('lib', 'notifications')
 const transactions_ = __.require('controllers', 'transactions/lib/transactions')
 
 const getLastNetworkBooks = require('./last_network_books')
@@ -35,7 +35,7 @@ const getEmailData = user => {
     groupInvitations: groupsCounts.pendingGroupInvitationsCount(userId),
     groupRequests: groupsCounts.pendingGroupRequestsCount(userId),
     // unread notifications
-    unreadNotifications: notifs_.unreadCount(userId),
+    unreadNotifications: notifications_.unreadCount(userId),
     // waiting transaction
     activeTransactions: transactions_.activeTransactionsCount(userId),
     // new books in your network: preview + count for others 'X more...'

@@ -3,7 +3,7 @@ const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const sanitize = __.require('lib', 'sanitize/sanitize')
 const responses_ = __.require('lib', 'responses')
-const notifs_ = __.require('lib', 'notifications')
+const notifications_ = __.require('lib', 'notifications')
 
 const sanitization = {
   limit: { optional: true, default: 10 },
@@ -27,7 +27,7 @@ const paginate = params => notifications => {
 }
 
 const getNotifications = params => {
-  return notifs_.byUserId(params.reqUserId)
+  return notifications_.byUserId(params.reqUserId)
   .then(paginate(params))
 }
 
@@ -48,7 +48,7 @@ const updateStatus = (req, res) => {
   if (!_.isArray(times) || (times.length <= 0)) return _.ok(res)
 
   // could probably be replaced by a batch operation
-  return Promise.all(times.map(notifs_.updateReadStatus.bind(null, reqUserId)))
+  return Promise.all(times.map(notifications_.updateReadStatus.bind(null, reqUserId)))
   .then(() => {
     _.success([ reqUserId, times ], 'notifs marked as read')
     responses_.ok(res)
