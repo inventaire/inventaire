@@ -5,6 +5,7 @@ const error_ = __.require('lib', 'error/error')
 
 const validations = module.exports = {
   couchUuid: _.isCouchUuid,
+  'doc _id': _.isCouchUuid,
   userId: _.isUserId,
   itemId: _.isItemId,
   transactionId: _.isTransactionId,

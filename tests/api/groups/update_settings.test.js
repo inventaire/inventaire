@@ -1,6 +1,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-require('should')
+const should = require('should')
 const { publicReq, authReq, shouldNotBeCalled } = require('../utils/utils')
 const { getNotifications } = require('../utils/notifications')
 const { groupPromise, createGroup, createGroupWithAMember } = require('../fixtures/groups')
@@ -152,6 +152,44 @@ describe('groups:update-settings', () => {
       notification.data.attribute.should.equal('open')
       notification.data.previousValue.should.equal(false)
       notification.data.newValue.should.equal(true)
+    })
+
+    it('should keep only the latest unread notification on an updated setting (updating the old one)', async () => {
+      const { group, member } = await createGroupWithAMember()
+      const { _id: groupId, name: initialName } = group
+      await authReq('put', endpoint, {
+        group: groupId,
+        attribute: 'name',
+        value: `${initialName}-updated`
+      })
+      await authReq('put', endpoint, {
+        group: groupId,
+        attribute: 'name',
+        value: `${initialName}-reupdated`
+      })
+      const notifications = await getNotifications({ user: member, type: 'groupUpdate', subject: groupId })
+      notifications.length.should.equal(1)
+      const notification = notifications[0]
+      notification.data.previousValue = initialName
+      notification.data.newValue = `${initialName}-reupdated`
+    })
+
+    it('should delete unread notification after an updated reverses to the previous setting', async () => {
+      const { group, member } = await createGroupWithAMember()
+      const { _id: groupId, name: initialName } = group
+      await authReq('put', endpoint, {
+        group: groupId,
+        attribute: 'name',
+        value: `${initialName}-updated`
+      })
+      await authReq('put', endpoint, {
+        group: groupId,
+        attribute: 'name',
+        value: initialName
+      })
+      const notifications = await getNotifications({ user: member, type: 'groupUpdate', subject: groupId })
+      const notification = notifications.find(isAttributeNotification('name'))
+      should(notification).not.be.ok()
     })
   })
 })

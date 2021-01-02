@@ -40,6 +40,8 @@ const isDesignDoc = designDocsNames => doc => {
   // this allows to have draft design docs in CouchDB that aren't worth
   // to be tracked by git without turning them into untracked files
   if (!designDocsNames.includes(designDocsName)) return false
+  // Ignore cases were the design doc was deleted on CouchDB
+  if (doc._deleted) return false
   return true
 }
 

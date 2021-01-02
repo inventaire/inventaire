@@ -43,6 +43,6 @@ const triggerAndWait = (eventName, args) => async listener => {
   try {
     await listener(...args)
   } catch (err) {
-    _.error(err, `${eventName} error`)
+    _.error(err, `${eventName} event listener error`)
   }
 }

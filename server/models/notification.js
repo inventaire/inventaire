@@ -15,5 +15,15 @@ module.exports = {
     }
 
     return doc
+  },
+
+  update: doc => {
+    validations.pass('doc _id', doc._id)
+    validations.pass('userId', doc.user)
+    validations.pass('type', doc.type)
+    validations.pass('data', doc.data, { type: doc.type })
+
+    doc.time = Date.now()
+    return doc
   }
 }

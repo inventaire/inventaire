@@ -32,9 +32,13 @@ const notifications_ = module.exports = {
     return db.post(doc)
   },
 
-  addBulk: bulk => {
+  bulkAddOrUpdate: bulk => {
     assert_.array(bulk)
-    const docs = bulk.map(Notification.create)
+    // Allow to pass a mix of existing notification docs or
+    const docs = bulk.map(data => {
+      if (data._id != null) return Notification.update(data)
+      else return Notification.create(data)
+    })
     return db.bulk(docs)
   },
 
@@ -83,23 +87,35 @@ const callbacks = {
     const { attribute } = data
     if (groupAttributeWithNotification.includes(attribute)) {
       const { usersToNotify, groupId, actorId, previousValue, newValue } = data
+      const existingNotificationsByUsers = await getUnreadGroupNotificationsByUsers({ groupId, attribute })
       // creates a lot of similar documents:
       // could be refactored to use a single document
       // including a read status per-user: { user: id, read: boolean }
       const bulk = usersToNotify.map(userToNotify => {
-        return {
-          user: userToNotify,
-          type: 'groupUpdate',
-          data: {
-            group: groupId,
-            user: actorId,
-            attribute,
-            previousValue,
-            newValue
+        const existingNotification = existingNotificationsByUsers[userToNotify]
+        if (existingNotification) {
+          if (existingNotification.data.previousValue === newValue) {
+            existingNotification._deleted = true
+            return existingNotification
+          } else {
+            existingNotification.data.newValue = newValue
+            return existingNotification
+          }
+        } else {
+          return {
+            user: userToNotify,
+            type: 'groupUpdate',
+            data: {
+              group: groupId,
+              user: actorId,
+              attribute,
+              previousValue,
+              newValue
+            }
           }
         }
       })
-      return notifications_.addBulk(bulk)
+      return notifications_.bulkAddOrUpdate(bulk)
     }
   },
 
@@ -110,6 +126,18 @@ const callbacks = {
     _.log(`deleting ${label} notifications`)
     return notifications_.deleteAllBySubjectId(subjectId)
   }
+}
+
+const getUnreadGroupNotificationsByUsers = async ({ groupId, attribute }) => {
+  const { docs } = await db.find({
+    selector: {
+      'data.group': groupId,
+      'data.attribute': attribute
+    },
+    use_index: [ 'groups_notifications', 'unreadNotificationsByGroupAndAttribute' ],
+  })
+
+  return _.keyBy(docs, 'user')
 }
 
 const groupAttributeWithNotification = [
