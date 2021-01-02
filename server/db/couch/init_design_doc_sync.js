@@ -13,9 +13,7 @@ const dbsList = require('./list')
 const designDocFolder = __.path('couchdb', 'design_docs')
 
 module.exports = () => {
-  if (!CONFIG.db.enableDesignDocSync) return
-  // Wait for the end of the server initalization
-  setTimeout(init, 2000)
+  if (CONFIG.db.enableDesignDocSync) init()
 }
 
 const init = () => {
