@@ -1,59 +1,45 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
-const { customAuthReq, getUserGetter } = require('../utils/utils')
-const { Wait } = __.require('lib', 'promises')
+const { customAuthReq, getUserGetter, shouldNotBeCalled } = require('../utils/utils')
 const endpoint = '/api/auth?action=email-confirmation'
 const { createUserEmail } = require('../fixtures/users')
 const { BasicUpdater } = __.require('lib', 'doc_updates')
 const db = __.require('couch', 'base')('users')
 
 describe('auth:email-confirmation', () => {
-  it('should send a confirmation if email is not validated ', done => {
+  it('should send a confirmation if email is not validated ', async () => {
     const email = createUserEmail()
-    const userPromise = getUserGetter(email)()
-    userPromise
-    .then(user => {
-      user.validEmail.should.be.false()
-      return customAuthReq(userPromise, 'post', endpoint, { email })
-    })
-    .then(res => {
-      res.ok.should.be.true()
-      done()
-    })
-    .catch(done)
+    const user = await getUserGetter(email)()
+    user.validEmail.should.be.false()
+    const res = await customAuthReq(user, 'post', endpoint, { email })
+    res.ok.should.be.true()
   })
 
-  it('should reject if email is already valid ', done => {
+  it('should reject if email is already valid ', async () => {
     const email = createUserEmail()
-    const userPromise = getUserGetter(email)()
-    createCustomUser(userPromise, 'validEmail', true)
-    .then(() => customAuthReq(userPromise, 'post', endpoint, { email }))
+    const user = await getUserGetter(email)()
+    await setCustomUserAttribute(user, 'validEmail', true)
+    await customAuthReq(user, 'post', endpoint, { email })
+    .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal('email was already validated')
-      done()
     })
-    .catch(done)
   })
 
-  it('should reject if creation strategy is not local ', done => {
+  it('should reject if creation strategy is not local ', async () => {
     const email = createUserEmail()
-    const userPromise = getUserGetter(email)()
-    createCustomUser(userPromise, 'creationStrategy', 'notLocal')
-    .then(() => customAuthReq(userPromise, 'post', endpoint, { email }))
+    const user = await getUserGetter(email)()
+    await setCustomUserAttribute(user, 'creationStrategy', 'notLocal')
+    await customAuthReq(user, 'post', endpoint, { email })
+    .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal('wrong authentification creationStrategy')
-      done()
     })
-    .catch(done)
   })
 })
 
-const createCustomUser = (userPromise, userAttribute, value) => {
-  return userPromise
-  .then(user => {
-    db.update(user._id, BasicUpdater(userAttribute, value))
-    return user
-  })
-  .then(Wait(100))
+const setCustomUserAttribute = async (user, userAttribute, value) => {
+  await db.update(user._id, BasicUpdater(userAttribute, value))
+  return user
 }
