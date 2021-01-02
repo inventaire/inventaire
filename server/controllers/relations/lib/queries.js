@@ -10,12 +10,11 @@ const get = (userId, otherId) => db.get(Relation.docId(userId, otherId))
 
 const putStatus = (userId, otherId, status) => {
   const docId = Relation.docId(userId, otherId)
-  // blue-cot handles get-put-with-rev and inexistant doc errors
-  return db.update(docId, updateStatus.bind(null, docId, status))
+  return db.update(docId, updateStatus.bind(null, docId, status), { createIfMissing: true })
 }
 
 const updateStatus = (docId, status, doc) => {
-  // if doc doesnt exist, cot creates one: { _id: doc._id }
+  // if doc doesnt exist, blue-cot with createIfMissing=true creates one: { _id: doc._id }
   // thus the need to test doc.status instead
   if (doc && doc.status) {
     doc.status = status

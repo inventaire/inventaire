@@ -45,7 +45,7 @@
     "url": "https://github.com/inventaire/inventaire"
   },
   "dependencies": {
-    "blue-cot": "^5.0.1",
+    "blue-cot": "^6.1.1",
     "body-parser": "^1.18.2",
     "chalk": "^1.1.3",
     "cloudant-follow": "^0.18.2",
