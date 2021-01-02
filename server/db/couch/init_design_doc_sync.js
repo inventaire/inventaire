@@ -43,19 +43,25 @@ const isDesignDoc = designDocsNames => doc => {
   return true
 }
 
-const syncDesignDocFile = change => {
+const syncDesignDocFile = async change => {
   const { id, doc } = change
   const designDocName = id.split('/')[1]
   const designDocPath = `${designDocFolder}/${designDocName}.json`
 
   const updatedDesignDoc = formatDesignDoc(doc)
 
-  return readFile(designDocPath, { encoding: 'utf-8' })
-  .then(file => {
-    if (updatedDesignDoc === file) return
-    return writeFile(designDocPath, updatedDesignDoc)
-    .then(() => _.success(`${designDocName} design doc updated`))
-  })
+  let file
+  try {
+    file = await readFile(designDocPath, { encoding: 'utf-8' })
+  } catch (err) {
+    if (err.code === 'ENOENT') file = ''
+    else throw err
+  }
+
+  if (updatedDesignDoc === file) return
+
+  return writeFile(designDocPath, updatedDesignDoc)
+  .then(() => _.success(`${designDocName} design doc updated`))
   .catch(_.Error(`${designDocName} design doc update err`))
 }
 
