@@ -29,6 +29,7 @@ const reservedWords = [
   'last',
   'lend',
   'listings',
+  'local',
   'map',
   'me',
   'nearby',
