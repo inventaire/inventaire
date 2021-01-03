@@ -68,7 +68,7 @@ const matchEntities = (search, userLang) => {
 
 const defaultEntitiesFields = userLang => {
   const fields = [
-    'labels.*^2',
+    'labels.*^4',
     'aliases.*^2',
     'descriptions.*'
   ]
