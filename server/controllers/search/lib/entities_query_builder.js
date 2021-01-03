@@ -32,7 +32,10 @@ module.exports = params => {
               missing: '1'
             },
           }
-        ]
+        ],
+        // add the function result to the _score (instead of multiplying by default)
+        // which is drastically decreasing popularity boosting compared to default
+        boost_mode: 'sum'
       },
     },
     size,
