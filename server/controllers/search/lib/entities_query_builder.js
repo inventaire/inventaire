@@ -48,15 +48,14 @@ const matchType = types => {
 
 const matchEntities = (search, userLang) => {
   return [
-    // strict (operator 'and') match on all words
     {
-      multi_match: {
+      // see query strings doc : https://www.elastic.co/guide/en/elasticsearch/reference/7.9/query-dsl-query-string-query.html
+      query_string: {
         query: search,
-        operator: 'and',
-        fields: defaultEntitiesFields(userLang),
+        default_operator: 'AND',
+        boost: 5,
       }
     },
-    // match on some words
     {
       multi_match: {
         query: search,
