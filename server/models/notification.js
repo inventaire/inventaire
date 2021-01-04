@@ -25,5 +25,10 @@ module.exports = {
 
     doc.time = Date.now()
     return doc
+  },
+
+  markAsRead: doc => {
+    doc.status = 'read'
+    return doc
   }
 }

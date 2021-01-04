@@ -1,10 +1,8 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
-const { BasicUpdater } = __.require('lib', 'doc_updates')
 const { minKey, maxKey } = __.require('lib', 'couch')
 const assert_ = __.require('utils', 'assert_types')
 const Notification = __.require('models', 'notification')
-
 const db = __.require('couch', 'base')('notifications')
 
 const notifications_ = module.exports = {
@@ -31,10 +29,13 @@ const notifications_ = module.exports = {
     return db.post(doc)
   },
 
-  updateReadStatus: (userId, time) => {
-    time = Number(time)
-    return db.viewFindOneByKey('byUserAndTime', [ userId, time ])
-    .then(doc => db.update(doc._id, BasicUpdater('status', 'read')))
+  updateReadStatus: async (userId, times) => {
+    assert_.string(userId)
+    assert_.numbers(times)
+    const keys = times.map(time => [ userId, time ])
+    const docs = await db.viewByKeys('byUserAndTime', keys)
+    docs.forEach(Notification.markAsRead)
+    return db.bulk(docs)
   },
 
   deleteAllBySubjectId: subjectId => {
