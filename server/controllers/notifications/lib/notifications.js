@@ -31,16 +31,6 @@ const notifications_ = module.exports = {
     return db.post(doc)
   },
 
-  bulkAddOrUpdate: bulk => {
-    assert_.array(bulk)
-    // Allow to pass a mix of existing notification docs or
-    const docs = bulk.map(data => {
-      if (data._id != null) return Notification.update(data)
-      else return Notification.create(data)
-    })
-    return db.bulk(docs)
-  },
-
   updateReadStatus: (userId, time) => {
     time = Number(time)
     return db.viewFindOneByKey('byUserAndTime', [ userId, time ])

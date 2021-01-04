@@ -1,7 +1,7 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const db = __.require('couch', 'base')('notifications')
-const notifications_ = require('./notifications')
+const Notification = __.require('models', 'notification')
 
 const groupAttributeWithNotification = [
   'name',
@@ -12,38 +12,42 @@ const groupAttributeWithNotification = [
 
 module.exports = async data => {
   const { attribute } = data
-  if (groupAttributeWithNotification.includes(attribute)) {
-    const { usersToNotify, groupId, actorId, previousValue, newValue } = data
-    const existingNotificationsByUsers = await getUnreadGroupNotificationsByUsers({ groupId, attribute })
-    // creates a lot of similar documents:
-    // could be refactored to use a single document
-    // including a read status per-user: { user: id, read: boolean }
-    const bulk = usersToNotify.map(userToNotify => {
-      const existingNotification = existingNotificationsByUsers[userToNotify]
-      if (existingNotification) {
-        if (existingNotification.data.previousValue === newValue) {
-          existingNotification._deleted = true
-          return existingNotification
-        } else {
-          existingNotification.data.newValue = newValue
-          return existingNotification
-        }
-      } else {
-        return {
-          user: userToNotify,
-          type: 'groupUpdate',
-          data: {
-            group: groupId,
-            user: actorId,
-            attribute,
-            previousValue,
-            newValue
-          }
-        }
-      }
-    })
-    return notifications_.bulkAddOrUpdate(bulk)
+  if (!groupAttributeWithNotification.includes(attribute)) return
+
+  const { usersToNotify, groupId } = data
+  const existingNotificationsByUsers = await getUnreadGroupNotificationsByUsers({ groupId, attribute })
+  const docs = usersToNotify.map(getNotificationUpdateOrCreation(data, existingNotificationsByUsers))
+  return db.bulk(docs)
+}
+
+const getNotificationUpdateOrCreation = (data, existingNotificationsByUsers) => userToNotify => {
+  const existingNotification = existingNotificationsByUsers[userToNotify]
+  if (existingNotification) return getNotificationUpdate(existingNotification, data.newValue)
+  else return getNewNotification(userToNotify, data)
+}
+
+const getNewNotification = (userToNotify, data) => {
+  const { groupId, actorId, attribute, previousValue, newValue } = data
+  return Notification.create({
+    user: userToNotify,
+    type: 'groupUpdate',
+    data: {
+      group: groupId,
+      user: actorId,
+      attribute,
+      previousValue,
+      newValue
+    }
+  })
+}
+
+const getNotificationUpdate = (existingNotification, newValue) => {
+  if (existingNotification.data.previousValue === newValue) {
+    existingNotification._deleted = true
+  } else {
+    existingNotification.data.newValue = newValue
   }
+  return Notification.update(existingNotification)
 }
 
 const getUnreadGroupNotificationsByUsers = async ({ groupId, attribute }) => {
