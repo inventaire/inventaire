@@ -1,9 +1,18 @@
 const __ = require('config').universalPath
 const radio = __.require('lib', 'radio')
+const ActionsControllers = __.require('lib', 'actions_controllers')
 
 module.exports = {
-  get: require('./get'),
-  post: require('./update_status')
+  get: ActionsControllers({
+    authentified: {
+      default: require('./get')
+    }
+  }),
+  post: ActionsControllers({
+    authentified: {
+      default: require('./update_status')
+    }
+  })
 }
 
 radio.on('notify:friend:request:accepted', require('./lib/accepted_request'))

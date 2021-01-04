@@ -10,8 +10,6 @@ const sanitization = {
 }
 
 module.exports = (req, res) => {
-  if (req.user == null) return error_.unauthorizedApiAccess(req, res)
-
   sanitize(req, res, sanitization)
   .then(getNotifications)
   .then(responses_.Send(res))

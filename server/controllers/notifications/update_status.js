@@ -5,7 +5,6 @@ const responses_ = __.require('lib', 'responses')
 const notifications_ = require('./lib/notifications')
 
 module.exports = (req, res) => {
-  if (req.user == null) return error_.unauthorizedApiAccess(req, res)
   const reqUserId = req.user._id
 
   const { times } = req.body
