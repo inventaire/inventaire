@@ -1,0 +1,68 @@
+const __ = require('config').universalPath
+const _ = __.require('builders', 'utils')
+const { BasicUpdater } = __.require('lib', 'doc_updates')
+const { minKey, maxKey } = __.require('lib', 'couch')
+const assert_ = __.require('utils', 'assert_types')
+const Notification = __.require('models', 'notification')
+
+const db = __.require('couch', 'base')('notifications')
+
+const notifications_ = module.exports = {
+  byUserId: userId => {
+    assert_.string(userId)
+    return db.viewCustom('byUserAndTime', {
+      startkey: [ userId, maxKey ],
+      endkey: [ userId, minKey ],
+      include_docs: true,
+      descending: true,
+    })
+    .catch(_.ErrorRethrow('byUserId'))
+  },
+
+  // Make notifications accessible by the subjects they involve:
+  // user, group, item etc
+  bySubject: subjectId => {
+    return db.viewByKey('bySubject', subjectId)
+    .catch(_.ErrorRethrow('bySubject'))
+  },
+
+  add: (user, type, data) => {
+    const doc = Notification.create({ user, type, data })
+    return db.post(doc)
+  },
+
+  bulkAddOrUpdate: bulk => {
+    assert_.array(bulk)
+    // Allow to pass a mix of existing notification docs or
+    const docs = bulk.map(data => {
+      if (data._id != null) return Notification.update(data)
+      else return Notification.create(data)
+    })
+    return db.bulk(docs)
+  },
+
+  updateReadStatus: (userId, time) => {
+    time = Number(time)
+    return db.viewFindOneByKey('byUserAndTime', [ userId, time ])
+    .then(doc => db.update(doc._id, BasicUpdater('status', 'read')))
+  },
+
+  deleteAllBySubjectId: subjectId => {
+    // You absolutly don't want this id to be undefined
+    // as this would end up deleting the whole database
+    assert_.string(subjectId)
+    return notifications_.bySubject(subjectId)
+    .then(db.bulkDelete)
+  },
+
+  unreadCount: userId => {
+    return notifications_.byUserId(userId)
+    .then(getUnreadCount)
+  }
+}
+
+// Alias
+notifications_.deleteAllByUserId = notifications_.deleteAllBySubjectId
+
+const getUnreadCount = notifs => notifs.filter(isUnread).length
+const isUnread = notif => notif.status === 'unread'

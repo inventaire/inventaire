@@ -3,7 +3,7 @@ const relations_ = __.require('controllers', 'relations/lib/queries')
 const deleteUserItems = __.require('controllers', 'items/lib/delete_user_items')
 const { leaveAllGroups } = __.require('controllers', 'groups/lib/leave_groups')
 const { cancelAllActiveTransactions } = __.require('controllers', 'transactions/lib/transactions')
-const notifications_ = __.require('lib', 'notifications')
+const notifications_ = __.require('controllers', 'notifications/lib/notifications')
 const { softDeleteById } = __.require('controllers', 'user/lib/delete')
 
 module.exports = async userId => {
