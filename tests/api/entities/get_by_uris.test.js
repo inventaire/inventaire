@@ -1,44 +1,39 @@
 const should = require('should')
-const { undesiredRes } = require('../utils/utils')
+const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
+
 const { createEditionWithIsbn, createWorkWithAuthor, createEditionWithWorkAuthorAndSerie, createHuman, someFakeUri } = require('../fixtures/entities')
 const { getByUris, merge } = require('../utils/entities')
 const workWithAuthorPromise = createWorkWithAuthor()
 
 describe('entities:get:by-uris', () => {
-  it('should reject invalid uri', done => {
+  it('should reject invalid uri', async () => {
     const invalidUri = 'bla'
-    getByUris(invalidUri)
-    .then(undesiredRes(done))
-    .catch(err => {
+    try {
+      await getByUris(invalidUri)
+      .then(shouldNotBeCalled)
+    } catch (err) {
+      rethrowShouldNotBeCalledErrors(err)
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.startWith('invalid uri')
-      done()
-    })
-    .catch(done)
+    }
   })
 
-  it('should reject uri with wrong prefix', done => {
+  it('should reject uri with wrong prefix', async () => {
     const invalidUri = 'foo:Q535'
-    getByUris(invalidUri)
-    .then(undesiredRes(done))
-    .catch(err => {
+    try {
+      await getByUris(invalidUri)
+      .then(shouldNotBeCalled)
+    } catch (err) {
+      rethrowShouldNotBeCalledErrors(err)
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.startWith('invalid uri')
-      done()
-    })
-    .catch(done)
+    }
   })
 
-  it('should accept inventaire uri', done => {
-    workWithAuthorPromise
-    .then(work => {
-      return getByUris(work.uri)
-      .then(res => {
-        res.entities[work.uri].should.be.an.Object()
-        done()
-      })
-    })
-    .catch(done)
+  it('should accept inventaire uri', async () => {
+    const work = await workWithAuthorPromise
+    const res = await getByUris(work.uri)
+    res.entities[work.uri].should.be.an.Object()
   })
 
   it('should return uris not found', async () => {
@@ -73,61 +68,45 @@ describe('entities:get:by-uris', () => {
   })
 
   describe('relatives', () => {
-    it("should accept a 'relatives' parameter", done => {
-      workWithAuthorPromise
-      .then(work => {
-        const { uri: workUri } = work
-        const authorUri = work.claims['wdt:P50'][0]
-        return getByUris(workUri, 'wdt:P50')
-        .then(res => {
-          res.entities[workUri].should.be.an.Object()
-          res.entities[authorUri].should.be.an.Object()
-          done()
-        })
-      })
-      .catch(done)
+    it("should accept a 'relatives' parameter", async () => {
+      const work = await workWithAuthorPromise
+      const { uri: workUri } = work
+      const authorUri = work.claims['wdt:P50'][0]
+      const res = await getByUris(workUri, 'wdt:P50')
+      res.entities[workUri].should.be.an.Object()
+      res.entities[authorUri].should.be.an.Object()
     })
 
-    it("should reject a non-allowlisted 'relatives' parameter", done => {
-      workWithAuthorPromise
-      .then(work => {
-        const { uri: workUri } = work
-        return getByUris(workUri, 'wdt:P31')
-        .then(undesiredRes(done))
-        .catch(err => {
-          err.statusCode.should.equal(400)
-          err.body.status_verbose.should.startWith('invalid relative')
-          done()
-        })
-      })
-      .catch(done)
+    it("should reject a non-allowlisted 'relatives' parameter", async () => {
+      const work = await workWithAuthorPromise
+      const { uri: workUri } = work
+      try {
+        await getByUris(workUri, 'wdt:P31')
+        .then(shouldNotBeCalled)
+      } catch (err) {
+        rethrowShouldNotBeCalledErrors(err)
+        err.statusCode.should.equal(400)
+        err.body.status_verbose.should.startWith('invalid relative')
+      }
     })
 
-    it('should be able to include the works, authors, and series of an edition', done => {
-      createEditionWithWorkAuthorAndSerie()
-      .then(({ uri }) => uri)
-      .then(editionUri => {
-        return getByUris(editionUri, 'wdt:P50|wdt:P179|wdt:P629')
-        .then(res => {
-          const edition = res.entities[editionUri]
-          edition.should.be.an.Object()
+    it('should be able to include the works, authors, and series of an edition', async () => {
+      const { uri: editionUri } = await createEditionWithWorkAuthorAndSerie()
+      const res = await getByUris(editionUri, 'wdt:P50|wdt:P179|wdt:P629')
+      const edition = res.entities[editionUri]
+      edition.should.be.an.Object()
 
-          const workUri = edition.claims['wdt:P629'][0]
-          const work = res.entities[workUri]
-          work.should.be.an.Object()
+      const workUri = edition.claims['wdt:P629'][0]
+      const work = res.entities[workUri]
+      work.should.be.an.Object()
 
-          const authorUri = work.claims['wdt:P50'][0]
-          const author = res.entities[authorUri]
-          author.should.be.an.Object()
+      const authorUri = work.claims['wdt:P50'][0]
+      const author = res.entities[authorUri]
+      author.should.be.an.Object()
 
-          const serieUri = work.claims['wdt:P179'][0]
-          const serie = res.entities[serieUri]
-          serie.should.be.an.Object()
-
-          done()
-        })
-      })
-      .catch(done)
+      const serieUri = work.claims['wdt:P179'][0]
+      const serie = res.entities[serieUri]
+      serie.should.be.an.Object()
     })
   })
 })
