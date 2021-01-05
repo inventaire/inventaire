@@ -30,7 +30,12 @@ module.exports = async (rawIsbns, params) => {
   if (notFound.length > 0) {
     results.notFound = _.map(notFound, 'isbn').map(prefixifyIsbn)
   }
-
+  // if dataseed results are empty, populate notFound with missing uris
+  if (!(_.isNonEmptyArray(newEntities)) && (!(_.isNonEmptyArray(notFound)))) {
+    results.notFound = missingIsbns.map(isbn => {
+      return prefixifyIsbn(isbn.replace(/\W/g, ''))
+    })
+  }
   return addRedirections(results, redirections)
 }
 
