@@ -12,8 +12,8 @@ const entity = {
 
 const uniqueString = {
   datatype: 'string',
-  // Arbitrary max length
-  validate: BoundedString(1, 5000),
+  // Aligning max length on Wikidata's limit
+  validate: BoundedString(1, 1500),
   uniqueValue: true
 }
 
