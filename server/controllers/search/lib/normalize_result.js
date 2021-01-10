@@ -16,7 +16,9 @@ const entityFormatter = (result, _source, lang) => ({
   uri: getUri(result._index, result._id),
   label: getBestLangValue(lang, null, _source.labels).value,
   description: getShortDescription(_source.descriptions, lang),
-  image: getBestLangValue(lang, null, _source.images).value
+  image: getBestLangValue(lang, null, _source.images).value,
+  _score: result._score,
+  _popularity: _source.popularity,
 })
 
 const getShortDescription = (descriptions, lang) => {
@@ -31,7 +33,8 @@ const networkFormatter = (labelAttr, descAttr) => (result, _source, lang) => ({
   type: _source.type,
   label: _source[labelAttr],
   description: _source[descAttr] && _source[descAttr].slice(0, 200),
-  image: _source.picture
+  image: _source.picture,
+  _score: result._score,
 })
 
 const formatters = {
