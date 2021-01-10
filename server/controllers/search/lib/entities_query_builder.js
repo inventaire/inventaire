@@ -24,7 +24,7 @@ module.exports = params => {
         },
         functions: [
           {
-            // See: https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-function-score-query.html#function-field-value-factor
+            // See: https://www.elastic.co/guide/en/elasticsearch/reference/7.10/query-dsl-function-score-query.html#function-field-value-factor
             field_value_factor: {
               field: 'popularity',
               // Inspired by https://www.elastic.co/guide/en/elasticsearch/guide/current/boosting-by-popularity.html
@@ -52,7 +52,7 @@ const matchType = types => {
 const matchEntities = (search, userLang) => {
   return [
     {
-      // see query strings doc : https://www.elastic.co/guide/en/elasticsearch/reference/7.9/query-dsl-query-string-query.html
+      // see query strings doc : https://www.elastic.co/guide/en/elasticsearch/reference/7.10/query-dsl-query-string-query.html
       query_string: {
         query: search,
         default_operator: 'AND'
