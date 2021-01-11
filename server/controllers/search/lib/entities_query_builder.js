@@ -32,7 +32,10 @@ module.exports = params => {
               missing: '1'
             },
           }
-        ]
+        ],
+        // add the function result to the _score (instead of multiplying by default)
+        // which is drastically decreasing popularity boosting compared to default
+        boost_mode: 'sum'
       },
     },
     size,
@@ -48,39 +51,31 @@ const matchType = types => {
 
 const matchEntities = (search, userLang) => {
   return [
-    // strict (operator 'and') match on all words
     {
-      multi_match: {
+      // see query strings doc : https://www.elastic.co/guide/en/elasticsearch/reference/7.9/query-dsl-query-string-query.html
+      query_string: {
         query: search,
-        operator: 'and',
-        fields: defaultEntitiesFields(userLang),
+        default_operator: 'AND'
       }
     },
-    // match on some words
     {
       multi_match: {
         query: search,
-        fields: flattenedTermsFields(userLang)
+        fields: entitiesFields(userLang)
       }
     }
   ]
 }
 
-const defaultEntitiesFields = userLang => {
+const entitiesFields = userLang => {
   const fields = [
-    'labels.*^2',
+    'labels.*^4',
     'aliases.*^2',
-    'descriptions.*'
+    'descriptions.*',
+    'flattenedLabels', // text type
+    'flattenedAliases', // text type
+    'flattenedDescriptions' // text type
   ]
   if (userLang) fields.push(`labels.${userLang}^4`)
   return fields
-}
-
-const flattenedTermsFields = userLang => {
-  return [
-    'flattenedLabels', // text type
-    'flattenedAliases', // text type
-    'flattenedDescriptions', // text type
-    ...defaultEntitiesFields(userLang)
-  ]
 }
