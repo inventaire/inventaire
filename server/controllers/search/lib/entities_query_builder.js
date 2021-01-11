@@ -27,9 +27,7 @@ module.exports = params => {
             // See: https://www.elastic.co/guide/en/elasticsearch/reference/7.10/query-dsl-function-score-query.html#function-field-value-factor
             field_value_factor: {
               field: 'popularity',
-              // Inspired by https://www.elastic.co/guide/en/elasticsearch/guide/current/boosting-by-popularity.html
-              modifier: 'ln2p',
-              missing: '1'
+              missing: 0
             },
           }
         ],
@@ -55,7 +53,8 @@ const matchEntities = (search, userLang) => {
       // see query strings doc : https://www.elastic.co/guide/en/elasticsearch/reference/7.10/query-dsl-query-string-query.html
       query_string: {
         query: search,
-        default_operator: 'AND'
+        default_operator: 'AND',
+        boost: 2
       }
     },
     {
@@ -69,13 +68,13 @@ const matchEntities = (search, userLang) => {
 
 const entitiesFields = userLang => {
   const fields = [
-    'labels.*^4',
-    'aliases.*^2',
-    'descriptions.*',
-    'flattenedLabels', // text type
-    'flattenedAliases', // text type
-    'flattenedDescriptions' // text type
+    'labels.*',
+    'aliases.*^0.5',
+    'descriptions.*^0.25',
+    'flattenedLabels^0.25', // text type
+    'flattenedAliases^0.25', // text type
+    'flattenedDescriptions^0.25' // text type
   ]
-  if (userLang) fields.push(`labels.${userLang}^4`)
+  if (userLang) fields.push(`labels.${userLang}`)
   return fields
 }
