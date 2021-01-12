@@ -14,8 +14,8 @@ node --print "JSON.stringify(require('./server/lib/wikidata/aliases'))" |
   # Get the id, wrapped between double quotes
   sed -E 's/wd:(Q.*)/"\1"/' > indexed_types_ids
 
-curl --silent https://dumps.wikimedia.org/wikidatawiki/entities/latest-all.json.bz2 |
-  pbzip2 --decompress --stdout |
+curl --silent https://dumps.wikimedia.org/wikidatawiki/entities/latest-all.json.gz |
+  gzip --decompress |
   # Prefilter to keep only entities that refer to a valid P31 value in some way
   grep --file indexed_types_ids |
   # Drop end-of-line comma to produce valid ndjson
