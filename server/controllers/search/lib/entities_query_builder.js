@@ -27,6 +27,7 @@ module.exports = params => {
             // See: https://www.elastic.co/guide/en/elasticsearch/reference/7.10/query-dsl-function-score-query.html#function-field-value-factor
             field_value_factor: {
               field: 'popularity',
+              modifier: 'sqrt',
               missing: 0
             },
           }
@@ -54,7 +55,7 @@ const matchEntities = (search, userLang) => {
       query_string: {
         query: search,
         default_operator: 'AND',
-        boost: 2
+        boost: 3
       }
     },
     {
@@ -75,6 +76,9 @@ const entitiesFields = userLang => {
     'flattenedAliases^0.25', // text type
     'flattenedDescriptions^0.25' // text type
   ]
-  if (userLang) fields.push(`labels.${userLang}`)
+  if (userLang) {
+    fields.push(`labels.${userLang}`)
+    fields.push(`aliases.${userLang}`)
+  }
   return fields
 }
