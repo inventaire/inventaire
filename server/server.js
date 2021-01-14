@@ -24,4 +24,9 @@ Promise.all([
 .then(initExpress)
 .then(() => console.timeEnd('startup'))
 .then(__.require('lib', 'startup/after'))
-.catch(_.Error('init err'))
+.catch(err => {
+  _.error(err, 'init err')
+  // Exit after the error logs where written, and give a second
+  // before a process manager might attempt to restart this process in better conditions
+  setTimeout(process.exit.bind(process, 1), 1000)
+})
