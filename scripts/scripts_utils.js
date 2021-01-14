@@ -30,4 +30,5 @@ module.exports = {
 
 const makeSureLogsAreWrittenBeforeExit = () => {
   process.stdout._handle.setBlocking(true)
+  process.stderr._handle.setBlocking(true)
 }
