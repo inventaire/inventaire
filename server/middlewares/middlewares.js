@@ -5,32 +5,28 @@ const cache = require('./cache')
 const requestsLogger = require('./requests_logger')
 const content = require('./content')
 
-module.exports = {
-  common: [
-    // Place the request logger first so that even requests that generate an error
-    // in the middleware are logged
-    requestsLogger,
+module.exports = [
+  // Place the request logger first so that even requests that generate an error
+  // in the middleware are logged
+  requestsLogger,
 
-    content.fakeSubmitException,
-    content.jsonBodyParser,
-    statics.favicon,
+  content.fakeSubmitException,
+  content.jsonBodyParser,
+  statics.favicon,
 
-    statics.enableCors,
-    statics.mountStaticFiles,
+  statics.enableCors,
+  statics.mountStaticFiles,
 
-    cache.cacheControl,
+  cache.cacheControl,
 
-    auth.cookieParser,
-    auth.session,
-    auth.enforceSessionMaxAge,
-    auth.passport.initialize,
-    auth.passport.session,
-    auth.basicAuth,
+  auth.cookieParser,
+  auth.session,
+  auth.enforceSessionMaxAge,
+  auth.passport.initialize,
+  auth.passport.session,
+  auth.basicAuth,
 
-    content.deduplicateRequests,
+  content.deduplicateRequests,
 
-    security.enableCorsOnPublicApiRoutes
-  ],
-  production: [],
-  dev: []
-}
+  security.enableCorsOnPublicApiRoutes
+]

@@ -2,16 +2,14 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const express = require('express')
-const { env, port, host, name } = CONFIG
+const { port, host, name } = CONFIG
 
 const middlewares = require('./middlewares/middlewares')
-const middlewaresList = middlewares.common.concat((middlewares[env] || []))
-
 const routes = require('./controllers/routes')
 
 const app = express()
 
-for (const middleware of middlewaresList) {
+for (const middleware of middlewares) {
   if (_.isArray(middleware)) {
     app.use.apply(app, middleware)
   } else {
