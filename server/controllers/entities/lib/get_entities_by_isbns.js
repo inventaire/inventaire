@@ -7,34 +7,34 @@ const formatEditionEntity = require('./format_edition_entity')
 const isbn_ = __.require('lib', 'isbn/isbn')
 const { prefixifyIsbn } = __.require('controllers', 'entities/lib/prefix')
 
-module.exports = (rawIsbns, params) => {
+module.exports = async (rawIsbns, params) => {
   const [ isbns, redirections ] = getRedirections(rawIsbns)
-  const { refresh } = params
+  const { refresh, autocreate } = params
   // search entities by isbn locally
-  return entities_.byIsbns(isbns)
-  .then(entities => {
-    const foundIsbns = entities.map(getIsbn13h)
-    const missingIsbns = _.difference(isbns, foundIsbns)
+  let entities = await entities_.byIsbns(isbns)
+  const foundIsbns = entities.map(getIsbn13h)
+  const missingIsbns = _.difference(isbns, foundIsbns)
 
-    entities = entities.map(formatEditionEntity)
+  entities = entities.map(formatEditionEntity)
 
-    if (missingIsbns.length === 0) {
-      const results = { entities }
-      return addRedirections(results, redirections)
+  if (missingIsbns.length === 0) {
+    const results = { entities }
+    return addRedirections(results, redirections)
+  }
+  const results = { entities }
+
+  if (autocreate) {
+    const [ newEntities, notFound ] = await getMissingEditionEntitiesFromSeeds(missingIsbns, refresh)
+
+    results.entities = entities.concat(newEntities)
+    if (notFound.length > 0) {
+      results.notFound = _.map(notFound, 'isbn').map(prefixifyIsbn)
     }
+  } else {
+    results.notFound = missingIsbns.map(prefixifyIsbn)
+  }
 
-    // then look for missing isbns on dataseed
-    return getMissingEditionEntitiesFromSeeds(missingIsbns, refresh)
-    .then(([ newEntities, notFound ]) => {
-      const results = { entities: entities.concat(newEntities) }
-
-      if (notFound.length > 0) {
-        results.notFound = _.map(notFound, 'isbn').map(prefixifyIsbn)
-      }
-
-      return addRedirections(results, redirections)
-    })
-  })
+  return addRedirections(results, redirections)
 }
 
 const getIsbn13h = entity => entity.claims['wdt:P212'][0]
