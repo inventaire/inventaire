@@ -31,9 +31,7 @@ module.exports = async (rawIsbns, params) => {
       results.notFound = _.map(notFound, 'isbn').map(prefixifyIsbn)
     }
   } else {
-    results.notFound = missingIsbns.map(isbn => {
-      return prefixifyIsbn(isbn.replace(/\W/g, ''))
-    })
+    results.notFound = missingIsbns.map(prefixifyIsbn)
   }
 
   return addRedirections(results, redirections)
