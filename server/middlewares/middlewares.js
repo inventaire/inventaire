@@ -10,7 +10,13 @@ module.exports = [
   // in the middleware are logged
   requestsLogger,
 
-  content.fakeSubmitException,
+  // server/controllers/auth/fake_submit.js relies on the possibility
+  // to submit a url encoded form data, so it needs to have the body-parser ready for it
+  content.acceptUrlencoded('/api/submit'),
+
+  // OAuth clients might send urlencoded content
+  content.acceptUrlencoded('/api/oauth/token'),
+
   content.jsonBodyParser,
   statics.favicon,
 
@@ -24,7 +30,7 @@ module.exports = [
   auth.enforceSessionMaxAge,
   auth.passport.initialize,
   auth.passport.session,
-  auth.basicAuth,
+  auth.authorizationHeader,
 
   content.deduplicateRequests,
 

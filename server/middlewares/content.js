@@ -5,6 +5,8 @@ const _ = require('builders/utils')
 const error_ = require('lib/error/error')
 const bodyParser = require('body-parser')
 
+const urlencodedBodyParser = bodyParser.urlencoded({ extended: false })
+
 module.exports = {
   // Assume JSON content-type for, among others:
   // - application/json
@@ -15,14 +17,8 @@ module.exports = {
   // Not using '*/*' as this would include multipart/form-data
   // used for image upload
   jsonBodyParser: bodyParser.json({ type: 'application/*', limit: '5mb' }),
-  // server/controllers/auth/fake_submit.js relies on the possibility
-  // to submit a url encoded form data, so it needs to have the body-parser ready for it,
-  // otherwise it throws a 'SyntaxError: Unexpected token # in JSON at position 0' error
-  // This middleware will only apply for requests on the '/api/submit' endpoint
-  fakeSubmitException: [
-    '/api/submit',
-    bodyParser.urlencoded({ extended: false })
-  ],
+
+  acceptUrlencoded: endpoint => [ endpoint, urlencodedBodyParser ],
 
   // Assumes that a requests made twice with the same body within 2 secondes
   // is an erronous request that should be blocked

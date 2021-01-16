@@ -8,6 +8,7 @@ const cookieParser = require('cookie-parser')
 const cookieSession = require('cookie-session')
 const Keygrip = require('keygrip')
 const autoRotatedKeys = require('lib/auto_rotated_keys')
+const oauthServer = require('controllers/auth/oauth_server')
 
 // See https://github.com/expressjs/cookie-session/#cookie-options
 const cookieSessionParams = {
@@ -50,13 +51,26 @@ module.exports = {
     session: passport.session({ pauseStream: true })
   },
 
-  basicAuth: (req, res, next) => {
-    if (req.headers.authorization == null) {
+  authorizationHeader: async (req, res, next) => {
+    const { authorization } = req.headers
+    if (authorization == null) {
       next()
-    } else {
+    } else if (authorization.startsWith('Basic')) {
       // TODO: handle response to avoid text/plain 401 response
       // to keep the API consistent on Content-Type
       passport_.authenticate.basic(req, res, next)
+    } else if (authorization.startsWith('Bearer')) {
+      oauthServer.authenticate(req, res, afterBearerToken(req, res, next))
+    } else {
+      next()
     }
   }
+}
+
+const afterBearerToken = (req, res, next) => err => {
+  if (err) return next(err)
+  if (res.locals.oauth && res.locals.oauth.token && typeof res.locals.oauth.token.user === 'object') {
+    req.user = res.locals.oauth.token.user
+  }
+  next()
 }
