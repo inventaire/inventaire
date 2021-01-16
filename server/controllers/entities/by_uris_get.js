@@ -16,7 +16,8 @@ const sanitization = {
   refresh: { optional: true },
   autocreate: {
     generic: 'boolean',
-    optional: true
+    optional: true,
+    default: false
   },
   relatives: {
     allowlist: validRelativesProperties,
