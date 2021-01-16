@@ -39,7 +39,7 @@ const waitForIndexation = async (indexBaseName, id) => {
     // Now that the doc is in ElasticSearch, let it a moment to update secondary indexes
     await wait(elasticsearchUpdateDelay)
   } else {
-    _.warn(`wainting for ${index}/${id} indexation`)
+    _.warn(`waiting for ${index}/${id} indexation`)
     await wait(500)
     return waitForIndexation(indexBaseName, id)
   }
