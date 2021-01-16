@@ -49,19 +49,22 @@ const matchType = types => {
 }
 
 const matchEntities = (search, userLang) => {
+  const fields = entitiesFields(userLang)
   return [
     {
-      // see query strings doc : https://www.elastic.co/guide/en/elasticsearch/reference/7.10/query-dsl-query-string-query.html
+      // Use query_string to give exact matches a boost.
+      // See query strings doc : https://www.elastic.co/guide/en/elasticsearch/reference/7.10/query-dsl-query-string-query.html
       query_string: {
         query: search,
         default_operator: 'AND',
+        fields,
         boost: 3
       }
     },
     {
       multi_match: {
         query: search,
-        fields: entitiesFields(userLang)
+        fields,
       }
     }
   ]
