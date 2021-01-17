@@ -30,6 +30,12 @@ module.exports = (req, res, err, status) => {
     _.error(err, err.message)
   }
 
+  if (err.context) {
+    // Prevent returning authorization headers from an internal requests that would have failed
+    // such as requests to CouchDB
+    delete err.context.headers
+  }
+
   res.status(statusCode)
   responses_.send(res, {
     status: statusCode,

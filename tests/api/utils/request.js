@@ -4,6 +4,7 @@ const { wait } = require('lib/promises')
 const host = CONFIG.fullPublicHost()
 const requests_ = require('lib/requests')
 const assert_ = require('lib/utils/assert_types')
+const { stringify: stringifyQuery } = require('querystring')
 
 const testServerAvailability = async () => {
   if (!CONFIG.waitForServer) return
@@ -27,7 +28,7 @@ const rawRequest = async (method, url, reqParams = {}) => {
   await waitForTestServer
   reqParams.returnBodyOnly = false
   reqParams.redirect = 'manual'
-  reqParams.parseJson = false
+  reqParams.parseJson = reqParams.parseJson || false
   if (url[0] === '/') url = `${host}${url}`
   return requests_[method](url, reqParams)
 }
@@ -37,7 +38,9 @@ const request = async (method, endpoint, body, cookie) => {
   assert_.string(endpoint)
   const url = host + endpoint
   const data = {
-    headers: { cookie }
+    headers: { cookie },
+    // Use rawRequest to test redirections
+    redirect: 'error'
   }
 
   if (body != null) data.body = body
@@ -71,4 +74,14 @@ const rawCustomAuthReq = async ({ user, method, url, options = {} }) => {
   return rawRequest(method, url, options)
 }
 
-module.exports = { request, rawRequest, customAuthReq, rawCustomAuthReq }
+const postUrlencoded = (url, body) => {
+  return rawRequest('post', url, {
+    headers: {
+      'content-type': 'application/x-www-form-urlencoded'
+    },
+    body: stringifyQuery(body),
+    parseJson: true
+  })
+}
+
+module.exports = { request, rawRequest, customAuthReq, rawCustomAuthReq, postUrlencoded }

@@ -1,4 +1,4 @@
-const { request, customAuthReq } = require('./request')
+const { request, customAuthReq, rawCustomAuthReq } = require('./request')
 const randomString = require('lib/utils/random_string')
 const { createUser, getRefreshedUser } = require('../fixtures/users')
 require('should')
@@ -19,6 +19,8 @@ const API = module.exports = {
   authReqC: (...args) => customAuthReq(API.getUserC(), ...args),
   adminReq: (...args) => customAuthReq(API.getAdminUser(), ...args),
   dataadminReq: (...args) => customAuthReq(API.getDataadminUser(), ...args),
+
+  rawAuthReq: (...args) => rawCustomAuthReq(API.getUser(), ...args),
 
   // Create users only if needed by the current test suite
   getUser: getUserGetter('a'),

@@ -1,3 +1,5 @@
+const __ = require('config').universalPath
+const error_ = __.require('lib', 'error/error')
 const OAuthServer = require('express-oauth-server')
 
 const oauthServer = new OAuthServer({
@@ -8,7 +10,6 @@ const oauthServer = new OAuthServer({
 const authorize = oauthServer.authorize({
   authenticateHandler: {
     handle: (req, res) => {
-      // TODO: handle when user isn't logged in
       return req.user
     }
   }
@@ -20,7 +21,14 @@ module.exports = {
   // by doing a GET on the authorize endpoint
   // Implements https://aaronparecki.com/oauth-2-simplified/#web-server-apps "Authorization"
   authorize: {
-    get: authorize
+    get: (req, res, next) => {
+      if (req.user == null) return error_.unauthorizedApiAccess(req, res)
+
+      const { scope } = req.query
+      if (!scope) return error_.bundleMissingQuery(req, res, 'scope')
+
+      authorize(req, res, next)
+    }
   },
 
   // Step 2: the client requests a token

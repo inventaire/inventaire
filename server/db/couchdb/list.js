@@ -15,6 +15,9 @@ module.exports = {
   patches: [ 'patches' ],
   shelves: [ 'shelves' ],
   tasks: [ 'tasks' ],
+  oauth_authorizations: [],
+  oauth_clients: [],
+  oauth_tokens: [],
   transactions: [ 'transactions' ],
   users: [ 'users', 'relations', 'invited' ],
 }
