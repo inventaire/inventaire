@@ -5,6 +5,7 @@ const { rawAuthReq } = require('../utils/utils')
 const randomString = __.require('lib', 'utils/random_string')
 const { parse: parseQuery } = require('querystring')
 const { sha1 } = __.require('lib', 'crypto')
+const { postUrlencoded } = require('./request')
 const assert_ = __.require('utils', 'assert_types')
 
 const getClient = async (params = {}) => {
@@ -43,4 +44,16 @@ const getClientWithAuthorization = async (params = {}) => {
   return Object.assign(authorizationData, client)
 }
 
-module.exports = { getClient, getClientWithAuthorization }
+const getToken = async ({ scope }) => {
+  const { _id: clientId, secret, code, redirectUris } = await getClientWithAuthorization({ scope })
+  const { body } = await postUrlencoded('/api/oauth/token', {
+    client_id: clientId,
+    client_secret: secret,
+    grant_type: 'authorization_code',
+    code,
+    redirect_uri: redirectUris[0],
+  })
+  return body
+}
+
+module.exports = { getClient, getClientWithAuthorization, getToken }

@@ -67,5 +67,13 @@ module.exports = {
     assert_.array(client.scope)
     if (client.scope.length === 1 && client.scope[0] === scope) return scope
     else return false
+  },
+
+  // Spec https://oauth2-server.readthedocs.io/en/latest/model/spec.html#verifyscope-accesstoken-scope-callback
+  verifyScope: async (token, acceptedScopes) => {
+    if (typeof token.scope === 'string') token.scope = token.scope.split(' ')
+    assert_.array(acceptedScopes)
+    token.matchingScopes = token.scope.filter(scope => acceptedScopes.includes(scope))
+    return token.matchingScopes.length > 0
   }
 }

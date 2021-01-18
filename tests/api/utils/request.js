@@ -84,4 +84,16 @@ const postUrlencoded = (url, body) => {
   })
 }
 
-module.exports = { request, rawRequest, customAuthReq, rawCustomAuthReq, postUrlencoded }
+const bearerTokenReq = (token, method, endpoint, body) => {
+  assert_.object(token)
+  assert_.string(token.access_token)
+  return rawRequest(method, endpoint, {
+    headers: {
+      authorization: `Bearer ${token.access_token}`
+    },
+    parseJson: true,
+    body
+  })
+}
+
+module.exports = { request, rawRequest, customAuthReq, rawCustomAuthReq, postUrlencoded, bearerTokenReq }

@@ -41,5 +41,21 @@ module.exports = {
   // Step 3: the client uses a token to access resources within the token authorized scopes
   // That token is used by the authenticate middleware to accept or decline the access on any endpoint
   // Implements https://aaronparecki.com/oauth-2-simplified/#making-authenticated-requests
-  authenticate: oauthServer.authenticate()
+  authenticate: (req, res, next) => {
+    const scope = getAcceptedScopes(req)
+    oauthServer.authenticate({ scope })(req, res, next)
+  }
+}
+
+const getAcceptedScopes = ({ method, url }) => {
+  method = method.toLowerCase()
+  if (scopeByMethodAndRoute[method] != null) {
+    return scopeByMethodAndRoute[method][url]
+  }
+}
+
+const scopeByMethodAndRoute = {
+  get: {
+    '/api/user': [ 'profile' ]
+  }
 }
