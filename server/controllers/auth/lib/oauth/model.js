@@ -64,16 +64,23 @@ module.exports = {
 
   // Spec https://oauth2-server.readthedocs.io/en/latest/model/spec.html#validatescope-user-client-scope-callback
   validateScope: async (user, client, scope) => {
+    if (typeof scope === 'string') scope = getScopeArray(scope)
     assert_.array(client.scope)
-    if (client.scope.length === 1 && client.scope[0] === scope) return scope
-    else return false
+    if (scope.every(scopePart => client.scope.includes(scopePart))) {
+      return scope
+    } else {
+      return false
+    }
   },
 
   // Spec https://oauth2-server.readthedocs.io/en/latest/model/spec.html#verifyscope-accesstoken-scope-callback
   verifyScope: async (token, acceptedScopes) => {
-    if (typeof token.scope === 'string') token.scope = token.scope.split(' ')
+    if (typeof token.scope === 'string') token.scope = getScopeArray(token.scope)
     assert_.array(acceptedScopes)
     token.matchingScopes = token.scope.filter(scope => acceptedScopes.includes(scope))
     return token.matchingScopes.length > 0
   }
 }
+
+const scopeSeparators = /[+\s]/
+const getScopeArray = scopeStr => scopeStr.split(scopeSeparators)

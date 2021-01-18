@@ -43,7 +43,8 @@ module.exports = {
   // Implements https://aaronparecki.com/oauth-2-simplified/#making-authenticated-requests
   authenticate: (req, res, next) => {
     const scope = getAcceptedScopes(req)
-    oauthServer.authenticate({ scope })(req, res, next)
+    if (scope != null) oauthServer.authenticate({ scope })(req, res, next)
+    else return error_.bundle(req, res, 'this resource can not be accessed with an OAuth bearer token', 403)
   }
 }
 
