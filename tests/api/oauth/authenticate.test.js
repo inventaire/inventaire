@@ -3,6 +3,7 @@ const { shouldNotBeCalled } = require('../utils/utils')
 const { bearerTokenReq } = require('../utils/request')
 const { getToken } = require('../utils/oauth')
 const randomString = __.require('lib', 'utils/random_string')
+const { parseSessionCookies, parseBase64EncodedJson } = require('../utils/auth')
 
 describe('oauth:authenticate', () => {
   it('should reject a request authentified by a bearer token with a non existing scope', async () => {
@@ -38,5 +39,14 @@ describe('oauth:authenticate', () => {
       err.statusCode.should.equal(403)
       err.body.status_verbose.should.equal('this resource can not be accessed with an OAuth bearer token')
     })
+  })
+
+  // Ideally, we should not return any 'Set-Cookie' header at all
+  // to not give the false impression that those cookies have any interest
+  it('should not return authentified session cookies', async () => {
+    const token = await getToken({ scope: [ 'profile' ] })
+    const res = await bearerTokenReq(token, 'get', '/api/user')
+    const [ sessionCookie ] = parseSessionCookies(res.headers['set-cookie'])
+    parseBase64EncodedJson(sessionCookie).passport.should.deepEqual({})
   })
 })
