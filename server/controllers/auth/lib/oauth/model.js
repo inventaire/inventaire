@@ -5,6 +5,7 @@ const __ = require('config').universalPath
 const user_ = __.require('controllers', 'user/lib/user')
 const error_ = __.require('lib', 'error/error')
 const assert_ = __.require('utils', 'assert_types')
+const { catchNotFound } = error_
 
 const clients_ = require('./clients')
 const authorizations_ = require('./authorizations')
@@ -14,7 +15,7 @@ module.exports = {
   // Spec https://oauth2-server.readthedocs.io/en/latest/model/spec.html#getaccesstoken-accesstoken-callback
   getAccessToken: async bearerToken => {
     if (!bearerToken) return false
-    const token = await tokens_.byId(bearerToken)
+    const token = await tokens_.byId(bearerToken).catch(catchNotFound)
     if (!token) return false
     const client = await clients_.byId(token.clientId)
     const user = await user_.byId(token.userId)
@@ -38,7 +39,8 @@ module.exports = {
 
   // Spec https://oauth2-server.readthedocs.io/en/latest/model/spec.html#getauthorizationcode-authorizationcode-callback
   getAuthorizationCode: async authorizationCode => {
-    const foundAuthorizationCode = await authorizations_.byId(authorizationCode)
+    const foundAuthorizationCode = await authorizations_.byId(authorizationCode).catch(catchNotFound)
+    if (!foundAuthorizationCode) return
     const client = await clients_.byId(foundAuthorizationCode.clientId)
     const user = await user_.byId(foundAuthorizationCode.userId)
     return Object.assign(foundAuthorizationCode, { client, user })
@@ -53,7 +55,7 @@ module.exports = {
   // Spec https://oauth2-server.readthedocs.io/en/latest/model/spec.html#revokeauthorizationcode-code-callback
   revokeAuthorizationCode: async code => {
     const { authorizationCode } = code
-    const foundAuthorizationCode = await authorizations_.byId(authorizationCode)
+    const foundAuthorizationCode = await authorizations_.byId(authorizationCode).catch(catchNotFound)
     if (foundAuthorizationCode != null) {
       await authorizations_.delete(foundAuthorizationCode)
       return true

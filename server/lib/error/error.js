@@ -33,7 +33,8 @@ error_.notFound = context => {
 
 error_.catchNotFound = err => {
   // notFound flag is set by: levelup, error_.notFound
-  if (!(err && err.notFound)) throw err
+  if (err && (err.notFound || err.statusCode === 404)) return
+  throw err
 }
 
 error_.addContextToStack = err => {

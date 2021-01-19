@@ -92,4 +92,28 @@ describe('oauth:token', () => {
       err.body.status_verbose.should.equal('Invalid grant: authorization code has expired')
     })
   })
+
+  it('should reject when the authorization has already been used', async () => {
+    const { _id: clientId, secret, code, redirectUris } = await getClientWithAuthorization()
+    const res = await post({
+      client_id: clientId,
+      client_secret: secret,
+      grant_type: 'authorization_code',
+      code,
+      redirect_uri: redirectUris[0],
+    })
+    res.statusCode.should.equal(200)
+    await post({
+      client_id: clientId,
+      client_secret: secret,
+      grant_type: 'authorization_code',
+      code,
+      redirect_uri: redirectUris[0],
+    })
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.equal('Invalid grant: authorization code is invalid')
+    })
+  })
 })
