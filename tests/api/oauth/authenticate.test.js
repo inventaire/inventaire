@@ -17,19 +17,19 @@ describe('oauth:authenticate', () => {
   })
 
   it('should accept a request authentified by a bearer token', async () => {
-    const token = await getToken({ scope: [ 'profile' ] })
+    const token = await getToken({ scope: [ 'username' ] })
     const res = await bearerTokenReq(token, 'get', '/api/user')
     res.statusCode.should.equal(200)
   })
 
   it('should accept a request authentified by a bearer token with several scopes', async () => {
-    const token = await getToken({ scope: [ 'foo', 'profile' ] })
+    const token = await getToken({ scope: [ 'email', 'username' ] })
     const res = await bearerTokenReq(token, 'get', '/api/user')
     res.statusCode.should.equal(200)
   })
 
   it('should reject a request to a resource out of the token scope', async () => {
-    const token = await getToken({ scope: [ 'profile' ] })
+    const token = await getToken({ scope: [ 'username' ] })
     await bearerTokenReq(token, 'put', '/api/user', {
       attribute: 'bio',
       value: randomString(10)
@@ -44,7 +44,7 @@ describe('oauth:authenticate', () => {
   // Ideally, we should not return any 'Set-Cookie' header at all
   // to not give the false impression that those cookies have any interest
   it('should not return authentified session cookies', async () => {
-    const token = await getToken({ scope: [ 'profile' ] })
+    const token = await getToken({ scope: [ 'username' ] })
     const res = await bearerTokenReq(token, 'get', '/api/user')
     const [ sessionCookie ] = parseSessionCookies(res.headers['set-cookie'])
     parseBase64EncodedJson(sessionCookie).passport.should.deepEqual({})

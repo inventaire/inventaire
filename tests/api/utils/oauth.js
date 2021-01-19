@@ -9,7 +9,8 @@ const { postUrlencoded } = require('./request')
 const assert_ = __.require('utils', 'assert_types')
 
 const getClient = async (params = {}) => {
-  const { scope = [ 'profile' ] } = params
+  params.scope = params.scope || [ 'username' ]
+  const { scope } = params
 
   assert_.array(scope)
 
@@ -31,7 +32,7 @@ const getClient = async (params = {}) => {
 }
 
 const getClientWithAuthorization = async (params = {}) => {
-  const { scope = [ 'profile' ] } = params
+  const { scope = [ 'username' ] } = params
   const client = await getClient(params)
   const url = _.buildPath('/api/oauth/authorize', {
     client_id: client._id,

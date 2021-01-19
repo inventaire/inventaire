@@ -151,6 +151,13 @@ User.removeRole = role => user => {
   return user
 }
 
+// We need a stable username for services that use the username as unique user id
+// such as wiki.inventaire.io (https://github.com/inventaire/inventaire-mediawiki)
+User.setStableUsername = user => {
+  user.stableUsername = user.stableUsername || user.username
+  return user
+}
+
 User.formatters = {
   position: truncateLatLng
 }

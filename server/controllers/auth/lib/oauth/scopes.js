@@ -9,6 +9,6 @@ module.exports = {
 
 const scopeByMethodAndRoute = {
   get: {
-    '/api/user': [ 'profile', 'wiki-stable-profile' ]
+    '/api/user': [ 'username', 'stable-username', 'email' ]
   }
 }

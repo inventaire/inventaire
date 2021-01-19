@@ -15,7 +15,7 @@ describe('oauth:authorize', () => {
   })
 
   it('should reject without a client id', async () => {
-    await authReq('get', `${endpoint}?scope=profile`)
+    await authReq('get', `${endpoint}?scope=username`)
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
@@ -25,7 +25,7 @@ describe('oauth:authorize', () => {
 
   it('should reject without a state', async () => {
     const { _id: clientId } = await getClient()
-    await authReq('get', `${endpoint}?client_id=${clientId}&scope=profile`)
+    await authReq('get', `${endpoint}?client_id=${clientId}&scope=username`)
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
@@ -35,7 +35,7 @@ describe('oauth:authorize', () => {
 
   it('should reject without a response_type', async () => {
     const { _id: clientId } = await getClient()
-    await authReq('get', `${endpoint}?client_id=${clientId}&state=${randomString(20)}&scope=profile`)
+    await authReq('get', `${endpoint}?client_id=${clientId}&state=${randomString(20)}&scope=username`)
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
@@ -56,7 +56,7 @@ describe('oauth:authorize', () => {
   })
 
   it('should reject when passed an invalid client id', async () => {
-    await authReq('get', `${endpoint}?client_id=foo&state=${randomString(20)}&response_type=code&scope=profile`)
+    await authReq('get', `${endpoint}?client_id=foo&state=${randomString(20)}&response_type=code&scope=username`)
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
@@ -66,7 +66,7 @@ describe('oauth:authorize', () => {
 
   it('should reject when passed an invalid response_type', async () => {
     const { _id: clientId } = await getClient()
-    await authReq('get', `${endpoint}?client_id=${clientId}&state=${randomString(20)}&response_type=foo&scope=profile`)
+    await authReq('get', `${endpoint}?client_id=${clientId}&state=${randomString(20)}&response_type=foo&scope=username`)
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
@@ -77,7 +77,7 @@ describe('oauth:authorize', () => {
   it('should redirect to the client redirect uri', async () => {
     const { _id: clientId, redirectUris } = await getClient()
     const state = randomString(20)
-    const url = `${endpoint}?client_id=${clientId}&state=${state}&response_type=code&scope=profile`
+    const url = `${endpoint}?client_id=${clientId}&state=${state}&response_type=code&scope=username`
     const { statusCode, headers } = await rawAuthReq('get', url)
     statusCode.should.equal(302)
     const { location } = headers

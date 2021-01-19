@@ -1,6 +1,6 @@
 require('should')
-const { dataadminReq, adminReq, authReq, customAuthReq, getReservedUser } = require('../utils/utils')
-const { deleteUser } = require('../utils/users')
+const { getUser, dataadminReq, adminReq, authReq, customAuthReq, getReservedUser } = require('../utils/utils')
+const { deleteUser, updateUser } = require('../utils/users')
 const { getToken } = require('../utils/oauth')
 const { bearerTokenReq } = require('../utils/request')
 const endpoint = '/api/user'
@@ -51,17 +51,25 @@ describe('user:get', () => {
     userData.accessLevels.should.deepEqual(dataadminAccessLevels)
   })
 
-  describe('scope-tailored profile', () => {
-    describe('wiki-stable-profile', () => {
-      it.only('should only return a username and an email', async () => {
-        const token = await getToken({ scope: [ 'wiki-stable-profile' ] })
-        const { body } = await bearerTokenReq(token, 'get', '/api/user')
-        Object.keys(body).sort().should.deepEqual([
-          '_id',
-          'email',
-          'username',
-        ])
-      })
+  describe('scope-tailored user data', () => {
+    it('should only return the attributes allowed for the authorized scopes', async () => {
+      const token = await getToken({ scope: [ 'email', 'username' ] })
+      const { body } = await bearerTokenReq(token, 'get', '/api/user')
+      Object.keys(body).sort().should.deepEqual([ 'email', 'username' ])
+    })
+  })
+
+  describe('stable username', () => {
+    it('should always return the same username', async () => {
+      const token = await getToken({ scope: [ 'username', 'stable-username' ] })
+      const { body: userData } = await bearerTokenReq(token, 'get', '/api/user')
+      const initialUsername = userData.username
+      userData.stableUsername.should.equal(initialUsername)
+      const updatedUsername = initialUsername + 'a'
+      await updateUser(getUser(), 'username', updatedUsername)
+      const { body: userDataAfterUpdate } = await bearerTokenReq(token, 'get', '/api/user')
+      userDataAfterUpdate.username.should.equal(updatedUsername)
+      userDataAfterUpdate.stableUsername.should.equal(initialUsername)
     })
   })
 })

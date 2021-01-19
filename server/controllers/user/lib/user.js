@@ -122,6 +122,15 @@ const user_ = module.exports = {
     return db.update(userId, User.setOauthTokens(provider, data))
   },
 
+  setStableUsername: async userData => {
+    const { _id: userId, username, stableUsername } = userData
+    if (stableUsername == null) {
+      await db.update(userId, User.setStableUsername)
+      userData.stableUsername = username
+    }
+    return userData
+  },
+
   nearby: async (userId, meterRange, strict) => {
     const { position } = await user_.byId(userId)
     if (position == null) {
