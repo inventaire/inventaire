@@ -1,6 +1,7 @@
 const __ = require('config').universalPath
 const error_ = __.require('lib', 'error/error')
 const OAuthServer = require('express-oauth-server')
+const { getAcceptedScopes } = require('./lib/oauth/scopes')
 
 const oauthServer = new OAuthServer({
   useErrorHandler: true,
@@ -45,18 +46,5 @@ module.exports = {
     const scope = getAcceptedScopes(req)
     if (scope != null) oauthServer.authenticate({ scope })(req, res, next)
     else return error_.bundle(req, res, 'this resource can not be accessed with an OAuth bearer token', 403)
-  }
-}
-
-const getAcceptedScopes = ({ method, url }) => {
-  method = method.toLowerCase()
-  if (scopeByMethodAndRoute[method] != null) {
-    return scopeByMethodAndRoute[method][url]
-  }
-}
-
-const scopeByMethodAndRoute = {
-  get: {
-    '/api/user': [ 'profile' ]
   }
 }
