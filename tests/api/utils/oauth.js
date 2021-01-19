@@ -15,13 +15,16 @@ const getClient = async (params = {}) => {
   assert_.array(scope)
 
   const client = {
-    _id: sha1(JSON.stringify(params)),
+    // Generate a deterministic id that looks like a CouchDB-uuid
+    _id: sha1(JSON.stringify(params)).slice(0, 32),
     secret: randomString(30),
     redirectUris: [
       'http://localhost:8888/wiki/Special:OAuth2Client/callback',
     ],
     grants: [ 'authorization_code' ],
-    scope
+    scope,
+    name: 'foo',
+    description: 'bar',
   }
 
   return clientsDb.get(client._id)

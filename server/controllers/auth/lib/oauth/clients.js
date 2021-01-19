@@ -6,5 +6,7 @@ module.exports = {
     const doc = await db.get(id)
     doc.id = doc._id
     return doc
-  }
+  },
+
+  byIds: db.byIds
 }
