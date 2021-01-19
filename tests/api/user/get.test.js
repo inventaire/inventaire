@@ -1,6 +1,8 @@
 require('should')
 const { dataadminReq, adminReq, authReq, customAuthReq, getReservedUser } = require('../utils/utils')
 const { deleteUser } = require('../utils/users')
+const { getToken } = require('../utils/oauth')
+const { bearerTokenReq } = require('../utils/request')
 const endpoint = '/api/user'
 
 describe('user:get', () => {
@@ -47,5 +49,19 @@ describe('user:get', () => {
     const userData = await dataadminReq('get', endpoint)
     const dataadminAccessLevels = [ 'public', 'authentified', 'dataadmin' ]
     userData.accessLevels.should.deepEqual(dataadminAccessLevels)
+  })
+
+  describe('scope-tailored profile', () => {
+    describe('wiki-stable-profile', () => {
+      it.only('should only return a username and an email', async () => {
+        const token = await getToken({ scope: [ 'wiki-stable-profile' ] })
+        const { body } = await bearerTokenReq(token, 'get', '/api/user')
+        Object.keys(body).sort().should.deepEqual([
+          '_id',
+          'email',
+          'username',
+        ])
+      })
+    })
   })
 })

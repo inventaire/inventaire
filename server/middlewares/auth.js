@@ -69,8 +69,10 @@ module.exports = {
 
 const afterBearerToken = (req, res, next) => err => {
   if (err) return next(err)
-  if (res.locals.oauth && res.locals.oauth.token && typeof res.locals.oauth.token.user === 'object') {
-    req.user = res.locals.oauth.token.user
+  const { oauth } = res.locals
+  if (oauth && oauth.token && typeof oauth.token.user === 'object') {
+    req.user = oauth.token.user
+    res.locals.scope = oauth.token.matchingScopes
   }
   next()
 }
