@@ -1,4 +1,6 @@
-const __ = require('config').universalPath
+const CONFIG = require('config')
+const __ = CONFIG.universalPath
+const { authorizationCodeLifetimeMs } = CONFIG.oauthServer
 const error_ = __.require('lib', 'error/error')
 const OAuthServer = require('express-oauth-server')
 const { getAcceptedScopes } = require('./lib/oauth/scopes')
@@ -9,6 +11,7 @@ const oauthServer = new OAuthServer({
 })
 
 const authorize = oauthServer.authorize({
+  authorizationCodeLifetime: authorizationCodeLifetimeMs / 1000,
   authenticateHandler: {
     handle: (req, res) => {
       return req.user

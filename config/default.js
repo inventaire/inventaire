@@ -201,5 +201,9 @@ const config = module.exports = {
   entitiesRelationsTemporaryCache: {
     checkFrequency: 10 * 60 * 1000,
     ttl: 4 * 60 * 60 * 1000
+  },
+
+  oauthServer: {
+    authorizationCodeLifetimeMs: 5 * 60 * 1000
   }
 }

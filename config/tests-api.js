@@ -50,5 +50,9 @@ module.exports = {
     disabled: true
   },
 
-  itemsCountDebounceTime: 500
+  itemsCountDebounceTime: 500,
+
+  oauthServer: {
+    authorizationCodeLifetimeMs: 1000
+  },
 }

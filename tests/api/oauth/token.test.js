@@ -1,6 +1,10 @@
+const CONFIG = require('config')
+const __ = CONFIG.universalPath
+const { authorizationCodeLifetimeMs } = CONFIG.oauthServer
 const { shouldNotBeCalled } = require('../utils/utils')
 const { postUrlencoded } = require('../utils/request')
 const { getClient, getClientWithAuthorization } = require('../utils/oauth')
+const { wait } = __.require('lib', 'promises')
 const post = body => postUrlencoded('/api/oauth/token', body)
 
 describe('oauth:token', () => {
@@ -69,6 +73,23 @@ describe('oauth:token', () => {
     body.expires_in.should.be.a.Number()
     body.refresh_token.should.be.a.String()
     body.refresh_token.should.match(/^[0-9a-f]{40}$/)
-    body.scope.should.equal(scope[0])
+    body.scope.should.deepEqual(scope)
+  })
+
+  it('should reject when the authorization expired', async () => {
+    const { _id: clientId, secret, code, redirectUris } = await getClientWithAuthorization()
+    await wait(authorizationCodeLifetimeMs + 10)
+    await post({
+      client_id: clientId,
+      client_secret: secret,
+      grant_type: 'authorization_code',
+      code,
+      redirect_uri: redirectUris[0],
+    })
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.equal('Invalid grant: authorization code has expired')
+    })
   })
 })
