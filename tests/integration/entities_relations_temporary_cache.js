@@ -3,6 +3,7 @@ const __ = CONFIG.universalPath
 const { wait } = __.require('lib', 'promises')
 require('should')
 const { checkFrequency, ttl } = CONFIG.entitiesRelationsTemporaryCache
+const { catchNotFound } = __.require('lib', 'error/error')
 
 const { someFakeUri } = __.require('apiTests', 'fixtures/entities')
 const { shouldNotBeCalled } = __.require('apiTests', 'utils/utils')
@@ -13,7 +14,7 @@ const targetEntityUri = 'wd:Q1'
 
 describe('entities relations temporary cache', () => {
   beforeEach(async () => {
-    await del(someFakeUri, property, targetEntityUri)
+    await del(someFakeUri, property, targetEntityUri).catch(catchNotFound)
   })
 
   it('should reject missing subject', async () => {

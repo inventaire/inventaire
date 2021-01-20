@@ -2,14 +2,8 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
-const { promisify } = require('util')
-const levelTtl = require('level-ttl')
 const { checkFrequency, ttl } = CONFIG.entitiesRelationsTemporaryCache
-
 const db = __.require('level', 'get_sub_db')('entities-relations', 'utf8')
-const ttlDb = levelTtl(db, { checkFrequency, defaultTTL: ttl })
-const put = promisify(ttlDb.put).bind(ttlDb)
-const del = promisify(ttlDb.del).bind(ttlDb)
 
 module.exports = {
   get: async (property, valueUri) => {
@@ -17,19 +11,37 @@ module.exports = {
     return keys.map(getSubject)
   },
 
-  set: async (subjectUri, property, valueUri) => put(buildKey(subjectUri, property, valueUri), ''),
+  set: async (subjectUri, property, valueUri) => {
+    const key = buildKey(subjectUri, property, valueUri)
+    const expireTimeKey = buildExpireTimeKey(key)
+    return db.batch([
+      { type: 'put', key, value: expireTimeKey },
+      { type: 'put', key: expireTimeKey, value: '' },
+    ])
+  },
 
-  del: async (subjectUri, property, valueUri) => del(buildKey(subjectUri, property, valueUri))
+  del: async (subjectUri, property, valueUri) => {
+    const key = buildKey(subjectUri, property, valueUri)
+    const expireTimeKey = await db.get(key)
+    return db.batch([
+      { type: 'del', key },
+      { type: 'del', key: expireTimeKey },
+    ])
+  }
 }
 
 const getKeyRange = (property, object) => {
-  const keys = []
   const keyBase = `${property}-${object}-`
+  return getKeys({
+    gte: keyBase,
+    lt: keyBase + 'z'
+  })
+}
+
+const getKeys = params => {
+  const keys = []
   return new Promise((resolve, reject) => {
-    db.createKeyStream({
-      gte: keyBase,
-      lt: keyBase + 'z'
-    })
+    db.createKeyStream(params)
     .on('data', key => keys.push(key))
     .on('close', () => resolve(keys))
     .on('error', reject)
@@ -44,3 +56,27 @@ const buildKey = (subjectUri, property, valueUri) => {
   if (!_.isEntityUri(valueUri)) throw error_.new('invalid value', { valueUri })
   return `${property}-${valueUri}-${subjectUri}`
 }
+
+const buildExpireTimeKey = key => {
+  const expireTime = Date.now() + ttl
+  return `expire!${expireTime}!${key}`
+}
+
+const checkExpiredCache = async () => {
+  const expiredTimeKeys = await getKeys({
+    gt: 'expire!',
+    lt: `expire!${Date.now()}`
+  })
+
+  if (expiredTimeKeys.length === 0) return
+
+  const batch = []
+  expiredTimeKeys.forEach(expiredTimeKey => {
+    const key = expiredTimeKey.split('!')[2]
+    batch.push({ type: 'del', key })
+    batch.push({ type: 'del', key: expiredTimeKeys })
+  })
+  await db.batch(batch)
+}
+
+setInterval(checkExpiredCache, checkFrequency)
