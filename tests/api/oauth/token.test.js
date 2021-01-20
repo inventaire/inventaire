@@ -28,6 +28,16 @@ describe('oauth:token', () => {
     })
   })
 
+  it('should reject when passed the wrong client secret', async () => {
+    const { _id: clientId } = await getClient()
+    await post({ client_id: clientId, client_secret: 'not_the_secret' })
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.equal('Invalid client: client credentials are invalid')
+    })
+  })
+
   it('should reject without a grant type', async () => {
     const { _id: clientId, secret } = await getClient()
     await post({ client_id: clientId, client_secret: secret })

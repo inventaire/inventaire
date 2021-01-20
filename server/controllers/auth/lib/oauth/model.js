@@ -10,6 +10,7 @@ const { catchNotFound } = error_
 const clients_ = require('./clients')
 const authorizations_ = require('./authorizations')
 const tokens_ = require('./tokens')
+const InvalidClientError = require('oauth2-server/lib/errors/invalid-client-error')
 
 module.exports = {
   // Spec https://oauth2-server.readthedocs.io/en/latest/model/spec.html#getaccesstoken-accesstoken-callback
@@ -25,6 +26,14 @@ module.exports = {
   // Spec https://oauth2-server.readthedocs.io/en/latest/model/spec.html#getclient-clientid-clientsecret-callback
   getClient: async (clientId, clientSecret) => {
     return clients_.byId(clientId)
+    .then(client => {
+      // Secret validation is done only while trying to optain a token, not when generating an authorization
+      if (clientSecret === null) return client
+      // TODO: store the client secret as we would store a password: hashed and slow
+      if (client.secret === clientSecret) return client
+      // Without a valid client, oauth2-server@3.0.0 throws 'client is invalid', which is quite unspecific
+      else throw new InvalidClientError('Invalid client: client credentials are invalid')
+    })
     .catch(err => {
       if (err.statusCode === 404) throw error_.new('unknown client', 400, { clientId })
       else throw err
