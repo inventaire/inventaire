@@ -4,6 +4,7 @@ const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const { checkFrequency, ttl } = CONFIG.entitiesRelationsTemporaryCache
 const db = __.require('level', 'get_sub_db')('entities-relations', 'utf8')
+const radio = __.require('lib', 'radio')
 
 module.exports = {
   get: async (property, valueUri) => {
@@ -71,11 +72,13 @@ const checkExpiredCache = async () => {
   if (expiredTimeKeys.length === 0) return
 
   const batch = []
-  expiredTimeKeys.forEach(expiredTimeKey => {
+  for (const expiredTimeKey of expiredTimeKeys) {
     const key = expiredTimeKey.split('!')[2]
+    const [ property, valueUri, subjectUri ] = key.split('-')
+    await radio.emit('invalidate:wikidata:entities:relations', { subjectUri, property, valueUri })
     batch.push({ type: 'del', key })
     batch.push({ type: 'del', key: expiredTimeKeys })
-  })
+  }
   await db.batch(batch)
 }
 

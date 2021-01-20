@@ -8,6 +8,7 @@ const { catchNotFound } = __.require('lib', 'error/error')
 const { someFakeUri } = __.require('apiTests', 'fixtures/entities')
 const { shouldNotBeCalled } = __.require('apiTests', 'utils/utils')
 const { get, set, del } = __.require('controllers', 'entities/lib/entities_relations_temporary_cache')
+const runQuery = __.require('data', 'wikidata/run_query')
 
 const property = 'wdt:P50'
 const targetEntityUri = 'wd:Q1'
@@ -59,5 +60,20 @@ describe('entities relations temporary cache', () => {
     await wait(delay)
     const refreshedSubjects = await get(property, targetEntityUri)
     refreshedSubjects.should.not.containEql(someFakeUri)
+  })
+
+  it('should invalidate related cached queries', async function () {
+    const delay = ttl + checkFrequency
+    this.timeout(10000 + delay)
+    const authorId = 'Q1345582'
+    const authorUri = `wd:${authorId}`
+    const works = await runQuery({ query: 'author_works', qid: authorId })
+    works.length.should.be.above(0)
+    await set(someFakeUri, 'wdt:P50', authorUri)
+    await wait(delay)
+    // Using dry=true so that we just get an empty result
+    // if the cache invalidation worked as expected
+    const worksInCache = await runQuery({ query: 'author_works', qid: authorId, dry: true })
+    worksInCache.length.should.equal(0)
   })
 })

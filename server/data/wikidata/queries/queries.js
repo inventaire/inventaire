@@ -1,4 +1,4 @@
-module.exports = {
+const queries = {
   author_works: require('./author_works'),
   serie_parts: require('./serie_parts'),
   publisher_collections: require('./publisher_collections'),
@@ -7,3 +7,17 @@ module.exports = {
   humans_reverse_claims: require('./humans_reverse_claims'),
   resolve_external_ids: require('./resolve_external_ids')
 }
+
+const queriesPerProperty = {}
+
+for (const queryName in queries) {
+  const { relationProperties } = queries[queryName]
+  if (relationProperties) {
+    relationProperties.forEach(property => {
+      queriesPerProperty[property] = queriesPerProperty[property] || []
+      queriesPerProperty[property].push(queryName)
+    })
+  }
+}
+
+module.exports = { queries, queriesPerProperty }

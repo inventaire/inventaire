@@ -1,5 +1,11 @@
 module.exports = {
   parameters: [ 'qid' ],
+
+  relationProperties: [
+    'wdt:P179',
+    'wdt:P361',
+  ],
+
   query: params => {
     const { qid: serieQid } = params
 
