@@ -15,7 +15,11 @@ let emit
 if (waitForListeners) {
   emit = async (eventName, ...args) => {
     const listeners = radio.listeners(eventName)
-    await Promise.all(listeners.map(triggerAndWait(eventName, args)))
+    if (listeners.length === 0) {
+      _.warn({ eventName, args }, 'no event listner found')
+    } else {
+      await Promise.all(listeners.map(triggerAndWait(eventName, args)))
+    }
   }
 } else {
   emit = radio.emit.bind(radio)
