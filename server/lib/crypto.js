@@ -39,4 +39,4 @@ exports.sha1 = createHexHash('sha1')
 exports.md5 = createHexHash('md5')
 exports.sha1FromStream = createHexHashFromStream('sha1')
 
-exports.getRandomBytesBuffer = length => crypto.randomBytes(length)
+exports.getRandomBytes = (length, encoding) => crypto.randomBytes(length).toString(encoding)

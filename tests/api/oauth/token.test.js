@@ -9,8 +9,8 @@ const post = body => postUrlencoded('/api/oauth/token', body)
 
 describe('oauth:token', () => {
   it('should reject without a client id', async () => {
-    const { secret } = await getClient()
-    await post({ client_secret: secret })
+    const { testsPseudoSecret } = await getClient()
+    await post({ client_secret: testsPseudoSecret })
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
@@ -39,8 +39,8 @@ describe('oauth:token', () => {
   })
 
   it('should reject without a grant type', async () => {
-    const { _id: clientId, secret } = await getClient()
-    await post({ client_id: clientId, client_secret: secret })
+    const { _id: clientId, testsPseudoSecret } = await getClient()
+    await post({ client_id: clientId, client_secret: testsPseudoSecret })
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
@@ -49,8 +49,8 @@ describe('oauth:token', () => {
   })
 
   it('should reject without a code', async () => {
-    const { _id: clientId, secret } = await getClient()
-    await post({ client_id: clientId, client_secret: secret, grant_type: 'authorization_code' })
+    const { _id: clientId, testsPseudoSecret } = await getClient()
+    await post({ client_id: clientId, client_secret: testsPseudoSecret, grant_type: 'authorization_code' })
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
@@ -59,8 +59,8 @@ describe('oauth:token', () => {
   })
 
   it('should reject without a redirect_uri', async () => {
-    const { _id: clientId, secret, code } = await getClientWithAuthorization()
-    await post({ client_id: clientId, client_secret: secret, grant_type: 'authorization_code', code })
+    const { _id: clientId, testsPseudoSecret, code } = await getClientWithAuthorization()
+    await post({ client_id: clientId, client_secret: testsPseudoSecret, grant_type: 'authorization_code', code })
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
@@ -69,10 +69,10 @@ describe('oauth:token', () => {
   })
 
   it('should obtain a token', async () => {
-    const { _id: clientId, secret, code, redirectUris, scope } = await getClientWithAuthorization()
+    const { _id: clientId, testsPseudoSecret, code, redirectUris, scope } = await getClientWithAuthorization()
     const { body } = await post({
       client_id: clientId,
-      client_secret: secret,
+      client_secret: testsPseudoSecret,
       grant_type: 'authorization_code',
       code,
       redirect_uri: redirectUris[0],
@@ -87,11 +87,11 @@ describe('oauth:token', () => {
   })
 
   it('should reject when the authorization expired', async () => {
-    const { _id: clientId, secret, code, redirectUris } = await getClientWithAuthorization()
+    const { _id: clientId, testsPseudoSecret, code, redirectUris } = await getClientWithAuthorization()
     await wait(authorizationCodeLifetimeMs + 10)
     await post({
       client_id: clientId,
-      client_secret: secret,
+      client_secret: testsPseudoSecret,
       grant_type: 'authorization_code',
       code,
       redirect_uri: redirectUris[0],
@@ -104,10 +104,10 @@ describe('oauth:token', () => {
   })
 
   it('should reject when the authorization has already been used', async () => {
-    const { _id: clientId, secret, code, redirectUris } = await getClientWithAuthorization()
+    const { _id: clientId, testsPseudoSecret, code, redirectUris } = await getClientWithAuthorization()
     const res = await post({
       client_id: clientId,
-      client_secret: secret,
+      client_secret: testsPseudoSecret,
       grant_type: 'authorization_code',
       code,
       redirect_uri: redirectUris[0],
@@ -115,7 +115,7 @@ describe('oauth:token', () => {
     res.statusCode.should.equal(200)
     await post({
       client_id: clientId,
-      client_secret: secret,
+      client_secret: testsPseudoSecret,
       grant_type: 'authorization_code',
       code,
       redirect_uri: redirectUris[0],

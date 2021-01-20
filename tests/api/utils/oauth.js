@@ -3,21 +3,28 @@ const _ = __.require('builders', 'utils')
 const clientsDb = __.require('couch', 'base')('oauth_clients')
 const randomString = __.require('lib', 'utils/random_string')
 const { parse: parseQuery } = require('querystring')
-const { sha1 } = __.require('lib', 'crypto')
-const { postUrlencoded, rawCustomAuthReq } = require('./request')
+const { sha1, passwords, getRandomBytes } = __.require('lib', 'crypto')
+const { waitForTestServer, postUrlencoded, rawCustomAuthReq } = require('./request')
 const { getUser } = require('./utils')
 const assert_ = __.require('utils', 'assert_types')
 
 const getClient = async (params = {}) => {
+  await waitForTestServer
   params.scope = params.scope || [ 'username' ]
   const { scope } = params
 
   assert_.array(scope)
 
+  // Generate a deterministic id that looks like a CouchDB-uuid
+  const id = sha1(JSON.stringify(params)).slice(0, 32)
+  const secret = getRandomBytes(64, 'base64')
+
   const client = {
-    // Generate a deterministic id that looks like a CouchDB-uuid
-    _id: sha1(JSON.stringify(params)).slice(0, 32),
-    secret: randomString(30),
+    _id: id,
+    // Store the secret in plain text to let tests access it
+    // This should obviously not be done in other environments
+    testsPseudoSecret: secret,
+    secret: await passwords.hash(secret),
     redirectUris: [
       'http://localhost:8888/wiki/Special:OAuth2Client/callback',
     ],
@@ -52,10 +59,10 @@ const getClientWithAuthorization = async (params = {}) => {
 }
 
 const getToken = async ({ user, scope }) => {
-  const { _id: clientId, secret, code, redirectUris } = await getClientWithAuthorization({ user, scope })
+  const { _id: clientId, testsPseudoSecret, code, redirectUris } = await getClientWithAuthorization({ user, scope })
   const { body } = await postUrlencoded('/api/oauth/token', {
     client_id: clientId,
-    client_secret: secret,
+    client_secret: testsPseudoSecret,
     grant_type: 'authorization_code',
     code,
     redirect_uri: redirectUris[0],

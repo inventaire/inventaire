@@ -11,7 +11,7 @@ const CONFIG = require('config')
 const { cookieMaxAge, autoRotateKeys: leadingServer } = CONFIG
 const __ = CONFIG.universalPath
 const _ = require('builders/utils')
-const { getRandomBytesBuffer } = require('lib/crypto')
+const { getRandomBytes } = require('lib/crypto')
 const { oneDay, msToHumanTime, msToHumanAge } = require('lib/time')
 const error_ = require('lib/error/error')
 const { readFileSync } = require('fs')
@@ -81,7 +81,7 @@ const updateKey = ({ timestamp, key }) => {
 
 const generateNewKey = () => {
   _.info('generating new key')
-  const newKey = getRandomBytesBuffer(64).toString('base64')
+  const newKey = getRandomBytes(64, 'base64')
   keys.unshift(newKey)
   data[Date.now()] = newKey
   cleanupKeysInMemory()

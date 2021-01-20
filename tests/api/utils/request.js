@@ -96,4 +96,12 @@ const bearerTokenReq = (token, method, endpoint, body) => {
   })
 }
 
-module.exports = { request, rawRequest, customAuthReq, rawCustomAuthReq, postUrlencoded, bearerTokenReq }
+module.exports = {
+  waitForTestServer,
+  request,
+  rawRequest,
+  customAuthReq,
+  rawCustomAuthReq,
+  postUrlencoded,
+  bearerTokenReq
+}
