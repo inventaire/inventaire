@@ -91,7 +91,7 @@ const config = module.exports = {
 
   serveStaticFiles: true,
 
-  hashPasswords: true,
+  useSlowPasswordHashFunction: true,
   requestsLogger: {
     // Use to mute certain requests if it gets too noisy or you want to focus on a certain domain
     // Possible values: js, css, img, api
