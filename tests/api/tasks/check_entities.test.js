@@ -5,7 +5,7 @@ require('should')
 const { checkEntities, getBySuspectUri } = require('../utils/tasks')
 const { findOrIndexEntities } = require('../utils/entities')
 const { createHuman, createWork } = require('../fixtures/entities')
-const { rethrowShouldNotBeCalledErrors } = __.require('apiTests', 'utils/utils')
+const { shouldNotBeCalled } = __.require('apiTests', 'utils/utils')
 
 describe('tasks:check-entities', () => {
   before(async () => {
@@ -16,13 +16,12 @@ describe('tasks:check-entities', () => {
     // Currently, only humans can be checked for duplicates,
     // or at least are the entrypoint for duplicate checks
     const work = await createWork()
-    try {
-      await checkEntities(work.uri)
-    } catch (err) {
-      rethrowShouldNotBeCalledErrors(err)
+    await checkEntities(work.uri)
+    .then(shouldNotBeCalled)
+    .catch(err => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal('unsupported type: work')
-    }
+    })
   })
 
   it('should create tasks for the requested URIs', async () => {

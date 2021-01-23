@@ -4,7 +4,7 @@ const _ = __.require('builders', 'utils')
 require('should')
 const { createWork, generateIsbn13h, createEditionWithIsbn, createHuman } = require('../fixtures/entities')
 const { getByUris, getByUri } = require('../utils/entities')
-const { adminReq, rethrowShouldNotBeCalledErrors, getAdminUser } = __.require('apiTests', 'utils/utils')
+const { authReq, rethrowShouldNotBeCalledErrors, getUser, shouldNotBeCalled } = __.require('apiTests', 'utils/utils')
 const { getBySuspectUri } = require('../utils/tasks')
 const { wait } = __.require('lib', 'promises')
 const endpoint = '/api/tasks?action=deduplicate-works'
@@ -12,7 +12,8 @@ const endpoint = '/api/tasks?action=deduplicate-works'
 describe('tasks:deduplicate:works', () => {
   it('should reject to without a uri', async () => {
     try {
-      await adminReq('post', endpoint)
+      await authReq('post', endpoint)
+      .then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
       err.statusCode.should.equal(400)
@@ -22,7 +23,8 @@ describe('tasks:deduplicate:works', () => {
 
   it('should reject to without isbn', async () => {
     try {
-      await adminReq('post', endpoint, { uri: 'inv:00000000000000000000000000000000' })
+      await authReq('post', endpoint, { uri: 'inv:00000000000000000000000000000000' })
+      .then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
       err.statusCode.should.equal(400)
@@ -35,7 +37,8 @@ describe('tasks:deduplicate:works', () => {
     const uri = human.uri
     const isbn = generateIsbn13h()
     try {
-      await adminReq('post', endpoint, { uri, isbn })
+      await authReq('post', endpoint, { uri, isbn })
+      .then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
       err.statusCode.should.equal(400)
@@ -50,14 +53,15 @@ describe('tasks:deduplicate:works', () => {
     const edition = await createEditionWithIsbn()
     const editionWorkUri = edition.claims['wdt:P629'][0]
     const isbn = edition.isbn
-    const res = await adminReq('post', endpoint, { uri, isbn })
+
+    const res = await authReq('post', endpoint, { uri, isbn })
     res.tasks[0].ok.should.equal(true)
     const suspectUriTasksRes = await getBySuspectUri(uri)
     const newTask = Object.values(suspectUriTasksRes)[0]
 
     newTask.entitiesType.should.equal('works')
     newTask.suggestionUri.should.equal(editionWorkUri)
-    const user = await getAdminUser()
+    const user = await getUser()
     newTask.reporter.should.equal(user._id)
     newTask.clue.should.equal(isbn)
   })
@@ -72,7 +76,7 @@ describe('tasks:deduplicate:works', () => {
     const work = await createWork({ labels: { zh: editionWorkTitle } })
     const workUri = work.uri
 
-    await adminReq('post', endpoint, { uri: workUri, isbn })
+    await authReq('post', endpoint, { uri: workUri, isbn })
     await wait(100)
 
     const res = await getByUris(workUri)
@@ -86,9 +90,9 @@ describe('tasks:deduplicate:works', () => {
     const edition = await createEditionWithIsbn()
     const isbn = edition.isbn
 
-    await adminReq('post', endpoint, { uri, isbn })
+    await authReq('post', endpoint, { uri, isbn })
     await wait(100)
-    await adminReq('post', endpoint, { uri, isbn })
+    await authReq('post', endpoint, { uri, isbn })
     await wait(100)
     const tasks = await getBySuspectUri(uri)
     const uniqSuggestiontUris = _.uniq(_.map(tasks, 'suggestionUri'))
