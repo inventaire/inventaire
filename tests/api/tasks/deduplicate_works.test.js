@@ -30,7 +30,7 @@ describe('tasks:deduplicate:works', () => {
     }
   })
 
-  it('should reject unsupported entity type', async () => {
+  it('should reject wrong entity type', async () => {
     const human = await createHuman()
     const uri = human.uri
     const isbn = generateIsbn13h()

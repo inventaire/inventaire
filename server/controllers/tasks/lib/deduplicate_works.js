@@ -3,7 +3,7 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 let error_ = __.require('lib', 'error/error')
 const getEntityByUri = __.require('controllers', 'entities/lib/get_entity_by_uri')
-const getEntitiesByUris = __.require('controllers', 'entities/lib/get_entities_by_uris')
+const getEntitiesList = __.require('controllers', 'entities/lib/get_entities_list')
 const tasks_ = require('./tasks')
 error_ = __.require('lib', 'error/error')
 const getEntitiesByIsbns = __.require('controllers', 'entities/lib/get_entities_by_isbns')
@@ -17,15 +17,13 @@ module.exports = async (workUri, isbn, userId) => {
   if (type !== 'work') {
     throw error_.new(`unsupported type: ${type}, only work is supported`, 400, { workUri, work })
   }
-
-  const editionsRes = await getEntitiesByIsbns([ isbn ], { refresh: true })
+  const editionsRes = await getEntitiesByIsbns([ isbn ])
   const edition = editionsRes.entities[0]
   const editionWorksUris = edition.claims['wdt:P629']
-  const editionWorksRes = await getEntitiesByUris({ uris: editionWorksUris })
-  const editionWorks = Object.values(editionWorksRes.entities)
+  const editionWorks = await getEntitiesList(editionWorksUris)
   const suggestions = await getSuggestionsOrAutomerge(work, editionWorks, userId)
 
-  if (_.isEmpty(suggestions)) { return }
+  if (suggestions.length === 0) return
   const existingTasks = await getExistingTasks(workUri)
   let newSuggestions = await filterNewTasks(existingTasks, suggestions)
   newSuggestions = _.map(newSuggestions, addToSuggestion(userId, isbn))

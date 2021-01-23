@@ -9,7 +9,6 @@ const { rethrowShouldNotBeCalledErrors } = __.require('apiTests', 'utils/utils')
 
 describe('tasks:check-entities', () => {
   before(async () => {
-    // Tests dependency: having a populated ElasticSearch wikidata index
     const wikidataUris = [ 'wd:Q237087' ]
     await findOrIndexEntities(wikidataUris)
   })

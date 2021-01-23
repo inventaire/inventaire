@@ -116,5 +116,5 @@ const completeWithEmptyArrays = (tasksByUris, uris) => {
 }
 
 const assignKeyIfExists = (newTask, name, value) => {
-  if (value) { newTask[name] = value }
+  if (value != null) { newTask[name] = value }
 }
