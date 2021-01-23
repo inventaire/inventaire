@@ -6,7 +6,7 @@ const Entity = __.require('models', 'entity')
 const placeholders_ = require('./placeholders')
 const propagateRedirection = require('./propagate_redirection')
 
-module.exports = async ({ userId, fromId, toUri, previousToUri }) => {
+module.exports = async ({ userId, fromId, toUri, previousToUri, context }) => {
   assert_.strings([ userId, fromId, toUri ])
   if (previousToUri != null) assert_.string(previousToUri)
 
@@ -20,7 +20,8 @@ module.exports = async ({ userId, fromId, toUri, previousToUri }) => {
   await entities_.putUpdate({
     userId,
     currentDoc: currentFromDoc,
-    updatedDoc: updatedFromDoc
+    updatedDoc: updatedFromDoc,
+    context
   })
   return propagateRedirection(userId, fromUri, toUri, previousToUri)
 }

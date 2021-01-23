@@ -21,7 +21,14 @@ module.exports = async (user, invEntityUri) => {
   // by the absence of the entity they just moved to Wikidata in lists generated with the help of the WQS
   await cacheEntityRelations(invEntityUri)
 
-  await mergeEntities({ userId: reqUserId, fromUri: invEntityUri, toUri: wdEntityUri })
+  await mergeEntities({
+    userId: reqUserId,
+    fromUri: invEntityUri,
+    toUri: wdEntityUri,
+    context: {
+      action: 'move-to-wikidata'
+    }
+  })
 
   return { uri: wdEntityUri }
 }

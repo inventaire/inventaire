@@ -7,7 +7,7 @@ const Entity = __.require('models', 'entity')
 const turnIntoRedirection = require('./turn_into_redirection')
 const getInvEntityCanonicalUri = require('./get_inv_entity_canonical_uri')
 
-module.exports = ({ userId, fromUri, toUri }) => {
+module.exports = ({ userId, fromUri, toUri, context }) => {
   let [ fromPrefix, fromId ] = fromUri.split(':')
   let [ toPrefix, toId ] = toUri.split(':')
 
@@ -22,11 +22,11 @@ module.exports = ({ userId, fromUri, toUri }) => {
 
   if (toPrefix === 'wd') {
     // no merge to do for Wikidata entities, simply creating a redirection
-    return turnIntoRedirection({ userId, fromId, toUri })
+    return turnIntoRedirection({ userId, fromId, toUri, context })
   } else {
     // TODO: invert fromId and toId if the merged entity is more popular
     // to reduce the amount of documents that need to be updated
-    return mergeInvEntities(userId, fromId, toId)
+    return mergeInvEntities(userId, fromId, toId, context)
   }
 }
 
