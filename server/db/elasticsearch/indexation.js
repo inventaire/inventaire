@@ -26,7 +26,6 @@ module.exports = ({ indexBaseName, index }) => {
   return async doc => {
     if (!filter(doc)) return
     if (shouldBeDeindexed(doc)) {
-      // There is nothing to deindex when starting from an empty index
       addToBatch(batch, 'delete', index, doc)
     } else {
       // Allow the format function to return undefined,
