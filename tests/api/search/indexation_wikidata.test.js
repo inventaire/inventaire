@@ -4,7 +4,7 @@ require('should')
 const { wait } = __.require('lib', 'promises')
 const { getByUri } = require('../utils/entities')
 const { updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
-const { getIndexedDoc, deindex } = require('../utils/search')
+const { getIndexedDoc, deindex, indexPlaceholder } = require('../utils/search')
 const { wikidata: wikidataIndex } = __.require('controllers', 'search/lib/indexes').indexes
 
 describe('indexation:wikidata', () => {
@@ -50,6 +50,21 @@ describe('indexation:wikidata', () => {
     result._source.popularity.should.a.Number()
   })
 
-  // it('should deindex a wikidata entity when deleted', async () => {})
-  // it('should deindex a wikidata entity when redirected', async () => {})
+  it('should deindex a wikidata entity when redirected', async () => {
+    const redirectedEntityId = 'Q105045498'
+    await indexPlaceholder(wikidataIndex, redirectedEntityId)
+    await getByUri(`wd:${redirectedEntityId}`, true)
+    await wait(elasticsearchUpdateDelay)
+    const result = await getIndexedDoc(wikidataIndex, redirectedEntityId)
+    result.found.should.be.false()
+  })
+
+  it('should deindex a wikidata entity when deleted', async () => {
+    const deletedEntityId = 'Q6'
+    await indexPlaceholder(wikidataIndex, deletedEntityId)
+    await getByUri(`wd:${deletedEntityId}`, true)
+    await wait(elasticsearchUpdateDelay)
+    const result = await getIndexedDoc(wikidataIndex, deletedEntityId)
+    result.found.should.be.false()
+  })
 })

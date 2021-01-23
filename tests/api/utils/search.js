@@ -76,5 +76,13 @@ module.exports = {
         throw err
       }
     }
+  },
+
+  indexPlaceholder: async (index, id) => {
+    assert_.string(index)
+    assert_.string(id)
+    const url = `${elasticHost}/${index}/_doc/${id}`
+    await rawRequest('put', url, { body: { testPlaceholder: true } })
+    _.success(url, 'placeholder added')
   }
 }

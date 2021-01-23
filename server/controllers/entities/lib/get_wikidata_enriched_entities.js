@@ -11,7 +11,7 @@ const getOriginalLang = __.require('lib', 'wikidata/get_original_lang')
 const formatClaims = __.require('lib', 'wikidata/format_claims')
 const { simplify } = wdk
 const getEntityType = require('./get_entity_type')
-const { prefixifyWd } = __.require('controllers', 'entities/lib/prefix')
+const { prefixifyWd, unprefixify } = __.require('controllers', 'entities/lib/prefix')
 const cache_ = __.require('lib', 'cache')
 const getWdEntity = __.require('data', 'wikidata/get_entity')
 const addImageData = require('./add_image_data')
@@ -64,8 +64,6 @@ const format = entity => {
     entity.type = null
   }
 
-  radio.emit('wikidata:entity:cache:miss', entity.id, entity.type)
-
   entity.claims = omitUndesiredPropertiesPerType(entity.type, entity.claims)
 
   if (entity.type === 'meta') {
@@ -113,7 +111,7 @@ const formatAndPropagateRedirection = entity => {
     // if the redirected entity is used in Inventaire claims, redirect claims
     // to their new entity
     propagateRedirection(hookUserId, entity.redirects.from, entity.redirects.to)
-    reindex({ _id: entity.redirects.from, redirect: true })
+    reindex({ _id: unprefixify(entity.redirects.from), redirect: true })
     radio.emit('wikidata:entity:redirect', entity.redirects.from, entity.redirects.to)
   }
 }
