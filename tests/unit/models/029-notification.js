@@ -64,7 +64,7 @@ describe('notification model', () => {
         user: someUserId,
         type: 'groupUpdate',
       })
-      .should.throw(/invalid data/)
+      .should.throw(/expected object/)
     })
 
     it('should return a notification object', () => {
@@ -79,6 +79,19 @@ describe('notification model', () => {
       notificationDoc.status.should.equal('unread')
       notificationDoc.time.should.be.belowOrEqual(Date.now())
       notificationDoc.time.should.be.above(Date.now() - 10)
+    })
+
+    describe('group update notification', () => {
+      it('should reject notification without a data.attribute', () => {
+        const data = someGroupUpdateData()
+        delete data.attribute
+        Notification.create.bind(null, {
+          user: someUserId,
+          type: 'groupUpdate',
+          data
+        })
+        .should.throw(/invalid attribute/)
+      })
     })
   })
 

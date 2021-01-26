@@ -1,14 +1,14 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const { pass, passFromFunction } = require('./common')
+const { pass } = require('./common')
 const { types } = require('../attributes/notification')
+const assert_ = __.require('utils', 'assert_types')
 const Group = require('../group')
 
 const validations = module.exports = {
   pass,
   type: type => types.includes(type),
   data: (data, { type }) => {
-    passFromFunction('data', data, _.isPlainObject)
+    assert_.object(data)
     dataValidationPerType[type](data)
     return true
   }
@@ -21,7 +21,7 @@ const dataValidationPerType = {
   groupUpdate: ({ group, user, attribute, previousValue, newValue }) => {
     validations.pass('groupId', group)
     validations.pass('userId', user)
-    passFromFunction('attribute', attribute, _.isString)
+    validations.pass('attribute', attribute)
     Group.validations.pass(attribute, previousValue)
     Group.validations.pass(attribute, newValue)
   },

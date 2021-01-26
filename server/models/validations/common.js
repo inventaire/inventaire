@@ -21,6 +21,7 @@ const validations = module.exports = {
     else return _.isUserImg(image)
   },
   boolean: _.isBoolean,
+  attribute: _.isString,
   shelves: shelves => _.isArray(shelves) && _.every(shelves, _.isCouchUuid),
   position: latLng => {
     // Allow a user or a group to delete their position by passing a null value
@@ -49,17 +50,9 @@ validations.valid = function (attribute, value, option) {
   return test(value, option)
 }
 
-validations.passFromFunction = (attribute, value, testFn) => {
-  if (!testFn(value)) throwValidationError(attribute, value)
-}
-
 validations.pass = function (attribute, value, option) {
   if (!validations.valid.call(this, attribute, value, option)) {
-    throwValidationError(attribute, value)
+    if (_.isObject(value)) value = JSON.stringify(value)
+    throw error_.newInvalid(attribute, value)
   }
-}
-
-const throwValidationError = (attribute, value) => {
-  if (_.isObject(value)) value = JSON.stringify(value)
-  throw error_.newInvalid(attribute, value)
 }
