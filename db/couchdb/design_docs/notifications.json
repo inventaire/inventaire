@@ -7,6 +7,9 @@
     },
     "bySubject": {
       "map": "(doc)->\n  data = doc.data\n  emit doc.user, 'user'\n  if data.user isnt doc.user then emit data.user, 'data:user'\n  switch doc.type\n    when 'groupUpdate', 'userMadeAdmin' then emit data.group, 'data:group'\n"
+    },
+    "unreadNotificationsByGroupAndAttribute": {
+      "map": "(doc)->\n  if doc.type is 'groupUpdate' and doc.status is 'unread'\n    emit [ doc.data.group, doc.data.attribute ], null"
     }
   }
 }
