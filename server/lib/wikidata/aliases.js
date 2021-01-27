@@ -6,14 +6,12 @@ const { 'wdt:P31': invP31Values } = __.require('controllers', 'entities/lib/prop
 // that can be refreshed from time to time
 const wikidataOnlyP31Values = {
   humans: [
-    'wd:Q5', // human
     'wd:Q10648343', // duo
     'wd:Q14073567', // sibling duo
     'wd:Q19913602', // house name
     'wd:Q61002' // pseudonym
   ],
   series: [
-    'wd:Q277759', // book series
     'wd:Q14406742', // comic book series
     'wd:Q21198342', // manga series
     'wd:Q74262765', // manhwa series
@@ -57,10 +55,12 @@ const wikidataOnlyP31Values = {
     'wd:Q10901350', // anime and manga
     'wd:Q20540385', // non-fiction book
     'wd:Q36279', // biography
-    'wd:Q234460' // text
+    'wd:Q234460', // text
+    'wd:Q193934', // paperback
+    'wd:Q193955', // hardback
+    'wd:Q17994250', // pocket edition
   ],
   editions: [
-    'wd:Q3331189', // edition
     'wd:Q3972943' // publishing
   ],
   articles: [
@@ -79,7 +79,6 @@ const wikidataOnlyP31Values = {
     'wd:Q13136' // reference work
   ],
   publishers: [
-    'wd:Q2085381', // publisher
     'wd:Q1320047', // book publishing company
     'wd:Q1114515', // comics publishing company
     'wd:Q149985', // self-publishing company
@@ -90,7 +89,6 @@ const wikidataOnlyP31Values = {
     'wd:Q45400320' // open access publisher
   ],
   collections: [
-    'wd:Q20655472', // editorial collection
     'wd:Q1700470', // monographic series
     'wd:Q2668072' // collection
   ],

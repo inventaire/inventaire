@@ -3,7 +3,9 @@ const __ = CONFIG.universalPath
 const isbn_ = __.require('lib', 'isbn/isbn')
 const error_ = __.require('lib', 'error/error')
 const assert_ = __.require('utils', 'assert_types')
-const { concurrentString } = require('./properties_config_bases')
+const { concurrentString, uniqueEntity } = require('./properties_config_bases')
+const propertiesValuesLists = require('./properties_values_lists')
+const { getPluralType } = __.require('lib', 'wikidata/aliases')
 
 module.exports = {
   isbnProperty: num => {
@@ -39,6 +41,17 @@ module.exports = {
           throw error_.new('unsupported type', 500, { regexPerType, entityType, value })
         }
         return regexPerType[entityType].test(value)
+      }
+    })
+  },
+
+  shortlistedEntityValues: property => {
+    const propertyValuesShortlistPerType = propertiesValuesLists[property]
+    return Object.assign({}, uniqueEntity, {
+      typeSpecificValidation: true,
+      validate: (entityUri, entityType) => {
+        const type = getPluralType(entityType)
+        return propertyValuesShortlistPerType[type].includes(entityUri)
       }
     })
   }
