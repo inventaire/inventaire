@@ -12,10 +12,6 @@ const wikidataOnlyP31Values = {
     'wd:Q61002' // pseudonym
   ],
   series: [
-    'wd:Q14406742', // comic book series
-    'wd:Q21198342', // manga series
-    'wd:Q74262765', // manhwa series
-    'wd:Q1667921', // novel series
     'wd:Q3297186', // limited series
     'wd:Q21191134', // comic strip series
     'wd:Q17489659', // group of works

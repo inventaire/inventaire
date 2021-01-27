@@ -14,6 +14,10 @@ module.exports = {
     ],
     series: [
       'wd:Q277759', // book series
+      'wd:Q1667921', // novel series
+      'wd:Q14406742', // comic book series
+      'wd:Q21198342', // manga series
+      'wd:Q74262765', // manhwa series
     ],
     works: [
       'wd:Q47461344', // written work
