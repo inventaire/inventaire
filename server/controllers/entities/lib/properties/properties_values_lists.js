@@ -1,5 +1,20 @@
 module.exports = {
   'wdt:P31': {
+    collections: [
+      'wd:Q20655472', // editorial collection
+    ],
+    editions: [
+      'wd:Q3331189', // edition
+    ],
+    humans: [
+      'wd:Q5', // human
+    ],
+    publishers: [
+      'wd:Q2085381', // publisher
+    ],
+    series: [
+      'wd:Q277759', // book series
+    ],
     works: [
       'wd:Q47461344', // written work
       'wd:Q7725634', // literary work
@@ -12,4 +27,15 @@ module.exports = {
       'wd:Q562214', // manhwa
     ],
   },
+
+  'wdt:P437': {
+    editions: [
+      'wd:Q193934', // paperback
+      'wd:Q193955', // hardback
+      'wd:Q17994250', // pocket edition
+      'wd:Q2831984', // comic book album
+      'wd:Q128093', // ebook
+      'wd:Q106833', // audiobook
+    ],
+  }
 }

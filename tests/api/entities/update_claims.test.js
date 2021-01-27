@@ -148,7 +148,7 @@ describe('entities:update-claims', () => {
     const authorsUris = [ 'wd:Q192214', 'wd:Q206685' ]
     const work = await createWork()
     const responses = await Promise.all(authorsUris.map(uri => addClaim(work.uri, 'wdt:P50', uri)))
-    responses.forEach(res => should(res.ok).be.true())
+    responses.forEach(res => res.ok.should.be.true())
     const updatedWork = await getByUri(work.uri)
     const addedAuthorsUris = updatedWork.claims['wdt:P50']
     authorsUris.forEach(uri => should(addedAuthorsUris.includes(uri)).be.true())
@@ -157,16 +157,42 @@ describe('entities:update-claims', () => {
   it('should accept a non-duplicated concurrent value', async () => {
     const human = await createHuman()
     const res = await addClaim(human._id, 'wdt:P648', someOpenLibraryId())
-    should(res.ok).be.true()
+    res.ok.should.be.true()
   })
 
-  it('should reject invalid value for type-specific value formats', async () => {
+  it('should reject an invalid value for a type-specific value format', async () => {
     const human = await createHuman()
     await updateClaim(human.uri, 'wdt:P648', null, someOpenLibraryId('work'))
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
-      err.body.status_verbose.should.equal('invalid property value for entity type human')
+      err.body.status_verbose.should.equal('invalid property value for entity type "human"')
+    })
+  })
+
+  it('should accept an allowlisted value for a constrained property', async () => {
+    const edition = await createEdition()
+    const res = await updateClaim(edition.uri, 'wdt:P437', null, 'wd:Q128093')
+    res.ok.should.be.true()
+  })
+
+  it('should reject a non-allowlisted value for a constrained property', async () => {
+    const edition = await createEdition()
+    await updateClaim(edition.uri, 'wdt:P437', null, 'wd:Q123')
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.equal('invalid property value for entity type "edition"')
+    })
+  })
+
+  it('should reject a non-allowlisted value for a given entity type', async () => {
+    const edition = await createEdition()
+    await updateClaim(edition.uri, 'wdt:P31', 'wd:Q3331189', 'wd:Q5')
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.equal('invalid property value for entity type "edition"')
     })
   })
 
@@ -174,7 +200,7 @@ describe('entities:update-claims', () => {
     const id = someOpenLibraryId()
     const human = await createHuman()
     const res = await addClaim(human.uri, 'wdt:P648', id)
-    should(res.ok).be.true()
+    res.ok.should.be.true()
     const human2 = await createHuman()
     await addClaim(human2.uri, 'wdt:P648', id)
     .then(shouldNotBeCalled)

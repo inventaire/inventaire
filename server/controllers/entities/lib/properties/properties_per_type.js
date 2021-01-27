@@ -38,6 +38,7 @@ module.exports = {
     'wdt:P212', // ISBN-13
     'wdt:P214', // VIAF ID
     'wdt:P407', // language
+    'wdt:P437', // distribution format
     'wdt:P577', // publication date
     'wdt:P629', // edition or translation of
     'wdt:P648', // Open Library ID
