@@ -9,7 +9,6 @@ const couch_ = __.require('lib', 'couch')
 const validateAndFormatClaims = require('./validate_and_format_claims')
 const getInvEntityCanonicalUri = require('./get_inv_entity_canonical_uri')
 const getEntityType = require('./get_entity_type')
-const radio = __.require('lib', 'radio')
 const { getUrlFromImageHash } = __.require('lib', 'images')
 
 const { validateProperty } = require('./properties/validations')
@@ -93,7 +92,6 @@ const entities_ = module.exports = {
     // It is to the consumers responsability to check if there is an update:
     // empty patches at this stage will throw 500 errors
     const docAfterUpdate = await db.putAndReturn(updatedDoc)
-    triggerUpdateEvent(currentDoc, docAfterUpdate)
 
     try {
       await patches_.create(params)
@@ -117,11 +115,3 @@ const entities_ = module.exports = {
 }
 
 const getUri = entity => entity.uri
-
-const triggerUpdateEvent = (currentDoc, updatedDoc) => {
-  // Use currentDoc claims if the update removed the claims object
-  // Known case: when an entity is turned into a redirection
-  const claims = updatedDoc.claims || currentDoc.claims
-  const type = getEntityType(claims['wdt:P31'])
-  radio.emit('inv:entity:update', updatedDoc._id, type)
-}
