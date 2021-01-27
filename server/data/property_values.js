@@ -18,6 +18,6 @@ module.exports = (req, res) => {
     const allAliases = typesAliases[type]
     return _.difference(allAliases, depreciatedAliases)
   })
-  .then(responses_.Wrap(res, 'entity-type-aliases'))
+  .then(responses_.Wrap(res, 'values'))
   .catch(error_.Handler(req, res))
 }

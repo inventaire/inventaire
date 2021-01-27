@@ -6,7 +6,7 @@ module.exports = {
     public: {
       'wp-extract': __.require('data', 'wikipedia/extract'),
       isbn: __.require('data', 'isbn'),
-      'entity-type-aliases': __.require('data', 'entity_type_aliases')
+      'property-values': __.require('data', 'property_values')
     }
   })
 }
