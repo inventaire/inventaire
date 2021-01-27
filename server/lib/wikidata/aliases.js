@@ -59,6 +59,8 @@ const wikidataOnlyP31Values = {
     'wd:Q193934', // paperback
     'wd:Q193955', // hardback
     'wd:Q17994250', // pocket edition
+    'wd:Q1238720', // volume
+    'wd:Q193495', // monograph
   ],
   editions: [
     'wd:Q3972943' // publishing
@@ -88,10 +90,7 @@ const wikidataOnlyP31Values = {
     'wd:Q19720191', // large publisher
     'wd:Q45400320' // open access publisher
   ],
-  collections: [
-    'wd:Q1700470', // monographic series
-    'wd:Q2668072' // collection
-  ],
+  collections: [],
   movements: [
     'wd:Q2198855', // cultural movement
     'wd:Q3326717', // literary movement
