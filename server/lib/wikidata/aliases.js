@@ -1,9 +1,10 @@
 const __ = require('config').universalPath
 const error_ = __.require('lib', 'error/error')
+const { 'wdt:P31': invP31Values } = __.require('controllers', 'entities/lib/properties/properties_values_lists')
 
 // TODO: replace this list by a SPARQL generated list
 // that can be refreshed from time to time
-const typesAliases = module.exports = {
+const wikidataOnlyP31Values = {
   humans: [
     'wd:Q5', // human
     'wd:Q10648343', // duo
@@ -33,16 +34,9 @@ const typesAliases = module.exports = {
   ],
   works: [
     'wd:Q571', // book
-    'wd:Q47461344', // written work
     'wd:Q2831984', // comic book album
-    'wd:Q1004', // bande dessinée / comic book
-    'wd:Q1760610', // comic book
     'wd:Q838795', // comic strip
-    'wd:Q8261', // novel / roman
     'wd:Q149537', // novella
-    'wd:Q725377', // graphic novel
-    'wd:Q25379', // theatre play
-    'wd:Q7725634', // literary work
     'wd:Q17518870', // group of literary works
     'wd:Q12106333', // poetry collection
     'wd:Q1279564', // short story collection
@@ -51,8 +45,6 @@ const typesAliases = module.exports = {
     'wd:Q17991521', // tale
     'wd:Q699', // fairy tale
     'wd:Q34620', // Greek tragedy
-    'wd:Q8274', // manga
-    'wd:Q562214', // manhwa
     'wd:Q128093', // ebook
     'wd:Q17518461', // posthumous work
     'wd:Q179461', // religious text
@@ -118,9 +110,13 @@ const typesAliases = module.exports = {
   ]
 }
 
-const depreciatedAliases = [
-  'wd:Q571' // book
-]
+const typesAliases = {}
+
+for (const type in wikidataOnlyP31Values) {
+  const wdTypeValues = wikidataOnlyP31Values[type]
+  const invTypeValues = invP31Values[type] || []
+  typesAliases[type] = wdTypeValues.concat(invTypeValues)
+}
 
 const types = {}
 
@@ -156,5 +152,4 @@ module.exports = {
   getPluralTypeByTypeUri,
   getSingularType,
   getSingularTypes,
-  depreciatedAliases,
 }

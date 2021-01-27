@@ -1,35 +1,42 @@
 const __ = require('config').universalPath
 require('should')
 const { publicReq } = require('../utils/utils')
-const { types } = __.require('lib', 'wikidata/aliases')
+const propertiesValuesLists = __.require('controllers', 'entities/lib/properties/properties_values_lists')
 const endpoint = '/api/data?action=property-values'
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = __.require('apiTests', 'utils/utils')
+const { shouldNotBeCalled } = __.require('apiTests', 'utils/utils')
 
 describe('data:property-values', () => {
   it('should reject without param', async () => {
-    try {
-      await publicReq('get', endpoint).then(shouldNotBeCalled)
-    } catch (err) {
-      rethrowShouldNotBeCalledErrors(err)
-      err.body.status_verbose.should.equal('missing parameter in query: type')
+    await publicReq('get', endpoint)
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.body.status_verbose.should.startWith('missing parameter in query')
       err.statusCode.should.equal(400)
-    }
+    })
+  })
+
+  it('should reject invalid property', async () => {
+    const property = 'bla'
+    await publicReq('get', `${endpoint}&property=${property}`)
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.body.status_verbose.should.startWith('invalid property')
+      err.statusCode.should.equal(400)
+    })
   })
 
   it('should reject invalid type', async () => {
-    try {
-      const type = 'blu'
-      await publicReq('get', `${endpoint}&type=${type}`).then(shouldNotBeCalled)
-    } catch (err) {
-      rethrowShouldNotBeCalledErrors(err)
+    const type = 'blu'
+    await publicReq('get', `${endpoint}&property=wdt:P31&type=${type}`)
+    .then(shouldNotBeCalled)
+    .catch(err => {
       err.body.status_verbose.should.startWith('invalid type')
       err.statusCode.should.equal(400)
-    }
+    })
   })
 
   it('should return property values', async () => {
-    const { values } = await publicReq('get', `${endpoint}&type=works`)
-    const firstAlias = values[0]
-    Object.keys(types).should.containEql(firstAlias)
+    const { values } = await publicReq('get', `${endpoint}&property=wdt:P31&type=works`)
+    values.should.deepEqual(propertiesValuesLists['wdt:P31'].works)
   })
 })
