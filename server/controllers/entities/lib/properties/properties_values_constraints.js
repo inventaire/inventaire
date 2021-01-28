@@ -34,7 +34,7 @@ module.exports = {
   // image
   'invp:P2': bases.imageHash,
   // instance of
-  'wdt:P31': builders.shortlistedEntityValues('wdt:P31'),
+  'wdt:P31': builders.allowedPropertyValues('wdt:P31'),
   // author
   'wdt:P50': extend(bases.humanEntity, { hasPlaceholders: true }),
   // founded by
@@ -70,7 +70,7 @@ module.exports = {
   // language of work
   'wdt:P407': bases.entity,
   // distribution format
-  'wdt:P437': builders.shortlistedEntityValues('wdt:P437'),
+  'wdt:P437': builders.allowedPropertyValues('wdt:P437'),
   // ORCID ID
   'wdt:P496': builders.externalId(/^0000-000(1-[5-9]|2-[0-9]|3-[0-4])\d{3}-\d{3}[\dX]?$/),
   // date of birth
