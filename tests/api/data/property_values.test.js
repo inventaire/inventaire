@@ -1,7 +1,7 @@
 const __ = require('config').universalPath
 require('should')
 const { publicReq } = require('../utils/utils')
-const propertiesValuesLists = __.require('controllers', 'entities/lib/properties/properties_values_lists')
+const propertiesValuesPerTypesLists = __.require('controllers', 'entities/lib/properties/properties_values_per_types_lists')
 const endpoint = '/api/data?action=property-values'
 const { shouldNotBeCalled } = __.require('apiTests', 'utils/utils')
 
@@ -37,6 +37,6 @@ describe('data:property-values', () => {
 
   it('should return property values', async () => {
     const { values } = await publicReq('get', `${endpoint}&property=wdt:P31&type=works`)
-    values.should.deepEqual(propertiesValuesLists['wdt:P31'].works)
+    values.should.deepEqual(propertiesValuesPerTypesLists['wdt:P31'].works)
   })
 })

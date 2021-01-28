@@ -1,6 +1,6 @@
 const __ = require('config').universalPath
 const error_ = __.require('lib', 'error/error')
-const { 'wdt:P31': invP31Values } = __.require('controllers', 'entities/lib/properties/properties_values_lists')
+const { 'wdt:P31': invP31Values } = __.require('controllers', 'entities/lib/properties/properties_values_per_types_lists')
 
 // TODO: replace this list by a SPARQL generated list
 // that can be refreshed from time to time

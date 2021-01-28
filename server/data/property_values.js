@@ -3,11 +3,11 @@ const responses_ = __.require('lib', 'responses')
 const error_ = __.require('lib', 'error/error')
 const { typesNames } = __.require('lib', 'wikidata/aliases')
 const sanitize = __.require('lib', 'sanitize/sanitize')
-const propertiesValuesLists = __.require('controllers', 'entities/lib/properties/properties_values_lists')
+const propertiesValuesPerTypesLists = __.require('controllers', 'entities/lib/properties/properties_values_per_types_lists')
 
 const sanitization = {
   property: {
-    allowlist: Object.keys(propertiesValuesLists)
+    allowlist: Object.keys(propertiesValuesPerTypesLists)
   },
   type: {
     allowlist: typesNames
@@ -22,7 +22,7 @@ module.exports = (req, res) => {
 }
 
 const getPropertyValues = ({ property, type }) => {
-  const list = propertiesValuesLists[property]
+  const list = propertiesValuesPerTypesLists[property]
   if (list[type]) return list[type]
   else throw error_.new('unsupported type for this property', 400, { property, type })
 }
