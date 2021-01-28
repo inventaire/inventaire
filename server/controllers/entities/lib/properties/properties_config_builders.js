@@ -45,13 +45,13 @@ module.exports = {
     })
   },
 
-  shortlistedEntityValues: property => {
-    const propertyValuesShortlistPerType = propertiesValuesLists[property]
+  allowedPropertyValues: property => {
+    const propertyValuesPerType = propertiesValuesLists[property]
     return Object.assign({}, uniqueEntity, {
       typeSpecificValidation: true,
       validate: (entityUri, entityType) => {
         const type = getPluralType(entityType)
-        return propertyValuesShortlistPerType[type].includes(entityUri)
+        return propertyValuesPerType[type].includes(entityUri)
       }
     })
   }
