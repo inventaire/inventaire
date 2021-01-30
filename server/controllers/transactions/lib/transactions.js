@@ -69,21 +69,33 @@ const transactions_ = module.exports = {
   cancelAllActiveTransactions: async userId => {
     const transactions = await transactions_.byUser(userId)
     const activeTransactions = transactions.filter(Transaction.isActive)
-    return Promise.all(activeTransactions.map(transaction => {
-      return transactions_.updateState('cancelled', userId, transaction)
+    await Promise.all(activeTransactions.map(transaction => {
+      return transactions_.updateState(transaction, 'cancelled', userId)
     }))
   },
 
+  getItemBusyTransactions: async itemId => {
+    assert_.string(itemId)
+    const rows = await getBusyItems([ itemId ])
+    return _.map(rows, 'id')
+  },
+
   setItemsBusyFlag: async items => {
+    assert_.objects(items)
     if (items.length === 0) return items
     const itemsIds = _.map(items, '_id')
-    const { rows } = await db.view('transactions', 'byBusyItem', { keys: itemsIds })
+    const rows = await getBusyItems(itemsIds)
     const busyItemsIds = new Set(_.map(rows, 'key'))
     return items.map(item => {
       item.busy = busyItemsIds.has(item._id)
       return item
     })
   }
+}
+
+const getBusyItems = async itemsIds => {
+  const { rows } = await db.viewKeys('transactions', 'byBusyItem', itemsIds, { include_docs: false })
+  return rows
 }
 
 const stateUpdater = (state, userId, transaction) => {

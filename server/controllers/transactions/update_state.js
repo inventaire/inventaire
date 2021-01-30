@@ -26,6 +26,7 @@ module.exports = (req, res) => {
 const updateState = async ({ transactionId, state, reqUserId }) => {
   const transaction = await transactions_.byId(transactionId)
   verifyRights(transaction, state, reqUserId)
+  await checkForConcurrentTransactions(transaction, state)
   return transactions_.updateState(transaction, state, reqUserId)
 }
 
@@ -38,4 +39,16 @@ const verifyRightsFunctionByAllowedActor = {
   requester: verifyIsRequester,
   owner: verifyIsOwner,
   both: verifyRightToInteract,
+}
+
+const checkForConcurrentTransactions = async (transaction, requestedState) => {
+  if (requestedState === 'accepted') {
+    const { item: itemId } = transaction
+    const itemBusyTransactions = await transactions_.getItemBusyTransactions(itemId)
+    // No need to check that the transaction holding the item busy is not the updated transaction
+    // as only accepting
+    if (itemBusyTransactions.length > 0) {
+      throw error_.new('item already busy', 400, { transaction, itemBusyTransactions, requestedState })
+    }
+  }
 }

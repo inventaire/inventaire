@@ -5,6 +5,7 @@ const { createTransaction, getSomeTransaction } = require('../fixtures/transacti
 const { updateTransaction } = require('../utils/transactions')
 const { getById: getItem } = require('../utils/items')
 const { wait } = require('lib/promises')
+const { getUserC } = require('../utils/utils')
 
 const endpoint = '/api/transactions?action=update-state'
 
@@ -136,9 +137,24 @@ describe('transactions:update-state', () => {
         await updateTransaction(userB, transaction, 'accepted')
         await updateTransaction(userA, transaction, 'confirmed')
         await updateTransaction(userA, transaction, 'cancelled')
-        await wait(1000)
+        await wait(100)
         const updatedItem = await getItem(userBItem)
         updatedItem.busy.should.be.false()
+      })
+    })
+  })
+
+  describe('concurrent transactions', () => {
+    it("should not allow to 'accept' when the item is already busy", async () => {
+      const { transaction: transactionX, userB, userBItem } = await createTransaction()
+      const { transaction: transactionY } = await createTransaction({ userA: getUserC(), item: userBItem })
+      await updateTransaction(userB, transactionX, 'accepted')
+      await wait(100)
+      await updateTransaction(userB, transactionY, 'accepted')
+      .then(shouldNotBeCalled)
+      .catch(err => {
+        err.statusCode.should.equal(400)
+        err.body.status_verbose.should.equal('item already busy')
       })
     })
   })
