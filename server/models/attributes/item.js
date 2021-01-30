@@ -31,7 +31,6 @@ attributes.notUpdatable = [
   'updated',
 
   // Updated as side effects of transactions
-  'busy',
   'owner',
   'history',
 
@@ -50,7 +49,6 @@ attributes.private = [
 // Attribute to reset on owner change
 attributes.reset = attributes.private.concat([
   'details',
-  'busy'
 ])
 
 const allowTransaction = [ 'giving', 'lending', 'selling' ]

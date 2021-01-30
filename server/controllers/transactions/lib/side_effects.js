@@ -14,13 +14,6 @@ const applySideEffects = (transacDoc, newState) => {
   return sideEffects[newState](transacDoc, newState)
 }
 
-const setItemBusyness = (busy, transacDoc) => {
-  _.log({ busy, transacDoc }, 'setItemBusyness')
-  const { item } = transacDoc
-  return items_.setBusyness(item, busy)
-  .catch(_.Error('setItemBusyness'))
-}
-
 const changeOwnerIfOneWay = transacDoc => {
   if (Transaction.isOneWay(transacDoc)) {
     _.log({ transacDoc }, 'changeOwner')
@@ -29,13 +22,10 @@ const changeOwnerIfOneWay = transacDoc => {
   }
 }
 
-const setItemToBusy = _.partial(setItemBusyness, true)
-const setItemToNotBusy = _.partial(setItemBusyness, false)
-
 const sideEffects = {
-  accepted: setItemToBusy,
+  accepted: _.noop,
   declined: _.noop,
   confirmed: changeOwnerIfOneWay,
-  returned: setItemToNotBusy,
-  cancelled: setItemToNotBusy
+  returned: _.noop,
+  cancelled: _.noop,
 }

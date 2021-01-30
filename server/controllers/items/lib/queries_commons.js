@@ -1,5 +1,6 @@
 const _ = require('builders/utils')
 const user_ = require('controllers/user/lib/user')
+const transactions_ = require('controllers/transactions/lib/transactions')
 const snapshot_ = require('./snapshot/snapshot')
 
 const filters = {
@@ -13,12 +14,13 @@ const validFilters = Object.keys(filters)
 const queriesCommons = module.exports = {
   validFilters,
 
-  addAssociatedData: page => {
-    return Promise.all([
+  addAssociatedData: async page => {
+    await Promise.all([
       queriesCommons.addItemsSnapshots(page.items),
-      queriesCommons.addUsersData(page)
+      queriesCommons.addUsersData(page),
+      transactions_.setItemsBusyFlag(page.items),
     ])
-    .then(() => page)
+    return page
   },
 
   addUsersData: page => {

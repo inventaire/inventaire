@@ -72,6 +72,17 @@ const transactions_ = module.exports = {
     return Promise.all(activeTransactions.map(transaction => {
       return transactions_.updateState('cancelled', userId, transaction)
     }))
+  },
+
+  setItemsBusyFlag: async items => {
+    if (items.length === 0) return items
+    const itemsIds = _.map(items, '_id')
+    const { rows } = await db.view('transactions', 'byBusyItem', { keys: itemsIds })
+    const busyItemsIds = new Set(_.map(rows, 'key'))
+    return items.map(item => {
+      item.busy = busyItemsIds.has(item._id)
+      return item
+    })
   }
 }
 
