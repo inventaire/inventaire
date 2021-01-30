@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
 const { authReqB, authReqC, shouldNotBeCalled } = __.require('apiTests', 'utils/utils')
-const { createTransaction } = require('../fixtures/transactions')
+const { createTransaction, getSomeTransaction } = require('../fixtures/transactions')
 
 const endpoint = '/api/transactions?action=update-state'
 
@@ -17,7 +17,7 @@ describe('transactions:update-state', () => {
   })
 
   it('should not update unknown state', async () => {
-    const { transaction } = await createTransaction()
+    const { transaction } = await getSomeTransaction()
     await authReqB('put', endpoint, {
       transaction: transaction._id,
       state: 'random state'
@@ -29,7 +29,7 @@ describe('transactions:update-state', () => {
   })
 
   it('should not update when requested by a user not involved in transaction', async () => {
-    const { transaction } = await createTransaction()
+    const { transaction } = await getSomeTransaction()
     await authReqC('put', endpoint, {
       transaction: transaction._id,
       state: 'accepted'

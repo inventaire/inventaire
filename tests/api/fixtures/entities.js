@@ -103,6 +103,11 @@ const API = module.exports = {
     })
   },
 
+  createEditionFromWorkWithAuthor: async () => {
+    const work = await API.createWorkWithAuthor()
+    return API.createEditionFromWorks(work)
+  },
+
   createWorkWithSerie: async serie => {
     const work = await API.createWork()
     await API.addSerie(work, serie)

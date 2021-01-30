@@ -4,6 +4,7 @@ require('should')
 const { authReq, authReqB, getUser, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = __.require('apiTests', 'utils/utils')
 const { createTransaction } = require('../fixtures/transactions')
 const { createItem } = require('../fixtures/items')
+const { createEditionFromWorkWithAuthor } = require('../fixtures/entities')
 const endpoint = '/api/transactions?action=request'
 
 describe('transactions:request', () => {
@@ -66,8 +67,9 @@ describe('transactions:request', () => {
   })
 
   it('should create a transaction', async () => {
-    const res = await createTransaction()
-    const { transaction, userA, userB, userBItem } = res
+    const edition = await createEditionFromWorkWithAuthor()
+    const itemData = { entity: edition.uri, listing: 'public', transaction: 'lending' }
+    const { transaction, userA, userB, userBItem } = await createTransaction({ itemData })
     transaction.should.be.an.Object()
     transaction.item.should.equal(userBItem._id)
     transaction.requester.should.equal(userA._id)
