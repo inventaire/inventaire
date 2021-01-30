@@ -4,35 +4,20 @@ const _ = __.require('builders', 'utils')
 require('should')
 const { authReq, authReqC } = __.require('apiTests', 'utils/utils')
 const { createTransaction } = require('../fixtures/transactions')
-const transactionPromise = createTransaction()
 
 describe('transactions:get', () => {
-  it('should get user transactions', done => {
-    transactionPromise
-    .then(res1 => {
-      const { transaction } = res1
-      return authReq('get', '/api/transactions')
-      .then(res2 => {
-        res2.transactions.should.be.an.Array()
-        const transactionsIds = _.map(res2.transactions, '_id')
-        transactionsIds.should.containEql(transaction._id)
-        done()
-      })
-    })
-    .catch(done)
+  it('should get user transactions', async () => {
+    const { transaction } = await createTransaction()
+    const res = await authReq('get', '/api/transactions')
+    res.transactions.should.be.an.Array()
+    const transactionsIds = _.map(res.transactions, '_id')
+    transactionsIds.should.containEql(transaction._id)
   })
 
-  it('should not get other users transactions', done => {
-    transactionPromise
-    .then(res1 => {
-      const { transaction } = res1
-      return authReqC('get', '/api/transactions')
-      .then(res2 => {
-        const transactionsIds = _.map(res2.transactions, '_id')
-        transactionsIds.should.not.containEql(transaction._id)
-        done()
-      })
-    })
-    .catch(done)
+  it('should not get other users transactions', async () => {
+    const { transaction } = await createTransaction()
+    const res = await authReqC('get', '/api/transactions')
+    const transactionsIds = _.map(res.transactions, '_id')
+    transactionsIds.should.not.containEql(transaction._id)
   })
 })

@@ -1,20 +1,19 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
-const { authReq, authReqB, authReqC, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = __.require('apiTests', 'utils/utils')
+const { authReq, authReqB, authReqC, shouldNotBeCalled } = __.require('apiTests', 'utils/utils')
 const { createTransaction } = require('../fixtures/transactions')
 
 const endpoint = '/api/transactions?action=mark-as-read'
 
 describe('transactions:update-state', () => {
   it('should reject without id', async () => {
-    try {
-      await authReq('put', endpoint, {}).then(shouldNotBeCalled)
-    } catch (err) {
-      rethrowShouldNotBeCalledErrors(err)
+    await authReq('put', endpoint, {})
+    .then(shouldNotBeCalled)
+    .catch(err => {
       err.body.status_verbose.should.equal('missing parameter in body: id')
       err.statusCode.should.equal(400)
-    }
+    })
   })
 
   it('should update transaction read state', async () => {
@@ -27,13 +26,11 @@ describe('transactions:update-state', () => {
   })
 
   it('should not update when requested by a user not involved in transaction', async () => {
-    try {
-      const transactionRes = await createTransaction()
-      const { transaction } = transactionRes
-      await authReqC('put', endpoint, { id: transaction._id }).then(shouldNotBeCalled)
-    } catch (err) {
-      rethrowShouldNotBeCalledErrors(err)
+    const { transaction } = await createTransaction()
+    await authReqC('put', endpoint, { id: transaction._id })
+    .then(shouldNotBeCalled)
+    .catch(err => {
       err.body.status_verbose.should.equal('wrong user')
-    }
+    })
   })
 })

@@ -5,9 +5,6 @@ const _ = __.require('builders', 'utils')
 require('should')
 const sinon = require('sinon')
 
-const promises_ = __.require('lib', 'promises')
-const { Promise } = promises_
-
 const requestGrouper = __.require('lib', 'request_grouper')
 
 const MockRequester = (spy = _.noop) => async ids => {

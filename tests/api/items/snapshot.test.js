@@ -2,13 +2,11 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
-const { Promise, wait } = __.require('lib', 'promises')
+const { wait } = __.require('lib', 'promises')
 const { authReq } = require('../utils/utils')
 const { getById: getItem } = require('../utils/items')
-let { getByUris, merge, revertMerge, updateLabel, updateClaim } = require('../utils/entities')
-const { createEditionWithWorkAndAuthor } = require('../fixtures/entities')
-const { createWork, createHuman, addAuthor, addSerie, createEdition, createEditionFromWorks, createWorkWithAuthor, humanName, someImageHash } = require('../fixtures/entities');
-({ updateClaim } = require('../utils/entities'))
+const { getByUris, merge, revertMerge, updateLabel, updateClaim } = require('../utils/entities')
+const { createWork, createHuman, addAuthor, addSerie, createEdition, createEditionFromWorks, createWorkWithAuthor, humanName, someImageHash, createEditionWithWorkAndAuthor } = require('../fixtures/entities')
 
 describe('items:snapshot', () => {
   it("should snapshot the item's work series names", async () => {

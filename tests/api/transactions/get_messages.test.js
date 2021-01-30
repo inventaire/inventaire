@@ -19,8 +19,7 @@ describe('transactions:get:messages', () => {
   })
 
   it('should get a transaction messages', async () => {
-    const res1 = await createTransaction()
-    const { transaction } = res1
+    const { transaction } = await createTransaction()
     const { _id } = transaction
     await addMessage(transaction)
     const res2 = await authReq('get', `${endpoint}&transaction=${_id}`)

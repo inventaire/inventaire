@@ -1,8 +1,6 @@
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 module.exports = {
-  Promise,
-
   props: async obj => {
     const keys = []
     const values = []

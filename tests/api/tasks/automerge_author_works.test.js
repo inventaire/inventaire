@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const { Promise, Wait, tap } = __.require('lib', 'promises')
+const { Wait, tap } = __.require('lib', 'promises')
 require('should')
 
 const automergeAuthorWorks = __.require('controllers', 'tasks/lib/automerge_author_works')
