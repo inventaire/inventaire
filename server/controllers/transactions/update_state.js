@@ -16,21 +16,26 @@ const sanitization = {
 module.exports = (req, res) => {
   sanitize(req, res, sanitization)
   .then(params => {
-    const { transaction, state } = req.body
-    const reqUserId = req.user._id
-    return transactions_.byId(transaction)
-    .then(VerifyRights(state, reqUserId))
-    .then(transactions_.updateState.bind(null, state, reqUserId))
-    .then(Track(req, [ 'transaction', 'update', state ]))
+    return updateState(params)
+    .then(Track(req, [ 'transaction', 'update', params.state ]))
   })
   .then(responses_.Ok(res))
   .catch(error_.Handler(req, res))
 }
 
-const VerifyRights = (state, reqUserId) => {
+const updateState = async ({ transactionId, state, reqUserId }) => {
+  const transaction = await transactions_.byId(transactionId)
+  verifyRights(transaction, state, reqUserId)
+  return transactions_.updateState(transaction, state, reqUserId)
+}
+
+const verifyRights = (transaction, state, reqUserId) => {
   const { actor } = states[state]
-  if (actor === 'requester') return verifyIsRequester.bind(null, reqUserId)
-  else if (actor === 'owner') return verifyIsOwner.bind(null, reqUserId)
-  else if (actor === 'both') return verifyRightToInteract.bind(null, reqUserId)
-  else throw error_.new('unknown actor', 500, { state, reqUserId })
+  verifyRightsFunctionByAllowedActor[actor](reqUserId, transaction)
+}
+
+const verifyRightsFunctionByAllowedActor = {
+  requester: verifyIsRequester,
+  owner: verifyIsOwner,
+  both: verifyRightToInteract,
 }

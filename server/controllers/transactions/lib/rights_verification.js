@@ -37,27 +37,21 @@ module.exports = {
 
   verifyRightToInteract: (userId, transaction) => {
     const { owner, requester } = transaction
-    if (userId === owner || userId === requester) {
-      return transaction
-    } else {
+    if (!(userId === owner || userId === requester)) {
       throw error_.new('wrong user', 403, userId, transaction)
     }
   },
 
   verifyIsOwner: (userId, transaction) => {
     const { owner } = transaction
-    if (userId === owner) {
-      return transaction
-    } else {
+    if (userId !== owner) {
       throw error_.new('wrong user', 403, userId, transaction)
     }
   },
 
   verifyIsRequester: (userId, transaction) => {
     const { requester } = transaction
-    if (userId === requester) {
-      return transaction
-    } else {
+    if (userId !== requester) {
       throw error_.new('wrong user', 403, userId, transaction)
     }
   }

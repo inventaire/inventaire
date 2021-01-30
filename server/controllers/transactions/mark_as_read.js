@@ -12,12 +12,13 @@ const sanitization = {
 
 module.exports = (req, res) => {
   sanitize(req, res, sanitization)
-  .then(params => {
-    const { id, reqUserId } = params
-    return transactions_.byId(id)
-    .then(verifyRightToInteract.bind(null, reqUserId))
-    .then(transactions_.markAsRead.bind(null, reqUserId))
-    .then(responses_.Ok(res))
-  })
+  .then(markAsRead)
+  .then(responses_.Ok(res))
   .catch(error_.Handler(req, res))
+}
+
+const markAsRead = async ({ id, reqUserId }) => {
+  const transaction = await transactions_.byId(id)
+  verifyRightToInteract(reqUserId, transaction)
+  await transactions_.markAsRead(reqUserId, transaction)
 }

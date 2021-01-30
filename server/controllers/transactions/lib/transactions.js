@@ -41,10 +41,10 @@ const transactions_ = module.exports = {
     }
   },
 
-  updateState: (newState, userId, transaction) => {
+  updateState: async (transaction, newState, userId) => {
     Transaction.validatePossibleState(transaction, newState)
-    return db.update(transaction._id, stateUpdater(newState, userId, transaction))
-    .then(() => radio.emit('transaction:update', transaction, newState))
+    await db.update(transaction._id, stateUpdater(newState, userId, transaction))
+    await radio.emit('transaction:update', transaction, newState)
   },
 
   markAsRead: (userId, transaction) => {
