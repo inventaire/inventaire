@@ -16,6 +16,12 @@ describe('search:global', () => {
         err.body.status_verbose.should.equal('missing parameter in query: search')
       }
     })
+
+    it('should not crashed when the search contains special characters', async () => {
+      const query = encodeURIComponent("L'eau d\\o~uc/e/-en ~pé*ril!~*")
+      const { results } = await publicReq('get', `/api/search?lang=en&types=works&search=${query}`)
+      results.should.be.an.Array()
+    })
   })
 
   describe('types', () => {

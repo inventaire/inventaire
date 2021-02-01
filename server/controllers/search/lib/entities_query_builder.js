@@ -55,7 +55,7 @@ const matchEntities = (search, userLang) => {
       // Use query_string to give exact matches a boost.
       // See query strings doc : https://www.elastic.co/guide/en/elasticsearch/reference/7.10/query-dsl-query-string-query.html
       query_string: {
-        query: search,
+        query: dropSpecialQueryCharacters(search),
         default_operator: 'AND',
         fields,
         boost: 3
@@ -85,3 +85,6 @@ const entitiesFields = userLang => {
   }
   return fields
 }
+
+const specialQueryCharacters = /[!*~+/\\]/g
+const dropSpecialQueryCharacters = str => str.replace(specialQueryCharacters, '')
