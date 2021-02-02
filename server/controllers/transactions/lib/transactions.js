@@ -74,10 +74,10 @@ const transactions_ = module.exports = {
     }))
   },
 
-  getItemBusyTransactions: async itemId => {
+  itemIsBusy: async itemId => {
     assert_.string(itemId)
     const rows = await getBusyItems([ itemId ])
-    return _.map(rows, 'id')
+    return rows.length > 0
   },
 
   setItemsBusyFlag: async items => {

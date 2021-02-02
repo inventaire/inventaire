@@ -43,12 +43,12 @@ const verifyRightsFunctionByAllowedActor = {
 
 const checkForConcurrentTransactions = async (transaction, requestedState) => {
   if (requestedState === 'accepted') {
-    const { item: itemId } = transaction
-    const itemBusyTransactions = await transactions_.getItemBusyTransactions(itemId)
     // No need to check that the transaction holding the item busy is not the updated transaction
-    // as only accepting
-    if (itemBusyTransactions.length > 0) {
-      throw error_.new('item already busy', 400, { transaction, itemBusyTransactions, requestedState })
+    // as the requested state is 'accepted', which, to be valid, needs to be done on a transaction
+    // in a 'requested' state
+    const itemIsBusy = await transactions_.itemIsBusy(transaction.item)
+    if (itemIsBusy) {
+      throw error_.new('item already busy', 403, { transaction, requestedState })
     }
   }
 }

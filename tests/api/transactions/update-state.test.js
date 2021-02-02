@@ -153,7 +153,7 @@ describe('transactions:update-state', () => {
       await updateTransaction(userB, transactionY, 'accepted')
       .then(shouldNotBeCalled)
       .catch(err => {
-        err.statusCode.should.equal(400)
+        err.statusCode.should.equal(403)
         err.body.status_verbose.should.equal('item already busy')
       })
     })

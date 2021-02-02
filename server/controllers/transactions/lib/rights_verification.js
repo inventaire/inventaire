@@ -22,9 +22,10 @@ const verifyNoExistingTransaction = (requester, item) => {
 }
 
 module.exports = {
-  verifyRightToRequest: (requester, item) => {
-    if (item.busy) {
-      throw error_.new('this item is busy', 403, item)
+  verifyRightToRequest: async (requester, item) => {
+    const itemIsBusy = await transactions_.itemIsBusy(item._id)
+    if (itemIsBusy) {
+      throw error_.new('item already busy', 403, item)
     }
 
     // the owner of the item isnt allowed to request it
