@@ -1,3 +1,8 @@
+const { serverMode } = require('config')
+// This flag can't rely on the CONFIG.env, as it's main use case is for error reported by mocha,
+// and mocha is sometimes called directly, without giving the chance to set NODE_ENV
+const errContextMightNotBeLogged = serverMode !== true
+
 // Using minimal dependencies to avoid circular dependencies
 // as this is depended on by lib/error which is called very early
 const { isNumber, isPlainObject, flatten, compact } = require('lodash')
@@ -21,6 +26,11 @@ module.exports = (err, filter, ...context) => {
 
   err.context = context
   err.emitter = getErrorEmittingLines(err)
+
+  if (errContextMightNotBeLogged) {
+    err.stack += `\nContext: ${JSON.stringify(err.context)}`
+  }
+
   return err
 }
 

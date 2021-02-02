@@ -5,6 +5,7 @@ const error_ = __.require('lib', 'error/error')
 
 const validations = module.exports = {
   couchUuid: _.isCouchUuid,
+  'doc _id': _.isCouchUuid,
   userId: _.isUserId,
   itemId: _.isItemId,
   transactionId: _.isTransactionId,
@@ -20,6 +21,7 @@ const validations = module.exports = {
     else return _.isUserImg(image)
   },
   boolean: _.isBoolean,
+  attribute: _.isString,
   shelves: shelves => _.isArray(shelves) && _.every(shelves, _.isCouchUuid),
   position: latLng => {
     // Allow a user or a group to delete their position by passing a null value
@@ -44,6 +46,7 @@ validations.valid = function (attribute, value, option) {
   // if no test are set at this attribute for this context
   // default to common validations
   if (test == null) test = validations[attribute]
+  if (test == null) throw error_.new('missing validation function', 500, { attribute, context: this })
   return test(value, option)
 }
 

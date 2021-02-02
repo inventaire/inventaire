@@ -31,7 +31,7 @@ module.exports = async (data, userId) => {
 
   await db.put(updatedDoc)
 
-  radio.emit('group:update', notifData)
+  await radio.emit('group:update', notifData)
 
   return { hooksUpdates }
 }

@@ -12,7 +12,7 @@ const defaultPeriodicity = 20
 
 const relations_ = __.require('controllers', 'relations/lib/queries')
 const groupsCounts = __.require('controllers', 'groups/lib/counts')
-const notifications_ = __.require('lib', 'notifications')
+const notifications_ = __.require('controllers', 'notifications/lib/notifications')
 const transactions_ = __.require('controllers', 'transactions/lib/transactions')
 
 const getLastNetworkBooks = require('./last_network_books')

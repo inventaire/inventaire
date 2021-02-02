@@ -13,6 +13,7 @@ const getGroup = async group => {
 const createGroup = (params = {}) => {
   const {
     name = groupName(),
+    description = groupDescription(),
     user = getUser(),
     position = [ 1, 1 ],
     searchable = true,
@@ -20,6 +21,7 @@ const createGroup = (params = {}) => {
   } = params
   return customAuthReq(user, 'post', `${endpointBase}?action=create`, {
     name,
+    description,
     position,
     searchable,
     open,
@@ -61,18 +63,24 @@ const groupAndMemberPromise = () => {
 }
 
 const groupName = () => `${faker.lorem.words(3)} group`
+const groupDescription = () => faker.lorem.words(10)
+
+const createGroupWithAMember = async params => {
+  const group = await createGroup(params)
+  const admin = await getUser()
+  const member = await getUserB()
+  const [ refreshedGroup ] = await addMember(group, member)
+  return { group: refreshedGroup, admin, member }
+}
 
 // Resolves to a group with userA as admin and userB as member
-const groupPromise = createGroup()
-  .then(async group => {
-    const [ refreshedGroup ] = await addMember(group, getUserB())
-    return refreshedGroup
-  })
+const groupPromise = createGroupWithAMember().then(({ group }) => group)
 
 module.exports = {
   endpointBase,
   groupPromise,
   getGroup,
+  createGroupWithAMember,
   groupName,
   createGroup,
   addMember,
