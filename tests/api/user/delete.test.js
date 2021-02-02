@@ -92,7 +92,7 @@ describe('user:delete', () => {
   describe('transactions', () => {
     it('should cancel active transactions', async () => {
       const user = await getReservedUser()
-      const { transaction } = await createTransaction(user, getUser())
+      const { transaction } = await createTransaction({ userA: user, userB: getUser() })
       transaction.state.should.equal('requested')
       await deleteUser(user)
       const updatedTransaction = await getTransaction(user, transaction._id)
@@ -101,7 +101,7 @@ describe('user:delete', () => {
 
     it('should not affect already terminated transactions', async () => {
       const user = await getReservedUser()
-      const { transaction } = await createTransaction(user, getUser())
+      const { transaction } = await createTransaction({ userA: user, userB: getUser() })
       transaction.state.should.equal('requested')
       await updateTransaction(getUser(), transaction._id, 'declined')
       const updatedTransaction = await getTransaction(user, transaction._id)
