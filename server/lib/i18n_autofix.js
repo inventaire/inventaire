@@ -39,22 +39,30 @@ const emails = __.path('i18nSrc', 'emails.en.json')
 
 const reorder = keys => {
   const reordered = {}
+  const addKey = key => { reordered[key] = keys[key] }
+
+  // Add non-properties first
   Object.keys(keys)
-  .sort(alphabeticallyAndPropertiesLast)
-  .forEach(key => {
-    reordered[key] = keys[key]
-  })
+  .filter(key => !isPropertyIdOrUri(key))
+  .sort(alphabetically)
+  .forEach(addKey)
+
+  // Then, Wikidata properties
+  Object.keys(keys)
+  .filter(isPropertyId)
+  .sort(byPropertyId)
+  .forEach(addKey)
+
+  // Then, Inventaire properties
+  Object.keys(keys)
+  .filter(key => key.startsWith('invp:'))
+  .sort(byPropertyId)
+  .forEach(addKey)
+
   return reordered
 }
 
-const alphabeticallyAndPropertiesLast = (a, b) => {
-  if (isPropertyId(a) && isPropertyId(b)) {
-    return parseInt(a.slice(1)) - parseInt(b.slice(1))
-  } else if (isPropertyId(a)) {
-    return 1
-  } else if (isPropertyId(b)) {
-    return -1
-  } else {
-    return a.toLowerCase() > b.toLowerCase() ? 1 : -1
-  }
-}
+const alphabetically = (a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1
+const byPropertyId = (a, b) => parseInt(a.split('P')[1]) - parseInt(b.split('P')[1])
+
+const isPropertyIdOrUri = str => isPropertyId(str) || str.startsWith('invp:')
