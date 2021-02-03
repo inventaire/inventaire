@@ -31,7 +31,7 @@ describe('tasks:check-entities', () => {
     const task = tasks[0]
     task.suspectUri.should.equal(human.uri)
     task.type.should.equal('deduplicate')
-    task.entitiesType.should.equal('humans')
+    task.entitiesType.should.equal(human.type)
     task.suggestionUri.should.startWith('wd')
     task.lexicalScore.should.be.a.Number()
     task.relationScore.should.be.a.Number()

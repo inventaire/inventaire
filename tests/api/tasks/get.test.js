@@ -27,7 +27,7 @@ describe('tasks:byScore', () => {
 })
 
 describe('tasks:byEntitiesType', () => {
-  const entitiesType = 'works'
+  const entitiesType = 'work'
 
   it('should return tasks with a specific entitiesType', async () => {
     await createTask({ entitiesType })

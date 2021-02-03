@@ -17,7 +17,7 @@ module.exports = async (workUri, isbn, userId) => {
   if (type !== 'work') {
     throw error_.new(`unsupported type: ${type}, only work is supported`, 400, { workUri, work })
   }
-  const editionsRes = await getEntitiesByIsbns([ isbn ])
+  const editionsRes = await getEntitiesByIsbns([ isbn ], {})
   const edition = editionsRes.entities[0]
   const editionWorksUris = edition.claims['wdt:P629']
   const editionWorks = await getEntitiesList(editionWorksUris)
@@ -27,7 +27,7 @@ module.exports = async (workUri, isbn, userId) => {
   const existingTasks = await getExistingTasks(workUri)
   let newSuggestions = await filterNewTasks(existingTasks, suggestions)
   newSuggestions = _.map(newSuggestions, addToSuggestion(userId, isbn))
-  return tasks_.create(workUri, 'deduplicate', newSuggestions)
+  return tasks_.create(workUri, 'deduplicate', work.type, newSuggestions)
 }
 
 const getSuggestionsOrAutomerge = async (work, editionWorks, userId) => {
@@ -62,7 +62,6 @@ const haveExactMatch = (labels1, labels2) => {
 }
 
 const addToSuggestion = (userId, isbn) => suggestion => {
-  suggestion.entitiesType = 'works'
   suggestion.reporter = userId
   suggestion.clue = isbn
   return suggestion

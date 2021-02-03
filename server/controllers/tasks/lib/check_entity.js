@@ -26,7 +26,7 @@ module.exports = async uri => {
 
   const existingTasks = await getExistingTasks(uri)
   const newSuggestions = await getNewTasks(entity, existingTasks)
-  await tasks_.create(uri, 'deduplicate', newSuggestions)
+  await tasks_.create(uri, 'deduplicate', entity.type, newSuggestions)
   await updateRelationScore(uri)
 }
 

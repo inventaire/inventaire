@@ -59,7 +59,7 @@ describe('tasks:deduplicate:works', () => {
     const suspectUriTasksRes = await getBySuspectUri(uri)
     const newTask = Object.values(suspectUriTasksRes)[0]
 
-    newTask.entitiesType.should.equal('works')
+    newTask.entitiesType.should.equal('work')
     newTask.suggestionUri.should.equal(editionWorkUri)
     const user = await getUser()
     newTask.reporter.should.equal(user._id)

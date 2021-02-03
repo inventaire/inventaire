@@ -6,7 +6,7 @@ const sanitize = __.require('lib', 'sanitize/sanitize')
 
 const sanitization = {
   type: {
-    allowlist: [ 'works' ]
+    allowlist: [ 'work' ]
   },
   limit: {
     default: 10

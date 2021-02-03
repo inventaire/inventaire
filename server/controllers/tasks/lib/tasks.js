@@ -7,10 +7,10 @@ const Task = __.require('models', 'task')
 const db = __.require('couch', 'base')('tasks')
 
 const tasks_ = module.exports = {
-  create: async (suspectUri, type, suggestions) => {
+  create: async (suspectUri, type, entitiesType, suggestions) => {
     // suggestions may only be an array of objects with a 'uri' key
     const newTasksObjects = suggestions.map(suggestion => {
-      const { entitiesType, _score, uri: suggestionUri, occurrences, reporter, clue } = suggestion
+      const { _score, uri: suggestionUri, occurrences, reporter, clue } = suggestion
 
       const newTask = { type, suspectUri, suggestionUri }
 
