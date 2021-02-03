@@ -17,7 +17,7 @@ module.exports = async (workUri, isbn, userId) => {
   if (type !== 'work') {
     throw error_.new(`unsupported type: ${type}, only work is supported`, 400, { workUri, work })
   }
-  const editionsRes = await getEntitiesByIsbns([ isbn ], {})
+  const editionsRes = await getEntitiesByIsbns([ isbn ])
   const edition = editionsRes.entities[0]
   const editionWorksUris = edition.claims['wdt:P629']
   const editionWorks = await getEntitiesList(editionWorksUris)

@@ -7,7 +7,7 @@ const formatEditionEntity = require('./format_edition_entity')
 const isbn_ = __.require('lib', 'isbn/isbn')
 const { prefixifyIsbn } = __.require('controllers', 'entities/lib/prefix')
 
-module.exports = async (rawIsbns, params) => {
+module.exports = async (rawIsbns, params = {}) => {
   const [ isbns, redirections ] = getRedirections(rawIsbns)
   const { refresh, autocreate } = params
   // search entities by isbn locally

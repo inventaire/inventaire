@@ -12,7 +12,7 @@ const { createHuman, createWorkWithAuthor, addSerie } = require('../fixtures/ent
 describe('automerge_author_works: only from inv works to wd works', () => {
   before(async () => {
     // Tests dependency: having a populated ElasticSearch wikidata index
-    const wikidataUris = [ 'wd:Q205739', 'wd:Q1748845', 'wd:Q172140' ]
+    const wikidataUris = [ 'wd:Q205739', 'wd:Q1748845', 'wd:Q172140', 'wd:Q732060' ]
     await findOrIndexEntities(wikidataUris)
   })
 
