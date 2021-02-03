@@ -8,6 +8,7 @@ const tasks_ = require('./tasks')
 error_ = __.require('lib', 'error/error')
 const getEntitiesByIsbns = __.require('controllers', 'entities/lib/get_entities_by_isbns')
 const mergeEntities = __.require('controllers', 'entities/lib/merge_entities')
+const { haveExactMatch } = __.require('controllers', 'entities/lib/labels_match')
 
 module.exports = async (workUri, isbn, userId) => {
   const work = await getEntityByUri({ uri: workUri })
@@ -47,18 +48,6 @@ const getExistingTasks = uri => tasks_.bySuspectUris([ uri ])
 const filterNewTasks = (existingTasks, suggestions) => {
   const existingTasksUris = _.map(existingTasks, 'suggestionUri')
   return suggestions.filter(suggestion => !existingTasksUris.includes(suggestion.uri))
-}
-
-// TODO: find a place to DRY haveExactMatch occurence in get_new_tasks.js
-const haveExactMatch = (labels1, labels2) => {
-  for (let label1 of labels1) {
-    label1 = label1.toLowerCase()
-    for (let label2 of labels2) {
-      label2 = label2.toLowerCase()
-      return label2.match(label1)
-    }
-  }
-  return false
 }
 
 const addToSuggestion = (userId, isbn) => suggestion => {

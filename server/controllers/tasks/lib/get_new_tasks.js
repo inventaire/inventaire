@@ -6,6 +6,7 @@ const entities_ = __.require('controllers', 'entities/lib/entities')
 const getOccurrencesFromEntities = __.require('controllers', 'entities/lib/get_occurrences_from_entities')
 const getOccurrencesFromExternalSources = __.require('controllers', 'entities/lib/get_occurrences_from_external_sources')
 const { getEntityNormalizedTerms } = __.require('controllers', 'entities/lib/terms_normalization')
+const { haveExactMatch } = __.require('controllers', 'entities/lib/labels_match')
 
 module.exports = (entity, existingTasks) => {
   return Promise.all([
@@ -35,18 +36,6 @@ const filterOrMergeSuggestions = (suspect, workLabels) => suggestions => {
 const filterNewTasks = existingTasks => suggestions => {
   const existingTasksUris = _.map(existingTasks, 'suggestionUri')
   return suggestions.filter(suggestion => !existingTasksUris.includes(suggestion.uri))
-}
-
-// TODO: find a place to DRY haveExactMatch occurence in deduplicate_work.js
-const haveExactMatch = (labels1, labels2) => {
-  for (let label1 of labels1) {
-    label1 = label1.toLowerCase()
-    for (let label2 of labels2) {
-      label2 = label2.toLowerCase()
-      return label2.match(label1)
-    }
-  }
-  return false
 }
 
 const filterSourced = suggestions => suggestions.filter(sug => sug.occurrences.length > 0)

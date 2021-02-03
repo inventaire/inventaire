@@ -84,6 +84,23 @@ describe('tasks:deduplicate:works', () => {
     res.entities[editionWorkUri].should.be.ok()
   })
 
+  it('should not automerge if labels almost match', async () => {
+    const edition = await createEditionWithIsbn()
+    const editionWorkUri = edition.claims['wdt:P629'][0]
+    const editionWork = await getByUri(editionWorkUri)
+    const editionWorkTitle = editionWork.labels.en
+    const isbn = edition.isbn
+
+    const work = await createWork({ labels: { zh: editionWorkTitle + 'zzz' } })
+    const workUri = work.uri
+
+    await authReq('post', endpoint, { uri: workUri, isbn })
+    await wait(100)
+
+    const res = await getByUris(workUri)
+    res.entities[workUri].should.be.ok()
+  })
+
   it('should not re-create existing tasks', async () => {
     const work = await createWork()
     const uri = work.uri
