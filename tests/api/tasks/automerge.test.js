@@ -11,7 +11,7 @@ describe('tasks:automerge', () => {
   })
   it('should automerge if author has homonyms but only one has occurrences', done => {
     const humanLabel = 'Alan Moore' // homonyms wd:Q205739, wd:Q1748845
-    const WdUri = 'wd:Q205739'
+    const wdUri = 'wd:Q205739'
     const workLabel = 'Voice of the Fire' // wd:Q3825051, Alan Moore's work
     createHuman({ labels: { en: humanLabel } })
     .then(human => {
@@ -23,7 +23,7 @@ describe('tasks:automerge', () => {
         .then(({ entities }) => entities)
         .then(entities => {
           // entity should have merged, thus URI is now a WD uri
-          entities[WdUri].should.be.ok()
+          entities[wdUri].should.be.ok()
           done()
         })
       })
