@@ -37,6 +37,15 @@ describe('search:entities', () => {
       it('should return only exact matches', async () => {
         const humanLabel = human.labels.en
         const results = await search({ types: 'humans', search: humanLabel, lang: 'en', exact: true })
+        results.length.should.be.aboveOrEqual(1)
+        results.forEach(result => result.label.should.equal(humanLabel))
+      })
+
+      it('should accept a different word order', async () => {
+        const humanLabel = human.labels.en
+        const reversedLabel = humanLabel.split(' ').reverse().join(' ')
+        const results = await search({ types: 'humans', search: reversedLabel, lang: 'en', exact: true })
+        results.length.should.be.aboveOrEqual(1)
         results.forEach(result => result.label.should.equal(humanLabel))
       })
 
