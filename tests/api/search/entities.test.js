@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
-const { createWork, createHuman, createSerie, createCollection, createPublisher } = require('../fixtures/entities')
+const { createWork, createHuman, createSerie, createCollection, createPublisher, humanName } = require('../fixtures/entities')
 const { getByUris } = require('../utils/entities')
 const { search, waitForIndexation } = require('../utils/search')
 const { shouldNotBeCalled } = require('../utils/utils')
@@ -131,8 +131,23 @@ describe('search:entities', () => {
       }
     })
 
-    it('should return exact match labels', async () => {
-      await search({ types: [ 'groups', 'users' ], strict: true }).then(shouldNotBeCalled)
+    it('should return exact match labels only', async () => {
+      const humanLabel = human.labels.en
+      const almostSameLabel = sameFirstNameLabel(humanLabel)
+      const almostSameHuman = await createHuman({ labels: { en: almostSameLabel } })
+      waitForIndexation('entities', almostSameHuman._id)
+
+      const results = await search({ types: 'humans', search: humanLabel, strict: true })
+      results.should.be.an.Array()
+      const labelsInResults = results.map(_.property('label'))
+      _.uniq(labelsInResults).should.deepEqual([ humanLabel ])
     })
   })
 })
+
+const sameFirstNameLabel = label => {
+  const lastName = humanName().split(' ')[0]
+  const labelNames = label.split(' ')
+  labelNames[1] = lastName
+  return labelNames.join(' ')
+}
