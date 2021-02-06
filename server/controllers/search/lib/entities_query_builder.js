@@ -1,5 +1,6 @@
 const __ = require('config').universalPath
 const { getSingularTypes } = __.require('lib', 'wikidata/aliases')
+const { dropSpecialQueryCharacters, matchType } = require('./helpers')
 
 module.exports = params => {
   const { lang: userLang, search, limit: size, minScore = 1 } = params
@@ -42,12 +43,6 @@ module.exports = params => {
   }
 }
 
-const matchType = types => {
-  return types.map(type => (
-    { match: { type } }
-  ))
-}
-
 const matchEntities = (search, userLang) => {
   const fields = entitiesFields(userLang)
   return [
@@ -85,6 +80,3 @@ const entitiesFields = userLang => {
   }
   return fields
 }
-
-const specialQueryCharacters = /[!*~+/\\]/g
-const dropSpecialQueryCharacters = str => str.replace(specialQueryCharacters, '')

@@ -131,7 +131,7 @@ describe('search:entities', () => {
       }
     })
 
-    it('should return exact match labels only', async () => {
+    it('should not return same first name human', async () => {
       const humanLabel = human.labels.en
       const almostSameLabel = sameFirstNameLabel(humanLabel)
       const almostSameHuman = await createHuman({ labels: { en: almostSameLabel } })
