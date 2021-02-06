@@ -5,6 +5,7 @@ require('should')
 const { createWork, createHuman, createSerie, createCollection, createPublisher } = require('../fixtures/entities')
 const { getByUris } = require('../utils/entities')
 const { search, waitForIndexation } = require('../utils/search')
+const { shouldNotBeCalled } = require('../utils/utils')
 const wikidataUris = [ 'wd:Q184226', 'wd:Q180736', 'wd:Q8337', 'wd:Q225946', 'wd:Q3409094', 'wd:Q3236382' ]
 
 describe('search:entities', () => {
@@ -117,6 +118,21 @@ describe('search:entities', () => {
       results.should.be.an.Array()
       results.forEach(result => result.type.should.equal('publishers'))
       _.map(results, 'id').includes('Q3236382').should.be.true()
+    })
+  })
+
+  describe('search:strict', () => {
+    it('should reject types that are not entity', async () => {
+      try {
+        await search({ types: [ 'groups', 'users' ], strict: true }).then(shouldNotBeCalled)
+      } catch (err) {
+        err.statusCode.should.equal(400)
+        err.body.status_verbose.should.equal('strict search are restricted to entities types')
+      }
+    })
+
+    it('should return exact match labels', async () => {
+      await search({ types: [ 'groups', 'users' ], strict: true }).then(shouldNotBeCalled)
     })
   })
 })

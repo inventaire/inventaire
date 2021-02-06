@@ -17,14 +17,18 @@ const sanitization = {
     allowlist: [ 'wd', 'inv' ],
     optional: true
   },
+  strict: {
+    generic: 'boolean',
+    optional: true
+  },
 }
 
 module.exports = {
   get: (req, res) => {
     sanitize(req, res, sanitization)
     .then(params => {
-      const { types, search, lang, limit, filter, reqUserId } = params
-      return typeSearch({ lang, types, search, limit, filter })
+      const { types, search, lang, limit, filter, strict, reqUserId } = params
+      return typeSearch({ lang, types, search, limit, filter, strict })
       .then(results => {
         return results
         .filter(isSearchable(reqUserId))

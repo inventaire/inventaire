@@ -11,7 +11,7 @@ const indexedTypesSet = new Set(indexedTypes)
 const entitiesQueryBuilder = require('./entities_query_builder')
 const socialQueryBuilder = require('./social_query_builder')
 
-module.exports = async ({ lang, types, search, limit = 20, filter, minScore }) => {
+module.exports = async ({ lang, types, search, limit = 20, filter, minScore, strict }) => {
   assert_.array(types)
   for (const type of types) {
     if (!indexedTypesSet.has(type)) throw error_.new('invalid type', 500, { type, types })
@@ -26,6 +26,7 @@ module.exports = async ({ lang, types, search, limit = 20, filter, minScore }) =
   if (hasSocialTypes && hasEntityTypes) {
     throw error_.new('can not have both social and entity types', 400, { types })
   }
+  if (strict != null) validateStrictSearch({ types })
 
   let body, queryIndexes
   if (hasSocialTypes) {
@@ -48,4 +49,8 @@ const entitiesIndexesPerFilter = {
   wd: [ indexes.wikidata ],
   inv: [ indexes.entities ],
   [undefined]: [ indexes.wikidata, indexes.entities ],
+}
+
+const validateStrictSearch = ({ types }) => {
+  if (_.without(types, ...indexedEntitiesTypes).length > 0) throw error_.new('strict search are restricted to entities types', 400, { givenTypes: types, validTypes: indexedEntitiesTypes })
 }
