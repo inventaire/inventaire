@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
-const { createWork, createHuman, createSerie, createCollection, createPublisher } = require('../fixtures/entities')
+const { createWork, createHuman, createSerie, createCollection, createPublisher, sameFirstNameLabel } = require('../fixtures/entities')
 const { getByUris } = require('../utils/entities')
 const { shouldNotBeCalled } = require('../utils/utils')
 const { search, waitForIndexation } = require('../utils/search')
@@ -57,6 +57,18 @@ describe('search:entities', () => {
         const results = await search({ types: 'humans', search: reversedLabel, lang: 'en', exact: true })
         results.length.should.be.aboveOrEqual(1)
         results.forEach(result => result.label.should.equal(humanLabel))
+      })
+
+      it('should not return same first name human', async () => {
+        const humanLabel = human.labels.en
+        const almostSameLabel = sameFirstNameLabel(humanLabel)
+        const almostSameHuman = await createHuman({ labels: { en: almostSameLabel } })
+        await waitForIndexation('entities', almostSameHuman._id)
+
+        const results = await search({ types: 'humans', search: humanLabel, lang: 'en', exact: true })
+        results.should.be.an.Array()
+        const labelsInResults = results.map(_.property('label'))
+        _.uniq(labelsInResults).should.deepEqual([ humanLabel ])
       })
 
       it('should not match on descriptions', async () => {
