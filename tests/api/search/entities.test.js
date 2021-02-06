@@ -53,6 +53,15 @@ describe('search:entities', () => {
         const results = await search({ types: 'humans', search: 'philosopher', lang: 'en', exact: true })
         results.length.should.equal(0)
       })
+
+      // TODO: make this test pass
+      xit('should find a label with special characters', async () => {
+        const label = "L'eau douce en péril !"
+        const work = await createWork({ labels: { fr: label } })
+        await waitForIndexation('entities', work._id)
+        const results = await search({ types: 'works', search: label, lang: 'fr', exact: true })
+        _.map(results, 'uri').should.containEql(work.uri)
+      })
     })
   })
 
