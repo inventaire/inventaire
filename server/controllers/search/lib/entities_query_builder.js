@@ -29,14 +29,12 @@ module.exports = params => {
             // See: https://www.elastic.co/guide/en/elasticsearch/reference/7.10/query-dsl-function-score-query.html#function-field-value-factor
             field_value_factor: {
               field: 'popularity',
-              modifier: 'sqrt',
-              missing: 0
+              // Inspired by https://www.elastic.co/guide/en/elasticsearch/guide/current/boosting-by-popularity.html
+              modifier: 'ln2p',
+              missing: 1
             },
           }
         ],
-        // add the function result to the _score (instead of multiplying by default)
-        // which is drastically decreasing popularity boosting compared to default
-        boost_mode: 'sum'
       },
     },
     size,
