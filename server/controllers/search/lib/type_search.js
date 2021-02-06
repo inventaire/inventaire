@@ -21,6 +21,10 @@ module.exports = async ({ lang, types, search, limit = 20, filter, exact, minSco
   const hasSocialTypes = types.includes('users') || types.includes('groups')
   const hasEntityTypes = _.someMatch(types, indexedEntitiesTypes)
 
+  if (hasSocialTypes && exact) {
+    throw error_.new('exact search is restricted to entity types', 400, { givenTypes: types, validTypes: indexedEntitiesTypes })
+  }
+
   // Query must be either social (user, group) or entities related
   // but cannot be both as results scores are built very differently
   if (hasSocialTypes && hasEntityTypes) {

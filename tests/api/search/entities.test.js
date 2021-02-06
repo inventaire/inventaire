@@ -4,6 +4,7 @@ const _ = __.require('builders', 'utils')
 require('should')
 const { createWork, createHuman, createSerie, createCollection, createPublisher } = require('../fixtures/entities')
 const { getByUris } = require('../utils/entities')
+const { shouldNotBeCalled } = require('../utils/utils')
 const { search, waitForIndexation } = require('../utils/search')
 const wikidataUris = [ 'wd:Q184226', 'wd:Q180736', 'wd:Q8337', 'wd:Q225946', 'wd:Q3409094', 'wd:Q3236382' ]
 
@@ -34,6 +35,15 @@ describe('search:entities', () => {
 
   describe('parameters', () => {
     describe('exact', () => {
+      it('should reject types that are not entity related', async () => {
+        try {
+          await search({ types: [ 'groups', 'users' ], exact: true }).then(shouldNotBeCalled)
+        } catch (err) {
+          err.statusCode.should.equal(400)
+          err.body.status_verbose.should.equal('exact search is restricted to entity types')
+        }
+      })
+
       it('should return only exact matches', async () => {
         const humanLabel = human.labels.en
         const results = await search({ types: 'humans', search: humanLabel, lang: 'en', exact: true })
