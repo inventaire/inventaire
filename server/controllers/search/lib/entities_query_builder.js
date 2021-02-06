@@ -86,5 +86,5 @@ const entitiesFields = userLang => {
   return fields
 }
 
-const specialQueryCharacters = /[!*~+/\\]/g
+const specialQueryCharacters = /[!*~+/\\[\]]/g
 const dropSpecialQueryCharacters = str => str.replace(specialQueryCharacters, '')

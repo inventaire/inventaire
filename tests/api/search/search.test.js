@@ -18,7 +18,7 @@ describe('search:global', () => {
     })
 
     it('should not crashed when the search contains special characters', async () => {
-      const query = encodeURIComponent("L'eau d\\o~uc/e/-en ~pé*ril!~*")
+      const query = encodeURIComponent("L'eau d\\o~uc/e/-e[n] ~pé*ril!~*")
       const { results } = await publicReq('get', `/api/search?lang=en&types=works&search=${query}`)
       results.should.be.an.Array()
     })
