@@ -49,7 +49,8 @@ const matchType = types => {
 }
 
 const matchEntities = (search, userLang, exact) => {
-  const fields = entitiesFields(userLang)
+  const fields = entitiesFields(userLang, exact)
+
   const should = [
     {
       // Use query_string to give exact matches a boost.
@@ -60,8 +61,9 @@ const matchEntities = (search, userLang, exact) => {
         fields,
         boost: 3
       }
-    },
+    }
   ]
+
   if (!exact) {
     should.push({
       multi_match: {
@@ -74,19 +76,26 @@ const matchEntities = (search, userLang, exact) => {
   return should
 }
 
-const entitiesFields = userLang => {
+const entitiesFields = (userLang, exact) => {
   const fields = [
     'labels.*',
     'aliases.*^0.5',
-    'descriptions.*^0.25',
-    'flattenedLabels^0.25', // text type
-    'flattenedAliases^0.25', // text type
-    'flattenedDescriptions^0.25' // text type
   ]
   if (userLang) {
-    fields.push(`labels.${userLang}`)
-    fields.push(`aliases.${userLang}`)
+    fields.push(
+      `labels.${userLang}`,
+      `aliases.${userLang}`
+    )
   }
+  if (!exact) {
+    fields.push(
+      'flattenedLabels^0.25',
+      'flattenedAliases^0.25',
+      'descriptions.*^0.25',
+      'flattenedDescriptions^0.25'
+    )
+  }
+
   return fields
 }
 

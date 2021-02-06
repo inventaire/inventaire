@@ -39,6 +39,11 @@ describe('search:entities', () => {
         const results = await search({ types: 'humans', search: humanLabel, lang: 'en', exact: true })
         results.forEach(result => result.label.should.equal(humanLabel))
       })
+
+      it('should not match on descriptions', async () => {
+        const results = await search({ types: 'humans', search: 'philosopher', lang: 'en', exact: true })
+        results.length.should.equal(0)
+      })
     })
   })
 
