@@ -2,7 +2,7 @@ const __ = require('config').universalPath
 const { getSingularTypes } = __.require('lib', 'wikidata/aliases')
 
 module.exports = params => {
-  const { lang: userLang, search, limit: size, minScore = 1 } = params
+  const { lang: userLang, search, limit: size, exact, minScore = 1 } = params
   let { types } = params
   types = getSingularTypes(types)
 
@@ -18,7 +18,7 @@ module.exports = params => {
               // Because most of the work has been done at index time (indexing terms by ngrams)
               // all this query needs to do is to look up search terms which is way more efficient than the match_phrase_prefix approach
               // See https://www.elastic.co/guide/en/elasticsearch/guide/current/_index_time_search_as_you_type.html
-              { bool: { should: matchEntities(search, userLang) } }
+              { bool: { should: matchEntities(search, userLang, exact) } }
             ]
           }
         },
@@ -48,9 +48,9 @@ const matchType = types => {
   ))
 }
 
-const matchEntities = (search, userLang) => {
+const matchEntities = (search, userLang, exact) => {
   const fields = entitiesFields(userLang)
-  return [
+  const should = [
     {
       // Use query_string to give exact matches a boost.
       // See query strings doc : https://www.elastic.co/guide/en/elasticsearch/reference/7.10/query-dsl-query-string-query.html
@@ -61,13 +61,17 @@ const matchEntities = (search, userLang) => {
         boost: 3
       }
     },
-    {
+  ]
+  if (!exact) {
+    should.push({
       multi_match: {
         query: search,
         fields,
       }
-    }
-  ]
+    })
+  }
+
+  return should
 }
 
 const entitiesFields = userLang => {

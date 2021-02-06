@@ -32,6 +32,16 @@ describe('search:entities', () => {
     ])
   })
 
+  describe('parameters', () => {
+    describe('exact', () => {
+      it('should return only exact matches', async () => {
+        const humanLabel = human.labels.en
+        const results = await search({ types: 'humans', search: humanLabel, lang: 'en', exact: true })
+        results.forEach(result => result.label.should.equal(humanLabel))
+      })
+    })
+  })
+
   describe('humans', () => {
     it('should return a wikidata human', async () => {
       const results = await search('humans', 'Gilles Deleuze')

@@ -46,13 +46,13 @@ const waitForIndexation = async (indexBaseName, id) => {
 
 module.exports = {
   search: async (...args) => {
-    let types, search, lang, filter
-    if (args.length === 1) ({ types, search, lang, filter } = args[0])
+    let types, search, lang, filter, exact = false
+    if (args.length === 1) ({ types, search, lang, filter, exact } = args[0])
     else [ types, search, lang, filter ] = args
     lang = lang || 'en'
     if (_.isArray(types)) types = types.join('|')
     search = encodeURIComponent(search)
-    let url = `${endpoint}?types=${types}&lang=${lang}&search=${search}`
+    let url = `${endpoint}?types=${types}&lang=${lang}&search=${search}&exact=${exact}`
     if (filter) url += `&filter=${filter}`
     const { results } = await publicReq('get', url)
     return results
