@@ -44,11 +44,7 @@ module.exports = params => {
   }
 }
 
-const matchType = types => {
-  return types.map(type => (
-    { match: { type } }
-  ))
-}
+const matchType = types => types.map(type => ({ term: { type } }))
 
 const matchEntities = (search, userLang, exact) => {
   const fields = entitiesFields(userLang, exact)
