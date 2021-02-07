@@ -33,6 +33,7 @@ const waitForIndexation = async (indexBaseName, id) => {
   assert_.string(indexBaseName)
   const index = indexesNamesByBaseNames[indexBaseName]
   assert_.string(index)
+  assert_.string(id)
   const { found } = await getIndexedDoc(index, id)
   if (found) {
     // Now that the doc is in ElasticSearch, let it a moment to update secondary indexes
