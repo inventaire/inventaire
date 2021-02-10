@@ -2,19 +2,18 @@ const CONFIG = require('config')
 const host = CONFIG.fullPublicHost()
 require('should')
 const { rawRequest } = require('../utils/request')
-const { createUser } = require('../fixtures/users')
+const { getUser } = require('../utils/utils')
 const { groupPromise } = require('../fixtures/groups')
-const someUserPromise = createUser()
 
 describe('rss redirections', () => {
   it('should redirect to a user feed by id', async () => {
-    const { _id } = await someUserPromise
+    const { _id } = await getUser()
     const { headers } = await rawRequest('get', `/users/${_id}.rss`)
     headers.location.should.equal(`${host}/api/feeds?user=${_id}`)
   })
 
   it('should redirect to a user feed by username', async () => {
-    const { _id, username } = await someUserPromise
+    const { _id, username } = await getUser()
     const { headers } = await rawRequest('get', `/inventory/${username}.rss`)
     headers.location.should.equal(`${host}/api/feeds?user=${_id}`)
   })
