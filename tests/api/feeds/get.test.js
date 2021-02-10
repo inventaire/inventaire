@@ -2,6 +2,8 @@ require('should')
 const { getUser } = require('../utils/utils')
 const { rawRequest } = require('../utils/request')
 const { createItem } = require('../fixtures/items')
+const { groupPromise } = require('../fixtures/groups')
+const { createShelf } = require('../fixtures/shelves')
 
 describe('feeds:get', () => {
   it('should return a user RSS feed', async () => {
@@ -56,5 +58,17 @@ describe('feeds:get', () => {
     body.startsWith('<?xml').should.be.true()
     body.includes(itemA._id).should.be.true()
     body.includes(itemB._id).should.be.true()
+  })
+
+  it('should return a group RSS feed', async () => {
+    const group = await groupPromise
+    const { body } = await rawRequest('get', `/api/feeds?group=${group._id}`)
+    body.startsWith('<?xml').should.be.true()
+  })
+
+  it('should return a shelf RSS feed', async () => {
+    const shelf = await createShelf(getUser(), { listing: 'public' })
+    const { body } = await rawRequest('get', `/api/feeds?shelf=${shelf._id}`)
+    body.startsWith('<?xml').should.be.true()
   })
 })

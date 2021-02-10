@@ -5,6 +5,7 @@ const sanitize = __.require('lib', 'sanitize/sanitize')
 const getAuthentifiedUser = require('./lib/get_authentified_user')
 const userFeedData = require('./lib/user_feed_data')
 const groupFeedData = require('./lib/group_feed_data')
+const shelfFeedData = require('./lib/shelf_feed_data')
 const generateFeedFromFeedData = require('./lib/generate_feed_from_feed_data')
 
 const sanitization = {
@@ -12,6 +13,9 @@ const sanitization = {
     optional: true
   },
   group: {
+    optional: true
+  },
+  shelf: {
     optional: true
   },
   requester: {
@@ -41,7 +45,7 @@ module.exports = {
 }
 
 const getFeed = headersLang => async params => {
-  const { userId, groupId, requesterId, token } = params
+  const { userId, groupId, shelfId, requesterId, token } = params
   // Guess the lang from the query string or from the request headers
   // that might be passed by the feeds aggregator
   const lang = params.lang || headersLang || 'en'
@@ -62,12 +66,13 @@ const getFeed = headersLang => async params => {
   const authentifiedUser = await getAuthentifiedUser(requesterId, token)
   const reqUserId = authentifiedUser ? authentifiedUser._id : null
 
-  return getFeedData({ userId, groupId, reqUserId })
+  return getFeedData({ userId, groupId, shelfId, reqUserId })
   .then(generateFeedFromFeedData(lang))
 }
 
-const getFeedData = ({ userId, groupId, reqUserId }) => {
-  if (userId != null) return userFeedData(userId, reqUserId)
-  else if (groupId != null) return groupFeedData(groupId, reqUserId)
-  else throw error_.newMissingQuery('user|group', 400)
+const getFeedData = ({ userId, groupId, shelfId, reqUserId }) => {
+  if (userId) return userFeedData(userId, reqUserId)
+  else if (groupId) return groupFeedData(groupId, reqUserId)
+  else if (shelfId) return shelfFeedData(shelfId, reqUserId)
+  else throw error_.newMissingQuery('user|group|shelf', 400)
 }
