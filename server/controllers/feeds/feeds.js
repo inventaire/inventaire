@@ -59,17 +59,15 @@ const getFeed = headersLang => async params => {
   // a limitied amount of allowlisted routes.
   // It is way easier to simply have this ad-hoc token authentification strategy
   // that we know opens only the limited rights we wish it to open.
-  const authentifiedUserPromise = getAuthentifiedUser(requesterId, token)
+  const authentifiedUser = await getAuthentifiedUser(requesterId, token)
+  const reqUserId = authentifiedUser ? authentifiedUser._id : null
 
-  let feedDataPromise
-  if (userId != null) {
-    feedDataPromise = userFeedData(userId, authentifiedUserPromise)
-  } else if (groupId != null) {
-    feedDataPromise = groupFeedData(groupId, authentifiedUserPromise)
-  } else {
-    throw error_.newMissingQuery('user|group', 400)
-  }
-
-  return feedDataPromise
+  return getFeedData({ userId, groupId, reqUserId })
   .then(generateFeedFromFeedData(lang))
+}
+
+const getFeedData = ({ userId, groupId, reqUserId }) => {
+  if (userId != null) return userFeedData(userId, reqUserId)
+  else if (groupId != null) return groupFeedData(groupId, reqUserId)
+  else throw error_.newMissingQuery('user|group', 400)
 }

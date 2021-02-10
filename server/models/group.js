@@ -166,7 +166,7 @@ Group.categories = {
   users: [ 'admins', 'members', 'invited', 'requested' ]
 }
 
-Group.getAllMembers = group => {
+Group.getAllMembersIds = group => {
   assert_.object(group)
   const adminsIds = _.map(group.admins, 'user')
   const membersIds = _.map(group.members, 'user')
