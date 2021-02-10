@@ -68,6 +68,7 @@ const redirections = {
         return groups_.bySlug(slug)
         .then(({ _id }) => `/api/feeds?group=${_id}`)
       }
-    }
+    },
+    shelves: id => `/api/feeds?shelf=${id}`,
   }
 }

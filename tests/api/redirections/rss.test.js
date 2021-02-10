@@ -4,6 +4,7 @@ require('should')
 const { rawRequest } = require('../utils/request')
 const { getUser } = require('../utils/utils')
 const { groupPromise } = require('../fixtures/groups')
+const { createShelf } = require('../fixtures/shelves')
 
 describe('rss redirections', () => {
   it('should redirect to a user feed by id', async () => {
@@ -28,5 +29,11 @@ describe('rss redirections', () => {
     const { _id, slug } = await groupPromise
     const { headers } = await rawRequest('get', `/groups/${slug}.rss`)
     headers.location.should.equal(`${host}/api/feeds?group=${_id}`)
+  })
+
+  it('should redirect to a shelf feed by id', async () => {
+    const { _id } = await createShelf()
+    const { headers } = await rawRequest('get', `/shelves/${_id}.rss`)
+    headers.location.should.equal(`${host}/api/feeds?shelf=${_id}`)
   })
 })
