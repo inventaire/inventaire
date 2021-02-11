@@ -16,6 +16,7 @@ const createItemWithEntities = createEntityFn => async (user, itemData = {}) => 
   itemData.entity = uri
   return API.createItem(user, itemData)
 }
+
 const API = module.exports = {
   createItems: async (user, itemsData = []) => {
     user = user || getUser()

@@ -6,8 +6,6 @@ const { createShelf, createShelfWithItem } = require('../fixtures/shelves')
 const { createItem } = require('../fixtures/items')
 
 const endpoint = '/api/shelves?action=remove-items'
-const itemPromise = createItem
-const shelfWithItemPromise = createShelfWithItem(itemPromise)
 
 describe('shelves:remove-items', () => {
   it('should reject without shelf id', async () => {
@@ -21,7 +19,7 @@ describe('shelves:remove-items', () => {
   })
 
   it('should reject without items', async () => {
-    const shelf = await shelfWithItemPromise
+    const { shelf } = await createShelfWithItem()
     try {
       await authReq('post', endpoint, {
         id: shelf._id
@@ -35,7 +33,7 @@ describe('shelves:remove-items', () => {
   })
 
   it('should delete item from shelf', async () => {
-    const shelf = await shelfWithItemPromise
+    const { shelf } = await createShelfWithItem()
     const itemId = shelf.items[0]
     const res = await authReq('post', endpoint, {
       id: shelf._id,
@@ -47,7 +45,7 @@ describe('shelves:remove-items', () => {
 
   it('should reject removing different owner items', async () => {
     try {
-      const shelf = await shelfWithItemPromise
+      const { shelf } = await createShelfWithItem()
       const item = await createItem(getUserB())
       await authReq('post', endpoint, {
         id: shelf._id,
