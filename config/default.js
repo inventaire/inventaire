@@ -148,7 +148,8 @@ const config = module.exports = {
     mode: 'local',
     local: {
       folder: () => config.universalPath.path('root', 'storage'),
-      internalEndpoint: () => `http://localhost:${port}/local/`
+      internalEndpoint: () => `http://localhost:${port}/local/`,
+      fallbackHost: 'https://inventaire.io/img/'
     },
     // Swift parameters are required only when mediaStorage mode is set to 'swift'
     swift: {

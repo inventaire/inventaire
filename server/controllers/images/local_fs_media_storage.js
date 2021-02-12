@@ -8,6 +8,7 @@ const error_ = __.require('lib', 'error/error')
 const regex_ = __.require('lib', 'regex')
 const { local: localStorage } = CONFIG.mediaStorage
 const storageFolder = localStorage.folder()
+const { fallbackHost } = localStorage
 
 // images urls look like /img/#{container}/#{hash}"
 // expect the pictures' files to be in #{storageFolder}
@@ -43,7 +44,13 @@ module.exports = {
     const filepath = `${storageFolder}/${container}/${filename}`
 
     res.sendFile(filepath, options, err => {
-      if (err != null) {
+      if (!err) return
+
+      if (err.code === 'ENOENT' && fallbackHost) {
+        const fallbackHostImageUrl = pathname.replace('/local/', fallbackHost)
+        _.warn(`image not found locally, fallback on ${fallbackHostImageUrl}`)
+        res.redirect(fallbackHostImageUrl)
+      } else {
         _.error(err, `failed to send ${filepath}`)
         res.status(err.statusCode).json(err)
       }
