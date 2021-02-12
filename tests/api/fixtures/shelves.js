@@ -2,8 +2,9 @@ const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const faker = require('faker')
 const { customAuthReq } = require('../utils/request')
-const { authReq, getUser } = require('../utils/utils')
+const { getUser } = require('../utils/utils')
 const { createItem } = require('../fixtures/items')
+const { addItemsToShelf } = require('../utils/shelves')
 
 const fixtures = module.exports = {
   shelfName: () => `${faker.lorem.words(3)} shelf`,
@@ -22,18 +23,20 @@ const fixtures = module.exports = {
     const { shelves } = await customAuthReq(userPromise, 'get', `${ownerEndpoint}&owners=${user._id}`)
     return Object.values(shelves).find(shelf => shelf.name === shelfData.name)
   },
-  createShelfWithItem: async (itemPromise, shelfData = {}) => {
-    const item = await resolveOrCreateItem(itemPromise)
+
+  createShelfWithItem: async (shelfData = {}, item) => {
+    item = await (item || createItem())
     const itemId = item._id
     const shelf = await fixtures.createShelf(null, shelfData)
-    const shelvesWithItem = await authReq('post', '/api/shelves?action=add-items', {
-      id: shelf._id,
-      items: [ itemId ]
-    })
-    return _.values(shelvesWithItem.shelves)[0]
-  }
-}
+    await addItemsToShelf(null, shelf, [ itemId ])
+    return { shelf, item }
+  },
 
-const resolveOrCreateItem = async itemPromise => {
-  return itemPromise ? itemPromise() : createItem()
+  createShelfWithItems: async (shelfData = {}, items) => {
+    items = await Promise.all(items.map(item => item || createItem()))
+    const itemsIds = _.map(items, '_id')
+    const shelf = await fixtures.createShelf(null, shelfData)
+    await addItemsToShelf(null, shelf, itemsIds)
+    return { shelf, items }
+  }
 }

@@ -89,9 +89,10 @@ const format = (input, name, formatFn, config) => {
 }
 
 const applyDefaultValue = (input, name, config, parameter) => {
-  if (config.default != null) {
+  // Accept 'null' as a default value
+  if (config.default !== undefined) {
     input[name] = _.cloneDeep(config.default)
-  } else if (parameter.default != null) {
+  } else if (parameter.default !== undefined) {
     input[name] = _.cloneDeep(parameter.default)
   }
 }

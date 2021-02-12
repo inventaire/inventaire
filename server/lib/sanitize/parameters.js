@@ -238,6 +238,7 @@ module.exports = {
   username: { validate: validations.common.username },
   usernames,
   relatives: allowlistedStrings,
+  requester: couchUuid,
   value: {
     // Endpoints accepting a 'value' can specify a type
     // or have to do their own validation

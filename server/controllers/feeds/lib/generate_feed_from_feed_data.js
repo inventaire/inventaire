@@ -5,22 +5,25 @@ const { feed: feedConfig } = CONFIG
 const snapshot_ = __.require('controllers', 'items/lib/snapshot/snapshot')
 const serializeFeed = require('./serialize_feed')
 const getItemsByAccessLevel = __.require('controllers', 'items/lib/get_by_access_level')
+const getAuthorizedItems = __.require('controllers', 'items/lib/get_authorized_items')
 const user_ = __.require('controllers', 'user/lib/user')
-const promises_ = __.require('lib', 'promises')
 
-module.exports = lang => feedData => {
-  const { accessLevel, feedOptions } = feedData
-  let { users } = feedData
+module.exports = lang => async ({ accessLevel, reqUserId, feedOptions, users, shelves }) => {
   users = users.map(user_.serializeData)
   const usersIds = _.map(users, '_id')
-  return getLastItemsFromUsersIds(usersIds, accessLevel)
-  .then(items => serializeFeed(feedOptions, users, items, lang))
+  let items
+  if (shelves) {
+    items = await getAuthorizedItems.byShelves(shelves, reqUserId)
+  } else {
+    items = await getLastItemsFromUsersIds(usersIds, accessLevel)
+  }
+  return serializeFeed(feedOptions, users, items, lang)
 }
 
-const getLastItemsFromUsersIds = (usersIds, accessLevel) => {
-  return getItemsByAccessLevel[accessLevel](usersIds)
-  .then(extractLastItems)
-  .then(promises_.map(snapshot_.addToItem))
+const getLastItemsFromUsersIds = async (usersIds, accessLevel) => {
+  let items = await getItemsByAccessLevel[accessLevel](usersIds)
+  items = extractLastItems(items)
+  return Promise.all(items.map(snapshot_.addToItem))
 }
 
 const extractLastItems = items => {

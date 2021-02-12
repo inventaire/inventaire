@@ -66,7 +66,7 @@ const groups_ = module.exports = {
     return groups_.byId(groupId)
     .then(group => {
       if (group == null) throw error_.notFound({ group: groupId })
-      return Group.getAllMembers(group)
+      return Group.getAllMembersIds(group)
     })
   }
 }

@@ -2,9 +2,7 @@ const __ = require('config').universalPath
 const user_ = __.require('controllers', 'user/lib/user')
 const getInventoryAccessLevel = __.require('controllers', 'items/lib/get_inventory_access_level')
 
-module.exports = async (userId, authentifiedUserPromise) => {
-  const reqUserId = await getReqUserId(authentifiedUserPromise)
-
+module.exports = async (userId, reqUserId) => {
   const [ user, accessLevel ] = await Promise.all([
     user_.byId(userId),
     getInventoryAccessLevel(userId, reqUserId)
@@ -22,9 +20,4 @@ module.exports = async (userId, authentifiedUserPromise) => {
       pathname: `inventory/${user._id}`
     }
   }
-}
-
-const getReqUserId = async authentifiedUserPromise => {
-  const reqUser = await authentifiedUserPromise
-  if (reqUser) return reqUser._id
 }
