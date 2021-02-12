@@ -21,7 +21,8 @@ module.exports = async (req, res, url, dimensions) => {
   try {
     response = await fetch(url, reqOptions)
   } catch (err) {
-    return error_.handler(req, res, err, 500)
+    error_.handler(req, res, err, 500)
+    return
   }
 
   const { statusText } = response
@@ -47,7 +48,7 @@ module.exports = async (req, res, url, dimensions) => {
   } else {
     res.header('Content-Type', 'image/jpeg')
     res.header('Cache-Control', 'immutable')
-    return resizeFromStream(response.body, width, height, req, res)
+    resizeFromStream(response.body, width, height, req, res)
   }
 }
 
