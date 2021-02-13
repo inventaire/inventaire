@@ -94,6 +94,7 @@ const searchEntityDuplicatesSuggestions = async entity => {
     search: name,
     types: [ 'humans' ],
     filter: 'wd',
+    exact: true,
     minScore: lowestSuggestionMatchScore
   })
 
