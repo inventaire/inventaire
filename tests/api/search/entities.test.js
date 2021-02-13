@@ -76,12 +76,27 @@ describe('search:entities', () => {
         results.length.should.equal(0)
       })
 
-      // TODO: make this test pass
+      // FIX. This test passes when the search_analyzer is set to 'standard' (instead of 'simple')
       xit('should find a label with special characters', async () => {
         const label = "L'eau douce en péril !"
         const work = await createWork({ labels: { fr: label } })
         await waitForIndexation('entities', work._id)
         const results = await search({ types: 'works', search: label, lang: 'fr', exact: true })
+        _.map(results, 'uri').should.containEql(work.uri)
+      })
+
+      // FIX: The reason this test fails seems to be that we use
+      // the autocomplete analyzer with a max_gram lower those terms, as you can
+      // see by searching 'Metaphysis Anfangsgrü der Naturwisse' instead.
+      // The test also passes when search_analyzer is let unspecified at indexation
+      // letting the search query use the autocomplete tokenizer
+      xit('should find a label containing long terms', async () => {
+        const label = 'Metaphysische Anfangsgründe der Naturwissenschaft'
+        const work = await createWork({ labels: { de: label } })
+        console.log({ work })
+        await waitForIndexation('entities', work._id)
+        const results = await search({ types: 'works', search: label, lang: 'de', exact: true })
+        console.log({ results })
         _.map(results, 'uri').should.containEql(work.uri)
       })
     })
