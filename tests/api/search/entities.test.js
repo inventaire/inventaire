@@ -76,8 +76,7 @@ describe('search:entities', () => {
         results.length.should.equal(0)
       })
 
-      // FIX. This test passes when the search_analyzer is set to 'standard' (instead of 'simple')
-      xit('should find a label with special characters', async () => {
+      it('should find a label with special characters', async () => {
         const label = "L'eau douce en péril !"
         const work = await createWork({ labels: { fr: label } })
         await waitForIndexation('entities', work._id)
