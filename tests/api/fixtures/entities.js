@@ -159,7 +159,14 @@ const API = module.exports = {
     return API.generateIsbn13()
   },
 
-  generateIsbn13h: () => isbn_.toIsbn13h(API.generateIsbn13())
+  generateIsbn13h: () => isbn_.toIsbn13h(API.generateIsbn13()),
+
+  sameFirstNameLabel: label => {
+    const newLastName = faker.name.lastName()
+    const labelNames = label.split(' ')
+    labelNames[1] = newLastName
+    return labelNames.join(' ')
+  }
 }
 
 const addEntityClaim = (createFnName, property) => async (subjectEntity, objectEntity) => {

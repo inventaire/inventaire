@@ -2,7 +2,7 @@ const __ = require('config').universalPath
 const { getSingularTypes } = __.require('lib', 'wikidata/aliases')
 
 module.exports = params => {
-  const { lang: userLang, search, limit: size, minScore = 1 } = params
+  const { lang: userLang, search, limit: size, exact, minScore = 1 } = params
   let { types } = params
   types = getSingularTypes(types)
 
@@ -11,14 +11,16 @@ module.exports = params => {
       function_score: {
         query: {
           bool: {
-            must: [
+            filter: [
               // at least one type should match
               // this is basically an 'or' operator
               { bool: { should: matchType(types) } },
+            ],
+            must: [
               // Because most of the work has been done at index time (indexing terms by ngrams)
               // all this query needs to do is to look up search terms which is way more efficient than the match_phrase_prefix approach
               // See https://www.elastic.co/guide/en/elasticsearch/guide/current/_index_time_search_as_you_type.html
-              { bool: { should: matchEntities(search, userLang) } }
+              { bool: { should: matchEntities(search, userLang, exact) } }
             ]
           }
         },
@@ -42,49 +44,58 @@ module.exports = params => {
   }
 }
 
-const matchType = types => {
-  return types.map(type => (
-    { match: { type } }
-  ))
-}
+const matchType = types => types.map(type => ({ term: { type } }))
 
-const matchEntities = (search, userLang) => {
-  const fields = entitiesFields(userLang)
-  return [
+const matchEntities = (search, userLang, exact) => {
+  const fields = entitiesFields(userLang, exact)
+
+  const should = [
     {
       // Use query_string to give exact matches a boost.
       // See query strings doc : https://www.elastic.co/guide/en/elasticsearch/reference/7.10/query-dsl-query-string-query.html
-      query_string: {
-        query: dropSpecialQueryCharacters(search),
-        default_operator: 'AND',
-        fields,
-        boost: 3
-      }
-    },
-    {
       multi_match: {
         query: search,
+        operator: 'and',
         fields,
+        analyzer: 'standard',
+        type: 'best_fields',
+        boost: 3
       }
     }
   ]
+
+  if (!exact) {
+    should.push({
+      multi_match: {
+        query: search,
+        fields,
+        analyzer: 'standard',
+      }
+    })
+  }
+
+  return should
 }
 
-const entitiesFields = userLang => {
+const entitiesFields = (userLang, exact) => {
   const fields = [
     'labels.*',
     'aliases.*^0.5',
-    'descriptions.*^0.25',
-    'flattenedLabels^0.25', // text type
-    'flattenedAliases^0.25', // text type
-    'flattenedDescriptions^0.25' // text type
   ]
   if (userLang) {
-    fields.push(`labels.${userLang}`)
-    fields.push(`aliases.${userLang}`)
+    fields.push(
+      `labels.${userLang}`,
+      `aliases.${userLang}`
+    )
   }
+  if (!exact) {
+    fields.push(
+      'flattenedLabels^0.25',
+      'flattenedAliases^0.25',
+      'descriptions.*^0.25',
+      'flattenedDescriptions^0.25'
+    )
+  }
+
   return fields
 }
-
-const specialQueryCharacters = /[!*~+/\\[\]]/g
-const dropSpecialQueryCharacters = str => str.replace(specialQueryCharacters, '')

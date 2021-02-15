@@ -2,8 +2,9 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
-const { createWork, createHuman, createSerie, createCollection, createPublisher } = require('../fixtures/entities')
+const { createWork, createHuman, createSerie, createCollection, createPublisher, sameFirstNameLabel } = require('../fixtures/entities')
 const { getByUris } = require('../utils/entities')
+const { shouldNotBeCalled } = require('../utils/utils')
 const { search, waitForIndexation } = require('../utils/search')
 const wikidataUris = [ 'wd:Q184226', 'wd:Q180736', 'wd:Q8337', 'wd:Q225946', 'wd:Q3409094', 'wd:Q3236382' ]
 
@@ -30,6 +31,74 @@ describe('search:entities', () => {
       waitForIndexation('entities', collection._id),
       ...wikidataUris.map(uri => waitForIndexation('wikidata', uri.split(':')[1]))
     ])
+  })
+
+  describe('parameters', () => {
+    describe('exact', () => {
+      it('should reject types that are not entity related', async () => {
+        try {
+          await search({ types: [ 'groups', 'users' ], exact: true }).then(shouldNotBeCalled)
+        } catch (err) {
+          err.statusCode.should.equal(400)
+          err.body.status_verbose.should.equal('exact search is restricted to entity types')
+        }
+      })
+
+      it('should return only exact matches', async () => {
+        const humanLabel = human.labels.en
+        const results = await search({ types: 'humans', search: humanLabel, lang: 'en', exact: true })
+        results.length.should.be.aboveOrEqual(1)
+        results.forEach(result => result.label.should.equal(humanLabel))
+      })
+
+      it('should accept a different word order', async () => {
+        const humanLabel = human.labels.en
+        const reversedLabel = humanLabel.split(' ').reverse().join(' ')
+        const results = await search({ types: 'humans', search: reversedLabel, lang: 'en', exact: true })
+        results.length.should.be.aboveOrEqual(1)
+        results.forEach(result => result.label.should.equal(humanLabel))
+      })
+
+      it('should not return same first name human', async () => {
+        const humanLabel = human.labels.en
+        const almostSameLabel = sameFirstNameLabel(humanLabel)
+        const almostSameHuman = await createHuman({ labels: { en: almostSameLabel } })
+        await waitForIndexation('entities', almostSameHuman._id)
+
+        const results = await search({ types: 'humans', search: humanLabel, lang: 'en', exact: true })
+        results.should.be.an.Array()
+        const labelsInResults = results.map(_.property('label'))
+        _.uniq(labelsInResults).should.deepEqual([ humanLabel ])
+      })
+
+      it('should not match on descriptions', async () => {
+        const results = await search({ types: 'humans', search: 'philosopher', lang: 'en', exact: true })
+        results.length.should.equal(0)
+      })
+
+      it('should find a label with special characters', async () => {
+        const label = "L'eau douce en péril !"
+        const work = await createWork({ labels: { fr: label } })
+        await waitForIndexation('entities', work._id)
+        const results = await search({ types: 'works', search: label, lang: 'fr', exact: true })
+        _.map(results, 'uri').should.containEql(work.uri)
+      })
+
+      // FIX: The reason this test fails seems to be that we use
+      // the autocomplete analyzer with a max_gram lower those terms, as you can
+      // see by searching 'Metaphysis Anfangsgrü der Naturwisse' instead.
+      // The test also passes when search_analyzer is let unspecified at indexation
+      // letting the search query use the autocomplete tokenizer
+      xit('should find a label containing long terms', async () => {
+        const label = 'Metaphysische Anfangsgründe der Naturwissenschaft'
+        const work = await createWork({ labels: { de: label } })
+        console.log({ work })
+        await waitForIndexation('entities', work._id)
+        const results = await search({ types: 'works', search: label, lang: 'de', exact: true })
+        console.log({ results })
+        _.map(results, 'uri').should.containEql(work.uri)
+      })
+    })
   })
 
   describe('humans', () => {

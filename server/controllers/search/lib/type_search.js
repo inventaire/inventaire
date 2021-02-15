@@ -11,7 +11,7 @@ const indexedTypesSet = new Set(indexedTypes)
 const entitiesQueryBuilder = require('./entities_query_builder')
 const socialQueryBuilder = require('./social_query_builder')
 
-module.exports = async ({ lang, types, search, limit = 20, filter, minScore }) => {
+module.exports = async ({ lang, types, search, limit = 20, filter, exact, minScore }) => {
   assert_.array(types)
   for (const type of types) {
     if (!indexedTypesSet.has(type)) throw error_.new('invalid type', 500, { type, types })
@@ -20,6 +20,10 @@ module.exports = async ({ lang, types, search, limit = 20, filter, minScore }) =
 
   const hasSocialTypes = types.includes('users') || types.includes('groups')
   const hasEntityTypes = _.someMatch(types, indexedEntitiesTypes)
+
+  if (hasSocialTypes && exact) {
+    throw error_.new('exact search is restricted to entity types', 400, { givenTypes: types, validTypes: indexedEntitiesTypes })
+  }
 
   // Query must be either social (user, group) or entities related
   // but cannot be both as results scores are built very differently
@@ -34,7 +38,7 @@ module.exports = async ({ lang, types, search, limit = 20, filter, minScore }) =
   } else {
     queryIndexes = entitiesIndexesPerFilter[filter]
     if (queryIndexes == null) throw error_.new('invalid filter', 500, { filter })
-    body = entitiesQueryBuilder({ lang, types, search, limit, minScore })
+    body = entitiesQueryBuilder({ lang, types, search, limit, exact, minScore })
   }
 
   const url = `${elasticHost}/${queryIndexes.join(',')}/_search`
