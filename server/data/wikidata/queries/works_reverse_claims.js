@@ -1,5 +1,8 @@
 module.exports = {
   parameters: [ 'pid', 'qid' ],
+
+  relationProperties: [ '*' ],
+
   query: params => {
     const { pid, qid } = params
     return `SELECT DISTINCT ?item WHERE {

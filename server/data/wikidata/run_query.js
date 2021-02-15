@@ -1,10 +1,12 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
+const radio = __.require('lib', 'radio')
 const cache_ = __.require('lib', 'cache')
 const error_ = __.require('lib', 'error/error')
 const wdk = require('wikidata-sdk')
 const makeSparqlRequest = require('./make_sparql_request')
-const queries = require('./queries/queries')
+const { queries, queriesPerProperty } = require('./queries/queries')
+const { unprefixify } = __.require('controllers', 'entities/lib/prefix')
 const possibleQueries = Object.keys(queries)
 const dashesPattern = /-/g
 
@@ -18,33 +20,39 @@ module.exports = async params => {
 
   // Converting from kebab case to snake case
   queryName = params.query = queryName.replace(dashesPattern, '_')
-
   if (!possibleQueries.includes(queryName)) {
     throw error_.new('unknown query', 400, params)
   }
 
-  const { parameters } = queries[queryName]
+  validateValues(queryName, params)
 
+  const key = buildKey(queryName, params)
+
+  const fn = runQuery.bind(null, params, key)
+  return cache_.get({ key, fn, refresh, dry, dryFallbackValue: [] })
+}
+
+const validateValues = (queryName, params) => {
   // Every type of query should specify which parameters it needs
   // with keys matching parametersTests keys
-  for (const k of parameters) {
+  for (const k of queries[queryName].parameters) {
     const value = params[k]
     if ((parametersTests[k] != null) && !parametersTests[k](value)) {
       throw error_.newInvalid(k, params)
     }
   }
+}
 
+const buildKey = (queryName, params) => {
   // Building the cache key
   let key = `wdQuery:${queryName}`
-  for (const k of parameters) {
+  for (const k of queries[queryName].parameters) {
     let value = params[k]
     // Known case: resolve_external_ids expects an array of [ property, value ] pairs
     if (!_.isString(value)) value = JSON.stringify(value)
     key += `:${value}`
   }
-
-  const fn = runQuery.bind(null, params, key)
-  return cache_.get({ key, fn, refresh, dry, dryFallbackValue: [] })
+  return key
 }
 
 const parametersTests = {
@@ -54,9 +62,19 @@ const parametersTests = {
 
 const runQuery = (params, key) => {
   const { query: queryName } = params
-  const { query: queryBuilder } = queries[queryName]
-  const sparql = queryBuilder(params)
+  const sparql = queries[queryName].query(params)
 
   return makeSparqlRequest(sparql)
   .catch(_.ErrorRethrow(key))
 }
+
+radio.on('invalidate:wikidata:entities:relations', async ({ property, valueUri }) => {
+  const queriesToInvalidate = queriesPerProperty[property] || []
+  // Queries that should be invalidated for any property
+  queriesToInvalidate.push(...queriesPerProperty['*'])
+  const pid = unprefixify(property)
+  const qid = unprefixify(valueUri)
+  const keys = queriesToInvalidate.map(queryName => buildKey(queryName, { pid, qid }))
+  await cache_.batchDelete(keys)
+  _.info(keys, 'invalidated queries cache')
+})

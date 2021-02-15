@@ -11,17 +11,14 @@ const { wait } = __.require('lib', 'promises')
 // so the following tests try to reproduce conditions as close as possible to the real use-cases
 const { cacheEntityRelations, getCachedRelations } = __.require('controllers', 'entities/lib/temporarily_cache_relations')
 
-const assertLeveldbDiskBackend = () => {
-  if (CONFIG.leveldbMemoryBackend) {
-    throw new Error(`this test requires ${CONFIG.env} config to have CONFIG.leveldbMemoryBackend=false`)
-  }
+if (CONFIG.leveldbMemoryBackend) {
+  throw new Error(`this test requires ${CONFIG.env} config to have CONFIG.leveldbMemoryBackend=false`)
 }
 
 // Due to this feature being primarily used to keep data after edits on Wikidata,
 // and due to the revalidation on primary data, it's quite hard to test from the API itself.
 describe('temporarily cache relations', () => {
   it('should add author relation to cache', async () => {
-    assertLeveldbDiskBackend()
     const someAuthorUri = 'wd:Q1345582'
     const { uri } = await createWorkWithAuthor({ uri: someAuthorUri })
     await cacheEntityRelations(uri)
@@ -30,7 +27,6 @@ describe('temporarily cache relations', () => {
   })
 
   it('should add serie relation to cache', async () => {
-    assertLeveldbDiskBackend()
     const someSerieUri = 'wd:Q3656893'
     const { uri } = await createWorkWithSerie({ uri: someSerieUri })
     await cacheEntityRelations(uri)
@@ -39,7 +35,6 @@ describe('temporarily cache relations', () => {
   })
 
   it('should check the primary data', async () => {
-    assertLeveldbDiskBackend()
     const someSerieUri = 'wd:Q3656893'
     const someUnrelatedWorkUri = 'wd:Q187655'
     const workWithSerie = await createWorkWithSerie({ uri: someSerieUri })

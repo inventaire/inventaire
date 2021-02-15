@@ -61,6 +61,11 @@ module.exports = {
     if (!_.isNonEmptyString(key)) throw error_.new('invalid key', 500)
     if (value == null) throw error_.new('missing value', 500)
     return putResponseInCache(key, value)
+  },
+
+  batchDelete: keys => {
+    const batch = _.forceArray(keys).map(key => ({ type: 'del', key }))
+    return db.batch(batch)
   }
 }
 
