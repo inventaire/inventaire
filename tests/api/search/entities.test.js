@@ -193,4 +193,13 @@ describe('search:entities', () => {
       _.map(results, 'id').includes('Q3236382').should.be.true()
     })
   })
+
+  describe('multi-types', () => {
+    it('should accept several types', async () => {
+      const types = [ 'works', 'series' ]
+      const results = await search({ types, search: serie.labels.en, limit: 20 })
+      results.forEach(result => types.should.containEql(result.type))
+      _.map(results, 'id').includes(serie._id).should.be.true()
+    })
+  })
 })

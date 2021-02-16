@@ -12,9 +12,9 @@ module.exports = params => {
         query: {
           bool: {
             filter: [
-              // at least one type should match
-              // this is basically an 'or' operator
-              { bool: { should: matchType(types) } },
+              // At least one type should match
+              // See https://www.elastic.co/guide/en/elasticsearch/reference/7.10/query-dsl-terms-query.html
+              { terms: { type: types } }
             ],
             must: [
               // Because most of the work has been done at index time (indexing terms by ngrams)
@@ -41,8 +41,6 @@ module.exports = params => {
     min_score: minScore
   }
 }
-
-const matchType = types => types.map(type => ({ term: { type } }))
 
 const matchEntities = (search, userLang, exact) => {
   const fields = entitiesFields(userLang, exact)
