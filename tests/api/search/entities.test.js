@@ -72,8 +72,11 @@ describe('search:entities', () => {
       })
 
       it('should not match on descriptions', async () => {
-        const results = await search({ types: 'humans', search: 'philosopher', lang: 'en', exact: true })
-        results.length.should.equal(0)
+        const description = 'french philosopher'
+        const results = await search({ types: 'humans', search: description, lang: 'en' })
+        results.length.should.be.aboveOrEqual(0)
+        const exactResults = await search({ types: 'humans', search: description, lang: 'en', exact: true })
+        exactResults.length.should.equal(0)
       })
 
       it('should find a label with special characters', async () => {
