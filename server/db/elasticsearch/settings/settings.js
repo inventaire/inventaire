@@ -1,5 +1,14 @@
 // See: https://www.elastic.co/guide/en/elasticsearch/reference/7.10/search-analyzer.html
 
+// To update the settings of an existing index:
+// - Close index
+//   curl -XPOST ${elastic_host}/${index_name}/_close
+// - Update index settings:
+//   settings_json=$(node -p 'JSON.stringify(require("./server/db/elasticsearch/settings/settings.js"))')
+//   curl -XPUT ${elastic_host}/${index_name}/_settings -d "$settings_json"
+// - Reopen index
+//   curl -XPOST ${elastic_host}/${index_name}/_open
+
 const maxGram = 10
 
 module.exports = {
