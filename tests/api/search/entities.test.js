@@ -84,18 +84,12 @@ describe('search:entities', () => {
         _.map(results, 'uri').should.containEql(work.uri)
       })
 
-      // FIX: The reason this test fails seems to be that we use
-      // the autocomplete analyzer with a max_gram lower those terms, as you can
-      // see by searching 'Metaphysis Anfangsgrü der Naturwisse' instead.
-      // The test also passes when search_analyzer is let unspecified at indexation
-      // letting the search query use the autocomplete tokenizer
-      xit('should find a label containing long terms', async () => {
+      it('should find a label containing terms longer than the autocomplete max ngram', async () => {
+        // Current max_ngram=10
         const label = 'Metaphysische Anfangsgründe der Naturwissenschaft'
         const work = await createWork({ labels: { de: label } })
-        console.log({ work })
         await waitForIndexation('entities', work._id)
         const results = await search({ types: 'works', search: label, lang: 'de', exact: true })
-        console.log({ results })
         _.map(results, 'uri').should.containEql(work.uri)
       })
     })

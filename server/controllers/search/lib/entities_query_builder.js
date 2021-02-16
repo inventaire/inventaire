@@ -55,7 +55,7 @@ const matchEntities = (search, userLang, exact) => {
         query: search,
         operator: 'and',
         fields,
-        analyzer: 'standard',
+        analyzer: 'standard_truncated',
         type: 'best_fields',
         boost: 3
       }
@@ -67,7 +67,7 @@ const matchEntities = (search, userLang, exact) => {
       multi_match: {
         query: search,
         fields,
-        analyzer: 'standard',
+        analyzer: 'standard_truncated',
       }
     })
   }
