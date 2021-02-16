@@ -84,6 +84,14 @@ describe('search:entities', () => {
         _.map(results, 'uri').should.containEql(work.uri)
       })
 
+      it('should ignore the case', async () => {
+        const label = "L'EAU DOUCE EN PÉRIL"
+        const work = await createWork({ labels: { fr: label.toLowerCase() } })
+        await waitForIndexation('entities', work._id)
+        const results = await search({ types: 'works', search: label, lang: 'fr', exact: true })
+        _.map(results, 'uri').should.containEql(work.uri)
+      })
+
       it('should find a label containing terms longer than the autocomplete max ngram', async () => {
         // Current max_ngram=10
         const label = 'Metaphysische Anfangsgründe der Naturwissenschaft'
