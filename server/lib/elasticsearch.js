@@ -3,6 +3,7 @@ const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const requests_ = __.require('lib', 'requests')
 const assert_ = __.require('utils', 'assert_types')
+const error_ = __.require('lib', 'error/error')
 const { host: elasticHost } = CONFIG.elasticsearch
 
 const buildSearcher = params => {
@@ -23,9 +24,16 @@ const buildSearcher = params => {
   }
 }
 
-const getHits = res => res.hits.hits
+const getHits = ({ hits, _shards }) => {
+  if (_shards.failures) {
+    const failure = _shards.failures[0]
+    throw error_.new(failure.reason.reason, 500, failure)
+  } else {
+    return hits.hits
+  }
+}
 
-const parseResponse = res => res.hits.hits.map(parseHit)
+const parseResponse = res => getHits(res).map(parseHit)
 
 // Reshape the error object to be fully displayed when logged by _.warn
 const formatError = err => {
