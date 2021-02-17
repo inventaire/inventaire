@@ -2,8 +2,14 @@
 
 set -e
 
-# If no test file is passed as argument, run all tests
+filter_files(){
+  local filter=$1
+  local file_names="${*:2}"
+  echo "$file_names" | tr ' ' '\n' | grep "$filter" | tr '\n' ' '
+}
+
 if [ -z "$1" ]; then
+  # If no test file is passed as argument, run all tests
   echo "Starting unit tests"
   ./scripts/run_unit_tests
   echo "Starting integration tests"
@@ -11,21 +17,21 @@ if [ -z "$1" ]; then
   echo "Starting API tests"
   ./tests/api/scripts/test_api
 else
-  unit_tests_files=$(echo "$@" | tr ' ' '\n' | grep 'tests/unit/' | tr '\n' ' ')
+  unit_tests_files=$(filter_files "tests/unit/" "$@")
   [ "$unit_tests_files" != "" ] && {
-    echo "Starting unit tests"
+    echo "Run unit tests from $unit_tests_files"
     ./scripts/run_unit_tests $unit_tests_files
   }
 
-  integration_tests_files=$(echo "$@" | tr ' ' '\n' | grep 'tests/integration/' | tr '\n' ' ')
+  integration_tests_files=$(filter_files "tests/integration/" "$@")
   [ "$integration_tests_files" != "" ] && {
-    echo "Starting integration tests"
+    echo "Run integration tests from $integration_tests_files"
     ./scripts/run_integration_tests $integration_tests_files
   }
 
-  api_tests_files=$(echo "$@" | tr ' ' '\n' | grep 'tests/api/' | tr '\n' ' ')
+  api_tests_files=$(filter_files "tests/api/" "$@")
   [ "$api_tests_files" != "" ] && {
-    echo "Starting API tests"
+    echo "Run API tests from $api_tests_files"
     ./tests/api/scripts/test_api_quick $api_tests_files
   }
 
