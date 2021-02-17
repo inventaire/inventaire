@@ -12,7 +12,7 @@ module.exports = (db, _) => {
   const bulkDelete = async docs => {
     assert_.objects(docs)
     if (docs.length === 0) return []
-    _.warn(docs, 'bulkDelete')
+    _.warn(docs, `${db.dbName} bulkDelete`)
     return db.bulk(couch_.setDocsDeletedTrue(docs))
   }
 

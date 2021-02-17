@@ -10,6 +10,8 @@ const { getUsersNearPosition, getRandomPosition, deleteUser } = require('../util
 const { createGroup, getGroup, addMember, addAdmin } = require('../fixtures/groups')
 const { createTransaction } = require('../fixtures/transactions')
 const { getTransaction, updateTransaction } = require('../utils/transactions')
+const { createShelf } = require('../fixtures/shelves')
+const { getShelfById } = require('../utils/shelves')
 
 describe('user:delete', () => {
   it('should delete the user', async () => {
@@ -51,6 +53,17 @@ describe('user:delete', () => {
       deleteRes.ok.should.be.true()
       const updatedItem = await getItemById(item)
       should(updatedItem).not.be.ok()
+    })
+  })
+
+  describe('shelves', () => {
+    it('should delete the user shelves', async () => {
+      const user = await getReservedUser()
+      const shelf = await createShelf(user, { listing: 'public' })
+      const deleteRes = await deleteUser(user)
+      deleteRes.ok.should.be.true()
+      const updatedShelf = await getShelfById(getUser(), shelf._id)
+      should(updatedShelf).not.be.ok()
     })
   })
 

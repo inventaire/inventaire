@@ -17,7 +17,7 @@ const getHandler = memoize((dbBaseName, dbName, designDocName) => {
   validate(dbBaseName, designDocName)
   const db = getDbApi(dbName, designDocName)
   const bundles = require('./bundles')(db, _)
-  return Object.assign(db, bundles)
+  return Object.assign(db, bundles, { dbBaseName, dbName, designDocName })
 })
 
 // Not using error_ as that would make hard to solve cirucular dependencies

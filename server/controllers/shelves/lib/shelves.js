@@ -51,7 +51,11 @@ const shelves_ = module.exports = {
         throw error_.new('wrong owner', 403, { userId, shelfId: shelf._id })
       }
     }
-  }
+  },
+  deleteUserShelves: userId => {
+    return db.viewByKeys('byOwners', [ userId ])
+    .then(db.bulkDelete)
+  },
 }
 
 const updateShelvesItems = async (action, shelvesIds, userId, itemsIds) => {
