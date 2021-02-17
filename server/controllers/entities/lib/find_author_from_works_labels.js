@@ -28,7 +28,7 @@ module.exports = async (authorStr, worksLabels, worksLabelsLangs) => {
   })
 }
 
-const searchHumans = authorStr => typeSearch({ search: authorStr, types: [ 'humans' ], filter: 'wd', minScore: 1 })
+const searchHumans = authorStr => typeSearch({ search: authorStr, types: [ 'humans' ], filter: 'wd', exact: true })
 
 const parseWdUris = hits => hits.map(hit => hit._source.uri)
 

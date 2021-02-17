@@ -22,7 +22,7 @@ module.exports = async seed => {
   const cachedWorkPromise = workEntitiesCache.get(seed)
   if (cachedWorkPromise != null) return cachedWorkPromise
 
-  const results = await typeSearch({ search: title, types: [ 'works' ], lang })
+  const results = await typeSearch({ search: title, types: [ 'works' ], lang, exact: true })
   const uris = results.map(result => result._source.uri)
   let entities = await getEntitiesByUris({ uris, list: true })
 
