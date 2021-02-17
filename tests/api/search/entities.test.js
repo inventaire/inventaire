@@ -3,11 +3,12 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
 const { createWork, createHuman, createSerie, createCollection, createPublisher, sameFirstNameLabel } = require('../fixtures/entities')
-const { randomWords } = require('../fixtures/text')
+const { randomLongWord, randomWords } = require('../fixtures/text')
 const { getByUris } = require('../utils/entities')
 const { shouldNotBeCalled } = require('../utils/utils')
 const { search, waitForIndexation } = require('../utils/search')
 const wikidataUris = [ 'wd:Q184226', 'wd:Q180736', 'wd:Q8337', 'wd:Q225946', 'wd:Q3409094', 'wd:Q3236382' ]
+const { max_gram: maxGram } = __.require('db', 'elasticsearch/settings/settings').analysis.filter.autocomplete_filter
 
 describe('search:entities', () => {
   let human, work, serie, collection, publisher
@@ -101,8 +102,8 @@ describe('search:entities', () => {
       })
 
       it('should find a label containing terms longer than the autocomplete max ngram', async () => {
-        // Current max_ngram=10
-        const label = 'Metaphysische Anfangsgründe der Naturwissenschaft'
+        const wordLength = maxGram + 5
+        const label = `${randomLongWord(wordLength)} ${randomLongWord(wordLength)} ${randomLongWord(wordLength)}`
         const work = await createWork({ labels: { de: label } })
         await waitForIndexation('entities', work._id)
         const results = await search({ types: 'works', search: label, lang: 'de', exact: true })
