@@ -6,6 +6,8 @@ module.exports = params => {
   let { types } = params
   types = getSingularTypes(types)
 
+  const boolMode = exact ? 'must' : 'should'
+
   return {
     query: {
       function_score: {
@@ -16,12 +18,10 @@ module.exports = params => {
               // See https://www.elastic.co/guide/en/elasticsearch/reference/7.10/query-dsl-terms-query.html
               { terms: { type: types } }
             ],
-            must: [
-              // Because most of the work has been done at index time (indexing terms by ngrams)
-              // all this query needs to do is to look up search terms which is way more efficient than the match_phrase_prefix approach
-              // See https://www.elastic.co/guide/en/elasticsearch/guide/current/_index_time_search_as_you_type.html
-              { bool: { should: matchEntities(search, userLang, exact) } }
-            ]
+            // Because most of the work has been done at index time (indexing terms by ngrams)
+            // all this query needs to do is to look up search terms which is way more efficient than the match_phrase_prefix approach
+            // See https://www.elastic.co/guide/en/elasticsearch/guide/current/_index_time_search_as_you_type.html
+            [boolMode]: matchEntities(search, userLang, exact)
           }
         },
         functions: [
@@ -45,7 +45,7 @@ module.exports = params => {
 const matchEntities = (search, userLang, exact) => {
   const fields = entitiesFields(userLang, exact)
 
-  const should = [
+  const queries = [
     {
       // Use query_string to give exact matches a boost.
       // See query strings doc : https://www.elastic.co/guide/en/elasticsearch/reference/7.10/query-dsl-query-string-query.html
@@ -61,7 +61,7 @@ const matchEntities = (search, userLang, exact) => {
   ]
 
   if (!exact) {
-    should.push({
+    queries.push({
       multi_match: {
         query: search,
         fields,
@@ -70,7 +70,7 @@ const matchEntities = (search, userLang, exact) => {
     })
   }
 
-  return should
+  return queries
 }
 
 const entitiesFields = (userLang, exact) => {
