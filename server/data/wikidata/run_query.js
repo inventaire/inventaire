@@ -69,9 +69,9 @@ const runQuery = (params, key) => {
 }
 
 radio.on('invalidate:wikidata:entities:relations', async ({ property, valueUri }) => {
-  const queriesToInvalidate = queriesPerProperty[property] || []
-  // Queries that should be invalidated for any property
-  queriesToInvalidate.push(...queriesPerProperty['*'])
+  const queriesToInvalidate = (queriesPerProperty[property] || [])
+    // Add queries that should be invalidated for any property
+    .concat(queriesPerProperty['*'])
   const pid = unprefixify(property)
   const qid = unprefixify(valueUri)
   const keys = queriesToInvalidate.map(queryName => buildKey(queryName, { pid, qid }))
