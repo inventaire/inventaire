@@ -24,17 +24,13 @@ module.exports = params => {
             [boolMode]: matchEntities(search, userLang, exact)
           }
         },
-        functions: [
-          {
-            // See: https://www.elastic.co/guide/en/elasticsearch/reference/7.10/query-dsl-function-score-query.html#function-field-value-factor
-            field_value_factor: {
-              field: 'popularity',
-              // Inspired by https://www.elastic.co/guide/en/elasticsearch/guide/current/boosting-by-popularity.html
-              modifier: 'ln2p',
-              missing: 1
-            },
-          }
-        ],
+        // See: https://www.elastic.co/guide/en/elasticsearch/reference/7.10/query-dsl-function-score-query.html#function-field-value-factor
+        field_value_factor: {
+          field: 'popularity',
+          // Inspired by https://www.elastic.co/guide/en/elasticsearch/guide/current/boosting-by-popularity.html
+          modifier: 'ln2p',
+          missing: 1
+        },
       },
     },
     size,
