@@ -3,6 +3,7 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
 const { createWork, createHuman, createSerie, createCollection, createPublisher, sameFirstNameLabel } = require('../fixtures/entities')
+const { randomWords } = require('../fixtures/text')
 const { getByUris } = require('../utils/entities')
 const { shouldNotBeCalled } = require('../utils/utils')
 const { search, waitForIndexation } = require('../utils/search')
@@ -80,7 +81,9 @@ describe('search:entities', () => {
       })
 
       it('should find a label with special characters', async () => {
-        const label = "L'eau douce en péril !"
+        // Insert random words in the middle to mitigate a too low score due to a high term frequency
+        // when running the tests several times without emptying the database
+        const label = `L'eau ${randomWords(2)} en péril !`
         const work = await createWork({ labels: { fr: label } })
         await waitForIndexation('entities', work._id)
         const results = await search({ types: 'works', search: label, lang: 'fr', exact: true })
@@ -88,7 +91,9 @@ describe('search:entities', () => {
       })
 
       it('should ignore the case', async () => {
-        const label = "L'EAU DOUCE EN PÉRIL"
+        // Insert random words in the middle to mitigate a too low score due to a high term frequency
+        // when running the tests several times without emptying the database
+        const label = `L'EAU DOUCE ${randomWords(2).toUpperCase()} EN PÉRIL`
         const work = await createWork({ labels: { fr: label.toLowerCase() } })
         await waitForIndexation('entities', work._id)
         const results = await search({ types: 'works', search: label, lang: 'fr', exact: true })

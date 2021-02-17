@@ -7,6 +7,7 @@ const wdLang = require('wikidata-lang')
 const { getByUri, addClaim } = require('../utils/entities')
 const faker = require('faker')
 const someImageHash = 'aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd'
+const { humanName, randomWords } = require('./text')
 
 const createEntity = (P31, options = {}) => (params = {}) => {
   const { canHaveLabels = true, defaultClaims } = options
@@ -22,9 +23,6 @@ const createEntity = (P31, options = {}) => (params = {}) => {
   return customAuthReq(user, 'post', '/api/entities?action=create', { labels, claims })
 }
 
-const humanName = () => faker.fake('{{name.firstName}} {{name.lastName}}')
-const randomWords = length => faker.random.words(length)
-
 const API = module.exports = {
   createEntity,
   createHuman: createEntity('wd:Q5'),
@@ -38,7 +36,8 @@ const API = module.exports = {
       'wdt:P1476': [ randomWords(4) ]
     }
   }),
-  randomLabel: (length = 5) => randomWords(length),
+
+  randomLabel: randomWords,
   humanName,
 
   createEdition: async (params = {}) => {
