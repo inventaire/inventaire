@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+set -e
+
+# If no test file is passed as argument, run all tests
+if [ -z "$1" ]; then
+  echo "Starting unit tests"
+  ./scripts/run_unit_tests
+  echo "Starting integration tests"
+  ./scripts/run_integration_tests
+  echo "Starting API tests"
+  ./tests/api/scripts/test_api
+else
+  unit_tests_files=$(echo "$@" | tr ' ' '\n' | grep 'tests/unit/' | tr '\n' ' ')
+  [ "$unit_tests_files" != "" ] && {
+    echo "Starting unit tests"
+    ./scripts/run_unit_tests $unit_tests_files
+  }
+
+  integration_tests_files=$(echo "$@" | tr ' ' '\n' | grep 'tests/integration/' | tr '\n' ' ')
+  [ "$integration_tests_files" != "" ] && {
+    echo "Starting integration tests"
+    ./scripts/run_integration_tests $integration_tests_files
+  }
+
+  api_tests_files=$(echo "$@" | tr ' ' '\n' | grep 'tests/api/' | tr '\n' ' ')
+  [ "$api_tests_files" != "" ] && {
+    echo "Starting API tests"
+    ./tests/api/scripts/test_api_quick $api_tests_files
+  }
+
+  true
+fi

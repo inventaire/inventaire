@@ -31,10 +31,11 @@
     "replicate-tests-db": "./scripts/replicate_tests_db.js",
     "start": "node server/server.js",
     "start-tests-server": "./tests/api/scripts/start_tests_server",
-    "test": "./scripts/run_unit_tests",
+    "test": "./scripts/run_tests",
     "test-api": "./tests/api/scripts/test_api",
     "test-api-quick": "./tests/api/scripts/test_api_quick",
     "test-integration": "./scripts/run_integration_tests",
+    "test-unit": "./scripts/run_unit_tests",
     "update-i18n": "./scripts/update_i18n",
     "update-toc": "./scripts/update_toc",
     "watch": "./scripts/watch"
