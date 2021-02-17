@@ -1,0 +1,217 @@
+{
+  "pageid": 794,
+  "ns": 0,
+  "title": "Q535",
+  "lastrevid": 1361680964,
+  "modified": "2021-02-15T10:38:27Z",
+  "type": "item",
+  "id": "Q535",
+  "labels": {
+    "en": {
+      "language": "en",
+      "value": "Victor Hugo"
+    },
+    "ru": {
+      "language": "ru",
+      "value": "Виктор Гюго"
+    },
+    "fr": {
+      "language": "fr",
+      "value": "Victor Hugo"
+    },
+    "it": {
+      "language": "it",
+      "value": "Victor Hugo"
+    },
+    "ca": {
+      "language": "ca",
+      "value": "Victor Hugo"
+    },
+    "nb": {
+      "language": "nb",
+      "value": "Victor Hugo"
+    },
+    "ilo": {
+      "language": "ilo",
+      "value": "Victor Hugo"
+    },
+    "de": {
+      "language": "de",
+      "value": "Victor Hugo"
+    },
+    "es": {
+      "language": "es",
+      "value": "Victor Hugo"
+    },
+    "an": {
+      "language": "an",
+      "value": "Victor Hugo"
+    },
+    "fake": {
+      "language": "fake",
+      "value": "Victor rdtfgexupo Hugo"
+    }
+  },
+  "descriptions": {
+    "en": {
+      "language": "en",
+      "value": "French poet, novelist, and dramatist (1802-1885)"
+    },
+    "fr": {
+      "language": "fr",
+      "value": "écrivain, poète et homme politique français"
+    },
+    "it": {
+      "language": "it",
+      "value": "scrittore francese"
+    },
+    "ca": {
+      "language": "ca",
+      "value": "Escriptor francès"
+    },
+    "nb": {
+      "language": "nb",
+      "value": "fransk forfatter"
+    },
+    "ilo": {
+      "language": "ilo",
+      "value": "Pranses a mannaniw, nobelista, ken dramatista"
+    },
+    "de": {
+      "language": "de",
+      "value": "französischer Poet und Autor (1802-1885)"
+    },
+    "fake": {
+      "language": "fake",
+      "value": "tstnhvhwvv"
+    }
+  },
+  "aliases": {
+    "es": [
+      {
+        "language": "es",
+        "value": "Víctor Marie Hugo"
+      },
+      {
+        "language": "es",
+        "value": "Victor Marie Hugo"
+      },
+      {
+        "language": "es",
+        "value": "Victor-Marie Hugo"
+      }
+    ],
+    "en": [
+      {
+        "language": "en",
+        "value": "Victor Marie Hugo"
+      },
+      {
+        "language": "en",
+        "value": "Victor-Marie Hugo"
+      },
+      {
+        "language": "en",
+        "value": "Victor Marie, Comte Hugo"
+      }
+    ],
+    "fr": [
+      {
+        "language": "fr",
+        "value": "L'Homme océan"
+      },
+      {
+        "language": "fr",
+        "value": "Victor Marie Hugo"
+      },
+      {
+        "language": "fr",
+        "value": "Victor, Marie Hugo"
+      }
+    ],
+    "zh": [
+      {
+        "language": "zh",
+        "value": "雨果"
+      },
+      {
+        "language": "zh",
+        "value": "維克多•雨果"
+      }
+    ],
+    "he": [
+      {
+        "language": "he",
+        "value": "הוגא, וויקטאר"
+      }
+    ],
+    "ru": [
+      {
+        "language": "ru",
+        "value": "Гюго, Виктор"
+      },
+      {
+        "language": "ru",
+        "value": "Гюго, Виктор Мари"
+      },
+      {
+        "language": "ru",
+        "value": "Виктор Мари Гюго"
+      }
+    ],
+    "fake": [
+      {
+        "language": "fake",
+        "value": "Victor bbcpsptnhh"
+      },
+      {
+        "language": "fake",
+        "value": "ebnkwspgrw Hugo"
+      },
+      {
+        "language": "fake",
+        "value": "Victor depfrznqhb Hugo"
+      }
+    ]
+  },
+  "claims": {
+    "P31": [
+      {
+        "mainsnak": {
+          "snaktype": "value",
+          "property": "P31",
+          "hash": "ad7d38a03cdd40cdc373de0dc4e7b7fcbccb31d9",
+          "datavalue": {
+            "value": {
+              "entity-type": "item",
+              "numeric-id": 5,
+              "id": "Q5"
+            },
+            "type": "wikibase-entityid"
+          },
+          "datatype": "wikibase-item"
+        },
+        "type": "statement",
+        "id": "Q535$98CA28BF-453B-4594-BE44-3C684183F734",
+        "rank": "normal"
+      }
+    ]
+  },
+  "sitelinks": {
+    "afwiki": {
+      "site": "afwiki",
+      "title": "Victor Hugo",
+      "badges": []
+    },
+    "afwikiquote": {
+      "site": "afwikiquote",
+      "title": "Victor Hugo",
+      "badges": []
+    },
+    "alswiki": {
+      "site": "alswiki",
+      "title": "Victor Hugo",
+      "badges": []
+    }
+  }
+}
