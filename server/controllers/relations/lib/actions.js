@@ -2,18 +2,19 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const queries_ = require('./queries')
 const radio = __.require('lib', 'radio')
-const { tapEmit } = radio
 
 module.exports = {
-  acceptRequest: (userId, otherId) => {
-    return queries_.putFriendStatus(userId, otherId)
-    .then(tapEmit('notify:friend:request:accepted', otherId, userId))
+  acceptRequest: async (userId, otherId) => {
+    const res = await queries_.putFriendStatus(userId, otherId)
+    await radio.emit('notify:friend:request:accepted', otherId, userId)
+    return res
   },
 
-  simultaneousRequest: (userId, otherId) => {
-    return queries_.putFriendStatus(userId, otherId)
-    .then(tapEmit('notify:friend:request:accepted', otherId, userId))
-    .then(tapEmit('notify:friend:request:accepted', userId, otherId))
+  simultaneousRequest: async (userId, otherId) => {
+    const res = await queries_.putFriendStatus(userId, otherId)
+    await radio.emit('notify:friend:request:accepted', otherId, userId)
+    await radio.emit('notify:friend:request:accepted', userId, otherId)
+    return res
   },
 
   makeRequest: async (inviterId, recipientId, notify = true) => {
