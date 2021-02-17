@@ -33,11 +33,11 @@ const lists = module.exports = {
     .then(db.bulkDelete)
   },
 
-  getUserFriendsAndCoGroupsMembers: userId => {
-    return Promise.all([
+  getUserFriendsAndCoGroupsMembers: async userId => {
+    const [ friends, coMembers ] = await Promise.all([
       lists.getUserFriends(userId),
       groups_.findUserGroupsCoMembers(userId)
     ])
-    .then(([ friends, coMembers ]) => _.uniq(friends.concat(coMembers)))
+    return _.uniq(friends.concat(coMembers))
   }
 }

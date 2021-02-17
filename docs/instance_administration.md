@@ -43,3 +43,5 @@ Delete a user account in the same way a user could do, namely by also cleaning u
 ```sh
 npm run db-actions:delete-user <user id>
 ```
+
+The script will ask for confirmation for any user that has shown signs of activity

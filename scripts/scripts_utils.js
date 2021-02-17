@@ -3,6 +3,7 @@ const _ = __.require('builders', 'utils')
 const { red } = require('chalk')
 const { promisify } = require('util')
 const exec = promisify(require('child_process').exec)
+const read = promisify(require('read'))
 
 module.exports = {
   logErrorAndExit: (label, err) => {
@@ -25,7 +26,9 @@ module.exports = {
       stdout: stdout.trim(),
       stderr: stderr.trim()
     }
-  }
+  },
+
+  prompt: async message => read({ prompt: message })
 }
 
 const makeSureLogsAreWrittenBeforeExit = () => {
