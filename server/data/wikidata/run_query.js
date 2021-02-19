@@ -76,5 +76,4 @@ radio.on('invalidate:wikidata:entities:relations', async ({ property, valueUri }
   const qid = unprefixify(valueUri)
   const keys = queriesToInvalidate.map(queryName => buildKey(queryName, { pid, qid }))
   await cache_.batchDelete(keys)
-  _.info(keys, 'invalidated queries cache')
 })
