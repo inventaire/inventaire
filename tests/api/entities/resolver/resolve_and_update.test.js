@@ -181,6 +181,25 @@ describe('entities:resolver:update-resolved', () => {
     batchId.should.above(startTime)
     batchId.should.below(Date.now())
   })
+
+  it('should not update if entry date is as precise as entity date', async () => {
+    const year = '2020'
+    const { uri, isbn } = await createEditionWithIsbn({ publicationDate: year })
+    const entry = {
+      edition: {
+        isbn,
+        claims: { 'wdt:P577': year }
+      }
+    }
+    const { entities: preResolvedEntities } = await getByUris(uri)
+    const preResolvedEntityVersion = Object.values(preResolvedEntities)[0].version
+
+    await resolveAndUpdate(entry)
+    await wait(10)
+    const { entities: postResolvedEntities } = await getByUris(uri)
+    const postResolvedEntityVersion = Object.values(postResolvedEntities)[0].version
+    postResolvedEntityVersion.should.equal(preResolvedEntityVersion)
+  })
 })
 
 const someEntryWithAGoodReadsWorkId = () => ({
