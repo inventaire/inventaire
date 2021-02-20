@@ -22,8 +22,7 @@ const updateEntityFromSeed = (reqUserId, batchId) => async seed => {
   if (prefix === 'wd') return
 
   const entity = await getEntity(prefix, entityId)
-  await updateDatePrecision(entity, seedClaims, reqUserId, batchId)
-  await addMissingClaims(entity, seedClaims, imageUrl, reqUserId, batchId)
+  await updateClaims(entity, seedClaims, imageUrl, reqUserId, batchId)
 }
 
 const getEntity = (prefix, entityId) => {
@@ -34,13 +33,18 @@ const getEntity = (prefix, entityId) => {
   }
 }
 
-const addMissingClaims = async (entity, seedClaims, imageUrl, reqUserId, batchId) => {
-  // Do not update if property already exists
+const updateClaims = async (entity, seedClaims, imageUrl, reqUserId, batchId) => {
+  // Do not update if property already exists (except if date is more precise)
   // Known cases: avoid updating authors who are actually edition translators
+  const updatedEntity = _.cloneDeep(entity)
   const newClaims = _.omit(seedClaims, Object.keys(entity.claims))
+  _.forEach(newClaims, (newValues, prop) => {
+    updatedEntity.claims[prop] = newClaims[prop]
+  })
+  updateDatePrecision(entity, updatedEntity, seedClaims)
   await addImageClaim(entity, imageUrl, newClaims)
-  if (_.isEmpty(newClaims)) return
-  return entities_.addClaims(reqUserId, newClaims, entity, batchId)
+  if (_.isEqual(updatedEntity, entity)) return
+  await entities_.putUpdate({ userId: reqUserId, currentDoc: entity, updatedDoc: updatedEntity, batchId })
 }
 
 const addImageClaim = async (entity, imageUrl, newClaims) => {
@@ -51,9 +55,8 @@ const addImageClaim = async (entity, imageUrl, newClaims) => {
   newClaims['invp:P2'] = [ imageHash ]
 }
 
-const updateDatePrecision = async (currentDoc, seedClaims, userId, batchId) => {
+const updateDatePrecision = (currentDoc, updatedDoc, seedClaims) => {
   const seedDateClaims = _.pick(seedClaims, simpleDayProperties)
-  const updatedDoc = _.cloneDeep(currentDoc)
 
   _.forEach(seedDateClaims, (seedDates, prop) => {
     const seedDate = seedDates[0]
@@ -62,8 +65,6 @@ const updateDatePrecision = async (currentDoc, seedClaims, userId, batchId) => {
       updatedDoc.claims[prop] = seedDateClaims[prop]
     }
   })
-  if (_.isEqual(updatedDoc, currentDoc)) return
-  await entities_.putUpdate({ userId, currentDoc, updatedDoc, batchId })
 }
 
 const simpleDayProperties = [ 'wdt:P569', 'wdt:P570', 'wdt:P571', 'wdt:P576', 'wdt:P577' ]
