@@ -44,7 +44,12 @@ const updateClaims = async (entity, seedClaims, imageUrl, reqUserId, batchId) =>
   updateDatePrecision(entity, updatedEntity, seedClaims)
   await addImageClaim(entity, imageUrl, newClaims)
   if (_.isEqual(updatedEntity, entity)) return
-  await entities_.putUpdate({ userId: reqUserId, currentDoc: entity, updatedDoc: updatedEntity, batchId })
+  await entities_.putUpdate({
+    userId: reqUserId,
+    currentDoc: entity,
+    updatedDoc: updatedEntity,
+    batchId
+  })
 }
 
 const addImageClaim = async (entity, imageUrl, newClaims) => {
@@ -55,14 +60,14 @@ const addImageClaim = async (entity, imageUrl, newClaims) => {
   newClaims['invp:P2'] = [ imageHash ]
 }
 
-const updateDatePrecision = (currentDoc, updatedDoc, seedClaims) => {
+const updateDatePrecision = (entity, updatedEntity, seedClaims) => {
   const seedDateClaims = _.pick(seedClaims, simpleDayProperties)
 
   _.forEach(seedDateClaims, (seedDates, prop) => {
     const seedDate = seedDates[0]
-    const currentDate = currentDoc.claims[prop][0]
+    const currentDate = entity.claims[prop][0]
     if (seedDate && currentDate && isMorePreciseDate(seedDate, currentDate)) {
-      updatedDoc.claims[prop] = seedDateClaims[prop]
+      updatedEntity.claims[prop] = seedDateClaims[prop]
     }
   })
 }
