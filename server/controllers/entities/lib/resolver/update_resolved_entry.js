@@ -22,6 +22,7 @@ const updateEntityFromSeed = (reqUserId, batchId) => async seed => {
   if (prefix === 'wd') return
 
   const entity = await getEntity(prefix, entityId)
+  await updateDatePrecision(entity, seedClaims, reqUserId, batchId)
   await addMissingClaims(entity, seedClaims, imageUrl, reqUserId, batchId)
 }
 
@@ -49,3 +50,24 @@ const addImageClaim = async (entity, imageUrl, newClaims) => {
   const { url: imageHash } = await getImageByUrl(imageUrl)
   newClaims['invp:P2'] = [ imageHash ]
 }
+
+const updateDatePrecision = async (currentDoc, seedClaims, userId, batchId) => {
+  const seedDateClaims = _.pick(seedClaims, simpleDayProperties)
+  const updatedDoc = _.cloneDeep(currentDoc)
+
+  _.forEach(seedDateClaims, (seedDates, prop) => {
+    const seedDate = seedDates[0]
+    const currentDate = currentDoc.claims[prop][0]
+    if (seedDate && currentDate && isMorePreciseDate(seedDate, currentDate)) {
+      updatedDoc.claims[prop] = seedDateClaims[prop]
+    }
+  })
+  if (_.isEqual(updatedDoc, currentDoc)) return
+  await entities_.putUpdate({ userId, currentDoc, updatedDoc, batchId })
+}
+
+const simpleDayProperties = [ 'wdt:P569', 'wdt:P570', 'wdt:P571', 'wdt:P576', 'wdt:P577' ]
+
+const isMorePreciseDate = (date1, date2) => intCount(date1) > intCount(date2)
+
+const intCount = str => (str.match(/\d/g) || []).length

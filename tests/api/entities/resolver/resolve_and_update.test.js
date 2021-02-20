@@ -200,6 +200,50 @@ describe('entities:resolver:update-resolved', () => {
     const postResolvedEntityVersion = Object.values(postResolvedEntities)[0].version
     postResolvedEntityVersion.should.equal(preResolvedEntityVersion)
   })
+
+  it('should update if entry date is more precise than entity date', async () => {
+    const entryDate = '2020-01-01'
+    const entityDate = '2020'
+    const { uri, isbn } = await createEditionWithIsbn({ publicationDate: entityDate })
+    const entry = {
+      edition: {
+        isbn,
+        claims: { 'wdt:P577': entryDate }
+      }
+    }
+    const { entities: preResolvedEntities } = await getByUris(uri)
+    const preResolvedEntityVersion = Object.values(preResolvedEntities)[0].version
+
+    await resolveAndUpdate(entry)
+    await wait(10)
+    const { entities: postResolvedEntities } = await getByUris(uri)
+    const postResolvedEntityVersion = Object.values(postResolvedEntities)[0].version
+    postResolvedEntityVersion.should.equal(preResolvedEntityVersion + 1)
+  })
+
+  it('should update authors date claims', async () => {
+    const entryDate = '2020-01-01'
+    const entityDate = '2020'
+    const goodReadsId = someGoodReadsId()
+    const entry = {
+      edition: { isbn: generateIsbn13() },
+      authors: [ {
+        claims: {
+          'wdt:P2963': [ goodReadsId ],
+          'wdt:P569': [ entryDate ]
+        }
+      }
+      ]
+    }
+    const human = await createHuman()
+    await addClaim(human.uri, 'wdt:P2963', goodReadsId)
+    await addClaim(human.uri, 'wdt:P569', entityDate)
+    const { entries } = await resolveAndUpdate(entry)
+    const authorUri = entries[0].authors[0].uri
+    const { entities } = await getByUris(authorUri)
+    const updatedAuthorClaim = entities[authorUri].claims['wdt:P569']
+    updatedAuthorClaim.should.containEql(entryDate)
+  })
 })
 
 const someEntryWithAGoodReadsWorkId = () => ({
