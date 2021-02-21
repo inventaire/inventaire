@@ -12,6 +12,8 @@ module.exports = {
     findUser(resource)
     .then(user => {
       if (!user) throw error_.new('unknown actor', 400, resource)
+      const { username } = user
+      res.json(formatWebfinger(username, resource))
     })
     .catch(error_.Handler(req, res))
   }
@@ -47,4 +49,21 @@ const findUser = async resource => {
   const username = getActorParts(resource)[0]
   return user_.byUsername(username)
   .then(couch_.firstDoc)
+}
+
+const formatWebfinger = (username, resource) => {
+  const publicHost = `${CONFIG.publicProtocol}://${CONFIG.publicHost}`
+  const actorUrl = `${publicHost}/api/activitypub?action=actor&name=${username}`
+
+  return {
+    subject: resource,
+    aliases: [ actorUrl ],
+    links: [
+      {
+        rel: 'self',
+        type: 'application/activity+json',
+        href: actorUrl
+      }
+    ]
+  }
 }
