@@ -96,6 +96,20 @@ describe('entities:create', () => {
     })
   })
 
+  it('should reject non allowlisted values for constrained properties', async () => {
+    await authReq('post', endpoint, {
+      claims: {
+        'wdt:P31': [ 'wd:Q123' ],
+      }
+    })
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(400)
+      err.body.context.property.should.equal('wdt:P31')
+      err.body.status_verbose.should.equal('invalid property value for entity type "edition"')
+    })
+  })
+
   it('should reject invalid labels datatype', async () => {
     await authReq('post', endpoint, {
       labels: [],

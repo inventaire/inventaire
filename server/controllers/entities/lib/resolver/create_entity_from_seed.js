@@ -10,7 +10,7 @@ const createAuthor = (userId, batchId) => author => {
   if (author.uri != null) return author
   const claims = {}
 
-  addClaimIfValid(claims, 'wdt:P31', [ 'wd:Q5' ])
+  addClaimIfValid(claims, 'wdt:P31', [ 'wd:Q5' ], 'human')
   return createEntityFromSeed({ type: 'human', seed: author, claims, userId, batchId })
 }
 
@@ -18,7 +18,7 @@ const createWork = (userId, batchId, authors) => work => {
   if (work.uri != null) return work
   const authorsUris = _.compact(_.map(authors, 'uri'))
   const claims = {}
-  addClaimIfValid(claims, 'wdt:P31', [ 'wd:Q47461344' ])
+  addClaimIfValid(claims, 'wdt:P31', [ 'wd:Q47461344' ], 'work')
   addClaimIfValid(claims, 'wdt:P50', authorsUris)
   return createEntityFromSeed({ type: 'work', seed: work, claims, userId, batchId })
 }
@@ -30,7 +30,7 @@ const createEdition = async (edition, works, userId, batchId, enrich) => {
   const worksUris = _.compact(_.map(works, 'uri'))
   const claims = {}
 
-  addClaimIfValid(claims, 'wdt:P31', [ 'wd:Q3331189' ])
+  addClaimIfValid(claims, 'wdt:P31', [ 'wd:Q3331189' ], 'edition')
   addClaimIfValid(claims, 'wdt:P629', worksUris)
 
   if (isbn != null) {

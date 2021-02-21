@@ -14,7 +14,7 @@ module.exports = (property, value, entityType) => {
 
   if (properties[property].typeSpecificValidation) {
     if (!properties[property].validate(value, entityType)) {
-      const message = `invalid property value for entity type ${entityType}`
+      const message = `invalid property value for entity type "${entityType}"`
       throw error_.new(message, 400, { entityType, property, value })
     }
   } else {

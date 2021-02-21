@@ -1,22 +1,17 @@
 const __ = require('config').universalPath
 const error_ = __.require('lib', 'error/error')
+const { 'wdt:P31': invP31Values } = __.require('controllers', 'entities/lib/properties/properties_values_per_types_lists')
 
 // TODO: replace this list by a SPARQL generated list
 // that can be refreshed from time to time
-const typesAliases = module.exports = {
+const wikidataOnlyP31Values = {
   humans: [
-    'wd:Q5', // human
     'wd:Q10648343', // duo
     'wd:Q14073567', // sibling duo
     'wd:Q19913602', // house name
     'wd:Q61002' // pseudonym
   ],
   series: [
-    'wd:Q277759', // book series
-    'wd:Q14406742', // comic book series
-    'wd:Q21198342', // manga series
-    'wd:Q74262765', // manhwa series
-    'wd:Q1667921', // novel series
     'wd:Q3297186', // limited series
     'wd:Q21191134', // comic strip series
     'wd:Q17489659', // group of works
@@ -33,16 +28,9 @@ const typesAliases = module.exports = {
   ],
   works: [
     'wd:Q571', // book
-    'wd:Q47461344', // written work
     'wd:Q2831984', // comic book album
-    'wd:Q1004', // bande dessinée / comic book
-    'wd:Q1760610', // comic book
     'wd:Q838795', // comic strip
-    'wd:Q8261', // novel / roman
     'wd:Q149537', // novella
-    'wd:Q725377', // graphic novel
-    'wd:Q25379', // theatre play
-    'wd:Q7725634', // literary work
     'wd:Q17518870', // group of literary works
     'wd:Q12106333', // poetry collection
     'wd:Q1279564', // short story collection
@@ -51,8 +39,6 @@ const typesAliases = module.exports = {
     'wd:Q17991521', // tale
     'wd:Q699', // fairy tale
     'wd:Q34620', // Greek tragedy
-    'wd:Q8274', // manga
-    'wd:Q562214', // manhwa
     'wd:Q128093', // ebook
     'wd:Q17518461', // posthumous work
     'wd:Q179461', // religious text
@@ -65,10 +51,14 @@ const typesAliases = module.exports = {
     'wd:Q10901350', // anime and manga
     'wd:Q20540385', // non-fiction book
     'wd:Q36279', // biography
-    'wd:Q234460' // text
+    'wd:Q234460', // text
+    'wd:Q193934', // paperback
+    'wd:Q193955', // hardback
+    'wd:Q17994250', // pocket edition
+    'wd:Q1238720', // volume
+    'wd:Q193495', // monograph
   ],
   editions: [
-    'wd:Q3331189', // edition
     'wd:Q3972943' // publishing
   ],
   articles: [
@@ -87,7 +77,6 @@ const typesAliases = module.exports = {
     'wd:Q13136' // reference work
   ],
   publishers: [
-    'wd:Q2085381', // publisher
     'wd:Q1320047', // book publishing company
     'wd:Q1114515', // comics publishing company
     'wd:Q149985', // self-publishing company
@@ -97,11 +86,7 @@ const typesAliases = module.exports = {
     'wd:Q19720191', // large publisher
     'wd:Q45400320' // open access publisher
   ],
-  collections: [
-    'wd:Q20655472', // editorial collection
-    'wd:Q1700470', // monographic series
-    'wd:Q2668072' // collection
-  ],
+  collections: [],
   movements: [
     'wd:Q2198855', // cultural movement
     'wd:Q3326717', // literary movement
@@ -116,6 +101,14 @@ const typesAliases = module.exports = {
     'wd:Q4167836', // Wikimedia category
     'wd:Q4167410' // Wikimedia disambiguation page
   ]
+}
+
+const typesAliases = {}
+
+for (const type in wikidataOnlyP31Values) {
+  const wdTypeValues = wikidataOnlyP31Values[type]
+  const invTypeValues = invP31Values[type] || []
+  typesAliases[type] = wdTypeValues.concat(invTypeValues)
 }
 
 const types = {}
@@ -151,5 +144,5 @@ module.exports = {
   getPluralType,
   getPluralTypeByTypeUri,
   getSingularType,
-  getSingularTypes
+  getSingularTypes,
 }
