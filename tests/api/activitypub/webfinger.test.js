@@ -1,8 +1,9 @@
 const CONFIG = require('config')
+const _ = require('builders/utils')
 require('should')
 const { publicReq } = require('../utils/utils')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
-const { createUsername } = require('../fixtures/users')
+const { createUser, createUsername } = require('../fixtures/users')
 
 const endpoint = '/.well-known/webfinger?resource='
 
@@ -40,5 +41,23 @@ describe('activitypub:webfinger', () => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal('unknown actor')
     }
+  })
+
+  it('should return an activitypub compliant webfinger', async () => {
+    const username = createUsername()
+    await createUser({ username })
+    const resource = `acct:${username}@${CONFIG.publicHost}`
+    const res = await publicReq('get', `${endpoint}${resource}`)
+    const { subject, aliases, links } = res
+    res.should.be.an.Object()
+    subject.should.equal(resource)
+    const publicHost = `${CONFIG.publicProtocol}://${CONFIG.publicHost}`
+    const actorUrl = `${publicHost}/api/activitypub?action=actor&name=${username}`
+    aliases[0].should.equal(actorUrl)
+    aliases.should.matchAny(actorUrl)
+    const firstLink = _.find(links, { rel: 'self' })
+    firstLink.should.be.an.Object()
+    firstLink.type.should.equal('application/activity+json')
+    firstLink.href.should.equal(actorUrl)
   })
 })

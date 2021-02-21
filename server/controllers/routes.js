@@ -34,6 +34,7 @@ const routes = module.exports = {
   'api/transactions': endpoint('./transactions/transactions'),
   'api/user': endpoint('./user/user'),
   'api/users': endpoint('./users/users'),
+  'api/activitypub': endpoint('./activitypub/activitypub'),
   'img/*': endpoint('./images/resize'),
   '.well-known/webfinger': endpoint('./activitypub/webfinger')
 }
