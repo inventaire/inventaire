@@ -7,6 +7,7 @@ const { createUser } = require('../fixtures/users')
 const randomString = __.require('lib', './utils/random_string')
 const { getTwoFriends } = require('../fixtures/users')
 const { Wait } = __.require('lib', 'promises')
+const specialUsersNames = Object.keys(__.require('db', 'couch/hard_coded_documents').users)
 
 const endpoint = '/api/users?action=by-usernames'
 
@@ -61,5 +62,10 @@ describe('users:by-usernames', () => {
     const res = await publicReq('get', `${endpoint}&usernames=${usernames.join('|')}`)
     const lowercasedUsernames = usernames.map(_.toLowerCase)
     _.keys(res.users).should.deepEqual(lowercasedUsernames)
+  })
+
+  it('should get a special user', async () => {
+    const res = await publicReq('get', `${endpoint}&usernames=${specialUsersNames.join('|')}`)
+    Object.keys(res.users).should.deepEqual(specialUsersNames)
   })
 })
