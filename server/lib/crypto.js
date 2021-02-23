@@ -1,6 +1,8 @@
 const pw = require('./password_hashing')
 const error_ = require('lib/error/error')
 const crypto = require('crypto')
+const { promisify } = require('util')
+const generateKeyPair = promisify(crypto.generateKeyPair)
 
 exports.passwords = {
   hash: async password => {
@@ -40,3 +42,20 @@ exports.md5 = createHexHash('md5')
 exports.sha1FromStream = createHexHashFromStream('sha1')
 
 exports.getRandomBytes = (length, encoding) => crypto.randomBytes(length).toString(encoding)
+
+exports.keyPair = {
+  generateKeyPair: async () => {
+    // from https://github.com/dariusk/express-activitypub/blob/master/routes/admin.js#L50
+    return generateKeyPair('rsa', {
+      modulusLength: 4096,
+      publicKeyEncoding: {
+        type: 'spki',
+        format: 'pem'
+      },
+      privateKeyEncoding: {
+        type: 'pkcs8',
+        format: 'pem'
+      }
+    })
+  }
+}
