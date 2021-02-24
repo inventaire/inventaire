@@ -13,7 +13,7 @@ module.exports = {
   comments: [ 'comments' ],
   entities: [ 'entities', 'entities_deduplicate' ],
   patches: [ 'patches' ],
-  notifications: [ 'notifications', 'groups_notifications' ],
+  notifications: [ 'notifications' ],
   tasks: [ 'tasks' ],
   shelves: [ 'shelves' ]
 }
