@@ -1,10 +1,9 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-let error_ = __.require('lib', 'error/error')
+const error_ = __.require('lib', 'error/error')
 const getEntityByUri = __.require('controllers', 'entities/lib/get_entity_by_uri')
 const tasks_ = require('./tasks')
 const getNewTasks = require('./get_new_tasks')
-error_ = __.require('lib', 'error/error')
 const updateRelationScore = require('./relation_score')
 const supportedTypes = [ 'human' ]
 

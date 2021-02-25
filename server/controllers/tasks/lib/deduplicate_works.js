@@ -1,11 +1,10 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-let error_ = __.require('lib', 'error/error')
+const error_ = __.require('lib', 'error/error')
 const getEntityByUri = __.require('controllers', 'entities/lib/get_entity_by_uri')
 const getEntitiesList = __.require('controllers', 'entities/lib/get_entities_list')
 const tasks_ = require('./tasks')
-error_ = __.require('lib', 'error/error')
 const getEntitiesByIsbns = __.require('controllers', 'entities/lib/get_entities_by_isbns')
 const mergeEntities = __.require('controllers', 'entities/lib/merge_entities')
 const { haveExactMatch } = __.require('controllers', 'entities/lib/labels_match')
