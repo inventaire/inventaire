@@ -176,6 +176,22 @@ const generics = {
 
 module.exports = {
   attribute: nonEmptyString,
+  bbox: {
+    format: value => {
+      return JSON.parse(value)
+    },
+    validate: (bbox, name, config) => {
+      if (_.typeOf(bbox) !== 'array') return false
+      if (bbox.length !== 4) return false
+      for (const coordinate of bbox) {
+        if (_.typeOf(coordinate) !== 'number') return false
+      }
+      const [ minLng, minLat, maxLng, maxLat ] = bbox
+      if (minLng >= maxLng || minLat >= maxLat) return false
+      if (minLng < -180 || maxLng > 180 || minLat < -90 || maxLat > 90) return false
+      return true
+    }
+  },
   email: { validate: validations.common.email },
   description: nonEmptyString,
   filter: allowlistedString,

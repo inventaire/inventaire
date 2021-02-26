@@ -16,9 +16,6 @@
     },
     "byInvitedUser": {
       "map": "(doc)->\n  if doc.type is 'group'\n    for invitation in doc.invited\n      emit invitation.user, null"
-    },
-    "byGeoSquare": {
-      "map": "(doc)->\n  if doc.type is 'group' and doc.position?\n    [lat, lng] = doc.position\n    lat = Math.floor lat\n    lng = Math.floor lng\n    emit [lat,lng], null"
     }
   }
 }

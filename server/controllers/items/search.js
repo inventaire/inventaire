@@ -19,5 +19,5 @@ module.exports = (req, res) => {
 
 const itemsSearch = async ({ reqUserId, userId, search }) => {
   const accessLevel = await getInventoryAccessLevel(userId, reqUserId)
-  return searchUserItems(search, { userId, accessLevel })
+  return searchUserItems({ search, userId, accessLevel })
 }

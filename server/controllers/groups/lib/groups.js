@@ -6,6 +6,7 @@ const Group = __.require('models', 'group')
 const db = __.require('couch', 'base')('groups')
 const lists_ = require('./users_lists')
 const { add: addSlug } = require('./slug')
+const searchGroupsByPosition = __.require('lib', 'search_by_position')(db, 'groups')
 
 const groups_ = module.exports = {
   // using a view to avoid returning users or relations
@@ -68,7 +69,7 @@ const groups_ = module.exports = {
       if (group == null) throw error_.notFound({ group: groupId })
       return Group.getAllMembersIds(group)
     })
-  }
-}
+  },
 
-groups_.byPosition = __.require('lib', 'by_position')(db, 'groups')
+  byPosition: searchGroupsByPosition
+}

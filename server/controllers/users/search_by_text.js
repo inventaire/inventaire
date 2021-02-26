@@ -13,12 +13,12 @@ module.exports = (req, res) => {
     return error_.bundleInvalid(req, res, 'search', search)
   }
 
-  return searchByText(search)
+  return searchByText({ search })
   .then(responses_.Wrap(res, 'users'))
   .catch(error_.Handler(req, res))
 }
 
 const searchByText = buildSearcher({
   dbBaseName: 'users',
-  queryBuilder: search => queryBuilder({ search })
+  queryBuilder
 })

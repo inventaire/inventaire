@@ -4,8 +4,10 @@ const _ = __.require('builders', 'utils')
 const should = require('should')
 const { publicReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = __.require('apiTests', 'utils/utils')
 const { createGroup } = require('../fixtures/groups')
-const qs = require('querystring')
+const { getRandomPosition } = require('../fixtures/users')
+const { waitForIndexation } = require('../utils/search')
 const endpoint = '/api/groups?action=search-by-position'
+const qs = require('querystring')
 
 describe('groups:search-by-position', () => {
   it('should reject without bbox', async () => {
@@ -19,8 +21,16 @@ describe('groups:search-by-position', () => {
   })
 
   it('should get groups by position', async () => {
-    const group = await createGroup({ position: [ 10, 10 ] })
-    const bbox = qs.escape(JSON.stringify([ 9, 9, 11, 11 ]))
+    const position = getRandomPosition()
+    const [ lat, lng ] = position
+    const bbox = qs.escape(JSON.stringify([
+      lng - 1, // minLng
+      lat - 1, // minLat
+      lng + 1, // maxLng
+      lat + 1, // maxLat
+    ]))
+    const group = await createGroup({ position })
+    await waitForIndexation('groups', group._id)
     const res = await publicReq('get', `${endpoint}&bbox=${bbox}`)
     res.groups.should.be.an.Array()
     const groupsIds = _.map(res.groups, '_id')

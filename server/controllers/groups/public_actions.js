@@ -5,7 +5,6 @@ const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
 const groups_ = require('./lib/groups')
 const getGroupPublicData = require('./lib/group_public_data')
-const parseBbox = __.require('lib', 'parse_bbox')
 const sanitize = __.require('lib', 'sanitize/sanitize')
 const { get: getSlug } = require('./lib/slug')
 
@@ -31,10 +30,8 @@ module.exports = {
   },
 
   searchByPositon: (req, res) => {
-    parseBbox(req.query)
-    // Can't be chained directy as .filter makes problems when parseBbox throws:
-    // "parseBbox(...).then(...).then(...).catch(...).filter is not a function"
-    .then(bbox => groups_.byPosition(bbox))
+    sanitize(req, res, { bbox: {} })
+    .then(({ bbox }) => groups_.byPosition(bbox))
     .then(groups => groups.filter(searchable))
     .then(responses_.Wrap(res, 'groups'))
     .catch(error_.Handler(req, res))
