@@ -83,9 +83,6 @@ const getAuthorWorksData = authorId => {
 
 const getLangs = work => Object.keys(work.labels)
 
-// Arbitrarily set, can be changed to better fit the changes in results scores
-const lowestSuggestionMatchScore = 4
-
 const searchEntityDuplicatesSuggestions = async entity => {
   const name = _.values(entity.labels)[0]
   if (!_.isNonEmptyString(name)) return []
@@ -95,7 +92,6 @@ const searchEntityDuplicatesSuggestions = async entity => {
     types: [ 'humans' ],
     filter: 'wd',
     exact: true,
-    minScore: lowestSuggestionMatchScore
   })
 
   return results.map(formatResult)

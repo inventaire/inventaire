@@ -3,10 +3,12 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 require('should')
 const { createWork, createHuman, createSerie, createCollection, createPublisher, sameFirstNameLabel } = require('../fixtures/entities')
+const { randomLongWord, randomWords } = require('../fixtures/text')
 const { getByUris } = require('../utils/entities')
 const { shouldNotBeCalled } = require('../utils/utils')
 const { search, waitForIndexation } = require('../utils/search')
 const wikidataUris = [ 'wd:Q184226', 'wd:Q180736', 'wd:Q8337', 'wd:Q225946', 'wd:Q3409094', 'wd:Q3236382' ]
+const { max_gram: maxGram } = __.require('db', 'elasticsearch/settings/settings').analysis.filter.autocomplete_filter
 
 describe('search:entities', () => {
   let human, work, serie, collection, publisher
@@ -72,30 +74,39 @@ describe('search:entities', () => {
       })
 
       it('should not match on descriptions', async () => {
-        const results = await search({ types: 'humans', search: 'philosopher', lang: 'en', exact: true })
-        results.length.should.equal(0)
+        const description = 'french philosopher'
+        const results = await search({ types: 'humans', search: description, lang: 'en' })
+        results.length.should.be.aboveOrEqual(0)
+        const exactResults = await search({ types: 'humans', search: description, lang: 'en', exact: true })
+        exactResults.length.should.equal(0)
       })
 
       it('should find a label with special characters', async () => {
-        const label = "L'eau douce en péril !"
+        // Insert random words in the middle to mitigate a too low score due to a high term frequency
+        // when running the tests several times without emptying the database
+        const label = `L'eau ${randomWords(2)} en péril !`
         const work = await createWork({ labels: { fr: label } })
         await waitForIndexation('entities', work._id)
         const results = await search({ types: 'works', search: label, lang: 'fr', exact: true })
         _.map(results, 'uri').should.containEql(work.uri)
       })
 
-      // FIX: The reason this test fails seems to be that we use
-      // the autocomplete analyzer with a max_gram lower those terms, as you can
-      // see by searching 'Metaphysis Anfangsgrü der Naturwisse' instead.
-      // The test also passes when search_analyzer is let unspecified at indexation
-      // letting the search query use the autocomplete tokenizer
-      xit('should find a label containing long terms', async () => {
-        const label = 'Metaphysische Anfangsgründe der Naturwissenschaft'
+      it('should ignore the case', async () => {
+        // Insert random words in the middle to mitigate a too low score due to a high term frequency
+        // when running the tests several times without emptying the database
+        const label = `L'EAU DOUCE ${randomWords(2).toUpperCase()} EN PÉRIL`
+        const work = await createWork({ labels: { fr: label.toLowerCase() } })
+        await waitForIndexation('entities', work._id)
+        const results = await search({ types: 'works', search: label, lang: 'fr', exact: true })
+        _.map(results, 'uri').should.containEql(work.uri)
+      })
+
+      it('should find a label containing terms longer than the autocomplete max ngram', async () => {
+        const wordLength = maxGram + 5
+        const label = `${randomLongWord(wordLength)} ${randomLongWord(wordLength)} ${randomLongWord(wordLength)}`
         const work = await createWork({ labels: { de: label } })
-        console.log({ work })
         await waitForIndexation('entities', work._id)
         const results = await search({ types: 'works', search: label, lang: 'de', exact: true })
-        console.log({ results })
         _.map(results, 'uri').should.containEql(work.uri)
       })
     })
@@ -186,6 +197,15 @@ describe('search:entities', () => {
       results.should.be.an.Array()
       results.forEach(result => result.type.should.equal('publishers'))
       _.map(results, 'id').includes('Q3236382').should.be.true()
+    })
+  })
+
+  describe('multi-types', () => {
+    it('should accept several types', async () => {
+      const types = [ 'works', 'series' ]
+      const results = await search({ types, search: serie.labels.en, limit: 20 })
+      results.forEach(result => types.should.containEql(result.type))
+      _.map(results, 'id').includes(serie._id).should.be.true()
     })
   })
 })

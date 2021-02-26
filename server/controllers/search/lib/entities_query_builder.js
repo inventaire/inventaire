@@ -6,35 +6,31 @@ module.exports = params => {
   let { types } = params
   types = getSingularTypes(types)
 
+  const boolMode = exact ? 'must' : 'should'
+
   return {
     query: {
       function_score: {
         query: {
           bool: {
             filter: [
-              // at least one type should match
-              // this is basically an 'or' operator
-              { bool: { should: matchType(types) } },
+              // At least one type should match
+              // See https://www.elastic.co/guide/en/elasticsearch/reference/7.10/query-dsl-terms-query.html
+              { terms: { type: types } }
             ],
-            must: [
-              // Because most of the work has been done at index time (indexing terms by ngrams)
-              // all this query needs to do is to look up search terms which is way more efficient than the match_phrase_prefix approach
-              // See https://www.elastic.co/guide/en/elasticsearch/guide/current/_index_time_search_as_you_type.html
-              { bool: { should: matchEntities(search, userLang, exact) } }
-            ]
+            // Because most of the work has been done at index time (indexing terms by ngrams)
+            // all this query needs to do is to look up search terms which is way more efficient than the match_phrase_prefix approach
+            // See https://www.elastic.co/guide/en/elasticsearch/guide/current/_index_time_search_as_you_type.html
+            [boolMode]: matchEntities(search, userLang, exact)
           }
         },
-        functions: [
-          {
-            // See: https://www.elastic.co/guide/en/elasticsearch/reference/7.10/query-dsl-function-score-query.html#function-field-value-factor
-            field_value_factor: {
-              field: 'popularity',
-              // Inspired by https://www.elastic.co/guide/en/elasticsearch/guide/current/boosting-by-popularity.html
-              modifier: 'ln2p',
-              missing: 1
-            },
-          }
-        ],
+        // See: https://www.elastic.co/guide/en/elasticsearch/reference/7.10/query-dsl-function-score-query.html#function-field-value-factor
+        field_value_factor: {
+          field: 'popularity',
+          // Inspired by https://www.elastic.co/guide/en/elasticsearch/guide/current/boosting-by-popularity.html
+          modifier: 'ln2p',
+          missing: 1
+        },
       },
     },
     size,
@@ -42,12 +38,10 @@ module.exports = params => {
   }
 }
 
-const matchType = types => types.map(type => ({ term: { type } }))
-
 const matchEntities = (search, userLang, exact) => {
   const fields = entitiesFields(userLang, exact)
 
-  const should = [
+  const queries = [
     {
       // Use query_string to give exact matches a boost.
       // See query strings doc : https://www.elastic.co/guide/en/elasticsearch/reference/7.10/query-dsl-query-string-query.html
@@ -55,7 +49,7 @@ const matchEntities = (search, userLang, exact) => {
         query: search,
         operator: 'and',
         fields,
-        analyzer: 'standard',
+        analyzer: 'standard_truncated',
         type: 'best_fields',
         boost: 3
       }
@@ -63,16 +57,16 @@ const matchEntities = (search, userLang, exact) => {
   ]
 
   if (!exact) {
-    should.push({
+    queries.push({
       multi_match: {
         query: search,
         fields,
-        analyzer: 'standard',
+        analyzer: 'standard_truncated',
       }
     })
   }
 
-  return should
+  return queries
 }
 
 const entitiesFields = (userLang, exact) => {
