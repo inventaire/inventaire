@@ -47,11 +47,12 @@ const waitForIndexation = async (indexBaseName, id) => {
 
 module.exports = {
   search: async (...args) => {
-    let types, search, lang, filter, limit, exact = false
+    let types, search, lang, filter, limit, exact
     if (args.length === 1) ({ types, search, lang, filter, limit, exact } = args[0])
     else [ types, search, lang, filter ] = args
     lang = lang || 'en'
     limit = limit || 10
+    exact = exact || false
     if (_.isArray(types)) types = types.join('|')
     search = encodeURIComponent(search)
     let url = `${endpoint}?types=${types}&lang=${lang}&search=${search}&limit=${limit}&exact=${exact}`

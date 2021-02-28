@@ -21,8 +21,8 @@ describe('search:entities', () => {
       createSerie(),
       createPublisher(),
       createCollection(),
-      // Ensure wikidata uris are indexed
-      getByUris(wikidataUris, null, false),
+      // Ensure wikidata uris are indexed in the current format
+      getByUris(wikidataUris, null, true),
     ])
 
     await Promise.all([
@@ -108,6 +108,13 @@ describe('search:entities', () => {
         await waitForIndexation('entities', work._id)
         const results = await search({ types: 'works', search: label, lang: 'de', exact: true })
         _.map(results, 'uri').should.containEql(work.uri)
+      })
+    })
+
+    describe('not exact', () => {
+      it('should match flattened terms', async () => {
+        const results = await search({ types: 'series', search: 'ဟယ်ရီပေါ်တာ' })
+        _.map(results, 'uri').should.containEql('wd:Q8337')
       })
     })
   })
