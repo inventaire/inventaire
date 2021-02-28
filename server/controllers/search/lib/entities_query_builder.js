@@ -65,19 +65,6 @@ const matchEntities = (search, userLang, exact) => {
         type: 'cross_fields',
       }
     })
-    // Flattened terms have been indexes with the 'standard' analyzer
-    // and would thus give poor results if queried with the 'standard_truncated' analyzer
-    // thus this additionnal query. Once they are reindexed with the autocomplete analyzer
-    // those fields could be queries as the other fields, and the query below could then be removed
-    queries.push({
-      multi_match: {
-        query: search,
-        operator: 'or',
-        fields: entitiesFlattenedFields,
-        analyzer: 'standard',
-        type: 'cross_fields',
-      }
-    })
   }
 
   return queries
@@ -96,15 +83,12 @@ const entitiesFields = (userLang, exact) => {
   }
   if (!exact) {
     fields.push(
-      'descriptions.*^0.25'
+      'flattenedLabels^0.25',
+      'flattenedAliases^0.25',
+      'descriptions.*^0.25',
+      'flattenedDescriptions^0.25'
     )
   }
 
   return fields
 }
-
-const entitiesFlattenedFields = [
-  'flattenedLabels^0.25',
-  'flattenedAliases^0.25',
-  'flattenedDescriptions^0.1'
-]
