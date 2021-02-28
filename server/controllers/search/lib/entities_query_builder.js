@@ -60,8 +60,10 @@ const matchEntities = (search, userLang, exact) => {
     queries.push({
       multi_match: {
         query: search,
+        operator: 'or',
         fields,
         analyzer: 'standard_truncated',
+        type: 'cross_fields',
       }
     })
     // Flattened terms have been indexes with the 'standard' analyzer
@@ -71,8 +73,10 @@ const matchEntities = (search, userLang, exact) => {
     queries.push({
       multi_match: {
         query: search,
+        operator: 'or',
         fields: entitiesFlattenedFields,
         analyzer: 'standard',
+        type: 'cross_fields',
       }
     })
   }
