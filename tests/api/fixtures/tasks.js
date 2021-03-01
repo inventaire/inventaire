@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const { createHuman } = require('./entities')
+const { createHuman, createWork } = require('./entities')
 const { checkEntities } = require('../utils/tasks')
 const { createInBulk } = __.require('controllers', 'tasks/lib/tasks')
 const promises = {}
@@ -29,13 +29,22 @@ module.exports = {
 }
 
 const createTaskDoc = async (params = {}) => {
-  let human = {}
-  if (!params.suspectUri) { human = await createHuman() }
+  let suspect = {}
+  let suggestionUri = ''
+  if (!params.suspectUri) {
+    if (params.entitiesType && params.entitiesType === 'work') {
+      suspect = await createWork()
+      suggestionUri = 'wd:Q104889737'
+    } else {
+      suspect = await createHuman()
+      suggestionUri = 'wd:Q205739'
+    }
+  }
   return {
     type: params.type || 'deduplicate',
     entitiesType: params.entitiesType || 'human',
-    suspectUri: params.suspectUri || human.uri,
-    suggestionUri: params.suggestionUri || 'wd:Q205739',
+    suspectUri: params.suspectUri || suspect.uri,
+    suggestionUri: params.suggestionUri || suggestionUri,
     lexicalScore: 12.01775,
     relationScore: 0.1,
     externalSourcesOccurrences: []
