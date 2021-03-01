@@ -7,15 +7,18 @@ const Task = __.require('models', 'task')
 const db = __.require('couch', 'base')('tasks')
 
 const tasks_ = module.exports = {
-  create: async (suspectUri, type, suggestions) => {
+  create: async (suspectUri, type, entitiesType, suggestions) => {
     // suggestions may only be an array of objects with a 'uri' key
     const newTasksObjects = suggestions.map(suggestion => {
-      const { _score, uri: suggestionUri, occurrences } = suggestion
+      const { _score, uri: suggestionUri, occurrences, reporter, clue } = suggestion
 
       const newTask = { type, suspectUri, suggestionUri }
 
-      if (_score) { newTask.lexicalScore = _score }
-      if (occurrences) { newTask.externalSourcesOccurrences = occurrences }
+      assignKeyIfExists(newTask, 'entitiesType', entitiesType)
+      assignKeyIfExists(newTask, 'lexicalScore', _score)
+      assignKeyIfExists(newTask, 'reporter', reporter)
+      assignKeyIfExists(newTask, 'externalSourcesOccurrences', occurrences)
+      assignKeyIfExists(newTask, 'clue', clue)
       return newTask
     })
     return tasks_.createInBulk(newTasksObjects)
@@ -47,6 +50,17 @@ const tasks_ = module.exports = {
       limit,
       skip: offset,
       descending: true,
+      include_docs: true
+    })
+  },
+
+  byEntitiesType: options => {
+    const { type, limit, offset } = options
+    return db.viewCustom('byEntitiesType', {
+      startkey: type,
+      endkey: type,
+      limit,
+      skip: offset,
       include_docs: true
     })
   },
@@ -99,4 +113,8 @@ const completeWithEmptyArrays = (tasksByUris, uris) => {
     if (tasksByUris[uri] == null) tasksByUris[uri] = []
   }
   return tasksByUris
+}
+
+const assignKeyIfExists = (newTask, name, value) => {
+  if (value != null) { newTask[name] = value }
 }

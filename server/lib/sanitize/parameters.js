@@ -4,6 +4,7 @@ const _ = __.require('builders', 'utils')
 const host = CONFIG.fullPublicHost()
 const error_ = __.require('lib', 'error/error')
 const { truncateLatLng } = __.require('lib', 'geo')
+const { isValidIsbn } = __.require('lib', 'isbn/isbn')
 
 // Parameters attributes:
 // - format (optional)
@@ -94,6 +95,8 @@ const arrayOrPipedStrings = value => {
 const entityUri = {
   validate: validations.common.entityUri
 }
+
+const isbn = { validate: isValidIsbn }
 
 const entityUris = {
   format: arrayOrPipedStrings,
@@ -201,6 +204,7 @@ module.exports = {
   group: couchUuid,
   id: couchUuid,
   ids: couchUuids,
+  isbn,
   item: couchUuid,
   items: couchUuids,
   lang: {

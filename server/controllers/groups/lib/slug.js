@@ -1,11 +1,8 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-let groups_ = __.require('controllers', 'groups/lib/groups')
 const getNextSlugCandidate = require('./get_next_slug_candidate')
 const slugify = require('./slugify')
 
 // Working around the circular dependency
-groups_ = null
+let groups_
 const lateRequire = () => { groups_ = require('./groups') }
 setTimeout(lateRequire, 0)
 

@@ -6,6 +6,7 @@ const entities_ = __.require('controllers', 'entities/lib/entities')
 const getOccurrencesFromEntities = __.require('controllers', 'entities/lib/get_occurrences_from_entities')
 const getOccurrencesFromExternalSources = __.require('controllers', 'entities/lib/get_occurrences_from_external_sources')
 const { getEntityNormalizedTerms } = __.require('controllers', 'entities/lib/terms_normalization')
+const { haveExactMatch } = __.require('controllers', 'entities/lib/labels_match')
 
 module.exports = (entity, existingTasks) => {
   return Promise.all([
@@ -25,7 +26,7 @@ const filterOrMergeSuggestions = (suspect, workLabels) => suggestions => {
   const suspectTerms = getEntityNormalizedTerms(suspect)
   // Do not automerge if author name is in work title
   // as it confuses occurences found on Wikipedia pages
-  if (authorNameInWorkTitles(suspectTerms, workLabels)) return suggestions
+  if (haveExactMatch(suspectTerms, workLabels)) return suggestions
   const sourcedSuggestions = filterSourced(suggestions)
   if (sourcedSuggestions.length === 0) return suggestions
   if (sourcedSuggestions.length > 1) return sourcedSuggestions
@@ -35,15 +36,6 @@ const filterOrMergeSuggestions = (suspect, workLabels) => suggestions => {
 const filterNewTasks = existingTasks => suggestions => {
   const existingTasksUris = _.map(existingTasks, 'suggestionUri')
   return suggestions.filter(suggestion => !existingTasksUris.includes(suggestion.uri))
-}
-
-const authorNameInWorkTitles = (authorTerms, workLabels) => {
-  for (const authorLabel of authorTerms) {
-    for (const workLabel of workLabels) {
-      if (workLabel.match(authorLabel)) return true
-    }
-  }
-  return false
 }
 
 const filterSourced = suggestions => suggestions.filter(sug => sug.occurrences.length > 0)

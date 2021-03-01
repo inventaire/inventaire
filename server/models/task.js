@@ -7,21 +7,27 @@ const validations = require('./validations/task')
 module.exports = {
   create: newTask => {
     assert_.object(newTask)
-    const { type, suspectUri, suggestionUri, lexicalScore, externalSourcesOccurrences } = newTask
+    const { type, entitiesType, suspectUri, suggestionUri, externalSourcesOccurrences, reporter, clue } = newTask
+    let { lexicalScore } = newTask
 
     validations.pass('type', type)
     validations.pass('suspectUri', suspectUri)
-    validations.pass('lexicalScore', lexicalScore)
-    validations.pass('externalSourcesOccurrences', externalSourcesOccurrences)
 
-    return {
+    const task = {
       type,
       suspectUri,
       suggestionUri,
-      lexicalScore: _.round(lexicalScore, 2),
-      externalSourcesOccurrences,
       created: Date.now()
     }
+
+    if (lexicalScore) lexicalScore = _.round(lexicalScore, 2)
+
+    validateAndAssign(task, 'entitiesType', entitiesType)
+    validateAndAssign(task, 'lexicalScore', lexicalScore)
+    validateAndAssign(task, 'externalSourcesOccurrences', externalSourcesOccurrences)
+    validateAndAssign(task, 'reporter', reporter)
+    validateAndAssign(task, 'clue', clue)
+    return task
   },
 
   update: (task, attribute, value) => {
@@ -38,5 +44,12 @@ module.exports = {
     task[attribute] = value
     task.updated = now
     return task
+  }
+}
+
+const validateAndAssign = (task, name, attribute) => {
+  if (attribute) {
+    validations.pass(name, attribute)
+    task[name] = attribute
   }
 }
