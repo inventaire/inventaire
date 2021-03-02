@@ -3,7 +3,7 @@ const should = require('should')
 const { adminReq, getUser, getReservedUser } = require('../utils/utils')
 const { createWork } = require('../fixtures/entities')
 const endpoint = '/api/entities?action=contributions'
-const { wait, Wait } = __.require('lib', 'promises')
+const { wait } = __.require('lib', 'promises')
 
 describe('entities:contributions', () => {
   it('should return contributions from all users by default', async () => {
@@ -16,128 +16,66 @@ describe('entities:contributions', () => {
     lastPatch.user.should.equal(user._id)
   })
 
-  it('should return an empty list of patch when user does not exist', done => {
+  it('should return an empty list of patch when user does not exist', async () => {
     const id = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab'
-    adminReq('get', `${endpoint}&user=${id}`)
-    .then(res => {
-      res.patches.should.be.an.Array()
-      res.patches.length.should.equal(0)
-      done()
-    })
-    .catch(done)
+    const { patches } = await adminReq('get', `${endpoint}&user=${id}`)
+    patches.should.be.an.Array()
+    patches.length.should.equal(0)
   })
 
-  it('should return a list of patches', done => {
-    getUser()
-    .then(user => {
-      const { _id } = user
-      return adminReq('get', `${endpoint}&user=${_id}`)
-      .then(res => {
-        res.patches.should.be.an.Array()
-        done()
-      })
-    })
-    .catch(done)
+  it('should return a list of patches', async () => {
+    const { _id } = await getUser()
+    const { patches } = await adminReq('get', `${endpoint}&user=${_id}`)
+    patches.should.be.an.Array()
   })
 
-  it('should return a list of patches ordered by timestamp', done => {
-    get2WorksAndUser()
-    .then(([ workA, workB, user ]) => {
-      const { _id } = user
-      return adminReq('get', `${endpoint}&user=${_id}`)
-      .then(res => {
-        const { patches } = res
-        const patchesIds = patches.map(getPatchEntityId);
-        (patchesIds.includes(workB._id)).should.be.true();
-        (patchesIds.includes(workA._id)).should.be.true();
-        (patches[0].timestamp > patches[1].timestamp).should.be.true()
-        done()
-      })
-    })
-    .catch(done)
+  it('should return a list of patches ordered by timestamp', async () => {
+    const { workA, workB, user } = await get2WorksAndUser()
+    const { patches } = await adminReq('get', `${endpoint}&user=${user._id}`)
+    const patchesIds = patches.map(getPatchEntityId)
+    should(patchesIds.includes(workB._id)).be.true()
+    should(patchesIds.includes(workA._id)).be.true()
+    should(patches[0].timestamp > patches[1].timestamp).be.true()
   })
 
-  it('should take a limit parameter', done => {
-    get2WorksAndUser()
-    .then(([ workA, workB, user ]) => {
-      const { _id } = user
-      return adminReq('get', `${endpoint}&user=${_id}&limit=1`)
-      .then(res => {
-        const { patches } = res
-        patches.length.should.equal(1)
-        workB._id.should.equal(patches[0]._id.split(':')[0])
-        done()
-      })
-    })
-    .catch(done)
+  it('should take a limit parameter', async () => {
+    const { workB, user } = await get2WorksAndUser()
+    const { patches } = await adminReq('get', `${endpoint}&user=${user._id}&limit=1`)
+    patches.length.should.equal(1)
+    workB._id.should.equal(patches[0]._id.split(':')[0])
   })
 
-  it('should take an offset parameter', done => {
-    worksAndUserPromise
-    .then(([ workA, workB, user ]) => {
-      const { _id } = user
-      return adminReq('get', `${endpoint}&user=${_id}`)
-      .then(res => {
-        const patchesCount = res.patches.length
-        const offset = 1
-        return adminReq('get', `${endpoint}&user=${_id}&offset=${offset}`)
-        .then(res2 => {
-          (patchesCount - offset).should.equal(res2.patches.length)
-          done()
-        })
-      })
-    })
-    .catch(done)
+  it('should take an offset parameter', async () => {
+    const { user } = await get2WorksAndUser()
+    const { patches } = await adminReq('get', `${endpoint}&user=${user._id}`)
+    const offset = 1
+    const { patches: patches2 } = await adminReq('get', `${endpoint}&user=${user._id}&offset=${offset}`)
+    should(patches.length - offset).equal(patches2.length)
   })
 
-  it('should return total data', done => {
-    worksAndUserPromise
-    .then(([ workA, workB, user ]) => {
-      const { _id } = user
-      return adminReq('get', `${endpoint}&user=${_id}&limit=1`)
-      .then(res1 => {
-        res1.total.should.be.a.Number()
-        should(res1.total >= 2).be.true()
-        done()
-      })
-      .catch(done)
-    })
+  it('should return total data', async () => {
+    const { user } = await get2WorksAndUser()
+    const { total } = await adminReq('get', `${endpoint}&user=${user._id}&limit=1`)
+    total.should.be.a.Number()
+    should(total >= 2).be.true()
   })
 
-  it('should return continue data', done => {
-    worksAndUserPromise
-    .then(([ workA, workB, user ]) => {
-      const { _id } = user
-      return adminReq('get', `${endpoint}&user=${_id}&limit=1`)
-      .then(res1 => {
-        res1.continue.should.be.a.Number()
-        res1.continue.should.equal(1)
-        done()
-      })
-      .catch(done)
-    })
+  it('should return continue data', async () => {
+    const { user } = await get2WorksAndUser()
+    const { continue: continu } = await adminReq('get', `${endpoint}&user=${user._id}&limit=1`)
+    continu.should.be.a.Number()
+    continu.should.equal(1)
   })
 
-  it('should return increment contributions', done => {
-    Promise.all([ createWork(), getUser() ])
-    .then(([ work, user ]) => {
-      const { _id } = user
-      return adminReq('get', `${endpoint}&user=${_id}`)
-      .then(res1 => {
-        should(res1.total >= 1).be.true()
-        return createWork()
-        .then(Wait(10))
-        .then(workB => {
-          return adminReq('get', `${endpoint}&user=${_id}`)
-          .then(res2 => {
-            getWorkId(res2.patches[0]._id).should.equal(workB._id)
-            getWorkId(res2.patches[1]._id).should.equal(work._id)
-            done()
-          })
-        })
-      })
-    })
-    .catch(done)
+  it('should return increment contributions', async () => {
+    const [ work, user ] = await Promise.all([ createWork(), getUser() ])
+    const { total } = await adminReq('get', `${endpoint}&user=${user._id}`)
+    should(total >= 1).be.true()
+    const workB = await createWork()
+    await wait(10)
+    const { patches: patches2 } = await adminReq('get', `${endpoint}&user=${user._id}`)
+    getWorkId(patches2[0]._id).should.equal(workB._id)
+    getWorkId(patches2[1]._id).should.equal(work._id)
   })
 })
 
@@ -155,7 +93,7 @@ const create2WorksAndGetUser = async () => {
   // Do not parallelize so that we can assume that workB creation is the last patch
   const workB = await createWork({ user })
   await wait(1000)
-  return [ workA, workB, user ]
+  return { workA, workB, user }
 }
 
 const getWorkId = id => id.split(':')[0]
