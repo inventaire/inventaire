@@ -161,6 +161,11 @@ User.setStableUsername = user => {
   return user
 }
 
+User.shouldBeAnonymized = user => {
+  const userSetting = _.get(user, 'settings.contributions.anonymize')
+  return userSetting !== false
+}
+
 User.formatters = {
   position: truncateLatLng
 }
