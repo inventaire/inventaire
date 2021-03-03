@@ -131,8 +131,9 @@ const API = module.exports = {
     return API.createEdition({ work })
   },
 
-  createItemFromEntityUri: (uri, data = {}) => {
-    return authReq('post', '/api/items', Object.assign({}, data, { entity: uri }))
+  createItemFromEntityUri: ({ user, uri, item = {} }) => {
+    user = user || getUser()
+    return customAuthReq(user, 'post', '/api/items', Object.assign({}, item, { entity: uri }))
   },
 
   someFakeUri: 'inv:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',

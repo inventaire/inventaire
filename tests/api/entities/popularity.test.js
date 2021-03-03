@@ -22,14 +22,14 @@ describe('entities:popularity', () => {
     it('should equal the amount of instances in inventories', async () => {
       const { uri } = await createEdition()
       await scoreShouldEqual(uri, 0)
-      await createItemFromEntityUri(uri)
+      await createItemFromEntityUri({ uri })
       await scoreShouldEqual(uri, 1)
     })
 
     it('should count only one instance per owner', async () => {
       const { uri } = await createEdition()
-      await createItemFromEntityUri(uri, { details: '1' })
-      await createItemFromEntityUri(uri, { details: '2' })
+      await createItemFromEntityUri({ uri, item: { details: '1' } })
+      await createItemFromEntityUri({ uri, item: { details: '2' } })
       await scoreShouldEqual(uri, 1)
     })
   })
@@ -41,10 +41,10 @@ describe('entities:popularity', () => {
     })
 
     it('should be incremented by every instances of editions', async () => {
-      const edition = await createEdition()
-      const workUri = edition.claims['wdt:P629'][0]
+      const { uri, claims } = await createEdition()
+      const workUri = claims['wdt:P629'][0]
       await scoreShouldEqual(workUri, 1)
-      await createItemFromEntityUri(edition.uri)
+      await createItemFromEntityUri({ uri })
       await scoreShouldEqual(workUri, 2)
     })
   })
@@ -85,7 +85,10 @@ const createSerieWithAWorkWithAnEditionWithAnItem = async () => {
     createEdition({ work }),
     addClaim(work.uri, 'wdt:P179', serie.uri)
   ])
-  const item = await createItemFromEntityUri(edition.uri, { lang: 'en' })
+  const item = await createItemFromEntityUri({
+    uri: edition.uri,
+    item: { lang: 'en' }
+  })
   return [ serie, work, edition, item ]
 }
 

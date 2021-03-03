@@ -77,7 +77,7 @@ describe('entities:merge', () => {
       createEdition(),
       createEditionWithIsbn()
     ])
-    const item = await createItemFromEntityUri(editionA.uri)
+    const item = await createItemFromEntityUri({ uri: editionA.uri })
     item.entity.should.equal(editionA.uri)
     await merge(editionA.uri, editionB.uri)
     const [ { entities, redirects }, { items } ] = await Promise.all([
@@ -94,7 +94,7 @@ describe('entities:merge', () => {
       createEditionWithIsbn(),
       createEdition()
     ])
-    const item = await createItemFromEntityUri(editionB.uri)
+    const item = await createItemFromEntityUri({ uri: editionB.uri })
     await merge(editionA.uri, editionB.uri)
     const [ { entities, redirects }, { items } ] = await Promise.all([
       getByUris(editionB.uri),
