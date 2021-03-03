@@ -3,6 +3,7 @@ const error_ = require('lib/error/error')
 const getEntitiesByUris = require('./lib/get_entities_by_uris')
 const mergeEntities = require('./lib/merge_entities')
 const { emit } = require('lib/radio')
+const requestEntitiesMerge = require('controllers/tasks/lib/request_entities_merge')
 
 const sanitization = {
   from: {},
@@ -20,7 +21,7 @@ const sanitization = {
 const validFromUriPrefix = [ 'inv', 'isbn' ]
 
 const controller = async params => {
-  const { reqUserId } = params
+  const { reqUserId, reqUserHasDataadminAccess } = params
   let { from: fromUri, to: toUri } = params
   const [ fromPrefix ] = fromUri.split(':')
 
@@ -39,9 +40,19 @@ const controller = async params => {
   fromUri = replaceIsbnUriByInvUri(fromUri, fromEntity._id)
   toUri = replaceIsbnUriByInvUri(toUri, toEntity._id)
 
-  await mergeEntities({ userId: reqUserId, fromUri, toUri })
-  emit('entity:merge', fromUri, toUri)
-  return { ok: true }
+  let task
+  if (reqUserHasDataadminAccess) {
+    await mergeEntities({ fromUri, toUri, userId: reqUserId })
+    emit('entity:merge', fromUri, toUri)
+  } else {
+    task = await requestEntitiesMerge({
+      fromUri,
+      toUri,
+      entityType: toEntity.type,
+      userId: reqUserId
+    })
+  }
+  return { ok: true, task, merged: task == null }
 }
 
 const getMergeEntities = async (fromUri, toUri) => {
