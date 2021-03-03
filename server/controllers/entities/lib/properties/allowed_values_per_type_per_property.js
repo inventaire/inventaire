@@ -18,6 +18,7 @@ module.exports = {
       'wd:Q14406742', // comic book series
       'wd:Q21198342', // manga series
       'wd:Q74262765', // manhwa series
+      'wd:Q104213567', // light novel series
     ],
     works: [
       'wd:Q47461344', // written work
@@ -29,6 +30,7 @@ module.exports = {
       'wd:Q49084', // short story / conte
       'wd:Q8274', // manga
       'wd:Q562214', // manhwa
+      'wd:Q747381', // light novel
     ],
   },
 
