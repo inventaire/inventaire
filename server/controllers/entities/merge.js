@@ -1,11 +1,10 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
-const { tap } = __.require('lib', 'promises')
 const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
 const getEntitiesByUris = require('./lib/get_entities_by_uris')
 const mergeEntities = require('./lib/merge_entities')
-const { tapEmit } = __.require('lib', 'radio')
+const { emit } = __.require('lib', 'radio')
 const sanitize = __.require('lib', 'sanitize/sanitize')
 
 const sanitization = {
@@ -16,35 +15,42 @@ const sanitization = {
 // Assumptions:
 // - ISBN are already desambiguated and should thus never need merge
 //   out of the case of merging with an existing Wikidata edition entity
-//   but those are ignored for the moment: not enough of them, data mixed with works, etc.
+//   but those are ignored for the moment (see https://github.com/inventaire/inventaire/issues/182)
 // - The merged entity data may be lost: the entity was probably a placeholder
-//   what matters the most is the redirection. Or more fine, reconciling strategy can be developed later
+//   what matters the most is the redirection. Finer reconciling strategy could be developed later
 
 // Only inv entities can be merged yet
 const validFromUriPrefix = [ 'inv', 'isbn' ]
 
 module.exports = (req, res) => {
   sanitize(req, res, sanitization)
-  .then(params => {
-    const { from: fromUri, to: toUri, reqUserId } = params
-    const [ fromPrefix ] = fromUri.split(':')
-
-    if (!validFromUriPrefix.includes(fromPrefix)) {
-      // 'to' prefix doesn't need validation as it can be anything
-      const message = `invalid 'from' uri domain: ${fromPrefix}. Accepted domains: ${validFromUriPrefix}`
-      return error_.bundle(req, res, message, 400, params)
-    }
-
-    _.log({ merge: params, user: reqUserId }, 'entity merge request')
-
-    return getMergeEntities(fromUri, toUri)
-    .then(tap(filterEntities(fromUri, toUri)))
-    .then(tap(filterByType))
-    .then(merge(reqUserId, fromUri, toUri))
-    .then(tapEmit('entity:merge', fromUri, toUri))
-    .then(responses_.Ok(res))
-  })
+  .then(merge)
+  .then(responses_.Ok(res))
   .catch(error_.Handler(req, res))
+}
+
+const merge = async params => {
+  const { reqUserId } = params
+  let { from: fromUri, to: toUri } = params
+  const [ fromPrefix ] = fromUri.split(':')
+
+  if (!validFromUriPrefix.includes(fromPrefix)) {
+    // 'to' prefix doesn't need validation as it can be anything
+    const message = `invalid 'from' uri domain: ${fromPrefix}. Accepted domains: ${validFromUriPrefix}`
+    throw error_.new(message, 400, params)
+  }
+
+  _.log({ merge: params, user: reqUserId }, 'entity merge request')
+
+  const { fromEntity, toEntity } = await getMergeEntities(fromUri, toUri)
+  validateEntities({ fromUri, toUri, fromEntity, toEntity })
+  validateEntitiesByType({ fromEntity, toEntity })
+
+  fromUri = replaceIsbnUriByInvUri(fromUri, fromEntity._id)
+  toUri = replaceIsbnUriByInvUri(toUri, toEntity._id)
+
+  await mergeEntities({ userId: reqUserId, fromUri, toUri })
+  emit('entity:merge', fromUri, toUri)
 }
 
 const getMergeEntities = async (fromUri, toUri) => {
@@ -58,16 +64,15 @@ const getMergeEntity = (entities, redirects, uri) => {
   return entities[uri] || entities[redirects[uri]]
 }
 
-const filterEntities = (fromUri, toUri) => entities => {
-  const { fromEntity, toEntity } = entities
-  filterEntity(fromEntity, fromUri, 'from')
-  filterEntity(toEntity, toUri, 'to')
+const validateEntities = ({ fromUri, toUri, fromEntity, toEntity }) => {
+  validateEntity(fromEntity, fromUri, 'from')
+  validateEntity(toEntity, toUri, 'to')
   if (fromEntity.uri === toEntity.uri) {
     throw error_.new("can't merge an entity into itself", 400, { fromUri, toUri })
   }
 }
 
-const filterEntity = (entity, originalUri, label) => {
+const validateEntity = (entity, originalUri, label) => {
   if (entity == null) {
     throw error_.new(`'${label}' entity not found`, 400, originalUri)
   }
@@ -76,8 +81,7 @@ const filterEntity = (entity, originalUri, label) => {
   }
 }
 
-const filterByType = entities => {
-  const { fromEntity, toEntity } = entities
+const validateEntitiesByType = ({ fromEntity, toEntity }) => {
   const { uri: fromUri } = fromEntity
   const { uri: toUri } = toEntity
 
@@ -100,15 +104,6 @@ const filterByType = entities => {
       throw error_.new("can't merge editions with different ISBNs", 400, fromUri, toUri)
     }
   }
-}
-
-const merge = (reqUserId, fromUri, toUri) => entities => {
-  const { fromEntity, toEntity } = entities
-
-  fromUri = replaceIsbnUriByInvUri(fromUri, fromEntity._id)
-  toUri = replaceIsbnUriByInvUri(toUri, toEntity._id)
-
-  return mergeEntities({ userId: reqUserId, fromUri, toUri })
 }
 
 const replaceIsbnUriByInvUri = (uri, invId) => {
