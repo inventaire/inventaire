@@ -4,7 +4,7 @@ const isbn_ = __.require('lib', 'isbn/isbn')
 const error_ = __.require('lib', 'error/error')
 const assert_ = __.require('utils', 'assert_types')
 const { concurrentString, uniqueEntity } = require('./properties_config_bases')
-const propertiesValuesPerTypesLists = require('./properties_values_per_types_lists')
+const allowedValuesPerTypePerProperty = require('./allowed_values_per_type_per_property')
 const { getPluralType } = __.require('lib', 'wikidata/aliases')
 
 module.exports = {
@@ -46,12 +46,12 @@ module.exports = {
   },
 
   allowedPropertyValues: property => {
-    const propertyValuesPerType = propertiesValuesPerTypesLists[property]
+    const allowedValuesPerType = allowedValuesPerTypePerProperty[property]
     return Object.assign({}, uniqueEntity, {
       typeSpecificValidation: true,
       validate: (entityUri, entityType) => {
         const type = getPluralType(entityType)
-        return propertyValuesPerType[type].includes(entityUri)
+        return allowedValuesPerType[type].includes(entityUri)
       }
     })
   }
