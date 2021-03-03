@@ -39,10 +39,10 @@ module.exports = {
       'update-label': require('./update_label'),
       'revert-edit': require('./revert_edit'),
       'restore-version': require('./restore_version'),
+      merge: require('./merge'),
       'move-to-wikidata': require('./move_to_wikidata')
     },
     dataadmin: {
-      merge: require('./merge'),
       'revert-merge': require('./revert_merge')
     }
   })

@@ -3,6 +3,8 @@ const error_ = require('lib/error/error')
 const getEntitiesByUris = require('./lib/get_entities_by_uris')
 const mergeEntities = require('./lib/merge_entities')
 const { emit } = require('lib/radio')
+const requestEntitiesMerge = require('controllers/tasks/lib/request_entities_merge')
+const { hasDataadminAccess } = require('lib/user_access_levels')
 
 const sanitization = {
   from: {},
@@ -19,10 +21,11 @@ const sanitization = {
 // Only inv entities can be merged yet
 const validFromUriPrefix = [ 'inv', 'isbn' ]
 
-const controller = async params => {
+const controller = async (params, req) => {
   const { reqUserId } = params
   let { from: fromUri, to: toUri } = params
   const [ fromPrefix ] = fromUri.split(':')
+  const reqUserHasDataadminAccess = hasDataadminAccess(req.user)
 
   if (!validFromUriPrefix.includes(fromPrefix)) {
     // 'to' prefix doesn't need validation as it can be anything
@@ -39,9 +42,19 @@ const controller = async params => {
   fromUri = replaceIsbnUriByInvUri(fromUri, fromEntity._id)
   toUri = replaceIsbnUriByInvUri(toUri, toEntity._id)
 
-  await mergeEntities({ userId: reqUserId, fromUri, toUri })
-  await emit('entity:merge', fromUri, toUri)
-  return { ok: true }
+  if (reqUserHasDataadminAccess) {
+    await mergeEntities({ fromUri, toUri, userId: reqUserId })
+    await emit('entity:merge', fromUri, toUri)
+    return { ok: true }
+  } else {
+    const task = await requestEntitiesMerge({
+      fromUri,
+      toUri,
+      entityType: toEntity.type,
+      userId: reqUserId
+    })
+    return { ok: true, task, merged: task == null }
+  }
 }
 
 const getMergeEntities = async (fromUri, toUri) => {

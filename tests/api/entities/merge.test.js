@@ -1,16 +1,16 @@
 require('should')
-const { authReq, dataadminReq, shouldNotBeCalled } = require('../utils/utils')
+const { publicReq, dataadminReq, shouldNotBeCalled, getUser, getUserB } = require('../utils/utils')
 const randomString = require('lib/utils/random_string')
 const { getByUris, merge, getHistory, addClaim } = require('../utils/entities')
 const { getItemsByIds } = require('../utils/items')
 const { createWork, createHuman, createEdition, createEditionWithIsbn, createItemFromEntityUri, createWorkWithAuthor, someFakeUri } = require('../fixtures/entities')
 
 describe('entities:merge', () => {
-  it('should require dataadmin rights', async () => {
-    await authReq('put', '/api/entities?action=merge')
+  it('should require to be authentified', async () => {
+    await publicReq('put', '/api/entities?action=merge')
     .then(shouldNotBeCalled)
     .catch(err => {
-      err.statusCode.should.equal(403)
+      err.statusCode.should.equal(401)
     })
   })
 
@@ -228,5 +228,43 @@ describe('entities:merge', () => {
     ])
     editionA.uri.should.startWith('isbn')
     await merge(`inv:${editionA._id}`, editionB.uri)
+  })
+
+  describe('non-dataadmin', () => {
+    it('should create a merge request task', async () => {
+      const [ editionA, editionB ] = await Promise.all([
+        createEdition(),
+        createEdition()
+      ])
+      const { task, merged } = await merge(editionA.uri, editionB.uri, { user: getUser() })
+      task.should.be.an.Object()
+      task.suspectUri.should.equal(editionA.uri)
+      task.suggestionUri.should.equal(editionB.uri)
+      merged.should.be.false()
+    })
+
+    it('should reuse an existing task when the same user is requesting the same merge', async () => {
+      const [ editionA, editionB ] = await Promise.all([
+        createEdition(),
+        createEdition()
+      ])
+      const user = await getUser()
+      const { task: taskA } = await merge(editionA.uri, editionB.uri, { user })
+      const { task: taskB } = await merge(editionA.uri, editionB.uri, { user })
+      taskA._id.should.equal(taskB._id)
+      taskB.reporters.should.deepEqual([ user._id ])
+    })
+
+    it('should reuse an existing task when another user is requesting the same merge', async () => {
+      const [ editionA, editionB ] = await Promise.all([
+        createEdition(),
+        createEdition()
+      ])
+      const [ userA, userB ] = await Promise.all([ getUser(), getUserB() ])
+      const { task: taskA } = await merge(editionA.uri, editionB.uri, { user: userA })
+      const { task: taskB } = await merge(editionA.uri, editionB.uri, { user: userB })
+      taskA._id.should.equal(taskB._id)
+      taskB.reporters.should.deepEqual([ userA._id, userB._id ])
+    })
   })
 })
