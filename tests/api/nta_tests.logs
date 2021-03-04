@@ -1,0 +1,6 @@
+
+> inventaire@ test-api /home/maxlath/code/inventaire/inventaire
+> ./tests/api/scripts/test_api "/home/maxlath/code/inventaire/inventaire/tests/api/oauth/token.test.js"
+
+no test server to kill
+[0;34mStarting test server in the background: see logs in ./logs/test-server.log[0;30m

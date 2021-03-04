@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const assert_ = __.require('utils', 'assert_types')
-const { publicReq, authReq, dataadminReq, adminReq } = require('./utils')
+const { publicReq, authReq, dataadminReq, adminReq, customAuthReq, getDataadminUser } = require('./utils')
 const { getIndexedDoc } = require('../utils/search')
 const { unprefixify } = __.require('controllers', 'entities/lib/prefix')
 const { waitForIndexation } = __.require('apiTests', 'utils/search')
@@ -49,12 +49,13 @@ const entitiesUtils = module.exports = {
     return authReq('post', '/api/entities?action=delete', { uris })
   },
 
-  merge: (fromUri, toUri) => {
+  merge: (fromUri, toUri, options = {}) => {
     assert_.string(fromUri)
     assert_.string(toUri)
     fromUri = normalizeUri(fromUri)
     toUri = normalizeUri(toUri)
-    return dataadminReq('put', '/api/entities?action=merge', { from: fromUri, to: toUri })
+    const user = options.user || getDataadminUser()
+    return customAuthReq(user, 'put', '/api/entities?action=merge', { from: fromUri, to: toUri })
   },
 
   revertMerge: fromUri => {
